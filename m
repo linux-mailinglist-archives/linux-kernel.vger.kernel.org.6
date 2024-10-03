@@ -1,200 +1,155 @@
-Return-Path: <linux-kernel+bounces-349171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650EA98F213
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:05:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA3B98F215
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0AD1F2214F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E27561C21E0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F9F1A01CC;
-	Thu,  3 Oct 2024 15:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E001A0BD6;
+	Thu,  3 Oct 2024 15:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mMKWxK9V"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2068.outbound.protection.outlook.com [40.107.22.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C06Uemez"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8337C1A00F4
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727967931; cv=fail; b=gxQR7yMxRYCZPgH/UQNn8VVrNPabeFdMxYODqvK/puk4CtT6/RfPtDGhGpWyeeQuKwMGmA4nBoaqEZt31Fqy1A2cgL29xG4otG0EC3dyBvhQrPl9grYKesTDp0oO/zFrsz52U1XMZUmLOUUK1JleuPnupTaosAn4wbSQ6udj0QQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727967931; c=relaxed/simple;
-	bh=kte7HSeWrk6Elkd1Ew/6sjGm5nzGhuUja0VOoWvXjRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WC0Xb8mJFDUzO1ACYS4gilgny6/aZlz8Z2AH94/cMa5nHBIjCREL8XB5ccZUpamStrGocLFmBbSlcq2408/GK5f7os/9UutAZ1A7dgMfE6bMdWSSU+H3x8vXoyE0IQVOLWCs2eK3A31oyrgtZPa1ZFmL7gbkQrbOmac9v1/TNDo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mMKWxK9V; arc=fail smtp.client-ip=40.107.22.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JdkSREJjAxR4NRKJ8V6+o2CCHZpPFyp5WxoNve5YjzZG7tM+S/mgal+qOu/t+R39hSr73pksKfyTt5K4j2aCUC7lQF6+9ecFFKHFOLbcyRcraUB70svy0y6RMI9qIlXEjFe40etwTAL5D9spOmsAAGj95/vE5UYPbKOvCQRVKq884PiJKyeNHdhFJgDAp+wJMXuYUYIsReNb8qI0uL/pzcA6dxAZxYXLOmKkOEfJ7nWQoLYdFcGYvo43VfHEcmD+/EzHKvKRq+/f9B7R0pjF9UcKVxQJ0qVVYLRXsRhEg766oa5rURBml006Q+GXlrYfLbKFCVzzyTNa3FFsjcVwSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mSckGkyaaGe27mx/9d0pnlLqOdpwSVfeE8SDEmUDanE=;
- b=r6uGLUCCPApQScAuPIL8DAZEzbBuyzhZzoRXenC32gOBk02UPodytxDZCZ+K/HIIYaBc/oaggZUzCMmiuCMAOKZD2ut6GkAKRCl/232POMmn55Qt1CmThnOsRqbu6nFCFuahBk0/lcG8xq/4E/fK4qCsobKSr4ntOj5jYIFIOCpMWuj2ltWnCo8ASdMLXrUoJXmqz5lOndlLOpA4tU1uNGb8dkFBfdDYDxkJcKS37KaclOfFiQhbYbqCm8aZotqXzbeZqXus06mQ2+tkTXivsRo91JXUnpXWVOihgiYXNiJ2P8AjZygTXb7s0eoZgzV0HvJNfnIse7dL6t+TATV+hA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mSckGkyaaGe27mx/9d0pnlLqOdpwSVfeE8SDEmUDanE=;
- b=mMKWxK9VU8Paxzj0MQsGgCOdP5daBx0OFJc8SMF+sIHrXQ+3dQd0IlbvzHiQW+7UOvfiKsGMxquGokQ3h3hfEaZWBYDtqqeF8IRe9N09e+rtSsZiQ/kesUV5GS1uRFrnv4XOyxoICBcQVQn1sIEjqawRki4aY6Yc2OVjvEXADAuP+zruLrstEzWmjNU2Z1q7mhNIyDFkXru7KZhXQFmdI7HRAb8sV6mh0wHt390ZtQxgD+cjhQ7SR8tkIFBvcW62K6usMruDSazmS0fKJmbV7MByxWj5uGnTLhuFsnvkknRajNTQtcltsN/AEhJ4WJFBpBWHVVjp4a7Wa2T+HxNx+w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from GV1PR04MB9071.eurprd04.prod.outlook.com (2603:10a6:150:22::11)
- by AS8PR04MB8580.eurprd04.prod.outlook.com (2603:10a6:20b:427::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Thu, 3 Oct
- 2024 15:05:24 +0000
-Received: from GV1PR04MB9071.eurprd04.prod.outlook.com
- ([fe80::b7f2:1d0:6b6a:ba58]) by GV1PR04MB9071.eurprd04.prod.outlook.com
- ([fe80::b7f2:1d0:6b6a:ba58%7]) with mapi id 15.20.8026.016; Thu, 3 Oct 2024
- 15:05:23 +0000
-Date: Thu, 3 Oct 2024 10:05:16 -0500
-From: Han Xu <han.xu@nxp.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, imx@lists.linux.dev,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mtd: nand: raw: gpmi: improve power management
- handling
-Message-ID: <20241003150500.uz2efay7kadu47if@cozumel>
-References: <20241002153944.69733-1-han.xu@nxp.com>
- <20241002153944.69733-2-han.xu@nxp.com>
- <20241003093840.2965be20@xps-13>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241003093840.2965be20@xps-13>
-X-ClientProxiedBy: BYAPR02CA0064.namprd02.prod.outlook.com
- (2603:10b6:a03:54::41) To GV1PR04MB9071.eurprd04.prod.outlook.com
- (2603:10a6:150:22::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB341A0AE9;
+	Thu,  3 Oct 2024 15:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727967937; cv=none; b=Ekj+C8P8gQY2ERUcJqGlyIv4p+VPxhXB98AjoMTqBZ3k5liaMFRMeXKt0WtH/swaGC+Nsaug2V1oV9ZtcbM4umyy6gSYUjeA/h3xMermNtZZyWlNPMeP3qXQaP70aigU+8GRufo3f6H1APTtvnfSHUP/7nKQgsvT0x6XjDbF8KM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727967937; c=relaxed/simple;
+	bh=FzPkRJLlOZTn53kVv7+u73ppxqIHh5gXn7IIt6DRFTI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nkWvDdmE4wuYfxCV8zazwNsGemG6CxQuyhLgEAznBE2zz5pRGwQ/ZOTMOkSHEDVW5Y8S6265tE3NPGoTaBGTd8tZqRPk4qdWXBtjXQh3jxMS4k1oFkbajs19OOnui54P3LXdokxNyKQo/J1Caecoa8zNo4/gHjVMWScz+8UHXiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C06Uemez; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20bcae5e482so9830985ad.0;
+        Thu, 03 Oct 2024 08:05:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727967935; x=1728572735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=EyOI+Ah/tJuA1z6Ko36jQHDP/3dI4HWEoTHQaFVRgHY=;
+        b=C06Uemez4UYdYZCfD2Z0cmxnG98Jw6of7xk0alIRDfJnxBwEVBkfb/s4z1Mwhlkxx/
+         BfX+ktj/i1gCPXi/ge5XhRK6uJwBzTrbScBAaTCWmR7y/jcZyRJz6aapFJP33xJFRTjJ
+         b8RhhXblBACd6ZJ4VAhjqBvNPA4MrElMRCYGEuGtc0zY6uL155Gq3Gx0r7GySy2phKep
+         Jgilv2ymm4p4dgs+sHTw60G77PxNNI4mZEwsIOoJ+wen3iAgYdN28zjpkwST+hwszMge
+         m0DWIDNgzW0a+W/sK7dH+2oTpy4pua8WYyf40TvxfCPzUfBzQH0Ns0k1mPBqIjBe1zNi
+         utyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727967935; x=1728572735;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EyOI+Ah/tJuA1z6Ko36jQHDP/3dI4HWEoTHQaFVRgHY=;
+        b=ijeYRKrRAR7vQYYQbXqQGs/eYiRRAnynRDCs2MfiZ5FXTkldnRM+tP0feaIRcMicus
+         9XjNI2JeR0c1iUsZs6jt5RDg0bxKnHuuVZ3KWCy+JIjOLytarkoiPH28ykK0QaB6gYU2
+         RcjrV2YFZjvjbVc9bPKy3AOGC2p4OzOpsfxxwqYZm7BLpck4SeHoNMFuqIZmKW4WvFj+
+         pd1dAU8ry2zyLfhmVB1YZ3wjKbedBGJb72TaMxRm5ZhKMxw18EiuR8NUh5SItoo4XoT5
+         gqV8wboLxZI/vmql2yXmt7vK0SrKgY1n68BgWW1IlgsU19x5GMgdQsRFFjn+d6GugFSu
+         TysA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEdQH/njtRgk10KbpIojS5H3bAnrtJLAkqYAyuMqV/DlGo3n89D3F0IBVZHrOrywvAIIJ03ybw@vger.kernel.org, AJvYcCVtZFoEKEiSHJBSV3MZgQsy3pyayVjCS6Ncjt7eLpKqml3VTvqX42p0+NQW6LTF2326oQeXWVIuCJcck+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywccKcWaO2agXgvoFmoIaZ0nRGvaMGFwEPMshGZchko24pHDJy
+	sq1RQ/FoGZezA8UxYsW/Z7MG/+mh6aPT25SvzyIhcHtiYx7ACzNe
+X-Google-Smtp-Source: AGHT+IEsAT9LT8RpXrSCmEhJuRt0tcEdTAXtknobq811aYj4w3+npLWoKI9lnPW5YyE4NVRgjLdweA==
+X-Received: by 2002:a17:902:c94b:b0:20b:6edd:e95a with SMTP id d9443c01a7336-20bc599e148mr99531435ad.3.1727967934706;
+        Thu, 03 Oct 2024 08:05:34 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20bef7fd9casm9859065ad.245.2024.10.03.08.05.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 08:05:33 -0700 (PDT)
+Message-ID: <b187fe48-60c9-4666-ad61-5547ad9e97c2@gmail.com>
+Date: Thu, 3 Oct 2024 08:05:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV1PR04MB9071:EE_|AS8PR04MB8580:EE_
-X-MS-Office365-Filtering-Correlation-Id: bbc866e4-0352-42a5-8ca0-08dce3bcce51
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TEZQY0x2SXNYbXQ3YXg2NzNVWXlhdXpKMktyZFZzaVlWL3E3YTVwenFJaXF6?=
- =?utf-8?B?SW4zZGNmQ2ZobUJwRWI1RkQ4M0hPWFErZkR5TzRDeWsxdG9oRVJId2ZYbXBl?=
- =?utf-8?B?SVlRbURHelRsZDcxS1pYSHBxeDhpOWs5eGdiZkE3Sk10Mmpob2lVREtCWnJa?=
- =?utf-8?B?aU5MUEk2L2U3YmN3TkVsbmJkUUxITjJxd3crY2ZhNWFyRzN1Nm5BYWpYcHBZ?=
- =?utf-8?B?NXNLMmxyWXZQak1la2YvNmd3OFQydEVuT01xaWpJL2E2bVNhWFU2TnpkZnNH?=
- =?utf-8?B?OTU2ZEE4dWdiYldhc2ZhVmRRK1ljVlJKendmVmFkWGhOMlpnWml4MVduTkps?=
- =?utf-8?B?d1hoWXRlWStpU2pNVE1yNkVRUUxENWhoaE8wVGxMWlpCai9nL09uN2MyTy9i?=
- =?utf-8?B?NG1MdHF4bnVHRTFibWJQejBKUlYwQjJzRkJVTXZYcFd0SnQvaG1FVFpueGpv?=
- =?utf-8?B?Q0tpZzNUS2N3L2x6Y01vSldnSnlUODhvT0FGbjZlQkdyUFlwOHRWbWJWTnQ0?=
- =?utf-8?B?N3JiTUxUaGVDRWRsNFMyUjFpL2lNV0VXby9ZOG00ZWY0VkZ3MExxSE1FZC80?=
- =?utf-8?B?WGR2MTREV0hrWUFObXl1dWltSjN0Wk0yTU1OL0RLUm5IcGM3OTBuaWZ3d2E0?=
- =?utf-8?B?YzRXcUFWN2dLWW5vQ2RpektnN1IrcXVva1lXTEpXTDZaV3E2eDZNQjk0REdX?=
- =?utf-8?B?M0tpOTBhM2FiRC9rcndCb2syVFZVaUlEVm5BZUdNdlRrejNVQmN0a0xBWEVX?=
- =?utf-8?B?S2Z0cFpqN1dvTndZRGpCcFRXQzIvWkYzWG02QmNpaVN5ellFcVo1T2xxQTM4?=
- =?utf-8?B?cjdBNUZ6NStyY3RHUkJBUXA3bXVUbG4zUlJ1MWluT2R4UkwzNk41a3VDS2hM?=
- =?utf-8?B?cHE0S3d5VVo3aDhENFRxWmlIbVE5VlZjM21ZSFlqTTFiY0F6dlcwSDlPRHlM?=
- =?utf-8?B?SWNtZyt5b21jRUszbms1dy9QYXMxTlpIaUZJQitEdGdFb2trNlJ5L2xYSElN?=
- =?utf-8?B?YWdUdTdzMm1zejc5WEk1cWdqanFlZ1hUTDZDRWFWYW9sdzBYNWEwT2FtdE9m?=
- =?utf-8?B?Wm1QT1FIQ2h4M3pCMU43eUlpNTRzL28xWks2TmozTkdiNE9KMUhNQWtwWVdD?=
- =?utf-8?B?aXJvSE5VZGk4VnM0RW5uMDhqM3BPT3JFSGdaTTloMGY1MnRBUExCcUhXbzdt?=
- =?utf-8?B?VHFPQkZLNGFYVzhkaW5aNUhGTlJhUWFnOEdkZ0d5YmkxNC8vV1llUW5STFhq?=
- =?utf-8?B?cUY0Tkw2ODFjVjhBK2l1YnRtYzBhYlF5cnFnL0ZqK0xqVis5ZXZyQ2s4SzBC?=
- =?utf-8?B?L21GeEdPUldNa2lmMVVUZ21tVEQ4Zy8xSHl0TUpVbWhkZG1DZ05UOGhXUzJh?=
- =?utf-8?B?RytsUkRLQk5VR1Q1bEIzNmEvcjFlVVcrald4aGNIaHF3TW1kOVZmZnRCUkxt?=
- =?utf-8?B?UTBUdm4wbktlOHZnVW1QdHpHR3NOVDJ5enk1MUdYam1PRkkwQnc3VjlSWGYv?=
- =?utf-8?B?bDdXYzVpbHVBS3ZaTktwTGFSVjVCb1NHdEgwWmxhQStyeXVRWUQyUjRQb1hn?=
- =?utf-8?B?VDFYVlhQYW5lZ3VmU29LMEkwWVhFY0tSMW1iL2JmTksrNU0vbVJ5dWtNcU5O?=
- =?utf-8?B?ZjJpcTRpdWhDRDQyb2ZoazNNN1YzRk5mcnFqV3c4UVpNN1FrTVhuU2tZcng0?=
- =?utf-8?B?YXZvOTBvenlzaml4b2NpaHlNc3JwVGk3MERQRlZlNVdkK1VWVXNYTXFtM1Nx?=
- =?utf-8?B?cXJkNmozSFJqVVBwMGJkQmZKS3BmMFJyZVVBNmRraTRWNVlIZnkxTTMyUEd2?=
- =?utf-8?B?bHl4aWJRVWQ3ZUxBbVg3Zz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR04MB9071.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b1hXV3Y1ZE5Dc1BZOW9JcTNlNmcwN2V2ODZ2bm5DK3FxM0tVaGtBSUtFVGsv?=
- =?utf-8?B?QlU3Ty8xVVlhNkRLUUJ5Y2U2M20rUmEvUXVZWStPNGVOMTZWVERiVEVhL0JE?=
- =?utf-8?B?WXI0Q2luc1k1SzIzMmRUWmJwc2kvVTl1RkozNVJabkFTSXlEVWxIYXVWU1J1?=
- =?utf-8?B?d3gyMXhpTFZNU3UxNStTaE1GSjFnVjAzaXFkRldMVGE3TXgwbHpZbEYrdys0?=
- =?utf-8?B?dmhqZ0pibk5TakRKZm5kc3M3ei9rclY0TmxKN0s1K0ZaOVh4WGh0OGY0aGli?=
- =?utf-8?B?bDYxbXcraXQwV1daVkVoRXArVVhCKzc2NC93SFRWQUdldFZ2c0l5ZFNMS0Nj?=
- =?utf-8?B?Y3dYWktCZXZSN3d5bnIvaHcrcnBXT2wzcDZVTSt2VHp2Z0M3STIvcTZGMmN0?=
- =?utf-8?B?Q1ZKdmRvRkM2Z3dNMEJqdXk1VUVEd1dLT0wwUmNIbmxjTlZyVFRuall6R0VX?=
- =?utf-8?B?SUJYcHVvM1hvSnE3blVWUVFDWnJiOEpaUFpMclEyQzVwdUVtbEFUNVljWTJw?=
- =?utf-8?B?MmNRRkY1ZXVuY1pMU1ZFUkNHbm1kcDErY3IzL28wL0V6Y1JJVXp0aFJJSmxT?=
- =?utf-8?B?S1NpSHpRaWs2ajB1dURBdEREcngrcE9oNzB1YndEbmd1dEJEMUlHM1E3a2Jk?=
- =?utf-8?B?dFZQV1RrOVFwVHp2MnN6a1dEMFlzSkU2UGlKcGFqc083ZnFMOGt2K0EvbGJB?=
- =?utf-8?B?REQ5SGJwRml3RHd4dDI2Z1Jpc1o0RmhVZ0RkT1g1T0lrQjVvczZIOEc5WitQ?=
- =?utf-8?B?LzdOazVrTEhjTFgvN3JxT3dkT3FQZituK3FrZ0U4ZWtwcm82andzOC9YR1Vk?=
- =?utf-8?B?VWkyN1V6Y3EyTWhnTnhOMjltQXdnY0NwUGhKRmVXU3I1a1dNSlNEMmZ5OGN3?=
- =?utf-8?B?ZWdDaVo4VVJzK2RjUWR0R1pCZk84RC96UldxbnR4L3BSSmcrNWp2czkwRnM0?=
- =?utf-8?B?enFUVGpVdkRlbkx1VGxFWnQ2L2kwa0U2aytPdll0WTNnRGFYZTMwN2d1N3dV?=
- =?utf-8?B?RFdDSFdZaUQxM3JXc2orVFpWTk9iT1A1M1FxNERsaTdoUSt5WnhNd2Z0VzZa?=
- =?utf-8?B?aXBxdTN0dnNBZldHMWs1YlRndzVXTzVsOXdVWXB4aThZWFFwbnJsa3h1QUVm?=
- =?utf-8?B?VUZVNmpXVWFkeVdxZGxiSFY4NnY5cy9yblhFdEJIV200aVlKT1lEOVFVT0NO?=
- =?utf-8?B?bW84OEJkNmRNaGRuV3hjUC9jcW1hM0tEV1N0djJLb1I0akkvZnhRTWJvY1JQ?=
- =?utf-8?B?UnhvTUZDNjRSM3N3THBYQVo0a0VUNHRyN2RHUXpERUJtMkNkWGc0L0dsekph?=
- =?utf-8?B?SlZwcjVaS0wvR1RBMitad3hlTWlWU0ZXOHF1ZjV1NytZZjIvVDdsNXpuVkFV?=
- =?utf-8?B?VEd2bnRJc0U4VUViYlB5WGJoVU9TLzU2bXI2MnN1a1J4MWlBYmxpNUhXR3Z2?=
- =?utf-8?B?ZGIvdmV6T0Jrc3FpeXdvRndtek1WVWdnWVZ4djJqMWVpQ0VUaEtXZzVLY1JH?=
- =?utf-8?B?M20zTHM2TVE0VEgvNituVlJnazYwYTBES05jejhUOE52QllPeFZ2WlFqbW12?=
- =?utf-8?B?ME5ScmhDb1lzbVZ5WkI5SWdIK1pvSjNZR1A2aXNrU3dKbS83UWdUQ2lRV0hn?=
- =?utf-8?B?MlZPSTVVS0cyK3hQMjdJTnhMdHRueDFiUzhjeS9qVGkxZitSZi9kYmNaZkRh?=
- =?utf-8?B?SXdiSTNYbmxuNzNiRlVHQzBGMWNEYUtLK2QyYys1VE5iVXZxNFlwTXBZQVdN?=
- =?utf-8?B?MFdYUU9heStaL3cxUFZmRmpvbmRkbnNLWGVxSnJiMVFkdHUxc0EwOWMyNnVX?=
- =?utf-8?B?R0ZyUE1jM3VNKzNNcmk4QVVHeEMxNVdkL0FJUHZWdkRhbkZKVTRZSmhWT0lo?=
- =?utf-8?B?L3l3VmdaOTkraWswZ2dTdVlIQ2owRHFDTFZZalNIQ1dRZTNEZUFRTHNraEY3?=
- =?utf-8?B?Um8yRldEaVoyeXN5SzhtejBsS05iV2V6di90OTZVTGlIUXpjaXF1QWw5Rmta?=
- =?utf-8?B?YVByQks5WmJLYjBPR0puV0daMDBERFhTSkE5Z0szb3B0LzZvR0JlUjd3R010?=
- =?utf-8?B?ZENuYWNqYW84a2hPZnp1WkV0NU1ZTFhsQnFtd0FBTmdBaGlEZ080RnI1T1N1?=
- =?utf-8?Q?1do8=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbc866e4-0352-42a5-8ca0-08dce3bcce51
-X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB9071.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2024 15:05:23.5922
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ctm0WYIyG+jYTXp2EcYv7oVc93/7OLT/lQR5O7hqu07/Ke3nbpCCTEjJy0QliCvy
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8580
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/533] 6.6.54-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241003103209.857606770@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20241003103209.857606770@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 24/10/03 09:38AM, Miquel Raynal wrote:
-> Hi Han,
-> 
-> han.xu@nxp.com wrote on Wed,  2 Oct 2024 10:39:44 -0500:
-> 
-> > The commit refactors the power management handling in the gpmi nand
-> > driver. It removes redundant pm_runtime calls in the probe function,
-> > handles the pad control in suspend and resume, and moves the calls to
-> > acquire and release DMA channels to the runtime suspend and resume
-> > functions.
-> 
-> May I know the motivation to acquire and release the DMA channels
-> during suspend? In general it seems like a different change which I'd
-> prefer to see in its own commit with a justification. The rest looks
-> ok otherwise.
 
-Hi Miquel,
 
-Thanks for your comments. IMHO there is no much logic changes indeed, just move
-the dma channel acquire and release from system pm to the runtime pm, releasing
-the unused resources as early as possible. If you think it's necessary I will
-split the patch into two parts.
-
+On 10/3/2024 3:33 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.54 release.
+> There are 533 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Thanks,
-> Miquèl
+> Responses should be made by Sat, 05 Oct 2024 10:30:30 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.54-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
+
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
+
 
