@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-349362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7032E98F4C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C774398F4CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 202DD1F22610
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E38B1F225B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DD21A705C;
-	Thu,  3 Oct 2024 17:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE9F1A7250;
+	Thu,  3 Oct 2024 17:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPU9eRsd"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BI3RaFUO"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9973C433C1;
-	Thu,  3 Oct 2024 17:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B28A433C1;
+	Thu,  3 Oct 2024 17:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727975040; cv=none; b=K+rXq0VwEOWiwGlSBenWNRc8Cfi7qwh07XX8zgy1EIXQbidHBPTb79VQq1dKWHSCwEmZmx0kxuB2d8Rp2AMGrO9KRmlCmsu8zgVyHPke3adstTXuOxLrw0KdLV/OZfKfqzZRDT7ZmA4f4svku6hAorfyVH7O7kx16IzxUfYmvvg=
+	t=1727975136; cv=none; b=R/BdZsJ5v4i2zEu57TmL7g3GdHdGKFAmP70Ww6RUi+ZV12zcMG8E6RnnUYwankKuOY9HMCcn6gGcz7TV7HKC0NW9QcTh1vtrBeJ3Xs8RfyL6Tdms4ikxMfQlgxunixzPTmXf2cuclq0PyTd5ihKoylvYXYWEp9gJtABVhj77Xs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727975040; c=relaxed/simple;
-	bh=ClZaY7fV4/H+BU6MJI7jaOoTebP/CYx/bRHt814WFw0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eEXRyhs6VcpdL4Si0hVOIbccSxgMeh5EbFyOAQKBdDKrN+N7Vj+5rgzbrIN5RzqkJlvpuJOgFNJ1xIMRE4MlClrFT3XiBVJVBh8Lk/RJpZPfTl1k/1Sojmh0GU1P1vRwGguNXlKZJ+xHj/xR5eXZaK7n3Xz5GCeUCT6eFjpbSPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPU9eRsd; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so438957666b.1;
-        Thu, 03 Oct 2024 10:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727975037; x=1728579837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ClZaY7fV4/H+BU6MJI7jaOoTebP/CYx/bRHt814WFw0=;
-        b=dPU9eRsd+MRo1Or4SnWlOc3cTLqlhRBrqdwbs1oYOWJCYC9GII87USHEV1+4ZHaiix
-         aj1dAlsL75ja9QM9yPmcOsOySvN0313Yg7QJqU+X8Jm9fTRprUMqqxDxOgZTiv2LcWVi
-         kcAp32mbcF48i++Vk1jbCV0jpXcFT6rC7n6PRF1PpKXMdZZ8BL1hmgTK+WxdluTh8bo8
-         wK8si4v4vUFskhM5tQaGTon/QcvFDx0w7sD3irZ8gWKHLgDPkaLlNXx7u02q4wu+iDus
-         fpnjePn37Gxmv1W7nRkq5iDSkgnjlSlasZ1HewAPUeff6HlyzUfoajQ4KXcNA5oNlkCe
-         YLxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727975037; x=1728579837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ClZaY7fV4/H+BU6MJI7jaOoTebP/CYx/bRHt814WFw0=;
-        b=VVu/0Qmv+4rxXD7wFxSW5g2JCwh6NPj2w4CwbiRaNe0LsKDrm2DJ2vIOcRS9MSxS5v
-         2KHn3vUOLaXmNmiHYjVjoeYMB6Jilzc2NnPFw9AWiged0KDS6y4LSg1XC63qyooW7XO5
-         o1JFxapvo7bpLbhSUm7rSfnjOJCkdVQaKayz1cA95syc9nGXuT8W085+Y0IuoqsAsGQ6
-         680hr8CVOeoaRf8KQVb88f4YEoZjHR8S9+UcAhRNAiG7YzPtzLXEVlgRm3MEGVj44B9/
-         VgCj9y/0BFtZw1KOqkmqntt7M9Zfi2wYCJsAPpVK+j5kRykqWRnkPRfbaryfncpaQ60e
-         HfDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqpD95Y+G3xbK8dc97i31e35H2FfZy0B+Kxxb7mfjwOplpK28C0bTvSpPElimj8vb1tR7TQws2/Qi2uFhWPiRnQpXJ2A==@vger.kernel.org, AJvYcCW33SCwGvzb91A2l85VUeAEPbod6nos0CID8Dlp1lME9QirUknmr5Fh1A2/w1PiE2YZ4e6CRPrlvTDdqvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnigVPRr1LekrnQj3dmGC6OTljvH8bO0dv+VIVUCg5kaAvzWjx
-	9jCiVLKPlp6T0LO/dVa3fQOKqYivR0OPIakWFBV4TWdwoeiBlvKRUeMcPVok4gN0HVwyFIRyheE
-	6BpBiuIXLEdkAodJH+OxmOKc17d+mroQAAGo=
-X-Google-Smtp-Source: AGHT+IGl7hO//9lvqHSD8lnOzYcIZPTUjXhnmjUnZn/V/JU3NEnx0lTbKI3857Zg8TUPTl+Ugin6caiVc/J4xrkpWHs=
-X-Received: by 2002:a17:907:1c05:b0:a98:c4b7:7971 with SMTP id
- a640c23a62f3a-a990a23d7famr423372666b.32.1727975036845; Thu, 03 Oct 2024
- 10:03:56 -0700 (PDT)
+	s=arc-20240116; t=1727975136; c=relaxed/simple;
+	bh=1UVcQEoUaLBLHGw7elSGxR6RHDiLIqlA5Ci00ESzSjc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JbD77A+J6yY9qI1GkrxhmncrRBgCqd2+zbH5YdnzohrnkpeCdRUWqG60MhCAIcfQvXIET/8FjfGOUlttCk3fvIs/DWXZq5zXt4ssZEFZ8BChyECXNYmFYP+bP/XESWbMdL8BK4Vx5IapQmwyv9D2VEqjzXP5GNYP2qEtk57INYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BI3RaFUO; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727975111; x=1728579911; i=markus.elfring@web.de;
+	bh=x1aRqowk+avzQDXULHwlYV3N6dqI2bTShLMMxvbXA68=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=BI3RaFUO/IqVYSLIno2H+VgC6jRTGjRmvO6ARpvkaeM9bjGR7UaJ+cyudJiy/paW
+	 SShRUCuF6za+2AiFLI6lVnpynfYCOXFXqTWcjjt7fFefj/HC/winOHm8gYeyejcNN
+	 zep2PkPh2WYZ3TCEvTz9rAc3vK5rTllKtNDjXO1CUUSnbBNBtdzPnw+HR5gNCyRD2
+	 yH2AErWcst71WingjBzq0LapmAha0LG4cBgLdfgq5fUlTQ9FtxwVnwfRpvI7mQIgi
+	 yZC5IK52zBbs484UzS3E20fbAPULj0apH7OqA5yiGqdOAOiJQ+C6ZCGACWp/XGEwZ
+	 ShT/jDC8FEPzfbNKXg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MJnrX-1sco2x49gP-00ID8K; Thu, 03
+ Oct 2024 19:05:11 +0200
+Message-ID: <434320e1-2a30-4362-9212-ca17cdde8b31@web.de>
+Date: Thu, 3 Oct 2024 19:05:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003154819.1075141-1-andriy.shevchenko@linux.intel.com> <20241003160331.GP275077@black.fi.intel.com>
-In-Reply-To: <20241003160331.GP275077@black.fi.intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 3 Oct 2024 20:03:20 +0300
-Message-ID: <CAHp75VczZ=5jURRab0Psi1qDqbQmQNvgRwa3B2b+pG_LRapqCQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] platform/x86: intel_scu_ipc: Don't use "proxy" headers
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
-	Andy Shevchenko <andy@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] powerpc/pseries: Do not pass an error pointer to
+ of_node_put() in pSeries_reconfig_add_node()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nathan Lynch <nathanl@linux.ibm.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Paul Moore <paul@paul-moore.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <0981dc33-95d0-4a1b-51d9-168907da99e6@web.de> <871qln8quw.fsf@linux.ibm.com>
+ <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de> <87v8iz75ck.fsf@linux.ibm.com>
+ <2f5a00f6-f3fb-9f00-676a-acdcbef90c6c@web.de> <87pm9377qt.fsf@linux.ibm.com>
+ <afb528f2-5960-d107-c3ba-42a3356ffc65@web.de>
+ <d4bcde15-b4f1-0e98-9072-3153d1bd21bc@web.de>
+ <8949eefb-30d3-3c51-4f03-4a3c6f1b15dc@web.de>
+Content-Language: en-GB
+In-Reply-To: <8949eefb-30d3-3c51-4f03-4a3c6f1b15dc@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:l3pgyZOI07Bh3dnf7Bb4Ey6oOw4CTctWcTQzVYrYpobYkMHHXRn
+ OPk51Q8pvjKkh1GXivyDLMXfVDWgV17SXTn7dpTpoMJKyR5B9MPUpKdLhFHDwMw8X8qTCY/
+ MpN6c2xOvsHPMUhN+ZeRQBCKXhtupcUjNvgF5A5UqRZRi7WsV5o26c+nIi+Rs4CrKnwe0r+
+ 5GUf7Wh3YrZvtuVgD4Hgw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:H1JxztHArQo=;cU/Cb9YdbVJnqdRJnvh/1yWlVIo
+ FGsQCXXnJYaq1CgPuH5q2GZ+CEH611VtAZDvcnNaGLpYX5BAgU4/XAHIGBlD/nTs+SKQg71Ez
+ OqRQzxJYKJQgHvBjH/Z3o/sbKrzHDdmuYxN2uclk4dh6P+Jbe/MRnSqDS+MIl9WYxEv/jicPY
+ 1b2dUSlzSK0eKhi+sgXZo9KRzMsNPW+qBmWJam+j9YiRegdxCFUbfXcYdNhK/tDWO1IL3+jqy
+ nBYxZRnoPVlchx9XTqwMsdaZYe8l/AgKKocM1pMgMSuRmm58aosPDTFYVsufYGzywLcfZliC0
+ 3hE/79L+d227eg3CTeVTOtM8jBn0rVNPi7PP9dnEzC6or/Glmcj+XM9GI41j5wa9sxcbrg0c6
+ lGSFR1BDbgrt2/hdpzqcC3WjkI6vWr7RwClPiGauzR4cczbL0e3fop8rCFfywcqDIJGkvxhXR
+ HY1MS/npuLYQx3WGJ9ffLQXU+COEPhJY72h9c+PXAgywK/94sl6ixVNdjM21TSKjBojX1HNk+
+ DNDyc0aTgcDPS9Es0t0e+ublIE6/Yu9+v04wYA0YydWiIBFpCCF/QQDk16KtCGoky/vjMSxS5
+ rSMpHM5W8Zg6tUgI5+imto0tftAzfI7VtYpz3cu/N86DzcbS2Ck5gTdhC2QhHkMoR12wxpAhT
+ 6sCMn3+R0HBf9Jn6d+YPSY9H4cJ2VVkDCGyX9ARdlrnB6TkaqIhiWoinZUGYEXL3H8SJgArqf
+ xkum2OQsKay1suUH7SACttEn9BJIMJyw2iwJw1kz0ZBhc+rKR3Pghhl3e8Qgv/SoLiSp5sEhT
+ bbNhhBUhEWjGPwtEl3UmwuBw==
 
-On Thu, Oct 3, 2024 at 7:03=E2=80=AFPM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Thu, Oct 03, 2024 at 06:48:19PM +0300, Andy Shevchenko wrote:
-> > Update header inclusions to follow IWYU (Include What You Use)
-> > principle.
+> Date: Tue, 21 Mar 2023 10:30:23 +0100
 >
-> Is this some new Coding Style thing?
+> It can be determined in the implementation of the function
+> =E2=80=9CpSeries_reconfig_add_node=E2=80=9D that an error code would occ=
+asionally
+> be provided by a call of a function like pseries_of_derive_parent().
+> This error indication was passed to an of_node_put() call according to
+> an attempt for exception handling so far.
+=E2=80=A6
 
-It's useful to unravel a tangle of the dependency hell. Yet it needs
-to be documented.
+I was notified also about the following adjustment.
 
-> Fine by me,
->
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+=E2=80=A6
+ * linuxppc-dev: [resent,v2,1/2] powerpc/pseries: Do not pass an error poi=
+nter to of_node_put() in pSeries_reconfig_add_node()
+     - http://patchwork.ozlabs.org/project/linuxppc-dev/patch/f5ac19db-c7d=
+5-9a94-aa37-9bb448fe665f@web.de/
+     - for: Linux PPC development
+    was: New
+    now: Changes Requested
+=E2=80=A6
 
-Thank you!
+It seems that I can not see so far why this status update happened
+for any reasons.
+Will further clarifications become helpful here?
 
---=20
-With Best Regards,
-Andy Shevchenko
+Regards,
+Markus
 
