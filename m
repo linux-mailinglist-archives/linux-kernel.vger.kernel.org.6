@@ -1,252 +1,148 @@
-Return-Path: <linux-kernel+bounces-349545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F4498F819
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:29:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372EE98F81B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C39E1C20E49
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:29:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8DCB283104
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A771B85E3;
-	Thu,  3 Oct 2024 20:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC731B85CC;
+	Thu,  3 Oct 2024 20:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="do7CiO0v"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eyYSzBsr"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBF71B372C;
-	Thu,  3 Oct 2024 20:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ABB1AF4EF
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 20:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727987343; cv=none; b=tSV8tL220qInKwKI/9PJiKZ1+JxleH0SfckyPIhHPWrjlcVcos1OkxwdI+EB3JxRzhE60Zs//iCPv8DEJalpG36+dLYP+q+DA3vTtkJX20+eF4wvuk/wW3Cm03mMmWWoNe9mlkpmUQ/dx+W7SeptbliPvUoqJexINb9zz+RO5n8=
+	t=1727987405; cv=none; b=PFeq4SqcPick1XZ0NSSwvz/mG4zQ5gFS8pzUuWk3BkEozx4NFNr/21ldTcTuWSPbLSGDwJ5C5eOSPAVoLuJiWVpq3mOIYha4rHExzWav1VWU+DaS/EfVLVlbD7xxj//JMCAp1jBKFfJcBY6X9VHm7Oe2tx+qRhQC9Ogc72wQfFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727987343; c=relaxed/simple;
-	bh=ZjwtirPGxIShVnbmXwVlJ7STx79jGHSGNzOa+dVtG/s=;
+	s=arc-20240116; t=1727987405; c=relaxed/simple;
+	bh=SwGtc2Xda+ni7sn2/rxr5H2HBb82wmmYGATvDJbQMV8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sr2x8Bjf/1IGGxT6UpI6qRivfLG9ZwdzgisxGBbNKv2eSfNrP7V4XU/PNZLrkW5Vx9c76GlWANZwbp6DZcJ6VVaERZYt+dtBTgNi+CrJRBpBShnWxNY9X/Ued5W8IGyn2d52jerQhpbEOPqyszSwx+WPTIe9+BUYK1q8U8pCHMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=do7CiO0v; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-84eb1deaf03so382842241.3;
-        Thu, 03 Oct 2024 13:29:02 -0700 (PDT)
+	 To:Cc:Content-Type; b=IKMgUSzlWpyDHMAfBsKOutdFstoI+o85L5kmmYP46hLpXUoDPTkxeyBsf+fB2zBLgcxds+sOhmsqkWR36OVlScHoVxjRZGmgcSbQ/eOC4SVHLhNL4PsJMikOkCgQ5cpJC6jSICSU0DTIM8dIv+NYa/IKmfvo9EYB5L++zlQLXZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eyYSzBsr; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6e235a61bcbso16771157b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 13:30:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727987341; x=1728592141; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1727987403; x=1728592203; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dZY4Yz2sVXLM3aeDMDJjB8WJGa4cOVvOqWVPTEec4JE=;
-        b=do7CiO0vSU200im8jzRK+QjBLpUcZmiZWuUnwJTkjkXYWOrpVclgYdc+4qZiMJXIB+
-         Se5V/P8wV4QOcungcndrMZ5R0vkDJQHzFGqq5cnWoOKS9Os78UKhWaFw7KYcUdMXCy86
-         U8QSt16F1nafJcRA26swAt1/N0iASvAp9bK2vNf+UpX+/VtQW6W2l4Q6V4BJ0rUtf3nw
-         CYfAUnJLqt3hWIRY4nPAq7sjrL0oNLngL7qQ3vDN5fjD1SNiLNVLsynwMJQrHek6LxUK
-         4ySGAyDL6hFZzyS0u+2JWNKU4dJh75KXWFYjPuxZYYdi/LLbSmmNw7B8FJl7OhK7Bx0X
-         jsYA==
+        bh=Jb4MBypfKjTl+k0Kb3ThenrsifvOPVM8YBQVfXJ85Jk=;
+        b=eyYSzBsr94ipfVs+YorWrg3C5zzVcm+4gTguyo1Rv03b7wAMwDJV5mz3C1VKSNDdLt
+         H8dUO0Omj8wV0iEFewykJhqmLISffNsslDO8Zkh3uiCqzyX/S7iP0KGOKqfsZCCbs10O
+         tFhpODaKnFcW39rYPmzCHqc5IR2o1sXWu1+OWPFRDkhOHyRsJu87Dxyp5vzvEuD1NF/5
+         Vf0sL5eRiRvJ+qnoAAZn1OJaA7p2KBQys/MEzkoosY5tPbNBvDiGa/7MKhHBdcGrUQrw
+         ke4Ygrr5wf1SHZr4aoLgAXPuBmDOEHzleJOcUEu/VRwdilunuKyqt82KCKb+wh+IXG/B
+         1n+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727987341; x=1728592141;
+        d=1e100.net; s=20230601; t=1727987403; x=1728592203;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dZY4Yz2sVXLM3aeDMDJjB8WJGa4cOVvOqWVPTEec4JE=;
-        b=WAY1MdXd1Fq5l9zGKw0JiCnVOjSLC/hO7g+jKrPFQUSWgp0Kz7396/9rrD8Amxr9fA
-         d2VcQrvFPZlq7I7JEKnbvwKRryxgt1k7pmziTH/5IYNiS2A+EHbEzrXHKHZKIqWx8oQc
-         3q7Gia3WSdmwsl8Ib0EcOHdx6odkw94ywjBC9d2KojPuWhuqzsOPNffdl2fvvdiJlMDR
-         hW+CeTcVKRnOFy4cNnTA7eFJiZFP/ZQYvbqlUyntOgxY50T6/J9HItICmI1PWWdz46Cs
-         GnC41NxL3IubZykEqBUH5Bd3JCAvRCg20+gnjJJKSkf52/0PcgclOJMuvuGCPlhgmFE6
-         SCyA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8drY1qINc6HnFBFYj+lebIki598BlBsX5C0RQDSLDMlFnB5tvy8WBYc3UCgVFvxh/9kdAxmCiuTu/0Vo=@vger.kernel.org, AJvYcCVMw6TQbvDFoACANa2B6was1dQ+gLWAOSOPSe4S0dU/BfafCjvzLem8MQXSt9Q4hwKS9i76qvLQL4T6utttT9C6wVs=@vger.kernel.org, AJvYcCXzTtXampn2Po6Yv64KJDTTZwygwdQxdyM/dG5EyN7LGKbg8Po/H6IVaE7FBDFLfwWj0beA2JESRofhG10=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Qk61cFmNz3Okm1HTtQtZiyVnkDKmYrOsulU+5CrFmo+aPcvK
-	OD2hVcolYkiKnt+Gh+JgkU75CYvsP+EdCc+HlKBPZUe9o5dkeCqaKxO7CB/Asbjh+O1QLWCz416
-	yssYZ1xstYXIzL73oQ5SVx9KOquA=
-X-Google-Smtp-Source: AGHT+IEQ6r1uEXI+gHapJ5vf4OymrLw4YwkywLH0mAJDlzyox7oYDgtEAYSxv70b16kJ2DP5e4ccLvrM2Y56ncdSD58=
-X-Received: by 2002:a05:6122:91d:b0:50a:318:b39d with SMTP id
- 71dfb90a1353d-50c8543a748mr758316e0c.2.1727987341081; Thu, 03 Oct 2024
- 13:29:01 -0700 (PDT)
+        bh=Jb4MBypfKjTl+k0Kb3ThenrsifvOPVM8YBQVfXJ85Jk=;
+        b=VbWXMnl70bXQBa3xSPDDyGuQqR2Jj9DWLm9dyM8OnHGEuYRSWmYFE7c2BTY/+ri+gb
+         SNbwM07S1QsR/OcuKK2Z/IKAA2k7PkJYs1WLDuntRPrfSHZw04UjjoKJk5QSCGYIwn9a
+         qwNXtxTa97yM8LIcIC6znM6K30biXaexdhIBUf0NsPapCpCkvvB98VVfNQkcU6IkO1QF
+         lAURkYvTMyjmY7hsMjK5YVb1KNfGen0UXdnltJa2n9M9Ucleq9KTAdE+2/SS8aw+W+8N
+         YUp08UPG+WBSWLMorpzJPnRlJ8WxGR9JslfbZLTWJ1c9IbRVFaain1ksYq9WImP64s39
+         b4Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEwM2CbKo99UKCqyskg6frhGyl7PL+QaHjTAKcr3ExDzj2EHr6QefBTZA5sbfikSaT5D89i9rkN3iuA+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbky/uSFgiYhJvR5jBlChhUcFU1XJvrK/8OA44ugvckU1RX1H9
+	cFn4Vm45tyytwtuahxJcDD+R1I1p+hC0AHWi5EBHZOgrMz6IkyvVguJgB3QRZtFWdc0K79YFaTh
+	xe97P6Qt0avzswA1xp0cGZ06envcO2BhmPQ82
+X-Google-Smtp-Source: AGHT+IF236ZlsWjXinwnGBmUpr4ToS/9qMFMURISOyD71bvORHgRCXLSxeA2JJ/YfKI3o++dhjRkbTIBz2+RcKvZ9a4=
+X-Received: by 2002:a05:690c:6889:b0:6d6:c5cd:bde0 with SMTP id
+ 00721157ae682-6e2b53e65afmr36758307b3.15.1727987402869; Thu, 03 Oct 2024
+ 13:30:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001140919.206139-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241001140919.206139-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241003142549.GC5468@pendragon.ideasonboard.com>
-In-Reply-To: <20241003142549.GC5468@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 3 Oct 2024 21:28:35 +0100
-Message-ID: <CA+V-a8vT783X41nFWrnQmhn8v1ZHMrYsKxr0Mo_0MRO0Fv2ayQ@mail.gmail.com>
-Subject: Re: [PATCH v3 10/17] media: rzg2l-cru: Simplify handling of supported formats
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240906172934.1317830-1-masahiroy@kernel.org> <CAHC9VhS=5ohpS18kkXUKaE4QR5HfGZ-ADbR14WPQPor3jeFSuw@mail.gmail.com>
+In-Reply-To: <CAHC9VhS=5ohpS18kkXUKaE4QR5HfGZ-ADbR14WPQPor3jeFSuw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 3 Oct 2024 16:29:51 -0400
+Message-ID: <CAHC9VhQ6teo2OQTRZp_a8wVr-WsiiYGn_3c2fx862i2xaZK5ew@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] selinux: do not include <linux/*.h> headers from
+ host programs
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	selinux@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent,
-
-Thank you for the review.
-
-On Thu, Oct 3, 2024 at 3:25=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> Just one minor comment below.
->
-Missed Reviewed-by?
-
-> On Tue, Oct 01, 2024 at 03:09:12PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Fri, Sep 6, 2024 at 2:37=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+> On Fri, Sep 6, 2024 at 1:29=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
+org> wrote:
 > >
-> > Refactor the handling of supported formats in the RZ/G2L CRU driver by
-> > moving the `rzg2l_cru_ip_format` struct to the common header to allow
-> > reuse across multiple files and adding pixelformat and bpp members to i=
-t.
-> > This change centralizes format handling, making it easier to manage and
-> > extend.
+> > The header, security/selinux/include/classmap.h, is included not only
+> > from kernel space but also from host programs.
 > >
-> > - Moved the `rzg2l_cru_ip_format` struct to `rzg2l-cru.h` for better
-> >   accessibility.
-> > - Added format, datatype and bpp members to `rzg2l_cru_ip_format` struc=
-t
-> > - Dropped rzg2l_cru_formats
-> > - Introduced helper functions `rzg2l_cru_ip_code_to_fmt()`,
-> >   `rzg2l_cru_ip_format_to_fmt()`, and
-> >   `rzg2l_cru_ip_index_to_fmt()` to streamline format lookups.
-> > - Refactored the `rzg2l_cru_csi2_setup` and format alignment functions
-> >   to utilize the new helpers.
+> > It includes <linux/capability.h> and <linux/socket.h>, which pull in
+> > more <linux/*.h> headers. This makes the host programs less portable,
+> > specifically causing build errors on macOS.
 > >
-> > Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
-om>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Those headers are included for the following purposes:
+> >
+> >  - <linux/capability.h> for checking CAP_LAST_CAP
+> >  - <linux/socket.h> for checking PF_MAX
+> >
+> > These checks can be guarded by __KERNEL__ so they are skipped when
+> > building host programs. Testing them when building the kernel should
+> > be sufficient.
+> >
+> > The header, security/selinux/include/initial_sid_to_string.h, includes
+> > <linux/stddef.h> for the NULL definition, but this is not portable
+> > either. Instead, <stddef.h> should be included for host programs.
+> >
+> > Reported-by: Daniel Gomez <da.gomez@samsung.com>
+> > Closes: https://lore.kernel.org/lkml/20240807-macos-build-support-v1-6-=
+4cd1ded85694@samsung.com/
+> > Closes: https://lore.kernel.org/lkml/20240807-macos-build-support-v1-7-=
+4cd1ded85694@samsung.com/
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 > > ---
-> > v2->v3
-> > - Updated subject line and commit message
-> > - Implemented rzg2l_cru_ip_format_to_fmt() and rzg2l_cru_ip_index_to_fm=
-t()
-> > - Dropped checking fmt in rzg2l_cru_initialize_image_conv()
 > >
-> > v1->v2
-> > - New patch
-> > ---
-> >  .../platform/renesas/rzg2l-cru/rzg2l-cru.h    | 20 +++++-
-> >  .../platform/renesas/rzg2l-cru/rzg2l-ip.c     | 35 ++++++++--
-> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 67 ++++++-------------
-> >  3 files changed, 68 insertions(+), 54 deletions(-)
+> > Changes in v2:
+> >   - Reword the commit description
+> >   - Keep the location of CAP_LAST_CAP
+> >   - Include <stddef.h> for host programs
 > >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/dri=
-vers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > index 4fe24bdde5b2..39296a59b3da 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > @@ -62,6 +62,20 @@ struct rzg2l_cru_ip {
-> >       struct v4l2_subdev *remote;
-> >  };
-> >
-> > +/**
-> > + * struct rzg2l_cru_ip_format - CRU IP format
-> > + * @code: Media bus code
-> > + * @format: 4CC format identifier (V4L2_PIX_FMT_*)
-> > + * @datatype: MIPI CSI2 data type
-> > + * @bpp: bytes per pixel
-> > + */
-> > +struct rzg2l_cru_ip_format {
-> > +     u32 code;
-> > +     u32 format;
-> > +     u32 datatype;
-> > +     u8 bpp;
-> > +};
-> > +
-> >  /**
-> >   * struct rzg2l_cru_dev - Renesas CRU device structure
-> >   * @dev:             (OF) device
-> > @@ -144,10 +158,12 @@ int rzg2l_cru_video_register(struct rzg2l_cru_dev=
- *cru);
-> >  void rzg2l_cru_video_unregister(struct rzg2l_cru_dev *cru);
-> >  irqreturn_t rzg2l_cru_irq(int irq, void *data);
-> >
-> > -const struct v4l2_format_info *rzg2l_cru_format_from_pixel(u32 format)=
-;
-> > -
-> >  int rzg2l_cru_ip_subdev_register(struct rzg2l_cru_dev *cru);
-> >  void rzg2l_cru_ip_subdev_unregister(struct rzg2l_cru_dev *cru);
-> >  struct v4l2_mbus_framefmt *rzg2l_cru_ip_get_src_fmt(struct rzg2l_cru_d=
-ev *cru);
-> >
-> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned in=
-t code);
-> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_format_to_fmt(u32 forma=
-t);
-> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_index_to_fmt(u32 index)=
-;
-> > +
-> >  #endif
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/driv=
-ers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> > index 7b006a0bfaae..12aac9d6cb4b 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> > @@ -6,17 +6,21 @@
-> >   */
-> >
-> >  #include <linux/delay.h>
-> > -#include "rzg2l-cru.h"
-> >
-> > -struct rzg2l_cru_ip_format {
-> > -     u32 code;
-> > -};
-> > +#include <media/mipi-csi2.h>
-> > +
-> > +#include "rzg2l-cru.h"
-> >
-> >  static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] =3D {
-> > -     { .code =3D MEDIA_BUS_FMT_UYVY8_1X16, },
-> > +     {
-> > +             .code =3D MEDIA_BUS_FMT_UYVY8_1X16,
-> > +             .format =3D V4L2_PIX_FMT_UYVY,
-> > +             .datatype =3D MIPI_CSI2_DT_YUV422_8B,
-> > +             .bpp =3D 2,
-> > +     },
-> >  };
-> >
-> > -static const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsi=
-gned int code)
-> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned in=
-t code)
-> >  {
-> >       unsigned int i;
-> >
-> > @@ -27,6 +31,25 @@ static const struct rzg2l_cru_ip_format *rzg2l_cru_i=
-p_code_to_fmt(unsigned int c
-> >       return NULL;
-> >  }
-> >
-> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_format_to_fmt(u32 forma=
-t)
-> > +{
-> > +     unsigned int i;
-> > +
-> > +     for (i =3D 0; i < ARRAY_SIZE(rzg2l_cru_ip_formats); i++)
-> > +             if (rzg2l_cru_ip_formats[i].format =3D=3D format)
-> > +                     return &rzg2l_cru_ip_formats[i];
+> >  scripts/selinux/genheaders/Makefile              |  4 +---
+> >  scripts/selinux/genheaders/genheaders.c          |  3 ---
+> >  scripts/selinux/mdp/Makefile                     |  2 +-
+> >  scripts/selinux/mdp/mdp.c                        |  4 ----
+> >  security/selinux/include/classmap.h              | 11 ++++++++---
+> >  security/selinux/include/initial_sid_to_string.h |  4 ++++
+> >  6 files changed, 14 insertions(+), 14 deletions(-)
 >
->         for (i =3D 0; i < ARRAY_SIZE(rzg2l_cru_ip_formats); i++) {
->                 if (rzg2l_cru_ip_formats[i].format =3D=3D format)
->                         return &rzg2l_cru_ip_formats[i];
->         }
+> This looks much better, thank you.  We're currently at -rc6 which is
+> later than I would like to merge patches like this (I try to stick to
+> bug fixes or trivial changes at this point in the development cycle),
+> so I'm going to hold on to this until after the upcoming merge window
+> where I'll merge it into selinux/dev.  See the below doc for more
+> information on how the SELinux tree is managed:
 >
-> Sakari can probably handle this when applying the series to his tree.
->
-As there will be v4 anyway for fixing the link_validate(), I'll
-address it for v4.
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git/tree/=
+README.md
 
-Cheers,
-Prabhakar
+I just merged this into selinux/dev, you should see it reflected in
+the kernel.org shortly.
+
+--=20
+paul-moore.com
 
