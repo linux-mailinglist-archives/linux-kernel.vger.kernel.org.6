@@ -1,151 +1,123 @@
-Return-Path: <linux-kernel+bounces-348665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6D498EA30
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:13:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5D398EA32
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB1B6B23520
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:13:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACE5F1C2225E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD7D83CC8;
-	Thu,  3 Oct 2024 07:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB3984A22;
+	Thu,  3 Oct 2024 07:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kaxd3lJ2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VnRZwKqg"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE763D96A
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 07:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE1A84A27
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 07:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727939615; cv=none; b=NrJHFHgEezxy6XWhl98vgU2ticLB5URO2StI9pqq5PF1iD3Rr2ZZedKPCuEuBZCHh5UezafnlSyH27nk7THRC/cRML0dfub/6UTXJfNA0m9cL1L39QjpDAo6y6JSDZ9SplCChBK0RB6QCdZVAhfkpiKfmURG39tpt5gMEAPWJiU=
+	t=1727939656; cv=none; b=nPqDWtsbZBnl0CaMoBh+M+RmpOXMAdWKHQX/zphTLEoKHnLHlRIJ9hdTwu5Gj9KVj/lkKNS4L/X8BStV4TzgLr6jpmbmql8xztMMsBLMXNXKg2ZhiNzRrs+dkKm1TrB2F7rikLMPW3pjZVWqNLg0IjGMbncd3JuIOUgS5ssODys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727939615; c=relaxed/simple;
-	bh=JhZKiGtQJ3zymd/WHqllXr0LMe1u0429Jy42xFeCp7k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sLEEymwbBW06vOtr1ak4Wn4ciJcuK3UBc5uv0CLUiWOVsaMGIpDkmmLVt+xO/dmmO3RCLgag7imKHE4LOe9cfUlKj/Y4s07EHvFPKxK7ClccQ5v1R7cJS/2bmRQHTyJr56BhxsiumZzgp8Vkv43tivVc594Bwr7gM7L4iV41u1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kaxd3lJ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70733C4AF09
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 07:13:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727939615;
-	bh=JhZKiGtQJ3zymd/WHqllXr0LMe1u0429Jy42xFeCp7k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Kaxd3lJ25rkQajgmz7cQN8bDKn6xrj7OzSOtHfn8uH4EjOnJl1D9S+R5irC6GrrDU
-	 qaiRpJJpeMDcDyvWLjlcsf7YPsExEhhXOdxOUkJsbSb0hF5ljMlQaccLs9MGOVjIs4
-	 T07US2duiGJyfSvyps8auPPRECrs2CdTanUNzbrzk39yc7aiR8AkK7EOZscPeoeWiB
-	 YnZotNZBMuG9quNjZbeo0/vC6dxalac0MqejTpFccgxzVERgPtCGg2wlgpk7XykI5E
-	 BRddwweGoeGpXcwu66CUB/t+x0dwqGyAl1iidQuEZieU3X4s/Kt55QfpgTSSvn1Plm
-	 a+x8wkatdrz4Q==
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7d666fb3fb9so382703a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 00:13:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX6HhGN2WbHbS35M/dI6F34BGop2himNmu/8RRrnNlVgNNW4K6BziXvpbW43151VLdBgyJIwxOayaFEIC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLkA5VVSYh1RwF3cWU1yd6+P5vVnkLENQVcmD+D99JSDsiF9kp
-	6DmM+JQx5bdz2nxuBBJBezLnaFbkdzC0TT97AiWNYcxbj3mKHqnt3PV16jFbkPggPGHKBMJpzMH
-	0G7QhghgoOyZND0tqKHPdatrFrg==
-X-Google-Smtp-Source: AGHT+IHaAo5eZ05/dh9oa9JP9QZga/GAqhHnubzaK7kWFsvBL+T5Ll6XOf4RZb+dNKFMS4YkePxJqv4X4Xs3SvAUasY=
-X-Received: by 2002:a05:6a21:7746:b0:1d1:88bf:dff6 with SMTP id
- adf61e73a8af0-1d6d3aab4bbmr2809735637.15.1727939614998; Thu, 03 Oct 2024
- 00:13:34 -0700 (PDT)
+	s=arc-20240116; t=1727939656; c=relaxed/simple;
+	bh=rnCYbVwISgvzQVboy21nf7Z1AYb6vbTzmAfkgBhkYAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JPiAf7mnCOF199RtYfsVomjiK6V/AcetEbeCm51kJdf+awkpyfNAPTCX95ZkoVEnTaMJGKap2+6Lvj+2GCAhvGiLXvzvQ84pzBCqKkYFtXWH6LQ/KRyRa4kkNhNDtlDTeUXRD16E5Wdsfnlq72e6S/rLYazi09cmucbGBLqyCho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VnRZwKqg; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b1335e4e4so5710945ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 00:14:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727939654; x=1728544454; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0/Uq9tkcCY4Z9Y0M4J4n4ZTY4ZNPUaY8aYtXqjP/jKI=;
+        b=VnRZwKqg+PIHfAql4DCT6/P7/taq98tr9YuhYDJey0U+JUUnz6nDkW/D/d3ZNSVCm5
+         GnXwjYNooZSXeUf0lPa/kOcfT2uSYrvUG8O1AoV0tRlWtKl8LpUgx4q1EBQmCq3kxvt/
+         sG4nuTxoIOrbtfrUNFbn20+6ePUTGCEweeoZFK0U9c98vXbHd9TjUAxgfgtFxoU2Xj+a
+         RNZm8/nIlSMpBhBaY8MTwhzgSuhE7DSJ6zfG7c09WksyN9RCWz8o9DfDa84YYWtcNCD3
+         cGvzlqkXYkBEQxxWCnbxP3qdxbdBF+TPLWmPm1xx6weQR0xr28aClfImbZA39ixfsHZp
+         F0Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727939654; x=1728544454;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0/Uq9tkcCY4Z9Y0M4J4n4ZTY4ZNPUaY8aYtXqjP/jKI=;
+        b=XHE/lUnl2++bv0rpyRZtIiVKchUn2A9VNqn86dXDCN11ZQY1ASbE1TH95ivo2F0KBS
+         cOZ1BXQl8I9SPRjSb8HFEPdDfrKeXpb2rntMsI0SvczT8Epuz5P3LK+BGuDtiFtTHh0y
+         3BftDRGyzq/JQUuudkIVQix/ganuVy7PCiqYP9ZnkC9cg0hl9E67VsagcXPqdgepVjFu
+         v9Cs8TwspWQJXogD7qEz4U5eNZ8xeAdvYBEIPXbQRRRIG9LyOoR7VUpxrsqVJZ8TKOEA
+         /9aW3TMllU80475/7mNDdR30iSdJBFFcYEneG0xK7or5Owb4aD/RumiCvzzSh79plkM/
+         Xaig==
+X-Forwarded-Encrypted: i=1; AJvYcCVMXnwvvJJnQfTopgOTufSwO0U794kZUdDAaAUzplqBSDHpHXjACYgIxmKlj0fTJQPLPL/JYDqf71W5LEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/BtXHwwOfrVSwMOFE3TrIi0QzTbGFnxXklHn321ZYQJK08/sN
+	2T60OUr3SSijD0T2s5s5CaWkPYxyjy28qiZbG/omFBeX9VVDmJrA+Ayjhu/jEmc=
+X-Google-Smtp-Source: AGHT+IH5ip0y/7dbLpJy/zrNgjlhVxLD8xYzpS7Yi6sWbO5a8a6piAQZB8S2CXnGMq1Q1WPiBAhy/w==
+X-Received: by 2002:a17:902:d491:b0:20b:4875:2c51 with SMTP id d9443c01a7336-20bc5a01e73mr79268295ad.27.1727939654336;
+        Thu, 03 Oct 2024 00:14:14 -0700 (PDT)
+Received: from localhost ([122.172.83.237])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f770b30sm2919794a91.15.2024.10.03.00.14.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 00:14:13 -0700 (PDT)
+Date: Thu, 3 Oct 2024 12:44:11 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Vedang Nagar <quic_vnagar@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <quic_kdybcio@quicinc.com>,
+	Nikunj Kela <nkela@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Ilia Lin <ilia.lin@kernel.org>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 03/11] OPP: Rework _set_required_devs() to manage a
+ single device per call
+Message-ID: <20241003071411.vvhqb6bxxnrbkaw7@vireshk-i7>
+References: <20241002122232.194245-1-ulf.hansson@linaro.org>
+ <20241002122232.194245-4-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240928161546.9285-1-jason-jh.lin@mediatek.com>
-In-Reply-To: <20240928161546.9285-1-jason-jh.lin@mediatek.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Thu, 3 Oct 2024 15:13:53 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_9V+BFV0fCahzn2qNBAmLrY-cwRQAKzorTdRYGCFv5+tw@mail.gmail.com>
-Message-ID: <CAAOTY_9V+BFV0fCahzn2qNBAmLrY-cwRQAKzorTdRYGCFv5+tw@mail.gmail.com>
-Subject: Re: [PATCH v8 0/3] Fix degradation problem of alpha blending series
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
-Cc: Alper Nebi Yasak <alpernebiyasak@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Shawn Sung <shawn.sung@mediatek.com>, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Singo Chang <singo.chang@mediatek.com>, 
-	Nancy Lin <nancy.lin@mediatek.com>, Project_Global_Chrome_Upstream_Group@mediatek.com, 
-	Jason-jh Lin <jason-jh.lin@mediatek.corp-partner.google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002122232.194245-4-ulf.hansson@linaro.org>
 
-Hi, Jason:
+On 02-10-24, 14:22, Ulf Hansson wrote:
+>  /**
+>   * struct opp_config_data - data for set config operations
+>   * @opp_table: OPP table
+>   * @flags: OPP config flags
+> + * @index: The position in the array of required_devs
+>   *
+>   * This structure stores the OPP config information for each OPP table
+>   * configuration by the callers.
+> @@ -48,6 +49,7 @@ extern struct list_head opp_tables;
+>  struct opp_config_data {
+>  	struct opp_table *opp_table;
+>  	unsigned int flags;
+> +	unsigned int index;
 
-Jason-JH.Lin <jason-jh.lin@mediatek.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=882=
-9=E6=97=A5 =E9=80=B1=E6=97=A5 =E4=B8=8A=E5=8D=8812:16=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> From: Jason-jh Lin <jason-jh.lin@mediatek.corp-partner.google.com>
->
-> Some SoCs not support pre-multiplied pixel formats and extending
-> configuration of OVL pre-multiplied color formats, such as MT8173.
->
-> Fix the SoC degradation problem by this sreies.
+Maybe name this required_dev_index as well ?
 
-Applied to mediatek-drm-fixes [1], thanks.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-fixes
-
-Regards,
-Chun-Kuang.
-
->
-> ---
-> Change in v8:
-> Remove blend_modes for not supported pre-multiplied SoCs to fix the
-> return error from drm_plane_create_blend_mode_property().
->
-> Change in v7:
-> 1. Add the remove color format comment patch for OVL
-> 2. Fix warning: 'const' type qualifier on return type has no effect
->
-> Chnage in v6:
-> 1. Use blend_modes instead of function pointer in OVL
-> 2. Use ethdr instead of mdp_rdma to get blend_modes
-> 3. Add 0 checking for adding blend_mode property for mtk_plane
->
-> Change in v5:
-> Add fix patch for mtk_plane
->
-> Change in v4:
-> Add lost cases of mtk_ovl_fmt_convert_with_blend
->
-> Change in v3:
-> Change MACRO approach to function pointer in driver data
->
-> Change in v2:
-> Fix build error and typo
->
-> Change in v1:
-> Add fix patch for OVL unsupport color format settings by driver data
->
-> ---
->
-> Jason-JH.Lin (3):
->   drm/mediatek: ovl: Remove the color format comment for
->     ovl_fmt_convert()
->   drm/mediatek: ovl: Add blend_modes to driver data
->   drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
->
->  drivers/gpu/drm/mediatek/mtk_crtc.c           |  1 +
->  drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |  2 +
->  drivers/gpu/drm/mediatek/mtk_ddp_comp.h       | 10 +++++
->  drivers/gpu/drm/mediatek/mtk_disp_drv.h       |  2 +
->  drivers/gpu/drm/mediatek/mtk_disp_ovl.c       | 44 ++++++++++++++++---
->  .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  7 +++
->  drivers/gpu/drm/mediatek/mtk_ethdr.c          |  7 +++
->  drivers/gpu/drm/mediatek/mtk_ethdr.h          |  1 +
->  drivers/gpu/drm/mediatek/mtk_plane.c          | 15 +++----
->  drivers/gpu/drm/mediatek/mtk_plane.h          |  4 +-
->  10 files changed, 76 insertions(+), 17 deletions(-)
->
-> --
-> 2.43.0
->
+-- 
+viresh
 
