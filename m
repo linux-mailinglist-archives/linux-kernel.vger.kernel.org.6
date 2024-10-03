@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-349059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707A798F03E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:21:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 648C198F044
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213B81F21E66
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:21:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 266F7282EFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C531B19C546;
-	Thu,  3 Oct 2024 13:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC27519C548;
+	Thu,  3 Oct 2024 13:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KuvmOa3x"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jorM+WXD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF47199936
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 13:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190841E495;
+	Thu,  3 Oct 2024 13:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727961689; cv=none; b=POYSnowgBPzxB45n24G0DZ7GIIEWX/HdVBHA6l2LLASe1CizEpUxVm0NmV5AKPbsHUu0TlsKv24+Y4MAGmxSHxWqE39O3vZPyM+S0ASsPGGottnElEP2PQ++gxzMNR42JX7564cHxtzLwC+jPFDScmH4/76W9nxacvDebbJ0XYQ=
+	t=1727961718; cv=none; b=frWYpGYxefhm7GDx5NrumtbbAzczahl0sV/3qS1LqfRfAKiLDO3VzoBcC3XTxtCrKcd8+SEVeWy+37rnhpISOJukk+Onm5lHeYh7Nov6ZqBg2NP8hsuV+v6A461gir8J9afHiGDaorl0/DzO3BhzzdG6WvVaJg7TXwDvi09P0hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727961689; c=relaxed/simple;
-	bh=Z9XgoL99teLoFoNiHQ/T7CPkBXrpsvXcREZF6sRxZW4=;
+	s=arc-20240116; t=1727961718; c=relaxed/simple;
+	bh=qiTs3/DpFhvtQxE4+JoO9CH5m/R0yb7rKBnIKMULh+Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BmQrKCD5BpkAsg5e4NkuYriO/KykKqDbGdBtC5G556pDU2ce2MiUL9mZv414OQSOPJ9E03Y5eMu6rMd0RFP54xi7ymJbKWCrIPW6Pw8TjS4cEadhsJThY+7P3BaV3Cf2PYaTnWoKTY8TC+Ts/QKvEFOmHu7z+sJWvXY0hwwUFxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KuvmOa3x; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-82ce1cd202cso46063739f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 06:21:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727961687; x=1728566487; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eULbr4TsoYa61/A8JOQXACnDP0XDqLP86c5gLY8rbmg=;
-        b=KuvmOa3xE23DvQqNzwQdvTvE5UhT8Hy6VUFmYTpwJghzgzoaJrBwB/tYraSIFIHWyt
-         mADm1kMG7XwSax9hL7oYBhGdYm1XoO6htVT2oKF38jyOEMrfp8RESfeIWwLbhRR7jF6+
-         8Z6akxnNGCrQw0/uvENuU9yNjxQoJmkN2mojbt79L95DHTd28xtx51Y55pp1VMN4XvDu
-         G5yyvDmbDiffzSu6bDnXIFaRb7G5lKsPbEmhZD1Vy3UqssnW6rHc0raptuxb2bD7TP2J
-         GKAxMr4g34QbCk54YS0wYRgjcY8ay+LpIH2xOyFHGHAA/cEZfUTro9WEfLJcpA/ZzVd8
-         Hx3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727961687; x=1728566487;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eULbr4TsoYa61/A8JOQXACnDP0XDqLP86c5gLY8rbmg=;
-        b=kZEivlU5dPJbmKXErevbv/4U6bwcccbdmmBR44JOO3sphegwU64aUVXj/JgnYcqp4s
-         QZkI5FYXQbORtErP+DKH8tEAgZtQoZfLn/ApvKW+Rod0fhR6Gu6jf9Brloof2+836ymj
-         mmq1HO7BzD0S4jsTFG17IPFCvQtzhQHp7OwwaQKf4BAfpP616rZ4ZGmF1Dal6R8Sj/ZZ
-         ZYMqaasDyK7P/PGzrHojcDBWp0dSnWuy+QKULMUeWQ6i/NHvLNj0cuXNJ9thwKO9FX3K
-         ciHZiGl/tUsDdSHNLzeH+jXZiB/W75wbEKzt+bWu4GyfFfAqs3MQFt9OINGgGsPkKB8e
-         HC4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXRwpWhn6+voSaGceq/GAzH22afj9jvJ3REkmV8j/Jo0MJ+3iyE1M4qyRG5M69A5dPCLLjpz1rbymGevCU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSNNnsly5YY1dI/V4S1ZzZFjt0qAHV3Ge+kUpfTp/iPhdPuSO5
-	0TVAsdtX7SHAG0IoYuUM0FOrf6NQf0bdVEE0GXxTyCmRLtheaHqnQW0vTfsBFOE=
-X-Google-Smtp-Source: AGHT+IFjlNg/Smwj4Ff8kYKTAbnsTGM3VJQtCnUDqYyE6RIcRzBsFaxmzd9qPRCnay5mniXJok6JvQ==
-X-Received: by 2002:a05:6602:6409:b0:82b:42f:41d5 with SMTP id ca18e2360f4ac-834d84c3930mr696767539f.16.1727961686848;
-        Thu, 03 Oct 2024 06:21:26 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db55a63db7sm268802173.119.2024.10.03.06.21.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 06:21:26 -0700 (PDT)
-Message-ID: <fe7ce685-f7e3-4963-a0d3-b992354ea1d8@kernel.dk>
-Date: Thu, 3 Oct 2024 07:21:25 -0600
+	 In-Reply-To:Content-Type; b=KeF7Q+WjqtUzWvln8T7w52g3aTXtmTH7XzJi0NYLJ505O0Hvanr9EIgdejHrrjy2pgOxq+pEgkw+sjOFus+wXWJJSZlMSH8lFPbAhnl+/DFMyRxt5Sq7PhXujrqGi9IO80JWY7ZAOTye4DLIlBoNSN8/sLINQ8TdqHmHqFN+Tac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jorM+WXD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C947C4CEC5;
+	Thu,  3 Oct 2024 13:21:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727961717;
+	bh=qiTs3/DpFhvtQxE4+JoO9CH5m/R0yb7rKBnIKMULh+Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jorM+WXD2k3FvhrejCv4xSG7eGppnQfw/XXgRZEGd0zouB46C3fDLpkt6bej+9841
+	 mHkw+wqC4tXAcUGixQeY+fJMV8/OJHBqD84StHWsoBOoxC8BDkrWybf2/26Ib3x4Cb
+	 SSPu8tOYF5tGTKMx4wudSoPNInLojwrb9cMy3oEXczquPTch7dFl5cVygwY4PBgxZT
+	 OJ02X4D4sVRbLZC35s3FHsbfZBUAectpSjU0q1aukqbVOV4wF72QiuVBKAGJxl1dU0
+	 QUrd/gH+ik1BBaNBcz8qnG+6ZXiiokAlY+HnB9dRttw8k3Q3dvQmlE4qH2JPlyO2Ly
+	 mkqIgbNHae2vg==
+Message-ID: <90b7f2a3-8ebe-44da-82b3-def6206cd399@kernel.org>
+Date: Thu, 3 Oct 2024 15:21:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,58 +49,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
-To: Dan Carpenter <dan.carpenter@linaro.org>, Waiman Long <longman@redhat.com>
-Cc: Yu Kuai <yukuai3@huawei.com>, Tejun Heo <tj@kernel.org>,
- Josef Bacik <josef@toxicpanda.com>, cgroups@vger.kernel.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-References: <Zv0kudA9xyGdaA4g@stanley.mountain>
- <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
- <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
- <df1cc7cb-bac6-4ec2-b148-0260654cc59a@redhat.com>
- <3083c357-9684-45d3-a9c7-2cd2912275a1@stanley.mountain>
+Subject: Re: [PATCH v4 1/2] dt-bindings: i2c: snps,designware-i2c: declare bus
+ capacitance and clk freq optimized
+To: Michael Wu <michael.wu@kneron.us>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Morgan Chang <morgan.chang@kneron.us>, mvp.kutali@gmail.com
+References: <20241003111525.779410-1-michael.wu@kneron.us>
+ <20241003111525.779410-2-michael.wu@kneron.us>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <3083c357-9684-45d3-a9c7-2cd2912275a1@stanley.mountain>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241003111525.779410-2-michael.wu@kneron.us>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/3/24 6:03 AM, Dan Carpenter wrote:
->   3117                                  ioc_now(iocg->ioc, &now);
->   3118                                  weight_updated(iocg, &now);
->   3119                                  spin_unlock(&iocg->ioc->lock);
->   3120                          }
->   3121                  }
->   3122                  spin_unlock_irq(&blkcg->lock);
->   3123  
->   3124                  return nbytes;
->   3125          }
->   3126  
->   3127          blkg_conf_init(&ctx, buf);
->   3128  
->   3129          ret = blkg_conf_prep(blkcg, &blkcg_policy_iocost, &ctx);
->   3130          if (ret)
->   3131                  goto err;
->   3132  
->   3133          iocg = blkg_to_iocg(ctx.blkg);
->   3134  
->   3135          if (!strncmp(ctx.body, "default", 7)) {
->   3136                  v = 0;
->   3137          } else {
->   3138                  if (!sscanf(ctx.body, "%u", &v))
->   3139                          goto einval;
->   3140                  if (v < CGROUP_WEIGHT_MIN || v > CGROUP_WEIGHT_MAX)
->   3141                          goto einval;
->   3142          }
->   3143  
->   3144          spin_lock(&iocg->ioc->lock);
+On 03/10/2024 13:15, Michael Wu wrote:
+> Since there are no registers controlling the hardware parameters
+> IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION, their values can only be
+> declared in the device tree.
 > 
-> But why is this not spin_lock_irq()?  I haven't analyzed this so maybe it's
-> fine.
+> snps,bus-capacitance-pf indicates the bus capacitance in picofarads (pF).
+> It affects the high and low pulse width of SCL line in high speed mode.
+> The legal values for this property are 100 and 400 only, and default
+> value is 100. This property corresponds to IC_CAP_LOADING.
+> 
+> snps,clk-freq-optimized indicates whether the hardware reduce its
+> internal clock frequency by reducing the internal latency required to
+> generate the high period and low period of SCL line. This property
+> corresponds to IC_CLK_FREQ_OPTIMIZATION.
+> 
+> The driver can calculate the high period count and low period count of
+> SCL line for high speed mode based on these two properties.
+> 
+> Signed-off-by: Michael Wu <michael.wu@kneron.us>
+> ---
 
-That's a bug.
 
--- 
-Jens Axboe
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+---
+
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
+
+Best regards,
+Krzysztof
+
 
