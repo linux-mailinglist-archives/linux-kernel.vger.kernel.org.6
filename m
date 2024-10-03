@@ -1,116 +1,125 @@
-Return-Path: <linux-kernel+bounces-348828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A46A198EC50
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:33:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8459E98EC52
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07AEF286B39
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:33:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6E001C21A76
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08461146017;
-	Thu,  3 Oct 2024 09:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0F01465AE;
+	Thu,  3 Oct 2024 09:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="idW1oIgV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A+e2eYVV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E490A3AC2B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C286130AF6
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727947981; cv=none; b=bJYmnGkmO6YTqlAXnGDT/S/BAKPpCEH1MtuuFrg4pmxjqymHCloR/s4fp8c2H9ynk4r05ixdq22bamWnR6AZTJffHaVqczcHATJFEo41BxKOW/WR+qbXcKKHK/PXhmRu4nhU7wqhyd3d3pYXhImjY2HaiN6p5TjVRG9lr8sXzNY=
+	t=1727948097; cv=none; b=JiSnixTkeOrfnNGRdKwH/SIkL7QUl0MFha3qglCY3HH+B8wIrbjVGMZFsPVbXU6TlGN0sVdCUoub7vwlGReNaMlAUc7qAwTeggNNVEUgqQHZlKO18YBf80ER/ufGgiiQx3dhEw++pTTbfeIxW9qBYtaTrv1UNW9t9IQ97lB0uIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727947981; c=relaxed/simple;
-	bh=asyUiUs4l6Obu18wzSHbX0wuQi7BUxCV2FNCJSDnFd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cRSZaDja9zKMBP7hwvScqfB+jxFgHj6ypllXZzr7QuUfTE4MJ4aEgsycYu7FvtOJNHpdsBbarkqjJuYQpXjaZRmaKgZix/+HnOCStmi0M2NA4csCTByLZ1rN35YocZDC9V8v1ktERnT4XMFTRoU8tOnPswBksCUQXb8x19Sl1o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=idW1oIgV; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1727948097; c=relaxed/simple;
+	bh=8PNWb8f5FF5xUid5MxaKNsCFti1xv+NLEa0wWHyNbBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gTZpWXa2cyYzQhuam4qGvRuZXCwLftuUvWQpoLJJHeHlOJCAuwzNmEBHavhKZsbedMJ5kU1W8KlqBiNwgBUSPfKV5exXFznm7a9sAV9dVkDS7e3mhx6U4sKhY4pHR3dYDefYswJmK7GPgo8LPdeLGR/63wr01ImoOD3wEY4p9mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A+e2eYVV; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727947978;
+	s=mimecast20190719; t=1727948094;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K+zMxwgIWHYPuis7ae29GnRO7x5ZWg1o/g/hL8Dw+so=;
-	b=idW1oIgVLhe/H3ZY1tS96uGJ1hE35pNkpa2UQPNR2i1HsRbdeiU1uR1acLX7A/MZAqDebL
-	h+FcjzfsoeyY3e8s5jm2etdyMSqlwc0/g30VZsKuW3/XqYZR7KQ8PvRXoAgF/iiy8keOv2
-	fcKWOyyb/NZSLMSwKl3kG2sPjjYwwJs=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-433-AvGNL3lSNh-7JtYkcul2nw-1; Thu,
- 03 Oct 2024 05:32:55 -0400
-X-MC-Unique: AvGNL3lSNh-7JtYkcul2nw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B49581955D56;
-	Thu,  3 Oct 2024 09:32:51 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.1])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 801F519560A2;
-	Thu,  3 Oct 2024 09:32:44 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu,  3 Oct 2024 11:32:37 +0200 (CEST)
-Date: Thu, 3 Oct 2024 11:32:29 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-	paulmck@kernel.org, willy@infradead.org, surenb@google.com,
-	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com,
-	brauner@kernel.org, jannh@google.com, mhocko@kernel.org,
-	vbabka@suse.cz, mingo@kernel.org
-Subject: Re: [PATCH v2 tip/perf/core 5/5] uprobes: add speculative lockless
- VMA-to-inode-to-uprobe resolution
-Message-ID: <20241003093228.GA20733@redhat.com>
-References: <20241001225207.2215639-1-andrii@kernel.org>
- <20241001225207.2215639-6-andrii@kernel.org>
- <20241002072522.GB27552@redhat.com>
- <CAEf4Bzbpw-MDJFC8iNboEK02LVHcpeyzTKsQxrxt44fKm3MDRQ@mail.gmail.com>
+	bh=KXMpAb3wF74PmmdRNbw2eEeLnsh8xWYLhJFUtS51lww=;
+	b=A+e2eYVVUacu50MGbFR8nGA+uCdA6zdKBZHwxakRgE2Sl2kstmPD5iu+dLNo6MTB8I4pvP
+	cdlhQuUHSg7mVXSK//3ug47osyVt1Z9gAegh0qQby7Rp1jPs3KwkucLiG+va5Tf342dGLu
+	jEpcYCxuzmc6GF6tQPfygAZSQRz+EzQ=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-388-3UaPv60VNtaUqXwbPuKaVw-1; Thu, 03 Oct 2024 05:34:53 -0400
+X-MC-Unique: 3UaPv60VNtaUqXwbPuKaVw-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb5f6708aso3889725e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 02:34:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727948092; x=1728552892;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KXMpAb3wF74PmmdRNbw2eEeLnsh8xWYLhJFUtS51lww=;
+        b=oI5mI07eGvn+QkWdNZdkHZ+drqS8T3noQZ+mSTiGpA12NAu5D39tepORg+yzOY5/v3
+         pqOYm6mwLrKsNaEXi5icjfclGErETdVN7z3WHKsdyR0b/z+K6S8k5hztEy2XWzZqyjsh
+         0j3IcJv1Fw+Avc/1SBe2/AUAiyIyfx73Nk498YyCbF4Wh0n6GZNtcrwKBSLAckmm+iAM
+         YDPhuYnx8ftQ6rUSFhB18NTno15bO+um8YCfDzVWpHF8UTgRwCQvSxQW/CHrNC+zjwgu
+         27KsshaoRkczvOSADYPFIPMbSdFg++L1AEVTv2xJBk4I/eoAKcHs+MrMuMwYA0NCgEG4
+         qArg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTwqqBuRg/4UHsnnPuyHvd+LOAg0jUUia6pDXFe8MjclhglxHGxC+J2zLbpIXy0LiGE6ewl2w7wAKjyh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBwLxANNdzQa2JL086FZgisMgGPqWbHRr+dfVHDvfQmtGOMSxf
+	MXIW9ZV1rQB675Yn+LePQHTFT4n6bQPYW96ol1enpp9A6GAONB6OrgHKc544F4doHP97pnSXwGn
+	gRimiBiFjvcaZgDNPiCRtKd6wvULAJvPdFad0EDRjaPZEuacdtATVRLUzjYLknA==
+X-Received: by 2002:a05:600c:3510:b0:426:6ed5:d682 with SMTP id 5b1f17b1804b1-42f777bfa85mr41752555e9.12.1727948092114;
+        Thu, 03 Oct 2024 02:34:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFBowI5zhEycK9k+WgMuHJJtTO0OTPJ5Pur5BI9oIv9qrWES3L7uxAbpAFQkDhtkECemtMfmQ==
+X-Received: by 2002:a05:600c:3510:b0:426:6ed5:d682 with SMTP id 5b1f17b1804b1-42f777bfa85mr41752385e9.12.1727948091654;
+        Thu, 03 Oct 2024 02:34:51 -0700 (PDT)
+Received: from [192.168.88.248] (146-241-47-72.dyn.eolo.it. [146.241.47.72])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79d8d3edsm39844885e9.7.2024.10.03.02.34.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 02:34:51 -0700 (PDT)
+Message-ID: <a96b1e00-70e3-46d8-a918-e4eb2e7443e8@redhat.com>
+Date: Thu, 3 Oct 2024 11:34:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bzbpw-MDJFC8iNboEK02LVHcpeyzTKsQxrxt44fKm3MDRQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] hv_netvsc: Fix VF namespace also in netvsc_open
+To: Haiyang Zhang <haiyangz@microsoft.com>, linux-hyperv@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: kys@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+ edumazet@google.com, kuba@kernel.org, stephen@networkplumber.org,
+ davem@davemloft.net, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <1727470464-14327-1-git-send-email-haiyangz@microsoft.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <1727470464-14327-1-git-send-email-haiyangz@microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10/02, Andrii Nakryiko wrote:
->
-> On Wed, Oct 2, 2024 at 12:25 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > > +     vm_file = READ_ONCE(vma->vm_file);
-> > > +     if (!vm_file)
-> > > +             return NULL;
-> > > +
-> > > +     offset = (loff_t)(vma->vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vma->vm_start);
-> >
-> > LGTM. But perhaps vma->vm_pgoff and vma->vm_start need READ_ONCE() as well,
-> > if nothing else to shut up KCSAN if this code races with, say, __split_vma() ?
->
-> We keep going back and forth between reading directly, using
-> READ_ONCE(), and annotating with data_race(). I don't think it matters
-> in terms of correctness or performance, so I'm happy to add whatever
-> incantations that will make everyone satisfied. Let's see what others
-> think, and I'll incorporate that into the next revision.
+On 9/27/24 22:54, Haiyang Zhang wrote:
+> The existing code moves VF to the same namespace as the synthetic device
+> during netvsc_register_vf(). But, if the synthetic device is moved to a
+> new namespace after the VF registration, the VF won't be moved together.
+> 
+> To make the behavior more consistent, add a namespace check to netvsc_open(),
+> and move the VF if it is not in the same namespace.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: c0a41b887ce6 ("hv_netvsc: move VF to same namespace as netvsc device")
+> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
 
-OK, agreed...
+This looks strange to me. Skimming over the code it looks like that with 
+VF you really don't mean a Virtual Function...
 
-And I guess I was wrong anyway, READ_ONCE() alone won't shutup KCSAN in
-this case.
+Looking at the blamed commit, it looks like that having both the 
+synthetic and the "VF" device in different namespaces is an intended 
+use-case. This change would make such scenario more difficult and could 
+possibly break existing use-cases.
 
-Oleg.
+Why do you think it will be more consistent? If the user moved the 
+synthetic device in another netns, possibly/likely the user intended to 
+keep both devices separated.
+
+Thanks,
+
+Paolo
 
 
