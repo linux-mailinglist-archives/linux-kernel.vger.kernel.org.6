@@ -1,144 +1,190 @@
-Return-Path: <linux-kernel+bounces-348582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF5E98E957
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:22:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F16498E95B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F0B51C2142B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:22:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929B51C21F9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A150D40879;
-	Thu,  3 Oct 2024 05:22:27 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1A42110E;
+	Thu,  3 Oct 2024 05:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cgo0caG9"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75772110E
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 05:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFA53AC2B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 05:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727932947; cv=none; b=UMr3ctftSUHcoZGMsYA7rsphVzv9yvyDJV+tB/c4KwwvLafJ8AZ2BtTeE5L/HXUhfKsFop2pKv3iqVS0Ah7AkG2Yr8jnOaVlkDlwXLYypmxhBHaXQskerQUJ/zq1jsSDOAdfXgUxoq/M0IrPFcSD9GejpGIlh0B1nZnMJeRmRqU=
+	t=1727933180; cv=none; b=nw5+2Gx/FvbI407GQDwPbwc9Zoup3yLixgs1Er6MYDiJQ3UTnRYXMc16adW5gPacUT67RHFmI/FEqYWoKNwkbWwQkcMhlS4FWnq8qBtr0qT2/k+PbLj2jFBnRYh11T5mlJmWe8DQdBZ3bb71Qhndt/zIQcGsKjEf49KnwVEqFfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727932947; c=relaxed/simple;
-	bh=zrjqWxyx1KM73znQwv/Qe39o01mZlMnPXzDlN5Qcxw8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nKpEwukNqzWVeSeaXckStXWHbtqzJXWSCsKMTpMSTTmqHZ2asqovApCV3SjVRgBXIU9aFJRIbPsYbiLkiL4zM32ILViK0v1T6WejuFq0q319qvTj+ycjToFefDC4Vz3Y6tD1nIe8bV4Ky+C2sQgpnJE765r1u3k/myPeFjtk+fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3453139c0so7310775ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 22:22:25 -0700 (PDT)
+	s=arc-20240116; t=1727933180; c=relaxed/simple;
+	bh=sszam0YJeq9hUJhsVD5JKzOxSjLqkB4+aZQNF4yGZU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E+nlrkf3uy18/RwlALiM/kB5a/7o0Oiqnz3qGUhIUvoWXJQ6IFzna5ZNTDwgDJYD6cXShGlOKKlvUosqNGf2fRD7OMzpNVduE2tgVy23oHaoBXCG/fNOqwgxRxNbu13Ap/1ccR494ccotOfV+ejhmVUwgzabG55GYdYihqHimko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cgo0caG9; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20bcae5e482so4327785ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 22:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727933177; x=1728537977; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oR5QvxRn7I4F+X0gW6UsQkOXeRecGwMqfBoqqmAEfrA=;
+        b=Cgo0caG9ZjDYK2iEoxEsPqyj+eLv0pJC+Vi3A59SfHQD/CstoRRa+KYEbXU1A0elA0
+         XRqbhZGvK+hAfyeP6b+TLW65jbDIxwGZqy6Ed3dnZNGBO3UmMePk90cFWSshDb390jlN
+         x3Y7S6BKbthdEtyLMGLmSBQBgr915vU75DBoU+xW7+UWL5qZ2iQL85wcrn8yjrHMm1Ls
+         yZwjDxGnvqP9oK7yZ8bmd5k84/HJ+hf/4E7BMM0NxYdYjuHSqLMforBnFfUMgHZ4tUMt
+         ApuGYlOxe5HtGaKPNKV2gjHO322bDI39XGWa+c0h0k0C+BHSIuJ6uoezEDXwpgjOQ+Si
+         oKvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727932945; x=1728537745;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1727933177; x=1728537977;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kRbLzPjCHZ0TUlYnXRC4j6pufPY4JkwQb5Tk0/q3nVU=;
-        b=NAaB7Ur0tMZxQJKYjKcOCUGX3vM3gBk0pmOLoQQnFiy3FrBJVvE9caq9wtn3rk/3xT
-         JNqvDYnQmyaB+oZtjwpf4Ite5RaPsTbXNI1H2nAzQJloj0nZj4KpCOPAbQ51CWVKQ71E
-         aQ3D3gGwsvmQqwqvJ5qOqsHxUoYCiRECRtfLFg/O8Q1y5PdZuQCWLfH0jDwuTT0h3+E5
-         W/X++oJsCH3vNkPlcDaaxqzTOMRXQfUd0vvu4c7B71gw+HAATrJ1EOXP//k5+53fLqun
-         ByPwVsR+RlnNZUoYy8aSNndr2bSKenHu+dzMKuWYHD3U+JurwIn/09H2r3WkCeS1+tNA
-         MoIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpvFKkFFj9q+SS1qQRYT7g/3yb2DRgx3WJQvvUT6YOsX9haYcF+W/WeXcq01U82mQU+sT2VoEtcG6v+9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu320g7OwQJBdDAYrsxYg2DRDHWErRiliTSrhMAjxKzVny1L6t
-	xHdjEghr2gUyqNrNeaJf2AiLTLH4LdAaU/8s6JXvb/4Ifx0jm1pCE+udrhHmQXremhV0LjjS+x/
-	f6CaKqcz2MIBc+lEbaAGKf19pgKgo7cgLnX2lggfbECKRWr22fsf8g5s=
-X-Google-Smtp-Source: AGHT+IFqkEX4Ye2iuf3b8JgVfts4RYbiNQz45JsQ0etxrXMXbXgCQGI35qf+5nqzdFGj8u9IoHqyZGAkzfp9eQwodZQC9Gccttxw
+        bh=oR5QvxRn7I4F+X0gW6UsQkOXeRecGwMqfBoqqmAEfrA=;
+        b=nAgZlH4feIcxlLQCMQENJNxNSLuwDfLMRzgUVxTiUJ6s4dd70aLe8MYRRMsdZdsUsa
+         ezgWL92CDav6QwPAPg2c328T0AgVVrcvMC8ADYpb/xaoac6CIpLvHIYBDbmoM5sFp4j1
+         4Xu7XUx2a7sDuq7LkXkFRqLhFuEQUlKW4wo39s5I6OJow1KKsINuiEZxCuCZLkGACCLa
+         WB99+YldooyRcH7LpzRS9ShbLhKWov4QBEX9rRfarLSI4g9XTyX+xgC+Z/62YA0Untcc
+         bmZJzJFN3Nv4V5vSYoULOkv9jjxCY4Kf6iqqHD4YduycnXjZmTc2b19X12QtVJnJZ0MT
+         f8Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2/CRdeWqhpJZgyZ4n77AjcFJqMmU4iz1hlqE1QmQnD6K6vHcynqKV64y2nrnegtoqH+ZTsehK0S4Yujw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwjmyYooi1Pms7Ci0kjcAM5QrOBkLu7pMUp0BlXmYdhLwxvfNo
+	HXSadjmmDUR3sMXxbQWMNsCQDUzt00nLTeTZbn/ImUFpQwdnOWLm7AGxLCIj+g==
+X-Google-Smtp-Source: AGHT+IHEB1f8pGBuMcmPniimBQ09DleIhVDkzWJXmfPcSVMS6VW9PbLiP5upj1emW3YT7FrlKFEBug==
+X-Received: by 2002:a17:903:2451:b0:20b:983c:f0a0 with SMTP id d9443c01a7336-20bc59fc2f7mr71658925ad.31.1727933177496;
+        Wed, 02 Oct 2024 22:26:17 -0700 (PDT)
+Received: from thinkpad ([36.255.17.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beead255asm2102975ad.15.2024.10.02.22.26.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 22:26:17 -0700 (PDT)
+Date: Thu, 3 Oct 2024 10:56:12 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Vivek Pernamitta <quic_vpernami@quicinc.com>
+Cc: mhi@lists.linux.dev, quic_qianyu@quicinc.com, quic_vbadigan@quicinc.com,
+	quic_krichai@quicinc.com, quic_skananth@quicinc.com,
+	mrana@quicinc.com, Slark Xiao <slark_xiao@163.com>,
+	Fabio Porcedda <fabio.porcedda@gmail.com>,
+	Mank Wang <mank.wang@netprisma.us>,
+	"open list:MHI BUS" <linux-arm-msm@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bus: mhi: host: pci_generic: Add support for QDU100
+ device
+Message-ID: <20241003052612.o5lbgw274yopmpx6@thinkpad>
+References: <20241001113738.152467-1-quic_vpernami@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d84:b0:3a3:4164:eec9 with SMTP id
- e9e14a558f8ab-3a36592dd12mr52001815ab.14.1727932944927; Wed, 02 Oct 2024
- 22:22:24 -0700 (PDT)
-Date: Wed, 02 Oct 2024 22:22:24 -0700
-In-Reply-To: <0000000000003eb4720622638663@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fe2a10.050a0220.28a3b.0209.GAE@google.com>
-Subject: Re: [syzbot] [mm?] BUG: corrupted list in do_compact_page
-From: syzbot <syzbot+b7a3118f6a494674077f@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linmiaohe@huawei.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com, vitaly.wool@konsulko.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241001113738.152467-1-quic_vpernami@quicinc.com>
 
-syzbot has found a reproducer for the following issue on:
+On Tue, Oct 01, 2024 at 05:07:35PM +0530, Vivek Pernamitta wrote:
+> Add MHI controller configuration for QDU100 device.
+> 
+> This Qualcomm QDU100 device is inline accelerator card
+> which is an extension to QRU100 5G RAN platform.
+> which is designed to simplify 5G deployments by offering
+> a turnkey solution for ease of deployment with O-RAN
+> fronthaul and 5G NR layer 1 High (L1 High) processing,
+> and to accelerate operator and infrastructure vendor
+> adoption of virtualized RAN platforms.
+> 
+> https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
+> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 49 ++++++++++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index 9938bb034c1c..1153697fa858 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -245,6 +245,52 @@ struct mhi_pci_dev_info {
+>  		.channel = ch_num,		\
+>  	}
+>  
+> +static const struct mhi_channel_config modem_qcom_qdu100_mhi_channels[] = {
+> +	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 2),
+> +	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 2),
+> +	MHI_CHANNEL_CONFIG_UL_SBL(2, "SAHARA", 128, 1),
+> +	MHI_CHANNEL_CONFIG_DL_SBL(3, "SAHARA", 128, 1),
+> +	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 64, 3),
+> +	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 64, 3),
+> +	MHI_CHANNEL_CONFIG_UL(9, "QDSS", 64, 3),
+> +	MHI_CHANNEL_CONFIG_UL(14, "NMEA", 32, 4),
+> +	MHI_CHANNEL_CONFIG_DL(15, "NMEA", 32, 4),
+> +	MHI_CHANNEL_CONFIG_UL(16, "CSM_CTRL", 32, 4),
+> +	MHI_CHANNEL_CONFIG_DL(17, "CSM_CTRL", 32, 4),
+> +	MHI_CHANNEL_CONFIG_UL(40, "MHI_PHC", 32, 4),
+> +	MHI_CHANNEL_CONFIG_DL(41, "MHI_PHC", 32, 4),
+> +	MHI_CHANNEL_CONFIG_UL(46, "IP_SW0", 256, 5),
+> +	MHI_CHANNEL_CONFIG_DL(47, "IP_SW0", 256, 5),
+> +	MHI_CHANNEL_CONFIG_UL(48, "IP_SW1", 256, 6),
+> +	MHI_CHANNEL_CONFIG_DL(49, "IP_SW1", 256, 6),
+> +	MHI_CHANNEL_CONFIG_UL(50, "IP_SW2", 256, 7),
+> +	MHI_CHANNEL_CONFIG_DL(51, "IP_SW2", 256, 7),
 
-HEAD commit:    f23aa4c0761a Merge tag 'hid-for-linus-2024090201' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13904b9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6248f0ab12f33349
-dashboard link: https://syzkaller.appspot.com/bug?extid=b7a3118f6a494674077f
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174ab580580000
+I believe you are going to add support for these channels in mhi_net driver. If
+so, it would be good to mention that in the commit message as these channels
+won't be useable for now.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-f23aa4c0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6b65e6e0b52b/vmlinux-f23aa4c0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5dd7d20b144c/bzImage-f23aa4c0.xz
+> +};
+> +
+> +static struct mhi_event_config modem_qcom_qdu100_mhi_events[] = {
+> +	/* first ring is control+data ring */
+> +	MHI_EVENT_CONFIG_CTRL(0, 64),
+> +	/* SAHARA dedicated event ring */
+> +	MHI_EVENT_CONFIG_SW_DATA(1, 256),
+> +	/* Software channels dedicated event ring */
+> +	MHI_EVENT_CONFIG_SW_DATA(2, 64),
+> +	MHI_EVENT_CONFIG_SW_DATA(3, 256),
+> +	MHI_EVENT_CONFIG_SW_DATA(4, 256),
+> +	/* Software IP channels dedicated event ring */
+> +	MHI_EVENT_CONFIG_SW_DATA(5, 512),
+> +	MHI_EVENT_CONFIG_SW_DATA(6, 512),
+> +	MHI_EVENT_CONFIG_SW_DATA(7, 512),
+> +};
+> +
+> +static const struct mhi_controller_config modem_qcom_qdu100_mhi_config = {
+> +	.max_channels = 128,
+> +	.timeout_ms = 120000,
+> +	.num_channels = ARRAY_SIZE(modem_qcom_qdu100_mhi_channels),
+> +	.ch_cfg = modem_qcom_qdu100_mhi_channels,
+> +	.num_events = ARRAY_SIZE(modem_qcom_qdu100_mhi_events),
+> +	.event_cfg = modem_qcom_qdu100_mhi_events,
+> +};
+> +
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b7a3118f6a494674077f@syzkaller.appspotmail.com
+Where is the 'mhi_pci_dev_info' struct?
 
-list_add corruption. next->prev should be prev (ffffe8fefc9300e0), but was ffff88810a694800. (next=ffff88810868fc00).
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:29!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 3 UID: 0 PID: 69 Comm: kworker/u32:3 Not tainted 6.12.0-rc1-syzkaller-00042-gf23aa4c0761a #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: zswap1 compact_page_work
-RIP: 0010:__list_add_valid_or_report+0xa9/0x100 lib/list_debug.c:29
-Code: 9d d1 8b e8 19 93 d8 fc 90 0f 0b 48 c7 c7 60 9e d1 8b e8 0a 93 d8 fc 90 0f 0b 48 89 d9 48 c7 c7 c0 9e d1 8b e8 f8 92 d8 fc 90 <0f> 0b 48 89 f1 48 c7 c7 40 9f d1 8b 48 89 de e8 e3 92 d8 fc 90 0f
-RSP: 0018:ffffc90000d67bf8 EFLAGS: 00010286
-RAX: 0000000000000075 RBX: ffff88810868fc00 RCX: ffffffff816d47e9
-RDX: 0000000000000000 RSI: ffffffff816df0e6 RDI: 0000000000000005
-RBP: ffff888040c49000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000000 R12: ffff88810868fc00
-R13: ffff888040c490b0 R14: ffffea0001031240 R15: ffff888040c49008
-FS:  0000000000000000(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055555b764808 CR3: 000000006493a000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __list_add_valid include/linux/list.h:88 [inline]
- __list_add include/linux/list.h:150 [inline]
- list_add include/linux/list.h:169 [inline]
- add_to_unbuddied mm/z3fold.c:550 [inline]
- do_compact_page+0x10f2/0x27b0 mm/z3fold.c:772
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_add_valid_or_report+0xa9/0x100 lib/list_debug.c:29
-Code: 9d d1 8b e8 19 93 d8 fc 90 0f 0b 48 c7 c7 60 9e d1 8b e8 0a 93 d8 fc 90 0f 0b 48 89 d9 48 c7 c7 c0 9e d1 8b e8 f8 92 d8 fc 90 <0f> 0b 48 89 f1 48 c7 c7 40 9f d1 8b 48 89 de e8 e3 92 d8 fc 90 0f
-RSP: 0018:ffffc90000d67bf8 EFLAGS: 00010286
+>  static const struct mhi_channel_config modem_qcom_v1_mhi_channels[] = {
+>  	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 16, 1),
+>  	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 16, 1),
+> @@ -822,6 +868,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+>  	/* NETPRISMA FCUN69 (SDX6X) */
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
+>  		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
+> +	/* QDU100, x100-DU */
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0601),
+> +		.driver_data = (kernel_ulong_t)&modem_qcom_qdu100_mhi_config },
 
-RAX: 0000000000000075 RBX: ffff88810868fc00 RCX: ffffffff816d47e9
-RDX: 0000000000000000 RSI: ffffffff816df0e6 RDI: 0000000000000005
-RBP: ffff888040c49000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000000 R12: ffff88810868fc00
-R13: ffff888040c490b0 R14: ffffea0001031240 R15: ffff888040c49008
-FS:  0000000000000000(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055555b764808 CR3: 000000006493a000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Why are you passing 'mhi_controller_config' instead of 'mhi_pci_dev_info'?
 
+- Mani
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+மணிவண்ணன் சதாசிவம்
 
