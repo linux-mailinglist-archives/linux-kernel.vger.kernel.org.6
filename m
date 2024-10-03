@@ -1,164 +1,120 @@
-Return-Path: <linux-kernel+bounces-349485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D4C98F6D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:13:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A4B98F6E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEAD8B22D26
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:13:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 549ED1C220C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5939B1B85C7;
-	Thu,  3 Oct 2024 19:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224871AC423;
+	Thu,  3 Oct 2024 19:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AttPN6u9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="KpKctKFK"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A661AC445;
-	Thu,  3 Oct 2024 19:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1671ABEAB
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 19:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727982762; cv=none; b=F/8kVWa0lkZJ/Mnrt7gE/EVCXaj+YkcUUjuBLY/39gSBmQYKU5STfkC+5iNVgnODh52Kp+kdMLB561nZlimzm3iLNHcX5EzhGkiHMCxoZxZoNN3EMlNT2KZ9X2GeOk3xbBqOuFcoAgltPwavhqPby97KWKe0RbjVHBEeOZJudaM=
+	t=1727982940; cv=none; b=luNtS8CgXEDzCtFrj5sXWKTWC6mbo1ClP0SYu1WU01FrcKJf9QhFe0E4zhk20IfHtCh4rPJHDEC3lyPjqu1pKIheZ+oZ7MjoXQNnOWgK4M2EkKZgr0BYwE1Em6N6o1fjAFVvxRS0bR8cMASvEMI9Lhd7C2Thbf/iTSdcjzGdttI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727982762; c=relaxed/simple;
-	bh=sDrMH2vMq/rOASOnomz+Tq6S88RIiBBasNCK7KSIlt4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SeOHGjK4iA+yqggGLBCUjXEw2wWy2VvbPm4Be4ggG78q+aAAGegmrNC0rPBEYgngbZY0Yb1Xkl+cDZ2CYeBrheSHLv9IWKMQ21Dm4xn2F+SbYruutMDPmFAS/DQIXddAO9CHDeuMWetSV6Xbt+dUDYwID6Fo0htK5kadCacpu/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AttPN6u9; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727982761; x=1759518761;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sDrMH2vMq/rOASOnomz+Tq6S88RIiBBasNCK7KSIlt4=;
-  b=AttPN6u9NSfpQTGlFw/EXtE0QLzTLHSnUXvoz5RDiL7NjU/e2UvTBgV9
-   3efeLTiEBzgcI67gaInrwL6H6uJFwR1t3OsBYM5j4T+wmx9LBbfG0mrYg
-   r1LyeUZrRz7DCHiTiSxuBMqVgIDRG/GYHlQqGKJuFlF+/yxkII+Ndsaj8
-   9V+zqrpzWKn8iQSweejKDzZ7nYHBCeq222/R2TL6WBp81HAnI1ivewsFT
-   ZocV1V0tzJSzbZUXEcRsQcaV+apR1Ps0BPOPzgwvzvjOx1dIDXVYV8Qaf
-   edC4Yn7fqrOStasGWoOdCf8Zxh/jkoD0Slo6NxLg/tRzEF6NDgpAQ/OBE
-   w==;
-X-CSE-ConnectionGUID: +KIIyio5R+GAFRR1j8VU8w==
-X-CSE-MsgGUID: aJyNdKIETTuOVwIHH7dynQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="27287533"
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="27287533"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 12:12:36 -0700
-X-CSE-ConnectionGUID: TkfdpTCnR326mxjRWMqr0w==
-X-CSE-MsgGUID: KPr0GTWXQl+BqWmZhg6stA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="74031042"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 12:12:36 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	x86@kernel.org
-Cc: Shaopeng Tan <tan.shaopeng@fujitsu.com>,
-	James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v7 4/4] x86/resctrl: Add new "mba_MBps_event" mount option to documentation
-Date: Thu,  3 Oct 2024 12:12:28 -0700
-Message-ID: <20241003191228.67541-5-tony.luck@intel.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241003191228.67541-1-tony.luck@intel.com>
-References: <20241003191228.67541-1-tony.luck@intel.com>
+	s=arc-20240116; t=1727982940; c=relaxed/simple;
+	bh=nvgZo8v/XwYx8CMN/Kd1Zf4q3oflbE/LLAS2ci7oBH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ctAAmz9+vP7AIghfbKjOBSwUqj14Y50H/1V3IAqDWP+CS8xdlJBKxzTUpJllzg3JQJtBvgFJZS/2qgmz6bCLHcW9MJWcl4jbVjj4wpSc/RobYRf/lDH/GgIqoaQLJRfAXccotkijWf8vvtdb2KsEl1ftPENkYginJTu38GVgoH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=KpKctKFK; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
+	by cmsmtp with ESMTPS
+	id wMxesp4Ijg2lzwRH0sKgNN; Thu, 03 Oct 2024 19:14:02 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id wRGzseehX827nwRGzsBz3F; Thu, 03 Oct 2024 19:14:01 +0000
+X-Authority-Analysis: v=2.4 cv=GeTcnhXL c=1 sm=1 tr=0 ts=66feecf9
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=B3fuDwYyW55wTQKIj88FGw==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10
+ a=BXEf9FEPToR6foY5dqUA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=8pMJywXUdYNAihC5TeN69Uh5MH5fG8t9KLIBI2MlI90=; b=KpKctKFK35P0YCMvSWT+sDdjBR
+	S49MB/OwSRxhMHyKQzkm4mLkOY0yZHshVfRBf0AY0BFViLUNC08SO8w1jXjl7y+0KzB9DFdj+vbPw
+	MmAGihM9RAA3YEMgGTcd6+ilQw5AKaai3h7xjfPDQQ0ANcVxXAWYkKGPpfBUM5W8wS7WdRRQ+pdAc
+	JFL8R+8EWyIaw5eu45YKh8hS06cB2Yt3X2bLkTkyT5ftdpfv9Xabi3y9V9qnMIqbx9R4ZJz8hSJMu
+	MMJz5IZDwQvgp7IakU5sBGIJJ9upuZllwauGX34r35lvqfIaVqM9mFR5YjNBwQUhj/nWlsq4RQm+o
+	wEU8h5Uw==;
+Received: from [201.172.174.147] (port=34444 helo=[192.168.15.5])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1swRGy-001ha2-1j;
+	Thu, 03 Oct 2024 14:14:00 -0500
+Message-ID: <a276cecb-ae71-4ae2-8c9b-362403dbc367@embeddedor.com>
+Date: Thu, 3 Oct 2024 13:13:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] drm/nouveau: Avoid -Wflex-array-member-not-at-end
+ warning
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <ZsZLFS1CsHkKjw+C@elsanto>
+ <ef5a8e6d-cb97-4872-901c-cf4bbec23be6@embeddedor.com>
+ <30530165-0ea9-4f02-9d8c-e8abc9eda5a7@kernel.org>
+ <035ae74b-5df5-493f-9835-02c1c30ccfcc@kernel.org>
+ <45560975-7215-4205-8d3b-a01009c9b4f5@embeddedor.com>
+ <e9a05386-54d8-4a18-8b16-4e871de094a4@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <e9a05386-54d8-4a18-8b16-4e871de094a4@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.174.147
+X-Source-L: No
+X-Exim-ID: 1swRGy-001ha2-1j
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.5]) [201.172.174.147]:34444
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfAFyv+GTnCcTEUBFEe6lEJ0P1sR3P8I8zbHJUPy4enILSkIMJnNHi8A4m2FzRRtboEsp2tDScMvAEIY89pCBb/va2RzUf+xUM0cEyHt1OB51GWGkdqI6
+ 6J/B+uLl3WJfLCHQpvKl3CBkeQRW7hyYhspmRB4X5KABuDPlf9CDAGTsRW29u96Ky03SuZzGfWe75o9uqG1SwGvtKPvkNN/KZ3R0oNwomrxPC8zGQwFTBl2/
 
-New mount option may be used to choose a specific memory bandwidth
-monitoring event to feed the MBA Software Controller(mba_sc) feedback
-loop.
 
-Resctrl will automatically switch to using total memory bandwidth
-on systems that do not support monitroing local bandwidth.
+> 
+> Yes, it's not great, but I think it's better than having the length in two
+> places.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- Documentation/arch/x86/resctrl.rst | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+Agreed. I'll respin. :)
 
-diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/arch/x86/resctrl.rst
-index a824affd741d..ab0868713f4a 100644
---- a/Documentation/arch/x86/resctrl.rst
-+++ b/Documentation/arch/x86/resctrl.rst
-@@ -35,7 +35,8 @@ about the feature from resctrl's info directory.
- 
- To use the feature mount the file system::
- 
-- # mount -t resctrl resctrl [-o cdp[,cdpl2][,mba_MBps][,debug]] /sys/fs/resctrl
-+ # mount -t resctrl resctrl [-o cdp[,cdpl2][,mba_MBps] \
-+ [,mba_MBps_event=[mbm_local_bytes|mbm_total_bytes]][,debug]] /sys/fs/resctrl
- 
- mount options are:
- 
-@@ -44,8 +45,14 @@ mount options are:
- "cdpl2":
- 	Enable code/data prioritization in L2 cache allocations.
- "mba_MBps":
--	Enable the MBA Software Controller(mba_sc) to specify MBA
--	bandwidth in MiBps
-+	Use a software feedback loop from the memory bandwidth monitoring
-+	feature to automatically adjust memory bandwidth allocation
-+	throttling so that the user can specify MBA control values in MiBps.
-+	Defaults to using MBM local bandwidth, but will use total bandwidth on
-+	systems that do not support local bandwidth monitoring.
-+"mba_MBps_event=[mbm_local_bytes|mbm_total_bytes]":
-+	Enable the "mba_MBps" option with an explicitly chosen monitor
-+	event as input to the software feedback loop.
- "debug":
- 	Make debug files accessible. Available debug files are annotated with
- 	"Available only with debug option".
-@@ -561,16 +568,24 @@ increase or vary although user specified bandwidth percentage is same.
- In order to mitigate this and make the interface more user friendly,
- resctrl added support for specifying the bandwidth in MiBps as well.  The
- kernel underneath would use a software feedback mechanism or a "Software
--Controller(mba_sc)" which reads the actual bandwidth using MBM counters
--and adjust the memory bandwidth percentages to ensure::
-+Controller(mba_sc)" which reads the actual bandwidth using either local
-+or total memory bandwidth MBM counters and adjusts the memory bandwidth
-+percentages to ensure::
- 
- 	"actual bandwidth < user specified bandwidth".
- 
- By default, the schemata would take the bandwidth percentage values
- where as user can switch to the "MBA software controller" mode using
--a mount option 'mba_MBps'. The schemata format is specified in the below
-+the mount option 'mba_MBps' or explicitly choose which MBM event with
-+the 'mba_MBps_event' option. The schemata format is specified in the below
- sections.
- 
-+The software feedback mechanism uses measurement of local
-+memory bandwidth to make adjustments to throttling levels. If a system
-+is running applications with poor NUMA locality users may want to use
-+the "mba_MBps_event=mbm_total_bytes" mount option which will use total
-+memory bandwidth measurements instead of local.
-+
- L3 schemata file details (code and data prioritization disabled)
- ----------------------------------------------------------------
- With CDP disabled the L3 schemata format is::
--- 
-2.46.1
-
+Thanks
+--
+Gustavo
 
