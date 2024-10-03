@@ -1,188 +1,135 @@
-Return-Path: <linux-kernel+bounces-348611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E449998E9A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:07:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C61698E9A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A01ED2877D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:07:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57B902877F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D248770F1;
-	Thu,  3 Oct 2024 06:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BDA3D551;
+	Thu,  3 Oct 2024 06:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GGubBS9J"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DxlSw8G5"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8599A74BF5
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 06:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA8917579
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 06:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727935620; cv=none; b=Z32Lf8gRRYtomep8YjSYOQjOLUZZJheuhR1uzBVE5FAHmiYo3khxxWrLSN90wBNNRkvvTiIPbwNMJbeQr0W+i2uIw/yS7pdRkZv1MmcCi+UE2s4l+jk+Qp5WkUSmV6okmRvcouMDhG29IPdSAqomj4KXS2zHsnu7Pog4EhqELY4=
+	t=1727935788; cv=none; b=TxPlBWfRM6ITmI+XUIuFbm+Qdnffjvkn79oYZuzBo/10J/tDZL/oOKoOrG3rHfLgHEN2ArFEbZ5Jm/XQN9qI6yTel5q3eb7VNzQ85iEGcNgGVKi3o4DptatYG1yOM7Mwqj4Vl6s9EKvAi9VQfUzs7Xvw/NymD6J/2CyEGxehFv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727935620; c=relaxed/simple;
-	bh=fEsCQM6BW8SNOJTUvU3QTqqXra1nbVT9I/v3S3I7xWs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E+yp+kVt2SjNDhAQp1b3mduS+HIsCtWcfPs2tE/AKDxLRxHlD27PMf1e2tNf6Tp3JI9wHPTNNvlqBfluAFL/Y4cjBQML/qult49bphRDXqY8wx8vz4w0clwcsbCtTFn5I2VA8pwp3e6YH+NZbu6Eg+iusGYSuf9mfZcIP0+CGAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GGubBS9J; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e0a5088777so492846a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 23:06:58 -0700 (PDT)
+	s=arc-20240116; t=1727935788; c=relaxed/simple;
+	bh=5qE7r2zF9aYX4kmLqkW5oVwtgaulZIS8B+W0wm0ojXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BdW/ezIqMbFNg/D+SRBQG6+m7Uak9IOAvcgiTqsR6Z5xQ9zvyMmY2UeRsUTfLeb0vNRruifANuqAOkwTQ8OJFG08Hvl/oC94dq3E+RgpNmov9qqT5beUqvzY+xgz2sy7Uxselgx8Dq1Qytplp5bVsPv5avzdNLjo21qH69YrjnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DxlSw8G5; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so447182a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 23:09:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727935618; x=1728540418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gizy/hHvKle/wUxwaQYiB0W0k117aCDj8y0fuH7eCC0=;
-        b=GGubBS9JT+Nyt7scfalSRWgS9rlv73vnqwTaOfuopFcELbymoEehBJ3KwJLWSvYKci
-         5vT0foH+I3YDsuqky2kCLRmcCirGN5Y3F/Sp4orio1otA3xmPoD2/7tEpwyqI0XCchFU
-         AlvMNGqOD7dTrMg/AXfRbGgAECyNR0YY0ADa6MOVArebcLVqBUIB2tbhVPEhF3+rTfrb
-         PS2ujbfBj1KP2h3fOfs8BxtSqAHxXB+e1bT/cZHllfzEcjZjhE+C7aBfd5tWlHtZkqMo
-         QkGexYHOUtoz912BX25PwMf2EHrJHyKqPYoOpCVhK08eNb+KS996OIxoaY8tEsueTYQN
-         AN4A==
+        d=linaro.org; s=google; t=1727935787; x=1728540587; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Z+l/BNMu/LG26jO3LSFHUD/mLYE9z78MrYoZ9LI74D4=;
+        b=DxlSw8G5gySctd8N79YpdkB5vUMtzT2uBZiMADxbmy+kLqV3DG+DuPGSY3e3rmLS/2
+         XSu9ExDt4IA4zIaqctHQHwWIWjkLBhSDXfZ/iJxgfvmSV4zDIIDS36SdCWzXS24UWisP
+         UQJwiK/xtzR7nSyc6593gxDrjn6G53yIUH9IQKIiC3JAJQd3QmKjz4ptDa+brGg44AfY
+         c+cHSpI/mogGhKXAR1HduiB5srZyDezRvpVE74REdahsHu3vQuRi+GV5I2lF1k2oslJG
+         Pzd5u1msRn2kLxxPnfgBFsneLrowRYDWU/AsbGrvU5mEJ35HwsfcObWE7xDEOo/skb7D
+         qTQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727935618; x=1728540418;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Gizy/hHvKle/wUxwaQYiB0W0k117aCDj8y0fuH7eCC0=;
-        b=uOTRwBWHwv+IGgPThX7AIReWBsy643pgsPHSr39TIvbR62ysoZBjfCZL0Lrt2lOxlN
-         tNNVxuT5s3rKS76eMOZpMdTanK3radnSXieoFSeXu85ECCyoAfICxNzRIJFfoZI96DBC
-         C6f60Cn39I/UbgaYTDvjtq5PGfRy4Cu7zw4ENCgxD7Tdda0irq0C8KvOje3S8YIfvHWv
-         HXrr1I7Kc/XOz6XODY8IB50hLb02paZE5o3T+R795e7+F5OOmcBFNMjFKnEtnl044jeB
-         ZbLecBn2YBUiaIBrynI5n2InYDEMNfFQGOS72b6Tc5r5L7XpapH2Qophho9DjDAevziE
-         q3Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCWl+YOqn4F5A6j0MSIh7JmqEvDMlecU5odhmykIwshKChJPwz+TE3EVoczpBuZvajv7M9HdD6oFiicxlIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbQYsCfhDLaCE7alXiRSXx1vY0PWN8Za3+0yi3qCQm/9V/cSAb
-	JgknD6OR4Bd9IyRyI4Qbjr2NqJ1dEo1iB2TUvh9CAtbYMVa/V5dS
-X-Google-Smtp-Source: AGHT+IH28i2qJ6+/r9g3BIoTWHR1EDtmgHyOuIUkZIQ+s87HIus1gxI6hsudyMxwnt0IsASivdgL4w==
-X-Received: by 2002:a17:90b:3b52:b0:2e0:8784:d420 with SMTP id 98e67ed59e1d1-2e1848013e7mr6502496a91.21.1727935617738;
-        Wed, 02 Oct 2024 23:06:57 -0700 (PDT)
-Received: from jayDESKTOP.. (210006200231.ctinets.com. [210.6.200.231])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1bfad5e01sm620663a91.3.2024.10.02.23.06.54
+        d=1e100.net; s=20230601; t=1727935787; x=1728540587;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+l/BNMu/LG26jO3LSFHUD/mLYE9z78MrYoZ9LI74D4=;
+        b=IPETTu3g3gmScjycXeUls0tFWFrleQXGX8QV3ejhmO6b3xuxlJO7PwgifJzi3ghSBv
+         FJqF7nHTG8jKtTTC6Rauls0N2fC1+TpAQ2MrHEdi+C8va9DL9iQVRoUCSCuHJj4B0zEq
+         aYTd/JcMSGewxdD5DGB3gJl4xdYZ3cuMv4av399JqDs+h6QydWLaKBuopgLW4JwHjLme
+         dgAQFLhU5vfQ50UTkbevByqJLvQLlgdd4FChIRAEfmIfw2b5UQ2vPuRj9mqNMzTEEgHr
+         VPEHuQ44cv7t0uGBIbTOSk7MFFBn0YuqsevDjkpZ5sAGFQDPWEtUdjg721PeQR5smsU4
+         FGlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNHI/t4EUC3jnDatLBzJZUZIR9SQWAgyoVg6PkHLIERb9EyEUzRjUloPpeaBQYS3BluebJAXCIsB5Nzz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD5Vv0bKvnabL/0/5YqRkn6LsxQ0msY4iq74eM0BerGN1iED1F
+	g74vTEoSMjzWjY2rtNhbRoQo+PVONVAdYwNtBYhubScuuOeKuBTCwa+KHKNxIvonTWmLSLlh96M
+	=
+X-Google-Smtp-Source: AGHT+IFigsn8XaXeeugwLxzQiUgwK2EEtzyoYGufQ0g6YwMrdXB5m+uDhfgnjNBLbesB2OvjVs5uNw==
+X-Received: by 2002:a17:902:e54d:b0:20b:6457:31e3 with SMTP id d9443c01a7336-20bc59ec8b5mr85235575ad.3.1727935786729;
+        Wed, 02 Oct 2024 23:09:46 -0700 (PDT)
+Received: from thinkpad ([36.255.17.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beefb3b5fsm2513775ad.237.2024.10.02.23.09.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 23:06:57 -0700 (PDT)
-From: Wu Hoi Pok <wuhoipok@gmail.com>
-To: 
-Cc: Hoi Pok Wu <wuhoipok@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Christian Zigotzky <chzigotzky@xenosoft.de>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/radeon: add late_register for connector
-Date: Thu,  3 Oct 2024 14:06:46 +0800
-Message-ID: <20241003060650.18454-1-wuhoipok@gmail.com>
-X-Mailer: git-send-email 2.46.2
+        Wed, 02 Oct 2024 23:09:46 -0700 (PDT)
+Date: Thu, 3 Oct 2024 11:39:42 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: jingoohan1@gmail.com, kwilczynski@kernel.org, bhelgaas@google.com,
+	lpieralisi@kernel.org, frank.li@nxp.com, robh@kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v1 2/2] PCI: dwc: Do stop link in the
+ dw_pcie_suspend_noirq
+Message-ID: <20241003060942.af3nycevgtspzigj@thinkpad>
+References: <1727243317-15729-1-git-send-email-hongxing.zhu@nxp.com>
+ <1727243317-15729-3-git-send-email-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1727243317-15729-3-git-send-email-hongxing.zhu@nxp.com>
 
-This is a fix patch not tested yet,
-for a bug I introduce in previous rework of radeon driver.
-The bug is a null dereference in 'aux.dev', which is the
-'device' not registered, resulting in kernel panic. By having
-'late_register', the connector should be registered after
-'drm_dev_register' automatically.
+In subject,
 
-Please help testing thank you.
+s/Do/Always
 
-Signed-off-by: Wu Hoi Pok <wuhoipok@gmail.com>
----
- drivers/gpu/drm/radeon/atombios_dp.c       |  9 ++-------
- drivers/gpu/drm/radeon/radeon_connectors.c | 17 +++++++++++++++++
- 2 files changed, 19 insertions(+), 7 deletions(-)
+On Wed, Sep 25, 2024 at 01:48:37PM +0800, Richard Zhu wrote:
+> On i.MX8QM, PCIe link can't be re-established again in
+> dw_pcie_resume_noirq(), if the LTSSM_EN bit is not cleared properly in
+> dw_pcie_suspend_noirq().
+> 
+> Add dw_pcie_stop_link() into dw_pcie_suspend_noirq() to fix this issue and
+> keep symmetric in suspend/resume function since there is
+> dw_pcie_start_link() in dw_pcie_resume_noirq().
+> 
+> Fixes: 4774faf854f5 ("PCI: dwc: Implement generic suspend/resume functionality")
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
 
-diff --git a/drivers/gpu/drm/radeon/atombios_dp.c b/drivers/gpu/drm/radeon/atombios_dp.c
-index fca8b08535a5..6328627b7c34 100644
---- a/drivers/gpu/drm/radeon/atombios_dp.c
-+++ b/drivers/gpu/drm/radeon/atombios_dp.c
-@@ -228,10 +228,8 @@ void radeon_dp_aux_init(struct radeon_connector *radeon_connector)
- {
- 	struct drm_device *dev = radeon_connector->base.dev;
- 	struct radeon_device *rdev = dev->dev_private;
--	int ret;
- 
- 	radeon_connector->ddc_bus->rec.hpd = radeon_connector->hpd.hpd;
--	radeon_connector->ddc_bus->aux.dev = radeon_connector->base.kdev;
- 	radeon_connector->ddc_bus->aux.drm_dev = radeon_connector->base.dev;
- 	if (ASIC_IS_DCE5(rdev)) {
- 		if (radeon_auxch)
-@@ -242,11 +240,8 @@ void radeon_dp_aux_init(struct radeon_connector *radeon_connector)
- 		radeon_connector->ddc_bus->aux.transfer = radeon_dp_aux_transfer_atom;
- 	}
- 
--	ret = drm_dp_aux_register(&radeon_connector->ddc_bus->aux);
--	if (!ret)
--		radeon_connector->ddc_bus->has_aux = true;
--
--	WARN(ret, "drm_dp_aux_register() failed with error %d\n", ret);
-+	drm_dp_aux_init(&radeon_connector->ddc_bus->aux);
-+	radeon_connector->ddc_bus->has_aux = true;
- }
- 
- /***** general DP utility functions *****/
-diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
-index 528a8f3677c2..f9c73c55f04f 100644
---- a/drivers/gpu/drm/radeon/radeon_connectors.c
-+++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -1786,6 +1786,20 @@ static enum drm_mode_status radeon_dp_mode_valid(struct drm_connector *connector
- 	return MODE_OK;
- }
- 
-+static int
-+radeon_connector_late_register(struct drm_connector *connector)
-+{
-+	struct radeon_connector *radeon_connector = to_radeon_connector(connector);
-+	int r = 0;
-+
-+	if (radeon_connector->ddc_bus->has_aux) {
-+		radeon_connector->ddc_bus->aux.dev = radeon_connector->base.kdev;
-+		r = drm_dp_aux_register(&radeon_connector->ddc_bus->aux);
-+	}
-+
-+	return r;
-+}
-+
- static const struct drm_connector_helper_funcs radeon_dp_connector_helper_funcs = {
- 	.get_modes = radeon_dp_get_modes,
- 	.mode_valid = radeon_dp_mode_valid,
-@@ -1800,6 +1814,7 @@ static const struct drm_connector_funcs radeon_dp_connector_funcs = {
- 	.early_unregister = radeon_connector_unregister,
- 	.destroy = radeon_connector_destroy,
- 	.force = radeon_dvi_force,
-+	.late_register = radeon_connector_late_register,
- };
- 
- static const struct drm_connector_funcs radeon_edp_connector_funcs = {
-@@ -1810,6 +1825,7 @@ static const struct drm_connector_funcs radeon_edp_connector_funcs = {
- 	.early_unregister = radeon_connector_unregister,
- 	.destroy = radeon_connector_destroy,
- 	.force = radeon_dvi_force,
-+	.late_register = radeon_connector_late_register,
- };
- 
- static const struct drm_connector_funcs radeon_lvds_bridge_connector_funcs = {
-@@ -1820,6 +1836,7 @@ static const struct drm_connector_funcs radeon_lvds_bridge_connector_funcs = {
- 	.early_unregister = radeon_connector_unregister,
- 	.destroy = radeon_connector_destroy,
- 	.force = radeon_dvi_force,
-+	.late_register = radeon_connector_late_register,
- };
- 
- void
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index cb8c3c2bcc79..9ca33895456f 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -952,6 +952,7 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>  		}
+>  	}
+>  
+> +	dw_pcie_stop_link(pci);
+>  	if (pci->pp.ops->deinit)
+>  		pci->pp.ops->deinit(&pci->pp);
+>  
+> -- 
+> 2.37.1
+> 
+
 -- 
-2.46.2
-
+மணிவண்ணன் சதாசிவம்
 
