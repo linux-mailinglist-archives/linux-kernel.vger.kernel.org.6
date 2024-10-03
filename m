@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-348533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB8698E8B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F07C698E8B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4F3F1C231A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:11:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F8181C2195C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6C52C6A3;
-	Thu,  3 Oct 2024 03:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE39620309;
+	Thu,  3 Oct 2024 03:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Hsc6syN8"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GHDjt4XY"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7901DFED
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 03:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F608F40
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 03:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727925016; cv=none; b=DG0z3wJRfpjTYSSOZ+8KUQjZ5GNTktB64QE8IWdTUB94/bAQwfc0exNXrmxh9wmMh/zqh8IrVCIBJnj28Ef5NoE2UowMY+WDfqUeBxcd4IU9DRXyp5LdArMTwjr0j9DgD9t83H2wzYX5vh/AHiLtgm4hukOeIreFAkF0Y03WzYA=
+	t=1727925118; cv=none; b=TV2D9jb3VLX3FojYqjyNTzlh4zB5u6kK3gqnidW9+Ls+nMlhH5ZF3jeInARM11OyVtepbbWX0w+34erh7zdrki+GwXUJfTehBkedUrCa9Pyxc9T/9Iou7WYAxaumbkOZmyTYF3omCSdhKLb81a5M5mc31sB5wP/WB7Q5xGPVB4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727925016; c=relaxed/simple;
-	bh=Neqmkoyzn2RifH2dUjuEAnyjzZHNkTTbmrpBbj4yvZc=;
+	s=arc-20240116; t=1727925118; c=relaxed/simple;
+	bh=AnC+0cgleI6g6hOCog96yYZqAZY9JgX98qzm/FbnhiY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dUje3W8TW+z2VLYOX7g4QAAF1OZJXECWq5SiFUADRSjHPORWdbQs6kpk/HncXl6dm2Dp0OUY15zQp9xfMXdWihYMsEMTkIjvKU3Nl39CHY57nEMsevlq71ETqRyBAbjobXVDUh8w49GWRLb+A/+tqZhcd6vWVXddE/2PiYocOkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Hsc6syN8; arc=none smtp.client-ip=209.85.167.53
+	 To:Cc:Content-Type; b=tUVoPWlbYB8uqRJ+SNIKlOpLoC82tJ8bQQf3eTxBAL32l4hK41oWGs7mQzhPiFCYBWg1E8CsxsjXMKPsKPp4EsmAbbY/XJjD27xWBaIzGAGNbmHZw67M6LbB/eAViaH4cjhsWjTUhixqEg5vWq2ALZDv+ILzDmPFk5DWZ1o27mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GHDjt4XY; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398d171fa2so448404e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 20:10:13 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso4848971fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 20:11:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1727925012; x=1728529812; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1727925114; x=1728529914; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Neqmkoyzn2RifH2dUjuEAnyjzZHNkTTbmrpBbj4yvZc=;
-        b=Hsc6syN8QDOCoae84C0cLzHLkvPaLrp7sfAng9EtvNZTQkC+R5GPbc6ywZ8l2GoZt6
-         brtHoONq8x3LdB6Z4l2aMfmMhANG7F7D/RttujaKlUvuXuTcOxaa0yVutj5AVX0Vldqq
-         rd1tz9395Yb2m3/Kl5koiJAbIgoAWuysTcojA=
+        bh=AnC+0cgleI6g6hOCog96yYZqAZY9JgX98qzm/FbnhiY=;
+        b=GHDjt4XYOmmQ1kmq7LqbNo9mb2QQI0NImpt2VPrjU1Ctu9/mxr9mDhoayNaE/q7HL1
+         EZOj33EFc32mshjZ6doyXdzH2bLO2+FYDZFhAhKO0QSXvjZtId4I0jIcyFM7wj5d7E1d
+         aCaV27MENE+c9VBFFyyrqgUFCXhWosRu0SM34=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727925012; x=1728529812;
+        d=1e100.net; s=20230601; t=1727925114; x=1728529914;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Neqmkoyzn2RifH2dUjuEAnyjzZHNkTTbmrpBbj4yvZc=;
-        b=XHoVpauF2O78u0+AYodMG6UYeRDYRtNeXikjOWuOAc4641AqF6zns7+d2EkN15VpUo
-         yoVRIAvSJLC/iYbflX4mQqhuBNJegWBSLZdMa0lD4gy8kqCugKcuvRCZvH6bTRVY7o78
-         QOILyFw1jrt5K0CbmigYoDylzqZvN4OWHpXTzDlL68XbjSg8vKuoqA5JBNeLdEBP9c5X
-         Zt/ojeV1ffbIhO13L8ujnFlKnr9OT3t33hN/qqEekCuGPS8itH5294ZjYeTctr8GyReT
-         J3vASa0wkwwKtkSfIEe+yJHonF4YvF9ochUn/d8q4Djqc9YH1XA4TCQwXoudf9eFaRcY
-         VNsg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxMSbJ5TstAGKgJHsBgLLNZJ8he3eHWJKFedt3H2gspaOajjKW/AZMId0pC6kxAf6Ho/qO1VRc86qnqNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw77J2C8j12lch52dDy5r8Vjxv882CmSC93b7nAwfvsmPuVz898
-	owMYmSVpHAzh3BJuz1SM0oYrgRr36YErnJGCTEY2FByndEek0ttltRqJoJ6AjHE54rWkuPKwMZA
-	8SG70bvfyImRnA6hc7Qm98lv1GYiaP6gZJmf0
-X-Google-Smtp-Source: AGHT+IHZI1beHSN1dhEkqSQ8rSpzwALRThN30cRkwAw9Gcck0A8SEky8qu/TiFxzdpkFkp5A5fFg+zTDla30B3YbPV8=
-X-Received: by 2002:a05:6512:3d11:b0:535:69a2:5f9e with SMTP id
- 2adb3069b0e04-539a07a88c4mr3315530e87.51.1727925012028; Wed, 02 Oct 2024
- 20:10:12 -0700 (PDT)
+        bh=AnC+0cgleI6g6hOCog96yYZqAZY9JgX98qzm/FbnhiY=;
+        b=eIIHaylC7570E6eXCs7OTJOO3bsyP6xk3RNeRtvEnu/OhQP3LsR15n5UD3R+zlkuYm
+         S5ffimcbbT5zbQ8ZZSfQKWYL0T81CtnqLMTex4UoMtqHiKJWe5K5+RGczI7pCvFU5UZT
+         ilYaAJYTjVkCRd7O4rn+2fo0fvXZ1MMaAGhc2T976V6XqcH6e3JcYB7BmGUaEOdE1xUL
+         +UOIzyKLbrIS+9ct6Nazw37ToaVc346aXz6QxgUCG8QcU4s3DjrguAth8W28KV2iA2Qy
+         k75zwTkcfsRWYY0fj3O3QiMt73wuHu5sXOK2gbcna4WY7DXaY0e3FOEj9A7vOmB7HzX1
+         9lOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbCU3sZJ4TadO++nWXW7ZtFwseZW0JpEp1+SolJVACotk9pIo2r4jPbmrIqkZRHk8ST/RugR1k3xTJFfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMFVQYNl0R61FvHjwDTbqhXBWKcgIhFseFM6iujYzHSusg8Tcw
+	B1VRnb1pRTb8dUzXA0sHnsZnCbQKXdutQO9f1a81EmEiNewRN8d32kOAzcqTJpQiRKh1jLakwK7
+	IwYPwh0sY4DR0+hx0BV9YNJr5cCKallL3Jb3U
+X-Google-Smtp-Source: AGHT+IFp0Z11En82lDuDic3trrXoS+W9pMDYCo1lIptWKsHQYJoFNvYdT9OLDG5kuC+LDVYlKRCEqf81gAuBitqKj6o=
+X-Received: by 2002:a05:6512:3b9e:b0:530:ea2b:1a92 with SMTP id
+ 2adb3069b0e04-539a079eb01mr3242858e87.43.1727925114544; Wed, 02 Oct 2024
+ 20:11:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001073225.807419-1-dongml2@chinatelecom.cn> <20241001073225.807419-6-dongml2@chinatelecom.cn>
-In-Reply-To: <20241001073225.807419-6-dongml2@chinatelecom.cn>
+References: <20241001073225.807419-1-dongml2@chinatelecom.cn> <20241001073225.807419-3-dongml2@chinatelecom.cn>
+In-Reply-To: <20241001073225.807419-3-dongml2@chinatelecom.cn>
 From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Thu, 3 Oct 2024 08:39:59 +0530
-Message-ID: <CAH-L+nOCP5TiFN_YM_iRJr5m6g1m2fOnDndGBobemizLUxeCOA@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 05/12] net: vxlan: make vxlan_remcsum() return
- drop reasons
+Date: Thu, 3 Oct 2024 08:41:42 +0530
+Message-ID: <CAH-L+nMW_aUHjGTT7B6eSLedsqbFhSPszYi9awj0ybiMsy6RBw@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 02/12] net: tunnel: add pskb_inet_may_pull_reason()
+ helper
 To: Menglong Dong <menglong8.dong@gmail.com>
 Cc: idosch@nvidia.com, kuba@kernel.org, aleksander.lobakin@intel.com, 
 	horms@kernel.org, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
@@ -81,32 +81,31 @@ Cc: idosch@nvidia.com, kuba@kernel.org, aleksander.lobakin@intel.com,
 	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org, 
 	netdev@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000090fcfd062389e4a9"
+	boundary="000000000000ad6619062389ea2f"
 
---00000000000090fcfd062389e4a9
+--000000000000ad6619062389ea2f
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 1, 2024 at 1:06=E2=80=AFPM Menglong Dong <menglong8.dong@gmail.=
+On Tue, Oct 1, 2024 at 1:05=E2=80=AFPM Menglong Dong <menglong8.dong@gmail.=
 com> wrote:
 >
-> Make vxlan_remcsum() support skb drop reasons by changing the return
-> value type of it from bool to enum skb_drop_reason.
->
-> The only drop reason in vxlan_remcsum() comes from pskb_may_pull_reason()=
-,
-> so we just return it.
+> Introduce the function pskb_inet_may_pull_reason() and make
+> pskb_inet_may_pull a simple inline call to it. The drop reasons of it jus=
+t
+> come from pskb_may_pull_reason().
 >
 > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 
 LGTM,
 Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
+
 --=20
 Regards,
 Kalesh A P
 
---00000000000090fcfd062389e4a9
+--000000000000ad6619062389ea2f
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -178,14 +177,14 @@ a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
 x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
 VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
 bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIC341aoYtQP/0fiOhsNse+8WSs6SlmoUTTvg/Kjmae9dMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAwMzAzMTAxMlowaQYJKoZIhvcNAQkPMVwwWjAL
+AQkEMSIEIP0Bj0v4v4pj1zt0YRk9iVZK95KL4jnWqYyaJMcDzoTuMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAwMzAzMTE1NFowaQYJKoZIhvcNAQkPMVwwWjAL
 BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQA7POdDEYMg
-LazPItvMCtK9oyKYZTO4P+jwHcSjRDDvQzF13FEui1q3CcV+6JbJv23ZIadmVaiEUgXkBwJuS445
-d8z0G5TqsVnQDXwaFrkSCxTgaNB6+vDeY2FLrXZzJVxZ6DUXrk8hf8+mvxeFWoag2FwYV0GIujIZ
-dg1toqc/qu3yxfIs2zCKAetNpffcIVG9q4MfJb7EXrlT0UGsxwMPhRoX4CQ4uLEvUWhryxRefgBj
-awhGrsP/lXsifx7Aa4t2/leEd7JL3KwqcJ52/d9D1kafR5Psx41CgdN+yvY97a5RSmtHcOREthyM
-yICFRaQTShcMYu7kTFEUWH+T8a1t
---00000000000090fcfd062389e4a9--
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBjYbMMy7DJ
+pxIp3G4kaYKW4pMMLdHs1RSw0yhjbFIjbYXVxexbska3/Cp2TqNONfQ8B8fmwaPplR39wagchYlV
+PbX3az8oRgqBr/oYcZzTyN3JpuER42r4o28ND61PTwjqODqAoE9URKBIWmxFEGH1nFJRCYwOYyuB
+SUWx3/TVIwuBhRinoVdlci246M9zm3fWDQGJ2p0GFgYFMwYYIWq5xrfHVE3gSH7FN192s5C7z9Hc
+K7vHqW9jz0i4ABDOAdcHYPZIxGk8nYHiK2EWm2qgca/EqeXi10e7nGsvAIO8FSVQoEkY1Il6kJBf
+AygsQ7XP5z9dR99ptbo6miA12nvI
+--000000000000ad6619062389ea2f--
 
