@@ -1,231 +1,266 @@
-Return-Path: <linux-kernel+bounces-349306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C960098F419
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:19:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A40198F41D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D6A2284118
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:19:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1775E1F21D1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079661AED3F;
-	Thu,  3 Oct 2024 16:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5401A7244;
+	Thu,  3 Oct 2024 16:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KqimmuCD"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2062.outbound.protection.outlook.com [40.107.223.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ezt96Rq0"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEAE1AC882
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 16:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727972187; cv=fail; b=uDpP3+J6Vlcss3bV2kgcm9kn78VPzPEW4GeGwfGsCBGymCwVEqHaR/Z1nqS/s5KTFJYATiuGvZNzWx2EMRlVhovyjClFU+aQ8X5hIBEAvdse0IYL05DlgfZX5HSNLBJsTq5wLiW4ia2mKNV3uuoSrYxBlJJJHBVpUKuJR7x0Yd4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727972187; c=relaxed/simple;
-	bh=MDKx2SfODF8tfL0jRhTiAwV24FV0VhpaNu5/0NHdLr4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gk4BDNLg+1vOgTtBssdjzRlO4vyVmiCUByREnSd2IO0c0tAW4O/pWMYrzJRHfNziltRJCS75aURyt2mZt8L8urc7vFhpm3AVd+oHKz8vMU56XN2c4gp57WVXFGPI0SMJjYvoxpLsQfXnmU1xK/4dg51CglyC0W6sKluq6Rxx84s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KqimmuCD; arc=fail smtp.client-ip=40.107.223.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aleWMyyR8saJJiMteOe4DZpIeIdVYmEpss/RUyljtfCYc62+cYry3H/24gVExv8KJdCvFXoCOYsxO3jPIWUEGiW5eWgFyh/EIC9gfMgPY+2Oj8grfBTUwvVBr/OyBJLVmv/Nz3JkmHAEmMR42i9kp97DYhA4mSTwRqEKy/7EB+a/ZUWXFEBBWsURanxgEgxBOQP3LqoMgRXwU2/hWIzsctYaJUEoe75t06DpOTKPurR3Ffz9oysA1INPF0yL7z+v/1TRr3kOrXl+IaGDUqA49FvOzUCfcCOqZghx3cePM6+KBPJVDwwtngjkOauXT5jh/YOyolBHJCVS6jFvbhyB/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cEqiAU34G+czhYkcdDXNiDKVvaxaguXzBPlTIZ3urSI=;
- b=DbYMGhk6li2h4R/thyh4ofw0EyHgMFQGmpPZN4tVwiuzBhb1j3Ce6g4PV6GZPS5AVd8XoBA9kiYfF6hzll9qAqh41bJ/e49CUmTdjldSIBzd203Aod2fJAR8QLMtoCBth2R/B8mvuox7wPRE6C8ovB7bIz6JD0fUcnT5AKUr1+nWjskjOqjOmnEab/WlN6nZPCPQXZwx8C8huXckwkC/mDimzp1iZQZ6GnAY+/9iPoSpYm7Z7VKRD96786+4A1hOgPjCBaY7csMGfIM23lhYRayoUi57MAiizyKDU7Hnh7XGHYnqs9E8aUeUfZE32aHG+nk60ESvgTjZjPDvi6rAIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cEqiAU34G+czhYkcdDXNiDKVvaxaguXzBPlTIZ3urSI=;
- b=KqimmuCDFzmcluuBlQDp9PdSWHXKXPUdnzxOZzqquaAjnyEr7ALHGUMMjfmYx4YdUBZFf2jkqUZdUMEmcCFZ9onN4ropg4NuOGVULNoSbxlkA1Ue//2kWm0ctqz4RuSG11vN6QCJlYoBCZjZN3+VxzsVu6G53LX6FlNFDLGWWm8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
- PH8PR12MB6769.namprd12.prod.outlook.com (2603:10b6:510:1c4::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18; Thu, 3 Oct
- 2024 16:16:23 +0000
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6%5]) with mapi id 15.20.8026.017; Thu, 3 Oct 2024
- 16:16:23 +0000
-Message-ID: <aaaab5d3-047c-4d48-a4d9-cb5b4adc733c@amd.com>
-Date: Thu, 3 Oct 2024 23:16:19 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/6] iommu/amd: Modify set_dte_entry() to use 256-bit
- DTE helpers
-Content-Language: en-US
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
- robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
- jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
- kumaranand@google.com
-References: <20240916171805.324292-1-suravee.suthikulpanit@amd.com>
- <20240916171805.324292-4-suravee.suthikulpanit@amd.com>
- <20240926195648.GA229871@nvidia.com>
-From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
-In-Reply-To: <20240926195648.GA229871@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0013.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::7) To DM8PR12MB5445.namprd12.prod.outlook.com
- (2603:10b6:8:24::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582CD19F11F;
+	Thu,  3 Oct 2024 16:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727972320; cv=none; b=YmMI0/bpwoTOxowUhCiG8MCCbwo3gLp7IjqncLzg4XamY4WyXXqnJOP3AHI5njl2M411htPX/J6UsLJfgdJo295OpzDSj+bkKfP3OaK7ni1WgTR+LXnIH6P1Dj5YG2wwXsyKl3IdNKVqpmjmwM/ywp4ITT12y8JuqOIzJC6ECOw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727972320; c=relaxed/simple;
+	bh=+TW1MQhhi44LlreD/bumvRzSsUzQ+d7UyWIDPpQv/e4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BFnGYmrQPP8aVcFKZ/H4XPZsB75ZZXGNE11XTcPaiKTpMSpcbB5gwvcfpurp+kFM2FDTwK1TyKVOuWNyyEARODswaQf9FXyimVOJdt2gL84Hqa1xHaV7lBSgOcZLpC0VZmG/UNABjMrUTO7lftWH/RZQK3vJy/ut7W0fbuIYBsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ezt96Rq0; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d60e23b33so168113166b.0;
+        Thu, 03 Oct 2024 09:18:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727972317; x=1728577117; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AnV/QykSRvodk27nXQlvBUnckGrf7XmSXrVyXXYHZAM=;
+        b=ezt96Rq0gqwZlRKuQaPAoU/wZietAJ1amwvl+3j1siSIfsMWvmr5VCdv+Gos86PScX
+         5d3WgupjuSsDf6ICyg3xbYJhAoQLrUAFou9NA0lOv4WLeDfheqnKpSMBURJx64YkX1/0
+         lUa5qg0KwDKx1lEs/nDepc3e+UugT0T2qcJewzJ4DmsTShoqyKOr4LZykdYgU9vIcJMA
+         1rqk3jPKXYXHW5fiMYoJTIVBlWyXT5tgI207pKC60E0t+1WfKWxgyyXwIXebilY5LbwH
+         V5SHcIS694wlSyZDMEfABUBF28oLhGtliGbdKbwZt0OvXNgt+8vOpM5RKHBtXIafz2u0
+         e3wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727972317; x=1728577117;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AnV/QykSRvodk27nXQlvBUnckGrf7XmSXrVyXXYHZAM=;
+        b=ckC/tkTFu5Gxt78B0lt9niG9QpJe0JnkMX+msaix7zyNjX8AFmOFl2Y3d+DJ8s3PxN
+         ZWf8GYf8roSTwuCXvPkPbnZWuXJncXYww1Z5Az0sTMq7kqfmBTYJsmn1hCJ2AWLj5leC
+         oAn5NBJY30knMkBfZKzqg7wfGf+OhBxuBZjcPQihStqdFBmE5yxAX2PM/H2j64Fds20O
+         jiGg1OJchKnzHuOW8C+7NehxHV1XbUah9CKMGcFPXtkrFNVYON0mVq2z8fthOVAuCGGn
+         z5AzcOIIu+1uHgJtolEtDEA+qJom1oGo9wftoMY6CA8CxqdPUAz3NQ1vGRkVeppmvhka
+         DvNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxKoIz9SqiLxov+OY3A6VYD97aRl4/ba/QpSzaHpPpwA9kUJvN53tb10Q9saHaFWI+zMQgJs1WauKPA+c6A6Q=@vger.kernel.org, AJvYcCWF3U/HX3gC93lTnW5HQtRQCssVvVVDfQpeNTIrWkhrzZBW0zVoiKu4kRNKoQaKghYZDOPnvp+aXDIS9qU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTnseC4uhHqhdlBNPGImcQC68nTMSRlGrHbX7OZfmoW0DroA0r
+	v2r32ZRw+7A3GrCiOv3bataIMQubRqCUilhqqbbqhktUuFZBuqkT
+X-Google-Smtp-Source: AGHT+IFKSXV8+4LFh+QnlERd37DUImc0QvUjqHw8FGAFE9drLMWNE1/Co0TrfDVtCJhyHkD8Pct33Q==
+X-Received: by 2002:a17:906:f5aa:b0:a8d:42c3:5f68 with SMTP id a640c23a62f3a-a98f823906bmr619891366b.23.1727972316450;
+        Thu, 03 Oct 2024 09:18:36 -0700 (PDT)
+Received: from ?IPV6:2003:df:bf2f:2200:b91b:c640:bc7f:cabd? (p200300dfbf2f2200b91bc640bc7fcabd.dip0.t-ipconnect.de. [2003:df:bf2f:2200:b91b:c640:bc7f:cabd])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a991028581esm103749966b.37.2024.10.03.09.18.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 09:18:36 -0700 (PDT)
+Message-ID: <4f051c35-fb45-4f91-8daf-6ba53c8d4ab9@gmail.com>
+Date: Thu, 3 Oct 2024 18:18:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|PH8PR12MB6769:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4bb0a25d-d88f-418a-04ab-08dce3c6b8f7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Vjh2eFN2RmZHcUI0Rk5DT292VDdrYURqSElTcFR0WGpaQm54VVFpdDNnbGdM?=
- =?utf-8?B?dEZRUHY1NCtuMnU2aHdGazFuZjd6K3NUNnREYi9VcGtVWjFHeDBOS3FidWJF?=
- =?utf-8?B?T3VXV3NXVi9jc1d2U0tMQk8yMkNUTm1XQzRXWmV2aDdSSEhGNzJTM1JyUjBn?=
- =?utf-8?B?TzZXYmtCcnRUVHlxZWI5V1FjNTBuRE0yMVBTZW96bDVrVVBtWFVQL3ZsTHFQ?=
- =?utf-8?B?cDJIN0FDeDdmVmtBZTJJSFl1MG9QbzdrVEM4VkM4TVNpMkVKcnRDMGd6UTVk?=
- =?utf-8?B?M1NFUVpZL0xKakt3bGlTNHhOWk8vT3o0RytPYjVFR0JPMTRMcUJwdHZCUzhy?=
- =?utf-8?B?V2RoS0hNL3ZjU20xakFQdEJ6VFdHNWJzZTlwcmVHZXBaQUR0VStubTh0U1Zs?=
- =?utf-8?B?RWxHU09VaXl1dFZ6MTZvQlVlVmphOUVSbFEvYnBXREZYWUd6VU5nYWxXQkRj?=
- =?utf-8?B?cDhvcFBzRk5VUDlUeG1aNkFoSU9EWEc1eWJUWnhYRXN3UitRNjRuZnhEa3lq?=
- =?utf-8?B?cjFUN3RJK21tVHBlZ1VyWmZGVCtrUTdINTN4VWZad3NrbElJODlJcFZjU2JV?=
- =?utf-8?B?VFgxdHFiTHl5b0RLTFc0NlRyVEE2bWhDQzc2VERKRGhrdER2UDkzbmZkK056?=
- =?utf-8?B?ZStoc2M5ODFkMHZYUXRHWHMzd2tMVElqbWxubEI3UUIrUXFvNjZWNHM0bW5q?=
- =?utf-8?B?d09CVEhyZHM5Q3pYaXJPTUdBd2I0YVNDSjdOUklnVEtYcXY0NTdpbnRMalpq?=
- =?utf-8?B?Tno0bUUyMXZyT0JQMFp2ZmEzZ2NuSnBJS3JrTWxYYTl5ZFdTeFVhamNJU0w0?=
- =?utf-8?B?NWhwK0Z6NkxvVUpDR2ovWHlEWnJTVU1kZjl1c3VVMGJ6ZmZJMVhIKy90M2tp?=
- =?utf-8?B?eUZ1ejREVkZ0RU9seTVEOC9JNS9BYWhBWVpOU0hxeFlUNmZLT1FDSk4wL1lE?=
- =?utf-8?B?bFNPdXJzMmluMVMzWDhNYVBBRDQ3ZkM2dENGUndiVnhBZm1uTGY2RlJ4QzlF?=
- =?utf-8?B?cG80YkVVRWI0V1FJY0lVNWljTkc2OGZGaWgwWDZlaS9VcDNjdzF6bkl3MW1Y?=
- =?utf-8?B?OFhwTzlMbHFmSlBtSCtWaGxYM1dkNDEwalBEZ3AydHRpWUdpU0hqeDZGTkFh?=
- =?utf-8?B?WFlqSTY4ZmlndlFXTXhuVnRNcUVtZkJnZ3BXNHRJRG1sRis3V2ExVFFHUU81?=
- =?utf-8?B?NkJUZXJtY292TlR3OTQwVS8xTU5sOVFqNFZjOFZJMS9QRllTZGhkTTJmcnQ4?=
- =?utf-8?B?OGptNWVnV1pRb3hZaGRmNk1jT1BiWFVjL0ViVTZNSEhoSkQ0WVZrVFV6RDU5?=
- =?utf-8?B?SmdvN2FHU29xbENvdVd2cGY1WmV4dmUvb29rbWpSU1BpbmFwak5oNzQzWVRH?=
- =?utf-8?B?dnVpU2YrcmppRjJ4V2JmTnNvYm5HZUV2c1ZpakxKWEp5Skg3TUF4NDY3T0NP?=
- =?utf-8?B?SFdEMHRGbmxuelQzZjNtQlVLcWZyU3p1NFp4SnRzczdyU0t4N0NiSURRWDVq?=
- =?utf-8?B?OHVPaG1MbjA5M3lSNUtkYkRuWi81Ui9ZVDl2RzhzNTQ2c0dFL3ZjblpPZ0F6?=
- =?utf-8?B?MnByZ2s5bG8wbXdZWFh6aXorTDdXR3gvSTJQUnpNKzRpelFMZXBFUmQxN1g4?=
- =?utf-8?B?SUJsMmlORHhNcVdObFgxRUJWOU5kODdhRy84NFlBOFhHTXhGWDgvNjZ2WENi?=
- =?utf-8?B?eENkZXJkckR0QVMxZVhBeXJiQXNlUDdwYnc0VHpPRnFxNkJxM1Z5eDBnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UDBKcVUraWh1b0lLekZvam1UU01BNFRIRjNaVHJNMVJUcEoxQmdoeUFTOW5X?=
- =?utf-8?B?MGlkaVV1RFlnQnlvaCtnLzZnaW0zQ3VXNVo4MWRoU3ZRKzdmVmRWNHl3Zmhl?=
- =?utf-8?B?WXB4WkkrcE9oL01ReHdsUGFRU0ZRaVpxczhYUForU0Z1TWRSRERvWWlhM3Jo?=
- =?utf-8?B?YXVYSE8rMmY1UGV0NnhiUVNMR1I3emNhZ3pTRkJpaDI5QzBEU01OOXZYd01K?=
- =?utf-8?B?MVYzWWxHMUdXclNsbm1oSzA4NFhoSUVDNk15dzRiY3Z5QTFEQmxNR0N1VTVM?=
- =?utf-8?B?V2Z5T3pObkZ3d0kwOHFkcExCR1VVVWhTRHQxNFlZNUFQVVQrUFd4bzQ4RzJa?=
- =?utf-8?B?QU9HQm92VjRzY2hHSHcwK0tFSzFGcWp0RTgzZng1NWxIYk9QS0xhZ2pVTTVr?=
- =?utf-8?B?NUhBTFBDaXV3UlQySUliTWRnUXNtaXZMUjJsb1dJZVhneWtMUXFqWm05dTRu?=
- =?utf-8?B?YjQxOXV4V3ZTakllZTErUC9PTk9OVzY1enh5eTFvUG1aWmRick1KZXJjcldD?=
- =?utf-8?B?OGhLMzkxWDNNcWZtaUIxUHdLOVBCNnF6d2VoSGlFQkppYVhXTHdWRXJSaTN2?=
- =?utf-8?B?OW5vZnBWWlVWY1lRRmVYV053c3B1N3JRUEh4aURmUk5CR2ZDTGtNT0FsODdh?=
- =?utf-8?B?a0NHN05FVnpMQUF4ak92eklJSkNwZkxINit6NlFtVFlPYzhGbzkvNk80UFNH?=
- =?utf-8?B?UmRCL2Ivd3NtVnU2bUoreFQxc09hS29CWTR0elBCUzdsNTZGelRSc1d1TXc3?=
- =?utf-8?B?cTE5QmRBc0JGOHRFbTNOSGVaaDZYdlQrdmVEN3NHVFlYWXpMU0RsOG5XUjFm?=
- =?utf-8?B?SzJEY0FOckMwNmlJRDV6eFBqUkxMMHlEOGI4Y0lJNzV4WHg3a3l2TTIxYkIy?=
- =?utf-8?B?RFN0elpZV2xOVTA5cUNXeXF4Vm52ZnhtWDZ3Yk91a3ZxMUN2d2RLWmdzc2tO?=
- =?utf-8?B?dWpMUXZERnZtdGxKMW9qVk9ZWEZJTlcvYURBZ2VEeStRcnFjZWU5eEVqcFdn?=
- =?utf-8?B?dk5yNkswK0h1Z0ZGVnhsTUhpWTJZMU9FcCtDZVlPV1J2QWFYRlFhMTB2SEZY?=
- =?utf-8?B?RFhjV2hIT0luQU9GM0R3QjNVVDZLRE9lY0RjQ0FZSlZEejYxSE8vQU1rSTcr?=
- =?utf-8?B?aFNoOGo4eW9HZVlNRHNoN3NjRGo5cEd0cEYwc05Db3RJS2h6MWhSMlc3QzRT?=
- =?utf-8?B?WkQxRmkrd2VmdTl2eTBJWFlsV3R3dnpZYkh3eVFmS2lvbEVGY2J6ZEdOdU1z?=
- =?utf-8?B?NzlxT2V4TnlCYmtBekNlRThDK0Z2eUtFMk9kQXVaZjJWejZwYkVrYk16US9T?=
- =?utf-8?B?SFZEdW5iVGhZTW9FeFhaY3JXc2pjSzhoTURtV0JHQk9Idmp0eGg3UEJCRzVp?=
- =?utf-8?B?eGhmcS9HVVovbzZ1ZGdIcDlUNk5CRnpDQlFYUkdrcW43ZVllY2M5aDMrQWpm?=
- =?utf-8?B?SkNLQld4S3Ztb1VyZ3B5UGtVSklxT0srZ0ZVMG5ZTS9NN1Q3YWxqWmVkVEUy?=
- =?utf-8?B?bHNLVkFLb3BCYitxcTc0ZTU5V201d2lhcXA1K2JlcjI4cjJzbEc0WnhGeTV1?=
- =?utf-8?B?S0dpb1NMNXFoUVNFUmZQQlRVZytnTjE3MWJqK1dkTTZCaitBZWwyQkNmaTZQ?=
- =?utf-8?B?a0ZRTytwdnBrMTJrbEpzMDI2Y0hOVEVIdGZrRVkrWXdrTjYreFJBaVZyQmM2?=
- =?utf-8?B?SVdsYUxTSzJKaURGR2RMa2drNElkTGNuQjZCR1NFT3lkeVZ3ai9hdzE2Q1VM?=
- =?utf-8?B?MkFQQkQzYy9GU3dLRFRUb3diVENsWkJDd244SnVDZWpLQWQza1ZBaWV0Vm0y?=
- =?utf-8?B?TTZKWXlweTY0cG42QmJuVnZESkNLRWVYd3Bpa3k0K0JRcENGZHlmZnJHYkFL?=
- =?utf-8?B?ekpTUVQ2WVJJS1pFaXFRYXZNeFd6V25GUnhqTTZ6RW5iUk1rek1BUGhCV2Nu?=
- =?utf-8?B?V09Xbmowb1dzTjRTMnN3c1djcVhoTnlBeWpjKzNhMmdkM3ZyZnhqU2c3Q2xX?=
- =?utf-8?B?akRIVGw2Tmc2SEJpN0Vza2NvOHBRaU03U2tyeDZPVGgzbWxmeE4xN2FURCs2?=
- =?utf-8?B?TytnbERJbGQwVFBnNG5YZi9XRFBWcTRzZkVmUVBxZ2ZKOHM3NHFmNW4vcnhh?=
- =?utf-8?Q?eC+CQNTIVDCdu6YAWOXeoBvtE?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4bb0a25d-d88f-418a-04ab-08dce3c6b8f7
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2024 16:16:22.9203
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uFzw5gbWvFGzplNjbmRB0Kk0bO1hnJDw8W7kq7kz2w0pKjXbpb1NkaevDvmARYOxdnM8Ldv50J79fr2s9ihkxw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6769
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/14] hrtimer Rust API
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240917222739.1298275-1-a.hindborg@kernel.org>
+ <e644aec7-02b3-4faf-9a80-629055c5a27a@de.bosch.com>
+ <ZvwKTinnLckZm8aQ@boqun-archlinux>
+ <b129cddc-862a-472b-b52a-2457b1a02d45@gmail.com>
+ <Zv6WDYZHikCCpUlB@boqun-archlinux>
+Content-Language: en-US
+From: Dirk Behme <dirk.behme@gmail.com>
+In-Reply-To: <Zv6WDYZHikCCpUlB@boqun-archlinux>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 9/27/2024 2:56 AM, Jason Gunthorpe wrote:
-> On Mon, Sep 16, 2024 at 05:18:02PM +0000, Suravee Suthikulpanit wrote:
->> Also, the set_dte_entry() is used to program several DTE fields (e.g.
->> stage1 table, stage2 table, domain id, and etc.), which is difficult
->> to keep track with current implementation.
+Am 03.10.24 um 15:03 schrieb Boqun Feng:
+> On Thu, Oct 03, 2024 at 10:14:17AM +0200, Dirk Behme wrote:
+>> Am 01.10.24 um 16:42 schrieb Boqun Feng:
+>>> On Tue, Oct 01, 2024 at 02:37:46PM +0200, Dirk Behme wrote:
+>>>> On 18.09.2024 00:27, Andreas Hindborg wrote:
+>>>>> Hi!
+>>>>>
+>>>>> This series adds support for using the `hrtimer` subsystem from Rust code.
+>>>>>
+>>>>> I tried breaking up the code in some smaller patches, hopefully that will
+>>>>> ease the review process a bit.
+>>>>
+>>>> Just fyi, having all 14 patches applied I get [1] on the first (doctest)
+>>>> Example from hrtimer.rs.
+>>>>
+>>>> This is from lockdep:
+>>>>
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/locking/lockdep.c#n4785
+>>>>
+>>>> Having just a quick look I'm not sure what the root cause is. Maybe mutex in
+>>>> interrupt context? Or a more subtle one?
+>>>
+>>> I think it's calling mutex inside an interrupt context as shown by the
+>>> callstack:
+>>>
+>>> ]  __mutex_lock+0xa0/0xa4
+>>> ] ...
+>>> ]  hrtimer_interrupt+0x1d4/0x2ac
+>>>
+>>> , it is because:
+>>>
+>>> +//! struct ArcIntrusiveTimer {
+>>> +//!     #[pin]
+>>> +//!     timer: Timer<Self>,
+>>> +//!     #[pin]
+>>> +//!     flag: Mutex<bool>,
+>>> +//!     #[pin]
+>>> +//!     cond: CondVar,
+>>> +//! }
+>>>
+>>> has a Mutex<bool>, which actually should be a SpinLockIrq [1].
 >>
->> Therefore, separate logic for setting up the GCR3 Table Root Pointer,
->> GIOV, GV, GLX, and GuestPagingMode into another helper function
->> set_dte_gcr3_table().
 >>
->> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
->> ---
->>   drivers/iommu/amd/iommu.c | 117 +++++++++++++++++++++-----------------
->>   1 file changed, 65 insertions(+), 52 deletions(-)
+>> Two understanding questions:
 >>
->> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
->> index 48a721d10f06..12f27061680d 100644
->> --- a/drivers/iommu/amd/iommu.c
->> +++ b/drivers/iommu/amd/iommu.c
->> @@ -1947,17 +1947,58 @@ int amd_iommu_clear_gcr3(struct iommu_dev_data *dev_data, ioasid_t pasid)
->>   	return ret;
->>   }
->>   
->> +static void set_dte_gcr3_table(struct amd_iommu *iommu,
->> +			       struct iommu_dev_data *dev_data,
->> +			       struct dev_table_entry *target)
->> +{
->> +	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
->> +	u64 tmp, gcr3;
->> +
->> +	if (!gcr3_info->gcr3_tbl)
->> +		return;
->> +
->> +	pr_debug("%s: devid=%#x, glx=%#x, gcr3_tbl=%#llx\n",
->> +		 __func__, dev_data->devid, gcr3_info->glx,
->> +		 (unsigned long long)gcr3_info->gcr3_tbl);
->> +
->> +	tmp = gcr3_info->glx;
->> +	target->data[0] |= (tmp & DTE_GLX_MASK) << DTE_GLX_SHIFT;
->> +	if (pdom_is_v2_pgtbl_mode(dev_data->domain))
->> +		target->data[0] |= DTE_FLAG_GIOV;
 > 
-> When does this get called to install a gcr3 table without a v2 domain?
+> Good questions. ;-)
 
-The GCR3 table is also used when we setup v2 table for SVA stuff. In 
-such case, we would be setting up w/ PASID. Therefore, the GIOV bit is 
-not needed.
+:-)
 
-> Other than my remark on patch 5 this looks Ok to me and making a
-> helper function for the gcr3 case is a good step forward.
+>> 1. In the main thread (full example for reference below [2]) where is the
+>> lock released? After the while loop? I.e. is the lock held until guard
 > 
-> Suggest you follow up with helper functions for blocking, identity and
-> v1 as well :) Then it will be really easy to follow.
+> With the current implementation, there are two places the lock will be
+> released: 1) inside CondVar::wait() and
 
-We will look to simplify the code in the future.
 
-Thanks,
-Suravee
+CondVar::wait() releases *and* reaquires, the lock then? So that 
+outside of CondVar::wait() but inside the while() loop the lock is 
+held until the while loop is exit?
+
+Would that lock handling inside CondVar::wait() handle the irq stuff 
+(irq enable and disable) of SpinLockIrq correctly, then?
+
+
+> 2) after `guard` is eventually
+> drop after the loop.
+> 
+>> reaches 5?
+>>
+>> let mut guard = has_timer.flag.lock();   // <= lock taken here?
+>>
+>> while *guard != 5 {
+>>       has_timer.cond.wait(&mut guard);
+>> }                                                           // <= lock
+>> released here?
+>>
+>> I wonder what this would mean for the interrupt TimerCallback in case we
+>> would use an irq-off SpinLock instead here?
+>>
+>> Or maybe:
+>>
+>> 2. The only place where the guard is modified (*guard += 1;) is in the
+>> TimerCallback which runs in interrupt context as we learned. With that
+>> writing the guard value can't be interrupted. Couldn't we drop the whole
+>> lock, then?
+>>
+> 
+> No, because the main thread can run on another CPU, so disabling
+> interrupts (because of the interrupt handlers) doesn't mean exclusive
+> access to value.
+
+Yes. I agree if the main thread would write. But that main thread does 
+read-only accesses, only? So it reads either the old or the new value, 
+indepenent on the locking? Only the interrupt handler does 
+read/modify/write. But thats protected by the interrupt context, already.
+
+Dirk
+
+
+>> Best regards
+>>
+>> Dirk
+>>
+>>
+>> [2]
+>>
+>> //! #[pin_data]
+>> //! struct ArcIntrusiveTimer {
+>> //!     #[pin]
+>> //!     timer: Timer<Self>,
+>> //!     #[pin]
+>> //!     flag: Mutex<u64>,
+>> //!     #[pin]
+>> //!     cond: CondVar,
+>> //! }
+>> //!
+>> //! impl ArcIntrusiveTimer {
+>> //!     fn new() -> impl PinInit<Self, kernel::error::Error> {
+>> //!         try_pin_init!(Self {
+>> //!             timer <- Timer::new(),
+>> //!             flag <- new_mutex!(0),
+>> //!             cond <- new_condvar!(),
+>> //!         })
+>> //!     }
+>> //! }
+>> //!
+>> //! impl TimerCallback for ArcIntrusiveTimer {
+>> //!     type CallbackTarget<'a> = Arc<Self>;
+>> //!     type CallbackPointer<'a> = Arc<Self>;
+>> //!
+>> //!     fn run(this: Self::CallbackTarget<'_>) -> TimerRestart {
+>> //!         pr_info!("Timer called\n");
+>> //!         let mut guard = this.flag.lock();
+>> //!         *guard += 1;
+>> //!         this.cond.notify_all();
+>> //!         if *guard == 5 {
+>> //!             TimerRestart::NoRestart
+>> //!         }
+>> //!         else {
+>> //!             TimerRestart::Restart
+>> //!
+>> //!         }
+>> //!     }
+>> //! }
+>> //!
+>> //! impl_has_timer! {
+>> //!     impl HasTimer<Self> for ArcIntrusiveTimer { self.timer }
+>> //! }
+>> //!
+>> //!
+>> //! let has_timer = Arc::pin_init(ArcIntrusiveTimer::new(), GFP_KERNEL)?;
+>> //! let _handle = has_timer.clone().schedule(Ktime::from_ns(200_000_000));
+>> //! let mut guard = has_timer.flag.lock();
+>> //!
+>> //! while *guard != 5 {
+>> //!     has_timer.cond.wait(&mut guard);
+>> //! }
+>> //!
+>> //! pr_info!("Counted to 5\n");
+>> //! # Ok::<(), kernel::error::Error>(())
+>>
+>>
+>>
+> [...]
+
 
