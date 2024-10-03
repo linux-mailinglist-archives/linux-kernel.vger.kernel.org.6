@@ -1,110 +1,164 @@
-Return-Path: <linux-kernel+bounces-349162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451F598F1EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:54:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF3098F123
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7679B2147A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:54:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8B721F23597
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1336319F422;
-	Thu,  3 Oct 2024 14:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B131819D095;
+	Thu,  3 Oct 2024 14:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+eE4+IV"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b="EdVEHlGX"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5AA197A65;
-	Thu,  3 Oct 2024 14:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727967286; cv=none; b=JzRWIBOjSg4oSSz45yueuuwYi5LjRtBTbys/HDmvDHaqYBukxBUP7gay/H8bh1TP5/WeGWHNrly8bKnd5a5lkVCY9qvL8gPNn8XJQIf3F2KT8EeIHv/yMXrA2YjKqrlPOUGNoJmr5vJ8by/txbTTNXNidXFbV5dK3Y8t2dB6VE4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727967286; c=relaxed/simple;
-	bh=uZT04iLPoVH61EzFHUulkVfWq07rul/sIu7DgbW9cGM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=BpO7az0o+i5bzuo5P95YdUaMzx8+nZNjuwELPybTFdienr4Bcd5KYtcNy3z3GVG3T76wsEPx2p89obLekXbN9zrNXc9GTxjQnVcXdBgUiGxrkBstkiQebs4ToXQZXiWyqNinMeVBlJcqoZCK25qMIqA2XihqKHSxoVVtimhx0z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K+eE4+IV; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b90984971so11210615ad.3;
-        Thu, 03 Oct 2024 07:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727967284; x=1728572084; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cg9f8AAouFbGggtUAeWVFr1axZNtUOVGqld4t64139o=;
-        b=K+eE4+IV0x3j2JnWuiVv3YWFzzVsSthE3gxjiuPWnieZXTC79OCu8OURoL+NGvY8N4
-         4tA9lJILe7JI9OWpGtaD43D/WI1NdXiClF1vLKNit+GytpthYOCO+p5bzicWDlTrm2R1
-         Mxxryffhg3NDnCpqq/VIGPLnhuEKw7ZDceJMU5Aq/ZIYbJR5QN77EeuWyEw8yNh1uR2u
-         Jsmp6jjZ+7jEvSJfzxfxVCn0sFtWvx3dKwSmLyHm6+18i+eejszdf9i7FdNwk/C+ZqXo
-         ppfD7fLjcGNNW8B2RPCaXhRI1ZAEDejVmedwUgO65wf4lA5PjqmdLW05gkVQTloO8xku
-         YrLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727967284; x=1728572084;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cg9f8AAouFbGggtUAeWVFr1axZNtUOVGqld4t64139o=;
-        b=bjL9cMhoAelmYUw0J5oXHIFWtOkZZxaHEzRRKw6xVN8fhzju/5R642PQgpsboG6g33
-         gn/3rnU1hi44BaaSzqvsyGmDcFYlybvzFU8+jmQXEdagWESH4F8s6uX7BmF/OhF1PkNk
-         dqLHr4U87Fg0wrR9JH5KuLPJ2OCeabKcov3JSI6sQrf6FJCJ7c4xkdsrihvJdIFHZ4qd
-         RSTbu3fDq9DRBWeC3WK8VOS7CelLMFkrVWgt0MLFHBi3FNlXYNJkY3CP3EF917sylgkW
-         jnEvLNuD8B6CkSpO478+nNp+a7PhoitnfWo4OmSD/HZpOjTQ7bxaQiS3wQWhbhSewuOE
-         tong==
-X-Forwarded-Encrypted: i=1; AJvYcCU6/1CRoJFb+5JTvh9TJNZ7o+e25WlW6mB8aQDvMWVdm+BzX8ZLm/3vGp7r9D4XOzT39pMMIplrlYXFHyU=@vger.kernel.org, AJvYcCXWOGPpPICc2lawEqNd8vPt9IPuwnrnzG7Lh79+iQZFd1Tq8ZRU5dSKzfkOS1K8vj0EVMnu6PWH2OZeRCsdUA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Z2UUzSuf3esPvl54P5+azLqE0+fBrKzuSGYOc9UYNKANWdCQ
-	0667oSRGMDIuEu5Bb8xnV6ygMtXAM+UAILtIH0i8W2mvhDZprxFJ
-X-Google-Smtp-Source: AGHT+IG0BFSna3W4LN8wo1ab8T3hD+OjdQlWZUfyqNt9EsvJCBriV3EkgCXuAT4lco6B4hbUUAXT4w==
-X-Received: by 2002:a17:902:fac5:b0:20b:54cc:b34e with SMTP id d9443c01a7336-20bc5ae9657mr81941555ad.51.1727967284421;
-        Thu, 03 Oct 2024 07:54:44 -0700 (PDT)
-Received: from smtpclient.apple ([198.11.176.14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beef8ded5sm9900375ad.174.2024.10.03.07.54.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Oct 2024 07:54:43 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633D81990AA;
+	Thu,  3 Oct 2024 14:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727964588; cv=pass; b=W8QMyeHZKVqrUT9iW1GtVutUHgdtd2Lm33iVmyr+P1ZZdGoxU3b/OHuPmJy2HZSBS4Dc6Prg6B2FS5YshQMzrsDD2UrVqFmsCNt0E22Jtku+S/pcyFhsUAfzCHE7TNJHwrM0jL70PuT4Wcvmk8EccQXeuREqOpwcBahnO+nLyR8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727964588; c=relaxed/simple;
+	bh=LTnd3jdSNvNjGZdqtD6vI/EHupSMLeh5Jy6AQmo5xIU=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=eNQE9s2JadtVpdJ7toyHZXRXoySkwc+ZH8zq6nDSteC1qJfWn9inZrjD3So4fxEU/GHS46PKGJ3lQuzvFw6N8LIOiXRamjUvFBUme1c13O4ewg3MKiDhX6HrRijKFJGK46kRFIlKVMRtT8wJPMGFP5e89j+xtkPe3yjSwGtSW3M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b=EdVEHlGX; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1727964567; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=PxzjsxdZoHLLEWUXBUtJIbx9FvlzyWRBvnpXUEH8ZVkpiZfTLPGvy/XA4HWYH3GdXWX+Fz+Ry4cIzMuHahHXJgKCenG8jEWyZTKZyolivk+j54T4ML2Pv/4qbGoKaFOfbRo6H73BvIGULY1NSAmuOjbDWWcC+iPHvUooV3igJ74=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1727964567; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=1OHhhNZ+OELPUq/O9d/iIoYUAyuuf7NZlomVKgtomd4=; 
+	b=ZQ39KtJe+AupNLqYeceIQqzdxeoBXyc7+0+sM3kEHQadskrnS4I2nYcJIKzFZ6S6tT88hqj7BNMI3YkvxswsQoVqav0d37uWoeLGPwvWWGLRC3KyNnFYhzpPcv2naDvBK0ZmHLei4vv1jQtS+gO8XV4X2dxwr8Y1s6xchvBbZfw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=helen.koike@collabora.com;
+	dmarc=pass header.from=<helen.koike@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727964566;
+	s=zohomail; d=collabora.com; i=helen.koike@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=1OHhhNZ+OELPUq/O9d/iIoYUAyuuf7NZlomVKgtomd4=;
+	b=EdVEHlGXFsAxJN+19yf//ol9ieQSDoRqLCvgjjIZOMKb7c74NYzeDUO6lVicMw25
+	TfSDEhx15h+ibwLHoPb6jl72/1Bqu4PAePPAaebr6aFNNBGM+9Bf1cQHGBqxtcl9Rre
+	77I8HB53JN/onRr797LMXBEI+94fzCMDmNvIoeyc=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1727964564611390.8472928612191; Thu, 3 Oct 2024 07:09:24 -0700 (PDT)
+Date: Thu, 03 Oct 2024 11:09:24 -0300
+From: Helen Mae Koike Fornazier <helen.koike@collabora.com>
+To: "Vignesh Raman" <vignesh.raman@collabora.com>
+Cc: "dri-devel" <dri-devel@lists.freedesktop.org>,
+	"daniels" <daniels@collabora.com>, "airlied" <airlied@gmail.com>,
+	"daniel" <daniel@ffwll.ch>, "robdclark" <robdclark@gmail.com>,
+	"guilherme.gallo" <guilherme.gallo@collabora.com>,
+	"sergi.blanch.torne" <sergi.blanch.torne@collabora.com>,
+	"deborah.brouwer" <deborah.brouwer@collabora.com>,
+	"dmitry.baryshkov" <dmitry.baryshkov@linaro.org>,
+	"mripard" <mripard@kernel.org>,
+	"rodrigo.vivi" <rodrigo.vivi@intel.com>,
+	"quic_abhinavk" <quic_abhinavk@quicinc.com>,
+	"linux-mediatek" <linux-mediatek@lists.infradead.org>,
+	"linux-amlogic" <linux-amlogic@lists.infradead.org>,
+	"linux-rockchip" <linux-rockchip@lists.infradead.org>,
+	"amd-gfx" <amd-gfx@lists.freedesktop.org>,
+	"linux-arm-msm" <linux-arm-msm@vger.kernel.org>,
+	"intel-gfx" <intel-gfx@lists.freedesktop.org>,
+	"virtualization" <virtualization@lists.linux.dev>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <19252b6cc3e.e564b8892647525.6443730088827538481@collabora.com>
+In-Reply-To: <20240930095255.2071586-1-vignesh.raman@collabora.com>
+References: <20240930095255.2071586-1-vignesh.raman@collabora.com>
+Subject: Re: [PATCH v4] docs/gpu: ci: update flake tests requirements
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH V3 0/1] livepatch: Add "stack_order" sysfs attribute
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <alpine.LSU.2.21.2410021343570.19326@pobox.suse.cz>
-Date: Thu, 3 Oct 2024 16:09:23 +0800
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>,
- Petr Mladek <pmladek@suse.com>,
- Joe Lawrence <joe.lawrence@redhat.com>,
- live-patching@vger.kernel.org,
- linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <FD1037B2-3CF6-4518-92E9-F079A7598B0A@gmail.com>
-References: <20240929144335.40637-1-zhangwarden@gmail.com>
- <alpine.LSU.2.21.2410021343570.19326@pobox.suse.cz>
-To: Miroslav Benes <mbenes@suse.cz>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
-
-Hi, Miroslav.
-
-> On Oct 2, 2024, at 19:44, Miroslav Benes <mbenes@suse.cz> wrote:
-> 
-> Hello,
-> 
-> could you also include the selftests as discussed before, please?
-> 
-> Miroslav
-
-Should I include selftests in one patch?
-
-Regards.
-Wardenjohn.
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
 
+
+
+
+---- On Mon, 30 Sep 2024 06:52:47 -0300 Vignesh Raman  wrote ---
+
+ > Update the documentation to specify linking to a relevant GitLab 
+ > issue or email report for each new flake entry. Added specific 
+ > GitLab issue urls for amdgpu, i915, msm and xe driver. 
+ >  
+ > Acked-by: Maxime Ripard mripard@kernel.org> 
+ > Acked-by: Rodrigo Vivi rodrigo.vivi@intel.com> #intel and xe 
+ > Acked-by: Abhinav Kumar quic_abhinavk@quicinc.com> # msm 
+ > Acked-by: Dmitry Baryshkov dmitry.baryshkov@linaro.org> # msm 
+ > Signed-off-by: Vignesh Raman vignesh.raman@collabora.com> 
+
+Applied to drm-misc-next
+Thanks!
+
+Helen
+
+ > --- 
+ >  
+ > v2: 
+ > - Add gitlab issue link for msm driver. 
+ >  
+ > v3: 
+ > - Update docs to specify we use email reporting or GitLab issues for flake entries. 
+ >  
+ > v4: 
+ > - Add gitlab issue link for xe driver. 
+ >  
+ > --- 
+ >  Documentation/gpu/automated_testing.rst | 14 ++++++++++---- 
+ >  1 file changed, 10 insertions(+), 4 deletions(-) 
+ >  
+ > diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst 
+ > index 2d5a28866afe..6d7c6086034d 100644 
+ > --- a/Documentation/gpu/automated_testing.rst 
+ > +++ b/Documentation/gpu/automated_testing.rst 
+ > @@ -68,19 +68,25 @@ known to behave unreliably. These tests won't cause a job to fail regardless of 
+ >  the result. They will still be run. 
+ >  
+ >  Each new flake entry must be associated with a link to the email reporting the 
+ > -bug to the author of the affected driver, the board name or Device Tree name of 
+ > -the board, the first kernel version affected, the IGT version used for tests, 
+ > -and an approximation of the failure rate. 
+ > +bug to the author of the affected driver or the relevant GitLab issue. The entry 
+ > +must also include the board name or Device Tree name, the first kernel version 
+ > +affected, the IGT version used for tests, and an approximation of the failure rate. 
+ >  
+ >  They should be provided under the following format:: 
+ >  
+ > -  # Bug Report: $LORE_OR_PATCHWORK_URL 
+ > +  # Bug Report: $LORE_URL_OR_GITLAB_ISSUE 
+ >  # Board Name: broken-board.dtb 
+ >  # Linux Version: 6.6-rc1 
+ >  # IGT Version: 1.28-gd2af13d9f 
+ >  # Failure Rate: 100 
+ >  flaky-test 
+ >  
+ > +Use the appropriate link below to create a GitLab issue: 
+ > +amdgpu driver: https://gitlab.freedesktop.org/drm/amd/-/issues 
+ > +i915 driver: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues 
+ > +msm driver: https://gitlab.freedesktop.org/drm/msm/-/issues 
+ > +xe driver: https://gitlab.freedesktop.org/drm/xe/kernel/-/issues 
+ > + 
+ >  drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt 
+ >  ----------------------------------------------------------- 
+ >  
+ > -- 
+ > 2.43.0 
+ >  
+ > 
 
