@@ -1,103 +1,268 @@
-Return-Path: <linux-kernel+bounces-348934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2617F98EE17
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:26:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9656298EE1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3E8F283097
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:26:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0696DB20BD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F4A1547CE;
-	Thu,  3 Oct 2024 11:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F181547E7;
+	Thu,  3 Oct 2024 11:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="WwYXdwJa"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oqhugZGa"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120C4153836
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 11:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D0B15443D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 11:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727954776; cv=none; b=iupROVTz98GDRVKGkwwmSk2hiDf7d3YXfJ0l2zFCMCoe8v6bfdVD1DDfOdW+fSj/v2UE3S7fiZIVFrs3ObkTN6kTjUjtS3IMznN5zVeBEJFEGaHKCAXheW4oKt06qEgtffqeTTbYmx1l1NMIqUeEiHH/tuf4D41+uQ/Oa+9UDc0=
+	t=1727954870; cv=none; b=OFLYBrts4bPXuIq/uLTHxfRusTa2dTprQqDaUJGGT7kKzdPfsG8LARIe1tNrw4RXk2j9w8QmEmEMJ8hASXt/qW37iwdgEA0quQhjIvYIt9Xxu/xsS4k6LEaQj2NgG4TqIq7lQHDtC+8WSVu8a6Lz1mNMu+NH9GeZB8rCbRUyb18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727954776; c=relaxed/simple;
-	bh=NbODAL29Apvfd6D+JLLYZ5MaHuTJ5svZVOh57sb0hqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LTcHEO5a77saFK0TOARgEoKXBMD3PIVvmn0Y1osFfij30Lvy65etKXXdV0oaGdBNI2qw8WU1AH6pMY2/XUNMxfzWpYokKjUsuK/V1OdLIv0uk9nN7Tw3YdNbUz6iNUN6Pmu/kRfu/bQvs5TZzscyBIn/1qlmA3h48PxTfklQNHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=WwYXdwJa; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53994aadb66so791455e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 04:26:13 -0700 (PDT)
+	s=arc-20240116; t=1727954870; c=relaxed/simple;
+	bh=Z/wE6vlPIxBH6LaOzwO/7U3nnPDqtFz/6PyjY83CPvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=jZ4/LKbG0EV1adLXc/edqch4LXYkyQVNG0eR/qyyR3tgoJjg98R0LuefakOcIkFbPnVTa4h2R0/vOsIgz4mbqhHIVcSFZ7HqFSUEil9LoNebamhmJugaKRbzLlJQAyNZtZh96F+rXNrv439xE3r5Ij56x1dVq9NL29nr2L+t5+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oqhugZGa; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso10865625e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 04:27:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727954772; x=1728559572; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rlLLunCl6g3gRP7KC52BE84aGo81PObxe/Q5X6ID2V0=;
-        b=WwYXdwJaIlkmeWiuoKrm2W+/77BSIhaCD8dXab51z1H+dNngu816ymTjEfiog+Ej7c
-         gehfcCH962joeC1Yl5jGLPCjdshs4tBqS9tt2VS7tVkTfn3vLscSS1d/7tb8ScPm8TeP
-         TCIykmJfjrtDPH/HZv1cGpPoL/9kwvD20ABSVaFTE1A6azwG1UQruPJJ/TrCx5MPn81D
-         CNV+TasdHwiiX1/ozE3iRA1HinCYDhxM3tnO1145ELge0+KEZ7l6tQVwTYS19v/GwW6S
-         KtEKI4ycnX5kuRmfMluRo0patCV5ObgPTptyFHjzMO6mvQJIJerbSpinmFGn1GYGeB3M
-         OjSQ==
+        d=linaro.org; s=google; t=1727954866; x=1728559666; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qem65KOW9h0XHEqIvrOXeHfZuZNWOf4NfsS3cuje4Uc=;
+        b=oqhugZGaoE94ortBzoKl9f+2yjZyJrRePFVcOmvMmhyWHvtRPMHjf55Y2bHEib6NM3
+         yMG545/KQkPqNRPS81R6gMhg9p6Br/YNNvxYpIuqwDRAZTTA7pzAqmxR7agc/eDsm/SP
+         aBtDAcz2CJTLssTTy4NW1T0MfwGGmQYwwM8DzQCc3DkJQgnmQgfKyxX+75bS1yllo/mq
+         oFxIg1wyU/nAMgNetmcX6Cz/tDBDessNMCSF6rphUr22IGv8D06otdKaT5hTnbjhLRAT
+         FpMCHLF83WQcaNsTzyoWe7jwO7w5jHxWEsf8tDj0nHohG98rVcDXB/Ke6SDumrOgbe27
+         5hkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727954772; x=1728559572;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rlLLunCl6g3gRP7KC52BE84aGo81PObxe/Q5X6ID2V0=;
-        b=fDTAc83zZ8NMx+VLBiICcdy1szOGoAHYCZ3xJZneFMm4nbeiMagBU9eW24uqxqiQqd
-         RiTAm7pKjRuF0BTMoU+O84lM4KjeE7ILdfZk68KiLB34zKFRex6oxisHGtPUWBSpR485
-         9O8UTzCTdpBJMReytp6ifv3dbZ4kajO+3VmiykzOWkPKoiwDWDqUdC/+MWVts1kKa8fG
-         x2zbhP4P3c1wyBmE1tjmurFOy9y23BGRbw6rSy29VDn/OZE7qtrvRo8X7+14/KND6UwY
-         ej4oeIDbFWZxmVciYiOeR0exuBeSSWfE5mLMskJqp1LmD13+PfXN67tJkVSmDhGUsfbE
-         n3Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVISYOmIMIhxKL/kHX2Y1NdY6NOMKOMjmEnvi8YlCITpS99sL0/VawkETpzkdIZGjPHHk9D4JGTUwsq1eY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzEi/srOQXSW/7Bety7B10BUtzIVuiYDg2uPo1co6OBOindxYU
-	mdENcdIMuH+TlZxHEpVkpiWIrLXVR9kBA+Q7IQnHExJ8tE2RFtj1dG3MGI0DxGYE5dMr5zqgdZD
-	pSyzm9/3ZxmZh4ireHurHQ0VYMLKV/YuylumJ5A==
-X-Google-Smtp-Source: AGHT+IH/EAovmZOtegJhqaVGARHaDU2Egf6EGNvaVpuGE/EmHaXFwEn8LjOg/kYa13GbfjvlQCAqo0kemX+JkhA3oYk=
-X-Received: by 2002:a05:6512:2216:b0:539:9587:dec7 with SMTP id
- 2adb3069b0e04-539a06827ebmr3801825e87.32.1727954771954; Thu, 03 Oct 2024
- 04:26:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727954866; x=1728559666;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qem65KOW9h0XHEqIvrOXeHfZuZNWOf4NfsS3cuje4Uc=;
+        b=aDYFbGLcgBeMZC8vD7205E7x/hvYStq4I1vXnGOy6svVmNxUoDhDxqe1Okm31877bB
+         Yo64DWqyyqnuLAbPVLs/T5xiTXcbUuOBJgpNZbml+O9qov8zE9kQWaalh9k3cCnIRXTU
+         VImgVoHNdnxuYNjBkVcPJjdE9HMUbB7lEilHBMvgUU0ryZjotraO+3KuwYp8Qhy5P78d
+         oLjIOPKEdzglihbWhBeeoWwRJb7SqpLVCXu+YnDNGTty9DShwFHwONstUOPo4XXqN6/1
+         KE9KEbCfH43CLv7ObmGtK4Siq+rr3hV9XE80Ffs5ZtO3r/R+Mw2bh8oWrg92ORQXlUpc
+         KhaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUytmmbGv6Vufl1c3Zw8ln6++ISJkhT9kpWfPOMSFNJF2yi8Q8XUb4/Zazss/VSiZPS8da91iDDi7u/Wak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY40ydxK34Moz9rCmTeU/U2nYO5gZOAepBFC09XfTEbEG69yDn
+	dTW4/mKNwJXsfQeydwJJ9qnEq7wtXHaWaeeqkwMJN78GEv6EIV6cBPR02H2ut9g=
+X-Google-Smtp-Source: AGHT+IEEmiRO7XNga2R0AbTWwcKrW4gQGuckB9cWDC35qKZ6RovrhXFw2RQNIFfDGFsMFgKWwBKiFg==
+X-Received: by 2002:a05:600c:3581:b0:42c:b508:750e with SMTP id 5b1f17b1804b1-42f777ba30cmr58372725e9.11.1727954866397;
+        Thu, 03 Oct 2024 04:27:46 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79d8d3bcsm42549325e9.5.2024.10.03.04.27.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 04:27:45 -0700 (PDT)
+Date: Thu, 3 Oct 2024 14:27:42 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Rosen Penev <rosenp@gmail.com>,
+	linux-crypto@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Arnaud Ebalard <arno@natisbad.org>,
+	Srujana Challa <schalla@marvell.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rosen Penev <rosenp@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] crypto: cesa: use enabled variants for clk_get
+Message-ID: <7f2b38c2-f9bc-4030-8cb7-6042760d4992@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930103041.49229-1-brgl@bgdev.pl> <20240930103041.49229-2-brgl@bgdev.pl>
- <Zv50l7U_Rq91I1Dw@hovoldconsulting.com>
-In-Reply-To: <Zv50l7U_Rq91I1Dw@hovoldconsulting.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 3 Oct 2024 13:26:00 +0200
-Message-ID: <CAMRc=Mf=5H46Rn_zfQjaG_mvyJ4cx2VKOVZxtGuqnA4whSSeGA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] arm64: dts: qcom: sc8280xp-crd: model the PMU of
- the on-board wcn6855
-To: Johan Hovold <johan@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kalle Valo <kvalo@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001232547.355947-3-rosenp@gmail.com>
 
-On Thu, Oct 3, 2024 at 12:40=E2=80=AFPM Johan Hovold <johan@kernel.org> wro=
-te:
->
-> > +
-> > +             qcom,ath11k-calibration-variant =3D "QC_8280XP_CRD";
->
-> Not "SC8280XP"?
->
+Hi Rosen,
 
-This was agreed with Kalle under the previous version.
+kernel test robot noticed the following build warnings:
 
-Bart
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/crypto-cesa-add-COMPILE_TEST/20241002-072835
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+patch link:    https://lore.kernel.org/r/20241001232547.355947-3-rosenp%40gmail.com
+patch subject: [PATCH 2/5] crypto: cesa: use enabled variants for clk_get
+config: um-randconfig-r073-20241003 (https://download.01.org/0day-ci/archive/20241003/202410031841.JyZSemmn-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202410031841.JyZSemmn-lkp@intel.com/
+
+smatch warnings:
+drivers/crypto/marvell/cesa/cesa.c:517 mv_cesa_probe() warn: missing error code 'ret'
+
+vim +/ret +517 drivers/crypto/marvell/cesa/cesa.c
+
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  432  static int mv_cesa_probe(struct platform_device *pdev)
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  433  {
+0bf6948995f9f7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  434  	const struct mv_cesa_caps *caps = &orion_caps;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  435  	const struct mbus_dram_target_info *dram;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  436  	const struct of_device_id *match;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  437  	struct device *dev = &pdev->dev;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  438  	struct mv_cesa_dev *cesa;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  439  	struct mv_cesa_engine *engines;
+28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  440  	int irq, ret, i, cpu;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  441  	u32 sram_size;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  442  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  443  	if (cesa_dev) {
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  444  		dev_err(&pdev->dev, "Only one CESA device authorized\n");
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  445  		return -EEXIST;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  446  	}
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  447  
+0bf6948995f9f7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  448  	if (dev->of_node) {
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  449  		match = of_match_node(mv_cesa_of_match_table, dev->of_node);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  450  		if (!match || !match->data)
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  451  			return -ENOTSUPP;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  452  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  453  		caps = match->data;
+0bf6948995f9f7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  454  	}
+0bf6948995f9f7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  455  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  456  	cesa = devm_kzalloc(dev, sizeof(*cesa), GFP_KERNEL);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  457  	if (!cesa)
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  458  		return -ENOMEM;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  459  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  460  	cesa->caps = caps;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  461  	cesa->dev = dev;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  462  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  463  	sram_size = CESA_SA_DEFAULT_SRAM_SIZE;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  464  	of_property_read_u32(cesa->dev->of_node, "marvell,crypto-sram-size",
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  465  			     &sram_size);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  466  	if (sram_size < CESA_SA_MIN_SRAM_SIZE)
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  467  		sram_size = CESA_SA_MIN_SRAM_SIZE;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  468  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  469  	cesa->sram_size = sram_size;
+a86854d0c599b3 drivers/crypto/marvell/cesa.c      Kees Cook       2018-06-12  470  	cesa->engines = devm_kcalloc(dev, caps->nengines, sizeof(*engines),
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  471  				     GFP_KERNEL);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  472  	if (!cesa->engines)
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  473  		return -ENOMEM;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  474  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  475  	spin_lock_init(&cesa->lock);
+bf8f91e711926c drivers/crypto/marvell/cesa.c      Romain Perier   2016-06-21  476  
+3cea6b36a43405 drivers/crypto/marvell/cesa/cesa.c Zhang Qilong    2020-09-17  477  	cesa->regs = devm_platform_ioremap_resource_byname(pdev, "regs");
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  478  	if (IS_ERR(cesa->regs))
+dfe97ad30e8c03 drivers/crypto/marvell/cesa.c      Boris Brezillon 2016-03-17  479  		return PTR_ERR(cesa->regs);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  480  
+db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  481  	ret = mv_cesa_dev_dma_init(cesa);
+db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  482  	if (ret)
+db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  483  		return ret;
+db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  484  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  485  	dram = mv_mbus_dram_info_nooverlap();
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  486  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  487  	platform_set_drvdata(pdev, cesa);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  488  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  489  	for (i = 0; i < caps->nengines; i++) {
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  490  		struct mv_cesa_engine *engine = &cesa->engines[i];
+0501d0d1494900 drivers/crypto/marvell/cesa/cesa.c Herbert Xu      2023-10-27  491  		char res_name[16];
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  492  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  493  		engine->id = i;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  494  		spin_lock_init(&engine->lock);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  495  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  496  		ret = mv_cesa_get_sram(pdev, i);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  497  		if (ret)
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  498  			goto err_cleanup;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  499  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  500  		irq = platform_get_irq(pdev, i);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  501  		if (irq < 0) {
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  502  			ret = irq;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  503  			goto err_cleanup;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  504  		}
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  505  
+28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  506  		engine->irq = irq;
+28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  507  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  508  		/*
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  509  		 * Not all platforms can gate the CESA clocks: do not complain
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  510  		 * if the clock does not exist.
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  511  		 */
+0501d0d1494900 drivers/crypto/marvell/cesa/cesa.c Herbert Xu      2023-10-27  512  		snprintf(res_name, sizeof(res_name), "cesa%u", i);
+4d5eba631bcc35 drivers/crypto/marvell/cesa/cesa.c Rosen Penev     2024-10-01  513  		engine->clk = devm_clk_get_optional_enabled(dev, res_name);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  514  		if (IS_ERR(engine->clk)) {
+4d5eba631bcc35 drivers/crypto/marvell/cesa/cesa.c Rosen Penev     2024-10-01  515  			engine->clk = devm_clk_get_optional_enabled(dev, NULL);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  516  			if (IS_ERR(engine->clk))
+4d5eba631bcc35 drivers/crypto/marvell/cesa/cesa.c Rosen Penev     2024-10-01 @517  				goto err_cleanup;
+
+ret = PTR_ERR(engine->clk);
+
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  518  		}
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  519  
+0501d0d1494900 drivers/crypto/marvell/cesa/cesa.c Herbert Xu      2023-10-27  520  		snprintf(res_name, sizeof(res_name), "cesaz%u", i);
+4d5eba631bcc35 drivers/crypto/marvell/cesa/cesa.c Rosen Penev     2024-10-01  521  		engine->zclk = devm_clk_get_optional_enabled(dev, res_name);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  522  		if (IS_ERR(engine->zclk))
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  523  			goto err_cleanup;
+
+ret = PTR_ERR(engine->zclk);
+
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  524  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  525  		engine->regs = cesa->regs + CESA_ENGINE_OFF(i);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  526  
+db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  527  		if (dram && cesa->caps->has_tdma)
+21ec757d2dd865 drivers/crypto/marvell/cesa.c      Romain Perier   2016-04-19  528  			mv_cesa_conf_mbus_windows(engine, dram);
+db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  529  
+21ec757d2dd865 drivers/crypto/marvell/cesa.c      Romain Perier   2016-04-19  530  		writel(0, engine->regs + CESA_SA_INT_STATUS);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  531  		writel(CESA_SA_CFG_STOP_DIG_ERR,
+21ec757d2dd865 drivers/crypto/marvell/cesa.c      Romain Perier   2016-04-19  532  		       engine->regs + CESA_SA_CFG);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  533  		writel(engine->sram_dma & CESA_SA_SRAM_MSK,
+21ec757d2dd865 drivers/crypto/marvell/cesa.c      Romain Perier   2016-04-19  534  		       engine->regs + CESA_SA_DESC_P0);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  535  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  536  		ret = devm_request_threaded_irq(dev, irq, NULL, mv_cesa_int,
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  537  						IRQF_ONESHOT,
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  538  						dev_name(&pdev->dev),
+21ec757d2dd865 drivers/crypto/marvell/cesa.c      Romain Perier   2016-04-19  539  						engine);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  540  		if (ret)
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  541  			goto err_cleanup;
+bf8f91e711926c drivers/crypto/marvell/cesa.c      Romain Perier   2016-06-21  542  
+28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  543  		/* Set affinity */
+28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  544  		cpu = cpumask_local_spread(engine->id, NUMA_NO_NODE);
+28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  545  		irq_set_affinity_hint(irq, get_cpu_mask(cpu));
+28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  546  
+bf8f91e711926c drivers/crypto/marvell/cesa.c      Romain Perier   2016-06-21  547  		crypto_init_queue(&engine->queue, CESA_CRYPTO_DEFAULT_MAX_QLEN);
+bf8f91e711926c drivers/crypto/marvell/cesa.c      Romain Perier   2016-06-21  548  		atomic_set(&engine->load, 0);
+85030c5168f1df drivers/crypto/marvell/cesa.c      Romain Perier   2016-06-21  549  		INIT_LIST_HEAD(&engine->complete_queue);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  550  	}
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  551  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  552  	cesa_dev = cesa;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  553  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  554  	ret = mv_cesa_add_algs(cesa);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  555  	if (ret) {
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  556  		cesa_dev = NULL;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  557  		goto err_cleanup;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  558  	}
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  559  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  560  	dev_info(dev, "CESA device successfully registered\n");
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  561  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  562  	return 0;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  563  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  564  err_cleanup:
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  565  	for (i = 0; i < caps->nengines; i++) {
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  566  		mv_cesa_put_sram(pdev, i);
+28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  567  		if (cesa->engines[i].irq > 0)
+28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  568  			irq_set_affinity_hint(cesa->engines[i].irq, NULL);
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  569  	}
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  570  
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  571  	return ret;
+f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  572  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
