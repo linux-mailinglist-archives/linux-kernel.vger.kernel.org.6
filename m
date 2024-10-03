@@ -1,49 +1,83 @@
-Return-Path: <linux-kernel+bounces-348832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E8CC98EC5F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:40:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E001E98EC62
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D053A1C21F6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:40:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D52F1C22105
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6651474B2;
-	Thu,  3 Oct 2024 09:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C793146D68;
+	Thu,  3 Oct 2024 09:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0YBLObe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jx6d1uVV"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E4C139D07;
-	Thu,  3 Oct 2024 09:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A599F7F48C;
+	Thu,  3 Oct 2024 09:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727948427; cv=none; b=drnP3Uyw9TncLDw9VpVY5toQx3MdLvHBqhNsRHm0SKoGxX6HXhA+Kd2hK6QUTk4GvNCIUOBtT9Lig1E1FokiEmCVgxXmvMgrS8Z0hqOFRnV1CPqChXNR7S0E8US8vacczbuS/J/A0/g415SnoKdofjv3PAl2PNULMxoXFrafgGE=
+	t=1727948497; cv=none; b=qxN0kcmMf1SpgGpyINjJltyu1b2HmtKX4SPk0gaOjyzx7B8Em4q+nL/bWV8nMrTvUm0lu1pMIg1kJwuceQGPOvEBeoB0/AKMl2m0VqweQZ8xsjsIBivfskq2ctHc49rM7vcO8FkJLiEJOkaCuRScVN8h+ajpUYwo+NGzn+WGBu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727948427; c=relaxed/simple;
-	bh=LFd4++ARnwhBwXjU944tIIAQhIdqdupWfHSQTCj9Flo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fJDPAKU6fSxOoBmtw/YP19OKh0CK+3YTZlZAOzr89PP1/WQ7ND/uDpDtrdGP1p/7RoYZt3e8oVtVjmSilktg4DZ5ONYU3rzlu7gbE4rBNiL9firvStG5iix0xXos6AQjTQbK36hpDGjWhadJ+v2Z4OWAoB0cS3krXCpQn4dg5s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0YBLObe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62EBAC4CEC7;
-	Thu,  3 Oct 2024 09:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727948426;
-	bh=LFd4++ARnwhBwXjU944tIIAQhIdqdupWfHSQTCj9Flo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Q0YBLObeA+rDsTw11e8JZT3eaIfH5wIk0iahFyqHbfRQIBcC6c5Q4dBf9nXzRqJEk
-	 FegibTDSeM8T8xkUMWZgFU6XR9XTYv9UAVefiKUZwZ6tP1sewRmNOXxRSeH3VPncCH
-	 5hYkDg9sQJ7yF6+INiLQ6xjblZ8CP9f4o/SjdXQG3AxeNpy6B13FUqht2KfhLc7igd
-	 uPM6xeWzC48Ssgutak9pXTzufpRvTELlqzm4TxkbmL+hGMKDKLdVRWWZTdWvzOV0Dy
-	 0wDFT99H8E1+zCgPVWIIWSLSGmAOyjt5QpIKxBHyB8GxFRC3klCnduRICCnkeYoHi/
-	 TSDQTDNIgVSNg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEBE380DBCA;
-	Thu,  3 Oct 2024 09:40:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1727948497; c=relaxed/simple;
+	bh=KwdiU7e6jwQOUK4JMjIqWgd/iGKoH3nUSss+p9So8YE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hKEEJDs+z5FAy1huot14t3QR7oGMEd6w19UTOcZx6irIWYzGW++GApvxD9ggV/ZTM2nfJ+gBSxrEAgdyAFz3dY8oIs+21ZeKsEvPwTF8SkOSnHfIESBeKqmydsA10t2aNHNMnBjz8ZzX1Jcy3O89kbUDQ5FJIPtdjAMD+7re1Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jx6d1uVV; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7db174f9050so158356a12.3;
+        Thu, 03 Oct 2024 02:41:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727948495; x=1728553295; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LaAziZ5BzdqeZgTYUzIk4JiJJBELIKK3NVIKrTIoSy0=;
+        b=Jx6d1uVVXA1gVOPIllzZ1jv45pT0nAiFUo5nyLy94gFTjWucLyyZOY8DMNffo/bVLz
+         wZcY6xZqW0F3BZloNSxli+DFGF9S6vz5COjg2tpy+7Wy7pStxggl7AECjEjCuFEgyp31
+         nuET3TRGS9gm6NgNszxyQwUgKp5Rm2kaH9ZwjAgJxpLiOns/pWJpgaeluay9teM5TsTC
+         Y00MoIL8dT2hiplQWggj5/qrbxzUk/5tPfe8Clr9y7pirNwPJXnRVZsY5UMeXLaXl5X8
+         +2QEOY0/yzs3d3eXygc7OGJfDbfsnGtnFAxdChPcXC1bluqd6g7wKgNYIPbJc00tYguB
+         tapw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727948495; x=1728553295;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LaAziZ5BzdqeZgTYUzIk4JiJJBELIKK3NVIKrTIoSy0=;
+        b=H8+dMameAGbeLRZdkjHBXZrvlTh/SKI7TgiCa1wN3fk0XpaTte1xr/UZhPwl3uOrVR
+         O9iPz/Oo2yiCzq/60iI9hI2wS+CQQ8WtPoxnY0senFOwJm5YciX6j66XT9gbk1ivIHRZ
+         zCOvK5Rf1p7Zi4czimViCpYeI+TUyJo+dXE5oUejl7tKXIorINTlhmNK2CMwx6W7qLFV
+         NUtCUOzPcCB+4nHVPaFupoU2vsdLzCXv0YhxWgYNS9/FYBHpmbaFmNJU02m7dy/NFEJi
+         11qdFQ2ct3llG4pzu3F2FepayU6EKvI808T3saX+sQ4t11tBW5fTkoMzApm7y7D/i7sy
+         6Kkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWJIlAv2KQtV2jfOSK/tEL44Bzi+nWZKCePR/mQ8K2DtUcItyCxgR8JzP0uBn/m/FD6Z52Mv/buMXcQJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO3W/NYNmpNk9HimymnAk7Xg1g/kAF4YNxs6IT8q8ZG3DuNDHc
+	PMfMbkWB1qDny2gP3R3BAGBbOGEFx4H9/WbMjvwG8M2FdA1hzuKb
+X-Google-Smtp-Source: AGHT+IHzp87d8RlBHgGq6QEtWCw9cP0+SIVZM0Si98O7W13b6emrK07fZOu0Jjc9/Oy55CFtXXJjoA==
+X-Received: by 2002:a17:90b:4b4e:b0:2e0:944b:9524 with SMTP id 98e67ed59e1d1-2e1846c9f16mr7147308a91.22.1727948494799;
+        Thu, 03 Oct 2024 02:41:34 -0700 (PDT)
+Received: from localhost.localdomain (n203-164-232-111.bla21.nsw.optusnet.com.au. [203.164.232.111])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1bfd2a08asm1084624a91.46.2024.10.03.02.41.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 02:41:34 -0700 (PDT)
+From: Rohan Barar <rohan.barar@gmail.com>
+To: mchehab@kernel.org,
+	hverkuil@xs4all.nl
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rohan Barar <rohan.barar@gmail.com>
+Subject: [PATCH v3] media: cx231xx: Add support for Dexatek USB Video Grabber 1d19:6108
+Date: Thu,  3 Oct 2024 19:40:40 +1000
+Message-ID: <20241003094039.2893301-2-rohan.barar@gmail.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20240930232500.1700330-2-rohan.barar@gmail.com>
+References: <20240930232500.1700330-2-rohan.barar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,48 +85,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next RESEND] net: mana: Increase the
- DEF_RX_BUFFERS_PER_QUEUE to 1024
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172794842978.1797683.8326945624970411743.git-patchwork-notify@kernel.org>
-Date: Thu, 03 Oct 2024 09:40:29 +0000
-References: <1727667875-29908-1-git-send-email-shradhagupta@linux.microsoft.com>
-In-Reply-To: <1727667875-29908-1-git-send-email-shradhagupta@linux.microsoft.com>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, kys@microsoft.com,
- haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- longli@microsoft.com, horms@kernel.org, kotaranov@microsoft.com,
- schakrabarti@linux.microsoft.com, erick.archer@outlook.com,
- pavan.chebbi@broadcom.com, ahmed.zaki@intel.com, colin.i.king@gmail.com,
- shradhagupta@microsoft.com
 
-Hello:
+Add Dexatek Technology Ltd USB Video Grabber 1d19:6108 to the cx231xx
+driver. This device is sold under the name "BAUHN DVD Maker (DK8723)" by
+ALDI in Australia.
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+This device is similar to 1d19:6109, which is already included in cx231xx.
 
-On Sun, 29 Sep 2024 20:44:35 -0700 you wrote:
-> Through some experiments, we found out that increasing the default
-> RX buffers count from 512 to 1024, gives slightly better throughput
-> and significantly reduces the no_wqe_rx errs on the receiver side.
-> Along with these, other parameters like cpu usage, retrans seg etc
-> also show some improvement with 1024 value.
-> 
-> Following are some snippets from the experiments
-> 
-> [...]
+Both video and audio capture function correctly after installing the
+patched cx231xx driver.
 
-Here is the summary with links:
-  - [net-next,RESEND] net: mana: Increase the DEF_RX_BUFFERS_PER_QUEUE to 1024
-    https://git.kernel.org/netdev/net-next/c/e26a0c5d828b
+Patch Changelog
+v1:
+ - Initial submission.
+v2:
+ - Fix SoB + Improve subject.
+v3:
+ - Rephrase message to not exceed 75 characters per line.
+ - Removed reference to external GitHub URL.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Signed-off-by: Rohan Barar <rohan.barar@gmail.com>
 
+---
+ drivers/media/usb/cx231xx/cx231xx-cards.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
+index 92efe6c1f..bda729b42 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-cards.c
++++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
+@@ -994,6 +994,8 @@ const unsigned int cx231xx_bcount = ARRAY_SIZE(cx231xx_boards);
+
+ /* table of devices that work with this driver */
+ struct usb_device_id cx231xx_id_table[] = {
++	{USB_DEVICE(0x1D19, 0x6108),
++	.driver_info = CX231XX_BOARD_PV_XCAPTURE_USB},
+ 	{USB_DEVICE(0x1D19, 0x6109),
+ 	.driver_info = CX231XX_BOARD_PV_XCAPTURE_USB},
+ 	{USB_DEVICE(0x0572, 0x5A3C),
+--
+2.46.1
 
