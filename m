@@ -1,318 +1,284 @@
-Return-Path: <linux-kernel+bounces-348734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3686C98EB2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:14:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D8698EB39
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6298A1C227C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6E9A1C223C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9525713A869;
-	Thu,  3 Oct 2024 08:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755B613A25F;
+	Thu,  3 Oct 2024 08:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MzB8eMo5"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QFLInN7m"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB8179B8E;
-	Thu,  3 Oct 2024 08:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B255913AA41
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 08:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727943262; cv=none; b=kwdFPkBqmCzeiyfDvc2LCLOYA39BKSIXe2h36ORKlkAvTZSst794uA6v5fc9IBuGsk78bJAS90e3zAkuj7+WFREYZAhd9xnmstBCFjabdw+HoQq78rWd6et2PyqNQDeL6OInWJThV/DmCCeKOGgC1zc2lN+vl108YQTUiceRlpw=
+	t=1727943275; cv=none; b=lhpqsWo4RwkDB2paQzqKP42+LcGZVj2y+QeeK3jSjZaqHvudi1/qQJ05jjxzWxGzqkBFcZ6MgdtodeHFc0VnV6S4CS8JPaKTP7ErLB6iSCwrNWkFEJtkin6w4LwFSuYCn06z4I++yaaJEUCUw900FUm0hMcbqo4671h/UssT20I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727943262; c=relaxed/simple;
-	bh=MI2C6mIp/cSvQX+odh4VG2PeEwAWjsXXdnMmaR3iYSA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L76aQ+OgFIooiGBkRG2MvsrAcq2OgZE67ATVJ9+so1xBCFPcdv93wb+iF/BmYFzmm+qb8v9qx5XoCIVVQisxmJtE/DivDD8XOxsN2muNx2p1z/DuhMbqPHKKJMd9Y9/KwjovMdbXaLD6DQA6jUYXCqb2+dr+prmrUaNQMaRtE88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MzB8eMo5; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso89541166b.3;
-        Thu, 03 Oct 2024 01:14:20 -0700 (PDT)
+	s=arc-20240116; t=1727943275; c=relaxed/simple;
+	bh=I5gkxxh+/Kn7rSd5JE9ZVp0kaBODXFkfmbSKaf1DYHc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aBpKlNrUWRvjqelpe+B9/ViZcrv4uiQ2PlNBEHyo6PysLCeadzM379fbzkNwHVvrpswHk9evAfGMufa1sMrcki9/cxiXN3qrtR68+WMspyzdwqqjC9dtysKCpC5kA7upywwazIXQq0v88NJHX+ZSYtWNsb303WRX7NGUsgEPs/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QFLInN7m; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42ee66c2c49so1027085e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 01:14:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727943259; x=1728548059; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fnG75PdTGr90aZOu/IntPX6a41sRWP19HOmtpdEwRf4=;
-        b=MzB8eMo5wL8NuKyfOB0SYeRp1keVkmjYJdpZ4fwCiP9rpF28/Ac3DcVJb3KdolDbIG
-         rDoMFT+5D4NfXkDnJEzJreNsegAVeY9O14+wg/R8qqyMNtyhlBTa/QwKWsBxGvn5lnya
-         YdT6DoBU+7VYE8w1TcLgx9SJS9bxNC30KsRVoh0Yh9NGdo+o6ZdJ8wpAxx5Ok+Rq40jk
-         s95MIp8u8EkefVkjmU6ExcReQIo3kgqT4+Rw7hfOt/Au/+I5FLu4gZKT+tneWrbDAlaT
-         PzC7mB+/49fCXva3GzEApCOFUkbsaEGPU19JoML7rJ5xVpFwcQRUXmeGFXUfBRjN4YPj
-         adyQ==
+        d=linaro.org; s=google; t=1727943272; x=1728548072; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UHrfObhoXZxOjnZcmfI2vEOVJIbBll+cRB8dRqaKEJs=;
+        b=QFLInN7mDPxZ76Y+DBfNKyYAwLcqBTwBfTF0ESMF/3HEzU6TFDo+PRi+u1RcGJ3oOD
+         dXBNFPwT860Q4yskSJ2RsjMqpGEoElAb/cDgTDjJ6wyvveU2g2VMeH/y1HT8bg1OZPTy
+         8ZiG+IeEDAIUDHKS+Il9T2b/DUOP78vmxmcAPv/7zu2PVaiz3aCllkMIHAf0J/JVht55
+         1aKXgTQfCaJjPhID2q2qCAbR0oozS9dHUbsG/9MTnoZ2U89wmtWVE7nrvj5ILILcR1zB
+         5mFfWxbgDelegfrkXoWjeYaLxZ3SAPzPli0pEiB4ExwCjUM99TfQHUPXA248fmV0CX6J
+         RHsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727943259; x=1728548059;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fnG75PdTGr90aZOu/IntPX6a41sRWP19HOmtpdEwRf4=;
-        b=orXKbkaI3XS62KTWhWY0iszC7pcwOnG+KFfrEHUgmpuDh5hOQ1OApgs58m6tcYnUX8
-         BI1KbZHIM2D6EKsBgj0iFN/exH55ISsIaU5nqPwReMoZyIRhnjK0W5Lsy8G1avD2eYN7
-         U3EAC1bZnMcAQO7Z45VppqGwoRl4+12DGsCtXTQB6ukSbimSfDNsCP02E8kfNHhIVPcu
-         rW7rmqGpuiEb0M24XyN1f1kXkegWWNTf/5efYngrBADiowkoR7DC3XqAE13oOQLMz13e
-         zMsxp9q/EVrwsarOviLgzM3oieCEZ/CPto717mW2I5LEu4IiBBFiUk6Zu2WAqMfbzKPy
-         Quow==
-X-Forwarded-Encrypted: i=1; AJvYcCWEDoULSoVAhd9cmc0U1WRPI0lDhrWa9+PqLzaE/G5tcf+GPNm24WT7Y1vIz9dgWW0mkdANXnZYcP8/Ug+ohzU=@vger.kernel.org, AJvYcCXBTskMbBOLkj/+w749yDN5gJhnVyVqtsa5BW9uHNGHQIyEa+cT3tRZ6SnqInAp8mQvX2EW5RROcvuIQxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYsZHIr3NsCYyGMpU1tSTsM36/kCQtvmOLa1I1p3g1poW4omzX
-	M/HCQOGfYsa2V4hNMrdisnNWOVELvEsFWFSvzXoIZ0gmLSwxFmbp
-X-Google-Smtp-Source: AGHT+IHjCeOxyJl961FXaO56NAFwm1MP+kB2d6LSN3P4OkLrcVwOV+qm9u+CKz9fD7LroT9tFHJGcQ==
-X-Received: by 2002:a17:906:99c5:b0:a7a:acae:3415 with SMTP id a640c23a62f3a-a98f82133admr461600966b.10.1727943259158;
-        Thu, 03 Oct 2024 01:14:19 -0700 (PDT)
-Received: from ?IPV6:2003:df:bf2f:2200:b91b:c640:bc7f:cabd? (p200300dfbf2f2200b91bc640bc7fcabd.dip0.t-ipconnect.de. [2003:df:bf2f:2200:b91b:c640:bc7f:cabd])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99102a8e13sm49584966b.90.2024.10.03.01.14.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 01:14:18 -0700 (PDT)
-Message-ID: <b129cddc-862a-472b-b52a-2457b1a02d45@gmail.com>
-Date: Thu, 3 Oct 2024 10:14:17 +0200
+        d=1e100.net; s=20230601; t=1727943272; x=1728548072;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UHrfObhoXZxOjnZcmfI2vEOVJIbBll+cRB8dRqaKEJs=;
+        b=lwCGoWKS5m/1N5iJnAmN67XkzlvfI8pxENHab88YKWEP4yRkrb4ryJd7xsKN3ObNKL
+         ogUQhTH6UeTrahUH9Rak3Cx0KGgwag66B20kqsoKcK0qBeo0s3XtbwMgCSB3s+PUBdO1
+         1U9Fen+9BU2rzfwlRYTQqvkeBpZTT9BSij5yftQXcRsQYFuadrClrNug5cR8LYsd/yvq
+         bHJOvu+VSeXc+v/axINo2u5kIYVGbTjykVsA+aRrEZVoS8wsQwIMyGG0lA7x+pbuEiUr
+         RD6WdicLTjAz5QWdTtboGNL6+7cDjxcSYMV+V9HAoQZGUAzEomRjMYvG6Ufl48qJazSj
+         kFvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkG5yMUOMPy5Ybugc0wI6EUyw7eNbo/4tx/bZwGsze4RlvQJMa4tRW4l75l438THdV6A35Dg+/WCdjK/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsAu2wSqxA5N5rlGjQmVuTroSIeO2hb1vN4yOIcePwGKt4PJiU
+	AWx/dwHVMtz0TpWTlJ8oOiyxbXh5/vbDbwRy/Gqq5Ph/7V6RpSozBxXaLhWw9+o=
+X-Google-Smtp-Source: AGHT+IHMjRyVUMPEi+gSZ/24bRWlnva5QunmQXCmdsDcU6Mhxs+a79NfsNMAh1FZ1Yq85tIJ65W/ig==
+X-Received: by 2002:a05:6000:1ac6:b0:374:c962:a18a with SMTP id ffacd0b85a97d-37cfb8d068fmr2143166f8f.4.1727943271910;
+        Thu, 03 Oct 2024 01:14:31 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d230dsm702027f8f.94.2024.10.03.01.14.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 01:14:31 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Date: Thu, 03 Oct 2024 10:14:18 +0200
+Subject: [PATCH 1/5] dt-bindings: display/msm: merge SC8280XP DPU into
+ SC7280
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/14] hrtimer Rust API
-To: Boqun Feng <boqun.feng@gmail.com>, Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda
- <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240917222739.1298275-1-a.hindborg@kernel.org>
- <e644aec7-02b3-4faf-9a80-629055c5a27a@de.bosch.com>
- <ZvwKTinnLckZm8aQ@boqun-archlinux>
-Content-Language: de-AT-frami
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <ZvwKTinnLckZm8aQ@boqun-archlinux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241003-dt-binding-display-msm-merge-v1-1-91ab08fc76a2@linaro.org>
+References: <20241003-dt-binding-display-msm-merge-v1-0-91ab08fc76a2@linaro.org>
+In-Reply-To: <20241003-dt-binding-display-msm-merge-v1-0-91ab08fc76a2@linaro.org>
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Krishna Manikandan <quic_mkrishn@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5123;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=I5gkxxh+/Kn7rSd5JE9ZVp0kaBODXFkfmbSKaf1DYHc=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBm/lJgpCz5PczWvVC4MOIIKhlQ6KLXaZenlrYJI
+ drKKpzFNpOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZv5SYAAKCRDBN2bmhouD
+ 10fcD/4547yeLqXfKNqq/CjO1tHYFMiWiDA6JArchwq/G4NWZyVC+Xq8hEdf7u3a7ycQb0rs3cL
+ 0huBzw5X9Ufag9yLBEM3iS8noXXPgJuWSh/WqX8DTWpOvg1E3Bu8+w55lf/zy8GuUqGF4h1o7W0
+ qOmxHVECt5X4Ny+VxP5b6kxsezf4wUbVipwfW45ykmdqijK6D2qgrfF2CZMB+/aOZkVnUdavGtJ
+ gjMIYp5Pf/r9uGsCitHgUB0rULcJEippVF59cFhZdGD9ESFbSuuyS/CdaFmO9bmN3mPq/7UpD+i
+ kA8s7BwUumRlLjkhjAnSfC1+sg6vJln4nvp84XpySm80dTf6rRC8D3zfBlk2leVrq+eKr/4r8bF
+ 7x/I6rPiTHgPRHpsiwiVyR9BpzxnmvjQeCjlCHlGxW3Db+O3bbP6xvezxKYnHd6DTWm9ydIlNrU
+ UpONUCnuUvGy/SGhA6la9MlpRTcPlVCywjDAWVXW+U9ninUzNQqctGNSigCb9sgcp/oQEhgdrbG
+ XShEwlMGR1T1Co9HkghLDyQVMIqNGSc7htte0RjHVWqQadeLFyE/O+o2yA98PTrhN/PKR0A8Zj3
+ DNK0MrBAfS0fTQlkz0RNU2LrYSvNF51+fkpAQexMN5NMDH6zif5WdABJIKysAlQllhnMYh/63wo
+ KmkfVBAKxFOlbzA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Am 01.10.24 um 16:42 schrieb Boqun Feng:
-> On Tue, Oct 01, 2024 at 02:37:46PM +0200, Dirk Behme wrote:
->> On 18.09.2024 00:27, Andreas Hindborg wrote:
->>> Hi!
->>>
->>> This series adds support for using the `hrtimer` subsystem from Rust code.
->>>
->>> I tried breaking up the code in some smaller patches, hopefully that will
->>> ease the review process a bit.
->>
->> Just fyi, having all 14 patches applied I get [1] on the first (doctest)
->> Example from hrtimer.rs.
->>
->> This is from lockdep:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/locking/lockdep.c#n4785
->>
->> Having just a quick look I'm not sure what the root cause is. Maybe mutex in
->> interrupt context? Or a more subtle one?
-> 
-> I think it's calling mutex inside an interrupt context as shown by the
-> callstack:
-> 
-> ]  __mutex_lock+0xa0/0xa4
-> ] ...
-> ]  hrtimer_interrupt+0x1d4/0x2ac
-> 
-> , it is because:
-> 
-> +//! struct ArcIntrusiveTimer {
-> +//!     #[pin]
-> +//!     timer: Timer<Self>,
-> +//!     #[pin]
-> +//!     flag: Mutex<bool>,
-> +//!     #[pin]
-> +//!     cond: CondVar,
-> +//! }
-> 
-> has a Mutex<bool>, which actually should be a SpinLockIrq [1]. 
+Split of the bindings was artificial and not helping - we end up with
+multiple binding files for very similar devices thus increasing the
+chances of using different order of reg and clocks entries.
 
+Unify DPU bindings of SC7280 and SC8280XP, because they are the same.
 
-Two understanding questions:
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/display/msm/qcom,sc7280-dpu.yaml      |   5 +-
+ .../bindings/display/msm/qcom,sc8280xp-dpu.yaml    | 122 ---------------------
+ 2 files changed, 4 insertions(+), 123 deletions(-)
 
-1. In the main thread (full example for reference below [2]) where is 
-the lock released? After the while loop? I.e. is the lock held until 
-guard reaches 5?
+diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sc7280-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sc7280-dpu.yaml
+index b0fbe86219d1..fab7a3b9a20e 100644
+--- a/Documentation/devicetree/bindings/display/msm/qcom,sc7280-dpu.yaml
++++ b/Documentation/devicetree/bindings/display/msm/qcom,sc7280-dpu.yaml
+@@ -7,13 +7,16 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Display DPU on SC7280
+ 
+ maintainers:
++  - Bjorn Andersson <andersson@kernel.org>
+   - Krishna Manikandan <quic_mkrishn@quicinc.com>
+ 
+ $ref: /schemas/display/msm/dpu-common.yaml#
+ 
+ properties:
+   compatible:
+-    const: qcom,sc7280-dpu
++    enum:
++      - qcom,sc7280-dpu
++      - qcom,sc8280xp-dpu
+ 
+   reg:
+     items:
+diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sc8280xp-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sc8280xp-dpu.yaml
+deleted file mode 100644
+index d19e3bec4600..000000000000
+--- a/Documentation/devicetree/bindings/display/msm/qcom,sc8280xp-dpu.yaml
++++ /dev/null
+@@ -1,122 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+-%YAML 1.2
+----
+-$id: http://devicetree.org/schemas/display/msm/qcom,sc8280xp-dpu.yaml#
+-$schema: http://devicetree.org/meta-schemas/core.yaml#
+-
+-title: Qualcomm SC8280XP Display Processing Unit
+-
+-maintainers:
+-  - Bjorn Andersson <andersson@kernel.org>
+-
+-description:
+-  Device tree bindings for SC8280XP Display Processing Unit.
+-
+-$ref: /schemas/display/msm/dpu-common.yaml#
+-
+-properties:
+-  compatible:
+-    const: qcom,sc8280xp-dpu
+-
+-  reg:
+-    items:
+-      - description: Address offset and size for mdp register set
+-      - description: Address offset and size for vbif register set
+-
+-  reg-names:
+-    items:
+-      - const: mdp
+-      - const: vbif
+-
+-  clocks:
+-    items:
+-      - description: Display hf axi clock
+-      - description: Display sf axi clock
+-      - description: Display ahb clock
+-      - description: Display lut clock
+-      - description: Display core clock
+-      - description: Display vsync clock
+-
+-  clock-names:
+-    items:
+-      - const: bus
+-      - const: nrt_bus
+-      - const: iface
+-      - const: lut
+-      - const: core
+-      - const: vsync
+-
+-unevaluatedProperties: false
+-
+-examples:
+-  - |
+-    #include <dt-bindings/clock/qcom,dispcc-sc8280xp.h>
+-    #include <dt-bindings/clock/qcom,gcc-sc8280xp.h>
+-    #include <dt-bindings/interrupt-controller/arm-gic.h>
+-    #include <dt-bindings/interconnect/qcom,sc8280xp.h>
+-    #include <dt-bindings/power/qcom-rpmpd.h>
+-
+-    display-controller@ae01000 {
+-        compatible = "qcom,sc8280xp-dpu";
+-        reg = <0x0ae01000 0x8f000>,
+-              <0x0aeb0000 0x2008>;
+-        reg-names = "mdp", "vbif";
+-
+-        clocks = <&gcc GCC_DISP_HF_AXI_CLK>,
+-                 <&gcc GCC_DISP_SF_AXI_CLK>,
+-                 <&dispcc0 DISP_CC_MDSS_AHB_CLK>,
+-                 <&dispcc0 DISP_CC_MDSS_MDP_LUT_CLK>,
+-                 <&dispcc0 DISP_CC_MDSS_MDP_CLK>,
+-                 <&dispcc0 DISP_CC_MDSS_VSYNC_CLK>;
+-        clock-names = "bus",
+-                      "nrt_bus",
+-                      "iface",
+-                      "lut",
+-                      "core",
+-                      "vsync";
+-
+-        assigned-clocks = <&dispcc0 DISP_CC_MDSS_MDP_CLK>,
+-                          <&dispcc0 DISP_CC_MDSS_VSYNC_CLK>;
+-        assigned-clock-rates = <460000000>,
+-                               <19200000>;
+-
+-        operating-points-v2 = <&mdp_opp_table>;
+-        power-domains = <&rpmhpd SC8280XP_MMCX>;
+-
+-        interrupt-parent = <&mdss0>;
+-        interrupts = <0>;
+-
+-        ports {
+-            #address-cells = <1>;
+-            #size-cells = <0>;
+-
+-            port@0 {
+-                reg = <0>;
+-                endpoint {
+-                    remote-endpoint = <&mdss0_dp0_in>;
+-                };
+-            };
+-
+-            port@4 {
+-                reg = <4>;
+-                endpoint {
+-                    remote-endpoint = <&mdss0_dp1_in>;
+-                };
+-            };
+-
+-            port@5 {
+-                reg = <5>;
+-                endpoint {
+-                    remote-endpoint = <&mdss0_dp3_in>;
+-                };
+-            };
+-
+-            port@6 {
+-                reg = <6>;
+-                endpoint {
+-                    remote-endpoint = <&mdss0_dp2_in>;
+-                };
+-            };
+-        };
+-    };
+-...
 
-let mut guard = has_timer.flag.lock();   // <= lock taken here?
-
-while *guard != 5 {
-      has_timer.cond.wait(&mut guard);
-}                                                           // <= lock 
-released here?
-
-I wonder what this would mean for the interrupt TimerCallback in case 
-we would use an irq-off SpinLock instead here?
-
-Or maybe:
-
-2. The only place where the guard is modified (*guard += 1;) is in the 
-TimerCallback which runs in interrupt context as we learned. With that 
-writing the guard value can't be interrupted. Couldn't we drop the 
-whole lock, then?
-
-Best regards
-
-Dirk
-
-
-[2]
-
-//! #[pin_data]
-//! struct ArcIntrusiveTimer {
-//!     #[pin]
-//!     timer: Timer<Self>,
-//!     #[pin]
-//!     flag: Mutex<u64>,
-//!     #[pin]
-//!     cond: CondVar,
-//! }
-//!
-//! impl ArcIntrusiveTimer {
-//!     fn new() -> impl PinInit<Self, kernel::error::Error> {
-//!         try_pin_init!(Self {
-//!             timer <- Timer::new(),
-//!             flag <- new_mutex!(0),
-//!             cond <- new_condvar!(),
-//!         })
-//!     }
-//! }
-//!
-//! impl TimerCallback for ArcIntrusiveTimer {
-//!     type CallbackTarget<'a> = Arc<Self>;
-//!     type CallbackPointer<'a> = Arc<Self>;
-//!
-//!     fn run(this: Self::CallbackTarget<'_>) -> TimerRestart {
-//!         pr_info!("Timer called\n");
-//!         let mut guard = this.flag.lock();
-//!         *guard += 1;
-//!         this.cond.notify_all();
-//!         if *guard == 5 {
-//!             TimerRestart::NoRestart
-//!         }
-//!         else {
-//!             TimerRestart::Restart
-//!
-//!         }
-//!     }
-//! }
-//!
-//! impl_has_timer! {
-//!     impl HasTimer<Self> for ArcIntrusiveTimer { self.timer }
-//! }
-//!
-//!
-//! let has_timer = Arc::pin_init(ArcIntrusiveTimer::new(), GFP_KERNEL)?;
-//! let _handle = has_timer.clone().schedule(Ktime::from_ns(200_000_000));
-//! let mut guard = has_timer.flag.lock();
-//!
-//! while *guard != 5 {
-//!     has_timer.cond.wait(&mut guard);
-//! }
-//!
-//! pr_info!("Counted to 5\n");
-//! # Ok::<(), kernel::error::Error>(())
-
-
-
-
-> Note that
-> irq-off is needed for the lock, because otherwise we will hit a self
-> deadlock due to interrupts:
-> 
-> 	spin_lock(&a);
-> 	> timer interrupt
-> 	  spin_lock(&a);
-> 
-> Also notice that the IrqDisabled<'_> token can be simply created by
-> ::new(), because irq contexts should guarantee interrupt disabled (i.e.
-> we don't support nested interrupts*).
-> 
-> [*]: I vaguely remember we still have some driver code for slow devices
-> that will enable interrupts during an irq handler, but these are going
-> to be gone, we shouldn't really care about this in Rust code.
-> 
-> Regards,
-> Boqun
-> 
-> [1]: https://lore.kernel.org/rust-for-linux/20240916213025.477225-1-lyude@redhat.com/
-> 
-> 
->>
->> Best regards
->>
->> Dirk
->>
->> [1]
->>
->>      # rust_doctest_kernel_hrtimer_rs_0.location: rust/kernel/hrtimer.rs:10
->> rust_doctests_kernel: Timer called
->>
->> =============================
->> [ BUG: Invalid wait context ]
->> 6.11.0-rc1-arm64 #28 Tainted: G                 N
->> -----------------------------
->> swapper/5/0 is trying to lock:
->> ffff0004409ab900 (rust/doctests_kernel_generated.rs:1238){+.+.}-{3:3}, at:
->> rust_helper_mutex_lock+0x10/0x18
->> other info that might help us debug this:
->> context-{2:2}
->> no locks held by swapper/5/0.
->> stack backtrace:
->> CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Tainted: G N 6.11.0-rc1-arm64 #28
->> Tainted: [N]=TEST
->> Hardware name: ARM64 based board (DT)
->> Call trace:
->>   $x.11+0x98/0xb4
->>   show_stack+0x14/0x1c
->>   $x.3+0x3c/0x94
->>   dump_stack+0x14/0x1c
->>   $x.205+0x538/0x594
->>   $x.179+0xd0/0x18c
->>   __mutex_lock+0xa0/0xa4
->>   mutex_lock_nested+0x20/0x28
->>   rust_helper_mutex_lock+0x10/0x18
->>
->> _RNvXs_NvNvNvCslTRHJHclVGW_25doctests_kernel_generated32rust_doctest_kernel_hrtimer_rs_04main41__doctest_main_rust_kernel_hrtimer_rs_10_0NtB4_17ArcIntrusiveTimerNtNtCsclYTRz49wqv_6kernel7hrtimer13TimerCallback3run+0x5c/0xd0
->>
->> _RNvXs1_NtNtCsclYTRz49wqv_6kernel7hrtimer3arcINtNtNtB9_4sync3arc3ArcNtNvNvNvCslTRHJHclVGW_25doctests_kernel_generated32rust_doctest_kernel_hrtimer_rs_04main41__doctest_main_rust_kernel_hrtimer_rs_10_017ArcIntrusiveTimerENtB7_16RawTimerCallback3runB1b_+0x20/0x2c
->>   $x.90+0x64/0x70
->>   hrtimer_interrupt+0x1d4/0x2ac
->>   arch_timer_handler_phys+0x34/0x40
->>   $x.62+0x50/0x54
->>   generic_handle_domain_irq+0x28/0x40
->>   $x.154+0x58/0x6c
->>   $x.471+0x10/0x20
->>   el1_interrupt+0x70/0x94
->>   el1h_64_irq_handler+0x14/0x1c
->>   el1h_64_irq+0x64/0x68
->>   arch_local_irq_enable+0x4/0x8
->>   cpuidle_enter+0x34/0x48
->>   $x.37+0x58/0xe4
->>   cpu_startup_entry+0x30/0x34
->>   $x.2+0xf8/0x118
->>   $x.13+0x0/0x4
->> rust_doctests_kernel: Timer called
->> rust_doctests_kernel: Timer called
->> rust_doctests_kernel: Timer called
->> rust_doctests_kernel: Timer called
->> rust_doctests_kernel: Counted to 5
->>      ok 22 rust_doctest_kernel_hrtimer_rs_0
->>      # rust_doctest_kernel_hrtimer_rs_1.location: rust/kernel/hrtimer.rs:137
->> rust_doctests_kernel: Hello from the future
->> rust_doctests_kernel: Flag raised
->>      ok 23 rust_doctest_kernel_hrtimer_rs_1
->>      # rust_doctest_kernel_hrtimer_rs_2.location: rust/kernel/hrtimer.rs:76
->> rust_doctests_kernel: Timer called
->> rust_doctests_kernel: Flag raised
->>      ok 24 rust_doctest_kernel_hrtimer_rs_2
-> 
+-- 
+2.43.0
 
 
