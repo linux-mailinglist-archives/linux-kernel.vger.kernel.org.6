@@ -1,234 +1,149 @@
-Return-Path: <linux-kernel+bounces-349145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AAF498F1B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:43:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0599498F1BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4B701C212A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:43:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 370421C20D1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49E419F419;
-	Thu,  3 Oct 2024 14:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wETjuZ8D"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A736019F403;
+	Thu,  3 Oct 2024 14:45:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6351A19E7ED
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2B319F114
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727966594; cv=none; b=hT3Dm28OqKYSYLA+BkC9nVvwrUrgPrOLG8LNofNar/IQnPoIJfzMWzPbHgez5WL+12y3nmCYeBELCLXKi2K47ARg4Zl2467XasIOkbQYFmKQoC33hDqYbFnA2pFb0eKXiayWYeypZNQJuKrHl8Wtmv4eNlZJ5wTqt6G1SDIeVto=
+	t=1727966707; cv=none; b=QOH1OXQqCKB2Jet65XA6RlzazSAOlWfDU5WidT3QuoNKeiqtI4gV3hSWA0xpVdLheGxWg5qSlZ7vf05dLkFkVoE4XQPibtjES+p2KIc6XHgmxMnHhyQVe3j7TBXrzRkfylA5FQE4iFrYrR49cqsSEdmGs9wYVi3kcxxOXGaND5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727966594; c=relaxed/simple;
-	bh=nzrT9txoUNm2tCbFCELuiWr769P/fLWk67w2gdUIfNg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T2QT0Alw/uarBytr6ped0q133rSxVAn+kaQ9LZD/gHY+Al/GOIUb97SF7monrDBs/2nTcx2EIzYyYvPSh7nNo+JIxBxcdT5rONjJog1+Gg56polIKw3KMyQS/Bz5zHryJ7w5nbJ29cCwQ2RdVkdy8EBRDeij/hmLkpKpx3YzcaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wETjuZ8D; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4a3b97cfbf8so432852137.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 07:43:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727966589; x=1728571389; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KzPMIwM47GdFMCQF2aB/8Fmv8rw2SCurIv7fQEUearg=;
-        b=wETjuZ8D90NfaPHpHL3MsxPKJzGNV0vab//CJoknU1YixSxdVxgxDKEsVA+VUTWFBE
-         1OtUEaFfVC+VVE+fSI1QROMvcYN0Hx2NbtPaffX8M32d8k0s6RaDj3+wEzI3201YuZ1R
-         dKOTCXmryYoR0wZvwLnQsizg0mqubONHm7lDj9OeplPauz247YZfLMEdgz78KZx8WyXm
-         XGAatp7WCbJEADxfhRy7gewYKuBlUAPHphV5ZB2SM5XbgqnOvzTS69Thc2FLOS1zwqiU
-         fNejxRxQMvh/W6S3D+kclD2jJYgpBBdC8opcr3oKDzXn8tx1M9uQzgrLGOQz1MkRbBlU
-         2c7g==
+	s=arc-20240116; t=1727966707; c=relaxed/simple;
+	bh=WCOvTCUhC24KvaPygSWeHD7vLDuO8jmYAzkaBhVaWuQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=l79LUG+LCNFzxIQP//rL0VnLzzoUCQwo3JzAeAQHv0aLEc3YnX/6dOgGbPT1qSxn6F8uhLK9Zq/7t8VuyilQoFRICegdB35pyNW6nqxR4WcGBUcHcScqjG2/j1pckeBctc8kxySVF/74DG3RvNTVBuIF9Kw9GdOUEfExs6cm3ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1a6d8bb03so11481775ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 07:45:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727966589; x=1728571389;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KzPMIwM47GdFMCQF2aB/8Fmv8rw2SCurIv7fQEUearg=;
-        b=dWxOpmk53oq1C/45cpPPlUgmG9mqhv/ZBUTU3fxtAN+Ua45+jVUBPg2fzZfrK5/DQz
-         ucqwHN+kVYz/M2PF7TYEj+ZyJVjuCH3wvpiInMknSJn13Ouz/siRG4yropaqe3icJZAC
-         /9qdzSrBzClrrzye7tFVZrVTiHeEl9D6jYW/E27sGmLGU3UCQQ4mDoSKmULyt/ZI5a6x
-         Hs59KSHnc19/Rq0Lw0vgRSjjGEYjlIw8DbDj/3kj8m21eVi6zG3C70Y3fhLJ3LUxfuDq
-         nmErlpjeiHu+oHFbF/lxu24UVvAAgtlQ0DE6J3FJs4RdU1XEh9zUpo5GCNKYsy09t9Qn
-         /I/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXXbMWQg4vunaVyt87yHwArsXZlk6qUvphQfN0SySvL2pVeKu2yO9mEePSVve5fGG9ojnOL/XrmakqOHig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN8kYBMK4QQ/+TmWy8xnJrxxvxiaV+8eat5CoXL3phlTvdsgkg
-	jxhRKsfPbqU7rrByLL6hSuHtxZ4jN2Lbo1m3DmeTrB/6TkS5kmG0W+2cMQf663sg01jM1+WR352
-	NpiWZFC9eN1H/ziUYLDHJksK/zrUOIxVVJlw8Ew==
-X-Google-Smtp-Source: AGHT+IHeWg3AMl+TwKVwk49s+iH8ah5Trk6MJpXj/71J6Q2kfTA+Kfp/l/dkdK73jpJ/mQ6L4Jh9SUs/ymqKlo/mYG0=
-X-Received: by 2002:a05:6102:c46:b0:4a3:d8ab:8938 with SMTP id
- ada2fe7eead31-4a3e6852752mr5954103137.12.1727966589244; Thu, 03 Oct 2024
- 07:43:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727966705; x=1728571505;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YqgwiSIyyjXVtpe/wlPz1udWGxl36h0kXXb71vZI94Q=;
+        b=vIs32RZY4Kq+ia3moDwRE5Lxvgpjse0mICb78CzsrAovGMuDFUv8tYYDC7kGcE0G7v
+         gbfkeFv/ta8S4OvqMN5bhInXANyZF3zvJ9Mkkd8Q98FBC5RBwh0QQomnRR6M0+izZe+u
+         VL5cvRuSF+uOnleRITAG7SsFFWs9h1caLGY+T0SyMEY9IisHjnrV819i9PraLkmy0cr6
+         88t0BJDODVsL9tWFmosjSQupHWTfOaSUdJ2pcJYKjgid/9mBHTZ1hOTgHbk5Qi91NCbZ
+         O32YYJCYE2iU7XjyJZRrQTwKvtnHalvAIzkT4tjcAdC+YVIyqwOIGApSi02RxS+6krMb
+         y9cw==
+X-Forwarded-Encrypted: i=1; AJvYcCWs5Zj5YEBAKwi708xznXqkxtCDGK4IdfXjZJPPC8Ttl4pR5xzmJGO2OUDX+UJV6uhfIjn9hfGdjy+rBrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlMxyzhcWomOWkFFqc4q0EZl3qbwONTPatN1boiQXmOWYFdZf5
+	B0Qtsuq2lX4xmmS7sf+29By5M0KjVvA3iX67eOtn/YeX2fM9HP9/avuK/iUdgO+/kJEUE0fhhik
+	ZuxeNYZcARRror+C2q4NLp0BNFam/5vz/DcwjZPsJlA2exGrfMKFWeEg=
+X-Google-Smtp-Source: AGHT+IGDz3EgWb4beh65cBoiqxln1oApbaK9ID8OfgKoSvEaX9TpBjDA56BS/GnL/YrNVN3t3Lny5/TrLqzwr66ReXV/e8Fq3Tx9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003103209.857606770@linuxfoundation.org>
-In-Reply-To: <20241003103209.857606770@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 3 Oct 2024 20:12:56 +0530
-Message-ID: <CA+G9fYvAAKwe_LMb+cXnLoDE1a_Ji2o+C6j=ud64ET3wbiZTBA@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/533] 6.6.54-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
+X-Received: by 2002:a05:6e02:1544:b0:3a3:35f0:4c11 with SMTP id
+ e9e14a558f8ab-3a36592cb1bmr75740435ab.15.1727966705024; Thu, 03 Oct 2024
+ 07:45:05 -0700 (PDT)
+Date: Thu, 03 Oct 2024 07:45:04 -0700
+In-Reply-To: <Zv6qDfzdXMrSjGkE@fedora>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66feadf0.050a0220.9ec68.0042.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
+From: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	qianqiang.liu@163.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, 3 Oct 2024 at 16:03, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.54 release.
-> There are 533 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 05 Oct 2024 10:30:30 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.54-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in hci_dev_close_sync
+
+============================================
+WARNING: possible recursive locking detected
+6.11.0-syzkaller-11519-gc30a3f54e661-dirty #0 Not tainted
+--------------------------------------------
+syz.0.15/6089 is trying to acquire lock:
+ffff88802cd3cd80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_close_sync+0x66e/0x11b0 net/bluetooth/hci_sync.c:5191
+
+but task is already holding lock:
+ffff88802cd3cd80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_do_close net/bluetooth/hci_core.c:481 [inline]
+ffff88802cd3cd80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_close+0x10a/0x210 net/bluetooth/hci_core.c:508
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&hdev->req_lock);
+  lock(&hdev->req_lock);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+2 locks held by syz.0.15/6089:
+ #0: ffff88802cd3cd80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_do_close net/bluetooth/hci_core.c:481 [inline]
+ #0: ffff88802cd3cd80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_close+0x10a/0x210 net/bluetooth/hci_core.c:508
+ #1: ffff88802cd3c078 (&hdev->lock){+.+.}-{3:3}, at: hci_dev_close_sync+0x572/0x11b0 net/bluetooth/hci_sync.c:5183
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6089 Comm: syz.0.15 Not tainted 6.11.0-syzkaller-11519-gc30a3f54e661-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3034
+ check_deadlock kernel/locking/lockdep.c:3086 [inline]
+ validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3888
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ hci_dev_close_sync+0x66e/0x11b0 net/bluetooth/hci_sync.c:5191
+ hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
+ hci_dev_close+0x112/0x210 net/bluetooth/hci_core.c:508
+ sock_do_ioctl+0x158/0x460 net/socket.c:1228
+ sock_ioctl+0x626/0x8e0 net/socket.c:1347
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe0fa37cef9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe0fb0e2038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fe0fa536058 RCX: 00007fe0fa37cef9
+RDX: 0000000000000000 RSI: 00000000400448ca RDI: 0000000000000008
+RBP: 00007fe0fa3ef046 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fe0fa536058 R15: 00007fff1e0b61e8
+ </TASK>
 
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Tested on:
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+commit:         c30a3f54 net: mana: Add get_link and get_link_ksetting..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ea7580580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
+dashboard link: https://syzkaller.appspot.com/bug?extid=03d6270b6425df1605bf
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16806307980000
 
-## Build
-* kernel: 6.6.54-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 28c7e30f3bb639399f5f62ae5f201bba7dd69e55
-* git describe: v6.6.53-534-g28c7e30f3bb6
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.5=
-3-534-g28c7e30f3bb6
-
-## Test Regressions (compared to v6.6.51-145-g3ecfbb62e37a)
-
-## Metric Regressions (compared to v6.6.51-145-g3ecfbb62e37a)
-
-## Test Fixes (compared to v6.6.51-145-g3ecfbb62e37a)
-
-## Metric Fixes (compared to v6.6.51-145-g3ecfbb62e37a)
-
-## Test result summary
-total: 169067, pass: 148166, fail: 1582, skip: 19133, xfail: 186
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 129 passed, 0 failed
-* arm64: 40 total, 40 passed, 0 failed
-* i386: 28 total, 26 passed, 2 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 36 total, 35 passed, 1 failed
-* riscv: 10 total, 10 passed, 0 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
