@@ -1,167 +1,145 @@
-Return-Path: <linux-kernel+bounces-349542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC1498F803
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:23:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E9598F816
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 785BF282D46
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:23:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFD591F229BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAC31AC450;
-	Thu,  3 Oct 2024 20:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5F51AC88B;
+	Thu,  3 Oct 2024 20:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wZK2WmAb"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YNo6Tz3C"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21C51AAE3F
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 20:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680F932C8B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 20:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727987020; cv=none; b=Hv8HXTahTm5W6kmaRict5xzmPPlx610sVhcWHsWid7Tr8zAgntDozL03Mv3kEDkZ1bxeEvbKdy/D6u/m7kmwSuN5W93tXH1KFF0ediWMqlfNT6YbQMnXud/vpq4YCEy+7TuKMH6ONOlkbmd03ZskUBSMe0SGjeocQ6beJCzSwc0=
+	t=1727987340; cv=none; b=DztLtZPDOiC7KrgkgcWG/HrwatGPQO5nmRXww5YQDwnMOLMTPPNQRXuKXLlvu680+A9zw+9Fw+RsCypypbF4GllBgByv/hyZOrx9H2f1qumbCc49DvFtT8XNrSDYhwmdoZA8cQ8kL5VvoTva5MTMBbdsfrtpdNrKy+r9z7qaw/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727987020; c=relaxed/simple;
-	bh=9VA3PqYMSXMSKGPh4htGFi/0/3JHfkNHId5Y+qOLBsQ=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=Lb9cFuPTWTcjMllxthFFThfBUJWRUN8DcmLiJudHUTcayft7Gk12GSXGSYFIJuy5/RtVkcJPbZNYslyu37s7iPudRUeVcPnRVwoYM9HnvcZbu5J30R9jVjZDtneodo4oKpW9U6BWf+tqqqtsAR4tmA+dCWaU1ebpQVRF1CRnHU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wZK2WmAb; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-20b0ca9288fso17423285ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 13:23:38 -0700 (PDT)
+	s=arc-20240116; t=1727987340; c=relaxed/simple;
+	bh=KIQ5hoQmSc9lrpiU2gBhZbQ64z/SMG1wirj3hv3fpDc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EguzKl+DJhtPMWKE4OdfPyVv+hutZ6o37MSnjBkAPvJifE3B7/GBPjgPtNxnl52m168fnxUMyGst5bLSPApQtbkOBWVQWyy67kTxmUkI83LbEXi4vlH7HjLfJao0uRXE+wiB6UvNpRHmxrBGKUNUZvdVcGgwIoJ58yT0fVdT7mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YNo6Tz3C; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5398b2f43b9so2327954e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 13:28:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727987018; x=1728591818; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bsrxlfd04OhEv+n0CPbWpU82YP7zkM1b/vn5t74+eZQ=;
-        b=wZK2WmAbTB9D61/WhdMyO4Kagh/+tP8+qhn2RSuZr2yGHruC4QBdPmR+da6d89x7MA
-         0FBAF9VTQmNJTsln7tZpvHfrLiri0PXSy+u2Znfl44RGXUs6+1EHJa4BzIQuMB5CIsbC
-         F1GqWpN356u7rmhos5Pd3yEEIpoWd8gHpFXf81nj9TM7omQZQJYM2bAX3MSo3ODDChtj
-         s7WJozxAwiOjSA2L/07k5uPV3ZS6MvZtZIyW6VAT8Hfxjk4BoAYU8cA1O0iZQtXS2s/h
-         iplxi8Azh4n2TH/irNoC2C9dphUd+ZvAt90hbDyZFkhASa7RKvJ+Hz1fV7RWVzx3VtX+
-         UkOQ==
+        d=chromium.org; s=google; t=1727987334; x=1728592134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nYIVkNsPyt+bQBwSMHMJOZjiBjar2atE5RRCUQ3xHXI=;
+        b=YNo6Tz3CXoQrDINHRMqarLsHG0x6JFIbqy/qAWlU3Ti2OswRqAV8HmlwprglUgXCKQ
+         QRGHVqYvpK4V/mjM85V5wdKU7NM5twcXISxXmrs1EMi5MechttywnT5x+OuoZrEpnpYO
+         7rTsI5M/15rGwAh/PHFUeTYGYxfhU5FRt24po=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727987018; x=1728591818;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bsrxlfd04OhEv+n0CPbWpU82YP7zkM1b/vn5t74+eZQ=;
-        b=GKQD4t2MbcJHKCqwTItf1zC19XVuQMw75kCVZN7j66CbGDk08bTHgd5VNrHFb7wUgQ
-         bIjV9dit0Evud6tmXYJ/cIrwKQgfJHYRRa03Yjk7tOpTdF/IhV/c76VqLsu94KjCZ9wT
-         x+KdkWcuUYkxOWnp8/NxWkeB/4SNQiV6Yp6jWrqJWSgE5VKhkYhQPJhESXg9IkW3+KIT
-         3vw4lbEBUPIODZlI4ZW7vhyY39Cx3PEZgK63UZcraatmQtnsdjgNwaB2uKg1wXl2Bo25
-         ONtj0e/CViOqzASq9nL5YZQQ5JtuwWTiEGrY9ychUWtdDVEb6huAbx6iwAfrjMrE6A0G
-         4Wmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsBcfDLYw8MV0ihFacGM+kUD9251FCeRB72G31VD3SVmDFxGf2MahWYJRE/ZCV/+ul8/w9ePenDTJYmcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE7jwAqgKUUY9+EmdsFtCwNOKxJ4BTo0Ecf9adeGzouamlSzEm
-	xP8GG+Tf9yJ606CIllsrRQ5SXTjW2ZxVU93cXgKwTE8ObuL77ZLIC2ookRc5SoFdl7AKYUEFWFi
-	JPI9U8aZYKBgk63gPfnbP5Q==
-X-Google-Smtp-Source: AGHT+IFpD6BWHM5h+33v0jB6Q6n9bSyUbGf9Hz29V0yy4Czzzteo1cbIqPdjyXE3Ss97ow9Hj9/CtpXBjfv/MY3knw==
-X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:146:b875:ac13:a9fc])
- (user=ackerleytng job=sendgmr) by 2002:a17:903:187:b0:20b:bd8d:427a with SMTP
- id d9443c01a7336-20bfe17d820mr65455ad.5.1727987017910; Thu, 03 Oct 2024
- 13:23:37 -0700 (PDT)
-Date: Thu, 03 Oct 2024 20:23:36 +0000
-In-Reply-To: <20240913151802822-0700.eberman@hu-eberman-lv.qualcomm.com>
- (message from Elliot Berman on Fri, 13 Sep 2024 15:26:30 -0700)
+        d=1e100.net; s=20230601; t=1727987334; x=1728592134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nYIVkNsPyt+bQBwSMHMJOZjiBjar2atE5RRCUQ3xHXI=;
+        b=eCfp3ZzsQr5D4c8j/yWULi15/jmm/tTYttFam3ELdWAtJapSWJTSF665Z1RgPXQ1z5
+         332p2uyuPPitFcko3w3KjPFU4ezHMPV0LHtTlZLEOgWDgnGRCBhSH7jodwA+fp0C4bvT
+         MiTWHjgMnKnamXA9+HTPsEGT3T0qG8sFFbRl5Qaa0U3J43BI70xYwXeDgbSTEFwxaJKG
+         f/fkWoQyQKLzQ10jdfGJ/hPUO7XVrO9PIGPNFbpdYZu8b93LWgSCXuLllemGsuZY4Qu7
+         kKZCX1bU8jNSxpJPYl6d/fwCpNbH5Q2GD1b5LBRYNTt1Ee81ovnP3/+oKTf1QI7nFdWG
+         VjiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwi8AuDmOJza2RLZx2zpA6tV1dpGvujFWtPI7sOGFErGi4foehGlMXLw2876ggQgfeByg7iDUjbS8Crys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyONgj0r7ZcsEkAZ/TSpKLR3mEf8ZJLTQeJU4Edc+CK0faGulUq
+	Z9f+oQ5UewvFEK8D2K/zTLcX1+pn0Y6/gqqLYqdqEMXjdXQ04kspcKXibrOlvXDqnxfXz+MCNW/
+	g8A==
+X-Google-Smtp-Source: AGHT+IGaAeovtMgdDAGxa/wOzW6iZ36nMN6UZaLPXqw1uoB3DzNOTW6EX3uViAOSeQfBidb6wragvw==
+X-Received: by 2002:a05:6512:1111:b0:536:5e7d:6ab3 with SMTP id 2adb3069b0e04-539a62828cemr1481735e87.27.1727987334232;
+        Thu, 03 Oct 2024 13:28:54 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539a8250f36sm256210e87.54.2024.10.03.13.28.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 13:28:53 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398e58ceebso1395582e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 13:28:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVqF4np9NPZIOlJQKW7bRh7If7VJU/2YBM1et9LcWkFlUKv/hiyLoOewrjhIlgPgnpGyMOY6Ji03haAZBk=@vger.kernel.org
+X-Received: by 2002:a05:6512:2247:b0:539:933c:51c6 with SMTP id
+ 2adb3069b0e04-539ac17ec4bmr91249e87.29.1727987332011; Thu, 03 Oct 2024
+ 13:28:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <diqz34ldszp3.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH 15/39] KVM: guest_memfd: hugetlb: allocate and
- truncate from hugetlb
-From: Ackerley Tng <ackerleytng@google.com>
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: tabba@google.com, roypat@amazon.co.uk, jgg@nvidia.com, peterx@redhat.com, 
-	david@redhat.com, rientjes@google.com, fvdl@google.com, jthoughton@google.com, 
-	seanjc@google.com, pbonzini@redhat.com, zhiquan1.li@intel.com, 
-	fan.du@intel.com, jun.miao@intel.com, isaku.yamahata@intel.com, 
-	muchun.song@linux.dev, mike.kravetz@oracle.com, erdemaktas@google.com, 
-	vannapurve@google.com, qperret@google.com, jhubbard@nvidia.com, 
-	willy@infradead.org, shuah@kernel.org, brauner@kernel.org, bfoster@redhat.com, 
-	kent.overstreet@linux.dev, pvorel@suse.cz, rppt@kernel.org, 
-	richard.weiyang@gmail.com, anup@brainfault.org, haibo1.xu@intel.com, 
-	ajones@ventanamicro.com, vkuznets@redhat.com, maciej.wieczor-retman@intel.com, 
-	pgonda@google.com, oliver.upton@linux.dev, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-fsdevel@kvack.org
+MIME-Version: 1.0
+References: <20240926092931.3870342-1-treapking@chromium.org>
+ <20240926092931.3870342-2-treapking@chromium.org> <CAD=FV=V5Yf1shF2eKCYOxu=x48cScTh8WXkcm4Xvr1qJnSn1Kg@mail.gmail.com>
+In-Reply-To: <CAD=FV=V5Yf1shF2eKCYOxu=x48cScTh8WXkcm4Xvr1qJnSn1Kg@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 3 Oct 2024 13:28:35 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=URZRRoa1YNVTAx+jnfbP4tz+tn7sAaGR2-1yCWYVUoiw@mail.gmail.com>
+Message-ID: <CAD=FV=URZRRoa1YNVTAx+jnfbP4tz+tn7sAaGR2-1yCWYVUoiw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] drm/bridge: anx7625: Drop EDID cache on bridge
+ power off
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: Xin Ji <xji@analogixsemi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Sam Ravnborg <sam@ravnborg.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Elliot Berman <quic_eberman@quicinc.com> writes:
+Hi,
 
-> On Tue, Sep 10, 2024 at 11:43:46PM +0000, Ackerley Tng wrote:
->> If HugeTLB is requested at guest_memfd creation time, HugeTLB pages
->> will be used to back guest_memfd.
->> 
->> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->>
->> <snip>
->>
->> +/**
->> + * Use the uptodate flag to indicate that the folio is prepared for KVM's usage.
->> + */
->>  static inline void kvm_gmem_mark_prepared(struct folio *folio)
->>  {
->>  	folio_mark_uptodate(folio);
->> @@ -72,13 +84,18 @@ static inline void kvm_gmem_mark_prepared(struct folio *folio)
->>  static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
->>  				  gfn_t gfn, struct folio *folio)
->>  {
->> -	unsigned long nr_pages, i;
->>  	pgoff_t index;
->>  	int r;
->>  
->> -	nr_pages = folio_nr_pages(folio);
->> -	for (i = 0; i < nr_pages; i++)
->> -		clear_highpage(folio_page(folio, i));
->> +	if (folio_test_hugetlb(folio)) {
->> +		folio_zero_user(folio, folio->index << PAGE_SHIFT);
+On Thu, Sep 26, 2024 at 10:15=E2=80=AFAM Doug Anderson <dianders@chromium.o=
+rg> wrote:
 >
-> Is (folio->index << PAGE_SHIFT) the right address hint to provide?
-> I don't think we can say the folio will be mapped at this address since
-> this value is an offset into the file.  In most cases, I believe it
-> won't be mapped anywhere since we just allocated it.
+> Hi,
+>
+> On Thu, Sep 26, 2024 at 2:29=E2=80=AFAM Pin-yen Lin <treapking@chromium.o=
+rg> wrote:
+> >
+> > The bridge might miss the display change events when it's powered off.
+> > This happens when a user changes the external monitor when the system
+> > is suspended and the embedded controller doesn't not wake AP up.
+> >
+> > It's also observed that one DP-to-HDMI bridge doesn't work correctly
+> > when there is no EDID read after it is powered on.
+> >
+> > Drop the cache to force an EDID read after system resume to fix this.
+> >
+> > Fixes: 8bdfc5dae4e3 ("drm/bridge: anx7625: Add anx7625 MIPI DSI/DPI to =
+DP")
+> > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>
+> I don't think it needs a re-spin, but for future reference you're
+> always supposed to move your own Signed-off-by to the bottom whenever
+> you "touch" a patch. Thus yours should be below Dmitry's tag.
+>
+> In any case,
+>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+>
+> If these haven't been applied and there's no other feedback at the end
+> of next week I'll plan to apply both this and the next patch to
+> drm-misc-fixes.
 
+Dang. My brain wasn't working quite right and I pushed these to
+drm-misc-next instead of drm-misc-fixes. I'll assume that this is OK
+because the problem fixed isn't exactly new and the patch will still
+make it to mainline before too long. If this causes anyone problems
+let me know and I can also land it on drm-misc-fixes.
 
-vaddr in folio_zero_user(folio, vaddr) is eventually passed to
-clear_user_page(). clear_user_page() uses vaddr to clean up dcaches on
-some architectures, according to Documentation/core-api/cachetlb.rst.
+[1/2] drm/bridge: anx7625: Drop EDID cache on bridge power off
+      commit: 00ae002116a14c2e6a342c4c9ae080cdbb9b4b21
 
-In this patch series, folio_zero_user() is used in 2 places:
-
-+ kvm_gmem_prepare_folio()
-+ kvm_gmem_fault()
-
-folio->index is valid by the time folio_zero_user() is called in
-kvm_gmem_prepare_folio(), because when kvm_gmem_prepare_folio() is called, the
-folio is already in the filemap, and folio->index is set when the folios is
-added to the filemap.
-
-In kvm_gmem_fault(), kvm_gmem_get_folio() also returns a folio in the filemap
-and so folio->index is valid by the tiem folio_zero_user() is called.
-
-Hence in both cases where folio_zero_user() is called, folio->index <<
-PAGE_SHIFT returns the offset in the file.
-
-In hugetlb's fallocate, the offset within the file is passed in the call to
-folio_zero_user(), which is why the offset within the file was used here.
-
-In the next revision I will refactor this to something like
-kvm_gmem_prepare_folio_shared() and kvm_gmem_prepare_folio_private().
-
-In kvm_gmem_prepare_folio_private(), folio->index << PAGE_SHIFT can still be
-passed as addr_hint to align with HugeTLB. When being prepared as a private
-folio, the folio will be mapped by KVM: addr_hint won't matter since this folio
-isn't going to be mapped into userspace. If the folio was previously used as a
-shared page, unmapping would have flushed the dcache.
-
-In kvm_gmem_prepare_folio_shared(), the folio will subsequently be mapped and
-vmf->real_address should be passed as addr_hint.
-
-Thanks for this question!
+-Doug
 
