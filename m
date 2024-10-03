@@ -1,112 +1,173 @@
-Return-Path: <linux-kernel+bounces-349317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F0598F43F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:29:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E5398F447
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C8D1C20A27
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:29:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58440282A7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E861A7050;
-	Thu,  3 Oct 2024 16:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A741A7065;
+	Thu,  3 Oct 2024 16:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXZxke6n"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ncgMjvhi"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ACE196D80;
-	Thu,  3 Oct 2024 16:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758802E419;
+	Thu,  3 Oct 2024 16:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727972957; cv=none; b=HRhZrv420O9S6PIEOwWtix3hDwcn+GVIQik8H7Zt+VV+uaKaVJH5RAoSz1nOO7yvaVgvQLXNYueq/jGM9m7utX/Ydfov0FG4e9CERkYs2nrwvlnPJPilyuxFAZAi4cU6mK5NdWd6h7Tlve8YpKu+jMPCLCZDb5Ey/YFuaDQSaUk=
+	t=1727973142; cv=none; b=JuSaY2LXmNsg0cd6FdCMUWzjC6qRt3VsGLtZLKGwxmC4B5EO6CS3RgL1jPT/gv/1vx8DZIslekeUnx3UC4iXqGHc51rLuT1FvYP0ZmOIUbuP2tNQcxH7GCl2EBUA2fBUEobJL9kRLLxmbmaB4Hf9wFknG+By6v9QT42+0jk9SvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727972957; c=relaxed/simple;
-	bh=riWFRqwikXrJ5LBLlNpmR2Z5+gzV2Z6bLC88Xo+okNM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=MNJfslAOCe0GJxBCFSgxSa9qIck6ItFXXBtL2NEfChrUzEnA+J9pudHxf44uCRAg9KV5nrPFeb8zWe5fhlcJr9i5a5tA+OFLgGTI80boyoh1g6tgKvOQw1vbvDZggWHq5lYRIjkw7GvUb3ieIY8VcQl6GsR7laWG84b0PAghQ8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WXZxke6n; arc=none smtp.client-ip=209.85.208.170
+	s=arc-20240116; t=1727973142; c=relaxed/simple;
+	bh=JMJEZzcDykjRe2LzWFc0UnhPZ7HQw6CVeai1eHP5/bg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ev3QZl4KAH+bRVu9Gu7PTBGoXyO/+QzHuhDswtSHxH1I+hRRCHCJIM7u5jk3m23gnpO2kWoOFV3pUMVnMvFAWfLbrywQsm3nGgIJUGj85DpZCeiXI+lCRjrymwhKROa8E9vww3Ouo7kmkRXYQDtHXpkUF10DFEL5jse5Bd+PHd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ncgMjvhi; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fac9eaeafcso15192121fa.3;
-        Thu, 03 Oct 2024 09:29:15 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cba8340beso13598895e9.1;
+        Thu, 03 Oct 2024 09:32:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727972954; x=1728577754; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=inMs9w95NrP7csQUf9iREI7l3tzPsASQInUfTPMGpTg=;
-        b=WXZxke6nGVrHDQltLL+wxx2f1GvAN96q97FZ+ZL8fBPkvPjVFHpV4gxhsM/BLwikyk
-         DH30SB9XNNjMP7Qyo2RuUGdK/rAzL03zHWGuHPFtvfKSVY3uKo0dY6e0HvokCFFeosXe
-         FP82bnX8fGINhN4q8nT3XOpMmZs5RodDE9AbGcoIF+Z0JJi/0JFCd/shmIIisGqJPwSW
-         crYirmzI8PidBpbeOZqZUZ2Df+KN0GbRZoH6EaoSnR+1a0lN9kQZPUfT4UpUq3PBX1yH
-         q5Tj1KY4cIKLkngpzw7dYqJ2ma9tEBKRUYiFKwtp1or7KeALBq8kRQHNy9H5BuKuxsp3
-         00SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727972954; x=1728577754;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=gmail.com; s=20230601; t=1727973139; x=1728577939; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=inMs9w95NrP7csQUf9iREI7l3tzPsASQInUfTPMGpTg=;
-        b=qYQMiRPuQ4f6Pvr3Bo9luGAwgdd6X3Yga5cyBXfCvsLdEVWTr7n/wT7wmvxe1M0vEP
-         3HeBkYxbC+VSTVObs1wR5uzjRyAnlXhUiEamndV+ZAAGB981AYkWWIr6ta4zrClSAsU0
-         hYZ8YwkbdRYaCkt3/3Sfs9AfsHuPrTBH5g/zW92Eg2KF0qDMHDpTkJmiw66WcGqCRvJl
-         yaj73QPlAQTr/UBT/Lw/+rynLf/pp5nS/XijtktudHkuvbT/GzBpmW3FRLnr9GtKGr3C
-         MGrFZMkR7W3xQHs97dpr7NeCWZTaVIFlIy2bLaPaxLJEGvQY3jvPYFfC3z8m1otmt2Zu
-         hfAA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Lsf5oUzEtj+9w1Cjp/+XnOmw/F4MkFMVdVOcA9qd9V7VCR/GZ0VCn+c3AyE5lma3Q1qsKMoVlmGyCdvP@vger.kernel.org, AJvYcCXpluh2jqW1fO4pJHFcbc3A4J0pzO4LZdOb+dtrQn4dg88UCtHQ9I2z3sQLvd7G7msNiu8mDngH8b9h@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2tXtUEP3LFSgQJ4/giQwiKBCfze9sPjivXfJywbAPJZX4YwH5
-	wcsCdEXk+7dTcjNPAW/j4+eAt38duisj5vHIlBmYtnuowcWEKRVn9GeNmEH9NNFgBP1Rq5jQfu6
-	ooPBumZmzfo+bisKbBaPJVWVPXzA=
-X-Google-Smtp-Source: AGHT+IFilZVMSvTUSPJPky5Eji2bWpmuTbeDUmNh1qzkjlki0wllc6tTobfYcJZH8un4jp/M6dZanFGa3fcs3QhpjeA=
-X-Received: by 2002:a05:651c:198e:b0:2fa:e7f2:764b with SMTP id
- 38308e7fff4ca-2fae7f284aamr34158621fa.33.1727972953844; Thu, 03 Oct 2024
- 09:29:13 -0700 (PDT)
+        bh=EI0tnWl1dLlz6m0UaX8+H054cmhe7d9iY1/KJ1ExYdw=;
+        b=ncgMjvhi5ahx/KIl0nSHHKYY4saSJ4sW1rJobKGEfr6g9wPL7s5Mf1n7o475FTH5Li
+         d6nJXb1H8kQhIz1A+sw4+oEFed//5ajKdXieafnUPtU50Hre0KOy+DGCJPstuK9yNwwa
+         X46FTgnp4Gr9OQpNOyGJrEzC+A7Y9vNI/3iygbew+ALo2YtuP6Mvm843ng+Q/RXWlBYC
+         HpJySu5LJsD8WBcxt42WYBk6KFehQUwpJKxnyKukdPCRfDm2odG8JPmzN8DTQiKiWZFu
+         LxLDKAJeR9GHvXKmbixEG4nEq7lH03+PYfV+uZi2YkCrkfwXMuUmmcv46VSPcTS5LmIb
+         w2ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727973139; x=1728577939;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EI0tnWl1dLlz6m0UaX8+H054cmhe7d9iY1/KJ1ExYdw=;
+        b=ZyMcPIh4BvixxjQyEy8XzcqNyRBDxGVpTXFENllv9KhftVfjyG4+a0CxfYXhqiwIPP
+         FQPzbMl8XcKXtV13Yur8xbkpHMGAEc7ZSDlFuYWsiK3ctaULTA9gYgUAzHGzUnL9z1/H
+         Hm/nQoZtWXOkIT71NTgLtHjRhe3UgUbSaE/JpqWA0XvqsQNgSlvHHdGmBtrjd8Dbw9t8
+         ilfRV03cXuraY5AhkvhFBIzBFQxDMGYynqLf7L+K5aqzT001rUDyjIXkVr4oLW//NOTc
+         1ZM8Vzgo4AD86PHMK3NrBsHMuKV2FNs98KbMjkSzdtK8qFTDNoNqezxd7i5RxclaEHm4
+         bp7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWnLDQEw8hpdU3QTlKM75/cTmHK7CNeE7shMtw8aTbfdIjjY0i/DQmLew7LLjAg4ZiLURQYRd7nZXDewQ=@vger.kernel.org, AJvYcCXU1A4Y6DJ20Tzz9HC51orwC71anA4Qz4K72235HE0j7m0/SWnBbekm2wzdLfTQEGK18FEiiCRPHWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8KA17w2OlcBCLVpNghxnM/v5eayyq8ZE/XfqyuPBa6Vk+A8Ak
+	DG7ebcjW/1WqxtdS5deRDnJr/S1dpM5yWpt20UmfZpTtmawun061
+X-Google-Smtp-Source: AGHT+IFeQQTtsZq9/ZokVHKXqyJcGG5frxeTrecVPIYprnmtJAgju36msDG+gHJF21LNzwWNm9QU1Q==
+X-Received: by 2002:a05:600c:4695:b0:42c:b7e1:a9c with SMTP id 5b1f17b1804b1-42f7df4178amr27574895e9.5.1727973138419;
+        Thu, 03 Oct 2024 09:32:18 -0700 (PDT)
+Received: from [192.168.0.10] ([178.233.24.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f802a017esm19285205e9.36.2024.10.03.09.32.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 09:32:17 -0700 (PDT)
+Message-ID: <a0960c37-e390-481b-80c1-9c467b17beb8@gmail.com>
+Date: Thu, 3 Oct 2024 19:32:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 3 Oct 2024 11:29:01 -0500
-Message-ID: <CAH2r5mtK7gFUwQfmsBpg2LKPLxkvewsYBAtp7QO2zpX-bJ8SrQ@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] power: supply: sbs-battery: Handle unsupported
+ PROP_TIME_TO_EMPTY_NOW
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Hsin-Te Yuan <yuanhsinte@chromium.org>, Sebastian Reichel
+ <sre@kernel.org>, kernel@collabora.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Pin-yen Lin <treapking@chromium.org>
+References: <20240418-sbs-time-empty-now-error-v3-1-f286e29e3fca@collabora.com>
+ <cf4d8131-4b63-4c7a-9f27-5a0847c656c4@notapiano>
+ <CAHc4DNJ0prAQOw89Hvw8n9KhY+8xB3D77pJvoPfU-X7ZFDYu7Q@mail.gmail.com>
+ <924db470-8163-4454-8f59-f7372a132186@notapiano>
+ <c721f2b9-2b08-45f3-adb5-09b163924fbc@collabora.com>
+ <1db95251-04bb-4d4f-b77b-3b78a8f497cd@notapiano>
+Content-Language: en-US, tr, en-GB
+From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+In-Reply-To: <1db95251-04bb-4d4f-b77b-3b78a8f497cd@notapiano>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Please pull the following changes since commit
-9852d85ec9d492ebef56dc5f229416c925758edc:
+Hi,
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+On 2024-05-13 16:27 +03:00, Nícolas F. R. A. Prado wrote:
+> On Thu, May 09, 2024 at 05:43:42PM +0200, AngeloGioacchino Del Regno wrote:
+>> Il 09/05/24 17:25, Nícolas F. R. A. Prado ha scritto:
+>>> On Mon, Apr 22, 2024 at 04:10:23PM +0800, Hsin-Te Yuan wrote:
+>>>> On Sat, Apr 20, 2024 at 12:03 AM Nícolas F. R. A. Prado
+>>>> <nfraprado@collabora.com> wrote:
+>>>>>
+>>>>> On Thu, Apr 18, 2024 at 01:34:23PM -0400, Nícolas F. R. A. Prado wrote:
+> [..]
+>>>
+>>> Getting back on this, we were finally able to update the EC firmware for both
+>>> juniper and limozeen and all the issues were fixed. I have added the logs below
+>>> just for reference. So I guess the only change we could have upstream would be a
+>>> message suggesting the user to update the EC firmware in case the SBS is behind
+>>> the CrosEC and it starts throwing errors. I'll prepare a patch for that.
+>>>
+>>
+>> ...yes, but then you can't do that in the sbs-battery driver, but rather in the
+>> CrOS EC - so you'd have to link this and the other driver (beware: I'm not
+>> proposing to do that!), which wouldn't be the cleanest of options.
+> 
+> I *was* actually thinking of adding the log in the sbs driver by checking the
+> parent's compatible, since that's already done elsewhere in that driver to
+> disable PEC:
+> 
+> 	if (of_device_is_compatible(client->dev.parent->of_node, "google,cros-ec-i2c-tunnel")
+> 
+> But now that you mention it, indeed if we're only printing a warning, it would
+> be best to do it in the EC i2c tunnel driver. And that's all that I'm proposing
+> to do: log a warning telling the user to update their EC firmware, as that
+> should fix the readouts, and not add any quirk to the driver.
 
-are available in the Git repository at:
+I still see this error on a cozmo, even after doing a ChromeOS recovery 
+to upgrade EC firmware. (Also, some properties sometimes error with -6). 
+Looks like Google did not release an updated version with that patch:
 
-  git://git.samba.org/ksmbd.git tags/v6.12-rc1-ksmbd-fixes
+  $ sudo ectool version
+  RO version:    cozmo_v2.0.9006-689870d95c
+  RW version:    cozmo_v2.0.9006-689870d95c
+  Firmware copy: RW
+  Build info:    cozmo_v2.0.9006-689870d95c 2022-06-14 10:16:42 @chromeos-ci-firmware-us-central1-b-x32-0-he51
 
-for you to fetch changes up to 9c383396362a4d1db99ed5240f4708d443361ef3:
+  $ sudo ectool battery
+  Battery info:
+    OEM name:               PANASON
+    Model number:           AP19B5K
+    Chemistry   :           LION
+    Serial number:          38D5
+    Design capacity:        3440 mAh
+    Last full charge:       2558 mAh
+    Design output voltage   11550 mV
+    Cycle count             19
+    Present voltage         11607 mV
+    Present current         243 mA
+    Remaining capacity      2142 mAh
+    Flags                   0x06 BATT_PRESENT DISCHARGING
 
-  ksmbd: Use struct_size() to improve smb_direct_rdma_xmit()
-(2024-10-01 14:50:51 -0500)
+I hope you can ping someone to release a new firmware build (probably 
+firmware-icarus-12574.B)? I checked `chromeos-firmwareupdate --manifest` 
+as well, but mine matches the version there.
 
-----------------------------------------------------------------
-Three small ksmbd server fixes
-- small cleanup patches leveraging struct size to improve access bounds checking
+But upgrading firmware would be an ordeal for people who replaced 
+ChromeOS with an ordinary Linux distro on the internal disk. ChromeOS 
+recovery would wipe their non-ChromeOS system, so they might need to 
+figure out how to safely manually upgrade firmware (thinking VPD and A/B 
+flags).
 
-----------------------------------------------------------------
-Thorsten Blum (3):
-      ksmbd: Use struct_size() to improve get_file_alternate_info()
-      ksmbd: Annotate struct copychunk_ioctl_req with __counted_by_le()
-      ksmbd: Use struct_size() to improve smb_direct_rdma_xmit()
+Even then, the RO EC firmware will forever carry the EC bug on 
+most devices. For example, one of my hana boards goes into a bootloop 
+failing to sync EC firmware, where I had to disable that and only 
+use RO EC firmware. And we will eventually have non-ChromeOS firmware 
+for these devices, which might not properly handle EC firmware.
 
- fs/smb/server/smb2pdu.c        |  7 +++----
- fs/smb/server/smb2pdu.h        | 14 +++++++-------
- fs/smb/server/transport_rdma.c |  4 ++--
- 3 files changed, 12 insertions(+), 13 deletions(-)
-
--- 
-Thanks,
-
-Steve
+Please consider fixing it in the kernel as well.
 
