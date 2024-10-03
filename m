@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-348714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DA198EAE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:56:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 577D698EAE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36C0C2831BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:56:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89AF81C21A38
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4D412C7FB;
-	Thu,  3 Oct 2024 07:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HOUu0PXv"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610FC12C7FB;
+	Thu,  3 Oct 2024 07:57:51 +0000 (UTC)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D25126C09
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 07:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0418E53363
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 07:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727942181; cv=none; b=hRhVEU1ibmWQDzxmni5pBKxH3BdeKHeA9I3z2Li5+3C06wO4gIitfvNzhajTsFJvF+u3EjKi0RxpCqk1IS8oUnc72K4xlf3UXzNC7MmsBWn+/+8srVbcNaJYh3abEcit1UsW4QIzmYwPJSGflmGoBbUKMvjYZcEJ1Fs2CZrhUxk=
+	t=1727942271; cv=none; b=mKYAq4btRbf/vXgkF5jUj9wEwAVCK7hjpikHrAkejXePZc9Sd+aZbYF7cxBM09UdmSeOcYH2epSZp8VZcnhsUCXHG401XroqqPjik8pKpPEsnK7abUPbw6R4kK7eXG//3riUsMkYdfdBVtSc7TOgGN0J31rpAAozkCRAThNrZuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727942181; c=relaxed/simple;
-	bh=v6ALvc4W24Stl4DcbfKSXH2YeE+6bGWlnQQLPePuZlY=;
+	s=arc-20240116; t=1727942271; c=relaxed/simple;
+	bh=P6D8C+Qcs8klJaF2+jr6gTI/okBuq1w42TDRnsZx8/8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JQIb3unBb0iAKn3j8VPHSu3XBN4uatlu4RGAWSsShj7i9YEDhmDKRH8nyIsMkOWsbmreww+l7wzYpybtg+CWX4R0B55pC13cHoVi04UcS2GFoNExM45O4mfiP23wW1i78LSkApccv90UR8nk2ns13IL5znS5EMu8hJCw6btG3ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HOUu0PXv; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c42e7adbddso650661a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 00:56:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727942178; x=1728546978; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EKyDwfp4Ml344QHsxkGSl5FGwY5UjFoy6Vbspzij4AE=;
-        b=HOUu0PXvRUlRwG6A3NrFVfEIIqo6NrHkKLYNeqH2kXA8v0EZii/r5T8AOgJB2qcEli
-         VUKchgLrjjSwUbiol/VZiWAFb6gKtSfgIXJboK/kzGdNW0lV9ZiClUp8DBlcR62cLy89
-         dgkpvr1UM1xbhNPW7DfOTnUTQyIholapiKhfjiYljAX6W5+HskqrvaKUhUQdZHmv0AZ8
-         29ZlsUk5RzANWOeBwPfapPv2T8UWzvWti2YSd3qZhJRBSNSsBDrs2kKtoxDPy/21UP15
-         wHJxwo6L3S9bmurt/6oei4n5ztEDqY6hkUzdhn8vQjQemrgc+9KSTmyYxB4g9XOiveeA
-         5a8Q==
+	 To:Cc:Content-Type; b=pk6eTCFNkwJ0pwWPiZ95XRj42rSCS71sMsIoBruLxr4VOCpQlxd+0A3B//S3pBV4bVgKz1rNZ9F7KvcaHfmEzidDFfUnlSPjbezvrEybGwq5egqHDJNEffmElrFA7sJWcMHuAVQENFT1nEFnrkw+0yPJwSeSuG31HB4345+X1Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fac187eef2so8376811fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 00:57:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727942178; x=1728546978;
+        d=1e100.net; s=20230601; t=1727942265; x=1728547065;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EKyDwfp4Ml344QHsxkGSl5FGwY5UjFoy6Vbspzij4AE=;
-        b=txiOtv7XBECUEi9sKNGik7+YGxKF1m0Q1E3y7u8otGR3GRNAELfhoUzUf49BhzWMqR
-         G6anWBjDuXXmut2fewzx9Cu/ojPH/pfJYj64cz/qyIvYxy9PDK/CC1IN+K9ijX06BhuW
-         Vu3R86y4rrnWQ0wtzKT74LZ3PJQaW6Ux0n0Aiqh5ugqRzg1ZtBAAa1U5blArX1HxBlwG
-         CJtCQaKsKHwLYwE6LswW46gkV5EfrDAGtZUUGPBXEUfLKBFvcQy2FpMRuTyUE3rzj203
-         Uq5lMhYlVvQMHASIMZCkqVSMQ6E2ejtmwNP0bPo7swzA0aHUWY5hnp+ZlC809Eecy6DU
-         sthg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFR+qlPSUkmoRJwcTVfos2ha+Ge9+6oDKhOj1IEKuOnO7YG7RrqquMuBUPA+E81XlhZdC8wZ+pknjprC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6jjpNGfJiKhuu91rd/cAPolQrHOLSTscsc1RRtpzNZMq7iSY9
-	P4gejBxeHgX5LTe142VWcodYQtQNgeuHsDpUQOw7dCDvjwdGuoKL7k1EIG5XAsnoOoWICHU+AJW
-	zMUCG5rAL9d5jYbttf9GgnFDVBbMqKb3rkiRP
-X-Google-Smtp-Source: AGHT+IE1lXB/OQzfjadu4gqLsX6vwMaut6bPbMqb3wk8B2SU/Xr68rxVVKC73SYNSrAzyFVbSIuwVtACV3a0DRjhV8w=
-X-Received: by 2002:a05:6402:5255:b0:5c8:ad38:165c with SMTP id
- 4fb4d7f45d1cf-5c8b1b77ac0mr3450082a12.23.1727942177451; Thu, 03 Oct 2024
- 00:56:17 -0700 (PDT)
+        bh=6RD0t/Z2NUMuzWftZvrrW0m73y6hWXplEq2Auw33NSE=;
+        b=Mt1tZCfKc9L9h9vIGNAvkIwI5u/fuoyZ6Cluvfw+a2K/N915yJcAoxsynAEAGGy70S
+         gpMwLBHV6Jv+LXm2Y84cAJViP0nyI/F+XpT/tWcJ48KafD4Li2CgiZfI1P/R9ByBbH4g
+         7MZkWAg8TK43OaMExi/QEWv/OsEke7utBoEIm43AdB5IBu6UfII7TBK/mkwT7bf4e9wM
+         9+nVo7K9/g1FOZG0HUhele8kIr7oPigLv9dIln4zl+RbHABVkLpApQDFIMq8fVqAv/Cq
+         pNYLdrAudh0LG/1sewDPmwgt32I6JnwUlS73nttwHvMNEdJsa031Y7wAoYJV0tUAqnVi
+         aE7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWV75UkBEzKRNGb9honNEjMjGvLbR5MGPhBy7t32eWlR7XUoh4VqTGNdYgqOdxTViHNdoL644tcFWCL6eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIEIT97vnxHw8mLlc4zxUD9a6tM2qyCtv9Vpwp1DF25ooopirn
+	AoQs2lsxkF67UYUZcKu7UfE73/dMQii7qvJlpdRcF96oHlpF9krV6WJ9em4C
+X-Google-Smtp-Source: AGHT+IHaIW2/LihhlTBLq/khQNwl+sCP88YC+WaNmHFjbP2NTfOPP27QamehPjtGQ6q+ELncZMNbDg==
+X-Received: by 2002:a2e:802:0:b0:2f7:9d20:3882 with SMTP id 38308e7fff4ca-2fae105f2bbmr26850451fa.22.1727942265111;
+        Thu, 03 Oct 2024 00:57:45 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faecc6b443sm1473201fa.98.2024.10.03.00.57.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 00:57:44 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2facf40737eso8183801fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 00:57:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX3zkLgsF+jkdU+aSqDGkZ+AVxO2BgxA5SsmOyt8ZjR25xrxHZHogxoux84MNX2+REGk4ukr9ShtzQAvCc=@vger.kernel.org
+X-Received: by 2002:a2e:be9e:0:b0:2f7:53b8:ca57 with SMTP id
+ 38308e7fff4ca-2fae105a685mr37369921fa.19.1727942264767; Thu, 03 Oct 2024
+ 00:57:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002053844.130553-1-danielyangkang@gmail.com>
- <CANn89i+y77-1skcxeq+OAeOVBDXhgZb75yZCq8+NBpHtZGySmw@mail.gmail.com>
- <ff22de41-07a5-4d16-9453-183b0c6a2872@iogearbox.net> <CAGiJo8TaC70QNAtFCziRUAzN1hH9zjnMAuMMToAts0yFcRqPWw@mail.gmail.com>
-In-Reply-To: <CAGiJo8TaC70QNAtFCziRUAzN1hH9zjnMAuMMToAts0yFcRqPWw@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 3 Oct 2024 09:56:03 +0200
-Message-ID: <CANn89iK7W1CeQS-VZqakArdZqZY6UQi2kCDcpUmL4dGjAQwbCw@mail.gmail.com>
-Subject: Re: [PATCH] Fix KMSAN infoleak, initialize unused data in pskb_expand_head
-To: Daniel Yang <danielyangkang@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
+References: <1e82c551938c32b4dbf8b65dc779c1b772898307.1727853749.git.geert+renesas@glider.be>
+ <87zfnmbfu7.fsf@igel.home>
+In-Reply-To: <87zfnmbfu7.fsf@igel.home>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 3 Oct 2024 09:57:30 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW-_oowzrzpoeU-=mD1t8P_65cBr4meY-BToYbkyQMXtg@mail.gmail.com>
+Message-ID: <CAMuHMdW-_oowzrzpoeU-=mD1t8P_65cBr4meY-BToYbkyQMXtg@mail.gmail.com>
+Subject: Re: [PATCH v2] compiler-gcc.h: Disable __retain on gcc-11
+To: Andreas Schwab <schwab@linux-m68k.org>
+Cc: Tony Ambardar <tony.ambardar@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Miguel Ojeda <ojeda@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 3, 2024 at 6:42=E2=80=AFAM Daniel Yang <danielyangkang@gmail.co=
-m> wrote:
+Hi Andreas,
+
+On Wed, Oct 2, 2024 at 7:00=E2=80=AFPM Andreas Schwab <schwab@linux-m68k.or=
+g> wrote:
+> On Okt 02 2024, Geert Uytterhoeven wrote:
 >
-> I took a look at https://www.spinics.net/lists/netdev/msg982652.html
-> and am a little confused since the patch adds a check instead of
-> initializing the memory segment.
-> Is the general assumption that any packet with uninitialized memory is
-> ill formed and we need to drop? Also is there any documentation for
-> internal macros/function calls for BPF because I was trying to look
-> and couldn't find any.
+> > + * Optional: only supported since gcc >=3D 11 (partial), clang >=3D 13
+>
+> This is misleading.  gcc fully supports it since 11 as long as binutils
+> supports SHF_GNU_RETAIN.
 
-Callers wanting allocated memory to be cleared use __GFP_ZERO
-If we were forcing  __GFP_ZERO all the time, network performance would
-be reduced by 30% at least.
+It fails for me with arm-linux-gnueabihf-gcc-11 (gcc version 11.4.0
+(Ubuntu 11.4.0-1ubuntu1~22.04)).
 
-You are working around the real bug, just to silence a useful warning.
+$ arm-linux-gnueabihf-as -v
+GNU assembler version 2.38 (arm-linux-gnueabihf) using BFD version
+(GNU Binutils for Ubuntu) 2.38
 
-As I explained earlier, the real bug is that some layers think the
-ethernet header (14 bytes) is present in the packet.
+In response to v1, you replied:
 
-Providing 14 zero bytes (instead of random bytes) would still be a bug.
+| That ultimately depends on binutils support for SHF_GNU_RETAIN (2.36+).
 
-The real fix is to drop malicious packets when they are too small, like a N=
-IC.
+So binutils 2.38-4ubuntu2.6 is sufficiently new, but it doesn't work?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
