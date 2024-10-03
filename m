@@ -1,103 +1,94 @@
-Return-Path: <linux-kernel+bounces-348999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D348398EF2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:24:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F4E98EF34
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95620282A1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A11E1C21DE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99B2174EFC;
-	Thu,  3 Oct 2024 12:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288AC17ADE2;
+	Thu,  3 Oct 2024 12:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XZAby0s2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="UVtLf/rn"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95F215D5B7
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 12:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AB216F8E9;
+	Thu,  3 Oct 2024 12:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727958273; cv=none; b=lvFRcDz2MhBNgRol+46bIyZEjZwD+Bbe92kYgabcCnsGy3TCwcgAd4YWGM7n3oCsKuDO3Scx4pJM2Qz5w0nuOA/bL3SxDn/f5Ot8U7bfTxOVydCSSnUhIAVHa/XLGDMS+E5qtsz6uHupu/6A8ObxdRq3rVBrlPWLhM/dAQKRDCA=
+	t=1727958459; cv=none; b=Ps9LbBxcXjKiYSVHqMVQo3YerMUMJVLrnWpVz/Lqc3g5JFalLVmDxptf7c8bLh84SY+MHUGuCqEVNSY7wXFl8K6lg059ldzq2dXguw5KZZSmjOtHofCkEI9jxAULKkQ2Zpkve7GStT7GeuaoFtbz5k61gP9rZUC2GohgIyq433Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727958273; c=relaxed/simple;
-	bh=py0PPFc2Z3Eu/s4wBRnKGObvN7Xub9Bvs9CteQbFy8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HbOBpFYu5tTCb7sdZAubNCQsAxJ8639hArp5JILKWtVAYpRxtM0JQyWBKzbU2bjlfwn4KsO/L7EpHo4IowmOQ4AUxLc8jXKrlGlFmCsoyXkBsoOrCIsLsVnK4oEoK5TiM3NxLTVluqeiYqYZChUWfcV1pVZxeBUgGsE+7Tu97gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XZAby0s2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727958270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/Hl2FfZzxn+kGV/DjBSSLFvJJIbxpboOA9i3mKhddGE=;
-	b=XZAby0s2/fZgB3RDO4hz9S/uaU+QzeVbX174R0kcUoREjIqYsu5bl95Ce+m9rxdI/whUxF
-	jRWXy7s0eIW+C5ZbZfqhzITjn2wzdD8JUW5W5HyNMkBUs3KhtI5Q7ZEGxs5NHJCVgTLFV0
-	lU3nvQRSQ7zpST4cuyISxPj/GV4MM2o=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-671-AY_t0tYIP46NTZzSch3EGA-1; Thu,
- 03 Oct 2024 08:24:27 -0400
-X-MC-Unique: AY_t0tYIP46NTZzSch3EGA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1727958459; c=relaxed/simple;
+	bh=Jar3oUfzCe0cIFm3kfMnxBFkaTZ4qn1SLJRhfyHhm+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hhd4gMYtZwRE0BCFJxLveJR8wM0UcXOzv+wVYFYTP+QVwSEX1fXuY/ZbBxC7V4KzetDyKZZfPShtEPkGiVrnP6Pst2vOmtLRohqi2RsG1GuxaqSNAShgu5g4ZyEhJlTOs/Op38uIe8mz4BRpalbISiz/p2b/JAbV6sC+qkaWyEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=UVtLf/rn; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 9191f5490510dafa; Thu, 3 Oct 2024 14:27:34 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E03531954B06;
-	Thu,  3 Oct 2024 12:24:25 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.39.193.247])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6EAB31956046;
-	Thu,  3 Oct 2024 12:24:19 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH] tracing: doc: Fix typo in ftrace histogram
-Date: Thu,  3 Oct 2024 14:23:35 +0200
-Message-ID: <20241003122334.44682-2-gmonaco@redhat.com>
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 86BB26A94E9;
+	Thu,  3 Oct 2024 14:27:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1727958454;
+	bh=Jar3oUfzCe0cIFm3kfMnxBFkaTZ4qn1SLJRhfyHhm+E=;
+	h=From:Subject:Date;
+	b=UVtLf/rnRcypoe/U3qwNdpsNq5PknKjTkjrRQlRsVLsI6VaeNzTms/evmk44skpj1
+	 QSIIg/qxbx+XCb88vscSQnFV781XoO8hbX2Pgis5lpwLqjXsoYnW/sX0YUKdjAxwmO
+	 WQ51GM9D4+UvQMePASqr/RB+4/Aj/d7ekZ7toGc8b+BsO7Jbfc67uj7O5KeWzRMhLF
+	 8khDwSIRoTYmP/gSE05+Wtnj6mnrKBC0MXDLsn+VzN9ssDU7WgDgVpUGtZ+Pr34fG0
+	 W4BfU2Bbpb/0DrySd8y+NSh7Y3vTe6OeRdkRYYjP8wHMjRz33tWEszZ1mgk+I1PGFT
+	 dTtEJPZ+s9sRw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH v2 0/2] thermal: core: Fix potential use-after-free issues
+Date: Thu, 03 Oct 2024 14:23:52 +0200
+Message-ID: <12549318.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvuddghedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriihhrgh
+X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
 
-The Tracing > Histogram page contains a typo in the field display
-modifiers table.
+Hi Everyone,
 
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
----
- Documentation/trace/histogram.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is a second iteration of
 
-diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 3c9b263de9c2..0aada18c38c6 100644
---- a/Documentation/trace/histogram.rst
-+++ b/Documentation/trace/histogram.rst
-@@ -81,7 +81,7 @@ Documentation written by Tom Zanussi
- 	.usecs         display a common_timestamp in microseconds
-         .percent       display a number of percentage value
-         .graph         display a bar-graph of a value
--	.stacktrace    display as a stacktrace (must by a long[] type)
-+	.stacktrace    display as a stacktrace (must be a long[] type)
- 	=============  =================================================
- 
-   Note that in general the semantics of a given field aren't
+https://lore.kernel.org/linux-pm/12541117.O9o76ZdvQC@rjwysocki.net
 
-base-commit: e32cde8d2bd7d251a8f9b434143977ddf13dcec6
--- 
-2.46.1
+which updates the first patch (to make the code changes more straightforward).
+
+The original description of the series quoted below still applies:
+
+These fix potential use-after-free issues in the thermal netlink code
+and in the thermal core (during thermal zone unregistration).
+
+They have been found by code inspection, but nevertheless they should be
+addressed ASAP IMV.
+
+Thanks!
+
+
 
 
