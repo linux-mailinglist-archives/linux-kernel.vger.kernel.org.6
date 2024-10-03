@@ -1,87 +1,155 @@
-Return-Path: <linux-kernel+bounces-348809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB1298EC13
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:11:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28A1398EC19
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E1841C21E69
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:11:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C49C1C21EFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3469713E41A;
-	Thu,  3 Oct 2024 09:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jr+FwCPc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEFF145B27;
+	Thu,  3 Oct 2024 09:13:35 +0000 (UTC)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9015F13D509;
-	Thu,  3 Oct 2024 09:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173A713DBB1;
+	Thu,  3 Oct 2024 09:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727946674; cv=none; b=T+D6Xup6qxin4Dfg/RPaWa5JYH7RUCq+xNSnYR1bJTBd2bhVo80wkrMzpW4FnFxS33Wb3HeQ8xfrTKZE3H9G9LIDlLxZeBj0aeO03V60QvV4j0VOQEX4ATnJbXCZA1L8PcQPDmxggwqL5pQt1U6eUNSIUWl5MWOZjyFzcr2gb2w=
+	t=1727946814; cv=none; b=BR6J/9kH94aSeYSE6cIezzbQLCmY6dFV76DvA2BR9U4DW1z39IzBs55K4l4TV8FoG+4Pxv/Q8pV2vLkEUISQzIuAvgkjQqG0MTnmP6M9BnwqCkySEH8rUwgmvrqZ3jBa2s9ExlZ06+1rPomXqVjfwNWoex/z7WebNmS3oS42TYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727946674; c=relaxed/simple;
-	bh=Yuj4ftHQERaqRceheio1O3fO2msiqxszbRLhAk0gE/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BFB0wPaIrdfHM6z8DyLj5t4B4CrzWbSQLgw2TKBF2/i3WYb/ByVmAkc/qtrOSCPW2/8aIHAkdrKWFHCZd37PlkjYd3skbR+Im0pj23v1yOH3CxLiCnby4igEqalz/3kM7aXvJkUeqn2UE/FJX1w6zrNz8rYZT5y1JoK2lOsr4eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jr+FwCPc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A5CC4CEC7;
-	Thu,  3 Oct 2024 09:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727946674;
-	bh=Yuj4ftHQERaqRceheio1O3fO2msiqxszbRLhAk0gE/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jr+FwCPcNpUa+TkLnPMrSaJ+HuqCJcw/i1UcOjUAh4P2puC06JdLi6yxL2dkRDE49
-	 /GpNO1p+KF49dDo7KusuCUChmPbDpucJ8qTvN98e2CepnS3+U9N+1aP9Qu5/1DwSrW
-	 v2DBvWzaJ9fT0dbkxxR3FEaRpFp2vUMP8WiwxoBhsbyoBCiR7uZ2v/IYT6BlvbHSgs
-	 1uwgaKFjNcKIgN5Ir9pic7dHgEo9TJ7C7iLV3vexcqkejjVc8KbAjK56vsRoRT6ezx
-	 HkJmMKmLwO8VR01Hcjrl5hDNOoJbL7cLvpbAZMk39/s/AjpudyW+cNYzVGPE+sL8Vn
-	 2OEWNAd1eO3VA==
-Date: Thu, 3 Oct 2024 11:11:10 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Howells <dhowells@redhat.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the vfs-brauner tree
-Message-ID: <20241003-wacklig-gewonnen-131cc564566d@brauner>
-References: <20240906182906.54527fbf@canb.auug.org.au>
- <20240918152425.3105d1d1@canb.auug.org.au>
- <20241003084503.47f857c4@canb.auug.org.au>
+	s=arc-20240116; t=1727946814; c=relaxed/simple;
+	bh=NXCM33NdXsSEuRRLpBcQcMOtIahHrw3gOJde07MAaq4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YkB1E9vW86R49GTCmyKlPTHMF2XIlgXrgaLcEcBObgPcRDn9qk2dqNV+IozbUygCXxmfYb9uNoY0dMQ/HDynyirC8cUXceNMkXPaW0u3DOF4DbtOfN96yZBoW5iOiMjXc6iE1MySTZNmU6juRJTIcLjQTrKxhdt80vYqheNbzTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6ddfdeed0c9so5664027b3.2;
+        Thu, 03 Oct 2024 02:13:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727946811; x=1728551611;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c7WgvebXXsaRMnWziPr4x8Pj8uGoCS6EaJvHvtQmBuY=;
+        b=skiEfA82QesGYJog62JU63cMx1yyt7EdfbhvJIsRGZXuzYzhyOJGY9KS+tgsmNkJlE
+         rKVN0/KoKIqFlWIqBsOTsXDCI+YwGOKKKScOQKnZhre2l/P8ML447jnzPLHs7NOl4aZm
+         5RYuQe8EgMJnp5S9d/z71owjSb2FCYdi90833HGsbz2mp++AxHyAh9bPE9NP/4BBmwM+
+         me4Lsc0gX4Yh5X/8TntH5RVuhIBhlEzGoTTPnpOJl5GLiywVEoWreTb5E/oaj6oO9HRx
+         rOgs+q8256or7lEpLATxZrbCe8Xxm0x/ugF4LTsD64HT7j0VdrxxS/P7lJ5nKPDtHOUP
+         19YA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGur2MGfdOCjMsx/AkG1Wmxjbod5bU1S4XQWSSg/ZwQ4HSLlFPGT7xTZuL3T2wDXy0N2ifB944I8ftf6y0@vger.kernel.org, AJvYcCWWzVWB8phuSQkvgVdortL4/uSL8tVcelnb1jwOnf+6z78s719jQInlEN0I/NUp/Xk08YVWQFb3@vger.kernel.org, AJvYcCXRqWRrbB2mkLYysLuNkpzKgQiClx8IvTE33MIAyeAXV7uCMgHl/inQj0HRjMixDq/S6RmjH+sb0yrv@vger.kernel.org, AJvYcCXqLmCLpWR9LYYSGDj/X2bRzdzBlSZ3/RIPhCYveyhPdXbOgF8bc5bgzYdI4Ubd8SGt/3Oex0gmxQe4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBtPd0ImKYp2kLFnwENb0bhkkdFahehXcFj8MZMeONufcmqnwe
+	0TsxQHYjZrLTF4gf0AO/SsyhfNZ2e2Y3ut7yOT2gW89aaewWbci8hORumuniAYU=
+X-Google-Smtp-Source: AGHT+IGn18KDopn5fANqBk5+McBjmh6uePf8h4ryC2QhJR0RNJaG/0M5ek3KbypWMR3DGEBkmK/ztA==
+X-Received: by 2002:a05:690c:b13:b0:6e2:83d:dfd9 with SMTP id 00721157ae682-6e2a309f315mr62025137b3.44.1727946811113;
+        Thu, 03 Oct 2024 02:13:31 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2bc2d1de6sm1334357b3.68.2024.10.03.02.13.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 02:13:29 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e232e260c2so6053897b3.0;
+        Thu, 03 Oct 2024 02:13:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV+vvUfrvAOYPhCbgy1OcVfwxSR64yz1OIrTbiz7/Ikj4LpElzYKdcB8cC4idfggou8Ki0FVxXSA6iQt3tz@vger.kernel.org, AJvYcCV0jO9Sst1ZcZ4T+SIY2g6UwAtW76oIWHxtA2A/HoGac7fbTGxye45m/YO+/rMKDrXlh5GO16IcJ8C3@vger.kernel.org, AJvYcCWJhotmCwgW8t6hvs1hfVawmel2bVrXfAuHhjfnFWxLwqh4UaWeXQYXemwuJ8wHCOh94lFfXIg3@vger.kernel.org, AJvYcCXF4Ag7lK4fYaqH2jmWHYct9Sfb4wXkrox76ebUdhuYocx7KzgM/+6Jfnwf7UeXOhRIYRlijganGRzo@vger.kernel.org
+X-Received: by 2002:a05:690c:660e:b0:6e2:636:d9ed with SMTP id
+ 00721157ae682-6e2a2b72c98mr51489427b3.3.1727946809298; Thu, 03 Oct 2024
+ 02:13:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241003084503.47f857c4@canb.auug.org.au>
+References: <20241003081647.642468-1-herve.codina@bootlin.com> <20241003081647.642468-2-herve.codina@bootlin.com>
+In-Reply-To: <20241003081647.642468-2-herve.codina@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 3 Oct 2024 11:13:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU=Huug5Hip+CCma8pzo=AHAeWtzPES8Zu-qCBAJ0Ng2w@mail.gmail.com>
+Message-ID: <CAMuHMdU=Huug5Hip+CCma8pzo=AHAeWtzPES8Zu-qCBAJ0Ng2w@mail.gmail.com>
+Subject: Re: [PATCH v7 1/6] misc: Add support for LAN966x PCI device
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Lars Povlsen <lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 03, 2024 at 08:45:03AM GMT, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Wed, 18 Sep 2024 15:24:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Fri, 6 Sep 2024 18:29:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > After merging the vfs-brauner tree, today's linux-next build (htmldocs)
-> > > produced this warning:
-> > > 
-> > > Error: Cannot open file /home/sfr/next/next/fs/netfs/io.c
-> > > 
-> > > Introduced by commit
-> > > 
-> > >   550bc501ff91 ("netfs: Remove fs/netfs/io.c")
-> > > 
-> > > $ git grep -w fs/netfs/io.c
-> > > Documentation/filesystems/netfs_library.rst:.. kernel-doc:: fs/netfs/io.c  
-> > 
-> > That commit is now in Linus' tree, but I am still getting this warning.
-> 
-> I am still seeing that warning.
+Hi Herv=C3=A9,
 
-Pushed new branches now. I didn't do that yesterday.
+On Thu, Oct 3, 2024 at 10:17=E2=80=AFAM Herve Codina <herve.codina@bootlin.=
+com> wrote:
+> Add a PCI driver that handles the LAN966x PCI device using a device-tree
+> overlay. This overlay is applied to the PCI device DT node and allows to
+> describe components that are present in the device.
+>
+> The memory from the device-tree is remapped to the BAR memory thanks to
+> "ranges" properties computed at runtime by the PCI core during the PCI
+> enumeration.
+>
+> The PCI device itself acts as an interrupt controller and is used as the
+> parent of the internal LAN966x interrupt controller to route the
+> interrupts to the assigned PCI INTx interrupt.
+>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/drivers/misc/lan966x_pci.dtso
+> @@ -0,0 +1,167 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2022 Microchip UNG
+> + */
+> +
+> +#include <dt-bindings/clock/microchip,lan966x.h>
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/mfd/atmel-flexcom.h>
+> +#include <dt-bindings/phy/phy-lan966x-serdes.h>
+> +
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +/ {
+> +       fragment@0 {
+> +               target-path=3D"";
+
+Nit: missing spaces around "=3D".
+
+> +               __overlay__ {
+
+Unfortunately we cannot use sugar syntax, as sugar syntax does not
+support empty target paths yet.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
