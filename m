@@ -1,133 +1,100 @@
-Return-Path: <linux-kernel+bounces-349219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7097E98F2A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2448698F2A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239721F21CD2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4D21F21FC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DFB1A08AD;
-	Thu,  3 Oct 2024 15:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931461A4F06;
+	Thu,  3 Oct 2024 15:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JW6wiGlo"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ccJ1/wKN"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C796DDA8;
-	Thu,  3 Oct 2024 15:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB09D1A38D9;
+	Thu,  3 Oct 2024 15:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727969557; cv=none; b=VtnTy1A/DYw2/TAFK8NNN2f+B0+OaA+w9Xl9w7waadDkXx+N7QmOpdYtIf+nZNiJLdkA5It9AQ5KkspdDYF8TNIV5ihQ7URUJDDqZInO/gBzzVu+qpbh8XAy94Hw9ELdN3Rv3NxbBhrR+8RJ1AdUSdatfzBlQgfyXMHOZEvhYmY=
+	t=1727969561; cv=none; b=NNsl3C5LoNE7iEoxFsId22LG8ey44Y7cwvgopUjy/DXJtHaSa95g5tzbxvvpgI6T0UR472iLXQydSYy9CvzPMSgssIQu+jky3wK9v7E1WDuCjZTB0lOmYJguiGL6pBgb0LKp3krwXsJZl2jFcoMZrZ93oNjXSHJ9UuhcKGnBrK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727969557; c=relaxed/simple;
-	bh=jahUCEKj9NRTWQg1+eog4R85O0MFnIuBfeHhBf4QMZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hlGuq9hY1dwy2DZz4QL+6OhfuiI0Rauo6yH4rFDiYjsZvTawiJ/UwDpLk4/D3nuh7NWPdRGAtukqmloVxTdTc/ABLpa6CX7zAIerGSvDl3VS6VolrI6OynOidTECF+tfvQz8B03dk/TStsEow/lcHM8CGO7KGWw2rxfvRL7HFfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JW6wiGlo; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-287b8444ff3so225195fac.1;
-        Thu, 03 Oct 2024 08:32:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727969555; x=1728574355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jahUCEKj9NRTWQg1+eog4R85O0MFnIuBfeHhBf4QMZQ=;
-        b=JW6wiGlo53t21DwJKAYRAHUyCf2NSxLrvjOlUv5D2By0FbG3k54gJpYkOJ1JFkOiPz
-         O1w41yNnu7RqkOIvrviUKGCNBdogS9dHQX4DfQqFK3of6ZCYWCtQjk/44p2j4TvwmB80
-         4Du3sGBRgVx0YPPbfDsTAWp5hl54YJfdvmkbLMA9IoJwhslJSB4iIXh9iDIacsV2HDFX
-         ZT9ukVF9sVmm+I2lc1jkBPAUvnsyjgCTUX2Hs+7YFSIksduE0wOrRVYRFEm8HNJ85Lzc
-         jlfxnu9FqYuz/HIKztaeuQmuMZHJ+ymQFZGV7AuNhNXSRCAlRNJBiRe+pSObtQPRqFEc
-         3RtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727969555; x=1728574355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jahUCEKj9NRTWQg1+eog4R85O0MFnIuBfeHhBf4QMZQ=;
-        b=jVELJryxQTl+r8nqgWpQpKtUE7Zjmqv4hnfxb21VDduUIJBgeR0HK7tpouvk6YYE9W
-         /QVvwAjwhEhWa9BRjR8XYUFYLi7PhQKD/f7J9JSXCbE6o+3soeurZ9UOrM+p3LOJiuuF
-         nR+vjBwSmte9f6t+T2iJKDAX9p0sw91rbMzmXPwYrEzjKnvmRIBTUVzTzPkUAEsXUBxq
-         J1SUH4lQDOdn1AzxdWomKbugAE7yj97BxywoxJvSGdZ74EOSBsVrQ39PrHGNuFLqtudp
-         2zaJcjdF42r12NiGKHB14GfYimcGLUWEIKz3cIhwVTHOSUtSHEMkblvfo1erb7nG6Xmi
-         EmAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDAEh8C7dCaLi8/xdxx9i4gyi5JVhoZstJOmwoNHLI4wgs10LD4e5F9wv25qCB2KMWJ/hXCZ+DvUghDOLW1m+wSrs=@vger.kernel.org, AJvYcCVT2RjQYOTVxPOo8dRg6sbzNffnmpT/bc/6an/9aOoN3SNWp4VrDo181E4xyQpXfRrRyKs5EFRXb2AI@vger.kernel.org, AJvYcCVtqS3LkblJXTDV5wD+s8iFnNbCPoyZixpR5g8cBuP3LtndgCefOyJJXC/X/PgNiIfu7hc0OKRR6Ahx9hdZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo/lKoFB5AoyuzWBb4ZZ1E5fwIEB96Y15QvKrf2XIkeUrObDFD
-	MB8y1nTPcJagTNsJ3LY+Of8bK5xDKv7NXUDttWr39UbD5v9375vhHytuS7bJ62N37Wqz+PKb4vB
-	3kR0IFJOPRZM9z6b1knaEl8dkTT8=
-X-Google-Smtp-Source: AGHT+IGWgHG1pZLAJW1/0INFYGZK0vzLTtDKn/CvN91U6G58RVlzwkIQ+mHchK9Eyqu2EfUsF5ZJzF7dOXTRO5Q+5L4=
-X-Received: by 2002:a05:6870:d1c2:b0:277:d932:deb1 with SMTP id
- 586e51a60fabf-28788a8b15emr5118049fac.18.1727969555113; Thu, 03 Oct 2024
- 08:32:35 -0700 (PDT)
+	s=arc-20240116; t=1727969561; c=relaxed/simple;
+	bh=9krKfD2PPE4Bo0Oxq5l3JAozLfSecSk+reEbBJesV8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnKkCaHcdCVbruNT7e+HA/fCi99GhAAzRMcBeLwY6DBynsTfoshLR4CZgKDfBsgqWbmkN+ALZrLxO+bFC+FdngJnwoXkZHbzCv9mQCPiZD3P3DG5yZaZYuu71QySqw3g22XuhxNzHmbZ01l90AqaW769i5COEEmVgI+OtsB06Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ccJ1/wKN; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gwLKYGbX8kM5rFaC+/BTnEzd1qTUuvtYb4wOOvMU0n4=; b=ccJ1/wKNEyJiwkrzQVvGKBTQPK
+	QLWmqMcu8NOVBTbshrR6uF4MOd76489SBKFz2VcAT7BAj2RJtUaArZ/c+CGyg2CpMeA77BlTcadkC
+	XDtOy8IqwKq6lEzHXtWFzApu4tEXvSO/IAJX0O9jQZJ/YMKuGtSIbX+kFs8JAQqgTCgYRunDiKYZ7
+	dagD07u/itdHwSXq5gQWYYUS4VIKHrYMI2b+Op0K89m+coTECYuPeqsVChvvgxBTAeljRxXu3FWn9
+	8mk7xsXxhMxMqs4Qae9x+UsKDYE2Hz/AobF465Ouowmv2fnig/8pZBRpEAlxbaO5xHDzExWwXqObw
+	5KSLEZyw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1swNoe-00000003iIp-0LWh;
+	Thu, 03 Oct 2024 15:32:32 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1AC4130083E; Thu,  3 Oct 2024 17:32:31 +0200 (CEST)
+Date: Thu, 3 Oct 2024 17:32:31 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: gregkh@linuxfoundation.org, pmladek@suse.com, mst@redhat.com,
+	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, kuba@kernel.org,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, vschneid@redhat.com, axboe@kernel.dk
+Subject: Re: 6.12-rc1: Lockdep regression bissected
+ (virtio-net/console/scheduler)
+Message-ID: <20241003153231.GV5594@noisy.programming.kicks-ass.net>
+References: <20241003-savvy-efficient-locust-ae7bbc@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003131642.472298-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVknArz3W5XhPVj-ZGCu97SWyf2EqHhJRXOg6pJ1=tF=w@mail.gmail.com>
-In-Reply-To: <CAMuHMdVknArz3W5XhPVj-ZGCu97SWyf2EqHhJRXOg6pJ1=tF=w@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 3 Oct 2024 16:32:08 +0100
-Message-ID: <CA+V-a8v-zumfwm4q7icQxwB60SXetGogNOi0fBBFZRQwTsTxEw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Always call rzg2l_gpio_request()
- for interrupt pins
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003-savvy-efficient-locust-ae7bbc@leitao>
 
-Hi Geert,
+On Thu, Oct 03, 2024 at 07:51:20AM -0700, Breno Leitao wrote:
+> Upstream kernel (6.12-rc1) has a new lockdep splat, that I am sharing to
+> get more visibility:
+> 
+> 	WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
+> 
+> This is happening because the HARDIRQ-irq-unsafe "_xmit_ETHER#2" lock is
+> acquired in virtnet_poll_tx() while holding the HARDIRQ-irq-safe, and
+> lockdep doesn't like it much.
+> 
+> I've bisected the problem, and weirdly enough, this problem started to
+> show up after a unrelated(?) change in the scheduler:
+> 
+> 	52e11f6df293e816a ("sched/fair: Implement delayed dequeue")
+> 
+> At this time, I have the impression that the commit above exposed the
+> problem that was there already.
+> 
+> Here is the full log, based on commit 7ec462100ef91 ("Merge tag
+> 'pull-work.unaligned' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs")
 
-On Thu, Oct 3, 2024 at 2:46=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, Oct 3, 2024 at 3:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Ensure that rzg2l_gpio_request() is called for GPIO pins configured as
-> > interrupts, regardless of whether they are muxed in u-boot. This
-> > guarantees that the pinctrl core is aware of the GPIO pin usage via
-> > pinctrl_gpio_request(), which is invoked through rzg2l_gpio_request().
-> >
-> > Fixes: 2fd4fe19d0150 ("pinctrl: renesas: rzg2l: Configure interrupt inp=
-ut mode")
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > Output before this patch on G2L/SMARC:
-> > root@smarc-rzg2l:~# cat /sys/kernel/debug/pinctrl/11030000.pinctrl-pinc=
-trl-rzg2l/pinmux-pins | grep P2_1
-> > pin 17 (P2_1): UNCLAIMED
-> >
-> > Output after this patch G2L/SMARC:
-> > root@smarc-rzg2l:~# cat /sys/kernel/debug/pinctrl/11030000.pinctrl-pinc=
-trl-rzg2l/pinmux-pins | grep P2_1
-> > pin 17 (P2_1): GPIO 11030000.pinctrl:529
->
-> Just wondering: is this restored to UNCLAIMED after releasing the
-> interrupt (i.e. after unbinding the ADV7535 driver)?
->
-Actually it doesn't report `UNCLAIMED` after `modprobe -r adv7511`,
-pinmux-pins reports P2_1 is claimed 11030000.pinctrl:529. `modprobe
-adv7511` later succeeds though (maybe because it's the same device).
-rzg2l_gpio_free() is called from the rzg2l_gpio_irq_domain_free()
-path, either this path is not being called when IRQ is freed or the
-adv7511 isn't releasing the IRQ.
+This looks like the normal lockdep splat you get when the scheduler does
+printk. I suspect you tripped a WARN, but since you only provided the
+lockdep output and not the whole log, I cannot tell.
 
-Cheers,
-Prabhakar
+There is a fix in:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/urgent
+
+that might, or might not help. I can't tell.
 
