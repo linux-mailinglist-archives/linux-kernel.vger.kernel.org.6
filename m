@@ -1,102 +1,169 @@
-Return-Path: <linux-kernel+bounces-348477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFB798E825
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:32:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E4298E828
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2658B1F24DD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:32:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0EDC288656
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB41814F90;
-	Thu,  3 Oct 2024 01:32:34 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D1A1773A;
+	Thu,  3 Oct 2024 01:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dbogR42n"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E908611185
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 01:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C232011185;
+	Thu,  3 Oct 2024 01:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727919154; cv=none; b=UPn/Yd4F3DgJJk+8gcUaa4/j/DJfIEW8wAvSDc6Zk13MyCl+xUmNuGWgRoVkD1580tvUVeXC1u8qe3R04f+xxN/8dlnTgDJZPeJjzXXw1xXXoSUfsfO+4kQ0vhaAilmchEJcOuPjZ4GVCfsL4TdUf4DhifSHL+78Xy5R5AOxn4g=
+	t=1727919266; cv=none; b=nqK1aQmbdIGkKHVbiALk/JZvVa18KyOSXaucJHMxxqK8stUs6pK0Loe9NUJeKn7ieqxT7f9hl43Defjt3f0LPeO0oh7CiUqrh3XgU1JPO1xLlw7VqnOYdrH+8e9JNGazYXnz8pcOlpgASjDhqnaRmAzKD+rn2bGF4KomMrOWK7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727919154; c=relaxed/simple;
-	bh=bdfopPzbUgE+uGbefqmgycl4+ZsHX/bBI7R/rF/M5f4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=MqNbOmBfIPyH+29fWgKTI1J5hc3Be8FHqgiSFIYHSAq5MDmZ9IwotifBxvKi5Fok/lb0Wv57ssCizURSgCdeJZgXO6NegMecCeCoSKEC7TDefiGPa5YLUHtpmOCeECHoZDMZAb6PlFD4p/dLABZHYqiwV1EDQwpoUBOB+S4UNUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a342620f50so3966215ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 18:32:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727919151; x=1728523951;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1727919266; c=relaxed/simple;
+	bh=mmaUrN4Dm30mlJAYCNKceu7BnMA5aMALOTE+YcITCc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kXIb18SWmY3c9IFwlUzZlynXNgfqcX1ARBW5CZVWDX8wQ/GWL6cVx9lku35+8CM1LujA/a+xjA8C2jptNeK237pw5ngm32GUZ7FfIauyiwCiISyt0U7Ag7++obKpRoOJka9cV/QG0n6gkGNDYaXlXEpiEJvRCMc2h84S54R5oP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dbogR42n; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso46371866b.3;
+        Wed, 02 Oct 2024 18:34:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727919263; x=1728524063; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bdfopPzbUgE+uGbefqmgycl4+ZsHX/bBI7R/rF/M5f4=;
-        b=QHrZtWHbmAJ3kdSLufjSbFAaSXx1EB0wwuUobhWj4ihKSCRlbH6F8f/0dpoukUTEVY
-         OC8RYd/3Y6ATD0eT/6gnSZJA9K8iD7/lQRysGK8HGDFP/dWLoKVczMCLUx2wzdTnk4GW
-         b/S5AlPBuWbs86RSbuRfuqmsooXBxF0zzU1lc7UNnR+jhP6h1zcnjf2FK7cOQzjX+jcp
-         c/RJ3xZp+0Y5GdiRAwqjv9uGj4f2+VdqOP4ujBSW1qO2Axwzdf/NBPebSpK9iXoalP0R
-         VWUhSEPbHj7EacFr5wH6F5IJTyJymcuLHCK2FaexFcrQGae1Za5zaJH4rDtqMU6xVKmA
-         7uHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwfvH0T4EvaTNOl0wnkH5SZ1iu3odavLcMCwsbuPMnQe2DFntxCvbILTyo8L7lZe4VZcntyYvqJNDL194=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtma8WHsPysPTn3Go+Giu9heDEVcKrKa2RD1B/H0iFFonBWnac
-	voBkBrB52M8MBes6EO3NP1dDAXPxrhjXr/zR7H8mwOmku3xhs80pDGz4nVz7IfVP8p9Sk+2FxWr
-	51Mj5o/C27tf7PtoouNdBklgN1OusYVP6TOXS5a8VPNq810bvvPY0ghE=
-X-Google-Smtp-Source: AGHT+IEby/e4ph1vd9CJUNg1je9svkeaOPIrgnREOgawiRfLJ96dpmChz/DZOr5uepAjH/mK1/Sh6NlagTM4lA2MceUdpSgkHhcv
+        bh=DV7X6w6WEiEDmMlQq+ioS4yyvRQLrPkx+bFuOa+5sxo=;
+        b=dbogR42ndFuz3kjmL4J5kaVw5lo90PZvYYBVy0qeysrzEadAMfePrpKz4i2g028WGJ
+         PnHbcox/agn6mlu6V+/zBkwuDrSz3ZWIeIsr4vd8S4et3QHOeJ2HYxCa/HXn//YIxLtB
+         74ugJqMFSr5GGzniTjf28LSCWRzoKzeTkxIbHa1rxdn/Hxn6kW2/ksa+l29GpQPSZC12
+         ANpZqAyq2fWTfLO383MEDovbQMEP/003n5TmTyYY07EQN2SYDJQOlRB8nbxPr8VjYT+G
+         Odap6c1506/Iebb/17b7FQo9ErDF62JMtr2WlT/Vml01qqDOUy9Qs26nvP1NCKRqKxBC
+         lePw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727919263; x=1728524063;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DV7X6w6WEiEDmMlQq+ioS4yyvRQLrPkx+bFuOa+5sxo=;
+        b=t9so0iSpJeKtODbDfS0l7S9QY2F9fAKlXUw+H3BPqjW7jIngU5RB1Ah7/E94JLeJil
+         qeEERPwOVtVfFynCqbh/BSBtwf2q/FZB98+PImPhvL8pwK9MI6VP8nw7O0G8weLe3Vto
+         HRZzqvkLRuhV58LYpQtYHlU7mEi/94/SH7jhQpJik+TT0sKEF0MPgrq+HR0tYUxh0f2h
+         xrgCRU0v5EXii986xKx8mXi/qM2bPWvahIPnTGgKel+OXbhVq88JU9LNLeCQ2qnzE/iX
+         O7EquSkjAER3wmL2gWoJvN4IMrZEyPwof75iXD73JXrnaGaqm4jtRrNJrEDA/qLc1bVY
+         pB2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV1gUQfwrK3rALGRuA9lB1gQw0biVljSrHKDbZcE3H/WI4F983tO+Q6+xwRok+DsEAWm0J9gOsR@vger.kernel.org, AJvYcCVXYZXeOZ/rNQ9xontoHSDmXlmPkLqTKD+PfqemKecY3neOv3ZRicLd7vpxUvJ9klYBn/5DCjaVqQoiPHp6@vger.kernel.org, AJvYcCXfN0Z7DZ8OOhDvjY9Ea2cIXHJh7ezKe0K9nKbHzgavxDp8EZbR9UH0x/ddgH5I3YZOBBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzowji1tjWGtWnGibLRYKcOa6yegKs6YelolCZrJgzCEEqUL/HN
+	IlpO45dUvqLN+2FYdyEaMekSrbI95M1utyiltx7gDSPFc3xpugCt
+X-Google-Smtp-Source: AGHT+IEKU7TVq9K/bpf9fJy/0UOluYJcI2o5/6s1Yf9hUvaOWNNvq2hKSdZJYqbq5oGEnlxqZMVegQ==
+X-Received: by 2002:a17:906:4fd4:b0:a8d:3338:a497 with SMTP id a640c23a62f3a-a98f8216ce5mr439831066b.4.1727919262819;
+        Wed, 02 Oct 2024 18:34:22 -0700 (PDT)
+Received: from fedora.. ([151.29.146.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99104d2863sm5688566b.220.2024.10.02.18.34.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 18:34:21 -0700 (PDT)
+From: Luigi Leonardi <luigix25@gmail.com>
+X-Google-Original-From: Luigi Leonardi <luigi.leonardi@outlook.com>
+To: mst@redhat.com
+Cc: brauner@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	eperezma@redhat.com,
+	jasowang@redhat.com,
+	kuba@kernel.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	luigi.leonardi@outlook.com,
+	marco.pinn95@gmail.com,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	sgarzare@redhat.com,
+	stefanha@redhat.com,
+	virtualization@lists.linux.dev,
+	xuanzhuo@linux.alibaba.com
+Subject: Re: [PATCH] vsock/virtio: use GFP_ATOMIC under RCU read lock
+Date: Thu,  3 Oct 2024 03:33:53 +0200
+Message-ID: <20241003013353.116203-1-luigi.leonardi@outlook.com>
+X-Mailer: git-send-email 2.46.1
+In-Reply-To: <3fbfb6e871f625f89eb578c7228e127437b1975a.1727876449.git.mst@redhat.com>
+References: <3fbfb6e871f625f89eb578c7228e127437b1975a.1727876449.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1707:b0:3a0:a3f0:ff57 with SMTP id
- e9e14a558f8ab-3a36592acc9mr54903865ab.15.1727919150973; Wed, 02 Oct 2024
- 18:32:30 -0700 (PDT)
-Date: Wed, 02 Oct 2024 18:32:30 -0700
-In-Reply-To: <CAHC9VhSa-2Q5SPXJHfvyHCYXQEFPDQaYcRf82FVB2CH-PHxnFA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fdf42e.050a0220.28a3b.01f3.GAE@google.com>
-Subject: Re: [syzbot] [mm?] possible deadlock in upgrade_mmap_lock_carefully
-From: syzbot <syzbot+a6456f6334aa19425886@syzkaller.appspotmail.com>
-To: paul@paul-moore.com
-Cc: akpm@linux-foundation.org, ebpqwerty472123@gmail.com, hughd@google.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, paul@paul-moore.com, 
-	stephen.smalley.work@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-> On Wed, Oct 2, 2024 at 8:14=E2=80=AFAM Shu Han <ebpqwerty472123@gmail.com=
-> wrote:
->>
->> It seems to be the same as [1].
->> New LSM hook position for remap_file_pages + IMA =3D deadlock.
->> The new LSM hook position is added for a bypass caused by
->> no check in remap_file_pages + READ_IMPLIES_EXEC in do_mmap.
+> Link: https://lore.kernel.org/all/hfcr2aget2zojmqpr4uhlzvnep4vgskblx5b6xf2ddosbsrke7@nt34bxgp7j2x
+> Fixes: efcd71af38be ("vsock/virtio: avoid queuing packets when intermediate queue is empty")
+> Reported-by: Christian Brauner <brauner@kernel.org>
+> Cc: Stefano Garzarella <sgarzare@redhat.com>
+> Cc: Luigi Leonardi <luigi.leonardi@outlook.com>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
 >
-> Thanks Shu Han, let's mark this as a dup and sort out a fix in the first =
-report.
+> Lightly tested. Christian, could you pls confirm this fixes the problem
+> for you? Stefano, it's a holiday here - could you pls help test!
+> Thanks!
 >
-> #syz dup: [syzbot] [integrity?] [lsm?] possible deadlock in
+>
+>  net/vmw_vsock/virtio_transport.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
+> index f992f9a216f0..0cd965f24609 100644
+> --- a/net/vmw_vsock/virtio_transport.c
+> +++ b/net/vmw_vsock/virtio_transport.c
+> @@ -96,7 +96,7 @@ static u32 virtio_transport_get_local_cid(void)
+>
+>  /* Caller need to hold vsock->tx_lock on vq */
+>  static int virtio_transport_send_skb(struct sk_buff *skb, struct virtqueue *vq,
+> -				     struct virtio_vsock *vsock)
+> +				     struct virtio_vsock *vsock, gfp_t gfp)
+>  {
+>  	int ret, in_sg = 0, out_sg = 0;
+>  	struct scatterlist **sgs;
+> @@ -140,7 +140,7 @@ static int virtio_transport_send_skb(struct sk_buff *skb, struct virtqueue *vq,
+>  		}
+>  	}
+>
+> -	ret = virtqueue_add_sgs(vq, sgs, out_sg, in_sg, skb, GFP_KERNEL);
+> +	ret = virtqueue_add_sgs(vq, sgs, out_sg, in_sg, skb, gfp);
+>  	/* Usually this means that there is no more space available in
+>  	 * the vq
+>  	 */
+> @@ -178,7 +178,7 @@ virtio_transport_send_pkt_work(struct work_struct *work)
+>
+>  		reply = virtio_vsock_skb_reply(skb);
+>
+> -		ret = virtio_transport_send_skb(skb, vq, vsock);
+> +		ret = virtio_transport_send_skb(skb, vq, vsock, GFP_KERNEL);
+>  		if (ret < 0) {
+>  			virtio_vsock_skb_queue_head(&vsock->send_pkt_queue, skb);
+>  			break;
+> @@ -221,7 +221,7 @@ static int virtio_transport_send_skb_fast_path(struct virtio_vsock *vsock, struc
+>  	if (unlikely(ret == 0))
+>  		return -EBUSY;
+>
+> -	ret = virtio_transport_send_skb(skb, vq, vsock);
+> +	ret = virtio_transport_send_skb(skb, vq, vsock, GFP_ATOMIC);
+>  	if (ret == 0)
+>  		virtqueue_kick(vq);
+>
+> --
+> MST
+>
+>
 
-can't find the dup bug
+Thanks for fixing this!
 
-> process_measurement (4)
->
->> I suggest fix it by removing the check and moving READ_IMPLIES_EXEC
->> out of do_mmap[2].
->>
->> Link: https://lore.kernel.org/lkml/20240928065620.7abadb2d8552f03d785c77=
-c9@linux-foundation.org/
->> [1]
->> Link: https://lore.kernel.org/all/20240928180044.50-1-ebpqwerty472123@gm=
-ail.com/
->> [2]
->
-> --=20
-> paul-moore.com
+I enabled CONFIG_DEBUG_ATOMIC_SLEEP as Stefano suggested and tested with and
+without the fix, I can confirm that this fixes the problem.
+
+Reviewed-by: Luigi Leonardi <luigi.leonardi@outlook.com>
 
