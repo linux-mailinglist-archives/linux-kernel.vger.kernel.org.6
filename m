@@ -1,50 +1,79 @@
-Return-Path: <linux-kernel+bounces-349421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78F5F98F5BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:02:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D913A98F5C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A911F22912
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:02:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BA0CB23134
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E653F1A76B7;
-	Thu,  3 Oct 2024 18:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E343C1AB6ED;
+	Thu,  3 Oct 2024 18:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="EsuFjsfi"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Of1J8Hvy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D1628370;
-	Thu,  3 Oct 2024 18:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872011AAE1D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 18:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727978564; cv=none; b=F61xVEL+lEC1fN5sXEQs+dnBkWMzlqvFTzqjKo/9+hqGAagDVN05oi6BKg/y4HloB/yV2ZQOu9c7psu1gtA0Hi8AmzAPHBoKEf8gC5nq7tXsiNdCdwKukmDdu0UksI0+YOlXHUJXnx4qxbtVefdA7mLTjQCZrRnkcGJ7yGDWr5M=
+	t=1727978576; cv=none; b=SYy4Z6DpjzxIzRuIKul1iv7iUHTdLh/xqIQ/i6Yak6HAklcbnbbyHiqd3JEp/3Zm4p6pa0TZVjJoIAka1le+nSiCUYOOHRVWFDq8rPSIumiMe/Ao7D/8WuoQ3qR7LpvNiLWvqjvjXta9FIuuk8kJDSvh2I1PlIX8Npnki7K44BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727978564; c=relaxed/simple;
-	bh=HNpqj2LAI7uBi+EmJxWZgOWPeLGVvAZIHpXsFU6OCzU=;
+	s=arc-20240116; t=1727978576; c=relaxed/simple;
+	bh=LNXHnZ3MJTRGkhaxV719B4uyyapg1cSteIU3lrzILyY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WshRRNjifpWtZW7BCeoQ2GDcwEzjOppsxul8ojWXurdCAU7lo5uUVQCxHDGrdHSDgOr2zCISQUM51ZwebXGT/dMmYWBzmqKrn3Mq0EGZQxR7RoCn8Av6CpwzkZ6Cjh+K6xNF9QOcXsd8KTyUuAkxgY+TRrW9OrOunSPJ4a/bo+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=EsuFjsfi; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727978561;
-	bh=HNpqj2LAI7uBi+EmJxWZgOWPeLGVvAZIHpXsFU6OCzU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EsuFjsfi0tJGARLyFENnM/KPllKTKVUFOqXqIvZ96lFuTElWnaRQoZ5ie9s4M5lu2
-	 bkJJ3HEyZTmzyQDPN5IZ7eh4rr3s25Dtq/+QxQyzbcXDGdM8gcFXLlwoszavHm4H+s
-	 N1oqU8jfxwGLKL5o6MHY5LAtIrkMY5WoMGX/3PRGoEPi6Te/UXlGtWU1b/93LM6+pr
-	 wDvgAFFplTe90z7+N/CrPFT97TQRGYDH3ZtpKY9P/rVoO0g6nflOoBM49lssmWN6q3
-	 M+gvN6ikw279UQ0Hf1Vxuw0wcmWS/Op3Lj3JTn/DcsZeXlxVMSUq4VT78vgjIzjK7g
-	 RdiolnQ52ILsQ==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKKJx1Q9yz78q;
-	Thu,  3 Oct 2024 14:02:41 -0400 (EDT)
-Message-ID: <c1fbec54-a2e3-418b-b1fb-14fd16092613@efficios.com>
-Date: Thu, 3 Oct 2024 14:00:40 -0400
+	 In-Reply-To:Content-Type; b=H4iGOvnq2InKeT+logUjXpaJd1dz5RFVBKGv3eXAVqngKzvOBsR5zjlXPjY/znmGsjI19yGmKA+pdhXBdZW5vE0Gzt9lOFQK5D28E3pEHb0/s2JJ6Tr30m5T8+NUe+Rhq9Fvmse7sOA88Y+uImbuRL007/Zo0PjxEX4AXb4IFpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Of1J8Hvy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727978573;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LoB0gVV5ljS71U6qY/mcjDVPFZ4CZEqwYkfhM8ibUYo=;
+	b=Of1J8HvywBb1k8ZGAJx/JNinSXFgbhWuqAa3J6zscqKcumtqlJ7uAZXHB8yRTCYYMOJfFj
+	GsjkyQCISJZ8IBleouFFRsQ4Eai/dLf91KmxByQQvw4qcMC9f6C4hqTi7yQIeja6twO50l
+	x6rxd+PpGzbeheo9yKAXM3L2RK43o44=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-639-RUwWaVmgMRi1vNQoSNRnSg-1; Thu, 03 Oct 2024 14:02:52 -0400
+X-MC-Unique: RUwWaVmgMRi1vNQoSNRnSg-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a8a877c1d22so87368266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 11:02:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727978571; x=1728583371;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LoB0gVV5ljS71U6qY/mcjDVPFZ4CZEqwYkfhM8ibUYo=;
+        b=VtlJT1b15Fs8hgBYFDe1c3Irk4V7uY470Sq4/WyikoMXsab0/qcysA3uF1X3glCTUi
+         SAJGYTo5eIXyeBSm3Dwdas/ChK/w60Q3g//XJFDpGlt46/b3yebdwJABt1dBHpOLFE26
+         4Wi3uJJwtBlG22aDY58psqvg9a3sXn/oTWFcs5f1FgGYFe3Lmhvrwl7yTEJbqNDYFdCt
+         jz5Sd2GepCkXwCXX6xCRZzZ63CmMHJVfg/lVeDvdRQ0fFnqPNvu+x6zOuEghvGgiOaBa
+         dIG0sqGihvZPEOGL1vd8MY/mlOQAhlaL8LcvpoKgZDjwv4dTt1dC4hfZJMY/t5NZLpyt
+         u2UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpbDhJMBLigxOkrnbbHt7OAFWJaqIiuCxlSSZivScSlsHo/Mam7st8U4FcB+Pa0oCImGHdX59YlJELHBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy875/LhVSSvPfmTt65JuY0MZYx/Zr8LqZWHMDI/jUuMJ9y+hWb
+	ZO1VfJvA4sWqCslUgmyE/e1ZGYP8DgFZK1ZHmeOwoFO9+ASZyF+aZBCuuyiaWfTFYrDQepuXaoJ
+	0FPjpmoFydrH6293WbsoGDngNBdB840FEIUBsrBmZa/8C4PRxZxva6nkeVQa13g==
+X-Received: by 2002:a17:907:e89:b0:a8d:44a5:1c2f with SMTP id a640c23a62f3a-a991bce3ac7mr20421866b.6.1727978571018;
+        Thu, 03 Oct 2024 11:02:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6n7NcOHAAmMOq2VOS/f3DZ6xSz0sT97JwLchZBMGQYGRM+Fp8/kX9HVDKXUACimFwhcWCQg==
+X-Received: by 2002:a17:907:e89:b0:a8d:44a5:1c2f with SMTP id a640c23a62f3a-a991bce3ac7mr20418966b.6.1727978570560;
+        Thu, 03 Oct 2024 11:02:50 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9910472f96sm116305766b.146.2024.10.03.11.02.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 11:02:50 -0700 (PDT)
+Message-ID: <b230f7a0-618c-4ebb-913c-93602fb64cd2@redhat.com>
+Date: Thu, 3 Oct 2024 20:02:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,114 +81,169 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-To: David Laight <David.Laight@ACULAB.COM>,
- 'Alan Stern' <stern@rowland.harvard.edu>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+Subject: Re: [PATCH v1 2/4] mfd: intel_soc_pmic_bxtwc: Use IRQ domain for TMU
+ device
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-usb@vger.kernel.org
+Cc: Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
- John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>,
- "maged.michael@gmail.com" <maged.michael@gmail.com>,
- Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
- "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "lkmm@lists.linux.dev" <lkmm@lists.linux.dev>
-References: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
- <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
- <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
- <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
- <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
- <2b1caba3-48fa-43b9-bd44-cf60b9a141d7@rowland.harvard.edu>
- <22638e2fe1274eb0834fa3e43b44184e@AcuMS.aculab.com>
- <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
- <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
- <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
- <bd93a57c-662f-470e-8ba4-509f27eada6d@efficios.com>
- <498f11de5a024f0ca0b70aba4e28b17b@AcuMS.aculab.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <498f11de5a024f0ca0b70aba4e28b17b@AcuMS.aculab.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ Zhang Ning <zhangn1985@outlook.com>
+References: <20241003174252.1190628-2-andriy.shevchenko@linux.intel.com>
+ <20241003174252.1190628-4-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241003174252.1190628-4-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024-10-03 19:07, David Laight wrote:
-> ...
->> What _does_ work however are the following two approaches:
->>
->> 1) Perform the equality check on the original variables, creating
->> new versions (with OPTIMIZER_HIDE_VAR) of both variables for the
->> rest of their use, therefore making sure the pointer dereference
->> are not derived from versions of the variables which were compared
->> with another pointer. (as suggested by Boqun)
+Hi,
+
+On 3-Oct-24 7:32 PM, Andy Shevchenko wrote:
+> While design wise the idea of converting the driver to use
+> the hierarchy of the IRQ chips is correct, the implementation
+> has (inherited) flaws. This was unvelead when platform_get_irq()
+> had started WARN() on IRQ 0 that is supposed to be a Linux
+> IRQ number (also known as vIRQ).
 > 
-> If that is
-> 	a1 = a; OPTIMISER_HIDE_VAR(a1);
-> 	b1 = b; OPTIMISER_HIDE_BAR(b1);
-> 	if (a != b}
-> 		return;
-> 	// code using a1 and b1
-> then can't the compiler first flip it to:
-> 	if (a != b)
-> 		return;
-> 	a1 = a; OPTIMISER_HIDE_VAR(a1);
-> 	b1 = b; OPTIMISER_HIDE_VAR(b1);
-> and then replace the last line with:
-> 	b1 = a; OPTIMISER_HIDE_VAR(b1);
-> which isn't intended at all.
-
-Good point, so I suspect Boqun's ADDRESS_EQ() suggestion did not work:
-
-https://lore.kernel.org/lkml/ZvX12_1mK8983cXm@boqun-archlinux/
-> 		
-> 	
-> OTOH if you do:
-> 	a1 = a; OPTIMISER_HIDE_VAR(a1);
-> 	b1 = b; OPTIMISER_HIDE_VAR(b1);
-> 	if (a1 != b1)
-> 		return;
-> 	// code using a and b
-> (which I think is)
-
-This is in line with Linus' suggestion, which is the approach I
-retained.
-
+> Rework the driver to respect IRQ domain when creating each MFD
+> device separately, as the domain is not the same for all of them.
 > 
->> 2) Perform the equality check on the versions resulting of hiding
->> both variables, making sure those versions of the variables are
->> not dereferenced afterwards. (as suggested by Linus)
+> Fixes: 957ae5098185 ("platform/x86: Add Whiskey Cove PMIC TMU support")
+> Fixes: 57129044f504 ("mfd: intel_soc_pmic_bxtwc: Use chained IRQs for second level IRQ chips")
+> Reported-by: Zhang Ning <zhangn1985@outlook.com>
+> Closes: https://lore.kernel.org/r/TY2PR01MB3322FEDCDC048B7D3794F922CDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Thanks, patch looks good to me:
+
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+
+Please feel free to merge this through the MFD tree as suggested in
+the cover-letter.
+
+Regards,
+
+Hans
+
+
+> ---
+>  drivers/mfd/intel_soc_pmic_bxtwc.c     | 31 ++++++++++++++------------
+>  drivers/platform/x86/intel/bxtwc_tmu.c | 22 +++++-------------
+>  2 files changed, 23 insertions(+), 30 deletions(-)
 > 
-> then the compiler can't possibly reverse the asm blocks.
-
-Indeed.
-
-Thanks,
-
-Mathieu
-
-> 
-> 	David
-> 
+> diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
+> index d72995a9e820..628108dcf545 100644
+> --- a/drivers/mfd/intel_soc_pmic_bxtwc.c
+> +++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
+> @@ -245,12 +245,6 @@ static struct mfd_cell bxt_wc_dev[] = {
+>  		.num_resources = ARRAY_SIZE(bcu_resources),
+>  		.resources = bcu_resources,
+>  	},
+> -	{
+> -		.name = "bxt_wcove_tmu",
+> -		.num_resources = ARRAY_SIZE(tmu_resources),
+> -		.resources = tmu_resources,
+> -	},
 > -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+>  	{
+>  		.name = "bxt_wcove_gpio",
+>  		.num_resources = ARRAY_SIZE(gpio_resources),
+> @@ -261,6 +255,14 @@ static struct mfd_cell bxt_wc_dev[] = {
+>  	},
+>  };
+>  
+> +static const struct mfd_cell bxt_wc_tmu_dev[] = {
+> +	{
+> +		.name = "bxt_wcove_tmu",
+> +		.num_resources = ARRAY_SIZE(tmu_resources),
+> +		.resources = tmu_resources,
+> +	},
+> +};
+> +
+>  static struct mfd_cell bxt_wc_chgr_dev[] = {
+>  	{
+>  		.name = "bxt_wcove_usbc",
+> @@ -489,6 +491,15 @@ static int bxtwc_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "Failed to add IRQ chip\n");
+>  
+> +	ret = bxtwc_add_chained_devices(pmic, bxt_wc_tmu_dev, ARRAY_SIZE(bxt_wc_tmu_dev),
+> +					pmic->irq_chip_data,
+> +					BXTWC_TMU_LVL1_IRQ,
+> +					IRQF_ONESHOT,
+> +					&bxtwc_regmap_irq_chip_tmu,
+> +					&pmic->irq_chip_data_tmu);
+> +	if (ret)
+> +		return ret;
+> +
+>  	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
+>  					 BXTWC_PWRBTN_LVL1_IRQ,
+>  					 IRQF_ONESHOT,
+> @@ -497,14 +508,6 @@ static int bxtwc_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "Failed to add PWRBTN IRQ chip\n");
+>  
+> -	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
+> -					 BXTWC_TMU_LVL1_IRQ,
+> -					 IRQF_ONESHOT,
+> -					 &bxtwc_regmap_irq_chip_tmu,
+> -					 &pmic->irq_chip_data_tmu);
+> -	if (ret)
+> -		return dev_err_probe(dev, ret, "Failed to add TMU IRQ chip\n");
+> -
+>  	/* Add chained IRQ handler for BCU IRQs */
+>  	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
+>  					 BXTWC_BCU_LVL1_IRQ,
+> diff --git a/drivers/platform/x86/intel/bxtwc_tmu.c b/drivers/platform/x86/intel/bxtwc_tmu.c
+> index d0e2a3c293b0..9ac801b929b9 100644
+> --- a/drivers/platform/x86/intel/bxtwc_tmu.c
+> +++ b/drivers/platform/x86/intel/bxtwc_tmu.c
+> @@ -48,9 +48,8 @@ static irqreturn_t bxt_wcove_tmu_irq_handler(int irq, void *data)
+>  static int bxt_wcove_tmu_probe(struct platform_device *pdev)
+>  {
+>  	struct intel_soc_pmic *pmic = dev_get_drvdata(pdev->dev.parent);
+> -	struct regmap_irq_chip_data *regmap_irq_chip;
+>  	struct wcove_tmu *wctmu;
+> -	int ret, virq, irq;
+> +	int ret;
+>  
+>  	wctmu = devm_kzalloc(&pdev->dev, sizeof(*wctmu), GFP_KERNEL);
+>  	if (!wctmu)
+> @@ -59,27 +58,18 @@ static int bxt_wcove_tmu_probe(struct platform_device *pdev)
+>  	wctmu->dev = &pdev->dev;
+>  	wctmu->regmap = pmic->regmap;
+>  
+> -	irq = platform_get_irq(pdev, 0);
+> -	if (irq < 0)
+> -		return irq;
+> +	wctmu->irq = platform_get_irq(pdev, 0);
+> +	if (wctmu->irq < 0)
+> +		return wctmu->irq;
+>  
+> -	regmap_irq_chip = pmic->irq_chip_data_tmu;
+> -	virq = regmap_irq_get_virq(regmap_irq_chip, irq);
+> -	if (virq < 0) {
+> -		dev_err(&pdev->dev,
+> -			"failed to get virtual interrupt=%d\n", irq);
+> -		return virq;
+> -	}
+> -
+> -	ret = devm_request_threaded_irq(&pdev->dev, virq,
+> +	ret = devm_request_threaded_irq(&pdev->dev, wctmu->irq,
+>  					NULL, bxt_wcove_tmu_irq_handler,
+>  					IRQF_ONESHOT, "bxt_wcove_tmu", wctmu);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "request irq failed: %d,virq: %d\n",
+> -							ret, virq);
+> +			ret, wctmu->irq);
+>  		return ret;
+>  	}
+> -	wctmu->irq = virq;
+>  
+>  	/* Unmask TMU second level Wake & System alarm */
+>  	regmap_update_bits(wctmu->regmap, BXTWC_MTMUIRQ_REG,
 
 
