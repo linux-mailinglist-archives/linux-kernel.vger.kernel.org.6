@@ -1,128 +1,125 @@
-Return-Path: <linux-kernel+bounces-349424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A256F98F5CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:05:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE9A798F708
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD8A283323
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:05:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53BE0B210F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944131AB50B;
-	Thu,  3 Oct 2024 18:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A1A1ABED9;
+	Thu,  3 Oct 2024 19:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Yj0A2XYQ"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="q7OTvF1l"
+Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9819A1A7040;
-	Thu,  3 Oct 2024 18:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC1E1A76CF;
+	Thu,  3 Oct 2024 19:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727978739; cv=none; b=LccYhkosVzSQggjDO31cW/vBZvzTiWw5ube+li+XDDmJGES+VbhiWnBG8seRc2Dt/FP8z17U12zwjYK04UKhI6pqyW1nCcTKgpTF++5O2ebynjsthEI//Nn1pmjjSfY966Y4DepR3UKex1QVsN439W9drbyb2L9sFvkoEoGiJoc=
+	t=1727983933; cv=none; b=FRQ6rp3wXevSwdn+X95VR4ojkk6yTDK+ZSuiov/Foaa5Fbln5VjJykaEYjb7qS3Vhrzfgw1cFB6WNtlPtBIkTMJuBfGaxSc2cpcoYZueVonkk8VldTl7PgnrD7+m4qeesZbrfXmjBHSodjSeajR6ELe4xlhjMA8Y5MJNKeDXkjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727978739; c=relaxed/simple;
-	bh=NS7kXQUKxlrTfeb+LWgoodsEtPxJoaNeIkvDx3vZ6b4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=UPtnzgrTITaCBxVe1TdnKCNDtz77NDoB6bPIbroY+zoIM/ihTgOTDHd5huyqpjELO+Go2i1Y05g6AxhlzgeRVH/WZHL2bU/vLLU+/MOgg4zKVsJC5UE5wKyn73gsiYcf7ZJxlS1IwZHvY3puoRoXZ9wRLITLXndOjzwyw+QkIEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Yj0A2XYQ; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727978728; x=1728583528; i=markus.elfring@web.de;
-	bh=sXYDfNxNXvlLEtQjQyqH5jtoLuiiUVmTvTAFLF5cYH4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Yj0A2XYQGXuhXxxN9faAUpkh7h8aqrJAdmqh6yy53MopmHhzb770NWpRh4QXN6lP
-	 YmR7bzEDIGEHiuKI08BCvW7CdhxgkUfuqBP8SbTY4wDpiXt2TN1HZKVIc1s+tWBTd
-	 +SUX6HdzgAQ6tOGEl+8xMGEd+rTvcdacmHyxljEFH4r/Nv17Y6g8AzAAOrdFYs7HT
-	 Lew3vxMKgZ4gh+08D/Hq8AqDoJ+18Qa46h2lxn1R1kSAptzYfNId7lMmtV1Ovswjx
-	 YvWLZBm7Rk8JQZGiBk1fWY+Lx4gzSexLaJn6xiZaKb1H5ITDwaWP+25woNieR3fmL
-	 kDIvehaqHhKWxb2jzA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MaHWx-1sQkA90WnN-00Xucq; Thu, 03
- Oct 2024 20:05:28 +0200
-Message-ID: <504bb76d-d8ee-4332-ab3d-ad6b2482c29c@web.de>
-Date: Thu, 3 Oct 2024 20:05:27 +0200
+	s=arc-20240116; t=1727983933; c=relaxed/simple;
+	bh=d5iKgHRJaHd1qOIZNZ6AtOmvXTo3H3/Cvogev0/hzIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ELlZJgm1O0ivAYF/gKmHcDpH75eKJ/nFCeKM+mNfWpK4rppcdtxlHEpxMCnvm42te5hL8IL+s/2facnZfgIFfR5xpAQofCpJGX56uA38bd1oVJA7a5UardIDRANMaDCRpE3WnVLqbdGBCm/20fYr9KPUb972gvpHrf4CwMbZIFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=q7OTvF1l; arc=none smtp.client-ip=193.252.23.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id wPq8swhqS7qAjwPq8sLNUA; Thu, 03 Oct 2024 19:42:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1727977336;
+	bh=LhnrapA1svnmlMx7xGYpTi5BLYj0TEUzRvNk0AItb2s=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=q7OTvF1l62ehUvp8N5YxrlB6RCO6AOPpdfa7wRMrXMlm93JNTsppGGLP9A8sHnIb+
+	 TBo21exNKKTSnk8bsTG/tEfJxIs86mw/w4CCW/8LczKq5xPprFXZj0ntGDHZ4UB7Gz
+	 hxGNQrO9HY1sIqTZrMGrCJRkRQBxCsv0BpNr8CPPbPGHe5lg+ZFyVcuJ4W+qgz4SAv
+	 4pWMJa/9P9xHm4cJfbSecW6SFoZJ7z8uyUrBwyBa5K3DIH5pCgaUWTLOJk/Qne7SA/
+	 l2MSKn7Q7681nyR0gSt51hlH2iXFI5ttMw7DiuM0UUKSzwjxzbbhzefjPOtVVSO06c
+	 ghuSldIi556sQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 03 Oct 2024 19:42:16 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/i915/display: Remove kstrdup_const() and kfree_const() usage
+Date: Thu,  3 Oct 2024 19:41:08 +0200
+Message-ID: <f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727977199.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- David Airlie <airlied@gmail.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Simona Vetter <simona@ffwll.ch>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] drm: rcar-du: Reduce of_node_put(cmm) calls in
- rcar_du_cmm_init()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:GzLe1BNnQpGneYCLWGjV3Sn3P+BLxsHJpEIfsLxgOab82VnS6Vz
- QkzMxzHjENmdN1thEhr8VdufpeTW6LgLWN2gGtzn/CXg8YisrdRUyUhQZgtw11eWMymAABU
- l1llAqcyVO+MRL+E9G0rU3tAGYUJvWNrV3CFkeLLu6LGhqxB+JjJuLiTwL2dEXOjp0jJ/SS
- YOhb1AaIZPbXcPKypO5/g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SWAexnI8TKo=;MdJndK/inRWqYpfmqoqzxcuKWTH
- nPRDm+jzUy0JgiXlqXtt6qLdwa5gkXWX9WPO5/axyidQp36+w5JXEX2cHrqcgze+VJ0GSxOcQ
- jAQ5nc5NZBVfVc2cQXZ6f4gAuSl/3EFT1f3SbiomB6DQ4p16H9aSBPGDhG+kdnUJAbaHAT3/x
- RGBBxzveg0ob9At1ri5zOB1z+W+hXuKk1Jj9G/y5/Hv/TR7xe2DHf9wcU7NzkHbgNwEktXjDu
- PsEvE79oSwU8QOoqsJ8Ab6G4ne8HzlaLS6sLsqFRpzQU6DZnYXPeAHOadZA0ClrurAi7so373
- RNZafHzoFfn34DKDUGvAP/JbpoJjjK+tpQwrWTTgJ0lX0L2UEGVxbc+UM4cbPIlU+jTn52rBJ
- d/pT0H19YjI/OyTJqYiGaVEilFVIHexODiI6gnpVd9XxFwCGNNitvu4ScQjqWnePw9A0ONFJr
- KfLLbaEZh4DoGKBCftfpiYISpuyYY7zrX4F9iId9Y35UgryxRtS6GnOx97bS+ucT1yhAeE7tp
- /nXVPQL7fjDl+NGbU7fTpRcKu2ltZL3dcreA73D4Yt2K/lLYY2NcvqbxqiuVHwyMlXIPRuf6l
- Wnian0RZFHwboHKfX4IYF3flBhVFWwLaH4Vad2SpJyEB0UPrgXAP70f4jbDh3Y1br3Wgk4UrA
- G97Ji9xN5Mdn88WO/c60R1xsG4VZJaN1kOoXzy6RaK1Yw6QJUithrkdaYwM49eXqWuqN3ghsR
- daH3RuWdx9hHmzWmQaljdr8HU2dBhsqla72uQM+p++8rzbzf60un6s3oXzS7aYfJdqFk2pcVe
- eBYbYtgrWHyKoinqZ1i2qtog==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 3 Oct 2024 19:56:29 +0200
+kstrdup_const() and kfree_const() can be confusing in code built as a
+module. In such a case, it does not do what one could expect from the name
+of the functions.
 
-An of_node_put(cmm) call was immediately used after a null pointer check
-for an of_find_device_by_node() call in this function implementation.
-Thus call such a function instead directly before the check.
+The code is not wrong by itself, but in such a case, it is equivalent to
+kstrdup() and kfree().
 
-This issue was transformed by using the Coccinelle software.
+So, keep thinks simple and straightforward.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+This reverts commit 379b63e7e682 ("drm/i915/display: Save a few bytes of
+memory in intel_backlight_device_register()")
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c b/drivers/gpu/d=
-rm/renesas/rcar-du/rcar_du_kms.c
-index 70d8ad065bfa..a854b2b085f9 100644
-=2D-- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
-@@ -792,14 +792,12 @@ static int rcar_du_cmm_init(struct rcar_du_device *r=
-cdu)
- 		}
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/i915/display/intel_backlight.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- 		pdev =3D of_find_device_by_node(cmm);
-+		of_node_put(cmm);
- 		if (!pdev) {
- 			dev_err(rcdu->dev, "No device found for CMM%u\n", i);
--			of_node_put(cmm);
- 			return -EINVAL;
- 		}
-
--		of_node_put(cmm);
--
- 		/*
- 		 * -ENODEV is used to report that the CMM config option is
- 		 * disabled: return 0 and let the DU continue probing.
-=2D-
-2.46.1
+diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/gpu/drm/i915/display/intel_backlight.c
+index 9e05745d797d..3f81a726cc7d 100644
+--- a/drivers/gpu/drm/i915/display/intel_backlight.c
++++ b/drivers/gpu/drm/i915/display/intel_backlight.c
+@@ -949,7 +949,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+ 	else
+ 		props.power = BACKLIGHT_POWER_OFF;
+ 
+-	name = kstrdup_const("intel_backlight", GFP_KERNEL);
++	name = kstrdup("intel_backlight", GFP_KERNEL);
+ 	if (!name)
+ 		return -ENOMEM;
+ 
+@@ -963,7 +963,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+ 		 * compatibility. Use unique names for subsequent backlight devices as a
+ 		 * fallback when the default name already exists.
+ 		 */
+-		kfree_const(name);
++		kfree(name);
+ 		name = kasprintf(GFP_KERNEL, "card%d-%s-backlight",
+ 				 i915->drm.primary->index, connector->base.name);
+ 		if (!name)
+@@ -987,7 +987,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+ 		    connector->base.base.id, connector->base.name, name);
+ 
+ out:
+-	kfree_const(name);
++	kfree(name);
+ 
+ 	return ret;
+ }
+-- 
+2.46.2
 
 
