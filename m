@@ -1,149 +1,101 @@
-Return-Path: <linux-kernel+bounces-348771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891E998EBB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:34:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD1298EBB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB4C1C224C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D871F2141B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80F313B2A4;
-	Thu,  3 Oct 2024 08:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D6D145A18;
+	Thu,  3 Oct 2024 08:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hP/9M23Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMrzzQTR"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1547213A869;
-	Thu,  3 Oct 2024 08:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D19013E41A;
+	Thu,  3 Oct 2024 08:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727944488; cv=none; b=BgtBZHW3g4C1C/T4MjBl9DyhvhK7UXR4dJYpcr3SNZ8o6zNzbXUw1t0FidVY0m4Z+L5N1djuxaaHGYSkEq3kZLIArBAtL43rIahFhwP75NDj9mz7eXupMNuPwQZNZe7GJ5ZsWziKxcs549H9AuTqDEIBcdKhAbVkjR9UQCRmD2E=
+	t=1727944492; cv=none; b=g1ABFSBpUkfuwt9qchRPxwhIm+6hmQL+rjKUr5Ln3mVj5dTZr8L4AJlrQYCAVbWVfrmgw4oYwTbiyYG/BYuB8SvydTtL6AkveecARx8ObEl8fTzQFvct/0b6XxhMN22E6wYiei0i0s1fhbjfPeaQTgLVc349ByxxkrNmGxqe/F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727944488; c=relaxed/simple;
-	bh=8aTsuHACr2frjXo/0NtlfWhF09Us83P33NSNYLo1kng=;
+	s=arc-20240116; t=1727944492; c=relaxed/simple;
+	bh=depoTSniyt2pHdizgX8h/eGS3wMTqVguZQ59oJuJrtM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rLIbyj6G5JAYk7JttiLI7nxa3VQw+fF6ZU8N8nIHCtNz8oruCjdJ5iLh1mHkZkO1Q73QYKxAtp1OKFt5RNXD1qJFKtmQWTAZet02Ls8JF9iT823G2C32izXb5dyZeh5UdbmjqW/27aMN+qbf9THMqxSoRq+IqP+QJzRg+6s1Sdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hP/9M23Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0284DC4CEC7;
-	Thu,  3 Oct 2024 08:34:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727944487;
-	bh=8aTsuHACr2frjXo/0NtlfWhF09Us83P33NSNYLo1kng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hP/9M23QfCL2QJicEtiHlHfYTLSTs7/IV4wJ55lhG3N7VPOYG1CGUpKr9A1nmDE8l
-	 i9Qpf1F7FcLWpy6+g032wuarLiKbIsPglc27m3ZwH6Cb5F1JMZ03RbnsZPMjBB1eOD
-	 s4l/ZZLB41h+yY6usQ39t3w/1MO7oUsefoSLGFZTK7trz1M4mjmrPQiS+ihjOPK266
-	 s5lblsvik4I2nd1MP5vrE4wY0A6yp4eWySCUpU67zryYJOKByDZp1C/0bIOSnbmNsB
-	 pgV5jaMeX2AVXaX4WOh9nWuOvOoB4CJtONTbWc5ss6BD5wOO+IynAXSb0HZqalcaUG
-	 Lc7DXUK5ZXOBQ==
-Date: Thu, 3 Oct 2024 10:34:45 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Charan Pedumuru <charan.pedumuru@microchip.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: net: can: atmel: Convert to json schema
-Message-ID: <xykmnsibdts7u73yu7b2vn3w55wx7puqo2nwhsji57th7lemym@f4l3ccxpevo4>
-References: <20241003-can-v2-1-85701d3296dd@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uDTxiKbYh0ATqpsHzGwVufA9mKo4RLR6MLe+q6kYm1eZJIGcs6S0P3kDSw/UphyQ1dYp7gIrRG5dE3CWJ9B+Rz9jdy3+MXGU/MGPF1W/WeSrXn6SwG4DcpAuBYKqhUy8jqaw/0hDEYlZdg760HqC+9JV0Q88IG3urloaqgznrOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OMrzzQTR; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so8977445e9.0;
+        Thu, 03 Oct 2024 01:34:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727944489; x=1728549289; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jga7af/0yZ1Zr0GRHjyr4J7ThGzd+ei050RU+9Ps6i0=;
+        b=OMrzzQTRsJygvDvplrapQJTAIqixS1s9dWPLsonKLrlBCRxcjxLt2Iw0dKw9jstn64
+         MbPidUoSXz32cUQQJe2SAmnGuXRKZ+IeICQuAtJkj/vx68YSKiZylbm9lk180ynlZk3w
+         ku+tOWzlLN2N58Ie9SO5Q7/4JyRnze9QaUf8X0ap50OnvFjNqNOy1k2zZ+2CYshU+3rr
+         0sZQqbjYKgL0BvYY6SQgUqm8k25E2w7nqyWsSKvaEphGwerWMoHxK1eZCSVuA6QJOuKq
+         jVHJfscUdtieI3D9pl/NL8SwINNdEk3VJbdOf66zmgNqHwJoSITXe0k+lw13xCB7tFUf
+         jmVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727944489; x=1728549289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jga7af/0yZ1Zr0GRHjyr4J7ThGzd+ei050RU+9Ps6i0=;
+        b=nEH6B2rTKe0NpIrqbMzxcb0aKqn+KOaOQ9bkTIeNsct6fCfFTpKtgy807OaPGSadun
+         7kYBfyTSxeukuJbcDL6y4JXvkn90SsVixQEHr8+Ip6pjFrDsn04KK4DPDzxBLv+5lCvz
+         JPo9DCB6lzTBaix77lTXHLMpaVq2+KCxaJcNtMGksvkU5x2tLou4plFL4zbtxM1Ra/1S
+         rr6IW1BFy+g/UbHdzlGHr0I4vrP9hGCANBytEgqjfzK6H7Bf/5jCyNRLGBq0T2afNI8V
+         XOpJ1+io/az6oQ5l1jhTFxiF3mReK4R0mkJ1Z6sUvab2JMm49CiWvMHnkrqN3WE6ul7T
+         rReA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdnq4VdTwA3C6ZoZENv/pnhXCUrUTU2k+QrE5HlWSh+ub1Vv+Pmh2KgV6Ep5GXfz+4/Me8Oy3EDOuVOxU=@vger.kernel.org, AJvYcCVpmlzPUE1dD2eME8I/oGESbpR/fivXEGTNczsl3wJbZhcoh7mJg0rfTtcVsPdUeC34ecexa/fpV8urtweTzTA=@vger.kernel.org, AJvYcCXzJ8ApIICugrpyUsjjIAMAb/qvwTBuEwxbv2eNmbsEbvLmm3BTzTkZIcNL9i8722BdCaWoOLqyCrjaV88Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHeJ4Mf4YpSJJnHh0TAmhD61tS/2KKbs3T9VvVF1PZ7tJ0JDRW
+	OTHEeRH6M2AXGJj2iXQ1kunU4p7Sbv2JwBrONAU8ViVOuooYQsww
+X-Google-Smtp-Source: AGHT+IH9D1jOIH/eLsK3Qc/Fd3oWjoALCAQTCBMk6aKstilIJwBvujp0TgRR71DtaXfi+IqRKuyxjQ==
+X-Received: by 2002:adf:f285:0:b0:37c:cfbb:d357 with SMTP id ffacd0b85a97d-37cfb9d3385mr5283900f8f.30.1727944488501;
+        Thu, 03 Oct 2024 01:34:48 -0700 (PDT)
+Received: from void.void ([31.210.180.79])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d08245020sm744140f8f.53.2024.10.03.01.34.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 01:34:48 -0700 (PDT)
+Date: Thu, 3 Oct 2024 11:34:45 +0300
+From: Andrew Kreimer <algonell@gmail.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: platform: fix a typo
+Message-ID: <Zv5XJXR3BVjy4dZ7@void.void>
+References: <20241002212602.11601-1-algonell@gmail.com>
+ <c6b148d6-a6e5-458c-97ed-28b64eb7b238@xs4all.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241003-can-v2-1-85701d3296dd@microchip.com>
+In-Reply-To: <c6b148d6-a6e5-458c-97ed-28b64eb7b238@xs4all.nl>
 
-On Thu, Oct 03, 2024 at 10:37:03AM +0530, Charan Pedumuru wrote:
-> Convert atmel-can documentation to yaml format
+On Thu, Oct 03, 2024 at 08:50:09AM +0200, Hans Verkuil wrote:
+> Hi Andrew,
 > 
-> Signed-off-by: Charan Pedumuru <charan.pedumuru@microchip.com>
-> ---
-> Changes in v2:
-> - Renamed the title to "Microchip AT91 CAN controller"
-> - Removed the unnecessary labels and add clock properties to examples
-> - Removed if condition statements and made clock properties as default required properties
-> - Link to v1: https://lore.kernel.org/r/20240912-can-v1-1-c5651b1809bb@microchip.com
-> ---
->  .../bindings/net/can/atmel,at91sam9263-can.yaml    | 58 ++++++++++++++++++++++
->  .../devicetree/bindings/net/can/atmel-can.txt      | 15 ------
->  2 files changed, 58 insertions(+), 15 deletions(-)
+> Please always include the driver name in the subject:
 > 
-> diff --git a/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml
-> new file mode 100644
-> index 000000000000..c818c01a718b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/can/atmel,at91sam9263-can.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip AT91 CAN Controller
-> +
-> +maintainers:
-> +  - Nicolas Ferre <nicolas.ferre@microchip.com>
-> +
-> +allOf:
-> +  - $ref: can-controller.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - atmel,at91sam9263-can
-> +          - atmel,at91sam9x5-can
-> +      - items:
-> +          - enum:
-> +              - microchip,sam9x60-can
-> +          - const: atmel,at91sam9x5-can
+> media: platform: ti: omap: fix a typo
+> 
+> That way whoever maintains the driver will trigger on this patch.
+> 
+> Regards,
+> 
+> 	Hans
 
-That is not what old binding said.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: can_clk
-
-These are new...
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-
-Here the same. Each change to the binding should be explained (answer
-to the: why) in commit msg.
-
-> +
-> +unevaluatedProperties: false
-
-Best regards,
-Krzysztof
-
+Noted, thank you.
 
