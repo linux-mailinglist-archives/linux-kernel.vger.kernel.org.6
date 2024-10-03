@@ -1,194 +1,148 @@
-Return-Path: <linux-kernel+bounces-349216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF5D98F29E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:30:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3956498F29F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3638BB20CE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E683A2829B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3667C19C54F;
-	Thu,  3 Oct 2024 15:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F8B27702;
+	Thu,  3 Oct 2024 15:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=adamthiede.com header.i=@adamthiede.com header.b="niJ092Ed"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="NQq1eDhI"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9281A08C4
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908EF1A08A9
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727969420; cv=none; b=JnRKD+wOZLIbZ9MsmuXxGQiN0qABxH4cZCJaDbn6u8n/GvZLzfH18ASLD1qu145ojh4l79LZAhMEST0b1wSt565hUmSkptkkZEZyu4xhgK9Z8t/1JPVsq+iXGGcUV7laWzsi4/j8XfVMxOvMCQYx2Ok/QEQviQban7k2F2/QXe4=
+	t=1727969444; cv=none; b=mQF60m140EiRUVxoJOsFFryPtl5Une+s5NU+TTUadL1D4sE+1U0pKCiacmBDBAhp5MWkTvex/11Jne0oVPNhwd6v5GL2Lk70Q2QgTzWFUXCHwCWOkQ72o3ogyWxQMKK4mIwTHsDI9CVk4n1RRSbnEbVj8qxRgLplV/2zb1t2a/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727969420; c=relaxed/simple;
-	bh=swUYObTVkDsUXcJRj2euHLLgCk7NaECaet/AI4E3aMM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DbAbTMmrCTsg23s+oao5qdXNCAbESCoFWgqfmA1DcHf4kJf9BhhJBQO6cPirrRf22HLH3AmWeTUZ3Em+ztToHUrRiCOZC3XKUkkfcjXyfDdB0dxsgtiMPkPaAjbVKq8bzv7ijBskq6FoOyzsfMjTaOG9uKGwCLLLBOkTkrehsrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=adamthiede.com; spf=pass smtp.mailfrom=adamthiede.com; dkim=pass (2048-bit key) header.d=adamthiede.com header.i=@adamthiede.com header.b=niJ092Ed; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=adamthiede.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=adamthiede.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XKFwv5DZ7z9t3b;
-	Thu,  3 Oct 2024 17:30:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=adamthiede.com;
-	s=MBO0001; t=1727969407;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VQ7Tdl23liWLVAg/y+01BU3yD+eB6aWTqWBSJ+/vJng=;
-	b=niJ092EdrphluiifAVW5QfjhDYDzaGEabtMnbHrD9h9MdCnkuu7PnWAHwKhDyv3X+rcfbX
-	YvVBMKj8xc7+OTaxMBUS1WCOx725nmUZAiuD0Lrye9ktjNlVEMCjJ47ljT9BrwDmdOcQbC
-	1DCmk8COswoyAGrpNLtIDiGvouaEuF1/FlZw0E9RFc5A5vJ7GpNGPcV/w4pGXKbjrPbdcD
-	Kj8kjwRljX0+RwPAV9nqKEfhr3AmbNSE5DAwOB3VAa06egnJB64vA+bym4+PoakrYt/KqP
-	Nn1Jk2oWSOWOy3KpVYQwQ0h2JhwKriOghPfzXmVoyL/zka2GqytSyI8QOXYOOA==
-Message-ID: <0d93420b-4d40-479c-bd51-98963e49c4ed@adamthiede.com>
-Date: Thu, 3 Oct 2024 10:29:57 -0500
+	s=arc-20240116; t=1727969444; c=relaxed/simple;
+	bh=Cx4Y4EIPbRLGBZOJ2U9uswU7XGSHhz+L/e8UGfY1ngs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=g3Vih5lw3C9mmZFxAcYx6jxuy/5+UQiM5wZyFoTkzPTB/G60oNouOP0bf11ekybXJ755ujcaDDJDyS1kIBQESz/hks1b6yPBLep9wsYN7mngQ59QpJpNbukDnM/HPeOtgoYBw2xWYnT30QZNgk+N6SfMBDUAuaJJW98gH7SXaV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=NQq1eDhI; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cacd90ee4so1607075e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:30:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1727969441; x=1728574241; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cx4Y4EIPbRLGBZOJ2U9uswU7XGSHhz+L/e8UGfY1ngs=;
+        b=NQq1eDhIGMvWgFRK25N+IOcReIq27QXtKqwCpgCZC6/AHZ4vVOFaoTxdf5WQ4kU1fX
+         fUL0eORMR8Pl4nuOOGFeviIaubw2KZiwq9kFMVKVycEwAgp+oHikZff2WdzX5FsAgEVH
+         vmwP9kyjB0n3lsgyeGY2wUEm/Iy7BJYxtmya6/z5DBJXCHZyYflwzD97XfrCO26sRnWX
+         VKbaj2bSIXfqtOTk+G1ANKxt1iGuaEmkDPVC+5EFLOKOYw4R5Vxki1bjkxHvUzyEB7We
+         /8z1+ok6y1USjbObDzysFKUmvDcDyKnSJqBl5IuGhiERJJMnRF1+veIQKiWcyFm1nHkG
+         kmqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727969441; x=1728574241;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cx4Y4EIPbRLGBZOJ2U9uswU7XGSHhz+L/e8UGfY1ngs=;
+        b=EIVDVPcttFIzVeEARHuGBUw4MVpJp4fAZBKyo7BEZyOuow26bbk7KGX21PvDw5Wyhi
+         mVSvZfNJ43sBO+pvh13dPzOuy+BHa4MVU84PuQk2fpKYoa07WVxmCb6UwhvYhJVzRt2N
+         KzzDH4kkDIxIeXlZp9JOyiFAr3MTNZWhwINzUGlnXqwTq/8HwmQBhHOcuRpjH5/pEBgn
+         ViDIpl5dC+OIgqrbzrPenikoILNI5mnn54MT+dALB1J5uiuyJuOBLQRBGJAq9je87p4N
+         JJN3w49lbXU2C8AE7IWIvLDFG7TAiDz/8hk56nGAUv+cUm4m0hCT21eNzh4lNdMy1QQN
+         gAgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYDDXKmgKJMqOlz0rLhALh5JTXHcOy6m07AalaoY+GuAr7jslp9ioCNBjDPLRwUvhERtH0rSXUUuExETY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWFwwsl21VRJSouT9FxHf33kQDkf1/Hb587iWZj184rJhYc3JQ
+	JU32HLQFIsyWKTH9XowjYXdnSmvyj7mDNhOOaK+7fbmaXYjL/g/ogE9cfl0uur8=
+X-Google-Smtp-Source: AGHT+IG1CWXzgBWSp2zEqk/fVKLo93dcFsrO6YxiqkpAdkLG0XAdvAg7Dxpmf46BKl4Jop2PrKfgqw==
+X-Received: by 2002:a05:600c:3b02:b0:42c:ba6c:d9a7 with SMTP id 5b1f17b1804b1-42f7d0a09a9mr18086265e9.4.1727969440783;
+        Thu, 03 Oct 2024 08:30:40 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:a4f:301:1558:85f1:4dd0:3ea9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d0822b94fsm1504884f8f.46.2024.10.03.08.30.39
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Oct 2024 08:30:40 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Adam Thiede <me@adamthiede.com>
-Subject: Re: [PATCH v3 13/14] drm/mediatek: Support DRM plane alpha in OVL
-To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
- =?UTF-8?B?QmliYnkgSHNpZWggKOisnea/n+mBoCk=?= <Bibby.Hsieh@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
- "djkurtz@chromium.org" <djkurtz@chromium.org>,
- =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
- =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "littlecvr@chromium.org" <littlecvr@chromium.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: =?UTF-8?B?WVQgU2hlbiAo5rKI5bKz6ZyGKQ==?= <Yt.Shen@mediatek.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240620-igt-v3-0-a9d62d2e2c7e@mediatek.com>
- <20240620-igt-v3-13-a9d62d2e2c7e@mediatek.com>
- <1a3af354-bd15-4219-960e-089b6a6e673c@adamthiede.com>
- <49df03e8b982cc5ee97e09ef9545c1d138c32178.camel@mediatek.com>
- <00ebe9ca262b6a95fd726e5be06334b1e923db02.camel@mediatek.com>
- <5975b361-c1b4-4c57-89d4-0d247ae99d8c@adamthiede.com>
- <272b47f0c9e27268d29b58c341e0b48bce7e8e25.camel@mediatek.com>
- <06ed4527-3749-4fac-bd38-d837f1593311@adamthiede.com>
- <f7b4c6601d648e0eba2dc66f0fe1f34ca3d29cfb.camel@mediatek.com>
-Content-Language: en-US
-Autocrypt: addr=me@adamthiede.com; keydata=
- xsBNBF+n+90BCAC2ZRLVcvdXDgfY7EppN05eNor3U7/eeiNCCEIWZkYLhikUEP1ReLGBkXpK
- Pc70hfnKAKkCoth3IwhDty9WXMNU+iLNei4ieb2luW+UqluR6xIUIA+txahMU9YcjVaQTKf/
- yZWO4yl6pfBPCxC2UdPZKBAdGoi5NnE0ABFNbhBETQhhBic533lZn33ByupfI3acECnQdjgQ
- llCUpDbw4I+S/N1iFiEHcbMXH7ZB00e3IYNorZ1E9v7p++5rDY1fQ9gXpieg1vFKwSq1NJWo
- 9xx336YjaTUbX0EwrdKd9l8AktA3yRjckaK5TAcwSQaDtHvhpbl4ebvPhtwHh699MroXABEB
- AAHNH0FkYW0gVGhpZWRlIDxtZUBhZGFtdGhpZWRlLmNvbT7CwI4EEwEIADgCGwMFCwkIBwIG
- FQoJCAsCBBYCAwECHgECF4AWIQQtG9pGQ7sz3tf8M/kC7fV9o/vRzgUCZL1HxQAKCRAC7fV9
- o/vRzgyRB/wLqRCvvWhQCMgvzeKvru9wcXquhb77K8H/ByLbfiT8YBuP3lZFVh0IQhgO9Ylk
- fIoOJE4V+jjxyOnO2d9xjGbvAmmR6yT0gfLzSVWqrC4k+V9MWLv43nrNzxt41dvo5j824FAl
- X+zaiRZCdO8Jtxg5Elpiop2SKLi1utX1Z8i6YZh+ccJZlchUBAGUTk+D4UjK7vUcjLWT96ya
- CtdtTfXyw36CvGOPEWfc6++Kkl/5sgej1i7biPYzu/r0vssaQYTXKSrv6Cfa3Maa89ASiTtv
- q4qmhLnJeCrPxWlRAf6LEizeBEkOasYni2u8sp4wBezEq45Ozu45sfPkqLpPolG7zsBNBF+n
- +90BCADBRt+vrToRBEG580n77S99qSEkbKD+oJtCVyovnjMNkg0K9UG68LIeCX/ezngiV1M8
- JISvw5iFOuUFqGX/1hLl9wgt/YpuIrgWOp8XxkotavTCloLDvQmufJPO1L8bnnA+WgP2YgVZ
- 5MJTj/t4DI+yQgysEjsH8aurHO2uuqgJE+xK+2dy6Cl/wskuGxObksSPmmFH5PH0Joziwrtl
- 61ouLE2XwKbkMgIGEKkbFgbfwz3/QuLZGBni+OOtLzXeZ9wNTW/AHUPy6S9U4F+5z6/09fVT
- tTH0cvrgAGjbASlYx2VqGONXAsxCfjulq6ryJBFlPLp949c/JTTgOojukCSbABEBAAHCwHYE
- GAEIACACGwwWIQQtG9pGQ7sz3tf8M/kC7fV9o/vRzgUCZL1H0gAKCRAC7fV9o/vRzlamCACs
- vHw+0heTm+BfC3S8DUST6889gidIIwdqBep1ByzetCph7Bq8Y8BlT5YTX0u/bSKkxCzFgeTm
- vC341Q09ST2XjLAl1ZTdzGhH9gcgYyOw34pr5fPQRJLB392mPzD8YReRzciNbhWzj+DLgeVe
- ouyfGajd6jDjkf4FEq+trQLGZhpfsKn3JnDbzBUs945D50l/vz9q/QN3qZO+H4F6g8ZeMnqo
- FOEFN26xVtdEDr+0DNFsbgKmEzs675kdAY78ZZdbEetX/FSknxJ+FK1ZW3J7Yswwulj34AXP
- LB49Mk8Ot7fo6mdt0DkV11JS9LmKxKvpY+KTlrKG+i7pVCSZvVUx
-In-Reply-To: <f7b4c6601d648e0eba2dc66f0fe1f34ca3d29cfb.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4XKFwv5DZ7z9t3b
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <Zv62pi1VVbpkvoDM@archlinux>
+Date: Thu, 3 Oct 2024 17:30:28 +0200
+Cc: Kees Cook <kees@kernel.org>,
+ kent.overstreet@linux.dev,
+ regressions@lists.linux.dev,
+ linux-bcachefs@vger.kernel.org,
+ linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ ardb@kernel.org,
+ morbo@google.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <83834AC8-0109-40C5-A80C-8BFFA8F16B19@toblux.com>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+ <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+ <Zvg-mDsvvOueGpzs@archlinux> <202409281331.1F04259@keescook>
+ <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
+ <Zv6BEO-1Y0oJ3krr@archlinux>
+ <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
+ <Zv6YInHiwjLeBC3D@archlinux>
+ <63D4756D-31B7-4EA9-A92F-181A680206EF@toblux.com>
+ <Zv62pi1VVbpkvoDM@archlinux>
+To: Jan Hendrik Farr <kernel@jfarr.cc>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On 10/3/24 00:17, Jason-JH Lin (林睿祥) wrote:
->> Jason:
->> That is a lot of information, and quite above my head! Thank you
->> though.
->> 
->> I should note that the log items I sent you are from the "good"
->> kernel - 
->> 6.11 with the commit reverted. Here is a much longer set of logs: 
->> https://termbin.com/co6v
->> 
->> I've rebuild 6.11 with the log statement enabled and the "bad"
->> behavior.
->> Here is a dmesg from that: https://termbin.com/xiev
->> 
-> Hi Adam,
-> 
-> I think something wrong with your dmesg links, both logs look the same.
-> We should see this log in the "bad" one:
-> fmt:0x34325258, has_alpha:0x0, alpha:0xffff, con:0x2000
+On 3. Oct 2024, at 17:22, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> On 03 17:02:07, Thorsten Blum wrote:
+>> On 3. Oct 2024, at 15:12, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+>>> On 03 15:07:52, Thorsten Blum wrote:
+>>>> On 3. Oct 2024, at 13:33, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+>>>>>> [...]
+>>>>>=20
+>>>>> This issue is now fixed on the llvm main branch:
+>>>>> =
+https://github.com/llvm/llvm-project/commit/882457a2eedbe6d53161b2f78fcf76=
+9fc9a93e8a
+>>>>=20
+>>>> Thanks!
+>>>>=20
+>>>> Do you know if it also fixes the different sizes here:
+>>>> https://godbolt.org/z/vvK9PE1Yq
+>>>=20
+>>> Unfortunately this still prints 36.
+>>=20
+>> I just realized that the counted_by attribute itself causes the 4 =
+bytes
+>> difference. When you remove the attribute, the sizes are equal again.
+>=20
+> But we want these attributes to be in the kernel, so that
+> bounds-checking can be done in more scenarios, right?
 
-Apologies, I did indeed upload the same file twice. Here is the "good" one:
-https://termbin.com/tb33
+Yes
 
-And the "bad" one:
-https://termbin.com/yhxx
+> This changes clang to print 40, right? gcc prints 40 in the example
+> whether the attribute is there or not.
 
-I think the fact that we're not seeing that line in the "bad" one is 
-part of the problem?
-> 
-> But anyway, I think the reason for the downgrade is clear enough to me.
-> So let's try to figure out the solution.
-> 
->> These logs are both from `dmesg`.
->> 
->> I'm fairly certain I've built with the patch you referenced enabled.
->> The 
->> kernels I run are just release kernels, not RCs or git branches or 
->> anything. The mainline v6.11 kernel is the one that has this problem.
->> If 
->> that patch has been merged into 6.11 (which, looks like it has) then 
->> it's in the kernel I'm building.
-> 
-> Got it.
-> Then OVL_CONST_BLEND might be the unsupported configuration in MT8173,
-> I think we should remove the XRGB8888 format for MT8173.
-> 
-> Could you please try this modification and see if it'll change to use
-> others supported format to show the text?
-> 
-> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> @@ -102,12 +102,9 @@ static inline bool is_10bit_rgb(u32 fmt)
->   }
-> 
->   static const u32 mt8173_formats[] = {
-> -       DRM_FORMAT_XRGB8888,
->          DRM_FORMAT_ARGB8888,
-> -       DRM_FORMAT_BGRX8888,
->          DRM_FORMAT_BGRA8888,
->          DRM_FORMAT_ABGR8888,
-> -       DRM_FORMAT_XBGR8888,
->          DRM_FORMAT_RGB888,
->          DRM_FORMAT_BGR888,
->          DRM_FORMAT_RGB565,
-> 
-I've not been able to get the kernel to build with that patch; it keeps 
-segfaulting at the end. I will keep attempting though.
+Yes, clang prints 36 with and 40 without the attribute; gcc always 40.
 
-> 
-> Regards,
-> Jason-JH.Lin
-> 
->> 
->> - Adam Thiede
-
+>>>> I ran out of disk space when compiling llvm :0
+>>>>=20
+>>>>> So presumably this will go into 19.1.2, not sure what this means =
+for
+>>>>> distros that ship clang 18. Will they have to be notified to =
+backport
+>>>>> this?
+>>>>>=20
+>>>>> Best Regards
+>>>>> Jan
 
