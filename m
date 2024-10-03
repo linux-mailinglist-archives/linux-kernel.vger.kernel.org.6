@@ -1,129 +1,148 @@
-Return-Path: <linux-kernel+bounces-349266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D56898F36C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:01:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD3EE98F371
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D0DB1C21628
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63CBC1F22333
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3770B19C56A;
-	Thu,  3 Oct 2024 16:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1E21A4E99;
+	Thu,  3 Oct 2024 16:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uX2ypOsO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlUuerq6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CD31474D9
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 16:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955E219C56A;
+	Thu,  3 Oct 2024 16:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727971283; cv=none; b=dVxbhbnmQ9FFOP7RL05rNXVmLRqRW3s9hX/eFXbYCAAtLUe91RsKQ5DWgIZpznF5VOrqjZtnHiouhOsjDkd5DzdL0KpAJYqVjeU0j2abXdp9V9/XRWPqBM/9oMmNCBbUbjmHctpHS4FiQtGRBs9ep63oNUDjqty94b3JzAqSAr4=
+	t=1727971296; cv=none; b=b7BSerdqs1JfKPeNKTy0+g/Ay/em0tBwaihmZNgefB4IngF8bNsOCtOTSAWQAT2WL5ItZRAJD++KmOOlNGE6BFOvvCravPXVSocOUtxulEj6dEFwtUyoYRnNKOe9DlWnbzUV5dcFHn6Zda+ch/PAU1F4JIDbWtzDmbTJYkd6ahM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727971283; c=relaxed/simple;
-	bh=CX2P0FldUD9UrvNzD9zJjNC6r+EokVwad4+jJnTO4Ts=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NL/SaiUMf7Vwvn31BOEwu+uO1jOZklWWI1dZD1jSsUXuHON++yP5/oBmGT5bokqgm6Ze5ZtBS9oZmWeWw5++QBOLfVNOxk3qKBK3xVBGgpI1morJT6lAP8LEGqKg+eSx63WJMA0kVyYAtNIAPniBPcw5tBEAZNwKFCWTf52ul2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uX2ypOsO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 273DAC4CEC5;
-	Thu,  3 Oct 2024 16:01:23 +0000 (UTC)
+	s=arc-20240116; t=1727971296; c=relaxed/simple;
+	bh=N1KpW62xffrI1xTNzdpqLWPuaaxVmpXQlBykvBKOYos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCXSG+6OiWgG31XfW7kuw/Q1mg2OAoVVtMcDe5M73sXQEzvujPLPhmuv+2dBCc0clz2TrtTAeGsh41cKBjbRb58Al4FLYZixNEv74Xs76FoLE4HHlr83py7WwqJKnDROIJVvZh2FkDdugMbWLKcPgw9PYQJ+Pb4VszlCP+Zcu0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlUuerq6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF5DAC4CEC5;
+	Thu,  3 Oct 2024 16:01:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727971283;
-	bh=CX2P0FldUD9UrvNzD9zJjNC6r+EokVwad4+jJnTO4Ts=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=uX2ypOsORADHfL0GISRFpysTyz7sGD+mOYuGsZ+T+3e9PK1sopSXuutARdsDMSb1M
-	 KB4BF+8ylaHLeyjhCGJOtE7s02XjZYJMeOubS7KYkS08I6DeK4qjPJTqBDmgWYpaP4
-	 W6+l+fyJg5hR4kuOZcChwFa/mwq2iOjBi80Q29z1DfXaBqkukDZSxsSBHU35OHG9D+
-	 NeFBwNRNPH98YNG0IVz4SwjpZFnEFWGLHRSQuZSwlcGPvxD8evO+H6mud7zd1YLZcg
-	 wQG0rS76IEPrqEgKEyNybZwHqpE/+NhvjOET85n+0omP56yrxXWUoldD5vdQPkepvE
-	 YHl+FEPqY9vEQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B74CF34B2;
-	Thu,  3 Oct 2024 16:01:23 +0000 (UTC)
-From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Date: Thu, 03 Oct 2024 21:31:06 +0530
-Subject: [PATCH] Fixes: null pointer dereference in pfnmap_lockdep_assert
+	s=k20201202; t=1727971296;
+	bh=N1KpW62xffrI1xTNzdpqLWPuaaxVmpXQlBykvBKOYos=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nlUuerq6jbWlISvrN32hO7SexdrK03YY9JjbQN6uws4xuKYvBvihbcXTT9a9l5cHK
+	 pgguUwi+UAlqdOwiGtP+WPf88+D+hTQrTGq7bVjSoFwygpOQDegCToHeMaUrfQ9zPL
+	 TAFr4PDnJARhiYi62iuUl0ccT2fiwCLFAWBz1PmfZWWXngFtmQ+h1yiOMK3lD/vVO3
+	 EKUVNSE4Eiip8BSVk1iTVHvNkpSII5cib+lvnAhjjLS0Nfo/CWvAHcHwR5lWqx354J
+	 Df1fx1ilq9gb866aewtZ3zJTcjRRQayOe90l7mabPI0XvTtLrglCAONHdxgui35Hak
+	 u4M9kp0lRTlxQ==
+Date: Thu, 3 Oct 2024 18:01:30 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Werner Sembach <wse@tuxedocomputers.com>, Pavel Machek <pavel@ucw.cz>, 
+	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <cpt37kj2xqv6f5pb6bxgl53rxmmew6jdd647rsnrhowlphjq7i@dhp2655sl2sn>
+References: <586a1c41-bbe0-4912-b7c7-1716d886c198@tuxedocomputers.com>
+ <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
+ <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
+ <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
+ <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
+ <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
+ <c4e0beb6-acd1-45fa-ad47-f5cf9df89b11@gmx.de>
+ <74f8bd23-d85a-4f12-b8db-ebde59f3abe3@tuxedocomputers.com>
+ <swb45gt3vvctsmwgevo3ay6vkwoksasc64poj3tnaxsapxlsbg@kkmactexmclj>
+ <f2f013b9-6891-4aa0-9124-95775580f84e@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241003-fix-null-deref-v1-1-0a45df9d016a@iiitd.ac.in>
-X-B4-Tracking: v=1; b=H4sIAMG//mYC/x2MSQqAMAwAvyI5G4itKPgV8eCSaKBUaVEKxb9bP
- M7ATIbIQTnCUGUI/GjU0xdo6grWY/Y7o26FwZBpGyKLogn97RxuHFiwW2Qma3uW1UKJriI1/cN
- xet8Pec9y02AAAAA=
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>, Shuah Khan <skhan@linuxfoundation.org>, 
- Anup Sharma <anupnewsmail@gmail.com>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, 
- syzbot+093d096417e7038a689b@syzkaller.appspotmail.com, 
- Manas <manas18244@iiitd.ac.in>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727971281; l=1475;
- i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
- bh=x08Dt4D4CnyqFeKnwiqo7wiyGAvva8Affj+d/SXsW+A=;
- b=Cn/tYNqn5B45YcZhsFYQSPD2ldhhhYgc5XE7ctAhBQhf7vIsn/RfiuzQUe+wgjx4v745x3D2z
- V5tBTMz6vKHBV2y4fcqeEqW0KI/UyEl3xFgDdg3DkuZcC0lzWWna4zG
-X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
- pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
-X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
- auth_id=196
-X-Original-From: Manas <manas18244@iiitd.ac.in>
-Reply-To: manas18244@iiitd.ac.in
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2f013b9-6891-4aa0-9124-95775580f84e@gmx.de>
 
-From: Manas <manas18244@iiitd.ac.in>
+On Oct 02 2024, Armin Wolf wrote:
+> Am 02.10.24 um 10:42 schrieb Benjamin Tissoires:
+> 
+> > On Oct 01 2024, Werner Sembach wrote:
+> > > Hi Armin,
+> > > 
+> > > Am 01.10.24 um 18:45 schrieb Armin Wolf:
+> > [...snipped...]
+> > > > Why not having a simple led driver for HID LampArray devices which exposes the
+> > > > whole LampArray as a single LED?
+> > > Yes that is my plan, but see my last reply to Benjamin, it might not be
+> > > trivial as different leds in the same LampArray might have different max
+> > > values for red, green, blue, and intensity. And the LampArray spec even
+> > > allows to mix RGB and non-RGB leds.
+> > > > If userspace wants to have direct control over the underlying LampArray device,
+> > > > it just needs to unbind the default driver (maybe udev can be useful here?).
+> > > There was something in the last discussion why this might not work, but i
+> > > can't put my finger on it.
+> > We recently have the exact same problem, so it's still fresh in my
+> > memory. And here are what is happening:
+> > - you can unbind the driver with a sysfs command for sure
+> > - but then the device is not attached to a driver so HID core doesn't
+> >    expose the hidraw node
+> > - you'd think "we can just rebind it to hid-generic", but that doesn't
+> >    work because hid-generic sees that there is already a loaded driver
+> >    that can handle the device and it'll reject itself because it gives
+> >    priority over the other driver
+> > - what works is that you might be able to unload the other driver, but
+> >    if it's already used by something else (like hid-multitouch), you
+> >    don't want to do that. And also if you unload that driver, whenever
+> >    the driver gets re-inserted, hid-generic will unbind itself, so back
+> >    to square one
+> > 
+> > So unless we find a way to forward the "manual" binding to hid-generic,
+> > and/or we can also quirk the device with
+> > HID_QUIRK_IGNORE_SPECIAL_DRIVER[0] just unbinding the device doesn't
+> > work.
+> > 
+> > Cheers,
+> > Benjamin
+> 
+> I see, maybe we can add support for the driver_override mechanism to the HID bus?
 
-syzbot has pointed to a possible null pointer dereference in
-pfnmap_lockdep_assert. vm_file member of vm_area_struct is being
-dereferenced without any checks.
+hmm, we can, but only a couple of drivers would be valid: hid-multitouch
+and hid-generic AFAICT. All of the others are device specific, so
+allowing anybody to map a device to it might not work (if the driver
+requires driver_data).
 
-This fix returns if vm_file member in vm_area_struct is NULL.
+> Basically userspace could use the driver_override mechanism to forcefully bind hid-generic
+> to a given HID device even if a compatible HID driver already exists.
+> 
 
-Reported-by: syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
----
-This bug[1] triggers a general protection fault in follow_pfnmap_start
-function. An assertion pfnmap_lockdep_assert inside this function
-dereferences vm_file member of vm_area_struct. And panic gets triggered
-when vm_file is NULL.
+that coud be an option. But in that case, I wonder if the LampArray
+implementation should be done in hid-led or in hid-input.c (the generic
+part). I don't know if the new devices will export one HID device for
+LampArray and one other for the rest, when the rest might need a
+specific driver.
 
-This patch returns from the assertion pfnmap_lockdep_assert if vm_file
-is found to be NULL.
+Anyway, thanks for the tip :)
 
-[1] https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
+Cheers,
+Benjamin
 
-Signed-off-by: Manas <manas18244@iiitd.ac.in>
----
- mm/memory.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/mm/memory.c b/mm/memory.c
-index 2366578015ad..b152a95e543f 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -6346,6 +6346,9 @@ static inline void pfnmap_args_setup(struct follow_pfnmap_args *args,
- static inline void pfnmap_lockdep_assert(struct vm_area_struct *vma)
- {
- #ifdef CONFIG_LOCKDEP
-+	if (!vma->vm_file)
-+		return;
-+
- 	struct address_space *mapping = vma->vm_file->f_mapping;
- 
- 	if (mapping)
-
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241003-fix-null-deref-6bfa0337efc3
-
-Best regards,
--- 
-Manas <manas18244@iiitd.ac.in>
-
-
+> Thanks,
+> Armin Wolf
+> 
+> > PS: brain fart:
+> > if HID LampArray support (whatever the implementation, through Pavel's
+> > new API or simple LED emulation) is in hid-input, we can also simply add
+> > a new HID quirk to enable this or not, and use that quirk dynamically
+> > (yes, with BPF :-P ) to rebind the device...
+> > 
+> > [0] https://lore.kernel.org/linux-input/20241001-hid-bpf-hid-generic-v3-0-2ef1019468df@kernel.org/T/#t
 
