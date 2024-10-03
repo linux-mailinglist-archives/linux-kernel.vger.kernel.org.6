@@ -1,97 +1,185 @@
-Return-Path: <linux-kernel+bounces-348769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C9DF98EBAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E314C98EBAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C4541C222D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:34:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B2E1C2249B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BB913CFB8;
-	Thu,  3 Oct 2024 08:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BCD13CA95;
+	Thu,  3 Oct 2024 08:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMvqFrK5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U0uSA4tA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5272B13B2A4;
-	Thu,  3 Oct 2024 08:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EF313B2A4
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 08:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727944432; cv=none; b=VKg9/WcP6T8DDUSR8A8enuaoH8E6506txps9fQ4+Jrrpn+dtFYpixkRdCLgZicNin9dRqOaOqqiRe8Ll/yMSuiPWKDmqphS0+W/Yv0/OqtgsfYULk+VOtXo3VS7QyK4hDvB5ovd0dUM0C6z8dXDpgpo+/uZjw83C2BHL65osdOY=
+	t=1727944467; cv=none; b=QNgCBC/JsWTaWutd9GIFE+R+5iQ0//PxSrRkr7X9bUwO659KrBh7bt7dVch1mCNuQWwI5IpYM8EFdHEObk7F4sEC1L05Mq2qGjjpICxtC/iKQxhuhL3q29oHUPCRytQsGRzjvkoJShqCtxvl2XR62CY7WoQ1tBH+7hp9rsLUjPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727944432; c=relaxed/simple;
-	bh=t9NCdJyZZVWNegvqtHbQXG06Vs/AZR9IoZ/MuxzH4j8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZOP3JnAZtWeivhwhQif5g2hxCwRSMh975K3SMbHYBo3SOhsIrk4iHEIsXDBcwpbC9jMswplsoS/NA9nIjVjoAuEJmZWjTgV3F54lnV8fADMkl5nFHtjF2q0LNM6ePkTgrs1R2d6pYk8f3Vz295Yz8//zzOBWgI8Ougdfao9l2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMvqFrK5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD066C4CEC7;
-	Thu,  3 Oct 2024 08:33:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727944431;
-	bh=t9NCdJyZZVWNegvqtHbQXG06Vs/AZR9IoZ/MuxzH4j8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uMvqFrK5wTisMBMy2BU2/zMOBSpHxJKIS+iabq4XEt5oPI3RKYc4DngolQvSlOqyA
-	 WL71jQXEzXUxCSrAb2D+hpZ92qQ3StEFY/mv2sY+jtgktMzNBmX3gR636iUX0GC8c0
-	 +p+oHYO8njVrY/GKLmfIeCSGdawJ05Xg87flRxa/ixkdvXNL/HPa3gs6A7JEP1h1oa
-	 rZJaRGb7PdghKiQ/T16iBpebEcuewl8CoX85AlNuH+AuJkcZNtSbSkeFwLQedyjVEn
-	 QkQVD3hGVPKgabMDKsQfhBNkHKitCCC/Ha30od3CtQGVF4AsT1RCS/+n+5S/xgkb2k
-	 fVzOEWWOnpg1w==
-Date: Thu, 3 Oct 2024 10:33:46 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
-Message-ID: <20241003-karotten-geist-0ac7914b4445@brauner>
-References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
- <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
- <20241002-ertrag-syntaktisch-6c18b81d6c90@brauner>
- <CAH5fLgjm=u_im776f9cTrqjKCYQ31F4t=_Dg6mDzCoSEGoJm-w@mail.gmail.com>
+	s=arc-20240116; t=1727944467; c=relaxed/simple;
+	bh=svIvlDNgzYSVhmtDXtaCqaYc4fjLBBi+ljuqdoOQ9Lk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RgUKavD/4IBEv/yVCFyTbtMd8WqgVZzEtxOJhR4bCYVhkXCpLUu/H6oi9n4iFsEr2fmzYHaM7fAjHiC9oNlLrF/CWeFCJGuFtIv/Tuafwjg0yzSPAOjma6IOVJKdJLPgMcACjXB+pIlvUYF1stXIC7bgpKqJvXGbiXIcexVMp0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U0uSA4tA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727944464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ys4i0PydXyRMQ/rv2FLr8kvuGHk51g/SWpKTr17fmEo=;
+	b=U0uSA4tAALbq9wjt3ccc62J7Lm3bluDtA62H61pDtmPbXD/e9M8OZP6LMcn6dMnUcwBrDP
+	srI39skODcJXHDuDQQPBlPBwdfwD7G2WtGrpR/pFpQ/6P5ZoQEmrLlKEVY6kkufpgSczZM
+	L9LyXRe9Sk12dqW3ffLPbFYlll5bm6o=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-379-FZSqrYD4N5qbYWlusOuT0w-1; Thu, 03 Oct 2024 04:34:23 -0400
+X-MC-Unique: FZSqrYD4N5qbYWlusOuT0w-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37cd26ac362so287635f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 01:34:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727944462; x=1728549262;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ys4i0PydXyRMQ/rv2FLr8kvuGHk51g/SWpKTr17fmEo=;
+        b=n3gNw+wDKYr1l5aOEhFQiiDt9/qG0qFkTkzSh7xdf+bay2vXOuS1+vduODJ4PZpDDR
+         1S1R05yYOQW/nuKofU5nuNN3fmv2wHhRpOogyp1TG0jIIUF6JAAz/RKZpUti0rh1qpzg
+         BIFiumrKDb3pdFxH7cYGigtKLdHjpOQlNsddWYTLaGPoRA7EXksWcdXip+RROf2AvHez
+         6VUX1dzuAYRuabSgwa60K+G4Pc4e2Lm7lSEh1RNhNi7yAZgE11fS4zs3Cnkpwx1XP0dB
+         4wWhRkEp02nkp9w1bqfDsB0qhU/30hCLsKwRIpag1+ucGY9rQiy3cIdsnIw0qU4V6SD9
+         Ftug==
+X-Forwarded-Encrypted: i=1; AJvYcCVhxm521uNW8Vm2nBEuDdl9vOX+hkJeToerSDTg8QruMtxz9p7JxnUGCJaD13gOQ98ye9xvENUN74vqu7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/30ab/2Qf4RZzY09Yyj25CeHM2Y2x/D7Ox28GBZrdeeS8JShX
+	iig4iV6NMO/6V7v0M+1lj3xuGVq1v0LKFWfwGKCQCDzhp+EFFmDU2aM50aOy8DIdDKoaEx937s7
+	tWqUhkoXrJrVTwYVrVnnrUuxaJTeCcuI0dhG4wIJqu2SLBSl7+bfZ5B5gk7dgpg==
+X-Received: by 2002:a5d:694a:0:b0:374:bde6:bff5 with SMTP id ffacd0b85a97d-37cfb9fb82bmr2922728f8f.46.1727944461884;
+        Thu, 03 Oct 2024 01:34:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHfMhI50QmTEn44f2PnO+f2LWperfypCn6j7JnI2IqiOwLAv/irmG3mzxg+9korvdg3N8geHg==
+X-Received: by 2002:a5d:694a:0:b0:374:bde6:bff5 with SMTP id ffacd0b85a97d-37cfb9fb82bmr2922720f8f.46.1727944461478;
+        Thu, 03 Oct 2024 01:34:21 -0700 (PDT)
+Received: from [192.168.88.248] (146-241-47-72.dyn.eolo.it. [146.241.47.72])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082a6bf5sm743772f8f.71.2024.10.03.01.34.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 01:34:20 -0700 (PDT)
+Message-ID: <a3a81b7a-71a8-451a-a16d-53d9c54d6e80@redhat.com>
+Date: Thu, 3 Oct 2024 10:34:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgjm=u_im776f9cTrqjKCYQ31F4t=_Dg6mDzCoSEGoJm-w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] net: ethernet: ti: am65-cpsw: avoid
+ devm_alloc_etherdev, fix module removal
+To: Nicolas Pitre <nico@fluxnic.net>, "David S. Miller" <davem@davemloft.net>
+Cc: Nicolas Pitre <npitre@baylibre.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240927025301.1312590-1-nico@fluxnic.net>
+ <20240927025301.1312590-2-nico@fluxnic.net>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240927025301.1312590-2-nico@fluxnic.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 02, 2024 at 04:24:58PM GMT, Alice Ryhl wrote:
-> On Wed, Oct 2, 2024 at 4:06 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, Oct 01, 2024 at 08:22:22AM GMT, Alice Ryhl wrote:
-> > > +unsafe extern "C" fn fops_open<T: MiscDevice>(
-> > > +    inode: *mut bindings::inode,
-> > > +    file: *mut bindings::file,
-> > > +) -> c_int {
-> > > +    // SAFETY: The pointers are valid and for a file being opened.
-> > > +    let ret = unsafe { bindings::generic_file_open(inode, file) };
-> > > +    if ret != 0 {
-> > > +        return ret;
-> > > +    }
-> >
-> > Do you have code where that function is used? Because this looks wrong
-> > or at least I don't understand from just a glance whether that
-> > generic_file_open() call makes sense.
-> >
-> > Illustrating how we get from opening /dev/binder to this call would
-> > help.
+On 9/27/24 04:53, Nicolas Pitre wrote:
+> From: Nicolas Pitre <npitre@baylibre.com>
 > 
-> Hmm. I wrote this by comparing with the ashmem open callback. Now that
-> you mention it you are right that Binder does not call
-> generic_file_open ... I have to admit that I don't know what
-> generic_file_open does.
+> Usage of devm_alloc_etherdev_mqs() conflicts with
+> am65_cpsw_nuss_cleanup_ndev() as the same struct net_device instances
+> get unregistered twice. Switch to alloc_etherdev_mqs() and make sure
+> am65_cpsw_nuss_cleanup_ndev() unregisters and frees those net_device
+> instances properly.
+> 
+> With this, it is finally possible to rmmod the driver without oopsing
+> the kernel.
+> 
+> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
 
-It's irrelevant for binder.
+This patch and the previous one looks like fixes for the 'net' tree: you 
+should include the 'net' target into the subj prefix and include a 
+suitable fixes tag in the tag area, see:
+
+https://elixir.bootlin.com/linux/v6.12-rc1/source/Documentation/process/maintainer-netdev.rst#L67
+
+> ---
+>   drivers/net/ethernet/ti/am65-cpsw-nuss.c | 16 ++++++++++------
+>   1 file changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> index f6bc8a4dc6..4cb1c187c6 100644
+> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> @@ -2744,10 +2744,9 @@ am65_cpsw_nuss_init_port_ndev(struct am65_cpsw_common *common, u32 port_idx)
+>   		return 0;
+>   
+>   	/* alloc netdev */
+> -	port->ndev = devm_alloc_etherdev_mqs(common->dev,
+> -					     sizeof(struct am65_cpsw_ndev_priv),
+> -					     AM65_CPSW_MAX_QUEUES,
+> -					     AM65_CPSW_MAX_QUEUES);
+> +	port->ndev = alloc_etherdev_mqs(sizeof(struct am65_cpsw_ndev_priv),
+> +					AM65_CPSW_MAX_QUEUES,
+> +					AM65_CPSW_MAX_QUEUES);
+>   	if (!port->ndev) {
+>   		dev_err(dev, "error allocating slave net_device %u\n",
+>   			port->port_id);
+> @@ -2858,7 +2857,7 @@ static int am65_cpsw_nuss_init_ndevs(struct am65_cpsw_common *common)
+>   			return ret;
+>   	}
+>   
+> -	return ret;
+> +	return 0;
+
+This chunk looks unrelated from the actual fix, please do not include in 
+the next revision.
+
+>   }
+>   
+>   static void am65_cpsw_nuss_cleanup_ndev(struct am65_cpsw_common *common)
+> @@ -2868,8 +2867,12 @@ static void am65_cpsw_nuss_cleanup_ndev(struct am65_cpsw_common *common)
+>   
+>   	for (i = 0; i < common->port_num; i++) {
+>   		port = &common->ports[i];
+> -		if (port->ndev && port->ndev->reg_state == NETREG_REGISTERED)
+> +		if (!port->ndev)
+> +			continue;
+> +		if (port->ndev->reg_state == NETREG_REGISTERED)
+>   			unregister_netdev(port->ndev);
+> +		free_netdev(port->ndev);
+> +		port->ndev = NULL;
+>   	}
+>   }
+>   
+> @@ -3624,6 +3627,7 @@ static int am65_cpsw_nuss_probe(struct platform_device *pdev)
+>   
+>   err_free_phylink:
+>   	am65_cpsw_nuss_phylink_cleanup(common);
+> +	am65_cpsw_nuss_cleanup_ndev(common);
+
+The cleanup functions are called in the reverse order in 
+am65_cpsw_nuss_remove(). Skimming over the code the actual order between 
+these 2 does not matter (please double check this statement), but it 
+would be better to be consistent.
+
+Cheers,
+
+Paolo
+
+>   	am65_cpts_release(common->cpts);
+>   err_of_clear:
+>   	if (common->mdio_dev)
+
 
