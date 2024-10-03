@@ -1,87 +1,114 @@
-Return-Path: <linux-kernel+bounces-348475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4083298E81D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9DD98E826
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BECB6B25913
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967D9281E8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104B211CA0;
-	Thu,  3 Oct 2024 01:20:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA30171CD;
+	Thu,  3 Oct 2024 01:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ADZt65f1"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2350BDF49
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 01:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654B3101DE
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 01:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727918404; cv=none; b=oEVQ+B9YkN5iANNp9SppsrMuOODBnN9xTkEl2jFhfPQgMDZtxUoUdVtE/0OqCofo/NVwuHLmtSdKwPux6zIgIR8ujquQI1DOkFFC9iryaKmBWVNPForrCTx24auoLjv6/I0vJXQuG4omX8Sd70ptVgAETaWSkNJXEZZCU4pyON8=
+	t=1727919154; cv=none; b=Q3wYxoboxblQKNkKlFLFTQM9oo4GmWI4zT6WZM+m+n15h6kNx1ZkVKw6V80GPVn4VW/f2MK/rPgTtjTi5Q7QJQecBG8nb/+uTdSx8eOiJGb7zMUobKulxEaIgZQerPcZlRgGz9Qoap7i+InsXWQvGO5KeW59VfRL00gIXWJOIx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727918404; c=relaxed/simple;
-	bh=VgxLcjVqLId1nwjERIUwdNgWnVC3KfWn1HLPFd36T9c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=a/tizs3tNHw9zqriBBjisTg4ZTUo4OGZb0pu5UiUiCBxZNsdEkWmonGJ8PIMJGFxd1BtmM8VrcT28guOerjiCGci72Aj9ZCqbHi6LrzUrMBc9xSZT02N1874zFWDOZlZQEdp4LnVFA925VeWhNfPh4B6dRf4ks/bLVh7S14OBeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3479460f4so3808055ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 18:20:02 -0700 (PDT)
+	s=arc-20240116; t=1727919154; c=relaxed/simple;
+	bh=1UwXK1FoaoO9CGRgZEvqR8WstJfC7qHQR30H1C7tXkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cLqFZ7Xxx7kGHR8R+SGb8OsQTsTf6x/u4O9k1FKjvkSaJLeF+vhhRUaS61uab3TpNcdnq9BsJonFD7FoIR0W/u50jTIfzpDqCxDOpOlulLKjKXx+G5AHC7+unZhVK77AYs/kCpXZ/YpPdM4kojuhfMhu92Rrn8djRF7B/20NqmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ADZt65f1; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e21b4d7236so3643317b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 18:32:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1727919150; x=1728523950; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1UwXK1FoaoO9CGRgZEvqR8WstJfC7qHQR30H1C7tXkc=;
+        b=ADZt65f1hGq+tNtyGOcW9kxgTzR+Phj4M1bXyPyZA+yxv5yvW0aeuQZOmRONLhKcJY
+         iqNN9lB3m2YziWn4myfdZLfb6KBc2ZGOnUldJr0dbpONSSD9aGyCZe+EXqqEdUz6V9bG
+         0/2VNHF1tBJCzazDLpDOIkvyRmjD7qywIBCb17pWVa9jCEqduYBSJFUAT8Ayf6pl/KFm
+         V9gGMMVu6zKzZbCxqpjPYUKEuyYZz9i3TKQrQSDDYCz6lIaeGwXH2QCIO/a8VHPIdO2i
+         85jbIPrYuIT2Dk0RRC6kJ+YQWjLZJfC1/Ui82fuxwwNkrrGKecFgmIG9MOQe/BWmzXCG
+         ZUCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727918402; x=1728523202;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oLg4WjkU//b62h2ZX0FxgDSBVmbNEA2iXphVFPi2ilE=;
-        b=D2l8v1pdOk8r1uhqvt/gNppzRBG/wozmZQlZVoGiXGBIJZJBlPBTXIpChelQAm+r1c
-         fRLNnLSoINz16NH4wx9qnf+XznLARTsL45YinPQkNmuHIxAdp75byu3iRlN1pjcHa4Cw
-         6GyBd0yQzy5ea9B64/yCXDhtNPWggcW/IDqqMES4Me91VCdpUSbxpGCwKW3VJ5yxyCE/
-         NNWdccDe/TzhCgsvPPYMactfednEg3F6iFP9EeeAKyxH3D03zjqDTKZtrVgflmc2M5VL
-         QZQ3r6nQKZedo8ei4GkQfxGmB30AwQOFAB+ul10aTgXAYAstdnybcVhlGve0h2YfR+FG
-         9v5A==
-X-Forwarded-Encrypted: i=1; AJvYcCW9TWwRoTB/JuQTCXuIdkT2TqixzDZCtOsVvHfDC99VmWq9nTjDiZ9wpz57ru68nqFWYuu2xo0e54aY/kg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG8N30v94LXHGND+VyG0eIElnNwyvu9wHTjB1KHOehuzxb6GoU
-	R/NoqCl1kU1pNtXDIYNWaMI1DfCfCsY1n3t87iuwnD6mKFkwG0E2CC03bwjkwLoOyaNU1flz9r9
-	9HmzvpfozefXsTxsghseeqqd2AwmwcmgTJM8u1wJFOLudwkmpvgzALuE=
-X-Google-Smtp-Source: AGHT+IGqViwkcEVS8PdMA4PRbv9APJblCXNII4LxpvRx87WBi+qRDLtteGj05rHamd4t24+sAqM1WTmuFRSebAFN+SqR2vjKyYK2
+        d=1e100.net; s=20230601; t=1727919150; x=1728523950;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1UwXK1FoaoO9CGRgZEvqR8WstJfC7qHQR30H1C7tXkc=;
+        b=dfau4baWvfagelnnzOaOAV81APeVId+bEtOmdh/ZprA88jZkqEiFoc3JZZm2CiCrsT
+         sXXqn9wVp9Y3Vrp+wiLUNcIlg3ML+5RqhW+fVHwUL9xZM87xPVHAvpoWrJRnVPTFfXYc
+         1/gYGjdg8GCNrY7D1yC0UL9Wmec5N4knQhk0bz0G+5b/eQin4GrSmmnJGHzJZgMIn5YU
+         kusC2TlEKFW48re6O+iyWiMzg/uKclJEeLp5dx72H8bwKawqnMuJj4rlz3QHsqtB5wfj
+         DzaHEBtfDM++sTESPsT7r090OAxlkfKELIx7do/Fv3Vf/0sHffOG/5uRUGWh6FD+NhOK
+         DBeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVG9VnHyDjuXZ1W+jBauPGrxCrOJJM+q0V9XfgYw+bp87zcztLCEg5UqI6cXU39DF3pwko9FBxtNKqdgv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbMlfyrhmLpmH4K1oHqq0zbU0bRoP+SnbSz6cUTlOby2wh0NbS
+	lNHTtUeRfpMSU2pFZoJUEh76Ge8w/OTimuJhwbd/CIuS4ZyCr5jUjh1gnUh1aaEn8O7+IiFYDKM
+	uYmy3sNLyJ4GvV4dJRDonA4rmPgd5zjhwrgXW
+X-Google-Smtp-Source: AGHT+IETgnQD+Fykl9pMHACUWHaELEzbCGd7C2GoUuQae4g5nBX1YxBIfvZyaeMKpOabEmP4hEMEj+B8qq4LTRqQDE8=
+X-Received: by 2002:a05:690c:660f:b0:6e2:12e5:35b4 with SMTP id
+ 00721157ae682-6e2a297bfd5mr57387637b3.0.1727919150409; Wed, 02 Oct 2024
+ 18:32:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164d:b0:39f:51b8:5e05 with SMTP id
- e9e14a558f8ab-3a3659441d3mr47181185ab.16.1727918402242; Wed, 02 Oct 2024
- 18:20:02 -0700 (PDT)
-Date: Wed, 02 Oct 2024 18:20:02 -0700
-In-Reply-To: <20241003005956.1869-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fdf142.050a0220.9ec68.0030.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] KASAN: slab-use-after-free Read in binder_release_work
-From: syzbot <syzbot+9ba7a8cdae0440edd57b@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+References: <66f8846e.050a0220.aab67.000b.GAE@google.com> <66fcd082.050a0220.f28ec.04f1.GAE@google.com>
+ <CAHQche_ieCFxXP-ricwnVMiwwikO8LojWomH9=5eCJEfTm8wVQ@mail.gmail.com>
+In-Reply-To: <CAHQche_ieCFxXP-ricwnVMiwwikO8LojWomH9=5eCJEfTm8wVQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 2 Oct 2024 21:32:19 -0400
+Message-ID: <CAHC9VhSa-2Q5SPXJHfvyHCYXQEFPDQaYcRf82FVB2CH-PHxnFA@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] possible deadlock in upgrade_mmap_lock_carefully
+To: Shu Han <ebpqwerty472123@gmail.com>
+Cc: syzbot <syzbot+a6456f6334aa19425886@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, hughd@google.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, stephen.smalley.work@gmail.com, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Oct 2, 2024 at 8:14=E2=80=AFAM Shu Han <ebpqwerty472123@gmail.com> =
+wrote:
+>
+> It seems to be the same as [1].
+> New LSM hook position for remap_file_pages + IMA =3D deadlock.
+> The new LSM hook position is added for a bypass caused by
+> no check in remap_file_pages + READ_IMPLIES_EXEC in do_mmap.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Thanks Shu Han, let's mark this as a dup and sort out a fix in the first re=
+port.
 
-Reported-by: syzbot+9ba7a8cdae0440edd57b@syzkaller.appspotmail.com
-Tested-by: syzbot+9ba7a8cdae0440edd57b@syzkaller.appspotmail.com
+#syz dup: [syzbot] [integrity?] [lsm?] possible deadlock in
+process_measurement (4)
 
-Tested on:
+> I suggest fix it by removing the check and moving READ_IMPLIES_EXEC
+> out of do_mmap[2].
+>
+> Link: https://lore.kernel.org/lkml/20240928065620.7abadb2d8552f03d785c77c=
+9@linux-foundation.org/
+> [1]
+> Link: https://lore.kernel.org/all/20240928180044.50-1-ebpqwerty472123@gma=
+il.com/
+> [2]
 
-commit:         7ec46210 Merge tag 'pull-work.unaligned' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f22307980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6248f0ab12f33349
-dashboard link: https://syzkaller.appspot.com/bug?extid=9ba7a8cdae0440edd57b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1005339f980000
-
-Note: testing is done by a robot and is best-effort only.
+--=20
+paul-moore.com
 
