@@ -1,153 +1,167 @@
-Return-Path: <linux-kernel+bounces-349030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722B398EFBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:53:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C17298EFC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32763283483
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FFFF1C22208
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E20199934;
-	Thu,  3 Oct 2024 12:52:52 +0000 (UTC)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B33199397;
+	Thu,  3 Oct 2024 12:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxGpOvbU"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CA7194C89
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 12:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6825F15539D;
+	Thu,  3 Oct 2024 12:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727959971; cv=none; b=jj3NZyAsIwz1U786PxAs3QdlWUktUrC9OEsiTCXIKg0XYpowc6kPhhe+vBr7rWfw+m9IyGt1HOsrOW02qmr9SqnQ6w+96a1KE5CtECnZB3HbwwfEgnj71y0TtSqx47ERS/3xAw1MhN1aeGSSk9FRWceC/K6qsyrNe02DRaHoLkE=
+	t=1727960095; cv=none; b=mhWnlkccL+mcVZ22PDe3KVIN4MGivowdy3SCKIDq9iPSGZGQx1x3JIHqTF7WsodSmIsyWGNB6V9espboliqZE8ZOqYBdmdt8YO7BdjDyfagk2lm5JHV6Edc2XVwnN7uasrpzEPo1Srj7Ogib8mBzqO69agmqzpYErVGz3TUn6dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727959971; c=relaxed/simple;
-	bh=yS6IJU+GBe8K987oWSk1i8+zkeKATsul6ZaK90D/VdM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BX9RgDL92DjjTszGj1E3IfH9Kt8KwWCh4IbfevF/+znsgH92e3D5JqhscRcR6KE4/6dal5tQqQUV8rMN9KuBERvJjwEheiCluY0OZ1ajCbZ5upnxzbIHFnWCelaL+Th7+ddmu3rVcNsfTB+MtOf1NXlQz4gQgCzwXGKvTPkApdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1727960095; c=relaxed/simple;
+	bh=KljAQHtSfrZelRNu/DeQx5LVY5cSuSW2WcANOdnrzUc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TCtKyi9Qfsy/Ig5seDd8pWEtROtLbCWZydj9Hz2E9tDDNyyQ0k7WChyZ7WSJeluX4cfstjHbBo0U3JCn2g5LXBdmA94awIAMjcaxeolZw7tJ8EqYMPiDf6fnkwsKrtvz5opsidDPUgCFrJSsbjkVhz5aFv5DTTxumbiHrESWzeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hxGpOvbU; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e04196b7603so749874276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 05:52:49 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20b0b5cdb57so14280245ad.1;
+        Thu, 03 Oct 2024 05:54:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727960094; x=1728564894; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LsC4l5sUrgtE5C3AhIFngE9xrlbDasfd0CJezQP/zPM=;
+        b=hxGpOvbUQf/tayGvBmdEgNENJXZMfND0qFUTb9WtKeIULuvfy9EzB/Bn+PCHeT6BIW
+         AujUhzskKNHJBVHpRXq5dDDiUOCCL8O/tHyxwBLeh+3moqOoVghUik2jiTaF2YPTSaRw
+         23AFP0WkJAlADVM18co0v5sGJVdhoAq2Phbo2OKruE53h3ilCg+oQTE7L1BiKu+7gaqN
+         uHWCe/z0Sw73x6OP+I3FTGWgCQgvUkT+6bKxbyryDr0KiWLma7jaLO4h8R30zSDCPyjN
+         c8ygi2i1hOadgHey6qVXvgRn77q7dXIPgErQ0ODRYYMjmFRO72e6fRyBaoPnedoXE9Eq
+         66VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727959968; x=1728564768;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W2iGlYqAVkHqCyJOFhjC1gLFc3ar4xvTgTCzhjzM6yI=;
-        b=Qrz79G0Xnykf/dySWz0jAZAJEWOYweyIKeVOPkAlPiirhBJuf8WyL8CQRrvMn6Iond
-         VoSmpWfCLLuFuYQhqpxqGXPPzPOuTb1AOrXYjD27xm1WVLo/FNO3NKuzK1u5bZfbFIZ+
-         R2w9VUyWOtXavl/8crxjJHZjr/JbR8ubKJ8ZRslzVlvtkBISMlm6hvOfMfKfnVhQspP/
-         ft5vUb+XVs4bsIV/qSTdFOYfol22deZ2MO23ZNh+xgjLc+2fumPHUrMJai4X54UvTejW
-         B1D3Ld7GpME9P4YLW4wKFKBwqrEMqTGgCLRNjydho+ve1eYas8qEP8zUL8oK/qJEEv+p
-         uBSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSrY4QkLoHNidgtfXBZcU4vW8JcOZLJHWZYS1XsEMtxrLYwif5cVX268CcZFfduNXoHVGvIPq89K8C+qs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5KMlZe+AObxjHcKaabe3F5aArZiY0Yf8a3XItiWQivvb2Dj2I
-	owsxBULRxMMeIaC4L5+D9maavT0xJuZwSmm32mp74AVRKwj0IMv1Sz6hVVu8J1M=
-X-Google-Smtp-Source: AGHT+IG/kcjKhtXKe4WNwN0Elquo+SZCps49TIJpfKRAR4VXhn5wbePsnwolyoXtxPeW+ekC77OLDg==
-X-Received: by 2002:a05:690c:6592:b0:6dc:d556:aef7 with SMTP id 00721157ae682-6e2a2e40c14mr51561777b3.41.1727959968633;
-        Thu, 03 Oct 2024 05:52:48 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2bcf962casm1846977b3.82.2024.10.03.05.52.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 05:52:48 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e1f48e7c18so6458387b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 05:52:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUTt2fiWDiACxFJ82mfbS6jkuvyNwvbrIdmB3FvjLAJKKsnSXYEElgcOntt24gqh2sIVMrihNxKKSSzyHU=@vger.kernel.org
-X-Received: by 2002:a05:690c:3409:b0:6ac:8cfc:1cbc with SMTP id
- 00721157ae682-6e2a2e4a10emr34833787b3.45.1727959968166; Thu, 03 Oct 2024
- 05:52:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727960094; x=1728564894;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LsC4l5sUrgtE5C3AhIFngE9xrlbDasfd0CJezQP/zPM=;
+        b=NdoSmOUSELL/F5FAIOIQ7rohNdEivx+fqeypkSZsWRNR1N3hQ3w10yonRZIwFa9La3
+         gkAp305+sMWe5omZBshBD0LTAvvJ/NkvBUmw5J/Tu/lJTSrmzbUztiV2Vb9tZ6KqjE2E
+         wMk3zgOl2E2/Q3ArX8D/lC226aJY4L+3ofcL0TKWar/7BMC1mBBJeqfNdT3fEyNYFXE7
+         ODTj21S8BZHO4ejLC11O7FhATDXUlgYPmHn6kajmb6zzh1QTTpy01ci6xgwKh/pEmKgs
+         9k8BXpayTpT4sL8fbHetd2CeYV7O9Cm/p0uPylYeUq8c6YUmWzVNJRyM0/Kuq8jn+8ne
+         QLtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQCyODv/1x/yx4V2zRTZs+Uv6umultSR5KToecaEYiCo5eySQEQFd34XKeH1Qj5uhaY2DmMceQhLhJZuZ6@vger.kernel.org, AJvYcCVlxyHAewJ6XiuvgFNtOWSu7o+jleaYjbRUltFPpzC+zfczfkbj8ik4gvKrZfmnP4rGwWqio4304uHG@vger.kernel.org, AJvYcCXD0o8uGnHd8iZlLkbEhWLWxmqN5sw1XOlxXVftuE7myxy62e6HUzKCh0debk1jPlVrPDJ3sBbY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWBNhuFXXU4fxTCY3nWJDkPRL4o3tQ/oa0mcLOUJ1KWexwtj2z
+	aHIbrfMj8bdX5NedOPyawHGGDytJC+VDqVDNu4EoOt+IV41aJC//
+X-Google-Smtp-Source: AGHT+IEVVMmS1YZ2exZ1znFQnn9/34PbEJhr5acgKukRACDsDk/3Nx413ukvQ2Vv4QCXPWtKG24YCA==
+X-Received: by 2002:a17:903:41ce:b0:206:9c9b:61bb with SMTP id d9443c01a7336-20be187334amr45591905ad.6.1727960093539;
+        Thu, 03 Oct 2024 05:54:53 -0700 (PDT)
+Received: from localhost.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beefad240sm8324875ad.206.2024.10.03.05.54.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 05:54:53 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca
+Cc: akpm@osdl.org,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH v3] ext4: prevent data-race that occur when read/write ext4_group_desc structure members
+Date: Thu,  3 Oct 2024 21:53:37 +0900
+Message-Id: <20241003125337.47283-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1e82c551938c32b4dbf8b65dc779c1b772898307.1727853749.git.geert+renesas@glider.be>
- <87zfnmbfu7.fsf@igel.home> <CAMuHMdW-_oowzrzpoeU-=mD1t8P_65cBr4meY-BToYbkyQMXtg@mail.gmail.com>
- <87iku9r300.fsf@linux-m68k.org> <CAMuHMdW474PRT3F3qfcJaghoB1NTH0o2xXuuLpQfWPqpSSe-mA@mail.gmail.com>
- <87ed4xr22r.fsf@linux-m68k.org> <CANiq72k3BBCCChVhDRALxX=mrtq2dZYR1RzdVU00n2LU=sGXjg@mail.gmail.com>
- <87h69t75do.fsf@igel.home> <CAMuHMdVkw+G6-YjDO_7F6xtgJCBfjKF8T=HuHzQuHbcJK6sp4g@mail.gmail.com>
- <87cykh74bw.fsf@igel.home>
-In-Reply-To: <87cykh74bw.fsf@igel.home>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 3 Oct 2024 14:52:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVN9UyuUMFJUFb9hsKZ8=Uw=L0NEgS-kcoPDGbCk8XJnQ@mail.gmail.com>
-Message-ID: <CAMuHMdVN9UyuUMFJUFb9hsKZ8=Uw=L0NEgS-kcoPDGbCk8XJnQ@mail.gmail.com>
-Subject: Re: [PATCH v2] compiler-gcc.h: Disable __retain on gcc-11
-To: Andreas Schwab <schwab@linux-m68k.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	Tony Ambardar <tony.ambardar@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Miguel Ojeda <ojeda@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Andreas,
+Currently, data-race like [1] occur in fs/ext4/ialloc.c
 
-On Thu, Oct 3, 2024 at 2:34=E2=80=AFPM Andreas Schwab <schwab@linux-m68k.or=
-g> wrote:
-> On Okt 03 2024, Geert Uytterhoeven wrote:
-> > On Thu, Oct 3, 2024 at 2:11=E2=80=AFPM Andreas Schwab <schwab@linux-m68=
-k.org> wrote:
-> >> On Okt 03 2024, Miguel Ojeda wrote:
-> >> > Otherwise, does it mean we need a build-time test?
-> >>
-> >> A simple gcc version test definitely does not suffice.
-> >>
-> >> The suport for retain also depends on HAVE_INITFINI_ARRAY_SUPPORT, whi=
-ch
-> >> is usually enabled by default (depends on glibc support, but that is
-> >> much older), but can be disabled with --disable-initfini-array.
-> >
-> > FTR, no --disable-initfini-array seen here:
->
-> --disable-initfini-array is the default for cross compilers.
+find_group_other() and find_group_orlov() read *_lo, *_hi with 
+ext4_free_inodes_count without additional locking. This can cause data-race,
+but since the lock is held for most writes and free inodes value is generally
+not a problem even if it is incorrect, it is more appropriate to use 
+READ_ONCE()/WRITE_ONCE() than to add locking.
 
-Apparently not for cross compilers targeting riscv64?
-I.e. no --enable-initfini-array seen here:
+[1]
 
-$ riscv64-linux-gnu-gcc-11 -v
-Using built-in specs.
-COLLECT_GCC=3D/usr/bin/riscv64-linux-gnu-gcc-11
-COLLECT_LTO_WRAPPER=3D/usr/lib/gcc-cross/riscv64-linux-gnu/11/lto-wrapper
-Target: riscv64-linux-gnu
-Configured with: ../src/configure -v --with-pkgversion=3D'Ubuntu
-11.4.0-1ubuntu1~22.04'
---with-bugurl=3Dfile:///usr/share/doc/gcc-11/README.Bugs
---enable-languages=3Dc,ada,c++,go,d,fortran,objc,obj-c++,m2
---prefix=3D/usr --with-gcc-major-version-only --program-suffix=3D-11
---enable-shared --enable-linker-build-id --libexecdir=3D/usr/lib
---without-included-gettext --enable-threads=3Dposix --libdir=3D/usr/lib
---enable-nls --with-sysroot=3D/ --enable-clocale=3Dgnu
---enable-libstdcxx-debug --enable-libstdcxx-time=3Dyes
---with-default-libstdcxx-abi=3Dnew --enable-gnu-unique-object
---disable-libitm --disable-libquadmath --disable-libquadmath-support
---enable-plugin --enable-default-pie --with-system-zlib
---enable-libphobos-checking=3Drelease --without-target-system-zlib
---enable-multiarch --disable-werror --disable-multilib
---with-arch=3Drv64gc --with-abi=3Dlp64d --enable-checking=3Drelease
---build=3Dx86_64-linux-gnu --host=3Dx86_64-linux-gnu
---target=3Driscv64-linux-gnu --program-prefix=3Driscv64-linux-gnu-
---includedir=3D/usr/riscv64-linux-gnu/include
---with-build-config=3Dbootstrap-lto-lean --enable-link-serialization=3D2
-Thread model: posix
-Supported LTO compression algorithms: zlib zstd
-gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04)
+==================================================================
+BUG: KCSAN: data-race in ext4_free_inodes_count / ext4_free_inodes_set
 
-Gr{oetje,eeting}s,
+write to 0xffff88810404300e of 2 bytes by task 6254 on cpu 1:
+ ext4_free_inodes_set+0x1f/0x80 fs/ext4/super.c:405
+ __ext4_new_inode+0x15ca/0x2200 fs/ext4/ialloc.c:1216
+ ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
+ vfs_symlink+0xca/0x1d0 fs/namei.c:4615
+ do_symlinkat+0xe3/0x340 fs/namei.c:4641
+ __do_sys_symlinkat fs/namei.c:4657 [inline]
+ __se_sys_symlinkat fs/namei.c:4654 [inline]
+ __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4654
+ x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-                        Geert
+read to 0xffff88810404300e of 2 bytes by task 6257 on cpu 0:
+ ext4_free_inodes_count+0x1c/0x80 fs/ext4/super.c:349
+ find_group_other fs/ext4/ialloc.c:594 [inline]
+ __ext4_new_inode+0x6ec/0x2200 fs/ext4/ialloc.c:1017
+ ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
+ vfs_symlink+0xca/0x1d0 fs/namei.c:4615
+ do_symlinkat+0xe3/0x340 fs/namei.c:4641
+ __do_sys_symlinkat fs/namei.c:4657 [inline]
+ __se_sys_symlinkat fs/namei.c:4654 [inline]
+ __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4654
+ x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+value changed: 0x185c -> 0x185b
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Cc: <stable@vger.kernel.org>
+Fixes: ac27a0ec112a ("[PATCH] ext4: initial copy of files from ext3")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ fs/ext4/super.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 16a4ce704460..8337c4999f90 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -346,9 +346,9 @@ __u32 ext4_free_group_clusters(struct super_block *sb,
+ __u32 ext4_free_inodes_count(struct super_block *sb,
+ 			      struct ext4_group_desc *bg)
+ {
+-	return le16_to_cpu(bg->bg_free_inodes_count_lo) |
++	return le16_to_cpu(READ_ONCE(bg->bg_free_inodes_count_lo)) |
+ 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
+-		 (__u32)le16_to_cpu(bg->bg_free_inodes_count_hi) << 16 : 0);
++		 (__u32)le16_to_cpu(READ_ONCE(bg->bg_free_inodes_count_hi)) << 16 : 0);
+ }
+ 
+ __u32 ext4_used_dirs_count(struct super_block *sb,
+@@ -402,9 +402,9 @@ void ext4_free_group_clusters_set(struct super_block *sb,
+ void ext4_free_inodes_set(struct super_block *sb,
+ 			  struct ext4_group_desc *bg, __u32 count)
+ {
+-	bg->bg_free_inodes_count_lo = cpu_to_le16((__u16)count);
++	WRITE_ONCE(bg->bg_free_inodes_count_lo, cpu_to_le16((__u16)count));
+ 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
+-		bg->bg_free_inodes_count_hi = cpu_to_le16(count >> 16);
++		WRITE_ONCE(bg->bg_free_inodes_count_hi, cpu_to_le16(count >> 16));
+ }
+ 
+ void ext4_used_dirs_set(struct super_block *sb,
+--
 
