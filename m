@@ -1,216 +1,144 @@
-Return-Path: <linux-kernel+bounces-348793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BFA98EBE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:53:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53CEC98EBEA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCFA81F234B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:53:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2FEA285B50
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E162313DBB1;
-	Thu,  3 Oct 2024 08:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E3E13E04C;
+	Thu,  3 Oct 2024 08:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JJJRtaKb"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CIRWbWF7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9726F13B2AF
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 08:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBCD12C465
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 08:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727945588; cv=none; b=XLauJHrbN2YmsgsxJLIczm8Rky0MZUVQ0VCKQMbbC6gjfL+BH5AP1NUdE8FEyhV2CsyVI97GKmdV6NdPRrZuDD6vDwdEoSO4XKUwIZavzzA4eMUX6SqOloKH+JI8VwlR7FvixebVnfymrA5veqKVW7TZ9zUOvJPvle7ocOZgEG0=
+	t=1727945754; cv=none; b=gBie6jWmMa0bS4MmxPb03IzfU4OeDczR4AWk3ckdk7hXybvomuoTakAjb35rRzgukOhscyNR/QdYWYTZF3viOtf+9Ax0ccErhd2fcURcb6ecx43w2P2ovg91jvLYy2vcuZpONnD6mx+e49Ccy8zf7Hsn4aoltDve2bhprZFxlI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727945588; c=relaxed/simple;
-	bh=8/RcAShUx+4/hucXdLx+VDk3Ev07N7XvQkGwK7Djepk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aLMYaluXxy/CRw2XAFUKdWDA4XXNx91SyzttSUfRvD81AjBC1ktz3pS01xn+fHdugyI3Yjq/zWxi87L/exBl/kPHPW9Lwg3havTeiHR6i/CP/N9QtPhkGgCRUen+NtxbyKLp5xEzMoq3/XtixAv7SnqbSWpIj9Gg8uCSdp/rHbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JJJRtaKb; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e109539aedso640188a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 01:53:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727945586; x=1728550386; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t/ew+xUpwTY6RSUemCgB2ze/fVhIK30NyPUNAms6Zsc=;
-        b=JJJRtaKbDnNQO9/iC6GXrC7mW+BbwJ55B7OoO76WDmZY3S2EHyljbVgwckUStImkIH
-         hr5H1dFMwR+og/gO6VzUfPEPnx6xASmXNEIidqXZ/IGbopbtp0yE+HR8yj06260qorLI
-         ANCbO+x+dlYcbPHwJ5GhAzIgowI0AYAvlkz7aWW22ulety0iBfTGxqKdXSat9Sv6u53B
-         KBlMcAfzpoaugTKJeHRsnXNMHHXDxTh5swdiJohzg7Njo0ARbj+mItFhwT+1riaeVAPb
-         zB3f4cVJJHdILGj+Mb5VPs4SAF/D4z+AJYqqtSZNAm1sS/TTGieFuxNcYjfYtzDM6Zws
-         9ToA==
+	s=arc-20240116; t=1727945754; c=relaxed/simple;
+	bh=/ls+Usjj0lpRKVwE40z6h46uE7yUpqkPPHw9jtcK6Ko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lT7JLv5PSc8MkME+rvQvJhlQSqUxvddjWLTXf6Xybq4Ajds/RuEBdbgFdGsazIjN0TlS0o34ubo5tYnDUxFa7dMLGksetMLWkw5Dhx19ZBkFgNy6cEHTRZFi1tVE8CIpLejm8oMUymLLQ4BekAdrBXssLr76FjHqZhlry2mYXZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CIRWbWF7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727945752;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HNyleeSBIrkoz+o+G4sN8Sg53/W0Jp8BT6862q5Zags=;
+	b=CIRWbWF79J2p9X8rq4t1BEuMTEE1H2imxqNLhKV4GF9p2RGydj5hrW4cJA8pNabwfTXgeK
+	UjLyW1DetIkNbSLpTSyj3qYgvx1bHoIgacRaz27qltQ25UwLJxiMys2VpVcS2XDHuDqNHA
+	yYBWmeDOmeEIEoHxA6E5RUPSBj14HKM=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-74-Dd2XS6IoNDuZQ7mBjsLVHA-1; Thu, 03 Oct 2024 04:55:50 -0400
+X-MC-Unique: Dd2XS6IoNDuZQ7mBjsLVHA-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-53987fc3625so411427e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 01:55:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727945586; x=1728550386;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t/ew+xUpwTY6RSUemCgB2ze/fVhIK30NyPUNAms6Zsc=;
-        b=e6EAMWIg3GSbkfwAVFedrs/VT1ScpsGHnjhzIExtigeX0tI41d5176lFr9ivwhibJ/
-         58RPnGr3ChHfyV+CwX+BcIQcqJR5E4RKi8JJmuJAV+CN9OeRy1DzrGzSLPJnUSHF2e8h
-         DiLjfIksPKAY1b9TBN2bZS352b9IZxfS/LnPV5ykCvQEJQOGFhX0I81lYuyXq2wn0kNi
-         6pwoGGxRemUHmMDS3ez+iitu7C70LLPWji3+kMLwi7v0OxK8S6Id9BjdM83/mli+JcRc
-         HOuCr8761iQawpFKgPcS+2N5S38LLNhUgwl2Eo1PwdQpLlW8vQxizSS97tPbBFOwY9sT
-         D4zg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQtpEnp2CQREY5w4+7JZwG/kBBf8D8pqGBm9lLGLqRSoKSaLR97Y10GgnkNoEjzQOCFWfeOsUGR7dkyvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgc3PfgnVAwXgyMQaXFzPA5E80WPZpqMDzl9qTYXUZLQ7EZBWF
-	s2Nq5T9S0RKyhUqOkEudSixJ+k6cYKKIqbw8QFnu8SXl+lBDJ04pigGr/+aZAP3ZUNqc4Vpy1bx
-	XJgjteTQn/FxClucddaoYyXiK+sKz6mpYYka7nw==
-X-Google-Smtp-Source: AGHT+IHWHGiQk1HjIJ8MEluWaOhvqWglzVczOR8aRpVDcBjY6lrbMylBCpz4S/StSmxDxkrDwrXruWcuQpRrqy8cScg=
-X-Received: by 2002:a17:90a:c7cb:b0:2e0:90fe:cc2c with SMTP id
- 98e67ed59e1d1-2e1849696e5mr7309917a91.26.1727945585811; Thu, 03 Oct 2024
- 01:53:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727945749; x=1728550549;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HNyleeSBIrkoz+o+G4sN8Sg53/W0Jp8BT6862q5Zags=;
+        b=ILm194iYU+koQb+90xhSnn17Hg6Ja/n1TVcmDI6lrny2GAqe836SOKSPR/YmX1Uuwu
+         TfXF71g1KEC9qcEBMC8JcYYPTpqK+Lo2jfdFNPKon2Qu+4F/n1Cbj5URkGsQcwe6X8EA
+         3KckZXrHuZ+3wZgGpdUIX0IvhjSpofNvVQr1w2rnT2hc6T1SmULKF3YOg2P26Uu73gzs
+         CQIFRaAGREnytN+dkTSkHdQWWgrceltv5w6T+EmEmPXzHZie/25jWzjl3g53yhy2uDxi
+         02UdrkpQTFCEQiyQ/9Re8yiCFU3fFdaTcExgpB7wiviEY3rdQQoSbEy9MKLRmn2VoTji
+         X9gA==
+X-Forwarded-Encrypted: i=1; AJvYcCXsO8nsmhG45cjf9Ffnpws2R88fP3hmuB7UKldqD74bGh4eZtA3thY/i0fHHmi5cYGlEQvnwLNtxTaWxXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybZuf/gSwxk73nPn8W3O2P3ZJhc033ZFcLikVqHRzcpksdvbCT
+	kD8QzuYlSCI0LTTLQ43ComIVbBkpbK8MzjrXyZn4Ah6vLAl1jbgWZ2dbgo6I3Fi2O7TKTsFVyqf
+	cr3zJoGB/kTxSCRt5o9p4LsPEQTYglbgRxC2jSE1hApoAL7GCKqSOlt0SXAhw/w==
+X-Received: by 2002:a05:6512:1054:b0:539:8a9a:4e63 with SMTP id 2adb3069b0e04-539a079f5e5mr3663104e87.42.1727945749288;
+        Thu, 03 Oct 2024 01:55:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7QwxJ8KaZj1SiIC8+qvQzggg+ESKlt1wUj9pnPdfIIZHMWzpqbpbEcdhtk92ID+wFhtG63Q==
+X-Received: by 2002:a05:6512:1054:b0:539:8a9a:4e63 with SMTP id 2adb3069b0e04-539a079f5e5mr3663091e87.42.1727945748883;
+        Thu, 03 Oct 2024 01:55:48 -0700 (PDT)
+Received: from [192.168.88.248] (146-241-47-72.dyn.eolo.it. [146.241.47.72])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f802a0476sm10011435e9.35.2024.10.03.01.55.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 01:55:48 -0700 (PDT)
+Message-ID: <a9d896a4-b279-41f6-a492-980340e125ac@redhat.com>
+Date: Thu, 3 Oct 2024 10:55:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-5-vincent.guittot@linaro.org> <Zu2gHOv7mqArWXLZ@google.com>
- <CAKfTPtCvwPq+8pQcTZePiee9EXxKAQS=J57X2OavWFrQwkDt5A@mail.gmail.com>
- <ZvUlB8s-zIkDQji7@google.com> <CAKfTPtAzG7u0+e=8skMhnCETVxbDTOxT-zLaoqUXB-Zz5=4t+A@mail.gmail.com>
- <Zvw2O4JGBpMXwOZA@google.com> <CAKfTPtDOhNmL0Nn3g-agnL5HH5nhwXb3-sfzydEe4nvRKAq3HQ@mail.gmail.com>
- <71e7e154-584a-4856-b906-ba92c636b17f@arm.com>
-In-Reply-To: <71e7e154-584a-4856-b906-ba92c636b17f@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 3 Oct 2024 10:52:54 +0200
-Message-ID: <CAKfTPtD1N1qqEPV8AAhbRh-kzqXutNWi8+e11D5Z+8kQztC8FA@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, rafael.j.wysocki@intel.com, 
-	linux-kernel@vger.kernel.org, qyousef@layalina.io, hongyan.xia2@arm.com, 
-	Quentin Perret <qperret@google.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: retain NOCARRIER on protodown interfaces
+To: Volodymyr Boyko <boyko.cxx@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240927073331.80425-1-boyko.cxx@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240927073331.80425-1-boyko.cxx@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 3 Oct 2024 at 10:14, Lukasz Luba <lukasz.luba@arm.com> wrote:
->
-> Hi Vincent,
->
-> On 10/3/24 07:27, Vincent Guittot wrote:
-> > On Tue, 1 Oct 2024 at 19:51, Quentin Perret <qperret@google.com> wrote:
-> >>
-> >> On Tuesday 01 Oct 2024 at 18:20:03 (+0200), Vincent Guittot wrote:
-> >>> With commit 50181c0cff31 ("sched/pelt: Avoid underestimation of task
-> >>> utilization"), the util_est remains set the value before having to
-> >>> share the cpu with other tasks which means that the util_est remains
-> >>> correct even if its util_avg decrease because of sharing the cpu with
-> >>> other task. This has been done to cover the cases that you mention
-> >>> above whereboth util_avg and util_est where decreasing when tasks
-> >>> starts to  share  the CPU bandwidth with others
-> >>
-> >> I don't think I agree about the correctness of that util_est value at
-> >> all. The above patch only makes it arbitrarily out of date in the truly
-> >> overcommitted case. All the util-based heuristic we have in the
-> >> scheduler are based around the assumption that the close future will
-> >> look like the recent past, so using an arbitrarily old util-est is still
-> >> incorrect. I can understand how this may work OK in RT-app or other
-> >
-> > This fixes a real use case on android device
-> >
-> >> use-cases with perfectly periodic tasks for their entire lifetime and
-> >> such, but this doesn't work at all in the general case.
-> >>
-> >>> And feec() will return -1 for that case because util_est remains high
-> >>
-> >> And again, checking that a task fits is broken to start with if we don't
-> >> know how big the task is. When we have reasons to believe that the util
-> >> values are no longer correct (and the absence of idle time is a very
-> >> good reason for that) we just need to give up on them. The fact that we
-> >> have to resort to using out-of-date data to sort of make that work is
-> >> just another proof that this is not a good idea in the general case.
-> >
-> > That's where I disagree, this is not an out-of-date value, this is the
-> > last correct one before sharing the cpu
-> >
-> >>
-> >>> the commit that I mentioned above covers those cases and the task will
-> >>> not incorrectly fit to another smaller CPU because its util_est is
-> >>> preserved during the overutilized phase
-> >>
-> >> There are other reasons why a task may look like it fits, e.g. two tasks
-> >> coscheduled on a big CPU get 50% util each, then we migrate one away, the
-> >
-> > 50% of what ? not the cpu capacity. I think you miss one piece of the
-> > recent pelt behavior here. I fullygree that when the system os
-> > overcommitted the util base task placement is not correct but I also
-> > think that feec() can't find a cpu in such case
-> >
-> >> CPU looks half empty. Is it half empty? We've got no way to tell until
-> >
-> > The same here, it's not thanks to util_est
-> >
-> >> we see idle time. The current util_avg and old util_est value are just
-> >> not helpful, they're both bad signals and we should just discard them.
-> >>
-> >> So again I do feel like the best way forward would be to change the
-> >> nature of the OU threshold to actually ask cpuidle 'when was the last
-> >> time there was idle time?' (or possibly cache that in the idle task
-> >> directly). And then based on that we can decide whether we want to enter
-> >> feec() and do util-based decision, or to kick the push-pull mechanism in
-> >> your other patches, things like that. That would solve/avoid the problem
-> >> I mentioned in the previous paragraph and make the OU detection more
-> >> robust. We could also consider using different thresholds in different
-> >> places to re-enable load-balancing earlier, and give up on feec() a bit
-> >> later to avoid messing the entire task placement when we're only
-> >> transiently OU because of misfit. But eventually, we really need to just
-> >> give up on util values altogether when we're really overcommitted, it's
-> >> really an invariant we need to keep.
-> >
-> > For now, I will increase the OU threshold to cpu capacity to reduce
-> > the false overutilized state because of misfit tasks which is what I
-> > really care about. The redesign of OU will come in a different series
-> > as this implies more rework. IIUC your point, we are more interested
-> > by the prev cpu than the current one
-> >
->
-> What do you mean by that?
-> Is it due to OU in e.g. Little cluster?
-> Is it amplified by the uclamp_max usage?
+On 9/27/24 09:33, Volodymyr Boyko wrote:
+> Make interface with enabled protodown to retain NOCARRIER state during
+> transfer of operstate from its lower device.
+> 
+> Signed-off-by: Volodymyr Boyko <boyko.cxx@gmail.com>
+> ---
+> Currently bringing up lower device enables carrier on upper devices
+> ignoring the protodown flag.
+> 
+> Steps to reproduce:
+> ```
+> ip l a test0 up type dummy
+> ip l a test0.mv0 up link test0 type macvlan mode bridge
+> ip l s test0.mv0 protodown on
+> sleep 1
+> printf 'before flap:\n'
+> ip -o l show | grep test0
+> ip l set down test0 && ip l set up test0
+> printf 'after flap:\n'
+> ip -o l show | grep test0
+> ip l del test0
+> ```
+> 
+> output without this change:
+> ```
+> before flap:
+> 28: test0.mv0@test0: <NO-CARRIER,BROADCAST,MULTICAST,UP>
+> 	 state LOWERLAYERDOWN protodown on
+> after flap:
+> 28: test0.mv0@test0: <BROADCAST,MULTICAST,UP,LOWER_UP>
+> 	 state UP protodown on
+> ```
+> 
+> output with this change:
+> ```
+> before flap:
+> 28: test0.mv0@test0: <NO-CARRIER,BROADCAST,MULTICAST,UP>
+> 	state DOWN protodown on
+> after flap:
+> 28: test0.mv0@test0: <NO-CARRIER,BROADCAST,MULTICAST,UP>
+> 	state DOWN protodown on
+> ```
 
-You need to know if the prev cpu was overcommitted to know if the task
-utilization is correct and usable
+I'm unsure we can accept this change of behavior: existing user-space 
+application may rely on the existing one. I tend to stay on the safe side.
 
->
-> You're re-writing heavily the EAS+EM and I would like to understand
-> your motivation.
+Paolo
 
-I want to cover more cases that are obviously not covered by current
-EAS implementation
-
->
-> BTW, do you know that if you or anyone wants to improve the EAS/EM
-> should be able to provide the power numbers?
-
-Having power numbers with the latest mainline kernel is not always
-easy as platforms don't support it. Typically, pixel 6 doesn't support
-v6.11 or even v6.12-rc1 with enough power optimization. And older
-custom kernel don't get last changes and are often modified with out
-of tree code which are out of the scope of the discussion
-
->
-> W/o the power numbers the discussion is moot. Many times SW engineers
-> have wrong assumptions about HW, therefore we have to test and
-> measure. There are confidential power saving techniques in HW
-> that can be missed and some ugly workaround created in SW for issues
-> which don't exist.
->
-> That's why we have to discuss the power numbers.
->
-> This _subject_ is not different. If EAS is going to help
-> even in OU state - we need the numbers.
-
-I don't expect EAS to help during OU state but more to prevent
-spreading blindly everything around. I was more concerned to make sure
-that EAS doesn't regression perf too much when overutilized so it can
-keep sane task placement whenever possible
-
->
-> Regards,
-> Lukasz
 
