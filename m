@@ -1,121 +1,109 @@
-Return-Path: <linux-kernel+bounces-348875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB09898ECF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:30:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335D298ECF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C41D2829D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:30:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 651D91C20CB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7CA149C6F;
-	Thu,  3 Oct 2024 10:30:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8ED136338
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 10:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C005C136338;
+	Thu,  3 Oct 2024 10:30:22 +0000 (UTC)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE21213FEE
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 10:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727951410; cv=none; b=HKaVQ3C1nkbyFPWzibST15uVVYcdGtzNO19DNTp++R5LcjdNjzKjLjFM9EAh70RzS6HBtOXzrRQrZHlMuWQLTsAqzwOzuRg5ePueC8S9uMlSqdkKo42fHjmNh0brzb7d6dFlEciePLqsUAZFmeuOxwbMnUYzeDsp/yYWBggIpPI=
+	t=1727951422; cv=none; b=kGbp5+s10w+fqGhmhLssQys3nTl5eUajUDUTqGWLOBkUEFBt8vYS9fIo4pHkor8pk+pMCBwFb3fCrAWyCKxrwXe87WTVDjymejMXKf/bkAAqB00cZhQ9CtgXvYlJaHiHDbGVIiCcV4tC7f0I+CHYIKlxuheJSYSFEH9N12HVfDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727951410; c=relaxed/simple;
-	bh=Z8R3etoXxtOld6K/4IgMmkxQn05YSElJHj7sp77GacA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fgctv/HEolMrFWmSjmHULhmEjX6LxCJDrfkXexocjm96xo3I2m8VVtAFy9qz0lC/0kQeHlXmSuXo6AAC66JEPj2SDkfQ2kb2k6Hjj1tB2re4pAXAjNA24XkyYMqUvFfmqnNgG8W/ymv9lQE9kiokSKiGsSz6lwA6P75wy/PudWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 834C7339;
-	Thu,  3 Oct 2024 03:30:30 -0700 (PDT)
-Received: from [10.1.39.32] (e122027.cambridge.arm.com [10.1.39.32])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3225F3F64C;
-	Thu,  3 Oct 2024 03:29:58 -0700 (PDT)
-Message-ID: <4c8cf37c-1576-4633-9f75-01e26e95f6c2@arm.com>
-Date: Thu, 3 Oct 2024 11:29:55 +0100
+	s=arc-20240116; t=1727951422; c=relaxed/simple;
+	bh=3CnxpmtcFFEvhnfq/RUvf6CpLGkRu6oSX7ITGRrh6pk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y09pAbktGVSm86ztxWVp6uKUypRtnRQF7q7GK6ohCqBRZddqQvs9jK/R5Bluoo5oFZFRpFH2lf4FdvVMrUIrrrnEKFDh2x4WzoENvVKThurNSJ9CLDwFk/cCZXbVXMtHkVF9vVAW302JCQPzjy1zTO7YqVXKzkj5n6j6/vGJIHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c8af23a4fcso981151a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 03:30:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727951419; x=1728556219;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ob1ivIA2vZD2jo/vXYjrOKEgae7y9JnTjJoYmXfa3x8=;
+        b=c9Uk5jshWbYuv4udzhtX/+PwTndK2NeIZjFFu2MNy4AN6ZvXPEwWDwME53ECHh4hW6
+         8AdWOgl91DIkinK8EBE8FDWBA5Uxsfhg/VxUEhMvHqjPbUmSpu7THqypI6lhdyu0UWLL
+         znC/+YW+0Eg1mxo1rUbHcwIWga59cidAZUf3KjZAaDd+iSt7h6nAJfNCuUaXNfo0QkMw
+         j+HT8eB4uoqvoyzngyFPcmAlFN8Vwu24TDFoBhin9n86YGp2rGBbnLMZ6K2OnKOVy28j
+         2ulbEFFMGrAXXGxftEeLm1+ChvAaxZBXhVlPv6HbAGQQNHyHBx6+2IBvg+pz4ZFQWR9Y
+         3RnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvjS/AlCtWFP70nSymfVxY1chyX4C18+hLCjoJ5kL5dgaPpbC0zKLO80dFGjZQTiklorvCqUtfgC9X8Tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6VxWxyLufAN8Ozbx/ScNNF0Hpirm7zVJwRrOlkXfG0O43ly9l
+	fMHz213L03BF8sl1rNuujopEx+owuxM7IBzNf6QpLjXoE+SHzGkB
+X-Google-Smtp-Source: AGHT+IGbIsEjDU588oApcM1pMopvjJo8HPlkahwODhGFTxFQIIDiTNGXk+q2R+6udQvCjYie7kfaGA==
+X-Received: by 2002:a17:907:9708:b0:a86:7924:11bd with SMTP id a640c23a62f3a-a98f837b6b0mr610167366b.41.1727951418900;
+        Thu, 03 Oct 2024 03:30:18 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-007.fbsv.net. [2a03:2880:30ff:7::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a991047318esm66306266b.179.2024.10.03.03.30.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 03:30:18 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: akpm@linux-foundation.org
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Elliot Berman <quic_eberman@quicinc.com>,
+	Xiong Nandi <xndchn@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Carlos Llamas <cmllamas@google.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] scripts/decode_stacktrace.sh: remove trailing space
+Date: Thu,  3 Oct 2024 03:30:05 -0700
+Message-ID: <20241003103009.2635627-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panfrost: Add missing OPP table refcnt decremental
-To: Boris Brezillon <boris.brezillon@collabora.com>,
- =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-Cc: Rob Herring <robh@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241003002603.3177741-1-adrian.larumbe@collabora.com>
- <20241003091740.4e610f21@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20241003091740.4e610f21@collabora.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 03/10/2024 08:17, Boris Brezillon wrote:
-> On Thu,  3 Oct 2024 01:25:37 +0100
-> Adrián Larumbe <adrian.larumbe@collabora.com> wrote:
-> 
->> Commit f11b0417eec2 ("drm/panfrost: Add fdinfo support GPU load metrics")
->> retrieves the OPP for the maximum device clock frequency, but forgets to
->> keep the reference count balanced by putting the returned OPP object. This
->> eventually leads to an OPP core warning when removing the device.
->>
->> Fix it by putting OPP objects as many times as they're retrieved.
->> Also remove an unnecessary whitespace.
->>
->> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
->> Fixes: f11b0417eec2 ("drm/panfrost: Add fdinfo support GPU load metrics")
-> 
-> Reviewed-by: 
+decode_stacktrace.sh adds a trailing space at the end of the decoded
+stack if the module is not set (in most of the lines), which makes the
+some lines of the stack having trailing space and some others not.
 
-I assume that tag shouldn't be there ;)
+Do not add an extra space at the end of the line if module is not set,
+adding consistency in output formatting.
 
->> ---
->>  drivers/gpu/drm/panfrost/panfrost_devfreq.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
->> index 2d30da38c2c3..c7d3f980f1e5 100644
->> --- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
->> +++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
->> @@ -38,7 +38,7 @@ static int panfrost_devfreq_target(struct device *dev, unsigned long *freq,
->>  		return PTR_ERR(opp);
->>  	dev_pm_opp_put(opp);
->>  
->> -	err =  dev_pm_opp_set_rate(dev, *freq);
->> +	err = dev_pm_opp_set_rate(dev, *freq);
->>  	if (!err)
->>  		ptdev->pfdevfreq.current_frequency = *freq;
->>  
->> @@ -177,6 +177,8 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
->>  	 */
->>  	pfdevfreq->current_frequency = cur_freq;
->>  
->> +	dev_pm_opp_put(opp);
->> +
-> 
-> Shouldn't this be moved after the dev_pm_opp_set_opp() that's
-> following?
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ scripts/decode_stacktrace.sh | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-I agree.
-
-I'm not sure what the devfreq maintainers would think, but there's now a
-few drivers that basically want find_available_max_freq() exported - if
-you're interested in a wider cleanup then it might be worth looking at.
-
-Steve
-
->>  	/*
->>  	 * Set the recommend OPP this will enable and configure the regulator
->>  	 * if any and will avoid a switch off by regulator_late_cleanup()
-> 
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index 826836d264c6..4b3502a007fd 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -311,7 +311,12 @@ handle_line() {
+ 	parse_symbol # modifies $symbol
+ 
+ 	# Add up the line number to the symbol
+-	echo "${words[@]}" "$symbol $module"
++	if [ -z ${module} ]
++	then
++		echo "${words[@]}" "$symbol"
++	else
++		echo "${words[@]}" "$symbol $module"
++	fi
+ }
+ 
+ while read line; do
+-- 
+2.43.5
 
 
