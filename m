@@ -1,98 +1,125 @@
-Return-Path: <linux-kernel+bounces-348951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A0398EE61
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:46:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0891D98EE64
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D811C21F11
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:46:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F2F7B220FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EACF155325;
-	Thu,  3 Oct 2024 11:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A2B155C96;
+	Thu,  3 Oct 2024 11:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="larTJzim"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IJb+oSGf"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD4713D245;
-	Thu,  3 Oct 2024 11:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B91213D245;
+	Thu,  3 Oct 2024 11:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727956001; cv=none; b=a7u0ypEg+p20zOekeAjcdHSJmOwDwf8rnWSpxtDrQJg82jF6IaieVLPBb+W/N6gPopxzh+ZDKOo1R+FoXEI/O5Z0X17hMkWk0OqHk+pSMFGuZiODcALY7O9fSb3uPSaVt9Ez3OGznbiMbdao32D1BumyLx3y/D3tdF0bKrp0has=
+	t=1727956009; cv=none; b=ibM5rA8H4+kKhFxLKeujK93dlC+Ofv+d806kpEh0/iJLySvTO8GjXQ9Gs+MP3eCb/gYEoMs3TnM4J5bsA513UOR1hrKvX8pmOd0qnJ6k4BOW4IfbESket2Ijgqv+6ei/aVz4LwLH3xe8dyaaauIhM3KUM4QKLm2hOdAkgR273S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727956001; c=relaxed/simple;
-	bh=sBxW+KZU+ioaWiugsFWBycVCH29FrwaIOZPhAdwh4+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nit/r1s0feFxHu3VFc62yMM6mRVtDMIqQcm71CsupfliPvTMcBRouyQs399bZX8pMunOKNLPBfR3Mv1lRWbvgF2izko3K26JxHahZapoyUY0/rgTeP3SZmzctD4rO0wOdz9FdCzsUewMrBTlMTXut24ZpBa+B/IXhlBjJZJaMe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=larTJzim; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b7463dd89so8609145ad.2;
-        Thu, 03 Oct 2024 04:46:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727955999; x=1728560799; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dxoosp2XHhfn2bD9oac9bz/JCfWimb3Tn75xzIZVdsM=;
-        b=larTJzimcrt6DRId/duJJfJvQju4LOPuxjBA35J9PxY7PqIYjhexaL7Qx8azFOT88O
-         BaILYh90u5nKlVIed6uYYMtdxJ/w352JlV9mDkUVaHFB9wuiFxPq1jLKePatZ6wBrv1i
-         bNyefSDo0HZm0f3vb6VujGVW1NxKFcYwSOaaYbWvsCSEB60/BEtCq/BU+8HvnsHGRJMQ
-         NhqUnf+FNm0T1unhTNBwR+0s8E0YSfZxvnCKm96w+E/wgUo95mor+NM/hMVKCuFn1zAY
-         wX3Yby9t0J0fIOSfS4DCknK4cPlm4ssKNf2OHgR5t5YQGfIyRb0by3KrOTarupSYa+Lq
-         dhVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727955999; x=1728560799;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dxoosp2XHhfn2bD9oac9bz/JCfWimb3Tn75xzIZVdsM=;
-        b=TzUJuHkYXmVV7NataGRkXUk+GUL6TVp9Rdwor2Th5MlWS4m6CUnfRuVB684Cs/Xv5I
-         6U2cKbXT5vExp85+RYmDRPPpxp5g7RYeK31jkIqtVr9P8naJqLpct0XnTpJsxPqQBGnU
-         1Er+O0OlmRP/idVL2CoS7SD1tCxQxKvuogsFly/ZmItT4gOspcSmus4fu+RcJykZ4eHt
-         +7odbD50Stt+2nNmOpJywrdoCsL6uhsjIJLVjhfx17VXtsmJ1TZADHgRGzHzOvgep3dH
-         jYO1IIjeGSVPq1n+G7DkYg4Fu6+/o+PMiLx9+eTJ++eK7NQ7R9xo094dVLdDrm3Y/fHS
-         SiQg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4YOuAbGXC6wCDkWhMh2J0+ChuNi3A0VkAoIzoL4Z+vsSI7to7yAkomcRqctSodu3lCefCGLMxrq+4px2B@vger.kernel.org, AJvYcCX7/NO8qp4iBb34H2QMClfsfdw+6/PWI1r2Vj15ccC+u4BW35GU7+rIMhLcHEfrvv57l61l4/KgMs8+pQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaXl3ZLDwzSWVH9E+c70QRLG3b8tvRGeXVN8xL+2e8ReGc0h0n
-	St1v2RIlJvKTUGDWQgQYedtDbk8l3O/dEdq0RuYB3c7Uph4UvaZb
-X-Google-Smtp-Source: AGHT+IE/nZh0I7/GCo28tPCNxTDPgf1eXfIKjjF4dp2s5mm77ovbV0hIFr+dPxydoiidBwnomT1TWQ==
-X-Received: by 2002:a17:902:c405:b0:20b:84be:712c with SMTP id d9443c01a7336-20bc5a875e7mr107331865ad.55.1727955999406;
-        Thu, 03 Oct 2024 04:46:39 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:fba0:f631:4ed6:4411])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beeca6fb0sm7659275ad.75.2024.10.03.04.46.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 04:46:39 -0700 (PDT)
-Date: Thu, 3 Oct 2024 04:46:35 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: hycon-hy46xx - add missing dependency on
- REGMAP_I2C
-Message-ID: <Zv6EG6EYRJTFuf2o@google.com>
-References: <20241002-input-hycon-hy46xx-select-remap-i2c-v1-1-08f6e83b268a@gmail.com>
+	s=arc-20240116; t=1727956009; c=relaxed/simple;
+	bh=qJjNmjKDHb6WVPkylAOGLdvisVk70N6aiJ6nCK0+88U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TCL3mpEGv8KXmM9l2/otLbD4F/YIViXozWqSm+nfyGe3mEcvlZ+mc/VbcICcwja2XREE279W14frvShJFeBNX5HL4vJUOW01F+yEPXxfvzpk64oZcH1istpztfuLk+F19JCneWXNyMHMlrPvZnkI467NLKRvHZ18Clwdnns0NH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IJb+oSGf; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id DED7FC0002;
+	Thu,  3 Oct 2024 11:46:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727956004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pARedIXKgyoxaKrVbEhoCIxqzLG71ZV23YjcFZPbA0E=;
+	b=IJb+oSGfuOsHfD2jXJCKF0ty6j4nEuYgXwiwaYajLS7Pk11sjByVDZkgbup40eZbV6XzXF
+	gcLDrNTY7TqguBABo+jcPg7ol4wedWMKm/0WlQR2hMl6D0/XINiH83UPrOH9cyeZEaHgiU
+	tM7i79tUuH5kJkgRs79hj2uUBA2Kqn91V7kAyEd3LYUH9aHBMFg68Ew1BVUHEyMVIjf7bX
+	sPVD4rjN0rNnCDv0tBd5isvIa3wXEMn09qI4kkGgnmZVD/XD4HtzjX4I0cvVqLDfioPqPB
+	jZaLQZZEmXL4M8pEokOEewYvOgiffD304ex/vF/0rPr8+14Fd3S/Y4+p7bM5tg==
+From: Herve Codina <herve.codina@bootlin.com>
+To: Herve Codina <herve.codina@bootlin.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Ian Ray <ian.ray@gehealthcare.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v2 0/4] Add support for the GE HealthCare PMC ADC
+Date: Thu,  3 Oct 2024 13:46:37 +0200
+Message-ID: <20241003114641.672086-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002-input-hycon-hy46xx-select-remap-i2c-v1-1-08f6e83b268a@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Wed, Oct 02, 2024 at 10:56:37PM +0200, Javier Carrasco wrote:
-> hideep makes use of regmap_i2c, and it has to be selected within its
-> Kconfig entry to compile successfully.
-> 
-> Fixes: aa2f62cf211a ("Input: add driver for the Hycon HY46XX touchpanel series")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Hi,
 
-Applied, thank you.
+The GE HealthCare PMC Analog to Digital Converter (ADC) is a 16-Channel
+voltage and current, 16-Bit ADC with an I2C Interface.
+
+Compare to the previous iteration, this v2 series mainly:
+  - Add a description in the binding
+  - Fixed sign_extend32() parameter
+  - Use dev_err_probe()
+  - Remove scale and use processed channels
+
+Best regards,
+Herve Codina
+
+Changes v1 -> v2
+  v1: https://lore.kernel.org/lkml/20241001074618.350785-1-herve.codina@bootlin.com/
+
+  - Patch 1
+    Add 'Acked-by: Conor Dooley <conor.dooley@microchip.com>'
+
+  - Patch 2
+    Add a desccription for the 'osc' clock.
+
+  - Patch 3
+    Replace sign_extend32(ret, 16) by sign_extend32(ret, 15).
+    Use dev_err_probe().
+    Remove scale and use processed channels as values are read in IIO
+    expected unit (mV or mA).
+
+  - Patch 4
+    No changes
+
+Herve Codina (4):
+  dt-bindings: vendor-prefixes: Add an entry for GE HealthCare
+  dt-bindings: iio: adc: Add the GE HealthCare PMC ADC
+  iio: adc: Add support for the GE HealthCare PMC ADC
+  MAINTAINERS: add the GE HealthCare PMC ADC driver entry
+
+ .../bindings/iio/adc/gehc,pmc-adc.yaml        |  86 +++++++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |   8 +
+ drivers/iio/adc/Kconfig                       |  10 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/gehc-pmc-adc.c                | 227 ++++++++++++++++++
+ include/dt-bindings/iio/adc/gehc,pmc-adc.h    |  10 +
+ 7 files changed, 344 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/gehc,pmc-adc.yaml
+ create mode 100644 drivers/iio/adc/gehc-pmc-adc.c
+ create mode 100644 include/dt-bindings/iio/adc/gehc,pmc-adc.h
 
 -- 
-Dmitry
+2.46.1
+
 
