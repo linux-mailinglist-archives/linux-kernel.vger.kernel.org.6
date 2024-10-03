@@ -1,184 +1,237 @@
-Return-Path: <linux-kernel+bounces-349758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A7E98FB34
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:53:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61BC98FB36
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14BA1282616
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:53:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E09871C21EB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3F21D0B86;
-	Thu,  3 Oct 2024 23:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="vNJy90uO"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D381CF7BD;
+	Thu,  3 Oct 2024 23:54:24 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FA11B85C8
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AA2161302
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727999599; cv=none; b=HQMNu7PkeQOLm+SIsCwAoUpzPALojTZWu1YIKUIfFXsh0s8SXhXX4wf60VMu1OvyMowLuxksrlehLbSrpXrsMZR8OO5XDEKBpch8fntMO8zFb0uZj2NxE6OY4RRFdZsO0IPbJ8m08wsbWhmYwPQTp9nB1fQqxNQfAL9Ev7+ZMRE=
+	t=1727999663; cv=none; b=j2ZozObF+9VdzGHAYqw2yC4536y64S9Y9hQedWiLu+q2GJWFE2Pni0D95GiEtFlFd8aYdKzWPRYzGWh5o9+Z0GI//GON2S3qGU58u7e6yYDtzDtyNkAi4esphAq1UfVpGOh4LuQhtcMZTK7QXBVk+Jh0nMDp38VNFtxRfaYiEco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727999599; c=relaxed/simple;
-	bh=GzAathxYkC8uI6l+NrPvM061Qz0CwHqH7iz9J9uA/dY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iX7jp75TQfJ/mgjFuNGfX1VLghtJnSpDuGDEFPLlS31uwWHhX/RY89yHenZoWR43UrdZUDmxTqgSBnpj0vGnFJnKnGd6fTs5yb2I0KKI0PM1MU+NYuDzCo07eKGMrWkZ7AnD9TX/m15Y7VMGSV2CEYtyQiBl92ZjLmho4K8JjzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=vNJy90uO; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71afb729f24so1278727b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 16:53:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727999597; x=1728604397; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=to5UESfoGJJK2TcGhffLq8Xvshlbs/BIWcOtCWTyRfU=;
-        b=vNJy90uO/+wCEOTKqeNg+81U8xfWbr2RJzNeMJeW872P4JZGCzfKRPswC3jwAotVmz
-         mN62T1I79l4TMVIntHJkiFM5hUSqCl9noXafw7lI3Kjj5Nc+8qKLVLu/Qic3NvlRPKZ7
-         6A1+lk9Qz+fn7YPFyLpRdTNhZuyxehLXf54q4=
+	s=arc-20240116; t=1727999663; c=relaxed/simple;
+	bh=EBTlgwVBBS6NriTPzMmi40EY7nevtFqcaA+6abU1H3s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=m4NKup83NdN4zxOIuQz/ykgR0P/Bt7lArcT6gSLpVFMAOBUh4uEpwDFjCgvNWBo4dRTIuakok8a/B2JbSXtdkNCuF7ihX7aBESpxs5AJEHPlGXWxC4WVWik/08D35Cey/sp1SY1wBmrOeh1PEeBm5IarKmSUsvNX8NWIN4rvETA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0ce3a623eso13901955ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 16:54:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727999597; x=1728604397;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1727999661; x=1728604461;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=to5UESfoGJJK2TcGhffLq8Xvshlbs/BIWcOtCWTyRfU=;
-        b=Ke3cfdz+fv7rDG5e1+rPK/uAuN8ijP69NeZ2v3x/jNAkwVHce1LKhzbQyZ+XSBgx6+
-         1Fb0voy+vNJDkFm1bmlE2g2fmZgLLKuMr9LWDa8JzUCnbE8x4Mmzm7DiHTHOh1ENtOee
-         WR84nM91Dt/DgFjex3gwX1ekigha+2JPQjMN0uYXfFQle2WQA66+rUWw60dkbU+bTXmy
-         5nuRyICa2TVWsSE8P1Ma/mxDZLzqX0eyygetNUY5dTZOx3JyuaArg0zAjsYCCyOCzTMO
-         qdHqZXuh3v2r1e9B/nDcHTTnttHhBhwic6s7b/vYGz6ReG2VoPdZn8HV59sXezSOhZxh
-         hSAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHGVDjE7IlQZBAt6qoZC2Y9MaPHytaRpxUkKmLpVsl11OZUZHRboeK3AM3OXQXqJV0YoSkxBytSkvD9IE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAo+uKOFFP2NKwLJ3n+eyJGglm/5nwP92f15NT0P8eBIAJ9Gct
-	DpFD8qaCV4JRAyD4fyaHQshB679RqRG33Mbn4JyuD8WXmozGHH0FIz3zInlEXRo=
-X-Google-Smtp-Source: AGHT+IHFFJEXCsS7CL3SCEq6Zn2fPKDty4P7fGrgnhTy1s2+ZG4Kz84QJLtn4fcPKjIeGqhkJ9NQCw==
-X-Received: by 2002:aa7:8e0e:0:b0:717:9897:1405 with SMTP id d2e1a72fcca58-71de2439b2dmr1040349b3a.17.1727999597631;
-        Thu, 03 Oct 2024 16:53:17 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9df57ddsm1970234b3a.184.2024.10.03.16.53.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 16:53:17 -0700 (PDT)
-Date: Thu, 3 Oct 2024 16:53:13 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
-	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Breno Leitao <leitao@debian.org>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	David Ahern <dsahern@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Michael Chan <michael.chan@broadcom.com>,
-	Mina Almasry <almasrymina@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Subject: Re: [RFC net-next v4 0/9] Add support for per-NAPI config via netlink
-Message-ID: <Zv8uaQ4WIprQCBzv@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Stanislav Fomichev <stfomichev@gmail.com>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
-	bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Breno Leitao <leitao@debian.org>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	David Ahern <dsahern@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Michael Chan <michael.chan@broadcom.com>,
-	Mina Almasry <almasrymina@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-References: <20241001235302.57609-1-jdamato@fastly.com>
- <Zv8o4eliTO60odQe@mini-arch>
+        bh=LPzAya3GocO7JfeJnQAXfrQh4gmUQeWyOwRvOq/1IL0=;
+        b=rzmyCWsNkS/DY40oGUIbQxQib6xKLf7TqYC4kcgZHeBNSHMb3u74qImPkOeLz5Nd4l
+         fojEjdwMqmhEaojoz0GgvQRhwXBYS4zIfYvT/KlLv4J0k3yY1G/jRlGIueyHNm1HabxS
+         GxnDGyENCJWrpFQfP02+BPZhgAg1f+IvVfUrYZBZGZlQSkDeUNgQhaWwxuwOuPWuf0Bd
+         K5nlz8MiPdKWM0i80PKHm0mefoms6hX1P6/y+mO+aHCeHhVig6zSzvCqV5A2+Q5PXEnZ
+         osviQgp0r2aNf1o0pJObaRh0WHV6edi9yVagvByPneRpGF0i5EvY39wOP7zSGsXJX3XM
+         nG8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXOIgSvEwUPWTH/ZGCy74HfaMAxm8e/0XI9UkBAPubiDYGq+Em0wzEYM2+hSYl0YXgazwHf+jPRBf8AXlk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI7/nPOfAtyTcqx+Tqkl3giEEwUTZ59CK6EB7nn7XXSJu+rhFg
+	MyL/I9EaGtIWRhCNcuBQgkXjsPGvpPE/qFaTIdLLHCTPhdB4WrtqDeAxSGFolu9lga5xkz2OPS7
+	4x8AhvkwyArRKsigkI7SFtKq4VOYJzGGcU5fq7mk9BypUXxglL9bG+Ak=
+X-Google-Smtp-Source: AGHT+IEVziOjkGoW6cXj7TOtBJAQqN+jVrWhHpqc9rTg6FcQHIC8ph8kXd7Hdo0JzRdItf2ghQeGX2x7CcxXB8JIuhUuzdzxU42r
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zv8o4eliTO60odQe@mini-arch>
+X-Received: by 2002:a05:6e02:1a6e:b0:3a0:ab71:ed38 with SMTP id
+ e9e14a558f8ab-3a375b9afb2mr9061515ab.14.1727999661446; Thu, 03 Oct 2024
+ 16:54:21 -0700 (PDT)
+Date: Thu, 03 Oct 2024 16:54:21 -0700
+In-Reply-To: <0000000000000a78120620f2fc2b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ff2ead.050a0220.49194.03ec.GAE@google.com>
+Subject: Re: [syzbot] [mm?] possible deadlock in lock_mm_and_find_vma (2)
+From: syzbot <syzbot+b02bbe0ff80a09a08c1b@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, dhowells@redhat.com, hughd@google.com, 
+	jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, netfs@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 03, 2024 at 04:29:37PM -0700, Stanislav Fomichev wrote:
-> On 10/01, Joe Damato wrote:
+syzbot has found a reproducer for the following issue on:
 
-[...]
- 
-> >   2. This revision seems to work (see below for a full walk through). Is
-> >      this the behavior we want? Am I missing some use case or some
-> >      behavioral thing other folks need?
-> 
-> The walk through looks good!
+HEAD commit:    7ec462100ef9 Merge tag 'pull-work.unaligned' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=152ef580580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e3e4d87a80ed4297
+dashboard link: https://syzkaller.appspot.com/bug?extid=b02bbe0ff80a09a08c1b
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1783d527980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15e9d3d0580000
 
-Thanks for taking a look.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9c2b32151d7c/disk-7ec46210.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3c213e4aefaf/vmlinux-7ec46210.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dba87bc205ec/bzImage-7ec46210.xz
 
-> >   3. Re a previous point made by Stanislav regarding "taking over a NAPI
-> >      ID" when the channel count changes: mlx5 seems to call napi_disable
-> >      followed by netif_napi_del for the old queues and then calls
-> >      napi_enable for the new ones. In this RFC, the NAPI ID generation
-> >      is deferred to napi_enable. This means we won't end up with two of
-> >      the same NAPI IDs added to the hash at the same time (I am pretty
-> >      sure).
-> 
-> 
-> [..]
-> 
-> >      Can we assume all drivers will napi_disable the old queues before
-> >      napi_enable the new ones? If yes, we might not need to worry about
-> >      a NAPI ID takeover function.
-> 
-> With the explicit driver opt-in via netif_napi_add_config, this
-> shouldn't matter? When somebody gets to converting the drivers that
-> don't follow this common pattern they'll have to solve the takeover
-> part :-)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b02bbe0ff80a09a08c1b@syzkaller.appspotmail.com
 
-That is true; that's a good point. I'll let the RFC hang out on the
-list for another day or two just to give Jakub time to catch up on
-his mails ;) but if you all agree... this might be ready to be
-resent as a PATCH instead of an RFC.
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-rc1-syzkaller-00046-g7ec462100ef9 #0 Not tainted
+------------------------------------------------------
+syz-executor224/5511 is trying to acquire lock:
+ffff88802fabba98 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_lock_killable include/linux/mmap_lock.h:153 [inline]
+ffff88802fabba98 (&mm->mmap_lock){++++}-{3:3}, at: get_mmap_lock_carefully mm/memory.c:6108 [inline]
+ffff88802fabba98 (&mm->mmap_lock){++++}-{3:3}, at: lock_mm_and_find_vma+0x3a9/0x6a0 mm/memory.c:6159
+
+but task is already holding lock:
+ffff88802ff17858 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ffff88802ff17858 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: shmem_file_write_iter+0x86/0x140 mm/shmem.c:3211
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}:
+       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
+       inode_lock include/linux/fs.h:815 [inline]
+       process_measurement+0x39c/0x2370 security/integrity/ima/ima_main.c:250
+       ima_file_mmap+0x146/0x1d0 security/integrity/ima/ima_main.c:455
+       security_mmap_file+0x8bd/0x990 security/security.c:2977
+       __do_sys_remap_file_pages+0x526/0x900 mm/mmap.c:1692
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&mm->mmap_lock){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain kernel/locking/lockdep.c:3904 [inline]
+       __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
+       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+       down_read_killable+0x9d/0x380 kernel/locking/rwsem.c:1547
+       mmap_read_lock_killable include/linux/mmap_lock.h:153 [inline]
+       get_mmap_lock_carefully mm/memory.c:6108 [inline]
+       lock_mm_and_find_vma+0x3a9/0x6a0 mm/memory.c:6159
+       do_user_addr_fault+0x2b5/0x13f0 arch/x86/mm/fault.c:1361
+       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+       exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1539
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+       fault_in_readable+0x126/0x230 mm/gup.c:2235
+       fault_in_iov_iter_readable+0x101/0x2c0 lib/iov_iter.c:94
+       generic_perform_write+0x21b/0x920 mm/filemap.c:4044
+       shmem_file_write_iter+0x10e/0x140 mm/shmem.c:3221
+       new_sync_write fs/read_write.c:590 [inline]
+       vfs_write+0x6b5/0x1140 fs/read_write.c:683
+       ksys_write+0x12f/0x260 fs/read_write.c:736
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sb->s_type->i_mutex_key#12);
+                               lock(&mm->mmap_lock);
+                               lock(&sb->s_type->i_mutex_key#12);
+  rlock(&mm->mmap_lock);
+
+ *** DEADLOCK ***
+
+3 locks held by syz-executor224/5511:
+ #0: ffff888029a570b8 (&f->f_pos_lock){+.+.}-{3:3}, at: fdget_pos+0x24c/0x360 fs/file.c:1187
+ #1: ffff8880126a6420 (sb_writers#5){.+.+}-{0:0}, at: ksys_write+0x12f/0x260 fs/read_write.c:736
+ #2: ffff88802ff17858 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ #2: ffff88802ff17858 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: shmem_file_write_iter+0x86/0x140 mm/shmem.c:3211
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 5511 Comm: syz-executor224 Not tainted 6.12.0-rc1-syzkaller-00046-g7ec462100ef9 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x419/0x5d0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain kernel/locking/lockdep.c:3904 [inline]
+ __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+ down_read_killable+0x9d/0x380 kernel/locking/rwsem.c:1547
+ mmap_read_lock_killable include/linux/mmap_lock.h:153 [inline]
+ get_mmap_lock_carefully mm/memory.c:6108 [inline]
+ lock_mm_and_find_vma+0x3a9/0x6a0 mm/memory.c:6159
+ do_user_addr_fault+0x2b5/0x13f0 arch/x86/mm/fault.c:1361
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0010:fault_in_readable+0x126/0x230 mm/gup.c:2235
+Code: 38 ba ff 48 39 dd 0f 84 f0 00 00 00 45 31 f6 eb 11 e8 1e 38 ba ff 48 81 c3 00 10 00 00 48 39 eb 74 1d e8 0d 38 ba ff 45 89 f7 <8a> 03 31 ff 44 89 fe 88 44 24 28 e8 3a 3a ba ff 45 85 ff 74 d2 e8
+RSP: 0018:ffffc90003bb7b18 EFLAGS: 00050293
+RAX: 0000000000000000 RBX: 0000000000004000 RCX: ffffffff81d27776
+RDX: ffff888011ecda00 RSI: ffffffff81d27763 RDI: 0000000000000005
+RBP: 0000000000101000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000100082
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ fault_in_iov_iter_readable+0x101/0x2c0 lib/iov_iter.c:94
+ generic_perform_write+0x21b/0x920 mm/filemap.c:4044
+ shmem_file_write_iter+0x10e/0x140 mm/shmem.c:3221
+ new_sync_write fs/read_write.c:590 [inline]
+ vfs_write+0x6b5/0x1140 fs/read_write.c:683
+ ksys_write+0x12f/0x260 fs/read_write.c:736
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f04d812ac19
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f04d80ba228 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f04d81b4198 RCX: 00007f04d812ac19
+RDX: 0000000000100082 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007f04d81b4190 R08: 00007f04d80ba6c0 R09: 00007f04d80ba6c0
+R10: 00007f04d80ba6c0 R11: 0000000000000246 R12: 00007f04d81b419c
+R13: 00007f04d817a4ac R14: 0030656c69662f2e R15: 00007ffe59ac37d8
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	38 ba ff 48 39 dd    	cmp    %bh,-0x22c6b701(%rdx)
+   6:	0f 84 f0 00 00 00    	je     0xfc
+   c:	45 31 f6             	xor    %r14d,%r14d
+   f:	eb 11                	jmp    0x22
+  11:	e8 1e 38 ba ff       	call   0xffba3834
+  16:	48 81 c3 00 10 00 00 	add    $0x1000,%rbx
+  1d:	48 39 eb             	cmp    %rbp,%rbx
+  20:	74 1d                	je     0x3f
+  22:	e8 0d 38 ba ff       	call   0xffba3834
+  27:	45 89 f7             	mov    %r14d,%r15d
+* 2a:	8a 03                	mov    (%rbx),%al <-- trapping instruction
+  2c:	31 ff                	xor    %edi,%edi
+  2e:	44 89 fe             	mov    %r15d,%esi
+  31:	88 44 24 28          	mov    %al,0x28(%rsp)
+  35:	e8 3a 3a ba ff       	call   0xffba3a74
+  3a:	45 85 ff             	test   %r15d,%r15d
+  3d:	74 d2                	je     0x11
+  3f:	e8                   	.byte 0xe8
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
