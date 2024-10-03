@@ -1,128 +1,104 @@
-Return-Path: <linux-kernel+bounces-349455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677B698F672
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 420E098F674
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 902BB1C227BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:46:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ACBC1C21F4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29A71AB536;
-	Thu,  3 Oct 2024 18:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BBD1AB530;
+	Thu,  3 Oct 2024 18:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXmJiHxY"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="CAPZk2HS"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A67D148823;
-	Thu,  3 Oct 2024 18:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0059B6EB4A;
+	Thu,  3 Oct 2024 18:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727981154; cv=none; b=bMsRKqgJ0Y0N/PJNpWyanlBRZWVg0ZlmHzBnqw8cYrZcmbcxnaCXpfIJiEYdtXyMjDnleJMp50lV2tYu72929OscWG0jsOOn6zTb7Lu3yS+YyPiuhU7UTA6YBjqIQgd4QvHVx3BzN61Kl01+3c0mX2wX0y3fpiJF9/OK+bh1Dd8=
+	t=1727981241; cv=none; b=cOo78t7QwzlTl7DquRPB6JOFvhwBAYNmlSnTy7libH070PjeL2rYgsNprNjG1NKpZIjgaJOvkKIwj7VJk7hcN7idqExOh0AgWJWayjq/6RNMRs4D8/fOqpA7jpI7O/IBRCBBuGDR/hRxsAjB5Vbub6vkqj4WGdAdIqodcHko5So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727981154; c=relaxed/simple;
-	bh=yTJYhyck+ZqmATQBYEo/WB6UMVDQB58RT56agf8BaDM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MLnR4KDs7fDO5U22jfrqoNMPbHM0U71Mvd0lDtm/nQOuu80PJlwSPSj3g+WY60R8Ts7CMmcY9tWZSUR6utkKveqyC1v3F1huhrCE71zppVzYVXpPCZD9yGn9Dcr+rWCX7MtDYil7QJJpBPItZyZxvJf2HH6Gnr8vRTE6qg6gcBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXmJiHxY; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e0a4eebdcfso215402a91.0;
-        Thu, 03 Oct 2024 11:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727981152; x=1728585952; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8+tNDiM/tR2N3VNA68e0sjoSOqWi1IeukamjpIQY72o=;
-        b=hXmJiHxYJPShYOSgbHpMogPvuZoRuBK8s6sFfndSKgCKux53Yjg7x8o4gqBDH58KA3
-         SP0ZcYDW/0iIjAmFWIaGy8vfbhGHJjnGmZKwr1abSAZVZfbNgpEErh+6+HMynjxIWOqE
-         xqJNPjzvbi9MOXd1UH6pZ+qo3/hgzVvTLUEWyX8UXcVmeGRks/gZlqnCowasTD3ip5RU
-         Syj1ax+haZ/qNDfuQDYv29aBvI7v7KpLervEqqbAQEHpPuwLCvJhMA+u74w4UUOSw4ph
-         jh6jvzXqduQJCJkc4QM31ZCdS9JRgvBDb8eTfZDoaVYdgQ3/XKa1awKi7HuzLJrdGQwV
-         WsEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727981152; x=1728585952;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8+tNDiM/tR2N3VNA68e0sjoSOqWi1IeukamjpIQY72o=;
-        b=oVO63+tWXCreIdZTYZQe7kfKhWWd1P2tF9qyT7DvoLEGNhvPsiRIOe7Cc7T2y9JW9o
-         1EPI4x2RFJUnfSGFhSXyxFh09rUOj7BJa4VONQzZSVUCKuD4HaWILJ+4M2UTHvCZoCaJ
-         5hFXqkydYWgL9cJQisH7ZmnpsKOD/TyjG1TY3/TX1cZ1AbMl2LpO5+5QMWmSkBeIR8UJ
-         hR65KBJ/VhIYKLfewcFxv2vbKAqQURXNxCR7lbahjZp//eL4e8gHtRj2K5U+dBajli3e
-         Oq/LN/Nsh0bY4qa0wQgNJiTTL53N8k5mskm+//yGmmG1/n8pK3CeMTcsojKIS0JtuN4M
-         1POg==
-X-Forwarded-Encrypted: i=1; AJvYcCUb8WS8jMo2NNk/Xxj7iVhoOSobPr5YSTw8jb/4aAmrXlIsM5wz9G4gv/Xckjffn4JKStXPzIuqoK1krArL8jM=@vger.kernel.org, AJvYcCUqSnCP2ofMUbfP8YtzoJZOnIPGGcSXatsag2B0wUqh8bUnI/ayGgEv4MgWP/7Tc0lXSJCulwUB4E+SxIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuT6hpLYfvtiaaWwNpG944+b8wuaodNWLH0Yt0FQSTfUg754Ij
-	w/wrNQ1ooMGlm5JSLfFC1J/lerTDkGOyva85h5Igf9URhSsVwcGFXoFe9ImFIVSJpNUZdYzIAN6
-	VeFd4oEluELEHmN509Pzm493Q4XM=
-X-Google-Smtp-Source: AGHT+IEEv/6WuqK54zCCgRs6EtPTdocGJ4pyvu8SL4QxLG8ZHmHC1sXwOFyFr07WrLa2YH/LxaCuf704oAXWFA5GGgQ=
-X-Received: by 2002:a05:6a21:6d9b:b0:1cf:39db:2516 with SMTP id
- adf61e73a8af0-1d6dfa36987mr187025637.5.1727981152275; Thu, 03 Oct 2024
- 11:45:52 -0700 (PDT)
+	s=arc-20240116; t=1727981241; c=relaxed/simple;
+	bh=T9wz+87C74AUS9/08GqPgihpGyhIpa2SD6GazW5n10E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=khAtCaDisoqpuQnCe1eM91+M1eY255yW/TPZ8+qH7UFMed/CVliQO+F899dIXE0KEbBbxUu8num4tYjv8SCJzIKUwXHOrOqb3aTyK4TWMaypVpO2WfwVB3aPt6RfaE9be4hAu/jEhaNFYRtphs0SM7UtIAI2Bey/ubxAxgLAMus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=CAPZk2HS; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wegEXTDeqNu8qldzY9Q7ByoUaury9EFaSn0q1zTVDkw=; b=CAPZk2HSkzdnnvBYch7tMWy8z+
+	hpJxtcs8dLaHzf4LOULwkPNVJCsPI63tpWGwprGiRH+IDlS1jU5OnCe3OhY8xrItcM2Y297T1MUHR
+	0toiPW31MsRHqEL3kMQyfXipGBSTYjM3E/hUp3+szyQseqNtygy/FWIeHNf4VIznTb1tvyL8Ouo8A
+	ViS3y8oi2Bx2NZ2lKC0/wnc9GYsWj4Evzs5ymqx8M+2BySS8F8tUqQi0lWixo5NSnBd6VS2VTUMvK
+	/50nMBYJ9HRXKpyu6rBFVORwoutCJyxrjuzjY42WmhbIPI+o2X4/iixqqyJ1V5rTJ945apm7AZEEm
+	Tp6wUuXg==;
+Received: from [2001:9e8:9d1:b101:3235:adff:fed0:37e6] (port=58058 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1swQqy-006CD5-Dh;
+	Thu, 03 Oct 2024 20:47:08 +0200
+Date: Thu, 3 Oct 2024 20:47:06 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 18/23] kbuild: remove extmod_prefix, MODORDER,
+ MODULES_NSDEPS variables
+Message-ID: <20241003-petite-mamba-of-champagne-d9e0ac@lindesnes>
+References: <20240917141725.466514-1-masahiroy@kernel.org>
+ <20240917141725.466514-19-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-5-ojeda@kernel.org>
- <CALNs47udN4_Gr2KHDapwWAmY=ixoJN+-9apAShVT7qFcKdK23Q@mail.gmail.com>
-In-Reply-To: <CALNs47udN4_Gr2KHDapwWAmY=ixoJN+-9apAShVT7qFcKdK23Q@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 3 Oct 2024 20:45:40 +0200
-Message-ID: <CANiq72kEMtB8SBeTJKtRhw5stwieq6ULk6N_X4dyDcCz_2mDag@mail.gmail.com>
-Subject: Re: [PATCH 04/19] rust: enable `clippy::undocumented_unsafe_blocks` lint
-To: Trevor Gross <tmgross@umich.edu>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917141725.466514-19-masahiroy@kernel.org>
 
-On Sun, Sep 29, 2024 at 6:33=E2=80=AFAM Trevor Gross <tmgross@umich.edu> wr=
-ote:
->
-> There are a couple places where the attributes move like this - did
-> this come from an older clippy version? clippy used to warn about this
-> but accepts it by default since [1]. (Still works of course, I just
-> think it looks nicer to have the attributes next to their statements).
+On Tue, Sep 17, 2024 at 11:16:46PM +0900, Masahiro Yamada wrote:
+> With the previous changes, $(extmod_prefix), $(MODORDER), and
+> $(MODULES_NSDEPS) are constant. (empty, modules.order, and
+> modules.nsdeps, respectively).
+> 
+> Remove these variables and hard-code their values.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  Makefile                  | 22 +++++++++-------------
+>  scripts/Makefile.modfinal |  2 +-
+>  scripts/Makefile.modinst  |  2 +-
+>  scripts/Makefile.modpost  |  6 +++---
+>  scripts/nsdeps            |  2 +-
+>  5 files changed, 15 insertions(+), 19 deletions(-)
 
-I started this series about a long time ago, but I don't think old
-Clippy is the reason -- I took a look again at this a couple months
-ago and created this issue about it due to these lines of code,
-including some examples and test cases:
+Do you want to remove these also?  I can't think of a reason to keep these
+around:
 
-    https://github.com/rust-lang/rust-clippy/issues/13189
+$ git grep -Hrnwe extmod_prefix -e MODORDER -e MODULES_NSDEP
+Makefile:1912:  $(Q){ $(foreach m, $(single-ko), echo $(extmod_prefix)$(m:%.ko=%.o);) } > modules.order
+scripts/Makefile.modfinal:33:$(extmod_prefix).module-common.o: $(srctree)/scripts/module-common.c FORCE
+scripts/Makefile.modfinal:60:%.ko: %.o %.mod.o $(extmod_prefix).module-common.o $(objtree)/scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),$(objtree)/vmlinux) FORCE
+scripts/Makefile.modfinal:66:targets += $(modules:%.o=%.ko) $(modules:%.o=%.mod.o) $(extmod_prefix).module-common.o
+scripts/Makefile.modinst:60:modules := $(patsubst $(extmod_prefix)%.o, $(dst)/%.ko$(suffix-y), $(modules))
+scripts/Makefile.modinst:120:$(dst)/%.ko: $(extmod_prefix)%.ko FORCE
 
-For instance:
+W/ or w/o:
 
-    // SAFETY: ...
-    #[allow(clippy::unnecessary_cast)]
-    return Err(unsafe { Error::from_errno_unchecked(err as core::ffi::c_int=
-) });
-
-This will not work, i.e. it does not see the `// SAFETY:`. However,
-putting the `#[allow]` on top to let the comment be closer will work
-(like in the patch). This will also work:
-
-    return Err(
-        // SAFETY: ...
-        #[allow(clippy::unnecessary_cast)]
-        unsafe { Error::from_errno_unchecked(err as core::ffi::c_int) }
-    );
-
-There has been no reply in the issue so far, but if you have any
-comments/insights on whether those cases should or should not work,
-that would be great.
-
-Cheers,
-Miguel
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
