@@ -1,146 +1,117 @@
-Return-Path: <linux-kernel+bounces-348909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A390398ED80
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:00:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7268698ED7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ACFAB22A34
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:00:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 194921F20F7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F42A153BD7;
-	Thu,  3 Oct 2024 11:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6328E1531C0;
+	Thu,  3 Oct 2024 11:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="G3SzchAM"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WhIciC8K"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BB914F9F7;
-	Thu,  3 Oct 2024 11:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE821422C7
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 11:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727953231; cv=none; b=XANXtze069w7/KkJ5ZWWlPVBQcYIodfWGCOBFE0NBnA4+5fH5V1kCILPZi4nBqMXEd9hU6653Iy2jh4t11ELa6GwLZvofYVHIDWroxesCHU4Ce95pB9mI24e15MLfxyUAUAF7R/xDlrYQM+NLEBjWIwbeecxmuXlCJZe9IuMqOU=
+	t=1727953228; cv=none; b=Z0qrjdIo7uPT6t6wdpdl9A3GXeMks/m6rVKg7iShgP3BNxS6W5xtaDai34qxZKhJpo9YlMNBkcRJsLLB/pTPbN0Oh6HrAOKX9WJN28vHUy8i/oU3nF8fcicU+4drLPY6U81AGReK45SgXdlW/kuixlR8CBd4A2JZ9rQWPgytqhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727953231; c=relaxed/simple;
-	bh=AhT8Jx5J0jBQrUxZDVWjpykIF2lktRmZRdWQ/Ubs03o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HDeuaXDiJiALZyjUIG3zNBWZqBJ2vBIAKP3Fvf3q4cKinZH8AQAIFV7SPG3+xcJ7b+vwm8cVI8N8C+2ygJp7xLqWiaO2xdP7Xd9GDPTP4PKV8+rn8lzyVElQcaZTXrgcXPjZKlPv2AF3wYlpZ9WonYUOg6bXs/M6ZkDoXLIgP5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=G3SzchAM; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 493Axlb5084747;
-	Thu, 3 Oct 2024 05:59:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727953187;
-	bh=0oNlgkGKBB7nqfkE4spydYXDvRPd4v605UN/Gf0JBqQ=;
-	h=From:To:CC:Subject:Date;
-	b=G3SzchAM4ROodC5IEvPsgWWejwBj3AFE/wBFPBbV3zXILC2SGyOtaPDqkIvRz9eZ3
-	 rsD3qPi9dJl7ciTF2rG3AKEexmQbtlButZB4G9aWYqvg5WRgTY3NqnaEOl+vdeP0q2
-	 sAiID50CubujmIbAeEFs5SiKyV9veRLDAMXsqjo4=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 493AxlNe022449
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 3 Oct 2024 05:59:47 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 3
- Oct 2024 05:59:46 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 3 Oct 2024 05:59:46 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 493Axkld024127;
-	Thu, 3 Oct 2024 05:59:46 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 493AxjEJ027649;
-	Thu, 3 Oct 2024 05:59:46 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: <robh@kernel.org>, <jan.kiszka@siemens.com>, <dan.carpenter@linaro.org>,
-        <diogo.ivo@siemens.com>, <andrew@lunn.ch>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net] net: ti: icssg-prueth: Fix race condition for VLAN table access
-Date: Thu, 3 Oct 2024 16:29:40 +0530
-Message-ID: <20241003105940.533921-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727953228; c=relaxed/simple;
+	bh=7S9RPwBtIne7c69ZHQ/fRmgc8WabIOjO9LIicA2gK9A=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Xdqp8bo7sViF2sgaFaabB7beyk73h3uwLZcOdVL5Sx28MN7klbSY4ZoDuczzQpHb2FWzCxDGPEnQOvCPT9yoEaQYZ+llAizBfDEh7WAtWJInZJ40y7V+zhsTYZf/lZo8JUPFi1n3oy6aKjlloRthNe5hQEc60fWgbLpa3A4w1MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WhIciC8K; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727953227; x=1759489227;
+  h=date:from:to:cc:subject:message-id;
+  bh=7S9RPwBtIne7c69ZHQ/fRmgc8WabIOjO9LIicA2gK9A=;
+  b=WhIciC8KHeHER+WkqosxRbnf3TmN/FpMjsCEJ+n/oPKVLBaaLInvPMmq
+   9JsGjWnu5hYaaR3+gGv7I71AiRjeiqQA2ORSWpNMv3pRi5EK5GuR1lqK+
+   6b3ajgZd/c2BV6EpbXYvWS2P3hxnTkOUxZhMvEa7GDqrNYGaEfBgRb3EQ
+   vvABiPozvD+JpbuG5VgxbuFkanta+n7/CiAHpnER2MF5cyOcqefctKGhA
+   WLX+9dJjP6Cf+pul2upNDO+cqjMvOpkju9vLaSRrqUREsGM/HyVfnwM1M
+   Z7ZosAQ7b5+RyrJ6aB3fS6HXeG3zdfSdrqfNNGcaCYLsGMq68wyT7CRsP
+   w==;
+X-CSE-ConnectionGUID: qcHGkkkKQ9K7bc3Jcf0UJA==
+X-CSE-MsgGUID: lkhipvQgQ0qghqyjcNKkBw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="49664737"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="49664737"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 04:00:26 -0700
+X-CSE-ConnectionGUID: 87hDI0BtRzGCUC7Vy8ARlQ==
+X-CSE-MsgGUID: tAcuEB49QDaS6oaA1YNA3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="78729811"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 03 Oct 2024 04:00:25 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swJZG-0000Jl-35;
+	Thu, 03 Oct 2024 11:00:22 +0000
+Date: Thu, 03 Oct 2024 19:00:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/cpu] BUILD SUCCESS
+ f24f669d03f884a6ef95cca84317d0f329e93961
+Message-ID: <202410031904.pcF8RmZP-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The VLAN table is a shared memory between the two ports/slices
-in a ICSSG cluster and this may lead to race condition when the
-common code paths for both ports are executed in different CPUs.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
+branch HEAD: f24f669d03f884a6ef95cca84317d0f329e93961  x86/mm: Don't disable PCID when INVLPG has been fixed by microcode
 
-Fix the race condition access by locking the shared memory access
+elapsed time: 1007m
 
-Fixes: 487f7323f39a ("net: ti: icssg-prueth: Add helper functions to configure FDB")
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
- drivers/net/ethernet/ti/icssg/icssg_config.c | 2 ++
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 1 +
- drivers/net/ethernet/ti/icssg/icssg_prueth.h | 1 +
- 3 files changed, 4 insertions(+)
+configs tested: 25
+configs skipped: 132
 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
-index 72ace151d8e9..5d2491c2943a 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_config.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-@@ -735,6 +735,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
- 	u8 fid_c1;
- 
- 	tbl = prueth->vlan_tbl;
-+	spin_lock(&prueth->vtbl_lock);
- 	fid_c1 = tbl[vid].fid_c1;
- 
- 	/* FID_C1: bit0..2 port membership mask,
-@@ -750,6 +751,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
- 	}
- 
- 	tbl[vid].fid_c1 = fid_c1;
-+	spin_unlock(&prueth->vtbl_lock);
- }
- EXPORT_SYMBOL_GPL(icssg_vtbl_modify);
- 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 5fd9902ab181..5c20ceb164df 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -1442,6 +1442,7 @@ static int prueth_probe(struct platform_device *pdev)
- 		icss_iep_init_fw(prueth->iep1);
- 	}
- 
-+	spin_lock_init(&prueth->vtbl_lock);
- 	/* setup netdev interfaces */
- 	if (eth0_node) {
- 		ret = prueth_netdev_init(prueth, eth0_node);
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index bba6da2e6bd8..9a33e9ed2976 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -296,6 +296,7 @@ struct prueth {
- 	bool is_switchmode_supported;
- 	unsigned char switch_id[MAX_PHYS_ITEM_ID_LEN];
- 	int default_vlan;
-+	spinlock_t vtbl_lock; /* Lock for vtbl in shared memory */
- };
- 
- struct emac_tx_ts_response {
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-base-commit: 1127c73a8d4f803bb3d9e3d024b0863191d52e03
--- 
-2.34.1
+tested configs:
+arc          allmodconfig    clang-20
+arc          allyesconfig    clang-20
+arm          allmodconfig    clang-20
+arm          allyesconfig    clang-20
+arm64        allmodconfig    clang-20
+i386         allmodconfig    clang-18
+i386          allnoconfig    clang-18
+i386         allyesconfig    clang-18
+i386            defconfig    clang-18
+loongarch    allmodconfig    gcc-14.1.0
+m68k         allmodconfig    gcc-14.1.0
+m68k         allyesconfig    gcc-14.1.0
+microblaze   allmodconfig    gcc-14.1.0
+microblaze   allyesconfig    gcc-14.1.0
+s390         allmodconfig    gcc-14.1.0
+s390         allyesconfig    gcc-14.1.0
+sh           allmodconfig    gcc-14.1.0
+sh           allyesconfig    gcc-14.1.0
+sparc        allmodconfig    gcc-14.1.0
+x86_64        allnoconfig    clang-18
+x86_64       allyesconfig    clang-18
+x86_64          defconfig    clang-18
+x86_64              kexec    gcc-12
+x86_64           rhel-8.3    gcc-12
+x86_64      rhel-8.3-rust    clang-18
 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
