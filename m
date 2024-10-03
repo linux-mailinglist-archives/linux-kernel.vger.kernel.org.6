@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-348877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BBCE98ECFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:31:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7244998ECFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056CB280FBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:31:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3319F282C35
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A625314D457;
-	Thu,  3 Oct 2024 10:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58E615098A;
+	Thu,  3 Oct 2024 10:31:11 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE8A1B969;
-	Thu,  3 Oct 2024 10:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC16B78289;
+	Thu,  3 Oct 2024 10:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727951461; cv=none; b=mSgnwQ5NRF6J1i736XLJ6UJ0BFE06qSKs6BaY3gaIaS7mAA2VclD0+4QiV+aOES1DlPLnSnYIJMcYbQmVA2VN4RW09dywldyTZuIeif/j0ZMNF6YS2XI+Cm3o8AlvSwg7VWIul56XpHkmAtx+Fe3QWELicQYDO20ilh6fKAH9oA=
+	t=1727951471; cv=none; b=g2RUo0ypY9VcW8d/dRHOYzkId5POQEIeqO8tT2zy2P3+Y1B1ko1YvYCwRkPEaws8v5gGuFL/F88f7YsobvdEkuC1hYMWgyTza+Qu8QT1aYYBJ02swUpThpBqEj4G8VJlO4luqtpbbTi6TTL5sByoAeiDM+0NC3dhXysJ6oG127c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727951461; c=relaxed/simple;
-	bh=28Rp7iMfYu9uJMVMaa86uq9UWaNfDuDfeBBD55rbIZA=;
+	s=arc-20240116; t=1727951471; c=relaxed/simple;
+	bh=syiU2xxnWa7hq7jVo9NrqEqzZ+mdHNHoKDzLtmQtYI0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HG6OPjK98BUhUL4sT8YccemaR+IJbAQxYv6REiHbiRQTDKjbAPebzdrjb/whI9Hw+eNiBexk4vhaXQtyMH50p7cnAufoSUlUw764Dt6uMwMrmenn3LTM7R2ZSHtxOG0cv54b/gx1ZyRW+h5pTMJEPKKVb2F2J+GodrYqpDFjglU=
+	 In-Reply-To:Content-Type; b=PvCP7V9PUvHY7BFzYlt5Rq6MbR1N6yktAHifg0BJuoVn9rkbfz2LrfG+TqtmCH/GA/aDQnSja/ZVWiQYs0sG6Fy1Dk5cz+Z6828TPZ19OzQtpALo3MQqJJrGHJ5tqB/4CoJhnHzFzf82FiJ4fcDykCKm6rFteeTvVrQx6pD/iSU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2422339;
-	Thu,  3 Oct 2024 03:31:27 -0700 (PDT)
-Received: from [10.1.38.55] (e127648.arm.com [10.1.38.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1EB173F64C;
-	Thu,  3 Oct 2024 03:30:53 -0700 (PDT)
-Message-ID: <6e21e8f1-e3b4-4915-87cc-6ce77f54cc8a@arm.com>
-Date: Thu, 3 Oct 2024 11:30:52 +0100
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5006339;
+	Thu,  3 Oct 2024 03:31:38 -0700 (PDT)
+Received: from [10.57.85.26] (unknown [10.57.85.26])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C2393F64C;
+	Thu,  3 Oct 2024 03:31:03 -0700 (PDT)
+Message-ID: <a96794e0-76f6-4091-b4d4-d88d084ed2c2@arm.com>
+Date: Thu, 3 Oct 2024 11:30:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,167 +41,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 5/8] cpufreq/schedutil: Remove iowait boost
-To: Quentin Perret <qperret@google.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com,
- dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org,
- Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
- bvanassche@acm.org, andres@anarazel.de, asml.silence@gmail.com,
- linux-block@vger.kernel.org, io-uring@vger.kernel.org, qyousef@layalina.io,
- dsmythies@telus.net, axboe@kernel.dk
-References: <20240905092645.2885200-1-christian.loehle@arm.com>
- <20240905092645.2885200-6-christian.loehle@arm.com>
- <CAJZ5v0hJWwsErT193i394bHOczvCQwU_5AVVTJ1oKDe7kTW82g@mail.gmail.com>
- <Zv5oTvxPsiTWCJIo@google.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <Zv5oTvxPsiTWCJIo@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 1/2] PCI: Add enable_device() and disable_device()
+ callbacks for bridges
+To: Frank Li <Frank.Li@nxp.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ alyssa@rosenzweig.io, bpf@vger.kernel.org, broonie@kernel.org, jgg@ziepe.ca,
+ joro@8bytes.org, lgirdwood@gmail.com, maz@kernel.org,
+ p.zabel@pengutronix.de, will@kernel.org
+References: <20240930-imx95_lut-v2-0-3b6467ba539a@nxp.com>
+ <20240930-imx95_lut-v2-1-3b6467ba539a@nxp.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240930-imx95_lut-v2-1-3b6467ba539a@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10/3/24 10:47, Quentin Perret wrote:
-> On Monday 30 Sep 2024 at 18:34:24 (+0200), Rafael J. Wysocki wrote:
->> On Thu, Sep 5, 2024 at 11:27 AM Christian Loehle
->> <christian.loehle@arm.com> wrote:
->>>
->>> iowait boost in schedutil was introduced by
->>> commit ("21ca6d2c52f8 cpufreq: schedutil: Add iowait boosting").
->>> with it more or less following intel_pstate's approach to increase
->>> frequency after an iowait wakeup.
->>> Behaviour that is piggy-backed onto iowait boost is problematic
->>> due to a lot of reasons, so remove it.
->>>
->>> For schedutil specifically these are some of the reasons:
->>> 1. Boosting is applied even in scenarios where it doesn't improve
->>> throughput.
->>
->> Well, I wouldn't argue this way because it is kind of like saying that
->> air conditioning is used even when it doesn't really help.  It is
->> sometimes hard to know in advance whether or not it will help though.
->>
->>> 2. The boost is not accounted for in EAS: a) feec() will only consider
->>>  the actual task utilization for task placement, but another CPU might
->>>  be more energy-efficient at that capacity than the boosted one.)
->>>  b) When placing a non-IO task while a CPU is boosted compute_energy()
->>>  assumes a lower OPP than what is actually applied. This leads to
->>>  wrong EAS decisions.
->>
->> That's a very good point IMV and so is the one regarding UCLAMP_MAX (8
->> in your list).
+On 2024-09-30 8:42 pm, Frank Li wrote:
+> Some PCIe bridges require special handling when enabling or disabling
+> PCIe devices. For example, on the i.MX95 platform, a lookup table must be
+> configured to inform the hardware how to convert pci_device_id to stream
+> (bus master) ID, which is used by the IOMMU and MSI controller to identify
+> bus master device.
 > 
-> I would actually argue that this is also an implementation problem
-> rather than something fundamental about boosting. EAS could be taught
-> about iowait boosting and factor that into the decisions.
+> Enablement will be failure when there is not enough lookup table resource.
+> Avoid DMA write to wrong position. That is the reason why pci_fixup_enable
+> can't work since not return value for fixup function.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - move enable(disable)device ops to pci_host_bridge
+> ---
+>   drivers/pci/pci.c   | 14 ++++++++++++++
+>   include/linux/pci.h |  2 ++
+>   2 files changed, 16 insertions(+)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 7d85c04fbba2a..fcdeb12622568 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -2056,6 +2056,7 @@ int __weak pcibios_enable_device(struct pci_dev *dev, int bars)
+>   static int do_pci_enable_device(struct pci_dev *dev, int bars)
+>   {
+>   	int err;
+> +	struct pci_host_bridge *host_bridge;
+>   	struct pci_dev *bridge;
+>   	u16 cmd;
+>   	u8 pin;
+> @@ -2068,6 +2069,13 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
+>   	if (bridge)
+>   		pcie_aspm_powersave_config_link(bridge);
+>   
+> +	host_bridge = pci_find_host_bridge(dev->bus);
+> +	if (host_bridge && host_bridge->enable_device) {
+> +		err = host_bridge->enable_device(host_bridge, dev);
 
-Definitely, and I did do exactly that.
+If the intent is that this call may allocate host bridge resources, what 
+about the existing error returns below? Should those now have a cleanup 
+path to avoid a potential resource leak from here?
 
-> 
->> If the goal is to set the adequate performance for a given utilization
->> level (either actual or prescribed), boosting doesn't really play well
->> with this and it shouldn't be used at least in these cases.
-> 
-> There's plenty of cases where EAS will correctly understand that
-> migrating a task away will not reduce the OPP (e.g. another task on the
-> rq has a uclamp_min request, or another CPU in the perf domain has a
-> higher request), so iowait boosting could probably be added.
-> 
-> In fact if the iowait boost was made a task property, EAS could easily
-> understand the effect of migrating that boost with the task (it's not
-> fundamentally different from migrating a task with a high uclamp_min
-> from the energy model perspective).
+Thanks,
+Robin.
 
-True.
+> +		if (err)
+> +			return err;
+> +	}
+> +
+>   	err = pcibios_enable_device(dev, bars);
+>   	if (err < 0)
+>   		return err;
+> @@ -2262,12 +2270,18 @@ void pci_disable_enabled_device(struct pci_dev *dev)
+>    */
+>   void pci_disable_device(struct pci_dev *dev)
+>   {
+> +	struct pci_host_bridge *host_bridge;
+> +
+>   	dev_WARN_ONCE(&dev->dev, atomic_read(&dev->enable_cnt) <= 0,
+>   		      "disabling already-disabled device");
+>   
+>   	if (atomic_dec_return(&dev->enable_cnt) != 0)
+>   		return;
+>   
+> +	host_bridge = pci_find_host_bridge(dev->bus);
+> +	if (host_bridge && host_bridge->disable_device)
+> +		host_bridge->disable_device(host_bridge, dev);
+> +
+>   	do_pci_disable_device(dev);
+>   
+>   	dev->is_busmaster = 0;
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 573b4c4c2be61..ac15b02e14ddd 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -578,6 +578,8 @@ struct pci_host_bridge {
+>   	u8 (*swizzle_irq)(struct pci_dev *, u8 *); /* Platform IRQ swizzler */
+>   	int (*map_irq)(const struct pci_dev *, u8, u8);
+>   	void (*release_fn)(struct pci_host_bridge *);
+> +	int (*enable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
+> +	void (*disable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
+>   	void		*release_data;
+>   	unsigned int	ignore_reset_delay:1;	/* For entire hierarchy */
+>   	unsigned int	no_ext_tags:1;		/* No Extended Tags */
 > 
->>> 3. Actual IO heavy workloads are hardly distinguished from infrequent
->>> in_iowait wakeups.
->>
->> Do infrequent in_iowait wakeups really cause the boosting to be
->> applied at full swing?
->>
->>> 4. The boost isn't accounted for in task placement.
->>
->> I'm not sure what exactly this means.  "Big" vs "little" or something else?
->>
->>> 5. The boost isn't associated with a task, it therefore lingers on the
->>> rq even after the responsible task has migrated / stopped.
->>
->> Fair enough, but this is rather a problem with the implementation of
->> boosting and not with the basic idea of it.
-> 
-> +1
-> 
->>> 6. The boost isn't associated with a task, it therefore needs to ramp
->>> up again when migrated.
->>
->> Well, that again is somewhat implementation-related IMV, and it need
->> not be problematic in principle.  Namely, if a task migrates and it is
->> not the only one in the "new" CPUs runqueue, and the other tasks in
->> there don't use in_iowait, maybe it's better to not boost it?
->>
->> It also means that boosting is not very consistent, though, which is a
->> valid point.
->>
->>> 7. Since schedutil doesn't know which task is getting woken up,
->>> multiple unrelated in_iowait tasks lead to boosting.
->>
->> Well, that's by design: it boosts, when "there is enough IO pressure
->> in the runqueue", so to speak.
->>
->> Basically, it is a departure from the "make performance follow
->> utilization" general idea and it is based on the observation that in
->> some cases performance can be improved by taking additional
->> information into account.
->>
->> It is also about pure performance, not about energy efficiency.
->>
->>> 8. Boosting is hard to control with UCLAMP_MAX (which is only active
->>> when the task is on the rq, which for boosted tasks is usually not
->>> the case for most of the time).
-> 
-> Sounds like another reason to make iowait boosting per-task to me :-)
-> 
-> I've always thought that turning iowait boosting into some sort of
-> in-kernel uclamp_min request would be a good approach for most of the
-> issues mentioned above. Note that I'm not necessarily saying to use the
-> actual uclamp infrastructure (though it's valid option), I'm really just
-> talking about the concept. Is that something you've considered?
-> 
-> I presume we could even factor out the 'logic' part of the code that
-> decides out to request the boost into its own thing, and possibly have
-> different policies for different use-cases, but that might be overkill.
 
-See the cover-letter part on per-task iowait boosting, specifically:
-[1]
-v1 per-task io boost
-https://lore.kernel.org/lkml/20240304201625.100619-1-christian.loehle@arm.com/
-v2 per-task io boost
-https://lore.kernel.org/lkml/20240518113947.2127802-2-christian.loehle@arm.com/
-[2]
-OSPM24 discussion iowait boosting
-https://www.youtube.com/watch?v=MSQGEsSziZ4
-
-These are the main issues with transforming the existing mechanism into
-a per-task attribute.
-Almost unsolvable is: Does reducing "iowait pressure" (be it per-task or per-rq)
-actually improve throughput even (assuming for now that this throughput is
-something we care about, I'm sure you know that isn't always the case, e.g.
-background tasks). With MCQ devices and some reasonable IO workload that is
-IO-bound our iowait boosting is often just boosting CPU frequency (which uses
-power obviously) to queue in yet another request for a device which has essentially
-endless pending requests. If pending request N+1 arrives x usecs earlier or
-later at the device then makes no difference in IO throughput.
-If boosting would improve e.g. IOPS (of that device) is something the block layer
-(with a lot of added infrastructure, but at least in theory it would know what
-device we're iowaiting on, unlike the scheduler) could tell us about. If that is
-actually useful for user experience (i.e. worth the power) only userspace can decide
-(and then we're back at uclamp_min anyway).
-(The above all assumes that iowait even means "is waiting for block IO and
-about to send another block IO" which is far from reality.)
-
-Thanks Quentin for getting involved, your input is very much appreciated!
-
-Regards,
-Christian
 
