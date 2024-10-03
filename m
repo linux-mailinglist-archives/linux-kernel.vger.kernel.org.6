@@ -1,97 +1,128 @@
-Return-Path: <linux-kernel+bounces-348764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35D4D98EB9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:30:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0946798EBA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2B7AB23C56
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96821F218C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244AF13C69E;
-	Thu,  3 Oct 2024 08:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DB913C661;
+	Thu,  3 Oct 2024 08:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3mY8x/Z"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vzNps3oh"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9204AEF5;
-	Thu,  3 Oct 2024 08:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA85B13A888;
+	Thu,  3 Oct 2024 08:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727944214; cv=none; b=KUebA3RvDp2u/0VZ9rQ5Ct/EMVtKkczEEzG7+RH4Hp0WSUVfbZRXXIjvd11NYL9qezsUp4WCt8eGyNo42JQwtXyNUDTLLqDsT5ni5eqKBIE++hVhUk01+Zgv2/0nA9tdqHy97I5EKDMsYBU8/08ZulhgUJbbK/yYDmEQuVcvLDo=
+	t=1727944248; cv=none; b=lwQOr/y/u+mKXGIe+B0W7hr8mjcGXjaxufelP53F2SIc9qNH1IHubYH5CI1b34z+Z2iy3Mq3q8CIbG6PxVBZcB4nNmhUBUJtsv+GWRBbMI2GwUBhoG8IJLwgXnSHnXwIVrN/dz5IXtNkjM3TDNBftFQYjkS90snJculqV2tEhiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727944214; c=relaxed/simple;
-	bh=C4YjVWwucQlnFc3Bdyk1mQx7bTga0KsdWJhPjx/3d+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cNYoQi7YFkRDWChbDN0TMXmZEk5hh1BxPdA1olb4JT1g6TIWwKqlo0PfRCuKRzLskX/0meuqJ+gucUZoNP0qtp/xrGuCzEjFNR2ytJOWvQ1/hy7TsjjCrfzw4EnwId2gRPbFe3SJMZemQjrCmJUZ5yYhhXnuq+7PmrXTXWbucVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z3mY8x/Z; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37cd0b5515fso417630f8f.2;
-        Thu, 03 Oct 2024 01:30:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727944211; x=1728549011; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KgYlSRPdGNueMfiTMqgmWS1pTsWnaZpjKo5fJ+jS3mg=;
-        b=Z3mY8x/Zr1Qt1o7oX3krQqfq/+J0dTxKLzlEoFw5BSlyhsCXY8PGJmudEVcOGUsgY1
-         YCGvTT1MEDR08hIeYfefb81u3NbraqtHl+QkyrWQ0PlMhVkgB+0uEovm6q0/zDzTVIVx
-         sIj9Lz+xaLE8sa8nd7A2DFu8JAQlSFMInvgJ/rm4i5aukpErCJvGtl0Kn0aFa3w21YpK
-         M/X+PmGMtLh43JIpDrKjNYOFFrZ7CJuex9A8xd6PCQ00yvhAg9VAdOTfNlQYJXdGf4wi
-         yitHwyrYc1318/YetOKSuHdn3ftzMUy88wzM83jSlbyviKRw1Dyr+7dyCPKYNQUQHc0l
-         hiQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727944211; x=1728549011;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KgYlSRPdGNueMfiTMqgmWS1pTsWnaZpjKo5fJ+jS3mg=;
-        b=FCBfE9nFPaq25fXZVnQTZffw5fbtuzn/6yp7248bj23IPx3rMBI/GwNVr0OJ+FSPUE
-         3bVRN11QOL0KyfnmvFV5JRvdEm6HT4isQip04YIptpPNHrDwWvPd26oOA+rDXTOn2kAU
-         9IJiRpBxp6PWUVMfWieahHi4Rot0lDVnmXGTLS5YOp5uZ7fzrUZxhJahdwiWkvB5KGRu
-         lqndvzSRtVizUb7KPSJxg4IQeysRKoGhumhsLvSdG8LGS7yrYJyxqGdFNPUbo3k6ny8Y
-         yAXtuVVRoGqOMoYcZHjSvzAG4SqwCZHZXlLru9OPPG92U1w4OPZnbI/Dday0yNaZ9F+0
-         kl/A==
-X-Forwarded-Encrypted: i=1; AJvYcCU2i2sHRcNmX7zwgvlbY6fNSym2dk/5qZ7OtySxPIIA6Eg4d09zYsI2LuPqNK2f72XcopI9BtuYWflu@vger.kernel.org, AJvYcCUx0TIpPBo0if8zWrQJ9s4f6kU9i1wWS1aWCxlkxiQ1PzUjetFoM2g/kSkLEV5sbGAkxf2Yk7lLjH02gA0g@vger.kernel.org, AJvYcCXfzqH8ElxQGIFTCn35W4RIDixauE53MCr7FJb9glcX7WyNybxqwBeFrcxNJQq4EsBQOTo+8u9sIBkieEQcrK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJEwOyaXGCUewSyFPSXOI1ZGQUky9YAySyaJ53fBJNrszmcpCD
-	p0s4amisPSsD5g/OzzKIeVgZ0uHRbn4/FvRMg+15NSqUnlmwFbP7cOQ5FzAI
-X-Google-Smtp-Source: AGHT+IF8npkmOhbojp5KXFi8cInd8zqhM4R+86JiZ/fJ268SNIVJdHBDzgQCRAJIvhOjCnLqlbpAug==
-X-Received: by 2002:adf:fc49:0:b0:37c:c9b9:3732 with SMTP id ffacd0b85a97d-37cfb8b58d9mr3700396f8f.21.1727944210905;
-        Thu, 03 Oct 2024 01:30:10 -0700 (PDT)
-Received: from void.void ([31.210.180.79])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d081f70b1sm735887f8f.22.2024.10.03.01.30.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 01:30:10 -0700 (PDT)
-Date: Thu, 3 Oct 2024 11:30:07 +0300
-From: Andrew Kreimer <algonell@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: fix a typo
-Message-ID: <Zv5WD6z0uHtcS6wd@void.void>
-References: <20241002211948.10919-1-algonell@gmail.com>
- <1fe2c97a-fbb3-42bd-941a-c2538eefab0a@stanley.mountain>
+	s=arc-20240116; t=1727944248; c=relaxed/simple;
+	bh=EKnNjWpQQ4+XEaLYjekJzpE9qiQi5KvrrlhUuLaAloY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Yi1L8yA/2eok0p/QcLYI0R6m32o/Zk0eATmoFX+c7WM8v+Pt5TCAq59Z6Kle16bsAi57EZ1BffVOTbQO1LiNpsvGDFpwfaCIt4B5LqxqLaUhG5h1AWwHECuyYx6m5a3c2fcEMP9UGAh5LTH4wKZvyKBxeQEYlj7ytyxBNDMzKaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vzNps3oh; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727944224; x=1728549024; i=markus.elfring@web.de;
+	bh=ZX72Lmk43sBbEGkA1H10djPMZJfbXbYNCgT81G84xz8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=vzNps3ohhJYOJ+Msf7DEg8nRntDbiGV47RHn7toUXDacl0xdjUYP9PniI8nhXS4J
+	 tVY5AkRoeO1/P84x/QLjsCPQhYVwwCyDRXncgwLAq/ZuW7e3FnCh/VesWniyEX22A
+	 gAywsBBmoewCMAA8xXspsj9azLKnJEI4GahA2yy+YtnzNbmOTaCvHmUHaJvl8oFQg
+	 mugvy35q+G+wvp9aD9EVxtuhMILjzxI0ev6NaJJwS1ziemwi+clBknFuHLlbMSH6A
+	 BZZQD7dSZW9tjwTsUXunQxDi08N49j8/XEmiiqqPwPA7IWH//5MOb2oCH6gpHzMMi
+	 qzhN1LBWQRbUqE3gRw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MiuOW-1sHhD13LxE-00eP0o; Thu, 03
+ Oct 2024 10:30:23 +0200
+Message-ID: <84e202eb-40f3-4132-b2d3-67069a2bba70@web.de>
+Date: Thu, 3 Oct 2024 10:30:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1fe2c97a-fbb3-42bd-941a-c2538eefab0a@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+To: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Viresh Kumar <viresh.kumar@linaro.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] cpufreq: mvebu: Call of_node_put(np) only once in
+ armada_xp_pmsu_cpufreq_init()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:l+YAhpusRDHD/2fn+ZfJHeq9qj5xFO4cNSCcfWkIMcO/apJrpO2
+ 88Oq4JuTk1VR68J105hFn1l/i3ZxQM471Ra+kw+vb92TTqRQmq/xre4d4VFipwXBEgK23CY
+ ga27VBWHD0m+wI5uEBPLgc9tSDLwhJRhJ9DhKH/25hT4n1wYw7VUyhHj/BiIsQwjQCaz3Op
+ 9N66d6W63HJxcahnrSlbw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6HXuvQgU8Bc=;IZ5wj26uRkiTUXg7vzESX6OubE5
+ 0+pXKEfmMQ6E5gfU9C9VRCX29hq7Ape68GjT8dMmZM69DJEbjZBUySdLnqBnw0llJbbSFopmH
+ bcG7gAJ8EjxGHDvYHkHRV8xQtx4cCp1DtO85dzM8TIWFU0Ox31TwdIljrxJes275cwpAwHsIk
+ nOZhgSOevWCoS95j2YDpELre9YMAsevVHVBnl3aAVxGWFO+S0SxUKDD8dCMcblPUir9AHLfg2
+ HRR3yhUazVlH5pPsOh9v49cKQrNiah2yZaFyWz9NGh0iU+X6yb/EO2yzrsJIQaxtJVgSTXI0X
+ amfBbV1N6YRsbQrNit5D6yAvoPj0QILQ8eiJPPPkArQTf2bWxOZ5+bQ4pUCTKuaPQWqhNlRkG
+ aBe9E1W9q4USVHNORPvBC8MEb6BwHa+ThYtq1/cglq02u9dWXJ6kFm2weUxJVdNUO+LGCAt/S
+ IRpz+scAIAnxB7PqoXu6JK4MJnn2MQCuwOb8w1X3qonzg8d7Zb8e0RZ0mDsI1cqZBL+h+eS7N
+ W5nLDdymbdki6wFpoMxifXeNVuzYJDfWdztB3fQidQd9HQAG6j+3W8ETTSu/WGV+beMajqBsa
+ v81E0YYDqtUJjvuVQXXJ0nm+vCBM4qcSBuUfJ1CiWKcduQ0xw0qjUBRai7YSTPPgsZiSpScUp
+ /HqnJVSAja23fUxqjOXJirLnA7SWZw+WmqWWNcwo49g7G3VjLa1Zp7tRGDr5lhfNBMrcxRMbU
+ k3o9A8DZ02i5SO9h2YPcsbwBNR0Zc1rrccocYWNnlZzB/qN0Aa0Ndzg6SHPez+hGT/tFXBtqC
+ tpvWUQHRLj7kYrAGDOEEK3Ew==
 
-On Thu, Oct 03, 2024 at 08:59:42AM +0300, Dan Carpenter wrote:
-> On Thu, Oct 03, 2024 at 12:19:48AM +0300, Andrew Kreimer wrote:
-> > Fix a typo in comments.
-> > 
-> 
-> Could you explain what the typos are in the commit message so that we can spot
-> it more easily?  It saves a little review time.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 3 Oct 2024 10:18:39 +0200
 
-Noted, thank you.
+An of_node_put(np) call was immediately used after a return value check
+for an of_address_to_resource() call in this function implementation.
+Thus call such a function only once instead directly before the check.
+
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/cpufreq/mvebu-cpufreq.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/cpufreq/mvebu-cpufreq.c b/drivers/cpufreq/mvebu-cpufr=
+eq.c
+index 7f3cfe668f30..55ba7ad72c36 100644
+=2D-- a/drivers/cpufreq/mvebu-cpufreq.c
++++ b/drivers/cpufreq/mvebu-cpufreq.c
+@@ -42,14 +42,12 @@ static int __init armada_xp_pmsu_cpufreq_init(void)
+ 		return 0;
+
+ 	ret =3D of_address_to_resource(np, 1, &res);
++	of_node_put(np);
+ 	if (ret) {
+ 		pr_warn(FW_WARN "not enabling cpufreq, deprecated armada-xp-cpu-clock b=
+inding\n");
+-		of_node_put(np);
+ 		return 0;
+ 	}
+
+-	of_node_put(np);
+-
+ 	/*
+ 	 * For each CPU, this loop registers the operating points
+ 	 * supported (which are the nominal CPU frequency and half of
+=2D-
+2.46.1
+
 
