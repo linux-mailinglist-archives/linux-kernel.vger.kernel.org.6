@@ -1,250 +1,110 @@
-Return-Path: <linux-kernel+bounces-349098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6965698F0D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:51:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D78898F0D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C86C7B233B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:51:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60256281C37
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1E819CCFA;
-	Thu,  3 Oct 2024 13:51:34 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFF219CCF3;
+	Thu,  3 Oct 2024 13:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nu4CGhJi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A84D19C566
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 13:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994951547DC;
+	Thu,  3 Oct 2024 13:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727963494; cv=none; b=INLGLb7DeEqWS0A2iX+56SehVritczAArp/xZgovd8zk0PuRkfYwRfSBxdW/zh8xtjvm+kLIFALg1NWKtOVfxctyT4SS38pj50Pbx7ixiDk5wtDM7Celjy1L88Wusn/POxk0SqPubd/Oop6XfKz/G1EvoE7w+1RsIGt4+yWwEko=
+	t=1727963638; cv=none; b=fPjN8e5HhTSs5k55Jfbl5kzw1aQNsEgF2HihNEAS7VvgmH3I63jiHsTDRfQA1JO7yZI6guuGL5MQdt0IZj4Ay+02TJAprF4glMWcLDoXtTHHHf1g4znEe+4cCcKElL79ZbzUN6O3fLToFVs5rzxeHG48Qu/XOb6YiHfvTN0aNx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727963494; c=relaxed/simple;
-	bh=1ADzxu2OBA0VIRCOHkbscM+iCtwXCe9dARhDHr/xHDQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jWpAWs9p4/W+i6KR+C108BOV7XcXK6fpDpp6IgVfy3VEmEnjlJm9iyslrmOp1TiLmm1/eQiN+n2DCfDTP82lBRWunA8OqxEoehjttp/vUfoF47VwGq5cvCjgjAJtBdXX8elwkgGHXvT0ajXtHyz9ZG620nY1QmY++U2LB5fOtoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cdc7b7debso79861139f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 06:51:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727963490; x=1728568290;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OB1j0MrR34XgoaspLCqHmH56Fm6vQhBtOup8NTuwZhc=;
-        b=Awi1ZQp3wjovhWi3KVgLAlHxUxHY4R6bKI2BTr75ToB2X5PqNtFUkUzFo6J7MlaLoH
-         VYZPQMIN91jLn4FXBgAypbnX98zlOG6C/m6CrIK82qrUfB0XUbIBWtFq+3kgK7gWysH4
-         qJycyqypa3NjinVmC/Zm6Tig6VkwCGXcC2PN2fhMBZkZ/JOKjJhv7qlYqVICb51DTdon
-         pgiBNoSHTecFKHLbvuFD5GuPfGxdOaIeZxYsR8UegI/VesyjmVqa8vuQdftPKAYk+T+x
-         XXEhzXLL/CByvGgG6xoM/waApJHoUtvNWZQ8/n/KxXeSmv4WG1eVn0jKyXgfaM+i0PhT
-         Ibxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXPaI+ekXjGaEXTjM6FuuJ2fYBt9oIR07FBL37He8IGifhYQ+Dw7U0F5Tzmb6TxXPI3ebS/2XrsUlAzy8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3Va/fI+d3L+UVstnpqRde/rhOUF5eSfgUqaJBljY8gOfIDPMR
-	rSfeJYmQrQ2SPciDpDiHnlQ4svKojAlniS5ObxCGAPJK4IJ3J6MPZ/dd6IZNhktcgptlvTrldyb
-	lD88ZdlMa8qz3hlkEl5qT85ogKhPnozxDD345sSjF9ElVmBzywTzcQ3Q=
-X-Google-Smtp-Source: AGHT+IFMoW/0WzVswhR7l3puDOl3yWzQWgWZxLUB9Dy4O9Tjff8STIVqWDt9PyxWBDhfHVdCrp6OjbVmol0WOVcSdI8h/n5z8i9J
+	s=arc-20240116; t=1727963638; c=relaxed/simple;
+	bh=V7wL9d576mMnlSBCsFKYiCjgPRzQk/PV+oySoXjmUFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DuASlrehjoOk/AadazxrPmIj1/y82UzLrBA/C8jazre4BVsFkBULm54MW69n83keqZUl016K2xwN6ZGxiysQ5qqXv6VO2NvDvCFfLjkw7wefJtzAhAmeP5sC/kkoVQLYPmTYRmSUzKjUW3ymmUQfkpCxCB+c1aFaqbDoPvIDemU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nu4CGhJi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46A5AC4CEC5;
+	Thu,  3 Oct 2024 13:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727963638;
+	bh=V7wL9d576mMnlSBCsFKYiCjgPRzQk/PV+oySoXjmUFE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nu4CGhJiO2K2UxQVMyqJH7p8V0jLQG6p3NYyJjqeCIMGNU3AH4xmWVE4oymp4D3Pc
+	 09RVzUHE9jFr77KO998FJOI7Yq/3MquuBO7tIsBTevYgEUWTZhS4kSMESK91mvd7Ht
+	 loaXn0tyaS5kd+2q298GgwOAYPWLIrLF9Qsp/UhULOgN/IFitnV6NkRTY1TCAMolj2
+	 7EQ3OTUdEueUcGPl6tv6xWWzbeSpLiKd0VXCHzBKMNQCa1shQsQeJ8x0Ye0eaRSGQ4
+	 jI2JhbLsA0WY5ngvmyZH/k5ESNEl3fURiDA4VgBSXJz5JCSOP6P+jQRBeE0pfeevBM
+	 pXgfQAk/g0sMw==
+Date: Thu, 3 Oct 2024 14:53:54 +0100
+From: Simon Horman <horms@kernel.org>
+To: Danielle Ratson <danieller@nvidia.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, yuehaibing@huawei.com,
+	linux-kernel@vger.kernel.org, petrm@nvidia.com
+Subject: Re: [PATCH net-next v4 0/2] ethtool: Add support for writing firmware
+Message-ID: <20241003135354.GP1310185@kernel.org>
+References: <20241001124150.1637835-1-danieller@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6009:b0:82c:fd13:271c with SMTP id
- ca18e2360f4ac-834d8410f96mr655381539f.4.1727963490480; Thu, 03 Oct 2024
- 06:51:30 -0700 (PDT)
-Date: Thu, 03 Oct 2024 06:51:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fea162.050a0220.9ec68.003d.GAE@google.com>
-Subject: [syzbot] [hfs?] KASAN: slab-out-of-bounds Write in hfs_bnode_read_key (2)
-From: syzbot <syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001124150.1637835-1-danieller@nvidia.com>
 
-Hello,
+On Tue, Oct 01, 2024 at 03:41:48PM +0300, Danielle Ratson wrote:
+> In the CMIS specification for pluggable modules, LPL (Local Payload) and
+> EPL (Extended Payload) are two types of data payloads used for managing
+> various functions and features of the module.
+> 
+> EPL payloads are used for more complex and extensive management functions
+> that require a larger amount of data, so writing firmware blocks using EPL
+> is much more efficient.
+> 
+> Currently, only LPL payload is supported for writing firmware blocks to
+> the module.
+> 
+> Add support for writing firmware block using EPL payload, both to support
+> modules that support only EPL write mechanism, and to optimize the flashing
+> process of modules that support LPL and EPL.
+> 
+> Running the flashing command on the same sample module using EPL vs. LPL
+> showed an improvement of 84%.
+> 
+> Patchset overview:
+> Patch #1: preparations
+> Patch #2: Add EPL support
+> 
+> v4: Resending the right version after wrong v3.
 
-syzbot found the following issue on:
+Thanks, this one looks good :)
 
-HEAD commit:    3efc57369a0c Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=174b0ea9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a4fcb065287cdb84
-dashboard link: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10124b8b980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11894c57980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-3efc5736.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d0988c372a39/vmlinux-3efc5736.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8547f30d7e9d/bzImage-3efc5736.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7608c0ff0561/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 64
-==================================================================
-BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
-BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
-BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
-Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
-
-CPU: 0 UID: 0 PID: 5102 Comm: syz-executor237 Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
- memcpy_from_page include/linux/highmem.h:423 [inline]
- hfs_bnode_read fs/hfs/bnode.c:35 [inline]
- hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
- hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
- hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
- hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdir fs/namei.c:4300 [inline]
- __se_sys_mkdir fs/namei.c:4298 [inline]
- __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbdd6057a99
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe2eb7e0b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fbdd6057a99
-RDX: 00007fbdd6057a99 RSI: 0000000000000000 RDI: 0000000020000300
-RBP: 00007fbdd60cb5f0 R08: 00005555615064c0 R09: 00005555615064c0
-R10: 00000000000002b3 R11: 0000000000000246 R12: 00007ffe2eb7e0e0
-R13: 00007ffe2eb7e308 R14: 431bde82d7b634db R15: 00007fbdd60a003b
- </TASK>
-
-Allocated by task 5102:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __do_kmalloc_node mm/slub.c:4265 [inline]
- __kmalloc_noprof+0x1fc/0x400 mm/slub.c:4277
- kmalloc_noprof include/linux/slab.h:882 [inline]
- hfs_find_init+0x90/0x1f0 fs/hfs/bfind.c:21
- hfs_cat_create+0x182/0xa50 fs/hfs/catalog.c:96
- hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdir fs/namei.c:4300 [inline]
- __se_sys_mkdir fs/namei.c:4298 [inline]
- __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8880123cd100
- which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 0 bytes inside of
- allocated 78-byte region [ffff8880123cd100, ffff8880123cd14e)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x123cd
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801ac41280 ffffea0000498a00 dead000000000004
-raw: 0000000000000000 0000000080200020 00000001f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 4576, tgid 4576 (init), ts 31018946504, free_ts 31015095312
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x120 mm/slub.c:2413
- allocate_slab+0x5a/0x2f0 mm/slub.c:2579
- new_slab mm/slub.c:2632 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
- __slab_alloc+0x58/0xa0 mm/slub.c:3909
- __slab_alloc_node mm/slub.c:3962 [inline]
- slab_alloc_node mm/slub.c:4123 [inline]
- __do_kmalloc_node mm/slub.c:4264 [inline]
- __kmalloc_noprof+0x25a/0x400 mm/slub.c:4277
- kmalloc_noprof include/linux/slab.h:882 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- tomoyo_commit_ok+0x29/0x1d0 security/tomoyo/memory.c:76
- tomoyo_assign_domain+0x625/0x840 security/tomoyo/domain.c:576
- tomoyo_find_next_domain+0xe1c/0x1d40 security/tomoyo/domain.c:849
- tomoyo_bprm_check_security+0x114/0x180 security/tomoyo/hooks.h:76
- security_bprm_check+0x86/0x250 security/security.c:1296
- search_binary_handler fs/exec.c:1740 [inline]
- exec_binprm fs/exec.c:1794 [inline]
- bprm_execve+0xa56/0x1770 fs/exec.c:1845
- do_execveat_common+0x55f/0x6f0 fs/exec.c:1952
-page last free pid 4575 tgid 4575 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_folios+0xf12/0x18d0 mm/page_alloc.c:2686
- folios_put_refs+0x76c/0x860 mm/swap.c:1007
- free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:335
- __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
- tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
- tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
- tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
- exit_mmap+0x496/0xc40 mm/mmap.c:1877
- __mmput+0x115/0x390 kernel/fork.c:1347
- exit_mm+0x220/0x310 kernel/exit.c:571
- do_exit+0x9b2/0x28e0 kernel/exit.c:926
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff8880123cd000: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
- ffff8880123cd080: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc
->ffff8880123cd100: 00 00 00 00 00 00 00 00 00 06 fc fc fc fc fc fc
-                                              ^
- ffff8880123cd180: 00 00 00 00 00 00 00 00 00 00 00 06 fc fc fc fc
- ffff8880123cd200: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> v2:
+> 	* Fix the commit meassges to align the cover letter about the
+> 	  right meaning of LPL and EPL.
+> 	Patch #2:
+> 	* Initialize the variable 'bytes_written' before the first
+> 	  iteration.
+> 
+> Danielle Ratson (2):
+>   net: ethtool: Add new parameters and a function to support EPL
+>   net: ethtool: Add support for writing firmware blocks using EPL
+>     payload
+> 
+>  net/ethtool/cmis.h           |  16 ++++--
+>  net/ethtool/cmis_cdb.c       |  94 +++++++++++++++++++++++++-----
+>  net/ethtool/cmis_fw_update.c | 108 +++++++++++++++++++++++++++++------
+>  3 files changed, 184 insertions(+), 34 deletions(-)
+> 
+> -- 
+> 2.45.0
+> 
 
