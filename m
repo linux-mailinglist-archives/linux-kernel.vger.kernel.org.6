@@ -1,206 +1,286 @@
-Return-Path: <linux-kernel+bounces-349258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2533898F344
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:54:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7D898F347
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D80F128281E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E405D28284D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D64E1A3033;
-	Thu,  3 Oct 2024 15:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9MXDicp"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF661A4E86;
+	Thu,  3 Oct 2024 15:55:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF401A2C06
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960FF17A5BE
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727970884; cv=none; b=sM/jqJISBzR23rDh4P66ZGHC1I3myMUhpeRf7XxS4FHqh0ue+4cgKQIybCScATQBg9vGMiQRccNuIQABRDVSDDD5OY93dVf0RIY1lT6P05GTCsOAQxdT4WYAUQiJlmDqENR7R2xusCMOpbvhLuJdS+zPPo5Ye6PhAR7SxrU0nKk=
+	t=1727970905; cv=none; b=PKBNYnO3VObucSGQ+7sAr0QjhOJlHz8yADvTzxUNNfM8KSfH+7aT5WeDkuqYKVSVeZfGqpHf3uS9K30eF7+Bv5oioNLdjz5mcWXEVGWNstGj3nleonaQ3qk4Qp36CBNz5mDan37V07iXYrWNeBFDMNbCVbGyExQ4cHO3Pkr2/do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727970884; c=relaxed/simple;
-	bh=Dmr73yYMO3R8FpsZ2/WHKis7JEc3Bj0B1/YZcAb8FY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q1BPjkBRhx5bwCqxWr8T46hdkI2QW8J3aINtA0XsYRa6nrT9UyWyupsAXTkMMerXUzVQOm3zYOqRi9A0Hooa4T7K4k8/is6gUs3b9FOlcEVCO3aruXOPXfgcn5i+V6/KhJ0sKyZKqLMcCPAsc5m+JseWlsKFz9nP2HYOUg7L6vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9MXDicp; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e13718283bso187959a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:54:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727970882; x=1728575682; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0yGeUrKYFIPCVFsOqzylmOrv3kBoBBc0wc9fqVx2R8I=;
-        b=h9MXDicpHsFLc3w0Dm2eGj+ww9kiuPqZzbVHo7reEm6yXMz/2lJFskqZTU0xFK5ZO4
-         pMsQBijiT6KL8C+xIQCSGZKlfoMOLk96mTXm/XfDz9cTQZW8mewuX/mNHbet0PRxvk2s
-         TexVNn1O6o+IoKxY1iwOn6k+Rq3zUX0vWg7YdcJt2JGh6TOFQwkEOUoeUJgB/8bj1fiW
-         ChppqpXG0FeNKJQ9X3P+mEgsCC3EQmorQN6kLuv0imPgHNJAK0IhmQCmfKZqLlk1TtPB
-         1BaE8mOkWsamwAVHpqzRHAeOmdchiCPRHeDLvQ1WybCux5ec++bBmd6QNelVfEb3lSJr
-         D12A==
+	s=arc-20240116; t=1727970905; c=relaxed/simple;
+	bh=Rjam4N9XElTuCl8k0v0e3NlkET0xKgDBzqll595pSC0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QfSvsv6NeAzmEIMtUOdlQuTi/c/edY1nLKAx2mxKJZDlKZ18w85SF1zKviNtD8dX2e0SivTzxxJjBj1BG0juVc3fg8SqLebV9XHydbPNk7cpFUx4Jno5hzZ7URTxsxlIFmStU4rSFqFle6VLLlfNP/OdBV3YhmidRO82HAISErE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82aa467836eso209121239f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:55:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727970882; x=1728575682;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0yGeUrKYFIPCVFsOqzylmOrv3kBoBBc0wc9fqVx2R8I=;
-        b=j2E6rmVZ9996a41HsHKTnAHzfQzaRYJHd1Z2rCzIVPWuxHck4YdZB+AFtPAxN8xAWe
-         MJiJZt0L3ZBa+cWZ4hv2W4jO9Yl5t7Nb3bRo04Hjf9R02pBXOhI/hqUJtixzJfEw3q1E
-         ifBarAbId/f2cNMihg60pBJcxEutTgvT2xGF+NRBDRaUh8bZ5kbhy15MbkAmuaBlhI8z
-         N5fKo9JUXQDQbXUuBktN0jNHQ+kCslddpcAPlqUS4OQdDBibm6HcWCq75kp5oCm0qH95
-         XWjtrak60VneMFMcqOdTP6BeWXQafDs/5anCzwIT/8ylv8NTPaO/GDqaz+0YDMHhR5wx
-         rIUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4IBlwuib1j33dBCGpemmQAvpYmAeFjVmFTdX94LdEScGhUYFXLJoEJ9i8trBdfFkWGHnd0LimvgyHa5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFS46mhbrebuySOIRU/jQieKW3Iy5fB2m6k1vMPb1JPcmcs0nJ
-	VlYK2WrE7U/FIz/Ve/XUtuI9Dw1Uiq9ee+esrjZKoZD6Fx/bS52ebOCpJJkgg89Mt5gAyqHb2ra
-	HPnHCjbCEIL1+H7BobVd55GuLACc=
-X-Google-Smtp-Source: AGHT+IH+eTjTi91vp6di708DRWo+fli07tV+SgXGhpx5vBaiOKNM8nEPU0iifLJQbB3mv3n732aR5ljw2ZJKiemM5cM=
-X-Received: by 2002:a17:90b:3c6:b0:2da:a6d4:fd5d with SMTP id
- 98e67ed59e1d1-2e184527f84mr3469685a91.1.1727970882126; Thu, 03 Oct 2024
- 08:54:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727970903; x=1728575703;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h6gla1t8GwMuhtXRHdzB8lYJVs59JxbelzMstEOFi0w=;
+        b=jIQMWHlEF8kf+pk2LXGS8hYl5o2Z0ww748ZdTUYY70zmod5mp5DuDHE0wrqfqcR3Iu
+         /oUUVhgPT2kGw36n80A94RlNEpIYkxf7fPz6euYKxc3ZL7O+puQMF9LBPaDefpNEQoej
+         ZeRjmb3lPxQuS+WfV0o7ZXJiGgk9wacqU1VZz6yuTA294vjC3KUZKHlyz8L6DrB1/ixw
+         i606aLtYYZwcJGb7wLJTC5BcHvKxGXBW2gHBB+uFFUMRMCgFPVBvR0r8EUGpZVqBGDH1
+         Pt2oVYcvQYxVn/NseQbuV4hvKS8IZN5r4YeqkT8ruh/fibcV6LNRo+mH/a44AVaLPzBf
+         ukTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1AVEkqF51pccQwhinnkWTsS6w4BxtwDVKS1zK6kCz65eJCCFHyl+DAzY70+FqhDFIwDrIpY0+qc3M5AI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6VM0DodvUEppeDxrsL6m22JN+ld2Fo5GKe7spDJUvu7Fg3+ke
+	yi+dQ6VEJe79jTEiWX5n8tY9htYzsctK1u5T/YqLoYaiCGaRocc0uoYbuaFXRzgPsY8nVVXqi8y
+	ePvRwKmeYUfyp5KBOLckiNVnybVZPe+wY7jUZfbQvGt6lUszvz/ZtSjQ=
+X-Google-Smtp-Source: AGHT+IEf15kQnhzM/6hRNaE+lgS/TtGW4YTYw6O9TIFkMPxbJc8zKtMJ0q8XkVDqM4OGo2TiqyLc8atehgI/nQUBcK+w8DYkiHLN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003060650.18454-1-wuhoipok@gmail.com>
-In-Reply-To: <20241003060650.18454-1-wuhoipok@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 3 Oct 2024 11:54:30 -0400
-Message-ID: <CADnq5_PA37NQ52-Y8r6JEtXDRwPehzM5+cxysiZgVks4AkivjQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/radeon: add late_register for connector
-To: Wu Hoi Pok <wuhoipok@gmail.com>, Hans de Goede <hdegoede@redhat.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Christian Zigotzky <chzigotzky@xenosoft.de>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>, 
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:1561:b0:3a3:63c3:352e with SMTP id
+ e9e14a558f8ab-3a365944538mr74060575ab.19.1727970902680; Thu, 03 Oct 2024
+ 08:55:02 -0700 (PDT)
+Date: Thu, 03 Oct 2024 08:55:02 -0700
+In-Reply-To: <CABBYNZJLj6gSa-1prGM5aLKTJbFJo5mxxJkBU=WoqEx-P6TdOA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66febe56.050a0220.9ec68.0045.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Write in sco_sock_timeout
+From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
+To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	luiz.dentz@gmail.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-+ Hans
+Hello,
 
-On Thu, Oct 3, 2024 at 2:33=E2=80=AFAM Wu Hoi Pok <wuhoipok@gmail.com> wrot=
-e:
->
-> This is a fix patch not tested yet,
-> for a bug I introduce in previous rework of radeon driver.
-> The bug is a null dereference in 'aux.dev', which is the
-> 'device' not registered, resulting in kernel panic. By having
-> 'late_register', the connector should be registered after
-> 'drm_dev_register' automatically.
->
-> Please help testing thank you.
->
-> Signed-off-by: Wu Hoi Pok <wuhoipok@gmail.com>
-> ---
->  drivers/gpu/drm/radeon/atombios_dp.c       |  9 ++-------
->  drivers/gpu/drm/radeon/radeon_connectors.c | 17 +++++++++++++++++
->  2 files changed, 19 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/radeon/atombios_dp.c b/drivers/gpu/drm/radeo=
-n/atombios_dp.c
-> index fca8b08535a5..6328627b7c34 100644
-> --- a/drivers/gpu/drm/radeon/atombios_dp.c
-> +++ b/drivers/gpu/drm/radeon/atombios_dp.c
-> @@ -228,10 +228,8 @@ void radeon_dp_aux_init(struct radeon_connector *rad=
-eon_connector)
->  {
->         struct drm_device *dev =3D radeon_connector->base.dev;
->         struct radeon_device *rdev =3D dev->dev_private;
-> -       int ret;
->
->         radeon_connector->ddc_bus->rec.hpd =3D radeon_connector->hpd.hpd;
-> -       radeon_connector->ddc_bus->aux.dev =3D radeon_connector->base.kde=
-v;
->         radeon_connector->ddc_bus->aux.drm_dev =3D radeon_connector->base=
-.dev;
->         if (ASIC_IS_DCE5(rdev)) {
->                 if (radeon_auxch)
-> @@ -242,11 +240,8 @@ void radeon_dp_aux_init(struct radeon_connector *rad=
-eon_connector)
->                 radeon_connector->ddc_bus->aux.transfer =3D radeon_dp_aux=
-_transfer_atom;
->         }
->
-> -       ret =3D drm_dp_aux_register(&radeon_connector->ddc_bus->aux);
-> -       if (!ret)
-> -               radeon_connector->ddc_bus->has_aux =3D true;
-> -
-> -       WARN(ret, "drm_dp_aux_register() failed with error %d\n", ret);
-> +       drm_dp_aux_init(&radeon_connector->ddc_bus->aux);
-> +       radeon_connector->ddc_bus->has_aux =3D true;
->  }
->
->  /***** general DP utility functions *****/
-> diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm=
-/radeon/radeon_connectors.c
-> index 528a8f3677c2..f9c73c55f04f 100644
-> --- a/drivers/gpu/drm/radeon/radeon_connectors.c
-> +++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-> @@ -1786,6 +1786,20 @@ static enum drm_mode_status radeon_dp_mode_valid(s=
-truct drm_connector *connector
->         return MODE_OK;
->  }
->
-> +static int
-> +radeon_connector_late_register(struct drm_connector *connector)
-> +{
-> +       struct radeon_connector *radeon_connector =3D to_radeon_connector=
-(connector);
-> +       int r =3D 0;
-> +
-> +       if (radeon_connector->ddc_bus->has_aux) {
-> +               radeon_connector->ddc_bus->aux.dev =3D radeon_connector->=
-base.kdev;
-> +               r =3D drm_dp_aux_register(&radeon_connector->ddc_bus->aux=
-);
-> +       }
-> +
-> +       return r;
-> +}
-> +
->  static const struct drm_connector_helper_funcs radeon_dp_connector_helpe=
-r_funcs =3D {
->         .get_modes =3D radeon_dp_get_modes,
->         .mode_valid =3D radeon_dp_mode_valid,
-> @@ -1800,6 +1814,7 @@ static const struct drm_connector_funcs radeon_dp_c=
-onnector_funcs =3D {
->         .early_unregister =3D radeon_connector_unregister,
->         .destroy =3D radeon_connector_destroy,
->         .force =3D radeon_dvi_force,
-> +       .late_register =3D radeon_connector_late_register,
->  };
->
->  static const struct drm_connector_funcs radeon_edp_connector_funcs =3D {
-> @@ -1810,6 +1825,7 @@ static const struct drm_connector_funcs radeon_edp_=
-connector_funcs =3D {
->         .early_unregister =3D radeon_connector_unregister,
->         .destroy =3D radeon_connector_destroy,
->         .force =3D radeon_dvi_force,
-> +       .late_register =3D radeon_connector_late_register,
->  };
->
->  static const struct drm_connector_funcs radeon_lvds_bridge_connector_fun=
-cs =3D {
-> @@ -1820,6 +1836,7 @@ static const struct drm_connector_funcs radeon_lvds=
-_bridge_connector_funcs =3D {
->         .early_unregister =3D radeon_connector_unregister,
->         .destroy =3D radeon_connector_destroy,
->         .force =3D radeon_dvi_force,
-> +       .late_register =3D radeon_connector_late_register,
->  };
->
->  void
-> --
-> 2.46.2
->
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Write in hci_conn_drop
+
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: slab-use-after-free in atomic_dec_and_test include/linux/atomic/atomic-instrumented.h:1383 [inline]
+BUG: KASAN: slab-use-after-free in hci_conn_drop+0x34/0x280 include/net/bluetooth/hci_core.h:1548
+Write of size 4 at addr ffff88801ea58010 by task syz-executor.0/5537
+
+CPU: 0 UID: 0 PID: 5537 Comm: syz-executor.0 Not tainted 6.12.0-rc1-syzkaller-g7ec462100ef9-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_dec_and_test include/linux/atomic/atomic-instrumented.h:1383 [inline]
+ hci_conn_drop+0x34/0x280 include/net/bluetooth/hci_core.h:1548
+ sco_conn_destruct+0x57/0x100 net/bluetooth/sco.c:166
+ sco_sock_destruct+0x43/0x90 net/bluetooth/sco.c:407
+ __sk_destruct+0x5a/0x5f0 net/core/sock.c:2259
+ sco_sock_release+0x25e/0x320 net/bluetooth/sco.c:1259
+ __sock_release net/socket.c:658 [inline]
+ sock_close+0xbe/0x240 net/socket.c:1426
+ __fput+0x241/0x880 fs/file_table.c:431
+ __do_sys_close fs/open.c:1565 [inline]
+ __se_sys_close fs/open.c:1550 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1550
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa71cc7cd5a
+Code: 48 3d 00 f0 ff ff 77 48 c3 0f 1f 80 00 00 00 00 48 83 ec 18 89 7c 24 0c e8 03 7f 02 00 8b 7c 24 0c 89 c2 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 36 89 d7 89 44 24 0c e8 63 7f 02 00 8b 44 24
+RSP: 002b:00007ffc91af2860 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 00007fa71cc7cd5a
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: 00007fa71cdad980 R08: 0000001b2d160000 R09: 7fffffffffffffff
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000016f8e
+R13: ffffffffffffffff R14: 00007fa71c800000 R15: 0000000000016c4d
+ </TASK>
+
+Allocated by task 5455:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4296
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ __hci_conn_add+0x2f9/0x1850 net/bluetooth/hci_conn.c:932
+ hci_conn_add_unset net/bluetooth/hci_conn.c:1041 [inline]
+ hci_connect_sco+0xd0/0x370 net/bluetooth/hci_conn.c:1689
+ sco_connect net/bluetooth/sco.c:279 [inline]
+ sco_sock_connect+0x2fc/0x990 net/bluetooth/sco.c:596
+ __sys_connect_file net/socket.c:2066 [inline]
+ __sys_connect+0x2d3/0x300 net/socket.c:2083
+ __do_sys_connect net/socket.c:2093 [inline]
+ __se_sys_connect net/socket.c:2090 [inline]
+ __x64_sys_connect+0x7a/0x90 net/socket.c:2090
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 4494:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2343 [inline]
+ slab_free mm/slub.c:4580 [inline]
+ kfree+0x1a0/0x440 mm/slub.c:4728
+ device_release+0x9b/0x1c0
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x231/0x480 lib/kobject.c:737
+ hci_conn_cleanup net/bluetooth/hci_conn.c:174 [inline]
+ hci_conn_del+0x8c4/0xc40 net/bluetooth/hci_conn.c:1160
+ hci_abort_conn_sync+0x583/0xde0 net/bluetooth/hci_sync.c:5586
+ hci_cmd_sync_work+0x22d/0x400 net/bluetooth/hci_sync.c:328
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Last potentially related work creation:
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
+ insert_work+0x3e/0x330 kernel/workqueue.c:2183
+ __queue_work+0xc8b/0xf50 kernel/workqueue.c:2339
+ queue_delayed_work_on+0x1ca/0x390 kernel/workqueue.c:2552
+ sco_conn_destruct+0x57/0x100 net/bluetooth/sco.c:166
+ sco_sock_destruct+0x43/0x90 net/bluetooth/sco.c:407
+ __sk_destruct+0x5a/0x5f0 net/core/sock.c:2259
+ sco_sock_release+0x25e/0x320 net/bluetooth/sco.c:1259
+ __sock_release net/socket.c:658 [inline]
+ sock_close+0xbe/0x240 net/socket.c:1426
+ __fput+0x241/0x880 fs/file_table.c:431
+ task_work_run+0x251/0x310 kernel/task_work.c:228
+ get_signal+0x15e8/0x1740 kernel/signal.c:2690
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88801ea58000
+ which belongs to the cache kmalloc-8k of size 8192
+The buggy address is located 16 bytes inside of
+ freed 8192-byte region [ffff88801ea58000, ffff88801ea5a000)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1ea58
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff888015442280 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000080020002 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff888015442280 0000000000000000 dead000000000001
+head: 0000000000000000 0000000080020002 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea00007a9601 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4772, tgid 4772 (dhcpcd-run-hook), ts 33884825404, free_ts 32631813811
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x120 mm/slub.c:2413
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2579
+ new_slab mm/slub.c:2632 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
+ __slab_alloc+0x58/0xa0 mm/slub.c:3909
+ __slab_alloc_node mm/slub.c:3962 [inline]
+ slab_alloc_node mm/slub.c:4123 [inline]
+ __kmalloc_cache_noprof+0x1d5/0x2c0 mm/slub.c:4291
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ tomoyo_print_bprm security/tomoyo/audit.c:26 [inline]
+ tomoyo_init_log+0x11cd/0x2050 security/tomoyo/audit.c:264
+ tomoyo_supervisor+0x38a/0x11f0 security/tomoyo/common.c:2099
+ tomoyo_audit_env_log security/tomoyo/environ.c:36 [inline]
+ tomoyo_env_perm+0x178/0x210 security/tomoyo/environ.c:63
+ tomoyo_environ security/tomoyo/domain.c:672 [inline]
+ tomoyo_find_next_domain+0x146e/0x1d40 security/tomoyo/domain.c:881
+ tomoyo_bprm_check_security+0x114/0x180 security/tomoyo/hooks.h:76
+ security_bprm_check+0x86/0x250 security/security.c:1296
+ search_binary_handler fs/exec.c:1740 [inline]
+ exec_binprm fs/exec.c:1794 [inline]
+ bprm_execve+0xa56/0x1770 fs/exec.c:1845
+page last free pid 4743 tgid 4743 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
+ discard_slab mm/slub.c:2678 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:3146
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3221
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4450
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4086 [inline]
+ slab_alloc_node mm/slub.c:4135 [inline]
+ __kmalloc_cache_noprof+0x132/0x2c0 mm/slub.c:4291
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ tomoyo_print_header security/tomoyo/audit.c:156 [inline]
+ tomoyo_init_log+0x1ca/0x2050 security/tomoyo/audit.c:255
+ tomoyo_supervisor+0x38a/0x11f0 security/tomoyo/common.c:2099
+ tomoyo_audit_path_log security/tomoyo/file.c:168 [inline]
+ tomoyo_path_permission+0x243/0x360 security/tomoyo/file.c:587
+ tomoyo_path_perm+0x480/0x740 security/tomoyo/file.c:838
+ security_inode_getattr+0x130/0x330 security/security.c:2371
+ vfs_getattr+0x45/0x430 fs/stat.c:204
+ vfs_fstat fs/stat.c:229 [inline]
+ vfs_fstatat+0xe4/0x190 fs/stat.c:338
+ __do_sys_newfstatat fs/stat.c:505 [inline]
+ __se_sys_newfstatat fs/stat.c:499 [inline]
+ __x64_sys_newfstatat+0x11d/0x1a0 fs/stat.c:499
+
+Memory state around the buggy address:
+ ffff88801ea57f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88801ea57f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88801ea58000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                         ^
+ ffff88801ea58080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88801ea58100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+Tested on:
+
+commit:         7ec46210 Merge tag 'pull-work.unaligned' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=114d5527980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d0ca089c3fc6b54e
+dashboard link: https://syzkaller.appspot.com/bug?extid=4c0d0c4cde787116d465
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15355527980000
+
 
