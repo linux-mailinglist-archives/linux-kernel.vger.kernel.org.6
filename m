@@ -1,192 +1,186 @@
-Return-Path: <linux-kernel+bounces-348538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E48898E8CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:25:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE80498E8DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 990A0B25030
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:25:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F384B1C24C2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C4B26ACD;
-	Thu,  3 Oct 2024 03:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1849222619;
+	Thu,  3 Oct 2024 03:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Kl4okfZE"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="od+Ha1Jq"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74421E481
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 03:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D136F481DD
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 03:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727925944; cv=none; b=IZGaagKvogJqop+w8Jz83Qd8oH49shn7wANhj14D14aHpzDMbxT4dS3IoZWkPOmv7J6ga3aeZfCbawtBhvTk0OqY1aAyABIzaCZthCqcELmw4B2ijm4+JOkTF1fDJ77UttULYdw7nIguFDunbzjkKo5JvVZ8+RTlAM1XUjWNS9Y=
+	t=1727926350; cv=none; b=EQvEXcsKfOOov9T6mWgSnxUDb5DkL2dsWFj5p8KoZsIpao5jtXaj8EplCf+VIYXLwOowpDNGcO6k3koUzCfSZSPyne2TqolbuXNSKsr1mDzRjMz5mnzR7/x4itfGJ33n5m/sH8R4RyFSSd8UBm5dxa3bhbglWn3zx0DnvD+W12M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727925944; c=relaxed/simple;
-	bh=OGnfla1vaBMPTelIFuqBqdHHa/jsV8NOqQAMc1W9fy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YWLACm+kebYm1wKyM04PhWcznzvB4hffdcp/tm43uxjEMsFbNtcMCaClveo3OO9ORVSHAoOLOkoZMug7RIeLmdEpyRGvqWi5V5cK2sxXL3MWADuh2D996fSgVFwIxfanrISox8TbtcS63WUptfLo1b8W8nBXG+MHTruY0toRGHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Kl4okfZE; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso6413631fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 20:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1727925941; x=1728530741; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OGnfla1vaBMPTelIFuqBqdHHa/jsV8NOqQAMc1W9fy0=;
-        b=Kl4okfZEKxf6qT5UjxW9KVZss1RvZ3yEyiF2OAzwDB/y0klwN7O+KUcQgzJ0y5BLej
-         B4Vvs/f1yAxGAQthxXqgX1jWfbXXNZ3p2XNAHWCjcKDgUUqhqvf6Pxo4TNCJe0ozFBMf
-         Cw+Ki6/WlArcPNtTf/wnjD1a4yoDKkoDgNMpk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727925941; x=1728530741;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OGnfla1vaBMPTelIFuqBqdHHa/jsV8NOqQAMc1W9fy0=;
-        b=uu4p3Mw5f0NQYcNAc9vIgKyguIP/vxvrmomh6Z+tmugyb5A5peLaXC9aw1WP3tgiDe
-         39d3448Ob4GoMGCGM0VPgubJ41gRe6gScLbFCq6+L0vwbc0yeTaMQbc3YuE7m7MwcqUh
-         r1fIwb00DJnWJmoQmTOAsRvvBlXNxJyF2tn7qzQ+8jaTcv2LZDf+AJi+qglNXGDrIG7K
-         7HkWNnumc8e1oB0jDrFvgF+49MRv2tDfTSCelMo8oYbUyHZxtUymNCWu/NMyhZVrVDXJ
-         8o5xYGx9ir2h/FPDhrpB0TFLwZBkI+XHx8coUNW1/PiH76DaKbMKQ8PyTIbyUzvXFKO9
-         EpSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGUap36z87EgkpXIYsfzejVFgmT/pvJP/pVl4eXTK3Kfs90AVURrmg/PL7Qum6F9J1saUDCa/eCdD2myo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFoANMCEkMO138Dq0p3yaVYtpbcbZ+juC9p5kvkdf7w7wFQyaI
-	DM8629siJuNeuLexOnP+zy9468YFJIlVJslIjpZBYOjRYEsy7U+pdV9bhPthR72XXMirMff81gh
-	qpK9vgmPY6nnP5WmiIq6bQbkdwpncu16qx/Yl
-X-Google-Smtp-Source: AGHT+IGycS7WK/03fDcRcPwsEQLqnFUVO2tjSz0xgi1q1NQCGnT+yZNrmHfT6cCmCEMtFIqktY5bE+1yxZGpOo/O1Fg=
-X-Received: by 2002:a05:6512:3511:b0:539:a353:279b with SMTP id
- 2adb3069b0e04-539a35329cemr2931810e87.9.1727925940735; Wed, 02 Oct 2024
- 20:25:40 -0700 (PDT)
+	s=arc-20240116; t=1727926350; c=relaxed/simple;
+	bh=q4KJ1nLWZH6qD+XzexD2DL2YopndIuoxu1wm3w0N8Cc=;
+	h=To:Cc:Message-Id:From:Subject:Date; b=JJIbv+NtwM6ZZCLETvjxydeOwdKBIYm4EP9w5kdfWj8Kljsk4jRCmNmpmA30dLdTz+eDRBnrkVm34a73CMeamMFl/A3MBsN0x7nvzM9buNSjLjNOIaiN7BJCRv3t2OcAxuPr/ahbg1fCu/vhc2Spjlp5yHwsDB3DwPgjO26dORw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=od+Ha1Jq; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 14954138024C;
+	Wed,  2 Oct 2024 23:32:28 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Wed, 02 Oct 2024 23:32:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm2; t=1727926348; x=1728012748; bh=36nwp6Rh4Zskv
+	YpZUpbGmM8YFVLC0s1vC4mI0IdxrzI=; b=od+Ha1JqhMzEyEsO/7NI/pxtLrfhr
+	iNOFqRUjFakMW9E/smCLl9ZvzRuZbTMSsLpoDIAtcYi+ByBAqzXzUIvIlzjsTMZ2
+	o1rDdV/U8K9XsDrx0PivD//RRfnwmzrd/Oj3f8sfwqmoYraFViqboXnUBCIw9x8K
+	wVszSLE5SlKaT+T1Vrx+rTk61Cld0ws49udeqoQDrpT10ABoK4A2pVZYJPEc1BLF
+	6unyUPIkjkEc0MxxH212oN9TRWHmsT4ejxEQGr7JxAhWKQzbiAFOp41zfeFTHDoz
+	HfB/pwsEvO+dHosIfg3eVAYoJKd2Ty/t9nj6Tt7NrlrHrWDP7NHFyS/dw==
+X-ME-Sender: <xms:SxD-ZovompBL-_1-q4tWyObfTYJcRZFlr_PYtGCHb9atbKPa1zp1JQ>
+    <xme:SxD-ZlcB_PC8GRtNa4ZbZJmp17iAAaBMcePelplhvOtm3LNg5zyj-VoyFHK2UeVH8
+    WfrLfoqadK_dtqqFNE>
+X-ME-Received: <xmr:SxD-ZjwUFarz2Cz6NrjdyfhRxP7fMgjUizzgBbBbh4PnGPrQwkSzUEKSoUbk7vrcnlFitN18pxlAjkrTSzwfqBqtOsMgSeo1Nvc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvtddgjeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepvfevkffhufffsedttdertddttddtnecuhfhrohhm
+    pefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqe
+    enucggtffrrghtthgvrhhnpeehfffggeefveegvedtiefffeevuedtgefhueehieetffej
+    fefggeevfeeuvdduleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphht
+    thhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtsehlihhnuh
+    igqdhmieekkhdrohhrghdprhgtphhtthhopegurghnihgvlhestdigtdhfrdgtohhmpdhr
+    tghpthhtohepshhtrggslhgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
+    igqdhmieekkheslhhishhtshdrlhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:SxD-ZrPxWk_8720lc3tQ4mwmyA9RuoNaIKuQJx7ShOntc5ydhF9lkw>
+    <xmx:SxD-Zo9_J8aZTqiEGPwUZ6WC_PHOL3n-uufrzD1a-3L48xX0-jF2zA>
+    <xmx:SxD-ZjVmJvZ8BuuQKLtKi_5TTHQbXmp6S1Zu6qrCKtVRmc4gEJTF7w>
+    <xmx:SxD-Zhe0pu8dNRMpHfQ4I64vUm5BGweaPLZ3jywMKDRZiOOks8JTkQ>
+    <xmx:TBD-ZsYOnBOZSpeu1cq6u7easd2VYAsjwY7fhgg6PAhoHbcIR0Ckk7wp>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 2 Oct 2024 23:32:25 -0400 (EDT)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Daniel Palmer" <daniel@0x0f.com>,
+    stable@kernel.org,
+    linux-m68k@lists.linux-m68k.org,
+    linux-kernel@vger.kernel.org
+Message-Id: <b6112556472c657762f064ec5328f153e3ed03cd.1727926187.git.fthain@linux-m68k.org>
+From: Finn Thain <fthain@linux-m68k.org>
+Subject: [PATCH] m68k: mvme147: Reinstate early console
+Date: Thu, 03 Oct 2024 13:29:47 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com> <20241002-feature_poe_port_prio-v1-1-787054f74ed5@bootlin.com>
-In-Reply-To: <20241002-feature_poe_port_prio-v1-1-787054f74ed5@bootlin.com>
-From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Thu, 3 Oct 2024 08:55:28 +0530
-Message-ID: <CAH-L+nMBstSFBjc-EajsWqp97k58dq2woJ7W-qDYQy3oRGpsvQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 01/12] net: pse-pd: Remove unused
- pse_ethtool_get_pw_limit function declaration
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Kyle Swenson <kyle.swenson@est.tech>, Dent Project <dentproject@linuxfoundation.org>, 
-	kernel@pengutronix.de
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000ec70fd06238a1bb5"
 
---000000000000ec70fd06238a1bb5
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Daniel Palmer <daniel@0x0f.com>
 
-On Wed, Oct 2, 2024 at 9:59=E2=80=AFPM Kory Maincent <kory.maincent@bootlin=
-.com> wrote:
->
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
->
-> Removed the unused pse_ethtool_get_pw_limit() function declaration from
-> pse.h. This function was declared but never implemented or used,
-> making the declaration unnecessary.
->
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+Commit a38eaa07a0ce ("m68k/mvme147: config.c - Remove unused functions"),
+removed the console functionality for the mvme147 instead of wiring it
+up to an early console. Put the console write function back and wire it up
+like mvme16x does so it's possible to see Linux boot on this fine hardware
+once more.
 
-LGTM,
-Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+Cc: Daniel Palmer <daniel@0x0f.com>
+Cc: stable@kernel.org
+Fixes: a38eaa07a0ce ("m68k/mvme147: config.c - Remove unused functions")
+Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+Reviewed-by: Finn Thain <fthain@linux-m68k.org>
+---
+ arch/m68k/kernel/early_printk.c |  3 +++
+ arch/m68k/mvme147/config.c      | 27 +++++++++++++++++++++++++++
+ arch/m68k/mvme147/mvme147.h     |  6 ++++++
+ 3 files changed, 36 insertions(+)
+ create mode 100644 arch/m68k/mvme147/mvme147.h
 
+diff --git a/arch/m68k/kernel/early_printk.c b/arch/m68k/kernel/early_printk.c
+index 3cc944df04f6..d9399be89ad3 100644
+--- a/arch/m68k/kernel/early_printk.c
++++ b/arch/m68k/kernel/early_printk.c
+@@ -14,6 +14,7 @@
+ 
+ 
+ #include "../mvme16x/mvme16x.h"
++#include "../mvme147/mvme147.h"
+ 
+ asmlinkage void __init debug_cons_nputs(const char *s, unsigned n);
+ 
+@@ -24,6 +25,8 @@ static void __ref debug_cons_write(struct console *c,
+       defined(CONFIG_COLDFIRE))
+ 	if (MACH_IS_MVME16x)
+ 		mvme16x_cons_write(c, s, n);
++	else if (MACH_IS_MVME147)
++		mvme147_scc_write(c, s, n);
+ 	else
+ 		debug_cons_nputs(s, n);
+ #endif
+diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
+index e2560c6d10b4..536244a181ef 100644
+--- a/arch/m68k/mvme147/config.c
++++ b/arch/m68k/mvme147/config.c
+@@ -33,6 +33,7 @@
+ #include <asm/mvme147hw.h>
+ #include <asm/config.h>
+ 
++#include "mvme147.h"
+ 
+ static void mvme147_get_model(char *model);
+ extern void mvme147_sched_init(void);
+@@ -177,3 +178,29 @@ static u64 mvme147_read_clk(struct clocksource *cs)
+ 
+ 	return ticks;
+ }
++
++#define SCC_DELAY do { __asm__ __volatile__ ("nop; nop;"); } while (0)
++
++static void scc_write(char ch)
++{
++	do {
++		SCC_DELAY;
++	} while (!(in_8(M147_SCC_A_ADDR) & BIT(2)));
++	SCC_DELAY;
++	out_8(M147_SCC_A_ADDR, 8);
++	SCC_DELAY;
++	out_8(M147_SCC_A_ADDR, ch);
++}
++
++void mvme147_scc_write(struct console *co, const char *str, unsigned int count)
++{
++	unsigned long flags;
++
++	local_irq_save(flags);
++	while (count--)	{
++		if (*str == '\n')
++			scc_write('\r');
++		scc_write(*str++);
++	}
++	local_irq_restore(flags);
++}
+diff --git a/arch/m68k/mvme147/mvme147.h b/arch/m68k/mvme147/mvme147.h
+new file mode 100644
+index 000000000000..140bc98b0102
+--- /dev/null
++++ b/arch/m68k/mvme147/mvme147.h
+@@ -0,0 +1,6 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++
++struct console;
++
++/* config.c */
++void mvme147_scc_write(struct console *co, const char *str, unsigned int count);
+-- 
+2.39.5
 
---=20
-Regards,
-Kalesh A P
-
---000000000000ec70fd06238a1bb5
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
-BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
-JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
-aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
-FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
-T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
-o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
-aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
-YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
-cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
-ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
-HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
-Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
-LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
-zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
-4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
-cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
-u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
-a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
-x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
-bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIKYbriEV/+L5WZVGDL/cFGh5+KrzYVPweLwnXxbqzv1uMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAwMzAzMjU0MVowaQYJKoZIhvcNAQkPMVwwWjAL
-BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBjk9XwPU9w
-sjzDRadNKrPrg8vzFUzAOPWZzcbbH3uQhMpUTtepVBFvWIG+m3q0tSqGCJcMB85AF7LthH7WgC8Y
-d2Xwtq1XJdBpFqkXo+60L2hZEB09tHsHY2q8O9V9DM949lppJntbk3/KYNzzzEklVz0MjdWMEEjA
-m+OHfY77qOKEmGTtzlEaMzxUM4z6OnVCqiN05arp4KVwhBd+n+3zrRhegq30MJJd/WTyUmPOxFH7
-FjHt3RKGvDMG34QLG8tH8qlF+HHnEg4LPctGxQsItxqyA/7W8GMJnGOS6vx3KbR8S+APZcdXquFq
-iTrFvAt6lkwvOcUuBFFVFG3G+mZh
---000000000000ec70fd06238a1bb5--
 
