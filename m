@@ -1,74 +1,47 @@
-Return-Path: <linux-kernel+bounces-349474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D637A98F6B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:04:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 267BC98F6C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9299C283294
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEA981F20407
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2571ABEA1;
-	Thu,  3 Oct 2024 19:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288271AB6ED;
+	Thu,  3 Oct 2024 19:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hjv8EIL/"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZbyYNRi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44ADA1A4F36;
-	Thu,  3 Oct 2024 19:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8344E1A4E8C;
+	Thu,  3 Oct 2024 19:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727982264; cv=none; b=c7me6XCK9i4ZfTCqhSu1NmoMH96RIsZtbiplsIyDhu/MiXTOv5XbkAsPwtOpEjU6QeI+iYLjCIZSGla3UsGcnFOoyyUCPZyXp3sMCwiqxte0apnUPJwCZMEfA9aPvZO2KvRXU07yTSdtFPhedzYiJLxPYckbxBPj2+/8Qbnhx6o=
+	t=1727982546; cv=none; b=N0kTt5SztW2JdKAIsTVuGp7pzQhuqyr8xE51UHc9Vk3vnspzZO2RQ55dU80eDuesqu+Mk+Yi64c6b/EJrb6YlYKhWU1YUfZ0INaB3jakfjHFG5Fbe++hXrHRVFXRSyts1DD9GVZmi0Av0KziW5OBlG1Zerb99fbyJktZuIIsbnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727982264; c=relaxed/simple;
-	bh=95h3/bTRg8PKeuo/I1qGeBlrCewe0f4o27NjXvQTMNA=;
+	s=arc-20240116; t=1727982546; c=relaxed/simple;
+	bh=A1mk0jpO/HJnFIGMhh2gBHVnCw9aebL7CYqdU1X6hUU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JQjMCIkspst+JvFtbM8H4G1nQ0VYZoRxmWRXfL7fS9S28PqsqgJOMd0BftgUi9/84cglxEdH6O2y+6ldwqRIG2tVvgYCQNiq13BxT+5Bb12DXdGu73NJo1FlH/4uAfnt/DHTBh18wyFkQKttY9lZ6+3l5uSFr4vlW9PiLrKA/08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hjv8EIL/; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a99fd4ea26so110874985a.1;
-        Thu, 03 Oct 2024 12:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727982262; x=1728587062; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=aPWVZ9h8Ykb7Ey6pieYHHbCq60X7ntHCLSFMkz5AWkw=;
-        b=Hjv8EIL/w3gHWvP2KWoTVGl5GWIgXs4z4qdHRR7n6Bjp3HSpPHFnBRw8WnT6uhilc+
-         8E7km5GeWwFwtHb09tRk6Nyd3jE9xfnMUfC0LuKDHOFsop6AWdr9fbBdDCbixmknE4HP
-         mg7Nj62qmPFpMKN+SnH7po7kzI8lBsmKKnNqoO7k0IyiQPduCiM+CLs/BN/GMvfo0Jo3
-         76IazYzfpFSy4dzvv44ynHcMmdyPecPAeMzx6yy5I7brcZDGmp+KM1dC3iDkp2OYbIGB
-         8B0NWxobEGF6k8pRMFxOrkQY3zIEIpliw5ydFCjZTWQFymCyGOCpu6ZSNREWont8Eu/u
-         cfOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727982262; x=1728587062;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aPWVZ9h8Ykb7Ey6pieYHHbCq60X7ntHCLSFMkz5AWkw=;
-        b=uDLMrIRzZV6XC0iOzLGJxR/tfHNuHP15vUbnURB7y9901LSrezpeH9qrw+Zp7ZQ56e
-         CxWb5W7+tm9IfwIv4u1hZBRrOf4efZxEGPgCZAzU0s6ygmSGs1Ll9xv4Vb2/cK6gH/AJ
-         NLa66yBVIAaqAVSA8cPL3CmmEGwbmFLNJvQ9TqZULpk5IxiMPRiTGQK+TMlebQPrrpdI
-         Wuj4jfc/zngu1KG/x6al2AU2ID/+kYSSisu33xQS2vqKp8Jo32TzwM8+It33o9mw8bCP
-         UqqTdwp9i68sn34+oH83wRLbWRP218q37n8XkjBEJjU1fzrPpiBEOxEgFUuGEC0jahfr
-         vn7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWZLZ6b3FmhVsgHtlg52p4BE5wLnoTWZ15QIyAG0jkvW19GU5B8UgNejt7X4Qbzc3mGPjuDVMz/2AwPJ/JQdZc=@vger.kernel.org, AJvYcCX1qDKQJTvbONnPYGWGukwt1XwtuY7Rp86qJhBfVSTZ8IYs8VhJ4T5X+nJ5Ynus9SB6N4RwmiIw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTaCY4luKe9RyEnalB2P6oe06FdAsPbvvId/5Ha4pRWr7Dcv7R
-	4O/aipfbXh/6FIVPRCiMarGGkhT7BmDohMHTOcNhCrEEO3KBCpmr
-X-Google-Smtp-Source: AGHT+IHCo03EOF4oZLxl67aMAsd4dpPiswfSx6WN1zvrnrzDKC8Wder1rcB7FTdoEdoJBAMR15bJoQ==
-X-Received: by 2002:a05:620a:24d4:b0:79f:14de:2a09 with SMTP id af79cd13be357-7ae6f421aebmr40148185a.8.1727982261956;
-        Thu, 03 Oct 2024 12:04:21 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae6b39a797sm73015985a.46.2024.10.03.12.04.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 12:04:21 -0700 (PDT)
-Message-ID: <a3892753-6a24-4056-89d1-01698bc50ecb@gmail.com>
-Date: Thu, 3 Oct 2024 12:04:18 -0700
+	 In-Reply-To:Content-Type; b=DU6CFKIrgmfyncjS9puAqzbhOGrLBM/SaxuKM4TZsQWXRY5xDPwOAtklp/T7VSxUX6eo8rh6pwosEQFgmw2CIbsWkb+6Jjm9UiYDhCBh7ZZQG8H0hEqQdgh7Ny0+x0IE0Mp0ylvbERjsuYmlovlYjIP+g91tL5qkjcf2vMvJpHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZbyYNRi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 397E3C4CEC5;
+	Thu,  3 Oct 2024 19:09:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727982546;
+	bh=A1mk0jpO/HJnFIGMhh2gBHVnCw9aebL7CYqdU1X6hUU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VZbyYNRi1lCjV8blElcJnTdLnmfLBhbJsJSoklWSGdL+QYNm5c+S3tEiJNrz8ArAw
+	 xO5kQx9pnEMbsTfI2QP4m/mUzpFeWykvl195M3G0g4IUakSvZDCuEeOsOS6c2DYtb3
+	 7NGdR9Smj/2tQ8wb6LvermzG1+iSjJMMsXNL1FWB1Ek+UD45GGgbufxzKA59enfDxP
+	 N6+6Sd1brk9wH3EfYW4EmLP0Wsr0geK+vcNxDK4ftGp23HhpvN0zAelGktAqBanSSH
+	 KQ3qh60kICSftkZQ/0Dwv2xvwuyEkoaroYusMOUqjP7V8ymA5UGb2R3e6a4QpIeupZ
+	 oiwNNchrhcgQw==
+Message-ID: <e9a05386-54d8-4a18-8b16-4e871de094a4@kernel.org>
+Date: Thu, 3 Oct 2024 21:09:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,65 +49,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: phy: bcm84881: Fix some error handling paths
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- netdev@vger.kernel.org
-References: <3e1755b0c40340d00e089d6adae5bca2f8c79e53.1727982168.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH][next] drm/nouveau: Avoid -Wflex-array-member-not-at-end
+ warning
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <ZsZLFS1CsHkKjw+C@elsanto>
+ <ef5a8e6d-cb97-4872-901c-cf4bbec23be6@embeddedor.com>
+ <30530165-0ea9-4f02-9d8c-e8abc9eda5a7@kernel.org>
+ <035ae74b-5df5-493f-9835-02c1c30ccfcc@kernel.org>
+ <45560975-7215-4205-8d3b-a01009c9b4f5@embeddedor.com>
+From: Danilo Krummrich <dakr@kernel.org>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <3e1755b0c40340d00e089d6adae5bca2f8c79e53.1727982168.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <45560975-7215-4205-8d3b-a01009c9b4f5@embeddedor.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/3/24 12:03, Christophe JAILLET wrote:
-> If phy_read_mmd() fails, the error code stored in 'bmsr' should be returned
-> instead of 'val' which is likely to be 0.
+On 10/3/24 8:44 PM, Gustavo A. R. Silva wrote:
 > 
-> Fixes: 75f4d8d10e01 ("net: phy: add Broadcom BCM84881 PHY driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> On 03/10/24 12:36, Danilo Krummrich wrote:
+>> On 9/13/24 12:23 PM, Danilo Krummrich wrote:
+>>> Hi,
+>>>
+>>> On 9/13/24 10:09 AM, Gustavo A. R. Silva wrote:
+>>>> Hi all,
+>>>>
+>>>> Friendly ping: who can take this, please? 🙂
+>>>
+>>> Usually, that's me. But I thought you might want to send a v2 based on Kees'
+>>> comments?
+>>
+>> Do you plan to follow up on this? I'd prefer if we could get rid of the open-
+>> coded "17". So, maybe just go with the define until we have something like
+>> STACK_FLEX_COUNT()?
+> 
+> Do you mean the following define...?>
+> nv50_hdmi_enable(...)
+> {
+> ...
+> #define data_len    17
+>      DEFINE_RAW_FLEX(struct nvif_outp_infoframe_v0, args, data, data_len);
+> ...rest of function...
+> #undef data_len
+> }
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
---
-Florian
+Yes, it's not great, but I think it's better than having the length in two
+places.
+
+> 
+> Thanks
+> -- 
+> Gustavo
+> 
+
 
