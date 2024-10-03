@@ -1,168 +1,106 @@
-Return-Path: <linux-kernel+bounces-349440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4A398F63D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB2898F657
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9CA1C213E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:36:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51F291C20BEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2851AB505;
-	Thu,  3 Oct 2024 18:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EF71AB53A;
+	Thu,  3 Oct 2024 18:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JD1+5uvQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="XNhVgTjL"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8003C6A8D2;
-	Thu,  3 Oct 2024 18:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053851A705E
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 18:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727980594; cv=none; b=bP2hoCEYhnb77As8TbS00lTzpShUyPqTEccrNjQ5uL6bku3zyli665Ghr7qSjrktnsIKBvw1EWBdeYTbrcPCD6wKTK6VLNtzzq+S4WsZKwGIPkCnz5fajONg10Ku3MdVQsMS2z/mCrQbRndZxHJNYlsNB78IEfmjUJnbFlqaAFs=
+	t=1727980791; cv=none; b=t5QNL3bBcBKchBoG0+z3k4c5Kwx8i5/emKZgfKIpYdxVcfzwMi1TIE5WhmY/K8TBU0aFM8MbaKHXVdrz63nxDQBddV00z1cdlRew8O+Rlwofgx7esKYc6epnTr+XvULRDsHe8l/FPOW8iKfYM2JSWA9OhgPHAXJUplYwIx7muGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727980594; c=relaxed/simple;
-	bh=dhihO2xV9w/h1fDGIWA6yLwQYla31KjxpiyBpYGT8Qw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kZKj63fmcCV4DB4qP9NT84CMQBNIXzlph0HnLvcS3vtz9+qkRnjWly+0z0KAH4n/c9l+u02fwtka3P9kvz1GFWxLsnYJlCx8NyQYQ8BUCUXTp/3aOtgESqQxRH6P7T9IRQI5q6JNLcUegCsNEkLCTiLajK2/d5kxAtUcnElmbqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JD1+5uvQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15656C4CEC5;
-	Thu,  3 Oct 2024 18:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727980594;
-	bh=dhihO2xV9w/h1fDGIWA6yLwQYla31KjxpiyBpYGT8Qw=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=JD1+5uvQfG262fgFaggrvoPxMbuldb7hr1gT7bYOX/4lZwUTtTYetZMGMINcFBgu1
-	 hhY/O8y07jsuT2vYZ69hCBqJCOYFvQBxOyxnpyrPX3Dc74I0OQARZ7SPTHRjQUpBSp
-	 fq7u8lFuX6pifcqjIm654Ij8b1KjHr0VEYPnd7fqPezDf0DvbTFJz3lPtz7W2Otu0E
-	 OMsgfg0vRYBsidoODCHOscM8Es0vHBGsKjuWsVANZEpM4LDaO/f4KEI/N+MDj6ie6n
-	 m2zk0izHjs3RfwxII3SMkIClkMQt88dednfGfk+FsfWEBiB6n6UgHMcmd6CGHhKlpc
-	 av3O6mSLkLTIg==
-Message-ID: <035ae74b-5df5-493f-9835-02c1c30ccfcc@kernel.org>
-Date: Thu, 3 Oct 2024 20:36:30 +0200
+	s=arc-20240116; t=1727980791; c=relaxed/simple;
+	bh=DhOoRBLHjJo6iKb0pokJEyuf1Q43DOLSfMfmpPXYJ6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XbiBhfuwSlhfcKj38oPTruqO3+CNZx76LQDMr7R6F0U9ftDXpqRFjYiic0dgUIV8Nwept9H3/+3hPz0GRuau2/1J7BPnxgzHF02w0wVOjJVYOG7Yq/GyvxUUv9xFRTUu20GgrNCB/5119zbilb2SZCguJsvjAATlh6B5Lf61Jnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=XNhVgTjL; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b833f9b35so11718995ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 11:39:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1727980789; x=1728585589; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8NOfF+iASIgN1enWQgY9wUU6upF2RxXXkbqZYau3r2Q=;
+        b=XNhVgTjL/MD24AMoimalZIIxSyRbDfj8HXs5w8MVirHEh8EFO6wPMmctsXDYVzzaqF
+         TPAkKml+5QcJGfw9Z+n9Ukvifv8Gu55uG5+0zIOd0pdFDWxQ4QMBdWA0LgNq8ki4Je6w
+         5lLa65sGi6X26LzwfdjEcKYvzuvJDZmvESL4VvL+MUjduzfO3UsDOP5Xy56kas8aP5CG
+         veiStkFRAK3/COF/xr1d3OVaoJw+G+6vRUxQgRPH86ywNEN1Lua4HjlJ1QcYTLdm4gPE
+         ANin45X62pmbx0Lj9o+WsrxoFDVQj8kAAuzGWgd7gkq0Ua+KDv8kAL/tz2bboMI8VCVG
+         xHTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727980789; x=1728585589;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8NOfF+iASIgN1enWQgY9wUU6upF2RxXXkbqZYau3r2Q=;
+        b=ISYLSCvhv8E+P03w4ao4Re/mEUdxiTeD8lfoGzQCj1MiL12wg3KDTFHTwx64GiVSi4
+         KFJpMLOjJuLZ/MYSjDOfNB4YSbU057I3u0llQ7UAQEcMlPRye2Pkbo0fPqyA11kSzRcZ
+         TZ2I7Euc82LWp+Eeglt3okCsMelEsQbhRd52zZlYa6tLNjfFVcSD1fJQLIB795tsOz8I
+         yAbsqBiyryqJ/np+m5nreroFAY4gtwREU5LZI/7ESFSI7n48HEtnKs3yXpJFAgyforug
+         FymJ+q0wdqdpvs2By5e7RQxxYCrp3+6T4GUwI93FeANOka+fjW8Fg+hIbXjmav/k7lFf
+         dStw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeDXMVtfJmpEG5LJPuZW7iKIMHwtSrCO4wV387TTQPNeeycUU2JKaCTXQLMzRUZZFDpXZxvzRyx2k2+D8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR8+wY5LX1KVyCAERQYAd/TgIn4uQIgi4IDyZEcTAnZL/tOOI0
+	EHVAIwHgd9Y7chio6f365gk5zJ1Tk+GM2ssdKSmw0bEB1hvT/6mVfDnjQFrBkto=
+X-Google-Smtp-Source: AGHT+IGIHsGZj7FRyxDSBw/wKYL5XsHu8ck09mUVeMUbnS/YK8RyE1dWDEsQDtAZooeWNUfv2dlAew==
+X-Received: by 2002:a17:902:e881:b0:205:5dfe:7be with SMTP id d9443c01a7336-20bfdfeb5b4mr1953015ad.26.1727980789435;
+        Thu, 03 Oct 2024 11:39:49 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beeca2256sm12086035ad.91.2024.10.03.11.39.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 11:39:49 -0700 (PDT)
+Date: Thu, 3 Oct 2024 11:39:47 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Edward Cree <ecree.xilinx@gmail.com>
+Cc: Moon Yeounsu <yyyynoom@gmail.com>, Eric Dumazet <edumazet@google.com>,
+ davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ linux@weissschuh.net, j.granados@samsung.com, judyhsiao@chromium.org,
+ James.Z.Li@dell.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Simon Horman <horms@kernel.org>, linux-sparse@vger.kernel.org
+Subject: Re: [PATCH net] net: add inline annotation to fix the build warning
+Message-ID: <20241003113947.6e605b8c@hermes.local>
+In-Reply-To: <e5cb1a17-72e1-529c-0f46-404dcdb3e5f3@gmail.com>
+References: <20241001193352.151102-1-yyyynoom@gmail.com>
+	<CAAjsZQx1NFdx8HyBmDqDxQbUvcxbaag5y-ft+feWLgQeb1Qfdw@mail.gmail.com>
+	<CANn89i+aHZWGqWjCQXacRV4SBGXJvyEVeNcZb7LA0rCwifQH2w@mail.gmail.com>
+	<CAAjsZQxEKLZd-fQdRiu68uX6Kg4opW4wsQRaLcKyfnQ+UyO+vw@mail.gmail.com>
+	<CANn89i+hNfRjhvpRR+WXqD72ko4_-N+Tj3CqmJTBGyi3SpQ+Og@mail.gmail.com>
+	<CAAjsZQxkH8nmHchtFFPm5VouLEaViR5HTRCCnrP0d9jSF2pGAQ@mail.gmail.com>
+	<e5cb1a17-72e1-529c-0f46-404dcdb3e5f3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/nouveau: Avoid -Wflex-array-member-not-at-end
- warning
-From: Danilo Krummrich <dakr@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <ZsZLFS1CsHkKjw+C@elsanto>
- <ef5a8e6d-cb97-4872-901c-cf4bbec23be6@embeddedor.com>
- <30530165-0ea9-4f02-9d8c-e8abc9eda5a7@kernel.org>
-Content-Language: en-US
-In-Reply-To: <30530165-0ea9-4f02-9d8c-e8abc9eda5a7@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 9/13/24 12:23 PM, Danilo Krummrich wrote:
-> Hi,
-> 
-> On 9/13/24 10:09 AM, Gustavo A. R. Silva wrote:
->> Hi all,
->>
->> Friendly ping: who can take this, please? 🙂
-> 
-> Usually, that's me. But I thought you might want to send a v2 based on Kees'
-> comments?
+On Thu, 3 Oct 2024 17:11:26 +0100
+Edward Cree <ecree.xilinx@gmail.com> wrote:
 
-Do you plan to follow up on this? I'd prefer if we could get rid of the open-
-coded "17". So, maybe just go with the define until we have something like
-STACK_FLEX_COUNT()?
+> On 03/10/2024 16:33, Moon Yeounsu wrote:
+> > On 03/10/2024 15:19, Eric Dumazet wrote:  
+> >> It also does not know about conditional locking, it is quite useless.  
+> > So... What do you think about who wants to send the patch to silence
+> > the Sparse's warning message, nevertheless?  
 
-> 
-> - Danilo
-> 
->>
->> Thanks
->> -Gustavo
->>
->> On 21/08/24 22:16, Gustavo A. R. Silva wrote:
->>> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
->>> a flexible structure where the size of the flexible-array member
->>> is known at compile-time, and refactor the rest of the code,
->>> accordingly.
->>>
->>> So, with this, fix the following warning:
->>>
->>> drivers/gpu/drm/nouveau/dispnv50/disp.c:779:47: warning: structure containing 
->>> a flexible array member is not at the end of another structure [-Wflex-array- 
->>> member-not-at-end]
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
->>> ---
->>>   drivers/gpu/drm/nouveau/dispnv50/disp.c | 20 +++++++++-----------
->>>   1 file changed, 9 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/ 
->>> nouveau/dispnv50/disp.c
->>> index eed579a6c858..ddddc69640be 100644
->>> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
->>> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
->>> @@ -774,11 +774,9 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct 
->>> nouveau_crtc *nv_crtc,
->>>       struct drm_hdmi_info *hdmi = &nv_connector->base.display_info.hdmi;
->>>       union hdmi_infoframe infoframe = { 0 };
->>>       const u8 rekey = 56; /* binary driver, and tegra, constant */
->>> +    DEFINE_RAW_FLEX(struct nvif_outp_infoframe_v0, args, data, 17);
->>> +    const u8 data_len = 17; /* same length as in DEFINE_RAW_FLEX above. */
->>>       u32 max_ac_packet;
->>> -    struct {
->>> -        struct nvif_outp_infoframe_v0 infoframe;
->>> -        u8 data[17];
->>> -    } args = { 0 };
->>>       int ret, size;
->>>       max_ac_packet  = mode->htotal - mode->hdisplay;
->>> @@ -815,29 +813,29 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct 
->>> nouveau_crtc *nv_crtc,
->>>           return;
->>>       /* AVI InfoFrame. */
->>> -    args.infoframe.version = 0;
->>> -    args.infoframe.head = nv_crtc->index;
->>> +    args->version = 0;
->>> +    args->head = nv_crtc->index;
->>>       if (!drm_hdmi_avi_infoframe_from_display_mode(&infoframe.avi, 
->>> &nv_connector->base, mode)) {
->>>           drm_hdmi_avi_infoframe_quant_range(&infoframe.avi, &nv_connector- 
->>> >base, mode,
->>>                              HDMI_QUANTIZATION_RANGE_FULL);
->>> -        size = hdmi_infoframe_pack(&infoframe, args.data, 
->>> ARRAY_SIZE(args.data));
->>> +        size = hdmi_infoframe_pack(&infoframe, args->data, data_len);
->>>       } else {
->>>           size = 0;
->>>       }
->>> -    nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_AVI, 
->>> &args.infoframe, size);
->>> +    nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_AVI, args, 
->>> size);
->>>       /* Vendor InfoFrame. */
->>> -    memset(&args.data, 0, sizeof(args.data));
->>> +    memset(args->data, 0, data_len);
->>>       if (!drm_hdmi_vendor_infoframe_from_display_mode(&infoframe.vendor.hdmi,
->>>                                &nv_connector->base, mode))
->>> -        size = hdmi_infoframe_pack(&infoframe, args.data, 
->>> ARRAY_SIZE(args.data));
->>> +        size = hdmi_infoframe_pack(&infoframe, args->data, data_len);
->>>       else
->>>           size = 0;
->>> -    nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_VSI, 
->>> &args.infoframe, size);
->>> +    nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_VSI, args, 
->>> size);
->>>       nv_encoder->hdmi.enabled = true;
->>>   }
->>
-
+In my experience, conditional locking is often a cause of bugs.
 
