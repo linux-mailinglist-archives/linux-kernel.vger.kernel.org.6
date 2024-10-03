@@ -1,300 +1,239 @@
-Return-Path: <linux-kernel+bounces-348894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903C598ED41
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:45:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C44E98ED46
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 546A4281B53
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35C7A282187
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6D2152160;
-	Thu,  3 Oct 2024 10:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7158A15098A;
+	Thu,  3 Oct 2024 10:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="4V9hIx4j"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2077.outbound.protection.outlook.com [40.107.93.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVTYgZhj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0DF13B586;
-	Thu,  3 Oct 2024 10:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727952338; cv=fail; b=TDqWbMcuzbvPhHZV3D9jjx0VtZr9DNm9TfC5G6oNV4vbwTMaEMK3HsNqtRuqyY7Y32/L7VRTRrQCtfR9kxpLAEjxgqQwxWrv+5+xWR9s+dpRD+vcfxCuFJhhYBSWVrZXLZrgycm6XP+uK20IgtmRC5C7P7JbmNe2mc7hNt7ZCms=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727952338; c=relaxed/simple;
-	bh=4ZsCKnJ4bdirs/XCNwMwqD1GzpU2mpWBoJfFJ0elJ2w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HkSFI9aK0aWYOARTiycU6Es6/CfE7DWJsjzwDPLL1plmqlkzx7ot9Nc1EmEWpTpuon8pj9rNmB34oyzm41FOkKpkWmLYwRm/2Td3R2sw1leP8Qi/dbdD1IxPvl9FlgFWr2biTZHdYRv7oms3kCVS5esFfFKHDg/Qzj3caFUWctA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=4V9hIx4j; arc=fail smtp.client-ip=40.107.93.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tMKtifs+XU2hQUXYXt1qDffso12jrHgTHhRiK5/ZS+IGS+pK3QnVZWoAnAeevM104hmz/37V7G0FV3KAa8YlT+4eOvEvXqEBemkcizcYTjqrl8TwCQupcnhxTEgCg2IEGRxOAwUF7NxxiUxeTIMiYBUXUSUfLDqQxbs8mdr3qehvn2NdQG5BXrlGWDI0PJnLLKFEUB56tHFWrtDXrwaI396yUDRh+dnl1JAmZtLx98ftRM0wZwiDKl8tI3h6m2V/yLdmJcssC+OTOXgwByILzlJsTtgtCEDwt1o/05ULV3f9Vxvdl8nDwOV23jzakvXoCtLF3cgEWmRefKYG/grI0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5rdfmWh31ZoxQ7wieTJjk+bV4kfW2pC/+C2Qn/QQ/jY=;
- b=n6KLeWULbFwwpn83DlwAusf7W7dgrEhzV7GntlVsSmXXJ+cawWGfMrdSbfkFo2pnyWY3d2uxQ0eavFvBjdhFhO+0M9ZLeTBoK4K3O1GF+X4izNGsd9FjGS4Co/EQj5AO6LfAZecfV2w8CxuQcf+nEgST6RRVk7QcjkUgMQGgl2qT1pC0SLWlToMMe7fCRnRIsYk7dgoxnQZEkc+Ukd4AyV3Tqpn7VZy8fKwdz6WZUY4UZzKYIkV8AgKxPPBtxOJs8bhJn373Z/BLWM2U81+ax3K+vF5xCac85faHnowqVoWU60I1zMifaL62JV1IgsEGKAR4qjZYQGUQx2gGx+mgBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5rdfmWh31ZoxQ7wieTJjk+bV4kfW2pC/+C2Qn/QQ/jY=;
- b=4V9hIx4jIm5EYHrhbgcmo134mURZieJRBlODIvQcF184mwSVZqLMVQJJDitqrzBdXDOPQxYVAf4d8x785DlBqTQGrmpgLFy25NupJFlJsF+fbZ4A8+waLPIQ/w9jkjNPsVXKxCJMAgRauS7acp7InlSyRoVZpTtUlXBqBx9Mpc+yFNhGXU57n6t9KoOTZNjIAYNs78cs6cPJtqVBqRwBzXFLZc3A0tJDIYqfLG6kfQqqA/iBGq7WcokcDkGw+HXrH99s9NqpP3DTZVjPP0eEwxf874QAqccnrehWqBnNgBeiM9nDiRkBTRMdvguLtyYtinh1MNwLUe317jT4g+kyQg==
-Received: from CO1PR11MB4771.namprd11.prod.outlook.com (2603:10b6:303:9f::9)
- by MW5PR11MB5884.namprd11.prod.outlook.com (2603:10b6:303:1a0::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Thu, 3 Oct
- 2024 10:45:33 +0000
-Received: from CO1PR11MB4771.namprd11.prod.outlook.com
- ([fe80::bfb9:8346:56a5:e708]) by CO1PR11MB4771.namprd11.prod.outlook.com
- ([fe80::bfb9:8346:56a5:e708%2]) with mapi id 15.20.8026.016; Thu, 3 Oct 2024
- 10:45:33 +0000
-From: <Divya.Koppera@microchip.com>
-To: <o.rempel@pengutronix.de>, <andrew@lunn.ch>, <hkallweit1@gmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <f.fainelli@gmail.com>
-CC: <rmk+kernel@armlinux.org.uk>, <kernel@pengutronix.de>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux@armlinux.org.uk>, <devicetree@vger.kernel.org>
-Subject: RE: [PATCH net-next v4 2/2] net: phy: Add support for PHY timing-role
- configuration via device tree
-Thread-Topic: [PATCH net-next v4 2/2] net: phy: Add support for PHY
- timing-role configuration via device tree
-Thread-Index: AQHbE9T4y7pra0XwQ0iEI8qLzFg6qbJ02gBw
-Date: Thu, 3 Oct 2024 10:45:33 +0000
-Message-ID:
- <CO1PR11MB4771369283470D35EB5634A7E2712@CO1PR11MB4771.namprd11.prod.outlook.com>
-References: <20241001073704.1389952-1-o.rempel@pengutronix.de>
- <20241001073704.1389952-3-o.rempel@pengutronix.de>
-In-Reply-To: <20241001073704.1389952-3-o.rempel@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-Mentions: o.rempel@pengutronix.de
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO1PR11MB4771:EE_|MW5PR11MB5884:EE_
-x-ms-office365-filtering-correlation-id: f7c20a0f-2b93-4560-cffd-08dce3988200
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB4771.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?RnaDcCHXNc8WGVCmfLwm2jkSEJufWAatSipmiYnIENSIdRGIvSrlgHGUeNqz?=
- =?us-ascii?Q?NMig6ntRj5NAlErrmziKCMcvL418YdjBQ7SOcoyqLZpG1SgYCnbRq2G1QDBp?=
- =?us-ascii?Q?BN3adCs71FQN+YgPZ2NeVEakP0QNTYZHMysx/gGOLIqfjOWOrxtomqHg9w9j?=
- =?us-ascii?Q?53Zw9/GkyPWoIGXVC68azIK33WKQZPmoPoLX3pI5yiNQqAVMrdyUIPzq+f8/?=
- =?us-ascii?Q?h6yIeQpv7d5D/rS2RIUOufVvnxzEBDOlejsq/cesu7T2vMZapc8+/b6JF5Nx?=
- =?us-ascii?Q?jc3WFSAjGjiCqjgXx0/UzH5HBSxLlMUI79HABuZ2+IbjQ5veANgX2ywAj3q8?=
- =?us-ascii?Q?gytDCawScM3HYfSGY5pKNjwZMnR32HtFokppH7ktEG7nFJH5wpXsEF/X/tLU?=
- =?us-ascii?Q?cKuFVwiVjxGhDAIZv9YfNqiDZ2+bh9RgFkwUS4vafgcc1SDxfAbJtFGrzaZw?=
- =?us-ascii?Q?gKzLrZPvBvfIjLnh3VDQS9/Nztq7JkKfcQRyNrjCwmTtLurW0Kxv6oNgca7J?=
- =?us-ascii?Q?5wGd03EjkgNHxTGf4X8TZhN9jjx3dyfs8oLsXfY1dWh09AG/u8amBwoAZBMt?=
- =?us-ascii?Q?n2xryTrYtBlA8l3X77Wmpw6UhU+MT1zwOChaB7O+J1ZRlWHc6bFI1d1bEdwh?=
- =?us-ascii?Q?dEugks04jJbEsljIWulmID199WOFBYeqjaHpyI053xUlXkz1kBtXx0yl3saR?=
- =?us-ascii?Q?WxEjnEerztoa3GzUxVlxeushlOZiV1/DrxjKRDISbcu+uXY9KwakCAxGwBx0?=
- =?us-ascii?Q?YiOXLieCI+97Z/6O6M5hc3/TOHNytGQm0aD1YDI/MWmG/+O6xK6rUaUBz55+?=
- =?us-ascii?Q?vof9eyRNFAsdWC/ctDiF4GrpeoWi0rZEoXN7R7telh6ZQf+7m9SP2oReamHW?=
- =?us-ascii?Q?Mi2ILtJIcuV5cFNwSHqnZv1RxoHfbLkcihxrqreOebpn/9F8g8lnrO9wZvy+?=
- =?us-ascii?Q?B2O7G9B5ZniFNNf8jcCYbemQOXAMOT1g61zdqWyJZQw69FWgRhYdROcPQkxD?=
- =?us-ascii?Q?JZIWCCjR5TCsP76l35zrf2hvC1naky4AkIbKaZOPkb+rpZmXFtKl2jiol7H3?=
- =?us-ascii?Q?IopWuogcTSyFFr97UiKR9lk0viAhdwX4zvwczv7VA03Br05c7PkUBFSg//pF?=
- =?us-ascii?Q?kuNAT3afvclQQ2NZFsuWB8VFCRw1qMVoRGFTqB0HVcgY+7m+1Bo6UO+jXZv9?=
- =?us-ascii?Q?9yGNppdywRdESln1YcZjwLXkiWeyYiumxIux4tr8L+EF6luInjwJu6ICFmWZ?=
- =?us-ascii?Q?zTHnaB3mWcayhZMtdA3Ir6FTwwihIXowvwjbBuDDPs3Os3IHEe9xIt/9IsiH?=
- =?us-ascii?Q?psp9CFHJMVAidNjRBAz9YDZRQRFEwMR2dJ+dcgYV+x93K1LNmjwFT+iGOW9j?=
- =?us-ascii?Q?mFLUb8I=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?vGxpSAQQFUiiSDgNPAdFb3Q7uBUC8MnMDG9f/dpiAoCIzyCqBS15W8YuF8kP?=
- =?us-ascii?Q?IG2xXxZhiBXLu6c/2Om+XaTMLWrUKLqsxdYwIPeuYfYnevwZhVO9kRG0TrU8?=
- =?us-ascii?Q?Ed8+XOb3Gib9gLz6SDGQhoYWqXjnKFffjj7lsfi/aCxN7VGdCsuc2HJf/iog?=
- =?us-ascii?Q?7ByRm54g4cLsclE+qEcbdRH3R4UitWL+BV44M9mksNsq8SNwMQMWojzPR76M?=
- =?us-ascii?Q?u4H1ZlL2W8fezTES9oJfBMu7Lp37cEaOXKgNQMzlDAMTTytuFUpz3ohMQBjh?=
- =?us-ascii?Q?2Y4lzMjI8Rnq7nHnT/HuKXOBgAI0oEDPJvlV/oVnUz7DLrJUFYnMVBK9F5tF?=
- =?us-ascii?Q?4B4GrV4aftYtQOxjtvuztSpyqpsI+8KlINZBlIEcOZt0gbDoT37+hIDiihpw?=
- =?us-ascii?Q?akupndiXyjgkoKkq21hsUSJlLd7K93IjGCSYJscSur0U7xGPsmqnofLompoi?=
- =?us-ascii?Q?MH0mTcibjGSkfXMrcw2qAcovSQuviLQTPv8Nv+XqBfzk2r7nTl6bDdMh2T+6?=
- =?us-ascii?Q?PXpuMknKM386hUrCmuRQ0kkzGr2p8xAnyyk1jQFvTdxigcg4y+q4qpGTg3bw?=
- =?us-ascii?Q?f0+l4jgsKRBhOl2oaqRsukwnGQrU8XL2Wj5OZWKMJxZM6lfptXAnvK3Atcfz?=
- =?us-ascii?Q?e1QXIkzVdIyYPrEAU7dV6zUsjciNKL7WRzGKy3zTyAo+udK0KX0RBzXsgi+T?=
- =?us-ascii?Q?1lXH4HrjdmAzJV2kIbhbxKr9X3EReruZvXnXiI49JnGFNnSEqE/ced5/8ldu?=
- =?us-ascii?Q?1AnTUSnN1AaKWcSNWeeKnN1Mqo0Is7nJ9+nktrP2ct35ffu8IGhLCJPu5u/e?=
- =?us-ascii?Q?IMlJJF5rdHOtvsmUR50O4PXwcuKUnWdTBbTvmVxnB1cF9sP7gUJYuJ94xm8l?=
- =?us-ascii?Q?nitETxEOo1UHQ/tElVa40MI/lgs4QmD/TGDT/kinC39bfAHSwmx0ODQT9mnX?=
- =?us-ascii?Q?k7iIisegVfx7PnC+e5n4iHxmNcvjgZLlf9STjTghoIw6tASxTA9Bv4gOYZ/D?=
- =?us-ascii?Q?jG+rm9ey4hcawq9ik34nAr9aqld5auTFopwafxO/b4dHfJPqvrQRBhTsYtnT?=
- =?us-ascii?Q?g6FzPrDVtnPxpY7b/5RHp2uO03UAkB5rF8XM08DbkVHtsxlIXPKD45drENl0?=
- =?us-ascii?Q?MWVuhCoXJGk4e1t97weSaA96XDUuZhRu+UiAywq7yeV+y2pBQ80Kzb/1sX6l?=
- =?us-ascii?Q?yP8LRUHHYONcXg3LH8auS5xc0wfUooNinqTak/MCGbBglQQzcjuxDp3VYAbz?=
- =?us-ascii?Q?v7w6yQGmMNcXmoV61iXEuIYS6iscgCO6VGkn6GGdGcPuUVNwZ6fVuWf8paYY?=
- =?us-ascii?Q?PTIJQuZzcu3z9rhQEytruDFCABCCii68x1OSUwtHGUTJKZPduZMh2zl1CMrC?=
- =?us-ascii?Q?TIWuMr9sUg3vTJqwviDx5MCsuACT1DxBOcMmH6rVvwAJwJ2gL0VldSrEaokG?=
- =?us-ascii?Q?34HGohC50vZE0pbnlVeUl0jPkXKQVPKI2aLKmb87WJeGV9teyFc/LvAbdTt/?=
- =?us-ascii?Q?F8pvlHo6rbPLW++IXHJKmOaJNjuWYycKmQQv0Nf+HRqTpsin7iYXrjZT0YXM?=
- =?us-ascii?Q?Qh4t3FKCQtTKe53no+nnKosISfG3bs6t9i6G7QzBt/pdtS0ZpS/3sZfb6Gki?=
- =?us-ascii?Q?xg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9990B3D68;
+	Thu,  3 Oct 2024 10:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727952381; cv=none; b=eZfeSlmKODfZDC32HTzgp/bZVEQWzY5Y9Y9q2FxFYP9jA+RdxyvtNvY8uktPsuSPXz6gIFBY+LBpWKsxZS3WJMXzf9xx53t90hq36oHfZkThnrt4/o6POmHHg8pKVoBIFlQoIM+XDkgul4ANhyff9VNG8QuNKppg/j0UGtam5wM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727952381; c=relaxed/simple;
+	bh=m9/K6VvhKFRFfOMebN3I5d+4T6RrW1K2nP92qcHvI6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YHsmVe+zCWcZFnvq63RhGgSl5Qrm/f4lbgy7eDeXcBiFhoHsCkU1qtJE10cfkBm0KUGReGsgTYeDM1vnELD30o1aZo68KhqyXbjL8j2YIRDcDYMVnzryhgATXDPiPf9Cr5pUqSwxXVzaWXzSylQQelTt3cHrGI0wShzw9K+VpEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qVTYgZhj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 132C5C4CEC5;
+	Thu,  3 Oct 2024 10:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727952381;
+	bh=m9/K6VvhKFRFfOMebN3I5d+4T6RrW1K2nP92qcHvI6A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qVTYgZhjNCrm6XEtRVAvqp8LGSFWQsn68WS1I68rxULa62NDQHN45W2HAGtGnZF+V
+	 n8TWskvwAXqxF8mLnG/z8+Pb0BUVlDrymNvVvYW20yE3+02GDGNxDHPA+XVxXrI12E
+	 pM/g9eyFGc/uOnMzA7WNcCqkgQAM8qfrLTSQUl7KcTtPnNrw8UNGwC73yjM0ZENW9W
+	 9j2fIvsN2mNXlvmrdfPLlXaLhrKLyjgSde+L/euq+2mBrmFTtDvCC0Q0ufduWQm4Rz
+	 JuwecyTgFEB3yrmkmBEoBwVXfU5GTasKyPAlNU5iua3xQrFqTSwItUcYTO9qdgPqBb
+	 2FXjOksl5l8kA==
+Message-ID: <82db5037-bbd3-4005-bde9-02df1bf4c475@kernel.org>
+Date: Thu, 3 Oct 2024 12:46:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB4771.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7c20a0f-2b93-4560-cffd-08dce3988200
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2024 10:45:33.5197
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rfaFd6ZmIDEi7trhY6PE01Y0tu7TOROrvXC0G0g//PAhP4nn7mwY/grc3hQVetHpil96j2KQGiyJfco/sAdiEhlYsLdNdepK5ODcHwuMTeM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR11MB5884
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m-anatop: support spread
+ spectrum clocking
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
+ <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
+ <566859c1-a397-4465-987e-0682b07a703e@kernel.org>
+ <CABGWkvqqg-PGAZTCz=MMLRx5F93jaN_=z8zJt1sDd3PHXd80PQ@mail.gmail.com>
+ <6c3e6071-822f-4230-b76b-276330de07ef@kernel.org>
+ <CABGWkvrU507BHoP94Y7fEyFr=chuuy3o=oBHtuWRvwTw3GnxXw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CABGWkvrU507BHoP94Y7fEyFr=chuuy3o=oBHtuWRvwTw3GnxXw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi @Oleksij Rempel
+On 01/10/2024 08:29, Dario Binacchi wrote:
+> On Mon, Sep 30, 2024 at 8:45 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 29/09/2024 22:00, Dario Binacchi wrote:
+>>>>
+>>>>
+>>>>> +  properties:
+>>>>> +    compatible:
+>>>>> +      contains:
+>>>>> +        enum:
+>>>>> +          - fsl,imx8mm-anatop
+>>>>> +
+>>>>> +then:
+>>>>> +  properties:
+>>>>> +    fsl,ssc-clocks:
+>>>>
+>>>> Nope. Properties must be defined in top-level.
+>>>>
+>>>>> +      $ref: /schemas/types.yaml#/definitions/phandle-array
+>>>>> +      description:
+>>>>> +        The phandles to the PLLs with spread spectrum clock generation
+>>>>> +        hardware capability.
+>>>>
+>>>> These should be clocks.
+>>>
+>>> Sorry, but I can't understand what you're asking me.
+>>> Could you kindly explain it to me in more detail?
+>>
+>> You added new property instead of using existing one for this purpose:
+>> 'clocks'.
+> 
+>>
+>>
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
+> I added this new property specifically for managing spread-spectrum.
+> Indeed, not all clocks/PLLs
+> managed by the node/peripheral support spread-spectrum, and the added
+> properties specify
+> parameters for enabling and tuning SSC for each individual PLL based
+> on the index of each list.
+> If I were to use the 'clocks' property and add a clock to this list
+> that does not support SSC, IMHO
+> the pairings would be less clear.
 
-> -----Original Message-----
-> From: Oleksij Rempel <o.rempel@pengutronix.de>
-> Sent: Tuesday, October 1, 2024 1:07 PM
-> To: Andrew Lunn <andrew@lunn.ch>; Heiner Kallweit
-> <hkallweit1@gmail.com>; David S. Miller <davem@davemloft.net>; Eric
-> Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo
-> Abeni <pabeni@redhat.com>; Rob Herring <robh@kernel.org>; Krzysztof
-> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>;
-> Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; Russell King
-> <rmk+kernel@armlinux.org.uk>; kernel@pengutronix.de; linux-
-> kernel@vger.kernel.org; netdev@vger.kernel.org; Russell King
-> <linux@armlinux.org.uk>; devicetree@vger.kernel.org
-> Subject: [PATCH net-next v4 2/2] net: phy: Add support for PHY timing-rol=
-e
-> configuration via device tree
->=20
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e
-> content is safe
->=20
-> Introduce support for configuring the master/slave role of PHYs based on =
-the
-> `timing-role` property in the device tree. While this functionality is ne=
-cessary
-> for Single Pair Ethernet (SPE) PHYs (1000/100/10Base-T1) where hardware
-> strap pins may be unavailable or incorrectly set, it works for any PHY ty=
-pe.
->=20
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> ---
-> changes v4:
-> - add "Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>"
-> changes v3:
-> - rename master-slave to timing-role
-> ---
->  drivers/net/phy/phy-core.c   | 33 +++++++++++++++++++++++++++++++++
->  drivers/net/phy/phy_device.c |  3 +++
->  include/linux/phy.h          |  1 +
->  3 files changed, 37 insertions(+)
->=20
-> diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c inde=
-x
-> 1f98b6a96c153..97ff10e226180 100644
-> --- a/drivers/net/phy/phy-core.c
-> +++ b/drivers/net/phy/phy-core.c
-> @@ -412,6 +412,39 @@ void of_set_phy_eee_broken(struct phy_device
-> *phydev)
->         phydev->eee_broken_modes =3D broken;  }
->=20
-> +/**
-> + * of_set_phy_timing_role - Set the master/slave mode of the PHY
-> + *
-> + * @phydev: The phy_device struct
-> + *
-> + * Set master/slave configuration of the PHY based on the device tree.
-> + */
-> +void of_set_phy_timing_role(struct phy_device *phydev) {
-> +       struct device_node *node =3D phydev->mdio.dev.of_node;
-> +       const char *master;
-> +
-> +       if (!IS_ENABLED(CONFIG_OF_MDIO))
-> +               return;
-> +
-> +       if (!node)
-> +               return;
-> +
-> +       if (of_property_read_string(node, "timing-role", &master))
-> +               return;
-> +
-> +       if (strcmp(master, "force-master") =3D=3D 0)
-> +               phydev->master_slave_set =3D MASTER_SLAVE_CFG_MASTER_FORC=
-E;
-> +       else if (strcmp(master, "force-slave") =3D=3D 0)
-> +               phydev->master_slave_set =3D MASTER_SLAVE_CFG_SLAVE_FORCE=
-;
-> +       else if (strcmp(master, "prefer-master") =3D=3D 0)
-> +               phydev->master_slave_set =3D
-> MASTER_SLAVE_CFG_MASTER_PREFERRED;
-> +       else if (strcmp(master, "prefer-slave") =3D=3D 0)
+You duplicate property with argument "pairings shall match". Well, I am
+not happy with the duplication. Clocks have specific order, thus it is
+explicit which one needs tuning. Your other properties can match them as
+well, just index from clocks is offset...
 
-I would suggest to use "preferred" instead of "prefer" to be in sync with e=
-xisting macros.
 
-> +               phydev->master_slave_set =3D
-> MASTER_SLAVE_CFG_SLAVE_PREFERRED;
-> +       else
-> +               phydev_warn(phydev, "Unknown master-slave mode %s\n",
-> +master); }
-> +
->  /**
->   * phy_resolve_aneg_pause - Determine pause autoneg results
->   *
-> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-> index 560e338b307a4..4ccf504a8b2c2 100644
-> --- a/drivers/net/phy/phy_device.c
-> +++ b/drivers/net/phy/phy_device.c
-> @@ -3608,6 +3608,9 @@ static int phy_probe(struct device *dev)
->          */
->         of_set_phy_eee_broken(phydev);
->=20
-> +       /* Get master/slave strap overrides */
-> +       of_set_phy_timing_role(phydev);
-> +
->         /* The Pause Frame bits indicate that the PHY can support passing
->          * pause frames. During autonegotiation, the PHYs will determine =
-if
->          * they should allow pause frames to pass.  The MAC driver should=
- then
-> diff --git a/include/linux/phy.h b/include/linux/phy.h index
-> a98bc91a0cde9..ff762a3d8270a 100644
-> --- a/include/linux/phy.h
-> +++ b/include/linux/phy.h
-> @@ -1260,6 +1260,7 @@ size_t phy_speeds(unsigned int *speeds, size_t size=
-,
->                   unsigned long *mask);
->  void of_set_phy_supported(struct phy_device *phydev);  void
-> of_set_phy_eee_broken(struct phy_device *phydev);
-> +void of_set_phy_timing_role(struct phy_device *phydev);
->  int phy_speed_down_core(struct phy_device *phydev);
->=20
->  /**
-> --
-> 2.39.5
->=20
+> 
+> AFAIK the confusion arises from the fact that this node, which is a
+> clock controller, was used only
+> to export its base address, but perhaps it should have also exported
+> its clocks, which the other
+> clock controller does, as shown in:
+> Documentation/devicetree/bindings/clock/imx8m-clock.yaml.
 
-LGTM.
+You use it as clocks, so I don't understand this comment.
 
-Reviewed-by: Divya Koppera <divya.koppera@microchip.com>
+> If I consider its 'compatible' entries:
+> - 'fsl,imx8mm-ccm' -> drivers/clk/imx/clk-imx8mm.c
+> - 'fsl,imx8mn-ccm' -> drivers/clk/imx/clk-imx8mn.c
+> - 'fsl,imx8mp-ccm' -> drivers/clk/imx/clk-imx8mp.c
+> the probe function, triggered by fsl,imx8m{m,n,p}-ccm (and not
+> fsl,imx8m{m,n,p}-anatop),
+> retrieves the anatop node solely to get its base address, also
+> registering its clocks, which
+> I would have expected to be registered by another driver, specifically
+> the one for anatop:
+> 
+> static int imx8mn_clocks_probe(struct platform_device *pdev)
+> {
+> struct device *dev = &pdev->dev;
+> struct device_node *np = dev->of_node;
+> void __iomem *base;
+> struct imx_pll14xx_ssc pll1443x_ssc;
+> int ret;
+> 
+> clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
+>                            IMX8MN_CLK_END), GFP_KERNEL);
+> if (WARN_ON(!clk_hw_data))
+>     return -ENOMEM;
+> 
+> clk_hw_data->num = IMX8MN_CLK_END;
+> hws = clk_hw_data->hws;
+> 
+> hws[IMX8MN_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0);
+> hws[IMX8MN_CLK_24M] = imx_get_clk_hw_by_name(np, "osc_24m");
+> hws[IMX8MN_CLK_32K] = imx_get_clk_hw_by_name(np, "osc_32k");
+> hws[IMX8MN_CLK_EXT1] = imx_get_clk_hw_by_name(np, "clk_ext1");
+> hws[IMX8MN_CLK_EXT2] = imx_get_clk_hw_by_name(np, "clk_ext2");
+> hws[IMX8MN_CLK_EXT3] = imx_get_clk_hw_by_name(np, "clk_ext3");
+> hws[IMX8MN_CLK_EXT4] = imx_get_clk_hw_by_name(np, "clk_ext4");
+> 
+> np = of_find_compatible_node(NULL, NULL, "fsl,imx8mn-anatop");
+> base = devm_of_iomap(dev, np, 0, NULL);
+> of_node_put(np);
+> if (WARN_ON(IS_ERR(base))) {
+>     ret = PTR_ERR(base);
+>     goto unregister_hws;
+> }
+> 
+> hws[IMX8MN_AUDIO_PLL1_REF_SEL] = imx_clk_hw_mux("audio_pll1_ref_sel",
+> base + 0x0, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+> hws[IMX8MN_AUDIO_PLL2_REF_SEL] = imx_clk_hw_mux("audio_pll2_ref_sel",
+> base + 0x14, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+> hws[IMX8MN_VIDEO_PLL_REF_SEL] = imx_clk_hw_mux("video_pll_ref_sel",
+> base + 0x28, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+
+Sorry, I am not going to dwell into drivers code. We talk here about
+bindings and new properties.
+
+Best regards,
+Krzysztof
 
 
