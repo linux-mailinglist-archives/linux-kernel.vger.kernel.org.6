@@ -1,158 +1,128 @@
-Return-Path: <linux-kernel+bounces-349086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A94098F09F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:40:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB90F98F09C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96135B24B68
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:40:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1974CB23CE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF7D1A01D8;
-	Thu,  3 Oct 2024 13:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC9B19CC2F;
+	Thu,  3 Oct 2024 13:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="f6DMs9mc"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="IWyIHgdE"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D3E19D8A0
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 13:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FE319C56B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 13:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727962739; cv=none; b=rFaKJN1Rp3R206+e+Nex3pZMviexm/DAD9rAxIg3DVAIPKn5QXtMm5YkMn3wjv1eJNFbGP09sNQQs5SRSAgWNcgvv1OqSyGKyaFKJBHtZ9rOie7Unlgq+wG4gVV6wgnVS9j0RKexBxE5uLi4YtFaUDXJDhpyLM3/W3c640ikQ3I=
+	t=1727962733; cv=none; b=pEbsaw8k2n63r9nMdwMWFfiS1QdixaYB4Xx90RJ4Oj187y7CHQLvC5i/PErqEawFpZL4Glf3k0NUqkqihrZRztpmKi2fATVZHLl7xMkg60VbC4IidS7rOaaZqiQmbJHg/rF+OHJ0cMARBdODH98MkdGDLFZDkiAwTqss8tpfJI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727962739; c=relaxed/simple;
-	bh=826LdXrPRb+3ozgbEDIcrHwdnXdgoM0nE5i1C9+gds0=;
+	s=arc-20240116; t=1727962733; c=relaxed/simple;
+	bh=2yRHoyoZovFhtKX/Tu0sqMjpkMS+w41Nsd0gnTQ9W0o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=az9pdrysMVzeOIdwQ/MVsv/SctkKk0vXMjYyGJfuJsbutnD+uswlgHSBvYYfyExra0yFqnjMCHk1+QLGIDA7xBfpPSdO+medsiZUhj2vwTtR2OIzVuulpzv+8g7JVxymZDkvipERx0Cwkchqgh0yMCmoeuOwLv/u2E6yEp9UDjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=f6DMs9mc; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fpc (unknown [10.10.165.16])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 3F68540A1DCA;
-	Thu,  3 Oct 2024 13:38:55 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 3F68540A1DCA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1727962735;
-	bh=KOWqdSYd0HRIuG/HzcyDAFKhPmaylzN0roNXviZpNtw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f6DMs9mcJlTEHUqLTs5QPEMUO7gN0VYHvdDmd/FxOybqbeRUBvUpIagjui8SOv9vZ
-	 0DYyc/90v8TpSAxjE75gy5VUGqVGVkNcXu27F6n8d+RR/5hbeGUDOBvskxjKGnxgh9
-	 zYDYpR5pfyt4HfkQWc7/PPrL62IBlNdpvRVbgIJk=
-Date: Thu, 3 Oct 2024 16:38:46 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Igor Artemiev <Igor.A.Artemiev@mcst.ru>,
-	Alex Deucher <alexander.deucher@amd.com>
-Cc: Simona Vetter <simona@ffwll.ch>, Kenneth Feng <kenneth.feng@amd.com>,
-	lvc-project@linuxtesting.org, Xinhui Pan <Xinhui.Pan@amd.com>,
-	linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Subject: Re: [lvc-project] [PATCH v2] drm/amd/pm: check return value of
- amdgpu_irq_add_id()
-Message-ID: <20241003-271275e284694a8c82dac508-pchelkin@ispras.ru>
-References: <7b3ea9a6-575e-4fe5-98d9-6e53803188fa@amd.com>
- <20241002130149.1607979-1-Igor.A.Artemiev@mcst.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=INi6y0taxBv9wqDg+ZQAc2J1ngvKH58iRUeQAq0MI9pjXfRnuIXxcKgvzKn+haZzMDAA4YFEmCwXBKjHgssKqC1dgyZykZM3+jhM5ZHoqbhHQP92bzYQE5HahuFy6i4hXY8gObK/rnmuWc21JCg5wk2iPpWNP+R8K/KjiZQh77I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=IWyIHgdE; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4583068795eso8346831cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 06:38:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1727962731; x=1728567531; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7cYlQ8sS3dSodfjWbJOUDRW+BCri6YPN6Z8wFgeEOOM=;
+        b=IWyIHgdEIAYIvvo8M/x0YnNA0KN7yB9ejBqtkur3ScdlZQyxNduRq0jYw7SNbMxyF4
+         7MGCrkKW4sJr1OOhW7zuqVovOJxjWTWuq3B9eij1y1HByuiI+V8DcDB5ZXkmji8Ec4qK
+         sBZADW8Le7x21pEq8TtXoMIhGmWA2aETfCfZxbbknI+y7c8N+qBt/uETaRG8pU0oSq65
+         ufC7HKUP9oPCI6J9g9LQJU8859pcCgWJWrXvmY1uK6IWaEjjdInV2B8yqvpSuuI/WY+r
+         TLv0NwkHxX9bWB959A/pEaivLiBtoNTj34wXMxIumHMSNPviZIGa2uhfhOisOFjn0tHY
+         B7wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727962731; x=1728567531;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7cYlQ8sS3dSodfjWbJOUDRW+BCri6YPN6Z8wFgeEOOM=;
+        b=UswnikHcyZeCmZrOUOHPoQErpibxLOfJPHsxHM/8WeSqhLumpwTzdG7E/8ELYk6ACo
+         /dxw6CSkG+RdutBmkemYdFxin7D6ibMe0HXVAMbSO339yB1dVidJfVqCZyCio5Y3Devn
+         FqacK65do7Y8HUW6v/psNeOu9LLNLfZfNjMejZmqcEOOBdOrteezQtcWStBrAY5vNRvt
+         Wd1Ed1F69aOvRn6ztTfvS49eDNiKqL8H+gligvbbgLo5B6Y2ccZbOfi1LHfQRm9ucqZq
+         jYtUTRZYhwyeSzs4cygSEqUNDJaLO/HrUDBFD9vdTatKIQvqx3AW3JETMl3YE5DDbmHF
+         BQOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaz3Odd5nFd/qJlCbXaRGsNAbDV0aE5q4hG/hWwy7pqTFQlkgoMKlAYaRaPFeznnXSHgVzrCPcVhUuYOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ4lJ0HfgNO+V1nuN9JPmsO21xFRr3j1t3A82vl0+XvZ0bvhQh
+	FgAXLl6+YalA8qwLfEJpPAdKfAldJAsNH2NNzfFUrO0WuUPIPEAap3HBMgM9w/0=
+X-Google-Smtp-Source: AGHT+IEeXln8uxBBs7r0qbtw2wolKdiK0oe/fV/z2xXXfZUZhaM6OzDUMtsWVXSO1oxDdjO6OayXDA==
+X-Received: by 2002:ac8:58c4:0:b0:458:2795:4853 with SMTP id d75a77b69052e-45d804d3296mr96964851cf.32.1727962730877;
+        Thu, 03 Oct 2024 06:38:50 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45d92ed4dcesm5550881cf.69.2024.10.03.06.38.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 06:38:50 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1swM2b-00ASZK-KP;
+	Thu, 03 Oct 2024 10:38:49 -0300
+Date: Thu, 3 Oct 2024 10:38:49 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Timothy Pearson <tpearson@raptorengineering.com>
+Cc: Shivaprasad G Bhat <sbhat@linux.ibm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	Michael Ellerman <mpe@ellerman.id.au>, npiggin <npiggin@gmail.com>,
+	christophe leroy <christophe.leroy@csgroup.eu>,
+	aneesh kumar <aneesh.kumar@kernel.org>,
+	naveen n rao <naveen.n.rao@linux.ibm.com>,
+	gbatra <gbatra@linux.vnet.ibm.com>, brking@linux.vnet.ibm.com,
+	Alexey Kardashevskiy <aik@ozlabs.ru>, robh@kernel.org,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	kvm <kvm@vger.kernel.org>, aik <aik@amd.com>, msuchanek@suse.de,
+	jroedel <jroedel@suse.de>, vaibhav <vaibhav@linux.ibm.com>,
+	svaidy@linux.ibm.com
+Subject: Re: [RFC PATCH 1/3] powerpc/pseries/iommu: Bring back userspace view
+ for single level TCE tables
+Message-ID: <20241003133849.GD2456194@ziepe.ca>
+References: <171026724548.8367.8321359354119254395.stgit@linux.ibm.com>
+ <171026725393.8367.17497620074051138306.stgit@linux.ibm.com>
+ <20240319143202.GA66976@ziepe.ca>
+ <1386271253.24278379.1710873411133.JavaMail.zimbra@raptorengineeringinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241002130149.1607979-1-Igor.A.Artemiev@mcst.ru>
+In-Reply-To: <1386271253.24278379.1710873411133.JavaMail.zimbra@raptorengineeringinc.com>
 
-On Wed, 02. Oct 16:01, Igor Artemiev wrote:
-> amdgpu_irq_ad_id() may fail and the irq handlers will not be registered.
-> This patch adds error code check.
+On Tue, Mar 19, 2024 at 01:36:51PM -0500, Timothy Pearson wrote:
+> > On Tue, Mar 12, 2024 at 01:14:20PM -0500, Shivaprasad G Bhat wrote:
+> >> The commit 090bad39b237a ("powerpc/powernv: Add indirect levels to
+> >> it_userspace") which implemented the tce indirect levels
+> >> support for PowerNV ended up removing the single level support
+> >> which existed by default(generic tce_iommu_userspace_view_alloc/free()
+> >> calls). On pSeries the TCEs are single level, and the allocation
+> >> of userspace view is lost with the removal of generic code.
+> > 
+> > :( :(
+> > 
+> > If this has been broken since 2018 and nobody cared till now can we
+> > please go in a direction of moving this code to the new iommu APIs
+> > instead of doubling down on more of this old stuff that apparently
+> > almost nobody cares about ??
 > 
-> Found by Linux Verification Center (linuxtesting.org) with static
-> analysis tool SVACE.
-> 
-> Signed-off-by: Igor Artemiev <Igor.A.Artemiev@mcst.ru>
-> ---
-> v2: Remove the cast to struct amdgpu_device as Christian König 
-> <christian.koenig@amd.com> suggested.
-> 
->  .../drm/amd/pm/powerplay/hwmgr/smu_helper.c   | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
-> index 79a566f3564a..50a3085c00aa 100644
-> --- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
-> +++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
-> @@ -647,28 +647,41 @@ int smu9_register_irq_handlers(struct pp_hwmgr *hwmgr)
->  {
->  	struct amdgpu_irq_src *source =
->  		kzalloc(sizeof(struct amdgpu_irq_src), GFP_KERNEL);
-> +	int ret;
->  
->  	if (!source)
->  		return -ENOMEM;
->  
->  	source->funcs = &smu9_irq_funcs;
->  
-> -	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
-> +	ret = amdgpu_irq_add_id(hwmgr->adev,
->  			SOC15_IH_CLIENTID_THM,
->  			THM_9_0__SRCID__THM_DIG_THERM_L2H,
->  			source);
-> -	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
-> +	if (ret)
-> +		goto err;
-> +
-> +	ret = amdgpu_irq_add_id(hwmgr->adev,
->  			SOC15_IH_CLIENTID_THM,
->  			THM_9_0__SRCID__THM_DIG_THERM_H2L,
->  			source);
-> +	if (ret)
-> +		goto err;
->  
->  	/* Register CTF(GPIO_19) interrupt */
-> -	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
-> +	ret = amdgpu_irq_add_id(hwmgr->adev,
->  			SOC15_IH_CLIENTID_ROM_SMUIO,
->  			SMUIO_9_0__SRCID__SMUIO_GPIO19,
->  			source);
-> +	if (ret)
-> +		goto err;
->  
->  	return 0;
-> +
-> +err:
-> +	kfree(source);
+> Just FYI Raptor is working on porting things over to the new APIs.
+> RFC patches should be posted in the next week or two.
 
-Oh, the calltrace looks like:
+There was a discussion about this at LPC a few weeks ago, did any
+patches get prepared?
 
-hwmgr_sw_init()
-  phm_register_irq_handlers()
-    ->register_irq_handlers()
-    smu9_register_irq_handlers()
-
-And the return value of phm_register_irq_handlers() is not processed and
-the error is not reported anywhere, so I guess there is a risk of
-use-after-free: the source pointer may have been already registered by
-some of amdgpu_irq_add_id() calls before the error occured.
-
-The similar code exists in smu7_register_irq_handlers(), maybe should be
-fixed as well.
-
-Alex, is https://gitlab.freedesktop.org/agd5f/linux a public repo this
-patch should go in? I'd suggest to drop the patch and ask Igor to do a
-complete fix or, if dropping is not possible now, fix it by another patch.
-For the latter one I can do this myself but it would be nice to refer to
-the current patch via a git hash (it's probably not published yet in your
-repo).
-
-> +
-> +	return ret;
->  }
->  
->  void *smu_atom_get_data_table(void *dev, uint32_t table, uint16_t *size,
-> -- 
-> 2.39.2
+Jason
 
