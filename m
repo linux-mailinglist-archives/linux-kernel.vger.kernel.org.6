@@ -1,222 +1,124 @@
-Return-Path: <linux-kernel+bounces-348535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B58F98E8C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:14:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E0698E8C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939EF1F23744
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:14:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697AA1F233BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FBB2556E;
-	Thu,  3 Oct 2024 03:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5117A1EEF9;
+	Thu,  3 Oct 2024 03:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=illinois-edu.20230601.gappssmtp.com header.i=@illinois-edu.20230601.gappssmtp.com header.b="RyXLRa78"
-Received: from mail-qk1-f193.google.com (mail-qk1-f193.google.com [209.85.222.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WcK/zkh+"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615AE748D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 03:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E13110A0C;
+	Thu,  3 Oct 2024 03:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727925276; cv=none; b=GGITFv7PMynMfGkh1Lod+ep3Ns6V1NVakuaygT4wRY1ItIf9KSlcrDakMXPKQqAtvwIC2/no3kx0fJXX/bCfxg4e4ensoYGQUkzAhCu4LgIsL4aIFXfplZKh4DgCY7M7ezxIhx4fTO1dW1dmb7UzJzURuwIvmXm1bk86LczhhAM=
+	t=1727925535; cv=none; b=mOPjyOWxqbWpmxfdoTmbocnS4Xc6DEF5NPOFMuo2I+lo1M9FVCntn5hvLIwQicrmDurXWiogm69y8+4NtDOV6N29OKNfEA8JTaDraCHSdCrPJ+Yu5b/7uTIrbjlg45KwWFTOQjb8F49wh38pA7jgf05UgkHBKeEA1Z9Vb8YYwtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727925276; c=relaxed/simple;
-	bh=jKTsXBcNO/miLEA0jRPsm6kZWhLrFZu0gIUjdZSMDbU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UlNhib4g1KHc/EUbMESWyk5+INjzMuTrIR6osfhD0qkERiTDZ+rjXE5y/1QSLNyRPBrC2jrYrj9LQ9KEmF+zrwOYJDm6UyzziULjcHLVDEIN03Ub3ooFShSnJD9jbIV2fDh4SBIqp4qcOb6N2dwsiQ6hTpHdvXrjMGvSlnzUqKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu; spf=pass smtp.mailfrom=illinois.edu; dkim=pass (2048-bit key) header.d=illinois-edu.20230601.gappssmtp.com header.i=@illinois-edu.20230601.gappssmtp.com header.b=RyXLRa78; arc=none smtp.client-ip=209.85.222.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=illinois.edu
-Received: by mail-qk1-f193.google.com with SMTP id af79cd13be357-7ae3d9a93c0so50365385a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 20:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=illinois-edu.20230601.gappssmtp.com; s=20230601; t=1727925273; x=1728530073; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bVmdUELTDUmyOs2T634ZSBxOSroRBta42gzygmF21tA=;
-        b=RyXLRa78Q/eUKVFYaCd/tclyx2QoGYtdKAWCcsWRR6dzm7b41l2xPTm5P7T956sBBF
-         nomdJJTM2c2cWkzgx7H2BuSC53CfNHXb5mU8Du/PI0eWQcQmUEPGKHbPnVozxK8EpL2V
-         l8SmMhBnEoX7M1G93ie3ItkT35qaElp6afhfiw2doDr/beM8PfMU4ZmHBWDkN1GW/BL1
-         Xf50p5mctT7HynzQ3AHeDwz6k9g1IANORPLevVN6wF+0bey0nN0m43kSNgPLiSVDTJQY
-         5IU0fjKtSfW+Tgz09cKaAi5/0+JEkES1Hfjf8uoX/UZ21aIWEDGwcZnt7RVlcH57WjH3
-         lzOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727925273; x=1728530073;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bVmdUELTDUmyOs2T634ZSBxOSroRBta42gzygmF21tA=;
-        b=MO7dY5T4zXR9ixUQsufCY4pv8bpXPC3HMu3tHKac7iV2sCn9MiqEYV6p+oH2k8SdaC
-         rdjJsfsT0Zkg+ycJyihdWx8fZCL4Q41E9BbGbw3ahnm3HY+S67BumxxBeQxrT6nzRtCp
-         VMwXtes/05/rTXjNc3VSdubX39/sTWPdVP5oIuQbhSvvtBXxD6Nw8yioU8Dt9MhzZcqr
-         nD+2Xm9k3p03cb0CPvhVdWCCwtEmugadd231KVb1YNiusyy13vU6Jnh+0jnLh9PX8MYT
-         PSgRD9XyNf/wFR9fiYdAOM9bcyCwGLCHxc9o6wtUUjJud/mGAGaJu1nHJOMvsSbYxGPI
-         E/wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtXWt09vnOxBJV5QO7nz2FB9DI/1kqFMi5+SLVdbfUoAlN1ayIdqe5va8k8U66Se12FAJvmsmozOWXHrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzZ7R+hZ/Qn/PwpeDbru3Y8fph1eTv8ynjQ4RVxRuexAYzadb7
-	8jDUP3k9Hco3JJHpv/Wkz7Gadtr0Ur9oKKBY5yslVy/MULI+jfcga+Ip0QP2EA==
-X-Google-Smtp-Source: AGHT+IHyjSRkhjgcIpyEOBBu1F4Ot9eDMUivzJG0kRwm+KN8Ac30ciJk502QH5kn26uBubpxXFT/Wg==
-X-Received: by 2002:a05:620a:1923:b0:7a9:a63a:9f48 with SMTP id af79cd13be357-7ae626ac34dmr793486485a.11.1727925273322;
-        Wed, 02 Oct 2024 20:14:33 -0700 (PDT)
-Received: from shizuku.. ([2620:0:e00:550a:6782:866c:334a:d5e9])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae6b29e2c9sm6901385a.15.2024.10.02.20.14.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 20:14:33 -0700 (PDT)
-From: Wentao Zhang <wentaoz5@illinois.edu>
-To: nathan@kernel.org
-Cc: Matt.Kelly2@boeing.com,
-	akpm@linux-foundation.org,
-	andrew.j.oppelt@boeing.com,
-	anton.ivanov@cambridgegreys.com,
-	ardb@kernel.org,
-	arnd@arndb.de,
-	bhelgaas@google.com,
-	bp@alien8.de,
-	chuck.wolber@boeing.com,
-	dave.hansen@linux.intel.com,
-	dvyukov@google.com,
-	hpa@zytor.com,
-	jinghao7@illinois.edu,
-	johannes@sipsolutions.net,
-	jpoimboe@kernel.org,
-	justinstitt@google.com,
-	kees@kernel.org,
-	kent.overstreet@linux.dev,
-	linux-arch@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	llvm@lists.linux.dev,
-	luto@kernel.org,
-	marinov@illinois.edu,
-	masahiroy@kernel.org,
-	maskray@google.com,
-	mathieu.desnoyers@efficios.com,
-	matthew.l.weber3@boeing.com,
-	mhiramat@kernel.org,
-	mingo@redhat.com,
-	morbo@google.com,
-	ndesaulniers@google.com,
-	oberpar@linux.ibm.com,
-	paulmck@kernel.org,
-	peterz@infradead.org,
-	richard@nod.at,
-	rostedt@goodmis.org,
-	samitolvanen@google.com,
-	samuel.sarkisian@boeing.com,
-	steven.h.vanderleest@boeing.com,
-	tglx@linutronix.de,
-	tingxur@illinois.edu,
-	tyxu@illinois.edu,
-	wentaoz5@illinois.edu,
-	x86@kernel.org
-Subject: Re: [PATCH v2 2/4] llvm-cov: add Clang's MC/DC support
-Date: Wed,  2 Oct 2024 22:14:29 -0500
-Message-Id: <20241003031429.46276-1-wentaoz5@illinois.edu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241002011030.GB555609@thelio-3990X>
-References: <20241002011030.GB555609@thelio-3990X>
+	s=arc-20240116; t=1727925535; c=relaxed/simple;
+	bh=wxGa2GlRlw4QcElZIwjg+iANkn6BSXZgIaQxhbUFUNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J4XOpZx+9HS1mSfJYSYaEMIy7HOmPTjx8uLXWB6kGppQoBU7GTMoOYU+ev6cGcgq+pVhPyVdIvIQ36KZsnto9LFD6sKLob4SkWvGSgSaI4HBg4BZmLcI4c2KLEd3jhGWy9Wh2NKpI3M6Gi2iKZoBKZkE5LTvxbjO4NTZxczMreQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WcK/zkh+; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727925529;
+	bh=sDvw8D1PI1ZTzHpg6uOFCydd3DerhO2pfO6MVvc+MUM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WcK/zkh+movQQfKXtEpCKn0L1pA72Z9c7ZkspDf6ri747oEJGOCqW5WmXJY+5VR3A
+	 Np2jnn2BRM7s9eXnhkHu8Fa8EQPrQBhIcXG3sn+ccYwoc2xxm5kR/D05UsZLf0KgNJ
+	 XniNZk1duNCUUybeJ0cV30kUO1sduimA+rbzUtihbyBm7QySxATfEt/wfGY73wEDx/
+	 C5wzyeky+k37/RTxKPslxGEcyXQbZYfl5WAEBON0aepLHOQpAYAG/SiytRZr5DCstr
+	 Xbz4T/JY23NZA176XK76/fE2b2WmAhBNjdRpp0uoy2JVYNcsjV8z7G5gnh5pTdkKQL
+	 FUk4LxuYjfHdw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XJxj55YRlz4wcl;
+	Thu,  3 Oct 2024 13:18:48 +1000 (AEST)
+Date: Thu, 3 Oct 2024 13:18:48 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Keith Busch <kbusch@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of the block tree
+Message-ID: <20241003131848.62a8a6e4@canb.auug.org.au>
+In-Reply-To: <e6971851-477c-41c1-b0fe-1d813f8b9319@kernel.dk>
+References: <20240916183622.105641d8@canb.auug.org.au>
+	<20240927134337.021b1ec2@canb.auug.org.au>
+	<e6971851-477c-41c1-b0fe-1d813f8b9319@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/ExcDI6eatqy.hGxnZPhq/ie";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Nathan,
+--Sig_/ExcDI6eatqy.hGxnZPhq/ie
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your review! See some of my responses below inline. Other
-comments, including those to [1/4] and [4/4], are acknowledged and will be
-updated in v3.
+Hi All,
 
-On 2024-10-01 20:10, Nathan Chancellor wrote:
-> ...
-> > maximum value supported by Clang is 32767. According to local experiments,
-> > the working maximum for Linux kernel is 46, with the largest decisions in
-> > kernel codebase (with 47 conditions, as of v6.11) excluded, otherwise the
-> > kernel image size limit will be exceeded. The largest decisions in kernel
-> > are contributed for example by macros checking CPUID.
-> > 
-> > Code exceeding LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS will produce compiler
-> > warnings.
-> > 
-> > As of LLVM 19, certain expressions are still not covered, and will produce
-> > build warnings when they are encountered:
-> > 
-> > "[...] if a boolean expression is embedded in the nest of another boolean
-> >  expression but separated by a non-logical operator, this is also not
-> >  supported. For example, in x = (a && b && c && func(d && f)), the d && f
-> >  case starts a new boolean expression that is separated from the other
-> >  conditions by the operator func(). When this is encountered, a warning
-> >  will be generated and the boolean expression will not be
-> >  instrumented." [4]
-> 
-> These two sets of warnings appear to be pretty noisy in my build
-> testing... Is there any way to shut them up? Perhaps it is good for
+On Fri, 27 Sep 2024 04:20:40 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 9/26/24 9:43 PM, Stephen Rothwell wrote:
+> >=20
+> > On Mon, 16 Sep 2024 18:36:22 +1000 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote: =20
+> >>
+> >> After merging the block tree, today's linux-next build (htmldocs)
+> >> produced these warnings:
+> >>
+> >> block/blk-integrity.c:69: warning: Function parameter or struct member=
+ 'rq' not described in 'blk_rq_map_integrity_sg'
+> >> block/blk-integrity.c:69: warning: Excess function parameter 'q' descr=
+iption in 'blk_rq_map_integrity_sg'
+> >> block/blk-integrity.c:69: warning: Excess function parameter 'bio' des=
+cription in 'blk_rq_map_integrity_sg'
+> >>
+> >> Introduced by commit
+> >>
+> >>   76c313f658d2 ("blk-integrity: improved sg segment mapping") =20
+> >=20
+> > I am still seeing those warnings. =20
+>=20
+> Due to travel, didn't get it queued up before just now.
 
-These two warnings are currently implemented as custom diagnostic in
-clang/lib/CodeGen/CodeGenPGO.cpp:dataTraverseStmtPost. So I'm afraid there
-is no corresponding "-W[no-]xxx" flag at this moment. I agree such switches
-would be desirable but we might have to nudge this in LLVM community.
+These warnings have reappeared today :-(
 
-> users to see these limitations but it basically makes the build output
-> useless. If there were switches, then they could be disabled in the
-> default case with a Kconfig option to turn them on if the user is
-> concerned with seeing which parts of their code are not instrumented. I
-> could see developers wanting to run this for writing tests and they
-> might not care about this as much as someone else might.
-> 
-> I did leave LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS at its default value.
-> Perhaps there is a more reasonable default that would result in less
-> noisy build output but not run afoul of potential memory usage concerns?
-> I assume that mention means that memory usage may be a concern for the
-> type of deployments this technology would commonly be used with?
+--=20
+Cheers,
+Stephen Rothwell
 
-To my own experiences, enlarging this threshold won't really help with the
-issue, because the other type of warning ("nested boolean") is even more
-prevalent in kernel codebase. I once built the kernel serially and counted
-the number of instances from the gigantic log:
+--Sig_/ExcDI6eatqy.hGxnZPhq/ie
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-  unsupported number of conditions (>6): 837
-  unsupported nested boolean:            8029
+-----BEGIN PGP SIGNATURE-----
 
-So again we should probably improve this on the tool side. I can talk to
-developers there separately.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb+DRgACgkQAVBC80lX
+0GwyDwgAkys4dlHAJrNWx75TrAGxhNzm6FkqXNgaSTnxyOHTIOV66BMSEKjjNa4j
+ImREv+i4AlrEagD0Z1uWzzUfULy3fC9+0uxp1Tv/VcGUoJJd0jrWnuIQL59B1dIK
+ps1TinqTWb3+gzWR1lW/JBlKvi66lPpXjDRB6iUJeBqoNu8rJvRuSBOitCzLTn+f
+IEWE3lWoncNEOtwQga825hNhwGEfL3bvSkx6yT18tFv6h5GOsc+QHcX2TCJ1tK5M
+0zHzJwFLX0RacXvgmg34EhuP248dcLCHaEeI0Xl1DLZu8e6xi0jAABgXsGWOOfGX
+7wRnQragc+LmCSrWXC4baifdYT2hSw==
+=a7ts
+-----END PGP SIGNATURE-----
 
-> ...
-> > diff --git a/Makefile b/Makefile
-> > index 51498134c..1185b38d6 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -740,6 +740,12 @@ all: vmlinux
-> >  CFLAGS_LLVM_COV := -fprofile-instr-generate -fcoverage-mapping
-> >  export CFLAGS_LLVM_COV
-> >  
-> > +CFLAGS_LLVM_COV_MCDC := -fcoverage-mcdc
-> > +ifdef CONFIG_LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS
-> > +CFLAGS_LLVM_COV_MCDC += -Xclang -fmcdc-max-conditions=$(CONFIG_LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS)
-> 
-> Why is -Xclang needed here? Is this not a full frontend flag?
-
-"-fmcdc-max-conditions" is a cc1 option only, while "-fcoverage-mcdc" is
-both a cc1 option and a clang option. See llvm/llvm-project#82448 and their
-changes to clang/include/clang/Driver/Options.td.
-
-Thanks,
-Wentao
-
-> 
-> > +endif
-> > +export CFLAGS_LLVM_COV_MCDC
-> > +
-> >  CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage
-> >  ifdef CONFIG_CC_IS_GCC
-> >  CFLAGS_GCOV	+= -fno-tree-loop-im
+--Sig_/ExcDI6eatqy.hGxnZPhq/ie--
 
