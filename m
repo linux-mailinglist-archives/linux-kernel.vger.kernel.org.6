@@ -1,216 +1,138 @@
-Return-Path: <linux-kernel+bounces-349347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C06F98F49B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:54:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D71C98F49C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B244B1C218AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:54:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52881C20BA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4411A705F;
-	Thu,  3 Oct 2024 16:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325E51A7245;
+	Thu,  3 Oct 2024 16:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g32ab7v8"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fEe85A9s"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338791A704D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 16:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002F61779A5;
+	Thu,  3 Oct 2024 16:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727974430; cv=none; b=WOEj4etFE6c36z4HB9Jf8I/R3+RU4+7XP6zMeCUV2DLblshaoU+t2cNbhjAnZblnDSa5rKY2KryglApvTV1pbI2b44yJvjY9pHnPD7jhkPaTZKsUFmmZ9wXVAQw2Vjoc7OuY5W+Lr4d5G/8IHJp5W1k4wNuoWc1FeG2NkO4hnHI=
+	t=1727974470; cv=none; b=H7PAEBPLYQrCTcKAH42UNxovo3MyzqsVdvj5PAWX+PBk8K8WeBs+29etu3kjvRB3zVwkmDPkdZeAi41jYMi7gs5QkcrpHvvdnoQlEYfcPh1QLcN7f/ZN9XU0t0XZSaxS3M9Tm+vg4q9dFuTn6EQ6hkgE+2juX4HBEdkT4pmy21I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727974430; c=relaxed/simple;
-	bh=LxF46EDoaznY4F1zahJAqtHW2kF9JxWtY6qntfvLWNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=awXVnGP1c/aGa8IOoKKnp1lrwI8vi+c68TkfDxZ+s8LkaRamBG2jEL8AU4UMIed7Y3FojviNBcNkxxr7nN9NRIA0OIOFyWt2tC95T5tKhenaI0Ip7RV+22yE1+QXA8Km56PCEPYRUWPqWhD4pHSo/hRnDjKIDPqeHAG+0pnxyqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g32ab7v8; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1727974470; c=relaxed/simple;
+	bh=U7j7UqnFkFY9xYsaBm2qcbgHB+fmA5UPnziejffWI8M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P8c51Gx3gS94bBkbN9zQEmkjQYGFdLvguqk8MSQYcBEVf+VPao6X4WH+sxbgF4hgyJB2kF2NNEckVWWSlXW9Qo2YOE+V5qTpanRdjwG0HVQ/sE0quRiRlr7RKfTMfaG3nvvrWbSBruXF+ZsQgv7dtqsMgigDCwND5sZ5WQ8JBVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fEe85A9s; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42e748f78d6so11217965e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 09:53:46 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fabfc06de3so14117971fa.1;
+        Thu, 03 Oct 2024 09:54:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727974425; x=1728579225; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/5HCKrPV5sNaAbW+wmhASj2RNr6HhB9DqF90Z83CNHQ=;
-        b=g32ab7v8/vzZo8bblU+lotKVW3f0hI0ii/bgwkX7W2zMxIu7/1BIfqSnlLZMkfGq55
-         pYarp30fiwrayQ+YSGH6CzVl/CTo+vpJeKGkpuuoC6KdOFYplSBNorMkEAI714QbVACi
-         vOykLxXjI2Da0O09f8FEe8YoJdzuLF8L09fDan45nTiYj95UuhHVMcR0xbYH8d9oGfuz
-         YLm/ooD4NJ3kPPapaiDBSg6YZPY33z6/ydipBCKhD+BwvSbOlJyOztdRP9f5wiIwTQba
-         vyzs6adBPrMpqOyUAhIxx0rCrJFTlZvjYGVTnyOxQLOi6h1ufhjJwuOmcmw8e72bdQ6Y
-         r8vA==
+        d=gmail.com; s=20230601; t=1727974467; x=1728579267; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=feM/pb2TRQDjkTAc93/S9PAq+YwwxZL7OxPm8CgyVeA=;
+        b=fEe85A9s0Ue9Y6FoX16IxWcq5G97OTiDMmw50QJQECtExvNgQqfYtkGgtB4EeOL2oG
+         M0jFa64Rg+x75jbdo+MQIvErJpzCgopA/ztJleB9DW4C25s3Mt3+BFyXJ9WYgjSTmgJg
+         SqEpUK+3Y4FBrz6wxDi8ehUA9vSts/mcmdEjEoQRQG6oBjnXsG0/bfM64+W7gJT6R8Yc
+         i3rhrPDsPk9DHuRPeHjYkkMJYqnfTuVxYdjwCIUTk3Q4BCQrsUJtAHRsR1+StdHK7rGQ
+         6T9ESE/VazUbR9XNgwaRRwIgrMPpmdQZfQ0FnRHyqaskUuZDfcPsTbYu1yh9bNFKwcDA
+         hsAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727974425; x=1728579225;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/5HCKrPV5sNaAbW+wmhASj2RNr6HhB9DqF90Z83CNHQ=;
-        b=dAgqrmw05jBWpSPw7FcHt89WAxPPQAUXWDYurolqCDXowZy59UWk64naCYNsIa7aEC
-         PiMHYxfmJwHujBzONN2ViR4UaMFKIixtDqI9X0yrZ499tFR5lVGYMv7REk3Q3ipLmHJj
-         xkIjXFeIs4um/yRRsH+4d2JliQ8K+Jqq2VIyG9AnteEdUP1NHZ9fRU/2ySDnLt9g6Cpf
-         ydENDRfUf+qZQrjssoiLREpRG041bd1oBcHw9SaG0wXK8o4GBiG5+E+lEZuDjxLfRwNk
-         ijkUdK8fpEhKuZmLC38vdyGHkIvUhO1o3XuG0dlKaPe15chrE6jVoyOCY5zBsWmmfNZ9
-         bEKg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7lfXPuCGNO2Uhgy1hlsiW0a235lSxRkVE9ugbJzrUeLJf/n6LqFR0UN+eTHfHrZyFNW3nArAK1D0BLxc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOW+r03mvPctupUryI1iDzYen/h6cQZqqkTYQBEEAGFMg9xAFS
-	qajjSiVxccqWIomWY4PtyUDdIqL3LS99L3v2ysP6Hc6MuY62Ab1/
-X-Google-Smtp-Source: AGHT+IHBgIOzP/Suz1ksfCig2PKcbBrf7U15buBve6E9PK/UpBkTlfx0YdwrE2QARYX/dmtEPdvnmA==
-X-Received: by 2002:a05:600c:1c04:b0:42b:a88f:f872 with SMTP id 5b1f17b1804b1-42f778f13d3mr56789095e9.32.1727974425421;
-        Thu, 03 Oct 2024 09:53:45 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:3ec5:11f2:e453:20e3? (2a02-8389-41cf-e200-3ec5-11f2-e453-20e3.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:3ec5:11f2:e453:20e3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082a6b75sm1660996f8f.81.2024.10.03.09.53.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 09:53:44 -0700 (PDT)
-Message-ID: <5d666bc8-203f-44c7-b4e5-a5342b1bc38b@gmail.com>
-Date: Thu, 3 Oct 2024 18:53:42 +0200
+        d=1e100.net; s=20230601; t=1727974467; x=1728579267;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=feM/pb2TRQDjkTAc93/S9PAq+YwwxZL7OxPm8CgyVeA=;
+        b=KLgCw/SMYJa/NPqSxe+hvjfSK0fxMljvznG8LtljhmMV50ioRCRlglcbZmewqlFeaM
+         6YaI3iykEQxkThNFDyEC6dE26gqTeYXyOvMLbhVsbRjtXvICq9RooaUg+gYmvI+JldAp
+         oHptRvKr3Rhkw2xSNK1F28tsUItkixmlAnoWzqtef4nVaKbzuzcieQ/U4bXAFGcUZQ8x
+         CCQRT+JDBnkqZ5MSRt7164hBGGCKfd9oPOS+kmNz/5Odwaca+0cUQ3iLWMM1OgXGqAMH
+         Xx1T/Ow/q1E/FHs6T4unUUsTbz3nSVk0lUlAyvTv5NxUk/S7DOPrKaTV9F4vxYkE7eNG
+         ff0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUD5xJV6KaSW2C14UFkNa2ma7Y2SCh79wpErhxDjsOCC3nTj6gM+RMT1TVy7X+bVVhbyUqJNJwf31RNHmQkh4M=@vger.kernel.org, AJvYcCXevdIT/KVsq3COJHX/kxfhorMml9W/NQlhNRDWJ2aNcEEiT4eDebsRDZuiDkruPHPHDQzhBxO4MitaQC/y@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywml2CS1g5aTM2Tvkvt3ghYtkVygLeEddjurtjzNUCcmGNwiwHt
+	DM0CQ88vdCcKfg9di0R3V2ifso9j6TxTTtqgyTkS+DkLo2NPkHIudvM3h+ggvi1ZdyxRtC8cW0D
+	rJlxSPm5Y89whMolc885mERrpWtsDn9sD
+X-Google-Smtp-Source: AGHT+IGXGlGWDf7MgytdrxddZK2S2P5gwa5fcr/tyZl8ajv3BXmP/fZsMTKOv+5vCtnLtXNGtwwlLD/fuxLCouXlO+I=
+X-Received: by 2002:a05:651c:b2a:b0:2fa:d345:18b9 with SMTP id
+ 38308e7fff4ca-2fae10b4157mr45619721fa.38.1727974466669; Thu, 03 Oct 2024
+ 09:54:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: drivers/iio/accel/adxl367_spi.c:76:10: error: 'const struct
- regmap_bus' has no member named 'read'
-To: Philip Li <philip.li@intel.com>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
- linux-kernel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <202410021111.LknEX9ne-lkp@intel.com>
- <6e935f30-6dc5-4422-842d-068c08d31333@gmail.com> <Zv60l6y4ij6C6U2J@rli9-mobl>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <Zv60l6y4ij6C6U2J@rli9-mobl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <Zv67JUPfzgQp7Kgf@fedora> <66fec4aa.050a0220.9ec68.004b.GAE@google.com>
+ <Zv7KOuMKKHrLTvfw@fedora>
+In-Reply-To: <Zv7KOuMKKHrLTvfw@fedora>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Thu, 3 Oct 2024 12:54:13 -0400
+Message-ID: <CABBYNZ+BwrGdL0HYh3cmQ39RFwEqjzreJSyYhFkkhSWxeoorNg@mail.gmail.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
+To: Qianqiang Liu <qianqiang.liu@163.com>
+Cc: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>, 
+	johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/10/2024 17:13, Philip Li wrote:
-> On Wed, Oct 02, 2024 at 09:01:50AM +0200, Javier Carrasco wrote:
->> On 02/10/2024 05:21, kernel test robot wrote:
->>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
->>> head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
->>> commit: c922c634bd926d84967275efbb7275b8645aa343 iio: accel: adxl367: Constify struct regmap_bus
->>> date:   9 weeks ago
->>> config: x86_64-randconfig-001-20231120 (https://download.01.org/0day-ci/archive/20241002/202410021111.LknEX9ne-lkp@intel.com/config)
->>> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
->>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410021111.LknEX9ne-lkp@intel.com/reproduce)
->>>
->>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>> the same patch/commit), kindly add following tags
->>> | Reported-by: kernel test robot <lkp@intel.com>
->>> | Closes: https://lore.kernel.org/oe-kbuild-all/202410021111.LknEX9ne-lkp@intel.com/
->>>
->>> All errors (new ones prefixed by >>):
->>>
->>>    In file included from include/linux/sched.h:38,
->>>                     from include/linux/percpu.h:12,
->>>                     from arch/x86/include/asm/msr.h:15,
->>>                     from arch/x86/include/asm/tsc.h:10,
->>>                     from arch/x86/include/asm/timex.h:6,
->>>                     from include/linux/timex.h:67,
->>>                     from include/linux/time32.h:13,
->>>                     from include/linux/time.h:60,
->>>                     from include/linux/stat.h:19,
->>>                     from include/linux/module.h:13,
->>>                     from drivers/iio/accel/adxl367_spi.c:8:
->>>    include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
->>>       19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
->>>          |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
->>>    include/linux/mm.h:2888:5: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
->>>     2888 | #if USE_SPLIT_PTE_PTLOCKS
->>>          |     ^~~~~~~~~~~~~~~~~~~~~
->>>    include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
->>>       19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
->>>          |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
->>>    include/linux/mm_types_task.h:20:34: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
->>>       20 | #define USE_SPLIT_PMD_PTLOCKS   (USE_SPLIT_PTE_PTLOCKS && \
->>>          |                                  ^~~~~~~~~~~~~~~~~~~~~
->>>    include/linux/mm.h:3010:5: note: in expansion of macro 'USE_SPLIT_PMD_PTLOCKS'
->>>     3010 | #if USE_SPLIT_PMD_PTLOCKS
->>>          |     ^~~~~~~~~~~~~~~~~~~~~
->>>    drivers/iio/accel/adxl367_spi.c:75:21: error: variable 'adxl367_spi_regmap_bus' has initializer but incomplete type
->>>       75 | static const struct regmap_bus adxl367_spi_regmap_bus = {
->>>          |                     ^~~~~~~~~~
->>>>> drivers/iio/accel/adxl367_spi.c:76:10: error: 'const struct regmap_bus' has no member named 'read'
->>>       76 |         .read = adxl367_read,
->>>          |          ^~~~
->>>    drivers/iio/accel/adxl367_spi.c:76:17: warning: excess elements in struct initializer
->>>       76 |         .read = adxl367_read,
->>>          |                 ^~~~~~~~~~~~
->>>    drivers/iio/accel/adxl367_spi.c:76:17: note: (near initialization for 'adxl367_spi_regmap_bus')
->>>>> drivers/iio/accel/adxl367_spi.c:77:10: error: 'const struct regmap_bus' has no member named 'write'
->>>       77 |         .write = adxl367_write,
->>>          |          ^~~~~
->>>    drivers/iio/accel/adxl367_spi.c:77:18: warning: excess elements in struct initializer
->>>       77 |         .write = adxl367_write,
->>>          |                  ^~~~~~~~~~~~~
->>>    drivers/iio/accel/adxl367_spi.c:77:18: note: (near initialization for 'adxl367_spi_regmap_bus')
->>>    drivers/iio/accel/adxl367_spi.c:80:21: error: variable 'adxl367_spi_regmap_config' has initializer but incomplete type
->>>       80 | static const struct regmap_config adxl367_spi_regmap_config = {
->>>          |                     ^~~~~~~~~~~~~
->>>    drivers/iio/accel/adxl367_spi.c:81:10: error: 'const struct regmap_config' has no member named 'reg_bits'
->>>       81 |         .reg_bits = 8,
->>>          |          ^~~~~~~~
->>>    drivers/iio/accel/adxl367_spi.c:81:21: warning: excess elements in struct initializer
->>>       81 |         .reg_bits = 8,
->>>          |                     ^
->>>    drivers/iio/accel/adxl367_spi.c:81:21: note: (near initialization for 'adxl367_spi_regmap_config')
->>>    drivers/iio/accel/adxl367_spi.c:82:10: error: 'const struct regmap_config' has no member named 'val_bits'
->>>       82 |         .val_bits = 8,
->>>          |          ^~~~~~~~
->>>    drivers/iio/accel/adxl367_spi.c:82:21: warning: excess elements in struct initializer
->>>       82 |         .val_bits = 8,
->>>          |                     ^
->>>    drivers/iio/accel/adxl367_spi.c:82:21: note: (near initialization for 'adxl367_spi_regmap_config')
->>>    drivers/iio/accel/adxl367_spi.c: In function 'adxl367_spi_probe':
->>>    drivers/iio/accel/adxl367_spi.c:132:18: error: implicit declaration of function 'devm_regmap_init' [-Werror=implicit-function-declaration]
->>>      132 |         regmap = devm_regmap_init(&spi->dev, &adxl367_spi_regmap_bus, st,
->>>          |                  ^~~~~~~~~~~~~~~~
->>>    drivers/iio/accel/adxl367_spi.c:132:16: warning: assignment to 'struct regmap *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
->>>      132 |         regmap = devm_regmap_init(&spi->dev, &adxl367_spi_regmap_bus, st,
->>>          |                ^
->>>    drivers/iio/accel/adxl367_spi.c: At top level:
->>>    drivers/iio/accel/adxl367_spi.c:75:32: error: storage size of 'adxl367_spi_regmap_bus' isn't known
->>>       75 | static const struct regmap_bus adxl367_spi_regmap_bus = {
->>>          |                                ^~~~~~~~~~~~~~~~~~~~~~
->>>    drivers/iio/accel/adxl367_spi.c:80:35: error: storage size of 'adxl367_spi_regmap_config' isn't known
->>>       80 | static const struct regmap_config adxl367_spi_regmap_config = {
->>>          |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
->>>    cc1: some warnings being treated as errors
->>>
->>>
->>> vim +76 drivers/iio/accel/adxl367_spi.c
->>>
->>> cbab791c5e2a58 Cosmin Tanislav 2022-02-14  74  
->>> c922c634bd926d Javier Carrasco 2024-07-03  75  static const struct regmap_bus adxl367_spi_regmap_bus = {
->>> cbab791c5e2a58 Cosmin Tanislav 2022-02-14 @76  	.read = adxl367_read,
->>> cbab791c5e2a58 Cosmin Tanislav 2022-02-14 @77  	.write = adxl367_write,
->>> cbab791c5e2a58 Cosmin Tanislav 2022-02-14  78  };
->>> cbab791c5e2a58 Cosmin Tanislav 2022-02-14  79  
->>>
->>> :::::: The code at line 76 was first introduced by commit
->>> :::::: cbab791c5e2a58c123d84bd9202c054e5449bc96 iio: accel: add ADXL367 driver
->>>
->>> :::::: TO: Cosmin Tanislav <demonsingur@gmail.com>
->>> :::::: CC: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->>>
->>
->> Strange. I followed the "how to reproduce" guide step by step, but it
->> compiled just fine (gcc-12.3.0 instead of 12.2.0, though).
-> 
-> Sorry about false report, kindly ignore this. The bot side will look
-> into the detail to resolve the issue asap.
-> 
+Hi Qianqiang,
 
-No worries. As I already mentioned, the bot has recently found cases
-where the dependency was indeed missing, I am glad that it found those
-even if it comes with a couple of false positives, which are easy to
-verify anyway.
+On Thu, Oct 3, 2024 at 12:46=E2=80=AFPM Qianqiang Liu <qianqiang.liu@163.co=
+m> wrote:
+>
+> #syz test
+>
+> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+> index 5533e6f561b3..20d0793d3832 100644
+> --- a/net/bluetooth/hci_sync.c
+> +++ b/net/bluetooth/hci_sync.c
+> @@ -325,9 +325,11 @@ static void hci_cmd_sync_work(struct work_struct *wo=
+rk)
+>                         int err;
+>
+>                         hci_req_sync_lock(hdev);
+> -                       err =3D entry->func(hdev, entry->data);
+> -                       if (entry->destroy)
+> -                               entry->destroy(hdev, entry->data, err);
+> +                       if (entry->data) {
+> +                               err =3D entry->func(hdev, entry->data);
+> +                               if (entry->destroy)
+> +                                       entry->destroy(hdev, entry->data,=
+ err);
+> +                       }
+>                         hci_req_sync_unlock(hdev);
+>                 }
+>
+> diff --git a/net/bluetooth/mgmt_util.c b/net/bluetooth/mgmt_util.c
+> index 0115f783bde8..eccc51bfaf2e 100644
+> --- a/net/bluetooth/mgmt_util.c
+> +++ b/net/bluetooth/mgmt_util.c
+> @@ -307,6 +307,7 @@ void mgmt_pending_free(struct mgmt_pending_cmd *cmd)
+>         sock_put(cmd->sk);
+>         kfree(cmd->param);
+>         kfree(cmd);
+> +       cmd =3D NULL;
+>  }
+>
+>  void mgmt_pending_remove(struct mgmt_pending_cmd *cmd)
+>
+> --
+> Best,
+> Qianqiang Liu
 
-Best regards,
-Javier Carrasco
+Are you sure this hasn't been already fixed by Bluetooth: MGMT: Fix
+possible crash on mgmt_index_removed?
+
+--=20
+Luiz Augusto von Dentz
 
