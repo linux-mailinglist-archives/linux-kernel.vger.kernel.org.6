@@ -1,144 +1,102 @@
-Return-Path: <linux-kernel+bounces-348857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4F698ECB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:12:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD9598ECBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F89A1F2227E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:12:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0D01C21401
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEAB149E13;
-	Thu,  3 Oct 2024 10:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9538E14A084;
+	Thu,  3 Oct 2024 10:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="f+UPzySf"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="met/71qD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2159613B780;
-	Thu,  3 Oct 2024 10:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7F014601C;
+	Thu,  3 Oct 2024 10:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727950346; cv=none; b=ZEYIdt/Ed+jOd35MjbPp4gCYeMmHm5GkGmRtRjttzEo4+gnmLF5m4CIQpU25xj7fi71+FL4VfMjhDlx6lVIvd4pRvJgfZQuSvQuyxD0XvfehrRW7/6E1JNx+SxFw5i37j1CDcaqytCKQoqACSrT4YBE2n+gh3MY7RGvJRJeRXlE=
+	t=1727950501; cv=none; b=GmFGaicK3SwLHXpn3IKyF7PSWliEMBsRcsL3hTtnTHoxPbHAnO3dvUfs6IfugENyXS+9GymL2f6arEZA4Fr36z1ge6dY14UjPNisr1mclRvCfuiWrK54/R6i9mzEWYdu6GBvsk6orh7WthKdSivwaxb8uRnsJBKJaNHONVfVajQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727950346; c=relaxed/simple;
-	bh=KzG8zL4AzG1hFYloYuqzq+fGW6PcU8QWSrNexnu3abE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oAOXPV9NXgkdwUAJV/V3MPGPVZB1n401LOeUatHibCkczmXzNf4SLtt9qwGiHEkTchJoIrNTDmf+8tfzKMjlTnaOqRYUpAclbqns8Zq3FNc6sNMo9+hHzy/Y8pNPOkZjRFD9jRABRd9ck4YnuQbGIp+RZ7QRdP/P0FN6ei0EJWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=f+UPzySf; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4939tOFn021499;
-	Thu, 3 Oct 2024 10:12:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=/JQEd6iw662ZfguHaBbkaGClwE
-	ytKH5/pcNOoNSB/s4=; b=f+UPzySf0lV0cbfE/4H2NRAwEe2doG0sLcNJeZi1n0
-	3mpLYoM2jrI+F3ndmZ4Z1Egvv4JLlSi76DcL87mkC4C5DC5Q+BqVXCcTcIJbOjSK
-	RML9zkzam3oOjndgU/qOLGkIxeDJXG3YWapTgyC0aX1sQSLU0pcYS3ZaH6buMPxK
-	2fXA0TAoFg/kdqRuISPUT3IJ83HdSQX7cz1FxwfCmEl23OQsV7lsktxWhSOWheUn
-	mQNJxBicbmR9dRp8hXHy8PQVMWSIipCzDEZDXxBxq89ni7RJs6bUA0nCQWdbXgrz
-	lkOrn4giVqyeiFPfMeoQF5SGe1/0Ukr+7ASuhfY9g3bA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421s2cr2ea-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 10:12:14 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 493ACDex030614;
-	Thu, 3 Oct 2024 10:12:13 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421s2cr2e5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 10:12:13 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4938AMPg017866;
-	Thu, 3 Oct 2024 10:12:12 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xw4n76wq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 10:12:12 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 493ACAw857999672
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 3 Oct 2024 10:12:10 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8D49C2004B;
-	Thu,  3 Oct 2024 10:12:10 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 50D282004E;
-	Thu,  3 Oct 2024 10:12:09 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.in.ibm.com (unknown [9.109.253.82])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  3 Oct 2024 10:12:09 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-xfs@vger.kernel.org
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>, dchinner@redhat.com,
-        Chandan Babu R <chandan.babu@oracle.com>
-Subject: [PATCH] xfs: Check for deallayed allocations before setting extsize
-Date: Thu,  3 Oct 2024 15:42:07 +0530
-Message-ID: <20241003101207.205083-1-ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1727950501; c=relaxed/simple;
+	bh=DAdHbKj+3oyZaLA5bHhqbHUDyQskbVNhOk4Eci5N/d8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V+vHuqpIPCw8IZIN0N3cfCluNufIhUwF308Jh1GcB76/u1nFyzeBCcIuI4RKHKM+dJZ9OQmeHKNW42SXdDhQJTWE+3cJN6d7dCYGwUUAI7Rm2E0alvesha/Oy6rUp3HL2Tq0IIWwa+3EJdLE5TsnycRiPFbVy7GqkBO7IH9/mQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=met/71qD; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727950500; x=1759486500;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DAdHbKj+3oyZaLA5bHhqbHUDyQskbVNhOk4Eci5N/d8=;
+  b=met/71qD9difwEdVBumLz/PGAaf58XSvVaMKxYeGTU6hegXMJhcdS1dO
+   IJmpxEdqZ/4D6FxMeNVYhRFLW0czIKtyHxay4vPYpQoi379GgxrY3VdjC
+   OrQyVp/3mJYB2iBOcdlF4UuKWzCakwFoXLUy1AQ6GXIhtj0cXpGg/t6Ut
+   eKoXgvXrLRUBEysR0cnsq+V4Uaj+dzTImVCZeBxQVrwXUMBPCIXkXEaeC
+   yCa7IpkZfqS4vH/nFPcsR8a7r+JU6OL0rIjUHyyICefvv+1ZAQ47VjMbo
+   OqBMyqJDA7q2KkMZFr2+asv7UGeb+E0cmeLEFWwxzWgdc5M/9Hwg4+7mt
+   w==;
+X-CSE-ConnectionGUID: VhJVlxw5QWWwroO/yHSRFw==
+X-CSE-MsgGUID: f5Njp73fR5e0FhuKY4pSsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27316498"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="27316498"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 03:14:59 -0700
+X-CSE-ConnectionGUID: PQLKY6x6SsWlLq8Yy9uFiw==
+X-CSE-MsgGUID: MUqZf/+DTBCe7hQgg4qP7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="111764695"
+Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 03:14:57 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1swIrG-0000000G5Ep-42FN;
+	Thu, 03 Oct 2024 13:14:54 +0300
+Date: Thu, 3 Oct 2024 13:14:54 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Raag Jadav <raag.jadav@intel.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: platform: Add Panther Lake to the
+ list of supported
+Message-ID: <Zv5uns-q2e5i8M7h@smile.fi.intel.com>
+References: <20241002150036.3698181-1-andriy.shevchenko@linux.intel.com>
+ <20241002152758.GL275077@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: nux7zMiW8P7ENlx94t1xnhuJK9F4SMeA
-X-Proofpoint-ORIG-GUID: 0kZIqqGFzDMT8mS0f47tBTu1BpvJ3cGJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-03_06,2024-10-03_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=572
- adultscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 clxscore=1011
- priorityscore=1501 bulkscore=0 impostorscore=0 spamscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2410030065
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002152758.GL275077@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Extsize is allowed to be set on files with no data in it. For this,
-we were checking if the files have extents but missed to check if
-delayed extents were present. This patch adds that check.
+On Wed, Oct 02, 2024 at 06:27:58PM +0300, Mika Westerberg wrote:
+> On Wed, Oct 02, 2024 at 06:00:36PM +0300, Andy Shevchenko wrote:
+> > Intel Panther Lake is supported by the generic platform driver,
+> > so add it to the list of supported in Kconfig.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-**Without the patch (SUCCEEDS)**
+Pushed to my review and testing queue, thanks!
 
-$ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-
-wrote 1024/1024 bytes at offset 0
-1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-
-**With the patch (FAILS as expected)**
-
-$ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-
-wrote 1024/1024 bytes at offset 0
-1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
-
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/xfs/xfs_ioctl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 7226d27e8afc..55b574b43617 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -602,7 +602,8 @@ xfs_ioctl_setattr_check_extsize(
- 	if (!fa->fsx_valid)
- 		return 0;
- 
--	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
-+	if (S_ISREG(VFS_I(ip)->i_mode) &&
-+	    (ip->i_df.if_nextents || ip->i_delayed_blks) &&
- 	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
- 		return -EINVAL;
- 
 -- 
-2.43.5
+With Best Regards,
+Andy Shevchenko
+
 
 
