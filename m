@@ -1,64 +1,75 @@
-Return-Path: <linux-kernel+bounces-349442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E35BD98F65A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E10898F660
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5880282B99
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:42:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3538328330E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD551AB6C3;
-	Thu,  3 Oct 2024 18:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FA81AB6DE;
+	Thu,  3 Oct 2024 18:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="QsLMFyDQ"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0OKKxt81"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB7519F134;
-	Thu,  3 Oct 2024 18:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A840319F134;
+	Thu,  3 Oct 2024 18:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727980912; cv=none; b=uZGoIeRIZZQwM/YyflUoEJ9eQnsfgywJxlKbvkwglrmQBs+/UgWHj1zwqpuuqklSMk5SiayS6ssp5798xu8IitHZl5OQW246lCbBlT3HdBQoTebgIqCNzsQEmo5rdhmlhFrkeR90zhXtj9qWrb6wHBoQIrPtMVmFqDLMOFsm3Zc=
+	t=1727980959; cv=none; b=GoD97RnhDqXI/KV7hG6jwbsDlqEr/73j3nUGhuQZ15ieI7hO7ekq0q4k91iDy/mc3AxUZKP6Xn799YW9btkjCrWDxgAWxCG1ckSAaQAx0aOrx15a7iuxWOvPcFqwPZ2o3MXRWb9Tr+gnVWil3jOH6mxEQlJRW3m7I6nOdQrNhQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727980912; c=relaxed/simple;
-	bh=wTgNM06RbmTuSe1vk73CLMKZwqSjGjo1Lahr17D1ilk=;
+	s=arc-20240116; t=1727980959; c=relaxed/simple;
+	bh=0q5SSCaXUaMZqbCx0JIierHaddgdHVXpOzVy1vt9hIw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZRYPuAGgEha7xrubQ/WPDn5Ph1w2ELR+onijlZ21Oa278cpGmKE8iIN/S+h8X8o59CeTYEG2/di6/71oQrIiosf/+4Xxuk4s2q52GM6Am8apDl5wYeAnwigG4utUNnAjlknN89exUqPIvWv2MQCFbPPq0PXZWj6edV4Gkh+1d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=QsLMFyDQ; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=P7zwmdrkiHaLrmgYV+BJvjxojpHU/ouZnB9HE3vhhog=; b=QsLMFyDQkyKJu8wulgL2JTVJ1H
-	5COe66dzvUgnTCRfJGYf9MMiG0Zlu1GWFzbgYwhaFW5CnEYop7WbVwl9mBJ1ye1tVQzE5ouadqDHU
-	iZMrqs58s/c5foO4HCwjc1eQRrWue5lYpB4WvO0Y9t+1NjPu83jT0gw3FYkCwvZ0aBerwM9HEjIof
-	6qZkwladnuKmghVmRjRNjNw1U+xtuVIO0VuqDx8e+sVfVOPAZEh2k2uNVmYmwqNWuFF4eQS+/Y4wo
-	eSBrTBWaBPMv0hDkggyDb/x3EBegWMqKetY/tSt7+AK9C0HVg7U4UwzqgxIgznYMA3Ap3WWAu78Kf
-	S+KjIamw==;
-Received: from [2001:9e8:9d1:b101:3235:adff:fed0:37e6] (port=47996 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1swQlb-006Aih-Qs;
-	Thu, 03 Oct 2024 20:41:35 +0200
-Date: Thu, 3 Oct 2024 20:41:33 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 17/23] kbuild: build external modules in their directory
-Message-ID: <20241003-amazing-mandrill-of-mastery-865a3a@lindesnes>
-References: <20240917141725.466514-1-masahiroy@kernel.org>
- <20240917141725.466514-18-masahiroy@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tWe4hVXxKa1AGyAtKEUzGRgaSAB10GgS7N9SQOnFVAMWmmb54+eATx5CjcJYR3x6gnPaTFtG3/4R0QKIcdKqTJRZA9Sfv9tU5ogdkoJ1BTSYEYVjyNx8/njKjze75phOkVsCub36wnVZLrI2ocRhZ4pPs25zZ6ijbwoXZOW3344=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0OKKxt81; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=2RDjJwzjseFZ2RBERk4BN7b4d/RJVlrbdFG7geetqgs=; b=0OKKxt81bC8V4FGa2ByITtAODv
+	FxcvNjNTGZd1DTFR5x+XXPzIV8mpoS6kZW1lGcL6HpOkd31SBgarDSet5Ew+deEPrGgO80gE4Ie6J
+	FIBjrpKVepAKWyx1b+YrZ+WNxHrJsgL2T4D2NFU2Y9+Dwli4pJ8OvoBCQqm15Jce9OH8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1swQmP-008yMk-5X; Thu, 03 Oct 2024 20:42:25 +0200
+Date: Thu, 3 Oct 2024 20:42:25 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Kiran Kumar C.S.K" <quic_kkumarcs@quicinc.com>
+Cc: netdev@vger.kernel.org, Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, vsmuthu@qti.qualcomm.com,
+	arastogi@qti.qualcomm.com, linchen@qti.qualcomm.com,
+	john@phrozen.org, Luo Jie <quic_luoj@quicinc.com>,
+	Pavithra R <quic_pavir@quicinc.com>,
+	"Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
+	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
+Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
+Message-ID: <febe6776-53dc-454d-83b0-601540e45f78@lunn.ch>
+References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
+ <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
+ <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
+ <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,161 +78,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240917141725.466514-18-masahiroy@kernel.org>
+In-Reply-To: <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
 
-On Tue, Sep 17, 2024 at 11:16:45PM +0900, Masahiro Yamada wrote:
-> Currently, Kbuild always operates in the output directory of the kernel,
-> even when building external modules. This increases the risk of external
-> module Makefiles attempting to write to the kernel directory.
-> 
-> This commit switches the working directory to the external module
-> directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix from
-> some build artifacts.
-> 
-> The command for building external modules maintains backward
-> compatibility, but Makefiles that rely on working in the kernel
-> directory may break. In such cases, $(objtree) and $(srctree) should
-> be used to refer to the output and source directories of the kernel.
-> 
-> The appearance of the build log will change as follows:
-> 
-> [Before]
-> 
->   $ make -C /path/to/my/linux M=/path/to/my/externel/module
->   make: Entering directory '/path/to/my/linux'
->     CC [M]  /path/to/my/externel/module/helloworld.o
->     MODPOST /path/to/my/externel/module/Module.symvers
->     CC [M]  /path/to/my/externel/module/helloworld.mod.o
->     CC [M]  /path/to/my/externel/module/.module-common.o
->     LD [M]  /path/to/my/externel/module/helloworld.ko
->   make: Leaving directory '/path/to/my/linux'
-> 
-> [After]
-> 
->   $ make -C /path/to/my/linux M=/path/to/my/externel/module
->   make: Entering directory '/path/to/my/linux'
->   make[1]: Entering directory '/path/to/my/externel/module'
->     CC [M]  helloworld.o
->     MODPOST Module.symvers
->     CC [M]  helloworld.mod.o
->     CC [M]  .module-common.o
->     LD [M]  helloworld.ko
->   make[1]: Leaving directory '/path/to/my/externel/module'
->   make: Leaving directory '/path/to/my/linux'
-> 
-> Printing "Entering directory" twice is cumbersome. This will be
-> addressed later.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  Documentation/dev-tools/coccinelle.rst | 19 +++++-------
->  Makefile                               | 40 +++++++++++++++++---------
->  rust/Makefile                          |  4 +--
->  scripts/Makefile.compiler              |  2 +-
->  scripts/Makefile.modpost               |  6 ++--
->  scripts/coccicheck                     |  6 ++--
->  scripts/package/install-extmod-build   |  7 +++++
->  7 files changed, 49 insertions(+), 35 deletions(-)
-> 
-> diff --git a/Documentation/dev-tools/coccinelle.rst b/Documentation/dev-tools/coccinelle.rst
-> index 535ce126fb4f..80c83ce0babc 100644
-> --- a/Documentation/dev-tools/coccinelle.rst
-> +++ b/Documentation/dev-tools/coccinelle.rst
-> @@ -250,25 +250,20 @@ variables for .cocciconfig is as follows:
->  - Your directory from which spatch is called is processed next
->  - The directory provided with the ``--dir`` option is processed last, if used
->  
-> -Since coccicheck runs through make, it naturally runs from the kernel
-> -proper dir; as such the second rule above would be implied for picking up a
-> -.cocciconfig when using ``make coccicheck``.
-> -
->  ``make coccicheck`` also supports using M= targets. If you do not supply
->  any M= target, it is assumed you want to target the entire kernel.
->  The kernel coccicheck script has::
->  
-> -    if [ "$KBUILD_EXTMOD" = "" ] ; then
-> -        OPTIONS="--dir $srctree $COCCIINCLUDE"
-> +    if [ "$VPATH" ] ; then
-> +        OPTIONS="--dir $VPATH $COCCIINCLUDE"
->      else
-> -        OPTIONS="--dir $KBUILD_EXTMOD $COCCIINCLUDE"
-> +        OPTIONS="--dir . $COCCIINCLUDE"
->      fi
->  
-> -KBUILD_EXTMOD is set when an explicit target with M= is used. For both cases
-> -the spatch ``--dir`` argument is used, as such third rule applies when whether
-> -M= is used or not, and when M= is used the target directory can have its own
-> -.cocciconfig file. When M= is not passed as an argument to coccicheck the
-> -target directory is the same as the directory from where spatch was called.
-> +When an explicit target is executed with a separate output directory, VPATH is
-> +set to the target source directory. The third rule ensures the spatch reads the
+> Agree that switchdev is the right model for this device. We were
+> planning to enable base Ethernet functionality using regular
+> (non-switchdev) netdevice representation for the ports initially,
+> without offload support. As the next step, L2/VLAN offload support using
+> switchdev will be enabled on top. Hope this phased approach is fine.
 
-My limited English with German background likes to have "the target's
-source directory" here, but I am not sure if this is more correct.
+Since it is not a DSA switch, yes, a phased approach should be O.K.
 
-> +.cocciconfig from the target directory. When M= is used, the external module
-> +directory can have its own.cocciconfig file.
+> >> 3) PCS driver patch series:
+> >>         Driver for the PCS block in IPQ9574. New IPQ PCS driver will
+> >>         be enabled in drivers/net/pcs/
+> >> 	Dependent on NSS CC patch series (2).
+> > 
+> > I assume this dependency is pure at runtime? So the code will build
+> > without the NSS CC patch series?
+> 
+> The MII Rx/Tx clocks are supplied from the NSS clock controller to the
+> PCS's MII channels. To represent this in the DTS, the PCS node in the
+> DTS is configured with the MII Rx/Tx clock that it consumes, using
+> macros for clocks which are exported from the NSS CC driver in a header
+> file. So, there will be a compile-time dependency for the dtbindings/DTS
+> on the NSS CC patch series. We will clearly call out this dependency in
+> the cover letter of the PCS driver. Hope that this approach is ok.
 
-A space is missing after 'own'.
+Since there is a compile time dependency, you might want to ask for
+the clock patches to be put into a stable branch which can be merged
+into netdev.
 
->  
->  If not using the kernel's coccicheck target, keep the above precedence
->  order logic of .cocciconfig reading. If using the kernel's coccicheck target,
-> diff --git a/Makefile b/Makefile
-> index 7a76452049ea..4db22c3a8555 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -180,7 +180,20 @@ ifeq ("$(origin O)", "command line")
->    KBUILD_OUTPUT := $(O)
->  endif
->  
-> -output := $(KBUILD_OUTPUT)
-> +ifdef KBUILD_EXTMOD
-> +    ifdef KBUILD_OUTPUT
-> +        objtree := $(realpath $(KBUILD_OUTPUT))
-> +        $(if $(objtree),,$(error specified kernel directory "$(KBUILD_OUTPUT)" does not exist))
-> +    else
-> +        objtree := $(CURDIR)
-> +    endif
-> +    output := $(KBUILD_EXTMOD)
-> +else
-> +    objtree := .
-> +    output := $(KBUILD_OUTPUT)
-> +endif
-> +
-> +export objtree
->  
->  # Do we want to change the working directory?
->  ifneq ($(output),)
-> @@ -248,8 +261,6 @@ ifneq ($(KBUILD_ABS_SRCTREE),)
->  srctree := $(abs_srctree)
->  endif
->  
-> -objtree		:= .
-> -
->  VPATH		:=
->  
->  ifeq ($(KBUILD_EXTMOD),)
-> @@ -258,7 +269,7 @@ VPATH		:= $(srctree)
->  endif
->  endif
->  
-> -export building_out_of_srctree srctree objtree VPATH
-> +export building_out_of_srctree srctree VPATH
->  
->  # To make sure we do not include .config for any of the *config targets
->  # catch them early, and hand them over to scripts/kconfig/Makefile
-> @@ -708,7 +719,7 @@ endif
->  # in addition to whatever we do anyway.
->  # Just "make" or "make all" shall build modules as well
->  
-> -ifneq ($(filter all modules nsdeps %compile_commands.json clang-%,$(MAKECMDGOALS)),)
-> +ifneq ($(filter all modules nsdeps compile_commands.json clang-%,$(MAKECMDGOALS)),)
+Or you need to wait a kernel cycle.
 
-Nit: I think this would better match to patch "kbuild: remove
-extmod_prefix, MODORDER, MODULES_NSDEPS variables", but probably nobody
-else will care.
-
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+   Andrew
 
