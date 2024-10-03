@@ -1,207 +1,131 @@
-Return-Path: <linux-kernel+bounces-349621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61BC798F92A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:48:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B9098F934
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610711C219A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:48:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56010B20FD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BFA1BFE10;
-	Thu,  3 Oct 2024 21:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2AB1C1753;
+	Thu,  3 Oct 2024 21:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="YYmgoO5T";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JUoEtNX9"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jN3Mz37u"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89EE1A01BC;
-	Thu,  3 Oct 2024 21:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8BC6F06A;
+	Thu,  3 Oct 2024 21:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727992104; cv=none; b=o4t80hpDFlRTfHfn7IbMeDErYfpSp4yBCjiPtU+R7VWt8J09xqpUoU/YJa/QmcJnu6phreWI/5LR9aWCgLkyciUmpC9QeMGF/BcF8ZwDlDfM9SYd1Rnv3w5yGo/8wD7zQuh6Y0MsHvJaf5H7GI+U+dOas6OwQGL3fwCQIrjJCj0=
+	t=1727992196; cv=none; b=YWNee4g2CCBzFL+WFALedLijCLr/bm0402KP9qlX9rp9Pcqz8hSVlSYibbgSS40uzuCZ6ydZ5KauXLzugdgBV1lKi6IAiZFrh9N8ui6f86pkZm1rOGehARQFUwaPU3dnY8Q3z9IykfUHyftCVaYiQcyMjx4CwBQMudbpA9PvCqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727992104; c=relaxed/simple;
-	bh=YJ50vYM/u/Wi3SemAhvs0Nspplu4fWX+h6JYN+mxIqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qx0BkO9K7TukB300RwzB6wgQ2RsmTqrrhrYuYgtHsBspEbzOcAhyzPieoYHq52JOdAlXE/F6ODb3HEeuvRqcbXucdPCK4fWW81wLTD+TUiwHUHr+vhBrHxZvoUP+wCZwWnH2hIH12wNEXUA0BNqNfoK8AGdYgkj5RlUFq54BSWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=YYmgoO5T; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JUoEtNX9; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id E73A9114005B;
-	Thu,  3 Oct 2024 17:48:21 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Thu, 03 Oct 2024 17:48:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1727992101; x=1728078501; bh=sxhZZlorlZ
-	1zlcyfcdxkQm0SN1r5ERKj2wycvGmA2X0=; b=YYmgoO5T9U/OrryUAM563Oi3Mj
-	lxOSAlOkV43gW2bpa9UE2lj3HkwBv1pLBrQKw/XVhHIcee1IZ7lzLhaZ4yI9SeUr
-	94VQS6diOJmOIxrxoTvdMJiEHRBgFr63JCODLKvzWc/2qbHphdA9BC5olsOGPJJr
-	i6jJjIjP9h4g1qSJRt9Wns3xn7/aFyJrBShLSq42kW7B0zJff/k+MtkZoBy6RdQl
-	xyp8jiPDGG2CYxfJfKy29s9xL0QXzCB/a8LiZ9WQMTJioMtReaVXGhY3uRLXKYPU
-	BaT0Iit4ZEQbZkni7sL4snWE0yY3V/llaeCUWx0/G2+/WyibiepXGhGj3ydw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1727992101; x=1728078501; bh=sxhZZlorlZ1zlcyfcdxkQm0SN1r5
-	ERKj2wycvGmA2X0=; b=JUoEtNX9K8MgTE5BIi4+CIXq817aUI+vml58/5Ak12/Y
-	mZd/KyNAdlEos3OPZkmlLPCbABTF1RzCWQCHiBtfwZ9LKkESKp0ggAoqiY+StnNH
-	utuEDjwhRivqKxfKJ7uBoYYgAt2oIxqCAq5DmjGCpXLhVFbEZ9tRgCPUOTA2VDXq
-	UClnf1dkm7iv410uZdWFT6YE+7KZutm3gYHJ3yIJdUxPgIKg3YAr3u6KXzIsvKsb
-	N6t6pCy30X4j5tDGmgk9PD+vBkBicp6xMQpQ/AUk3uiVV3x4vGkUHSRO/q42r8dz
-	P2GYnD2gDdA62aJ1bqsWIfFBWDk3KXeEFw4uLc9kSw==
-X-ME-Sender: <xms:JRH_Znr0tVd09-NZMPMVrjBNSEVrt1DkVuuyM12udBaAA8N_J-RovA>
-    <xme:JRH_ZhrQjEY3b5v6aG_UHRVR94ulvqlkebaYT5CZELOvSK8dvNom-IaMHRjejjR5Z
-    D_AV8Xk7kqhCfDMwhM>
-X-ME-Received: <xmr:JRH_ZkNPROiDYXBZgPZZ8Wt8Px4hlfM1FEtTLgVGwcSKeCYBSo-mJ3TdT254R8csmouCOPpbMwiHVELT3VEJ7rObaUTS>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvvddgtdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdludehmdenucfjughrpeffhffvvefukfhf
-    gggtuggjsehttdertddttddvnecuhfhrohhmpeflrghnucfjvghnughrihhkucfhrghrrh
-    cuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtffrrghtthgvrhhnpefffeejffev
-    geejudeiveektdeiveefgefghfffveeujeefhfefffdvvdfgiedvheenucffohhmrghinh
-    epghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
-    rghilhhfrhhomhepkhgvrhhnvghlsehjfhgrrhhrrdgttgdpnhgspghrtghpthhtoheple
-    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehthhhorhhsthgvnhdrsghluhhmsehtohgslhhugidrtghomhdprh
-    gtphhtthhopehkvghnthdrohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghp
-    thhtoheprhgvghhrvghsshhiohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgtph
-    htthhopehlihhnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehlihhnuhigqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hmohhrsghosehgohhoghhlvgdrtghomh
-X-ME-Proxy: <xmx:JRH_Zq5d87SozioJm15PIeCgIZR1wRDQTg03FCs41D1FjSoy4D4HyA>
-    <xmx:JRH_Zm77dC4FkELMj5XYc5Kg8xvw8uUViEsTZ6j483o16dm1pTazFw>
-    <xmx:JRH_Zih-ApDH5R5wSmvzPJIDpuI9jros20A_BAKylYGNZMlOyuEOTQ>
-    <xmx:JRH_Zo445f1p9dGwmUuBax6JmnGLGy8V25ScP_vII71JT27boBj4Dg>
-    <xmx:JRH_ZvFFc6iEKEI6_F3f4IK-xBi4wz9iAsZYGLtjp7Sg5jaGYV1wke7E>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 3 Oct 2024 17:48:20 -0400 (EDT)
-Date: Thu, 3 Oct 2024 23:48:18 +0200
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-To: Kees Cook <kees@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ardb@kernel.org, morbo@google.com
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <Zv8RIs-htdc-PtXB@archlinux>
-References: <ZvV6X5FPBBW7CO1f@archlinux>
- <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
- <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
- <Zvg-mDsvvOueGpzs@archlinux>
- <202409281331.1F04259@keescook>
- <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
- <Zv6BEO-1Y0oJ3krr@archlinux>
- <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
- <Zv61dCaxScXuOjZg@archlinux>
- <202410031424.45E5D19@keescook>
+	s=arc-20240116; t=1727992196; c=relaxed/simple;
+	bh=YWSWyBMvb2BqcQtPmYtbpV7rQQkcRKcqy5ijg1PX33o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LWcB7icUp4iFBktVIInQgy1bpSUqxXg2YOF+VbrgXyjNfmpPN2CvVV+SomxnmzBqQs6vCaVHqs9uLa+ACAjAHg8MKlYz4ivcdG8Olt2VseJ0IATobnhprGuL1k4nIC5YMkqnC9ss/4XnAMdW1X8q88tME6d61mlhz08D59jPoYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jN3Mz37u; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7e9b2d75d92so205407a12.0;
+        Thu, 03 Oct 2024 14:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727992195; x=1728596995; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YWSWyBMvb2BqcQtPmYtbpV7rQQkcRKcqy5ijg1PX33o=;
+        b=jN3Mz37u2wOqm7KvXRdlnPkFLF7nsRhcfqTdxCyo5nNbP8m66VGPkRhFhjyz8f/H2S
+         dHpqP3j9MbmDdzYTJHPHgYgIg0X3OBcr80Fh4kElnLM0EmEUpnENL6oCAFGgdIdRrpHh
+         fvSRHnAtoyifDHyYaTOuCyQyikU90IA5GKG8qiM37mTIoamhPIgxj3RnvI5DHu1+10IS
+         7KLkO1wDEi6Gfed/mMtKU9V1jW4I3ng/rR1+vAJerevII2dzUcxRTWCTmjIyXVrEdVCT
+         +7OvT574y+d5l2Q5+k86cScw6LLLQVSui9hjKw7sawi1DUvyuDPxoUHcD7pHBQBoirZA
+         wXcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727992195; x=1728596995;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YWSWyBMvb2BqcQtPmYtbpV7rQQkcRKcqy5ijg1PX33o=;
+        b=XPFBxQgMIhLNF+Vnrx08p/7Ctlf/roBfbYjQJxdrWqJExxlYNqlM6CKBgfAbQLKtdN
+         GuS7ukCXR6IFxcIGkVPnmkcXrn0eTxJ0gU2ZILZDZY7VjP3Y97ErJNp/m/zObyJf1qUm
+         /+9j62B7PBlfhAgO3dBpiwtvGm5owtVNjWcLzFoexFTBiIVgSy0a0pILDLKZtB2mlwYr
+         dqr6e0nEgBhAiqFPSw8E9GLWRmQBWh6IO3C1gHcf3cZNAqeoE0tieFsxTfC7Q7/95TQn
+         E9B0l8Kg9Vn+AL58EHD9TAgympD7yXjNzDgZl6m1GJUmF2Ej9VPLVSn3cekWJdM56Rf7
+         HiIA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+hDBOEPjOP8hHWm76rkn/QqJYQ04dP72vBV+g/AmgH6cuA/Z+6qOtJLsfqxLPOnFxq7kyztwa16kZAgtnOxA=@vger.kernel.org, AJvYcCU+t2Gxt4DvG3KMPzkiUG+Oj13noKkKfMLzdguFjKP4QwzC2tNJTQJDVS9uF657yDpluUM44YDv0XmghLrf@vger.kernel.org, AJvYcCVKMzRP5lgM17iKMKIbcyh5MfqOHttQGy+pGg97Ur+psNodG2c+/V7xY1Jkku+rpsElRFuytV5lwZll7E4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ5CiSvT+qM3BB9JIARWIXmOEYzeuBJ3TKT+1mryDn68cDYByp
+	2ClYLVIuq/BRZuKPAcIeU2UN4wcA8SHOvOkTaW+5yCumHOGoTqi/eyqGhBqzJYVKWd32PPz4O1p
+	TQvAOBIVSFcbWRgCeYx6q+zAS9V8=
+X-Google-Smtp-Source: AGHT+IGyVrKTLv/6R4p9C4+lzDTKS+g4BKYcB6NEFd08fKt94IaBLorNVuAB40syGlRO/PPbVfEnCv0roeJaI2nbnEc=
+X-Received: by 2002:a05:6a00:3a28:b0:71b:64c:813f with SMTP id
+ d2e1a72fcca58-71de2479d53mr321221b3a.6.1727992194577; Thu, 03 Oct 2024
+ 14:49:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202410031424.45E5D19@keescook>
+References: <20240915132734.1653004-1-gary@garyguo.net>
+In-Reply-To: <20240915132734.1653004-1-gary@garyguo.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 3 Oct 2024 23:49:41 +0200
+Message-ID: <CANiq72kkN2T4NeesDwsrVkk=JcDA-8iPHFys2Cg9M7MobzTEoA@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: enable arbitrary_self_types and remove `Receiver`
+To: Gary Guo <gary@garyguo.net>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Danilo Krummrich <dakr@redhat.com>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Valentin Obst <kernel@valentinobst.de>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Alex Mantel <alexmantel93@mailbox.org>, 
+	Adrian Taylor <ade@hohum.me.uk>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03 14:28:01, Kees Cook wrote:
-> On Thu, Oct 03, 2024 at 05:17:08PM +0200, Jan Hendrik Farr wrote:
-> > gcc currently says that the __bdos of struct containing a flexible array
-> > member is:
-> > 
-> > sizeof(<whole struct>) + sizeof(<flexible array element>) * <count>
-> > 
-> > clang however does the following:
-> > 
-> > max(sizeof(<whole struct>), offsetof(<flexible array member>) + sizeof(<flexible array element>) * <count>)
-> 
-> Clang's calculation seems very wrong. I would expect it to match GCC's.
-> 
+On Sun, Sep 15, 2024 at 3:29=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+>
+> The term "receiver" means that a type can be used as the type of `self`,
+> and thus enables method call syntax `foo.bar()` instead of
+> `Foo::bar(foo)`. Stable Rust as of today (1.81) enables a limited
+> selection of types (primitives and types in std, e.g. `Box` and `Arc`)
+> to be used as receivers, while custom types cannot.
+>
+> We want the kernel `Arc` type to have the same functionality as the Rust
+> std `Arc`, so we use the `Receiver` trait (gated behind `receiver_trait`
+> unstable feature) to gain the functionality.
+>
+> The `arbitrary_self_types` RFC [1] (tracking issue [2]) is accepted and
+> it will allow all types that implement a new `Receiver` trait (different
+> from today's unstable trait) to be used as receivers. This trait will be
+> automatically implemented for all `Deref` types, which include our `Arc`
+> type, so we no longer have to opt-in to be used as receiver. To prepare
+> us for the change, remove the `Receiver` implementation and the
+> associated feature. To still allow `Arc` and others to be used as method
+> receivers, turn on `arbitrary_self_types` feature instead.
+>
+> This feature gate is introduced in 1.23.0. It used to enable both
+> `Deref` types and raw pointer types to be used as receivers, but the
+> latter is now split into a different feature gate in Rust 1.83 nightly.
+> We do not need receivers on raw pointers so this change would not affect
+> us and usage of `arbitrary_self_types` feature would work for all Rust
+> versions that we support (>=3D1.78).
+>
+> Cc: Adrian Taylor <ade@hohum.me.uk>
+> Link: https://github.com/rust-lang/rfcs/pull/3519 [1]
+> Link: https://github.com/rust-lang/rust/issues/44874 [2]
+> Signed-off-by: Gary Guo <gary@garyguo.net>
 
-I was on the very same train of thought, but I have since changed my
-mind a bit. A struct containing a flexible array member can be allocated in
-two ways:
+Applied to `rust-next` -- thanks everyone!
 
-(1):
-
-struct posix_acl *acl = malloc(sizeof(struct posix_acl) + sizeof(struct posix_acl_entry) * 1);
-acl.a_count = 1;
-
-or (2):
-
-struct posix_acl *acl = malloc(offsetof(struct posix_acl, a_entries) + sizeof(struct posix_acl_entry) * 1);
-acl.a_count = 1;
-
-Both are valid ways to allocate it. __bdos does not know which of these
-methods was used to allocate the struct whose size it has to determine,
-so it's giving the lower bound that doesn't include the (potential)
-padding at the end.
-
-So it comes down to false positives vs false negatives...
-More details here:
-https://github.com/llvm/llvm-project/pull/111015
-
-Clangs current behavior would essentially force kernel code to always
-assume option (2) is used. So
-
-struct posix_acl *
-posix_acl_clone(const struct posix_acl *acl, gfp_t flags)
-{
-	struct posix_acl *clone = NULL;
-
-	if (acl) {
-		int size = sizeof(struct posix_acl) + acl->a_count *
-		           sizeof(struct posix_acl_entry);
-		clone = kmemdup(acl, size, flags);
-		if (clone)
-			refcount_set(&clone->a_refcount, 1);
-	}
-	return clone;
-}
-EXPORT_SYMBOL_GPL(posix_acl_clone);
-
-from linux/fs/posix_acl.c would have to turn into something like:
-
-struct posix_acl *
-posix_acl_clone(const struct posix_acl *acl, gfp_t flags)
-{
-	struct posix_acl *clone = NULL;
-
-	if (acl) {
-		int size = offsetof(struct posix_acl, a_entries) + acl->a_count *
-		           sizeof(struct posix_acl_entry);
-		clone = kmemdup(acl, size, flags);
-		if (clone)
-			refcount_set(&clone->a_refcount, 1);
-	}
-	return clone;
-}
-EXPORT_SYMBOL_GPL(posix_acl_clone);
-
-Which is actually safer, because can you actually be sure this posix_acl
-wasn't allocated using method (2)?
-
-
-After looking at the assembly produced by gcc more, it actually looks
-like it's using the allocation size if it's known in the current context
-(for example if the struct was just malloced in the same function)
-and otherwise returns INT_MAX for the __bdos of a struct containing a
-flexible array member. It's only returning the size based on the
-__counted_by attribute of you ask it for the __bdos of the flexible
-array member itself.
-
+Cheers,
+Miguel
 
