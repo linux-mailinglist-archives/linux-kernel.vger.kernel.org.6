@@ -1,132 +1,91 @@
-Return-Path: <linux-kernel+bounces-349625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A379098F93D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:52:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8856098F941
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D63941C2120B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:52:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F26A2823C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4ED1C32FC;
-	Thu,  3 Oct 2024 21:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151EE1C2323;
+	Thu,  3 Oct 2024 21:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFkJM08r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpUfdqsU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD511BDAB9;
-	Thu,  3 Oct 2024 21:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A526F06A;
+	Thu,  3 Oct 2024 21:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727992339; cv=none; b=RqHyg/dinZSEp3HByvNWJ0GhJh5lcbrQM7ZhtR1wKEhhaQRsM9bBbZfrddG+1g3HKVSzE+TqQnHRxsxIZfLAf8lK3/DaHk66J+Ds3cJYCnUJO9Auso1bhM9uh7jYVMv7JXGPET7ZCr6Wy9K4CLdnI/t+99Kl7Ps3aukQcGUYw3c=
+	t=1727992443; cv=none; b=A5fJ4/RKrNRhVPhnY/RfPETDxEMybyF8UVsITZGrKD5kkRo6RPLgF44M7KIXM7moOhOFclwob7HWpu9sbRKmYJ77Si8apDht4/gKHMLp0Rn3JcsB9X6dkrufCJMuTpZ/USo5G+Bjp54M2r5m7tDhvZBJxdQ270gqGF+wgpOJ4BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727992339; c=relaxed/simple;
-	bh=dNBSGplwis3K3/BoL1llvA0r10YCQrzM8dDYNiQKPf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=hFkaAq+OO6OYT87WyVWjS3shyESJJXs4eX8L7L5O85IJ9plVE//62zKHQ172AHU9QmmxgU44Urs+NKudxd4p3fNemlS3IqsxJE9fvHAECEMJ4kfOaLrGNxoYQ22JVyZ5Eo40lDH08kamitAl3FcyL1zHgRdo6nGxnNAd0H28YtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFkJM08r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83B90C4CEC5;
-	Thu,  3 Oct 2024 21:52:18 +0000 (UTC)
+	s=arc-20240116; t=1727992443; c=relaxed/simple;
+	bh=ykq4pspMFz3hLW6ybfM/6qwDf4lp289eI6rgXUV8oA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ODS3RUCepg/bLoU1Yy2ZKOfxLpoVyI1NeNLlrqpa1tk/yQ3Fnyi+iO78uDTtw1p9RY/OBTbpdixyx6QUCHQgGdwGdNq32IIOJXipSmYblnmKEHfZ5USuPcCl8lplbb3R206DvFqrPOVZZneb3KXz/WJsC8sxZX4czD2MOlIGpnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpUfdqsU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 489BAC4CEC5;
+	Thu,  3 Oct 2024 21:53:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727992338;
-	bh=dNBSGplwis3K3/BoL1llvA0r10YCQrzM8dDYNiQKPf0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=OFkJM08rFSi8aZtXHy9IcjrHdWQ0uJl4NGs2vHxEYWcVSCL++MdeTG14/EMMULXR4
-	 mAs2LRqTtUB5P3xWP/OEpwzrOVR9zzyPaSejovUAZskqTSnpEXafq0xYTwEbLleb7M
-	 /sjXgymA0+ZB9mpjGj5TLbnTRtA85IhP8Id5nb/niURGG98WY/OuS4FqA7YDOW4AWt
-	 Ujm2aFbY/oIWFm8Dqgul9AC6K0nXig05mWpjdmGxvDd5z+DYzLyjMBHRKot3Bhc6fW
-	 Z8RlyqCJhYwh6gYC+8y4dAiLLDvUqmwD6mNsvsag8gwpaIwTghfa4aJGnjthx96G5p
-	 PXoPaAr7aJRmQ==
-Date: Thu, 3 Oct 2024 16:52:17 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	linux-pci@vger.kernel.org, vigneshr@ti.com, s-vadapalli@ti.com,
-	lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com, krzk@kernel.org,
-	alim.akhtar@samsung.com, shawn.guo@linaro.org,
-	songxiaowei@hisilicon.com, marek.vasut+renesas@gmail.com,
-	yoshihiro.shimoda.uh@renesas.com, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, thomas.petazzoni@bootlin.com, pali@kernel.org,
-	florian.fainelli@broadcom.com,
-	angelogioacchino.delregno@collabora.com, ryder.lee@mediatek.com,
-	heiko@sntech.de, kevin.xie@starfivetech.com, kishon@kernel.org,
-	dlemoal@kernel.org, shawn.lin@rock-chips.com,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: controller: Switch back to struct
- platform_driver::remove()
-Message-ID: <20241003215217.GA326383@bhelgaas>
+	s=k20201202; t=1727992443;
+	bh=ykq4pspMFz3hLW6ybfM/6qwDf4lp289eI6rgXUV8oA8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RpUfdqsU4rFOLanFE8uBBCJGrmV6YtsN4moowfxLvox9GbA6fLzNcr2gtaq8P4LdJ
+	 PvNj4nPN4I9djxk8lQXOYUciAteE5gtIv1ZprEIrN/JVOmvKnLvK5tldcQT/WKbeQt
+	 eJnF/gHdP1lClPH51jGaSYOyQCXM9NjrT+dQxsBWqUpdxpl2mBi6W+5IS66WNY6KMZ
+	 xIarg6MYcqfOSNk8gSELvWgJbSi2fORZcksaLuNfcNRK3HfyCw0MnJSd6Juc3TXcZg
+	 nhMIlZOXciXyeTgnlYjB+kJPBz/TebADqWHSz7BkrQh8iDJ4PmnYQ+cc1QBFHIjVFc
+	 xLNXHj1NHuGnA==
+Message-ID: <fd889e4a-3da7-4ade-a0a4-c4fb1feb540f@kernel.org>
+Date: Thu, 3 Oct 2024 23:53:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 25/26] kbuild: rust: remove the `alloc` crate and
+ `GlobalAlloc`
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>, ojeda@kernel.org, alex.gaynor@gmail.com,
+ wedsonaf@gmail.com, boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
+ akpm@linux-foundation.org, daniel.almeida@collabora.com,
+ faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+ lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
+ jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
+ lyude@redhat.com, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+References: <20240911225449.152928-1-dakr@kernel.org>
+ <20240911225449.152928-26-dakr@kernel.org>
+ <20240928204357.3a28dada.gary@garyguo.net>
+ <CANiq72nuZ41eDXkybGBbGRMgJzUOe1rRZioS-amJfH7UV-9cMQ@mail.gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <CANiq72nuZ41eDXkybGBbGRMgJzUOe1rRZioS-amJfH7UV-9cMQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <tdxrmmqyzcufupnwkdbg7lwgadizm7v3lxjirykijbml7x54ze@upbdzycdsilm>
 
-On Thu, Oct 03, 2024 at 12:17:08PM +0200, Uwe Kleine-König wrote:
-> Hello,
+On 10/3/24 11:41 PM, Miguel Ojeda wrote:
+> On Mon, Sep 30, 2024 at 9:11 PM Gary Guo <gary@garyguo.net> wrote:
+>>
+>> Would it make sense to throw in a soon-to-be-stable (or
+>> already-stable-but-beyond-min-rust-version) feature here to not have to
+>> remove the build system support for unstable feature directly?
 > 
-> I found this patch in next as 712359cb5e9d9553c1383fc5005593aa1988efc4.
-> 
-> While rebasing my patches with the same purpose I found that this patch
-> handled the indention differently than I did for two files:
+> Yeah, agreed -- we are going to have `lint_reasons` and
+> `arbitrary_self_types` before this series, so it should be fine.
 
-Updated 712359cb5e9d ("PCI: controller: Switch back to struct
-platform_driver::remove()") to adopt your indentation changes and also
-convert drivers/pci/controller/pcie-xilinx-nwl.c, thank you very much
-for noticing this!
+So, I guess you'll just fix it up when applying the series?
 
-> On Mon, Sep 23, 2024 at 08:57:06AM +0200, Sergio Paracuellos wrote:
-> > diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
-> > index ef73baefaeb9..b921bbb4de80 100644
-> > --- a/drivers/pci/controller/pcie-altera.c
-> > +++ b/drivers/pci/controller/pcie-altera.c
-> > @@ -817,7 +817,7 @@ static void altera_pcie_remove(struct platform_device *pdev)
-> >  
-> >  static struct platform_driver altera_pcie_driver = {
-> >  	.probe		= altera_pcie_probe,
-> > -	.remove_new	= altera_pcie_remove,
-> > +	.remove	= altera_pcie_remove,
-> >  	.driver = {
-> >  		.name	= "altera-pcie",
-> >  		.of_match_table = altera_pcie_of_match,
 > 
-> here indention is inconsistent already before, I replaced the tabs after
-> ".probe" by a single space (and after .remove, too).
+> Cheers,
+> Miguel
 > 
-> > [...]
-> > diff --git a/drivers/pci/controller/pcie-hisi-error.c b/drivers/pci/controller/pcie-hisi-error.c
-> > index ad9d5ffcd9e3..cb5fcfe032d1 100644
-> > --- a/drivers/pci/controller/pcie-hisi-error.c
-> > +++ b/drivers/pci/controller/pcie-hisi-error.c
-> > @@ -317,7 +317,7 @@ static struct platform_driver hisi_pcie_error_handler_driver = {
-> >  		.acpi_match_table = hisi_pcie_acpi_match,
-> >  	},
-> >  	.probe		= hisi_pcie_error_handler_probe,
-> > -	.remove_new	= hisi_pcie_error_handler_remove,
-> > +	.remove	= hisi_pcie_error_handler_remove,
-> >  };
-> >  module_platform_driver(hisi_pcie_error_handler_driver);
-> >  
-> 
-> Here I added another tab after ".remove".
-> 
-> > [...]
-> 
-> Also the patch missed to adapt drivers/pci/controller/pcie-xilinx-nwl.c.
-> 
-> Best regards
-> Uwe
-
 
 
