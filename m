@@ -1,188 +1,118 @@
-Return-Path: <linux-kernel+bounces-349263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D43998F35F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:58:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC7598F36A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F45282419
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:58:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F5191C2170C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4861A4F1B;
-	Thu,  3 Oct 2024 15:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89511A4F38;
+	Thu,  3 Oct 2024 16:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XbQOFEQA"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MGtF0T7W"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0675E155314;
-	Thu,  3 Oct 2024 15:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37A71A4E77;
+	Thu,  3 Oct 2024 16:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727971087; cv=none; b=u91dtONswWCsmg388NqYneISO+0c4oDj6nb/m6Vat+IombycL7Oou155iH0EjAM97TIATIFteFH3BhKjdx9M7T3hmzRWsga9aww1kwy8n2nGNbvCwsu498cKyVDJKjMffMcrJkSZg3SfDIfe82xcZ6SGn6FELvHMWSzpR/tzGD0=
+	t=1727971261; cv=none; b=I7gDF29ExkC1rM/QC/j6vukEBut1jjKG3ofikt/KvYHLNfogEPDrHFzh5N5A5g+YPrJDER9QEJ2OFkepPok+C5vYOznpL773nNxmaObn6kNj2d87QZskPhjfz2QWKEeruhkNuq9+/4400NPbMfC00wkiKZjMa9Lctpm51XVRW5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727971087; c=relaxed/simple;
-	bh=CWe3qeSufdkyrtmtM6u+5P9ovbXu+ZiAiRirvxh41Bc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UHitPAlzj0IIcmXFwUoPWvPW93AAz563LpV8TMTNj8c8/NiBXXkeQWzfT0NhZrK92Tup2wjuHON63ifRZPpZfOIsKbbBF9ldU/i6KQBvaFbIygDNqEnMVp85P6yUlKUH9Gl0pD/3hd8gDtYxtBSE+J3ErzjPai8KoqmQZkJ+F8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XbQOFEQA; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37cd3419937so798048f8f.0;
-        Thu, 03 Oct 2024 08:58:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727971084; x=1728575884; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oqkDUAEikU7mCD/D2xA0iEcZc4afdA+pWc3yCDGeyLg=;
-        b=XbQOFEQAB6cIiks1LLj944FV2NWYvz5Hew2vaK56db9X4LKLmO/ks0Ir2rQvg+xMEK
-         wKuPSJS+bf3bBfEkmTSSHwrjrAx9sFN3ryBY/VkYcxVcmtXiYlhR6dqf+ei3GpROKFcV
-         G9kNcmkR2a8wKmfMpju3u8w3TmE3BiSVoAnOGKgbyqp4P1ODSHVtwzjtXNmrRzJxFM2B
-         1okQTiMlZJixlMhdrrAGg4Fe/JSXwsVsuhFTvSHLmc9iQ/5eMJbadc7p/nYYToeQlZdF
-         oAYRVk296UXjJAmUx6wpfnAAhUud72+BKsCJLkFIm4I0+uLz+Wi8uc4BBOntgioSuXx6
-         +5gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727971084; x=1728575884;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oqkDUAEikU7mCD/D2xA0iEcZc4afdA+pWc3yCDGeyLg=;
-        b=YhUzn4gqpUlO3c5Ej5dFKvfWGc0GxFpe1UolhdcR8px7r9GZnYgW6GXkD5rddqvuH5
-         kBukNxOkURNk1LhVsRa9LcTH4LhrLfBHaYSz2Jug1fSBqdWB48aAcgdzqxBmqAmX7d99
-         rK7aRbYe5Jh545JcEaLeho2J4wXcOXyGyMFg7vCv5OOgvbBLUt6yYOLQdHomsyXoJVL8
-         mtsT+xJVdDQGfodDAEYUZ6TKeH/qlbjlnRdPoTuyysZAs5zr4LQv4JG4dgEGTVe7JoWF
-         4bMrfwNu7QDHN2Iz5BYa+IualZItZc/wwBi4eTtXYK/B0rQySowvo/2+xaaE4eGZ92O5
-         4zaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/mEDFSaUekaRJEjRty3TfSBoK/Er8W/JIn4RMBe82X/aq7duP5B0KawjuWazlE3/gYExRbDUY@vger.kernel.org, AJvYcCVBNFw5wvpgDnNF4tml4LYVwy5goInNe5J7WbRYyx7IANQY1LkOWDrSer/Xyd5RLM9SMyxHQLGq+gFc@vger.kernel.org, AJvYcCW21HiYH/3G8qNBVa66/Zz/mKyaz3WMo79GJ1Ntg2LetUx9959pgW9AMhSJtTtWs1DYtMSeXj8r5YYKOMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbzrprrjlSd6XqRLfn48trYu8zBolld0mh1ZxvLYAW70zFdKM5
-	cFUStxEsqcShjY4gq/WsKrNA6uiTm7h7UDR8i80Z/8KSKTcA4vPZ
-X-Google-Smtp-Source: AGHT+IGynBQwJJe96psnwHjihW22zqVdL3fL/y7qoDBG10scsoA83+TFhs4kJZFqUT8Fuvn9DVsSmg==
-X-Received: by 2002:adf:fac2:0:b0:374:c793:7bad with SMTP id ffacd0b85a97d-37cfb8cffb9mr4014725f8f.16.1727971084229;
-        Thu, 03 Oct 2024 08:58:04 -0700 (PDT)
-Received: from ubuntu-20.04.myguest.virtualbox.org ([77.137.66.252])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37d082d2e9fsm1541697f8f.109.2024.10.03.08.58.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 08:58:03 -0700 (PDT)
-From: Liel Harel <liel.harel@gmail.com>
-To: Steve Glendinning <steve.glendinning@shawell.net>,
-	UNGLinuxDriver@microchip.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: liel.harel@gmail.com
-Subject: [PATCH] smsc95xx: Fix some coding style issues
-Date: Thu,  3 Oct 2024 18:57:57 +0300
-Message-Id: <20241003155757.56504-1-liel.harel@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1727971261; c=relaxed/simple;
+	bh=US268CN7C8u8I8vi+t39s6ixvSRPzyOJbZ9UOyWWhUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WLuIaNQEobM73kR09Q0nrAlehjg3if8CLoASzbJ2NZcV89vWYJL/m8fXBmk2uEq/q2ZAW4bwY+4UUJ8SMt9VP4nLiqdv673zDPCms+cF10LdM08R8me92lAt5+ejT5nsmyD2TVKxbdIFleYK5G0pxrB1vFph+xS3hOESPL8bxbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MGtF0T7W; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727971223; x=1728576023; i=markus.elfring@web.de;
+	bh=mgi1PA9iSNuOGfuY2GvmlRhWbak0YrTiX689gvSw+fo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=MGtF0T7WLniRYu2vrmZhSVNZLiNqyYqmj+nNdxvf1AjAFzIt2aa6zMHe+GcKa+xj
+	 F247iC+VdeUjaH1LUUpyeOOGuCh0utCcCQvM47zUUIMjITHIhO4mb00QpMVXOxjrD
+	 gbwQiKzpCtO8M4M4P/k0W2AUQApU0bSTPPkWF81/+vwSSZENln/HCuk3oLp/iOd0/
+	 HbjzMXr47RCXMZbi4r0omLK0ygdHdsmsRUdE5ZY6O2ya2UdIVkHTFmkIUDsY01gCs
+	 2U4KBD2MDVDI8y7gHi6WxouWdt9PYOxZgWBUWQrRJTYzQeRlCK1yvnnGXKWu0mK3i
+	 3el0ftrdZKmnLgyigw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Myf3v-1ry4KI0tbB-00wE6x; Thu, 03
+ Oct 2024 18:00:23 +0200
+Message-ID: <c7844c93-1cc5-4d10-8385-8756a5406c16@web.de>
+Date: Thu, 3 Oct 2024 18:00:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] cleanup: adjust scoped_guard() to avoid potential
+ warning
+To: Andy Shevchenko <andriy.shevchenko@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+ =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kees Cook <kees@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>
+References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
+ <63de96f1-bd25-4433-bb7b-80021429af99@web.de>
+ <Zv6RqeKBaeqEWcGO@smile.fi.intel.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <Zv6RqeKBaeqEWcGO@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:S/T1X299wtUxa7pi41Mplw3q1ZNcg+4TUXsquBhiQxPHy/qrgcc
+ tPz0bDFKZLZhCLyHxntMWYbCdf6CAXlutSBJLIQ1EFAEmmuqfoilE+FWkSC7Ud1nsTJn9km
+ 8wPxqjQ+L/jI746B/lNFQ2FY5mabp7ncctqrJZTmKSS2o1qh+kVzp+Alo1c4Kj93+bUOf2B
+ OwogGPo7OL3Ed0y9cqXDg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:J7MJisWnq58=;MzSjKpS9joyZnLLpnb4Iyi5ZmJy
+ k3zs7FxiSw5tTfQcXPK0zoL59OBAjsa5IdKXXfYLQ0vLJIkz7yQGb8IRtLfRZF4biM9nqA6TQ
+ NQRI7JkiLN7o4d0wk84veOQXHzBv24Dyx6Yp57CjPbwNotLU+3ewKAsSQvGmqd+dl/EcdXvwN
+ XZtcGAZDCI0BtE0WCUzGGr0oxQk3Xlh7mRG8crDp7OedLRRA/FG4exM0I4DUg6M5lVhNmUql6
+ RNWqF5W0ltCByVDL8D2uG1nf/PMUkOdHmaSkCp5kwirDa2JrxCWfKBz6Hinp8/XlOICCR7rHg
+ 2e4VFr2PP0DFw3T2aw9Uzt2XrS5EKyLptZpEhwXoMyi8RDvdKGeePrRCCf11GuClZvPveapyM
+ K/3zNK4LzPk8+yfKUAL/4tQK9LhJ9XlL22HoZnyrAAk/bNRtupiyI4Y+1ldr9bl8khE9Du+TD
+ FLln+Q29Aua5xoauZcmyssO8+X4YtoCcOb0aa6gEK40fIguCyrUAJdujxFdxae59NwV8dTqFm
+ 0befEyvPyIYWgu2Odxg7ULboNZOyTYcoajjODpWNh2d5NcWVKsSe0bG/hLpe9h6T4MvBGCOq/
+ RjQ1TCQeNYtC2LJGaIqR8p9Z2CZd22yjzz8t7AnZVBcOniBZMX4Ca6zrogR/3dXCRxaxjqFOD
+ zkoq3Pb8IypWjzyVVQRRgulzaKWZ0V1vo+LaE20Ekva7XM7WRW5ICb4cpitTqpN20eopoTbF7
+ 3Z9/4KoEGBdihapjGjHRxN4OGMAD0PGeLzvQU2jvCUIXpF8UsSY9HbdonFTsvlNIJMejs2aw1
+ HjoPXeiWekcbRXdMO8GvggBw==
 
-Fix some coding style issues in drivers/net/usb/smsc95xx.c that
-checkpatch.pl script reported.
+> =E2=80=A6
+>
+>>>  "__" prefix added to internal macros;
+>
+> =E2=80=A6
+>
+>> Would you get into the mood to reconsider the usage of leading undersco=
+res
+>> any more for selected identifiers?
+>> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+o=
+r+define+a+reserved+identifier
+>
+> The mentioned URL doesn't cover the special cases like the kernels of th=
+e
+> operating systems or other quite low level code.
+Can such a view be clarified further according to available information?
 
-Signed-off-by: Liel Harel <liel.harel@gmail.com>
----
- drivers/net/usb/smsc95xx.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index 8e82184be..000a11818 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -137,7 +137,8 @@ static int __must_check smsc95xx_write_reg(struct usbnet *dev, u32 index,
- }
- 
- /* Loop until the read is completed with timeout
-- * called with phy_mutex held */
-+ * called with phy_mutex held
-+ */
- static int __must_check smsc95xx_phy_wait_not_busy(struct usbnet *dev)
- {
- 	unsigned long start_time = jiffies;
-@@ -470,7 +471,8 @@ static int __must_check smsc95xx_write_reg_async(struct usbnet *dev, u16 index,
- 
- /* returns hash bit number for given MAC address
-  * example:
-- * 01 00 5E 00 00 01 -> returns bit number 31 */
-+ * 01 00 5E 00 00 01 -> returns bit number 31
-+ */
- static unsigned int smsc95xx_hash(char addr[ETH_ALEN])
- {
- 	return (ether_crc(ETH_ALEN, addr) >> 26) & 0x3f;
-@@ -882,7 +884,7 @@ static int smsc95xx_reset(struct usbnet *dev)
- 	u32 read_buf, burst_cap;
- 	int ret = 0, timeout;
- 
--	netif_dbg(dev, ifup, dev->net, "entering smsc95xx_reset\n");
-+	netif_dbg(dev, ifup, dev->net, "entering %s\n", __func__);
- 
- 	ret = smsc95xx_write_reg(dev, HW_CFG, HW_CFG_LRST_);
- 	if (ret < 0)
-@@ -1065,7 +1067,7 @@ static int smsc95xx_reset(struct usbnet *dev)
- 		return ret;
- 	}
- 
--	netif_dbg(dev, ifup, dev->net, "smsc95xx_reset, return 0\n");
-+	netif_dbg(dev, ifup, dev->net, "%s, return 0\n", __func__);
- 	return 0;
- }
- 
-@@ -1076,7 +1078,7 @@ static const struct net_device_ops smsc95xx_netdev_ops = {
- 	.ndo_tx_timeout		= usbnet_tx_timeout,
- 	.ndo_change_mtu		= usbnet_change_mtu,
- 	.ndo_get_stats64	= dev_get_tstats64,
--	.ndo_set_mac_address 	= eth_mac_addr,
-+	.ndo_set_mac_address = eth_mac_addr,
- 	.ndo_validate_addr	= eth_validate_addr,
- 	.ndo_eth_ioctl		= smsc95xx_ioctl,
- 	.ndo_set_rx_mode	= smsc95xx_set_multicast,
-@@ -1471,7 +1473,8 @@ static int smsc95xx_autosuspend(struct usbnet *dev, u32 link_up)
- 		/* link is down so enter EDPD mode, but only if device can
- 		 * reliably resume from it.  This check should be redundant
- 		 * as current FEATURE_REMOTE_WAKEUP parts also support
--		 * FEATURE_PHY_NLP_CROSSOVER but it's included for clarity */
-+		 * FEATURE_PHY_NLP_CROSSOVER but it's included for clarity
-+		 */
- 		if (!(pdata->features & FEATURE_PHY_NLP_CROSSOVER)) {
- 			netdev_warn(dev->net, "EDPD not supported\n");
- 			return -EBUSY;
-@@ -1922,11 +1925,11 @@ static u32 smsc95xx_calc_csum_preamble(struct sk_buff *skb)
-  */
- static bool smsc95xx_can_tx_checksum(struct sk_buff *skb)
- {
--       unsigned int len = skb->len - skb_checksum_start_offset(skb);
-+	unsigned int len = skb->len - skb_checksum_start_offset(skb);
- 
--       if (skb->len <= 45)
--	       return false;
--       return skb->csum_offset < (len - (4 + 1));
-+	if (skb->len <= 45)
-+		return false;
-+	return skb->csum_offset < (len - (4 + 1));
- }
- 
- static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
-@@ -1955,7 +1958,8 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
- 	if (csum) {
- 		if (!smsc95xx_can_tx_checksum(skb)) {
- 			/* workaround - hardware tx checksum does not work
--			 * properly with extremely small packets */
-+			 * properly with extremely small packets
-+			 */
- 			long csstart = skb_checksum_start_offset(skb);
- 			__wsum calc = csum_partial(skb->data + csstart,
- 				skb->len - csstart, 0);
--- 
-2.25.1
-
+Regards,
+Markus
 
