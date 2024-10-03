@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-349744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA33198FAE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:45:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C623798FAE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D10E1F2286A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:45:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73931282869
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826291D26E0;
-	Thu,  3 Oct 2024 23:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F681D271C;
+	Thu,  3 Oct 2024 23:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M1ELjmWc"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tQMSKbCT"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154E81D1F46
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D401D221C
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727999032; cv=none; b=BPzsIss9HjmEXws+qI9llWEftdAaQk8XeDkVCTvrs+CDXVCboF26L3UP/OOrOIvRMD6t1oq71wm8z8Nry4Y+I1SQSjcmOFB51tkiJqqDHbHfeVhJP1EZTlqStPJhP8O2r7db8eDleiPdQDmKYiz0dBP2E45CPLWO/uZUYf7RZZ0=
+	t=1727999035; cv=none; b=q6SRh5lCclnxEGI+NK3oBc+H2toIuCpL0Y+sglqQTe3Kr2GOL49qOgAV2+UoRDJ7/fEVo5DUQehO+RoMPlvhO8gixfG2FPI1RtTYMPnuY9Rm7ozjKu0Tb/fb57q7WTVwsEFEXQoz8eULwJ8DpXa6hPNtS214MatqaFWTYOuwjJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727999032; c=relaxed/simple;
-	bh=gX+o8XXJM50peceuHqmdcWWs3o/nxzR2aXn9TDSmehw=;
+	s=arc-20240116; t=1727999035; c=relaxed/simple;
+	bh=YWaZS/REFKJMLevlqrMIo/CR/NX3I+PwQJV5TvOBW+s=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=g8w0VAW3qacQdMefeUlLtiSB56uOdkyYPGesy2mrgCbOCqPVsbbKyHzrg60TJVZ9v3b2tQC6+n4wstUQ17Vx/DbPoQjbQ0cxG/sOpGaZFBwiUIHkcydrF5ZDUJwoj4D0DYonSm0T957ECRCz0F3no121Yd/1MZrbGwR6dYK6rLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M1ELjmWc; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=ego45BYHxuw2ANb0WYNGP2FnNevdLTMasISwLhYPHfi5ZcxMqHDuqnubAndUeE+GxKdKr8F/eG3Mfs4JBoFprDox/68TAHrmXOBt1e28DNAx2N9qWkOseIfG82vkDO+UCo7xfX9x8n5ErKj9VHob5cGUkm/6+Unyh7U53Xmd3LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tQMSKbCT; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e26ba37314so23354457b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 16:43:50 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7c6a9c1a9b8so971088a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 16:43:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727999030; x=1728603830; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1727999032; x=1728603832; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=gk2ltXEs/6rBeGKFiAGP6lmYm5gM6rfWM1zcP38vcLM=;
-        b=M1ELjmWcrKGIHv6dlzNem/9r8nXGOLAHgM6FCnhWkfQo6U8luc77hyyf7n3pNvXMgc
-         MWcjAI1hOU7VnsMdJp8rqgkytznwecYJg4jhLqYwGffMoW7z4yGU+uF2tGe6Mm6YRcMQ
-         A1xSzSFywBifDCISZ3soisQTn3GeJlp08WXOBM3rdClJvm8r5NZKYOIBiUYMVLb5CH91
-         5rIC3ZYdSssn16JPfz9wievtg+pfYIOz5pdw7UxMLu2RXrkSO6upVeczRtTkzbEnmfDP
-         Ik3oRmrXnpiI3/HbKJooZN/asg1LqEFGtF5YuO79jtSasQet5r29/0Vyd+IsGnTds+Iz
-         lf4g==
+        bh=xgBcuvGk3o3ZhJ5eerG862wxsCgl+dqWJVsjJCQrLX8=;
+        b=tQMSKbCTN833z8PFmSr0bP6Be9Ipa2H0X8P+Nfmi+zYAJM6Iduuok3T9oHynd6H/Tw
+         iGu2Mq+3sUWbtl5XYOOa6ybifHd/wOi/tCmvbCjjBbtwQ7bQHuwBcYPM6L/01IolCExF
+         CatAu7x/VpsrRu1Gj0a0nDrO3FsFuAIfTl0KO8L+h04vdcEK4MgMPD3dvSTejB/9KwhA
+         qB4yTZSOtnHpk49Slm6OkZWSWCYnFRManXCh7rMf9Zw3y5+PJASirc+MDNIw6lBHy1h6
+         rOE1gsaoeeRyPWhFhpSQ280QsTRfq3KwGHNsc6GA2t50ZQZNXYoES8JaAbKwDvd5UP/S
+         VwrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727999030; x=1728603830;
+        d=1e100.net; s=20230601; t=1727999032; x=1728603832;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gk2ltXEs/6rBeGKFiAGP6lmYm5gM6rfWM1zcP38vcLM=;
-        b=bB4DwST8MkXDUFQxgSuDTtqAti0ZuBTRTv0VMi7RblScFMsVjt5edgNHtKbIVKfbcr
-         UIoL59eoay2cm3I3aFk+LniPQuVr+/ndtN3Vu7l5DvBj8K41E+374nN5LOiM4+HvFyZL
-         IDrBdAOaeso4jf2SLvvHmggr1R21XHD6Vqwkd6fA7oceVgYf3FFQ/NJ87lcKWLUzCedW
-         xD2ICJvvJgqqZrMjM2+IPcTu3Eg4IfpV888DUUEDla3OhnvP1p53E+fgjrx+ASUnOmiv
-         voG0G0PA6AbOwwxdj5GVcARipQrLgln3jhl8VR9KeoCz9/2SJw/1mnMc6fz/9fU/Zj6r
-         HNaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV68AM5yZ0K5/oeotPQQgrO9x1HXT5E2CcqDyzFp36yNQG3f1ycoaePcnAiALS10xL1pFPnAx4VCQPNFnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws0sZ5ZakfU8fRTyy90rZJ8nddeG4B6/t36gItZmpONeVquJWF
-	kmlwtI5FLf2IRkyajKuFfPRNI3m0QqKNCyqWl6yPnB8EK5vON/s7HHiTIrPOZtTpKoSbo9IF6vs
-	vHQ==
-X-Google-Smtp-Source: AGHT+IH1mRDr/LJ1+AGep1hMpxSXBKZFso+u/Vj+xIKpeT7s6R8CKDq8kLEN6DeZJyO2znluPHRoe2V7e78=
+        bh=xgBcuvGk3o3ZhJ5eerG862wxsCgl+dqWJVsjJCQrLX8=;
+        b=gbzCyPru0llrIcVMK1psXUbmBZQyV4lWDAr23JNBPquCrMqGMWPzbHDwaZcItmxZOO
+         6S9PQapZhgWRbaYVsxXH7AzNuilsPrkFkj1drt9dhWcnC8l2i9CE1v0Ag6pnW5oLAlJ7
+         AGYdMdbBU1CedK2142HWjqKk5+awVYfFxzYkC7huoWWhTaD/cXQuXRy5MKOV88eX9CXH
+         +ffcE5XvEdS5Ws4ZxaiueHhZpYMRu+zeE9qJIs4Dy+zVycD5g1hMcCrZ8ZlRow3hC16f
+         5C1o0CVgFQoUK4hZ9J3G4TPm+xcOHBqQhG4WuW3OrjmYehcSdvvNsd2IDSRNaqpRQsaq
+         /Ehw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKKpLJ78dBQKm6mox/Uafu3R79emCn9YmFxdWFru9BDzUZLNzT7n+BzMYhDniaPZlBsrb+9TTliIbCPCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9xlwJT2GUprfZ29z7pAxMoV2tRIngESfKhiYmGJhsPr4jnw3a
+	+ntLez3BgBwaKy2i/BPnFsDKcRHXr9mRHEUoBVs8+dUXN9v9Odw3CCBEF/cq5qwxkaz6XaBNvlb
+	Qvg==
+X-Google-Smtp-Source: AGHT+IFXq9RCb6WRkwMAtMcPJ9IUSeE+59BJekmESI3c/ddtcupPuWgRFNALH1TsU96CuFHtqHa2A7atpFQ=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:361d:0:b0:e22:5bdf:39c1 with SMTP id
- 3f1490d57ef6-e289394938fmr459276.10.1727999030121; Thu, 03 Oct 2024 16:43:50
+ (user=seanjc job=sendgmr) by 2002:a63:8c07:0:b0:7db:16b4:7a2a with SMTP id
+ 41be03b00d2f7-7e9e59a8976mr1289a12.2.1727999031876; Thu, 03 Oct 2024 16:43:51
  -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu,  3 Oct 2024 16:43:31 -0700
+Date: Thu,  3 Oct 2024 16:43:32 -0700
 In-Reply-To: <20241003234337.273364-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,156 +75,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241003234337.273364-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-Message-ID: <20241003234337.273364-6-seanjc@google.com>
-Subject: [PATCH 05/11] KVM: selftests: Configure XCR0 to max supported value
- by default
+Message-ID: <20241003234337.273364-7-seanjc@google.com>
+Subject: [PATCH 06/11] KVM: selftests: Verify XCR0 can be "downgraded" and "upgraded"
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-To play nice with compilers generating AVX instructions, set CR4.OSXSAVE
-and configure XCR0 by default when creating selftests vCPUs.  Some distros
-have switched gcc to '-march=x86-64-v3' by default, and while it's hard to
-find a CPU which doesn't support AVX today, many KVM selftests fail with
+Now that KVM selftests enable all supported XCR0 features by default, add
+a testcase to the XCR0 vs. CPUID test to verify that the guest can disable
+everything except the legacy FPU in XCR0, and then re-enable the full
+feature set, which is kinda sorta what the test did before XCR0 was setup
+by default.
 
-  ==== Test Assertion Failure ====
-    lib/x86_64/processor.c:570: Unhandled exception in guest
-    pid=72747 tid=72747 errno=4 - Interrupted system call
-    Unhandled exception '0x6' at guest RIP '0x4104f7'
-
-due to selftests not enabling AVX by default for the guest.  The failure
-is easy to reproduce elsewhere with:
-
-   $ make clean && CFLAGS='-march=x86-64-v3' make -j && ./x86_64/kvm_pv_test
-
-E.g. gcc-13 with -march=x86-64-v3 compiles this chunk from selftests'
-kvm_fixup_exception():
-
-        regs->rip = regs->r11;
-        regs->r9 = regs->vector;
-        regs->r10 = regs->error_code;
-
-into this monstronsity (which is clever, but oof):
-
-  405313:       c4 e1 f9 6e c8          vmovq  %rax,%xmm1
-  405318:       48 89 68 08             mov    %rbp,0x8(%rax)
-  40531c:       48 89 e8                mov    %rbp,%rax
-  40531f:       c4 c3 f1 22 c4 01       vpinsrq $0x1,%r12,%xmm1,%xmm0
-  405325:       49 89 6d 38             mov    %rbp,0x38(%r13)
-  405329:       c5 fa 7f 45 00          vmovdqu %xmm0,0x0(%rbp)
-
-Alternatively, KVM selftests could explicitly restrict the compiler to
--march=x86-64-v2, but odds are very good that punting on AVX enabling will
-simply result in tests that "need" AVX doing their own thing, e.g. there
-are already three or so additional cleanups that can be done on top.
-
-Reported-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Closes: https://lore.kernel.org/all/20240920154422.2890096-1-vkuznets@redhat.com
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- .../selftests/kvm/include/x86_64/processor.h  |  5 ++++
- .../selftests/kvm/lib/x86_64/processor.c      | 24 +++++++++++++++++++
- .../selftests/kvm/x86_64/xcr0_cpuid_test.c    |  6 ++---
- 3 files changed, 32 insertions(+), 3 deletions(-)
+ tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/testing/selftests/kvm/include/x86_64/processor.h b/tools/testing/selftests/kvm/include/x86_64/processor.h
-index e247f99e0473..645200e95f89 100644
---- a/tools/testing/selftests/kvm/include/x86_64/processor.h
-+++ b/tools/testing/selftests/kvm/include/x86_64/processor.h
-@@ -1049,6 +1049,11 @@ static inline void vcpu_set_cpuid(struct kvm_vcpu *vcpu)
- 	vcpu_ioctl(vcpu, KVM_GET_CPUID2, vcpu->cpuid);
- }
- 
-+static inline void vcpu_get_cpuid(struct kvm_vcpu *vcpu)
-+{
-+	vcpu_ioctl(vcpu, KVM_GET_CPUID2, vcpu->cpuid);
-+}
-+
- void vcpu_set_cpuid_property(struct kvm_vcpu *vcpu,
- 			     struct kvm_x86_cpu_property property,
- 			     uint32_t value);
-diff --git a/tools/testing/selftests/kvm/lib/x86_64/processor.c b/tools/testing/selftests/kvm/lib/x86_64/processor.c
-index 974bcd2df6d7..636b29ba8985 100644
---- a/tools/testing/selftests/kvm/lib/x86_64/processor.c
-+++ b/tools/testing/selftests/kvm/lib/x86_64/processor.c
-@@ -506,6 +506,8 @@ static void vcpu_init_sregs(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
- 
- 	sregs.cr0 = X86_CR0_PE | X86_CR0_NE | X86_CR0_PG;
- 	sregs.cr4 |= X86_CR4_PAE | X86_CR4_OSFXSR;
-+	if (kvm_cpu_has(X86_FEATURE_XSAVE))
-+		sregs.cr4 |= X86_CR4_OSXSAVE;
- 	sregs.efer |= (EFER_LME | EFER_LMA | EFER_NX);
- 
- 	kvm_seg_set_unusable(&sregs.ldt);
-@@ -519,6 +521,20 @@ static void vcpu_init_sregs(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
- 	vcpu_sregs_set(vcpu, &sregs);
- }
- 
-+static void vcpu_init_xcrs(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_xcrs xcrs = {
-+		.nr_xcrs = 1,
-+		.xcrs[0].xcr = 0,
-+		.xcrs[0].value = kvm_cpu_supported_xcr0(),
-+	};
-+
-+	if (!kvm_cpu_has(X86_FEATURE_XSAVE))
-+		return;
-+
-+	vcpu_xcrs_set(vcpu, &xcrs);
-+}
-+
- static void set_idt_entry(struct kvm_vm *vm, int vector, unsigned long addr,
- 			  int dpl, unsigned short selector)
- {
-@@ -675,6 +691,7 @@ struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
- 	vcpu = __vm_vcpu_add(vm, vcpu_id);
- 	vcpu_init_cpuid(vcpu, kvm_get_supported_cpuid());
- 	vcpu_init_sregs(vm, vcpu);
-+	vcpu_init_xcrs(vm, vcpu);
- 
- 	/* Setup guest general purpose registers */
- 	vcpu_regs_get(vcpu, &regs);
-@@ -686,6 +703,13 @@ struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
- 	mp_state.mp_state = 0;
- 	vcpu_mp_state_set(vcpu, &mp_state);
- 
-+	/*
-+	 * Refresh CPUID after setting SREGS and XCR0, so that KVM's "runtime"
-+	 * updates to guest CPUID, e.g. for OSXSAVE and XSAVE state size, are
-+	 * reflected into selftests' vCPU CPUID cache, i.e. so that the cache
-+	 * is consistent with vCPU state.
-+	 */
-+	vcpu_get_cpuid(vcpu);
- 	return vcpu;
- }
- 
 diff --git a/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c b/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c
-index 95ce192d0753..a4aecdc77da5 100644
+index a4aecdc77da5..c8a5c5e51661 100644
 --- a/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c
 +++ b/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c
-@@ -48,16 +48,16 @@ do {									\
+@@ -79,6 +79,11 @@ static void guest_code(void)
+ 	ASSERT_ALL_OR_NONE_XFEATURE(supported_xcr0,
+ 				    XFEATURE_MASK_XTILE);
  
- static void guest_code(void)
- {
--	uint64_t xcr0_reset;
-+	uint64_t initial_xcr0;
- 	uint64_t supported_xcr0;
- 	int i, vector;
- 
- 	set_cr4(get_cr4() | X86_CR4_OSXSAVE);
- 
--	xcr0_reset = xgetbv(0);
-+	initial_xcr0 = xgetbv(0);
- 	supported_xcr0 = this_cpu_supported_xcr0();
- 
--	GUEST_ASSERT(xcr0_reset == XFEATURE_MASK_FP);
-+	GUEST_ASSERT(initial_xcr0 == supported_xcr0);
- 
- 	/* Check AVX */
- 	ASSERT_XFEATURE_DEPENDENCIES(supported_xcr0,
++	vector = xsetbv_safe(0, XFEATURE_MASK_FP);
++	__GUEST_ASSERT(!vector,
++		       "Expected success on XSETBV(FP), got vector '0x%x'",
++		       vector);
++
+ 	vector = xsetbv_safe(0, supported_xcr0);
+ 	__GUEST_ASSERT(!vector,
+ 		       "Expected success on XSETBV(0x%lx), got vector '0x%x'",
 -- 
 2.47.0.rc0.187.ge670bccf7e-goog
 
