@@ -1,131 +1,103 @@
-Return-Path: <linux-kernel+bounces-348911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3824298ED89
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:03:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C221898ED8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D161C1F20ECA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B19B2826E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77BB153BD7;
-	Thu,  3 Oct 2024 11:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8022F14F9E7;
+	Thu,  3 Oct 2024 11:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qi1kM4A+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YPW8Bl0z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6C314F123;
-	Thu,  3 Oct 2024 11:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0B014F123;
+	Thu,  3 Oct 2024 11:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727953405; cv=none; b=cRA4VcIoaiRSdHELeib83Xqq31HN71vk/v1RWW5cV9Uk2t1pcG2ispktpPcwG/wImpNbB+rXUOa09wxXSkP73KVH9YeQkCnJG1VBjHrezEVHv/VUUjlvjAi81ZlCUapTMXlR4UPxZjqzlDFMIuIGMiOpT2OtPR9s9815TiQKFzc=
+	t=1727953414; cv=none; b=CTBAZ+jxHA4SUcpNVTq7byMRAHdXJhrgVoNwn0Ai4qmTn5OYqVB4i8wQ4+/8DZLFLbVPaUuRco5VjHGFNJNXa5DXonZpUETa19BhW71d/Yxw0oh3H10QTvLCC1NE8hhF6fvwbLyHaK7+075aHiyM0cZ9b/evLptSdcotWd4sfeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727953405; c=relaxed/simple;
-	bh=df2Nbj/hqQVIrGa+4waYwuDbuQZWuWu1AE+VTeU/f70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJx7U6qEibMCwAGT8/2Saw8fTMs4oIrMQOKLeq18beVJZge/mzh9KMfV9YF3uFtIQaXZTm5pCGKqRiIiL6fwg/4AS3pj2SyxUjbP9pa+WE4MG2iMJn4vC0CPBrfnz29mOfT0wB/PSic/YXK3YanEF12bR9kuvPKc0kRLJsMba8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qi1kM4A+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46EA9C4CEC5;
-	Thu,  3 Oct 2024 11:03:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727953404;
-	bh=df2Nbj/hqQVIrGa+4waYwuDbuQZWuWu1AE+VTeU/f70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qi1kM4A+RaAdIARpZ5o6qFW04lMQITGmFeI+Agv1TzuVt+oC5bw6dyO9QGVzZc+yA
-	 vHwVYzgRyMie6OKvDhY9mlziKIX0IQdHhu5SPfMBOAU5iC0/prGGR44vzImFHiTspW
-	 WygKX3YTf8TbnIRWhBnwzrHjnLX6yypHAYSaKPKODk0PVnasgSrvF0npsCFfObBbtB
-	 ZnkfcD738tVwS9ipJwD4mmvpU8YYs2+E7F1Z451dZR5iCIsvTp4dJLn7sGH752lEq8
-	 o5GOthWHPR7petJ9P1Kpbm1rovHNYXteZoZqcJpoKP4G2M6hKGZpmklHWwozfbuCOL
-	 8bGZhf0oO4skQ==
-Date: Thu, 3 Oct 2024 12:03:11 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	alistair.francis@wdc.com, richard.henderson@linaro.org,
-	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
-	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
-	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, rick.p.edgecombe@intel.com
-Subject: Re: [PATCH 33/33] kselftest/riscv: kselftest for user mode cfi
-Message-ID: <b4347055-46f7-4e06-b484-bbf147b80fe4@sirena.org.uk>
-References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
- <20241001-v5_user_cfi_series-v1-33-3ba65b6e550f@rivosinc.com>
- <fdf602e9-a8b1-4f62-9e26-bb62a7202d22@linuxfoundation.org>
+	s=arc-20240116; t=1727953414; c=relaxed/simple;
+	bh=BHxKfe7cwR5dwKO9e3Otil+dngQy74VkLkbWJ+gQaeA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=K2/Q/ivTUNpoOXhrbEp5YmHcBrKGvFPlZJR10Jg58JbgHHfq+ZBdKACogzaeoThWY/ihSGE9qtXNPXs+oAu4mRCIQAloaAZfS7MZdvKDZ1BAO02bPW6eblN//3jabq/HouGBWEjlzgWbryFxNFABLXFSwXQMvKxlqfrOaGwfioU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YPW8Bl0z; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727953414; x=1759489414;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=BHxKfe7cwR5dwKO9e3Otil+dngQy74VkLkbWJ+gQaeA=;
+  b=YPW8Bl0zxKI8za1Kdew3nVlaUezrlpq1QwLqly4rFqeCw+1st2p+Fg0H
+   1nFRE7t9LkUnHlm436Vz5PZNLGAy2Qz+IjWqbBUEqNNIzE+vjlhToZ4vz
+   eiby6j/e4EkcSogJptK+Q8C31yOH4FePcBVLypun6hiHltZ1lR8oD5xeN
+   uFpHKmPLL6wgo62ZUkdWDKJ3wl1wvFcJ14zXHRJwRI/kbepx+Ab+e6bVU
+   LXWPTIY0DeyOYLfZ91FVO2a48SOM8RhLF67jeI8vlFx43dWGGz9EaHr8P
+   R1k3V/yNPV51RfHoMYSUhmn30oQqOSqyDvuyUHEh1i/j+eOBdOolgoT+e
+   Q==;
+X-CSE-ConnectionGUID: tMXknGnhSBadwC7Pi044rA==
+X-CSE-MsgGUID: hIr5MRKZQVyOfXtVEm1KTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="37700196"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="37700196"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 04:03:33 -0700
+X-CSE-ConnectionGUID: B+UNORwcQfmYK5Pgts6f+w==
+X-CSE-MsgGUID: wKG45aIRTLiVUETH2FIG6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="97644287"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.198])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 04:03:29 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 3 Oct 2024 14:03:25 +0300 (EEST)
+To: "Wang, Crag" <Crag.Wang@dell.com>
+cc: "Tudor, Laurentiu" <Laurentiu.Tudor1@dell.com>, 
+    Mario Limonciello <mario.limonciello@amd.com>, 
+    Crag Wang <crag0715@gmail.com>, "Ksr, Prasanth" <Prasanth.Ksr@dell.com>, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    Dell Client Kernel <Dell.Client.Kernel@dell.com>, 
+    "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, 
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+    "Wang, Berry" <Berry.Wang@dell.com>
+Subject: RE: [PATCHv2 1/1] platform/x86: dell-sysman: add support for alienware
+ products
+In-Reply-To: <PH0PR19MB49884B9347569041F4EE234BE3682@PH0PR19MB4988.namprd19.prod.outlook.com>
+Message-ID: <7ec1d352-4059-e5f8-3ff4-ecc5737d8a6b@linux.intel.com>
+References: <20240923063658.411071-1-crag_wang@dell.com> <20240924050302.317522-2-crag_wang@dell.com> <0a31cb22-e3f9-4212-8fc1-77d6cafa7277@amd.com> <CY5PR19MB61479854D62CAD389C99BA15BA682@CY5PR19MB6147.namprd19.prod.outlook.com>
+ <PH0PR19MB49884B9347569041F4EE234BE3682@PH0PR19MB4988.namprd19.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kAfVHLmbYIIytvqg"
-Content-Disposition: inline
-In-Reply-To: <fdf602e9-a8b1-4f62-9e26-bb62a7202d22@linuxfoundation.org>
-X-Cookie: I'm into SOFTWARE!
+Content-Type: text/plain; charset=US-ASCII
 
+On Tue, 24 Sep 2024, Wang, Crag wrote:
 
---kAfVHLmbYIIytvqg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > Couple of newbie questions: what's the reason for dropping the URL check?
+> > Would it make sense to include the reason in the commit msg?
+> 
+> URL in type 11 is subject to change according to OEM ID Module specification, for
+> standard Dell and OEM inclusive the string 'Dell System' should be sufficient.
 
-On Wed, Oct 02, 2024 at 05:18:36PM -0600, Shuah Khan wrote:
-> On 10/1/24 10:06, Deepak Gupta wrote:
+Please add such information into the commit message so it gets properly 
+recorded. But I'd prefer this to be split into two patches, one adding 
+the Alienware and another that removes the URL making it easier to revert 
+only the latter one if the need arises.
 
-> > +#ifndef __NR_prctl
-> > +#define __NR_prctl 167
-> > +#endif
+-- 
+ i.
 
-> > +#ifndef __NR_map_shadow_stack
-> > +#define __NR_map_shadow_stack 453
+> Internal Use - Confidential
 
-> Why do we need to define these? Shouldn't including
-> asm-generic/unistd.h sufficient?
-
-We have this issue on arm64 as well, there's some issue with directly
-pulling in the asm header interfering with libc in some situation (I
-can't immediately figure out which situation or which libc to remind
-myself what it is though...) so we've got local defines like we do for
-the NT_ defines for ptrace.  I see x86 is doing the same.
-
---kAfVHLmbYIIytvqg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb+ee4ACgkQJNaLcl1U
-h9CFRQf/ZisHmPhxTo4GA9gvOyCclGJtTt5XbyRTnPd3KzS/hDF/0q+VpUbmWm+Y
-SmcaycdcESUg9VOXQZorDB8+tK3kaP7Sg2JmpaLB8yoKfuO3t/rVL6pt/vCKLlgX
-qwzZD6zQUDZlBt0SteGmZnXzHDKpjNrYf1MQdFSHYVkJSQCCnvPV0u2FXZVYj9Bb
-Jz/PNuyt9uexrRqPrBsbIKJcJUHREFq6SR1NYDMReO+lyYD8xLkKmXPH0K55C870
-FHSWZIUGQB5Lt80AJmT/FQrXn62k7+91Nalz/CyYtaqH/RdFHTD+mBkJtSs+c1gC
-i/L5TsJAiSLGEZl9I4rSRniStmUSlg==
-=2Xkh
------END PGP SIGNATURE-----
-
---kAfVHLmbYIIytvqg--
 
