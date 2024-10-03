@@ -1,96 +1,94 @@
-Return-Path: <linux-kernel+bounces-349733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841A698FAB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:40:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D6798FABA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0EF1F236CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77D481C2235C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13B51D0BAA;
-	Thu,  3 Oct 2024 23:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF12D1D017C;
+	Thu,  3 Oct 2024 23:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wxw8MN9Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCivXwtG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028FC1D0B90;
-	Thu,  3 Oct 2024 23:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0A21CDA26;
+	Thu,  3 Oct 2024 23:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727998836; cv=none; b=H5hW6hHUrfV0QXoCCIT359MNx7I0xDKpPKIJfyWUN2s/b4o53xWnKXCNZutxkn1ywLeBuEc+apEZ8fwBUMaSfgZUM0ackmxE2SbfV5nMUsvpNdKeqXp3N23nH/BgTz+214SXcUhEv65owDJzX4n9qcdF16ArLYvMGsNZGCTVK20=
+	t=1727998874; cv=none; b=eeAihsME29d7d3JwKAXMI1p/qYT3SWMSeYKD7pi4c5kwk9V0jNgs7l0Yh64lMnK89ZmskiBfocVEBKw2RvHFbZwG/5QufQnW2HXp2Y3teZAlzuNTJr4RQfiFKst8UQnPpZOIOK4CFhaGZjJbODj648zPE3ZiKyd2cWuNz8QpVBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727998836; c=relaxed/simple;
-	bh=L937tdndjiR3fU0aVHRBXcEqJx6fA5/dFTyDTrR43lA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=t+VuNFUt+m1mVCHiZigtA7rg2bKafq3s92RMyRsbYzCgHbVMRV/bsFTF5XDo4VtBpl7M4ewZgliI2OB2g2NaFLyr1e3PiIGU8gJcK7RKp03LfqiiJ55b/HtTSKb8hZ5eC/7MLvrjuwt1Sd6s3YYpuvT8RBbSvpF9w6CGUdjVy0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wxw8MN9Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C26C4CEC7;
-	Thu,  3 Oct 2024 23:40:35 +0000 (UTC)
+	s=arc-20240116; t=1727998874; c=relaxed/simple;
+	bh=izyo/MfvsnXCOlauszx1miz+7Gvkw2ssldnsTvhIVP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VupKEqSkQzt4Z2Ydbb5fXJJbPXNhE782yB6iNTSSlQ9kSKSxW3kie1tl4MY2zXrWfjgekc45EBU76Bc8lafLy3Lh6K8pI4zUPDI8ov5ju4QIansacT7mMkx0ISuF8JvIswc5m2lv3+3MsCE14QnJ091wFQZAUBscA62rSkF5mFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCivXwtG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD0E3C4CEC5;
+	Thu,  3 Oct 2024 23:41:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727998835;
-	bh=L937tdndjiR3fU0aVHRBXcEqJx6fA5/dFTyDTrR43lA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Wxw8MN9ZkK2fENeXuEhj3DQwmGXLEhRzoORba+WKMA9fHFe7yg8iDJBY7qq5j4DtQ
-	 s0/blE5pebpG5hcYOTGKfC4yAbw7hq2ydRHwk8kiXg5+kS2zoeYjHo94hYFZNzHtYs
-	 DruWrbFMJLMGuJXDLnRf4lLv5Atp4V0wklSYcK2XMe5RyBeS7GefrW0co+lrva9RY8
-	 HzNWc/wcpUdbXrd6OSxRe1BGqxO7nh1e0kkEWVBUM8LKXku5GZGOzB6TUe1TYxxRXz
-	 vsrGAhIHFI2GmBQBkKqqRZQk7FYHdsSlvGsI1LIbRtiUvYdoV37DacIvXkFTiPDEFt
-	 z0ahJ3XXSkZ+g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BDF3803263;
-	Thu,  3 Oct 2024 23:40:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1727998873;
+	bh=izyo/MfvsnXCOlauszx1miz+7Gvkw2ssldnsTvhIVP4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SCivXwtGEbSKeZElFTxVQgRfL5vFjKzc3rrKnIJ0cHYk4TxyrYaf+h5ztyzKen1qb
+	 6Jd4BJh5v+rrRDsxEkIoLCiPUZkH4A6sYe+/BHuVPw8MYatgIDyi7Ge93Qv5b780y8
+	 UbvQX3xzVHB9s+RJv999b8M9FBkYfBAzXJOLlug0PlYZA5f01Zkmhd5kkJ0CoSEw36
+	 IyqdJ1DHfct/ZqAyyvKWU3zYYkEOAQQgzgmpcK6FeF2dZQyd8RddDUIjbQhvN3Fcj4
+	 6SBKEgq3sZhUpM1FoF2kllCun3EBnM7iyfeekQF1qLHgnJxXBviDnPc+BTywjCHcW7
+	 yFQtF2yo6p/wQ==
+Date: Thu, 3 Oct 2024 18:41:12 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>,
+	Maxime Ripard <mripard@kernel.org>, freedreno@lists.freedesktop.org,
+	Rob Clark <robdclark@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, Sean Paul <sean@poorly.run>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>
+Subject: Re: [PATCH 3/5] dt-bindings: display/msm: merge SM8350 DPU into
+ SC7280
+Message-ID: <172799887185.1833455.5440021996602281505.robh@kernel.org>
+References: <20241003-dt-binding-display-msm-merge-v1-0-91ab08fc76a2@linaro.org>
+ <20241003-dt-binding-display-msm-merge-v1-3-91ab08fc76a2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: phy: microchip_t1: Interrupt support for
- lan887x
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172799883874.2030473.4805913584445830927.git-patchwork-notify@kernel.org>
-Date: Thu, 03 Oct 2024 23:40:38 +0000
-References: <20241001144421.6661-1-divya.koppera@microchip.com>
-In-Reply-To: <20241001144421.6661-1-divya.koppera@microchip.com>
-To: Divya Koppera <Divya.Koppera@microchip.com>
-Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
- hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kalesh-anakkur.purayil@broadcom.com, Parthiban.Veerasooran@microchip.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003-dt-binding-display-msm-merge-v1-3-91ab08fc76a2@linaro.org>
 
-Hello:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 1 Oct 2024 20:14:21 +0530 you wrote:
-> Add support for link up and link down interrupts in lan887x.
+On Thu, 03 Oct 2024 10:14:20 +0200, Krzysztof Kozlowski wrote:
+> Split of the bindings was artificial and not helping - we end up with
+> multiple binding files for very similar devices thus increasing the
+> chances of using different order of reg and clocks entries.
 > 
-> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
+> Unify DPU bindings of SC7280 and SM8350, because they are the same.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
-> v1 -> v2
-> - Replaced ret with rc return variable.
-> - Moved interrupt APIs to proper place and removed forward declaration.
-> - Removed redundant return variable declaration.
+>  .../bindings/display/msm/qcom,sc7280-dpu.yaml      |   1 +
+>  .../bindings/display/msm/qcom,sm8350-dpu.yaml      | 120 ---------------------
+>  2 files changed, 1 insertion(+), 120 deletions(-)
 > 
-> [...]
 
-Here is the summary with links:
-  - [net-next,v2] net: phy: microchip_t1: Interrupt support for lan887x
-    https://git.kernel.org/netdev/net-next/c/5fad1c1a09ac
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
