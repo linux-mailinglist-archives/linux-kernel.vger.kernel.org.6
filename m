@@ -1,136 +1,87 @@
-Return-Path: <linux-kernel+bounces-348469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E31298E813
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:17:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4083298E81D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C24AB211AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:17:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BECB6B25913
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BA611185;
-	Thu,  3 Oct 2024 01:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="SwRkD8cM"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104B211CA0;
+	Thu,  3 Oct 2024 01:20:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF6C17BCE;
-	Thu,  3 Oct 2024 01:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2350BDF49
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 01:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727918180; cv=none; b=fCUUtiQt8WdciqBkcFO4O6mFxqjOrqA4BTxbzaNJfKUL+ORuptpI29b3AXPK6OaUhDQ4rw5OywHVmeKVzyjWOFa23xvlkq4N8UKT/+P65OWS0IHba/QLZnXDUJVTYQN/pWvb4DaC4ePKFryjus0gqHK+zpmSKHZwG9vLj32/t0c=
+	t=1727918404; cv=none; b=oEVQ+B9YkN5iANNp9SppsrMuOODBnN9xTkEl2jFhfPQgMDZtxUoUdVtE/0OqCofo/NVwuHLmtSdKwPux6zIgIR8ujquQI1DOkFFC9iryaKmBWVNPForrCTx24auoLjv6/I0vJXQuG4omX8Sd70ptVgAETaWSkNJXEZZCU4pyON8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727918180; c=relaxed/simple;
-	bh=qVfQLDLGMSl6jEtK1Mx9+oBBF1tpV7JAUVMDfbCCyFI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dQmTXez58N7uqBGXyUg7oo5SE1c1QnkD8x+DTI1ntvmOJCmYmp19UiLcMfPbZz0xgcdAlrH67RE9XYDcPP6JiY8S8eBVmyn40Qt1tj0c6BhAz5EiAqcSGh40ZQpC0sQEqavHyVxx6S7VqBA3Pr9Whyg9sPMN+LaoEKSpbY74X70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=SwRkD8cM; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=T38uohCYX7hSayOdEiQEq9Wgaxht+5HAYWTxt6lFNlI=; b=SwRkD8cMwuCCvj00
-	L/GMI0swR8B885UDt3HlXBsKt4UvL0D6CVTvrKUns49xxqx4lul6Gcqk0c0fsFbCDguEw7ZsOJA6J
-	lanQo3UUAaEUoSKtIPuCDv2Ra433M/cBXeT0cjn15Onyt0HLmzMPU0yEdA6sBg0N7vF17H8wkfCzS
-	2smZN6n2Svbuf6zk/UmFSt8DAZQdrjfQQ000Xlf7BM8ityMfChnjMRdXK8B76yuKOs1wHehjWCJrs
-	H9M1jdyl/ywecbaDPdfTSQmB82Eubra4NgYQPx3zIHmaH8iDYzhToTCb8AzcdP6zg1P6aq1/ZPFmb
-	1DNftrq4ZvuiHZoMDg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1swARy-008Zju-0K;
-	Thu, 03 Oct 2024 01:16:14 +0000
-From: linux@treblig.org
-To: agk@redhat.com,
-	snitzer@kernel.org,
-	mpatocka@redhat.com,
-	msakai@redhat.com
-Cc: dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 9/9] dm vdo: Remove unused uds_compute_index_size
-Date: Thu,  3 Oct 2024 02:15:54 +0100
-Message-ID: <20241003011554.266654-10-linux@treblig.org>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241003011554.266654-1-linux@treblig.org>
-References: <20241003011554.266654-1-linux@treblig.org>
+	s=arc-20240116; t=1727918404; c=relaxed/simple;
+	bh=VgxLcjVqLId1nwjERIUwdNgWnVC3KfWn1HLPFd36T9c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=a/tizs3tNHw9zqriBBjisTg4ZTUo4OGZb0pu5UiUiCBxZNsdEkWmonGJ8PIMJGFxd1BtmM8VrcT28guOerjiCGci72Aj9ZCqbHi6LrzUrMBc9xSZT02N1874zFWDOZlZQEdp4LnVFA925VeWhNfPh4B6dRf4ks/bLVh7S14OBeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3479460f4so3808055ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 18:20:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727918402; x=1728523202;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oLg4WjkU//b62h2ZX0FxgDSBVmbNEA2iXphVFPi2ilE=;
+        b=D2l8v1pdOk8r1uhqvt/gNppzRBG/wozmZQlZVoGiXGBIJZJBlPBTXIpChelQAm+r1c
+         fRLNnLSoINz16NH4wx9qnf+XznLARTsL45YinPQkNmuHIxAdp75byu3iRlN1pjcHa4Cw
+         6GyBd0yQzy5ea9B64/yCXDhtNPWggcW/IDqqMES4Me91VCdpUSbxpGCwKW3VJ5yxyCE/
+         NNWdccDe/TzhCgsvPPYMactfednEg3F6iFP9EeeAKyxH3D03zjqDTKZtrVgflmc2M5VL
+         QZQ3r6nQKZedo8ei4GkQfxGmB30AwQOFAB+ul10aTgXAYAstdnybcVhlGve0h2YfR+FG
+         9v5A==
+X-Forwarded-Encrypted: i=1; AJvYcCW9TWwRoTB/JuQTCXuIdkT2TqixzDZCtOsVvHfDC99VmWq9nTjDiZ9wpz57ru68nqFWYuu2xo0e54aY/kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG8N30v94LXHGND+VyG0eIElnNwyvu9wHTjB1KHOehuzxb6GoU
+	R/NoqCl1kU1pNtXDIYNWaMI1DfCfCsY1n3t87iuwnD6mKFkwG0E2CC03bwjkwLoOyaNU1flz9r9
+	9HmzvpfozefXsTxsghseeqqd2AwmwcmgTJM8u1wJFOLudwkmpvgzALuE=
+X-Google-Smtp-Source: AGHT+IGqViwkcEVS8PdMA4PRbv9APJblCXNII4LxpvRx87WBi+qRDLtteGj05rHamd4t24+sAqM1WTmuFRSebAFN+SqR2vjKyYK2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:164d:b0:39f:51b8:5e05 with SMTP id
+ e9e14a558f8ab-3a3659441d3mr47181185ab.16.1727918402242; Wed, 02 Oct 2024
+ 18:20:02 -0700 (PDT)
+Date: Wed, 02 Oct 2024 18:20:02 -0700
+In-Reply-To: <20241003005956.1869-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fdf142.050a0220.9ec68.0030.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] KASAN: slab-use-after-free Read in binder_release_work
+From: syzbot <syzbot+9ba7a8cdae0440edd57b@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hello,
 
-uds_compute_index_size() has been unused since it was added in
-commit b46d79bdb82a ("dm vdo: add deduplication index storage interface")
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Remove it.
+Reported-by: syzbot+9ba7a8cdae0440edd57b@syzkaller.appspotmail.com
+Tested-by: syzbot+9ba7a8cdae0440edd57b@syzkaller.appspotmail.com
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/md/dm-vdo/indexer/index-layout.c | 26 ------------------------
- drivers/md/dm-vdo/indexer/indexer.h      |  4 ----
- 2 files changed, 30 deletions(-)
+Tested on:
 
-diff --git a/drivers/md/dm-vdo/indexer/index-layout.c b/drivers/md/dm-vdo/indexer/index-layout.c
-index 627adc24af3b..af8fab83b0f3 100644
---- a/drivers/md/dm-vdo/indexer/index-layout.c
-+++ b/drivers/md/dm-vdo/indexer/index-layout.c
-@@ -248,32 +248,6 @@ static int __must_check compute_sizes(const struct uds_configuration *config,
- 	return UDS_SUCCESS;
- }
- 
--int uds_compute_index_size(const struct uds_parameters *parameters, u64 *index_size)
--{
--	int result;
--	struct uds_configuration *index_config;
--	struct save_layout_sizes sizes;
--
--	if (index_size == NULL) {
--		vdo_log_error("Missing output size pointer");
--		return -EINVAL;
--	}
--
--	result = uds_make_configuration(parameters, &index_config);
--	if (result != UDS_SUCCESS) {
--		vdo_log_error_strerror(result, "cannot compute index size");
--		return uds_status_to_errno(result);
--	}
--
--	result = compute_sizes(index_config, &sizes);
--	uds_free_configuration(index_config);
--	if (result != UDS_SUCCESS)
--		return uds_status_to_errno(result);
--
--	*index_size = sizes.total_size;
--	return UDS_SUCCESS;
--}
--
- /* Create unique data using the current time and a pseudorandom number. */
- static void create_unique_nonce_data(u8 *buffer)
- {
-diff --git a/drivers/md/dm-vdo/indexer/indexer.h b/drivers/md/dm-vdo/indexer/indexer.h
-index 3744aaf625b0..183a94eb7e92 100644
---- a/drivers/md/dm-vdo/indexer/indexer.h
-+++ b/drivers/md/dm-vdo/indexer/indexer.h
-@@ -283,10 +283,6 @@ struct uds_request {
- 	enum uds_index_region location;
- };
- 
--/* Compute the number of bytes needed to store an index. */
--int __must_check uds_compute_index_size(const struct uds_parameters *parameters,
--					u64 *index_size);
--
- /* A session is required for most index operations. */
- int __must_check uds_create_index_session(struct uds_index_session **session);
- 
--- 
-2.46.2
+commit:         7ec46210 Merge tag 'pull-work.unaligned' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13f22307980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6248f0ab12f33349
+dashboard link: https://syzkaller.appspot.com/bug?extid=9ba7a8cdae0440edd57b
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1005339f980000
 
+Note: testing is done by a robot and is best-effort only.
 
