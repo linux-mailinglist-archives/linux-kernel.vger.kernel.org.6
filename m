@@ -1,178 +1,110 @@
-Return-Path: <linux-kernel+bounces-349716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE6898FA67
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:27:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F37E498FA6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B70D128407E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:27:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C1F1C2127E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A889C1CF7BD;
-	Thu,  3 Oct 2024 23:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B391CF5DC;
+	Thu,  3 Oct 2024 23:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bSl0982C"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSlK9Lqc"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680891CEAC5;
-	Thu,  3 Oct 2024 23:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B56014F124;
+	Thu,  3 Oct 2024 23:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727998021; cv=none; b=bouB5oD5I4nHsZkIEnWraLmn7b2r1N2h+swGsnP8Jq91M3zF1cXG6uLCfW5QFiGvKEdh4VUh0tObSxtT6hlqOzCMfKvjAvLD8G4fL/9cyoGRIMbupypblBVEaE6BDxBUYQbbljN3b/FXBXxxmNSX/1a6y9QenbJW0HAz8I7iSzs=
+	t=1727998118; cv=none; b=UmIBe2tLDF/LR76UF4BGoxCNtXoYuOF73G+fkMAQEMf04lUAhtRWVAe9Ec/snhjiC1R0GTQ1NtK4hueFAl4FuTc/apHJUhhQlbPIqSw9a+FlRuQmZAZEH6f+E34QFxYJrX1rVxbt/UzQRuUp/mDB8gsjiKMRkyoFv0F46nP79Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727998021; c=relaxed/simple;
-	bh=aNlxrPz0Onakv+a4ZcnpY+rxavPhtRRm8WsJdwPsDgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tUbtx2F6XYSlIK0QQtTss8uM4/W7GrQxn3CipTwndjOh254GqklkXY7y+FWympkR8BjJ0LN5HC7aIJV+EbWCiP7PzESuJvtb9EAZNXt+Hf7x04Q6aJnSQsphxdDB88q00IdwgbWNm8y1aKjwJwBhElvVZ13pcCc8BHDnEh+BRpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bSl0982C; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727998019; x=1759534019;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aNlxrPz0Onakv+a4ZcnpY+rxavPhtRRm8WsJdwPsDgo=;
-  b=bSl0982CBvcnuzGN27Nc05SqfMkCCAkdrtj/5pV+EN1GiMxd6Eko3ckS
-   xdnk8Ip3uRQUgjb2tphxECvZavzLLTCTlOYe5BpeLMeh6KvN8VaXhfvMT
-   MktCw8WIaalyRLiUuICDfa34qnMtNxh1nsWD0iZR19XF2/RbppGs46uQN
-   9CGFeE33RWbO1XROBD2pJsGR9p3GcXhsPWP+rHVaf54QvEUWPZhWwjfLC
-   1292p3KRgG04r2c9uqaSs1pjHyaFupibucG+g4ChzzgvJfMSWe7c7uPnM
-   dhBnqbSjTGoxjNQcQ4et/2ihsqc3lv3whjULEGGu7pQTBMa7XbVmrjdM5
-   w==;
-X-CSE-ConnectionGUID: MmgWpA35SK+Mp7iPcPKKZg==
-X-CSE-MsgGUID: A1pgneFtQ9usjEarPtImIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="30093306"
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="30093306"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 16:26:58 -0700
-X-CSE-ConnectionGUID: LElRzrFPRa6ZbF9H3ISchQ==
-X-CSE-MsgGUID: tOPdkfXHRvads+9kbySsMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="79360364"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 03 Oct 2024 16:26:55 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swVDh-000116-25;
-	Thu, 03 Oct 2024 23:26:53 +0000
-Date: Fri, 4 Oct 2024 07:26:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH] iio: core: make iio_device_claim_direct_mode()
- __must_check
-Message-ID: <202410040721.upAHwZJm-lkp@intel.com>
-References: <20241002-iio-must-check-claim-direct-v1-1-ab94ce728731@baylibre.com>
+	s=arc-20240116; t=1727998118; c=relaxed/simple;
+	bh=4fPZFq9GucltM9qF4rscl7ftDfoWZ+wWMtPS0pSK47E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AVQSVWO6FJSI7IoH4hndF6c4RmmswXVVAZgNF8rwolVwEmfSSN39SwzxnDm9JNJ+sUZa20VZ3BGX9vCaNlpTVzjiBIuzH3iZIuI+7JQ35R23tlxFi40veFKNLIsato+nb4fPiznGuEqXBN72pl5Yl7d7NOl0JZ0iHVxWfJARTc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=uc.cl; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSlK9Lqc; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=uc.cl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20bc2970df5so11704735ad.3;
+        Thu, 03 Oct 2024 16:28:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727998115; x=1728602915; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=EYpCc4I8glQ7ck+nhqJAvbOoAL+loG6airV9nPgLSA0=;
+        b=XSlK9LqcDnx5MbCEbNFZKzgtyZcdQafrdJnEfqVhCq1Moxh2NfGUD0Mn6nVHCBkwOo
+         Q6pl5LrJpz9hOHsQEXG4VIdVnQDEl+m+TrPDf2g2tcI4WX42cpIqQmpDqwun0sfPT83V
+         ZaEOZd9PznIBApD/J8S8UCoStx45hxRBwgFK+OpH9n1XlOnw7TYdv/eNITySX/+T6kS3
+         5XSVuHrZmnnM/jUpxofe3YLqub8mRmH50tCsGtn8v6j94Jtnopq4fAW7W4ay/XuL1B0a
+         e6jKIOSJmv/BTJxGNA0NbhrcQTrio3Bp1fQCVtKGAwaKtk+qyzi6RA28idgiNIp7MzaG
+         mEMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727998115; x=1728602915;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EYpCc4I8glQ7ck+nhqJAvbOoAL+loG6airV9nPgLSA0=;
+        b=KaFnrMoXrKKxbBnipvr6NFSMw4JqaEWh3tyV05cHnYzWYCg3wRN0M+xxhSK8H87Hw7
+         x00109RZlwDyK2LJ/JqbVijpEVPgRqUawICjMJLZFbO1vN3vXIN/K/tMMVEV70pvmeWw
+         ncb+6WD9z43eyEGu1HFrpyguwmgokvAKQOxuz/vQy2Y936puBG+x1sTt6yf7+SlpkTVt
+         SKU/6RRIUYPYpQU22Liut/44p4HQwAAiVnalQawvd+JQYgLuynJW+kCmwTqkAlJCgLaj
+         Db8h1lNhwj51vA046dzCj7d4RXHqk///b8Si6bmSZ7udhy0pgt+g7AwvZOihc1gf0opx
+         vZqg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1gRX09QVsQtwdgpUYk5Ul9HV39mdV4xmiuUtipGS5FujM3PV71IMXY1IZpdfznubpowb5YZoth7gNGko=@vger.kernel.org, AJvYcCUEtGqHwdnGxtjSjV0jeVaPhYjk+NBZusyeTKF4z2S5IHNnyCyfWomrhpgVounFKcskJsvkkv+vbodEYrY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9FS9dkr7b1MlZc4sDwc0Fvg0P7tS6dYjVWJtGGhUf23V2DDbz
+	Q5PMSFoiiz0OktOtqyuituLftu+8R3kDtJ5LTKcXqPu1Z4R2App/WKoGvw==
+X-Google-Smtp-Source: AGHT+IEjarl3ZFpoUlFYkZdMg7n2IxlJk17wP6TTR8dFnbsiCBWhX7f7OnO+tIVjnbgIBL/v/zloBA==
+X-Received: by 2002:a17:903:32d2:b0:206:a79c:ba37 with SMTP id d9443c01a7336-20bfdfb05e7mr9329415ad.19.1727998115304;
+        Thu, 03 Oct 2024 16:28:35 -0700 (PDT)
+Received: from lenovoKubuntu.. ([2800:150:11c:d43:5c59:fa0e:7df0:84f5])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20beead24e7sm14118155ad.10.2024.10.03.16.28.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 16:28:34 -0700 (PDT)
+Sender: =?UTF-8?Q?Hans_Peter_M=C3=B6ller?= <hmoller@gmail.com>
+From: Hans P Moller <hmoller@uc.cl>
+To: tiwai@suse.com,
+	perex@perex.cz,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Hans P Moller <hmoller@uc.cl>
+Subject: [PATCH] ALSA: line6: add hw monitor volume control to POD HD500X
+Date: Thu,  3 Oct 2024 20:28:28 -0300
+Message-ID: <20241003232828.5819-1-hmoller@uc.cl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002-iio-must-check-claim-direct-v1-1-ab94ce728731@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
-Hi David,
+Add hw monitor volume control for POD HD500X. This is done adding
+LINE6_CAP_HWMON_CTL to the capabilities
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Hans P. Moller <hmoller@uc.cl>
+---
+ sound/usb/line6/podhd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[auto build test WARNING on 431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-core-make-iio_device_claim_direct_mode-__must_check/20241002-233644
-base:   431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e
-patch link:    https://lore.kernel.org/r/20241002-iio-must-check-claim-direct-v1-1-ab94ce728731%40baylibre.com
-patch subject: [PATCH] iio: core: make iio_device_claim_direct_mode() __must_check
-config: arm-randconfig-001-20241004 (https://download.01.org/0day-ci/archive/20241004/202410040721.upAHwZJm-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project fef3566a25ff0e34fb87339ba5e13eca17cec00f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410040721.upAHwZJm-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410040721.upAHwZJm-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/iio/pressure/bmp280-regmap.c:6:
-   In file included from drivers/iio/pressure/bmp280.h:5:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/iio/pressure/bmp280-regmap.c:6:
-   In file included from drivers/iio/pressure/bmp280.h:7:
->> include/linux/iio/iio.h:669:50: warning: ignoring return value of function declared with 'warn_unused_result' attribute [-Wunused-result]
-     669 | DEFINE_GUARD(iio_claim_direct, struct iio_dev *, iio_device_claim_direct_mode(_T),
-         |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~
-   include/linux/cleanup.h:291:54: note: expanded from macro 'DEFINE_GUARD'
-     291 |         DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
-         |                                                             ^~~~~
-   include/linux/cleanup.h:248:13: note: expanded from macro 'DEFINE_CLASS'
-     248 | { _type t = _init; return t; }
-         |             ^~~~~
-   2 warnings generated.
---
-   In file included from drivers/iio/pressure/ms5611_core.c:14:
->> include/linux/iio/iio.h:669:50: warning: ignoring return value of function declared with 'warn_unused_result' attribute [-Wunused-result]
-     669 | DEFINE_GUARD(iio_claim_direct, struct iio_dev *, iio_device_claim_direct_mode(_T),
-         |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~
-   include/linux/cleanup.h:291:54: note: expanded from macro 'DEFINE_GUARD'
-     291 |         DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
-         |                                                             ^~~~~
-   include/linux/cleanup.h:248:13: note: expanded from macro 'DEFINE_CLASS'
-     248 | { _type t = _init; return t; }
-         |             ^~~~~
-   In file included from drivers/iio/pressure/ms5611_core.c:16:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   2 warnings generated.
---
-   In file included from drivers/iio/pressure/mpl115.c:11:
->> include/linux/iio/iio.h:669:50: warning: ignoring return value of function declared with 'warn_unused_result' attribute [-Wunused-result]
-     669 | DEFINE_GUARD(iio_claim_direct, struct iio_dev *, iio_device_claim_direct_mode(_T),
-         |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~
-   include/linux/cleanup.h:291:54: note: expanded from macro 'DEFINE_GUARD'
-     291 |         DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
-         |                                                             ^~~~~
-   include/linux/cleanup.h:248:13: note: expanded from macro 'DEFINE_CLASS'
-     248 | { _type t = _init; return t; }
-         |             ^~~~~
-   1 warning generated.
-
-
-vim +/warn_unused_result +669 include/linux/iio/iio.h
-
-1dae0cb79ceacb Jonathan Cameron 2024-01-28  664  
-1dae0cb79ceacb Jonathan Cameron 2024-01-28  665  /*
-1dae0cb79ceacb Jonathan Cameron 2024-01-28  666   * This autocleanup logic is normally used via
-1dae0cb79ceacb Jonathan Cameron 2024-01-28  667   * iio_device_claim_direct_scoped().
-1dae0cb79ceacb Jonathan Cameron 2024-01-28  668   */
-1dae0cb79ceacb Jonathan Cameron 2024-01-28 @669  DEFINE_GUARD(iio_claim_direct, struct iio_dev *, iio_device_claim_direct_mode(_T),
-1dae0cb79ceacb Jonathan Cameron 2024-01-28  670  	     iio_device_release_direct_mode(_T))
-1dae0cb79ceacb Jonathan Cameron 2024-01-28  671  
-
+diff --git a/sound/usb/line6/podhd.c b/sound/usb/line6/podhd.c
+index ffd8c157a281..70de08635f54 100644
+--- a/sound/usb/line6/podhd.c
++++ b/sound/usb/line6/podhd.c
+@@ -507,7 +507,7 @@ static const struct line6_properties podhd_properties_table[] = {
+ 	[LINE6_PODHD500X] = {
+ 		.id = "PODHD500X",
+ 		.name = "POD HD500X",
+-		.capabilities	= LINE6_CAP_CONTROL
++		.capabilities	= LINE6_CAP_CONTROL | LINE6_CAP_HWMON_CTL
+ 				| LINE6_CAP_PCM | LINE6_CAP_HWMON,
+ 		.altsetting = 1,
+ 		.ep_ctrl_r = 0x81,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
