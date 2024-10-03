@@ -1,124 +1,249 @@
-Return-Path: <linux-kernel+bounces-348667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4494F98EA36
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:15:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C55298EA38
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0167C283373
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:15:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D9C71C224A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC76447F69;
-	Thu,  3 Oct 2024 07:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dSn5VEv8"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D06C84A39;
+	Thu,  3 Oct 2024 07:16:25 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B90126BF7
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 07:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2AA2556E
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 07:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727939704; cv=none; b=GIvszs/zG3GhtuXktNgQ7No0am+sjamke/vUsZA5wzSknktQvqdfBA7I/NFdH+2aIhjzHhhjPFu1yJkSbb1ZBzuRDFnhKVzBreQiskRdjzCkbkS4V1Czbw+3qLDZMDHFnDYuUlRWLSwdlLryjIPzT5Ew4FIg5fWG9aKtj+qW9ag=
+	t=1727939784; cv=none; b=Za/pVS5q8+wW3YPXjueg6WrJD6te5RFTx5T14ZDUYUqs9jCuF14XGm4ETD5RbcC6SjRStnePlCRxZ3Gx/eobmtHF+pijVihC8DgsFzk8uREQ5FSO6CL9E85Zb4vXUNL0IkbUYsepcijxeucq1RuQTfSwlKptwUh5KzfraB/vdkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727939704; c=relaxed/simple;
-	bh=X3dvCMgk1rOHffa12B6uqLaEGtxrmP3GTRXzv8+1oHg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=htJoexgu5i7DLd2opVOL0KSdx0++ilE6/yUK4NTBZ7ynt2yHkWcOoNd2SdmAXyNUJgmu7/0Zucfo8ERTL8MUKqLtD9ker56IDWNrYD3K4AWzKMXDubjnd/+x8OqSwTxVqTPtHy+mstxWHx28agYnv0B8kIkJUwPyRYEcgXn5W7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dSn5VEv8; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e0af6e5da9so487294a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 00:15:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727939702; x=1728544502; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wa4pIu5pC+135xygnD713lEhYzLZxMaLiQkWjJzvNgM=;
-        b=dSn5VEv8Y7TgGdY46/eX8vF4/Ncy3KP2sCzY8ZmHRoICAI9b3DD/6yKULDrgNysudI
-         AVsboDt5MrK+YF0bO+mHEEn5jhEGRU19+qtpnUdLFzmMJJuHtC1dQ707pBAfiEiBLnr6
-         LYQXPQ40Vccx03PXTmF7I/xCtJJrd9lqf7uEr4mzfeyi5WCtQ/0XQ+Lj/VXgKjMe+luj
-         i6S6i3JRn07MuHMnoQXUEj0SksUoK8GAuCtDy1mMOmIzLsG/JLpdfXLJzAOu3UEFcIQ2
-         A0MTTud8PS+YnWJbpfKehv9SdcaT0Fe+9hF8OCaSuym8D6rdc/PYo66X3iAJ8UZkGHnS
-         W6ew==
+	s=arc-20240116; t=1727939784; c=relaxed/simple;
+	bh=g9ZGNSgOB6oWTeVjI79V5YFHloHrsOfmqnSZLeUfI+4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Vg1Bm4pheYr+emIrNKkZR7MwV//iXHQjKNs2+I53kAsakBxaAJ4y+WFL+f9Rw2fomNvyl0fDgkCS71Ih6InasmVkrUN6I0H2mbuSTALxBlSmw3o5+8ONfT5TZOV/c31b9JprfzPILfGyDRqwJ7mi25BR/0XxwCNsw26Kaul9420=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a34988d6b4so10814905ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 00:16:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727939702; x=1728544502;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wa4pIu5pC+135xygnD713lEhYzLZxMaLiQkWjJzvNgM=;
-        b=RuX5Rb0hwsaLlMXtlQfXAngkZSfXm/wGcQP4n1ZvSBvh6K+sZiiH7KGs6us6iw4oyg
-         /ZHctFQojUZtOF3lEswh67XlUv6USL2XxP+mTv6CVpvLxpFxGyFaBlf17GG3NZ/P6qU3
-         q7OPVQwhYVPmG+m0BNuXAoOzW/wWRJ9hwIb99voKl5/oM6rD4QVX05w+GcLrrGWyHsEy
-         irRSrHAZpX2YLpC1TZQkfDF86w5IsXbVylnqLU0pwGUyj2Ch0POu5yk86B6gxQbLSiOX
-         vT9UKTBUodpTCre/PvTJCW8JvzoFZLwghjEYXnd1tXXtKMq0FlX2LfZLPb47y9uhNqqI
-         FhQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMMThNqAJZ3JMkXRUCyxKPmc7jx6LuJY/TdyHqSVLp6w0a6/baJh4qBeMGlSNZZ5R3v5fJc8ZarK5saTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgY4PMgXzw7cNceTND85o9JZuoLs3zlMNsGGiSHRnfpzRuBfTB
-	QlPA2YiSHbbpYuqdB7DgPn42vzwaUX8sbJhhNMKWCcnewvNnRrHx
-X-Google-Smtp-Source: AGHT+IG395izEmIc+wheQbgooKM2yOIXSyp8HxCpDyfAtHvRK9D3lYz5JKBwip2Ls4SZJD7e4PEZOQ==
-X-Received: by 2002:a17:90a:8f03:b0:2d3:d68e:e8d8 with SMTP id 98e67ed59e1d1-2e1849e48bemr5475891a91.40.1727939702292;
-        Thu, 03 Oct 2024 00:15:02 -0700 (PDT)
-Received: from advait-kdeneon.. ([2405:201:1e:f1d5:b1fd:ba19:3835:b7cf])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1bff53549sm763656a91.55.2024.10.03.00.14.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 00:15:01 -0700 (PDT)
-From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	leo.liu@amd.com,
-	sathishkumar.sundararaju@amd.com,
-	saleemkhan.jamadar@amd.com,
-	Veerabadhran.Gopalakrishnan@amd.com,
-	advaitdhamorikar@gmail.com,
-	sonny.jiang@amd.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com
-Subject: [PATCH-next] Fix unintentional integer overflow
-Date: Thu,  3 Oct 2024 12:44:31 +0530
-Message-Id: <20241003071431.328259-1-advaitdhamorikar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1727939782; x=1728544582;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=99IhvVVp7w0A3AFTNvV1zCAeTS7RIQcvW0OdTxrgE2I=;
+        b=EP6nA/q5QIR1NzhVmrMW9ALMFOhcSx+DKdxFFeXLlYFFONDOHeMBEBM7NFh4X3IJjk
+         85ToT6+dutswJe7PZ2Wq6y4KUzYLlJG51tXDvVTcqgijeNuZRaxIywwNc1lZUni9yzrQ
+         esDm5QJYp7FkVKll2VhwTmCeobM8sUNirRKycMpIhMLX6ZA7P9nT0yImDIfWVmH+O12a
+         BhmShWhYvyMyXqdsX8xpnLm4wnJ0Q1Mw0YDjNHiN2mR6G3vRWj4ZxkvdnVUCf9bvsx1U
+         XSMTWq16IiHK2wMyTDUe7Ue7q6y5rMDS7zZOvs1YT71OCq2zrGhDtajvFtSteGecEkjb
+         Cw8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUVFphiLLHU/6g0OXI8MOsEsoUMXqZscTT+TvYWQC8mpZjk8+MFfUDnpUAgm3niXpOD0j7NTAiMrj8RyTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaYTPLE96OA6Xg+6IookRWR9tswhYqctspex2ZI9DHAc6/7Jvl
+	+5LcgikYp5ZjzhDv7OyQVAFHmx2N9VM0jWXIiQRb7F3L4X8OWvuYbM2G0o/OgzMhzshQiI9IGcO
+	56B2wnVTMlqPMPsuB6fBB7R+hBO+wOnqsHcTCGspSUKih8BjCUv/Wyuk=
+X-Google-Smtp-Source: AGHT+IGXR35b68JoZdM5KbrNRImTgiLusD+wckXhPgfHS4jFV5Rb26SSvqGiOg+0+x6+N9insGGF4pxSJfxO2UlEzGa8pu+T0+5t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1ca1:b0:3a0:a3cd:f239 with SMTP id
+ e9e14a558f8ab-3a36591fa85mr65941075ab.8.1727939782459; Thu, 03 Oct 2024
+ 00:16:22 -0700 (PDT)
+Date: Thu, 03 Oct 2024 00:16:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fe44c6.050a0220.9ec68.0032.GAE@google.com>
+Subject: [syzbot] [mm?] INFO: rcu detected stall in kjournald2 (2)
+From: syzbot <syzbot+14c6ac6811273526cfa5@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Fix overflow issue by casting uint8_t to uint64_t in JPEG
-instance multiplication.
-The expression's value may not be what the programmer intended,
-because the expression is evaluated using
-a narrow (i.e. few bits) integer type.
+Hello,
 
-Fixes: f0b19b84d391 ("drm/amdgpu: add amdgpu_jpeg_sched_mask debugfs")
-Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+syzbot found the following issue on:
+
+HEAD commit:    d505d3593b52 net: wwan: qcom_bam_dmux: Fix missing pm_runt..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=14aade80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
+dashboard link: https://syzkaller.appspot.com/bug?extid=14c6ac6811273526cfa5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164df6a9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=179ffe27980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0286a1cf90df/disk-d505d359.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b573fa96ab33/vmlinux-d505d359.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/cdd9993102ed/bzImage-d505d359.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+14c6ac6811273526cfa5@syzkaller.appspotmail.com
+
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P4645/1:b..l
+rcu: 	(detected by 1, t=10503 jiffies, g=5945, q=1808706 ncpus=2)
+task:jbd2/sda1-8     state:R  running task     stack:23792 pid:4645  tgid:4645  ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
+ preempt_schedule_irq+0xfb/0x1c0 kernel/sched/core.c:6997
+ irqentry_exit+0x5e/0x90 kernel/entry/common.c:354
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:stack_trace_consume_entry+0x7/0x280 kernel/stacktrace.c:83
+Code: ff e8 fd 9b 44 0a 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 41 57 <41> 56 41 55 41 54 53 48 83 ec 18 48 89 fb 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc9000e59f168 EFLAGS: 00000286
+RAX: ffffffff81ef7ceb RBX: ffffc9000e59f180 RCX: ffffffff917b9000
+RDX: ffffffff91966401 RSI: ffffffff81ef7ceb RDI: ffffc9000e59f260
+RBP: ffffc9000e59f210 R08: ffffc9000e59f4c0 R09: 0000000000000000
+R10: ffffc9000e59f1d0 R11: ffffffff81806870 R12: ffff8880318bbc00
+R13: ffffffff81806870 R14: ffffc9000e59f260 R15: 0000000000000000
+ arch_stack_walk+0x10e/0x150 arch/x86/kernel/stacktrace.c:27
+ stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+ save_stack+0xfb/0x1f0 mm/page_owner.c:156
+ __reset_page_owner+0x76/0x430 mm/page_owner.c:297
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
+ discard_slab mm/slub.c:2678 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:3146
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3221
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4450
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4086 [inline]
+ slab_alloc_node mm/slub.c:4135 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4142
+ alloc_buffer_head+0x2a/0x290 fs/buffer.c:3020
+ jbd2_journal_write_metadata_buffer+0xc2/0xa60 fs/jbd2/journal.c:349
+ jbd2_journal_commit_transaction+0x1b36/0x67e0 fs/jbd2/commit.c:663
+ kjournald2+0x41c/0x7b0 fs/jbd2/journal.c:201
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+rcu: rcu_preempt kthread starved for 10531 jiffies! g5945 f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R  running task     stack:25888 pid:17    tgid:17    ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6767
+ schedule_timeout+0x1be/0x310 kernel/time/timer.c:2615
+ rcu_gp_fqs_loop+0x2df/0x1330 kernel/rcu/tree.c:2045
+ rcu_gp_kthread+0xa7/0x3b0 kernel/rcu/tree.c:2247
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+rcu: Stack dump where RCU GP kthread last ran:
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 5277 Comm: kworker/0:4 Not tainted 6.11.0-syzkaller-11503-gd505d3593b52 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events nsim_dev_trap_report_work
+RIP: 0010:unwind_next_frame+0x46b/0x22d0 arch/x86/kernel/unwind_orc.c:512
+Code: 48 c1 e8 03 49 bc 00 00 00 00 00 fc ff df 42 0f b6 04 20 84 c0 0f 85 64 17 00 00 c6 03 01 48 c7 c2 e0 48 08 8c 48 8b 6c 24 50 <4c> 8d 7a 04 48 8d 5a 05 4c 89 f8 48 c1 e8 03 48 89 44 24 70 42 0f
+RSP: 0018:ffffc900000067f0 EFLAGS: 00000202
+RAX: 0000000000000002 RBX: ffffffff912967b2 RCX: ffffffff90873278
+RDX: ffffffff912967ae RSI: ffffffff912967ae RDI: 0000000000000001
+RBP: ffffc90000006910 R08: 0000000000000001 R09: ffffc900000069b0
+R10: ffffc90000006910 R11: ffffffff81806870 R12: dffffc0000000000
+R13: ffffc900000068c0 R14: ffffffff912967b3 R15: ffffffff89f7ea91
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000200000c0 CR3: 0000000032f5c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <IRQ>
+ arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+ ref_tracker_alloc+0x188/0x490 lib/ref_tracker.c:209
+ __netdev_tracker_alloc include/linux/netdevice.h:4050 [inline]
+ netdev_hold include/linux/netdevice.h:4079 [inline]
+ dst_init+0xee/0x490 net/core/dst.c:52
+ dst_alloc+0x14f/0x190 net/core/dst.c:93
+ rt_dst_alloc net/ipv4/route.c:1612 [inline]
+ __mkroute_output net/ipv4/route.c:2573 [inline]
+ ip_route_output_key_hash_rcu+0x13cc/0x2390 net/ipv4/route.c:2795
+ ip_route_output_key_hash+0x193/0x2b0 net/ipv4/route.c:2624
+ __ip_route_output_key include/net/route.h:141 [inline]
+ ip_route_output_flow+0x29/0x140 net/ipv4/route.c:2852
+ ip_route_output_key include/net/route.h:151 [inline]
+ ip_route_me_harder+0x80d/0x1300 net/ipv4/netfilter.c:53
+ synproxy_send_tcp+0x356/0x6c0 net/netfilter/nf_synproxy_core.c:431
+ synproxy_send_client_synack+0x8b8/0xf30 net/netfilter/nf_synproxy_core.c:484
+ nft_synproxy_eval_v4+0x3ca/0x610 net/netfilter/nft_synproxy.c:59
+ nft_synproxy_do_eval+0x362/0xa60 net/netfilter/nft_synproxy.c:141
+ expr_call_ops_eval net/netfilter/nf_tables_core.c:240 [inline]
+ nft_do_chain+0x4ad/0x1da0 net/netfilter/nf_tables_core.c:288
+ nft_do_chain_inet+0x418/0x6b0 net/netfilter/nft_chain_filter.c:161
+ nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
+ nf_hook_slow+0xc3/0x220 net/netfilter/core.c:626
+ nf_hook include/linux/netfilter.h:269 [inline]
+ NF_HOOK+0x29e/0x450 include/linux/netfilter.h:312
+ NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
+ __netif_receive_skb_one_core net/core/dev.c:5662 [inline]
+ __netif_receive_skb+0x2bf/0x650 net/core/dev.c:5775
+ process_backlog+0x662/0x15b0 net/core/dev.c:6107
+ __napi_poll+0xcb/0x490 net/core/dev.c:6771
+ napi_poll net/core/dev.c:6840 [inline]
+ net_rx_action+0x89b/0x1240 net/core/dev.c:6962
+ handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
+ do_softirq+0x11b/0x1e0 kernel/softirq.c:455
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
+ spin_unlock_bh include/linux/spinlock.h:396 [inline]
+ nsim_dev_trap_report drivers/net/netdevsim/dev.c:820 [inline]
+ nsim_dev_trap_report_work+0x75d/0xaa0 drivers/net/netdevsim/dev.c:850
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 3.091 msecs
+
+
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-index 95e2796919fc..b6f0435f56ba 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-@@ -357,7 +357,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_set(void *data, u64 val)
- 	if (!adev)
- 		return -ENODEV;
- 
--	mask = (1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
-+	mask = ((uint64_t)1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
- 	if ((val & mask) == 0)
- 		return -EINVAL;
- 
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
