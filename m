@@ -1,80 +1,131 @@
-Return-Path: <linux-kernel+bounces-348458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8951A98E7F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:01:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3792C98E7FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0327AB24636
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:01:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF908B24A6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F51510A0C;
-	Thu,  3 Oct 2024 01:00:57 +0000 (UTC)
-Received: from smtp134-32.sina.com.cn (smtp134-32.sina.com.cn [180.149.134.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC71212B93;
+	Thu,  3 Oct 2024 01:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="u0uEohHN"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0978C0B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 01:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D824CA64;
+	Thu,  3 Oct 2024 01:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727917257; cv=none; b=Hb27+KSxDmNy3N71WFstRCDuCi21Dgd0rYcVhDH5EelgVhClCNa6xbELOjw/D6bfN0QTZJMTpZ0TufVXwIB+jL19iKhz2HsRSUnaw2fnaA4JuUpbhvEoGhV/Z5vdh3emwdUmFr6emGlGJCG5Q3baDq1i3ufLWXFfZBLRPBgkjH8=
+	t=1727917482; cv=none; b=BFMl21Xybg84fNyrGWDv5Lb4xqmEIa0EsG9RkWqtR58ctV4NTPyr03T5tRL2ZpareB+4zw2qFZ/AqNr35azldbsgRBtpkQKjA6xHCAV/MWiUdIkIf2FmHDP69pTDuO0tezooW04TRDyHqdD+1rZVAAElabphiD2VSntIiHYlXcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727917257; c=relaxed/simple;
-	bh=e9yA2aMsSnI27oqa2pmoQRgb3I99jrGNJchdG8Jnwwc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Kb6QhRJUt+M7C4fDis2oxQbi28eWp6jKa6mN9+1B+ukwe0/tCvboWijeUzkSLUUjHDMqcWboFvxC3NZikmvdlzZH9xjCJWVqDrVAHGjrlqZo7NI/XDpDrsnO+JLsNyg774hRcc4/7r741AnojMAYg6ApfYydKMHtdth+jHJHdb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.64.67])
-	by sina.com (10.185.250.21) with ESMTP
-	id 66FDEC9700002C03; Thu, 3 Oct 2024 09:00:09 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 6079593408336
-X-SMAIL-UIID: 8185E8D8BF2C422B8278CC8D749533FF-20241003-090009-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+9ba7a8cdae0440edd57b@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernel?] KASAN: slab-use-after-free Read in binder_release_work
-Date: Thu,  3 Oct 2024 08:59:56 +0800
-Message-Id: <20241003005956.1869-1-hdanton@sina.com>
-In-Reply-To: <66fdb6be.050a0220.40bef.0024.GAE@google.com>
-References: 
+	s=arc-20240116; t=1727917482; c=relaxed/simple;
+	bh=iSTP0zih58N3xEEHEge+WT8alfAr5PIuX/8G0X505G8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Z3uaE/+eZQ6OKgRJ6UZ69zwepRM58PBsYkXhD4x3QkecbcuGlmwCTlezKF7dwfY3C56UEPLbnx/ocqYUve3GXsAJbn5wVBNNrJYFBJOQq7r1zXn2GtYbKslI506WqOLPuhnltr5/Pyf3dO5crxSLV3QSMp4DdUwmlAaoBGS5BU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=u0uEohHN; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727917473;
+	bh=X/YYsEKEor7BsDLH5o98zBdgxxt28r7iTiDpVYQK73Y=;
+	h=Date:From:To:Cc:Subject:From;
+	b=u0uEohHN8Dq1XXlZt8fnzUOWGGYtsGuwaBZ6Cgc6jbw9tR0aE+jZ1bpKWee93cT+J
+	 fwKvT4GdCM7SktY9DqB/Idm4WEbP39m0oWQoVm2kc+ovsEmOlAlU857Hn63u3Re1nU
+	 DV7naRg7PJqPnCfvSx/Qwnvr3Xx/gDTmFYMoHasEC6FRcidwEDHzqh3CVPzQkCuScG
+	 RbvQIp7K4klT0ypFrkVjLTpJNfZe+ZE194UMakNN6+gKbhdjggQyfweehhDPgBl/U/
+	 BqJnRucH+KPGFsMzGb5gytSeg0dOTQLVQw/wQa2IwrL7YU81rIO3EH249dCL9T1zRX
+	 UKFYH2HwpViKw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XJtk807Zlz4wbr;
+	Thu,  3 Oct 2024 11:04:31 +1000 (AEST)
+Date: Thu, 3 Oct 2024 11:04:31 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Simona Vetter <simona.vetter@ffwll.ch>
+Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>, Boris
+ Brezillon <boris.brezillon@collabora.com>, Intel Graphics
+ <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Liviu Dudau
+ <liviu.dudau@arm.com>
+Subject: linux-next: manual merge of the drm-misc tree with the
+ drm-misc-fixes tree
+Message-ID: <20241003110431.4bbfd467@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/Y4XmcyjBBi1VuD=v6iR9R+b";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, 02 Oct 2024 14:10:22 -0700
-> syzbot found the following issue on:
-> 
-> HEAD commit:    ad46e8f95e93 Merge tag 'pm-6.12-rc1-2' of git://git.kernel..
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ff3507980000
+--Sig_/Y4XmcyjBBi1VuD=v6iR9R+b
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-#syz test
+Hi all,
 
---- x/drivers/android/binder.c
-+++ y/drivers/android/binder.c
-@@ -6252,6 +6252,7 @@ static void binder_deferred_release(stru
- 		ref = rb_entry(n, struct binder_ref, rb_node_desc);
- 		outgoing_refs++;
- 		binder_cleanup_ref_olocked(ref);
-+		binder_dequeue_work(proc, &ref->freeze->work);
- 		binder_proc_unlock(proc);
- 		binder_free_ref(ref);
- 		binder_proc_lock(proc);
---
+Today's linux-next merge of the drm-misc tree got a conflict in:
+
+  drivers/gpu/drm/panthor/panthor_drv.c
+
+between commit:
+
+  2b55639a4e25 ("drm/panthor: Add FOP_UNSIGNED_OFFSET to fop_flags")
+
+from the drm-misc-fixes tree and commit:
+
+  e16635d88fa0 ("drm/panthor: add DRM fdinfo support")
+
+from the drm-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/panthor/panthor_drv.c
+index c520f156e2d7,f9b93f84d611..000000000000
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@@ -1383,7 -1476,7 +1476,8 @@@ static const struct file_operations pan
+  	.read =3D drm_read,
+  	.llseek =3D noop_llseek,
+  	.mmap =3D panthor_mmap,
+ +	.fop_flags =3D FOP_UNSIGNED_OFFSET,
++ 	.show_fdinfo =3D drm_show_fdinfo,
+  };
+ =20
+  #ifdef CONFIG_DEBUG_FS
+
+--Sig_/Y4XmcyjBBi1VuD=v6iR9R+b
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb97Z8ACgkQAVBC80lX
+0GzE6gf/c+S9TSnISE26vBOeap0FH86mtSRUJiSJ6ameIHRJjSIT/+sDxhf5CiG8
++tB+9/a5n48kRrrNVA48wtRqi81UUo0bp2+GWA4VMj4Bb011MeCte23mF68mssyF
+72iYSp22x5n8FlNTtTJW5hrSwj69p0UlDJgs2Uce/rX0I+24ewXDq71iMus6Mk7l
+9bhzugePKWcQVA1wR3ugJHk6M5EggPIOq5mX1ITKPbZwmom3vqtdS6BqPx7fHAjS
+3mZeC/btok+2gN0SJ7qfY4rixLoVQt2F5QuQuRa4QBqBjMI1IbHqiwTXZSsRh08c
+ixCkOtFnsQfTsCwR/9lvI86VgF+vwA==
+=fEHS
+-----END PGP SIGNATURE-----
+
+--Sig_/Y4XmcyjBBi1VuD=v6iR9R+b--
 
