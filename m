@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-349247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E42198F31D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:47:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC0198F31F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A7F2283C48
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81E4E1C21556
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75281A76B0;
-	Thu,  3 Oct 2024 15:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37C41A3A95;
+	Thu,  3 Oct 2024 15:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="bH7ch1Uv"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uRKwIq89"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFF41A3A9C
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2058919B3EC;
+	Thu,  3 Oct 2024 15:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727970376; cv=none; b=Qh3JW/5P8lhs+6hb0yRleMS9WRIH3mBki4T+qIlnjedRlZ7ejPXU2gzs9qhUfuiES/0sq1Gchmkw1bJ57iPuCDhbzntpf4CQP2oQJRaqgz+Uasho5/38udqtKADIMeW2TrPVmoMCGnpf7wgkxhAlGx6d9k51cJ6eoLPGxP/SLP4=
+	t=1727970463; cv=none; b=WVIaFltOzj1cxZjdY6kQESG14e1riRzgSYuH5y/MfEGnzgLtJXbnxZRVV/ycyOfg+UWzPlY57heM4kZcjM2YEiJzG5/VFd3JVtBUrR2IxdFPmdvdBH+s+6x4CBQX8iNnUNXpIA/ZcaAKwTridC8NsG98UFyJhE+gpIAcgEJ3o14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727970376; c=relaxed/simple;
-	bh=c24CSpB9u0bQiRjmqj4Py3erZup2Nm7AdiMa7TDZqlc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iyDNjaf+U0yp5p1b3Y3JWa1Ugx8l71CjoxZdBAForCteMEu1se88ZmWt5xz0mfD+aESR+Ox1gdGNdP+1XyRal14WDP7sqxK4EJgh3b+j0OnZy6T9G+SPfJfVeDwWOFucVJ7b077ETkmLeSvVkSrSWhtJEMDuQ+PwFE3Eu07KbQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=bH7ch1Uv; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20ba733b904so10178675ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:46:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727970374; x=1728575174; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vg9O2bmhocfO75+5ltClKdx7MUK6nTYdplQZgbhltGY=;
-        b=bH7ch1UvbPWdf0yI/yx4DtUYaJPGbkMnUJOB00qULLvwiSl4PwbV7YXaXDIT9XFb4s
-         cKsmjLCYzzMVqXLzCOhIrPtv5PgxI3E5ETiqBi9X7PUguxCA9sM/Ma08SkwOFaqm6q70
-         mDtwK+WbmXrTQbTCUgC7ZEz54ENXm1jiPdGjo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727970374; x=1728575174;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vg9O2bmhocfO75+5ltClKdx7MUK6nTYdplQZgbhltGY=;
-        b=LbuMn6pcgQeIbY5ml4Kfu/USQia1soD3/GACszBUg8bDRbslm9mMwDbW6x9LaVqthL
-         qosGeis+C/WeGPBnLrhjtyj2fCz779OyPjAlyEDTSiZD0mYB2WDSBE4/fDqYv6sw3OFP
-         dOYWTaDjJROStKP1JnGA2ZIyH9ZimxF82IXdtcBnAGylr3mIe5Hhal2FckZGahTu8qiy
-         3geCda8xSDp0NXhsnJbAysjOgRngcsOED/+xSQKhBH6Eus88EtekW1FIKgHaJCeGil08
-         IRwsd+4F3dP0v4MW+YzjVOxanxzmJWnOyg0aSpN4Pg4GhM540eihwGS8DbkIxk0HFE8V
-         WTVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBsGNxH4D7mM1kQv0hJix6R5ttqGoYojLMSKg38rmFtlgCZak/X1L+BU77irTXg8U8+qtpSzSMh/NWOVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweG3O/zkmGFD7xPQiHpDDxw7X2Rf2MBdmaVdDxTsv0G+YNXmdR
-	6i5L/RMJng828RMZYbTu9dDM1YAoVJPgmUJak1cjXJ1a7/lYcHKIGuArenEXDJk=
-X-Google-Smtp-Source: AGHT+IHJZ2Cva6weRJymSIYfRl+TvfkC3DsPe7+bV+X6mtLTATN118ZY6+JXSzlo5Pl23BKacVdE6A==
-X-Received: by 2002:a17:902:e84b:b0:20b:937e:ca1e with SMTP id d9443c01a7336-20bc5a0a801mr103188475ad.18.1727970374142;
-        Thu, 03 Oct 2024 08:46:14 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beeca2256sm10523285ad.91.2024.10.03.08.46.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 08:46:13 -0700 (PDT)
-Date: Thu, 3 Oct 2024 08:46:11 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	netdev@vger.kernel.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Simon Horman <horms@kernel.org>
-Subject: Re: [RFC net-next 1/1] idpf: Don't hard code napi_struct size
-Message-ID: <Zv68Q4ur4-ZVTmaL@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	netdev@vger.kernel.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Simon Horman <horms@kernel.org>
-References: <20240925180017.82891-1-jdamato@fastly.com>
- <20240925180017.82891-2-jdamato@fastly.com>
- <6a440baa-fd9b-4d00-a15e-1cdbfce52168@intel.com>
- <c32620a8-2497-432a-8958-b9b59b769498@intel.com>
- <9f86b27c-8d5c-4df9-8d8c-91edb01b0b79@intel.com>
- <Zvsjitl-SANM81Mk@LQ3V64L9R2>
- <a2d7ef07-a3a8-4427-857f-3477eb48af11@intel.com>
- <ZvwK1PnvREjf_wvK@LQ3V64L9R2>
- <20241002101727.349fc146@kernel.org>
- <b7228426-1f70-4e36-9622-c9b69bfe5be9@intel.com>
+	s=arc-20240116; t=1727970463; c=relaxed/simple;
+	bh=6YtWEy943w6XN6R2AHNa0OznWZOmWncdEFICHNQpfYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZyMJnOwbTiQUFRspC2lCtH7fBNTCtIC2xKFxN1N0sozM5I77y9kfH9n1ZQ5zvW1RpXZ0Bqxt4VFkhc/CTuEYZUCVGaI7Ma+qMzSzrVSvs7x3hZKSHy1M/1tUAiUGVgwmVSk41RMCJ+Yl411237PbbxF1iSGwLA7jhr8mgV+/3VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uRKwIq89; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727970445; x=1728575245; i=markus.elfring@web.de;
+	bh=6YtWEy943w6XN6R2AHNa0OznWZOmWncdEFICHNQpfYU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=uRKwIq89YSdIDUSSN6xXQU2nxgDwzu+GmR2DgpocW/h55ZNLZnSWP9uBlEFhQnPs
+	 9L6jHYFdPAFZp9magrXVsE3kkyBVu2IkLUt1R559o0aP/pMcbyDfG2006txOwD5wb
+	 wACAJtxuxztRUk/CZiNLcjh8W7OWCsvvmVRZF3w1Zuv5SyyNGQtTsQfkbfLHcdCOq
+	 6osE6+vaBsOjhy6nIwdMNWbdlhoDDbOuuCk7TAoiICbE/1RxKkDIXpL1TWVbK2Gkk
+	 Cv8xmq8/Ucthxov1RL07qgsmCc2y11DzZQ5ivRa4VxF3MKw2NBHxDyK5K4GRjJKnR
+	 CMakiobT8kqbkFynog==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MS13Z-1sTXja2faV-00QQXB; Thu, 03
+ Oct 2024 17:47:25 +0200
+Message-ID: <66655a11-888b-4c50-8e57-06552b82f922@web.de>
+Date: Thu, 3 Oct 2024 17:47:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7228426-1f70-4e36-9622-c9b69bfe5be9@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] powerpc/4xx: Fix exception handling in
+ ppc4xx_pciex_port_setup_hose()
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Josh Boyer <jwboyer@linux.vnet.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Stefan Roese <sr@denx.de>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <72a7bfe2-6051-01b0-6c51-a0f8cc0c93a5@web.de>
+ <ecda8227-d89a-9c23-06b7-54f9d974af5e@web.de>
+ <e68a714b-32f2-de9f-066e-99a3f51a264f@web.de>
+ <8edc93c8-b146-4507-8336-0709b2596cb9@csgroup.eu>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <8edc93c8-b146-4507-8336-0709b2596cb9@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7MPgs994GP7PFwTjO44hqBW56mTWsQeui4bBMdSxXLvJc+I18VO
+ s3LsKLJlB0WoxgwzjZ3tpXnNToRVLOajOQJrK5FHuToJD9iwBaTwB3/EYIyHLfak5541MD4
+ z+J/lsV1Ae+bTBuAk96TDFTiscjOfyOrECsQUkwKqq8FY+kMmfdCeB0a1TdZ+DpOjv0/T3O
+ ehS3hOXBDffyRnAy/y4yw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:GJwRiYMBY8M=;LW10UzlCbGnHFde9E838MAi2OIL
+ wSC/ml98zkbeD4DWod8gSxUewZX3IEkJ5aExpsgM3RjbNjXc1PEtBUvuv7gOczmmdtqArMJAZ
+ 3czz0b56geNY56a8I6Pde7f9u0Lpz2ByxceN4jElHLmdKCDkPuTXACBmPZQVvxG3vJmPB42ZM
+ nHPrJLCvnp2qz8H1swUjXdHY93ft1ten354QN1DeyeDzxOM9XvarY9sc2mTJedPK9C78yOROL
+ svdUlaxvCGJ/o1nf06qMfLEc4SaYgG/AlmzFTpYk3WYiPmEekwyuIydN6t6+ujd7h5SL12DxD
+ 0yeUZifEA7Z3Au8tXix2iIh/PPo6YpM3O4P3nx00is0Lgmvv9TKxBRa/D+R5ai736S4KiN/GA
+ 7CQb89+v6OvVXWnxF+xUTliWQMD/VHtlD6EPcOaA3Hb35mWZigPOP1sTZNVawgdiqNX/ENM0N
+ ALQw/4ri9OPoQhi42TzkJXUHlaLBOfGbCuBebLKqoqq1b2XQZL79tZPDQf6ZBOKStk7epP1XZ
+ OvxsdVQzRv2GoSZL3pWUYHvYL84eFkme/bjS8oH/H/9UOttoeKaME+rZEn1geQ2thpRIUl7tt
+ we0NIepxreeXWJA1xyOId/kD0mFoKnWvaicqFYXAAkYkvHPND7Nze62E5lfEzQRmTfT6dhl93
+ Of8/rbbkxHPsBpXT9l4TzcwVnMPrJpxu3cDL+iFvbW/YNjJzUPXQ/jeJHYizZlAX+fhA486x3
+ ePgbTSI7opOvpCjqhWv+IY4f+TvpzNiqh7owCEn+4FTfl8lNDApOHpTKaoUfAsYVNZNiagFyH
+ pF/EzXXeriqSBJZ3hj8VYbjw==
 
-On Thu, Oct 03, 2024 at 03:35:54PM +0200, Alexander Lobakin wrote:
-[...]
-> napi_struct is the only generic struct whichs size is hardcoded in the
-> macros (struct dim is already sizeof()ed, as well as cpumask_var_t), so
-> I'm fine with the change you proposed in your first RFC -- I mean
-> 
->  libeth_cacheline_set_assert(struct idpf_q_vector, 112,
-> -			    424 + 2 * sizeof(struct dim),
-> +			    24 + sizeof(struct napi_struct) +
-> +			    2 * sizeof(struct dim),
->  			    8 + sizeof(cpumask_var_t));
+=E2=80=A6
+> Looks like you have messed up your patches,
 
-So you are saying to drop the other #defines I added in the RFC and
-just embed a sizeof? I just want to be clear so that I send a v2
-that'll be correct.
+There were special communication settings involved which hindered desirabl=
+e
+data processing for known information systems.
+
+
+> there is no much we can do it seems:
+>
+> $ b4 shazam e68a714b-32f2-de9f-066e-99a3f51a264f@web.de
+
+Please take another look also at published information according to furthe=
+r
+mailing list archive interfaces.
+
+Example:
+[PATCH v2 0/4] powerpc/4xx: Adjustments for four function implementations
+https://lore.kernel.org/cocci/ecda8227-d89a-9c23-06b7-54f9d974af5e@web.de/
+https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00079.html
+
+
+Regards,
+Markus
 
