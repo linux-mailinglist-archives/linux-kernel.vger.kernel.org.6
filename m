@@ -1,167 +1,206 @@
-Return-Path: <linux-kernel+bounces-349660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053FC98F9C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:20:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C792198F9CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF34B1F2357C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:20:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86DE2284ECB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368191CC159;
-	Thu,  3 Oct 2024 22:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A684A1CC173;
+	Thu,  3 Oct 2024 22:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FENknH/N"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GqPSvSiC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179811C9EDF;
-	Thu,  3 Oct 2024 22:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA32E824BD;
+	Thu,  3 Oct 2024 22:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727994027; cv=none; b=OnpRv5YVzWkskB1jWWgz00uExI+3dpC1MVpsIA7NhmvOFHPWtXaF0w28Y/2ti0+33WLJ+waknDK5kOie3sIdGhbY9qEOeMjcDZ+H2CNlpN3z8dq/GYnnLaHy5dcTwPXohZ/rhNfogKcwEBRiz7nKQJ9VquuCTpQT1HSy+89/Q5E=
+	t=1727994171; cv=none; b=XMxJXruKxm+GuFiwyOXZ4JF2wyEE8+4sXjborEIA+7Huvm6PnupACt1Uznona8/NnDYygBjwajBpeCzAoYeHzogL8tA6zR60KYryflgJlyGQAul5xb7rZM8v9tDhdJM6fAH0XNU0pHIW9G+r+rev2on7acQL2DJE26xqpEbO4WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727994027; c=relaxed/simple;
-	bh=7LYQFIDtLFr7d9Q5dyKsMAdOCJcirF1lXxpH0IGSslw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=bM9ObPF5k+ezN11sriU22BYBfDHg/hlHh2sic6VnDu4+iKp+A8iuAg7JYR/TP5UHPV7PnNSHDY+hBwu2fJNT9ADoN5uNpJTFyfKJ5cZQBGkm3wXL5sAFXtq95fioqWhfzjT1J4aPd1H8gMb4+XK3r5eoXehdsWB9nM3RnHqG3cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FENknH/N; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 38BB71380116;
-	Thu,  3 Oct 2024 18:20:24 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Thu, 03 Oct 2024 18:20:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1727994024; x=1728080424; bh=Nbgtrgdb1TWm/96ogBiNPcnGSstA
-	nopG1pGhc6/EHeY=; b=FENknH/NahQ1oHjt2iQup7pWk6jkYVXHeLZ4S8Gpxm3I
-	H1YW9cba5yOi5z6Rb/rupcV+juScufkHH+6UULivxZBwEo0l9Pxsh7RmFy8GDbp2
-	BhXBLPLRVLsKcI+WNFcs6vw27VPNl9rqvW6JJMAGcpVqfYiez+9hAkEbATFv3N1S
-	yWAdhE2P08Z4bSMd9R5v7z978qMoGSnKY/6NBClkGII9FpUz+oRjGic5sf+IK8I9
-	UANaYVTIXb87InhztTUdH1BhlQf4j5iPDBrJiGX4WXbwXEVdgcC/uqE6PsJxIkQ3
-	15KCqFykZXaS3tlh8bxC68Vg01FQNpJGFBAYtUbJ7A==
-X-ME-Sender: <xms:pxj_Zr2D7MLqbvydOl9AgrrvfWCzc3s_opx1j8WRFdbC1w2-PMGzTA>
-    <xme:pxj_ZqEBQh3HyKS-IW6-XmpndWcAJllNNadT2sn1YmQL1jfOYgbsSrjrWCJSKPp0k
-    sPmXv3O_Ived0HgDqU>
-X-ME-Received: <xmr:pxj_Zr6vXdhaJ8poSquP3qpX25qzvM3ASapYeWaTTwF6KmlelgSXLafQfJsZzLMhHhV-EM4tmCAW_0mhzmYR0scgUOs6F6l07pw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvvddguddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecu
-    hfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrd
-    horhhgqeenucggtffrrghtthgvrhhnpeelueehleehkefgueevtdevteejkefhffekfeff
-    ffdtgfejveekgeefvdeuheeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggp
-    rhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtse
-    hlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghl
-    lhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrnhhivghlsedtgidtfh
-    drtghomhdprhgtphhtthhopehprghvohhnvgesrhgvthhrohguvghvrdgtohhmpdhrtghp
-    thhtoheplhhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrgh
-    dprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:pxj_Zg3001ewLJtjWL6OrqWdiHFzMeh6lCNO-FowELz_9V8nWiJB6A>
-    <xmx:pxj_ZuFbwlBq_s4znTEKwK2MDuvzLcfvbotSZbck2moFv0ORcWr5Kg>
-    <xmx:pxj_Zh_hn1NSKMkxNao9tBaWklTay1JUmWXAxjXDMFWihzD9KP633g>
-    <xmx:pxj_ZrlFhhytuAKzVdKr_UTXhzYqwR8s3uRJBNL4vVT_cnf3MZUdoQ>
-    <xmx:qBj_Zj5SJpSJShCho2ZBBEqr9RNTdz85McyFKRHJ2mMMn-brj3scClvd>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 3 Oct 2024 18:20:20 -0400 (EDT)
-Date: Fri, 4 Oct 2024 08:20:26 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-    Daniel Palmer <daniel@0x0f.com>, Michael Pavone <pavone@retrodev.com>, 
-    linux-m68k@lists.linux-m68k.org, linux-rtc@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] rtc: m48t59: Accommodate chips that lack a century
- bit
-In-Reply-To: <CAMuHMdWkcocokX7fgyt6baQdnr11F9a-apwNCAwTUf9Q2Ypauw@mail.gmail.com>
-Message-ID: <0a0888fd-dc82-bc85-e1ad-6aebc9c450ff@linux-m68k.org>
-References: <cover.1727925802.git.fthain@linux-m68k.org> <f9eedf61f64906006f57ac88bdc160e55bc40c8a.1727925802.git.fthain@linux-m68k.org> <CAMuHMdWkcocokX7fgyt6baQdnr11F9a-apwNCAwTUf9Q2Ypauw@mail.gmail.com>
+	s=arc-20240116; t=1727994171; c=relaxed/simple;
+	bh=DnmNpmJQQm4NYVqRCGy9i/+/Ig4LR3+hm92QTLY1nbI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EpCN0+memb5hU1lUdns4dqqA5AUPeytyR5fXjVQkLTBMVdfhwTuwT4w0aWOFujeUQRdEoiDfDejFnU09iE5h9zp3IO/Jg+9SuTUplpA3Ce4i20Gf/6Q9dNL7Pb3lErfEPGW5IWVADxRzAcVxuqwaGXMMsDPvKrtljPsOgLCAXIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GqPSvSiC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74B28C4CED2;
+	Thu,  3 Oct 2024 22:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727994170;
+	bh=DnmNpmJQQm4NYVqRCGy9i/+/Ig4LR3+hm92QTLY1nbI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GqPSvSiCq2147idnMn/x14O0AwRI3NfzoPIRTQierj7doff6M7aeiGRWFiirfIgdc
+	 99PyQ51AbiikWvguscediIN2n90aes+j9Eq34uGln8WDAw1bfzvxRHYCrG+vbXSUdu
+	 XpWfms4Y7NbnT8xoykZYRZfSVcSBHaX6WVq8lMt1pyXmdxYMVfH8cAjCouJ5pFgGt8
+	 ++0N1NV3jo2EDn/8RACAH9MHUYSVL7Mp9k6fBEIPysFYNFktRl/tXE+g2vDsE5K257
+	 pMkT+C5M1Wbxmu42Rwc/8h4KuCECHsrqsQGqBXEIuHLotRQ+5/VS56wTBe/XqJCnPI
+	 mZiXypv771ZWA==
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71ddfc61c78so525495b3a.2;
+        Thu, 03 Oct 2024 15:22:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVlIMW6vVVIMzxgmhdLqtz1yjcsKdDyan4ircGJ+pVf4ZFeLU+o7DOq04C7Tr4BOlyjFzwYwoRPR098Ih8=@vger.kernel.org, AJvYcCWl3L0Aftt1iFg2hvG07LuX+gXw63IfQWv+T1WZjnLa/txpbzmc0BDL5btNlaPHrTi3hctaOd/w@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgkR1ePtf4ElUf2KTIBPwDYS0erFMsKS7VFW7TTbdCKGKy16Iq
+	k7ecLAdxWd3h6n3Vz+fTMo0rCOOOKYT8AuoDz0K9Azie25iOhNie1+vX2yVcawqF5eBfJgcZYcx
+	LUhLL/U7vCq0tzAL9Ag08x8er2w==
+X-Google-Smtp-Source: AGHT+IGXo32/Wh1/RnyGtZO6Dr70hFaqnlQ4oOJucQ6j4BO6HwCW3L6ykIiixFLWJmfsoSmkM6UJ8UOdzPUIKxY03BA=
+X-Received: by 2002:a05:6a00:4b0a:b0:71d:d1b7:8dba with SMTP id
+ d2e1a72fcca58-71de24454cfmr729394b3a.18.1727994169992; Thu, 03 Oct 2024
+ 15:22:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240926211936.75373-1-21cnbao@gmail.com>
+In-Reply-To: <20240926211936.75373-1-21cnbao@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 3 Oct 2024 15:22:36 -0700
+X-Gmail-Original-Message-ID: <CANeU7QmSN_aVqgqNsCjqpGAZj5fAQJA90DVy1-duXxYicmPA+A@mail.gmail.com>
+Message-ID: <CANeU7QmSN_aVqgqNsCjqpGAZj5fAQJA90DVy1-duXxYicmPA+A@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
+ swapcache_prepare fails
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
+	Kairui Song <kasong@tencent.com>, "Huang, Ying" <ying.huang@intel.com>, Yu Zhao <yuzhao@google.com>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@suse.com>, 
+	Minchan Kim <minchan@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	SeongJae Park <sj@kernel.org>, Kalesh Singh <kaleshsingh@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, stable@vger.kernel.org, 
+	Oven Liyang <liyangouwen1@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Sep 26, 2024 at 2:20=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> From: Barry Song <v-songbaohua@oppo.com>
+>
+> Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcache")
+> introduced an unconditional one-tick sleep when `swapcache_prepare()`
+> fails, which has led to reports of UI stuttering on latency-sensitive
+> Android devices. To address this, we can use a waitqueue to wake up
+> tasks that fail `swapcache_prepare()` sooner, instead of always
+> sleeping for a full tick. While tasks may occasionally be woken by an
+> unrelated `do_swap_page()`, this method is preferable to two scenarios:
+> rapid re-entry into page faults, which can cause livelocks, and
+> multiple millisecond sleeps, which visibly degrade user experience.
+>
+> Oven's testing shows that a single waitqueue resolves the UI
+> stuttering issue. If a 'thundering herd' problem becomes apparent
+> later, a waitqueue hash similar to `folio_wait_table[PAGE_WAIT_TABLE_SIZE=
+]`
+> for page bit locks can be introduced.
+>
+> Fixes: 13ddaf26be32 ("mm/swap: fix race when skipping swapcache")
+> Cc: Kairui Song <kasong@tencent.com>
+> Cc: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Yu Zhao <yuzhao@google.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Chris Li <chrisl@kernel.org>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Yosry Ahmed <yosryahmed@google.com>
+> Cc: SeongJae Park <sj@kernel.org>
+> Cc: Kalesh Singh <kaleshsingh@google.com>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: <stable@vger.kernel.org>
+> Reported-by: Oven Liyang <liyangouwen1@oppo.com>
+> Tested-by: Oven Liyang <liyangouwen1@oppo.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
+>  mm/memory.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 2366578015ad..6913174f7f41 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4192,6 +4192,8 @@ static struct folio *alloc_swap_folio(struct vm_fau=
+lt *vmf)
+>  }
+>  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+>
+> +static DECLARE_WAIT_QUEUE_HEAD(swapcache_wq);
+> +
+>  /*
+>   * We enter with non-exclusive mmap_lock (to exclude vma changes,
+>   * but allow concurrent faults), and pte mapped but not yet locked.
+> @@ -4204,6 +4206,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>  {
+>         struct vm_area_struct *vma =3D vmf->vma;
+>         struct folio *swapcache, *folio =3D NULL;
+> +       DECLARE_WAITQUEUE(wait, current);
+>         struct page *page;
+>         struct swap_info_struct *si =3D NULL;
+>         rmap_t rmap_flags =3D RMAP_NONE;
+> @@ -4302,7 +4305,9 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>                                          * Relax a bit to prevent rapid
+>                                          * repeated page faults.
+>                                          */
+> +                                       add_wait_queue(&swapcache_wq, &wa=
+it);
+>                                         schedule_timeout_uninterruptible(=
+1);
+> +                                       remove_wait_queue(&swapcache_wq, =
+&wait);
+
+There is only one "swapcache_wq", if we don't care about the memory
+overhead, ideally should be per swap entry that fails to grab the
+HAS_CACHE bit and has one wait queue. Currently all swap entries using
+one wait queue will likely cause other swap entries (if any) get wait
+up then find out the swap entry it cares hasn't been served yet.
+
+Another thing to consider is that, if we are using a wait queue, the
+1ms is not relevant any more. It can be longer than 1ms and it is
+getting waited up by the wait queue anyway. Here you might use
+indefinitely sleep to reduce the unnecessary wait up and the
+complexity of the timer.
+
+>                                         goto out_page;
+>                                 }
+>                                 need_clear_cache =3D true;
+> @@ -4609,8 +4614,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>                 pte_unmap_unlock(vmf->pte, vmf->ptl);
+>  out:
+>         /* Clear the swap cache pin for direct swapin after PTL unlock */
+> -       if (need_clear_cache)
+> +       if (need_clear_cache) {
+>                 swapcache_clear(si, entry, nr_pages);
+> +               wake_up(&swapcache_wq);
+
+Agree with Ying that here the common path will need to take a lock to
+wait up the wait queue.
+
+Chris
 
 
-On Thu, 3 Oct 2024, Geert Uytterhoeven wrote:
-
-> Thanks for your patch!
-> 
-
-Thanks for your review.
-
-> > --- a/drivers/rtc/rtc-m48t59.c
-> > +++ b/drivers/rtc/rtc-m48t59.c
-> > @@ -57,6 +57,17 @@ m48t59_mem_readb(struct device *dev, u32 ofs)
-> >         return readb(m48t59->ioaddr+ofs);
-> >  }
-> >
-> > +/*
-> > + * Sun SPARC machines count years since 1968. MVME machines running Linux
-> > + * count years since 1970.
-> > + */
-> > +
-> > +#ifdef CONFIG_SPARC
-> > +#define YEAR0 68
-> > +#else
->  +#define YEAR0 70
-> > +#endif
-> 
-> This causes a change in behavior on other non-SPARC platforms,
-> if any out-of-tree platform exists that uses this driver.
-> 
-
-I'm unaware of any need to support out-of-tree code. Do you see think such 
-a requirement would be feasible somehow? Is this documented somewhere?
-
-> So I'd rather use:
-> 
->     #elif defined(CONFIG_VME)
->     #define YEAR0 70
->     #else
->     #define YEAR0 0
->     #endif
-> 
-
-That is a Y2K bug, right?
-
-> > +
-> >  /*
-> >   * NOTE: M48T59 only uses BCD mode
-> >   */
-> > @@ -82,10 +93,7 @@ static int m48t59_rtc_read_time(struct device *dev, struct rtc_time *tm)
-> >                 dev_dbg(dev, "Century bit is enabled\n");
-> >                 tm->tm_year += 100;     /* one century */
-> >         }
-> > -#ifdef CONFIG_SPARC
-> > -       /* Sun SPARC machines count years since 1968 */
-> > -       tm->tm_year += 68;
-> > -#endif
-> > +       tm->tm_year += YEAR0;
-> 
-> Upon closer look, the driver uses platform data, so a better solution 
-> would be to add the year0 offset to struct m48t59_plat_data.
-> 
-
-I agree.
-
-> Another suggestion for improvement, not related to this patch, would be 
-> to differentiate among M48T59, M48T02, and M48T08 by using 
-> platform_driver.id_table and platform_device_id.driver_data, instead of 
-> m48t59_plat_data.type.
-> 
-
-Yes, that's well out-of-scope I think.
+> +       }
+>         if (si)
+>                 put_swap_device(si);
+>         return ret;
+> @@ -4625,8 +4632,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>                 folio_unlock(swapcache);
+>                 folio_put(swapcache);
+>         }
+> -       if (need_clear_cache)
+> +       if (need_clear_cache) {
+>                 swapcache_clear(si, entry, nr_pages);
+> +               wake_up(&swapcache_wq);
+> +       }
+>         if (si)
+>                 put_swap_device(si);
+>         return ret;
+> --
+> 2.34.1
+>
 
