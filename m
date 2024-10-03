@@ -1,128 +1,176 @@
-Return-Path: <linux-kernel+bounces-349164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CD298F1F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:57:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D7398F1F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51465B21245
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:56:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8701F226E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C50019F432;
-	Thu,  3 Oct 2024 14:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8931A00CB;
+	Thu,  3 Oct 2024 14:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="E9vQjEb6"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mx49KkRY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6A119F420
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DC426ACD;
+	Thu,  3 Oct 2024 14:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727967407; cv=none; b=Ig94Evp2ii70blVoj8mx0ZJ3beilt0OUPmmtpdEsMWaWU13YDA6ii9qNOYiKBxMQlqRPyr9MhOK3LqNJaFb73mjvEQbgog1eovxZMGIPwngMELWoO4bVnZxCNqo0goqeAbOS0PmU/NKj+MjV9dB2HfoFQ9tG5ebOsUYoWlu1ypE=
+	t=1727967459; cv=none; b=PXcWoUeMnmOUG8O/bt4F5DzhEv0IdRyFOwRzbIXNQE78hRk/cDeE8GgcN5/ImxHohh6pmwO49YLLg6bZ97YuiXXL2h7UPzlPsf2CWjOjlcxqZmA7xJfiJCWG/RlnhuxKGbaq8J1wCcQqz1iq9Tp6H6C7juMc3IOgS9Mqmbodfjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727967407; c=relaxed/simple;
-	bh=xNB8aA4lwhkIWkbB3SrXYkjCVDmlWQ+HINc2HyZXxy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rz8GKUzgPfqxjm2RvZp5i/V1RqupOTSf4C9UrTPW3tGgB0IsYbd8Yq9xJiD/ZrRDa018ia7PSGHweVmAQgg/gilZjOW8w7D32kRBBCpIpAjqZoHY2DVpEc2uUwZrS8IxlNEWtP7d4MRwEdmMy2cl786ykVrR1NhQjnSJDRAJgvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=E9vQjEb6; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727967404;
-	bh=xNB8aA4lwhkIWkbB3SrXYkjCVDmlWQ+HINc2HyZXxy8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=E9vQjEb6DZSHlrpW7fhQwpsHX0Ffb6bXFAImCCaFq0YDIV12Tp1lZW14imXDY/5UF
-	 lFzOfG3JJzDfdxe2lkFDYMmuTxIyDvx6Az0t2DgBVAOodUbgaybIo7iZOo9WsEg6/M
-	 5PgfdyL5qEIxmoTPICOJBELh08GIlBGMnshc4aIsGR79tScD7f+v+ulUFAx47pbmGB
-	 PTC+D9LNhXrOYen9/WEI43q+CffeZRDqDTTCsbBBoj9BGdsWXFIqc22nNGXYGAxbNJ
-	 M/oGMluRWgrmLOdemPG616O4K+pST87PHmS+egIv03wBWzd+2IPyojeAJ3A5l9T7IX
-	 0lgqjrm90HnsQ==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	s=arc-20240116; t=1727967459; c=relaxed/simple;
+	bh=6lVb+SFOz5J/qaruoyw5IIPg/4SorI5aDmc74GIPE+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=odGZ2zgAI3DkWdYfI3K1vSNBPctjVKkUC/PGUgjqqe3sxYptF9RRaQ+4oGMyZ8lJaGiTmk2kcePxREbZaqawAP0hVaQQQKq46MY5OkLAaMxmczcq49JLTF/l7EGP2AfYKEa4GFuS2xU/kDZQF5CFf6xLZqusRb9GFN+xP7Q1JPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mx49KkRY; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727967458; x=1759503458;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6lVb+SFOz5J/qaruoyw5IIPg/4SorI5aDmc74GIPE+o=;
+  b=Mx49KkRY5S3Uk9fh0sfdGCpQdEPEAyrD2q95n2RLF75rdx/MRie2+Lin
+   3SXt7ovQlNNwVxNr9p+9lCEy9EtSMnngaqM+a26hVPQefNMZI+3jNHGY/
+   FOD01BUpjXdeCemjU6PeEdgTmZj3n8lZFo6H9vaLi5sfPZftgunx209jI
+   4Vf4kZbfy7AlG/c13n6PAP16O2ttlA2EJR2qanPVDObC+ZUAvjLor+mSI
+   zhZl8MS+lZ289LhaUfxWiJz7JMKYyLxu/Bol1IMbI110T8XbHEYxqgnv1
+   HIa6NAwJt/XX4Oa7twjUvmy9pi1JWTgqO73zGXkkkhDEBFLpHKqbsLqGl
+   Q==;
+X-CSE-ConnectionGUID: 8YUv5dC2QOKVtvZeRvD83A==
+X-CSE-MsgGUID: Q0EJzN40Rw6APDRg+auWnQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="27293293"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="27293293"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 07:57:14 -0700
+X-CSE-ConnectionGUID: ej4iMYwmRkeMWg96A960dA==
+X-CSE-MsgGUID: CN9GoFieQU+As3oH24319Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="74382111"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 07:57:14 -0700
+Received: from [10.212.90.18] (kliang2-mobl1.ccr.corp.intel.com [10.212.90.18])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 995AF17E3600;
-	Thu,  3 Oct 2024 16:56:43 +0200 (CEST)
-Date: Thu, 3 Oct 2024 16:56:38 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, AngeloGioacchino Del
- Regno <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] drm/panfrost: Add missing OPP table refcnt
- decremental
-Message-ID: <20241003165638.65a2d16e@collabora.com>
-In-Reply-To: <20241003133037.3398144-1-adrian.larumbe@collabora.com>
-References: <20241003133037.3398144-1-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by linux.intel.com (Postfix) with ESMTPS id 5913420B5782;
+	Thu,  3 Oct 2024 07:57:12 -0700 (PDT)
+Message-ID: <b0695ef6-8a59-4550-8a33-9afb25c93f48@linux.intel.com>
+Date: Thu, 3 Oct 2024 10:57:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
+To: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com>
+ <172781650408.2469191.8205759350946908012.b4-ty@kernel.org>
+ <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
+ <Zv3ek7aBkQo0Z9To@google.com>
+ <CAP-5=fUjLhGw4SmMTH_H2=1OwRDrY04RL6+C=DdQ=VSgXk8JZg@mail.gmail.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <CAP-5=fUjLhGw4SmMTH_H2=1OwRDrY04RL6+C=DdQ=VSgXk8JZg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu,  3 Oct 2024 14:30:28 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-> Commit f11b0417eec2 ("drm/panfrost: Add fdinfo support GPU load metrics")
-> retrieves the OPP for the maximum device clock frequency, but forgets to
-> keep the reference count balanced by putting the returned OPP object. This
-> eventually leads to an OPP core warning when removing the device.
->=20
-> Fix it by putting OPP objects as many times as they're retrieved. That
-> includes putting the OPP object in case setting it fails.
->=20
-> Also remove an unnecessary whitespace.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> Fixes: f11b0417eec2 ("drm/panfrost: Add fdinfo support GPU load metrics")
-> ---
->  drivers/gpu/drm/panfrost/panfrost_devfreq.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/dr=
-m/panfrost/panfrost_devfreq.c
-> index 2d30da38c2c3..4b8840a41779 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> @@ -38,7 +38,7 @@ static int panfrost_devfreq_target(struct device *dev, =
-unsigned long *freq,
->  		return PTR_ERR(opp);
->  	dev_pm_opp_put(opp);
-> =20
-> -	err =3D  dev_pm_opp_set_rate(dev, *freq);
-> +	err =3D dev_pm_opp_set_rate(dev, *freq);
->  	if (!err)
->  		ptdev->pfdevfreq.current_frequency =3D *freq;
-> =20
-> @@ -184,9 +184,12 @@ int panfrost_devfreq_init(struct panfrost_device *pf=
-dev)
->  	ret =3D dev_pm_opp_set_opp(dev, opp);
 
-Put the dev_pm_opp_put(opp) here, and you can drop the one in the error
-path.
+On 2024-10-02 8:57 p.m., Ian Rogers wrote:
+> On Wed, Oct 2, 2024 at 5:00 PM Namhyung Kim <namhyung@kernel.org> wrote:
+>>
+>> On Tue, Oct 01, 2024 at 03:32:04PM -0700, Ian Rogers wrote:
+>>> On Tue, Oct 1, 2024 at 2:02 PM Namhyung Kim <namhyung@kernel.org> wrote:
+>>>>
+>>>> On Fri, 13 Sep 2024 08:47:06 +0000, Dapeng Mi wrote:
+>>>>
+>>>>> Changes:
+>>>>> v5 -> v6:
+>>>>>   * no function change.
+>>>>>   * rebase patchset to latest code of perf-tool-next tree.
+>>>>>   * Add Kan's reviewed-by tag.
+>>>>>
+>>>>> History:
+>>>>>   v4: https://lore.kernel.org/all/20240816122938.32228-1-dapeng1.mi@linux.intel.com/
+>>>>>   v3: https://lore.kernel.org/all/20240712170339.185824-1-dapeng1.mi@linux.intel.com/
+>>>>>   v2: https://lore.kernel.org/all/20240708144204.839486-1-dapeng1.mi@linux.intel.com/
+>>>>>   v1: https://lore.kernel.org/all/20240702224037.343958-1-dapeng1.mi@linux.intel.com/
+>>>>>
+>>>>> [...]
+>>>>
+>>>> Applied to perf-tools-next, thanks!
+>>>
+>>> I disagreed with an early patch set and the issue wasn't resolved. Specifically:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/commit/?h=perf-tools-next&id=3b5edc0421e2598a0ae7f0adcd592017f37e3cdf
+>>> ```
+>>>   /* Followed by topdown events. */
+>>>   if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+>>>   return -1;
+>>> - if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
+>>> + /*
+>>> + * Move topdown events forward only when topdown events
+>>> + * are not in same group with previous event.
+>>> + */
+>>> + if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
+>>> +     lhs->core.leader != rhs->core.leader)
+>>>   return 1;
+>>> ```
+>>> Is a broken comparator as the lhs then rhs behavior varies from the
+>>> rhs then lhs behavior. The qsort implementation can randomly order the
+>>> events.
+>>> Please drop/revert.
+>>
+>> Can you please provide an example when it's broken?  I'm not sure how it
+>> can produce new errors, but it seems to fix a specific problem.  Do you
+>> have a new test failure after this change?
+> 
+> It may work with a particular sort routine in a particular library
+> today, the issue is that if the sort routine were say changed from:
+> 
+> if (cmp(a, b) < 0)
+> 
+> to:
+> 
+> if (cmp(b, a) > 0)
+> 
+> the sort would vary with this change even though such a change in the
+> sorting code is a no-op. It is fundamental algorithms that this code
+> is broken, I'm not going to spend the time finding a list of
+> instructions and a sort routine to demonstrate this.
 
->  	if (ret) {
->  		DRM_DEV_ERROR(dev, "Couldn't set recommended OPP\n");
-> +		dev_pm_opp_put(opp);
->  		return ret;
->  	}
-> =20
-> +	dev_pm_opp_put(opp);
-> +
->  	/* Find the fastest defined rate  */
->  	opp =3D dev_pm_opp_find_freq_floor(dev, &freq);
->  	if (IS_ERR(opp))
 
+I'm not sure I fully understand. But just want to mention that the
+change only impacts the Topdown perf metric group, which is only
+available for the ICL and later p-core. Nothing will change if no perf
+metrics topdown events are used. Very limited impact.
+
+I like the patch set is because it provides examples and tests to cover
+the possible combination of the slots event and topdown metrics events.
+So we will have a clear expectation for different combinations caused by
+the perf metrics mess.
+
+If the algorithms cannot be changed, can you please give some
+suggestions, especially for the sample read failure?
+
+Thanks,
+Kan
 
