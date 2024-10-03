@@ -1,186 +1,148 @@
-Return-Path: <linux-kernel+bounces-349178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D10E98F239
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:13:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4016798F23D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0C65B219D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02EE02833C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1ADB19CD0B;
-	Thu,  3 Oct 2024 15:13:12 +0000 (UTC)
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58991A08AD;
+	Thu,  3 Oct 2024 15:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="OQX2O5u/"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA911A0708;
-	Thu,  3 Oct 2024 15:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695F91A0726;
+	Thu,  3 Oct 2024 15:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727968392; cv=none; b=bzjNppOIWTId/PiEiE6WMVhbGQkR4p2VSBjSF4udNFmbfU8XeVe9yTTxhj3kInZBNo7Bc0eKyWiUK2F9hZNE1OnnK/ng5upFE7gxqH32prJbbPCfW3WmwrV7Yr3mPp0DbBC0A5TGJd5/Y00/I+f1bulUe7CSa+ME9o+p/+kWa0I=
+	t=1727968416; cv=none; b=NIoCANu1Ybp7C1BDMAzIEP6isryRg4+StVOgopU4AK6eCIh2lRuc97uFC/Hwvvr8p9/cIVYtI2EyWsqiJ1dh8r8/f4IaGtEZ4Xd6U7I8zlc8ZtlT33gc089n11aDKB8Gj0JRTfDJ2c3PKCBJ71IRjGiUxdV/+FHxIelN2o8UTyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727968392; c=relaxed/simple;
-	bh=dGlsxoZu8PtWpidPasr2wBeZc49hqi7PsXHUmZkFZy4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h1bGi8Y7t3bSSeEbWf9VDGKFKMVfYGnI03byvn52Q2Wakte9iU129m+wzQxBOEgF5x8vwp5XjX+ELIMbNx5WZhgk5QnCU6a4cUYY7twgWJAv1ICjywkuxxf+FqCoihXZ2n9/YbybbjEe2Te1wMSbOmB4qLC24s9Pp95sxmEnH6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-82aa6be8457so36620939f.0;
-        Thu, 03 Oct 2024 08:13:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727968384; x=1728573184;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=itCr7VtHEe0udli0L/vyJJ6/QS8R3KvPPLhdxRcMv+g=;
-        b=fwDQQbEks8iT9UGO1fXB/JECBA48JSqBwBIyCeFA6cWl7MgeXTuh4v6j/trjGUNo9H
-         0XLLsd8AEEssSdzJcX1iutplQkfNQis5sSPOAmXi47fHwqJ4APXh8vKg/IlIwrEmWoIA
-         rv/RNUVueDbuDmFpYKqmVlHtKtpF//KoBGw4SINV+VHy2ActNWXqAF5P2Wf5rMqrNDjo
-         iScj17yoiiKXbugDjI5zt0howfcD8fjyEeqQ7ZlBb28sEARFe3CRIgUraDWF4P1sRSr+
-         Q3p7gBhz/jS8p7Z+r0LFnxHBMdiwCNLwL7LCL2UAe/p7iuESazhBa6UzmFabe1kjpMUz
-         ZtvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUt3uSohd8iqsXZBqLRzY8ku2oUP3OgnH/GLrQkmbuJKkVPunra2+R4+dfhe7Pab3Bpp69OU98Qytiz@vger.kernel.org, AJvYcCWPUp/wBNLZhoGK/0h3VDa1MSHTKf99fTY/dzHWUdZq05JiHT0js/TwWF96V4PpZ1WeLcWCdr0fQu2Qy2/q@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxK8PxGicXpWf5I9NY714dFRLvuRslUnvvrmdcD4wvsJDS9qWJ
-	ZeNjaNq64CKG9QXnnyy2g14FRAWRB6BU5GNfMph+MX79mYlihxloYBS3R784
-X-Google-Smtp-Source: AGHT+IGcg0YSneQvVfQMdQMoW73EVz5FMom32jWlJ82POoJcAH1v6AKRHAhkl28hvsomGgHcgRU9pw==
-X-Received: by 2002:a05:6602:340d:b0:82c:f7c4:b093 with SMTP id ca18e2360f4ac-834e74a6138mr244733639f.3.1727968384060;
-        Thu, 03 Oct 2024 08:13:04 -0700 (PDT)
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com. [209.85.166.49])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-834efc4ef9bsm29897639f.6.2024.10.03.08.13.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 08:13:02 -0700 (PDT)
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-82aa7c3b498so34660139f.1;
-        Thu, 03 Oct 2024 08:13:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVFDyKFTMG4ana3grsN+Hw0t/3seq39phAg68jYeDV7H624bnb7cLipNoJO+lEoeA5Z/58YZqsMxVZxiWdN@vger.kernel.org, AJvYcCVM+z0ClaGNeMuDNIj98MdNhsvIogKLcp1458IkcODNqSB8V2PZNUWEZSEZ12rAd2pNAbQda/+xu8pR@vger.kernel.org
-X-Received: by 2002:a05:6602:2d8d:b0:82a:185f:5940 with SMTP id
- ca18e2360f4ac-834e76d16e0mr293099539f.7.1727968382525; Thu, 03 Oct 2024
- 08:13:02 -0700 (PDT)
+	s=arc-20240116; t=1727968416; c=relaxed/simple;
+	bh=THrwD2w2jgpRJFoIIvAIzPwbq4QWChfzrNpqJ9IfbzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NDyBAXaAPx+ip7N/DlHN6jXVQcMpeWgDfoo7xUtMD+k9SEjQL7Cqj8vGEZay/wviBkr/0hZxwgCZ6j8bYYD37H6SbptddZ8ZiO3JHIzD5hfh3MnpLSLT98e9gJdIUSBHuqL7V1puy5SrXX6l591sxRraiCcZamDJUoYDJJE++nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=OQX2O5u/; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=vwTjVbUJJWTfpeycaHrV+jGKYz9uqS6yeYkV6cjkb4o=; b=OQX2O5u/P1jhzIoYDXlPt62s5T
+	lQTPz0+YC6/pQ2ZdSIPY9xu74w/ka9itKl4MG8crlg9ez69Wu1OfZOk8Km4Y9hHi33E2U+L2ZeMN3
+	fytwQwqaUR6FHw4q6lEVryNrAYedpz5eHDyRM+eXiEQJFz6pZ88zscgMOMmIQo2+C3lDo+jh/mXdq
+	y6iOhSqVpQf4vdVydOLekJNieKK+ZZ/YYMqZYQOHDp8FkcMrTK+JVVg2I6zWn2n0rlUPLa69ZBHnh
+	Prnd+xlaK1paQW+mCDb3bZm3eNsHMh1Tb+NUsShX5ppmIWTkV0xRKpuvL52f7BPELcvOJrP4eCXi8
+	Y8eY5t7g==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40802)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1swNW1-0000am-2U;
+	Thu, 03 Oct 2024 16:13:17 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1swNVy-0000Cy-1X;
+	Thu, 03 Oct 2024 16:13:14 +0100
+Date: Thu, 3 Oct 2024 16:13:14 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Qingtao Cao <qingtao.cao.au@gmail.com>,
+	Qingtao Cao <qingtao.cao@digi.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] net: phy: marvell: avoid bringing down fibre link
+ when autoneg is bypassed
+Message-ID: <Zv60iix-um0dykAB@shell.armlinux.org.uk>
+References: <20241003022512.370600-1-qingtao.cao@digi.com>
+ <30f9c0d0-499c-47d6-bdf2-a86b6d300dbf@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003111444.543964-1-andre.przywara@arm.com> <20241003111444.543964-3-andre.przywara@arm.com>
-In-Reply-To: <20241003111444.543964-3-andre.przywara@arm.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 3 Oct 2024 23:12:46 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65jcxCYC7mess=4H9dz0gXk434tTyP_ATDvbrpdj_=aOQ@mail.gmail.com>
-Message-ID: <CAGb2v65jcxCYC7mess=4H9dz0gXk434tTyP_ATDvbrpdj_=aOQ@mail.gmail.com>
-Subject: Re: [PATCH 2/5] mfd: axp20x: ensure relationship between IDs and
- model names
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Martin Botka <martin.botka@somainline.org>, Chris Morgan <macromorgan@hotmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <30f9c0d0-499c-47d6-bdf2-a86b6d300dbf@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Oct 3, 2024 at 7:15=E2=80=AFPM Andre Przywara <andre.przywara@arm.c=
-om> wrote:
->
-> At the moment there is an implicit relationship between the AXP model
-> IDs and the order of the strings in the axp20x_model_names[] array.
-> This is fragile, and makes adding IDs in the middle error prone.
->
-> Make this relationship official by changing the ID type to the actual
-> enum used, and using indexed initialisers for the string list.
->
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+On Thu, Oct 03, 2024 at 04:30:19PM +0200, Andrew Lunn wrote:
+> On Thu, Oct 03, 2024 at 12:25:12PM +1000, Qingtao Cao wrote:
+> > On 88E151x the SGMII autoneg bypass mode defaults to be enabled. When it is
+> > activated, the device assumes a link-up status with existing configuration
+> > in BMCR, avoid bringing down the fibre link in this case
+> > 
+> > Test case:
+> > 1. Two 88E151x connected with SFP, both enable autoneg, link is up with speed
+> >    1000M
+> > 2. Disable autoneg on one device and explicitly set its speed to 1000M
+> > 3. The fibre link can still up with this change, otherwise not.
+> 
+> What is actually wrong here?
+> 
+> If both ends are performing auto-neg, i would expect a link at the
+> highest speeds both link peers support.
+> 
+> If one peer is doing autoneg, the other not, i expect link down, this
+> is not a valid configuration, since one peer is going to fail to
+> auto-neg.
+> 
+> If both peers are using forced 1000M, i would expect a link.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Since I've seen this patch posted, I've been wanting to pick through
+the Marvell documentation for the PHY.
 
-> ---
->  drivers/mfd/axp20x.c                 | 30 ++++++++++++++--------------
->  drivers/regulator/axp20x-regulator.c |  2 +-
->  include/linux/mfd/axp20x.h           |  2 +-
->  3 files changed, 17 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-> index 4051551757f2..5ceea359289f 100644
-> --- a/drivers/mfd/axp20x.c
-> +++ b/drivers/mfd/axp20x.c
-> @@ -34,20 +34,20 @@
->  #define AXP806_REG_ADDR_EXT_ADDR_SLAVE_MODE    BIT(4)
->
->  static const char * const axp20x_model_names[] =3D {
-> -       "AXP152",
-> -       "AXP192",
-> -       "AXP202",
-> -       "AXP209",
-> -       "AXP221",
-> -       "AXP223",
-> -       "AXP288",
-> -       "AXP313a",
-> -       "AXP717",
-> -       "AXP803",
-> -       "AXP806",
-> -       "AXP809",
-> -       "AXP813",
-> -       "AXP15060",
-> +       [AXP152_ID] =3D "AXP152",
-> +       [AXP192_ID] =3D "AXP192",
-> +       [AXP202_ID] =3D "AXP202",
-> +       [AXP209_ID] =3D "AXP209",
-> +       [AXP221_ID] =3D "AXP221",
-> +       [AXP223_ID] =3D "AXP223",
-> +       [AXP288_ID] =3D "AXP288",
-> +       [AXP313A_ID] =3D "AXP313a",
-> +       [AXP717_ID] =3D "AXP717",
-> +       [AXP803_ID] =3D "AXP803",
-> +       [AXP806_ID] =3D "AXP806",
-> +       [AXP809_ID] =3D "AXP809",
-> +       [AXP813_ID] =3D "AXP813",
-> +       [AXP15060_ID] =3D "AXP15060",
->  };
->
->  static const struct regmap_range axp152_writeable_ranges[] =3D {
-> @@ -1345,7 +1345,7 @@ int axp20x_match_device(struct axp20x_dev *axp20x)
->                 axp20x->regmap_irq_chip =3D &axp15060_regmap_irq_chip;
->                 break;
->         default:
-> -               dev_err(dev, "unsupported AXP20X ID %lu\n", axp20x->varia=
-nt);
-> +               dev_err(dev, "unsupported AXP20X ID %u\n", axp20x->varian=
-t);
->                 return -EINVAL;
->         }
->
-> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp=
-20x-regulator.c
-> index a8e91d9d028b..3ba76dbd0fb9 100644
-> --- a/drivers/regulator/axp20x-regulator.c
-> +++ b/drivers/regulator/axp20x-regulator.c
-> @@ -1597,7 +1597,7 @@ static int axp20x_regulator_probe(struct platform_d=
-evice *pdev)
->                 nregulators =3D AXP15060_REG_ID_MAX;
->                 break;
->         default:
-> -               dev_err(&pdev->dev, "Unsupported AXP variant: %ld\n",
-> +               dev_err(&pdev->dev, "Unsupported AXP variant: %d\n",
->                         axp20x->variant);
->                 return -EINVAL;
->         }
-> diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
-> index f4dfc1871a95..79ecaaaa2070 100644
-> --- a/include/linux/mfd/axp20x.h
-> +++ b/include/linux/mfd/axp20x.h
-> @@ -959,7 +959,7 @@ struct axp20x_dev {
->         unsigned long                   irq_flags;
->         struct regmap                   *regmap;
->         struct regmap_irq_chip_data     *regmap_irqc;
-> -       long                            variant;
-> +       enum axp20x_variants            variant;
->         int                             nr_cells;
->         const struct mfd_cell           *cells;
->         const struct regmap_config      *regmap_cfg;
-> --
-> 2.25.1
->
+The bit in question is bit 11 of the Fiber Specific Status Register
+(FSSR, page 1, register 17).
+
+When AN is disabled or in 100FX mode, this bit will be set. It will
+also be set when the speed and duplex have been resolved, and thus
+those fields are valid. If the fiber specific control register 2
+(FSCR2) bit 5 is set (AN bypass status), then this bit will also be
+clear.
+
+When FSSR bit 11 is clear, then duplex (bit 13) and speed (bits 14
+and 15) are not valid, so we shouldn't interpret their values.
+
+Further reading of the FSCR2 documentation indicates that bit 5 is
+a simple status bit that bypass mode was entered, and thus it can
+only be set when bypass mode was enabled (bit 6) - so checking that
+bit 6 is set is unnecessary.
+
+So, I'd suggest something like:
+
+	int fscr2;
+
+	if (fiber) {
+		/* We are on page 1, so this reads the FSCR2 */
+		fscr2 = phy_read(phydev, MII_88E151X_FSCR2);
+		if (fscr2 & MII_88E151X_FSCR2_BYPASS_STATUS) {
+			err = genphy_read_status_fixed(phydev);
+			if (err < 0)
+				return err;
+
+			phydev->link = 1;
+			return 0;
+		}
+	}
+
+would be sufficient, _provided_ the BMCR fixed-speed setting is
+correct for 1000base-X mode when AN is enabled (I haven't checked
+that is the case.)
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
