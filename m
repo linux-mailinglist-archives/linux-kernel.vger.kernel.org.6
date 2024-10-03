@@ -1,118 +1,127 @@
-Return-Path: <linux-kernel+bounces-348443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07ED98E7C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:26:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA05A98E7C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5993AB22942
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:26:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B3751F27911
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBBB8C07;
-	Thu,  3 Oct 2024 00:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7109479;
+	Thu,  3 Oct 2024 00:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="U4glnt4l"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FWJEXH6p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB40BA41
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 00:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727915194; cv=pass; b=bWw3UwNEG8NNGbaKVImGJi2Kk6sAPBKjT5ICvgJo0GVHgTPXh+4DkNMMBcF/WmK3l0RAJkkgN+TvQ8/SVXvzvsEoWvrC8xy4wnH7k/9rDGOxmX1j4co/NQM+t5baafd58xu8eaQJ8YERZDrMerERC3FtHRSFjuxhZMCGIWnyHfw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727915194; c=relaxed/simple;
-	bh=0Gr68qP4ELcAoBFdJAhPFxBZ0J7LmCLMIs0ceKlstok=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PWiWeUK+q89MXtEcvnD/1I4Mx9nfxDqhCWWFRWHsCJbKlhrhtx2AEFNUlw6sz2N+GEbykEq/eDqn41PakHUfFzUFg33lqTFPuoxJvu7KllHizSZGhG7Lsz8ixMBtDw4a7NlQ95KNIVYp50e/Nc6BHceF5RlA567xCOu6RP3aBGc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=U4glnt4l; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1727915179; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gebRKY4Cd8s6LDrxNwkT2OUgQQUWitapRVQ8AYlE6ZYxZhctwZ9gu6t8MhEzfuu9m2G1sJzQtXepIxBlJRkhbd95ZMLZ/S7uPrs+pj2nEUyMothgTkpgalWhUvA4vnUsyjvWzo5DTHN7XrnHkCJ7mlcpEgAoPIInqz4y6HCEiiY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1727915179; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=DChdb2BFzLOXfJBF9ehTCkQlOOWBFtEDNuAGBsr3xJ4=; 
-	b=U/EiUdxVShpE7mSEw+vKvOrMYl8izisccJuNSyR7Df4FeBCSlDVTrvBZx+BJBQ1DyWoWb5jp08PJIfsmZeFcQFEOjvMi4kEFYB+Ea2WrKbuCKVwCcDCsn7K30B7m76QNTeA1XbuhAGD4lpCJDUkM2IJBe8cd1FzP17rJzlVKKU0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727915179;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=DChdb2BFzLOXfJBF9ehTCkQlOOWBFtEDNuAGBsr3xJ4=;
-	b=U4glnt4lU4eZXXlmuK6xFvxFeAdEywuNSE1Ixmm8HQ8PaEvvVa4yjKYC8K5XeINu
-	QQgjcbGeqSHUsMNnmeF1ldcOm4Yz54mOx0zMIzpjPy7SnKX7qIFNI04mA7VeL+UKXua
-	Mw0Jp84Tx75QQ/pWjSjs2GeNV/Ed5WSqPTkylZ4I=
-Received: by mx.zohomail.com with SMTPS id 1727915178493626.7814922268785;
-	Wed, 2 Oct 2024 17:26:18 -0700 (PDT)
-From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-Cc: kernel@collabora.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panfrost: Add missing OPP table refcnt decremental
-Date: Thu,  3 Oct 2024 01:25:37 +0100
-Message-ID: <20241003002603.3177741-1-adrian.larumbe@collabora.com>
-X-Mailer: git-send-email 2.46.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C292F11CA0;
+	Thu,  3 Oct 2024 00:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727915273; cv=none; b=M+QY22iw8kuoaL9ffPKzS41bqzV/tBNGaemxR7XRWC3kxIwcuq4yy7yRT09o3u9weZl+P2LoQA2vEp+gWR8nGAkpg1w6+QXsGpa0oupr/s+poDdxiWLFcPFJ2RU/B7t31PVZBJwnqSvGleSwfV9hEVlZfOiGFRx0Ghbch47ECM0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727915273; c=relaxed/simple;
+	bh=4jOSy2S5vzvt4SXm1y8gfO76VgZUH7wm+QIBYnhH3Cg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BBhGe0JDoKKVYcJbhouViOQbGFLI9M+ZCw1Jpceox/P9jyy3OgfbMm2+cwqE53YWjKpyW+tVhTRp5vx/htixJnC/J7uA6hpiF548tNDdie4WGS5+D0pgGMgdmQwdQKOlpAGESvhkyiX9FbEQTXPVNEi6UNGxz4ysT5CdVltxzNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FWJEXH6p; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727915272; x=1759451272;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4jOSy2S5vzvt4SXm1y8gfO76VgZUH7wm+QIBYnhH3Cg=;
+  b=FWJEXH6pFiMldM9nE3x3PMaexwnVe+ympLpzGwsqN0b+pHLt9742g+IU
+   lN9cGq0fAJ0vXqPqPLgzyVS4RbpfbDztc1I41bYotK+Gad4+LDpmeRfB1
+   ZZOWycPcOIxD9dkHF+PnsPn7o/dFbEqO/x5o2/LcRYXoxeTcJ1qqyXaRE
+   cXZjD37oNjaKiOtJVonRNRZktqEQ5nkXmcC0oz2ey3Cg1c8vqbas3U7DB
+   onsxZu71E8gu3DrOc410OeEfZ8Djlm9lbah+xVUL46e+5ZBPLJdAgVS4k
+   cTzPOZ4IkNwzwWA7tpl4VYJSgxANHiZLM6x1ftk4sqOiSB/Wtu8Eda+gE
+   w==;
+X-CSE-ConnectionGUID: Q2DkQMeiTayRxeeg8mB9PA==
+X-CSE-MsgGUID: G+lGHATQSqqjHrb8KLVI3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="30983717"
+X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
+   d="scan'208";a="30983717"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 17:27:51 -0700
+X-CSE-ConnectionGUID: dwjIvjloTeinYpM1Frs8nw==
+X-CSE-MsgGUID: xpDUIod3TPOk3JYCsRfp0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
+   d="scan'208";a="74293881"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 02 Oct 2024 17:27:45 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sw9h1-000Ujz-0l;
+	Thu, 03 Oct 2024 00:27:43 +0000
+Date: Thu, 3 Oct 2024 08:27:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com, lina@asahilina.net,
+	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v8 15/29] rust: alloc: introduce `ArrayLayout`
+Message-ID: <202410030724.cV9BEoNG-lkp@intel.com>
+References: <20241001150008.183102-16-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001150008.183102-16-dakr@kernel.org>
 
-Commit f11b0417eec2 ("drm/panfrost: Add fdinfo support GPU load metrics")
-retrieves the OPP for the maximum device clock frequency, but forgets to
-keep the reference count balanced by putting the returned OPP object. This
-eventually leads to an OPP core warning when removing the device.
+Hi Danilo,
 
-Fix it by putting OPP objects as many times as they're retrieved.
-Also remove an unnecessary whitespace.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-Fixes: f11b0417eec2 ("drm/panfrost: Add fdinfo support GPU load metrics")
----
- drivers/gpu/drm/panfrost/panfrost_devfreq.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+[auto build test ERROR on 9852d85ec9d492ebef56dc5f229416c925758edc]
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-index 2d30da38c2c3..c7d3f980f1e5 100644
---- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-@@ -38,7 +38,7 @@ static int panfrost_devfreq_target(struct device *dev, unsigned long *freq,
- 		return PTR_ERR(opp);
- 	dev_pm_opp_put(opp);
- 
--	err =  dev_pm_opp_set_rate(dev, *freq);
-+	err = dev_pm_opp_set_rate(dev, *freq);
- 	if (!err)
- 		ptdev->pfdevfreq.current_frequency = *freq;
- 
-@@ -177,6 +177,8 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
- 	 */
- 	pfdevfreq->current_frequency = cur_freq;
- 
-+	dev_pm_opp_put(opp);
-+
- 	/*
- 	 * Set the recommend OPP this will enable and configure the regulator
- 	 * if any and will avoid a switch off by regulator_late_cleanup()
+url:    https://github.com/intel-lab-lkp/linux/commits/Danilo-Krummrich/rust-alloc-add-Allocator-trait/20241001-230558
+base:   9852d85ec9d492ebef56dc5f229416c925758edc
+patch link:    https://lore.kernel.org/r/20241001150008.183102-16-dakr%40kernel.org
+patch subject: [PATCH v8 15/29] rust: alloc: introduce `ArrayLayout`
+config: riscv-randconfig-001-20241002 (https://download.01.org/0day-ci/archive/20241003/202410030724.cV9BEoNG-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241003/202410030724.cV9BEoNG-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410030724.cV9BEoNG-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> error[E0425]: cannot find function `size_of` in this scope
+   --> rust/kernel/alloc/layout.rs:47:31
+   |
+   47 |         match len.checked_mul(size_of::<T>()) {
+   |                               ^^^^^^^ not found in this scope
+   |
+   help: consider importing this function
+   |
+   7  + use core::mem::size_of;
+   |
+
 -- 
-2.46.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
