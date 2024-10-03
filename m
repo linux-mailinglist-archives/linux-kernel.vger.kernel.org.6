@@ -1,99 +1,157 @@
-Return-Path: <linux-kernel+bounces-349578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD94D98F899
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:10:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E501B98F8A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FAE31F214FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:10:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2235C1C20CE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651481B85EB;
-	Thu,  3 Oct 2024 21:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066951BF81B;
+	Thu,  3 Oct 2024 21:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b="INF6BWGZ"
-Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3/i3JVn"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F310113C906
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 21:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33E91AB500;
+	Thu,  3 Oct 2024 21:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727989803; cv=none; b=t40oiBs2sbxj6f5PDALAt2Odjs7l5ckQxfEjX8MycXYSCijY4vLTwPsQfUQcxKbjavn/p0G6vCPuzvJakSgs1d8D0E6p7mMgZ4urDg8TzmUjjZ+HIG6T61g6tiQgMFUU0GYLrHmfnZZLeZXFegNMhKhFfI6SyCW03b6tWepn5eU=
+	t=1727989920; cv=none; b=Z9XS8kK1K54scQwPYiOodCP4Yb+KPE4Fc7rsZsQodd0M+H0NLYVeXwo/BHn3PVwcsFbzotW+aIaTu2Zgexdl8531G3OWJIbWzhaBc3L4G39nvUtXqNNrlD5THAuptBhvnmP7JIRhGiOl5DYDjitfdz0kqciI220DWouQev0v91w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727989803; c=relaxed/simple;
-	bh=gOnpqVQxDRa0AsHcv520fsU+gyO1QLihiJp5whM4EX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EBxnvtrTUvORXnce5YNmlv+4+EbjscJTktUesIsRWZOThUR7Nw9Pal5dJPIfgASS019UuZS6SiC1V19xu0MA+ziQG1voIH7KRtuu0AJSWW8x/tvzmPBilD8ShCw6TZYM0qSlU3RL+PRG2hbnQP6HUDQMVUTRWfAI3z57ywev+5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b=INF6BWGZ; arc=none smtp.client-ip=212.77.101.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 29153 invoked from network); 3 Oct 2024 23:09:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
-          t=1727989793; bh=/B72OQY3UXazz9DO5mTC1Ulshej0ST8FnRZ7Rrz8Urw=;
-          h=Subject:To:Cc:From;
-          b=INF6BWGZjxlPVD7+IC6CMOSMJMJDRDdeliUzhcjUS6SpD9SstwlyXS/5KdEzafju1
-           Huwu08y3K9HUEMt/bUCgpMXe0Z/vjUiCZJpnAnH2TVWnK9s3XXf+WRC3712YJToO8+
-           mmXDOAYdVSx1Xt4833y2PS0wk/zwMsHACVpUPLis=
-Received: from 83.5.182.107.ipv4.supernova.orange.pl (HELO [192.168.3.100]) (olek2@wp.pl@[83.5.182.107])
-          (envelope-sender <olek2@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <rosenp@gmail.com>; 3 Oct 2024 23:09:53 +0200
-Message-ID: <e770a088-c17b-4d6c-be96-2c28032b9130@wp.pl>
-Date: Thu, 3 Oct 2024 23:09:52 +0200
+	s=arc-20240116; t=1727989920; c=relaxed/simple;
+	bh=Kbi2i+FL2yoWCMEok+yZKrG01ezY64RKZSHimiFXaig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZWOblAq7ZC/RujRB6lSOe/zCajUAloyNnFrNBeRGDHnpt5fOwRukYJxClpDZUSZ//McJK+8g++NDLw3GoYAadKp6cHXDH5GuVNIG1YV7sABkyHsMrc49NJinVgsQZ3D/RTEfb7lmhg9r8WGA51Yi7lxSd5M1VIQifqVFfeVxqSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3/i3JVn; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cde6b5094so14164735e9.3;
+        Thu, 03 Oct 2024 14:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727989917; x=1728594717; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VI5or45IbYULVG7QzPxTjxL8zClYzFrs21LWY0ZUn2c=;
+        b=H3/i3JVnmbt2LhdVa5jGAOmjeJd7Z7Emw3fAbv49H39EU7lf3xsWXd9nBtnMn32cVq
+         LoDsajlCGtuYjuO6lKU3BeGPKXrWEx7spyS1lJcUD8Ieyu8i7o/LcMySHXv/GTrNyf5f
+         kQLeVoVpVGphkDyQde3pNSBbY/3fmofXLIeJ7ZPSsYZ4EN67EZ2mvyGUvFatCo/WvaTC
+         FuruC5JYk9b3+2SWZ0tBDQC3QjzokfbZmHe3t1qKrBzgZY8EtfuO5N4BROIeoiAKoFpi
+         TQAqBydpIZQ5rzQH+mR/saYgnr299KPKyIvvhRZVCEl58kOt4fUCtm5KLvlgl8GWIK7n
+         hNYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727989917; x=1728594717;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VI5or45IbYULVG7QzPxTjxL8zClYzFrs21LWY0ZUn2c=;
+        b=i47A9LuiSFRvbRp5KTjVN14rmE7jgMVsxpKkq7OBAgKub1jwn9gyNv4PPHNA4hRKBu
+         ao/75H/hwWOQSNlMZg03oXwqnGOArU9RPWkf6uLnz76dwPouEgvuDcLMe6SCsB3hp8J2
+         Jun4oWl6BN235YSSU5055wEvPDSUTd5u6JHNPj9o9I9ACUqK4zRRT3iO/Xt1XSeMzjtx
+         perxK2bjXwd2cJz5PX2uFuvegbcjMccGLbraqW6UovzZa2LXmXKknqcwvZschAtK1GU1
+         NoW2oyTqwmAHMREIMsdZfxwSY01uZM5CF9tsDY7O/q2j6+F2xP9RbIZ8pjKHT9relxef
+         VLRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUkLC7+NQo+q/JfvtXNiiSGu9XS3dCeEn/hANPLN9UPN0D7eDMBso6oBHQM+8PgqFhnqwaLtYxDqdn6U7BDA==@vger.kernel.org, AJvYcCVPl2KgIwj3B8rztGC8XtpZiPPby8ABUxeMLybVySKL/8AnjnOodx+AW57Q1WbOAV04OaGNfl0ZFuNFbBI7@vger.kernel.org, AJvYcCXIYsw+4eoudrRPgd+JQtI3DSj7XI1PziiWQvBArxRczg67RqBnz2gFQX9RkXjPkbncrO4H35nt+657@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDvXXaGZwHCo0AU6mc1BfBKmF/v+SoAaQ98jOi52bwjgwCp0IP
+	3Un1Lm7Dyq7/+7YTk9cdSwp0hE4mdHL2X+ytLdDC0BBINABl6g4=
+X-Google-Smtp-Source: AGHT+IHYeiprN5HPI7AXxDCl79promqgyksSqA5owbJXCqlh8ySiPYQbrnTEuFUJ+t2jY/R+FoMGrg==
+X-Received: by 2002:a05:600c:1e25:b0:42c:b63e:fe91 with SMTP id 5b1f17b1804b1-42f85aea11fmr2689145e9.24.1727989916336;
+        Thu, 03 Oct 2024 14:11:56 -0700 (PDT)
+Received: from localhost.lan (adsl-178-39-53-103.adslplus.ch. [178.39.53.103])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082e6dfesm2002073f8f.117.2024.10.03.14.11.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 14:11:55 -0700 (PDT)
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	robdclark@gmail.com,
+	peterdekraker@umito.nl,
+	Bryan.Kemp@dell.com,
+	tudor.laurentiu.oss@gmail.com,
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Subject: [PATCH v4 0/3] X1E Dell XPS 9345 support
+Date: Thu,  3 Oct 2024 23:10:06 +0200
+Message-ID: <20241003211139.9296-1-alex.vinarskis@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 net-next 05/10] net: lantiq_etop: move phy_disconnect to
- stop
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
- shannon.nelson@amd.com
-References: <20241001184607.193461-1-rosenp@gmail.com>
- <20241001184607.193461-6-rosenp@gmail.com>
-Content-Language: en-US
-From: Aleksander Jan Bajkowski <olek2@wp.pl>
-In-Reply-To: <20241001184607.193461-6-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-WP-MailID: 551cf454c491af86336e125fb7157593
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [IbOE]                               
+Content-Transfer-Encoding: 8bit
 
-Hi Rosen,
+Introduce support for the mentioned laptop.
 
-On 1.10.2024 20:46, Rosen Penev wrote:
-> phy is initialized in start, not in probe. Move to stop instead of
-> remove to disconnect it earlier.
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> Reviewed-by: Shannon Nelson <shannon.nelson@amd.com>
-> ---
->   drivers/net/ethernet/lantiq_etop.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/lantiq_etop.c b/drivers/net/ethernet/lantiq_etop.c
-> index d1fcbfd3e255..9ca8f01585f6 100644
-> --- a/drivers/net/ethernet/lantiq_etop.c
-> +++ b/drivers/net/ethernet/lantiq_etop.c
-> @@ -447,6 +447,7 @@ ltq_etop_stop(struct net_device *dev)
->   
->   	netif_tx_stop_all_queues(dev);
->   	phy_stop(dev->phydev);
-> +	phy_disconnect(dev->phydev);
+Very similar to other X1E laptops, device tree was derived by analyzing dtsi of
+existing models and ACPI tables of this laptop [1]. Most notable difference were
+* TZ protected SPI19.
+* Keyboard only working after suspend/resume sequence, will do a follow up patch
+to i2c-hid.
+* Lots of small deviations in LDOs voltages.
 
+Successfully tested with Debian 12 and Gnome. Firmware for GPU/aDSP/cDSP was
+extracted from Windows, WiFi firmware from upstream linux-firmware.
 
-Phy_disconnect() already calls phy_stop(). The second call is redundant.
+Quite a few things alraedy work, details in patches, quite a few still in WIP or
+TODOs. Since fixing these may take me a while due to lack of documentation,
+sending current progress as its very much usable.
 
+[1] https://github.com/aarch64-laptops/build/blob/master/misc/dell-xps-9345/acpi/DSDT.dsl
 
-Regards,
-Aleksander
+--------
+
+Changes to V3:
+* Rename device from `tributo-13` to `xps13-9345`
+* Update commit description - identify EC over i2c, likely camera model
+* Update cover letter - no hacks needed when build on top of linux-next
+* v3 link: https://lore.kernel.org/all/20240927094544.6966-1-alex.vinarskis@gmail.com/
+
+--------
+
+Changes to V2:
+* Fix uart21 missing alias
+* Fix redundant mdss_dp3 defines
+* Fix touchscreen i2c address
+* Update commit description - OLED panel reported working
+* Update commit description - touchscreen reported working
+* Update commit description - battery info reported working
+* Update commit description - add keyboard patches link
+* v2 link: https://lore.kernel.org/all/20240921163455.12577-1-alex.vinarskis@gmail.com/
+
+--------
+
+Changes to V1:
+* Fix misalignments due to wrong tab/space conversion
+* Fix regulator namings
+* Fix reasonable warnings from `scripts/checkpatch.pl`
+* Restructure all (sub)nodes alphabetically
+* v1 link: https://lore.kernel.org/all/20240919170018.13672-1-alex.vinarskis@gmail.com/
+
+Aleksandrs Vinarskis (3):
+  dt-bindings: arm: qcom: Add Dell XPS 13 9345
+  firmware: qcom: scm: Allow QSEECOM on Dell XPS 13 9345
+  arm64: dts: qcom: Add support for X1-based Dell XPS 13 9345
+
+ .../devicetree/bindings/arm/qcom.yaml         |   1 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../dts/qcom/x1e80100-dell-xps13-9345.dts     | 863 ++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c              |   1 +
+ 4 files changed, 866 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+
+-- 
+2.43.0
 
 
