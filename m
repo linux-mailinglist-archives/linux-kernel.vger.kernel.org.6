@@ -1,158 +1,137 @@
-Return-Path: <linux-kernel+bounces-348825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DEB98EC4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:29:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4074998EC4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05F6D1F23CAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:29:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A6F1F2275E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0EC146A73;
-	Thu,  3 Oct 2024 09:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23865139D07;
+	Thu,  3 Oct 2024 09:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DtRwP02r"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="fN9UA042"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC8113DDA7
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D2C3AC2B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727947750; cv=none; b=Jrf5IsZoAfMxDiJYV6ZvQ4kOgj55djB9qpb9fEN/eSK3+Ez0ztVkvM/m4F3v6Qah8LrC9Cc6o45M1oqqr9GNXqaZ1dqPpABEpkF1x9CD7ZOefmPwjBPdEtrIbxqmOp16aiulTGONjW+3nJhYu5vnbeAbUcEX6bFMMtUHahL1TiU=
+	t=1727947913; cv=none; b=OfESdjkffzUzrf7EY270BDqwQ0de23HdZ151z20l8aHEI5bxw6n3tuup4sh+82j+yUtTXPKGJ4o7HUVYHe5/RjhTfW7LwtfR2eJYS90KTf1WHiRjHIRZqll2cqOuGCMa1Wh+9x54awfRqs8/ufHeEAeSHZmK6YY6KUHtsifzYTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727947750; c=relaxed/simple;
-	bh=HoEAW+/eO6xo7I2fgAE+S4/JbGruMwy+VlHNZECjt2E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=h+ObB10oA06dZLvYIQBZFfyWl/Q7u08APLdfNL38HVxfWWezJBFtHAiyCeM3Y3pzJ/3abScUJez+n1seztuu8PrIKHzROV4iMnFRNEOGTf8yXzplcjlUP8QqsHmFeWHVlvVWje4rcyr/qugZKjmnWmqGSvTRHhz8MPZeS4TQKI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DtRwP02r; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241003092901euoutp02ac489baeda4dc1554618205f42441aae~651DI7Gks0366903669euoutp02D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:29:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241003092901euoutp02ac489baeda4dc1554618205f42441aae~651DI7Gks0366903669euoutp02D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727947741;
-	bh=51BHMcWfEge1OQoCPrt4FdlKAhUWgI/LQIBASekG+MA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DtRwP02rALlsiZbRPhU9GkbqB4k8qR9y5PqZ++AgHpuh6y1FB7/XZ/fvKBGVDEFzr
-	 eOq1q4RXLY234WrFycZOhB1uREgh76C1S1UnIoK/VtgzwAI69vII/JLQb9lYMhxd4n
-	 +kqZPwR043dP6z/rN/Xs0sepFDbiTgZ3EuiWHHpY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241003092900eucas1p1026e90c64d86804b160af507ef2259fb~651C0SQ1D2406024060eucas1p1k;
-	Thu,  3 Oct 2024 09:29:00 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 2E.D2.09875.CD36EF66; Thu,  3
-	Oct 2024 10:29:00 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241003092900eucas1p23bc93401d6803aa36c1b442b40bd6c15~651CbQ-tk1289512895eucas1p2R;
-	Thu,  3 Oct 2024 09:29:00 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241003092900eusmtrp1121e5b125467f1ab56ece748eb257cbd~651Can7Re1370213702eusmtrp1e;
-	Thu,  3 Oct 2024 09:29:00 +0000 (GMT)
-X-AuditID: cbfec7f4-11bff70000002693-9e-66fe63dc56b7
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 29.57.19096.CD36EF66; Thu,  3
-	Oct 2024 10:29:00 +0100 (BST)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241003092859eusmtip21772a927d7df8b2da94ddc169c169b12~651BzFhHk2013120131eusmtip2V;
-	Thu,  3 Oct 2024 09:28:59 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Dave Stevenson
-	<dave.stevenson@raspberrypi.com>, Javier Martinez Canillas
-	<javierm@redhat.com>
-Subject: [PATCH 2/2] drm/vc4: Provides DRM_FBDEV_DMA_DRIVER_OPS also for
- vc5_drm_driver
-Date: Thu,  3 Oct 2024 11:28:26 +0200
-Message-Id: <20241003092826.1942901-3-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241003092826.1942901-1-m.szyprowski@samsung.com>
+	s=arc-20240116; t=1727947913; c=relaxed/simple;
+	bh=6FDz1ieVcunc0jsEC4DOHmtr+NPK1PD+YS5dvYz7Mms=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MkuuGhZgIGtYxOWYrMIoe5tnpfsLmafvuJB0wT2r97gAF+23UUOojZIJ+GhlpnYDDnKr/MNumvkUVC9ip3eldFTsPnIRpUsa57FYUh1nXe/sp69G8/f1M61kn1b01lKmhB32SJfXwjqCQFpLIXHuPbP+/GKB5tnOi4Tct7uDB2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=fN9UA042; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1727947868; x=1728552668; i=efault@gmx.de;
+	bh=FuYXqkPOu0Z7mZA8VnhpQOn631I+cxlKBqc0u19fF9w=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=fN9UA0429NvAaueWfZy3hGm5gwzGLQWy6K+tTmeAcGagt7ICm2Cx+oxAMUr9yhc1
+	 PMAswd1sTEBdwN7olukyu0NrUGDfw9fWCAlgDVDWM+8PzevKO+5qQXfRzDZrjZPMY
+	 mbNgVCo+MkSu0wKw5Bpx0TF9AVJGJEjiG0lt1F0u/cEjTyimRGx+5UK2xb/5I8cil
+	 kbqNTqHwjIixSpoFyiz0+VleoOIRIlTClPq3zJozxP3PX7/GcjOrlDcskjyDBaeSE
+	 7OZ5j6+7UYsJbIL8Mkwr/Y6APpp3UJzGluECl2E8CjNPh+9I7PQbxZIMEnXgfUQve
+	 1yToR03t8UGsye5VLA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.151]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M8ygO-1sqG1i03rq-0070g1; Thu, 03
+ Oct 2024 11:31:08 +0200
+Message-ID: <acad4ac6a2daea2884e8ae4d031dfc8ae30fc365.camel@gmx.de>
+Subject: Re: sched/fair: Kernel panics in pick_next_entity
+From: Mike Galbraith <efault@gmx.de>
+To: Benjamin Segall <bsegall@google.com>
+Cc: Vishal Chourasia <vishalc@linux.ibm.com>, Peter Zijlstra
+ <peterz@infradead.org>, linux-kernel@vger.kernel.org, Ingo Molnar
+ <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Juri
+ Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+ Valentin Schneider <vschneid@redhat.com>, luis.machado@arm.com
+Date: Thu, 03 Oct 2024 11:31:06 +0200
+In-Reply-To: <2ffbd642407a2bc51a387b6f89e74f0f9c9f85cf.camel@gmx.de>
+References: <ZvVWq3WM6zVza_mD@linux.ibm.com>
+	 <20240930144157.GH5594@noisy.programming.kicks-ass.net>
+	 <Zvr2bLBEYyu1gtNz@linux.ibm.com> <Zvr4wJ9YJRzWrbEF@linux.ibm.com>
+	 <55a2acefffb8c99e4234bd18656a75625447c2d0.camel@gmx.de>
+	 <xm26msjmm91q.fsf@bsegall.svl.corp.google.com>
+	 <2ffbd642407a2bc51a387b6f89e74f0f9c9f85cf.camel@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPKsWRmVeSWpSXmKPExsWy7djPc7p3kv+lGXQ907Y4cX0Rk8XbuYtZ
-	LK58fc9msXDackaL9zMnMFtc3jWHzWLtkbvsFgs/bmWxaOtcxmox+91+dostbyayOnB77P22
-	gMVj56y77B6bVnWyecw7Gehxv/s4k0fr0V8sHu/3XWXz6NuyitFj8+lqj8+b5AK4orhsUlJz
-	MstSi/TtErgypj5+zlQwgb3ixuzCBsYWti5GTg4JAROJWbd7mLsYuTiEBFYwSvROPswO4Xxh
-	lHj/YwsrhPOZUeLWxxPsMC2vvrexQSSWM0rMXb+MCa7l7LFrzCBVbAKGEl1vu8CqRASagBIr
-	m8FmMQs8YJJ4MvUhI0iVsECkxLyjb1lBbBYBVYnWw1OYQGxeAXuJviXLmSH2yUvsP3gWzOYU
-	cJDYfOMVK0SNoMTJmU9YQGxmoJrmrbPB3pAQ+MAhsf3dFqhjXSQO374PNUhY4tVxmLiMxOnJ
-	PSwQDe2MEgt+32eCcCYwSjQ8v8UIUWUtcefcL6AnOIBWaEqs36UPEXaUeHoD5GkOIJtP4sZb
-	QYgj+CQmbZvODBHmlehoE4KoVpOYdXwd3NqDFy5BneMh8ezGTMYJjIqzkLwzC8k7sxD2LmBk
-	XsUonlpanJueWmyUl1quV5yYW1yal66XnJ+7iRGYxk7/O/5lB+PyVx/1DjEycTAeYpTgYFYS
-	4Z23/W+aEG9KYmVValF+fFFpTmrxIUZpDhYlcV7VFPlUIYH0xJLU7NTUgtQimCwTB6dUA9PW
-	FIG76+O59Z42Mi2akDTZQTVnY6WXUG7M5nVnnnE/qayR0Ju+1yd/xTuGHdmhv+es+JUV52w8
-	ZXPrmcU35cJrD38XcPGKuuax48osMVbpBI4gsfgik83vUibIm9/5ddaL37Vkc9/2LJW2pyt2
-	nV116fy+i9VfD33/WZmf3xTBUfGnsy7rvsDuTL/7G7wF83c2SfZNPl0dPdlaPl3riGvIu28d
-	Szaqt/+otDHiiqk5blkVF3uVZbKlzSkP9U4VC94Kts36XfUPl918/ibodLiBhMiOq25b0k5F
-	pbouijwtfLHm2eMP21dvLajgbNY5vO5ll439BuX7EkpvjPknTzCdE1BjfftAyZ1ijbt9Ykos
-	xRmJhlrMRcWJAIrGR3DSAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsVy+t/xe7p3kv+lGSz4LWJx4voiJou3cxez
-	WFz5+p7NYuG05YwW72dOYLa4vGsOm8XaI3fZLRZ+3Mpi0da5jNVi9rv97BZb3kxkdeD22Ptt
-	AYvHzll32T02repk85h3MtDjfvdxJo/Wo79YPN7vu8rm0bdlFaPH5tPVHp83yQVwRenZFOWX
-	lqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehlTH38nKlgAnvF
-	jdmFDYwtbF2MnBwSAiYSr763AdlcHEICSxkl3rw/xAyRkJE4Oa2BFcIWlvhzrQuq6BOjxK4L
-	t8CK2AQMJbreQiREBFoYJY5u/M0I4jALPGGSWPptKyNIlbBAuMTrxhVMIDaLgKpE6+EpYDav
-	gL1E35LlUOvkJfYfPAtmcwo4SGy+8QpstRBQzeFNfxkh6gUlTs58wgJiMwPVN2+dzTyBUWAW
-	ktQsJKkFjEyrGEVSS4tz03OLjfSKE3OLS/PS9ZLzczcxAqNt27GfW3Ywrnz1Ue8QIxMH4yFG
-	CQ5mJRHeedv/pgnxpiRWVqUW5ccXleakFh9iNAW6eyKzlGhyPjDe80riDc0MTA1NzCwNTC3N
-	jJXEedmunE8TEkhPLEnNTk0tSC2C6WPi4JRqYJI8+21bZll5OOOzQrO/RcIdDML6Ev//BD/c
-	JvNlcc/5mgcXBOuUf9YsMlgr7VgyR+pFvMDvjA/Z+RbhN7wVmVqEpzDc+m2m+HrRqq8cDh4F
-	kikLzzZatS0qZnli/vGx5bXTnid2X1sXyxRgIjNrl0nUmZ8/+SUdtsr+mXFQ8qHSuYNdYeZO
-	Ntm2xjvWP9Z73OWTt/hqQcFGdxePNR8N2XUmsB2Xnr+CR/vwFn7LrDJJro/TFE9Kmk3a9m6G
-	4ulzf+sKbWancbOvXD33TSGPq8L0BTOKJs7mat2h/TlWLnJRu6y2uPqKG6b6sU0qJj9uXGbm
-	ruB5fd+3PYn7fMyCc0e2xsV9Mmcu+e+jISPuocRSnJFoqMVcVJwIAPjRwPk/AwAA
-X-CMS-MailID: 20241003092900eucas1p23bc93401d6803aa36c1b442b40bd6c15
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20241003092900eucas1p23bc93401d6803aa36c1b442b40bd6c15
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241003092900eucas1p23bc93401d6803aa36c1b442b40bd6c15
-References: <20241003092826.1942901-1-m.szyprowski@samsung.com>
-	<CGME20241003092900eucas1p23bc93401d6803aa36c1b442b40bd6c15@eucas1p2.samsung.com>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:g2kuHNPg2zIISGhSWUyqymCkc5Ev4qG954JU4TO0xNh+sWYmggd
+ lmpKEKZbpqEaIDddQ4FiRigOI03oc8nvyPLd2X3L4x7OR4BEAPVztkUgpx1sQDi2TG+uBVJ
+ bklau2KhoYLOeIVF8I151buDaYZtZqBfhE02KKPRjWoGRXbC9Rn6mivorlq+cpGy3SR6Q7t
+ oZ+YQs2i+ATHQgvJs4EqQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:F1HqP8dJ+2I=;iqrUemDXRgyT0R4ROIUpMlwmI4d
+ 8MFwHY+/u7Ba+Dl6xMDTbI3hHmNLuFRXQRav5rZ1ma9TWaNAsPu/svuFc46ZdOczk8ntlxkFp
+ nQNZiVlehj7+D2rMILNUoGNilnZ7RxUGpLeTBpvw5z+uBMk+MBi8p/t+v3vx1UiBSReVzp2Jk
+ zrwenlZ0/0MIJKfniFA0bSLIZK4ZYuCPdyOFxO29TKLVXcy7QDneJcnnAQ98P9dPpcpU0svnn
+ /8xg5N400mzrOV9FyldmiUw/8F4xeBbn9Fu765Alzn3icxW9xwVXt/EnUV41q26Rq3eUYq/7H
+ m85TbfQS1OHyDEBmPFFdcTyem5bLL+ogYTLjDtviP201VJ0nwH2lPuInNanotEHc/xmoVlMlU
+ QU8HdobrkKg+deOQBPgCgUeHqBRGzAdkkwqB6Rqp/jGsn+j95ikToB4omcrAeAYDVKBcC7E07
+ iVkBTclPZyrXN7l/NjCdzJbX9qFWQ1M434+lTsSG7vFLBCUHFYtmH/+JBSzZxg6VsW9vxhrb1
+ LrWoN/oazu8cn+Cx/a4fAyLIhPsl9WOPhWvttl2BHwboLtqIppwVBmSgUc64K45SyqLD9yggr
+ 5aCRd+nOVo2ezm5fcD4lstbKOEDl+QUej1D27GKSGJde8kHX5RI1I2LJqJii0yTrEawXohpnK
+ OFs6hFKCg3yK1FIHC0fX++qg2RWldGT8WrXKcI+lHo4bQxngH90nnuk28hd0xw0EY36q419Al
+ UHSa+SrXQfVaaIo3nRmimKJUGJ2E+v/eB3BiTELvlYubFl9mrooMW/Zj88H+MGZiEpKfaRtoE
+ MtwDvBP7xKc4rIph19iQF63w==
 
-The VC4 DRM driver contains 2 'struct drm_driver' objects, used for
-different hardware versions. Commit 45903624e9fc ("drm/vc4: Run DRM
-default client setup") added the DRM_FBDEV_DMA_DRIVER_OPS entry only to
-the first one, causing the kernel oops if the second 'drm_driver' object
-is used. Fix this.
+On Thu, 2024-10-03 at 06:41 +0200, Mike Galbraith wrote:
+> On Wed, 2024-10-02 at 15:31 -0700, Benjamin Segall wrote:
 
-Fixes: 45903624e9fc ("drm/vc4: Run DRM default client setup")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/vc4/vc4_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+> > Whether dequeue_entity + enqueue_entity is better or worse than
+> > requeue_delayed_entity (+break), I really don't know.
+>
+> Hm, I'd say requeue_delayed_entity() not only fits better, it using
+> less lines gives it an extra brownie point.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index 13a1ecddbca3..a238f76a6073 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -238,6 +238,7 @@ const struct drm_driver vc5_drm_driver = {
- #endif
- 
- 	DRM_GEM_DMA_DRIVER_OPS_WITH_DUMB_CREATE(vc5_dumb_create),
-+	DRM_FBDEV_DMA_DRIVER_OPS,
- 
- 	.fops = &vc4_drm_fops,
- 
--- 
-2.34.1
+Probable not worth any churn or effort, but it is an option.
+
+sched: Clean up sched_delayed handling in unthrottle_cfs_rq()
+
+requeue_delayed_entity() achieves and documents in one line what a less
+clear preparatory dequeue facilitates over several, so use it instead,
+and remove the superfluous comment.
+
+Signed-off-by: Mike Galbraith <efault@gmx.de>
+=2D--
+ kernel/sched/fair.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+=2D-- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6058,12 +6058,9 @@ void unthrottle_cfs_rq(struct cfs_rq *cf
+ 	for_each_sched_entity(se) {
+ 		struct cfs_rq *qcfs_rq =3D cfs_rq_of(se);
+
+-		/* Handle any unfinished DELAY_DEQUEUE business first. */
+-		if (se->sched_delayed) {
+-			int flags =3D DEQUEUE_SLEEP | DEQUEUE_DELAYED;
+-
+-			dequeue_entity(qcfs_rq, se, flags);
+-		} else if (se->on_rq)
++		if (se->sched_delayed)
++			requeue_delayed_entity(se);
++		if (se->on_rq)
+ 			break;
+ 		enqueue_entity(qcfs_rq, se, ENQUEUE_WAKEUP);
+
 
 
