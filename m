@@ -1,137 +1,116 @@
-Return-Path: <linux-kernel+bounces-348827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4074998EC4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:32:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A46A198EC50
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A6F1F2275E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07AEF286B39
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23865139D07;
-	Thu,  3 Oct 2024 09:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08461146017;
+	Thu,  3 Oct 2024 09:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="fN9UA042"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="idW1oIgV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D2C3AC2B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E490A3AC2B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727947913; cv=none; b=OfESdjkffzUzrf7EY270BDqwQ0de23HdZ151z20l8aHEI5bxw6n3tuup4sh+82j+yUtTXPKGJ4o7HUVYHe5/RjhTfW7LwtfR2eJYS90KTf1WHiRjHIRZqll2cqOuGCMa1Wh+9x54awfRqs8/ufHeEAeSHZmK6YY6KUHtsifzYTQ=
+	t=1727947981; cv=none; b=bJYmnGkmO6YTqlAXnGDT/S/BAKPpCEH1MtuuFrg4pmxjqymHCloR/s4fp8c2H9ynk4r05ixdq22bamWnR6AZTJffHaVqczcHATJFEo41BxKOW/WR+qbXcKKHK/PXhmRu4nhU7wqhyd3d3pYXhImjY2HaiN6p5TjVRG9lr8sXzNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727947913; c=relaxed/simple;
-	bh=6FDz1ieVcunc0jsEC4DOHmtr+NPK1PD+YS5dvYz7Mms=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MkuuGhZgIGtYxOWYrMIoe5tnpfsLmafvuJB0wT2r97gAF+23UUOojZIJ+GhlpnYDDnKr/MNumvkUVC9ip3eldFTsPnIRpUsa57FYUh1nXe/sp69G8/f1M61kn1b01lKmhB32SJfXwjqCQFpLIXHuPbP+/GKB5tnOi4Tct7uDB2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=fN9UA042; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1727947868; x=1728552668; i=efault@gmx.de;
-	bh=FuYXqkPOu0Z7mZA8VnhpQOn631I+cxlKBqc0u19fF9w=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=fN9UA0429NvAaueWfZy3hGm5gwzGLQWy6K+tTmeAcGagt7ICm2Cx+oxAMUr9yhc1
-	 PMAswd1sTEBdwN7olukyu0NrUGDfw9fWCAlgDVDWM+8PzevKO+5qQXfRzDZrjZPMY
-	 mbNgVCo+MkSu0wKw5Bpx0TF9AVJGJEjiG0lt1F0u/cEjTyimRGx+5UK2xb/5I8cil
-	 kbqNTqHwjIixSpoFyiz0+VleoOIRIlTClPq3zJozxP3PX7/GcjOrlDcskjyDBaeSE
-	 7OZ5j6+7UYsJbIL8Mkwr/Y6APpp3UJzGluECl2E8CjNPh+9I7PQbxZIMEnXgfUQve
-	 1yToR03t8UGsye5VLA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([91.212.106.151]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M8ygO-1sqG1i03rq-0070g1; Thu, 03
- Oct 2024 11:31:08 +0200
-Message-ID: <acad4ac6a2daea2884e8ae4d031dfc8ae30fc365.camel@gmx.de>
-Subject: Re: sched/fair: Kernel panics in pick_next_entity
-From: Mike Galbraith <efault@gmx.de>
-To: Benjamin Segall <bsegall@google.com>
-Cc: Vishal Chourasia <vishalc@linux.ibm.com>, Peter Zijlstra
- <peterz@infradead.org>, linux-kernel@vger.kernel.org, Ingo Molnar
- <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Juri
- Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
- Valentin Schneider <vschneid@redhat.com>, luis.machado@arm.com
-Date: Thu, 03 Oct 2024 11:31:06 +0200
-In-Reply-To: <2ffbd642407a2bc51a387b6f89e74f0f9c9f85cf.camel@gmx.de>
-References: <ZvVWq3WM6zVza_mD@linux.ibm.com>
-	 <20240930144157.GH5594@noisy.programming.kicks-ass.net>
-	 <Zvr2bLBEYyu1gtNz@linux.ibm.com> <Zvr4wJ9YJRzWrbEF@linux.ibm.com>
-	 <55a2acefffb8c99e4234bd18656a75625447c2d0.camel@gmx.de>
-	 <xm26msjmm91q.fsf@bsegall.svl.corp.google.com>
-	 <2ffbd642407a2bc51a387b6f89e74f0f9c9f85cf.camel@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1727947981; c=relaxed/simple;
+	bh=asyUiUs4l6Obu18wzSHbX0wuQi7BUxCV2FNCJSDnFd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cRSZaDja9zKMBP7hwvScqfB+jxFgHj6ypllXZzr7QuUfTE4MJ4aEgsycYu7FvtOJNHpdsBbarkqjJuYQpXjaZRmaKgZix/+HnOCStmi0M2NA4csCTByLZ1rN35YocZDC9V8v1ktERnT4XMFTRoU8tOnPswBksCUQXb8x19Sl1o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=idW1oIgV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727947978;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K+zMxwgIWHYPuis7ae29GnRO7x5ZWg1o/g/hL8Dw+so=;
+	b=idW1oIgVLhe/H3ZY1tS96uGJ1hE35pNkpa2UQPNR2i1HsRbdeiU1uR1acLX7A/MZAqDebL
+	h+FcjzfsoeyY3e8s5jm2etdyMSqlwc0/g30VZsKuW3/XqYZR7KQ8PvRXoAgF/iiy8keOv2
+	fcKWOyyb/NZSLMSwKl3kG2sPjjYwwJs=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-433-AvGNL3lSNh-7JtYkcul2nw-1; Thu,
+ 03 Oct 2024 05:32:55 -0400
+X-MC-Unique: AvGNL3lSNh-7JtYkcul2nw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B49581955D56;
+	Thu,  3 Oct 2024 09:32:51 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.1])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 801F519560A2;
+	Thu,  3 Oct 2024 09:32:44 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  3 Oct 2024 11:32:37 +0200 (CEST)
+Date: Thu, 3 Oct 2024 11:32:29 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+	paulmck@kernel.org, willy@infradead.org, surenb@google.com,
+	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com,
+	brauner@kernel.org, jannh@google.com, mhocko@kernel.org,
+	vbabka@suse.cz, mingo@kernel.org
+Subject: Re: [PATCH v2 tip/perf/core 5/5] uprobes: add speculative lockless
+ VMA-to-inode-to-uprobe resolution
+Message-ID: <20241003093228.GA20733@redhat.com>
+References: <20241001225207.2215639-1-andrii@kernel.org>
+ <20241001225207.2215639-6-andrii@kernel.org>
+ <20241002072522.GB27552@redhat.com>
+ <CAEf4Bzbpw-MDJFC8iNboEK02LVHcpeyzTKsQxrxt44fKm3MDRQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:g2kuHNPg2zIISGhSWUyqymCkc5Ev4qG954JU4TO0xNh+sWYmggd
- lmpKEKZbpqEaIDddQ4FiRigOI03oc8nvyPLd2X3L4x7OR4BEAPVztkUgpx1sQDi2TG+uBVJ
- bklau2KhoYLOeIVF8I151buDaYZtZqBfhE02KKPRjWoGRXbC9Rn6mivorlq+cpGy3SR6Q7t
- oZ+YQs2i+ATHQgvJs4EqQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:F1HqP8dJ+2I=;iqrUemDXRgyT0R4ROIUpMlwmI4d
- 8MFwHY+/u7Ba+Dl6xMDTbI3hHmNLuFRXQRav5rZ1ma9TWaNAsPu/svuFc46ZdOczk8ntlxkFp
- nQNZiVlehj7+D2rMILNUoGNilnZ7RxUGpLeTBpvw5z+uBMk+MBi8p/t+v3vx1UiBSReVzp2Jk
- zrwenlZ0/0MIJKfniFA0bSLIZK4ZYuCPdyOFxO29TKLVXcy7QDneJcnnAQ98P9dPpcpU0svnn
- /8xg5N400mzrOV9FyldmiUw/8F4xeBbn9Fu765Alzn3icxW9xwVXt/EnUV41q26Rq3eUYq/7H
- m85TbfQS1OHyDEBmPFFdcTyem5bLL+ogYTLjDtviP201VJ0nwH2lPuInNanotEHc/xmoVlMlU
- QU8HdobrkKg+deOQBPgCgUeHqBRGzAdkkwqB6Rqp/jGsn+j95ikToB4omcrAeAYDVKBcC7E07
- iVkBTclPZyrXN7l/NjCdzJbX9qFWQ1M434+lTsSG7vFLBCUHFYtmH/+JBSzZxg6VsW9vxhrb1
- LrWoN/oazu8cn+Cx/a4fAyLIhPsl9WOPhWvttl2BHwboLtqIppwVBmSgUc64K45SyqLD9yggr
- 5aCRd+nOVo2ezm5fcD4lstbKOEDl+QUej1D27GKSGJde8kHX5RI1I2LJqJii0yTrEawXohpnK
- OFs6hFKCg3yK1FIHC0fX++qg2RWldGT8WrXKcI+lHo4bQxngH90nnuk28hd0xw0EY36q419Al
- UHSa+SrXQfVaaIo3nRmimKJUGJ2E+v/eB3BiTELvlYubFl9mrooMW/Zj88H+MGZiEpKfaRtoE
- MtwDvBP7xKc4rIph19iQF63w==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4Bzbpw-MDJFC8iNboEK02LVHcpeyzTKsQxrxt44fKm3MDRQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, 2024-10-03 at 06:41 +0200, Mike Galbraith wrote:
-> On Wed, 2024-10-02 at 15:31 -0700, Benjamin Segall wrote:
-
-> > Whether dequeue_entity + enqueue_entity is better or worse than
-> > requeue_delayed_entity (+break), I really don't know.
+On 10/02, Andrii Nakryiko wrote:
 >
-> Hm, I'd say requeue_delayed_entity() not only fits better, it using
-> less lines gives it an extra brownie point.
+> On Wed, Oct 2, 2024 at 12:25 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > > +     vm_file = READ_ONCE(vma->vm_file);
+> > > +     if (!vm_file)
+> > > +             return NULL;
+> > > +
+> > > +     offset = (loff_t)(vma->vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vma->vm_start);
+> >
+> > LGTM. But perhaps vma->vm_pgoff and vma->vm_start need READ_ONCE() as well,
+> > if nothing else to shut up KCSAN if this code races with, say, __split_vma() ?
+>
+> We keep going back and forth between reading directly, using
+> READ_ONCE(), and annotating with data_race(). I don't think it matters
+> in terms of correctness or performance, so I'm happy to add whatever
+> incantations that will make everyone satisfied. Let's see what others
+> think, and I'll incorporate that into the next revision.
 
-Probable not worth any churn or effort, but it is an option.
+OK, agreed...
 
-sched: Clean up sched_delayed handling in unthrottle_cfs_rq()
+And I guess I was wrong anyway, READ_ONCE() alone won't shutup KCSAN in
+this case.
 
-requeue_delayed_entity() achieves and documents in one line what a less
-clear preparatory dequeue facilitates over several, so use it instead,
-and remove the superfluous comment.
-
-Signed-off-by: Mike Galbraith <efault@gmx.de>
-=2D--
- kernel/sched/fair.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-=2D-- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6058,12 +6058,9 @@ void unthrottle_cfs_rq(struct cfs_rq *cf
- 	for_each_sched_entity(se) {
- 		struct cfs_rq *qcfs_rq =3D cfs_rq_of(se);
-
--		/* Handle any unfinished DELAY_DEQUEUE business first. */
--		if (se->sched_delayed) {
--			int flags =3D DEQUEUE_SLEEP | DEQUEUE_DELAYED;
--
--			dequeue_entity(qcfs_rq, se, flags);
--		} else if (se->on_rq)
-+		if (se->sched_delayed)
-+			requeue_delayed_entity(se);
-+		if (se->on_rq)
- 			break;
- 		enqueue_entity(qcfs_rq, se, ENQUEUE_WAKEUP);
-
+Oleg.
 
 
