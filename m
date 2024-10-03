@@ -1,148 +1,151 @@
-Return-Path: <linux-kernel+bounces-348664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51D198EA28
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:11:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6D498EA30
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD8881C22554
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:11:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB1B6B23520
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121DF84A3E;
-	Thu,  3 Oct 2024 07:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD7D83CC8;
+	Thu,  3 Oct 2024 07:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bXZ21Ly5"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kaxd3lJ2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0476881741;
-	Thu,  3 Oct 2024 07:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE763D96A
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 07:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727939462; cv=none; b=GWTVxwi+Ljdr0+G9lptjcxRhnBRIayEb2/1sBEE9kAHnj4UNkdGZKYRKanRd9r01HvaQg8j3wNmDB69c7vT3WAQGW4YICKZ79zD9TxKI2c0/Ocfpf4XW8xdlU3YUYIHjnRnHuG8MlvJETCFdNdwgCbGZVRWgzTffDlvJHrioHuw=
+	t=1727939615; cv=none; b=NrJHFHgEezxy6XWhl98vgU2ticLB5URO2StI9pqq5PF1iD3Rr2ZZedKPCuEuBZCHh5UezafnlSyH27nk7THRC/cRML0dfub/6UTXJfNA0m9cL1L39QjpDAo6y6JSDZ9SplCChBK0RB6QCdZVAhfkpiKfmURG39tpt5gMEAPWJiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727939462; c=relaxed/simple;
-	bh=84lnNA0eqVpackYrBd523yXXCmW6IkDpAA5xeW+IymI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=StLSDQh+BH/JHP5RVc/EBzip7wXa+tHU1zBOSfYqe9sGDpXNEVSZ8Yhmh2nNSKxkuDggcoVQHJ5wd2Klp8efPZvTNNTfeXIvibHKL/N1BW54NBsf385+SUWxWTYSuDR7Hzx+7aZAlm8mMkhOHDl8A3S90h7Dxe89G0h0GHxMaKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bXZ21Ly5; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20b84bfbdfcso11699145ad.0;
-        Thu, 03 Oct 2024 00:11:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727939460; x=1728544260; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4swTbsIyyjGxId3pTtmiwYIu8DgC7aQm9o6kUfsLAtc=;
-        b=bXZ21Ly5tyM7R4AtkCzcCvH/+1riW9efUUYQkdKMNbXypUay2h4vMUUrMcodUHVs2E
-         cV2f7dTvmrJQDXeY8UYFkBSWZu8mi8Zwvubu1rmlm2gjgLlvFEhFvo8SdgVWYhzdhWpi
-         Cm3jXAOZS0LXx7d5E/3MuvPGX4/LuKhRP3VHjlWjpuEFZcFjbQKj8r5jL4FOZgERb+VX
-         Je7I2lbbmECjwZQQnWm5OyB851WnWYVb47xz1ij/H6GXOBPhE3QXnl/gm+qfp20DrEES
-         eBew9lTjm3M0Ztvqf/rizFHR7lGe8IeKqacb6YNxL3vRyrHp8KSWZ59Lny4nnetB0x5S
-         ROhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727939460; x=1728544260;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4swTbsIyyjGxId3pTtmiwYIu8DgC7aQm9o6kUfsLAtc=;
-        b=kTC9DH/TawkMVD+ukRF8bU8HXkJFipsGBYaGB/e/K3XJkbQgfj1n59FVijMe4wl98A
-         emJmlr6teeHOfEv9HfOqBHtXIUHDF1LHy7EuYc/gfzUyW/8wuajmgDpCgoytBn8N7ZAF
-         XXJuof+kYbeQ1iMkSjGQPTtEObq394ujhptRGNr6cN29V2Tf81JMnduuMIF1psZkFHAM
-         EUCEn0h5r2RxF616unzHbFH4k0L4Hrzki3Pm0Jp15iiMpD71VZIcWUsuwb9RLdOLEhSc
-         LqDnzcckdZHfkA92jvZaOQZbjMp01cSKkEqlWIBpyDH8y7nJlbhoLKJL8zVP8u3sWQh5
-         0lzw==
-X-Forwarded-Encrypted: i=1; AJvYcCViau1//Tv0umsu7frRB7ld8jYGTMiyRiouHoiKTjOZXM34jJas6Nz/SI8UvNtvmunliRnzNIr6@vger.kernel.org, AJvYcCWgDIr48ZUXiBFeKU6h+lbJCVGVFRudQZEV/t7gGoekayN9rZRGMqiBPtdIzjjIQt4S4XfaIy7cnfYg6Gw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr6b5iA+Xbk68zz4ZF+4txrLEVw+Zuv0Vf+XJSkXlN8Mbmy9LX
-	wHETrfexcRmSwAxPGvBcxOQwTeraR+a6hk9M1v9RvGqvh09HeFZA
-X-Google-Smtp-Source: AGHT+IFbSIec96E5DlG2psOFYqwDO0BuMCkonLjj1NtHBEeVIm0osDCp4AuUPwImocc9QNJ4jt4gmQ==
-X-Received: by 2002:a17:903:2443:b0:206:aa47:adc0 with SMTP id d9443c01a7336-20be193c440mr29276495ad.24.1727939460266;
-        Thu, 03 Oct 2024 00:11:00 -0700 (PDT)
-Received: from harry-home.bne.opengear.com (122-151-100-51.dyn.ip.vocus.au. [122.151.100.51])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beef8eae0sm3455255ad.150.2024.10.03.00.10.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 00:10:59 -0700 (PDT)
-From: Qingtao Cao <qingtao.cao.au@gmail.com>
-X-Google-Original-From: Qingtao Cao <qingtao.cao@digi.com>
-To: 
-Cc: qingtao.cao.au@gmail.com,
-	Qingtao Cao <qingtao.cao@digi.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 1/1] net: phy: marvell: avoid bringing down fibre link when autoneg is bypassed
-Date: Thu,  3 Oct 2024 17:10:50 +1000
-Message-Id: <20241003071050.376502-1-qingtao.cao@digi.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727939615; c=relaxed/simple;
+	bh=JhZKiGtQJ3zymd/WHqllXr0LMe1u0429Jy42xFeCp7k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sLEEymwbBW06vOtr1ak4Wn4ciJcuK3UBc5uv0CLUiWOVsaMGIpDkmmLVt+xO/dmmO3RCLgag7imKHE4LOe9cfUlKj/Y4s07EHvFPKxK7ClccQ5v1R7cJS/2bmRQHTyJr56BhxsiumZzgp8Vkv43tivVc594Bwr7gM7L4iV41u1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kaxd3lJ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70733C4AF09
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 07:13:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727939615;
+	bh=JhZKiGtQJ3zymd/WHqllXr0LMe1u0429Jy42xFeCp7k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Kaxd3lJ25rkQajgmz7cQN8bDKn6xrj7OzSOtHfn8uH4EjOnJl1D9S+R5irC6GrrDU
+	 qaiRpJJpeMDcDyvWLjlcsf7YPsExEhhXOdxOUkJsbSb0hF5ljMlQaccLs9MGOVjIs4
+	 T07US2duiGJyfSvyps8auPPRECrs2CdTanUNzbrzk39yc7aiR8AkK7EOZscPeoeWiB
+	 YnZotNZBMuG9quNjZbeo0/vC6dxalac0MqejTpFccgxzVERgPtCGg2wlgpk7XykI5E
+	 BRddwweGoeGpXcwu66CUB/t+x0dwqGyAl1iidQuEZieU3X4s/Kt55QfpgTSSvn1Plm
+	 a+x8wkatdrz4Q==
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7d666fb3fb9so382703a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 00:13:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX6HhGN2WbHbS35M/dI6F34BGop2himNmu/8RRrnNlVgNNW4K6BziXvpbW43151VLdBgyJIwxOayaFEIC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLkA5VVSYh1RwF3cWU1yd6+P5vVnkLENQVcmD+D99JSDsiF9kp
+	6DmM+JQx5bdz2nxuBBJBezLnaFbkdzC0TT97AiWNYcxbj3mKHqnt3PV16jFbkPggPGHKBMJpzMH
+	0G7QhghgoOyZND0tqKHPdatrFrg==
+X-Google-Smtp-Source: AGHT+IHaAo5eZ05/dh9oa9JP9QZga/GAqhHnubzaK7kWFsvBL+T5Ll6XOf4RZb+dNKFMS4YkePxJqv4X4Xs3SvAUasY=
+X-Received: by 2002:a05:6a21:7746:b0:1d1:88bf:dff6 with SMTP id
+ adf61e73a8af0-1d6d3aab4bbmr2809735637.15.1727939614998; Thu, 03 Oct 2024
+ 00:13:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240928161546.9285-1-jason-jh.lin@mediatek.com>
+In-Reply-To: <20240928161546.9285-1-jason-jh.lin@mediatek.com>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Thu, 3 Oct 2024 15:13:53 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_9V+BFV0fCahzn2qNBAmLrY-cwRQAKzorTdRYGCFv5+tw@mail.gmail.com>
+Message-ID: <CAAOTY_9V+BFV0fCahzn2qNBAmLrY-cwRQAKzorTdRYGCFv5+tw@mail.gmail.com>
+Subject: Re: [PATCH v8 0/3] Fix degradation problem of alpha blending series
+To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
+Cc: Alper Nebi Yasak <alpernebiyasak@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Shawn Sung <shawn.sung@mediatek.com>, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Singo Chang <singo.chang@mediatek.com>, 
+	Nancy Lin <nancy.lin@mediatek.com>, Project_Global_Chrome_Upstream_Group@mediatek.com, 
+	Jason-jh Lin <jason-jh.lin@mediatek.corp-partner.google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 88E151x the SGMII autoneg bypass mode defaults to be enabled. When it is
-activated, the device assumes a link-up status with existing configuration
-in BMCR, avoid bringing down the fibre link in this case
+Hi, Jason:
 
-Test case:
-1. Two 88E151x connected with SFP, both enable autoneg, link is up with
-   speed 1000M
-2. Disable autoneg on one device and explicitly set its speed to 1000M
-3. The fibre link can still up with this change, otherwise not.
+Jason-JH.Lin <jason-jh.lin@mediatek.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=882=
+9=E6=97=A5 =E9=80=B1=E6=97=A5 =E4=B8=8A=E5=8D=8812:16=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> From: Jason-jh Lin <jason-jh.lin@mediatek.corp-partner.google.com>
+>
+> Some SoCs not support pre-multiplied pixel formats and extending
+> configuration of OVL pre-multiplied color formats, such as MT8173.
+>
+> Fix the SoC degradation problem by this sreies.
 
-Signed-off-by: Qingtao Cao <qingtao.cao@digi.com>
----
- drivers/net/phy/marvell.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Applied to mediatek-drm-fixes [1], thanks.
 
-diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
-index 9964bf3dea2f..efc4b2317466 100644
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -195,6 +195,10 @@
- 
- #define MII_88E1510_MSCR_2		0x15
- 
-+#define MII_88E1510_FSCR2		0x1a
-+#define MII_88E1510_FSCR2_BYPASS_ENABLE	BIT(6)
-+#define MII_88E1510_FSCR2_BYPASS_STATUS	BIT(5)
-+
- #define MII_VCT5_TX_RX_MDI0_COUPLING	0x10
- #define MII_VCT5_TX_RX_MDI1_COUPLING	0x11
- #define MII_VCT5_TX_RX_MDI2_COUPLING	0x12
-@@ -1623,11 +1627,21 @@ static void fiber_lpa_mod_linkmode_lpa_t(unsigned long *advertising, u32 lpa)
- static int marvell_read_status_page_an(struct phy_device *phydev,
- 				       int fiber, int status)
- {
-+	int fscr2;
- 	int lpa;
- 	int err;
- 
- 	if (!(status & MII_M1011_PHY_STATUS_RESOLVED)) {
- 		phydev->link = 0;
-+		if (fiber) {
-+			fscr2 = phy_read(phydev, MII_88E1510_FSCR2);
-+			if (fscr2 < 0)
-+				return fscr2;
-+			if ((fscr2 & MII_88E1510_FSCR2_BYPASS_ENABLE) &&
-+			    (fscr2 & MII_88E1510_FSCR2_BYPASS_STATUS) &&
-+			    (genphy_read_status_fixed(phydev) == 0))
-+				phydev->link = 1;
-+		}
- 		return 0;
- 	}
- 
--- 
-2.34.1
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
+log/?h=3Dmediatek-drm-fixes
 
+Regards,
+Chun-Kuang.
+
+>
+> ---
+> Change in v8:
+> Remove blend_modes for not supported pre-multiplied SoCs to fix the
+> return error from drm_plane_create_blend_mode_property().
+>
+> Change in v7:
+> 1. Add the remove color format comment patch for OVL
+> 2. Fix warning: 'const' type qualifier on return type has no effect
+>
+> Chnage in v6:
+> 1. Use blend_modes instead of function pointer in OVL
+> 2. Use ethdr instead of mdp_rdma to get blend_modes
+> 3. Add 0 checking for adding blend_mode property for mtk_plane
+>
+> Change in v5:
+> Add fix patch for mtk_plane
+>
+> Change in v4:
+> Add lost cases of mtk_ovl_fmt_convert_with_blend
+>
+> Change in v3:
+> Change MACRO approach to function pointer in driver data
+>
+> Change in v2:
+> Fix build error and typo
+>
+> Change in v1:
+> Add fix patch for OVL unsupport color format settings by driver data
+>
+> ---
+>
+> Jason-JH.Lin (3):
+>   drm/mediatek: ovl: Remove the color format comment for
+>     ovl_fmt_convert()
+>   drm/mediatek: ovl: Add blend_modes to driver data
+>   drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
+>
+>  drivers/gpu/drm/mediatek/mtk_crtc.c           |  1 +
+>  drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |  2 +
+>  drivers/gpu/drm/mediatek/mtk_ddp_comp.h       | 10 +++++
+>  drivers/gpu/drm/mediatek/mtk_disp_drv.h       |  2 +
+>  drivers/gpu/drm/mediatek/mtk_disp_ovl.c       | 44 ++++++++++++++++---
+>  .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  7 +++
+>  drivers/gpu/drm/mediatek/mtk_ethdr.c          |  7 +++
+>  drivers/gpu/drm/mediatek/mtk_ethdr.h          |  1 +
+>  drivers/gpu/drm/mediatek/mtk_plane.c          | 15 +++----
+>  drivers/gpu/drm/mediatek/mtk_plane.h          |  4 +-
+>  10 files changed, 76 insertions(+), 17 deletions(-)
+>
+> --
+> 2.43.0
+>
 
