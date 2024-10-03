@@ -1,106 +1,72 @@
-Return-Path: <linux-kernel+bounces-349041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F292898EFEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:03:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF2498EFED
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54841F246B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:03:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D88D81C20D4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBF3199938;
-	Thu,  3 Oct 2024 13:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMYzaPNv"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AC61993B0;
+	Thu,  3 Oct 2024 13:03:06 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6115B14D6ED;
-	Thu,  3 Oct 2024 13:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC0714D6ED;
+	Thu,  3 Oct 2024 13:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727960595; cv=none; b=H1BFyRLF2MmxG9+9+9qInMme6lE2H6CHx+rAilNTiJMEnAR0XD+S5aA2b3NxHTMUA0/DOTvjLUGYlb5zGNWI+9/EGm7oi930/BdAe4eK+K2/AkaygRAu+to3I7jJJYoc7wUwaBVTKeNFTfeoGhchM8TipKEXF6aYXn0wV7+43ts=
+	t=1727960586; cv=none; b=PxAVJku9goLuUKz3hU8JnO8dDCh2M6r3inYHCVMCadc1s4w9o2qmqugOt5rhSC5+zVCmTwbwy5fH2hp5qXXDtMwxs+BiH2cKVagPJdIj5OMI3wmHiVS2rwB8qlrE6AEjXLLfAmtOE6+VmUe2gQgbH4HBSBC3fmTDCm9Fd40qklU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727960595; c=relaxed/simple;
-	bh=0pjEEqKZB/jOjZ4/wQHEo+m3ps7ACgQNfifBOM3AuuM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZdUeAom/9s8EKk3Q2FWMu69OHsb9UPn54CjJ68nw55d7mOfShbdt4Kmf/dOdja6lKE/S/6IUkXWBNJrps/MJglJvVzyiy7cAnJgEZlLfQGyjEfZqcgNWOl/Kr8dC7nCZifaoaQGYRJTGKbSrncY28G7H9ItaySPrIxgY6S0/5Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LMYzaPNv; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539899c1febso110355e87.2;
-        Thu, 03 Oct 2024 06:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727960591; x=1728565391; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0pjEEqKZB/jOjZ4/wQHEo+m3ps7ACgQNfifBOM3AuuM=;
-        b=LMYzaPNvF4JWDIuOEvQOpXuGdDKIV7D7wQc7Vja7XWvJiaurCdgmG5WBcRek9vYjRB
-         vOrNTOSJHaJtKK/lex2I6IxI6T6NTfJo8WLJjPB8ln7hVXYctL6pHMi6yPfWZlMQgULO
-         XpsuAowdhK1cflu0EQ3qy48Wvl1j/Gkf8Kh4EJIXTTOJza0e6pG7hFn25b14oyQRCPYs
-         1c/tf8PyVH2jeDVPg87irSg0ocqaXmEnLv3Ny06qma81016ve32Mg0LeZM7PNDgiiMNB
-         soFYpHqy2voPI9KwizsC6VvCgWC/uA9W+k1/IjfJP2EJ37yph1ZfKQrriUhwkGL+o3in
-         V3Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727960591; x=1728565391;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0pjEEqKZB/jOjZ4/wQHEo+m3ps7ACgQNfifBOM3AuuM=;
-        b=q5v+MCcyLrd9MEo8ug7HvCnSU0JtZedS00VAPuYeD8pDibu2T4byEldF8NcU4eH9JS
-         WQYjan72y0b7algEr5luRp4NZPEq8EEI48O1Q0WSewEHTMAohYGqQTkvgl/793IG0jG7
-         vLQYi08JOjVjdmMG4SqVQZ+Ce7XwDQIdb83NWmOfgHxu8qjHfkpF+Kbnt/1vD+dttMSa
-         eU5CCTG8iblcjDk92t47kA8dlVXYkKAtzxWu8CazQ8uZt1jmNr7Xb025QDDSUfAu/T7n
-         lVTIYr+YP4SO/j8S7CuzWIIyvwnkQ1ujVaRc31JxT5sVIhfIzzigh3xh1URb/Zra/lqS
-         HR7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUo/d/KDYWqEBv0VtvETZE5niivlar7FxkUF/ssSGa3ODAvtdIwn+Se/eeUEl/mKA++9tkGx3Fxzhe2Ah4=@vger.kernel.org, AJvYcCXFnm8IWK2XWp+y/LPs4bqe5tczR9sBsS+hy/OXH7khwdLTkLesA+6tpc3pHaNa7nfyD6i/cx4W1woC/C3n3iI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhqX7As/fLuvH6k0vR7WpYInMdc8HBUdYkfeivDj0HnU5bjOvv
-	cfMk5YfUqY+xX/ZJDaBth8tdkJcjE/oRc+t7qc+Uv9ix4WGKVrGYhnk434toW7MtFXgTCoT6f8V
-	yOP37C94BUoFpKJbRVeyEsbT3NcToa1Dr/XA=
-X-Google-Smtp-Source: AGHT+IFD7y/g7S53GYq8SiQwnOk8qWSqXT05lzuITIkOIY2dV3j4VDuyIeBqThOBN0TfTDlNvXy/9tNoXVrAV/yNNmc=
-X-Received: by 2002:a05:6512:3c8c:b0:535:4d89:5b52 with SMTP id
- 2adb3069b0e04-539a065f9ecmr1045863e87.1.1727960590956; Thu, 03 Oct 2024
- 06:03:10 -0700 (PDT)
+	s=arc-20240116; t=1727960586; c=relaxed/simple;
+	bh=6tk8uHOm+fbBYCYxJ4bTeoO0K6O3UBI0CimSVl1/7T8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D9xP9awc+9pjTRQ3xN/+MykHDYfcmGFreCdDiKFrY1bcxeSww0JuAXa80J4gpiy4WdbfguwE0P0v/H638e6T8V5MG+oBPtl7ndTQ4KZs+ba0frWhG3623jPLHdUDT+iFyt2lVAOKs/Es1BUULj907cu7Y+abSN+p9uf0/s/fRbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 124CC227A88; Thu,  3 Oct 2024 15:02:59 +0200 (CEST)
+Date: Thu, 3 Oct 2024 15:02:58 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com,
+	hch@lst.de, cem@kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH v6 4/7] xfs: Support FS_XFLAG_ATOMICWRITES
+Message-ID: <20241003130258.GA18099@lst.de>
+References: <20240930125438.2501050-1-john.g.garry@oracle.com> <20240930125438.2501050-5-john.g.garry@oracle.com> <06344e9f-a625-4f6e-8b23-329ee8ebf67f@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927164414.560906-1-ojeda@kernel.org> <20240928193632.063d62a6.gary@garyguo.net>
-In-Reply-To: <20240928193632.063d62a6.gary@garyguo.net>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 3 Oct 2024 15:02:54 +0200
-Message-ID: <CANiq72kQ+E5-qQ9X8UdgcBN_P=7JYHo6Ft8rLNRwAXmxbMyeMA@mail.gmail.com>
-Subject: Re: [PATCH] rust: kunit: use C-string literals to clean warning
-To: Gary Guo <gary@garyguo.net>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06344e9f-a625-4f6e-8b23-329ee8ebf67f@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Sat, Sep 28, 2024 at 8:36=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+On Thu, Oct 03, 2024 at 01:48:41PM +0100, John Garry wrote:
+> On 30/09/2024 13:54, John Garry wrote:
+>> @@ -352,11 +352,15 @@ xfs_sb_has_compat_feature(
+>>   #define XFS_SB_FEAT_RO_COMPAT_RMAPBT   (1 << 1)		/* reverse map btree */
+>>   #define XFS_SB_FEAT_RO_COMPAT_REFLINK  (1 << 2)		/* reflinked files */
+>>   #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
+>> +#define XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES (1 << 31)	/* atomicwrites enabled */
+>> +
 >
-> Note that the cast actually need to be re-introduced instead of
-> cleaned-up -- `c"".as_ptr()` returns `core::ffi::c_char` which might be
-> signed, while after my series `*const u8` is expected by `printf`.
+> BTW, Darrick, as you questioned previously, this does make xfs/270 fail... 
+> until the change to a not use the top bit.
 
-Ah, right, in your series `bindgen` will point to the new one while
-the method will return the `core::ffi` one which might be still `i8`
-in some targets.
+With the large block size based atomic writes we shoudn't even need
+a feature flag, or am I missing something?
 
-It would be nice to get a way to modify the target for `u8`, i.e.
-`-Cunsigned-char` or a "target modifier" or similar.
-
-Added an entry with some links in our `rustc` list at
-https://github.com/Rust-for-Linux/linux/issues/355.
-
-Cheers,
-Miguel
 
