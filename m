@@ -1,88 +1,87 @@
-Return-Path: <linux-kernel+bounces-349650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC6E98F99B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C42D298F9A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 621451C2162F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:10:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02A0D1C21EF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0181CC883;
-	Thu,  3 Oct 2024 22:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698181CEAC4;
+	Thu,  3 Oct 2024 22:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vLRSU3VW"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2051.outbound.protection.outlook.com [40.107.236.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aUMi/xmS"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D951C4606;
-	Thu,  3 Oct 2024 22:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727993418; cv=fail; b=hq78eAVkGpBPBAweQoVXYx069Dm0eEfOVTvkdGvC1u8niSIUR2KALIzifQZgl9p02U99NXIdkyl6r7JHUObYitmB/wiWAqgchN2M4M4aFLYoXe+OGbDhJPykarDRI6pPXlVl0VVynpSb7BZGlhz1IjaqxgfT8HoG2S3F7LgWdoE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727993418; c=relaxed/simple;
-	bh=7samLhwa3tWBlDkvtssC7qDm2+AZBO5wifmzwWlynFY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TreSJGKAV3zAgQkwAv7TPE4dg945WMFip1zZvLIiat8jqD4reohDX25N3JhLOpQHdNcIU6tZr1gRL0JcdI8XqJF9o65ZTs+P3oEDEOz6d0Ov3UTrac+4Y69jroDwP//wemhAzOHmVqm9hpeTg6DnMLgJ3QgvzLo793IGj1TLgjQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vLRSU3VW; arc=fail smtp.client-ip=40.107.236.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jad+WZQNRUwXzocFV844y3fH2yEa6qUYxQLSqpQ3OKp3PuO/XQ1pCWtHC+SUxvNbyibiFJRwLegX0L5y8J/+At3YsJUanuu4Oth5uZrfDJw/3mCfmE1AT/Dkn1h+fnVrJusrP2ryz6IAh7lYGaM8Pt7pKZhk/8SX34gmc7Z2/ny2Y4afCuvhEzAMc2XrxAsOEEyWzqnVUJvK04bzdVf72q+rebUb/Ne1vzPGHIYryh8YxRhHJfxEFUhC2ka/pEaysB5n5/sFVOIxlWHKnyGZ/4255QbfEY4pqx9C2ScA1jmp5MyE/QGLX6z/2Miwz6Suitbct90FzSOWOZILLiOLeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6RrAZBcI3xQCF6Fdo9kfENK+y9HlR9QYUnSyM/90idU=;
- b=M9ajVviDEcoxkO7OnjW3w1OPQd+OwBWe5cA7xGqnmAAnu4DaeKwkJe2/xrr8P2U5LxWD99J5Hx0fpRNU2C/6lhE/EEdDkVzJoNIA5AY6tD/p++NGq4s5LWGvVdWdY7txPLos/dkid/95pFxelGImnx1GKy+cIziNbZGewwJoWmj165QfilK/y79o7umKCg6TdxE/Nuctt6ACxfccqBr7boDQjkXolbhV/vrOqDRbE+xWTwl+zGOQgLWuumdyv6JVfH5kQjv6ndoUxLRQWpVY7IvY/qR9KEDy8fHxSS3I/9Q+ulWPBUKgOZmBcJUW9oDqGnYP5AWlimJYjMCt+41vQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6RrAZBcI3xQCF6Fdo9kfENK+y9HlR9QYUnSyM/90idU=;
- b=vLRSU3VW3jksF5KIK5N6p9T2Pt/HMPIAzNmAvELkTabO/M8ZiNgWr+MbfUIOqlSVc5cz+xgTIV8fhjUH+ER84iItPB38QFfsL9LOVjsYXvvvKekZYz0tkzkR2nJULe5sPToUPAJB6ot+/dOPn2pI50Z30LcGuWrJxXD8KZfDze0=
-Received: from BN9PR03CA0605.namprd03.prod.outlook.com (2603:10b6:408:106::10)
- by PH8PR12MB6841.namprd12.prod.outlook.com (2603:10b6:510:1c8::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Thu, 3 Oct
- 2024 22:10:08 +0000
-Received: from MN1PEPF0000ECD9.namprd02.prod.outlook.com
- (2603:10b6:408:106:cafe::c7) by BN9PR03CA0605.outlook.office365.com
- (2603:10b6:408:106::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18 via Frontend
- Transport; Thu, 3 Oct 2024 22:10:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- MN1PEPF0000ECD9.mail.protection.outlook.com (10.167.242.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8026.11 via Frontend Transport; Thu, 3 Oct 2024 22:10:08 +0000
-Received: from purico-ed09host.amd.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 3 Oct
- 2024 17:10:06 -0500
-From: Ashish Kalra <Ashish.Kalra@amd.com>
-To: <pgonda@google.com>
-CC: <ashish.kalra@amd.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<davem@davemloft.net>, <herbert@gondor.apana.org.au>, <hpa@zytor.com>,
-	<john.allen@amd.com>, <kvm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <michael.roth@amd.com>, <mingo@redhat.com>,
-	<pbonzini@redhat.com>, <seanjc@google.com>, <tglx@linutronix.de>,
-	<thomas.lendacky@amd.com>, <x86@kernel.org>
-Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
-Date: Thu, 3 Oct 2024 22:09:56 +0000
-Message-ID: <20241003220956.33381-1-Ashish.Kalra@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAMkAt6qP+kuzsXYtnE4MRDUVx4sVpFoa+YwBtBRArMcnAfadkw@mail.gmail.com>
-References: <CAMkAt6qP+kuzsXYtnE4MRDUVx4sVpFoa+YwBtBRArMcnAfadkw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF6B1C2DB2;
+	Thu,  3 Oct 2024 22:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727993441; cv=none; b=BU1Zd+1+ghOaZ0kFwTdIt7cX82h/x77nSrZeoOIK0QSDQReP43uhfLWP55YcjZPDFj7Kgwo04XLEa1KU42FGiOjkJ063QAQ0LSXOp924g0YQ1vU8I3FcbCNYmKlUKgyVU09KUFqx/TGnlymGfyta539k5/ndinvTNmghh2OZKhI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727993441; c=relaxed/simple;
+	bh=2ruyZa95IziUZXPWi0IJh7ReSJdmiH/rP39WJPPvJ+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lnTQvBCJwXo2yFgKmzS2H909MFkQBqspBgxEzy0nuWcLBttTVLOg97ZzsYbzyAJRfbSu0zQ+VmdnRb/j+RdN4Ge3yakmp6o2VvInbXndPkjFryonxGWeZoxJSZePIqFFChqizsGxouRzgYGUBwH/5PH0RYeLHWhxaUH7rceB7jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aUMi/xmS; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cb9a0c300so12140925e9.0;
+        Thu, 03 Oct 2024 15:10:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727993438; x=1728598238; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C92rcUtVqnNfXPCgxcCPv2PyEiym9G5diOBGvpjsBrU=;
+        b=aUMi/xmSHyJQOll0s3hpW77UaM8q8DQdruuNQ0so2O+/0J5gbLfAr5w6Xk/lMt/t9q
+         9JyvsRewDK0VePpjPrHUIIIqICmiOrwbfArZ7xs5EYbGCUwtW0t3arR54hElEa5hFchc
+         0TvtJSfscn55SrDx4WD94Zpl6JOmAYcNBFNPUcOUa1+FHlqcJMua7iD5GiztYcteASb0
+         4qbAVFNPdiFZcCzKl+7tdY3G6BWteun3XXGYfZ+y0SPuZCsnxWcqbp+ZHXrUwngdrKmQ
+         mRRjswYqyjAR2nssh67TSB2xfo/Urr9YxSr6LkjH1HCbqsLWUUetRp/KjTxrXYTW+/dF
+         gM3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727993438; x=1728598238;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C92rcUtVqnNfXPCgxcCPv2PyEiym9G5diOBGvpjsBrU=;
+        b=TpviM2xYTr2uC5zqw/y9Lzt8/mIJix6RzEnorpKcqT9dEALiae6OvEuFjlw5W06Dwy
+         dtUYXzg+4J1Xu6487e89f1AGXn1QhStRtX9byDNa8aLpfj3Kff6WqDkdNSl+QWWMUdSt
+         i/cq8rOafpsNBHDszeRKJeSIcvphO1ywcor7gJplDrN4azmlschFk6+ooIRRmqWpdI6p
+         ZYiDUYIuA/SoXSHFTbzaHMGk0EGQj/crbT2awoWEjUtXki0f6tDeW8KZgMaIB8qpNyn4
+         XNMhQ9/LSRTI5qF6NpTnorLpsrUPKT81MfwJSzulqM2s2f4XwTU514SdtU99Df4nhEu1
+         Ebzg==
+X-Forwarded-Encrypted: i=1; AJvYcCViIZi1xBGNRwitJCSntK873qF2UYnXQmLc2co1mI48dlKDiPuesz+xIjDkdga2me6LDAEujuyW@vger.kernel.org, AJvYcCWF4mBnokF5gzRanA35r5TXOYCcnKdjvdf+tdJZwoKEwUqYW1jtS9dH/61CGBOztggcM2yCwy0W@vger.kernel.org, AJvYcCXQLisbqqV1HI/7GGEIGrV3NxOCgj8Ecd7SCMOXtCqWBzxwFHFMm1hhtfZrDyyJsSon5fRUPenmHcaRXyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7uKeinNrI3u6E8hL8qyAlJsTLcntjFbXvnBPdCWFMzqtHxLfy
+	FRtdCIg/UoU+1FqtLb3Znl3H7mk8bdM1SOXurdvK45zqUx4XDvor
+X-Google-Smtp-Source: AGHT+IGA89vqGhblOrD5/6Jy9UL6C7XcJGVX50m6iOPle18rO83og1WfKAZfbCpwnmg1BTf0BO7Oqw==
+X-Received: by 2002:a5d:59a1:0:b0:371:88b9:256d with SMTP id ffacd0b85a97d-37d0e6cae5emr653101f8f.6.1727993438034;
+        Thu, 03 Oct 2024 15:10:38 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37d0822995fsm2079334f8f.38.2024.10.03.15.10.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 15:10:36 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Daniel Golle <daniel@makrotopia.org>,
+	stable@vger.kernel.org
+Subject: [net PATCH 1/2] net: phy: Remove LED entry from LEDs list on unregister
+Date: Fri,  4 Oct 2024 00:10:04 +0200
+Message-ID: <20241003221006.4568-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,176 +89,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB03.amd.com
- (10.181.40.144)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD9:EE_|PH8PR12MB6841:EE_
-X-MS-Office365-Filtering-Correlation-Id: 47a79662-d489-4c57-9a4f-08dce3f82456
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?K+3p2cqExBB+UL+djild9UkHFSU0/VxoWemYQgR0ZHbLe99xE9nYCkL5CDxK?=
- =?us-ascii?Q?xCP880Q2zqlhpuBErYXCRNIzkUTU+6tkHPBZst3Rg1EMiTsorrGFZa3BeXZz?=
- =?us-ascii?Q?cKRJwp1IETnwobxNmk6zyLJcKnFvHlAGxIkO0/nzGc7ygh9gjLsYWSKy/Miz?=
- =?us-ascii?Q?YwT3UEhUCr26bfeX3bXxassxwnFDxNZPZyBOSz9u9blpLV141J/IqEkL6I9l?=
- =?us-ascii?Q?dFuvGvUdzJ9elfq++ZLa+9L0ugW1Gk5zvTA/5WwY3tozB+C7Gx3QndrT9DdB?=
- =?us-ascii?Q?NVyQFm1uT2nsoQOBY81mnjka0eAWXDdDe31BxCNcNl5NkDWpGRQ5/4yb0xeq?=
- =?us-ascii?Q?uS9YwPFxQCqukK0Lhknp1QWNHm2czDT2e7ZBx+6ATT8L7lQSPMfuabZRWzlp?=
- =?us-ascii?Q?640ENF3tLDajxQ+LL1f9jPHK1nfw6kRFxbfPwbB+ZdeU2afBYk7DZzlGfAGQ?=
- =?us-ascii?Q?Rn1G3wPj2Td1y/TpFCmIzz8t+e4SWLshImYIZfyMwr8xvghfk3l0u736jhKR?=
- =?us-ascii?Q?M0p8MZyltAsye7FeWJcgwO9CLTbYfc0bcLukxqVxKM1R7qQHydaq4zEdkJsb?=
- =?us-ascii?Q?agX25y4nTlAEmbZEuUlW6IQSG3ScSnN5lFMLBX+sY+ZljcY3P+0xxHOLJ5Sm?=
- =?us-ascii?Q?YxDOpS6DPOhXSN2IDh9c0z7/vo25MdudO4xRQj5XOKZ6VAKge0ajy7Sm3del?=
- =?us-ascii?Q?THDaJj/s+0Dmln1fpUBsk5xsN+8S0tu7duTWmv36/biMYiM8ltO2sis1a70e?=
- =?us-ascii?Q?rCqaNwIE8uxEGLPIQz+8mKH+yCt6In3x0YT6Izal8HhybexXAlxvTHuIr2jO?=
- =?us-ascii?Q?ycnv2V5/ajZxk19HbY6mKpf2PpEhByimxfbvEMBNj0Dmtg53wYXxP/U36Ywf?=
- =?us-ascii?Q?4n+/5aP6VjyKcSH0o/oaFAzQYcQvrB0gkE9RW/4gaBAiXzUGbU9YYgK+ujHo?=
- =?us-ascii?Q?KGrtoLhFMfjv9Jhz4fQZejvSVFhcEtSrJc8Y8uQNJlBLzPibINwcOWifnW89?=
- =?us-ascii?Q?O7IAhpoS30+KkjBHFMffayRpUo21YMQiihvIX4bteyKIVN48e173+qVEpH+u?=
- =?us-ascii?Q?0L6ub5NLgpsut/Havc9HHJP4MdMlXSRWdgN7Nt5v7o0h9B9bhYypPXIrBdP+?=
- =?us-ascii?Q?QnXVqaW6OAKjcJYXU9A08KWCK+biYud2x6UlAu81hzzHa6vJJbJlZwtuwBkg?=
- =?us-ascii?Q?j+n7B5Utzc9vBvq9UNi4j++xxLvQcBMR7wlJoIcl7zS/1Ay05OgyJgPDa40Z?=
- =?us-ascii?Q?1TNTGw/lBJQQob+OOxoOl98N02CVroLAEqZjoxM0ff5q7f2yoxBWJTqkr6oJ?=
- =?us-ascii?Q?f50nFoEXGuzQYnXKVcQ+0hmC6UfDmooCYpVSRI4EbOx77qZucfTMC9aVKGEN?=
- =?us-ascii?Q?fSdYw70k/CxVOpibGm6P8CJjnNdk?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2024 22:10:08.0192
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47a79662-d489-4c57-9a4f-08dce3f82456
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECD9.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6841
 
->>>>> +static int max_snp_asid;
->>>> +module_param(max_snp_asid, int, 0444);
->>>> +MODULE_PARM_DESC(max_snp_asid, "  override MAX_SNP_ASID for Cipher Text Hiding");
->>> My read of the spec is if Ciphertext hiding is not enabled there is no
->>> additional split in the ASID space. Am I understanding that correctly?
->> Yes that is correct.
->>> If so, I don't think we want to enable ciphertext hiding by default
->>> because it might break whatever management of ASIDs systems already
->>> have. For instance right now we have to split SEV-ES and SEV ASIDS,
->>> and SNP guests need SEV-ES ASIDS. This change would half the # of SNP
->>> enable ASIDs on a system.
->>
->> My thought here is that we probably want to enable Ciphertext hiding by default as that should fix any security issues and concerns around SNP encryption as .Ciphertext hiding prevents host accesses from reading the ciphertext of SNP guest private memory.
->>
->> This patch does add a new CCP module parameter, max_snp_asid, which can be used to dedicate all SEV-ES ASIDs to SNP guests.
->>
->>>
->>> Also should we move the ASID splitting code to be all in one place?
->>> Right now KVM handles it in sev_hardware_setup().
->>
->> Yes, but there is going to be a separate set of patches to move all ASID handling code to CCP module.
->>
->> This refactoring won't be part of the SNP ciphertext hiding support patches.
+Commit c938ab4da0eb ("net: phy: Manual remove LEDs to ensure correct
+ordering") correctly fixed a problem with using devm_ but missed
+removing the LED entry from the LEDs list.
 
->Makes sense. I see Tom has asked you to split this patch into ccp and KVM.
+This cause kernel panic on specific scenario where the port for the PHY
+is torn down and up and the kmod for the PHY is removed.
 
->Maybe add a line to the description so more are aware of the impending
->changes to asids?
+On setting the port down the first time, the assosiacted LEDs are
+correctly unregistered. The associated kmod for the PHY is now removed.
+The kmod is now added again and the port is now put up, the associated LED
+are registered again.
+On putting the port down again for the second time after these step, the
+LED list now have 4 elements. With the first 2 already unregistered
+previously and the 2 new one registered again.
 
-Sure, i will do that.
+This cause a kernel panic as the first 2 element should have been
+removed.
 
->I tested these patches a bit with the selftests / manually by
->backporting to 6.11-rc7. When you send a V3 I'll redo for a tag. BTW
->for some reason 6.12-rc1 and kvm/queue both fail to init SNP for me,
->then the kernel segfaults. Not sure whats going on there...
+Fix this by correctly removing the element when LED is unregistered.
 
-I tested with 6.12-rc1 and i don't have any issues with SNP init and running SNP 
-VMs on that (with and without CipherTextHiding enabled), but i am getting a lot of 
-stack dumps especially during host boot with apparmor, surely something looks
-to be broken on apparmor on 6.12-rc1: 
+Reported-by: Daniel Golle <daniel@makrotopia.org>
+Tested-by: Daniel Golle <daniel@makrotopia.org>
+Cc: stable@vger.kernel.org
+Fixes: c938ab4da0eb ("net: phy: Manual remove LEDs to ensure correct ordering")
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/net/phy/phy_device.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-[   33.180836] BUG: kernel NULL pointer dereference, address: 000000000000001c
-[   33.180842] #PF: supervisor read access in kernel mode
-[   33.180843] #PF: error_code(0x0000) - not-present page
-[   33.180846] PGD 16bc1b067 P4D 0 
-[   33.180849] Oops: Oops: 0000 [#4] SMP NOPTI
-[   33.180853] CPU: 155 UID: 0 PID: 2521 Comm: apparmor_parser Tainted: G      D W          6.12.0-rc1-next-20241003-snp-host-f2a41ff576cc-dirty #19
-[   33.632606] RIP: 0010:krealloc_noprof+0x8f/0x300
-[   33.632608] Code: 8b 50 08 f6 c2 01 0f 85 14 02 00 00 0f 1f 44 00 00 80 78 33 f5 0f 85 0e 02 00 00 48 85 c0 0f 84 05 02 00 00 48 8b 48 08 66 90 <48> 63 59 1c 41 89 df 4d 39 fd 0f 87 8c 00 00 00 0f 1f 44 00 00 48
-[   33.632610] RSP: 0018:ff2e31fe0ad3f848 EFLAGS: 00010202
-[   33.632611] RAX: ff9e19414443ec00 RBX: 0000000000000001 RCX: 0000000000000000
-[   33.632613] RDX: 0000000000000000 RSI: 0000000000002beb RDI: ff2d8c4410fb0000
-[   33.632614] RBP: ff2e31fe0ad3f878 R08: 0000000000002be4 R09: 0000000000000000
-[   33.632615] R10: 00000000000093cb R11: ff2d8c4410fb2beb R12: ff2d8c4410fb0000
-[   33.632616] R13: 0000000000002beb R14: 0000000000000cc0 R15: ff2d8c446d000000
-[   33.632618] FS:  00007ff504a05740(0000) GS:ff2d8c4b2c500000(0000) knlGS:0000000000000000
-[   33.632619] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   33.632620] CR2: 000000000000001c CR3: 0000000157f2e001 CR4: 0000000000771ef0
-[   33.632622] PKRU: 55555554
-[   33.632623] note: apparmor_parser[2522] exited with irqs disabled
-[   33.977961] Tainted: [D]=DIE, [W]=WARN
-[   33.990019] Hardware name: AMD Corporation PURICO/PURICO, BIOS TPUT0090F 06/05/2024
-[   34.006754] RIP: 0010:krealloc_noprof+0x8f/0x300
-[   34.020151] Code: 8b 50 08 f6 c2 01 0f 85 14 02 00 00 0f 1f 44 00 00 80 78 33 f5 0f 85 0e 02 00 00 48 85 c0 0f 84 05 02 00 00 48 8b 48 08 66 90 <48> 63 59 1c 41 89 df 4d 39 fd 0f 87 8c 00 00 00 0f 1f 44 00 00 48
-[   34.058484] RSP: 0018:ff2e31fe0ad57928 EFLAGS: 00010202
-[   34.073095] RAX: ff9e194145b4c400 RBX: 0000000000000001 RCX: 0000000000000000
-[   34.089957] RDX: 0000000000000000 RSI: 00000000000057bf RDI: ff2d8c446d310000
-[   34.106827] RBP: ff2e31fe0ad57958 R08: 00000000000057b8 R09: 0000000000000000
-[   34.123733] R10: 000000000000dac1 R11: ff2d8c446d3157bf R12: ff2d8c446d310000
-[   34.140668] R13: 00000000000057bf R14: 0000000000000cc0 R15: ff2d8c446d400000
-[   34.157572] FS:  00007ff504a05740(0000) GS:ff2d8c4b2b380000(0000) knlGS:0000000000000000
-[   34.175513] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   34.190675] CR2: 000000000000001c CR3: 0000000157f2a004 CR4: 0000000000771ef0
-[   34.207373] PKRU: 55555554
-[   34.218980] Call Trace:
-[   34.230226]  <TASK>
-[   34.241043]  ? show_regs+0x6d/0x80
-[   34.253389]  ? __die+0x29/0x70
-[   34.265311]  ? page_fault_oops+0x15c/0x550
-[   34.278341]  ? do_user_addr_fault+0x45e/0x7b0
-[   34.291477]  ? ZSTD_compressEnd_public+0x2c/0x170
-[   34.304780]  ? exc_page_fault+0x7c/0x170
-[   34.316962]  ? asm_exc_page_fault+0x2b/0x30
-[   34.329194]  ? krealloc_noprof+0x8f/0x300
-[   34.341001]  ? zstd_compress_cctx+0x87/0xa0
-[   34.353005]  aa_unpack+0x688/0x700
-[   34.364035]  aa_replace_profiles+0x9e/0x1170
-[   34.375977]  policy_update+0xd9/0x170
-[   34.387225]  profile_replace+0xb0/0x130
-[   34.398644]  vfs_write+0xf8/0x3e0
-[   34.409463]  ? __x64_sys_openat+0x59/0xa0
-[   34.420909]  ksys_write+0x6b/0xf0
-[   34.431356]  __x64_sys_write+0x1d/0x30
-[   34.442244]  x64_sys_call+0x1685/0x20d0
-[   34.453055]  do_syscall_64+0x6f/0x110
-[   34.463491]  ? ksys_read+0x6b/0xf0
-[   34.473492]  ? syscall_exit_to_user_mode+0x57/0x1b0
-[   34.485139]  ? do_syscall_64+0x7b/0x110
-[   34.495611]  ? generic_file_read_iter+0xbf/0x110
-[   34.506980]  ? apparmor_file_permission+0x6f/0x170
-[   34.518530]  ? ext4_file_read_iter+0x5f/0x1e0
-[   34.529610]  ? vfs_read+0x25c/0x340
-[   34.539607]  ? ksys_read+0x6b/0xf0
-[   34.549394]  ? syscall_exit_to_user_mode+0x57/0x1b0
-[   34.560829]  ? do_syscall_64+0x7b/0x110
-[   34.571009]  ? irqentry_exit_to_user_mode+0x33/0x170
-[   34.582461]  ? irqentry_exit+0x21/0x40
-[   34.592443]  ? exc_page_fault+0x8d/0x170
-[   34.602507]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   34.613786] RIP: 0033:0x7ff504714887
-[   34.623229] Code: 10 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
-[   34.655533] RSP: 002b:00007ffcb6fbc758 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   34.669681] RAX: ffffffffffffffda RBX: 000055f36c77bdc0 RCX: 00007ff504714887
-[   34.683405] RDX: 000000000000dac1 RSI: 000055f36c7a1680 RDI: 0000000000000007
-[   34.697133] RBP: 000000000000dac1 R08: 0000000000000000 R09: 000055f36c7a1680
-[   34.710815] R10: 0000000000000000 R11: 0000000000000246 R12: 000055f36c7a1680
-[   34.724467] R13: 000000000000dac1 R14: 000055f3654bcc5b R15: 0000000000000007
-[   34.738032]  </TASK>
-[   34.745917] Modules linked in: nls_iso8859_1 wmi_bmof rapl input_leds joydev ccp(+) k10temp wmi acpi_ipmi ipmi_si ipmi_devintf ipmi_msghandler mac_hid sch_fq_codel dm_multipath scsi_dh_rdac scsi_dh_emc scsi_dh_alua msr efi_pstore drm autofs4 btrfs blake2b_generic raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq raid1 raid0 crct10dif_pclmul ahci crc32_pclmul tg3 ghash_clmulni_intel libahci i2c_piix4 i2c_smbus hid_generic usbhid hid aesni_intel crypto_simd cryptd
-[   34.819993] CR2: 000000000000001c
-[   34.830269] ---[ end trace 0000000000000000 ]---
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 560e338b307a..499797646580 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -3326,10 +3326,11 @@ static __maybe_unused int phy_led_hw_is_supported(struct led_classdev *led_cdev,
+ 
+ static void phy_leds_unregister(struct phy_device *phydev)
+ {
+-	struct phy_led *phyled;
++	struct phy_led *phyled, *tmp;
+ 
+-	list_for_each_entry(phyled, &phydev->leds, list) {
++	list_for_each_entry_safe(phyled, tmp, &phydev->leds, list) {
+ 		led_classdev_unregister(&phyled->led_cdev);
++		list_del(&phyled->list);
+ 	}
+ }
+ 
+-- 
+2.45.2
 
 
