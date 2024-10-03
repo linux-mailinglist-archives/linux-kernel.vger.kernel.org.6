@@ -1,154 +1,232 @@
-Return-Path: <linux-kernel+bounces-348505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84A1998E869
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:25:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA8598E86B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 424E7284CBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:25:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E2DEB22DCE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFED117BA0;
-	Thu,  3 Oct 2024 02:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE6517BCE;
+	Thu,  3 Oct 2024 02:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCBuU0eQ"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="rSn00OHO"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BD1BA49;
-	Thu,  3 Oct 2024 02:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E770D168DC;
+	Thu,  3 Oct 2024 02:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727922335; cv=none; b=R1XWB2WiavQBRDzw8xA7GRIuTjboS1TtktV8sMvWJcpWmT5eqPV6ITWcEutjjM9RZ+rjSbhy4tUn8zCXT2yOAotwt4ChRQE40tGS9iovRyB9AXTCUC6HBIy+ElxYcU/YVAuNzi4iDJOBJLabBOLX6tu6qM9F4UkN4+3z9SB4kXI=
+	t=1727922476; cv=none; b=uAsmmcmLf/BmfbVd1Z96EhjQwbWUy04xT0QtH2z3UO9fkwMWZdNxqaIXRhcCetLgYFC026lrCJwoR8qd9fsDEmw2t05jj8qvZ/zrXhJ6oTNv8MvQDznKO92r6XG4SHKgaQhbE7g032ugQVkD2UCVqdaR7a60oVDt7OCKFDg0D6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727922335; c=relaxed/simple;
-	bh=LguPtBolw9t6KVom51ouY3IqR+yTaUGRdCGlMJuaWu8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KLNV0KToxS3L2hHEYz2w4dMtdPNSl6K/svX661bkBRZEDHEw8pve5SIS8vrEfBe0vR5FWgaInlhMxHaEOC/jUnG//9Kdv4W8IHKlnWsgqSYslIDjIwgiMryNFmbjTOuKhiFHFgFhbj44k3fxLEVnqvzR++xwvXPwcGEGZacholE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCBuU0eQ; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e18856feb4so412351a91.3;
-        Wed, 02 Oct 2024 19:25:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727922333; x=1728527133; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JBaz6lB0sicuAwTrZuei38DywHgcqip0M0hQ3nBEA64=;
-        b=HCBuU0eQ8okK4OHDFlYJkpT6jbg5grMDL6b8H7o6PJWbrVIgZpiJVKaNz+6n6VDfuv
-         rLfIDzbPQNxkyJQYcTPIisJ0YxOgSbZtow1xm6xPFU5Yyt5mqPusBM9YspHs0XrA8rvy
-         RWngj7qx9Y2+fhtfEmcdiAmevTJSbj5XTpE6bBDdj9f+0M/HrxYLGPJG4yu0UzDc2Zh2
-         zTe3i8obwhrYQURlQFQEmwTjjut+DgMZIDrOPKhoYBwo6FMrxsM+dZ5yZe1qB/Y0DTlC
-         6U2qWHb5RbJDQlir3bBGrZwIv7nkgACf+D7yqekrAIN4Ccs+3pAVUePbZ0xYZZsXobZN
-         yAjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727922333; x=1728527133;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JBaz6lB0sicuAwTrZuei38DywHgcqip0M0hQ3nBEA64=;
-        b=fAzAc6AyObMWCqMmSZeg9HU24FDZ8/PHyAU/W9ewsbO4tgUTuBqf2RlMjJoYE+cBLn
-         GpB7cplraVI/5iCmulRj5nGxxrK4X1DPg5tpywNozTm72+OzOLpbQwTjEKeujbfCUkxm
-         JYoFyc/1mUojopLZzGHxMWv/k6oZ1KFamqxWheZQG3QVuBe2g9AKj+9Ak0j/Nr6paBM7
-         aRQbkLnzOVnFiT7ehT5J4j+V+Mo/W7yHmU2fNkMnUOfqMGJKfYWVDMSJ2MBUgRjdJ8ai
-         hxbrSqiQsk6FeBd8YUmIggnRBiCFVtIcQvPt3QYdi0chlAP6b67KsZjc9XgVIXz1AJJ4
-         Fq8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUVJOmWuU+sb/Ygf+xHeYPv8wi4U9t38m4W2Y0+EERyrTvBKAEBNMajFOajF/SSP7JK5guJ5VpF@vger.kernel.org, AJvYcCVDGb69iA4wKrXsEzHBCCUnhIBxyABMCzSe+UmFKZEvJuC4hlYsQKm/9KcP+fREZWp9gxaOhy5Z4HbtqVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNEvWwkcR5JU07/kJksk4ZZO/ul9pos/qMl2VLYcYGCc6q6t2l
-	C7YgGbrahJ5vzNagQzMhiPTyqjzozZfv+8KZAEc8LcdiEnGauudj
-X-Google-Smtp-Source: AGHT+IH4ICFmxW01C9JuQFxYLiqHP5FBDN6LyNRKYqapyPFSePx76Ckc1AikPcDX84W3DmqoMNPB9Q==
-X-Received: by 2002:a17:90b:4aca:b0:2dd:6969:208e with SMTP id 98e67ed59e1d1-2e184511367mr6582573a91.3.1727922333229;
-        Wed, 02 Oct 2024 19:25:33 -0700 (PDT)
-Received: from harry-home.bne.opengear.com (122-151-100-51.dyn.ip.vocus.au. [122.151.100.51])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beeca242csm51305ad.112.2024.10.02.19.25.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 19:25:32 -0700 (PDT)
-From: Qingtao Cao <qingtao.cao.au@gmail.com>
-X-Google-Original-From: Qingtao Cao <qingtao.cao@digi.com>
-To: 
-Cc: qingtao.cao.au@gmail.com,
-	Qingtao Cao <qingtao.cao@digi.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] net: phy: marvell: avoid bringing down fibre link when autoneg is bypassed
-Date: Thu,  3 Oct 2024 12:25:12 +1000
-Message-Id: <20241003022512.370600-1-qingtao.cao@digi.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727922476; c=relaxed/simple;
+	bh=3OPAftrtMV+qIp4Qz8NWHzz2E0fBiQnLd7zeRbcYWmU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZyeIPCgO+ASVggpfH8I/nsVPY/9LNd8JFCFMJ0EklPopwiCKjmxvKN5YxFdT8S7aItaz8m3woyO3vGlDOscH8L3159H8JFf6llP9vyVDFN3VR3zZuahxdzFKlw4jc4LmWPhrEvAcGp+zjs2HgbR+Pc5Fuyv/wN2hFgHzZ2BLi8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=rSn00OHO; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.84] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id AD9F23F24D;
+	Thu,  3 Oct 2024 02:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727922470;
+	bh=RN31JBI6bHBo+rutpHLe7KMAvry1bQmwrXCcjkow2zY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=rSn00OHOGcx/Sa+PnHbQZzOaC3CmQKvdnvnEWwV5PHQg91Qwc96tkqsBo8G8LqBJd
+	 fB1eSCg5u3X1zSX963q7a1Rli7mNmXnFjq+WTgYYhufKPCYFUoj4iNrzj8mGJsY2qq
+	 WNpNST0AL5HFMAuMJqXzljA9bYn3nRP12nLP2hrY4szf8ndUEjp7AyAQ0dRpDvC/xG
+	 aukVdl1O4fDpzZXZXBWAbvrigPiOd/VHQRElJBg8brTiYHDkAbUa76pamFJrFDnLba
+	 e41s7pSQqnMUSTwyf0vlGxcVmtgD+N0zJQTxG54na6bhgBz6WGG1bG+aig5GxGpoKA
+	 h/1SAmTnA6PJw==
+Message-ID: <033eb4d9-482b-4b70-a251-dc8bcc738f40@canonical.com>
+Date: Wed, 2 Oct 2024 19:27:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: "Dr. Greg" <greg@enjellic.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul Moore <paul@paul-moore.com>, Jonathan Corbet <corbet@lwn.net>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ LKML <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net>
+ <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+ <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+ <20241002103830.GA22253@wind.enjellic.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20241002103830.GA22253@wind.enjellic.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 88E151x the SGMII autoneg bypass mode defaults to be enabled. When it is
-activated, the device assumes a link-up status with existing configuration
-in BMCR, avoid bringing down the fibre link in this case
+On 10/2/24 03:38, Dr. Greg wrote:
+> On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
+> 
+> Good morning Linus, I hope the week is going well for you.
+> 
+> Some reflections, for the record, on this issue.
+> 
+>> On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
+>>>
+>>> Linus, it's unclear if you're still following this thread after the
+>>> pull, but can you provide a little insight on your thoughts here?
+> 
+>> I absolutely hate the whole "security people keep arguing", and I
+>> cannot personally find it in myself to care about tomoyo.  I don't
+>> even know where it is used - certainly not in Fedora, which is the
+>> only distro I can check quickly.
+>>
+>> If the consensus is that we should revert, I'll happily revert. This
+>> was all inside of the tomoyo subdirectory, so I didn't see it as
+>> some kind of sidestepping, and treated the pull request as a regular
+>> "another odd security subsystem update".
+> 
+> I see that Paul Moore has further responded with commentary about the
+> 'LSM community' responding to this issue.  I wanted, on behalf of our
+> project and in support of Tetsuo's concerns, to register directly with
+> you a sense of jaded skepticism about the notion of a community
+> response.
+> 
+> Fixing Tetsuo's issue, at least to the extent it can be fixed,
+> requires technical improvements in the Linux security architecture.
 
-Test case:
-1. Two 88E151x connected with SFP, both enable autoneg, link is up with speed
-   1000M
-2. Disable autoneg on one device and explicitly set its speed to 1000M
-3. The fibre link can still up with this change, otherwise not.
+yes and that is correct place to do it. Doing it within a single
+LSM is very much the wrong approach
 
-Signed-off-by: Qingtao Cao <qingtao.cao@digi.com>
----
- drivers/net/phy/marvell.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+> Currently, potential technical improvements in this venue are
+> struggling to receive any kind of acknowledgement or review, to the
+> ultimate detriment of enhancements that Linux should be bringing
+> forward to address, not only this issue, but the security industry
+> writ-large.
+> 
 
-diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
-index 9964bf3dea2f..535c6e679ff7 100644
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -195,6 +195,10 @@
- 
- #define MII_88E1510_MSCR_2		0x15
- 
-+#define MII_88E1510_FSCR2		0x1a
-+#define MII_88E1510_FSCR2_BYPASS_ENABLE	(1<<6)
-+#define MII_88E1510_FSCR2_BYPASS_STATUS	(1<<5)
-+
- #define MII_VCT5_TX_RX_MDI0_COUPLING	0x10
- #define MII_VCT5_TX_RX_MDI1_COUPLING	0x11
- #define MII_VCT5_TX_RX_MDI2_COUPLING	0x12
-@@ -1625,9 +1629,26 @@ static int marvell_read_status_page_an(struct phy_device *phydev,
- {
- 	int lpa;
- 	int err;
-+	int fscr2;
- 
- 	if (!(status & MII_M1011_PHY_STATUS_RESOLVED)) {
--		phydev->link = 0;
-+		if (!fiber) {
-+			phydev->link = 0;
-+		} else {
-+			fscr2 = phy_read(phydev, MII_88E1510_FSCR2);
-+			if (fscr2 > 0) {
-+				if ((fscr2 & MII_88E1510_FSCR2_BYPASS_ENABLE) &&
-+				    (fscr2 & MII_88E1510_FSCR2_BYPASS_STATUS)) {
-+					if (genphy_read_status_fixed(phydev) < 0)
-+						phydev->link = 0;
-+				} else {
-+					phydev->link = 0;
-+				}
-+			} else {
-+				phydev->link = 0;
-+			}
-+		}
-+
- 		return 0;
- 	}
- 
--- 
-2.34.1
+everyone in the LSM community is struggling with available time, and
+yes there are disagreements around how this should be done so it
+moves slow.
+
+> We have made multiple submissions of technology, that can at least
+> positively impact Tetsuo's concerns, and in the process perhaps
+> improve the opportunity for security innovation in Linux.  After 20
+> months of doing so we have yet to receive anything that would resemble
+> substantive technical review [1].
+> 
+> The following are links to the four submissions.  We believe an
+> unbiased observer would conclude that they provide ample evidence of
+> very little interest in reviewing submissions for enhancements to the
+> Linux security eco-system, outside of perhaps certain constituencies:
+> 
+> V1:
+> https://lore.kernel.org/linux-security-module/20230204050954.11583-1-greg@enjellic.com/T/#t
+> 
+> V2:
+> https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg@enjellic.com/T/#t
+> 
+> V3:
+> https://lore.kernel.org/linux-security-module/20240401105015.27614-1-greg@enjellic.com/T/#t
+> 
+> V4:
+> https://lore.kernel.org/linux-security-module/20240826103728.3378-1-greg@enjellic.com/T/#t
+> 
+> As of the V4 release, we have added support for an approach that may
+> positively impact Tetsuo's concerns.  We do that without touching any
+> infrastructure outside of our proposed LSM.
+> 
+> We can speak, at great length, as to why we feel that Linux would
+> benefit from structural improvements to its security infrastructure.
+> We will refrain from doing so in this thread, given your stated
+> sentiments on these types of discussions.
+> 
+> However, your mantra, recently expressed on security infrastucture
+> issues, has always been:
+> 
+> "Code talks, bullshit walks."
+> 
+> For all of this to work, and the Linux community to remain healthy,
+> the code needs to be listened to and that is not effectively happening
+> in the security arena.
+> 
+> I started my involvement with Linux in late 1991.  All of what I see
+> is giving me a great deal of pause about the health of our community
+> moving forward and the potential negative impact these issues have on
+> the opportunity for security innovation to emerge
+> 
+>>                    Linus
+> 
+> Have a good remainder of the week.
+> 
+> Apologies in advance for extending conversations you find tiresome.
+> 
+> As always,
+> Dr. Greg
+> 
+> The Quixote Project - Flailing at the Travails of Cybersecurity
+>                https://github.com/Quixote-Project
+> 
+> 
+> [1]: A thank you to Casey Schaufler, despite our lively disagreement
+> about some issues, who has offered specific review comments and
+> dialogue about security modeling.  To Greg Kroah Hartman for
+> recommending the most important change we have implemented with
+> respect to JSON encoding of security events and a handful of other
+> individuals who have provided helpful procedural and technical point
+> suggestions.
+> 
 
 
