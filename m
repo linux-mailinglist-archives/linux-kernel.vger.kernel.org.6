@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-348439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA56C98E7AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:19:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 155E698E7BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85CA328842C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:19:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACF912828C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B925F8BF0;
-	Thu,  3 Oct 2024 00:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D483E8F49;
+	Thu,  3 Oct 2024 00:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="O6vxGTMl"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="mqUzFXZx"
+Received: from esa10.hc1455-7.c3s2.iphmx.com (esa10.hc1455-7.c3s2.iphmx.com [139.138.36.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9F2748D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 00:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3114063CB;
+	Thu,  3 Oct 2024 00:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.36.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727914783; cv=none; b=mzIG18E+hzeeS5l0csJHEjfjGb+08uKcab827fR4hWRBGOqK1MJ2t/1pU2GzfjLwZbnsN73kB25rogaObw38r1nkwQRKiXXvJpR7qs251uVRzcvqONz767JET0OcwIafX/V/VzWYz5NIYpabcWTWBNia5PxJKRXsGVUE4EmzUoI=
+	t=1727915076; cv=none; b=M9UFQbNj8V5Zepaao8lju+Lu0aeDzsWu8zQEMhbNm+KVikI0QHYBZYG7maYwoFFz7Qh1HKEm/gUIEA2xontAhEV1UwtV8hZFXI3+g6p62xQ8ILmAQmPfH2C7WJ+LBmRyzewSAR2UEN1Z36bH81SP9+kXGfCQu+hQ+UqqYsKmF1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727914783; c=relaxed/simple;
-	bh=Wszt+FMi++6hAkyrUPopyYAKo6vWeeUQyn8iYz+ArJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ys7+qB9+BPmuYz8ZN5SB9YnLaHh65jt5MBvO8t//N3DNTKD6SCnE8FOULTAPgPygyG0PjpSE8Vd/GzocArjfCHWiro9Y3CrtHvtcUwt0bUr9niOYMlr9tLbZ67oliyldrTRMcVtq1k+I/XjkbQzF0EjgWAeKTYKUcXDMLf6Q94A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=O6vxGTMl; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-82aad6c83ecso16210639f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 17:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727914781; x=1728519581; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IZK8FupAz8NR+xEbyhnAVE8FI4jxUNfH0gQ1SYLGKug=;
-        b=O6vxGTMldy5tWA5p5dXgc8Xaxfzz2alTiWm3RShVKQVmZBHyBgvvjOYsgsbtn4RGAD
-         PgTtr2vZmriLi53Y21GI3r08hBAeLtgjuqIx9ff97RtG3+T5eMecr5/5x9IMYpCqrr5+
-         eF0e5rcDtDZ56TeRkgzasahWGdkqXiBrKtwXQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727914781; x=1728519581;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IZK8FupAz8NR+xEbyhnAVE8FI4jxUNfH0gQ1SYLGKug=;
-        b=pWemApUr8bLGUwQUECy4RIbrRyIwU2etclsW2rU0w1SMtMkJQWGCUk4eptlycqpLlt
-         b3FiGQHPECjBuKZkFt23Yi9fZlh2N6eOJWJ5zLM7wq2NDZjp71f/ro/A3BCpkyuTqbIg
-         7j4HPuCP8b7Fn/Pehi+VC/NoQzaedK4yby0M0oHXCIjaC4NaL9gN+vu3xl9CcyV3dbrD
-         HrNsRDXV3v2ABeT+igAXyJI1f3cdx3qe3WcmwTRBWTcVWaLQ4KFiDFJuU+jIFD0S9+Nw
-         AV41/HV+HHRzdg0FCILdn1xCxS9taelmLpvLrMnxdP8C64P0bWiA8Bhhp52zogRpHdrc
-         wI6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWt01fPb4FKYrBv1Hxa0pplpzJ89lbMMg1bxZBYaMUoTnRSHkzOg+LE5fe2EENwagiQ6fmZc0spVtdluPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4DaQ5T/SP7n3lCLULFmgW03YM1UZc75QfPTFbGhibtaibg7FT
-	fkNs8GUN/zw9uG5AIDj9q0ukeZSciTfADKd4TlrjDRlPSMHooh6c9uomJhzDeQ4=
-X-Google-Smtp-Source: AGHT+IFL3nQ2fqVzpy55jIhf/78rEtwqx8BMIhySGt4vVuWgB+Ao0LYLQfLrxbqIDU5Zgeai3OU+Iw==
-X-Received: by 2002:a05:6e02:1525:b0:3a0:be93:e8d5 with SMTP id e9e14a558f8ab-3a36592a7abmr52563365ab.11.1727914780742;
-        Wed, 02 Oct 2024 17:19:40 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db5586134asm49602173.33.2024.10.02.17.19.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 17:19:40 -0700 (PDT)
-Message-ID: <199ba85c-afbc-41bb-af30-90e0b197aa84@linuxfoundation.org>
-Date: Wed, 2 Oct 2024 18:19:39 -0600
+	s=arc-20240116; t=1727915076; c=relaxed/simple;
+	bh=xL4ljROcU0VbrL9Otp98O8uaxbzfyrWiYGf9p6HJ9/Y=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=nrG6pMzeI+lFi+p4evhMhaNzZkK30c3E4RmmugHFlwl80sxXV0erFKEcUdDc3cO1XPIxWzG5w97bFkZ0AsuD07tBis/453yATsVUd47VLwqfQJbCxGTyoUtp/z05YKwi53veUrPnQtZfbfnrJPG4RDRQ/f1gSR3LeZ3atVfTxWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=mqUzFXZx; arc=none smtp.client-ip=139.138.36.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1727915074; x=1759451074;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xL4ljROcU0VbrL9Otp98O8uaxbzfyrWiYGf9p6HJ9/Y=;
+  b=mqUzFXZxyT6pq2JuUh2ORDx8oQshCXcsMuEvIIPf2V2maoXKokXphMWJ
+   ntNhBk1cG8vo5QbeR985LGygOMpbR7vUNVk/b5xT9vsBFjgT8l7wgmb7G
+   RSuS3hBTvIpN40wWLwW+8sLXb6+mqfn8Rda1n7uf84KmmVGDM5LEpCwiP
+   N3RAJmib+hOqQTo8RFm4zWCvK4hBFxq75RSdXYD/cCtvrCq1w+JnMy30B
+   cvXmsyt9mSpk//nJ3u1U0C+hNwAU/zBEg03mlnqudCqlPR5PMZ84itRI8
+   dmjU1bIyg+JV/dZCaf2otkKIIxN6rHNkDYg/LuLZq768GPi5P33+AKtSe
+   A==;
+X-CSE-ConnectionGUID: KITXSKGASSyyOjDzj5dM2w==
+X-CSE-MsgGUID: KKLTwZsJQ42B+1hb0qmejQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="162922413"
+X-IronPort-AV: E=Sophos;i="6.11,173,1725289200"; 
+   d="scan'208";a="162922413"
+Received: from unknown (HELO oym-r3.gw.nic.fujitsu.com) ([210.162.30.91])
+  by esa10.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 09:24:31 +0900
+Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
+	by oym-r3.gw.nic.fujitsu.com (Postfix) with ESMTP id 8D258D64AF;
+	Thu,  3 Oct 2024 09:24:29 +0900 (JST)
+Received: from yto-om2.fujitsu.com (yto-om2.o.css.fujitsu.com [10.128.89.163])
+	by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id BCD51D9CDC;
+	Thu,  3 Oct 2024 09:24:26 +0900 (JST)
+Received: from sm-x86-mem01.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
+	by yto-om2.fujitsu.com (Postfix) with ESMTP id 4E5F2400578EA;
+	Thu,  3 Oct 2024 09:24:26 +0900 (JST)
+From: Yoshihiro Furudera <fj5100bi@fujitsu.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>
+Subject: [PATCH] perf list: update option desc in man page
+Date: Thu,  3 Oct 2024 00:24:04 +0000
+Message-Id: <20241003002404.2592094-1-fj5100bi@fujitsu.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/634] 6.10.13-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241002125811.070689334@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241002125811.070689334@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
 
-On 10/2/24 06:51, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.13 release.
-> There are 634 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 04 Oct 2024 12:56:13 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.13-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+There is a difference between the SYNOPSIS section of the help message
+and the man page (tools/perf/Documentation/perf-list.txt) for the perf
+list command. After checking, we found that the help message reflected
+the latest specifications. Therefore, revised the SYNOPSIS section of
+the man page to match the help message.
 
-Compiled and booted on my test system. No dmesg regressions.
+Signed-off-by: Yoshihiro Furudera <fj5100bi@fujitsu.com>
+---
+ tools/perf/Documentation/perf-list.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
+index dea005410ec0..14621f39b375 100644
+--- a/tools/perf/Documentation/perf-list.txt
++++ b/tools/perf/Documentation/perf-list.txt
+@@ -8,7 +8,7 @@ perf-list - List all symbolic event types
+ SYNOPSIS
+ --------
+ [verse]
+-'perf list' [--no-desc] [--long-desc]
++'perf list' [<options>]
+             [hw|sw|cache|tracepoint|pmu|sdt|metric|metricgroup|event_glob]
+ 
+ DESCRIPTION
+-- 
+2.34.1
 
-thanks,
--- Shuah
 
