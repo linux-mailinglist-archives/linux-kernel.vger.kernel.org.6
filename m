@@ -1,153 +1,171 @@
-Return-Path: <linux-kernel+bounces-349076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D44198F07A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:33:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316BB98F07D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAC142837E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:33:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 537471C2109A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7F819CC04;
-	Thu,  3 Oct 2024 13:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9412519CC09;
+	Thu,  3 Oct 2024 13:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="aC5Bd2/d"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hrJLXP5w"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0918819B3F9
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 13:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293201386BF;
+	Thu,  3 Oct 2024 13:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727962408; cv=none; b=MMXBdY5w0zFKaGymlaGa0ZTG18pu6uc0ybXFVOd/yNE1CHxoAYLsRcMOu9DYnc51/WtZbgTP7pRu4SSboCpyCBlBN0PKtICtKYvMUQLsziSkctAcWW+rdjpYAz1IYZ2JF6i2RvFMNmpw0s07F7w64TXxw4nDT+DEsCHvgCM11H0=
+	t=1727962441; cv=none; b=DOv8mD7EIut3EDglcnjvrL562GYhPKp70qitcXWWgsra9wzRYjbwEQZaeLm/7ktO3pKbn5wwtnoUA5UCtkU9bRXCp7DXETrNEboDV/roJ51snjmVHOjs+o1JlTfF7QRfKU/f5YG283pZULeHilXM4X4dg/96yHdBNlbMxCubc4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727962408; c=relaxed/simple;
-	bh=ru5EfHEC2xYx7sJrFNE6UgCz7R3Tdiv5uWDzLygWL3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EPZBUSv/czPHK//IiKsnwJ0zg9VZggXHZZWZVI9I6HFfuRJxR2pL8RgVbb1VuwUrrlYEw7rUIXXnnoKPkhhAH61+dMFbayHFG1/LclN/MhfU3n+goWbFj4t+2Gpo4nKXE8TyQWPnOvwuEXX4+Zb/0jfwZUrJrreZyYlyTviEDsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=aC5Bd2/d; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6c5acb785f2so5661946d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 06:33:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1727962405; x=1728567205; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8dQ/gk58hUlGStzLPNPz+tqcQ3+D0/hVEA8eHIyZCn0=;
-        b=aC5Bd2/dhJf9fKs2BqfXGibi0Rb4Paggm5wxNHOi+8dgkaKZl3sYSoajE8lr7P57r5
-         CZsVfdN+KptxetJ8VkdW4U6EhvcgPubogkttCVRdzmcDLFUnrmDZ3zgJhLslJOaZTxMT
-         v437LvvpyTQTkG2QNdYV4ophc2M38YjG1kuufs1gHYh+Np/zRPG0rN1JCFu6bXBU52SH
-         G9aaSliwRdB9v44X/TGeS1mR5Ok+3CRSKGk5tYJnaV3K0oqzBpo4+YdR2br98+J7+VUw
-         SRwxiBmPdGZMWZmYAFrhRyCtiqQGE0IRLgQHKBPMTdNazzJ7r4ibjNBE/XV1xzfB4kjM
-         4koQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727962405; x=1728567205;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8dQ/gk58hUlGStzLPNPz+tqcQ3+D0/hVEA8eHIyZCn0=;
-        b=e5QcnA/mRwqsj7diEpYtZeXT/HO4u08g2b12M92fIfGdd7eZU/jUjiRAqZIeADuARB
-         5vVxYyiLbegPZJN10gxNZaIulZvxHMCCDItVsYKxdEH6fKj65Dh+WXmR56ysKGWIalZ0
-         UMnj/u/7AKtyZ0vbQhURu11SpfyQT+lE4wPl1NmwP59ZWGzGrwlcZsRlxBv6b6V8MQKu
-         +pGV0RFqD8OGXGTUyOaOdWKgWJZGqgJn9NSbw6rBeV9mkJJavVLrWawLPVG55vNM/ykv
-         OslT2VmzFPEb/UKodGLhRxfTDTXxX/88LKyRM2bXNmDGA1JA+sAkoYFjnskRioFeEpRz
-         1RxQ==
-X-Gm-Message-State: AOJu0YyX9Aq27iJJ/7BuuNeUecH/5Mt9w31gJRxwXxAr2jZ3riMkpZKO
-	IBnFVJ08tcLJFcl4iCcFmJdOPNL9/5xw24a7GjPQ5lpqMR3wcjtOZobJYLkIyLY=
-X-Google-Smtp-Source: AGHT+IHs6HB9tlbYAhVev9UHmvUhD6mUcL6pLiiMeMpBirOjKBi5OGNhsG7hwNB7h9ua6MEKwvVLvw==
-X-Received: by 2002:a05:6214:450c:b0:6cb:3644:7ee1 with SMTP id 6a1803df08f44-6cb81a1066emr94967236d6.28.1727962404750;
-        Thu, 03 Oct 2024 06:33:24 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb9359bad5sm6515846d6.5.2024.10.03.06.33.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 06:33:24 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1swLxL-00ASUf-OH;
-	Thu, 03 Oct 2024 10:33:23 -0300
-Date: Thu, 3 Oct 2024 10:33:23 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: James Gowans <jgowans@amazon.com>
-Cc: linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	"Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>,
-	iommu@lists.linux.dev, Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Alexander Graf <graf@amazon.de>, anthony.yznaga@oracle.com,
-	steven.sistare@oracle.com, nh-open-source@amazon.com,
-	"Saenz Julienne, Nicolas" <nsaenz@amazon.es>
-Subject: Re: [RFC PATCH 11/13] iommu: Add callback to restore persisted
- iommu_domain
-Message-ID: <20241003133323.GB2456194@ziepe.ca>
-References: <20240916113102.710522-1-jgowans@amazon.com>
- <20240916113102.710522-12-jgowans@amazon.com>
+	s=arc-20240116; t=1727962441; c=relaxed/simple;
+	bh=kDkGldLwAsOfUsEBIxIpYsOMwP0o3rK3yuOfGjV0TQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oqr+UgMAi9luunR5OG1Mb2mXTSLQZ0nXfU5GeYkD8orIXauQXlfjqA2HafbW1lMs4pTXZ14DmwiIKqX7ZJXR0ZuEyI9xz+8M+z2Ns3vbj23G1njlhtgGQiOFksoAKBUvhi/JlPXEx7ByA9anbqyJ9g4bD/rsFf+bNGuLzlRUG7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hrJLXP5w; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E9F99593;
+	Thu,  3 Oct 2024 15:32:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727962345;
+	bh=kDkGldLwAsOfUsEBIxIpYsOMwP0o3rK3yuOfGjV0TQI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hrJLXP5wCQq2DNql2od5FbYFC+bszF2kWVzOzc0V/EL1/Uk9aIaM+oaloAKvL6NoD
+	 R+b6be7U0yR/Vfib2NOV7Wz56xyj64tx4fCH1zBmWVEPWfnypw4eSGZmDjw5uXZF4u
+	 xwlQsTOR/WxMeIwrlDiK9qrLaWf+8abI5RbhbHfc=
+Message-ID: <ea1c37b3-0430-4bce-9228-5d761ff94425@ideasonboard.com>
+Date: Thu, 3 Oct 2024 16:33:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916113102.710522-12-jgowans@amazon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] media: i2c: ds90ub960: Fix missing return check on
+ ub960_rxport_read call
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241002165329.957739-1-colin.i.king@gmail.com>
+ <Zv40EQSR__JDN_0M@kekkonen.localdomain>
+ <f1e973fd-9933-49ed-8f9c-71b8283e6fb8@ideasonboard.com>
+ <Zv6Z6P0cjYCkyJh9@kekkonen.localdomain>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <Zv6Z6P0cjYCkyJh9@kekkonen.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 16, 2024 at 01:31:00PM +0200, James Gowans wrote:
-> diff --git a/drivers/iommu/iommufd/serialise.c b/drivers/iommu/iommufd/serialise.c
-> index 9519969bd201..baac7d6150cb 100644
-> --- a/drivers/iommu/iommufd/serialise.c
-> +++ b/drivers/iommu/iommufd/serialise.c
-> @@ -139,7 +139,14 @@ static int rehydrate_iommufd(char *iommufd_name)
->  		    area->node.last = *iova_start + *iova_len - 1;
->  		    interval_tree_insert(&area->node, &ioas->iopt.area_itree);
->  	    }
-> -	    /* TODO: restore link from ioas to hwpt. */
-> +	    /*
-> +	     * Here we should do something to associate struct iommufd_device with the
-> +	     * ictx, then get the iommu_ops via dev_iommu_ops(), and call the new
-> +	     * .domain_restore callback to get the struct iommu_domain.
-> +	     * Something like:
-> +	     * hwpt->domain = ops->domain_restore(dev, persistent_id);
-> +	     * Hand wavy - the details allude me at the moment...
-> +	     */
->  	}
+On 03/10/2024 16:19, Sakari Ailus wrote:
+> Moi,
+> 
+> On Thu, Oct 03, 2024 at 03:52:17PM +0300, Tomi Valkeinen wrote:
+>> Hi,
+>>
+>> On 03/10/2024 09:05, Sakari Ailus wrote:
+>>> Hi Colin,
+>>>
+>>> On Wed, Oct 02, 2024 at 05:53:29PM +0100, Colin Ian King wrote:
+>>>> The function ub960_rxport_read is being called and afterwards ret is
+>>>> being checked for any failures, however ret is not being assigned to
+>>>> the return of the function call. Fix this by assigning ret to the
+>>>> return of the call which appears to be missing.
+>>>>
+>>>> Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
+>>>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>>>> ---
+>>>>    drivers/media/i2c/ds90ub960.c | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+>>>> index ffe5f25f8647..58424d8f72af 100644
+>>>> --- a/drivers/media/i2c/ds90ub960.c
+>>>> +++ b/drivers/media/i2c/ds90ub960.c
+>>>> @@ -1286,7 +1286,7 @@ static int ub960_rxport_get_strobe_pos(struct ub960_data *priv,
+>>>>    	clk_delay += v & UB960_IR_RX_ANA_STROBE_SET_CLK_DELAY_MASK;
+>>>> -	ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
+>>>> +	ret = ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
+>>>>    	if (ret)
+>>>>    		return ret;
+>>>
+>>> There seems to be a similar issues all around the driver. It'd be good to
+>>> fix them at the same time.
+>>
+>> With similar issues, do you mean the code not checking the return value at
+>> all for i2c reads and writes?
+>>
+>> In this particular case the code already checks the return value, but
+>> setting the return value was missing. With a quick browse, I didn't see
+>> other like this.
+> 
+> See e.g. ub960_clear_rx_errors(), ub960_log_status(),
+> ub960_rxport_set_strobe_pos() and ub960_rxport_set_strobe_range.
 
-The core code should request a iommu_domain handle for the
-pre-existing translation very early on, it should not leave the device
-in some weird NULL domain state. I have been trying hard to eliminate
-that.
+Right, those don't check the return value. So they're not the same as 
+the one fixed in this patch.
 
-The special domain would need to remain attached and some protocol
-would be needed to carefully convey that past vfio to iommufd,
-including inhibiting attaching a blocked domain in VFIO
-startup. Including blocking FLRs from VFIO and rejecting attaches to
-other non-VFIO drivers.
+I'm not arguing against adding error checks, but that's a big work and I 
+think this patch is a different kind of fix which should be applied 
+whether the additional error checks are added or not.
 
-This is a twisty complicated path, it needs some solid definition of
-what the lifecycle of this special domain is, and some sensible exits
-if userspace isn't expecting/co-operating with the hand over, or it
-crashes while doing this..
+Also, while still not arguing against adding the checks, it looks quite 
+common to not check the returns values. E.g. it's not just a few errors 
+I see if I add __must_check to cci functions.
 
-> @@ -576,6 +578,9 @@ struct iommu_ops {
->  	struct iommu_domain *(*domain_alloc_sva)(struct device *dev,
->  						 struct mm_struct *mm);
->  
-> +	struct iommu_domain *(*domain_restore)(struct device *dev,
-> +			unsigned long persistent_id);
-> +
+  Tomi
 
-Why do we need an ID? There is only one persistent domain per device,
-right?
-
-This may need PASID, at least Intel requires the hypervisor to handle
-PASID domains, and they would need to persist as well.
-
-Jason
 
