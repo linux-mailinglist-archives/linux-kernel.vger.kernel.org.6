@@ -1,166 +1,93 @@
-Return-Path: <linux-kernel+bounces-348864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF2D98ECD2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:17:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB7E98ECD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C152A1F25E4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:17:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7CA1C213A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F8D14EC60;
-	Thu,  3 Oct 2024 10:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5DA14A09F;
+	Thu,  3 Oct 2024 10:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TeXrvxIz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoFB43Jk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1545148314;
-	Thu,  3 Oct 2024 10:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2052B1B969;
+	Thu,  3 Oct 2024 10:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727950646; cv=none; b=TVu/krROr5UTDA6KirfVRU6z4UXo76v440vAPpN3lHVcdjyIMbkT8s5eVsnZawOBVM9ClmOHVGStIV1fnKLwChSz9/sujPssVBVTNAVrIdlt6lxiVnqvMeOIkT59aePuvwYOOnv60Hgl0s/Sa6JBH/gevDTjDMuUusI02Q/zUpY=
+	t=1727950829; cv=none; b=KppMvtFiaKfEk3Z2b5mpQVIdyo+Plv8MMhzHsoy9bPpO4cBK2YcjoGDD/OuXPR2DKNL1TWjH5ufQYRbgs4CQgP7BMNweXYDQU457YmQgMNRCx00TbXgnLKAmwxXasqo84RCGB1rHhGij1sO9qSqjVR2J3vGrBe8KTd65/wbSnvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727950646; c=relaxed/simple;
-	bh=RjkHMa6NFpwQZS4eKH1S5lgppOyNMql2P81Y/JIoYrE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CGeqlemFxolA6Q/60gLS4IEPm4eMNVeE/AAbj9TWJeGEILcgsYmJW7T+6zmklwA7+L6bgu4YXPQ9GneS28SIPWK3g+rCXsKJVCHcOmzexv26M/mqprPGQ942kai+FwT2EENI9OzwIIKgWpcXRUXUEgCqZxPoL3hUCyuDLDfRxbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TeXrvxIz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18810C4CEC5;
-	Thu,  3 Oct 2024 10:17:20 +0000 (UTC)
+	s=arc-20240116; t=1727950829; c=relaxed/simple;
+	bh=b6xfIy6LocaTgiQynoJhq7HsQBAFM3ayKFMNhQRjhyE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Go1wsga9OxPO9QtBJJ7E9fWlThjIi8wsgmPj58gEpHe2TONjs1Eq1SM+X4Y4INoBXsk4WRuZeKmPD939JFfN4OICgMST+EhXgh+IY7P7PrAlpWmWWVz1QrRopiSCaHoslI4Z2DLQPsnlu4aPHStQcOYYWcy9W8EeLWBK2FAX0BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoFB43Jk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC055C4CEC5;
+	Thu,  3 Oct 2024 10:20:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727950645;
-	bh=RjkHMa6NFpwQZS4eKH1S5lgppOyNMql2P81Y/JIoYrE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TeXrvxIztXw3IMuuqf806bD/4CN1wTKICwpkPWUWppCQlVH2+3RsiAGpOjCqDfN4H
-	 wO20ZYCbKfpGYnCty598SihEDDPbVUsl8o3nm6K8T/ZoXx3LQYZO4zpJWiqe4BxYSU
-	 5LISSmfsSsHrIcP/Rg7cSOp6JArLBtap9rGDutcGz94ki71zm0YM+fFl4B0tFDZBya
-	 l6gSQS4LjTy9GJYfAVyyoL7Ta5rk8xQ6SqXbY6z/lbxkLQE9VLERnRG6WcuKsh/htK
-	 wNPKXJBMhikQrVD7I8aONOnnVRWPJa0d9ufwjPUzA2UoYVSG/5GHJ9oKRK6n6SJ4hN
-	 5eonSmfhE5Wvw==
-Message-ID: <e8142566-aef5-498e-9d2d-8ac187ce8524@kernel.org>
-Date: Thu, 3 Oct 2024 12:17:18 +0200
+	s=k20201202; t=1727950828;
+	bh=b6xfIy6LocaTgiQynoJhq7HsQBAFM3ayKFMNhQRjhyE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hoFB43JkYr+4j4XxQG4ODJPooL/GVRJdU0P5GAB5BtBfm7zP5iEkZ5cTMrii7s8FS
+	 inF5hjGxU29X2uKurzzr5+LNtwPZF1Ik2i1nHA62H6Ol2N6L7EfI9FeMVFHLaBSmxu
+	 YuwP2gc8EJBITqraW5rrwjNc58WpL6VDfGadEtF146rxTipFnQp07mwdR1m/Mzxa+l
+	 Z93iUGFyur0PaPlDcMjADSofbt/teyVhLbNp/Xu5DuJpm6c4SSnFz4JPn+xlgpaI4/
+	 jG4H5x0aTR5l05has+7fbwUzj9n/rixRJRDejwNwacpV1z33hHDhlfMuE3LZZN7UIx
+	 KebymvNmTRz7Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 72FC13803263;
+	Thu,  3 Oct 2024 10:20:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] media: dt-bindings: Add OmniVision OV08X40
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Jason Chen <jason.z.chen@intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241002-b4-master-24-11-25-ov08x40-v3-0-483bcdcf8886@linaro.org>
- <20241002-b4-master-24-11-25-ov08x40-v3-2-483bcdcf8886@linaro.org>
- <t4fajppdqagkl7wr2krcucsga4zocz6liar64odk2mnasdyfms@5fp7bfwalson>
- <a86d05c3-5151-4161-8612-58894b1d0203@linaro.org>
- <8554d372-18cb-4351-a5ab-894be09c613b@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <8554d372-18cb-4351-a5ab-894be09c613b@linaro.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] doc: net: napi: Update documentation for
+ napi_schedule_irqoff
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172795083227.1807590.449747881502540277.git-patchwork-notify@kernel.org>
+Date: Thu, 03 Oct 2024 10:20:32 +0000
+References: <20240930153955.971657-1-sean.anderson@linux.dev>
+In-Reply-To: <20240930153955.971657-1-sean.anderson@linux.dev>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, bigeasy@linutronix.de,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
+ bcreeley@amd.com
 
-On 03/10/2024 10:38, Bryan O'Donoghue wrote:
-> On 03/10/2024 09:33, Bryan O'Donoghue wrote:
->> On 03/10/2024 09:29, Krzysztof Kozlowski wrote:
->>> On Wed, Oct 02, 2024 at 02:58:44PM +0100, Bryan O'Donoghue wrote:
->>>> +        properties:
->>>> +          data-lanes:
->>>> +            oneOf:
->>>> +              - items:
->>>> +                  - const: 1
->>>> +                  - const: 2
->>>> +              - items:
->>>> +                  - const: 1
->>>> +                  - const: 2
->>>> +                  - const: 3
->>>> +                  - const: 4
->>>> +
->>>> +          link-frequencies: true
->>>
->>> Not much changed here and you did not continued discussion about it.
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>
->> Ah my mistake, I didn't read the bit at the bottom of your email
-> 
-> I'll do this
-> 
-> Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> 
->            data-lanes:
->              description:
->                This property is for lane reordering between the THP7312
->                and the SoC. The sensor supports either two-lane, or
->                four-lane operation.
->                If this property is omitted four-lane operation is
->                assumed. For two-lane operation the property must be
->                set to <1 2>.
->              minItems: 2
->              maxItems: 4
->              items:
->                maximum: 4
-> 
-> This captures what I'm after.
+Hello:
 
-I commented on link-frequencies.
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Best regards,
-Krzysztof
+On Mon, 30 Sep 2024 11:39:54 -0400 you wrote:
+> Since commit 8380c81d5c4f ("net: Treat __napi_schedule_irqoff() as
+> __napi_schedule() on PREEMPT_RT"), napi_schedule_irqoff will do the
+> right thing if IRQs are threaded. Therefore, there is no need to use
+> IRQF_NO_THREAD.
+> 
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] doc: net: napi: Update documentation for napi_schedule_irqoff
+    https://git.kernel.org/netdev/net/c/b63ad06ddddf
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
