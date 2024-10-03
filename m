@@ -1,167 +1,153 @@
-Return-Path: <linux-kernel+bounces-349655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895DA98F9AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:14:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D759798F9BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A04C1F2379B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:14:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61D12B22162
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134EE1CB514;
-	Thu,  3 Oct 2024 22:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EE61CB53A;
+	Thu,  3 Oct 2024 22:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtYS0Jdr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V97lcLm4"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6261C9DC2;
-	Thu,  3 Oct 2024 22:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4460824BD;
+	Thu,  3 Oct 2024 22:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727993636; cv=none; b=KS52T6CMISI5Q/RsX+uM1MZQy8MsDIfY4+j+hthYoY8kWzBkIcC+t9xw4e3k0JMgeBFO45ihNlEqYucX4yjk9M9nmk0vnAZN4dpONeNG42HebJNMGRXLCnKY8SFxh/mWFTqm8N/CFnDMs2lT/PGijLJH1hf97f9cy1966S8JfDc=
+	t=1727993858; cv=none; b=t2tE4dCQIMkttYq3sZVjWOC6EV6RK1p4jkXeQvEWBKN8N56gbY9TijeK2OXCNVEn1co1uIQiD4HcaPMr8Gy3cmwfo6lFzS3fBH7RIa1vItGf5vhYvI34oA+yTqKBze57LBvwbDzWhcTM7ZvZyqYFOMzgqO9DiGMAg6Boexf4/9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727993636; c=relaxed/simple;
-	bh=xOjSyMsBh5IGBGcZ4RMgGN36DzY919SWbahZJt1TSns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sj84ng2zb4Ln21GySgQpwIxOU26p44o6Mw0mg1jmBDVi/s8gojvFN2h3xrGNMc2qnC1yUHcsTA7WTX7Id329Qw6CdWkSyuIF+dFgAFN+bF5Zi6rq9t6uV9Tanl+vWYR6hhITvxlwF/Ov8xhZPJ/7pXGFVbd9cGrNJ1VGSCjCjxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtYS0Jdr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91FE4C4CEC5;
-	Thu,  3 Oct 2024 22:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727993636;
-	bh=xOjSyMsBh5IGBGcZ4RMgGN36DzY919SWbahZJt1TSns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WtYS0Jdrlmc1x9aK84ZK6EH4sMeXUYh0WfMcSwcu0jIWqpEhhCTG5v/luq3XzIU/q
-	 miQTWE8ZPIXmrsEwADqdYWEB9L4SP4lZD5o28ne+UMQmhC1dLmyMR84LVsMfiT2UHZ
-	 7wYhwZp/uwYyxVjuvA2VpnFecTq04T/c77r47B+yHpK204qyaQHF/vEIkitsgLsdwK
-	 DOqe7nCFY0CeTRtOyDJEBKSMDEVM29Chy82pqQJ7p+OMDGCWls5BApnX4TJaJXrhCq
-	 JWSKghU2bjHz1twtkCTav523E33tOzGy6DxJR9VZxIbWypt6LCDaoJd8C3/qrQS8ZX
-	 n+wb0FEiRoD5Q==
-Date: Thu, 3 Oct 2024 15:13:53 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
-Message-ID: <Zv8XIZAwfoTtzOl4@google.com>
-References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com>
- <172781650408.2469191.8205759350946908012.b4-ty@kernel.org>
- <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
- <Zv3ek7aBkQo0Z9To@google.com>
- <CAP-5=fUjLhGw4SmMTH_H2=1OwRDrY04RL6+C=DdQ=VSgXk8JZg@mail.gmail.com>
- <b0695ef6-8a59-4550-8a33-9afb25c93f48@linux.intel.com>
- <CAP-5=fXutWptEKZKNvLXvXXpuDoMje6PiOxMuF872xoMjtumGQ@mail.gmail.com>
- <Zv7KHGQx0y3rAGWx@google.com>
- <690ddcd6-276a-4b7b-bd21-fb4ef2349990@linux.intel.com>
- <CAP-5=fU7_RqcG+YO4C=FP_cy__eSd=ieJ_pOe4J-s2zh=sybsw@mail.gmail.com>
+	s=arc-20240116; t=1727993858; c=relaxed/simple;
+	bh=Ymh2tpS1JI2NHOim1p+BjzOidAveJc2fGryZHKnRDpE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZURI/IA423miIyhnCQakXpaMVZxlmnO/fqmE7Nrk5ZeD92ekoWLurrxYArtO3RFxDfc1FOuLcnsosKzkNr9rjDzvuUADNeetQTcDjpB57GHBzrCADvqarLuMUQY6qmbVTRRpt2168Vqs/8vlzClzNOYsleJcOjCHSf8vI8he5i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V97lcLm4; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso16474491fa.0;
+        Thu, 03 Oct 2024 15:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727993855; x=1728598655; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lo03yBFFODZstMfsdWLSOlbjB57/RWRNzFo3/1cKqnQ=;
+        b=V97lcLm4l35g8Az8mujQLDGHO83/8/JlZgMm2r/Qc4tn16peyN3T7PgR0/PwYWl2no
+         r1x9g/SKX7Hu0xO3tDcZ/RSCIZ8YeAXEjiWd4lUPRvTP2dVBImFYWlrHdzqaAu6ila0w
+         AE8fJ5YWWIwJGIH/TnG+zxinnI4MUTX92UeyvPsyHUcR13veaCrUny9EhuwwO09zukNW
+         KZJQ+Bsmbz0KntHYGxRW62dHnzHEqdmx+PeOVsev4H0s82Rq0M84PIcql9K1Rvyoif/c
+         WO4QsMHvlgr6LwJ7jWfyFmnrPycn4lsCxyN1ehhYwdZTqny/NacGNQCuN/HeOyH4EziQ
+         kCxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727993855; x=1728598655;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lo03yBFFODZstMfsdWLSOlbjB57/RWRNzFo3/1cKqnQ=;
+        b=M6iRstHk7MIv6rxyAer6oq4I0Zbk8Kff0jp2JaDBL6ee49VAeIlF2ZF6c45mvgUL3T
+         8qI4TAplTgToekLc/e3txcBzDiN+8tnaivLtlNBjuyCstbbSJno+mjvZoQHHTHuP1Zbn
+         fkxGCdIii/hRvUYyI8ZQK5fowhqBtwg6RW8yAPPXmrM7XAJiys0dovJ9CMsnZJXQLEgP
+         pKFOLSQYAL8ilGHGszOTuQn4jozrXOOGNc0j167UVxSYqIT6SdOfKEyN5INZi58+wHUA
+         sIu84kPW4Jb+MttnejRQuNI95rpievKBl5TNDFd+FeJmDIUbTj/lrUiJ8df8dHY60G32
+         oGeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSK/o0/g7+aJYxVIU1AveHIWhpCRsFgBydAzEG08R+EaT6pP9PXf6TFKYzOUQYmcOuezoIc4UZ6jEGweA=@vger.kernel.org, AJvYcCWAFXYyUETz63CiIfs6CUNTYCop3R+C4Zr/eV5aHqtMOzuXYcAxg+g40mrzQNASFKNg/Lg79M5wfIyTJL6Uuy0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFOtopHUaCFa/YcBN1nCaJDrTJw5tbNAjcnJLiR+qWbjI1Jfjf
+	txIJ7Fph++HiOLyFy8i4mhxRNDaAKjZtCcSLEBgfvAkXiRjYjItN
+X-Google-Smtp-Source: AGHT+IG12SpHijBRGXnrLLIsP9edGAXbq0kxeeG2mPlpZc4fneT6+0Ohi0oAfNbIPRCboytuYOt7fw==
+X-Received: by 2002:a05:6512:12d1:b0:539:94df:38e9 with SMTP id 2adb3069b0e04-539ab88af26mr456917e87.31.1727993854565;
+        Thu, 03 Oct 2024 15:17:34 -0700 (PDT)
+Received: from mbp-deepak.lan (89-69-93-57.dynamic.chello.pl. [89.69.93.57])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9910473160sm137958966b.167.2024.10.03.15.17.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 15:17:33 -0700 (PDT)
+From: Deepak Thukral <iapain@gmail.com>
+To: 
+Cc: Deepak Thukral <iapain@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Nell Shamrell-Harrington <nells@linux.microsoft.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] rust: update dbg macro outputs in docs
+Date: Fri,  4 Oct 2024 00:15:37 +0200
+Message-Id: <20241003221536.34826-1-iapain@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-145)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fU7_RqcG+YO4C=FP_cy__eSd=ieJ_pOe4J-s2zh=sybsw@mail.gmail.com>
 
-On Thu, Oct 03, 2024 at 02:26:29PM -0700, Ian Rogers wrote:
-> On Thu, Oct 3, 2024 at 12:45 PM Liang, Kan <kan.liang@linux.intel.com> wrote:
-> >
-> >
-> >
-> > On 2024-10-03 12:45 p.m., Namhyung Kim wrote:
-> > >>> If the algorithms cannot be changed, can you please give some
-> > >>> suggestions, especially for the sample read failure?
-> > >> So this is symmetric:
-> > >> ```
-> > >> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
-> > >>   return -1;
-> > >> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
-> > >>   return 1;
-> > >> ```
-> > >> That is were lhs and rhs swapped then you'd get the expected comparison order.
-> > >> ```
-> > >> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs) &&
-> > >> lhs->core.leader != rhs->core.leader)
-> > >>   return -1;
-> > >> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
-> > >> lhs->core.leader != rhs->core.leader)
-> > >>   return 1;
-> > >> ```
-> > >> Is symmetric as well.
-> > >> ```
-> > >> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
-> > >>   return -1;
-> > >> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
-> > >> lhs->core.leader != rhs->core.leader)
-> > >>   return 1;
-> > >> ```
-> > >> (what this patch does) is not symmetric as the group leader impacts
-> > >> the greater-than case but not the less-than case.
-> > >>
-> > >> It is not uncommon to see in a sort function:
-> > >> ```
-> > >> if (cmp(a, b) <= 0) {
-> > >>   assert(cmp(b,a) >= 0 && "check for unstable/broken compare functions");
-> > >> ```
-> > > I see.  So are you proposing this?
-> > >
-> > > diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
-> > > index 438e4639fa892304..46884fa17fe658a6 100644
-> > > --- a/tools/perf/arch/x86/util/evlist.c
-> > > +++ b/tools/perf/arch/x86/util/evlist.c
-> > > @@ -70,7 +70,8 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
-> > >                 if (arch_is_topdown_slots(rhs))
-> > >                         return 1;
-> > >                 /* Followed by topdown events. */
-> > > -               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
-> > > +               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs) &&
-> > > +                   lhs->core.leader != rhs->core.leader)
-> > >                         return -1;
-> > >                 /*
-> > >                  * Move topdown events forward only when topdown events
-> > >
-> > > Dapeng and Kan, can you verify if it's ok?  My quick tests look ok.
-> >
-> > I verified the above change. It works well.
-> >
-> > Tested-by: Kan Liang <kan.liang@linux.intel.com>
+Hi,
 
-Thanks for the check!
+This patch updates outdated examples for `dbg!` macro.
 
-> 
-> Dapeng's comment should cover replace the comment /* Followed by
-> topdown events. */ but there are other things amiss. I'm thinking of
-> something like: "slots,cycles,{instructions,topdown-be-bound}" the
-> topdown-be-bound should get sorted and grouped with slots, but cycles
-> and instructions have no reason to be reordered, so do we end up with
-> slots, instructions and topdown-be-bound being grouped with cycles
-> sitting ungrouped in the middle of the evlist? I believe there are
-> assumptions that grouped evsels are adjacent in the evlist, not least
-> in:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/parse-events.c?h=perf-tools-next#n2106
-> Does cycles instructions end up being broken out of a group in this
-> case? Which feels like the case the code was trying to avoid.
+Signed-off-by: Deepak Thukral <iapain@gmail.com>
+---
+ rust/kernel/std_vendor.rs | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-I got this:
-
-  $ sudo ./perf record -a -e "slots,cycles,{instructions,topdown-be-bound}" true
-  Error:
-  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (topdown-be-bound).
-  "dmesg | grep -i perf" may provide additional information.
-
-Thanks,
-Namhyung
+diff --git a/rust/kernel/std_vendor.rs b/rust/kernel/std_vendor.rs
+index 67bf9d37d..464b2c4b5 100644
+--- a/rust/kernel/std_vendor.rs
++++ b/rust/kernel/std_vendor.rs
+@@ -16,7 +16,7 @@
+ /// let a = 2;
+ /// # #[allow(clippy::dbg_macro)]
+ /// let b = dbg!(a * 2) + 1;
+-/// //      ^-- prints: [src/main.rs:2] a * 2 = 4
++/// //      ^-- prints: [src/main.rs:2:9] a * 2 = 4
+ /// assert_eq!(b, 5);
+ /// ```
+ ///
+@@ -65,7 +65,7 @@
+ /// This prints to the kernel log:
+ ///
+ /// ```text,ignore
+-/// [src/main.rs:4] n.checked_sub(4) = None
++/// [src/main.rs:4:8] n.checked_sub(4) = None
+ /// ```
+ ///
+ /// Naive factorial implementation:
+@@ -88,15 +88,15 @@
+ /// This prints to the kernel log:
+ ///
+ /// ```text,ignore
+-/// [src/main.rs:3] n <= 1 = false
+-/// [src/main.rs:3] n <= 1 = false
+-/// [src/main.rs:3] n <= 1 = false
+-/// [src/main.rs:3] n <= 1 = true
+-/// [src/main.rs:4] 1 = 1
+-/// [src/main.rs:5] n * factorial(n - 1) = 2
+-/// [src/main.rs:5] n * factorial(n - 1) = 6
+-/// [src/main.rs:5] n * factorial(n - 1) = 24
+-/// [src/main.rs:11] factorial(4) = 24
++/// [src/main.rs:3:8] n <= 1 = false
++/// [src/main.rs:3:8] n <= 1 = false
++/// [src/main.rs:3:8] n <= 1 = false
++/// [src/main.rs:3:8] n <= 1 = true
++/// [src/main.rs:4:9] 1 = 1
++/// [src/main.rs:5:9] n * factorial(n - 1) = 2
++/// [src/main.rs:5:9] n * factorial(n - 1) = 6
++/// [src/main.rs:5:9] n * factorial(n - 1) = 24
++/// [src/main.rs:11:1] factorial(4) = 24
+ /// ```
+ ///
+ /// The `dbg!(..)` macro moves the input:
+-- 
+2.39.3
 
 
