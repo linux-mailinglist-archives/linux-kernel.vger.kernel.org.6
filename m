@@ -1,190 +1,145 @@
-Return-Path: <linux-kernel+bounces-348532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C42098E8B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:10:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF3D98E8AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 728B71C227F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:10:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BB2F1F26BB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C587768FC;
-	Thu,  3 Oct 2024 03:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A825D3FE55;
+	Thu,  3 Oct 2024 03:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="H2PRcJar"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dcT++lDK"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCCF41760;
-	Thu,  3 Oct 2024 03:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455C21EA90
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 03:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727924978; cv=none; b=onkBmke3g7g8zfKHyAcBjI9pSzdFoqju7SUSrF6pEkcqwqA94SC5iW9MFAjodVT0I4Yp2hVHnFo2f/Z+uWeMpVpLcverI/4g/6jmh/niJGwoETw/YvT18727eLciOjHRDGTz/bkxceH6la4C2swKHqBpI4wmSWmtG83oLF5wDP8=
+	t=1727924976; cv=none; b=Z4uXeWu6FNhmGk2159sK6I0V9KPi/PxwhusDG+E2iReNf1Eqydee5DiPqP8ZGapq3ZWQUF9iS4bXoYpphHS3bPswY6tKT2sJciRN8gr/Kat0vXabOviCAmycWTy3UBasQIkYGSmxdyFb9o27iard08uinxgrTvQ05pXOyJVwqUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727924978; c=relaxed/simple;
-	bh=GgH1zlfsBcYy2XR4gqGasev5RJpaPE4ofjQ4/pVn9GU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QwWPkp9AC8khfJ+ig0NUDvljtRHgcyEPatmvNiOKJV7S9fAKIw5yneH96YJXSh3JQ0Rat7thZ43DPpHYs8sGAn2ie4GZEg7HKghEGocfPp4MiraN3qFQfC0bj6e558T68FF6fdi8khciRk2NvyuF0CxvjzLptCVgCDoyhsF+TFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=H2PRcJar; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: e64a9ab0813411efb66947d174671e26-20241003
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=0KhrERn+x95fmVwYoycNWzZQMILdQBU+L1WFDe4D2c4=;
-	b=H2PRcJarZfgkj83veVJL8Ap65D1C09uePxPBx8jWi1OF5wCI7XbnEw0cwuDkCWFb6IvNx+QxOcU4mqiAs/umgIgAoaUq+ar4hW/vhGg3y5uiifi7H6t13Cj5fYrq7oddQhf8SNRQTue1o4cNuUZ4aMFnERDcWMaNId3H/LkyAiw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:cc5269c6-8d46-4c03-a2a1-a8d612f82b3b,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-30
-X-CID-META: VersionHash:6dc6a47,CLOUDID:a70ae51a-3b87-4dc0-9e4d-1d837ff4304b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:1|19,IP:nil
-	,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
-X-UUID: e64a9ab0813411efb66947d174671e26-20241003
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 716648927; Thu, 03 Oct 2024 11:09:27 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 2 Oct 2024 20:09:25 -0700
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 3 Oct 2024 11:09:25 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>, Joerg
- Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rohit
- Agarwal <rohiagar@chromium.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Mergnat
-	<amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen
- Chu <sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>, Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v6 4/4] dt-bindings: display: mediatek: dpi: correct power-domains property
-Date: Thu, 3 Oct 2024 11:09:19 +0800
-Message-ID: <20241003030919.17980-4-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20241003030919.17980-1-macpaul.lin@mediatek.com>
-References: <20241003030919.17980-1-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1727924976; c=relaxed/simple;
+	bh=gqxa1YnqSpyoO8jYHhaneN1Xbjde9NeCMupNvy17rVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tMov4MCV/0aOMWdPfyv+X2yz+6g5RtFcKM5TNj/CUsymWUZXEKMcmEjMA9abJDNwuBUXNWAQ+Eyx8nWOwIPfv6/z3J9wmxpO5c83kgQwfqs01JS34Xtq0Lpm+DbqPJ8422Rp61ZdH2N3ckr8W0O2YU7q1+lZWJgTrG/KtqJCnXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dcT++lDK; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso392794276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 20:09:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1727924973; x=1728529773; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6TKlAqmWS7yAuGxt2U11/NinoSGw3zEex51U/NMll6k=;
+        b=dcT++lDKZGo+I167ijS7wJafX8qH34ogEGytZ+LqXFMa+/I6+gJWFaLd9OIy8+rNqQ
+         hytoO83DZqTVs0rcShRiCzQomzXm/m0oywfe6Ha7D7Rg+6iBTQNx27QpXnsSGyQFSPKW
+         ngqyxBSepdTtk62nC5prlCPZDpjC0FTIe6Ng2ByDzdJ1E8J+khx/7Eed44nnyIJut1/x
+         iWDwkoEgggTrgZmxlMFbAI2aace//qm+gYPsQIyiV/jH4MZMB9BXBx6HOwTZ7iQeMZ8p
+         cblaOkdadofbtyUhBcZtc/9OcHEar2tWIfbuuI3AW8XEus8CcVKThImFtjXYVsinQ9fj
+         3xKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727924973; x=1728529773;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6TKlAqmWS7yAuGxt2U11/NinoSGw3zEex51U/NMll6k=;
+        b=tc1PIc8Yzi27rgOjfI7sxxCOSdaVKaQ2P/vRrawGzQVTlLk9cNQOPZQa4eZb3f9++6
+         AReiI4QwqX41mITdVV5tTwWZVTSoZqwn+G9GGUBPPQjM9bcCskiDnde9ZsZw+6SJvVuI
+         hjYiqeOQX2UHnzFuG8IBNnySZN2fMMiO8BCjzrLQAvNwz+asJDJFMW13Ijm/OVF3pnBH
+         XyJzRFREfFtTw7JCoMTG3mjwDQAgXXLBMObOORwMrRpKVzRFgvmvA2EOspj48esa6+lP
+         JA9fiuhKllBfC5qt1FCgXeycTsDL/gLr7OXFAftmB99/wpQEAoq2dXMi12fiY/oNv8Mc
+         aE8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWnsRif5SgjtA9H5z3KWYUqUvNWIKIJg8z+XsHm3KZSi0ZyNwAON/lloi01N66rjszvkv4GgnYlDq7uCp0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaeBLno0Vd8N64k9kes0MjyUPADYghhI2AohKJf50hLp5+23JD
+	Am+Xi3FI+nRXKWD0vIb6D+7r2Vt7uCGbdliYFKqLfI7bhB/DSDt+bijsDgpjNKKEzzCExdnzol4
+	YGFX1aKqRA4U4VZyy8WszP8lS3ntuQglIfJaf
+X-Google-Smtp-Source: AGHT+IEXOkpzxjalt/s6BumTiyIkpgNz6DTSsxcgK3vVgqu+PX9GLKOWjEc84soRoaZm+DQi7TTIHvhFljCKfSz0Z54=
+X-Received: by 2002:a05:690c:ed0:b0:6dd:c679:f108 with SMTP id
+ 00721157ae682-6e2a2b3f03cmr55041267b3.5.1727924973274; Wed, 02 Oct 2024
+ 20:09:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+References: <66f7b10e.050a0220.46d20.0036.GAE@google.com> <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
+In-Reply-To: <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 2 Oct 2024 23:09:22 -0400
+Message-ID: <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com>
+Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
+ process_measurement (4)
+To: Shu Han <ebpqwerty472123@gmail.com>
+Cc: syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, hughd@google.com, jmorris@namei.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	roberto.sassu@huawei.com, serge@hallyn.com, stephen.smalley.work@gmail.com, 
+	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The MediaTek DPI module is typically associated with one of the
-following multimedia power domains:
- - POWER_DOMAIN_DISPLAY
- - POWER_DOMAIN_VDOSYS
- - POWER_DOMAIN_MM
-The specific power domain used varies depending on the SoC design.
+On Sat, Sep 28, 2024 at 2:08=E2=80=AFPM Shu Han <ebpqwerty472123@gmail.com>=
+ wrote:
+>
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > WARNING: possible circular locking dependency detected
+> > 6.11.0-syzkaller-10045-g97d8894b6f4c #0 Not tainted
+> > ------------------------------------------------------
+> > syz-executor369/5231 is trying to acquire lock:
+> > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode_l=
+ock include/linux/fs.h:815 [inline]
+> > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: process=
+_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+> >
+> > but task is already holding lock:
+> > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_kill=
+able include/linux/mmap_lock.h:122 [inline]
+> > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_remap_file_=
+pages mm/mmap.c:1649 [inline]
+> > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_remap_file_=
+pages+0x22d/0xa50 mm/mmap.c:1624
+> >
+> > which lock already depends on the new lock.
+>
+> This issue (if not a false positive?) is due to the possible `prot`
+> change caused by the processing logic for READ_IMPLIES_EXEC in do_mmap(),
+> so the remap_file_pages() must perform LSM check before calling do_mmap()=
+,
+> this is what the previous commit want to do.
 
-These power domains are shared by multiple devices within the SoC.
-In most cases, these power domains are enabled by other devices.
-As a result, the DPI module of legacy SoCs often functions correctly
-even without explicit configuration.
+My apologies for the delay on this, I was traveling for a bit and
+missed this issue while away.
 
-It is recommended to explicitly add the appropriate power domain
-property to the DPI node in the device tree. Hence drop the
-compatible checking for specific SoCs.
+Looking quickly at the report, I don't believe this is a false positive.
 
-Fixes: 5474d49b2f79 ("dt-bindings: display: mediatek: dpi: Add power domains")
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../display/mediatek/mediatek,dpi.yaml        | 24 ++++++++-----------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+> The LSM check is required to know what the `prot` is, but `prot` must be
+> obtained after holding the `mmap_write_lock`.
+>
+> If the `mmap_write_lock` is released after getting the `prot` and before
+> the LSM call in remap_file_pages(), it may cause TOCTOU.
 
-Changes for v2:
- - Because of the corresponding dts fix has been reviewed with a Reviewed-by: tag.
-   [1] https://lore.kernel.org/all/20240925080515.16377-1-macpaul.lin@mediatek.com/
-   We still need this change to fix the 2 dtbs_check errors.
-   So keeps no change here.
+Looking at the IMA code, specifically the process_measurement()
+function which is called from the security_mmap_file() LSM hook, I'm
+not sure why there is the inode_lock() protected region.  Mimi?
+Roberto?  My best guess is that locking the inode may have been
+necessary before we moved the IMA inode state into the inode's LSM
+security blob, but I'm not certain.
 
-Changes for v3:
- - The origin patch is [2]
-   https://lore.kernel.org/all/20240926111449.9245-2-macpaul.lin@mediatek.com/
- - Thanks for Conor's reminding, after MediaTek's internal discussion,
-   This patch v3 is the replacement of [2] v2.
-   Because the DPI module should has a explicit configuration with power domain.
- - Drop Acked-by: tag since v3 is nearly a new patch for different approach.
+Mimi and Roberto, can we safely remove the inode locking in
+process_measurement()?
 
-Changes for v4:
- - No change. Please help to review it again.
-
-Changes for v5:
- - Add missing Reviewed-by Tag from Krzysztof. Thanks.
-
-Changes for v6:
- - No change.
-
-diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-index 3a82aec9021c..497c0eb4ed0b 100644
---- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-+++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-@@ -63,6 +63,16 @@ properties:
-       - const: sleep
- 
-   power-domains:
-+    description: |
-+      The MediaTek DPI module is typically associated with one of the
-+      following multimedia power domains:
-+        POWER_DOMAIN_DISPLAY
-+        POWER_DOMAIN_VDOSYS
-+        POWER_DOMAIN_MM
-+      The specific power domain used varies depending on the SoC design.
-+
-+      It is recommended to explicitly add the appropriate power domain
-+      property to the DPI node in the device tree.
-     maxItems: 1
- 
-   port:
-@@ -79,20 +89,6 @@ required:
-   - clock-names
-   - port
- 
--allOf:
--  - if:
--      not:
--        properties:
--          compatible:
--            contains:
--              enum:
--                - mediatek,mt6795-dpi
--                - mediatek,mt8173-dpi
--                - mediatek,mt8186-dpi
--    then:
--      properties:
--        power-domains: false
--
- additionalProperties: false
- 
- examples:
--- 
-2.45.2
-
+--=20
+paul-moore.com
 
