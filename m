@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-349175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E51298F236
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:12:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D10E98F239
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1990828331A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:12:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0C65B219D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFC41A0721;
-	Thu,  3 Oct 2024 15:12:42 +0000 (UTC)
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1ADB19CD0B;
+	Thu,  3 Oct 2024 15:13:12 +0000 (UTC)
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55C917C224;
-	Thu,  3 Oct 2024 15:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA911A0708;
+	Thu,  3 Oct 2024 15:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727968362; cv=none; b=eTbj6vl97PJvFdbHWOJ6Rjazev0D5sDArB/k56uJE6a+8IV6pNCJJE6KWXkuR95X/3Ooj1U5ru7aJXUXsytxOEzvqu8PHTED3XjUYQeKCC/G/HYSHQhKeuYg8pQ/Q9jGGRVVbmwdE/Vmma6ee43IvyIosP1F9yOKXIW2cVIjRaA=
+	t=1727968392; cv=none; b=bzjNppOIWTId/PiEiE6WMVhbGQkR4p2VSBjSF4udNFmbfU8XeVe9yTTxhj3kInZBNo7Bc0eKyWiUK2F9hZNE1OnnK/ng5upFE7gxqH32prJbbPCfW3WmwrV7Yr3mPp0DbBC0A5TGJd5/Y00/I+f1bulUe7CSa+ME9o+p/+kWa0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727968362; c=relaxed/simple;
-	bh=gwKW4ycAUTNy1tipNB505j/jZ3lNfe3SfserdHNQQkU=;
+	s=arc-20240116; t=1727968392; c=relaxed/simple;
+	bh=dGlsxoZu8PtWpidPasr2wBeZc49hqi7PsXHUmZkFZy4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jwy6UWbk6M+Rsa+S5GhTK7+s+CO3Htaw5VRJzeM7FoCKyaY1/Ly5AnlTfvbko7QMzNC4yCAZadz2V/2vTAaRL1ewyPHWFy+/zg82/dTHY9xIow/ZxeA4W8CHCOCpTyllHiG9NwH4E76VmhsNe0mJKy/Ra6o1Tw4evZUHL0noLo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.182
+	 To:Cc:Content-Type; b=h1bGi8Y7t3bSSeEbWf9VDGKFKMVfYGnI03byvn52Q2Wakte9iU129m+wzQxBOEgF5x8vwp5XjX+ELIMbNx5WZhgk5QnCU6a4cUYY7twgWJAv1ICjywkuxxf+FqCoihXZ2n9/YbybbjEe2Te1wMSbOmB4qLC24s9Pp95sxmEnH6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a367da1f8cso4284565ab.2;
-        Thu, 03 Oct 2024 08:12:40 -0700 (PDT)
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-82aa6be8457so36620939f.0;
+        Thu, 03 Oct 2024 08:13:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727968355; x=1728573155;
+        d=1e100.net; s=20230601; t=1727968384; x=1728573184;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :reply-to:in-reply-to:references:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=47KD1hatbg94UjbGvu7DyHwu3QN5WNe4psfvAfpMbAE=;
-        b=cbPLYk1lFMW7jq+V8ur3os+XP0MgSaqDNouxZozh6++/Zlpt4EuHi6M/H0e70ktzF6
-         b7OwVnRtnGgor0Mgv4Km6kdod3yHJb1wtyOipvqhqu/22jvDb3fp258a78Cy7JoinKTm
-         WvB0DtwjVBbvkZTUjGXBiedly36XSGQOsH2FCZxImxg/32jPDyBHnGeo/iaoVp0iaUnv
-         elMIjewctpL2QfLGBViVwpXuh8K7b81uYn1jLAXClOYA5rt6m74AEUTYJW8ehIoPe/Bu
-         1x3Zmw4jfvU5qmDj6sWpfR5hsrSvc+HcVK7SLRYX7/aLIgcB3ZJyybMgFfhj4JBoTFzm
-         33lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+S3fWe4DZyiLQATdJBunlS9TlD4nLrQOu/8+9FOFwSwLuomddCadNMOTayxWN9Ovw4KL0zpjnVF3tfO+O@vger.kernel.org, AJvYcCWox1YoAnErMngfLbR7X+s08dkJ0EtL5+QtOlfLjSNtenN+RaSR58qzeVZtP8Zz62QR7OAnNya/A5jT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/MUNY9t+ZJqmoZiVwJAuQfnI+uH5Lm3ECzrAoCICrAqCibm1t
-	Z6XeydydF0R328HgR0seJMKMyF911M7RYnxUuY6t7FXxIBi6EqNPaMG47fnJ
-X-Google-Smtp-Source: AGHT+IGLzNmfgEZNEVxJSuO/fIcVpvdtfZYWVFG3ozV7qrdfHwgdOBkjrTLK6ugR5pW+PKSINhwioQ==
-X-Received: by 2002:a05:6e02:12e5:b0:3a0:9244:191d with SMTP id e9e14a558f8ab-3a365942fd5mr60489145ab.16.1727968354573;
-        Thu, 03 Oct 2024 08:12:34 -0700 (PDT)
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com. [209.85.166.54])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db55aa3784sm310131173.123.2024.10.03.08.12.31
+        bh=itCr7VtHEe0udli0L/vyJJ6/QS8R3KvPPLhdxRcMv+g=;
+        b=fwDQQbEks8iT9UGO1fXB/JECBA48JSqBwBIyCeFA6cWl7MgeXTuh4v6j/trjGUNo9H
+         0XLLsd8AEEssSdzJcX1iutplQkfNQis5sSPOAmXi47fHwqJ4APXh8vKg/IlIwrEmWoIA
+         rv/RNUVueDbuDmFpYKqmVlHtKtpF//KoBGw4SINV+VHy2ActNWXqAF5P2Wf5rMqrNDjo
+         iScj17yoiiKXbugDjI5zt0howfcD8fjyEeqQ7ZlBb28sEARFe3CRIgUraDWF4P1sRSr+
+         Q3p7gBhz/jS8p7Z+r0LFnxHBMdiwCNLwL7LCL2UAe/p7iuESazhBa6UzmFabe1kjpMUz
+         ZtvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUt3uSohd8iqsXZBqLRzY8ku2oUP3OgnH/GLrQkmbuJKkVPunra2+R4+dfhe7Pab3Bpp69OU98Qytiz@vger.kernel.org, AJvYcCWPUp/wBNLZhoGK/0h3VDa1MSHTKf99fTY/dzHWUdZq05JiHT0js/TwWF96V4PpZ1WeLcWCdr0fQu2Qy2/q@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxK8PxGicXpWf5I9NY714dFRLvuRslUnvvrmdcD4wvsJDS9qWJ
+	ZeNjaNq64CKG9QXnnyy2g14FRAWRB6BU5GNfMph+MX79mYlihxloYBS3R784
+X-Google-Smtp-Source: AGHT+IGcg0YSneQvVfQMdQMoW73EVz5FMom32jWlJ82POoJcAH1v6AKRHAhkl28hvsomGgHcgRU9pw==
+X-Received: by 2002:a05:6602:340d:b0:82c:f7c4:b093 with SMTP id ca18e2360f4ac-834e74a6138mr244733639f.3.1727968384060;
+        Thu, 03 Oct 2024 08:13:04 -0700 (PDT)
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com. [209.85.166.49])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-834efc4ef9bsm29897639f.6.2024.10.03.08.13.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 08:12:31 -0700 (PDT)
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-834d3363a10so49601739f.1;
-        Thu, 03 Oct 2024 08:12:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKREmqxfKSxfTVpkhM+Suap2dm1WNuCp5ezngJFC3TI4N3/r7RR7+Ja7cD7Kgj331mHCcG+EFujc1/Ehkt@vger.kernel.org, AJvYcCWtPbgjnnGFz8ewTeh97YMXQS5nT/+C6sdQ94lwiErSi0JmDWciaSP1D045Q0qB40N3DvI884+nfGqL@vger.kernel.org
-X-Received: by 2002:a05:6602:634e:b0:806:31ee:132 with SMTP id
- ca18e2360f4ac-834d83f7467mr701739239f.4.1727968351148; Thu, 03 Oct 2024
- 08:12:31 -0700 (PDT)
+        Thu, 03 Oct 2024 08:13:02 -0700 (PDT)
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-82aa7c3b498so34660139f.1;
+        Thu, 03 Oct 2024 08:13:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVFDyKFTMG4ana3grsN+Hw0t/3seq39phAg68jYeDV7H624bnb7cLipNoJO+lEoeA5Z/58YZqsMxVZxiWdN@vger.kernel.org, AJvYcCVM+z0ClaGNeMuDNIj98MdNhsvIogKLcp1458IkcODNqSB8V2PZNUWEZSEZ12rAd2pNAbQda/+xu8pR@vger.kernel.org
+X-Received: by 2002:a05:6602:2d8d:b0:82a:185f:5940 with SMTP id
+ ca18e2360f4ac-834e76d16e0mr293099539f.7.1727968382525; Thu, 03 Oct 2024
+ 08:13:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003111444.543964-1-andre.przywara@arm.com> <20241003111444.543964-2-andre.przywara@arm.com>
-In-Reply-To: <20241003111444.543964-2-andre.przywara@arm.com>
+References: <20241003111444.543964-1-andre.przywara@arm.com> <20241003111444.543964-3-andre.przywara@arm.com>
+In-Reply-To: <20241003111444.543964-3-andre.przywara@arm.com>
 Reply-To: wens@csie.org
 From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 3 Oct 2024 23:12:15 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65vx+9gD41yK_gcBSk2_GQKLxn1O806RJ9HpMqMA1gDAQ@mail.gmail.com>
-Message-ID: <CAGb2v65vx+9gD41yK_gcBSk2_GQKLxn1O806RJ9HpMqMA1gDAQ@mail.gmail.com>
-Subject: Re: [PATCH 1/5] dt-bindings: mfd: x-powers,axp152: Document AXP323
+Date: Thu, 3 Oct 2024 23:12:46 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65jcxCYC7mess=4H9dz0gXk434tTyP_ATDvbrpdj_=aOQ@mail.gmail.com>
+Message-ID: <CAGb2v65jcxCYC7mess=4H9dz0gXk434tTyP_ATDvbrpdj_=aOQ@mail.gmail.com>
+Subject: Re: [PATCH 2/5] mfd: axp20x: ensure relationship between IDs and
+ model names
 To: Andre Przywara <andre.przywara@arm.com>
 Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -84,51 +85,101 @@ Content-Transfer-Encoding: quoted-printable
 On Thu, Oct 3, 2024 at 7:15=E2=80=AFPM Andre Przywara <andre.przywara@arm.c=
 om> wrote:
 >
-> The X-Powers AXP323 is a PMIC used on some newer Allwinner devices.
-> It is almost the same as the AXP313, but supports dual-phasing the first
-> two DC/DC converters. A pure AXP313 driver wouldn't know about this, and
-> might turn the linked DCDC2 regulator off, as it does not seem to be
-> used. This makes the AXP323 incompatible to the AXP313a.
+> At the moment there is an implicit relationship between the AXP model
+> IDs and the order of the strings in the axp20x_model_names[] array.
+> This is fragile, and makes adding IDs in the middle error prone.
 >
-> Add the new compatible string, and treat it like the AXP313a.
+> Make this relationship official by changing the ID type to the actual
+> enum used, and using indexed initialisers for the string list.
 >
 > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
 > ---
->  Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/mfd/axp20x.c                 | 30 ++++++++++++++--------------
+>  drivers/regulator/axp20x-regulator.c |  2 +-
+>  include/linux/mfd/axp20x.h           |  2 +-
+>  3 files changed, 17 insertions(+), 17 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml b=
-/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml
-> index 14ab367fc887..3f7661bdd202 100644
-> --- a/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml
-> @@ -71,6 +71,7 @@ allOf:
->                  - x-powers,axp15060
->                  - x-powers,axp305
->                  - x-powers,axp313a
-> +                - x-powers,axp323
+> diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+> index 4051551757f2..5ceea359289f 100644
+> --- a/drivers/mfd/axp20x.c
+> +++ b/drivers/mfd/axp20x.c
+> @@ -34,20 +34,20 @@
+>  #define AXP806_REG_ADDR_EXT_ADDR_SLAVE_MODE    BIT(4)
 >
->      then:
->        required:
-> @@ -82,6 +83,7 @@ allOf:
->            contains:
->              enum:
->                - x-powers,axp313a
-> +              - x-powers,axp323
->                - x-powers,axp15060
->                - x-powers,axp717
+>  static const char * const axp20x_model_names[] =3D {
+> -       "AXP152",
+> -       "AXP192",
+> -       "AXP202",
+> -       "AXP209",
+> -       "AXP221",
+> -       "AXP223",
+> -       "AXP288",
+> -       "AXP313a",
+> -       "AXP717",
+> -       "AXP803",
+> -       "AXP806",
+> -       "AXP809",
+> -       "AXP813",
+> -       "AXP15060",
+> +       [AXP152_ID] =3D "AXP152",
+> +       [AXP192_ID] =3D "AXP192",
+> +       [AXP202_ID] =3D "AXP202",
+> +       [AXP209_ID] =3D "AXP209",
+> +       [AXP221_ID] =3D "AXP221",
+> +       [AXP223_ID] =3D "AXP223",
+> +       [AXP288_ID] =3D "AXP288",
+> +       [AXP313A_ID] =3D "AXP313a",
+> +       [AXP717_ID] =3D "AXP717",
+> +       [AXP803_ID] =3D "AXP803",
+> +       [AXP806_ID] =3D "AXP806",
+> +       [AXP809_ID] =3D "AXP809",
+> +       [AXP813_ID] =3D "AXP813",
+> +       [AXP15060_ID] =3D "AXP15060",
+>  };
 >
-> @@ -100,6 +102,7 @@ properties:
->            - x-powers,axp221
->            - x-powers,axp223
->            - x-powers,axp313a
-> +          - x-powers,axp323
->            - x-powers,axp717
->            - x-powers,axp803
->            - x-powers,axp806
+>  static const struct regmap_range axp152_writeable_ranges[] =3D {
+> @@ -1345,7 +1345,7 @@ int axp20x_match_device(struct axp20x_dev *axp20x)
+>                 axp20x->regmap_irq_chip =3D &axp15060_regmap_irq_chip;
+>                 break;
+>         default:
+> -               dev_err(dev, "unsupported AXP20X ID %lu\n", axp20x->varia=
+nt);
+> +               dev_err(dev, "unsupported AXP20X ID %u\n", axp20x->varian=
+t);
+>                 return -EINVAL;
+>         }
+>
+> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp=
+20x-regulator.c
+> index a8e91d9d028b..3ba76dbd0fb9 100644
+> --- a/drivers/regulator/axp20x-regulator.c
+> +++ b/drivers/regulator/axp20x-regulator.c
+> @@ -1597,7 +1597,7 @@ static int axp20x_regulator_probe(struct platform_d=
+evice *pdev)
+>                 nregulators =3D AXP15060_REG_ID_MAX;
+>                 break;
+>         default:
+> -               dev_err(&pdev->dev, "Unsupported AXP variant: %ld\n",
+> +               dev_err(&pdev->dev, "Unsupported AXP variant: %d\n",
+>                         axp20x->variant);
+>                 return -EINVAL;
+>         }
+> diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
+> index f4dfc1871a95..79ecaaaa2070 100644
+> --- a/include/linux/mfd/axp20x.h
+> +++ b/include/linux/mfd/axp20x.h
+> @@ -959,7 +959,7 @@ struct axp20x_dev {
+>         unsigned long                   irq_flags;
+>         struct regmap                   *regmap;
+>         struct regmap_irq_chip_data     *regmap_irqc;
+> -       long                            variant;
+> +       enum axp20x_variants            variant;
+>         int                             nr_cells;
+>         const struct mfd_cell           *cells;
+>         const struct regmap_config      *regmap_cfg;
 > --
 > 2.25.1
 >
