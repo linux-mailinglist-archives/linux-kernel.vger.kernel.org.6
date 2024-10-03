@@ -1,98 +1,149 @@
-Return-Path: <linux-kernel+bounces-349422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD0298F5BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F94998F59F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3595FB21E91
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:03:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F38B5B2398A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9231D1AB533;
-	Thu,  3 Oct 2024 18:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C17E1AAE34;
+	Thu,  3 Oct 2024 17:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="K2zfvg0i"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iI6omeBD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EABD1AB507;
-	Thu,  3 Oct 2024 18:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37F71A76CA;
+	Thu,  3 Oct 2024 17:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727978569; cv=none; b=qHBlwM10DJeVPf5dJuyXV+uXV6vHTZu2Oq5/maO/bat77MNDKxew8vx2IrHClhbzSa0diBU0cKRUSnTxyCXZUvAIKYz3myotc8NZuRyhnjvWY/JPZ+2BpbJAX0CPIXwSz+wUJDNZ2PjXbe9gsuXYsU37W2qe5YBhCLVDnYPDa6M=
+	t=1727978209; cv=none; b=amaGURewKAIyVsF6A+ZhZjuViyLPaMkOfeapWZEeVQhCql6kKXCURWi7Hbq/jtYYMiI6hBiYsIkZAUf9inqGms+s8pQYa+MBdEO5hivuB/ZX2JYA8Ak2Q1aqZmO1ewB7JC+0p0gZaJRqJ7zXVdR9VmRhHDzGPJy/at97nqNOwpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727978569; c=relaxed/simple;
-	bh=BwQl95qn8NQHVnbYBOg3nyDaq+TN5ZnTOOCyjX7yN3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CmNcph9J+naspNMDPF7iJdbrieugjFFvbVM4gA9SqQK9c+VDF5U8j/9rW6UCwV82Rsfcxk366gDG7cAGSPaJ2VNIUrf28LAgW5ShEidFbgI6vYyuiQpxDCp1Qoqo9Jm0xwffHxjkbtekY6DCT3Zf1mCDP6850gnoWg1HrPYNiEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=K2zfvg0i; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id wQ1HsjqreQ2lWwQ1Hs9Yfl; Thu, 03 Oct 2024 19:53:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727978025;
-	bh=BD85zUf1cnOXS4ei1Z72y4kXkRVVXUgHE87cq6s1DA0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=K2zfvg0iyqieGGioeJQw1CQ6c2xARmb/fILtfGpLXxRq2FP/GptyJ7GbCpN3xc0Mo
-	 ihOf7kTg0pnZ9JcziMh5uB+qkF2Ev8WbHnnCoMDo7udKzj2Qw3Pixku2melLuC8HTu
-	 ExnYbqJz5eQOEWYLB/szY9OsIDpuOAlKjlxNcKcdmr5JpVqAXZ0WY1ubdYaAxYkcaJ
-	 NdQG5eyQlHdSdP7m1E+g/lA2obglXBJfQmdKeppjyTOLZqnmDwDTyTYSQ8OXpEznGJ
-	 xy5d40WWeAT4lL9RZKjXp5i5o+yyTiQC3WNg5aUDOroOGJudTrJ9V/Xs1ZveeKl/9f
-	 WeCZb69sGkHxg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 03 Oct 2024 19:53:45 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Julien Massot <julien.massot@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-media@vger.kernel.org
-Subject: [PATCH] media: i2c: vgxy61: Fix an error handling path in vgxy61_detect()
-Date: Thu,  3 Oct 2024 19:53:15 +0200
-Message-ID: <666ac169157f0af1c2e1d47926b68870cb39d587.1727977974.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727978209; c=relaxed/simple;
+	bh=Tdz26YASw+9dvuOBtCyGwKlhjo+jgUjMABkC2CrdMsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CMdWvoWd3vtstIMt7CBTWs+McvtQP18misAFCwtiHtb7nH7gYCsthJ1NGNk7LJYLPgLAvZyMbVFG5N2qS1JsFHEDk98pW0RQ4gQDprXU2//BCb89qIHOddiGOBw8uOEu/WiwOVDswisE0j1NIuezm0Q5TrgFIB09PlkOpwACttQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iI6omeBD; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727978207; x=1759514207;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Tdz26YASw+9dvuOBtCyGwKlhjo+jgUjMABkC2CrdMsU=;
+  b=iI6omeBDc2JFg4iVnzvJlwN0tG/INzff2Nh2TziMIjczvXUS6SObFQOX
+   SXIFMmyANFRtiRlo7HoSJvv2BYQ+UopkH7v0YTleX4ofdg8x/bGA9dTMG
+   jj1a4L0LzUUTzOEjU7QONFF0ttO5myJzNG+uw67V5FiUsOr58AWPf5lz3
+   2dmQ4kNXqaJCKOE/4SJK+uVA7MrJChaqwj7I27YfEFXLJeJIDrGYChMDb
+   q4JPYsfaDX+jMQAxZNmQV9BIwvwj0e5deNnUWIoABLj3OT3sYhCTeP0oZ
+   FFBMnnF9LOFoLfo21OZ3Dh4DY4iUQ177OJraLQVA0rr0XucF1hDj/VDow
+   w==;
+X-CSE-ConnectionGUID: M6/GC9aqQx6KayUWHhAKVA==
+X-CSE-MsgGUID: 51ntRmi/QmqSK+DhTj5Ylw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="37749978"
+X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
+   d="scan'208";a="37749978"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 10:56:47 -0700
+X-CSE-ConnectionGUID: 11Robe9ISIGg+2J4PucE6A==
+X-CSE-MsgGUID: cra+AehDQ1ivTOPes+L8Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
+   d="scan'208";a="74012973"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 03 Oct 2024 10:56:45 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swQ4A-0000kR-1v;
+	Thu, 03 Oct 2024 17:56:42 +0000
+Date: Fri, 4 Oct 2024 01:55:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ard Biesheuvel <ardb+git@google.com>, x86@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, llvm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	stable@vger.kernel.org, Fangrui Song <i@maskray.me>,
+	Brian Gerst <brgerst@gmail.com>, Uros Bizjak <ubizjak@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH] x86/stackprotector: Work around strict Clang TLS symbol
+ requirements
+Message-ID: <202410040122.shftyeMf-lkp@intel.com>
+References: <20241002092534.3163838-2-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002092534.3163838-2-ardb+git@google.com>
 
-If cci_read() fails, 'st' is set to 0 in cci_read(), so we return success,
-instead of the expected error code.
+Hi Ard,
 
-Fix it and return the expected error.
+kernel test robot noticed the following build warnings:
 
-Fixes: 9a6d7f2ba2b9 ("media: i2c: st-vgxy61: Convert to CCI register access helpers")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/media/i2c/vgxy61.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[auto build test WARNING on tip/x86/core]
+[also build test WARNING on tip/master linus/master tip/x86/asm v6.12-rc1 next-20241003]
+[cannot apply to tip/auto-latest]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/media/i2c/vgxy61.c b/drivers/media/i2c/vgxy61.c
-index 30378e962016..8034e21051be 100644
---- a/drivers/media/i2c/vgxy61.c
-+++ b/drivers/media/i2c/vgxy61.c
-@@ -1617,7 +1617,7 @@ static int vgxy61_detect(struct vgxy61_dev *sensor)
- 
- 	ret = cci_read(sensor->regmap, VGXY61_REG_NVM, &st, NULL);
- 	if (ret < 0)
--		return st;
-+		return ret;
- 	if (st != VGXY61_NVM_OK)
- 		dev_warn(&client->dev, "Bad nvm state got %u\n", (u8)st);
- 
+url:    https://github.com/intel-lab-lkp/linux/commits/Ard-Biesheuvel/x86-stackprotector-Work-around-strict-Clang-TLS-symbol-requirements/20241002-172733
+base:   tip/x86/core
+patch link:    https://lore.kernel.org/r/20241002092534.3163838-2-ardb%2Bgit%40google.com
+patch subject: [PATCH] x86/stackprotector: Work around strict Clang TLS symbol requirements
+config: i386-randconfig-061-20241003 (https://download.01.org/0day-ci/archive/20241004/202410040122.shftyeMf-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410040122.shftyeMf-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410040122.shftyeMf-lkp@intel.com/
+
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+WARNING: modpost: EXPORT symbol "__ref_stack_chk_guard" [vmlinux] version generation failed, symbol will not be versioned.
+Is "__ref_stack_chk_guard" prototyped in <asm/asm-prototypes.h>?
+WARNING: modpost: "__ref_stack_chk_guard" [kernel/rcu/refscale.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [kernel/torture.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [fs/nfs/nfsv4.ko] has no CRC!
+>> WARNING: modpost: "__ref_stack_chk_guard" [fs/unicode/utf8-selftest.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [fs/smb/client/cifs.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [crypto/gcm.ko] has no CRC!
+>> WARNING: modpost: "__ref_stack_chk_guard" [lib/kunit/kunit-test.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [lib/string_kunit.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [lib/string_helpers_kunit.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [lib/test_hexdump.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [lib/test_hash.ko] has no CRC!
+>> WARNING: modpost: "__ref_stack_chk_guard" [lib/test_printf.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [lib/test_scanf.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [lib/test_bitmap.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [lib/test_uuid.ko] has no CRC!
+>> WARNING: modpost: "__ref_stack_chk_guard" [lib/cmdline_kunit.ko] has no CRC!
+>> WARNING: modpost: "__ref_stack_chk_guard" [lib/memcpy_kunit.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [lib/overflow_kunit.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [lib/stackinit_kunit.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [lib/fortify_kunit.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [lib/siphash_kunit.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [drivers/gpu/drm/tests/drm_cmdline_parser_test.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [drivers/gpu/drm/tests/drm_connector_test.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [drivers/gpu/drm/tests/drm_format_helper_test.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [drivers/gpu/drm/display/drm_display_helper.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [drivers/base/test/property-entry-test.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [drivers/power/supply/test_power.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [net/mptcp/mptcp_crypto_test.ko] has no CRC!
+WARNING: modpost: "__ref_stack_chk_guard" [net/dns_resolver/dns_resolver.ko] has no CRC!
+
 -- 
-2.46.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
