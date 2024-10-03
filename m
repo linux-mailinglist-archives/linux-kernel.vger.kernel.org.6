@@ -1,116 +1,89 @@
-Return-Path: <linux-kernel+bounces-349328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90FAC98F46E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:48:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A284198F472
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4351E1F21CCE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:48:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46671C20E1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7114A1A707E;
-	Thu,  3 Oct 2024 16:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921201A7060;
+	Thu,  3 Oct 2024 16:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="dIGbdhL3"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xx777kdn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF201A7056;
-	Thu,  3 Oct 2024 16:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90B51527B4;
+	Thu,  3 Oct 2024 16:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727974072; cv=none; b=kmaKX0YBgEdD89iRzPFjNE9hNDZeWnNI43d3/Zau2bcL4BQJ5oAEeVKOVYmAjfwi04IXqzCHIEv98RG6et4CXHoOTKRn4EHt5dmxKmEK6ncQyFx0GCAB2OQhdDk/c8fdrF+NSCiE3TkU5gCNy9OcafLxsMYddufUxEeykL19Cgs=
+	t=1727974100; cv=none; b=pMw6XPZu0RhEfqcip7EwRus+3dwkF5LB8UTSKOJmwuTLeyzI7nV+D+PbkOxwuTJD+dXCt5/6z/TpysDMS2gVFty5wXRWbTBPliAfvqGHRDdfK0K7ZEv/hNPqY4ToQCHRluN/MIbAAI/n+H4fc8Z3lVZiP4s/viWB3bgGqaxTkiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727974072; c=relaxed/simple;
-	bh=M8f6aS+IByeVtnTPSzuINb48pU+igaxfoJQ9Tcvwxn8=;
+	s=arc-20240116; t=1727974100; c=relaxed/simple;
+	bh=+Qa9dKaycAhBRYIrsw+LWF3SLzloCUMxztuqxkQ01wM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uZAUX9MNdlCnQsO4wyjs3W+2tM5W/9yFOqYrHLVzcqNe6YYo8nGL+qez5pUkho9DadtXnTelIsTJPtQSPZrooqq8pyE+vp8OTicKiBRA4to0W0M+skeu+3sgScCTO3L9QJQw5XGyNXkfc1DgA9LdVCfnKR2k7KsDbC2bIvpjpfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=dIGbdhL3; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so11693035e9.3;
-        Thu, 03 Oct 2024 09:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1727974070; x=1728578870; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LTMcH4K9v+DoRwb+OflDxoZfRqr/SiTrH+qJdlHOBAI=;
-        b=dIGbdhL3VOgzodVkyYKSPhQlxv6Um7QTaIcQyEzUr5dYGfYjBmSQ4TMtFsdjWAEF6X
-         Kk605cheKKWP2s9jiP8P8tSKhBRmgAxDgqf0X+W+Cb7vIohiNjS2cRSXT+BBF/vAVVfE
-         6pnPJtsR+d9Qmh9wzUdeEOcoWuJi3Y4hSz80EY0fAolBy0tNNfqPBpCpFRC/XCLJjU9m
-         AZhCSim2mG4UATrvLcta7yqALzsF5YBRZxBhtzGhWUkD5jrZm8XvQXKOcATqbbDNJzWY
-         dwOEk7p7mRLgoBYiLqDL+BCCp9p4Rr8GHwBpf+IIU7ao4ZcqY7TKnLQSNRLpBOKY3gkX
-         76zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727974070; x=1728578870;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LTMcH4K9v+DoRwb+OflDxoZfRqr/SiTrH+qJdlHOBAI=;
-        b=b+d5w5gOE/PfIMh1x3PxAN0wNvjcutHh8G3ExtopNO9CYfnsJxqISMJQlsfkth4OjF
-         ytmuvBaLKaJxDlDtVFnCJVl7ooHXB07s4heDdBatDLl4ZxX1V4reDJNg2Y4B8wuBwV5Y
-         SRWlHVkNGHJWGmYT1/Xs5xw6U8vqtEHt3RGA1SPpHPODR6c8K1p9E62W8LT5I8U7jay8
-         165S361ROl11I4gWDwAgmywqvHUxRm1/5bxD963GStWczcglD9ogXeywUfp2iaqJhCt+
-         9LdAGUQ1RB/mdNlhlo2fl5UHyboQAHxadsT08Cblqgs5a9wqbcVgVDUqHZQx2Q4njTZZ
-         3Tvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMc0Dx9/WZglIzsQva4Lf/hZGAgxUI8WCOLFk9bZ7KxA5VG+gduplm88OVpwsZYVQQIPdh+tm6a6wdqyU=@vger.kernel.org, AJvYcCW/nhytI+Lh+okQ4lY/t800Hqxe6JxFRx3xc+2zgjPxo5AmT3imNaqK++xoCVz3RSRDjWfKvKA5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqfDMVXqPftR1kjjDGSKvHIK/hZuzZsAQXzsoNi5GRP3737iVA
-	GZnTHu7XviAwsibmSX+XRCG9S8Wk8NdNeIX2NIUHDQWktjXhHcU=
-X-Google-Smtp-Source: AGHT+IGUM8IIlGHJt3TQo8HYw+JN1qzS1zuRiNI3etW98uwknaVKmuQrYw+rNbZnlbOEODJAC0AFow==
-X-Received: by 2002:a5d:5850:0:b0:37c:c5fc:5802 with SMTP id ffacd0b85a97d-37d0e7b9b24mr8467f8f.36.1727974069340;
-        Thu, 03 Oct 2024 09:47:49 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b4899.dip0.t-ipconnect.de. [91.43.72.153])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7a01fc92sm49035985e9.36.2024.10.03.09.47.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 09:47:48 -0700 (PDT)
-Message-ID: <3b058daa-718e-418c-b34a-54e014988461@googlemail.com>
-Date: Thu, 3 Oct 2024 18:47:47 +0200
+	 In-Reply-To:Content-Type; b=h7SvaGd83HPMxvn8I8m+5Oc7RYyt/hxs7UNLl2xp6//P2al8/Xfxm502PlzvyRSu6n591Cs7jCBth4/bCjC7g0pVm8b5lFqdGNq5UguRUZamytdMXoSMb5iRHq69uCvdDo/dzSJU7250Z6rq2Qpp50CEa4acWp34RJOh7XczuUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xx777kdn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF20C4CEC5;
+	Thu,  3 Oct 2024 16:48:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727974099;
+	bh=+Qa9dKaycAhBRYIrsw+LWF3SLzloCUMxztuqxkQ01wM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Xx777kdnc3tch5DRdjRa9JbwLb4MLmM2MxRanYyJW2QfqJ0Qll6QmcgDF9fqX9SYk
+	 UkXxhpqfVfbmrbOm/RTxL58LD8uklTYebjtLja6+ul4cOW5k4vBOjjl6o8/jZII3sY
+	 BSQAZh6687xuad/hq/L5jt/CbaZkvRsbYSIEwH1BQxJnhysM8eVlH5GyercFqUO9Pa
+	 fXvKWR+ULspFHYp12q+72fFLyFJEuftVGEd7M5/mpStkolRzyKZL7KeYQSrxXlSXFW
+	 mX0OyIPR2VNQ7Q28rGSUna681NPSlAYHyciLZ/xkMoEj+Ok5G9TgiLtr91z/yq94oL
+	 BQcfnHY1AjEww==
+Message-ID: <c30baaca-beaf-485c-88b4-984febf06519@kernel.org>
+Date: Thu, 3 Oct 2024 18:48:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/533] 6.6.54-rc2 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241003103209.857606770@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20241003103209.857606770@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFT 1/2] firmware: qcom: scm: Introduce
+ CP_SMMU_APERTURE_ID
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Clark <robdclark@gmail.com>,
+ Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+References: <20241002-adreno-smmu-aparture-v1-0-e9a63c9ccef5@oss.qualcomm.com>
+ <20241002-adreno-smmu-aparture-v1-1-e9a63c9ccef5@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20241002-adreno-smmu-aparture-v1-1-e9a63c9ccef5@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 03.10.2024 um 12:33 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.54 release.
-> There are 533 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 3.10.2024 5:01 AM, Bjorn Andersson wrote:
+> The QCOM_SCM_SVC_MP service provides QCOM_SCM_MP_CP_SMMU_APERTURE_ID,
+> which is used to trigger the mapping of register banks into the SMMU
+> context for per-processes page tables to function (in case this isn't
+> statically setup by firmware).
+> 
+> This is necessary on e.g. QCS6490 Rb3Gen2, in order to avoid "CP | AHB
+> bus error"-errors from the GPU.
+> 
+> Introduce a function to allow the msm driver to invoke this call.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> ---
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Tested-by: Konrad Dybcio <konradybcio@kernel.org> # FP5
+Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
-
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Konrad
 
