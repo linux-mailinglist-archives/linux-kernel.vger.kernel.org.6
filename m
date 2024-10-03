@@ -1,158 +1,109 @@
-Return-Path: <linux-kernel+bounces-349182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DA998F245
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:14:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D3B98F248
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB16A1C21A88
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:14:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A15C1C21E45
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6CA1A08AB;
-	Thu,  3 Oct 2024 15:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63CF1A072B;
+	Thu,  3 Oct 2024 15:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rWIVpEg2"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G+Rrnns0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8C319CD0B;
-	Thu,  3 Oct 2024 15:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191B619F428
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727968492; cv=none; b=kUT9/WEb8fmkmkWxr3daxfMidT1eMumh8IYCDQrNkjf5+S14qT4EBoikKn61JixEw9YDrmB+C7rkcPv+QJlWynnm4d+34ZmNVkpgXgUxI69Fb9DTtWHKQZWd5wX82srVX6idBHQpjZdqfdWMk6P+rhgnf9Na3H0mg+coKO3IrCA=
+	t=1727968501; cv=none; b=okNS/p+OhgCGVtZFh2pHyGw95eYtXm/aqDnLaNRtQmSalO8X5bkjZj9CYWh2Vms9DWPmCZ5TZo2w+uLE6R+SqOzS6p0tey8Pasfc/RdW+huo5DCNh0roh2/t/BVkDkCUZ3nt8ETTEAh/rFC3OJ/CA7LzbAmyiQdyJcDRCpxQB9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727968492; c=relaxed/simple;
-	bh=xmEH20Nq5o5Un2lXFQ1wQmstfsur9/CVwpYLSoOVYG8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uL7/hmpq5RrIN9GCTA57M1xPmPOdksoBlcgBKdA8EpGNclzK07DRJZ1pYKuDSlCZZYAB/5rjrH5a7GtKOLf+ljJ0RMpjfAQNxvcAyZb/6Jtx8ET7Qxe5F8lldbZLQ/FnVYORLz3zANJNOC6qP4ojI1R0uoMBd2nOfEXzW63A34g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rWIVpEg2; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493EkfED032613;
-	Thu, 3 Oct 2024 15:14:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	06CT3E910iENCLWyqE+iVYG+TqUy1wGVmKngE4Bo+qw=; b=rWIVpEg2d0uIFxRM
-	m+cdImoSGwdsYjxRhOC1ocsvRUo1ohP+oUL1xQtgpHGF/fnflAw3XOj+hiKLI7dM
-	NPCTn5Mij14wgFJj7+t7QBfmJY7lW19kF7vSVIhx7s/YCa4bW0mwcBiOeBw/RxJg
-	Ln7zibjOjFpToeZl1JPzYJ8lorxr8zN/rPqHGEip/0+7x7NUOwbGLdYkNsF1A9o8
-	n3BJAkf9Tosk3p9znJvkbKFOVBNLTo+EKG/azJn6pkXiBy9Wkjz7eO5dzZKfsglE
-	lsRkUyt/GvtosGpmN5jPb/4FPuFmnGK0js9nHYjlBXRj3EHTUbOAl5FnRVndn2bp
-	orCXvQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421wae04ps-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 15:14:27 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 493FERfw006145;
-	Thu, 3 Oct 2024 15:14:27 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421wae04pf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 15:14:27 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 493BsNKo020408;
-	Thu, 3 Oct 2024 15:14:26 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xv4sgmr6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 15:14:26 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 493FEP8I56951112
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 3 Oct 2024 15:14:25 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4C2A45805E;
-	Thu,  3 Oct 2024 15:14:25 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3017D5805A;
-	Thu,  3 Oct 2024 15:14:24 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  3 Oct 2024 15:14:24 +0000 (GMT)
-Message-ID: <7f05ff8e-6103-4ad7-8a32-9ff5643b8a41@linux.ibm.com>
-Date: Thu, 3 Oct 2024 11:14:23 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com,
-        mapengyu@gmail.com, Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20240921120811.1264985-1-jarkko@kernel.org>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20240921120811.1264985-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: DrgH_RP9_UttccGGai0UddPG_vRoRn8C
-X-Proofpoint-ORIG-GUID: f_eH5Q7IsdQSTJubjWUFHlsqUMbaRzGw
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1727968501; c=relaxed/simple;
+	bh=7Yq4cy07ZquN0NM6WX4wVc7UDGlhgQy4ek2vgUtUTfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h0NAaptcJj9V9pmkISh1sIyVzem+NJvObkPU83UfJYlnQ+ceGjcQMCVPgAjTIKTfIXAhFSv6BsrHA74JEf17x5x7JMDq6/VnYEAM3PfEkmsvf/2eDjnXeKf1nrxljkhck2Bhvu3AvLd+ZarDnvaB7m0oKTxYQVXBFJWp2SL2JQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G+Rrnns0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727968498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/Q6u1Q1puTLpWggqtqfruJ5S7u7WGLMO+5A9Gghea7s=;
+	b=G+Rrnns0NxN6hZvgYqnME/Cb438/zxL+u9Z2+zWnTey6tZMPMwicevoLMToiuckVKDijqJ
+	S0KOtMZQ3mFi5VsSXmNfKFJEmH7mNIb2RzRUqDJKVmEjMNZB+jxt5uoQV95bElynDLSMvy
+	Ikp6qr36mOJIKg5llj0FMZBenI/BAYM=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-312-kKU9KgzcMMmnOaCgr5cSgw-1; Thu,
+ 03 Oct 2024 11:14:53 -0400
+X-MC-Unique: kKU9KgzcMMmnOaCgr5cSgw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E5AD419560BE;
+	Thu,  3 Oct 2024 15:14:50 +0000 (UTC)
+Received: from fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com (fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com [10.6.24.150])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1AF2D19560A3;
+	Thu,  3 Oct 2024 15:14:49 +0000 (UTC)
+From: Alexander Aring <aahringo@redhat.com>
+To: trondmy@kernel.org
+Cc: anna@kernel.org,
+	bcodding@redhat.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	akpm@linux-foundation.org,
+	linux-nfs@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] nfs: kobject: use generic helpers and ownership
+Date: Thu,  3 Oct 2024 11:14:31 -0400
+Message-ID: <20241003151435.3753959-1-aahringo@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-03_06,2024-10-03_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- bulkscore=0 clxscore=1015 impostorscore=0 adultscore=0 suspectscore=0
- mlxlogscore=900 malwarescore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410030110
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+Hi,
 
+I currently have pending patches for fs/dlm (Distributed Lock Manager)
+subsystem to introduce some helpers to udev. However, it seems it takes
+more time that I can bring those changes upstream. I put those out now
+and already figured out that nfs can also take advantage of those changes.
 
-On 9/21/24 8:08 AM, Jarkko Sakkinen wrote:
-> This patch set aims to fix:
-> https://bugzilla.kernel.org/show_bug.cgi?id=219229.
-> 
-> The baseline for the series is the v6.11 tag.
+With this patch-series I try to try to reduce my patch-series for DLM
+and already bring part of it upstream and nfs will be a user of it.
 
-I was testing this with 6.12-rc1 on ppc64/kvm + vtpm boot time from 
-pressing return on grub until login prompt appears while using an IMA 
-measure policy:
+The ownership callback, I think it should be set as the
+kset_create_and_add() sets this callback as default. I never had any
+issues with it, but there might be container corner cases that requires
+those changes?
 
-with HMAC2: 36s
-with HMAC2+this series: 29s
-without HMAC2: 28s
+- Alex
 
-Looks good to me, though using a hardware TPM would probably be more 
-critical in this type of measurement.
+Alexander Aring (4):
+  kobject: add kset_type_create_and_add() helper
+  kobject: export generic helper ops
+  nfs: sysfs: use kset_type_create_and_add()
+  nfs: sysfs: use default get_ownership() callback
 
-> 
-> v4:
-> https://lore.kernel.org/linux-integrity/20240918203559.192605-1-jarkko@kernel.org/
-> v3:
-> https://lore.kernel.org/linux-integrity/20240917154444.702370-1-jarkko@kernel.org/
-> v2:
-> https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jarkko@kernel.org/
-> v1:
-> https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jarkko@kernel.org/
-> 
-> Jarkko Sakkinen (5):
->    tpm: Return on tpm2_create_null_primary() failure
->    tpm: Implement tpm2_load_null() rollback
->    tpm: flush the null key only when /dev/tpm0 is accessed
->    tpm: Allocate chip->auth in tpm2_start_auth_session()
->    tpm: flush the auth session only when /dev/tpm0 is open
-> 
->   drivers/char/tpm/tpm-chip.c       |  14 ++++
->   drivers/char/tpm/tpm-dev-common.c |   8 +++
->   drivers/char/tpm/tpm-interface.c  |  10 ++-
->   drivers/char/tpm/tpm2-cmd.c       |   3 +
->   drivers/char/tpm/tpm2-sessions.c  | 109 ++++++++++++++++++------------
->   include/linux/tpm.h               |   2 +
->   6 files changed, 102 insertions(+), 44 deletions(-)
-> 
+ fs/nfs/sysfs.c          | 30 +++----------------
+ include/linux/kobject.h | 10 +++++--
+ lib/kobject.c           | 65 ++++++++++++++++++++++++++++++-----------
+ 3 files changed, 60 insertions(+), 45 deletions(-)
+
+-- 
+2.43.0
+
 
