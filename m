@@ -1,115 +1,137 @@
-Return-Path: <linux-kernel+bounces-349278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5670698F3AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:11:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9EF98F3AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096AF1F2223D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 904A72812C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F531A705C;
-	Thu,  3 Oct 2024 16:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185451A705B;
+	Thu,  3 Oct 2024 16:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFjdn9qr"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="htZCYnHn"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1198C1779A5;
-	Thu,  3 Oct 2024 16:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B333A1A7056
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 16:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727971891; cv=none; b=jqp4BWIS5W7PG65EJlJFvq0aVlzPcJOVa/cOcGM2xmYv9OS2w8oWkzVUmgLzYPg8kgzV6cHsSYnN/pNL4UOWbCYg+gbTkJ4C1zmOwYwBoUVKK30GOmDprH+JXCUn+XLYGzLkV/KVfZ09ahBztmak1teCKo7E5v+A9JIPNS078C0=
+	t=1727971909; cv=none; b=P5BMTTkgk/47xg4Xn8yy9hDxzdYqcxhHe5kIsxlBFrUhiDrFZJyy9fFW4kQabqEA8L0suDZony+k2LcncOg9o/OJbyJO3dvfId75FI1gsmv4EHUU9Bi/1mmjXqofZJqXEkXwZwCB3dj7wG79UDVdNV9c801jix2Ozh2uUa3U3IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727971891; c=relaxed/simple;
-	bh=RBTkyoqQBQWgJfvXHK3j1LZTf2HaqtLVUqrz+n1nGS8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=VH6L2oGroPrBnI74eLoVWWTtzxKcmECfn0R3Yfu4eF3ULjJIWhZqaAxDbSAlJLg9/1WkMf48kMUCMiqdbDiiqqv2J3H2hWhw4s/FRpClD+DXAAz71li7urBY1yan9RrZnCYsyvdupfZHXr/yIhoobwT9d/BoKZEskMMXKZaBt20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFjdn9qr; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d51a7d6f5so166751966b.2;
-        Thu, 03 Oct 2024 09:11:29 -0700 (PDT)
+	s=arc-20240116; t=1727971909; c=relaxed/simple;
+	bh=KAJhNktsKQBL31h4FFeDeoZJgORcWmVqd2YZcjRTjio=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MEAPy+CPA+DtsWBIbhDokFLn3LCygPvz/1hCkol3LK1o/ZRgq52r82nONtKdMGdzTBxg+rnXATDF5bLxIiz5OWi8WDGta/TQwySCfEuQsQXdagh98YuE16EssbZGml+PKetzffQrzm2Ie22in0qBsM2Q+ddzlEYDAtVn8tSNCu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=htZCYnHn; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37cd0b5515fso745498f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 09:11:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727971888; x=1728576688; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q32JbGi18+OdbRw4TK5uJ1wmgJog0ZexuMhgdGd1U7A=;
-        b=LFjdn9qr90yo7XJZA/xw5CDDwAa8LMLE8ITR6QtIv7B3xAfvJLT7+Y4p/4z0xr7933
-         vwetGXPSTa+cIS+oIeKeVIaKDRcIPxqgiIStue1t7RajGymAClqlnr16Wm8huZefvW3O
-         pry7Z7qXSwu4iJKIskrTkftDxT0DaoGOWA4JaUL4cS6zljCvg5rX/BxZisNUe63wIOia
-         W6xEqrZwKkxaBwoE6OXWd57yu/cUvsrecVlsgA7AnDiAZnyHTuJ3ciBKDkuFRA5kvdwK
-         CbbhEIUytGYDNaWmhwk/7j4Yo8j9K2koW71onqlsvRQR2BuZ81W624uxecRjOMyP7wq/
-         WqGQ==
+        d=google.com; s=20230601; t=1727971906; x=1728576706; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z8M94Szf86aflf7GYtGP4IFREoq5t6mzeSASTe2kb0E=;
+        b=htZCYnHnXDGWCP+6zbxUw779bJe8vH6gOTcHBU0FS6B+yhLxoYKbh3SeI9QwfA95m7
+         OUUCpDRNaFtGYJMc84CNmcWcJNAJc/2pnjuJkMQy1CbQJbZVmfsl9/udA67Zkr33hyMV
+         YKJtPC0B25j8jGWbG5CZy1BRX9K4QgmsZ0fZ0/PUX/wBVk+12sHBFBI+mMCdnWM2A/xB
+         M4D995eTb2Op1U6It1TzoW4+rp9IkCmpbZMGxDK1CICnRODHIhNEHZJGj7Z7UFMssR1s
+         rqfaObnFpqU9kAN5Uxw0VzHDv5ddSv4E3HJR0/I62I0XkCHnUfnG3tTcQmeas7S1199s
+         SxQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727971888; x=1728576688;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q32JbGi18+OdbRw4TK5uJ1wmgJog0ZexuMhgdGd1U7A=;
-        b=fRkznvk5j8zDF/eOvuWNvlFI/ktoh99PjHKQD+ARaD0MhUHrqiTKWVWHubs8DVd9ri
-         SClgeklvhLlCIJlMh+mo/gv5e5ZTVhQatHSWmMuGIqKKlYbTFBE9rPwPpZl4MiOUwELc
-         sdFY2e28du31Ro5ykz5wFgSMxwm8XqLRZapFg/cDOtGyMc8jkWNgsrB0uT4EXrf/7isJ
-         FQJZDPrtE/phGucTZ5zZNASCpe3DBQlx7OOTf3pgzyGnlYRGSwSlTw6NmHTpXJRQO7pF
-         dCiwPVX4/TzIvX2MZEW3yJY9WulUTXv4C+jX4fxqzSEi2c2nmsOIR/RLSRAAyzxr7i2h
-         cr1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUb8lcSeMJjyhl+fL4r9nt/kz07N2yA7slGtsE1KSL7MJKpb65wJuDNRMlY3wckFTP8+o2lhCCt@vger.kernel.org, AJvYcCX+VRBrXJpt0aL0W9ZbhFVS10KZY0FISiH1rfJ0i83bNLbL/OoWqwyC1ynxxszzu4e6FEcAOfnIaK2N7A2m@vger.kernel.org, AJvYcCXBJihinsgpsDI6ZObx5Fcevp5O5OskiuvusL2JhaXvDmYvvqfEnJPkcNqrULSgj83jk8Whu75pcarQB28=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4TRzkfbFr5eHcuQibnvZ4d2p8SBGvWI8s5JNEvivAgn8iK/bH
-	7n2gdUvE3PD3Rf+xk48DKVw773pA745bH7iF+HUJ/yBvyeZviSd/iWDe5g==
-X-Google-Smtp-Source: AGHT+IGVUxJ3Rjm+l2YhrSaIEYLUyEHl58QHM5FDOIe0jd4iDF22k/ljd6Y1nEVy8WHcPBHoFt0avQ==
-X-Received: by 2002:a17:906:4fcc:b0:a7a:af5d:f312 with SMTP id a640c23a62f3a-a98f837d235mr701438966b.46.1727971888087;
-        Thu, 03 Oct 2024 09:11:28 -0700 (PDT)
-Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9910472f96sm104790066b.146.2024.10.03.09.11.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 09:11:27 -0700 (PDT)
-Subject: Re: [PATCH net] net: add inline annotation to fix the build warning
-To: Moon Yeounsu <yyyynoom@gmail.com>, Eric Dumazet <edumazet@google.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- linux@weissschuh.net, j.granados@samsung.com, judyhsiao@chromium.org,
- James.Z.Li@dell.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Simon Horman <horms@kernel.org>, linux-sparse@vger.kernel.org
-References: <20241001193352.151102-1-yyyynoom@gmail.com>
- <CAAjsZQx1NFdx8HyBmDqDxQbUvcxbaag5y-ft+feWLgQeb1Qfdw@mail.gmail.com>
- <CANn89i+aHZWGqWjCQXacRV4SBGXJvyEVeNcZb7LA0rCwifQH2w@mail.gmail.com>
- <CAAjsZQxEKLZd-fQdRiu68uX6Kg4opW4wsQRaLcKyfnQ+UyO+vw@mail.gmail.com>
- <CANn89i+hNfRjhvpRR+WXqD72ko4_-N+Tj3CqmJTBGyi3SpQ+Og@mail.gmail.com>
- <CAAjsZQxkH8nmHchtFFPm5VouLEaViR5HTRCCnrP0d9jSF2pGAQ@mail.gmail.com>
-From: Edward Cree <ecree.xilinx@gmail.com>
-Message-ID: <e5cb1a17-72e1-529c-0f46-404dcdb3e5f3@gmail.com>
-Date: Thu, 3 Oct 2024 17:11:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        d=1e100.net; s=20230601; t=1727971906; x=1728576706;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z8M94Szf86aflf7GYtGP4IFREoq5t6mzeSASTe2kb0E=;
+        b=swQRpp2fzs5UBvZo0NGrxehyrXEDe/ZsOJ4Aq026uWaIlh33s3/zmAK65a8Wv/BkD6
+         O3UbvU+kXdXI44PD3q++lf9x0bgTH+vTx6gGL6OY8Cx0iiEmKn7Y9aUIjh9Rbb65uIc/
+         Vp37z+GFsHMDnHpypCNTrFrduPkpqpIAI+ktPx0kFkcBNbR1GkKNroRaYyJnCNJhT2TK
+         grG2GhhDJWvjwC9aPoFYQO/jXmXBRZ76zfN9+rv66WZc7Vm/V6S0QNAo+B1BRGtC7GVB
+         07biNAZF/vSGNkcdXrsMIpRdNXeTtPSgJeYnBz92v+sZ7ufTa43aUiGgaIu1ik1T+6Su
+         iw0A==
+X-Forwarded-Encrypted: i=1; AJvYcCV7zJOi/4JZHhzsmHbJgnK6a28Tl6uz+Rt3aRM7/WOkMR3+EFb29sEq8ksCHhSLzGfvzUSVJoSlfGZTK6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbFCSmPYgs7yM1FseSlJYFEpLaI9YnRI1ZpNTKYHraCdNjEtKs
+	6lhisK45D1Ljiq4BljBpqg//aiIsniKAOidlqk2By1WHRSBCY3kcVtEwHYTfTS29zrEp8/3lXBf
+	5e0ucsofEbZ/GQ3+ddJdKHbDiCpc2D3lK61yW
+X-Google-Smtp-Source: AGHT+IGsVwokVwDnq0q9EW2iHbb+PYH+PmCbmotDyShkoPWSykbINIhoAZtW8xfR6197nX/vMfmDWCNcz9sMeU0B/yE=
+X-Received: by 2002:a05:6000:4009:b0:37c:c605:218b with SMTP id
+ ffacd0b85a97d-37cfb9c8d6cmr4943794f8f.35.1727971905843; Thu, 03 Oct 2024
+ 09:11:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAjsZQxkH8nmHchtFFPm5VouLEaViR5HTRCCnrP0d9jSF2pGAQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20241002233409.2857999-1-xur@google.com> <20241002233409.2857999-2-xur@google.com>
+ <20241003154143.GW5594@noisy.programming.kicks-ass.net> <CAKwvOdnS-vyTXHaGm4XiLMtg4rsTuUTJ6ao7Ji-fUobZjdBVLw@mail.gmail.com>
+ <20241003160309.GY5594@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241003160309.GY5594@noisy.programming.kicks-ass.net>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Thu, 3 Oct 2024 09:11:34 -0700
+Message-ID: <CAKwvOd=CRiHitKeYtHH=tmT8yfDa2RSALbYn5uCC8nRq8ud79g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] Add AutoFDO support for Clang build
+To: Peter Zijlstra <peterz@infradead.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>, 
+	Sriraman Tallam <tmsriram@google.com>, David Li <davidxl@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>, 
+	Brian Gerst <brgerst@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
+	Jann Horn <jannh@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, linux-arch@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>, 
+	workflows@vger.kernel.org, x86@kernel.org, "Xin Li (Intel)" <xin@zytor.com>, 
+	Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/10/2024 16:33, Moon Yeounsu wrote:
-> On 03/10/2024 15:19, Eric Dumazet wrote:
->> It also does not know about conditional locking, it is quite useless.
-> So... What do you think about who wants to send the patch to silence
-> the Sparse's warning message, nevertheless?
+On Thu, Oct 3, 2024 at 9:03=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+> On Thu, Oct 03, 2024 at 08:51:51AM -0700, Nick Desaulniers wrote:
+> > On Thu, Oct 3, 2024 at 8:42=E2=80=AFAM Peter Zijlstra <peterz@infradead=
+.org> wrote:
+> > >
+> > > On Wed, Oct 02, 2024 at 04:34:00PM -0700, Rong Xu wrote:
+> > > > +6) Rebuild the kernel using the AutoFDO profile file with the same=
+ config as step 1,
+> > > > +    (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
+> > > > +
+> > > > +      .. code-block:: sh
+> > > > +
+> > > > +         $ make LLVM=3D1 CLANG_AUTOFDO_PROFILE=3D<profile_file
+> > > > +
+> > >
+> > >
+> > > Can this be done without the endless ... code-block nonsense?
+> >
+> > Dunno, I think it looks pretty nice once rendered. Makes it
+>
+> It makes it absolute crap for all of us who 'render' text documents
+> using less or vi.
 
-Fwiw, my experience is that if I can't explain the locking to sparse
- that's usually a sign that the code is too complex and needs to be
- rewritten.
-In general I'm in favour of patches to fix sparse warnings.  In this
- case it looks like what's needed is __cond_acquires, but the patch
- to implement that in sparse[1] doesn't seem to have gotten anywhere
- near Luc's tree.  (Yet it's present and occasionally used in the
- kernel...)  CCing the sparse ML to find out why.
+"It hurts when I punch myself in the face."
 
--ed
+https://docs.kernel.org/ is where we point people to, and what we
+should be optimizing for (IMO).  Jonathan, do we have a policy about
+using code-block consistently throughout the kernel docs or not?
+Otherwise, this complaint smells like "non-technical non-sense" to me.
 
-[1]: https://lore.kernel.org/all/CAHk-=wjZfO9hGqJ2_hGQG3U_XzSh9_XaXze=HgPdvJbgrvASfA@mail.gmail.com/#t
+--=20
+Thanks,
+~Nick Desaulniers
 
