@@ -1,319 +1,190 @@
-Return-Path: <linux-kernel+bounces-349062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1692198F046
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:23:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0F398F04F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479BA1C21F99
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:23:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BEF2B237C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543A819ADA3;
-	Thu,  3 Oct 2024 13:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7D419B595;
+	Thu,  3 Oct 2024 13:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gOdIkUyq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="wP35DN2E"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9907F1E495
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 13:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165CF186E46;
+	Thu,  3 Oct 2024 13:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727961812; cv=none; b=d4ldFmQ/OwaqMmfAY6iOMi6sWmCJjS1YMHmZXoKXx7RazWnktWEuDKtM31K7sxYyPJU+AoKlWy50EJ0aWWwbj76XMRNobVzwG2eMJ4E6jghvgGrCIT+If9lpPs00Ky4pVOvUiqt4SNs/4/KLiMqAKtV8dJSwVfaAxkyvKAXlbOo=
+	t=1727961946; cv=none; b=KBgShGdJ7b0gmtJqecf1zny11UtXMvF+agtuJfGdqSYZd7y0fYEseF70EvwrvF9ZhgZ2dKcUI3ca1+NSDImAnaPV7aQ1JqBsSuCCES/T5nxz8Ftk950Rf1V9nPYx/AohnoygJ/AhphMForWWt2F0CHUdSI3U3WLDNr37sDcFuGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727961812; c=relaxed/simple;
-	bh=+g4D41G9E/gTcvaT6Lc/6aR0I06Xgk+K8ZtCl8/7JQc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t1LdrCMewLi85YADMsBW3eyjqNKP0+XReZBaK1LoJGUr7NGxIrT67nCYoEX7iXJWW3VKegl9KbNB1hbeiMtJAaB/Md/PXCsSYlmssLP8NGsejWvR5iQXkvtgG0d/WemwdwqK/q9exAe1wAlS+veR9W+0NyJvnK8xDdnxgD9vZ5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gOdIkUyq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727961809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6Udh+D3KcyXmjXENW577w+3fYh/n4oDV27euJaC3aD8=;
-	b=gOdIkUyqSx1dtelL43p2C68Y0njxpqVOQVED6AjXE4iaUCeHKjEzh+29r8z/nK45Hp5mkb
-	Vv72EWYEs/IfpKk2TPAYSQ0Hg+F+lMZCu+g9soAevowSFeD59DHQBDyaaI/4wdIqK6L5+I
-	4ChdKb69ZeQIBgOkUxMDZNDRp2fVhac=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-637-NiMhYkClMLu2yiWBKj-dog-1; Thu,
- 03 Oct 2024 09:23:26 -0400
-X-MC-Unique: NiMhYkClMLu2yiWBKj-dog-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B989819560BD;
-	Thu,  3 Oct 2024 13:23:24 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.45.225.141])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9D7551956054;
-	Thu,  3 Oct 2024 13:23:22 +0000 (UTC)
-From: Paolo Abeni <pabeni@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Networking for v6.12-rc2
-Date: Thu,  3 Oct 2024 15:23:02 +0200
-Message-ID: <20241003132302.26857-1-pabeni@redhat.com>
+	s=arc-20240116; t=1727961946; c=relaxed/simple;
+	bh=0Bq3tDtnRpX1pbJsNPejO+Bs7zMzKXxBWm7bWQUcwiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uuFCUiXeDQCuxuCr9Bqn9EFqOe9Xj1Eyq59VL+p0+xuT5ir2nVEOlZUGNcsbFfbdAKSScIg4uktvyduAikXTrY41fTJGFz5y2iZu4FWKiH8YqDviSdsV7EutZfeR+y/7YrTcmn11nagjPBPnOmiCIl3AIMTjbDeU+Bg/yqoMor4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=wP35DN2E; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727961933;
+	bh=0Bq3tDtnRpX1pbJsNPejO+Bs7zMzKXxBWm7bWQUcwiE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=wP35DN2EtpOm07PoWCz0T0mMaUcxto2ytWDs1yziiOGWC+j+FxhxOq3eC1qy+b9q+
+	 qLO1bAlnX0N0Zlw1ZGvD7iJMGAVGLmou2zQdfOP+pWMZ4h+xNjWqdvt3jRp/enzwQk
+	 tofficLJX+6zWFrzrnXzjz0qiwslONzUNtSt9nQyznJ6Kp3/nJlxI0jmloXbEAzF1S
+	 0cCdDSKfA/epuSKCZuuT0eGajBd0gPVIJsWlRUiN5aVMbhR58+K6sTuUyNOwS3R8Z8
+	 tj16vbvLgKlkiEk7Y4D2WThHi3pO1STu+DDdJHFH3vL30MOwt/bNO6KWSxegxqIWhT
+	 7Z6AB4hAYPUcg==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKC992Gdzz4sn;
+	Thu,  3 Oct 2024 09:25:33 -0400 (EDT)
+Message-ID: <bd93a57c-662f-470e-8ba4-509f27eada6d@efficios.com>
+Date: Thu, 3 Oct 2024 09:23:31 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
-
-Hi Linus!
-
-The following changes since commit 62a0e2fa40c5c06742b8b4997ba5095a3ec28503:
-
-  Merge tag 'net-6.12-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-09-26 10:27:10 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.12-rc2
-
-for you to fetch changes up to 8beee4d8dee76b67c75dc91fd8185d91e845c160:
-
-  sctp: set sk_state back to CLOSED if autobind fails in sctp_listen_start (2024-10-03 12:18:29 +0200)
-
-----------------------------------------------------------------
-Including fixes from ieee802154, bluetooth and netfilter.
-
-Current release - regressions:
-
-  - eth: mlx5: fix wrong reserved field in hca_cap_2 in mlx5_ifc
-
-  - eth: am65-cpsw: fix forever loop in cleanup code
-
-Current release - new code bugs:
-
-  - eth: mlx5: HWS, fixed double-free in error flow of creating SQ
-
-Previous releases - regressions:
-
-  - core: avoid potential underflow in qdisc_pkt_len_init() with UFO
-
-  - core: test for not too small csum_start in virtio_net_hdr_to_skb()
-
-  - vrf: revert "vrf: remove unnecessary RCU-bh critical section"
-
-  - bluetooth:
-    - fix uaf in l2cap_connect
-    - fix possible crash on mgmt_index_removed
-
-  - dsa: improve shutdown sequence
-
-  - eth: mlx5e: SHAMPO, fix overflow of hd_per_wq
-
-  - eth: ip_gre: fix drops of small packets in ipgre_xmit
-
-Previous releases - always broken:
-
-  - core: fix gso_features_check to check for both dev->gso_{ipv4_,}max_size
-
-  - core: fix tcp fraglist segmentation after pull from frag_list
-
-  - netfilter: nf_tables: prevent nf_skb_duplicated corruption
-
-  - sctp: set sk_state back to CLOSED if autobind fails in sctp_listen_start
-
-  - mac802154: fix potential RCU dereference issue in mac802154_scan_worker
-
-  - eth: fec: restart PPS after link state change
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-
-----------------------------------------------------------------
-Aakash Menon (1):
-      net: sparx5: Fix invalid timestamps
-
-Aleksander Jan Bajkowski (1):
-      net: ethernet: lantiq_etop: fix memory disclosure
-
-Anton Danilov (1):
-      ipv4: ip_gre: Fix drops of small packets in ipgre_xmit
-
-Csókás, Bence (2):
-      net: fec: Restart PPS after link state change
-      net: fec: Reload PTP registers after link-state change
-
-Dan Carpenter (1):
-      net: ethernet: ti: am65-cpsw: Fix forever loop in cleanup code
-
-Daniel Borkmann (2):
-      net: Add netif_get_gro_max_size helper for GRO
-      net: Fix gso_features_check to check for both dev->gso_{ipv4_,}max_size
-
-Dragos Tatulea (1):
-      net/mlx5e: SHAMPO, Fix overflow of hd_per_wq
-
-Eddie James (1):
-      net/ncsi: Disable the ncsi work before freeing the associated structure
-
-Elena Salomatkina (1):
-      net/mlx5e: Fix NULL deref in mlx5e_tir_builder_alloc()
-
-Eric Dumazet (5):
-      netfilter: nf_tables: prevent nf_skb_duplicated corruption
-      net: avoid potential underflow in qdisc_pkt_len_init() with UFO
-      net: add more sanity checks to qdisc_pkt_len_init()
-      net: test for not too small csum_start in virtio_net_hdr_to_skb()
-      ppp: do not assume bh is held in ppp_channel_bridge_input()
-
-FUJITA Tomonori (1):
-      net: phy: qt2025: Fix warning: unused import DeviceId
-
-Felix Fietkau (1):
-      net: gso: fix tcp fraglist segmentation after pull from frag_list
-
-Geert Uytterhoeven (1):
-      net: microchip: Make FDMA config symbol invisible
-
-Gerd Bayer (1):
-      net/mlx5: Fix error path in multi-packet WQE transmit
-
-Hangbin Liu (1):
-      selftests: rds: move include.sh to TEST_FILES
-
-Hui Wang (1):
-      net: phy: realtek: Check the index value in led_hw_control_get
-
-Ido Schimmel (1):
-      bridge: mcast: Fail MDB get request on empty entry
-
-Jakub Kicinski (3):
-      Merge tag 'ieee802154-for-net-2024-09-27' of git://git.kernel.org/pub/scm/linux/kernel/git/wpan/wpan
-      Merge tag 'for-net-2024-09-27' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
-      Merge tag 'mlx5-fixes-2024-09-25' of git://git.kernel.org/pub/scm/linux/kernel/git/saeed/linux
-
-Jianbo Liu (1):
-      net/mlx5e: Fix crash caused by calling __xfrm_state_delete() twice
-
-Jiawei Ye (1):
-      mac802154: Fix potential RCU dereference issue in mac802154_scan_worker
-
-Jiawen Wu (1):
-      net: pcs: xpcs: fix the wrong register that was written back
-
-Jinjie Ruan (4):
-      ieee802154: Fix build error
-      net: ieee802154: mcr20a: Use IRQF_NO_AUTOEN flag in request_irq()
-      net: wwan: qcom_bam_dmux: Fix missing pm_runtime_disable()
-      Bluetooth: btmrvl: Use IRQF_NO_AUTOEN flag in request_irq()
-
-Luiz Augusto von Dentz (3):
-      Bluetooth: MGMT: Fix possible crash on mgmt_index_removed
-      Bluetooth: L2CAP: Fix uaf in l2cap_connect
-      Bluetooth: hci_event: Align BR/EDR JUST_WORKS paring with LE
-
-Mohamed Khalfella (1):
-      net/mlx5: Added cond_resched() to crdump collection
-
-Paolo Abeni (3):
-      Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
-      Merge branch 'net-two-fixes-for-qdisc_pkt_len_init'
-      Merge tag 'nf-24-10-02' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
-
-Phil Sutter (2):
-      netfilter: uapi: NFTA_FLOWTABLE_HOOK is NLA_NESTED
-      selftests: netfilter: Fix nft_audit.sh for newer nft binaries
-
-Ravikanth Tuniki (1):
-      dt-bindings: net: xlnx,axi-ethernet: Add missing reg minItems
-
-Roger Quadros (1):
-      net: ethernet: ti: cpsw_ale: Fix warning on some platforms
-
-Sean Anderson (1):
-      doc: net: napi: Update documentation for napi_schedule_irqoff
-
-Shenwei Wang (1):
-      net: stmmac: dwmac4: extend timeout for VLAN Tag register busy bit check
-
-Vladimir Oltean (1):
-      net: dsa: improve shutdown sequence
-
-Willem de Bruijn (2):
-      vrf: revert "vrf: Remove unnecessary RCU-bh critical section"
-      gso: fix udp gso fraglist segmentation after pull from frag_list
-
-Xin Long (1):
-      sctp: set sk_state back to CLOSED if autobind fails in sctp_listen_start
-
-Yevgeny Kliteynik (3):
-      net/mlx5: Fix wrong reserved field in hca_cap_2 in mlx5_ifc
-      net/mlx5: HWS, fixed double-free in error flow of creating SQ
-      net/mlx5: HWS, changed E2BIG error to a negative return code
-
-zhang jiao (1):
-      selftests: netfilter: Add missing return value
-
- .../devicetree/bindings/net/xlnx,axi-ethernet.yaml |  3 +-
- Documentation/networking/napi.rst                  |  5 +-
- drivers/bluetooth/btmrvl_sdio.c                    |  3 +-
- drivers/net/ethernet/freescale/fec.h               |  9 ++++
- drivers/net/ethernet/freescale/fec_main.c          | 11 ++++-
- drivers/net/ethernet/freescale/fec_ptp.c           | 50 +++++++++++++++++++
- drivers/net/ethernet/lantiq_etop.c                 |  4 +-
- drivers/net/ethernet/mellanox/mlx5/core/en.h       |  2 +-
- drivers/net/ethernet/mellanox/mlx5/core/en/tir.c   |  3 ++
- .../ethernet/mellanox/mlx5/core/en_accel/ipsec.c   |  8 ++-
- drivers/net/ethernet/mellanox/mlx5/core/en_tx.c    |  1 -
- .../net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c  | 10 ++++
- .../mlx5/core/steering/hws/mlx5hws_bwc_complex.c   |  2 +-
- .../mlx5/core/steering/hws/mlx5hws_definer.c       |  4 +-
- .../mlx5/core/steering/hws/mlx5hws_matcher.c       |  2 +-
- .../mellanox/mlx5/core/steering/hws/mlx5hws_send.c |  8 ++-
- drivers/net/ethernet/microchip/fdma/Kconfig        |  2 +-
- .../net/ethernet/microchip/sparx5/sparx5_packet.c  |  6 ++-
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  | 18 +++----
- drivers/net/ethernet/ti/am65-cpsw-nuss.c           |  2 +-
- drivers/net/ethernet/ti/cpsw_ale.c                 | 12 ++++-
- drivers/net/ethernet/ti/cpsw_ale.h                 |  1 +
- drivers/net/ieee802154/Kconfig                     |  1 +
- drivers/net/ieee802154/mcr20a.c                    |  5 +-
- drivers/net/pcs/pcs-xpcs-wx.c                      |  2 +-
- drivers/net/phy/qt2025.rs                          |  4 +-
- drivers/net/phy/realtek.c                          |  3 ++
- drivers/net/ppp/ppp_generic.c                      |  4 +-
- drivers/net/vrf.c                                  |  2 +
- drivers/net/wwan/qcom_bam_dmux.c                   | 11 +++--
- include/linux/mlx5/mlx5_ifc.h                      |  2 +-
- include/linux/netdevice.h                          | 18 +++++++
- include/linux/virtio_net.h                         |  4 +-
- include/uapi/linux/netfilter/nf_tables.h           |  2 +-
- net/bluetooth/hci_core.c                           |  2 +
- net/bluetooth/hci_event.c                          | 15 +++---
- net/bluetooth/l2cap_core.c                         |  8 ---
- net/bluetooth/mgmt.c                               | 23 +++++----
- net/bridge/br_mdb.c                                |  2 +-
- net/core/dev.c                                     | 14 ++++--
- net/core/gro.c                                     |  9 +---
- net/dsa/dsa.c                                      |  7 +++
- net/ipv4/ip_gre.c                                  |  6 +--
- net/ipv4/netfilter/nf_dup_ipv4.c                   |  7 ++-
- net/ipv4/tcp_offload.c                             | 10 +++-
- net/ipv4/udp_offload.c                             | 22 ++++++++-
- net/ipv6/netfilter/nf_dup_ipv6.c                   |  7 ++-
- net/ipv6/tcpv6_offload.c                           | 10 +++-
- net/mac802154/scan.c                               |  4 +-
- net/ncsi/ncsi-manage.c                             |  2 +
- net/sctp/socket.c                                  |  4 +-
- .../selftests/net/netfilter/conntrack_dump_flush.c |  1 +
- tools/testing/selftests/net/netfilter/nft_audit.sh | 57 +++++++++++-----------
- tools/testing/selftests/net/rds/Makefile           |  3 +-
- tools/testing/selftests/net/rds/test.py            |  0
- 55 files changed, 310 insertions(+), 127 deletions(-)
- mode change 100644 => 100755 tools/testing/selftests/net/rds/test.py
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+To: 'Alan Stern' <stern@rowland.harvard.edu>,
+ David Laight <David.Laight@aculab.com>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ "maged.michael@gmail.com" <maged.michael@gmail.com>,
+ Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
+ "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "lkmm@lists.linux.dev" <lkmm@lists.linux.dev>
+References: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+ <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
+ <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
+ <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
+ <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
+ <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
+ <2b1caba3-48fa-43b9-bd44-cf60b9a141d7@rowland.harvard.edu>
+ <22638e2fe1274eb0834fa3e43b44184e@AcuMS.aculab.com>
+ <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
+ <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
+ <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 2024-10-03 03:50, 'Alan Stern' wrote:
+> On Wed, Oct 02, 2024 at 03:24:45PM +0000, David Laight wrote:
+>> I think I know what you are trying to do, and you just fail.
+>> Whether something can work is another matter, but that code
+>> can't ever work.
+>>
+>> Inside if (a == b) the compiler will always use the same register
+>> for references to a and b - because it knows they have the same value.
+> 
+> According to the other people in this discussion who have actually tried
+> using this code, it _does_ work (at least some of the time).
+> 
+> However, I'm not one of those people and so I leave it up to them to
+> decide how to respond to this critique.
+
+I suspect that David's comment is about this specific example that
+was given in this leg of the email thread:
+
+https://lore.kernel.org/lkml/5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com/
+
+> > > > > int fct_hide(void)
+> > > > > > {
+> > > > > >     int *a, *b;
+> > > > > >
+> > > > > >     do {
+> > > > > >         a = READ_ONCE(p);
+> > > > > >         asm volatile ("" : : : "memory");
+> > > > > >         b = READ_ONCE(p);
+> > > > > >     } while (a != b);
+> > > > > >     OPTIMIZER_HIDE_VAR(b);
+> > > > > >     return *b;
+> > > > > > } 
+
+This indeed cannot work because the hide var is done
+on @b after it was compared with @a, so after the compiler
+was free to use any of the registers due to the equality.
+
+Another example that does *not* work is if we try to hide
+vars on the inputs of the equality, and then proceed to do the
+comparison on the resulting temporaries, e.g.:
+
+int fct_hide(void)
+{
+      int *a, *b;
+
+      do {
+          a = READ_ONCE(p);
+          asm volatile ("" : : : "memory");
+          b = READ_ONCE(p);
+      } while (OPTIMIZER_HIDE_VAR(a) != OPTIMIZER_HIDE_VAR(b));
+      return *b;
+}
+
+The reason why this does *not* work is because the compiler is
+free to use either temporaries for *b at the end, because they
+were deemed identical.
+
+What _does_ work however are the following two approaches:
+
+1) Perform the equality check on the original variables, creating
+new versions (with OPTIMIZER_HIDE_VAR) of both variables for the
+rest of their use, therefore making sure the pointer dereference
+are not derived from versions of the variables which were compared
+with another pointer. (as suggested by Boqun)
+
+2) Perform the equality check on the versions resulting of hiding
+both variables, making sure those versions of the variables are
+not dereferenced afterwards. (as suggested by Linus)
+
+Thanks,
+
+Mathieu
+
+
+> 
+> Alan
+> 
+>> Possibly something like:
+>> 	c = b;
+>> 	OPTIMISER_HIDE_VAR(c);
+>> 	if (a == c) {
+>> 		*b
+>> will ensure that there isn't a speculative load from *a.
+>> You'll get at least one register-register move - but they are safe.
+>> Otherwise you'll need to put the condition inside an asm block.
+>>
+>> 	David
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
