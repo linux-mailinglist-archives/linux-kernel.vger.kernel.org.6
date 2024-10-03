@@ -1,101 +1,54 @@
-Return-Path: <linux-kernel+bounces-348982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E45F98EEEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:17:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF4098EEE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7D58283597
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:17:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23BC42834DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B121791F4;
-	Thu,  3 Oct 2024 12:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A4B16F826;
+	Thu,  3 Oct 2024 12:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hQBBLOxb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rJoFd6g4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hQBBLOxb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rJoFd6g4"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVOtBbtA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8973D170A2E;
-	Thu,  3 Oct 2024 12:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814DA26AD4;
+	Thu,  3 Oct 2024 12:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727957807; cv=none; b=b81vuvhgdPdVVCRyhxoM2x/dK9N8RcrVQuXQz9NmGZbifgRYbqVjtSIVWK1LjRKCqy+nu+J36WMlOurnkkbU7V8j5McaIz898tbNwHu9wGR8Uxt+0LgDIU847p1F8rfLrWzGYEvm+KwbStyvrm9iInDVpeKeiZoDpIp06c1vSRM=
+	t=1727957803; cv=none; b=lAEvMANPN0ldCyWI+iRlt4xrmooOu5C9a0DS/nEjC6NAmZvea5lkHS8DQQvW6BK6STkatuWHHWs1s8Ra26ZkDO9Z2nmSQQG/icqVPn5GX1O3mdjWAjYJTawZlyGgyhCN7ir+z9VtwlAVr3MlyIyM2SlPRwTYEzyPxflOvRj2WdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727957807; c=relaxed/simple;
-	bh=SEJwaaFr2ADiYX4qg+k6s74GJOUgEqwMZSCm/dJa30A=;
+	s=arc-20240116; t=1727957803; c=relaxed/simple;
+	bh=Aese/eIBS0I7NY7YUTmRlTs54LEUgV++awSfuMxhuC8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kfxUdOxb7jc2R94IYRbLaomBSVJ/WNspznXGmVjVwTdfEh8M3+rkn9qFbcEDKVzubjl7ueFMYDrF7PTPypPHPTpS7rC/GhfQT2G6HLm5mYWhhXCIAGqM0jbS6FZmGw6UCA7CHH1fnxhU+MfGrjvk4XavCkOzA+2EKdi9XVj05Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hQBBLOxb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rJoFd6g4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hQBBLOxb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rJoFd6g4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9D24221CFF;
-	Thu,  3 Oct 2024 12:16:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727957803; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/hSFLEwAHNuNwWLKgwfodoEokY1wh1J/NWvIOHRUOVM=;
-	b=hQBBLOxbU7Xr882TXBje5AtzYamifhI7nVZZ9CEj1ZaurIV7Nfbai9t3347dV65UdijPQt
-	34YQH0nlKmtBA2AR7wfWCkJDe7BakbwArojJ9VF03y3UzaaDzfQc8blF9qQPZK2KdL5OvK
-	iKS9cHLD8C6H6NMstZOuDKWbp8TaZ+8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727957803;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/hSFLEwAHNuNwWLKgwfodoEokY1wh1J/NWvIOHRUOVM=;
-	b=rJoFd6g4t4NgKS0B0jW+MIeltvmf+B9SPhP9/fxWbI0MWmp0IsuKY8ZPxB9NyhLD1mK3Eg
-	ShIfi7vzZr/4e8Aw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727957803; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/hSFLEwAHNuNwWLKgwfodoEokY1wh1J/NWvIOHRUOVM=;
-	b=hQBBLOxbU7Xr882TXBje5AtzYamifhI7nVZZ9CEj1ZaurIV7Nfbai9t3347dV65UdijPQt
-	34YQH0nlKmtBA2AR7wfWCkJDe7BakbwArojJ9VF03y3UzaaDzfQc8blF9qQPZK2KdL5OvK
-	iKS9cHLD8C6H6NMstZOuDKWbp8TaZ+8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727957803;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/hSFLEwAHNuNwWLKgwfodoEokY1wh1J/NWvIOHRUOVM=;
-	b=rJoFd6g4t4NgKS0B0jW+MIeltvmf+B9SPhP9/fxWbI0MWmp0IsuKY8ZPxB9NyhLD1mK3Eg
-	ShIfi7vzZr/4e8Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 932A313882;
-	Thu,  3 Oct 2024 12:16:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /HHnIyuL/mboIwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 03 Oct 2024 12:16:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3541DA086F; Thu,  3 Oct 2024 14:16:35 +0200 (CEST)
-Date: Thu, 3 Oct 2024 14:16:35 +0200
-From: Jan Kara <jack@suse.cz>
-To: Tang Yizhou <yizhou.tang@shopee.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm/page-writeback.c: Fix comment of
- wb_domain_writeout_add()
-Message-ID: <20241003121635.l7wpciq2jnoh7sq2@quack3>
-References: <20241002130004.69010-1-yizhou.tang@shopee.com>
- <20241002130004.69010-3-yizhou.tang@shopee.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DdPoZHA4k0lvrFMWF/aEIXC39z7UGEq+791ZDo43b5ABGqI35Kl77IorbEhEc//J6quVj5hDT9xBkLz6O2Pa44biiEdOqnnE65oZzMT95kw1SR54jUk4ce3LUbpGXy8CU7gJvxayfGPOZXTF+pi4Pec7lTO/uBtDqWWGN2j3rgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVOtBbtA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73F4AC4CEC5;
+	Thu,  3 Oct 2024 12:16:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727957803;
+	bh=Aese/eIBS0I7NY7YUTmRlTs54LEUgV++awSfuMxhuC8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TVOtBbtAkxEnd2BpkcFDgluD2pFJ69aj5gLqTAW2fnY6nre8pm3MM3TnEy9cDHNEY
+	 VUGOF3tHs3gQLSz47y+Z4PUnRkPHGyNADRzDMsG2h7oVlGNpkpZCDdBNlAaO/rFSyi
+	 hRKp8ttz0iB2v+W/F/T0aedNghvh3Z9WOxQUhKjrZ4L5rccgurf6JD4/RIkOJga/fD
+	 lVZLmIf/ceCPsgrj/I0WQW6beRScC5PnkhDX1lyP/BgzXNKBXOSl3QHVu44VCftIxh
+	 5D6q8SUmYSyAS+0KbJ/jeADZqMfBJqZR4OiwFZby+miiV7OOy0dZU4bWzquhppljg8
+	 aczN1FplpMQEQ==
+Date: Thu, 3 Oct 2024 14:16:39 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Robert Richter <rric@kernel.org>
+Subject: Re: [PATCH v8 2/2] i2c: octeon: Add block-mode i2c operations
+Message-ID: <iprnleek4h3gcky5ckeupk55wme5vb5e3d7nba7sxk7k56smwj@4f37zfh2hcqs>
+References: <20240926041203.2850856-1-aryan.srivastava@alliedtelesis.co.nz>
+ <20240926041203.2850856-3-aryan.srivastava@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,68 +57,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241002130004.69010-3-yizhou.tang@shopee.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.995];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20240926041203.2850856-3-aryan.srivastava@alliedtelesis.co.nz>
 
-On Wed 02-10-24 21:00:03, Tang Yizhou wrote:
-> From: Tang Yizhou <yizhou.tang@shopee.com>
-> 
-> __bdi_writeout_inc() has undergone multiple renamings, but the comment
-> within the function body have not been updated accordingly. Update it
-> to reflect the latest wb_domain_writeout_add().
-> 
-> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+Hi Aryan,
 
-Looks good. Feel free to add:
+>  drivers/i2c/busses/i2c-octeon-core.c     | 155 ++++++++++++++++++++++-
+>  drivers/i2c/busses/i2c-octeon-core.h     |  13 +-
+>  drivers/i2c/busses/i2c-thunderx-pcidrv.c |   3 +
+>  3 files changed, 164 insertions(+), 7 deletions(-)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+I'm having issues at applying this patch, can you please rebase
+it on top of the latest i2c/i2c-host[*]?
 
-								Honza
+Thanks,
+Andi
 
-> ---
->  mm/page-writeback.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index a848e7f0719d..4f6efaa060bd 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -586,7 +586,7 @@ static void wb_domain_writeout_add(struct wb_domain *dom,
->  	/* First event after period switching was turned off? */
->  	if (unlikely(!dom->period_time)) {
->  		/*
-> -		 * We can race with other __bdi_writeout_inc calls here but
-> +		 * We can race with other wb_domain_writeout_add calls here but
->  		 * it does not cause any harm since the resulting time when
->  		 * timer will fire and what is in writeout_period_time will be
->  		 * roughly the same.
-> -- 
-> 2.25.1
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[*] git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git
 
