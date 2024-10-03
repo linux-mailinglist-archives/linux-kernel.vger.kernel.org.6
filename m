@@ -1,190 +1,222 @@
-Return-Path: <linux-kernel+bounces-348534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07C698E8B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:12:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B58F98E8C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F8181C2195C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939EF1F23744
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE39620309;
-	Thu,  3 Oct 2024 03:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FBB2556E;
+	Thu,  3 Oct 2024 03:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GHDjt4XY"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=illinois-edu.20230601.gappssmtp.com header.i=@illinois-edu.20230601.gappssmtp.com header.b="RyXLRa78"
+Received: from mail-qk1-f193.google.com (mail-qk1-f193.google.com [209.85.222.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F608F40
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 03:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615AE748D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 03:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727925118; cv=none; b=TV2D9jb3VLX3FojYqjyNTzlh4zB5u6kK3gqnidW9+Ls+nMlhH5ZF3jeInARM11OyVtepbbWX0w+34erh7zdrki+GwXUJfTehBkedUrCa9Pyxc9T/9Iou7WYAxaumbkOZmyTYF3omCSdhKLb81a5M5mc31sB5wP/WB7Q5xGPVB4M=
+	t=1727925276; cv=none; b=GGITFv7PMynMfGkh1Lod+ep3Ns6V1NVakuaygT4wRY1ItIf9KSlcrDakMXPKQqAtvwIC2/no3kx0fJXX/bCfxg4e4ensoYGQUkzAhCu4LgIsL4aIFXfplZKh4DgCY7M7ezxIhx4fTO1dW1dmb7UzJzURuwIvmXm1bk86LczhhAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727925118; c=relaxed/simple;
-	bh=AnC+0cgleI6g6hOCog96yYZqAZY9JgX98qzm/FbnhiY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tUVoPWlbYB8uqRJ+SNIKlOpLoC82tJ8bQQf3eTxBAL32l4hK41oWGs7mQzhPiFCYBWg1E8CsxsjXMKPsKPp4EsmAbbY/XJjD27xWBaIzGAGNbmHZw67M6LbB/eAViaH4cjhsWjTUhixqEg5vWq2ALZDv+ILzDmPFk5DWZ1o27mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GHDjt4XY; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso4848971fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 20:11:56 -0700 (PDT)
+	s=arc-20240116; t=1727925276; c=relaxed/simple;
+	bh=jKTsXBcNO/miLEA0jRPsm6kZWhLrFZu0gIUjdZSMDbU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UlNhib4g1KHc/EUbMESWyk5+INjzMuTrIR6osfhD0qkERiTDZ+rjXE5y/1QSLNyRPBrC2jrYrj9LQ9KEmF+zrwOYJDm6UyzziULjcHLVDEIN03Ub3ooFShSnJD9jbIV2fDh4SBIqp4qcOb6N2dwsiQ6hTpHdvXrjMGvSlnzUqKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu; spf=pass smtp.mailfrom=illinois.edu; dkim=pass (2048-bit key) header.d=illinois-edu.20230601.gappssmtp.com header.i=@illinois-edu.20230601.gappssmtp.com header.b=RyXLRa78; arc=none smtp.client-ip=209.85.222.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=illinois.edu
+Received: by mail-qk1-f193.google.com with SMTP id af79cd13be357-7ae3d9a93c0so50365385a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 20:14:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1727925114; x=1728529914; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AnC+0cgleI6g6hOCog96yYZqAZY9JgX98qzm/FbnhiY=;
-        b=GHDjt4XYOmmQ1kmq7LqbNo9mb2QQI0NImpt2VPrjU1Ctu9/mxr9mDhoayNaE/q7HL1
-         EZOj33EFc32mshjZ6doyXdzH2bLO2+FYDZFhAhKO0QSXvjZtId4I0jIcyFM7wj5d7E1d
-         aCaV27MENE+c9VBFFyyrqgUFCXhWosRu0SM34=
+        d=illinois-edu.20230601.gappssmtp.com; s=20230601; t=1727925273; x=1728530073; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bVmdUELTDUmyOs2T634ZSBxOSroRBta42gzygmF21tA=;
+        b=RyXLRa78Q/eUKVFYaCd/tclyx2QoGYtdKAWCcsWRR6dzm7b41l2xPTm5P7T956sBBF
+         nomdJJTM2c2cWkzgx7H2BuSC53CfNHXb5mU8Du/PI0eWQcQmUEPGKHbPnVozxK8EpL2V
+         l8SmMhBnEoX7M1G93ie3ItkT35qaElp6afhfiw2doDr/beM8PfMU4ZmHBWDkN1GW/BL1
+         Xf50p5mctT7HynzQ3AHeDwz6k9g1IANORPLevVN6wF+0bey0nN0m43kSNgPLiSVDTJQY
+         5IU0fjKtSfW+Tgz09cKaAi5/0+JEkES1Hfjf8uoX/UZ21aIWEDGwcZnt7RVlcH57WjH3
+         lzOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727925114; x=1728529914;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AnC+0cgleI6g6hOCog96yYZqAZY9JgX98qzm/FbnhiY=;
-        b=eIIHaylC7570E6eXCs7OTJOO3bsyP6xk3RNeRtvEnu/OhQP3LsR15n5UD3R+zlkuYm
-         S5ffimcbbT5zbQ8ZZSfQKWYL0T81CtnqLMTex4UoMtqHiKJWe5K5+RGczI7pCvFU5UZT
-         ilYaAJYTjVkCRd7O4rn+2fo0fvXZ1MMaAGhc2T976V6XqcH6e3JcYB7BmGUaEOdE1xUL
-         +UOIzyKLbrIS+9ct6Nazw37ToaVc346aXz6QxgUCG8QcU4s3DjrguAth8W28KV2iA2Qy
-         k75zwTkcfsRWYY0fj3O3QiMt73wuHu5sXOK2gbcna4WY7DXaY0e3FOEj9A7vOmB7HzX1
-         9lOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbCU3sZJ4TadO++nWXW7ZtFwseZW0JpEp1+SolJVACotk9pIo2r4jPbmrIqkZRHk8ST/RugR1k3xTJFfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMFVQYNl0R61FvHjwDTbqhXBWKcgIhFseFM6iujYzHSusg8Tcw
-	B1VRnb1pRTb8dUzXA0sHnsZnCbQKXdutQO9f1a81EmEiNewRN8d32kOAzcqTJpQiRKh1jLakwK7
-	IwYPwh0sY4DR0+hx0BV9YNJr5cCKallL3Jb3U
-X-Google-Smtp-Source: AGHT+IFp0Z11En82lDuDic3trrXoS+W9pMDYCo1lIptWKsHQYJoFNvYdT9OLDG5kuC+LDVYlKRCEqf81gAuBitqKj6o=
-X-Received: by 2002:a05:6512:3b9e:b0:530:ea2b:1a92 with SMTP id
- 2adb3069b0e04-539a079eb01mr3242858e87.43.1727925114544; Wed, 02 Oct 2024
- 20:11:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727925273; x=1728530073;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bVmdUELTDUmyOs2T634ZSBxOSroRBta42gzygmF21tA=;
+        b=MO7dY5T4zXR9ixUQsufCY4pv8bpXPC3HMu3tHKac7iV2sCn9MiqEYV6p+oH2k8SdaC
+         rdjJsfsT0Zkg+ycJyihdWx8fZCL4Q41E9BbGbw3ahnm3HY+S67BumxxBeQxrT6nzRtCp
+         VMwXtes/05/rTXjNc3VSdubX39/sTWPdVP5oIuQbhSvvtBXxD6Nw8yioU8Dt9MhzZcqr
+         nD+2Xm9k3p03cb0CPvhVdWCCwtEmugadd231KVb1YNiusyy13vU6Jnh+0jnLh9PX8MYT
+         PSgRD9XyNf/wFR9fiYdAOM9bcyCwGLCHxc9o6wtUUjJud/mGAGaJu1nHJOMvsSbYxGPI
+         E/wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtXWt09vnOxBJV5QO7nz2FB9DI/1kqFMi5+SLVdbfUoAlN1ayIdqe5va8k8U66Se12FAJvmsmozOWXHrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzZ7R+hZ/Qn/PwpeDbru3Y8fph1eTv8ynjQ4RVxRuexAYzadb7
+	8jDUP3k9Hco3JJHpv/Wkz7Gadtr0Ur9oKKBY5yslVy/MULI+jfcga+Ip0QP2EA==
+X-Google-Smtp-Source: AGHT+IHyjSRkhjgcIpyEOBBu1F4Ot9eDMUivzJG0kRwm+KN8Ac30ciJk502QH5kn26uBubpxXFT/Wg==
+X-Received: by 2002:a05:620a:1923:b0:7a9:a63a:9f48 with SMTP id af79cd13be357-7ae626ac34dmr793486485a.11.1727925273322;
+        Wed, 02 Oct 2024 20:14:33 -0700 (PDT)
+Received: from shizuku.. ([2620:0:e00:550a:6782:866c:334a:d5e9])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae6b29e2c9sm6901385a.15.2024.10.02.20.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 20:14:33 -0700 (PDT)
+From: Wentao Zhang <wentaoz5@illinois.edu>
+To: nathan@kernel.org
+Cc: Matt.Kelly2@boeing.com,
+	akpm@linux-foundation.org,
+	andrew.j.oppelt@boeing.com,
+	anton.ivanov@cambridgegreys.com,
+	ardb@kernel.org,
+	arnd@arndb.de,
+	bhelgaas@google.com,
+	bp@alien8.de,
+	chuck.wolber@boeing.com,
+	dave.hansen@linux.intel.com,
+	dvyukov@google.com,
+	hpa@zytor.com,
+	jinghao7@illinois.edu,
+	johannes@sipsolutions.net,
+	jpoimboe@kernel.org,
+	justinstitt@google.com,
+	kees@kernel.org,
+	kent.overstreet@linux.dev,
+	linux-arch@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	llvm@lists.linux.dev,
+	luto@kernel.org,
+	marinov@illinois.edu,
+	masahiroy@kernel.org,
+	maskray@google.com,
+	mathieu.desnoyers@efficios.com,
+	matthew.l.weber3@boeing.com,
+	mhiramat@kernel.org,
+	mingo@redhat.com,
+	morbo@google.com,
+	ndesaulniers@google.com,
+	oberpar@linux.ibm.com,
+	paulmck@kernel.org,
+	peterz@infradead.org,
+	richard@nod.at,
+	rostedt@goodmis.org,
+	samitolvanen@google.com,
+	samuel.sarkisian@boeing.com,
+	steven.h.vanderleest@boeing.com,
+	tglx@linutronix.de,
+	tingxur@illinois.edu,
+	tyxu@illinois.edu,
+	wentaoz5@illinois.edu,
+	x86@kernel.org
+Subject: Re: [PATCH v2 2/4] llvm-cov: add Clang's MC/DC support
+Date: Wed,  2 Oct 2024 22:14:29 -0500
+Message-Id: <20241003031429.46276-1-wentaoz5@illinois.edu>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241002011030.GB555609@thelio-3990X>
+References: <20241002011030.GB555609@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001073225.807419-1-dongml2@chinatelecom.cn> <20241001073225.807419-3-dongml2@chinatelecom.cn>
-In-Reply-To: <20241001073225.807419-3-dongml2@chinatelecom.cn>
-From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Thu, 3 Oct 2024 08:41:42 +0530
-Message-ID: <CAH-L+nMW_aUHjGTT7B6eSLedsqbFhSPszYi9awj0ybiMsy6RBw@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 02/12] net: tunnel: add pskb_inet_may_pull_reason()
- helper
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: idosch@nvidia.com, kuba@kernel.org, aleksander.lobakin@intel.com, 
-	horms@kernel.org, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
-	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com, 
-	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000ad6619062389ea2f"
+Content-Transfer-Encoding: 8bit
 
---000000000000ad6619062389ea2f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Nathan,
 
-On Tue, Oct 1, 2024 at 1:05=E2=80=AFPM Menglong Dong <menglong8.dong@gmail.=
-com> wrote:
->
-> Introduce the function pskb_inet_may_pull_reason() and make
-> pskb_inet_may_pull a simple inline call to it. The drop reasons of it jus=
-t
-> come from pskb_may_pull_reason().
->
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+Thanks for your review! See some of my responses below inline. Other
+comments, including those to [1/4] and [4/4], are acknowledged and will be
+updated in v3.
 
-LGTM,
-Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+On 2024-10-01 20:10, Nathan Chancellor wrote:
+> ...
+> > maximum value supported by Clang is 32767. According to local experiments,
+> > the working maximum for Linux kernel is 46, with the largest decisions in
+> > kernel codebase (with 47 conditions, as of v6.11) excluded, otherwise the
+> > kernel image size limit will be exceeded. The largest decisions in kernel
+> > are contributed for example by macros checking CPUID.
+> > 
+> > Code exceeding LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS will produce compiler
+> > warnings.
+> > 
+> > As of LLVM 19, certain expressions are still not covered, and will produce
+> > build warnings when they are encountered:
+> > 
+> > "[...] if a boolean expression is embedded in the nest of another boolean
+> >  expression but separated by a non-logical operator, this is also not
+> >  supported. For example, in x = (a && b && c && func(d && f)), the d && f
+> >  case starts a new boolean expression that is separated from the other
+> >  conditions by the operator func(). When this is encountered, a warning
+> >  will be generated and the boolean expression will not be
+> >  instrumented." [4]
+> 
+> These two sets of warnings appear to be pretty noisy in my build
+> testing... Is there any way to shut them up? Perhaps it is good for
 
+These two warnings are currently implemented as custom diagnostic in
+clang/lib/CodeGen/CodeGenPGO.cpp:dataTraverseStmtPost. So I'm afraid there
+is no corresponding "-W[no-]xxx" flag at this moment. I agree such switches
+would be desirable but we might have to nudge this in LLVM community.
 
---=20
-Regards,
-Kalesh A P
+> users to see these limitations but it basically makes the build output
+> useless. If there were switches, then they could be disabled in the
+> default case with a Kconfig option to turn them on if the user is
+> concerned with seeing which parts of their code are not instrumented. I
+> could see developers wanting to run this for writing tests and they
+> might not care about this as much as someone else might.
+> 
+> I did leave LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS at its default value.
+> Perhaps there is a more reasonable default that would result in less
+> noisy build output but not run afoul of potential memory usage concerns?
+> I assume that mention means that memory usage may be a concern for the
+> type of deployments this technology would commonly be used with?
 
---000000000000ad6619062389ea2f
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+To my own experiences, enlarging this threshold won't really help with the
+issue, because the other type of warning ("nested boolean") is even more
+prevalent in kernel codebase. I once built the kernel serially and counted
+the number of instances from the gigantic log:
 
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
-BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
-JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
-aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
-FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
-T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
-o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
-aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
-YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
-cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
-ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
-HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
-Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
-LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
-zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
-4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
-cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
-u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
-a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
-x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
-bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIP0Bj0v4v4pj1zt0YRk9iVZK95KL4jnWqYyaJMcDzoTuMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAwMzAzMTE1NFowaQYJKoZIhvcNAQkPMVwwWjAL
-BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBjYbMMy7DJ
-pxIp3G4kaYKW4pMMLdHs1RSw0yhjbFIjbYXVxexbska3/Cp2TqNONfQ8B8fmwaPplR39wagchYlV
-PbX3az8oRgqBr/oYcZzTyN3JpuER42r4o28ND61PTwjqODqAoE9URKBIWmxFEGH1nFJRCYwOYyuB
-SUWx3/TVIwuBhRinoVdlci246M9zm3fWDQGJ2p0GFgYFMwYYIWq5xrfHVE3gSH7FN192s5C7z9Hc
-K7vHqW9jz0i4ABDOAdcHYPZIxGk8nYHiK2EWm2qgca/EqeXi10e7nGsvAIO8FSVQoEkY1Il6kJBf
-AygsQ7XP5z9dR99ptbo6miA12nvI
---000000000000ad6619062389ea2f--
+  unsupported number of conditions (>6): 837
+  unsupported nested boolean:            8029
+
+So again we should probably improve this on the tool side. I can talk to
+developers there separately.
+
+> ...
+> > diff --git a/Makefile b/Makefile
+> > index 51498134c..1185b38d6 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -740,6 +740,12 @@ all: vmlinux
+> >  CFLAGS_LLVM_COV := -fprofile-instr-generate -fcoverage-mapping
+> >  export CFLAGS_LLVM_COV
+> >  
+> > +CFLAGS_LLVM_COV_MCDC := -fcoverage-mcdc
+> > +ifdef CONFIG_LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS
+> > +CFLAGS_LLVM_COV_MCDC += -Xclang -fmcdc-max-conditions=$(CONFIG_LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS)
+> 
+> Why is -Xclang needed here? Is this not a full frontend flag?
+
+"-fmcdc-max-conditions" is a cc1 option only, while "-fcoverage-mcdc" is
+both a cc1 option and a clang option. See llvm/llvm-project#82448 and their
+changes to clang/include/clang/Driver/Options.td.
+
+Thanks,
+Wentao
+
+> 
+> > +endif
+> > +export CFLAGS_LLVM_COV_MCDC
+> > +
+> >  CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage
+> >  ifdef CONFIG_CC_IS_GCC
+> >  CFLAGS_GCOV	+= -fno-tree-loop-im
 
