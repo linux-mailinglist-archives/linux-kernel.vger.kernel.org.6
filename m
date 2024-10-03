@@ -1,112 +1,82 @@
-Return-Path: <linux-kernel+bounces-349311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8365198F42C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:23:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F076B98F42F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10A942811B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:23:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1089B1C21634
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C651A4F35;
-	Thu,  3 Oct 2024 16:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C4E1A4F21;
+	Thu,  3 Oct 2024 16:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYPeSZcL"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="rCMVEUVk"
+Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6637433AD;
-	Thu,  3 Oct 2024 16:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86293433AD;
+	Thu,  3 Oct 2024 16:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727972631; cv=none; b=nZSCc0rKL9ca7hLvJlYpm+TL/fjs4rGPYIw4o4l6N8SwYDJaM0tnfAY80s/350TWdpu9B1730ubSvAIdpsAQKaCabraRidny4a7YqVS4y7QA7LZ6rESnjt6frT4vSFzg+EYmEH9HE/X98CzJlgp1QQ9Ty16+u7yoLr6x3xpUZH4=
+	t=1727972688; cv=none; b=rX6xi64YJuryozKZGbhZDNynRp7nI1sKd2G4XS2XAGfM0vzelLwTFuqZGIlnHLA5Y5qwvohyLbJCYD/RKy/LrpCs8iUaV2JZdMvYKuPHwMwkMn/DoFa3ojwpG+/ldV4h+YBFMNVfRhH+h3g7OacgmyMAeTEwi7QNsv+qFzn2akQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727972631; c=relaxed/simple;
-	bh=O8Vmu7TFQB3fopW1DTEkKfVJeNrb3XgMb8cN6yFuONM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ho3XxFDUD6/fqgd5Ft3dXhEXIMPqA5VhubxrTFf3kTHdM6cU60am3zq5IwSiWGaHccp+ysF67CcjmQS++4AoXcXyTB4Etl1Wb6DYyKG9TcWXv7TZtJFZUv8W2GbCEu2cXypXH1F3BB+bn9xTjK2ydvwhAmFs7sU1/F2XnIZitYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYPeSZcL; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e262e36df27so1801108276.0;
-        Thu, 03 Oct 2024 09:23:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727972629; x=1728577429; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2A7HVbCYMRJB0wC6HN6kgIW4ax3rl9C50DMlGTp8TQw=;
-        b=EYPeSZcLclU06uP1DsyS8j66o1XHoRrVTietpIhV7h021IQXxoLrK8U83dCX2ciaBs
-         1aGk1TJ8jY1CBzB/Ek9vS2vUOp+ZqT8C0POAQwCClJr2PbNiCMwK6XeYOVpPMo95Vix6
-         ssCTQPQoPMCTC35ObPh+1/nqbRnDvdP9wsaUv87RKjMDWh4fCk1iq+GueZGS4A6E8tuC
-         gzyBdgpaTHhZLG8/XsrrP3lZAFv4TB6ihoSH9wUrbPuKLf7nouIPfCLH9lvd1oStmBN3
-         gSCD2ZScPcox97jnbemHIobxYD6RbBxmnJA5yS6WYLnGhDdHbS4V8ndyzufv6KMVfX3f
-         XdVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727972629; x=1728577429;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2A7HVbCYMRJB0wC6HN6kgIW4ax3rl9C50DMlGTp8TQw=;
-        b=u1NAmcbGckf1BlsRt78cy+r7fQeYYu+mvNQRwYtx7Z10ftrRDyc0Ai597yFMMDfuB4
-         8Pxb5Y6MzMMc+ODqNIM+esQV03DGjKLPhr8juAjBXPj/ZCv4qekYKJb2+EEYYuzidAbB
-         +n+aZgqsaIXmtePR+fPYn2Z+r57ukmx/cRBedY2y8CFL3Sumw2SKI6xrJoFB3iwsUg4u
-         d9W9ysw8GnKTQX53OoKk+ebqd2uC+NvVhSpJQ/UygzzbCuzHWEvIR3kijC+7Zhq9Afdf
-         UPEzrtMyo0aYH6j1kU3/RE311QKkwQa2IKUVLTlOShJCmQu0Tw6f2yDVjgjR/PJwQeus
-         OUDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXICWUAEqJXpYwAhlc5x2n8PkHvp4pcNEz4Kv09Nf3IpDti04e3P9mWGQdleJPwAC6NLYUbDyXkyo+ev7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw37NF+GY8SlB/9hDUw2Lo4+3uj8XEqqLYgyetJqMC1mAgz32fr
-	SGUSqwk4t+tJwTNuEjsl0TmrB8IFVrKBtbGJOc4WA0QrQzkmpq5k
-X-Google-Smtp-Source: AGHT+IFoKPod/9H6XNAvjsfkxVWc/pBu30GvTKXrHnDKDWyOWAOLLIEQ/DOSeLpmtKWpOwNDXLNUVw==
-X-Received: by 2002:a5b:891:0:b0:e24:9e26:133 with SMTP id 3f1490d57ef6-e286f81947emr3207971276.14.1727972628734;
-        Thu, 03 Oct 2024 09:23:48 -0700 (PDT)
-Received: from localhost (fwdproxy-nha-000.fbsv.net. [2a03:2880:25ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e2885d2ac2asm269232276.16.2024.10.03.09.23.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 09:23:48 -0700 (PDT)
-From: Daniel Zahka <daniel.zahka@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
+	s=arc-20240116; t=1727972688; c=relaxed/simple;
+	bh=ooKvUn0ZhSfVHHCa4TH7hrIcROX+r2JeOuuQe6j7EGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PupEuRHFZ7pzJ72y8q9TVCvs9aDIahybejJoLcmqtELeYKeduNHv5crl2qPpg5gVfd5Dspc2L7g8qFeLDIv7kSNnoUXQpV+ohPu0PT4ZasEVZxY04ynTvo40up2SP2xT+NQhNlyvNaBokNauZiODn0E2w0X+n7+66+2euxNJ0H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=rCMVEUVk; arc=none smtp.client-ip=129.21.49.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
+Received: from localhost (localhost [127.0.0.1])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 83F9A417943F;
+	Thu,  3 Oct 2024 12:24:45 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
+	in-reply-to:content-disposition:content-type:content-type
+	:mime-version:references:message-id:subject:subject:from:from
+	:date:date:received:received; s=mail; t=1727972685; x=
+	1729787086; bh=ooKvUn0ZhSfVHHCa4TH7hrIcROX+r2JeOuuQe6j7EGs=; b=r
+	CMVEUVkjp+B6LCyxxVRoi0abHmyOCI3B0RSJa6EhATXI0Gz08uCmmY43ESJJUoJf
+	2WUdyekEj4FUUZjEel2bkUwADwJqpdCKPmHvns5WU8J5JrUrtYAeAFXMMioIYz+U
+	XUdO4ZuMNIXBNEpdJEZeHmlaMtlSGksOH5E5/GqYnQ=
+X-Virus-Scanned: amavisd-new at csh.rit.edu
+Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
+ by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
+ with ESMTP id yfurWxpSA_LF; Thu,  3 Oct 2024 12:24:45 -0400 (EDT)
+Received: from freedom.csh.rit.edu (unknown [129.21.49.24])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id DBDBC45735E9;
+	Thu,  3 Oct 2024 12:24:44 -0400 (EDT)
+Date: Thu, 3 Oct 2024 12:24:43 -0400
+From: Mary Strodl <mstrodl@csh.rit.edu>
+To: gregkh@linuxfoundation.org
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v1] ethtool: rss: fix rss key initialization warning
-Date: Thu,  3 Oct 2024 09:23:10 -0700
-Message-ID: <20241003162310.1310576-1-daniel.zahka@gmail.com>
-X-Mailer: git-send-email 2.43.5
+Subject: Re: [PATCH v4] gpio: add support for FTDI's MPSSE as GPIO
+Message-ID: <Zv7FS5cfHAE4EzoO@freedom.csh.rit.edu>
+References: <20241003155054.4159343-1-mstrodl@csh.rit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003155054.4159343-1-mstrodl@csh.rit.edu>
 
-This warning is emitted when a driver does not default populate an rss
-key when one is not provided from userspace. Some devices do not
-support individual rss keys per context. For these devices, it is ok
-to leave the key zeroed out in ethtool_rxfh_context. Do not warn on
-zeroed key when ethtool_ops.rxfh_per_ctx_key == 0.
+Hi Greg,
 
-Signed-off-by: Daniel Zahka <daniel.zahka@gmail.com>
----
- net/ethtool/ioctl.c | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, Oct 01, 2024 at 09:04:58PM +0200, Bartosz Golaszewski wrote:
+> I don't know much about the USB subsystem in the kernel, maybe Cc Greg
+> KH on this?
 
-diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
-index 65cfe76dafbe..04b34dc6b369 100644
---- a/net/ethtool/ioctl.c
-+++ b/net/ethtool/ioctl.c
-@@ -1505,6 +1505,7 @@ static noinline_for_stack int ethtool_set_rxfh(struct net_device *dev,
- 						       extack);
- 			/* Make sure driver populates defaults */
- 			WARN_ON_ONCE(!ret && !rxfh_dev.key &&
-+				     ops->rxfh_per_ctx_key &&
- 				     !memchr_inv(ethtool_rxfh_context_key(ctx),
- 						 0, ctx->key_size));
- 		} else if (rxfh_dev.rss_delete) {
--- 
-2.43.5
+I forgot to copy you on this patch until after I sent it, but wanted to make
+sure you had a copy.
 
+(Apologies if this is a bad way to do this... I couldn't think of a better way
+with my mail client)
+
+Thanks!
 
