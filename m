@@ -1,198 +1,154 @@
-Return-Path: <linux-kernel+bounces-349404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2BC98F56E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:42:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1CCF98F589
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3D92824E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:42:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E360D1C2254F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D94F1A7AF5;
-	Thu,  3 Oct 2024 17:42:30 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063141AAE19;
+	Thu,  3 Oct 2024 17:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eDSvoWF3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8783D15534D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 17:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B81836126;
+	Thu,  3 Oct 2024 17:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727977350; cv=none; b=BxkElI2Q5TD9oUc96u7STqOAq5y39+HuMKpO7VQg34PhILNTbEX9j2sTE1pxsCq3Nk4TBXl8xaBVWkeua2c/piPcYXv8I8zYBxstoLzNCcX+zKT0nwcXPd4S5pCM2v2F2U8Uz0zfT+v3EUDk7S+eGy9ykuJctD5X/4c3+5rGGsg=
+	t=1727977675; cv=none; b=f/qo7oZjZE3M/b8pk0kfJEGu5Gk9yc+WvKIPMwimvTxqZWwGEWwtwr2470mJ1AtgENb2SwYJKulkdoL9JhoSFv/PLXAf7WPOwcWjSIuBIUnf2O9Pbd7FJ611PKeN2DHnfVY7Ofgnk7nDJ4fEX3Il72kw5GYBnalq919jx7io87o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727977350; c=relaxed/simple;
-	bh=Tw3sYx3H7J3gzvQ37HaTe+udynk3ZScYULN3rC42aNI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=P9bHUIFOiU2UiEIP/U64ZHOSEmr97xvkl0H9MFMVIMeFDfzENKz5IMUQkFiEAT0q5KjEh7vyvxV/7DWHt7wblBv5OU1yZ5cWJaFKAh3VKk1MNs+v2qab77SM73GLEeD+ZtyJKmbINFJjN451hWEnRl5alTYawNB8+OudGQiau9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a344da7987so15213015ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 10:42:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727977348; x=1728582148;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nsN0MDOsLKpxRqmM7P1rmtNrYKam7fStwhypmlPwGuA=;
-        b=rA7QkAToonHi4Ygrt4xJ22G7tSyOulexNntdjWaYFHnArWSe/UZqzB4oYvyNpaV1Bi
-         +L3A9Q/ORD34rOYIO49MIUfbvHgtfPlTqGTODhy+yr/molX3hFIMKHwjwXgaJoYOQnxL
-         zqjFX7pnsvQkNzd0NoifXu817S8LqlIMDspd4fSgAvbEW9LaVA30tDFAkORZVWKcUJhj
-         QhxnUYPoJUPCbVKgOjkxbtrsqILI3Efsb8uLCIpLa+t3jU8AlMNAz+YNi7yUXqafLoh7
-         JYF/0N37afucRiHmrT26/15oB+p+yOy7mn4z5ipEmwl01/8kKz5dYbsUyXss+PDXnzMv
-         eceA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrLeJRg57O4Cgm8BLk9wB4MHkoSbB33j5lR9X+0PwTmXfVSoDaaINcbP/AX5+/Vby1sNoyxxVR8X0B4jc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9j0DwomykUzEg6ZLP3fLmt+iQfZDSrtLGg+msuT1G8ibYmn2y
-	f8SbKqscglfcknuFxtu2AcypTFDgHHlKEQwW90xmH/H93l1nqDAnr2xMmTj/2dAccLq3MrkDQRh
-	Kebi5F9VipgaXctwEOBGTv8Ni+OHrhE2yE+fUzsFKILIiD6Uw8c6sQzw=
-X-Google-Smtp-Source: AGHT+IEdj9gaVqPS1TGvP+/aml1Sba0BY9AKFBFwz2CsHJeHImwtKseSj1VEaflTLjATmmhYYhTuuXhg3Ao0jO0akEYt2R/c9iaJ
+	s=arc-20240116; t=1727977675; c=relaxed/simple;
+	bh=BBAlqBhSnPMozlYFdbQWCelgUwjNdy//bRfOuSlblps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=muSe3QT8VIYOdp4oJoUebH0HzLxQI4Losu4/nbVSlHaHgov2Sdyc1xL2j7yvxVJF20xb5uygdZcoVOrT5r4cAs63H852jyiPca4/e3ksirL04SCv2n3fp+Ah0+snOSOMbkRNPGeIreuMQI2eADLDdxyfG5M83r4mLn6s+j5T+3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eDSvoWF3; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727977674; x=1759513674;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BBAlqBhSnPMozlYFdbQWCelgUwjNdy//bRfOuSlblps=;
+  b=eDSvoWF3zrN2r17QGdbdeXILzEgG0Mp91S/yMUeuh+rmb4dh5REvn40m
+   mTT3n6tXXeVKJrPxGM8y72OtovPBsu1CjHGtunTRVBrKqQvH5ra2Mw720
+   woI58FGwbNOzgu+eAsGrRnjNJg/CEZT0kd9cI+/HXkSFPGqFSjn+pdo8U
+   MpnxhAG1iYAC5azUWgzxWSBaL2WRgJMZpvAU2C4GptzhWSGfzDSXMh446
+   mQS7RBramdc7FA/LabDZnERxhMo8pD8SW78ryUtXwRhNi5sxjYKmNI1mi
+   tUt+9ibyRKyIE/qu5WJ0YHLKkIdq26qcDlyuzHBb+4LSFFVcpHVUc1vqg
+   Q==;
+X-CSE-ConnectionGUID: p2E5qJ+zQ2+iyHiG4VFnlQ==
+X-CSE-MsgGUID: STEEWqP1S0mqMiZDqcc0EQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="49714925"
+X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
+   d="scan'208";a="49714925"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 10:47:53 -0700
+X-CSE-ConnectionGUID: Qsfl+iIVTfaDD2DBt1JJTQ==
+X-CSE-MsgGUID: g+hoeYPwSquySlq834lcpg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
+   d="scan'208";a="97748898"
+Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 10:47:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1swPvX-0000000GFE7-2gmU;
+	Thu, 03 Oct 2024 20:47:47 +0300
+Date: Thu, 3 Oct 2024 20:47:47 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: linux-kernel@vger.kernel.org, amadeuszx.slawinski@linux.intel.com,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	Markus Elfring <Markus.Elfring@web.de>, Kees Cook <kees@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v1] cleanup: adjust scoped_guard() to avoid potential
+ warning
+Message-ID: <Zv7Yw1iJehLW73Fq@smile.fi.intel.com>
+References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
+ <Zv6RZS3bjfNcwh-B@smile.fi.intel.com>
+ <Zv6SIHeN_nOWSH41@smile.fi.intel.com>
+ <e242741e-2f9f-4404-93f9-83e8971ace7a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1e06:b0:3a0:5642:c78 with SMTP id
- e9e14a558f8ab-3a36592b550mr78097885ab.15.1727977347619; Thu, 03 Oct 2024
- 10:42:27 -0700 (PDT)
-Date: Thu, 03 Oct 2024 10:42:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fed783.050a0220.9ec68.0051.GAE@google.com>
-Subject: [syzbot] [bcachefs?] possible deadlock in bch2_replicas_entry_validate
-From: syzbot <syzbot+4d24267b490e2b68a5fa@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e242741e-2f9f-4404-93f9-83e8971ace7a@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Thu, Oct 03, 2024 at 03:38:45PM +0200, Przemek Kitszel wrote:
+> On 10/3/24 14:46, Andy Shevchenko wrote:
+> > On Thu, Oct 03, 2024 at 03:43:17PM +0300, Andy Shevchenko wrote:
+> > > On Thu, Oct 03, 2024 at 01:39:06PM +0200, Przemek Kitszel wrote:
 
-syzbot found the following issue on:
+...
 
-HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=105b939f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1f009dd80b3799c2
-dashboard link: https://syzkaller.appspot.com/bug?extid=4d24267b490e2b68a5fa
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1366e927980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111c7dd0580000
+> > > > +#define __scoped_guard_labeled(_label, _name, args...)			\
+> > > > +	for (CLASS(_name, scope)(args);					\
+> > > > +	     __guard_ptr(_name)(&scope) || !__is_cond_ptr(_name);	\
+> > > > +		     ({ goto _label; }))				\
+> > > > +		if (0)							\
+> > > > +		_label:							\
+> > > > +			break;						\
+> > > > +		else
+> > > 
+> > > I believe the following will folow more the style we use in the kernel:
+> > > 
+> > > #define __scoped_guard_labeled(_label, _name, args...)			\
+> > > 	for (CLASS(_name, scope)(args);					\
+> > > 	     __guard_ptr(_name)(&scope) || !__is_cond_ptr(_name);	\
+> > > 		     ({ goto _label; }))				\
+> > > 		if (0) {						\
+> > > _label:									\
+> > > 			break;						\
+> > > 		} else
+> > > 
+> > > ...
+> > > 
+> > > > -	     *done = NULL; !done; done = (void *)1) \
+> > > > +	     *done = NULL; !done; done = (void *)1 +  	\
+> > > 
+> > > You have TABs/spaces mix in this line now.
+> > 
+> > And FWIW:
+> > 1) still NAKed;
+> 
+> I guess you are now opposed to just part of the patch, should I add:
+> # for enabling "scoped_guard(...) return ...;" shortcut
+> or keep it unqualified?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/08f3ba449e03/disk-e32cde8d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/17bcace1ab90/vmlinux-e32cde8d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/da9183ac0145/bzImage-e32cde8d.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/4c7b8b3c4819/mount_0.gz
+As you put a reference to the whole list the detailed elaboration
+is not needed.
 
-The issue was bisected to:
+> > 2) interestingly you haven't mentioned that meanwhile I also helped you to
+> > improve this version of the patch. Is it because I NAKed it?
+> 
+> 0/1 vs false/true and whitespaces, especially for RFC, are not big deal
 
-commit 49fd90b2cc332b8607a616d99d4bb792f18208b9
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Wed Sep 25 22:17:31 2024 +0000
++ the above now.
 
-    bcachefs: Fix unlocked access to c->disk_sb.sb in bch2_replicas_entry_validate()
+I assume every contribution should be credited, no?
+Otherwise it sounds like a bit of disrespect.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14b8a3d0580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16b8a3d0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b8a3d0580000
+> anyway, I will reword v2 to give you credits for your valuable
+> contribution during internal review :)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4d24267b490e2b68a5fa@syzkaller.appspotmail.com
-Fixes: 49fd90b2cc33 ("bcachefs: Fix unlocked access to c->disk_sb.sb in bch2_replicas_entry_validate()")
-
-WARNING: The mand mount option has been deprecated and
-         and is ignored by this kernel. Remove the mand
-         option from the mount to silence this warning.
-=======================================================
-bcachefs (loop0): starting version 1.7: mi_btree_bitmap opts=errors=continue,compression=zstd,norecovery,recovery_pass_last=check_dirents,nojournal_transaction_names,version_upgrade=none
-============================================
-WARNING: possible recursive locking detected
-6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0 Not tainted
---------------------------------------------
-syz-executor340/5221 is trying to acquire lock:
-ffff888078a80908 (&c->sb_lock){+.+.}-{3:3}, at: bch2_replicas_entry_validate+0x2a/0x80 fs/bcachefs/replicas.c:101
-
-but task is already holding lock:
-ffff888078a80908 (&c->sb_lock){+.+.}-{3:3}, at: bch2_read_superblock_clean+0x36/0x520 fs/bcachefs/sb-clean.c:149
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&c->sb_lock);
-  lock(&c->sb_lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by syz-executor340/5221:
- #0: ffff888078a80278 (&c->state_lock){+.+.}-{3:3}, at: bch2_fs_start+0x45/0x5b0 fs/bcachefs/super.c:1007
- #1: ffff888078a80908 (&c->sb_lock){+.+.}-{3:3}, at: bch2_read_superblock_clean+0x36/0x520 fs/bcachefs/sb-clean.c:149
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5221 Comm: syz-executor340 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3037
- check_deadlock kernel/locking/lockdep.c:3089 [inline]
- validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3891
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- bch2_replicas_entry_validate+0x2a/0x80 fs/bcachefs/replicas.c:101
- journal_entry_data_usage_validate+0x2b6/0x690 fs/bcachefs/journal_io.c:608
- bch2_sb_clean_validate_late fs/bcachefs/sb-clean.c:40 [inline]
- bch2_read_superblock_clean+0x207/0x520 fs/bcachefs/sb-clean.c:168
- bch2_fs_recovery+0x1f4/0x39c0 fs/bcachefs/recovery.c:639
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2071
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2478bb0c3a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffecc9ae478 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffecc9ae490 RCX: 00007f2478bb0c3a
-RDX: 0000000020005d80 RSI: 0000000020000240 RDI: 00007ffecc9ae490
-RBP: 0000000000000004 R08: 00007ffecc9ae4d0 R09: 0000000000005daf
-R10: 0000000000000044 R11: 0000000000000282 R12: 0000000000000044
-R13: 00007ffecc9ae4d0 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
