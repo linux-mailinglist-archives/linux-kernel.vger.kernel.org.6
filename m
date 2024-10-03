@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-349700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D14C98FA31
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:03:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D7398FA33
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B37EC1F23F96
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD3811F23F9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F271CF296;
-	Thu,  3 Oct 2024 23:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629951CF5C4;
+	Thu,  3 Oct 2024 23:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="qk2H5B/t"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejapJXlH"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F841AB52D;
-	Thu,  3 Oct 2024 23:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBB11CCED6;
+	Thu,  3 Oct 2024 23:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727996621; cv=none; b=TnEsp21aDJzxkDe3mSWkwc2YI33vvzTI/NyL3+ROXHGX1UjSRsavBzeSNihozq0W2HwaJHvxPudeCTq67d+NouZCZqQtsAaD6YtzsySOBlGMXe1XHllGkxCJAwd0Vjfz69wyFKVTvISjtTN4fOqgSt9IJaN63U3THurR8kZrSgk=
+	t=1727996643; cv=none; b=QNRE8MD21x9WUqq2XWfMZhz77oJPRzjIdI2gNBzsGp7TCbhQ7Lj9UmBE2FlQeUz6t71TJeftsGlUoqv8aLJ1l6Om0hkLYsX10Tht0DswjeJDmPTwmdTlCG4TcwMsRlkbpeUQWYTIM5DZYoxEeJC8R7RPAjq6+fPcCTZj9jE15hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727996621; c=relaxed/simple;
-	bh=RlBHWrkvPIdEMvHPzkeCP7Y0MeQke+gep+nbMAKkxPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UwkMsvX6GNg6noI5tSF/71tMTEHmDdrgGzdTbOcxBEoQZkvKD+x2ZxKucAY+o7Q7BzUYlT8jcsCuhvmHcPRGihZtgdtBZhofklykv4m1Z1RCxKAIIuZEWGd5Vhih221zj8Sa7YaPX9qAxEim9O/ub1Mu+zGSk39jv1Hg8nC5PnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=qk2H5B/t; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1727996610; x=1728601410; i=w_armin@gmx.de;
-	bh=nGQ2e3eWhWCnCEzigv0/+ogytIWxpyFa6ZW3FmJvq8E=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=qk2H5B/toLiXozMBVngIUDE44Jjo1bAVMGCk20qtWPIwqxkjOn0BhUAOikIgjrjF
-	 wlAyfhwiLLDIL4jRtnHhOvkuBoY5VtYjbuckO9TJKvHNVfMigwXb/M6tkd28Q634W
-	 GNW/Uve5KQDBX/fSmXOSayDcWpQuasfdipB38dFvnbjE2+y1IHlasHwQyY8GEGX7i
-	 1Oo8oRyt9VAujVqDSfLhRF3+l+UyaCPbZI5TC78jkKFmw8d1QjqeW+6oQJkjoW+/I
-	 UHUv/OGDFJVM/EIHjj7rvrbTlhkOMB9E4edFLLcWu8ZgYVQriNFsDO4nncsf7WRyo
-	 FrgWdfcC01cgcwJZ0w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.2.35] ([91.137.126.34]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N0oBr-1s09Zv3HVd-00sqpX; Fri, 04
- Oct 2024 01:03:30 +0200
-Message-ID: <17bc2698-9113-4cf0-b58b-4f9db1813753@gmx.de>
-Date: Fri, 4 Oct 2024 01:03:29 +0200
+	s=arc-20240116; t=1727996643; c=relaxed/simple;
+	bh=/ZV1yl+wG7zT1y4IlAG+HSLEM/FBXFaYSgOI1p4BBTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ss+CMt+5KBc3T16fzrhMMTMH8cLSmEmFsLgBpO51TnT+RwBEh20eg3t5HmOWS6zeh8zXkHqLoOt37eTjND+2kkDZY3jwcN5adDf6HhEDrjLx/qrF5RvepIEzltCOaXo3+cenDkF2RbBlIclBAh0MCLeYgfdD13qjtylV4Ui2jtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ejapJXlH; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cb1e3b449so2121375e9.3;
+        Thu, 03 Oct 2024 16:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727996640; x=1728601440; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CyFHmbDf6829/sLt58Su4BESbrgT0QnRcIQ7BcAKpHM=;
+        b=ejapJXlHumpGvN7Q9n4g1zDIfpP6c96j8JpQ2dKIJDtWwwPhIKTtdHMg9vX3UWP5x0
+         LzYQFPvVuqnlZRXVDFI3pmMSE/WAw94yQQh3F6TSjNLt5NuwMVFBzm/eBqMSWz4Z34Nj
+         QGB3hvwPt0+i2ljXRZ6td8uPKCBtuyw1haayeRS7kVhWK1LzjlCpnKTB+T0HyCWrJ/72
+         8UqqJBNcD8ppCBGXMsIlAEUfxUvWJ4R/3TRckB/ochTI0aRRGAV4i2YRlqDE+MrvhYBt
+         2zHliMG74dCQ+lUqIADjXgaA9ccRbeKXeDnmISQn1rEAF0BdDAp3/+g7yrhGdFHl6iT0
+         Zg6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727996640; x=1728601440;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CyFHmbDf6829/sLt58Su4BESbrgT0QnRcIQ7BcAKpHM=;
+        b=R94DuQPjYe+3zn5SQK0PfUNcYmruPJzGpgD2EQZq0MrVrCadVOzsgUBeWK4UTayXPw
+         /05t97dVXOOwPbdp2P0+9mDhqTjMIyhjjULPWKWcs0+p/KzjD55mxvFq1Y0BiL/H+VVh
+         OtO0Tghy5vrylH4fUq32vsNGXLtF+mYaZNDeeCO+f0PLsVOBeU7n5CGxO+TQgrtReNxG
+         fiCaVbV/mBhilZjf1F+/gO69yCxsWVy6SA8+eHzHVL04m1IOwuMbfeDmGQvivxtGwbxP
+         1iQHF1zq00AUqhOUPY/L76Bm+tzaJprdEPA6q1BBrwy/sXiLsug1ke8vcQcDn69Ufqfs
+         hALw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBIjeUbqF0Sdg0mqcTC+HYowBZ3huezEO2ANU1eoE7VgLCKjQgauAGvOleOw+Mow/NGk8FPkKn@vger.kernel.org, AJvYcCVYuQeh/88gtvEuRfrIggpETfqcEsy8dbwCEBQSTu2N9BWgVBijNqH1Eey3QT0/TAr4sjXqp9/+7XtJ5Wc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVt5JKt284EpQOX4hEkgqnkpr3XRsBG4VlXfRuOHqGD5JQrH/u
+	4vtwXihNTQuizvhN9ec4n8r/KrKUZGxNr+fVqskWCWINa5/zteyT
+X-Google-Smtp-Source: AGHT+IHtEg7OmcgdyH960h8MGHeAzll4OqzKkPH5RpqYhOrxBPkznsz8OclQMS37eMFUtwHXXqGsjA==
+X-Received: by 2002:a05:600c:a05:b0:42c:df54:18f6 with SMTP id 5b1f17b1804b1-42f85aab26dmr1777225e9.3.1727996640116;
+        Thu, 03 Oct 2024 16:04:00 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b2c816sm769935e9.39.2024.10.03.16.03.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 16:03:59 -0700 (PDT)
+Date: Fri, 4 Oct 2024 02:03:57 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH] net: phy: Validate PHY LED OPs presence before
+ registering
+Message-ID: <20241003230357.z2czrn3pymhuywud@skbuf>
+References: <20241003221250.5502-1-ansuelsmth@gmail.com>
+ <20241003222400.q46szutlnxivzrup@skbuf>
+ <66ff1bb3.7b0a0220.135f57.013e@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fix typo in Documentation/wmi/devices/dell-wmi-ddv.rst
-To: Anaswara T Rajan <anaswaratrajan@gmail.com>
-Cc: corbet@lwn.net, platform-driver-x86@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241002100748.309707-1-anaswaratrajan@gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241002100748.309707-1-anaswaratrajan@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8NV1QISHBdcUWuIi9vy5D0xmjN0fZXEGGGvD9lT4oMCLKmD6H6C
- RlA1ThF7r9oDSPqb4Up+5q1OSOrLkaYvXYipFJaGCQTiAApr4N/4hYhsvSTayPvSljEpKYL
- 6tAv/PjeB18ecZFLhQ8KmqiPQrZANcrd3egkAfPSGUh6XoTnckcA9K+sPMFTHnd/0LBhldX
- VChwiXks7GENusqzkE95Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pLYzM+Qns9c=;T7hfbrlG61qcrBwYBn7Mxl6OLkS
- Er3QJJH13MQ/F/EQRatzDimkJa4r15fsjo9pzT+vs2XrCwFtrt++0T12nhSTAMD+vT2YMlmMk
- Nx6T9Z6GIZO+iLG3nT5zIzIAEzUtf7rrGaz3or+7tJWg2lsOWTgGzN6r4uHLqUUBM0/ob5fY9
- lD/FAbZQlLLNkr/zaAcZeXuMeafRGa/CD1BxpzotUceicO3B6Ckypv2e8io3SKZLuSAFhBI02
- 0kB61C1rjLuiDLcqDj/CuKzC3lEXbX9/5czBrpDECiUeQShyXK6m3nHHJz8LNeZzoUo+rLhnz
- GmF35LBrkOg6l5qYEZVICkvXUv0GDdYWmG8oNNsoqC6BVWmrTZFKd6vglEn5ifeW0iLhcJvEH
- NwUQIWdnm0VLXD/EsPAUCNMBa8XmLAZQOzZVaQpcY8Hs2kjFsOkMSfHQIiENLIRVd4u6AEoGa
- LlIS2LJYmTe7Vss4VAvzR9x8quSU90q+jFmlR/XibUPqjxxPbTHsqJqUV3oRQv3W/NJ2xUQ7Q
- ucPv/cXHbnWZTvyWf8FxLcXKr774t8KE+h178WTuy/30c6RVwcxMv3NBA8ZFqptHHbgPYkcbB
- DoHMTRW2JLSFjQIODsyM+MFYOMgFu8LiimMiE1pTQwWJ76P45XB77qgqKfxIsy0tBWiYhpbHG
- PyKaxcExHbuz6WtLQw84O+AbjKJZ2ZmsPEtkVVpGYbHdHbMoHB0oHGDD+UIDLXELTBva7TdQ0
- I+Wk4UaynF1NFsT98e6AcLJuWh3bV4VnMo1TRd1dTUeudzck3JOuAMwb/6G/8d5Vb4pMtWDR9
- YC9v2Mf5HapqDYg+nYZodYFUDa9xdcnPla9bL6pHvoiMY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66ff1bb3.7b0a0220.135f57.013e@mx.google.com>
 
-Am 02.10.24 um 12:07 schrieb Anaswara T Rajan:
+On Fri, Oct 04, 2024 at 12:33:17AM +0200, Christian Marangi wrote:
+> On Fri, Oct 04, 2024 at 01:24:00AM +0300, Vladimir Oltean wrote:
+> > On Fri, Oct 04, 2024 at 12:12:48AM +0200, Christian Marangi wrote:
+> > > Validate PHY LED OPs presence before registering and parsing them.
+> > > Defining LED nodes for a PHY driver that actually doesn't supports them
+> > > is wrong and should be reported.
+> > 
+> > What about the case where a PHY driver gets LED support in the future?
+> > Shouldn't the current kernel driver work with future device trees which
+> > define LEDs, and just ignore that node, rather than fail to probe?
+> 
+> Well this just skip leds node parse and return 0, so no fail to probe.
+> This just adds an error. Maybe I should use warn instead?
+> 
+> (The original idea was to return -EINVAL but it was suggested by Daniel
+> that this was too much and a print was much better)
 
-> typo in word 'diagnostics'
+Ok, the "exit" label returns 0, not a probe failure, but as you say,
+there's still the warning message printed to dmesg. What's its intended
+value, exactly?
 
-Please rename your patch to "platform/x86: dell-ddv: Fix typo in documenta=
-tion" and
-rework the patch description so it forms a full sentence.
+What would you do if you were working on a board which wasn't supported
+in mainline but instead you only had the DTB for it, and you had to run
+a git bisect back to when the driver didn't support parsing the PHY LED
+nodes? What would you do, edit the DTB to add/remove the node at each
+bisect step, so that the kernel gets what it understands in the device
+tree and nothing more?
 
-Other than that, the patch look fine.
-
-Thanks,
-Armin Wolf
-
-> Signed-off-by: Anaswara T Rajan <anaswaratrajan@gmail.com>
-> ---
->   Documentation/wmi/devices/dell-wmi-ddv.rst | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/wmi/devices/dell-wmi-ddv.rst b/Documentation/=
-wmi/devices/dell-wmi-ddv.rst
-> index 2fcdfcf03327..e0c20af30948 100644
-> --- a/Documentation/wmi/devices/dell-wmi-ddv.rst
-> +++ b/Documentation/wmi/devices/dell-wmi-ddv.rst
-> @@ -8,7 +8,7 @@ Introduction
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->   Many Dell notebooks made after ~2020 support a WMI-based interface for
-> -retrieving various system data like battery temperature, ePPID, diagost=
-ic data
-> +retrieving various system data like battery temperature, ePPID, diagnos=
-tic data
->   and fan/thermal sensor data.
->
->   This interface is likely used by the `Dell Data Vault` software on Win=
-dows,
-> @@ -277,7 +277,7 @@ Reverse-Engineering the DDV WMI interface
->   4. Try to deduce the meaning of a certain WMI method by comparing the =
-control
->      flow with other ACPI methods (_BIX or _BIF for battery related meth=
-ods
->      for example).
-> -5. Use the built-in UEFI diagostics to view sensor types/values for fan=
-/thermal
-> +5. Use the built-in UEFI diagnostics to view sensor types/values for fa=
-n/thermal
->      related methods (sometimes overwriting static ACPI data fields can =
-be used
->      to test different sensor type values, since on some machines this d=
-ata is
->      not reinitialized upon a warm reset).
+Why would the kernel even act so weird about it and print warnings or
+return errors in the first place? Nobody could possibly develop anything
+new with patches like this, without introducing some sort of mishap in
+past kernels. Is there some larger context around this patch which I'm
+missing?
 
