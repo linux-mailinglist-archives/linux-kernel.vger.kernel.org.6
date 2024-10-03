@@ -1,86 +1,97 @@
-Return-Path: <linux-kernel+bounces-348763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFD598EB9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:30:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D4D98EB9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EE861C21BED
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:30:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2B7AB23C56
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340AC13C69E;
-	Thu,  3 Oct 2024 08:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244AF13C69E;
+	Thu,  3 Oct 2024 08:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZcVGDcy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3mY8x/Z"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89656139566;
-	Thu,  3 Oct 2024 08:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9204AEF5;
+	Thu,  3 Oct 2024 08:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727944191; cv=none; b=f/BnVWxcO+edZBeKg+be18YPCBUQvNZsmGGcmr+rXshBkTifL5+D7+U2x3aO8+Nivo/jyxGn5uAlnZN3KlG9Hg9GjWcIr0uKsqU3C+sAyv1BPuLqkdE87ibiXbNsXTUp4mgJkmyz+I36SLykvt/rqeDTbLsl7+Y4COE5DUZXAms=
+	t=1727944214; cv=none; b=KUebA3RvDp2u/0VZ9rQ5Ct/EMVtKkczEEzG7+RH4Hp0WSUVfbZRXXIjvd11NYL9qezsUp4WCt8eGyNo42JQwtXyNUDTLLqDsT5ni5eqKBIE++hVhUk01+Zgv2/0nA9tdqHy97I5EKDMsYBU8/08ZulhgUJbbK/yYDmEQuVcvLDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727944191; c=relaxed/simple;
-	bh=OkI+8g8nFZe0fk2Hx5XVcCgs1CGYPYkt8hC6nRqk8qE=;
+	s=arc-20240116; t=1727944214; c=relaxed/simple;
+	bh=C4YjVWwucQlnFc3Bdyk1mQx7bTga0KsdWJhPjx/3d+A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fbJIESHiBHTiwcuzrMzP4+bRAoCb99uRsPu+wfaNrcsJndZnbWmwzzhHKFj0YUzVsqKTJ5uw/eO2KYoG3ZEoZe+8Z1BPireuUHceBiogvDPZVe6Ioa3GLHBKfm9ZSuOoiRobuISNQEyCDw0U7bLtGY3ueXM1TJR0eoWW92x1O3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZcVGDcy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C2FC4CEC7;
-	Thu,  3 Oct 2024 08:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727944191;
-	bh=OkI+8g8nFZe0fk2Hx5XVcCgs1CGYPYkt8hC6nRqk8qE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rZcVGDcy6nozBZEDFDS9TRUIIfloHx2Tmens55Zzu0eKw8JZRiHTCwEq/ei4PLsAA
-	 XHFPVb2HqY6+DHXRoyK/4E+20woIuEzGewXHN9dpLof9RP3DIKjGM1QNq3k95jH5kk
-	 WJ0VDTr680ZbJGpbTG66OKAU2613+/7G5QLcC6seTeRm7m8C77nv7x0GMUdLHq1G6+
-	 x4D91oeCsp3SxBamxM9E/n1sT8QB7oAzc9a2/V44YJaKPEB+L/8D5Oan955VIrycdd
-	 OGyvRRVRJmeqFdEziThnVoKDgjbYF1i0m93tYBV6+jAdl45o27eeJanYrhpZA+Ru9i
-	 Usc/g542Bk+Uw==
-Date: Thu, 3 Oct 2024 10:29:47 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Jason Chen <jason.z.chen@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] media: dt-bindings: Add OmniVision OV08X40
-Message-ID: <t4fajppdqagkl7wr2krcucsga4zocz6liar64odk2mnasdyfms@5fp7bfwalson>
-References: <20241002-b4-master-24-11-25-ov08x40-v3-0-483bcdcf8886@linaro.org>
- <20241002-b4-master-24-11-25-ov08x40-v3-2-483bcdcf8886@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cNYoQi7YFkRDWChbDN0TMXmZEk5hh1BxPdA1olb4JT1g6TIWwKqlo0PfRCuKRzLskX/0meuqJ+gucUZoNP0qtp/xrGuCzEjFNR2ytJOWvQ1/hy7TsjjCrfzw4EnwId2gRPbFe3SJMZemQjrCmJUZ5yYhhXnuq+7PmrXTXWbucVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z3mY8x/Z; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37cd0b5515fso417630f8f.2;
+        Thu, 03 Oct 2024 01:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727944211; x=1728549011; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KgYlSRPdGNueMfiTMqgmWS1pTsWnaZpjKo5fJ+jS3mg=;
+        b=Z3mY8x/Zr1Qt1o7oX3krQqfq/+J0dTxKLzlEoFw5BSlyhsCXY8PGJmudEVcOGUsgY1
+         YCGvTT1MEDR08hIeYfefb81u3NbraqtHl+QkyrWQ0PlMhVkgB+0uEovm6q0/zDzTVIVx
+         sIj9Lz+xaLE8sa8nd7A2DFu8JAQlSFMInvgJ/rm4i5aukpErCJvGtl0Kn0aFa3w21YpK
+         M/X+PmGMtLh43JIpDrKjNYOFFrZ7CJuex9A8xd6PCQ00yvhAg9VAdOTfNlQYJXdGf4wi
+         yitHwyrYc1318/YetOKSuHdn3ftzMUy88wzM83jSlbyviKRw1Dyr+7dyCPKYNQUQHc0l
+         hiQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727944211; x=1728549011;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KgYlSRPdGNueMfiTMqgmWS1pTsWnaZpjKo5fJ+jS3mg=;
+        b=FCBfE9nFPaq25fXZVnQTZffw5fbtuzn/6yp7248bj23IPx3rMBI/GwNVr0OJ+FSPUE
+         3bVRN11QOL0KyfnmvFV5JRvdEm6HT4isQip04YIptpPNHrDwWvPd26oOA+rDXTOn2kAU
+         9IJiRpBxp6PWUVMfWieahHi4Rot0lDVnmXGTLS5YOp5uZ7fzrUZxhJahdwiWkvB5KGRu
+         lqndvzSRtVizUb7KPSJxg4IQeysRKoGhumhsLvSdG8LGS7yrYJyxqGdFNPUbo3k6ny8Y
+         yAXtuVVRoGqOMoYcZHjSvzAG4SqwCZHZXlLru9OPPG92U1w4OPZnbI/Dday0yNaZ9F+0
+         kl/A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2i2sHRcNmX7zwgvlbY6fNSym2dk/5qZ7OtySxPIIA6Eg4d09zYsI2LuPqNK2f72XcopI9BtuYWflu@vger.kernel.org, AJvYcCUx0TIpPBo0if8zWrQJ9s4f6kU9i1wWS1aWCxlkxiQ1PzUjetFoM2g/kSkLEV5sbGAkxf2Yk7lLjH02gA0g@vger.kernel.org, AJvYcCXfzqH8ElxQGIFTCn35W4RIDixauE53MCr7FJb9glcX7WyNybxqwBeFrcxNJQq4EsBQOTo+8u9sIBkieEQcrK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJEwOyaXGCUewSyFPSXOI1ZGQUky9YAySyaJ53fBJNrszmcpCD
+	p0s4amisPSsD5g/OzzKIeVgZ0uHRbn4/FvRMg+15NSqUnlmwFbP7cOQ5FzAI
+X-Google-Smtp-Source: AGHT+IF8npkmOhbojp5KXFi8cInd8zqhM4R+86JiZ/fJ268SNIVJdHBDzgQCRAJIvhOjCnLqlbpAug==
+X-Received: by 2002:adf:fc49:0:b0:37c:c9b9:3732 with SMTP id ffacd0b85a97d-37cfb8b58d9mr3700396f8f.21.1727944210905;
+        Thu, 03 Oct 2024 01:30:10 -0700 (PDT)
+Received: from void.void ([31.210.180.79])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d081f70b1sm735887f8f.22.2024.10.03.01.30.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 01:30:10 -0700 (PDT)
+Date: Thu, 3 Oct 2024 11:30:07 +0300
+From: Andrew Kreimer <algonell@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: fix a typo
+Message-ID: <Zv5WD6z0uHtcS6wd@void.void>
+References: <20241002211948.10919-1-algonell@gmail.com>
+ <1fe2c97a-fbb3-42bd-941a-c2538eefab0a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241002-b4-master-24-11-25-ov08x40-v3-2-483bcdcf8886@linaro.org>
+In-Reply-To: <1fe2c97a-fbb3-42bd-941a-c2538eefab0a@stanley.mountain>
 
-On Wed, Oct 02, 2024 at 02:58:44PM +0100, Bryan O'Donoghue wrote:
-> +        properties:
-> +          data-lanes:
-> +            oneOf:
-> +              - items:
-> +                  - const: 1
-> +                  - const: 2
-> +              - items:
-> +                  - const: 1
-> +                  - const: 2
-> +                  - const: 3
-> +                  - const: 4
-> +
-> +          link-frequencies: true
+On Thu, Oct 03, 2024 at 08:59:42AM +0300, Dan Carpenter wrote:
+> On Thu, Oct 03, 2024 at 12:19:48AM +0300, Andrew Kreimer wrote:
+> > Fix a typo in comments.
+> > 
+> 
+> Could you explain what the typos are in the commit message so that we can spot
+> it more easily?  It saves a little review time.
 
-Not much changed here and you did not continued discussion about it.
-
-Best regards,
-Krzysztof
-
+Noted, thank you.
 
