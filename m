@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-349732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D3998FAB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 841A698FAB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D8431F236C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0EF1F236CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0321F1CF7C9;
-	Thu,  3 Oct 2024 23:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13B51D0BAA;
+	Thu,  3 Oct 2024 23:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mI8BUXqZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wxw8MN9Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6161B186E3D;
-	Thu,  3 Oct 2024 23:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028FC1D0B90;
+	Thu,  3 Oct 2024 23:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727998830; cv=none; b=lCo1ZzWmzyxSzdUDMABmSwLPnNBG9YFx+YknniXhsumHWM+Sm8rGgvzRVq7VSyxEmwUnNBwIiAaNlS095iH9fZBUUA6mZMaf48W9lpPWJK50k5MXDMHJxH9ytPV9IqWNYZ0qqQRpwM9ZQNipMXBbBQGA+1M/QoWyzXFfj2sRvhQ=
+	t=1727998836; cv=none; b=H5hW6hHUrfV0QXoCCIT359MNx7I0xDKpPKIJfyWUN2s/b4o53xWnKXCNZutxkn1ywLeBuEc+apEZ8fwBUMaSfgZUM0ackmxE2SbfV5nMUsvpNdKeqXp3N23nH/BgTz+214SXcUhEv65owDJzX4n9qcdF16ArLYvMGsNZGCTVK20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727998830; c=relaxed/simple;
-	bh=zVZVjUKwWmy8wagdQANWGdYz209m0lxLhYaTaCBEHMQ=;
+	s=arc-20240116; t=1727998836; c=relaxed/simple;
+	bh=L937tdndjiR3fU0aVHRBXcEqJx6fA5/dFTyDTrR43lA=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SyonjZ6TGuRiowaRFk0FV9d578qcD2wMEBtlC///O2IixrWrBxNsEpI/VuK/zo+nm3Q0oKMHsoWMftTmnJhtZc7PXNSH7TQibmf4vlbDlqQp0QQLOuv6MpD3gNztkQr3u3o83MgmJD52RfUrWDH5QL44zxTNiEUVDkVSm1XcdvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mI8BUXqZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C576EC4CEC5;
-	Thu,  3 Oct 2024 23:40:29 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=t+VuNFUt+m1mVCHiZigtA7rg2bKafq3s92RMyRsbYzCgHbVMRV/bsFTF5XDo4VtBpl7M4ewZgliI2OB2g2NaFLyr1e3PiIGU8gJcK7RKp03LfqiiJ55b/HtTSKb8hZ5eC/7MLvrjuwt1Sd6s3YYpuvT8RBbSvpF9w6CGUdjVy0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wxw8MN9Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C26C4CEC7;
+	Thu,  3 Oct 2024 23:40:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727998829;
-	bh=zVZVjUKwWmy8wagdQANWGdYz209m0lxLhYaTaCBEHMQ=;
+	s=k20201202; t=1727998835;
+	bh=L937tdndjiR3fU0aVHRBXcEqJx6fA5/dFTyDTrR43lA=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=mI8BUXqZAsl94swu2Na4yOSkFRW+rIHSzMdr+OOCtzysZY7xK4NB37clhkGrRoxh5
-	 F5iTlNhZjJwtYoMByl3WwiLkBo2YCKs1DTW5vdT12GLA/O98FAjYXZHdko5AYEcKtb
-	 6FqXNIUtnd4TOgoSiH7tiUeJMCwqXtKDJ8kku6ifEu0k3Htr46NCeImz54M5HsmbTn
-	 +XN/6M2ds4ywQ/PVyYwfsTJnDvbgMYMfL9u8J6r60kQlWSQIF78frKsXWelzLq62vA
-	 Vpjv8DqlOg9tqFbIePYcuhZaxc2eMRq3ipYJFGJQXCduLVlGH/w1pfOJnkcV91J/9p
-	 Qwm5070zZRonA==
+	b=Wxw8MN9ZkK2fENeXuEhj3DQwmGXLEhRzoORba+WKMA9fHFe7yg8iDJBY7qq5j4DtQ
+	 s0/blE5pebpG5hcYOTGKfC4yAbw7hq2ydRHwk8kiXg5+kS2zoeYjHo94hYFZNzHtYs
+	 DruWrbFMJLMGuJXDLnRf4lLv5Atp4V0wklSYcK2XMe5RyBeS7GefrW0co+lrva9RY8
+	 HzNWc/wcpUdbXrd6OSxRe1BGqxO7nh1e0kkEWVBUM8LKXku5GZGOzB6TUe1TYxxRXz
+	 vsrGAhIHFI2GmBQBkKqqRZQk7FYHdsSlvGsI1LIbRtiUvYdoV37DacIvXkFTiPDEFt
+	 z0ahJ3XXSkZ+g==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F033803263;
-	Thu,  3 Oct 2024 23:40:34 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BDF3803263;
+	Thu,  3 Oct 2024 23:40:40 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/2] rxrpc: Miscellaneous fixes
+Subject: Re: [PATCH net-next v2] net: phy: microchip_t1: Interrupt support for
+ lan887x
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172799883325.2030473.10709152930569519748.git-patchwork-notify@kernel.org>
-Date: Thu, 03 Oct 2024 23:40:33 +0000
-References: <20241001132702.3122709-1-dhowells@redhat.com>
-In-Reply-To: <20241001132702.3122709-1-dhowells@redhat.com>
-To: David Howells <dhowells@redhat.com>
-Cc: netdev@vger.kernel.org, marc.dionne@auristor.com, davem@davemloft.net,
+ <172799883874.2030473.4805913584445830927.git-patchwork-notify@kernel.org>
+Date: Thu, 03 Oct 2024 23:40:38 +0000
+References: <20241001144421.6661-1-divya.koppera@microchip.com>
+In-Reply-To: <20241001144421.6661-1-divya.koppera@microchip.com>
+To: Divya Koppera <Divya.Koppera@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
  edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kalesh-anakkur.purayil@broadcom.com, Parthiban.Veerasooran@microchip.com
 
 Hello:
 
-This series was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue,  1 Oct 2024 14:26:57 +0100 you wrote:
-> Here some miscellaneous fixes for AF_RXRPC:
+On Tue, 1 Oct 2024 20:14:21 +0530 you wrote:
+> Add support for link up and link down interrupts in lan887x.
 > 
->  (1) Fix a race in the I/O thread vs UDP socket setup.
-> 
->  (2) Fix an uninitialised variable.
-> 
-> David
+> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
+> ---
+> v1 -> v2
+> - Replaced ret with rc return variable.
+> - Moved interrupt APIs to proper place and removed forward declaration.
+> - Removed redundant return variable declaration.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,1/2] rxrpc: Fix a race between socket set up and I/O thread creation
-    https://git.kernel.org/netdev/net/c/bc212465326e
-  - [net,2/2] rxrpc: Fix uninitialised variable in rxrpc_send_data()
-    https://git.kernel.org/netdev/net/c/7a310f8d7dfe
+  - [net-next,v2] net: phy: microchip_t1: Interrupt support for lan887x
+    https://git.kernel.org/netdev/net-next/c/5fad1c1a09ac
 
 You are awesome, thank you!
 -- 
