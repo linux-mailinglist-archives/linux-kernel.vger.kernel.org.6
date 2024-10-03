@@ -1,115 +1,126 @@
-Return-Path: <linux-kernel+bounces-348924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5114798EDBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:16:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A5A98EDB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE7E91F23AE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:16:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CE76B23248
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCF2170A03;
-	Thu,  3 Oct 2024 11:15:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FDA17838C;
-	Thu,  3 Oct 2024 11:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3E9154425;
+	Thu,  3 Oct 2024 11:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dNjMm1OM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D595213C3C2;
+	Thu,  3 Oct 2024 11:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727954119; cv=none; b=EBP63kZ3fAnlh6PKroqMS7xrNkcPR48k6YOf9kMNyYFTbB6AWlH6kmgmCYEZUGJEnc2JKZx3r8R4sPkDsmuQQW96EFJR1XMqP1TFsYQS/aXhz7RH+VhjQCootW9dkYlszoY7zZ0vaELEQi+lzVsxrkv0BgSEJI1B0WonyZBkXV0=
+	t=1727954095; cv=none; b=qnjfCZCXhRgyg6Fr39bvnaUFlIG0Uv68uQ6ehvLrHK786QV8J57JIBStu1Sv37zioJY02gSb2mUh8+RNttMvpY2cZ1o2hDnc+o0UXPDywihuf17EGpmZM6YPq6u7BZHst2k7LBHE/7X3hQqDPiawv2eATriJnPBs7h7JOf0KEDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727954119; c=relaxed/simple;
-	bh=/FzFW9WXcSY1CgAMQDYyoTu481kZOYcSEgjBUguuwVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JmbtlvE5hFGmSe8R64gwA6dycZxmY3ZLxjc6ZzZOl7XEiLGSjuMlkL3cvqxxONrXHYl2Rav6Qk5d9g7+zSMRmpA5TPCUczT40lSb6g+My/A/LFIpJuRfzpnWErm5DgC6jW+/dEv0qXNJny3bXzW+mD0tORj96X9qzeSZLiynXfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7D63497;
-	Thu,  3 Oct 2024 04:15:46 -0700 (PDT)
-Received: from e110479.arm.com (unknown [10.57.55.26])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4638F3F640;
-	Thu,  3 Oct 2024 04:15:14 -0700 (PDT)
-From: Andre Przywara <andre.przywara@arm.com>
-To: Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Martin Botka <martin.botka@somainline.org>,
-	Chris Morgan <macromorgan@hotmail.com>
-Subject: [PATCH 5/5] regulator: axp20x: add support for the AXP323
-Date: Thu,  3 Oct 2024 12:14:44 +0100
-Message-Id: <20241003111444.543964-6-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241003111444.543964-1-andre.przywara@arm.com>
-References: <20241003111444.543964-1-andre.przywara@arm.com>
+	s=arc-20240116; t=1727954095; c=relaxed/simple;
+	bh=+kSGnXkoPKavIBGRDvSzfj5Pdagy64X694bm9u+MYDE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ZIphHMti1J6+VGPCUuMf3DqDB2ayg3KC/iky4bYPfhTWAcwdfsdD1kepvAZB860our5SvMGAPcHOietpTCiGXxwdvOmMNUDAtPgWrBnwdd64ZvcBFGDn6c27OLsgGCBOhO1D+62cb85+M3OwasUW4AmNTZgafy+mu4WfEcg2nSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dNjMm1OM; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727954094; x=1759490094;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=+kSGnXkoPKavIBGRDvSzfj5Pdagy64X694bm9u+MYDE=;
+  b=dNjMm1OMVQrmEXvHb4rt6Dhn9MIddiVypSiM0Zcbrw5ZXCl1qCdEBIR3
+   GwGTCtMGNsiyLBw6kavn5i0kxUVEE1YYvlKdifFbav7I1uVDpDJVmYh2z
+   75z4mPaPj+8UhJ4oujZRqH7EzmWx/PQrdpSVv5309LpnoDWyN1Jp0I5Wi
+   SYdm7nWAIBlCYJ7lYcWaA3dOGaBZdcnd8rr4iKii/Kt6RFMY7sWyDasyu
+   s49SPiQlFgfELYMibqDD81ZYF97Qsa/o8xK2YM9hroIjuiV5Q0lm6rmrk
+   0Un5brUdGeC+rmaPahRwEnwOYIPExDcnlZ/3Jz1/CpOYutGIciAwpMrkG
+   A==;
+X-CSE-ConnectionGUID: zniEK7WpRfGs7zDuIfL9nw==
+X-CSE-MsgGUID: N0cUdwsbQR6lsTlPKGrh3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="49666184"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="49666184"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 04:14:54 -0700
+X-CSE-ConnectionGUID: CqugsmqbTOiLE5nN7WrH0Q==
+X-CSE-MsgGUID: /d/Pn8ncQRmMxWn5ljdUhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="78734014"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.198])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 04:14:51 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 3 Oct 2024 14:14:47 +0300 (EEST)
+To: "David E. Box" <david.e.box@linux.intel.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, david.e.box@intel.com, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-pm@vger.kernel.org, rjw@rjwysocki.net
+Subject: Re: [PATCH] platform/x86/intel/pmc: Disable C1 auto-demotion during
+ suspend
+In-Reply-To: <f621da34-32a7-c56e-2c99-54a5f03c7e6f@linux.intel.com>
+Message-ID: <856e2489-d92a-4203-feae-b4f41af8ed04@linux.intel.com>
+References: <20241001225901.135564-1-david.e.box@linux.intel.com> <f621da34-32a7-c56e-2c99-54a5f03c7e6f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-992593729-1727954088=:970"
 
-The X-Powers AXP323 is a very close sibling of the AXP313A. The only
-difference seems to be the ability to dual-phase the first two DC/DC
-converters.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Place the new AXP323 ID next to the existing AXP313A checks, to let
-them share most code.
-The only difference is the poly-phase detection code, which gets
-extended to check the respective bit in a newly used register.
+--8323328-992593729-1727954088=:970
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/regulator/axp20x-regulator.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On Wed, 2 Oct 2024, Ilpo J=E4rvinen wrote:
 
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index 3ba76dbd0fb9..e3cc59b82ea6 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -1341,6 +1341,7 @@ static int axp20x_set_dcdc_freq(struct platform_device *pdev, u32 dcdcfreq)
- 		step = 150;
- 		break;
- 	case AXP313A_ID:
-+	case AXP323_ID:
- 	case AXP717_ID:
- 	case AXP15060_ID:
- 		/* The DCDC PWM frequency seems to be fixed to 3 MHz. */
-@@ -1527,6 +1528,15 @@ static bool axp20x_is_polyphase_slave(struct axp20x_dev *axp20x, int id)
- 		}
- 		break;
- 
-+	case AXP323_ID:
-+		regmap_read(axp20x->regmap, AXP323_DCDC_MODE_CTRL2, &reg);
-+
-+		switch (id) {
-+		case AXP313A_DCDC2:
-+			return !!(reg & BIT(1));
-+		}
-+		break;
-+
- 	default:
- 		return false;
- 	}
-@@ -1565,6 +1575,7 @@ static int axp20x_regulator_probe(struct platform_device *pdev)
- 						  "x-powers,drive-vbus-en");
- 		break;
- 	case AXP313A_ID:
-+	case AXP323_ID:
- 		regulators = axp313a_regulators;
- 		nregulators = AXP313A_REG_ID_MAX;
- 		break;
--- 
-2.25.1
+> On Tue, 1 Oct 2024, David E. Box wrote:
+>=20
+> > On some platforms, aggressive C1 auto-demotion may lead to failure to e=
+nter
+> > the deepest C-state during suspend-to-idle, causing high power consumpt=
+ion.
+> > To prevent this, disable C1 auto-demotion during suspend and re-enable =
+on
+> > resume.
+> >=20
+> > Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> > ---
 
+> > @@ -220,6 +237,15 @@ int cnl_resume(struct pmc_dev *pmcdev)
+> >  {
+> >  =09pmc_core_send_ltr_ignore(pmcdev, 3, 0);
+> > =20
+> > +=09if (!pm_suspend_via_firmware()) {
+> > +=09=09int cpunum;
+> > +
+> > +=09=09for_each_online_cpu(cpunum) {
+> > +=09=09=09pr_debug("%s: cpu:%d cst %llx\n", __func__, cpunum, per_cpu(p=
+kg_cst_config, cpunum));
+> > +=09=09=09wrmsrl_on_cpu(cpunum, MSR_PKG_CST_CONFIG_CONTROL, per_cpu(pkg=
+_cst_config, cpunum));
+>=20
+> Is the set of onlined CPUs iterated by the suspend and resume handlers=20
+> guaranteed to be the same?
+
+I asked about this from more knowledgeable people than me and got a=20
+response that during suspend/resume userspace cannot offline any CPUs so=20
+it should be guaranteed to remain the same for resume.
+
+--=20
+ i.
+
+--8323328-992593729-1727954088=:970--
 
