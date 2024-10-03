@@ -1,619 +1,254 @@
-Return-Path: <linux-kernel+bounces-348631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E9998E9E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:56:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62AC698E9EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50B6FB203BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A547283B68
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8EE824AD;
-	Thu,  3 Oct 2024 06:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49D784A27;
+	Thu,  3 Oct 2024 06:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vx7nE9qv"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VK9uosCY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C7B80027
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 06:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727938580; cv=none; b=O0wQ5fKHVz2bmbRxC5TWV3W1dsTA5rusxmi7nPXCBdL9aOwp7tzdRdHfvd9Pbey/zpCPE51YI5jD6ZUhpLBWBfuQCT44zz51TMUY2ewiCw58Z7rz04hOga1NssF0yn56Px3oLj3cfjwQmmg4IsnsuvketLLjnqG3PQ1Hp1I4bEY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727938580; c=relaxed/simple;
-	bh=zqd0AMQPm9nfLsOPft1fG0TAm43ccGTgomzApatYpGM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mN1RDtW6k2rLjK/uJriYLugXxQJ9smbzLuy8oYQFNlbNVu6wDvdsyTHPzCmNttpkOeJv+Wh+hA/zWScwwlaD4FmiY6yRKhFEDNU3IfPwGff23yLtRDKf+pVfmObckIBvXwpNLsCpsgdARfAoj0+1KafVmjdxjrILvA8rRR78Y9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vx7nE9qv; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cb259e2eafso5880886d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 23:56:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727938577; x=1728543377; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=l8O/gDp0Oh+ERDH35scw3vlbjQG6JrGtVie6sk+We4o=;
-        b=Vx7nE9qv/8ItfAt2Or0rt8+Rk/oizVFFS+iUsE0hSLTZZCUFZ+fkRLOhDSN9/GYsYm
-         V6wOuVUuimZFPGTR2+MCPtKxwUxrpHrxbpz9EoWN67NgDh31mt35Tx5dndPDpXhMEX/T
-         +SYDpwAjm8Xo/viNwzhEm7ASfsKC9VtxiA3iO57SqxsI8qvRsWIsgbVcBwUXPPAbaZCV
-         1O/O/N4ffe6I/nrBEC+/9mAft6X89jBiDUpUWT2YOPzb8N7j5OipMBmi54GdUzR4QC3r
-         PTzyRuzElN00hyjttll7FzLsBBW8rWsDObU/npdJ+GGbrnQhcvKwhINThbE0RfO7GFsM
-         QzWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727938577; x=1728543377;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l8O/gDp0Oh+ERDH35scw3vlbjQG6JrGtVie6sk+We4o=;
-        b=NHWW5eFbmuZGXwxj7tQThsFAJBIEhYcUJeLU9F1wDiTYzl3Ok2I6GJC7teGvp/06FZ
-         5Ey4lbChBbIQWCim4ISA/vdnwZleTrjfLrJ9YyufOoSos1L8ihug7oJbFk7aXA5qzQvN
-         Y0NILRfT+X/KCPIZhjXXH4kpwze68zY4RxbZz8oTvlV/Em80kFjG/NgAkdEpzUiKc5r0
-         cDpi7hJXjjlZKlP6k99n2I9+QTWLCeKBGMdPagpMh7Hv3YABHf17n0dK/QF0cBthvho/
-         l++lD1rYp2P8Z66VXIzXuKrV4/jT0++rBILxZeRD2LwI6SW1lvm79gwdalcQjSUTT1wu
-         Izyw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1nXlAJvUCZIlxvEeZZVPfxB/S87EGztMPbdj52vwbIWwwiS2a5HCpvV3WVrWYRDjdTuDQXRgzbEtGQIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziMF1TNg1sNMzKIZa8aklqjobKf20kYV7ylOfuSq7wFfIhqel8
-	2L3yCgGXnk4dBNTxeHpQRmsZ8QmaItLg/LI1TnEFIRj7Kd2RnFjax0P2K0aaiNcX4fCOoii5YdF
-	+LDz5q0tzHU+nLdIwddNVRsrlNFhFgjXsjiNg
-X-Google-Smtp-Source: AGHT+IGUiohT/U5YlOmXlzdJpxHCdyp6c9HCXwlNVFJ2yE5Ia0BabKZFdL3kV4+wgM8iSHlXF1CudIKNkyh06IwJq2U=
-X-Received: by 2002:a05:6214:5a07:b0:6c7:c646:4b7f with SMTP id
- 6a1803df08f44-6cb900ad4c5mr32541406d6.3.1727938576872; Wed, 02 Oct 2024
- 23:56:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CFD537F8;
+	Thu,  3 Oct 2024 06:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727938657; cv=fail; b=ee6ciCQrWugcL7W+gT2TmFdoZw/8U0hE9N8OnyhujkfaEwFOa/69/i4R1uUrR94aQI4n6m2G0CqDMsJrVI/cOoC3GpPmlndoXdMyokeWWBEyZ7ibLYSazcm9uDXltmwzf8IrfEJLuvZOCzzkwYm4y5vRwTo7dEUiq05wC+rEvH0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727938657; c=relaxed/simple;
+	bh=/1PxpGtRc7TjLsWRxBJPa9CB0+YECJKZ3vAySo/0pYQ=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=e2blhfqXrpb+hnT+WaKlKI50BbmzCv6s+92aZyu5PkB+f4eDCCNB+1BHtBa+i0rpFgfEBct0ejreR8pRookYNMS/vz2qYMCnNbzIvow7kEb2S6atG2foNUWfYs39fE7Eb2rngo7Z/HrwgfvelY8QaQAsBDqMkdEQ+9MYHTyBYeQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VK9uosCY; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727938655; x=1759474655;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=/1PxpGtRc7TjLsWRxBJPa9CB0+YECJKZ3vAySo/0pYQ=;
+  b=VK9uosCY7/Kff7roYWhyd+U0iuZ+PQwA8+JfY9Z0wN4urJnqVVDZhN3x
+   QZFZZUxLwUor+5Us21uh2pGwbD1llZScqnGwXDAj/gq4W9sjrTnEXsw61
+   qUx1/4rkgSojxbss9wQwLFDn/1z9Ye29gcyEiZRQdrEJ3VGZVuCsF5Y4Z
+   GytlNpdndjS69QsLRDuSuOggLXc9gs3GJimNgIV4MqxnbBN+6jCv2fyBq
+   hh54+CmU7Nvxq4kPST9Iy913KqrPmUKCa0k8Sb4C4WdilQSVUF2mdQBRQ
+   vYgWm3LbVmYfiu8yUV7BHAyRSGjF1bOHAUD08EoBvjyQ88UH8v6uvaP3B
+   Q==;
+X-CSE-ConnectionGUID: 67Rn3RZNRFiVERkpQEvBLA==
+X-CSE-MsgGUID: 1fnofwp+RwiEhECqO5aAVg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="26630573"
+X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
+   d="scan'208";a="26630573"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 23:57:34 -0700
+X-CSE-ConnectionGUID: fVMdJ2LqTIqVrsgotlACSw==
+X-CSE-MsgGUID: WDEjYq0eSvGxy413hc+WLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
+   d="scan'208";a="78272331"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Oct 2024 23:57:34 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 2 Oct 2024 23:57:33 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 2 Oct 2024 23:57:33 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 2 Oct 2024 23:57:33 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.175)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 2 Oct 2024 23:57:33 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q0rinugQx1hlEIQJ4ZsTMGdTntKAjb1yX07nBJeGsgxNOuY/t1ILt4iuGOWKJUqsnlfcpxyoGRx8ZDDBK2SE5hGuYgaHW4Nv2MX46xcf153ZjRIfQyvhqoCgeT3A7T4fLqpS06PLJdrPORYj58Wwg8eyqFbfLuhZ4/mkLDJm3QsBrE1My8Wl+F1+DlRrQ2cwj4ybaMB33AdkAuKyNF+GVti5/yIPnRrEXx/qTJyMmSSWrvOCUkotfD1yuOZb/F2Zpp5FXYyGf+2YWsTFfy/aIfAR2NQ+US3CFzdz8WRS8d11mLnhg+uMbzZAUNSZU9UUHylvWwxDBQ025wRgK6s0Ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XsR6lVwDwiJo63hCOrddQbTR1YpQfWPhMeBySzrsv1I=;
+ b=VZuFGaa9BDOllV34ztbbGMcE08cZMBhDriNZTrt8BWlqqkdXjd1v5ebwRC60YIfCmUk+DD6ADUmm2x1jDLAbrD+7tkxp8Y4tRH6Pn/WOEwC2tr2vrxm1bARYEMtaO/NiLs/ZaL93PBlI2QmG3cNVVbIk4onrdZXLwLL7gYMdf2TQRGDp0Ll/QxX3kW2Df4PE0qZoZnq9TxUHLYX/rXdzpHWMadSHaXH+x4eNuLZZTxeHJeAc7rYkaicQPwnT2dpOw2iQPppErAk7vS+wxWgokLrQcqGH+w4fWCdMpP7FDOVNH/+P8hZ0ZpuJTDbs8FAlTTMtjKq9rlUGxT84QX7lZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5399.namprd11.prod.outlook.com (2603:10b6:208:318::12)
+ by DM4PR11MB8157.namprd11.prod.outlook.com (2603:10b6:8:187::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Thu, 3 Oct
+ 2024 06:57:31 +0000
+Received: from BL1PR11MB5399.namprd11.prod.outlook.com
+ ([fe80::b8f1:4502:e77d:e2dc]) by BL1PR11MB5399.namprd11.prod.outlook.com
+ ([fe80::b8f1:4502:e77d:e2dc%2]) with mapi id 15.20.8026.016; Thu, 3 Oct 2024
+ 06:57:31 +0000
+Message-ID: <566e6e9d-4c6d-4bac-9a93-e760b9ee4c1b@intel.com>
+Date: Thu, 3 Oct 2024 08:57:24 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] net/mlx5: Fix typos
+To: Andrew Kreimer <algonell@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, "David S
+ . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>, "Matthew
+ Wilcox" <willy@infradead.org>
+References: <20241002200838.7316-1-algonell@gmail.com>
+Content-Language: pl
+From: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
+Organization: Intel
+In-Reply-To: <20241002200838.7316-1-algonell@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0110.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:20::7) To BL1PR11MB5399.namprd11.prod.outlook.com
+ (2603:10b6:208:318::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917005116.304090-1-arturacb@gmail.com> <20240917005116.304090-2-arturacb@gmail.com>
-In-Reply-To: <20240917005116.304090-2-arturacb@gmail.com>
-From: David Gow <davidgow@google.com>
-Date: Thu, 3 Oct 2024 14:56:05 +0800
-Message-ID: <CABVgOSm50-QiygxEGzwXp0QbEPdHJLSA8h5RGr-1MaiovB_4cA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] lib/llist_kunit.c: add KUnit tests for llist
-To: Artur Alves <arturacb@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, n@nfraprado.net, 
-	andrealmeid@riseup.net, vinicius@nukelet.com, 
-	diego.daniel.professional@gmail.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000001afb2d06238d0d52"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5399:EE_|DM4PR11MB8157:EE_
+X-MS-Office365-Filtering-Correlation-Id: d375668d-8656-4516-0019-08dce378a6c4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?di91MmtuZ1JsODJ0bWJmZkNDOUFOSGVsNG5YTC9DT3pVWlF0N3E3N1hkM21a?=
+ =?utf-8?B?cXgzRFNGemVzY2VVajZ3WDRUR21KOFhRU0NBeG55djJsaEk4cE1nYzVGMWtE?=
+ =?utf-8?B?OTEwQXVJNXZvVXdDUk51bFkrYXhuRjZkdW5DaW9sQXladWhmVnVWVnI1TER2?=
+ =?utf-8?B?WnlVbFZ4cVRlRmJtRUswdXFuYU15eDBZcFFIbU9Gck1CelQ2dkxzQWpxR0xW?=
+ =?utf-8?B?Q2NOeXdUZUo0UWxDYVFCMTdxczBlRmVhR1kya3hWbk11bk5DWTRHcjQ4NUw3?=
+ =?utf-8?B?VC94R0htSC9JdVUzNjlyTnc0aFZTZktvQ09DeXlESWpBZmEwelgxYzJvZlRS?=
+ =?utf-8?B?OUNxeXl1NDBPL2ZEbW1RR3JiK0tvb0pFWW5XcVhPU2kxTCt6UmpyL3BZR0tu?=
+ =?utf-8?B?aytXcUczc0FDRmdaVFcybmlKNnhRNVBPTHJIMTdCek04VHV6WTdKRVBrZVlC?=
+ =?utf-8?B?ZUd3ZFZLcFluQ2hHVmNWZ1VsYTB6dm1rcVFmcVI0UnNwb3EzZHNEVmxFZzJD?=
+ =?utf-8?B?ZmwxdFIrTGNWNWdnUXF2MVVZQTZIY1lnd093NUdnVW4zOCtEeG9DdTB3eTFn?=
+ =?utf-8?B?cG9ackZ5SVVIRnByUkFFbnZ1bTFnSE9rTE9OSzFVRG9kUk9WMzBlck40SzYz?=
+ =?utf-8?B?WncxVnExcVVaQVBnZG5BSjBhRll0c0FqVE80TkRlbm5UcEJVdmtaZEx2R3hR?=
+ =?utf-8?B?d3g4cngzWFFSU1ZXYS9mNkJ1K0NWdEJtZEU5NDlmREI3dWd3aVU2bXphSlND?=
+ =?utf-8?B?T3B3c05NbFR1aWJucU1qL05JZ25mVjhBVFdoZmRJTW1nY2RCZWZrWkVRQUpy?=
+ =?utf-8?B?TUkrUG5RUVk4R0xSVkJ5Wkl1SFJDME1xTHZFVVoxajJTM3EranZwVlpTVW41?=
+ =?utf-8?B?TDEvcE0wWTVaS3dvdVI4RnBTdnhBNTZyK3R1ZnpFZWJqaC9vVmFHU1NlNUNY?=
+ =?utf-8?B?a2orbnd5SEVwdVlEZWY3bzFXdWltcFJoRTdSNFdmbmFvV2RQamlyUTZNRWNS?=
+ =?utf-8?B?SU9WaTRwVTJJRy9jYXlVZHJjZUxuMmhObzJWaVBXbXJsWlg1ZStDVFk3YkJx?=
+ =?utf-8?B?RkRPVjVvSC8yaGlKblhXb0RCWkx2d3lWKzFZanBWQjc0SXJ6Q0laWXdoZm1j?=
+ =?utf-8?B?QXo3QXJaVUhjZ2hiWFFJOGxzZmp4YkRxNXh4RmlXcmNQQk5IcDVvczVQdndY?=
+ =?utf-8?B?cmZyNmxGNzBDS0xUaHAyaXpGT3lsOVBXMUxhU1RwaWdqVjc5YjJWMFQ5NUdN?=
+ =?utf-8?B?eERBaXFtZlQ2UVU4YVVDb1o0ODY4aGVtMnNyT0dGV1NCZ0VXZ21qWGoyb1Rs?=
+ =?utf-8?B?a0RYa0NRV2V4M29BNHZsL1A4bGFVcDdTUFpnYW5VeHZwd3VEbU11SUJhaHl3?=
+ =?utf-8?B?aHN6aSsxNVY0SVpMN1JHSzBSUVJZd3c0ZGVMOE90bHJuQlU5ajJKRkg0ajVm?=
+ =?utf-8?B?TXJQY3hkcWovUFR4bkZMMENqemYwa2c3RlJnTStEdzRSSHAyOENUdElvelNT?=
+ =?utf-8?B?ZDNIMDUveUQyRHZaOURjbm9pUFRVUEdEcU42cmhJRnRNK3N5WDFpbHh6TUFK?=
+ =?utf-8?B?S2oxSGd2S2JBcjJ1V0g0WlJwcU9Oc2xtT01uTm5BNDc4SWpFUkVRTFQ4WjQx?=
+ =?utf-8?B?TGcyMWxFQk42cHhUNVFhaUttT1h4KzhjckY1cFU4V29zejdqRGxJcmlsQURB?=
+ =?utf-8?B?TnJZTTVpMi93N2psNC9LbFc0K0VpdWVpa1J2V3F3RHR5dXlhNnJkcFhBPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?clR4QkxPbVlzZXpybWRac0ZQOFBZQ2ZkQkRzMStLM2NiYUlZZndMNVNXZXR1?=
+ =?utf-8?B?dTY0TDJTVm9QYVNRcW5oZDRxYXZXZjRPa3d3cVZObHVRb0hDU0VaWjZLaU5v?=
+ =?utf-8?B?bDdXSWtGd2FucDhQdkFoMnk5eno2T0hNeWxRNXNRZjdyUE9iRU0wdXN2cDd5?=
+ =?utf-8?B?aEpKOENheVRFUUJQRHphcmVyMVpYZHJPd3k5SkdJZFNta2F1Mjh3ODVQajFK?=
+ =?utf-8?B?TVJuK2hDUDNWYjJjU2Q5cCtoNC8wQ0FsN1kyRXZrN2ZlaWo1bjh4YkJkRFpt?=
+ =?utf-8?B?TmJLeVo0MzFTTUdWak1LeEc1YWdleDcvS0ZGVGJ1QmZvOFNRbFJnU1VTZlYy?=
+ =?utf-8?B?a0lESTl1WXNqRDJuY1JtY29JU2pILzZsblJQRkNrSnQrSHdRMWxqbW1pV0cy?=
+ =?utf-8?B?S3RqODMvT3lRYi94V1MvcXJrZUxxbzI2MEFzZmdNeFNxaFMzbloxakhmbkVh?=
+ =?utf-8?B?bGp0MnkvcVhpV2NmM21qM1AzSkRId3BFRW9ibVFOQ0hMZEtpcWc1c05ab25V?=
+ =?utf-8?B?ZGg4WnRPWDc3RWZlMit3c2YvdEE3dy84SWNuMkppSmFFdy85UDc4M1ZaQThw?=
+ =?utf-8?B?Q1ZnVzRTSnRVNjBiekZ4K015MG00NUMya28vS0cvS0NnZzRadGkvcWtEMDMr?=
+ =?utf-8?B?b2E4MDNCZ2o2Z0o2L3M5QTJtaUtxNnRVOXFGSDNDWitQQi8waStCbEphaVZ6?=
+ =?utf-8?B?bXdpM1JzRGpqbVgxTTY3bFhQOGpBOFhVRXhaUkJQSGE3ZTdFT3lEK2pOT2N1?=
+ =?utf-8?B?VWF2am13d0NpT1ZmSXdPRTJ4ZVM0S0JRMWM3c2ZLUFhVT3J6dXJnR0ZKaW80?=
+ =?utf-8?B?Q1JWejhSMTJxazJ6WWZXY3cweW9NeHZuanJXY05lTzdsM3BJQXQ0cmpERis0?=
+ =?utf-8?B?K2N3aGE2RHB2YUxoYmt3TERFOE1ldnVYcWhXVmRrZ012bUlNWWpsRUUzc25H?=
+ =?utf-8?B?ZU9TVFZWd3YrSUJJMy9qR25DK1ZXaXVBWVU3OUluVXpIL0tySWJMK01IQThR?=
+ =?utf-8?B?V3dNcUp2MnBPd2xXaWtFN3ErMEZJQlc3aWl6cFcvQmkrYTRxUTVxc1lUbGlv?=
+ =?utf-8?B?b0ZpejVRQVNPeWVVemJMZ0NWMDJSMUE1SE9KTzRCRDQzbTFlUzhsZlFXNVdT?=
+ =?utf-8?B?QmI5R3luZTdoSzdwUm5STDMyZXFSd0xab2JKTlNQYzlXTXR4M1RETHhaLzk5?=
+ =?utf-8?B?aitnNm5kZ1Bpb1RNdnFEVnJvUnh6N0w0enB4SVpFa0xMUURYRjdSR3VUWDNV?=
+ =?utf-8?B?dGJzdG5nOXU0bU1YbjFpajBtTFZtL1ptYWhOZm1vcG81MzF3S3dMMGYwSHlR?=
+ =?utf-8?B?SkJyZ1RRZVNOV0I0QnVmU0Q4SEh6Skx3UFcrWGpaYlF1RHpLWWdGNkFwbElq?=
+ =?utf-8?B?NUR4THRTT2h0UllXNnpCTjZLSHRwaHcrUFZTelJGRUxVanZqeDB6L2hYNGE0?=
+ =?utf-8?B?YkRhL0p3bjZCV0VNZEVFc01nVDZzVlZaTHVkNGdjS0VCU3dmWDYxRmJ1TGxC?=
+ =?utf-8?B?ek9LQysyaVljbXFSSHJQckFDcGd3LzlhWmZrbVNmcnIrOXUxanBiRDdnRXhH?=
+ =?utf-8?B?M1RqZThKaWFsNXBxeTh6L3pHSHY4T2ZEOG9TWE9ScnFHaGMwNlUrSzd2VXQr?=
+ =?utf-8?B?aTZrbFB0T0JKN09GT2hvUU01RzJVRHhuZnhnWnc3ZDlhVWY4dGRPeWZXaXY5?=
+ =?utf-8?B?aFhiRUE3TEhWZk43ZXNqRHJyeTBOL1I2eFdIWU42cEJqeThnaVdZd2dFYWMv?=
+ =?utf-8?B?WkVoV29YR3Yzbnl3eVJBWW44bDAzSlUwNDFhR0pRbzVraDJGN0tlS2tBbTdJ?=
+ =?utf-8?B?a1o3U2NZOGtFcW11Nklwak9CTUlnT0l1QWttbzVvaVl5MVllNUZWU0pSUXhP?=
+ =?utf-8?B?UERIMnEwcWszaVJQVWRLUXg5VGpNQWd5YWl4aVN6VlVON3FOeTU0WitVS0x5?=
+ =?utf-8?B?czQvODF5VWM2akNqeDAvWkVKNHJlUTdPSkx5UkRsZ1VwRDR5ZGtvZTZ0NmNE?=
+ =?utf-8?B?b0VHcERQM2J4NFk5bVQ4Wm9GdGVycGtNaENiTjV6YzYxREJFMlVjbjJwWjRM?=
+ =?utf-8?B?aVV5cFlRUXoyOGJYaVFNYmQ2NVVpaWdtaTJXRXNVM21uVFZWaUJqM21YQ0Zx?=
+ =?utf-8?B?KzIyTEdEUUkxUitWZGozUGZBQitzNmFvK29pYlcrYzdSMXE1WUxqQy9UejQ3?=
+ =?utf-8?B?WVE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d375668d-8656-4516-0019-08dce378a6c4
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5399.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2024 06:57:31.4895
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GMa1zzLn8h7ooLSwgx4BU4msZBYHuoxDTY8RFCEG6I52fbY9Th58nO3O9eU5PDXq21OPv32k/243dWZsgnejOwc6muEvx0rks+kUJSERbBE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8157
+X-OriginatorOrg: intel.com
 
---0000000000001afb2d06238d0d52
-Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 17 Sept 2024 at 08:51, Artur Alves <arturacb@gmail.com> wrote:
->
-> Add KUnit tests for the llist data structure. They test the vast
-> majority of methods and macros defined in include/linux/llist.h.
->
-> These are inspired by the existing tests for the 'list' doubly
-> linked in lib/list-test.c. Each test case (llist_test_x) tests
-> the behaviour of the llist function/macro 'x'.
->
-> Signed-off-by: Artur Alves <arturacb@gmail.com>
+
+On 10/2/2024 10:08 PM, Andrew Kreimer wrote:
+> Fix typos in comments.
+> 
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 > ---
+> v2:
+>    - A repost, there is no range-diff.
+> v1: https://lore.kernel.org/netdev/20240915114225.99680-1-algonell@gmail.com/
+> 
+>   drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c | 2 +-
+>   drivers/net/ethernet/mellanox/mlx5/core/main.c         | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c b/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
+> index 1477db7f5307..4336ac98d85d 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
+> @@ -80,7 +80,7 @@ irq_pool_request_irq(struct mlx5_irq_pool *pool, struct irq_affinity_desc *af_de
+>    * isn't subset of req_mask, so we will skip it. irq1_mask is subset of req_mask,
+>    * we don't skip it.
+>    * If pool is sf_ctrl_pool, then all IRQs have the same mask, so any IRQ will
+> - * fit. And since mask is subset of itself, we will pass the first if bellow.
+> + * fit. And since mask is subset of itself, we will pass the first if below.
+>    */
+>   static struct mlx5_irq *
+>   irq_pool_find_least_loaded(struct mlx5_irq_pool *pool, const struct cpumask *req_mask)
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+> index 220a9ac75c8b..82911ea10ff8 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+> @@ -1664,7 +1664,7 @@ void mlx5_unload_one(struct mlx5_core_dev *dev, bool suspend)
+>   	devl_unlock(devlink);
+>   }
+>   
+> -/* In case of light probe, we don't need a full query of hca_caps, but only the bellow caps.
+> +/* In case of light probe, we don't need a full query of hca_caps, but only the below caps.
+>    * A full query of hca_caps will be done when the device will reload.
+>    */
+>   static int mlx5_query_hca_caps_light(struct mlx5_core_dev *dev)
 
-Always nice to see more list tests!
-
-Acked-by: David Gow <davidgow@google.com>
-
-Cheers,
--- David
-
->  lib/Kconfig.debug       |  11 ++
->  lib/tests/Makefile      |   1 +
->  lib/tests/llist_kunit.c | 358 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 370 insertions(+)
->  create mode 100644 lib/tests/llist_kunit.c
->
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index b5696659f027..f6bd98f8ce2b 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -2813,6 +2813,17 @@ config USERCOPY_KUNIT_TEST
->           on the copy_to/from_user infrastructure, making sure basic
->           user/kernel boundary testing is working.
->
-> +config LLIST_KUNIT_TEST
-> +       tristate "KUnit tests for lib/llist" if !KUNIT_ALL_TESTS
-> +       depends on KUNIT
-> +       default KUNIT_ALL_TESTS
-> +       help
-> +         This option builds the llist (lock-less list) KUnit test suite.
-> +         It tests the API and basic functionality of the macros and
-> +         functions defined in <linux/llist.h>.
-> +
-> +         If unsure, say N.
-> +
->  config TEST_UDELAY
->         tristate "udelay test driver"
->         help
-> diff --git a/lib/tests/Makefile b/lib/tests/Makefile
-> index c6a14cc8663e..8d7c40a73110 100644
-> --- a/lib/tests/Makefile
-> +++ b/lib/tests/Makefile
-> @@ -34,4 +34,5 @@ CFLAGS_stackinit_kunit.o += $(call cc-disable-warning, switch-unreachable)
->  obj-$(CONFIG_STACKINIT_KUNIT_TEST) += stackinit_kunit.o
->  obj-$(CONFIG_STRING_KUNIT_TEST) += string_kunit.o
->  obj-$(CONFIG_STRING_HELPERS_KUNIT_TEST) += string_helpers_kunit.o
-> +obj-$(CONFIG_LLIST_KUNIT_TEST) += llist_kunit.o
->
-> diff --git a/lib/tests/llist_kunit.c b/lib/tests/llist_kunit.c
-> new file mode 100644
-> index 000000000000..817bb2948697
-> --- /dev/null
-> +++ b/lib/tests/llist_kunit.c
-> @@ -0,0 +1,358 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * KUnit test for the Kernel lock-less linked-list structure.
-> + *
-> + * Author: Artur Alves <arturacb@gmail.com>
-> + */
-> +
-> +#include <kunit/test.h>
-> +#include <linux/llist.h>
-> +
-> +#define ENTRIES_SIZE 3
-> +
-> +struct llist_test_struct {
-> +       int data;
-> +       struct llist_node node;
-> +};
-> +
-> +static void llist_test_init_llist(struct kunit *test)
-> +{
-> +       /* test if the llist is correctly initialized */
-> +       struct llist_head llist1 = LLIST_HEAD_INIT(llist1);
-> +       LLIST_HEAD(llist2);
-> +       struct llist_head llist3, *llist4, *llist5;
-> +
-> +       KUNIT_EXPECT_TRUE(test, llist_empty(&llist1));
-> +
-> +       KUNIT_EXPECT_TRUE(test, llist_empty(&llist2));
-> +
-> +       init_llist_head(&llist3);
-> +       KUNIT_EXPECT_TRUE(test, llist_empty(&llist3));
-> +
-> +       llist4 = kzalloc(sizeof(*llist4), GFP_KERNEL | __GFP_NOFAIL);
-> +       init_llist_head(llist4);
-> +       KUNIT_EXPECT_TRUE(test, llist_empty(llist4));
-> +       kfree(llist4);
-> +
-> +       llist5 = kmalloc(sizeof(*llist5), GFP_KERNEL | __GFP_NOFAIL);
-> +       memset(llist5, 0xFF, sizeof(*llist5));
-> +       init_llist_head(llist5);
-> +       KUNIT_EXPECT_TRUE(test, llist_empty(llist5));
-> +       kfree(llist5);
-> +}
-> +
-> +static void llist_test_init_llist_node(struct kunit *test)
-> +{
-> +       struct llist_node a;
-> +
-> +       init_llist_node(&a);
-> +
-> +       KUNIT_EXPECT_PTR_EQ(test, a.next, &a);
-> +}
-> +
-> +static void llist_test_llist_entry(struct kunit *test)
-> +{
-> +       struct llist_test_struct test_struct, *aux;
-> +       struct llist_node *llist = &test_struct.node;
-> +
-> +       aux = llist_entry(llist, struct llist_test_struct, node);
-> +       KUNIT_EXPECT_PTR_EQ(test, &test_struct, aux);
-> +}
-> +
-> +static void llist_test_add(struct kunit *test)
-> +{
-> +       struct llist_node a, b;
-> +       LLIST_HEAD(llist);
-> +
-> +       init_llist_node(&a);
-> +       init_llist_node(&b);
-> +
-> +       /* The first assertion must be true, given that llist is empty */
-> +       KUNIT_EXPECT_TRUE(test, llist_add(&a, &llist));
-> +       KUNIT_EXPECT_FALSE(test, llist_add(&b, &llist));
-> +
-> +       /* Should be [List] -> b -> a */
-> +       KUNIT_EXPECT_PTR_EQ(test, llist.first, &b);
-> +       KUNIT_EXPECT_PTR_EQ(test, b.next, &a);
-> +}
-> +
-> +static void llist_test_add_batch(struct kunit *test)
-> +{
-> +       struct llist_node a, b, c;
-> +       LLIST_HEAD(llist);
-> +       LLIST_HEAD(llist2);
-> +
-> +       init_llist_node(&a);
-> +       init_llist_node(&b);
-> +       init_llist_node(&c);
-> +
-> +       llist_add(&a, &llist2);
-> +       llist_add(&b, &llist2);
-> +       llist_add(&c, &llist2);
-> +
-> +       /* This assertion must be true, given that llist is empty */
-> +       KUNIT_EXPECT_TRUE(test, llist_add_batch(&c, &a, &llist));
-> +
-> +       /* should be [List] -> c -> b -> a */
-> +       KUNIT_EXPECT_PTR_EQ(test, llist.first, &c);
-> +       KUNIT_EXPECT_PTR_EQ(test, c.next, &b);
-> +       KUNIT_EXPECT_PTR_EQ(test, b.next, &a);
-> +}
-> +
-> +static void llist_test_llist_next(struct kunit *test)
-> +{
-> +       struct llist_node a, b;
-> +       LLIST_HEAD(llist);
-> +
-> +       init_llist_node(&a);
-> +       init_llist_node(&b);
-> +
-> +       llist_add(&a, &llist);
-> +       llist_add(&b, &llist);
-> +
-> +       /* should be [List] -> b -> a */
-> +       KUNIT_EXPECT_PTR_EQ(test, llist_next(&b), &a);
-> +       KUNIT_EXPECT_NULL(test, llist_next(&a));
-> +}
-> +
-> +static void llist_test_empty_llist(struct kunit *test)
-> +{
-> +       struct llist_head llist = LLIST_HEAD_INIT(llist);
-> +       struct llist_node a;
-> +
-> +       KUNIT_EXPECT_TRUE(test, llist_empty(&llist));
-> +
-> +       llist_add(&a, &llist);
-> +
-> +       KUNIT_EXPECT_FALSE(test, llist_empty(&llist));
-> +}
-> +
-> +static void llist_test_llist_on_list(struct kunit *test)
-> +{
-> +       struct llist_node a, b;
-> +       LLIST_HEAD(llist);
-> +
-> +       init_llist_node(&a);
-> +       init_llist_node(&b);
-> +
-> +       llist_add(&a, &llist);
-> +
-> +       /* should be [List] -> a */
-> +       KUNIT_EXPECT_TRUE(test, llist_on_list(&a));
-> +       KUNIT_EXPECT_FALSE(test, llist_on_list(&b));
-> +}
-> +
-> +static void llist_test_del_first(struct kunit *test)
-> +{
-> +       struct llist_node a, b, *c;
-> +       LLIST_HEAD(llist);
-> +
-> +       llist_add(&a, &llist);
-> +       llist_add(&b, &llist);
-> +
-> +       /* before: [List] -> b -> a */
-> +       c = llist_del_first(&llist);
-> +
-> +       /* should be [List] -> a */
-> +       KUNIT_EXPECT_PTR_EQ(test, llist.first, &a);
-> +
-> +       /* del must return a pointer to llist_node b
-> +        * the returned pointer must be marked on list
-> +        */
-> +       KUNIT_EXPECT_PTR_EQ(test, c, &b);
-> +       KUNIT_EXPECT_TRUE(test, llist_on_list(c));
-> +}
-> +
-> +static void llist_test_del_first_init(struct kunit *test)
-> +{
-> +       struct llist_node a, *b;
-> +       LLIST_HEAD(llist);
-> +
-> +       llist_add(&a, &llist);
-> +
-> +       b = llist_del_first_init(&llist);
-> +
-> +       /* should be [List] */
-> +       KUNIT_EXPECT_TRUE(test, llist_empty(&llist));
-> +
-> +       /* the returned pointer must be marked out of the list */
-> +       KUNIT_EXPECT_FALSE(test, llist_on_list(b));
-> +}
-> +
-> +static void llist_test_del_first_this(struct kunit *test)
-> +{
-> +       struct llist_node a, b;
-> +       LLIST_HEAD(llist);
-> +
-> +       llist_add(&a, &llist);
-> +       llist_add(&b, &llist);
-> +
-> +       llist_del_first_this(&llist, &a);
-> +
-> +       /* before: [List] -> b -> a */
-> +
-> +       // should remove only if is the first node in the llist
-> +       KUNIT_EXPECT_FALSE(test, llist_del_first_this(&llist, &a));
-> +
-> +       KUNIT_EXPECT_TRUE(test, llist_del_first_this(&llist, &b));
-> +
-> +       /* should be [List] -> a */
-> +       KUNIT_EXPECT_PTR_EQ(test, llist.first, &a);
-> +}
-> +
-> +static void llist_test_del_all(struct kunit *test)
-> +{
-> +       struct llist_node a, b;
-> +       LLIST_HEAD(llist);
-> +       LLIST_HEAD(empty_llist);
-> +
-> +       llist_add(&a, &llist);
-> +       llist_add(&b, &llist);
-> +
-> +       /* deleting from a empty llist should return NULL */
-> +       KUNIT_EXPECT_NULL(test, llist_del_all(&empty_llist));
-> +
-> +       llist_del_all(&llist);
-> +
-> +       KUNIT_EXPECT_TRUE(test, llist_empty(&llist));
-> +}
-> +
-> +static void llist_test_for_each(struct kunit *test)
-> +{
-> +       struct llist_node entries[ENTRIES_SIZE] = { 0 };
-> +       struct llist_node *pos, *deleted_nodes;
-> +       LLIST_HEAD(llist);
-> +       int i = 0, j = 0;
-> +
-> +       for (int i = ENTRIES_SIZE - 1; i >= 0; i--)
-> +               llist_add(&entries[i], &llist);
-> +
-> +       /* before [List] -> entries[0] -> ... -> entries[ENTRIES_SIZE - 1] */
-> +       llist_for_each(pos, llist.first) {
-> +               KUNIT_EXPECT_PTR_EQ(test, pos, &entries[i++]);
-> +       }
-> +
-> +       KUNIT_EXPECT_EQ(test, ENTRIES_SIZE, i);
-> +
-> +       /* traversing deleted nodes */
-> +       deleted_nodes = llist_del_all(&llist);
-> +
-> +       llist_for_each(pos, deleted_nodes) {
-> +               KUNIT_EXPECT_PTR_EQ(test, pos, &entries[j++]);
-> +       }
-> +
-> +       KUNIT_EXPECT_EQ(test, ENTRIES_SIZE, j);
-> +}
-> +
-> +static void llist_test_safe_for_each(struct kunit *test)
-> +{
-> +       struct llist_node entries[ENTRIES_SIZE];
-> +       struct llist_node *pos, *n;
-> +       LLIST_HEAD(llist);
-> +       int i = 0;
-> +
-> +       for (int i = ENTRIES_SIZE - 1; i >= 0; i--)
-> +               llist_add(&entries[i], &llist);
-> +
-> +       llist_for_each_safe(pos, n, llist.first) {
-> +               KUNIT_EXPECT_PTR_EQ(test, pos, &entries[i++]);
-> +               llist_del_first(&llist);
-> +       }
-> +
-> +       KUNIT_EXPECT_EQ(test, ENTRIES_SIZE, i);
-> +       KUNIT_EXPECT_TRUE(test, llist_empty(&llist));
-> +}
-> +
-> +static void llist_test_entry_for_each(struct kunit *test)
-> +{
-> +       struct llist_test_struct entries[ENTRIES_SIZE], *pos;
-> +       LLIST_HEAD(llist);
-> +       int i = 0;
-> +
-> +       for (int i = ENTRIES_SIZE - 1; i >= 0; --i) {
-> +               entries[i].data = i;
-> +               llist_add(&entries[i].node, &llist);
-> +       }
-> +
-> +       i = 0;
-> +
-> +       llist_for_each_entry(pos, llist.first, node) {
-> +               KUNIT_EXPECT_EQ(test, pos->data, i);
-> +               i++;
-> +       }
-> +
-> +       KUNIT_EXPECT_EQ(test, ENTRIES_SIZE, i);
-> +}
-> +
-> +static void llist_test_entry_safe_for_each(struct kunit *test)
-> +{
-> +       struct llist_test_struct entries[ENTRIES_SIZE], *pos, *n;
-> +       LLIST_HEAD(llist);
-> +       int i = 0;
-> +
-> +       for (int i = ENTRIES_SIZE - 1; i >= 0; --i) {
-> +               entries[i].data = i;
-> +               llist_add(&entries[i].node, &llist);
-> +       }
-> +
-> +       i = 0;
-> +
-> +       llist_for_each_entry_safe(pos, n, llist.first, node) {
-> +               KUNIT_EXPECT_EQ(test, pos->data, i++);
-> +               llist_del_first(&llist);
-> +       }
-> +
-> +       KUNIT_EXPECT_EQ(test, ENTRIES_SIZE, i);
-> +       KUNIT_EXPECT_TRUE(test, llist_empty(&llist));
-> +}
-> +
-> +static void llist_test_reverse_order(struct kunit *test)
-> +{
-> +       struct llist_node entries[ENTRIES_SIZE], *pos, *reversed_llist;
-> +       LLIST_HEAD(llist);
-> +       int i = 0;
-> +
-> +       for (int i = 0; i < ENTRIES_SIZE; i++)
-> +               llist_add(&entries[i], &llist);
-> +
-> +       /* before [List] -> entries[2] -> entries[1] -> entries[0] */
-> +       reversed_llist = llist_reverse_order(llist_del_first(&llist));
-> +
-> +       /* should be [List] -> entries[0] -> entries[1] -> entries[2] */
-> +       llist_for_each(pos, reversed_llist) {
-> +               KUNIT_EXPECT_PTR_EQ(test, pos, &entries[i++]);
-> +       }
-> +
-> +       KUNIT_EXPECT_EQ(test, ENTRIES_SIZE, i);
-> +}
-> +
-> +static struct kunit_case llist_test_cases[] = {
-> +       KUNIT_CASE(llist_test_init_llist),
-> +       KUNIT_CASE(llist_test_init_llist_node),
-> +       KUNIT_CASE(llist_test_llist_entry),
-> +       KUNIT_CASE(llist_test_add),
-> +       KUNIT_CASE(llist_test_add_batch),
-> +       KUNIT_CASE(llist_test_llist_next),
-> +       KUNIT_CASE(llist_test_empty_llist),
-> +       KUNIT_CASE(llist_test_llist_on_list),
-> +       KUNIT_CASE(llist_test_del_first),
-> +       KUNIT_CASE(llist_test_del_first_init),
-> +       KUNIT_CASE(llist_test_del_first_this),
-> +       KUNIT_CASE(llist_test_del_all),
-> +       KUNIT_CASE(llist_test_for_each),
-> +       KUNIT_CASE(llist_test_safe_for_each),
-> +       KUNIT_CASE(llist_test_entry_for_each),
-> +       KUNIT_CASE(llist_test_entry_safe_for_each),
-> +       KUNIT_CASE(llist_test_reverse_order),
-> +       {}
-> +};
-> +
-> +static struct kunit_suite llist_test_suite = {
-> +       .name = "llist",
-> +       .test_cases = llist_test_cases,
-> +};
-> +
-> +kunit_test_suite(llist_test_suite);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("KUnit tests for the llist data structure.");
-> --
-> 2.46.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "KUnit Development" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kunit-dev+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kunit-dev/20240917005116.304090-2-arturacb%40gmail.com.
-
---0000000000001afb2d06238d0d52
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-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
-erg7AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFKFQnbTpSq0q
-cOYnlrbegXJIIvA6MFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBR
-nRJBmUP+IpudtmSQ/R55Sv0qv8TO9zHTlIdsIf2Gc/zeCi0SamUQkFWb01d7Q+20kcpxNzwV6M7y
-hDRk5uuVFvtVxOrmbhflCo0uBpD9vz/symtfJYZLNyvSDi1PIVrwGNpyRrD0W6VQJxzzsBTwsO+S
-XWN3+x70+QDf7+zovW7KF0/y8QYD6PIN7Y9LRUXct0HKhatkHmO3w6MSJatnqSvsjffIwpNecUMo
-h10c6Etz17b7tbGdxdxLw8njN+UnfoFp3v4irrafB6jkArRfsR5TscZUUKej0ihl7mXEKUBmClkP
-ndcbXHFxS6WTkpjvl7Jjja8DdWJSJmdEWUnFjnQnDrqLqvYjeVMS/8IBF57eyT6yEPrMzA+Zd+f5
-hnM7HuBSGvVHv+c/rlHVp0S364DBGXj11obl7nKgL9D59QwC5/kNJ1whoKwsATUSepanzALdOTn3
-BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
-0DhqINx2fw0bwhpfFGADOZDe5DVhI7AIW/kEMHuIgAJ/HPgyn1+tldOPWiFLQbTNNBnfGv9sDPz0
-hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
-AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
-eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgd5/lB4eHvQR0jhT3J2rfBWsuGoKF
-n5OMhxVrs0eX1t4wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
-MDAzMDY1NjE3WjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
-BAIBMA0GCSqGSIb3DQEBAQUABIIBAJveUwMTF5NE5QloYGUHDjiM1jqQI1V80xXWM5e41nZ1CcoF
-3jD6/fmRD/PY6ZjneedffIj0XzKrfkh6aMigRfkEx42a+2T9Wu4Ahy8sMpQNK/ID8kJ7fO+IrE1w
-Bn4qqmDcCS35+/PXhx89KNcHqTjSTqpXcxKYOxqorw7a0yw1QVl5PFIQ+2qHy4bWJONx0Tcd3cGv
-LD9Z0HbLIPLQ8+I/RztTEHVIRX6lXevt0gc6GluU+FTf0UbUCJwNOxA2Lu7hR/qa9hbU3ATxaAbD
-JcDJOJURAfUahfDPTpWS84D29w0jcF81rCl85f0N+HJ/RiV/m5vg+A91Su97U1tt0vM=
---0000000000001afb2d06238d0d52--
+Reviewed-by: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
 
