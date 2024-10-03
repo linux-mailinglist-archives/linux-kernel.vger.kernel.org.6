@@ -1,225 +1,211 @@
-Return-Path: <linux-kernel+bounces-348976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5077C98EEBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:07:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B1E98EECF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14AAD283EE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:07:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A92DB1C21BB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E06158DD2;
-	Thu,  3 Oct 2024 12:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEAA16F0EC;
+	Thu,  3 Oct 2024 12:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTi2trF3"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="Yl2V5Et3"
+Received: from mx0a-00176a03.pphosted.com (mx0b-00176a03.pphosted.com [67.231.157.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5AE13D245
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 12:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E77414D708;
+	Thu,  3 Oct 2024 12:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.157.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727957225; cv=none; b=JEsBPgx75BQVNds0Xm4tun6O/YIH5avObOePUZ0RVMheyy6j2OQ2lTNz9OD79rLgppUT3NSah2cP84jJvb2YgHP0gQQFaJzdIhewwRte54eDY29u2j2vXDhJM+BG7klMeV1qHrLWcq29GFPMcrcQCW0a+2gcG8jMj1A64Zszkjc=
+	t=1727957459; cv=none; b=BlU0pVPNgdYcStDXr8k8hyngSLGFz2vnYcTrDH3G+3SbCOyJbMl2ghdw6jXlMlzUzHxMb71viTS6njSVwQMMwwcQyGiqRod3W7xvwhYOV/ZKacZzIY0EVvhXVEN1o576y5JPquNQf1gJN8BOVxTYsTWkObc/7gSTBDcJcEBEaLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727957225; c=relaxed/simple;
-	bh=nHw/Cgh/A45jVuav0wZXD/senHY2VZ6AM5LdzHqNegY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aGSnzEtec0zRL9nzZfBrgh0l0FVVOscZdKvzNxyCgdJugNxUgKo9qd0U2LpkiL3oTuURnJVEzaMOMYHzKBYWSS/Ij5tNuK0DDbUZy8akmd83zSzbsIILEAibduLSLjWsvCCgA1DExy/3QUI9Q3Dsk+EnNpM1rctNsCIltpXEFwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTi2trF3; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71788bfe60eso713833b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 05:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727957223; x=1728562023; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tENLZuUZDqCKRHgFd+nN+o31lrR5w79lUzAqq4taxj4=;
-        b=NTi2trF33dE0nHylzPhjZO1OBHj/BuT5EOtY/LFySbvRcBsXgWVNgxwh5ZTVXxrPIH
-         buzlO8Bdg6K5MHbffqn+VyeqgqLU7OUxt4ZdqQ/FRlfy83bGEiD09bsTU1pCEwcYkqCZ
-         1DQ93DrQoY05UEWr0zXySk29DLy60z6Fm2ZB6/vHh3qKuQ64aUtJDktAiHor5JPzvVfY
-         IhZxSO6KTO0tzUnLWFBTCkOSrYV21M8wlelGEyYKAQd+plCSWjig6QwNKh0O/cPXhmmq
-         sHs2j8kSzkEQU66j0Dtt7IkX1XxkkWJWl43ozsFiQC7kGHJyyiw9sqTb9jihDZUeFT4Q
-         CkJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727957223; x=1728562023;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tENLZuUZDqCKRHgFd+nN+o31lrR5w79lUzAqq4taxj4=;
-        b=StNgMIeFjiGg9HL+tZcydb2b1BLBFOIxiBkC3rqruxGVLXWjKEAEx2kclWgi6Hr52u
-         Z5fMe20H8Uj3DutThdNznyWIVN/o8eAVdLXrFMkFouXEbNoZJGeWMps78LmwsTuIfVug
-         dKZvmvscnR7+FkSPxzhjWqHJXC6hmT1pOw973LMY8cRA5Od3dm5AJr7B/LiSUVMWXj1m
-         QeJ5ewJxJn9q0nUFuO3xE1CYvM8j7gAGF7QdiSW0uuvf3rnjSCQrRD2IBsW92Xtdf8Rx
-         HyON3ih901PR7HAftu4LwI1k7pHY5Nc67XGpmkzwnE9k/PXq0TEH9i4GyddVgAr+POjv
-         Z17A==
-X-Forwarded-Encrypted: i=1; AJvYcCU1iqiZHSBT47rVmc0ffOvKL4EHnJajp4E630pHHlrU9tRyHlEWDUMpfrbXSADwZeMQPuAS20tLazEV/L8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykRGpckye968gFksBbWEbdkCekGsYYDYTHKfA/YTaPIB5OsW/G
-	PJQ4wJ5E4FzveO6k5m18kM1L7773H4J7+EHdXlbYOehnKYa2wHpy
-X-Google-Smtp-Source: AGHT+IFxqoj5fyUph4UhadmHB8SVnCU8LR0L/apgVycs4/k3ghkiqeSJseoHUadhnddg+9TcHN3m2w==
-X-Received: by 2002:a05:6a21:9cca:b0:1d4:e4a9:c126 with SMTP id adf61e73a8af0-1d5e2d9e0a5mr10236329637.32.1727957222574;
-        Thu, 03 Oct 2024 05:07:02 -0700 (PDT)
-Received: from fedora.. ([2405:201:d007:50c2:4888:86b4:6f32:9ae])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9dcb138f3sm601150a12.40.2024.10.03.05.06.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 05:07:01 -0700 (PDT)
-From: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: skhan@linuxfoundation.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] gpu/drm: set gamma_lut or degamma_lut based on HW in setcmap_atomic
-Date: Thu,  3 Oct 2024 17:36:55 +0530
-Message-ID: <20241003120655.53663-1-vamsikrishna.brahmajosyula@gmail.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727957459; c=relaxed/simple;
+	bh=zcY13KIWIrUY8UFQ1kMAw23M2r5Ji5YpIDTzQZHJiww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKk/20oO7hiNO+Huu4C1MpQxPMjcL4Qt3jCUwIf8xl8wVmjretHL2ojC6t/pKRvChByZWumEJ6YxwLAzfQCAcJE4xin0H/rHMPZ9tNlwixY8TfadXQ3AfL63NE54ybKCf4dw+e6JZUhm7GBbNjqHxcHxybfWl5/fxDoiHrfjx54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=Yl2V5Et3; arc=none smtp.client-ip=67.231.157.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
+Received: from pps.filterd (m0048300.ppops.net [127.0.0.1])
+	by m0048300.ppops.net-00176a03. (8.18.1.2/8.18.1.2) with ESMTP id 493BTQn9018585;
+	Thu, 3 Oct 2024 07:56:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	gehealthcare.com; h=cc:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=outbound; bh=S
+	HlQdxbYpL9AvU3/VUMxJirlhY+RYkPiFenF7jPzuo4=; b=Yl2V5Et3py9dIRqMc
+	51n9c6v/FPhURwvGKbK0iy8J5/mXGF4yPHbuKjZfyN/6QHiAlYkkDYxrUXXVJqwr
+	SdZqa5p8hPfDNV7uhvIGnrh/PaQyb/0ITVJqo4ApA+dV9jlwnjNS6ksnsVNZ4LYE
+	09qL38GtlcXCNyvKTTgLbg/Sp6R7l2qAT7QJtNVr8b0XbkvvuakE/U1amizU1Tvd
+	leiciL5ECYKfdW50873lf2lZk0Q7VKl4MECod9j4uNqnV0nTiX/7SXk3wDP603AN
+	/TsrV+aDyoCjnqqlm6POdyi2V482OB+6IcuuJKFgmrrNhBPG10//fxIuk4Ej7ZdE
+	UUtJg==
+Date: Thu, 3 Oct 2024 14:56:03 +0300
+From: Ian Ray <ian.ray@gehealthcare.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: iio: adc: Add the GE HealthCare PMC
+ ADC
+Message-ID: <Zv6GU3QuyJjgt0o1@852ed68de471>
+References: <20241003114641.672086-1-herve.codina@bootlin.com>
+ <20241003114641.672086-3-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003114641.672086-3-herve.codina@bootlin.com>
+X-Proofpoint-GUID: vlS15X4uHUT6nIMba0xM37AcmKNocuXX
+X-Proofpoint-ORIG-GUID: vlS15X4uHUT6nIMba0xM37AcmKNocuXX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-03_06,2024-10-03_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 impostorscore=0
+ adultscore=0 spamscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1011 phishscore=0 mlxscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2410030087
 
-setcmap_atomic always sets gamma_lut in setcmap_atomic
+On Thu, Oct 03, 2024 at 01:46:39PM +0200, Herve Codina wrote:
+> 
+> WARNING: This email originated from outside of GE HealthCare. Please validate the sender's email address before clicking on links or attachments as they may not be safe.
+> 
+> The GE HealthCare PMC Analog to Digital Converter (ADC) is a 16-Channel
+> (voltage and current), 16-Bit ADC with an I2C Interface.
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-Address the following FIXME to set gamma or degamma lut
-	FIXME: This always uses gamma_lut. Some HW have only
-	degamma_lut, in which case we should reset gamma_lut and set
-	degamma_lut. See drm_crtc_legacy_gamma_set().
+Tested-by: Ian Ray <ian.ray@gehealthcare.com>
 
-Tested by calling setcmap_atomic in drm_fb_helper_setcmap with out
-the condition check.
-
-Signed-off-by: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
----
- drivers/gpu/drm/drm_fb_helper.c | 50 ++++++++++++++++++++-------------
- 1 file changed, 31 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 29c53f9f449c..48f053f7ac89 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -871,11 +871,11 @@ static int setcmap_legacy(struct fb_cmap *cmap, struct fb_info *info)
- 	return ret;
- }
- 
--static struct drm_property_blob *setcmap_new_gamma_lut(struct drm_crtc *crtc,
-+static struct drm_property_blob *setcmap_new_blob_lut(struct drm_crtc *crtc,
- 						       struct fb_cmap *cmap)
- {
- 	struct drm_device *dev = crtc->dev;
--	struct drm_property_blob *gamma_lut;
-+	struct drm_property_blob *blob;
- 	struct drm_color_lut *lut;
- 	int size = crtc->gamma_size;
- 	int i;
-@@ -883,11 +883,11 @@ static struct drm_property_blob *setcmap_new_gamma_lut(struct drm_crtc *crtc,
- 	if (!size || cmap->start + cmap->len > size)
- 		return ERR_PTR(-EINVAL);
- 
--	gamma_lut = drm_property_create_blob(dev, sizeof(*lut) * size, NULL);
--	if (IS_ERR(gamma_lut))
--		return gamma_lut;
-+	blob = drm_property_create_blob(dev, sizeof(*lut) * size, NULL);
-+	if (IS_ERR(blob))
-+		return blob;
- 
--	lut = gamma_lut->data;
-+	lut = blob->data;
- 	if (cmap->start || cmap->len != size) {
- 		u16 *r = crtc->gamma_store;
- 		u16 *g = r + crtc->gamma_size;
-@@ -911,14 +911,14 @@ static struct drm_property_blob *setcmap_new_gamma_lut(struct drm_crtc *crtc,
- 		lut[cmap->start + i].blue = cmap->blue[i];
- 	}
- 
--	return gamma_lut;
-+	return blob;
- }
- 
- static int setcmap_atomic(struct fb_cmap *cmap, struct fb_info *info)
- {
- 	struct drm_fb_helper *fb_helper = info->par;
- 	struct drm_device *dev = fb_helper->dev;
--	struct drm_property_blob *gamma_lut = NULL;
-+	struct drm_property_blob *blob = NULL;
- 	struct drm_modeset_acquire_ctx ctx;
- 	struct drm_crtc_state *crtc_state;
- 	struct drm_atomic_state *state;
-@@ -926,6 +926,9 @@ static int setcmap_atomic(struct fb_cmap *cmap, struct fb_info *info)
- 	struct drm_crtc *crtc;
- 	u16 *r, *g, *b;
- 	bool replaced;
-+	u32 gamma_id = dev->mode_config.gamma_lut_property->base.id;
-+	u32 degamma_id = dev->mode_config.degamma_lut_property->base.id;
-+	bool use_gamma_lut;
- 	int ret = 0;
- 
- 	drm_modeset_acquire_init(&ctx, 0);
-@@ -941,11 +944,21 @@ static int setcmap_atomic(struct fb_cmap *cmap, struct fb_info *info)
- 	drm_client_for_each_modeset(modeset, &fb_helper->client) {
- 		crtc = modeset->crtc;
- 
--		if (!gamma_lut)
--			gamma_lut = setcmap_new_gamma_lut(crtc, cmap);
--		if (IS_ERR(gamma_lut)) {
--			ret = PTR_ERR(gamma_lut);
--			gamma_lut = NULL;
-+		if (drm_mode_obj_find_prop_id(&crtc->base, gamma_id))
-+			use_gamma_lut = true;
-+		else if (drm_mode_obj_find_prop_id(&crtc->base, degamma_id))
-+			use_gamma_lut = false;
-+		else {
-+			ret = -ENODEV;
-+			blob = NULL;
-+			goto out_state;
-+		}
-+
-+		if (!blob)
-+			blob = setcmap_new_blob_lut(crtc, cmap);
-+		if (IS_ERR(blob)) {
-+			ret = PTR_ERR(blob);
-+			blob = NULL;
- 			goto out_state;
- 		}
- 
-@@ -956,15 +969,14 @@ static int setcmap_atomic(struct fb_cmap *cmap, struct fb_info *info)
- 		}
- 
- 		/*
--		 * FIXME: This always uses gamma_lut. Some HW have only
--		 * degamma_lut, in which case we should reset gamma_lut and set
--		 * degamma_lut. See drm_crtc_legacy_gamma_set().
-+		 * Some HW have only degamma_lut, in which case we should
-+		 * reset gamma_lut and set degamma_lut.
- 		 */
- 		replaced  = drm_property_replace_blob(&crtc_state->degamma_lut,
--						      NULL);
-+						      use_gamma_lut ? NULL : blob);
- 		replaced |= drm_property_replace_blob(&crtc_state->ctm, NULL);
- 		replaced |= drm_property_replace_blob(&crtc_state->gamma_lut,
--						      gamma_lut);
-+						      use_gamma_lut ? blob : NULL);
- 		crtc_state->color_mgmt_changed |= replaced;
- 	}
- 
-@@ -988,7 +1000,7 @@ static int setcmap_atomic(struct fb_cmap *cmap, struct fb_info *info)
- 	if (ret == -EDEADLK)
- 		goto backoff;
- 
--	drm_property_blob_put(gamma_lut);
-+	drm_property_blob_put(blob);
- 	drm_atomic_state_put(state);
- out_ctx:
- 	drm_modeset_drop_locks(&ctx);
-
-base-commit: 7ec462100ef9142344ddbf86f2c3008b97acddbe
--- 
-2.46.2
-
+> ---
+>  .../bindings/iio/adc/gehc,pmc-adc.yaml        | 86 +++++++++++++++++++
+>  include/dt-bindings/iio/adc/gehc,pmc-adc.h    | 10 +++
+>  2 files changed, 96 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/gehc,pmc-adc.yaml
+>  create mode 100644 include/dt-bindings/iio/adc/gehc,pmc-adc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/gehc,pmc-adc.yaml b/Documentation/devicetree/bindings/iio/adc/gehc,pmc-adc.yaml
+> new file mode 100644
+> index 000000000000..2cea7c104a26
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/gehc,pmc-adc.yaml
+> @@ -0,0 +1,86 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: https://nam10.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fiio%2Fadc%2Fgehc%2Cpmc-adc.yaml%23&data=05%7C02%7Cian.ray%40gehealthcare.com%7C29c6b87aecab477476ef08dce3a11117%7C9a309606d6ec4188a28a298812b4bbbf%7C0%7C0%7C638635528128598570%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=SDlnZF05zDF5iYE2X%2BsDV9BKN73B2rc5cAaPOJVY%2BrA%3D&reserved=0
+> +$schema: https://nam10.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&data=05%7C02%7Cian.ray%40gehealthcare.com%7C29c6b87aecab477476ef08dce3a11117%7C9a309606d6ec4188a28a298812b4bbbf%7C0%7C0%7C638635528128610679%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=FbLudkkL4uUu2oTjkGLe7SFCI%2B5kXRCNhBPRcess0hc%3D&reserved=0
+> +
+> +title: GE HealthCare PMC Analog to Digital Converter (ADC)
+> +
+> +maintainers:
+> +  - Herve Codina <herve.codina@bootlin.com>
+> +
+> +description:
+> +  The GE HealthCare PMC ADC is a 16-Channel (voltage and current), 16-Bit ADC
+> +  with an I2C Interface.
+> +
+> +properties:
+> +  compatible:
+> +    const: gehc,pmc-adc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  vdd-supply:
+> +    description:
+> +      Regulator for the VDD power supply.
+> +
+> +  vdda-supply:
+> +    description:
+> +      Regulator for the VDD analog (VDDA) power supply.
+> +
+> +  vddio-supply:
+> +    description:
+> +      Regulator for the VDD IO (VDDIO) power supply.
+> +
+> +  vref-supply:
+> +    description:
+> +      Regulator for the voltage reference power supply.
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description:
+> +      The component uses an external oscillator (osc) if an external oscillator
+> +      is connected to its clock pins. Otherwise, it uses an internal reference
+> +      clock.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: osc
+> +
+> +  "#io-channel-cells":
+> +    const: 2
+> +    description: |
+> +      The first cell is the channel type (dt-bindings/iio/adc/gehc,pmc-adc.h
+> +      defines these values):
+> +       - 0: voltage
+> +       - 1: current
+> +      The second cell is the channel number from 0 to 15.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +  - vdda-supply
+> +  - vddio-supply
+> +  - vref-supply
+> +  - '#io-channel-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        adc@14 {
+> +            compatible = "gehc,pmc-adc";
+> +            reg = <0x14>;
+> +            vdd-supply = <&reg_vdd>;
+> +            vdda-supply = <&reg_vdda>;
+> +            vddio-supply = <&reg_vddio>;
+> +            vref-supply = <&reg_vref>;
+> +            #io-channel-cells = <2>;
+> +        };
+> +    };
+> +...
+> diff --git a/include/dt-bindings/iio/adc/gehc,pmc-adc.h b/include/dt-bindings/iio/adc/gehc,pmc-adc.h
+> new file mode 100644
+> index 000000000000..2f291e3c76ae
+> --- /dev/null
+> +++ b/include/dt-bindings/iio/adc/gehc,pmc-adc.h
+> @@ -0,0 +1,10 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> +
+> +#ifndef _DT_BINDINGS_IIO_ADC_GEHC_PMC_ADC_H
+> +#define _DT_BINDINGS_IIO_ADC_GEHC_PMC_ADC_H
+> +
+> +/* ADC channel type */
+> +#define GEHC_PMC_ADC_VOLTAGE   0
+> +#define GEHC_PMC_ADC_CURRENT   1
+> +
+> +#endif
+> --
+> 2.46.1
+> 
+> 
 
