@@ -1,126 +1,105 @@
-Return-Path: <linux-kernel+bounces-349665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39ACA98F9D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:25:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B50398F9D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A371F21225
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:25:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78F2C1C21FF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068D91CC89C;
-	Thu,  3 Oct 2024 22:25:13 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA581CC881;
+	Thu,  3 Oct 2024 22:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WmixGB2i"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BDA824BD;
-	Thu,  3 Oct 2024 22:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86858824BD
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 22:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727994312; cv=none; b=DBw1/afpEF1mz3tjQdZC5OfTmR8V/n5S57k6HWM6/HYjSjrhBJoMvhplEx1hhevvZ6kiY8lHehuFBzC/80WkchRCy4tb7x98ROiYlDzKWP1QUYor03UTfwm73P4o8uwEvRR/NKv1v/AhSJSkovYgMTB70Sw3bJzA7kg8s35anq8=
+	t=1727994382; cv=none; b=FVHqfxf03sJalot7cH/44RA+BJfuijS7ScjcxB/rCPMdCduG6JMbhvw7RPFI78iqnvFQxszgmH5SRq9nN7VAx6TkH0Dinq7pMtzkDY8shXOcLNdQJBsDOrNIl6ViGDaYl+1pcHBu6e1Z2z+gJgorZ6NIyr6C+RX0LMRk7XsxWSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727994312; c=relaxed/simple;
-	bh=hAmj3kMsm7Vl70wIT+Y1n66dA9OGBd+UlgTvFwamrMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PDPbkco/zrNo3AI+17Cd48/CRIELt7mtyQO+tsKc7BwOzLhdWV32C5n4NtHRT0O1DI7Qh2M6nAH3oXKKJs3Aw3C4wlimv+Je4+gjbZU8c5oR/vZ0ln4qIrnjJj7MHmfzGVqf+2jz7ePIXTwsEPsXUkwqNIDzNn/fspsih8Yf6SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D2DFC4CEC5;
-	Thu,  3 Oct 2024 22:25:10 +0000 (UTC)
-Date: Thu, 3 Oct 2024 18:26:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, Joel
- Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
- Andrii Nakryiko <andrii@kernel.org>, Michael Jeanson
- <mjeanson@efficios.com>
-Subject: Re: [PATCH v1 4/8] tracing/bpf: guard syscall probe with
- preempt_notrace
-Message-ID: <20241003182604.09e4851d@gandalf.local.home>
-In-Reply-To: <20241003151638.1608537-5-mathieu.desnoyers@efficios.com>
-References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
-	<20241003151638.1608537-5-mathieu.desnoyers@efficios.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727994382; c=relaxed/simple;
+	bh=xPOeaIqzyy399mWp3j1JLABvwZIVnneJOdO8eGepAoo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EaBtm9IwvqECB3OA3afEmS0hZ7Ua+QtAkgfr4pz/fJ1kPfclcCWDvEH7TszT9OPdlEtUbdM4JHBcIQDHhCxl9a6nhyLoxTvZpuZVcoGigvIJBNXwd07QHkW5BogAUsrbqrzsNmS/++qBnvhUA2OOaWys0ItyvrKDDblU+zWaMYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WmixGB2i; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-82ce603d8daso53939339f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 15:26:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727994379; x=1728599179; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tT0L0c+7PU2Ej+uTg2dcOIbX/VnJHQAzBR3GEEYX4uI=;
+        b=WmixGB2ibT9Gbe4NJ4Mh056u31JV9uX7lNQdncgmJFtUkngMwmjE51GZUbwoiLvDxM
+         fzbC+uuS/2ROZqMTuHI3w4hJiqkqATd4eq5r330JF54VURCCYeqeZwCPF0ohWuwuGR3p
+         3ZY9i7Ot9wyLjxuKRTmobYH91Vx/MHY/vntsQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727994379; x=1728599179;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tT0L0c+7PU2Ej+uTg2dcOIbX/VnJHQAzBR3GEEYX4uI=;
+        b=vD912S75MSgBUVhXNQlgIrIvwBINIFEY4b6rPY/DT8mZgSenjNaU0aX4Fzq00x7rBz
+         dc1eujMZF0D2hOMoKZbNr2Xl6xvzROQa/VHPCZCyFHhkQwzjyyZoaFV7YYNoYuOQhf90
+         H93qvYRsSuUwJZYtaTdi2HEp4oRSLRsNaB3IeY0oIPw+g8CNA8YH4MQnXlj5b4nXGZ+K
+         3ga62A9Xe02odp1c/1vaujVTsYLcGkJHDihpExRWkwm6e51n1T5A1wCkbcVgG9ksUsRF
+         6I1cPFmfhdYPbKdfbbV+DH4696jgcgHN/HMduZV67HqW+2Kl82N5E6/+U5UhTC94Pnmp
+         bBig==
+X-Forwarded-Encrypted: i=1; AJvYcCXkcing72o+40k6IaUzLxLRGf7xd0EYgq6P2vMlvmVehFJ8dkrYTdS4LvujKTGYlYVfABBSQa1lx0yZV1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0cSydIpDU9F0cLUVpwaR03wvuKeAGFU43dc28WmQfhhEIi/4J
+	Y2sBLO/F2K88kuLrHBsFWSmzKPNzQ0CdeisODzKqpjgQD6clGNPPG783oit2j4Y=
+X-Google-Smtp-Source: AGHT+IHcCX7rPbxDB40pLseyRGGR7wxZ7SBLlcOt78NrgLauwTEpR5XalH0BunvR9FDE1sw+XYladw==
+X-Received: by 2002:a05:6e02:1a21:b0:3a0:933a:2a0a with SMTP id e9e14a558f8ab-3a375999a8bmr5235935ab.7.1727994379669;
+        Thu, 03 Oct 2024 15:26:19 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db559b186bsm467837173.81.2024.10.03.15.26.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 15:26:19 -0700 (PDT)
+Message-ID: <62b01355-9d9e-4f17-85ab-2c7d57978f57@linuxfoundation.org>
+Date: Thu, 3 Oct 2024 16:26:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/vdso: Add linux/sched.h to fix CLONE_NEWTIME
+ build error
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ SurajSonawane2415 <surajsonawane0215@gmail.com>,
+ Yu Liao <liaoyu15@huawei.com>
+Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241002152849.111841-1-surajsonawane0215@gmail.com>
+ <543d4b19-e530-45e3-876c-522101f9a5e6@linuxfoundation.org>
+ <Zv3Oaf4gMFyIFrV6@zx2c4.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <Zv3Oaf4gMFyIFrV6@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu,  3 Oct 2024 11:16:34 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-
-> In preparation for allowing system call enter/exit instrumentation to
-> handle page faults, make sure that bpf can handle this change by
-> explicitly disabling preemption within the bpf system call tracepoint
-> probes to respect the current expectations within bpf tracing code.
+On 10/2/24 16:51, Jason A. Donenfeld wrote:
+> Wasn't this already submitted and commented on?
 > 
-> This change does not yet allow bpf to take page faults per se within its
-> probe, but allows its existing probes to adapt to the upcoming change.
-> 
+> https://lore.kernel.org/all/20240919111841.20226-1-liaoyu15@huawei.com/
 
-I guess the BPF folks should state if this is needed or not?
+Thank you Jason. Yes we reviewed this - I asked Yu Liao to send
+me v2 since the define is coming in from pthread.h indirectly.
 
-Does the BPF hooks into the tracepoints expect preemption to be disabled
-when called?
+Suraj, Thank for finding and fixing the problem. However Yu Liao sent
+in patch for this before you did. We will take that patch.
 
--- Steve
-
-
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> Tested-by: Andrii Nakryiko <andrii@kernel.org> # BPF parts
-> Cc: Michael Jeanson <mjeanson@efficios.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Yonghong Song <yhs@fb.com>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: bpf@vger.kernel.org
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> ---
->  include/trace/bpf_probe.h | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/trace/bpf_probe.h b/include/trace/bpf_probe.h
-> index c85bbce5aaa5..211b98d45fc6 100644
-> --- a/include/trace/bpf_probe.h
-> +++ b/include/trace/bpf_probe.h
-> @@ -53,8 +53,17 @@ __bpf_trace_##call(void *__data, proto)					\
->  #define DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print)	\
->  	__BPF_DECLARE_TRACE(call, PARAMS(proto), PARAMS(args))
->  
-> +#define __BPF_DECLARE_TRACE_SYSCALL(call, proto, args)			\
-> +static notrace void							\
-> +__bpf_trace_##call(void *__data, proto)					\
-> +{									\
-> +	guard(preempt_notrace)();					\
-> +	CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U64(args));	\
-> +}
-> +
->  #undef DECLARE_EVENT_SYSCALL_CLASS
-> -#define DECLARE_EVENT_SYSCALL_CLASS DECLARE_EVENT_CLASS
-> +#define DECLARE_EVENT_SYSCALL_CLASS(call, proto, args, tstruct, assign, print)	\
-> +	__BPF_DECLARE_TRACE_SYSCALL(call, PARAMS(proto), PARAMS(args))
->  
->  /*
->   * This part is compiled out, it is only here as a build time check
-
+thanks,
+-- Shuah
 
