@@ -1,129 +1,153 @@
-Return-Path: <linux-kernel+bounces-348509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3530998E872
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:33:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C44098E876
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53DDD1C23665
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:33:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 803F2B25463
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0047C18037;
-	Thu,  3 Oct 2024 02:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110C01CFB6;
+	Thu,  3 Oct 2024 02:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3zqQNe+"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="N/9EBLM5"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B1816415;
-	Thu,  3 Oct 2024 02:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF4E16415;
+	Thu,  3 Oct 2024 02:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727922800; cv=none; b=PjdAkDr3eN5MvVuUlwoQ6xxI2XER6kZJ/QP9LPgnRH4InorJgyalvnEjEesZpqTl33/Zjwb2/hh6Q3/ZgwURtYSySTyioWoK66pkWIuoVQf3MjRPsnJt8z4R7+R0yonrHtUKC6M87QIK6PWur89uOpIXWqz4s9VHrObJT3oqc/0=
+	t=1727922828; cv=none; b=C6FFHddYRu1HKZcxE+Rns2McCpXz9gqhdFCCudSQz65AhKkBf2ao3Sj4F6sgE9mSmruf8zluKT+Rcp1/qGffSkG0jbksaw6sHHmH5mIV1G+3BN76jGrTsqE6kTAOEKaJD1a4HhpcElHcKkd5zrnncaRdWxc12X5MBrANa5eq4Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727922800; c=relaxed/simple;
-	bh=ievyg8trTrRHAB+z6Z6DCj1Tu10iG5GzPRJdGpAVUbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oAYgp1p5EDcjsL9pIBapXHqX6d6/2xju/AEoBDFO+bzuSe9DsTbZ+T+w+ADTEbaHh8Fnp6c+B4HaaZIl9EXWmVvFvLJ/KDY0getgqoIKd6ZGn5U8X5z9iIdxRfRu3YJGYed6/PKTlz3z2/0XQ6RfMWJG2/od7lPbtcx7r7TiMQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3zqQNe+; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6cb2458774dso3668176d6.3;
-        Wed, 02 Oct 2024 19:33:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727922797; x=1728527597; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xkpfPr0EYRdlxNhthgj3FTAxfyKqmJJR9nkwDDTRTpI=;
-        b=l3zqQNe+FyOfhgo1e2Rc5FdgJUNyLfr6WYmEVZaaEcd+pyudEjH3lLXWJC8JUHCIty
-         t7SWOFZbkAomhXtZKobA1HttPnViEcZ/B9c8ssFRu2tCdSFOTUVJELVyh5vWoI0c6Vtk
-         nbVdcauHk6UmAGMv0oP+QMOzMs+1D4oGCciLxeL3+KvqSLOKfdat7Ltr2qn+gTKBqzCV
-         wjvVMO+uGNxqfyFBKrdF0aZ5dtyTyukZVSxec3C4Dw3J9WHxcmpkpXvZwdu0kYwrVIkm
-         1Vv65Rcaw8aqZost4vC4+5WBovN2jjISm7w9dNkObTWWvo54DYQOOa5BK0gpmt03Y+mq
-         7RQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727922797; x=1728527597;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xkpfPr0EYRdlxNhthgj3FTAxfyKqmJJR9nkwDDTRTpI=;
-        b=IHPRM6QEqs5GC8HtEjoVMvQZzPgTcisQX975ENwJrjeEnExUD0WW2f1rhfTDs+tg3N
-         KLUEe2u0BE7WiqbX6Ul1Uqgk5lC2XAJ5Q/aHFMNtp/8leuucd8PlqX+GrsUqyhAENTuh
-         3jGANE7iOkzNTJXV3pEjfXcrBkW2QGADMcrQ3ebmbrvLhtI825R6K77FicVvAesYoELp
-         aTszZcE+vNKiBprxatTXjlD6rh3ix6ajHylxmKmonSxWOSNhR2fvKkJjYHV1z9+//tFF
-         Oulyd3YKJRdfmolQGkbSAFOzYuex8jSytJRAGXULTYQs3S/Q5hA9YWwJJLb5+HZV5k8e
-         OcsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNndxGm5ctYh/+jszHrzDo44naB39K7H1RBRsPWNmghCEGiGc/itBOUZBh6i/h1GuGaGS3cBLBOXFT@vger.kernel.org, AJvYcCWbg3FJJpJgTOFLb0snP9M0ijHBc1EiA2FjkMReivw/9ioku7scaTnT/q+4M6nKVi4tC/hL1HTwhv6z@vger.kernel.org, AJvYcCXYU613aB6DggVkjvuGHpA7EELuW4VJMwFwK2+5JHK6EMEKs6hOAouy65FV2gEnsBIA6c/7SSThTpcOH/mW@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMd9IC5Mv2TCnp4HOkLKkggI1e+2S7CtiElEXj++umU9xd1362
-	bVHS0OxvYKnbJr2HSRkhqXJUFQxV+pA8pdjIVN+FtxqIlrqCY7tH
-X-Google-Smtp-Source: AGHT+IFI/jVC3KeK2s+JU4a0+Yt+Rz9wy+dcMj8aCK/vKQWCiYwY7iHn9bnCY+q25G+oSsBZcN4Q1w==
-X-Received: by 2002:a05:6214:3f84:b0:6c3:58b7:d703 with SMTP id 6a1803df08f44-6cb81a24c2bmr86793316d6.22.1727922797436;
-        Wed, 02 Oct 2024 19:33:17 -0700 (PDT)
-Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb937fba50sm1501446d6.116.2024.10.02.19.33.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 19:33:16 -0700 (PDT)
-Date: Wed, 2 Oct 2024 22:33:13 -0400
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Mehdi Djait <mehdi.djait@bootlin.com>, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v8 0/2] Add driver for Sharp Memory LCD
-Message-ID: <ees3m2qmazah2547ys62zvbrvo4dsgki2z2jwulwz4dfjtm4hk@kpmlapv6occv>
-References: <20241002033807.682177-1-lanzano.alex@gmail.com>
- <t4lefcykpoe5i36wb4x5u23sseh6drnphtivuqc3mjviat2vvc@7hg4jyhxvpye>
+	s=arc-20240116; t=1727922828; c=relaxed/simple;
+	bh=D+XzrM4kffemXExnwULMa6Y85zx78Tn2w+hWwqe677M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P+P0vY4Lp1bK1iNcgTPfdap9lm6JakmRJBwUEBX8jEkE4augrEGr6k8FJyPwBbTubAL0Y6o4QC13xzxoFui3GPguaBGwIF8svNNnVc2CmGaRadU3eNEbtjZ0K7vcDWR7GsXrIC2ET6v9aiQm0kqk1C9DcyRFj3CsLbqN8zv6k4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=N/9EBLM5; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.84] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 72A283F0A2;
+	Thu,  3 Oct 2024 02:33:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727922823;
+	bh=bqHosOLOSfOAxFroc9/HxDPruNIp6CA5pgnWnRYFeM0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=N/9EBLM5OOAuNiWG6QtCdpzrnvebwgMsjolT4prAOIfYjdPTseoryGirOrezlTaH2
+	 LtqELmyMXCNUIp7koee4541qCL3k9rqjuVMqyIDTPtEt3/jTxarKS3lxt4k/cWWgkE
+	 6dppkPMwB63EQREPe8AnmO2GqCxTZbzgAe+mlk9E8fa/JeVaJZHZVZs4VEqXvoyZHH
+	 fD2NqAnCc3iLAcEqionGQEkuE0Lt4GFUGEEZo/Vf/aIPn4B1A2PaWqCqIClDt9LoPx
+	 m7HwIxJ9lsumh2fuOYFSjR0IMw3JSovvkcV7opLKzbEu01vJv6MS/nRdhLdOIcUix+
+	 oRKkW1PWcU6/w==
+Message-ID: <f930e51e-3eb9-4146-a68c-1f226304cc86@canonical.com>
+Date: Wed, 2 Oct 2024 19:33:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: Paul Moore <paul@paul-moore.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ LKML <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net>
+ <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+ <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+ <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ xsFNBE5mrPoBEADAk19PsgVgBKkImmR2isPQ6o7KJhTTKjJdwVbkWSnNn+o6Up5knKP1f49E
+ BQlceWg1yp/NwbR8ad+eSEO/uma/K+PqWvBptKC9SWD97FG4uB4/caomLEU97sLQMtnvGWdx
+ rxVRGM4anzWYMgzz5TZmIiVTZ43Ou5VpaS1Vz1ZSxP3h/xKNZr/TcW5WQai8u3PWVnbkjhSZ
+ PHv1BghN69qxEPomrJBm1gmtx3ZiVmFXluwTmTgJOkpFol7nbJ0ilnYHrA7SX3CtR1upeUpM
+ a/WIanVO96WdTjHHIa43fbhmQube4txS3FcQLOJVqQsx6lE9B7qAppm9hQ10qPWwdfPy/+0W
+ 6AWtNu5ASiGVCInWzl2HBqYd/Zll93zUq+NIoCn8sDAM9iH+wtaGDcJywIGIn+edKNtK72AM
+ gChTg/j1ZoWH6ZeWPjuUfubVzZto1FMoGJ/SF4MmdQG1iQNtf4sFZbEgXuy9cGi2bomF0zvy
+ BJSANpxlKNBDYKzN6Kz09HUAkjlFMNgomL/cjqgABtAx59L+dVIZfaF281pIcUZzwvh5+JoG
+ eOW5uBSMbE7L38nszooykIJ5XrAchkJxNfz7k+FnQeKEkNzEd2LWc3QF4BQZYRT6PHHga3Rg
+ ykW5+1wTMqJILdmtaPbXrF3FvnV0LRPcv4xKx7B3fGm7ygdoowARAQABzStKb2huIEpvaGFu
+ c2VuIDxqb2huLmpvaGFuc2VuQGNhbm9uaWNhbC5jb20+wsF3BBMBCgAhBQJOjRdaAhsDBQsJ
+ CAcDBRUKCQgLBRYCAwEAAh4BAheAAAoJEAUvNnAY1cPYi0wP/2PJtzzt0zi4AeTrI0w3Rj8E
+ Waa1NZWw4GGo6ehviLfwGsM7YLWFAI8JB7gsuzX/im16i9C3wHYXKs9WPCDuNlMc0rvivqUI
+ JXHHfK7UHtT0+jhVORyyVVvX+qZa7HxdZw3jK+ROqUv4bGnImf31ll99clzo6HpOY59soa8y
+ 66/lqtIgDckcUt/1ou9m0DWKwlSvulL1qmD25NQZSnvB9XRZPpPd4bea1RTa6nklXjznQvTm
+ MdLq5aJ79j7J8k5uLKvE3/pmpbkaieEsGr+azNxXm8FPcENV7dG8Xpd0z06E+fX5jzXHnj69
+ DXXc3yIvAXsYZrXhnIhUA1kPQjQeNG9raT9GohFPMrK48fmmSVwodU8QUyY7MxP4U6jE2O9L
+ 7v7AbYowNgSYc+vU8kFlJl4fMrX219qU8ymkXGL6zJgtqA3SYHskdDBjtytS44OHJyrrRhXP
+ W1oTKC7di/bb8jUQIYe8ocbrBz3SjjcL96UcQJecSHu0qmUNykgL44KYzEoeFHjr5dxm+DDg
+ OBvtxrzd5BHcIbz0u9ClbYssoQQEOPuFmGQtuSQ9FmbfDwljjhrDxW2DFZ2dIQwIvEsg42Hq
+ 5nv/8NhW1whowliR5tpm0Z0KnQiBRlvbj9V29kJhs7rYeT/dWjWdfAdQSzfoP+/VtPRFkWLr
+ 0uCwJw5zHiBgzsFNBE5mrPoBEACirDqSQGFbIzV++BqYBWN5nqcoR+dFZuQL3gvUSwku6ndZ
+ vZfQAE04dKRtIPikC4La0oX8QYG3kI/tB1UpEZxDMB3pvZzUh3L1EvDrDiCL6ef93U+bWSRi
+ GRKLnNZoiDSblFBST4SXzOR/m1wT/U3Rnk4rYmGPAW7ltfRrSXhwUZZVARyJUwMpG3EyMS2T
+ dLEVqWbpl1DamnbzbZyWerjNn2Za7V3bBrGLP5vkhrjB4NhrufjVRFwERRskCCeJwmQm0JPD
+ IjEhbYqdXI6uO+RDMgG9o/QV0/a+9mg8x2UIjM6UiQ8uDETQha55Nd4EmE2zTWlvxsuqZMgy
+ W7gu8EQsD+96JqOPmzzLnjYf9oex8F/gxBSEfE78FlXuHTopJR8hpjs6ACAq4Y0HdSJohRLn
+ 5r2CcQ5AsPEpHL9rtDW/1L42/H7uPyIfeORAmHFPpkGFkZHHSCQfdP4XSc0Obk1olSxqzCAm
+ uoVmRQZ3YyubWqcrBeIC3xIhwQ12rfdHQoopELzReDCPwmffS9ctIb407UYfRQxwDEzDL+m+
+ TotTkkaNlHvcnlQtWEfgwtsOCAPeY9qIbz5+i1OslQ+qqGD2HJQQ+lgbuyq3vhefv34IRlyM
+ sfPKXq8AUTZbSTGUu1C1RlQc7fpp8W/yoak7dmo++MFS5q1cXq29RALB/cfpcwARAQABwsFf
+ BBgBCgAJBQJOZqz6AhsMAAoJEAUvNnAY1cPYP9cP/R10z/hqLVv5OXWPOcpqNfeQb4x4Rh4j
+ h/jS9yjes4uudEYU5xvLJ9UXr0wp6mJ7g7CgjWNxNTQAN5ydtacM0emvRJzPEEyujduesuGy
+ a+O6dNgi+ywFm0HhpUmO4sgs9SWeEWprt9tWrRlCNuJX+u3aMEQ12b2lslnoaOelghwBs8IJ
+ r998vj9JBFJgdeiEaKJLjLmMFOYrmW197As7DTZ+R7Ef4gkWusYFcNKDqfZKDGef740Xfh9d
+ yb2mJrDeYqwgKb7SF02Hhp8ZnohZXw8ba16ihUOnh1iKH77Ff9dLzMEJzU73DifOU/aArOWp
+ JZuGJamJ9EkEVrha0B4lN1dh3fuP8EjhFZaGfLDtoA80aPffK0Yc1R/pGjb+O2Pi0XXL9AVe
+ qMkb/AaOl21F9u1SOosciy98800mr/3nynvid0AKJ2VZIfOP46nboqlsWebA07SmyJSyeG8c
+ XA87+8BuXdGxHn7RGj6G+zZwSZC6/2v9sOUJ+nOna3dwr6uHFSqKw7HwNl/PUGeRqgJEVu++
+ +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
+ p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
+Organization: Canonical
+In-Reply-To: <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <t4lefcykpoe5i36wb4x5u23sseh6drnphtivuqc3mjviat2vvc@7hg4jyhxvpye>
 
-On Wed, Oct 02, 2024 at 09:56:38AM GMT, Uwe Kleine-König wrote:
-> Hello,
+On 10/1/24 11:22, Paul Moore wrote:
+> On Tue, Oct 1, 2024 at 12:36â€¯PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
+>>>
+>>> Linus, it's unclear if you're still following this thread after the
+>>> pull, but can you provide a little insight on your thoughts here?
 > 
-> On Tue, Oct 01, 2024 at 11:37:35PM -0400, Alex Lanzano wrote:
-> > This patch series add support for the monochrome Sharp Memory LCD
-> > panels. This series is based off of the work done by Mehdi Djait.
-> > 
-> > References:
-> > https://lore.kernel.org/dri-devel/71a9dbf4609dbba46026a31f60261830163a0b99.1701267411.git.mehdi.djait@bootlin.com/
-> > https://www.sharpsde.com/fileadmin/products/Displays/2016_SDE_App_Note_for_Memory_LCD_programming_V1.3.pdf
-> > 
-> > Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
-> > Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
-> > Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
-> > ---
-> > Changes in v8:
-> > - Addressed review comments from Uwe
-> >     - Replace pwm_get_state with pwm_init_state
-> >     - Use pwm_set_relative_duty_cycle instead of manually setting period and duty cycle
+> ...
 > 
-> You didn't explicitly mention that it's fine if the PWM doesn't emit the
-> inactive state when you call pwm_disable(). You're code should continue
-> to work if you drop all calls to pwm_disable().
+>> If the consensus is that we should revert, I'll happily revert.
 > 
-> Ideally you mention that in a code comment to make others reading your
-> code understand that.
+> Starting tomorrow when I'm reliably back in front of computer I'll
+> sort this out with the rest of the LSM folks.  Unless something
+> unexpected comes up in the discussion I'll send you a revert later
+> this week.
+> 
+I agree that this is the wrong approach and will add that it is
+egregious enough that Ubuntu is going to have to disable Tomoyo as
+it effectively allows by-passing signed module loads.
 
-Sorry about that! The intent of the code is to stop the pwm from outputing
-when the display is disabled since the signal is no longer needed. If
-it's best to emit the inactive state rather than calling pwm_disable()
-I'm fine with making that change.
+you can add my
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Best regards,
-Alex
+>> This
+>> was all inside of the tomoyo subdirectory, so I didn't see it as some
+>> kind of sidestepping, and treated the pull request as a regular
+>> "another odd security subsystem update".
+> 
+> Yes, that's fair, I think you would need a deeper understanding of the
+> LSM framework as well as an understanding of recent discussions on the
+> list to appreciate all of the details.
+> 
 
 
