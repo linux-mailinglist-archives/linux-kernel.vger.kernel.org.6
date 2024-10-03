@@ -1,158 +1,244 @@
-Return-Path: <linux-kernel+bounces-349090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6507998F0A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:41:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82D798F0AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 286A8283E73
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:41:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAA962810A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487BC19CC2A;
-	Thu,  3 Oct 2024 13:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE1619CC2A;
+	Thu,  3 Oct 2024 13:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XBl0p+c1"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fdwul2Qj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C9119C56A
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 13:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727962800; cv=none; b=gH3RXL0K+YhOAIILV8sDR4TUP45wuBm51NV7kcz9MJEFF/wYVpTwrO6prGL2K4zb2V18stHTgKVZRgo0oMdNcTRYVBI5Q7Y8FJ+Oc0c6dTyNBn0cTxceGzCFe3GLcxWrqma49adLidVZ9BKXW5zklxJ7E8XdY57X3amWkfz3M9k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727962800; c=relaxed/simple;
-	bh=ImQWi8bDG3NrV5BoM1m0/vC7/PTgqm0dE4tVrwGjJe8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rOwCGn4PbVlnOymqG5ZTkS/bPC22u8ibqcGxHZrxbrnxwW5zF87sfjAkhJA0WT9pJZ62nHmISiZe7pltAMcaXLmQWdRUkppvMKwLDLiuH9N1zOULBAee7l7vFEVR4bQYqQLojfFo0fiehd5m040OCs/fyNtBZKg6KJIYn/iTMkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XBl0p+c1; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-286f304f504so480442fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 06:39:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727962798; x=1728567598; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g3eGOVQW6LyZhzgIoNdSlaLLYNUqeTgHsLVhuM5ZBgE=;
-        b=XBl0p+c1V3VLrNQqgJ/hH2874gSiYUY4Kt3crlLrvW4PCwKtz6WILu+d0Nbon29DwR
-         BHpNgTwt6VQzYJ5pkd3wXtpbNw5NApfOCETJYjKMqWOOGRv5PP4Y6QRs9/iO1tzTBp/e
-         q/7GN1Yvr0SLn3DefpBusjoKsga7sodoa8qDNq0Q2tDhA1RzYA+ypS70Uo4ZmWIuU/UU
-         XR7xZEhCLe0qOC06Lw8jw9VL1We1u5YR5tTXMqEy9Lx9yXmUXGh9z5ECIRzJB1qTAW4N
-         K8jwWNrTUf1NXTJA2lhLEzf1IX2MPRtM7Db/ac+1G+obiVZ+ayCGCFgL7yYXEMS5b4nK
-         pvqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727962798; x=1728567598;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g3eGOVQW6LyZhzgIoNdSlaLLYNUqeTgHsLVhuM5ZBgE=;
-        b=iyrdudsRGtuXZjw6IDkTwuH81/DCjyaIEZBZ1PsaSIDkZHIyHtyH1TtnlqoNvY4rj2
-         ZBpU/CKkEoFujN27exGMR7qeU7C/v/bXq4cYTWF9vcbbSXbtdiycbd9PyZeUAbwMj5bQ
-         ur3VbEsYwZqsfu8AF/puhJ7z/fBx6OtDv/WR473VKITLXaDpbnaMlh59r1ipvDY1nmvj
-         VCHzIv+xeHO1qQ2xVerwsdUdK3Fu+H7YrmliW064nbr6oBsIdeCrGIGV9PTMffehBtml
-         mmTlfwCBR/FcOdkFVUKou61UbnyUWGGdAKM0YAmURYI0GVI+peTGySuFdDJP4xfwLLCK
-         +gMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAapKGX5PlMeA+npBOiF0ja/xDsldbNaGDyAUC7v1DOgSAOwotfHePQF7CVEKcZeZJ7QwcqJzn5T1jMwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaF9p0Fu+90ooEecSR3H06DFrdUADH8GxzCAIhYxRA1o3U1k+b
-	whnWsFLqh/K5g/ALWRTy/BctCSAGnrr4QichS+VbdRzroPVV8kt41TXbpre4Arg=
-X-Google-Smtp-Source: AGHT+IGZuvs26FhH3bjDKJGfAMoutPN5LFT9w/usT9UzEvNftVGxVwVPZ4OarD2He65+ZwQwDEu6Wg==
-X-Received: by 2002:a05:6870:7182:b0:268:282b:bdec with SMTP id 586e51a60fabf-287a3e35caamr1589871fac.8.1727962797866;
-        Thu, 03 Oct 2024 06:39:57 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-287abbc6f53sm445891fac.36.2024.10.03.06.39.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 06:39:56 -0700 (PDT)
-Message-ID: <cdc27a53-281d-41d7-a9b5-196f2650c468@baylibre.com>
-Date: Thu, 3 Oct 2024 08:39:54 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0356915887C;
+	Thu,  3 Oct 2024 13:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727962958; cv=fail; b=fx2mO18snTibrtYQ2xpFs9fwDdminnw4lFJ/q066Nv3pFYaN9F6ShdlqLo+Ks7uWQRXEH2Ck10ZxKOz2E4QneZKwDzGYqtjmSgZeIjPJwYJifdsy/+zqYdCulpQuuWmDfxH9YRN/SIZaqtKUVh/imP/Zs2O8eHC99UtkO28gYEQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727962958; c=relaxed/simple;
+	bh=YKPN28sPQNjJBx0iGfXkXo97ChXE9u95Zzkh4bDs90I=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oRh155HGY5qpRUJoE1Z0RF4x0IyGN0uEmKGJpp88i6S/SsI7Lh5ehy+LJSGJYwekXJs7z3/Ja282gDqpmQa42+B0EhuMlONCmOEGHQl1hcfCTwXZt9dIpVVLHMwOczKpa7ID9OGFAMy28HBtF9+zuo5A8Gh1F+zLXizMxZP0Ias=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fdwul2Qj; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727962957; x=1759498957;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=YKPN28sPQNjJBx0iGfXkXo97ChXE9u95Zzkh4bDs90I=;
+  b=fdwul2QjrWV5AWNrDMYr6QF+A1TGkut1wwzVC3m6N7I0kj4IZyrtThR0
+   4AcCJO4OhS/a6KlsQbs7Qg1kScMnFhFS0laiVHWkqQMh8IFyDWD1Hw7sg
+   p5vtlBLs0SmrjUUjNWgfDswCS0eCKS426NLvbsas9Buop1RE+txmAKNAl
+   MMLsadJshnMf2enDzssWeUCYhc2mTcOYf0beOg6aO4sOuh6brPWTZD3vz
+   m/vImT4Y8nkCksDtkfGoxojBjA6cBzqb7UD0FYoyi+VmJh8CX0fJP3C63
+   6SDCKKNeDu7t6c835Xr96JVVWWM7IgL/3opTwRnBBxUCZC+4/8DEvSmpo
+   g==;
+X-CSE-ConnectionGUID: WK3athXwSH2Ml0p2YxoaLw==
+X-CSE-MsgGUID: z6u92v5rS9aS0f4LropD8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="38515595"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="38515595"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 06:42:34 -0700
+X-CSE-ConnectionGUID: rF0dF0kkSl+hDO04XsNWAw==
+X-CSE-MsgGUID: MT2WBKQNRXyR6Nc+TKunBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="75144191"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Oct 2024 06:42:31 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 3 Oct 2024 06:42:29 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 3 Oct 2024 06:42:29 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.173)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 3 Oct 2024 06:42:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zyucsfb3b60lmnDwaERgZlohs82vuAwXf02Ct99gOKMeDZlHlKAaj7v9ogySHyD7HKP7o8sJAM36G0LcBOtAeniSI0k6ac5IGH6TFrPSWSDA925jmiilsCOORhu9FkSOgkkLbQeGlFHyiKuvd1FS3a8ZA84BCijGjD3Q5DfCUlrwM5GCJuhzyBu/kKfzvMWPZMQrK/8i3obQ1ozUNGBoXUIaoH41RZGOMaHPOurAynv7nc/Pvy+gGMCTjr9M6ApBNxg+qjurQgga3AK5yf5bz2sy7hNmLRKTgtfYrAyqewAfEPFjGiQEMDP1dWI7FHwawiwkntiFCx0KGnDbWkcmyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pLPQHBZ+Ur0sGASkVgmKRDiUPZlI7YL4E9hinrG4RbI=;
+ b=HurnbspCkGJc58x7CvGRdmttVt7QtRWb9kLBA/sJzf6vgtLGqSnlSeYGNmoaxs3ybPHcsGcE62lq+vACNlkdACQkp8BYmFmi8s0XslePDHHSK4x/EYrUiqGLrN5rWsYXI/wnurs2OFsyL2Mk0kps0TlL9uJpLvz73ON0lkoF2DBw3skDaKeDBYg7uMRygUkRFTcaE4//9CsO8aPTXADj17Tx5fXJu4sSh7lOl3kyDnj1KXOwHdKLEgyb1CjFo9G1Y0Q271gNIfwrdYln4OiAQOFW0KCN6cDpE0Ad24znLc4ctuEsyDxl8iG3jVHl4prkWAYqmACunP5//w68n7DIgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
+ by SA3PR11MB7980.namprd11.prod.outlook.com (2603:10b6:806:2fc::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Thu, 3 Oct
+ 2024 13:42:26 +0000
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.8026.016; Thu, 3 Oct 2024
+ 13:42:26 +0000
+Message-ID: <a2358981-289b-4fee-854b-ca6e9fd8b2e6@intel.com>
+Date: Thu, 3 Oct 2024 15:42:20 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] cleanup: adjust scoped_guard() to avoid potential
+ warning
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <amadeuszx.slawinski@linux.intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	<nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <netdev@vger.kernel.org>,
+	Markus Elfring <Markus.Elfring@web.de>, Kees Cook <kees@kernel.org>, "Dan
+ Carpenter" <dan.carpenter@linaro.org>, Peter Zijlstra <peterz@infradead.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>
+References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
+ <Zv6VccBLviQ2ug6h@google.com>
+Content-Language: en-US
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+In-Reply-To: <Zv6VccBLviQ2ug6h@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: WA1P291CA0023.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:19::7) To MN6PR11MB8102.namprd11.prod.outlook.com
+ (2603:10b6:208:46d::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] iio: adc: Add support for the GE HealthCare PMC
- ADC
-To: Herve Codina <herve.codina@bootlin.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Ian Ray <ian.ray@gehealthcare.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20241003114641.672086-1-herve.codina@bootlin.com>
- <20241003114641.672086-4-herve.codina@bootlin.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241003114641.672086-4-herve.codina@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|SA3PR11MB7980:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7df35093-cb63-4e46-5569-08dce3b13779
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Z0JNSC9MZmpmV2NSci9CM1k5a3Y4UXJ1YXk5Z3R0ZlkyeElBMVdIbHFRWTd1?=
+ =?utf-8?B?aW9JR0NVd1lmNnMxOVk0WCtEN3FOeXN5OUp3emdPNnc1eW50bFRpVE9LTmFY?=
+ =?utf-8?B?aUwycnd5L1NKRHlKTVoxSUdrNFdHYkpqcmg0ZytERDRTR0Rzc2Rsdy8rQWhQ?=
+ =?utf-8?B?NWFMd3FkMHlFVzZsVno1WE1DOUtPL0o5bUZwRVhGbkFmOE9uM0xRVE8yZkRn?=
+ =?utf-8?B?VS81UmlnU3BsYnJMSk9DZ1RWM0tWaGFDOElTUDBwU2hORE9HSEpQL2RZeUpZ?=
+ =?utf-8?B?UW1yNFAwa2MvZHVoL21JT2hpT1hXQ3kyV1VuSlk3NzF4VTd0QW11bHhxREJT?=
+ =?utf-8?B?a0Q2d3dEcG9ueTVaNytCYXd1UlpmcVBmNHlXVWlDZEtXZzhrK3lEUHlVY0N3?=
+ =?utf-8?B?YWh2bkFnWVJkZkhLajFoT2M3RXhFRzFDYVZucklXWjVnTWZNUGV1L1RHWjVq?=
+ =?utf-8?B?VDY0MHNRN0MxVmpGVHVQakRGcXpCckQyUGtLZUcyd2NYbEtvT2xHdE90aVEr?=
+ =?utf-8?B?VThSVVF6dXJRaXIvYXNIY1MrUGhrbWJlTFhZTHgyUFdHaEhtSHQrckFLNWly?=
+ =?utf-8?B?bytLa2hHZkp1bmRCV3VhdDFDSjFzdWE0ZkkyUW1yOTI0QTdmUFY4WGE3c3Bk?=
+ =?utf-8?B?WnQzY0lYWHVFdGpCQ0dneVArKzZSVS94UkhUQVRNajIxT0c0SGxNZEkxK2Vt?=
+ =?utf-8?B?SlRBUHFNQVZtcWFtR2R0UjJaRmUrZnhuWW1UZGlXU1FPQWlsSHM1dSsvSm5y?=
+ =?utf-8?B?Z1pKMmZRVjd0VVNMNTI2aHB5WnlmL0psUHJwU2VBeDBJdFVDTlpkU1ZxTlhh?=
+ =?utf-8?B?Z0IzYlpabDh4c1RGVEcxa0FEWk1kWnE2T1RDOW02RTJSZFFvcnlLVUxoMjR2?=
+ =?utf-8?B?d25PRzc5SDBETitrdzkyRkxpaVhZUGJoV0ZQakl4dnVmdk43S3U0Y3FmQXZY?=
+ =?utf-8?B?TTM4SGt6YWNqb0NCZGppOUNNSEVObC91THI1QjE3ME9ScXoxSmlqU1VTc1pS?=
+ =?utf-8?B?anEyMnIwK2R4MzNLeFUweWxMNVBQTlhScjJhRlR4WHlOeGdOTGVjb2Z5SG9P?=
+ =?utf-8?B?OG5nVnBKSWUxUDBweldwMm92SDh0ODR6b2lBSWlrSTJPcjZSQUJlYkF6WTF6?=
+ =?utf-8?B?cWxEckZXa3Q2SllQdW9GY1lQeTJpc1htY2RaTG81ZnRWRHJaMGlxWUpGdWJK?=
+ =?utf-8?B?WmtreTZ5bEV1bW5veXVCdE4rd0FBd3Z3aUF1TmdGaVFoZFYrRGM0VXZxTnF3?=
+ =?utf-8?B?cTgxL2tzWFZMeXc0Ti9scUtzVys5Y0NUdE9Jd1grN3VQVk01U1k5NnBLeEd2?=
+ =?utf-8?B?WXRGdEFpeXVVRUZBdVovaTY4VjMyR1lVd3FCMjBEMjVmS1hGM1dnYzZUc2tE?=
+ =?utf-8?B?YUROZFRNa1FYUWVMZWkwTGJNcUdRai85WklMNWNvQnVEcnRla2Eya2E0VEhu?=
+ =?utf-8?B?dXMxYVV4NnhvcWpOeFoyTmw3bWlNWTVPVU0rWjVtU21ESG9oVW90KzBPYm1B?=
+ =?utf-8?B?K1lTazZQRzFpa1Nia1AyejkxWldoTXVEOFpucW13SHhEVXRXVm9FNnZITjNk?=
+ =?utf-8?B?ZS9WNTRsR0h1bGx1Y0dQd21jdE8zRGNpZWFqb0cxdURLVU4yNGpOUVltZDVQ?=
+ =?utf-8?B?Z3JLTWp6c0dheWFTSVZoN2N3dGwxS1BRVllDWk5PRDJkbi84dmsrZ3Nxc1cv?=
+ =?utf-8?B?R1BScHR4REhBQUszZFZuZVRjMGlNYVM1cEExR1NiYXJkQ3NHaUlVbEFBPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c2RSU3Rvc0lVd0VGUmFKUGkrZERuWXorS1JHK1dtbnVDV0pMb3gzSWViTGJa?=
+ =?utf-8?B?NEllVnNMUkJrOEQvVFB1NVlid0gyNkRrNll2bGpwb1RSOWJMeVBPV0l2bjdF?=
+ =?utf-8?B?amJ4cUFSS3llOWFHcytQK3hTME42YWxObXVqRjNYN21EcW90YTlsSXJoajdy?=
+ =?utf-8?B?eDBSMTB5N1pxYTJvOUNCYVpwKzgreWtvOHJhWlFJTjE3bllSbkVwN0dHUWZH?=
+ =?utf-8?B?SFg4QW1pY1RVc2FGMVdhWnJ1VDRWMHMxVGdIcW5Ec3lZYWJ4UjdyelByajAw?=
+ =?utf-8?B?QkZZaDBTRlJvOXhLaWRUakxtUGlpRVJ6RTZneCtpLzRYOTBlMXRkWVJPQm9G?=
+ =?utf-8?B?Mk1nRWtWVWl0WGRwN0lBNlpQY05DZkZNeVR0cS8zZ2pzRVdTT2lZRzdhMjBJ?=
+ =?utf-8?B?MUpxRERKS0c1cVZNTXFYNENJZGlRTlpxTnYwUjZjelFZUXQxYVg4Q2xvT3ZX?=
+ =?utf-8?B?OVhKOFdjWFN6RXRLa28vOU5ieXhjdnh1ckxFSHlHU3lZeDJhZTVJMjVTTnU4?=
+ =?utf-8?B?Rmd3Nkp3R3V6em1OMVl5RUFHSis0V0RkSTlZTm9wTUkrWHJTUHV4M1NpS3kw?=
+ =?utf-8?B?VmtvRU0xNjIySEd6Ukd0UllPMDF4SHpmTEtWa0l4dndjNTdpdVZVQ0l1U0c1?=
+ =?utf-8?B?S3hSVXFyRXZJY0tBTFR3MHEzUDZnMUkrcFpQeHR3UXpzbVhWWlhIVEhsOHNp?=
+ =?utf-8?B?WmRBdXplVVF3YkVlZTRGekxrdVV0VlRndEFlNWdidXdQbU81QTh4TVN5NjBv?=
+ =?utf-8?B?Z1RadmlJUUZLOXFnNVhkQThycFVpWmg5ZWlwWmY5NitmdmlNckJ0NGl4WmJU?=
+ =?utf-8?B?T0gyVHhzcHNMM1JBd2ZYZ2pOZHJxUWJNZHNQTkt1dDNEV21IT3FNMHcvcG1P?=
+ =?utf-8?B?bmo3NlJBNVpXUmJuZlRSUUN6aS96RzhCbTlIbk9EbFY3RHV2YVpYL1VXbW1a?=
+ =?utf-8?B?cVp0UTBrdi80OHlHV1A1NDZDTlZKM1B0djEzT2p3UHc5RTdsV0JJYmtSWVdU?=
+ =?utf-8?B?L0ZJTzNEbWh6QkZ1S3NNSThyUWFmNXV5UzFmRVdBenFEUkF3L0k0UEcvWmFz?=
+ =?utf-8?B?VzhSZ2RIUnlhM3EyWHZuMkV0RVNUTENQSWhNQUxsM0w0K3pXZGcyRHd6UE95?=
+ =?utf-8?B?OEo0ekVaLzRITm5FK3hKekhLdThiQ1pvbjBUNlp3RmYzc0pNUityQy9NNHpP?=
+ =?utf-8?B?d0RGT3cxcGE3TmRWYjlYa3ZDTVlQS0NLYU9nVU5iamVKQ0NhSDZYWnBoR25o?=
+ =?utf-8?B?SG1HM1JMNGJRZEVsc20rbVVzUHgxdzZsNGhLazltRjVzalIzVGgzMTlpMCtR?=
+ =?utf-8?B?S3YwaU5tT2QxKytxbTBBbUhxQzRuMVRlYWx4ODZxRHhnUWJjTjF6bUxwRDZQ?=
+ =?utf-8?B?R0ZXUm5VeWd5N2t5SDlpS1RuMFdhZHhzSFNaUDVRV3h1eWR3RWN2RTlsb3pV?=
+ =?utf-8?B?SWhTcldsK3k0MWZRRzJLejdlZUpPcXBwQUxRNHpkWmtSSSsvU3VlYmI4RmNM?=
+ =?utf-8?B?RWI3V3Evei82VFNSeEJjdGhVVkxMMUVPLzR0VUtTV1VjcWpSdG0rYjV5S2cw?=
+ =?utf-8?B?bEMrTzRsQU1zRnJqUTZ6VzBRR3VRcEZpRHpVRXRVQ05qMFRPcFEveldSdWNI?=
+ =?utf-8?B?bG50QnRvYXZFbEw5ZlNGUFRJd0hiZ29rN1Z4N2ludi84cE1sTkF4YU1DcTNC?=
+ =?utf-8?B?TG43Z2RZRDF6Vi9ZanBjYnZhREkxWUVQenhYeGlGWUFRdHFRRlBZZWtMTmkz?=
+ =?utf-8?B?QS9rVkVuV2RRK0dhNFcrNUFOZGJpbnA4dzFKZ0NaWSt2cTNjRjdWTC9xMTFz?=
+ =?utf-8?B?eDA1bVc0MVpnVnRrWTQ2WVRjaG56T0M3Unhma1l1VzJjdERvQU5BTzRNNktw?=
+ =?utf-8?B?U2lOR0hvZ09YOUFjY2hDc3dBSERZNGRFZWpPV1BnYkMyRjI2aGZrM0I3Y3B5?=
+ =?utf-8?B?T3NTR1VuUnk2UzZ0bHR1R0xSdWs0MFhaUWZtTUVGUDZVYnlYVHN1TXN5SnVQ?=
+ =?utf-8?B?RTFVZDE1eXpUYVNUZmFIdjlNMWtvNDRGSEZ6REp2NUhnK25sY3FjTmk1eUpm?=
+ =?utf-8?B?cXFLc1FvK0QvSWo5YUV2bk03blNDdGgvZk9ScnlCbCtZaTZ1VDFDaGhReEZt?=
+ =?utf-8?B?ZFBuaDU3eUx5KzBFcjBraGt2bmtJcjkxVUp1N0Q3dk9xaGFPbzhhTnNNeUZB?=
+ =?utf-8?B?WHc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7df35093-cb63-4e46-5569-08dce3b13779
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2024 13:42:26.1057
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hHaorulSv1w5R74WPV7d2NEm9VPLs6mgvSitVIaK5T7m7+xdJj5bhR86m9+qdxFXucTifswSPtOUpmPM9jSyMMFsikiDK7eTcN87K913BjI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7980
+X-OriginatorOrg: intel.com
 
-On 10/3/24 6:46 AM, Herve Codina wrote:
-> The GE HealthCare PMC Analog to Digital Converter (ADC) is a 16-Channel
-> (voltage and current), 16-Bit ADC with an I2C Interface.
+On 10/3/24 15:00, Dmitry Torokhov wrote:
+> Hi Przemek,
 > 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
+> On Thu, Oct 03, 2024 at 01:39:06PM +0200, Przemek Kitszel wrote:
+>> @@ -167,14 +172,25 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+>>   	CLASS(_name, __UNIQUE_ID(guard))
+>>   
+>>   #define __guard_ptr(_name) class_##_name##_lock_ptr
+>> +#define __is_cond_ptr(_name) class_##_name##_is_conditional
+>> +
+>> +#define __scoped_guard_labeled(_label, _name, args...)			\
+>> +	for (CLASS(_name, scope)(args);					\
+>> +	     __guard_ptr(_name)(&scope) || !__is_cond_ptr(_name);	\
+> 
+> It would be great if you added the comment that "!__is_cond_ptr(_name)"
+> condition ensures that the compiler does not believe that it is possible
+> to skip the loop body because it does not realize that
+> "__guard_ptr(_name)(&scope)" will never return 0 for unconditional
+> locks. You have the explanation in the patch description, but I think it
+> is worth to reiterate here as well.
 
-...
+thanks, I will add an in-code comment; sometimes it's easy to loose
+outside perspective if you spend too much time on one piece
 
-
-> +
-> +static int pmc_adc_probe(struct i2c_client *client)
-> +{
-> +	struct iio_dev *indio_dev;
-> +	struct pmc_adc *pmc_adc;
-> +	struct clk *clk;
-> +	s32 val;
-> +	int ret;
-> +
-> +	ret = devm_regulator_bulk_get_enable(&client->dev, ARRAY_SIZE(pmc_adc_regulator_names),
-> +					     pmc_adc_regulator_names);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret, "Failed to get regulators\n");
-> +
-> +	clk = devm_clk_get_optional_enabled(&client->dev, "osc");
-> +	if (IS_ERR(clk))
-> +		return dev_err_probe(&client->dev, PTR_ERR(clk), "Failed to get osc clock\n");
-> +
-> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*pmc_adc));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	pmc_adc = iio_priv(indio_dev);
-> +	pmc_adc->client = client;
-> +
-> +	val = i2c_smbus_read_byte_data(pmc_adc->client, PMC_ADC_CMD_REQUEST_PROTOCOL_VERSION);
-> +	if (val < 0)
-> +		return dev_err_probe(&client->dev, val, "Failed to get protocol version\n");
-> +
-> +	if (val != 0x01)
-> +		return dev_err_probe(&client->dev, -EINVAL,
-> +				     "Unsupported protocol version 0x%02x\n", val);
-> +
-> +	indio_dev->name = "pmc_adc";
-> +	indio_dev->info = &pmc_adc_info;
-> +	indio_dev->channels = pmc_adc_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(pmc_adc_channels);
-
-I don't think the core code actually checks this, but for
-correctness we should add:
-
-	indio_dev->modes = INDIO_DIRECT_MODE;
-
-> +
-> +	return devm_iio_device_register(&client->dev, indio_dev);
-> +}
-> +
-
-With that...
-
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+> 
+>> +		     ({ goto _label; }))				\
+>> +		if (0)							\
+>> +		_label:							\
+>> +			break;						\
+>> +		else
+>> +
+> 
+> Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> 
+> Thanks.
+> 
 
 
