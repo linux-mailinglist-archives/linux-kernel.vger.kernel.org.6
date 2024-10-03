@@ -1,268 +1,260 @@
-Return-Path: <linux-kernel+bounces-348935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9656298EE1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:28:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7858198EE21
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0696DB20BD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:27:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E541F2187C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F181547E7;
-	Thu,  3 Oct 2024 11:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BA01547CD;
+	Thu,  3 Oct 2024 11:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oqhugZGa"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="mU2AWwR1"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D0B15443D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 11:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE8F1422C7
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 11:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727954870; cv=none; b=OFLYBrts4bPXuIq/uLTHxfRusTa2dTprQqDaUJGGT7kKzdPfsG8LARIe1tNrw4RXk2j9w8QmEmEMJ8hASXt/qW37iwdgEA0quQhjIvYIt9Xxu/xsS4k6LEaQj2NgG4TqIq7lQHDtC+8WSVu8a6Lz1mNMu+NH9GeZB8rCbRUyb18=
+	t=1727954957; cv=none; b=rm33VuBtbhCJTg135brbWGXOxN69CC1Pg/UoP2OjT/6GRwHi1likhsZVPfk3A7sJi/7LRi0QaUGbzMHrbqqVLNFOwvstqzpNBzuEC7LZ7Bmpkzojld7g2ChUeDXR0eQFLIw5wq3usr5IaGe2zn6BtBNAs/BHJMttl4Ozu6a3L5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727954870; c=relaxed/simple;
-	bh=Z/wE6vlPIxBH6LaOzwO/7U3nnPDqtFz/6PyjY83CPvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=jZ4/LKbG0EV1adLXc/edqch4LXYkyQVNG0eR/qyyR3tgoJjg98R0LuefakOcIkFbPnVTa4h2R0/vOsIgz4mbqhHIVcSFZ7HqFSUEil9LoNebamhmJugaKRbzLlJQAyNZtZh96F+rXNrv439xE3r5Ij56x1dVq9NL29nr2L+t5+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oqhugZGa; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso10865625e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 04:27:47 -0700 (PDT)
+	s=arc-20240116; t=1727954957; c=relaxed/simple;
+	bh=nVjOl7FI7A+n6tLkR5VVKYp4Rl4H/IYpRVFdm6TrJgo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CpMoEBHM2+hDvxllhtIbQ5ZD6qC2fJPX05xXc2/JyJvX7oB8eQEp8usc/NmObhS0XcoykPUJGB5DbrdL9A7QJT5R5Ub2kPKFmeqrbdkGr260pUdgLV5uzbcZiaVkoDM0KLcmGb7S2lcE6pI/xEhWGeNL5hdlPpoIEXk7DkSyab0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=mU2AWwR1; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6c5acb785f2so4858736d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 04:29:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727954866; x=1728559666; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qem65KOW9h0XHEqIvrOXeHfZuZNWOf4NfsS3cuje4Uc=;
-        b=oqhugZGaoE94ortBzoKl9f+2yjZyJrRePFVcOmvMmhyWHvtRPMHjf55Y2bHEib6NM3
-         yMG545/KQkPqNRPS81R6gMhg9p6Br/YNNvxYpIuqwDRAZTTA7pzAqmxR7agc/eDsm/SP
-         aBtDAcz2CJTLssTTy4NW1T0MfwGGmQYwwM8DzQCc3DkJQgnmQgfKyxX+75bS1yllo/mq
-         oFxIg1wyU/nAMgNetmcX6Cz/tDBDessNMCSF6rphUr22IGv8D06otdKaT5hTnbjhLRAT
-         FpMCHLF83WQcaNsTzyoWe7jwO7w5jHxWEsf8tDj0nHohG98rVcDXB/Ke6SDumrOgbe27
-         5hkA==
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1727954952; x=1728559752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oDA9NUNx9gSo2kRmc35eR3BkbtLwu7lBmRWMEDqyb+0=;
+        b=mU2AWwR1UDJQtdwPB9DSE4kyOnvtN01w5WPy6SU78AH16VRnn9LV2VmtAatoWDzuo0
+         sUtuKZZH8pUkSle68iPhu2WMJ/Z9R3ji9ppOPBCgUaMuEv3G+jt5IVmEa6I050ic4SsQ
+         neYjbVR2XiG4hwYZDoyOi1aGj/qlZ/LEgUnZqyhT0MFOhT2c2toeNu591cTOmFmTjkzm
+         ykPT8rqMBm1KQktTvqA4nkjlTWWpGxwLwQ5fng2gVneUY366Ya1PYJ2TyWNQw8oDwM9H
+         HmwvKfhraO8F10c+hLWnZH7ETt0yrmhzy5CeZUi/eyWVOrZI5x6d5Hzb7hYSHMTPozYf
+         ipcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727954866; x=1728559666;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1727954952; x=1728559752;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qem65KOW9h0XHEqIvrOXeHfZuZNWOf4NfsS3cuje4Uc=;
-        b=aDYFbGLcgBeMZC8vD7205E7x/hvYStq4I1vXnGOy6svVmNxUoDhDxqe1Okm31877bB
-         Yo64DWqyyqnuLAbPVLs/T5xiTXcbUuOBJgpNZbml+O9qov8zE9kQWaalh9k3cCnIRXTU
-         VImgVoHNdnxuYNjBkVcPJjdE9HMUbB7lEilHBMvgUU0ryZjotraO+3KuwYp8Qhy5P78d
-         oLjIOPKEdzglihbWhBeeoWwRJb7SqpLVCXu+YnDNGTty9DShwFHwONstUOPo4XXqN6/1
-         KE9KEbCfH43CLv7ObmGtK4Siq+rr3hV9XE80Ffs5ZtO3r/R+Mw2bh8oWrg92ORQXlUpc
-         KhaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUytmmbGv6Vufl1c3Zw8ln6++ISJkhT9kpWfPOMSFNJF2yi8Q8XUb4/Zazss/VSiZPS8da91iDDi7u/Wak=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY40ydxK34Moz9rCmTeU/U2nYO5gZOAepBFC09XfTEbEG69yDn
-	dTW4/mKNwJXsfQeydwJJ9qnEq7wtXHaWaeeqkwMJN78GEv6EIV6cBPR02H2ut9g=
-X-Google-Smtp-Source: AGHT+IEEmiRO7XNga2R0AbTWwcKrW4gQGuckB9cWDC35qKZ6RovrhXFw2RQNIFfDGFsMFgKWwBKiFg==
-X-Received: by 2002:a05:600c:3581:b0:42c:b508:750e with SMTP id 5b1f17b1804b1-42f777ba30cmr58372725e9.11.1727954866397;
-        Thu, 03 Oct 2024 04:27:46 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79d8d3bcsm42549325e9.5.2024.10.03.04.27.45
+        bh=oDA9NUNx9gSo2kRmc35eR3BkbtLwu7lBmRWMEDqyb+0=;
+        b=fujiqeZsLpeUqmuDNBpX9yTQv9VFaqSVPUZ+CiCszWXKwqIa9dfY/IWmykoZvAjklk
+         5gOn1OlkqVkDLsXdFxvZoAKbjHx0XqgDHz3wi/W+0z21tZCPVwxqywsCTfQlGDJAqf1a
+         mS3cKtbdd99ZGVbf5QBVVCk7MxcbYRCM6ArnyN9K2HeAULNYxt8fEAmmgU86mYxyAnwF
+         tyrpMo7dkWzANixOWWSPS0Bvx0R+QLKE18Wxh08x7bUr2T32po1/i5E2oMA/1JoAXZFj
+         b2PyH7VJzbXTN7xaVvRiFXPonuvrLDs1yhBksF8V9H5LKi76H3Ih8ERGUQv9oF1LwYzI
+         hU6g==
+X-Forwarded-Encrypted: i=1; AJvYcCX0tbOs2LmvB1RLwsWcwa5A6oBT5pqWMnZFISjkUS94bbaXRKYATwckRImT2KfW71kgBYVQg/jJLJ3kGTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCSzoJIeyJalgqFSLiKmwaxECe97iMuSzbONfarsINfXT1mngW
+	/4rs3ozluDr6UHG+k2gxtdeHhN9zEYhWBD3uh3sdDwn+LaGPkSk9QDzLHWes2Yw=
+X-Google-Smtp-Source: AGHT+IGKBdcVDcUfhjcWU4LPho1BuvRf7cARd5UtflWnLAlYg+l9fMr57836UwiyVyTmk44DF5CG8g==
+X-Received: by 2002:a05:6214:2b8d:b0:6cb:2cfa:3b9d with SMTP id 6a1803df08f44-6cb819d6288mr66848376d6.14.1727954952255;
+        Thu, 03 Oct 2024 04:29:12 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb935cce42sm5674286d6.37.2024.10.03.04.29.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 04:27:45 -0700 (PDT)
-Date: Thu, 3 Oct 2024 14:27:42 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Rosen Penev <rosenp@gmail.com>,
-	linux-crypto@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Arnaud Ebalard <arno@natisbad.org>,
-	Srujana Challa <schalla@marvell.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Rosen Penev <rosenp@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] crypto: cesa: use enabled variants for clk_get
-Message-ID: <7f2b38c2-f9bc-4030-8cb7-6042760d4992@stanley.mountain>
+        Thu, 03 Oct 2024 04:29:10 -0700 (PDT)
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-kernel@vger.kernel.org,
+	Brandon Duffany <brandon@buildbuddy.io>,
+	stable@vger.kernel.org,
+	Chengming Zhou <chengming.zhou@linux.dev>
+Subject: [PATCH] sched: psi: fix bogus pressure spikes from aggregation race
+Date: Thu,  3 Oct 2024 07:29:05 -0400
+Message-ID: <20241003112905.1617308-1-hannes@cmpxchg.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001232547.355947-3-rosenp@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Rosen,
+Brandon reports sporadic, non-sensical spikes in cumulative pressure
+time (total=) when reading cpu.pressure at a high rate. This is due to
+a race condition between reader aggregation and tasks changing states.
 
-kernel test robot noticed the following build warnings:
+While it affects all states and all resources captured by PSI, in
+practice it most likely triggers with CPU pressure, since scheduling
+events are so frequent compared to other resource events.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The race context is the live snooping of ongoing stalls during a
+pressure read. The read aggregates per-cpu records for stalls that
+have concluded, but will also incorporate ad-hoc the duration of any
+active state that hasn't been recorded yet. This is important to get
+timely measurements of ongoing stalls. Those ad-hoc samples are
+calculated on-the-fly up to the current time on that CPU; since the
+stall hasn't concluded, it's expected that this is the minimum amount
+of stall time that will enter the per-cpu records once it does.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/crypto-cesa-add-COMPILE_TEST/20241002-072835
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-patch link:    https://lore.kernel.org/r/20241001232547.355947-3-rosenp%40gmail.com
-patch subject: [PATCH 2/5] crypto: cesa: use enabled variants for clk_get
-config: um-randconfig-r073-20241003 (https://download.01.org/0day-ci/archive/20241003/202410031841.JyZSemmn-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+The problem is that the path that concludes the state uses a CPU clock
+read that is not synchronized against aggregators; the clock is read
+outside of the seqlock protection. This allows aggregators to race and
+snoop a stall with a longer duration than will actually be recorded.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202410031841.JyZSemmn-lkp@intel.com/
+With the recorded stall time being less than the last snapshot
+remembered by the aggregator, a subsequent sample will underflow and
+observe a bogus delta value, resulting in an erratic jump in pressure.
 
-smatch warnings:
-drivers/crypto/marvell/cesa/cesa.c:517 mv_cesa_probe() warn: missing error code 'ret'
+Fix this by moving the clock read of the state change into the seqlock
+protection. This ensures no aggregation can snoop live stalls past the
+time that's recorded when the state concludes.
 
-vim +/ret +517 drivers/crypto/marvell/cesa/cesa.c
+Reported-by: Brandon Duffany <brandon@buildbuddy.io>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=219194
+Link: https://lore.kernel.org/lkml/20240827121851.GB438928@cmpxchg.org/
+Fixes: df77430639c9 ("psi: Reduce calls to sched_clock() in psi")
+Cc: stable@vger.kernel.org
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+---
+ kernel/sched/psi.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  432  static int mv_cesa_probe(struct platform_device *pdev)
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  433  {
-0bf6948995f9f7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  434  	const struct mv_cesa_caps *caps = &orion_caps;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  435  	const struct mbus_dram_target_info *dram;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  436  	const struct of_device_id *match;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  437  	struct device *dev = &pdev->dev;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  438  	struct mv_cesa_dev *cesa;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  439  	struct mv_cesa_engine *engines;
-28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  440  	int irq, ret, i, cpu;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  441  	u32 sram_size;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  442  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  443  	if (cesa_dev) {
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  444  		dev_err(&pdev->dev, "Only one CESA device authorized\n");
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  445  		return -EEXIST;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  446  	}
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  447  
-0bf6948995f9f7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  448  	if (dev->of_node) {
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  449  		match = of_match_node(mv_cesa_of_match_table, dev->of_node);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  450  		if (!match || !match->data)
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  451  			return -ENOTSUPP;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  452  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  453  		caps = match->data;
-0bf6948995f9f7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  454  	}
-0bf6948995f9f7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  455  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  456  	cesa = devm_kzalloc(dev, sizeof(*cesa), GFP_KERNEL);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  457  	if (!cesa)
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  458  		return -ENOMEM;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  459  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  460  	cesa->caps = caps;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  461  	cesa->dev = dev;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  462  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  463  	sram_size = CESA_SA_DEFAULT_SRAM_SIZE;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  464  	of_property_read_u32(cesa->dev->of_node, "marvell,crypto-sram-size",
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  465  			     &sram_size);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  466  	if (sram_size < CESA_SA_MIN_SRAM_SIZE)
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  467  		sram_size = CESA_SA_MIN_SRAM_SIZE;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  468  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  469  	cesa->sram_size = sram_size;
-a86854d0c599b3 drivers/crypto/marvell/cesa.c      Kees Cook       2018-06-12  470  	cesa->engines = devm_kcalloc(dev, caps->nengines, sizeof(*engines),
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  471  				     GFP_KERNEL);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  472  	if (!cesa->engines)
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  473  		return -ENOMEM;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  474  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  475  	spin_lock_init(&cesa->lock);
-bf8f91e711926c drivers/crypto/marvell/cesa.c      Romain Perier   2016-06-21  476  
-3cea6b36a43405 drivers/crypto/marvell/cesa/cesa.c Zhang Qilong    2020-09-17  477  	cesa->regs = devm_platform_ioremap_resource_byname(pdev, "regs");
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  478  	if (IS_ERR(cesa->regs))
-dfe97ad30e8c03 drivers/crypto/marvell/cesa.c      Boris Brezillon 2016-03-17  479  		return PTR_ERR(cesa->regs);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  480  
-db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  481  	ret = mv_cesa_dev_dma_init(cesa);
-db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  482  	if (ret)
-db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  483  		return ret;
-db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  484  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  485  	dram = mv_mbus_dram_info_nooverlap();
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  486  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  487  	platform_set_drvdata(pdev, cesa);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  488  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  489  	for (i = 0; i < caps->nengines; i++) {
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  490  		struct mv_cesa_engine *engine = &cesa->engines[i];
-0501d0d1494900 drivers/crypto/marvell/cesa/cesa.c Herbert Xu      2023-10-27  491  		char res_name[16];
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  492  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  493  		engine->id = i;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  494  		spin_lock_init(&engine->lock);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  495  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  496  		ret = mv_cesa_get_sram(pdev, i);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  497  		if (ret)
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  498  			goto err_cleanup;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  499  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  500  		irq = platform_get_irq(pdev, i);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  501  		if (irq < 0) {
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  502  			ret = irq;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  503  			goto err_cleanup;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  504  		}
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  505  
-28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  506  		engine->irq = irq;
-28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  507  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  508  		/*
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  509  		 * Not all platforms can gate the CESA clocks: do not complain
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  510  		 * if the clock does not exist.
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  511  		 */
-0501d0d1494900 drivers/crypto/marvell/cesa/cesa.c Herbert Xu      2023-10-27  512  		snprintf(res_name, sizeof(res_name), "cesa%u", i);
-4d5eba631bcc35 drivers/crypto/marvell/cesa/cesa.c Rosen Penev     2024-10-01  513  		engine->clk = devm_clk_get_optional_enabled(dev, res_name);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  514  		if (IS_ERR(engine->clk)) {
-4d5eba631bcc35 drivers/crypto/marvell/cesa/cesa.c Rosen Penev     2024-10-01  515  			engine->clk = devm_clk_get_optional_enabled(dev, NULL);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  516  			if (IS_ERR(engine->clk))
-4d5eba631bcc35 drivers/crypto/marvell/cesa/cesa.c Rosen Penev     2024-10-01 @517  				goto err_cleanup;
-
-ret = PTR_ERR(engine->clk);
-
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  518  		}
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  519  
-0501d0d1494900 drivers/crypto/marvell/cesa/cesa.c Herbert Xu      2023-10-27  520  		snprintf(res_name, sizeof(res_name), "cesaz%u", i);
-4d5eba631bcc35 drivers/crypto/marvell/cesa/cesa.c Rosen Penev     2024-10-01  521  		engine->zclk = devm_clk_get_optional_enabled(dev, res_name);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  522  		if (IS_ERR(engine->zclk))
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  523  			goto err_cleanup;
-
-ret = PTR_ERR(engine->zclk);
-
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  524  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  525  		engine->regs = cesa->regs + CESA_ENGINE_OFF(i);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  526  
-db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  527  		if (dram && cesa->caps->has_tdma)
-21ec757d2dd865 drivers/crypto/marvell/cesa.c      Romain Perier   2016-04-19  528  			mv_cesa_conf_mbus_windows(engine, dram);
-db509a45339fd7 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  529  
-21ec757d2dd865 drivers/crypto/marvell/cesa.c      Romain Perier   2016-04-19  530  		writel(0, engine->regs + CESA_SA_INT_STATUS);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  531  		writel(CESA_SA_CFG_STOP_DIG_ERR,
-21ec757d2dd865 drivers/crypto/marvell/cesa.c      Romain Perier   2016-04-19  532  		       engine->regs + CESA_SA_CFG);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  533  		writel(engine->sram_dma & CESA_SA_SRAM_MSK,
-21ec757d2dd865 drivers/crypto/marvell/cesa.c      Romain Perier   2016-04-19  534  		       engine->regs + CESA_SA_DESC_P0);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  535  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  536  		ret = devm_request_threaded_irq(dev, irq, NULL, mv_cesa_int,
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  537  						IRQF_ONESHOT,
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  538  						dev_name(&pdev->dev),
-21ec757d2dd865 drivers/crypto/marvell/cesa.c      Romain Perier   2016-04-19  539  						engine);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  540  		if (ret)
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  541  			goto err_cleanup;
-bf8f91e711926c drivers/crypto/marvell/cesa.c      Romain Perier   2016-06-21  542  
-28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  543  		/* Set affinity */
-28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  544  		cpu = cpumask_local_spread(engine->id, NUMA_NO_NODE);
-28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  545  		irq_set_affinity_hint(irq, get_cpu_mask(cpu));
-28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  546  
-bf8f91e711926c drivers/crypto/marvell/cesa.c      Romain Perier   2016-06-21  547  		crypto_init_queue(&engine->queue, CESA_CRYPTO_DEFAULT_MAX_QLEN);
-bf8f91e711926c drivers/crypto/marvell/cesa.c      Romain Perier   2016-06-21  548  		atomic_set(&engine->load, 0);
-85030c5168f1df drivers/crypto/marvell/cesa.c      Romain Perier   2016-06-21  549  		INIT_LIST_HEAD(&engine->complete_queue);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  550  	}
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  551  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  552  	cesa_dev = cesa;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  553  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  554  	ret = mv_cesa_add_algs(cesa);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  555  	if (ret) {
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  556  		cesa_dev = NULL;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  557  		goto err_cleanup;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  558  	}
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  559  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  560  	dev_info(dev, "CESA device successfully registered\n");
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  561  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  562  	return 0;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  563  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  564  err_cleanup:
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  565  	for (i = 0; i < caps->nengines; i++) {
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  566  		mv_cesa_put_sram(pdev, i);
-28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  567  		if (cesa->engines[i].irq > 0)
-28ee8b0912ca2f drivers/crypto/marvell/cesa/cesa.c Sven Auhagen    2020-07-21  568  			irq_set_affinity_hint(cesa->engines[i].irq, NULL);
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  569  	}
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  570  
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  571  	return ret;
-f63601fd616ab3 drivers/crypto/marvell/cesa.c      Boris Brezillon 2015-06-18  572  }
-
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 020d58967d4e..84dad1511d1e 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -769,12 +769,13 @@ static void record_times(struct psi_group_cpu *groupc, u64 now)
+ }
+ 
+ static void psi_group_change(struct psi_group *group, int cpu,
+-			     unsigned int clear, unsigned int set, u64 now,
++			     unsigned int clear, unsigned int set,
+ 			     bool wake_clock)
+ {
+ 	struct psi_group_cpu *groupc;
+ 	unsigned int t, m;
+ 	u32 state_mask;
++	u64 now;
+ 
+ 	lockdep_assert_rq_held(cpu_rq(cpu));
+ 	groupc = per_cpu_ptr(group->pcpu, cpu);
+@@ -789,6 +790,7 @@ static void psi_group_change(struct psi_group *group, int cpu,
+ 	 * SOME and FULL time these may have resulted in.
+ 	 */
+ 	write_seqcount_begin(&groupc->seq);
++	now = cpu_clock(cpu);
+ 
+ 	/*
+ 	 * Start with TSK_ONCPU, which doesn't have a corresponding
+@@ -899,18 +901,15 @@ void psi_task_change(struct task_struct *task, int clear, int set)
+ {
+ 	int cpu = task_cpu(task);
+ 	struct psi_group *group;
+-	u64 now;
+ 
+ 	if (!task->pid)
+ 		return;
+ 
+ 	psi_flags_change(task, clear, set);
+ 
+-	now = cpu_clock(cpu);
+-
+ 	group = task_psi_group(task);
+ 	do {
+-		psi_group_change(group, cpu, clear, set, now, true);
++		psi_group_change(group, cpu, clear, set, true);
+ 	} while ((group = group->parent));
+ }
+ 
+@@ -919,7 +918,6 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ {
+ 	struct psi_group *group, *common = NULL;
+ 	int cpu = task_cpu(prev);
+-	u64 now = cpu_clock(cpu);
+ 
+ 	if (next->pid) {
+ 		psi_flags_change(next, 0, TSK_ONCPU);
+@@ -936,7 +934,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ 				break;
+ 			}
+ 
+-			psi_group_change(group, cpu, 0, TSK_ONCPU, now, true);
++			psi_group_change(group, cpu, 0, TSK_ONCPU, true);
+ 		} while ((group = group->parent));
+ 	}
+ 
+@@ -974,7 +972,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ 		do {
+ 			if (group == common)
+ 				break;
+-			psi_group_change(group, cpu, clear, set, now, wake_clock);
++			psi_group_change(group, cpu, clear, set, wake_clock);
+ 		} while ((group = group->parent));
+ 
+ 		/*
+@@ -986,7 +984,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ 		if ((prev->psi_flags ^ next->psi_flags) & ~TSK_ONCPU) {
+ 			clear &= ~TSK_ONCPU;
+ 			for (; group; group = group->parent)
+-				psi_group_change(group, cpu, clear, set, now, wake_clock);
++				psi_group_change(group, cpu, clear, set, wake_clock);
+ 		}
+ 	}
+ }
+@@ -997,8 +995,8 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
+ 	int cpu = task_cpu(curr);
+ 	struct psi_group *group;
+ 	struct psi_group_cpu *groupc;
+-	u64 now, irq;
+ 	s64 delta;
++	u64 irq;
+ 
+ 	if (static_branch_likely(&psi_disabled))
+ 		return;
+@@ -1011,7 +1009,6 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
+ 	if (prev && task_psi_group(prev) == group)
+ 		return;
+ 
+-	now = cpu_clock(cpu);
+ 	irq = irq_time_read(cpu);
+ 	delta = (s64)(irq - rq->psi_irq_time);
+ 	if (delta < 0)
+@@ -1019,12 +1016,15 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
+ 	rq->psi_irq_time = irq;
+ 
+ 	do {
++		u64 now;
++
+ 		if (!group->enabled)
+ 			continue;
+ 
+ 		groupc = per_cpu_ptr(group->pcpu, cpu);
+ 
+ 		write_seqcount_begin(&groupc->seq);
++		now = cpu_clock(cpu);
+ 
+ 		record_times(groupc, now);
+ 		groupc->times[PSI_IRQ_FULL] += delta;
+@@ -1223,11 +1223,9 @@ void psi_cgroup_restart(struct psi_group *group)
+ 	for_each_possible_cpu(cpu) {
+ 		struct rq *rq = cpu_rq(cpu);
+ 		struct rq_flags rf;
+-		u64 now;
+ 
+ 		rq_lock_irq(rq, &rf);
+-		now = cpu_clock(cpu);
+-		psi_group_change(group, cpu, 0, 0, now, true);
++		psi_group_change(group, cpu, 0, 0, true);
+ 		rq_unlock_irq(rq, &rf);
+ 	}
+ }
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.2
 
 
