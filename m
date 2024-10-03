@@ -1,205 +1,110 @@
-Return-Path: <linux-kernel+bounces-349210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5545398F288
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:28:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8AA98F289
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D12341F21C00
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47BE8281570
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175C01A2569;
-	Thu,  3 Oct 2024 15:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1FF1A2569;
+	Thu,  3 Oct 2024 15:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nS4k6zQd"
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LczFIZBQ"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB5C1A08AB
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E9F1A0AF8
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727969294; cv=none; b=IEB3X0VDw4Qh8N1J+MNc46+fSUeEOXdoy7qvlQUsShDH+SMtsvM3fPmpS1DvO5K+6bGp2Saobwf2vxNG6dg6Z1UCov7sEv+lKGs+0uai/GHb+zv06iEQsMI75lutS0MMig3M04RY+bo9I3GB2iwtnFy3LH63FOtpfzMIKtCEUZg=
+	t=1727969305; cv=none; b=B4QWPbK6Fq1itVoHl/XLynZOk8gPzn3IbBBDKOfLlzAayFqfMA4uo5njZ1oKsOz14A1rkxLqjFLtTa2ribyZAP99befBecPJr+IWLCg8I5vgejG5Yosuz9XGbnEJy0/p+aEw6/GZ8UJ8b+r7NAzejo8zf14cPlTEY6Kjnc81eVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727969294; c=relaxed/simple;
-	bh=23DmI3ZOG95lNnEDbHKLxf0PlXPI5rDQVtmX+6ep1CU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JI2v3wj3oQ4jqftkz8o+2xojC68NG6990kTg3omsS6jc+qunuXC83tHGhbaAOM66W8SSSkN+pwr788+6WHEbKkwVjDGMJv1Ujs96xrjNZ1M7b4pWNMz3jBsosmlmZlp2iH9pnPm3cPx1QwUNYFQKDsPrCiovGfGcs5vFwjnDLxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nS4k6zQd; arc=none smtp.client-ip=84.16.66.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XKFtT3QqXzkrw;
-	Thu,  3 Oct 2024 17:28:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1727969281;
-	bh=RtMnr2s6u7cUmsuv8MOgfvVfWmTfShe/DgZRHT5uuFw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nS4k6zQd41hGTaVBKT9BN2UGiuWzLZ5tslKz9NF49mAukMpAxD0TbmXB9IpY89Qpv
-	 CU2M35TTSM80Ktzl4HYOmT9/PJx6lkORP9/bV5Rnn/bPplAHBY2yFadY3nJl+c8weS
-	 QxJ6A/HfIxj0jOXnfZCKEww4U6sSw0CU8mJZuU7s=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XKFtS6lqqzJ4X;
-	Thu,  3 Oct 2024 17:28:00 +0200 (CEST)
-Date: Thu, 3 Oct 2024 17:27:55 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] samples/landlock: Refactor --help message in
- function
-Message-ID: <20241003.ieh5gaeCh9Sh@digikod.net>
-References: <20241003005042.258991-1-matthieu@buffet.re>
- <20241003005042.258991-2-matthieu@buffet.re>
+	s=arc-20240116; t=1727969305; c=relaxed/simple;
+	bh=o4tSB0OS+wj4OBBCgHzoXYq0HMKB0OkF9xUGHJud/6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B2PM8aPDFQlZE9pRbcIQ0Is0ClIZAMXqhz5MAaXb8Rq/oWTTneNhheFO6ZomHghJiTcK6vhLhSZYLzdCS6AiWMyZJkeOuBMKwjNobxnfZRTn1IkZ7q3wD9d4dMCOsGFQEYSDFVgxVugN2ztEv7WrWoyxLdaHTF8Ubz40JNAJxiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LczFIZBQ; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 51F40240007;
+	Thu,  3 Oct 2024 15:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727969301;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uxCb51voBr0vjEKD8Q9WRN/h6yqu39Aa5iGYpPO4WHM=;
+	b=LczFIZBQBywG/pvyV+PJInj0A/ure9+4X9XrYO+ADcmJvKs85YwuuAol2kPqw5kC/zAk7W
+	KW+K9QESHu6r2EiGFUIFVnR2xswJuJKNFfBhURnd7rjx22L4dGJoUxcKE7Ib48L55oCmtB
+	7kGj506/RD6XSv5e0B+P2RFcGv/OHmuD098Um52Wu/EK972kYgJN+S8mL3tfmbGEleeQ/u
+	ESrzlctfK9Hvu3DAXUePCOXEKowvT0+/raVHY/H5l/hE/9z18jvTYKfVUs7FOZkzoO8TPB
+	v47DIC6MenA9s3iEBG9IAAtLraXOng5wuEkeio166YTAffoiAX+mFCmqctQTxg==
+Date: Thu, 3 Oct 2024 17:28:20 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Han Xu <han.xu@nxp.com>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, imx@lists.linux.dev, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] mtd: nand: raw: gpmi: improve power management
+ handling
+Message-ID: <20241003172820.50324192@xps-13>
+In-Reply-To: <20241003150500.uz2efay7kadu47if@cozumel>
+References: <20241002153944.69733-1-han.xu@nxp.com>
+	<20241002153944.69733-2-han.xu@nxp.com>
+	<20241003093840.2965be20@xps-13>
+	<20241003150500.uz2efay7kadu47if@cozumel>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241003005042.258991-2-matthieu@buffet.re>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-This series looks good to me, but each patch still needs to pass
-clang-format.
+Hi Han,
 
-On Thu, Oct 03, 2024 at 02:50:41AM +0200, Matthieu Buffet wrote:
-> Help message is getting larger with each new supported feature (scopes,
-> and soon UDP). Refactor it away into a separate helper function.
-> 
-> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
-> ---
->  samples/landlock/sandboxer.c | 87 +++++++++++++++++++-----------------
->  1 file changed, 46 insertions(+), 41 deletions(-)
-> 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index aff5ef808e22..f16994d35d9e 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -295,6 +295,51 @@ static bool check_ruleset_scope(const char *const env_var,
->  
->  #define LANDLOCK_ABI_LAST 6
->  
-> +static void print_help(const char *argv0)
-> +{
-> +	fprintf(stderr,
-> +		"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s "
-> +		"<cmd> [args]...\n\n",
-> +		ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> +		ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv0);
-> +	fprintf(stderr,
-> +		"Execute a command in a restricted environment.\n\n");
-> +	fprintf(stderr,
-> +		"Environment variables containing paths and ports "
-> +		"each separated by a colon:\n");
-> +	fprintf(stderr,
-> +		"* %s: list of paths allowed to be used in a read-only way.\n",
-> +		ENV_FS_RO_NAME);
-> +	fprintf(stderr,
-> +		"* %s: list of paths allowed to be used in a read-write way.\n\n",
-> +		ENV_FS_RW_NAME);
-> +	fprintf(stderr,
-> +		"Environment variables containing ports are optional "
-> +		"and could be skipped.\n");
-> +	fprintf(stderr,
-> +		"* %s: list of ports allowed to bind (server).\n",
-> +		ENV_TCP_BIND_NAME);
-> +	fprintf(stderr,
-> +		"* %s: list of ports allowed to connect (client).\n",
-> +		ENV_TCP_CONNECT_NAME);
-> +	fprintf(stderr, "* %s: list of scoped IPCs.\n",
-> +		ENV_SCOPED_NAME);
-> +	fprintf(stderr,
-> +		"\nexample:\n"
-> +		"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
-> +		"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
-> +		"%s=\"9418\" "
-> +		"%s=\"80:443\" "
-> +		"%s=\"a:s\" "
-> +		"%s bash -i\n\n",
-> +		ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> +		ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv0);
-> +	fprintf(stderr,
-> +		"This sandboxer can use Landlock features "
-> +		"up to ABI version %d.\n",
-> +		LANDLOCK_ABI_LAST);
-> +}
+han.xu@nxp.com wrote on Thu, 3 Oct 2024 10:05:16 -0500:
 
-While we are at it, could you please transform this set of fprintf()
-calls to a static const char[] with "%1$s" where we need argv0, and use
-the defined constants in place instead of %s (with string conversion for
-the ABI).  This would make the whole help easier to read and maintain.
+> On 24/10/03 09:38AM, Miquel Raynal wrote:
+> > Hi Han,
+> >=20
+> > han.xu@nxp.com wrote on Wed,  2 Oct 2024 10:39:44 -0500:
+> >  =20
+> > > The commit refactors the power management handling in the gpmi nand
+> > > driver. It removes redundant pm_runtime calls in the probe function,
+> > > handles the pad control in suspend and resume, and moves the calls to
+> > > acquire and release DMA channels to the runtime suspend and resume
+> > > functions. =20
+> >=20
+> > May I know the motivation to acquire and release the DMA channels
+> > during suspend? In general it seems like a different change which I'd
+> > prefer to see in its own commit with a justification. The rest looks
+> > ok otherwise. =20
+>=20
+> Hi Miquel,
+>=20
+> Thanks for your comments. IMHO there is no much logic changes indeed, jus=
+t move
+> the dma channel acquire and release from system pm to the runtime pm, rel=
+easing
+> the unused resources as early as possible. If you think it's necessary I =
+will
+> split the patch into two parts.
 
-We'll need some help from the preprocessor as explained in
-https://gcc.gnu.org/onlinedocs/cpp/Stringizing.html:
+Actually I don't understand why these channels are released and
+acquired again. Does it make sense to do that in the (runtime)
+suspend/resume path? I'd be in favor of avoiding this extra
+configuration which as a first sight does not seem required here.
 
-#define XSTR(s) STR(s)
-#define STR(s) #s
-
-static const char help[] =
-"usage: " ENV_FS_RO_NAME "=\"...\" [...] %1$s "
-[...]
-"up to ABI version " XSTR(LANDLOCK_ABI_LAST) ".\n";
-
-> +
->  int main(const int argc, char *const argv[], char *const *const envp)
->  {
->  	const char *cmd_path;
-> @@ -313,47 +358,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  	};
->  
->  	if (argc < 2) {
-> -		fprintf(stderr,
-> -			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s "
-> -			"<cmd> [args]...\n\n",
-> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> -			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
-> -		fprintf(stderr,
-> -			"Execute a command in a restricted environment.\n\n");
-> -		fprintf(stderr,
-> -			"Environment variables containing paths and ports "
-> -			"each separated by a colon:\n");
-> -		fprintf(stderr,
-> -			"* %s: list of paths allowed to be used in a read-only way.\n",
-> -			ENV_FS_RO_NAME);
-> -		fprintf(stderr,
-> -			"* %s: list of paths allowed to be used in a read-write way.\n\n",
-> -			ENV_FS_RW_NAME);
-> -		fprintf(stderr,
-> -			"Environment variables containing ports are optional "
-> -			"and could be skipped.\n");
-> -		fprintf(stderr,
-> -			"* %s: list of ports allowed to bind (server).\n",
-> -			ENV_TCP_BIND_NAME);
-> -		fprintf(stderr,
-> -			"* %s: list of ports allowed to connect (client).\n",
-> -			ENV_TCP_CONNECT_NAME);
-> -		fprintf(stderr, "* %s: list of scoped IPCs.\n",
-> -			ENV_SCOPED_NAME);
-> -		fprintf(stderr,
-> -			"\nexample:\n"
-> -			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
-> -			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
-> -			"%s=\"9418\" "
-> -			"%s=\"80:443\" "
-> -			"%s=\"a:s\" "
-> -			"%s bash -i\n\n",
-> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> -			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
-> -		fprintf(stderr,
-> -			"This sandboxer can use Landlock features "
-> -			"up to ABI version %d.\n",
-> -			LANDLOCK_ABI_LAST);
-> +		print_help(argv[0]);
->  		return 1;
->  	}
->  
-> -- 
-> 2.39.2
-> 
-> 
+Thanks,
+Miqu=C3=A8l
 
