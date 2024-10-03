@@ -1,117 +1,89 @@
-Return-Path: <linux-kernel+bounces-348848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A5D98EC88
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:52:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C6A98EC8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E0C41F223EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:52:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884ECB2346A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EA414D456;
-	Thu,  3 Oct 2024 09:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1AE1487D5;
+	Thu,  3 Oct 2024 09:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HOmT5H4G"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bkZZ4uVg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8119714D29D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F193823C3;
+	Thu,  3 Oct 2024 09:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727949138; cv=none; b=L/F2t+wvLkC27xWic8UhFOdHVmvd9UNeMU9WiRTXQ8T1jKFDXeAg/tmbluLZP5Faulnrm3tz9FEJm00Ua0sRBqkMlg/pzI4vikX6hI58PXBkmgzPc15eJz77hsbRyaLy0ehSe3zbSEYe1zNZRAB5MGIwx/W8lbj4bGFxqpPO/s0=
+	t=1727949181; cv=none; b=joXKFUCwkYlJfhv6UEh2+q/+QjZvvr6yt6C+eYmwO58WyviK90uEK0yhhL970RkvMTXem4RcKYv4b/2Uiw6etUCSskaDVlD6RVpVOQUIqAAAwzuYzlKg2nDybK70+g+zVrk9Yd91psHE/PX0T3Dsti+bhbXeO+a9yni8dcJQTEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727949138; c=relaxed/simple;
-	bh=ZK23YV09G5NPnhMJsU2t6zsI91DapwC8NpJ+yBiMqKo=;
+	s=arc-20240116; t=1727949181; c=relaxed/simple;
+	bh=r60vZJZ6L6N7kj/zd/wI6zNB6uYbLdjKz0S6lEoaP5c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dnV0KvsVRpLcMPcvqolhU8d3KCsTf0Lr6ojvvlQ399mLvUukOEcUnewdl80knmBJcdOV662GLJXOof4r3ViUdtHyuo0J1BNN2NjUzl4glwdO1BlMXiBINW/chsuCp4a6DcKJ4gPqPDEk2mKveH/Rxqd2s1ro6aIfxOjffAPV8SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HOmT5H4G; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d24f98215so115766166b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 02:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727949135; x=1728553935; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=198000I1J4GZG3LQ4nrMVIGx7oFrEH8rZ5KRJ7ZtSTU=;
-        b=HOmT5H4GYAQB8Nc3Wv5UhOcwMvONKHS6y3t9wdhpoQeJf5PrjHWxUcyitehGtLftO+
-         aPgvDB1GmDulOmvh9n4WNQ1OqywJ3AEZJM0ouOWqXIyYsoNySRjefy2oPSheUCt93UoS
-         /cs80IJtMxNWWEWlRPXbEOnE9B6K5RhNtTYV9H/rRktmeC/pd4dm+YjNDOX+taI7+GNt
-         UNx9tybg9pcGSDdlxUokv8nlN1m/8YGgpUJNDTEHPp3T69FqHUQE+uqBEulZgY9J3I3B
-         Uaju1fdgUz4GHnBMNDc3dQW7gX2Pm0rCPcpPxBbhM3HvDJ1/gEu56G6EMKId3ZS9vOSP
-         5zWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727949135; x=1728553935;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=198000I1J4GZG3LQ4nrMVIGx7oFrEH8rZ5KRJ7ZtSTU=;
-        b=dTzh6vMxArePS/KSS+dI1KzVdXN3MQkxV/17+7UgQeLqiLtybZ3ZAtLVv2vfmV3Grp
-         FLd/U5zSF2edJ0F5vZfRtIi1LQK9vgWPX2saIOkGOtYmMxozvpCBJEN9Gfr7nPcBw3NK
-         Sb9RWsa8T1o0YZXrqHvzdAQeiKlAvMbJG9IRIej87ovDupbN4wfWtp0zxJl9iQstDokN
-         x2MJbt9t9i18Y+8/+uNOlXeX1ttCRmipFFyc9JcLEBfsojl4QwYXG9XfvhDhbBNif1oM
-         etcOOtqCBwt8df+h2qrCw1PlSLCtmtM9CgMqj21Dg4MHBj2D832h8fQgyKDMbHXeq7DU
-         fsEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnR9y2lm+ON2ytaLKQsbnY7SsS+d3IIvzQ8LoUUcT0vXVaNGqDRg97PRRuyT+mPCaxam5VCik4qi2ez+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQZaPxjIhldWHXG4nmYMZu2j0B3t3ctY72AW0yHJMKZ19F/wRV
-	dOC5mIoDRiKTLJKDwsZSCU7w1Pf1HvliWoa5zQmsumWjFyR/pvcZ5YxBeePnJw==
-X-Google-Smtp-Source: AGHT+IEftv/Se2bfhfJELlrfHZCrJlTKEzUH35+9TLP/9p/XMuTeo0i+E4SjE/zliqO64y/ipRHYcQ==
-X-Received: by 2002:a17:906:794c:b0:a90:b6e8:6919 with SMTP id a640c23a62f3a-a98f83615e1mr607022766b.48.1727949134451;
-        Thu, 03 Oct 2024 02:52:14 -0700 (PDT)
-Received: from google.com (40.162.204.35.bc.googleusercontent.com. [35.204.162.40])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9910285a85sm62300966b.39.2024.10.03.02.52.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 02:52:13 -0700 (PDT)
-Date: Thu, 3 Oct 2024 09:52:09 +0000
-From: Quentin Perret <qperret@google.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com,
-	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
-	qyousef@layalina.io, hongyan.xia2@arm.com
-Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
-Message-ID: <Zv5pSdRsSsfRSNsJ@google.com>
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-5-vincent.guittot@linaro.org>
- <Zu2gHOv7mqArWXLZ@google.com>
- <CAKfTPtCvwPq+8pQcTZePiee9EXxKAQS=J57X2OavWFrQwkDt5A@mail.gmail.com>
- <ZvUlB8s-zIkDQji7@google.com>
- <CAKfTPtAzG7u0+e=8skMhnCETVxbDTOxT-zLaoqUXB-Zz5=4t+A@mail.gmail.com>
- <Zvw2O4JGBpMXwOZA@google.com>
- <CAKfTPtDOhNmL0Nn3g-agnL5HH5nhwXb3-sfzydEe4nvRKAq3HQ@mail.gmail.com>
- <Zv5UDufqpoXvSocy@google.com>
- <CAKfTPtAmgi0QbtjqjJ_mzq6qat8ivd3vXXNYMiniDeKvLwujDQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H4614Otkom9JJPTQ0VSYRsgRg37apZza09tmAFXifQDjJ26Sgj8PKJc1J9YSmjG1pvA6JUq5SxhYbeezl2i7BflcJjrin0ZE8EhTCHA+Pm8oLxdZK1RTiud6KsHSkz4D+3d1DaC+FjJCGccqs0fxAc9IR1FUZp4Fwnq5P1oT34E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bkZZ4uVg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03A0EC4CEC5;
+	Thu,  3 Oct 2024 09:52:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727949180;
+	bh=r60vZJZ6L6N7kj/zd/wI6zNB6uYbLdjKz0S6lEoaP5c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bkZZ4uVgWjc0N+61OfaOJSF5I8pztDIEd+CDcaXuqdEAnpBqaVh6K7Mw4Z5zJSnwS
+	 Gr42seg4MFQin24dekGDSosnp4J3fztfBTlCxLMdtZ7MPcBlrEKJN+SquLS0jC9ChI
+	 /FbvltcJ/V1wwdZevbZzFDqHJ0uF6suMGGD8gky030TGu0S3P4gBkPba8m791MKZil
+	 BkLmD73tyZUOhWgFUkioXaEwb/MuTJJbEuXAI+b2cgg6fURIxveDRLPrl649ydxPES
+	 jpy741S3hqtLWiE/0nnHg3FJTn6gxf7zzqpPi0Gn1/aw7n30g6djUiyP2yXn1PhbSG
+	 tjpra4c3WbczQ==
+Date: Thu, 3 Oct 2024 11:52:57 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-riscv@lists.infradead.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
+	Andy Chiu <andybnac@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v1 5/5] dt-bindings: riscv: document vector crypto
+ requirements
+Message-ID: <kduc5r2nisteqax3zbxkja6qevdi2pdu6nk4sqabkap7nxtmok@sxq7yhptrvqc>
+References: <20241002-defeat-pavestone-73d712895f0b@spud>
+ <20241002-sincerity-urgent-acdb0e8d8a66@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtAmgi0QbtjqjJ_mzq6qat8ivd3vXXNYMiniDeKvLwujDQ@mail.gmail.com>
+In-Reply-To: <20241002-sincerity-urgent-acdb0e8d8a66@spud>
 
-On Thursday 03 Oct 2024 at 10:57:55 (+0200), Vincent Guittot wrote:
-> The current pelt algorithm track actual cpu utilization and can go
-> above cpu capacity (but not above 1024) so a  task utilization can
-> become bigger than a little cpu capacity
+On Wed, Oct 02, 2024 at 05:10:58PM +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> Section 35.2. Extensions Overview of [1] says:
+> | The Zvknhb and Zvbc Vector Crypto Extensions --and accordingly the composite extensions Zvkn and
+> | Zvks-- (sic) require a Zve64x base, or application ("V") base Vector Extension.
+> | All of the other Vector Crypto Extensions can be built on any embedded (Zve*) or application ("V") base
+> | Vector Extension
+> 
+> Apply these rules in the binding, so that invalid combinations can be
+> avoided.
+> 
+> Link: https://github.com/riscv/riscv-isa-manual/releases/tag/riscv-isa-release-698e64a-2024-09-09 [1]
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  .../devicetree/bindings/riscv/extensions.yaml | 32 +++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 
-Right, the time invariance thing. So yes, I still think that a mix of
-co-scheduling and task migrations (which is likely common in the
-overcommitted state) will cause some CPUs to appear lightly utilized at
-least transiently, hence tricking feec() into thinking it can help when
-it really can't.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> As replied to Lukasz, if you want to discard utilization of a trask
-> you need to check the previous cpu
+Best regards,
+Krzysztof
 
-Please help me out here because I'm still not quite sure what we're
-talking about. Could you please expand a bit?
-
-Thanks,
-Quentin
 
