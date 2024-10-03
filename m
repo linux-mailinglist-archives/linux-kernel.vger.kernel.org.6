@@ -1,88 +1,73 @@
-Return-Path: <linux-kernel+bounces-349658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D759798F9BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:17:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9204498F9BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61D12B22162
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179A01C20860
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EE61CB53A;
-	Thu,  3 Oct 2024 22:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57D21CC893;
+	Thu,  3 Oct 2024 22:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V97lcLm4"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="XEHY3a6R"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4460824BD;
-	Thu,  3 Oct 2024 22:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C1D1BFDFF;
+	Thu,  3 Oct 2024 22:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727993858; cv=none; b=t2tE4dCQIMkttYq3sZVjWOC6EV6RK1p4jkXeQvEWBKN8N56gbY9TijeK2OXCNVEn1co1uIQiD4HcaPMr8Gy3cmwfo6lFzS3fBH7RIa1vItGf5vhYvI34oA+yTqKBze57LBvwbDzWhcTM7ZvZyqYFOMzgqO9DiGMAg6Boexf4/9Q=
+	t=1727993788; cv=none; b=on5bZkgmSSengzlHTbhIBq+qfGRqWsDrNGV7xX6x8sc+j9NS0RNCFQNA8MyJZpAhKsKRCO1maAvgb3zxo01c39d7lNhD/4pexrcRH/ubyj85VDxxBe6bIal1kM0EOOErMZ5LVvjTCUFBQltzeMFQVzUfe+A+Bcefdot40PLUSio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727993858; c=relaxed/simple;
-	bh=Ymh2tpS1JI2NHOim1p+BjzOidAveJc2fGryZHKnRDpE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZURI/IA423miIyhnCQakXpaMVZxlmnO/fqmE7Nrk5ZeD92ekoWLurrxYArtO3RFxDfc1FOuLcnsosKzkNr9rjDzvuUADNeetQTcDjpB57GHBzrCADvqarLuMUQY6qmbVTRRpt2168Vqs/8vlzClzNOYsleJcOjCHSf8vI8he5i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V97lcLm4; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso16474491fa.0;
-        Thu, 03 Oct 2024 15:17:36 -0700 (PDT)
+	s=arc-20240116; t=1727993788; c=relaxed/simple;
+	bh=J/rkdBOnFENzr/Ao83muSATxMMgLCURc4fzHWx3WNr4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Iq5YUneVDeQywC6bdF0YhI5eMeQR3nUn8bFdf9qAAbsj4kKPtCLnNtSX87BfbyPwXlXn6UJy7CS73CcY1/p82jGhEtVHA3tW3VwlzkrRjyz+FiRwdrLxvQ2oV+y4vBMkA7Kd2YfFG1kJWUMK8git7Bp9StPiNtcg+SiXXguMTiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=XEHY3a6R; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727993855; x=1728598655; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lo03yBFFODZstMfsdWLSOlbjB57/RWRNzFo3/1cKqnQ=;
-        b=V97lcLm4l35g8Az8mujQLDGHO83/8/JlZgMm2r/Qc4tn16peyN3T7PgR0/PwYWl2no
-         r1x9g/SKX7Hu0xO3tDcZ/RSCIZ8YeAXEjiWd4lUPRvTP2dVBImFYWlrHdzqaAu6ila0w
-         AE8fJ5YWWIwJGIH/TnG+zxinnI4MUTX92UeyvPsyHUcR13veaCrUny9EhuwwO09zukNW
-         KZJQ+Bsmbz0KntHYGxRW62dHnzHEqdmx+PeOVsev4H0s82Rq0M84PIcql9K1Rvyoif/c
-         WO4QsMHvlgr6LwJ7jWfyFmnrPycn4lsCxyN1ehhYwdZTqny/NacGNQCuN/HeOyH4EziQ
-         kCxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727993855; x=1728598655;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lo03yBFFODZstMfsdWLSOlbjB57/RWRNzFo3/1cKqnQ=;
-        b=M6iRstHk7MIv6rxyAer6oq4I0Zbk8Kff0jp2JaDBL6ee49VAeIlF2ZF6c45mvgUL3T
-         8qI4TAplTgToekLc/e3txcBzDiN+8tnaivLtlNBjuyCstbbSJno+mjvZoQHHTHuP1Zbn
-         fkxGCdIii/hRvUYyI8ZQK5fowhqBtwg6RW8yAPPXmrM7XAJiys0dovJ9CMsnZJXQLEgP
-         pKFOLSQYAL8ilGHGszOTuQn4jozrXOOGNc0j167UVxSYqIT6SdOfKEyN5INZi58+wHUA
-         sIu84kPW4Jb+MttnejRQuNI95rpievKBl5TNDFd+FeJmDIUbTj/lrUiJ8df8dHY60G32
-         oGeg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSK/o0/g7+aJYxVIU1AveHIWhpCRsFgBydAzEG08R+EaT6pP9PXf6TFKYzOUQYmcOuezoIc4UZ6jEGweA=@vger.kernel.org, AJvYcCWAFXYyUETz63CiIfs6CUNTYCop3R+C4Zr/eV5aHqtMOzuXYcAxg+g40mrzQNASFKNg/Lg79M5wfIyTJL6Uuy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFOtopHUaCFa/YcBN1nCaJDrTJw5tbNAjcnJLiR+qWbjI1Jfjf
-	txIJ7Fph++HiOLyFy8i4mhxRNDaAKjZtCcSLEBgfvAkXiRjYjItN
-X-Google-Smtp-Source: AGHT+IG12SpHijBRGXnrLLIsP9edGAXbq0kxeeG2mPlpZc4fneT6+0Ohi0oAfNbIPRCboytuYOt7fw==
-X-Received: by 2002:a05:6512:12d1:b0:539:94df:38e9 with SMTP id 2adb3069b0e04-539ab88af26mr456917e87.31.1727993854565;
-        Thu, 03 Oct 2024 15:17:34 -0700 (PDT)
-Received: from mbp-deepak.lan (89-69-93-57.dynamic.chello.pl. [89.69.93.57])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9910473160sm137958966b.167.2024.10.03.15.17.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 15:17:33 -0700 (PDT)
-From: Deepak Thukral <iapain@gmail.com>
-To: 
-Cc: Deepak Thukral <iapain@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Nell Shamrell-Harrington <nells@linux.microsoft.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rust: update dbg macro outputs in docs
-Date: Fri,  4 Oct 2024 00:15:37 +0200
-Message-Id: <20241003221536.34826-1-iapain@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-145)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1727993786; x=1759529786;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=x7S5TLf0uNeKxKynG+d6zNMxgJ7TApjOSq9+bG8QoKE=;
+  b=XEHY3a6R9mI+m9uNFF3osvfJmCpl8HmZddVK9Fe2uDPWeUmSmsXvIGaY
+   OZESwTUuG36/7JLvGrwRQEEFF0a5Q+Mpn4LnRjqFA7UmSRbptmBq0Ab7s
+   fBRIgeZQQv2DHHoDdFCsLtUjhuKjBjO0GpP6CQiF6vXKQB405E46KOhTk
+   E=;
+X-IronPort-AV: E=Sophos;i="6.11,175,1725321600"; 
+   d="scan'208";a="663541638"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 22:16:22 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.38.20:54321]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.37.239:2525] with esmtp (Farcaster)
+ id 2b21fd1b-19d3-4b7c-a31b-14397a46a683; Thu, 3 Oct 2024 22:16:21 +0000 (UTC)
+X-Farcaster-Flow-ID: 2b21fd1b-19d3-4b7c-a31b-14397a46a683
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 3 Oct 2024 22:16:21 +0000
+Received: from 88665a182662.ant.amazon.com.com (10.187.171.32) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Thu, 3 Oct 2024 22:16:18 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <a.kovaleva@yadro.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <johannes@sipsolutions.net>,
+	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <linux@yadro.com>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <stable@vger.kernel.org>,
+	<kuniyu@amazon.com>
+Subject: Re: [PATCH v3 net] net: Fix an unsafe loop on the list
+Date: Thu, 3 Oct 2024 15:16:07 -0700
+Message-ID: <20241003221607.13408-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20241003104431.12391-1-a.kovaleva@yadro.com>
+References: <20241003104431.12391-1-a.kovaleva@yadro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,64 +75,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D038UWB002.ant.amazon.com (10.13.139.185) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Hi,
+From: Anastasia Kovaleva <a.kovaleva@yadro.com>
+Date: Thu, 3 Oct 2024 13:44:31 +0300
+> The kernel may crash when deleting a genetlink family if there are still
+> listeners for that family:
+> 
+> Oops: Kernel access of bad area, sig: 11 [#1]
+>   ...
+>   NIP [c000000000c080bc] netlink_update_socket_mc+0x3c/0xc0
+>   LR [c000000000c0f764] __netlink_clear_multicast_users+0x74/0xc0
+>   Call Trace:
+> __netlink_clear_multicast_users+0x74/0xc0
+> genl_unregister_family+0xd4/0x2d0
+> 
+> Change the unsafe loop on the list to a safe one, because inside the
+> loop there is an element removal from this list.
+> 
+> Fixes: b8273570f802 ("genetlink: fix netns vs. netlink table locking (2)")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Anastasia Kovaleva <a.kovaleva@yadro.com>
+> Reviewed-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
 
-This patch updates outdated examples for `dbg!` macro.
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
-Signed-off-by: Deepak Thukral <iapain@gmail.com>
----
- rust/kernel/std_vendor.rs | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/rust/kernel/std_vendor.rs b/rust/kernel/std_vendor.rs
-index 67bf9d37d..464b2c4b5 100644
---- a/rust/kernel/std_vendor.rs
-+++ b/rust/kernel/std_vendor.rs
-@@ -16,7 +16,7 @@
- /// let a = 2;
- /// # #[allow(clippy::dbg_macro)]
- /// let b = dbg!(a * 2) + 1;
--/// //      ^-- prints: [src/main.rs:2] a * 2 = 4
-+/// //      ^-- prints: [src/main.rs:2:9] a * 2 = 4
- /// assert_eq!(b, 5);
- /// ```
- ///
-@@ -65,7 +65,7 @@
- /// This prints to the kernel log:
- ///
- /// ```text,ignore
--/// [src/main.rs:4] n.checked_sub(4) = None
-+/// [src/main.rs:4:8] n.checked_sub(4) = None
- /// ```
- ///
- /// Naive factorial implementation:
-@@ -88,15 +88,15 @@
- /// This prints to the kernel log:
- ///
- /// ```text,ignore
--/// [src/main.rs:3] n <= 1 = false
--/// [src/main.rs:3] n <= 1 = false
--/// [src/main.rs:3] n <= 1 = false
--/// [src/main.rs:3] n <= 1 = true
--/// [src/main.rs:4] 1 = 1
--/// [src/main.rs:5] n * factorial(n - 1) = 2
--/// [src/main.rs:5] n * factorial(n - 1) = 6
--/// [src/main.rs:5] n * factorial(n - 1) = 24
--/// [src/main.rs:11] factorial(4) = 24
-+/// [src/main.rs:3:8] n <= 1 = false
-+/// [src/main.rs:3:8] n <= 1 = false
-+/// [src/main.rs:3:8] n <= 1 = false
-+/// [src/main.rs:3:8] n <= 1 = true
-+/// [src/main.rs:4:9] 1 = 1
-+/// [src/main.rs:5:9] n * factorial(n - 1) = 2
-+/// [src/main.rs:5:9] n * factorial(n - 1) = 6
-+/// [src/main.rs:5:9] n * factorial(n - 1) = 24
-+/// [src/main.rs:11:1] factorial(4) = 24
- /// ```
- ///
- /// The `dbg!(..)` macro moves the input:
--- 
-2.39.3
-
+> ---
+> v3: remove trailing "\", change spaces to tab
+> v2: add CC tag for stable
+> ---
+>  include/net/sock.h       | 2 ++
+>  net/netlink/af_netlink.c | 3 ++-
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/net/sock.h b/include/net/sock.h
+> index c58ca8dd561b..db29c39e19a7 100644
+> --- a/include/net/sock.h
+> +++ b/include/net/sock.h
+> @@ -894,6 +894,8 @@ static inline void sk_add_bind_node(struct sock *sk,
+>  	hlist_for_each_entry_safe(__sk, tmp, list, sk_node)
+>  #define sk_for_each_bound(__sk, list) \
+>  	hlist_for_each_entry(__sk, list, sk_bind_node)
+> +#define sk_for_each_bound_safe(__sk, tmp, list) \
+> +	hlist_for_each_entry_safe(__sk, tmp, list, sk_bind_node)
+>  
+>  /**
+>   * sk_for_each_entry_offset_rcu - iterate over a list at a given struct offset
+> diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+> index 0b7a89db3ab7..0a9287fadb47 100644
+> --- a/net/netlink/af_netlink.c
+> +++ b/net/netlink/af_netlink.c
+> @@ -2136,8 +2136,9 @@ void __netlink_clear_multicast_users(struct sock *ksk, unsigned int group)
+>  {
+>  	struct sock *sk;
+>  	struct netlink_table *tbl = &nl_table[ksk->sk_protocol];
+> +	struct hlist_node *tmp;
+>  
+> -	sk_for_each_bound(sk, &tbl->mc_list)
+> +	sk_for_each_bound_safe(sk, tmp, &tbl->mc_list)
+>  		netlink_update_socket_mc(nlk_sk(sk), group, 0);
+>  }
+>  
+> -- 
+> 2.40.1
 
