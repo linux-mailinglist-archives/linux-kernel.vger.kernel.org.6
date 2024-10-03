@@ -1,281 +1,331 @@
-Return-Path: <linux-kernel+bounces-348844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A5198EC81
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:51:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6237298EC86
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86DED1F222A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:51:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CBE1F22A28
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9514E149E17;
-	Thu,  3 Oct 2024 09:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4854E149C4A;
+	Thu,  3 Oct 2024 09:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ngxFSt/D"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alzmZrOp"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F1D1482F3;
-	Thu,  3 Oct 2024 09:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43DA147C91;
+	Thu,  3 Oct 2024 09:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727949093; cv=none; b=TcXiXmFC5eVGp/36zu/YrdquWfXgTwW6WuFORD0qsXOBByo5lRMenwIh6Yb2FqkwtLab1DH7Rex8hywcbiu6BD7k8ap7zWjpOin6NuSohukRTwxnh31yqD9QnaMdds5ajBtL+FQFPrVfe6HRuRLqmlJpXmGgChuQTzdF+IM5+OY=
+	t=1727949129; cv=none; b=bQEBbAy7JqZVwkQ+1DKVj+C6+z8sgyQXHY8wzYf2NsRcqDltpBGBOfwqXomZdKLhgZjgdv4DHNN9T9FC/PhWxXynU/TrAWwnewxtl1nEZS7f8MKEJ2ZyMuqw+LQK+Ig87dwNrFGj5jMGiMJm9BmPvTYMflUXvgJdiJZJdZonPns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727949093; c=relaxed/simple;
-	bh=xizrXnGov7AAOVQuDbwecEI19TyCL4hiyjAWT7N7dyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jE6mEr/5aMVu0KtNIkixf1gdyEEVQqEohCuZmA6iLwpaNaQZA9/R7lnAV4fwumGCE3jz144IZ3Zh1sJ61FQ4hmjx58PQy6wN9GDEuo3RP47qlX9Q8lqTsEG/IAjGDoSYLKqxYlupG8hRu1Mloy8vLDygsxd+g8gvG8jI8hcU4Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ngxFSt/D; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727949092; x=1759485092;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xizrXnGov7AAOVQuDbwecEI19TyCL4hiyjAWT7N7dyI=;
-  b=ngxFSt/DNrlZyRW+zREGp+6XBJn5bF6T+5Zb/odQfg4T0vSgXhKMDiOa
-   KmJjovZ1q9vyupWBy8dnGEGc1/5ZRApKKaJRQJmS8IJwz+F/6scV5egcW
-   7AM2VR/SwL1Kdc6Y0tziNgRZHpfNE9kkYgYyieEhCgth29GdSdGkF9AcB
-   aYycYwPMmQe2ovHey7NfJvZAMKNohS3QRMxLiEOLCagRIVCsF06Oh/+kT
-   LK4Bg4Di6DRLGw+aWVYSOGhqPZ8Xq3GQRdyAL3SuZoy2lkwWrKprYNJrZ
-   +Rwi/xU3dAwYSVgMSSertEkGEpd4clRb0CJb6Ca9jRi0vG+UAQ4veIo9o
-   Q==;
-X-CSE-ConnectionGUID: d9yJv+2mQj6edybDDWuh+w==
-X-CSE-MsgGUID: c3ao4idzS5GP+s/ONr+cuA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="26943332"
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="26943332"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 02:51:28 -0700
-X-CSE-ConnectionGUID: 2W2P7847Th2tA56LK5cXmw==
-X-CSE-MsgGUID: CJbxo7dFRvC6Fqlo0rQvrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="74547792"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 03 Oct 2024 02:51:23 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swIUS-0000Fg-2P;
-	Thu, 03 Oct 2024 09:51:20 +0000
-Date: Thu, 3 Oct 2024 17:51:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	linux-trace-kernel@vger.kernel.org,
-	Michael Jeanson <mjeanson@efficios.com>
-Subject: Re: [PATCH resend 1/8] tracing: Declare system call tracepoints with
- TRACE_EVENT_SYSCALL
-Message-ID: <202410031750.cFIt2Rmx-lkp@intel.com>
-References: <20240930192357.1154417-2-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1727949129; c=relaxed/simple;
+	bh=vC1m1peYy1hyb6G9W1VTWJ/grPn1isN6p/zCL45KsYg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pr/VmPEZdWknma6HJy03Du8uBFwkkKwaHt2BSB1HthqtMHOUR2b035qONRYxbEatSBeRbuZpg2Q+GLoQyNM/AFSD0SwxpyIx0pLequDG4spddswDrWY6Rn/sXacI44Dh+NjtfU4aogezAwd42vhysrewNqRGZjkGdfKp9DjaiYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alzmZrOp; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-710e489860bso363322a34.1;
+        Thu, 03 Oct 2024 02:52:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727949126; x=1728553926; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UqfxhczWNqtWNNjCh+1twrtzgsdZIyTNwB7xDvw5m6A=;
+        b=alzmZrOp9zVEl+5h3ePCGfhszGlA2wC76B/B47J9inSt1CQYvtt+63+splTYG8n5sn
+         Ws4cQ6q17K3JtcyStguxZhiOo5BILYTLVQx/Y6C6gI4c2j4XZFZLP2uJUv6VnajqV/4d
+         eCIuo4zdt+t5EnujxGGRa88Rdv1RTmXJNJvD+oAqiYX4ohp/rpirKiOVwXQtTO2UxDGr
+         ljZZoPJsVEH3wJKD4qPOfCJ7IShBTS7Kbe7eBLH1y4B63YZ4yGXE0BZHP7k8o6v75JKe
+         6BPUF71o+tsVEwrLXamjdJo207PWfbgGQ7lDFREiIcawBM15MLm6jKLwzDkrm3STELgd
+         XfmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727949126; x=1728553926;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UqfxhczWNqtWNNjCh+1twrtzgsdZIyTNwB7xDvw5m6A=;
+        b=BVeHae9vVln/ZrkOayIp9IPY4D/jH0ldl1YYnJC2AcmtvKUv8h8rOH3+1XQd0lQw7U
+         d8GhKZcatIAOdWANHeiBpOLyfxFg64bI9+oNWlDtPJqOIM90SI0blJrP1BILSsvYxmoh
+         ROyGYAmaTQefW2nrfi3YhWQ3l0NFY0c8yn2tVUGgthiFW/1iV7KFzU0yupy0IOdJ0hlJ
+         mQ9H4Nm59DQ/dP4r4hHC+mBakL2oygWhK8ajKzp5JcRoOdUrGrqw9PVvbOpY4846ODxq
+         A5jNmLMkEcr6A8eIh38YnjNogsptOdr45QYVCiBbWMJORFx4P62Lq852vVYHwmExzGME
+         TblQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVn9aNqIWE3Dl/IXWJojyh3arT3CkBFwD9nJbK+hPVmMqpw7dZ+LT1P0L5nhDdWYNZN6A4M20QWs4KLdQ==@vger.kernel.org, AJvYcCW6rSQCQO1Krw4//er9ei/J6U9tUjZcDG1H8XcUbJKqsDYDJDZp/CDObNJsyhTHjyEjbX5pDznbL2YHcGl/@vger.kernel.org
+X-Gm-Message-State: AOJu0YylbEUVtel4Kcq2ZxCZ4nJA4AYM9ONkfW2kVfOIrlIoWfsMTwbm
+	bqW+QOBR76rSXrdM1hHYbTrxhmlIgzfsS4FZvbRragFTlNnz23FT
+X-Google-Smtp-Source: AGHT+IH0V8hI5HeNKCTnKvRpDBv1+/QL7vuU688TVQN9l7UrfZnKS8BzkcdjlVXxet1uvkj15TEwPg==
+X-Received: by 2002:a05:6830:3142:b0:70c:9c46:b83d with SMTP id 46e09a7af769-7153cded0d1mr5575218a34.25.1727949126493;
+        Thu, 03 Oct 2024 02:52:06 -0700 (PDT)
+Received: from hera-2-ThinkPad-X12-Detachable-Gen-2.. ([2404:7a80:b9a1:7100:63c1:5e3e:230f:6b2f])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71dd9d871d3sm937132b3a.56.2024.10.03.02.52.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 02:52:06 -0700 (PDT)
+From: Vishnu Sankar <vishnuocv@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: mpearson-lenovo@squebb.ca,
+	vsankar@lenovo.com,
+	Vishnu Sankar <vishnuocv@gmail.com>
+Subject: [PATCH] hid-lenovo: Support for TP-X12-TAB-1/2 Kbd Fn keys that use HID raw events.
+Date: Thu,  3 Oct 2024 18:51:24 +0900
+Message-ID: <20241003095124.7611-1-vishnuocv@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930192357.1154417-2-mathieu.desnoyers@efficios.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Mathieu,
+Fn Keys like Mic mute, Power Modes/Airplane mode,Selective
+screenshot/Pickup Phone, KBD Backlight, Display mode and
+star/Favourites is emitted as HID raw events in X12 Tab1 and Tab2.
+This support has been added.
 
-kernel test robot noticed the following build errors:
+Thinkpad X12 TAB 2 and TAB 1 Folio keyboard's raw events will get
+detected as Fn keys with this patch.
 
-[auto build test ERROR on peterz-queue/sched/core]
-[also build test ERROR on linus/master v6.12-rc1 next-20241003]
-[cannot apply to rostedt-trace/for-next rostedt-trace/for-next-urgent tip/core/entry]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Default fn_lock state for these Keyboards are OFF.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mathieu-Desnoyers/tracing-Declare-system-call-tracepoints-with-TRACE_EVENT_SYSCALL/20241001-032827
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/core
-patch link:    https://lore.kernel.org/r/20240930192357.1154417-2-mathieu.desnoyers%40efficios.com
-patch subject: [PATCH resend 1/8] tracing: Declare system call tracepoints with TRACE_EVENT_SYSCALL
-config: powerpc-allnoconfig (https://download.01.org/0day-ci/archive/20241003/202410031750.cFIt2Rmx-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241003/202410031750.cFIt2Rmx-lkp@intel.com/reproduce)
+Other than these changes, we follow TP10UKBD's processes.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410031750.cFIt2Rmx-lkp@intel.com/
+Tested on X12 Tab 2.
 
-All errors (new ones prefixed by >>):
+Signed-off-by: Vishnu Sankar <vishnuocv@gmail.com>
+Signed-off-by: Vishnu Sankar <vsankar@lenovo.com>
+Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+---
+ drivers/hid/hid-lenovo.c | 122 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 121 insertions(+), 1 deletion(-)
 
-   In file included from include/trace/syscall.h:5,
-                    from include/linux/syscalls.h:93,
-                    from arch/powerpc/kernel/ptrace/ptrace.c:19:
-   include/trace/events/syscalls.h:20:18: error: expected ')' before 'struct'
-      20 |         TP_PROTO(struct pt_regs *regs, long id),
-         |                  ^~~~~~
-   include/linux/tracepoint.h:106:25: note: in definition of macro 'PARAMS'
-     106 | #define PARAMS(args...) args
-         |                         ^~~~
-   include/linux/tracepoint.h:614:9: note: in expansion of macro 'DECLARE_TRACE_SYSCALL'
-     614 |         DECLARE_TRACE_SYSCALL(name, PARAMS(proto), PARAMS(args))
-         |         ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/tracepoint.h:614:37: note: in expansion of macro 'PARAMS'
-     614 |         DECLARE_TRACE_SYSCALL(name, PARAMS(proto), PARAMS(args))
-         |                                     ^~~~~~
-   include/trace/events/syscalls.h:18:1: note: in expansion of macro 'TRACE_EVENT_SYSCALL'
-      18 | TRACE_EVENT_SYSCALL(sys_enter,
-         | ^~~~~~~~~~~~~~~~~~~
-   include/trace/events/syscalls.h:20:9: note: in expansion of macro 'TP_PROTO'
-      20 |         TP_PROTO(struct pt_regs *regs, long id),
-         |         ^~~~~~~~
-   include/trace/events/syscalls.h:46:18: error: expected ')' before 'struct'
-      46 |         TP_PROTO(struct pt_regs *regs, long ret),
-         |                  ^~~~~~
-   include/linux/tracepoint.h:106:25: note: in definition of macro 'PARAMS'
-     106 | #define PARAMS(args...) args
-         |                         ^~~~
-   include/linux/tracepoint.h:614:9: note: in expansion of macro 'DECLARE_TRACE_SYSCALL'
-     614 |         DECLARE_TRACE_SYSCALL(name, PARAMS(proto), PARAMS(args))
-         |         ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/tracepoint.h:614:37: note: in expansion of macro 'PARAMS'
-     614 |         DECLARE_TRACE_SYSCALL(name, PARAMS(proto), PARAMS(args))
-         |                                     ^~~~~~
-   include/trace/events/syscalls.h:44:1: note: in expansion of macro 'TRACE_EVENT_SYSCALL'
-      44 | TRACE_EVENT_SYSCALL(sys_exit,
-         | ^~~~~~~~~~~~~~~~~~~
-   include/trace/events/syscalls.h:46:9: note: in expansion of macro 'TP_PROTO'
-      46 |         TP_PROTO(struct pt_regs *regs, long ret),
-         |         ^~~~~~~~
-   arch/powerpc/kernel/ptrace/ptrace.c: In function 'do_syscall_trace_enter':
->> arch/powerpc/kernel/ptrace/ptrace.c:298:17: error: implicit declaration of function 'trace_sys_enter'; did you mean 'ftrace_nmi_enter'? [-Wimplicit-function-declaration]
-     298 |                 trace_sys_enter(regs, regs->gpr[0]);
-         |                 ^~~~~~~~~~~~~~~
-         |                 ftrace_nmi_enter
-   arch/powerpc/kernel/ptrace/ptrace.c: In function 'do_syscall_trace_leave':
->> arch/powerpc/kernel/ptrace/ptrace.c:329:17: error: implicit declaration of function 'trace_sys_exit'; did you mean 'ftrace_nmi_exit'? [-Wimplicit-function-declaration]
-     329 |                 trace_sys_exit(regs, regs->result);
-         |                 ^~~~~~~~~~~~~~
-         |                 ftrace_nmi_exit
-
-
-vim +298 arch/powerpc/kernel/ptrace/ptrace.c
-
-2449acc5348b94 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  235  
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  236  /**
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  237   * do_syscall_trace_enter() - Do syscall tracing on kernel entry.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  238   * @regs: the pt_regs of the task to trace (current)
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  239   *
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  240   * Performs various types of tracing on syscall entry. This includes seccomp,
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  241   * ptrace, syscall tracepoints and audit.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  242   *
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  243   * The pt_regs are potentially visible to userspace via ptrace, so their
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  244   * contents is ABI.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  245   *
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  246   * One or more of the tracers may modify the contents of pt_regs, in particular
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  247   * to modify arguments or even the syscall number itself.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  248   *
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  249   * It's also possible that a tracer can choose to reject the system call. In
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  250   * that case this function will return an illegal syscall number, and will put
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  251   * an appropriate return value in regs->r3.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  252   *
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  253   * Return: the (possibly changed) syscall number.
-^1da177e4c3f41 arch/ppc/kernel/ptrace.c            Linus Torvalds    2005-04-16  254   */
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  255  long do_syscall_trace_enter(struct pt_regs *regs)
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  256  {
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  257  	u32 flags;
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  258  
-985faa78687de6 arch/powerpc/kernel/ptrace/ptrace.c Mark Rutland      2021-11-29  259  	flags = read_thread_flags() & (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE);
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  260  
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  261  	if (flags) {
-153474ba1a4aed arch/powerpc/kernel/ptrace/ptrace.c Eric W. Biederman 2022-01-27  262  		int rc = ptrace_report_syscall_entry(regs);
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  263  
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  264  		if (unlikely(flags & _TIF_SYSCALL_EMU)) {
-5521eb4bca2db7 arch/powerpc/kernel/ptrace.c        Breno Leitao      2018-09-20  265  			/*
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  266  			 * A nonzero return code from
-153474ba1a4aed arch/powerpc/kernel/ptrace/ptrace.c Eric W. Biederman 2022-01-27  267  			 * ptrace_report_syscall_entry() tells us to prevent
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  268  			 * the syscall execution, but we are not going to
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  269  			 * execute it anyway.
-a225f156740555 arch/powerpc/kernel/ptrace.c        Elvira Khabirova  2018-12-07  270  			 *
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  271  			 * Returning -1 will skip the syscall execution. We want
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  272  			 * to avoid clobbering any registers, so we don't goto
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  273  			 * the skip label below.
-5521eb4bca2db7 arch/powerpc/kernel/ptrace.c        Breno Leitao      2018-09-20  274  			 */
-5521eb4bca2db7 arch/powerpc/kernel/ptrace.c        Breno Leitao      2018-09-20  275  			return -1;
-5521eb4bca2db7 arch/powerpc/kernel/ptrace.c        Breno Leitao      2018-09-20  276  		}
-5521eb4bca2db7 arch/powerpc/kernel/ptrace.c        Breno Leitao      2018-09-20  277  
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  278  		if (rc) {
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  279  			/*
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  280  			 * The tracer decided to abort the syscall. Note that
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  281  			 * the tracer may also just change regs->gpr[0] to an
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  282  			 * invalid syscall number, that is handled below on the
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  283  			 * exit path.
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  284  			 */
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  285  			goto skip;
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  286  		}
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  287  	}
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  288  
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  289  	/* Run seccomp after ptrace; allow it to set gpr[3]. */
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  290  	if (do_seccomp(regs))
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  291  		return -1;
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  292  
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  293  	/* Avoid trace and audit when syscall is invalid. */
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  294  	if (regs->gpr[0] >= NR_syscalls)
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  295  		goto skip;
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  296  
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02  297  	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02 @298  		trace_sys_enter(regs, regs->gpr[0]);
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02  299  
-cab175f9fa2973 arch/powerpc/kernel/ptrace.c        Denis Kirjanov    2010-08-27  300  	if (!is_32bit_task())
-91397401bb5072 arch/powerpc/kernel/ptrace.c        Eric Paris        2014-03-11  301  		audit_syscall_entry(regs->gpr[0], regs->gpr[3], regs->gpr[4],
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  302  				    regs->gpr[5], regs->gpr[6]);
-cfcd1705b61ecc arch/powerpc/kernel/ptrace.c        David Woodhouse   2007-01-14  303  	else
-91397401bb5072 arch/powerpc/kernel/ptrace.c        Eric Paris        2014-03-11  304  		audit_syscall_entry(regs->gpr[0],
-cfcd1705b61ecc arch/powerpc/kernel/ptrace.c        David Woodhouse   2007-01-14  305  				    regs->gpr[3] & 0xffffffff,
-cfcd1705b61ecc arch/powerpc/kernel/ptrace.c        David Woodhouse   2007-01-14  306  				    regs->gpr[4] & 0xffffffff,
-cfcd1705b61ecc arch/powerpc/kernel/ptrace.c        David Woodhouse   2007-01-14  307  				    regs->gpr[5] & 0xffffffff,
-cfcd1705b61ecc arch/powerpc/kernel/ptrace.c        David Woodhouse   2007-01-14  308  				    regs->gpr[6] & 0xffffffff);
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  309  
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  310  	/* Return the possibly modified but valid syscall number */
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  311  	return regs->gpr[0];
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  312  
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  313  skip:
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  314  	/*
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  315  	 * If we are aborting explicitly, or if the syscall number is
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  316  	 * now invalid, set the return value to -ENOSYS.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  317  	 */
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  318  	regs->gpr[3] = -ENOSYS;
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  319  	return -1;
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  320  }
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  321  
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  322  void do_syscall_trace_leave(struct pt_regs *regs)
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  323  {
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  324  	int step;
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  325  
-d7e7528bcd456f arch/powerpc/kernel/ptrace.c        Eric Paris        2012-01-03  326  	audit_syscall_exit(regs);
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  327  
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02  328  	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02 @329  		trace_sys_exit(regs, regs->result);
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02  330  
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  331  	step = test_thread_flag(TIF_SINGLESTEP);
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  332  	if (step || test_thread_flag(TIF_SYSCALL_TRACE))
-153474ba1a4aed arch/powerpc/kernel/ptrace/ptrace.c Eric W. Biederman 2022-01-27  333  		ptrace_report_syscall_exit(regs, step);
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  334  }
-002af9391bfbe8 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2018-10-12  335  
-
+diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
+index 3b0c779ce8f7..86ce6152429d 100644
+--- a/drivers/hid/hid-lenovo.c
++++ b/drivers/hid/hid-lenovo.c
+@@ -31,12 +31,21 @@
+ #include <linux/input.h>
+ #include <linux/leds.h>
+ #include <linux/workqueue.h>
++#include <linux/platform_profile.h>
+ 
+ #include "hid-ids.h"
+ 
+ /* Userspace expects F20 for mic-mute KEY_MICMUTE does not work */
+ #define LENOVO_KEY_MICMUTE KEY_F20
+ 
++/* HID raw events for ThinkPas X12 Tabs*/
++#define TP_X12_RAW_HOTKEY_FN_F4		0x000200
++#define TP_X12_RAW_HOTKEY_FN_F8		0x100038
++#define TP_X12_RAW_HOTKEY_FN_F10	0x080000
++#define TP_X12_RAW_HOTKEY_FN_F12	0x040000
++#define TP_X12_RAW_HOTKEY_FN_SPACE	0x100018
++#define TP_X12_RAW_HOTKEY_FN_F7		0x080013
++
+ struct lenovo_drvdata {
+ 	u8 led_report[3]; /* Must be first for proper alignment */
+ 	int led_state;
+@@ -71,6 +80,14 @@ struct lenovo_drvdata {
+ #define TP10UBKBD_LED_OFF		1
+ #define TP10UBKBD_LED_ON		2
+ 
++/* Function to report raw_events as key events*/
++static inline void report_key_event(struct input_dev *input, int keycode)
++{
++	input_report_key(input, keycode, 1);
++	input_report_key(input, keycode, 0);
++	input_sync(input);
++}
++
+ static int lenovo_led_set_tp10ubkbd(struct hid_device *hdev, u8 led_code,
+ 				    enum led_brightness value)
+ {
+@@ -472,6 +489,8 @@ static int lenovo_input_mapping(struct hid_device *hdev,
+ 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
+ 		return lenovo_input_mapping_tp10_ultrabook_kbd(hdev, hi, field,
+ 							       usage, bit, max);
++	case USB_DEVICE_ID_LENOVO_X12_TAB:
++	case USB_DEVICE_ID_LENOVO_X12_TAB2:
+ 	case USB_DEVICE_ID_LENOVO_X1_TAB:
+ 		return lenovo_input_mapping_x1_tab_kbd(hdev, hi, field, usage, bit, max);
+ 	default:
+@@ -581,6 +600,8 @@ static ssize_t attr_fn_lock_store(struct device *dev,
+ 	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
+ 		lenovo_features_set_cptkbd(hdev);
+ 		break;
++	case USB_DEVICE_ID_LENOVO_X12_TAB:
++	case USB_DEVICE_ID_LENOVO_X12_TAB2:
+ 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
+ 	case USB_DEVICE_ID_LENOVO_X1_TAB:
+ 		ret = lenovo_led_set_tp10ubkbd(hdev, TP10UBKBD_FN_LOCK_LED, value);
+@@ -678,9 +699,63 @@ static const struct attribute_group lenovo_attr_group_cptkbd = {
+ 	.attrs = lenovo_attributes_cptkbd,
+ };
+ 
++/* Function to handle Lenovo Thinkpad TAB X12's HID raw inputs for fn keys*/
++static int lenovo_raw_event_TP_X12_tab(struct hid_device *hdev, u32 raw_data)
++{
++	struct hid_input *hidinput;
++	struct input_dev *input = NULL;
++
++	/* Iterate through the associated inputs to find the correct input device */
++	list_for_each_entry(hidinput, &hdev->inputs, list) {
++		input = hidinput->input;
++		if (input)
++			break;  /* Use the first valid input device */
++	}
++
++	switch (raw_data) {
++		/* fn-F20 being used here for MIC mute*/
++	case TP_X12_RAW_HOTKEY_FN_F4:
++		report_key_event(input, LENOVO_KEY_MICMUTE);
++		return 1;
++		/* Power-mode or Airplane mode will be called based on the device*/
++	case TP_X12_RAW_HOTKEY_FN_F8:
++		/*
++		 * TP X12 TAB uses Fn-F8 calls Airplanemode
++		 * Whereas TP X12 TAB2 uses Fn-F8 for toggling
++		 * Power modes
++		 */
++		(hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB) ?
++			report_key_event(input, KEY_RFKILL) :
++			platform_profile_cycle();
++		return 1;
++	case TP_X12_RAW_HOTKEY_FN_F10:
++		/* TAB1 has PICKUP Phone and TAB2 use Snipping tool*/
++		(hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB) ?
++		report_key_event(input, KEY_PICKUP_PHONE) :
++		report_key_event(input, KEY_SELECTIVE_SCREENSHOT);
++		return 1;
++	case TP_X12_RAW_HOTKEY_FN_F12:
++		/* BookMarks/STAR key*/
++		report_key_event(input, KEY_BOOKMARKS);
++		return 1;
++	case TP_X12_RAW_HOTKEY_FN_SPACE:
++		/* Keyboard LED backlight toggle*/
++		report_key_event(input, KEY_KBDILLUMTOGGLE);
++		return 1;
++	case TP_X12_RAW_HOTKEY_FN_F7:
++		/* DISPLAY switching when connecting to external monitors*/
++		report_key_event(input, KEY_SWITCHVIDEOMODE);
++		return 1;
++	default:
++		break;
++	}
++	return 0;
++}
++
+ static int lenovo_raw_event(struct hid_device *hdev,
+ 			struct hid_report *report, u8 *data, int size)
+ {
++	u32 raw_data;
+ 	/*
+ 	 * Compact USB keyboard's Fn-F12 report holds down many other keys, and
+ 	 * its own key is outside the usage page range. Remove extra
+@@ -695,6 +770,32 @@ static int lenovo_raw_event(struct hid_device *hdev,
+ 		data[2] = 0x01;
+ 	}
+ 
++	/*
++	 * Lenovo TP X12 Tab KBD's Fn+XX is HID raw data defined. Report ID is 0x03
++	 * For eg: Raw data received for MIC mute is 0x03000200.
++	 */
++	if (unlikely((hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB
++			|| hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB2)
++			&& size >= 3)) {
++		/*
++		 * data[0] is report ID and is same for all 4byte raw_events from this KBD
++		 * for eg: Fn+F8 0x03,0x10,0x00,0x38
++		 * report ID here for most of the keys are 0x03.
++		 */
++		if (report->id == 0x03)
++			raw_data = (data[1] << 16) | (data[2] << 8) | data[3];
++		/*
++		 * For some Keys the raw data is 6 bytes long but the last 3 bytes
++		 * will be always Zeros. There is no report-id documented.
++		 * For eg: for Fn+F7: 0x08,0x00,0x13,0x00,0x00,0x00.
++		 * In other words the last 3 bytes are dummy for now.
++		 */
++		else
++			raw_data = (data[0] << 16) | (data[1] << 8) | data[2];
++
++		/* Calling function to generate Key events */
++		lenovo_raw_event_TP_X12_tab(hdev, raw_data);
++	}
+ 	return 0;
+ }
+ 
+@@ -774,6 +875,8 @@ static int lenovo_event(struct hid_device *hdev, struct hid_field *field,
+ 	case USB_DEVICE_ID_LENOVO_TPIIUSBKBD:
+ 	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
+ 		return lenovo_event_cptkbd(hdev, field, usage, value);
++	case USB_DEVICE_ID_LENOVO_X12_TAB:
++	case USB_DEVICE_ID_LENOVO_X12_TAB2:
+ 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
+ 	case USB_DEVICE_ID_LENOVO_X1_TAB:
+ 		return lenovo_event_tp10ubkbd(hdev, field, usage, value);
+@@ -1054,6 +1157,8 @@ static int lenovo_led_brightness_set(struct led_classdev *led_cdev,
+ 	case USB_DEVICE_ID_LENOVO_TPKBD:
+ 		lenovo_led_set_tpkbd(hdev);
+ 		break;
++	case USB_DEVICE_ID_LENOVO_X12_TAB:
++	case USB_DEVICE_ID_LENOVO_X12_TAB2:
+ 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
+ 	case USB_DEVICE_ID_LENOVO_X1_TAB:
+ 		ret = lenovo_led_set_tp10ubkbd(hdev, tp10ubkbd_led[led_nr], value);
+@@ -1239,8 +1344,15 @@ static int lenovo_probe_tp10ubkbd(struct hid_device *hdev)
+ 	 * We cannot read the state, only set it, so we force it to on here
+ 	 * (which should be a no-op) to make sure that our state matches the
+ 	 * keyboard's FN-lock state. This is the same as what Windows does.
++	 *
++	 * For X12 TAB and TAB2, the default windows behavious Fn-lock Off.
++	 * Adding additional check to ensure the behaviour in case of
++	 * Thinkpad X12 Tabs.
+ 	 */
+-	data->fn_lock = true;
++
++	data->fn_lock = !(hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB ||
++			hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB2);
++
+ 	lenovo_led_set_tp10ubkbd(hdev, TP10UBKBD_FN_LOCK_LED, data->fn_lock);
+ 
+ 	ret = sysfs_create_group(&hdev->dev.kobj, &lenovo_attr_group_tp10ubkbd);
+@@ -1284,6 +1396,8 @@ static int lenovo_probe(struct hid_device *hdev,
+ 	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
+ 		ret = lenovo_probe_cptkbd(hdev);
+ 		break;
++	case USB_DEVICE_ID_LENOVO_X12_TAB:
++	case USB_DEVICE_ID_LENOVO_X12_TAB2:
+ 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
+ 	case USB_DEVICE_ID_LENOVO_X1_TAB:
+ 		ret = lenovo_probe_tp10ubkbd(hdev);
+@@ -1370,6 +1484,8 @@ static void lenovo_remove(struct hid_device *hdev)
+ 	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
+ 		lenovo_remove_cptkbd(hdev);
+ 		break;
++	case USB_DEVICE_ID_LENOVO_X12_TAB:
++	case USB_DEVICE_ID_LENOVO_X12_TAB2:
+ 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
+ 	case USB_DEVICE_ID_LENOVO_X1_TAB:
+ 		lenovo_remove_tp10ubkbd(hdev);
+@@ -1421,6 +1537,10 @@ static const struct hid_device_id lenovo_devices[] = {
+ 	 */
+ 	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
+ 		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_X1_TAB) },
++	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
++		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_X12_TAB) },
++	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
++		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_X12_TAB2) },
+ 	{ }
+ };
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
