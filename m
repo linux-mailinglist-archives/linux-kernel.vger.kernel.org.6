@@ -1,127 +1,78 @@
-Return-Path: <linux-kernel+bounces-349095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB1498F0B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B56D98F0CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7E641F21AA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:46:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69881F21F15
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BCD19C56B;
-	Thu,  3 Oct 2024 13:46:25 +0000 (UTC)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E938019CCED;
+	Thu,  3 Oct 2024 13:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7Q8W4G3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF668C07;
-	Thu,  3 Oct 2024 13:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4630D19C57F;
+	Thu,  3 Oct 2024 13:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727963185; cv=none; b=Zo5zV9f6CmlI1xfJd+MTNT30qwSBCSv3IYpSrtxJjCUTh3OpW3em5pMEi2XGlO1dIPvQ8uWvpk7984+jmhhFMt7xgMoHEtgeg9fhSKmXVdyp+mCxFYGSs38YYTiwaJtu8FfrHIX2Jb8Yo66n4rakVjo8uHs4LUYFHCm7e9o7DrY=
+	t=1727963293; cv=none; b=L7JZFKdQAgWLeZ9KQmAxRDlQU6+agv95w6gGM7/AKUGp2rwPqTKSFTli2lxBDV3yoRv8/Ulqe//OSMgP1cCvv82/4x89kqgfeGR9UJ56MIprpeI29kBqrsIb9XTkBi8qFq7h4uDXree08uWaXVI8o/aIcp20e9BYOy3SjejCewE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727963185; c=relaxed/simple;
-	bh=qrV+a7hrgx9ymUEkSMtlkXA0HGKn702MhfqunwmhFWo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UtH64F6ee8TzBSRHHkecXk/AuAmnSXXNkSDgibn6L7CSmnbuHXdE69D8ZJm/phRqwEmmnZCnAmlnrc7l6/CkycBLJhieFf9Ol1/WNPNjIFNc7KWrdQVt8CfJhGbgsK0q90D1GiyPW7ZhTI8cciTPzcFIxDP6SZwrGVyyYGh+yN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e1f48e7c18so7085287b3.3;
-        Thu, 03 Oct 2024 06:46:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727963182; x=1728567982;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WAoZCzATdza81ShITb8W5CF8H9VjglTMiXMKyURvYrU=;
-        b=jF3W+rTcl8KAW5qsJu9ChNaAnhNCG3I6/F/MsU0YihVFo86SHMSxDzGVb7SHWCCfju
-         Dcv1AOvTUNFMAPThTIXK3dh3UOWttvJmaasHmX5HEFh9ECliB+hYW8WztSIcGDXtBH1/
-         qYxBxINDkv1WR/OzLDLKrlQiF8Prhnnf/qI7ZNSAvlx29APGIHdSHF233B4D0+8y6rTk
-         3KqJWXgcECO3oTIfBoSayECGQUA1/FdBldSPCm8x73B/wxcbNLxTJTC8vRKZjRdHLPVx
-         cmxeiHC98EquG5skZGcRM4YXW3tQVE3j2JtLDqynd6asVaN3EqWIAJgV8K4Vvliic2WI
-         lYJg==
-X-Forwarded-Encrypted: i=1; AJvYcCURYIlgX7J4PUhSrs+xwEEe7ZjqMVpgAJn9dOzA8meHG2hA47bcn6tcd2vkFEWDj2nR0ZwujBKlzBgO@vger.kernel.org, AJvYcCVO5pQkdKIPx4kRYpxZJ34QFd7ESlFN8mj6vGbnjlfyikC1jCpcPmnEGMYcjPMyye4HM5mhmrs0YllovZpS@vger.kernel.org, AJvYcCWr8uWClQ/EyStj6gac8aSzWIxRwJ/HPuZCkbhlfnHdadCqNVLpiC+Ny9GjmfOOjP4/pnYqKgDelD7Hc4wIftspJ3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHjxDReRVv+PlZo/Fpx+1IVNiHCRwrLpodB1y04sBaqqseRD0h
-	cwDgeuC54RtSYdYT5B6w4Zdtiy0+LLU488ki2GHLBtUT5dBOG5O6oWxqk7T20nk=
-X-Google-Smtp-Source: AGHT+IFAG1D9kQ43y3azZ5e32BXSnm2EY1WvCXssj9uPWJ1lmmW7AHBMukFMqt7Bh4mLZ/ZeNp/B7g==
-X-Received: by 2002:a05:690c:d81:b0:627:24d0:5037 with SMTP id 00721157ae682-6e2a2980306mr66592957b3.0.1727963182051;
-        Thu, 03 Oct 2024 06:46:22 -0700 (PDT)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2bbbb7baasm2218507b3.11.2024.10.03.06.46.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 06:46:21 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e29c50ccbaso8765417b3.2;
-        Thu, 03 Oct 2024 06:46:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUTBg4fdRI3EhyzCh3vqHkISbF5RSnUTG6ZLEGHSMx6WCBOwXYWgsZGtiKRu0oi9zoPIyakpBsmJY80D9o3XtNDCeo=@vger.kernel.org, AJvYcCWrg84DZtEQA+6tI2gOwKsK+5ttpEbg3FPOwaSChx0e/MYNOxWCVr5hm81cvqNWrKD+mnV/gKlykckS@vger.kernel.org, AJvYcCXMqJ/MbpvQ3d/zKmrdtmax4lMg9Zq2ya01wJ+c+3+NSizuGgmO2JBKqmi2WdEEgMNNG7hHEPvIyb+PMBr8@vger.kernel.org
-X-Received: by 2002:a05:690c:c90:b0:6ae:e4b8:6a46 with SMTP id
- 00721157ae682-6e2a2e47f90mr64480937b3.44.1727963181650; Thu, 03 Oct 2024
- 06:46:21 -0700 (PDT)
+	s=arc-20240116; t=1727963293; c=relaxed/simple;
+	bh=Pcf1C/POCe7HwoUC3D/WWJhTwc+2H52b9z20++v3c5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pR2r9M3N2fJfGg252RTj9exkCuLYUPwhQX1oxsQTl44r/YIMPAFIUFa00VT+EOeA4q+qyKc3YZljfWPJzEZL62Y3fF/jE0exibgqXZqTHlGe1UImo/8Phokea9CB8A5Uzjnu9lMZurbSusU7S2j7wUXa/v9ru5vJqDGvdMnddgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7Q8W4G3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFDB9C4CEC5;
+	Thu,  3 Oct 2024 13:48:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727963292;
+	bh=Pcf1C/POCe7HwoUC3D/WWJhTwc+2H52b9z20++v3c5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n7Q8W4G3HmS7/4f0qaPq+APBpihg0ujMldpyTwjlXalVBYhiJWUIkTk9fF9+G0piB
+	 F/bbab+kuve8wA5RHts2SiofPmYccJLedQAaoCsvUNtFZv/z3FuiGUYs1A/DIPJX/K
+	 meekCRUoM03MBC5CD8riu18oN9A5cXY2h6d/yM8uGmkjrmtcr2zdv2Bk73qGWiP9md
+	 yON1QodmF03ig9IYmJazUe+5V7oC6ce2DOFEhIgYtfQSHJHXEFDvhTOXkkRtXFAnbM
+	 QqQKfRpOuiTU2yDDIAtSUdAuwgv1TV8yH1wtYKx4ezhYZL9RwipvKoh/t3q5jobuAS
+	 U5pJAFGqGFhLA==
+Date: Thu, 3 Oct 2024 14:48:04 +0100
+From: Simon Horman <horms@kernel.org>
+To: Riyan Dhiman <riyandhiman14@gmail.com>
+Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+	jerinj@marvell.com, hkelam@marvell.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	rsaladi2@marvell.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] octeontx2-af: Change block parameter to
+ const pointer in get_lf_str_list
+Message-ID: <20241003134804.GO1310185@kernel.org>
+References: <20241001110542.5404-2-riyandhiman14@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003131642.472298-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241003131642.472298-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 3 Oct 2024 15:46:09 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVknArz3W5XhPVj-ZGCu97SWyf2EqHhJRXOg6pJ1=tF=w@mail.gmail.com>
-Message-ID: <CAMuHMdVknArz3W5XhPVj-ZGCu97SWyf2EqHhJRXOg6pJ1=tF=w@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Always call rzg2l_gpio_request()
- for interrupt pins
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001110542.5404-2-riyandhiman14@gmail.com>
 
-Hi Prabhakar,
+On Tue, Oct 01, 2024 at 04:35:43PM +0530, Riyan Dhiman wrote:
+> Convert struct rvu_block block to const struct rvu_block *block in
+> get_lf_str_list() function parameter. This improves efficiency by
+> avoiding structure copying and reflects the function's read-only
+> access to block.
+> 
+> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+> ---
+> v2: change target branch to net-next and remove fix tag.
+> Compile tested only
 
-On Thu, Oct 3, 2024 at 3:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Ensure that rzg2l_gpio_request() is called for GPIO pins configured as
-> interrupts, regardless of whether they are muxed in u-boot. This
-> guarantees that the pinctrl core is aware of the GPIO pin usage via
-> pinctrl_gpio_request(), which is invoked through rzg2l_gpio_request().
->
-> Fixes: 2fd4fe19d0150 ("pinctrl: renesas: rzg2l: Configure interrupt input=
- mode")
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Thanks for your patch!
-
-> Output before this patch on G2L/SMARC:
-> root@smarc-rzg2l:~# cat /sys/kernel/debug/pinctrl/11030000.pinctrl-pinctr=
-l-rzg2l/pinmux-pins | grep P2_1
-> pin 17 (P2_1): UNCLAIMED
->
-> Output after this patch G2L/SMARC:
-> root@smarc-rzg2l:~# cat /sys/kernel/debug/pinctrl/11030000.pinctrl-pinctr=
-l-rzg2l/pinmux-pins | grep P2_1
-> pin 17 (P2_1): GPIO 11030000.pinctrl:529
-
-Just wondering: is this restored to UNCLAIMED after releasing the
-interrupt (i.e. after unbinding the ADV7535 driver)?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
