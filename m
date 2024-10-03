@@ -1,146 +1,144 @@
-Return-Path: <linux-kernel+bounces-348858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76B798ECB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:12:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4F698ECB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:12:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060571C212E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F89A1F2227E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1726314D2A0;
-	Thu,  3 Oct 2024 10:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEAB149E13;
+	Thu,  3 Oct 2024 10:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cK5jzg33"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="f+UPzySf"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE96214B08C
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 10:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2159613B780;
+	Thu,  3 Oct 2024 10:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727950350; cv=none; b=n/FZRfrunhKOTfEkvuVfX1Azfb2GwZTm8GW+K6ltcDaQ3bxdU3q6W6+IcCjFhd65TQZvhkLRWTsigKVwIObavBhoslnVkif1Ts+/NapFkqg1Vr8qP+lMnyS+zbdDcA4Y1pWBJBbhfoDuo7wEQUf7UJApTkjUIoPQRfjSEOarXrE=
+	t=1727950346; cv=none; b=ZEYIdt/Ed+jOd35MjbPp4gCYeMmHm5GkGmRtRjttzEo4+gnmLF5m4CIQpU25xj7fi71+FL4VfMjhDlx6lVIvd4pRvJgfZQuSvQuyxD0XvfehrRW7/6E1JNx+SxFw5i37j1CDcaqytCKQoqACSrT4YBE2n+gh3MY7RGvJRJeRXlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727950350; c=relaxed/simple;
-	bh=7kQ9CE+8piCl1PeEPd00/TWkbHX5U5LP/am+07aNRu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+5YgX04s/2wW7wtyhYk4L5N8Ty30Mp2eCHrJGjMl3n2cB5wNNfVakD1xTwRTPFAt+OpVgiE1H8v10/MjE/gqdScAm+t6BQt38hb/FsxdDXWzUDbEnjlF3qjH5aWMVI0EsARdkr9zA3UucvyriH48UN7UZjWxKvNzU6uXnyaljI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cK5jzg33; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727950349; x=1759486349;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7kQ9CE+8piCl1PeEPd00/TWkbHX5U5LP/am+07aNRu4=;
-  b=cK5jzg33UTniqgKogLAmsjRTRTAGmwunuRFtpsxOIewwHobtTf3XNhRA
-   cVClUnyUTq+Nfcz7n4a+wL+DfcS3h3xuN5sy7u3snEnHat4lWWeas6kVA
-   TCaH9XJWlDA0/uqbqSa2UgnhW5MqBVnnlGP36uEGNIMiFUgGpvrnBtuxD
-   4GmUqu6XkXWP7Yz6tTOMnlNZCzZ1J28+mcQo5xjDgadJuu2ew2wd94oSI
-   IWmezKf8t2vDG8daiDBoumFdX9yJC9Krvlrjy2MvgFOGwxlUl6buZ3DiX
-   g5MBtGqhxrDmM0ROS5b7LcWfxVUe+5Mo07HH+plG0tmt+Nc2yZPZA2n1H
-   w==;
-X-CSE-ConnectionGUID: oA3It7EbRX6chIItsL6y1A==
-X-CSE-MsgGUID: vX2zxaxiTQuCPIxScGoMSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27316393"
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="27316393"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 03:12:28 -0700
-X-CSE-ConnectionGUID: lbW8fCgmRXSfOkJ8w0Wtpw==
-X-CSE-MsgGUID: aeHdcJlWSAiJEvUGTdUcBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="111764103"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 03 Oct 2024 03:12:24 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swIon-0000H1-1G;
-	Thu, 03 Oct 2024 10:12:21 +0000
-Date: Thu, 3 Oct 2024 18:11:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: shiyongbang <shiyongbang@huawei.com>, xinliang.liu@linaro.org,
-	tiantao6@hisilicon.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com
-Cc: oe-kbuild-all@lists.linux.dev, liangjian010@huawei.com,
-	chenjianmin@huawei.com, lidongming5@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com, shenjian15@huawei.com,
-	shaojijie@huawei.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH drm-dp 2/4] drm/hisilicon/hibmc: add dp link moduel in
- hibmc drivers
-Message-ID: <202410031735.8iRZZR6T-lkp@intel.com>
-References: <20240930100610.782363-3-shiyongbang@huawei.com>
+	s=arc-20240116; t=1727950346; c=relaxed/simple;
+	bh=KzG8zL4AzG1hFYloYuqzq+fGW6PcU8QWSrNexnu3abE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oAOXPV9NXgkdwUAJV/V3MPGPVZB1n401LOeUatHibCkczmXzNf4SLtt9qwGiHEkTchJoIrNTDmf+8tfzKMjlTnaOqRYUpAclbqns8Zq3FNc6sNMo9+hHzy/Y8pNPOkZjRFD9jRABRd9ck4YnuQbGIp+RZ7QRdP/P0FN6ei0EJWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=f+UPzySf; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4939tOFn021499;
+	Thu, 3 Oct 2024 10:12:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=/JQEd6iw662ZfguHaBbkaGClwE
+	ytKH5/pcNOoNSB/s4=; b=f+UPzySf0lV0cbfE/4H2NRAwEe2doG0sLcNJeZi1n0
+	3mpLYoM2jrI+F3ndmZ4Z1Egvv4JLlSi76DcL87mkC4C5DC5Q+BqVXCcTcIJbOjSK
+	RML9zkzam3oOjndgU/qOLGkIxeDJXG3YWapTgyC0aX1sQSLU0pcYS3ZaH6buMPxK
+	2fXA0TAoFg/kdqRuISPUT3IJ83HdSQX7cz1FxwfCmEl23OQsV7lsktxWhSOWheUn
+	mQNJxBicbmR9dRp8hXHy8PQVMWSIipCzDEZDXxBxq89ni7RJs6bUA0nCQWdbXgrz
+	lkOrn4giVqyeiFPfMeoQF5SGe1/0Ukr+7ASuhfY9g3bA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421s2cr2ea-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 10:12:14 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 493ACDex030614;
+	Thu, 3 Oct 2024 10:12:13 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421s2cr2e5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 10:12:13 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4938AMPg017866;
+	Thu, 3 Oct 2024 10:12:12 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xw4n76wq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 10:12:12 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 493ACAw857999672
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 3 Oct 2024 10:12:10 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8D49C2004B;
+	Thu,  3 Oct 2024 10:12:10 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 50D282004E;
+	Thu,  3 Oct 2024 10:12:09 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.in.ibm.com (unknown [9.109.253.82])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  3 Oct 2024 10:12:09 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-xfs@vger.kernel.org
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>, dchinner@redhat.com,
+        Chandan Babu R <chandan.babu@oracle.com>
+Subject: [PATCH] xfs: Check for deallayed allocations before setting extsize
+Date: Thu,  3 Oct 2024 15:42:07 +0530
+Message-ID: <20241003101207.205083-1-ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930100610.782363-3-shiyongbang@huawei.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: nux7zMiW8P7ENlx94t1xnhuJK9F4SMeA
+X-Proofpoint-ORIG-GUID: 0kZIqqGFzDMT8mS0f47tBTu1BpvJ3cGJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-03_06,2024-10-03_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=572
+ adultscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 clxscore=1011
+ priorityscore=1501 bulkscore=0 impostorscore=0 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2410030065
 
-Hi shiyongbang,
+Extsize is allowed to be set on files with no data in it. For this,
+we were checking if the files have extents but missed to check if
+delayed extents were present. This patch adds that check.
 
-kernel test robot noticed the following build errors:
+**Without the patch (SUCCEEDS)**
 
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on linus/master v6.12-rc1 next-20241003]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+$ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
 
-url:    https://github.com/intel-lab-lkp/linux/commits/shiyongbang/drm-hisilicon-hibmc-add-dp-aux-in-hibmc-drivers/20240930-181437
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20240930100610.782363-3-shiyongbang%40huawei.com
-patch subject: [PATCH drm-dp 2/4] drm/hisilicon/hibmc: add dp link moduel in hibmc drivers
-config: i386-buildonly-randconfig-003-20241003 (https://download.01.org/0day-ci/archive/20241003/202410031735.8iRZZR6T-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241003/202410031735.8iRZZR6T-lkp@intel.com/reproduce)
+wrote 1024/1024 bytes at offset 0
+1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410031735.8iRZZR6T-lkp@intel.com/
+**With the patch (FAILS as expected)**
 
-All errors (new ones prefixed by >>):
+$ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
 
-   In file included from drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c:10:
-   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c: In function 'dp_link_training_cr_pre':
->> drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h:45:41: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
-      45 | #define DPCD_VOLTAGE_SWING_LEVEL_2      FIELD_PREP(GENMASK(1, 0), 2)
-         |                                         ^~~~~~~~~~
-   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c:105:32: note: in expansion of macro 'DPCD_VOLTAGE_SWING_LEVEL_2'
-     105 |                 train_set[i] = DPCD_VOLTAGE_SWING_LEVEL_2 | DPCD_PRE_EMPHASIS_LEVEL_0;
-         |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+wrote 1024/1024 bytes at offset 0
+1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
 
+Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+---
+ fs/xfs/xfs_ioctl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-vim +/FIELD_PREP +45 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
-
-ff6e8ef6021188 baihan li 2024-09-30  37  
-ff6e8ef6021188 baihan li 2024-09-30  38  #define DPCD_TRAINING_PATTERN_DISABLE	0x0
-ff6e8ef6021188 baihan li 2024-09-30  39  #define DPCD_TRAINING_PATTERN_1		0x1
-ff6e8ef6021188 baihan li 2024-09-30  40  #define DPCD_TRAINING_PATTERN_2		0x2
-ff6e8ef6021188 baihan li 2024-09-30  41  #define DPCD_TRAINING_PATTERN_3		0x3
-ff6e8ef6021188 baihan li 2024-09-30  42  #define DPCD_TRAINING_PATTERN_4		0x7
-ff6e8ef6021188 baihan li 2024-09-30  43  #define DPCD_VOLTAGE_SWING_LEVEL_0	FIELD_PREP(GENMASK(1, 0), 0)
-ff6e8ef6021188 baihan li 2024-09-30  44  #define DPCD_VOLTAGE_SWING_LEVEL_1	FIELD_PREP(GENMASK(1, 0), 1)
-ff6e8ef6021188 baihan li 2024-09-30 @45  #define DPCD_VOLTAGE_SWING_LEVEL_2	FIELD_PREP(GENMASK(1, 0), 2)
-ff6e8ef6021188 baihan li 2024-09-30  46  #define DPCD_VOLTAGE_SWING_LEVEL_3	FIELD_PREP(GENMASK(1, 0), 3)
-ff6e8ef6021188 baihan li 2024-09-30  47  #define DPCD_PRE_EMPHASIS_LEVEL_0	FIELD_PREP(GENMASK(4, 3), 0)
-ff6e8ef6021188 baihan li 2024-09-30  48  #define DPCD_PRE_EMPHASIS_LEVEL_1	FIELD_PREP(GENMASK(4, 3), 1)
-ff6e8ef6021188 baihan li 2024-09-30  49  #define DPCD_PRE_EMPHASIS_LEVEL_2	FIELD_PREP(GENMASK(4, 3), 2)
-ff6e8ef6021188 baihan li 2024-09-30  50  #define DPCD_PRE_EMPHASIS_LEVEL_3	FIELD_PREP(GENMASK(4, 3), 3)
-ff6e8ef6021188 baihan li 2024-09-30  51  
-
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 7226d27e8afc..55b574b43617 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -602,7 +602,8 @@ xfs_ioctl_setattr_check_extsize(
+ 	if (!fa->fsx_valid)
+ 		return 0;
+ 
+-	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
++	if (S_ISREG(VFS_I(ip)->i_mode) &&
++	    (ip->i_df.if_nextents || ip->i_delayed_blks) &&
+ 	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
+ 		return -EINVAL;
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.5
+
 
