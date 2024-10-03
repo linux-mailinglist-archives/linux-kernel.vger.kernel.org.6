@@ -1,163 +1,158 @@
-Return-Path: <linux-kernel+bounces-349180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D38C98F240
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:14:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DA998F245
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5BDD283310
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:14:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB16A1C21A88
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6851A0BDB;
-	Thu,  3 Oct 2024 15:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6CA1A08AB;
+	Thu,  3 Oct 2024 15:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VOIUspi6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rWIVpEg2"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB2B1A01BC;
-	Thu,  3 Oct 2024 15:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8C319CD0B;
+	Thu,  3 Oct 2024 15:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727968436; cv=none; b=MEIRz/tQX3fvldXGCUcnoZCS5ubeRHiwURAjj5gQQgM/3fdhltSe7bwaUHt79B1+QQf/OJzN7ZAlwMp6kIrZrLgd4G6YieRRkTrKzE38SBWPs0op3APT86XZdTRR+D78jboxZo/eo4fSCeK75PZ3xOrXrUivMzDAwvoYJJFs9M4=
+	t=1727968492; cv=none; b=kUT9/WEb8fmkmkWxr3daxfMidT1eMumh8IYCDQrNkjf5+S14qT4EBoikKn61JixEw9YDrmB+C7rkcPv+QJlWynnm4d+34ZmNVkpgXgUxI69Fb9DTtWHKQZWd5wX82srVX6idBHQpjZdqfdWMk6P+rhgnf9Na3H0mg+coKO3IrCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727968436; c=relaxed/simple;
-	bh=f/vMsRMQF4DP5vs+pa5InfZpJ0GIZVb4L2/Q82hBRzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UH0/PTnGGS976237lBxSRZ+vCEfFKgjc84y/hYKRDLMasFHBTHhrcYZzXMevZ6YJbsUoB6MIt6o2kTy7x87GjXKdn2hsln65qxLR4Zws0kdg4INJEbo/atYBClBLI32xMAnA5+GTleDz7yvIjLRq2aJJCrTUNcKEcbkyFT8+ps4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VOIUspi6; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727968434; x=1759504434;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=f/vMsRMQF4DP5vs+pa5InfZpJ0GIZVb4L2/Q82hBRzE=;
-  b=VOIUspi6ug6jX9/ZHdq1bOKJNuDLxoUgnayqiu6aSJZT5rnPX64Tx+Ee
-   AhJk4Hc58rAa4VakI9BwExw2vxaIBYjKMgmfSweZyjoM73BM2J+pVEYkh
-   wgESnhbfhWq6SEirN3Bgr5g9gcTt17G/QTnyZv9/4f/y5wLmwcqynxLZu
-   bcfpJC9Pxf/YZbuyfYdwa8aTSDc+KKY45hrJ6qks4KUzjYtJxqAJxEDLs
-   CxIJOkg47hUo7tviwyXi/Uow/QDNG2qRG2823LrufVWMmn0QKOJQ7DCUV
-   HlsOiy/SvuW84dUWtFxkmXBkkuc1hxY5A/7QPBSz9D84ilCOf9yV3U5Co
-   w==;
-X-CSE-ConnectionGUID: 9RFU3jicTYalhtr2yfTJYw==
-X-CSE-MsgGUID: R9KjX12yQrWtl3925/yZmQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="27297995"
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="27297995"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 08:13:53 -0700
-X-CSE-ConnectionGUID: g1yVx1EeS0yqLvTQckaNTQ==
-X-CSE-MsgGUID: ce2dxXTVSruPny3mMWSgcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="74488618"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 08:13:51 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 80E4411F855;
-	Thu,  3 Oct 2024 18:13:48 +0300 (EEST)
-Date: Thu, 3 Oct 2024 15:13:48 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] media: i2c: ds90ub960: Fix missing return check on
- ub960_rxport_read call
-Message-ID: <Zv60rJo_ucdxHQk3@kekkonen.localdomain>
-References: <20241002165329.957739-1-colin.i.king@gmail.com>
- <Zv40EQSR__JDN_0M@kekkonen.localdomain>
- <f1e973fd-9933-49ed-8f9c-71b8283e6fb8@ideasonboard.com>
- <Zv6Z6P0cjYCkyJh9@kekkonen.localdomain>
- <ea1c37b3-0430-4bce-9228-5d761ff94425@ideasonboard.com>
+	s=arc-20240116; t=1727968492; c=relaxed/simple;
+	bh=xmEH20Nq5o5Un2lXFQ1wQmstfsur9/CVwpYLSoOVYG8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uL7/hmpq5RrIN9GCTA57M1xPmPOdksoBlcgBKdA8EpGNclzK07DRJZ1pYKuDSlCZZYAB/5rjrH5a7GtKOLf+ljJ0RMpjfAQNxvcAyZb/6Jtx8ET7Qxe5F8lldbZLQ/FnVYORLz3zANJNOC6qP4ojI1R0uoMBd2nOfEXzW63A34g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rWIVpEg2; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493EkfED032613;
+	Thu, 3 Oct 2024 15:14:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	06CT3E910iENCLWyqE+iVYG+TqUy1wGVmKngE4Bo+qw=; b=rWIVpEg2d0uIFxRM
+	m+cdImoSGwdsYjxRhOC1ocsvRUo1ohP+oUL1xQtgpHGF/fnflAw3XOj+hiKLI7dM
+	NPCTn5Mij14wgFJj7+t7QBfmJY7lW19kF7vSVIhx7s/YCa4bW0mwcBiOeBw/RxJg
+	Ln7zibjOjFpToeZl1JPzYJ8lorxr8zN/rPqHGEip/0+7x7NUOwbGLdYkNsF1A9o8
+	n3BJAkf9Tosk3p9znJvkbKFOVBNLTo+EKG/azJn6pkXiBy9Wkjz7eO5dzZKfsglE
+	lsRkUyt/GvtosGpmN5jPb/4FPuFmnGK0js9nHYjlBXRj3EHTUbOAl5FnRVndn2bp
+	orCXvQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421wae04ps-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 15:14:27 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 493FERfw006145;
+	Thu, 3 Oct 2024 15:14:27 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421wae04pf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 15:14:27 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 493BsNKo020408;
+	Thu, 3 Oct 2024 15:14:26 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xv4sgmr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 15:14:26 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 493FEP8I56951112
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 3 Oct 2024 15:14:25 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4C2A45805E;
+	Thu,  3 Oct 2024 15:14:25 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3017D5805A;
+	Thu,  3 Oct 2024 15:14:24 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  3 Oct 2024 15:14:24 +0000 (GMT)
+Message-ID: <7f05ff8e-6103-4ad7-8a32-9ff5643b8a41@linux.ibm.com>
+Date: Thu, 3 Oct 2024 11:14:23 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com,
+        mapengyu@gmail.com, Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20240921120811.1264985-1-jarkko@kernel.org>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20240921120811.1264985-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: DrgH_RP9_UttccGGai0UddPG_vRoRn8C
+X-Proofpoint-ORIG-GUID: f_eH5Q7IsdQSTJubjWUFHlsqUMbaRzGw
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea1c37b3-0430-4bce-9228-5d761ff94425@ideasonboard.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-03_06,2024-10-03_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ bulkscore=0 clxscore=1015 impostorscore=0 adultscore=0 suspectscore=0
+ mlxlogscore=900 malwarescore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410030110
 
-Moi,
 
-On Thu, Oct 03, 2024 at 04:33:54PM +0300, Tomi Valkeinen wrote:
-> On 03/10/2024 16:19, Sakari Ailus wrote:
-> > Moi,
-> > 
-> > On Thu, Oct 03, 2024 at 03:52:17PM +0300, Tomi Valkeinen wrote:
-> > > Hi,
-> > > 
-> > > On 03/10/2024 09:05, Sakari Ailus wrote:
-> > > > Hi Colin,
-> > > > 
-> > > > On Wed, Oct 02, 2024 at 05:53:29PM +0100, Colin Ian King wrote:
-> > > > > The function ub960_rxport_read is being called and afterwards ret is
-> > > > > being checked for any failures, however ret is not being assigned to
-> > > > > the return of the function call. Fix this by assigning ret to the
-> > > > > return of the call which appears to be missing.
-> > > > > 
-> > > > > Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
-> > > > > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > > > > ---
-> > > > >    drivers/media/i2c/ds90ub960.c | 2 +-
-> > > > >    1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-> > > > > index ffe5f25f8647..58424d8f72af 100644
-> > > > > --- a/drivers/media/i2c/ds90ub960.c
-> > > > > +++ b/drivers/media/i2c/ds90ub960.c
-> > > > > @@ -1286,7 +1286,7 @@ static int ub960_rxport_get_strobe_pos(struct ub960_data *priv,
-> > > > >    	clk_delay += v & UB960_IR_RX_ANA_STROBE_SET_CLK_DELAY_MASK;
-> > > > > -	ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
-> > > > > +	ret = ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
-> > > > >    	if (ret)
-> > > > >    		return ret;
-> > > > 
-> > > > There seems to be a similar issues all around the driver. It'd be good to
-> > > > fix them at the same time.
-> > > 
-> > > With similar issues, do you mean the code not checking the return value at
-> > > all for i2c reads and writes?
-> > > 
-> > > In this particular case the code already checks the return value, but
-> > > setting the return value was missing. With a quick browse, I didn't see
-> > > other like this.
-> > 
-> > See e.g. ub960_clear_rx_errors(), ub960_log_status(),
-> > ub960_rxport_set_strobe_pos() and ub960_rxport_set_strobe_range.
+
+On 9/21/24 8:08 AM, Jarkko Sakkinen wrote:
+> This patch set aims to fix:
+> https://bugzilla.kernel.org/show_bug.cgi?id=219229.
 > 
-> Right, those don't check the return value. So they're not the same as the
-> one fixed in this patch.
-> 
-> I'm not arguing against adding error checks, but that's a big work and I
-> think this patch is a different kind of fix which should be applied whether
-> the additional error checks are added or not.
+> The baseline for the series is the v6.11 tag.
 
-How much of work that is really? It seems trivial, albeit there are a
-number of locations that need to be fixed.
+I was testing this with 6.12-rc1 on ppc64/kvm + vtpm boot time from 
+pressing return on grub until login prompt appears while using an IMA 
+measure policy:
 
-I'm fine with applying this but it'd be nice to add at least a FIXME:
-comment to the code while at it.
+with HMAC2: 36s
+with HMAC2+this series: 29s
+without HMAC2: 28s
+
+Looks good to me, though using a hardware TPM would probably be more 
+critical in this type of measurement.
 
 > 
-> Also, while still not arguing against adding the checks, it looks quite
-> common to not check the returns values. E.g. it's not just a few errors I
-> see if I add __must_check to cci functions.
-
-I haven't seen this being as widespread in pretty much any other (upstream)
-driver.
-
--- 
-Terveisin,
-
-Sakari Ailus
+> v4:
+> https://lore.kernel.org/linux-integrity/20240918203559.192605-1-jarkko@kernel.org/
+> v3:
+> https://lore.kernel.org/linux-integrity/20240917154444.702370-1-jarkko@kernel.org/
+> v2:
+> https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jarkko@kernel.org/
+> v1:
+> https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jarkko@kernel.org/
+> 
+> Jarkko Sakkinen (5):
+>    tpm: Return on tpm2_create_null_primary() failure
+>    tpm: Implement tpm2_load_null() rollback
+>    tpm: flush the null key only when /dev/tpm0 is accessed
+>    tpm: Allocate chip->auth in tpm2_start_auth_session()
+>    tpm: flush the auth session only when /dev/tpm0 is open
+> 
+>   drivers/char/tpm/tpm-chip.c       |  14 ++++
+>   drivers/char/tpm/tpm-dev-common.c |   8 +++
+>   drivers/char/tpm/tpm-interface.c  |  10 ++-
+>   drivers/char/tpm/tpm2-cmd.c       |   3 +
+>   drivers/char/tpm/tpm2-sessions.c  | 109 ++++++++++++++++++------------
+>   include/linux/tpm.h               |   2 +
+>   6 files changed, 102 insertions(+), 44 deletions(-)
+> 
 
