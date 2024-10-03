@@ -1,133 +1,146 @@
-Return-Path: <linux-kernel+bounces-349212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7382598F28D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:29:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A5C698F299
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A75C1F21A2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:29:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D58F9B21A66
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0561A265E;
-	Thu,  3 Oct 2024 15:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="spXx6AcA"
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1EEDDA8
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20B31A4E84;
+	Thu,  3 Oct 2024 15:29:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BE21A0708;
+	Thu,  3 Oct 2024 15:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727969354; cv=none; b=FWWOyM0pPE+7WI1YOAoXYtKStGb58BvT35602Zhu9P+ee3iJBk6AZ/PV6FYbrOMtVDGuI0beeHu3frpmDV9lm4bgDKRTOGlILnbKhqf+QiRdKhNQY33N/wPdQHGsk4zIW7gdrLj/bvGhwK144KLLhlNxS1y5XpKDdZN0vOelkd4=
+	t=1727969363; cv=none; b=Q1UVfek78LmnjWtujrHCD7Kzd2KNaNIPKt8snVx7OuhB7H2JdTYrwL/YLVadP6fOZiyYiQ7mP5fX69hLgmgTeRgqxo/lyw0x1qqQOSrxGDYdLJRtSdgiijmaDssNsArFjLrdg1T66Cr06RMXycSdvIuZE3hbQi45092mBE3E40s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727969354; c=relaxed/simple;
-	bh=vHAhxvdfBCy0Fig2E+fqk6AIZTILhCxXYnZE49T+x0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IfhlrBRqLWwbTj4/tJT2sjSi+6ftQdKnXAWUXwpuXiA5QelAQgNVVsYPAPCrKP1RFC0q9dy+hqMzZ6jJ8IIff3uScFvG0R9c6HsltBE7gOibjTKca2UexJu3/KdT2NysRbUqgqbRQNNSEH1lrY180TKdmaEIS1vH538fz5ZAo60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=spXx6AcA; arc=none smtp.client-ip=84.16.66.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XKFvn1VKBzjD4;
-	Thu,  3 Oct 2024 17:29:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1727969349;
-	bh=DHC7Z0lCSKbSGZQeetiruygx7u51kZ68Uq60ZbYypoc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=spXx6AcAEgB+Xx38piZsAmWdLSbYwd170/uvEaAd+/J1lqCzEgQwQi7wYZ6j0ZS2j
-	 TrK76Xb/cqqESFD9aoTNVhsUrXkDObRtfBFRrJliPHeYrsJnj1zAvFSr7HOubINbHi
-	 wG2Pk+JynlVB+1DA0Fusy+RKRLH91Sof8EtbV7Hs=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XKFvm5TD5zKcb;
-	Thu,  3 Oct 2024 17:29:08 +0200 (CEST)
-Date: Thu, 3 Oct 2024 17:29:06 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] samples/landlock: Clarify option parsing behaviour
-Message-ID: <20241003.tieveil5xohL@digikod.net>
-References: <20241003005042.258991-1-matthieu@buffet.re>
- <20241003005042.258991-3-matthieu@buffet.re>
+	s=arc-20240116; t=1727969363; c=relaxed/simple;
+	bh=pII1JQEUEe3l4XrTYQ16aKUPeSkG/WGB8VqvHkfyi34=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=fg9GoPNQeEY/0Oz+HI4vAk6QfmpseuQbewz7QY9mR8nkX7tUa89hyC5VPqmCXTM0SPmL+BAhwkefKMhtT0rI0vuFSizZaj4obPlqd0lzzV7cyO4hoA7kQhLnlkXGSgNructrlPisLMMNp/tj3xtT9i2IINyLVcfwJ+G0hOt6x0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC383339;
+	Thu,  3 Oct 2024 08:29:49 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 803283F640;
+	Thu,  3 Oct 2024 08:29:17 -0700 (PDT)
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH v3 0/2] vdso: Use only headers from the vdso/ namespace
+Date: Thu,  3 Oct 2024 16:29:08 +0100
+Message-Id: <20241003152910.3287259-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241003005042.258991-3-matthieu@buffet.re>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 03, 2024 at 02:50:42AM +0200, Matthieu Buffet wrote:
-> - Clarify which environment variables are optional, which ones are
->   mandatory
-> - Clarify the difference between unset variables and empty ones
+The recent implementation of getrandom in the generic vdso library,
+includes headers from outside of the vdso/ namespace.
 
-You can remove the "-" and just go with two sentences.
+The purpose of this patch series is to refactor the code to make sure
+that the library uses only the allowed namespace.
 
-> 
-> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
-> ---
->  samples/landlock/sandboxer.c | 22 +++++++++++++---------
->  1 file changed, 13 insertions(+), 9 deletions(-)
-> 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index f16994d35d9e..a28e4a9c5f87 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -298,24 +298,27 @@ static bool check_ruleset_scope(const char *const env_var,
->  static void print_help(const char *argv0)
->  {
->  	fprintf(stderr,
-> -		"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s "
-> +		"usage: %s=\"...\" %s=\"...\" [other environment variables] %s "
->  		"<cmd> [args]...\n\n",
-> -		ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> -		ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv0);
-> +		ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv0);
->  	fprintf(stderr,
->  		"Execute a command in a restricted environment.\n\n");
->  	fprintf(stderr,
-> -		"Environment variables containing paths and ports "
-> -		"each separated by a colon:\n");
-> +		"All environment variables can be multi-valued, with a "
-> +		"colon delimiter.\n"
-> +		"\n"
-> +		"Mandatory settings:\n");
->  	fprintf(stderr,
->  		"* %s: list of paths allowed to be used in a read-only way.\n",
->  		ENV_FS_RO_NAME);
->  	fprintf(stderr,
-> -		"* %s: list of paths allowed to be used in a read-write way.\n\n",
-> +		"* %s: list of paths allowed to be used in a read-write way.\n",
->  		ENV_FS_RW_NAME);
->  	fprintf(stderr,
-> -		"Environment variables containing ports are optional "
-> -		"and could be skipped.\n");
-> +		"\n"
-> +		"Optional settings (when not set, their associated access "
-> +		"check is always allowed, which is different from an empty "
-> +		"string which means an empty list)\n");
->  	fprintf(stderr,
->  		"* %s: list of ports allowed to bind (server).\n",
->  		ENV_TCP_BIND_NAME);
-> @@ -325,7 +328,8 @@ static void print_help(const char *argv0)
->  	fprintf(stderr, "* %s: list of scoped IPCs.\n",
->  		ENV_SCOPED_NAME);
->  	fprintf(stderr,
-> -		"\nexample:\n"
-> +		"\n"
-> +		"Example:\n"
->  		"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
->  		"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
->  		"%s=\"9418\" "
-> -- 
-> 2.39.2
-> 
-> 
+The series has been rebased on [1] to simplify the testing. 
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git master
+
+Changes:
+--------
+v3:
+  - Discard vdso/mman.h changes in favor of [2].
+  - Refactor vdso/page.h.
+  - Add a fix to drm/intel_gt.
+v2:
+  - Added common PAGE_SIZE and PAGE_MASK definitions.
+  - Added opencoded macros where not defined.
+  - Dropped VDSO_PAGE_* redefinitions.
+
+[2] https://lore.kernel.org/lkml/20240925210615.2572360-1-arnd@kernel.org
+
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Naveen N Rao <naveen@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+
+Vincenzo Frascino (2):
+  drm: Fix fault format
+  vdso: Introduce vdso/page.h
+
+ arch/alpha/include/asm/page.h      |  6 +-----
+ arch/arc/include/uapi/asm/page.h   |  7 +++----
+ arch/arm/include/asm/page.h        |  5 +----
+ arch/arm64/include/asm/page-def.h  |  5 +----
+ arch/csky/include/asm/page.h       |  8 ++------
+ arch/hexagon/include/asm/page.h    |  4 +---
+ arch/loongarch/include/asm/page.h  |  7 +------
+ arch/m68k/include/asm/page.h       |  6 ++----
+ arch/microblaze/include/asm/page.h |  5 +----
+ arch/mips/include/asm/page.h       |  7 +------
+ arch/nios2/include/asm/page.h      |  7 +------
+ arch/openrisc/include/asm/page.h   | 11 +----------
+ arch/parisc/include/asm/page.h     |  4 +---
+ arch/powerpc/include/asm/page.h    | 10 +---------
+ arch/riscv/include/asm/page.h      |  4 +---
+ arch/s390/include/asm/page.h       |  4 +---
+ arch/sh/include/asm/page.h         |  6 ++----
+ arch/sparc/include/asm/page_32.h   |  4 +---
+ arch/sparc/include/asm/page_64.h   |  4 +---
+ arch/um/include/asm/page.h         |  5 +----
+ arch/x86/include/asm/page_types.h  |  5 +----
+ arch/xtensa/include/asm/page.h     |  8 +-------
+ drivers/gpu/drm/i915/gt/intel_gt.c |  2 +-
+ include/vdso/page.h                | 23 +++++++++++++++++++++++
+ 24 files changed, 51 insertions(+), 106 deletions(-)
+ create mode 100644 include/vdso/page.h
+
+-- 
+2.34.1
+
 
