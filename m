@@ -1,134 +1,93 @@
-Return-Path: <linux-kernel+bounces-348787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBBF498EBDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:47:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D265B98EBDF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 021811C22272
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:47:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7592B1F2196D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C3813D509;
-	Thu,  3 Oct 2024 08:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB5813DBB1;
+	Thu,  3 Oct 2024 08:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U2Q4hm1y"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BmWsw31/"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72BC482ED
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 08:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F051C482ED;
+	Thu,  3 Oct 2024 08:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727945227; cv=none; b=AclzZMHqznG0ImbPc+c39S2LyenX8jIRa6j/mn3pJSsrzLPvgyP1nqKXU57o6+qynyZ2hNLDjTT/eoea3SU2JjuReNtjEFKOrGDBgYHlXQRrBoQK6zIojhP37rk7QGh6HM0NY6CiIkNOwVCRExU2OukMdT2lxVPFpG7THtSg560=
+	t=1727945275; cv=none; b=QO7dRB1TviA3hvISt24dBneEef0M5QmbK1HyWPdxlLni5EhpvEsY9IUdKM47HS4R4KXjtmY+rkhTLp0i53yolszD5Sca1EueHgN2Und4SzWQvx+CeN3qZsYQlRrR25nWnMnNT9WfPMzWG7CRre6cfqeGRQ3pkBxgC6Vp6/U98CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727945227; c=relaxed/simple;
-	bh=nh3iKVHuIov7eMZfm8q1FUzsC0zhjNRt9MDTrXyNxck=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JvicNswXlE9T7E0spG9LP3ffLSwvxfZqVb5+auWsmcCDGwu/LzcWJpzYeA5A7/4iWn8s8V2Ihv/EYiZTFE4loVhPPLesJNDLb/MI7/IeGfPZTN4Z7ylc7dHf5s4PTyRSXBp8IyowcBdObJO5cWC3AG6oWW3F4Mak4UD6ZDyOiGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U2Q4hm1y; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c87853df28so852438a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 01:47:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727945224; x=1728550024; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tSiPzrmzoIoMCOJCQ39CROW4s9bHVIocbjOAHp4Gd2o=;
-        b=U2Q4hm1yICJi3tKuj/girfaof7VHiCAygejQ/bLBqYhwc4p/eQVYYjd0q+10U04ytK
-         FvjGvGJhWuXChJuZY0HF4p5MVrTyEfoNXZqg0flrjH/4ubZuP9/5+TV2+rqtLWzS8x2q
-         Lh9bxRADECQBGtTKVhAQdbbIpd/yeQriPCmKc6VPX0HNpbz6rCzfDVrVatw/OINsCmSP
-         dYU6hVnEJxpsWqpwY04CsOMhk5fvg9TvCizhAzBPd8qQj4y9XpJStdvCuArjGW/oHaNE
-         iM+ZF/AeKqm2mO9q5y9UfAOR8z71DlSiWDaGGB6bIFKuXAaoO7/0Q45e6gutvDi9yobf
-         4bgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727945224; x=1728550024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tSiPzrmzoIoMCOJCQ39CROW4s9bHVIocbjOAHp4Gd2o=;
-        b=VH7JJTvBfG3Jkm1nuwPXPSpoRbVZUnHWWD9MfTr96WL20NA5wWqWvIaCvXdAP1wRac
-         2aaDixk0ywX+KkrMgBuc9NrUxacOOdKIvDDJt4dslesauhOH8Ts78kyyVpWaXi4c7WJf
-         7WRYJ/XFrshJpZv/PIqO3zgLb2j2QTmHX7P1VFezzVHjE4bZAPHQuWTJV+RtxL644LHw
-         N7pM9KmBOy8m99obc6c4qUOLp99ODHa+m4E6/8douCkqgYDdPD3Hg2N/pzy74PZYGmui
-         wlsDSs+Fdu9n3hwlONkBCZp0zvw6oaNqO3C7CFPak+gJrrc2r1gYJ8LocBt5wGM3qAJM
-         bq2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCURCUbSBDZMya8yvAJV+cqmDi/cmoAun+qJwThSRWo0z7HoNE9AHNu4xEYW9DufUV13Udy75rTbrqowu0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWBv8ZaZjCwUGDMmPnJCeNMHm9UKBcJizC7WU8TZ1bSBmDZblS
-	b5szonAM9mM82KWiscQcGYaN1w749gqh/Wv3SFOmLDMde5BUvZ6uyYOuwbHSHMaGThoq3wnhkCP
-	vcZM0iSN0kNCGFTU0GpvMW1nK4FzMpQmv8JhM
-X-Google-Smtp-Source: AGHT+IF+GPKQZszYUr0X8NGccGwW03+Jj//xlIgGpJ/U2dxYRVqSMGOJIQZmNewncQEjXeMhAvXtb9pvXPXWEX8CFMg=
-X-Received: by 2002:a05:6402:34c6:b0:5c5:b679:cf29 with SMTP id
- 4fb4d7f45d1cf-5c8b18eea38mr4612747a12.1.1727945224017; Thu, 03 Oct 2024
- 01:47:04 -0700 (PDT)
+	s=arc-20240116; t=1727945275; c=relaxed/simple;
+	bh=NFiEVfncwlZrl8/o+O8TpVCGpp2sMmTX/y+pFR+apCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YYKX28rG779RDmV8Jpzo4z6SNbUZ2FtGB5T4tmi91oZqfq4WBftoxLf5OVhh6MujeNlq/sy0BBAyqCQ5UrJBcERl+ukoS4xMztAdl8ZFDXP9swNfe45/k7ynT5mybHkX6U6aTcr5cwx/RbiGkLlhXZsNwn1a1kXwFEKRoQP/BPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BmWsw31/; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JxpVfVshi8ln9iQvUep2RQ1oDNl0ObuPgd4eUfVRQMQ=; b=BmWsw31/+Rgv9gXtydqbMXfbuJ
+	FbwlNY+kkOAz5yyZ2IroIwABeQsOebExpuUTNIokUQVOY/Odx8nOxZXbHhmnn17c6n9ggUWBKG6KZ
+	/KoysLnY0FhQE5j0goWfANoZTyBaAHuDzAtaXKw8R1xRsq0lQcG7qFdtDC3cHntXlradoDJK0zbS5
+	FMjTwuU5f5S2Do368Y3M36UoFmA7dAJM2woBSO+8AmSs2gv2VNO4vOOoWAq9ahD1sQvVctB5gLcsP
+	D/XjDh4YJgZLQN68ZoqerwfGnyV8o2YhaDafLoF87ppcN4xeyT7zapHc8xA4v6rYYgo3yZRjeb9gw
+	CBnQYMBA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1swHUu-00000003ewe-1gyM;
+	Thu, 03 Oct 2024 08:47:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6B93E30083E; Thu,  3 Oct 2024 10:47:43 +0200 (CEST)
+Date: Thu, 3 Oct 2024 10:47:43 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
+	linux-next@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <20241003084743.GC33184@noisy.programming.kicks-ass.net>
+References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
+ <20241003084039.GS5594@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003082231.759759-1-dongml2@chinatelecom.cn>
-In-Reply-To: <20241003082231.759759-1-dongml2@chinatelecom.cn>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 3 Oct 2024 10:46:50 +0200
-Message-ID: <CANn89iKfvO1Z8_ntCre-nG+6jrq-Lf0Hym_D=+w68beZps4Atg@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: tcp: refresh tcp_mstamp for compressed ack
- in timer
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Menglong Dong <dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003084039.GS5594@noisy.programming.kicks-ass.net>
 
-On Thu, Oct 3, 2024 at 10:23=E2=80=AFAM Menglong Dong <menglong8.dong@gmail=
-.com> wrote:
->
-> For now, we refresh the tcp_mstamp for delayed acks and keepalives, but
-> not for the compressed ack in tcp_compressed_ack_kick().
->
-> I have not found out the effact of the tcp_mstamp when sending ack, but
-> we can still refresh it for the compressed ack to keep consistent.
+On Thu, Oct 03, 2024 at 10:40:39AM +0200, Peter Zijlstra wrote:
+> On Wed, Aug 21, 2024 at 02:57:16PM -0700, Paul E. McKenney wrote:
+> 
+> > My reproducer on the two-socket 40-core 80-HW-thread systems is:
+> > 
+> > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "50*TREE03" --trust-make
+> > 
+> 
+> This gets me a very long stream of:
+> 
+> Results directory: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33
+> tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 50*TREE03 --trust-make
+> TREE03 -------
+> QEMU error, output:
+> cat: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33/TREE03/qemu-output: No such file or directory
+> TREE03.10 -------
+> QEMU error, output:
+> cat: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33/TREE03.10/qemu-output: No such file or directory
+> ...
+> 
+> 
+> Did I not do it right?
 
-This was a choice I made for the following reason :
-
-delayed ack timer can happen sometime 40ms later. Thus the
-tcp_mstamp_refresh(tp) was probably welcome.
-
-Compressed ack timer is scheduled for min( 5% of RTT, 1ms). It is
-usually in the 200 usec range.
-
-So sending the prior tsval (for flow using TCP TS) was ok (and right
-most of the time), and not changing PAWS or EDT logic.
-
-Although I do not object to your patch, there is no strong argument
-for it or against it.
-
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-
->
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> ---
->  net/ipv4/tcp_timer.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-> index 79064580c8c0..1f37a37f9c82 100644
-> --- a/net/ipv4/tcp_timer.c
-> +++ b/net/ipv4/tcp_timer.c
-> @@ -851,6 +851,7 @@ static enum hrtimer_restart tcp_compressed_ack_kick(s=
-truct hrtimer *timer)
->                          * LINUX_MIB_TCPACKCOMPRESSED accurate.
->                          */
->                         tp->compressed_ack--;
-> +                       tcp_mstamp_refresh(tp);
->                         tcp_send_ack(sk);
->                 }
->         } else {
-> --
-> 2.39.5
->
+Urgh, for some reason my machine doesn't auto load kvm_intel.ko and then
+proceeds to not do anything useful.. Let me try again.
 
