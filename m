@@ -1,79 +1,119 @@
-Return-Path: <linux-kernel+bounces-348425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A9998E777
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:57:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5BA98E779
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245E2284AA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:57:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70EDF1F260BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55381A01C3;
-	Wed,  2 Oct 2024 23:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B0BC133;
+	Thu,  3 Oct 2024 00:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="v6kDv0oc"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpkpjTHj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D331A14B972;
-	Wed,  2 Oct 2024 23:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8162C63CB;
+	Thu,  3 Oct 2024 00:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727913440; cv=none; b=FFge5nq5dt16dWXA6UCvMJp8w+9K3BfaGZgGIqFQ8pmj1oewEAxXJS+06QhJHJp7fDZh4Y2FpuhaVDIu/VFRjO6mRot9BWl5Tc1MInLTAspXSZYPGvCiki1YLr3i2TIPad0hfY3b9kTaS2RI7YH3mJ232QPEWH9gpZ6pk8/j690=
+	t=1727913621; cv=none; b=SSRJLPkZPe3OivzrTAXVory+ek9IO5rRkDipFChBnKh0O3L2qf6qQLFLPIHJqZUw/1bGEE7jeA3ucHcOgrTVHElAG2skW8KOcyWBken5c2zck8Fm+z7QSsOumokW/Ak6wyviT58KBBfgGmg3h/fSewjCAMbiMlGghlv177bnV8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727913440; c=relaxed/simple;
-	bh=MBRHyO+e28D/r9LwjPo9VkTBkix3qJhv26tCz419R/0=;
+	s=arc-20240116; t=1727913621; c=relaxed/simple;
+	bh=l7Ai4uJ2WmdodLKKKV1L+UBOHEh6ATojiNTXF/E/Qsk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PV7Oup4G7q15egVWrXRLgA0FQ+0WcN8tcyNFCVudUac7diHDMJ+P/ldwEXLbJacTg8Hn31Nypr+cNWpSZCR4/Qqd8nr7D1mWVFuPyqY2U39ciYJppAyMwSRGEi9iP9jPugvMl9pz5+S4O2eXGl51E7wvMIpzFRjC4HT/YJObiBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=v6kDv0oc; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=5SH4G3BifOy86siuo5EL/MuoIB3QLu7HKrFwz/TS5pY=; b=v6kDv0ocxykXdFFfzSNHMJQkUd
-	kFDbNSO8/Exj0oRygi1uSyf2Xwf3UT235VubsaNunfqfX6kjDtayS+yrGYSJ7joaL9CncPHb0GWEb
-	MFIJn8Tihckr9+E5KXFtfLMKoXChTj0UV76ZaeqruVFfzFN3B2DKf1jIZDh+ZMWLEgeA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sw9DQ-008uHc-VE; Thu, 03 Oct 2024 01:57:08 +0200
-Date: Thu, 3 Oct 2024 01:57:08 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de
-Subject: Re: [PATCH net-next 12/12] net: pse-pd: tps23881: Add support for
- PSE events and interrupts
-Message-ID: <c4b47aaa-3ae6-48cd-906f-cab8a74392ee@lunn.ch>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
- <20241002-feature_poe_port_prio-v1-12-787054f74ed5@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XPBmC50fuwlHlziIwPvfeNnHs7xxhe5wl7lL1TIabSqX/hfwNXPr5UXAyh3In147YratAshusr7i/S8bo91ImFVKL1+c3zXXnf+MulZpk/P3lbl9xKagGCM1mPnlm6xAuiBoks3zxrkMkchej/Tch4Cl9CZBf6Ct1bwEr6zQUho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpkpjTHj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B876EC4CEC2;
+	Thu,  3 Oct 2024 00:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727913621;
+	bh=l7Ai4uJ2WmdodLKKKV1L+UBOHEh6ATojiNTXF/E/Qsk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CpkpjTHjGn09cl+i3PsQkXgMsrafRA96b/E9vOAJ8IHAccI10r33mawCB/fWEnZeF
+	 wwysezURLxkfa2t4Bs0vWePrd3km+RXfIxU2fdr+03Rvvw8Ia8/kI4IlgNtfiKS+do
+	 +DH/g5HqTX2ojYaKiKzaZXQA1p4kGSfIQj7Vh3/ZPjHZiwsnx9cwxH5B77rxJzyKot
+	 rwnUpf8Eswl9rHQ0fYgkBKg6QiRsBv7MBKCz4xRxLhJGtO6gt3oy3gsu5IkLDLeF1L
+	 y6JIYBY6JIBZyqHFPvDC9AIdUlZZwd95ud/yDWkbiEa1ZAYoZUqLj2NBYlj+aDN3M7
+	 fFTzhJZ5DichA==
+Date: Wed, 2 Oct 2024 17:00:19 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
+Message-ID: <Zv3ek7aBkQo0Z9To@google.com>
+References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com>
+ <172781650408.2469191.8205759350946908012.b4-ty@kernel.org>
+ <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241002-feature_poe_port_prio-v1-12-787054f74ed5@bootlin.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
 
-> This patch also adds support for an OSS GPIO line to turn off all low
-> priority ports in case of an over-current event.
+On Tue, Oct 01, 2024 at 03:32:04PM -0700, Ian Rogers wrote:
+> On Tue, Oct 1, 2024 at 2:02 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Fri, 13 Sep 2024 08:47:06 +0000, Dapeng Mi wrote:
+> >
+> > > Changes:
+> > > v5 -> v6:
+> > >   * no function change.
+> > >   * rebase patchset to latest code of perf-tool-next tree.
+> > >   * Add Kan's reviewed-by tag.
+> > >
+> > > History:
+> > >   v4: https://lore.kernel.org/all/20240816122938.32228-1-dapeng1.mi@linux.intel.com/
+> > >   v3: https://lore.kernel.org/all/20240712170339.185824-1-dapeng1.mi@linux.intel.com/
+> > >   v2: https://lore.kernel.org/all/20240708144204.839486-1-dapeng1.mi@linux.intel.com/
+> > >   v1: https://lore.kernel.org/all/20240702224037.343958-1-dapeng1.mi@linux.intel.com/
+> > >
+> > > [...]
+> >
+> > Applied to perf-tools-next, thanks!
+> 
+> I disagreed with an early patch set and the issue wasn't resolved. Specifically:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/commit/?h=perf-tools-next&id=3b5edc0421e2598a0ae7f0adcd592017f37e3cdf
+> ```
+>   /* Followed by topdown events. */
+>   if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+>   return -1;
+> - if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
+> + /*
+> + * Move topdown events forward only when topdown events
+> + * are not in same group with previous event.
+> + */
+> + if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
+> +     lhs->core.leader != rhs->core.leader)
+>   return 1;
+> ```
+> Is a broken comparator as the lhs then rhs behavior varies from the
+> rhs then lhs behavior. The qsort implementation can randomly order the
+> events.
+> Please drop/revert.
 
-Does this need a binding update? Or is the GPIO already listed?
+Can you please provide an example when it's broken?  I'm not sure how it
+can produce new errors, but it seems to fix a specific problem.  Do you
+have a new test failure after this change?
 
-	Andrew
+Thanks,
+Namhyung
+
 
