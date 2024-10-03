@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-348919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5636E98EDB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:15:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C1DE98EDB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888581C219EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F807283116
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58275154BEA;
-	Thu,  3 Oct 2024 11:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674BC155757;
+	Thu,  3 Oct 2024 11:15:07 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB6E152166;
-	Thu,  3 Oct 2024 11:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7A6155389;
+	Thu,  3 Oct 2024 11:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727954103; cv=none; b=Av4czH9bPuibK17t6yKEe0yOilEO5Hg3WRfkocEeIf8UzJ4BV0ZjIYXM9QCf2K/xFeg3CdQK4yLX1id7+WOwQiRl3U8mIrafEqN8VhQcZe+IwLaClniNpvTgEw7+UbZq7a0zRze6twNgdbcc8AUIUyGe0sdtMDwf3aNlHxrpNR0=
+	t=1727954107; cv=none; b=tgqs/YLW9KZLQoyCoicnwP2f/1nFb6l91uALnbzhDOmkvBW4R07g9p4lxWKAzho0wIfq/D6LcJ/peJFqK/FUmROMo4/9lzJyXmR32pg4kR0Qz+a7LRt4JIBWd7CWWZ1pRH5DsiwrU7GOb8HsC8jDX/2MtmUB2yGT/MwY/UcubTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727954103; c=relaxed/simple;
-	bh=WiaApKJByJkkbq30GzUGjXpAzo95nozGboie/erMrTg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hZEsLGvaVQMrT42xc2L8ppj0JYUInuhCqqWa0Ptnk4itv5QDEcdLCn9cD/mo6X5QkoVvuRtSlLtoweLmUkBBVcK+H8U7DVOe1S4GCrF3TVh7AspVT1jkdH+v8EwYVKvszdYyO+Gk5uhMG7TcbQpqh1Vvp7Mcq2k36p4DR9KLiAQ=
+	s=arc-20240116; t=1727954107; c=relaxed/simple;
+	bh=3v6BWUEr5bFFLRShtA8lbJG5VpVmcDRdGnW1qFqpO7Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tBsqO21E4KUFYd0YsBaLPkEDPRQKsWAMi/BooTY6BvYHZW3B7Hmh/Zn2TnuRVDe19ePcVx+Ox82eRGjLPzjIx5cNRWsDuaNDGQBiEKgAbDgcP3/k8QMmPRBZx3r4ZwBAnfkEzxTKn/edGTTZxfsaLOJp6/b+hdlRPvORiJg/kIM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17C08339;
-	Thu,  3 Oct 2024 04:15:30 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71A84497;
+	Thu,  3 Oct 2024 04:15:33 -0700 (PDT)
 Received: from e110479.arm.com (unknown [10.57.55.26])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 602653F640;
-	Thu,  3 Oct 2024 04:14:57 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF03F3F640;
+	Thu,  3 Oct 2024 04:15:00 -0700 (PDT)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Lee Jones <lee@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -44,10 +45,12 @@ Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Martin Botka <martin.botka@somainline.org>,
 	Chris Morgan <macromorgan@hotmail.com>
-Subject: [PATCH 0/5] regulator: add X-Powers AXP323 support
-Date: Thu,  3 Oct 2024 12:14:39 +0100
-Message-Id: <20241003111444.543964-1-andre.przywara@arm.com>
+Subject: [PATCH 1/5] dt-bindings: mfd: x-powers,axp152: Document AXP323
+Date: Thu,  3 Oct 2024 12:14:40 +0100
+Message-Id: <20241003111444.543964-2-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241003111444.543964-1-andre.przywara@arm.com>
+References: <20241003111444.543964-1-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,50 +59,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The X-Powers AXP323 is a close sibling to the AXP313a PMIC, only that it
-allows to dual-phase the first two DC/DC converters. This is controlled
-via a new register. On the first glance that would sound like a
-compatible extension, but any random AXP313a driver would not know about
-the potential dual-phase nature of the second DCDC rail, so might want
-to turn that off, spoiling the whole setup. So this patchset introduces
-a new compatible string, without any fallbacks.
+The X-Powers AXP323 is a PMIC used on some newer Allwinner devices.
+It is almost the same as the AXP313, but supports dual-phasing the first
+two DC/DC converters. A pure AXP313 driver wouldn't know about this, and
+might turn the linked DCDC2 regulator off, as it does not seem to be
+used. This makes the AXP323 incompatible to the AXP313a.
 
-Patch 1 adds the DT binding documentation, patch 2 fixes some fragile
-connection between PMIC IDs and an array. Patch 3 allows multiple AXP
-chips, since the AXP323 seems to be often paired with the AXP717, and
-there is some sysfs naming clash with the current code.
-Patch 4 then adds the MFD bits, to introduce the new device type and that
-extra register, while patch 4 eventually adds the new regulator device,
-and takes care about the proper poly-phase detection.
+Add the new compatible string, and treat it like the AXP313a.
 
-One note: so far the poly-phased AXP PMICs had that setting already
-enabled at reset time, so we just detected it and were good. However the
-AXP323 on my board does not, so it requires enabling the dual-phase bit at
-boot time. The BSP kernel does that in their boot0 (SPL) early boot code,
-and the plan would be to do this either in U-Boot or TF-A for mainline.
-But should we actually expose this in the DT, as some new property, to
-give kernels a chance to set it? The rails in question power the secondary
-cluster, so it's not strictly required at boot time, but it's probably too
-late for the kernel anyway, given that SMP bringup is much earlier than
-drivers? I would appreciate any thoughts here.
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+ Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thanks,
-Andre
-
-Andre Przywara (5):
-  dt-bindings: mfd: x-powers,axp152: Document AXP323
-  mfd: axp20x: ensure relationship between IDs and model names
-  mfd: axp20x: Allow multiple regulators
-  mfd: axp20x: Add support for AXP323
-  regulator: axp20x: add support for the AXP323
-
- .../bindings/mfd/x-powers,axp152.yaml         |  3 +
- drivers/mfd/axp20x-i2c.c                      |  1 +
- drivers/mfd/axp20x.c                          | 58 ++++++++++++++-----
- drivers/regulator/axp20x-regulator.c          | 13 ++++-
- include/linux/mfd/axp20x.h                    |  4 +-
- 5 files changed, 61 insertions(+), 18 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml b/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml
+index 14ab367fc887..3f7661bdd202 100644
+--- a/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml
++++ b/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml
+@@ -71,6 +71,7 @@ allOf:
+                 - x-powers,axp15060
+                 - x-powers,axp305
+                 - x-powers,axp313a
++                - x-powers,axp323
+ 
+     then:
+       required:
+@@ -82,6 +83,7 @@ allOf:
+           contains:
+             enum:
+               - x-powers,axp313a
++              - x-powers,axp323
+               - x-powers,axp15060
+               - x-powers,axp717
+ 
+@@ -100,6 +102,7 @@ properties:
+           - x-powers,axp221
+           - x-powers,axp223
+           - x-powers,axp313a
++          - x-powers,axp323
+           - x-powers,axp717
+           - x-powers,axp803
+           - x-powers,axp806
 -- 
 2.25.1
 
