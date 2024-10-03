@@ -1,150 +1,152 @@
-Return-Path: <linux-kernel+bounces-349400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4786D98F55E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:36:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 289FA98F569
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D94282283
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:36:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54951F22C48
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23861B85C5;
-	Thu,  3 Oct 2024 17:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D84A1AAE13;
+	Thu,  3 Oct 2024 17:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hx2d8os3"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="DHKUDIWo"
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.241.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758871AD3E1;
-	Thu,  3 Oct 2024 17:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10288DDCD
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 17:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.241.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727976897; cv=none; b=u31Y4HvysKfzbCDbAnfBVuDV8pcQ6C5aDQ0vhYckMl32JyovGxtinaV5kb1nyIA4sZcQeOZuNEtSOsNe0vOdP3QesPNsnib4TPzKEdBUHb5OoOcNBjCr5gzIMu3Z3hJDTuYx58/kabJHiw9WpyWsegqHIwahynXPT/JqvYVT1AQ=
+	t=1727977100; cv=none; b=RFwr+0t3n1EwvSye6KSk4WhUrD1Ezd+9c8SE5d4d/i3OsDYEpv403sWNyCfrDa1PTfmYCUzn3Lo5weKNCq8EeJNlcwCKe1YuKdNcXBFLA1HE3pe+fxToSUEi4nClZt5zGhmSXBD5PXecr/hacZ+PTP37FjmS/HIQ4IAlklzK9sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727976897; c=relaxed/simple;
-	bh=3D2UcZCozg5mtziUUk5vTYahXBxocqjYckSdyK5dx/8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qTsV0VFzJmDNRJzxyrQhq0E9AIJnrE3pSDLW5FXfBXcsXqcpHMDVw2gTCt+ngxbt1bA85D3nNkivi8nX0r2pm566OogG5ZucO88KKaQ6Bda2PB0O9h/sygOZHzbWFSmjzkZWW9tJd0qkwPYWOgVDXmSa8boUU0674fcUtfqgWSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hx2d8os3; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso11867655e9.0;
-        Thu, 03 Oct 2024 10:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727976894; x=1728581694; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wz8mn2zxSXqsVq5jkg3nHNCDHyd967M2Mt/0lSJOZUc=;
-        b=hx2d8os36c9WcoaPIIQpCCfFRu9j2513p4LAPlx+tjy/RPnlSjZxF28RLShzVsDDvt
-         FLFdNFFAVLqnpE1ze2ykP6Qgkz0VogVCYy+JZ7QjKWHsHo47cCOqO837VrUcjXRCRPOT
-         /IWcxZJT6RKY+aCQcAfrik1r1BeHYf4EjlOVRVttlcHK5dsabRNpdAC86i4FBeFMVeVt
-         3dXUCMIxrAGSsdIzKF2f+Ys9et4I0oUgZfB5SdzfZCu9i8+wnqdfgQDzhGZbeMQGat5q
-         +z8Qo/BRbbZF7/ir0VnKz01tBz1RNOoH5cB4JO4+cWjRYv/O801Hqy8uLo0mrxtPrBOI
-         ejXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727976894; x=1728581694;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wz8mn2zxSXqsVq5jkg3nHNCDHyd967M2Mt/0lSJOZUc=;
-        b=JwK4pet0odxR0Ytu6n7IcMzFJDdIpfsUNcBT5AJ2l0zQlUBMEBw4DWlzSXAacp/1DP
-         HsnfnDx4PajJlAHw2EDi8+NARsnvugdOPzoCgd/uGGbpD4J/T51r9URA91OgWZ9XLSwC
-         z9pZfDZq4xP80nhug/udJMqkP3qa1a9yiIHSIniVeMrLMTbqgvJGt3AZ9mloYCSguwXQ
-         IBK/EiVa/KQNwzW9LPeTZdsvX4BabSpveA/VrRDlDK4yYXpEz5jAGVTCSnfg/kcWwtcb
-         8RZrCsVeSPH5QHftfBNMoc5dpez+8hCRZKQ/+H/DKgkh4IFGPETypLeLmkEkhqbkYjkH
-         Ky8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUKyyiQfRnjyZ7VVpGUvdlzl1JTO6QtaOrx0v0ClgpJHY7cZdqlWe8kuPfdmr7t43XFyV3qsOyShIKnXwY=@vger.kernel.org, AJvYcCWa98UxnJfNcdhnM0FaaHWtgUErgD9EcqOMak2pFU1cPmTOhntisYLhPdnjFGNvh600CfP7btpoLF/cDg==@vger.kernel.org, AJvYcCXVR8RV6ciOxAYdeP7BUMl0MTiuOgeq3sfZmdx6quh7kPWb1rLUgW6kBt8PS3xYgZ30fH9AayC6YCY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOWVcwvLoMnEzcufdSYOaZB6U1kScQYlx5BD/t1d3ZoWyg2TPM
-	nAP6zuDQZfdnvC2vKtg2zMFV8HNNCQmQH4J9bMjjH3xXBZn8HbLl
-X-Google-Smtp-Source: AGHT+IHo+APz86h00PjtGq6DOnGX3/XEFKhnzXvT9fk7SgBeKfuGQG+33H6UlRik9DhMNcXPUe6fzA==
-X-Received: by 2002:a05:600c:1d25:b0:42b:8a35:1acf with SMTP id 5b1f17b1804b1-42f778f2bb8mr66032595e9.25.1727976893476;
-        Thu, 03 Oct 2024 10:34:53 -0700 (PDT)
-Received: from localhost (host-79-19-52-27.retail.telecomitalia.it. [79.19.52.27])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79eadd8csm49640315e9.16.2024.10.03.10.34.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 10:34:52 -0700 (PDT)
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Date: Thu, 03 Oct 2024 19:34:12 +0200
-Subject: [PATCH 7/7] power: supply: ingenic-battery: free scale buffer
- after use
+	s=arc-20240116; t=1727977100; c=relaxed/simple;
+	bh=m1yB8Ze6iYF0CL9QqSRczwMHRy9+goP0hLkrZu9n4fs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qqD1XnHpuavkw73W3D5BQ14OL34d/fAdnB8HarINVdIAY830R6DtR1I3RwuCM+EVFP5MWdLrSPKpQftmD9DQcAf/DangZIjSHSAF+Td2RJxXWj6XH8B3+efAr57EDF/7W7Qb2jwMeNt6w+m7N7IDfP5+mJkgfqLwhSizczK+SlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=DHKUDIWo; arc=none smtp.client-ip=159.100.241.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from relay2.mymailcheap.com (relay2.mymailcheap.com [151.80.165.199])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id 7FBF62000E
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 17:38:10 +0000 (UTC)
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay2.mymailcheap.com (Postfix) with ESMTPS id 8B27E3E8AF;
+	Thu,  3 Oct 2024 19:38:02 +0200 (CEST)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 21CBF4075C;
+	Thu,  3 Oct 2024 17:38:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1727977081; bh=m1yB8Ze6iYF0CL9QqSRczwMHRy9+goP0hLkrZu9n4fs=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=DHKUDIWoEo7ugj+8L+DxuHRpikcCzpQjB//Za1NVRBeCs5LFQ5kxzmfW8jlvxDwA3
+	 3x0YUynVY9tjk7Gip6YHnahmgMTXGVZqy4IxoqJVZVFct7Art1SsuuqwiTOpXkIhxl
+	 sEWNaqthSgGvF1h1t99sVIIfhGKAhVpQO06ea9+w=
+Received: from [198.18.0.1] (unknown [58.32.43.121])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 93CAB42EDC;
+	Thu,  3 Oct 2024 17:37:58 +0000 (UTC)
+Message-ID: <d1383f52-b1b3-4967-8bd1-abb42fedba4f@aosc.io>
+Date: Fri, 4 Oct 2024 01:37:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Thunderbird Daily
+Subject: Re: [PATCH] net/9p/usbg: Fix build error
+To: Jinjie Ruan <ruanjinjie@huawei.com>, ericvh@kernel.org, lucho@ionkov.net,
+ asmadeus@codewreck.org, linux_oss@crudebyte.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, m.grzeschik@pengutronix.de,
+ gregkh@linuxfoundation.org, v9fs@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20240930081520.2371424-1-ruanjinjie@huawei.com>
+Content-Language: en-US
+From: Kexy Biscuit <kexybiscuit@aosc.io>
+In-Reply-To: <20240930081520.2371424-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241003-iio-read-avail-release-v1-7-c70cc7d9c2e0@gmail.com>
-References: <20241003-iio-read-avail-release-v1-0-c70cc7d9c2e0@gmail.com>
-In-Reply-To: <20241003-iio-read-avail-release-v1-0-c70cc7d9c2e0@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Alisa-Dariana Roman <alisa.roman@analog.com>, 
- Christian Eggers <ceggers@arri.de>, Peter Rosin <peda@axentia.se>, 
- Paul Cercueil <paul@crapouillou.net>, Sebastian Reichel <sre@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mips@vger.kernel.org, linux-pm@vger.kernel.org, 
- Matteo Martelli <matteomartelli3@gmail.com>
-X-Mailer: b4 0.14.2
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Rspamd-Queue-Id: 21CBF4075C
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-0.09 / 10.00];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ONE(0.00)[1];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FROM_HAS_DN(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[]
 
-The iio_read_avail_channel_attribute() iio interface now allocates a
-copy of the available info buffer that must be freed after use.
+On 9/30/2024 4:15 PM, Jinjie Ruan wrote:
+> When CONFIG_NET_9P_USBG=y but CONFIG_USB_LIBCOMPOSITE=m and
+> CONFIG_CONFIGFS_FS=m, the following build error occurs:
+> 
+> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_free_func':
+> 	trans_usbg.c:(.text+0x124): undefined reference to `usb_free_all_descriptors'
+> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_rx_complete':
+> 	trans_usbg.c:(.text+0x2d8): undefined reference to `usb_interface_id'
+> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x2f6): undefined reference to `usb_string_id'
+> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_func_bind':
+> 	trans_usbg.c:(.text+0x31c): undefined reference to `usb_ep_autoconfig'
+> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x336): undefined reference to `usb_ep_autoconfig'
+> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x378): undefined reference to `usb_assign_descriptors'
+> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `f_usb9pfs_opts_buflen_store':
+> 	trans_usbg.c:(.text+0x49e): undefined reference to `usb_put_function_instance'
+> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc_instance':
+> 	trans_usbg.c:(.text+0x5fe): undefined reference to `config_group_init_type_name'
+> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc':
+> 	trans_usbg.c:(.text+0x7aa): undefined reference to `config_ep_by_speed'
+> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x7ea): undefined reference to `config_ep_by_speed'
+> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_set_alt':
+> 	trans_usbg.c:(.text+0x828): undefined reference to `alloc_ep_req'
+> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modexit':
+> 	trans_usbg.c:(.exit.text+0x10): undefined reference to `usb_function_unregister'
+> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modinit':
+> 	trans_usbg.c:(.init.text+0x1e): undefined reference to `usb_function_register'
+> 
+> Select the config for NET_9P_USBG to fix it.
+> 
+> Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>   net/9p/Kconfig | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/net/9p/Kconfig b/net/9p/Kconfig
+> index 63f988f0c9e8..ee967fd25312 100644
+> --- a/net/9p/Kconfig
+> +++ b/net/9p/Kconfig
+> @@ -43,6 +43,8 @@ config NET_9P_XEN
+>   config NET_9P_USBG
+>   	bool "9P USB Gadget Transport"
+>   	depends on USB_GADGET=y || USB_GADGET=NET_9P
+> +	select CONFIGFS_FS
+> +	select USB_LIBCOMPOSITE
+>   	help
+>   	  This builds support for a transport for 9pfs over
+>   	  usb gadget.
 
-Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
----
- drivers/power/supply/ingenic-battery.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+Fixed building on arm64.
 
-diff --git a/drivers/power/supply/ingenic-battery.c b/drivers/power/supply/ingenic-battery.c
-index 0a40f425c27723ccec49985b8b5e14a737b6a7eb..fa6d6898f8722cc8e06a888a762a3edeb0474a6e 100644
---- a/drivers/power/supply/ingenic-battery.c
-+++ b/drivers/power/supply/ingenic-battery.c
-@@ -79,8 +79,10 @@ static int ingenic_battery_set_scale(struct ingenic_battery *bat)
- 		dev_err(bat->dev, "Unable to read channel avail scale\n");
- 		return ret;
- 	}
--	if (ret != IIO_AVAIL_LIST || scale_type != IIO_VAL_FRACTIONAL_LOG2)
--		return -EINVAL;
-+	if (ret != IIO_AVAIL_LIST || scale_type != IIO_VAL_FRACTIONAL_LOG2) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
- 	max_mV = bat->info->voltage_max_design_uv / 1000;
- 
-@@ -99,7 +101,8 @@ static int ingenic_battery_set_scale(struct ingenic_battery *bat)
- 
- 	if (best_idx < 0) {
- 		dev_err(bat->dev, "Unable to find matching voltage scale\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto out;
- 	}
- 
- 	/* Only set scale if there is more than one (fractional) entry */
-@@ -109,10 +112,13 @@ static int ingenic_battery_set_scale(struct ingenic_battery *bat)
- 						  scale_raw[best_idx + 1],
- 						  IIO_CHAN_INFO_SCALE);
- 		if (ret)
--			return ret;
-+			goto out;
- 	}
- 
--	return 0;
-+	ret = 0;
-+out:
-+	kfree(scale_raw);
-+	return ret;
- }
- 
- static enum power_supply_property ingenic_battery_properties[] = {
+Tested-by: Kexy Biscuit <kexybiscuit@aosc.io>
+
+https://buildit.aosc.io/jobs/43382
 
 -- 
-2.46.2
-
+Best Regards,
+Kexy Biscuit
 
