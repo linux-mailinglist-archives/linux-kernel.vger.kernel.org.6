@@ -1,149 +1,145 @@
-Return-Path: <linux-kernel+bounces-349146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0599498F1BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:45:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C199498F1BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 370421C20D1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:45:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69A281F22381
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A736019F403;
-	Thu,  3 Oct 2024 14:45:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7737319F410;
+	Thu,  3 Oct 2024 14:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RJRjkiy6"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2B319F114
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2776519C54D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727966707; cv=none; b=QOH1OXQqCKB2Jet65XA6RlzazSAOlWfDU5WidT3QuoNKeiqtI4gV3hSWA0xpVdLheGxWg5qSlZ7vf05dLkFkVoE4XQPibtjES+p2KIc6XHgmxMnHhyQVe3j7TBXrzRkfylA5FQE4iFrYrR49cqsSEdmGs9wYVi3kcxxOXGaND5E=
+	t=1727966785; cv=none; b=G5tVQZiHJhY84lErPsIGDowbaHYblsoEyS727A0BlD0yRIRtrCvB+3VVYXrFR6Lis7qC5X/pqD4Sq1OxUfoJk6kLvYYWbqYDtshVvq2V5CUos9Y7jKOxtlZdclMptr+oJI2OiTC5j89mI/hdrTiCorUmIGM03TPy6RYWRPWsopU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727966707; c=relaxed/simple;
-	bh=WCOvTCUhC24KvaPygSWeHD7vLDuO8jmYAzkaBhVaWuQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=l79LUG+LCNFzxIQP//rL0VnLzzoUCQwo3JzAeAQHv0aLEc3YnX/6dOgGbPT1qSxn6F8uhLK9Zq/7t8VuyilQoFRICegdB35pyNW6nqxR4WcGBUcHcScqjG2/j1pckeBctc8kxySVF/74DG3RvNTVBuIF9Kw9GdOUEfExs6cm3ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1a6d8bb03so11481775ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 07:45:05 -0700 (PDT)
+	s=arc-20240116; t=1727966785; c=relaxed/simple;
+	bh=fQwcGRptCa9kgB5UpZHLtjKvuJo7svABcu9q/+NvTbA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YItQwOGt6dLgD9DhD8glmGJ51YlvtiiEOmNwo6z/5/ihPudHs1AKU4ElCUQyTFL5y7/4tNgZq/4eLv6Q56JkPrK0QP2ay8LB8BYB5l+ivUo2BIvctIvrCKPj1AknASrMmltU2H52DLxk3PnGVEgMOxkUTVyQIumywhaC3hZjEso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RJRjkiy6; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71dd92e3718so716138b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 07:46:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727966783; x=1728571583; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/wSFs2AZuVyV0WjazJSfQ5VVOaJNnI6A+XKfJwz8XRo=;
+        b=RJRjkiy6wiYkDiLb0vROoiS6XPsHZCveefX15k+QH7k4hb64rCWMNgxFFp/34dlzdz
+         6pjmu5QYEj2nv3EjUpsCLvfOK/PCplyMiQDf/z+G2waTI1x+jeKmnTeVoxkYqjRr2aHC
+         OQmJqgS5nzXNxVuVWqTxoGIkSiBg2pK9tAKsXAa6YUiQvqbJWROLdOtX+VoUXc1CsBEb
+         fODBgEdBAvICBIyBzjvv4YFO6drJsVLbYuotNaoRM4d/6oSLmiOd5ZkklaGfQWBesBlv
+         MmP6B4S2hNLqb2kaeHmgzJLasbvjRBFH8GAiYOWSmtQtDwJO1yZWvg7bD8yxBas7+VFa
+         DeFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727966705; x=1728571505;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1727966783; x=1728571583;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YqgwiSIyyjXVtpe/wlPz1udWGxl36h0kXXb71vZI94Q=;
-        b=vIs32RZY4Kq+ia3moDwRE5Lxvgpjse0mICb78CzsrAovGMuDFUv8tYYDC7kGcE0G7v
-         gbfkeFv/ta8S4OvqMN5bhInXANyZF3zvJ9Mkkd8Q98FBC5RBwh0QQomnRR6M0+izZe+u
-         VL5cvRuSF+uOnleRITAG7SsFFWs9h1caLGY+T0SyMEY9IisHjnrV819i9PraLkmy0cr6
-         88t0BJDODVsL9tWFmosjSQupHWTfOaSUdJ2pcJYKjgid/9mBHTZ1hOTgHbk5Qi91NCbZ
-         O32YYJCYE2iU7XjyJZRrQTwKvtnHalvAIzkT4tjcAdC+YVIyqwOIGApSi02RxS+6krMb
-         y9cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWs5Zj5YEBAKwi708xznXqkxtCDGK4IdfXjZJPPC8Ttl4pR5xzmJGO2OUDX+UJV6uhfIjn9hfGdjy+rBrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlMxyzhcWomOWkFFqc4q0EZl3qbwONTPatN1boiQXmOWYFdZf5
-	B0Qtsuq2lX4xmmS7sf+29By5M0KjVvA3iX67eOtn/YeX2fM9HP9/avuK/iUdgO+/kJEUE0fhhik
-	ZuxeNYZcARRror+C2q4NLp0BNFam/5vz/DcwjZPsJlA2exGrfMKFWeEg=
-X-Google-Smtp-Source: AGHT+IGDz3EgWb4beh65cBoiqxln1oApbaK9ID8OfgKoSvEaX9TpBjDA56BS/GnL/YrNVN3t3Lny5/TrLqzwr66ReXV/e8Fq3Tx9
+        bh=/wSFs2AZuVyV0WjazJSfQ5VVOaJNnI6A+XKfJwz8XRo=;
+        b=Bma18oYTAF2fxHvDygGdvr4SHH6iQuR4TMxlbMSUADLTx47+GVt+7k+gpmZs0X3xiq
+         hssCVTzKgw0hnl1E+OzxTm4pkiUQUuOUGr1SXcIcTkhLxdH9h9msxjqhSxSRpBqFpb4K
+         Kwr3HJ19QbBzSestLPKPr4wn8N9xrL/+LgHWtKWWjVXrkxFL3b54tF+r3PFJ3FbG+ARD
+         0zbS36B3MfjP1GutdrmhHMSUcb3uDJauuUmkMpNWoPrAQ/sPf/ucwUqD9Js4ToblZR1W
+         yJguwVhJP/ZfppxO0Au5+C8HSNawmRzqWDBXy8x/s/b4/dvF0rv7f7bgSZegBZdP4nHp
+         WHHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbx0wrB9+PDsntkfhKDeISzTYrriVIJs3/nOb/i/KIzPdag+PqfGnV9jgtD1jnzHJk6yf0nFBLR2naic4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLhHf93tBf+XMRKjxCYcGwbgEN0FFlkhNadnJ7oE7YOfVfbDG5
+	D0qK5Pqi3SLlNyoQm8iEyeGn8BlhNVZpbrQ7cJC4IK9yMKF0cQMidledYBD/938=
+X-Google-Smtp-Source: AGHT+IFqtXWr7EWblGmxV8DoVUC/E8p3CDxEuCfrxe9bestz3shboebLieEWgxOyUrrtzt2XFRL+bA==
+X-Received: by 2002:a05:6a00:a83:b0:710:7fd2:c91 with SMTP id d2e1a72fcca58-71dc5d6df3fmr9812888b3a.26.1727966783505;
+        Thu, 03 Oct 2024 07:46:23 -0700 (PDT)
+Received: from [192.168.0.4] (174-21-81-121.tukw.qwest.net. [174.21.81.121])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9defa5bsm1405345b3a.153.2024.10.03.07.46.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 07:46:23 -0700 (PDT)
+Message-ID: <beb7c984-0a10-4fe5-856f-58000edb68e8@linaro.org>
+Date: Thu, 3 Oct 2024 07:46:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1544:b0:3a3:35f0:4c11 with SMTP id
- e9e14a558f8ab-3a36592cb1bmr75740435ab.15.1727966705024; Thu, 03 Oct 2024
- 07:45:05 -0700 (PDT)
-Date: Thu, 03 Oct 2024 07:45:04 -0700
-In-Reply-To: <Zv6qDfzdXMrSjGkE@fedora>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66feadf0.050a0220.9ec68.0042.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
-From: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	qianqiang.liu@163.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 06/10] alpha: Align prototypes of IO memcpy/memset
+To: Julian Vetter <jvetter@kalrayinc.com>, Arnd Bergmann <arnd@arndb.de>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Guo Ren <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, Andrew Morton <akpm@linux-foundation.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>,
+ "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Yoshinori Sato <ysato@users.sourceforge.jp>,
+ Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Richard Weinberger <richard@nod.at>,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+ Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-m68k@lists.linux-m68k.org, linux-alpha@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-arch@vger.kernel.org,
+ Yann Sionneau <ysionneau@kalrayinc.com>
+References: <20240930132321.2785718-1-jvetter@kalrayinc.com>
+ <20240930132321.2785718-7-jvetter@kalrayinc.com>
+Content-Language: en-US
+From: Richard Henderson <richard.henderson@linaro.org>
+In-Reply-To: <20240930132321.2785718-7-jvetter@kalrayinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 9/30/24 06:23, Julian Vetter wrote:
+> Align the prototypes of the memcpy_{from,to}io and memset_io functions
+> with the new ones from iomap_copy.c and remove function declarations,
+> because they are now declared in asm-generic/io.h.
+> 
+> Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
+> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+> ---
+> Changes for v7:
+> - New patch
+> ---
+>   arch/alpha/include/asm/io.h | 6 ++----
+>   arch/alpha/kernel/io.c      | 4 ++--
+>   2 files changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/alpha/include/asm/io.h b/arch/alpha/include/asm/io.h
+> index b191d87f89c4..db3a9f41447e 100644
+> --- a/arch/alpha/include/asm/io.h
+> +++ b/arch/alpha/include/asm/io.h
+> @@ -591,13 +591,11 @@ extern inline u64 readq_relaxed(const volatile void __iomem *addr)
+>   /*
+>    * String version of IO memory access ops:
+>    */
+> -extern void memcpy_fromio(void *, const volatile void __iomem *, long);
+> -extern void memcpy_toio(volatile void __iomem *, const void *, long);
+>   extern void _memset_c_io(volatile void __iomem *, unsigned long, long);
+>   
+> -static inline void memset_io(volatile void __iomem *addr, u8 c, long len)
+> +static inline void memset_io(volatile void __iomem *dst, int c, size_t count)
+>   {
+> -	_memset_c_io(addr, 0x0101010101010101UL * c, len);
+> +	_memset_c_io(dst, 0x0101010101010101UL * c, count);
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in hci_dev_close_sync
-
-============================================
-WARNING: possible recursive locking detected
-6.11.0-syzkaller-11519-gc30a3f54e661-dirty #0 Not tainted
---------------------------------------------
-syz.0.15/6089 is trying to acquire lock:
-ffff88802cd3cd80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_close_sync+0x66e/0x11b0 net/bluetooth/hci_sync.c:5191
-
-but task is already holding lock:
-ffff88802cd3cd80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_do_close net/bluetooth/hci_core.c:481 [inline]
-ffff88802cd3cd80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_close+0x10a/0x210 net/bluetooth/hci_core.c:508
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&hdev->req_lock);
-  lock(&hdev->req_lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by syz.0.15/6089:
- #0: ffff88802cd3cd80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_do_close net/bluetooth/hci_core.c:481 [inline]
- #0: ffff88802cd3cd80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_close+0x10a/0x210 net/bluetooth/hci_core.c:508
- #1: ffff88802cd3c078 (&hdev->lock){+.+.}-{3:3}, at: hci_dev_close_sync+0x572/0x11b0 net/bluetooth/hci_sync.c:5183
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 6089 Comm: syz.0.15 Not tainted 6.11.0-syzkaller-11519-gc30a3f54e661-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3034
- check_deadlock kernel/locking/lockdep.c:3086 [inline]
- validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3888
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- hci_dev_close_sync+0x66e/0x11b0 net/bluetooth/hci_sync.c:5191
- hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
- hci_dev_close+0x112/0x210 net/bluetooth/hci_core.c:508
- sock_do_ioctl+0x158/0x460 net/socket.c:1228
- sock_ioctl+0x626/0x8e0 net/socket.c:1347
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe0fa37cef9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe0fb0e2038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fe0fa536058 RCX: 00007fe0fa37cef9
-RDX: 0000000000000000 RSI: 00000000400448ca RDI: 0000000000000008
-RBP: 00007fe0fa3ef046 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fe0fa536058 R15: 00007fff1e0b61e8
- </TASK>
+By changing c from 'u8' to 'int', you need to mask before the multiplication.
 
 
-Tested on:
-
-commit:         c30a3f54 net: mana: Add get_link and get_link_ksetting..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13ea7580580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
-dashboard link: https://syzkaller.appspot.com/bug?extid=03d6270b6425df1605bf
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16806307980000
-
+r~
 
