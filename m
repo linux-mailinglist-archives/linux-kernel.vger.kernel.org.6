@@ -1,257 +1,95 @@
-Return-Path: <linux-kernel+bounces-348452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D2798E7E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:42:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3EDD98E7DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F290F1C20E76
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:42:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 635BF1F25D93
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2706815E86;
-	Thu,  3 Oct 2024 00:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CFF1DFE3;
+	Thu,  3 Oct 2024 00:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jw4OUQHi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhhO6Hbd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1F81401C;
-	Thu,  3 Oct 2024 00:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5CA1BC20;
+	Thu,  3 Oct 2024 00:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727916146; cv=none; b=pMczcLrF59acFhJvrzeIfYQGOnI6j1PuMrUr+l1xmkEWpwysF6XEvBzmG56dHMc69IH+NuZOt/V1lAIV5kkp4cHIzHgnQdBo4UNXHkdk4ze2l+/NmWnd50HDEp2ozlsMrZAUk3YkUr5j86B4oyLlM4LtkqLDt9RrNZS4uZErWrc=
+	t=1727916039; cv=none; b=r/YCom15JqJpRKLvoVpJ268TIAWVsBhcsU6autgUjU6S6L0oHcap3/Wx4LOgosaXvTDloxKw4/ZxBrcyg0G8NcdSEektOGq46G43k7GhnDyi7TFFD/YqlSzwqDACAwHpdPeNNFVBPzwvndru0LBoOZyxKfTfVuP+d+LNCGw791I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727916146; c=relaxed/simple;
-	bh=QapNPDWW0D6xJOFkvf3OmH3dvhr7KwJvo4JUoMz4Ih8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=asyuLpoDadG1k5CqcK+l1J8MJ/OnTXGgMi3t/YKIf2ESg7dK2J2McfloxnUvnFUA13kLQPbOFxOMruZceArI+8+TyR5XaJIGo8umlwhLmSGXp1hKojNh2+zFgsTDJ29ji+OjDVncRp0TmlyJM+pTqapjPgfI8mtzw6ziFNqN450=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jw4OUQHi; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727916144; x=1759452144;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=QapNPDWW0D6xJOFkvf3OmH3dvhr7KwJvo4JUoMz4Ih8=;
-  b=Jw4OUQHiUQzf3ZuYbIi9Tu846JO2g3JMykLe0obESvDyxZvQ/UIQkKvZ
-   65SXAbLLx25VpHxnkGmJ8XVrQXLIl9etoxpzsa7IX6eY3krw/6BDM9UEB
-   CafYSiyPUBD9TSzEBldYyTo4HctJ66/HstuGaaxNyTfi4V9z+AoqBbnlq
-   a06MgtTW6BD3kvoHybNGRKGVjDkNDxY4I56nqKNpU+3IMq+jBVhVdberB
-   Q4XfqSiV7ldaG/DY6JMm0vhFywJeRuzirQA5laIFjr+P5czPHf+s5yfnI
-   /QpZ8ZlbGsW5Nh9dkH60oNS+n0migZRgq9KG+AGLGN3zEJ7389dMe+830
-   w==;
-X-CSE-ConnectionGUID: qqKq5oh4Ql6TqlkgVIv+uA==
-X-CSE-MsgGUID: fr2h7Y2TRraZyQHwkmDdgg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="49625985"
-X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
-   d="scan'208";a="49625985"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 17:42:24 -0700
-X-CSE-ConnectionGUID: fSM5io+RQ22OuT3atUyjTg==
-X-CSE-MsgGUID: B/nHh/MZTy+qdU6hSAldDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
-   d="scan'208";a="74426139"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 17:42:19 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: Barry Song <21cnbao@gmail.com>,  akpm@linux-foundation.org,
-  chrisl@kernel.org,  david@redhat.com,  hannes@cmpxchg.org,
-  hughd@google.com,  kaleshsingh@google.com,  linux-kernel@vger.kernel.org,
-  linux-mm@kvack.org,  liyangouwen1@oppo.com,  mhocko@suse.com,
-  minchan@kernel.org,  sj@kernel.org,  stable@vger.kernel.org,
-  surenb@google.com,  v-songbaohua@oppo.com,  willy@infradead.org,
-  yosryahmed@google.com,  yuzhao@google.com
-Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
- swapcache_prepare fails
-In-Reply-To: <CAMgjq7D5qoFEK9Omvd5_Zqs6M+TEoG03+2i_mhuP5CQPSOPrmQ@mail.gmail.com>
-	(Kairui Song's message of "Thu, 3 Oct 2024 02:30:29 +0800")
-References: <87y137nxqs.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<20241002015754.969-1-21cnbao@gmail.com>
-	<CAMgjq7D5qoFEK9Omvd5_Zqs6M+TEoG03+2i_mhuP5CQPSOPrmQ@mail.gmail.com>
-Date: Thu, 03 Oct 2024 08:38:46 +0800
-Message-ID: <87ed4ynhpl.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1727916039; c=relaxed/simple;
+	bh=ubg2yzOpxd3KbR42Fu2Dz5a5+IIwMbOTk1Uo9RExvh4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=BdArlfrgZ/kJ4SB3isO6I4XOZzNXP7H7zvKzsJK9b1W17SeNqaRIBNbSUUQLsdLZJ9zMEyL37DXqRPUni4tdTFfy8S+QVXaQQg59Hodp6JQsIbYjjm73qr2ZQaMcenaIrd10SBKoZV9JWga2Rlwts98ARWfSwiVPwqeCtew2saU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhhO6Hbd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C8AC4CEC2;
+	Thu,  3 Oct 2024 00:40:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727916039;
+	bh=ubg2yzOpxd3KbR42Fu2Dz5a5+IIwMbOTk1Uo9RExvh4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=bhhO6HbdYNICD4NL9SIRiKDXs/lTl3IAlHrPK1KaF4PBsKfphVhPKgF0FkA77Axjr
+	 SMdrhc9z9KwTdy39Xz1eCcwhhl6IXSNx9a67XVt6QX3zTIFvtRneuaP2/lB9LoGRGz
+	 6W5pOznGwOVCcy6mIcP1B0ASTkU/uVSzsVYHM95xc8JCdFBkczYVPjmgvQQ4ax7FtD
+	 ufX4NMuQ8AhTe8OsNnQ9PlBw6EPjQul9YZL8sJ1dm8zursRnFDWxGdcEJOPgXHWREC
+	 JX95Z4tLABxOkyYFrg8jAe8Hk/oBnRRslCm66bx8cKhwiEgE63/hypc6334IJ2qtwY
+	 s4yq27v5KNBnQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF08380DBD1;
+	Thu,  3 Oct 2024 00:40:43 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net] net: ethernet: ti: am65-cpsw: Fix forever loop in
+ cleanup code
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172791604250.1387504.10478445061671408891.git-patchwork-notify@kernel.org>
+Date: Thu, 03 Oct 2024 00:40:42 +0000
+References: <8e7960cc-415d-48d7-99ce-f623022ec7b5@stanley.mountain>
+In-Reply-To: <8e7960cc-415d-48d7-99ce-f623022ec7b5@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: rogerq@kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, jpanis@baylibre.com,
+ alexander.sverdlin@siemens.com, grygorii.strashko@ti.com, c-vankar@ti.com,
+ horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-Hi, Kairui,
+Hello:
 
-Kairui Song <ryncsn@gmail.com> writes:
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-> On Wed, Oct 2, 2024 at 10:02=E2=80=AFAM Barry Song <21cnbao@gmail.com> wr=
-ote:
->>
->> On Wed, Oct 2, 2024 at 8:43=E2=80=AFAM Huang, Ying <ying.huang@intel.com=
-> wrote:
->> >
->> > Barry Song <21cnbao@gmail.com> writes:
->> >
->> > > On Tue, Oct 1, 2024 at 7:43=E2=80=AFAM Huang, Ying <ying.huang@intel=
-.com> wrote:
->> > >>
->> > >> Barry Song <21cnbao@gmail.com> writes:
->> > >>
->> > >> > On Sun, Sep 29, 2024 at 3:43=E2=80=AFPM Huang, Ying <ying.huang@i=
-ntel.com> wrote:
->> > >> >>
->> > >> >> Hi, Barry,
->> > >> >>
->> > >> >> Barry Song <21cnbao@gmail.com> writes:
->> > >> >>
->> > >> >> > From: Barry Song <v-songbaohua@oppo.com>
->> > >> >> >
->> > >> >> > Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcach=
-e")
->> > >> >> > introduced an unconditional one-tick sleep when `swapcache_pre=
-pare()`
->> > >> >> > fails, which has led to reports of UI stuttering on latency-se=
-nsitive
->> > >> >> > Android devices. To address this, we can use a waitqueue to wa=
-ke up
->> > >> >> > tasks that fail `swapcache_prepare()` sooner, instead of always
->> > >> >> > sleeping for a full tick. While tasks may occasionally be woke=
-n by an
->> > >> >> > unrelated `do_swap_page()`, this method is preferable to two s=
-cenarios:
->> > >> >> > rapid re-entry into page faults, which can cause livelocks, and
->> > >> >> > multiple millisecond sleeps, which visibly degrade user experi=
-ence.
->> > >> >>
->> > >> >> In general, I think that this works.  Why not extend the solutio=
-n to
->> > >> >> cover schedule_timeout_uninterruptible() in __read_swap_cache_as=
-ync()
->> > >> >> too?  We can call wake_up() when we clear SWAP_HAS_CACHE.  To av=
-oid
->> > >> >
->> > >> > Hi Ying,
->> > >> > Thanks for your comments.
->> > >> > I feel extending the solution to __read_swap_cache_async() should=
- be done
->> > >> > in a separate patch. On phones, I've never encountered any issues=
- reported
->> > >> > on that path, so it might be better suited for an optimization ra=
-ther than a
->> > >> > hotfix?
->
-> Hi Barry and Ying,
->
-> For the __read_swap_cache_async case, I'm not really against adding a
-> similar workqueue, but if no one is really suffering from it, and if
-> the workqueue do causes extra overhead, maybe we can ignore it for the
-> __read_swap_cache_async case now, and I plan to resent the following
-> patch:
-> https://lore.kernel.org/linux-mm/20240326185032.72159-9-ryncsn@gmail.com/=
-#r
->
-> It removed all schedule_timeout_uninterruptible workaround and other
-> similar things, and the performance will go even higher.
+On Sat, 28 Sep 2024 13:04:01 +0300 you wrote:
+> This error handling has a typo.  It should i++ instead of i--.  In the
+> original code the error handling will loop until it crashes.
+> 
+> Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reviewed-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+> 
+> [...]
 
-Sounds good to me.  Please resend it.  It's more complex than Barry's
-fix.  So, I suggest to merge Barry's version first.
+Here is the summary with links:
+  - [v2,net] net: ethernet: ti: am65-cpsw: Fix forever loop in cleanup code
+    https://git.kernel.org/netdev/net/c/3c97fe4f9fbc
 
->> > >>
->> > >> Yes.  It's fine to do that in another patch as optimization.
->> > >
->> > > Ok. I'll prepare a separate patch for optimizing that path.
->> >
->> > Thanks!
->> >
->> > >>
->> > >> >> overhead to call wake_up() when there's no task waiting, we can =
-use an
->> > >> >> atomic to count waiting tasks.
->> > >> >
->> > >> > I'm not sure it's worth adding the complexity, as wake_up() on an=
- empty
->> > >> > waitqueue should have a very low cost on its own?
->> > >>
->> > >> wake_up() needs to call spin_lock_irqsave() unconditionally on a gl=
-obal
->> > >> shared lock.  On systems with many CPUs (such servers), this may ca=
-use
->> > >> severe lock contention.  Even the cache ping-pong may hurt performa=
-nce
->> > >> much.
->> > >
->> > > I understand that cache synchronization was a significant issue befo=
-re
->> > > qspinlock, but it seems to be less of a concern after its implementa=
-tion.
->> >
->> > Unfortunately, qspinlock cannot eliminate cache ping-pong issue, as
->> > discussed in the following thread.
->> >
->> > https://lore.kernel.org/lkml/20220510192708.GQ76023@worktop.programmin=
-g.kicks-ass.net/
->> >
->> > > However, using a global atomic variable would still trigger cache br=
-oadcasts,
->> > > correct?
->> >
->> > We can only change the atomic variable to non-zero when
->> > swapcache_prepare() returns non-zero, and call wake_up() when the atom=
-ic
->> > variable is non-zero.  Because swapcache_prepare() returns 0 most time=
-s,
->> > the atomic variable is 0 most times.  If we don't change the value of
->> > atomic variable, cache ping-pong will not be triggered.
->>
->> yes. this can be implemented by adding another atomic variable.
->>
->> >
->> > Hi, Kairui,
->> >
->> > Do you have some test cases to test parallel zram swap-in?  If so, that
->> > can be used to verify whether cache ping-pong is an issue and whether =
-it
->> > can be fixed via a global atomic variable.
->> >
->>
->> Yes, Kairui please run a test on your machine with lots of cores before
->> and after adding a global atomic variable as suggested by Ying. I am
->> sorry I don't have a server machine.
->
-> I just had a try with the build kernel test which I used for the
-> allocator patch series, with -j64, 1G memcg on my local branch:
->
-> Without the patch:
-> 2677.63user 9100.43system 3:33.15elapsed 5452%CPU (0avgtext+0avgdata
-> 863284maxresident)k
-> 2671.40user 8969.07system 3:33.67elapsed 5447%CPU (0avgtext+0avgdata
-> 863316maxresident)k
-> 2673.66user 8973.90system 3:33.18elapsed 5463%CPU (0avgtext+0avgdata
-> 863284maxresident)k
->
-> With the patch:
-> 2655.05user 9134.21system 3:35.63elapsed 5467%CPU (0avgtext+0avgdata
-> 863288maxresident)k
-> 2652.57user 9104.87system 3:35.07elapsed 5466%CPU (0avgtext+0avgdata
-> 863272maxresident)k
-> 2665.44user 9155.97system 3:35.92elapsed 5474%CPU (0avgtext+0avgdata
-> 863316maxresident)k
->
-> Only three test runs, the main bottleneck for the test is still some
-> other locks (list_lru lock, swap cgroup lock etc), but it does show
-> the performance seems a bit lower. Could be considered a trivial
-> amount of overhead so I think it's acceptable for the SYNC_IO path.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks!  The difference appears measurable although small.  And, in some
-use cases, multiple memcg may be used, so list_lru, swap cgroup lock
-will be less contended.
 
---
-Best Regards,
-Huang, Ying
 
