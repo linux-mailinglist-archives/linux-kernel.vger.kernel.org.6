@@ -1,105 +1,107 @@
-Return-Path: <linux-kernel+bounces-349021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F5998EF8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:45:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BB998EF98
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 665141C2104C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:45:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F218D1C213D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4933186E3C;
-	Thu,  3 Oct 2024 12:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7EE186E3C;
+	Thu,  3 Oct 2024 12:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMBewtC0"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ofk2FqlL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F3D1E49B;
-	Thu,  3 Oct 2024 12:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8FE1E511;
+	Thu,  3 Oct 2024 12:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727959540; cv=none; b=CMJnEfKivhtGf4eQB+5YNnVp9+DWeV7DSy2TEXTy7YGnpUJiGlUjxvvwV6oS7BazvE/m8nspZ4eRx1larxYpYfbToEH5uIn3nK9EZYW/M841UTwmf88B4jv1SP5mhf5D1l67XzmojG27mP+Do2Zao3UJAC4T1ERV+kUVeDfxPaM=
+	t=1727959548; cv=none; b=Dgp9uDT++kfeZCy/Mv1BpgCHpwKOxrAkommFmqyDaVSlRC3xtOSHeWPp7r/Zpfx6z97I5UEWR3zRwgrr3iPKAvCUEGuktneMqBE2QhjFJtX8DF7caGNOrm3EEDgn3I7spnZ7mV9DnpY0tzcJuRfZFfxqGhPY1ArV1+Qj7OGK3NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727959540; c=relaxed/simple;
-	bh=h8glWa8FKBKj3nCk6I+JgRJLRZCrCXwBgF2+dYsvdM8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K9onHK//dRYcPrrrmyvEFoeJ7yZaLsm3QcEQf8DRqdO/EUYynRxI6ETBva+UxLMiyPUmJkZhCc97nFQuMCMwRFpHJQwAJ/C7VU/uP7zGcYlCBasZEeSacs7VUDqJCokEqfXYGOc8pKtaRD0mAbiLYFhstdUknUdLAPXnHCJU3A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OMBewtC0; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fad5024b8dso11708781fa.1;
-        Thu, 03 Oct 2024 05:45:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727959537; x=1728564337; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h8glWa8FKBKj3nCk6I+JgRJLRZCrCXwBgF2+dYsvdM8=;
-        b=OMBewtC0141O11YmIKxta4kytxFFJXVXUv5m1QcP2QjUNG7WAnKW4eGq8/Z5wGY/oW
-         9WUjXu5f8Ik5FEbqjsOALuRertbNGt5IYGOINePwk3c9gvtATPQTrhDN5bYJNbPH5m0U
-         tPHBNDsJcEAjM9Gt1l8lfM7lJWWSZDQmMPz4CeXoSfxIlVb8rO57HckzRNYkvkJXfBu/
-         nf9xAzUnmV38zxlf3NTVcPi4piYw19hBcYIPgWM58OPbWHHbQ0H2dcJ1EvvcJbVDL+Id
-         Aj2iAwqztq8QKIzLcIIGAJ72+mGEnA0BcFzhEHyX8Ah06R87gFXwZuH6g8iqgv1kMiGp
-         OZPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727959537; x=1728564337;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h8glWa8FKBKj3nCk6I+JgRJLRZCrCXwBgF2+dYsvdM8=;
-        b=Rwm86ho51ZglQ5RpG+rftqMmP0hUmP3qqjfi0lmKGULp8l4GHqshWF1NbATWdCgEWa
-         NzKsu0F0s6794kJiztEmkZufOFk+oOsclFJA/nJ3T8cz5Gqrf+3REa5nziGIRVBHCvTT
-         4f4IXYYBQ/6baQKsW6vKQfmddnKbXJuytdNGLyDeNEoeiuT/OxR9SZnlE6DA0TIbs2+a
-         OjNUYfeaL5uuuw9z1QZpb86IPkD36E13G0ISk32iAuSHbagFqKOWK25CBghlAjAKEmdc
-         ja2/bCwRglQ2Ay/U6ebfiBI8ibGg7T+BnOClMT5KAEJaAqSirR74l7mJc/hT5j1Vw93I
-         u/WA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzfirzXSWffHfffPEPWh9X7yRY7RZjz9Xj+6Q/gx3w6MI182VvWdBHo6uCPCJRIrclmQkkLtwo/3UT0ANv@vger.kernel.org, AJvYcCXHtpWiXy4WAXyfL9A6DDmLCDon9qaCoLY5vat0d16qGNYgp61jt1edfe6xGlUcj2L9lkXy1alWYjSh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYbluxwp+qva8cZ9xji81nr4Rn0GynwkRWoSs1Tchw9WEA07z8
-	9UVi10J6E282HgqEJKNT+iiH+HY+MTy+C9Oz4h5tyAWTCoQ7idwQkcGIm6ll5KdMlqFqX04riSh
-	XLryDUTVvtsXc9SQd8LtyDUGgbtc=
-X-Google-Smtp-Source: AGHT+IFH/d91ETaLO9wS69JBdZtdkMi1nBG0J5JtGXgyo3Q1FiOyG+AaAEmd/z9+6SFqLvAFdUJ6gCbWcbyQrmqWuPc=
-X-Received: by 2002:a05:6512:12d3:b0:530:aea3:4659 with SMTP id
- 2adb3069b0e04-539a0658b50mr4221107e87.9.1727959536381; Thu, 03 Oct 2024
- 05:45:36 -0700 (PDT)
+	s=arc-20240116; t=1727959548; c=relaxed/simple;
+	bh=GJIo6+hC/7Ec8/Uv2y6IFRYFGp8Tdb4FIA8AD5c01vs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3b05Kc9y/J+VTQa2acXFjMJ47cy8W06j+ufgMq1VgKZQoIPcOZ6tlLVgWVEqk5gp7ZnM/hbilc5IU25fR6jg7g+9ff8egDGiKbr+Nw4JmQJrqm3dQkrTLCQLIskQRmIPWKL3KaW/mlZJIDvGmovR8P484VQvzaCTv1x6Fp5I2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ofk2FqlL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78877C4CECF;
+	Thu,  3 Oct 2024 12:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727959547;
+	bh=GJIo6+hC/7Ec8/Uv2y6IFRYFGp8Tdb4FIA8AD5c01vs=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Ofk2FqlLzVmzdi2z/6wI0YC0StqWbaah+X5lt4ndjsswRg/8KuZ2ATiOjVoPE5gnw
+	 DKDyfq4vvzhwZ9eFwDQV/xHmyJ7xJXxppSSk1pU6a4ZaHIEKDRBeX85amf+8IbjJnR
+	 aduknodTIIwS7dMq72js+UbRj8GxoCZUrqOc/OcuAdU331n3+nrYQiHVJJ5ZBksaq+
+	 aUvUf4JVy30GjhvEhly3Srewy0QV7cjq1+fhtXAzX+llvUfYpMqzdwnh226ajt0GIu
+	 fTRKfSbo81YE0ZFd7LGoiTtjpAQU1gs8AhBU/4jx+cOOd6VKBxPIcT10kgDyKmcS9V
+	 hfXNy3bRDDhTA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 2DFACCE0A48; Thu,  3 Oct 2024 05:45:47 -0700 (PDT)
+Date: Thu, 3 Oct 2024 05:45:47 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
+	linux-next@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <83d29a0c-dab2-4570-8be0-539b43237724@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
+ <20241003084039.GS5594@noisy.programming.kicks-ass.net>
+ <20241003084743.GC33184@noisy.programming.kicks-ass.net>
+ <20241003092707.GD33184@noisy.programming.kicks-ass.net>
+ <20241003122824.GE33184@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002204750.597337-1-Frank.Li@nxp.com> <20241002204750.597337-2-Frank.Li@nxp.com>
-In-Reply-To: <20241002204750.597337-2-Frank.Li@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 3 Oct 2024 09:45:24 -0300
-Message-ID: <CAOMZO5CDwN32kiPWQ+ObNiFD1Wewj+qyTUMCRhyXKq941phAkg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] arm64: dts: imx8dxl-evk: Add PCIe support
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003122824.GE33184@noisy.programming.kicks-ass.net>
 
-On Wed, Oct 2, 2024 at 5:48=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
->
-> From: Richard Zhu <hongxing.zhu@nxp.com>
->
-> Add PCIe supports on i.MX8DXL EVK board.
+On Thu, Oct 03, 2024 at 02:28:24PM +0200, Peter Zijlstra wrote:
+> On Thu, Oct 03, 2024 at 11:27:07AM +0200, Peter Zijlstra wrote:
+> > On Thu, Oct 03, 2024 at 10:47:43AM +0200, Peter Zijlstra wrote:
+> > > On Thu, Oct 03, 2024 at 10:40:39AM +0200, Peter Zijlstra wrote:
+> > > > On Wed, Aug 21, 2024 at 02:57:16PM -0700, Paul E. McKenney wrote:
+> > > > 
+> > > > > My reproducer on the two-socket 40-core 80-HW-thread systems is:
+> > > > > 
+> > > > > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "50*TREE03" --trust-make
+> > > > > 
+> > > > 
+> > > > This gets me a very long stream of:
+> > > > 
+> > > > Results directory: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33
+> > > > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 50*TREE03 --trust-make
+> > > > TREE03 -------
+> > > > QEMU error, output:
+> > > > cat: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33/TREE03/qemu-output: No such file or directory
+> > > > TREE03.10 -------
+> > > > QEMU error, output:
+> > > > cat: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33/TREE03.10/qemu-output: No such file or directory
+> > > > ...
+> > > > 
+> > > > 
+> > > > Did I not do it right?
+> > > 
+> > > Urgh, for some reason my machine doesn't auto load kvm_intel.ko and then
+> > > proceeds to not do anything useful.. Let me try again.
+> > 
+> > Works a ton better now, obviously no splat yet :/
+> 
+> I have by now ran many hundreds of 1m TREE03 instances, and not yet seen
+> anything. Surely I'm doing it wrong?
 
-s/supports/support
+I ran 100*TREE03 for 18 hours each, and got 23 instances of *something*
+happening (and I need to suppress stalls on the repeat).  One of the
+earlier bugs happened early, but sadly not this one.
 
-> +&hsio_phy{
-
-missing space.
-
-> +&pcieb{
-
-Ditto.
+							Thanx, Paul
 
