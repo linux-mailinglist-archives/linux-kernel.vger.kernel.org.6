@@ -1,74 +1,81 @@
-Return-Path: <linux-kernel+bounces-348856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1592398ECAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:07:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76B798ECB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7EDC2845F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:07:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060571C212E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B2D149C54;
-	Thu,  3 Oct 2024 10:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1726314D2A0;
+	Thu,  3 Oct 2024 10:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K7tGgS1v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cK5jzg33"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C993D128369;
-	Thu,  3 Oct 2024 10:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE96214B08C
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 10:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727950070; cv=none; b=Hu/H+xAbt7xoXNVd4VmVFd/m0HzepdVbQ0oZ4fxT2kAZWO52qcYCxR9h+kGduQZ8i8c4wUrt9e1dNiQV7ApR8Jmn52JsDgWcTKYkQ7vDcmyBptU3091SaE4bw8mIqb+jCPK/y3K/l1RoSSjKrxq9QvgqrSTwkzszEOdu5t4O8lE=
+	t=1727950350; cv=none; b=n/FZRfrunhKOTfEkvuVfX1Azfb2GwZTm8GW+K6ltcDaQ3bxdU3q6W6+IcCjFhd65TQZvhkLRWTsigKVwIObavBhoslnVkif1Ts+/NapFkqg1Vr8qP+lMnyS+zbdDcA4Y1pWBJBbhfoDuo7wEQUf7UJApTkjUIoPQRfjSEOarXrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727950070; c=relaxed/simple;
-	bh=/NF4xFE7Olwzdb6AyqKqfP4aQQ8mNZr0x6Y2QYMelM4=;
+	s=arc-20240116; t=1727950350; c=relaxed/simple;
+	bh=7kQ9CE+8piCl1PeEPd00/TWkbHX5U5LP/am+07aNRu4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t69RwpomSHtFfeKdapcPJz2/aFsb0eOAuSwrer768JvZKQsV9iNK/8iDRTfK1ifiU/XgxFTz8xUqMHYraZfghObdKJUC3BAIidkDAf9fhm9RCvzUaUL9PVfND/ZivMuXXx+mYrYib9ljR0QsGGYV8LWxGvtQ8Gv4+71WdGO8uFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K7tGgS1v; arc=none smtp.client-ip=198.175.65.15
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+5YgX04s/2wW7wtyhYk4L5N8Ty30Mp2eCHrJGjMl3n2cB5wNNfVakD1xTwRTPFAt+OpVgiE1H8v10/MjE/gqdScAm+t6BQt38hb/FsxdDXWzUDbEnjlF3qjH5aWMVI0EsARdkr9zA3UucvyriH48UN7UZjWxKvNzU6uXnyaljI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cK5jzg33; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727950069; x=1759486069;
+  t=1727950349; x=1759486349;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=/NF4xFE7Olwzdb6AyqKqfP4aQQ8mNZr0x6Y2QYMelM4=;
-  b=K7tGgS1v4dujIzD+3GOgFOfNVgQovb67YIUWZsVALEfY2uoI1u1GX4Wp
-   j4OFFdp7i5/W5rAmij+/jf5Ueg7sJ4wui8uoJQVfbD5WsvJypp0h0iVDb
-   nz0mTN73Tc+oLXTNoBXyaXZmyBULhl++psqyDGK8H5VGRtI1r5I6ziLwk
-   NxFxhSDDGDulRS7nhC6g2/U+6LXWgK24329MLqgYsJp14u4KqOTUb3jQ2
-   RM98Jja4H17ZVz1aKDzZGjXhZzFwXisDxe3HmaxLRRWw3qlBbRoXU1KWT
-   e1k7XHgGX4X4Owe+xkZcXCGEEhcGIa33ri70N4R8j/uOXffraxtHyvP6l
-   Q==;
-X-CSE-ConnectionGUID: lPGnPMgZQnC4zJJEmoUxNA==
-X-CSE-MsgGUID: c4FGPecWRqKniH9dAuvTZw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="30844182"
+  bh=7kQ9CE+8piCl1PeEPd00/TWkbHX5U5LP/am+07aNRu4=;
+  b=cK5jzg33UTniqgKogLAmsjRTRTAGmwunuRFtpsxOIewwHobtTf3XNhRA
+   cVClUnyUTq+Nfcz7n4a+wL+DfcS3h3xuN5sy7u3snEnHat4lWWeas6kVA
+   TCaH9XJWlDA0/uqbqSa2UgnhW5MqBVnnlGP36uEGNIMiFUgGpvrnBtuxD
+   4GmUqu6XkXWP7Yz6tTOMnlNZCzZ1J28+mcQo5xjDgadJuu2ew2wd94oSI
+   IWmezKf8t2vDG8daiDBoumFdX9yJC9Krvlrjy2MvgFOGwxlUl6buZ3DiX
+   g5MBtGqhxrDmM0ROS5b7LcWfxVUe+5Mo07HH+plG0tmt+Nc2yZPZA2n1H
+   w==;
+X-CSE-ConnectionGUID: oA3It7EbRX6chIItsL6y1A==
+X-CSE-MsgGUID: vX2zxaxiTQuCPIxScGoMSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27316393"
 X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="30844182"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 03:07:48 -0700
-X-CSE-ConnectionGUID: /fd4EMRVS9ytR3rM/SkL3Q==
-X-CSE-MsgGUID: i2do0EC7T9eJ01Bw0KTVAQ==
+   d="scan'208";a="27316393"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 03:12:28 -0700
+X-CSE-ConnectionGUID: lbW8fCgmRXSfOkJ8w0Wtpw==
+X-CSE-MsgGUID: aeHdcJlWSAiJEvUGTdUcBA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="75103190"
-Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 03:07:47 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1swIkK-0000000G4zp-38va;
-	Thu, 03 Oct 2024 13:07:44 +0300
-Date: Thu, 3 Oct 2024 13:07:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the auxdisplay tree
-Message-ID: <Zv5s8BbsBKV9lE4L@smile.fi.intel.com>
-References: <20241003124608.7eb3f1fb@canb.auug.org.au>
+   d="scan'208";a="111764103"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 03 Oct 2024 03:12:24 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swIon-0000H1-1G;
+	Thu, 03 Oct 2024 10:12:21 +0000
+Date: Thu, 3 Oct 2024 18:11:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: shiyongbang <shiyongbang@huawei.com>, xinliang.liu@linaro.org,
+	tiantao6@hisilicon.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com
+Cc: oe-kbuild-all@lists.linux.dev, liangjian010@huawei.com,
+	chenjianmin@huawei.com, lidongming5@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com, shenjian15@huawei.com,
+	shaojijie@huawei.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH drm-dp 2/4] drm/hisilicon/hibmc: add dp link moduel in
+ hibmc drivers
+Message-ID: <202410031735.8iRZZR6T-lkp@intel.com>
+References: <20240930100610.782363-3-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,29 +84,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241003124608.7eb3f1fb@canb.auug.org.au>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240930100610.782363-3-shiyongbang@huawei.com>
 
-On Thu, Oct 03, 2024 at 12:46:08PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the auxdisplay tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/auxdisplay/ht16k33.c: No such file or directory
-> 
-> Caused by commit
-> 
->   7f11dc1a9ca9 ("auxdisplay: ht16k33: Make use of i2c_get_match_data()")
-> 
-> I have used the auxdisplay tree from next-20241002 for today.
+Hi shiyongbang,
 
-Thank you for catching this! It seems the malformed change was pushed into
-repository. For an unknown reason I have got the driver renamed. Fixed now.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on linus/master v6.12-rc1 next-20241003]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/shiyongbang/drm-hisilicon-hibmc-add-dp-aux-in-hibmc-drivers/20240930-181437
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20240930100610.782363-3-shiyongbang%40huawei.com
+patch subject: [PATCH drm-dp 2/4] drm/hisilicon/hibmc: add dp link moduel in hibmc drivers
+config: i386-buildonly-randconfig-003-20241003 (https://download.01.org/0day-ci/archive/20241003/202410031735.8iRZZR6T-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241003/202410031735.8iRZZR6T-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410031735.8iRZZR6T-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c:10:
+   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c: In function 'dp_link_training_cr_pre':
+>> drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h:45:41: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
+      45 | #define DPCD_VOLTAGE_SWING_LEVEL_2      FIELD_PREP(GENMASK(1, 0), 2)
+         |                                         ^~~~~~~~~~
+   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c:105:32: note: in expansion of macro 'DPCD_VOLTAGE_SWING_LEVEL_2'
+     105 |                 train_set[i] = DPCD_VOLTAGE_SWING_LEVEL_2 | DPCD_PRE_EMPHASIS_LEVEL_0;
+         |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/FIELD_PREP +45 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
+
+ff6e8ef6021188 baihan li 2024-09-30  37  
+ff6e8ef6021188 baihan li 2024-09-30  38  #define DPCD_TRAINING_PATTERN_DISABLE	0x0
+ff6e8ef6021188 baihan li 2024-09-30  39  #define DPCD_TRAINING_PATTERN_1		0x1
+ff6e8ef6021188 baihan li 2024-09-30  40  #define DPCD_TRAINING_PATTERN_2		0x2
+ff6e8ef6021188 baihan li 2024-09-30  41  #define DPCD_TRAINING_PATTERN_3		0x3
+ff6e8ef6021188 baihan li 2024-09-30  42  #define DPCD_TRAINING_PATTERN_4		0x7
+ff6e8ef6021188 baihan li 2024-09-30  43  #define DPCD_VOLTAGE_SWING_LEVEL_0	FIELD_PREP(GENMASK(1, 0), 0)
+ff6e8ef6021188 baihan li 2024-09-30  44  #define DPCD_VOLTAGE_SWING_LEVEL_1	FIELD_PREP(GENMASK(1, 0), 1)
+ff6e8ef6021188 baihan li 2024-09-30 @45  #define DPCD_VOLTAGE_SWING_LEVEL_2	FIELD_PREP(GENMASK(1, 0), 2)
+ff6e8ef6021188 baihan li 2024-09-30  46  #define DPCD_VOLTAGE_SWING_LEVEL_3	FIELD_PREP(GENMASK(1, 0), 3)
+ff6e8ef6021188 baihan li 2024-09-30  47  #define DPCD_PRE_EMPHASIS_LEVEL_0	FIELD_PREP(GENMASK(4, 3), 0)
+ff6e8ef6021188 baihan li 2024-09-30  48  #define DPCD_PRE_EMPHASIS_LEVEL_1	FIELD_PREP(GENMASK(4, 3), 1)
+ff6e8ef6021188 baihan li 2024-09-30  49  #define DPCD_PRE_EMPHASIS_LEVEL_2	FIELD_PREP(GENMASK(4, 3), 2)
+ff6e8ef6021188 baihan li 2024-09-30  50  #define DPCD_PRE_EMPHASIS_LEVEL_3	FIELD_PREP(GENMASK(4, 3), 3)
+ff6e8ef6021188 baihan li 2024-09-30  51  
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
