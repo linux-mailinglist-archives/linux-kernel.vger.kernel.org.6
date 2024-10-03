@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-348592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC9898E96D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:38:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E01D98E96F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7BB2B22837
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:38:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0D5C2816B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F95C2232A;
-	Thu,  3 Oct 2024 05:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB26942069;
+	Thu,  3 Oct 2024 05:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EfAOFHIH"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ht1KebHN"
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789B3224D1
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 05:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F21224D1
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 05:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727933907; cv=none; b=C7InHpQJKMuI54Ynh7vl/gi/HocBMcEDQvzh4WKsnt+9iF98484BU0MGnlVa/4OgZiiy28MRiuH+dT99qp2hKt/Rj1GQKJasvNf8tCL+X2G3fYSqT1BXQyuj2lzJ4SiUolU/qwq+9VpZEyLY5qkuC+khduD7iyWnZLI1zCP14Lk=
+	t=1727933933; cv=none; b=pflscCkdYnhNL67oBs7HD4xTjqMI+NdkMYyBwLZaTqd58Ml0+4awlRkwqAfmFEDFknyG3KIZq/glHd5d5mq+hfSK7DLpKILzRE6DPLmqZ0PXsOC9p2AhgpJ4Kted8cwnHXlJdQC7dUiFpuVNUOy/vwKpqep1U0Ue80B5WQQl09E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727933907; c=relaxed/simple;
-	bh=OZf5T1dMlAEXY8gTRUkhfj9KW2sc8CDfqqYDFYBKrCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bt1MvjySeabBTnTo9pn7DvyNuAX4rdP3fkwns7LlG/gY709RMpZgVpu/GXQ9Cx8k8J3ZBQBvljYhiwwyFQkBLdjWqc8JdJz48V+qIsbEqnVgyeYw/Bg4lgo7Ii1SsbL5q90NGLXzPoaLciWQsA1J4Uh+iN3g5Hgkf2j1p+FIxho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EfAOFHIH; arc=none smtp.client-ip=209.85.216.52
+	s=arc-20240116; t=1727933933; c=relaxed/simple;
+	bh=oe0+JV1VGmH2Oziz0rDxTc69NeKMoL9ldZaw4FEpcBc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N6VG01vJY7cW4rpgZtAsry15wZjeEv/KU9OBxpgMHeia9Lk+R+ZZOiN40ymmdbNvO2iCuJdo99jOPM9pAkmDt1TOVtYL0UMs4BeVrzqhADYUIJOPA1qhCS5jc/xvX1C4tLNuYLRjZvoxiaRWdR9/VjpwgkK62TwK9GzP9GO99xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ht1KebHN; arc=none smtp.client-ip=209.85.217.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e07d91f78aso435040a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 22:38:26 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4a39f7c43a6so163697137.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 22:38:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727933906; x=1728538706; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Pd1LkdkCibllI1ORTg7Irg02FkDWiTpEyiSVdQth11o=;
-        b=EfAOFHIHy61mW90b2kdWTYvOPpMC8QRvTKV6wc6LdEuBbusegTguXpnLPskCko7ep8
-         9I7Vke8R9tWdwNXEZqW8jj1/1rcmBMEgUHCL55uBrGkr8/lm+mCbOMDsFh8nQcXTibko
-         sfjHWHY23rhkEYOXlEFlhOSspKYmMVfu7UdRvy9vyGzi/NNgcRJORWq2gxv6gArG4gML
-         wve5gy8iLw5Q8tf5NxtNzBKnzodbOnbTc54l1Oe+6/GDT/0AeV7tUM+uMK2utHgXxgiP
-         j3xWNLjItUln/XkF9qVqG/dys8ic0cRNamJjBRhaqeUC2QugStHQo6MSIZMzAleyoYpO
-         fUoQ==
+        d=linaro.org; s=google; t=1727933931; x=1728538731; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=f5vUbpgAuf4ukV4d+K3A2JqlzY0GqMqBxJh0u41jQac=;
+        b=ht1KebHN3xRHzRMqyAhhil1V7HCO087ouO3+6v15H4my544SFM50fVQDTzO58JN9JI
+         sjRhXjLiMYT3L4DV2gYtkiYbqtJRmGgEd3Xht+kuwGXg8b7rLCfGovYNRq6b5d18TwsE
+         BCucIwld2kIEoBpsbUwIk7DLC6KO5UAEK4/uca4RtTGVevMA+UoKHd/xWWFU4nxucYZy
+         r/ewwEuH1wbsi5ylzeNVVcnYLDGjA1HN5sqQSa9PC48cOJoiNIntQWKJztL/ZM3lUnhx
+         fhVq2fBLIaeMgSp2z6JqOlW+FjqfwFOgN3uzuH2y6lwss4mHbpw9osaBzhcEN1IS60eU
+         2PwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727933906; x=1728538706;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pd1LkdkCibllI1ORTg7Irg02FkDWiTpEyiSVdQth11o=;
-        b=C/WswNrNEvPR0NfocFhVpAbs2+VnVbkV0hKgi9PLax+ymKbfd8IppbAvr2XRRqHrkD
-         6/DYqkV9XcGld3FTPKF6nf9JROUpKZQfpECqVUCCMoMzunvU7dkEcrXrn5I4qyBpC8xE
-         Spa/VyJyIUugwadYdLBrbMW1Z/XCHr4CFihd2nEV1boBLfoEwjaTCygfaWmYKOcAr1f3
-         AHpOFRnkOgfeKZ8yQP8M4TQWr8w1PVVLLMrH0Sn/eo6Rc12+HyEAequP/xf76A9nn1Tf
-         bPtpmASQv4l0zCnSXXE+U63GqtTo3+//VxRco8aKfDlsZ/eGZXmVdcBriApLLCAfwEjB
-         9H0A==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Uhwmr4e9yzdcdx4FBOMsdCSdirCeVopUeTQMeMqyAVFb0A7BYcNRMf3DeeI7mI0PZ0QPOJ3jljtjkWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx07o8cCvLDRyNriJHQ1PY8p0Scd+KvfFbs/0gshO1Q/MjxWfWk
-	Qa23hx3v2mSX61BEs+wJTut2Y4LZJZPumDcRUAiKB6+kzpaQtcd/jBWgrcxAgQ==
-X-Google-Smtp-Source: AGHT+IETFJQL7nnoFerivVi2DQB/Jkm21orJvAufRoGLmUdngzWZk//7FXKGWhSccYa6K7py+Gxobg==
-X-Received: by 2002:a17:90b:1e42:b0:2d8:ebef:547 with SMTP id 98e67ed59e1d1-2e18496989dmr6233335a91.35.1727933905751;
-        Wed, 02 Oct 2024 22:38:25 -0700 (PDT)
-Received: from thinkpad ([36.255.17.222])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e182634b11sm2043389a91.0.2024.10.02.22.38.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 22:38:25 -0700 (PDT)
-Date: Thu, 3 Oct 2024 11:08:17 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
-Subject: Re: [PATCH v3 1/3] of: address: Add parent_bus_addr to struct
- of_pci_range
-Message-ID: <20241003053817.eycemurigrr6qy4u@thinkpad>
-References: <20240930-pci_fixup_addr-v3-0-80ee70352fc7@nxp.com>
- <20240930-pci_fixup_addr-v3-1-80ee70352fc7@nxp.com>
+        d=1e100.net; s=20230601; t=1727933931; x=1728538731;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f5vUbpgAuf4ukV4d+K3A2JqlzY0GqMqBxJh0u41jQac=;
+        b=O9U8+2uoZRLeOPXAYbs3Bd1N43Pt4VcInKlCMVic6yr7qzjMXSdlQiYGCnu42aZPyH
+         Njo2adFxi6MpU0xDm2gtZydhI6FZROtfS/3nfnsdn8Ez8y8wb05K16sa507iN1tvvf0U
+         uHjF2i+ARxB3HvEiJxR9+x2ehpDaO8wVfQG+S+CpyOfHmOD/FRP3prfSy5pStmRHgln4
+         uUrMJ+fu1kXWMGBUUOW9CzDHXSNqxz/tw9xWuhi+TcOzEnfoPqWX9CZ8k4O02vagKEqH
+         WBcZKBoUePSmzNxWFBr1Rz/Y7LrgXDy1qwMZnciOvpL8eKLcP3SfFh9aOBtAFfhmLjeV
+         Gnlw==
+X-Forwarded-Encrypted: i=1; AJvYcCX437Umk89HTXuAiEPuf4H48OQigE7VBAXbd8jqpEdOSNhdqJ5NFDoNIPYHFLgSSwVFJtnm2s/OOn7MhtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFCRXWwELMKd6u7111pirZqXYQB6EsfixysPHs0o/MxEgYfbyf
+	EKg8PlFEazEi7uFc+/HjgmHVEkHPym7zM1ucHDJztQPm8E9Qhs2CUAQB62pL2busg11eIXyZLAL
+	fYn2gPQByu45TGNHeKwfK7Laszi9E+xfm74tUUQ==
+X-Google-Smtp-Source: AGHT+IE/udGm3ds/9p2RO6rOSEFkpb2M7UEn+Fb2vf0HPMu89AA8Y6YrRw6hQK0Vrjj2Jj6Mauzen3zuBjj6b49BXG0=
+X-Received: by 2002:a05:6102:c46:b0:4a3:cfa9:6c84 with SMTP id
+ ada2fe7eead31-4a3e680c40dmr4484322137.3.1727933930644; Wed, 02 Oct 2024
+ 22:38:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240930-pci_fixup_addr-v3-1-80ee70352fc7@nxp.com>
+References: <CA+G9fYvo5npQ3o_vgiOX2guHtgafRoFPL__4O8Kcwg2=ssXmKg@mail.gmail.com>
+ <e718bc99-e63b-4adb-9e40-2379f48301f5@stanley.mountain> <b22dbfe2-dd29-40de-a4a3-4a0d6b55cd65@stanley.mountain>
+ <62a65418-2393-40ec-b462-151605a5efcf@stanley.mountain>
+In-Reply-To: <62a65418-2393-40ec-b462-151605a5efcf@stanley.mountain>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 3 Oct 2024 11:08:39 +0530
+Message-ID: <CA+G9fYvdzY+vWhPKPmyPDJNDqvH7AaU4HfKTFtgUwU+KTrD9_Q@mail.gmail.com>
+Subject: Re: next-20241001: WARNING: at mm/list_lru.c:77 list_lru_del
+ (mm/list_lru.c:212 mm/list_lru.c:200)
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Kairui Song <kasong@tencent.com>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
+	linux-mm <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 30, 2024 at 02:44:53PM -0400, Frank Li wrote:
-> Introduce field 'parent_bus_addr' in of_pci_range to retrieve untranslated
-> CPU address information.
-> 
-> Refer to the diagram below to understand that the bus fabric in some
-> systems (like i.MX8QXP) does not use a 1:1 address map between input and
-> output.
-> 
-> Currently, many drivers use .cpu_addr_fixup() callback hardcodes that
+On Wed, 2 Oct 2024 at 16:58, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> On Wed, Oct 02, 2024 at 02:25:34PM +0300, Dan Carpenter wrote:
+> > On Wed, Oct 02, 2024 at 02:24:20PM +0300, Dan Carpenter wrote:
+> > > Let's add Kairui Song to the  CC list.
+> > >
+> > > One simple thing is that we should add a READ_ONCE() to the comparison.  Naresh,
+> > > could you test the attached diff?  I don't know that it will fix it but it's
+> > > worth checking the easy stuff first.
+> > >
+> >
+> > Actually that's not right.  Let me write a different patch.
+>
+> Try this one.
+>
 
-s/drivers/controller drivers/
+Thanks for the patch,
 
-> translation in the code, e.g., "cpu_addr & CDNS_PLAT_CPU_TO_BUS_ADDR",
-> "cpu_addr + BUS_IATU_OFFSET", etc, even though those translations *should*
-> be described via DT.
-> 
+I have applied this patch and testing is in progress.
+From last night the tests running in a loop did not find the reported warning.
 
-It'd be useful to mention which driver has the mentioned fixup as an example.
 
-- Mani
+> regards,
+> dan carpenter
+>
+> diff --git a/mm/list_lru.c b/mm/list_lru.c
+> index 79c2d21504a2..2c429578ed31 100644
+> --- a/mm/list_lru.c
+> +++ b/mm/list_lru.c
+> @@ -65,6 +65,7 @@ lock_list_lru_of_memcg(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
+>                        bool irq, bool skip_empty)
+>  {
+>         struct list_lru_one *l;
+> +       long nr_items;
+>         rcu_read_lock();
+>  again:
+>         l = list_lru_from_memcg_idx(lru, nid, memcg_kmem_id(memcg));
+> @@ -73,8 +74,9 @@ lock_list_lru_of_memcg(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
+>                         spin_lock_irq(&l->lock);
+>                 else
+>                         spin_lock(&l->lock);
+> -               if (likely(READ_ONCE(l->nr_items) != LONG_MIN)) {
+> -                       WARN_ON(l->nr_items < 0);
+> +               nr_items = READ_ONCE(l->nr_items);
+> +               if (likely(nr_items != LONG_MIN)) {
+> +                       WARN_ON(nr_items < 0);
+>                         rcu_read_unlock();
+>                         return l;
+>                 }
 
--- 
-மணிவண்ணன் சதாசிவம்
+- Naresh
 
