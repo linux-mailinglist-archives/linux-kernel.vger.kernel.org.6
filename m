@@ -1,103 +1,119 @@
-Return-Path: <linux-kernel+bounces-349634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E99D98F950
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:56:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3748798F951
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:57:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068051F22E0E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:56:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D49AB20D95
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06BC1C8FD4;
-	Thu,  3 Oct 2024 21:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TyuBWWWh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15EA1C245F;
+	Thu,  3 Oct 2024 21:57:48 +0000 (UTC)
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA63E1C32F8;
-	Thu,  3 Oct 2024 21:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7F46A33F
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 21:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727992560; cv=none; b=mv06t99DYBp2PbjILNVqz8lo7q7ieFrGnbDX3/6EB4aWXVxzRf4LUe9QfsRoc2C7P15ffov4Hoi6JVkwblxOB9B/rcLjsk8iygLFsptG/Ndm5YL7v2qAvwdSJOur7O/YT76Gq2cA6GFpMPv5kGxF4zX9zFhvl8xMmrHhUUZFUD8=
+	t=1727992668; cv=none; b=SGBV8+v+E5/kN7rdo177G8gaJwCSnlmBHNP3ESREDdabzyFn2Vog3MYdOX9jk5hrdvY/SG+FcVnv8Mz2DJsmpG/vBtorHItMXtxWl+kHOtZPYK+TAn23tD5rLFU0By0+JSUe3a0yzQ9qwc9Dl0nG3FIoItHVEQieWucou6XXYpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727992560; c=relaxed/simple;
-	bh=esDs2RmdrB6/nAxGGpfrppBHn38pThHzYzo6g9GO/xE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jowODIkHXvTSZugbu5f0Ui5GKdO7vNq49TCNI3HMGqM3ecQAIrYBVREBFKF+7oIRe9XimdN5dke6uJ/0IdmG1iHv0K6ahL7wSly4MIuEZRUkrDgP7VfJcaLHd8yCGXx2QihkBk6j8xWjnDGfhgJ9cQ67M+h20u13iVphUQI8pCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TyuBWWWh; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727992559; x=1759528559;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=esDs2RmdrB6/nAxGGpfrppBHn38pThHzYzo6g9GO/xE=;
-  b=TyuBWWWhydRjNfaIqMF81rhtc3R72Muy/JoYnzX7wdIlDQjRlxBFcGdW
-   9UBeo+Sy98yQq/9wRL8NcjH1HQJfqItG+W69IdmFdDRu1gaTOno+4Q+Nx
-   Gn4Zx2qQStUXs3FcJ+5ZqpT/1fHzSr/puJN3w1CKX0z3/AWuYLyZI/QI2
-   6zYBZ7b4NFbwMoUmA9+7oyXZOWhsXQGbKgIKLwIi2Cdv57CcjklYuweT9
-   SWf5cJNZwPYUdnvq1P5ZMahHaSC0SS+w8/CIvo/ac6XY7G9BxCkjg2Wyw
-   pz7nAYo+a9vxTDBlAX37NE87KHRUQBoazjAHaZEeSNT5YfHez1nLzen48
-   g==;
-X-CSE-ConnectionGUID: Df/OkG7kQhOdbXUqQFveXQ==
-X-CSE-MsgGUID: LByqolk9TpS56Ef+DCjqSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="31094005"
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="31094005"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 14:55:56 -0700
-X-CSE-ConnectionGUID: YGTJgXKjSwaxtmurnWjPFA==
-X-CSE-MsgGUID: lFFfD8QLQ9GhLXftHfCHDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="74613939"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by fmviesa008.fm.intel.com with ESMTP; 03 Oct 2024 14:55:56 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 2/2] platform/x86/intel: power-domains: Add Diamond Rapids support
-Date: Thu,  3 Oct 2024 14:55:54 -0700
-Message-ID: <20241003215554.3013807-3-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20241003215554.3013807-1-srinivas.pandruvada@linux.intel.com>
-References: <20241003215554.3013807-1-srinivas.pandruvada@linux.intel.com>
+	s=arc-20240116; t=1727992668; c=relaxed/simple;
+	bh=TTY6zomx2ZQSoj491llg50Y3v88NzS5jt9eldSGnkHY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HRZS4umUhnk4dnY/XB5WvuiY5Uwu4zb0SrnLcNU+HbjNzAIPY3Kbxyid6zXWUMrvbpIqQAtEc1rHmGZVG+t93RbHq8O6cwFDjysKftrnNmewD1AhWdcfTVmjgegc3ncjVpd4AAbVN10SMQTEcfB6kprhvK38Dkx63eTJMlBG50g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id 808c90d5-81d2-11ef-995b-005056bd6ce9;
+	Fri, 04 Oct 2024 00:57:37 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 4 Oct 2024 00:57:34 +0300
+To: Zhang Ning <zhangn1985@outlook.com>
+Cc: Andy Shevchenko <andy@kernel.org>, gregkh@linuxfoundation.org,
+	rafael@kernel.org, linux-kernel@vger.kernel.org, lee@kernel.org
+Subject: Re: mfd: intel_soc_pmic_bxtwc: irq 0 issue, tmu and typec components
+ fail to probe.
+Message-ID: <Zv8TTiFLNxWpWHZM@surfacebook.localdomain>
+References: <TY2PR01MB3322FEDCDC048B7D3794F922CDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+ <ZrYMne34hVa33qKf@smile.fi.intel.com>
+ <TY2PR01MB33222D8BE4B1107EB3A1917FCDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+ <ZrYjLdPryElDubaM@smile.fi.intel.com>
+ <TY2PR01MB33224CE088EF01D57DE1BABFCD9C2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY2PR01MB33224CE088EF01D57DE1BABFCD9C2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
 
-Add Diamond Rapids (INTEL_PANTHERCOVE_X) to tpmi_cpu_ids to support
-domaid id mappings.
+Wed, Sep 04, 2024 at 10:29:03PM +0800, Zhang Ning kirjoitti:
+> On Fri, Aug 09, 2024 at 05:09:49PM +0300, Andy Shevchenko wrote:
+> > On Fri, Aug 09, 2024 at 08:53:24PM +0800, Zhang Ning wrote:
+> > > On Fri, Aug 09, 2024 at 03:33:33PM +0300, Andy Shevchenko wrote:
+> > > > On Fri, Aug 09, 2024 at 08:02:43PM +0800, Zhang Ning wrote:
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/platform/x86/intel/tpmi_power_domains.c | 1 +
- 1 file changed, 1 insertion(+)
+...
 
-diff --git a/drivers/platform/x86/intel/tpmi_power_domains.c b/drivers/platform/x86/intel/tpmi_power_domains.c
-index 4eb02553957c..0609a8320f7e 100644
---- a/drivers/platform/x86/intel/tpmi_power_domains.c
-+++ b/drivers/platform/x86/intel/tpmi_power_domains.c
-@@ -82,6 +82,7 @@ static const struct x86_cpu_id tpmi_cpu_ids[] = {
- 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT_X,	NULL),
- 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,	NULL),
- 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_D,	NULL),
-+	X86_MATCH_VFM(INTEL_PANTHERCOVE_X,	NULL),
- 	{}
- };
- MODULE_DEVICE_TABLE(x86cpu, tpmi_cpu_ids);
+> > > > > recently, when I try to enable mfd components for intel_soc_pmic_bxtwc
+> > > > > for debian kernel[0]. I find tmu and typec failed to probe.
+> > > > > 
+> > > > > after check source code, I find irq for these two devices are 0, when
+> > > > > use platform_get_irq, it will alway fail.
+> > > > > 
+> > > > > 	if (WARN(!ret, "0 is an invalid IRQ number\n"))
+> > > > > 		return -EINVAL;
+> > > > > 	return ret;
+> > > > > 
+> > > > > My workaround for debian is to hardcode irq to 0, instead to use api.
+> > > > > 
+> > > > > I don't know how to write a good solution, thus send an email to you.
+> > > > 
+> > > > Hold on, how the heck you got 0 in the first place?A
+> > > 
+> > > use tmu as an example
+> > > 
+> > > enum bxtwc_irqs_tmu {
+> > >         BXTWC_TMU_IRQ = 0,
+> > > };
+> > > 
+> > > static const struct regmap_irq bxtwc_regmap_irqs_tmu[] = {
+> > >         REGMAP_IRQ_REG(BXTWC_TMU_IRQ, 0, GENMASK(2, 1)),
+> > > };
+> > > 
+> > > static const struct resource tmu_resources[] = {
+> > >         DEFINE_RES_IRQ_NAMED(BXTWC_TMU_IRQ, "TMU"),
+> > > };
+> > > 
+> > >         {
+> > >                 .name = "bxt_wcove_tmu",
+> > >                 .num_resources = ARRAY_SIZE(tmu_resources),
+> > >                 .resources = tmu_resources,
+> > >         },
+> > > 
+> > > this is why I got 0, and I don't do any hack.
+> > 
+> > Thanks for elaboration, I will look at this a bit later (may be next or one
+> > after next week, just returned from vacations).
+> 
+>    could you share the patch link to the fix? then I could port it to
+>    debian.
+
+FWIW, the fix series is available here [1]. Please, test.
+
+[1]: https://lore.kernel.org/platform-driver-x86/20241003174252.1190628-2-andriy.shevchenko@linux.intel.com/
+
 -- 
-2.46.1
+With Best Regards,
+Andy Shevchenko
+
 
 
