@@ -1,230 +1,311 @@
-Return-Path: <linux-kernel+bounces-349309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEB298F426
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:22:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4602198F43D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24121F2128A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:22:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 039E6B2326E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E90E1A4F21;
-	Thu,  3 Oct 2024 16:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C62A1A7062;
+	Thu,  3 Oct 2024 16:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bZZuXirL";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Q26fsWCM"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hRoFIT8v"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533042C6A3;
-	Thu,  3 Oct 2024 16:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727972515; cv=fail; b=No72+wmUYsZgxkQIAeQevycbkITWy1jd5E0r4uFxaIdJSHpPdM5wkl3ilb4LjRvNRqhVkjKNH9ARyBdZPCBj9pwt7OnrNNGYUcsJMT5A5XEnhHTMaHtiWjmM7ZbDACs8igGKU5nuv0GP9kFOqOu1CYsn3uEXo9bJYCDsAFEaQqE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727972515; c=relaxed/simple;
-	bh=8HD0bZ/dJ+7PhN9OmjZBQElEie2TS9S6+w97cMVIb+A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GPaJE6vQDIve8enjX1KLhZ15v7VmKyQ6aOW/C/r0jsVC72frXFRNaPRlzpZidoghkDGTeVCYpFZPwWO73qBu7b7bUOc7fVx5Nma1KLw6HL83NU1QAIXlN9SfWBR4m42C0CwtNcAzT/dDWwKTKZmnYKO9L90HxvfFS8vv/mKYDS8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bZZuXirL; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Q26fsWCM; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493FMd3k006333;
-	Thu, 3 Oct 2024 16:21:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=2Pke98CitsYSwqV92ME/G3Mb+nvVHUDAys+MgsOQjLs=; b=
-	bZZuXirLlylMCfsun13ON7/hiNy2MFJb23S427Agtv49GMVBe/wSggEoqvPyu2cU
-	WB2acGZuJm5p+JcIddbB2uBy/pyl+bfAdMUmcHi9aAM8EA4sjZqM9TpU3QJu0bby
-	tUJtemMirU5fCBYh0JA0WyRd3BdmHfFY92cdmqC44c+y9D+y97fvju42F38Edb2G
-	tXDSOFx7VRC1/0FmyYEgikV1uo7oxLoiwQvXrR05cEsc3/Uuse8N44RQAHqTc8gp
-	idn+h4Mv/JUID5tgHj+OhHIXPHln9uzHs3R13cWB1B96VCSBQ23zjk9CmjcGegUH
-	uretXk0GqtubS0nILZatXw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x87dcgx4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 03 Oct 2024 16:21:27 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 493GBqVW028403;
-	Thu, 3 Oct 2024 16:21:26 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2177.outbound.protection.outlook.com [104.47.59.177])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41x88an67g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 03 Oct 2024 16:21:26 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ux/gTmDA0Zjbzyt+PI1boywd03W9qchnbVgfqAAklXTNe4sslseUs0MmyGQ14EdbK1EQaFsraqtZvJVAGJJgyORZEZzoEWQCJObiOEvysVs7vIGG93q0Mk2mNpmcgwyGgKMEPn15wu01kzzstLjwWj7zvNFeEYBdQCL5trgSAmywsLYQ9hh0KorrQx7nCfh/lgzc1UyoDcbyPPzSvSAHavRiy3LJ7upxp/KWQ2xtfmJ78apspibI8EMLgI0dgz2BKFmzkbQTwfFGb4eIz1/U9snidZB6Dgaa4RPr0BdBOY7UplzPrfAa03w0TS1kGU140fapjYLlXXny30/ehsv0Cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2Pke98CitsYSwqV92ME/G3Mb+nvVHUDAys+MgsOQjLs=;
- b=qHcr/nNQRE9EOF1Bryme9rXyVvGIA4q1cw0ZwZlZNbLvNaJV+q4StS9bkV/nDHVT3BgFwq5blSCQZXHrMm/hAjjszJ1IBGxjioTyBIaYcKIiPWpL8xLoyCm9L0S0bZSL9mTjp473lMDTHkbo0M3S1+er8D0UVaH9qp+5ojNZvaDzB2gwoUa/NZxx0ulcXcgjgG/AyOJYwwI12TC50TQPzm1ad9JmhcpgvKobilM3Py4/LYS/XKr/bb/k7gRDuzOiyRuHfIcBd/FCHUAJ0JDAXMjqQPfVXIiPp6gXY+NvaghIyB/9eu84Kk8ilRjNZAg34mKg7NRgzwBNf+wvV1sNGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Pke98CitsYSwqV92ME/G3Mb+nvVHUDAys+MgsOQjLs=;
- b=Q26fsWCMikD52uY139YAVXNMWyGdhr/PSm2RCgBkTwTMid20xJvxZCd6ymgoRgkuNEWmrgzo61jSOwGrl+rx2K0zgmgOXOkX0mM6rpwLZ71hKGK/LbaGzKEdBu3lp5/Nw7a54w8CQdkQG68/2sFxYgNMInujf7JXPPgUeKFUGkU=
-Received: from PH8PR10MB6290.namprd10.prod.outlook.com (2603:10b6:510:1c1::7)
- by CH3PR10MB7808.namprd10.prod.outlook.com (2603:10b6:610:1ba::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Thu, 3 Oct
- 2024 16:21:23 +0000
-Received: from PH8PR10MB6290.namprd10.prod.outlook.com
- ([fe80::309b:26bb:11d5:cc76]) by PH8PR10MB6290.namprd10.prod.outlook.com
- ([fe80::309b:26bb:11d5:cc76%3]) with mapi id 15.20.8026.016; Thu, 3 Oct 2024
- 16:21:23 +0000
-Message-ID: <899d2baf-2233-4f1b-a8a9-43f4c6785443@oracle.com>
-Date: Thu, 3 Oct 2024 21:51:10 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/533] 6.6.54-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
-        rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com,
-        broonie@kernel.org, Vegard Nossum <vegard.nossum@oracle.com>,
-        Darren Kenny <darren.kenny@oracle.com>
-References: <20241003103209.857606770@linuxfoundation.org>
-Content-Language: en-US
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-In-Reply-To: <20241003103209.857606770@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: KL1PR01CA0075.apcprd01.prod.exchangelabs.com
- (2603:1096:820:2::15) To PH8PR10MB6290.namprd10.prod.outlook.com
- (2603:10b6:510:1c1::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4C81A3AB7;
+	Thu,  3 Oct 2024 16:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727972799; cv=none; b=kgF129q7cUAyttAnqVAfr7ltBX2WvDQL0PCDVRqLAs60U1arlAIXUzTchL2Z4LusV9qarwG03+gVXBXtw7SdOcAnOrnlCXlgCojsU9FwsuE98DED2eJSq9i7434Uk11FDcUOF888O94Qw/JayPglKAZvCtL1oftJDRKdlbsedMo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727972799; c=relaxed/simple;
+	bh=+EWm9ovp3FONrNswzRV2ocgiTP0QhZsdLG0Iv6QGQTk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G8Tk7dJeOTQEkp25MxDQhC8UHAKPuWMEvJsUgcFRH6icPUCdOna8PNe1zHzSY7ZaVOCQISIS5TJ9HfKXbS/9h3zRe2GBkx4IujHo63BM0hnnVUvEXB00jIWyLuB/0/S5BigfXd6oWuLXcg7BnC4+WXKx42D5uMa5xNQN59Ab5zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hRoFIT8v; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1727972797; x=1759508797;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+EWm9ovp3FONrNswzRV2ocgiTP0QhZsdLG0Iv6QGQTk=;
+  b=hRoFIT8vO/zWe8GjufeMus8W7UkGjCaYtTV6yv/aIF7yEGk0KW1qgemO
+   DMewxe0Auo8B7mOZPamExRmCTc6DTAhxJuVMVzNTFBjqecXn+enLAwxTa
+   a2YnBJUGn1uEAGh0QExRlXJ1WZHFY8UUROC5TWK9IBv71radkjUr1F0Js
+   D4T7w/5Fi6Rk+yZClloY1+3doaZsYqsKCv5O7kJNfG8E7DA3y5T0lEz3P
+   cEc0Gg0+TMqUIjsZwVoZTtHq5+WldPmFJqIMqptom7xAbtei+3ieWvpaD
+   E8AwrnNu5uJDQnZCSMkd8jeZMNPbfa/79cWNbx09xPN+Lptq6lU/I1c9l
+   g==;
+X-CSE-ConnectionGUID: EJyWgJZ7TvOBIF+vRJDc2A==
+X-CSE-MsgGUID: S8KfLE8gR3OHapzlvornXg==
+X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
+   d="scan'208";a="263610546"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Oct 2024 09:26:31 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 3 Oct 2024 09:26:09 -0700
+Received: from HYD-DK-UNGSW20.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 3 Oct 2024 09:26:06 -0700
+From: Tarun Alle <tarun.alle@microchip.com>
+To: <arun.ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next v5] net: phy: microchip_t1: SQI support for LAN887x
+Date: Thu, 3 Oct 2024 21:51:18 +0530
+Message-ID: <20241003162118.232123-1-tarun.alle@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR10MB6290:EE_|CH3PR10MB7808:EE_
-X-MS-Office365-Filtering-Correlation-Id: 210eb57d-5faf-4ad4-5955-08dce3c76c47
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RTlzTXBTVVNuU2Vib0ltUkV2MW5UNHF0cTBGd0hKdDliUkYvY2lwYUI1Mk9j?=
- =?utf-8?B?MjZVUjVhTDFBYjJDSzQ4ajV3Z1NOdjN2enF0a2xWYUpZUkcweXVnUkpxU1ZI?=
- =?utf-8?B?Y2Ira0VBY2lNY1IybE9kK2VocDRxNXR2NUkzNGZsNTI2TkE1bkF3bE9ZdEJC?=
- =?utf-8?B?VytxZ0FYN0ZHZUUzTTdzSGFuME5JN3ppNGd0V1FnMGJNeFFBM0x0bEZ6MHFn?=
- =?utf-8?B?dHAyRFZFS2dtQnY3dFRrZmxEeHFudWpFcmFIU0JiUmhjY3NrakxJemg5RFdt?=
- =?utf-8?B?MmJFZjVjR1F4VUx6Q0Z1UmRpUEJiVzNjeC9HaHN6OVlUMERmdm91clJWMVdN?=
- =?utf-8?B?ZDBkVWVUMkJPRlMrb3RmUFJZdUFhdkNPUjRZNGxkZVF0dm5FeHRQcUhGMXFV?=
- =?utf-8?B?SFp4cGVIWmhKa1ViYXkvMnZFUlVKMzdkalhFeUZxMXpQV2t3bGdweWh1Rm45?=
- =?utf-8?B?cUFUd04ydURhZzNHYUFiZEd1UVFJeW9hcldCclhubCtBSC9QNDBXaUphNGVE?=
- =?utf-8?B?Qm9HQnF1NFlPT1d5aytpeXFqUVhEUUJXelAzYi9IbVQzV0g0U2xMM1hNcDZ5?=
- =?utf-8?B?WWd1czRKZGU5VHQveG1wa25IUERab0xnVTVjM3YrQ3BkTW1oa2NVYWUwdGxv?=
- =?utf-8?B?cUVVbkdDTHl0N1N1ODVid05KRG05SU5aMmlub3d6MkZValRhMzMrMWhXcFBa?=
- =?utf-8?B?OWFsNURjdGNFQS9GaWJEdnYxR2J1RVMxekVJU2FKYjNld091RzNhQ0dwdFdC?=
- =?utf-8?B?YkNQb1dmc2hSNHBEM0hCd3RmOEdQcG9Vak1RUVM0UEp3bzZjcVEycHNHUUtL?=
- =?utf-8?B?MGw1cU5RUWVYVUVzdm1JMEUxUDRJUE93MzhxcTI2R2hRWC9CeDE4VGpXaUxs?=
- =?utf-8?B?WEZzbEJ0TStQalE4LzBNT251OGhiSUl4OGtlVlRnVWhqblFJNzc0ZjR3REFG?=
- =?utf-8?B?UHJ1UUZPVzRuTEV4MU8reHFRR0o5MUV5bXp2bFBIUk05anlMTG9qbjNwVTFX?=
- =?utf-8?B?RlZraWdEY3FHQThlSURsenFRU2trQU5UcjUyT0tCUWtqM21aSUx0UmlmZmQ2?=
- =?utf-8?B?c3Yyc0FMUnBWZ0hkc0hrVEdldmhPSUdsaEFCTkw0dDNZOUFhMmREREVHVlFU?=
- =?utf-8?B?WkgrWVVzdzVjQjdjbFdzNEpSMDR0dGd3bVBiZVZyamtOYjlZR2I0cWtpaVhH?=
- =?utf-8?B?b3VkTWprV0E3cURMS0pqM2hSb01VL29kcXo2dHR1ZUhUTjdmWTVSTlc4MTZv?=
- =?utf-8?B?WVlEUER3dTl3bTNlYzJnV3pQSDRqNGZDbFNVNHplcnIxdUZvQXY5enptRjlR?=
- =?utf-8?B?QUNXODAvRWQ3MGxzSUhLcVhVMlRNaHAvSWlzdkkyd0lVWkZabXBST1FjK251?=
- =?utf-8?B?a1VoV2xrVytvRVZJeS9qYy9hSndnVE5tZXlBMFB0eC9RdWxJMkVvSWRVc3NB?=
- =?utf-8?B?NDR3a2VCQkZyckFZQjhTQzZ1ZVcyVzA1SGZwM1dvZGgvL1lHaDJaZzZ1NmF3?=
- =?utf-8?B?K2xMbERsZUxOU3poNVUwbW1vMUhxOHhuN09mY09MV29pNGJ2TGZUUlZFc2FI?=
- =?utf-8?B?bnAzQmQwK0pELzhIREhYOVM2TW11a2tjTnNaN1ZRdUZFSU5PeWc3OE1oNmFr?=
- =?utf-8?B?QUxiZnpUUHZNK2NCdnpCaEdiRUkxeUExeDRtb0VmWkF4djRGNnA2V2d4NFQy?=
- =?utf-8?B?SVF5VWtNak1zaktRVms4QjRqZlpBUkRHamFhNENWZTJLZXlwd1d1MEhnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6290.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RGxaN2QwcHFFZzhmMldJQ3FDbmVhQjVpYWZkVUNGOWIxYXdZOHB6NVhiTlR4?=
- =?utf-8?B?Ry9CS0ZPM1FncTNqUHdTV09zNWhrd2RkcXA2SGI1SloyRmNVMDhJSDdBSTZV?=
- =?utf-8?B?WkFFUXhZdU9OWW44dUdGZ3hIYUJTMmZhbU9kb0gyRXlVMFhpRmR0eUZSMWNY?=
- =?utf-8?B?em9GMWRSWldVRHYzWjZxamllTzJMc2JHQUZFVTJvNjBVRVdyTkI0N2prWjIy?=
- =?utf-8?B?MVU4VHhONGo5bXgyall5YUo5bzFpMW5DaVU2T25JbS9UQjUrNDNkSm0zSGVU?=
- =?utf-8?B?d3RkczFXQ1lNKzhrV3lWMGIvWksya3pUcVlSMW5aOWhMSXN6OWlTQWQvRFRE?=
- =?utf-8?B?TlJ4N3htQlhWZWlZZHRydXJ6eW04UStyaDIyeUVRNmpZa0NZVjlFcTVyWEky?=
- =?utf-8?B?L2xINE9wMEVWcjJHMGxlVDNYbjljTHFqV096MHFtMzk2SWhKaThtbURhMkU0?=
- =?utf-8?B?Yy9CNXJmd1RLenZMS3VrOUNyMDNwWk53dXpGd3kvRHlOcmN1VG9GQkZCMU9V?=
- =?utf-8?B?STVpUnUwYUdlRDBxaWlQSnJQNUNvVS8ybzBkaDRTM2pBaG5DemtIQzg1V0tB?=
- =?utf-8?B?SEJLSEdBTG13UEowckt0Q09keXp0S0wwWWFlZmRLcFBMNjM3RVMwMlQxR2g4?=
- =?utf-8?B?MTdNSURXZGZrTVRiVzZJQmUrRmNJaW5MdStGUVZnNEVOK2RxSGpBa2JuYjJx?=
- =?utf-8?B?bUU1SGROVUNDdkRvSWdyd2pERTkrWERZNDBMaXpCQUN0cnpoUXEzc3MxaFlJ?=
- =?utf-8?B?dFduOUIvMDFWVEZINE5PUUVKZGdaSVVqTU5yVXF3WVNJbExjeWxSdi9GbEpY?=
- =?utf-8?B?UTBJa1pjdVNCTk1qa2tJcnZBUU50QWxpbnJyRkpDeTVlN2UyQUlhbVBjZFNq?=
- =?utf-8?B?NEY3aGx3azE5VERIcU94VWd3blNxUEhWUDBHSnVMbDQvTlFVSzRtRDV6MzEx?=
- =?utf-8?B?NmFBL3BTaS9nZlU0aGY4VUlKcG4rQ1BEQW9sL2pDeC9Obk10NWw4NXVDUGJo?=
- =?utf-8?B?U2VvNSt6Y1pzMWNrWC80cjNBTE5LK2lWVnVyTmNkVFpsbnliVkxqSlNTTTZC?=
- =?utf-8?B?MVZrUXFQMmY4cDR3MmhmbW5DaHN4dUlhSUxVTmpESkZhSm1kSCtVb3JWYWg5?=
- =?utf-8?B?aHBjQTNQNCtQUDdsWEw1TW50dFcrUThtT21DcDVHSlZud2tmRVNoVVFuOEow?=
- =?utf-8?B?UHBZTWJsdmk1bkZ0cllBOUZVRlh3UVkzVVVFREkxZ21RdEN4Q2tDZmxCaFB6?=
- =?utf-8?B?aFM0Qk5HWWhhQStaVnZGbXBNOThXSkl3bGZrKzNBdnB3eGgvd0FTa2hGYVRi?=
- =?utf-8?B?ZGVNMG1BSk5WSEIvdGF4YlFCaFJOTUU1eS95ZnIwQ0F2ZjhWWmxwQUZudFNk?=
- =?utf-8?B?WWpRQzBMZUFqT1hVVW5hTHhacnE3NXBWT25MMnlZc0p6WUI2ZXVpd1k1azhV?=
- =?utf-8?B?RGFoR2pPVlBRRlRZMXNUbGlKREFwWkd6NlBGbG5mZ3BXZTE0T0p5MituRVFX?=
- =?utf-8?B?V1NBWC93UTBlSTFpdnF4Z0VtRitCVWNqN2JKbmNoSzlTT3ZJYTZwRGJrb0Ro?=
- =?utf-8?B?cG80N2prVGdCUWlOdjBFSXc1RnY5alhmWk5uQ2drM1pxZFFoU0pYNUxldUVD?=
- =?utf-8?B?UnZFamd1ekFTS1BKSU83V1VzVWlDak9zQW1jZjlaMFYxa0M4dFVXRlFDa0pn?=
- =?utf-8?B?L2doemRqSGQyUGQ1SlZwRXRrcFErMDBLaFVmZnFtbFAydHZpdUpJZHNLdDJC?=
- =?utf-8?B?SXl0RVZEdTcxU0hwSzQ5a0tNcStYVStObllNRmp6ZENvbXlScXYrTWRLZTND?=
- =?utf-8?B?ZitpNndoZGxJYW1yUGwrVUxUYU5qMXhsSEpUbnh4SnJjTWUwWWViVUdtUEg0?=
- =?utf-8?B?T0xyc2E5S0doVDI2Z1lmc2tsVXFoRmFBNWY4QUtsdTBubi9sbmRjNlhORFBV?=
- =?utf-8?B?VG5WN0JxcFl3WXVJeWN2SHdpTzk5d1U0Z1U1dk1rQzJueGRuZU5keCtRNzN4?=
- =?utf-8?B?VnBVc2l3U3Q2TlpkNHpidlRuMjdReDJudS9LMzdnZjRLQWdVZXl2V0tBV3NS?=
- =?utf-8?B?N1lRdVdJN1duVHpQYXdQQml5amtGNXpOUGFxMVc5ZEFhS1NyTmcyMWxxUHF0?=
- =?utf-8?B?ZzlnK0c3R1lRTjRHM1k2bnpTMmVjV2gxeGQrcU5RaEhLdEtDQ0FVSGVRa1Bp?=
- =?utf-8?Q?7wCQ4tgva4b5uR8fctFrqBY=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	RnJWup4T78aTjTL9981GefGdFSqkz0ciXkMp2EMWJWonYjELC87rf0bg75ltetpvN19Q1Rkt/tF0u1S5ZyHOkHsO8dW7PQFeWnHHfcUKQmNmreBphtsUrdLQw5vPedq5LGaFL92ORGZPec3GfEKwzzmQ5XInPYd52fKkoX7X86wOOzf+E7ZKNgjKa4n2iYSi7cfIDUdvUpZ/cX3NRNX3BGmWjV2NXgaR+daFImJwx3HcZzkJ0SOChTzmwUVyQrKxyollJsZn7tjRPGgEewNyORcpPlZiDVmhhdOpG73Ox7iiPzB8e97lgS5yMQlIzkhmpz1Eb3muWrOF47r48ACrsm4IeDYjdslBohc8lQ51GPeCpvzI6dhG4rkUsv8SGZ0ynYPF1WJgHicP9PFKoZvtVk+NP3Zo232sboakaE3B88hBrKFnQJnK4mePCQVdnpvR+mBNWXX6IlBUIYZR4seUoQKDsPMmc8OwgAouH4i0+jt1+Wp3Mbf2HfrWWWLYK9GJP68VHbylVXfb7OJUSq9w5a84S4qf/6cizL2SmoeGCqdQObfihN/9nMa/z0BsXBnlc3eW/VXEryfJ77NFI3sNzG47MQ5QCaNVxXi1Z0ptYyo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 210eb57d-5faf-4ad4-5955-08dce3c76c47
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6290.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2024 16:21:23.7493
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PMtemGINpHPZnxpLAM5PaU3r0UMVQvGo3S/3tTJrazsYXeTXv6J+FH9q2yePrQLMEWWxD0EcJEF8gLdeVVPzuozbLDnNpLUmcJpYBI3tR3a/drrk7z6cl8QX2p2sH1UI
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7808
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-03_15,2024-10-03_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
- definitions=main-2410030118
-X-Proofpoint-GUID: mE09OjuAKWwKebOum19SjIt8e0Fqw4rj
-X-Proofpoint-ORIG-GUID: mE09OjuAKWwKebOum19SjIt8e0Fqw4rj
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Greg,
+From: Tarun Alle <Tarun.Alle@microchip.com>
 
-On 03/10/24 16:03, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.54 release.
-> There are 533 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 05 Oct 2024 10:30:30 +0000.
-> Anything received after that time might be too late.
+Add support for measuring Signal Quality Index for LAN887x T1 PHY.
+Signal Quality Index (SQI) is measure of Link Channel Quality from
+0 to 7, with 7 as the best. By default, a link loss event shall
+indicate an SQI of 0.
 
-rc2 is good and had passed all our tests!
+Signed-off-by: Tarun Alle <Tarun.Alle@microchip.com>
+---
+v4 -> v5
+- Renamed and organised the macros of SQI samples.
 
-No problems seen on x86_64 and aarch64 with our testing.
+v3 -> v4
+- Added check to handle invalid samples.
+- Added macro for ARRAY_SIZE(rawtable).
 
-Tested-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+v2 -> v3
+- Replaced hard-coded values with ARRAY_SIZE(rawtable).
 
-Thanks,
-Harshit
+v1 -> v2
+- Replaced hard-coded 200 with ARRAY_SIZE(rawtable).
+- Replaced return value -EINVAL with -ENETDOWN.
+- Changed link checks.
+---
+ drivers/net/phy/microchip_t1.c | 172 +++++++++++++++++++++++++++++++++
+ 1 file changed, 172 insertions(+)
+
+diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
+index a5ef8fe50704..69e01692db65 100644
+--- a/drivers/net/phy/microchip_t1.c
++++ b/drivers/net/phy/microchip_t1.c
+@@ -6,6 +6,7 @@
+ #include <linux/delay.h>
+ #include <linux/mii.h>
+ #include <linux/phy.h>
++#include <linux/sort.h>
+ #include <linux/ethtool.h>
+ #include <linux/ethtool_netlink.h>
+ #include <linux/bitfield.h>
+@@ -226,6 +227,35 @@
+ #define MICROCHIP_CABLE_MAX_TIME_DIFF	\
+ 	(MICROCHIP_CABLE_MIN_TIME_DIFF + MICROCHIP_CABLE_TIME_MARGIN)
+ 
++#define LAN887X_COEFF_PWR_DN_CONFIG_100		0x0404
++#define LAN887X_COEFF_PWR_DN_CONFIG_100_V	0x16d6
++#define LAN887X_SQI_CONFIG_100			0x042e
++#define LAN887X_SQI_CONFIG_100_V		0x9572
++#define LAN887X_SQI_MSE_100			0x483
++
++#define LAN887X_POKE_PEEK_100			0x040d
++#define LAN887X_POKE_PEEK_100_EN		BIT(0)
++
++#define LAN887X_COEFF_MOD_CONFIG		0x080d
++#define LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN	BIT(8)
++
++#define LAN887X_DCQ_SQI_STATUS			0x08b2
++
++/* SQI raw samples count */
++#define SQI_SAMPLES 200
++
++/* Samples percentage considered for SQI calculation */
++#define SQI_INLINERS_PERCENT 60
++
++/* Samples count considered for SQI calculation */
++#define SQI_INLIERS_NUM (SQI_SAMPLES * SQI_INLINERS_PERCENT / 100)
++
++/* Start offset of samples */
++#define SQI_INLIERS_START ((SQI_SAMPLES - SQI_INLIERS_NUM) / 2)
++
++/* End offset of samples */
++#define SQI_INLIERS_END (SQI_INLIERS_START + SQI_INLIERS_NUM)
++
+ #define DRIVER_AUTHOR	"Nisar Sayed <nisar.sayed@microchip.com>"
+ #define DRIVER_DESC	"Microchip LAN87XX/LAN937x/LAN887x T1 PHY driver"
+ 
+@@ -1830,6 +1860,146 @@ static int lan887x_cable_test_get_status(struct phy_device *phydev,
+ 	return lan887x_cable_test_report(phydev);
+ }
+ 
++/* Compare block to sort in ascending order */
++static int sqi_compare(const void *a, const void *b)
++{
++	return  *(u16 *)a - *(u16 *)b;
++}
++
++static int lan887x_get_sqi_100M(struct phy_device *phydev)
++{
++	u16 rawtable[SQI_SAMPLES];
++	u32 sqiavg = 0;
++	u8 sqinum = 0;
++	int rc, i;
++
++	/* Configuration of SQI 100M */
++	rc = phy_write_mmd(phydev, MDIO_MMD_VEND1,
++			   LAN887X_COEFF_PWR_DN_CONFIG_100,
++			   LAN887X_COEFF_PWR_DN_CONFIG_100_V);
++	if (rc < 0)
++		return rc;
++
++	rc = phy_write_mmd(phydev, MDIO_MMD_VEND1, LAN887X_SQI_CONFIG_100,
++			   LAN887X_SQI_CONFIG_100_V);
++	if (rc < 0)
++		return rc;
++
++	rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_SQI_CONFIG_100);
++	if (rc != LAN887X_SQI_CONFIG_100_V)
++		return -EINVAL;
++
++	rc = phy_modify_mmd(phydev, MDIO_MMD_VEND1, LAN887X_POKE_PEEK_100,
++			    LAN887X_POKE_PEEK_100_EN,
++			    LAN887X_POKE_PEEK_100_EN);
++	if (rc < 0)
++		return rc;
++
++	/* Required before reading register
++	 * otherwise it will return high value
++	 */
++	msleep(50);
++
++	/* Link check before raw readings */
++	rc = genphy_c45_read_link(phydev);
++	if (rc < 0)
++		return rc;
++
++	if (!phydev->link)
++		return -ENETDOWN;
++
++	/* Get 200 SQI raw readings */
++	for (i = 0; i < SQI_SAMPLES; i++) {
++		rc = phy_write_mmd(phydev, MDIO_MMD_VEND1,
++				   LAN887X_POKE_PEEK_100,
++				   LAN887X_POKE_PEEK_100_EN);
++		if (rc < 0)
++			return rc;
++
++		rc = phy_read_mmd(phydev, MDIO_MMD_VEND1,
++				  LAN887X_SQI_MSE_100);
++		if (rc < 0)
++			return rc;
++
++		rawtable[i] = (u16)rc;
++	}
++
++	/* Link check after raw readings */
++	rc = genphy_c45_read_link(phydev);
++	if (rc < 0)
++		return rc;
++
++	if (!phydev->link)
++		return -ENETDOWN;
++
++	/* Sort SQI raw readings in ascending order */
++	sort(rawtable, SQI_SAMPLES, sizeof(u16), sqi_compare, NULL);
++
++	/* Keep inliers and discard outliers */
++	for (i = SQI_INLIERS_START; i < SQI_INLIERS_END; i++)
++		sqiavg += rawtable[i];
++
++	/* Handle invalid samples */
++	if (sqiavg != 0) {
++		/* Get SQI average */
++		sqiavg /= SQI_INLIERS_NUM;
++
++		if (sqiavg < 75)
++			sqinum = 7;
++		else if (sqiavg < 94)
++			sqinum = 6;
++		else if (sqiavg < 119)
++			sqinum = 5;
++		else if (sqiavg < 150)
++			sqinum = 4;
++		else if (sqiavg < 189)
++			sqinum = 3;
++		else if (sqiavg < 237)
++			sqinum = 2;
++		else if (sqiavg < 299)
++			sqinum = 1;
++		else
++			sqinum = 0;
++	}
++
++	return sqinum;
++}
++
++static int lan887x_get_sqi(struct phy_device *phydev)
++{
++	int rc, val;
++
++	if (phydev->speed != SPEED_1000 &&
++	    phydev->speed != SPEED_100) {
++		return -ENETDOWN;
++	}
++
++	if (phydev->speed == SPEED_100)
++		return lan887x_get_sqi_100M(phydev);
++
++	/* Writing DCQ_COEFF_EN to trigger a SQI read */
++	rc = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1,
++			      LAN887X_COEFF_MOD_CONFIG,
++			      LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN);
++	if (rc < 0)
++		return rc;
++
++	/* Wait for DCQ done */
++	rc = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
++				       LAN887X_COEFF_MOD_CONFIG, val, ((val &
++				       LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN) !=
++				       LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN),
++				       10, 200, true);
++	if (rc < 0)
++		return rc;
++
++	rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_DCQ_SQI_STATUS);
++	if (rc < 0)
++		return rc;
++
++	return FIELD_GET(T1_DCQ_SQI_MSK, rc);
++}
++
+ static struct phy_driver microchip_t1_phy_driver[] = {
+ 	{
+ 		PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX),
+@@ -1881,6 +2051,8 @@ static struct phy_driver microchip_t1_phy_driver[] = {
+ 		.read_status	= genphy_c45_read_status,
+ 		.cable_test_start = lan887x_cable_test_start,
+ 		.cable_test_get_status = lan887x_cable_test_get_status,
++		.get_sqi	= lan887x_get_sqi,
++		.get_sqi_max	= lan87xx_get_sqi_max,
+ 	}
+ };
+ 
+-- 
+2.34.1
+
 
