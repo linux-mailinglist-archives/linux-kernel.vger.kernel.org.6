@@ -1,203 +1,200 @@
-Return-Path: <linux-kernel+bounces-348614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1805A98E9AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EFA198E9C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E2E1C210EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:18:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 937FD1C21903
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE50178281;
-	Thu,  3 Oct 2024 06:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496407E0E4;
+	Thu,  3 Oct 2024 06:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IQZudeoM"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UAI18LAM"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8A42564
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 06:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4CF40BF2;
+	Thu,  3 Oct 2024 06:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727936318; cv=none; b=Zu6LnP4zjAre/WYV1EtAPX3PBceDcjRWpAx6mLLY9ovQFr+79tpbr4fhjYmGUn1NUKvnc2olS8zfxQ7wUNp4ximuJAtZbPKN80fSQcBjDJHYfB5TmZ7TDlDADmMLAbrED1/J1BMK3ZsFqXijiX561v9W7l9QIMD0LYGGoiX5qtI=
+	t=1727937507; cv=none; b=BNokwCFKL6Gb+OWQmfnKQLccQ8Ot62aiVDEQjIGHX0OW4nT/aHjgBOXxIEBrpPiHTSe2yvbIvFOzpX5nm3EdatEC4V5HBzoNurbVDOmeZBCvXHmHJQlVARNl72zVns6xrqwZCVGB6cN4LCurDw8MZNWGuNXX1F8Ltr0WVjJVWys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727936318; c=relaxed/simple;
-	bh=sBl0fCFHom5Hc09gdCxZI8m3P85FrpOdRPZ8njZoZjw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AxwoYW07mrnI8PzXpo1Q6/x9Ux4dRa003kXG+24GXiGs5/94gxrMT0XB81YILjU4FXVl9IVsv9R3vbYFtjzbN3eKIK+yiWYDYn6AoPjjA8YFXaZXMVLIgUwGFqw63tGkN87NCs59MCS0BgxUjpoOCGMJfvG0C+L82DoL5BfUqkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IQZudeoM; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-50ac0c8cd48so180909e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 23:18:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727936315; x=1728541115; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XjCn7wNLVdT3ReTaN+Qz+I/dQF+bFHwwiGL3poiE5os=;
-        b=IQZudeoMsYvkZfRbHHOn2IeQDmERVY6SIvhGzRBzUuQaL+NAFvJlUngScY9o9++KTG
-         1/PqKECUyOTozPnOdiypiQZENpQ81wsWFK4Y8L3Db0OeN09TyBRnULZIlhPQGkACGmzi
-         Rk2FNRzFcwdwyTb6ygOcbGJynZH++pXaix4yM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727936315; x=1728541115;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XjCn7wNLVdT3ReTaN+Qz+I/dQF+bFHwwiGL3poiE5os=;
-        b=gEu5RFh2c6d7pGZnTKFyAVeOn4N35bnRefhSXAj3kveJRMqLzFgq7BQY4MvOvD/rQy
-         ke+pkiQCGkwg7gwKJqD+sT0PdSLuBmDTrsAjX2Zrxt1ViMFKvrszhqIcR3DYxroTBt0/
-         hCVLhLqSgCPlxMYcRbzF6cN0n0XZ7DTEdxBTlx/RuA1SRfgAlyGM7cfdySXmwjiF/LhC
-         64LKoZJIwXa2BYoAu7PQQ+ihSTEcyRwNMXdZIML4SI4FZtPZy+Ii7qyzAUI4gSLTolFC
-         NWXI81xIkpZoG37R2a04Zj0NFsQBuN2Sdh0caCBQZX19EFfCxeVwGSJiIVKV7r5q64D4
-         Bxjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYlrQ6PQWJP8jV9BkmbZQFnNgDipiksZo2U96dNXX3bD+HB/Bv1qk18tZVFvNu3Id91sFRL3GeCUyascQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAwgMQBRL1dtIOyO0EPx0+hqpJLI4JT1pU0YCLqTwJvCe+axzy
-	4K+74wYhLuCkF//4u08Wo7sTC5uwQMpgcKrJ2ARi3ywob79uiC/8C7yHChVL5MIgiBbjwKOUBBJ
-	iyw==
-X-Google-Smtp-Source: AGHT+IETRC2QWyRNdAbzQkW9E8SuFtDQy0g2sfLs1qjYRF/aVTNwI4GPnJDLB73cbDh0JqjzXhJtPQ==
-X-Received: by 2002:a05:6122:3091:b0:50a:cc6f:2a32 with SMTP id 71dfb90a1353d-50c5814bc4bmr4722456e0c.3.1727936315309;
-        Wed, 02 Oct 2024 23:18:35 -0700 (PDT)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-50c72c03adfsm84985e0c.35.2024.10.02.23.18.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 23:18:35 -0700 (PDT)
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4a3ace86b5cso237367137.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 23:18:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVeKvjkSTJTWZfhEHXy0n3BY+f8J4GR1ftVzsT24JsLAcl66MYLH/OVGt43AMICPlov+8wqOwagEkCZFIM=@vger.kernel.org
-X-Received: by 2002:a05:6102:3584:b0:4a3:a7a0:889a with SMTP id
- ada2fe7eead31-4a3e6924383mr4417458137.19.1727936314349; Wed, 02 Oct 2024
- 23:18:34 -0700 (PDT)
+	s=arc-20240116; t=1727937507; c=relaxed/simple;
+	bh=qz/wQUkt3pi1fxpJs3vuvBgTZ1SXry1uNY0xAdlOrMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kMvQWpILDl5v2jAVP0SgdvH56IYpruCzYUcgK9d0q8b4qO2kpAhYUOWr05TlLA42UHx+dg+DsTMIQe2ENdme2HBGCNNxoEMTaZqjIK/rLjZui8N/ylN4pR9LjyXl1QXzpxsOCrQ8mKkmwG7Na25ts0ka3sojV/HffMDC4dzTfPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UAI18LAM; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4936Nw82019701;
+	Thu, 3 Oct 2024 06:38:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=b
+	+gzo4utoDfKCg2QIw2CU0gA0a/fOr1VNQALEIVPkkk=; b=UAI18LAMg03LKnFGM
+	Q4xc3i0Pqg9YIW/ZJEhz6m0pMkNFzF/Nrk7reYbXV5skpnTqvl/VIKrUrB1e2Jjp
+	i4D1ro7OjQz43X0BaGAa9xF8HHUUE2gVvvVWmkKpyzqrGyqEUfmAzOS0QyNm4oN2
+	jCrggGdMze8vDKltmXKuB2qI+t3OYNsFM/NAOtwllrSgNGTfAUI/NwnIlKQhOZrF
+	dW94iNQHlYbfogGAsVOxVuC7nxOUBfPaZ4l8VOsf3iLU2zAZrHWUxrCMa0PXTbWv
+	RfK3l0uPOm9I9Lj+FoQAJxXgu4J0JKDJKvp6WxM/LufuCngDqtJVnz6XCPt9Goer
+	8GLwQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421nyc0257-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 06:38:05 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4936X6N5012246;
+	Thu, 3 Oct 2024 06:38:05 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421nyc024n-9
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 06:38:05 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4934TsiL018356;
+	Thu, 3 Oct 2024 06:19:37 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xw4n6bm8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 06:19:37 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4936JbN251249672
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 3 Oct 2024 06:19:37 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E8D1958055;
+	Thu,  3 Oct 2024 06:19:36 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3BDDF5805E;
+	Thu,  3 Oct 2024 06:19:31 +0000 (GMT)
+Received: from [9.43.46.102] (unknown [9.43.46.102])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  3 Oct 2024 06:19:29 +0000 (GMT)
+Message-ID: <eabd6384-0b3f-4112-92d4-7cae4bc3f61f@linux.ibm.com>
+Date: Thu, 3 Oct 2024 11:49:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002114614.847553-1-fshao@chromium.org> <20241002114614.847553-3-fshao@chromium.org>
- <7faeac1b-0b7a-a820-16a5-330b82d12e01@mediatek.com>
-In-Reply-To: <7faeac1b-0b7a-a820-16a5-330b82d12e01@mediatek.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Thu, 3 Oct 2024 14:17:57 +0800
-X-Gmail-Original-Message-ID: <CAC=S1niQQi_m+GB_CoZr-PTgyxVNCa_uwgZw+vGqgE-E5FBnCw@mail.gmail.com>
-Message-ID: <CAC=S1niQQi_m+GB_CoZr-PTgyxVNCa_uwgZw+vGqgE-E5FBnCw@mail.gmail.com>
-Subject: Re: [PATCH 2/9] arm64: dts: mediatek: mt8188: Add PCIe nodes
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, jianguo.zhang@mediatek.com, 
-	jian.yang@mediatek.com, jieyy.yang@mediatek.com, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, Bear Wang <bear.wang@mediatek.com>, 
-	Pablo Sun <pablo.sun@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Oct 2, 2024 at 8:42=E2=80=AFPM Macpaul Lin <macpaul.lin@mediatek.co=
-m> wrote:
->
->
->
-> On 10/2/24 19:41, Fei Shao wrote:
-> >
-> >
-> > External email : Please do not click links or open attachments until yo=
-u
-> > have verified the sender or the content.
-> >
-> >
-> > Add PCIe node and the associated PHY node.
-> > Individual board device tree should enable the nodes as needed.
-> >
-> > Signed-off-by: Fei Shao <fshao@chromium.org>
-> > ---
-> >
-> >   arch/arm64/boot/dts/mediatek/mt8188.dtsi | 62 +++++++++++++++++++++++=
-+
-> >   1 file changed, 62 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot=
-/dts/mediatek/mt8188.dtsi
-> > index 10195a4e4e9d..9431f3c5c228 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> > +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> > @@ -1763,6 +1763,53 @@ xhci0: usb@112b0000 {
-> >                       status =3D "disabled";
-> >               };
-> >
-> > +             pcie: pcie@112f0000 {
-> > +                     compatible =3D "mediatek,mt8188-pcie", "mediatek,=
-mt8192-pcie";
-> > +                     reg =3D <0 0x112f0000 0 0x2000>;
-> > +                     reg-names =3D "pcie-mac";
->
-> It seems the property 'linux,pci-domain =3D <0>;' is missing?
-
-I'll add that. I guess the fallback will assign a dynamic ID to it
-(likely also 0), but explicitly having a static domain ID is never a
-bad thing.
-
->
-> [snip]
->
-> > +                     };
-> > +             };
-> > +
-> >               nor_flash: spi@1132c000 {
-> >                       compatible =3D "mediatek,mt8188-nor", "mediatek,m=
-t8186-nor";
-> >                       reg =3D <0 0x1132c000 0 0x1000>;
-> > @@ -1775,6 +1822,21 @@ nor_flash: spi@1132c000 {
-> >                       status =3D "disabled";
-> >               };
-> >
-> > +             pciephy: t-phy@11c20700 {
-> > +                     compatible =3D "mediatek,mt8188-tphy", "mediatek,=
-generic-tphy-v3";
-> > +                     ranges =3D <0 0 0x11c20700 0x700>;
-> > +                     #address-cells =3D <1>;
-> > +                     #size-cells =3D <1>;
-> > +                     status =3D "disabled";
-> > +
->
-> The power-domains property is missing.
-> It should be 'power-domains =3D <&spm MT8188_POWER_DOMAIN_PEXTP_PHY_TOP>;=
-'
-
-I dropped this as the binding check was against it, and I thought it
-was a mistake because other tphy nodes don't seem to have a power
-domain either.
-And now I noticed your tphy binding patch in [1] so that explains,
-except that I still can't tell whether there should be a power domain
-for a given tphy node...
-
-Anyway, I'll fix this one. Thanks!
-
-[1]: https://lore.kernel.org/all/20240926101804.22471-1-macpaul.lin@mediate=
-k.com/
-
-Regards,
-Fei
+User-Agent: Mozilla Thunderbird
+Subject: Re: BUG: Kernel NULL pointer dereference on read at 0x00000000 in
+ pnv_get_random_long()
+To: Corentin LABBE <clabbe@baylibre.com>, mpe@ellerman.id.au,
+        npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, olivia@selenic.com,
+        herbert@gondor.apana.org.au
+References: <Zv02AMOBJ5a2lrF0@Red>
+Content-Language: en-US
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <Zv02AMOBJ5a2lrF0@Red>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Y4Jw8El7YCzrBI6fpKR-VV6Ztb3aVOrx
+X-Proofpoint-ORIG-GUID: ybG4ByxBZfIO1UFcUfiZ60cJ-iRDoWus
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-03_04,2024-10-03_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=659 bulkscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 clxscore=1011
+ adultscore=0 suspectscore=0 mlxscore=0 spamscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410030043
 
 
->
-> > +                     pcieport: pcie-phy@0 {
-> > +                             reg =3D <0 0x700>;
-> > +                             clocks =3D <&topckgen CLK_TOP_CFGREG_F_PC=
-IE_PHY_REF>;
-> > +                             clock-names =3D "ref";
-> > +                             #phy-cells =3D <1>;
-> > +                     };
-> > +             };
-> > +
-> >               i2c1: i2c@11e00000 {
-> >                       compatible =3D "mediatek,mt8188-i2c";
-> >                       reg =3D <0 0x11e00000 0 0x1000>,
->
-> Thanks!
-> Best regards,
-> Macpaul Lin
+
+On 10/2/24 5:31 PM, Corentin LABBE wrote:
+> Hello
+> 
+> I have a 8335-GCA POWER8 which got a kernel crash during boot:
+> [   11.754238] Kernel attempted to read user page (0) - exploit attempt? (uid: 0)
+> [   11.754437] BUG: Kernel NULL pointer dereference on read at 0x00000000
+> [   11.754499] Faulting instruction address: 0xc0000000000c3758
+> [   11.754518] Oops: Kernel access of bad area, sig: 11 [#1]
+> [   11.754534] LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=2048 NUMA PowerNV
+> [   11.754699] Modules linked in: powernv_rng(+) ecb ctr sr_mod hid ofpart fb_sys_fops cdrom i2c_algo_bit powernv_flash sg mtd vmx_crypto(+) ipmi_powernv ipmi_devintf at24(+) ipmi_msghandler opal_prd regmap_i2c nfsd gf128mul auth_rpcgss nfs_acl lockd grace sunrpc drm fuse configfs loop drm_panel_orientation_quirks ip_tables x_tables autofs4 uas usb_storage ext4 crc16 mbcache jbd2 crc32c_generic dm_mod xhci_pci xhci_hcd sd_mod t10_pi crc64_rocksoft crc64 crc_t10dif crct10dif_generic crct10dif_common usbcore tg3 libphy crc32c_vpmsum ahci usb_common libahci
+> [   11.754869] CPU: 25 PID: 1332 Comm: (udev-worker) Not tainted 6.1.106 #4 
+> [   11.754890] Hardware name: 8335-GCA POWER8 (raw) 0x4d0200 opal:skiboot-5.4.8-5787ad3 PowerNV
+> [   11.754926] NIP:  c0000000000c3758 LR: c0000000000c3754 CTR: 0000000000000000
+> [   11.754947] REGS: c00000000ec3af70 TRAP: 0300   Not tainted  (6.1.106)
+> [   11.754966] MSR:  900000000280b033 <SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 44222282  XER: 20000000
+> [   11.755168] CFAR: c0000000001dfbb4 DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 0 
+>                GPR00: c0000000000c3754 c00000000ec3b210 c00000000113cd00 000000000000002c 
+>                GPR04: 00000000ffff7fff c00000000ec3b010 c00000000ec3b008 0000000ff57e0000 
+>                GPR08: 0000000000000027 c000000ff7907f98 0000000000000001 0000000000002200 
+>                GPR12: 0000000000000000 c000000ffffeaf00 0000000000000020 0000000022000000 
+>                GPR16: 0000000000000000 0000000000000000 0000000000000009 000000013c86f5d8 
+>                GPR20: 0000000000000000 000001002cd75d90 0000000000000000 0000000000000005 
+>                GPR24: 000001002cd794a0 000001002cd75d90 c00000000285e6fc c000000000f9e4a0 
+>                GPR28: 0000000000000003 0000000000000004 0000000000000000 c0000010103ca180 
+> [   11.755363] NIP [c0000000000c3758] pnv_get_random_long+0x88/0x170
+> [   11.755386] LR [c0000000000c3754] pnv_get_random_long+0x84/0x170
+> [   11.755407] Call Trace:
+> [   11.755416] [c00000000ec3b210] [c0000000000c3754] pnv_get_random_long+0x84/0x170 (unreliable)
+> [   11.755444] [c00000000ec3b280] [c008000021c50130] powernv_rng_read+0x98/0x120 [powernv_rng]
+> [   11.755473] [c00000000ec3b300] [c00000000091ac88] add_early_randomness+0x88/0x150
+> [   11.755577] [c00000000ec3b340] [c00000000091b2c4] hwrng_register+0x344/0x420
+> [   11.755678] [c00000000ec3b3a0] [c00000000091b408] devm_hwrng_register+0x68/0xf0
+> [   11.755703] [c00000000ec3b3e0] [c008000021c5003c] powernv_rng_probe+0x34/0x90 [powernv_rng]
+> [   11.755728] [c00000000ec3b450] [c000000000949218] platform_probe+0x78/0x110
+> [   11.755750] [c00000000ec3b4d0] [c0000000009442d8] really_probe+0x108/0x590
+> [   11.755773] [c00000000ec3b560] [c000000000944814] __driver_probe_device+0xb4/0x230
+> [   11.755799] [c00000000ec3b5e0] [c0000000009449e4] driver_probe_device+0x54/0x130
+> [   11.755824] [c00000000ec3b620] [c0000000009456d8] __driver_attach+0x158/0x2b0
+> [   11.755850] [c00000000ec3b6a0] [c000000000940764] bus_for_each_dev+0xb4/0x140
+> [   11.755874] [c00000000ec3b700] [c000000000943734] driver_attach+0x34/0x50
+> [   11.755896] [c00000000ec3b720] [c000000000942d88] bus_add_driver+0x218/0x300
+> [   11.755921] [c00000000ec3b7b0] [c000000000946b84] driver_register+0xb4/0x1c0
+> [   11.755947] [c00000000ec3b820] [c000000000948b98] __platform_driver_register+0x38/0x50
+> [   11.755969] [c00000000ec3b840] [c008000021c501e8] powernv_rng_driver_init+0x30/0x4c [powernv_rng]
+> [   11.755997] [c00000000ec3b860] [c0000000000121b0] do_one_initcall+0x80/0x320
+> [   11.756020] [c00000000ec3b940] [c0000000002198bc] do_init_module+0x6c/0x290
+> [   11.756042] [c00000000ec3b9c0] [c00000000021d118] __do_sys_finit_module+0xd8/0x190
+> [   11.756066] [c00000000ec3baf0] [c00000000002b038] system_call_exception+0x138/0x260
+> [   11.756091] [c00000000ec3be10] [c00000000000c654] system_call_common+0xf4/0x258
+> [   11.756117] --- interrupt: c00 at 0x7fffaae9a9e4
+> [   11.756134] NIP:  00007fffaae9a9e4 LR: 00007fffab110500 CTR: 0000000000000000
+> [   11.756153] REGS: c00000000ec3be80 TRAP: 0c00   Not tainted  (6.1.106)
+> [   11.762944] MSR:  900000000280f033 <SF,HV,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 24222248  XER: 00000000
+> [   11.765251] IRQMASK: 0 
+>                GPR00: 0000000000000161 00007ffff4b57210 00007fffaafa6f00 0000000000000006 
+>                GPR04: 00007fffab11be88 0000000000000000 0000000000000006 0000000000000000 
+>                GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
+>                GPR12: 0000000000000000 00007fffab1fe240 0000000000000020 0000000022000000 
+>                GPR16: 0000000000000000 0000000000000000 0000000000000009 000000013c86f5d8 
+>                GPR20: 0000000000000000 000001002cd75d90 0000000000000000 0000000000000005 
+>                GPR24: 000001002cd794a0 000001002cd75d90 0000000022000000 000001002cd32120 
+>                GPR28: 00007fffab11be88 0000000000020000 0000000000000000 000001002cd75d90 
+> [   11.773845] NIP [00007fffaae9a9e4] 0x7fffaae9a9e4
+> [   11.774334] LR [00007fffab110500] 0x7fffab110500
+> [   11.774347] --- interrupt: c00
+> [   11.779698] Instruction dump:
+> [   11.779711] e88952f8 38634198 3bde52f8 4811c439 60000000 e94d0030 3c62ffe4 386341c0 
+> [   11.779739] 7fcaf02a 7fc4f378 4811c41d 60000000 <e93e0000> 7c0004ac e9490000 0c0a0000 
+> [   11.779782] ---[ end trace 0000000000000000 ]---
+> 
+> This happen on stock debian 6.1.0-23-powerpc64le.
+
+I am not able to recreate this in my setup. 
+Have tried stable 6.1.106, 6.1.100 and also latest upstream with powernv_defconfig.
+Can you share the config file. 
+
+Maddy
+
+> 
+> I debugged a bit and the crash happen in arch/powerpc/platforms/powernv/rng.c in pnv_get_random_long()
+> The call rng = get_cpu_var(pnv_rng) return null and so rng is dereferenced via ->regs just after.
+> 
+> I have no real idea on how to fix properly (appart adding a "!rng return 0" test)
+> 
+> Regards
+> 
+
 
