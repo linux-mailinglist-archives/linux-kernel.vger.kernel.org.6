@@ -1,127 +1,143 @@
-Return-Path: <linux-kernel+bounces-349326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C499198F467
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:47:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0203998F469
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 714021F22386
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC740282057
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3601A08C1;
-	Thu,  3 Oct 2024 16:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBED01A7056;
+	Thu,  3 Oct 2024 16:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uatXi8xH"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXMzyV1m"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8561A3A8D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 16:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6331527B4;
+	Thu,  3 Oct 2024 16:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727974017; cv=none; b=p/Ys4XcfEWJqClrP2I1G38JCyrLrgylqnWphjcg9BYyDr9a7+QREyd+P6Nj6M2lyPOZA9s9iKs7V8genHEP5qRdMei+hbn1YgfnOINbtZGXln2f2tYfaW7C/WfiIqXvjIRMe+wlLa+TCkJC+Zq7xCz07tK6bie7ZipxzpriYcmc=
+	t=1727974058; cv=none; b=FXXx/+XyUaY+JZuOeGhFyKEnGLJhm7ItWiR1E7JxFhgIMw1HlqG70gm21bVBZyiTnXB8bUo2EdZkj3uG9cGUjiHXY2GfoCsHBeM+e6mwMRarYMeA8XEOWYUkWAj4cQXjijC2qGm7c00EeXDiVJOOVSzG4jpRqkQgRXa8DKDg8Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727974017; c=relaxed/simple;
-	bh=EwT3q9EsnCa7yrZWUCyRNUjVCTNH45yR8vvcQYT/i1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WacdB9RxNDrI5s8bxd7ZCO8fMk3AmmB93a27x1z7Ni3Wm8zOXzlL0SA85i7+KkDc2aBoghn1+opdjFLAzfrTIlbZJdvMeldQWo2wigyvr88zNNbLb+dShhvggR+HJwOIiVVgu4w0gmzg4sE2dL7FDqdyy+KLjaWeb8xG3VxYR8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uatXi8xH; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7e6afa8baeaso976938a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 09:46:55 -0700 (PDT)
+	s=arc-20240116; t=1727974058; c=relaxed/simple;
+	bh=SQdnVgiNWl8DyoVYZQVhOY68PuDDCJZ7vrWQquscuk4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=olVG0Dk7YobAC83Jzx0qafuTb94Dxwje3h4rpi9Yxsh9ZrgHXpviXp4YutrGaGJTsv8jJhig8OopBuZ3l8rjAzWCCfogNV7R7QWSv8D50jnLK2Y7plGFJVLl2Zgs1OqnbRtciB+iudP11HEbXSxgeLPd36qsGKN+L01+h5RSArs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KXMzyV1m; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fad6de2590so21174021fa.0;
+        Thu, 03 Oct 2024 09:47:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727974015; x=1728578815; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RW5P1Arx8XPYT/NPFqMkITFeiGycXbJcANO3qtPPvbA=;
-        b=uatXi8xHkUqeCRDr5Mlfvk0MQ7i+Nps7epYpKwfgqrQRySXt99qKBhbRaMqzKGY+tS
-         OIILTTs16rkouA4DCwtOCgugHYZ1rF2oUSWAOPqourYu+pstKMN50Zy6PbC5TnxhfXc8
-         H0P7LVQeSJlpJsVQ6k7sQKEiG+zt7wQAmyeC1x3aH2n4rdeOKOJ/FTSqCmN1aKpRN6VV
-         KfJ6kMjnomN0iZhMexd+6BBmqinzauQsPlsDnPUocmILborbu/Wn3eXu3N9HJhpQykQh
-         GWosPjT/vKjbFLkWvjARTDnbRXScsqHn9e8VnprsXgwtA+/X355H36ntcB+C2fELdeeJ
-         TUmg==
+        d=gmail.com; s=20230601; t=1727974055; x=1728578855; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=psqXgVYQxh+Nqc0Py7UigoY7uptpL1QNQzj4fqHhGjU=;
+        b=KXMzyV1mrMXXNeK0nZAr+ZLifPPuqjlDLA9+wNeEZRpGhSAnnTS6Vs9NsI/C9+FEQp
+         PYKKhPihrOtrn8SIEHgLl3Fi1FYYDZaOu/KcOz5b93L7do3UbUpNgixeVozCWHtSHGd5
+         p26loWOx/1IOjRCvLRjI/V/67LXSL+2k8OHFtt4V7xWUEMYNQq8oLw84zZG/wszU6iyc
+         yLDh8T32nH+nLVvN+/ddYIpQr+Im0J8PMnvi8sGrEmPP0YMvC5L8EW3xTbP+/PfDbp+D
+         7brFjyIMFvuZoofVs0t/DVSWgxZNokYPc2CrKrxfZY9ruNIc15aSGZ/OFkAh/mVBlsAp
+         5aAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727974015; x=1728578815;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RW5P1Arx8XPYT/NPFqMkITFeiGycXbJcANO3qtPPvbA=;
-        b=mpaoFElj1nG3naLUN6Sa729400U8fMmNdZ6Z9YsrJ9NJD+ZnNEXyo/0l0LPCcUUVKI
-         Pa0NRlM3edVftQEss3DcU6lu2ED0kIqB7GvIeRJStJp3OMigQmq1L0ZNx2CXITOW8aHC
-         dH5NIRXourM0IQrgStEi8uTfzIK+13XKVGGS2MpiLlt1jRTWtwqAT4jUDWpv4adsXcxo
-         G7HE1KpxrDrn/PY7KcaX4MuLija9quRC4nHLEv8fkxZKASvr/NRz+YO91sVrcCVD5C7h
-         LbtuWROawNc3HkhBDcxQ7vqala0Ix9d+tpQ/B+cavttQruZ+iLvGssOMOuPSr9zU0h24
-         ia8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVIY3mdIPKFVBsd8C5k1C0BD86f0leJsJRpJ/N3pDRah6QjpnhlmFrDHP/jaLzWTbNGX6EnhJVCsNjIZ4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVGW53oxFJuHBtxTdoFKcyarLXkyo30zlLIPtUaLDThJQdeJBg
-	fxGLlkEPCkAyvkn5ejnCEm7borxO+akLA5Kddoj5uPHEjyxe350yMlVr1jmq9t4=
-X-Google-Smtp-Source: AGHT+IHrNLnq312K7GVWKGT1Vo9Ff69i9ensfXAZGMY12ruPSu/BXqZiVZ26a2jiItIAw0CUa22nFw==
-X-Received: by 2002:a05:6a20:cf84:b0:1d2:e8f6:81e with SMTP id adf61e73a8af0-1d5db1bf932mr10105522637.24.1727974014772;
-        Thu, 03 Oct 2024 09:46:54 -0700 (PDT)
-Received: from [192.168.0.4] (174-21-81-121.tukw.qwest.net. [174.21.81.121])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9dbcf13b6sm1055380a12.8.2024.10.03.09.46.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 09:46:54 -0700 (PDT)
-Message-ID: <a4f85184-73d4-44e4-bddd-0c1775ed9f50@linaro.org>
-Date: Thu, 3 Oct 2024 09:46:50 -0700
+        d=1e100.net; s=20230601; t=1727974055; x=1728578855;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=psqXgVYQxh+Nqc0Py7UigoY7uptpL1QNQzj4fqHhGjU=;
+        b=IBdpZZDg+l+C8lRbqKXgg1QQY/jls2TQ1CdVCz0ae8OYNpXB6JscD4MYivj2ddcr4T
+         MMhU9BlrfM/9EmopkiiJjlwOGPbpmWXrbmtoIjvSIjBn8riZCBB2DB9a5iM50zwoNZFy
+         cJR43GgII5bTdFEWCy0xruZqZ+hD/FjuMkd66S23shH3E6u3lRLc56oDWV8+q5EFpE9h
+         Rknb4bkRapkhROoXeDGM+owZob/vcJgFYOdp65wmqF56eIcMhZl120iea1KBX+S9wuLI
+         AFjMIbo3Ca4xICJQsY3oCNgprDPBC82ZhI/C4oNQU1a5vbyThnUSqlKzOP7rXpb9Iwib
+         c41g==
+X-Forwarded-Encrypted: i=1; AJvYcCVjAn0MZ5h/D/TlWokkIkcP7i56dPVlF+HkwPBeyV8mzLaOt05A0UbaVc0jmGhFK2ie6a7CxQmmQFkAV40=@vger.kernel.org, AJvYcCWeVKY5rEgcQTRKGzX3nRpOg4Ys6bsnarbLgl9z/NqHrinKMpoCqo5TOyrIsMovXd1mj2zuIDLfFP3WhiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLgsMQJasJCeh/BmHv1j+utJau/u0jP8dNq1m1BP7Zf8Yv4qWE
+	ZEhP/ogrc2JYmWpntxPNKFXsBlz2tcVMRF3/PJdCky7T5msf5oYaG6574g2vttq/agLU8+Bcrrc
+	QHYvQAt1xtn/aEa5NeJqMsPhMrek=
+X-Google-Smtp-Source: AGHT+IGPSZ3E9O5gAxhRq5O9LqntfK9B6JDHzw+kooRnu6f4cg5nHyGVMnGw5PmESsxX1yJS8iK6tHj52Q6zsyKi2nE=
+X-Received: by 2002:a2e:b8c1:0:b0:2fa:c455:23c with SMTP id
+ 38308e7fff4ca-2fae10b4c0emr73735201fa.42.1727974054298; Thu, 03 Oct 2024
+ 09:47:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 01/10] Consolidate IO memcpy/memset into iomap_copy.c
-To: Julian Vetter <jvetter@kalrayinc.com>, Arnd Bergmann <arnd@arndb.de>,
- Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Guo Ren <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Andrew Morton <akpm@linux-foundation.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Yoshinori Sato <ysato@users.sourceforge.jp>,
- Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
- linux-m68k@lists.linux-m68k.org, linux-alpha@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-um@lists.infradead.org, linux-arch@vger.kernel.org,
- Yann Sionneau <ysionneau@kalrayinc.com>
-References: <20240930132321.2785718-1-jvetter@kalrayinc.com>
- <20240930132321.2785718-2-jvetter@kalrayinc.com>
-Content-Language: en-US
-From: Richard Henderson <richard.henderson@linaro.org>
-In-Reply-To: <20240930132321.2785718-2-jvetter@kalrayinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241001174611.12155-1-quic_pintu@quicinc.com> <CAO_48GFPg=R4JaSZtgTKjh0TLKTrw24AF0nRMvFRXxwYCP28fg@mail.gmail.com>
+In-Reply-To: <CAO_48GFPg=R4JaSZtgTKjh0TLKTrw24AF0nRMvFRXxwYCP28fg@mail.gmail.com>
+From: Pintu Agarwal <pintu.ping@gmail.com>
+Date: Thu, 3 Oct 2024 22:17:22 +0530
+Message-ID: <CAOuPNLg1=YCUFXW-76A_gZm_PE1MFSugNvg3dEdkfujXV_5Zfw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dma-buf: replace symbolic permission S_IRUGO with
+ octal 0444
+To: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Pintu Kumar <quic_pintu@quicinc.com>, christian.koenig@amd.com, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org, joe@perches.com, 
+	skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/30/24 06:23, Julian Vetter wrote:
-> +void memset_io(volatile void __iomem *dst, int c, size_t count)
-> +{
-> +	uintptr_t qc = (u8)c;
+Hi Sumit,
 
-Missed one change to 'long'
+On Thu, 3 Oct 2024 at 12:27, Sumit Semwal <sumit.semwal@linaro.org> wrote:
+>
+> Hello Pintu,
+>
+> On Tue, 1 Oct 2024 at 23:16, Pintu Kumar <quic_pintu@quicinc.com> wrote:
+> >
+> > Symbolic permissions are not preferred, instead use the octal.
+> > Also, fix other warnings/errors as well for cleanup.
+> >
+> > WARNING: Block comments use * on subsequent lines
+> > +       /* only support discovering the end of the buffer,
+> > +          but also allow SEEK_SET to maintain the idiomatic
+> >
+> > WARNING: Block comments use a trailing */ on a separate line
+> > +          SEEK_END(0), SEEK_CUR(0) pattern */
+> >
+> > WARNING: Block comments use a trailing */ on a separate line
+> > +        * before passing the sgt back to the exporter. */
+> >
+> > ERROR: "foo * bar" should be "foo *bar"
+> > +static struct sg_table * __map_dma_buf(struct dma_buf_attachment *attach,
+> >
+> > WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
+> > +       d = debugfs_create_file("bufinfo", S_IRUGO, dma_buf_debugfs_dir,
+> >
+> > total: 1 errors, 4 warnings, 1746 lines checked
+> >
+> > Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
+>
+> Thanks for this patch - could you please also mention in the commit
+> log how did you find this? It looks like you ran checkpatch, but it's
+> not clear from the commit log.
+>
+Thanks for your review.
+Sure. Yes, it was found while using the checkpatch.
+I tried to put "checkpatch fixes" in the commit header but the tool
+did not allow me.
+So, I removed it.
+But I think I can add that in the commit log.
 
-> +
-> +	qc |= qc << 8;
-> +	qc |= qc << 16;
-> +
-> +#ifdef CONFIG_64BIT
-> +	qc |= qc << 32;
-> +#endif
+> Since this patch does multiple things related to checkpatch warnings
+> (change S_IRUGO to 0444, comments correction, function declaration
+> correction), can I please ask you to change the commit title to also
+> reflect that?
+>
+ok sure. Last time I tried to mention "fix checkpatch warnings" in a
+general way,
+but the tool itself catches it and throws another warning.
+So, I chose the major fix as the commit header and combined others, instead
+of raising 3 different patches.
+Let me try to put the same as you mentioned above.
 
-Could be 'qc *= -1ul / 0xff;'
+I will correct these and send v2 in a different mail.
 
-
-r~
+Thanks.
 
