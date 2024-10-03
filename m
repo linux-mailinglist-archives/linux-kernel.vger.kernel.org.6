@@ -1,384 +1,156 @@
-Return-Path: <linux-kernel+bounces-348525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC1498E899
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:59:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900E298E893
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05C48B252B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F4D91F258F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD461DFE3;
-	Thu,  3 Oct 2024 02:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C733282FE;
+	Thu,  3 Oct 2024 02:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cMDsif6k"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Xh9BdgBq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107A9199B9;
-	Thu,  3 Oct 2024 02:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38644200CD
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 02:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727924385; cv=none; b=Wgbpm2V7I/Df/khpcaODTUGIkbfvbfyre7yqr1/kpdyMvX7XxZ7q4WZlndG3cg4dd30P1ZfQYHB87rfk6zQ49U8nVEw4yarINon91pq/uWr8OPZN+D2qpKDBwHNlWUYRq9doyOEp2oLaHyCKGOMTf4x3Qkn5Zu0dBYvbv1IQrDc=
+	t=1727924323; cv=none; b=SYEmvY9QEdVMzMaB/x/0EqQJcPhUX3gYv9PlCq6rPkAty5VlFTk6svgpi1aJeF3nKpf+eDViw9GT8M85L+SOZ2QYC6gpV2PgtX+o/V2fSBYro+tFDfRioS3wOKQa6Qh5RpPtiTHV9qhD2atcjZ04Dgl+9/2TXe1LBAH3Pau1YSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727924385; c=relaxed/simple;
-	bh=chfxwnDZ1maUQSdIcpKBYAb+Y08FQyT25NdrDi6Af4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RZm6ADi2lLLHo+de8WkLaJIt3w2goSYMCe1f88zZ+PKCsVtEtj61XMhvZQiwQvDcvMeqmSE5KQt8NQBAMdnlEaOslTXhp3/eJyRLXKwDOqVZkNdX20dap39CRN6o/jmDRC2eLzXwlLYvBYBefEoLPqsiV94gHUw3WKDNHmLw5Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cMDsif6k; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4932mT5d001186;
-	Thu, 3 Oct 2024 02:59:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=DIjeen6mjL4yNMlMFPYrHvDpzV
-	dcRgFzjuMwZCFZA5c=; b=cMDsif6kSnTNTUCCOieO/BCb+5nMgrYaYE4k/NlreM
-	Xa/uqnJE33zXmg+tF+2qDUNEhQXs8c/iyN1GaR280/NZ9Z7OECD6tpcXcMyUanyf
-	KsLJTVfXrhU4m7eC80sJAyW2AjrAhVimsS/e451KLVdK/k4AadNlHL4gCi2gkkeq
-	5ryVceqwVJ4SQVo9+kayIVOCFLW0AJyjPJDeHNDBTdJHvFQOqtD8wADmvG7BY15x
-	nPJZ60KUAbtgtAjYmrstiRrgSUaE0fwq2h0q0g7lQxaMOKkQLBVSvD0sph2ub1bw
-	kh1CElAYNIqbU9KQdWPCxTMEVUEeUYdO/HBAh0q2jriQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421jt7g0r1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 02:59:26 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4932xQrW023505;
-	Thu, 3 Oct 2024 02:59:26 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421jt7g0qx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 02:59:26 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49302JF0007957;
-	Thu, 3 Oct 2024 02:59:25 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgy5tr4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 02:59:25 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4932xN7S38601062
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 3 Oct 2024 02:59:23 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6A65E20049;
-	Thu,  3 Oct 2024 02:59:23 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4CC8420040;
-	Thu,  3 Oct 2024 02:59:18 +0000 (GMT)
-Received: from li-fdfde5cc-27d0-11b2-a85c-e224154bf6d4.ibm.com.com (unknown [9.43.26.191])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  3 Oct 2024 02:59:17 +0000 (GMT)
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Subject: [PATCH v4] perf sched timehist: Add pre-migration wait time option
-Date: Thu,  3 Oct 2024 08:29:14 +0530
-Message-ID: <20241003025914.12220-1-vineethr@linux.ibm.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1727924323; c=relaxed/simple;
+	bh=bNYddmgsyW8zpJaljT25nbUCMx0j2dCKdXD1Dvmcx/Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=R3DD8BuICVk3uTPmmBCrH1zEchvVBQ6OGqIdEMkWNHboh6rU82qLduLeqJsqHNX030sJfIKcOVFvmQ3PkdSU+RqRpQCylvhnhgA6MEu+xyiKWVxYgT6vj8ih9gIBEFr0/uOsuzMpq63wlPjCGMOs9Eo5QrYh4ImOwOMRrQNQF/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Xh9BdgBq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4932nqcm025883
+	for <linux-kernel@vger.kernel.org>; Thu, 3 Oct 2024 02:58:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=q87Q2dHuDJxAM/tFgGrfhU
+	NvO2zsd1XaxZiQ5xUbYkI=; b=Xh9BdgBqed78RooLrts88+5MfXP1B2E+kA59iY
+	fTdK4Ao/Fn6AsaJ5v1uP97tglHAJkFD1tvxi+EA3OV9chymXuzTI+vsEOqKaCDjK
+	HDETzGokqN5rp8lyTUP8qFyfp6JV+sI0g1PxvrreKE63zJGd4osqtV8tAbkVa50Q
+	OTJZui/ekBfeO3BJV5mAKuGOKder1ycZRATijHx9QqC3CigVgPtMylvx6ocXbuLw
+	lb4cLYlq8WxTbh2f78ULFELF00J/8YAb8ywcUM/Qngvl2edn/FoGqRtyj8xvojuB
+	ndsIyi1N8a5ALnbyQcrC+tJf6ojouxh1N7r1XV21LuvwT3/Q==
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xajfn347-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 02:58:40 +0000 (GMT)
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5e1c6f207edso1005829eaf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 19:58:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727924319; x=1728529119;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q87Q2dHuDJxAM/tFgGrfhUNvO2zsd1XaxZiQ5xUbYkI=;
+        b=EHDKvN2ZTHr5XFdmz481T73RYBlwK7OT5JZUa3uC3ywWbh2SlQaxy+X/5tiGrbD9U4
+         b/jeTJFAXGCNWTGWYGC0D5vqc12n757YZGFfgMbx6H9EIctbgFUBkJm0kwQ2DyEL98j/
+         kBSzTfKxAulXHLJQJYVxOiORzQpwN4MJLFDrcCPQVYgnywmmphnKJPpVu0rpIpNHwZlo
+         IWSr3spodZiWeudTQ8x7DnB4U4qRxvPm4i3OiE1NVWyS3nN7n+8M5q9Av8tFm8D6mBzn
+         1sKg0gqrtM493sRxx5pwwpIfGpfe/te5XMCcn/UBwWs1Zemj6SBsHmhQCrbRdO7eaHD7
+         qznA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcNcFk74qmSrWH2u2ys4AQKyUMMUZdoaDuOSKNkJkweVrxQt9lw7Ss2fUY+UAmYMlp0ebZgs+uA/wc36A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8n6tg8WzWmgxB0C6XuGyb7JTScavhzKJEidy5b3FpQKsiVUhY
+	GYUCdNAePDwdSs9KxOxfn0YPn68THcNPL5Tl3eE3P0t1q4cjAie6dcmpkN+ud3rgobVkWaCavxZ
+	OoRF5n68aBDLr3Vk/BNGvq7Nr1tIhk8pI2ewEWrEGWP5sm8SOvnF1c9mBSImvM9CozXma0NPfTi
+	wy+/pGqym+oCI=
+X-Received: by 2002:a05:6870:a551:b0:277:d790:6e99 with SMTP id 586e51a60fabf-287a404ebcemr915304fac.18.1727924319169;
+        Wed, 02 Oct 2024 19:58:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEg0JvlIROszA+vBjdJya8knWyGhXAkKydvC9LIezO0qqNQPEf4Qksob0bkVhdDzfAP+Z9+3g==
+X-Received: by 2002:a05:6870:a551:b0:277:d790:6e99 with SMTP id 586e51a60fabf-287a404ebcemr915298fac.18.1727924318822;
+        Wed, 02 Oct 2024 19:58:38 -0700 (PDT)
+Received: from [192.168.86.60] (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-287ab9b5ba5sm188924fac.21.2024.10.02.19.58.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 19:58:37 -0700 (PDT)
+From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Subject: [PATCH RFT 0/2] drm/msm/adreno: Setup SMMU aparture
+Date: Wed, 02 Oct 2024 20:01:31 -0700
+Message-Id: <20241002-adreno-smmu-aparture-v1-0-e9a63c9ccef5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: yg9zgAER68U4oVi_TKgBTc6Scex5lvVa
-X-Proofpoint-GUID: z8fqI1Pqa4hTa9YylMPKxQuakYsgv7zC
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAsJ/mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwMj3cSUotS8fN3i3NxS3cSCxKKS0qJU3bRU8xTTRMPkJAtjEyWg1oK
+ i1LTMCrCx0UpBbiFKsbW1ACRXU2ZrAAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1016;
+ i=bjorn.andersson@oss.qualcomm.com; h=from:subject:message-id;
+ bh=bNYddmgsyW8zpJaljT25nbUCMx0j2dCKdXD1Dvmcx/Y=;
+ b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBm/gkch2/1mQLQC6vdzGTNgJUZUGqjflYJhWQTm
+ hKmRcBFeIyJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZv4JHBUcYW5kZXJzc29u
+ QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcWDMg//QeesKF52cIqBJpczFAINE9i+3Uutx4KLVAMSvm4
+ fKb6Yk+MKfdjkxacJjdJvVw2ABwCXsVCZsdi/8e0kk8HuSKKzQytBdZYLXfGMyot0dKLA/uMjds
+ apF2Io6qWCaVZrcy/OhMmpjSenKgw5wgtNaiiYJPJ1Nwq+0AFBka7mEHW4nrAv+X4p/1eWpGT/8
+ RUu2rrdAwcKQYP8mzky5BCPr7L0nL1W8JjxbfF16dTWSfhzDNNE/+zvnZfDa2aIGmKNqvOPWV7c
+ zza70jdEfgL9NBwIS/RezeNiWWtkxf+g9tcKHmQK/maoeGvN8wRshfhccvJOeqHGDQ2u8p8tTez
+ z7Dnw3+rr8K0zI7dFlTmJNJqjmC9TD52VHoq3LNByuZzjOpziJ7Av2Rhx8sgwA4kZD5zXtqGtci
+ IlZgdT8oz3vIvcsuAw+6trOZfoSsp7zEURhQmXn3hHmphcK6yth4PHSJFT8ohMyuyWGbYP7cEcG
+ l624x48xjLA1qZ7HYfa80/kQnGPs2MDnAoVHN6hrE0v10MLk739fUiinOeQNy/cI2tSCmzjnu5f
+ WPIxeqJPl6t3O/wIq6jfFMjW0WNQmEOiN8QAikMMQI8QP7RLIybFItf4DshLDCZS3K8rizTjh8C
+ crfPs5/ZSyWA48j5qlO8q4HHEAjP6mzDAjclZA8xXeQM=
+X-Developer-Key: i=bjorn.andersson@oss.qualcomm.com; a=openpgp;
+ fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
+X-Proofpoint-GUID: Ge--wgG7GWurpFQl6rIwJvdn0NDvOGL7
+X-Proofpoint-ORIG-GUID: Ge--wgG7GWurpFQl6rIwJvdn0NDvOGL7
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-03_02,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 phishscore=0
- adultscore=0 suspectscore=0 clxscore=1015 spamscore=0 mlxlogscore=999
- mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410030017
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=859
+ impostorscore=0 mlxscore=0 clxscore=1011 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2410030018
 
-pre-migration wait time is the time that a task unnecessarily spends
-on the runqueue of a CPU but doesn't get switched-in there. In terms
-of tracepoints, it is the time between sched:sched_wakeup and
-sched:sched_migrate_task.
+Support for per-page tables requires the SMMU aparture to be setup, on
+some targets this is done statically in firmware, on others it's
+expected to be requested in runtime by the driver, through a SCM call.
 
-Let's say a task woke up on CPU2, then it got migrated to CPU4 and
-then it's switched-in to CPU4. So, here pre-migration wait time is
-time that it was waiting on runqueue of CPU2 after it is woken up.
+Marking the series as RFT, as this has been tested on a few different
+modern platforms, but only with Qualcomm presence in EL2.
 
-The general pattern for pre-migration to occur is:
-sched:sched_wakeup
-sched:sched_migrate_task
-sched:sched_switch
-
-The sched:sched_waking event is used to capture the wakeup time,
-as it aligns with the existing code and only introduces a negligible
-time difference.
-
-pre-migrations are generally not useful and it increases migrations.
-This metric would be helpful in testing patches mainly related to wakeup
-and load-balancer code paths as better wakeup logic would choose an
-optimal CPU where task would be switched-in and thereby reducing pre-
-migrations.
-
-The sample output(s) when -P or --pre-migrations is used:
-=================
-           time    cpu  task name                       wait time  sch delay   run time  pre-mig time
-                        [tid/pid]                          (msec)     (msec)     (msec)     (msec)
---------------- ------  ------------------------------  ---------  ---------  ---------  ---------
-   38456.720806 [0001]  schbench[28634/28574]               4.917      4.768      1.004      0.000
-   38456.720810 [0001]  rcu_preempt[18]                     3.919      0.003      0.004      0.000
-   38456.721800 [0006]  schbench[28779/28574]              23.465     23.465      1.999      0.000
-   38456.722800 [0002]  schbench[28773/28574]              60.371     60.237      3.955     60.197
-   38456.722806 [0001]  schbench[28634/28574]               0.004      0.004      1.996      0.000
-   38456.722811 [0001]  rcu_preempt[18]                     1.996      0.005      0.005      0.000
-   38456.723800 [0000]  schbench[28833/28574]               4.000      4.000      3.999      0.000
-   38456.723800 [0004]  schbench[28762/28574]              42.951     42.839      3.999     39.867
-   38456.723802 [0007]  schbench[28812/28574]              43.947     43.817      3.999     40.866
-   38456.723804 [0001]  schbench[28587/28574]               7.935      7.822      0.993      0.000
-
-Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-
+Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 ---
-Changes in v4:
-- Remove the redundant check for r->ready_to_run and r->migrated. (Namhyung Kim)
-- Rebase against perf-tools-next commit 5873de90315a ("perf/test: perf test
-  86 fails on s390")
+Bjorn Andersson (2):
+      firmware: qcom: scm: Introduce CP_SMMU_APERTURE_ID
+      drm/msm/adreno: Setup SMMU aparture for per-process page table
 
-Changes in v3:
-- Use the sched:sched_waking event to calculate the wakeup time. (Namhyung Kim)
-- Rebase against perf-tools-next commit 80f192724e31 ("perf tests: Add more
-  topdown events regroup tests")
+ drivers/firmware/qcom/qcom_scm.c        | 19 +++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.h        |  1 +
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c | 10 ++++++++++
+ include/linux/firmware/qcom/qcom_scm.h  |  1 +
+ 4 files changed, 31 insertions(+)
+---
+base-commit: fe21733536749bb1b31c9c84e0b8d2ab8d82ce13
+change-id: 20241002-adreno-smmu-aparture-fe7d5a1cb834
 
-Changes in v2:
-- Use timehist_sched_wakeup_event() to get the sched_wakeup time. (Namhyung Kim)
-- Rebase against perf-tools-next commit b38c49d8296b ("perf/test: Speed up test
-  case perf annotate basic tests")
-
- tools/perf/Documentation/perf-sched.txt |  8 +++
- tools/perf/builtin-sched.c              | 81 +++++++++++++++----------
- 2 files changed, 58 insertions(+), 31 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-index 3db64954a267..6dbbddb6464d 100644
---- a/tools/perf/Documentation/perf-sched.txt
-+++ b/tools/perf/Documentation/perf-sched.txt
-@@ -221,6 +221,14 @@ OPTIONS for 'perf sched timehist'
- 	priorities are specified with -: 120-129. A combination of both can also be
- 	provided: 0,120-129.
- 
-+-P::
-+--pre-migrations::
-+	Show pre-migration wait time. pre-migration wait time is the time spent
-+	by a task waiting on a runqueue but not getting the chance to run there
-+	and is migrated to a different runqueue where it is finally run. This
-+	time between sched_wakeup and migrate_task is the pre-migration wait
-+	time.
-+
- OPTIONS for 'perf sched replay'
- ------------------------------
- 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index fdf979aaf275..6dbc2eee69f7 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -225,6 +225,7 @@ struct perf_sched {
- 	bool		show_wakeups;
- 	bool		show_next;
- 	bool		show_migrations;
-+	bool		pre_migrations;
- 	bool		show_state;
- 	bool		show_prio;
- 	u64		skipped_samples;
-@@ -244,7 +245,9 @@ struct thread_runtime {
- 	u64 dt_iowait;      /* time between CPU access by iowait (off cpu) */
- 	u64 dt_preempt;     /* time between CPU access by preempt (off cpu) */
- 	u64 dt_delay;       /* time between wakeup and sched-in */
-+	u64 dt_pre_mig;     /* time between migration and wakeup */
- 	u64 ready_to_run;   /* time of wakeup */
-+	u64 migrated;	    /* time when a thread is migrated */
- 
- 	struct stats run_stats;
- 	u64 total_run_time;
-@@ -252,6 +255,7 @@ struct thread_runtime {
- 	u64 total_iowait_time;
- 	u64 total_preempt_time;
- 	u64 total_delay_time;
-+	u64 total_pre_mig_time;
- 
- 	char last_state;
- 
-@@ -2073,14 +2077,15 @@ static void timehist_header(struct perf_sched *sched)
- 		printf(" ");
- 	}
- 
--	if (sched->show_prio) {
--		printf(" %-*s  %-*s  %9s  %9s  %9s",
--		       comm_width, "task name", MAX_PRIO_STR_LEN, "prio",
--		       "wait time", "sch delay", "run time");
--	} else {
--		printf(" %-*s  %9s  %9s  %9s", comm_width,
--		       "task name", "wait time", "sch delay", "run time");
--	}
-+	printf(" %-*s", comm_width, "task name");
-+
-+	if (sched->show_prio)
-+		printf("  %-*s", MAX_PRIO_STR_LEN, "prio");
-+
-+	printf("  %9s  %9s  %9s", "wait time", "sch delay", "run time");
-+
-+	if (sched->pre_migrations)
-+		printf("  %9s", "pre-mig time");
- 
- 	if (sched->show_state)
- 		printf("  %s", "state");
-@@ -2095,17 +2100,15 @@ static void timehist_header(struct perf_sched *sched)
- 	if (sched->show_cpu_visual)
- 		printf(" %*s ", ncpus, "");
- 
--	if (sched->show_prio) {
--		printf(" %-*s  %-*s  %9s  %9s  %9s",
--		       comm_width, "[tid/pid]", MAX_PRIO_STR_LEN, "",
--		       "(msec)", "(msec)", "(msec)");
--	} else {
--		printf(" %-*s  %9s  %9s  %9s", comm_width,
--		       "[tid/pid]", "(msec)", "(msec)", "(msec)");
--	}
-+	printf(" %-*s", comm_width, "[tid/pid]");
- 
--	if (sched->show_state)
--		printf("  %5s", "");
-+	if (sched->show_prio)
-+		printf("  %-*s", MAX_PRIO_STR_LEN, "");
-+
-+	printf("  %9s  %9s  %9s", "(msec)", "(msec)", "(msec)");
-+
-+	if (sched->pre_migrations)
-+		printf("  %9s", "(msec)");
- 
- 	printf("\n");
- 
-@@ -2117,15 +2120,15 @@ static void timehist_header(struct perf_sched *sched)
- 	if (sched->show_cpu_visual)
- 		printf(" %.*s ", ncpus, graph_dotted_line);
- 
--	if (sched->show_prio) {
--		printf(" %.*s  %.*s  %.9s  %.9s  %.9s",
--		       comm_width, graph_dotted_line, MAX_PRIO_STR_LEN, graph_dotted_line,
--		       graph_dotted_line, graph_dotted_line, graph_dotted_line);
--	} else {
--		printf(" %.*s  %.9s  %.9s  %.9s", comm_width,
--		       graph_dotted_line, graph_dotted_line, graph_dotted_line,
--		       graph_dotted_line);
--	}
-+	printf(" %.*s", comm_width, graph_dotted_line);
-+
-+	if (sched->show_prio)
-+		printf("  %.*s", MAX_PRIO_STR_LEN, graph_dotted_line);
-+
-+	printf("  %.9s  %.9s  %.9s", graph_dotted_line, graph_dotted_line, graph_dotted_line);
-+
-+	if (sched->pre_migrations)
-+		printf("  %.9s", graph_dotted_line);
- 
- 	if (sched->show_state)
- 		printf("  %.5s", graph_dotted_line);
-@@ -2180,6 +2183,8 @@ static void timehist_print_sample(struct perf_sched *sched,
- 
- 	print_sched_time(tr->dt_delay, 6);
- 	print_sched_time(tr->dt_run, 6);
-+	if (sched->pre_migrations)
-+		print_sched_time(tr->dt_pre_mig, 6);
- 
- 	if (sched->show_state)
- 		printf(" %5c ", thread__tid(thread) == 0 ? 'I' : state);
-@@ -2239,6 +2244,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
- 	r->dt_iowait  = 0;
- 	r->dt_preempt = 0;
- 	r->dt_run     = 0;
-+	r->dt_pre_mig = 0;
- 
- 	if (tprev) {
- 		r->dt_run = t - tprev;
-@@ -2247,6 +2253,9 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
- 				pr_debug("time travel: wakeup time for task > previous sched_switch event\n");
- 			else
- 				r->dt_delay = tprev - r->ready_to_run;
-+
-+			if ((r->migrated > r->ready_to_run) && (r->migrated < tprev))
-+				r->dt_pre_mig = r->migrated - r->ready_to_run;
- 		}
- 
- 		if (r->last_time > tprev)
-@@ -2270,6 +2279,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
- 	r->total_sleep_time   += r->dt_sleep;
- 	r->total_iowait_time  += r->dt_iowait;
- 	r->total_preempt_time += r->dt_preempt;
-+	r->total_pre_mig_time += r->dt_pre_mig;
- }
- 
- static bool is_idle_sample(struct perf_sample *sample,
-@@ -2684,8 +2694,14 @@ static int timehist_migrate_task_event(const struct perf_tool *tool,
- 
- 	tr->migrations++;
- 
-+	if (tr->migrated == 0)
-+		tr->migrated = sample->time;
-+
- 	/* show migrations if requested */
--	timehist_print_migration_event(sched, evsel, sample, machine, thread);
-+	if (sched->show_migrations) {
-+		timehist_print_migration_event(sched, evsel, sample,
-+							machine, thread);
-+	}
- 
- 	return 0;
- }
-@@ -2836,11 +2852,13 @@ static int timehist_sched_change_event(const struct perf_tool *tool,
- 		/* last state is used to determine where to account wait time */
- 		tr->last_state = state;
- 
--		/* sched out event for task so reset ready to run time */
-+		/* sched out event for task so reset ready to run time and migrated time */
- 		if (state == 'R')
- 			tr->ready_to_run = t;
- 		else
- 			tr->ready_to_run = 0;
-+
-+		tr->migrated = 0;
- 	}
- 
- 	evsel__save_time(evsel, sample->time, sample->cpu);
-@@ -3280,8 +3298,8 @@ static int perf_sched__timehist(struct perf_sched *sched)
- 		goto out;
- 	}
- 
--	if (sched->show_migrations &&
--	    perf_session__set_tracepoints_handlers(session, migrate_handlers))
-+	if ((sched->show_migrations || sched->pre_migrations) &&
-+		perf_session__set_tracepoints_handlers(session, migrate_handlers))
- 		goto out;
- 
- 	/* pre-allocate struct for per-CPU idle stats */
-@@ -3823,6 +3841,7 @@ int cmd_sched(int argc, const char **argv)
- 	OPT_BOOLEAN(0, "show-prio", &sched.show_prio, "Show task priority"),
- 	OPT_STRING(0, "prio", &sched.prio_str, "prio",
- 		   "analyze events only for given task priority(ies)"),
-+	OPT_BOOLEAN('P', "pre-migrations", &sched.pre_migrations, "Show pre-migration wait time"),
- 	OPT_PARENT(sched_options)
- 	};
- 
+Best regards,
 -- 
-2.43.2
+Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 
 
