@@ -1,147 +1,235 @@
-Return-Path: <linux-kernel+bounces-348598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4747398E97F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:43:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE94B98E981
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78EAC1C214C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:43:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600B81F244C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8667A4EB45;
-	Thu,  3 Oct 2024 05:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80724AEEA;
+	Thu,  3 Oct 2024 05:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="evgoOmHB"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TzYEGM5S"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E9A2232A;
-	Thu,  3 Oct 2024 05:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBA71F5FF
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 05:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727934193; cv=none; b=iQlujvQO1Pfd7fvago4VOaffkvE5W28rzx8P3hLIESZEefHICqAKXYICo8DUqV87cunW1/o3AMWXPR8GjfcvNEPD9AmtbsDHz90S40KxWVSQ0E2mR/1E0VtTncdSd7Zjvh+VE8j1m4D4kW7Px8I0mBm1ZsI+zDLUMgewjuniST4=
+	t=1727934360; cv=none; b=OBiJ/o/y3oXKLT3uiqfhZwJybhqK0lIaBvqVTQOkZ3D8HvyGWFQ6ljAV/jcFDwbgrfTxfyiIyZmtdrtspLG/u1FwI/DndNGCe1dzvYfyba8C2+hcN0CuZtmcixK2u/cXVW1hq7hKp57ygeNC6K/h2hiESmMBlj4p41IPtAu7+zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727934193; c=relaxed/simple;
-	bh=T2aj2SuLoi5JOD1B4WKGxBQv8As0GXz+9P1Kdr3/6Ac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SfDqlrv5c2VMM7chskeIUfzvSflNUT5Qi5U5Ptf0d6Z4gwgxwjpo3yKD1Tta5U+V1rEULsyD1C4KnizS16XN2Xd0qmqC8cej6yxy73uA/FF+lVFK8Vdkao4VwGJLBOJTr1LcMRYK5nsiJCGR2bEb8JpX9UuDfJKIYwqAHlydmNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=evgoOmHB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4934W7UH000710;
-	Thu, 3 Oct 2024 05:43:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o8VGzuX/8rUBjBNr9tC3zE8BeUNSdPjOp74nVHXruEI=; b=evgoOmHBwxVC0pJF
-	iyPZvPi8n0ha3bBxmoc6x6eu4V9cygE/OpGUgSc2gaEt3WyOkqZ3Vy+IE5vecGKd
-	CnwzL5KetHsJ965YnshIYTkfM/jnZWTagUxovhfnZSFvRmo59Z/QSmB8zJq3KUFd
-	/Rvvu+7kqSKpM6a/mOpI19ZIho/VlJuK5qPcjlrkh88lRgeybtIZsxd7O5ycCcD5
-	yrkbnHmxHnvEaO1d73zrafiRJw6H9/puFzfpZqDuWthG0PJDY7xd3xjerdz2Nuhw
-	rYgHqvyNvOr8oCCZhKF+imAWJaaVJtQAIggQ8kgVuguVflHrfDK7+MQ33yd1Aylo
-	ZuRXDA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x7gedp1x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 05:43:08 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4935h6MQ014327
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 3 Oct 2024 05:43:06 GMT
-Received: from [10.214.67.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 2 Oct 2024
- 22:43:02 -0700
-Message-ID: <2d4e47fd-0aaf-4533-a96f-95ada853d9a0@quicinc.com>
-Date: Thu, 3 Oct 2024 11:13:02 +0530
+	s=arc-20240116; t=1727934360; c=relaxed/simple;
+	bh=7VB1xwuRR8UQe+a/YaYfy7RKFBUy5OIT8gml3aNe52M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DzTCdKnLUY4bOJhx45wW4H9c5mjT5ht/94f2ogXy8r5gUQdCdToppd4SDMympkKUucWOZ20UzC+rF0wAgruSGg3Hon/Y0eMAw3pugW9Wvz/3lbPK9k7SZmiXJazZVXkootSB1B45KQj4xrKE8e0GxnUJdhtsQYtxK5MA/ZLKEdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TzYEGM5S; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-502b6e2a0acso175924e0c.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 22:45:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727934357; x=1728539157; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QYnUWcnI0m9f5QC5Cm9op/4MJS0/hwrdxOc5nlsYkAM=;
+        b=TzYEGM5SjE/MI1Hr2tWVPMPLnkL2PF1j759GvNNOfoWeB35WLHFPlYojc8VLai7gmM
+         7gLj/ps82RQ+73FoHDS16k8/q0ng6t1sYBSVrqwNjW+z/VbRqPUIXfQU5Bbpm8mFjPVB
+         cz922zhAkAdvcHNmzT3Edjcv9HxI/fXn2MsA9wbwEJtsdzHAhthrHn+zqBaWjFm1gtV1
+         qs33VW2HOjRqkvM3lo8psRRP4olOWTgTx4Tw9s6MMKAk6OfLdpzanbcIuz2aTABAFPHk
+         U//E4wKdappy64fP/5JevsKAxYNcXhcT3GHNw6mkxrangsZs1SImzw+1l44JY/8kVFeZ
+         Xx5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727934357; x=1728539157;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QYnUWcnI0m9f5QC5Cm9op/4MJS0/hwrdxOc5nlsYkAM=;
+        b=ljLxLsq7g0Rn41khnb9FRld7CIsTW6Qi/vMqXl3mCBv0Gy8RwmlB1tJcz0p05wl8Jb
+         O+7AZbhjbzOY/P29JJbOiVuTPR4JSWSkvUzg6FaWtJgu9VKCPHFZX1VZkWSRhmu4C5oG
+         b7Z7ZVSOgkI7nEsUgAfIe2BEi+JiBk4jKdu+S+BypiN/UWU3vfKgrENl92EYyyOe//XW
+         wmD6iYam9Q1b+XJGHYfEhHYuPyLhEgvUd+Q8+7FG+odRqQz1LSa8bfFuSE7ffaaWzLPw
+         /zMNfWpffbdwdez76pR3D7RSo6zZymu2WP7t22cnyNy3NH4w9Huyo3hfGr250nrWXqIi
+         a2ig==
+X-Forwarded-Encrypted: i=1; AJvYcCWUt349msaZFA4dQGzmdhV15dBCz1eiVyCRMgZRyaMhJ2PsCxm2V6IsXQduf/6f+zYNTLBPOe0NmKA98mU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx28w+pU3mAcs7oQyuosBYfeX0KnwZV6F7UWjwInwGWQHcVQ3xd
+	igI7Pqnf0aJyj6HpMTPx3t6eyg0wIi8kwiwmo1wRSSwYEOh9xXw7LDfUjTExyzCLlSb+8eOEi8w
+	u/nMh/hwrGbXMFVTnikfYOi+w8smLnW9YIuHuBg==
+X-Google-Smtp-Source: AGHT+IFpH4XX7rfYGKfWBYMuNXQ88HCKR/3QMKVyiHnotXvFJGZug8zkeuptdJDqYvH/9P7T0UeM3MKDZoV6nnKyT1I=
+X-Received: by 2002:a05:6122:338a:b0:4ef:5b2c:df41 with SMTP id
+ 71dfb90a1353d-50c58265495mr4544590e0c.9.1727934357251; Wed, 02 Oct 2024
+ 22:45:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: mailbox: qcom,cpucp-mbox: Add sc7280
- cpucp mailbox instance
-To: Rob Herring <robh@kernel.org>
-CC: Sibi Sankar <quic_sibis@quicinc.com>,
-        Jassi Brar
-	<jassisinghbrar@gmail.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Ramakrishna Gottimukkula
-	<quic_rgottimu@quicinc.com>
-References: <20240924050941.1251485-1-quic_kshivnan@quicinc.com>
- <20240924050941.1251485-2-quic_kshivnan@quicinc.com>
- <20240924232526.GA563039-robh@kernel.org>
-Content-Language: en-US
-From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-In-Reply-To: <20240924232526.GA563039-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ckc6PATnCe_HXCnBKRRYq-fsA9yqpNen
-X-Proofpoint-GUID: ckc6PATnCe_HXCnBKRRYq-fsA9yqpNen
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- bulkscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
- priorityscore=1501 suspectscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410030038
+References: <20241002125811.070689334@linuxfoundation.org>
+In-Reply-To: <20241002125811.070689334@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 3 Oct 2024 11:15:46 +0530
+Message-ID: <CA+G9fYuv=ZKfhFTcykDDit2DKVJSsjeVP4=c8PG7t4-nuKKcgw@mail.gmail.com>
+Subject: Re: [PATCH 6.10 000/634] 6.10.13-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-thanks Rob for reviewing this patch.
+On Wed, 2 Oct 2024 at 19:29, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.10.13 release.
+> There are 634 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 04 Oct 2024 12:56:13 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.10.13-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
 
-On 9/25/2024 4:55 AM, Rob Herring wrote:
-> On Tue, Sep 24, 2024 at 10:39:39AM +0530, Shivnandan Kumar wrote:
->> sc7280 has a cpucp mailbox. Document them.
-> 
-> And is different from the existing device how?
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-It is different with respect to the register placement.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Thanks,
-Shivnandan
+## Build
+* kernel: 6.10.13-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: f5f9dc8965d511c0bab748c48b3456a1d5cfca61
+* git describe: v6.10.12-635-gf5f9dc8965d5
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.10.y/build/v6.10=
+.12-635-gf5f9dc8965d5
 
-> 
->>
->> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
->> ---
->>   .../devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml         | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
->> index f7342d04beec..4a7ea072a3c1 100644
->> --- a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
->> +++ b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
->> @@ -15,8 +15,9 @@ description:
->>
->>   properties:
->>     compatible:
->> -    items:
->> -      - const: qcom,x1e80100-cpucp-mbox
->> +    enum:
->> +      - qcom,x1e80100-cpucp-mbox
->> +      - qcom,sc7280-cpucp-mbox
->>
->>     reg:
->>       items:
->> --
->> 2.25.1
->>
+## Test Regressions (compared to v6.10.10-178-g8b49a95a8604)
+
+## Metric Regressions (compared to v6.10.10-178-g8b49a95a8604)
+
+## Test Fixes (compared to v6.10.10-178-g8b49a95a8604)
+
+## Metric Fixes (compared to v6.10.10-178-g8b49a95a8604)
+
+## Test result summary
+total: 214298, pass: 188888, fail: 1735, skip: 23195, xfail: 480
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 131 total, 129 passed, 2 failed
+* arm64: 43 total, 43 passed, 0 failed
+* i386: 28 total, 26 passed, 2 failed
+* mips: 26 total, 25 passed, 1 failed
+* parisc: 4 total, 3 passed, 1 failed
+* powerpc: 36 total, 35 passed, 1 failed
+* riscv: 12 total, 11 passed, 1 failed
+* s390: 14 total, 13 passed, 1 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 7 total, 6 passed, 1 failed
+* x86_64: 35 total, 34 passed, 1 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
