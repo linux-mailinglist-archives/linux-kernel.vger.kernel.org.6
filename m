@@ -1,148 +1,204 @@
-Return-Path: <linux-kernel+bounces-348543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F55598E8DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:32:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D87598E8E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D6F4288A0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:32:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70E7AB23AE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EEA26ACD;
-	Thu,  3 Oct 2024 03:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gHJIV8kW"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4D4208DA
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 03:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDCE22619;
+	Thu,  3 Oct 2024 03:40:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A9617C77
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 03:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727926329; cv=none; b=bOzM52q1t15/LxmBAyvp9TuFHkaL0MqsGp6XaBy6qFT0RYogIhzZpQeQqVlmuMm601C86OpVXR4dsPheMvYLbaBleD/EwRLObgS24A5T1Tw2QbScGYq7NWTdWS7T4FJEUI3zPrCzL4bTONL/FO8XeJMpGvXh11zFb1rX3Rk7LQs=
+	t=1727926850; cv=none; b=CHKDXw/XlPRnORkv/tm5NKJ3BZDO169qKNhh1aahu66iM6n/3rv4KJUuZZauOb27tCzlUmAl3mBIeJQsJbP9L+urC8x59A9rLX1RsIPmFo2950sLW0Fe45Jk9DepPjOIlaMnYyl+A2cRh7I33LE9vS76/SoTqd9HgDUi7eREIAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727926329; c=relaxed/simple;
-	bh=sPqYsxGw4UKWZVGhmn3EmQz2XgH0EJItdTfQ4iscmkc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bb7ULWMcdQcNNE08iFemk9CjkM+aCuYB7yMiCkRKiTnoQygfoAXS/6wQm8+Jr7i4113XIk2F7epCNzrs+bX0KPHmdsAStSXuSTvQXG8mcgDi3IgS5lHK1aZ3qqeYkq7uq1l1cTOFBdylSiCx44sshyknPWs1pCS7GQv1VLtQsnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gHJIV8kW; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7193010d386so465639b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 20:32:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727926327; x=1728531127; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BGpCecy1PgHkxzgOvGnovEBjk6UmIsmI1Dv+w1TXrew=;
-        b=gHJIV8kW8+H4vRNua6FgA4TS6yKt42fctgXFke4OFVXUbT0FVBmbEo4ewg9EzDGk8Z
-         xda0MbBPKX780VXdWusuNhjYtip7L4HSeS9R8hUNwf1PYesjPqHO6P9sLtDzlBrIQfNe
-         FudlDWUvq9MwDmHq3khjjH7lMwI5J4FkbY1J9Hg3UK+2oMxUmAxdVoCb4kHOqPMh3nPU
-         Y1wO4QlmQl7wy5rpLiXkb9Ue+KJ7jJPAiJXoDv7ueWiPI7JLinvH/B3w1mQbj5PbafWV
-         4BWteX6FRiqREdswAP8kUgH7iAwu0ndB4MZsWyr55zC7QIIYMSM9fRDpy4EXbkJY05Ai
-         jRnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727926327; x=1728531127;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BGpCecy1PgHkxzgOvGnovEBjk6UmIsmI1Dv+w1TXrew=;
-        b=BAo2OFV8S2wFKA1etpyDnC7ECUZTttejC35WwkQanZArPCqoHJ93VvTWVulvyIgkgc
-         kDSwu93pxsPz4i0xbXOUp8aTidXw19/TUlkjH5EZzZfN1CROdu13BdWcwAPKiS+Ms9pj
-         FX9oGR+A5n9auqlc/LxJT6H4FTpkX4+Vksp7qBppoAqGcmUJetBWkn9f1P/YXewGiU5V
-         4rFo1uAqWdI6hZxAx7yQERSZL4qQTouZjoTNbGL61MMWD26powjnS2Cr4QHfo1jAbR9B
-         vdehLANBO7J9hcMLW8n7zJAoMwqq+5T6rI0ocirZYx5zfCCPGHjsfB7KnDcBfb1e++9c
-         nMHA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0JIY3oyEZY5mDQC3yOCFXYt65EnGqKvprEW3R6i0WJEjKUqsDVwEpaDYvhMsr6Nd/nKKVWc1mZADvqag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxojLGPxsttuwBPn45AGToYdtPrTR+gNbuuaxHgXjnGfs942qWn
-	uQJtH2APNdre/9XR9NcRG2ih5GkV99SPIqw/AgQpZrQrAxOfWK6M4Frjud4DFDQxjuLPnGIyCWf
-	DtY0MYL6aOlmYLhcxKDHP3RBfTTs=
-X-Google-Smtp-Source: AGHT+IGxU23MVhIzmikqUZ1ChMRkDvxsLqd3I0IYnv2mo71SHn/bUXBPNSL0ZoDwXDXOZ0TQSVxxghjWoD2jNK+gVmI=
-X-Received: by 2002:a05:6a00:cc2:b0:70d:2796:bce8 with SMTP id
- d2e1a72fcca58-71dc5d5bf5fmr6871110b3a.20.1727926326883; Wed, 02 Oct 2024
- 20:32:06 -0700 (PDT)
+	s=arc-20240116; t=1727926850; c=relaxed/simple;
+	bh=ggf4pIh3/wTu8uu9dZOwqC1+gRnjRUQ0lepm5IfBHnc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L9gEW7oVK3lIYDOFnAmsrzCfFPxXFKQlLGSf7miWGX0/AxqIdN2WK02edWj8D/+ln514BoKvYWsIwXwXvxSr7GUkf0tmd+yBhIZycRholKiwV9d+5UKpBHH3QOcjHVPTXSrx+tpqzuwg/Myw9dJ055ohsbolf/+WpfF9Js9Eze0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60D71339;
+	Wed,  2 Oct 2024 20:41:15 -0700 (PDT)
+Received: from [10.163.37.202] (unknown [10.163.37.202])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A624C3F640;
+	Wed,  2 Oct 2024 20:40:41 -0700 (PDT)
+Message-ID: <eae3b6bd-b69a-41cb-8963-feb766f9d528@arm.com>
+Date: Thu, 3 Oct 2024 09:10:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002132820.402583-1-sayyad.abid16@gmail.com> <06ffa5a2-f73d-198c-3e7b-178e4fcec1ed@linux-m68k.org>
-In-Reply-To: <06ffa5a2-f73d-198c-3e7b-178e4fcec1ed@linux-m68k.org>
-From: Sayyad Abid <sayyad.abid16@gmail.com>
-Date: Thu, 3 Oct 2024 09:01:32 +0530
-Message-ID: <CACVUEBnohcsyiPpCF3QNdQeXXaU6pvVOY-5X8CHmRSvEJxXoyA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] drivers: nubus: Fix coding style issues in nubus.c
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64/hw_breakpoint: Enable FEAT_Debugv8p9
+To: kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, Jonathan Corbet <corbet@lwn.net>,
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ James Morse <james.morse@arm.com>, Suzuki K Poulose
+ <suzuki.poulose@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, kvmarm@lists.linux.dev
+References: <20241001043602.1116991-4-anshuman.khandual@arm.com>
+ <202410030700.kZSan6G6-lkp@intel.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <202410030700.kZSan6G6-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 3, 2024 at 4:25=E2=80=AFAM Finn Thain <fthain@linux-m68k.org> w=
-rote:
->
->
-> Hello sayyad.abid16@gmail.com
->
-> Thanks for taking the trouble to send e-mail messages to so many people b=
-y
-> use of a free e-mail account.
->
-> With regards to kernel patches, can I request that you --
->
-> 1. Don't run checkpatch on existing code
-> 2. Don't send patches that break the build
-> 3. Don't claim to be improving code style by sending patches that violate
->    code style rules
-> 4. Read the mailing lists and study the development process before trying
->    to contribute
->
-> Thanks for your consideration.
->
-> Regards
-> Finn
->
-> On Wed, 2 Oct 2024, Sayyad Abid wrote:
->
-> > This patch series addresses coding style improvements in
-> > the Nubus subsystem, specifically in `nubus.c`. These changes
-> > aim to enhance readability and maintainability of the code.
-> >
-> > These coding style inconsistencies were found using checkpatch.pl
-> >
-> > Changes include:
-> >  1. Improved comment block formatting by aligning `*` in
-> >     multi-line comments.
-> >  2. Fixing assignments inside conditional statements to improve clarity=
-.
-> >  3. Correcting the use of tabs for indentation in specific functions.
-> >
-> > Each commit focuses on a specific aspect, as detailed below.
-> >
-> >
-> > Sayyad Abid (3):
-> >   Fix use of tabs in nubus_get_vendorinfo and nubus_add_board
-> >   Fix use of assignment in if condition in nubus_add_board()
-> >   Fix use of * in comment block in nubus.c
-> >
-> >  drivers/nubus/nubus.c | 94 ++++++++++++++++++++++++-------------------
-> >  1 file changed, 53 insertions(+), 41 deletions(-)
-> >
-> > --
-> > 2.39.5
-> >
-> >
-My sincere apologies for causing the trouble,
-I overlooked a few things there,
-I will keep a note of your points and make sure
-that it is not repeated again.
 
-Thank You!
 
---=20
-Abid
+On 10/3/24 05:06, kernel test robot wrote:
+> Hi Anshuman,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on arm64/for-next/core]
+> [also build test ERROR on kvmarm/next soc/for-next arm/for-next arm/fixes linus/master v6.12-rc1 next-20241002]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/arm64-cpufeature-Add-field-details-for-ID_AA64DFR1_EL1-register/20241001-123752
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
+> patch link:    https://lore.kernel.org/r/20241001043602.1116991-4-anshuman.khandual%40arm.com
+> patch subject: [PATCH 3/3] arm64/hw_breakpoint: Enable FEAT_Debugv8p9
+> config: arm64-randconfig-004-20241003 (https://download.01.org/0day-ci/archive/20241003/202410030700.kZSan6G6-lkp@intel.com/config)
+> compiler: aarch64-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241003/202410030700.kZSan6G6-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410030700.kZSan6G6-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    arch/arm64/kernel/hw_breakpoint.c: In function 'set_bank_index':
+>>> arch/arm64/kernel/hw_breakpoint.c:113:30: error: 'MDSELR_EL1_BANK_BANK_0' undeclared (first use in this function)
+>      113 |                 mdsel_bank = MDSELR_EL1_BANK_BANK_0;
+>          |                              ^~~~~~~~~~~~~~~~~~~~~~
+>    arch/arm64/kernel/hw_breakpoint.c:113:30: note: each undeclared identifier is reported only once for each function it appears in
+>>> arch/arm64/kernel/hw_breakpoint.c:116:30: error: 'MDSELR_EL1_BANK_BANK_1' undeclared (first use in this function)
+>      116 |                 mdsel_bank = MDSELR_EL1_BANK_BANK_1;
+>          |                              ^~~~~~~~~~~~~~~~~~~~~~
+>>> arch/arm64/kernel/hw_breakpoint.c:119:30: error: 'MDSELR_EL1_BANK_BANK_2' undeclared (first use in this function)
+>      119 |                 mdsel_bank = MDSELR_EL1_BANK_BANK_2;
+>          |                              ^~~~~~~~~~~~~~~~~~~~~~
+>>> arch/arm64/kernel/hw_breakpoint.c:122:30: error: 'MDSELR_EL1_BANK_BANK_3' undeclared (first use in this function)
+>      122 |                 mdsel_bank = MDSELR_EL1_BANK_BANK_3;
+>          |                              ^~~~~~~~~~~~~~~~~~~~~~
+>    In file included from arch/arm64/include/asm/cputype.h:226,
+>                     from arch/arm64/include/asm/cache.h:43,
+>                     from include/linux/cache.h:6,
+>                     from include/linux/time.h:5,
+>                     from include/linux/compat.h:10,
+>                     from arch/arm64/kernel/hw_breakpoint.c:12:
+>>> arch/arm64/kernel/hw_breakpoint.c:128:38: error: 'MDSELR_EL1_BANK_SHIFT' undeclared (first use in this function); did you mean 'CSSELR_EL1_InD_SHIFT'?
+>      128 |         write_sysreg_s(mdsel_bank << MDSELR_EL1_BANK_SHIFT, SYS_MDSELR_EL1);
+>          |                                      ^~~~~~~~~~~~~~~~~~~~~
+>    arch/arm64/include/asm/sysreg.h:1168:27: note: in definition of macro 'write_sysreg_s'
+>     1168 |         u64 __val = (u64)(v);                                           \
+>          |                           ^
+>>> arch/arm64/kernel/hw_breakpoint.c:128:61: error: 'SYS_MDSELR_EL1' undeclared (first use in this function); did you mean 'SYS_MDSCR_EL1'?
+>      128 |         write_sysreg_s(mdsel_bank << MDSELR_EL1_BANK_SHIFT, SYS_MDSELR_EL1);
+>          |                                                             ^~~~~~~~~~~~~~
+>    arch/arm64/include/asm/sysreg.h:1169:46: note: in definition of macro 'write_sysreg_s'
+>     1169 |         u32 __maybe_unused __check_r = (u32)(r);                        \
+>          |                                              ^
+> 
+> 
+> vim +/MDSELR_EL1_BANK_BANK_0 +113 arch/arm64/kernel/hw_breakpoint.c
+> 
+>     59	
+>     60	#define READ_WB_REG_CASE(OFF, N, REG, VAL)	\
+>     61		case (OFF + N):				\
+>     62			AARCH64_DBG_READ(N, REG, VAL);	\
+>     63			break
+>     64	
+>     65	#define WRITE_WB_REG_CASE(OFF, N, REG, VAL)	\
+>     66		case (OFF + N):				\
+>     67			AARCH64_DBG_WRITE(N, REG, VAL);	\
+>     68			break
+>     69	
+>     70	#define GEN_READ_WB_REG_CASES(OFF, REG, VAL)	\
+>     71		READ_WB_REG_CASE(OFF,  0, REG, VAL);	\
+>     72		READ_WB_REG_CASE(OFF,  1, REG, VAL);	\
+>     73		READ_WB_REG_CASE(OFF,  2, REG, VAL);	\
+>     74		READ_WB_REG_CASE(OFF,  3, REG, VAL);	\
+>     75		READ_WB_REG_CASE(OFF,  4, REG, VAL);	\
+>     76		READ_WB_REG_CASE(OFF,  5, REG, VAL);	\
+>     77		READ_WB_REG_CASE(OFF,  6, REG, VAL);	\
+>     78		READ_WB_REG_CASE(OFF,  7, REG, VAL);	\
+>     79		READ_WB_REG_CASE(OFF,  8, REG, VAL);	\
+>     80		READ_WB_REG_CASE(OFF,  9, REG, VAL);	\
+>     81		READ_WB_REG_CASE(OFF, 10, REG, VAL);	\
+>     82		READ_WB_REG_CASE(OFF, 11, REG, VAL);	\
+>     83		READ_WB_REG_CASE(OFF, 12, REG, VAL);	\
+>     84		READ_WB_REG_CASE(OFF, 13, REG, VAL);	\
+>     85		READ_WB_REG_CASE(OFF, 14, REG, VAL);	\
+>     86		READ_WB_REG_CASE(OFF, 15, REG, VAL)
+>     87	
+>     88	#define GEN_WRITE_WB_REG_CASES(OFF, REG, VAL)	\
+>     89		WRITE_WB_REG_CASE(OFF,  0, REG, VAL);	\
+>     90		WRITE_WB_REG_CASE(OFF,  1, REG, VAL);	\
+>     91		WRITE_WB_REG_CASE(OFF,  2, REG, VAL);	\
+>     92		WRITE_WB_REG_CASE(OFF,  3, REG, VAL);	\
+>     93		WRITE_WB_REG_CASE(OFF,  4, REG, VAL);	\
+>     94		WRITE_WB_REG_CASE(OFF,  5, REG, VAL);	\
+>     95		WRITE_WB_REG_CASE(OFF,  6, REG, VAL);	\
+>     96		WRITE_WB_REG_CASE(OFF,  7, REG, VAL);	\
+>     97		WRITE_WB_REG_CASE(OFF,  8, REG, VAL);	\
+>     98		WRITE_WB_REG_CASE(OFF,  9, REG, VAL);	\
+>     99		WRITE_WB_REG_CASE(OFF, 10, REG, VAL);	\
+>    100		WRITE_WB_REG_CASE(OFF, 11, REG, VAL);	\
+>    101		WRITE_WB_REG_CASE(OFF, 12, REG, VAL);	\
+>    102		WRITE_WB_REG_CASE(OFF, 13, REG, VAL);	\
+>    103		WRITE_WB_REG_CASE(OFF, 14, REG, VAL);	\
+>    104		WRITE_WB_REG_CASE(OFF, 15, REG, VAL)
+>    105	
+>    106	static int set_bank_index(int n)
+>    107	{
+>    108		int mdsel_bank;
+>    109		int bank = n / 16, index = n % 16;
+>    110	
+>    111		switch (bank) {
+>    112		case 0:
+>  > 113			mdsel_bank = MDSELR_EL1_BANK_BANK_0;
+>    114			break;
+>    115		case 1:
+>  > 116			mdsel_bank = MDSELR_EL1_BANK_BANK_1;
+>    117			break;
+>    118		case 2:
+>  > 119			mdsel_bank = MDSELR_EL1_BANK_BANK_2;
+>    120			break;
+>    121		case 3:
+>  > 122			mdsel_bank = MDSELR_EL1_BANK_BANK_3;
+>    123			break;
+>    124		default:
+>    125			pr_warn("Unknown register bank %d\n", bank);
+>    126		}
+>    127		preempt_disable();
+>  > 128		write_sysreg_s(mdsel_bank << MDSELR_EL1_BANK_SHIFT, SYS_MDSELR_EL1);
+>    129		isb();
+>    130		return index;
+>    131	}
+>    132	
+> 
+
+This build failure and also the other two on the series here are false positives
+caused by non-availability of used register field definitions which are provided
+via the dependent KVM FEAT_FGT2 FGU series.
 
