@@ -1,108 +1,108 @@
-Return-Path: <linux-kernel+bounces-351201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2644990E63
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:34:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8BD990E20
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49DCF1F26C4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:34:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBA771F22710
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE842256B3;
-	Fri,  4 Oct 2024 18:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D9A21D196;
+	Fri,  4 Oct 2024 18:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdEnvHL2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cnnSoO+x"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462E71E261B;
-	Fri,  4 Oct 2024 18:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF1B21CAD5;
+	Fri,  4 Oct 2024 18:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066592; cv=none; b=VTEf135nvIVxW4Hqm15ptNoLhXFXdapTJj/vtPA9NWWX7s9QeYbt7ZiyF5Pr2SHFOcUawBHk6i8gY/rI7tcWJW2gwuuN5mMm0TeaJSMC27jr+8swHQVGDrsbxjUwf/ftao5iN2GocB3DMjZuQ8OzPbREC35dvErKd4vAoknoxX8=
+	t=1728066555; cv=none; b=CYFT8xnSAm9fSN7QATCLrzOm04oKsxFjGcXLKX3+QkHA2iEdTrPvYrdEz67KR1vSl2Kz48nzzxwQhh4EdN+bC2Mxw9YZEPgqQaRBWQoj84cvEGA2AH/HQFc9iAQhmaUojMW6NYK1pWVIaZRUXFs/ZX5cCngREw5n3b8X5mGg9XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066592; c=relaxed/simple;
-	bh=evmvvGbhWKHfqCIlgskArgjyb7DEwgQyyfI0Q4j2Bn4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VU30kiDgDgG2KfLVOCZ8nFsgIxsF4VGSG8tMxNIrLosJMF5LWzojJwkkYFb+IzUnbWQ0Y3uZxFHhp/4MsFiAEMTzw3pcdeZm4NsJ+AiCKDytN8tQKKBDAXMrRL/tFNFK4MKTbQDQ7bZ03SzNVEJZYRlxfqHFrndRdsWyOJbH408=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdEnvHL2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0964DC4CEC6;
-	Fri,  4 Oct 2024 18:29:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066592;
-	bh=evmvvGbhWKHfqCIlgskArgjyb7DEwgQyyfI0Q4j2Bn4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tdEnvHL2RcsSgm9rrZwnKmx5rsuCl0wVtDttzaicKU3fD9NRHaZiJ1HDXQhsRfWoR
-	 inyqb7LrjRDH2633ewxhg4D5LadvuFLgPNugILusHvCIhP9Pmsm7RSDKygPNhJ+tIs
-	 BYHRCK+8ltUTHHaY1kkBK+44U3Woi0Dp7u34kDJRJEDhxzAItgfUWCHRv/K3T0wd7S
-	 mEQy06gjRnRyd9QzxjUqgCdfmiT/4380PQSXMRzTWuNy4yFflLecSTsWRAHK9vjNU4
-	 VH5fdLdyO9Haa+r9secSD0l9jZ6v3rZRt7YBwlJDsgY9qxQsaQX6KbX/SxciC4qq1j
-	 yzVmWfmyM9JCA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Andrey Shumilin <shum.sdl@nppct.ru>,
-	Helge Deller <deller@gmx.de>,
-	Sasha Levin <sashal@kernel.org>,
-	tzimmermann@suse.de,
-	fullwaywang@outlook.com,
-	javierm@redhat.com,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.15 31/31] fbdev: sisfb: Fix strbuf array overflow
-Date: Fri,  4 Oct 2024 14:28:39 -0400
-Message-ID: <20241004182854.3674661-31-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004182854.3674661-1-sashal@kernel.org>
-References: <20241004182854.3674661-1-sashal@kernel.org>
+	s=arc-20240116; t=1728066555; c=relaxed/simple;
+	bh=6lBCjiRF4B46nhbZCs3k/e4Z0301LBosumkSAIOX6LI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EarPHt+fL0R3x/3UtggcW6zIqjMSUdXaClxx94kkrF1a1iwsjZdt9+4rbYX5D7eRMt/BxIjpHqe0/6uzhDKgOaBPjY8Hcll5eQSHDzFau3YXV9K6UfPzKH6VFRk9jYcuEJkX5PMhNmcJIBXOGvW9ASzW0ABfM+hUxttyyE617sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cnnSoO+x; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fOb9M6ZRjRfvVCqDlasosWrUHjFjp7Hur2fhf3PBfgg=; b=cnnSoO+x6ifbk2XZl8GRTZm8Kf
+	Co4+zcisD6SR3lxix0PIP9Jh4m4Pv+xHhyh7i2N1aWvSENqf735ZdKFu3jV/Op1hKu+/Amc1ebVpQ
+	jzzYwasH3PDPVdgZCCQih6N9/3qgQOsoEPOyQUPkwg8MBeG3NG6FoWaZg7GOEnzU8ASije6iYVn0g
+	QKj1o/K7Cbv1VL5d4ApJkG4PMbtD+Br/8f2CgUZJMzqUnkSSngEuptT7K4ADE3JVoUFSkEUADU0bB
+	++C4Mvx4vGExNnCMtNMO2zc0LYl7AMLUxTHioVqT8B7lqCBpqBrLdFdRgsXe7z6FX7Sp7Wav/lN3c
+	mMDTiZbA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1swn2l-0000000B26f-1O0A;
+	Fri, 04 Oct 2024 18:28:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 94FA230083E; Fri,  4 Oct 2024 20:28:47 +0200 (CEST)
+Date: Fri, 4 Oct 2024 20:28:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>,
+	Sriraman Tallam <tmsriram@google.com>,
+	David Li <davidxl@google.com>,
+	Krzysztof Pszeniczny <kpszeniczny@google.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
+	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
+	Brian Gerst <brgerst@gmail.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Jann Horn <jannh@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Juergen Gross <jgross@suse.com>,
+	Justin Stitt <justinstitt@google.com>, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
+	x86@kernel.org, "Xin Li (Intel)" <xin@zytor.com>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v2 1/6] Add AutoFDO support for Clang build
+Message-ID: <20241004182847.GU18071@noisy.programming.kicks-ass.net>
+References: <20241002233409.2857999-1-xur@google.com>
+ <20241002233409.2857999-2-xur@google.com>
+ <20241003154143.GW5594@noisy.programming.kicks-ass.net>
+ <202410041106.6C1BC9BDA@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.167
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202410041106.6C1BC9BDA@keescook>
 
-From: Andrey Shumilin <shum.sdl@nppct.ru>
+On Fri, Oct 04, 2024 at 11:10:04AM -0700, Kees Cook wrote:
 
-[ Upstream commit 9cf14f5a2746c19455ce9cb44341b5527b5e19c3 ]
+> +Configure the kernel with::(make)
+> +
+> +     CONFIG_AUTOFDO_CLANG=y
+> 
+> Then we could avoid the extra 2 lines but still gain the rendered language
+> highlights?
 
-The values of the variables xres and yres are placed in strbuf.
-These variables are obtained from strbuf1.
-The strbuf1 array contains digit characters
-and a space if the array contains non-digit characters.
-Then, when executing sprintf(strbuf, "%ux%ux8", xres, yres);
-more than 16 bytes will be written to strbuf.
-It is suggested to increase the size of the strbuf array to 24.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Signed-off-by: Andrey Shumilin <shum.sdl@nppct.ru>
-Signed-off-by: Helge Deller <deller@gmx.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/video/fbdev/sis/sis_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/video/fbdev/sis/sis_main.c b/drivers/video/fbdev/sis/sis_main.c
-index c6e21ba008953..ce9dc1e8bcdca 100644
---- a/drivers/video/fbdev/sis/sis_main.c
-+++ b/drivers/video/fbdev/sis/sis_main.c
-@@ -183,7 +183,7 @@ static void sisfb_search_mode(char *name, bool quiet)
- {
- 	unsigned int j = 0, xres = 0, yres = 0, depth = 0, rate = 0;
- 	int i = 0;
--	char strbuf[16], strbuf1[20];
-+	char strbuf[24], strbuf1[20];
- 	char *nameptr = name;
- 
- 	/* We don't know the hardware specs yet and there is no ivideo */
--- 
-2.43.0
-
+The whole double-colon thing is already a pain to read; you're making it
+worse again.
 
