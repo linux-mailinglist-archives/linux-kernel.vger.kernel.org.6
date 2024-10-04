@@ -1,126 +1,153 @@
-Return-Path: <linux-kernel+bounces-350074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3225298FF63
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:10:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CABF98FF67
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F2CEB22959
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989CD1F22163
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8A6146A83;
-	Fri,  4 Oct 2024 09:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865FD146017;
+	Fri,  4 Oct 2024 09:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WtfI6LvU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lisG9BNX"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6ED313E88C
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 09:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF0017758;
+	Fri,  4 Oct 2024 09:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728033021; cv=none; b=AqmryHgTqcRDDbtBm0ZEp0nUxGGRPYdg0rdeDYcpMiDk0PRtGD02E5nhHQ/qJoK0GtbWV+2wZ4BVeLvk8N2e2AKYVtHMOsj1HPk+m54Hf5v1VayWI+eOrCTYfOaE+sL+TJ8MLytWAPpsxBUNovpCm2CBpB0dFJd69CCMXQW5cwU=
+	t=1728033223; cv=none; b=kBio52ZNRs4JOly7nQo8fQhzblP/w2o/knXDBjQrAyRacXnoH14UiP46Fwg87solVZ061gvXX3V8DGgosRqRm2OHDf70DBhBg508XFmqzm0VXinZARjAQmHAhdXy5ot+XdLMlEUNbam0hLBAmOeZVxj91MudlPHuWyQI2RSghPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728033021; c=relaxed/simple;
-	bh=QTYuQh0P26vRKNsQewIzdoWVB1PnsOxVnuBkST55Nmk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SjJ5g5snaACVVcte/9ZATJdXpIIiRzZjkxEdweQGNCvREMgaNoR3gLSNhJf57knFKhMgT2LXUJDHrOLnme+gxpn2+UldOu7kEPL7Wf+6JD8ozewqO3fpM4xNRf50KUcAu+kNKcbEa2f1kR8kAdzsdsN1IDyNyxo7LcPr7VAESfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WtfI6LvU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728033018;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWaxtFyxCVqdKiE9UC3u3v1VjOYPBu3LjrsGcjWBoPY=;
-	b=WtfI6LvUluHMSoUrs42wJvkyJO2T7Z7xynQshFnksxqDi7L97GOu8BhOpspDuLNKtULw6m
-	bxzEXeQ0RhCeASgoLdg/9PwIWM2O3z7DFbSexD2iBXC7z/HpPOdned5siwcvsaZEFK0YnT
-	0lv+dyzo4q3PmP1RDGacamp5Phajq2k=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-vz-n68IhOSqwIAWewBHBjw-1; Fri, 04 Oct 2024 05:10:17 -0400
-X-MC-Unique: vz-n68IhOSqwIAWewBHBjw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cdeac2da6so14155105e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 02:10:17 -0700 (PDT)
+	s=arc-20240116; t=1728033223; c=relaxed/simple;
+	bh=Z5bHITMaJBCz28koUc5htlEld8pCy/uM/+Bqca7buto=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Owz6nA6Od1bcUS1f06xaFVj355eDe1CLrtXpTk5BubI8H0ZtfsEusJL/LGz7wmyNYdWFrsItk9ngZS3lOk84b1OmSCyYdeTH9XupIxReUgC+mqDva6by32JjaPGdp5XwWEzB60uptlr3t28N3KQJjNvY3Hv22oy0OCUKV2x+Ka0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lisG9BNX; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cb9a0c300so16232465e9.0;
+        Fri, 04 Oct 2024 02:13:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728033220; x=1728638020; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=X15WC1ZWXuz5+wofBMUIwK10sZf4phCW4d2DHL2mVeQ=;
+        b=lisG9BNX621iWVPwVt5AjEgQ1KXoJQGRfw9/I0dFytIrUypHV4CfFe3JdEMFNzeywj
+         lLT25IjwdSY3x+hx4cW8XsoFcOmKPJ8VdRwxdplY/XSrnDqQBwP2XNN3hDRxGD9RyXzZ
+         Q92E4X+RuGTlGKxXkhHY9t1HxsYfx5VY4kJonUbHgPiWZjD8CZU6qKGcV3ovt7eSH1K2
+         tiSY9X/V2hb+PKOYyLQPMS8J4fvGhOmyWvDbRESLydlVMWIBUgJdK/q/Sgo1lpXWacbj
+         gT+GQiTyKobJdP/sGtUYwE+QiCK7DC9aUZEQVY84Sa4fDg3X/UXjmk/Yh3S0hVCat+wa
+         Q3dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728033016; x=1728637816;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XWaxtFyxCVqdKiE9UC3u3v1VjOYPBu3LjrsGcjWBoPY=;
-        b=AwMKyWGKgMjpS5fXOIfFSnJbEsqBNqsgSQLGn04bSgvdyTIOb+tfSGh6mxriar2MKW
-         Td5H93rcAizlGTuWCXUe3yAXCRaP5PSu1I+8nMk9plC+fKd1DMcJclrfrQmHSzt0nCFE
-         H/3BdLEEZqESeLvA0oFV70jyJH6hl/reGjc1z/hVDyEng82es7YLFqAdpoUsfGE9gGP9
-         +Gd44JpMiDzprS3iLwqlvrKyy6FE9Y4Q/BYyJMtAESUJVIYT0W8bG0flkQJm5IroxSVH
-         KJEe18CbyyJRPVz3rqh1JqirEPIbz0opIT4S4AldIaByH8EskKRLku2BwClfd/vSeUxE
-         V5oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdNbZOH09YtMUhm/ZGubvFZIhAC08QjxQ3WtTO1p2zrrsZFdFZ2shwDYVK+zIiSZMPLrZBXcxRlIUBlFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjR254I8LEwN7FGtOfJx6OFXXZBAJG/twfh7yIiPd15mNfyEmN
-	m4hFk71O8cmT0DHSl4TcGwM5v1spL5NysrtkKbqTaQXHkZbbe5Jz0/+qPE3q6+1TRHaq6KkBSLL
-	BSkFP/nzIVGn4ntK9OAGcN2OA9Ptm8kSh9w9dBv8CDpXXWik4b/ZtpdGvTFJOXQxY7y2NbL6wt3
-	a/mH1FElZjj9nTwCR2vDQHG/JJWqsZeJK1UQ1v5m6+ygiyGw==
-X-Received: by 2002:a05:600c:35c3:b0:428:f0c2:ef4a with SMTP id 5b1f17b1804b1-42f85aa817emr14424245e9.13.1728033016354;
-        Fri, 04 Oct 2024 02:10:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTm157t6QcMf8gjoAtCEnaqJykgnp6tIfLsplWcv2x4DJAc1A+hAkLVGTelF1r+AOWTAiLCA==
-X-Received: by 2002:a05:600c:35c3:b0:428:f0c2:ef4a with SMTP id 5b1f17b1804b1-42f85aa817emr14423975e9.13.1728033015874;
-        Fri, 04 Oct 2024 02:10:15 -0700 (PDT)
-Received: from fedora (g2.ign.cz. [91.219.240.8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b1d640sm10512925e9.25.2024.10.04.02.10.15
+        d=1e100.net; s=20230601; t=1728033220; x=1728638020;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X15WC1ZWXuz5+wofBMUIwK10sZf4phCW4d2DHL2mVeQ=;
+        b=jX7ObyxtlmpKnBc+etf+Y4BwWH/qk4VRNwR7Lj4drY3zvX1P31rOwWuQF92Rmp/ctD
+         SewvIO+k30g26ExScBCUMM7HiGK1Smkjg7XXJjJx6NZRlArmXydLxyLDEUH01D0fK0tM
+         s7SOSxrFt+DNoclhOX01Ki2i1JG6XoPyjnbmmSGEptsNxENOsHqA+xw1rR1Yxlu8e3zS
+         AxDdM/rMIOEAO7bnimQ7ltZnfgv4hS6SzHycFydZKF5GvZDUIGpCiN60flGFrWlL4J6w
+         4mwV7/mGy5rYIJ/Aj4wwtzkCTr1ZgPkJf0ouWxymj/F/ri1TUCSOnk4RHokwnysaidFX
+         nkUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCaWFYMPLwZfq+ekQhIJ3scLB9sU82ULKIHlTkhr+c3WJilaexKWzhOFraSaQUbRbcCc54uVpc@vger.kernel.org, AJvYcCWvve/cCi/rtgIVLYOBpVsQp1QZH/dz0sd3+NcuHx7mhIaZ6blaWAoVim5kkAQIWve0BAUxIbyxFyM9sV0=@vger.kernel.org, AJvYcCX+MZ64/ZyZO8GBB89LZv9KE6CrdpdNUBAHh+gva2Icic2C+Q1skaM1d/VDyFRE8CUqjXGVtGQK@vger.kernel.org
+X-Gm-Message-State: AOJu0YysJk8b3+8QggzDIaQmw7W3+cGqShYfL/WDuJwCIDdUTcfAxAsI
+	+KRNAnYFOBTtumGu3YBrqQ/mSaXBIcxyfhcULlikwGph9yD0jGLN
+X-Google-Smtp-Source: AGHT+IEd5QPZB1kQDUm9RuZ3CmJ84GZOC9yYfP5vZ1CPXSmaZBiiM7cib2MJO2OH5P38dW7HKytDeg==
+X-Received: by 2002:a05:6000:1370:b0:37c:cf73:4bf7 with SMTP id ffacd0b85a97d-37d0e761138mr1402186f8f.34.1728033220106;
+        Fri, 04 Oct 2024 02:13:40 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d08247911sm2847582f8f.57.2024.10.04.02.13.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 02:10:15 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/11] KVM: selftests: Drop manual XCR0 configuration
- from state test
-In-Reply-To: <20241003234337.273364-10-seanjc@google.com>
-References: <20241003234337.273364-1-seanjc@google.com>
- <20241003234337.273364-10-seanjc@google.com>
-Date: Fri, 04 Oct 2024 11:10:14 +0200
-Message-ID: <87frpci689.fsf@redhat.com>
+        Fri, 04 Oct 2024 02:13:38 -0700 (PDT)
+Message-ID: <66ffb1c2.df0a0220.1b4c87.ce13@mx.google.com>
+X-Google-Original-Message-ID: <Zv-xvFed138JItAj@Ansuel-XPS.>
+Date: Fri, 4 Oct 2024 11:13:32 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>,
+	stable@vger.kernel.org
+Subject: Re: [net PATCH 2/2] net: phy: Skip PHY LEDs OF registration for
+ Generic PHY driver
+References: <20241003221006.4568-1-ansuelsmth@gmail.com>
+ <20241003221006.4568-2-ansuelsmth@gmail.com>
+ <2dcd127d-ab41-4bf7-aea4-91f175443e62@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2dcd127d-ab41-4bf7-aea4-91f175443e62@lunn.ch>
 
-Sean Christopherson <seanjc@google.com> writes:
-
-> Now that CR4.OSXSAVE and XCR0 are setup by default, drop the manual
-> enabling from the state test, which is fully redundant with the default
-> behavior.
+On Fri, Oct 04, 2024 at 12:50:39AM +0200, Andrew Lunn wrote:
+> On Fri, Oct 04, 2024 at 12:10:05AM +0200, Christian Marangi wrote:
+> > It might happen that a PHY driver fails to probe or is not present in
+> > the system as it's a kmod. In such case the Device Tree might have LED
+> > entry but the Generic PHY is probed instead.
+> > 
+> > In this scenario, PHY LEDs OF registration should be skipped as
+> > controlling the PHY LEDs is not possible.
+> > 
+> > Tested-by: Daniel Golle <daniel@makrotopia.org>
+> > Cc: stable@vger.kernel.org
+> > Fixes: 01e5b728e9e4 ("net: phy: Add a binding for PHY LEDs")
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  drivers/net/phy/phy_device.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> > index 499797646580..af088bf00bae 100644
+> > --- a/drivers/net/phy/phy_device.c
+> > +++ b/drivers/net/phy/phy_device.c
+> > @@ -3411,6 +3411,11 @@ static int of_phy_leds(struct phy_device *phydev)
+> >  	struct device_node *leds;
+> >  	int err;
+> >  
+> > +	/* Skip LED registration if we are Generic PHY */
+> > +	if (phy_driver_is_genphy(phydev) ||
+> > +	    phy_driver_is_genphy_10g(phydev))
+> > +		return 0;
+> 
+> Why fix it link this, when what you propose for net-next, that the drv
+> ops must also exist, would fix it.
+> 
+> I don't see any need to special case genphy.
 >
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  tools/testing/selftests/kvm/x86_64/state_test.c | 5 -----
->  1 file changed, 5 deletions(-)
->
-> diff --git a/tools/testing/selftests/kvm/x86_64/state_test.c b/tools/testing/selftests/kvm/x86_64/state_test.c
-> index 1c756db329e5..141b7fc0c965 100644
-> --- a/tools/testing/selftests/kvm/x86_64/state_test.c
-> +++ b/tools/testing/selftests/kvm/x86_64/state_test.c
-> @@ -145,11 +145,6 @@ static void __attribute__((__flatten__)) guest_code(void *arg)
->  
->  		memset(buffer, 0xcc, sizeof(buffer));
->  
-> -		set_cr4(get_cr4() | X86_CR4_OSXSAVE);
-> -		GUEST_ASSERT(this_cpu_has(X86_FEATURE_OSXSAVE));
-> -
-> -		xsetbv(0, xgetbv(0) | supported_xcr0);
-> -
->  		/*
->  		 * Modify state for all supported xfeatures to take them out of
->  		 * their "init" state, i.e. to make them show up in XSTATE_BV.
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+While the patch in net-next fix a broken condition (PHY driver exist but
+doesn't have LEDs OPs), this account a much possible scenario.
+
+It's totally ok if the PHY driver is not loaded and we fallback to the
+Generic PHY and there are LEDs node.
+
+This is the case with something like
+ip link set eth0 down
+rmmod air_en8811h
+ip link set eth0 up
+
+On this up, the Generic PHY is loaded and LEDs will wrongly be
+registered. We should not add the LED to the phydev LEDs list.
+
+Do you think this logic is wrong and we should print a warning also in
+this case? Or should we bite it and just return 0 with no warning at
+all? (again my concern is the additional LEDs entry in sysfs that won't
+be actually usable as everything will be rejected)
 
 -- 
-Vitaly
-
+	Ansuel
 
