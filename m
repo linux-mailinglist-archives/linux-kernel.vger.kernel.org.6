@@ -1,152 +1,96 @@
-Return-Path: <linux-kernel+bounces-350021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5FD98FEC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:14:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9715C98FEA8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 210BA1F243DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:14:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 941AC1C232C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A702613F43B;
-	Fri,  4 Oct 2024 08:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB7013C8EA;
+	Fri,  4 Oct 2024 08:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SLznpBWl"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tNEi/nkp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF7E140360
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 08:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C158017758;
+	Fri,  4 Oct 2024 08:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728029593; cv=none; b=TxGavgftGtxyF2Ixra7rYLn5g16DWH3mseo65wAqXajIhWypfFdSVGIHDaFC5Jb7hXcZFpx61SaPK1PriawPj2gnvn4kiOHX9sEbXpeM80uB3snsp1nddNHSDpVTG57ckH3gygdyOYZvGQ3o6gRNbEe7cGiu0NvyI9qXCU6fIAU=
+	t=1728029530; cv=none; b=ZD3sSmuSDhu1khjPhqXsn+2p/qTro1AYsSnSy8EFpr6C447kIxXSGCGnaxypuFmiVVWj9MUAOU3y+StkSdn99XR+Sw4h9tp8LOlFecWEjbMhF5aRN1Qsvp6p6n7iatl1Lpdcbc5IGJZKQr0VvSWEJL/BM25jXZ9vx+2dVr3fqwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728029593; c=relaxed/simple;
-	bh=uxyWLD5dh7h0Mh0aBVTfxH5YILsrVLKXtv94ykKER5I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FxfEIW/v+tDrfT8FPpZa2U0qmneswm4VTNdmnul3pkXJamJ5sN/CKYqMChfHeBfPA74rSRcm0VmTgQ5XLuJvRpvUFnNyFhUE0skIHhc6opAKtfJ7o2D7Yo+AuOKcaz9crH/P58vglDZU89xxuB14JWguem/yEks4RXpXtwbq9Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SLznpBWl; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20b0b2528d8so20935095ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 01:13:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728029591; x=1728634391; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GN85sCKrVOA3tu4HmVxI2QI8ZoLBkf3gydcFUAN5vhA=;
-        b=SLznpBWljOohzvu6mp/NWiFu7XEnmZrpTG4ZimrWZmQ+E0DPKqggPENYz+Os/X+lwE
-         FQ+4AGxhvpY1RjvGhzhz5xLz8wfyrBWJyLmm2hL39cd6T4TRzM9tiXQKFrinVlugD8Od
-         /tPSIod/CEylvyViwNv1SSGLK/skWn0F2ECXE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728029591; x=1728634391;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GN85sCKrVOA3tu4HmVxI2QI8ZoLBkf3gydcFUAN5vhA=;
-        b=fWldSD/+I92DqP6XSXLBbYY66De7gKVv++fRVwu/dNFNFyYoFV1iIKYs9IfRyYjxOP
-         uE2q6JoKze4VsRTlO2kd58Yc+VsFFTz7acz1OTqVDPonQqCVoREVPP7drgvYQW+Eg79U
-         RbMXeUIHgbOb1867biPGcqn9CTaC04eoTBeoa7Rg9byUNghDoK0omRl0CHOikR2GwTMk
-         ZsiNrlPv//WE4oPzbeducAnevaMmit82SQ425DWv1nth2Dr1xSxW3FSuRO2NzgBVREUS
-         MZ3T5i41JvEw63eBfaf2hH3YEGbLF2f2vHe+CyI2IkwapxqQwZ87QEG6EaeC6cIVXXSD
-         eliA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZPvTAY102gdq+7uF8RZer2Gtxl1MX0/Pnj5N2tPkERrL0t5gFWCNfxwJn64vBw6Ng2nu92zip4h2fxYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtX/4zepzpkJl7vOJF9/0VQU547g29d62R4NVd6HWt3lCCfpqO
-	8mbdJrjVrPzR0k7PX9Tj7RtxZhG0D9+2IbyqRxQrv5xaRjjln1U59UQ4sSF6/g==
-X-Google-Smtp-Source: AGHT+IE6hBhfSi7O3sSuEyG5gBp6fSKltdiW7DF90nxxWftNyyRn2q94R5o8RRcdXS8Hi7NBzU9KiQ==
-X-Received: by 2002:a17:903:2349:b0:20b:c1e4:2d77 with SMTP id d9443c01a7336-20bfe494b6dmr27155845ad.38.1728029590960;
-        Fri, 04 Oct 2024 01:13:10 -0700 (PDT)
-Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:73bb:cecf:e651:2ce6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beefad264sm19401305ad.205.2024.10.04.01.13.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 01:13:10 -0700 (PDT)
-From: Fei Shao <fshao@chromium.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Fei Shao <fshao@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 9/9] arm64: dts: mediatek: mt8188: Add eDP and DP TX nodes
-Date: Fri,  4 Oct 2024 16:12:01 +0800
-Message-ID: <20241004081218.55962-10-fshao@chromium.org>
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-In-Reply-To: <20241004081218.55962-1-fshao@chromium.org>
-References: <20241004081218.55962-1-fshao@chromium.org>
+	s=arc-20240116; t=1728029530; c=relaxed/simple;
+	bh=27vdyBwZrOTnjtEnm92fTx/uIulW8vv6bAvMEt++eiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lJtkxQXJ9VU7aGtmTtD0hFCJAb5fICvLmQ/E1Z3+yRx2zlPMVp6GEGmIXy3DejcE5pt+9nQ3ZDiGCvayLtZvvc2j11ue2qOtXHjfPPf7q7qPRy9dEabVPGKtyll7eKZdnNMxxNdzroJdsBgJYsfQrXkoq3NGApHtVKuk1SRmbiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tNEi/nkp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E36D3C4CECC;
+	Fri,  4 Oct 2024 08:12:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728029530;
+	bh=27vdyBwZrOTnjtEnm92fTx/uIulW8vv6bAvMEt++eiU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tNEi/nkpZnf9gHaw5GEFi5YYEKgxD3JhdEcrjdkTXAI3aTIWzA2PJ1M2j3nS5VSbG
+	 W9RBAOZO1Oq04gBBj5ZlLlFwdSxHLr22JwQrS/caL9wGiRqdYih7gfAHxwRqDG5YNt
+	 MHrB+sxbB0zFd6cIPLMF6hV4/XfrVRFQ3Oa44zQo=
+Date: Fri, 4 Oct 2024 10:12:07 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] usb: typec: tipd: Fix dereferencing freed memory 'fw
+ in core.c
+Message-ID: <2024100444-unwound-poppy-97ec@gregkh>
+References: <20240923092625.2673-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923092625.2673-1-kdipendra88@gmail.com>
 
-Add edp-tx and dp-tx nodes for the Embedded DisplayPort (eDP) and
-DisplayPort ports to connect to DP-INTF ports and panels, and add the
-efuse cell for the DP calibration data.
+On Mon, Sep 23, 2024 at 09:26:24AM +0000, Dipendra Khadka wrote:
+> Smatch reported dereferencing freed memory 'fw' in tps6598x_apply_patch().
+> 
+> Invoking relrease_firmware(fw) just after checking ret.
+> 
+> Fixes: 916b8e5fa73d ("usb: typec: tipd: add error log to provide firmware name and size")
+> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+> ---
+> v2:
+>  - Updated patch subject.
+>  - Updated patch description.
+>  - Added Fixes tag.
+> v1: 
+>  drivers/usb/typec/tipd/core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+> index ea768b19a7f1..70bf8023ea35 100644
+> --- a/drivers/usb/typec/tipd/core.c
+> +++ b/drivers/usb/typec/tipd/core.c
+> @@ -1191,12 +1191,13 @@ static int tps6598x_apply_patch(struct tps6598x *tps)
+>  	dev_info(tps->dev, "Firmware update succeeded\n");
+>  
+>  release_fw:
+> -	release_firmware(fw);
+>  	if (ret) {
+>  		dev_err(tps->dev, "Failed to write patch %s of %zu bytes\n",
+>  			firmware_name, fw->size);
+>  	}
+>  
+> +	relrease_firmware(fw);
 
-Individual board device tree should enable the nodes and connect input
-and output ports as needed.
+Any specific reason why you did not even compile this version of the
+patch?
 
-Signed-off-by: Fei Shao <fshao@chromium.org>
----
-
-(no changes since v1)
-
- arch/arm64/boot/dts/mediatek/mt8188.dtsi | 26 ++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-index 8864f1ead663..3b71d01d41cf 100644
---- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-@@ -2021,6 +2021,10 @@ efuse: efuse@11f20000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 
-+			dp_calib_data: dp-calib@1a0 {
-+				reg = <0x1a0 0xc>;
-+			};
-+
- 			lvts_efuse_data1: lvts1-calib@1ac {
- 				reg = <0x1ac 0x40>;
- 			};
-@@ -2882,5 +2886,27 @@ padding7: padding@1c124000 {
- 			power-domains = <&spm MT8188_POWER_DOMAIN_VDOSYS1>;
- 			mediatek,gce-client-reg = <&gce0 SUBSYS_1c12XXXX 0x4000 0x1000>;
- 		};
-+
-+		edp_tx: edp-tx@1c500000 {
-+			compatible = "mediatek,mt8188-edp-tx";
-+			reg = <0 0x1c500000 0 0x8000>;
-+			interrupts = <GIC_SPI 676 IRQ_TYPE_LEVEL_HIGH 0>;
-+			nvmem-cells = <&dp_calib_data>;
-+			nvmem-cell-names = "dp_calibration_data";
-+			power-domains = <&spm MT8188_POWER_DOMAIN_EDP_TX>;
-+			max-linkrate-mhz = <8100>;
-+			status = "disabled";
-+		};
-+
-+		dp_tx: dp-tx@1c600000 {
-+			compatible = "mediatek,mt8188-dp-tx";
-+			reg = <0 0x1c600000 0 0x8000>;
-+			interrupts = <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH 0>;
-+			nvmem-cells = <&dp_calib_data>;
-+			nvmem-cell-names = "dp_calibration_data";
-+			power-domains = <&spm MT8188_POWER_DOMAIN_DP_TX>;
-+			max-linkrate-mhz = <5400>;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.47.0.rc0.187.ge670bccf7e-goog
+{sigh}
 
 
