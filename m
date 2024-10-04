@@ -1,110 +1,182 @@
-Return-Path: <linux-kernel+bounces-350750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ACD990903
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:23:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0AB899090F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADF6328161E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:23:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C10FE1C21E0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3EB1C7295;
-	Fri,  4 Oct 2024 16:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hJl5Z07e"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31411C7294
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD911C75F5;
+	Fri,  4 Oct 2024 16:24:11 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670EE1C75E4;
+	Fri,  4 Oct 2024 16:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728058962; cv=none; b=mt25zmTDGDDVS/SqTQMhzT84tkmXSGrtmx1/u7C5LwjOapwgTAwkO8yj1Yy9ZVOYsBCiYom1MFxqyx+NnVnK5gLiHR6ovdTpgOfAbPiu8q160Hldojk+P9b/oc5vR3SJwXa0kHCwR2dk0LoP80T/o3MaBvL2qN71srSf0A3dAtg=
+	t=1728059051; cv=none; b=en2hEHwvTcC0RE6DynxsCLxFuBozYAC3jbkER+dBmtBmz8+YMkfIBp+Vu6gpGbYTqb3rl6xUHDv4Rpe4ZZtPIRpmm6wZc0QTiq25GN1OlhULXKTiYt6SyI6iPkr+YANbeAr8TdoMTKqsdfP1lE/8Q1p5aWnejXbT8iKS8RRsijg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728058962; c=relaxed/simple;
-	bh=OW3oP33x3PxA4gdYXyjY0vacWaWZ+M921+FbsBzfR+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OvAVBIvLmL+Lw65PL+wcFnneCd17f/o4gcyYsoVungWCqCFU8C58kZucyZazq4WYvFpqOlnIZ+u3i87n8ZXpOYZA8SoP3VTMtrs38+zvLp0EqoNpQkkKsuvCQTJIaWUNqWfnbNaM1OSBU8qyiwtX1JFWGkpBskhV7LLA/d2JjtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hJl5Z07e; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 25ADF4000B;
-	Fri,  4 Oct 2024 16:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728058953;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RFJZiZ70kuhVJM7CKPrrjtdjJ4PTniafhKm6S3phoZQ=;
-	b=hJl5Z07e9oxr1TwZw9Ch9RBk7tos3r+M+r5M51lvHnaDYMyG5qfg/OdFfiapl3YMYVAsRs
-	xxy/G9yTIvQCHQsdKY7PCEWeDq+Qx41KjYQO2oVbjPJd2DT+p85F2dHKTv2EdIiP6GdgM/
-	k5c2/DPV+7wlauVCGZJLGIzA38tslBs0LugAls/cD9wk2f+7wTOkrsqsgbC+3dyk4YOw3w
-	eWHsnIw5UXBzawSsxf0ijIPAbd0J4Vv7KLKNz71Q0YkjBLhcsBo4Ao7ngIZjCiVKw2mMZb
-	o11z7oLOAnv0KvQVgLIxmN+3mtdsgZFxDAeRKr379QSdlEMMTIf8zTg+ej07ZQ==
-Date: Fri, 4 Oct 2024 18:22:29 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
- bbrezillon@kernel.org, boris.brezillon@collabora.com,
- conor.culhane@silvaco.com, gregkh@linuxfoundation.org, imx@lists.linux.dev,
- pthombar@cadence.com, ravindra.yashvant.shinde@nxp.com
-Subject: Re: [PATCH v6 2/3] i3c: master: Extend address status bit to 4 and
- add I3C_ADDR_SLOT_EXT_DESIRED
-Message-ID: <20241004182229.6e08d02c@xps-13>
-In-Reply-To: <ZwAHziElHUR7ZdKS@lizhi-Precision-Tower-5810>
-References: <20241003-i3c_dts_assign-v6-0-eae2569c92ca@nxp.com>
-	<20241003-i3c_dts_assign-v6-2-eae2569c92ca@nxp.com>
-	<20241004092914.42701e56@xps-13>
-	<ZwAHziElHUR7ZdKS@lizhi-Precision-Tower-5810>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728059051; c=relaxed/simple;
+	bh=MIXwu4c46lO6pDES3z40SL2p1LX6813TKrzziANSpO4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=miBlHO8xZ4XJk/HphM8nlVEd8fKH3RYd/lwchE1yFNWT81iO4YMPg633dqKQB/pbcDFaVRnTkiws/C0mssS0wawO+l2s8AHOLAS+lBXSt9NFTWHJaoTr1dSXduIKuGLsZi5Oi6ZXDcqVpV/HN7qaObmNhn2lGyIBScaRTT0ahDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 0A92992009C; Fri,  4 Oct 2024 18:24:01 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 0673C92009B;
+	Fri,  4 Oct 2024 17:24:01 +0100 (BST)
+Date: Fri, 4 Oct 2024 17:24:00 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Arnd Bergmann <arnd@kernel.org>
+cc: Niklas Schnelle <schnelle@linux.ibm.com>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Jiri Slaby <jirislaby@kernel.org>, 
+    =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+    linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+In-Reply-To: <b59d81ee-04af-4557-9d35-ec2c03fbcbe7@app.fastmail.com>
+Message-ID: <alpine.DEB.2.21.2410041642140.45128@angie.orcam.me.uk>
+References: <20240405152924.252598-1-schnelle@linux.ibm.com> <20240405152924.252598-2-schnelle@linux.ibm.com> <alpine.DEB.2.21.2405230244140.1257@angie.orcam.me.uk> <ef2912910d006c573324bcf063cb76e843dc8267.camel@linux.ibm.com> <alpine.DEB.2.21.2410011707550.45128@angie.orcam.me.uk>
+ <7bcec0eb88c3891d23f5c9f224e708e4a9bb8b89.camel@linux.ibm.com> <alpine.DEB.2.21.2410021632150.45128@angie.orcam.me.uk> <84bbda13-ded1-4ada-a765-9d012d3f4abd@app.fastmail.com> <alpine.DEB.2.21.2410022305040.45128@angie.orcam.me.uk>
+ <b59d81ee-04af-4557-9d35-ec2c03fbcbe7@app.fastmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Frank,
+On Fri, 4 Oct 2024, Arnd Bergmann wrote:
 
-> > > @@ -1918,9 +1959,10 @@ static int i3c_master_bus_init(struct i3c_mast=
-er_controller *master)
-> > >  			goto err_rstdaa;
-> > >  		}
-> > >
-> > > -		i3c_bus_set_addr_slot_status(&master->bus,
-> > > -					     i3cboardinfo->init_dyn_addr,
-> > > -					     I3C_ADDR_SLOT_I3C_DEV);
-> > > +		i3c_bus_set_addr_slot_status_mask(&master->bus,
-> > > +						 i3cboardinfo->init_dyn_addr,
-> > > +						 I3C_ADDR_SLOT_I3C_DEV | I3C_ADDR_SLOT_EXT_DESIRED,
-> > > +						 I3C_ADDR_SLOT_EXT_STATUS_MASK); =20
+> >  It can be worse than that.  Part of my confusion with the defxx driver 
+> > trying to do port I/O with my POWER9 system came from the mapping actually 
+> > resulting in non-NULL invalid pointers, dereferencing which caused a flood 
+> > of obscure messages produced to the system console by the system firmware:
 > >
-> > However I'm not sure I understand the use of the
-> > set_addr_slot_status_mask() function. Can't we just use the normal
-> > function and just extend the mask in the fist place? =20
->=20
-> The major purpose of set_addr_slot_status_mask() is that reduce code
-> change. There are already address alloc/free by using I3C_ADDR_SLOT_FREE.
->=20
-> we don't want i3c_bus_set_addr_slot_status() touch bit
-> I3C_ADDR_SLOT_EXT_DESIRED since it was init at scan dts.
+> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> > IPMI: dropping non severe PEL event
+> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> > IPMI: dropping non severe PEL event
+> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> > IPMI: dropping non severe PEL event
+> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> > IPMI: dropping non severe PEL event
+> > [...]
+> >
+> > from which it was all but obvious that they were caused by an attempt to 
+> > use PCI port I/O with a system lacking support for it.
+> 
+> Ah, that's too bad. I think this is a result of the patch that
+> Michael did to shut up the NULL pointer warning we get, see
+> be140f1732b5 ("powerpc/64: Set _IO_BASE to POISON_POINTER_DELTA
+> not 0 for CONFIG_PCI=n"). I really wish we could have finished
+> Niklas' series earlier to avoid this.
 
-I agree, but in general you will never remove any "desired" slot, so
-the "set status", besides at init time, should never touch these extra
-bits?
+ That was back in 2020 (5.9.0), so long before be140f1732b5, and it's a 
+production system, so I don't want to fiddle with it beyond necessity:
 
-> There are 18 place, using i3c_bus_set_addr_slot_status(), but we only need
-> touch I3C_ADDR_SLOT_EXT_DESIRED bit when scan dts.
->=20
+$ uptime
+ 16:53:27 up 466 days,  9:49,  5 users,  load average: 0.14, 0.12, 0.09
+$ 
 
-Thanks,
-Miqu=C3=A8l
+ Essentially defxx has this code (not changed much since, except that 
+`dfx_use_mmio' is now always true for PCI):
+
+	if (!dfx_use_mmio)
+		region = request_region(bar_start[0], bar_len[0],
+					bdev->driver->name);
+	if (!region) {
+		dfx_register_res_err(print_name, dfx_use_mmio,
+				     bar_start[0], bar_len[0]);
+		err = -EBUSY;
+		goto err_out_disable;
+	}
+	/* ... */
+	if (dfx_use_mmio) {
+		/* ... */
+	} else {
+		bp->base.port = bar_start[0];
+		dev->base_addr = bar_start[0];
+	}
+
+so whatever came out of BAR[1]:
+
+pci 0031:02:04.0: [1011:000f] type 00 class 0x020200
+pci 0031:02:04.0: reg 0x10: [mem 0x620c080020000-0x620c08002007f]
+pci 0031:02:04.0: reg 0x14: [io  0x0000-0x007f]
+pci 0031:02:04.0: reg 0x18: [mem 0x620c080030000-0x620c08003ffff]
+pci 0031:02:04.0: BAR0 [mem size 0x00000080]: requesting alignment to 0x10000
+
+was supplied to `inl'/`outl' and wreaked havoc.
+
+ First of all I think `request_region', etc. ought to fail in the first 
+place with non-port-I/O systems: why does a request for a resource that 
+cannot be satisfied succeed?  It would have already solved the issue with 
+defxx, making the driver gracefully fail to register the device.  I don't 
+know if this has been fixed since.
+
+ Second, rather than relying on a magic mapping in the physical space 
+causing a bus error (unless you are absolutely sure it is going to work in 
+100% cases), I think it would make sense to make port I/O accessors call 
+BUG_ON(no_port_io) explicitly for platforms where it is only known at run 
+time whether PCI/e port I/O is available or not.  Port I/O is the opposite 
+of performance already, so a couple of extra instructions will be lost in 
+the latency and at least POWER has conditional traps, so there'd be no 
+branch penalty.
+
+> >  Well, virtually all non-x86 systems continue supporting PCI/e port I/O 
+> > via a suitably decoded CPU-side MMIO window, so I think coming across one 
+> > that doesn't can still be a nasty surprise even in 2024.  For instance 
+> > I've been happily using a PC parallel port PCIe option card, one of the 
+> > very few interfaces if not the only one remaining that have not ever seen 
+> > an MMIO variant, with my RISC-V hardware, newer than said POWER9 system.
+> >
+> >  So far it's been the s390 and a couple of POWER system implementations 
+> > that have support for PCI/e port I/O removed.  Have I missed anything?
+> 
+> I meant PCIe cards with I/O space here, not host bridges. I know you
+> have a lot of them, but what I've heard from Arm platform maintainers
+> is that they tend to struggle finding any PCIe cards to test their
+> hsot bridge drivers on, and I expect that a lot of them are actually
+> broken because they have never been tested and just copied the
+> implementation badly from some other driver.
+
+ I would expect serial ports to be the most common PCIe options still 
+using port I/O.  Sadly OxSemi was acquired and their line of devices, 
+which support MMIO, cancelled at one point and my observations seem to 
+indicate that what is still manufactured uses port I/O (correct me if I'm 
+wrong please).  Last time I checked OxSemi-based option cards were still 
+available though, but one may have to check with the supplier as to 
+whether they have been configured for MMIO or port I/O, as they're not 
+dual-mapped.
+
+> I think the only new PCIe devices you can find today that still use
+> I/O space are ones with compatibility registers for IBM PC style
+> hardware (vga, uart, parport), but most users would never have used
+> one of those and instead use the native register interface of their
+> GPU (on non-x86), USB-serial and no parport. Other devices that
+> needed I/O space never worked on PCIe anyway because of the lack
+> of ISA style DMA.
+
+ I think serial port options are the most likely devices still in use, 
+given that UARTs continue being widely used in industrial applications.  
+Depending on application a USB serial adapter may or may not be suitable 
+to interface those.
+
+> There are also a lot of Arm systems that have no I/O space support at
+> all, such as the Apple M2 I'm using at the moment.
+
+ Thanks for letting me know.  Is it AArch64 only that has no port I/O 
+support in the PCIe root complex nowadays, or is it 32-bit ARM as well?
+
+  Maciej
 
