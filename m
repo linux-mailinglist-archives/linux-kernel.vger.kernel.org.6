@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-350855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A55990A8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:00:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B39D9990A8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2355B2206D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:00:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC0931C21112
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20832E83F;
-	Fri,  4 Oct 2024 18:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1DF823DF;
+	Fri,  4 Oct 2024 18:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGN5S/Ri"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cEBnjt3C"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC5B1DAC8D
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798371E377B
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728064828; cv=none; b=aEZ/MBEIpfky7PmIC9T2sKVcqsASczVVf7XSx0DO0IFSHUn4DBEuqRLlmOR23RfPhuKGy42fDp+9vCHx8ms8sIYCrRLqP7EX04O5C8nkm7YofnQTUuJcjWWdYUZU/NCdOTViABQilRt/F42h3wgo/sEiMTuyhGpIn0/HFFV/ZTY=
+	t=1728064884; cv=none; b=SgGBmUKV44hw3EyMVYWBA0/Z84nUpaWbCz3dy6SYKulJvTcQODFn72w8AmFz2IAU4mEUeUVGYUviLhKK0HREWv8TwNCeT4QeZTz7/lkdFKwDE87wXlup3VR9TI+WEHPuRXBh8A3J/Yfr+dAN4ll0JvJ6ah3ma2xMAtlEhsAvyIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728064828; c=relaxed/simple;
-	bh=24SrSZcE9gFtxi3ujAeUld17DOZqCc/Q9kJuwTv4xgs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nCrZ2JatPj9INM6jOZ8hrmF1byvmFSBu2FQGAjFSqleuE6gRY1yd12xjU9kZV0wXink6u0C/6+6ZbD+DzVlC4nU+nHLE4C1aB0f2ZZ2vjtB+kMPopqb+hbkCmEDCnoKo5m31niZ3HNmzhHzhIvmNyBXPp8u40+xy47Na3WYc6Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGN5S/Ri; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e084dc44bcso234657a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 11:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728064826; x=1728669626; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RKWT3sDU4NtrrluAI0QmU3x+uhGBRrICw49xVu95Gg0=;
-        b=JGN5S/RiJ78vrcbG/+Tr6HssVUclWEKh7ldJnx9a9lq8jrhoDYjbwkv4z19km4qFzq
-         uu6wjpyQfuu54iU2OZcm2L+7orRrKqifo5JEtzdK5HcU9M0dLw5wd/ZA7+wCv054gTf8
-         tL9lBunfgj8u9VeiFKCNAUiDuifcgqZVouJYq3oJBa/4AD0DGnq0RntF20ydZyuXZJx6
-         linPBa/7y7f9fCJHsP+XWXJZjxJnJwKEYBAWxkNYgVUUvn/sEGR50GiqO14HNUxAKuNN
-         PwiOfR4gZBuMI1jRgzm9hDI7tm/8MLv2d8IXayOI16aGWOs1pfFUfqcl8IRVGXECjV1N
-         8aXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728064826; x=1728669626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RKWT3sDU4NtrrluAI0QmU3x+uhGBRrICw49xVu95Gg0=;
-        b=H1wIqSVX54XFZqncPH1M3lwLXzHFi7RGp+utBEhO4qF0WdMPxNa4t5wkYIfrATuARP
-         qwfExfRvBVATS5gDMLVhVPdxaEEEFGGrpzm8QzZCeGUdQKHdOoBIIm4ZbWJzzcVyGPbI
-         D+h4Se03G4jY0C7PYYnbP33JnvRCXvMYsVHS0iMTAfRMIL0Wkk1GnQV/tnHRAaJI1Nyk
-         r0cjl/uB5FsY8RneeWJoXUPFGuspUnDc8KIIhgirdkCpY5DCyPO9hwm1pK7P6G7gU6wj
-         3R1OFzNjLFzmPxFXi5ZDLQ89KnaGV64PF9eNJ1GM3YSXonkixorJPm/cpT36ywqgCe3x
-         kcgA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3JgMlQ5igKajdV05JSYiDN2AZUhoRtg7IfsqiViKqHTZ0caoNQfMW8FSYxzVGXUewSHJ+uTZaxS91Rqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygT+DPUawPvm424Q+Lzjr93sHd1QuqAOhnkQEz8kVSr+xczpXd
-	z/eBu7eltIDF7UUyLp8Lh8oprPkVuKG5K4t2weI9kBhqnEsodaqF+kf/yDbcAyTTCUNGxY2IM/h
-	HcbuZD10UFTEmy3t5/ifEPp9XDRU=
-X-Google-Smtp-Source: AGHT+IGNe3YVRFKhWrgUI99fM++c+XkooDEtmM3ozfZ5VLPvyPYojqK0jLsnzBStdbGNJy4bDlX3c3UeSSmtiOAwF1I=
-X-Received: by 2002:a17:90a:3dc5:b0:2d8:9f4e:1c3d with SMTP id
- 98e67ed59e1d1-2e1e63237e8mr1635577a91.5.1728064826219; Fri, 04 Oct 2024
- 11:00:26 -0700 (PDT)
+	s=arc-20240116; t=1728064884; c=relaxed/simple;
+	bh=uWPZ3ufbC/wfGebvblqb3Mr0rz7AR9cnbkpxqvS2umE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gdz6TtWgahhUbAFHG+A+Wlyik75HUkNqlOsDaCsoOSK0RJsPDDQh2doPCa6Otz1W89aT1gkL5kOX9SWal9L/ikNd7ABqM+oQWjDuboXaQGzajb7GPlppj0jenRmSraBSdOX3VK4SqxP4JOMz9Z9W/PqQYIBbgdKNUq3hClBrt4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cEBnjt3C; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494APai9029115;
+	Fri, 4 Oct 2024 18:01:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qWeHTzzr5dKEVUmcLYSOmzmVGfE/02KwSjMavnSpS8w=; b=cEBnjt3CsOcpyUg6
+	g4oW1gkoeaQwbijs3SxX7cHQK8NDnHVIbl/9egJKaARbde0m8Qr3vo84p75BuLKs
+	7/jqPQrWsipJT7nl/rdChKz9VYtFZcVVM6t9KYiXgkesWS4knSmiaE2rtLJ8z2Mx
+	kd2ZA9HDZMkNzVOzEtbcBiKNP5/GQtQHIC8so6dNAjj0d+rMciif8RRzo84xf+ER
+	0ZqcYxwbLNwqiaXfn3a224zaC/C5tNLXxJf1QHQA+JbV0U2bKFMkKoO5mOSGrL9E
+	46hMmRfh2fG6ycXHaXuZUwOn+XevTwEMSjk3L+61eiU30ZFbm9hHeHxmtq77afZ+
+	QrpgIw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205hawq4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 18:01:18 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494I1H3f003827
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 18:01:17 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
+ 11:01:17 -0700
+Message-ID: <8549424d-bd22-8308-c661-c2ef13cdc441@quicinc.com>
+Date: Fri, 4 Oct 2024 12:01:16 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004081618.27599-1-advaitdhamorikar@gmail.com> <00761132-75f3-41fd-b571-30b0cbe5565d@amd.com>
-In-Reply-To: <00761132-75f3-41fd-b571-30b0cbe5565d@amd.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 4 Oct 2024 14:00:14 -0400
-Message-ID: <CADnq5_OKww1YZ1R_OytEMLcNVwdq=-ckc2gqQ+WMyOv6AZ9kqg@mail.gmail.com>
-Subject: Re: [PATCH-next] Fix unintentional integer overflow
-To: "Sundararaju, Sathishkumar" <sasundar@amd.com>
-Cc: Advait Dhamorikar <advaitdhamorikar@gmail.com>, alexander.deucher@amd.com, 
-	christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com, 
-	simona@ffwll.ch, leo.liu@amd.com, sathishkumar.sundararaju@amd.com, 
-	saleemkhan.jamadar@amd.com, Veerabadhran.Gopalakrishnan@amd.com, 
-	sonny.jiang@amd.com, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, anupnewsmail@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V3 07/11] accel/amdxdna: Add command execution
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240911180604.1834434-1-lizhi.hou@amd.com>
+ <20240911180604.1834434-8-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240911180604.1834434-8-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2cBXhKe3-JPb7Mob1bWJOBauxhG2eP64
+X-Proofpoint-ORIG-GUID: 2cBXhKe3-JPb7Mob1bWJOBauxhG2eP64
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ malwarescore=0 clxscore=1015 mlxlogscore=723 phishscore=0
+ priorityscore=1501 impostorscore=0 lowpriorityscore=0 spamscore=0
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040124
 
-On Fri, Oct 4, 2024 at 5:15=E2=80=AFAM Sundararaju, Sathishkumar
-<sasundar@amd.com> wrote:
->
->
-> All occurrences of this error fix should have been together in a single p=
-atch both in _get and _set callbacks corresponding to f0b19b84d391, please =
-avoid separate patch for each occurrence.
->
-> Sorry Alex, I missed to note this yesterday.
+On 9/11/2024 12:06 PM, Lizhi Hou wrote:
+> +enum amdxdna_cmd_type {
+> +	AMDXDNA_CMD_SUBMIT_EXEC_BUF = 0,
+> +	AMDXDNA_CMD_SUBMIT_DEPENDENCY,
+> +	AMDXDNA_CMD_SUBMIT_SIGNAL,
+> +};
+> +
+> +/**
+> + * struct amdxdna_drm_exec_cmd - Execute command.
+> + * @ext: MBZ.
+> + * @ext_flags: MBZ.
 
-I've dropped the patch.  Please pick it up once it's fixed up appropriately=
-.
+I see a check for ext_flags, but not ext
 
-Thanks,
-
-Alex
-
->
->
-> Regards,
-> Sathish
->
->
-> On 10/4/2024 1:46 PM, Advait Dhamorikar wrote:
->
-> Fix shift-count-overflow when creating mask.
-> The expression's value may not be what the
-> programmer intended, because the expression is
-> evaluated using a narrower integer type.
->
-> Fixes: f0b19b84d391 ("drm/amdgpu: add amdgpu_jpeg_sched_mask debugfs")
-> Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_jpeg.c
-> index 95e2796919fc..7df402c45f40 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> @@ -388,7 +388,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_get(void *d=
-ata, u64 *val)
->   for (j =3D 0; j < adev->jpeg.num_jpeg_rings; ++j) {
->   ring =3D &adev->jpeg.inst[i].ring_dec[j];
->   if (ring->sched.ready)
-> - mask |=3D 1 << ((i * adev->jpeg.num_jpeg_rings) + j);
-> + mask |=3D (u64)1 << ((i * adev->jpeg.num_jpeg_rings) + j);
->   }
->   }
->   *val =3D mask;
+> + * @hwctx: Hardware context handle.
+> + * @type: One of command type in enum amdxdna_cmd_type.
+> + * @cmd_handles: Array of command handles or the command handle itself
+> + *               in case of just one.
+> + * @args: Array of arguments for all command handles.
+> + * @cmd_count: Number of command handles in the cmd_handles array.
+> + * @arg_count: Number of arguments in the args array.
+> + * @seq: Returned sequence number for this command.
+> + */
+> +struct amdxdna_drm_exec_cmd {
+> +	__u64 ext;
+> +	__u64 ext_flags;
+> +	__u32 hwctx;
+> +	__u32 type;
+> +	__u64 cmd_handles;
+> +	__u64 args;
+> +	__u32 cmd_count;
+> +	__u32 arg_count;
+> +	__u64 seq;
+> +};
 
