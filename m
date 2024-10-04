@@ -1,128 +1,122 @@
-Return-Path: <linux-kernel+bounces-351312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E1E7990F9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:03:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12ED9990F9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C011D1C22407
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A311C21188
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56431FBCAE;
-	Fri,  4 Oct 2024 19:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9AA1AE01D;
+	Fri,  4 Oct 2024 19:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2bm3SsiF"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S2WDZQJp"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521AE1ADFE1
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 19:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68651AE010;
+	Fri,  4 Oct 2024 19:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728069170; cv=none; b=QXG4Nc9PkOifcmohaGmmymqA7i2xDbvy0WDdw4EmW8eSZLPBNJ1Zg/X9lKOYup64Uf2U7c3bBbgG+PB1ehakZPjY0qhyXVfhw31a38aG/HTcJod5TANMD1JgOATAvg1n+ILyQjVGsUM47KziembllhDuFDkEu8MmR+me14WDa/A=
+	t=1728069286; cv=none; b=h2qlzARjimwX3DlQVjvnQWfpcGyFs/2IzZkgLi9At8D1n7pICVX4GE0PjnVTknsxSljmUy1Q5oaLcRw/S1iMeL0GqbUTdo4tJsizrBt9EE5WXkNcP9Ce9HuSCB+Z3vVHTA6J/i4IKHmlSog7eLRAlcj8Co9wOVjDe0mkXZ3VGB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728069170; c=relaxed/simple;
-	bh=/M1ZjTmABJbh4MwRycydLtqA1KHIs1Qq3zaDKYdOVWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tUPMuNVQ3q6m8+3uKYn4T7194MADzaT50pVQeZqpKstsl0BOozLAFp3ua5CJgf7gSzJLctKdKRVqbsgoVBbbZVnIoriNYo1NbGr59pLA+M6QfjzneEt4qAOd3QeK6ATnwMixPVyP4/5z2ZYDw0WjIcpeOwCfY8ubXUHFdEEFb6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2bm3SsiF; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5e77c6ed92bso1412506eaf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 12:12:45 -0700 (PDT)
+	s=arc-20240116; t=1728069286; c=relaxed/simple;
+	bh=Vm5cwzVRBb2+9hU6XAIcq43yYLjs8dd8c1WLVKtaLP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sJx9oI7zVvfKz2pJUAzzkIxGN74DWCbF6Aex0o0qicuiD+hSTazfM2bj67nNYZsOr3Eu6+8DAMF6LxL5Ujx9P2OlncSJ3LYN0NGb/WzBrd8svwfqjgWGyR1eLYIZ/jPVlIJNk0LH9PsAwzQQfmj5ciPEZBqDm5e6Wk+UHvop8kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S2WDZQJp; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso23760185e9.2;
+        Fri, 04 Oct 2024 12:14:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728069165; x=1728673965; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X8E/75Ze8LWS+oGsxT4cv2r0PKvnIHpyk0O4+fHPIOA=;
-        b=2bm3SsiFnil/TerVkPL27FcNu6kn2S1Ba4V6iJbhm8KA/CTWn9lEZcGpbCy0UvAaad
-         RNa9st+PTK+vVm7kYOQZL2hMsHGPhRnio9VLBIcXTTraC84aWu8JyJ1CapFKXpGVijqR
-         U0YaRXesOhWPflYv/eMLu38nhh+xlQAIsUX3Nrqxw4ZLvnUJj7XEq058j7JSXmjvCJrs
-         cIiM+5pYTygTqHyGyuH8ON6k5sQe+MscV3W13u3YAR8/BoYwkz+2uVzZqleDRbV16HSv
-         L2SsEdfr0PuCl0I+S+fbB9PbyVjoDIYpoIaadqyUMxvmjB3pQaEM3ca5M5bqGkgiAqXD
-         er4A==
+        d=gmail.com; s=20230601; t=1728069283; x=1728674083; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8CycWNZFawBP96zK96WEn+kWaW4vTJKQJHVIc0au9Ow=;
+        b=S2WDZQJpY+B5HhYqkKNrcwTd8uqWJKPVI41nZyWsCNzOfYxLcnsCdiK+VEyU/M5LS/
+         fieCyL+LvW4aafa/SMG8IwWnqbmGMt+eQ0JkVJ6nCLzpf2RuXB90mM45qXoIVYlhV9M1
+         ItSRqm85eb7hqsX/BXS910lHAD/N5f3uJrG7UBqe+5v/PNpv/gUu8eu0NLUFLgdDWBTc
+         0GDea8i3q1bRpLd0LjWISLEW2fiWNgZ0OZqjqTbyZAinsX92TH//dug4+elxzpIthBQM
+         pdCMyQ+nJ5TIBjqU5iUnW6klGrhQjl7TGUd+DBMxzpU0IJ+DMMTqBPHUxiBHTH7xgenp
+         tU5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728069165; x=1728673965;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1728069283; x=1728674083;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X8E/75Ze8LWS+oGsxT4cv2r0PKvnIHpyk0O4+fHPIOA=;
-        b=fjJ4lHNTdwhS9xIHPrjHy1cvQpaeDdukrErwzW8K6UfZp2OXfFPq5WfqL2TWEZ4e0Z
-         1nhcpM6VlRstT/3ZtmYMJXh8HJQaFU1e/pfgIiY4e6u5x4Bdq70xqVs5l5HTBeQwNZgZ
-         nkvUMwX3kt9dxRash3vgBG5CXNtkxSds4e60kqKACweYnO3lCTGBLtgZxEhi+sP9jYlG
-         eCMwZssCiFihvoINQEzw3GIsR65IXdrt96ZuvyndRcgjm2ZZb+crdE4kfg8BFEJwO30u
-         +CxDaJ9IBdjj8Ehh+8ghIINA4N767Vczu970SG5nWt+nHcPc2DcQaErWPfqsZM7rJ7Kn
-         Ax1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUX/ik91kiRin6Z7gFiHmVZIen8e7HT5V0Vw2UTG9bepeTLCD6cgRNR8FV5HB22OxNS+mgJ3gSymVpX9ec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYF4sq96+Ow9QpinJFhXftSi37Ucc4EzhCjQOvbsGjS8LwHVA9
-	WSOYc5gJW8luQ4j0EGtYJiBv1qPMc03celhSYe5RC1QQRsb9EsokuPQvuYtmVCA=
-X-Google-Smtp-Source: AGHT+IFauv67y1n9nX22pC/6NEemDgp2UqXjYbZLEVPwPcm0WP0X9oCZ9xusSoOdx+Ve9A4mDrHazg==
-X-Received: by 2002:a05:6870:3913:b0:278:14bf:2fb with SMTP id 586e51a60fabf-287c228bee8mr2703044fac.34.1728069165246;
-        Fri, 04 Oct 2024 12:12:45 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7155674599dsm137977a34.9.2024.10.04.12.12.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 12:12:44 -0700 (PDT)
-Message-ID: <0ce9a516-dee5-49cd-bb74-62166c16e644@baylibre.com>
-Date: Fri, 4 Oct 2024 14:12:44 -0500
+        bh=8CycWNZFawBP96zK96WEn+kWaW4vTJKQJHVIc0au9Ow=;
+        b=be3tAXwUMcbCJgczNiId/OExjf6KH1mVvJaFvF8Xe2my6xcrY80FJpRjMcpOL43WO5
+         iQmPbQuQ/hQEjTbNNxTLJp6tXI2Rrf2iaKTv63/u1R8+1jwFy56anvDtQmp9Jxu/DsdM
+         asXwdQQph+7v7CFT0DwcNNfEEB2FNIftln8n8eL1blIuJSLe9GU1eoj5evRi6b0LUj5E
+         BlYmuEIEFNTfV5JJExACdor5AHYK3wMKLALNuknmSTtydLibPYRCbgtEy2Ka+AbTbdLR
+         WvzZeKSx8xOTf0Say4ygr+lbUGyzhhPUyl6vo2hu9Rl2ASaT3w6bhqiJCfwFhUmALyQ4
+         El1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVV/JHj6b9MHyEqoAAxVL4UuZFtmYRZQagM/Im3evcghrDKZyrjBocnNuy60tHcRJgHG12H3QR9DDVw@vger.kernel.org, AJvYcCXlNYac2a0YtgAFHPQtbLBYhJr0NS9hGkCJQ/kpjRndlrJQoVVUUHTWAw8W1mD5nI+KX+sAFb1Zwx9E2bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFr3D+WoINOBZy3AeVcapr2O+LhAnQyYhw6WyyiaUW1UiNXnEA
+	KeDwDmtkwZkYobBLPPzLkCx6mDwZRoQm8EDQLEBGG3nRzmUttnZ3
+X-Google-Smtp-Source: AGHT+IGCBOY3jHzzlTONE1G+8e4KYsJ+Y2gkCxsC/PCJoAHiPiLj0M+8frbC93RAc9jZzeID3U5I7Q==
+X-Received: by 2002:a05:600c:474a:b0:42f:6d3d:399f with SMTP id 5b1f17b1804b1-42f85ac193fmr29861845e9.21.1728069282796;
+        Fri, 04 Oct 2024 12:14:42 -0700 (PDT)
+Received: from freebase (oliv-cloud.duckdns.org. [78.196.47.215])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89eac29dsm4271285e9.26.2024.10.04.12.14.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 12:14:41 -0700 (PDT)
+Date: Fri, 4 Oct 2024 21:14:39 +0200
+From: Olivier Dautricourt <olivierdautricourt@gmail.com>
+To: =?utf-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, mathias.nyman@intel.com
+Subject: Re: [PATCH] usb: xhci: xhci_setup_port_arrays: early -ENODEV if
+ maxports is 0.
+Message-ID: <ZwA-n56XlNkkLNXM@freebase>
+References: <20240930052336.80589-1-olivierdautricourt@gmail.com>
+ <20241004125716.75c857ae@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: core: make iio_device_claim_direct_mode()
- __must_check
-To: Dan Williams <dan.j.williams@intel.com>, kernel test robot
- <lkp@intel.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241002-iio-must-check-claim-direct-v1-1-ab94ce728731@baylibre.com>
- <202410040721.upAHwZJm-lkp@intel.com>
- <67002c9cdb068_10a0a294a7@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <67002c9cdb068_10a0a294a7@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241004125716.75c857ae@foxbook>
 
-On 10/4/24 12:57 PM, Dan Williams wrote:
-> kernel test robot wrote:
->> Hi David,
->>
->> kernel test robot noticed the following build warnings:
->>
->> [auto build test WARNING on 431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e]
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-core-make-iio_device_claim_direct_mode-__must_check/20241002-233644
->> base:   431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e
->> patch link:    https://lore.kernel.org/r/20241002-iio-must-check-claim-direct-v1-1-ab94ce728731%40baylibre.com
->> patch subject: [PATCH] iio: core: make iio_device_claim_direct_mode() __must_check
-> [..]
->>>> include/linux/iio/iio.h:669:50: warning: ignoring return value of function declared with 'warn_unused_result' attribute [-Wunused-result]
->>      669 | DEFINE_GUARD(iio_claim_direct, struct iio_dev *, iio_device_claim_direct_mode(_T),
-> 
-> So I think this points to the fact that iio_device_claim_direct_mode()
-> should not be using DEFINE_GUARD() in the first instance. I think
-> iio_claim_direct() really wants to be using DEFINE_CLASS() directly.
-> Skip usage of DEFINE_GUARD() which I now see is unable to interoperate
-> with a __must_check locking function.
-> 
-> Perhaps the new class can be something like:
-> 
->     DEFINE_GUARD_EXCL_COND()
-> 
-> ...which creates a guard that is exclusively conditional and has no
-> unconditional flavor. However, maybe that only lives in iio unless and
-> until another user arrives.
+Hello,
 
-Hmm... I see what you mean. All other conditional guards (e.g.
-mutex_trylock) have an unconditional counterpart (mutex_lock)
-that is used with DEFINE_GUARD.
+On Fri, Oct 04, 2024 at 12:57:16PM +0200, Michał Pecio wrote:
+> Hi,
+> 
+> > If the controller reports HCSPARAMS1.maxports==0 then we can skip the
+> > whole function: it would fail later after doing a bunch of unnecessary
+> > stuff. It can occur on a buggy hardware (the value is driven by external
+> > signals).
+> 
+> This function runs once during HC initialization, so what's the benefit
+> of bypassing it? Does it take unusually long time? Does it panic?
+> 
+> It seems to alreday be written to handle such abnormal cases gracefully.
+
+That is correct, the case is handled without panic, but the 0 value gets
+silently propagated until it eventually fails on line 2220:
+	if (xhci->usb2_rhub.num_ports == 0 && xhci->usb3_rhub.num_ports == 0) {
+		xhci_warn(xhci, "No ports on the roothubs?\n");
+		return -ENODEV;
+	}
+The benefits are only:
+  - Reporting a more precise issue
+  - Avoids iterating through the capability structures of the controller
+  - failsafe if future changes
+
+This is totally a nitpick as the case is unusual, if you think it is not
+worth taking it upstream i'll understand.
 
 
+Kr,
+Olivier
 
