@@ -1,135 +1,245 @@
-Return-Path: <linux-kernel+bounces-350845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D41990A6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:51:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736B5990A6C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 028B11C221C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:51:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6810B21FE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF8A1DD867;
-	Fri,  4 Oct 2024 17:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2D11DAC85;
+	Fri,  4 Oct 2024 17:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hWeDJvA3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bly3jlG2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4CB1DAC82;
-	Fri,  4 Oct 2024 17:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A4C1C8315;
+	Fri,  4 Oct 2024 17:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728064260; cv=none; b=qGoGqhpuIZXYRlzP9J6JGZnCRhjLIQRNpErbqq991h2HvaNWQsRPtvlj88KXimCIadItkpCAUe3PKwQmdMj8M3CqIYbosB0oYCTD0hW0orBVGoKG95DnL0gk6wrnIyDUZ+Gtoi5pRPCck4hJV0RAuZ17EDOaCCe1KapDzUA0Jfk=
+	t=1728064299; cv=none; b=lRRAh7/2tW9aMUUXIwbqDDpbcZV5UBS692FYTrzixBVuIbX/awwig4NA80+ITx+vpLtzeKUo1xulvJAzayHIGnL9Dwm8NEGl4e59AaPEbnA0xmntA+bcElb9JsI3spwSbCe/Ytx7tN1zCel3ZGmfMxdRvaChu9xFSAyHRFrchu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728064260; c=relaxed/simple;
-	bh=J2pBFoWCNLu9OWwh6o18VBWp9Gc3BRt/DN6DOSxEcLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mSFBJNwQfTL/Nr5ADbCj3Rt6RDQBJVT5kntDQUUsuuTsF8Q7nyrSec2NtwWFKTUsbcDvHGF1FAak3VzR6p8B0A4IDYLqlf7mFzpOnqPyL+M5GfFyO8vrSDAd05N+yJyN4v3z8ma9lmddMpjuDNES6Dfbr1HEoIY4zsqGXWIq+z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hWeDJvA3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494AjlSt011614;
-	Fri, 4 Oct 2024 17:50:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Xjz4yd70wxUaQw4j4BLPipCerkHoWOnY6H3NukNKRrk=; b=hWeDJvA3WZyNRkul
-	x1XQkL/iBfkhoKsISZqp47pCWYvopITU5Bn4X7HOYCLNcnqeoz88ZSkBC+iRAuBB
-	h/c+42doePOXRk92mHOG4+8U+Nm4PpWuZxo6fvHE4RhtWTArden5fyxveHgSdWzE
-	iwRNwQw+6s/N5NAIdk9EOp7nn8BL5zHzDvqRlCqlGqlYrrdSR80Kxcw8dRBe+HQ+
-	PnZSq0rdjqiaS7tpmqh7PXcEPecL6taYaxRGm4iHvizGsMwAjHnVDVvk9Gr+Zwd9
-	XXzCctp6VnSasywg4Qkk6l5O4Ceet/KZqsFsk3ooZbvzYaf/XO84/SfTX9vdjKOL
-	6MWVHw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205kaugp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 17:50:57 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494HovVk006293
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 17:50:57 GMT
-Received: from [10.110.70.43] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 10:50:56 -0700
-Message-ID: <e30b4dc9-41bb-4f8b-992f-125001a60a54@quicinc.com>
-Date: Fri, 4 Oct 2024 10:50:56 -0700
+	s=arc-20240116; t=1728064299; c=relaxed/simple;
+	bh=QOT8DpvU292U8dzeD/6dY5RlYMFBHAzTSLeHX5BrL8I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TpknPx+azKh1cA+LHX3xK8QTqZ6iPwhhrZf0JDespSsfSffck1V3Gwo06FmGnnERG9gPkrUSTu2GXjSr1b9qF/b5WFFylG6+b0uatiYK/l30VAIdDz8nK/to0w8tuFbOU2hdk/XMfm/gawkA6V9c2yvwLYwqIhkVtYBGQ5IG4es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bly3jlG2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B7CC4CED0;
+	Fri,  4 Oct 2024 17:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728064299;
+	bh=QOT8DpvU292U8dzeD/6dY5RlYMFBHAzTSLeHX5BrL8I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bly3jlG2OKnbj0I71z8ZSQiSYMFctOetlyOTuAFuIdWdSV064SdLgIISmngTpN3XD
+	 spoieb1Wue3VFdVYte/6wV1qIuovVfLiTX3p+CjGwy3foleN+101i/T2ZFc7zFV7Gb
+	 vxl03jCljZBR4nbo0uvDqRNsajHmyRH0qLiq9Kn4Flrf5s/xdQXGLYGLWOdF7TPTZP
+	 1iJnt5sJo2fZJKlFr0F4FLaV/fyXqIjQGZ2OSa/CDeYFgc7cMiLBIZE7FAmlEDn0lR
+	 eq06wGyTdhw6d+Gk6fN+GU9LkFFlHvAf3BoA6FxISIv6d9S26G7j+MCeG/0gSH6L2W
+	 Qe7m6EHCo0mXw==
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e3ba403b57so1545489b6e.2;
+        Fri, 04 Oct 2024 10:51:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUafMk/bm+EFCjcqzDGCOXpDfBb7tNG6WcWM8XpPQUm1QGiGfJbsH0h5Rz6z4PnroUisdJFo7Kfoe1z@vger.kernel.org, AJvYcCV9JNMGpMZibVwpwh6xXfHQbr6yjmUv+fAkbSzCxs8XC5WTIhUCQ03HVWeiewSPwZeVzS+zr4J1mswoDQCQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhaj1a2xCfqcZ0v18zP3xzv06xGnS/oZR/cxCqKUYjZnGy8eO5
+	oFyvz83EFup78sqqt43Eims567xzEboSHg0X6cT1GJryeEuj7x26ZzvoiCduPVfmAwIZ9kzIewf
+	56prDUIQkuH8/3QYV5aU7HoLdKmI=
+X-Google-Smtp-Source: AGHT+IGfudAVmgBiNbHDwOkHDWM/sQbEvS7Qqh0rXBFLg/YxtkrwDuczDOZnBgNIVPuw/rctv1151k2QDhonqr4Q8iM=
+X-Received: by 2002:a05:6808:318e:b0:3e0:67be:a24d with SMTP id
+ 5614622812f47-3e3c131df45mr2628513b6e.9.1728064298588; Fri, 04 Oct 2024
+ 10:51:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bus: mhi: host: pci_generic: Use pcim_iomap_region() to
- request and map MHI BAR
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        <mhi@lists.linux.dev>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Loic
- Poulain <loic.poulain@linaro.org>
-References: <20241004023351.6946-1-manivannan.sadhasivam@linaro.org>
-Content-Language: en-US
-From: Mayank Rana <quic_mrana@quicinc.com>
-In-Reply-To: <20241004023351.6946-1-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: lj_3Y6bHMPu9nAoSC8QiW2qxgHXz80dT
-X-Proofpoint-ORIG-GUID: lj_3Y6bHMPu9nAoSC8QiW2qxgHXz80dT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
- clxscore=1011 impostorscore=0 mlxlogscore=917 malwarescore=0 spamscore=0
- phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410040123
+References: <20240914140026.29144-1-linux@treblig.org>
+In-Reply-To: <20240914140026.29144-1-linux@treblig.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 4 Oct 2024 19:51:27 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gbEJCHkgb_F5SjmzyaOhDqEF9Re8NMnSo4+3nkw6_7rw@mail.gmail.com>
+Message-ID: <CAJZ5v0gbEJCHkgb_F5SjmzyaOhDqEF9Re8NMnSo4+3nkw6_7rw@mail.gmail.com>
+Subject: Re: [PATCH] ACPCIA: Remove unused acpi_ns_one_complete_parse
+To: linux@treblig.org
+Cc: robert.moore@intel.com, rafael.j.wysocki@intel.com, lenb@kernel.org, 
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Sep 14, 2024 at 4:00=E2=80=AFPM <linux@treblig.org> wrote:
+>
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> The last use of 'acpi_ns_one_complete_parse' was removed by commit
+> aa342261bde5 ("ACPICA: Remove legacy module-level code support")
+>
+> Remove it.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
+In order to make changes in the ACPICA code, please submit them to the
+upstream ACPICA project on GitHub from where they will be
+automatically ported to the Linux kernel when the next upstream ACPICA
+release is made.
 
-On 10/3/2024 7:33 PM, Manivannan Sadhasivam wrote:
-> Use of both pcim_iomap_regions() and pcim_iomap_table() APIs are
-> deprecated. Hence, switch to pcim_iomap_region() API which handles both the
-> request and map of the MHI BAR region.
-> 
-> Cc: Loic Poulain <loic.poulain@linaro.org>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+If you want an ACPICA code change that has already been merged into
+upstream ACPICA to be ported to Linux before the next ACPICA release,
+please send a Linux patch corresponding to it with a Link tag pointing
+to the original ACPICA commit or pull request through which it was
+submitted.
+
+Thanks!
+
 > ---
-> 
-> Compile tested only.
-> 
->   drivers/bus/mhi/host/pci_generic.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 9938bb034c1c..07645ce2119a 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -917,12 +917,12 @@ static int mhi_pci_claim(struct mhi_controller *mhi_cntrl,
->   		return err;
->   	}
->   
-> -	err = pcim_iomap_regions(pdev, 1 << bar_num, pci_name(pdev));
-> -	if (err) {
-> +	mhi_cntrl->regs = pcim_iomap_region(pdev, 1 << bar_num, pci_name(pdev));
-> +	if (IS_ERR(mhi_cntrl->regs)) {
-> +		err = PTR_ERR(mhi_cntrl->regs);
->   		dev_err(&pdev->dev, "failed to map pci region: %d\n", err);
->   		return err;
->   	}
-> -	mhi_cntrl->regs = pcim_iomap_table(pdev)[bar_num];
->   	mhi_cntrl->reg_len = pci_resource_len(pdev, bar_num);
->   
->   	err = dma_set_mask_and_coherent(&pdev->dev, dma_mask);
-Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
-
-Regards,
-Mayank
+>  drivers/acpi/acpica/acnamesp.h |   5 --
+>  drivers/acpi/acpica/nsparse.c  | 102 ---------------------------------
+>  2 files changed, 107 deletions(-)
+>
+> diff --git a/drivers/acpi/acpica/acnamesp.h b/drivers/acpi/acpica/acnames=
+p.h
+> index 9448bc026b9b..c3dd202e247f 100644
+> --- a/drivers/acpi/acpica/acnamesp.h
+> +++ b/drivers/acpi/acpica/acnamesp.h
+> @@ -104,11 +104,6 @@ acpi_ns_parse_table(u32 table_index, struct acpi_nam=
+espace_node *start_node);
+>  acpi_status
+>  acpi_ns_execute_table(u32 table_index, struct acpi_namespace_node *start=
+_node);
+>
+> -acpi_status
+> -acpi_ns_one_complete_parse(u32 pass_number,
+> -                          u32 table_index,
+> -                          struct acpi_namespace_node *start_node);
+> -
+>  /*
+>   * nsaccess - Top-level namespace access
+>   */
+> diff --git a/drivers/acpi/acpica/nsparse.c b/drivers/acpi/acpica/nsparse.=
+c
+> index 31e551cf4ea6..549dc16aed3c 100644
+> --- a/drivers/acpi/acpica/nsparse.c
+> +++ b/drivers/acpi/acpica/nsparse.c
+> @@ -131,108 +131,6 @@ acpi_ns_execute_table(u32 table_index, struct acpi_=
+namespace_node *start_node)
+>         return_ACPI_STATUS(status);
+>  }
+>
+> -/***********************************************************************=
+********
+> - *
+> - * FUNCTION:    ns_one_complete_parse
+> - *
+> - * PARAMETERS:  pass_number             - 1 or 2
+> - *              table_desc              - The table to be parsed.
+> - *
+> - * RETURN:      Status
+> - *
+> - * DESCRIPTION: Perform one complete parse of an ACPI/AML table.
+> - *
+> - ***********************************************************************=
+*******/
+> -
+> -acpi_status
+> -acpi_ns_one_complete_parse(u32 pass_number,
+> -                          u32 table_index,
+> -                          struct acpi_namespace_node *start_node)
+> -{
+> -       union acpi_parse_object *parse_root;
+> -       acpi_status status;
+> -       u32 aml_length;
+> -       u8 *aml_start;
+> -       struct acpi_walk_state *walk_state;
+> -       struct acpi_table_header *table;
+> -       acpi_owner_id owner_id;
+> -
+> -       ACPI_FUNCTION_TRACE(ns_one_complete_parse);
+> -
+> -       status =3D acpi_get_table_by_index(table_index, &table);
+> -       if (ACPI_FAILURE(status)) {
+> -               return_ACPI_STATUS(status);
+> -       }
+> -
+> -       /* Table must consist of at least a complete header */
+> -
+> -       if (table->length < sizeof(struct acpi_table_header)) {
+> -               return_ACPI_STATUS(AE_BAD_HEADER);
+> -       }
+> -
+> -       aml_start =3D (u8 *)table + sizeof(struct acpi_table_header);
+> -       aml_length =3D table->length - sizeof(struct acpi_table_header);
+> -
+> -       status =3D acpi_tb_get_owner_id(table_index, &owner_id);
+> -       if (ACPI_FAILURE(status)) {
+> -               return_ACPI_STATUS(status);
+> -       }
+> -
+> -       /* Create and init a Root Node */
+> -
+> -       parse_root =3D acpi_ps_create_scope_op(aml_start);
+> -       if (!parse_root) {
+> -               return_ACPI_STATUS(AE_NO_MEMORY);
+> -       }
+> -
+> -       /* Create and initialize a new walk state */
+> -
+> -       walk_state =3D acpi_ds_create_walk_state(owner_id, NULL, NULL, NU=
+LL);
+> -       if (!walk_state) {
+> -               acpi_ps_free_op(parse_root);
+> -               return_ACPI_STATUS(AE_NO_MEMORY);
+> -       }
+> -
+> -       status =3D acpi_ds_init_aml_walk(walk_state, parse_root, NULL,
+> -                                      aml_start, aml_length, NULL,
+> -                                      (u8)pass_number);
+> -       if (ACPI_FAILURE(status)) {
+> -               acpi_ds_delete_walk_state(walk_state);
+> -               goto cleanup;
+> -       }
+> -
+> -       /* Found OSDT table, enable the namespace override feature */
+> -
+> -       if (ACPI_COMPARE_NAMESEG(table->signature, ACPI_SIG_OSDT) &&
+> -           pass_number =3D=3D ACPI_IMODE_LOAD_PASS1) {
+> -               walk_state->namespace_override =3D TRUE;
+> -       }
+> -
+> -       /* start_node is the default location to load the table */
+> -
+> -       if (start_node && start_node !=3D acpi_gbl_root_node) {
+> -               status =3D
+> -                   acpi_ds_scope_stack_push(start_node, ACPI_TYPE_METHOD=
+,
+> -                                            walk_state);
+> -               if (ACPI_FAILURE(status)) {
+> -                       acpi_ds_delete_walk_state(walk_state);
+> -                       goto cleanup;
+> -               }
+> -       }
+> -
+> -       /* Parse the AML */
+> -
+> -       ACPI_DEBUG_PRINT((ACPI_DB_PARSE,
+> -                         "*PARSE* pass %u parse\n", pass_number));
+> -       acpi_ex_enter_interpreter();
+> -       status =3D acpi_ps_parse_aml(walk_state);
+> -       acpi_ex_exit_interpreter();
+> -
+> -cleanup:
+> -       acpi_ps_delete_parse_tree(parse_root);
+> -       return_ACPI_STATUS(status);
+> -}
+> -
+>  /***********************************************************************=
+********
+>   *
+>   * FUNCTION:    acpi_ns_parse_table
+> --
+> 2.46.0
+>
+>
 
