@@ -1,226 +1,268 @@
-Return-Path: <linux-kernel+bounces-350494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE94F9905FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:26:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D16990606
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A1C42848C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:26:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41C3FB23CB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABD2217339;
-	Fri,  4 Oct 2024 14:25:58 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E19217330;
+	Fri,  4 Oct 2024 14:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Mh8TuXH4";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="yPrJT631"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EAD20FAB3;
-	Fri,  4 Oct 2024 14:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728051958; cv=none; b=GWrJpfU4vjH3J+YGcpO+L+LsgYxnlnZ5byvLKKRU7mEubMw7e6zhBjmS1nlBJQhXslZs0S00Xy5FKODp2wHLqTSwGPwInB/yLcUXQVQu0mtSBv/jBugeXFXf9EJ7m+iLHHKRQNr403m5OssnBmZemt/U3psg7p6o9eC1vSphQF8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728051958; c=relaxed/simple;
-	bh=VLd66Cbz9muKF7Etf6eUjwWYZzDeImjqSXpDNbBE3Cg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tKxoOIT/lJKy1tQ7T9LZmBqHWmohd5FQzbZtYLCekdQ8yqfb5H0r9pZR3q28YWxf0SygruPnyV89oCxGjhWsHM8cbCcHleo/Gq7XN9UlwwvOvq7Osij6MeY6AZQTbCKwoATP3WjwmvnAa4zgzTyeJi6osahP5ymc3pwyJp47w60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XKrSG1qyFz6HJc8;
-	Fri,  4 Oct 2024 22:25:50 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E13691400CA;
-	Fri,  4 Oct 2024 22:25:53 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Oct
- 2024 16:25:53 +0200
-Date: Fri, 4 Oct 2024 15:25:51 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Guillaume Stols <gstols@baylibre.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
-	<ukleinek@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "Michael
- Hennerich" <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Michal Marek
-	<mmarek@suse.com>, <linux-pwm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <aardelean@baylibre.com>,
-	<dlechner@baylibre.com>, <jstephan@baylibre.com>
-Subject: Re: [PATCH v2 07/10] iio: adc: ad7606: Add compatibility to
- fw_nodes
-Message-ID: <20241004152551.00000813@Huawei.com>
-In-Reply-To: <57c5d8b1-295a-492f-b17c-b44caf8aeb2d@baylibre.com>
-References: <20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com>
-	<20240920-ad7606_add_iio_backend_support-v2-7-0e78782ae7d0@baylibre.com>
-	<20240929134412.506998db@jic23-huawei>
-	<57c5d8b1-295a-492f-b17c-b44caf8aeb2d@baylibre.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A97216A3F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728052001; cv=fail; b=EUvqznuVBaubmYUFpzj3msMVsTRbWxXaCaPUJrt1X4JQ3vM83/RqLbkajFF+DScudmaNeS2AFKkXj3edAzyL8nIzbTvqM6Dps6FM9HBIRcBk/3Z0atV/Lx4jIk0SD3hVrhWD6zVFbYZTeb32xRJRxz8PMAIgwfBnsMCA1fhxZhk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728052001; c=relaxed/simple;
+	bh=+UnJthpnyd9YpN1nGmENHUzXF92Qzyd6d6BHDWRGVAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bwFYvIykS/SoDaNQtPPbmLFv5VtSr8pitgsKKM19ip93GMh6pxN7Qb8B2WUBhUva8amLt7zz2sEa9cse9x4Ha3lzCUkJ3TflZ8ZF5GTZ2AFInfdJqdS3FiTwb5yNTxWhG1d/xsRtHz8hwTgx0IRjr+vb3CuHaOso3yX7AusdaXI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Mh8TuXH4; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=yPrJT631; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494Dxwru004392;
+	Fri, 4 Oct 2024 14:26:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=wziJJtC2IGUUfCe
+	/ZxxSaO33oygYnW52ftedQk1e0JQ=; b=Mh8TuXH4bMiCIh2OTjwFiWxLmABmvwC
+	G37ZAox9Xo099LNtS8op3Jur21qEVJbL08aXFv6AGMFKePXZaQa2ovbTLYiVQwFO
+	737xc/jPMAKUqcRL4OblAOjlFNGtOzE07oyiQg+TGrxLukqY2DxQfAwsytkhk6BP
+	6I/ijfCYvp7VuSUZFV1DMDDHVJYjEZ4A8opEO2VLVEO9CfyU4PZ9LGpxeIfEBHTb
+	KGaG+FVNChLHCGK+pLQIayNQ9vnLxp94bzGZclLhCb1U9r/ydOm8CQ2M6b0uKwtF
+	yqI5aUwOLiz37MjwDW5E1s1JlvJvlC/8suGY5oboOCT0piN9sZVZqEA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42204espyu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 04 Oct 2024 14:26:33 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 494DP746014406;
+	Fri, 4 Oct 2024 14:26:32 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2174.outbound.protection.outlook.com [104.47.56.174])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422057mdns-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 04 Oct 2024 14:26:32 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mvl1nmdtZV4d2Lg3Zb2NJyjs2+vDgO8FpIOhYeV7NM7lXKxdiBf/wW3oyCg8k6Ab9KaBQrBTcl5fAzlddwgxKbqqq4jhiFcZ4Bav1i9HdAyGrglIHNc+nQx5HhKlIgsirgyH5syc0d1QMZsRF081nNnvHhR+LQP3RNSug95YO5i4PEiZGkACHzid4rdaBMUQCO+j6SGtery5UZLJSdK7CQYwdrrGHxJ/AoQiwEqok0tmPoD6peSgX4j0vYe56prp/fcEZsRGcHFXM1MaCWJtOuRdJ2SdQ5P18zl+rVn7eF4VrA5aySoEOpvX14dVyFqgr004/KUUqQf0iFNXzK2Hqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wziJJtC2IGUUfCe/ZxxSaO33oygYnW52ftedQk1e0JQ=;
+ b=gUkn2pzno8i0+d0Ds4SXHCbhSKaGn8zVDUuTpGEc72utgJsK9wtQBST+epGWrPvnBZ5NngRta+x3BS/YAWCdMJ6DH2ujsFfCmESOXCSNVtCg9DiL1IeKT5X9vA3i2CykTPJQE3ndM0nzPblzTWFP4pr+YMMEyIEn1ES6V4JjPKukXCVOukQnFVByniStOPhzIQxpPCFmwb9PjzurEXH5pGVzqVeYYRkovZ/WCRxqsIUpxSBn14DzQGmGJnjc39P/HOTV4sTr9l2M6SDYbSFitfrWir6xC9MeBVrZxb0FNxFvITfV+OnYjQiVe6X15UMdOjne+9NsN6gKR3BKc8zFKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wziJJtC2IGUUfCe/ZxxSaO33oygYnW52ftedQk1e0JQ=;
+ b=yPrJT6318PaF6GApwd9iCUce6cgYCNYSF3PXxC5JqntqG6esqVPovydGoAnY5TYwmAbmCnPZ+ALHqCgM41Qbt2dJZMFOwtecOOuspbIrt99KoPQkNGpyFvRT+z+eQfzBRQtzaoVmZyLISDugkrqytFOoZ7fS54u9IUS4/0ad/5w=
+Received: from PH0PR10MB5611.namprd10.prod.outlook.com (2603:10b6:510:f9::16)
+ by PH0PR10MB5564.namprd10.prod.outlook.com (2603:10b6:510:f3::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18; Fri, 4 Oct
+ 2024 14:26:29 +0000
+Received: from PH0PR10MB5611.namprd10.prod.outlook.com
+ ([fe80::d513:a871:bbf9:fce2]) by PH0PR10MB5611.namprd10.prod.outlook.com
+ ([fe80::d513:a871:bbf9:fce2%7]) with mapi id 15.20.8026.019; Fri, 4 Oct 2024
+ 14:26:29 +0000
+Date: Fri, 4 Oct 2024 15:26:26 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in mmap_region()
+Message-ID: <a34fe509-f1d0-482e-9aa9-8dc3fa0743f3@lucifer.local>
+References: <20241004093546.3232-1-spasswolf@web.de>
+ <d07c85a3-d1b6-48e7-9e98-bb533bb73417@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d07c85a3-d1b6-48e7-9e98-bb533bb73417@lucifer.local>
+X-ClientProxiedBy: LO4P123CA0355.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18d::18) To PH0PR10MB5611.namprd10.prod.outlook.com
+ (2603:10b6:510:f9::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5611:EE_|PH0PR10MB5564:EE_
+X-MS-Office365-Filtering-Correlation-Id: f1d350a1-8ceb-47af-995e-08dce48089b2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nBEbCZ3CE/v51YF/I/280+lLcm3Qoh4SHHc9boRVsng5f5QiPm6D1YDU9D49?=
+ =?us-ascii?Q?ItEfw+/8IgL7GuO6xCdjvurbOyzcE8eFWwdckOs2LUmgv461JnTV9roxY5Uq?=
+ =?us-ascii?Q?Ev52qveznQJamgqkcduJX2IVoIq5d3YNCCMCksoGXchghD94KKB9i7OJNU0B?=
+ =?us-ascii?Q?o/fz1fVwc+IXUGbjHzHzCmY0b60tTMV5cBfIrJ0IFLIdNOghPSuej8yolKN1?=
+ =?us-ascii?Q?l/KOQE8HIuTClghi8LHPGvOP58C6hCWd+pWgPb5vENgpYkSJSqACEHVDLgTp?=
+ =?us-ascii?Q?9+HwaMjNmKnXll16gG7Olc7WcYxrrvAS6xXYHSDZOxSI8eRCvRP+mDt8CP6x?=
+ =?us-ascii?Q?C9SWuw1FGWI27rY7i2+uj8cUC54353hMCpUv0RF3IywRjMe23IB2+Jtzprj3?=
+ =?us-ascii?Q?JnXXtTrKDXBQhjOhLmgY5v3bhKLpu0/a46+iU16GP5ABG84gLMWNfaFQLHlj?=
+ =?us-ascii?Q?8bfvsL1EowF3uO3vHueK2WNPyDPJlGWxIT93avCGTURexPzFnz015Ro8NwJb?=
+ =?us-ascii?Q?7roaW8zdEc3rwwkp52duOPPU5LWfMc1co5tLz9/BX7Q3/j08Ok+0OW0Gv8l+?=
+ =?us-ascii?Q?EjzJSoZOzeYJG9CpqyIXCiuVa9Sja5E6sTy8IYmYn/C/PPFxFLVWYp0RdNB3?=
+ =?us-ascii?Q?tvnvu5LHUziiOYb6ew/qrLZtt98R0gRefwsiY889V97YGsxxNAxlqg6Jak6Q?=
+ =?us-ascii?Q?l/+oFlwgqAt+PPTiu8Ko09JHfcpanucj6tRWn8eyAA/dX+Mof6RUl2g6mAh7?=
+ =?us-ascii?Q?ubvizHwTbqrMlbolXBSKN4nwc0+/ISBoNAwshjGPDbsyK7GzNWH+aZwjnxl0?=
+ =?us-ascii?Q?S71pMfzdosE2R+ycuGhXcY4bEmpJfVlXaaMDzard6fEcj41yJWU90nwBkTy/?=
+ =?us-ascii?Q?ANJXEyMyceyLUS0kG6P0Len5K18M60LBf82qDju5qfKT2wdY36pPjeJkk+g1?=
+ =?us-ascii?Q?XbXIITGKWiqvFLMCfRr5lRrhz62SzdD+0btwUaXbwqsIZ2GA63Jl+48Umney?=
+ =?us-ascii?Q?q3M/vrS9dfvsJJPr7uxIf5aOvKy6RW/hGeDuUyd4e4pIa0hV/pOQir3cB8yM?=
+ =?us-ascii?Q?TCmbE5iNESG2rJtbUJspR/WrO+ptJsN17iCw6yFoEKY8CY1zCR8ji35zPFWP?=
+ =?us-ascii?Q?M7WVmooF5bxChlyqPyKXJMEYw9O7rUzfh0TJ0bcIADCXQ/aAWWcyl983Fbol?=
+ =?us-ascii?Q?soIw4jcl1YrYXgb4Mn3zMWsESv5vCFsmzL8+SWst4vTPTj1Mrg/OnsbfzddT?=
+ =?us-ascii?Q?6fyaUUEUgpgrwTh5CQu6OF3LDdaCQ5WblajmNDqb2w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5611.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?s4bbLLsXmnfa/NXKhCXI3jU59NmpMuQyf1o6fttR8dO1uzbStSOUxFl0gJTl?=
+ =?us-ascii?Q?lGFIKq+UkNlg5myHxtcU5ZzACEk40vZ3h8LaJbEyW215ZbT9mzrZFaW7P6j5?=
+ =?us-ascii?Q?DtzH0QdmzAIWMdB6KmhnlhfmBcBIXjeWtYPhlHgRLakqYuScvvJYPYbj+LT3?=
+ =?us-ascii?Q?O1MMC2dB+QWrimP69txSVuEvhUoMmR6omJBJKAkDBigP9WXmsiVpIEFed0WY?=
+ =?us-ascii?Q?h1RO1UhHe3hErlbbtnaZcwjBxRX4ZbDR0dFCxe6c2FEaelnONwA52osfBh3Z?=
+ =?us-ascii?Q?djv9FGcZfeHLrcU8KZtGH+B+OebFmiir872/JB/KDsVUORtU78ctjkVS0Vqo?=
+ =?us-ascii?Q?C7/V6S9LkAxqBQd0kbcCQvy0ndPL/xigQLg7R/uxLIQcNmEDTC9qjIiias7p?=
+ =?us-ascii?Q?2szMjqPcd7nY71QVBso7UjcytzfY/YW1vf2sdTrLNwHg4jyJocZsVpJOOn8h?=
+ =?us-ascii?Q?GeUUL+GuKy9fPtVrNCpTwNL0IjihniiQjnv6Uqv4/BTr8tOkMNb3PX8J+FX7?=
+ =?us-ascii?Q?6f6zi+Cpt1F7UTqR77VRZWehuGAUBoH5CA7EX/cg+rb2SMhOHkKW2u+RXWiR?=
+ =?us-ascii?Q?Xy9Uf+a/4KFlUoFkCyBI+Xa2HebCjbiJIcVOa559B1HLA0ZLnkZ+4D/5D43p?=
+ =?us-ascii?Q?DQA7QX7ARcVdembz2RPbPn+kvmYz7P3vopKOY+t4m+tMPIJVSIFtdsaiVS1U?=
+ =?us-ascii?Q?uEdPf+SLMP7K9cI8eY+YsBXQyriHBic1UkDEKel5e5onn8APqidAodEpR1nD?=
+ =?us-ascii?Q?sFcm/5bAa71uTRyMmQCXc8VcRiL/IvamS76zgBwOLisQ49BXuCp4PFMIDhjr?=
+ =?us-ascii?Q?x4VXtgDdMP3cDeLm1I92Miiq7iaGfqp4zFsZn1GxG+zBJ98EQP1Q+WKRL84i?=
+ =?us-ascii?Q?nmgPLWb4CIbC+0LqYU5qYLYuE/vkoCP3g+4OSFuE7uXnm1qDjwwEDHA1nbMM?=
+ =?us-ascii?Q?wRwxsT3TenI9lAjNQqAZ90F02MJyucgj7vjbTQTvBLTI5e9kaYFsjpyWsdNi?=
+ =?us-ascii?Q?1K/7JMENUni0LX+RZDOPtRmZiynCOgNUigW9rzaqBjTyVbOJgUIK9bHZLAEo?=
+ =?us-ascii?Q?bYeIneMHBdO3SWfQxd9OiH9cLSTZ7wRLI/OOp6iKMBRaW19TCILX6wz+WWw2?=
+ =?us-ascii?Q?5VEh3hrvdmkpcEMw5QaLOzg/+RYMuI7LVcJ/G4/JE37gl+j2XZMH86lVZhSF?=
+ =?us-ascii?Q?x56XXhpnL4g7LuYkjY95zOamk7HqjCzfk9YUnouRnaHxRzAlc8OjIgTcddDi?=
+ =?us-ascii?Q?4s4kM925MMQjhtFOCLH+HCQ3YBASREj4w4CI0H666JvU+QvKV73/XfDgsPmN?=
+ =?us-ascii?Q?eHFOwIo/KrVHUbtW2suR6lUuv3YAvkZBW7gwoYvzM8sEECnfLzycXO028UFI?=
+ =?us-ascii?Q?HimWPfv8U68JuBeR4Gsn7sFJrOxjOGfepUMINOT7kTj+8sgLQVGf/lup29KU?=
+ =?us-ascii?Q?RmdIeiFm9GPSCEAhxPaAFDzTPuJpiITzwy29PYBM1EfUfaiO/Kgb2kpo2p2I?=
+ =?us-ascii?Q?dfc4spZiCvk+eOdDnQdErucNWzMKrgcQ2RAKeqEZ65wDXGqCZ9v5hEfne6Pq?=
+ =?us-ascii?Q?25y7QWo3EoT93yv2OhgZ8CBzuwQ2j9NedEzNUEaYiwUHwHLZuDn2U/CgSexB?=
+ =?us-ascii?Q?sg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	y6kCG45Se76DIimYTlAnRzspv7M2BjnN1ECl+74IM66BHyX/hut9di4q+Nu0FJkz0ORFeh6f+K5JkQCSq5tsfK83Jyq3rqxoAAmdgX3S+5q7NLB9sjvnkkCIr/OLLfVVYxFeo2KBrkrFa3XhMgf//DFZW7bnt+Bj96Uv3MGXZUVK0NQl5oyLceurqrxic40jySFuVHlE1OKoiBkc6w/Y1EyWDSX2DP41kjuvJZ03ylQx9O6sTLTgv8waDSYnNU2htTmADBI8yd6X7tk2NnLHKNrxzT26Eafmjx7DaSGmwKmbaKqb+HzOK5x5y8TYWIEW3v+/Gc60SuJH0z0J9ZY3CiZci3x8wz0yeHTT/05oS2vDPbFDGdHoLN6TSt6dmryju3PXkcQ8PW8f4L4Z7zDJY74LwOIbBMz3PH8KuHpypd36ioz5a55npU/oJbIxvjbz2iMi/vYpG+V7Kk4FZya3WnOsnAcmvNwhJlus3BcIjUoM8RDZrQqomgXE+7CkJPTEw05In+qgi7RNAt3OQakXz5hssw+wtyBtb1mmrv4t65Y2F5fq7OyDENWt3JaTI3wuUTypew0Ud3yYPoPCvZGrGisBrUQDe82P6TIDOP94Nbc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1d350a1-8ceb-47af-995e-08dce48089b2
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5611.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 14:26:29.7921
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aiUhvAljIBRowcAsxL0elHR0YFHJcmYbYSNw3WnaucgugI/cK9fbLBFnzsh9KKdmKNBaiYE35QkMwYtfK6W5iMfbRu3lmKsaMCOG5h/MAqI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5564
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-04_10,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 malwarescore=0 adultscore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410040100
+X-Proofpoint-GUID: kLEjTkUiQOMdlxffN2MyRVxW7_aXZwZv
+X-Proofpoint-ORIG-GUID: kLEjTkUiQOMdlxffN2MyRVxW7_aXZwZv
 
-On Wed, 2 Oct 2024 02:12:28 +0200
-Guillaume Stols <gstols@baylibre.com> wrote:
+On Fri, Oct 04, 2024 at 03:23:37PM +0100, Lorenzo Stoakes wrote:
+> On Fri, Oct 04, 2024 at 11:35:44AM +0200, Bert Karwatzki wrote:
+> > Here's the log procduced by this kernel:
+> >
+> > c9e7f76815d3 (HEAD -> maple_tree_debug_4) hack: set of info stuff v5
+> > 7e3bb072761a mm: correct error handling in mmap_region()
+> > 77df9e4bb222 (tag: next-20241001, origin/master, origin/HEAD, master) Add linux-next specific files for 20241001
+> >
+> > Again it took two attempts to trigger the bug.
+> >
+> > Bert Karwatzki
+> >
+>
+> Hi Bert, please try the below fix.
 
-> On 9/29/24 14:44, Jonathan Cameron wrote:
-> > On Fri, 20 Sep 2024 17:33:27 +0000
-> > Guillaume Stols <gstols@baylibre.com> wrote:
-> > =20
-> >> On the parallel version, the current implementation is only compatible
-> >> with id tables and won't work with fw_nodes, this commit intends to fix
-> >> it.
-> >>
-> >> Also, chip info is moved in the .h file so to be accessible to all the=
- =20
-> > chip info is not moved (I was going to say no to that) but an
-> > extern is used to make it available. So say that rather than moved here.
-> > =20
-> >> driver files that can set a pointer to the corresponding chip as the
-> >> driver data.
-> >>
-> >>  =20
-> >> diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-> >> index c13dda444526..18c87fe9a41a 100644
-> >> --- a/drivers/iio/adc/ad7606.h
-> >> +++ b/drivers/iio/adc/ad7606.h
-> >> @@ -38,8 +38,19 @@
-> >>   	AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCAL=
-E),\
-> >>   		0, BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO))
-> >>  =20
-> >> +enum ad7606_supported_device_ids {
-> >> +	ID_AD7605_4,
-> >> +	ID_AD7606_8,
-> >> +	ID_AD7606_6,
-> >> +	ID_AD7606_4,
-> >> +	ID_AD7606B,
-> >> +	ID_AD7616,
-> >> +};
-> >> +
-> >>   /**
-> >>    * struct ad7606_chip_info - chip specific information
-> >> + * @name		device name
-> >> + * @id			device id =20
-> > ID in chip info normally indicates something bad in the design. In that=
- somewhere
-> > we have code that is ID dependent rather than all such code / data being
-> > found directly in this structure (or callbacks found from here).
-> > Can we avoid it here? =20
->=20
-> Hi Jonathan,
->=20
-> chip_info has to describe the chip hardwarewise, but there are different=
-=20
-> bops depending on the wiring (interface used, and backend/no backend).
+OK sorry please abort that, my git tree was screwed up this won't work (ugh).
 
-Normal solution to this is multiple chip specific structures so they
-become specific to a chip + some wiring option. Then you just
-pick between static const structures.
+Let me redo this...
 
-Does that work here?
-
-You will need them exposed (extern) from your header but that's
-not too bad.
-
-Aim is to pick just one structure that describes all the 'specific'
-stuff for the driver.  That brings all that stuff into one place and
-provides an easy way to extend to new combinations of options for
-other devices.
-
-Jonathan
-
-
->=20
-> The easiest way I found was to use the ID in a switch/case to=20
-> determinate which bops I should take (well it was only needed in the spi=
-=20
-> version since it is the one supporting almost all the chips while the=20
-> other ones still support only one). For instance, the ad7606B will use=20
-> ad7606_bi_bops if it has a backend and ad7606B_spi_bops for spi version.
->=20
-> If I can't use the ID, the only way I see is creating 3 fields in=20
-> chip_info (spi_ops, par_ops, backend_ops) and to initialize every=20
-> chip_info structure with its associated op(s) for the associated=20
-> interface. This would also lead to declare the different instances of=20
-> ad7606_bus_ops directly in ad7606.h=A0 (I dont like it very much but see=
-=20
-> no other option).
->=20
-> Do you think it's better that way ? Or do you have any other idea ?
->=20
-> Regards,
->=20
-> Guillaume
->=20
-> > =20
-> >>    * @channels:		channel specification
-> >>    * @num_channels:	number of channels
-> >>    * @oversampling_avail	pointer to the array which stores the availab=
-le
-> >> @@ -50,6 +61,8 @@ =20
-> > ...
-> > =20
-> >> diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par=
-.c
-> >> index d651639c45eb..7bac39033955 100644
-> >> --- a/drivers/iio/adc/ad7606_par.c
-> >> +++ b/drivers/iio/adc/ad7606_par.c
-> >> @@ -11,6 +11,7 @@
-> >>   #include <linux/mod_devicetable.h>
-> >>   #include <linux/module.h>
-> >>   #include <linux/platform_device.h>
-> >> +#include <linux/property.h>
-> >>   #include <linux/types.h>
-> >>  =20
-> >>   #include <linux/iio/iio.h>
-> >> @@ -89,12 +90,20 @@ static const struct ad7606_bus_ops ad7606_par8_bop=
-s =3D {
-> >>  =20
-> >>   static int ad7606_par_probe(struct platform_device *pdev)
-> >>   {
-> >> -	const struct platform_device_id *id =3D platform_get_device_id(pdev);
-> >> +	const struct ad7606_chip_info *chip_info;
-> >> +	const struct platform_device_id *id;
-> >>   	struct resource *res;
-> >>   	void __iomem *addr;
-> >>   	resource_size_t remap_size;
-> >>   	int irq;
-> >>  =20
-> >> +	if (dev_fwnode(&pdev->dev)) {
-> >> +		chip_info =3D device_get_match_data(&pdev->dev);
-> >> +	} else {
-> >> +		id =3D platform_get_device_id(pdev);
-> >> +		chip_info =3D (const struct ad7606_chip_info *)id->driver_data;
-> >> +	}
-> >> +
-> >>   	irq =3D platform_get_irq(pdev, 0);
-> >>   	if (irq < 0)
-> >>   		return irq;
-> >> @@ -106,25 +115,25 @@ static int ad7606_par_probe(struct platform_devi=
-ce *pdev)
-> >>   	remap_size =3D resource_size(res);
-> >>  =20
-> >>   	return ad7606_probe(&pdev->dev, irq, addr,
-> >> -			    id->name, id->driver_data, =20
-> > Rewrap to move chip_info up a line perhaps.
-> > =20
-> >> +			    chip_info,
-> >>   			    remap_size > 1 ? &ad7606_par16_bops :
-> >>   			    &ad7606_par8_bops); =20
->=20
-
+>
+> It fails a couple tests in the test suite so this might not be stable but
+> it fixes my repro, be good to confirm it fixes the issue for you.
+>
+> Thanks!
+>
+> ----8<----
+> From 07485683fcd3d8d22996d82bdbde0e3647f2349e Mon Sep 17 00:00:00 2001
+> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Date: Fri, 4 Oct 2024 15:18:58 +0100
+> Subject: [PATCH] fix
+>
+> ---
+>  lib/maple_tree.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> index 37abf0fe380b..fc221a9f23f2 100644
+> --- a/lib/maple_tree.c
+> +++ b/lib/maple_tree.c
+> @@ -3527,6 +3527,7 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
+>  	return true;
+>  }
+>
+> +// Return whether the node actually contains entries at or greater than wr_mas->mas->index.
+>  static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
+>  {
+>  	struct ma_state *mas = wr_mas->mas;
+> @@ -3696,6 +3697,7 @@ static noinline void mas_wr_spanning_store(struct ma_wr_state *wr_mas)
+>  	struct maple_big_node b_node;
+>  	struct ma_state *mas;
+>  	unsigned char height;
+> +	bool r_populated;
+>
+>  	/* Left and Right side of spanning store */
+>  	MA_STATE(l_mas, NULL, 0, 0);
+> @@ -3737,7 +3739,7 @@ static noinline void mas_wr_spanning_store(struct ma_wr_state *wr_mas)
+>  		r_mas.last++;
+>
+>  	r_mas.index = r_mas.last;
+> -	mas_wr_walk_index(&r_wr_mas);
+> +	r_populated = mas_wr_walk_index(&r_wr_mas);
+>  	r_mas.last = r_mas.index = mas->last;
+>
+>  	/* Set up left side. */
+> @@ -3759,9 +3761,12 @@ static noinline void mas_wr_spanning_store(struct ma_wr_state *wr_mas)
+>
+>  	memset(&b_node, 0, sizeof(struct maple_big_node));
+>  	/* Copy l_mas and store the value in b_node. */
+> +
+>  	mas_store_b_node(&l_wr_mas, &b_node, l_mas.end);
+> +
+>  	/* Copy r_mas into b_node. */
+> -	if (r_mas.offset <= r_mas.end)
+> +
+> +	if (r_populated && r_mas.offset <= r_mas.end)
+>  		mas_mab_cp(&r_mas, r_mas.offset, r_mas.end,
+>  			   &b_node, b_node.b_end + 1);
+>  	else
+> --
+> 2.46.2
 
