@@ -1,141 +1,149 @@
-Return-Path: <linux-kernel+bounces-350563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547EE9906D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 285F09906E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 850A71C220FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:56:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58A5B1C21923
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC5A2216A9;
-	Fri,  4 Oct 2024 14:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9F621BB12;
+	Fri,  4 Oct 2024 14:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="cHYsIzSu"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="aqZJiDkc"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D392216A4;
-	Fri,  4 Oct 2024 14:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FE32178EE;
+	Fri,  4 Oct 2024 14:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728053267; cv=none; b=nj6nZi6lhri53bMBBOuNky4lFL4ihIg7dUJIZdHUlCi0Lf2tb8kWiBYReeMYMDojKdlbMkdO5c5kNiKuPpcgFdtEu3+Nk8t6OJOHAjw2FoM2/hgw+v/y0I1/DXHnXHnjVB7J4DLsFTwUWhO4FbQBiBiRkwdeVOTyrr27klozqlU=
+	t=1728053500; cv=none; b=WnhtqDtxIGYjS6enATDybywzKdkJsGJRua/z2ELImxg11qeTUGH8ivsRqx87YHq9L4YwS1xYV8Xg7P5WRmhk0bhbmlTEONntZ76mubl5MNR63ayeNtumRU9MPAYgla9QKlfSHmdstKjniNe3VF2fNYB/3voyp4oHAiE9T4l4zlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728053267; c=relaxed/simple;
-	bh=7hor2qzuwGEvWmi49euvC9tyFA066oo3GcrVIH/aZzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W/zcLPWDV5253Mo2l1mmH1QLH7ExzlkXZL+D+iGJUngLBN+AuwuaAPfHgVBy4ejvmDRfXDGA81XQmo3agXcdi3TPk+qh6+t2GOBG30Yf9If9cklf93gDMPaVJAcB/y8uL0tHiVCFK1xvrDeA632jJkKZ3aLEMG75GB/QuH0rf/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=cHYsIzSu; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=v38cgu6X66MW8fCyAaX1OVN2xawi1fHqr+/1/Zs1Dsg=; b=cHYsIzSu20boL9RlvEdCz/ThpT
-	mKZkIjXPTgLG3u0523FoSmZAwbG6Mf2Ri9COErAl9nfk69bT07E0W7NtlxrTRDAO9SbqK8OH5owFJ
-	7HcJPMthEMClII9pQfCxPJ6iDWuW8R+TOIB7LnnUwr/15ZBBbc+mtvMtQ/EU1yQPhUtaH4azZj/HJ
-	K1fwuZRQEKR0XiE1TiMjXgooWAg0IkZWVT6zPmMwLn+yXePD34QdaL8AN/j4t7zj6Dut6TMq/HVJM
-	dCw5GIPGWKEv9r+WyTo+80gpMv94uGt76TIBHNSYqUCWF8gTeJoM8SLAJPGUKyk4VhBMUGXJ9DZtU
-	kIO7XZ9w==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1swjaZ-00FBA9-0P;
-	Fri, 04 Oct 2024 15:47:27 +0100
-Date: Fri, 4 Oct 2024 15:47:27 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Stefan Berger <stefanb@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] tpm: Workaround failed command reception on Infineon
- devices
-Message-ID: <Zv___74cyROxZSic@earth.li>
-References: <Zv1810ZfEBEhybmg@earth.li>
- <Zv19Cc-oTOzv8wVO@earth.li>
- <3c9a6d63-f892-4809-b48d-5fecc3817ad9@linux.ibm.com>
- <979629af-e224-4308-a9a1-c66a60003d2d@linux.ibm.com>
+	s=arc-20240116; t=1728053500; c=relaxed/simple;
+	bh=AR81zM7tcgdPrGoH+VnVwMEtO6dO/auPSDmcI/0T2as=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D+gaD6TLsWwoHBaJmO5w9iSOmV3yx9pvlGDEVp8FGzkZAtLSF35c3LIN7E7HJde6ebjIK6Ww/+U1VWD+ljwEf7LeAegocFMnRO3l9gWxgUXL0IN3wuPcHR1R7zgOLGjOxBNM9pJ3XGBELOi0EDItUt9kl6v4klKil/Z3Bk1aBCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=aqZJiDkc; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1728053497;
+	bh=AR81zM7tcgdPrGoH+VnVwMEtO6dO/auPSDmcI/0T2as=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aqZJiDkcFNbybvOWnSH1YTzAZ3uM5/cerAacIkwqm7Lc3cPTmNVHb2YLKv/c5xS8T
+	 mf1JNd4Lb0yZQvRElFWOgE1sRkiHrTIEwXxpXFj/DgKcwGYaY59Qm0ZfTIBo6HMqrq
+	 SnqTnoHFHD7zxNEL31vKleGoeHsH4JU3kIbE8BN2q5/dLekoHC/Bw4Hh/pTOBiLAq3
+	 jTIvouslB+GU7+x+ruAd6KDu5e174r8AnvwmiSCrDRZlYnQofKF6bMfiqMYZwbBOB5
+	 2jP+8Rl5p/OA9LMVlV0mND/nS6t6oofgwuyWUaK+L7ECjLYobPdfO+7xKz43utBB3q
+	 dEYJeAKnimt6A==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKs2119qszL30;
+	Fri,  4 Oct 2024 10:51:37 -0400 (EDT)
+Message-ID: <1aff8385-083e-4d8d-9c81-ce8d54b688ed@efficios.com>
+Date: Fri, 4 Oct 2024 10:49:36 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <979629af-e224-4308-a9a1-c66a60003d2d@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] tracing: Allow system call tracepoints to handle
+ page faults
+To: Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
+ "Paul E . McKenney" <paulmck@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
+ Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org
+References: <20241004011201.1681962-1-mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+In-Reply-To: <20241004011201.1681962-1-mathieu.desnoyers@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 03, 2024 at 06:25:14PM -0400, Stefan Berger wrote:
-> On 10/3/24 5:59 PM, Stefan Berger wrote:
-> > On 10/2/24 1:04 PM, Jonathan McDowell wrote:
-> > > (I'm still in the process of testing this to confirm it fixes the
-> > > errata I've seen, but I wanted to send it out for comments to make sure
-> > > it's a reasonable approach.)
-> > > 
-> > > Some Infineon devices have a issue where the status register will get
-> > > stuck with a quick REQUEST_USE / COMMAND_READY sequence. The work around
-> > 
-> > Did you tell Infineon about it? Maybe they should have a look at their
-> > firmware.
-
-I'm in contact with Infineon, and have their errata under NDA.
-
-> > What are the TPMs in your fleet doing? I heared that some TPMs
-> > pre-create keys in the background once users requested a few. I would
-> > try to create a few primary keys with different combination of key flags
+On 2024-10-04 03:11, Mathieu Desnoyers wrote:
+> Wire up the system call tracepoints with Tasks Trace RCU to allow
+> the ftrace, perf, and eBPF tracers to handle page faults.
 > 
-> Actually make this child keys of primary keys:
+> This series does the initial wire-up allowing tracers to handle page
+> faults, but leaves out the actual handling of said page faults as future
+> work.
 > 
-> > tsscreateprimary
-> Handle 80000000
-> > while :; do time tsscreate -hp 80000000 -si  -opem pubkey.pem ; cat
-> pubkey.pem; done
+> This series was compile and runtime tested with ftrace and perf syscall
+> tracing and raw syscall tracing, adding a WARN_ON_ONCE() in the
+> generated code to validate that the intended probes are used for raw
+> syscall tracing. The might_fault() added within those probes validate
+> that they are called from a context where handling a page fault is OK.
 > 
-> This should give a different key every time and maybe key creation time goes
-> up at some point...
+> This series replaces the "Faultable Tracepoints v6" series found at [1].
+> 
+> This has been rebased on v6.12-rc1 on top of two patches from Steven:
+> 
+> tracing: Remove definition of trace_*_rcuidle()
+> tracepoint: Remove SRCU protection
 
-We're doing a TPM2_CC_CREATE, but as part of a "seal" operation for some
-data, rather than full asymmetric key creation. So I don't think this is
-likely to be the cause, but it's given me the idea to see if we are
-seeing a spike on a particular command - maybe there's something that's
-close to the edge on timings that is occasionally going over. Playing
-around with bpftrace seems to give useful data so I'll need to
-investigate if I can deploy that to do some monitoring.
+I'll send an updated series which includes
+"tracing: Declare system call tracepoints with TRACE_EVENT_SYSCALL"
+(missing here), and which rework that patch to remove the mapping from
+trace_sys_enter/exit to trace_syscall_sys_enter/exit which requires
+modifying architecture code. A lot of churn for little value add.
 
-Our monitoring is running hourly and does the following TPM2
-operations (including the in kernel context switching):
+Thanks,
 
-TPM2_CC_SELF_TEST
-TPM2_CC_GET_CAPABILITY
-TPM2_CC_READ_PUBLIC
-TPM2_CC_READ_PUBLIC
-TPM2_CC_CREATE
-TPM2_CC_LOAD
-TPM2_CC_CONTEXT_SAVE
-TPM2_CC_FLUSH_CONTEXT
-TPM2_CC_CONTEXT_LOAD
-TPM2_CC_UNSEAL
-TPM2_CC_CONTEXT_SAVE
-TPM2_CC_FLUSH_CONTEXT
-TPM2_CC_CONTEXT_LOAD
-TPM2_CC_FLUSH_CONTEXT
-TPM2_CC_CONTEXT_SAVE
-TPM2_CC_READ_CLOCK
-TPM2_CC_GET_CAPABILITY
-TPM2_CC_GET_CAPABILITY
-TPM2_CC_GET_CAPABILITY
-TPM2_CC_GET_CAPABILITY
-TPM2_CC_GET_CAPABILITY
-TPM2_CC_GET_CAPABILITY
-TPM2_CC_READ_PUBLIC
+Mathieu
 
-J.
+> 
+> Thanks,
+> 
+> Mathieu
+> 
+> Link: https://lore.kernel.org/lkml/20240828144153.829582-1-mathieu.desnoyers@efficios.com/ # [1]
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Yonghong Song <yhs@fb.com>
+> Cc: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: bpf@vger.kernel.org
+> Cc: Joel Fernandes <joel@joelfernandes.org>
+> Cc: linux-trace-kernel@vger.kernel.org
+> 
+> Mathieu Desnoyers (7):
+>    tracing/ftrace: guard syscall probe with preempt_notrace
+>    tracing/perf: guard syscall probe with preempt_notrace
+>    tracing/bpf: guard syscall probe with preempt_notrace
+>    tracing: Allow system call tracepoints to handle page faults
+>    tracing/ftrace: Add might_fault check to syscall probes
+>    tracing/perf: Add might_fault check to syscall probes
+>    tracing/bpf: Add might_fault check to syscall probes
+> 
+>   include/linux/tracepoint.h    | 18 ++++++++++-----
+>   include/trace/bpf_probe.h     | 12 +++++++++-
+>   include/trace/perf.h          | 42 +++++++++++++++++++++++++++++++----
+>   include/trace/trace_events.h  | 39 ++++++++++++++++++++++++++------
+>   init/Kconfig                  |  1 +
+>   kernel/trace/trace_syscalls.c | 28 +++++++++++++++++++++++
+>   6 files changed, 123 insertions(+), 17 deletions(-)
+> 
 
 -- 
-If I, um, err. Yeah, it probably rounds down. -- Simon Huggins
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
