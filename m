@@ -1,103 +1,107 @@
-Return-Path: <linux-kernel+bounces-350136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33865990053
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:54:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC085990057
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92645B242D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BAD21F211DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E66148FF3;
-	Fri,  4 Oct 2024 09:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C820148FE5;
+	Fri,  4 Oct 2024 09:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlImvfew"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbS5LmLa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF91714659B;
-	Fri,  4 Oct 2024 09:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB106145B0C;
+	Fri,  4 Oct 2024 09:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728035638; cv=none; b=oiyoIeWRi+gvqQFq5y++4O5zqWQ7wais/gywEi0HTPT5DTF+XA9+7aTzgDPLO92C+esE7AxPBCaxDUy3mE3CK56hNVzdPHg1jMWD8vGSB3vTjTvPsqeIZBYKSmk/brUybxyHEx7+n74jLv6HtMk+G/EzfTDMbcYXDRtOvOKHvnE=
+	t=1728035666; cv=none; b=byyDz/mU+51Ty3BmDI5a74MPfxXYU+KhI4urpjt+RO6mRFZKlIqGzrY+yelMYIUDxXq2V0RSgyu/nhxFhC2cvGU0XbwRz/QSu06JNxGIqfuw3ep/VILmtiVMFnq0lk66eucFpwWoY14eFgchqlCDgqmg7T+dn8RjP40ExrxlJRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728035638; c=relaxed/simple;
-	bh=+gpexw+GwzFZ1lHSAbDPE9XzLQf8wRp0a9tbaMAgoHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aINnCqSN+SnxujzrQqvkXn5hZwuB7MujeC4YxNZ3ApEsge82YW9CeTZqDL+KZGoWjP7Pwx/gJsFOCRlVy0qrXLODZH7g+4XeyoNFV565V4/d+yelBJKFYmvNOw3NIARZqkUEvCAfFbAcxJJIVHMnBGYnq9Awvh8qLaveIrLus0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlImvfew; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A55C4C4CEC6;
-	Fri,  4 Oct 2024 09:53:55 +0000 (UTC)
+	s=arc-20240116; t=1728035666; c=relaxed/simple;
+	bh=GIekdLf920VjYQWuOHpXecODWknJgd0TvVRyo6zOyWg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NUKasyffnB+Wpkm2oXApI+H4kDwg8i9FEGLl8LYOV5bvcas2mBSosbXN2NMueGI9juE9D7PPlzd61dHKCbTx+bnT/dJkMYbjKXul5cewUdqi1BsE6po0dsWU8xH9K6u+cqcyrkajhcZDbKxI17jdr9YYrfUZKdjdD16+WICDveU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbS5LmLa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7E3BC4CEC6;
+	Fri,  4 Oct 2024 09:54:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728035637;
-	bh=+gpexw+GwzFZ1lHSAbDPE9XzLQf8wRp0a9tbaMAgoHY=;
+	s=k20201202; t=1728035666;
+	bh=GIekdLf920VjYQWuOHpXecODWknJgd0TvVRyo6zOyWg=;
 	h=From:To:Cc:Subject:Date:From;
-	b=IlImvfewMB2ZAGEK2TtFwv+s6oPed/fZfd0vY+v7tn6rsY8dKyGaWZVUbxH8/FiaP
-	 TJbDmjgthJAyCsX394bPOyNilMqhBu3rw0ayhCGQ2sc/szq0bxxU19Py2QuvwJjtfB
-	 S4hduUL0Fgqx60GcBoiXUSZb9ZRHBtcN2aIekUzncWB5EvGrh6lUrqHqnJXHiVuE+8
-	 QuiK6JrVE+ZpdiDFvSSuIAKeDOdlnKfXd6/oS+bNCD/GmDw7fRyug1TwFJC0mTJNIz
-	 5e9obZNTkgni0SmOkfMQVh5IJl06s/ivk1q5JUWiv1B5E+6/D4uI+EfKncv9E/Zs8J
-	 CVVjnAte6oRSA==
-From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
-To: Mark Brown <broonie@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>
-Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	b=pbS5LmLayz5YFv3aDX7vOrXQyUBdS7od4SGqy6tjKZ8S+S0jXLM+Gswg2DiB1IGIj
+	 G0XybEDl9mWsXkTS86ZIQgZq3tU4ydLowy3nR9ZpGd03HT5uUap6mqnvpgk2+8Z+nS
+	 tZbj77btt5Qu4x4x91TJJlUFlt+snn56vaNaSaHLSN0opWQ2JEcw1mAvS+zVQsZ2bA
+	 kGmv3Qn73t7/mODTJe5Yo9KyDWHIntnvtDY2IYXM3RSlzJqrRr34O6Z+vNCYbh3sBW
+	 gGsrpc5ocZeBwnM+XHE9EFpDnVSFMA6rLXMOKCeXrUebvHwRo4d89saTIyF6mobC9O
+	 zyFaBbbZbpj3w==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Baochen Qiang <quic_bqiang@quicinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Rameshkumar Sundaram <quic_ramess@quicinc.com>,
+	linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests: Do not skip BPF selftests by default
-Date: Fri,  4 Oct 2024 11:53:47 +0200
-Message-ID: <20241004095348.797020-1-bjorn@kernel.org>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH] wifi: ath12k: fix one more memcpy size error
+Date: Fri,  4 Oct 2024 09:54:13 +0000
+Message-Id: <20241004095420.637091-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Björn Töpel <bjorn@rivosinc.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-This effectively is a revert of commit 7a6eb7c34a78 ("selftests: Skip
-BPF seftests by default"). At the time when this was added, BPF had
-"build time dependencies on cutting edge versions". Since then a
-number of BPF capable tests has been included in net, hid, sched_ext.
+A previous patch addressed a fortified-memcpy warning on older compilers,
+but there is still a warning on gcc-14 in some configurations:
 
-There is no reason not to include BPF by default in the build.
+In file included from include/linux/string.h:390,
+                 from drivers/net/wireless/ath/ath12k/wow.c:7:
+drivers/net/wireless/ath/ath12k/wow.c: In function 'ath12k_wow_convert_8023_to_80211.isra':
+include/linux/fortify-string.h:114:33: error: '__builtin_memcpy' accessing 18446744073709551610 or more bytes at offsets 0 and 0 overlaps 9223372036854775797 bytes at offset -9223372036854775803 [-Werror=restrict]
+include/linux/fortify-string.h:679:26: note: in expansion of macro '__fortify_memcpy_chk'
+  679 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+      |                          ^~~~~~~~~~~~~~~~~~~~
+drivers/net/wireless/ath/ath12k/wow.c:199:25: note: in expansion of macro 'memcpy'
+  199 |                         memcpy(pat + a3_ofs - pkt_ofs,
+      |                         ^~~~~~
 
-Remove BPF from the selftests skiplist.
+Address this the same way as the other two, using size_add().
 
-Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+Fixes: b49991d83bba ("wifi: ath12k: fix build vs old compiler")
+Fixes: 4a3c212eee0e ("wifi: ath12k: add basic WoW functionalities")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- tools/testing/selftests/Makefile | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath12k/wow.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index b38199965f99..88f59a5fef96 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -129,10 +129,8 @@ ifeq ($(filter net/lib,$(TARGETS)),)
- endif
- endif
+diff --git a/drivers/net/wireless/ath/ath12k/wow.c b/drivers/net/wireless/ath/ath12k/wow.c
+index 9b8684abbe40..3624180b25b9 100644
+--- a/drivers/net/wireless/ath/ath12k/wow.c
++++ b/drivers/net/wireless/ath/ath12k/wow.c
+@@ -191,7 +191,7 @@ ath12k_wow_convert_8023_to_80211(struct ath12k *ar,
+ 			memcpy(bytemask, eth_bytemask, eth_pat_len);
  
--# User can optionally provide a TARGETS skiplist.  By default we skip
--# BPF since it has cutting edge build time dependencies which require
--# more effort to install.
--SKIP_TARGETS ?= bpf
-+# User can optionally provide a TARGETS skiplist.
-+SKIP_TARGETS ?=
- ifneq ($(SKIP_TARGETS),)
- 	TMP := $(filter-out $(SKIP_TARGETS), $(TARGETS))
- 	override TARGETS := $(TMP)
-
-base-commit: 0c559323bbaabee7346c12e74b497e283aaafef5
+ 			pat_len = eth_pat_len;
+-		} else if (eth_pkt_ofs + eth_pat_len < prot_ofs) {
++		} else if (size_add(eth_pkt_ofs, eth_pat_len) < prot_ofs) {
+ 			memcpy(pat, eth_pat, ETH_ALEN - eth_pkt_ofs);
+ 			memcpy(bytemask, eth_bytemask, ETH_ALEN - eth_pkt_ofs);
+ 
 -- 
-2.43.0
+2.39.2
 
 
