@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-351196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129E1990E5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:32:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BA4990E73
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1121C2281D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:32:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86B86B21EBA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1BD224163;
-	Fri,  4 Oct 2024 18:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D800224187;
+	Fri,  4 Oct 2024 18:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="RdTfy12B"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="r6ReknGz"
 Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A821E261B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0371223AC1;
 	Fri,  4 Oct 2024 18:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066586; cv=none; b=TXfnNMkad//RuypMHJdtedgDHzKJSFLJA73hekRKutdPalqMDGNcX8d4WEfp+r0mUE79iRDCaC8+SEln9ZlrTOaucF8GEYo2n6FIYLhABGLcBzapCq/6c31mOaj0SnOweBnrowRwIEuw7WzWxglx1KbbS3SSJ1PJBvKSb3cGyjc=
+	t=1728066587; cv=none; b=faQwlfxqgk7pttYNaTmASeg+sCLlWDtFv4mfiHBL5JFJOjlJvlK48buSge6qiaIO/UzTczyBcihgXODsRF5CoqEGXHYrf4VNimnnFcLqneF6swzb1cyQyvcDiWxZEmBJxopPqL/q12VySG1oDVfStib0PD9ktWqY8UxFNg4WGDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066586; c=relaxed/simple;
-	bh=59DRX32mdLXQysZ3Sgtuo0FR/eOuDpT4eLg0JUW2fnk=;
+	s=arc-20240116; t=1728066587; c=relaxed/simple;
+	bh=cSNRj0OI4fdrnI8/xVeVJxRNLIid96/Ux+wWEexmpEo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TqT/auPCgqZzygQ1V+Lq9JzjsP70158HxpyStTbOo6kVTkqHAZ+vzqWaIK1tqOuH9jqiqqsVtbQChO+Rf/qTJ5cq7+6BVupoiwEyE+w3XxUb3VsNjLAHgjJ83P7N5hi/RlAV3w8IDn+AL4SguiLZIwGXLQxvPwubArCzSULD6VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=RdTfy12B; arc=none smtp.client-ip=167.114.26.122
+	 MIME-Version; b=gDbd9Khwvl3tbJyrWAmeG0AYGb5drHYOPLRQn3QbYGekaLcS75lKuy5vLK6hXbjuXTQZ6tM22RLZAAwIJ4wr4ni60Sk75W9ULLv/Oktxoh/A0vu1ZYUZnNsoZlnnGFadOzUMd0nT+qUu269Mic1yN7ZuACGJdnDNbZgB0ex251s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=r6ReknGz; arc=none smtp.client-ip=167.114.26.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728066583;
-	bh=59DRX32mdLXQysZ3Sgtuo0FR/eOuDpT4eLg0JUW2fnk=;
+	s=smtpout1; t=1728066584;
+	bh=cSNRj0OI4fdrnI8/xVeVJxRNLIid96/Ux+wWEexmpEo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RdTfy12BdY1Bl7hzscghScaTILWzPL5EyN5ELmrc3J2sYHpBPokMsTfhnIykSfGSK
-	 YaJz60er3+WsoaCsPqYOej9ykNgWNZaLLlE48Lr7PHnyJ0D0gsU4JOYa9hq5Stu+xM
-	 NtNTg7QBBUsnCzbd5OrumMWo1q2l4xG/7aEUcixKMLeizZE8lbysakmUfSbYGrTcG/
-	 1GwQbFZ3nX0q8a7rO+Ed18OF0LlIsJzZWCuF+UsqnJ+MGtlE2bBn+/uFqeU8xASdbZ
-	 lJS/EyWYZr6ndUMJMeR6KMPaZgypdmw/z5jBCUJpMyMK08aLZfgflzAdlFgRYYpQBm
-	 img2y4307lftA==
+	b=r6ReknGzb47nzp3khOzTi1spk242OSeTFb23vL+0K6+KnZ9xtgKlm1qYKGpPUi/5N
+	 k18L7NChx3cewWTMkPeBFrJWLb2YBGnZw6UQcuOTtGd+4pUGJBeltmzT/5N1V/IrVl
+	 /I3rqJNwB7ipVWSz81mHN5FT5/ASIDObYV8qwMXFo+TGCnJ+m6gVTyhxvp6ZBatrYt
+	 zwtjoAUhMDofxSGwv+3tfZ5oblunbsWNnPf0LAwqTjkHKwbJfSr90Be0hfZvsmCU7y
+	 Hi8ASQ2gn6o5cMeEbdLjSBX42KcSWFbd08uhJ7Xvx9tA+8ZY9iKQCh9cPsX37eWCGz
+	 8aG3MKyQFtazw==
 Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKxsg0TGHzNGs;
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKxsg4h1LzNDr;
 	Fri,  4 Oct 2024 14:29:43 -0400 (EDT)
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Boqun Feng <boqun.feng@gmail.com>
@@ -76,13 +76,10 @@ Cc: linux-kernel@vger.kernel.org,
 	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
 	rcu@vger.kernel.org,
 	linux-mm@kvack.org,
-	lkmm@lists.linux.dev,
-	Gary Guo <gary@garyguo.net>,
-	Nikita Popov <github@npopov.com>,
-	llvm@lists.linux.dev
-Subject: [RFC PATCH v2 2/4] Documentation: RCU: Refer to ptr_eq()
-Date: Fri,  4 Oct 2024 14:27:32 -0400
-Message-Id: <20241004182734.1761555-3-mathieu.desnoyers@efficios.com>
+	lkmm@lists.linux.dev
+Subject: [RFC PATCH v2 3/4] hp: Implement Hazard Pointers
+Date: Fri,  4 Oct 2024 14:27:33 -0400
+Message-Id: <20241004182734.1761555-4-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241004182734.1761555-1-mathieu.desnoyers@efficios.com>
 References: <20241004182734.1761555-1-mathieu.desnoyers@efficios.com>
@@ -94,15 +91,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Refer to ptr_eq() in the rcu_dereference() documentation.
+This API provides existence guarantees of objects through Hazard
+Pointers (HP). This minimalist implementation is specific to use
+with preemption disabled, but can be extended further as needed.
 
-ptr_eq() is a mechanism that preserves address dependencies when
-comparing pointers, and should be favored when comparing a pointer
-obtained from rcu_dereference() against another pointer.
+Each HP domain defines a fixed number of hazard pointer slots (nr_cpus)
+across the entire system.
 
+Its main benefit over RCU is that it allows fast reclaim of
+HP-protected pointers without needing to wait for a grace period.
+
+It also allows the hazard pointer scan to call a user-defined callback
+to retire a hazard pointer slot immediately if needed. This callback
+may, for instance, issue an IPI to the relevant CPU.
+
+There are a few possible use-cases for this in the Linux kernel:
+
+  - Improve performance of mm_count by replacing lazy active mm by HP.
+  - Guarantee object existence on pointer dereference to use refcount:
+    - replace locking used for that purpose in some drivers,
+    - replace RCU + inc_not_zero pattern,
+  - rtmutex: Improve situations where locks need to be taken in
+    reverse dependency chain order by guaranteeing existence of
+    first and second locks in traversal order, allowing them to be
+    locked in the correct order (which is reverse from traversal
+    order) rather than try-lock+retry on nested lock.
+
+References:
+
+[1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
+     lock-free objects," in IEEE Transactions on Parallel and
+     Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
+
+Link: https://lore.kernel.org/lkml/j3scdl5iymjlxavomgc6u5ndg3svhab6ga23dr36o4f5mt333w@7xslvq6b6hmv/
+Link: https://lpc.events/event/18/contributions/1731/
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: "Paul E. McKenney" <paulmck@kernel.org>
@@ -113,6 +138,7 @@ Cc: Alan Stern <stern@rowland.harvard.edu>
 Cc: John Stultz <jstultz@google.com>
 Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Boqun Feng <boqun.feng@gmail.com>
 Cc: Frederic Weisbecker <frederic@kernel.org>
 Cc: Joel Fernandes <joel@joelfernandes.org>
@@ -128,86 +154,250 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vlastimil Babka <vbabka@suse.cz>
 Cc: maged.michael@gmail.com
 Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Gary Guo <gary@garyguo.net>
 Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
 Cc: rcu@vger.kernel.org
 Cc: linux-mm@kvack.org
 Cc: lkmm@lists.linux.dev
-Cc: Nikita Popov <github@npopov.com>
-Cc: llvm@lists.linux.dev
 ---
 Changes since v0:
-- Include feedback from Alan Stern.
-
-Changes since v1:
-- Include feedback from Paul E. McKenney.
+- Remove slot variable from hp_dereference_allocate().
 ---
- Documentation/RCU/rcu_dereference.rst | 38 +++++++++++++++++++++++----
- 1 file changed, 33 insertions(+), 5 deletions(-)
+ include/linux/hp.h | 158 +++++++++++++++++++++++++++++++++++++++++++++
+ kernel/Makefile    |   2 +-
+ kernel/hp.c        |  46 +++++++++++++
+ 3 files changed, 205 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/hp.h
+ create mode 100644 kernel/hp.c
 
-diff --git a/Documentation/RCU/rcu_dereference.rst b/Documentation/RCU/rcu_dereference.rst
-index 2524dcdadde2..de6175bf430f 100644
---- a/Documentation/RCU/rcu_dereference.rst
-+++ b/Documentation/RCU/rcu_dereference.rst
-@@ -104,11 +104,12 @@ readers working properly:
- 	after such branches, but can speculate loads, which can again
- 	result in misordering bugs.
- 
---	Be very careful about comparing pointers obtained from
--	rcu_dereference() against non-NULL values.  As Linus Torvalds
--	explained, if the two pointers are equal, the compiler could
--	substitute the pointer you are comparing against for the pointer
--	obtained from rcu_dereference().  For example::
-+-	Use operations that preserve address dependencies (such as
-+	"ptr_eq()") to compare pointers obtained from rcu_dereference()
-+	against non-NULL pointers. As Linus Torvalds explained, if the
-+	two pointers are equal, the compiler could substitute the
-+	pointer you are comparing against for the pointer obtained from
-+	rcu_dereference().  For example::
- 
- 		p = rcu_dereference(gp);
- 		if (p == &default_struct)
-@@ -125,6 +126,29 @@ readers working properly:
- 	On ARM and Power hardware, the load from "default_struct.a"
- 	can now be speculated, such that it might happen before the
- 	rcu_dereference().  This could result in bugs due to misordering.
-+	Performing the comparison with "ptr_eq()" ensures the compiler
-+	does not perform such transformation.
+diff --git a/include/linux/hp.h b/include/linux/hp.h
+new file mode 100644
+index 000000000000..e85fc4365ea2
+--- /dev/null
++++ b/include/linux/hp.h
+@@ -0,0 +1,158 @@
++// SPDX-FileCopyrightText: 2024 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
++//
++// SPDX-License-Identifier: LGPL-2.1-or-later
 +
-+	If the comparison is against another pointer, the compiler is
-+	allowed to use either pointer for the following accesses, which
-+	loses the address dependency and allows weakly-ordered
-+	architectures such as ARM and PowerPC to speculate the
-+	address-dependent load before rcu_dereference().  For example::
++#ifndef _LINUX_HP_H
++#define _LINUX_HP_H
 +
-+		p1 = READ_ONCE(gp);
-+		p2 = rcu_dereference(gp);
-+		if (p1 == p2)  /* BUGGY!!! */
-+			do_default(p2->a);
++/*
++ * HP: Hazard Pointers
++ *
++ * This API provides existence guarantees of objects through hazard
++ * pointers.
++ *
++ * It uses a fixed number of hazard pointer slots (nr_cpus) across the
++ * entire system for each HP domain.
++ *
++ * Its main benefit over RCU is that it allows fast reclaim of
++ * HP-protected pointers without needing to wait for a grace period.
++ *
++ * It also allows the hazard pointer scan to call a user-defined callback
++ * to retire a hazard pointer slot immediately if needed. This callback
++ * may, for instance, issue an IPI to the relevant CPU.
++ *
++ * References:
++ *
++ * [1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
++ *      lock-free objects," in IEEE Transactions on Parallel and
++ *      Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
++ */
 +
-+	The compiler can use p1->a rather than p2->a, destroying the
-+	address dependency.  Performing the comparison with "ptr_eq()"
-+	ensures the compiler preserves the address dependencies.
-+	Corrected code::
++#include <linux/rcupdate.h>
 +
-+		p1 = READ_ONCE(gp);
-+		p2 = rcu_dereference(gp);
-+		if (ptr_eq(p1, p2))
-+			do_default(p2->a);
- 
- 	However, comparisons are OK in the following cases:
- 
-@@ -204,6 +228,10 @@ readers working properly:
- 		comparison will provide exactly the information that the
- 		compiler needs to deduce the value of the pointer.
- 
-+	When in doubt, use operations that preserve address dependencies
-+	(such as "ptr_eq()") to compare pointers obtained from
-+	rcu_dereference() against non-NULL pointers.
++/*
++ * Hazard pointer slot.
++ */
++struct hp_slot {
++	void *addr;
++};
 +
- -	Disable any value-speculation optimizations that your compiler
- 	might provide, especially if you are making use of feedback-based
- 	optimizations that take data collected from prior runs.  Such
++/*
++ * Hazard pointer context, returned by hp_use().
++ */
++struct hp_ctx {
++	struct hp_slot *slot;
++	void *addr;
++};
++
++/*
++ * hp_scan: Scan hazard pointer domain for @addr.
++ *
++ * Scan hazard pointer domain for @addr.
++ * If @retire_cb is NULL, wait to observe that each slot contains a value
++ * that differs from @addr.
++ * If @retire_cb is non-NULL, invoke @callback for each slot containing
++ * @addr.
++ */
++void hp_scan(struct hp_slot __percpu *percpu_slots, void *addr,
++	     void (*retire_cb)(int cpu, struct hp_slot *slot, void *addr));
++
++/* Get the hazard pointer context address (may be NULL). */
++static inline
++void *hp_ctx_addr(struct hp_ctx ctx)
++{
++	return ctx.addr;
++}
++
++/*
++ * hp_allocate: Allocate a hazard pointer.
++ *
++ * Allocate a hazard pointer slot for @addr. The object existence should
++ * be guaranteed by the caller. Expects to be called from preempt
++ * disable context.
++ *
++ * Returns a hazard pointer context.
++ */
++static inline
++struct hp_ctx hp_allocate(struct hp_slot __percpu *percpu_slots, void *addr)
++{
++	struct hp_slot *slot;
++	struct hp_ctx ctx;
++
++	if (!addr)
++		goto fail;
++	slot = this_cpu_ptr(percpu_slots);
++	/*
++	 * A single hazard pointer slot per CPU is available currently.
++	 * Other hazard pointer domains can eventually have a different
++	 * configuration.
++	 */
++	if (READ_ONCE(slot->addr))
++		goto fail;
++	WRITE_ONCE(slot->addr, addr);	/* Store B */
++	ctx.slot = slot;
++	ctx.addr = addr;
++	return ctx;
++
++fail:
++	ctx.slot = NULL;
++	ctx.addr = NULL;
++	return ctx;
++}
++
++/*
++ * hp_dereference_allocate: Dereference and allocate a hazard pointer.
++ *
++ * Returns a hazard pointer context. Expects to be called from preempt
++ * disable context.
++ */
++static inline
++struct hp_ctx hp_dereference_allocate(struct hp_slot __percpu *percpu_slots, void * const * addr_p)
++{
++	void *addr, *addr2;
++	struct hp_ctx ctx;
++
++	addr = READ_ONCE(*addr_p);
++retry:
++	ctx = hp_allocate(percpu_slots, addr);
++	if (!hp_ctx_addr(ctx))
++		goto fail;
++	/* Memory ordering: Store B before Load A. */
++	smp_mb();
++	/*
++	 * Use RCU dereference without lockdep checks, because
++	 * lockdep is not aware of HP guarantees.
++	 */
++	addr2 = rcu_access_pointer(*addr_p);	/* Load A */
++	/*
++	 * If @addr_p content has changed since the first load,
++	 * clear the hazard pointer and try again.
++	 */
++	if (!ptr_eq(addr2, addr)) {
++		WRITE_ONCE(ctx.slot->addr, NULL);
++		if (!addr2)
++			goto fail;
++		addr = addr2;
++		goto retry;
++	}
++	/*
++	 * Use addr2 loaded from rcu_access_pointer() to preserve
++	 * address dependency ordering.
++	 */
++	ctx.addr = addr2;
++	return ctx;
++
++fail:
++	ctx.slot = NULL;
++	ctx.addr = NULL;
++	return ctx;
++}
++
++/* Retire the hazard pointer in @ctx. */
++static inline
++void hp_retire(const struct hp_ctx ctx)
++{
++	smp_store_release(&ctx.slot->addr, NULL);
++}
++
++#endif /* _LINUX_HP_H */
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 3c13240dfc9f..ec16de96fa80 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -7,7 +7,7 @@ obj-y     = fork.o exec_domain.o panic.o \
+ 	    cpu.o exit.o softirq.o resource.o \
+ 	    sysctl.o capability.o ptrace.o user.o \
+ 	    signal.o sys.o umh.o workqueue.o pid.o task_work.o \
+-	    extable.o params.o \
++	    extable.o params.o hp.o \
+ 	    kthread.o sys_ni.o nsproxy.o \
+ 	    notifier.o ksysfs.o cred.o reboot.o \
+ 	    async.o range.o smpboot.o ucount.o regset.o ksyms_common.o
+diff --git a/kernel/hp.c b/kernel/hp.c
+new file mode 100644
+index 000000000000..b2447bf15300
+--- /dev/null
++++ b/kernel/hp.c
+@@ -0,0 +1,46 @@
++// SPDX-FileCopyrightText: 2024 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
++//
++// SPDX-License-Identifier: LGPL-2.1-or-later
++
++/*
++ * HP: Hazard Pointers
++ */
++
++#include <linux/hp.h>
++#include <linux/percpu.h>
++
++/*
++ * hp_scan: Scan hazard pointer domain for @addr.
++ *
++ * Scan hazard pointer domain for @addr.
++ * If @retire_cb is non-NULL, invoke @callback for each slot containing
++ * @addr.
++ * Wait to observe that each slot contains a value that differs from
++ * @addr before returning.
++ */
++void hp_scan(struct hp_slot __percpu *percpu_slots, void *addr,
++	     void (*retire_cb)(int cpu, struct hp_slot *slot, void *addr))
++{
++	int cpu;
++
++	/*
++	 * Store A precedes hp_scan(): it unpublishes addr (sets it to
++	 * NULL or to a different value), and thus hides it from hazard
++	 * pointer readers.
++	 */
++
++	if (!addr)
++		return;
++	/* Memory ordering: Store A before Load B. */
++	smp_mb();
++	/* Scan all CPUs slots. */
++	for_each_possible_cpu(cpu) {
++		struct hp_slot *slot = per_cpu_ptr(percpu_slots, cpu);
++
++		if (retire_cb && smp_load_acquire(&slot->addr) == addr)	/* Load B */
++			retire_cb(cpu, slot, addr);
++		/* Busy-wait if node is found. */
++		while ((smp_load_acquire(&slot->addr)) == addr)	/* Load B */
++			cpu_relax();
++	}
++}
 -- 
 2.39.2
 
