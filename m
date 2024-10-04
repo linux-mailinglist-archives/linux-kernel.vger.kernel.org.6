@@ -1,92 +1,93 @@
-Return-Path: <linux-kernel+bounces-350144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 144CD99006F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:03:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADF5990074
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EAB91C221EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:02:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3598B24794
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558E5149E09;
-	Fri,  4 Oct 2024 10:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E828B14A4F0;
+	Fri,  4 Oct 2024 10:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5QNRkmW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyi9nyqg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38143CF74;
-	Fri,  4 Oct 2024 10:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C140146A72;
+	Fri,  4 Oct 2024 10:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728036169; cv=none; b=PpylCFqIBsIk7/7suFG2eqsCY4FSjWa2BtT+3+sw9B4Blij4FpdGezqjbBFtZdBovZvndHUvTVwQngJyOXfFw1/3WdvSCzqlAYSIg+Szl2alisaVt8ctrGNa7ipBjfSQyjW/qVHJbUeexRIVbvLy6csBrb9Ft0IblxY6NNA+tUE=
+	t=1728036209; cv=none; b=dC8n8eNOxHyQ5fWIf426joT4qOr+HCgq3x2bSBPnG7fiIBeAfVe7mmxNEY/zl+9jmgOl1LoAbzArP8JR5w3idIxti07vAXv86uTfElEvWaXChDR6tyk4p7onU47zb1p4E9dJ/GgZ/aW/izJpzMNgKepwXebopFIIePFRrPJVVG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728036169; c=relaxed/simple;
-	bh=vr5NqSC5uXNJKkc7DBKfbxu6d6QS50mMwkxzdrdXIoQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gX9x0rmfd131ermrwHCwFRqt5HhIy40wYPgf0xN/5z7HCFfcsgAtGd7S/CQ8zklinxo46XnPi7q0L7S6B6Je0q89dGvPFC9cnh4kiWOtFAQ3sZudpmBDBjsVJNIwhJJAH9dEddZccwXeZzn4X7/3RCOirgVSr1iXRBkVOYVDi18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5QNRkmW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A227AC4CEC6;
-	Fri,  4 Oct 2024 10:02:47 +0000 (UTC)
+	s=arc-20240116; t=1728036209; c=relaxed/simple;
+	bh=w8bWlQBTvkReQC5vkKIau+hsj+b10X/1li97V1B6tvo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mtgxUxxJ3DiYS8196dxTF5enYNeu1iprEQmUg881+5WoqQU0W5YfdMwHI4PwPabV737ECQflkz5UyqNDQygfQP9UtZHW1FgI49LVUBsbMztpfdDedcfDRbdrlf7nkUh0XiyV6eUBjuL1HLlYzf/wAZhxwJ7iyol6qlJJyQ6FM+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyi9nyqg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F8C3C4CEC6;
+	Fri,  4 Oct 2024 10:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728036169;
-	bh=vr5NqSC5uXNJKkc7DBKfbxu6d6QS50mMwkxzdrdXIoQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=T5QNRkmWKnyRRPiX8Lknp2akQ1hc17ws1NDT7jEbQwXVs5Gpyw7t+T9R9zh8u36N2
-	 kS9Z1rpen9PVcU/aHC0E5IvrznvFc4ZvDhOv0RMkEeh57riARxQkEAqZZJVTGb0vRI
-	 9NqqFkrrT90JMnlAaw1u4xiXZh6WT96KwtDA5i9yACzvdgk+lTKvG9NOyPtVdWVWxf
-	 uHzCKKAzLKkk90YTwbR7BUyktJrUMxAi8+oY/dqRHd0VwFOpttVLX9g/110B2yNrVR
-	 2A7H0dAl7VRMnITpYVKyzmawtKX53FN1FsJRO7hAGQYMmNMF0vVsvd2i4zipJQrHxA
-	 YavTnEXybgMwg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] media: cec: seco: add HAS_IOPORT dependency
-Date: Fri,  4 Oct 2024 10:02:23 +0000
-Message-Id: <20241004100223.638190-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=k20201202; t=1728036208;
+	bh=w8bWlQBTvkReQC5vkKIau+hsj+b10X/1li97V1B6tvo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=gyi9nyqg+EMzDl2tNtN1yhFefNYCo6HbhJr2mjZJcUBgwZ0fTp4UE45YpId12nblT
+	 A4Kk30NGKLqdJyeLC0C/fTJt8ocRpAEotRbNAFH+n9W3QC7Wx4DJsUsrqW3nRS2X0u
+	 lhUA1FdDNAD9BfLox31troxtqVGeyfElsjpqzNVUtAw8uDA+86J39ufm2X0oUV9sFZ
+	 vtsGhQwSBk0BYXmK77By4i2hkuPkJyfy0uUNL2WzbEeaTmE7y8UuNZYUY5rtbZkx3c
+	 tZSQZSNG00bb/GaYuJNucJEcNaqOpw+m8t4W+R8OJhvfX46tHi39oj4UWfYq9Jgu8A
+	 rfwIBJqQXku4A==
+From: Simon Horman <horms@kernel.org>
+Subject: [PATCH RFC net 0/2] MAINTAINERS: Networking file coverage updates
+Date: Fri, 04 Oct 2024 11:03:20 +0100
+Message-Id: <20241004-maint-net-hdrs-v1-0-41fd555aacc5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGi9/2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwMT3dzEzLwS3bzUEt2MlKJi3TQLU4uUJDPLVGNLYyWgpoKi1LTMCrC
+ B0UpBbs4KQJVKsbW1AMwe/RFpAAAA
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+ netdev@vger.kernel.org
+X-Mailer: b4 0.14.0
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi,
 
-This driver is now enabled for compile-testing on architectures
-that may not have I/O port access:
+The aim of this proposal is to make the handling of some files,
+related to Networking and Wireless, more consistently. It does so by:
 
-drivers/media/cec/platform/seco/seco-cec.c: In function 'smb_word_op.constprop.isra':
-include/asm-generic/io.h:542:14: error: call to '_inb' declared with attribute error: inb()) requires CONFIG_HAS_IOPORT
+1. Adding some more headers to the UDP section, making it consistent
+   with the TCP section.
 
-Add a Kconfig dependency again.
+2. Excluding some files relating to Wireless from NETWORKING [GENERAL],
+   making their handling consistent with other files related to
+   Wireless.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The aim of this is to make things more consistent.  And for MAINTAINERS
+to better reflect the situation on the ground.  I am more than happy to
+be told that the current state of affairs is fine. Or for other ideas to
+be discussed.
+
 ---
- drivers/media/cec/platform/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Simon Horman (2):
+      MAINTAINERS: consistently exclude wireless files from NETWORKING [GENERAL]
+      MAINTAINERS: Add headers and mailing list to UDP section
 
-diff --git a/drivers/media/cec/platform/Kconfig b/drivers/media/cec/platform/Kconfig
-index b672d3142eb7..e40413609f53 100644
---- a/drivers/media/cec/platform/Kconfig
-+++ b/drivers/media/cec/platform/Kconfig
-@@ -99,7 +99,7 @@ config CEC_TEGRA
- 
- config CEC_SECO
- 	tristate "SECO Boards HDMI CEC driver"
--	depends on X86 || COMPILE_TEST
-+	depends on X86 || (COMPILE_TEST && HAS_IOPORT)
- 	depends on PCI && DMI
- 	select CEC_CORE
- 	select CEC_NOTIFIER
--- 
-2.39.2
+ MAINTAINERS | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+base-commit: 096c0fa42afa92b6ffa4e441c4c72a2f805c5a88
 
 
