@@ -1,134 +1,165 @@
-Return-Path: <linux-kernel+bounces-349867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF76398FC74
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:01:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16ECE98FC7A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786542840BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:01:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 448281C2267E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCF83A1C4;
-	Fri,  4 Oct 2024 03:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA8D482D8;
+	Fri,  4 Oct 2024 03:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TDfLljWl"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="JtxXIg4s"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2CCDDA1;
-	Fri,  4 Oct 2024 03:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075712B2DA;
+	Fri,  4 Oct 2024 03:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728010854; cv=none; b=LL6/tH9BtRuTrUyOn5A5WVb/vgcEPc+X94jAt+I6Nsx9TUZO7u3e0wXbHImgEzIICWGh/H6iSVE2liiuClF8oX7P9njuloeiDM/OnhayYpmULtzbtOfjZJ4kSf+a2YCc+Xi46uFc8qmgvs0i8SdhjqKkaH3dQg/DI6z7D1kvTTA=
+	t=1728010931; cv=none; b=TRF2PYQ/I5EgDI1AZ8pPwCj3Fy6+vec3eWY4NAvSWHRS3YNZ64usFbncyISy7xueetlC3U/0YRjlwcs/5Cbhr53rcQfA3vXnRs0L2GmyRESQsQKXqyqRlvQjfH8XPdB7pRu7RQFr/o4cYUg+TKgqplXXl/AaXBaS6L59SZ1KwnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728010854; c=relaxed/simple;
-	bh=08eO4rVSuL5Itu06fqQ6rH+zvRpYJ/V9/51Uuh/gTrg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RMunz/68uwM7ZGZ/cmWJfKNzmX8Q0EiMEfe8EupGKfEgsUDyIKjmCZ1G3RCMpjOw1yqz70JzwG6eGqaoDrihfT5BAVPYIFRu8cj6W0V6HmZChYzX9iWjczOApopPBrroYmaFzPKUAPdHFcM2VSu9f+sBQOg4+JQUu+sEvztY18Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TDfLljWl; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cbface8d6so20764345e9.3;
-        Thu, 03 Oct 2024 20:00:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728010851; x=1728615651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cbp1AkhesU9hhRzgbyEVW16AAfvZIjNwVq3OXYiQd6Q=;
-        b=TDfLljWlhwB3gXHhg3swg4LJp5pOOIfnIss1XpBKbheZpDDCwIT1/M+q/BP5VgeQR4
-         CRgwcAcQs1lXndmoO9vCbR7xMueYt3X9LsqWoOn6nvwWvaw68/udxwT3fq5Lod5Q6naW
-         P0stYtBuJ/U5uLIzpxlXzFPbM5ZHnb6tXzqjbDKVc0FJCe/6B0bc6qbn88uBb3X1ioSR
-         I36nh81cYoEt5HM2h4zGTCvM+rz4U5v0lFmZQhAoYs9Zu+j+LLiDR+aTTWYHbnAPftb4
-         +SgBUWCFj7HBTiJuFo63tEImSA9M75SGg34lvOJHKfgYXcrUNpa8e7Gb815m9kBK7bnZ
-         WNCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728010851; x=1728615651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cbp1AkhesU9hhRzgbyEVW16AAfvZIjNwVq3OXYiQd6Q=;
-        b=tvErVka4nOUSjfRXQUbgfNAc/uhIRH3hb+dqNVGdFDJw9JINbfrC88WE62gZJvqq26
-         rwSuNOelcdC3CAhbzxuJbvHxRxZ03JvaiU06D2e364au7G2xnZYzFrhishtR/UEf3kox
-         Bwytz50JtgPHXRfX3ufFuvCzHLsSLKyIZyZBEg1S7PoikCIoj3bKHeJhuVDno2Civj5p
-         bOKrhxadvK5sD2Z2Ck5lgQRNTnRT1eRGtEkZylyH6ZULxfXfAAJePAo09SzhURwFIB4t
-         QfiWnsR20xgEgPOugqAeOHQAFvdZIzuAt9kYBRs5JOSE1CdNF+ctF+vokT5m+GWY5TSv
-         6IrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWU3TYtn7w0fjBn68/Edx9n6ihk8i5UnisiSqu2hDT/LpVc2cxfKR/wmjkVg+5AHdN8L7QTUZ8@vger.kernel.org, AJvYcCXQBDqdetpZa9zUhntWc8EY60G5V7Zhf2VEEmOwQckWGOgZGv+gV6+lQtXsU6yvYid4+3HBC9xm1nqOthk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx61kZmsqoKJA7H4jun7NyrznM7t1o3ZmP5T3rHsppHCjayi8qV
-	6ne522BT+DhACavxbLwNN+x7acYpL4ITsMOw8uSLMc/An31fRqptilY/fkQVEIAL9cwPAgNMq3o
-	3oKMsyXwg4MmnhQ7a99qUcwnTaec=
-X-Google-Smtp-Source: AGHT+IEDGQvwmpIEDJ3EyYSzUAgad1wQGBiJYudeCLaHHvxeP0wsMi1NMM2pdsOlj8ZjOFDg+USt7JIsjjJHusb800Q=
-X-Received: by 2002:adf:f58c:0:b0:37c:d507:aacd with SMTP id
- ffacd0b85a97d-37d0e724b97mr1056615f8f.14.1728010851339; Thu, 03 Oct 2024
- 20:00:51 -0700 (PDT)
+	s=arc-20240116; t=1728010931; c=relaxed/simple;
+	bh=GstCkWPShMQ/UszwQe5t8ZxgyO018igh7DIxzE2l6KQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lvXGiK9eonvpqzuFCh8E/aBfFVp3swg8OINBjwpPK0flNRTE2J057DnLEV3cqGIGR9FcChWR+/rjhz6ILo6v8IQ1QSbot4lDi95dKakepoweQcWvp/iLzBGHn6T9Pp8B2iptkgMUYhs7Fsj4GdHOoYEJTFYpEr9qzK7/HQGswFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=JtxXIg4s; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 07a1587a81fd11efb66947d174671e26-20241004
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=I5K+nSN5T2E6nZK8faQwTndLJFZXOZd9+jaIpIgcUmI=;
+	b=JtxXIg4se85SUpMfFG/MS9btK5uNS+KI/iGLan25sATf+ad+KRzf2qwAXFPyD9ODpPXXKi42xEaxnu1po6btao0EZB3kw4bIX2Eu/HjMaGtKwVBP03hsxE/k5z1FVoaSFOU+MvKJLZ2+YQOWhbbSLyfeIEVPhFmrHYEGENBGId8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:5ba1abf4-9ec8-4cc1-93df-cde14933b573,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:68614326-5902-4533-af4f-d0904aa89b3c,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 07a1587a81fd11efb66947d174671e26-20241004
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1143322155; Fri, 04 Oct 2024 11:02:02 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 4 Oct 2024 11:01:59 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 4 Oct 2024 11:01:59 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	<linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
+	<amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>
+Subject: [PATCH v2 1/2] dt-bindings: mfd: mediatek: mt6397: add adc, codec and regulators for mt6359
+Date: Fri, 4 Oct 2024 11:01:47 +0800
+Message-ID: <20241004030148.13366-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001075858.48936-1-linyunsheng@huawei.com> <20241001075858.48936-10-linyunsheng@huawei.com>
-In-Reply-To: <20241001075858.48936-10-linyunsheng@huawei.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Thu, 3 Oct 2024 20:00:14 -0700
-Message-ID: <CAKgT0UeSbXTXoOuTZS918pZQcCVZBXiTseN-NUBTGt71ctQ2Vw@mail.gmail.com>
-Subject: Re: [PATCH net-next v19 09/14] net: rename skb_copy_to_page_nocache() helper
-To: Yunsheng Lin <yunshenglin0825@gmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Eric Dumazet <edumazet@google.com>, 
-	David Ahern <dsahern@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--5.650800-8.000000
+X-TMASE-MatchedRID: 4TOfFruLyYi6lIBLPjRk6RWCVBr+Ay98wQ0CCpqVHSz98u70/pR9GipO
+	gudjiL0DF8NKa4AxCmBzNWqZAVqAAh9J5bZqJbIJvHKClHGjjr0W40XiUkbrG9zOQo7mTgA+cCE
+	8iA5iVa0ZoBsQWiqLArpjAjMHHtZlHxPMjOKY7A8LbigRnpKlKWxlRJiH43972G1cTkcL58gA5L
+	rtblF1DqM775K4TBnPkhIGp65r72JaobKNZg9nXg==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--5.650800-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	3EB65091C26E2076BB07561CB10BB184BCAB13156FBE39F3D07547B13E47422F2000:8
+X-MTK: N
 
-On Tue, Oct 1, 2024 at 12:59=E2=80=AFAM Yunsheng Lin <yunshenglin0825@gmail=
-.com> wrote:
->
-> Rename skb_copy_to_page_nocache() to skb_copy_to_va_nocache()
-> to avoid calling virt_to_page() as we are about to pass virtual
-> address directly.
->
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> ---
->  include/net/sock.h | 10 ++++------
->  net/ipv4/tcp.c     |  7 +++----
->  net/kcm/kcmsock.c  |  7 +++----
->  3 files changed, 10 insertions(+), 14 deletions(-)
->
-> diff --git a/include/net/sock.h b/include/net/sock.h
-> index c58ca8dd561b..7d0b606d6251 100644
-> --- a/include/net/sock.h
-> +++ b/include/net/sock.h
-> @@ -2185,15 +2185,13 @@ static inline int skb_add_data_nocache(struct soc=
-k *sk, struct sk_buff *skb,
->         return err;
->  }
->
-> -static inline int skb_copy_to_page_nocache(struct sock *sk, struct iov_i=
-ter *from,
-> -                                          struct sk_buff *skb,
-> -                                          struct page *page,
-> -                                          int off, int copy)
-> +static inline int skb_copy_to_va_nocache(struct sock *sk, struct iov_ite=
-r *from,
-> +                                        struct sk_buff *skb, char *va,
-> +                                        int copy)
->  {
+Since MT6359 PMIC has been added as one of the compatibles of
+"mediatek,mt6397.yaml", the sub-device node of "MT6359 PMIC AUXADC",
+"MT6359 Audio Codec"  and "MT6359 PMIC Regulators" should also be
+contained in this DT Schema as well.
 
-This new naming is kind of confusing. Currently the only other
-"skb_copy_to" functions are skb_copy_to_linear_data and
-skb_copy_to_linear_data_offset. The naming before basically indicated
-which part of the skb the data was being copied into. So before we
-were copying into the "page" frags. With the new naming this function
-is much less clear as technically the linear data can also be a
-virtual address.
+This patch includes:
+ - add 'adc' property and $ref for 'mediatek,mt6359-auxadc'.
+ - add 'mt6359-regulator' to the compatibles of regulators.
+ - add 'mt6359-codec' to the compatibles of audio-codec.
 
-I would recommend maybe replacing "va" with "frag", "page_frag" or
-maybe "pfrag" as what we are doing is copying the data to one of the
-pages in the paged frags section of the skb before they are added to
-the skb itself.
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ .../devicetree/bindings/mfd/mediatek,mt6397.yaml          | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+Changes for v2:
+ - Rebase on top of the DT schema conversion patch V8 (should be final version)
+   without adc, audio-codec, and regulator.
+   [1] https://lore.kernel.org/all/20241001104145.24054-3-macpaul.lin@mediatek.com/
+ - Add 'mt6359-codec' to the compatibles of 'audio-codec' property.
+   Please help to review it again.
+
+diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+index 95e9566fc535..35c4bc199b4e 100644
+--- a/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
++++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+@@ -17,6 +17,7 @@ description: |
+   MT6397/MT6323 is a multifunction device with the following sub modules:
+   - Regulators
+   - RTC
++  - ADC
+   - Audio codec
+   - GPIO
+   - Clock
+@@ -86,6 +87,7 @@ properties:
+           - enum:
+               - mediatek,mt6323-regulator
+               - mediatek,mt6358-regulator
++              - mediatek,mt6359-regulator
+               - mediatek,mt6397-regulator
+           - items:
+               - enum:
+@@ -95,6 +97,11 @@ properties:
+     required:
+       - compatible
+ 
++  adc:
++    type: object
++    $ref: /schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
++    unevaluatedProperties: false
++
+   audio-codec:
+     type: object
+     description:
+@@ -106,6 +113,7 @@ properties:
+         oneOf:
+           - enum:
+               - mediatek,mt6358-sound
++              - mediatek,mt6359-codec
+               - mediatek,mt6397-codec
+           - items:
+               - enum:
+-- 
+2.45.2
+
 
