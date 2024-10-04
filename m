@@ -1,348 +1,262 @@
-Return-Path: <linux-kernel+bounces-350764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D0699093D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:32:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE14990949
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38B6D1C2133E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:32:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81DAA281C38
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355321CACD2;
-	Fri,  4 Oct 2024 16:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="THakEV7y"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197291C876D;
+	Fri,  4 Oct 2024 16:34:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1101CACED
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2C71C7299
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728059526; cv=none; b=tQt9Gzo429onKslQ5CPjqBhgiIEhhwQi9lugSuY+/Lmd+ZB/ruuKK3Q1i8Zv8H2pQ8bCnKkTwqQ744/3JERoFmCO1UF21CMaGa6JdBqN6knmJBwv6l1XvTzffLKIJ5AknqI+U0zn8lFlFvEX7fNwLmIrc0LNzz2bjochzhYIVmE=
+	t=1728059646; cv=none; b=pNe2/EfeItiO+btzEGBqW0Y+MkjRbFpJwwHw5sAwUfi9LobDmayx/7BE5ypZqtj4KrwsxQLO9BhaGROTF8tBhaO5wp+fscLwNstPNEsqyHTUUEASDqSI7P9mUhTKn0W7JYNMmw6lJw+ueweHlii4UpHkFk1Q44gg1GLzpJaFoMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728059526; c=relaxed/simple;
-	bh=kUl1sKw/xZqbxSTdZSwJtsohwS7kwAMEXoZtDsaxJLQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JRP/26B60S7X1QvkAB6f8MFFK/MGoOmBQQxCCiZ8U8pKuDBZGxbrzjxbMcaWfWeor4IT7F8UWHvchJSEyxw83tCehzSjGr0yPm4RavojiR/CAD5ofGZKPzB1Fwu0TzBNSAORGemde4Ll3indjdaR1LYygmZ8u9nrMohCPUnc29o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=THakEV7y; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e0b467da03so329474a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:32:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728059524; x=1728664324; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rQOMelg8du2jqJR/l5fp+h+gbDSex9spvxivV4Wc4GE=;
-        b=THakEV7yI2XEQTKmJ6tAIEgLk+/euK7wUMBcWcG4sX/0/7EyMvxuEk3fiRoxE9MJaj
-         e+RcRDOSRrmfLJARE1xQ7sXITpsa2Pf0jYYTbyAXACHXQMJZhB67su+9qQGfh3bINu2J
-         RdyJac+VBSizBwkkfPcqA0CSyjachUvpTZutU=
+	s=arc-20240116; t=1728059646; c=relaxed/simple;
+	bh=luGiNjfAqRML657SA23qiUMPysQi+9kCMMN/lkgsqys=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=KBujApTV1N1uRxcX8tsNPhCh7acLvTgfLkfg5vOuHg4cxIZ9Qz/Kqyw9CUDz8+OZ+iJJpj/dtFwcCVyl8eNx8cSNQcz+X2ToOblNp56oabNhT+tCCtzIFcw//bMpfSVoMDikfAyxAh0L9p4cyGnI0GHBNXZx+E/stHfI2VDCxaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a34988d6b4so36082705ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:34:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728059524; x=1728664324;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rQOMelg8du2jqJR/l5fp+h+gbDSex9spvxivV4Wc4GE=;
-        b=fcF9OG+nSxccvc2NgQ8FN9G40mpqNjGjPmT80hOUCPrK9bVKUoyYh2MDPn7jJZHIfP
-         YNu9lBfX1WmGMIQqOS9kSUGcfAp3wQvDE2EPoQhzwy23QSIfxU8DnpJsp+tuDkmXyxkL
-         eIASgsHRDsXM/k2jHPYur0JAPxjiOrkJnwYIKj2jweTY8rAYEKrazGfMxwdCHlq9Z6lO
-         l2jpWFQFY8A4Ohb8e797CN0nCQ68HV/lCb1BWDPEd27rddAD/5/0poJLGPjwZVZPbdpi
-         0G5wZS4x15pSOZnxQyvM0jbzvAr9PMcjts0Q7HlUXc/8nLby2xk7snZLTCdeIgQAeszX
-         7TYw==
-X-Gm-Message-State: AOJu0Yw+aSMYSrGC9ttXhPrdavp1WvMIDawOmOv+VmqGvGACvRQBaK1k
-	OetBg9KD2LwFgFQgKkvpBsMfi20JnFvP5HLx3HYUjdSTB82A+0Frm1eCasdymttVURX+RPIv0LI
-	=
-X-Google-Smtp-Source: AGHT+IHlRjKCM5IdGCgmApKjlpZTmU7xptRaY1QXl4V8jzbeG1/tYay9E/D80BRI0OhBkb9/UUDt1A==
-X-Received: by 2002:a17:90a:c7cb:b0:2db:60b:eec with SMTP id 98e67ed59e1d1-2e1e63ae8a0mr1687786a91.7.1728059523995;
-        Fri, 04 Oct 2024 09:32:03 -0700 (PDT)
-Received: from localhost (99.34.197.35.bc.googleusercontent.com. [35.197.34.99])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2e1e866583esm1837061a91.37.2024.10.04.09.32.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 09:32:03 -0700 (PDT)
-From: jeffxu@chromium.org
-To: akpm@linux-foundation.org,
-	keescook@chromium.org,
-	jannh@google.com,
-	torvalds@linux-foundation.org,
-	adhemerval.zanella@linaro.org,
-	oleg@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-mm@kvack.org,
-	jorgelo@chromium.org,
-	sroettger@google.com,
-	ojeda@kernel.org,
-	adobriyan@gmail.com,
-	anna-maria@linutronix.de,
-	mark.rutland@arm.com,
-	linus.walleij@linaro.org,
-	mike.kravetz@oracle.com,
-	Jason@zx2c4.com,
-	deller@gmx.de,
-	rdunlap@infradead.org,
-	davem@davemloft.net,
-	hch@lst.de,
-	peterx@redhat.com,
-	hca@linux.ibm.com,
-	f.fainelli@gmail.com,
-	gerg@kernel.org,
-	dave.hansen@linux.intel.com,
-	mingo@kernel.org,
-	ardb@kernel.org,
-	nathan_lynch@mentor.com,
-	dsafonov@virtuozzo.com,
-	Liam.Howlett@Oracle.com,
-	mhocko@suse.com,
-	42.hyeyoo@gmail.com,
-	peterz@infradead.org,
-	ardb@google.com,
-	enh@google.com,
-	rientjes@google.com,
-	groeck@chromium.org,
-	lorenzo.stoakes@oracle.com,
-	Jeff Xu <jeffxu@chromium.org>
-Subject: [RFC PATCH v1 1/1] exec: seal system mappings
-Date: Fri,  4 Oct 2024 16:31:55 +0000
-Message-ID: <20241004163155.3493183-2-jeffxu@google.com>
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-In-Reply-To: <20241004163155.3493183-1-jeffxu@google.com>
-References: <20241004163155.3493183-1-jeffxu@google.com>
+        d=1e100.net; s=20230601; t=1728059644; x=1728664444;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y/aQhE9ajfh9pOWYTaT4IkwwQwIV7zv/+D/iOH9uDmY=;
+        b=nqTd4yAotcueUYQVPkWsBuhDqXq7nDo8JRd7tkDNKcfmJZsnR2fKEFA+HFQGB4QTxj
+         aSga0helpYGtYpRUZjWl8Xlg+F9MKIVodjSu8sTnFfSNeLtNNHUBlPwINqObO3tNw0XI
+         igSN4K+TsyBvNYpfFFFaX5cdnf3Lyo0oh+phH/LyFe/InjwmlmIZIeHvofN3iPL4k+1R
+         OlrymhH3E3NG5clCYX1O1E0Ci46OXZl4L4jTAh9jZBh+lukJTHXBCyDl2HdH5g//VJNb
+         tOuIBHWKuvPgGAfeUary1ZYT4vYWaG8ENNbOvyyM1X66QQ5/1xisDzcV7b5REx/JNSBs
+         xUHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdEGHZDAoYDHqcMZ8pqwkWVMBS3ajLtuCI7EFQ4bul9KIaTQQeFLAls9DLPsNq/5o9T/5wW6yNvK//D+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqJD+ku52vqc+n3K4ZIZEPISmxBz3znAtOv6ElkOnFqXzPYhps
+	A/F5nRGFdj9Wtb8v9P5eJiqlkZARje8YDaYZ3c5rdRWMtuAGFyRsOvtK/WEPTdmvCYBOt5vaX2+
+	kxIeSV9ND0gfRIh8Qsgng0+B6uL00kUopZSEvV4xY7t7wZjj+Ms31fJQ=
+X-Google-Smtp-Source: AGHT+IE9gqXYOwjYD7YvrcThcBj/MTXysQ/Xx1poFCbrowpZOuU3E451qbs5LHzGBFWVhyJi9cPjDNd5JMabBqlcHL4amq1qR8b/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1d0a:b0:3a2:7651:9864 with SMTP id
+ e9e14a558f8ab-3a375b99555mr33699345ab.12.1728059643928; Fri, 04 Oct 2024
+ 09:34:03 -0700 (PDT)
+Date: Fri, 04 Oct 2024 09:34:03 -0700
+In-Reply-To: <CABBYNZ+i88jmqD3pV2Czh=7fBhZ0_73s1+tsumt0+oVo8kSm1w@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670018fb.050a0220.49194.0492.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Write in sco_sock_timeout
+From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
+To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	luiz.dentz@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Jeff Xu <jeffxu@chromium.org>
+Hello,
 
-Seal vdso, vvar, sigpage, uprobes and vsyscall.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Write in sco_conn_del
 
-Those mappings are readonly or executable only, sealing can protect
-them from ever changing during the life time of the process.
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: slab-use-after-free in atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
+BUG: KASAN: slab-use-after-free in __refcount_add include/linux/refcount.h:184 [inline]
+BUG: KASAN: slab-use-after-free in __refcount_inc include/linux/refcount.h:241 [inline]
+BUG: KASAN: slab-use-after-free in refcount_inc include/linux/refcount.h:258 [inline]
+BUG: KASAN: slab-use-after-free in sock_hold include/net/sock.h:781 [inline]
+BUG: KASAN: slab-use-after-free in sco_conn_del+0x9a/0x2c0 net/bluetooth/sco.c:227
+Write of size 4 at addr ffff88801f485080 by task kworker/u9:1/4491
 
-System mappings such as vdso, vvar, and sigpage (for arm) are
-generated by the kernel during program initialization. These mappings
-are designated as non-writable, and sealing them will prevent them
-from ever becoming writeable.
+CPU: 0 UID: 0 PID: 4491 Comm: kworker/u9:1 Not tainted 6.12.0-rc1-syzkaller-00125-g0c559323bbaa-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: hci0 hci_cmd_sync_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
+ __refcount_add include/linux/refcount.h:184 [inline]
+ __refcount_inc include/linux/refcount.h:241 [inline]
+ refcount_inc include/linux/refcount.h:258 [inline]
+ sock_hold include/net/sock.h:781 [inline]
+ sco_conn_del+0x9a/0x2c0 net/bluetooth/sco.c:227
+ sco_connect_cfm+0xe6/0xb40 net/bluetooth/sco.c:1381
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ hci_conn_failed+0x1d0/0x300 net/bluetooth/hci_conn.c:1262
+ hci_abort_conn_sync+0x583/0xde0 net/bluetooth/hci_sync.c:5586
+ hci_cmd_sync_work+0x22d/0x400 net/bluetooth/hci_sync.c:328
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-Unlike the aforementioned mappings, the uprobe mapping is not
-established during program startup. However, its lifetime is the same
-as the process's lifetime [1], thus sealable.
+Allocated by task 5576:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __do_kmalloc_node mm/slub.c:4265 [inline]
+ __kmalloc_noprof+0x1fc/0x400 mm/slub.c:4277
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ sk_prot_alloc+0xe0/0x210 net/core/sock.c:2164
+ sk_alloc+0x38/0x370 net/core/sock.c:2217
+ bt_sock_alloc+0x3c/0x340 net/bluetooth/af_bluetooth.c:148
+ sco_sock_alloc net/bluetooth/sco.c:517 [inline]
+ sco_sock_create+0xbb/0x390 net/bluetooth/sco.c:548
+ bt_sock_create+0x163/0x230 net/bluetooth/af_bluetooth.c:132
+ __sock_create+0x492/0x920 net/socket.c:1576
+ sock_create net/socket.c:1627 [inline]
+ __sys_socket_create net/socket.c:1664 [inline]
+ __sys_socket+0x150/0x3c0 net/socket.c:1711
+ __do_sys_socket net/socket.c:1725 [inline]
+ __se_sys_socket net/socket.c:1723 [inline]
+ __x64_sys_socket+0x7a/0x90 net/socket.c:1723
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-The vdso, vvar, sigpage, and uprobe mappings all invoke the
-_install_special_mapping() function. As no other mappings utilize this
-function, it is logical to incorporate sealing logic within
-_install_special_mapping(). This approach avoids the necessity of
-modifying code across various architecture-specific implementations.
+Freed by task 5577:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2343 [inline]
+ slab_free mm/slub.c:4580 [inline]
+ kfree+0x1a0/0x440 mm/slub.c:4728
+ sk_prot_free net/core/sock.c:2200 [inline]
+ __sk_destruct+0x479/0x5f0 net/core/sock.c:2292
+ sco_sock_release+0x25e/0x320 net/bluetooth/sco.c:1276
+ __sock_release net/socket.c:658 [inline]
+ sock_close+0xbe/0x240 net/socket.c:1426
+ __fput+0x241/0x880 fs/file_table.c:431
+ task_work_run+0x251/0x310 kernel/task_work.c:228
+ get_signal+0x15e8/0x1740 kernel/signal.c:2690
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-The vsyscall mapping, which has its own initialization function, is
-sealed in the XONLY case, it seems to be the most common and secure
-case of using vsyscall.
+The buggy address belongs to the object at ffff88801f485000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 128 bytes inside of
+ freed 2048-byte region [ffff88801f485000, ffff88801f485800)
 
-It is important to note that the CHECKPOINT_RESTORE feature (CRIU) may
-alter the mapping of vdso, vvar, and sigpage during restore
-operations. Consequently, this feature cannot be universally enabled
-across all systems. To address this, a kernel configuration option has
-been introduced to enable or disable this functionality. I tested
-CONFIG_SEAL_SYSTEM_MAPPINGS_ALWAYS with ChromeOS, which doesn’t use
-CHECKPOINT_RESTORE, to verify the sealing works.
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1f480
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff888015442000 ffffea00007d4800 0000000000000002
+raw: 0000000000000000 0000000000080008 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff888015442000 ffffea00007d4800 0000000000000002
+head: 0000000000000000 0000000000080008 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea00007d2001 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5098, tgid 5098 (syz-executor.0), ts 63096504293, free_ts 61414295203
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x120 mm/slub.c:2413
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2579
+ new_slab mm/slub.c:2632 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
+ __slab_alloc+0x58/0xa0 mm/slub.c:3909
+ __slab_alloc_node mm/slub.c:3962 [inline]
+ slab_alloc_node mm/slub.c:4123 [inline]
+ __do_kmalloc_node mm/slub.c:4264 [inline]
+ __kmalloc_noprof+0x25a/0x400 mm/slub.c:4277
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ kmalloc_array_noprof include/linux/slab.h:923 [inline]
+ cache_create_net+0x83/0x270 net/sunrpc/cache.c:1743
+ nfsd_idmap_init+0xe8/0x1e0 fs/nfsd/nfs4idmap.c:476
+ nfsd_net_init+0x4b/0x450 fs/nfsd/nfsctl.c:2242
+ ops_init+0x320/0x590 net/core/net_namespace.c:139
+ setup_net+0x287/0x9e0 net/core/net_namespace.c:356
+ copy_net_ns+0x33f/0x570 net/core/net_namespace.c:494
+ create_new_namespaces+0x425/0x7b0 kernel/nsproxy.c:110
+page last free pid 5088 tgid 5085 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
+ discard_slab mm/slub.c:2678 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:3146
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3221
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4450
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4086 [inline]
+ slab_alloc_node mm/slub.c:4135 [inline]
+ __do_kmalloc_node mm/slub.c:4264 [inline]
+ __kmalloc_noprof+0x1a6/0x400 mm/slub.c:4277
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ tomoyo_add_entry security/tomoyo/common.c:2033 [inline]
+ tomoyo_supervisor+0xe0d/0x11f0 security/tomoyo/common.c:2105
+ tomoyo_audit_path_log security/tomoyo/file.c:168 [inline]
+ tomoyo_path_permission+0x243/0x360 security/tomoyo/file.c:587
+ tomoyo_path_perm+0x480/0x740 security/tomoyo/file.c:838
+ security_inode_getattr+0x130/0x330 security/security.c:2371
+ vfs_getattr+0x45/0x430 fs/stat.c:204
+ vfs_statx_path fs/stat.c:251 [inline]
+ vfs_statx+0x199/0x490 fs/stat.c:315
+ vfs_fstatat+0x145/0x190 fs/stat.c:341
+ __do_sys_newfstatat fs/stat.c:505 [inline]
+ __se_sys_newfstatat fs/stat.c:499 [inline]
+ __x64_sys_newfstatat+0x11d/0x1a0 fs/stat.c:499
 
-[1] https://lore.kernel.org/all/CABi2SkU9BRUnqf70-nksuMCQ+yyiWjo3fM4XkRkL-NrCZxYAyg@mail.gmail.com/
+Memory state around the buggy address:
+ ffff88801f484f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88801f485000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88801f485080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff88801f485100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88801f485180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
-Signed-off-by: Jeff Xu <jeffxu@chromium.org>
----
- .../admin-guide/kernel-parameters.txt         |  9 ++++
- arch/x86/entry/vsyscall/vsyscall_64.c         |  9 +++-
- fs/exec.c                                     | 53 +++++++++++++++++++
- include/linux/fs.h                            |  1 +
- mm/mmap.c                                     |  1 +
- security/Kconfig                              | 26 +++++++++
- 6 files changed, 97 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 8dcec6d1cdb8..871ba308bb04 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1535,6 +1535,15 @@
- 			Permit 'security.evm' to be updated regardless of
- 			current integrity status.
- 
-+	exec.seal_system_mappings = [KNL]
-+			Format: { never | always }
-+			Seal system mappings: vdso, vvar, sigpage, uprobes,
-+			vsyscall.
-+			This overwrites KCONFIG CONFIG_SEAL_SYSTEM_MAPPINGS_*
-+			- 'never':  never seal system mappings.
-+			- 'always': always seal system mappings.
-+			If not specified or invalid, default is the KCONFIG value.
-+
- 	early_page_ext [KNL,EARLY] Enforces page_ext initialization to earlier
- 			stages so cover more early boot allocations.
- 			Please note that as side effect some optimizations
-diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
-index 2fb7d53cf333..20a3000550d2 100644
---- a/arch/x86/entry/vsyscall/vsyscall_64.c
-+++ b/arch/x86/entry/vsyscall/vsyscall_64.c
-@@ -32,6 +32,7 @@
- #include <linux/mm_types.h>
- #include <linux/syscalls.h>
- #include <linux/ratelimit.h>
-+#include <linux/fs.h>
- 
- #include <asm/vsyscall.h>
- #include <asm/unistd.h>
-@@ -366,8 +367,12 @@ void __init map_vsyscall(void)
- 		set_vsyscall_pgtable_user_bits(swapper_pg_dir);
- 	}
- 
--	if (vsyscall_mode == XONLY)
--		vm_flags_init(&gate_vma, VM_EXEC);
-+	if (vsyscall_mode == XONLY) {
-+		unsigned long vm_flags = VM_EXEC;
-+
-+		update_seal_exec_system_mappings(&vm_flags);
-+		vm_flags_init(&gate_vma, vm_flags);
-+	}
- 
- 	BUILD_BUG_ON((unsigned long)__fix_to_virt(VSYSCALL_PAGE) !=
- 		     (unsigned long)VSYSCALL_ADDR);
-diff --git a/fs/exec.c b/fs/exec.c
-index 6c53920795c2..bd4d687c37b1 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -68,6 +68,7 @@
- #include <linux/user_events.h>
- #include <linux/rseq.h>
- #include <linux/ksm.h>
-+#include <linux/fs_parser.h>
- 
- #include <linux/uaccess.h>
- #include <asm/mmu_context.h>
-@@ -2169,3 +2170,55 @@ fs_initcall(init_fs_exec_sysctls);
- #ifdef CONFIG_EXEC_KUNIT_TEST
- #include "tests/exec_kunit.c"
- #endif
-+
-+#ifdef CONFIG_64BIT
-+/*
-+ * Kernel cmdline overwrite for CONFIG_SEAL_SYSTEM_MAPPINGS_X
-+ */
-+enum seal_system_mappings_type {
-+	SEAL_SYSTEM_MAPPINGS_NEVER,
-+	SEAL_SYSTEM_MAPPINGS_ALWAYS
-+};
-+
-+static enum seal_system_mappings_type seal_system_mappings __ro_after_init =
-+	IS_ENABLED(CONFIG_SEAL_SYSTEM_MAPPINGS_ALWAYS) ? SEAL_SYSTEM_MAPPINGS_ALWAYS :
-+	SEAL_SYSTEM_MAPPINGS_NEVER;
-+
-+static const struct constant_table value_table_sys_mapping[] __initconst = {
-+	{ "never", SEAL_SYSTEM_MAPPINGS_NEVER},
-+	{ "always", SEAL_SYSTEM_MAPPINGS_ALWAYS},
-+	{ }
-+};
-+
-+static int __init early_seal_system_mappings_override(char *buf)
-+{
-+	if (!buf)
-+		return -EINVAL;
-+
-+	seal_system_mappings = lookup_constant(value_table_sys_mapping,
-+			buf, seal_system_mappings);
-+
-+	return 0;
-+}
-+
-+early_param("exec.seal_system_mappings", early_seal_system_mappings_override);
-+
-+static bool seal_system_mappings_enabled(void)
-+{
-+	if (seal_system_mappings == SEAL_SYSTEM_MAPPINGS_ALWAYS)
-+		return true;
-+
-+	return false;
-+}
-+
-+void update_seal_exec_system_mappings(unsigned long *vm_flags)
-+{
-+	if (seal_system_mappings_enabled())
-+		*vm_flags |= VM_SEALED;
-+
-+}
-+#else
-+void update_seal_exec_system_mappings(unsigned long *vm_flags)
-+{
-+}
-+#endif /* CONFIG_64BIT */
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 1e25267e2e48..7539e89ccd03 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3075,6 +3075,7 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos);
- extern ssize_t kernel_write(struct file *, const void *, size_t, loff_t *);
- extern ssize_t __kernel_write(struct file *, const void *, size_t, loff_t *);
- extern struct file * open_exec(const char *);
-+extern void update_seal_exec_system_mappings(unsigned long *vm_flags);
-  
- /* fs/dcache.c -- generic fs support functions */
- extern bool is_subdir(struct dentry *, struct dentry *);
-diff --git a/mm/mmap.c b/mm/mmap.c
-index ee8f91eaadb9..eb158e39ce0d 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2115,6 +2115,7 @@ struct vm_area_struct *_install_special_mapping(
- 	unsigned long addr, unsigned long len,
- 	unsigned long vm_flags, const struct vm_special_mapping *spec)
- {
-+	update_seal_exec_system_mappings(&vm_flags);
- 	return __install_special_mapping(mm, addr, len, vm_flags, (void *)spec,
- 					&special_mapping_vmops);
- }
-diff --git a/security/Kconfig b/security/Kconfig
-index 28e685f53bd1..e289fbb5d676 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -51,6 +51,32 @@ config PROC_MEM_NO_FORCE
- 
- endchoice
- 
-+choice
-+	prompt "Seal system mappings"
-+	default SEAL_SYSTEM_MAPPINGS_NEVER
-+	help
-+	  Seal system mappings such as vdso, vvar, sigpage, uprobes and
-+	  vsyscall.
-+	  Note: kernel command line exec.seal_system_mappings overwrite this.
-+
-+config SEAL_SYSTEM_MAPPINGS_NEVER
-+	bool "Traditional behavior - not sealed"
-+	help
-+	  Do not seal system mappings.
-+	  This is default.
-+
-+config SEAL_SYSTEM_MAPPINGS_ALWAYS
-+	bool "Always seal system mappings"
-+	depends on 64BIT
-+	depends on !CHECKPOINT_RESTORE
-+	help
-+	  Seal system mappings such as vdso, vvar, sigpage, uprobes and
-+	  vsyscall.
-+	  Note: CHECKPOINT_RESTORE might relocate vdso mapping during restore,
-+	  and remap will fail if the mapping is sealed, therefore
-+	  !CHECKPOINT_RESTORE is added as dependency.
-+endchoice
-+
- config SECURITY
- 	bool "Enable different security models"
- 	depends on SYSFS
--- 
-2.47.0.rc0.187.ge670bccf7e-goog
+Tested on:
+
+commit:         0c559323 Merge tag 'rust-fixes-6.12' of https://github..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13fdb3d0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d0ca089c3fc6b54e
+dashboard link: https://syzkaller.appspot.com/bug?extid=4c0d0c4cde787116d465
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=160db3d0580000
 
 
