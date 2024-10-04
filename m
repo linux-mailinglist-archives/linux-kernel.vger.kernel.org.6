@@ -1,109 +1,165 @@
-Return-Path: <linux-kernel+bounces-350570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5D19906E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:58:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC26A9906FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1C1D1C22141
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 902A41F21CCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67B11D9A7D;
-	Fri,  4 Oct 2024 14:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FE51C761D;
+	Fri,  4 Oct 2024 15:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBxKL3Ds"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="dvBKmKwj"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412C91D9A6D;
-	Fri,  4 Oct 2024 14:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BFC1AA79B;
+	Fri,  4 Oct 2024 15:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728053900; cv=none; b=HA7f2rmiC0HASJEj5EzUWD35i1tLokB6QsJBqByqbsrLJvwsr4oyWmdKDD+fIPVWEsquT8qFkk2v9MmiXGrAg3kSm7nNmt923ZwApAx6LGkJ0q73R8soSFs+V/35n6V+fIY9yS208QzODMz+1kDGPbqgC73mKHihlnOmoom8sKU=
+	t=1728054028; cv=none; b=ptOaUggtYw3zaIkeLT/HUA7no+Fkzx3l4h2G4ZL7/cAaDf5ZWIW5xe78woiaR2mgH5wZmVeE2vb1SBqR/ZX5dL+d08P0AXYW8HY8NT3zXpk8oLWbO6guCYfVF5JhP+BAo3jSVpcbp0zQGIavON7E29xPXSSaU/xUhOUlxmm/FqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728053900; c=relaxed/simple;
-	bh=hdx+Nlnqh49HdIrn5ECqFiAYUAa+WEBCnBFbH03L0U8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mtsndAeGhjRaw3bW/h8hfDdU8/DQRLg3Vp+YHFOVvtFlTH18ez/NyJ2lbiBg2TSA7Ssqi3dbykO9b45Sq6CfX11WX+r7fhJvZanZm+h5ihgulwfl2UZenxGbJlCH2jMKPkHSiAxTYd7CU2rBsBYyBSUt3aFsFACb/xhfUAnR96Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBxKL3Ds; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6FC3C4CEC6;
-	Fri,  4 Oct 2024 14:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728053899;
-	bh=hdx+Nlnqh49HdIrn5ECqFiAYUAa+WEBCnBFbH03L0U8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fBxKL3DsUpoP+JinPpudeiel+njsclMIT6jbhTpYmITwoloJRv9FKqNNiD5ph0hnu
-	 5faD0whmMiBTR7Nz/88Ak18WYLsE52Q0uhymh0x7AxkJxDrgD8PCQ3S3QSiigRHpyF
-	 W59ARwSudAfO8NEOcYPGa3y9zAaFpx4nwpjuHCIvSQDLrQJO9x2o+aMJRdbMuh/S09
-	 1fKHViikT4dbYtVAl9zB50rJO6gMV60zYIamcgyGcXBMNEBz1ens/7gegntv9w9Y1V
-	 Ab0tV7vj5FC6h4pWus2y3EcBzwyKUVPfPnck+Bab7BsyVIMAZCRO/XCJwQIMLh7gOP
-	 yIJtfLjjUBOsA==
-Date: Fri, 4 Oct 2024 15:58:15 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 00/14] Remove support for platform data from samsung
- keypad
-Message-ID: <76d98587-3623-4ff2-89eb-a5fe8c535293@sirena.org.uk>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <803e3902-cec9-49ed-baff-d26e578a8ab7@app.fastmail.com>
- <Zv_vuSrJzpN9IvXV@google.com>
+	s=arc-20240116; t=1728054028; c=relaxed/simple;
+	bh=q9fuqUVszf04BYf81tv1tIWkcRZj+Rh78Bl7h//T8fM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BJc1/flGWpg5a4VDYjT87w5HX5YrqeU4Yhz01Mupng1MZlqUVFTFaHJF+dKJJkPAp504jll9Dy06UlVIatM1nAwjsXI+/UPprwC1CZL/8C0qHMGS/5S3n7rf7UhAJv2DTOyj9TJOI2FpLm+15rYyxdP5girOMFxBdjCB6vmIlMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=dvBKmKwj; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1728054025;
+	bh=q9fuqUVszf04BYf81tv1tIWkcRZj+Rh78Bl7h//T8fM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dvBKmKwj6F/Ch+gyeqBp/6a6DNOv5mNlzi8uoysTYqB8IAAiJ1gQx564FALMMzQUL
+	 ytGYuqoZ6ox8zftVgzdcaCy9WV5GpPad/KynXbJPFDRTFFv3jE70kqPFSnWHGakx9f
+	 d0IDpdQL64kdyZ4ePNDvXIJfyD8m8xgqfhGxF2Ld71KeyTBWm+MpZhNGh1yj/wK9dL
+	 ig56oqimpI6XC8ngVCyzH0tb6VoR/c50G2Ze18GAqY9hi/1wKZ5xFjKOwB3ZevDNfa
+	 x5SXYltfvyqJ+P8QsPkZfc3AU/qIbndVNu4GdaW5WjbQRA6ahrHSyQkKydVjMznsvc
+	 vzYv3TpZljW0Q==
+Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKsD86QnhzLN5;
+	Fri,  4 Oct 2024 11:00:24 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Yonghong Song <yhs@fb.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	bpf@vger.kernel.org,
+	Joel Fernandes <joel@joelfernandes.org>,
+	linux-trace-kernel@vger.kernel.org,
+	Michael Jeanson <mjeanson@efficios.com>
+Subject: [PATCH v3 5/8] tracing: Allow system call tracepoints to handle page faults
+Date: Fri,  4 Oct 2024 10:58:15 -0400
+Message-Id: <20241004145818.1726671-6-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20241004145818.1726671-1-mathieu.desnoyers@efficios.com>
+References: <20241004145818.1726671-1-mathieu.desnoyers@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2O90PREKokAOuISY"
-Content-Disposition: inline
-In-Reply-To: <Zv_vuSrJzpN9IvXV@google.com>
-X-Cookie: A bachelor is an unaltared male.
+Content-Transfer-Encoding: 8bit
 
+Use Tasks Trace RCU to protect iteration of system call enter/exit
+tracepoint probes to allow those probes to handle page faults.
 
---2O90PREKokAOuISY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In preparation for this change, all tracers registering to system call
+enter/exit tracepoints should expect those to be called with preemption
+enabled.
 
-On Fri, Oct 04, 2024 at 06:38:01AM -0700, Dmitry Torokhov wrote:
-> On Mon, Aug 19, 2024 at 11:40:56AM +0200, Arnd Bergmann wrote:
+This allows tracers to fault-in userspace system call arguments such as
+path strings within their probe callbacks.
 
-> > I had a (brief) look at the patches, everything looks fine to
-> > me, thanks for working on this! Let's see what Mark and=20
-> > Krzysztof think.
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Michael Jeanson <mjeanson@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Yonghong Song <yhs@fb.com>
+Cc: Paul E. McKenney <paulmck@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: bpf@vger.kernel.org
+Cc: Joel Fernandes <joel@joelfernandes.org>
+---
+ include/linux/tracepoint.h | 12 ++++++++++--
+ init/Kconfig               |  1 +
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-> Mark, were you able to give this a spin? Or should I address the DT
-> binding comments from Krzysztof and Connor and resent for merge?
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 014790495ad8..cefd44b7c91f 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -17,6 +17,7 @@
+ #include <linux/errno.h>
+ #include <linux/types.h>
+ #include <linux/rcupdate.h>
++#include <linux/rcupdate_trace.h>
+ #include <linux/tracepoint-defs.h>
+ #include <linux/static_call.h>
+ 
+@@ -107,6 +108,7 @@ void for_each_tracepoint_in_module(struct module *mod,
+ #ifdef CONFIG_TRACEPOINTS
+ static inline void tracepoint_synchronize_unregister(void)
+ {
++	synchronize_rcu_tasks_trace();
+ 	synchronize_rcu();
+ }
+ #else
+@@ -204,11 +206,17 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 		if (!(cond))						\
+ 			return;						\
+ 									\
+-		preempt_disable_notrace();				\
++		if (syscall)						\
++			rcu_read_lock_trace();				\
++		else							\
++			preempt_disable_notrace();			\
+ 									\
+ 		__DO_TRACE_CALL(name, TP_ARGS(args));			\
+ 									\
+-		preempt_enable_notrace();				\
++		if (syscall)						\
++			rcu_read_unlock_trace();			\
++		else							\
++			preempt_enable_notrace();			\
+ 	} while (0)
+ 
+ /*
+diff --git a/init/Kconfig b/init/Kconfig
+index fbd0cb06a50a..eedd0064fb36 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1984,6 +1984,7 @@ config BINDGEN_VERSION_TEXT
+ #
+ config TRACEPOINTS
+ 	bool
++	select TASKS_TRACE_RCU
+ 
+ source "kernel/Kconfig.kexec"
+ 
+-- 
+2.39.2
 
-Sorry, no - I've been some combination of ill, travelling and super busy
-since you posted it (sadly the bootloader for the board only supports
-booting from SD card so until I port u-boot it's not in my board farm
-and I need to specifically set it up on my desk whenver I want to do
-anything with it, especially for this where I need to poke at the
-keypad).  I've got one more week of travel next week and one of the
-major sources of super busy just got better so I'm reasonably hopeful
-I'll get to it week of the 14th but probably worth respinning.
-
---2O90PREKokAOuISY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcAAoYACgkQJNaLcl1U
-h9CIyAf/UT+SvU5Yxhj17iZJ3+MFGVgNHn0JN6vrsQBXrossVlgZ1JP7vbl1RobZ
-cw1/99nUqLGDjOHkNBSx/2/GjaZz1gEUDCbDeVaIMifsrGd4BbtoMTfwnclyCsp6
-fvvMKx0WAzcRmvm+FdQ5KGgt6mzZDsT/u3Q15ZOJ5GHunnP+njEkRY8SzaRZZteP
-EgGtc1FFI+tDVsoIQ6DNA23I0DVy2j/HZB23y/mYEOF1JiIspwhM+JjVUKJVgU57
-piRknEy0k2sO3sJ26HhyngwWT30Zg+ud+oSB64uO4RqnGqP9B6coPbCzow4vvENE
-zTfKRFshRCxw25+aDBoBxDxERSyLew==
-=jObm
------END PGP SIGNATURE-----
-
---2O90PREKokAOuISY--
 
