@@ -1,99 +1,111 @@
-Return-Path: <linux-kernel+bounces-350152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F7199008B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:08:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3AB399008F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8561F24BB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:08:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F36F61C23A92
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4092014A605;
-	Fri,  4 Oct 2024 10:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3481314A4EB;
+	Fri,  4 Oct 2024 10:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NdHNdaFc"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hzwWe9J7"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A34C146A72;
-	Fri,  4 Oct 2024 10:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4057814A0B3;
+	Fri,  4 Oct 2024 10:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728036525; cv=none; b=Pjc7PvgS/XRP6czD1+2V/hX8oWXJCo3oaKypN0olG+tCw4hFv+wJ0ON724aCiO3WlbhVFeU4lm5NDtGvxCKb8HtObZGDnsd4FMv0ir1qPAnaMoZrHgBmxcT9k8eUyhITs/jYpa+DdICPkHXy2cLCLn4qDXJ6Z2WvN48M9AfiuIY=
+	t=1728036546; cv=none; b=IaOdOgPkp6b/NOiu8bcGi8Bf6IxM5nO+CmbnCOfu4YwgqDCpRfnbMMkhVs3PgFoxFdcbUP7awiJ2UCE1EaTu40ekWamxNkdTLp+rAOXQAvxUTyPw3gbYJWo0Qzq11/XvgRzvV05OVP1tsjfM4SnQ3nDzYtKeqMT5nruHlHIvssg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728036525; c=relaxed/simple;
-	bh=GMIxrpyZ7lWGEEHcirtrn9Tag+b3HbRGsmWpQIAcR8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tP7NByUFl68yhb6fwdEbZSyXjIrBEVgMnexDgGTrGxUqrC8LvS7hMZMZSJSqqK9LvkoyKMwnSM/bgQB3PdWQDL0dCD8eeVw43spd8UibTbUi8Wd8sbwhuf68SqRc8Al04NemtTx5NUfMKX9zN2usQePTW9NU1haJ9A270HvGSI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NdHNdaFc; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xaIy+tdNmAOIqcYnnJ2OzNqLnsHQb5n/Nh5bV5Dh8k8=; b=NdHNdaFcsueRNxvgLKJtfa0YDt
-	nuJhx0CS9W4YnLjcOqKeTTCLN+wIlSKYr21+6l3iQV1KnccgEwwyBtsJgBqv3PyqtYfcF40fhQoMo
-	fB9+GLPYxxKmQOWUQUkEFNHmdRXutxI/jZDxTPtYqhEaLfbSlvk9/uTiGVszM7ulpTmlXaBtQRKj7
-	4S2jLAG3Rx3dgOUsjP3v3H1JtClOE9GdC6CPrJDy8tBtLVjN2VrqM8142/DMEBAuYCWeXpq96uvWg
-	cokpvIxZ1m+XQUcQcZjVxNeBTW9wkMcokLH3Pko0GWUGNcJvYKFt/matGeUd6RQFOYwPO0KwbW4uk
-	ummA1yMQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1swfEi-0000000A91d-3iFx;
-	Fri, 04 Oct 2024 10:08:38 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 87FBB30083E; Fri,  4 Oct 2024 12:08:36 +0200 (CEST)
-Date: Fri, 4 Oct 2024 12:08:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCH v2 resend2] locking/spinlocks: Make __raw_* lock ops
- static
-Message-ID: <20241004100836.GP18071@noisy.programming.kicks-ass.net>
-References: <7201d7fb408375c6c4df541270d787b1b4a32354.1727879348.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1728036546; c=relaxed/simple;
+	bh=j6qXLKpDGQeRpCfNbico8g5BsY6cHlUnTlu09Fb0fbk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RqAxBVUS7ADrwDyeIW/oABCmWZ0+sU5h6RGoAK2eBWoPiEFlejADMmrHvq9Gpj4A+TeAyVA5xXBun17BTWvSK7v+WGf8Rx0jDNYA/ad566EoSWuMI5j+3enAg7eumSjtpf8rcmoyCkxRTy9O2mGBKIgxjEhNPwbOa8XQF1X7D4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hzwWe9J7; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e07b031da3so1457855a91.3;
+        Fri, 04 Oct 2024 03:09:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728036544; x=1728641344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9pWViwr4+F82iHmSuij8u/lyZyDWYC8oeY1h2VZpYSw=;
+        b=hzwWe9J78SlBLtE5CAX0j7xN0R3vv2LOGIqnLjWGSfee1oNlzc3sd4kNEsLKXjS4Nh
+         RBIfUEdSdSCZ7bBVCUYfk1lcoOtEL5j5mE9+EUo8wdRP8P/B4d0RI2UEQ5qZNL+DYx2N
+         H8lO+uQOUNEYbLr+mu/M9Vvg+D/JLNOkapV7V/2tnY8dP40Yg57iY9BhOTIarUsWUi3x
+         pRmDojfX20pvkIX3XHwbLplk9dRMGXtiAeRSwn+/LeYXuz53dCvqeCJbt10lW6DdaYW2
+         JWWIbj5pGEv3Mn6AO8mGgRXpnVxL37n4u2KWaLm72XxZOInuaW94bQyO5MPzSgLnmcBt
+         04Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728036544; x=1728641344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9pWViwr4+F82iHmSuij8u/lyZyDWYC8oeY1h2VZpYSw=;
+        b=UHHsku22+xK1DQxeop8wFPX3GXvUrqrIYy5R5nz6g1xkk2kdKBa9KTjrSfkdMdFuL7
+         WpCItfPYfESreXNWUMKP/vwnRlMEONEafs+xRPVnkQWlfyDswM7H9uMgMZOzClQzeK36
+         K8Z3nMT7/YyOEdQRuDbFwfkJ16m7VhkDvLkM1kTdQgMHl+5u37VhQ4mwRovy1xnHgukY
+         KrC9o3WNNf0v0dci9zAjJQ746Tj2G7RibXXUCB2jFk9YjhSECkMJhrlwlxA4XiuzApHF
+         rC3Nvvz9fTXiqnnIgKminTvPHMjynuAdjrDHR3qBLLzSTStZjvH1Gggabix1bUzRE31N
+         rB7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVENamFgTioQurI6ig1d6XV/g/gB2Ru0sAV1vFygUNqLkveIwxWBVnO9UzPcC1aN9zwclmoSRmccQIuSyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtmVwfymsLHyFD8FCC1K0UmP1Dki82rlFElqFq7SMIBVMqh9QP
+	7wko6aBW6sdOGrLXYT6M7K9TNezAelMAVL17rotNKZw7ce/aEVZU
+X-Google-Smtp-Source: AGHT+IEkp2Toit4P5rBU4WuD7W0gKQXlVhYCwnzITODhq8yhnVn6zo0z/FANWWNOC2mNiYtd72ErRQ==
+X-Received: by 2002:a17:90b:3145:b0:2d3:dca0:89b7 with SMTP id 98e67ed59e1d1-2e1e620f0ffmr2396491a91.3.1728036544448;
+        Fri, 04 Oct 2024 03:09:04 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2405:204:20:6275:2654:2317:92c7:7b80])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e86652edsm1159221a91.36.2024.10.04.03.09.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 03:09:04 -0700 (PDT)
+From: SurajSonawane2415 <surajsonawane0215@gmail.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	SurajSonawane2415 <surajsonawane0215@gmail.com>
+Subject: [PATCH] block: Fix uninitialized symbol 'bio' in blk_rq_prep_clone
+Date: Fri,  4 Oct 2024 15:38:42 +0530
+Message-Id: <20241004100842.9052-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7201d7fb408375c6c4df541270d787b1b4a32354.1727879348.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 02, 2024 at 05:03:55PM +0200, Geert Uytterhoeven wrote:
-> If CONFIG_GENERIC_LOCKBREAK=y and CONFIG_DEBUG_LOCK_ALLOC=n
-> (e.g. sh/sdk7786_defconfig):
-> 
->     kernel/locking/spinlock.c:68:17: warning: no previous prototype for '__raw_spin_lock' [-Wmissing-prototypes]
->     kernel/locking/spinlock.c:80:26: warning: no previous prototype for '__raw_spin_lock_irqsave' [-Wmissing-prototypes]
->     kernel/locking/spinlock.c:98:17: warning: no previous prototype for '__raw_spin_lock_irq' [-Wmissing-prototypes]
->     kernel/locking/spinlock.c:103:17: warning: no previous prototype for '__raw_spin_lock_bh' [-Wmissing-prototypes]
->     kernel/locking/spinlock.c:68:17: warning: no previous prototype for '__raw_read_lock' [-Wmissing-prototypes]
->     kernel/locking/spinlock.c:80:26: warning: no previous prototype for '__raw_read_lock_irqsave' [-Wmissing-prototypes]
->     kernel/locking/spinlock.c:98:17: warning: no previous prototype for '__raw_read_lock_irq' [-Wmissing-prototypes]
->     kernel/locking/spinlock.c:103:17: warning: no previous prototype for '__raw_read_lock_bh' [-Wmissing-prototypes]
->     kernel/locking/spinlock.c:68:17: warning: no previous prototype for '__raw_write_lock' [-Wmissing-prototypes]
->     kernel/locking/spinlock.c:80:26: warning: no previous prototype for '__raw_write_lock_irqsave' [-Wmissing-prototypes]
->     kernel/locking/spinlock.c:98:17: warning: no previous prototype for '__raw_write_lock_irq' [-Wmissing-prototypes]
->     kernel/locking/spinlock.c:103:17: warning: no previous prototype for '__raw_write_lock_bh' [-Wmissing-prototypes]
-> 
-> All __raw_* lock ops are internal functions without external callers.
-> Hence fix this by making them static.
-> 
-> Note that if CONFIG_GENERIC_LOCKBREAK=y, no lock ops are inlined, as all
-> of CONFIG_INLINE_*_LOCK* depend on !GENERIC_LOCKBREAK.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Waiman Long <longman@redhat.com>
+Fix the uninitialized symbol 'bio' in the function blk_rq_prep_clone
+to resolve the following error:
+block/blk-mq.c:3199 blk_rq_prep_clone() error: uninitialized symbol 'bio'.
 
-Thanks!
+Initialize 'bio' to NULL to prevent undefined behavior from uninitialized
+access and safe cleanup in case of failure.
+
+Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
+---
+ block/blk-mq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 4b2c8e940..b2087bdd9 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -3156,7 +3156,7 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+ 		      int (*bio_ctr)(struct bio *, struct bio *, void *),
+ 		      void *data)
+ {
+-	struct bio *bio, *bio_src;
++	struct bio *bio = NULL, *bio_src;
+ 
+ 	if (!bs)
+ 		bs = &fs_bio_set;
+-- 
+2.34.1
 
