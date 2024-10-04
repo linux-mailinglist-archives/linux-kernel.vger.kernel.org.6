@@ -1,254 +1,77 @@
-Return-Path: <linux-kernel+bounces-350509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B40599062E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:34:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C95990630
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1F9D2812AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:34:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A930C2815FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43419215F6C;
-	Fri,  4 Oct 2024 14:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92712178EC;
+	Fri,  4 Oct 2024 14:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SGjZ1Ysq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HJss5F1+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CDE2141D7
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1150C15749A
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728052447; cv=none; b=IEz7ISmBnfvCGdHMRs5CxwmQKqOXnDV2GkFtVWaKpbFYeOJoxKkoL/LQPJw3U3Ive2JbOxOyKLHmJLQJ8xuh4+OWN8m9PJ65NDyRXD646pf8rp45fSO5fW65OmGnUr68Qg4mlKMv3oKUnVjPWt5TCi23Sauaw0sibuolANvjVs8=
+	t=1728052473; cv=none; b=qUyaORyrUbcChk3KPSXZB6xOByNpaEgvimVyYeD+zX+iBIC4mvLO1U875dSBSo4oLeziRcz9tuZdHZ3giv5rTF6pBSIgCfuArG1lk4D+pz2Qgycxj+R9IOatqv0XgQSq1vDHDz8Xt5MqO/tk6SdWNxiTM88kiVqftYhjtWL5c0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728052447; c=relaxed/simple;
-	bh=dg/JlRn0H+tthLm9axveuXLsy7nnpjo7rpM9hSESaPQ=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=BTvFBQWpfTV5wWK6TQZnWmnsfEhV/oVJoYAHmIjSSLgVTRTx933QVp68y2P59HEZ416s7N04jewqMUSxFOwtC8tu2i1aUut0WkF7v5vRzt3D3DOaGHR0jZ1g1WhYmvGPZ2jTO5YXIpZXBPA8dezpn5Gc4HYYstrVxW0omGfWFP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SGjZ1Ysq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728052444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=f1XZvlT7o8oSbF4HuhkqAPlXh5kAhT6DviPjd2xOrk0=;
-	b=SGjZ1Ysq6kRCqakhLvYHmY2eXb3g9EhWhmycnNM0viNbH0z1MaHSXEOJrPDLo4nwbWiQof
-	4CDwq+Y3C9MPcTaR/HBME+uagrLSVsT7XM/AbeOph78LOZAZtsKX+A+MZlpK1ByxFMl9WX
-	Ns3Cncfh3nDMfUaun9d3BtiGM0069b0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-158-MgEqM_UkMWi8Y9TB9fcswg-1; Fri,
- 04 Oct 2024 10:34:03 -0400
-X-MC-Unique: MgEqM_UkMWi8Y9TB9fcswg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E41501955F10;
-	Fri,  4 Oct 2024 14:34:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E21AF1955E93;
-	Fri,  4 Oct 2024 14:33:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] netfs: In readahead, put the folio refs as soon extracted
+	s=arc-20240116; t=1728052473; c=relaxed/simple;
+	bh=3aISpKShlj2CHhji8UWYU36L3jXAJvB4tTlbTML+Ojk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kXKVho/jcqdp/PnNS7ea2ZZTZoT1Qb7wz7owIN8ga6CyADWT5WHNcKZcWWGqzJhRnKTKRWUY31cElg0VTrpILQNHZbsRdR1UnoTOAkQuQ2fbDcsqVCT8o1hnPzo5RHCJnXRWcB1twQhytAcT2BJJ85p9SDuAM2TsS9TTBW0Jdcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HJss5F1+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BC9nmJQQ1vJwIExoU2h3dhDujW58HlT3FVP8MyhAdQc=; b=HJss5F1+g38swUPnFDJH9KrDJA
+	LhrCoCqCgS0mvyxE1FZ8NpUZA3S4MphJoY4Rb4+hklrXJfb/X2R8Wi27nDUmi9BKOf9BOlZaBNvwf
+	kInkkYvTDNageGqRq7n8jHDqWv53TlNuS06gXXr6wrbCMIBb5MGNBuYzJaEVlg5/iedI3h/jxIJnM
+	LqLA+UkfK92osndoWv46O13SbAtDUBHt+UlUN5vsI5snQ8FAuR0LCUGzUdbTJhrZBtJoGUEXrn4+N
+	6iQCgTfoRXZBasXqloJZh18BaJpwbk5bGO/S8TalfW28WbeiPOqhnzPD5Pb1dM4TMhoedRCnLuITu
+	QwSxHKqg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1swjNt-0000000AbyT-3pxw;
+	Fri, 04 Oct 2024 14:34:21 +0000
+Date: Fri, 4 Oct 2024 15:34:21 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: akpm@linux-foundation.org, kasong@tencent.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+fa43f1b63e3aa6f66329@syzkaller.appspotmail.com
+Subject: Re: [PATCH] mm: swap: prevent possible data-race in
+ __try_to_reclaim_swap
+Message-ID: <Zv_87TBZnh2lIwyH@casper.infradead.org>
+References: <20241004142504.4379-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3771537.1728052438.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 04 Oct 2024 15:33:58 +0100
-Message-ID: <3771538.1728052438@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004142504.4379-1-aha310510@gmail.com>
 
-netfslib currently defers dropping the ref on the folios it obtains during
-readahead to after it has started I/O on the basis that we can do it whils=
-t
-we wait for the I/O to complete, but this runs the risk of the I/O
-collection racing with this in future.
+On Fri, Oct 04, 2024 at 11:25:04PM +0900, Jeongjun Park wrote:
+> A report [1] was uploaded from syzbot.
+> 
+> In the previous commit 862590ac3708 ("mm: swap: allow cache reclaim to skip 
+> slot cache"), the __try_to_reclaim_swap() function reads offset and nr_pages 
+> from folio without folio_lock protection. 
 
-Furthermore, Matthew Wilcox strongly suggests that the refs should be
-dropped immediately, as readahead_folio() does (netfslib is using
-__readahead_batch() which doesn't drop the refs).
-
-Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/buffered_read.c     |   47 ++++++++++++-------------------------=
-------
- fs/netfs/read_collect.c      |    2 +
- include/trace/events/netfs.h |    1 =
-
- 3 files changed, 16 insertions(+), 34 deletions(-)
-
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index c40e226053cc..af46a598f4d7 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -67,7 +67,8 @@ static int netfs_begin_cache_read(struct netfs_io_reques=
-t *rreq, struct netfs_in
-  * Decant the list of folios to read into a rolling buffer.
-  */
- static size_t netfs_load_buffer_from_ra(struct netfs_io_request *rreq,
--					struct folio_queue *folioq)
-+					struct folio_queue *folioq,
-+					struct folio_batch *put_batch)
- {
- 	unsigned int order, nr;
- 	size_t size =3D 0;
-@@ -82,6 +83,9 @@ static size_t netfs_load_buffer_from_ra(struct netfs_io_=
-request *rreq,
- 		order =3D folio_order(folio);
- 		folioq->orders[i] =3D order;
- 		size +=3D PAGE_SIZE << order;
-+
-+		if (!folio_batch_add(put_batch, folio))
-+			folio_batch_release(put_batch);
- 	}
- =
-
- 	for (int i =3D nr; i < folioq_nr_slots(folioq); i++)
-@@ -120,6 +124,9 @@ static ssize_t netfs_prepare_read_iterator(struct netf=
-s_io_subrequest *subreq)
- 		 * that we will need to release later - but we don't want to do
- 		 * that until after we've started the I/O.
- 		 */
-+		struct folio_batch put_batch;
-+
-+		folio_batch_init(&put_batch);
- 		while (rreq->submitted < subreq->start + rsize) {
- 			struct folio_queue *tail =3D rreq->buffer_tail, *new;
- 			size_t added;
-@@ -132,10 +139,11 @@ static ssize_t netfs_prepare_read_iterator(struct ne=
-tfs_io_subrequest *subreq)
- 			new->prev =3D tail;
- 			tail->next =3D new;
- 			rreq->buffer_tail =3D new;
--			added =3D netfs_load_buffer_from_ra(rreq, new);
-+			added =3D netfs_load_buffer_from_ra(rreq, new, &put_batch);
- 			rreq->iter.count +=3D added;
- 			rreq->submitted +=3D added;
- 		}
-+		folio_batch_release(&put_batch);
- 	}
- =
-
- 	subreq->len =3D rsize;
-@@ -348,6 +356,7 @@ static int netfs_wait_for_read(struct netfs_io_request=
- *rreq)
- static int netfs_prime_buffer(struct netfs_io_request *rreq)
- {
- 	struct folio_queue *folioq;
-+	struct folio_batch put_batch;
- 	size_t added;
- =
-
- 	folioq =3D kmalloc(sizeof(*folioq), GFP_KERNEL);
-@@ -360,39 +369,14 @@ static int netfs_prime_buffer(struct netfs_io_reques=
-t *rreq)
- 	rreq->submitted =3D rreq->start;
- 	iov_iter_folio_queue(&rreq->iter, ITER_DEST, folioq, 0, 0, 0);
- =
-
--	added =3D netfs_load_buffer_from_ra(rreq, folioq);
-+	folio_batch_init(&put_batch);
-+	added =3D netfs_load_buffer_from_ra(rreq, folioq, &put_batch);
-+	folio_batch_release(&put_batch);
- 	rreq->iter.count +=3D added;
- 	rreq->submitted +=3D added;
- 	return 0;
- }
- =
-
--/*
-- * Drop the ref on each folio that we inherited from the VM readahead cod=
-e.  We
-- * still have the folio locks to pin the page until we complete the I/O.
-- *
-- * Note that we can't just release the batch in each queue struct as we u=
-se the
-- * occupancy count in other places.
-- */
--static void netfs_put_ra_refs(struct folio_queue *folioq)
--{
--	struct folio_batch fbatch;
--
--	folio_batch_init(&fbatch);
--	while (folioq) {
--		for (unsigned int slot =3D 0; slot < folioq_count(folioq); slot++) {
--			struct folio *folio =3D folioq_folio(folioq, slot);
--			if (!folio)
--				continue;
--			trace_netfs_folio(folio, netfs_folio_trace_read_put);
--			if (!folio_batch_add(&fbatch, folio))
--				folio_batch_release(&fbatch);
--		}
--		folioq =3D folioq->next;
--	}
--
--	folio_batch_release(&fbatch);
--}
--
- /**
-  * netfs_readahead - Helper to manage a read request
-  * @ractl: The description of the readahead request
-@@ -436,9 +420,6 @@ void netfs_readahead(struct readahead_control *ractl)
- 		goto cleanup_free;
- 	netfs_read_to_pagecache(rreq);
- =
-
--	/* Release the folio refs whilst we're waiting for the I/O. */
--	netfs_put_ra_refs(rreq->buffer);
--
- 	netfs_put_request(rreq, true, netfs_rreq_trace_put_return);
- 	return;
- =
-
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index b18c65ba5580..3cbb289535a8 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -77,6 +77,8 @@ static void netfs_unlock_read_folio(struct netfs_io_subr=
-equest *subreq,
- 			folio_unlock(folio);
- 		}
- 	}
-+
-+	folioq_clear(folioq, slot);
- }
- =
-
- /*
-diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-index 1d7c52821e55..69975c9c6823 100644
---- a/include/trace/events/netfs.h
-+++ b/include/trace/events/netfs.h
-@@ -172,7 +172,6 @@
- 	EM(netfs_folio_trace_read,		"read")		\
- 	EM(netfs_folio_trace_read_done,		"read-done")	\
- 	EM(netfs_folio_trace_read_gaps,		"read-gaps")	\
--	EM(netfs_folio_trace_read_put,		"read-put")	\
- 	EM(netfs_folio_trace_read_unlock,	"read-unlock")	\
- 	EM(netfs_folio_trace_redirtied,		"redirtied")	\
- 	EM(netfs_folio_trace_store,		"store")	\
+Umm.  You don't need folio_lock to read nr_pages.  Holding a refcount
+is sufficient to stabilise nr_pages.  I cannot speak to folio->swap
+though (and the KCSAN report does appear to be pointing to folio->swap).
 
 
