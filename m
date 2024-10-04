@@ -1,141 +1,137 @@
-Return-Path: <linux-kernel+bounces-350408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD7B9904B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:46:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246AF9904BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 232981F2285E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:46:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E88428455D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D651420FAA6;
-	Fri,  4 Oct 2024 13:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73AF212EE8;
+	Fri,  4 Oct 2024 13:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kY5smuTo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izq+I0a5"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C5F33D5
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9250433D5;
+	Fri,  4 Oct 2024 13:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728049552; cv=none; b=VrzJ5C8WuxxaJRdtcJeb6FQGXo4Wgmz8Nmvj+TvYs9xGQUgzuKogMZCD3M4MelXA4q0fr/p7o4tr6iB0JHu2BM4X+1BbOeKjsCg/+PvtRuYEfNtXuU0nm2R4DrlsyCJxSe/pY959Mhb9u2RJP3OOjZY5TkrI7n+MAg3kq2bnIqk=
+	t=1728049604; cv=none; b=bX/W/N6dZA/VCZjdKuhfMyrupz9p1TjDjC0sNyN2Oaego9E8Dtt7DF6Lbo8NxyzdIlriENsekfYqZ8ozbV6+rKX9C4e0d79rhvVBwtTUp26wHv2ev204s+0qmPudgEXDAoFwRRUROD1qlDqmVNnKRmPjUXONyHyXZlvJssFKTYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728049552; c=relaxed/simple;
-	bh=1RS+17mH4AXNIN1g+vb0r2cDyMfutwB690D0Mhv8Yh8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NBlXuszL60Nfw+mqzOGbRoZvrUMhhiPtATms/kpQ3zkhfE41Y6lLxYIUwRMl1UJzdBBJbAVjGQIybcf7eyNQ0dTmLAd73HpyinSUB2SSsNmyEioxtEYAm8cp0hc0rEF8f9sPx6LBqWDkeUqTE6wiPRApfPz1JEGvuz6QMCd+x0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kY5smuTo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B6B62C4CEC6;
-	Fri,  4 Oct 2024 13:45:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728049551;
-	bh=1RS+17mH4AXNIN1g+vb0r2cDyMfutwB690D0Mhv8Yh8=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=kY5smuToRMZKl6xm4yZRdHQApYQ3/XOLtSnwsedUdU/Cef+xb1HiPFi64SBlYsCba
-	 VJk8LxCL1zCGUEMyhNTlSfC7QtMehfn1KfI6iNaqaWWrWn9/7H0++Ch27GuDPFU1QZ
-	 dzrxaFui6BnRPXq1c9lHK5ZSkMA/RgnOHg3uWk8m/LqlLv6C3qpi/LmK0iD4/LI699
-	 V8+w/dpS7AGDo1MjeStmezhRKBjqr+HETrNxVVTCfdTn6LvvT2ZFxaIleoR6p/k96b
-	 d1VSfJngByDPXxN7JRlq7utRdNgXkZ99otxezBc04F53JV7cZmJWaXPQvIpmf1G39Q
-	 TRF7o+2YMggTA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB61DCFA775;
-	Fri,  4 Oct 2024 13:45:51 +0000 (UTC)
-From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Date: Fri, 04 Oct 2024 19:15:48 +0530
-Subject: [PATCH v3] Fixes: null pointer dereference in
- pfnmap_lockdep_assert
+	s=arc-20240116; t=1728049604; c=relaxed/simple;
+	bh=oMYr0J7vPOPRVc7QldvTZSHj9WMFS7q8Kx/H5jbYL4E=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BWxqSaNsTOuAiDsklIBL3LcpzWErKDmE8TBApZNk0wEbi2XeGq169CqsocYT7IqOq1HZPhFs91GbhJ2Lwl8vQEP8oXTO7+mViePQxG7KZfM5Gpz60FU0FePhYJHQxS+ob8HH5FBt/GYN+4o0GMIJ84t41Cybxe9DgDilD2MUPtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=izq+I0a5; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37ce8458ae3so1900777f8f.1;
+        Fri, 04 Oct 2024 06:46:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728049601; x=1728654401; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=xquMX47J/UTAd2fUYDr54EILmglm1WHGMz/WfdVeeI4=;
+        b=izq+I0a5ohhoABNpAuNXk2EbZydo5Qbj6AOjw2QpMp5sS1uSSZTVNUkwgPTdUtD8um
+         2kUMWA6CLjUyI10ARANZWQF7lfm49bbpz5Lq//MXjwVwJr2AtlA3LP0jDjrEqOhEqIsV
+         CUXpZDJ5O/ciMLwHLUKtKHQ3qHvLRAFPZeh3COsElgQ6lpaZK2MPDd/+cKXMVH6wUoD6
+         F07z6sL2QELAYFZLiFZL+QZgGFiDkXKHxwMTQPmjGmMi46aNSWgIrl2k1X8fv2948lYa
+         Z7nAxQPo2FWk9N8dNqAKP4xBO1wh6ksBePdW9tN3u0ocKjt+MW0Ce/7qRjZKhvV6PjJ9
+         2lpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728049601; x=1728654401;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xquMX47J/UTAd2fUYDr54EILmglm1WHGMz/WfdVeeI4=;
+        b=irlsZlfyzsB2ovTWp2jFySLd9sqyXfO/excUhBBZKTtpNDuOQ5gPg24o3Ba8OQBc0F
+         9HBgGxc75rvo5zdaN/6Dr/HRQ2qZpikc/U0novOwobSkRpF8MXJcL8t5Su1rSlDzFHWl
+         ksVR7tdYPVf7wsglm5JoT8oqF+Nk40n7LRqR69jzs9qbEcuN8ohCLEK9uIz3p8EYqLGR
+         zn/TN6ui+Kxs8npOd6QAXzk3BRTUuMhCZv5wg89tIGnwF/yGqtK0QgDCDczmgCZNabw9
+         C/D5zmaVMC/4kDsZMqN2nbjN76crAXW88Y7/jnX9NT1DXwAlhpd/Kqij7CRPr39UiRs5
+         NIWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVG+gmHkm7di7KFrrOuwjF0E6pAk4ddfGwc+2XVen5Ei4VMtd+1lQGg8qRoLNBaZCblqYyLZS1T@vger.kernel.org, AJvYcCW+DqyrihECqrg/7TL2tOIJ5GCzDoQ7ekj25SJa5MXCB/4U+VkuIaugILGNm265YSfzFZ10t0eg@vger.kernel.org, AJvYcCWqJM/lGmzjSDw5upiWjYwFd2jPl0TB+IINjbpXAjo3UVpZuWygXaeaQGq0788TBY4Q4DEvr2kEZ2DCap4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFmFQYypOYBgnzbJKsFUgZvz1dyVM08R1r9mMFHDtsqoECpxeb
+	7CbjdWhRhOZohi9p2Uee9Sp4yyc2F/BujSSulqYusvjAWdUuzQHq
+X-Google-Smtp-Source: AGHT+IEn4lV83tB8+RgSLR8zaIiwUXR9TcB5oXcYr/vqVWEQ1FhRpBowNA9v0KynJqoOvieo0Uxm8w==
+X-Received: by 2002:adf:fe8a:0:b0:374:c8b7:63ec with SMTP id ffacd0b85a97d-37d0e73742fmr2555611f8f.21.1728049600414;
+        Fri, 04 Oct 2024 06:46:40 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d0822b94fsm3284447f8f.46.2024.10.04.06.46.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 06:46:40 -0700 (PDT)
+Message-ID: <66fff1c0.050a0220.f97fa.fec2@mx.google.com>
+X-Google-Original-Message-ID: <Zv_xuL7uKwjj0zk5@Ansuel-XPS.>
+Date: Fri, 4 Oct 2024 15:46:32 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>,
+	stable@vger.kernel.org
+Subject: Re: [net PATCH 2/2] net: phy: Skip PHY LEDs OF registration for
+ Generic PHY driver
+References: <20241003221006.4568-1-ansuelsmth@gmail.com>
+ <20241003221006.4568-2-ansuelsmth@gmail.com>
+ <2dcd127d-ab41-4bf7-aea4-91f175443e62@lunn.ch>
+ <66ffb1c2.df0a0220.1b4c87.ce13@mx.google.com>
+ <a463ca8c-ebd7-4fd4-98a9-bc869a92548c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-fix-null-deref-v3-1-f9459b1cc95f@iiitd.ac.in>
-X-B4-Tracking: v=1; b=H4sIAIvx/2YC/3XMSwrCMBSF4a2UOzYlj1qJo+5DHMTkxl4oqSQ1V
- Er3btqRIg7/A+dbIGEkTHCuFoiYKdEYSqhDBbY34Y6MXGmQXDaCc8U8zSw8h4E5jOhZe/OGK3V
- CbxWU06OMNO/g5Vq6pzSN8bX7WWzrXyoLJhg3zdF57bhoTUdEk6uNrSnAhmX5CTQ/gCyAVMZpr
- rW2TnwD67q+Ac2cABzvAAAA
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>, Shuah Khan <skhan@linuxfoundation.org>, 
- Anup Sharma <anupnewsmail@gmail.com>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, 
- syzbot+093d096417e7038a689b@syzkaller.appspotmail.com, 
- Manas <manas18244@iiitd.ac.in>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728049550; l=2095;
- i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
- bh=ew+qGxm4Lxxrd6Mo6kl+2EOEGjzE1+x1lwHF41mIdfg=;
- b=8TyYBtUuYhyHZVRpCSzgDVmHLuJkeS15eZxJViSrrKRr3LtHwGkO1VBNGFwq2t3iosIWnHmIn
- SRsaG1T5cwhDUs0SpaHKlXe9E97qDUHK29VN1sdeSx7taszr+x56E9Z
-X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
- pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
-X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
- auth_id=196
-X-Original-From: Manas <manas18244@iiitd.ac.in>
-Reply-To: manas18244@iiitd.ac.in
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a463ca8c-ebd7-4fd4-98a9-bc869a92548c@lunn.ch>
 
-From: Manas <manas18244@iiitd.ac.in>
+On Fri, Oct 04, 2024 at 03:44:33PM +0200, Andrew Lunn wrote:
+> > While the patch in net-next fix a broken condition (PHY driver exist but
+> > doesn't have LEDs OPs), this account a much possible scenario.
+> > 
+> > It's totally ok if the PHY driver is not loaded and we fallback to the
+> > Generic PHY and there are LEDs node.
+> > 
+> > This is the case with something like
+> > ip link set eth0 down
+> > rmmod air_en8811h
+> > ip link set eth0 up
+> > 
+> > On this up, the Generic PHY is loaded and LEDs will wrongly be
+> > registered. We should not add the LED to the phydev LEDs list.
+> > 
+> > Do you think this logic is wrong and we should print a warning also in
+> > this case? Or should we bite it and just return 0 with no warning at
+> > all? (again my concern is the additional LEDs entry in sysfs that won't
+> > be actually usable as everything will be rejected)
+> 
+> We should not add LEDs which we cannot drive. That much is clear to
+> me.
+> 
+> I would also agree that LEDs in DT which we cannot drive is not
+> fatal. So the return value should be 0.
+> 
+> The only really open point is phydev_err(), phydev_warn() or
+> phydev_dbg(). Since it is not fatal, phydev_err() is wrong. I would
+> probably go with phydev_dbg(), to aid somebody debugging why the LEDs
+> don't appear in some conditions.
+>
 
-syzbot has pointed to a possible null pointer dereference in
-pfnmap_lockdep_assert. vm_file member of vm_area_struct is being
-dereferenced without any checks.
+Ok I will squash this and the net-next patch and change to dbg.
 
-This fix assigns mapping only if vm_file is not NULL.
+Do you think it's still "net" content? I'm more tempted to post in
+net-next since I have to drop the Generic PHY condition.
 
-Reported-by: syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
----
-This bug[1] triggers a general protection fault in follow_pfnmap_start
-function. An assertion pfnmap_lockdep_assert inside this function
-dereferences vm_file member of vm_area_struct. And panic gets triggered
-when vm_file is NULL.
-
-This patch assigns mapping only if vm_file is not NULL.
-
-[1] https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
-
-Signed-off-by: Manas <manas18244@iiitd.ac.in>
----
-Changes in v3:
-- v3: use assigned var instead of accessing member again 
-- Link to v2: https://lore.kernel.org/r/20241004-fix-null-deref-v2-1-23ad90999cd1@iiitd.ac.in
-
-Changes in v2:
-- v2: use ternary operator according to feedback
-- Link to v1: https://lore.kernel.org/r/20241003-fix-null-deref-v1-1-0a45df9d016a@iiitd.ac.in
----
- mm/memory.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/memory.c b/mm/memory.c
-index 2366578015ad..828967a13596 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -6346,10 +6346,10 @@ static inline void pfnmap_args_setup(struct follow_pfnmap_args *args,
- static inline void pfnmap_lockdep_assert(struct vm_area_struct *vma)
- {
- #ifdef CONFIG_LOCKDEP
--	struct address_space *mapping = vma->vm_file->f_mapping;
-+	struct address_space *mapping = vma->vm_file ? vma->vm_file->f_mapping : NULL;
- 
- 	if (mapping)
--		lockdep_assert(lockdep_is_held(&vma->vm_file->f_mapping->i_mmap_rwsem) ||
-+		lockdep_assert(lockdep_is_held(&mapping->i_mmap_rwsem) ||
- 			       lockdep_is_held(&vma->vm_mm->mmap_lock));
- 	else
- 		lockdep_assert(lockdep_is_held(&vma->vm_mm->mmap_lock));
-
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241003-fix-null-deref-6bfa0337efc3
-
-Best regards,
 -- 
-Manas <manas18244@iiitd.ac.in>
-
-
+	Ansuel
 
