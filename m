@@ -1,102 +1,145 @@
-Return-Path: <linux-kernel+bounces-349769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E9598FB5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:03:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A85398FB62
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CBF1F23858
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:03:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B7AB1F23493
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0136D256D;
-	Fri,  4 Oct 2024 00:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339D328E8;
+	Fri,  4 Oct 2024 00:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMdzorrD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7Jv1tZd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F92E1849;
-	Fri,  4 Oct 2024 00:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9337C1849;
+	Fri,  4 Oct 2024 00:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728000197; cv=none; b=frM7cjKicrJTyB8l9oP+xE5eVZf/B2JBG7Z3pdIm8ZRroi3UEntVUgXVdLozqfh9D/RbWzVX48mwAcSl6DFIxvXjQi0VFPpDiJTw2Dr4OE8mGhid7+73qC8tjVOsPXsYPmUTD2QHcmqtpj5Ob6ZbkmN3NgVu+GWBZkZosyxHEjs=
+	t=1728000286; cv=none; b=FZSzr8YInlNVXiX0TAYt4xEtX7Bjsj1Iz+BjV+2iKitd4s8xc7xc8luaK85oe3mjsD42jIJ6XUOLCojQCs4cGDRkOgVEP+wL6Mni6V9BTUMbtkLqJEjYfTojtPd0tIcrUU1dyrEvwOp9f2NjVwu6545n6suo0P01chz7k2VwvZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728000197; c=relaxed/simple;
-	bh=SNrvlogFlg3d5o+tg0qQnk7NnFWIl9VQl1VbaDJnDgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IDWRWuCevkyrLZHDhiId1G7Sz0Lq5MoriEQcsWvDg6k8llnjcXpiBhEy/CQp+VROGvZm3wxbK6X30i/u/tO2Q3cjp6BgSGEY7urpgzSJCeTyQHoyaOeAAnlS6fl6a6hLz++Mk7uoSJoXNOzh3UOkRM6nRyNJL3Cbeg7cSlPe0lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMdzorrD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D672AC4CEC5;
-	Fri,  4 Oct 2024 00:03:16 +0000 (UTC)
+	s=arc-20240116; t=1728000286; c=relaxed/simple;
+	bh=lhoaVc7qSnymcgP1B8/4MMCarOpcklf6p668zfKRuzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rgkYbSn8RL42fOvOwfUs+3M4Z+fPh1/i3MlJcX/TBJxboHrLr0n9eiXK5DpoEyKoMa2WHzVZJiXSFI3L/tpBB+Q/Oe14dtW+YjhJuaS+aEHee6i1W5I/VoQE46M50auMUoDxH/SxM6qUQEju2w0eJw/IZdB+DEUvJ1eA1Keh+l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7Jv1tZd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38165C4CEC5;
+	Fri,  4 Oct 2024 00:04:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728000197;
-	bh=SNrvlogFlg3d5o+tg0qQnk7NnFWIl9VQl1VbaDJnDgo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VMdzorrDPhHDsZkbSRBXh7eDHyOllgtmi71lMaV764yDzF/xTrgCLutg+cydsTuE3
-	 N8lG88FyjnhppugZnTjoBtFXkoRShhpQVXnDAeNZJMhVSUrExke7LXNNhhW9jVv3FW
-	 tnkJbYrQDj/Kqj0xY3gWcet9cN60KtQq0IYix2MTuYFBy8IKxWbQHQ/kySTqzg6NDc
-	 rTzEwawwqizTQt9DKpLrYMQ6LRoLEVP76dJe/wxP5CZrky1uBHg/+0aBsFKZIXDSaw
-	 wyiNKmogMLoXeJ4XBhsIrfMHa84CGYeoPjoBn/0aP+g+f/7sQtMJPrkM/jHVKvfGLA
-	 aLFDoDy1ZK53w==
-Date: Thu, 3 Oct 2024 19:03:16 -0500
-From: Rob Herring <robh@kernel.org>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: mark.rutland@arm.com, will@kernel.org, leitao@debian.org,
-	catalin.marinas@arm.com, saravanak@google.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH] of/kexec: save pa of initial_boot_params for arm64 and
- use it at kexec
-Message-ID: <20241004000316.GA1910499-robh@kernel.org>
-References: <20241003113840.2972416-1-usamaarif642@gmail.com>
+	s=k20201202; t=1728000286;
+	bh=lhoaVc7qSnymcgP1B8/4MMCarOpcklf6p668zfKRuzQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=c7Jv1tZdZM/fnHdpzoFFCVRifsAK0UoqstaXwCyipWYiQ9uadjQY/WcOBB6o5fuMF
+	 8J7mD9s0jAXUe2kbK2VPV998nGZHwQxaQ+ncy3C+63icgHCU1owiAeUGFcekADCiug
+	 bWlOYyMRUbJk0lLlr/eFpwbYpN5uTmppZV4NoAh3sJhKLrbL+5cum9VQVJ5Z4Gjrod
+	 woUKLGoos7Efhtt7ZMGUooDDFIKNeK3QK0C+KzVAfp3BQc4L1jvBER7t8a1jkgW/G/
+	 BBnTHEN1rxsghfRnDg4UoQNhQYZ5WBRnvv9tcu8fqyCfPz5a2i03f8yRt8mAsKK3sI
+	 57SCuYYwPpAIw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Rust fixes for 6.12
+Date: Fri,  4 Oct 2024 02:03:49 +0200
+Message-ID: <20241004000349.675431-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241003113840.2972416-1-usamaarif642@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 03, 2024 at 12:38:40PM +0100, Usama Arif wrote:
->  __pa() is only intended to be used for linear map addresses and using
-> it for initial_boot_params which is in fixmap for arm64 will give an
-> incorrect value. Hence stash the physical address when it is known at
-> boot time and use it at kexec time instead of converting the virtual
-> address using __pa().
-> 
-> Reported-by: Breno Leitao <leitao@debian.org>
-> Suggested-by: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> Fixes: ac10be5cdbfa ("arm64: Use common of_kexec_alloc_and_setup_fdt()")
-> ---
->  arch/arm64/kernel/setup.c | 8 ++++++++
->  drivers/of/fdt.c          | 6 ++++++
->  drivers/of/kexec.c        | 8 ++++++--
->  include/linux/of_fdt.h    | 2 ++
->  4 files changed, 22 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-> index b22d28ec8028..a4d96f5e2e05 100644
-> --- a/arch/arm64/kernel/setup.c
-> +++ b/arch/arm64/kernel/setup.c
-> @@ -194,6 +194,14 @@ static void __init setup_machine_fdt(phys_addr_t dt_phys)
->  	/* Early fixups are done, map the FDT as read-only now */
->  	fixmap_remap_fdt(dt_phys, &size, PAGE_KERNEL_RO);
->  
-> +	/*
-> +	 * Save dt_phys address so that it can be used later for kexec. This
-> +	 * is done as __pa() is only intended to be used for linear map addresses
-> +	 * and using it for initial_boot_params which is in fixmap will give an
-> +	 * incorrect value.
-> +	 */
-> +	set_initial_boot_params_pa(dt_phys);
+Hi Linus,
 
-No new arch->dt functions please. If we need to save off the PA, then do 
-that when we set initial_boot_params.
+Please pull these fixes for Rust.
 
-Rob
+They have all been in linux-next for at least a couple rounds, and most
+for a week.
+
+You will probably notice a non-tag base -- I used the Rust merge because
+there was a trivial issue in the merge resolution so I added the fix on
+top of that one without waiting for v6.12-rc1. Please let me know if you
+prefer something else (e.g. I considered sending you that patch directly
+to you).
+
+No conflicts expected.
+
+You also already merged a fix for a Rust driver (qt2025) via netdev.
+
+Thanks!
+
+Cheers,
+Miguel
+
+The following changes since commit 570172569238c66a482ec3eb5d766cc9cf255f69:
+
+  Merge tag 'rust-6.12' of https://github.com/Rust-for-Linux/linux (2024-09-25 10:25:40 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/Rust-for-Linux/linux.git tags/rust-fixes-6.12
+
+for you to fetch changes up to 05cef2c4a421ca09ab9761a95e61423e59e5bfb1:
+
+  rust: kunit: use C-string literals to clean warning (2024-10-01 23:46:42 +0200)
+
+----------------------------------------------------------------
+Rust fixes for v6.12
+
+Toolchain and infrastructure:
+
+ - Fix/improve a couple 'depends on' on the newly added CFI/KASAN
+   suppport to avoid build errors/warnings.
+
+ - Fix ARCH_SLAB_MINALIGN multiple definition error for RISC-V under
+   !CONFIG_MMU.
+
+ - Clean upcoming (Rust 1.83.0) Clippy warnings.
+
+'kernel' crate:
+
+ - 'sync' module: fix soundness issue by requiring 'T: Sync' for
+   'LockedBy::access'; and fix helpers build error under PREEMPT_RT.
+
+ - Fix trivial sorting issue ('rustfmtcheck') on the v6.12 Rust merge.
+
+----------------------------------------------------------------
+Alice Ryhl (3):
+      rust: sync: require `T: Sync` for `LockedBy::access`
+      rust: KASAN+RETHUNK requires rustc 1.83.0
+      cfi: encode cfi normalized integers + kasan/gcov bug in Kconfig
+
+Dirk Behme (1):
+      rust: mutex: fix __mutex_init() usage in case of PREEMPT_RT
+
+Gary Guo (1):
+      rust: fix `ARCH_SLAB_MINALIGN` multiple definition error
+
+Miguel Ojeda (3):
+      rust: kernel: sort Rust modules
+      rust: cfi: fix `patchable-function-entry` starting version
+      rust: kunit: use C-string literals to clean warning
+
+ arch/Kconfig                  | 18 +++++++++++++++++-
+ init/Kconfig                  |  5 +++--
+ rust/bindgen_parameters       |  5 +++++
+ rust/helpers/mutex.c          |  6 ++++++
+ rust/kernel/kunit.rs          |  4 ++--
+ rust/kernel/lib.rs            |  2 +-
+ rust/kernel/sync/locked_by.rs | 18 ++++++++++++++----
+ 7 files changed, 48 insertions(+), 10 deletions(-)
 
