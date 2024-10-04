@@ -1,236 +1,127 @@
-Return-Path: <linux-kernel+bounces-351309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4AD5990F91
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:02:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BD8990F93
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 114C41C22BA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:02:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B62F1C22117
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6C91FB3E7;
-	Fri,  4 Oct 2024 19:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B6E1DDC21;
+	Fri,  4 Oct 2024 19:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYfU5nCF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UZXY4FR1"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87471DDC02;
-	Fri,  4 Oct 2024 19:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA941DDC02
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 19:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728069075; cv=none; b=Td1tO3vdfWUccAsCTmcT/S2izMHAP/UrkuqznWewkh/iXnA3UB0TrZtW198U6KRHiB9AmrP49GTwXunnA9pUWEUAxzT/XEe2tCpMcHprUdDPOD24TqpjX60mQLfAEM1SV/+JcVaSnN40Wqd6+Wtnvt+CeI3a4pglWMnuAvKtPRA=
+	t=1728069101; cv=none; b=O16+zyMk2IZO2QhESOdkFCHDeAEVFDiBTpDgOnXJ6gSoWS10pKIce1X7ngMak+QmaNawmbZCEi/0jJPMpRhdVu7Sp3VxraoIzcA4Nx4vE2hFv8hRV+vMkIt/FRJbJkcjLMDDG1No2oDyOJbJ7DzaWA6AuoKKO+qYeMQ3DoRLTzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728069075; c=relaxed/simple;
-	bh=YYYFR4xM6pq64tyhxGwfZ3sPFhLIXiPYgsZ0dStL10M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drByXn6E+WvRJYgCQxuk7XS/szLTW1Y7Q646CX38oIcjFp28X5ZJYCSieDG5BrdQ05ZLpHl2fv8wtBRjfWKRYS8CrcjRHbdEv3hJA1utieY6gMqwSb4/TjASoMT8CaaNPaESw6Oo2NE0CTMylVklkgQuWsKIx6n+/6MoiWhRHhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYfU5nCF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 109CEC4CEC6;
-	Fri,  4 Oct 2024 19:11:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728069074;
-	bh=YYYFR4xM6pq64tyhxGwfZ3sPFhLIXiPYgsZ0dStL10M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LYfU5nCF1IhcG9r/BLUlZ83fopNKYX/W4gNeO7INGLlb3hG5q7ZfL/MItsNOF7lvD
-	 Z0TfCzp7GYj74VR2pfNgN7Q//fzAy3lRSXTLX/YNyIB2c4P24z0ZJizhfSxu/y8/Bn
-	 xtlL5gXdG/ygxQ8t7ZTAswkYupUyG+14LV5wjlxC3QTC+B4Tkat8cU/9fQIjRu407n
-	 Y2dIB/ITsG6b2oH0nwxPpgrhcjKCN2rWwK6UkDUe5m6pkwrygKAZJO1vGsl8PPR86D
-	 dHzMujwLCbQYn7S/FYdKe9qAowdS8s5p4I9nlpPVoY+oHL3F3dHvy5JJATMDW8qHln
-	 fk6pRwV/iNalA==
-Date: Fri, 4 Oct 2024 20:11:04 +0100
-From: Simon Horman <horms@kernel.org>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	iommu@lists.linux.dev, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	virtualization@lists.linux.dev, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	catalin.marinas@arm.com, will@kernel.org, luto@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
-	daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, bhelgaas@google.com, arnd@arndb.de,
-	sgarzare@redhat.com, jinankjain@linux.microsoft.com,
-	muminulrussell@gmail.com, skinsburskii@linux.microsoft.com,
-	mukeshrathor@microsoft.com
-Subject: Re: [PATCH 5/5] hyperv: Use hvhdk.h instead of hyperv-tlfs.h in
- Hyper-V code
-Message-ID: <20241004191104.GI1310185@kernel.org>
-References: <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1727985064-18362-6-git-send-email-nunodasneves@linux.microsoft.com>
+	s=arc-20240116; t=1728069101; c=relaxed/simple;
+	bh=uYPo+e+mTCUcpd9n3QJrV7jvRJEDbjFR9XhK7iRCEN8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DURJPibQZU93DpZy7ANmrfX61H7RZ9Np6Xj3C3+ZIExc98y1C+DmOlPkvvWD158+++j/DIZNZba4zTS9eB17d8g1cDuPRwNmStq2mSx7OrOpU+f6CFI5zsMEIypiwXu0n4JxKysXCicWp8piowQHc6w6ZjPQtmx9qkh+TIn1qi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UZXY4FR1; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a3525ba6aaso8155245ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 12:11:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1728069098; x=1728673898; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7DGtjofFLon4QI6Cl3zgL4lNfBVb4VEqAk2u1rUhYQc=;
+        b=UZXY4FR1cj8WyoKOUD1Zyy3a1+vbya2w8vz7EeK/S8lypd1gVIElgYiamA6nT5ngIO
+         3Myo6umgMD6BA6SV+lTkN9F08rH2J5vhg2K8kGk0Fl8A0IGrmyWTkzbQwPJjGS1nMXB0
+         fp+kAjbuMksX9qPInylIRbNcQmMvD0d7hADS4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728069098; x=1728673898;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7DGtjofFLon4QI6Cl3zgL4lNfBVb4VEqAk2u1rUhYQc=;
+        b=Z/MAcmVbfwEfzWZXsuDucqad2hQM68DBqvdwwS4ub7vno5geLm5nCe93cyXai/JS50
+         oVkRHoHTae2sA10HlrCV3UaKo8qY03nGFi9svPaNo/K4Zbq1Upf9iBr+xXmYZcEK4shg
+         60Dd4tWqnAD9hvn32k1yy93aIEcFvc+azdaqhB0jjVP+NSwPWyFwJFUxm9a0S9O9bocp
+         A2YmBjaqMO5P3b7pf8uEShiD67qc1vgRPdemJ0U3oK7//48goV8Bvsix9UHvoETjKiGw
+         5gtCtMuJZMpki+xaluTeqv0xfHdB7VaU+Qhn0mthEHvjvffrIAXTpicOGcm+IJTB9K1s
+         sNGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVo7XDxytJiTdMKfWx+zzGnscblLud8I716MozwQ3dFRlrOc1cp2LkwJxt7o+EVtmMR48pvCqmMzbpE7Pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkOH+cD9sfcVLgFu7iM4qZIo/RsgmR4lbP9cyXecJH0J58jhW3
+	Q4iGWzfhVMf9CW1gnyqio528RDEKqxKlMshvWk/PlPS0a6JDU40dWnOZ8Tld8To=
+X-Google-Smtp-Source: AGHT+IFNSzR4jqR8T4dR5f3ZGvvXjjrep3zTEoQa8V0+74iUAXaRYs9EdKpIP63gWvQZvCpNMFctZg==
+X-Received: by 2002:a05:6e02:12e5:b0:3a1:d180:15b4 with SMTP id e9e14a558f8ab-3a375bd2fb8mr34757425ab.23.1728069098538;
+        Fri, 04 Oct 2024 12:11:38 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a37a7e7c23sm980315ab.4.2024.10.04.12.11.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 12:11:37 -0700 (PDT)
+Message-ID: <532edd71-93c3-4d90-ac98-9763993807fa@linuxfoundation.org>
+Date: Fri, 4 Oct 2024 13:11:36 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1727985064-18362-6-git-send-email-nunodasneves@linux.microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/atmel_hlcdc: Fix uninitialized variable
+To: Advait Dhamorikar <advaitdhamorikar@gmail.com>,
+ Sam Ravnborg <sam@ravnborg.org>, Boris Brezillon <bbrezillon@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, anupnewsmail@gmail.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241004150849.70883-1-advaitdhamorikar@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241004150849.70883-1-advaitdhamorikar@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 03, 2024 at 12:51:04PM -0700, Nuno Das Neves wrote:
-> To move toward importing headers from Hyper-V directly, switch to
-> using hvhdk.h in all Hyper-V code. KVM code that uses Hyper-V
-> definitions from hyperv-tlfs.h remains untouched.
+On 10/4/24 09:08, Advait Dhamorikar wrote:
+> atmel_hlcdc_plane_update_buffers: may use an uninitialized
+> sr variable when the if condition remains unsatisfied
 > 
-> Add HYPERV_NONTLFS_HEADERS everywhere mshyperv.h, asm/svm.h,
-> clocksource/hyperv_timer.h is included in Hyper-V code.
+
+As mentioned in my response to another one of your patches,
+include how you found the problem in the change log.
+
+> Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+> ---
+>   drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Replace hyperv-tlfs.h with hvhdk.h directly in linux/hyperv.h, and
-> define HYPERV_NONTLFS_HEADERS there, since it is only used in
-> Hyper-V device code.
-> 
-> Update a couple of definitions to updated names found in the new
-> headers: HV_EXT_MEM_HEAT_HINT, HV_SUBNODE_TYPE_ANY.
-> 
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> index 4a7ba0918eca..4150c4d0b4f2 100644
+> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> @@ -559,7 +559,7 @@ static void atmel_hlcdc_plane_update_buffers(struct atmel_hlcdc_plane *plane,
+>   	const struct atmel_hlcdc_layer_desc *desc = plane->layer.desc;
+>   	struct atmel_hlcdc_dc *dc = plane->base.dev->dev_private;
+>   	struct drm_framebuffer *fb = state->base.fb;
+> -	u32 sr;
+> +	u32 sr = 0;
+  
+>   	int i;
+>   
+>   	if (!dc->desc->is_xlcdc)
 
-...
+sr could be used uninitialized in the for loop, !dc->desc->is_xlcdc
+case. However, is 0 the right initialization for this value?
 
-> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
-> index b1a4de4eee29..62b2a270ae65 100644
-> --- a/arch/arm64/hyperv/mshyperv.c
-> +++ b/arch/arm64/hyperv/mshyperv.c
-> @@ -15,6 +15,7 @@
->  #include <linux/errno.h>
->  #include <linux/version.h>
->  #include <linux/cpuhotplug.h>
-> +#define HYPERV_NONTLFS_HEADERS
->  #include <asm/mshyperv.h>
->  
->  static bool hyperv_initialized;
-
-Hi,
-
-With this change in place I see allmodconfig x86_64 builds reporting that
-HV_REGISTER_FEATURES is undeclared.
-
-arch/arm64/hyperv/mshyperv.c: In function 'hyperv_init':
-arch/arm64/hyperv/mshyperv.c:53:26: error: 'HV_REGISTER_FEATURES' undeclared (first use in this function); did you mean 'HV_REGISTER_FEATURES_INFO'?
-   53 |         hv_get_vpreg_128(HV_REGISTER_FEATURES, &result);
-      |                          ^~~~~~~~~~~~~~~~~~~~
-      |                          HV_REGISTER_FEATURES_INFO
-arch/arm64/hyperv/mshyperv.c:53:26: note: each undeclared identifier is reported only once for each function it appears in
-arch/arm64/hyperv/mshyperv.c:58:26: error: 'HV_REGISTER_ENLIGHTENMENTS' undeclared (first use in this function); did you mean 'HV_ACCESS_REENLIGHTENMENT'?
-   58 |         hv_get_vpreg_128(HV_REGISTER_ENLIGHTENMENTS, &result);
-      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
-      |                          HV_ACCESS_REENLIGHTENMENT
-
-> diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-> index 6d83ceb7f1ba..5f4053c49658 100644
-> --- a/arch/x86/entry/vdso/vma.c
-> +++ b/arch/x86/entry/vdso/vma.c
-> @@ -25,6 +25,7 @@
->  #include <asm/page.h>
->  #include <asm/desc.h>
->  #include <asm/cpufeature.h>
-> +#define HYPERV_NONTLFS_HEADERS
->  #include <clocksource/hyperv_timer.h>
->  
->  #undef _ASM_X86_VVAR_H
-> diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-> index f022d5f64fb6..4fe3b3b13256 100644
-> --- a/arch/x86/hyperv/hv_apic.c
-> +++ b/arch/x86/hyperv/hv_apic.c
-> @@ -26,6 +26,7 @@
->  #include <linux/slab.h>
->  #include <linux/cpuhotplug.h>
->  #include <asm/hypervisor.h>
-> +#define HYPERV_NONTLFS_HEADERS
->  #include <asm/mshyperv.h>
->  #include <asm/apic.h>
->  
-> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-> index fc3c3d76c181..680c4abc456e 100644
-> --- a/arch/x86/hyperv/hv_init.c
-> +++ b/arch/x86/hyperv/hv_init.c
-> @@ -19,6 +19,7 @@
->  #include <asm/sev.h>
->  #include <asm/ibt.h>
->  #include <asm/hypervisor.h>
-> +#define HYPERV_NONTLFS_HEADERS
->  #include <asm/mshyperv.h>
->  #include <asm/idtentry.h>
->  #include <asm/set_memory.h>
-
-And here too, with x86_64 allmodconfig.
-
-In file included from ./include/linux/string.h:390,
-                 from ./include/linux/efi.h:16,
-                 from arch/x86/hyperv/hv_init.c:12:
-arch/x86/hyperv/hv_init.c: In function 'get_vtl':
-./include/linux/overflow.h:372:23: error: invalid application of 'sizeof' to incomplete type 'struct hv_get_vp_registers_input'
-  372 |                 sizeof(*(p)) + flex_array_size(p, member, count),       \
-      |                       ^
-./include/linux/fortify-string.h:502:42: note: in definition of macro '__fortify_memset_chk'
-  502 |         size_t __fortify_size = (size_t)(size);                         \
-      |                                          ^~~~
-arch/x86/hyperv/hv_init.c:427:9: note: in expansion of macro 'memset'
-  427 |         memset(input, 0, struct_size(input, element, 1));
-      |         ^~~~~~
-arch/x86/hyperv/hv_init.c:427:26: note: in expansion of macro 'struct_size'
-  427 |         memset(input, 0, struct_size(input, element, 1));
-      |                          ^~~~~~~~~~~
-
-[errors trimmed for the sake of brevity]
-
-...
-
-> diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-> index 04775346369c..a8bb6ad7efb6 100644
-> --- a/arch/x86/hyperv/hv_vtl.c
-> +++ b/arch/x86/hyperv/hv_vtl.c
-> @@ -10,6 +10,7 @@
->  #include <asm/boot.h>
->  #include <asm/desc.h>
->  #include <asm/i8259.h>
-> +#define HYPERV_NONTLFS_HEADERS
->  #include <asm/mshyperv.h>
->  #include <asm/realmode.h>
->  #include <../kernel/smpboot.h>
-
-And, likewise, with this patch applied I see a number of errors when
-compiling this file. This is with allmodconfig on x86_64 with:
-
-Modified: CONFIG_HYPERV=y (instead of m)
-Added: CONFIG_HYPERV_VTL_MODE=y
-
-arch/x86/hyperv/hv_vtl.c: In function 'hv_vtl_bringup_vcpu':
-arch/x86/hyperv/hv_vtl.c:154:34: error: 'HVCALL_ENABLE_VP_VTL' undeclared (first use in this function)
-  154 |         status = hv_do_hypercall(HVCALL_ENABLE_VP_VTL, input, NULL);
-      |                                  ^~~~~~~~~~~~~~~~~~~~
-arch/x86/hyperv/hv_vtl.c:154:34: note: each undeclared identifier is reported only once for each function it appears in
-In file included from ./include/linux/string.h:390,
-                 from ./include/linux/bitmap.h:13,
-                 from ./include/linux/cpumask.h:12,
-                 from ./arch/x86/include/asm/apic.h:5,
-                 from arch/x86/hyperv/hv_vtl.c:9:
-arch/x86/hyperv/hv_vtl.c: In function 'hv_vtl_apicid_to_vp_id':
-arch/x86/hyperv/hv_vtl.c:189:32: error: invalid application of 'sizeof' to incomplete type 'struct hv_get_vp_from_apic_id_in'
-  189 |         memset(input, 0, sizeof(*input));
-      |                                ^
-./include/linux/fortify-string.h:502:42: note: in definition of macro '__fortify_memset_chk'
-  502 |         size_t __fortify_size = (size_t)(size);                         \
-      |                                          ^~~~
-arch/x86/hyperv/hv_vtl.c:189:9: note: in expansion of macro 'memset'
-  189 |         memset(input, 0, sizeof(*input));
-      |         ^~~~~~
-arch/x86/hyperv/hv_vtl.c:190:14: error: invalid use of undefined type 'struct hv_get_vp_from_apic_id_in'
-  190 |         input->partition_id = HV_PARTITION_ID_SELF;
-      |              ^~
-arch/x86/hyperv/hv_vtl.c:191:14: error: invalid use of undefined type 'struct hv_get_vp_from_apic_id_in'
-  191 |         input->apic_ids[0] = apic_id;
-      |              ^~
-arch/x86/hyperv/hv_vtl.c:195:45: error: 'HVCALL_GET_VP_ID_FROM_APIC_ID' undeclared (first use in this function)
-  195 |         control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_ID_FROM_APIC_ID;
-      |                                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-...
+thanks,
+-- Shuah
 
