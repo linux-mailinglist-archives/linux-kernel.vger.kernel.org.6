@@ -1,102 +1,117 @@
-Return-Path: <linux-kernel+bounces-351290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC6D991066
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:26:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0582F990FE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FD89B3033C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:57:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D0D1C218AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76641F4711;
-	Fri,  4 Oct 2024 18:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DCC1E25E7;
+	Fri,  4 Oct 2024 19:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6dqzA50"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="vBL47Fg+"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2F01B4F21;
-	Fri,  4 Oct 2024 18:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE501E04AF;
+	Fri,  4 Oct 2024 19:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728067893; cv=none; b=IGoRrxUODs9gaUmfeYQ9jFY4BLpJzR1+pAXEPDgVLxmU3ozVriGzr48tvPKpaGCo4X62ZOQDn5uPF9OhJXuuOPk1HSCw1FhYpTgBQ+uzL5FMKzkgSmhHJQPq/O+oGrfGRDdfwfT3g3M57rrH+a6oKh1gXEFht/O5xyeqa9/VVFM=
+	t=1728070992; cv=none; b=SPIlPNLSar8U2B11/CliNl10yd1Bjl6gWqBlDdoC9UURbZkYaSCantj9YcW9K5M26rlhw8c+HQqlQRdbJpPF8+MDTer4A4jq57aSRl15HmVI+UQF/upCqJrE7mgd2ECgV53alD6WXoRLKcIUyKP1CSlbFvIEJXWrjot4ffzmty8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728067893; c=relaxed/simple;
-	bh=UuZy6A6LuFUhlQOeTvkyHBMAN4IBW/fb9Y4T/BE/DQE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RL5APu6GqPafDNcJh3/mHJwaaVhbJYe4wDC1HKKAKcgFQ3f7WsUfCNFj+uSiTMRrb1U9HdtNIw/6wAyP0FI/rHqpak1VGvHrwKjJoR0W4s9IebZLMRCzhtZ4MwcTo/az12JBgveEnU0Wxw0Q1l5Mq+tCnaUc4JS43kcmjtCgMPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6dqzA50; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8470EC4CEC6;
-	Fri,  4 Oct 2024 18:51:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728067892;
-	bh=UuZy6A6LuFUhlQOeTvkyHBMAN4IBW/fb9Y4T/BE/DQE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=S6dqzA50OWy5mLDaFh/bCL7R2eDXUfEVbi89sYlvycWNhKa4alDc90XskYHLLrsjR
-	 o9OAgjxtKkznQ7tcA3QwaQhRbZMEsaoZJTOc6E0wPaJK90THQBZNhQScdeatioEKCR
-	 /7Hv72VXsOsIIA7oFNnZCgr/r9tky/0AUVjmHs+PPUffqGzHmEJ5HdNkNMUOqdGhKx
-	 6S0h9OFdhX1psPM5C9TNqFOIDwGP8qB0Fysj/rZcTKQxyIRb2/1pIGbphJGLSLeLE5
-	 L8GqFhoiUTFw1J74t/z6p2xvtQn09iReAqfd5D9/cGcTgq+NNI9tCIc9eY+xR80PdG
-	 izA2YfJHe4udQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Gary Guo" <gary@garyguo.net>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>,  "Benno Lossin"
- <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Martin Rodriguez Reboredo"
- <yakoyoku@gmail.com>,  "Will Deacon" <will@kernel.org>,  "Peter Zijlstra"
- <peterz@infradead.org>,  "Mark Rutland" <mark.rutland@arm.com>,  "Dirk
- Behme" <dirk.behme@de.bosch.com>,  <linux-kernel@vger.kernel.org>,
-  <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 1/3] rust: implement `kernel::sync::Refcount`
-In-Reply-To: <20241004155247.2210469-2-gary@garyguo.net> (Gary Guo's message
-	of "Fri, 04 Oct 2024 16:52:22 +0100")
-References: <20241004155247.2210469-1-gary@garyguo.net>
-	<pKZ-hxxNoouLWnfXzFGWvcgGgfjpEixPzJ--cZeEufWI9_MoG_mpToSPflheyUhYmZ4qTKLVypVLRuvX7rfyxg==@protonmail.internalid>
-	<20241004155247.2210469-2-gary@garyguo.net>
-Date: Fri, 04 Oct 2024 20:51:22 +0200
-Message-ID: <87cykfpuqd.fsf@kernel.org>
+	s=arc-20240116; t=1728070992; c=relaxed/simple;
+	bh=cy+WwnoBRC6rdTFM1PR8NdUhf8lZXn2Da1cPNppT9P8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RMKmZRgBTRzY5tEK71kdF+xXom965oyoM8abV4/+2/3Nlh3sxbJJVFMBjxc2nWt3VbNlwo915C6Cm7INEnwn+ZnmVMHkMoOwsr0GPHjVfajUF3YCaXVQ8F2d0X+cYiFPgEpmKCu63vLC2v0ylqqKVKU0bkKrx5rqtPgn6k7EtRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=vBL47Fg+; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id cef8527249cd07f2; Fri, 4 Oct 2024 21:43:09 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id CC1DC6A9505;
+	Fri,  4 Oct 2024 21:43:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1728070988;
+	bh=cy+WwnoBRC6rdTFM1PR8NdUhf8lZXn2Da1cPNppT9P8=;
+	h=From:Subject:Date;
+	b=vBL47Fg+IAWLfp/gXX1j57XJRUlzqO5q2WuYNjwI1Ywzk/xLbQ7pOuR+Cw1JRpk/w
+	 qmEYEDR8cL30IPUa7X3PmtvDZrGhlLlP8RpvGGYmHz7PoF1kyU5AA8B/Bg4VnqbxeQ
+	 3TFeWRqHjyr2mNcsO6GcEaOWXfvzQzEijf0H0TnoUYN/xUARe2gtBe5lJl9eHBwlCp
+	 Ts/EVkrSsTMczHARfYmHSJ3lMBfDtzHIHhPxSSehC7Vda5ciRSLeM25xiJ4ZWeSYx4
+	 fvmXRmryXDvQGPv6fPNJ3UT7MJ6rNq+RPTRHvkaVZnhaLcFOrdIxOD5niSAAx7qcrh
+	 9QnUg/vCYqGfw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH v2 00/12] thermal: core: Fixes and cleanups,
+ mostly related to thermal zone init and exit
+Date: Fri, 04 Oct 2024 21:01:34 +0200
+Message-ID: <2215082.irdbgypaU6@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvfedgudegtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhg
+X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
 
-Hi Gary,
+Hi Everyone,
 
-"Gary Guo" <gary@garyguo.net> writes:
+After posting the two series of thermal core patches for 6.13:
 
-[...]
+https://lore.kernel.org/linux-pm/4920970.GXAFRqVoOG@rjwysocki.net/
 
-> diff --git a/rust/helpers/refcount.c b/rust/helpers/refcount.c
-> index f47afc148ec3..39649443426b 100644
-> --- a/rust/helpers/refcount.c
-> +++ b/rust/helpers/refcount.c
-> @@ -8,11 +8,26 @@ refcount_t rust_helper_REFCOUNT_INIT(int n)
->  	return (refcount_t)REFCOUNT_INIT(n);
->  }
->
-> +unsigned int rust_helper_refcount_read(refcount_t *r)
-> +{
-> +	return refcount_read(r);
-> +}
+and
 
-+EXPORT_SYMBOL_GPL(rust_helper_refcount_read);
+https://lore.kernel.org/linux-pm/6100907.lOV4Wx5bFT@rjwysocki.net/
 
-> +
-> +void rust_helper_refcount_set(refcount_t *r, int n)
-> +{
-> +	refcount_set(r, n);
-> +}
+before the 6.12 merge window, I have decided to reorder the changes included in
+these series, so that fixes and more significant cleanups (for example, changing
+they layout of data structures) go first, followed by the changes related to
+using guards for locking, and the optimization involving sorted lists becomes
+the last piece.
 
-+EXPORT_SYMBOL_GPL(rust_helper_refcount_set);
+This series is the first part and the majority of patches in it come from the
+second (RFC) series mentioned above.  Of course, they needed to be rebased to
+be applied in the new order.  It is on top of 6.12-rc1 with
 
-BR Andreas
+https://lore.kernel.org/linux-pm/12549318.O9o76ZdvQC@rjwysocki.net/
+
+applied and it will be added to my thermal-core-testing branch.  It is in v2
+to start with because all of the patches in it have already been posted in
+some form.
+
+The first 10 patches fix some potential issues related to thermal zone
+initialization and exit (for example, user space may start to interact with
+a thermal zone during its initialization before it's ready and system suspend
+taking place at a wrong time may skip a new thermal zone so it is not suspended)
+and do some cleanups related to that.  This concludes with the removal of the
+need_update field from struct thermal_zone_device.
+
+The last two patches move lists of thermal instances from thermal zones to
+trip point descriptors and clean up some code on top of that.
+
+Please refer to the individual patch changelogs for details.
+
+Thanks!
+
+
 
 
