@@ -1,142 +1,127 @@
-Return-Path: <linux-kernel+bounces-350249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949FC990218
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:32:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B95199021A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 400561F2468B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:32:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 953D7B21703
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A2715A4B7;
-	Fri,  4 Oct 2024 11:32:11 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F231156C76;
+	Fri,  4 Oct 2024 11:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="ghochHcR"
+Received: from relay2.mymailcheap.com (relay2.mymailcheap.com [151.80.165.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9738613D503;
-	Fri,  4 Oct 2024 11:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9573614884D;
+	Fri,  4 Oct 2024 11:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=151.80.165.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728041531; cv=none; b=VhJhLLysiwCWg9jTZi799M6f/OGBroeHfxO5JYSW8Mjup1klFhRdIcU8gz+/QPc7RGwRZKjczo0JyEImMzj0d5OHjSjqaTDI6N2A8a27NvSqLnMl0rSSPewdyUiu6qXk0aY+ao4qmeu4NynKf1SPFYbo3c16cepe3jwT1BhxzZk=
+	t=1728041588; cv=none; b=Zj3Sa+Q4h6ouB46vzzhKpRf1oilSp0Ntczv9flDYzYLNLEAdmpuDSxmLmGifMVAKn+dQvNJL9K3nK2phEEUmPG30VWEB0QP+Ts1f2nJdE5zktnHMebzMyhHQggsN4UiAA+U35JsiG+aYdtl9J1rphmNyoH94S+gy502i7qhH/Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728041531; c=relaxed/simple;
-	bh=yZJUr5y0cFjRAooP/YZ0lox9GjmGrEgMTe2qMk8Si8E=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b804lXHl1nGZQIskE0PynH2hJWSbKTlmOycQt68m1PLnpgzboSIh0auCd/GOXP3VF8lEnAoS1zZXwUpSdc5599jsOdtiH3aUnvkRPIB0Nq4+U0o2CTqKN31Fpvx4NCNQtpGgDnqld5rVMKAjE4QkTzJyI2o23XjHU0ngk7e4Iqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XKmVy3Kfnz6LCql;
-	Fri,  4 Oct 2024 19:27:54 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3EC721402C6;
-	Fri,  4 Oct 2024 19:32:06 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Oct
- 2024 13:32:05 +0200
-Date: Fri, 4 Oct 2024 12:32:03 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Lukas Wunner <lukas@wunner.de>
-CC: Gregory Price <gourry@gourry.net>, Dan Williams
-	<dan.j.williams@intel.com>, <linux-pci@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bhelgaas@google.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<vishal.l.verma@intel.com>
-Subject: Re: [PATCH] pci/doe: add a 1 second retry window to pci_doe
-Message-ID: <20241004123203.00007456@Huawei.com>
-In-Reply-To: <ZvwZd5CCV2PdqSLF@wunner.de>
-References: <20240913183241.17320-1-gourry@gourry.net>
-	<66e51febbab99_ae212949d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-	<20240916101557.00007b3a@Huawei.com>
-	<ZvwRjbRIrkCSjwQI@PC2K9PVX.TheFacebook.com>
-	<ZvwZd5CCV2PdqSLF@wunner.de>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728041588; c=relaxed/simple;
+	bh=hSOwhoZCf274TL/u7qNs0OKvVReFwg9y16gyqVm17yA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hQ9hFFBL0dUHkf4h8ejwMiDTcyDnGZPH9xa1IACYKkFVYyd8Nv7Alzf53PU6a4WZd4HI6PqwCUxr0KN51boX7Y4oteVt4eXxTHwYQSrqblO55RuIK7clVDffmdRdqNSB+TEYfZjhKHCw3J0hVC0PpjGf9L4bENWA4R0yJY1zKgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=ghochHcR; arc=none smtp.client-ip=151.80.165.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay2.mymailcheap.com (Postfix) with ESMTPS id B17AA3E8B0;
+	Fri,  4 Oct 2024 13:33:04 +0200 (CEST)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 4CE2D40092;
+	Fri,  4 Oct 2024 11:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1728041584; bh=hSOwhoZCf274TL/u7qNs0OKvVReFwg9y16gyqVm17yA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ghochHcROfhdxbssGuWUkF+AsfIxcH/2LmqV+pPbKhgDejsVhXApe5Lt/h08hyQ1a
+	 JseMOJO2tRZVB+fXseYExyv8PulgV13FhbYt1owVhHNk7wwpQ1vvYaKp1AkU/KjQRy
+	 5p9cWN4Bv76oMwghEJEyDHbGUUTNOnW7aswHxaX0=
+Received: from [198.18.0.1] (unknown [58.32.43.121])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 64026405DE;
+	Fri,  4 Oct 2024 11:32:59 +0000 (UTC)
+Message-ID: <aec2ece0-f571-4f49-894b-4bfa22ffa91f@aosc.io>
+Date: Fri, 4 Oct 2024 19:32:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Thunderbird Daily
+Subject: Re: [PATCH 6.11 000/695] 6.11.2-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241002125822.467776898@linuxfoundation.org>
+Content-Language: en-US
+From: Kexy Biscuit <kexybiscuit@aosc.io>
+In-Reply-To: <20241002125822.467776898@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-Rspamd-Queue-Id: 4CE2D40092
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Spamd-Result: default: False [1.29 / 10.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	BAYES_HAM(-0.12)[66.67%];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	RCVD_COUNT_ONE(0.00)[1];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,nvidia.com,gmail.com,sladewatkins.net,gmx.de];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Action: no action
 
-On Tue, 1 Oct 2024 17:47:03 +0200
-Lukas Wunner <lukas@wunner.de> wrote:
+On 10/2/2024 8:49 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.2 release.
+> There are 695 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 04 Oct 2024 12:56:13 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.2-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-> On Tue, Oct 01, 2024 at 11:13:17AM -0400, Gregory Price wrote:
-> > > > Gregory Price wrote:  
-> > > > > Depending on the device, sometimes firmware clears the busy flag
-> > > > > later than expected.  This can cause the device to appear busy when
-> > > > > calling multiple commands in quick sucession. Add a 1 second retry
-> > > > > window to all doe commands that end with -EBUSY.    
-> > 
-> > Just following up here, it sounds like everyone is unsure of this change.
-> > 
-> > I can confirm that this handles the CDAT retry issue I am seeing, and that
-> > the BUSY bit is set upon entry into the initial call. Only 1 or 2 retries
-> > are attempted before it is cleared and returns successfully.
-> > 
-> > I'd explored putting the retry logic in the CDAT code that calls into here,
-> > but that just seemed wrong.  Is there a suggestion or a nak here?
-> > 
-> > Trying to find a path forward.  
-> 
-> The PCIe Base Spec doesn't prescribe a maximum timeout for the
-> DOE BUSY bit to clear.  Thus it seems fine to me in principle
-> to add a (or raise the) timeout if it turns out to be necessary
-> for real-life hardware.
-> 
-> That said, the proposed patch has room for improvement:
-> 
-> * The patch seems to wait for DOE BUSY bit to clear *after*
->   completion.  That's odd.  The kernel waits for DOE Busy bit
->   to clear *before* sending a new request, in pci_doe_send_req().
->   My expectation would have been that you'd add a loop there which
->   polls for DOE Busy bit to clear before sending a request.
-> 
->   It seems that polling is the only option as no interrupt is
->   raised on DOE Busy bit clear, per PCIe r6.2 sec 6.30.3.
->   (Please add this bit of information to the commit message.)
+Building passed on amd64, arm64, loongarch64, ppc64el, and riscv64. 
+Smoke testing passed on 9 amd64 and 1 arm64 test systems.
 
-This changed at some point.  In PCI 6.0 the clearing
-of this bit is explicitly called out in DOE interrupt status
-as a reason to trigger the interrupt. By 6.1 that's gone.
-This was a problem for the original implementation as we had
-to assume that we'd get random spurious interrupts because
-of that delight.
+Tested-by: Kexy Biscuit <kexybiscuit@aosc.io>
 
-Anyhow, hopefully doesn't matter to us here as you are correct
-that we have to poll for it.
+https://github.com/AOSC-Dev/aosc-os-abbs/pull/7680
 
-Mind you we still have to allow for spurious garbage interrupts
-and eat them silently. :(
-
-> 
-> * The commit message should clearly specify the device(s)
->   affected by the issue (Vendor and Device ID plus name).
->   Comments such as "Depending on the device, sometimes ..."
->   are a little too vague.
-> 
-> * The "1 or 2 retries" bit of information you're mentioning
->   above should likewise be in the commit message.
-> 
-> * Please use "PCI/DOE:" as subject prefix to match previous
->   commits which touched drivers/pci/doe.c.
-> 
-> * Please adhere to spec language, e.g. use "DOE Busy bit"
->   instead of "busy bit" so it's unambiguous for readers
->   what you're referring to.
-> 
-> Thanks,
-> 
-> Lukas
-> 
-
+-- 
+Best Regards,
+Kexy Biscuit
 
