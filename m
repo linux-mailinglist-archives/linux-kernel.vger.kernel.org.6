@@ -1,99 +1,137 @@
-Return-Path: <linux-kernel+bounces-351428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B62599110A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:00:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10F9991110
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0B51C231D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:00:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB3A0B22AF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA5E1AE000;
-	Fri,  4 Oct 2024 21:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0721AE002;
+	Fri,  4 Oct 2024 21:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Tixl3HK8"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ylpCy8/P"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D7013D24E;
-	Fri,  4 Oct 2024 20:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1AA1AE000
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728075600; cv=none; b=sqlCPPx9891qvyk3Ytk7Fqc0z0/zfx4RWNpmmoKhw0WEC0pvGQRgBiinnuYqfVhBQO4wfF7QObTJLKMKie53r+9eWcUrkRt5P0i6GsaM9Ddh9KuXk1hl9lum8ndqb1oTro1nupv9bM/PNq2k13ndmSk6y99ZQFrpqh3ksVryrFw=
+	t=1728075695; cv=none; b=HdcdqnUeuBTkyOJ8u35P5xeAhM5oD1iltr65cbkY6acbfgMs2mxXQJS9PtkOggerZSSrbFVA2Fm7hgHSne6iAFGmdP7C60RqcKBvOgsWXBx6dfjtK8yTU5YRra73tyNzuji/uAhw/JkkPwcKLipURkAXQ+Ue1aqdfTPUtANCOLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728075600; c=relaxed/simple;
-	bh=dUi6zBa7KQgcGPfXHpqwpRrYp3tvxSq8ybo4PWAAPns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TaGe5WTPRS2KbNIjWICieJW2xHbNMxXlQRhSBVm4QtPa3YmKuOjLtIWuHcE56nmtAM0PnUBeDhDp0QucHqFPUtQ82Rv1ArJxJT87eUF272idyskrkr5xMMWshT+m7fy62WWfyTsrLSHkTxdzc/P/BFwnwgfwE6mAPTdtWnleD5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Tixl3HK8; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=GoG3mIuOyJseRPw9mMfR8nv4ktbc7UQHNgzab70N2cY=; b=Tixl3HK84UAu+elY4pn/Gorgjk
-	QEQTguLf0b0Ws5A4trSKmUKWcBJf1UTvCaPjUO+3e4HzPvCXYBhWspfck6jzgLlQUbCD2AQhL9tMc
-	kRT4DZBR6qmyYZ/pMkwTsnvbDIIgBQG+EuebCb7QFFp/hjcW2kmyQ8Q1OuhdpiKvPGpM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1swpOr-0095oD-LG; Fri, 04 Oct 2024 22:59:45 +0200
-Date: Fri, 4 Oct 2024 22:59:45 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Christian Marangi <ansuelsmth@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC net-next] net: phy: always set polarity_modes if op
- is supported
-Message-ID: <5c821b2d-17eb-4078-942f-3c1317b025ff@lunn.ch>
-References: <473d62f268f2a317fd81d0f38f15d2f2f98e2451.1728056697.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1728075695; c=relaxed/simple;
+	bh=ZrU3UBPWJpylAJORtFhQ5c8nnUiqnSULcp2eKF/OetA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OGPYm4Tc77pXP8HGsf6EvtniKRfm7U7Iw5EIA1x5xXc3eGSMLTZU3uHWo8RA58gV2ZOqB0iYhYQaQSv7hApvPXjH4YFIyvPSZ67yfDsQ82MfeXUBR9+6Fhq9RTqtqAz0qmANX+UmWF+Dd3zfqr9KKVZpj76UQ4Ffx43dA8+BVD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ylpCy8/P; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b01da232aso21180165ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 14:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728075693; x=1728680493; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=02o52SakPOEEYup05c2CaLqcb8nYoF4Ju3nIc1JSSQY=;
+        b=ylpCy8/PB3qo0C4i2r0CMq84CWt5tBXptFy/ta1FTzLSHFg+6XVJzu6ItuujiDlO+6
+         Y4f8n8Q4wq4bPLOCFuFobu2rNHCH7T58kas6Y+FZR18y1FkKeEhdHUdHfhe2Dz3yNoPN
+         YEca7PNdCrKHDegx5XyQQLTGU5a2YXCpFI5NJWGtwbbya2zVLEMiZQBsRym5uHiKPyii
+         +LFSGg/ZM1YtASm/gKg7UtgOReYB4P+abNKErb1wsLjVXOI7QFGeqPcZ2VMK1rO1wdOi
+         17KfrkLH4D+p3T+ZkBR7ziYtKu9nmsvito5rnNxSljtuE0XXTZcHQzJbGksc4fc5QOnY
+         QJTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728075693; x=1728680493;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=02o52SakPOEEYup05c2CaLqcb8nYoF4Ju3nIc1JSSQY=;
+        b=lT1Au75EZ0F9hZ1AEOKXPtx79Fvm9o+mvBYs7Fu69GACi1MBYCe9zJjjYBNbrXOeMu
+         YJ5tjUDM+sPoEIPGSUPaazjTFx4c3SSyMXL/7j2+Qxg6AhFMMhPi7LW2XIUGGhscF9LT
+         09nwo7IuBUEvn94IUP9//oFfak2Yx9XN7fBCS2vwNZLmhLjKxlsiARTym2rW0OuANtV3
+         mTl6bfGt8H/yzuqk2KP4t8wSeKwnmF90jtZgBYPAFjI33eFP2ocIAZGDot+mQH40oz9P
+         z55mXNSkfPLJ4fhz62zNBOXjzBtEUQrmXHPWAZgMKCX2KjeSs5CB34kKjcwf73ouCV22
+         XCTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5k1DfTTt/tRekxi9SzQgtROu7PQg8JHIg54J/kBwB3bSUpK8OgI97hwqRS5+DJrEiGHUS0B+t1Dblrxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEkvMltS4RvlOvODF5mTUPdJ5P1MZ9o2naVWtfYI5lGPWedbKn
+	tyGJKr7szhD+umdMhv8DvBC1oBrK6jvqy9P4s7cMVus8AVrRQOcAzwRuf0C/ccs=
+X-Google-Smtp-Source: AGHT+IGOrzY7Ll1jPw3NbGDwLof/FW9IZlr1dap2JCDIDG/Ooagd56yXVujIfA03YdIssw8ZNUuurA==
+X-Received: by 2002:a17:902:cec7:b0:20b:db4:d913 with SMTP id d9443c01a7336-20bff494762mr65270885ad.11.1728075693610;
+        Fri, 04 Oct 2024 14:01:33 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c139311aasm2699195ad.175.2024.10.04.14.01.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 14:01:33 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Enric Balletbo i Serra
+ <eballetbo@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Nishanth Menon <nm@ti.com>, srk@ti.com, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Roger Quadros <rogerq@kernel.org>
+Subject: Re: [PATCH 0/3] ARM: dts: ti: omap: fix dtbs_check warnings for
+ ti,gpmc-nand and ti,gpmc-onenend
+In-Reply-To: <20240903-gpmc-dtb-v1-0-380952952e34@kernel.org>
+References: <20240903-gpmc-dtb-v1-0-380952952e34@kernel.org>
+Date: Fri, 04 Oct 2024 14:01:32 -0700
+Message-ID: <7ha5fjk2fn.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <473d62f268f2a317fd81d0f38f15d2f2f98e2451.1728056697.git.daniel@makrotopia.org>
+Content-Type: text/plain
 
-On Fri, Oct 04, 2024 at 04:46:33PM +0100, Daniel Golle wrote:
-> Some PHYs drive LEDs active-low by default and polarity needs to be
-> configured in case the 'active-low' property is NOT set.
-> One way to achieve this without introducing an additional 'active-high'
-> property would be to always call the led_polarity_set operation if it
-> is supported by the phy driver.
+Hi Roger,
 
-It is a good idea to state why it is RFC. What comments do you want?
+Roger Quadros <rogerq@kernel.org> writes:
 
-So this potentially causes regressions/change in behaviour. Strapping
-or the bootloader could set the polarity, and Linux leaves it alone up
-until this patch.
+> This series fixes dtbs_check warnings on OMAP platforms
+> for ti,gpmc-nand and ti,gpmc-onenand.
+>
+> The following warnings are fixed
+> - "nand@0,0: Unevaluated properties are not allowed ('linux,mtd-name' was unexpected)"
+> - "nand@0,0: Unevaluated properties are not allowed ('gpmc,device-nand' was unexpected)"
+> - "omap3430-sdp.dtb: onenand@2,0: Unevaluated properties are not allowed ('linux,mtd-name' was unexpected)"
+>
+> ---
+> Roger Quadros (3):
+>       ARM: dts: ti: drop linux,mtd-name from NAND nodes
+>       ARM: dts: ti: omap: am335x-baltos: drop "gpmc,device-nand" from NAND node
+>       ARM: dts: ti: omap3434-sdp: drop linux,mtd-name from onenand node
+>
+>  arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi       | 1 -
+>  arch/arm/boot/dts/ti/omap/am3517-som.dtsi          | 1 -
+>  arch/arm/boot/dts/ti/omap/dm8148-evm.dts           | 1 -
+>  arch/arm/boot/dts/ti/omap/dm8168-evm.dts           | 1 -
+>  arch/arm/boot/dts/ti/omap/dra62x-j5eco-evm.dts     | 1 -
+>  arch/arm/boot/dts/ti/omap/logicpd-som-lv.dtsi      | 1 -
+>  arch/arm/boot/dts/ti/omap/logicpd-torpedo-som.dtsi | 1 -
+>  arch/arm/boot/dts/ti/omap/omap3-evm-37xx.dts       | 1 -
+>  arch/arm/boot/dts/ti/omap/omap3-evm.dts            | 1 -
+>  arch/arm/boot/dts/ti/omap/omap3-igep.dtsi          | 1 -
+>  arch/arm/boot/dts/ti/omap/omap3-ldp.dts            | 1 -
+>  arch/arm/boot/dts/ti/omap/omap3-overo-base.dtsi    | 1 -
+>  arch/arm/boot/dts/ti/omap/omap3430-sdp.dts         | 2 --
+>  13 files changed, 14 deletions(-)
+> ---
+> base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
+> change-id: 20240830-gpmc-dtb-de2ce28acfb6
 
-The device tree binding says:
+FYI: you seem to have used the same change-id in this series as in a
+previous patch[1], which means when I point b4 at this series, notices
+the same change-id in the other patch, thinks it's a v2 of this series,
+and tries to apply the v2 patch instead.
 
-  active-low:
-    type: boolean
-    description:
-      Makes LED active low. To turn the LED ON, line needs to be
-      set to low voltage instead of high.
+I was able to "encourage" b4 to apply this series by using -v1, but it
+took me a bit to figure out why I pointed it at a 3 patch series and it
+was applying a single patch from a different thread.
 
-There is no mention that the absence of this property means it is
-active-high.
+Kevin
 
-In effect, i think we have a tristate, active-low, active-high, don't
-touch.
-
-I think adding an active-high property is probably the safest bet,
-even if it is more work.
-
-	Andrew
+[1] https://lore.kernel.org/all/20240903-gpmc-dtb-v2-1-8046c1915b96@kernel.org/
 
