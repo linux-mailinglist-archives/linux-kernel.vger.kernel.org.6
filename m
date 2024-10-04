@@ -1,95 +1,81 @@
-Return-Path: <linux-kernel+bounces-350133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDD0990045
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:52:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 139F0990048
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09566284708
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:52:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C107628415F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9AF146000;
-	Fri,  4 Oct 2024 09:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF41414B953;
+	Fri,  4 Oct 2024 09:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cagAmj1g";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Trsgu59";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cagAmj1g";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Trsgu59"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F53f5GsZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E3814A4D0
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 09:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D3014BFB0
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 09:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728035535; cv=none; b=MtFRc40SoS+3EPOmCenZjADIBCP8IqAvxF+1JzSgZ7vsm8DupbCCgcVU1UyJQFaCJgBMZyRJPi31w0gnjsqnN9xHnCDxsS0slRC51UJomfrHFsuHG+mKjwgrs81KwrFrbY9f3NN5UzGJsUooB3xo7JK1PcDAcCxS78/oMWPmCDs=
+	t=1728035560; cv=none; b=X5xxn0oaopc8ipeiUYIY4CWQX/Gxj8rENFqNhBeUs6xInKleuPEUN2YwnbPV0YxMKpJMjuec5FZsqL4LGvIUYtymlhMWCcDh6EVITU0PUqCL0HdeSLcH3H0HzyOT5x2Q+H+NPcRHql2/+HGRzGrGXLgUzkkd+Wo4QcDJmuasX4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728035535; c=relaxed/simple;
-	bh=IlcCc65yEb7QN9EYIoci0uLxacDb4lOTTYsZM7Yn9AI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=g2pZXPCn+FaOjocXRZVBNfq9n/+B+qLfejr7mUduditC9hI8yTrlVdpBaJ8usu4IGlYcPYbqIkTsyuJAR46ff1X6uOZXs8/GOr2K4riTxmorLc0XKL2HyD8XKVqg4ydDfrnEcq1h+o6KQi3LGaMcBm80E4ES3Ucr1UdSeuq+1Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cagAmj1g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Trsgu59; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cagAmj1g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Trsgu59; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 68E3A21C47;
-	Fri,  4 Oct 2024 09:52:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728035531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Mc45QIIZl/Qv9AcqyKNAc7BYIVWe6fly1TOftOh3r88=;
-	b=cagAmj1gsa5olAOlWI2EUp67UYywND8Ve3s3HBa+Upq3yje+tjHDHg/ZOt+bC/A0O6OPHg
-	2/8GPZAfAEvTKse7fFYRe4mB8KIYvDTIl/zZxBbXUvDJSjyOEYszEO219VdLlW9quJD00n
-	jdmbU4r/ZxdPKTiGExyFb4Kur4kCGMI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728035531;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Mc45QIIZl/Qv9AcqyKNAc7BYIVWe6fly1TOftOh3r88=;
-	b=1Trsgu59AyH2TrCpc/SvAZjuFHpkA+Y/tAgMdQbIv9G4xtTSXO65L9I5w7KPzH2wxPHh3t
-	OjgyzvwoQWs0trAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cagAmj1g;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=1Trsgu59
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728035531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Mc45QIIZl/Qv9AcqyKNAc7BYIVWe6fly1TOftOh3r88=;
-	b=cagAmj1gsa5olAOlWI2EUp67UYywND8Ve3s3HBa+Upq3yje+tjHDHg/ZOt+bC/A0O6OPHg
-	2/8GPZAfAEvTKse7fFYRe4mB8KIYvDTIl/zZxBbXUvDJSjyOEYszEO219VdLlW9quJD00n
-	jdmbU4r/ZxdPKTiGExyFb4Kur4kCGMI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728035531;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Mc45QIIZl/Qv9AcqyKNAc7BYIVWe6fly1TOftOh3r88=;
-	b=1Trsgu59AyH2TrCpc/SvAZjuFHpkA+Y/tAgMdQbIv9G4xtTSXO65L9I5w7KPzH2wxPHh3t
-	OjgyzvwoQWs0trAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3D2F513A6E;
-	Fri,  4 Oct 2024 09:52:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0mwbDsu6/2YTEgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 04 Oct 2024 09:52:11 +0000
-Message-ID: <2382d6e1-7719-4bf9-8a4a-1e2c32ee7c9f@suse.cz>
-Date: Fri, 4 Oct 2024 11:52:10 +0200
+	s=arc-20240116; t=1728035560; c=relaxed/simple;
+	bh=H909r7EBxLaodYwgEv2a99zZiE139lBLdtGTsN3xwh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ef9dcRuEI1RJwMMdM7A3gPHj0089ICA4kWGSvwgUCLKdiPf7SRm4Y/CuBe5Rcw8gY9t7jLsSwBCV7uicSF2UdKq0N8jlx7ySUiOjtI0KiFQ6JRrust8r91A73yOgeyYmqqs/s2sS+QDVEsN+S0DMOuwNwi4ePNe7T8gvn6Z30oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F53f5GsZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493HxPWb022353
+	for <linux-kernel@vger.kernel.org>; Fri, 4 Oct 2024 09:52:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qoyqY+ou/5x6xtj7TFGxDBBjsMoXv2qfS+nE6ns1F4Y=; b=F53f5GsZJMRSr8oK
+	M5VY22c5vbaFpEqEr4xhL4w2+SvByUgxRU5xoCXUZjaytk2y4Zltznyb09sWFrdi
+	N0CoVXndWOHuumqdQW+gbdNjFILogfg3FtUF5ibza4bcVwQIvH8Xd3KoN1ToBoR7
+	FEY+e8RvjnMMaolOGErhuFbNXb2Pg7PRZzcBZ00e4acAcLEmKhcVEHnx4yMgDly0
+	aVNf28KJT3N+AtdVMLf9/uQBCbnzfZVEhTrnbWSZlw4PzUPAti/4myQJq9jUg0Jy
+	fDSgPKSd5keoiA6Aq6J2R0lDhpnPVstUwv7FTBkwqCQW+/MKhz6g+M2QAeU0xmyb
+	TtNk4A==
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205d9pqe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:52:37 +0000 (GMT)
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cbf0bc766so2869555e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 02:52:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728035555; x=1728640355;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qoyqY+ou/5x6xtj7TFGxDBBjsMoXv2qfS+nE6ns1F4Y=;
+        b=nQbE+jM+ZS/36bvuRzld0mTwwX642eGri8LeYZPDGS/iPNfQoQOu9p0nuFDlMTN0+f
+         /4gYTGpCh3NtluLW/c/WdifKn85Vlec1Memp3KAUmXp0wjvkRMufqdIOauV1Ou5gwr7H
+         RyghSgZQ3efn4Yg+EBYxekmoqb/9eC2gQqqZ8wjyvs3iuCMXqOu4bL2fghqXQpVZjpXn
+         Xb9VFCI3otxPPGiwQXB/8PfD01bjIDtGVFNjvx2GhV2OjBG6fGKjEAAlv3GCWHa2xk3C
+         tDyXQfdgdblLOZYaOn1OzN+oVtYcepOanoSWohgM0HPpjZFLCRcICBGcqoBPy7arMqtS
+         DTKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBblDGvDFh2u143pbpDpVKxyl3zocU2obLVZqSBlMQiAW3MM+WXkMw1oVvyFJ/iWJb/uLN2dNygg41kIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSofRZm3fj7iJHYCycg60gPUVgz/3JkEmz+xsC97ll5cEutfaR
+	r6SzZJCdPFNBVkBymkulNFv1eDj/e1mrrHDTBssducdHVJiuoEHzYySi0I8v2/6TMLFNVVqc045
+	tsDo1+7bf2dkxT5HYwh5f+CmX15VIo8i+LdIOMI7PwoRvHkBuqXmBrK5/nOA6DiI=
+X-Received: by 2002:a5d:5848:0:b0:37c:fa12:8cf5 with SMTP id ffacd0b85a97d-37d0e50b420mr757501f8f.0.1728035555658;
+        Fri, 04 Oct 2024 02:52:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHGVpkedxRIRARtG1vsRB0nGp8t4h6rguYRWAbij3uXXq9ZtVjE/NRidrif5fAPl/UfC4sVCQ==
+X-Received: by 2002:a5d:5848:0:b0:37c:fa12:8cf5 with SMTP id ffacd0b85a97d-37d0e50b420mr757485f8f.0.1728035555283;
+        Fri, 04 Oct 2024 02:52:35 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8ca4f66aasm1665164a12.84.2024.10.04.02.52.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 02:52:35 -0700 (PDT)
+Message-ID: <bf4d3fdd-e23a-4747-8ee7-137d925c2c03@oss.qualcomm.com>
+Date: Fri, 4 Oct 2024 11:52:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,150 +83,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] mm/slub: Improve data handling of krealloc() when
- orig_size is enabled
+Subject: Re: [PATCH v7 2/2] arm64: dts: qcom: sm8550: extend the register
+ range for UFS ICE
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Gaurav Kashyap <quic_gaurkash@quicinc.com>
+References: <20241001-wrapped-keys-dts-v7-0-a668519b7ffe@linaro.org>
+ <20241001-wrapped-keys-dts-v7-2-a668519b7ffe@linaro.org>
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-To: Marco Elver <elver@google.com>
-Cc: Feng Tang <feng.tang@intel.com>, Andrew Morton
- <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Andrey Konovalov
- <andreyknvl@gmail.com>, Shuah Khan <skhan@linuxfoundation.org>,
- David Gow <davidgow@google.com>, Danilo Krummrich <dakr@kernel.org>,
- Alexander Potapenko <glider@google.com>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>, Dmitry Vyukov
- <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
- linux-mm@kvack.org, kasan-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
-References: <20240911064535.557650-1-feng.tang@intel.com>
- <d3dd32ba-2866-40ce-ad2b-a147dcd2bf86@suse.cz>
- <CANpmjNM5XjwwSc8WrDE9=FGmSScftYrbsvC+db+82GaMPiQqvQ@mail.gmail.com>
- <49ef066d-d001-411e-8db7-f064bdc2104c@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <49ef066d-d001-411e-8db7-f064bdc2104c@suse.cz>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241001-wrapped-keys-dts-v7-2-a668519b7ffe@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 68E3A21C47
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[intel.com,linux-foundation.org,linux.com,kernel.org,google.com,lge.com,linux.dev,gmail.com,linuxfoundation.org,arm.com,kvack.org,googlegroups.com,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-Proofpoint-GUID: yYoxDRK9t73ahQwrCqnCXHGQa8RZ0Wuu
+X-Proofpoint-ORIG-GUID: yYoxDRK9t73ahQwrCqnCXHGQa8RZ0Wuu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 impostorscore=0 bulkscore=0
+ suspectscore=0 mlxlogscore=746 lowpriorityscore=0 adultscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040071
 
-On 10/4/24 11:18, Vlastimil Babka wrote:
-> On 10/4/24 08:44, Marco Elver wrote:
+On 1.10.2024 10:35 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> I think it's commit d0a38fad51cc7 doing in __do_krealloc()
+> The Inline Crypto Engine (ICE) for UFS/EMMC supports the Hardware Key
+> Manager (HWKM) to securely manage storage keys. Enable using this
+> hardware on sm8550.
 > 
-> -               ks = ksize(p);
-> +
-> +               s = virt_to_cache(p);
-> +               orig_size = get_orig_size(s, (void *)p);
-> +               ks = s->object_size;
+> This requires us to increase the register range: HWKM is an additional
+> piece of hardware sitting alongside ICE, and extends the old ICE's
+> register space.
 > 
-> so for kfence objects we don't get their actual allocation size but the
-> potentially larger bucket size?
+> NOTE: Although wrapped keys cannot be independently generated and
+> tested on this platform using generate, prepare and import key calls,
+> there are non-kernel paths to create wrapped keys, and still use the
+> kernel to program them into ICE. Hence, enabling wrapped key support
+> on sm8550 too.
 > 
-> I guess we could do:
-> 
-> ks = kfence_ksize(p) ?: s->object_size;
-> 
-> ?
+> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> Co-developed-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-Hmm this probably is not the whole story, we also have:
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
--               memcpy(ret, kasan_reset_tag(p), ks);
-+               if (orig_size)
-+                       memcpy(ret, kasan_reset_tag(p), orig_size);
-
-orig_size for kfence will be again s->object_size so the memcpy might be a
-(read) buffer overflow from a kfence allocation.
-
-I think get_orig_size() should perhaps return kfence_ksize(p) for kfence
-allocations, in addition to the change above.
-
-Or alternatively we don't change get_orig_size() (in a different commit) at
-all, but __do_krealloc() will have an "if is_kfence_address()" that sets
-both orig_size and ks to kfence_ksize(p) appropriately. That might be easier
-to follow.
-
-But either way means rewriting 2 commits. I think it's indeed better to drop
-the series now from -next and submit a v3.
-
-Vlastimil
-
->> Thanks,
->> -- Marco
-> 
-
+Konrad
 
