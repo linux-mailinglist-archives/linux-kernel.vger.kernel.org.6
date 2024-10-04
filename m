@@ -1,194 +1,136 @@
-Return-Path: <linux-kernel+bounces-350380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DB499045B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:30:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA9799047A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E23AF1C2213F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:30:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBF211F21246
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B72921019F;
-	Fri,  4 Oct 2024 13:30:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC79933D5;
-	Fri,  4 Oct 2024 13:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4013F215F54;
+	Fri,  4 Oct 2024 13:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="l2FhARoH"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF772139D1;
+	Fri,  4 Oct 2024 13:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048627; cv=none; b=jnGG6deL2RUaMxvWtjAz+FBk2+9a+N/pNIP0Kevy4rJEaOGkMfksiXy46i0GGQFyc5fkcIbY9b98VhoTyeVYhyBOT4FzCy3dmEUi9XdxCyavH6TsV9kW/xytEIVXBBdRET++5VFRkYdggnEZoVcXzxTze6gJg5KR+bu/XNp6u2o=
+	t=1728048722; cv=none; b=toEG0Dhv1RAnvPSK2W6NLBYdF1a6ir7aagt9nsQ0A4e+3G46dz3p6w8DDMwVGGXaq0v9B3MCopt98W7znFRaTGZBupIRtRdxocEiBvZOidw1EKiku4sK+PPReGhAQTV6pSOGF2nSgIQ9pv2KIc2lqEk3AzXOZg+4H6yW/2iXfPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728048627; c=relaxed/simple;
-	bh=i/0c9PLBQkRP6iwcADycVvdZKhX0l8Iuz8m6N5dPHOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RmSK7qmCgSOk/jzC7ya4lBCx6Io0euOpbPXSTsT1byPnfSiqFO/9z8XgbNF5EsPRQ/SSXSb81VZXGu2g1QF2qs2J/saCImY8nIU9gvRgLCYxPQvOqMFr/YktyHw5ca28EWHKUe2fKoSYvHL+SIaqP+BIshnKq9iJU1wnf+i2Uvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61072339;
-	Fri,  4 Oct 2024 06:30:53 -0700 (PDT)
-Received: from [10.57.77.142] (unknown [10.57.77.142])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 59A2F3F58B;
-	Fri,  4 Oct 2024 06:30:22 -0700 (PDT)
-Message-ID: <5222419a-2664-4bb5-b1d4-77a46677bb4d@arm.com>
-Date: Fri, 4 Oct 2024 14:31:21 +0100
+	s=arc-20240116; t=1728048722; c=relaxed/simple;
+	bh=4ZcG6HApmxFgnmkhEQ0/UXTPCxyU/LuPOCdIeoOi5+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LtWYSGx6qYF8IZQl+myJiDd7dc26uTQ6BBw8V9gQ7lTxCEwqpFJwKPj1FFR9vrMoAyocUJG5JVu5ssby2vUwfirqBPUr3e6zRDxkY3Z+TyhvrmI0VEk1DB179WqtLcf9rclbCY3tvkqmtJ37qv9Qwb56xdYGY8Lb9TF7hlFH3Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=l2FhARoH; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=YEzeoPK+5DMNMwCTBYHijBFYiufFU95QnUnFGGXLTB8=; b=l2FhARoHXz0xzvTYN3Jio9mbZi
+	GZY/sY4heG0arqH2J/2cRaEWJqcMEVuJZ8mV1O6Lbx54b4sac9NLP3c88vqAXb5X979bugvbcdlpA
+	pDkLwBPxkWOwe33GIVRQVl4I/PZU4DlLcFfXWfKoSWnTdOkJ9UQ3+CCgXj9sMrruuhis=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1swiPJ-00931j-QA; Fri, 04 Oct 2024 15:31:45 +0200
+Date: Fri, 4 Oct 2024 15:31:45 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Kiran Kumar C.S.K" <quic_kkumarcs@quicinc.com>
+Cc: netdev@vger.kernel.org, Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, vsmuthu@qti.qualcomm.com,
+	arastogi@qti.qualcomm.com, linchen@qti.qualcomm.com,
+	john@phrozen.org, Luo Jie <quic_luoj@quicinc.com>,
+	Pavithra R <quic_pavir@quicinc.com>,
+	"Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
+	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
+Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
+Message-ID: <54102e54-59b6-4881-8fbe-23954ea4d297@lunn.ch>
+References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
+ <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
+ <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
+ <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
+ <febe6776-53dc-454d-83b0-601540e45f78@lunn.ch>
+ <6c0118b9-f883-4fb5-9e69-a9095869d37f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] thermal: core: Reference count the zone in
- thermal_zone_get_by_id()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <12549318.O9o76ZdvQC@rjwysocki.net>
- <6112242.lOV4Wx5bFT@rjwysocki.net>
- <b2d949a2-2586-44ec-b0e7-0879fd3ac7cf@arm.com>
- <CAJZ5v0g494bUwLbFDF_WHwLSMbu1iTxiynNwDqKktv3-4049Sw@mail.gmail.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <CAJZ5v0g494bUwLbFDF_WHwLSMbu1iTxiynNwDqKktv3-4049Sw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6c0118b9-f883-4fb5-9e69-a9095869d37f@quicinc.com>
 
-
-
-On 10/4/24 14:25, Rafael J. Wysocki wrote:
-> Hi Łukasz,
+On Fri, Oct 04, 2024 at 06:36:59PM +0530, Kiran Kumar C.S.K wrote:
 > 
-> On Fri, Oct 4, 2024 at 10:01 AM Lukasz Luba <lukasz.luba@arm.com> wrote:
->>
->> Hi Rafael,
->>
->> On 10/3/24 13:25, Rafael J. Wysocki wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>
->>> There are places in the thermal netlink code where nothing prevents
->>> the thermal zone object from going away while being accessed after it
->>> has been returned by thermal_zone_get_by_id().
->>>
->>> To address this, make thermal_zone_get_by_id() get a reference on the
->>> thermal zone device object to be returned with the help of get_device(),
->>> under thermal_list_lock, and adjust all of its callers to this change
->>> with the help of the cleanup.h infrastructure.
->>>
->>> Fixes: 1ce50e7d408e ("thermal: core: genetlink support for events/cmd/sampling")
->>> Cc: 6.8+ <stable@vger.kernel.org> # 6.8+
->>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>> ---
->>>
->>> v1 -> v2: Use the cleanup.h infrastructure to reduce the amount of code changes.
->>>
->>> ---
->>>    drivers/thermal/thermal_core.c    |    1 +
->>>    drivers/thermal/thermal_core.h    |    3 +++
->>>    drivers/thermal/thermal_netlink.c |    9 +++------
->>>    3 files changed, 7 insertions(+), 6 deletions(-)
->>>
->>> Index: linux-pm/drivers/thermal/thermal_core.c
->>> ===================================================================
->>> --- linux-pm.orig/drivers/thermal/thermal_core.c
->>> +++ linux-pm/drivers/thermal/thermal_core.c
->>> @@ -728,6 +728,7 @@ struct thermal_zone_device *thermal_zone
->>>        mutex_lock(&thermal_list_lock);
->>>        list_for_each_entry(tz, &thermal_tz_list, node) {
->>>                if (tz->id == id) {
->>> +                     get_device(&tz->device);
->>>                        match = tz;
->>>                        break;
->>>                }
->>> Index: linux-pm/drivers/thermal/thermal_core.h
->>> ===================================================================
->>> --- linux-pm.orig/drivers/thermal/thermal_core.h
->>> +++ linux-pm/drivers/thermal/thermal_core.h
->>> @@ -194,6 +194,9 @@ int for_each_thermal_governor(int (*cb)(
->>>
->>>    struct thermal_zone_device *thermal_zone_get_by_id(int id);
->>>
->>> +DEFINE_CLASS(thermal_zone_get_by_id, struct thermal_zone_device *,
->>> +          if (_T) put_device(&_T->device), thermal_zone_get_by_id(id), int id)
->>> +
->>>    static inline bool cdev_is_power_actor(struct thermal_cooling_device *cdev)
->>>    {
->>>        return cdev->ops->get_requested_power && cdev->ops->state2power &&
->>> Index: linux-pm/drivers/thermal/thermal_netlink.c
->>> ===================================================================
->>> --- linux-pm.orig/drivers/thermal/thermal_netlink.c
->>> +++ linux-pm/drivers/thermal/thermal_netlink.c
->>> @@ -443,7 +443,6 @@ static int thermal_genl_cmd_tz_get_trip(
->>>    {
->>>        struct sk_buff *msg = p->msg;
->>>        const struct thermal_trip_desc *td;
->>> -     struct thermal_zone_device *tz;
->>>        struct nlattr *start_trip;
->>>        int id;
->>>
->>> @@ -452,7 +451,7 @@ static int thermal_genl_cmd_tz_get_trip(
->>>
->>>        id = nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
->>>
->>> -     tz = thermal_zone_get_by_id(id);
->>> +     CLASS(thermal_zone_get_by_id, tz)(id);
->>>        if (!tz)
->>>                return -EINVAL;
->>>
->>> @@ -488,7 +487,6 @@ out_cancel_nest:
->>>    static int thermal_genl_cmd_tz_get_temp(struct param *p)
->>>    {
->>>        struct sk_buff *msg = p->msg;
->>> -     struct thermal_zone_device *tz;
->>>        int temp, ret, id;
->>>
->>>        if (!p->attrs[THERMAL_GENL_ATTR_TZ_ID])
->>> @@ -496,7 +494,7 @@ static int thermal_genl_cmd_tz_get_temp(
->>>
->>>        id = nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
->>>
->>> -     tz = thermal_zone_get_by_id(id);
->>> +     CLASS(thermal_zone_get_by_id, tz)(id);
->>>        if (!tz)
->>>                return -EINVAL;
->>>
->>> @@ -514,7 +512,6 @@ static int thermal_genl_cmd_tz_get_temp(
->>>    static int thermal_genl_cmd_tz_get_gov(struct param *p)
->>>    {
->>>        struct sk_buff *msg = p->msg;
->>> -     struct thermal_zone_device *tz;
->>>        int id, ret = 0;
->>>
->>>        if (!p->attrs[THERMAL_GENL_ATTR_TZ_ID])
->>> @@ -522,7 +519,7 @@ static int thermal_genl_cmd_tz_get_gov(s
->>>
->>>        id = nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
->>>
->>> -     tz = thermal_zone_get_by_id(id);
->>> +     CLASS(thermal_zone_get_by_id, tz)(id);
->>>        if (!tz)
->>>                return -EINVAL;
->>>
->>>
->>>
->>>
->>
->> I wasn't aware of that helpers in cleanup.h.
->>
->> Could you help me to understand when this this
->> 'if (_T) put_device((&_T->device)' will be called?
 > 
-> When the pointer variable initialized via the CLASS() macro goes out
-> of scope (that is, before freeing the memory occupied by the pointer
-> itself).
+> On 10/4/2024 12:12 AM, Andrew Lunn wrote:
+> >> Agree that switchdev is the right model for this device. We were
+> >> planning to enable base Ethernet functionality using regular
+> >> (non-switchdev) netdevice representation for the ports initially,
+> >> without offload support. As the next step, L2/VLAN offload support using
+> >> switchdev will be enabled on top. Hope this phased approach is fine.
+> > 
+> > Since it is not a DSA switch, yes, a phased approach should be O.K.
+> > 
+> 
+> Ok.
+> 
+> >>>> 3) PCS driver patch series:
+> >>>>         Driver for the PCS block in IPQ9574. New IPQ PCS driver will
+> >>>>         be enabled in drivers/net/pcs/
+> >>>> 	Dependent on NSS CC patch series (2).
+> >>>
+> >>> I assume this dependency is pure at runtime? So the code will build
+> >>> without the NSS CC patch series?
+> >>
+> >> The MII Rx/Tx clocks are supplied from the NSS clock controller to the
+> >> PCS's MII channels. To represent this in the DTS, the PCS node in the
+> >> DTS is configured with the MII Rx/Tx clock that it consumes, using
+> >> macros for clocks which are exported from the NSS CC driver in a header
+> >> file. So, there will be a compile-time dependency for the dtbindings/DTS
+> >> on the NSS CC patch series. We will clearly call out this dependency in
+> >> the cover letter of the PCS driver. Hope that this approach is ok.
+> > 
+> > Since there is a compile time dependency, you might want to ask for
+> > the clock patches to be put into a stable branch which can be merged
+> > into netdev.
+> > 
+> 
+> Sure. We will request for such a stable branch merge once the NSS CC
+> patches are accepted by the reviewers. Could the 'net' tree be one such
+> stable branch option to merge the NSS CC driver?
 
+Given Bjorn reply, maybe you should explain in detail why you have a
+build dependency.
 
-OK, so do we still need the old code in
-thermal_zone_device_unregister(), which calls
-put_device(&tz->device) ?
-Maybe that code can go away?
+A stable branch has some overhead. We should not create it just to
+find out you have your architecture wrong when we start reviewing the
+code, and it is not actually needed when you fix your architecture.
+
+So, details please.
+
+	Andrew
+
 
