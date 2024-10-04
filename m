@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-349982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA2998FE30
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:56:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F28898FE43
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E9581C22EF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:56:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A5D81C2326F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE4113AD26;
-	Fri,  4 Oct 2024 07:56:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969AF7F7CA;
-	Fri,  4 Oct 2024 07:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064DA13BC1E;
+	Fri,  4 Oct 2024 07:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ok/KjEEi"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0142209F;
+	Fri,  4 Oct 2024 07:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728028576; cv=none; b=Tm6jwqcCxtgxHmgaFzl4KCO/E0xzhUh6aFFyGVFfnCBMCfY5AfaEGGYYPFTYa9lldm0Sj5R9rz9QgQkyvP+opnh79C6OioiyjGI6sVqEUAutj+3y1B+6s9ZHAgh6v8zjQEMyVf7dYIsVqTrM9Ha0xWNvZ+/ByC5wFhFKzUML+Zk=
+	t=1728028677; cv=none; b=eeRlgPmjnN73/tVl2BhFci5rQKzoCBkeiD8wYAaOsuGc4R0iSimtYJi902h7s3mVJ6W+zPcgL8efTfYF+MuI7UySCN+gMwn4N4YZA8mYkFlX9itssNiAnA9rzidHcnpLA9y+IWCpA0fr415G2wnmB9SyZp9PtQO8Mf8vHcToIJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728028576; c=relaxed/simple;
-	bh=vcUo44yXnAuxnWVyPnPjEmKC4oZy4wLFAKgzz/6lqdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q/9W/5+ZnvrauJhvKuvGLio+3V0VKzJyQ+8dOBNYMUQCuXCMMIJ/+BxM9GA3riBATxO004bq1PaRIL5QwlANRTQPYb3zITWxoHBcjsrMwy3vb8qWfHJUNKRnYdjyA8mEOen48PXB+FtpoSmuYly1+xqQvNW6AYi7C6p9eC68G3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34703339;
-	Fri,  4 Oct 2024 00:56:41 -0700 (PDT)
-Received: from [10.57.77.142] (unknown [10.57.77.142])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 736AD3F64C;
-	Fri,  4 Oct 2024 00:56:10 -0700 (PDT)
-Message-ID: <09a3f091-6201-4911-b8bb-21440f38df07@arm.com>
-Date: Fri, 4 Oct 2024 08:57:10 +0100
+	s=arc-20240116; t=1728028677; c=relaxed/simple;
+	bh=Gx3ByTHdqH+Z6NrgWs+dOHm2pf1YYYDIrVPK06ZcIsI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dkEUjvpYP8sAjZsFzgR5HP8oFbsJkQNpXZR9lSYm00bNmNu55WeuVjkxvJH0vx2juINvywKBi5+x40BkaKKqZbSFHUkgfSErRtR0v0XE9zftIDfPveO8QmOj3kW9/8sQSjZBAPLuxisCO0bTJjMpmV42+WxG155CUvv2rQkrkcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ok/KjEEi; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493I03lo021789;
+	Fri, 4 Oct 2024 07:57:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YXpbF4mHKiP22JJzGGOCfafZjcykIbh3vzNu3zCQFe8=; b=ok/KjEEikM5YwZV2
+	LAk9aO7k3ybCAtQJ7KIm51QbEsePu4QSKBzpl7C+GW95XYz8Z+VXIe8ucJlDMiOy
+	AL15wQKyeMHMOJghslwMP519w39o5OFZSXg56pM32xR6C7FqJZmNzAvOKxZO/240
+	NeBlPsPBI5gzNqP1EJ+j1JIsVBPJevLtb6Bd/QTa4MeKNsGsepkUcBu3fGgIkSQv
+	PnPvrHa8SiT0q014Wy04oK4qzw87NB+K0Htv964pkpBhVlLFcRFQTKaidmvvWQaz
+	ElsEuLcK+yOjFyWNRwrl3BT0HxLOYVBZlcNMESFu4+FkpjGLvnVL+D+PnUdp9cZz
+	fsKc9g==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205p9f0g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 07:57:31 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4947vUMT013051
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 07:57:30 GMT
+Received: from [10.50.18.17] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
+ 00:57:22 -0700
+Message-ID: <c7ddb7d3-7046-4e27-8ef7-c88262da6b8a@quicinc.com>
+Date: Fri, 4 Oct 2024 13:27:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,65 +64,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] thermal: core: Free tzp copy along with the
- thermal zone
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <12549318.O9o76ZdvQC@rjwysocki.net>
- <4623516.LvFx2qVVIh@rjwysocki.net>
+Subject: Re: [PATCH V5 6/7] arm64: dts: qcom: ipq9574: Add support for nsscc
+ node
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Devi Priya
+	<quic_devipriy@quicinc.com>, <andersson@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <p.zabel@pengutronix.de>,
+        <richardcochran@gmail.com>, <geert+renesas@glider.be>,
+        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
+        <arnd@arndb.de>, <m.szyprowski@samsung.com>, <nfraprado@collabora.com>,
+        <u-kumar1@ti.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <netdev@vger.kernel.org>
+References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
+ <20240626143302.810632-7-quic_devipriy@quicinc.com>
+ <8ffd8a3c-83e6-4753-8bdf-7daa3a3d8306@linaro.org>
 Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <4623516.LvFx2qVVIh@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <8ffd8a3c-83e6-4753-8bdf-7daa3a3d8306@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: N6PBUiV8ug3rBba6OwewLPJDVEfSfWD4
+X-Proofpoint-ORIG-GUID: N6PBUiV8ug3rBba6OwewLPJDVEfSfWD4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ impostorscore=0 adultscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 mlxlogscore=688 priorityscore=1501 bulkscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040056
 
 
 
-On 10/3/24 13:27, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 6/29/2024 7:00 PM, Konrad Dybcio wrote:
+> On 26.06.2024 4:33 PM, Devi Priya wrote:
+>> Add a node for the nss clock controller found on ipq9574 based devices.
+>>
+>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>> ---
 > 
-> The object pointed to by tz->tzp may still be accessed after being
-> freed in thermal_zone_device_unregister(), so move the freeing of it
-> to the point after the removal completion has been completed at which
-> it cannot be accessed any more.
+> Title: s/support for//
 > 
-> Fixes: 3d439b1a2ad3 ("thermal/core: Alloc-copy-free the thermal zone parameters structure")
-> Cc: 6.8+ <stable@vger.kernel.org> # 6.8+
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
+> You're adding the node, not the support for it.
 > 
-> v1 -> v2: No changes
+> The nodes look good. Looking at the driver, the interconnect paths that will
+> be sync_state'd away due to no consumers don't seem to be super critical for
+> the system, so I'm assuming this doesn't crash
 > 
-> ---
->   drivers/thermal/thermal_core.c |    4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -1606,14 +1606,12 @@ void thermal_zone_device_unregister(stru
->   	ida_destroy(&tz->ida);
->   
->   	device_del(&tz->device);
-> -
-> -	kfree(tz->tzp);
-> -
->   	put_device(&tz->device);
->   
->   	thermal_notify_tz_delete(tz);
->   
->   	wait_for_completion(&tz->removal);
-> +	kfree(tz->tzp);
->   	kfree(tz);
->   }
->   EXPORT_SYMBOL_GPL(thermal_zone_device_unregister);
-> 
-> 
+> So, with the title fixed:
 > 
 
+Hi Konrad,
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Sorry for the delayed response.
+
+Okay, sure. Will fix the title.
+
+Thanks & Regards,
+Manikanta.
+
+
 
