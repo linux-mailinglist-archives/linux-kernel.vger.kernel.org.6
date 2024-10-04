@@ -1,151 +1,284 @@
-Return-Path: <linux-kernel+bounces-350257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9F7990236
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:41:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45425990231
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43F651F237E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:41:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D35B1C21108
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C422915A863;
-	Fri,  4 Oct 2024 11:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmH/dN+p"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D0115B111;
+	Fri,  4 Oct 2024 11:40:27 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D30146A63;
-	Fri,  4 Oct 2024 11:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE93915958D
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 11:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728042052; cv=none; b=ssYIGil+n1nN5zB9zrVnze1nRJve5XQoEhC8XkS4XUWgIFU6e7JUAwaUfvreCy5zASTu4oiGVX5lyG7rBQ+eq1qIQDFGjYPHfsAGrhOlnA1PKyRrgAob8GDIJz1tdtVylcjLooKHeWaNOXWHPmJMYA0m0er4+wXE3wpvP2bsgTY=
+	t=1728042026; cv=none; b=Hi5kfNsUYDN7pzuoN0AJ+pf5M/h4bT/xUVvr8SXInTJdWpvdTc7vJTg1ZTBJ0wEm7iM5W5XZk5NZ6l6vhd2BPfLhzjKOpX02Q/GoFLIXG2TSPswPZNUrsvT58+tKw7NIAyEIyZkD2g1ubdBeQXmJFUDonl7m0NbyKHMigsueBEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728042052; c=relaxed/simple;
-	bh=otYBiSqYpzQvcEOzrqVXTkSSDkEtAGRqXVxQRVTPTtI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WmNb76MvknDfc7Bg0nis9udN1KCN9/b7xapoyYKfLychas4FIV2C/MIIqLSSn+5NOrs/1LwP7yNDbR+3rKHk8KVyEfirtcg04EnLWyIkGVJLQZaqpwbX+IcgPS6YKNb75Zjzm0nzs1IbVHiSNr7SaoOssLGTyYqbQbGqoVHzn+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmH/dN+p; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-50923780607so569869e0c.1;
-        Fri, 04 Oct 2024 04:40:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728042049; x=1728646849; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gKCQdo+p8Gze0vcICMzXMRiWujRcC5yLqN4wtvnwSaI=;
-        b=cmH/dN+pICvFiKF2aGOFg/PmqZLXUPlcRMoKNhSJFkaOUZbl9R1t2Hlppo1wxurK4f
-         zMk5esdcOycvLOk0PN1fhzSHGAbiwpAYVSkkvnC81j95JyYTbxGHkfU7c5FcGEUk99W4
-         Ocnwko9pvkl/PJtN9RkYK69u3ue9x/ZSvvt/h/sQ4FNh9FnB3djLZDNArqO7ZRU6x0VI
-         ha5eauv3Bdh8rmw/56N9hmJBrG9eIBe300hLnThhWCWh9v74J6iZKgz6nmdjSdo9MKH9
-         B6JhEF4hdbJBolU0EWP255xXDJCKu+pQ+9kqo5HFJ6z3z6oHmhxjNdFZaDW1/AN8TV4d
-         Kphg==
+	s=arc-20240116; t=1728042026; c=relaxed/simple;
+	bh=lStMSKeFZnRbEIqJpj9x5Y6AdrxkvIhM9oeN1BkdSoI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nqqYHAMlV7gmKWVGw/8Wue7AOssI9DqK+oE6GV4cfMoxFMG8z0FuvlhCZj1OkE2dgDX0wOedkDSVhWjCJnfm0q7rgTmFf2VtIgRGmmeyilOK+JUQJQxU5rFGk6RnzSFnzwGpKnbBCCB7h02yiLj8UYdmpeGcXRMpRoxizgWd8wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1925177fdso22743835ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 04:40:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728042049; x=1728646849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gKCQdo+p8Gze0vcICMzXMRiWujRcC5yLqN4wtvnwSaI=;
-        b=KFTBvtaeiOgfw/m12v21Q/dfy+UzaWx6ZS2qQfBhXf5iiRbRLP0VJaprV1kVNVelNr
-         3UQoKNhbThbSS3H3nfTkLoQqBjxnghMQYdYzDQT+kWQ9/evpXTx6Paj9FlcVuTRPnvHs
-         9k/nt2x17yVsVNnXrDWHdIneQ1WAuSM3xYfvt0rmIUoK5LcZag63qq7FiQEDQ8neMzEA
-         0eJn5dVuaBpD3yytvmqrTrCu8vWBbUwZ1Q9XRJDedOvzgraK98qW8Aw4XSfP2NOKW5KX
-         wzTl6zgZmIgrtq7d/B4TA3Gamkdfyl9A2t7r/KRCWFEVmbrByCvoR0W/qadm+PzNMiSC
-         NcOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDQGa3FlMuZKNsOJuMmzpt+bvSRMSNvjJcLUwhFVLNKXVRrCt+dRRo0FqTXD1cDZcYzzKgr2s/L0hi@vger.kernel.org, AJvYcCUEorBTeBK9JNdT6GqZgsS9eaic8aiQxvWsEQJyCErlUwGcqXgkwcQznGX+ljzURewdE8a+9uUKkblD8kV1@vger.kernel.org, AJvYcCWvX8S7spi0ILEUnwBWR7G/iDVUjTda5sk9Ma8hbvhml/CoL9PUl7oHIFcl47S96fsoOeEPVWdX8JPetg==@vger.kernel.org, AJvYcCX0ydIEyVWrhvSb7X3HnM1v9HgW8H7fmcFQjgaehtFG6p7VpIpTKKuAb+U1+0Az2sxJZiyEkg2D89te2QM1pVKqQ+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym+CfpPWbELDQsN3rJm5eULTcLtk/w62eL4Cl3ZlqkPP1Ymvbp
-	MiAhXDRMXymtuUf4JoAKGH9WUV10R3NbuKXIe+VxcMA4tClfis0YZLblI91GOTE00Wr4ebDZzCc
-	Pqc0tXqS6TQFFxUpviRHdDxHJP3w=
-X-Google-Smtp-Source: AGHT+IFC3OyNNIPDOrsFuuPwGn8CfLR42u8mLnHhuVlMaBMOyEKFYgtYXlGu9lM/6h3sqSwjih5kARz8PE6Wwu/A0Fs=
-X-Received: by 2002:a05:6122:180d:b0:4fc:e3c2:2c71 with SMTP id
- 71dfb90a1353d-50c85444ac7mr1617808e0c.2.1728042049555; Fri, 04 Oct 2024
- 04:40:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728042024; x=1728646824;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RH7XhbMlUbLbawgAsaJ/+d3DvzsgIfhNKAXRoNm7PyQ=;
+        b=GYMRqwi10ND1QSqNH+nMYoQXoeVcWJVsy/qLkx396TDSW7UwcWKhq0+XOuAlUF0wTc
+         1HdLKKkKRvCznqE0nSoiGfnUF9EElaYJBGLgyj69iwf2aiGdtIfl2NE8/Eix6PpPz8eD
+         gkpkSUt01okBFVPxspRu66mJqDKERnG5Vza7dbDpWepw1ljMmeabSizK76L5cbYCWepE
+         9EpXH86QE4GQ56vn2nQPVzLA4nMwqbNJ6QljLTa8NLm4kgrxv+NIDqjxRLJyGKPyBh80
+         X664V2cz+VgUOL51lhLOSjKSgl6H1WTEk5C1x4wdnfrMqrOc/aaBI1RkfyrbYJmosXuc
+         GLsg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6iLIT8E7rGOlv+JyI6SbgAxFBDz9MhkRZfinUj07+prVbrLmlM1MphqzoyYPf7eBeD6a4TGQQY11j3DY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzpoRCNgwysL9N8EIG+BXAo9eotGaipW+cckIjNwP4uNDhjMdE
+	nnKFVbjDsl9Iv+/Yajnq07jt7kkuzHprbmZQm70snwZpr6q+WiIzX0n/sdkR4B4s0ycKo5zqhhC
+	HNL+6A8U1zaenBJfmDukRSuVS+rtY6hNagbifOzJ4aGCCAhrIcRL89yQ=
+X-Google-Smtp-Source: AGHT+IEXFY+p3aUX9Vdx4VsnV85b0tMFwKajA+xSKAUnK0VdlM7DhrzqLKFlD3rJ2s2PCsXgBXt1ZW6c0FU9FBagm1mG+ec34J8b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918120909.284930-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240918120909.284930-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWkHvHh=AhJhOutFRAJMczpCGdUCPvPuqjY_V4aiMvmAg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWkHvHh=AhJhOutFRAJMczpCGdUCPvPuqjY_V4aiMvmAg@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 4 Oct 2024 12:40:22 +0100
-Message-ID: <CA+V-a8v7Y83cS4EHd0K5hvbCLFxE8xrv9zajDMvwT_R0RH59vg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
- 'input-schmitt-{enable,disable}' and 'drive-open-drain' properties
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Received: by 2002:a05:6e02:1fc8:b0:3a0:aa15:3497 with SMTP id
+ e9e14a558f8ab-3a375976e55mr21453585ab.1.1728042024133; Fri, 04 Oct 2024
+ 04:40:24 -0700 (PDT)
+Date: Fri, 04 Oct 2024 04:40:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ffd428.050a0220.49194.048a.GAE@google.com>
+Subject: [syzbot] [bpf?] possible deadlock in __put_partials
+From: syzbot <syzbot+5a878c984150fad34185@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Hello,
 
-Thank you for the review.
+syzbot found the following issue on:
 
-On Fri, Oct 4, 2024 at 8:54=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Fabrizio,
->
-> On Wed, Sep 18, 2024 at 2:09=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > On the RZ/V2H(P) SoC we can configure the 'input-schmitt-{enable,disabl=
-e}'
-> > and 'drive-open-drain' of multiplexed pins. Update the binding
-> > documentation to include these properties.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.y=
-aml
-> > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.y=
-aml
-> > @@ -119,6 +119,9 @@ additionalProperties:
-> >          bias-disable: true
-> >          bias-pull-down: true
-> >          bias-pull-up: true
-> > +        input-schmitt-enable: true
-> > +        input-schmitt-disable: true
-> > +        drive-open-drain: true
->
-> I think you also need "drive-push-pull", to disable open drain.
->
-Agreed, I will add support for it and send a v2.
+HEAD commit:    99a648c951ba selftests/bpf: Verify that sync_linked_regs p..
+git tree:       bpf
+console output: https://syzkaller.appspot.com/x/log.txt?x=1668bd07980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d3e39725ec0dfcbc
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a878c984150fad34185
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Cheers,
-Prabhakar
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> >          renesas,output-impedance:
-> >            description:
-> >              Output impedance for pins on the RZ/V2H(P) SoC. The value =
-provided by this
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e45f24c2d262/disk-99a648c9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/48ad218fc65c/vmlinux-99a648c9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/691b40913107/bzImage-99a648c9.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5a878c984150fad34185@syzkaller.appspotmail.com
+
+tun0: tun_chr_ioctl cmd 1074025681
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-syzkaller-10550-g99a648c951ba #0 Not tainted
+------------------------------------------------------
+syz.0.924/9009 is trying to acquire lock:
+ffff8881404006d8 (&n->list_lock){-.-.}-{2:2}, at: __put_partials+0x61/0x130 mm/slub.c:3126
+
+but task is already holding lock:
+ffff8880758dda00 (&trie->lock){-.-.}-{2:2}, at: trie_update_elem+0xc8/0xc00 kernel/bpf/lpm_trie.c:333
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&trie->lock){-.-.}-{2:2}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+       trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
+       0xffffffffa00021b3
+       bpf_dispatcher_nop_func include/linux/bpf.h:1257 [inline]
+       __bpf_prog_run include/linux/filter.h:701 [inline]
+       bpf_prog_run include/linux/filter.h:708 [inline]
+       __bpf_trace_run kernel/trace/bpf_trace.c:2318 [inline]
+       bpf_trace_run2+0x2ec/0x540 kernel/trace/bpf_trace.c:2359
+       trace_contention_end+0x114/0x140 include/trace/events/lock.h:122
+       __pv_queued_spin_lock_slowpath+0xb7e/0xdb0 kernel/locking/qspinlock.c:557
+       pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:584 [inline]
+       queued_spin_lock_slowpath+0x42/0x50 arch/x86/include/asm/qspinlock.h:51
+       queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
+       do_raw_spin_lock+0x272/0x370 kernel/locking/spinlock_debug.c:116
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:111 [inline]
+       _raw_spin_lock_irqsave+0xe1/0x120 kernel/locking/spinlock.c:162
+       __put_partials+0x61/0x130 mm/slub.c:3126
+       put_cpu_partial+0x17c/0x250 mm/slub.c:3221
+       __slab_free+0x2ea/0x3d0 mm/slub.c:4450
+       qlink_free mm/kasan/quarantine.c:163 [inline]
+       qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+       kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+       __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+       kasan_slab_alloc include/linux/kasan.h:247 [inline]
+       slab_post_alloc_hook mm/slub.c:4086 [inline]
+       slab_alloc_node mm/slub.c:4135 [inline]
+       kmem_cache_alloc_node_noprof+0x16b/0x320 mm/slub.c:4187
+       perf_event_alloc+0x166/0x2310 kernel/events/core.c:12147
+       __do_sys_perf_event_open kernel/events/core.c:12767 [inline]
+       __se_sys_perf_event_open+0xb1f/0x3870 kernel/events/core.c:12658
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&n->list_lock){-.-.}-{2:2}:
+       check_prev_add kernel/locking/lockdep.c:3158 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+       __put_partials+0x61/0x130 mm/slub.c:3126
+       ___slab_alloc+0x4f7/0x14b0 mm/slub.c:3776
+       __slab_alloc+0x58/0xa0 mm/slub.c:3909
+       __slab_alloc_node mm/slub.c:3962 [inline]
+       slab_alloc_node mm/slub.c:4123 [inline]
+       __do_kmalloc_node mm/slub.c:4264 [inline]
+       __kmalloc_node_noprof+0x286/0x440 mm/slub.c:4271
+       kmalloc_array_node_noprof include/linux/slab.h:995 [inline]
+       alloc_slab_obj_exts mm/slub.c:1969 [inline]
+       account_slab mm/slub.c:2542 [inline]
+       allocate_slab+0xb6/0x2f0 mm/slub.c:2597
+       new_slab mm/slub.c:2632 [inline]
+       ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
+       __slab_alloc+0x58/0xa0 mm/slub.c:3909
+       __slab_alloc_node mm/slub.c:3962 [inline]
+       slab_alloc_node mm/slub.c:4123 [inline]
+       __do_kmalloc_node mm/slub.c:4264 [inline]
+       __kmalloc_node_noprof+0x286/0x440 mm/slub.c:4271
+       kmalloc_node_noprof include/linux/slab.h:905 [inline]
+       bpf_map_kmalloc_node+0xd3/0x1c0 kernel/bpf/syscall.c:422
+       lpm_trie_node_alloc kernel/bpf/lpm_trie.c:299 [inline]
+       trie_update_elem+0x1cd/0xc00 kernel/bpf/lpm_trie.c:342
+       bpf_map_update_value+0x4d3/0x540 kernel/bpf/syscall.c:203
+       generic_map_update_batch+0x60d/0x900 kernel/bpf/syscall.c:1849
+       bpf_map_do_batch+0x39a/0x660 kernel/bpf/syscall.c:5143
+       __sys_bpf+0x377/0x810
+       __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
+       __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
+       __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&trie->lock);
+                               lock(&n->list_lock);
+                               lock(&trie->lock);
+  lock(&n->list_lock);
+
+ *** DEADLOCK ***
+
+2 locks held by syz.0.924/9009:
+ #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: bpf_map_update_value+0x3c4/0x540 kernel/bpf/syscall.c:202
+ #1: ffff8880758dda00 (&trie->lock){-.-.}-{2:2}, at: trie_update_elem+0xc8/0xc00 kernel/bpf/lpm_trie.c:333
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 9009 Comm: syz.0.924 Not tainted 6.11.0-syzkaller-10550-g99a648c951ba #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
+ check_prev_add kernel/locking/lockdep.c:3158 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+ __put_partials+0x61/0x130 mm/slub.c:3126
+ ___slab_alloc+0x4f7/0x14b0 mm/slub.c:3776
+ __slab_alloc+0x58/0xa0 mm/slub.c:3909
+ __slab_alloc_node mm/slub.c:3962 [inline]
+ slab_alloc_node mm/slub.c:4123 [inline]
+ __do_kmalloc_node mm/slub.c:4264 [inline]
+ __kmalloc_node_noprof+0x286/0x440 mm/slub.c:4271
+ kmalloc_array_node_noprof include/linux/slab.h:995 [inline]
+ alloc_slab_obj_exts mm/slub.c:1969 [inline]
+ account_slab mm/slub.c:2542 [inline]
+ allocate_slab+0xb6/0x2f0 mm/slub.c:2597
+ new_slab mm/slub.c:2632 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
+ __slab_alloc+0x58/0xa0 mm/slub.c:3909
+ __slab_alloc_node mm/slub.c:3962 [inline]
+ slab_alloc_node mm/slub.c:4123 [inline]
+ __do_kmalloc_node mm/slub.c:4264 [inline]
+ __kmalloc_node_noprof+0x286/0x440 mm/slub.c:4271
+ kmalloc_node_noprof include/linux/slab.h:905 [inline]
+ bpf_map_kmalloc_node+0xd3/0x1c0 kernel/bpf/syscall.c:422
+ lpm_trie_node_alloc kernel/bpf/lpm_trie.c:299 [inline]
+ trie_update_elem+0x1cd/0xc00 kernel/bpf/lpm_trie.c:342
+ bpf_map_update_value+0x4d3/0x540 kernel/bpf/syscall.c:203
+ generic_map_update_batch+0x60d/0x900 kernel/bpf/syscall.c:1849
+ bpf_map_do_batch+0x39a/0x660 kernel/bpf/syscall.c:5143
+ __sys_bpf+0x377/0x810
+ __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fea6a97dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fea6b756038 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007fea6ab35f80 RCX: 00007fea6a97dff9
+RDX: 0000000000000038 RSI: 0000000020000480 RDI: 000000000000001a
+RBP: 00007fea6a9f0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fea6ab35f80 R15: 00007ffd21039768
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
