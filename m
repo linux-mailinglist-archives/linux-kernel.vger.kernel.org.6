@@ -1,175 +1,140 @@
-Return-Path: <linux-kernel+bounces-350749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B70990902
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:22:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D3AB990906
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AF1F1C2205A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A72811F25C5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56DC1C7280;
-	Fri,  4 Oct 2024 16:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A7B1C7607;
+	Fri,  4 Oct 2024 16:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cDhogYdp"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQrjpq/h"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37A81C303B;
-	Fri,  4 Oct 2024 16:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF201C7294;
+	Fri,  4 Oct 2024 16:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728058948; cv=none; b=F2vMSoiZcJTV74X7fk7mJRx3/zcApXZscxOqKssdA2p21TdSAnaMYHkI8iUVlxMD4YwWA+kmy3j//+0t94HU8vkkBqsaNiqolk5EMkxVka4eGuiY9WturusNNYfG1XH9/jHS0jp4pnx/Onxbje8g2tgHyxtnAg+l8zfxjooM8/s=
+	t=1728058968; cv=none; b=Za0r7k6ZZkerSJ7JLC2bUdZkOWfZFzs4FPwliC9HTFprcAx7ZpIaK/6sUiRWhAhjbn2Ak6jMdZifPtLJkYGu/lF2drMahDhaS4Uy8LMJXC+MGEqv55DaQkKZyCjRKbWuECjYI0kX2247yrbawK1GHW9DVGaVIWP4+GH438LIJvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728058948; c=relaxed/simple;
-	bh=YB1a8wOwJLhAqIe6duyZgwM93LIZHutIryJ+TLjttiY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xqpc/MyvTCOIqfiH/t638ssHXFEHKXZewIOm9np85LN73cOn1QODrzcamE2yQfHJKELMpqWedMLvF0IC9ooFzo0qUCsL0F07IRbsX5LpCQmyc132eM6SHW7SBKsB8Y8dDoIZVOykMXkPa8zhH1UGopY+CqEc3Pb4AxprTPJ+qog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cDhogYdp; arc=none smtp.client-ip=209.85.216.46
+	s=arc-20240116; t=1728058968; c=relaxed/simple;
+	bh=xb+RCijfzqEsoaGXJBRxp/a+e/bURhJaDLLJdyCduOk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q8+44Za75gpm7FHDz+HP3sd72GGusSwSKkK5iFE3TLpQcr5d6YUbz+2NMEbA0VDnTtLsYtlVrbUyBz43OtZoSj1KgZajt12qLzQpQ7RfQYgZvTxqLD/sSuxCwDWoh1CjSORlX3tFUuxkfxUz+fWa7YUOxfXAL6yP2iPyeIJXZew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nQrjpq/h; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e07d85e956so1949778a91.3;
-        Fri, 04 Oct 2024 09:22:26 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5389917ef34so2759368e87.2;
+        Fri, 04 Oct 2024 09:22:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728058946; x=1728663746; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IiKLndcyYH7rIY6+ban5HB3XSyx5eEP2bPfLFhg1KI4=;
-        b=cDhogYdp7rYQrp8JdXO9ieyoR1YOwRzumxIswQr12XJX9gb2L99XK7GEra8511jxhS
-         FlaoMCZxMBPM7Ib2K7tShCaYZHndi4fM7GYUAigU8OaMrvu9clLc1mda61KImIqR806t
-         dwS+BdvvdBOKzj06uAIsZQRj2Xdc17YvPME3VboA0ZGQXVj6o2zdHf4byznrpY5XMpre
-         BVhexbD+HeqA+j/1L56he/5bNeRXZQPbm51UvhT0uXmapez87On8MjLCAG3IT7+QtC7Z
-         uIqr/BTG5guwMX2Wf8qaGI78OBKgsgNepTui31i+wAwgj7loQbmE8++E4o82ASnZDNRf
-         H9og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728058946; x=1728663746;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728058965; x=1728663765; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IiKLndcyYH7rIY6+ban5HB3XSyx5eEP2bPfLFhg1KI4=;
-        b=JDDXz0FXF9u0m1QDfFjWHglp0V9t2KxdHwyg2aWUeTMJK+l1bzAAN9zEXqHe0CFPYV
-         o6xN9aFdU0YeWDlJwMUznk3ugv8Y+LA5Hem4on66SOoEtSBZ0Qlh/z5gxW0GqFHvhCIN
-         Y8LQqFwhIYVmo/typNPXa9or+vHDKhLjt8dnhsVJLbn3bFuJo2pNyUvR6/G4sJwV2DOz
-         7d7h+Efj39Xd+PiLJdddh2haEHBzgKHUYCOYir2Z0kS+pkzVESZhex0PZWavoXJNfaLp
-         RqUn92iv4lgoji8WfEqDGUxyq1RDq40TMaLlBn50KgtI4PUHbVkyY4Qle4T1XboWXT1q
-         1gcg==
-X-Forwarded-Encrypted: i=1; AJvYcCU24yMH/d6uOFYVvCNvvmYs40I2Cwy9MszoXQYbmw83nSZvuXKlb1eUGdTWDxWzCgmVfnysggMS@vger.kernel.org, AJvYcCVjTJ4O7jMwdCy+b941Nna3vOkxlJP84C2X9VXD+bRibZtg4CTAhD7mnrRCamPwKS8Po5SddyrqmjcUmOV1@vger.kernel.org, AJvYcCW0Rz2eBz8IjZQXZwkS14dIsbq8yhg4ceG7QLH5QOa4ZEIFMr7iYDJiMqEW9/Kl4nuxWcLAZ//rm9wlOw==@vger.kernel.org, AJvYcCXTFT5d22wZS2Sp0Hzt+oEL/2CY2J3Ffgqo0dj0f/n5RFc+ck7UQBiw19UrsKzQXDy20vAdtqY2bg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSlN5lGx2mNTEAhJSGqJMLnQ0iO4ZcC1kP6pB1fd0o75mzHuTD
-	kF4tjFSVPeuZ8uj96Z1wxf7Jczze2yHCKzMy7Z5bNO/oWim+Tb4=
-X-Google-Smtp-Source: AGHT+IEI6UcOl2z3NwD/Obevru63AVasNN95GSKu0sNmL+CypXsezoR8vxwOcZjTy/7iJ1GELnSOLA==
-X-Received: by 2002:a17:90b:d81:b0:2d8:f3e7:a177 with SMTP id 98e67ed59e1d1-2e1e620db58mr3188386a91.6.1728058945894;
-        Fri, 04 Oct 2024 09:22:25 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e86aa36dsm1806025a91.53.2024.10.04.09.22.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 09:22:25 -0700 (PDT)
-Date: Fri, 4 Oct 2024 09:22:24 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
-	bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Breno Leitao <leitao@debian.org>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	David Ahern <dsahern@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Michael Chan <michael.chan@broadcom.com>,
-	Mina Almasry <almasrymina@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Subject: Re: [RFC net-next v4 0/9] Add support for per-NAPI config via netlink
-Message-ID: <ZwAWQCpSbb4sn0LX@mini-arch>
-References: <20241001235302.57609-1-jdamato@fastly.com>
- <Zv8o4eliTO60odQe@mini-arch>
- <Zv8uaQ4WIprQCBzv@LQ3V64L9R2>
- <Zv9UA1DkmJQkW_sG@LQ3V64L9R2>
+        bh=dUw7Svd/aGEIiLjbnB81Ko4TPZRdd6H9VfhJ5prWRJs=;
+        b=nQrjpq/hZMM5V891JeMJkERCwE7LssxgYdXbIcrw4XCv3zTpOFDHCXYG29hxeYmiJd
+         VCk10H1kLcpuYnq1oz/dyZLPPy0Ms/FN18/ABnBzBECRlxPCzevTtEEkHb8tvmEe9hbz
+         xzbKRqLAlrEkn19A8c3pDbNTzXywq5R1vhgHZFwajL4IgkTpwWy+LOAj9dOz3sLvB+xg
+         V5AerHU29i4UGDrRT4qeuso46+NY10PAWz72Tyi714mtOEybJSxelOUP1TC5KIx1fswK
+         ZiQuJCuJbhcTzJ7Wk9VwIzyriA8X2QFP78Tf09rR+PUXF69VVtwFgcnYx4tkZe1flqgo
+         d8fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728058965; x=1728663765;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dUw7Svd/aGEIiLjbnB81Ko4TPZRdd6H9VfhJ5prWRJs=;
+        b=nj6dYoXK+iXKTKgamDhWM7Fpl7ghltIEKQHdIWYM4Y4gWc1NwfBicN86Glvm5eu7CB
+         FnMxCLFXbXCc7wq4tZFTO8fbGtsJvrr1y5AUAhTihuJW7uL+b9AElEF53Kzu0gdzEYIm
+         2BSQpsE3zA3mRXuchNJB+25lQR8q99jtbV/JhRteaGX9E1Qm6oXSINsnyuujQPgp07PD
+         0etwnNI7JckkIj7QYBcjxfXWo4RrRC+hj5OdWbSdM0/GokxBjjBYRASLukw9cjk3fxD7
+         qTsZXIkNHew+YQFZACfqfv+DbZk2nLSeOlX2SUnrro8+BJOyyoey7zO0ExbItF4BMXyO
+         DOog==
+X-Forwarded-Encrypted: i=1; AJvYcCVhktLlr8tzk7HKWvZo1yzaCA67CzQc2EDAJ3McmndXNfgdhj8mvbUUD/jX7qYmkmao7+LkahhWUK15j30=@vger.kernel.org, AJvYcCVwUx3C2z89vIeO2bYDMW3lk9+ID7GsQPmrRleveXpLkz6k8mXNt773c6/05cbsa0Sb6apQulp+yMbu@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAG4Sp38ruHCs6BQgrdbgLjbQX80TMqGKfuXmPz3NGhy4/+TyQ
+	8TCjLnl8RH1KlWTbZHUXgpW9bEaq6jF0CciBMSjnW4jf6uAnLB5PlT6pJcqqFZ1lYTOPWDYW5Rv
+	eQoXIgEWT1SWSpe0enPwS7uJy+vU=
+X-Google-Smtp-Source: AGHT+IHzS6ChsWNa74YQ40xSvjV3eZhMCDko9AiWB8J2L29/c4Nmv4CywaF5hvcz5U0Lq6BJ5PXczgDNtYFLAsKe+UU=
+X-Received: by 2002:a05:6512:68a:b0:539:9594:b226 with SMTP id
+ 2adb3069b0e04-539ab88c32emr2496877e87.34.1728058964711; Fri, 04 Oct 2024
+ 09:22:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zv9UA1DkmJQkW_sG@LQ3V64L9R2>
+References: <20240926141956.2386374-1-alvinzhou.tw@gmail.com>
+ <20240926141956.2386374-2-alvinzhou.tw@gmail.com> <28ac1c39-5592-4e5c-8fce-53489e0135ee@linaro.org>
+ <CAPhrvRQirexA9QJzBSqjfmPnbnF62-hzg-neQ-cZX2hnkP_Zwg@mail.gmail.com> <890c1926-2778-41e3-bca6-d08a5a493708@linaro.org>
+In-Reply-To: <890c1926-2778-41e3-bca6-d08a5a493708@linaro.org>
+From: Alvin Zhou <alvinzhou.tw@gmail.com>
+Date: Sat, 5 Oct 2024 00:22:26 +0800
+Message-ID: <CAPhrvRQrugRQgQcdHBdwid3_sUkCm0mZL9zhz1=TYzXg4qUTfw@mail.gmail.com>
+Subject: Re: [PATCH v10 1/6] mtd: spi-nor: add Octal DTR support for Macronix flash
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pratyush@kernel.org, mwalle@kernel.org, 
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com, 
+	broonie@kernel.org, chengminglin@mxic.com.tw, leoyu@mxic.com.tw, 
+	AlvinZhou <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/03, Joe Damato wrote:
-> On Thu, Oct 03, 2024 at 04:53:13PM -0700, Joe Damato wrote:
-> > On Thu, Oct 03, 2024 at 04:29:37PM -0700, Stanislav Fomichev wrote:
-> > > On 10/01, Joe Damato wrote:
-> > 
-> > [...]
-> >  
-> > > >   2. This revision seems to work (see below for a full walk through). Is
-> > > >      this the behavior we want? Am I missing some use case or some
-> > > >      behavioral thing other folks need?
-> > > 
-> > > The walk through looks good!
-> > 
-> > Thanks for taking a look.
-> > 
-> > > >   3. Re a previous point made by Stanislav regarding "taking over a NAPI
-> > > >      ID" when the channel count changes: mlx5 seems to call napi_disable
-> > > >      followed by netif_napi_del for the old queues and then calls
-> > > >      napi_enable for the new ones. In this RFC, the NAPI ID generation
-> > > >      is deferred to napi_enable. This means we won't end up with two of
-> > > >      the same NAPI IDs added to the hash at the same time (I am pretty
-> > > >      sure).
-> > > 
-> > > 
-> > > [..]
-> > > 
-> > > >      Can we assume all drivers will napi_disable the old queues before
-> > > >      napi_enable the new ones? If yes, we might not need to worry about
-> > > >      a NAPI ID takeover function.
-> > > 
-> > > With the explicit driver opt-in via netif_napi_add_config, this
-> > > shouldn't matter? When somebody gets to converting the drivers that
-> > > don't follow this common pattern they'll have to solve the takeover
-> > > part :-)
-> > 
-> > That is true; that's a good point.
-> 
-> Actually, sorry, that isn't strictly true. NAPI ID generation is
-> moved for everything to napi_enable; they just are (or are not)
-> persisted depending on whether the driver opted in to add_config or
-> not.
-> 
-> So, the change does affect all drivers. NAPI IDs won't be generated
-> and added to the hash until napi_enable and they will be removed
-> from the hash in napi_disable... even if you didn't opt-in to having
-> storage.
-> 
-> Opt-ing in to storage via netif_napi_add_config just means that your
-> NAPI IDs (and other settings) will be persistent.
-> 
-> Sorry about my confusion when replying earlier.
+Hi Tudor,
 
-AFAIA, all control operations (ethtool or similar ones via netlink),
-should grab rtnl lock. So as long as both enable/disable happen
-under rtnl (and in my mind they should), I don't think there is gonna
-be any user-visible side-effects of your change. But I might be wrong,
-let's see if others can come up with some corner cases..
+Tudor Ambarus <tudor.ambarus@linaro.org> =E6=96=BC 2024=E5=B9=B410=E6=9C=88=
+4=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=885:58=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+>
+>
+> On 10/4/24 10:05 AM, Alvin Zhou wrote:
+> >>> +     /* Read flash ID to make sure the switch was successful. */
+> >>> +     ret =3D spi_nor_read_id(nor, 4, 4, buf, SNOR_PROTO_8_8_8_DTR);
+> >> can we use nor->addr_nbytes for the second argument? Please test and
+> >> confirm. No need to resend for this, just confirm and I can amend when
+> >> applying.
+> > The following is the process of spi_nor_scan()
+> > int spi_nor_scan(...)
+> > {
+> > ......
+> > ret =3D spi_nor_init_params(nor);
+> > ......
+> > ret =3D spi_nor_setup(nor, hwcaps);
+> > ......
+> > }
+> > First, within the spi_nor_parse_sfdp() function inside
+> > spi_nor_init_params(): nor->params->addr_nbytes is set based on the
+> > SFDP, while nor->addr_nbytes is not available. Therefore, the second
+> > argument cannot use nor->addr_nbytes but can use
+> > nor->params->addr_nbytes. Additionally, For Macronix Octal NOR Flash
+>
+>
+> nor->addr_nbytes is set in spi_nor_setup().
+> spi_nor_set_octal_dtr() is called after spi_nor_setup(), thus you can
+> use nor->addr_nbytes.
+
+I apologize for the misunderstanding. Thanks for your clarification. So
+using nor->addr_nbytes as the second argument is not a problem. I
+have verified, thanks!
+>
+> > in Octal DDR mode, both the address and dummy cycles are fixed at 4
+> > in READID, so setting the second and third argument to 4 is also valid.
+>
+> but we don't want magic numbers or states that are not tracked, so use
+> the parameters set
+>
+> > Moreover, nor->addr_nbytes is set within the spi_nor_setup() function.
+>
+> yep, use it then.
+
+Thanks,
+Alvin
 
