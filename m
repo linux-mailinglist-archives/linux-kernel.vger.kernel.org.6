@@ -1,62 +1,39 @@
-Return-Path: <linux-kernel+bounces-349996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCF0F98FE6B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:02:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B21BB98FE5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C1A1C20A2C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:02:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F1D6B21A3C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141A313D244;
-	Fri,  4 Oct 2024 08:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f3Bv4frj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B98817758;
-	Fri,  4 Oct 2024 08:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A44513D291;
+	Fri,  4 Oct 2024 08:01:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8782913B58F;
+	Fri,  4 Oct 2024 08:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728028954; cv=none; b=IXrNROnymYpKqAzoYmps7G1qvzVRCWf8hIPVbXDBIxR0rWe+nfJ7EdAGfmv6FChSHKqdKuMJVJSsxv7zbyQAMPT+fI5FDN+3jf64YcGpH540wzmUBbDv37q+k0eUD9m6fBntvlQEBq436rlT7MXjgF1rT4IJ/D9ogo4luglxfIA=
+	t=1728028895; cv=none; b=nTdD/B6Elx1irIvGyKcOlnsCziyAlcF5LyXJt0CbOfSkgIT0U8J6/FsulgjYSHpMeDemx2GfWei/6iZm/7/c8027hqNYUbrT7b1tvxwkhXVAonFEGXaM2sd3MEgEEiGR/BGCxoPLdf2+AkX/jjsl275l60SdE4+Y/e4ns3yumvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728028954; c=relaxed/simple;
-	bh=nCAdfraMrBMYOjQaxQFPKyByIAkrnpsokcrGWyl4FNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dHfxpI77qLxwgAaYvNCCOx917LD97jtXNhM1mt8/Jux9eCKW53+tt7x4o2d984XmimouR+CmFCvfVXOkKkaqrmbmmqL/ChomLx+Qg1iug1k3XmXv3dHjqyhUkVrIPeyd1GjdYlf9M3OTfIBskBalpeajwKiyufvsb0pm0mNLWPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f3Bv4frj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493LoPKu018562;
-	Fri, 4 Oct 2024 08:02:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Y6usrgQie7+gNNQ3hdRFEjpuEV0TcscHL44Hxv/X5Ww=; b=f3Bv4frjGM6NE8WF
-	SNW7233bO4i8fPf4xUp31RjIlBlHnIIAksbBNoUi6CX6fvJjIrjnZPYTFrSOZyan
-	KcSZnjuJLD1KBBrBzFPjIVSr7ZRLOd1Jdw44KKjvh2/HbiIU0m70MUYJyyk/hPhY
-	qWWFiinkxheo06LCOn7pqntTMSgHWsUi52sGXzzXvkezFP547gTBqVbrBu1NaLeN
-	ocSYFouEOxAozEljDL55/rW3x5aZLP+LVv3Okdf22XaZUR/lrp0NlRkj0D1oJiNk
-	yojmUqPGnN1lKgh6A0PXUjpvsemf2PLPor17zuEyc/lcoH5S2KNsUylcbbFLoqNn
-	638grg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205e1ew9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 08:02:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49482Apc002677
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 08:02:10 GMT
-Received: from [10.50.18.17] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 01:02:03 -0700
-Message-ID: <61299c8f-4603-4f9f-9aee-8e4e51945d44@quicinc.com>
-Date: Fri, 4 Oct 2024 13:31:59 +0530
+	s=arc-20240116; t=1728028895; c=relaxed/simple;
+	bh=ZZ2+6eYhBqp1fE5+pAZtMP2mpfuyj8H7GtB08YmVhd8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kYIfxdeoTyvDZvAosFMzr8PBKcfV/6ajkWYLsovftvv4rZOrN54rJJ6OngvG1Te3GJS0SPsSaNN8SdDuWyC6pTYc3M/rj3mRgjXlElAPwmOdqwqWv5VuKMgC6LuYeleA8Zr+KZxHg0w6e9poFqIuneVUTrQwiyExUvVW9Pv8Lpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51A3C339;
+	Fri,  4 Oct 2024 01:02:02 -0700 (PDT)
+Received: from [10.57.77.142] (unknown [10.57.77.142])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7576F3F64C;
+	Fri,  4 Oct 2024 01:01:31 -0700 (PDT)
+Message-ID: <b2d949a2-2586-44ec-b0e7-0879fd3ac7cf@arm.com>
+Date: Fri, 4 Oct 2024 09:02:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,84 +41,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 5/7] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Devi Priya
-	<quic_devipriy@quicinc.com>, <andersson@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <p.zabel@pengutronix.de>,
-        <richardcochran@gmail.com>, <geert+renesas@glider.be>,
-        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
-        <arnd@arndb.de>, <m.szyprowski@samsung.com>, <nfraprado@collabora.com>,
-        <u-kumar1@ti.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <netdev@vger.kernel.org>, <konradybcio@kernel.org>
-References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
- <20240626143302.810632-6-quic_devipriy@quicinc.com>
- <e678339b-356f-4aa4-aa04-e6e54d8e554c@linaro.org>
+Subject: Re: [PATCH v2 1/2] thermal: core: Reference count the zone in
+ thermal_zone_get_by_id()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <12549318.O9o76ZdvQC@rjwysocki.net>
+ <6112242.lOV4Wx5bFT@rjwysocki.net>
 Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <e678339b-356f-4aa4-aa04-e6e54d8e554c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <6112242.lOV4Wx5bFT@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: JPjpeUFsiMOQDb5mAYitXp9LCGrRTrmQ
-X-Proofpoint-ORIG-GUID: JPjpeUFsiMOQDb5mAYitXp9LCGrRTrmQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 phishscore=0 mlxlogscore=755
- mlxscore=0 adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1011
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410040057
 
+Hi Rafael,
 
-
-On 6/26/2024 9:09 PM, Konrad Dybcio wrote:
-> On 26.06.2024 4:33 PM, Devi Priya wrote:
->> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
->> devices.
->>
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->> Tested-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
->> ---
+On 10/3/24 13:25, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> [...]
+> There are places in the thermal netlink code where nothing prevents
+> the thermal zone object from going away while being accessed after it
+> has been returned by thermal_zone_get_by_id().
 > 
->> +	struct regmap *regmap;
->> +	struct qcom_cc_desc nsscc_ipq9574_desc = nss_cc_ipq9574_desc;
->> +	struct clk *nsscc_clk;
->> +	struct device_node *np = (&pdev->dev)->of_node;
->> +	int ret;
->> +
->> +	nsscc_clk = of_clk_get(np, 11);
->> +	if (IS_ERR(nsscc_clk))
->> +		return PTR_ERR(nsscc_clk);
->> +
->> +	ret = clk_prepare_enable(nsscc_clk);
->> +	if (ret)
->> +		clk_disable_unprepare(nsscc_clk);
+> To address this, make thermal_zone_get_by_id() get a reference on the
+> thermal zone device object to be returned with the help of get_device(),
+> under thermal_list_lock, and adjust all of its callers to this change
+> with the help of the cleanup.h infrastructure.
 > 
-> No changes to be seen..
+> Fixes: 1ce50e7d408e ("thermal: core: genetlink support for events/cmd/sampling")
+> Cc: 6.8+ <stable@vger.kernel.org> # 6.8+
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> v1 -> v2: Use the cleanup.h infrastructure to reduce the amount of code changes.
+> 
+> ---
+>   drivers/thermal/thermal_core.c    |    1 +
+>   drivers/thermal/thermal_core.h    |    3 +++
+>   drivers/thermal/thermal_netlink.c |    9 +++------
+>   3 files changed, 7 insertions(+), 6 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -728,6 +728,7 @@ struct thermal_zone_device *thermal_zone
+>   	mutex_lock(&thermal_list_lock);
+>   	list_for_each_entry(tz, &thermal_tz_list, node) {
+>   		if (tz->id == id) {
+> +			get_device(&tz->device);
+>   			match = tz;
+>   			break;
+>   		}
+> Index: linux-pm/drivers/thermal/thermal_core.h
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.h
+> +++ linux-pm/drivers/thermal/thermal_core.h
+> @@ -194,6 +194,9 @@ int for_each_thermal_governor(int (*cb)(
+>   
+>   struct thermal_zone_device *thermal_zone_get_by_id(int id);
+>   
+> +DEFINE_CLASS(thermal_zone_get_by_id, struct thermal_zone_device *,
+> +	     if (_T) put_device(&_T->device), thermal_zone_get_by_id(id), int id)
+> +
+>   static inline bool cdev_is_power_actor(struct thermal_cooling_device *cdev)
+>   {
+>   	return cdev->ops->get_requested_power && cdev->ops->state2power &&
+> Index: linux-pm/drivers/thermal/thermal_netlink.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_netlink.c
+> +++ linux-pm/drivers/thermal/thermal_netlink.c
+> @@ -443,7 +443,6 @@ static int thermal_genl_cmd_tz_get_trip(
+>   {
+>   	struct sk_buff *msg = p->msg;
+>   	const struct thermal_trip_desc *td;
+> -	struct thermal_zone_device *tz;
+>   	struct nlattr *start_trip;
+>   	int id;
+>   
+> @@ -452,7 +451,7 @@ static int thermal_genl_cmd_tz_get_trip(
+>   
+>   	id = nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
+>   
+> -	tz = thermal_zone_get_by_id(id);
+> +	CLASS(thermal_zone_get_by_id, tz)(id);
+>   	if (!tz)
+>   		return -EINVAL;
+>   
+> @@ -488,7 +487,6 @@ out_cancel_nest:
+>   static int thermal_genl_cmd_tz_get_temp(struct param *p)
+>   {
+>   	struct sk_buff *msg = p->msg;
+> -	struct thermal_zone_device *tz;
+>   	int temp, ret, id;
+>   
+>   	if (!p->attrs[THERMAL_GENL_ATTR_TZ_ID])
+> @@ -496,7 +494,7 @@ static int thermal_genl_cmd_tz_get_temp(
+>   
+>   	id = nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
+>   
+> -	tz = thermal_zone_get_by_id(id);
+> +	CLASS(thermal_zone_get_by_id, tz)(id);
+>   	if (!tz)
+>   		return -EINVAL;
+>   
+> @@ -514,7 +512,6 @@ static int thermal_genl_cmd_tz_get_temp(
+>   static int thermal_genl_cmd_tz_get_gov(struct param *p)
+>   {
+>   	struct sk_buff *msg = p->msg;
+> -	struct thermal_zone_device *tz;
+>   	int id, ret = 0;
+>   
+>   	if (!p->attrs[THERMAL_GENL_ATTR_TZ_ID])
+> @@ -522,7 +519,7 @@ static int thermal_genl_cmd_tz_get_gov(s
+>   
+>   	id = nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
+>   
+> -	tz = thermal_zone_get_by_id(id);
+> +	CLASS(thermal_zone_get_by_id, tz)(id);
+>   	if (!tz)
+>   		return -EINVAL;
+>   
+> 
+> 
 > 
 
-Hi Konrad,
+I wasn't aware of that helpers in cleanup.h.
 
-Sorry for the delayed response.
+Could you help me to understand when this this
+'if (_T) put_device((&_T->device)' will be called?
 
-The ethernet node will subscribe to GCC_NSSCC_CLK and enable it.
-Hence, it need not be obtained and setup here. Will drop this.
-
-Thanks & Regards,
-Manikanta.
-
-> Konrad
-
+Regards,
+Lukasz
 
