@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-350005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 998DF98FE98
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:07:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2590B98FE9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 191C51F24EA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:07:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9E71F2508D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC4D13CFA5;
-	Fri,  4 Oct 2024 08:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85851411C8;
+	Fri,  4 Oct 2024 08:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQcUlWWG"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rx9q7zes"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA841386B3;
-	Fri,  4 Oct 2024 08:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881A11386B3;
+	Fri,  4 Oct 2024 08:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728029176; cv=none; b=nVe+HZUOXxokCsf1nDULBz5bNoOoTzgGzy3j3rZcu/HKJhPoPSE0E/9GBWqoAP7vOI+GzgrIL5U+m19618oV1dSDfU4sFQoxtF7MtguNNg+YzafEzDzwXqfMX/r/HkaVZ+4nCIUqq91K/8pnltLhZQrIasbPqT1naOZfEPSzZxc=
+	t=1728029196; cv=none; b=nKdwSGhTVa+G+4g9z1hF80X7bABIFlmK4cfZpimQEXsHcGeogJvxBsyhdy8GrHyAV8eyx9e6uHXUOXj9EW3hD2pWtMykyenjBKjUKWpisfCUSCXX1cHP3nMNVxmjNtvnhK9h78B1idNT642yWzCbafkH4WqIj7rZSyDxXZ0/Q80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728029176; c=relaxed/simple;
-	bh=0HjU+ifdPcwtuKUfJST6QYBiE/jCS2KLfph7v3/0kg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PWlVzhF0k5lKLM00uNw6Hh2oFtMtwRTf61gJtJZINL9rhMhcaFv12jW0PYmslSz3X3P0tOpqYfgwCr3NdEH4NTfYu975y/KQ+c+peylTBXmTl2qsoLjcWuqnP5SinGm9zKDQMJtJ1m5u+t0BGP98BGWGzBglWRRjlH5bnDTVzo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQcUlWWG; arc=none smtp.client-ip=209.85.210.175
+	s=arc-20240116; t=1728029196; c=relaxed/simple;
+	bh=K6n+4UwmtZcKyoNg48rgaxKDNoW0xY/Ch+LlwWp/9K0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hBVLBbO9A071aoIo/ciOLjemo/Xk6ffV/zDdktL8wfDp4vaxcc5qS9An0USz+8+nc1PPLRuTbGQGadu8EuJ8N3Dvmga2osfDr4NxtrWUf3MTGGQRyRNUk9J+pz/dWo8feOXDdBUTM4V9ai3PwfUqE2P+9Lp/Rq4P2UssW0e8zxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rx9q7zes; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-718d704704aso1727137b3a.3;
-        Fri, 04 Oct 2024 01:06:15 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71970655611so1760230b3a.0;
+        Fri, 04 Oct 2024 01:06:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728029174; x=1728633974; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IIVOVxu9XfMaLlpy1+QMdcSq5GsuEzAvbsSA/qxcZ88=;
-        b=VQcUlWWGwN0dirdb1qZp/DuGnh8gGYPyjLkZMypJgEQWmv60v7GP1+CjryVw1A1YVU
-         8w1Dq79UraweHzSm9A56O96MKrNVFGXv4xvDn37I5WE25K68y+jjn9ghvrNb7l7ELwpc
-         LQv5/ohXX6eJHodxbMVjaTKP9cjt+vNhySyC5MXby2lEnDnoCPzo3GTFBSi1MKOxJyMj
-         IXoytt3pe8yGgmmebzejJlN+Cj8LnEPhsyxTjKim8p1UI0FN7svkoT4dTqXJcl4CxA8O
-         Wjd92/K+TDmcw3VuL9yQ9J4lHC45nEGYZOHgPhzvdwhX4bRweIprWltz+pdGm1WSSipJ
-         VEaw==
+        d=gmail.com; s=20230601; t=1728029194; x=1728633994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yn7EDiPk8tvD+amgfWsMTbLvOA9JjMtSP1WSiPFeqcM=;
+        b=Rx9q7zesACjujz29S0M6p7X6NQ2rpc0Le+3B/UNz/9G4z5ivs5L5bb7tgb+Bte3Mot
+         jFJnokYczQJdoiccpbZhRvOKCnbKrJIgE+0w9HL79+6YH9W6ZGHoJ8JPKW0nEqhuubsB
+         WWxkg9AR4WtnuMGyunJhyrm0c97bS+SkpX2+xac6HySAVVWME7kyXc5Y4j2BYLimRiJj
+         IIke6Il8vKkP3CsbB8WEX8w7U5CrmYYAb4RIb9dRoArmsVpdNg9I8wOiq4E/5mkS5RBR
+         3ETwF+82PvuCo/ky6K0iqZOU3Tr0lFfx2Bjob+IROnNdR4Xi+/Uap8KEjM7Y1Y2wju7Q
+         O1xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728029174; x=1728633974;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IIVOVxu9XfMaLlpy1+QMdcSq5GsuEzAvbsSA/qxcZ88=;
-        b=vpNAinGugkOiEyxlNaM/jfmMUo9C9MgjZzLu+vEx/TQnHflXn2cpRVYPKbBrGLwGNg
-         pr/00likRsWGb9+x9oXDaWRLNNHyYrE7ka1Zae7/fR8Wi869lA8HfPSuhs1niKUzZNTR
-         1fGrkT2fgxOE1VYQDKJ6pIUduPOhru2g7ju/TSOLBjEgl/JzWgyFEiH4Wqm0O4wcNkvZ
-         WirX0fLJ3b7U+872K5YvLF7WfrKldvVT5gjfNfGvMslhAsD/ADfV+n/k42QSZ9xTJuo4
-         XWPoZccVLawMXNDusoAsuiBGVs9rPXjCMfwgcQnRnHOj7TFsopfxBjLRj0qyyLkMXQeY
-         H9NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ5e8gNGEJQzjHB7CImHsSSs9Na+CdSCzI0vFTl+whGgYTCfIsy8h7hNIWKf5hoZl3+Jst48VkO1xk@vger.kernel.org, AJvYcCXynCxkfIOL9tkmfKTkaQo0rmuyJPWsWn1EDv8eu1FdvSPdWo1PcOt23YoTslS08rP1CeYCz9yhzTlcLbcy@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiBsYHLj5JLRXSuPImZ9Zo54JAxxP2kslc/8xxQhe0vWM/lJlH
-	1EVh3EkyiGsyfeZL1Jv6HGwAE4CUqBHoFv6yxYwVeve83ru4fUFW
-X-Google-Smtp-Source: AGHT+IFD93Hx9WdYcsinPCBU7f7jsifCqWXaRlWgBVZX2Aq7Tsr0QLF6mfhgNojtgp0wn4ICIS6pww==
-X-Received: by 2002:a05:6a00:124a:b0:70d:33b3:2d7f with SMTP id d2e1a72fcca58-71de245f650mr2912648b3a.26.1728029174386;
-        Fri, 04 Oct 2024 01:06:14 -0700 (PDT)
-Received: from localhost ([121.250.214.124])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9dcb138besm1940795a12.37.2024.10.04.01.06.13
+        d=1e100.net; s=20230601; t=1728029194; x=1728633994;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yn7EDiPk8tvD+amgfWsMTbLvOA9JjMtSP1WSiPFeqcM=;
+        b=b1hu1mkfrErOrZQ6gGsklIHKIyn+2I8VpqvQeogEPWO1xSxEfvNpP+80Nouf/XWKDF
+         3Vcg6JvlvxRiVRQZXRE62iH8bV2G3Lzsf73Dj5uqnm3a6ON/lYtDtMxrMNg/Dp60kpSM
+         bivZY0fwRFl5liLNi0aXJKDzcwOTkd1WElYbb2Y2+ZLIkK/TZcsktl+NgfZ+V/gMtHe3
+         gwFsyKNGWcTJUV7qe4yKwoKLBUUl3+GNwlkURmufugmRNVIxAs6eIJwqBmG0+aQCoCBv
+         6N6GOD4wRj8L+g0zxab7c/+k+Do2+pV3iYoLtNCQPCCE7h/O5+6svRxhU6Z67B9febul
+         j/Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCVR8Y/6Xz7e+k8rdYJw4Z3nLnnT2H3+5zOKl65dU2nBley4S29Tfg5fJy2jePUb5aYGclypL5hseoOwturx@vger.kernel.org, AJvYcCXz8jB69kHXbp+68GnhykEJJVhTHTRArL4E2opp+0pPj0wwvcxhNqqdvOKI+NcutXgzRsQLfgC9Edkk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK7e9pukd9DNT7rVS39bWN9fVKQaq+FG9jUxLtQ3Ka8q0tUnvA
+	EreN6vZR2QCFv5Psq/jDFVD3/TNhsyuabS0WIzJ/g4p0eLUDbByU
+X-Google-Smtp-Source: AGHT+IEPhKOYkZAH1L27GVScnktHV29Zg6rnYt7Aao9Pj+ivGpNBxOMvq6N+e5012LjWTi4Tl4hdpQ==
+X-Received: by 2002:a05:6a00:3c83:b0:717:8ee0:4ea1 with SMTP id d2e1a72fcca58-71de22e8399mr3349322b3a.0.1728029193671;
+        Fri, 04 Oct 2024 01:06:33 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71de63d0014sm689798b3a.190.2024.10.04.01.06.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 01:06:14 -0700 (PDT)
+        Fri, 04 Oct 2024 01:06:33 -0700 (PDT)
 From: Inochi Amaoto <inochiama@gmail.com>
 To: Chen Wang <unicorn_wang@outlook.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -85,10 +87,12 @@ Cc: Yixun Lan <dlan@gentoo.org>,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org
-Subject: [PATCH 0/3] riscv: interrupt-controller: Add T-HEAD C900 ACLINT SSWI
-Date: Fri,  4 Oct 2024 16:05:54 +0800
-Message-ID: <20241004080557.2262872-1-inochiama@gmail.com>
+Subject: [PATCH 1/3] dt-bindings: interrupt-controller: Add Sophgo SG2044 ACLINT SSWI
+Date: Fri,  4 Oct 2024 16:05:55 +0800
+Message-ID: <20241004080557.2262872-2-inochiama@gmail.com>
 X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241004080557.2262872-1-inochiama@gmail.com>
+References: <20241004080557.2262872-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,32 +101,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-New version of T-HEAD C920 implement a fully featured ACLINT[1] device
-(This core is used by Sophgo SG2044). This ACLINT device provides a
-SSWI field to support fast S-mode IPI. This SSWI device is like the
-MSWI device in CLINT/ACLINT, but for S-mode. The only thing is different
-from the draft is that the T-HEAD version SSWI needs to write 0 on the
-SSWI address to clear the IPI.
+Sophgo SG2044 has a new version of T-HEAD C920, which implement
+a fully featured ACLINT device. This ACLINT has an extra SSWI
+field to support fast S-mode IPI.
 
-Add full support for T-HEAD C900 SSWI device.
+Add necessary compatible string for the T-HEAD ACLINT sswi device.
 
-[1] https://github.com/riscv/riscv-aclint
-
-Inochi Amaoto (3):
-  dt-bindings: interrupt-controller: Add Sophgo SG2044 ACLINT SSWI
-  irqchip: add T-HEAD C900 ACLINT SSWI driver
-  riscv: defconfig: Enable T-HEAD C900 ACLINT SSWI drivers
-
- .../thead,c900-aclint-sswi.yaml               |  58 ++++++
- arch/riscv/configs/defconfig                  |   1 +
- drivers/irqchip/Kconfig                       |  10 ++
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-thead-c900-aclint-sswi.c  | 169 ++++++++++++++++++
- include/linux/cpuhotplug.h                    |   1 +
- 6 files changed, 240 insertions(+)
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+---
+ .../thead,c900-aclint-sswi.yaml               | 58 +++++++++++++++++++
+ 1 file changed, 58 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml
- create mode 100644 drivers/irqchip/irq-thead-c900-aclint-sswi.c
 
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml b/Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml
+new file mode 100644
+index 000000000000..0106fbf3ea1f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/interrupt-controller/thead,c900-aclint-sswi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sophgo sg2044 ACLINT Supervisor-level Software Interrupt Device
++
++maintainers:
++  - Inochi Amaoto <inochiama@outlook.com>
++
++description:
++  The SSWI device is a part of the riscv ACLINT device. It provides
++  supervisor-level IPI functionality for a set of HARTs on a RISC-V
++  platform. It provides a register to set an IPI (SETSSIP) for each
++  HART connected to the SSWI device.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - sophgo,sg2044-aclint-sswi
++      - const: thead,c900-aclint-sswi
++
++  reg:
++    maxItems: 1
++
++  "#interrupt-cells":
++    const: 0
++
++  interrupt-controller: true
++
++  interrupts-extended:
++    minItems: 1
++    maxItems: 4095
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - "#interrupt-cells"
++  - interrupt-controller
++  - interrupts-extended
++
++examples:
++  - |
++    interrupt-controller@94000000 {
++      compatible = "sophgo,sg2044-aclint-sswi", "thead,c900-aclint-sswi";
++      reg = <0x94000000 0x00004000>;
++      #interrupt-cells = <0>;
++      interrupt-controller;
++      interrupts-extended = <&cpu1intc 1>,
++                            <&cpu2intc 1>,
++                            <&cpu3intc 1>,
++                            <&cpu4intc 1>;
++    };
++...
 --
 2.46.2
 
