@@ -1,121 +1,173 @@
-Return-Path: <linux-kernel+bounces-351588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D637F991357
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 01:59:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F09099135B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F84A1F23F3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:59:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC7321F24431
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6CA1552EB;
-	Fri,  4 Oct 2024 23:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B979155CB0;
+	Fri,  4 Oct 2024 23:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SRzA/qLd"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Afz5uC/k"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4FD14D2B3
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 23:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A723A1552EB;
+	Fri,  4 Oct 2024 23:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728086361; cv=none; b=GMncRzW4O4MkAjeY49WDwK3wa4viZjaQzrzxD0LRDHfKFEY36FVeEcmgEEjQ9SEpHMPzCxCxKhRb6WtRd76yO8UDMEEe6gl51/JguO4iLGQqETo/gyhOjxoGNnZGuRXH6bqO7lnxzcxHTayPgykTlmYXtL2QlG8Vamj+RIXQHJ8=
+	t=1728086393; cv=none; b=Rs+vGNkum9UaAwhdjWag5FT5pDGAWlgkwS6RYcEV6p0VtzRMQrgWI7gNDsfHUFlmIZFI3HqB/lFRvS2P8HnhDGmO0XGzSFKPnAY9RBpjgwk2ohHWBy6ySm3umzwCJ30GC9xN2o5A8a66wnXfUQT2PrC/ZR0+kxP/MULDm3nT+4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728086361; c=relaxed/simple;
-	bh=LBxnYi6JWkEDu/s7q8rzjJg1t1F0DxG9EiKarQm6Bvs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ysnq748YaKgF+J6/b50k0MSaGzh5uleWzFFAbn4XQqIKz3HOUK8M0K90/E4aUB7uzQSenuot7gzhj3yddQt8h9wQwB1y7xMFI51ZCOooArElfSdQ52pL1pVENVNqhhvdpn89Cj+nIoYd3yr4qjAJKQ4BdoHRvbN7ojH1qRjMOyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SRzA/qLd; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b78ee6298so17317625ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 16:59:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728086359; x=1728691159; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ELTyDzpdOksZjoNrVzCSOk+1T+6UJusdniGL8nRZ6BA=;
-        b=SRzA/qLdwh/G4TkatousfHl2dGr0tog7Zgs4u3fqy8EsUaAMk7kRgxfvweVNO+CGxR
-         9DqimyDuqLXwoZC1MxStWMnyi6OUWUscLlDjL7gg7veeYvyIrenQMkRCH5Ed8/nUcUY9
-         3NYClLoOuD3Es6jm+1bhVTYojvkbC43lsaQQE40vmCN3azUlRCiNOIsg1cTRx7rRJ7RE
-         2lr0sRuuWOZgp1Puf35Aq+EN5qUYYiFqXNRsqIfeaE1g2cmUg3ttHtcaXQjGHtA4fPPA
-         UIvdjdqbWYaZ3eqzEgXEWK+e8Bavg9JpyU+aYT/rHUvuYUUnGnriW0V+bjP0E4skCt9d
-         Spkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728086359; x=1728691159;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ELTyDzpdOksZjoNrVzCSOk+1T+6UJusdniGL8nRZ6BA=;
-        b=dd47YcJl9hrIneK+lIGyYljZNG63Ip1P4A0QYPzWHS4YJTCwBMnirOKMtr95gtdr37
-         J88lPx6fbT4zXPRNlk1cQpBIPlsjDA+DI/iMQdY1xxLkTJSFTtleA9kuH9GRDxwXHUj2
-         1GIYoHVmG5AVGXlZM84H6fibb5lUQSWtlHNiE5GJIQu2kteJ9i6HA+c0UkkVpGceyb5x
-         JSg20QyZ+IMz3ke7JzpMupMoqy9atlDUhS4Pqqjegv6+UpFcoNhAef2KaEgbvq+iB3nk
-         J59moJ6rP3/5VCxgT+v2aapCerqa5GfGeVTpcSCcxsZ1jD92K5YVWmT7MEsp3+bojcRV
-         74lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQPZFAApuZnRtXDS5l+Eu7f/zt1PuExMttCkE+x7Y+LMmrX9+lS9knL344V76aBKfixIlFWWULCq1OOzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjRQELCuH3JbBEaGX6E2GjZJbuKBkFSm3z9mHOmX1qWgG5ZNH4
-	nipNwMG6FhBRtcTYPrLUV6FFz0IS805xhWSBMp7pscO2pZe84MLn
-X-Google-Smtp-Source: AGHT+IE4KeUCrGU0raePMGcI+7No2gZ8fga25JYXVow+n45+mMfBY6vGLyd1AwU6nr8w1On2GvMBAQ==
-X-Received: by 2002:a17:902:e547:b0:20b:b75d:e8c1 with SMTP id d9443c01a7336-20bfde5567cmr72247025ad.4.1728086358935;
-        Fri, 04 Oct 2024 16:59:18 -0700 (PDT)
-Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20c13987571sm3841785ad.250.2024.10.04.16.59.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 16:59:18 -0700 (PDT)
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
-To: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
-	David Wu <David.Wu3@amd.com>,
-	Felix Kuehling <felix.kuehling@amd.com>,
-	Mohammed Anees <pvmohammedanees2003@gmail.com>
-Subject: [PATCH] drm/amdgpu: prevent BO_HANDLES error from being overwritten
-Date: Sat,  5 Oct 2024 05:29:04 +0530
-Message-ID: <20241004235904.8605-1-pvmohammedanees2003@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1728086393; c=relaxed/simple;
+	bh=nr4GUGUStXtqD14t7ZevxhYCeurvOELE6qLbAsqBJvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ew8dr885twm1LZ7kCK9cERlGZ6z5fptTfUhJroQ+UaCC0oPF1BZEG5yPPDnzFFtgWGhLA7nREO04zHHyFRPlIQ/zt/q0N37DNyOqsbgUBIgn5Gprjo6AoCsV4RtM2JXuQ2E23atiWSohGLIY0RpqjycPjESMffDatTRtCElC758=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Afz5uC/k; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728086392; x=1759622392;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nr4GUGUStXtqD14t7ZevxhYCeurvOELE6qLbAsqBJvQ=;
+  b=Afz5uC/k0yMcUR55/0vQ5sXFENv3AXtnLEu/riReXx2dfRglJzARMeOD
+   B8xNjpvmMWHuQDtuXpE8RVr9gVd03ZJXaVNfG2Xyx3O1XeNUUVwu14gtP
+   09qY8zdN2Z9Mt7pmF4ADQ9bQ+j0EdNkWiP+IulkdG2e7Oa5XvHIMUsURJ
+   Z6V0U6Jm/88S5PV5hcpcEL+o1Wy7zZd/q6h4S2rGgs/GEO/EQmJGEEQwQ
+   aHGbZ81Gn0HXhRP9Wdt8msfFIMA1UiPsYhaHBhAcoPgJzegZ1OXlPbexg
+   Lt1Zlh66uO4AfRCPN3xmLeshkrFFiDd1UDYKtXcChqLk9JsSB40jaOABv
+   w==;
+X-CSE-ConnectionGUID: rcMEP+WmS6G8Lapqx6jBgQ==
+X-CSE-MsgGUID: Ccn8La+cRsqGhsZ8UVJhkQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="27456451"
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="27456451"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 16:59:52 -0700
+X-CSE-ConnectionGUID: r4hSBamkQvqDiGw8qBDzCg==
+X-CSE-MsgGUID: kSuRW7wQSN++WA4YrXARVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="75290556"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 04 Oct 2024 16:59:46 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swsD2-0002M1-0Q;
+	Fri, 04 Oct 2024 23:59:44 +0000
+Date: Sat, 5 Oct 2024 07:59:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org, oleg@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, rostedt@goodmis.org, mhiramat@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+	paulmck@kernel.org, willy@infradead.org, surenb@google.com,
+	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com,
+	brauner@kernel.org, jannh@google.com, mhocko@kernel.org,
+	vbabka@suse.cz, mingo@kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH v2 tip/perf/core 5/5] uprobes: add speculative lockless
+ VMA-to-inode-to-uprobe resolution
+Message-ID: <202410050745.2Nuvusy4-lkp@intel.com>
+References: <20241001225207.2215639-6-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001225207.2215639-6-andrii@kernel.org>
 
-Before this patch, if multiple BO_HANDLES chunks were submitted,
-the error -EINVAL would be correctly set but could be overwritten
-by the return value from amdgpu_cs_p1_bo_handles(). This patch
-ensures that once an error condition is detected, the function
-returns immediately, avoiding the overwriting of the error code.
+Hi Andrii,
 
-Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-index 1e475eb01417..543db0df9a31 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-@@ -266,8 +266,9 @@ static int amdgpu_cs_pass1(struct amdgpu_cs_parser *p,
- 			/* Only a single BO list is allowed to simplify handling. */
- 			if (p->bo_list)
- 				ret = -EINVAL;
-+			else
-+				ret = amdgpu_cs_p1_bo_handles(p, p->chunks[i].kdata);
- 
--			ret = amdgpu_cs_p1_bo_handles(p, p->chunks[i].kdata);
- 			if (ret)
- 				goto free_partial_kdata;
- 			break;
+[auto build test ERROR on tip/perf/core]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/mm-introduce-mmap_lock_speculation_-start-end/20241002-065354
+base:   tip/perf/core
+patch link:    https://lore.kernel.org/r/20241001225207.2215639-6-andrii%40kernel.org
+patch subject: [PATCH v2 tip/perf/core 5/5] uprobes: add speculative lockless VMA-to-inode-to-uprobe resolution
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20241005/202410050745.2Nuvusy4-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410050745.2Nuvusy4-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410050745.2Nuvusy4-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   kernel/events/uprobes.c: In function 'find_active_uprobe_speculative':
+>> kernel/events/uprobes.c:2098:46: error: passing argument 2 of 'mmap_lock_speculation_start' from incompatible pointer type [-Wincompatible-pointer-types]
+    2098 |         if (!mmap_lock_speculation_start(mm, &seq))
+         |                                              ^~~~
+         |                                              |
+         |                                              long int *
+   In file included from include/linux/mm.h:16,
+                    from arch/loongarch/include/asm/cacheflush.h:8,
+                    from include/linux/cacheflush.h:5,
+                    from include/linux/highmem.h:8,
+                    from kernel/events/uprobes.c:13:
+   include/linux/mmap_lock.h:126:75: note: expected 'int *' but argument is of type 'long int *'
+     126 | static inline bool mmap_lock_speculation_start(struct mm_struct *mm, int *seq) { return false; }
+         |                                                                      ~~~~~^~~
+
+
+vim +/mmap_lock_speculation_start +2098 kernel/events/uprobes.c
+
+  2086	
+  2087	static struct uprobe *find_active_uprobe_speculative(unsigned long bp_vaddr)
+  2088	{
+  2089		struct mm_struct *mm = current->mm;
+  2090		struct uprobe *uprobe = NULL;
+  2091		struct vm_area_struct *vma;
+  2092		struct file *vm_file;
+  2093		loff_t offset;
+  2094		long seq;
+  2095	
+  2096		guard(rcu)();
+  2097	
+> 2098		if (!mmap_lock_speculation_start(mm, &seq))
+  2099			return NULL;
+  2100	
+  2101		vma = vma_lookup(mm, bp_vaddr);
+  2102		if (!vma)
+  2103			return NULL;
+  2104	
+  2105		/* vm_file memory can be reused for another instance of struct file,
+  2106		 * but can't be freed from under us, so it's safe to read fields from
+  2107		 * it, even if the values are some garbage values; ultimately
+  2108		 * find_uprobe_rcu() + mmap_lock_speculation_end() check will ensure
+  2109		 * that whatever we speculatively found is correct
+  2110		 */
+  2111		vm_file = READ_ONCE(vma->vm_file);
+  2112		if (!vm_file)
+  2113			return NULL;
+  2114	
+  2115		offset = (loff_t)(vma->vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vma->vm_start);
+  2116		uprobe = find_uprobe_rcu(vm_file->f_inode, offset);
+  2117		if (!uprobe)
+  2118			return NULL;
+  2119	
+  2120		/* now double check that nothing about MM changed */
+  2121		if (!mmap_lock_speculation_end(mm, seq))
+  2122			return NULL;
+  2123	
+  2124		return uprobe;
+  2125	}
+  2126	
+
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
