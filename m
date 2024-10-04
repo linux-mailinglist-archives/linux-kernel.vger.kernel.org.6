@@ -1,137 +1,92 @@
-Return-Path: <linux-kernel+bounces-350602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42AE2990761
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:25:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04735990765
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050E528719E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A570A286239
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8EE1C75F6;
-	Fri,  4 Oct 2024 15:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF121AA7B6;
+	Fri,  4 Oct 2024 15:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="YGKx+jKe"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/OrqZHE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF2D1AA7A2;
-	Fri,  4 Oct 2024 15:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32445481CE;
+	Fri,  4 Oct 2024 15:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728055475; cv=none; b=swRjYw8jjb9x0gCAT1xaWQlhGI2+vdNHYM3dEJbnpIK5JTljap4tX8hRK5gAUzeP4AA1mosKMfHx+BpNDU5rpUhF0v8xmbe7QbhTDt/iTRfTtJlzFOqyF7iMfTz0T939Veupx6Gf+EIR7/DDGmsdUGWenffL4Tq+M2Znwv5f2+0=
+	t=1728055493; cv=none; b=Q7IKuWsEza0dV4Gkw17LTcU3/9eLU8RZB7j0OQQ9R/lPymNrTojHSdJEqomwidFH4yDV6e5O3DVT6KN4MuXcWvYhkgBzsjE/TKQ95PSraG+EZw3t6phgFn828lPYynQibIEVC1ZHwdtEfYvZU8jc2IPAV5eEANAUek51vTC2AKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728055475; c=relaxed/simple;
-	bh=SBkiaUlKESpkzxowsLPzQ06N4HMke3qJ1FgvApVwVUo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=leeljoPMUo8NjJ+e1Tg3BllVVsOipGqibkq/bc0QI+fqRYjZYmkMqwiI51rgln6XcVXpoIvJ+OTjUHgsNXnU47s2QakRts6/VNXXgYrXdGBru2Fw57vH35yTcHaMrGhJtHSG0HO4jf9fjoMb59wfz84lAdljsLSgF3apkjWUKJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=YGKx+jKe; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 7E66320E6A;
-	Fri,  4 Oct 2024 17:24:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1728055472;
-	bh=KptdMQH+uxSKHP9pjmqfYtljNFGdshmXN06eLUlgi/0=; h=From:To:Subject;
-	b=YGKx+jKeyGwPTK6aIWenY7KyUgJC/HHQa++ChR1Or7cZQhgrC8EKpXUzOQDC4HWZz
-	 ES2ETkNGTfLHiLANHkUnT43CETfYs0cab1VDsX4ncnR9XdM1DwIuUD3MCcMNyCV2mw
-	 xYme84OqXN9W6XdQZmzVEbMsi+2a8Z7AzObRU1vcNZgrii+eL1idZnuqyKe5xNBMmT
-	 SdeCfO7U0ikw0LEaNAhNDfBxzhjr8wi2+5OM7c/WAXfFJIG6uy3u8hhaeyAgXtKdF7
-	 yMrihUVHdWbaWh18/u+pXYzXzqQj0Xpglyv+gB1OirYG4LI4SCkiu3lQKfcAv/5NR3
-	 rs7g2XPDZA0qA==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Wei Fang <wei.fang@nxp.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Linux Team <linux-imx@nxp.com>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
-	imx@lists.linux.dev,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Frank Li <Frank.Li@nxp.com>,
-	Rafael Beims <rafael.beims@toradex.com>
-Subject: [PATCH net-next v4 3/3] net: fec: make PPS channel configurable
-Date: Fri,  4 Oct 2024 17:24:19 +0200
-Message-Id: <20241004152419.79465-4-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241004152419.79465-1-francesco@dolcini.it>
-References: <20241004152419.79465-1-francesco@dolcini.it>
+	s=arc-20240116; t=1728055493; c=relaxed/simple;
+	bh=SNsQXTK1hQBmBp0m1IgGUkJYgXLqNVqg4Qz9jYygkQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sXlKpe0CI0vE0jJRImCftp7iOBFhPDpfnHdHR6MSPdXskTR+xcCjO2nWu1ofYqud6UeP+FmwRmwHHfvsyRBNQxHUCjEZKPq0tklvW2+6OUx+E+Ka/klNWUH5dmR7+lKroOSZutbVkQwPhduiRZvkODczk+C6LS34Wxu/vSh7txk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/OrqZHE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0793AC4CEC6;
+	Fri,  4 Oct 2024 15:24:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728055492;
+	bh=SNsQXTK1hQBmBp0m1IgGUkJYgXLqNVqg4Qz9jYygkQQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C/OrqZHEDMFpctn1qkqSvyPzCQvfO4XSkzCvulE5hgFM/wB30envTH5zyizRS4/8t
+	 3JqOsZW7xH5yqAmB+7QlSE9W0E3QUCnzFFrVseAH8vVOyTcmzKHmhWYBs7FaHzRqgu
+	 SntHsEny4fYa4TqvI/IOdeTPJ2MlsBAsr92eVK+leKPK6dS+Beeax2ove5fEmccent
+	 rhYCxtB2bvEMRFI2AG+pi0NU9NcI1yb0/H1GtGCFhH7S+p0jomjFNvoiYhwBWKReec
+	 QiBHI7v/3zMnHQogMPxH9BSOHB7KAGezjOT77qK6F3ZDCvd7OJjSrIIsfbYEJj1xeH
+	 GZNxK8OgDhb5w==
+Date: Fri, 4 Oct 2024 16:24:47 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+Cc: amitkumar.karwar@nxp.com, neeraj.sanjaykale@nxp.com,
+	marcel@holtmann.org, luiz.dentz@gmail.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, m.felsch@pengutronix.de,
+	bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+Message-ID: <20241004-coke-stimuli-4b8aa1be0782@spud>
+References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="+hmX0S2hU71VqjfY"
+Content-Disposition: inline
+In-Reply-To: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
 
-From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-Depending on the SoC where the FEC is integrated into the PPS channel
-might be routed to different timer instances. Make this configurable
-from the devicetree.
+--+hmX0S2hU71VqjfY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-When the related DT property is not present fallback to the previous
-default and use channel 0.
+On Fri, Oct 04, 2024 at 01:35:56PM +0200, Catalin Popescu wrote:
+> Add support for chip power supply and chip reset/powerdown.
+>=20
+> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Tested-by: Rafael Beims <rafael.beims@toradex.com>
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
-v4: no changes
-v3: no changes
-v2: add Reviewed|Tested-by
----
- drivers/net/ethernet/freescale/fec_ptp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
-index ce7aa2c38c7f..aea24575e840 100644
---- a/drivers/net/ethernet/freescale/fec_ptp.c
-+++ b/drivers/net/ethernet/freescale/fec_ptp.c
-@@ -523,8 +523,6 @@ static int fec_ptp_enable(struct ptp_clock_info *ptp,
- 	unsigned long flags;
- 	int ret = 0;
- 
--	fep->pps_channel = DEFAULT_PPS_CHANNEL;
--
- 	if (rq->type == PTP_CLK_REQ_PPS) {
- 		fep->reload_period = PPS_OUPUT_RELOAD_PERIOD;
- 
-@@ -706,12 +704,16 @@ void fec_ptp_init(struct platform_device *pdev, int irq_idx)
- {
- 	struct net_device *ndev = platform_get_drvdata(pdev);
- 	struct fec_enet_private *fep = netdev_priv(ndev);
-+	struct device_node *np = fep->pdev->dev.of_node;
- 	int irq;
- 	int ret;
- 
- 	fep->ptp_caps.owner = THIS_MODULE;
- 	strscpy(fep->ptp_caps.name, "fec ptp", sizeof(fep->ptp_caps.name));
- 
-+	fep->pps_channel = DEFAULT_PPS_CHANNEL;
-+	of_property_read_u32(np, "fsl,pps-channel", &fep->pps_channel);
-+
- 	fep->ptp_caps.max_adj = 250000000;
- 	fep->ptp_caps.n_alarm = 0;
- 	fep->ptp_caps.n_ext_ts = 0;
--- 
-2.39.5
+--+hmX0S2hU71VqjfY
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwAIvwAKCRB4tDGHoIJi
+0sJhAP4gCQ2nSaAYtCDEei6OcSuCBWS4sDcYFkR6cUUNX11iBAEAiVncy3j6EGC1
+yDScHH0bKV1DODnMY2v6Zp7zvLwnswY=
+=871w
+-----END PGP SIGNATURE-----
+
+--+hmX0S2hU71VqjfY--
 
