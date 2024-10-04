@@ -1,144 +1,173 @@
-Return-Path: <linux-kernel+bounces-349933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F8D98FD87
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:51:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C465898FD8D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E38C1F235BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820E52839CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE51B13210D;
-	Fri,  4 Oct 2024 06:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3C613210D;
+	Fri,  4 Oct 2024 06:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRfd5RcU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GH3q6Kaa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534D126281;
-	Fri,  4 Oct 2024 06:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB8E26281
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 06:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728024679; cv=none; b=L8mNZWhEdGbSgpH4Kc3uBPCGZx2s1JYZ888s/mRbKTmzwsUdt61kzXCxAUhUwrfXfvUooC3igJI4T5FyCFxVtzcQd5fsH5PVQPvlUCoy2NEybRCIikmzTNaVi1PepAOMIYwTaGxjfY5HSxEIYUtAWMMBSxSar2e37LwBpTIUt2c=
+	t=1728024854; cv=none; b=Nm0Q9P+RAbC54YncR5tWGHSk4VKEe1cfIK4QYzojbavGlabDxPmUib9l8ulQl1MiLCRzL5cj65mDVg9iIQaJixT15TfbnZ4urbWwLDrDR+n/joNs7dlYITYP0/sDguly7oFNPZqF3sgucAsoh+rq61h5lhGaP1b6ys5h7QRjsO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728024679; c=relaxed/simple;
-	bh=fSV8AonMVDpdw/ciW3KPmZT06dPfAKvEUnyW6pn0zi8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ao5r7xhRBnMi3S/xPnZfn1dcKBAXYY5PaTQkkRTclkzf96T/uYyZjriIFHGDx1b9p1bUEXuKbcLREGJQOnDpeR+Jd+JyEa2Vuomk1+TTyMDcvHUggGbBufdEAeTMTvjwPaox9uR3fEKlnZBw5Os1HE4Gkh5nfgN4eAPIScDRFtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRfd5RcU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84AA5C4CECC;
-	Fri,  4 Oct 2024 06:51:13 +0000 (UTC)
+	s=arc-20240116; t=1728024854; c=relaxed/simple;
+	bh=dHbeqTOFijkf+HG0GxeHaA5ZnKKP1WS0EPmt37KZWYM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=XfHIE2SaqdLJe/srGh3ts71wXFpxfutxGWfAYSUkd8NksZ+ZpObq8r6X1dYw9txlGT+4Me/69zVF17E6M2kRdWLvzp15LsKAAH7pxmATDRSUPwb6l8bKrrLRyjwhMVfFdVPpZdmeWNHZ952PpSS57Fz/4PuIXmT2F8rB1+d4BN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GH3q6Kaa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1089C4CEC6;
+	Fri,  4 Oct 2024 06:54:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728024677;
-	bh=fSV8AonMVDpdw/ciW3KPmZT06dPfAKvEUnyW6pn0zi8=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=kRfd5RcUqf4+QJpAePEAnaMP3eau9/2zxUs+zc+HFmylbG9xl6PzhqiRqXKqNRGhd
-	 H5LJwmaKbSHjpjyh8O/3lBAJ1mnwxklVwpnshMo+M8HGZ80n7KwDfHYYMYp3v4wD13
-	 6WAEQmOdb6VVJl29RgIqwp8wJsZMu+ycLyDNpqXgPGhPYfnHT7rz/Z1cyIDZ3GuEIn
-	 Vv1bTfVRkl5aruMZjmzyPYp810tHZY3xKrEIr8KV94d0+2uNH7TqNuA/o4SrKJqvUo
-	 +VyxdZ4rOEZg+W0ZF6JCIb3I/aep8yZz5acTYFc4czXazDF8mzdrMPnLF/5mwL7q7Z
-	 XBcQhyIBq7SIQ==
-Message-ID: <80a9ec34-52eb-41fa-b068-3c9552065927@kernel.org>
-Date: Fri, 4 Oct 2024 08:51:11 +0200
+	s=k20201202; t=1728024854;
+	bh=dHbeqTOFijkf+HG0GxeHaA5ZnKKP1WS0EPmt37KZWYM=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=GH3q6Kaa5r5RSbncazDzIPRYW1dDSe/EHsUU81j78iA9l1SSDX4NgC0GGrddXCpMQ
+	 azRJvdZFhoZsNCEmUbMgiCMWKTFDS5PnE8aAl1ocLdc9JPpL3EAAIG/v7jAhwKRM8a
+	 Ul5b43c9YVIoASViyJ1Tr0h69EitJLgKxB1KKFHjKf80xgTzldbSoeGl7KXnagW5TE
+	 tdBfKzGjjFWVYyKSiuPSJagfiHFuxPmYMcvs7bWM/yrTuHUlqQGMvA6VrFRkzVkUZk
+	 21QBUPnXYg40VkPMnWT5z+5hrKcFqaOQMZT0E4z5B2lx4swXDUeICws2Pg+jU+4kG9
+	 BSmWhKEtBuF6Q==
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id F3DEC1200069;
+	Fri,  4 Oct 2024 02:54:12 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 04 Oct 2024 02:54:13 -0400
+X-ME-Sender: <xms:FJH_ZjX-mTJ5qSZB52-76AC1bEOrsGJ2LzotzJ6LyrcPXzg3SSjetQ>
+    <xme:FJH_Zrn2xnyE9p1sON2MpfX9AIRoFVWNulLkJCaU2Af3tfQxxaVD-cXrTy6Ra71o1
+    VuLdrNxqh4sT4q_m0w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvvddguddugecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvg
+    hlrdhorhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeef
+    iedtudeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
+    ihhthidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlh
+    drohhrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehhtggrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepshgthhhnvghl
+    lhgvsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinh
+    gvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhi
+    nhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmrggtrhhosehorhgtrg
+    hmrdhmvgdruhhkpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:FJH_ZvaaTbq7YwQP5PTXD8qijyf0GwxK1lwDYe3ZeMg-rtHaUXTPUw>
+    <xmx:FJH_ZuVq739NZbNaUqYvIOpOTa-pTJagZeYIkFWoI9gjNdOMGKZEow>
+    <xmx:FJH_ZtkFWvBsiPVEIm2_wQJTzBcKrRVM3C2Unrc6FvR3TwwibsxcSg>
+    <xmx:FJH_ZrcPiEougHjDp2aRgjiB43kXD2juTSb3l7yUNGNyGdctbHTHmQ>
+    <xmx:FJH_ZnGsXpuGcmOzHAbcobxQeY-beaijC00gDHCVORFNfN0VqK0Gii2m>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C11CB2220071; Fri,  4 Oct 2024 02:54:12 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm64: bcmbca: Add Zyxel EX3510-B based
- on BCM4906
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- William Zhang <william.zhang@broadcom.com>,
- Anand Gore <anand.gore@broadcom.com>, Kursad Oney
- <kursad.oney@broadcom.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241003220820.1345048-1-CFSworks@gmail.com>
- <20241003220820.1345048-2-CFSworks@gmail.com>
- <3okd7byomwmo5vjsyaaxsorhn6ldw3mp3k6whcklqnw2stx5tm@jpv2e5ydswzw>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <3okd7byomwmo5vjsyaaxsorhn6ldw3mp3k6whcklqnw2stx5tm@jpv2e5ydswzw>
-Content-Type: text/plain; charset=UTF-8
+Date: Fri, 04 Oct 2024 06:53:51 +0000
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: "Niklas Schnelle" <schnelle@linux.ibm.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
+ linux-kernel@vger.kernel.org
+Message-Id: <b59d81ee-04af-4557-9d35-ec2c03fbcbe7@app.fastmail.com>
+In-Reply-To: <alpine.DEB.2.21.2410022305040.45128@angie.orcam.me.uk>
+References: <20240405152924.252598-1-schnelle@linux.ibm.com>
+ <20240405152924.252598-2-schnelle@linux.ibm.com>
+ <alpine.DEB.2.21.2405230244140.1257@angie.orcam.me.uk>
+ <ef2912910d006c573324bcf063cb76e843dc8267.camel@linux.ibm.com>
+ <alpine.DEB.2.21.2410011707550.45128@angie.orcam.me.uk>
+ <7bcec0eb88c3891d23f5c9f224e708e4a9bb8b89.camel@linux.ibm.com>
+ <alpine.DEB.2.21.2410021632150.45128@angie.orcam.me.uk>
+ <84bbda13-ded1-4ada-a765-9d012d3f4abd@app.fastmail.com>
+ <alpine.DEB.2.21.2410022305040.45128@angie.orcam.me.uk>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 04/10/2024 08:49, Krzysztof Kozlowski wrote:
-> On Thu, Oct 03, 2024 at 03:08:19PM -0700, Sam Edwards wrote:
->> This is a series (EX3510-B0 and EX3510-B1) of residential gateways based
->> on BCM4906, a stripped-down version of the BCM4908 SoC. Although Zyxel's
->> marketing materials call this a "series," the EX3510-B1 appears to be a
->> very minor revision of the EX3510-B0, with only changes that are
->> transparent to software. As far as Linux is concerned, this "series"
->> effectively represents a single model.
->>
->> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
-> 
-> Can you use the same email as for SoB?
+On Wed, Oct 2, 2024, at 22:59, Maciej W. Rozycki wrote:
+> On Wed, 2 Oct 2024, Arnd Bergmann wrote:
+>> Part of the problem that Niklas is trying to solve with the
+>> CONFIG_HAS_IOPORT annotations is to prevent an invalid inb()/outb()
+>> from turning into a NULL pointer dereference as it currently does
+>> on architectures that have no way to support PIO but get the
+>> default implementation from asm-generic/io.h.
+>
+>  It can be worse than that.  Part of my confusion with the defxx driver 
+> trying to do port I/O with my POWER9 system came from the mapping actually 
+> resulting in non-NULL invalid pointers, dereferencing which caused a flood 
+> of obscure messages produced to the system console by the system firmware:
+>
+> LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> IPMI: dropping non severe PEL event
+> LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> IPMI: dropping non severe PEL event
+> LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> IPMI: dropping non severe PEL event
+> LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> IPMI: dropping non severe PEL event
+> [...]
+>
+> from which it was all but obvious that they were caused by an attempt to 
+> use PCI port I/O with a system lacking support for it.
 
-I meant, same for patch author and SoB. How is even possible to generate
-different data? You had to change it manually, which should make you
-wondering if this is correct.
+Ah, that's too bad. I think this is a result of the patch that
+Michael did to shut up the NULL pointer warning we get, see
+be140f1732b5 ("powerpc/64: Set _IO_BASE to POISON_POINTER_DELTA
+not 0 for CONFIG_PCI=n"). I really wish we could have finished
+Niklas' series earlier to avoid this.
 
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
-> 
+>> I think that anyone using hardware that relies on port I/O on
+>> non-x86 is at this point going to have a reasonable understanding
+>> of the system, so I'm not too worried here. ;-)
+>
+>  Well, virtually all non-x86 systems continue supporting PCI/e port I/O 
+> via a suitably decoded CPU-side MMIO window, so I think coming across one 
+> that doesn't can still be a nasty surprise even in 2024.  For instance 
+> I've been happily using a PC parallel port PCIe option card, one of the 
+> very few interfaces if not the only one remaining that have not ever seen 
+> an MMIO variant, with my RISC-V hardware, newer than said POWER9 system.
+>
+>  So far it's been the s390 and a couple of POWER system implementations 
+> that have support for PCI/e port I/O removed.  Have I missed anything?
 
-Best regards,
-Krzysztof
+I meant PCIe cards with I/O space here, not host bridges. I know you
+have a lot of them, but what I've heard from Arm platform maintainers
+is that they tend to struggle finding any PCIe cards to test their
+hsot bridge drivers on, and I expect that a lot of them are actually
+broken because they have never been tested and just copied the
+implementation badly from some other driver.
 
+I think the only new PCIe devices you can find today that still use
+I/O space are ones with compatibility registers for IBM PC style
+hardware (vga, uart, parport), but most users would never have used
+one of those and instead use the native register interface of their
+GPU (on non-x86), USB-serial and no parport. Other devices that
+needed I/O space never worked on PCIe anyway because of the lack
+of ISA style DMA.
+
+There are also a lot of Arm systems that have no I/O space support at
+all, such as the Apple M2 I'm using at the moment.
+
+      Arnd
 
