@@ -1,269 +1,194 @@
-Return-Path: <linux-kernel+bounces-351509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3168D991249
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:25:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E0B2991255
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5476E1C23021
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:25:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5760E2814A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B86E1B4F37;
-	Fri,  4 Oct 2024 22:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890621AA78A;
+	Fri,  4 Oct 2024 22:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l2vl0oSc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pRateUr3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2EB1B4F28;
-	Fri,  4 Oct 2024 22:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728080704; cv=fail; b=B/zcoqhgTV/lYFi9WyvzIL+t9o2/GJtSEkNFdvMEyhnROvHs5ci5/kTFpxOXxsbV6I5o8G5hbfiwgGhbIf9GPyPX99qvSlphniPGgVj8z0zyEjSK5IM9xgReV2sBwEdiscelgBh9r4UnbvNIynXrNhPEYq8d0Kpobkr4G42An9Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728080704; c=relaxed/simple;
-	bh=iR5eIxRcXUcKTArpVIijIiSuKGYG7DnkIgmJ19MHeD0=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Aappyz1ZpW5X3exsK3iTIxgqf6voDkyV4CiSa+cim4MY4TKHMztUzdElgBGqCsX67rsTo0DZIIHvG8A1zspfYaaiyul4Oujlp2DYTOs+zXeLqYMk6S2LYZzP2r46mjtOypWzbxT4kwQ8LzTqRaIVSwfLKvNeswSFNbKVPS7PHrg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l2vl0oSc; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728080703; x=1759616703;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=iR5eIxRcXUcKTArpVIijIiSuKGYG7DnkIgmJ19MHeD0=;
-  b=l2vl0oSc37RV/LXHXBpP62SBKlxBohb+vGmuTfyuQpsdRilUx7ekaznV
-   PAeQ+N0Ytaj61jkn7SKMZa6ujZ0iDUXLip6j++ZDJ7xFGTFjdG9+/R8ER
-   nCywe0tsstLiJE5p9IeDKjJ7hsrjE84mFlCZkbRTnQs89SXG2lYIFMTTr
-   gybU2grKuswHKe83E+YCB4kHLUHYBz0pIQFAiFW1zGPI8xCcXFqPmgqiT
-   zUeIWcgSAJ/lhnctOVEKVlAKABVaGEtO4Ah1l6dCwqyN7XIT+qnTuuxNN
-   vrcedHB7FPUclqz5NOQt0uG67uSd1YVRiRGX+HXe0SpKdieK1dXPaXu4j
-   A==;
-X-CSE-ConnectionGUID: BGxIWQfsTWC5IhKU2MA6uQ==
-X-CSE-MsgGUID: G5QyrTgnTF+4MP2tO4hu1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="27447291"
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="27447291"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 15:25:02 -0700
-X-CSE-ConnectionGUID: aW6eLONTRG2ZBgwhGH4zNw==
-X-CSE-MsgGUID: fmOVum5tRpum/L+/S67LGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="75659980"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Oct 2024 15:25:03 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 4 Oct 2024 15:25:01 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 4 Oct 2024 15:25:00 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 4 Oct 2024 15:25:00 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 4 Oct 2024 15:25:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bBtL6nrg5+eRiHkZY+2cBFibTTlbockV+fqzyGNiBLpehuFyHkU4dcqc32WY/4A9heUmFRhpNWSrrdm7Vtz/9SW8PoRyqgzJyShAOKMYrCYdkbni9JzY1TPkxE7NBdmuQodvdx8sroYjGLrFhSDG6aw7VnyHD4YV8p8fuhGx85sZIBrZSy4T9OZjbrxaR2LPutqGwU9bwUSRh76EaCPAg0LRy3XxiZvrVfBI91O5iS/+s+IDVItH7IQ+UgEUTEMw7A5FBEQgub/asxlYCkwa8PwjMVhvmUoPkZPxrYLZAyiJujNqamXU2d+06PuSNPKn54gUuix0s+X3HR3kahUmNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mKPZHizYrZKZeBns/oYtARpcaWgp5n4d64xhyGiLc6I=;
- b=Di8MJZECd6iWzjQCeYzCBEUPi0UGbJHYUl7jZVyN8f2xBR1niwvareKoA08CG5Eu3gHgHHUrqfZgY2xiRVN7xcYnPFDRcI67nLUYXV78tKOQrIf5kuo6+Y32LZSgO3CEayx8S3WTI3ZJstVAPrbidUkmajo5YMSmXr0mmDhc2aM4t+ZWIbuqX+A798yry5RvhHYmjeR8cQKHUqmsy6wYKs94UjbZcAk2xH2FQsf65pYEOsWQH/t4UjJ2wEPWn5qU/ApM7UsFIo8PRhaEwLP+NW6D7QLVUHcIybRUsjRVqpb92/9f/qQt2UnPAVLZ9R9gIf7NWVlt0LQSrZOJEK6IZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SA1PR11MB7112.namprd11.prod.outlook.com (2603:10b6:806:2b7::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Fri, 4 Oct
- 2024 22:24:57 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8026.017; Fri, 4 Oct 2024
- 22:24:57 +0000
-Message-ID: <17724709-cb1e-4d27-8e02-e5d84f84a10a@intel.com>
-Date: Fri, 4 Oct 2024 15:24:55 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 13/13] selftests/resctrl: Keep results from first test
- run
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: <fenghua.yu@intel.com>, <shuah@kernel.org>, <tony.luck@intel.com>,
-	<peternewman@google.com>, <babu.moger@amd.com>,
-	=?UTF-8?Q?Maciej_Wiecz=C3=B3r-Retman?= <maciej.wieczor-retman@intel.com>,
-	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <cover.1726164080.git.reinette.chatre@intel.com>
- <46200b49e874c69a05538b813852af0e1eeeea4c.1726164080.git.reinette.chatre@intel.com>
- <45af2a8c-517d-8f0d-137d-ad0f3f6a3c68@linux.intel.com>
-Content-Language: en-US
-From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <45af2a8c-517d-8f0d-137d-ad0f3f6a3c68@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW2PR16CA0024.namprd16.prod.outlook.com (2603:10b6:907::37)
- To SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA2C231C9F;
+	Fri,  4 Oct 2024 22:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728081063; cv=none; b=k76RAVDLiOAyU/wSFKKYrfI+M+2DCVz3N2N/MVwiNNGLCoFzfKYOtrINOnvQJC+CMkOneOZyMuDwP5aRfXlHNwXaPnswzn4LpDyEcSGR1tuHHB61OyZfcN0hs13mqLR/TSzCl5fzRNe+XJUPGGOpd3e4PnoXGehH2eS1YEUCQEM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728081063; c=relaxed/simple;
+	bh=BgRwyliACBnT66ihhfVej0/HJsEABY7aPb6zx0dkdzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=txb4jmR/toAHTFsBAaA/W15S5GMlN2VvVQ3f/vBvMYm2bpmVIUykAcF19VYvYaRqptOEsdyKDXFR6SKPdBju7V0YHKmIL6LTu7mf7Iq06WFUNgotgbnDprC6tsKaNUPl6QLUTK4rNeluYfVcU6mZXPnQgSGIL13Y8u2JaNp1GH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pRateUr3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494BE9gJ017372;
+	Fri, 4 Oct 2024 22:30:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sIIFuxFWnisemmQkJjj2CElTPnR87/XsEZKsQqMKHYE=; b=pRateUr3FzKlWwuC
+	tE24QdeNG8KNlFFF1cpvsNNohbWvyXTmQ8mJLBhjJxnPzbdOdCUS2B4bKj8pRx/A
+	p8x3I5Gu0ic5cCIFlsGYP/d6117YnyGLqB+d7M0mQwtjzK8Ap77k9UnEAmrLkjJ/
+	6b1op8maOP5rBd/HDG0+FlxAe3jON1t/Cc3bTNQE5S8RNYeNeEhtGzacM2/dWTaO
+	LrxXg3kQ1NYJEh6vLN08iw2pRQOXF7TIwaCEybAPplGn+Cpgk4FfP/XNFYW0OsFO
+	lw7n+nMdEFUJifOOLKvapjuem+eMDGN+foUww2wtlPOdM4ZNuiyPFdKYurw6FCPm
+	Y1sr8A==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205n3dfw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 22:30:51 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494MUo84032475
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 22:30:50 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
+ 15:30:49 -0700
+Message-ID: <cf68b09e-ab3a-4e69-a7b8-7edddcf1c6c4@quicinc.com>
+Date: Fri, 4 Oct 2024 15:30:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SA1PR11MB7112:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9825f37d-d15b-42df-e002-08dce4c360b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?b3M1Y2hPU2J4YUdKVGpnbEkvN1pqOUw2R0k4S3BYWUlZUW5ETEd5WHNkVExC?=
- =?utf-8?B?SExuQlZ6L043MzRianA3NTdmRVpwbUxoVnd1bnI2aTNlZmJJS2RmeHRMZGtz?=
- =?utf-8?B?L2pINlJ4S0plVzJpWHF5MmxmS1hjNnluR0dwK3dCQUs3Z3EwVUF3cU42Ly9C?=
- =?utf-8?B?RHFCeWRsbUdMZ3VwOCswZXZXcTREV3VpNlR6TUZDMXNYcnkrbmRENEpmT3pI?=
- =?utf-8?B?b2lQVkNhcjF2SEkvRVVRMWNzaWM2UGNxcXFhV1Jkb3JSRDdlUWF5cU9EZi84?=
- =?utf-8?B?SHFZVXpBb3MyK3JFL3VZQUxwdFpJSGxESFlyazV5a3FGNC9yN0tOSW9jT0k3?=
- =?utf-8?B?NFozaVVMMzFRRUdSc2tRR2Q0cytCdEFKbmhrTkErdXViRER2eld5UzB5NTZE?=
- =?utf-8?B?NjNkeTlnQ3kwcXJSMDd2YkY2UmI2eVdxaXdOZ25FNS9rcUFTRkp0aGIxQjJs?=
- =?utf-8?B?UGdydVh3Qythbk9BTUhISFAzZ3ZnMTBZWE5QK2dJdEZyTzJMRWJ6Mlo1M2h4?=
- =?utf-8?B?Wi9QcTFoRTA4NkdKK1AyRkZVVGxTSnd1eEdDUUZmVGZESEVERGZuUUUyT04z?=
- =?utf-8?B?TU4vamRPcG1nek52cFZ6UjI3VlNYOVF2M1VIUnJYNWZadTFaV3VMcHBKMTBD?=
- =?utf-8?B?WmpLSWx2OG9DM1pRZ0MzaUg1VDBxVzdPc2RZL1QxWlNybyswWmpFR2dKOHYr?=
- =?utf-8?B?VXBWTjZxZ3lRbHFaSVRmaE1DbVhsTG9MS0t0UWllbFZiZUhwWU8xWG9GRHhn?=
- =?utf-8?B?NHZsMFV6QStzWUtRejdMTTJGb21VcVAvbnMxRGJVLzFyT1I3Zm90dXZCamR2?=
- =?utf-8?B?bkRaN09JTUNYcXAya3VZUzdYOVV2SlhZQk1ma01qLzU4RG1nekRJamRSa0RL?=
- =?utf-8?B?dnF4ejJnNzg2WnlJZnUzd0ZlR1pVMjVKQ05XcWFvdkVaZUtEeDdjcjdYak9X?=
- =?utf-8?B?WVZUL0ZDK04vRGV1RGRmckZNUER5alI4Z1RXNldoMlpleE9HLzVHcUxZU1J3?=
- =?utf-8?B?dHlrczdZeXhXOUtvUGlRc2pVK2RIa2NZNjR2NzlKZzZwVXVLWFNHNVRQZUNu?=
- =?utf-8?B?TWcxaG1UM2FUdXpDUUxoNzJhOGFLYWZzNHlZdzdScEVYektjMW4wNXN0VFA2?=
- =?utf-8?B?Z21qQmJLWEdHWkdjaTdtVm9rbm1SL0Z5WjN2aVNTb0FUcnoxdEJoUDJMbVVM?=
- =?utf-8?B?dmNVbTN2bjhVYkovZ0JLVDg3OFhxaitMUUN1OWE2UVVSWmUrdmxOUDJXQXY1?=
- =?utf-8?B?OFBXK25xNWVVSHlPZ2FmeFlUUVRpeGxwY0s1aXovVExscDFnbFZWbUNIYXNV?=
- =?utf-8?B?QmJXeHJuNlhWaHowQkliVTNSc1ZsTE53dVFlS0U5eWFIRW9qYjFvSlAza1hy?=
- =?utf-8?B?STZqTVVUclB6bStqTkJEUm4vY0xWdzlFVnc2d0dwdnlkMlovU2Riait5Qld4?=
- =?utf-8?B?Y0dxaEFHMFlibWJjVEJsQmVDaDE5VmdEbWN2VTJqM0VnbWpocklqYU5lYnho?=
- =?utf-8?B?bU9Pc3RBcjhnZnZpTFBmYTR4NDBweXl0VGFwMUxESW9aT0dDUmQySkVFd0s5?=
- =?utf-8?B?WGUvUFRTWkd5enhKeHJBdUpnL3dDanR3TzRmbU16U29QYkJHTlh4WWlML0tY?=
- =?utf-8?B?TFlOUUFDNHFkUWtMZXVGQmhSMy9WWHQ4ZjNqZ25pNFdLbXA1c0ZOSzFjLzVN?=
- =?utf-8?B?clVXS2dEYzR3d2hpMCtTU20vK2VRaytianZhMG16QlJ1RDB2QU04M0ZRPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SUQ5VStJZHdYaklBRERMT01xczVBUFdPdnlSdXhDbEFoT2FqTm5uc2U0T3lV?=
- =?utf-8?B?TG5Fbm1WblhTWXkzcktrSHIrZUlJMmNNcTVqT21Vd2IwSEFXVFM1bzhQVlI5?=
- =?utf-8?B?WHoyYkM1R0JVVldUbTEybjVBOFY0VE9WWTNLZ1ZZdDMwMG9RNCtLUElSMkhW?=
- =?utf-8?B?ZW8xVC9VcjhlWGlZV0tPV1NHWlZFUTVwZGRqcHRieVA4dVI4Q3kxd1dPMEMw?=
- =?utf-8?B?a0gxajRNaFlWN3ZubUJjWFVJQnRhVTgxMjNQSVNGalBDTWFzckFxMUhsaUo4?=
- =?utf-8?B?MHlHR3Q4WGV5cUpUSG9WYXFKa3VHRVczVjVYZy9XYnFzVEhNR3FDcTlZRTAw?=
- =?utf-8?B?dFNuQU1DbEw0RnBiK2lHVVdEVi9tRHY2THY5QzF6RU12NkVIS0dJdXdrbE4r?=
- =?utf-8?B?U2U5NGI0Q1I2VkVNV2tqYWVrbTlZd0IyMlNrQnpIeUFucDdMNXhMemtUV3Rj?=
- =?utf-8?B?OHZrVXA3OTNNOXFkRnFNKytyNFJNS2xhSVVLQjBwU1IxY1dkL2hsY0FickF0?=
- =?utf-8?B?RGlGbnR2ZVczaVpOOC9HU0JpbEllTlpmVklNVWZ1NmFiRUs3WXlXSGFuMUtH?=
- =?utf-8?B?ZEw5azhuZzNNalpUWDdxK1I5Y3AxMFJmeG82Ukg5WENEeWRDQWp1bG91ZnR4?=
- =?utf-8?B?Y001Mko0eWlIenNkMmFudkREVGVyVnJGcEFGRHNDT0dZNE5BZS9OV0hlY0JX?=
- =?utf-8?B?SDcvK3lidWRYQzhCMVVUNUNiWlIwZFBDTUROR2hMQmxDMHFpMDNQT0UyMWVj?=
- =?utf-8?B?b1J0bDNrN3ZqTmkrZVFMMk1IYmhreVBmSFp4NFRaR0pKeHA1bE5GcFB1S25r?=
- =?utf-8?B?SW1yU0FFeWFRdmkrSkc2YktiQ0s2ZlJwWnhLVDVieUxZR0cvNm1nSlpDMEN3?=
- =?utf-8?B?MlBlUWZnS1dCc203dVFSdW1EUUc4S2RrYk1aT01hb2c4QUFya2pkTmlwOHlD?=
- =?utf-8?B?cm0ya2lFTStBeno3aE1QdGlwV044ZE1lUU45eGxBZDhROUU3MndiTUQvdm1Z?=
- =?utf-8?B?ZGpKQ2hkaUFYdXZreDl3Rm5WL0gzVENRRkZKNGwvTkNrWmEyWkRnL3pOSHlI?=
- =?utf-8?B?NWVmb3BOMlNlUmNFRWh4NU1ZdEc2a3plQkJ2MzFiQWlydS9Rc0RVSHVqU3ZB?=
- =?utf-8?B?RDk3eEdqa0tmbzc2WDJCZ0lDVU1rS1VOV00zbVd0dG1NTWhXVVVvRkkvckJF?=
- =?utf-8?B?ZWpRZHRMY0ZPNGM0SUFaN20ybjg5dGRIU3kvcTlIbW0vb3lpa2FoL2xJWjZi?=
- =?utf-8?B?b2R6Z1czRHZlSE5CSjVkT1d1K2JFRTJLSmxxckdQdGp5aVppQ211OGpBeE5w?=
- =?utf-8?B?ODYydlJFR3FUazY2bVB5UWxLNkwwRXBRV0xlNmhpeW95WjVydDQ3WkRGNkg0?=
- =?utf-8?B?cUQycGFRd2dmUzFFaVA0TEVqNVMyRER2NmlDNnp6YzB2ekNJTHBIVTZndFUz?=
- =?utf-8?B?VnhGSTRDOUs0UE1uWnBKUTB4LzZjMCtjcUFBUXQySDlhdEJsM0FwVGpIYkFM?=
- =?utf-8?B?dUxYMkVXYXJxWGZhMmVreXduVm9FL25OMUpTZUVBVmh2Q1FkUHcxdHNlYVRE?=
- =?utf-8?B?dTQ0UEpnWkF3Mk5GZzlSZWY3L0NocXBQR3NEOVBXTCtCeCtESlpuV0U0SFRV?=
- =?utf-8?B?RVBqdVdFYVVqMU5hczJJdzRvSW4xZ2oyNlI1Njg4V3kwWFlFRTNNbkJFR0JZ?=
- =?utf-8?B?NFJSc254RjVvZkJKdC9wYnZIM09FN1dkVHhyYUJRMjdnb08rMGYyL0FPUGVD?=
- =?utf-8?B?M0ZVQzRvdjMwQ2Fub0ZJb2QzZjBWSFNHM2ZOQUErbGdPcGkzdC8xb2lTTmFZ?=
- =?utf-8?B?bnlpc1lYSVBYV3RiZzI0QmZ6VDFHOGhKRXJvVEtmQ3ZyaXN4cnBPU3pQbEJn?=
- =?utf-8?B?aUhCTElNTjRJald3L2hvVGg0TStvZDFVRWVTQTBRWlMrZXNiNVJiRU1qeURI?=
- =?utf-8?B?Y2tJYUQ3Nmx6YmRnNG9NQU1peGEwODBsRGV3QUpIaHdIcHVrVkxDdDlDTU5n?=
- =?utf-8?B?TThOY0I3Z1ZDRm1UeUZPcVJmNEFBcXNXRlpDa05RS1ZZRE5yenJjSmJ4L3ph?=
- =?utf-8?B?bWJYTE1obStXYlVGazRKZkdyN0ttWE1PNVd4UjljaVlaQklrV0NjQXlxMW1O?=
- =?utf-8?B?UjRDNExoY2NjQ0p0Y0F6Um1teHNiaWpGVlVGSlA2N0x6c1VEMi9CMzlhclc5?=
- =?utf-8?B?WVE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9825f37d-d15b-42df-e002-08dce4c360b5
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 22:24:57.3080
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mzbGrcpX90ykU+NHVSYYqmXl6VqCF9qDOEiGj2Z2b7MOZlsNUpPAlkJA9kNgLiGofrEbpLmaD/YcjPN6MftHBO2uBvTHh4Ex+JK2CiAav9Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7112
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFT 1/2] firmware: qcom: scm: Introduce
+ CP_SMMU_APERTURE_ID
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>
+References: <20241002-adreno-smmu-aparture-v1-0-e9a63c9ccef5@oss.qualcomm.com>
+ <20241002-adreno-smmu-aparture-v1-1-e9a63c9ccef5@oss.qualcomm.com>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20241002-adreno-smmu-aparture-v1-1-e9a63c9ccef5@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: oXV_PNUTAXeIC2-E6GxWx06NisMh6erQ
+X-Proofpoint-GUID: oXV_PNUTAXeIC2-E6GxWx06NisMh6erQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ clxscore=1011 bulkscore=0 malwarescore=0 phishscore=0 spamscore=0
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040155
 
-Hi Ilpo,
 
-On 10/4/24 7:29 AM, Ilpo Järvinen wrote:
-> On Thu, 12 Sep 2024, Reinette Chatre wrote:
 
-...
-
->> diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
->> index 7635ee6b9339..8c818e292dce 100644
->> --- a/tools/testing/selftests/resctrl/mbm_test.c
->> +++ b/tools/testing/selftests/resctrl/mbm_test.c
->> @@ -22,17 +22,13 @@ show_bw_info(unsigned long *bw_imc, unsigned long *bw_resc, size_t span)
->>  	int runs, ret, avg_diff_per;
->>  	float avg_diff = 0;
->>  
->> -	/*
->> -	 * Discard the first value which is inaccurate due to monitoring setup
->> -	 * transition phase.
->> -	 */
->> -	for (runs = 1; runs < NUM_OF_RUNS ; runs++) {
->> +	for (runs = 0; runs < NUM_OF_RUNS; runs++) {
->>  		sum_bw_imc += bw_imc[runs];
->>  		sum_bw_resc += bw_resc[runs];
->>  	}
->>  
->> -	avg_bw_imc = sum_bw_imc / 4;
->> -	avg_bw_resc = sum_bw_resc / 4;
->> +	avg_bw_imc = sum_bw_imc / NUM_OF_RUNS;
->> +	avg_bw_resc = sum_bw_resc / NUM_OF_RUNS;
->>  	avg_diff = (float)labs(avg_bw_resc - avg_bw_imc) / avg_bw_imc;
->>  	avg_diff_per = (int)(avg_diff * 100);
+On 10/2/2024 8:01 PM, Bjorn Andersson wrote:
+> The QCOM_SCM_SVC_MP service provides QCOM_SCM_MP_CP_SMMU_APERTURE_ID,
+> which is used to trigger the mapping of register banks into the SMMU
+> context for per-processes page tables to function (in case this isn't
+> statically setup by firmware).
 > 
-> While the patch itself is fine, I notice the code has this magic number 
-> gem too:
+> This is necessary on e.g. QCS6490 Rb3Gen2, in order to avoid "CP | AHB
+> bus error"-errors from the GPU.
 > 
->         unsigned long bw_imc[1024], bw_resc[1024];
-
-That could be related to NUM_OF_RUNS ... I'll take a look. While this is safe
-since both array size and number of runs are hardcoded in test, of course
-you are right that this can improved.
-
-I'm also concerned about something like below where there are some
-assumptions of external data ... not that we expect the kernel
-interface to change, but something like below should be more robust:
-
-static int read_from_imc_dir(char *imc_dir, int count)
-{
-	char cas_count_cfg[1024],...
-	...
-	if (fscanf(fp, "%s", cas_count_cfg) <= 0) { /* May read more than 1024 */
-		...
-	}
-}
-
+> Introduce a function to allow the msm driver to invoke this call.
 > 
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 
-Thank you very much for your review. Much appreciated.
+Hi Bjorn,
 
-Reinette
+Tested-by: Jessica Zhang <quic_jesszhan@quicinc.com> # Trogdor (sc7180)
+
+Thanks,
+
+Jessica Zhang
+
+> ---
+>   drivers/firmware/qcom/qcom_scm.c       | 19 +++++++++++++++++++
+>   drivers/firmware/qcom/qcom_scm.h       |  1 +
+>   include/linux/firmware/qcom/qcom_scm.h |  1 +
+>   3 files changed, 21 insertions(+)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 10986cb11ec0..bd633c57b6e8 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -903,6 +903,25 @@ int qcom_scm_restore_sec_cfg(u32 device_id, u32 spare)
+>   }
+>   EXPORT_SYMBOL_GPL(qcom_scm_restore_sec_cfg);
+>   
+> +#define QCOM_SCM_CP_APERTURE_CONTEXT_MASK	GENMASK(7, 0)
+> +
+> +int qcom_scm_set_gpu_smmu_aperture(unsigned int context_bank)
+> +{
+> +	struct qcom_scm_desc desc = {
+> +		.svc = QCOM_SCM_SVC_MP,
+> +		.cmd = QCOM_SCM_MP_CP_SMMU_APERTURE_ID,
+> +		.arginfo = QCOM_SCM_ARGS(4),
+> +		.args[0] = 0xffff0000 | FIELD_PREP(QCOM_SCM_CP_APERTURE_CONTEXT_MASK, context_bank),
+> +		.args[1] = 0xffffffff,
+> +		.args[2] = 0xffffffff,
+> +		.args[3] = 0xffffffff,
+> +		.owner = ARM_SMCCC_OWNER_SIP
+> +	};
+> +
+> +	return qcom_scm_call(__scm->dev, &desc, NULL);
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_scm_set_gpu_smmu_aperture);
+> +
+>   int qcom_scm_iommu_secure_ptbl_size(u32 spare, size_t *size)
+>   {
+>   	struct qcom_scm_desc desc = {
+> diff --git a/drivers/firmware/qcom/qcom_scm.h b/drivers/firmware/qcom/qcom_scm.h
+> index 685b8f59e7a6..e36b2f67607f 100644
+> --- a/drivers/firmware/qcom/qcom_scm.h
+> +++ b/drivers/firmware/qcom/qcom_scm.h
+> @@ -116,6 +116,7 @@ struct qcom_tzmem_pool *qcom_scm_get_tzmem_pool(void);
+>   #define QCOM_SCM_MP_IOMMU_SET_CP_POOL_SIZE	0x05
+>   #define QCOM_SCM_MP_VIDEO_VAR			0x08
+>   #define QCOM_SCM_MP_ASSIGN			0x16
+> +#define QCOM_SCM_MP_CP_SMMU_APERTURE_ID		0x1b
+>   #define QCOM_SCM_MP_SHM_BRIDGE_ENABLE		0x1c
+>   #define QCOM_SCM_MP_SHM_BRIDGE_DELETE		0x1d
+>   #define QCOM_SCM_MP_SHM_BRIDGE_CREATE		0x1e
+> diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+> index 9f14976399ab..23ec8ee5e49f 100644
+> --- a/include/linux/firmware/qcom/qcom_scm.h
+> +++ b/include/linux/firmware/qcom/qcom_scm.h
+> @@ -85,6 +85,7 @@ int qcom_scm_io_writel(phys_addr_t addr, unsigned int val);
+>   
+>   bool qcom_scm_restore_sec_cfg_available(void);
+>   int qcom_scm_restore_sec_cfg(u32 device_id, u32 spare);
+> +int qcom_scm_set_gpu_smmu_aperture(unsigned int context_bank);
+>   int qcom_scm_iommu_secure_ptbl_size(u32 spare, size_t *size);
+>   int qcom_scm_iommu_secure_ptbl_init(u64 addr, u32 size, u32 spare);
+>   int qcom_scm_iommu_set_cp_pool_size(u32 spare, u32 size);
+> 
+> -- 
+> 2.45.2
+> 
+> 
+
 
