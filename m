@@ -1,93 +1,110 @@
-Return-Path: <linux-kernel+bounces-351489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB5939911EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:58:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8460991208
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81CBE283E2C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:58:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DFC01F24289
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3CB1B4F18;
-	Fri,  4 Oct 2024 21:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65DE147C9B;
+	Fri,  4 Oct 2024 22:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sollMiRt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mepyZkYd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F44231CA7;
-	Fri,  4 Oct 2024 21:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5AB231CA3;
+	Fri,  4 Oct 2024 22:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728079119; cv=none; b=GbnBP5QGb2U+cKyLUcD54QzclrL+bJ5qt6an+Q9y4OA7u1c6I5getmy9bGeN/CLv74XPbNfK6MFPk272T1bstQP4tjamH78Z6vSjVb05sCC+5HP974S8cw/e9twwy30q2O15t1ZGaoRVTzR7oTGjc8qQrp/+wXZM4YhDyEO7Tcs=
+	t=1728079243; cv=none; b=gKzfX2HdcVLik+qAP4saVxCaApwG3Fkje3AUbQyxpngnBx14EQxfkjVy52QBxKNFOoqMqpwbFrpw9kgR7roIahx6DFV6ltypcb771cpULi+ihb3MzS4tl2NeQO0Uh5Fb05Hr0RUwHLqAbjm24TwZyi6BwhOJzHwYBjxx3NU9ORE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728079119; c=relaxed/simple;
-	bh=NWJ2ejRwVxbuD9Q92StrJcn2VdD1Fw1ly1MZiLiQyf4=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=OL9AnkYjttvE5w01JCwJuCUB0nGTOUKeQ2FkTUHDaK19Mq6Czn5gR2pHf1vqlLs/33la3CoO8ROAB0fX7/JK0Tsq0eccupEnwKVogZjUPyiHgShBrHWkCC3yYeM+uHaT7evIdDbh20EmomPRqING4KmIvGspdDVqXnH4tA1+i7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sollMiRt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42774C4CECC;
-	Fri,  4 Oct 2024 21:58:38 +0000 (UTC)
+	s=arc-20240116; t=1728079243; c=relaxed/simple;
+	bh=RZ5naVt379h7XDSVNVXSDrKS20ULBksNQLRLtrjXCbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=RPOtJ6zpm56r05TkfL2l2v/vv3cQF1unVAsNkos8LB6U9opNX17ZO//8jt00lo+uZfu6kf02BR2zgp4sw/FwKsB0G6UhQWwrIhkdJMqwPnP63/4NfrzmcdqjEMczxEuOBbOyMVyJPlr2bOj7erxp1nEGRniQS3+s04x9Vzw0Y8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mepyZkYd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EFFCC4CEC6;
+	Fri,  4 Oct 2024 22:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728079118;
-	bh=NWJ2ejRwVxbuD9Q92StrJcn2VdD1Fw1ly1MZiLiQyf4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sollMiRt0XJKe/6kc1MzoGKYy86jrW8iUS9YSBUIKzbHBtjwsss/9TiC7YY9IRD7s
-	 /Vu7YRQfHJi85F2SX9Wq7dXRbqnNgMCmgOCWMvHQ+9g5xRmSvd+nc5IaCZNSkf24iL
-	 cYppvM5eB3SoyuNqwfe2gr6pKNSZqcmzHugMaKkk5URNBJFWWwsfP1Hsghl4TbDzvR
-	 mFxtPcr4GmFhix5XYBiNGEaqGu+uwzRIAfYjB4QB6w1wnsXBpac0Yn6oWybHDQ45IX
-	 GlNJvUMb3RHYLOdfo+l9fUxgOO+rV2RrzE9qTnoh4IAOP14AUMU5Lfur7TyJWWVqus
-	 Cz4nS9QhXnY9A==
-Message-ID: <bb073282a3cbc0a5349db87260957934.broonie@kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] SPI fixes for v6.12-rc1
-Date: Fri, 04 Oct 2024 22:58:22 +0100
+	s=k20201202; t=1728079242;
+	bh=RZ5naVt379h7XDSVNVXSDrKS20ULBksNQLRLtrjXCbg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=mepyZkYd4IGkqR2KC40TWAzcWYjH+6x4Hvnywoy7wy5p98XSLLIFAKYO9rJZyPeNM
+	 fzvSPh4NGs0z66zQp+VRZ39c+2rwvBgOs54wxFJbsI4iTAQKonyh8p3tPxcLPa3uc3
+	 WwS/+snmCbQuweP6dUE2sA+XVpUU+sBFAFEb7GoePGf5D49DOCu4BKoWOOkbEZ0rKJ
+	 qVoh3NQYspfFhxKhQZJKjDxZ9HEAA0GGsWjV0KIB3MnGEtNZv/A7Ta4Wz7UMql11qB
+	 juDE9R/yV5SSwaYYXuDi0sCprmsHOZy4Ni+xmI8ueLrsn5BoCOnVqaDi2HT7xAVvZy
+	 tIM2VvE+Uei8A==
+Date: Fri, 4 Oct 2024 17:00:39 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] PCI/pwrctl: pwrseq: don't use OF-specific routines
+Message-ID: <20241004220039.GA363598@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004125821.47525-1-brgl@bgdev.pl>
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+On Fri, Oct 04, 2024 at 02:58:21PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> This driver doesn't need to use OF interfaces directly. Replace the
+> single usage of an of_ function and replace it with a generic device
+> property variant. Drop the of.h header and pull in property.h instead.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+Applied to pci/pwrseq for v6.13, thanks.
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.12-rc1
-
-for you to fetch changes up to 65fbec3121eb7a10a839784496357f5a833af69b:
-
-  spi: Fix pm_runtime_set_suspended() with runtime pm (2024-10-02 00:24:48 +0100)
-
-----------------------------------------------------------------
-spi: Fixes for v6.12
-
-A small set of driver specific fixes that came in since the merge
-window, about half of which is fixes for correctness in the use of the
-runtime PM APIs done as part of a broader cleanup.
-
-----------------------------------------------------------------
-Alexander Dahl (1):
-      spi: atmel-quadspi: Fix wrong register value written to MR
-
-Ben Dooks (1):
-      spi: s3c64xx: fix timeout counters in flush_fifo
-
-Jinjie Ruan (3):
-      spi: spi-imx: Fix pm_runtime_set_suspended() with runtime pm enabled
-      spi: spi-cadence: Fix pm_runtime_set_suspended() with runtime pm enabled
-      spi: spi-cadence: Fix missing spi_controller_is_target() check
-
-Mark Brown (1):
-      spi: Fix pm_runtime_set_suspended() with runtime pm
-
- drivers/spi/atmel-quadspi.c | 2 +-
- drivers/spi/spi-cadence.c   | 8 +++++---
- drivers/spi/spi-imx.c       | 2 +-
- drivers/spi/spi-s3c64xx.c   | 4 ++--
- 4 files changed, 9 insertions(+), 7 deletions(-)
+> ---
+> Bjorn: This may conflict with [1] but this should go for v6.13 while [1]
+> is a fix that's targetting v6.12. If git doesn't figure it out then the
+> resolution is trivial, just add <linux/property.h> in both and drop
+> <linux/of.h>.
+> 
+> [1] https://lore.kernel.org/linux-pci/20241004125227.46514-1-brgl@bgdev.pl/
+> 
+>  drivers/pci/pwrctl/pci-pwrctl-pwrseq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
+> index a23a4312574b..d3f960612cf3 100644
+> --- a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
+> +++ b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
+> @@ -6,9 +6,9 @@
+>  #include <linux/device.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+> -#include <linux/of.h>
+>  #include <linux/pci-pwrctl.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/property.h>
+>  #include <linux/pwrseq/consumer.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+> @@ -35,7 +35,7 @@ static int pci_pwrctl_pwrseq_probe(struct platform_device *pdev)
+>  	if (!data)
+>  		return -ENOMEM;
+>  
+> -	data->pwrseq = devm_pwrseq_get(dev, of_device_get_match_data(dev));
+> +	data->pwrseq = devm_pwrseq_get(dev, device_get_match_data(dev));
+>  	if (IS_ERR(data->pwrseq))
+>  		return dev_err_probe(dev, PTR_ERR(data->pwrseq),
+>  				     "Failed to get the power sequencer\n");
+> -- 
+> 2.43.0
+> 
 
