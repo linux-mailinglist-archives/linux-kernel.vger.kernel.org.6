@@ -1,146 +1,111 @@
-Return-Path: <linux-kernel+bounces-351431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6710F99111A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:04:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 444C599111D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93F9C1C22F7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:04:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAF26B23059
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2ED1ADFF7;
-	Fri,  4 Oct 2024 21:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8391ADFFA;
+	Fri,  4 Oct 2024 21:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YgYuA8qx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YbLtoeMX"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7934A231CA7;
-	Fri,  4 Oct 2024 21:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906FF231CA7;
+	Fri,  4 Oct 2024 21:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728075888; cv=none; b=hAJAq3mg8u8hg8pNhRZqBJN54tWUkGoREWDLH6zeaUrpBNK6OnW/vSib2WbevnRvhmo6JzPoZxIONxHqZleXS+MdsL6feOgPcZhZK3iGS2SLoUU9g45YI4ET9d3F0hhbGLo8bxbtm44W/Yk4X/2YtoO7txvrZzetD525F7Hx1yA=
+	t=1728075925; cv=none; b=bROWWbdfdnL47flHmRRI7Si4bMJUoPoFvCJRoumFpmooaG3GDJh1hHqtmrMTVsO02+EEpGDBzZS/KWDxYpX8qP+yrhIHuvWWoqANvPlmpLeC7Vf6wUiU3mmd4siUlUMpcp8T5CI7kMGJFW81hQac7zZxknTeE9h9G/AMDQ6rvtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728075888; c=relaxed/simple;
-	bh=BlCs4G57c75rPmpj9j2Sv00qNA2/cF5ptyo3jJ2dc78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lcnJvkXi7hsxLdxy02Lsjvpa+zhDYTecH45h+TkawXMM7KIH4l+PxOU573WNv5Xi5Zuq9AbvEeAuU0VHl3oWFzB3hpyig1s51AW9IHf6WXuluc0Dccisofpp5kF4FdnSE3cgbt4ItabocPICJ9ohn7sT1WqeODI4b/PesXTr5eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YgYuA8qx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494AWxPd025555;
-	Fri, 4 Oct 2024 21:04:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o1hG0uigKPKLd7MZiP0E36zG2soH19zWr9IJPPcvcOc=; b=YgYuA8qxMO5ztFAf
-	Q/gp4rv3aIDuzMUBme0oLQTo/qgAbVY6Q4QXBrOqxH1sG5KV+7savlqIFPC+Jbmb
-	3ikhBqi8vejapSD3zf0oISzL96CodbHaXZjNm7RUOiUsk6uLY7zZmzrQEYkiokcg
-	ynjYjV6ZRX04WeWmTR4jkq52W55VIflZIVei0ApyjFyET1gsmxO443/9jYZ4sUPz
-	0CeP0whTHISm8hKcRjGuqymC+3BK+z4/fEl4qmS002XjzwNb6V188yE54wmn2i5P
-	N/t9rnKKy2trk7wcYdQ3CfzdUTQzPqjAkDfbiYgquhyR0feSiMn25mxvC4jYrya5
-	cUabvA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205kk8sf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 21:04:30 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494L4TIe014511
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 21:04:29 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 14:04:28 -0700
-Message-ID: <2a4f79f6-fd67-48c4-a06f-b1c1c85363c4@quicinc.com>
-Date: Fri, 4 Oct 2024 14:04:17 -0700
+	s=arc-20240116; t=1728075925; c=relaxed/simple;
+	bh=DT2WHnIBh8UMUWoOng5tAC/Wdv+tohTtauqPm8K2F6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X0I1HulJHT2nsUXAxKH7SJxCsA/RmTnZiSWtVKZ8I8ckglWd3wsQVWfSD9i/qIXzSx6WhDI6glcxixChIdOxTCd3XLMCE+cC9UuG0yO+j9UxeE14LCoeBNxu01tFb2tCMH5xvE1C969EHudUdKwVvHNijf36F1I3uBTWcTJ59VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YbLtoeMX; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53991d05416so3223659e87.2;
+        Fri, 04 Oct 2024 14:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728075922; x=1728680722; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rZ6LqA6cGFyG3fHM9OBIDfBQ22yTmW/1uiMLfi3g5aM=;
+        b=YbLtoeMX0Z5puqh/aQntXY4Yu/Lk1k8VbSS3344xYB6autz6HUCWaCVywXYVwd1+ZT
+         dKydcWsf1zTwTcyHDRmio45poIx5rN6AmhgTmOuRJ0t9F/BDHeltQvluMkdezt/NYDlp
+         ZssaN92jQ+z+MIg9BKf3enNkPRGTBBGMsyShLX4rxY/dbuE2KgeplZF0fzWC7n8OM0no
+         hLUWrHfX5gLSrtFCcbbmNcjBFLW6vIGi8jOeK2qbbZqxQad+ErCISStb+hJW/Pcj1lmc
+         KAgPh/YgO0SJXbnO1kRYvZNarh5yB7x8Mksvj4SNU+yNrBs9UDS1V1IksCIdH0CXqAGD
+         HfUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728075922; x=1728680722;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rZ6LqA6cGFyG3fHM9OBIDfBQ22yTmW/1uiMLfi3g5aM=;
+        b=wgGdn5mJCvgS9OXJCxmNduav86fb0IcLV4+z0wBIgcZcw/456qtiV9jZqgnwlcSSdt
+         4MNc7T0rjMvrCplflrdw5pfCDqgr09l6+dXIMip8VNlL88+VqDp2Vh+7spueicp4w9bg
+         gJzwba+Qv/Uz3EVWCNLHQNax/25qi0AWTyZAYz/iZzpbtNp7aPnyV/creU9l3+ZoM+gA
+         ZhkaeGeNlxgNKOJWfLNjU3PCDlDWTKgstdjoirK8ZHlhmDbc9I/TsvN357lVQCqQD836
+         O0bfDun2K87m9MkMlfo7LYRvXybBY5uq0mFI0SUPLqOnQbb7Al1bbyfQF4qoQ+fJPFsV
+         boWg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/FGpY1n0CKTx3t2bP7mIviA46zzh+lTJts+MFX2KtX6vEWGIpSw9li7gfO6wTrhd/1EZtCwz7x7xmSH0=@vger.kernel.org, AJvYcCXufWjpc1Gky2PWvFyVBHnG4Mk5vmCshoIqy0fN954m+CEcZ9Ze8BlSsy286SuCkCuaW9KB7H+y9bbP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4IriSfHn8rYWvzTrDaMa+1ScsPXNuTd4cJQSLuxnZK94WKdZU
+	nv7JKbcCXKWGpoigFbJO6GjW5UyBjAqtgeRZLmvJk3jwqiyiMF2x
+X-Google-Smtp-Source: AGHT+IGht61pFxnnu7WKnwOuvShXWr1PizGfidCqeTA62Nf8gJGyHgNbkD0Z8DrTv5Um0GJWE8+miA==
+X-Received: by 2002:a05:6512:3087:b0:539:8f68:e036 with SMTP id 2adb3069b0e04-539ab87df04mr4162722e87.34.1728075921361;
+        Fri, 04 Oct 2024 14:05:21 -0700 (PDT)
+Received: from foxbook (bfk18.neoplus.adsl.tpnet.pl. [83.28.48.18])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff234edsm57983e87.229.2024.10.04.14.05.20
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Fri, 04 Oct 2024 14:05:20 -0700 (PDT)
+Date: Fri, 4 Oct 2024 23:05:16 +0200
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: Olivier Dautricourt <olivierdautricourt@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, mathias.nyman@intel.com
+Subject: Re: [PATCH] usb: xhci: xhci_setup_port_arrays: early -ENODEV if
+ maxports is 0.
+Message-ID: <20241004230516.5eb3f7a4@foxbook>
+In-Reply-To: <ZwA-n56XlNkkLNXM@freebase>
+References: <20240930052336.80589-1-olivierdautricourt@gmail.com>
+	<20241004125716.75c857ae@foxbook>
+	<ZwA-n56XlNkkLNXM@freebase>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: panel: jd9365da-h3: Remove unused num_init_cmds
- structure member
-To: Hugo Villeneuve <hugo@hugovil.com>, Jagan Teki <jagan@edgeble.ai>,
-        Neil
- Armstrong <neil.armstrong@linaro.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Zhaoxiong Lv
-	<lvzhaoxiong@huaqin.corp-partner.google.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Hugo Villeneuve <hvilleneuve@dimonoff.com>, <stable@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240930170503.1324560-1-hugo@hugovil.com>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240930170503.1324560-1-hugo@hugovil.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: CEEzi8FV4nSMDuy67RWw_i0698R69Qv6
-X-Proofpoint-GUID: CEEzi8FV4nSMDuy67RWw_i0698R69Qv6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- adultscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- bulkscore=0 impostorscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410040145
 
+> That is correct, the case is handled without panic, but the 0 value
+> gets silently propagated until it eventually fails on line 2220:
+> 	if (xhci->usb2_rhub.num_ports == 0 && xhci->usb3_rhub.num_ports == 0) {
+>              xhci_warn(xhci, "No ports on the roothubs?\n");
+>              return -ENODEV;
+> 	}
+> The benefits are only:
+>   - Reporting a more precise issue
+>   - Avoids iterating through the capability structures of the
+>     controller
+>   - failsafe if future changes
 
+Well, simplifying things is not bad in principle, but in this case it
+looks like this patch adds a branch and some 50 bytes of code/data for
+the sake of optimizing something with no practical relevance (any such
+hardware is useless, rejected by this driver, and violates the spec).
 
-On 9/30/2024 10:05 AM, Hugo Villeneuve wrote:
-> From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> 
-> Now that the driver has been converted to use wrapped MIPI DCS functions,
-> the num_init_cmds structure member is no longer needed, so remove it.
-> 
-> Fixes: 35583e129995 ("drm/panel: panel-jadard-jd9365da-h3: use wrapped MIPI DCS functions")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+So, maybe just not worth the cost, no matter how small ;)
 
-Hi Hugo,
-
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-
-Thanks,
-
-Jessica Zhang
-
-> ---
->   drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> index 44897e5218a6..45d09e6fa667 100644
-> --- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> +++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> @@ -26,7 +26,6 @@ struct jadard_panel_desc {
->   	unsigned int lanes;
->   	enum mipi_dsi_pixel_format format;
->   	int (*init)(struct jadard *jadard);
-> -	u32 num_init_cmds;
->   	bool lp11_before_reset;
->   	bool reset_before_power_off_vcioo;
->   	unsigned int vcioo_to_lp11_delay_ms;
-> 
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-> -- 
-> 2.39.5
-> 
-
+Regards,
+Michal
 
