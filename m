@@ -1,122 +1,107 @@
-Return-Path: <linux-kernel+bounces-350305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EE4899032D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:40:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8496990333
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2F61C21B0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:40:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EB951F23659
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6B81D5CFD;
-	Fri,  4 Oct 2024 12:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4915D1D4327;
+	Fri,  4 Oct 2024 12:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSKFZnbu"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="QbmqyC66"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54241D5CC3;
-	Fri,  4 Oct 2024 12:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C7C146589
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 12:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728045589; cv=none; b=SFN6w7KtL2FPD9OG/x/M2I10vk1lD/HTSajWtONSGM/WCAaqP+XIAFZwt1Vl0/AmS8wOe8gR12W8qlKKhpUaofzSx8aQU9rSDgXUZJoWTkAOPJAqf0PMXpEShI3BNcGH6mE/fIOmnDLu9VhL100Pb7pNSkWtlkiF9xPnD1AbIlw=
+	t=1728045827; cv=none; b=iCiY46do+x+8k4kzvbyPnNrVHA7sRRxCMJNEmxqK/PsF/xCvL2KFvjX5DqkY0ROhz5U7dyXH/OWFRIRopzvKt764cSR4x1RlZHac4vIfn0+NkC2sGdribeCAOmLPGcxXFvUsSHumJ7KI5kYn2wAgi7kVvSfvVF2gsugHXvKX0eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728045589; c=relaxed/simple;
-	bh=AIp8Sb9E5Fz+WpvcD+u9V4krizPFdDbX2AQ5FoKmGpc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=haoVCWE6jbcgSzrH05B1QCozJdTq+cr3n4mvmp4zfJoHeaDAZ3vksz7z26Nyzc1pU/4D1DhHEBr/3kYQkyn3MaHtUM31P1vKIhGLAaQ2f8LH29dmmfaVdc55x9cmjs2oKRvKiy61dsbYrQshId3dBiA2khYx92KyuzI7gjJKYjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSKFZnbu; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20b7eb9e81eso24000075ad.2;
-        Fri, 04 Oct 2024 05:39:47 -0700 (PDT)
+	s=arc-20240116; t=1728045827; c=relaxed/simple;
+	bh=HSOAqw79gXVAVkv8I96SO09KcBqBwdwHMfyZ5HwM23M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bn0odQgBN7PHeFqqyNlYTzaIy0w2e8rMSZdiTj++xndRhhfD7y1Bsjrf7oaBJXP26BKFmhfgoulVVoFtsRcJl858rnDmSC+qX6HoDQalcfJ8orsAmgFcNJjlncEm38TqvvdV3APfMQNG0NjkHBAcbvdwlcAbHRxMfu1HxCWGbR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=QbmqyC66; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6cb284c1a37so17086706d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 05:43:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728045587; x=1728650387; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R4pe5uGwNtuOGba2q34Cr4z8s4d37tWlPOENsVKw6Kk=;
-        b=NSKFZnbu9C3jW0iZkI3JMWwIa41L5W+cGPH0+bG5odaDLobgRDkBsjgXeMtrI9ml16
-         D9BqeuIdlxtUFWjnCE02bCDRsQfyDA6vJd7Q4W0aW9pJajYCrKWeRrpTG/aXVOdc0eHN
-         rc6sVce5yJ2wYg6myhKCHfGc2tdMqlgRtz2N6YryUpdp7z++wOQdkYrAlou2gQPKHjK1
-         ZfNXNFdM6yEij9MMkQqchwjmMo9nuouE1yWEX8VYeINpp1V39KIgeHDcKfod3FJ38q27
-         e5QRQaJH77vcfN2CM4Hk80UvJA+lvMcKHFOqSiV5LSWDaAFgK3q1z7OdYhP5/pSbYvYb
-         Di7w==
+        d=ziepe.ca; s=google; t=1728045824; x=1728650624; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HSOAqw79gXVAVkv8I96SO09KcBqBwdwHMfyZ5HwM23M=;
+        b=QbmqyC66Zz5xIyvVDi2t4D8YAbb6m7Fqkp4xqwFWPq0MpvWYec+rZw8y9qR/NWMdyH
+         dARbeTTIIRM9PxVn5s0aXryCPd9i5sPeeLtls+/45wlKjP6Ys6Rv3K9+sUT6mZNawqyO
+         pQo1Ts8Swis+P+h7FTM4TH4oDfjWEXrh1CV/0dSzd2ZlLLvLCXLv5v8wIY++VdkuKTpY
+         PZxt4s87No8yESTH5MUVwvd+ISXCIc3UDr7IKUwu5a2cmAjnxashQzL/YS3RZkO3fJfh
+         WzNWorlkuSV4d/43oWUYZtFeik+BPsQfId928RNCBUmOC2DXoqIioUoRonikTYXP/00j
+         w5OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728045587; x=1728650387;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R4pe5uGwNtuOGba2q34Cr4z8s4d37tWlPOENsVKw6Kk=;
-        b=QIuZ11o60zCxsaU/Ji8jN53FWZkpsFCU7sOeZgu8zK1VJ7hW67LbRamlROh1w3SNsy
-         2U+0uTJH4yaO4nqde3YO/vwropHpg4M5xkB60na1q0M8SmzlUQDR1mEj62ufnIFV764K
-         6xPj4r99S3sUGMzL5SfZ48rcyOIJYf5ml1JvXZIBjVhFVQK/PXvhUzcCCAkPTcjB948y
-         JiooEsT3nibvnHLNIv2P0UuvejjhQOBZ53fr86ZmxsEsROrSWEaVztOnqqXnTxpG7ihm
-         sP0tMV80/VgKCkflHmOybNvd9SS2r11bLgnjPX+45Gajkn8EkwmUwbEi9ZiaiM642Z4p
-         fk8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXtYEIOzT/wg7dOw5uDAvbXPZtfCltWEVI6z/rs3zmFe8MmBPEf7gainQvlIKk1ISHrTKN/hRzMaMy3/Uw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQsrmhMJbpZzoDew9XO1m/5iFMhZOBcYmKi1Uxj9yHIpXoOwj7
-	hZQpJ0SHXaZgU3JtVakNlDnrAJqDbyCzgTyHMui7JCJeuIJLLkBH
-X-Google-Smtp-Source: AGHT+IG3EQZR7ZrNyH5xNXe6CPTWG5X6RRuPMP27wu3wLUE6qkHY6N6F6EhoubsfunDfouc4XiOWFw==
-X-Received: by 2002:a17:902:e882:b0:20b:9078:707b with SMTP id d9443c01a7336-20bfe02199emr32505615ad.30.1728045586991;
-        Fri, 04 Oct 2024 05:39:46 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2405:204:20:6275:2654:2317:92c7:7b80])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beeca1879sm23454145ad.114.2024.10.04.05.39.43
+        d=1e100.net; s=20230601; t=1728045824; x=1728650624;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HSOAqw79gXVAVkv8I96SO09KcBqBwdwHMfyZ5HwM23M=;
+        b=mcyq8RDmLptsy51/TMwbYO5JdPWuRK7B+I6GCSv2p8p3brPeVWM6ZIwoslFbb4Qwr8
+         +bNNBtf9RiyD5H5UCRDm6DobUGGufMWiiHGFpAx5xwMpzdT6dW7qnTE41VZlleuafCCe
+         wAacv9A/j+CYDNYitViAfDPELQu2R7lzymL03oxfr6kToQNyJB/tA0sN2l+qalNsg+Cx
+         yANTtXAG4v80OvknsFkGUnwwtId/pztvLIEwxbZmoY+WOBG+/X1AKZKJ8IwYSuP7pZUf
+         FWsNEtGC+Db3VohxPzl/eWz9iIyrMYdNbd3Ws6JX9OBvz2Jx3CG6VLOF6BAlkhAulIoy
+         0gEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKTZlh8YOuTIFArrKUEKxearbe53yw+Jx2qWYN/w89ZvDF/jJKKtGYcWfTt4kTmdAj0R8lOZBHSZjA7K0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2s25dZZ29VCn+n6BIkP1CHVLz0gBbWKjaEa//Se4ZEjvz28qn
+	dRkYX8Rm4f+S5VnnwwQTD1EieJvQCdIzWiGs9Nd2kWokhPyGJFjyJqkzdra12hE=
+X-Google-Smtp-Source: AGHT+IH+lBEw9Gy7ze1H4cjY01Q+qaaLegOnnDxsIEJsjc592NIky/t8xlw3yrAV1RLwJUr+c1mMjg==
+X-Received: by 2002:a05:6214:398a:b0:6cb:2565:3f5f with SMTP id 6a1803df08f44-6cb9a490b83mr25471536d6.51.1728045824196;
+        Fri, 04 Oct 2024 05:43:44 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb9359c013sm15335776d6.18.2024.10.04.05.43.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 05:39:46 -0700 (PDT)
-From: SurajSonawane2415 <surajsonawane0215@gmail.com>
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	SurajSonawane2415 <surajsonawane0215@gmail.com>
-Subject: [PATCH] block: Fix elevator_get_default() to check for null q->tag_set
-Date: Fri,  4 Oct 2024 18:09:22 +0530
-Message-Id: <20241004123922.35834-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Fri, 04 Oct 2024 05:43:43 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1swhep-00CeVI-0I;
+	Fri, 04 Oct 2024 09:43:43 -0300
+Date: Fri, 4 Oct 2024 09:43:43 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, james.morse@arm.com,
+	will@kernel.org, robin.murphy@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH] iommu/arm-smmu-v3: Fix L1 stream table index
+ calculation for 32-bit sid size
+Message-ID: <20241004124343.GE2456194@ziepe.ca>
+References: <20241002175514.1165299-1-yang@os.amperecomputing.com>
+ <Zv2ONA2b3+kMAizm@Asurada-Nvidia>
+ <1c9767e1-4d05-4650-bc14-65a18fc63cc2@os.amperecomputing.com>
+ <Zv2diJDU6v60hKtU@Asurada-Nvidia>
+ <20241002194004.GT1369530@ziepe.ca>
+ <f28cab76-8030-477a-84b1-461dc02451ff@os.amperecomputing.com>
+ <20241003111603.GU1369530@ziepe.ca>
+ <43c2227a-71c9-4cbf-bfec-5a2fbf698f27@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43c2227a-71c9-4cbf-bfec-5a2fbf698f27@os.amperecomputing.com>
 
-Fix null pointer error by checking if q->tag_set is null.
-Address "block/elevator.c:569 elevator_get_default() error:
-we previously assumed 'q->tag_set' could be null (see line 565)"
-This change prevents errors by making sure q->tag_set is valid
-before accessing its flags.
+On Thu, Oct 03, 2024 at 08:31:23AM -0700, Yang Shi wrote:
+> If I understand correctly, the check is mainly used to avoid the u64 -> u32
+> overflow. This check guarantee no overflow. If some crazy hardware really
+> requests that large memory, the allocation will fail.
 
-Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
----
- block/elevator.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Sure, the kalloc will print a warn on anyhow if it is too big
 
-diff --git a/block/elevator.c b/block/elevator.c
-index 4122026b1..9ca32a6bd 100644
---- a/block/elevator.c
-+++ b/block/elevator.c
-@@ -562,12 +562,14 @@ static inline bool elv_support_iosched(struct request_queue *q)
-  */
- static struct elevator_type *elevator_get_default(struct request_queue *q)
- {
--	if (q->tag_set && q->tag_set->flags & BLK_MQ_F_NO_SCHED_BY_DEFAULT)
--		return NULL;
-+	if (q->tag_set) {
-+		if (q->tag_set->flags & BLK_MQ_F_NO_SCHED_BY_DEFAULT)
-+			return NULL;
- 
--	if (q->nr_hw_queues != 1 &&
--	    !blk_mq_is_shared_tags(q->tag_set->flags))
--		return NULL;
-+		if (q->nr_hw_queues != 1 &&
-+			!blk_mq_is_shared_tags(q->tag_set->flags))
-+			return NULL;
-+	}
- 
- 	return elevator_find_get(q, "mq-deadline");
- }
--- 
-2.34.1
-
+Jason
 
