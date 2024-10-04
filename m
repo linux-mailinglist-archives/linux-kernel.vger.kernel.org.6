@@ -1,114 +1,155 @@
-Return-Path: <linux-kernel+bounces-350208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9569C990182
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:41:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077C29901C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC4C51C23A10
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 373981C2349A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497711369BB;
-	Fri,  4 Oct 2024 10:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JzB82TEd"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59014156C5E;
+	Fri,  4 Oct 2024 11:01:48 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E7D156644
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D3712C81F;
+	Fri,  4 Oct 2024 11:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728038464; cv=none; b=d2o5QUNKi2ze9Hc708wfJ1VteSNdqppj8Ik4Byc77Lo87F9KrbFznOtYK/AKPu4KIh2vzLW/7GeGRVgVDhzHjtn6rSCBFlLi/T9LagLo1u3A8Rfspk7ZSl+vXHcNtHqtFU483CdLQXyuLCpI39lw++mxdFJj71oUxTdLgDpMSIw=
+	t=1728039708; cv=none; b=DKAWsjEGjWmORig86hA9MQyoMfOI3MgBICUrJI+Wie0po2AjMtlh1xHbkSAtdsK/XfL1Hi/4iaNQ60djmcmaxwCZDNP3e+deT4/25IKmTaPEWzPmud2VECaWceNPL7nxznKpXBk1o8ydoE65ht4wWnPua18blAJgCyehhFW1baw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728038464; c=relaxed/simple;
-	bh=MJ9SS7wuFxx4IxrtT8ysk8y2mxUcn83msldULPlyJK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E85T2mJV2NP5hDRWCpROXKvWa7O7XSXaB3XMBEmaSGF5D/LlQfejY8L9KjMOZL1WyDlteKuupoo4LrURJ4qPfwzBEFwv+0W5SBp62iq2tevqc4N4nPM6fDiPbZOt31oF+TIt3hGgzZ8lzdssPvxABXW8788X2NbEjbZixsYEH8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JzB82TEd; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso22770801fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 03:41:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728038461; x=1728643261; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y7PmH07HIiK1wIfwMtRYMnhYqfowrL/1RwJu9Jk8bm0=;
-        b=JzB82TEdAdOAr5iXM/2+t7UpRnVmQRLmPVP8MUKsxNh1kTvCDLLBSmTeaSwo5ca5az
-         PedYg8uGaECJqB/k4QtPx/aGsULEOyPggDvonCSYlSfBZbVlGLGTggEWVYgW5eSPLBhO
-         kZkriNQgiIo8pJQxWhKyTZ2W62ilWMdFlfh3T1K6o3FJcaj8pvhUGMtkZUqehjz0R2eY
-         ke7nFqhFqOl0720HZh9rv+0W2kbJ1qlPqnITjxck6slnkTduhdx+XOWhrBNZlW+wggZj
-         g0qsb6TGboSpRrlb8j4vekvkRDL7CeOoCUPQCTGdKW/GsOsVkcs9/NnsjuO15091+Zr9
-         bBOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728038461; x=1728643261;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y7PmH07HIiK1wIfwMtRYMnhYqfowrL/1RwJu9Jk8bm0=;
-        b=qrDEnQhywXFbYyoQE+d3oGMvlGTEN1fXuY5pT38klEdFUaS1xkMMa9fHgQ5sE1o/LH
-         opiteN8YBCvQH8REYH+YS5BFARCsjbwjr+XMpqCnvwk9JM4h6r3qyxnTiviA9F10IKUQ
-         LedIcgUHzEGA7ksKVQYddj9r/HCM42oF4nugWA4i64BDa5HZXeA9fWqnPsdx4YbMGVLR
-         pLuPM30O82H/9HZt9AL/JVdOBRL/0d6b59ON1HMckWuVy0ThKKieUwUl49XD5pa2BvWn
-         knl3ebZqiU0Gb/AETF5NYMcxQPpALGCmtKCv+O7ELTwTXNrCR3vouSGhrw7QdjcgxhwL
-         8YAw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9HRXaRX1dHKfp4b1GnZbiVLTYm7KD5+knvdQ2qg8ShNLJUBUFOyVYjbYTg1HW9mxuOxEe1olFOeCtD+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwugpweBsVjxC9kmlC/pe3Re1eYE4cJMQeI6p/E4JADESGd+snD
-	8OSftfhXUlS+8eEnJvNueFI9c5QOJqAxs6f7NPBnjr9Viqg4n71Yy0ntct0G9aw=
-X-Google-Smtp-Source: AGHT+IG1YRkmJO1uW40VGoEQ/zmCD5PRanqljw7b7hellT62vHdQUmTOOb68rz0pdZxxtE9k4kWw7Q==
-X-Received: by 2002:a2e:bc0e:0:b0:2fa:cc50:41b with SMTP id 38308e7fff4ca-2faf3c508ffmr14062411fa.5.1728038460307;
-        Fri, 04 Oct 2024 03:41:00 -0700 (PDT)
-Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dedc1e407sm358346b3a.160.2024.10.04.03.40.58
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Oct 2024 03:40:59 -0700 (PDT)
-Date: Fri, 4 Oct 2024 18:40:55 +0800
-From: joeyli <jlee@suse.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Chun-Yi Lee <joeyli.kernel@gmail.com>,
-	Justin Sanders <justin@coraid.com>,
-	Pavel Emelianov <xemul@openvz.org>,
-	Kirill Korotaev <dev@openvz.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Nicolai Stange <nstange@suse.com>,
-	Greg KH <gregkh@linuxfoundation.org>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] aoe: add reference count in aoeif for tracking
- the using of net_device
-Message-ID: <20241004104055.GN3296@linux-l9pv.suse>
-References: <20241002040616.25193-1-jlee@suse.com>
- <20241002040616.25193-2-jlee@suse.com>
- <e20707d4-53bc-400c-bb66-f1bd63e063e9@kernel.dk>
+	s=arc-20240116; t=1728039708; c=relaxed/simple;
+	bh=NtDsvusRx+fsiFebmXuORxX16ZxXymuvfEFFLg91cOE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=G7iRozRtflyPMoI43NvImWJJ3z7GSXkRiDwxiXZtynZckIGdsPcuy46HST5UqTj+sjgUXB5RY0Ok1dOTqONNmenZTPLQUoUKXiKwoJsRE6ua5fssDCO8jkEx+pd+GsrJ4HHgKekSJUdLrvikMSj3dPVx6yYDPzf9cvX4fG2pbVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XKkx72wzVz9v7JQ;
+	Fri,  4 Oct 2024 18:16:59 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 537F5140935;
+	Fri,  4 Oct 2024 18:42:44 +0800 (CST)
+Received: from [10.81.200.188] (unknown [10.81.200.188])
+	by APP2 (Coremail) with SMTP id GxC2BwBH9saaxv9m_X80Ag--.35107S2;
+	Fri, 04 Oct 2024 11:42:43 +0100 (CET)
+Message-ID: <d5387ff4-06c7-4115-bd53-1c485e3743ec@huaweicloud.com>
+Date: Fri, 4 Oct 2024 12:42:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e20707d4-53bc-400c-bb66-f1bd63e063e9@kernel.dk>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>
+Cc: dhowells@redhat.com, dwmw2@infradead.org, davem@davemloft.net,
+ linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-crypto@vger.kernel.org, zohar@linux.ibm.com,
+ linux-integrity@vger.kernel.org, roberto.sassu@huawei.com,
+ linux-security-module@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
+References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
+ <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
+ <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com>
+ <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
+ <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
+ <a991cf4187bced19485e28a5542ac446b92f864e.camel@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <a991cf4187bced19485e28a5542ac446b92f864e.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwBH9saaxv9m_X80Ag--.35107S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxur4xCFW5Jw4rGrW8CFyDZFb_yoW5XF13pa
+	9aqFy2kr1kJr1Ik3Z7Ca18ZFWFyws3ta45Gr9xXryrA34YqF12yryfKF43ZFy2krn5Ga1j
+	vrZ8try5A3Z8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAGBGb-TvcIKQAAsC
 
-Hi Jens,
-
-On Wed, Oct 02, 2024 at 12:38:30PM -0600, Jens Axboe wrote:
-> On 10/1/24 10:06 PM, Chun-Yi Lee wrote:
-> > This is a patch for debugging. For tracking the reference count of using
-> > net_device in aoeif, this patch adds a nd_pcpu_refcnt field in aoeif
-> > structure. Two wrappers, nd_dev_hold() and nd_dev_put() are used to
-> > call dev_hold(nd)/dev_put(nd) and maintain ifp->nd_pcpu_refcnt at the
-> > same time.
+On 9/26/2024 11:41 AM, Roberto Sassu wrote:
+> On Sun, 2024-09-15 at 10:40 +0200, Linus Torvalds wrote:
+>> On Sun, 15 Sept 2024 at 10:08, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>>>
+>>> If the aformentioned EFI use-case is bogus, then distro package
+>>> verification is going to be the only application for PGP keys in
+>>> the kernel.
+>>
+>> So I haven't actually seen _that_ series, but as mentioned it does
+>> smell pretty conceptually broken to me.
+>>
+>> But hey, code talks, bullshit walks. People can most certainly try to
+>> convince me.
 > 
-> There's no parallel universe in which using a percpu reference over just
-> a refcount_t for something like aoe is warranted.
->
+> The solution has three parts.
+> 
+> 1. The kernel verifies the RPM header with a PGP key embedded in the
+> kernel, and provided by the Linux distribution vendor.
+> 
+> 2. The Integrity Digest Cache parses the verified RPM header in the
+> kernel and feeds one of the existing LSMs (IMA, IPE and BPF LSM) with
+> the digests extracted from the RPM header.
+> 
+> 3. The LSMs compare the fsverity digest they find in the filesystem
+> with the authenticated ones from the RPM header, and might deny access
+> to the file if the digests don't match.
+> 
+> At this point, RPM headers don't contain fsverity digests, only file
+> content digests, but this is an orthogonal problem.
+> 
+> 
+> I had a look at previous threads on similar topics, to find your
+> position on the matter.
+> 
+> I got that you would not be probably against (1), and maybe not (3).
+> 
+> However, we still need a source telling whether the fsverity digest in
+> the filesystem is the same of one calculated by Linux distributions
+> during build. That is what the Integrity Digest Cache provides.
+> 
+> Regarding (2), maybe I'm missing something fundamental, but isn't
+> parsing the ELF format of kernel modules from the kernel similar?
+> 
+> Cannot really go to user space at this point, since the authenticated
+> fsverity digests are directly consumed by LSMs. Also, as David pointed
+> out in this thread [1], there is no obligation for user space to call
+> any signature verification function before executing a file, this task
+> must be done by an LSM.
+> 
+> I'm aware that we should not run unnecessary code in the kernel. I
+> tried to mitigate this issue by striping the parsing functionality to
+> the minimum (220 LOC), and formally verifying it with the Frama-C
+> static analyzer. The parser is available here [2].
+> 
+> I'm also aware that this is not the long term solution, but I didn't
+> find much support on the alternatives, like a trustworthy user mode
+> driver [3][4] (isolated from other root processes) and signed eBPF
+> programs [5].
+> 
+> What it would be the right way to proceed, in your opinion?
 
-Thanks for your review! I will use refcount_t in next version.
+If I remove the parsers completely from the kernel, and attach them 
+dynamically with eBPF, would you reconsider my patch set?
 
-Joey Lee 
+Thanks
+
+Roberto
+
 
