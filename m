@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-350301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A034E990320
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:38:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35414990322
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67A0C282AB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:38:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64FB21C2175A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778CA1D362F;
-	Fri,  4 Oct 2024 12:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4631D45FF;
+	Fri,  4 Oct 2024 12:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="I4Dt1rU6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSWJlxH/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E021D2B17;
-	Fri,  4 Oct 2024 12:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0EA1D45E2
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 12:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728045459; cv=none; b=VvrVPFdYe2eEpAMXuErfIHqeR/jC+o8gK08FEnaa23u+UgakA4pjUP093eLoVf1kBGKhhS3anseDB3B1/J919YU+iOIvHsteXgxv71mxCQBRxCcpwBLbudh4hZeXGLjrZTfUccTr9iXYZys5LZt1GNHOpaS9qvznDaVzUSdM0Pc=
+	t=1728045463; cv=none; b=XFbWgJxMRqlEIINrJ5sh57kuPyg5gflimpEX4zudNQJkWm+l4t7wGShnO2/inCu2gAZ31cJx/aLvSXD5obcZ1XyR8buAh8qPVVBF/VQ81XxTQ4STAis9+nnqqLYUFLj5kSKv0dkZaAZ9aP7dz6/LNxUfdo9KydBxdW3CbGfRjWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728045459; c=relaxed/simple;
-	bh=3zfonY9sf1wjm4sdPiwJ9/S9NQD+PWGHtrpv2Fq7FZY=;
+	s=arc-20240116; t=1728045463; c=relaxed/simple;
+	bh=/eCfyRvQjlc+/+MzJM+Lozt+n38vDldK/kYvieVCF8c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4kux4u3g+M1sullVrPzOiRwqaGjLhoq0ACHdU0Uq+/Ce6AvNFHb87hDmSJybFI29Shxkpdfn/gMKYOetP68iie+q0bZzrp/FBId8fAVU5UZOXIuV0zkU+v99x72X/Mr808k2blTjgr6kfVRw+2KS2s8hKciEhSaUbq9xQ/nOWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=I4Dt1rU6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB6A5C4CEC6;
-	Fri,  4 Oct 2024 12:37:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728045458;
-	bh=3zfonY9sf1wjm4sdPiwJ9/S9NQD+PWGHtrpv2Fq7FZY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=frOZ7kbhmycJMrm8qLh0jMRqo+49w9KQqNwhxu0sWcvkFs0Fq2B5HoLRJN7fm8QTwh3xnc2cXhvxVYmzsI5ikE1H5GkuU4S39CgKUQlacGTef5OY5/iUbki4keiaOptvpMCrTSBF+pxcxvFJJexTj+efAq+3cFlXzqo12tPR0jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSWJlxH/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EE7AC4CEC7;
+	Fri,  4 Oct 2024 12:37:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728045462;
+	bh=/eCfyRvQjlc+/+MzJM+Lozt+n38vDldK/kYvieVCF8c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I4Dt1rU67ncIOvQTd00T9nbmvL1N1CWXqKShkpk/I6vzIvZEEkr6aL5fXTGRW+iA0
-	 TAfcEt7001/F7F6pe3hcvKTQrfNc10WSBZ+yn9L4duF6daW0vLEQwrWxkP/JsJmv5U
-	 9SHv72vIT6pYMDumVYE+06gkiAfE/FUZC/+swP6U=
-Date: Fri, 4 Oct 2024 14:37:35 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Wang Yugui <wangyugui@e16-tech.com>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.6 000/533] 6.6.54-rc2 review
-Message-ID: <2024100410-daughter-pruning-e2a6@gregkh>
-References: <20241004071723.69AD.409509F4@e16-tech.com>
- <2024100426-wheat-heavily-68d1@gregkh>
- <20241004185705.7AA1.409509F4@e16-tech.com>
+	b=nSWJlxH/Ur3gatsrgfINvQPI7YdkdkvoHYhMwXN0U3A3JA1zDzLUhCm6i2tx8rDBf
+	 Vq+0RI19U+AwDzYZxlorZX0WJ/GOQN+oPrW6V4GproTRGHMdkNCtSVLqEe/Quc0Ll5
+	 udx6b/zpFlD7fB5AtxSt3noydFbt9adKhY/bL8ift9AbjyLu1DpRmtAwo61t2uTdi/
+	 nY85onSLKUB10V5r3hPF0r4A32rWHDsLHPVYxpqWDsWDhVR9G1ecRGhmaxajKs6lO2
+	 b2WuO/Mlse4a9xelq6xktYEeILn1hUpncCvDyhc4OUZDLQcOs88ZRTQ5CymOkE2vxZ
+	 +BBsmk8DWdaFA==
+Date: Fri, 4 Oct 2024 14:37:39 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Leonardo Bras <leobras@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	linux-kernel@vger.kernel.org, Junyao Zhao <junzhao@redhat.com>
+Subject: Re: [PATCH v2 1/1] wq: Avoid using isolated cpus' timers on
+ queue_delayed_work
+Message-ID: <Zv_hk59xfNvzlw3B@localhost.localdomain>
+References: <20240130010046.2730139-2-leobras@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241004185705.7AA1.409509F4@e16-tech.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240130010046.2730139-2-leobras@redhat.com>
 
-On Fri, Oct 04, 2024 at 06:57:07PM +0800, Wang Yugui wrote:
-> Hi,
+Hi,
+
+Le Mon, Jan 29, 2024 at 10:00:46PM -0300, Leonardo Bras a écrit :
+> When __queue_delayed_work() is called, it chooses a cpu for handling the
+> timer interrupt. As of today, it will pick either the cpu passed as
+> parameter or the last cpu used for this.
 > 
-> > On Fri, Oct 04, 2024 at 07:17:24AM +0800, Wang Yugui wrote:
-> > > Hi,
-> > > 
-> > > > This is the start of the stable review cycle for the 6.6.54 release.
-> > > > There are 533 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Sat, 05 Oct 2024 10:30:30 +0000.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > > The whole patch series can be found in one patch at:
-> > > > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.54-rc2.gz
-> > > > or in the git tree and branch at:
-> > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> > > > and the diffstat can be found below.
-> > > 
-> > > A new waring is report by 'make bzImage' in 6.6.54-rc2, 
-> > > but that is not reported in 6.6.53 and 6.12-rc1.
-> > > 
-> > > arch/x86/tools/insn_decoder_test: warning: Found an x86 instruction decoder bug, please report this.
-> > > arch/x86/tools/insn_decoder_test: warning: ffffffff8103c4d5:    c4 03 81 48 cf e9       vpermil2ps $0x9,%xmm15,%xmm14,%xmm15,%xmm9
-> > > arch/x86/tools/insn_decoder_test: warning: objdump says 6 bytes, but insn_get_length() says 0
-> > > arch/x86/tools/insn_decoder_test: warning: Decoded and checked 6968668 instructions with 1 failures
-> > > 
-> > > the root cause is yet not clear.
-> > 
-> > I've been seeing this locally for all 6.6.y releases, so for me it isn't
-> > new, and I can't seem to track down the root cause.  As it's just now
-> > showing up for you, can you do a 'git bisect' to find out the issue?
+> This is not good if a system does use CPU isolation, because it can take
+> away some valuable cpu time to:
+> 1 - deal with the timer interrupt,
+> 2 - schedule-out the desired task,
+> 3 - queue work on a random workqueue, and
+> 4 - schedule the desired task back to the cpu.
 > 
-> 'git bisect'  show that the root cause is
-> 	x86/entry: Remove unwanted instrumentation in common_interrupt()
+> So to fix this, during __queue_delayed_work(), if cpu isolation is in
+> place, pick a random non-isolated cpu to handle the timer interrupt.
 > 
-> after reverting this patch to 6.6.54-rc2, this warning does not happen.
+> As an optimization, if the current cpu is not isolated, use it instead
+> of looking for another candidate.
 > 
-> gcc --version:
-> gcc (GCC) 8.3.1 20190311 (Red Hat 8.3.1-3)
+> Signed-off-by: Leonardo Bras <leobras@redhat.com>
+> ---
+> Changes since v1:
+> - Make sure the CPU is isolated for any value of "cpu"
+> 
+> Changes since RFC:
+> - Do not use the same cpu from the timer for queueing the work.
+> - If the current cpu is not isolated, use it's timer instead of
+>   looking for another candidate.
+> 
+>  kernel/workqueue.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+> index 76e60faed8923..8dd7c01b326a4 100644
+> --- a/kernel/workqueue.c
+> +++ b/kernel/workqueue.c
+> @@ -1958,10 +1958,18 @@ static void __queue_delayed_work(int cpu, struct workqueue_struct *wq,
+>  	dwork->cpu = cpu;
+>  	timer->expires = jiffies + delay;
+>  
+> -	if (unlikely(cpu != WORK_CPU_UNBOUND))
+> +	if (housekeeping_enabled(HK_TYPE_TIMER)) {
+> +		/* If the current cpu is a housekeeping cpu, use it. */
+> +		cpu = smp_processor_id();
+> +		if (!housekeeping_test_cpu(cpu, HK_TYPE_TIMER))
+> +			cpu = housekeeping_any_cpu(HK_TYPE_TIMER);
 
-Wow that's an old version of gcc.  can't you use anything more modern?
+add_timer() already picks up a housekeeping CPU. So why is it needed?
 
-Anyway, that patch looks sane, it's just moving stuff around, it's not
-making any new code anywhere from what I can see so perhaps the decoder
-test just needs to be updated with a patch we have missed from newer
-releases?  I'll dig into that after this release is out unless someone
-beats me to it...
+Thanks.
 
-thanks,
+>  		add_timer_on(timer, cpu);
+> -	else
+> -		add_timer(timer);
+> +	} else {
+> +		if (likely(cpu == WORK_CPU_UNBOUND))
+> +			add_timer(timer);
+> +		else
+> +			add_timer_on(timer, cpu);
+> +	}
 
-greg k-h
+>  }
+>  
+>  /**
+> -- 
+> 2.43.0
+> 
+> 
 
