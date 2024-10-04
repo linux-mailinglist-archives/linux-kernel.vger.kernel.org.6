@@ -1,109 +1,118 @@
-Return-Path: <linux-kernel+bounces-350303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7C5990325
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:39:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A034E990320
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ACB71C218DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:39:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67A0C282AB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0483B1D4619;
-	Fri,  4 Oct 2024 12:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778CA1D362F;
+	Fri,  4 Oct 2024 12:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hEHV+6j6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="I4Dt1rU6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCA11D415F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 12:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E021D2B17;
+	Fri,  4 Oct 2024 12:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728045464; cv=none; b=o59JFLcvA49JB/HmesWCQaG+Ur0gBw3VufmCYyw80TlynnQJzchx8XM+dCp3ePRA92FTi2Q0h42OlBnD/fuIr9XV09MWJ7y3pp591unxkOIdDUybye+hx92MhufYJZ6Xa4QXhVfbofpRYaYa9gkcl8kJj9X53LYeqS6uZWR3HBk=
+	t=1728045459; cv=none; b=VvrVPFdYe2eEpAMXuErfIHqeR/jC+o8gK08FEnaa23u+UgakA4pjUP093eLoVf1kBGKhhS3anseDB3B1/J919YU+iOIvHsteXgxv71mxCQBRxCcpwBLbudh4hZeXGLjrZTfUccTr9iXYZys5LZt1GNHOpaS9qvznDaVzUSdM0Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728045464; c=relaxed/simple;
-	bh=y8AcVoWVD+54sJ+A2toFMeSvjuzIiqgPSmXvzXW7oyQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=SlnOkrZiGd4MXunfRG2ijgtokpNvWHm5f8/L3wBoRfGbTZy8fp8yc1QNtz3nnvtaO/m0hY14tA7oXjwHKHWY6kCe6U5LK92JQSJK6F4AdZzQIJfIGQReArK0N57C37qVFlDWIPSZiqsltrdmJ6nEGRFuk491XNGFvSPtmwHoDJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hEHV+6j6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728045461;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=PVHODFCJStcGgS4z5ceFWY8UmrVfGMzO62w7g60kd7E=;
-	b=hEHV+6j6WcH8sHLBeL9PaoHt48MS3cCOet8CfytKDDPN+gvk3MswXC8O8v+JgxeK+zV8FC
-	HXOE2ZYEcy8OQLNgHLLEB3kq0nhP08Ni/Lo2AODYDFCJ7fIdd4hqakz4Z3n8Gg2Vk1isx3
-	RJAZ/8QqRktDtmx8VPolmiUNNz9D/R0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-bjs2kgU6OoO4C1CIw5oIKQ-1; Fri,
- 04 Oct 2024 08:37:35 -0400
-X-MC-Unique: bjs2kgU6OoO4C1CIw5oIKQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 07CFA194510E;
-	Fri,  4 Oct 2024 12:37:33 +0000 (UTC)
-Received: from pauld.com (unknown [10.22.32.131])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A147E195605F;
-	Fri,  4 Oct 2024 12:37:30 +0000 (UTC)
-From: Phil Auld <pauld@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Juri Lelli <juri.lelli@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH] sched/deadline: Use hrtick_enabled_dl() before start_hrtick_dl()
-Date: Fri,  4 Oct 2024 08:37:29 -0400
-Message-ID: <20241004123729.460668-1-pauld@redhat.com>
+	s=arc-20240116; t=1728045459; c=relaxed/simple;
+	bh=3zfonY9sf1wjm4sdPiwJ9/S9NQD+PWGHtrpv2Fq7FZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O4kux4u3g+M1sullVrPzOiRwqaGjLhoq0ACHdU0Uq+/Ce6AvNFHb87hDmSJybFI29Shxkpdfn/gMKYOetP68iie+q0bZzrp/FBId8fAVU5UZOXIuV0zkU+v99x72X/Mr808k2blTjgr6kfVRw+2KS2s8hKciEhSaUbq9xQ/nOWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=I4Dt1rU6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB6A5C4CEC6;
+	Fri,  4 Oct 2024 12:37:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728045458;
+	bh=3zfonY9sf1wjm4sdPiwJ9/S9NQD+PWGHtrpv2Fq7FZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I4Dt1rU67ncIOvQTd00T9nbmvL1N1CWXqKShkpk/I6vzIvZEEkr6aL5fXTGRW+iA0
+	 TAfcEt7001/F7F6pe3hcvKTQrfNc10WSBZ+yn9L4duF6daW0vLEQwrWxkP/JsJmv5U
+	 9SHv72vIT6pYMDumVYE+06gkiAfE/FUZC/+swP6U=
+Date: Fri, 4 Oct 2024 14:37:35 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Wang Yugui <wangyugui@e16-tech.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 000/533] 6.6.54-rc2 review
+Message-ID: <2024100410-daughter-pruning-e2a6@gregkh>
+References: <20241004071723.69AD.409509F4@e16-tech.com>
+ <2024100426-wheat-heavily-68d1@gregkh>
+ <20241004185705.7AA1.409509F4@e16-tech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004185705.7AA1.409509F4@e16-tech.com>
 
-The deadline server code moved one of the start_hrtick_dl() calls
-but dropped the dl specific hrtick_enabled check. This causes hrticks
-to get armed even when sched_feat(HRTICK_DL) is false. Fix it.
+On Fri, Oct 04, 2024 at 06:57:07PM +0800, Wang Yugui wrote:
+> Hi,
+> 
+> > On Fri, Oct 04, 2024 at 07:17:24AM +0800, Wang Yugui wrote:
+> > > Hi,
+> > > 
+> > > > This is the start of the stable review cycle for the 6.6.54 release.
+> > > > There are 533 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > > 
+> > > > Responses should be made by Sat, 05 Oct 2024 10:30:30 +0000.
+> > > > Anything received after that time might be too late.
+> > > > 
+> > > > The whole patch series can be found in one patch at:
+> > > > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.54-rc2.gz
+> > > > or in the git tree and branch at:
+> > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> > > > and the diffstat can be found below.
+> > > 
+> > > A new waring is report by 'make bzImage' in 6.6.54-rc2, 
+> > > but that is not reported in 6.6.53 and 6.12-rc1.
+> > > 
+> > > arch/x86/tools/insn_decoder_test: warning: Found an x86 instruction decoder bug, please report this.
+> > > arch/x86/tools/insn_decoder_test: warning: ffffffff8103c4d5:    c4 03 81 48 cf e9       vpermil2ps $0x9,%xmm15,%xmm14,%xmm15,%xmm9
+> > > arch/x86/tools/insn_decoder_test: warning: objdump says 6 bytes, but insn_get_length() says 0
+> > > arch/x86/tools/insn_decoder_test: warning: Decoded and checked 6968668 instructions with 1 failures
+> > > 
+> > > the root cause is yet not clear.
+> > 
+> > I've been seeing this locally for all 6.6.y releases, so for me it isn't
+> > new, and I can't seem to track down the root cause.  As it's just now
+> > showing up for you, can you do a 'git bisect' to find out the issue?
+> 
+> 'git bisect'  show that the root cause is
+> 	x86/entry: Remove unwanted instrumentation in common_interrupt()
+> 
+> after reverting this patch to 6.6.54-rc2, this warning does not happen.
+> 
+> gcc --version:
+> gcc (GCC) 8.3.1 20190311 (Red Hat 8.3.1-3)
 
-Fixes: 63ba8422f876 ("sched/deadline: Introduce deadline servers")
-Signed-off-by: Phil Auld <pauld@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
----
- kernel/sched/deadline.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Wow that's an old version of gcc.  can't you use anything more modern?
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 9ce93d0bf452..be1b917dc8ce 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2385,7 +2385,7 @@ static void set_next_task_dl(struct rq *rq, struct task_struct *p, bool first)
- 
- 	deadline_queue_push_tasks(rq);
- 
--	if (hrtick_enabled(rq))
-+	if (hrtick_enabled_dl(rq))
- 		start_hrtick_dl(rq, &p->dl);
- }
- 
--- 
-2.46.1
+Anyway, that patch looks sane, it's just moving stuff around, it's not
+making any new code anywhere from what I can see so perhaps the decoder
+test just needs to be updated with a patch we have missed from newer
+releases?  I'll dig into that after this release is out unless someone
+beats me to it...
 
+thanks,
+
+greg k-h
 
