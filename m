@@ -1,108 +1,183 @@
-Return-Path: <linux-kernel+bounces-351163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7F8990F09
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:47:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89237990E58
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E557B2B871
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:23:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB0A1C22789
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30A3218D75;
-	Fri,  4 Oct 2024 18:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9964E223AF3;
+	Fri,  4 Oct 2024 18:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVh77BHP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="VS52UYd6"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548E2218D62;
-	Fri,  4 Oct 2024 18:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B1A1E2604;
+	Fri,  4 Oct 2024 18:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066519; cv=none; b=YVRSS0Rr1Tm3tOul3YyunO2rC9885NNrRFWaypbz/U1lfIe2I+Qx0XZ7aD2oH9EWKP0A4eaUVJu1agkefep6ftWZusZIALtV9YLE1dcNNCKR7hPjvNMXEZL2HmoHub0RBv6Ea0kHyE7v/fFncCwyqnz9YyWeUj2ob+hu6WasKmY=
+	t=1728066585; cv=none; b=l6Q6lQCYEhYvBWPrvWDgnc02vnaFFL9iYLS8HT3CIGDYFmmZOtCdAPiHerRxVJsb7nTX3KX0EIfJ7M/32f4QF4iKDIjL2wdO0MrmfBJCG6S8X6VodGD4jU3UukJQ2VU9qJEX9VGSBkc/NcYtwl5jA1Oad4X4A3SprR8mwbjH5fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066519; c=relaxed/simple;
-	bh=C+vulO/pDYcyLdqr2Hq0QZwpkjw93TAWRFoVuXYCTWQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sa+KatALk+U9f63sfT+gwgLWQWzOxmyKNnhbaCmofhKY82h77U/We0XrneCazXor5eVBd/B80AyiU6OBlEu3mZOxlaxHGQGhERrH4P4AuIxTm1HN78my6BGM1Sp8f5N0eddczLgGK5l/VMoRE6CO40Hav5nIQj5EZqUccFBWySM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qVh77BHP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21926C4CECD;
-	Fri,  4 Oct 2024 18:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066519;
-	bh=C+vulO/pDYcyLdqr2Hq0QZwpkjw93TAWRFoVuXYCTWQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qVh77BHPV3kmEplcUQm0e4l3+liAPQNZaGIbuk1wioz2LeS8QY+oTXHXEFLFiFn9B
-	 7aMLEu6Qyr5vhkolGVF1BuFYSKTjVzKvlJavPjdwfffg+75J28jpOA/ZxzlZ4Yd0oV
-	 e7V0m+8/mXdF0G/eLtfIoGLEFGE4i3aYBCxLVQ91tbF0L4LLBKVVkNjNqIS7iljuEL
-	 yDX6PDX7THv+16WTtPHdpXmjW5WF6J/U3M3tJ1yxObLykDuGQRmEpeLaBSQnEx/QE+
-	 7F4SiDfGxNTstoZ99uNvm5g9ngMSVJVV+jg8StBSRf2Z1ba6Gvvqh6vI8cSOG+/AX+
-	 QQBWBl8BIcQAQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Andrey Shumilin <shum.sdl@nppct.ru>,
-	Helge Deller <deller@gmx.de>,
-	Sasha Levin <sashal@kernel.org>,
-	tzimmermann@suse.de,
-	javierm@redhat.com,
-	fullwaywang@outlook.com,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.1 42/42] fbdev: sisfb: Fix strbuf array overflow
-Date: Fri,  4 Oct 2024 14:26:53 -0400
-Message-ID: <20241004182718.3673735-42-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004182718.3673735-1-sashal@kernel.org>
-References: <20241004182718.3673735-1-sashal@kernel.org>
+	s=arc-20240116; t=1728066585; c=relaxed/simple;
+	bh=MWud5rJYcp01tmdb0smF8P75Q+GNmRWixrTxRl8zMFk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k203EypCK+9jkFRvjOEShpO71x5fn1HYla6ckqIgp+aaWX+AMfBQewk6X48SuzNTI5xGlhdHr2y6tOyXzUay3PgQhDxjTT53FwnVoC/xLtaWwCx3M1shoGWIE6YoOnvHhV5xQ7XELBdlHSK1UbRKDhtJWHqU753PIwVmzS5q70k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=VS52UYd6; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1728066582;
+	bh=MWud5rJYcp01tmdb0smF8P75Q+GNmRWixrTxRl8zMFk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VS52UYd6+pQ4D/wAPhBdWsqtEtpep/nQzQlFII7jB0tQjkbxdphiSbOO47RuvZJr5
+	 YoKQkqOk6PPn6iN5nZRaPyW59k2aH2pVMplcLapIJhKo0GeF1q0uU2qsuZh7nxpe3y
+	 7fklJJTiI+F7n4MJvqrALtgx0pn+a9fqvrfcIwZiVJf0CZFirgN6tGC/Kue7bQAG18
+	 pMTIXQ6GiKQhpKcp0qC9687F5LVTmryf7P585gxI9MUzdnM6bvYVNYp8lGHPbgPO9h
+	 lqXRJBJIMftkexbY+fkLFpO5yRRPPKtOR+iGJp3jTyclNd6g14SyTS0wYtIQ2axrKk
+	 pK3SuYKswUsLg==
+Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKxsd5z2nzMpK;
+	Fri,  4 Oct 2024 14:29:41 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	John Stultz <jstultz@google.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	maged.michael@gmail.com,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	rcu@vger.kernel.org,
+	linux-mm@kvack.org,
+	lkmm@lists.linux.dev
+Subject: [RFC PATCH v2 0/4] sched+mm: Track lazy active mm existence with hazard pointers
+Date: Fri,  4 Oct 2024 14:27:30 -0400
+Message-Id: <20241004182734.1761555-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.112
 Content-Transfer-Encoding: 8bit
 
-From: Andrey Shumilin <shum.sdl@nppct.ru>
+[ Based on recent discussion with Linus, it appears that this series
+  just proves that it's time to get rid of active mm altogether:
 
-[ Upstream commit 9cf14f5a2746c19455ce9cb44341b5527b5e19c3 ]
+  https://lore.kernel.org/lkml/CAHk-=wgztWbA4z85xKob4eS9P=Nt5h4j=HnN+Pc90expskiCRA@mail.gmail.com/
 
-The values of the variables xres and yres are placed in strbuf.
-These variables are obtained from strbuf1.
-The strbuf1 array contains digit characters
-and a space if the array contains non-digit characters.
-Then, when executing sprintf(strbuf, "%ux%ux8", xres, yres);
-more than 16 bytes will be written to strbuf.
-It is suggested to increase the size of the strbuf array to 24.
+  I'm posting a v2 fixing minor issues from v1 in case it can be useful
+  to try hazard pointers with other use-cases, or for further
+  benchmarking of active mm tracking impact.
+]
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Hazard pointers appear to be a good fit for replacing refcount based lazy
+active mm tracking.
 
-Signed-off-by: Andrey Shumilin <shum.sdl@nppct.ru>
-Signed-off-by: Helge Deller <deller@gmx.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/video/fbdev/sis/sis_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Highlight:
 
-diff --git a/drivers/video/fbdev/sis/sis_main.c b/drivers/video/fbdev/sis/sis_main.c
-index fe8996461b9ef..7b83d73eb0a04 100644
---- a/drivers/video/fbdev/sis/sis_main.c
-+++ b/drivers/video/fbdev/sis/sis_main.c
-@@ -184,7 +184,7 @@ static void sisfb_search_mode(char *name, bool quiet)
- {
- 	unsigned int j = 0, xres = 0, yres = 0, depth = 0, rate = 0;
- 	int i = 0;
--	char strbuf[16], strbuf1[20];
-+	char strbuf[24], strbuf1[20];
- 	char *nameptr = name;
- 
- 	/* We don't know the hardware specs yet and there is no ivideo */
+will-it-scale context_switch1_threads
+
+nr threads (-t)     speedup
+     1                -0.2%
+     2                +0.4%
+     3                +0.2%
+     6                +0.6%
+    12                +0.8%
+    24                +3%
+    48               +12%
+    96               +21%
+   192               +28%
+   384                +4%
+   768                -0.6%
+
+This series applies on top of v6.11.1.
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: John Stultz <jstultz@google.com>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Zqiang <qiang.zhang1211@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: maged.michael@gmail.com
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: rcu@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: lkmm@lists.linux.dev
+
+Mathieu Desnoyers (4):
+  compiler.h: Introduce ptr_eq() to preserve address dependency
+  Documentation: RCU: Refer to ptr_eq()
+  hp: Implement Hazard Pointers
+  sched+mm: Use hazard pointers to track lazy active mm existence
+
+ Documentation/RCU/rcu_dereference.rst |  38 ++++++-
+ Documentation/mm/active_mm.rst        |   9 +-
+ arch/Kconfig                          |  32 ------
+ arch/powerpc/Kconfig                  |   1 -
+ arch/powerpc/mm/book3s64/radix_tlb.c  |  23 +---
+ include/linux/compiler.h              |  63 ++++++++++
+ include/linux/hp.h                    | 158 ++++++++++++++++++++++++++
+ include/linux/mm_types.h              |   3 -
+ include/linux/sched/mm.h              |  71 +++++-------
+ kernel/Makefile                       |   2 +-
+ kernel/exit.c                         |   4 +-
+ kernel/fork.c                         |  47 ++------
+ kernel/hp.c                           |  46 ++++++++
+ kernel/sched/sched.h                  |   8 +-
+ lib/Kconfig.debug                     |  10 --
+ 15 files changed, 350 insertions(+), 165 deletions(-)
+ create mode 100644 include/linux/hp.h
+ create mode 100644 kernel/hp.c
+
 -- 
-2.43.0
-
+2.39.2
 
