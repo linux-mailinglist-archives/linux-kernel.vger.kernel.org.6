@@ -1,50 +1,64 @@
-Return-Path: <linux-kernel+bounces-350486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7EA9905DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:21:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59CA19905D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5578B21B99
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:21:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B561C21897
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFE72178F4;
-	Fri,  4 Oct 2024 14:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9D3215F6C;
+	Fri,  4 Oct 2024 14:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="AcM0vt7T"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="NYXJ1CQU"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB61216A3F;
-	Fri,  4 Oct 2024 14:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFDC2139DA;
+	Fri,  4 Oct 2024 14:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728051669; cv=none; b=KuFe0c7giAvPb3NMsbd2iLygfm0l31pwShntjgHGWBpMaDc2dFMfWCXykABQ+IAU4LzSNvZcm5C60UHUAb7XzJbkTRgxoUBXpcL7XL71dU0C9LLrRgio66Mp9T4DOw9ku/j5FzjoR1JYPJlYPfYai8OQ3Lrx8722MwIIIGujUvI=
+	t=1728051569; cv=none; b=EQKFi08Tp9BGDknDzTSESYofLrRlfXwdxg/6l/hORJ5gleZ/pBy0usWjIZ5c+xKhGp2/NfSoaCz8ybWtZhrOF5HvClUGod5UDfr1JTh/IZuLUu1mYUZuA00QjCJtFXHwhjHWPLC8Wkt291iIkrfrZMak9N8yBIsAu6OCrFZiYBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728051669; c=relaxed/simple;
-	bh=xGZVsNftekr8WT4WvGI2SOfuewhewH/sye43N5K4ri8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JfKgpBDvriFCRyw/vuwVwtXImToj9KnGtsr/QGCBcMO/QpQh0eg8OehlJxfHu7hk6sI8ptgo1QtPS/XVuN9v8ycgCm695P5uZctrjIqX6z52XnDuJ5f8XMlX/sLxiqEANUr5vrGfxeMwvtcJF35bIQj5a034qLfTjKr8cwPdbHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=AcM0vt7T; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728051660;
-	bh=xGZVsNftekr8WT4WvGI2SOfuewhewH/sye43N5K4ri8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AcM0vt7TQlGl3UU5KbIG3MnQA3xFuF+AgWZipNjvjNi6ZNzclsgohCdzD9K+wNpgx
-	 Y0Qa7Q2K3FEpu79MZ2GSxyiLp6oiDWshkW1aqj8iXagrfJHBnv0Vp0p1Vm3F5XaaAG
-	 L+bHEBxEKaTiByL4vabMl6sobp4+Tpm6YZuWYhqYfRdLHPQ8ArHLmBGWiGl/rOrkzs
-	 OwnzsmAPkCkO4hCtimLdvFPKjyTRXlLFPO0g4vwCCEl5h5pIxSrAl4IJalGNdjjeu5
-	 V3LnfsTid1/O3sJxnoWEHdll5HdiwdDYyPHOqj3pDmnFVe8AS13acA7ctXsRvMELdy
-	 vHsJcipyVUL7A==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKrLh0NN2zLDZ;
-	Fri,  4 Oct 2024 10:21:00 -0400 (EDT)
-Message-ID: <db35f840-1c90-406a-906f-c26aca29be84@efficios.com>
-Date: Fri, 4 Oct 2024 10:18:59 -0400
+	s=arc-20240116; t=1728051569; c=relaxed/simple;
+	bh=2BLWGkCi9IuXDLYDzEKfW7ieDXxkrD9eyPr/svUeaL4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nzCqEbPMy9wnjGYHH5loNeVHRrCvWA7v04L9HQgPD/v4qzEKTZ0yU8N4VDgMShPjbX476Bv0lhlZbo4U9n0y49bCL1584VGhKgJM50VoztRzknosa+KEwvhozHTmNRSPPQleaqu7xjdzNHH2bfCjeE59F2b4pG/Na1R8x8ou5oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=NYXJ1CQU; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1728051567; x=1759587567;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=2BLWGkCi9IuXDLYDzEKfW7ieDXxkrD9eyPr/svUeaL4=;
+  b=NYXJ1CQUeZDU3bmeoPXRXpH4wXSUC8X99arGiXJf+KuX5n+Z2sD4h4vP
+   TUlIajcdAxtaadOzT/WqI/cb1sjnldjeh2avnhQSrw8Eel5nlMehbkx7h
+   kTjWnNDqA6M28eve1v2IAOyTmHlqHzeLEvfCayMkvHc1yR9TxC5/L/CBr
+   yoNGmpoYGZj3Xuc9Q4ftBHPoMc4E7CMm3qVqUqitvdr5tfjsdJkJc37tT
+   aMRAPqo5IJC8UYMQC7mWvjZSjguShhuIAcrUXqlit4UdVaEe/Mh+wGwk/
+   d17CC4El9K/ds271qVSSQg7mr9pndz1Gb0Sl/QriD3We08DWxxYzp5Y/i
+   A==;
+X-CSE-ConnectionGUID: gI4jLvESQWmk89b6me/PGQ==
+X-CSE-MsgGUID: NwJtQ0+/RNGly4b7rAsyww==
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="35905329"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Oct 2024 07:19:26 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 4 Oct 2024 07:19:03 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Fri, 4 Oct 2024 07:19:01 -0700
+Message-ID: <1cba974d-492e-49f0-8d43-1a75672861d0@microchip.com>
+Date: Fri, 4 Oct 2024 16:19:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,112 +66,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/8] tracing/ftrace: guard syscall probe with
- preempt_notrace
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>
-References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
- <20241003151638.1608537-3-mathieu.desnoyers@efficios.com>
- <20241003182304.2b04b74a@gandalf.local.home>
- <6dc21f67-52e1-4ed5-af7f-f047c3c22c11@efficios.com>
- <20241003210403.71d4aa67@gandalf.local.home>
- <90ca2fee-cdfb-4d48-ab9e-57d8d2b8b8d8@efficios.com>
- <20241004092619.0be53f90@gandalf.local.home>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241004092619.0be53f90@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH net-next] net: macb: Adding support for Jumbo Frames up to
+ 10240 Bytes in SAMA5D2
+Content-Language: en-US, fr-FR
+To: Aleksander Jan Bajkowski <olek2@wp.pl>, <claudiu.beznea@tuxon.dev>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, linux-arm-kernel
+	<linux-arm-kernel@lists.infradead.org>
+References: <20241003171941.8814-1-olek2@wp.pl>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20241003171941.8814-1-olek2@wp.pl>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2024-10-04 15:26, Steven Rostedt wrote:
-> On Thu, 3 Oct 2024 21:33:16 -0400
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+On 03/10/2024 at 19:19, Aleksander Jan Bajkowski wrote:
+> As per the SAMA5D2 device specification it supports Jumbo frames.
+> But the suggested flag and length of bytes it supports was not updated
+> in this driver config_structure.
+> The maximum jumbo frames the device supports:
+> 10240 bytes as per the device spec.
 > 
->> On 2024-10-04 03:04, Steven Rostedt wrote:
->>> On Thu, 3 Oct 2024 20:26:29 -0400
->>> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
->>>
->>>    
->>>> static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
->>>> {
->>>>            struct trace_array *tr = data;
->>>>            struct trace_event_file *trace_file;
->>>>            struct syscall_trace_enter *entry;
->>>>            struct syscall_metadata *sys_data;
->>>>            struct trace_event_buffer fbuffer;
->>>>            unsigned long args[6];
->>>>            int syscall_nr;
->>>>            int size;
->>>>
->>>>            syscall_nr = trace_get_syscall_nr(current, regs);
->>>>            if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
->>>>                    return;
->>>>
->>>>            /* Here we're inside tp handler's rcu_read_lock_sched (__DO_TRACE) */
->>>>            trace_file = rcu_dereference_sched(tr->enter_syscall_files[syscall_nr]);
->>>>
->>>> ^^^^ this function explicitly states that preempt needs to be disabled by
->>>> tracepoints.
->>>
->>> Ah, I should have known it was the syscall portion. I don't care for this
->>> hidden dependency. I rather add a preempt disable here and not expect it to
->>> be disabled when called.
->>
->> Which is exactly what this patch is doing.
+> While changing the MTU value greater than 1500, it threw error:
+> sudo ifconfig eth1 mtu 9000
+> SIOCSIFMTU: Invalid argument
 > 
-> I was thinking of putting the protection in the function and not the macro.
+> Add this support to driver so that it works as expected and designed.
+> 
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
 
-I'm confused by your comment. The protection is added to the function here:
+Looks good indeed:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index 67ac5366f724..ab4db8c23f36 100644
---- a/kernel/trace/trace_syscalls.c
-+++ b/kernel/trace/trace_syscalls.c
-@@ -299,6 +299,12 @@ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
-         int syscall_nr;
-         int size;
-  
-+       /*
-+        * Syscall probe called with preemption enabled, but the ring
-+        * buffer and per-cpu data require preemption to be disabled.
-+        */
-+       guard(preempt_notrace)();
-+
-         syscall_nr = trace_get_syscall_nr(current, regs);
-         if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
-                 return;
-@@ -338,6 +344,12 @@ static void ftrace_syscall_exit(void *data, struct pt_regs *regs, long ret)
-         struct trace_event_buffer fbuffer;
-         int syscall_nr;
-  
-+       /*
-+        * Syscall probe called with preemption enabled, but the ring
-+        * buffer and per-cpu data require preemption to be disabled.
-+        */
-+       guard(preempt_notrace)();
-+
-         syscall_nr = trace_get_syscall_nr(current, regs);
-         if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
-                 return;
+Thanks, best regards,
+   Nicolas
 
-(I'll answer to the rest of your message in a separate email)
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+> ---
+>   drivers/net/ethernet/cadence/macb_main.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index f06babec04a0..9fda16557509 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -4841,10 +4841,11 @@ static const struct macb_config pc302gem_config = {
+>   };
+> 
+>   static const struct macb_config sama5d2_config = {
+> -       .caps = MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII,
+> +       .caps = MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII | MACB_CAPS_JUMBO,
+>          .dma_burst_length = 16,
+>          .clk_init = macb_clk_init,
+>          .init = macb_init,
+> +       .jumbo_max_len = 10240,
+>          .usrio = &macb_default_usrio,
+>   };
+> 
+> --
+> 2.39.5
+> 
 
 
