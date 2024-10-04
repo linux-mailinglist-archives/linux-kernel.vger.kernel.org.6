@@ -1,86 +1,254 @@
-Return-Path: <linux-kernel+bounces-350507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FBC99062B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:33:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B40599062E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347211F2378C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:33:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1F9D2812AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58342217914;
-	Fri,  4 Oct 2024 14:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43419215F6C;
+	Fri,  4 Oct 2024 14:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZJ7lTf1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SGjZ1Ysq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BF0216A06;
-	Fri,  4 Oct 2024 14:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CDE2141D7
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728052392; cv=none; b=cZEzj051QoYTVq7tpE2fz+vrXWbyIgj/R+EfYMyW543MVwbpe9+GtmJx/jWyXBb3sxOLOJZ3LvGKsBT5JNnZxkuXhb44qesSv5c6BPS5SRy4B3eptyZaET/GzksO1H3UgjPXGC17fx51LJ4jVXr6klLcjE5m7WHx1ZsoiQkRtEk=
+	t=1728052447; cv=none; b=IEz7ISmBnfvCGdHMRs5CxwmQKqOXnDV2GkFtVWaKpbFYeOJoxKkoL/LQPJw3U3Ive2JbOxOyKLHmJLQJ8xuh4+OWN8m9PJ65NDyRXD646pf8rp45fSO5fW65OmGnUr68Qg4mlKMv3oKUnVjPWt5TCi23Sauaw0sibuolANvjVs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728052392; c=relaxed/simple;
-	bh=BNq+2BVbN1l33gixxoqIfhl6WtmK4yi8jzOPhLnc1Rc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ntc8CR6QlGwfm8CWoZNZWgndNqgzxouv57cUfS0/1R2lRQ3Sd8lBE0nqhDShdYrAufhBXajlb1TT+nAH/r30B0RAfOI2BqO4m+YRuEu3InI4UhCLQZVRceieTJT6gN6+05z3em3pTOJqzXCQlCccG/ingcZvKHVrkdRcQLOCgoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZJ7lTf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2BBCC4CEC6;
-	Fri,  4 Oct 2024 14:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728052392;
-	bh=BNq+2BVbN1l33gixxoqIfhl6WtmK4yi8jzOPhLnc1Rc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EZJ7lTf18AOZGhmxz5nWFA351JyvnAsEWL8pjGClUYq9A2gdKSndmv2bOuKfm9HAA
-	 FC51D7tj61c3iQjGzaki9cPiOcaCABHhV2JfS3dEmhA9yEJzE02hfp9Xew4BJ7LGJ0
-	 Djg1AAGvOaCLl1zwarBK/9i6v32EwxVYTmMiKDAmI8y0apUskhweQsL13PdgZ0HYFa
-	 cYJ3uRJYCmk6pKbhrd1GPZNpgR4VWfo8Y2P+LYbon7tpSSsTO7FadIeR1ZkQZXL3nI
-	 Db624rDGiul6LrEG2E6b+11zE0U884e5KWCToAH/IZxCqjp0dRkmxJLlBibGkQfD+e
-	 ru7eJTa90Ko9A==
-Date: Fri, 4 Oct 2024 07:33:11 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: Veerasenareddy Burru <vburru@marvell.com>, Sathesh Edara
- <sedara@marvell.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Abhijit Ayarekar
- <aayarekar@marvell.com>, Satananda Burla <sburla@marvell.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <lvc-project@linuxtesting.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net v3] octeon_ep: Add SKB allocation failures handling
- in __octep_oq_process_rx()
-Message-ID: <20241004073311.223efca4@kernel.org>
-In-Reply-To: <20240930053328.9618-1-amishin@t-argos.ru>
-References: <20240930053328.9618-1-amishin@t-argos.ru>
+	s=arc-20240116; t=1728052447; c=relaxed/simple;
+	bh=dg/JlRn0H+tthLm9axveuXLsy7nnpjo7rpM9hSESaPQ=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=BTvFBQWpfTV5wWK6TQZnWmnsfEhV/oVJoYAHmIjSSLgVTRTx933QVp68y2P59HEZ416s7N04jewqMUSxFOwtC8tu2i1aUut0WkF7v5vRzt3D3DOaGHR0jZ1g1WhYmvGPZ2jTO5YXIpZXBPA8dezpn5Gc4HYYstrVxW0omGfWFP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SGjZ1Ysq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728052444;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=f1XZvlT7o8oSbF4HuhkqAPlXh5kAhT6DviPjd2xOrk0=;
+	b=SGjZ1Ysq6kRCqakhLvYHmY2eXb3g9EhWhmycnNM0viNbH0z1MaHSXEOJrPDLo4nwbWiQof
+	4CDwq+Y3C9MPcTaR/HBME+uagrLSVsT7XM/AbeOph78LOZAZtsKX+A+MZlpK1ByxFMl9WX
+	Ns3Cncfh3nDMfUaun9d3BtiGM0069b0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-158-MgEqM_UkMWi8Y9TB9fcswg-1; Fri,
+ 04 Oct 2024 10:34:03 -0400
+X-MC-Unique: MgEqM_UkMWi8Y9TB9fcswg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E41501955F10;
+	Fri,  4 Oct 2024 14:34:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E21AF1955E93;
+	Fri,  4 Oct 2024 14:33:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: In readahead, put the folio refs as soon extracted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3771537.1728052438.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 04 Oct 2024 15:33:58 +0100
+Message-ID: <3771538.1728052438@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, 30 Sep 2024 08:33:28 +0300 Aleksandr Mishin wrote:
-> build_skb() returns NULL in case of a memory allocation failure so handle
-> it inside __octep_oq_process_rx() to avoid NULL pointer dereference.
-> 
-> __octep_oq_process_rx() is called during NAPI polling by the driver. If
-> skb allocation fails, keep on pulling packets out of the Rx DMA queue: we
-> shouldn't break the polling immediately and thus falsely indicate to the
-> octep_napi_poll() that the Rx pressure is going down. As there is no
-> associated skb in this case, don't process the packets and don't push them
-> up the network stack - they are skipped.
-> 
-> The common code with skb and some index manipulations is extracted to make
-> the fix more readable and avoid code duplication. Also helper function is
-> implemented to unmmap/flush all the fragment buffers used by the dropped
-> packet. 'alloc_failures' counter is incremented to mark the skb allocation
-> error in driver statistics.
+netfslib currently defers dropping the ref on the folios it obtains during
+readahead to after it has started I/O on the basis that we can do it whils=
+t
+we wait for the I/O to complete, but this runs the risk of the I/O
+collection racing with this in future.
 
-You're doing multiple things here, please split this patch up.
--- 
-pw-bot: cr
+Furthermore, Matthew Wilcox strongly suggests that the refs should be
+dropped immediately, as readahead_folio() does (netfslib is using
+__readahead_batch() which doesn't drop the refs).
+
+Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/buffered_read.c     |   47 ++++++++++++-------------------------=
+------
+ fs/netfs/read_collect.c      |    2 +
+ include/trace/events/netfs.h |    1 =
+
+ 3 files changed, 16 insertions(+), 34 deletions(-)
+
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index c40e226053cc..af46a598f4d7 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -67,7 +67,8 @@ static int netfs_begin_cache_read(struct netfs_io_reques=
+t *rreq, struct netfs_in
+  * Decant the list of folios to read into a rolling buffer.
+  */
+ static size_t netfs_load_buffer_from_ra(struct netfs_io_request *rreq,
+-					struct folio_queue *folioq)
++					struct folio_queue *folioq,
++					struct folio_batch *put_batch)
+ {
+ 	unsigned int order, nr;
+ 	size_t size =3D 0;
+@@ -82,6 +83,9 @@ static size_t netfs_load_buffer_from_ra(struct netfs_io_=
+request *rreq,
+ 		order =3D folio_order(folio);
+ 		folioq->orders[i] =3D order;
+ 		size +=3D PAGE_SIZE << order;
++
++		if (!folio_batch_add(put_batch, folio))
++			folio_batch_release(put_batch);
+ 	}
+ =
+
+ 	for (int i =3D nr; i < folioq_nr_slots(folioq); i++)
+@@ -120,6 +124,9 @@ static ssize_t netfs_prepare_read_iterator(struct netf=
+s_io_subrequest *subreq)
+ 		 * that we will need to release later - but we don't want to do
+ 		 * that until after we've started the I/O.
+ 		 */
++		struct folio_batch put_batch;
++
++		folio_batch_init(&put_batch);
+ 		while (rreq->submitted < subreq->start + rsize) {
+ 			struct folio_queue *tail =3D rreq->buffer_tail, *new;
+ 			size_t added;
+@@ -132,10 +139,11 @@ static ssize_t netfs_prepare_read_iterator(struct ne=
+tfs_io_subrequest *subreq)
+ 			new->prev =3D tail;
+ 			tail->next =3D new;
+ 			rreq->buffer_tail =3D new;
+-			added =3D netfs_load_buffer_from_ra(rreq, new);
++			added =3D netfs_load_buffer_from_ra(rreq, new, &put_batch);
+ 			rreq->iter.count +=3D added;
+ 			rreq->submitted +=3D added;
+ 		}
++		folio_batch_release(&put_batch);
+ 	}
+ =
+
+ 	subreq->len =3D rsize;
+@@ -348,6 +356,7 @@ static int netfs_wait_for_read(struct netfs_io_request=
+ *rreq)
+ static int netfs_prime_buffer(struct netfs_io_request *rreq)
+ {
+ 	struct folio_queue *folioq;
++	struct folio_batch put_batch;
+ 	size_t added;
+ =
+
+ 	folioq =3D kmalloc(sizeof(*folioq), GFP_KERNEL);
+@@ -360,39 +369,14 @@ static int netfs_prime_buffer(struct netfs_io_reques=
+t *rreq)
+ 	rreq->submitted =3D rreq->start;
+ 	iov_iter_folio_queue(&rreq->iter, ITER_DEST, folioq, 0, 0, 0);
+ =
+
+-	added =3D netfs_load_buffer_from_ra(rreq, folioq);
++	folio_batch_init(&put_batch);
++	added =3D netfs_load_buffer_from_ra(rreq, folioq, &put_batch);
++	folio_batch_release(&put_batch);
+ 	rreq->iter.count +=3D added;
+ 	rreq->submitted +=3D added;
+ 	return 0;
+ }
+ =
+
+-/*
+- * Drop the ref on each folio that we inherited from the VM readahead cod=
+e.  We
+- * still have the folio locks to pin the page until we complete the I/O.
+- *
+- * Note that we can't just release the batch in each queue struct as we u=
+se the
+- * occupancy count in other places.
+- */
+-static void netfs_put_ra_refs(struct folio_queue *folioq)
+-{
+-	struct folio_batch fbatch;
+-
+-	folio_batch_init(&fbatch);
+-	while (folioq) {
+-		for (unsigned int slot =3D 0; slot < folioq_count(folioq); slot++) {
+-			struct folio *folio =3D folioq_folio(folioq, slot);
+-			if (!folio)
+-				continue;
+-			trace_netfs_folio(folio, netfs_folio_trace_read_put);
+-			if (!folio_batch_add(&fbatch, folio))
+-				folio_batch_release(&fbatch);
+-		}
+-		folioq =3D folioq->next;
+-	}
+-
+-	folio_batch_release(&fbatch);
+-}
+-
+ /**
+  * netfs_readahead - Helper to manage a read request
+  * @ractl: The description of the readahead request
+@@ -436,9 +420,6 @@ void netfs_readahead(struct readahead_control *ractl)
+ 		goto cleanup_free;
+ 	netfs_read_to_pagecache(rreq);
+ =
+
+-	/* Release the folio refs whilst we're waiting for the I/O. */
+-	netfs_put_ra_refs(rreq->buffer);
+-
+ 	netfs_put_request(rreq, true, netfs_rreq_trace_put_return);
+ 	return;
+ =
+
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index b18c65ba5580..3cbb289535a8 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -77,6 +77,8 @@ static void netfs_unlock_read_folio(struct netfs_io_subr=
+equest *subreq,
+ 			folio_unlock(folio);
+ 		}
+ 	}
++
++	folioq_clear(folioq, slot);
+ }
+ =
+
+ /*
+diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
+index 1d7c52821e55..69975c9c6823 100644
+--- a/include/trace/events/netfs.h
++++ b/include/trace/events/netfs.h
+@@ -172,7 +172,6 @@
+ 	EM(netfs_folio_trace_read,		"read")		\
+ 	EM(netfs_folio_trace_read_done,		"read-done")	\
+ 	EM(netfs_folio_trace_read_gaps,		"read-gaps")	\
+-	EM(netfs_folio_trace_read_put,		"read-put")	\
+ 	EM(netfs_folio_trace_read_unlock,	"read-unlock")	\
+ 	EM(netfs_folio_trace_redirtied,		"redirtied")	\
+ 	EM(netfs_folio_trace_store,		"store")	\
+
 
