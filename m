@@ -1,74 +1,131 @@
-Return-Path: <linux-kernel+bounces-350260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB5F990272
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D41A3990274
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68CA1281C4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:48:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92328281DC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E35A161902;
-	Fri,  4 Oct 2024 11:47:26 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE80155C9E;
+	Fri,  4 Oct 2024 11:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UvMtY0W1"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACE41D5AD8;
-	Fri,  4 Oct 2024 11:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2357F15852E
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 11:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728042446; cv=none; b=I9C9jlqqfUNI8Ti1o/Ot88k5Wn4vghM749UpT5VUtC+NmeY9NZ2M+eI/Q605dE1+5sPMCaeJgiEefZuJ8gl3FCGneNic1HkWFC8khaxDK23uFibcaPslTx9rKttmWJq8Nkv4wdOKBED6HxwQ7yqaX+KLIy5V2vFxKcUNmqnoxNE=
+	t=1728042451; cv=none; b=rjHR8m3WP6SH2u+VFVTxvGKgup4rY2sHZKIwWbqgl0BcuR5yac8reH3guK2jUO6SKSPoolhT61WgKEUJnzO5udWGCsjc/BwMq0peJiSewJVi3WquEs/alIijIodZ8ZQWbNi3vBUmIQhVqRKlr/vJfjR5ir4knxNeW/OgKgdSYjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728042446; c=relaxed/simple;
-	bh=0SLIkc6pXbim1GsR1XPmtqI24YJ6z9f6qFd1qlGEDxM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kl3usqkv4r5amzmlRZ75oIXjKxj6QibjSlhZ0x2c/vYpl8uAasnOs+9LNUQHqb7DcJtHnlklLts3quiwK2ROUqzEUc9/w4GYrnXjaD+Czt5DTAYLRUKXwurtfuKm0wsh7YcH+7DtB3lBh4t9Ctw4/6O2XOgKR4RcLExhIbO/5HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79203C4CEC6;
-	Fri,  4 Oct 2024 11:47:23 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Rob Herring <robh@kernel.org>,
-	D Scott Phillips <scott@os.amperecomputing.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: James More <james.morse@arm.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64: Subscribe Microsoft Azure Cobalt 100 to erratum 3194386
-Date: Fri,  4 Oct 2024 12:47:21 +0100
-Message-Id: <172804243078.2676985.11423830386246877637.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241003225239.321774-1-eahariha@linux.microsoft.com>
-References: <20241003225239.321774-1-eahariha@linux.microsoft.com>
+	s=arc-20240116; t=1728042451; c=relaxed/simple;
+	bh=9Bftv/ViHvya+hAel1EI0cggVPhQ0jLcj2WxYo+AdIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aDwWRuN2oz5bpH9VbYEl+kba6WHTjngyr3ISOsfGFCR19Tx8DSf6UxhtBs5ARDpTH9HlkFNZOJuJU/GYLfoZF7BY57gPXLhIJcP1K6A80PKxKemo/bXWUfobh1rwWySoKHRy4eigrUxCz5rSTkhc5ZT+K1g7+K8j6gNbGI1m+As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UvMtY0W1; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37ccfbbd467so1525094f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 04:47:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728042448; x=1728647248; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DeDKJXnQ2GOHAMqg9c7Xaq3R7hTT7ZgpuGbhp8lo2vI=;
+        b=UvMtY0W1J6LuUmC8RuOFydnLjFTvgs/6Bc3+PG3csmCRyN+TMQIVSFyhoWR12vTnus
+         izKjiWFtN0niuCU0h4E4H1yD+zb61jEpJ6BXqcrI1zQ+RRjayza/GCnyghXxJXwFt4p8
+         4rQ2DTM/J9oRuiumKiZN05OPCFGiuMredcmrQrsulcQ8qvVmq8FEkpf0/tp178Xm1KVc
+         +eQC4iqZfRjQ8wk89GkNMDt8s6dLBTwZ9m0K5nmogysGlEvVmFhCHw4WhryKXUBf27iD
+         mf0P6SiZu4AFcaN9sTiW6BZISWpwyteJ+uQ2kGB5hfsN/J1TN8UiLQz+YQrgfQ4yt3PX
+         8m6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728042448; x=1728647248;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DeDKJXnQ2GOHAMqg9c7Xaq3R7hTT7ZgpuGbhp8lo2vI=;
+        b=MsRKT9/RgeOORA6vu63nT+OlpkwaBHy94JlczIyn+N6645pdmLkVKHdEG0HwUDJujs
+         qMBGMlBn55OscHKuDGM/44zNQKc61QQXOJFlMZQsiLp+qChgrN33nhXssvlwSWo5OWjz
+         cC1CvxzOXZxgnscuNra+/RrR5Q2HjFjZskygzbyUwvcJvcpjBhlV1VZCLmpgNXUEcAlJ
+         Rz2qwR1s/puoybVjnoB5v1I4R6+HTeJN1L6xvkkXxFlsAk8eCe+tW9Mn+qGEyi9usK8p
+         hc/MfmI5YWhyzqJLBtpUm3aFaBfRGrosADtyo97TXDmFBIiLoxqIHNLnnrJmch0YVq0y
+         jnmw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4ruSsJg0QG6D1r3QBFmv5d1VssDj7zWDW786xcMXP/cNn91FgTUxq8eWE9+4Do+DGb9r/BO7fZ0tMvEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKAPuNXKViZcPZ41xyrqMxw/+8PGLmlt5YYKNDfA3Xw/UNua9L
+	lVflRnFvw6oqQqdXN/VhdlqveQ112caUXRm96zKVi3JUMowZ1HLbwXjnZeca8Nk=
+X-Google-Smtp-Source: AGHT+IG2dPHDnsTK9NmP0VSAoPEMolEgwVq80QcHsxaDBbtih2FVohfyldaIM7Y5wPIrqGUshgyIbQ==
+X-Received: by 2002:a5d:59a1:0:b0:367:9d05:cf1f with SMTP id ffacd0b85a97d-37d0e7374acmr2312722f8f.14.1728042448380;
+        Fri, 04 Oct 2024 04:47:28 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f869a39adsm13960695e9.0.2024.10.04.04.47.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 04:47:26 -0700 (PDT)
+Date: Fri, 4 Oct 2024 14:47:22 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lennart Franzen <lennart@lfdomain.com>,
+	Alexandru Tachici <alexandru.tachici@analog.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net] net: ethernet: adi: adin1110: Fix some error
+ handling path in adin1110_read_fifo()
+Message-ID: <63dbd539-2f94-4b68-ab4e-c49e7b9d2ddd@stanley.mountain>
+References: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
 
-On Thu, 03 Oct 2024 22:52:35 +0000, Easwar Hariharan wrote:
-> Add the Microsoft Azure Cobalt 100 CPU to the list of CPUs suffering
-> from erratum 3194386 added in commit 75b3c43eab59 ("arm64: errata:
-> Expand speculative SSBS workaround")
+On Thu, Oct 03, 2024 at 08:53:15PM +0200, Christophe JAILLET wrote:
+> If 'frame_size' is too small or if 'round_len' is an error code, it is
+> likely that an error code should be returned to the caller.
 > 
+> Actually, 'ret' is likely to be 0, so if one of these sanity checks fails,
+> 'success' is returned.
 > 
+> Return -EINVAL instead.
+> 
+> Fixes: bc93e19d088b ("net: ethernet: adi: Add ADIN1110 support")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This patch is speculative.
+> If returning 0 is what was intended, then an explicit 0 would be better.
 
-Applied to arm64 (for-next/fixes), thanks!
+I have an unpublished Smatch warning for these:
 
-[1/1] arm64: Subscribe Microsoft Azure Cobalt 100 to erratum 3194386
-      https://git.kernel.org/arm64/c/3eddb108abe3
+drivers/net/ethernet/adi/adin1110.c:321 adin1110_read_fifo() info: returning a literal zero is cleaner
+drivers/net/ethernet/adi/adin1110.c:325 adin1110_read_fifo() info: returning a literal zero is cleaner
 
--- 
-Catalin
+It's a pity that deliberately doing a "return ret;" when ret is zero is so
+common.  Someone explained to me that it was "done deliberately to express that
+we were propagating the success from frob_whatever()".  No no no!
+
+I don't review these warnings unless I'm fixing a bug in the driver because
+they're too common.  The only ones I review are:
+
+	ret = frob();
+	if (!ret)
+		return ret;
+
+Maybe 20% of the time those warnings indicate a reversed if statement.
+
+Your heuristic here is very clever and I'll try steal it to create a new more
+specific warning.
+
+regards,
+dan carpenter
 
 
