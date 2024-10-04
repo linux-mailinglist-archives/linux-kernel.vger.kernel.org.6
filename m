@@ -1,152 +1,128 @@
-Return-Path: <linux-kernel+bounces-350197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4AC99015F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:33:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B1C99014B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB5D3281C57
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E01961C21796
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28483176230;
-	Fri,  4 Oct 2024 10:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8CF15697A;
+	Fri,  4 Oct 2024 10:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Bvfvx73r"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hh2qXfBo"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0912415CD79;
-	Fri,  4 Oct 2024 10:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C07714884D;
+	Fri,  4 Oct 2024 10:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728037893; cv=none; b=mUlL+2Gpst9CkiAelm+4lrNkFqPx+HsSj1mbgQz9cTTqTMDiyIDahdPtjtE0tTgDUrZtfZwdWyiWMpI+wjw1LgOg5/E/WoFibF7YNFyYze1d+z8MoS3735516oOjBKGhWlzKIK7Eb+4q/CQPwRagSYcniAaVpnQEGDqbhl+Sbps=
+	t=1728037874; cv=none; b=o1JDBELUPb7MdqT1HAxyjSiHvN2ZPN+F0woD2vAcDKVs5DVMDsLOSefhN1bWHRdt2ZXQF5RCZedq/N1FeyzGacWO+jyJTOsQUEuSuAdvm1N+JbLKWU2fe6FoLNCUFDde7SSG9BdhXi1ewmwvmEwe1U2x3L7l6aKYZRUYVB4Y78s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728037893; c=relaxed/simple;
-	bh=qh1dJmz9Niyfu2oHwfupkB8xyeHzIoyc1Tg7CLZqXg8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=KBYAEDUfv6zvT/IOi+0GcQbHOL347JLbzODb33q7oPySJrRGy4+jk2i9JikOAwCzrjvDP4vEPPXp6vPDtp5kk97Yf12lN4vYWv8BVeI+nU5/mkxseexsA2ZZRmDWFT9ApZgktiUE0e+WKYh3OfbKNMiAtS6Q2huDBmU+IUO8XOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Bvfvx73r; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493I04U2019310;
-	Fri, 4 Oct 2024 10:30:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=ZrRGGH8wPdT3FVfI0KiGv6u4QRqtiYJOLJYc2CPf60I=; b=Bv
-	fvx73rtYCvPVN5woRaSaS3NLylv9Dzagg5LkFGGS4qI0tE5TUIx7Evma7NFc3PPS
-	M5ZUrub6YWkFqroLvzLq68D9B14HiXSP1pOE5rdDGLIRotmv940kd8PPOaTrCBiq
-	oH6dyetVSJcMnWhmUF1gijUHKjX0PiUyk/H9r67R6owUz6faxQkIGX8ZBPOVumlQ
-	Hf4dx2n+dSXpJpyxzXrGgEnq4/e1OMtjY3AbNXl/PLjHEm98QJ99pQ+OpXag4JN8
-	ClcPxp+yQbG12K3oL2YD503RrxFdI3EYdCF0lWjHNUKCbXyfSDmQI3qFTM3I5d3f
-	m6LaNuGHVdqANqnUqShw==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205n1t0p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 10:30:55 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 494AUoPp005782;
-	Fri, 4 Oct 2024 10:30:51 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 41xavmrk0y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 04 Oct 2024 10:30:51 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 494AUbuP005260;
-	Fri, 4 Oct 2024 10:30:51 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-mukhopad-hyd.qualcomm.com [10.147.244.250])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 494AUo4i005788;
-	Fri, 04 Oct 2024 10:30:50 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 3978529)
-	id CE2FE5009EF; Fri,  4 Oct 2024 16:00:48 +0530 (+0530)
-From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-To: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org,
-        andersson@kernel.org, simona@ffwll.ch, dmitry.baryshkov@linaro.org,
-        abel.vesa@linaro.org, robdclark@gmail.com, quic_abhinavk@quicinc.com,
-        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
-        daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_khsieh@quicinc.com, konrad.dybcio@linaro.org,
-        quic_parellan@quicinc.com, quic_bjorande@quicinc.com
-Cc: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        quic_riteshk@quicinc.com, quic_vproddut@quicinc.com
-Subject: [PATCH v4 5/5] drm/msm/dp: Add DisplayPort controller for SA8775P
-Date: Fri,  4 Oct 2024 16:00:46 +0530
-Message-Id: <20241004103046.22209-6-quic_mukhopad@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241004103046.22209-1-quic_mukhopad@quicinc.com>
-References: <20241004103046.22209-1-quic_mukhopad@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0U8tKL-V8NF6DtQG7pdjq1yc3iy9PwvH
-X-Proofpoint-GUID: 0U8tKL-V8NF6DtQG7pdjq1yc3iy9PwvH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- clxscore=1015 bulkscore=0 malwarescore=0 phishscore=0 spamscore=0
- suspectscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410040076
+	s=arc-20240116; t=1728037874; c=relaxed/simple;
+	bh=divJE67Ubr8PC2NRoBfkagwgqttequOKzDKDErTfwcA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u6NHSNYsJM7118CvpzwpjCt/2gtrJIF34uQl0gBIzNAq9dsKDGoUZ2XR4RKccbt2R3I3IKbTEm/GW8TbmboEfjWNTHUA6YNRO7X6G3HH5zzUIV2aM8jop5QsQ/gUpzTjP6In0Wmx+hG0aOi8BAMVQceRLsSHbbpg/ajBE+zE6YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hh2qXfBo; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71dd2b6cbe6so1632945b3a.1;
+        Fri, 04 Oct 2024 03:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728037873; x=1728642673; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y9YF4Qs0IPa4oKPvVx7Hv7ooYcAeECqPtJ8bxat5WgY=;
+        b=hh2qXfBoWzfrNz+QS/bjH0LWdcqpMreGJwaaTctL3qipsFr/DMcuYNOdJF/Xp8jJS5
+         t8KKfTKJR1Wh3PkeO5bN9DhoZpUWSaNYjcDRXzEbaQaTlTXFbiJPgaiBpcLDIiAN0dPV
+         bntkA2zg1ghti3J6TNzvhfvPHonNEKo9QOaXS4EdII/ks2C0+0lNLibuRj7V8YZQWF73
+         lxZJLulj7Mb2bnJI28qOw4dmLpfhB04II3o5UdMRzJ3Kc5Lm4H+D/1E0WHu79R8vH5EB
+         rofbW35ih9aQiQcy7yTR0yAX1NHY8niRaphiaTVCZhr3mE+aNj3rgdv6/Aef5A/+GaQi
+         flbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728037873; x=1728642673;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y9YF4Qs0IPa4oKPvVx7Hv7ooYcAeECqPtJ8bxat5WgY=;
+        b=G/ykPY4xorSBClKdumqfhELSgzFZI+kE98jpCZxagI8svi1yGxarBZux0QPkRTajef
+         wgII1B+GcToltVaIYagN0u5gY8YlWllaxfYNm1nHDGdLggN1eNUN9rP3A31qKGVmanzN
+         dYlnBQD7Sn0G+OgRzpwstYrvWyQuP+s7cIpD1vGg99J9n//h21dg7b/Ew1tzaw88a54z
+         ugmF/oxD8EYRQMwLUMLGi0PHqaqbKhzxXuUnPc0AgPfsdAFeUKD6umVT92Zybkb0Kfiy
+         V7ANxQKH0Bup5LMy6z8TrsdrArGasSFCL0aG7ELX2aYihuuacSXTily7lvjLHnPtQVIm
+         bjdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKxfRIf54vxH0bCAOt3Ji3rZ4cYhBS10NjkiKwLylIoCAfcB+/ZU/A2+DbJvCzyA6QRxrAowZHstpV8Xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykavbyPlz/6glQgl/eel/yt70ayEjApl6qVVLw5wYOIrTjWXOr
+	Y2LTHzh/QRKT2dhkgF7/7vbjP7b9E+UWnBbo9xKfuXI8f4ZTcqrqP/NBw0Zk
+X-Google-Smtp-Source: AGHT+IEV84KXrWKzPAXE9oR9QWAIhciy20oY421EqGnBkA/QJsb2O47VOOySsWCh5mbkrE4POsAQ+g==
+X-Received: by 2002:a05:6a20:c68e:b0:1d3:b30:44a2 with SMTP id adf61e73a8af0-1d6dfa25a50mr4320240637.7.1728037872752;
+        Fri, 04 Oct 2024 03:31:12 -0700 (PDT)
+Received: from advait-kdeneon.. ([2405:201:1e:f1d5:9681:ce03:a7e1:2f99])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9df0b50sm2972570b3a.171.2024.10.04.03.31.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 03:31:12 -0700 (PDT)
+From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+To: Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>,
+	David Howells <dhowells@redhat.com>,
+	Enzo Matsumiya <ematsumiya@suse.de>
+Cc: linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com,
+	Advait Dhamorikar <advaitdhamorikar@gmail.com>
+Subject: [PATCH] Fix logically dead code
+Date: Fri,  4 Oct 2024 16:00:51 +0530
+Message-Id: <20241004103051.43862-1-advaitdhamorikar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The Qualcomm SA8775P platform comes with 2 DisplayPort controllers
-for each mdss, having different base offsets than the previous
-SoCs. The support for all 4 DPTX have been added here, and
-validation of only MDSS0 DPTX0 and DPTX1 have been conducted.
+The if condition in collect_sample: can never be satisfied
+because of a logical contradiction.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Fixes: 94ae8c3fee94 ("smb: client: compress: LZ77 code improvements cleanup")
+Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
 ---
-v2: No change
+ fs/smb/client/compress.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-v3: Fixed review comments from Konrad and Bjorn
-	-Added all the necessary DPTX controllers for this platform.
-
-v4: Updated commit message
-
----
- drivers/gpu/drm/msm/dp/dp_display.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-index e1228fb093ee..2195779584dc 100644
---- a/drivers/gpu/drm/msm/dp/dp_display.c
-+++ b/drivers/gpu/drm/msm/dp/dp_display.c
-@@ -118,6 +118,14 @@ struct msm_dp_desc {
- 	bool wide_bus_supported;
- };
+diff --git a/fs/smb/client/compress.c b/fs/smb/client/compress.c
+index 63b5a55b7a57..766b4de13da7 100644
+--- a/fs/smb/client/compress.c
++++ b/fs/smb/client/compress.c
+@@ -166,7 +166,6 @@ static int collect_sample(const struct iov_iter *iter, ssize_t max, u8 *sample)
+ 	loff_t start = iter->xarray_start + iter->iov_offset;
+ 	pgoff_t last, index = start / PAGE_SIZE;
+ 	size_t len, off, foff;
+-	ssize_t ret = 0;
+ 	void *p;
+ 	int s = 0;
  
-+static const struct msm_dp_desc sa8775p_dp_descs[] = {
-+	{ .io_start = 0xaf54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
-+	{ .io_start = 0xaf5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true },
-+	{ .io_start = 0x22154000, .id = MSM_DP_CONTROLLER_2, .wide_bus_supported = true },
-+	{ .io_start = 0x2215c000, .id = MSM_DP_CONTROLLER_3, .wide_bus_supported = true },
-+	{}
-+};
-+
- static const struct msm_dp_desc sc7180_dp_descs[] = {
- 	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
- 	{}
-@@ -162,6 +170,7 @@ static const struct msm_dp_desc x1e80100_dp_descs[] = {
- };
+@@ -193,9 +192,6 @@ static int collect_sample(const struct iov_iter *iter, ssize_t max, u8 *sample)
+ 				memcpy(&sample[s], p, len2);
+ 				kunmap_local(p);
  
- static const struct of_device_id dp_dt_match[] = {
-+	{ .compatible = "qcom,sa8775p-dp", .data = &sa8775p_dp_descs },
- 	{ .compatible = "qcom,sc7180-dp", .data = &sc7180_dp_descs },
- 	{ .compatible = "qcom,sc7280-dp", .data = &sc7280_dp_descs },
- 	{ .compatible = "qcom,sc7280-edp", .data = &sc7280_dp_descs },
+-				if (ret < 0)
+-					return ret;
+-
+ 				s += len2;
+ 
+ 				if (len2 < SZ_2K || s >= max - SZ_2K)
 -- 
-2.17.1
+2.34.1
 
 
