@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-350728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40839908B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2ED9908BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B9F7283709
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:09:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9864728246A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE4A1AA794;
-	Fri,  4 Oct 2024 16:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE681C3031;
+	Fri,  4 Oct 2024 16:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bn9NoN7w"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ImUWCEza"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC9D1AA79F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8A51E3793
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728058174; cv=none; b=VSknv+TCe0hgOvOHVo86UTG2XWcrgSKlNkvin2yZUqwPnxblBXBF1r2wpc8rkvNdwcQHSGPu5gC/ROoD3G/Gnoai8Sd1suqfszapwG0cPine+wPDb1FH9KDXeQJ1gnbkshEUiiwA4l3OZQ5D1k4Yckwq0mCLyREesQGlZ0QKo3E=
+	t=1728058278; cv=none; b=Ku/7Lndys4XDnsvtdoHdh1qp5BqztG7hVLb5GN2weK5XDUrLpOdgqg+b0dhw8g6rTbRZl+yTYy2qFsWkXP9eX71fLGD4o0go9fOWeDoaf6rkiYOOobSodjI33sY3XcbLN9pdCIOT3bx1ehRZI5LqJ75hOHwwsrRzxgSitVcpz3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728058174; c=relaxed/simple;
-	bh=eoaWatCnhBU62iXtHmx39mSv9OQWXaKw4pJX9ho+iJE=;
+	s=arc-20240116; t=1728058278; c=relaxed/simple;
+	bh=cdbTN3dk9KoQtaZSwUqNJIdnaKT+6V+GIVRcSA/hhaI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G+QUVUQFQuUWM7QQqMvD/x2o74LJQMlyb6+d5ayyB06ZJ16ZACxAmSGDv8BE+OIcR4iS51MzTax62M4psnpHMec3VGWbZ469O9ByGyy6qLW9E25PqJzrh5tO2w+IXPTujqJwRfYCm5yna+M7GgZ9bdqRjxAmWFukmQtFFtUvUek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=bn9NoN7w; arc=none smtp.client-ip=209.85.222.177
+	 In-Reply-To:Content-Type; b=n4dlNlBf7bphcVRKhMn12qZ8UgTFxfSfoI/bBpxb5oCqePqE8/Q8dPlEHvJhxuBzvA3lgGTyrDGFBo382/B0lrYKc629h1I+5KOUOadq5OyyJx0nP3pi+K0vAMaqF2Ku3ID2FOh9Jn8obU1USMWE1cpus3dd2pV4K+6b6KJWzeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ImUWCEza; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7ae3fcec5feso217932385a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:09:32 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4582f9abb43so15339121cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:11:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1728058171; x=1728662971; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1728058276; x=1728663076; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=5h8wpPh30s6KF37peScNelcNl3ZFS3xlRdD1aJCpMMs=;
-        b=bn9NoN7wvaqsVKOpRoKBYsxzISiRpBSmr1TXhlV+uNOhsZmeffXquUUomILkUmWQ9t
-         0/M19NiUAvJcICOcxxVewDrxDPXYptUzNRN6xBpE3l7BaRk1VWpAQvG4qbG3rK/1sOOj
-         xSp5F/wNWnwM7Xq/9+2Xdvnqwvrag0dBJzisI=
+        bh=Qv99QOeXcBkbZdfo+87lDU5Rqpsh7c5RFPOmgI+cSL0=;
+        b=ImUWCEzaE4mZkXjbttV11AJlFc4ToFqVuqP93OjIIUbdcwn99G5Z3xvZGKQQXNGz67
+         HmsZ6rpmRzlUBJvi9ZWPZE/sOX4VOjRd+XRkxhcoQnx240vYRm0E01sKVYsKS5495zzl
+         wh8q5D2ZAyq3MYvLVwMLwQ5wmBG/A/l/ew1e4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728058171; x=1728662971;
+        d=1e100.net; s=20230601; t=1728058276; x=1728663076;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5h8wpPh30s6KF37peScNelcNl3ZFS3xlRdD1aJCpMMs=;
-        b=j0bIX2xr3CQXuYw9TN1jQl/HVX3iyP1kGOTrsOx0TK7IjQPoHQAVi14aRHLyOh9N18
-         V0ZwI5uWsJNXRiJVBfmOifEiD2mkPj+6Xe4nL1YTmfgnYY/78POYSMtrp6KRwtlbVbx0
-         tIU2ukl3LyUG94WsbuJ7kqsLqZf2jtPpNGId8A/diPoiKld8VgXkxt4OZuXV6glOYx7Z
-         uO6vKwJBlumV+VN88v+xPqjPSG1trCUF1/D+gfiBeM+MYl88c1D2AR8jHC5+45yjgnwt
-         T8P2IpqEI7uGvMqzeDHhCANc7zuhZUk0yAqLbjgbvOfqKl7oP7qb+bYL+NymM48/D5qR
-         Grsg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9lDmZ25OiR09t0dcsjgeVhCTaSptfoJIoNyEu1zM7hcL9bLeT+Cxl0nASQUBc1VmWQ9kfCkGK4PQHExk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfc7gIg50/ClGxzVsGETavRO6H/JWVHOLbFppz/8dkKHukRjCk
-	P3+YR/hEMtCC7wrw4cf4n/McOxrEj7+48we9fkLLQlocvEazurn1DWc0K/sEuw==
-X-Google-Smtp-Source: AGHT+IGtCk7ebsbdtPTQyF7KwUl+f/hTvdermQbklRaY7Diuv4J09nixlWJsdMN8MEXs3rPHxFGdUQ==
-X-Received: by 2002:a05:620a:4108:b0:7a9:beaf:ce61 with SMTP id af79cd13be357-7ae6f486860mr569681385a.45.1728058170895;
-        Fri, 04 Oct 2024 09:09:30 -0700 (PDT)
+        bh=Qv99QOeXcBkbZdfo+87lDU5Rqpsh7c5RFPOmgI+cSL0=;
+        b=k80yTrD6PGkN0yDBqtWCntyCcIe3gNMR2azQvksh+hiD8LE33/XJ9jFFf6RNjigxDU
+         a3SS/l1ErHhN6RFh9hF6dniHXq5mC9kjqw5lxC+Jm9k7BtPFvUD4ZeY8VEOWRTJpNpzp
+         D8InKfu3fr2E3NGh4TH5lW4syFL6tBLjL52y4LK4KsJtexiRdfPRQftXIbYxjM1Ke5pl
+         eCeUkMHgYelIxNO0j03pWZDPmOzlYBgJ8P3oBmG0SYZp1XL4Ym0ADjk8aTENQ7hgBwIo
+         Okb0HxdLxACF7oET3KlEE+HQw/D04bCHobMUDuwg4Me8U92nQK/5AqEIBLs25P4RfaPg
+         L6DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNBP2gUdeXbKVPrz489ABvTyy43hKLVPMbw6iq9VGoLIJ7qsOrZglk/bMkD9vx7v/v+AaiuLJN5JLdAZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1rLyB2OxBmluzTRVm/gRiataPdAV0yk7guCJtRm1AbKJkizXz
+	/r4GmRt09tbaUbtaasjhegs0E4OpdKpw5pPggGbw1AM3NMpQsf/yw1nPDcW6kg==
+X-Google-Smtp-Source: AGHT+IF9WjuoqxXB7O+btvUqDweLOUwXmnSbTM4nu4YD4ylONS6lfLeSrTfD5T+E6hR6pXbqZE+C+A==
+X-Received: by 2002:a05:622a:11c5:b0:45d:9236:89f2 with SMTP id d75a77b69052e-45d9ba79551mr40913531cf.2.1728058275929;
+        Fri, 04 Oct 2024 09:11:15 -0700 (PDT)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae6b29f0dbsm150110485a.24.2024.10.04.09.09.26
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45da75ed6b3sm349691cf.61.2024.10.04.09.11.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 09:09:29 -0700 (PDT)
-Message-ID: <64c13754-79b2-4480-9f97-7987fe097d8c@broadcom.com>
-Date: Fri, 4 Oct 2024 09:09:25 -0700
+        Fri, 04 Oct 2024 09:11:14 -0700 (PDT)
+Message-ID: <d6cfbefa-7526-4a8b-bb81-66f198de1395@broadcom.com>
+Date: Fri, 4 Oct 2024 09:11:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,15 +73,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: dsa: bcm_sf2: fix crossbar port bitwidth logic
+Subject: Re: [PATCH 2/2] arm64: dts: broadcom: bcmbca: bcm4908: Add DT for
+ Zyxel EX3510-B
 To: Sam Edwards <cfsworks@gmail.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <rafal@milecki.pl>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241003212301.1339647-1-CFSworks@gmail.com>
+ <rafal@milecki.pl>, William Zhang <william.zhang@broadcom.com>,
+ Anand Gore <anand.gore@broadcom.com>, Kursad Oney <kursad.oney@broadcom.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241003220820.1345048-1-CFSworks@gmail.com>
+ <20241003220820.1345048-3-CFSworks@gmail.com>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -116,29 +119,41 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20241003212301.1339647-1-CFSworks@gmail.com>
+In-Reply-To: <20241003220820.1345048-3-CFSworks@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/3/24 14:23, Sam Edwards wrote:
-> The SF2 crossbar register is a packed bitfield, giving the index of the
-> external port selected for each of the internal ports. On BCM4908 (the
-> only currently-supported switch family with a crossbar), there are 2
-> internal ports and 3 external ports, so there are 2 bits per internal
-> port.
+On 10/3/24 15:08, Sam Edwards wrote:
+> Zyxel EX3510-B is a WiFi 6 capable home gateway (family) based on the
+> BCM4906 SoC, with 512MiB of RAM and 512MiB of NAND flash. WiFi support
+> consists of a BCM6710 and a BCM6715 attached to separate PCIe buses.
 > 
-> The driver currently conflates the "bits per port" and "number of ports"
-> concepts, lumping both into the `num_crossbar_int_ports` field. Since it
-> is currently only possible for either of these counts to have a value of
-> 2, there is no behavioral error resulting from this situation for now.
+> Add an initial devicetree for this system, with support for:
+> - Onboard UART (per base dtsi)
+> - USB (2.0 only; superspeed devices are treated as high-speed due to an
+>      unknown cause)
+> - Both buttons (rear reset, front WPS)
+> - Almost all LEDs:
+>    - Power (red/green)
+>    - Internet (red/green)
+>    - WAN (green)
+>    - LAN (green; anode is connected to GPIO 13 so currently
+>        nonfunctioning)
+>    - USB (green)
+>    - WPS button (red/green)
+>    - Absent in DT: There are 2.4GHz/5.0GHz WiFi status LEDs connected to
+>        the WiFi chips instead of the SoC.
+> - NAND flash
+> - Embedded Ethernet switch
+> - Factory-programmed Ethernet MAC address
 > 
-> Make the code more readable (and support the future possibility of
-> larger crossbars) by adding a `num_crossbar_ext_bits` field to represent
-> the "bits per port" count and relying on this where appropriate instead.
-> 
-> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+> WiFi cannot be enabled at this time due to Linux lacking drivers for
+> both the PCIe controllers and the PCIe WiFi peripherals.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+On the topic of PCIe, AFAICT Rafal had made an attempt at modifying 
+pcie-brcmstb.c, which is really the same IP, or rather a fork of it. Let 
+me know if you need help in figuring out the programming and we can help 
+with that.
 -- 
 Florian
 
