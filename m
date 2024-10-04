@@ -1,249 +1,333 @@
-Return-Path: <linux-kernel+bounces-350800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB229909D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:02:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD479909D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A77282D6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:02:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07D24B220AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676011DAC8A;
-	Fri,  4 Oct 2024 17:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7861CACDB;
+	Fri,  4 Oct 2024 17:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mylyawIG";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="K+zkuuOa"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kFDIw/JJ"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2072.outbound.protection.outlook.com [40.107.223.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8A21CACEB
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBED1E378C
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.72
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728061296; cv=fail; b=tb6eT12v173qBm0d4wgIYlqHeWlAFBv97qY7VPv+oNpqpANo38J/YMOp1b886aukAgV0ve4ChGu6VESRtnCVC5Z8XmIthdVmVw+xmwJQaVpbTV9LNQhBSRstxNMOQ6AyPl3vL+RLGf0j5RaKnArDasz32oK6qzsyaiCXIEgBG3o=
+	t=1728061285; cv=fail; b=mtBVuA6EHJ0JIFUakpWPnYy8RF+lN0sMCA9fwUutlCmJmog5A8NkTerLkP60P+Z5o4mRJ8jQ4BPHhE8kwlpVj5X5wHcpRw9N1UIwgTMSpMsa0/gn+u7z3z+OeXEM8TBvH3li+sHX4n4oIYXtw1zphP4X4hsBM06aN0p5MlSbwLQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728061296; c=relaxed/simple;
-	bh=RiO5Q5LkoU8RXgC48VMFpjn5vhEbFSPWCBzmtM7LUWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Qr1GLDWISjJ8CVGmna+CdZ7Tu6SSo33rLUEITvIoMZ1sLKiTNx0eATheVX1ouhT8d6h7a/diG2UASlLHdfNH6EpP1UoBRcTx+gj2R165u8ae4RdTPlh5UQMNrgGYxMh7o65R1uKfZCHqmy49KCMahc+io3tKjvpzDpmXRQV1F5E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=mylyawIG; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=K+zkuuOa; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494GfrHT001749;
-	Fri, 4 Oct 2024 17:01:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=6wxaMIaH8JF8obq
-	yw1Lzqzd2Qk/jpvwauOmtypwz6jA=; b=mylyawIGn4ZjpUWyXfArnXmRXMsWy72
-	fUNO61RV4CY7dvvH0W3j0LGayMN5Y2YrP77f/mbCMheeWTRTnTeQFfK4Z//+QJp6
-	8JBHEchTLlkMn0uPD0iTpVfZIawF/3jXkWjkwWjIiambPI1HNnA19TVd6+hmBcw5
-	m4Y0vPLkX7XaOAZmepdaPXrrMjNfoHe7fsNEZhmySnqU0vwTDG1A0SUKeCk7QiK6
-	O0P8f6U4UjNWqTc7M+BIX/no6M/QoYj1mVCwDg/5HsgNtRwhVlIOUXSI3lnw5n+M
-	69b6mcm9urXFrFm5HXVaTkVtZzB+ACqUwWb/1E8O1Txy2YQ0r+ah+Jw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42204b22y8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 04 Oct 2024 17:01:13 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 494H03BH013758;
-	Fri, 4 Oct 2024 17:01:13 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2172.outbound.protection.outlook.com [104.47.58.172])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422057u5ed-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 04 Oct 2024 17:01:13 +0000
+	s=arc-20240116; t=1728061285; c=relaxed/simple;
+	bh=Nwd1DJY1QUVDBdPlTKQSkgt/mCJsnZVNdQueCdvvGTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bpkzI9UXMDhUxw4WhGMINEbC8NFvjIuu5NCzQjzNeaewyehuEMHsS6FSBSPV9T1dAWwcQ754+hvxkY5+ShIfVXFbr+mCFeUg1R+aZvPSaj8evx0h7SlVlW0zvk0eGOOIGieZDu3JnXl5exsFw1eAbg2maJJQXoy0bzwe+5ien5o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kFDIw/JJ; arc=fail smtp.client-ip=40.107.223.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p9DAN/yIW6+/zUCKxB5LmznwuuUtA6Ggdwi8z2Y9PAbJFg1UlQzeALUAziU8qKvZ4Y6KVRO0Ei5tZ9K/sygnap/Fyaj4Sa8b3k7cXiNhCThwX8V81ub6XP2cFq2jM0xQ6Gjry0JgQ4qWxWAvxn1oiz/YuuLe8cEq6iAKNpf440AfDQ4UzW/krPtDk9w5K3iWSfy7T9A8q02GKUeXJytGGFyy4Vo8wPByqDQmPsEEnvT+m8+jJS2/GsB5nYAOieXOzZi7bYu8NPfp4iR9jOduS+9G2jm0QP6XZIz+mgBIaZEWrZxRu0UiPWsDJNPci0JGrrgqXrR5ZOWRLkWVvps3hA==
+ b=NHsMQuYavON5LxDZQ2s194PEiWaKog2ab18EBDJvnM/S+f5xRAFA5OVGQGDeJr5Cn5bZRpmMfioN4INX1FAymO1/seVy9ZaCiS1mG47AS6Gs/X6gSSt1S1YgSdl2nprs3utb/4bq4umdayencXcN7xxiO55ZVtbnJsqo77lOhvyruM2QyQjtZTwZBCsrMvuED5O06onbpm5ybgTN8Pjs7rLklhPLb5V1RFCpk9xxPwpexqOX3Gi/zbsNEuO5+7Z8IzIAtTph5y3FIYdDTjvTvwLNGg1Sjskj2iVgu8KGN6Zwn6SomWaj3QGwC4K5mCsqpZX87SQkc6pSHhrQquxD7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6wxaMIaH8JF8obqyw1Lzqzd2Qk/jpvwauOmtypwz6jA=;
- b=MMvFDh8tCGcV9Yf9oS+45EIuni6/uW1ZHcNlUmMoyEe4DWe1roNibQVOc/N2qM//9lqW2NMDJMFr48Jo5Y3XgLq1bN4W4Q/djBZM0fItOemkbCMbOqWCqjbhOy+ZLSX5gJkZePsxhu/7ipxuKwEouk5ScHKCT8sBHdiJT+ddyVgmgYCzdPcz4LX4PYQ0N2a4HjWSYrOgP2w32SnSHD327BfGTel3oQ9YPF8hmFW8jh7wsAuq6NVUd33asouRe5a1ZAq4BCs6n4nDZxxHpzhlOaKMwDbznygDHtlS33cgAnmorhSvIWwok1wm/E3zOPV3gseLpX0CfcwJawtV0hDtHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ bh=+21m2uOkyuCSjcfXNYpn0zFm55hiKCtMyDASqZfxXbE=;
+ b=U+U4P27uXIx+6W88Z5P/3P+s3gmfMEJTtUieo94fsBJaIiFN6rMK7KXqmxCsh5QvNom6sW30mw6oe0FuEeuvyZUvG86PEW8iXQfj+xvvFsna3zBzltoQYzDZoTCt6C/68xN1r4b6QLywHyk3FIB4YUi0zikCXFExCzfRKHgZjnd3Xd/aElmwuQsiGbikhRRqlr8g2hhR9hobH8h282Mz7cDBocnKyN60ksmA3y4CSFvuQgBVYgJTaBg6tfHVBEO2SM2imbpsIygLiwlVzqrasMkPzop1C+urMI+rFKMRUtjmf509gr3GVbnhV3CrazDBKQ3a4NRRfYk2NQPQHph6Gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6wxaMIaH8JF8obqyw1Lzqzd2Qk/jpvwauOmtypwz6jA=;
- b=K+zkuuOaGLKoHumi6OHMQVC2Xq7aPymSshKIl5p/Ey2I3NGBtllvViz03MfpfreVRTAc1qVocPC8J/l1mcT8NRz+UaF/hnOjfREqBQ97wXJJeUOCpaDRB9nkTW/WXyQ2TXOXPKLrSbuYEIy9hoQUgOxNSbdUzSotzrtV134GQwA=
-Received: from PH0PR10MB5611.namprd10.prod.outlook.com (2603:10b6:510:f9::16)
- by CO1PR10MB4531.namprd10.prod.outlook.com (2603:10b6:303:6c::22) with
+ bh=+21m2uOkyuCSjcfXNYpn0zFm55hiKCtMyDASqZfxXbE=;
+ b=kFDIw/JJfqxvcEEOUatCYzY95yyfDPGUL6xn3wOxLJXhTcype8YqOS4OXLK3IRgH0b2XUv+FFmktfjrtqiSP9A5vFEODX16bfdsDRkv0qsvxf9rqwuvkJY/J9ti99bo8vJHQIwffxWW/JscwynJ9fbs7t3m5EWvnQerAV+jwmrs=
+Received: from BY1P220CA0014.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:59d::9)
+ by MW4PR12MB6921.namprd12.prod.outlook.com (2603:10b6:303:208::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18; Fri, 4 Oct
- 2024 17:01:10 +0000
-Received: from PH0PR10MB5611.namprd10.prod.outlook.com
- ([fe80::d513:a871:bbf9:fce2]) by PH0PR10MB5611.namprd10.prod.outlook.com
- ([fe80::d513:a871:bbf9:fce2%7]) with mapi id 15.20.8026.019; Fri, 4 Oct 2024
- 17:01:10 +0000
-Date: Fri, 4 Oct 2024 18:01:07 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, kernel-team@meta.com,
-        "open list:VMA" <linux-mm@kvack.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm: Remove misleading 'unlikely' hint in
- vms_gather_munmap_vmas()
-Message-ID: <71b7cbeb-1301-491c-9637-e6d48938ddaf@lucifer.local>
-References: <20241004164832.218681-1-leitao@debian.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004164832.218681-1-leitao@debian.org>
-X-ClientProxiedBy: LO6P265CA0001.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:339::9) To PH0PR10MB5611.namprd10.prod.outlook.com
- (2603:10b6:510:f9::16)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Fri, 4 Oct
+ 2024 17:01:19 +0000
+Received: from CO1PEPF000066E7.namprd05.prod.outlook.com
+ (2603:10b6:a03:59d:cafe::28) by BY1P220CA0014.outlook.office365.com
+ (2603:10b6:a03:59d::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.19 via Frontend
+ Transport; Fri, 4 Oct 2024 17:01:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000066E7.mail.protection.outlook.com (10.167.249.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8026.11 via Frontend Transport; Fri, 4 Oct 2024 17:01:18 +0000
+Received: from [10.252.216.179] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Oct
+ 2024 12:01:11 -0500
+Message-ID: <8ae45988-9c5b-8a68-b351-5e1d41da59e6@amd.com>
+Date: Fri, 4 Oct 2024 22:31:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [REGRESSION] Re: [PATCH 17/24] sched/fair: Implement delayed
+ dequeue
+Content-Language: en-US
+To: Peter Zijlstra <peterz@infradead.org>
+CC: Klaus Kudielka <klaus.kudielka@gmail.com>, Chris Bainbridge
+	<chris.bainbridge@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<bsegall@google.com>, <dietmar.eggemann@arm.com>, <efault@gmx.de>,
+	<juri.lelli@redhat.com>, <mgorman@suse.de>, <mingo@redhat.com>,
+	<rostedt@goodmis.org>, <tglx@linutronix.de>, <vincent.guittot@linaro.org>,
+	<vschneid@redhat.com>, <wuyun.abel@bytedance.com>,
+	<youssefesmat@chromium.org>, <spasswolf@web.de>,
+	<regressions@lists.linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, "Linux
+ regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>
+References: <20240830123458.3557-1-spasswolf@web.de>
+ <ZvA7n9GNoD-ipjkj@debian.local>
+ <1ee5f5828e2021bf1051dc1f9b6f01a8c061ffb1.camel@gmail.com>
+ <2128d714-90f7-1598-b32b-559206fce5de@amd.com>
+ <20241004123506.GR18071@noisy.programming.kicks-ass.net>
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20241004123506.GR18071@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5611:EE_|CO1PR10MB4531:EE_
-X-MS-Office365-Filtering-Correlation-Id: 45faa138-2132-444e-96b2-08dce4962573
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066E7:EE_|MW4PR12MB6921:EE_
+X-MS-Office365-Filtering-Correlation-Id: 92d70d56-6e7c-47d9-dd70-08dce4962a4c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|36860700013|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RW/2SHVDILsiIegbgXZXLeLF7U6nDRKkxl/6evcv66KzLegy6fauDe6C9D9m?=
- =?us-ascii?Q?3Vuw6Aen/46LGzVDmXstNh3NhFjgAnkGDUt8SjpAR0uUe79HDV7fkecAo/Ah?=
- =?us-ascii?Q?p9B4nsVTZbagufCYCV2WcMCyq1AGfbfJTJ00LmHnCsH4phe+VjXp9Js74WMK?=
- =?us-ascii?Q?JwKdUYpONWS7XyPajhkzmGErAr1NBdPyZvMcgQ4OwSrnX5GlqyQ15tEd8YV3?=
- =?us-ascii?Q?NB0HAFBjFqeYiAVr0lgy1meGel3rgLK/rfN449oiKx8TS8S3M9V7fq5ojAy2?=
- =?us-ascii?Q?2ZHzx0EOlYQmHWBC5dBtvLpgneEMkKwfkBY137y29Zw0ij78vMZKS6WT2az3?=
- =?us-ascii?Q?D+0Ovp42x8Zi3F0ova52V8Z+HtJt0zCLOBBRoRJ0Xaf/nS/G8w0sreaJnIdq?=
- =?us-ascii?Q?mW2NCS8jY1uU1fKmKR/VqLEdA9jMX0+c29TbZwbhYehNi2CW7jrowKltixxH?=
- =?us-ascii?Q?CAEBaTkEQmCB6X57lgV44TE5Tg14i8w8+DpV7pmS2RDJBTg3lPRn9OM0nDJR?=
- =?us-ascii?Q?gJQ8kcbpmGCMFYACwQZ0nUFYmnoZzspjF3T5EquSCH7HIxor0ng3X5fdZS+Z?=
- =?us-ascii?Q?s5AwUqptrhhF4b/UC3sZSJLwzNgPuz1iuHSQnicQ21rUaNdt2UmrRi1SsVjN?=
- =?us-ascii?Q?yhpMgVTj4piKA2M2ntIXbi7sdnKV9vRgdQKrGqypm5ZaOB/zc9fvabqy0Rm5?=
- =?us-ascii?Q?DnxjuQNBSz/bGO/mc1LK7+lE9VrB/SNfU8mNjqJd/vdf/W06kYqvFzkh5uCa?=
- =?us-ascii?Q?pfwi9TklA7VtDEsJmV2ovx6tMwjLrppjcDLAHeNPpOJg03vb/LwU+nZUwS/w?=
- =?us-ascii?Q?NCCWSBg4NtsjA7uBGlWu+k77Zm+5OrQSzuyp/rBRFhnLSNgOZno6ESPmkMIh?=
- =?us-ascii?Q?EZtPisj4svSuivDt6+vXRR01KDFDoBwpuRMcA+m0Mk4QxXQ9Pd2T+GeNk19q?=
- =?us-ascii?Q?9JZk1GDRo4J93aGIMNUjnNKditKBP4EDV7jBj5FiHwygynrcSphQeZYSYUzH?=
- =?us-ascii?Q?y7YAT3fBJJuv5i3qf4YEhKrzJGcts8A/LYyZFbIZAJyy+ZtO7LGa2oc8QxpS?=
- =?us-ascii?Q?ceBVgCkkSz2gteWuLjUbUjo5yu3t9XfM6uXdlQfeDJVZhab8IeNaq9qc5L/7?=
- =?us-ascii?Q?e5a0BIMxXJF8i7ASSk6rmSlzsWSTH/MbR+rxy1BMOjwPgXknxK4CDeby89W+?=
- =?us-ascii?Q?jyKaWWswy5YtnlFa7N3/2tYHgHPfxCVuEvtPDumrTxkNQiRQUO1kaIwg4rjq?=
- =?us-ascii?Q?2Eg33L5OhswBFgylHwFzAINsX9hDS3nVpPe1/REglw=3D=3D?=
+	=?utf-8?B?cE1VOUdCak9YOXBCUmRZQVA0N1F6MTBHTDFDdUIzbFVwajdUSDZHL1BxWm5J?=
+ =?utf-8?B?Ri83RzBCMDVZNnNJdHBLWXFydEprblJvZWV4V200SlRORFRGaHlnZ2VZcWlZ?=
+ =?utf-8?B?endFSGR6Ri96MVhock03eU5ObmZndy9UcWhOVFBDSUcyRlNUVFAxYWRROFRt?=
+ =?utf-8?B?U1VvWUZISTlENTdKSFhQSzNPMEdPbk1IRnBKRGhnUXFTZ2M5Qk4wbWtZaFFx?=
+ =?utf-8?B?MmJibEQ2djkrUElKRjAwUGl5bWNwUG9RWis5UWFIeFduS3dJZW1sZlM5OTly?=
+ =?utf-8?B?WTBqc0lSbjVhbUkzNExNaHhjTFdUK2V1MlRDVTM4NkY5T0V2VzJ3NE1oQnI2?=
+ =?utf-8?B?M3ZWckhQWHR0MXlGL0hBS0xDcU5BZWJGdnRRSFRmMG1oS3MrQS9ONTlzckNH?=
+ =?utf-8?B?NkJia1RMNHgwZGdsM0hmdHRmM3ltU052TGI5dlBoU1FkS3ZNckRwQmdsRHdN?=
+ =?utf-8?B?K1Z4elljZ2JpR082QXBGQ0dOUjlNTktqQUErK2FRc29hSjlvWXZsY2VWK3J4?=
+ =?utf-8?B?Mk1ZZE9SZWhQNU43RHpTVFNOQ1BTSXo3N1dQL3FVNGc0QldrOTNXQWtWcmhZ?=
+ =?utf-8?B?amxqNGh3czVwRkhNS1h0UUJSRmpnUzRUbUlNMnhjSmNrdmdIUTFQU1dxRnRN?=
+ =?utf-8?B?cG1sSUpzTWJuS0JsWEo4K0VaTGY0amZ5cXhENVJxeFljbmRPZ3Z0bnJrUVBH?=
+ =?utf-8?B?TEU1VHk2cGw4Tkw3UUZoN3dDSE03cmtydmJZV0x5Q2ticmF0aEVMczlneUFq?=
+ =?utf-8?B?cnNQbk9iNWpIWHpFeWdVbmNpc2lPWm55OFEyRlBwSWo1YmpPZjhPUlJtWmVl?=
+ =?utf-8?B?Mlp2V2tLa0xvMzZ2WjRSWHFRRklzSkxETnVHRVVBdUU0WmNXWUpKeGJZM200?=
+ =?utf-8?B?MDllZ0JHRDBhdVVqZXcxN1FVSE5yMDYvc0c3NmU5NGFIdnc4VWJaeW9nanh6?=
+ =?utf-8?B?UzFQZlFQR2twMmUzMFVTWCs1VTVzYzlGZ3JUaktXMndxS2pXb1hkMkc3YUxG?=
+ =?utf-8?B?dThDMTZjM2dzaUpGbU4vWlZwYjRBRkRtdC9XWmNMZERwQ0ptdzRNcDBnOTVy?=
+ =?utf-8?B?ME5kQzgzVjhjNm1FYStBSHdqcW43UmlJOWxhdjd1YVViaVVhaU5rYTAxeGk0?=
+ =?utf-8?B?ZjFnaHNTRTdNblVmd3ZtUnU5RDIyUHNNSlFqQ3BJSm9CQXBmVUZkUTgyWjRP?=
+ =?utf-8?B?NEY0Y0tYenhlRWxyZzVyb2ZzTlRicWdhU3Z6RHdFVUFyLzVBVmx6TnpsQXlV?=
+ =?utf-8?B?cHdVa3pCVXl2bUQ2b1E3NldNNWZQbEMvWlJYcld6RzBXUmtWNXEvNWRFK2sv?=
+ =?utf-8?B?VGNJTWhVS3pWYVhBZXd6a084VEJWNlF6bmNJeExzU25SSTIvVFlVL2dwZGNP?=
+ =?utf-8?B?UjVwT2lNMmxHanpicGZueCt0WlFETkRPcEw0c0ZRNDJrbWJVS3VZQ0lrMkN0?=
+ =?utf-8?B?b0FoUGhCK0JWTzJBWUN3dDEyTzVBWVFla1k5a3RDYWl0Z1Q2MHZVR2JBZ21x?=
+ =?utf-8?B?U0RzWWI5MHROYTJKbWFVYXkrRUwxMmdQSzFhcjFmRlJLaTVEVnRySy8wTVI2?=
+ =?utf-8?B?ZG82azQwSzJoRHRUSTJybktaOTV3cmFOL2ExY291OFErWGgwSVRDSkhVdStL?=
+ =?utf-8?B?OWgyaUVidW9HbDZNb0h5dWs0Nmw5THo3cnpSR0E5TmN0OVp4MVh1aFVGQnYy?=
+ =?utf-8?B?S3hORHIvTVcyak5xMzk4UjI3eS8wcFpSNzdvckwrTzE0cWZmb0Q4SzlJUW5j?=
+ =?utf-8?Q?D6NnjhxWydKI1XLul5TFocxdQDEg+QxPXAvpOSc?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5611.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HHIG4YFuYceVO1/lfJUjkAAw0SRKjkinl34hckIyIMKTFBDirEOavBFLcYmF?=
- =?us-ascii?Q?ffHUuUBxqKvJAFopeza9b4pLRv5pHNKUNXqmtookVBJAJlfNDxBfaDza5owD?=
- =?us-ascii?Q?xv4iWyUskE3LtBiWIIxKVDBLIxqHw7x2yp/see34VFFFSRxVuhF49ZxuI6wt?=
- =?us-ascii?Q?GBRK39ppbglqMb0r/G9/o/gmBOv1dF8vFpGgyLd9P4taNuvo6oL2LhGcUvK8?=
- =?us-ascii?Q?ROPcy/VBDg5wzuPBnglJAf4bdEcQA3IsmVHFV+dEhiPY7KXMtWUAdX3OtuuW?=
- =?us-ascii?Q?1qCbkctAvIsoi7bukA9c5eKNEA0yjqleYY8XGknhV9mK5HoAxXNRTMs2GP5X?=
- =?us-ascii?Q?v1Iik0gNtgwpmHAycJXC2uvz/CLq7nOb4dgKCvmNb/8i22xgahPXkI/DzOwg?=
- =?us-ascii?Q?ttguZLd6lM5xrAF8ZDIQiBB+1kQbPE8mLLV6rGBQAXre7nRF95TZOOrDjMxW?=
- =?us-ascii?Q?/+t3P/ZX2PquyL2wCuJRuq4pwg215vPGMyJ0fUQzlMdcFbpfokS3JixJP9rP?=
- =?us-ascii?Q?MbBpG38uNGxN2s2UIzNsdNhNtXJmDcyBAypwUVncdn1/mBDAMUgI/XPHi7Rp?=
- =?us-ascii?Q?Rkras54ZdWGYJi3NOwKEPxrRtyWGBXX8xspK9mmR3ON6FGfPamCcxMhCuRCz?=
- =?us-ascii?Q?agWUKYL/5/Y7VJJAVYLEMVSjE7hbhu2GhvF0mxBe2Ryqxt+ELJ+Jm8/p1o29?=
- =?us-ascii?Q?doO9gdUDRT1rdmGY/vFub1FYBbs7drxsUQsniRPRz912u9lfSfQ4bz9fbBVJ?=
- =?us-ascii?Q?4aqF9njONNaYFkcvrwxehbvqbpfGBnRFDwpEo8T2oNyrz+5HxL1HME7py4Bv?=
- =?us-ascii?Q?xqyaKXUFS9rX9bEcZUWTAkIaHllG5VVs1y7Hku95VRo7/CY/aNqmSoClJEfR?=
- =?us-ascii?Q?bUsY2iwV0w7r8JIpzmlejBwZ3M6r9VWycfaO+dTTYUcquVCqFr5QRmKJ9zkE?=
- =?us-ascii?Q?CYZcspS09mxBSBtmAjZ6V5vdIwyuuC6MgUNhlushKKLSPSSOisBhWEd5xLDu?=
- =?us-ascii?Q?/Kj06zw1wn6N4f7Bqfrrq8Mnoqmps2TWIxxpFNrc2K500D7YQg61EKW07sRt?=
- =?us-ascii?Q?P2xuRvVtebR/5R6xjPcJ2W4ohgvW2VVVYDbPbE2u+G4gCMyHLawpCitW9aNU?=
- =?us-ascii?Q?8gdBqnTMJprpNcUZn9Bz2dnBI5lN6ZrZrfqBdcDI7Z767ylAiVR2k0RG1ziE?=
- =?us-ascii?Q?wbABH1TKD9PYkPiTK5Qqr+OhoAYX3vYldrkBW+4/PdHCSEuiPcTVLgQQDBa4?=
- =?us-ascii?Q?HeOl496syup21vOG2d8LYLISqO1Wm6tna/I7tXdKpONLUU+mbdU0WBik+FSX?=
- =?us-ascii?Q?GynXSPfommju37Prq6Wi94tMxlYlsCw/BNiRSdjylERi9Ayyuf7vXcr0q536?=
- =?us-ascii?Q?ZqnMrPJKulBxPTsCAhKDMZaAvmO6xmyvYOiuGYmXKYSVyXcXFA9vSlPQ27d9?=
- =?us-ascii?Q?XMU1VnQ0gblQ+kEdW/7TA8H0cJrU3IyuLxvV6rpojcEuAZoitThgXw9n2+uH?=
- =?us-ascii?Q?OLswZManzycY8OQ7edbSY+o0kGULKf+PGW2c0IW9hbWf9LK9qu6SJ6bP2a0d?=
- =?us-ascii?Q?N/3Lr0cQvzvtex/RvE1hfw98cScYJtZcrXGMxK7FfV350dhZbrX/DqFLFq67?=
- =?us-ascii?Q?Bw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	0udmJbZGbJmJO75LromgTI39QtBLbNXzMv9N0Wkyi4ccEV8XJQ4YaaEw22eRQ5NKsDZuFvlE9fXo0RZ0FQD3bbhPmE7KQ9e/gH1XsRe3kdPVzZc692anEbsdV/64i8WqZR0eY8ZfDH5CRn1MCR2gmwYYmV5mLOR4a5WNz+LFe+F/Ciji08TFuAtZCBRgWjWVYxzI+rzzemhdlUPjtfFZehWZJm97JobbCDOoW4i/ZTxMbQbC9dj2c61+99HIY00LjSRjp7NnIjuXbS40YzqJJDSEPJkgBsiAXOMw5ve8KoUkdE4ejabsIZd/TqTf6c7T3Yp8FlHqLpsyfJS4Z2Vfl/tP24gtpboLuKdIMRM75FKje+sb9egkLavmsDBW6tGBbtY4t0BiLgHRSRRyvlmT9n+DOB5Roe/cuZtfWv4iRVmAIGeY4zozYg/TbRuoryBBhMhFQ87F1yR83z8g9qRSocczKZFnPAusM9Vo12hQrY4sKnoWqATVUzgCmL6vHoF9qMS1QmfXYsK7QcwdEMYVL2wuG/N7rmM2UW/OmgvrZBc+WTZYvTurwp1i5Iu8SYFkfsxrOyELP/bmUPVUCq9QSmv8XoC+lfXIxVcFR1KNB7Y=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45faa138-2132-444e-96b2-08dce4962573
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5611.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 17:01:10.5609
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 17:01:18.2238
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D7bl9xziA21X+O5q+zgmqrcqtl8UGBcmMooiXft1daj1hGPATGwC0zWxbmOzkFXnd8X7qqOrTAWgJ4gg7mWMhI51aG1gihlEAk9G8S/dW4I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4531
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-04_14,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 suspectscore=0
- spamscore=0 malwarescore=0 adultscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410040118
-X-Proofpoint-ORIG-GUID: huYKNRxXVqnruoApeRhPn695O2xwyV8k
-X-Proofpoint-GUID: huYKNRxXVqnruoApeRhPn695O2xwyV8k
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92d70d56-6e7c-47d9-dd70-08dce4962a4c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066E7.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6921
 
-On Fri, Oct 04, 2024 at 09:48:31AM -0700, Breno Leitao wrote:
-> Performance analysis using branch annotation on a fleet of 200 hosts
-> running web servers revealed that the 'likely' hint in
+Hello Peter,
 
-To be pedantic: *unlikely
+On 10/4/2024 6:05 PM, Peter Zijlstra wrote:
+> On Fri, Oct 04, 2024 at 04:40:08PM +0530, K Prateek Nayak wrote:
+>> Hello folks,
+>>
+>> On 10/3/2024 11:01 AM, Klaus Kudielka wrote:
+>>> On Sun, 2024-09-22 at 16:45 +0100, Chris Bainbridge wrote:
+>>>> On Fri, Aug 30, 2024 at 02:34:56PM +0200, Bert Karwatzki wrote:
+>>>>> Since linux next-20240820 the following messages appears when booting:
+>>>>>
+>>>>> [    T1] smp: Bringing up secondary CPUs ...
+>>>>> [    T1] smpboot: x86: Booting SMP configuration:
+>>>>> [    T1] .... node  #0, CPUs:        #2  #4  #6  #8 #10 #12 #14  #1
+>>>>> This is the line I'm concerend about:
+>>>>> [    T1] psi: inconsistent task state! task=61:cpuhp/3 cpu=0 psi_flags=4 clear=0 set=4
+>>>>> [    T1]   #3  #5  #7  #9 #11 #13 #15
+>>>>> [    T1] Spectre V2 : Update user space SMT mitigation: STIBP always-on
+>>>>> [    T1] smp: Brought up 1 node, 16 CPUs
+>>>>> [    T1] smpboot: Total of 16 processors activated (102216.16 BogoMIPS)
+>>>>>
+>>>>> I bisected this to commit 152e11f6df29 ("sched/fair: Implement delayed dequeue").
+>>>>> Is this normal or is this something I should worry about?
+>>>>>
+>>>>> Bert Karwatzki
+>>>>
+>>>> I am also getting a similar error on boot, and bisected it to the same commit:
+>>>>
+>>>> [    0.342931] psi: inconsistent task state! task=15:rcu_tasks_trace cpu=0 psi_flags=4 clear=0 set=4
+>>>>
+>>>> #regzbot introduced: 152e11f6df293e816a6a37c69757033cdc72667d
+>>>
+>>> Just another data point, while booting 6.12-rc1 on a Turris Omnia:
+>>>
+>>> [    0.000000] Linux version 6.12.0-rc1 (XXX) (arm-linux-gnueabihf-gcc (Debian 14.2.0-1) 14.2.0, GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP Thu Oct  3 06:59:25 CEST 2024
+>>> [    0.000000] CPU: ARMv7 Processor [414fc091] revision 1 (ARMv7), cr=10c5387d
+>>> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+>>> [    0.000000] OF: fdt: Machine model: Turris Omnia
+>>> ...
+>>> [    0.000867] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+>>> [    0.000876] psi: inconsistent task state! task=2:kthreadd cpu=0 psi_flags=4 clear=0 set=4
+>>>
+>>
+>> Not sure if someone took a stab at this but I haven't seen the "psi:
+> 
+> I'm aware of the issue, but since it's just statistics and not
+> anything 'important', I've been spending my time on those crashing bugs.
+> 
+>> inconsistent task state" warning with the below diff. I'm not sure if my
+>> approach is right which if why I'm pasting the diff before sending out
+>> an official series. Any comments or testing is greatly appreciated.
+>>
+>> The diff is based on:
+>>
+>>      git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/urgent
+>>
+>> at commit d4ac164bde7a ("sched/eevdf: Fix wakeup-preempt by checking
+>> cfs_rq->nr_running")
+> 
+> Thanks, I just pushed all that out to tip/sched/urgent.
+> 
+>> My approach was as follows:
+>>
+>> o psi_dequeue() relied on psi_sched_switch() to set the PSI flags
+>>    appropriately for a dequeued task. However, psi_sched_switch() used
+>>    "!task_on_rq_queued(prev)" to judge if the prev task is blocked which
+>>    is now untrue with DELAYED_DEQUEUE. Fix it by checking
+>>    "p->se.sched_delayed" as well. I also added a matching check for
+>>    ENQUEUE_DELAYED for psi_enqueue().
+> 
+> We already determine the whole sleep state earlier, the whole having
+> called block_task() is a clue, perhaps we should propagate that state
+> instead of trying to divinate it again.
 
-> vms_gather_munmap_vmas() was 100% consistently incorrect. In all
-> observed cases, the branch behavior contradicted the hint.
+Yup that makes sense!
 
-OK so this is probably because vm_mmap_pgoff() declares the userfaultfd
-list head on the stack then passes it into do_mmap() and threads all the
-way to this code... and yeah, so that would be 100%.
+> 
+>> o With the above, the warning was put off for a few more seconds but it
+>>    still appeared. I dumped all PSI flag transition along with
+>>    "tsk->se.sched_delayed" to see what trips it and I saw the following
+>>    state changes for the task that finally tripped it:
+>>
+>>      psi: task state: task=18:rcu_preempt cpu=0 psi_flags=0 clear=0 set=0 delayed=1
+>>      psi: task state: task=18:rcu_preempt cpu=128 psi_flags=0 clear=0 set=4 delayed=1
+>>      psi: task state: task=18:rcu_preempt cpu=128 psi_flags=4 clear=0 set=4 delayed=0
+>>      psi: inconsistent task state! task=18:rcu_preempt cpu=128 psi_flags=4 clear=0 set=4 delayed=0
+>>
+>>    Note that cpu switched with "tsk->se.sched_delayed" still set which
+>>    got me looking at the task migration path. The warning added below
+>>    in "deactivate_task()" tripped without fail, just before the PSI
+>>    warning was logged.
+>>
+>>    To prevent migration of a delayed entity (XXX: Is it a good idea?)
+> 
+> It is not. By migrating the entities they can get picked sooner and the
+> delayed thing gets removed sooner. Less 'hidden' weight.
 
-There are other code paths that aren't 100%, but the system call one is.
+True that! I was thinking moving queued load could also potentially help
+delayed entities being picked faster on the rq where they were delayed.
+Both seem to help in one way or the other but I don't have any solid
+data to conclusively say which might be better.
 
-Nice spot!
+> 
+>>    we do a "account_task_dequeue()" in the delayed dequeue case to
+>>    remove the task from the "rq->cfs_list", thus removing it from the
+>>    purview of the load balancer.
+> 
+> Anyway, assuming PSI wants to preserve current semantics, does something
+> like the below work?
 
->
-> Remove the 'unlikely' qualifier from the condition checking 'vms->uf'.
-> By doing so, we allow the compiler to make optimization decisions based
-> on its own heuristics and profiling data, rather than relying on a
-> static hint that has proven to be inaccurate in real-world scenarios.
+I've updated the details from my testing on the parallel thread by
+Johannes.
 
-Yeah I'm generally not in favour of 'vibes' based likely()/unlikely(), I
-think it should always be based on profiling.
+tl;dr I still see PSI warnings, some more tinkering on top of your
+changes altered the warning to "psi: task underflow!". So far, no
+luck figuring out how that comes about.
 
-It's understandable that there would be this expectation, and it may have
-migrated from other code that already had this check in where perhaps it
-wasn't always referencing a stack object, but yeah this is just wrong.
+Thank you for taking a look and for the quick patch!
 
->
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+-- 
+Thanks and Regards,
+Prateek
 
-Liam will want a look too when he's back next week.
-
-Looks good to me though!
-
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
+> 
 > ---
->  mm/vma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/vma.c b/mm/vma.c
-> index 4737afcb064c..9d4fe794dd07 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -1250,7 +1250,7 @@ int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
->  		else if (is_data_mapping(next->vm_flags))
->  			vms->data_vm += nrpages;
->
-> -		if (unlikely(vms->uf)) {
-> +		if (vms->uf) {
->  			/*
->  			 * If userfaultfd_unmap_prep returns an error the vmas
->  			 * will remain split, but userland will get a
-> --
-> 2.43.5
->
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 43e453ab7e20..0d766fb9fbc4 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2012,7 +2012,7 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+>   	if (!(flags & ENQUEUE_NOCLOCK))
+>   		update_rq_clock(rq);
+>   
+> -	if (!(flags & ENQUEUE_RESTORE)) {
+> +	if (!(flags & ENQUEUE_RESTORE) && !p->se.sched_delayed) {
+>   		sched_info_enqueue(rq, p);
+>   		psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
+>   	}
+> @@ -2039,7 +2039,7 @@ inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
+>   	if (!(flags & DEQUEUE_NOCLOCK))
+>   		update_rq_clock(rq);
+>   
+> -	if (!(flags & DEQUEUE_SAVE)) {
+> +	if (!(flags & DEQUEUE_SAVE) && !p->se.sched_delayed) {
+>   		sched_info_dequeue(rq, p);
+>   		psi_dequeue(p, flags & DEQUEUE_SLEEP);
+>   	}
+> @@ -6537,6 +6537,7 @@ static void __sched notrace __schedule(int sched_mode)
+>   	 * as a preemption by schedule_debug() and RCU.
+>   	 */
+>   	bool preempt = sched_mode > SM_NONE;
+> +	bool block = false;
+>   	unsigned long *switch_count;
+>   	unsigned long prev_state;
+>   	struct rq_flags rf;
+> @@ -6622,6 +6623,7 @@ static void __sched notrace __schedule(int sched_mode)
+>   			 * After this, schedule() must not care about p->state any more.
+>   			 */
+>   			block_task(rq, prev, flags);
+> +			block = true;
+>   		}
+>   		switch_count = &prev->nvcsw;
+>   	}
+> @@ -6667,7 +6669,7 @@ static void __sched notrace __schedule(int sched_mode)
+>   
+>   		migrate_disable_switch(rq, prev);
+>   		psi_account_irqtime(rq, prev, next);
+> -		psi_sched_switch(prev, next, !task_on_rq_queued(prev));
+> +		psi_sched_switch(prev, next, block);
+>   
+>   		trace_sched_switch(preempt, prev, next, prev_state);
+>   
+
 
