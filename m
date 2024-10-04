@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-350119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C164990024
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:45:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135CB990028
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABB0E1F24499
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:44:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEF83281F64
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220F414B06A;
-	Fri,  4 Oct 2024 09:42:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35A514AD24;
-	Fri,  4 Oct 2024 09:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB2714C58C;
+	Fri,  4 Oct 2024 09:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6O24UIr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEF2179BB;
+	Fri,  4 Oct 2024 09:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728034953; cv=none; b=iIrmuvR4hm756fwdI5SONj9zeojqoEuGvemxOJaAiYghBts9u12D7TBqF/CpRTE0HTcSEfVP7RQ8VMj5uimqn7529dDiOO39+8G4XBKEeweL76zObMXYdTsiLZln/ZhvLhQt78uAjOyD3RUk5xxylS706zQsVI07+dpOn/gnEOY=
+	t=1728034979; cv=none; b=LN4f3nhEI2CHa1Ak2zks+YZixIrh3g+so46gtdn+kX4CbH2vwvtHDn0GB8EJ0gpMCRkDJZzUyMRFf7e3kq3TXXhApwEjcShFIeSmlJub++DCx1kVSUSI937vfDE8h8WcXtVKw0EMVk7yZL73WjUZBeUHtPtu/QUKgnszusi9ATQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728034953; c=relaxed/simple;
-	bh=qBrp9b2JFsXIIwmv/dzgme8ndotyZbizXpIi1iZzvW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sTzh+zwU8DA9rwhbv+1qGv7Pk7V+oSYYeHBWuxWCkyBEZnsJKFHUiv3qX9JgqzIC0ErH0oly5y9Z1Njm7H6r45/cM1K5tH1pIWdHcHevMa218NXeqDlchn8qyWEVIPVAty0ZzoKXw6O9GMVE87ouAkQjzMg6igpIEihs0dzTn0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AACD3339;
-	Fri,  4 Oct 2024 02:43:00 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 362B63F64C;
-	Fri,  4 Oct 2024 02:42:29 -0700 (PDT)
-Date: Fri, 4 Oct 2024 10:42:26 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, Martin Botka <martin.botka@somainline.org>,
- Chris Morgan <macromorgan@hotmail.com>
-Subject: Re: [PATCH 4/5] mfd: axp20x: Add support for AXP323
-Message-ID: <20241004104226.04534d8c@donnerap.manchester.arm.com>
-In-Reply-To: <CAGb2v64jPk64Y-Aef1YPWkjCfp0eq6EasE2xszu8+WoX+Epv-A@mail.gmail.com>
-References: <20241003111444.543964-1-andre.przywara@arm.com>
-	<20241003111444.543964-5-andre.przywara@arm.com>
-	<CAGb2v64jPk64Y-Aef1YPWkjCfp0eq6EasE2xszu8+WoX+Epv-A@mail.gmail.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1728034979; c=relaxed/simple;
+	bh=SzhRbPk78jtGFOBCsX0ZbmHldM75YK5G46pTsUz7W2A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pQqvg6GDJTunOQLMsAnH40DpfADfx2EJLy4AiX5AfAIcK8dY0VKBZnT08xufqwntLLJeanRbo4gjxNgOdQ70wgPaQraiROa9XwH7oO+GDGZhD6rcYgLV9r6PAgjmZaUOOqHIzgtnAbk55PR2Ciiplf7QIj5bJQ/+G09p2Zb5Ueo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6O24UIr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76F50C4CEC6;
+	Fri,  4 Oct 2024 09:42:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728034979;
+	bh=SzhRbPk78jtGFOBCsX0ZbmHldM75YK5G46pTsUz7W2A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=K6O24UIrnQLvTn2gf3tB4sV3i5xDEFVB8dYD+wUb7ntkgmHrol4txY5c1cCuaD/Fp
+	 gO5mQrMCLw/Lwjmhzuu5bj9lkgYwNXUNrYysI9LO+0OarhhTP0gD2/mwHU5jlanowY
+	 236S4FQ0Jw5Nx377/hmDZaIPvZ4beLHmqREhQ+vXmW/k52t/upg3CY8ouuTCL31+EB
+	 9uPvLAb9xAQBNliOtgTfhZWGuTmtGhDwpKGhZw6A2GLMiSrycHgnqdy4SB1ZrRa+nX
+	 JpsIfIEx6FDaDyNspvZkNAO70gb1i1JqmPrNmUv3lEw7NTrz918G2220FK/4I5cGGN
+	 1ZhZ+KWb9tbQw==
+From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	bpf@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] selftests: sched_ext: Add sched_ext as proper selftest target
+Date: Fri,  4 Oct 2024 11:42:46 +0200
+Message-ID: <20241004094247.795385-1-bjorn@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,161 +60,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 3 Oct 2024 23:20:58 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+From: Björn Töpel <bjorn@rivosinc.com>
 
-> On Thu, Oct 3, 2024 at 7:15=E2=80=AFPM Andre Przywara <andre.przywara@arm=
-.com> wrote:
-> >
-> > The X-Powers AXP323 is a very close sibling of the AXP313A. The only
-> > difference seems to be the ability to dual-phase the first two DC/DC
-> > converter, which adds another register.
-> >
-> > Add the required boilerplate to introduce a new PMIC to the AXP MFD
-> > driver. Where possible, this just maps into the existing structs defined
-> > for the AXP313A, only deviating where needed.
-> >
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > ---
-> >  drivers/mfd/axp20x-i2c.c   |  1 +
-> >  drivers/mfd/axp20x.c       | 26 ++++++++++++++++++++++++++
-> >  include/linux/mfd/axp20x.h |  2 ++
-> >  3 files changed, 29 insertions(+)
-> >
-> > diff --git a/drivers/mfd/axp20x-i2c.c b/drivers/mfd/axp20x-i2c.c
-> > index 791a0b4cb64b..5c93136f977e 100644
-> > --- a/drivers/mfd/axp20x-i2c.c
-> > +++ b/drivers/mfd/axp20x-i2c.c
-> > @@ -65,6 +65,7 @@ static const struct of_device_id axp20x_i2c_of_match[=
-] =3D {
-> >         { .compatible =3D "x-powers,axp221", .data =3D (void *)AXP221_I=
-D },
-> >         { .compatible =3D "x-powers,axp223", .data =3D (void *)AXP223_I=
-D },
-> >         { .compatible =3D "x-powers,axp313a", .data =3D (void *)AXP313A=
-_ID },
-> > +       { .compatible =3D "x-powers,axp323", .data =3D (void *)AXP323_I=
-D },
-> >         { .compatible =3D "x-powers,axp717", .data =3D (void *)AXP717_I=
-D },
-> >         { .compatible =3D "x-powers,axp803", .data =3D (void *)AXP803_I=
-D },
-> >         { .compatible =3D "x-powers,axp806", .data =3D (void *)AXP806_I=
-D },
-> > diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-> > index bc08ae433260..8d90962b56d9 100644
-> > --- a/drivers/mfd/axp20x.c
-> > +++ b/drivers/mfd/axp20x.c
-> > @@ -42,6 +42,7 @@ static const char * const axp20x_model_names[] =3D {
-> >         [AXP223_ID] =3D "AXP223",
-> >         [AXP288_ID] =3D "AXP288",
-> >         [AXP313A_ID] =3D "AXP313a",
-> > +       [AXP323_ID] =3D "AXP323",
-> >         [AXP717_ID] =3D "AXP717",
-> >         [AXP803_ID] =3D "AXP803",
-> >         [AXP806_ID] =3D "AXP806",
-> > @@ -193,6 +194,10 @@ static const struct regmap_range axp313a_writeable=
-_ranges[] =3D {
-> >         regmap_reg_range(AXP313A_ON_INDICATE, AXP313A_IRQ_STATE),
-> >  };
-> >
-> > +static const struct regmap_range axp323_writeable_ranges[] =3D {
-> > +       regmap_reg_range(AXP313A_ON_INDICATE, AXP323_DCDC_MODE_CTRL2),
-> > +};
-> > +
-> >  static const struct regmap_range axp313a_volatile_ranges[] =3D {
-> >         regmap_reg_range(AXP313A_SHUTDOWN_CTRL, AXP313A_SHUTDOWN_CTRL),
-> >         regmap_reg_range(AXP313A_IRQ_STATE, AXP313A_IRQ_STATE),
-> > @@ -203,6 +208,11 @@ static const struct regmap_access_table axp313a_wr=
-iteable_table =3D {
-> >         .n_yes_ranges =3D ARRAY_SIZE(axp313a_writeable_ranges),
-> >  };
-> >
-> > +static const struct regmap_access_table axp323_writeable_table =3D {
-> > +       .yes_ranges =3D axp323_writeable_ranges,
-> > +       .n_yes_ranges =3D ARRAY_SIZE(axp323_writeable_ranges),
-> > +};
-> > +
-> >  static const struct regmap_access_table axp313a_volatile_table =3D {
-> >         .yes_ranges =3D axp313a_volatile_ranges,
-> >         .n_yes_ranges =3D ARRAY_SIZE(axp313a_volatile_ranges),
-> > @@ -433,6 +443,15 @@ static const struct regmap_config axp313a_regmap_c=
-onfig =3D {
-> >         .cache_type =3D REGCACHE_MAPLE,
-> >  };
-> >
-> > +static const struct regmap_config axp323_regmap_config =3D {
-> > +       .reg_bits =3D 8,
-> > +       .val_bits =3D 8,
-> > +       .wr_table =3D &axp323_writeable_table,
-> > +       .volatile_table =3D &axp313a_volatile_table,
-> > +       .max_register =3D AXP323_DCDC_MODE_CTRL2,
-> > +       .cache_type =3D REGCACHE_RBTREE, =20
->=20
-> Maple tree instead?
+The sched_ext selftests is missing proper cross-compilation support, a
+proper target entry, and out-of-tree build support.
 
-Ah yes, you are right, this was lost over a rebase. Will fix in v2.
+When building the kselftest suite, e.g.:
 
-> The rest looks fine, so once fixed,
->=20
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+  make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- \
+    SKIP_TARGETS="" O=/output/foo -C tools/testing/selftests install
 
-Thanks!
-Andre
+The expectation is that the sched_ext is included, cross-built, and
+placed into /output/foo.
 
->=20
-> > +};
-> > +
-> >  static const struct regmap_config axp717_regmap_config =3D {
-> >         .reg_bits =3D 8,
-> >         .val_bits =3D 8,
-> > @@ -1221,6 +1240,7 @@ static int axp20x_power_off(struct sys_off_data *=
-data)
-> >         unsigned int shutdown_reg;
-> >
-> >         switch (axp20x->variant) {
-> > +       case AXP323_ID:
-> >         case AXP313A_ID:
-> >                 shutdown_reg =3D AXP313A_SHUTDOWN_CTRL;
-> >                 break;
-> > @@ -1289,6 +1309,12 @@ int axp20x_match_device(struct axp20x_dev *axp20=
-x)
-> >                 axp20x->regmap_cfg =3D &axp313a_regmap_config;
-> >                 axp20x->regmap_irq_chip =3D &axp313a_regmap_irq_chip;
-> >                 break;
-> > +       case AXP323_ID:
-> > +               axp20x->nr_cells =3D ARRAY_SIZE(axp313a_cells);
-> > +               axp20x->cells =3D axp313a_cells;
-> > +               axp20x->regmap_cfg =3D &axp323_regmap_config;
-> > +               axp20x->regmap_irq_chip =3D &axp313a_regmap_irq_chip;
-> > +               break;
-> >         case AXP717_ID:
-> >                 axp20x->nr_cells =3D ARRAY_SIZE(axp717_cells);
-> >                 axp20x->cells =3D axp717_cells;
-> > diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
-> > index 79ecaaaa2070..c3df0e615fbf 100644
-> > --- a/include/linux/mfd/axp20x.h
-> > +++ b/include/linux/mfd/axp20x.h
-> > @@ -19,6 +19,7 @@ enum axp20x_variants {
-> >         AXP223_ID,
-> >         AXP288_ID,
-> >         AXP313A_ID,
-> > +       AXP323_ID,
-> >         AXP717_ID,
-> >         AXP803_ID,
-> >         AXP806_ID,
-> > @@ -113,6 +114,7 @@ enum axp20x_variants {
-> >  #define AXP313A_SHUTDOWN_CTRL          0x1a
-> >  #define AXP313A_IRQ_EN                 0x20
-> >  #define AXP313A_IRQ_STATE              0x21
-> > +#define AXP323_DCDC_MODE_CTRL2         0x22
-> >
-> >  #define AXP717_ON_INDICATE             0x00
-> >  #define AXP717_PMU_STATUS_2            0x01
-> > --
-> > 2.25.1
-> > =20
+Add CROSS_COMPILE, OUTPUT, and TARGETS support to the sched_ext
+selftest.
+
+Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+---
+ tools/testing/selftests/Makefile           |  1 +
+ tools/testing/selftests/sched_ext/Makefile | 59 +++++++++++++++-------
+ 2 files changed, 41 insertions(+), 19 deletions(-)
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index b38199965f99..20ee8a0b795c 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -88,6 +88,7 @@ TARGETS += rlimits
+ TARGETS += rseq
+ TARGETS += rtc
+ TARGETS += rust
++TARGETS += sched_ext
+ TARGETS += seccomp
+ TARGETS += sgx
+ TARGETS += sigaltstack
+diff --git a/tools/testing/selftests/sched_ext/Makefile b/tools/testing/selftests/sched_ext/Makefile
+index 0754a2c110a1..66467a99184d 100644
+--- a/tools/testing/selftests/sched_ext/Makefile
++++ b/tools/testing/selftests/sched_ext/Makefile
+@@ -13,14 +13,8 @@ LLVM_SUFFIX := $(LLVM)
+ endif
+ 
+ CC := $(LLVM_PREFIX)clang$(LLVM_SUFFIX) $(CLANG_FLAGS) -fintegrated-as
+-else
+-CC := gcc
+ endif # LLVM
+ 
+-ifneq ($(CROSS_COMPILE),)
+-$(error CROSS_COMPILE not supported for scx selftests)
+-endif # CROSS_COMPILE
+-
+ CURDIR := $(abspath .)
+ REPOROOT := $(abspath ../../../..)
+ TOOLSDIR := $(REPOROOT)/tools
+@@ -34,18 +28,39 @@ GENHDR := $(GENDIR)/autoconf.h
+ SCXTOOLSDIR := $(TOOLSDIR)/sched_ext
+ SCXTOOLSINCDIR := $(TOOLSDIR)/sched_ext/include
+ 
+-OUTPUT_DIR := $(CURDIR)/build
++ifeq (,$(OUTPUT))
++OUTPUT := $(CURDIR)/build
++RUNNER_DIR := $(CURDIR)
++else
++OUTPUT_DIR := $(OUTPUT)
++RUNNER_DIR := $(OUTPUT)
++endif
+ OBJ_DIR := $(OUTPUT_DIR)/obj
+ INCLUDE_DIR := $(OUTPUT_DIR)/include
+ BPFOBJ_DIR := $(OBJ_DIR)/libbpf
+ SCXOBJ_DIR := $(OBJ_DIR)/sched_ext
+ BPFOBJ := $(BPFOBJ_DIR)/libbpf.a
+ LIBBPF_OUTPUT := $(OBJ_DIR)/libbpf/libbpf.a
+-DEFAULT_BPFTOOL := $(OUTPUT_DIR)/sbin/bpftool
+ HOST_BUILD_DIR := $(OBJ_DIR)
+ HOST_OUTPUT_DIR := $(OUTPUT_DIR)
+ 
+-VMLINUX_BTF_PATHS ?= ../../../../vmlinux					\
++ifneq ($(CROSS_COMPILE),)
++DEFAULT_BPFTOOL := $(OUTPUT_DIR)/host/sbin/bpftool
++HOST_OBJ_DIR := $(OBJ_DIR)/host/bpftool
++HOST_LIBBPF_OUTPUT := $(OBJ_DIR)/host/libbpf/
++HOST_LIBBPF_DESTDIR := $(OUTPUT_DIR)/host/
++HOST_DESTDIR := $(OUTPUT_DIR)/host/
++else
++DEFAULT_BPFTOOL := $(OUTPUT_DIR)/sbin/bpftool
++HOST_OBJ_DIR := $(OBJ_DIR)/bpftool
++HOST_LIBBPF_OUTPUT := $(OBJ_DIR)/libbpf/
++HOST_LIBBPF_DESTDIR := $(OUTPUT_DIR)/
++HOST_DESTDIR := $(OUTPUT_DIR)/
++endif
++
++VMLINUX_BTF_PATHS ?= $(if $(O),$(O)/vmlinux)					\
++		     $(if $(KBUILD_OUTPUT),$(KBUILD_OUTPUT)/vmlinux)		\
++		     ../../../../vmlinux					\
+ 		     /sys/kernel/btf/vmlinux					\
+ 		     /boot/vmlinux-$(shell uname -r)
+ VMLINUX_BTF ?= $(abspath $(firstword $(wildcard $(VMLINUX_BTF_PATHS))))
+@@ -80,17 +95,23 @@ IS_LITTLE_ENDIAN = $(shell $(CC) -dM -E - </dev/null |				\
+ # Use '-idirafter': Don't interfere with include mechanics except where the
+ # build would have failed anyways.
+ define get_sys_includes
+-$(shell $(1) -v -E - </dev/null 2>&1 \
++$(shell $(1) $(2) -v -E - </dev/null 2>&1 \
+ 	| sed -n '/<...> search starts here:/,/End of search list./{ s| \(/.*\)|-idirafter \1|p }') \
+-$(shell $(1) -dM -E - </dev/null | grep '__riscv_xlen ' | awk '{printf("-D__riscv_xlen=%d -D__BITS_PER_LONG=%d", $$3, $$3)}')
++$(shell $(1) $(2) -dM -E - </dev/null | grep '__riscv_xlen ' | awk '{printf("-D__riscv_xlen=%d -D__BITS_PER_LONG=%d", $$3, $$3)}')
+ endef
+ 
++ifneq ($(CROSS_COMPILE),)
++CLANG_TARGET_ARCH = --target=$(notdir $(CROSS_COMPILE:%-=%))
++endif
++
++CLANG_SYS_INCLUDES = $(call get_sys_includes,$(CLANG),$(CLANG_TARGET_ARCH))
++
+ BPF_CFLAGS = -g -D__TARGET_ARCH_$(SRCARCH)					\
+ 	     $(if $(IS_LITTLE_ENDIAN),-mlittle-endian,-mbig-endian)		\
+ 	     -I$(CURDIR)/include -I$(CURDIR)/include/bpf-compat			\
+ 	     -I$(INCLUDE_DIR) -I$(APIDIR) -I$(SCXTOOLSINCDIR)			\
+ 	     -I$(REPOROOT)/include						\
+-	     $(call get_sys_includes,$(CLANG))					\
++	     $(CLANG_SYS_INCLUDES) 						\
+ 	     -Wall -Wno-compare-distinct-pointer-types				\
+ 	     -Wno-incompatible-function-pointer-types				\
+ 	     -O2 -mcpu=v3
+@@ -98,7 +119,7 @@ BPF_CFLAGS = -g -D__TARGET_ARCH_$(SRCARCH)					\
+ # sort removes libbpf duplicates when not cross-building
+ MAKE_DIRS := $(sort $(OBJ_DIR)/libbpf $(OBJ_DIR)/libbpf				\
+ 	       $(OBJ_DIR)/bpftool $(OBJ_DIR)/resolve_btfids			\
+-	       $(INCLUDE_DIR) $(SCXOBJ_DIR))
++	       $(HOST_OBJ_DIR) $(INCLUDE_DIR) $(SCXOBJ_DIR))
+ 
+ $(MAKE_DIRS):
+ 	$(call msg,MKDIR,,$@)
+@@ -112,14 +133,14 @@ $(BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile)			\
+ 		    DESTDIR=$(OUTPUT_DIR) prefix= all install_headers
+ 
+ $(DEFAULT_BPFTOOL): $(wildcard $(BPFTOOLDIR)/*.[ch] $(BPFTOOLDIR)/Makefile)	\
+-		    $(LIBBPF_OUTPUT) | $(OBJ_DIR)/bpftool
++		    $(LIBBPF_OUTPUT) | $(HOST_OBJ_DIR)
+ 	$(Q)$(MAKE) $(submake_extras)  -C $(BPFTOOLDIR)				\
+ 		    ARCH= CROSS_COMPILE= CC=$(HOSTCC) LD=$(HOSTLD)		\
+ 		    EXTRA_CFLAGS='-g -O0'					\
+-		    OUTPUT=$(OBJ_DIR)/bpftool/					\
+-		    LIBBPF_OUTPUT=$(OBJ_DIR)/libbpf/				\
+-		    LIBBPF_DESTDIR=$(OUTPUT_DIR)/				\
+-		    prefix= DESTDIR=$(OUTPUT_DIR)/ install-bin
++		    OUTPUT=$(HOST_OBJ_DIR)/					\
++		    LIBBPF_OUTPUT=$(HOST_LIBBPF_OUTPUT)				\
++		    LIBBPF_DESTDIR=$(HOST_LIBBPF_DESTDIR)			\
++		    prefix= DESTDIR=$(HOST_DESTDIR) install-bin
+ 
+ $(INCLUDE_DIR)/vmlinux.h: $(VMLINUX_BTF) $(BPFTOOL) | $(INCLUDE_DIR)
+ ifeq ($(VMLINUX_H),)
+@@ -203,7 +224,7 @@ $(SCXOBJ_DIR)/util.o: util.c | $(SCXOBJ_DIR)
+ 
+ runner: $(SCXOBJ_DIR)/runner.o $(SCXOBJ_DIR)/util.o $(BPFOBJ) $(testcase-targets)
+ 	@echo "$(testcase-targets)"
+-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
++	$(CC) $(CFLAGS) -o $(RUNNER_DIR)/$@ $^ $(LDFLAGS)
+ 
+ TEST_GEN_PROGS := runner
+ 
+
+base-commit: 0c559323bbaabee7346c12e74b497e283aaafef5
+-- 
+2.43.0
 
 
