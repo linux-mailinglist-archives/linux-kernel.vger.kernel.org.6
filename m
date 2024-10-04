@@ -1,111 +1,49 @@
-Return-Path: <linux-kernel+bounces-349767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE84C98FB5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:02:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4EF98FB4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A76FB21948
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:02:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 910231C22195
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8CE1D2232;
-	Fri,  4 Oct 2024 00:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECA81D12EB;
+	Fri,  4 Oct 2024 00:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQUbGIJG"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWj5ILNO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAD41D1E9B;
-	Fri,  4 Oct 2024 00:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C0A1D0B8B;
+	Fri,  4 Oct 2024 00:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728000035; cv=none; b=hMabDoV13YRyz5wSF6vf4YvUeV979zxZo4vWZVB/rXh3M5uSp9Q3EOdVtTihYFNUz9oR4eWuTGaJznJ/dfhJpsGbvCZniYTANlAiGq6Rxi7Jg1Ecq+3m6+8DFjaA6UHZVOKMOToxz+BaMdV3KrUMU0I2i+MWmXcFOgYvVnv+ca4=
+	t=1728000031; cv=none; b=I8laOqnDGcZGdm6OGiyqneEMKv8E0J9KiRXasTrG7mqY9EROE6pVdfRtx1YagIcxjcI+33DNp5o1LrxBG+/YjWXFaOQM5lyGZwZkpy84XM1qf9z7c+EOr/Nt00etKvIZ+rGjmHB7geoOpLbfKwDdg5BFhwCpG6VsFoREXx2t5kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728000035; c=relaxed/simple;
-	bh=0YcDLsbwBepenWfoJZWFdsKWsOmtv44Xzd2Zv1XAZdw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P7bLhgauQc18A8ZTw18eq8zumYj1PsStLbCVS9Upu7q7FoVjeg2wQXf1e9h09v2pMXo4jedR7GK0dr5I0TloicMpzbWV3E/IVYeM1qrTH2S088wEIggUiMYNlqiLqQHY0ChUoAb4bCBPrCgfcfNWTXdhU+RqLKXF4zhMDLwVml4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQUbGIJG; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71798a15ce5so1951770b3a.0;
-        Thu, 03 Oct 2024 17:00:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728000033; x=1728604833; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TPG7NWLbTV1K4yXh2AqTy27S5IzvT22XN7gfixbpbfM=;
-        b=XQUbGIJGlHkzXMaNtSuNURtXOGI+Yfqmjm9isHIBMzo2WG4pdmeYBTvoc3/tdSejdL
-         +TISWZYO5Y+MkiY35YA8IUp0iOufi+Bj2wT9ekdC4KVBrU7fc+HCNNThrSEoMn2B1zVB
-         YxDzEG3OhpYAPTtEFZsb4ZFYA+yoI84HF/40xP5/E88BSQ935TmDsBC1XCyzSNgA6w0l
-         aGpnYrvkoOPFsnYSMS09z9nwszHWCedLlLYuPYalStAykUyB3g3+y4OgX+FOuwfMdKXd
-         Q4FG3FvoCxz1mU/18J7AGiXrAfJ6jN4b45ud0zLYMFRCSv3nDZVG4hB3Ge//r+/ki3Es
-         QLsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728000033; x=1728604833;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TPG7NWLbTV1K4yXh2AqTy27S5IzvT22XN7gfixbpbfM=;
-        b=HSOjdj+LBMtVuZS5Z/gTCBUNJjvMcLLqqybztZGkoKMHF50X4dGeGD3gQlIGWSqnvj
-         /2Cbi+YSlI5xl6jAKq9VBSbfYCZUad2qCJtqKNqeptjaMbhIWc+PFSKRNZBlD9nv/CkI
-         cvA3sdkn/nHqkZQcBUR7hlOvOj1xQBgPfclUh2cgN4j0sC5+dxGycs6msSPNs+Pc5JHs
-         ozkM2zEOktzOZ7hb6p8x0W3NlMvqU/M6dZ2VKnBUNKRfen4a0godqxAuw+Bu25Gt91fT
-         RBsTy0G4bafgtdi88TabEBaihygcPv/VrbCtJle4zINo+uSu9ydv3Y0hTeLNDoGPQbdF
-         Hu8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUypgd10SQ8wctiRp+R5QYYJKeMpSIfQOQnLWaeda48KOswXOlPcQuLgiJkeQUMzTd0sldhC3fw0OdqrFNo@vger.kernel.org, AJvYcCX0HQRLK+yDQECxNT7mCsZmKRYdyBdLkJ+q+cDi5tuEzfX6qh8eaCb0JxPmXRZ32qHqEovT1d5j@vger.kernel.org, AJvYcCXPbc5TXNaSoHWxsvKJ2CIjjgshdixNSB+GGJLrPRB/SvC9kAPBIOJ4WorBzt6/fik/QM8pxWXy+dBQZVIt@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGusOhfrqqK08OxeL3+sS5RQeTOtE6xqZAaGnPQor5X40PKjvb
-	HzvbPgjJeMWEaFhFG/E/ABItPGt/HdFf73j0yoUJostgaACY33mjtVP0uf0L
-X-Google-Smtp-Source: AGHT+IFRpqusbyBChPGJdLDMkF4flvi5LdGXwNB5TEbIL5IvxwzIRTPeVbU6C3UfDDB2eSYpuaFaIQ==
-X-Received: by 2002:a05:6a00:238d:b0:717:92d8:ca5c with SMTP id d2e1a72fcca58-71dd5ae0c7dmr9336561b3a.3.1728000033244;
-        Thu, 03 Oct 2024 17:00:33 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9cb0b28sm1983047b3a.0.2024.10.03.17.00.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 17:00:32 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	William Zhang <william.zhang@broadcom.com>,
-	Anand Gore <anand.gore@broadcom.com>,
-	Kursad Oney <kursad.oney@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rosen Penev <rosenp@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	linux-mtd@lists.infradead.org (open list:MEMORY TECHNOLOGY DEVICES (MTD)),
-	linux-kernel@vger.kernel.org (open list),
-	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-	linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM MAILING LIST),
-	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCMBCA ARM ARCHITECTURE),
-	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
-Subject: [PATCHv2 5/5] documentation: use nvmem-layout in examples
-Date: Thu,  3 Oct 2024 17:00:15 -0700
-Message-ID: <20241004000015.544297-6-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241004000015.544297-1-rosenp@gmail.com>
-References: <20241004000015.544297-1-rosenp@gmail.com>
+	s=arc-20240116; t=1728000031; c=relaxed/simple;
+	bh=+xvAIX6IJFp5VUob+EF6es/jA7D5vA7Q0y9G0s+Uvis=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ASPt0YpqAhOS4316zaS3niRhhKdXISov6v0zf7RZMoEuYfdbSHwBWpTJHXWKpkOEqyIBSzTD+M1tweeyim7jUR8uEKpnuAnmElTq+HuDb9XSSZ0rbvbZF6b32BSdZFwtO8TrbDM0T523JbBYYyD1K4v0vPPqBULaYlTqGwpjaRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWj5ILNO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 418E7C4CEC7;
+	Fri,  4 Oct 2024 00:00:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728000031;
+	bh=+xvAIX6IJFp5VUob+EF6es/jA7D5vA7Q0y9G0s+Uvis=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=UWj5ILNObymFnthWJ043Bs7QJwUOFAN3+39bezt06Cg/NqqBRg9RlpNlMGzPzvBXT
+	 3ACqN3i5SSiBDZlpD+ZsJw+ET7CzXPoxEpIRwNnuE7cOughzLQeTYgWLC43MveHNou
+	 AJpOJOaPL0DZDVcNJLiQ774WRPTpGJUAx8aetKg2355NsZnIPRf6wl60/uWT7+1J9A
+	 fUhAHz4O1nwepv96YNIgrPzP4kmgCNDX4l/aUN/Oaa7FRd8dsyXWTgiOwwr0z9hKzQ
+	 XzoZbu7Z5VchQ8quIgA9xuiB1EfDDFEgZlEgNkL5hF+JLDfcmKTgMMlv3Hq1/3djzf
+	 RsAswhqQNHW2g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB5BE3803263;
+	Fri,  4 Oct 2024 00:00:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -113,79 +51,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] selftests: net: csum: Clean up
+ recv_verify_packet_ipv6
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172800003451.2035955.15765832023119892490.git-patchwork-notify@kernel.org>
+Date: Fri, 04 Oct 2024 00:00:34 +0000
+References: <20240930162935.980712-1-sean.anderson@linux.dev>
+In-Reply-To: <20240930162935.980712-1-sean.anderson@linux.dev>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, willemb@google.com,
+ shuah@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-nvmem-cells are deprecated and replaced with nvmem-layout. For these
-examples, replace. They're not relevant to the main point of the
-document anyway.
+Hello:
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- .../mtd/partitions/qcom,smem-part.yaml        | 19 +++++++++++--------
- .../bindings/net/marvell,aquantia.yaml        | 13 ++++++++-----
- 2 files changed, 19 insertions(+), 13 deletions(-)
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-index 1c2b4e780ca9..8ae149534b23 100644
---- a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-+++ b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-@@ -45,17 +45,20 @@ examples:
-             compatible = "qcom,smem-part";
- 
-             partition-art {
--                compatible = "nvmem-cells";
--                #address-cells = <1>;
--                #size-cells = <1>;
-                 label = "0:art";
- 
--                macaddr_art_0: macaddr@0 {
--                    reg = <0x0 0x6>;
--                };
-+                nvmem-layout {
-+                    compatible = "fixed-layout";
-+                    #address-cells = <1>;
-+                    #size-cells = <1>;
-+
-+                    macaddr_art_0: macaddr@0 {
-+                        reg = <0x0 0x6>;
-+                    };
- 
--                macaddr_art_6: macaddr@6 {
--                    reg = <0x6 0x6>;
-+                    macaddr_art_6: macaddr@6 {
-+                        reg = <0x6 0x6>;
-+                    };
-                 };
-             };
-         };
-diff --git a/Documentation/devicetree/bindings/net/marvell,aquantia.yaml b/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
-index 9854fab4c4db..5d118553228b 100644
---- a/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
-+++ b/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
-@@ -98,15 +98,18 @@ examples:
-             /* ... */
- 
-             partition@650000 {
--                compatible = "nvmem-cells";
-                 label = "0:ethphyfw";
-                 reg = <0x650000 0x80000>;
-                 read-only;
--                #address-cells = <1>;
--                #size-cells = <1>;
- 
--                aqr_fw: aqr_fw@0 {
--                    reg = <0x0 0x5f42a>;
-+                nvmem-layout {
-+                    compatible = "fixed-layout";
-+                    #address-cells = <1>;
-+                    #size-cells = <1>;
-+
-+                    aqr_fw: aqr_fw@0 {
-+                        reg = <0x0 0x5f42a>;
-+                    };
-                 };
-             };
- 
+On Mon, 30 Sep 2024 12:29:34 -0400 you wrote:
+> Rename ip_len to payload_len since the length in this case refers only
+> to the payload, and not the entire IP packet like for IPv4. While we're
+> at it, just use the variable directly when calling
+> recv_verify_packet_udp/tcp.
+> 
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] selftests: net: csum: Clean up recv_verify_packet_ipv6
+    https://git.kernel.org/netdev/net-next/c/d772cc25ccf7
+
+You are awesome, thank you!
 -- 
-2.46.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
