@@ -1,114 +1,102 @@
-Return-Path: <linux-kernel+bounces-349991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7227F98FE59
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:00:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC06198FE51
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCDDAB21CA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:00:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E798F1C232B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A1F13AA31;
-	Fri,  4 Oct 2024 08:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F02B13B79F;
+	Fri,  4 Oct 2024 08:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/GnpiuS"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBu8P6ow"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793AB4D59F;
-	Fri,  4 Oct 2024 08:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0893781AB4
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 07:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728028848; cv=none; b=W7irc3urysF86D7yWLomr1j3x7XC+AlPsdHldJqZwMiQYbuKi9+g5jpLiO5CKbWcX6HlIdlKPVks097dBt9kBF4oLV1C+sMuF1X7t3z4KveNtH/x3Dd4DoRctX5kZAtOX76o78Ha06Sz7r7xcWgnjomwNsr+WMFO3Z9sqzI1xvE=
+	t=1728028800; cv=none; b=hNjf+aCbBS8nKSb1n0Wt5btjDu18k6GLCUXROuqGnqg2+wKPyWjr0/8H0486quFYYfpXQDLFIIbsJHr9hlSR/ezebBd9BhDZN+yuUid4+vR9Usod9YX+WVMa89EQFcVYYoRkledoozGlf5/tBqV2u7+qMpgwclVsG0Q/SeMcHFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728028848; c=relaxed/simple;
-	bh=lD9g13riO+Slp8TPw34u0NRH4HM0q6/i/yEMqgmB3gA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tFfkr/SgqaqZHEkRDSSZSmAlCkp6qpV2JgPSky+8kPiarJBaHfKSViDtKp8GcOt8NZTt/nXijrUi8Nc8p5N//RsbFK5tTOle8lvN2PB43G78zx2OF84cwfax/HQMVXlUrSc91U1adoobZgPJR+OOxMTsnqr8hxshl0YPMhYE8ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/GnpiuS; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e199b1d157so1420503a91.2;
-        Fri, 04 Oct 2024 01:00:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728028847; x=1728633647; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vaJUzQZBRfciOxNmEHoxDvtrS7KbDHmKUO7rTJ8eI28=;
-        b=B/GnpiuSUOVXWSJvwRD24sm5NEVXPhOB42HtatujtJzjKhgcKwElQunGscSOyKxFWO
-         WeQwBxAgEOWvkbubFjJCGttWPcpT7qvXRy6nxeUR8fkdyNZPvOSKjgi8klKROpK6bWzq
-         1Ak7G20yjNjPQHa8D4r5PDjazFltWMQF8BHdgFZDqG1htu1Cn+efk/eiGYvtbTXF4sbR
-         zDixMT6yQEn6WRwgW1xZRYl8+yTTzu7pGLIVqCndXTMITAINSGdHVz50vjC+ZsFJ22yy
-         r5hoo2hsMGUB+4cRWmkoN+ToWdI5ZBA6+zQCaZmEKbRCtsY36NQ5wPHtPa60Xd7rSS4h
-         L/ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728028847; x=1728633647;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vaJUzQZBRfciOxNmEHoxDvtrS7KbDHmKUO7rTJ8eI28=;
-        b=d/sRFoV4yf8eomAsun+V6IF/P91zM7tdQ7hyUJm4Q0T2aq3ubk30H98FQcKO7kOGYj
-         peZoS02U2Nu+hWgQ/NJNnDAfEBfAblQ8Atz48ChnydBmstBEUEN/dlUmbRg2lp1UFzFo
-         umiecrmDAA7Ur4LRF3TmiiTY86BD7kMZD4AogrZUnoZ9y9S8MPOknznYuC2YnC3AX0AD
-         Payf1vakWEmUtQDy4tBCtVxNb2BR8N0unjZGzqbFrArl7OdBgR4js9c8u6lEwkpuy8pX
-         k9DVqzS3ksxTFMjk38fIyA7iAmA8gxLYykFmVfhtENy53U/eDmAQYIuQs5SkACpdL+Xb
-         TwjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWW0AbXGCi+FOX25v3kmd8g4Pp8EL39O3T0/wjvhildCPhoxwe+7a57JAdmm41678qoKCJIwTU3FDgy9Go=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhG6LQac3UMHAM6ad2Mgsl2/KUjgOqma+IHdgyq9Ly1WxzB6zS
-	MilsISM9Hi5xkKhDBVDPz14gK1Vo2AcfuueJT52vCNs/8zuZZJmG
-X-Google-Smtp-Source: AGHT+IFRMMNyHnXu8f39dYd1F+hod061jiUEL4xNeTv+BMuCEwXttH/YFmMM5Kbk1UMIyMGAJdtUpg==
-X-Received: by 2002:a17:90a:6b07:b0:2c8:5cb7:54e5 with SMTP id 98e67ed59e1d1-2e1e636f822mr2187065a91.32.1728028846654;
-        Fri, 04 Oct 2024 01:00:46 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2405:204:20:6275:d166:ebdd:d4b:47ee])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e866551csm896656a91.40.2024.10.04.01.00.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 01:00:46 -0700 (PDT)
-From: SurajSonawane2415 <surajsonawane0215@gmail.com>
-To: srinivas.pandruvada@linux.intel.com,
-	jikos@kernel.org,
-	bentiss@kernel.org
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	SurajSonawane2415 <surajsonawane0215@gmail.com>
-Subject: [PATCH] hid: intel-ish-hid: Fix uninitialized variable 'rv' in ish_fw_xfer_direct_dma
-Date: Fri,  4 Oct 2024 13:29:44 +0530
-Message-Id: <20241004075944.44932-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728028800; c=relaxed/simple;
+	bh=gH1EjjdQwsWfbG39xO0kyHoK76uYMvZ+CN2d9gfGXh4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OpnlnIBYYhy4ZW0UyKKrKDtE5OG8vw00+RQ90lcUiX3r1OJxSh0PyVSr2OoacjCZpPonXUCHZTyWS+K+zZgY/EKJTZvv58nZ0wy00jk+YdYOkdp6Smj9+S2vTRdAWrrIJMefizRTlUt1VYfv+wLkVgBBbZ6nmabwtcRok99HqBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBu8P6ow; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9781AC4CECD
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 07:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728028799;
+	bh=gH1EjjdQwsWfbG39xO0kyHoK76uYMvZ+CN2d9gfGXh4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NBu8P6owkwszxxQfUfcfX6P2DMwZnCRKIb+n7VR5hdx294R7VlLYRx6yTB0MOhG0C
+	 eKmRaNoFAfIHVKnTo55MtKlWnWammgHjXD/gSKBZGP647yXZLQPX/PgG0fb1OzqXi+
+	 0JrcCi3KJTUH5UC6Bmo4rgaH42Ah3LwtAiJdPyMYUghDvrEh6zJr4bv2cEMZLEPYwN
+	 vt1+4w0zJEeArcLFrbFRSOsBdlg1ANcXz+wL/pWBnuTMy3RQB2VhQEV3Q1DLKnIBa8
+	 kfcKf1Dag3yqJFEURXOc0nMO77nF/wu2hal8nUOrOUu+b5f1CqhD1yWdV3CIPDxOd8
+	 7mL/AJS1+g3UQ==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53991d05416so2247664e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 00:59:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVEUYJnn6G6TWstQxfUCwyQ1ThE5075WYtW+LP+/cDAdtm+YBXhWse/GV7rqkKtTckFMse7cqzgZ3xErUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEvAWwCViUgfoUty5+wCToh5/Wcnz4bp5DsaJAOwBh7+pZz89S
+	anuu3RLqy2bReCzbuBwPUNV0gXXUsj5sq0kFUcCbXFLCT585MKE3gJi/D+rZ09RU1zzpfQMk7gw
+	YtizooJTjGPU8J0/IEZslho66hOM=
+X-Google-Smtp-Source: AGHT+IFRExm09fKU0AOXfAlg/Zx6Iocw73831/ez4boxd2aW2dvjCn0rrirEyku4XkPTVrRthWeux/Sjz1I2+RPl6S4=
+X-Received: by 2002:a05:6512:3ba4:b0:536:a695:9414 with SMTP id
+ 2adb3069b0e04-539ab84e6e1mr1796554e87.6.1728028797824; Fri, 04 Oct 2024
+ 00:59:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <05fd690797ea4e1ee798b7fa497857519ae840d4.1728001850.git.jpoimboe@kernel.org>
+ <CAMj1kXHt3GTVx-Ow0OZaP4WW7k=RVc+jgtC-4qOSZM3js4jo0g@mail.gmail.com> <20241004072847.zihm6dw7y5m4e2lb@treble>
+In-Reply-To: <20241004072847.zihm6dw7y5m4e2lb@treble>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 4 Oct 2024 09:59:46 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHQAQwcRFnhiFPySmMEruJPc1gSvWr-1ui-qaiNBV4ZNw@mail.gmail.com>
+Message-ID: <CAMj1kXHQAQwcRFnhiFPySmMEruJPc1gSvWr-1ui-qaiNBV4ZNw@mail.gmail.com>
+Subject: Re: [PATCH] objtool: Detect non-relocated text references
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Fix the uninitialized symbol 'rv' in the function ish_fw_xfer_direct_dma
-to resolve the following warning from the smatch tool:
-drivers/hid/intel-ish-hid/ishtp-fw-loader.c:714 ish_fw_xfer_direct_dma()
-error: uninitialized symbol 'rv'.
-Initialize 'rv' to 0 to prevent undefined behavior from uninitialized
-access.
+On Fri, 4 Oct 2024 at 09:28, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>
+> On Fri, Oct 04, 2024 at 08:54:16AM +0200, Ard Biesheuvel wrote:
+> > On Fri, 4 Oct 2024 at 02:31, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> > > However there are some "lea xxx(%rip)" cases which don't use relocations
+> > > because they're referencing code in the same translation unit.
+> >
+> > input section
+>
+> "in the same translation unit and section" ?
+>
 
-Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
----
- drivers/hid/intel-ish-hid/ishtp-fw-loader.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yeah, something like that. The point is really that the only way we
+might end up in this case is when the LEA offset is known at assembly
+time.
 
-diff --git a/drivers/hid/intel-ish-hid/ishtp-fw-loader.c b/drivers/hid/intel-ish-hid/ishtp-fw-loader.c
-index e157863a8..b3c3cfcd9 100644
---- a/drivers/hid/intel-ish-hid/ishtp-fw-loader.c
-+++ b/drivers/hid/intel-ish-hid/ishtp-fw-loader.c
-@@ -635,7 +635,7 @@ static int ish_fw_xfer_direct_dma(struct ishtp_cl_data *client_data,
- 				  const struct firmware *fw,
- 				  const struct shim_fw_info fw_info)
- {
--	int rv;
-+	int rv = 0;
- 	void *dma_buf;
- 	dma_addr_t dma_buf_phy;
- 	u32 fragment_offset, fragment_size, payload_max_size;
--- 
-2.34.1
+> > > However if we enable -fpie, the compiler would start generating them and
+> > > there would definitely be bugs in the IBT sealing.
+> > >
+> >
+> > -fpie is guaranteed to break things, but even without it, Clang may
+> > issue RIP-relative LEA instructions (or LLD when it performs
+> > relaxations), so this is definitely worth addressing even if we don't
+> > enable -fpie.
+>
+> I haven't seen this with Clang either.  Also, objtool runs before the
+> linker so LLD relaxations shouldn't matter.
+>
 
+Fair enough.
 
