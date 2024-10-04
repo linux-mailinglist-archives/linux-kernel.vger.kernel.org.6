@@ -1,88 +1,99 @@
-Return-Path: <linux-kernel+bounces-349947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70ABE98FDB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:17:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570C198FDB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 885841C21CF3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:17:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C481B2135B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6AA136664;
-	Fri,  4 Oct 2024 07:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B561311A7;
+	Fri,  4 Oct 2024 07:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TptPJz7x"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PL8BNx0y"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB528C1A
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 07:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C74013775E
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 07:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728026269; cv=none; b=MgfSzNEec+LAk8T/EFcF2+ynsGFL1s52KxePErL2eS7Wgmbe+R6sUyr73b7cBUmJfp+lz83ln6klFJ6wJsSvHOX309Ez0o7eYNeKwYxLAr+Z3mcm5aLBYEybXrs1vFNzJukU5kh7yoJxXLklFywB7y6GeXU7KyELKQ/9/rNbbaI=
+	t=1728026309; cv=none; b=ls1DrP5IZuAulXNUuwKYrQz9YZv598rGB1lqAm+18yOgDTOqnysUSf2Gbu5WevV3u5HHn6nrcSyRmMMIWOWgxpiaiW5FFbEyj1qsmDvZiZksaiqo2HYVnmiRpRwWdXW1+7yu7Tz+Jfo1gB7I5H18+kFl3wmOt0gQb3mXzOZ3Iys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728026269; c=relaxed/simple;
-	bh=RvLQ3hgcxffhJ/7j4iwbdSErN0H5G+6+jvVLjwMWyhw=;
+	s=arc-20240116; t=1728026309; c=relaxed/simple;
+	bh=M8A8nqqCpPKoeerjqd7wTpPyC1e9ptUMSe+itBbXXLY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=prgT6uWZmLANdSAhmRq5/487y8xi2NyQHmbp52aQowhVg5VZp8+/jB66kr3W/8IAtqjWpq0/+0JiCFXGhlPhKojkC4laWCnQfJ3gU3BShV5Va1ABxk+8Ih8xDIaVidbJULnnJfRkNJxlY4MtjrjkwW4ZbBjnxhrR1H/D+p1/OO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TptPJz7x; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fabc9bc5dfso23156871fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 00:17:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728026266; x=1728631066; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iuULKTHuresw0Zy6wICe+A8Q6rp+HpZuWrQucEn75pE=;
-        b=TptPJz7xY+vSN6OspgJRFgjv2YZaKyoB1t7PyvqGg/8MgigbpgoLvQ/OmUTjbMrpkM
-         ArQg5szag3tgzjRsGEXFF/GSbcYOEWsvFkYDw+q0y6OiLcb6ohDPfoPechI+lTzjFWNh
-         T9TwN4O2t4OdCaz2AJA7GIDK5Lq7nnRGrvz6Q/eLq3HgH9U/yiX+oIlcNw/xl6dYFsOc
-         YBV01junQ0SB6tJMoq3Vn0a2sy3Qc8ZVv0RaSio5b0H7amPndjLI1X5rvjyet2/ytiqZ
-         mJnpceSiOd+HOQoB0RwMktnjEquc7IWKmCG7gAg/9h95+RxR3Nf2JgVGsXbxLNZVCKD1
-         aahA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728026266; x=1728631066;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iuULKTHuresw0Zy6wICe+A8Q6rp+HpZuWrQucEn75pE=;
-        b=bOyXmLtNj0FMKPkNB9VG5nGlIA72qnZY9r1pDOfRY1l0PWjA/HMBWISV9wospXW6rh
-         kMmeucIZ73hqOzykYX6MvaTrzPgJjCf/f4F4XGYV0WKznsw+wqSx5bFv3c/tropdfzGY
-         JJf3W1k+PuMLMliRiYnh9J96SqdhBmtuJeaynYf7/mz+iIQnR4yKuHfCDaL1tdA+l6aO
-         pMYOX6+WzCaf6k1cRBEZz845dFMxDwCxKnYFtFilqjloDHJEmgKux+4sP4eWi3HKP4W2
-         N3bOu4AB/NOrLWlRNPhN1qQ8oLnJF9XVIAIH9Yhm4HMX2oj0mEZC4npUuv2rQQDddWjH
-         gGSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuvABDc93gBDz3DjyO7TidHWaD1Q4qebSc4JDs3HAgv+iSNQH0tG4o9XPKY1aiWORoohM8FF1DTzFAKRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWNb5WAiZ3/UvMOK4NaDjrBbZkOhPzot+VguAPlGNwpYKlux2d
-	xenbtLU3nJRITd6dKbzxe3bj4u0fFpKVTiCE/15r/nfv5md8xnuO80oxGoU7XV8=
-X-Google-Smtp-Source: AGHT+IH3FPLJ9NczEQNZcKAcDolBttBYKumyjdxeNCDK5IlZy+i6GBGjeqGjF6YI6L6mnh9DGpCO9w==
-X-Received: by 2002:a05:651c:19a3:b0:2f9:cf21:b9f with SMTP id 38308e7fff4ca-2faf3c41fb1mr7646541fa.22.1728026265293;
-        Fri, 04 Oct 2024 00:17:45 -0700 (PDT)
-Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e86ac41csm800085a91.55.2024.10.04.00.17.42
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Oct 2024 00:17:44 -0700 (PDT)
-Date: Fri, 4 Oct 2024 15:17:40 +0800
-From: joeyli <jlee@suse.com>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Chun-Yi Lee <joeyli.kernel@gmail.com>,
-	Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
-	Pavel Emelianov <xemul@openvz.org>,
-	Kirill Korotaev <dev@openvz.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Nicolai Stange <nstange@suse.com>,
-	Greg KH <gregkh@linuxfoundation.org>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] aoe: add reference count in aoeif for tracking
- the using of net_device
-Message-ID: <20241004071740.GJ3296@linux-l9pv.suse>
-References: <20241002040616.25193-1-jlee@suse.com>
- <20241002040616.25193-2-jlee@suse.com>
- <69292789-fb92-45de-8608-185849fdd543@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LDGZH/e9/RSLxWUjaK+47bzC1Xw8q/zuBrMK6sSy6AdhCQ7aqr7fDqT1KJ/mg7qI4M3MG68i3mMldkCfizeldDvxKm2GF59dJ51O1mVk7RGc05i2OuQ7VNFUlOn1LFls1okFiJ0ODR98pyQIPjZxxr9stfkjuTrUbnqAFfgvpe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PL8BNx0y; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4947IBTS032572;
+	Fri, 4 Oct 2024 07:18:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=TWGE4XmQnG+WrW7DGBLDxFr2uNu
+	TGT9jxwW+foVbp7I=; b=PL8BNx0yJRSzdQGFvzqCIoDYdxfmBAy4IojYBUk7uu+
+	k+jnR4Wlt75dLPCFYZnW0mBRwQ2XsSTgiUpr0hvMKq2kQuSHL5g2muyLFtKrff6S
+	3GQCezoaGktPo3SeFSdcNy+6W0+uVObIG0yuckGwOVytAZsKbFpIHH5UcXMm+RMZ
+	O+xbfx9KBsHEnt3ZXUHe6VaIq6xlSje6+9v3q1ZuY1OnHcFhM1KcLIJ8x597v0RO
+	J1rGHGhCpi+U+ofZVMbZiRQAm1zW+rzzphE6PK3Lbs5vP8C0v/nx8TOTWqwGZV3K
+	V02L5YvnBX0WYndAY4VYoN+PwIa2/Qf12QK54sHp31Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 422bhbr2m5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 07:18:10 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4947ASIK018366;
+	Fri, 4 Oct 2024 07:18:10 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 422bhbr2m3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 07:18:10 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49471mGl017912;
+	Fri, 4 Oct 2024 07:18:09 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42207jap5b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 07:18:09 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4947I7HH18678102
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 4 Oct 2024 07:18:07 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 56A0720049;
+	Fri,  4 Oct 2024 07:18:07 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 600CD2004E;
+	Fri,  4 Oct 2024 07:18:04 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.124.214.154])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  4 Oct 2024 07:18:04 +0000 (GMT)
+Date: Fri, 4 Oct 2024 12:47:59 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Benjamin Segall <bsegall@google.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+        Valentin Schneider <vschneid@redhat.com>, luis.machado@arm.com
+Subject: Re: sched/fair: Kernel panics in pick_next_entity
+Message-ID: <Zv-WpzwtDxjY2SLT@linux.ibm.com>
+References: <ZvVWq3WM6zVza_mD@linux.ibm.com>
+ <20240930144157.GH5594@noisy.programming.kicks-ass.net>
+ <Zvr2bLBEYyu1gtNz@linux.ibm.com>
+ <Zvr4wJ9YJRzWrbEF@linux.ibm.com>
+ <55a2acefffb8c99e4234bd18656a75625447c2d0.camel@gmx.de>
+ <xm26msjmm91q.fsf@bsegall.svl.corp.google.com>
+ <2ffbd642407a2bc51a387b6f89e74f0f9c9f85cf.camel@gmx.de>
+ <acad4ac6a2daea2884e8ae4d031dfc8ae30fc365.camel@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,157 +102,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <69292789-fb92-45de-8608-185849fdd543@kernel.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <acad4ac6a2daea2884e8ae4d031dfc8ae30fc365.camel@gmx.de>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: oSIEU-SzYdQQyyPJdpzUJCESB82GSDY6
+X-Proofpoint-ORIG-GUID: JsPLWGUSH7xmJJFINEoiVVvy6CpgB4UA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-04_05,2024-10-03_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 priorityscore=1501 mlxlogscore=548
+ phishscore=0 mlxscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040047
 
-Hi Damien, 
-
-Thanks for your review, first!
-
-On Wed, Oct 02, 2024 at 02:35:33PM +0900, Damien Le Moal wrote:
-> On 10/2/24 1:06 PM, Chun-Yi Lee wrote:
-> > This is a patch for debugging. For tracking the reference count of using
-> > net_device in aoeif, this patch adds a nd_pcpu_refcnt field in aoeif
-> > structure. Two wrappers, nd_dev_hold() and nd_dev_put() are used to
-> > call dev_hold(nd)/dev_put(nd) and maintain ifp->nd_pcpu_refcnt at the
-> > same time.
-> > 
-> > Defined DEBUG to the top of the aoe.h can enable the tracking function.
-> > The nd_pcpu_refcnt will be printed to debugfs:
+On Thu, Oct 03, 2024 at 11:31:06AM +0200, Mike Galbraith wrote:
+> On Thu, 2024-10-03 at 06:41 +0200, Mike Galbraith wrote:
+> > On Wed, 2024-10-02 at 15:31 -0700, Benjamin Segall wrote:
 > 
-> Why not make that a config option ? That would avoid having to edit the code to
-> enable debugging...
->
-
-This debug patch is only for tracking the reference count of net_device but
-no other debugging feature. I don't want to add one more config option for
-this small feature. On the other hand, the tracking requirment of reference
-count is more for developer but not for administrator. That's why I did not
-add a new option.
- 
-> > 
-> > rttavg: 249029 rttdev: 1781043
-> > nskbpool: 0
-> > kicked: 0
-> > maxbcnt: 1024
-> > ref: 0
-> > falloc: 36
-> > ffree: 0000000013c0033f
-> > 52540054c48e:0:16:16
-> >         ssthresh:8
-> >         taint:0
-> >         r:1270
-> >         w:8
-> >         enp1s0:1	<-- the aoeif->nd_pcpu_refcnt is behind nd->name
-> > 
-[...snip]
-> > +	ifp = ifi? ifi:get_aoeif(nd);
-> > +	if (ifp) {
-> > +		this_cpu_inc(*ifp->nd_pcpu_refcnt);
-> > +		pr_debug("aoe: %s dev_hold %s->refcnt: %d, aoeif->nd_refcnt: %d\n",
-> > +			 str, nd->name, netdev_refcnt_read(nd),
-> > +			 aoeif_nd_refcnt_read(ifp));
-> > +	} else
-> > +		pr_debug("aoe: %s dev_hold %s->refcnt: %d\n",
-> > +			 str, nd->name, netdev_refcnt_read(nd));
+> > > Whether dequeue_entity + enqueue_entity is better or worse than
+> > > requeue_delayed_entity (+break), I really don't know.
+> >
+> > Hm, I'd say requeue_delayed_entity() not only fits better, it using
+> > less lines gives it an extra brownie point.
 > 
-> Missing curly brackets around the else statement.
->
-
-Thanks for your reminder! I will add it in next version.
- 
-> > +}
-> > +#define nd_dev_hold(msg, ifi) __nd_dev_hold(__FUNCTION__, (msg), (ifi))
-> > +
-> > +static inline void __nd_dev_put(const char *str, struct net_device *nd, struct aoeif *ifi)
-> > +{
-> > +	struct aoeif *ifp;
-> > +
-> > +	if (!nd)
-> > +		return;
-> > +	dev_put(nd);
-> > +	ifp = ifi? ifi:get_aoeif(nd);
-> > +	if (ifp) {
-> > +		this_cpu_dec(*ifp->nd_pcpu_refcnt);
-> > +		pr_debug("aoe: %s dev_put %s->refcnt: %d, aoeif->nd_refcnt: %d\n",
-> > +			 str, nd->name, netdev_refcnt_read(nd),
-> > +			 aoeif_nd_refcnt_read(ifp));
-> > +	} else
-> > +		pr_debug("aoe: %s dev_put %s->refcnt: %d\n",
-> > +			 str, nd->name, netdev_refcnt_read(nd));
+> Probable not worth any churn or effort, but it is an option.
 > 
-> Same here.
->
-
-Thanks! I will add it.
- 
-> > +}
-> > +#define nd_dev_put(msg, ifi) __nd_dev_put(__FUNCTION__, (msg), (ifi))
-> > +#else
-> > +static inline void nd_dev_put(struct net_device *nd, struct aoeif *ifi)
-> > +{
-> > +	dev_hold(nd);
-> > +}
-> > +static inline void nd_dev_hold(struct net_device *nd, struct aoeif *ifi)
-> > +{
-> > +       dev_put(nd);
-> > +}
-> > +static inline void aoeif_nd_refcnt_free(const struct aoeif *ifp) {}
-> > +#endif // DEBUG
-> > diff --git a/drivers/block/aoe/aoeblk.c b/drivers/block/aoe/aoeblk.c
-> > index 2028795ec61c..19d62ccca1e9 100644
-> > --- a/drivers/block/aoe/aoeblk.c
-> > +++ b/drivers/block/aoe/aoeblk.c
-> > @@ -142,7 +142,12 @@ static int aoe_debugfs_show(struct seq_file *s, void *ignored)
-> >  		ifp = (*t)->ifs;
-> >  		ife = ifp + ARRAY_SIZE((*t)->ifs);
-> >  		for (; ifp->nd && ifp < ife; ifp++) {
-> > +#ifdef DEBUG
-> > +			seq_printf(s, "%c%s:%d", c, ifp->nd->name,
-> > +					aoeif_nd_refcnt_read(ifp));
+> sched: Clean up sched_delayed handling in unthrottle_cfs_rq()
 > 
-> I personnally find it better looking to align the arguments instead of adding a
-> random tab...
->
-
-Thanks! I will modify the second line to align with the first argument.
- 
-> > +#else
-> >  			seq_printf(s, "%c%s", c, ifp->nd->name);
-> > +#endif
-> >  			c = ',';
-> >  		}
-> >  		seq_puts(s, "\n");
-> > diff --git a/drivers/block/aoe/aoedev.c b/drivers/block/aoe/aoedev.c
-> > index 3523dd82d7a0..9781488b286b 100644
-> > --- a/drivers/block/aoe/aoedev.c
-> > +++ b/drivers/block/aoe/aoedev.c
-> > @@ -529,3 +529,23 @@ aoedev_init(void)
-> >  {
-> >  	return 0;
-> >  }
-> > +
-> > +struct aoeif *
-> > +get_aoeif(struct net_device *nd)
+> requeue_delayed_entity() achieves and documents in one line what a less
+> clear preparatory dequeue facilitates over several, so use it instead,
+> and remove the superfluous comment.
 > 
-> Why the line split after "*" ?
+> Signed-off-by: Mike Galbraith <efault@gmx.de>
+Hi Mike, thanks for the patch!
+
+I didn't see any warnings or kernel panics in my setup. 
+
+Tested-by: Vishal Chourasia <vishalc@linux.ibm.com>
+> ---
+>  kernel/sched/fair.c |    9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 > 
-
-I followed the same coding style in aoedev.c:
-
-/* find it or allocate it */
-struct aoedev *
-aoedev_by_aoeaddr(ulong maj, int min, int do_alloc)
-{
-        struct aoedev *d;
-...
-
-If kernel coding style does not specify this. I prefer follow the original
-style in the same driver.
-
-Let me know if I missed anything, please. Then I will change the style. 
-
-
-Thanks a lot!
-Joey Lee
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6058,12 +6058,9 @@ void unthrottle_cfs_rq(struct cfs_rq *cf
+>  	for_each_sched_entity(se) {
+>  		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
+> 
+> -		/* Handle any unfinished DELAY_DEQUEUE business first. */
+> -		if (se->sched_delayed) {
+> -			int flags = DEQUEUE_SLEEP | DEQUEUE_DELAYED;
+> -
+> -			dequeue_entity(qcfs_rq, se, flags);
+> -		} else if (se->on_rq)
+> +		if (se->sched_delayed)
+> +			requeue_delayed_entity(se);
+> +		if (se->on_rq)
+>  			break;
+>  		enqueue_entity(qcfs_rq, se, ENQUEUE_WAKEUP);
+> 
+> 
 
