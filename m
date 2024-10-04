@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-350886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A08990AAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:11:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD010990AB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBD301C237B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:11:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82F0FB240C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EDD1E2840;
-	Fri,  4 Oct 2024 18:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618CE21C19D;
+	Fri,  4 Oct 2024 18:06:33 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1F321C188
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C2421C18F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728065190; cv=none; b=MHZ+6O9a6Re21G6rmjVJUCxjp3vwHPQmeumI6ZWY/RPnZ/mTgNxAlj6eODg6cuU1NwmTdjYXVFDZLwspHvH1BPN+CtKOewmq+9nG1Stam1fgrkHVvMOrW5vZexIsf7VXyB4yUT0k60fTMGwg70FAqmDIU0eOQXrztSYm4TMDO5Y=
+	t=1728065193; cv=none; b=OeJAOKpTN2CbBgX2WxOoIvTig0+sFgxCIhW0g9VLrOEZbo30DoB497eQrY3Q86a4AOf8r1RRWBVZIblDhs1O695IVzhvmXqSSxzf0OgziC+LntEMmQNPxB9pr9SAi8+tC9iwOFIi7/wd4LqdVR0WG5yRR0KYzFv2NEQrL3uQgZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728065190; c=relaxed/simple;
-	bh=g279jB43VVpXdRKRdlkr5D9RReGxy0X0yPdLlHhDgmw=;
+	s=arc-20240116; t=1728065193; c=relaxed/simple;
+	bh=A2aXloBeu64up5hajxlivDli572v8uJNHc/wFfqyyWA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XGQjzVDSaMshXOQXCh7C9qcBRiiryMabW8A0QkY3pQmh7Jj31ddoGyL83BQKj7EigGAu0hDkkSaCzLH9GvCi1TU1JFVNXR/tTbxULK5t/n5kjzjCQhCNZNCB2Mcy211eIihxPyP3EyCVBY4IbLQ4Z6sdTmwa/l1AnUYCIVzS6uQ=
+	 MIME-Version; b=sEd6IdN1UVWCJPzUkAz484QlKOOiPGaEZWiujJqk15b7z9UyTgnGeVnF0WVEOfX3NneA1iw3US7NfAYCelk7P2aAEAOPig0nlucwyYGQYFPe3AER6qnsIRk36rYXue+ToCn0nA/yxm3DisVLOdkBBLtcs3J2eR6y8sdg8uNwiMM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62FE31063;
-	Fri,  4 Oct 2024 11:06:57 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE93C150C;
+	Fri,  4 Oct 2024 11:07:00 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFD393F7C5;
-	Fri,  4 Oct 2024 11:06:24 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18D9A3F58B;
+	Fri,  4 Oct 2024 11:06:27 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -59,9 +59,9 @@ Cc: Fenghua Yu <fenghua.yu@intel.com>,
 	Rex Nie <rex.nie@jaguarmicro.com>,
 	Dave Martin <dave.martin@arm.com>,
 	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: [PATCH v5 26/40] x86/resctrl: Make resctrl_arch_pseudo_lock_fn() take a plr
-Date: Fri,  4 Oct 2024 18:03:33 +0000
-Message-Id: <20241004180347.19985-27-james.morse@arm.com>
+Subject: [PATCH v5 27/40] x86/resctrl: Move thread_throttle_mode_init() to be managed by resctrl
+Date: Fri,  4 Oct 2024 18:03:34 +0000
+Message-Id: <20241004180347.19985-28-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20241004180347.19985-1-james.morse@arm.com>
 References: <20241004180347.19985-1-james.morse@arm.com>
@@ -73,188 +73,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-resctrl_arch_pseudo_lock_fn() has architecture specific behaviour,
-and takes a struct rdtgroup as an argument.
+thread_throttle_mode_init() is called from the architecture specific code
+to make the 'thread_throttle_mode' file visible. The architecture specific
+code has already set the membw.throttle_mode in the rdt_resource.
 
-After the filesystem code moves to /fs/, the definition of struct
-rdtgroup will not be available to the architecture code.
+This doesn't need to be specific to the architecture, the throttle_mode
+can be used by resctrl to determine if the 'thread_throttle_mode' file
+should be visible.
 
-The only reason resctrl_arch_pseudo_lock_fn() wants the rdtgroup is
-for the CLOSID. Embed that in the pseudo_lock_region as a closid,
-and move the definition of struct pseudo_lock_region to resctrl.h.
+Call thread_throttle_mode_init() from resctrl_setup(), check the
+membw.throttle_mode on the MBA resource. This avoids publishing an
+extra function between the architecture and filesystem code.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
 Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 ---
-Change since v1:
- * [Commit message only] Typo fix:
-   s/hw_closid/closid/g
----
- arch/x86/include/asm/resctrl.h            |  2 +-
- arch/x86/kernel/cpu/resctrl/internal.h    | 37 ---------------------
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 13 ++++----
- include/linux/resctrl.h                   | 39 +++++++++++++++++++++++
- 4 files changed, 47 insertions(+), 44 deletions(-)
+ arch/x86/kernel/cpu/resctrl/core.c     | 1 -
+ arch/x86/kernel/cpu/resctrl/internal.h | 1 -
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 9 ++++++++-
+ 3 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/resctrl.h b/arch/x86/include/asm/resctrl.h
-index bf32d30e595b..6c1446ce43da 100644
---- a/arch/x86/include/asm/resctrl.h
-+++ b/arch/x86/include/asm/resctrl.h
-@@ -206,7 +206,7 @@ static inline void resctrl_arch_mon_ctx_free(struct rdt_resource *r, int evtid,
- 					     void *ctx) { };
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index b5ad1ed2a4de..0da7314195af 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -228,7 +228,6 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
+ 		r->membw.throttle_mode = THREAD_THROTTLE_PER_THREAD;
+ 	else
+ 		r->membw.throttle_mode = THREAD_THROTTLE_MAX;
+-	thread_throttle_mode_init();
  
- u64 resctrl_arch_get_prefetch_disable_bits(void);
--int resctrl_arch_pseudo_lock_fn(void *_rdtgrp);
-+int resctrl_arch_pseudo_lock_fn(void *_plr);
- int resctrl_arch_measure_cycles_lat_fn(void *_plr);
- int resctrl_arch_measure_l2_residency(void *_plr);
- int resctrl_arch_measure_l3_residency(void *_plr);
+ 	r->alloc_capable = true;
+ 
 diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 21109418b46a..9c08efb0e198 100644
+index 9c08efb0e198..30de95e59129 100644
 --- a/arch/x86/kernel/cpu/resctrl/internal.h
 +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -208,43 +208,6 @@ struct mongroup {
- 	u32			rmid;
- };
+@@ -495,7 +495,6 @@ void cqm_handle_limbo(struct work_struct *work);
+ bool has_busy_rmid(struct rdt_mon_domain *d);
+ void __check_limbo(struct rdt_mon_domain *d, bool force_free);
+ void rdt_domain_reconfigure_cdp(struct rdt_resource *r);
+-void __init thread_throttle_mode_init(void);
+ void __init mbm_config_rftype_init(const char *config);
+ void rdt_staged_configs_clear(void);
+ bool closid_allocated(unsigned int closid);
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 3f10e6897daa..596f5f087834 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -2048,10 +2048,15 @@ static struct rftype *rdtgroup_get_rftype_by_name(const char *name)
+ 	return NULL;
+ }
  
--/**
-- * struct pseudo_lock_region - pseudo-lock region information
-- * @s:			Resctrl schema for the resource to which this
-- *			pseudo-locked region belongs
-- * @d:			RDT domain to which this pseudo-locked region
-- *			belongs
-- * @cbm:		bitmask of the pseudo-locked region
-- * @lock_thread_wq:	waitqueue used to wait on the pseudo-locking thread
-- *			completion
-- * @thread_done:	variable used by waitqueue to test if pseudo-locking
-- *			thread completed
-- * @cpu:		core associated with the cache on which the setup code
-- *			will be run
-- * @line_size:		size of the cache lines
-- * @size:		size of pseudo-locked region in bytes
-- * @kmem:		the kernel memory associated with pseudo-locked region
-- * @minor:		minor number of character device associated with this
-- *			region
-- * @debugfs_dir:	pointer to this region's directory in the debugfs
-- *			filesystem
-- * @pm_reqs:		Power management QoS requests related to this region
-- */
--struct pseudo_lock_region {
--	struct resctrl_schema	*s;
--	struct rdt_ctrl_domain	*d;
--	u32			cbm;
--	wait_queue_head_t	lock_thread_wq;
--	int			thread_done;
--	int			cpu;
--	unsigned int		line_size;
--	unsigned int		size;
--	void			*kmem;
--	unsigned int		minor;
--	struct dentry		*debugfs_dir;
--	struct list_head	pm_reqs;
--};
--
- /**
-  * struct rdtgroup - store rdtgroup's data in resctrl file system.
-  * @kn:				kernfs node
-diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index 0fee49fc153a..9bcd1d06b4e8 100644
---- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -414,7 +414,7 @@ static void pseudo_lock_free(struct rdtgroup *rdtgrp)
- 
- /**
-  * resctrl_arch_pseudo_lock_fn - Load kernel memory into cache
-- * @_rdtgrp: resource group to which pseudo-lock region belongs
-+ * @_plr: the pseudo-lock region descriptor
-  *
-  * This is the core pseudo-locking flow.
-  *
-@@ -431,10 +431,9 @@ static void pseudo_lock_free(struct rdtgroup *rdtgrp)
-  *
-  * Return: 0. Waiter on waitqueue will be woken on completion.
-  */
--int resctrl_arch_pseudo_lock_fn(void *_rdtgrp)
-+int resctrl_arch_pseudo_lock_fn(void *_plr)
+-void __init thread_throttle_mode_init(void)
++static void __init thread_throttle_mode_init(void)
  {
--	struct rdtgroup *rdtgrp = _rdtgrp;
--	struct pseudo_lock_region *plr = rdtgrp->plr;
-+	struct pseudo_lock_region *plr = _plr;
- 	u32 rmid_p, closid_p;
- 	unsigned long i;
- 	u64 saved_msr;
-@@ -494,7 +493,8 @@ int resctrl_arch_pseudo_lock_fn(void *_rdtgrp)
- 	 * pseudo-locked followed by reading of kernel memory to load it
- 	 * into the cache.
- 	 */
--	__wrmsr(MSR_IA32_PQR_ASSOC, rmid_p, rdtgrp->closid);
-+	__wrmsr(MSR_IA32_PQR_ASSOC, rmid_p, plr->closid);
++	struct rdt_resource *r = resctrl_arch_get_resource(RDT_RESOURCE_MBA);
+ 	struct rftype *rft;
+ 
++	if (!r->alloc_capable ||
++	    r->membw.throttle_mode == THREAD_THROTTLE_UNDEFINED)
++		return;
 +
- 	/*
- 	 * Cache was flushed earlier. Now access kernel memory to read it
- 	 * into cache region associated with just activated plr->closid.
-@@ -1320,7 +1320,8 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 	rft = rdtgroup_get_rftype_by_name("thread_throttle_mode");
+ 	if (!rft)
+ 		return;
+@@ -4264,6 +4269,8 @@ int __init resctrl_init(void)
  
- 	plr->thread_done = 0;
+ 	rdtgroup_setup_default();
  
--	thread = kthread_create_on_node(resctrl_arch_pseudo_lock_fn, rdtgrp,
-+	plr->closid = rdtgrp->closid;
-+	thread = kthread_create_on_node(resctrl_arch_pseudo_lock_fn, plr,
- 					cpu_to_node(plr->cpu),
- 					"pseudo_lock/%u", plr->cpu);
- 	if (IS_ERR(thread)) {
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 84588ab1994d..e7354f581d3b 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -58,6 +58,45 @@ enum resctrl_conf_type {
- 
- #define CDP_NUM_TYPES	(CDP_DATA + 1)
- 
-+/*
-+ * struct pseudo_lock_region - pseudo-lock region information
-+ * @s:			Resctrl schema for the resource to which this
-+ *			pseudo-locked region belongs
-+ * @closid:		The closid that this pseudo-locked region uses
-+ * @d:			RDT domain to which this pseudo-locked region
-+ *			belongs
-+ * @cbm:		bitmask of the pseudo-locked region
-+ * @lock_thread_wq:	waitqueue used to wait on the pseudo-locking thread
-+ *			completion
-+ * @thread_done:	variable used by waitqueue to test if pseudo-locking
-+ *			thread completed
-+ * @cpu:		core associated with the cache on which the setup code
-+ *			will be run
-+ * @line_size:		size of the cache lines
-+ * @size:		size of pseudo-locked region in bytes
-+ * @kmem:		the kernel memory associated with pseudo-locked region
-+ * @minor:		minor number of character device associated with this
-+ *			region
-+ * @debugfs_dir:	pointer to this region's directory in the debugfs
-+ *			filesystem
-+ * @pm_reqs:		Power management QoS requests related to this region
-+ */
-+struct pseudo_lock_region {
-+	struct resctrl_schema	*s;
-+	u32			closid;
-+	struct rdt_ctrl_domain	*d;
-+	u32			cbm;
-+	wait_queue_head_t	lock_thread_wq;
-+	int			thread_done;
-+	int			cpu;
-+	unsigned int		line_size;
-+	unsigned int		size;
-+	void			*kmem;
-+	unsigned int		minor;
-+	struct dentry		*debugfs_dir;
-+	struct list_head	pm_reqs;
-+};
++	thread_throttle_mode_init();
 +
- /**
-  * struct resctrl_staged_config - parsed configuration to be applied
-  * @new_ctrl:		new ctrl value to be loaded
+ 	ret = resctrl_mon_resource_init();
+ 	if (ret)
+ 		return ret;
 -- 
 2.39.2
 
