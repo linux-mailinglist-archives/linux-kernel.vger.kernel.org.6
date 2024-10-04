@@ -1,91 +1,155 @@
-Return-Path: <linux-kernel+bounces-351392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E03C499105C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:24:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095C599105D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A672728282A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:24:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DC321C22AAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EFA1D9695;
-	Fri,  4 Oct 2024 20:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F571DB375;
+	Fri,  4 Oct 2024 20:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osHq7uVn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i65lkRe1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A861C302D;
-	Fri,  4 Oct 2024 20:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988651D9689;
+	Fri,  4 Oct 2024 20:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728072625; cv=none; b=cisaeLFbyznGNlguUI8LtLlUA+bV5AghQ1gm6dmo5lTKE19hGLeF+dzE5kCNCn8YS2g2JJebrRMEzINBFIagf1WiVme9Ug6Hkdckjx4Q9YRQqaNzZZ0r06pVvKQ5C1B8nYnlUy//MndHkmIti2bgtFii3OuVR7PSmkwSz4J20D8=
+	t=1728072671; cv=none; b=ttZ7e9rMVdRnsAI/Fr1fDbnC+T7IRT2+5kLR6rwPj51jgT4R+/cD9JrhLWDeCEUGm12Jqo+d0odA0wJ5Aykwaod0685sLrzNJQRXKIv3LpDHkOKMpQh+peFXXo+F3rZ06FmZl/bEylUldHxpzuvQUt7bcNsWXnxtvQjD7/xfey4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728072625; c=relaxed/simple;
-	bh=kiUO3gtzG7jRQjrU5YxnxYMNvX+42NCIsKG8z9Da7fA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ZO4/MACPoMTibFXGkn6myckck7eiAiUHv5i2TSPU0KwAkC8uEaLNV8Ytc+KleS5lBc713oDZhI07O/qevACHy5uyltGXghjSeaPT6/qfh4ZX4jTDIdffbGAkxAGqE0zeshwe/vncCXpct/tienKNg/Zh0d7GjHizaOfFf2Upprg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osHq7uVn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE395C4CEC6;
-	Fri,  4 Oct 2024 20:10:24 +0000 (UTC)
+	s=arc-20240116; t=1728072671; c=relaxed/simple;
+	bh=NnBk3LnKYCZ5iFKF5AqTT8rdYv7l7hGgWci/fR+vGSU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OkR0nZJt3PTs6IphaCrEZxn6zI0ULURQ0uUY3KYjF5ODjYra05+v3KZUgMPMGROyhmH4+Av6ZIhL6zUiD6LXb9aNxzoyVMkVwMsOXxWT2cY+5svadi4LmcKJNrWra1o2Uu0PZy5YQd0LOjRRGXyvaW95oMnUGHEj+K7Dughx/Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i65lkRe1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24B77C4CED4;
+	Fri,  4 Oct 2024 20:11:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728072624;
-	bh=kiUO3gtzG7jRQjrU5YxnxYMNvX+42NCIsKG8z9Da7fA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=osHq7uVnIZzvRLDd4nJlyE+lqfVmXgRJ1TqQ5XieRLKzygBGFYzIGVJtph+Hed16L
-	 a1f/7CoBmIVRLQQoI7EDuNE2i1Y/OKN/LwgwVQwi+3Ki0VkZLp0dMPVgI/eq8qO2Br
-	 Qy4VC+KWZ+WNLpDUidAKZLKsHBsEKjXGHmAJ4x6xIYnL8MGigtBV3R7OdGb9IC6mek
-	 c5vKZBgMcHcZtilPCOqRyqLLkdPTdRKIIECqBFA3XxKNdiDd2DSJPPWiIyiXvADrX7
-	 a5WEYX99LzM/ih2YmGM584EL8Xsm4eaeqRFGWfZM1KV06Q4jTuIwQUrtq19qRChTuw
-	 +azx4kMeqGeVg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id A060239F76FF;
-	Fri,  4 Oct 2024 20:10:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1728072671;
+	bh=NnBk3LnKYCZ5iFKF5AqTT8rdYv7l7hGgWci/fR+vGSU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=i65lkRe1lYWrkBWR3gCHDpFIJpYCd3cDLrO2vZPy/WNmy+394c+mFj6nI7MlTScOe
+	 /GWaGeIi7hFJm5BVAVsjhsSCgDmZ/A426q7hQ7I83CFiF8T2/BrPmzeoGL7wiKU/nL
+	 wDkA1hg0nBog6JWFkVnQecMJSMFWLVZFB8pQ9ZunODVNJvsUN038c8VasUd+QiYhn5
+	 +xmTNfO48Y9kF8w0TH/z4b1ordr05Yr7TIIsJ3HREKpEfVP0OsUM5bDkWuSwCK6ekf
+	 ZKJBtzSlbnNABrzZcQJ856a/vlni3KbBCHhI1LsMY6/WneqHEbID1SfNQ4DxLoeEFE
+	 1Wv1Kb/EgXn/w==
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a377534e00so3657415ab.3;
+        Fri, 04 Oct 2024 13:11:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVDbAr0eRfPGBS6FOi1ZCO6AImwBjcs7pdk+UaRtVBm/hza1/sh5p7HmLLJ6gI+RntgkrM=@vger.kernel.org, AJvYcCWj+PVtvGLFRhkDJsMpi4xbm6M71U4OZBSBfi+mCFjlcK8Ot8nryTCDZ+DUZ9yDjTbQGpuwTZOow4jOWQSe@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzQ0gbdAi6plFcCd11QvSor9Nu9hV+iHAyiLjMm8hmJaR4eUyP
+	iOA22+xMRDAUJdol0TgeVPS1E6k94iHzSDH5Yj4txu3KMd0ocqBjlIHZK7QuYFzvr0ZJMgHx875
+	Xzd01OsSzg0oMSHzwW+l/Kyt9sLA=
+X-Google-Smtp-Source: AGHT+IH+FqtwP+CAIXfw1HbhK7Hj5jM4yQcYaDSjWiH0pUADieY8H1qdXWDnxc8PDNqyqTjiXXmYIFl2yp0wjAGXFtw=
+X-Received: by 2002:a92:c269:0:b0:3a0:92e5:af68 with SMTP id
+ e9e14a558f8ab-3a375b9aba9mr43340495ab.15.1728072670428; Fri, 04 Oct 2024
+ 13:11:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v1] ethtool: rss: fix rss key initialization warning
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172807262853.2727057.11525933903751583873.git-patchwork-notify@kernel.org>
-Date: Fri, 04 Oct 2024 20:10:28 +0000
-References: <20241003162310.1310576-1-daniel.zahka@gmail.com>
-In-Reply-To: <20241003162310.1310576-1-daniel.zahka@gmail.com>
-To: Daniel Zahka <daniel.zahka@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241002180956.1781008-1-namhyung@kernel.org> <20241002180956.1781008-3-namhyung@kernel.org>
+In-Reply-To: <20241002180956.1781008-3-namhyung@kernel.org>
+From: Song Liu <song@kernel.org>
+Date: Fri, 4 Oct 2024 13:10:58 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7Bh-ZXfM2aYB=Yj8WaJHFc==AKmv6LDRgBq-TfdQ3s8A@mail.gmail.com>
+Message-ID: <CAPhsuW7Bh-ZXfM2aYB=Yj8WaJHFc==AKmv6LDRgBq-TfdQ3s8A@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Wed, Oct 2, 2024 at 11:10=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> The bpf_get_kmem_cache() is to get a slab cache information from a
+> virtual address like virt_to_cache().  If the address is a pointer
+> to a slab object, it'd return a valid kmem_cache pointer, otherwise
+> NULL is returned.
+>
+> It doesn't grab a reference count of the kmem_cache so the caller is
+> responsible to manage the access.  The intended use case for now is to
+> symbolize locks in slab objects from the lock contention tracepoints.
+>
+> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> Acked-by: Roman Gushchin <roman.gushchin@linux.dev> (mm/*)
+> Acked-by: Vlastimil Babka <vbabka@suse.cz> #mm/slab
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  kernel/bpf/helpers.c |  1 +
+>  mm/slab_common.c     | 19 +++++++++++++++++++
+>  2 files changed, 20 insertions(+)
+>
+> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> index 4053f279ed4cc7ab..3709fb14288105c6 100644
+> --- a/kernel/bpf/helpers.c
+> +++ b/kernel/bpf/helpers.c
+> @@ -3090,6 +3090,7 @@ BTF_ID_FLAGS(func, bpf_iter_bits_new, KF_ITER_NEW)
+>  BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)
+>  BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
+>  BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
+> +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RET_NULL)
+>  BTF_KFUNCS_END(common_btf_ids)
+>
+>  static const struct btf_kfunc_id_set common_kfunc_set =3D {
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 7443244656150325..5484e1cd812f698e 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1322,6 +1322,25 @@ size_t ksize(const void *objp)
+>  }
+>  EXPORT_SYMBOL(ksize);
+>
+> +#ifdef CONFIG_BPF_SYSCALL
+> +#include <linux/btf.h>
+> +
+> +__bpf_kfunc_start_defs();
+> +
+> +__bpf_kfunc struct kmem_cache *bpf_get_kmem_cache(u64 addr)
+> +{
+> +       struct slab *slab;
+> +
+> +       if (!virt_addr_valid(addr))
+> +               return NULL;
+> +
+> +       slab =3D virt_to_slab((void *)(long)addr);
+> +       return slab ? slab->slab_cache : NULL;
+> +}
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Do we need to hold a refcount to the slab_cache? Given
+we make this kfunc available everywhere, including
+sleepable contexts, I think it is necessary.
 
-On Thu,  3 Oct 2024 09:23:10 -0700 you wrote:
-> This warning is emitted when a driver does not default populate an rss
-> key when one is not provided from userspace. Some devices do not
-> support individual rss keys per context. For these devices, it is ok
-> to leave the key zeroed out in ethtool_rxfh_context. Do not warn on
-> zeroed key when ethtool_ops.rxfh_per_ctx_key == 0.
-> 
-> Signed-off-by: Daniel Zahka <daniel.zahka@gmail.com>
-> 
-> [...]
+Thanks
+Song
 
-Here is the summary with links:
-  - [net-next,v1] ethtool: rss: fix rss key initialization warning
-    https://git.kernel.org/netdev/net-next/c/5c2ab978f9c9
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> +
+> +__bpf_kfunc_end_defs();
+> +#endif /* CONFIG_BPF_SYSCALL */
+> +
+>  /* Tracepoints definitions. */
+>  EXPORT_TRACEPOINT_SYMBOL(kmalloc);
+>  EXPORT_TRACEPOINT_SYMBOL(kmem_cache_alloc);
+> --
+> 2.46.1.824.gd892dcdcdd-goog
+>
 
