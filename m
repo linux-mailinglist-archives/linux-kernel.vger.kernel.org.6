@@ -1,222 +1,142 @@
-Return-Path: <linux-kernel+bounces-351306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F63990F85
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:01:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E7EC990F83
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B34E82816A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:01:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB8EC1C23128
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B896E1FA247;
-	Fri,  4 Oct 2024 19:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0501F9AA0;
+	Fri,  4 Oct 2024 19:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVw0/2AU"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hcd0bE5h"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472861F9AA8;
-	Fri,  4 Oct 2024 19:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAE41F9A82;
+	Fri,  4 Oct 2024 19:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728068679; cv=none; b=aUuD+olHTOodmPrPTc68ob1rYkBZ8zw42XoOzjamb6OptjDoSHVxUD0nk3Necj7zCDCGHFE4O0FInPePKMswnyegTr7ZpcDgOxI3BJj9KxpYyIpjvWQsVGmsZlEq+E8Y/cvNuXBvtCjBIR5V73TsnWCc5nUdiTtznkdT8UOuDCc=
+	t=1728068671; cv=none; b=q3Q/5ujOfSn6BvyP3DT+3R6oMsnwNMIPFiht9LHJWaoqbaSgajBvTUKay2/klFqmGoJfgms9XcV1IbJaEaUtHaxfi6DrnYKBLoa0blCCx5CK5yKgPopreeypEaAopBNZKsFDjaQEBCrVvgdQUMPrhEfqoEADG5aDmz5SS33DDLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728068679; c=relaxed/simple;
-	bh=EYXoxF8J+Y51OPF0Evi9LCP8HPNnSPwukPuNw27WKEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QmQoSdCBlWXcETXCV9wVTR+MHT7XDC2PAEyPm0UcuOD14Avj8eQvNtNbcVgYQGVyNWdQ7xqWiuH6/sl4OqfMCNh3Ym8qqwrlXe+H2ShFmOozGRx19tPUHL8A1a4/vBCVXQ/Xaqweo++YhVErfKwmWLvnr3cBpdx+tJR1FVamfMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVw0/2AU; arc=none smtp.client-ip=209.85.160.179
+	s=arc-20240116; t=1728068671; c=relaxed/simple;
+	bh=38FWtjNG7ztTk0vyl9goaMmj7S+4vdzAmiAK1g8t8Pc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dx2/gIa7nPt62mNCV9y1TvcBOmjCAJZMKuZ+2nIoDaKJSCKsXJ9yHwQMJGXsw/GhUo6bDypJIV7G8W6MXgTnc1kq3VbJvmiLRmiT3rwDVG2QlraSnlPhShfb8r8DAo23zaHXSP/c3LYkBqOsXzYqsuA+0NydHD0FTqlWXwxtWuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hcd0bE5h; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4585e250f9dso15788871cf.1;
-        Fri, 04 Oct 2024 12:04:37 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cdbdbbb1cso1312357f8f.3;
+        Fri, 04 Oct 2024 12:04:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728068676; x=1728673476; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EStsrddaAqsEdZHuo7kWeqjRs5ADGW1wT+p+2UhGVJk=;
-        b=QVw0/2AUBbJLuF2ZLsNNhwXv6MMD5KfOwtqbPVt/+uS9OqqsrD8eoDW8bo/8irsZA8
-         ku0HFlLftytWFaNoyAhRY1T68hRKAFCwfq9zmLDa5w8bbXN5rPvrrR7B08Se6+v55KL5
-         BqbBvp5X2TVysiVR6oGsiJqmQIRoKq1KnYRGKnWqmECpzKz8VA5EDH/qsA2K/VyPv8+g
-         qfjSKANBkPpZyNEQJSXmG7g1XWT0MlSrDTShtlrKHp1dMEIfQ6wJ0supMpeGX051cIMJ
-         UAnWD3qIyb5Fa8vsYzPxQrVgf6zwjm45LNoYOgLvysMIc2wdCguT/1iR6Dvddu1sYUCr
-         YpBQ==
+        d=gmail.com; s=20230601; t=1728068668; x=1728673468; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uR17DBK3CgvuTP/A+YeEkLOp8ykg0LTLmIaNQYIZdOk=;
+        b=Hcd0bE5hkximu3zCNYhsb8uSZoDDio3JeyKtXxsJy0ZYlNImgSfEpJDHKY2XtPqoOB
+         YFRwIQVgq/MaDiz305Ytp6Eb5i2nAn8G3ssWM7VEUziQdsFfIUsNws6OfloABPqm44D1
+         +UlwwwQBjBcUb9xfziOw9RTd0qQh4lfdq/h9O25z/IepN1XQgs1i7YORc+Ygsr07kut5
+         NyXyjj2VOdt/bM1sXLtGnAAbckpJ56qfur3BmPg2C4gE/sTUdl2UuD/X4iCaCZbxQvHC
+         tVyJELn24FhJ3WcL9qjo3KNcd3HeZ4UqT4N4Iw0/ABrhO6KO/4dhj6Qk81ps0qb6dYsC
+         EyMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728068676; x=1728673476;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EStsrddaAqsEdZHuo7kWeqjRs5ADGW1wT+p+2UhGVJk=;
-        b=UhN8QflSEgpZmR2jh5fSZFf7C1wXgeOsjQCerMmxaP3pwPoL54fv1pdOvTm8w//XaZ
-         WgGBjo0ky5D9HFzB6b22UNZdBnkdP3VUxV5nCOpo2+kuiScDQyVS77hYDNyeeEc8Xqhw
-         QodjjjD48lgeTN7ohBbU4YSxjqPD2NVm6gHuOvqFThHkgOdj8DP65iiwtD4fNCV6MUGl
-         XDtboG6hbNYGhA28rf+BBPxaFvn1Dy8XCkxUSNe8Me2pW8uqP3q0CmlnDGxnuZkVZ7yW
-         Xvxkp+ei8gmMqhjv0Il9uk2YZGILkTfN/1sT1nyDZ2ayzAdUmocOYVg8vuUN7KpWs+Q/
-         /nfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWHs804+fIWaHWXE1EUj9hIa0e1vcIO5vrR6X0X4Fe/TBoZE+zsj2UQ4wPOvUlYCCq3YfI3iYv3/fsxIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpvcZ/oWJvp61eWfTsu5CBKL2Ukwtlc9Ey843K7fiBY1/JUXUh
-	B/Roy0YI9VuwOSvFRiNdkjvhnGPpuvO4fs29lFDkQRT7zC/VcC77ncp4u2jckUmDdhB+nyv8SQh
-	rSY05Kx05PAzqOtNt9oyb3R9hJ00mjhuj
-X-Google-Smtp-Source: AGHT+IE6ecGGBT7nhmFk2o6LxeTZEkQYiEHXxbrFjAKAWH8n5fvpH7/CsF31zubGxANEzTetv3NRCPaF7NPpBBs/2iw=
-X-Received: by 2002:ac8:7fd0:0:b0:458:1431:d3ef with SMTP id
- d75a77b69052e-45d9ba2f024mr46004071cf.5.1728068676092; Fri, 04 Oct 2024
- 12:04:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728068668; x=1728673468;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uR17DBK3CgvuTP/A+YeEkLOp8ykg0LTLmIaNQYIZdOk=;
+        b=szQZGI1Xb1n8QDKCA9fnLJhC9KjrHnk8Z1IFCznJ6f+Ie0L2Wa2OfD4nWTGurSjWb9
+         4CbJpgbLU6YRFAxMzN7kY5V317RGo6gW0jTtmDq6Ti3DnLxIB38lVuaSD9kjJLdFM1j/
+         kpxcsXMDPrtttKts1MsTZVHJ2PwDGQw4S80cTMMVDYT5OsA5pYcVrtbtYx2inFjvtm+c
+         600CnVrHYHX+7a4WXIGpt9pcRhpSGQEIL+o1oBaEwrykqpEV70KToGvlRYYtqzRZ15U2
+         /ZP2XcrjN8X/22VWP9HGbVT7Oc2wZAtELDa+GeCIj0wahXjyG9LRonozZuajESQMmLR5
+         dZ/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWJn4rrrrmt4nlqWdxRM5F3X1h5MNmF8hfk79cZ3YKMbt1yYWRrXQaUbCiuvjGzrgrK6x6r0ldTgbZy@vger.kernel.org, AJvYcCX18F4Pjn6EvmBr3v3eWWNbO9zqD7B1hlwOiW8VbTzoQgRlrUoUjtL5YFmYRblDrxzyC0wP99VvoYpPuUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz1y6DKvu3iI4Fp6bFaJBXBrRMqjJi+1aFJra3UsWIiw0peyIh
+	rVPSoZw8/6CjqjC3U4wLCD0zF3nQQEGFzI9qX+tgTOaMop9U8pAqT+pR5PSd0oo=
+X-Google-Smtp-Source: AGHT+IHXWeyAT0Q319kx0ragpDZHMmJzNX5IYvRvTuXIDWVixgz79SC/7C2QuZGKUee2/7nBHGGdlQ==
+X-Received: by 2002:a5d:6149:0:b0:37c:cd71:2ba2 with SMTP id ffacd0b85a97d-37d0e7bcdf8mr2106125f8f.38.1728068668374;
+        Fri, 04 Oct 2024 12:04:28 -0700 (PDT)
+Received: from freebase (oliv-cloud.duckdns.org. [78.196.47.215])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16920549sm247106f8f.54.2024.10.04.12.04.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 12:04:27 -0700 (PDT)
+Date: Fri, 4 Oct 2024 21:04:25 +0200
+From: Olivier Dautricourt <olivierdautricourt@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?utf-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>
+Subject: Re: [PATCH] usb: xhci: xhci_setup_port_arrays: early -ENODEV if
+ maxports is 0.
+Message-ID: <ZwA8OWFJhAuvWDJh@freebase>
+References: <20240930052336.80589-1-olivierdautricourt@gmail.com>
+ <2024100407-hatless-goofy-bf12@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66fc4b74.050a0220.f28ec.04c8.GAE@google.com> <CAJnrk1ZrPcDsD_mmNjTHj51NkuVR83g5cgZOJTHez6CB6T31Ww@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZrPcDsD_mmNjTHj51NkuVR83g5cgZOJTHez6CB6T31Ww@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 4 Oct 2024 12:04:24 -0700
-Message-ID: <CAJnrk1ZSZVrMY=EeuLQ0EGonL-9n72aOCEvvbs4=dhQ=xWqZYw@mail.gmail.com>
-Subject: Re: [syzbot] [fuse?] WARNING in fuse_writepages
-To: syzbot <syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024100407-hatless-goofy-bf12@gregkh>
 
-On Tue, Oct 1, 2024 at 5:02=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> On Tue, Oct 1, 2024 at 12:24=E2=80=AFPM syzbot
-> <syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1'=
- of..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12e8bdd0580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1b5201b9103=
-5a876
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D217a976dc26ef=
-2fa8711
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for=
- Debian) 2.40
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/a585cdb91cda/d=
-isk-e32cde8d.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/dbeec5d7b296/vmli=
-nux-e32cde8d.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/000fd790e08a=
-/bzImage-e32cde8d.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com
-> >
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_write_file_get fs=
-/fuse/file.c:1989 [inline]
-> > WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_write_file_get fs=
-/fuse/file.c:1986 [inline]
-> > WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_writepages+0x497/=
-0x5a0 fs/fuse/file.c:2368
-> > Modules linked in:
-> > CPU: 0 UID: 0 PID: 5296 Comm: kworker/u8:8 Not tainted 6.12.0-rc1-syzka=
-ller-00031-ge32cde8d2bd7 #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 09/13/2024
-> > Workqueue: writeback wb_workfn (flush-0:52)
-> > RIP: 0010:fuse_write_file_get fs/fuse/file.c:1989 [inline]
-> > RIP: 0010:fuse_write_file_get fs/fuse/file.c:1986 [inline]
-> > RIP: 0010:fuse_writepages+0x497/0x5a0 fs/fuse/file.c:2368
-> > Code: 00 00 00 44 89 f8 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8=
- 79 b6 90 fe 48 8b 7c 24 08 e8 af 6f 27 08 e8 6a b6 90 fe 90 <0f> 0b 90 41 =
-bf fb ff ff ff eb 8b e8 59 b6 90 fe 48 8b 7c 24 18 be
-> > RSP: 0018:ffffc900044ff4a8 EFLAGS: 00010293
-> > RAX: 0000000000000000 RBX: ffffc900044ff4f8 RCX: 0000000000000000
-> > RDX: ffff88802d42da00 RSI: ffffffff82fcd286 RDI: 0000000000000001
-> > RBP: ffff88805c994aa0 R08: 0000000000000000 R09: ffffed100b9329d7
-> > R10: ffff88805c994ebb R11: 0000000000000003 R12: ffffc900044ff840
-> > R13: ffff88805c994880 R14: ffff88805f330000 R15: ffff88805c994d50
-> > FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000000020055000 CR3: 000000005df4a000 CR4: 00000000003526f0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  <TASK>
-> >  do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
-> >  __writeback_single_inode+0x166/0xfa0 fs/fs-writeback.c:1658
-> >  writeback_sb_inodes+0x603/0xfa0 fs/fs-writeback.c:1954
-> >  wb_writeback+0x199/0xb50 fs/fs-writeback.c:2134
-> >  wb_do_writeback fs/fs-writeback.c:2281 [inline]
-> >  wb_workfn+0x294/0xbc0 fs/fs-writeback.c:2321
-> >  process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
-> >  process_scheduled_works kernel/workqueue.c:3310 [inline]
-> >  worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
-> >  kthread+0x2c1/0x3a0 kernel/kthread.c:389
-> >  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> >  </TASK>
-> >
->
-> #syz dup: [syzbot] [fuse?] WARNING in fuse_write_file_get (2)
->
-> This is the same warning reported in
-> https://lore.kernel.org/linux-fsdevel/66fbae38.050a0220.6bad9.0051.GAE@go=
-ogle.com/T/#u
->
-> The warning is complaining about this WARN_ON here
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/f=
-s/fuse/file.c#n1989.
-> I think this warning can get triggered if there's a race between a
-> write() and a close() where the page is dirty in the cache after the
-> release has happened. Then when writeback (eg fuse_writepages()) is
-> triggered, we hit this warning. (this possibility has always existed,
-> it was surfaced after this refactoring commit 4046d3adcca4: "move fuse
-> file initialization to wpa allocation time" but the actual logic
-> hasn't been changed).
+Hello,
 
-Actually, it's not clear how this WARN_ON is getting triggered.
+On Fri, Oct 04, 2024 at 10:07:01AM +0200, Greg Kroah-Hartman wrote:
+> On Mon, Sep 30, 2024 at 07:23:29AM +0200, Olivier Dautricourt wrote:
+> > If the controller reports HCSPARAMS1.maxports==0 then we can skip the
+> > whole function: it would fail later after doing a bunch of unnecessary
+> > stuff. It can occur on a buggy hardware (the value is driven by external
+> > signals).
+> 
+> What "buggy hardware" is this that can not pass the USB testing for this
+> type of issue?
 
-I will wait for syzbot to surface a repro first before taking further actio=
-n.
+This is a behaviour found while debugging a custom firmware where this
+value happen to be controlled here, i don't know any hardware out there
+with such issue, this change should be seen as a software nitpick and is
+not trying to fix a specific hardware.
 
->
-> I think we can address this by instead calling "data.ff =3D
-> __fuse_write_file_get(fi);" in fuse_writepages(). I'll submit a fix
-> for this to Miklos's tree.
->
->
-> Thanks,
-> Joanne
->
-> >
+> 
+> > 
+> > Signed-off-by: Olivier Dautricourt <olivierdautricourt@gmail.com>
 > > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> >
-> > If the report is already addressed, let syzbot know by replying with:
-> > #syz fix: exact-commit-title
-> >
-> > If you want to overwrite report's subsystems, reply with:
-> > #syz set subsystems: new-subsystem
-> > (See the list of subsystem names on the web dashboard)
-> >
-> > If the report is a duplicate of another one, reply with:
-> > #syz dup: exact-subject-of-another-report
-> >
-> > If you want to undo deduplication, reply with:
-> > #syz undup
-> >
+> >  drivers/usb/host/xhci-mem.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+> > index d2900197a49e..e8406db78782 100644
+> > --- a/drivers/usb/host/xhci-mem.c
+> > +++ b/drivers/usb/host/xhci-mem.c
+> > @@ -2160,6 +2160,11 @@ static int xhci_setup_port_arrays(struct xhci_hcd *xhci, gfp_t flags)
+> >  	struct device *dev = xhci_to_hcd(xhci)->self.sysdev;
+> >  
+> >  	num_ports = HCS_MAX_PORTS(xhci->hcs_params1);
+> > +	if (num_ports == 0) {
+> > +		xhci_warn(xhci, "Host controller has no port enabled\n");
+> > +		return -ENODEV;
+> > +	}
+> 
+> Should this be backported to older kernels, if so, how far back if this
+> is common hardware?
+
+I don't think this would have to be ported to stable trees: The function
+handles the case without failure: the 0 value is propagated until line
+2220 and fails on condition:
+	if (xhci->usb2_rhub.num_ports == 0 && xhci->usb3_rhub.num_ports == 0) {
+		xhci_warn(xhci, "No ports on the roothubs?\n");
+		return -ENODEV;
+	}
+
+The change merely avoids passing 0 value through kcalloc_node calls and
+unnecessary accesses to the capability structures of the controller.
+
+Kr,
+Olivier
 
