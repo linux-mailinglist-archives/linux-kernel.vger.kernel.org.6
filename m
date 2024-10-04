@@ -1,173 +1,357 @@
-Return-Path: <linux-kernel+bounces-349934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C465898FD8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:54:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC30898FD8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820E52839CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:54:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40E541F23853
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3C613210D;
-	Fri,  4 Oct 2024 06:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC94785260;
+	Fri,  4 Oct 2024 06:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GH3q6Kaa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gk7KDoGE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB8E26281
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 06:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E958026281
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 06:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728024854; cv=none; b=Nm0Q9P+RAbC54YncR5tWGHSk4VKEe1cfIK4QYzojbavGlabDxPmUib9l8ulQl1MiLCRzL5cj65mDVg9iIQaJixT15TfbnZ4urbWwLDrDR+n/joNs7dlYITYP0/sDguly7oFNPZqF3sgucAsoh+rq61h5lhGaP1b6ys5h7QRjsO4=
+	t=1728024872; cv=none; b=gK6NBrLYRueVUERkWiXw1FgIniB5sBpLXkqYY9rNRzNT8wBYUMh4OlMwLYHWM01YqcHbiUKYwff3hTRGlri/lLPLBV/nSAKSOHPP6ht2EbxbaKvitP3571AzV2m+kDdJkJeLi71/3yfO1YBp8ZP+SjMzXkCUtpknjWCWuQJmZM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728024854; c=relaxed/simple;
-	bh=dHbeqTOFijkf+HG0GxeHaA5ZnKKP1WS0EPmt37KZWYM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=XfHIE2SaqdLJe/srGh3ts71wXFpxfutxGWfAYSUkd8NksZ+ZpObq8r6X1dYw9txlGT+4Me/69zVF17E6M2kRdWLvzp15LsKAAH7pxmATDRSUPwb6l8bKrrLRyjwhMVfFdVPpZdmeWNHZ952PpSS57Fz/4PuIXmT2F8rB1+d4BN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GH3q6Kaa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1089C4CEC6;
-	Fri,  4 Oct 2024 06:54:13 +0000 (UTC)
+	s=arc-20240116; t=1728024872; c=relaxed/simple;
+	bh=ouq+tMObfOhhwFeZ7U1REMfL8wkLg2xCuRIcFneHI7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yd7Ld0qVhdeNlZ763hCgzo92zRsvGGcaJ5G3sPviywHhf0RZjvrJj7c6MW3rwkkFGAnT/ehf3Okilz9x6M/9h3lLHlxEw+S63+NTz2s0O97zXoDKqPW/6HvbX5sk1C8jDUiyBH2BxLM+OxvPNVoiHTYDuNROBvLTVGNvaksHlHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gk7KDoGE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A1D8C4CECC
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 06:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728024854;
-	bh=dHbeqTOFijkf+HG0GxeHaA5ZnKKP1WS0EPmt37KZWYM=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=GH3q6Kaa5r5RSbncazDzIPRYW1dDSe/EHsUU81j78iA9l1SSDX4NgC0GGrddXCpMQ
-	 azRJvdZFhoZsNCEmUbMgiCMWKTFDS5PnE8aAl1ocLdc9JPpL3EAAIG/v7jAhwKRM8a
-	 Ul5b43c9YVIoASViyJ1Tr0h69EitJLgKxB1KKFHjKf80xgTzldbSoeGl7KXnagW5TE
-	 tdBfKzGjjFWVYyKSiuPSJagfiHFuxPmYMcvs7bWM/yrTuHUlqQGMvA6VrFRkzVkUZk
-	 21QBUPnXYg40VkPMnWT5z+5hrKcFqaOQMZT0E4z5B2lx4swXDUeICws2Pg+jU+4kG9
-	 BSmWhKEtBuF6Q==
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id F3DEC1200069;
-	Fri,  4 Oct 2024 02:54:12 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 04 Oct 2024 02:54:13 -0400
-X-ME-Sender: <xms:FJH_ZjX-mTJ5qSZB52-76AC1bEOrsGJ2LzotzJ6LyrcPXzg3SSjetQ>
-    <xme:FJH_Zrn2xnyE9p1sON2MpfX9AIRoFVWNulLkJCaU2Af3tfQxxaVD-cXrTy6Ra71o1
-    VuLdrNxqh4sT4q_m0w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvvddguddugecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvg
-    hlrdhorhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeef
-    iedtudeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlh
-    drohhrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehhtggrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepshgthhhnvghl
-    lhgvsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinh
-    gvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhi
-    nhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmrggtrhhosehorhgtrg
-    hmrdhmvgdruhhkpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:FJH_ZvaaTbq7YwQP5PTXD8qijyf0GwxK1lwDYe3ZeMg-rtHaUXTPUw>
-    <xmx:FJH_ZuVq739NZbNaUqYvIOpOTa-pTJagZeYIkFWoI9gjNdOMGKZEow>
-    <xmx:FJH_ZtkFWvBsiPVEIm2_wQJTzBcKrRVM3C2Unrc6FvR3TwwibsxcSg>
-    <xmx:FJH_ZrcPiEougHjDp2aRgjiB43kXD2juTSb3l7yUNGNyGdctbHTHmQ>
-    <xmx:FJH_ZnGsXpuGcmOzHAbcobxQeY-beaijC00gDHCVORFNfN0VqK0Gii2m>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C11CB2220071; Fri,  4 Oct 2024 02:54:12 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=k20201202; t=1728024870;
+	bh=ouq+tMObfOhhwFeZ7U1REMfL8wkLg2xCuRIcFneHI7U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Gk7KDoGEPjRNyAvt61JOlUUPDEwPifBycUL1jPT0uv5K/wlfj4ZA9lXvptLqHd1JR
+	 RuW+r4Em2VQArn7pUD4L38AUBOqwKgnFG9ow5IZ6kNTb8vw0xDLUNFMVXXsz/nuFXq
+	 Nk9TQP+m1r81olBmDXk9pP60nXFArdvj0Atz+EVMCaJVC6KEwPq+xfffLZIpvVrI3f
+	 SDQ/MdFBOlePSxLLYggWy8xZ2rlYQ4t1VbDzPRY75NKZnADf1UIJhmH4TXcVQoCAEe
+	 mEVdme4lfAMqazJQUxcA/73UnlNKbm5ErcE9Ws0it9yaz6lUqI0LEN3VMrHR6NkTm3
+	 /JGWALp/vSCdw==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so2529143e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 23:54:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWx1SdW+s+BSexUBbVHPJvLy5wUau7W3ZhsGtcHFhOdXuQZfD2RsOWKfcjp0o/5kDjAUOUIP2FE2d5a1fA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9Bm36yD22Xyn9dtoeR/Xdmh5Qoz96PKZZAYmt90PpyOoJncgf
+	NoObIg8bFcfYaa/eMGKO42o7hBitk0beWdINy3qIDZ1wsMsxaZ8OZ4n35c7yTW1Gy6g2CL4oj3h
+	JjBYW5kaPN2t3trBkMemMd21DNNc=
+X-Google-Smtp-Source: AGHT+IHh2RYq/S6blclmQ1j/ohwHNA9GgunR03DjrQVI+Vano+50osuzBxYJJbqWD8M5R4vV8vMrqbVxLGQB7wxxu1I=
+X-Received: by 2002:a05:6512:12c3:b0:530:ab86:3 with SMTP id
+ 2adb3069b0e04-539ab84a49bmr939775e87.1.1728024868467; Thu, 03 Oct 2024
+ 23:54:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 04 Oct 2024 06:53:51 +0000
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: "Niklas Schnelle" <schnelle@linux.ibm.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jiri Slaby" <jirislaby@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
- linux-kernel@vger.kernel.org
-Message-Id: <b59d81ee-04af-4557-9d35-ec2c03fbcbe7@app.fastmail.com>
-In-Reply-To: <alpine.DEB.2.21.2410022305040.45128@angie.orcam.me.uk>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
- <20240405152924.252598-2-schnelle@linux.ibm.com>
- <alpine.DEB.2.21.2405230244140.1257@angie.orcam.me.uk>
- <ef2912910d006c573324bcf063cb76e843dc8267.camel@linux.ibm.com>
- <alpine.DEB.2.21.2410011707550.45128@angie.orcam.me.uk>
- <7bcec0eb88c3891d23f5c9f224e708e4a9bb8b89.camel@linux.ibm.com>
- <alpine.DEB.2.21.2410021632150.45128@angie.orcam.me.uk>
- <84bbda13-ded1-4ada-a765-9d012d3f4abd@app.fastmail.com>
- <alpine.DEB.2.21.2410022305040.45128@angie.orcam.me.uk>
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <05fd690797ea4e1ee798b7fa497857519ae840d4.1728001850.git.jpoimboe@kernel.org>
+In-Reply-To: <05fd690797ea4e1ee798b7fa497857519ae840d4.1728001850.git.jpoimboe@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 4 Oct 2024 08:54:16 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHt3GTVx-Ow0OZaP4WW7k=RVc+jgtC-4qOSZM3js4jo0g@mail.gmail.com>
+Message-ID: <CAMj1kXHt3GTVx-Ow0OZaP4WW7k=RVc+jgtC-4qOSZM3js4jo0g@mail.gmail.com>
+Subject: Re: [PATCH] objtool: Detect non-relocated text references
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 2, 2024, at 22:59, Maciej W. Rozycki wrote:
-> On Wed, 2 Oct 2024, Arnd Bergmann wrote:
->> Part of the problem that Niklas is trying to solve with the
->> CONFIG_HAS_IOPORT annotations is to prevent an invalid inb()/outb()
->> from turning into a NULL pointer dereference as it currently does
->> on architectures that have no way to support PIO but get the
->> default implementation from asm-generic/io.h.
+Hi Josh,
+
+On Fri, 4 Oct 2024 at 02:31, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
 >
->  It can be worse than that.  Part of my confusion with the defxx driver 
-> trying to do port I/O with my POWER9 system came from the mapping actually 
-> resulting in non-NULL invalid pointers, dereferencing which caused a flood 
-> of obscure messages produced to the system console by the system firmware:
+> When kernel IBT is enabled, objtool detects all text references in order
+> to determine which functions can be indirectly branched to.
 >
-> LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
-> IPMI: dropping non severe PEL event
-> LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
-> IPMI: dropping non severe PEL event
-> LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
-> IPMI: dropping non severe PEL event
-> LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
-> IPMI: dropping non severe PEL event
-> [...]
+> In text, such references look like one of the following:
 >
-> from which it was all but obvious that they were caused by an attempt to 
-> use PCI port I/O with a system lacking support for it.
-
-Ah, that's too bad. I think this is a result of the patch that
-Michael did to shut up the NULL pointer warning we get, see
-be140f1732b5 ("powerpc/64: Set _IO_BASE to POISON_POINTER_DELTA
-not 0 for CONFIG_PCI=n"). I really wish we could have finished
-Niklas' series earlier to avoid this.
-
->> I think that anyone using hardware that relies on port I/O on
->> non-x86 is at this point going to have a reasonable understanding
->> of the system, so I'm not too worried here. ;-)
+>    mov    $0x0,%rax        R_X86_64_32S     .init.text+0x7e0a0
+>    lea    0x0(%rip),%rax   R_X86_64_PC32    autoremove_wake_function-0x4
 >
->  Well, virtually all non-x86 systems continue supporting PCI/e port I/O 
-> via a suitably decoded CPU-side MMIO window, so I think coming across one 
-> that doesn't can still be a nasty surprise even in 2024.  For instance 
-> I've been happily using a PC parallel port PCIe option card, one of the 
-> very few interfaces if not the only one remaining that have not ever seen 
-> an MMIO variant, with my RISC-V hardware, newer than said POWER9 system.
+> Either way the function pointer is denoted by a relocation, so objtool
+> just reads that.
 >
->  So far it's been the s390 and a couple of POWER system implementations 
-> that have support for PCI/e port I/O removed.  Have I missed anything?
+> However there are some "lea xxx(%rip)" cases which don't use relocations
+> because they're referencing code in the same translation unit.
 
-I meant PCIe cards with I/O space here, not host bridges. I know you
-have a lot of them, but what I've heard from Arm platform maintainers
-is that they tend to struggle finding any PCIe cards to test their
-hsot bridge drivers on, and I expect that a lot of them are actually
-broken because they have never been tested and just copied the
-implementation badly from some other driver.
+input section
 
-I think the only new PCIe devices you can find today that still use
-I/O space are ones with compatibility registers for IBM PC style
-hardware (vga, uart, parport), but most users would never have used
-one of those and instead use the native register interface of their
-GPU (on non-x86), USB-serial and no parport. Other devices that
-needed I/O space never worked on PCIe anyway because of the lack
-of ISA style DMA.
+> Objtool
+> doesn't have visibility to those.
+>
+> The only currently known instances of that are a few hand-coded asm text
+> references which don't actually need ENDBR.  So it's not actually a
+> problem at the moment.
+>
+> However if we enable -fpie, the compiler would start generating them and
+> there would definitely be bugs in the IBT sealing.
+>
 
-There are also a lot of Arm systems that have no I/O space support at
-all, such as the Apple M2 I'm using at the moment.
+-fpie is guaranteed to break things, but even without it, Clang may
+issue RIP-relative LEA instructions (or LLD when it performs
+relaxations), so this is definitely worth addressing even if we don't
+enable -fpie.
 
-      Arnd
+> Detect non-relocated text references and handle them appropriately.
+>
+> [ Note: I removed the manual static_call_tramp check -- that should
+>   already be handled by the noendbr check. ]
+>
+> Reported-by: Ard Biesheuvel <ardb@kernel.org>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+
+Thanks for the quick fix. This addresses the issue I ran into, so
+
+Tested-by: Ard Biesheuvel <ardb@kernel.org>
+
+> ---
+>  arch/x86/kernel/acpi/wakeup_64.S     |   1 +
+>  arch/x86/kernel/head_64.S            |   1 +
+>  tools/objtool/arch/x86/decode.c      |  15 ++--
+>  tools/objtool/check.c                | 112 +++++++++++++++------------
+>  tools/objtool/include/objtool/arch.h |   1 +
+>  5 files changed, 77 insertions(+), 53 deletions(-)
+>
+> diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
+> index af2f2ed57658..5e4472f788b3 100644
+> --- a/arch/x86/kernel/acpi/wakeup_64.S
+> +++ b/arch/x86/kernel/acpi/wakeup_64.S
+> @@ -85,6 +85,7 @@ SYM_FUNC_START(do_suspend_lowlevel)
+>
+>         .align 4
+>  .Lresume_point:
+> +       ANNOTATE_NOENDBR
+>         /* We don't restore %rax, it must be 0 anyway */
+>         leaq    saved_context(%rip), %rax
+>         movq    saved_context_cr4(%rax), %rbx
+> diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+> index 88cdc5a0c7a3..9e95599b58cf 100644
+> --- a/arch/x86/kernel/head_64.S
+> +++ b/arch/x86/kernel/head_64.S
+> @@ -88,6 +88,7 @@ SYM_CODE_START_NOALIGN(startup_64)
+>         lretq
+>
+>  .Lon_kernel_cs:
+> +       ANNOTATE_NOENDBR
+>         UNWIND_HINT_END_OF_STACK
+>
+>  #ifdef CONFIG_AMD_MEM_ENCRYPT
+> diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
+> index ed6bff0e01dc..fe1362c34564 100644
+> --- a/tools/objtool/arch/x86/decode.c
+> +++ b/tools/objtool/arch/x86/decode.c
+> @@ -456,10 +456,6 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+>                 if (!rex_w)
+>                         break;
+>
+> -               /* skip RIP relative displacement */
+> -               if (is_RIP())
+> -                       break;
+> -
+>                 /* skip nontrivial SIB */
+>                 if (have_SIB()) {
+>                         modrm_rm = sib_base;
+> @@ -467,6 +463,12 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+>                                 break;
+>                 }
+>
+> +               /* lea disp(%rip), %dst */
+> +               if (is_RIP()) {
+> +                       insn->type = INSN_LEA_RIP;
+> +                       break;
+> +               }
+> +
+>                 /* lea disp(%src), %dst */
+>                 ADD_OP(op) {
+>                         op->src.offset = ins.displacement.value;
+> @@ -737,7 +739,10 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+>                 break;
+>         }
+>
+> -       insn->immediate = ins.immediate.nbytes ? ins.immediate.value : 0;
+> +       if (ins.immediate.nbytes)
+> +               insn->immediate = ins.immediate.value;
+> +       else if (ins.displacement.nbytes)
+> +               insn->immediate = ins.displacement.value;
+>
+>         return 0;
+>  }
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index 94a56099e22d..d33bf36d36a3 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -4354,6 +4354,51 @@ static bool noendbr_range(struct objtool_file *file, struct instruction *insn)
+>         return insn->offset == sym->offset + sym->len;
+>  }
+>
+> +static int __validate_ibt_insn(struct objtool_file *file, struct instruction *insn,
+> +                              struct instruction *dest)
+> +{
+> +       if (dest->type == INSN_ENDBR) {
+> +               mark_endbr_used(dest);
+> +               return 0;
+> +       }
+> +
+> +       if (insn_func(dest) && insn_func(insn) &&
+> +           insn_func(dest)->pfunc == insn_func(insn)->pfunc) {
+> +               /*
+> +                * Anything from->to self is either _THIS_IP_ or
+> +                * IRET-to-self.
+> +                *
+> +                * There is no sane way to annotate _THIS_IP_ since the
+> +                * compiler treats the relocation as a constant and is
+> +                * happy to fold in offsets, skewing any annotation we
+> +                * do, leading to vast amounts of false-positives.
+> +                *
+> +                * There's also compiler generated _THIS_IP_ through
+> +                * KCOV and such which we have no hope of annotating.
+> +                *
+> +                * As such, blanket accept self-references without
+> +                * issue.
+> +                */
+> +               return 0;
+> +       }
+> +
+> +       /*
+> +        * Accept anything ANNOTATE_NOENDBR.
+> +        */
+> +       if (dest->noendbr)
+> +               return 0;
+> +
+> +       /*
+> +        * Accept if this is the instruction after a symbol
+> +        * that is (no)endbr -- typical code-range usage.
+> +        */
+> +       if (noendbr_range(file, dest))
+> +               return 0;
+> +
+> +       WARN_INSN(insn, "relocation to !ENDBR: %s", offstr(dest->sec, dest->offset));
+> +       return 1;
+> +}
+> +
+>  static int validate_ibt_insn(struct objtool_file *file, struct instruction *insn)
+>  {
+>         struct instruction *dest;
+> @@ -4366,6 +4411,7 @@ static int validate_ibt_insn(struct objtool_file *file, struct instruction *insn
+>          * direct/indirect branches:
+>          */
+>         switch (insn->type) {
+> +
+>         case INSN_CALL:
+>         case INSN_CALL_DYNAMIC:
+>         case INSN_JUMP_CONDITIONAL:
+> @@ -4375,6 +4421,23 @@ static int validate_ibt_insn(struct objtool_file *file, struct instruction *insn
+>         case INSN_RETURN:
+>         case INSN_NOP:
+>                 return 0;
+> +
+> +       case INSN_LEA_RIP:
+> +               if (!insn_reloc(file, insn)) {
+> +                       /* local function pointer reference without reloc */
+> +
+> +                       off = arch_jump_destination(insn);
+> +
+> +                       dest = find_insn(file, insn->sec, off);
+> +                       if (!dest) {
+> +                               WARN_INSN(insn, "corrupt function pointer reference");
+> +                               return 1;
+> +                       }
+> +
+> +                       return __validate_ibt_insn(file, insn, dest);
+> +               }
+> +               break;
+> +
+>         default:
+>                 break;
+>         }
+> @@ -4385,13 +4448,6 @@ static int validate_ibt_insn(struct objtool_file *file, struct instruction *insn
+>                                               reloc_offset(reloc) + 1,
+>                                               (insn->offset + insn->len) - (reloc_offset(reloc) + 1))) {
+>
+> -               /*
+> -                * static_call_update() references the trampoline, which
+> -                * doesn't have (or need) ENDBR.  Skip warning in that case.
+> -                */
+> -               if (reloc->sym->static_call_tramp)
+> -                       continue;
+> -
+>                 off = reloc->sym->offset;
+>                 if (reloc_type(reloc) == R_X86_64_PC32 ||
+>                     reloc_type(reloc) == R_X86_64_PLT32)
+> @@ -4403,47 +4459,7 @@ static int validate_ibt_insn(struct objtool_file *file, struct instruction *insn
+>                 if (!dest)
+>                         continue;
+>
+> -               if (dest->type == INSN_ENDBR) {
+> -                       mark_endbr_used(dest);
+> -                       continue;
+> -               }
+> -
+> -               if (insn_func(dest) && insn_func(insn) &&
+> -                   insn_func(dest)->pfunc == insn_func(insn)->pfunc) {
+> -                       /*
+> -                        * Anything from->to self is either _THIS_IP_ or
+> -                        * IRET-to-self.
+> -                        *
+> -                        * There is no sane way to annotate _THIS_IP_ since the
+> -                        * compiler treats the relocation as a constant and is
+> -                        * happy to fold in offsets, skewing any annotation we
+> -                        * do, leading to vast amounts of false-positives.
+> -                        *
+> -                        * There's also compiler generated _THIS_IP_ through
+> -                        * KCOV and such which we have no hope of annotating.
+> -                        *
+> -                        * As such, blanket accept self-references without
+> -                        * issue.
+> -                        */
+> -                       continue;
+> -               }
+> -
+> -               /*
+> -                * Accept anything ANNOTATE_NOENDBR.
+> -                */
+> -               if (dest->noendbr)
+> -                       continue;
+> -
+> -               /*
+> -                * Accept if this is the instruction after a symbol
+> -                * that is (no)endbr -- typical code-range usage.
+> -                */
+> -               if (noendbr_range(file, dest))
+> -                       continue;
+> -
+> -               WARN_INSN(insn, "relocation to !ENDBR: %s", offstr(dest->sec, dest->offset));
+> -
+> -               warnings++;
+> +               warnings += __validate_ibt_insn(file, insn, dest);
+>         }
+>
+>         return warnings;
+> diff --git a/tools/objtool/include/objtool/arch.h b/tools/objtool/include/objtool/arch.h
+> index 0b303eba660e..d63b46a19f39 100644
+> --- a/tools/objtool/include/objtool/arch.h
+> +++ b/tools/objtool/include/objtool/arch.h
+> @@ -28,6 +28,7 @@ enum insn_type {
+>         INSN_CLD,
+>         INSN_TRAP,
+>         INSN_ENDBR,
+> +       INSN_LEA_RIP,
+>         INSN_OTHER,
+>  };
+>
+> --
+> 2.46.0
+>
 
