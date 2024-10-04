@@ -1,106 +1,107 @@
-Return-Path: <linux-kernel+bounces-351465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2FE4991186
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:40:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71243991189
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D07B41C228FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:40:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A361F23D67
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09041AE013;
-	Fri,  4 Oct 2024 21:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40BF1AE013;
+	Fri,  4 Oct 2024 21:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JU/awhzY"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="r2Zt/cjE"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2686C231CB1;
-	Fri,  4 Oct 2024 21:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE8D231CB1
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728078019; cv=none; b=nP5R+HnVqcEk16aaBNUBSXFZIzB5rEuqkAVGAMnxH6AKb/WUXY7UMiUPtKgdMsUMC/vHX4JmnwLeKSEaRWaEL7iRZA8GOYOj6vZMaeeN/rtdISUuayWejtJj3saBg5zQOeINZjAjxWX/cm2MtaLFzfkCaedFBFev/keoOPNJyVo=
+	t=1728078058; cv=none; b=AimEYZzBLm7JsGE+HItbnCy0GWgm+iHEf244Xp+twwOQRfKVWzMQQr4iVamzpH/W3zqLBjyi7HOgoNYfGZpOQxhMhma0dEOrOyCB1YNRP5SBtz0MhZzRKzpV5GJIPffAubjH8EFELXdZafcASvRSGig2MjeaKBkENHmiK6lvdsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728078019; c=relaxed/simple;
-	bh=JOl/MNmZSJ67n7It5Xw1wfunsJqzofFETO4zf4slRE8=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=p5hs0LOp65CCJ8tApAQWSH/5nxi3lJbuKhjdCB+BMbZ3u9grckdUxQ8Z3DyMvdDwe6DujWcuUgcjkmUjRmoWVn5gNwTanYS/xABeUc2z1o8lO+VUcW1Q21hMrcBPYw5gUQfLm6THR4x6aHIptr16LF5AOhwnwKDl+ZzXdbDAuXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JU/awhzY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494AXrWb025676;
-	Fri, 4 Oct 2024 21:40:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=JOl/MNmZSJ67n7It5Xw1wfunsJqzofFETO4zf4slRE8=; b=JU
-	/awhzYIU2963RaeQWpT416xSdXR8fTD2TPlmkZBnx6lNtMveAhyevj5jtE5JGft4
-	m6ToYELQuYAE3q+r/oqIeirMpgCvl+tMNmPKep2ZSw7ZND/2vBRIYN8kFs+6Xf/o
-	+snNn8hc5aFuUpY2rilmy4kmu1cZ/oD1egElJeTkAvva73/kG3HkhMA4YNGWWg5e
-	TTOBYK3wAwTCYAMkKTxjnPEl9dmM9j4QzBbhKzMXsANJrmqHh9KmDuzHugEUMTe4
-	oYypIew/tqasXVjN7geDz99kQOKJUN0SqJD+lGYQ0j5TW2iGnFmjm2k/fGQS3UvH
-	mVDmr3vgV29Sj5OBmW3w==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205kkagg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 21:40:14 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494LeEbO018432
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 21:40:14 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 4 Oct 2024 14:40:10 -0700
-Date: Sat, 5 Oct 2024 03:10:07 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad
- Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/6] Peripheral Image Loader support for Qualcomm SoCs
-Message-ID: <ZwBgt+9pAyHGDFOI@hu-mojha-hyd.qualcomm.com>
+	s=arc-20240116; t=1728078058; c=relaxed/simple;
+	bh=UoYyHSaGN4evXNG/TbmwzxroeUm+2Gmv++PjScBOvoQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=t6Xqv32WYXU7+qnWTvUDZGuTEbyU3PWSsYEW0E9/kdt48izy5lBYwmZiluTE5Tfz0XoVf738vhwbl1WZC8JFKWoV/ObaL6EOLnarD9WG6Bm1sQ0ES/ZrmgGOTrPiMP/TSJGG/qQdNJ6ksadKhuXrsCd1r6XGQ/9HVrvhdOrtFPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=r2Zt/cjE; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-718d6ad6050so2262821b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 14:40:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728078056; x=1728682856; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0tXUbWLYJR3U+zEjSbqk0pk+6bVLw22kfGamouLUdmc=;
+        b=r2Zt/cjE3xn30hPQCxPePWk2SdFuQyE8ptxtmGs/Hkfj3+ONDHbFHz6FEpZPysk8o4
+         T4+No5jlW28IwB+HbP5kq8KgADrnubILnFA4RamQpGGTCYFeO7IKNhvMXgAd8Vrd5KJV
+         86yfKodNCASQa3MHrRmks7J/K4BR+/o+M2IxuTt3wyy+N7HTpgFLwf0Uyjsu4US/k3kJ
+         2IjRdGfFqjkzZL2aq6SNFcoQ0HcTBEztqFiSxVpyVoyJcmiafQie2//A+2tnOmpSB9jS
+         wSngk5OmxozMGUDYQ4EY2XyGE+EuTvY9BOxxwjlJWvv4ZXxPHcB50hTNhit57IUaxnfR
+         W5RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728078056; x=1728682856;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0tXUbWLYJR3U+zEjSbqk0pk+6bVLw22kfGamouLUdmc=;
+        b=h4081StUCYfYVSa1XQVVn70KexJq0CN8Xe5PA4pgzJ0Dt7G+Q/qD1uXINSPOLflQwr
+         j1uR1fWL5MDcRg8ndab5uiIIYV3+W0wt6jLY/yiHEnVHFWSpctsixcxvx8GSFTzWoKkn
+         IJQlsLdvdE+OF1LJRbSkSSJdsD7y7BjcHunaYCDBb1EO+nBQj8wQ1UEXdPfb5+Bus6IK
+         kYyDgDcv7xzeq+NwDcwnd3XUOflTKpI1HsVpmeGWZTIRKnXt/Y//pA+7aOvoLNxPTRZX
+         006IyPuTJt6whJIgJ6pvNYpXCV76Oo7CLqi/iB+tv0UZE3elg2S2iOfFwbDr6OH+O0BN
+         ZDzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbxxXrKGo18QrE0NdcJH+662i8ofr23ZzPeKyAsWe34JPk5W4E+q5pPaDyckhtplqwOpczXqDP+clV54s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywde32MTQxfTdE6xtoT8F7hUg7gezs7D3IMMGyXUMiHaDZR0M4Z
+	6BXzmXE2hd3hnJNoGCQLjKyLWFNkm96HHdCBWQYXk2yvuTNNmiaaif5rK7NiNjs=
+X-Google-Smtp-Source: AGHT+IGaTO9NlECH4L11tO3rmXARCrwfZWwkyx8BS6wAVI9KvFTpdxilVZxd5eG3rkBDAnNyLMXExg==
+X-Received: by 2002:a05:6a00:1a8c:b0:717:8568:8cee with SMTP id d2e1a72fcca58-71de23d01a4mr6922378b3a.12.1728078056364;
+        Fri, 04 Oct 2024 14:40:56 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d7b9d6sm330093b3a.187.2024.10.04.14.40.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 14:40:56 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: tony@atomide.com, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+Cc: Paul Kocialkowski <contact@paulk.fr>
+In-Reply-To: <20240915193527.1071792-1-andreas@kemnade.info>
+References: <20240915193527.1071792-1-andreas@kemnade.info>
+Subject: Re: [PATCH] ARM: dts: omap4-kc1: fix twl6030 power node
+Message-Id: <172807805572.806523.7110616698781538712.b4-ty@baylibre.com>
+Date: Fri, 04 Oct 2024 14:40:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mGVC_yWuGGvKU5FHqR3gW17wNMJKnDfy
-X-Proofpoint-GUID: mGVC_yWuGGvKU5FHqR3gW17wNMJKnDfy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- adultscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- bulkscore=0 impostorscore=0 malwarescore=0 suspectscore=0 mlxlogscore=533
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410040150
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cb14d
 
-Subject got wrapped and later part got ignored,
-Quoting it again here for reference.
 
-"Peripheral Image Loader support for Qualcomm SoCs on KVM host system"
+On Sun, 15 Sep 2024 21:35:27 +0200, Andreas Kemnade wrote:
+> dtbs_check was moaning about twl6030-power, use the standard property
+> instead.
+> Apparently that twl6030 power snippet slipped in without the
+> corresponding driver. Now it is handled by the standard property.
+> 
+> 
 
--Mukesh
+Applied, thanks!
+
+[1/1] ARM: dts: omap4-kc1: fix twl6030 power node
+      commit: 59caaade193003e4dcbc92c82e66906ab7558951
+
+Best regards,
+-- 
+Kevin Hilman <khilman@baylibre.com>
 
 
