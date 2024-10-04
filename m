@@ -1,346 +1,147 @@
-Return-Path: <linux-kernel+bounces-350206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F2899017B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:39:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8329900BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 141CA28173A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:39:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD2E1F241B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B46215574C;
-	Fri,  4 Oct 2024 10:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA0414B972;
+	Fri,  4 Oct 2024 10:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="joD9SW80";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/YSBy8ug"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2BGGZMmN"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D962E156C5F;
-	Fri,  4 Oct 2024 10:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D807714A08E
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728038334; cv=none; b=d8H8kuz2ixAZazl8ON9Z82iaJSnGy25qD5OVPJnR1BGZ2Mx1YFlGpzmbcipHIJL8rva2yTwUJ+AQFOQkg9wX+6+o/+dAyUudDRKqJPFvr6f1uYfXpBjr1LxB/jC0fQhldyCU3T0/UbJemdsUaQt6DvNr5K+qBbwUBDm4jWm07As=
+	t=1728037178; cv=none; b=PFIuqjzzU55hThz3g9K21jIlMrEtEnBCNTo2wE3fQZD/xM+6asvCSF4FtZkK5y0U9KifrqvmlRUh50keXT1fRD9nJMZEhETzQAz97z8bRRP+Df7j4RIYtcEyLgniRxLJQnRdNvaRgQGEepOABM/4hWYHBtj5UVsRk2JMSusdHaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728038334; c=relaxed/simple;
-	bh=z8ZXkay8HgoELDWCWTIHS0pMX3WrRR08Fki0/CTISx0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JPHvyAz0qC9/4xPA/XhOZq4g6M+MIfwNdU+O6P/Dd3L4UGeeJhbluk2blLK6pq8RBEdit/UsOUk0mkAQwKm+FAAv83/lrDcKydeep8naiuvyF6/23hZyF1AZdc8UX0slNV3OADNDEI4u8P6u5xlna1gqlgFCa3Cp/Xt0hrkNwPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=joD9SW80; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/YSBy8ug; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728038331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VBgKKAO0Q/Z9dNt4RdWxipCkz06XMACjsNyLFX8vuSc=;
-	b=joD9SW804yEFtyv77HdaOV7gDonSksTii7kyw8zorQb+qLBZl2Zo4m3acbhvhlAThjxHxn
-	B+rf+tA1fnGjH06+FsYv6/vqyqhlh3NZk0Iuf2aCladge1j8jC9IABfRZWdUGTBjmKB0T7
-	GAN2WOa/xuMEa8BZQg1dRr0sexjof0vaNll9bj1eACYjCZEzYFZAQyng/1coyPSWMyclwG
-	39wIyMuod9iyVMky0qFJ+gxkF3tIrReCdUX2iqu8erItsnHk/Kw0gGlB7HlbfOBqdAW1Dw
-	t0Fmm02Qn9JhivcdTkHayhElTAypjaYYpoPX3nwiY+d+ZM+RX5KlZRzbx/raFw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728038331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VBgKKAO0Q/Z9dNt4RdWxipCkz06XMACjsNyLFX8vuSc=;
-	b=/YSBy8ug96ISxvIOTgVgJy0zRG9njNFnil6lXK4kpl0NhPPKpzWBCpDcIOYTbUcXYydKTa
-	ghenMSGrZIP7yfAw==
-To: linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 1/1] softirq: Use a dedicated thread for timer wakeups on PREEMPT_RT.
-Date: Fri,  4 Oct 2024 12:17:04 +0200
-Message-ID: <20241004103842.131014-2-bigeasy@linutronix.de>
-In-Reply-To: <20241004103842.131014-1-bigeasy@linutronix.de>
-References: <20241004103842.131014-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1728037178; c=relaxed/simple;
+	bh=ABL3wmDqqTNBkhLkQetuoOuvCA417zI/wRviczcrQXE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W7EYJzjQLKs3V+BkaVLnvQ84yIvYpgC94nLbZe62k0GItX/ipz3JO3ic5TkUcKcD03W5Katj+5qR4tH1vtNJi/saNlfv1iq63xTIa4YKAuBsdYDM5iRu7q1nm5aiRRKrZktoQm88gnz72czVknkPInsiohWY2m1l8nwBGC6zvoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2BGGZMmN; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c87ab540b3so5477348a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 03:19:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728037175; x=1728641975; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N/rcmFBYidoCiljefYKdEWXPO8lL88kIKj0tKbLJLyY=;
+        b=2BGGZMmNtp0UofABcZ8f4t6myddTEFkcXdvPqKvJ5LbDJxZcTU7EzRYCdZ5sOE+4I+
+         IMUEPioqReuLnOmSGKMQCaYaZ+DAXTzn5lEbglknhfgli4kh3mtfk2w8Ce/rSJ3nfiti
+         AS6ganj6A+FpHBiKEmMkxMOktiEgzr4pfFKfxFcwezex8veIOMhxMamuE3UxZReaugtG
+         QJGLOg8Z76B0b0r9fTRtzxnjwm+KKaQi/x6qXLaZ4RnfcdMROxJ5YeN6vPm9+w9fPdag
+         ObRQJ163M0p0ZS83kgMm0aCKjcdZKP5IqBKqfb+UNXD2CLdFZP8qZaH0PFZXREJrE6aL
+         YDuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728037175; x=1728641975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N/rcmFBYidoCiljefYKdEWXPO8lL88kIKj0tKbLJLyY=;
+        b=jGIyEVMeklz9hSnovlPwhhe76nHJtvL61vhyX8/S1jZJIasG43OMfncJMN0Mzibf4x
+         nzF/o5saAZLyUTYKWSzSPDAzcMUysh3izxXfOh86QMPNLyk1ST8t6fWGsyzdDpArXDBy
+         C/1hVj1OU+oDYthKdRKRu7YC7FNaE9UGvjFcKoT8ZeWZUxTBTW3wWcAD4wxouXNjgGum
+         yOGJx0FrxooiEQTaYvfGOusXV7sSYrfGPEfNxEkrza2qMFm/+nCIi1EKgeJhprf+D4u7
+         Wwf4KwcuAbgaZNqUPKkfk8N8/WM35YzAFkXyTeyLBtaReSgDBCScBDWMAtYg16fgrr4r
+         maFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhfQg4k/HC1lWxwk4uJ6f9NxtGKqpxR2x3Rs4v2d8lEfE9RQ4mlQG3XCJ/pyA7LGIlswMMJImokkYZa5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVFk1QIZzmHf3FkLyX2NJ4CBTR04C2QZxT5Wtodl4XVEEPUDPz
+	ilzqsvz7LQQOL1ie499Xi4+mhyAmq/PqWd9QwLFAe9Li5i+tkaScQa04Lyf+tMPUr6axsSsJVxv
+	Rg6aafKN0rKLwt4I8Z2kdyM1SLIqPKqwd/mi3
+X-Google-Smtp-Source: AGHT+IG2ylqDlHlpj6CludCqdF4jAiPwztB1MV/DHQjdD8kLzIL2saD55CdWhKN78Hfp28hLSalNMkp00XhcQDxqEsc=
+X-Received: by 2002:a05:6402:5250:b0:5c5:c444:4e3a with SMTP id
+ 4fb4d7f45d1cf-5c8d2e5523bmr2145135a12.0.1728037174770; Fri, 04 Oct 2024
+ 03:19:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241003170151.69445-1-ignat@cloudflare.com> <20241003215038.11611-1-kuniyu@amazon.com>
+ <CANn89iKtKOx47OW90f-uUWcuF-kcEZ-WBvuPszc5eoU-aC6Z0w@mail.gmail.com> <CALrw=nEV5KXwU6yyPgHBouF1pDxXBVZA0hMEGY3S6bOE_5U_dg@mail.gmail.com>
+In-Reply-To: <CALrw=nEV5KXwU6yyPgHBouF1pDxXBVZA0hMEGY3S6bOE_5U_dg@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 4 Oct 2024 12:19:20 +0200
+Message-ID: <CANn89i+BNfpKY_qCRLFyGSgtzNeVGuPKudw2nWTF7=r0+P9jUg@mail.gmail.com>
+Subject: Re: [PATCH] net: explicitly clear the sk pointer, when pf->create fails
+To: Ignat Korchagin <ignat@cloudflare.com>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, alibuda@linux.alibaba.com, davem@davemloft.net, 
+	kernel-team@cloudflare.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-A timer/ hrtimer softirq is raised in-IRQ context. With threaded
-interrupts enabled or on PREEMPT_RT this leads to waking the ksoftirqd
-for the processing of the softirq.
-Once the ksoftirqd is marked as pending (or is running) it will collect
-all raised softirqs. This in turn means that a softirq which would have
-been processed at the end of the threaded interrupt, which runs at an
-elevated priority, is now moved to ksoftirqd which runs at SCHED_OTHER
-priority and competes with every regular task for CPU resources.
-This introduces long delays on heavy loaded systems and is not desired
-especially if the system is not overloaded by the softirqs.
+On Fri, Oct 4, 2024 at 12:05=E2=80=AFPM Ignat Korchagin <ignat@cloudflare.c=
+om> wrote:
+>
+> On Fri, Oct 4, 2024 at 9:55=E2=80=AFAM Eric Dumazet <edumazet@google.com>=
+ wrote:
+> >
+> > On Thu, Oct 3, 2024 at 11:50=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazo=
+n.com> wrote:
+> > >
+> > > From: Ignat Korchagin <ignat@cloudflare.com>
+> > > Date: Thu,  3 Oct 2024 18:01:51 +0100
+> > > > We have recently noticed the exact same KASAN splat as in commit
+> > > > 6cd4a78d962b ("net: do not leave a dangling sk pointer, when socket
+> > > > creation fails"). The problem is that commit did not fully address =
+the
+> > > > problem, as some pf->create implementations do not use sk_common_re=
+lease
+> > > > in their error paths.
+> > > >
+> > > > For example, we can use the same reproducer as in the above commit,=
+ but
+> > > > changing ping to arping. arping uses AF_PACKET socket and if packet=
+_create
+> > > > fails, it will just sk_free the allocated sk object.
+> > > >
+> > > > While we could chase all the pf->create implementations and make su=
+re they
+> > > > NULL the freed sk object on error from the socket, we can't guarant=
+ee
+> > > > future protocols will not make the same mistake.
+> > > >
+> > > > So it is easier to just explicitly NULL the sk pointer upon return =
+from
+> > > > pf->create in __sock_create. We do know that pf->create always rele=
+ases the
+> > > > allocated sk object on error, so if the pointer is not NULL, it is
+> > > > definitely dangling.
+> > >
+> > > Sounds good to me.
+> > >
+> > > Let's remove the change by 6cd4a78d962b that should be unnecessary
+> > > with this patch.
+> > >
+> >
+> > Reviewed-by: Eric Dumazet <edumazet@google.com>
+> >
+> > Even if not strictly needed we also could fix af_packet to avoid a
+> > dangling pointer.
+>
+> af_packet was just one example - I reviewed every pf->create function
+> and there are others. It would not be fair to fix this, but not the
+> others, right?
 
-Split the TIMER_SOFTIRQ and HRTIMER_SOFTIRQ processing into a dedicated
-timers thread and let it run at the lowest SCHED_FIFO priority.
-Wake-ups for RT tasks happen from hardirq context so only timer_list timers
-and hrtimers for "regular" tasks are processed here. The higher priority
-ensures that wakeups are performed before scheduling SCHED_OTHER tasks.
+I have not said your patch was not correct, I gave a +2 on it.
 
-Using a dedicated variable to store the pending softirq bits values
-ensure that the timer are not accidentally picked up by ksoftirqd and
-other threaded interrupts.
-It shouldn't be picked up by ksoftirqd since it runs at lower priority.
-However if ksoftirqd is already running while a timer fires, then
-ksoftird will be PI-boosted due to the BH-lock to ktimer's priority.
-Ideally we try to avoid having ksoftirqd running.
+In general, leaving pointers to a freed piece of memory (and possibly reuse=
+d)
+can confuse things like kmemleak.
 
-The timer thread can pick up pending softirqs from ksoftirqd but only
-if the softirq load is high. It is not be desired that the picked up
-softirqs are processed at SCHED_FIFO priority under high softirq load
-but this can already happen by a PI-boost by a force-threaded interrupt.
-
-[ frederic@kernel.org: rcutorture.c fixes, storm fix by introduction of
-  local_pending_timers() for tick_nohz_next_event() ]
-
-[ junxiao.chang@intel.com: Ensure ktimersd gets woken up even if a
-  softirq is currently served. ]
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/interrupt.h | 29 ++++++++++++++
- kernel/rcu/rcutorture.c   |  6 +++
- kernel/softirq.c          | 82 ++++++++++++++++++++++++++++++++++++++-
- kernel/time/hrtimer.c     |  4 +-
- kernel/time/tick-sched.c  |  2 +-
- kernel/time/timer.c       |  2 +-
- 6 files changed, 120 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 457151f9f263d..4a4f367cd6864 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -616,6 +616,35 @@ extern void __raise_softirq_irqoff(unsigned int nr);
- extern void raise_softirq_irqoff(unsigned int nr);
- extern void raise_softirq(unsigned int nr);
-=20
-+#ifdef CONFIG_PREEMPT_RT
-+DECLARE_PER_CPU(struct task_struct *, timersd);
-+DECLARE_PER_CPU(unsigned long, pending_timer_softirq);
-+
-+extern void raise_timer_softirq(void);
-+extern void raise_hrtimer_softirq(void);
-+
-+static inline unsigned int local_pending_timers(void)
-+{
-+	return __this_cpu_read(pending_timer_softirq);
-+}
-+
-+#else
-+static inline void raise_timer_softirq(void)
-+{
-+	raise_softirq(TIMER_SOFTIRQ);
-+}
-+
-+static inline void raise_hrtimer_softirq(void)
-+{
-+	raise_softirq_irqoff(HRTIMER_SOFTIRQ);
-+}
-+
-+static inline unsigned int local_pending_timers(void)
-+{
-+	return local_softirq_pending();
-+}
-+#endif
-+
- DECLARE_PER_CPU(struct task_struct *, ksoftirqd);
-=20
- static inline struct task_struct *this_cpu_ksoftirqd(void)
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index bb75dbf5c800c..609687fd742d5 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -2440,6 +2440,12 @@ static int rcutorture_booster_init(unsigned int cpu)
- 		WARN_ON_ONCE(!t);
- 		sp.sched_priority =3D 2;
- 		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
-+#ifdef CONFIG_PREEMPT_RT
-+		t =3D per_cpu(timersd, cpu);
-+		WARN_ON_ONCE(!t);
-+		sp.sched_priority =3D 2;
-+		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
-+#endif
- 	}
-=20
- 	/* Don't allow time recalculation while creating a new task. */
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index d082e7840f880..2d847405e5a7f 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -624,6 +624,24 @@ static inline void tick_irq_exit(void)
- #endif
- }
-=20
-+#ifdef CONFIG_PREEMPT_RT
-+DEFINE_PER_CPU(struct task_struct *, timersd);
-+DEFINE_PER_CPU(unsigned long, pending_timer_softirq);
-+
-+static void wake_timersd(void)
-+{
-+	struct task_struct *tsk =3D __this_cpu_read(timersd);
-+
-+	if (tsk)
-+		wake_up_process(tsk);
-+}
-+
-+#else
-+
-+static inline void wake_timersd(void) { }
-+
-+#endif
-+
- static inline void __irq_exit_rcu(void)
- {
- #ifndef __ARCH_IRQ_EXIT_IRQS_DISABLED
-@@ -636,6 +654,10 @@ static inline void __irq_exit_rcu(void)
- 	if (!in_interrupt() && local_softirq_pending())
- 		invoke_softirq();
-=20
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT) && local_pending_timers() &&
-+	    !(in_nmi() | in_hardirq()))
-+		wake_timersd();
-+
- 	tick_irq_exit();
- }
-=20
-@@ -971,12 +993,70 @@ static struct smp_hotplug_thread softirq_threads =3D {
- 	.thread_comm		=3D "ksoftirqd/%u",
- };
-=20
-+#ifdef CONFIG_PREEMPT_RT
-+static void timersd_setup(unsigned int cpu)
-+{
-+	sched_set_fifo_low(current);
-+}
-+
-+static int timersd_should_run(unsigned int cpu)
-+{
-+	return local_pending_timers();
-+}
-+
-+static void run_timersd(unsigned int cpu)
-+{
-+	unsigned int timer_si;
-+
-+	ksoftirqd_run_begin();
-+
-+	timer_si =3D local_pending_timers();
-+	__this_cpu_write(pending_timer_softirq, 0);
-+	or_softirq_pending(timer_si);
-+
-+	__do_softirq();
-+
-+	ksoftirqd_run_end();
-+}
-+
-+static void raise_ktimers_thread(unsigned int nr)
-+{
-+	trace_softirq_raise(nr);
-+	__this_cpu_or(pending_timer_softirq, 1 << nr);
-+}
-+
-+void raise_hrtimer_softirq(void)
-+{
-+	raise_ktimers_thread(HRTIMER_SOFTIRQ);
-+}
-+
-+void raise_timer_softirq(void)
-+{
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	raise_ktimers_thread(TIMER_SOFTIRQ);
-+	wake_timersd();
-+	local_irq_restore(flags);
-+}
-+
-+static struct smp_hotplug_thread timer_threads =3D {
-+	.store			=3D &timersd,
-+	.setup			=3D timersd_setup,
-+	.thread_should_run	=3D timersd_should_run,
-+	.thread_fn		=3D run_timersd,
-+	.thread_comm		=3D "ktimers/%u",
-+};
-+#endif
-+
- static __init int spawn_ksoftirqd(void)
- {
- 	cpuhp_setup_state_nocalls(CPUHP_SOFTIRQ_DEAD, "softirq:dead", NULL,
- 				  takeover_tasklets);
- 	BUG_ON(smpboot_register_percpu_thread(&softirq_threads));
--
-+#ifdef CONFIG_PREEMPT_RT
-+	BUG_ON(smpboot_register_percpu_thread(&timer_threads));
-+#endif
- 	return 0;
- }
- early_initcall(spawn_ksoftirqd);
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index cddcd08ea827f..133d49f703d93 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1811,7 +1811,7 @@ void hrtimer_interrupt(struct clock_event_device *dev)
- 	if (!ktime_before(now, cpu_base->softirq_expires_next)) {
- 		cpu_base->softirq_expires_next =3D KTIME_MAX;
- 		cpu_base->softirq_activated =3D 1;
--		raise_softirq_irqoff(HRTIMER_SOFTIRQ);
-+		raise_hrtimer_softirq();
- 	}
-=20
- 	__hrtimer_run_queues(cpu_base, now, flags, HRTIMER_ACTIVE_HARD);
-@@ -1906,7 +1906,7 @@ void hrtimer_run_queues(void)
- 	if (!ktime_before(now, cpu_base->softirq_expires_next)) {
- 		cpu_base->softirq_expires_next =3D KTIME_MAX;
- 		cpu_base->softirq_activated =3D 1;
--		raise_softirq_irqoff(HRTIMER_SOFTIRQ);
-+		raise_hrtimer_softirq();
- 	}
-=20
- 	__hrtimer_run_queues(cpu_base, now, flags, HRTIMER_ACTIVE_HARD);
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 753a184c70907..efa3181607a2b 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -859,7 +859,7 @@ static void tick_nohz_restart(struct tick_sched *ts, kt=
-ime_t now)
-=20
- static inline bool local_timer_softirq_pending(void)
- {
--	return local_softirq_pending() & BIT(TIMER_SOFTIRQ);
-+	return local_pending_timers() & BIT(TIMER_SOFTIRQ);
- }
-=20
- /*
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 0fc9d066a7be4..79f0dc73ac436 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -2499,7 +2499,7 @@ static void run_local_timers(void)
- 		 */
- 		if (time_after_eq(jiffies, READ_ONCE(base->next_expiry)) ||
- 		    (i =3D=3D BASE_DEF && tmigr_requires_handle_remote())) {
--			raise_softirq(TIMER_SOFTIRQ);
-+			raise_timer_softirq();
- 			return;
- 		}
- 	}
---=20
-2.45.2
-
+I have not said _you_ had to review all pf->create() functions.
 
