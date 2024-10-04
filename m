@@ -1,86 +1,82 @@
-Return-Path: <linux-kernel+bounces-350237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0719901E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC449901E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDA7A1C2313D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:14:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1F81F25146
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E863157492;
-	Fri,  4 Oct 2024 11:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5Yv7xDe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0958F158534;
+	Fri,  4 Oct 2024 11:15:03 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E0713DDD3;
-	Fri,  4 Oct 2024 11:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D0A13DDD3;
+	Fri,  4 Oct 2024 11:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728040444; cv=none; b=uHDmb/zy2T7K705i9ggkJpdJqcJYgBf1efTspgfG/RyU6kNZu1/tH0RQjQsGXMWJzRyPvT2iqVvAYf5AHmB5WI30E/YUEbiHXCJsimol8MR05sRxGtH7oq0o2PxA5WZijS7yVDOAGk1bI3FxKdfKRtrf4bcCajYFlzRtxq6sArE=
+	t=1728040502; cv=none; b=DeoXB1rNkjYKYFF/I2ChepplcCJ9/Jw8Nf5Niy1Evg+s+BnP4QhBwd2ZbjJ70UMJVNtqlv/qfrOLPQzpd/cg2fZGVkFb7Sd1lXBO/tHIAT1Emb1Hnxm2M++86Z+lut8VwFZiFBaV3EBL5PfuBnAhtOMSl/g0ZRmkit8/jaEam0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728040444; c=relaxed/simple;
-	bh=DGc/W0UrKEUGOcaleW8QUdWu58sIZuwBFC6pQA6pPg4=;
+	s=arc-20240116; t=1728040502; c=relaxed/simple;
+	bh=LW23ndT1CxeC4h6uYTBagZ3oCm4WR+VrDPZOUEWaIBI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MIeB9xUpbcH+qatJzdbvxKLShD7q++Urr7shzcqw1lQy8XJr7TptYi94inGHVSNv847/tCLTRfvTnDlBFFFQWHyEC4GYIWoNH6x3ZqOzP4LtZvSz/9Yd+jkXfB8dpq/XwQzNhmsv9T/a2Iuqc36UJOo58OVChSj/w5NBlk9EA8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5Yv7xDe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA784C4CEC7;
-	Fri,  4 Oct 2024 11:14:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728040443;
-	bh=DGc/W0UrKEUGOcaleW8QUdWu58sIZuwBFC6pQA6pPg4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f5Yv7xDeibAmEYdBfg4FTCnKH4Bawxoi0s+lf6yFF2REePik0spkZQ1jRskqqdxOd
-	 XGY5cFlxaABdr1GETPvOGrqtbIgpWjU212S2NO7aGnfj1lG5AE11XX4bFzK10yJUxl
-	 P+eyfPXVyyKbwXsBYFj7lMd92/Mfrxd9qxzGU0Xcv11BwonfIjYJWvCdkcqnCn69WK
-	 T3LnoG+vg0p4vjaaQLtmivVluteoGCSGMQJHiLbcVXwYphSPFvFYxthBfJcs+CdGWF
-	 T6DyQKz8AaCqS3aOV2KG4GCU/e5R8Pth74Jiz06sjyzVJQ8A3QS27SlguCKxsRL+2H
-	 0QqbzhvU+iUGA==
-Date: Fri, 4 Oct 2024 12:13:59 +0100
-From: Simon Horman <horms@kernel.org>
-To: Aleksander Jan Bajkowski <olek2@wp.pl>
-Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: macb: Adding support for Jumbo Frames up
- to 10240 Bytes in SAMA5D2
-Message-ID: <20241004111359.GE1310185@kernel.org>
-References: <20241003171941.8814-1-olek2@wp.pl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mwd6jSgXxOqPglwuUugYZ1MLBm6f+U+Oa3QTDbRUVA+/FfOSk+wZzZLCUb4XvFVJXGQVNA6DMacJf/aINee/rte6nuWf9v0vaibdNyDxbL+BF4dTH9qDTKCvAn0YlBFegZe2oIIgUyJa6QOe6t+fFYC2tLOgYVI/jowKXFKXdH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=54078 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1swgGt-00FAWP-Bk; Fri, 04 Oct 2024 13:14:57 +0200
+Date: Fri, 4 Oct 2024 13:14:54 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Justin Stitt <justinstitt@google.com>
+Cc: Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Roopa Prabhu <roopa@nvidia.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	bridge@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH] netfilter: nf_tables: replace deprecated strncpy with
+ strscpy_pad
+Message-ID: <Zv_OLpeDYCPiPH19@calendula>
+References: <20240909-strncpy-net-bridge-netfilter-nft_meta_bridge-c-v1-1-946180aa7909@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241003171941.8814-1-olek2@wp.pl>
+In-Reply-To: <20240909-strncpy-net-bridge-netfilter-nft_meta_bridge-c-v1-1-946180aa7909@google.com>
+X-Spam-Score: -1.8 (-)
 
-On Thu, Oct 03, 2024 at 07:19:41PM +0200, Aleksander Jan Bajkowski wrote:
-> As per the SAMA5D2 device specification it supports Jumbo frames.
-> But the suggested flag and length of bytes it supports was not updated
-> in this driver config_structure.
-> The maximum jumbo frames the device supports:
-> 10240 bytes as per the device spec.
+On Mon, Sep 09, 2024 at 03:48:39PM -0700, Justin Stitt wrote:
+> strncpy() is deprecated for use on NUL-terminated destination strings [1] and
+> as such we should prefer more robust and less ambiguous string interfaces.
 > 
-> While changing the MTU value greater than 1500, it threw error:
-> sudo ifconfig eth1 mtu 9000
-> SIOCSIFMTU: Invalid argument
+> In this particular instance, the usage of strncpy() is fine and works as
+> expected. However, towards the goal of [2], we should consider replacing
+> it with an alternative as many instances of strncpy() are bug-prone. Its
+> removal from the kernel promotes better long term health for the
+> codebase.
 > 
-> Add this support to driver so that it works as expected and designed.
-> 
-> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+> The current usage of strncpy() likely just wants the NUL-padding
+> behavior offered by strncpy() and doesn't care about the
+> NUL-termination. Since the compiler doesn't know the size of @dest, we
+> can't use strtomem_pad(). Instead, use strscpy_pad() which behaves
+> functionally the same as strncpy() in this context -- as we expect
+> br_dev->name to be NUL-terminated itself.
 
-Thanks Aleksander,
-
-This appears to be consistent with:
-
-233a15875396 ("net: macb: Adding Support for Jumbo Frames up to 10240 Bytes in SAMA5D3")
-
-Reviewed-by: Simon Horman <horms@kernel.org>
+Applied to nf-next
 
