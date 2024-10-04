@@ -1,106 +1,111 @@
-Return-Path: <linux-kernel+bounces-349804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E3F98FBB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:44:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C938F98FBB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CAD41F218D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:44:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B4228206B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F151D5AD1;
-	Fri,  4 Oct 2024 00:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FCFC8FF;
+	Fri,  4 Oct 2024 00:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="gNhw32Sj"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="EBVjXTmP"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E984079E5
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 00:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E07F11C92;
+	Fri,  4 Oct 2024 00:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728002664; cv=none; b=TxHFRh7o3Q4wRiQCCLQd5lmYwFiYT3olyqv0dVKsbxVpF46ByOyQH+aQgdFoOUuaX3nxmfB/GYu1kUOmneclC6FSlXk6ydJCLaum8d7T+6WdCJjY3COldVx8uALmhI8mlkhgocL2iAiZdnj/cILf1UQDgyHDKoS92WlekdYMOSA=
+	t=1728002578; cv=none; b=kwId8oK8lQoB700aRu/2MEtslLHhX2TnBhw6RF609naypWB7Wu6J6VvtqLvZuJ/7izp7Sb5Pf+MBxaqJzS3i+/YkW73fNDktUNCZw5MnLfV07QEA0PGITyn2tt/HU5MbIHIebrRAagE2l0kkd68ER1PLpn9BQKjmSH/Laj3SRFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728002664; c=relaxed/simple;
-	bh=qz2ze7MDl3RmNjzv+Cv2+kl2AhSDVeS6KksEYqRj4Uo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZVc5j/P0LhjnVHs3q6ZsbwLYRedr2YmELVpn6RJrSNirpO4fJoM4FSi2iUoiF4Mu3OUfpNvW/9mD6932geJe2mIvMprgQ0iXibL59oS6P53Ch7UcOVsPY29LiROIoEkAufFiBlll4BxrP7T7ACQHaiKILQJbXzxUnYB8ibgLYsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=gNhw32Sj; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728002661;
-	bh=qz2ze7MDl3RmNjzv+Cv2+kl2AhSDVeS6KksEYqRj4Uo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gNhw32SjHNdpf0NTc1MFzWqHu6DOOEq+CnwiZkERcrDD8OlEq/fUVRMf34dFiDyZv
-	 gOk59UZ4bXh0VR5Rcv1YFesZppZC1t95CzVdTZL1xLOaq9X7oLwovW3qr5X0ai35eF
-	 LDXqp1+6segM8DsdD+KNLV0bAusgiqAz+6DXwoluAowr8BhRBJd2vCememDxUXdGiN
-	 mQuxgCkLfppbQEYBTEFJDFUggq/pOtf0yao3ZTrhAYlaT6iksFcsf8KVP6Ytlc7gga
-	 1bGqlc1bu4GMecuoWRamTFz36d60NKNouxqRO0CfxweaWJHgBNAUx7SRPtuUkDh2jM
-	 yeLLdrbgDZVWw==
-Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKVDP572QzBgZ;
-	Thu,  3 Oct 2024 20:44:21 -0400 (EDT)
-Message-ID: <9a6f262f-c00a-41be-823e-bf0d2ab50f62@efficios.com>
-Date: Thu, 3 Oct 2024 20:42:20 -0400
+	s=arc-20240116; t=1728002578; c=relaxed/simple;
+	bh=Tceov/Sz6VOnsY6sK8wHBtiRUJ6SjmEZeQzP7PUKEEI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qMTr0EGThKIKMeSilxC5Cyf03MfoiwGwMEA3TNBC9sAnlfreEG/E878kf/CnSeMwxXhg+e35ku2+8aoD1jCGW6bxe3kWJwGeg1YnA9s9Z6gSFcT33WZMJ46U6A+7zEYkwgn3VlSS6M3HuNTCFBuVGdiU+5GnOMNiBXllueOerO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=EBVjXTmP; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=rKdeWm3Oud5zUksSBOao5xNzkkZe3e90MkZhVY5qJIw=; b=EBVjXTmPxXM3ieJO
+	hjHgoqysx8poIfxKpln4DL5opyeHbyZHZ53zaxYljfZG/iHfE8a0h+61R1t5Ug7NGbc74z7hjGd+z
+	3GhlQaPpw9KUH5nCDrg7FKgSn0sXuhfH8QTcmjFIwnbG0PvPe53L8IP2RC2LEk5l08AhChZeRYCjO
+	q0txNg5Wea3gJAXL8O1D1q4+7xY4jJzCn7JCZ83QSnL+L3APStKkNZVWrU0ZSdxAlk+aOJqsyHNxn
+	vkNjEEOzekjWHYMcSW3590YovKcVDlz9VKA69f7dYDWzVF0cg1RFgxZasP3+wDwZfpQky3IOCeZQI
+	UbfTZtfyBvh6H4yS9A==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1swWPF-008lv9-2h;
+	Fri, 04 Oct 2024 00:42:53 +0000
+From: linux@treblig.org
+To: arend.vanspriel@broadcom.com,
+	kvalo@kernel.org,
+	linux-wireless@vger.kernel.org
+Cc: brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] brcmfmac: Remove unused brcmf_cfg80211_get_iftype
+Date: Fri,  4 Oct 2024 01:42:52 +0100
+Message-ID: <20241004004252.470836-1-linux@treblig.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] selftests/rseq: Adapt to glibc __rseq_size feature
- detection
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Valentin Schneider <vschneid@redhat.com>,
- Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
- Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>
-References: <20241003175157.1634301-1-mathieu.desnoyers@efficios.com>
- <20241003175157.1634301-3-mathieu.desnoyers@efficios.com>
- <ee987900-85ff-49f4-b393-4bbb889554dc@linuxfoundation.org>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <ee987900-85ff-49f4-b393-4bbb889554dc@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024-10-04 00:40, Shuah Khan wrote:
-> On 10/3/24 11:51, Mathieu Desnoyers wrote:
->> Adapt the rseq.c/rseq.h code to follow GNU C library changes 
->> introduced by:
->>
->> commit 2e456ccf0c34 ("Linux: Make __rseq_size useful for feature 
->> detection (bug 31965)")
->>
->> Wihout this fix, rseq selftests for mm_cid fail:
-> 
-> Without
-> 
-> Can you change the short log to say "Fix mm_cid test failure"
-> 
-> This way it is clear that this fixes a test failure. You can
-> add "Adapt to glibc __rseq_size feature detection: in the
-> chabeg log for context.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Yes, I will update it and re-send the series.
+brcmf_cfg80211_get_iftype() has been unused since 2013's commit
+5cd51c2bad56 ("brcmfmac: Find correct MAC descriptor in case of TDLS.")
 
-Thanks,
+Remove it.
 
-Mathieu
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ .../net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c    | 7 -------
+ .../net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h    | 1 -
+ 2 files changed, 8 deletions(-)
 
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index 349aa3439502..297a7c738c01 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -7820,13 +7820,6 @@ s32 brcmf_cfg80211_down(struct net_device *ndev)
+ 	return err;
+ }
+ 
+-enum nl80211_iftype brcmf_cfg80211_get_iftype(struct brcmf_if *ifp)
+-{
+-	struct wireless_dev *wdev = &ifp->vif->wdev;
+-
+-	return wdev->iftype;
+-}
+-
+ bool brcmf_get_vif_state_any(struct brcmf_cfg80211_info *cfg,
+ 			     unsigned long state)
+ {
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h
+index dc3a6a537507..2abae8894614 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h
+@@ -443,7 +443,6 @@ void brcmf_cfg80211_detach(struct brcmf_cfg80211_info *cfg);
+ s32 brcmf_cfg80211_up(struct net_device *ndev);
+ s32 brcmf_cfg80211_down(struct net_device *ndev);
+ struct cfg80211_ops *brcmf_cfg80211_get_ops(struct brcmf_mp_device *settings);
+-enum nl80211_iftype brcmf_cfg80211_get_iftype(struct brcmf_if *ifp);
+ 
+ struct brcmf_cfg80211_vif *brcmf_alloc_vif(struct brcmf_cfg80211_info *cfg,
+ 					   enum nl80211_iftype type);
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.46.2
 
 
