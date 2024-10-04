@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-350275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D5E9902A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:07:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B90A99044F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7BD1F21A35
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:07:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD992829BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10C115B11D;
-	Fri,  4 Oct 2024 12:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642C8212F1B;
+	Fri,  4 Oct 2024 13:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0SU/NGJ"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EHF1MGNE"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF871FAA;
-	Fri,  4 Oct 2024 12:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A55149DF4;
+	Fri,  4 Oct 2024 13:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728043654; cv=none; b=J+bYK88dLP3vIJeWwSZiq8uJKXz1P2r9CtIy+Jaj6bqma54qh/KcdbsERWu6YIhG1feYdH3Ydux0U++X+NEJ6sOllvZmE3UKhsUbtWGBTKDyV7li1WCyHZ5MTBhfTTq3UXjV1Au4VvvsYhW2avJLQ00miH5PV91OgguWgacHlkw=
+	t=1728048451; cv=none; b=Q/XLr5BWjzEFvhe0KAkOJZh7KcWOEuTZJJ/PbY0IsgZZIDnzHDr+PbzRmqDLBbbfehZopAOf2bKh/gMeXyfC+ztzDxZFDRXPZ3YInV/rutO9ttkTTAYwysPaLaqlHhhPTAXgxa/3vfmjmlSlR/p2z63WX33GKi4sG1tMhDqYbYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728043654; c=relaxed/simple;
-	bh=/nlhZDMw86a8EL1I6PUDXGIEBWPdc7RMixIl26A0uPE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fDDdSyFoXRNsLCdez8JOlAEVHBZ49Sddmf4qYuEmKTYlOoaN94rBpV27tG1B6EqbeLWOKqj250JLyH0AWkrGb5cj04FLXYfcUtmGqEzqglujv0KuzjNkGHad+GqkuFBBB565Ve5N8fHj8GMw6hLM9yqrc8kfP7XBbrq+tQuLfTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W0SU/NGJ; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1728048451; c=relaxed/simple;
+	bh=a93hVSkItuu3hCe0uBJSZlAAwH2LqSJVgJljySUsJm0=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=hTfrWNDCe1yJLX2/UsabU9YfH3DpCtvoOHJync3zuXbuFCAzMJW0NkyX0c8+mtyTcfHXDvfnXp0A4HEzNQ0INd2QnLuc6KchjsUXMPfOE4xScUCj0Rct7qkQIPUwtx3EPQlHt2XL3H5kaeIknM8paN7ckcNJF4H4gVRr2klkXH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EHF1MGNE; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c5b9d2195eso2756514a12.1;
-        Fri, 04 Oct 2024 05:07:32 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb0f28bfbso18431355e9.1;
+        Fri, 04 Oct 2024 06:27:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728043651; x=1728648451; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dJVK921w3iFUMPjOsedY5HobXgKXFD8ikd8FUYg1RJY=;
-        b=W0SU/NGJwiGrVoeP5fYedNbW9APJU+k4HFZClkqbWfBOiujOfSxS/bOlY/mN8ne3ea
-         JIBfHIvewi/rDHb3iq+glxzzpEAKao9AlDONS8JUD5JjNRRhhvK/XHCdTBJxpqeBm7ju
-         +X5FJRUHAONVMx20ceX2vqeHIqVI5shrb86NwlPU2jd0RxwPgEYuhR7fnbgecJ/jmRdx
-         mklwNF82GyYINxQBw+cHkHHMa28lGzfEtXvHWkK1gBeC8/6JgMznebaY/h9Y4Qvkdurt
-         fCXiKrT0e+cweWX9Iq31g8j6U9aYdHcPfhRr0FVAUyfqLmvX0SU1eIQkQSlj00TM5Ctz
-         2g8w==
+        d=gmail.com; s=20230601; t=1728048448; x=1728653248; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=22cBRwE57Xw0sioNBB/NhLn4DPgBWGUrQGpJqtIVHq0=;
+        b=EHF1MGNEizcZ1/XVgly+zR8gvTHJpnwPYL9/97TgrWzvL+07D50gLHKbxQY1aYh5V3
+         WEOUAXXcVgoDfcWKOYJCrwYYwF+FJ6viFRyq1wZolJjXLKjErtRTyCoOHo7vjJRvF306
+         NohzWoesjZ/934aBgM0+h5EySNYjFf8zrrgYO0f8wwAeOEbzOQrSoOlhY0l1/0v8qHz6
+         jx1+QnGoe2J8dH2gvCVCjwbeeukiOUdy2fcVSwITCCGoY2WjMH2JwlwJSEZF4mQUvNjy
+         qFaS9AScbvrQMjntfplNoKpxB3D49xqaABiK6HIvDRqK4ro0MFQTg6O8SjGdeu7TDpW9
+         S2XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728043651; x=1728648451;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dJVK921w3iFUMPjOsedY5HobXgKXFD8ikd8FUYg1RJY=;
-        b=ODDMfUD2x5RiQmGy0y5tn65tRlUsxTdc3ALaX5Ou7inRX3EqW/O0UaeoJdQEEqofDP
-         IrYjffM+A/WAbp8y17rJhJ9GJ3/gpJcAafTM/XplBYLRsPS/caE8QGUvkeIYpBgvACC7
-         v2KnjTXB/m960pmVQ6bjkP0ud8s4oETiNi1HtoF6bjeug6QxBnnzGPz6KLK8LCQk2vII
-         aqOtmHu75e66oxGcQRW719YJ6hTW2KCJSRz8tMKIj84qITEVa/q/P+Uo82/fu3BhEKej
-         HGHrC/U9EFKDzPa+InbLsFzS8/zermZxWnaEZpVPFXXeIs23vm4hs4Gb3Lv5RSngnraq
-         HVtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyqwChQ6niv1D5r3ItzA/7aMxeKQwb7UkMkxOLER4hN6fnIZQaDWJkTW62oCP18tjYBs0fM6x8zyNaeUpP@vger.kernel.org, AJvYcCXX5ZSfoCAPBbnUi/JC4Iv9CHIPAYmFHnr6owBGGRvm9SECrfnlIthTwmFXVEdqNVM8eGI60/UYoFf+P48W@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb1s8WqUJbfE2tb2lIaJEcDjcxsJNCyV43OyODC9zNuu3Obyek
-	U0hsq37mFtCUwXKhYzDjeyZ++9kwsQgSwJkQTpoZTgqSmVvaehWfJMMEdCfA
-X-Google-Smtp-Source: AGHT+IGCmBA6NptMvevhseiOieqkBOfft0hRfl6fCcaTQKwAPYzIHgU2oHNiwCMzms/GqgiqijKR0w==
-X-Received: by 2002:a05:6402:538a:b0:5c5:b9c2:c5bb with SMTP id 4fb4d7f45d1cf-5c8d2e9f05dmr1729696a12.35.1728043650570;
-        Fri, 04 Oct 2024 05:07:30 -0700 (PDT)
-Received: from ?IPV6:2a01:e11:5400:7400:cad:e881:e8d:c87? ([2a01:e11:5400:7400:cad:e881:e8d:c87])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8ca4f713asm1766441a12.97.2024.10.04.05.07.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 05:07:29 -0700 (PDT)
-Message-ID: <991c8404-1c1c-47c7-ab27-2117d134b59b@gmail.com>
-Date: Fri, 4 Oct 2024 14:07:25 +0200
+        d=1e100.net; s=20230601; t=1728048448; x=1728653248;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=22cBRwE57Xw0sioNBB/NhLn4DPgBWGUrQGpJqtIVHq0=;
+        b=RNo8V5pKGEuKCVlpo5Rii5temWPieXxTloWtAhNwRwwrKnPgzrotgkXW6a6JaWe3+a
+         A84tY0uX+5nT8tq4CXRtRF6VboKZFsQoAdldLklV/aYl6zOBWWHnsJCQJkQy7kudyBaV
+         9AxKYoQ/bOmVseAFwcZW0xHEAl22KeHikjf5cW2o0LpVdrw0vWNQObZqqV5aS7ZbZB7I
+         hRbTMgAvVeHzYXpUJ22Krm1ibELffG49b4R8RKm5M6PLy3oF0JEBGzuPJ/dDdEyVuLkI
+         elKq+kP1rPZ4D9vrpEZVitwwFTjS6UBTDX3xpY6sPN3As/ktvsJI+xRrtisY8H4ZgdSq
+         fbBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmhvoYKebDfU3OPCqt+13bgmbXfeRhc2JKsCMFG3LVrKoMrDkNe+zUXu5XGDa9BwI79vXkSoJ7@vger.kernel.org, AJvYcCUu6C9vpPrV6XuVvFbXu5i4J36Ztej7Gbag21bIbGXxm3ARwjW6VBjxh3zpoZhgTntjubC4xrDaHkc=@vger.kernel.org, AJvYcCXLzNNrrjDbtGKdDsWLz0gvw1Bw4u9civeQCPhEwPrQrW0rSYIuCwSnpd/EAqflEgCsqQD27R66i6a5HuAh@vger.kernel.org
+X-Gm-Message-State: AOJu0YywBDHCTE6yxFFWpUq/ADrwXsnBPnCsboQ+X9dxmRI72D5Rfsd2
+	tjBX0ftyueNx9u1xd8ZEYDjCrk1CKQZs35b877Jz6u95ELbQI7OD
+X-Google-Smtp-Source: AGHT+IH3yRfRGBBOHC0hZKS9HHSTVHJgXqCz4P71fKXwCQTPx3XtSJMJI4pbwzjjO5SWKJWuVhC+aw==
+X-Received: by 2002:a05:600c:3507:b0:42c:b309:8d18 with SMTP id 5b1f17b1804b1-42f85ac1ff6mr20186185e9.19.1728048448049;
+        Fri, 04 Oct 2024 06:27:28 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:395e:c10e:1999:d9f1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d07fde1fesm3303168f8f.0.2024.10.04.06.27.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 06:27:27 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,  "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Jonathan
+ Corbet <corbet@lwn.net>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+  linux-kernel@vger.kernel.org,  netdev@vger.kernel.org,
+  linux-doc@vger.kernel.org,  Kyle Swenson <kyle.swenson@est.tech>,  Dent
+ Project <dentproject@linuxfoundation.org>,  kernel@pengutronix.de
+Subject: Re: [PATCH net-next 07/12] netlink: specs: Expand the PSE netlink
+ command with C33 prio attributes
+In-Reply-To: <20241002-feature_poe_port_prio-v1-7-787054f74ed5@bootlin.com>
+	(Kory Maincent's message of "Wed, 02 Oct 2024 18:28:03 +0200")
+Date: Fri, 04 Oct 2024 11:44:47 +0100
+Message-ID: <m2r08wf8ps.fsf@gmail.com>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+	<20241002-feature_poe_port_prio-v1-7-787054f74ed5@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Fix NULL pointer dereference in read_cache_folio
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, skhan@linuxfoundation.org,
- syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
-References: <20240929230548.370027-3-gianf.trad@gmail.com>
- <20240930090225.28517-2-gianf.trad@gmail.com>
- <ZvrqotTfw06vAK9Y@casper.infradead.org>
-Content-Language: en-US, it
-From: Gianfranco Trad <gianf.trad@gmail.com>
-In-Reply-To: <ZvrqotTfw06vAK9Y@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 30/09/24 20:14, Matthew Wilcox wrote:
-> On Mon, Sep 30, 2024 at 11:02:26AM +0200, Gianfranco Trad wrote:
->> @@ -2360,6 +2360,8 @@ static int filemap_read_folio(struct file *file, filler_t filler,
->>   	/* Start the actual read. The read will unlock the page. */
->>   	if (unlikely(workingset))
->>   		psi_memstall_enter(&pflags);
->> +	if (!filler)
->> +		return -EIO;
-> 
-> This is definitely wrong because you enter memstall, but do not exit it.
+Kory Maincent <kory.maincent@bootlin.com> writes:
 
-Got it, thanks.
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+>
+> Expand the c33 PSE attributes with priority and priority max to be able to
+> set and get the PSE Power Interface priority.
+>
+> ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-get
+>              --json '{"header":{"dev-name":"eth1"}}'
+> {'c33-pse-actual-pw': 1700,
+>  'c33-pse-admin-state': 3,
+>  'c33-pse-avail-pw-limit': 97500,
+>  'c33-pse-prio': 2,
+>  'c33-pse-prio-max': 2,
+>  'c33-pse-pw-class': 4,
+>  'c33-pse-pw-d-status': 4,
+>  'c33-pse-pw-limit-ranges': [{'max': 18100, 'min': 15000},
+>                              {'max': 38000, 'min': 30000},
+>                              {'max': 65000, 'min': 60000},
+>                              {'max': 97500, 'min': 90000}],
+>  'header': {'dev-index': 5, 'dev-name': 'eth1'}}
+>
+> ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-set
+>              --json '{"header":{"dev-name":"eth1"},
+>                       "c33-pse-prio":1}'
+> None
+>
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-> 
-> As Andrew says, the underlying problem is that the filesystem does not
-> implement ->read_folio.  Which filesystem is this?
-
-Reproducer via procfs accesses a bpf map backed by an anonymous
-inode (anon_inode_fs_type), with mapping->a_ops pointing to anon_aops,
-hence, read_folio() undefined.
-
-> 
->>   	error = filler(file, folio);
->>   	if (unlikely(workingset))
->>   		psi_memstall_leave(&pflags);
->> -- 
->> 2.43.0
->>
-
-I suppose the next step would be to contact the proper maintainers(?)
-If you have any additional suggestions, I'd be more than glad to listen.
-
-Thanks to both of you for your time,
-
---Gian
-
+Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 
