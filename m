@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-351066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B168A990CE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:59:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 543B9990CA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7D31F220C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:59:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06A11F22242
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2442009AF;
-	Fri,  4 Oct 2024 18:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA461FB3C4;
+	Fri,  4 Oct 2024 18:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abG/5t4p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ic6Eu+cZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B53C2009A2;
-	Fri,  4 Oct 2024 18:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51CC1FAC44
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066313; cv=none; b=B+/futPQcL64hxCoL8+Z83qSVZBEHKaMa6awnK/4Q2oIi+ZQNepYw5JQE566d00fxgCQaVov8zaxthjQmQWBoePL9+Og8xzBra1kZ4lFpTiLtNKO+BSeirPc6GDE9fZfcShhcaczI+iOg/RBkbiogKY1M/BepSZyN20vW6LI7PU=
+	t=1728066225; cv=none; b=sDkLFXdgQvjGeI/d4lG+BziiNW0vECUO/UPn3PHVgkmu9AwN6k0RBLr2aCzLdJkUQDn8EPI1fn75yXXOOthxXPO7XZEYsKKF8HrhnijEnifCDl8MHM2s2EvQD9mrxsjxrQ2rHsUtJ88+qtOKxy87VIfh5xxbzqbLiQFfZbndxjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066313; c=relaxed/simple;
-	bh=/xEHbD1S9fJifTO2lK5CNHKP/Ub5l6y09bgLXiTTMk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y/+rzHOwVLNCRo1jEbY8jR0395KMIObMpWC1xO0ywm/ThKGxLIYE5+spV7qsu3YDxaqhlKqtXlY3y2ZD91CioxclLjQf5DEFhnCQhVrGcxlj3/TKCK1Jo8NkK3ZWv1hWC8kSFypzBToXv747V0O8f0GzMqUi1nmfS1/GAk6tw+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abG/5t4p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98F7C4CECE;
-	Fri,  4 Oct 2024 18:25:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066313;
-	bh=/xEHbD1S9fJifTO2lK5CNHKP/Ub5l6y09bgLXiTTMk0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=abG/5t4pKbTkt74KteSLZsxVxDbeLA7WsrsTr3L6o6ni6yl8o4NUONjpltFzc88Xb
-	 X2+y4f+HtdhR3qpjC4NGI1Sy9hynvWit8b63a+9VkduoIDy1GcU1cboO8WTDoHRA7k
-	 AqWUfoJiRTP8QYQOcGV6dg2/wY8VT+Tt2BeLGCKH2G+sd0q2S2vjVSWPupCd7rJECE
-	 XCUxMGTWrqXumXI/96ozcB7ihVWC3V/ITbOYjtFdq/Foxj0ktVcDWI+MqRmAPyIHXv
-	 ofJqjXHZyqvUAkJvOhMLgZEor+xLIRDLkOWRNOdiBKaLKQirlkz0gMVMSRhoeYf3tM
-	 iO2rHmVi7IFmg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Heiko Carstens <hca@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Sasha Levin <sashal@kernel.org>,
-	gor@linux.ibm.com,
-	agordeev@linux.ibm.com,
-	nathan@kernel.org,
-	akpm@linux-foundation.org,
-	iii@linux.ibm.com,
-	frankja@linux.ibm.com,
-	sumanthk@linux.ibm.com,
-	jpoimboe@kernel.org,
-	linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 05/58] s390/boot: Compile all files with the same march flag
-Date: Fri,  4 Oct 2024 14:23:38 -0400
-Message-ID: <20241004182503.3672477-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004182503.3672477-1-sashal@kernel.org>
-References: <20241004182503.3672477-1-sashal@kernel.org>
+	s=arc-20240116; t=1728066225; c=relaxed/simple;
+	bh=opHH52SekK6nZaQeI5hv1osvzD+JfYbxKdx73XHC/Xw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lFQtcnHhG+w0NL47Try1BcQfBEzpaOhI46Em7Vxe848SgMrEJ/5TxI7A9PNfJD5ea3s9gqMsvA3dxOgSUz+msT8Is2hIYYyyjqmHLGwjSDf1G9nykgKADO+cAmciu/HGkaNAmOPNYDsnWGJ3AExD7HVjePRZHF4/kT5lbDlcnJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ic6Eu+cZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494A4grc031989;
+	Fri, 4 Oct 2024 18:23:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bqBt+x4TRRe7C1lPlzRCRL5ZSm4Dw8vlyjsXr8DFA/0=; b=ic6Eu+cZVkTKbwqm
+	ybfjM4am4lOvpnZsinhnZnuJUoOB5q6g91GTGkJ1+7DzQoIMsDc7UJB9YU60HswM
+	0yk2pIcpEeQqFSzVXRuBxS0bq7CBrm1uJVMygqW4keT7ZBHjrBvdNHwwtVOS5nGE
+	rl8PZwX7XujHFnfSXPAI6uuqNWtLxOA8C8dPuLVZjUA0xUfArQZTDTFFpgfejirx
+	MGMPyyTyVUd8gGuXX7aoFUWUWP+atjbpfeEoPUySqW29xSIElv7fi+BH0PvwxLMM
+	Dz6WrZpvtBDVHtDvJqcmm1yEBv/tuJaYHh8JggyJ2SbSYrAFOSjOofVAdOy0be/N
+	bw/KlQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205f2xp4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 18:23:40 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494INdR5032471
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 18:23:39 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
+ 11:23:38 -0700
+Message-ID: <bc45a66f-70d1-da44-808c-e924d8e06c37@quicinc.com>
+Date: Fri, 4 Oct 2024 12:23:38 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.54
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V3 10/11] accel/amdxdna: Add query functions
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240911180604.1834434-1-lizhi.hou@amd.com>
+ <20240911180604.1834434-11-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240911180604.1834434-11-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: vqHGHLNlK-WsapGgwE7jC2IumvKkXO98
+X-Proofpoint-ORIG-GUID: vqHGHLNlK-WsapGgwE7jC2IumvKkXO98
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=998 priorityscore=1501 phishscore=0 bulkscore=0
+ impostorscore=0 clxscore=1015 lowpriorityscore=0 spamscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040127
 
-From: Heiko Carstens <hca@linux.ibm.com>
+On 9/11/2024 12:06 PM, Lizhi Hou wrote:
+> diff --git a/drivers/accel/amdxdna/aie2_error.c b/drivers/accel/amdxdna/aie2_error.c
+> index 3b8223420f5b..9dc44ecf2adb 100644
+> --- a/drivers/accel/amdxdna/aie2_error.c
+> +++ b/drivers/accel/amdxdna/aie2_error.c
+> @@ -3,6 +3,7 @@
+>    * Copyright (C) 2023-2024, Advanced Micro Devices, Inc.
+>    */
+>   
+> +#include <drm/amdxdna_accel.h>
+>   #include <drm/drm_cache.h>
+>   #include <drm/drm_device.h>
+>   #include <drm/drm_print.h>
 
-[ Upstream commit fccb175bc89a0d37e3ff513bb6bf1f73b3a48950 ]
-
-Only a couple of files of the decompressor are compiled with the
-minimum architecture level. This is problematic for potential function
-calls between compile units, especially if a target function is within
-a compile until compiled for a higher architecture level, since that
-may lead to an unexpected operation exception.
-
-Therefore compile all files of the decompressor for the same (minimum)
-architecture level.
-
-Reviewed-by: Sven Schnelle <svens@linux.ibm.com>
-Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/s390/boot/Makefile | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
-
-diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
-index c7c81e5f92189..e4def3a6c6cca 100644
---- a/arch/s390/boot/Makefile
-+++ b/arch/s390/boot/Makefile
-@@ -9,11 +9,8 @@ UBSAN_SANITIZE := n
- KASAN_SANITIZE := n
- KCSAN_SANITIZE := n
- 
--KBUILD_AFLAGS := $(KBUILD_AFLAGS_DECOMPRESSOR)
--KBUILD_CFLAGS := $(KBUILD_CFLAGS_DECOMPRESSOR)
--
- #
--# Use minimum architecture for als.c to be able to print an error
-+# Use minimum architecture level so it is possible to print an error
- # message if the kernel is started on a machine which is too old
- #
- ifndef CONFIG_CC_IS_CLANG
-@@ -22,16 +19,10 @@ else
- CC_FLAGS_MARCH_MINIMUM := -march=z10
- endif
- 
--ifneq ($(CC_FLAGS_MARCH),$(CC_FLAGS_MARCH_MINIMUM))
--AFLAGS_REMOVE_head.o		+= $(CC_FLAGS_MARCH)
--AFLAGS_head.o			+= $(CC_FLAGS_MARCH_MINIMUM)
--AFLAGS_REMOVE_mem.o		+= $(CC_FLAGS_MARCH)
--AFLAGS_mem.o			+= $(CC_FLAGS_MARCH_MINIMUM)
--CFLAGS_REMOVE_als.o		+= $(CC_FLAGS_MARCH)
--CFLAGS_als.o			+= $(CC_FLAGS_MARCH_MINIMUM)
--CFLAGS_REMOVE_sclp_early_core.o	+= $(CC_FLAGS_MARCH)
--CFLAGS_sclp_early_core.o	+= $(CC_FLAGS_MARCH_MINIMUM)
--endif
-+KBUILD_AFLAGS := $(filter-out $(CC_FLAGS_MARCH),$(KBUILD_AFLAGS_DECOMPRESSOR))
-+KBUILD_CFLAGS := $(filter-out $(CC_FLAGS_MARCH),$(KBUILD_CFLAGS_DECOMPRESSOR))
-+KBUILD_AFLAGS += $(CC_FLAGS_MARCH_MINIMUM)
-+KBUILD_CFLAGS += $(CC_FLAGS_MARCH_MINIMUM)
- 
- CFLAGS_sclp_early_core.o += -I$(srctree)/drivers/s390/char
- 
--- 
-2.43.0
-
+Feels like this should be in the previous patch.
 
