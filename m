@@ -1,123 +1,157 @@
-Return-Path: <linux-kernel+bounces-350023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6465A98FEC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:16:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB9698FEDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E562816F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:16:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD0B1C212F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22B313CFA5;
-	Fri,  4 Oct 2024 08:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F1113D25E;
+	Fri,  4 Oct 2024 08:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ixt9CnNi"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=tuxedo.de header.i=@tuxedo.de header.b="EeaRuE8R"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F9C6F305
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 08:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0134D6F305;
+	Fri,  4 Oct 2024 08:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728029798; cv=none; b=WFnyrFj4qN9l/U8cXIMkrSXI6+ZKuqRwN9K04KyqYZrsrgYksntX4lBQIae2vC9yxH/GpR+ftHBJqdr1GM2oc+n4RcOJYfGosrMuwa/TbeGGQJQiOCTJZgelyOWXbJ9QmviZPZEY/k9vCpCrnLPD7e1+uebYxOi+K1bj6peT9Is=
+	t=1728029902; cv=none; b=IVLXVLbRTJKNUimGOJcwMZJ6g5hmro98vKOLSRiKJfxlekT4/Kp8WH8FMXJ/cssLyTPhpw7LP0TN8KCTzsYO8qoNnasVPymcmVwSBJz/PHCWfOPE2+uEX+NVd5qvRmKZ4iqTyG+U1AK9Lc8jh2ufCGy3+SqF4msofJ566Hq17U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728029798; c=relaxed/simple;
-	bh=c43f90flHYTN0da2c6xEBraaBOdF9VKmWMVoG3VLcl8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o+KyphWV0GtiBxDqXjfb8YRXjtmLTVeOF8AadmyhjhpfggkaaTL1rlKqpeVAVIz6KKxav4qs6H5oLVsgs4Dv4tk6L0hBtGAoXbPMoN5Doh2J/EGnyLQpVl0hhSbaSw4Ru9ereKisA4te0DbMskCXJqK3DBm9b4Rld/dVhnFTEEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ixt9CnNi; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b7463dd89so20346805ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 01:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728029796; x=1728634596; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EpHwQlBLt9aUuZVqI52DbACRCcwYewzEXJNWbf21nvo=;
-        b=Ixt9CnNiO9EGFJ2xteGbOXw5ja4c5LxZFzSt7XO0JMJTt9mf25ZxPbckdb2Lk2yvEt
-         tPMoEU588EQAwnr9nFkIPOai2bRDSgASMcR3LGMJQUnZsq0gWXA8oJiXNCnI8kEp0r2R
-         AnusNRtWjk1v7no1OedJeSo+XK1zIkt8rFQqabWZfzkh/GPtSo1BYaRz13lpweEhYnVV
-         t9dwE2WXGKCt+rGZZd6Cw7P5tA47uT8znOQ9MfWszXugVTzcgZwiQKC7ql6/x7ONIYSv
-         1m/6oWcHPoHO4mejJNIHaz6P0WbPIAOqcCuWmYmjokdxyzpN0qQcjIua2uv3yiGanMLc
-         fgsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728029796; x=1728634596;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EpHwQlBLt9aUuZVqI52DbACRCcwYewzEXJNWbf21nvo=;
-        b=AvLcQAfo3kgJVFIl0GsFt7o1oZ7tJsP9J46X8PjAjMQ7bniCFs3hBToDBu+NkfaUT1
-         PZ/3xCXmdvNjZcmm2RBhRISKT9HA0zjtjL3YGxz6RfVyBKDW5D79LSzxqdzD5nsAWasR
-         dBQ4r6WWMuCTcASJ4Qxq3MmOwfmAKvuQaXEPJ4zBJBaPWLr6G1aoXmz/oNylx3+sVT+o
-         3IcLMd9F4c7ASz1x+pFMwGTvbJwb6qRpczlBxbAshVaXV/rFb0Ch3SfgCKo114QxPrG/
-         2HEniifAS8wCTkeMiZmQ8i6ESYw05xpGex9UTtii5tKLbXq0wiQVerJ1zh98E3mFTro7
-         Kmig==
-X-Forwarded-Encrypted: i=1; AJvYcCWA4GtmkvOpe2OhPUoL4Xvr04Po8no2FxoWNHMZ9wjyipyulkeZo2vMFEm0ytz2WMYqDf9qbE3rThDNl9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFpTmxP3DdXHrYTvDsojfA8snk9unYdYq4ZS9+BVzn85B4SG+g
-	Hp3tf+bK0YU4n9DVaZLDo3XE+bqyizZ3+9wRfoRhvMW9XjkXSUqmKyv0MX8y
-X-Google-Smtp-Source: AGHT+IESstItqCuBNL/elHzMasRvg1qmLhXnxawENnsB30tcavQLHFcDrefZED0ZlkxVd/XHEigKaA==
-X-Received: by 2002:a17:902:e551:b0:20b:4875:2c51 with SMTP id d9443c01a7336-20bfe024d5cmr32004945ad.27.1728029796105;
-        Fri, 04 Oct 2024 01:16:36 -0700 (PDT)
-Received: from advait-kdeneon.. ([2405:201:1e:f1d5:4e5:4fce:4f6a:9764])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beead49b4sm19832125ad.32.2024.10.04.01.16.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 01:16:35 -0700 (PDT)
-From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	leo.liu@amd.com,
-	sathishkumar.sundararaju@amd.com,
-	saleemkhan.jamadar@amd.com,
-	Veerabadhran.Gopalakrishnan@amd.com,
-	advaitdhamorikar@gmail.com,
-	sonny.jiang@amd.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com
-Subject: [PATCH-next] Fix unintentional integer overflow
-Date: Fri,  4 Oct 2024 13:46:18 +0530
-Message-Id: <20241004081618.27599-1-advaitdhamorikar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728029902; c=relaxed/simple;
+	bh=vEVx02YeXFs1Ck3x9SmNG7bAkUKtAAM5e0JVmiFheKE=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=n50SGis27FZmO42oHaius9DXTUK+8ebj44jrrdZ9ADsmqdzturtl9N+DE3iEinUXf1Rzm9nxF8Xz5hY1vJZIrxYzWC3+58iYroUmrG6YP9GpKoZjIIEPEFgUgCguyl9tZKsTXXH14YU0VU4g+u1yarN2HvvS5TI2/iuJoBR7fLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tuxedo.de; spf=pass smtp.mailfrom=tuxedo.de; dkim=pass (2048-bit key) header.d=tuxedo.de header.i=@tuxedo.de header.b=EeaRuE8R; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tuxedo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedo.de
+Received: from mail.tuxedocomputers.com (localhost [IPv6:::1])
+	(Authenticated sender: cs@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id B95CD2FC0064;
+	Fri,  4 Oct 2024 10:18:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedo.de; s=default;
+	t=1728029890;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+CpL4Sl5F+f6FBlOiTv4ia09midQCrE4QrZcBntnkKI=;
+	b=EeaRuE8RPsGjp8wzk/S3kRhFvF7BTozX6DMp/XJnkHT2lYEoqclf5o5COivn3FaAOA718F
+	BJGwsO+naHqt+QhDd9swWSjHnoO3/wtjQtbvGqUc3y2LZgr2IRskf1Uv6VrHDCJLQ1s7aF
+	TuK34/uqQ7DMmrDvmFLV3LJFvTRr5O1QmXJEcqa3U27dxhD1Wo3Fln5DdXcvy67wtbC2cf
+	gUcAq5QFVZS/VkFNFaUqeyuR3BewVx753bFsidtfsd//Ua/suhjhT0jNOcQL8CyGZ89L+/
+	rXAZ7nAYS+iijXgrDyh4nLvpdZXeIZXf9jouVsekjum36C49YNdv6Ppuy+y41g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Fri, 04 Oct 2024 10:18:10 +0200
+From: Christoffer Sandberg <cs@tuxedo.de>
+To: Jerry Luo <jerryluo225@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.de>, christian@heusel.eu,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz,
+ regressions@lists.linux.dev, wse@tuxedocomputers.com
+Subject: Re: [REGRESSION][BISECTED] Audio volume issues since 4178d78cd7a8
+In-Reply-To: <d348ca06-38ca-474f-8673-dff2248331e5@gmail.com>
+References: <87jzfbh5tu.wl-tiwai@suse.de>
+ <ea6e5168-238f-41f5-9600-36b75ed990a1@gmail.com>
+ <87jzetk2l0.wl-tiwai@suse.de> <b38b5947482a5ca4b55e0ddb908c2f34@tuxedo.de>
+ <87seteli51.wl-tiwai@suse.de>
+ <d348ca06-38ca-474f-8673-dff2248331e5@gmail.com>
+User-Agent: Roundcube Webmail/1.4.15
+Message-ID: <dbc783cc2608ac63ffd420b1dc3eeaa9@tuxedo.de>
+X-Sender: cs@tuxedo.de
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fix shift-count-overflow when creating mask.
-The expression's value may not be what the
-programmer intended, because the expression is
-evaluated using a narrower integer type.
 
-Fixes: f0b19b84d391 ("drm/amdgpu: add amdgpu_jpeg_sched_mask debugfs")
-Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-index 95e2796919fc..7df402c45f40 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-@@ -388,7 +388,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_get(void *data, u64 *val)
- 		for (j = 0; j < adev->jpeg.num_jpeg_rings; ++j) {
- 			ring = &adev->jpeg.inst[i].ring_dec[j];
- 			if (ring->sched.ready)
--				mask |= 1 << ((i * adev->jpeg.num_jpeg_rings) + j);
-+				mask |= (u64)1 << ((i * adev->jpeg.num_jpeg_rings) + j);
- 		}
- 	}
- 	*val = mask;
--- 
-2.34.1
+On 2.10.2024 23:28, Jerry Luo wrote:
+> On 10/2/24 10:00 AM, Takashi Iwai wrote:
+>> On Wed, 02 Oct 2024 10:21:22 +0200,
+>> Christoffer Sandberg wrote:
+>>> 
+>>> 
+>>> On 30.9.2024 09:44, Takashi Iwai wrote:
+>>>> On Mon, 23 Sep 2024 21:37:42 +0200,
+>>>> Jerry Luo wrote:
+>>>>> 
+>>>>> Hi Takashi,
+>>>>> 
+>>>>> On Mon, 16 Sep 2024 19:22:05 +0200,
+>>>>> 
+>>>>> Takashi Iwai wrote:
+>>>>> 
+>>>>>      Could you give alsa-info.sh output from both working and
+>>>>> non-working
+>>>>>      cases?  Run the script with --no-upload option and attach the
+>>>>> outputs.
+>>>>> 
+>>>>>      thanks,
+>>>>> 
+>>>>>      Takashi
+>>>>> 
+>>>>> Issue now reappear, output from alsa-info.sh are attached. If they
+>>>>> are still
+>>>>> needed.
+>>>> Thanks.  The obvious difference seems to be the assignment of two 
+>>>> DACs
+>>>> 0x10 and 0x11 for headphone and speaker outputs.
+>>>> 
+>>>> Christoffer, how are those on your machines?
+>>> I attached alsa-info from the Sirius Gen2 device.
+>>> 
+>>> Comparing the working/nonworking of Jerry, yeah, the assignment of
+>>> 0x10 and 0x11 looks switched around. I don't see what difference this
+>>> would make. Also, node 0x22 has "bass speaker" controls in the
+>>> non-working version.
+>>> 
+>>> Comparing the Sirius Gen2 alsa-info with Jerrys, to me it looks like
+>>> the non-working version corresponds to our working version.
+>>> 
+>>> I would expect the non-working version to happen all the time though
+>>> with regards to the "bass speaker" controls. Why would this only
+>>> happen sometimes?
+>> Thanks!  The assignment of DACs depend on the pins and topology, so it
+>> can be a bit sensitive.
+>> 
+>> Now looking more closely at both outputs, I wonder how the commit
+>> breaks pang14.  Maybe it has a PCI SSID 2782:12c5 (or 12c3) while the
+>> codec SSID is 2782:12b3?  If so, the patch below should fix.
 
+Interesting, you're right, PCI SSID c3/c5 and codec SSID c3/c5 for the 
+Siriuses.
+
+I had a look around. In patch_realtek there are some cases where codec 
+SSID match is needed as well. Would it be better/safer to directly do 
+this immediately or keep it as an exception where it breaks or for known 
+sensitive models/brands?
+
+>> 
+>> Could you guys try it and verify whether it fixes for Pangolin and
+>> doesn't break Sirius?
+>> 
+>> 
+>> Takashi
+>> 
+> It does seems to fix the issue on Pangolin. It might worth mention
+> that the headphone output will have the same issue when the speaker is
+> not working. Now they are all good. Thanks!
+> 
+> 
+> Jerry
+
+Tested on our devices, both speakers still active.
+
+That's an ok from my side as well, thanks!
+
+Christoffer
 
