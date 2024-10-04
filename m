@@ -1,154 +1,154 @@
-Return-Path: <linux-kernel+bounces-350047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D449298FF1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:53:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B8898FF1D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AB55B21FA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:53:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0FFF1F22540
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F7513E898;
-	Fri,  4 Oct 2024 08:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18311142E78;
+	Fri,  4 Oct 2024 08:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9aEorJw"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="humaQc4M"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB38179BB
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 08:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D7D13E898
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 08:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728032004; cv=none; b=fK/kYUZ//Y+BujG3Q6rMmbe1bpg0IjWyZu6G4JxeAfLvB6OtFnAboidUuib9efb0cARv0+i0+qBNGw8F0IA00f18krS24Y1aGubEo0TKWjDzqR8ej5da0/D0lnQCpCUiFH+EiLRecS+hOlwdNKKCDwteZx1fk9oN3EyRWVoO3Is=
+	t=1728032130; cv=none; b=alsXklaLTahvy5kwmEBj08TnAaewYXDncugBTFIIuYqIQ2dtchmLVI0o82zpge805ndahwFcrIzneAwo7DEpeoG5T6kgIbcF4tkBD+G+Hr8uIluJf3uhVL1VCgPzTXDAwfn+mBo1J5BUkKERCzia6RNAnNsn4hmWhhC/eqvPx0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728032004; c=relaxed/simple;
-	bh=fSi/DnRqOTTDowmfSZ5bZ6hGI+ihjfxBm59znB+ZY1M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NKHPqzz/jgPF+b01eBkdTZzDCRK9t8Z1xYQyYowFf8tDDO8JykthmptZotky8pFhMEHo8/cCa5FbosEwGQlMQ7d1UGx3f3DdZgDoVlF4A9JUmqTXR/itwUoW4LoJfiG5xISPI/WFMphsPzBOT82lks1+ApgelwiFYioG0IV0DkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T9aEorJw; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cb2191107so16936725e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 01:53:22 -0700 (PDT)
+	s=arc-20240116; t=1728032130; c=relaxed/simple;
+	bh=G4NOQYUd6lbAZrqBMu3K3LRuuLXb8ndFNWXjGjfThWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E6DdbzaxakhRUID53/PbJ2/bZMK3jik48G52LmjbPy4UP9GEf0THReNa/cCmNkRxrpnanqtqQzqozZ90h3Vj5hkK8u7hQ3evHa4mXd88LFa1F9OIBQ58JvVpIRw1M09OTNx90nUP9dRsTkiVgqdgGSJJwbQvLAz+SvsjPQ+sNoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=humaQc4M; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fad8337aa4so23415501fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 01:55:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728032000; x=1728636800; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ghyrjKQPR6MAXEymJxap2yPvYqxKajoThOTWMdhxLdk=;
-        b=T9aEorJwJepoxXXfOK/k4pp6cJ5F9DrVRzE0H1v4rIXiqdKqQsz+YjMFevLBLvNbnJ
-         ihPdya5PqZEDqW+z5GdG6AZCcie6flWaHPmJa7bjUpoKo/SHoS95tGNinkBm9+lzcPfw
-         QPqjl7YIomjW7KJUX6VnDnapd1fQe8Ez78mb4vHUoGZ6Dgm/AnP0tdsS6bNIPMvg9eF0
-         QxUwT3jCwGtV/+nFH1SP608m4C6aWsq6ACuYxtSr9cUfvbkT4EGV5l0xtv0ZVPGxma3d
-         MO3ZkocLhzExwT5goMPwqYomlHw1pxrPvB/aaXA18osKtxAxXqYIEsQKW2S+mMZAF00G
-         zRgA==
+        d=google.com; s=20230601; t=1728032127; x=1728636927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=APHihkRJ426qI6C5wVNLcGdq46sW64PqDR1x8Iq4k5k=;
+        b=humaQc4MtqhNrQg2IcqU4fsW6Uv1V40uVNxxwWDhibF0H9N18tGvWMXie7bWeWeumh
+         MRFpK/k8OtUbx/8h39u+zrnMvfRCT5fHj83grBq5pycQdWuKztcGpUwb+FnJg6IQLXY7
+         vEXVxxA8ViIFGmIMeh0f5Gf93JqP0rf77GaGd6PYbu1d8FSJkLKLWoNgxpaDerKSCyhX
+         t7Qj+t0AS8xCy8AISCSusBvbSlpc2tjsxY9XufZxMWNAWizF3xpMQZ9tjX0Lm7bHhGQr
+         HS79eVHRl0kWTnkgCpvHDuxCfa3FzFRp9hRtLb7xvdHueHvRdtbKM+/wd0ejCbPt2ozA
+         +n7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728032000; x=1728636800;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ghyrjKQPR6MAXEymJxap2yPvYqxKajoThOTWMdhxLdk=;
-        b=YMFj0NWNcUKErqeW+qjl1rFl38wwoSJ7CJGJX6yjgPuIO3fFSBHheAiYF1RJMy9CEa
-         U8G9W+eO2OCjNURNRmnz2WX4A+t/7htq1rXzHlDgrP+LQtTCzXEu9CMD6ysqjbD5ipCz
-         v3AUfryRwSku0Z5gelwCDEO28uPgjkGnz61AJB/Q2sRIQF4gfvqDVHDaTi9SQrwuyTG0
-         SdmmbWm4Fy6ACyp73Jr1KumTqw9FURcUgOp5hsP6fd/0rlB7AEL2ucYDcbTqAfkzzKqR
-         XmITKMlCO2dWukDKF7ZDdvr7Z0i9EZXPwg41O3XrxqBuhkXvG3llz37Q18tUUPslts8K
-         UVfg==
-X-Gm-Message-State: AOJu0Yy3Wiv35Bndj2T89w3GXgNwtBAhmIVM4EwWAD3quXmbgZtHHR2R
-	myIUE47Pb6uJmGSkdWZErK94lMAbqh1o7FgWIJbwb8cH0sp+jzWtHe3p5BXa
-X-Google-Smtp-Source: AGHT+IHyMfjfE9X8yw3eeuZMil/pQjXN1GC6KmK1zTbMsg4APUoK4scF+XlnFjeIZcYx4a+olPhvEQ==
-X-Received: by 2002:a5d:5ccf:0:b0:374:c949:836d with SMTP id ffacd0b85a97d-37d0e7b9d9emr1203853f8f.37.1728032000167;
-        Fri, 04 Oct 2024 01:53:20 -0700 (PDT)
-Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d081f74d9sm2845453f8f.7.2024.10.04.01.53.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 01:53:19 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v2] futex: Rewrite get_inode_sequence_number() to make code simpler
-Date: Fri,  4 Oct 2024 10:52:32 +0200
-Message-ID: <20241004085257.10908-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.46.2
+        d=1e100.net; s=20230601; t=1728032127; x=1728636927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=APHihkRJ426qI6C5wVNLcGdq46sW64PqDR1x8Iq4k5k=;
+        b=VUnVYUB62t1SH7WDZnTESSUgBil25113OHKsWd0xBBZD0Yvi5NOhqC5zrTLn5rnWgJ
+         BRPzgMk4DQ6CCh24m0VVkso35850qwnAhjzlRaKuxqQcFlrLSq8iex3ARQRx8Z20fjn6
+         04m4OfnAvCtyXqny4xKdvcKVK8qCQE6bU3u3/VtkjZIGWM+gfxheEkOEoQaytwGIsUKO
+         H6xPI+PzmcMtPYiwDACOJnaRdilqIHF9/+z8TmvC2BTGLBz7xxXf8RRmhLj7VmJ0vKHU
+         p8xs1jyqyy1zGdIfoTrTWkT/8IL0LQk7WProL/9DQ/YfaBt+I8b5sDizDS9PQMLf+Y0E
+         nAJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFJxg6SlXdqhisgppMzTEBClfN5aftAz3qT1pfhROFMiBCJO6qYLbw2q8yUa3a1cuN/Br5gY8dxBledow=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymu0XWkid2UG+0r+HwMeEJFQWFSN1GzR20Hkzxyvndkkd5Rc74
+	1qqu7DaGjwao8STPPMiy2w+eEdthugKyl54ZBvy/UCaHjmOolIvklw2IVRRNh2S0tHn08ZzDGuW
+	nYygBm4SWT9SNOt9zpI0SVV3iz6bGWLllefan
+X-Google-Smtp-Source: AGHT+IGTqyJALZax478RwJ5kw0jUBmZiI4PXZFZPCOQh2NZNXGF5/4paa1kJ4psKYCjn+3Xprn5TVs/ZIHHKuAqKKg4=
+X-Received: by 2002:a2e:be90:0:b0:2fa:c9ad:3d17 with SMTP id
+ 38308e7fff4ca-2faf3bfffc0mr11399431fa.4.1728032126561; Fri, 04 Oct 2024
+ 01:55:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241003170151.69445-1-ignat@cloudflare.com> <20241003215038.11611-1-kuniyu@amazon.com>
+In-Reply-To: <20241003215038.11611-1-kuniyu@amazon.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 4 Oct 2024 10:55:12 +0200
+Message-ID: <CANn89iKtKOx47OW90f-uUWcuF-kcEZ-WBvuPszc5eoU-aC6Z0w@mail.gmail.com>
+Subject: Re: [PATCH] net: explicitly clear the sk pointer, when pf->create fails
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: ignat@cloudflare.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
+	kernel-team@cloudflare.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rewrite get_inode_sequence_number() to make code simpler:
+On Thu, Oct 3, 2024 at 11:50=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.co=
+m> wrote:
+>
+> From: Ignat Korchagin <ignat@cloudflare.com>
+> Date: Thu,  3 Oct 2024 18:01:51 +0100
+> > We have recently noticed the exact same KASAN splat as in commit
+> > 6cd4a78d962b ("net: do not leave a dangling sk pointer, when socket
+> > creation fails"). The problem is that commit did not fully address the
+> > problem, as some pf->create implementations do not use sk_common_releas=
+e
+> > in their error paths.
+> >
+> > For example, we can use the same reproducer as in the above commit, but
+> > changing ping to arping. arping uses AF_PACKET socket and if packet_cre=
+ate
+> > fails, it will just sk_free the allocated sk object.
+> >
+> > While we could chase all the pf->create implementations and make sure t=
+hey
+> > NULL the freed sk object on error from the socket, we can't guarantee
+> > future protocols will not make the same mistake.
+> >
+> > So it is easier to just explicitly NULL the sk pointer upon return from
+> > pf->create in __sock_create. We do know that pf->create always releases=
+ the
+> > allocated sk object on error, so if the pointer is not NULL, it is
+> > definitely dangling.
+>
+> Sounds good to me.
+>
+> Let's remove the change by 6cd4a78d962b that should be unnecessary
+> with this patch.
+>
 
-a) Rewrite FOR loop to a DO-WHILE loop with returns moved
-out of the loop.
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
-b) Use atomic64_inc_return() instead of atomic64_add_return().
+Even if not strictly needed we also could fix af_packet to avoid a
+dangling pointer.
 
-c) Use !atomic64_try_cmpxchg_relaxed(*ptr, &old, new) instead of
-atomic64_cmpxchg_relaxed (*ptr, old, new) != old.  x86 CMPXCHG
-instruction returns success in ZF flag, so this change also saves
-a compare instruction after CMPXCHG.
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index a705ec21425409dc708cf61d619545ed342b1f01..db7d3482e732f236ec461b1ff52=
+a264d1b93bf90
+100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -3421,16 +3421,18 @@ static int packet_create(struct net *net,
+struct socket *sock, int protocol,
+        if (sock->type =3D=3D SOCK_PACKET)
+                sock->ops =3D &packet_ops_spkt;
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: "André Almeida" <andrealmeid@igalia.com>
----
-v2: Explicitly initialize "old" to zero before the call to
-atomic64_try_cmpxchg_relaxed(). Rewrite commit message to
-state the motivation for the patch.
----
- kernel/futex/core.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
++       po =3D pkt_sk(sk);
++       err =3D packet_alloc_pending(po);
++       if (err)
++               goto out2;
++
++       /* No more error after this point. */
+        sock_init_data(sock, sk);
 
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index 136768ae2637..ac650f7ed56c 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -173,23 +173,21 @@ futex_setup_timer(ktime_t *time, struct hrtimer_sleeper *timeout,
- static u64 get_inode_sequence_number(struct inode *inode)
- {
- 	static atomic64_t i_seq;
--	u64 old;
-+	u64 old, new;
- 
- 	/* Does the inode already have a sequence number? */
- 	old = atomic64_read(&inode->i_sequence);
- 	if (likely(old))
- 		return old;
- 
--	for (;;) {
--		u64 new = atomic64_add_return(1, &i_seq);
--		if (WARN_ON_ONCE(!new))
--			continue;
-+	do {
-+		new = atomic64_inc_return(&i_seq);
-+	} while	(WARN_ON_ONCE(!new));
- 
--		old = atomic64_cmpxchg_relaxed(&inode->i_sequence, 0, new);
--		if (old)
--			return old;
--		return new;
--	}
-+	old = 0;
-+	if (!atomic64_try_cmpxchg_relaxed(&inode->i_sequence, &old, new))
-+		return old;
-+	return new;
- }
- 
- /**
--- 
-2.46.2
+-       po =3D pkt_sk(sk);
+        init_completion(&po->skb_completion);
+        sk->sk_family =3D PF_PACKET;
+        po->num =3D proto;
 
+-       err =3D packet_alloc_pending(po);
+-       if (err)
+-               goto out2;
+
+        packet_cached_dev_reset(po);
 
