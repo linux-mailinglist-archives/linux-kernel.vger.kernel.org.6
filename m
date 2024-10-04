@@ -1,135 +1,95 @@
-Return-Path: <linux-kernel+bounces-351231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E5D990EC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:41:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20CD990E96
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 440EA1F24DE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:41:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 980A4280CAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612BE22AD32;
-	Fri,  4 Oct 2024 18:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40ED92281FE;
+	Fri,  4 Oct 2024 18:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPxF/qbM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6w+0H2W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49A522AD2A;
-	Fri,  4 Oct 2024 18:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAB92281DE;
+	Fri,  4 Oct 2024 18:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066670; cv=none; b=Ya/RnaC4GRHsGG+Fa34vQoNqsJZxFhEyzpfg82dzIwdF9HXmOvaz66SJuDFZd2ohqqHixOWnZdcUMjSMK3gBti/klvwIlA+RQbC/FXhyls2YG47rSMGXa17g9JSJH64eneAZ56NF066APLTwD/LheRapuGVBF5pjMaDD9zMN0cE=
+	t=1728066634; cv=none; b=CrH637E4Vo1yFawMPZMZFqqQnceFalq0/i2VfscTabit8R/JEtWFBwE0YOrorK2GD+K/h4/LnM2J91uVsuD+uO85hriCTqrYjX/Y45QrFK8Jai2VXXTaSMm88dWBczVbk53aJaJk2uDOJ05UJa47jRrKCSKM2OLmj9+7ZkXWViY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066670; c=relaxed/simple;
-	bh=R85LbV8H9lilogl/LLZ8T2Bj37ho9J71VV48hHczD64=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qMMgMzzR2Dfq6EZtVmpnz3LobpvFPcoJkTw/L3ssKwHXu2OVe0e/KG+p3NG+tnwAOFLWRuHN1EXNd1TKtwv+LThLqFj37HsN97I4nAkIHiiXcnVHmK/m8nl94FhPqiY+hLeLjijZdiJc8t6v2jphg1paWb7yQEvxVjhbNcrxVrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPxF/qbM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6C7BC4CECD;
-	Fri,  4 Oct 2024 18:31:08 +0000 (UTC)
+	s=arc-20240116; t=1728066634; c=relaxed/simple;
+	bh=xasM00lynAo+BSi/xT1aQHH+uZC3jhuQiZ/pR7PgChI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Zv/BVwEed9DsPBzep6+meXSr4qqtDznk6I5YiRVb2FS7xMk+dTzWJLIFtc2TLgZ6+7ewBReiPcmU47p3DbFellJ/em3zwnLR0ksjObVuKvhktNwd/DBefQNul/zwP5fFlX5n/SKWaRm2J4gk1e6fp9klaFf+dkWjx3TEHmwYp2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6w+0H2W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26E12C4CED0;
+	Fri,  4 Oct 2024 18:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066670;
-	bh=R85LbV8H9lilogl/LLZ8T2Bj37ho9J71VV48hHczD64=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WPxF/qbMqInsBIT8KYZEFtoJqeAm4RNEK8lMhlZkpuuS616m9zpBJ5RDt0W7ZxdW5
-	 kFoow3qJisc/5XTci3jT86yALZd4Qqp0nfsA/sYauLt2SFLTlnHZ5jFxViTvDmk8wQ
-	 j+sOKAoKcQTjG74Lr9EWfBxUOj8O8Vv7U++EOhUfqyHl7yoHFTp2mWJybJL/qx6r9/
-	 owxVKndvkPPmqKi6iMMn0EjGulswYw2idRbMuSnz83Gvrn1ewZ4dleg+sWW6+Oikv+
-	 V3o/lXnlzfagxmow0k/Pwhhq+ZjLfzgS6SkkQ8GZFzMqRp+G1yQ+MC2uDg9XFJwBDo
-	 X/1+bCzYtJI4A==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Heiko Carstens <hca@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Sasha Levin <sashal@kernel.org>,
-	gor@linux.ibm.com,
-	agordeev@linux.ibm.com,
-	nathan@kernel.org,
-	sumanthk@linux.ibm.com,
-	iii@linux.ibm.com,
-	frankja@linux.ibm.com,
-	jpoimboe@kernel.org,
-	linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 02/21] s390/boot: Compile all files with the same march flag
-Date: Fri,  4 Oct 2024 14:30:37 -0400
-Message-ID: <20241004183105.3675901-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004183105.3675901-1-sashal@kernel.org>
-References: <20241004183105.3675901-1-sashal@kernel.org>
+	s=k20201202; t=1728066634;
+	bh=xasM00lynAo+BSi/xT1aQHH+uZC3jhuQiZ/pR7PgChI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=h6w+0H2WUpldTKAfCDdPEjhii4+U5Kena9EE0MOcMOWL6A0avyV3GImYQz1vxDhVT
+	 G38x70nY5/FOvyLSLCwkyDTklXSSCP/Tr0vcvNNoXyRmD15M6xeX0KwtC1DiWo0/n4
+	 H3XUt+m/PtU6NeoqT17PBHg0mabgvDUQ0YWcTN6ZD3gWC0KyIneEIkBP++m8fENN2a
+	 w3L5vyPkq/yqouJqwNo03Lrcf9L5qBux5dwyrrp+AbGL7S2uFbcQfN9EogoolPuDam
+	 9B2I8KIhjv+Wu3gFMQTWLet0m6aqWujB2+MZ2iqOmrSJMhI//T+HpDh69htmGGqeHF
+	 0DJjEu0Etzh6w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB62239F76FF;
+	Fri,  4 Oct 2024 18:30:38 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.284
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: macb: Adding support for Jumbo Frames up to
+ 10240 Bytes in SAMA5D2
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172806663775.2691890.6191095154643853918.git-patchwork-notify@kernel.org>
+Date: Fri, 04 Oct 2024 18:30:37 +0000
+References: <20241003171941.8814-1-olek2@wp.pl>
+In-Reply-To: <20241003171941.8814-1-olek2@wp.pl>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Heiko Carstens <hca@linux.ibm.com>
+Hello:
 
-[ Upstream commit fccb175bc89a0d37e3ff513bb6bf1f73b3a48950 ]
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Only a couple of files of the decompressor are compiled with the
-minimum architecture level. This is problematic for potential function
-calls between compile units, especially if a target function is within
-a compile until compiled for a higher architecture level, since that
-may lead to an unexpected operation exception.
+On Thu,  3 Oct 2024 19:19:41 +0200 you wrote:
+> As per the SAMA5D2 device specification it supports Jumbo frames.
+> But the suggested flag and length of bytes it supports was not updated
+> in this driver config_structure.
+> The maximum jumbo frames the device supports:
+> 10240 bytes as per the device spec.
+> 
+> While changing the MTU value greater than 1500, it threw error:
+> sudo ifconfig eth1 mtu 9000
+> SIOCSIFMTU: Invalid argument
+> 
+> [...]
 
-Therefore compile all files of the decompressor for the same (minimum)
-architecture level.
+Here is the summary with links:
+  - [net-next] net: macb: Adding support for Jumbo Frames up to 10240 Bytes in SAMA5D2
+    https://git.kernel.org/netdev/net-next/c/8389cdb5c192
 
-Reviewed-by: Sven Schnelle <svens@linux.ibm.com>
-Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/s390/boot/Makefile | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
-
-diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
-index 0ff9261c915e3..cba2705c62353 100644
---- a/arch/s390/boot/Makefile
-+++ b/arch/s390/boot/Makefile
-@@ -8,11 +8,8 @@ GCOV_PROFILE := n
- UBSAN_SANITIZE := n
- KASAN_SANITIZE := n
- 
--KBUILD_AFLAGS := $(KBUILD_AFLAGS_DECOMPRESSOR)
--KBUILD_CFLAGS := $(KBUILD_CFLAGS_DECOMPRESSOR)
--
- #
--# Use minimum architecture for als.c to be able to print an error
-+# Use minimum architecture level so it is possible to print an error
- # message if the kernel is started on a machine which is too old
- #
- ifndef CONFIG_CC_IS_CLANG
-@@ -21,16 +18,10 @@ else
- CC_FLAGS_MARCH_MINIMUM := -march=z10
- endif
- 
--ifneq ($(CC_FLAGS_MARCH),$(CC_FLAGS_MARCH_MINIMUM))
--AFLAGS_REMOVE_head.o		+= $(CC_FLAGS_MARCH)
--AFLAGS_head.o			+= $(CC_FLAGS_MARCH_MINIMUM)
--AFLAGS_REMOVE_mem.o		+= $(CC_FLAGS_MARCH)
--AFLAGS_mem.o			+= $(CC_FLAGS_MARCH_MINIMUM)
--CFLAGS_REMOVE_als.o		+= $(CC_FLAGS_MARCH)
--CFLAGS_als.o			+= $(CC_FLAGS_MARCH_MINIMUM)
--CFLAGS_REMOVE_sclp_early_core.o	+= $(CC_FLAGS_MARCH)
--CFLAGS_sclp_early_core.o	+= $(CC_FLAGS_MARCH_MINIMUM)
--endif
-+KBUILD_AFLAGS := $(filter-out $(CC_FLAGS_MARCH),$(KBUILD_AFLAGS_DECOMPRESSOR))
-+KBUILD_CFLAGS := $(filter-out $(CC_FLAGS_MARCH),$(KBUILD_CFLAGS_DECOMPRESSOR))
-+KBUILD_AFLAGS += $(CC_FLAGS_MARCH_MINIMUM)
-+KBUILD_CFLAGS += $(CC_FLAGS_MARCH_MINIMUM)
- 
- CFLAGS_sclp_early_core.o += -I$(srctree)/drivers/s390/char
- 
+You are awesome, thank you!
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
