@@ -1,159 +1,208 @@
-Return-Path: <linux-kernel+bounces-350440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAE3990531
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:02:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E6B990534
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F176E1F240A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:02:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A8AE1C22959
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F832141DF;
-	Fri,  4 Oct 2024 14:02:30 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9A92139C1;
+	Fri,  4 Oct 2024 14:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zq6kmT7f";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+7PlV7z3";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zq6kmT7f";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+7PlV7z3"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1BF15748E
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DE015748E;
+	Fri,  4 Oct 2024 14:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728050549; cv=none; b=aKtlaOUkNgLHipfab8wNpL3J3lxVGMrRtbH8wQzcMS1nFsJvjxTa8ujfAF8KVkXJai/2/4Itu7XrLBn4yHFOaxTerpXvlB7Oxp4Rnp2otjpAczgYxp8FrsqhaaYetm+etM937aFBbqmJck91PJTLkX4ScYd6SDprvFvGlQPYsg4=
+	t=1728050568; cv=none; b=dJKFGI4usTeSAbGzfo2k2HQ8KGfZeswRFt1DUMGacgbfwNkNUZy4DCCt4N0Ok/6oxJqeITabBnsZ6y4/Cu/xQGWPFgghZd/v0tCcy16/cUCkN4M2RcE2RyNhp+cUjiMwTMAQAHsqI952sQ7Y1iIr7JXmRk+VElv0qXHl++sUqjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728050549; c=relaxed/simple;
-	bh=m+EuFRP4yJCBryc6cpYw/Y6cYfUZ04WOCx4r0St2QmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLu0SV9y8DE7hQA7+TKtt/8reF4sKZeK7ItHyJItUgO5RRcxiye57+DMko1IZ1bwlSQREtUOk0r962k5OijOGUat9znSaYWsTAMh9IG/SHknBTP3AwHttQxZR4fn/6AZ+RxovGgaU+JHm6murCFIB4PiLDlUIrRM6tVtcX+Tc8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1swisr-0006f4-HM; Fri, 04 Oct 2024 16:02:17 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1swisp-003abZ-Kf; Fri, 04 Oct 2024 16:02:15 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1swisp-00AhcU-1j;
-	Fri, 04 Oct 2024 16:02:15 +0200
-Date: Fri, 4 Oct 2024 16:02:15 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Kory Maincent <kory.maincent@bootlin.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de
-Subject: Re: [PATCH net-next 11/12] net: pse-pd: Add support for event
- reporting using devm_regulator_irq_helper
-Message-ID: <Zv_1ZzwQJ-P36mt6@pengutronix.de>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
- <20241002-feature_poe_port_prio-v1-11-787054f74ed5@bootlin.com>
- <f56780af-b2d4-42d7-bc5d-c35b295d7c52@lunn.ch>
- <20241003102806.084367ba@kmaincent-XPS-13-7390>
- <f97baa90-1f76-4558-815a-ef4f82913c3a@lunn.ch>
- <20241003153303.7cc6dba8@kmaincent-XPS-13-7390>
- <4b9d1adf-e9bd-47c0-ac69-5da77fcf8d0b@lunn.ch>
- <Zv_0ESPJgHKhFIwk@pengutronix.de>
+	s=arc-20240116; t=1728050568; c=relaxed/simple;
+	bh=Foo2ekqWaWWi28wmA/yN6/45dO3dfNCZnOQEmUN4X18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N2tCsIxT06Pn+erifcw/+VzDVtE1bw7cVp1LAPEt1tOT54wbGrrqwyM+M+m5ZmJ/0Moi2gle2AcC3dw6OHjmjIWwMuVYNfcrz5YnUG4+BTjudSkoXKI+xkIUNoJbRbLHCsB3E+twIeqv87PAPjyOLsdSjvayirY7yUHHjQs3/OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zq6kmT7f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+7PlV7z3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zq6kmT7f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+7PlV7z3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7381821CA8;
+	Fri,  4 Oct 2024 14:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728050562; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gqObr0AigrA7ZpSBRTkZlMkVnj4cssT1fvsbDoNXTBA=;
+	b=zq6kmT7fngtRfjgf9qUkwTesO8WgncvKkraHd2d8ezCwKqSdaxEFtwIKIxNP+Nmv4s6o+1
+	qbJo/d8FsMqk/NshOosnwiNswVOBsRux5Nu135oArTM0eucWh10iF7ptbGgK4Me5qcRkWz
+	trMj+a848KoRwX8ptLOvoD2Vl4kXsoQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728050562;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gqObr0AigrA7ZpSBRTkZlMkVnj4cssT1fvsbDoNXTBA=;
+	b=+7PlV7z3ZLT73G0jZTspuxXdOAmuf2J5/0vMiX54e6PEESOg69lWqzIccWfLZUbW781hyb
+	B+nN77x3oiYupTCA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=zq6kmT7f;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=+7PlV7z3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728050562; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gqObr0AigrA7ZpSBRTkZlMkVnj4cssT1fvsbDoNXTBA=;
+	b=zq6kmT7fngtRfjgf9qUkwTesO8WgncvKkraHd2d8ezCwKqSdaxEFtwIKIxNP+Nmv4s6o+1
+	qbJo/d8FsMqk/NshOosnwiNswVOBsRux5Nu135oArTM0eucWh10iF7ptbGgK4Me5qcRkWz
+	trMj+a848KoRwX8ptLOvoD2Vl4kXsoQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728050562;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gqObr0AigrA7ZpSBRTkZlMkVnj4cssT1fvsbDoNXTBA=;
+	b=+7PlV7z3ZLT73G0jZTspuxXdOAmuf2J5/0vMiX54e6PEESOg69lWqzIccWfLZUbW781hyb
+	B+nN77x3oiYupTCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4962313A6E;
+	Fri,  4 Oct 2024 14:02:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id eC2iEIL1/2ZxYAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 04 Oct 2024 14:02:42 +0000
+Message-ID: <713a42f1-83d0-4d20-96f0-db9815313205@suse.de>
+Date: Fri, 4 Oct 2024 16:02:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zv_0ESPJgHKhFIwk@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: clps711x-fb: Remove dead code
+To: Qianqiang Liu <qianqiang.liu@163.com>, deller@gmx.de
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241004014349.435006-1-qianqiang.liu@163.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20241004014349.435006-1-qianqiang.liu@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 7381821CA8
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[163.com,gmx.de];
+	FREEMAIL_ENVRCPT(0.00)[163.com,gmx.de];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Oct 04, 2024 at 03:56:33PM +0200, Oleksij Rempel wrote:
-> On Thu, Oct 03, 2024 at 05:22:58PM +0200, Andrew Lunn wrote:
-> > > Indeed, but regulator API already provide such events, which will even be sent
-> > > when we enable or disable the PSE. Should we write a second event management.
-> > > Using regulator event API allows to report over current internal events to the
-> > > parents regulator the power supply of the PSE which could also do something to
-> > > avoid smoke.
-> > > 
-> > > Or maybe we should add another wrapper which will send PSE ethtool netlink
-> > > notification alongside the regulator notifications supported by this patch.
-> > > 
-> > > > Also, how do regulator events work in combination with network
-> > > > namespaces? If you move the interface into a different network
-> > > > namespace, do the regulator events get delivered to the root namespace
-> > > > or the namespace the interface is in?
-> > > 
-> > > regulator events are sent in root namespace.
-> > 
-> > I think we will need two event, the base regulator event, and a
-> > networking event. Since it is a regulator, sending a normal regulator
-> > event makes a lot of sense. But mapping that regulator event to a
-> > netns:ifnam is going to be hard. Anything wanting to take an action is
-> > probably going to want to use ethtool, and so needs to be in the
-> > correct netns, etc. But it does get messy if there is some sort of
-> > software driven prioritisation going on, some daemon needs to pick a
-> > victim to reduce power to, and the interfaces are spread over multiple
-> > network namespaces.
-> > 
-> > What i don't know is if we can use an existing event, or we should add
-> > a new one. Often rtnetlink_event() is used:
-> > 
-> > https://elixir.bootlin.com/linux/v6.12-rc1/source/net/core/rtnetlink.c#L6679
-> > 
-> > but without some PSE information in it, it would be hard to know why
-> > it was sent. So we probably either want a generic ethtool event, or a
-> > PSE event.
-> 
-> Hm... assuming we have following scenario:
-> 
->                                   .---------   PI 1
->                                  / .---------  PI 2
->                    .========= PSE /----------( PI 3 ) NNS red
->                   //              \----------( PI 4 ) NNS blue
-> Main supply      //                `---------( PI 5 ) NNS blue
-> o================´--- System, CPU
-> 
-> In this case we seems to have a new challenge:
-> 
-> On one side, a system wide power manager should see and mange all ports.
-> On other side, withing a name space, we should be able to play in a
-> isolated sand box. There is a reason why it is isolated. So, we should
-> be able to sandbox power delivery and port prios too. Means, by creating
-> network names space, we will need a power names space. 
-> 
-> I can even imagine a use case: an admin limited access to a switch for
-> developer. A developer name space is created with PSE budget and max
-> prios available for this name space. This will prevent users from DoSing
-> system critical ports.
-> 
-> At this point, creating a power name space will an overkill for this
-> patch set, so it should be enough to allow controlling prios over
-> ethtool per port and isolation support if needed.
+Hi
 
-Oh, sorry, i'm too tired. Too many words are missing in my answer ...
+Am 04.10.24 um 03:43 schrieb Qianqiang Liu:
+> The code can never be reached: unregister_framebuffer(info);
+>
+> Fixes: 36462ac19308 ("fbdev: clps711x-fb: Replace check_fb in favor of struct fb_info.lcd_dev")
+> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+> ---
+>   drivers/video/fbdev/clps711x-fb.c | 2 --
+>   1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
+> index 9e3df1df5ac4..b57134bc63e7 100644
+> --- a/drivers/video/fbdev/clps711x-fb.c
+> +++ b/drivers/video/fbdev/clps711x-fb.c
+> @@ -332,8 +332,6 @@ static int clps711x_fb_probe(struct platform_device *pdev)
+>   
+>   	return 0;
+>   
+> -	unregister_framebuffer(info);
+> -
+
+This used to be code for error rollback, but is now unused. Thanks for 
+fixing the issue.
+
+Best regards
+Thomas
+
+>   out_fb_dealloc_cmap:
+>   	regmap_update_bits(cfb->syscon, SYSCON_OFFSET, SYSCON1_LCDEN, 0);
+>   	fb_dealloc_cmap(&info->cmap);
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
