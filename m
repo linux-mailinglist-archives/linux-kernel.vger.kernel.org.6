@@ -1,185 +1,144 @@
-Return-Path: <linux-kernel+bounces-350640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB449907B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:39:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 727DC9907FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90DB11F22CD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:39:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39321B2AA28
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007841DD88E;
-	Fri,  4 Oct 2024 15:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFB31DF84B;
+	Fri,  4 Oct 2024 15:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dZukQM+h"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="iD5JhKCo"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5971DD860
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 15:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637DF1DEC04;
+	Fri,  4 Oct 2024 15:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728055846; cv=none; b=m9zv1VkFG3Slbm9RUUgnB0Vgk1F/rn2NBHYkEP1+NP3W9Pz0Wlo+t6y9Uop9ujgnV+y3+yzzZSSMJwg6Qi/gWyuNQ0uJZaWBxMrKpy4f3hqkPT4PEXotKJzbetNtaaUsdDEn1sw2fM23Mgf4/ElrzZcW3pcMSNu1YC6hcif0ZwE=
+	t=1728055867; cv=none; b=FSEVcS9jPoV9ehCuOojIb3TZYK2kk7FKCv+L6AaAYSp4oOd1f2TPt2CwL15KG56shZuQqClpcVAtUnETp83JTtecFUyTVL0Kv+2seLIzZOqWTcDXBfpDFcXTI9CYrIcKRXJpZZNdOmLLKUxmYU4waRE/8OfXQ2paQGOc/tbR9jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728055846; c=relaxed/simple;
-	bh=crHaYagkgo6VoCxFYlW3iJ5g8SOMwNWskhvJG8xhac0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G0b7ELjhqBfzE5Ob5Qwrsxpi5fdRqXcqKfpMBYRW6KcO3FH3/D2n11wETobq/ZRdVCArJJ3ndBCJ8jnDSqt1N43VjPIyEtYxXwGGMd1E14C1UyufbSh6AvxYvKigISsBA8LxwWtGjsQh4PDXTGEMr/jd8odc+QzTWTmB5HzvCC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dZukQM+h; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728055842;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nJxNMvGZJj5t/DTE3o+ykBUvxddJVXwreZIV/z+vrk8=;
-	b=dZukQM+hVWDAd+prFllzIZqNiMdG0c+Sjgdhxozw+sGAA54mmGV3Fh+fw9isu5RnSGBcuN
-	5H1Bju+jQQbNr6Ix0RIAQnFnWlruUXBpX1Nkeu2dmNT8TmsEPbGl195HyGxaZyZvOh1lRj
-	/OmSTBktEYlHzrI09Qn1M11S9pvAVf8=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-455-iFZrV0BxOQKw7QLmB50IOw-1; Fri,
- 04 Oct 2024 11:30:39 -0400
-X-MC-Unique: iFZrV0BxOQKw7QLmB50IOw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B8BCE1944CCA;
-	Fri,  4 Oct 2024 15:30:37 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.24])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4D0491955E93;
-	Fri,  4 Oct 2024 15:30:35 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ming Lei <ming.lei@redhat.com>,
-	David Howells <dhowells@redhat.com>
-Subject: [PATCH] lib/iov_iter.c: extract virt-contiguous pages in iov_iter_extract_bvec_pages
-Date: Fri,  4 Oct 2024 23:30:25 +0800
-Message-ID: <20241004153025.1867858-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1728055867; c=relaxed/simple;
+	bh=hRUT7x36WL1tH8NnlxWOKwKJUK8woiG3Vticu4lEW14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=umGxTt1E74B8mu34QBRmJWxRollu4xcQEU8ayTb+1NzJEe5wFyWKriB6SWoC4M22BAYgahuY+Ntqg+a2QH0LWrRCePXaLKb+jXwYMeOVUwVK95SNmzYkKti+4wEZw+uoALsVXdDSFY7z/+Eas29OZxXZ3ScZAy/TD2bSpBxYNRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=iD5JhKCo; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 95F5720B47;
+	Fri,  4 Oct 2024 17:31:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1728055864;
+	bh=ccGcztWl7U3odd6O5dl9JTlXWZfdzQE/tBihuERy8RE=;
+	h=Received:From:To:Subject;
+	b=iD5JhKCoqsX41ju9bSHYiWRvUxeinPJ53MZus4UK5Oo9fC2WvLR/J8BK3GCyW9mTJ
+	 8JWa2knjTQ/xd6Fy06CW9kDQIgurEXQw5cpeRKCyfgOQFEkHGNfQ0P37alocBDPGef
+	 0l5CdSG0IBAU7+YwbztYpTi12H6HtQE1kunh1svSG7mcN+vwIJjSfFoY/ya7ELsIsu
+	 egcTR20emIcfx1Ht5NlHk4js4jyIyBcEmgaS/tYbJiCIe+qELO/MYLUdGR4pFl/Ykr
+	 PP7Z0EGXo9ufFfU7Wh4E1eox7DqiB+jAcX8UasLzkBD/cTGAFCntT7Ul+QBpA/4oQJ
+	 fT5gX5HPJNGoA==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id 389837F96B; Fri,  4 Oct 2024 17:31:04 +0200 (CEST)
+Date: Fri, 4 Oct 2024 17:31:04 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Conor Dooley <conor@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Parth Pancholi <parth.pancholi@toradex.com>,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: usb: add TUSB73x0 PCIe
+Message-ID: <ZwAKOKQ96sCoxsMN@gaggiata.pivistrello.it>
+References: <20241004124521.53442-1-francesco@dolcini.it>
+ <20241004124521.53442-2-francesco@dolcini.it>
+ <20241004-calzone-sitcom-0f755e244497@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004-calzone-sitcom-0f755e244497@spud>
 
-All iov_iter_bvec() users only want to extract virt-contiguous pages from
-iov_iter_extract_pages() instead physical-contiguous pages.
+Hello Conor,
 
-Change iov_iter_extract_bvec_pages() to extract virt-contiguous pages via
-bvec helper.
+On Fri, Oct 04, 2024 at 04:23:18PM +0100, Conor Dooley wrote:
+> On Fri, Oct 04, 2024 at 02:45:20PM +0200, Francesco Dolcini wrote:
+> > From: Parth Pancholi <parth.pancholi@toradex.com>
+> > 
+> > Add device tree bindings for TI's TUSB73x0 PCIe-to-USB 3.0 xHCI
+> > host controller. The controller supports software configuration
+> > through PCIe registers, such as controlling the PWRONx polarity
+> > via the USB control register (E0h).
+> > 
+> > Similar generic PCIe-based bindings can be found as qcom,ath11k-pci.yaml
+> > as an example.
+> > 
+> > Datasheet: https://www.ti.com/lit/ds/symlink/tusb7320.pdf
+> > Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > ---
+> >  .../bindings/usb/ti,tusb73x0-pci.yaml         | 60 +++++++++++++++++++
+> >  1 file changed, 60 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml b/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
+> > new file mode 100644
+> > index 000000000000..bcb619b08ad3
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
+> > @@ -0,0 +1,60 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/usb/ti,tusb73x0-pci.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: TUSB73x0 USB 3.0 xHCI Host Controller (PCIe)
+> > +
+> > +maintainers:
+> > +  - Francesco Dolcini <francesco.dolcini@toradex.com>
+> > +
+> > +description:
+> > +  TUSB73x0 USB 3.0 xHCI Host Controller via PCIe x1 Gen2 interface.
+> > +  The TUSB7320 supports up to two downstream ports, the TUSB7340 supports up
+> > +  to four downstream ports.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: pci104C,8241
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  ti,tusb7320-pwron-polarity-invert:
+> 
+> To me, "polarity-invert" makes less sense than calling this "active-high"
+> making the property a flag. active-low would then be the case where the
+> property is not provided. Given you don't make the property required,
+> what you've got here is effectively a flag anyway.
 
-This way can fill much more pages one time, instead of (often)one page from
-iov_iter_extract_pages() each time.
+We had the same doubt when deciding which property name to propose, looking
+at the existing bindings it seemed that "polarity-invert" was more common.
 
-Cc: David Howells <dhowells@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- include/linux/bvec.h |  6 ++++++
- lib/iov_iter.c       | 47 +++++++++++++++++++++++---------------------
- 2 files changed, 31 insertions(+), 22 deletions(-)
+FTR the datasheet explicetly name the signals with a # suffix (PWRON1#,
+PWRON2#, ...), they are defined as active-low by default.
 
-diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-index f41c7f0ef91e..98e1a4ad09e0 100644
---- a/include/linux/bvec.h
-+++ b/include/linux/bvec.h
-@@ -184,6 +184,12 @@ static inline void bvec_iter_advance_single(const struct bio_vec *bv,
- 		((bvl = bvec_iter_bvec((bio_vec), (iter))), 1);	\
- 	     bvec_iter_advance_single((bio_vec), &(iter), (bvl).bv_len))
- 
-+#define for_each_bvec_max(bvl, bio_vec, iter, start, nr_bvecs)		\
-+	for (iter = (start);						\
-+	     (iter).bi_size && iter.bi_idx < nr_bvecs &&		\
-+		((bvl = bvec_iter_bvec((bio_vec), (iter))), 1);	\
-+	     bvec_iter_advance_single((bio_vec), &(iter), (bvl).bv_len))
-+
- /* for iterating one bio from start to end */
- #define BVEC_ITER_ALL_INIT (struct bvec_iter)				\
- {									\
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 97003155bfac..6e00f6da5259 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1677,8 +1677,8 @@ static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
- }
- 
- /*
-- * Extract a list of contiguous pages from an ITER_BVEC iterator.  This does
-- * not get references on the pages, nor does it get a pin on them.
-+ * Extract a list of virtually contiguous pages from an ITER_BVEC iterator.
-+ * This does not get references on the pages, nor does it get a pin on them.
-  */
- static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
- 					   struct page ***pages, size_t maxsize,
-@@ -1686,35 +1686,38 @@ static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
- 					   iov_iter_extraction_t extraction_flags,
- 					   size_t *offset0)
- {
--	struct page **p, *page;
--	size_t skip = i->iov_offset, offset, size;
--	int k;
-+	size_t skip = i->iov_offset, size = 0;
-+	struct bvec_iter bi;
-+	struct bio_vec bv;
-+	int k = 0;
- 
--	for (;;) {
--		if (i->nr_segs == 0)
--			return 0;
--		size = min(maxsize, i->bvec->bv_len - skip);
--		if (size)
--			break;
-+	if (i->nr_segs == 0)
-+		return 0;
-+
-+	if (i->iov_offset == i->bvec->bv_len) {
- 		i->iov_offset = 0;
- 		i->nr_segs--;
- 		i->bvec++;
- 		skip = 0;
- 	}
-+	bi.bi_size = maxsize + skip;
-+	bi.bi_bvec_done = skip;
- 
--	skip += i->bvec->bv_offset;
--	page = i->bvec->bv_page + skip / PAGE_SIZE;
--	offset = skip % PAGE_SIZE;
--	*offset0 = offset;
-+	maxpages = want_pages_array(pages, maxsize, skip, maxpages);
- 
--	maxpages = want_pages_array(pages, size, offset, maxpages);
--	if (!maxpages)
--		return -ENOMEM;
--	p = *pages;
--	for (k = 0; k < maxpages; k++)
--		p[k] = page + k;
-+	for_each_bvec_max(bv, i->bvec, bi, bi, i->nr_segs) {
-+		if (k >= maxpages)
-+			break;
-+		if (!k)
-+			*offset0 = bv.bv_offset;
-+		else if (bv.bv_offset)
-+			break;
-+		(*pages)[k++] = bv.bv_page;
-+		size += bv.bv_len;
-+		if (bv.bv_offset + bv.bv_len != PAGE_SIZE)
-+			break;
-+	}
- 
--	size = min_t(size_t, size, maxpages * PAGE_SIZE - offset);
- 	iov_iter_advance(i, size);
- 	return size;
- }
--- 
-2.46.0
+With that said, if we prefer to have `ti,tusb7320-pwron-active-high`, I am 100%
+good with it.
+
+Francesco
 
 
