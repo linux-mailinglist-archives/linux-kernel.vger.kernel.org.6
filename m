@@ -1,123 +1,253 @@
-Return-Path: <linux-kernel+bounces-350349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE399903E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 748849903EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970BA1F22133
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E49701F2155D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7396A2101BE;
-	Fri,  4 Oct 2024 13:19:16 +0000 (UTC)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B68215F43;
+	Fri,  4 Oct 2024 13:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kE2d4ug5"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B8E20FAA4;
-	Fri,  4 Oct 2024 13:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467EC2141A0;
+	Fri,  4 Oct 2024 13:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728047956; cv=none; b=KseBsdpAOa+bevQwHi4JF3nMZPlIGlQE5pAQjv180PUKdD+v6z7YKPWcGauVgozS3aDw/Uish3qZUNNl8ITC+jzuT/vPy/b+Ja5UUtGHgr77RJK0OZ1QgpFHzKRiUn/Stzbf5dz/ywg7G2feS4ZnvsWNDm3J2V2X38QFD2q0LAU=
+	t=1728048036; cv=none; b=eU8tQyrY9jBBcq9gX2HX+gOxUdDw9KoHeBFpIkXIH/y1wbiEEJLd1eBJAg7sN76TidOjPppa2zbImXy2bUjFXnB2iL7cSThEoqt32VHiGzJ0ps4PO08tURhvv6BXzFsDYEEmXYx7RiF61Pyj+pr+ixIwJXmvwmJ7fsL1UceI+kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728047956; c=relaxed/simple;
-	bh=9pd0g5NRuW0OoKQvQfD4kc4y5rgN6O3XZmxtYDj6WzI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=plumWzZVcf/dyf5qRvbXz2vu07SStFXO9BJVBAKsEdDolFztXnUNvdFlhAbted+40XvluAxh/IuTThVqiVggmwuFtAta7RzIxAqcg9z2JZMlcP4NZvxywFSFCYJS+tZjirO49A2jLyD2pRERTs8VXl/NXj2V025Xy2RYirKXaNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37ce9644daaso1440994f8f.3;
-        Fri, 04 Oct 2024 06:19:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728047953; x=1728652753;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rNnCppYLxIGhffsDy6p+mSN8RvEoWQUoD8xWvgVlqA0=;
-        b=vgDuCTN7+zNahxU7uV2de+2cl7JcxyGAcpMRgjIQrgcoEEuppuU2HNZfCyYYOMwkL8
-         luXWr7ZtEzSaaC354w/nQfZBKDhuBX3MaGhKbhAOnb1m2fXeKi+P8yxWht7V1K6fmWob
-         BOsGsCDPtlQ7rc6N/k83maoDJkmMY5SDv+n1JqV7U2YNAYdH8vwopoe8qjV6iNrgndZG
-         Bfp8Xo6xr6o4EZXZe3VIHr10w8niCywCWD844VxILIVVkRosLmANMja7+iBoZ8VI/Hjc
-         R/nY0onbUFVaCRMx/1UF969V9eR6S+U1Pz0I5SgJdezRBit//CLi/oQLbtV2hh6i5Kj0
-         mb/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU+pJyNtdcM3V73tLkxsHo7OTOT/38ehEM30/q5l3VaOT1O5W96Na/qsf+9kPGfGJ5XBty+36mQmgTQo2zm@vger.kernel.org, AJvYcCWcmPZXa+4zugQTx7sO9b4tA+EKJ6JY3xz3A2c4GosYhjxybb+h9ESfmSejX+/JU+NLFZcpKHgzgjNfJQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaQNJ3ZFw+nxQQ3tjQn+ctjt7KpBv/ubpr6zoK3oScav1LC6wZ
-	QiD+G29tc8Ky+ZMRYWL7Tc94spryDmJLpqZqJwIss439HWPIsvOo
-X-Google-Smtp-Source: AGHT+IFp/kBkMK6qU0pGozVHgf+5tR134P1Et7KYZWsoNYK8MOLyJUAbwGxztfbviOS4pjLO92GP3A==
-X-Received: by 2002:a5d:44cf:0:b0:374:c621:62a6 with SMTP id ffacd0b85a97d-37d0e8f065dmr1708929f8f.47.1728047952463;
-        Fri, 04 Oct 2024 06:19:12 -0700 (PDT)
-Received: from nuc.fritz.box (p200300f6f71aeb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71a:eb00:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d08234048sm3246607f8f.47.2024.10.04.06.19.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 06:19:12 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Qu Wenruo <wqu@suse.com>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Filipe Manana <fdmanana@suse.com>
-Subject: [PATCH v3] btrfs: don't BUG_ON() NOCOW ordered-extents with checksum list
-Date: Fri,  4 Oct 2024 15:19:01 +0200
-Message-ID: <20241004131901.21720-1-jth@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728048036; c=relaxed/simple;
+	bh=dMlQpXZxmtYu9oYAJGj42LF3x9VRU4K35wpBuxaERJs=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Plb5uZwq8raDgMbxaIUyFbrNn06xbGXAM3DxrDds/EI+UeEzbCr2s1uyneG+IYlZ4sj0213OwR2Blm36F74RgSiWX7/1xG0T2YEyGEvxkyVP0tU3JdHXsdU0BMimgTd7FU0/YInB7JIFObql2Baux802a9iU3T1Xm7Cp/rXRmck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kE2d4ug5; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1728048034; x=1759584034;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=dMlQpXZxmtYu9oYAJGj42LF3x9VRU4K35wpBuxaERJs=;
+  b=kE2d4ug5WubR9EQBs9m8W78BJKXTdvQXzmMGa83ppC9aSOjZWIOS0lfO
+   VSe7XFdcrRojIMttz+G86yhxqYfQTpmP7F0+xHagN82VvUcdyhw2YOO4B
+   u/sDEFgQ7rs/Rm+S1VReoCKkujj3yyeGfWCd7u5bZgWAvzmIt5y21VXby
+   8V0bltJ+ylDmHob0ZZ0mwKM16rRsbPEByanaRXzSqIBcbriRyPjQUut7s
+   ZB+1mAKklo+uyGMgau5Vb8I6K+Qp5t78JHQQ0Nd2CrXZsqJpQmZNPQHd+
+   G9R2p8pccCWbwDcSl6ukWruPNruwUBFxMU7gGnm50J5PqU4O1SV4bqnfo
+   A==;
+X-CSE-ConnectionGUID: wYEhTCIITtS2MLde76jJ4w==
+X-CSE-MsgGUID: M/y/7YsLSOiN6GF6kCG5Sg==
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="32602241"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Oct 2024 06:20:33 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 4 Oct 2024 06:20:02 -0700
+Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Fri, 4 Oct 2024 06:19:59 -0700
+From: Daniel Machon <daniel.machon@microchip.com>
+Subject: [PATCH net-next v2 00/15] net: sparx5: prepare for lan969x switch
+ driver
+Date: Fri, 4 Oct 2024 15:19:26 +0200
+Message-ID: <20241004-b4-sparx5-lan969x-switch-driver-v2-0-d3290f581663@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF7r/2YC/4WOQQ6CMBBFr2Jm7ZjSaBFX3sOwKNPBTiKFTAliD
+ HcXuIDLn5/33/9CZhXOcDt8QXmSLH1agz0egKJPT0YJawZr7NlUtsTmjHnwOl/w5VPlqhnzW0a
+ KGFQmVgwthYsty9aXBtaVQbmVeTc8IPGIiecR6rVpfGZs1CeKm6HzkjYgSh57/eyPpmLHNnlhT
+ PFXPhVo8EruWrk2EDt374S0pyjDifoO6mVZfmxaO6nzAAAA
+To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Lars Povlsen <lars.povlsen@microchip.com>, "Steen
+ Hegelund" <Steen.Hegelund@microchip.com>, <horatiu.vultur@microchip.com>,
+	<jensemil.schulzostergaard@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	Richard Cochran <richardcochran@gmail.com>, <horms@kernel.org>,
+	<justinstitt@google.com>, <gal@nvidia.com>, <aakash.r.menon@gmail.com>,
+	<jacob.e.keller@intel.com>, <ast@fiberby.net>
+CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+X-Mailer: b4 0.14-dev
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+== Description:
 
-Currently we BUG_ON() in btrfs_finish_one_ordered() if we finishing an
-ordered-extent that is flagged as NOCOW, but it's checsum list is non-empty.
+This series is the first of a multi-part series, that prepares and adds
+support for the new lan969x switch driver.
 
-This is clearly a logic error which we can recover from by aborting the
-transaction.
+The upstreaming efforts is split into multiple series (might change a
+bit as we go along):
 
-For developer builds which enable CONFIG_BTRFS_ASSERT, also ASSERT() that the
-list is empty.
+    1) Prepare the Sparx5 driver for lan969x (this series)
+    2) Add support lan969x (same basic features as Sparx5 provides +
+       RGMII, excl.  FDMA and VCAP)
+    3) Add support for lan969x FDMA
+    4) Add support for lan969x VCAP
 
-Suggested-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Reviewed-by: Qu Wenruo <wqu@suse.com>
+== Lan969x in short:
+
+The lan969x Ethernet switch family [1] provides a rich set of
+switching features and port configurations (up to 30 ports) from 10Mbps
+to 10Gbps, with support for RGMII, SGMII, QSGMII, USGMII, and USXGMII,
+ideal for industrial & process automation infrastructure applications,
+transport, grid automation, power substation automation, and ring &
+intra-ring topologies. The LAN969x family is hardware and software
+compatible and scalable supporting 46Gbps to 102Gbps switch bandwidths.
+
+== Preparing Sparx5 for lan969x:
+
+The lan969x switch chip reuses many of the IP's of the Sparx5 switch
+chip, therefore it has been decided to add support through the existing
+Sparx5 driver, in order to avoid a bunch of duplicate code. However, in
+order to reuse the Sparx5 switch driver, we have to introduce some
+mechanisms to handle the chip differences that are there.  These
+mechanisms are:
+
+    - Platform match data to contain all the differences that needs to
+      be handled (constants, ops etc.)
+
+    - Register macro indirection layer so that we can reuse the existing
+      register macros.
+
+    - Function for branching out on platform type where required.
+
+In some places we ops out functions and in other places we branch on the
+chip type. Exactly when we choose one over the other, is an estimate in
+each case.
+
+After this series is applied, the Sparx5 driver will be prepared for
+lan969x and still function exactly as before.
+
+== Patch breakdown:
+
+Patch #1        adds private match data
+
+Patch #2        adds register macro indirection layer
+
+Patch #3-#4     does some preparation work
+
+Patch #5-#7     adds chip constants and updates the code to use them
+
+Patch #8-#13    adds and uses ops for handling functions differently on the
+                two platforms.
+
+Patch #14       adds and uses a macro for branching out on the chip type.
+
+Patch #15 (NEW) redefines macros for internal ports and PGID's.
+
+[1] https://www.microchip.com/en-us/product/lan9698
+
+To: David S. Miller <davem@davemloft.net>
+To: Eric Dumazet <edumazet@google.com>
+To: Jakub Kicinski <kuba@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+To: Lars Povlsen <lars.povlsen@microchip.com>
+To: Steen Hegelund <Steen.Hegelund@microchip.com>
+To: horatiu.vultur@microchip.com
+To: jensemil.schulzostergaard@microchip.com
+To: UNGLinuxDriver@microchip.com
+To: Richard Cochran <richardcochran@gmail.com>
+To: horms@kernel.org
+To: justinstitt@google.com
+To: gal@nvidia.com
+To: aakash.r.menon@gmail.com
+To: jacob.e.keller@intel.com
+To: ast@fiberby.net
+Cc: netdev@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+
+Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 ---
-Changes to v2:
-* Move ASSERT() out of if () block (Filipe)
-* goto 'out' after aborting the transaction (Filipe)
+Changes in v2:
 
-Changes to v1:
-* Fixup if () and ASSERT() (Qu)
-* Fix spelling of 'Currently'
+  Version 2 primarily handles the dropped SPX5_CONST() macro. Now
+  functions access the constants directly using the sparx5->data->consts
+  variable. This has the side-effect of dropping one patch, which is no
+  longer required (#3 in v1), and adding a new patch that handles internal ports
+  and PGID's (patch #15 in v2).
+
+- Removed the SPX5_CONST macro and the use of it from patches #6, #7 and
+  #8 in v1.
+
+- Removed GADDR(), GSIZE() etc. macros from sparx5_main_regs.h. Instead
+  the macros access the regs variable directly.
+
+- Patch #3 in v1 is dropped (no need to rename spx5 to sparx5 anymore)
+
+- Added patch #15 in v2. This patch changes the internal port and PGID
+  values to be offsets and adds helpers to get them.
+
+- Added the Reviewed-by tag of Jacob Keller to certain patches.
+
+- Link to v1: https://lore.kernel.org/r/20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com
+
 ---
- fs/btrfs/inode.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Daniel Machon (15):
+      net: sparx5: add support for private match data
+      net: sparx5: add indirection layer to register macros
+      net: sparx5: modify SPX5_PORTS_ALL macro
+      net: sparx5: add *sparx5 argument to a few functions
+      net: sparx5: add constants to match data
+      net: sparx5: use SPX5_CONST for constants which already have a symbol
+      net: sparx5: use SPX5_CONST for constants which do not have a symbol
+      net: sparx5: add ops to match data
+      net: sparx5: ops out chip port to device index/bit functions
+      net: sparx5: ops out functions for getting certain array values
+      net: sparx5: ops out function for setting the port mux
+      net: sparx5: ops out PTP IRQ handler
+      net: sparx5: ops out function for DSM calendar calculation
+      net: sparx5: add is_sparx5 macro and use it throughout
+      net: sparx5: redefine internal ports and PGID's as offsets
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 103ec917ca9d..ef82579dfe09 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -3088,7 +3088,12 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_extent *ordered_extent)
- 
- 	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
- 		/* Logic error */
--		BUG_ON(!list_empty(&ordered_extent->list));
-+		ASSERT(list_empty(&ordered_extent->list));
-+		if (!list_empty(&ordered_extent->list)) {
-+			ret = -EINVAL;
-+			btrfs_abort_transaction(trans, ret);
-+			goto out;
-+		}
- 
- 		btrfs_inode_safe_disk_i_size_write(inode, 0);
- 		ret = btrfs_update_inode_fallback(trans, inode);
+ drivers/net/ethernet/microchip/sparx5/Makefile     |    2 +-
+ .../ethernet/microchip/sparx5/sparx5_calendar.c    |   56 +-
+ drivers/net/ethernet/microchip/sparx5/sparx5_dcb.c |    5 +-
+ .../net/ethernet/microchip/sparx5/sparx5_ethtool.c |   34 +-
+ .../net/ethernet/microchip/sparx5/sparx5_fdma.c    |   10 +-
+ .../ethernet/microchip/sparx5/sparx5_mactable.c    |   10 +-
+ .../net/ethernet/microchip/sparx5/sparx5_main.c    |  228 +-
+ .../net/ethernet/microchip/sparx5/sparx5_main.h    |  130 +-
+ .../ethernet/microchip/sparx5/sparx5_main_regs.h   | 4469 +++++++++++---------
+ .../net/ethernet/microchip/sparx5/sparx5_netdev.c  |   15 +-
+ .../net/ethernet/microchip/sparx5/sparx5_packet.c  |    8 +-
+ .../net/ethernet/microchip/sparx5/sparx5_pgid.c    |   15 +-
+ .../net/ethernet/microchip/sparx5/sparx5_police.c  |    3 +-
+ .../net/ethernet/microchip/sparx5/sparx5_port.c    |   76 +-
+ .../net/ethernet/microchip/sparx5/sparx5_port.h    |   23 +-
+ .../net/ethernet/microchip/sparx5/sparx5_psfp.c    |   49 +-
+ drivers/net/ethernet/microchip/sparx5/sparx5_ptp.c |   44 +-
+ drivers/net/ethernet/microchip/sparx5/sparx5_qos.c |    8 +-
+ drivers/net/ethernet/microchip/sparx5/sparx5_qos.h |    2 +
+ .../net/ethernet/microchip/sparx5/sparx5_regs.c    |  219 +
+ .../net/ethernet/microchip/sparx5/sparx5_regs.h    |  244 ++
+ .../net/ethernet/microchip/sparx5/sparx5_sdlb.c    |   15 +-
+ .../ethernet/microchip/sparx5/sparx5_switchdev.c   |   33 +-
+ drivers/net/ethernet/microchip/sparx5/sparx5_tc.c  |    8 +-
+ .../ethernet/microchip/sparx5/sparx5_tc_flower.c   |    4 +-
+ .../net/ethernet/microchip/sparx5/sparx5_vlan.c    |   47 +-
+ 26 files changed, 3531 insertions(+), 2226 deletions(-)
+---
+base-commit: 3a39d672e7f48b8d6b91a09afa4b55352773b4b5
+change-id: 20240927-b4-sparx5-lan969x-switch-driver-dfcd5277fa70
+
+Best regards,
 -- 
-2.43.0
+Daniel Machon <daniel.machon@microchip.com>
 
 
