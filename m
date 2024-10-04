@@ -1,105 +1,122 @@
-Return-Path: <linux-kernel+bounces-350209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3497990188
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:45:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8362699018B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DC92B20EDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:45:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BEE282613
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6631715666B;
-	Fri,  4 Oct 2024 10:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52DA14884D;
+	Fri,  4 Oct 2024 10:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="oR3Of1Wf"
-Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGPiIn2U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469B01553AF;
-	Fri,  4 Oct 2024 10:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D62C179BB;
+	Fri,  4 Oct 2024 10:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728038694; cv=none; b=VTC1qoZVdqikqieLCW9evSw9D+A3mMBVJAMoYqmYk6XPEniGeJAALueCmfJEu6BVKYS/Br9LaOWAdK4SNnRflaInxw89umRUy1LcJMWfzJTQ11Mc4vCUorUmfc/G7Zt+d9MS7UM325IwNnrFXUyT7d66TEbmzxBE772d4NUA3p8=
+	t=1728038776; cv=none; b=Gz1tTm2JCoGtvJFxezZMvCXVF3nZ5Lbvr5tmwRrbYuWLSx3hEKY8BEJhpATBTTj9tgqyX2Yzbi92Q/KHwtg8riciydZiZRYY8mrlY30jalarZQwvG+x3BIUGLDYKSPXVLaAFZbTnqygBy9mUOzT9CEVi6cn9HQQmURIDZYJex/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728038694; c=relaxed/simple;
-	bh=pPE4/I601JrMIy+XM5295Vjl31RBUgIJ/rXqcSjo5c4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nlK6slzXIppXnp3zt4ZxM0EL3EXGaRtu2UADOLpoF4kyIQUIMMmnImmsNzhsEP0hM0DWtgUlMB5wutdzqD/fhfepEPL8IXH7ni+tGC4sN+rU5jm8XNe0nsv11n6Kj74OK/ENAQYcXSldnGNvjHbH6+T1IDJQRibRlZzvJfjKQE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=oR3Of1Wf; arc=none smtp.client-ip=207.171.190.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1728038694; x=1759574694;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pPE4/I601JrMIy+XM5295Vjl31RBUgIJ/rXqcSjo5c4=;
-  b=oR3Of1Wf3HEo0dnwjdj9QbOoKLlal8JmUjY1VqjmajiWOso5ovkldN2a
-   nW3HSKi2u16NPX0mCuCfjeOhqn2MYK1icoyhHtZwgINDo1LHvqJKtIGZM
-   dJkftOs02UjrtQ1EUALedb+9lnWyUkHF1IzVWw2JMVw2OxvCyZwR/u/Me
-   Y=;
-X-IronPort-AV: E=Sophos;i="6.11,177,1725321600"; 
-   d="scan'208";a="372905230"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 10:44:44 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:37237]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.45.76:2525] with esmtp (Farcaster)
- id 1351fef0-1ef8-4c2c-b61d-a56b05783d23; Fri, 4 Oct 2024 10:44:42 +0000 (UTC)
-X-Farcaster-Flow-ID: 1351fef0-1ef8-4c2c-b61d-a56b05783d23
-Received: from EX19D041EUB003.ant.amazon.com (10.252.61.118) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 4 Oct 2024 10:44:41 +0000
-Received: from [10.95.86.80] (10.95.86.80) by EX19D041EUB003.ant.amazon.com
- (10.252.61.118) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Fri, 4 Oct 2024
- 10:44:35 +0000
-Message-ID: <3208be2b-7e9f-413b-a9dc-c36ef4e3d177@amazon.de>
-Date: Fri, 4 Oct 2024 12:44:30 +0200
+	s=arc-20240116; t=1728038776; c=relaxed/simple;
+	bh=B8ZfT9sDJWNA2ZZ/GjSMk3QDZWUnW9h5HxHc1sUE5Io=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RaIoQWoBAmmeNHpiGQzKLvDbfmOhRjJOGN/xhOg/1+vpzwJlJQI1Hoj25Dt2MuVuReVsYglgAE+B9MlMH0gPqenFEegMAcW295Zd9REF2I5FWa30CN7EGrf8SRx8cQzR3D2XF03a1IVSO7RSVYnwgGBGc6h8Xqll1aBzaOWBjxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGPiIn2U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBF27C4CEC6;
+	Fri,  4 Oct 2024 10:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728038775;
+	bh=B8ZfT9sDJWNA2ZZ/GjSMk3QDZWUnW9h5HxHc1sUE5Io=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jGPiIn2UFQvTCg0slQtAATcMv+919vOElr0Rv/jVtg/0wKz8bH4204JEOMsanC8d1
+	 FIujERpd+huQqfUlCfxmKN7qdmR/Ta7y6zxyeuXku7UaOdA75Ex2XRABocrVv/A1/G
+	 LiCZ4qEYQrn14YXrPdtIDSjmBLQM8LJdAmTMY6NIrh5PNJMOVNYYA/qOV8SFd3F0G9
+	 KKXiwybcqo5KlenddfLe9drdVFRmP3Iay7TyPbgMdEJnhEBgIK9dMsNRd9UQiHFaU6
+	 QhKP1ckugsiRZau26IdctAq4VpDLPw3gtzBC3k+zpOUCxgk4KZ+ton+ePkzpqyMgXb
+	 NjY+wNrYBkZdw==
+Date: Fri, 4 Oct 2024 11:46:10 +0100
+From: Simon Horman <horms@kernel.org>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, robh@kernel.org,
+	jan.kiszka@siemens.com, dan.carpenter@linaro.org,
+	diogo.ivo@siemens.com, andrew@lunn.ch, pabeni@redhat.com,
+	edumazet@google.com, davem@davemloft.net,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Roger Quadros <rogerq@kernel.org>
+Subject: Re: [PATCH net] net: ti: icssg-prueth: Fix race condition for VLAN
+ table access
+Message-ID: <20241004104610.GD1310185@kernel.org>
+References: <20241003105940.533921-1-danishanwar@ti.com>
+ <20241003174142.384e51ad@kernel.org>
+ <4f1f0d20-6411-49c8-9891-f7843a504e9c@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/15] KVM: x86: Introduce new ioctl KVM_TRANSLATE2
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
-	<seanjc@google.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
-CC: Nicolas Saenz Julienne <nsaenz@amazon.com>, Alexander Graf
-	<graf@amazon.de>, James Gowans <jgowans@amazon.com>,
-	<nh-open-source@amazon.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <linux-kernel@vger.kernel.org>,
-	<kvm@vger.kernel.org>, <x86@kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <kvmarm@lists.linux.dev>,
-	<kvm-riscv@lists.infradead.org>, Nikolas Wipper <nik.wipper@gmx.de>
-References: <20240910152207.38974-1-nikwip@amazon.de>
-From: Nikolas Wipper <nikwip@amazon.de>
-Content-Language: en-US
-In-Reply-To: <20240910152207.38974-1-nikwip@amazon.de>
-X-ClientProxiedBy: EX19D046UWB003.ant.amazon.com (10.13.139.174) To
- EX19D041EUB003.ant.amazon.com (10.252.61.118)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4f1f0d20-6411-49c8-9891-f7843a504e9c@ti.com>
 
-SSBzYXcgdGhpcyBvbiBhbm90aGVyIHNlcmllc1sqXToKCj4gaWYgS1ZNX1RSQU5TTEFURTIgbGFu
-ZHMgKHRob3VnaCBJJ20gc29tZXdoYXQgY3VyaW91cyBhcyB0byB3aHkgUUVNVSBkb2Vzbid0IGRv
-Cj4gdGhlIHBhZ2Ugd2Fsa3MgaXRzZWxmKS4KClRoZSBzaW1wbGUgcmVhc29uIGZvciBrZWVwaW5n
-IHRoaXMgZnVuY3Rpb25hbGl0eSBpbiBLVk0sIGlzIHRoYXQgaXQgYWxyZWFkeQpoYXMgYSBtYXR1
-cmUsIHByb2R1Y3Rpb24tbGV2ZWwgcGFnZSB3YWxrZXIgKHdoaWNoIGlzIGFscmVhZHkgZXhwb3Nl
-ZCkgYW5kCmNyZWF0aW5nIHNvbWV0aGluZyBzaW1pbGFyIFFFTVUgd291bGQgdGFrZSBhIGxvdCBs
-b25nZXIgYW5kIHdvdWxkIGJlIG11Y2gKaGFyZGVyIHRvIG1haW50YWluIHRoYW4ganVzdCBjcmVh
-dGluZyBhbiBBUEkgdGhhdCBsZXZlcmFnZXMgdGhlIGV4aXN0aW5nCndhbGtlci4KClsqXSBodHRw
-czovL2xvcmUua2VybmVsLm9yZy9sa21sL1p2SnNlVm9UN2dOX0dCRzNAZ29vZ2xlLmNvbS9ULyNt
-YjBiMjNhMWY1MDIzMTkyYTQ0MmRiNGExNjYyOWQ5Y2E3NGViNmI1ZQoKcHM6IHRoaXMgaXMgYWxz
-byBhIGdlbnRsZSBwaW5nIGZvciByZXZpZXcsIGlmIHRoaXMgZ290IGxvc3QgaW4gYmV0d2Vlbgpj
-b25mZXJlbmNlcwoKCgpBbWF6b24gV2ViIFNlcnZpY2VzIERldmVsb3BtZW50IENlbnRlciBHZXJt
-YW55IEdtYkgKS3JhdXNlbnN0ci4gMzgKMTAxMTcgQmVybGluCkdlc2NoYWVmdHNmdWVocnVuZzog
-Q2hyaXN0aWFuIFNjaGxhZWdlciwgSm9uYXRoYW4gV2Vpc3MKRWluZ2V0cmFnZW4gYW0gQW10c2dl
-cmljaHQgQ2hhcmxvdHRlbmJ1cmcgdW50ZXIgSFJCIDI1Nzc2NCBCClNpdHo6IEJlcmxpbgpVc3Qt
-SUQ6IERFIDM2NSA1MzggNTk3Cg==
+On Fri, Oct 04, 2024 at 10:25:05AM +0530, MD Danish Anwar wrote:
+> 
+> 
+> On 04/10/24 6:11 am, Jakub Kicinski wrote:
+> > On Thu, 3 Oct 2024 16:29:40 +0530 MD Danish Anwar wrote:
+> >> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> >> index bba6da2e6bd8..9a33e9ed2976 100644
+> >> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> >> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> >> @@ -296,6 +296,7 @@ struct prueth {
+> >>  	bool is_switchmode_supported;
+> >>  	unsigned char switch_id[MAX_PHYS_ITEM_ID_LEN];
+> >>  	int default_vlan;
+> >> +	spinlock_t vtbl_lock; /* Lock for vtbl in shared memory */
+> > 
+> > This needs to be kdoc, otherwise:
+> > 
+> > drivers/net/ethernet/ti/icssg/icssg_prueth.h:301: warning: Function parameter or struct member 'vtbl_lock' not described in 'prueth'
+> 
+> Hi Jakub,
+> 
+> Removing the documentation from here and keeping it in kdoc results in
+> below checkpatch,
+> 
+> CHECK: spinlock_t definition without comment
+> #69: FILE: drivers/net/ethernet/ti/icssg/icssg_prueth.h:300:
+> +	spinlock_t vtbl_lock;
+> 
+> 
+> What should be done here? Should I,
+> 
+> 1. Move the documentation to kdoc - This is will result in checkpatch
+> 2. Keep the documentation in kdoc as well as inline - This will result
+> in no warnings but duplicate documentation which I don't think is good.
+> 
+> I was not sure which one takes more precedence check patch or kdoc, thus
+> put it inline thinking fixing checkpatch might have more weightage.
+> 
+> Let me know what should be done here.
 
+FWIIW, my preference would be for option 2.
+
+I think it is important that Kernel doc is accurate, as it can end
+up incorporated in documentation. And moreover, what is the point
+if it is missing bits?
+
+I feel less strongly about the checkpatch bit, but it does seem
+to be worthwhile following that practice too.
+
+Maybe you can avoid duplication by making the two location document
+different aspects of the field. Or maybe that is silly 🤷
 
