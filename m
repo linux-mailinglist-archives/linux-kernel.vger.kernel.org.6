@@ -1,188 +1,280 @@
-Return-Path: <linux-kernel+bounces-350868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78758990A99
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:07:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2CBE990A8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7A8AB22835
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:06:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0ACA1C2109B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED1F1DD86D;
-	Fri,  4 Oct 2024 18:05:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD94B1E2857
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728065135; cv=none; b=JplemEKsM7J4T78t8EUZJB3KuNvQJE9ZGCZ3LfyTY6KBXgXkbpjnSaPAgyhWeDb/sJPOcpP8xkDy82JYex3U0VtMUHAcPXhC6nIG1q3ldyfVODdL/sv7WPTo4yAZnEiG3MksQ3uipX8lfozOqMgm3ZqTb2uHvM5BE7knVhPX3ig=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728065135; c=relaxed/simple;
-	bh=nPdveqIGxlbCcvTq9zSs/sf+B5btQuDRm89gQIQn7eg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Z/Va7mr/nDmQ9xQnWrwnICVvXbdWIKdcAQK+Ijvq8lvQdTJwSGT2JFvKExBwk5GeP8UgT9ChH+zG9oHP4bnkQscAqljpEs9t6zDMarz86/3ve1ONfHo4niv8RApmmZk8tNHpxSWLmi65BD4KZhFlkHhpEHDSHbnVk7kmx7YohWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E0A81063;
-	Fri,  4 Oct 2024 11:06:02 -0700 (PDT)
-Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 611083F7C5;
-	Fri,  4 Oct 2024 11:05:27 -0700 (PDT)
-From: James Morse <james.morse@arm.com>
-To: x86@kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663F41CACF1;
+	Fri,  4 Oct 2024 18:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="B2EP5wWR"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11020142.outbound.protection.outlook.com [52.101.56.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D350247F5F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.142
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728065072; cv=fail; b=IemRRXqkm+Wj0MHa/eSvI48rftGLsucW89OzNSW4W3MpMo9r3CuK6IFfpxkI2m+/ZB2/hDu70fYS/wxvCV36fs1TyloY+Z8Mg+7mWSYOzWyN7tWrdCSDcDMM2DvxXrHDoSxMBKwa/lKCGeaB504i6aCJ6iMrcZZqgKqVbI7vL0I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728065072; c=relaxed/simple;
+	bh=Ty1jsNaL9ID3LEFKl4it+FIu3EOw4XnAq4E/B9LjsN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=G6hMqjv/og1StDtHiVaPPZy/4EboHDO/lUMRTE/HJNYQhLHCf1yXQiJE9TG1WUYk2ppliwa5GDgeLXQXvKqXXbfySTLLIhVPZy6/rSw5N7sryab+B4ThN9a7JF1xhYNt87IcKY/kxgbGf8Jb5nSJW3AWaanVggTvxUkIH+qwLQ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=B2EP5wWR; arc=fail smtp.client-ip=52.101.56.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NfACxX1T2Pp8A7fy1j0QuEF/Jh7wWl3SnJI5BgT6FDpfG7NigUujEwmpqn4p3YaX6MOzINawyo2hItl4zQPEoE5otnWlSY8Qazok8ankw9QwdvOd/qm2OMpksTTTW7b+hUV/DHu+l/G0Vu2ZVddBk+DxA+pKazaIQB6C/P2sYEe0l87J5eDct79OZjVjVkpHQX9bfNbksTwWbEVk2b0FItx7q0hjWSFog5w4i4SWdYQM8RTI06SFISm7oDQryAZ82msXKMRjZ94XnwxtCfD4ITVMdmFjakSWndHfJyWoEAPiprQFglsNeNR9zC5JbVRjiuOfonmTZhJS1HzexG9/og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M8FcsShTOMu1idkRdNuc6WIZxCi0YKk18XsCEvMNSdM=;
+ b=PGqGUN45xrCDmU0ujw3qPkC/MOHB0Uh6UqrUI7acC3wVv3aE0fD7HFlkPzMjzw4Wl+FvoGpGrWEnxbVTlXV5FnpiuP8Z3yjxo0FkCimzQQVuZNxk0XfdRHsKzHuFLWZn8RS3PU3DKAclPByE/6IFC1EeLTTYEb2UAHyYA++HIc75B/8dR9gGFP8W3Pz6cLnacEIKlLGqwS6gE/aizoSJ/R8WMMuR51ACeHtkxAJJN47/PBNRB2h2uxaZuCPZh192B+hUrANAO3d9CSPmkzDAY6Euqiyfe/H+uPvSGc+p+PgY8u57RCr4HyO2Mymx8s/YcASEUj0GCBeeeZZCid1mZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M8FcsShTOMu1idkRdNuc6WIZxCi0YKk18XsCEvMNSdM=;
+ b=B2EP5wWRqNXJiuLBrxFk+WgB+03BFk6yOQGCKMnKWY5SikSG8TwsUASpi+sOllNmEZ39BXXH0churjjWXhgA26vGVEX+KjuvyddwKvRHPJ/C+gewNUo/hk5QSh51i0e4RmpWUDAJWK8Khd09WPKQPFGOv3yu/PPDwQbkZYlaFmY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ SA1PR01MB8396.prod.exchangelabs.com (2603:10b6:806:389::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.34; Fri, 4 Oct 2024 18:04:20 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%5]) with mapi id 15.20.7982.022; Fri, 4 Oct 2024
+ 18:04:20 +0000
+From: Yang Shi <yang@os.amperecomputing.com>
+To: jgg@ziepe.ca,
+	nicolinc@nvidia.com,
+	james.morse@arm.com,
+	will@kernel.org,
+	robin.murphy@arm.com
+Cc: yang@os.amperecomputing.com,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>,
-	Babu Moger <Babu.Moger@amd.com>,
-	James Morse <james.morse@arm.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	lcherian@marvell.com,
-	bobo.shaobowang@huawei.com,
-	tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	peternewman@google.com,
-	dfustini@baylibre.com,
-	amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: [PATCH v5 10/40] x86/resctrl: Remove rdtgroup from update_cpu_closid_rmid()
-Date: Fri,  4 Oct 2024 18:03:17 +0000
-Message-Id: <20241004180347.19985-11-james.morse@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20241004180347.19985-1-james.morse@arm.com>
-References: <20241004180347.19985-1-james.morse@arm.com>
+Subject: [v3 PATCH] iommu/arm-smmu-v3: Fix L1 stream table index calculation for 32-bit sid size
+Date: Fri,  4 Oct 2024 11:04:05 -0700
+Message-ID: <20241004180405.555194-1-yang@os.amperecomputing.com>
+X-Mailer: git-send-email 2.41.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH2PR04CA0027.namprd04.prod.outlook.com
+ (2603:10b6:610:52::37) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|SA1PR01MB8396:EE_
+X-MS-Office365-Filtering-Correlation-Id: f50692ad-bd43-4725-3df3-08dce49ef820
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?A1Lm0Jd+hQWmHNCUGZ1Ft8ibkwn3EhJSTMN1uOEtg4Ivv00LH4yIpuGwWcn4?=
+ =?us-ascii?Q?/X54rCul1gC/MmwldY8MtieMe4TOPm4k+t45c75s7Yn0HkUghs7rVGRftlcI?=
+ =?us-ascii?Q?TkMNSk3aaWSXz0H/7Qsa5hEfTM0U48XU6KmRpBx0KsyetLDlVJHAv2QmLHlD?=
+ =?us-ascii?Q?R2YhL9PcuH+aoi4jUxrHoWK/pSUGdySHTdF1ka3NfkFmj/XYch1qEUR1G8xX?=
+ =?us-ascii?Q?/VawBDPR5pTY182AnBZYkqeyLIcBXEBcJdnO+0nktNklMRpO3+hwO0Nps/7z?=
+ =?us-ascii?Q?lUdKyKB2UEtZvZrF0dMZUiIRm811lXn5Fk79waPnH2ShH+7g06wWjagJ5feE?=
+ =?us-ascii?Q?b4C+xFUZEFW3QrOT8Nc08ZOjeHSgQMkZp624OyyFW7lssEbqg7T4yow0qpLq?=
+ =?us-ascii?Q?rSy6xtYQUc5fc3JeT6ZrSrwccLDMPJfr7uq4PrhHIT6OJZPlJsea5R7S8yIr?=
+ =?us-ascii?Q?5XzOLpzXVGAIIxO2kLEjSYNACttbSU0mPjmsQlCT8AaM02h70Xxn1AtD2zUu?=
+ =?us-ascii?Q?zt6RFPOefQuGws2lhXVnxvQ8bs2l94vTZx9wXUl3/7WvxhN6nRqef32sUi19?=
+ =?us-ascii?Q?o4Xvs/66Mh6n6wzyBz6NzCfM213W3v1uTQM1xkuyB6SR0CYebQRjOk4T5HOg?=
+ =?us-ascii?Q?TGAs9Kp4c6kAfhDmBcFFic4prYUKNy2HnpXgzCRAhDq8R/U0LSogJGVYptIX?=
+ =?us-ascii?Q?8KEtgMoHDzGDtxFnGN1NMH7ZQmhLhzAZMWfnirHjWaZEenWAxstyJCGWM87m?=
+ =?us-ascii?Q?LDSkWqQtW2iPZVKoDzUsXT4hV2Km7jIH0XoKXjsvfW3S5X63H37L6YGKi29F?=
+ =?us-ascii?Q?f/PFrtU91jeuo+kgYM9FXQusmoM+NaNMRwwgBk4EJwg0U02c95K8o5alRiNL?=
+ =?us-ascii?Q?TNUoyXvdbDRTRSLeAvhqQ011Yti6tX35cuh4jIwiSywwI1koZuKqiLxMN5dS?=
+ =?us-ascii?Q?oSaurIFCYkPo43PRDZ3KUgsadOxd6MOY62DSqFQPYRlUFRTZGk8O1uvbX/L7?=
+ =?us-ascii?Q?dizFBbKpDUffhciHh70H7855ziTvgjXwYhG9WEBEBDJelm89XFwmqJNWTVjQ?=
+ =?us-ascii?Q?udJtGS83wDkbNBoazCkdWJ+9Hnu5Ih6ipS7xanIS9l2UD8GAcuHQNrCUbLVF?=
+ =?us-ascii?Q?yji1K464ZOZcL7OZx5Unm6gbiAzdDjsLMUjlylQrddHIBIIY6HYB/kYXXi1P?=
+ =?us-ascii?Q?hlGcz7YOX9lNATeBB8kyMf7/vL1eHs/OKEMxgReibY91CKLZ5bn0vqJMnB6S?=
+ =?us-ascii?Q?hmbtD0F6kO7GxrblfQ1mG7OdbEe+9A3eJFCbBMscBFimfwGZNgJLHa+Tnex/?=
+ =?us-ascii?Q?DWJcBSLUZXnklmjGKP9nJog7R2W2rV/+8DHkf43k2eyAJA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KIS5tsRWQWYZ+rX1axjmzYmh21Y4QvJ2PCqjJZVKsP/s8griZoczbiVwS5UZ?=
+ =?us-ascii?Q?UzdK6Hi0rSok04n1RKDRra1WrwCj2Qnb/gz5mHofqqgldx3g/0PIKDIMvr3F?=
+ =?us-ascii?Q?bEqBlEWTK1iqzB4F9agm5QRGVch0e11TI8Ft3zD6NZBvwv6UgSRc8g//cBdU?=
+ =?us-ascii?Q?duYZ8A9k3cP8ZcefUBct2SFIZ2/2oDhyc1LG7E7wV+6SbqD5vjiruhPbEyLw?=
+ =?us-ascii?Q?9ZMPLzBT4DGxZAO0pdI8Fe236mkKdoLfZ9Ad//X2n+yKcMXeq5W6pZEOi7Br?=
+ =?us-ascii?Q?Vm+vbkoJUx/+9N0FzhZHkRYt3v5cSo2dTT8qZaCq9e9AFH/YIpgI2aAPmrkp?=
+ =?us-ascii?Q?b+3CJbYNrzpWarjK8FTYe2QiXasXD36mzykdBqx74GKI8CL/O+JTYwOKqQKw?=
+ =?us-ascii?Q?WrNmbW/ZcZncJv5KMc/5P4d24YXYQB1LByJBf9i+e6zW6FTvw86UT9VpT8gR?=
+ =?us-ascii?Q?Bq1RBblo3elbWiH1eJ56iIDZE6+VEQ316mkRdStypq1eb6i5kzYyjUUOAPmQ?=
+ =?us-ascii?Q?um1Q3NmScIX7D8EmzhyZay4qWAQsa911QC/n0AlxyIN8eoQrzbf5xSK2NMzE?=
+ =?us-ascii?Q?YaETBIgmYvpezhWggNMc04C00aV0nFBt3kv8UZYhMbAwM08GudENJrGHKBRv?=
+ =?us-ascii?Q?NWv38OUqa8RdKmLt04DTQpJVKRsy4YCS8rG5ERHFX/qEMdDrrnKC4ziGPzkc?=
+ =?us-ascii?Q?fqibQXJ+p78SzyQuulRg99s0pRRLpb0DEX1tDUDssHHx58HnL87Ht4eFht0H?=
+ =?us-ascii?Q?8zlxQYL5QszzwUQ0lMJlsw3oVdUx5eWa66FCNnoc0FCtOBXqLdAi/gcHmVi7?=
+ =?us-ascii?Q?i1+mmb5VWhqP0Qnu/E6QJ1N+8SoRb1I9W5C5HQuWvyKxmKhfPS8P8aJW7MKq?=
+ =?us-ascii?Q?wduxbfoHD+sQcnfxdXMvsSRPMMCQJNp5qV6oakv/2QyNCZCi9x9LAgqejLDt?=
+ =?us-ascii?Q?SZ+JmskiGaKTKFiyUOEFiFP5Meo28gPuHuoZ4HQm9M1fypbv+FOSLbWbNU1p?=
+ =?us-ascii?Q?hpZVFNv9vkwfsYe2vNOVhM9ieRlcQKgdpS4Xn/j+/jQafskFuWuwDxGowV2A?=
+ =?us-ascii?Q?deB+VOY47cbw1R+gxjo5+OsWheSRTqCDn2VexnPnvxvUP9zebTOxyV0n0w37?=
+ =?us-ascii?Q?EY5vePK8ymMSH+1ibQY+yVeb+UY7t/ABUTk7g548LLWUPQx2MDbExi1MWTHS?=
+ =?us-ascii?Q?9rb5j3JqgKUK/UpB5kAzh3Tyv0+KeL+AA+zF79rTdHu1dF3tv7yGbs7R6/7v?=
+ =?us-ascii?Q?7mtxvWUxkap4imdAFXP9dBUTcrTcT1WY6K4hlvsu6J/sZej4N/1c+XXtR4xG?=
+ =?us-ascii?Q?rCOQc7TmwSY80ZsZ4JOdP6FXL4RvOdnXWwayQ7lMJdxlu9SHn/4ze+cUXT/f?=
+ =?us-ascii?Q?uNJFuiFQu01YWqE+80vVjzi3vifxtWVeBg4npK/tNgWKoGsnFYp47T1g7b3M?=
+ =?us-ascii?Q?QYwStmi4g62ViYZ6ra2Bcu7RmPKcklW5qLxoe3vcce3vrIoSNBXTLnXVzFqf?=
+ =?us-ascii?Q?Y1gYEHhUv4J0kEC28ysqPapHTMbTSo5VU5Ga+RLWuHNPAXa/s/txyMFNcliu?=
+ =?us-ascii?Q?CWdGOJZOVwQ4YD1sRGdvV0xuISX7sbW8qLQrh94bobxsySdgnvjLOU5szcNo?=
+ =?us-ascii?Q?5uDgpstPMTjDBcPujaJkhBw=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f50692ad-bd43-4725-3df3-08dce49ef820
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 18:04:20.0709
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: t3OUcUC2kptNudHe2M8IPCIIvHsYNRdiVz1eFTh6k7EJsRkEmp2Gwn4DcjBM3cCcBr6YqhRofoeCl5H4Qnj4J5HBQQVCu4r2Vm+AIXMGmlY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR01MB8396
 
-update_cpu_closid_rmid() takes a struct rdtgroup as an argument, which
-it uses to update the local CPUs default pqr values. This is a problem
-once the resctrl parts move out to /fs/, as the arch code cannot
-poke around inside struct rdtgroup.
+The commit ce410410f1a7 ("iommu/arm-smmu-v3: Add arm_smmu_strtab_l1/2_idx()")
+calculated the last index of L1 stream table by 1 << smmu->sid_bits. 1
+is 32 bit value.
+However some platforms, for example, AmpereOne and the platforms with
+ARM MMU-700, have 32-bit stream id size.  This resulted in ouf-of-bound shift.
+The disassembly of shift is:
 
-Rename update_cpu_closid_rmid() as resctrl_arch_sync_cpus_defaults()
-to be used as the target of an IPI, and pass the effective CLOSID
-and RMID in a new struct.
+    ldr     w2, [x19, 828]  //, smmu_7(D)->sid_bits
+    mov     w20, 1
+    lsl     w20, w20, w2
 
-Co-developed-by: Dave Martin <Dave.Martin@arm.com>
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Signed-off-by: James Morse <james.morse@arm.com>
-Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
-Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+According to ARM spec, if the registers are 32 bit, the instruction actually
+does:
+    dest = src << (shift % 32)
+
+So it actually shifted by zero bit.
+
+The out-of-bound shift is also undefined behavior according to C
+language standard.
+
+This caused v6.12-rc1 failed to boot on such platforms.
+
+UBSAN also reported:
+
+UBSAN: shift-out-of-bounds in drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3628:29
+shift exponent 32 is too large for 32-bit type 'int'
+
+Using 64 bit immediate when doing shift can solve the problem.  The
+disassembly after the fix looks like:
+    ldr     w20, [x19, 828] //, smmu_7(D)->sid_bits
+    mov     x0, 1
+    lsl     x0, x0, x20
+
+There are a couple of problematic places, extracted the shift into a helper.
+
+Fixes: ce410410f1a7 ("iommu/arm-smmu-v3: Add arm_smmu_strtab_l1/2_idx()")
+Tested-by: James Morse <james.morse@arm.com>
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
 ---
-Changes since v1:
- * To clarify the meanings of the new helper and struct:
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 16 +++++++++++-----
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h |  5 +++++
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
-   Rename resctrl_arch_sync_cpu_default() to
-   resctrl_arch_sync_cpu_closid_rmid();
+v3: * Some trivial modification to the commit log per Robin Murphy.
+    * Used "num_sids" instead of "max_sids" per Robin Murphy.
+    * Returned u64 type for arm_smmu_strtab_num_sids() per Nicolin Chen.
+    * Checked size in arm_smmu_init_strtab_linear() in order to avoid
+      overflow per Jason Gunthorpe.
+    * Collected r-b tag from Jason Gunthorpe.
+v2: * Extracted the shift into a helper per Jason Gunthorpe.
+    * Covered more places per Nicolin Chen and Jason Gunthorpe.
+    * Used 1ULL instead of 1UL to guarantee 64 bit per Robin Murphy.
+    * Made the subject more general since this is not AmpereOne specific
+      problem per the report from James Morse.
+    * Collected t-b tag from James Morse.
+    * Added Fixes tag in commit log.
 
-   Rename struct resctrl_cpu_sync to struct resctrl_cpu_defaults;
-
-   Flesh out the comment block in <linux/resctrl.h>.
-
-   No functional change.
----
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 17 +++++++++++++----
- include/linux/resctrl.h                | 22 ++++++++++++++++++++++
- 2 files changed, 35 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index b430f4465cbf..04a6afedb070 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -346,13 +346,13 @@ static int rdtgroup_cpus_show(struct kernfs_open_file *of,
-  * from update_closid_rmid() is protected against __switch_to() because
-  * preemption is disabled.
-  */
--static void update_cpu_closid_rmid(void *info)
-+void resctrl_arch_sync_cpu_closid_rmid(void *info)
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+index 737c5b882355..9d4fc91d9258 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -3624,8 +3624,9 @@ static int arm_smmu_init_strtab_2lvl(struct arm_smmu_device *smmu)
  {
--	struct rdtgroup *r = info;
-+	struct resctrl_cpu_defaults *r = info;
+ 	u32 l1size;
+ 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
++	u64 num_sids = arm_smmu_strtab_num_sids(smmu);
+ 	unsigned int last_sid_idx =
+-		arm_smmu_strtab_l1_idx((1 << smmu->sid_bits) - 1);
++		arm_smmu_strtab_l1_idx(num_sids - 1);
  
- 	if (r) {
- 		this_cpu_write(pqr_state.default_closid, r->closid);
--		this_cpu_write(pqr_state.default_rmid, r->mon.rmid);
-+		this_cpu_write(pqr_state.default_rmid, r->rmid);
+ 	/* Calculate the L1 size, capped to the SIDSIZE. */
+ 	cfg->l2.num_l1_ents = min(last_sid_idx + 1, STRTAB_MAX_L1_ENTRIES);
+@@ -3655,20 +3656,25 @@ static int arm_smmu_init_strtab_2lvl(struct arm_smmu_device *smmu)
+ 
+ static int arm_smmu_init_strtab_linear(struct arm_smmu_device *smmu)
+ {
+-	u32 size;
++	u64 size;
+ 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
++	u64 num_sids = arm_smmu_strtab_num_sids(smmu);
++
++	size = num_sids * sizeof(struct arm_smmu_ste);
++	/* The max size for dmam_alloc_coherent() is 32-bit */
++	if (size > SIZE_MAX)
++		return -EINVAL;
+ 
+-	size = (1 << smmu->sid_bits) * sizeof(struct arm_smmu_ste);
+ 	cfg->linear.table = dmam_alloc_coherent(smmu->dev, size,
+ 						&cfg->linear.ste_dma,
+ 						GFP_KERNEL);
+ 	if (!cfg->linear.table) {
+ 		dev_err(smmu->dev,
+-			"failed to allocate linear stream table (%u bytes)\n",
++			"failed to allocate linear stream table (%llu bytes)\n",
+ 			size);
+ 		return -ENOMEM;
  	}
+-	cfg->linear.num_ents = 1 << smmu->sid_bits;
++	cfg->linear.num_ents = num_sids;
  
- 	/*
-@@ -367,11 +367,20 @@ static void update_cpu_closid_rmid(void *info)
-  * Update the PGR_ASSOC MSR on all cpus in @cpu_mask,
-  *
-  * Per task closids/rmids must have been set up before calling this function.
-+ * @r may be NULL.
-  */
- static void
- update_closid_rmid(const struct cpumask *cpu_mask, struct rdtgroup *r)
- {
--	on_each_cpu_mask(cpu_mask, update_cpu_closid_rmid, r, 1);
-+	struct resctrl_cpu_defaults defaults, *p = NULL;
-+
-+	if (r) {
-+		defaults.closid = r->closid;
-+		defaults.rmid = r->mon.rmid;
-+		p = &defaults;
-+	}
-+
-+	on_each_cpu_mask(cpu_mask, resctrl_arch_sync_cpu_closid_rmid, p, 1);
- }
- 
- static int cpus_mon_write(struct rdtgroup *rdtgrp, cpumask_var_t newmask,
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 1a9cca95b5e8..4a3f8c171eb7 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -267,6 +267,28 @@ struct resctrl_schema {
- 	u32				num_closid;
+ 	arm_smmu_init_initial_stes(cfg->linear.table, cfg->linear.num_ents);
+ 	return 0;
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+index 1e9952ca989f..c8ceddc5e8ef 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+@@ -853,6 +853,11 @@ struct arm_smmu_master_domain {
+ 	ioasid_t ssid;
  };
  
-+struct resctrl_cpu_defaults {
-+	u32 closid;
-+	u32 rmid;
-+};
++static inline u64 arm_smmu_strtab_num_sids(struct arm_smmu_device *smmu)
++{
++	return (1ULL << smmu->sid_bits);
++}
 +
-+/**
-+ * resctrl_arch_sync_cpu_closid_rmid() - Refresh this CPU's CLOSID and RMID.
-+ *					 Call via IPI.
-+ * @info:	If non-NULL, a pointer to a struct resctrl_cpu_defaults
-+ *		specifying the new CLOSID and RMID for tasks in the default
-+ *		resctrl ctrl and mon group when running on this CPU.  If NULL,
-+ *		this CPU is not re-assigned to a different default group.
-+ *
-+ * Propagates reassignment of CPUs and/or tasks to different resctrl groups
-+ * when requested by the resctrl core code.
-+ *
-+ * This function records the per-cpu defaults specified by @info (if any),
-+ * and then reconfigures the CPU's hardware CLOSID and RMID for subsequent
-+ * execution based on @current, in the same way as during a task switch.
-+ */
-+void resctrl_arch_sync_cpu_closid_rmid(void *info);
-+
- /**
-  * resctrl_get_default_ctrl() - Return the default control value for this
-  *                              resource.
+ static inline struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
+ {
+ 	return container_of(dom, struct arm_smmu_domain, domain);
 -- 
-2.39.2
+2.41.0
 
 
