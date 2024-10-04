@@ -1,158 +1,144 @@
-Return-Path: <linux-kernel+bounces-350758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0E6990924
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:28:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3520299092A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3974D1C20D5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:28:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADBCC1F21394
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4145C1C8772;
-	Fri,  4 Oct 2024 16:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D191C8772;
+	Fri,  4 Oct 2024 16:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="N5MAvhXP"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OEuaGWQp"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8079E1C8784
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB7B1C8770
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728059316; cv=none; b=D+o6Y04VGMW4EOiYcXFlMSrExM+uchC9H2dTLS/or4nFEogW83ul8B1n+xhxGaF9dIllC4jgQ4s6i9g52WRvY8Y+7ICC9R3vV2C2OzqQbQGaKDUHmJVHvT8wI3CoQaHkKYUcHTJluPEQVtBYqQ+X+zWMWB6sNbEaXOy+mXkYkyg=
+	t=1728059333; cv=none; b=BpFXEmd5VaeBUzFIUuGYPkFtqxvhI+wlAxKFzy3wiI7uePsm3airiSaLY5n1dNBiaI/5zsJfsZeTyxwOwoYNqZixb3LsE486YnYQdTys3zadMO+9L5ny2J239gPQAU3aAwqKsIo0sz2ZxEspdHTD4K6JyIcqdEHINT3nlyW7MqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728059316; c=relaxed/simple;
-	bh=l7+/OOnbPo59NRdHU4hf39heIHqnVwgUybEyl/BT7zY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=joJFhnxfbyS7EOhOYneywdUeM1BKXGTWDueYMifaY2JKvKHQTPtvO7gTOy36+Grjpzz7oVB8mXKeZjpTLfFRHl8xO1Y/5hV+ep6z7ks984IEJJX4xB8DPdk/q0NOVpAyXoJ0JXvO1lcYk4l5cTRBFpmlpGVSxfUViQxJLK8uwbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=N5MAvhXP; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cb2f344dbbso17642226d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:28:33 -0700 (PDT)
+	s=arc-20240116; t=1728059333; c=relaxed/simple;
+	bh=mcKXImcn/JYcaewMquzchQJQfQcUvJgG3O8bd9ZOhKE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ckOmLL0DF+1VUB8lx/0Q1ZfKWQFa/NeOBFHpw4O3dYW5l99wJkIhkRnyMT+TdrsKXVowcrKVsi06Q39nwMrH1BPRgu94wT0k1UFinHMwUoPD3keWo6IXAqsrECcPYWK4jzRtwlJMwzixaBJvD9GKzrMmATJEVlpj2DJ35z7VX1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OEuaGWQp; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a376e3acfbso231335ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1728059312; x=1728664112; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g9cpx8Hyi6dy6qO2dUhiRIRpdrteVAK0AMuAZrMnAe0=;
-        b=N5MAvhXPocpXL+3MRnLl6U8seb48TXhzIBXVAGF6Z5WylKzfg0PGkMinuwXG8cdnS/
-         raQH7qudNAX3v1B/9Qy3c5Hzk1i75y3HHgpVLDnNWTzg9pKA9hI91i9zbS8fkvBRzbhL
-         yDmknpHxL8IoHp+fne7pCvc5KTG7wzoc234m6tS2ePyNmurrsfezA97BnnePodjMbDWY
-         FXAPzWSJx+qYyc2kLa/btg7cqB4xWXJuLy6/a2AXezMquOZah862dfX8qAHQ8YRHztEU
-         MHoIpaiotQi/NjTH3AnQxWKN+5riQplWeni+ontCtxV05YncNV4ObPO8IopM6J3olyTJ
-         I2eQ==
+        d=google.com; s=20230601; t=1728059331; x=1728664131; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OgGY2eqskxrBEZxo84cDOux6pQgpEj/UNQt8PWqDZ8w=;
+        b=OEuaGWQpE6165Gx1F0EDyOZczr5rpkXelnjrtxxNNsxaDjqfmVCqmEyKO4FTDuoRS+
+         +0jodkObFIEn6xYD4LR5bQ6v4cj1oYg9wnaAL6n488WgVp1kyJNfyqPEgORe9+c/ua4k
+         BdJzxB2E1oKBODPcTyPSYNlEDeGjMiaNQfsxXRTkuvdjPAuLI8xafYuyBdUviwnGaDZc
+         M6ggPpx1f1EW3SPHvNeB8bftISZ5ZVoD2qebczwK1J4yP4XsV+lmPqiaDm6loPOB38qD
+         D+sF6tku0H5Nqw/jMgafEQ6wvm+5dmMfjl6iRpfXj9qWNxytnn7LeMmf2hJ90gMOelMk
+         rErw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728059312; x=1728664112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g9cpx8Hyi6dy6qO2dUhiRIRpdrteVAK0AMuAZrMnAe0=;
-        b=cJLH4y9Kdd+3hlYKlijXRaSEH2eEUXzuzR4rKXtT+i1nVlj5H50XQmrsTZmGSzO+rw
-         8er8OxsXYKHyu+C6ob0knGKBG+Hy5YW3qdVytes/6rHVvoJ+dEExIeDBpARZt4kpeLC3
-         +A2jNhL6WQY2tHIWzocawWycKFFnYUyzP8NhU60U4ZKalcDTuhNpDeh5wWzM4QZxiEAm
-         z65Ry/4PU7IUNXWlSctpmA6rqhuoh2NBeUVdEBQDCoYV0AuEaLYruRCb/A1U0HnoECUY
-         REw+/P12lNiuPZEsbsK6XMh+uoZHakf6TO3kH33BpU6giuOp1634velhyQHkxGtOwU0r
-         HKrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwSbV4YjNXFByySEBCq807mBFpa1BecnEbkW8+PLDaxwW/ZPSgrCq57CrLPeSfcP5TduM25KYVm/ZT6kg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ4wsc0bGPT1OTwQ4ZdjQTaJUjNjzpHa9nIsqCtH6YA5C+XFDA
-	U4WX2zbm08WOGh+lP4ovgR9Z+wd1ys1MzdOzzjtbpu+mNKxwZ7kYdfkZWQcq8n8=
-X-Google-Smtp-Source: AGHT+IHCGTgu+cqiGiiZGFp3IkE06rob+xgV+iZNNZ8TyR776du/mFsmvAe7H6wEvrhSrVYdAin9FQ==
-X-Received: by 2002:a05:6214:5504:b0:6cb:4a84:e02a with SMTP id 6a1803df08f44-6cb9a32d338mr50523826d6.16.1728059312390;
-        Fri, 04 Oct 2024 09:28:32 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba4751920sm573476d6.98.2024.10.04.09.28.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 09:28:31 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: linux-pci@vger.kernel.org
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lukas@wunner.de,
-	dan.j.williams@intel.com,
-	bhelgaas@google.com,
-	dave@stgolabs.net,
-	dave.jiang@intel.com,
-	vishal.l.verma@intel.com,
-	Jonathan.Cameron@Huawei.com
-Subject: [PATCH] PCI/DOE: Poll DOE Busy bit for up to 1 second in pci_doe_send_req
-Date: Fri,  4 Oct 2024 12:28:28 -0400
-Message-ID: <20241004162828.314-1-gourry@gourry.net>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1728059331; x=1728664131;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OgGY2eqskxrBEZxo84cDOux6pQgpEj/UNQt8PWqDZ8w=;
+        b=kfhFmg3Ero/weRh+4KhEUsY6WbDXZSj9j3+42cvuenLDI1xqeuho7iIZoDkzRySA3v
+         3D13iTrwr5O6nHqQKbBqMJJxPl6l0HQ8cfs/dRIdgm6nU+tUbQAUjGuHFsMAMeVeXBqZ
+         UFZSaVRHCfF8wYUS9sTU3+1fCf6Hp7omsXEfvI7A+dtM711fngIvkaDgYn18wRyOSYQt
+         zeAnxlDFdMNmowfEQhi/bk7lfZrHt3FILKSgnbPTPCPzPY8D5zfe4W/6eFCgCw5Fjdwk
+         5jVYIpUb6IzNIFxDHob40TUeErYAhnQscB95+fHwcyyal/ANJnVWNJhkwV6j9RhAxyRS
+         3RaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxpETstqndz25uhNd0/hfZTWuE/W1dEVnZsxQ0s+ZLXkdfIRYqkm4dMBxcvTK8E9WaTJeLQrTT+tH6TC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnG65nyx7ZyvxkvQvScv7yKNHlatTFuwEvADDMMBHxjVQRRMhh
+	OhxhZFc55lhVmyDTQC7z/lgIYyX214OyAT8YHsQHGPoJ5SCUBX7/FmyckKpcXV594NU4kALWwn6
+	hdr7HJlokalodeGhcGw9pROT8fmtef2a+oDi+
+X-Google-Smtp-Source: AGHT+IGCEt+Cx8Bcl8DmVXb76uKeIue9614VP76/1RwzU7Pr6FX0/77BJWA/5ijrvw6aJnbkMfeSKf9ghJEJrtNmO1Y=
+X-Received: by 2002:a05:6e02:154f:b0:39f:3778:c896 with SMTP id
+ e9e14a558f8ab-3a3767e5548mr3313975ab.5.1728059330603; Fri, 04 Oct 2024
+ 09:28:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241002233409.2857999-1-xur@google.com> <20241002233409.2857999-2-xur@google.com>
+ <20241003154143.GW5594@noisy.programming.kicks-ass.net> <CAKwvOdnS-vyTXHaGm4XiLMtg4rsTuUTJ6ao7Ji-fUobZjdBVLw@mail.gmail.com>
+ <20241003160309.GY5594@noisy.programming.kicks-ass.net> <CAKwvOd=CRiHitKeYtHH=tmT8yfDa2RSALbYn5uCC8nRq8ud79g@mail.gmail.com>
+ <20241003161257.GZ5594@noisy.programming.kicks-ass.net> <CAF1bQ=RAizpP-T_sRGpE2-Kjsk_RZD3r_iz_dpn25W+uDzpWOw@mail.gmail.com>
+ <Zv-Fy4hnuscnLH1k@kernel.org>
+In-Reply-To: <Zv-Fy4hnuscnLH1k@kernel.org>
+From: Rong Xu <xur@google.com>
+Date: Fri, 4 Oct 2024 09:28:36 -0700
+Message-ID: <CAF1bQ=S8Hg0FUThaDU0snVqerVos6ztzVvN6sm1Ng3FnTpJt_A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] Add AutoFDO support for Clang build
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Han Shen <shenhan@google.com>, 
+	Sriraman Tallam <tmsriram@google.com>, David Li <davidxl@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>, 
+	Brian Gerst <brgerst@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
+	Jann Horn <jannh@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, linux-arch@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Samuel Holland <samuel.holland@sifive.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, x86@kernel.org, 
+	"Xin Li (Intel)" <xin@zytor.com>, Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-During initial device probe, the PCI DOE busy bit for some CXL
-devices may be left set for a longer period than expected by the
-current driver logic. Despite local comments stating DOE Busy is
-unlikely to be detected, it appears commonly specifically during
-boot when CXL devices are being probed.
+On Thu, Oct 3, 2024 at 11:09=E2=80=AFPM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> On Thu, Oct 03, 2024 at 11:20:17AM -0700, Rong Xu wrote:
+> > Writing the doc with all these code-blocks was not fun either.
+> > We are happy to change if there is a better way for this.
+> >
+> > -Rong
+> >
+> > On Thu, Oct 3, 2024 at 9:13=E2=80=AFAM Peter Zijlstra <peterz@infradead=
+.org> wrote:
+> > >
+> > > On Thu, Oct 03, 2024 at 09:11:34AM -0700, Nick Desaulniers wrote:
+> > >
+> > > > > It makes it absolute crap for all of us who 'render' text documen=
+ts
+> > > > > using less or vi.
+> > > >
+> > > > "It hurts when I punch myself in the face."
+> > >
+> > > Weirdly enough I have a job that entails staring at text documents in
+> > > text editors all day every day :-) sorry for thinking that's a sane
+> > > thing to do.
+>
+> Something like this should do:
+>
+> > +- For enabling a single file (e.g. foo.o)::
+> > +
+> > +        AUTOFDO_PROFILE_foo.o :=3D y
 
-This was observed on a single socket AMD platform with 2 CXL memory
-expanders attached to the single socket. It was not the case that
-concurrent accesses were being made, as validated by monitoring
-mailbox commands on the device side.
+Do you mean we don't use ".. code-block:: " here and just use indented
+text separated with blank lines?
 
-This behavior has been observed with multiple CXL memory expanders
-from different vendors - so it appears unrelated to the model.
+-Rong
 
-In all observed tests, only a small period of the retry window is
-actually used - typically only a handful of loop iterations.
-
-Polling on the PCI DOE Busy Bit for (at max) one PCI DOE timeout
-interval (1 second), resolves this issues cleanly.
-
-Per PCIe r6.2 sec 6.30.3, the DOE Busy Bit being cleared does not
-raise an interrupt, so polling is the best option in this scenario.
-
-Subsqeuent code in doe_statemachine_work and abort paths also wait
-for up to 1 PCI DOE timeout interval, so this order of (potential)
-additional delay is presumed acceptable.
-
-Suggested-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Gregory Price <gourry@gourry.net>
----
- drivers/pci/doe.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/doe.c b/drivers/pci/doe.c
-index 652d63df9d22..27ba5d281384 100644
---- a/drivers/pci/doe.c
-+++ b/drivers/pci/doe.c
-@@ -149,14 +149,26 @@ static int pci_doe_send_req(struct pci_doe_mb *doe_mb,
- 	size_t length, remainder;
- 	u32 val;
- 	int i;
-+	unsigned long timeout_jiffies;
- 
- 	/*
- 	 * Check the DOE busy bit is not set. If it is set, this could indicate
- 	 * someone other than Linux (e.g. firmware) is using the mailbox. Note
- 	 * it is expected that firmware and OS will negotiate access rights via
- 	 * an, as yet to be defined, method.
-+	 *
-+	 * Wait up to one PCI_DOE_TIMEOUT period to allow the prior command to
-+	 * finish. Otherwise, simply error out as unable to field the request.
-+	 *
-+	 * PCIe r6.2 sec 6.30.3 states no interrupt is raised when the DOE Busy
-+	 * bit is cleared, so polling here is our best option for the moment.
- 	 */
--	pci_read_config_dword(pdev, offset + PCI_DOE_STATUS, &val);
-+	timeout_jiffies = jiffies + PCI_DOE_TIMEOUT;
-+	do {
-+		pci_read_config_dword(pdev, offset + PCI_DOE_STATUS, &val);
-+	} while (FIELD_GET(PCI_DOE_STATUS_BUSY, val) &&
-+		 !time_after(jiffies, timeout_jiffies));
-+
- 	if (FIELD_GET(PCI_DOE_STATUS_BUSY, val))
- 		return -EBUSY;
- 
--- 
-2.43.0
-
+>
+>
+> --
+> Sincerely yours,
+> Mike.
 
