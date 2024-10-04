@@ -1,158 +1,110 @@
-Return-Path: <linux-kernel+bounces-349929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8156D98FD79
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:45:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4125398FD7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF04FB21E4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:45:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08B1F28102F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36F37E796;
-	Fri,  4 Oct 2024 06:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADB282499;
+	Fri,  4 Oct 2024 06:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XcwPa/u+"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="DiKthRHU"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8003D97F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 06:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F341D5AA7
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 06:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728024336; cv=none; b=cr2ettvtw+86dIzlL/qqXauoO8yvI1fLBvmbEd1z91wuoDpkbsM5eeKvKEXR64Z1ZFe6fnZAOo5uXitECgYHoxl7XZYtNEvtYd6afvbRCRKZRQqV/3cGFOVotITh4+/lap9IyFSyvu6E4RsmnPsbjE2QVp5XuCZGpmBinTQOqAQ=
+	t=1728024392; cv=none; b=hHTCWEdtHwX+/7uiqneXLjPSfAJXn1iesc/XG8um+tuRHCbO/ZLbfRcT61yBAKAd9cdjBKkJgyB/faZOhwAMPG16tvQBrBtrb7I+o5EsjLMDTE5883SHHUiedAuRYAyYCV+lVfT5JUYeP8FL9flIu/iEsrwhRKI1TF50NzyN+q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728024336; c=relaxed/simple;
-	bh=mL2W2tJrDMQeo1z+yDtY45KIaV/M8fHOjbAIS4+Vjz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YTnHEH19OmFw593Jhw/OxoEopDdEybj3eNOBdag4C8WYPoX3p2Z278x1DJtft9TYRjRU+jMtrlvlnyxrfhBQsBE2WAQVQmVKh/NjxmWcT6aaxw673OqoKdKzfaL/HtULN3b9ElSdz4eaR5SZQoJ8Q5tlsxMUc831+nIhnD7p2cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XcwPa/u+; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5e5b57127e6so882725eaf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 23:45:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728024333; x=1728629133; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mL2W2tJrDMQeo1z+yDtY45KIaV/M8fHOjbAIS4+Vjz4=;
-        b=XcwPa/u+oQV6Se4VwG2bbsjXpK82/SRysuAmFy/N1EJZXyA6KuVNfNAHbNYSgOER/s
-         vvQ+vim622dxkPr7Q21Bx7TT8UhX0wx1Pfced+2PZfqTkMR7K+DwbUw860n5cP6kkvk+
-         2kkgEp/aw+uhADezIdHUVV/QxsjHNh8VXszlnOHHLdOf4RnLjl3nWfjPWoUB+FcQoCR+
-         9uBAra0mKGKZTLRVIB8BN9+0v76ChhGyu9kRP8NKo+XPPHhTlKRnI6oQoQflZqij4vI2
-         kKHF1Jw0UwTuzEli6kO+ETAmQJJvO/Up31lUn9xhuwh/yQmJ5bMa0UkPzHHwJYlCAHhJ
-         evnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728024333; x=1728629133;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mL2W2tJrDMQeo1z+yDtY45KIaV/M8fHOjbAIS4+Vjz4=;
-        b=fa796s07YFB2/YU0SSN4i2DEoPQu30045LD2OSnX5y4x+zKWH2XDQQrknetKwdca+q
-         Fw15VDvZDk/FsglnhH+KUMSz2qIEch0xSNEILFjOpggFqMF6AsX648xMLACCrqRR6W7u
-         rxyq4A9fYhzyHz7ZTMt5jTT9fm/6ALYQA1+EyY5vZYoaqPbIUorTZ0dfWHCDIsFuwxNa
-         s2cPMO9EohOUbAAIR41g7bfekBJibIOLo4XH1vdiiVLO3CQsWwSzp5xYTEzDRCwhtkCp
-         6wK2gQQcRhZK9iEe1tHxiDMs8i14X3SUumpmIBiURY+O9JnMwGxOw5yP8FkFN3OXEJo7
-         4L4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVC5FEdULIIyqoM/6Zoqq0LtebYgFaa/9MCmZ3xdioY0CppCFLo813UEAPSAGmzBMzIulFzPGWbFlbQTU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB0WBfyh/47YY2e7oyJBjXF2n6QoGCzNiVOsW7h5H9ZYrF7PlE
-	4EcPGkABff6TkBILMZTEL/ResBidJeryWIsSRqycvDKXpo3Wd1I2QCRR79e/nB1r6hX8LOOrVcA
-	cthKWWdUmbLRiJs2Kk/VeuQan0zoPKA2UAFXe
-X-Google-Smtp-Source: AGHT+IH4Qhk7cAgNm6q1FriBC0eeLIQyCLkkZYNvfP5aKV2GbglNqvRSEqLE9XFLJqJynYRgllNS+XWQ5R7JRKSBfyU=
-X-Received: by 2002:a05:6870:364e:b0:278:14b6:a8f7 with SMTP id
- 586e51a60fabf-287c20219d4mr1335084fac.42.1728024333180; Thu, 03 Oct 2024
- 23:45:33 -0700 (PDT)
+	s=arc-20240116; t=1728024392; c=relaxed/simple;
+	bh=hG8JH9QC7IUabcnlZPtpcrZLfaI9QVGNzqfHD0bUMLk=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Pk5JnqFm7xBf+XEvP0q4Rm4QY5eKriBtHLavZtoqWmG1QbwCi4Rfdgyb9nLA7a21xe2JMwRucwrEhknNz9+G8lp1+8K92xq2Wuy3/uablJhzmqt7CHWtDbFoxL+jXWH2+TGhgkjqt7srXktDNDePcHtJvD9wkhrniSj25pMcDzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=DiKthRHU; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911064535.557650-1-feng.tang@intel.com> <d3dd32ba-2866-40ce-ad2b-a147dcd2bf86@suse.cz>
-In-Reply-To: <d3dd32ba-2866-40ce-ad2b-a147dcd2bf86@suse.cz>
-From: Marco Elver <elver@google.com>
-Date: Fri, 4 Oct 2024 08:44:54 +0200
-Message-ID: <CANpmjNM5XjwwSc8WrDE9=FGmSScftYrbsvC+db+82GaMPiQqvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] mm/slub: Improve data handling of krealloc() when
- orig_size is enabled
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Feng Tang <feng.tang@intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, David Gow <davidgow@google.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Alexander Potapenko <glider@google.com>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-mm@kvack.org, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1728024380;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sSHMcRc/7oJcjlVYuOOAXPpQW88U0Cjkb5Oc0Zij2G0=;
+	b=DiKthRHUZMmjw2bDMF2Obg/a47KqCGb17kjC5LcHKDr+8PDDrZKiSwKhvXzH1GGmeARFTl
+	1BbdW6LTiyr9HsZJ9/XwsVvd68HCHyIi/9sdAovCpo6w1R/NUc2btpV4hC6vQo6RYY7PUh
+	PHTWqN9aLcVWYqvP3rjMtEtc9mJGXB5L8vxdziiBRAwDcjyS5FwvaIOGTrNAZaYylkXicI
+	ZWpqtg0nBpU+c6BUKE8RZyrK0B6jMqqO3qJd2uq9row26EEiq+agpp0EJKFOpSLLOeMkqw
+	fP0vFCdbWM0IV68H9aw8Hw2j+N0gwBIzKkU5xTUkktwhTjYN/iTKA2tl8p7WsA==
+Date: Fri, 04 Oct 2024 08:46:19 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: linux-rockchip@lists.infradead.org, linux-phy@lists.infradead.org
+Cc: vkoul@kernel.org, kishon@kernel.org, heiko@sntech.de,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Improve error handling in Rockchip Inno USB 2.0
+ PHY driver
+In-Reply-To: <cover.1725524802.git.dsimic@manjaro.org>
+References: <cover.1725524802.git.dsimic@manjaro.org>
+Message-ID: <71569a2773d88d13ca1cf4aa41b56496@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Wed, 2 Oct 2024 at 12:42, Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> On 9/11/24 08:45, Feng Tang wrote:
-> > Danilo Krummrich's patch [1] raised one problem about krealloc() that
-> > its caller doesn't pass the old request size, say the object is 64
-> > bytes kmalloc one, but caller originally only requested 48 bytes. Then
-> > when krealloc() shrinks or grows in the same object, or allocate a new
-> > bigger object, it lacks this 'original size' information to do accurate
-> > data preserving or zeroing (when __GFP_ZERO is set).
-> >
-> > Thus with slub debug redzone and object tracking enabled, parts of the
-> > object after krealloc() might contain redzone data instead of zeroes,
-> > which is violating the __GFP_ZERO guarantees. Good thing is in this
-> > case, kmalloc caches do have this 'orig_size' feature, which could be
-> > used to improve the situation here.
-> >
-> > To make the 'orig_size' accurate, we adjust some kasan/slub meta data
-> > handling. Also add a slub kunit test case for krealloc().
-> >
-> > This patchset has dependency over patches in both -mm tree and -slab
-> > trees, so it is written based on linux-next tree '20240910' version.
-> >
-> > [1]. https://lore.kernel.org/lkml/20240812223707.32049-1-dakr@kernel.org/
->
-> Thanks, added to slab/for-next
+Hello,
 
-This series just hit -next, and we're seeing several "KFENCE: memory
-corruption ...". Here's one:
-https://lore.kernel.org/all/66ff8bf6.050a0220.49194.0453.GAE@google.com/
+On 2024-09-05 10:28, Dragan Simic wrote:
+> This is a small series that improves error handling in the probe path
+> of the Rockchip Innosilicon USB 2.0 PHY driver, by returning the actual
+> error code in one place and by using dev_err_probe() properly in 
+> multiple
+> places.  It also performs a bunch of small, rather trivial code 
+> cleanups,
+> to make the code neater and a bit easier to read.
 
-One more (no link):
+Just a brief reminder about this patch series...  Please let me know
+if something more is needed for these patches to be merged.
 
-> ==================================================================
-> BUG: KFENCE: memory corruption in xfs_iext_destroy_node+0xab/0x670 fs/xfs/libxfs/xfs_iext_tree.c:1051
->
-> Corrupted memory at 0xffff88823bf5a0d0 [ 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 ] (in kfence-#172):
-> xfs_iext_destroy_node+0xab/0x670 fs/xfs/libxfs/xfs_iext_tree.c:1051
-> xfs_iext_destroy+0x66/0x100 fs/xfs/libxfs/xfs_iext_tree.c:1062
-> xfs_inode_free_callback+0x91/0x1d0 fs/xfs/xfs_icache.c:145
-> rcu_do_batch kernel/rcu/tree.c:2567 [inline]
-[...]
->
-> kfence-#172: 0xffff88823bf5a000-0xffff88823bf5a0cf, size=208, cache=kmalloc-256
->
-> allocated by task 5494 on cpu 0 at 101.266046s (0.409225s ago):
-> __do_krealloc mm/slub.c:4784 [inline]
-> krealloc_noprof+0xd6/0x2e0 mm/slub.c:4838
-> xfs_iext_realloc_root fs/xfs/libxfs/xfs_iext_tree.c:613 [inline]
-[...]
->
-> freed by task 16 on cpu 0 at 101.573936s (0.186416s ago):
-> xfs_iext_destroy_node+0xab/0x670 fs/xfs/libxfs/xfs_iext_tree.c:1051
-> xfs_iext_destroy+0x66/0x100 fs/xfs/libxfs/xfs_iext_tree.c:1062
-> xfs_inode_free_callback+0x91/0x1d0 fs/xfs/xfs_icache.c:145
-[...]
->
-> CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.12.0-rc1-next-20241003-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> ==================================================================
-
-Unfortunately there's no reproducer yet it seems. Unless it's
-immediately obvious to say what's wrong, is it possible to take this
-series out of -next to confirm this series is causing the memory
-corruptions? Syzbot should then stop finding these crashes.
-
-Thanks,
--- Marco
+> Changes in v3:
+>   - Collected Reviewed-by tags from Heiko for patches 1/3 and 2/3
+>   - Brought back one empty line as a separator of dissimilar operations
+>     in patch 1/3, as suggested by Heiko [2]
+>   - Dropped one backward conversion of dev_err_probe() to dev_err() in
+>     patch 3/3, as suggested by Heiko, [3] and adjusted the summary and
+>     description of patch 3/3 accordingly
+> 
+> Changes in v2:
+>   - Expanded into a small series, after a suggestion from Heiko [1] to
+>     use dev_err_probe(), because it all happens in the probe path
+> 
+> Link to v2:
+> https://lore.kernel.org/linux-phy/cover.1724225528.git.dsimic@manjaro.org/T/#u
+> Link to v1:
+> https://lore.kernel.org/linux-phy/5fa7796d71e2f46344e972bc98a54539f55b6109.1723551599.git.dsimic@manjaro.org/T/#u
+> 
+> [1] https://lore.kernel.org/linux-phy/4927264.xgNZFEDtJV@diego/
+> [2] https://lore.kernel.org/linux-phy/5307900.6fTUFtlzNn@diego/
+> [3] https://lore.kernel.org/linux-phy/6073817.31tnzDBltd@diego/
+> 
+> Dragan Simic (3):
+>   phy: phy-rockchip-inno-usb2: Perform trivial code cleanups
+>   phy: phy-rockchip-inno-usb2: Handle failed extcon allocation better
+>   phy: phy-rockchip-inno-usb2: Use dev_err_probe() in the probe path
+> 
+>  drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 56 +++++++------------
+>  1 file changed, 21 insertions(+), 35 deletions(-)
 
