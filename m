@@ -1,157 +1,126 @@
-Return-Path: <linux-kernel+bounces-350431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814D5990508
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:59:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F138499050C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B164A1C229F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:59:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8DB284D06
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ADD212F07;
-	Fri,  4 Oct 2024 13:56:50 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79D32141DB;
+	Fri,  4 Oct 2024 13:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="COdlk9UB"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684BE212F04
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBA92139C6;
+	Fri,  4 Oct 2024 13:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728050210; cv=none; b=BMFtmRF8VnY7vPz6AXxI4fDdEG8mwk+7c8nZc0riP2OqhHA+Jk1Z3//EiglrW8sTF6OGj7C7+JTodp9BHMCqkePwqOcWyIMai/3Lx/DGlNkPn3h8it+qHqfq3YqWtbT/suLXP7ufYcU9lXP+dCFfUZ8DXK6WEC4atGjFpGqPegE=
+	t=1728050236; cv=none; b=OE8mp12gCC6SPZhx2P1ID2Ii7yhEX/Oo6WHJviSijuoCr6CEwwVwTrmttAJPbwQgdQNEYUn8UNNaPq4rmUGIIjZBRdAsUmdw0cYJNU2Uc6HvYvwWTZzA5YHuWGNMdWyEp3Oc+KAU6J06cnVq4vUFlYIUh+2O4szfCey+kUJRAwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728050210; c=relaxed/simple;
-	bh=N1C818eBlvE4sv6He9cJ9ekrXjXZ4zgfAiLcULwa9Xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iPH8fQ4HrsReXVBxmDBYVn6Q7LrtUk63YFs0GF+IVd9n530AkbPdZR9CHCHdOxigsd/vU1zpXis5scisxBTIBVSFXvtQAjaKVH8rl3UQLAd3xSy7VWQMueQ2N/L6aeP7Dno/AjDsMFbc0e+e1Ai1nEfL00jPBSu2tFMpmKdvRE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1swinL-0005ji-1g; Fri, 04 Oct 2024 15:56:35 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1swinJ-003aES-87; Fri, 04 Oct 2024 15:56:33 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1swinJ-00AhVa-0T;
-	Fri, 04 Oct 2024 15:56:33 +0200
-Date: Fri, 4 Oct 2024 15:56:33 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Kory Maincent <kory.maincent@bootlin.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de
-Subject: Re: [PATCH net-next 11/12] net: pse-pd: Add support for event
- reporting using devm_regulator_irq_helper
-Message-ID: <Zv_0ESPJgHKhFIwk@pengutronix.de>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
- <20241002-feature_poe_port_prio-v1-11-787054f74ed5@bootlin.com>
- <f56780af-b2d4-42d7-bc5d-c35b295d7c52@lunn.ch>
- <20241003102806.084367ba@kmaincent-XPS-13-7390>
- <f97baa90-1f76-4558-815a-ef4f82913c3a@lunn.ch>
- <20241003153303.7cc6dba8@kmaincent-XPS-13-7390>
- <4b9d1adf-e9bd-47c0-ac69-5da77fcf8d0b@lunn.ch>
+	s=arc-20240116; t=1728050236; c=relaxed/simple;
+	bh=7Hwq9uEJINWh6lbq0eDSkjI/LwWpxKdFjo1dFmCmg70=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Lh0oChPKuqovZUeT+au20NctxE5QzgTBIAYLCV6uhwAS6bw7UnMz57YnHjNJnD7hSJbfx/Q+mMV0RDknzDlAeItcYkLfQxiW11Q0MgMYFQtCIicqSaT2PDNZeSqX8t0XDvP3Y8z+jkqQaV7gCqCVb1FqxWZH9ID/rFkplpUWVCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=COdlk9UB; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728050209; x=1728655009; i=markus.elfring@web.de;
+	bh=l5sBalEVeHVqU+tztsDZkdHezcT8/Y4LuI15YAud/Os=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=COdlk9UBKuCaUvN8clv+FF4S1THVbAJVqWB2QPda56DLfiExkrEEV3YXwSBlszS8
+	 cyvkQjedLlpKoTRmW5jNCcuYvapidFV3QR63Ie6xHybvmVh61mHIjkP6oGgAPZYVt
+	 9c9x9KuTBrgITV4twZSTlEsZzwLIowJVSDnkIlCgKngpdsJ3KBjkRoH4706QriDe5
+	 CrePkqpy4471HXcIzvv+q5vzvbIymU4ay7aWsLDMtITNc4VVtwudGk1pHSUNL6+99
+	 1ACB5JD3eSIKk9ySyUJgBkkCshQk7Evi8cly/P0cbISptAlAzi76DCah5i1JG8TD3
+	 SzfFny4QSQkyCRbIxQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MKuKF-1sbU7g1DCv-00JJaN; Fri, 04
+ Oct 2024 15:56:49 +0200
+Message-ID: <5d8222c5-d564-4e27-9a85-ec4a526e84f8@web.de>
+Date: Fri, 4 Oct 2024 15:56:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4b9d1adf-e9bd-47c0-ac69-5da77fcf8d0b@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+To: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Patrice Chotard <patrice.chotard@foss.st.com>,
+ Peter Griffin <peter.griffin@linaro.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] media: c8sectpfe: Call of_node_put(i2c_bus) only once in
+ c8sectpfe_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+QCmwZmgCaEV2v9LZCjjGJaghSVTSAFn4GQRGdBCM9HPGmzrnAE
+ Lcb0ITz5R+EmIIdpN813CxVRkg9rEs4rJj5QfVKUDzyVC0xUoeTpb5ZUmPFowDwCD86gcQN
+ 3D+EVcUyEqJ1jyRRdS9PmFc6wvHSUAQjGc2K1KSm9HFjwekFdsQxZqBjMvd4DZn9mew7iOX
+ tuPcpy+p7rU5mGdoyxx9g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:29mHHnh0jhA=;z6wggkJyybQu1vD86KEzN9mdlr8
+ XjiZLv7SDj+hTW2IAtItSG0mfxETpxsAF/fPdld+Lnv/Kr7Gdp340FB7Q/Co9oUYRNmgvZndJ
+ WhWZq8ICA5j+QUrXL1Qm5AMV82ETLRV7aZ9SRNrm4tcQ3CqcmVT8KM2aqky+3VuG2mhbwa1mj
+ d9BxiVsmTyzGrUoam8ZbwFIBaFRuOuz+TP4BZu0ERcEAZWpwhr0V4DTTr+JJPl6kDdpueGmb2
+ 2B3Fmb0Rcb3CoNg7FegMIROggaKA5HybxuPryDiz2d+d6W6sGUMBQAdGtHXCL1sLu6VYRhshU
+ G8xjxkOjJILfCNP6u6uIE1HZRjNZP7sLV4WbKEIL/ahrrxRRG05YLi/zKA/W4VRDC/gGf7B3k
+ uGdYm/JOF3a36aUYzUCaWvnmnLncr8SUl4UIze9OPSYan8ZL1C3sSoik63Hi82/IMxAkyM+LB
+ laPtlpzek5cm23EZ+3A/FfjqSuTbUaDrovRgWLydEXFrocKHOp8YBXRcG5YNlHb6MW/nZmxju
+ yDvK7YyPV8BSX4szIs9sgh5aDbszp66CohurHr4BZV507rwlVJtqg3aRTYHDH8wQdjqxENdoX
+ XpdDQr2wugfyCHIQChrUJFSdBG90tBzukuZH37+2g+Mh3iAUE++MVUG43J/bzMNhfgufX7/Jy
+ d/3sZJxObfIL07opdp1mNivSu7Jo8jiq05PQunXjaNr9LHe8AjHQmB8fDIOGVUw8AyK8tFkin
+ jbrbWHP/ceV24LF+P6nWU5e2LgDBkyJop6oJ0gsOaByJ2uSvI+vKMnVit5TnDuqXbir+tzorf
+ aWhhbgXbpWa4szLljX4G17ng==
 
-On Thu, Oct 03, 2024 at 05:22:58PM +0200, Andrew Lunn wrote:
-> > Indeed, but regulator API already provide such events, which will even be sent
-> > when we enable or disable the PSE. Should we write a second event management.
-> > Using regulator event API allows to report over current internal events to the
-> > parents regulator the power supply of the PSE which could also do something to
-> > avoid smoke.
-> > 
-> > Or maybe we should add another wrapper which will send PSE ethtool netlink
-> > notification alongside the regulator notifications supported by this patch.
-> > 
-> > > Also, how do regulator events work in combination with network
-> > > namespaces? If you move the interface into a different network
-> > > namespace, do the regulator events get delivered to the root namespace
-> > > or the namespace the interface is in?
-> > 
-> > regulator events are sent in root namespace.
-> 
-> I think we will need two event, the base regulator event, and a
-> networking event. Since it is a regulator, sending a normal regulator
-> event makes a lot of sense. But mapping that regulator event to a
-> netns:ifnam is going to be hard. Anything wanting to take an action is
-> probably going to want to use ethtool, and so needs to be in the
-> correct netns, etc. But it does get messy if there is some sort of
-> software driven prioritisation going on, some daemon needs to pick a
-> victim to reduce power to, and the interfaces are spread over multiple
-> network namespaces.
-> 
-> What i don't know is if we can use an existing event, or we should add
-> a new one. Often rtnetlink_event() is used:
-> 
-> https://elixir.bootlin.com/linux/v6.12-rc1/source/net/core/rtnetlink.c#L6679
-> 
-> but without some PSE information in it, it would be hard to know why
-> it was sent. So we probably either want a generic ethtool event, or a
-> PSE event.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 4 Oct 2024 15:50:15 +0200
 
-Hm... assuming we have following scenario:
+An of_node_put(i2c_bus) call was immediately used after a pointer check
+for an of_find_i2c_adapter_by_node() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-                                  .---------   PI 1
-                                 / .---------  PI 2
-                   .========= PSE /----------( PI 3 ) NNS red
-                  //              \----------( PI 4 ) NNS blue
-Main supply      //                `---------( PI 5 ) NNS blue
-o================´--- System, CPU
+This issue was transformed by using the Coccinelle software.
 
-In this case we seems to have a new challenge:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On one side, a system wide power manager should see and mange all ports.
-On other side, withing a name space, we should be able to play in a
-isolated sand box. There is a reason why it is isolated. So, we should
-be able to sandbox power delivery and port prios too. Means, by creating
-network names space, we will need a power names space. 
+diff --git a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c b/dr=
+ivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
+index 67d3d6e50d2e..ed3a107965cc 100644
+=2D-- a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
++++ b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
+@@ -797,13 +797,12 @@ static int c8sectpfe_probe(struct platform_device *p=
+dev)
+ 		}
+ 		tsin->i2c_adapter =3D
+ 			of_find_i2c_adapter_by_node(i2c_bus);
++		of_node_put(i2c_bus);
+ 		if (!tsin->i2c_adapter) {
+ 			dev_err(&pdev->dev, "No i2c adapter found\n");
+-			of_node_put(i2c_bus);
+ 			ret =3D -ENODEV;
+ 			goto err_node_put;
+ 		}
+-		of_node_put(i2c_bus);
 
-I can even imagine a use case: an admin limited access to a switch for
-developer. A developer name space is created with PSE budget and max
-prios available for this name space. This will prevent users from DoSing
-system critical ports.
+ 		/* Acquire reset GPIO and activate it */
+ 		tsin->rst_gpio =3D devm_fwnode_gpiod_get(dev,
+=2D-
+2.46.1
 
-At this point, creating a power name space will an overkill for this
-patch set, so it should be enough to allow controlling prios over
-ethtool per port and isolation support if needed.
-
-Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
