@@ -1,361 +1,522 @@
-Return-Path: <linux-kernel+bounces-350963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B48990BA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:33:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD6E990ADA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8CF1282B98
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:32:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ECF01C22C00
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0911E5707;
-	Fri,  4 Oct 2024 18:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6E31D9A62;
+	Fri,  4 Oct 2024 18:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/ToBXcI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lpPhuM+u"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7E21E47D0;
-	Fri,  4 Oct 2024 18:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0ABC1C7612
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066014; cv=none; b=lYHQvSo0T5MAkj1M2/T/pAUsrW7GADbVODIZd3iNV/ovhFIN2bwsY0m7Pm3NjlG5hhWWI7ceCIlZwka0DYDcr0lT3haABbO3lApiGBXlCVcXTq9NAURuum5C744Jl0A2IN3b3oFiWCRsc7EO+7CtRlRE1DCKdVC1y0jK9KF6z8Q=
+	t=1728065848; cv=none; b=Yde0eLhQ3U082DBszgCiCo3HDCaQjVWBGSxS75fdtKINYUpkmSwJxQxnO/8yqx7/pV+j8IAFxJFUp9kSZ8AByfafawFxgbRL8PpN6cKeFrE8E7SAvpIKW842slgQ7OPHDpzbVNACpcyIl3WuWoOQ+eYDTMxl6r/lOBx1LRhNgC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066014; c=relaxed/simple;
-	bh=j19w5fcqs6VfX5ozTp4BN1+r4G5B3Vf1wFDCsUjw0to=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZJcBUiyo39PFxN30E5+qZ556xKhKiT1mo4WQM4xK805UVF1oCUsbEl+Fvtr5yHsUOxN0A0ClWLH5C8U/okUocGF6STz2lnyspL9ex1Bjcbd07BcuKcMurGNLYyAWfv0TqPgi9UOv3bkTK7la7fKpjXRwANYDrGA1KZv2amvk3LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/ToBXcI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0079DC4CEC6;
-	Fri,  4 Oct 2024 18:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066013;
-	bh=j19w5fcqs6VfX5ozTp4BN1+r4G5B3Vf1wFDCsUjw0to=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B/ToBXcI/4gfCfMGHKGaBYM5feotID4fA/eVH77LiQa7t68aFk0bylqdoSi1uiKiN
-	 U8RaLIPCuFdCjXIQYX3Ey/i4VJQoRi84bzHyqb6Or3/7/VHs1iEx+Rid6GBB1G/Ytt
-	 XqPn2UMdSzHQWQ2ZCaBwfua0vFjhNabgQPdAayK4TmMbzrvROliR/h9DiM5BdIBz4o
-	 kKxo8/ihp4d4kmIkHq3kxObud9/UQjkutSPgbfc19tzwij435QhrgQUDV+ur+abSFc
-	 K1VJzECS/7Cojyn81kptztw0Qh1/KXNiUoTmO3RGXzWAU2KJT4j0d7mbcMmTZR6pFJ
-	 7WSziLyKDxYSg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>,
-	=?UTF-8?q?=C5=81ukasz=20Bartosik?= <ukaszb@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	mathias.nyman@intel.com,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.11 55/76] xhci: dbc: Fix STALL transfer event handling
-Date: Fri,  4 Oct 2024 14:17:12 -0400
-Message-ID: <20241004181828.3669209-55-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004181828.3669209-1-sashal@kernel.org>
-References: <20241004181828.3669209-1-sashal@kernel.org>
+	s=arc-20240116; t=1728065848; c=relaxed/simple;
+	bh=bQtoaaPY3LL/uKF3YMTInrh0Dm1vi999UrSDUhyKl/4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=anlJJikC2YZiSiusUlcW1CJ6SpvwIfdovWhvpLd+ktrSwfgB97+tWkS2qVv5vhXS7Nx18mnPawbpYUef6iAVQ/LIsR2p960sQYiUk0XqSwgptLr5aX3cj603ZydQSEHwi2uykBlL1+ZtYMAb7nNtySYmkbl15ALduDtwGgNcRnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lpPhuM+u; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2877da58a20so104394fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 11:17:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728065845; x=1728670645; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mNH0oJNpe/bTkwrHuGm9kRIw5J8BcCwGdVTZ/6zJlcE=;
+        b=lpPhuM+uqUzoMD2uk9UsJHA+pwBz41Rk0Mvf9FR+ax0Hh4i1xQwsxW3TkIxns3cK5m
+         xbYTsvlELGkINreoMfRAEhi4ngKWy79+F/hHt9Jpm0PcQYj0UHKgVs+7FXChO8iDtLgg
+         BJ/Y2JIHL+/t2sj9xTaVrVHzXZdgDtAonwWMM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728065845; x=1728670645;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mNH0oJNpe/bTkwrHuGm9kRIw5J8BcCwGdVTZ/6zJlcE=;
+        b=jZ1H6vQepyD8Uyazs5MT6IJXJzTuI1+7C2ihbiSPveiwA2UlZgrHhoBeIfUgHijUpi
+         hUmZK8luYs5BErjikLInURhDtGoicmo1JU1hFZ+UE43CDpWjVHnGFXyeFNNZkuyJCy8A
+         3DUvNu9t8UlF/rE/d0WMYI2oSXSSyybnDta/zcUOKHh4YpSP3xrcoDMi9jVssOHENzt3
+         sY4CKRLICfAQo+Jjdt5JjVXwsNc/7NDmIKzR4ItxogLxvdo2xl5TcGJjGatofWOtDXz7
+         hkSyMhfhOOsA2uDxrn4QDs8+UbZM9/M3G3qksB8WnuKZDyrAvU55e+zrfHMQUR6i1CHc
+         MYsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWSyjswSbXu8RepS7lrm0iAytjjf7yZQJiU27/ZlK00IC5Gko10Bkn6eG51c4MGGSRFgq/nrCx6o9S7KM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjCnxs6cYMemYFswIg9QIEYOl35VA252cz/59f5Bd6B/bmrqS6
+	J665TIeBpAJZgc2BQsLAoLrI/Rh2iTlBbDHqMEE55d109W0tRUYlHg8D+CuaOYKVKMGJg6YPT4J
+	1GXeUG+M6neKKovPnQbNFZsGcPHqc9cVUjQh2
+X-Google-Smtp-Source: AGHT+IEBuk65mXnQmA+bPkWVVOmPVtTM05MxGP01b7TqmGd4Bj6qVn16brn+k1A6yf9ZtcCEaxdKBLpSxZbHRluDzhE=
+X-Received: by 2002:a05:6870:89a3:b0:286:f523:4d76 with SMTP id
+ 586e51a60fabf-287c1e16b7dmr738482fac.6.1728065844617; Fri, 04 Oct 2024
+ 11:17:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.11.2
-Content-Transfer-Encoding: 8bit
+References: <cover.1727440966.git.lorenzo.stoakes@oracle.com> <a578ee9bb656234d3a19bf9e97c3012378d31a19.1727440966.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <a578ee9bb656234d3a19bf9e97c3012378d31a19.1727440966.git.lorenzo.stoakes@oracle.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 4 Oct 2024 11:17:13 -0700
+Message-ID: <CABi2SkWzjTVjEwED_QjNz385m4aGo8OfAS2RkRjuZdpSviNkJQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/4] mm: madvise: implement lightweight guard page mechanism
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Kees Cook <keescook@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>, 
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Muchun Song <muchun.song@linux.dev>, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org, 
+	Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-kselftest@vger.kernel.org, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, Vlastimil Babka <vbabka@suze.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Hi Lorenzo,
 
-[ Upstream commit 9044ad57b60b0556d42b6f8aa218a68865e810a4 ]
+Please add me to this series, I 'm interested in everything related to
+mseal :-), thanks.
 
-Don't flush all pending DbC data requests when an endpoint halts.
+I also added Kees into the cc, since mseal is a security feature.
 
-An endpoint may halt and xHC DbC triggers a STALL error event if there's
-an issue with a bulk data transfer. The transfer should restart once xHC
-DbC receives a ClearFeature(ENDPOINT_HALT) request from the host.
 
-Once xHC DbC restarts it will start from the TRB pointed to by dequeue
-field in the endpoint context, which might be the same TRB we got the
-STALL event for. Turn the TRB to a no-op in this case to make sure xHC
-DbC doesn't reuse and tries to retransmit this same TRB after we already
-handled it, and gave its corresponding data request back.
+On Fri, Sep 27, 2024 at 5:52=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> Implement a new lightweight guard page feature, that is regions of userla=
+nd
+> virtual memory that, when accessed, cause a fatal signal to arise.
+>
+> Currently users must establish PROT_NONE ranges to achieve this.
+>
+> However this is very costly memory-wise - we need a VMA for each and ever=
+y
+> one of these regions AND they become unmergeable with surrounding VMAs.
+>
+> In addition repeated mmap() calls require repeated kernel context switche=
+s
+> and contention of the mmap lock to install these ranges, potentially also
+> having to unmap memory if installed over existing ranges.
+>
+> The lightweight guard approach eliminates the VMA cost altogether - rathe=
+r
+> than establishing a PROT_NONE VMA, it operates at the level of page table
+> entries - poisoning PTEs such that accesses to them cause a fault followe=
+d
+> by a SIGSGEV signal being raised.
+>
+> This is achieved through the PTE marker mechanism, which a previous commi=
+t
+> in this series extended to permit this to be done, installed via the
+> generic page walking logic, also extended by a prior commit for this
+> purpose.
+>
+> These poison ranges are established with MADV_GUARD_POISON, and if the
+> range in which they are installed contain any existing mappings, they wil=
+l
+> be zapped, i.e. free the range and unmap memory (thus mimicking the
+> behaviour of MADV_DONTNEED in this respect).
+>
+> Any existing poison entries will be left untouched. There is no nesting o=
+f
+> poisoned pages.
+>
+> Poisoned ranges are NOT cleared by MADV_DONTNEED, as this would be rather
+> unexpected behaviour, but are cleared on process teardown or unmapping of
+> memory ranges.
+>
+> Ranges can have the poison property removed by MADV_GUARD_UNPOISON -
+> 'remedying' the poisoning. The ranges over which this is applied, should
+> they contain non-poison entries, will be untouched, only poison entries
+> will be cleared.
+>
+> We permit this operation on anonymous memory only, and only VMAs which ar=
+e
+> non-special, non-huge and not mlock()'d (if we permitted this we'd have t=
+o
+> drop locked pages which would be rather counterintuitive).
+>
+> The poisoning of the range must be performed under mmap write lock as we
+> have to install an anon_vma to ensure correct behaviour on fork.
+>
+> Suggested-by: Vlastimil Babka <vbabka@suze.cz>
+> Suggested-by: Jann Horn <jannh@google.com>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  arch/alpha/include/uapi/asm/mman.h     |   3 +
+>  arch/mips/include/uapi/asm/mman.h      |   3 +
+>  arch/parisc/include/uapi/asm/mman.h    |   3 +
+>  arch/xtensa/include/uapi/asm/mman.h    |   3 +
+>  include/uapi/asm-generic/mman-common.h |   3 +
+>  mm/madvise.c                           | 158 +++++++++++++++++++++++++
+>  mm/mprotect.c                          |   3 +-
+>  mm/mseal.c                             |   1 +
+>  8 files changed, 176 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/alpha/include/uapi/asm/mman.h b/arch/alpha/include/uapi=
+/asm/mman.h
+> index 763929e814e9..71e13f27742d 100644
+> --- a/arch/alpha/include/uapi/asm/mman.h
+> +++ b/arch/alpha/include/uapi/asm/mman.h
+> @@ -78,6 +78,9 @@
+>
+>  #define MADV_COLLAPSE  25              /* Synchronous hugepage collapse =
+*/
+>
+> +#define MADV_GUARD_POISON 102          /* fatal signal on access to rang=
+e */
+> +#define MADV_GUARD_UNPOISON 103                /* revoke guard poisoning=
+ */
+> +
+>  /* compatibility flags */
+>  #define MAP_FILE       0
+>
+> diff --git a/arch/mips/include/uapi/asm/mman.h b/arch/mips/include/uapi/a=
+sm/mman.h
+> index 9c48d9a21aa0..1a2222322f77 100644
+> --- a/arch/mips/include/uapi/asm/mman.h
+> +++ b/arch/mips/include/uapi/asm/mman.h
+> @@ -105,6 +105,9 @@
+>
+>  #define MADV_COLLAPSE  25              /* Synchronous hugepage collapse =
+*/
+>
+> +#define MADV_GUARD_POISON 102          /* fatal signal on access to rang=
+e */
+> +#define MADV_GUARD_UNPOISON 103                /* revoke guard poisoning=
+ */
+> +
+>  /* compatibility flags */
+>  #define MAP_FILE       0
+>
+> diff --git a/arch/parisc/include/uapi/asm/mman.h b/arch/parisc/include/ua=
+pi/asm/mman.h
+> index 68c44f99bc93..380905522397 100644
+> --- a/arch/parisc/include/uapi/asm/mman.h
+> +++ b/arch/parisc/include/uapi/asm/mman.h
+> @@ -75,6 +75,9 @@
+>  #define MADV_HWPOISON     100          /* poison a page for testing */
+>  #define MADV_SOFT_OFFLINE 101          /* soft offline page for testing =
+*/
+>
+> +#define MADV_GUARD_POISON 102          /* fatal signal on access to rang=
+e */
+> +#define MADV_GUARD_UNPOISON 103                /* revoke guard poisoning=
+ */
+> +
+>  /* compatibility flags */
+>  #define MAP_FILE       0
+>
+> diff --git a/arch/xtensa/include/uapi/asm/mman.h b/arch/xtensa/include/ua=
+pi/asm/mman.h
+> index 1ff0c858544f..e8d5affceb28 100644
+> --- a/arch/xtensa/include/uapi/asm/mman.h
+> +++ b/arch/xtensa/include/uapi/asm/mman.h
+> @@ -113,6 +113,9 @@
+>
+>  #define MADV_COLLAPSE  25              /* Synchronous hugepage collapse =
+*/
+>
+> +#define MADV_GUARD_POISON 102          /* fatal signal on access to rang=
+e */
+> +#define MADV_GUARD_UNPOISON 103                /* revoke guard poisoning=
+ */
+> +
+>  /* compatibility flags */
+>  #define MAP_FILE       0
+>
+> diff --git a/include/uapi/asm-generic/mman-common.h b/include/uapi/asm-ge=
+neric/mman-common.h
+> index 6ce1f1ceb432..5dfd3d442de4 100644
+> --- a/include/uapi/asm-generic/mman-common.h
+> +++ b/include/uapi/asm-generic/mman-common.h
+> @@ -79,6 +79,9 @@
+>
+>  #define MADV_COLLAPSE  25              /* Synchronous hugepage collapse =
+*/
+>
+> +#define MADV_GUARD_POISON 102          /* fatal signal on access to rang=
+e */
+> +#define MADV_GUARD_UNPOISON 103                /* revoke guard poisoning=
+ */
+> +
+>  /* compatibility flags */
+>  #define MAP_FILE       0
+>
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index e871a72a6c32..7216e10723ae 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -60,6 +60,7 @@ static int madvise_need_mmap_write(int behavior)
+>         case MADV_POPULATE_READ:
+>         case MADV_POPULATE_WRITE:
+>         case MADV_COLLAPSE:
+> +       case MADV_GUARD_UNPOISON: /* Only poisoning needs a write lock. *=
+/
+>                 return 0;
+>         default:
+>                 /* be safe, default to 1. list exceptions explicitly */
+> @@ -1017,6 +1018,157 @@ static long madvise_remove(struct vm_area_struct =
+*vma,
+>         return error;
+>  }
+>
+> +static bool is_valid_guard_vma(struct vm_area_struct *vma, bool allow_lo=
+cked)
+> +{
+> +       vm_flags_t disallowed =3D VM_SPECIAL | VM_HUGETLB;
+> +
+> +       /*
+> +        * A user could lock after poisoning but that's fine, as they'd n=
+ot be
+> +        * able to fault in. The issue arises when we try to zap existing=
+ locked
+> +        * VMAs. We don't want to do that.
+> +        */
+> +       if (!allow_locked)
+> +               disallowed |=3D VM_LOCKED;
+> +
+> +       if (!vma_is_anonymous(vma))
+> +               return false;
+> +
+> +       if ((vma->vm_flags & (VM_MAYWRITE | disallowed)) !=3D VM_MAYWRITE=
+)
+> +               return false;
+> +
+> +       return true;
+> +}
+> +
+> +static int guard_poison_install_pte(unsigned long addr, unsigned long ne=
+xt,
+> +                                   pte_t *ptep, struct mm_walk *walk)
+> +{
+> +       unsigned long *num_installed =3D (unsigned long *)walk->private;
+> +
+> +       (*num_installed)++;
+> +       /* Simply install a PTE marker, this causes segfault on access. *=
+/
+> +       *ptep =3D make_pte_marker(PTE_MARKER_GUARD);
+> +
+> +       return 0;
+> +}
+> +
+> +static bool is_guard_pte_marker(pte_t ptent)
+> +{
+> +       return is_pte_marker(ptent) &&
+> +               is_guard_swp_entry(pte_to_swp_entry(ptent));
+> +}
+> +
+> +static int guard_poison_pte_entry(pte_t *pte, unsigned long addr,
+> +                                 unsigned long next, struct mm_walk *wal=
+k)
+> +{
+> +       pte_t ptent =3D ptep_get(pte);
+> +
+> +       /*
+> +        * If not a guard marker, simply abort the operation. We return a=
+ value
+> +        * > 0 indicating a non-error abort.
+> +        */
+> +       return !is_guard_pte_marker(ptent);
+> +}
+> +
+> +static const struct mm_walk_ops guard_poison_walk_ops =3D {
+> +       .install_pte            =3D guard_poison_install_pte,
+> +       .pte_entry              =3D guard_poison_pte_entry,
+> +       /* We might need to install an anon_vma. */
+> +       .walk_lock              =3D PGWALK_WRLOCK,
+> +};
+> +
+> +static long madvise_guard_poison(struct vm_area_struct *vma,
+> +                                struct vm_area_struct **prev,
+> +                                unsigned long start, unsigned long end)
+> +{
+> +       long err;
+> +       bool retried =3D false;
+> +
+> +       *prev =3D vma;
+> +       if (!is_valid_guard_vma(vma, /* allow_locked =3D */false))
+> +               return -EINVAL;
+> +
+> +       /*
+> +        * Optimistically try to install the guard poison pages first. If=
+ any
+> +        * non-guard pages are encountered, give up and zap the range bef=
+ore
+> +        * trying again.
+> +        */
+> +       while (true) {
+> +               unsigned long num_installed =3D 0;
+> +
+> +               /* Returns < 0 on error, =3D=3D 0 if success, > 0 if zap =
+needed. */
+> +               err =3D walk_page_range_mm(vma->vm_mm, start, end,
+> +                                        &guard_poison_walk_ops,
+> +                                        &num_installed);
+> +               /*
+> +                * If we install poison markers, then the range is no lon=
+ger
+> +                * empty from a page table perspective and therefore it's
+> +                * appropriate to have an anon_vma.
+> +                *
+> +                * This ensures that on fork, we copy page tables correct=
+ly.
+> +                */
+> +               if (err >=3D 0 && num_installed > 0) {
+> +                       int err_anon =3D anon_vma_prepare(vma);
+> +
+> +                       if (err_anon)
+> +                               err =3D err_anon;
+> +               }
+> +
+> +               if (err <=3D 0)
+> +                       return err;
+> +
+> +               if (!retried)
+> +                       /*
+> +                        * OK some of the range have non-guard pages mapp=
+ed, zap
+> +                        * them. This leaves existing guard pages in plac=
+e.
+> +                        */
+> +                       zap_page_range_single(vma, start, end - start, NU=
+LL);
+> +               else
+> +                       /*
+> +                        * If we reach here, then there is a racing fault=
+ that
+> +                        * has populated the PTE after we zapped. Give up=
+ and
+> +                        * let the user know to try again.
+> +                        */
+> +                       return -EAGAIN;
+> +
+> +               retried =3D true;
+> +       }
+> +}
+> +
+> +static int guard_unpoison_pte_entry(pte_t *pte, unsigned long addr,
+> +                                   unsigned long next, struct mm_walk *w=
+alk)
+> +{
+> +       pte_t ptent =3D ptep_get(pte);
+> +
+> +       if (is_guard_pte_marker(ptent)) {
+> +               /* Simply clear the PTE marker. */
+> +               pte_clear_not_present_full(walk->mm, addr, pte, true);
+> +               update_mmu_cache(walk->vma, addr, pte);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct mm_walk_ops guard_unpoison_walk_ops =3D {
+> +       .pte_entry              =3D guard_unpoison_pte_entry,
+> +       .walk_lock              =3D PGWALK_RDLOCK,
+> +};
+> +
+> +static long madvise_guard_unpoison(struct vm_area_struct *vma,
+> +                                  struct vm_area_struct **prev,
+> +                                  unsigned long start, unsigned long end=
+)
+> +{
+> +       *prev =3D vma;
+> +       /*
+> +        * We're ok with unpoisoning mlock()'d ranges, as this is a
+> +        * non-destructive action.
+> +        */
+> +       if (!is_valid_guard_vma(vma, /* allow_locked =3D */true))
+> +               return -EINVAL;
+> +
+> +       return walk_page_range(vma->vm_mm, start, end,
+> +                              &guard_unpoison_walk_ops, NULL);
+> +}
+> +
+>  /*
+>   * Apply an madvise behavior to a region of a vma.  madvise_update_vma
+>   * will handle splitting a vm area into separate areas, each area with i=
+ts own
+> @@ -1098,6 +1250,10 @@ static int madvise_vma_behavior(struct vm_area_str=
+uct *vma,
+>                 break;
+>         case MADV_COLLAPSE:
+>                 return madvise_collapse(vma, prev, start, end);
+> +       case MADV_GUARD_POISON:
+> +               return madvise_guard_poison(vma, prev, start, end);
+> +       case MADV_GUARD_UNPOISON:
+> +               return madvise_guard_unpoison(vma, prev, start, end);
+>         }
+>
+>         anon_name =3D anon_vma_name(vma);
+> @@ -1197,6 +1353,8 @@ madvise_behavior_valid(int behavior)
+>         case MADV_DODUMP:
+>         case MADV_WIPEONFORK:
+>         case MADV_KEEPONFORK:
+> +       case MADV_GUARD_POISON:
+> +       case MADV_GUARD_UNPOISON:
+>  #ifdef CONFIG_MEMORY_FAILURE
+>         case MADV_SOFT_OFFLINE:
+>         case MADV_HWPOISON:
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index 0c5d6d06107d..d0e3ebfadef8 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -236,7 +236,8 @@ static long change_pte_range(struct mmu_gather *tlb,
+>                         } else if (is_pte_marker_entry(entry)) {
+>                                 /*
+>                                  * Ignore error swap entries unconditiona=
+lly,
+> -                                * because any access should sigbus anywa=
+y.
+> +                                * because any access should sigbus/sigse=
+gv
+> +                                * anyway.
+>                                  */
+>                                 if (is_poisoned_swp_entry(entry))
+>                                         continue;
+> diff --git a/mm/mseal.c b/mm/mseal.c
+> index ece977bd21e1..21bf5534bcf5 100644
+> --- a/mm/mseal.c
+> +++ b/mm/mseal.c
+> @@ -30,6 +30,7 @@ static bool is_madv_discard(int behavior)
+>         case MADV_REMOVE:
+>         case MADV_DONTFORK:
+>         case MADV_WIPEONFORK:
+> +       case MADV_GUARD_POISON:
 
-Other STALL events might be completely bogus.
-Lukasz Bartosik discovered that xHC DbC might issue spurious STALL events
-if hosts sends a ClearFeature(ENDPOINT_HALT) request to non-halted
-endpoints even without any active bulk transfers.
+Can you please describe the rationale to add this to the existing
+mseal's semantic ?
 
-Assume STALL event is spurious if it reports 0 bytes transferred, and
-the endpoint stopped on the STALLED TRB.
-Don't give back the data request corresponding to the TRB in this case.
+I didn't not find any description from the cover letter or this
+patch's description, hence asking.
 
-The halted status is per endpoint. Track it with a per endpoint flag
-instead of the driver invented DbC wide DS_STALLED state.
-DbC remains in DbC-Configured state even if endpoints halt. There is no
-Stalled state in the DbC Port state Machine (xhci section 7.6.6)
+Thanks
+-Jeff
 
-Reported-by: Łukasz Bartosik <ukaszb@chromium.org>
-Closes: https://lore.kernel.org/linux-usb/20240725074857.623299-1-ukaszb@chromium.org/
-Tested-by: Łukasz Bartosik <ukaszb@chromium.org>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20240905143300.1959279-2-mathias.nyman@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/usb/host/xhci-dbgcap.c | 133 ++++++++++++++++++++-------------
- drivers/usb/host/xhci-dbgcap.h |   2 +-
- 2 files changed, 83 insertions(+), 52 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-dbgcap.c b/drivers/usb/host/xhci-dbgcap.c
-index 161c09953c4e0..241d7aa1fbc20 100644
---- a/drivers/usb/host/xhci-dbgcap.c
-+++ b/drivers/usb/host/xhci-dbgcap.c
-@@ -173,16 +173,18 @@ static void xhci_dbc_giveback(struct dbc_request *req, int status)
- 	spin_lock(&dbc->lock);
- }
- 
--static void xhci_dbc_flush_single_request(struct dbc_request *req)
-+static void trb_to_noop(union xhci_trb *trb)
- {
--	union xhci_trb	*trb = req->trb;
--
- 	trb->generic.field[0]	= 0;
- 	trb->generic.field[1]	= 0;
- 	trb->generic.field[2]	= 0;
- 	trb->generic.field[3]	&= cpu_to_le32(TRB_CYCLE);
- 	trb->generic.field[3]	|= cpu_to_le32(TRB_TYPE(TRB_TR_NOOP));
-+}
- 
-+static void xhci_dbc_flush_single_request(struct dbc_request *req)
-+{
-+	trb_to_noop(req->trb);
- 	xhci_dbc_giveback(req, -ESHUTDOWN);
- }
- 
-@@ -649,7 +651,6 @@ static void xhci_dbc_stop(struct xhci_dbc *dbc)
- 	case DS_DISABLED:
- 		return;
- 	case DS_CONFIGURED:
--	case DS_STALLED:
- 		if (dbc->driver->disconnect)
- 			dbc->driver->disconnect(dbc);
- 		break;
-@@ -669,6 +670,23 @@ static void xhci_dbc_stop(struct xhci_dbc *dbc)
- 	pm_runtime_put_sync(dbc->dev); /* note, was self.controller */
- }
- 
-+static void
-+handle_ep_halt_changes(struct xhci_dbc *dbc, struct dbc_ep *dep, bool halted)
-+{
-+	if (halted) {
-+		dev_info(dbc->dev, "DbC Endpoint halted\n");
-+		dep->halted = 1;
-+
-+	} else if (dep->halted) {
-+		dev_info(dbc->dev, "DbC Endpoint halt cleared\n");
-+		dep->halted = 0;
-+
-+		if (!list_empty(&dep->list_pending))
-+			writel(DBC_DOOR_BELL_TARGET(dep->direction),
-+			       &dbc->regs->doorbell);
-+	}
-+}
-+
- static void
- dbc_handle_port_status(struct xhci_dbc *dbc, union xhci_trb *event)
- {
-@@ -697,6 +715,7 @@ static void dbc_handle_xfer_event(struct xhci_dbc *dbc, union xhci_trb *event)
- 	struct xhci_ring	*ring;
- 	int			ep_id;
- 	int			status;
-+	struct xhci_ep_ctx	*ep_ctx;
- 	u32			comp_code;
- 	size_t			remain_length;
- 	struct dbc_request	*req = NULL, *r;
-@@ -706,8 +725,30 @@ static void dbc_handle_xfer_event(struct xhci_dbc *dbc, union xhci_trb *event)
- 	ep_id		= TRB_TO_EP_ID(le32_to_cpu(event->generic.field[3]));
- 	dep		= (ep_id == EPID_OUT) ?
- 				get_out_ep(dbc) : get_in_ep(dbc);
-+	ep_ctx		= (ep_id == EPID_OUT) ?
-+				dbc_bulkout_ctx(dbc) : dbc_bulkin_ctx(dbc);
- 	ring		= dep->ring;
- 
-+	/* Match the pending request: */
-+	list_for_each_entry(r, &dep->list_pending, list_pending) {
-+		if (r->trb_dma == event->trans_event.buffer) {
-+			req = r;
-+			break;
-+		}
-+		if (r->status == -COMP_STALL_ERROR) {
-+			dev_warn(dbc->dev, "Give back stale stalled req\n");
-+			ring->num_trbs_free++;
-+			xhci_dbc_giveback(r, 0);
-+		}
-+	}
-+
-+	if (!req) {
-+		dev_warn(dbc->dev, "no matched request\n");
-+		return;
-+	}
-+
-+	trace_xhci_dbc_handle_transfer(ring, &req->trb->generic);
-+
- 	switch (comp_code) {
- 	case COMP_SUCCESS:
- 		remain_length = 0;
-@@ -718,31 +759,49 @@ static void dbc_handle_xfer_event(struct xhci_dbc *dbc, union xhci_trb *event)
- 	case COMP_TRB_ERROR:
- 	case COMP_BABBLE_DETECTED_ERROR:
- 	case COMP_USB_TRANSACTION_ERROR:
--	case COMP_STALL_ERROR:
- 		dev_warn(dbc->dev, "tx error %d detected\n", comp_code);
- 		status = -comp_code;
- 		break;
-+	case COMP_STALL_ERROR:
-+		dev_warn(dbc->dev, "Stall error at bulk TRB %llx, remaining %zu, ep deq %llx\n",
-+			 event->trans_event.buffer, remain_length, ep_ctx->deq);
-+		status = 0;
-+		dep->halted = 1;
-+
-+		/*
-+		 * xHC DbC may trigger a STALL bulk xfer event when host sends a
-+		 * ClearFeature(ENDPOINT_HALT) request even if there wasn't an
-+		 * active bulk transfer.
-+		 *
-+		 * Don't give back this transfer request as hardware will later
-+		 * start processing TRBs starting from this 'STALLED' TRB,
-+		 * causing TRBs and requests to be out of sync.
-+		 *
-+		 * If STALL event shows some bytes were transferred then assume
-+		 * it's an actual transfer issue and give back the request.
-+		 * In this case mark the TRB as No-Op to avoid hw from using the
-+		 * TRB again.
-+		 */
-+
-+		if ((ep_ctx->deq & ~TRB_CYCLE) == event->trans_event.buffer) {
-+			dev_dbg(dbc->dev, "Ep stopped on Stalled TRB\n");
-+			if (remain_length == req->length) {
-+				dev_dbg(dbc->dev, "Spurious stall event, keep req\n");
-+				req->status = -COMP_STALL_ERROR;
-+				req->actual = 0;
-+				return;
-+			}
-+			dev_dbg(dbc->dev, "Give back stalled req, but turn TRB to No-op\n");
-+			trb_to_noop(req->trb);
-+		}
-+		break;
-+
- 	default:
- 		dev_err(dbc->dev, "unknown tx error %d\n", comp_code);
- 		status = -comp_code;
- 		break;
- 	}
- 
--	/* Match the pending request: */
--	list_for_each_entry(r, &dep->list_pending, list_pending) {
--		if (r->trb_dma == event->trans_event.buffer) {
--			req = r;
--			break;
--		}
--	}
--
--	if (!req) {
--		dev_warn(dbc->dev, "no matched request\n");
--		return;
--	}
--
--	trace_xhci_dbc_handle_transfer(ring, &req->trb->generic);
--
- 	ring->num_trbs_free++;
- 	req->actual = req->length - remain_length;
- 	xhci_dbc_giveback(req, status);
-@@ -762,7 +821,6 @@ static void inc_evt_deq(struct xhci_ring *ring)
- static enum evtreturn xhci_dbc_do_handle_events(struct xhci_dbc *dbc)
- {
- 	dma_addr_t		deq;
--	struct dbc_ep		*dep;
- 	union xhci_trb		*evt;
- 	u32			ctrl, portsc;
- 	bool			update_erdp = false;
-@@ -814,43 +872,17 @@ static enum evtreturn xhci_dbc_do_handle_events(struct xhci_dbc *dbc)
- 			return EVT_DISC;
- 		}
- 
--		/* Handle endpoint stall event: */
-+		/* Check and handle changes in endpoint halt status */
- 		ctrl = readl(&dbc->regs->control);
--		if ((ctrl & DBC_CTRL_HALT_IN_TR) ||
--		    (ctrl & DBC_CTRL_HALT_OUT_TR)) {
--			dev_info(dbc->dev, "DbC Endpoint stall\n");
--			dbc->state = DS_STALLED;
--
--			if (ctrl & DBC_CTRL_HALT_IN_TR) {
--				dep = get_in_ep(dbc);
--				xhci_dbc_flush_endpoint_requests(dep);
--			}
--
--			if (ctrl & DBC_CTRL_HALT_OUT_TR) {
--				dep = get_out_ep(dbc);
--				xhci_dbc_flush_endpoint_requests(dep);
--			}
--
--			return EVT_DONE;
--		}
-+		handle_ep_halt_changes(dbc, get_in_ep(dbc), ctrl & DBC_CTRL_HALT_IN_TR);
-+		handle_ep_halt_changes(dbc, get_out_ep(dbc), ctrl & DBC_CTRL_HALT_OUT_TR);
- 
- 		/* Clear DbC run change bit: */
- 		if (ctrl & DBC_CTRL_DBC_RUN_CHANGE) {
- 			writel(ctrl, &dbc->regs->control);
- 			ctrl = readl(&dbc->regs->control);
- 		}
--
- 		break;
--	case DS_STALLED:
--		ctrl = readl(&dbc->regs->control);
--		if (!(ctrl & DBC_CTRL_HALT_IN_TR) &&
--		    !(ctrl & DBC_CTRL_HALT_OUT_TR) &&
--		    (ctrl & DBC_CTRL_DBC_RUN)) {
--			dbc->state = DS_CONFIGURED;
--			break;
--		}
--
--		return EVT_DONE;
- 	default:
- 		dev_err(dbc->dev, "Unknown DbC state %d\n", dbc->state);
- 		break;
-@@ -939,7 +971,6 @@ static const char * const dbc_state_strings[DS_MAX] = {
- 	[DS_ENABLED] = "enabled",
- 	[DS_CONNECTED] = "connected",
- 	[DS_CONFIGURED] = "configured",
--	[DS_STALLED] = "stalled",
- };
- 
- static ssize_t dbc_show(struct device *dev,
-diff --git a/drivers/usb/host/xhci-dbgcap.h b/drivers/usb/host/xhci-dbgcap.h
-index 0118c6288a3cc..97c5dc290138b 100644
---- a/drivers/usb/host/xhci-dbgcap.h
-+++ b/drivers/usb/host/xhci-dbgcap.h
-@@ -81,7 +81,6 @@ enum dbc_state {
- 	DS_ENABLED,
- 	DS_CONNECTED,
- 	DS_CONFIGURED,
--	DS_STALLED,
- 	DS_MAX
- };
- 
-@@ -90,6 +89,7 @@ struct dbc_ep {
- 	struct list_head		list_pending;
- 	struct xhci_ring		*ring;
- 	unsigned int			direction:1;
-+	unsigned int			halted:1;
- };
- 
- #define DBC_QUEUE_SIZE			16
--- 
-2.43.0
-
+>                 return true;
+>         }
+>
+> --
+> 2.46.2
+>
+>
 
