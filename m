@@ -1,103 +1,139 @@
-Return-Path: <linux-kernel+bounces-351267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD79990F2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:50:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2883990F2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D0361C22F3F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:50:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4984E1F24D05
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04439231CA0;
-	Fri,  4 Oct 2024 18:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFEA1E1C37;
+	Fri,  4 Oct 2024 18:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QgSK3jpE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYuVnOB5"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B3C231C91
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501A4231C91;
+	Fri,  4 Oct 2024 18:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066791; cv=none; b=QST4yVHWeMUXCZS+2xCLDBChVtfP2eGHT2OzsdxcWYXrgR5mCDlYR0A8VRuqGn4ph9arE9gZho0t56sfURKo/GlNa6HTgW9aeMWoRipliC/mU8iOEr2c9qZbBhjmq5ClZaUM7glXuemp5gok7nr0416uXyd7KUbODGAP8Em4Drg=
+	t=1728066832; cv=none; b=h/c2tEs0dNa3Tyz6YcW4KAq4gHsqGXhJwK1Le1zjf6BtLBYPCerQ9JSKjZkdkizrUMJoK5DOhVKgYIF4E6NFpSMSfOUezPAduuFTC4y4kOM1T0kCdUX4TNoa7XctRg707AkhHMmDL1m9LrM4GWL6hsAWs4ExFjn2AG0JID6KNuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066791; c=relaxed/simple;
-	bh=CJkthIwbyQ2P295Vy9Qj+ckjweCDMd6jXFZiFV0zFWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=G1ZkK8nt2AHQs4H5Tsbn5TUrsziW4N1Qpf4/En0thTVyAjca0mWUOz7avIq7PuAFta/WPG5sWVefYq5kUO+v9LgWv6K7wYFHi1K0HrfACUSTUATXmXKnjKpq3DoEa0v4H945ocBV2M8hrpS7lSlXTu4e76oik0yueo1WgZKNbCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QgSK3jpE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494AqpHV005396;
-	Fri, 4 Oct 2024 18:33:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3+xaBo+tQwgmphShqtZjZP+Jn+aYi/Hz1R5K3p9jxYY=; b=QgSK3jpE0wHwBrG8
-	dYCR3VAaVYJKOM7c4qXfBQ2zQEA50s0Gm5wVaifEfkgAOaK1901CZ46QKmMOHbo8
-	Da1+eGgOcGNMaCeMMhs2vpJLXoe5K/fK9pGU0TmeCGE29tnmqKVZe7rGkwlnJftn
-	7o4QE3mKVVVaqvr0b7HHiuvMJB8UUAxRCpBHpPEVHKW9UpDJJ2f/Mtv0J4Fd++Bz
-	SM9LFkVbSFJcNArVG8nPxWECbOKAaDxzqNF8Hb/lCr3XIZdqtVwMwMWrQzxSvAzi
-	fqFCYDsX26EU5MVAl9eQWW2aPioozlYzfzI9Radwzq2HY4y5V38OxCC3I6IKVUa4
-	DFIRbw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205e315e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 18:33:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494IX38b028853
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 18:33:03 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 11:33:02 -0700
-Message-ID: <1a2bb8fc-0242-d86b-1de0-cc9eec1c61c0@quicinc.com>
-Date: Fri, 4 Oct 2024 12:33:01 -0600
+	s=arc-20240116; t=1728066832; c=relaxed/simple;
+	bh=ZJojrD0MiFBc82T9ho+Qu0OfFoyqUGxJb3o88qAdpRE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MNm1RCnIZcXsJuDSOq0i3gQyfD0JVC+dQlFTnxKNgQYa5+7Joj2Q7D8wmLoW4gHfRAkMaI2OPfIiGWBUtUQVLiY1keY5h9GYT5FaAjjT4N1L1FL2JZgDZAPg4EkuAj2wPS1YpDzNhTpY9yYqtL/9Grl14WM7lHRzC9tKn4bsGg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VYuVnOB5; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb1e623d1so24074195e9.0;
+        Fri, 04 Oct 2024 11:33:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728066829; x=1728671629; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4+eivA74IJ09ih5Gd9yZF2KHb3khSrTcjkEBWfJwMu0=;
+        b=VYuVnOB5t8O9m316b3fWSmUbnzBbfwhDW6QJ8fnclzTlmOBpbzaPLCrPW/FbFq93yX
+         4YdMLeGp3ZJ32fXwWWP5bHJBZ2SIbwezim/549sBteNwM7T74QzT4vaLDqsZ38bUE5Vp
+         WAO0tpLBORHk4pZ8J0R1PVnyZSFlpfOBFVL4PZ0nYbDEUgd9PafCJk1updc4cRUKD1DR
+         lpWynTK9TWBpCR4VXEEAEvumolZ7wuhBf8+p/U+RcLA4srrJBVlYaWTW4yq+A0WNjQZA
+         fPhzLKR5l6ORtALCbTeyYXgO5fxNXsceeZLzdjqVxh1whTjxSv4zNNSfcLKr1CUhL9mJ
+         O+vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728066829; x=1728671629;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4+eivA74IJ09ih5Gd9yZF2KHb3khSrTcjkEBWfJwMu0=;
+        b=cz7ctoI/Lpd6N1lNiUwQ+tPfxdLdLHmmFrgqDz+BFY8F6/+IvCoVPERxTD9/eOg5Nm
+         XxV9yy1VwE77vFjf/h+syMD/yuNCY8oTHCZWrVm/Xkz1uFz0k6mdiQ2+iK0a7K4ooE+8
+         wYBaVCnSXATo5dmKL7yi4BLXB96KOMigziPL23je2gHTzQkJ62UwAz+mK9fh0TCx3QXn
+         NgtdBBgshUHHFCgZRwpgxnQj5H3cYr0pwGRTB/p1kfoygRiLGByS+W7Nu7qHCXQIOo7T
+         BPb/JSPFZequQklhbrGvoseVWC0JvptCRIr8rZh2OT+1rInhs0V+Owkb/pAb9O4SfCNu
+         qdJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5oRa1wLathEIGUPNRLm2jEM9o8K268YGNDl2GFNDZYiXPnDa2aFUaxKZxLV90WpwLj3Xk5MbtH5dV8Qc=@vger.kernel.org, AJvYcCXQLkgqgBI2kfOOYuksLrOg5fKtjL8nbUj0D9s9czIW3HaQ3pa/MasBKvzP+KXMQx89XFQicRyu@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV0GC7Gzn1D+IdM4S0ePUKbjxU+I1wmZdc9GdQtqUQKqwDG/vw
+	fRO4k1Jq52ivGB6Tb5+X5Ycb6HscjTs385Tb4JSBWVdPSg/9y+Co
+X-Google-Smtp-Source: AGHT+IFDmFVFFxe2MyfGZo8gTm8mEKtZk46BdZRLcGR9ECJZt5B8zo/Ek2cjYUXmSy7cPVcGCr+MJw==
+X-Received: by 2002:a05:600c:a49:b0:42c:b52b:4335 with SMTP id 5b1f17b1804b1-42f85aad1c3mr30536915e9.10.1728066829322;
+        Fri, 04 Oct 2024 11:33:49 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42f89ec644dsm3546475e9.37.2024.10.04.11.33.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 11:33:48 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [net-next PATCH v2] net: phy: Validate PHY LED OPs presence before registering
+Date: Fri,  4 Oct 2024 20:33:11 +0200
+Message-ID: <20241004183312.14829-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH V3 11/11] accel/amdxdna: Add firmware debug buffer support
-Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20240911180604.1834434-1-lizhi.hou@amd.com>
- <20240911180604.1834434-12-lizhi.hou@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240911180604.1834434-12-lizhi.hou@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FfKdEFuTcf_7m05uejgdJZu_GnxXU5gl
-X-Proofpoint-ORIG-GUID: FfKdEFuTcf_7m05uejgdJZu_GnxXU5gl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 phishscore=0 mlxlogscore=956
- mlxscore=0 adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410040128
+Content-Transfer-Encoding: 8bit
 
-On 9/11/2024 12:06 PM, Lizhi Hou wrote:
-> User application may allocate a debug buffer and attach it to an NPU
-> context through the driver. Then the NPU firmware prints its debug
-> information to this buffer for debugging.
+Validate PHY LED OPs presence before registering and parsing them.
+Defining LED nodes for a PHY driver that actually doesn't supports them
+is redundant and useless.
 
-I feel like I must be missing something. It looks like this patch 
-accepts a buffer from the user, and stores it. However I don't see how 
-the NPU firmware ever learns that this special buffer exists to then use it.
+It's also the case with Generic PHY driver used and a DT having LEDs
+node for the specific PHY.
+
+Skip it and report the error with debug print enabled.
+
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+Changes v2:
+- Use phydev_dbg instead of warn
+
+ drivers/net/phy/phy_device.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 499797646580..e3aff78945a2 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -3421,6 +3421,16 @@ static int of_phy_leds(struct phy_device *phydev)
+ 	if (!leds)
+ 		return 0;
+ 
++	/* Check if the PHY driver have at least an OP to
++	 * set the LEDs.
++	 */
++	if (!phydev->drv->led_brightness_set &&
++	    !phydev->drv->led_blink_set &&
++	    !phydev->drv->led_hw_control_set) {
++		phydev_dbg(phydev, "ignoring leds node defined with no PHY driver support\n");
++		goto exit;
++	}
++
+ 	for_each_available_child_of_node_scoped(leds, led) {
+ 		err = of_phy_led(phydev, led);
+ 		if (err) {
+@@ -3430,6 +3440,7 @@ static int of_phy_leds(struct phy_device *phydev)
+ 		}
+ 	}
+ 
++exit:
+ 	of_node_put(leds);
+ 	return 0;
+ }
+-- 
+2.45.2
+
 
