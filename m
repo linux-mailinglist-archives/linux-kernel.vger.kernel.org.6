@@ -1,75 +1,70 @@
-Return-Path: <linux-kernel+bounces-350833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08897990A3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:37:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05156990A40
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08DBB1C21F58
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A138B1F23197
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7CF1D9A78;
-	Fri,  4 Oct 2024 17:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XtfN1OIo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1997D1D9A79;
+	Fri,  4 Oct 2024 17:38:02 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392271D9A5E
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE8050A63;
+	Fri,  4 Oct 2024 17:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728063454; cv=none; b=o+EvZvG/HMSju6rwRNS66RYM9d41pTwAdLjM3P09uv8FppkwsMHunmzZYz+03Y1l48pFSkWJx6dxV8VTgejOby9wCkqgQP7aMAyZ94eeC9qeCLMIbtM8gtflElJOrZqqTEv7XRVN50r4qC99tmDbP1hKJraEhNXEYme6ck0S9uY=
+	t=1728063481; cv=none; b=L5LZHOYs4lDHu16xpy/ooDuV4M15g4s00qfww7X+IQz5B2HZuGnwkbWQnJv+haHT0LPLvfgMgJXlYklT4Uw4omfPFth0xHKqAvKmEVgVobu9PRX8A4GwWdQz1bMtox+vXKUYbhm21CxpINSc7jXXUH0RupQowWlZt+yQ29hrry0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728063454; c=relaxed/simple;
-	bh=iZFWLSoPxAd/cwpSGTpHg2V73KoZMyPRMN4xeGb1Tb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=q6nWqa3I60KWoxKotu/fWhnhhSZmAkfKLxg8gukrKDT31W4Vnb6cd0qR5F1CSukTTgMR/beuayIBnBJXJ0eRUS6wY3aPZSZIpIt4JM6mW0eulJ3ePmfkz7qz7yns/HVFhyCGEWiaeR0Tums+yBtD+hdnPN/ACFwtBLGz1Qg4/7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XtfN1OIo; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728063452; x=1759599452;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=iZFWLSoPxAd/cwpSGTpHg2V73KoZMyPRMN4xeGb1Tb4=;
-  b=XtfN1OIoGa0BqA2eGRSiLNk2Dy5e/45IYZ1J5fCMhsQq7zbQWn3ECwtL
-   myX3Tq7POSb1zD5JCxG29MTGFLwHQwpVC68LUbFwWV7BYYlGHjkyjcTcs
-   UvjctBVLGkcvXGYyeXvlySfiIt9V1YjcCbPY7I0n8WDqMG3P8lTrBdTUN
-   bLR1wcG9UX8AoxMGQFi1hATDfgiR67WX1j8Q8YxnOV4ReD/X94Jki0uU1
-   +PR/WnNqSOtGGT4j4/zS4lORJvoy8mHkuFCedh+Sn7ZdmLAI+K7ThYolO
-   aB2bs2oe0IAI9HdOh69JpWpd7M4Yd7/cvrRQCFHfg3sTzEp7Je3vG34TV
-   A==;
-X-CSE-ConnectionGUID: wz4PmfeVQj+ZqRlxqsshsg==
-X-CSE-MsgGUID: DAKcZ/mNRqq6bwElabv/pA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="30178586"
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="30178586"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 10:37:32 -0700
-X-CSE-ConnectionGUID: MQ8R+xm+S7Srm39Pz1j2vQ==
-X-CSE-MsgGUID: eKuvOb3DTbmWjo7PlRHDJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="74598750"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 04 Oct 2024 10:37:31 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swmF6-0001yK-10;
-	Fri, 04 Oct 2024 17:37:28 +0000
-Date: Sat, 5 Oct 2024 01:37:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20241003 14/14]
- kernel/bpf/core.c:2505:29: warning: comparison of distinct pointer types
- lacks a cast
-Message-ID: <202410050156.QDVz2Sit-lkp@intel.com>
+	s=arc-20240116; t=1728063481; c=relaxed/simple;
+	bh=r6h6ivAteGGBHkj5NscHtHXFd57HJ1AIrm66cRntSVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ma9LFmaKDm9hAWcjJIf8BwGJWlfz+0e7Re81bkrGlzb6cmDBHpNxknnoXw7eoL2PYksFGrD4kWIjwEXYEYGqFU4uHszroX575OfzF7H17jeLj4t2JKl6UPi5Dbfq3wvjzWy5BcRj5f12ISTIwKOR/9AnaQ9qyYH4EdIVfFhtZfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a93b2070e0cso267946866b.3;
+        Fri, 04 Oct 2024 10:37:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728063478; x=1728668278;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FhtiUJLGqKylZjIhkXCBoyOQK1CEukwM7WvnraRscHc=;
+        b=E/phjZqdTpcBvq0tmY+bOXaYaI6TCn0E/v4mH1KFfT+3HR6fs8ifqbB7LDxGAjK2g6
+         4UOFwV9JKcQEWiVHhighgSMLT7u/0+2LBF7KHNub7zizsdN3cceGSPpGRtO7FIERwTT0
+         fXn87PfCqok48YrDvFhQioSJZzUeoMcJI7yUFTyMel+YoWRzGOFIEgqdcxk8KaCM4fUi
+         YPOSJXsE+40uyNFYhH+F4xiDLXqe9bIK1N6iCrgPsRiBaztkHioA7hreAHgVrDbbafbw
+         Mc+8KjiVp6gDIvP9V+ydVoRzxwrfdDnqGHqhxf6vaGUxJejagU0oGK5V+nHbKKiDqEEo
+         YReQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9BY+n4ursCIr957ijtU+81RkQJjD5fPf66ExzBpmhu4tcGeFA7rbu/BTuOU0prVMrAGiWof4fLaFRlFs=@vger.kernel.org, AJvYcCWPfYMdEroKrsi3EfPplzYUH6h9Sv9tiPpDA3rveUSy+saOV4PzLqVljDewm2wy+sHrK/771KQV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz50WBFlYK08xuiCLbhTI+/LfMcTvkMdkHgf9k+didUSQlgyL5s
+	v9lA/BGPdYNAoA42gPJN2wzAzIeQnzNsjE5lqDqW/5EF1zJRgr9t
+X-Google-Smtp-Source: AGHT+IGM43/t6Op9V+aFOXXOJkw2sD8OmTLFOZsdFt6lqMnE9b04AjNAFM955nCwxHjG8NNKw1ttfw==
+X-Received: by 2002:a17:907:9304:b0:a8d:7b7d:8c39 with SMTP id a640c23a62f3a-a991c03145bmr375006066b.43.1728063478123;
+        Fri, 04 Oct 2024 10:37:58 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-112.fbsv.net. [2a03:2880:30ff:70::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7c46e3sm20031066b.180.2024.10.04.10.37.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 10:37:57 -0700 (PDT)
+Date: Fri, 4 Oct 2024 10:37:52 -0700
+From: Breno Leitao <leitao@debian.org>
+To: David Ahern <dsahern@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	rmikey@meta.com, kernel-team@meta.com, horms@kernel.org,
+	"open list:NETWORKING [IPv4/IPv6]" <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: Optimize IPv6 path in ip_neigh_for_gw()
+Message-ID: <20241004-straight-prompt-auk-ada09a@leitao>
+References: <20241004162720.66649-1-leitao@debian.org>
+ <2234f445-848b-4edc-9d6d-9216af9f93a3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,45 +73,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <2234f445-848b-4edc-9d6d-9216af9f93a3@kernel.org>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241003
-head:   ec64acf2dce7577a42c01241e78b24afebc26e96
-commit: ec64acf2dce7577a42c01241e78b24afebc26e96 [14/14] treewide_some: fix multiple -Wfamnae warnings that must be audited separately
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241005/202410050156.QDVz2Sit-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410050156.QDVz2Sit-lkp@intel.com/reproduce)
+Hello David,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410050156.QDVz2Sit-lkp@intel.com/
+On Fri, Oct 04, 2024 at 11:01:29AM -0600, David Ahern wrote:
+> On 10/4/24 10:27 AM, Breno Leitao wrote:
+> > Branch annotation traces from approximately 200 IPv6-enabled hosts
+> > revealed that the 'likely' branch in ip_neigh_for_gw() was consistently
+> > mispredicted. Given the increasing prevalence of IPv6 in modern networks,
+> > this commit adjusts the function to favor the IPv6 path.
+> > 
+> > Swap the order of the conditional statements and move the 'likely'
+> > annotation to the IPv6 case. This change aims to improve performance in
+> > IPv6-dominant environments by reducing branch mispredictions.
+> > 
+> > This optimization aligns with the trend of IPv6 becoming the default IP
+> > version in many deployments, and should benefit modern network
+> > configurations.
+> > 
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > ---
+> >  include/net/route.h | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/include/net/route.h b/include/net/route.h
+> > index 1789f1e6640b..b90b7b1effb8 100644
+> > --- a/include/net/route.h
+> > +++ b/include/net/route.h
+> > @@ -389,11 +389,11 @@ static inline struct neighbour *ip_neigh_for_gw(struct rtable *rt,
+> >  	struct net_device *dev = rt->dst.dev;
+> >  	struct neighbour *neigh;
+> >  
+> > -	if (likely(rt->rt_gw_family == AF_INET)) {
+> > -		neigh = ip_neigh_gw4(dev, rt->rt_gw4);
+> > -	} else if (rt->rt_gw_family == AF_INET6) {
+> > +	if (likely(rt->rt_gw_family == AF_INET6)) {
+> >  		neigh = ip_neigh_gw6(dev, &rt->rt_gw6);
+> >  		*is_v6gw = true;
+> > +	} else if (rt->rt_gw_family == AF_INET) {
+> > +		neigh = ip_neigh_gw4(dev, rt->rt_gw4);
+> >  	} else {
+> >  		neigh = ip_neigh_gw4(dev, ip_hdr(skb)->daddr);
+> >  	}
+> 
+> This is an IPv4 function allowing support for IPv6 addresses as a
+> nexthop. It is appropriate for IPv4 family checks to be first.
 
-All warnings (new ones prefixed by >>):
+Right. In which case is this called on IPv6 only systems?
 
-   kernel/bpf/core.c: In function 'bpf_prog_array_free_sleepable':
->> kernel/bpf/core.c:2505:29: warning: comparison of distinct pointer types lacks a cast
-    2505 |         if (!progs || progs == &bpf_empty_prog_array.hdr)
-         |                             ^~
+On my IPv6-only 200 systems, the annotated branch predictor is showing
+it is mispredicted 100% of the time.
 
+Thanks for the review
+--breno
 
-vim +2505 kernel/bpf/core.c
-
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2502  
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2503  void bpf_prog_array_free_sleepable(struct bpf_prog_array *progs)
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2504  {
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14 @2505  	if (!progs || progs == &bpf_empty_prog_array.hdr)
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2506  		return;
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2507  	call_rcu_tasks_trace(&progs->rcu, __bpf_prog_array_free_sleepable_cb);
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2508  }
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2509  
-
-:::::: The code at line 2505 was first introduced by commit
-:::::: 8c7dcb84e3b744b2b70baa7a44a9b1881c33a9c9 bpf: implement sleepable uprobes by chaining gps
-
-:::::: TO: Delyan Kratunov <delyank@fb.com>
-:::::: CC: Alexei Starovoitov <ast@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
