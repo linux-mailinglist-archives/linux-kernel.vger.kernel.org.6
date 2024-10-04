@@ -1,131 +1,211 @@
-Return-Path: <linux-kernel+bounces-350813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA53990A01
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:12:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C87990A02
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EFCC28409F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:12:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71BB31C21EE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3591CACC0;
-	Fri,  4 Oct 2024 17:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB791D9A54;
+	Fri,  4 Oct 2024 17:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="S/kFGKA1"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6r2BjFf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101D11CACDE
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34011E377D;
+	Fri,  4 Oct 2024 17:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728061921; cv=none; b=uXZjNKkuOFfrK+7nDTRdwqvvNez5a0KWKA018Hi11iyXZHhVCegL2e2L2nGEA6qx4/9xHxe2Ql85Kr1/yzAylNLoMCy6MwOcL3zO1kzF3KOCcEoF5R25vO9rLcNhqxk6Jrb7KE59YrdHmD6pYuxda7j3tPhu8QMTt7RhhXlansk=
+	t=1728062004; cv=none; b=gPBEnuYAd5W2W3Iz346v5vcTIEa4CCzAr05kdKp89+XCPMQTv48zF8qg7MrWqFLTEVTKGP5LFhZD3x/L83NF7C54xzBMUJPDCoB2xdtECt6umDq8R6dww/Mu504gqmsokm2HZpIuFw3H8tiJB4FGah7c4twzMyXfVepLNeCvCQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728061921; c=relaxed/simple;
-	bh=FbOJJOM3C21piIGCEoT1PnIBWiQi2gJhK77KWad+6OA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nGFfxuLv3muJduZjXm8aZZ2jwC8ysD7VsrFT03ZTi2csvdgwGs8w/A1dTd7VqxLIwUdnE1pSIYcXO7gJYi07JexAU2LZZgK6XCX6+4WWXiUG6XH4vt4Q6No14lA6TslL7BOvnjpLnkYCTw4rXSdWx/XTtZEyx1LKBpd7EWiarVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=S/kFGKA1; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e3bda8b6fbso894622b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1728061918; x=1728666718; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=DX3a8LNIL/T0dZCq6vj7iBGRI8KMTX6Fm4ZrI6JYfmM=;
-        b=S/kFGKA14MxQIZSvRa39AHTauBdF2HQuFqOEFtlnj7YePVecpSsWiOAALgMPqkXlKA
-         F5eatWd/I0QTtrPsrai1aI7FIaqwU/duKNwT8fhAH9zEO41NQMxCw6nJDPbZ0O994rfJ
-         Osid1m8eRLTvD6avJGfi+Q4mBv1USvi5ZrlSQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728061918; x=1728666718;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DX3a8LNIL/T0dZCq6vj7iBGRI8KMTX6Fm4ZrI6JYfmM=;
-        b=lUwHy+upuga+bU97V/z4BEoPAQO7cWSTooSw7MKvJde/fCw2gY1Ho0OFAwn8p1LA1X
-         Wte7tBvzpldgNd8y8bN7MpRh4f2vL+EdAPeZZR5gKcJi4ox+N2dkupvd0RI2m1RV4LJH
-         hgRUi95aiAF2zti+Uc6K6FLBixzVlveZwdmix4Xi6X8p1rt4+8e6gRUrLG8crw70dRA/
-         PYDAnhYiDcbqa1ymq0jt/hy8G4VdhT+dXubW2V4tuRl/R8gNwZ0dLvFRoPqiqAejWIpU
-         hoAFhBL65NT4qXUy3DhKyJfe6leOgj4aPgPPaNOzSy1yxSYA2yu2tt6b5WC4KNlomESS
-         HxOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSeSQrh1R805z4P7Qf0zfxCBz0VlPLq7VXi8nBi3hjA8gtHLbhO0tLmp4g/gIdQTCl6oGGxO2HBYi5URo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnnzLURWoPuoKPb/bP1YvoZv0THz54Vza/xD/2WYbI69RiWwKb
-	pcpWYxPobUhQuPss+FVvgSkuw7wo1TuhqhscCNoyhNbN4YAUbfY49/mE5gGlAsLHLWXptrO14EA
-	=
-X-Google-Smtp-Source: AGHT+IHWLXiFheqEvcpcKH/iTcEInY4sqxF3uncfe3L4/zjoF9UnbCLYYIJ6TBQvDKvtCBpc5vzuRg==
-X-Received: by 2002:a05:6808:2114:b0:3e0:3b81:6b26 with SMTP id 5614622812f47-3e3c1329c0fmr2934052b6e.15.1728061918120;
-        Fri, 04 Oct 2024 10:11:58 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f683eddasm165562a12.56.2024.10.04.10.11.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 10:11:57 -0700 (PDT)
-Message-ID: <3566d8aa-c166-4d4c-bf78-4bdf652b2674@broadcom.com>
-Date: Fri, 4 Oct 2024 10:11:56 -0700
+	s=arc-20240116; t=1728062004; c=relaxed/simple;
+	bh=LHqprxKT11QQbqhmJEZLGqpjDxBSH8wKedLsZeJ9SFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t9EF+H6jjqdniNT4J/nN6kUxT/B102w4g8hjJ1wvdma/wx1CyrtSvxilUDqH63zfA4tbgMzDQcsw+feu60iEip3uDySCshDqtcQC8wsENhAbs+RHaNhH/1Yan4qnkF+cB6T5XpfPopUiSCJ41qdJEkGQ2m8Acu8Bks6z8Djq9Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6r2BjFf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77FC8C4CEC6;
+	Fri,  4 Oct 2024 17:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728062003;
+	bh=LHqprxKT11QQbqhmJEZLGqpjDxBSH8wKedLsZeJ9SFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X6r2BjFfRCr0TwxhIfOZo85dwkHZ7eA4brv7n52yDVjDmU2ObBGfmw+OD/84qH3aw
+	 OxBMrc9dtCJt7/GeqOImJ2rpZXD/VS7kK3L9lVuC/8RBKAdZK+NNSWcVLL5B2BGbug
+	 Cvcqz3iznVBbrC2JAutYRWcKW+pQoARP7VQQddfVszeRqc0rC6cqPKoO/Go4GNLk2s
+	 ketrT9wSomi4uouunvddXrzSMmy383L9RkLF3ruq/85r06UNmGn3bU1DYFbrdQ39Fq
+	 wiRFYceVT149BYmlTNe2Q2B97mbTDqf54If1ia3uMpy9RPzhhf2AIjk49kRQLZ8hlc
+	 w3U1aDXzvyhqw==
+Date: Fri, 4 Oct 2024 10:13:20 -0700
+From: Kees Cook <kees@kernel.org>
+To: Jan Hendrik Farr <kernel@jfarr.cc>
+Cc: Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ardb@kernel.org, morbo@google.com
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <202410040958.C19D3B9E48@keescook>
+References: <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+ <Zvg-mDsvvOueGpzs@archlinux>
+ <202409281331.1F04259@keescook>
+ <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
+ <Zv6BEO-1Y0oJ3krr@archlinux>
+ <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
+ <Zv61dCaxScXuOjZg@archlinux>
+ <202410031424.45E5D19@keescook>
+ <Zv8RIs-htdc-PtXB@archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: bcm: brcmstb: Drop custom init_irq callback
-To: linux-arm-kernel@lists.infradead.org
-Cc: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Russell King
- <linux@armlinux.org.uk>, open list <linux-kernel@vger.kernel.org>
-References: <20240925173839.29315-1-florian.fainelli@broadcom.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20240925173839.29315-1-florian.fainelli@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zv8RIs-htdc-PtXB@archlinux>
 
-On 9/25/24 10:38, Florian Fainelli wrote:
-> The default is to call irqchip_init() in the absence of a machine
-> descriptor init_irq callback.
+On Thu, Oct 03, 2024 at 11:48:18PM +0200, Jan Hendrik Farr wrote:
+> On 03 14:28:01, Kees Cook wrote:
+> > On Thu, Oct 03, 2024 at 05:17:08PM +0200, Jan Hendrik Farr wrote:
+> > > gcc currently says that the __bdos of struct containing a flexible array
+> > > member is:
+> > > 
+> > > sizeof(<whole struct>) + sizeof(<flexible array element>) * <count>
+> > > 
+> > > clang however does the following:
+> > > 
+> > > max(sizeof(<whole struct>), offsetof(<flexible array member>) + sizeof(<flexible array element>) * <count>)
+> > 
+> > Clang's calculation seems very wrong. I would expect it to match GCC's.
+> > 
 > 
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> I was on the very same train of thought, but I have since changed my
+> mind a bit. A struct containing a flexible array member can be allocated in
+> two ways:
+> 
+> (1):
+> 
+> struct posix_acl *acl = malloc(sizeof(struct posix_acl) + sizeof(struct posix_acl_entry) * 1);
+> acl.a_count = 1;
+> 
+> or (2):
+> 
+> struct posix_acl *acl = malloc(offsetof(struct posix_acl, a_entries) + sizeof(struct posix_acl_entry) * 1);
+> acl.a_count = 1;
+> 
+> Both are valid ways to allocate it. __bdos does not know which of these
+> methods was used to allocate the struct whose size it has to determine,
+> so it's giving the lower bound that doesn't include the (potential)
+> padding at the end.
 
-Applied
+I want to separate several easily confused issues. Instead of just
+saying __bdos, let's clearly refer to what calculation within bdos is
+being used. There are 3 choices currently:
+- alloc_size attribute
+- counted_by attribute
+- fallback to __bos (which is similar to sizeof(), except that FAMs are 0 sized)
+
+Additionally there are (for all intents and purposes) 2 size
+determinations to be made by __bos and __bdos, via argument 2:
+- containing object size (type 0) ("maximum size")
+- specific object size (type 1) ("minimum size")
+
+For example, consider:
+
+struct posix_acl *acl = malloc(1024);
+acl->a_count = 1;
+
+what should these return:
+
+	__bos(acl, 0)
+	__bos(acl, 1)
+	__bdos(acl, 0)
+	__bdos(acl, 1)
+	__bos(acl->a_entries, 0)
+	__bos(acl->a_entries, 1)
+	__bdos(acl->a_entries, 0)
+	__bdos(acl->a_entries, 1)
+
+> So it comes down to false positives vs false negatives...
+> More details here:
+> https://github.com/llvm/llvm-project/pull/111015
+> 
+> Clangs current behavior would essentially force kernel code to always
+> assume option (2) is used. So
+> 
+> struct posix_acl *
+> posix_acl_clone(const struct posix_acl *acl, gfp_t flags)
+> {
+> 	struct posix_acl *clone = NULL;
+> 
+> 	if (acl) {
+> 		int size = sizeof(struct posix_acl) + acl->a_count *
+> 		           sizeof(struct posix_acl_entry);
+> 		clone = kmemdup(acl, size, flags);
+> 		if (clone)
+> 			refcount_set(&clone->a_refcount, 1);
+> 	}
+> 	return clone;
+> }
+> EXPORT_SYMBOL_GPL(posix_acl_clone);
+> 
+> from linux/fs/posix_acl.c would have to turn into something like:
+> 
+> struct posix_acl *
+> posix_acl_clone(const struct posix_acl *acl, gfp_t flags)
+> {
+> 	struct posix_acl *clone = NULL;
+> 
+> 	if (acl) {
+> 		int size = offsetof(struct posix_acl, a_entries) + acl->a_count *
+> 		           sizeof(struct posix_acl_entry);
+> 		clone = kmemdup(acl, size, flags);
+> 		if (clone)
+> 			refcount_set(&clone->a_refcount, 1);
+> 	}
+> 	return clone;
+> }
+> EXPORT_SYMBOL_GPL(posix_acl_clone);
+> 
+> Which is actually safer, because can you actually be sure this posix_acl
+> wasn't allocated using method (2)?
+
+First, this should not be using an open coded calculation at all; it
+should use the struct_size() macro.
+
+Secondly, if we want to change struct_size(), then we must (via
+allmodconfig builds) determine all the places in the kernel
+where the calculated size changes, and audit those for safety.
+
+Right now, struct_size() over-estimates in the face of padding.
+
+We're already moving the kernel toward not even calling struct_size()
+externally from the allocation, and instead using the it within the
+allocation macros themselves:
+https://lore.kernel.org/lkml/20240822231324.make.666-kees@kernel.org/
+
+> After looking at the assembly produced by gcc more, it actually looks
+> like it's using the allocation size if it's known in the current context
+> (for example if the struct was just malloced in the same function)
+> and otherwise returns INT_MAX for the __bdos of a struct containing a
+> flexible array member. It's only returning the size based on the
+> __counted_by attribute of you ask it for the __bdos of the flexible
+> array member itself.
+
+Here is my test case for all the corner cases we've found so far:
+https://github.com/kees/kernel-tools/blob/trunk/fortify/array-bounds.c
+
+I'd prefer we add cases there so we can all be talking about the same
+things. :)
+
+-Kees
+
 -- 
-Florian
+Kees Cook
 
