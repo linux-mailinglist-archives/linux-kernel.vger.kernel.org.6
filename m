@@ -1,123 +1,111 @@
-Return-Path: <linux-kernel+bounces-350321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8498899036F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:04:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B7E990370
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B04851C21488
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:04:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F8F1F2146B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D42B20FAB5;
-	Fri,  4 Oct 2024 13:04:50 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ADA20FA97;
+	Fri,  4 Oct 2024 13:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="akpGldQZ"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CCF157494;
-	Fri,  4 Oct 2024 13:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47B920FAA5
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728047089; cv=none; b=GBYcqgZetEBrdJG1LhXTDCYDHg4+h8G/vZ1If37aqH7wyJxKwvcBQYSnNMeFEyawroZjMtHyebRIkBuCJbZnnfksKaKM5hbMay1XCbH6DV2Lcq3/wxPqaD7/vq545Zjki9zALNfmhYN2W5udJieaEjDrJ3hgElgqRZW+Ycmd8x0=
+	t=1728047099; cv=none; b=empXzRUATO98f7g3uJmAyvnBFwA3VfTrAMV1FYbp+5ijzQpouVWkI0J+AjF14+K3YYwwmpDQlO0aPGToQ4i2p2fqStb759v1dx8+22PsL0725U77ccKptfCvmVj6ITQ+YCIzC3zYYt+8LnxfYJvJEwbVUumr0E493Lm5Itj4rzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728047089; c=relaxed/simple;
-	bh=QdQmrZm7ty9NtOo3apEXaRMY4IeNfNBJqs1EKlHsObM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dNOugKUArHmjqFMwdILEeRIky41SIMwhfEV/hji6BzMesuSEQN5ee+WohHv6IMX2MbpvRSMcL4d0nbil9bihn+dv/bDF8cdPByvKIZDH6sgmwS+oAKZEofdbMNomBSu+qip5gPEzpk7HCw0J7vLf0ZMLLg992yDg9ODk7D01ais=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e2b9e945b9so15794817b3.0;
-        Fri, 04 Oct 2024 06:04:47 -0700 (PDT)
+	s=arc-20240116; t=1728047099; c=relaxed/simple;
+	bh=qqSKowVgiExwCTKItsRXI5m6aV4meAX5YXyRU8P+ERY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uS5elVLdsEhIKZObULSNtldXgnKUskHh0HE9DBs7y6RjnfysDSlz75U+LEm47QIJd6lVrc5bV8ybDYlXiHLRaRJuotkfhJuxhzQWLwaK3zd4rgvZyVGjslxHJX3YXToCp5lcMECZi79HP5iQ4kc34oMvtfAPp8otR829cqsjG9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=akpGldQZ; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37cd1ccaf71so1810761f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 06:04:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728047096; x=1728651896; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NB+OTwv7KhCxQhNRfvwJ8makfTxQYrktnchDrBIeFU8=;
+        b=akpGldQZyZ0zm4B3raC+7F9urMMEAsJgCRVtKI+7lRRC8n4z3hZJH5N28IBd0ahSab
+         eCRt/PxwLO0nuS7bWC7ZUULqBeXQ6bQPA+XgPFYJZI/+MortBYq+rQFuOu+PYpGRPYCf
+         fQiyanj6JoGyywxQsVLKpuplgoJzed25P9l83XzBUU19TGA7LKGCNOIl1xJJKVhYxGNq
+         OfQln5BJU81Mi79pou1vWBn1IxX90IaICIsK2D1XVRGnuxSm0di8uRuzHAJTrIXkARSU
+         G7pOdyrgPnuEVOOhnSGFSEB507QqqUgXKMJtDBeG5zrR/HQK5Wq5UOns3DiQkrV9IGUz
+         9IVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728047086; x=1728651886;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ruv3nAghpejgQO903vPRqxuDL21r+6DHIyGybH2hS5Y=;
-        b=OnHu/emV9lFMvzyXaXf982lhKHZNw1qvkeozTq7rJPW6e/Ro3O9W9i3dc+jN6OAVdI
-         F9rPiYOv+GG8R7QjR8K7+KT0T9axQj3ZUwggGVqGQRD/x/Fyw8ATJX+XlbPm32MeRNif
-         Rnlhe3MAHjtvHmEoKYoR8dB4aes3L3Qzgyj79lJYc1PUwwl9GotYuQJEZzC3qwoczJX+
-         +h+ko/k7oy8GzLDHRYzjsT4Yt0pHsHwcAv49Ih5vGK04Fni4Endw04dqFPspBKQkBVUN
-         p7j/9b3bF4ollAOJTZ7e8SLZb7rHzYyH6N9bZZjsAb5HKzb8is0COB7An3xHzTZfzyYU
-         V3Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCV0rwhg4qtpY3oXiS2h8LmZqdJRZmYMQWTCSfFG99Vd6WvT6mnYfPYRpg3XUKcd9/caGqmmHmIkM3m4kZE6l15/LcI=@vger.kernel.org, AJvYcCVSpXIxxRRqwkPjN2qsZAEqRZL9rGNEjjw+5qqY+2jQXjEabz3BnIzj71tqYyfQC23fBunjt99+bwpZyQ==@vger.kernel.org, AJvYcCWmAZJ4sXN/XZLEhdaMSuGsFcpOaYYLjxoJVlS2YArcFph7CAd99NPtw8lhGysBxsSkw5eUTZ90LRWNylnK@vger.kernel.org, AJvYcCWt6zFUimwSd3h8tfA4YcthYpLUtdb9NlzG5R7xCz5RcIg2aqKiOSWlz04QZXrhSGR7wOOTs+DMU4bx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0gnXD1KdwNqbfbwKRY1zES0G48x2um23RPm8XtSjZYJeJbBYu
-	6bH0Cu3131tj7eVnELpx3ribyG9rXg6Imp2idsPcgUj9cHVWTkKgS44Mdp9u
-X-Google-Smtp-Source: AGHT+IHeBegiMa3kc2BX0hxuJpZdwpgZ3fL2GPCvaRce1CTnp8xJB7w+v5P/xs8IIn43YCO07WIUoA==
-X-Received: by 2002:a05:690c:6610:b0:6e2:a962:d80f with SMTP id 00721157ae682-6e2c6fcb63emr23079957b3.8.1728047085955;
-        Fri, 04 Oct 2024 06:04:45 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2bcfb3683sm6212807b3.126.2024.10.04.06.04.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 06:04:45 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e2772f7df9so17457017b3.2;
-        Fri, 04 Oct 2024 06:04:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULl1kcEYAmGisXnUyjn9JAy8tMYFepPMFqymIcIutnmlAz1lIGbBvLsj8RvDtjmYptQuvbwhQFj3Pr3w==@vger.kernel.org, AJvYcCUWTXSH+SVMdcUQFcTh5CfQtnLHOsgKviPRavUoIHatzTKIbX8ryl8Qv3vXyutD1ncejJlhSTIZ2oO68MhlSDfW/rw=@vger.kernel.org, AJvYcCVz7EkrM1dOE3/IFBTqUoBBqsr2KrTtTGIadYoOTW34quzKdeke8nIaJPPU7GEyujqUdRlrnjDcZkMFp1kJ@vger.kernel.org, AJvYcCWFdsMg9332B3FQtfGTcWD1TZcGnLbwADjHhAe4n6rfXMKlj+jpaWuXKYvx3hmsvj37sYuYqoJZRZV7@vger.kernel.org
-X-Received: by 2002:a05:690c:2a93:b0:6af:eaaf:2527 with SMTP id
- 00721157ae682-6e2c7024d93mr17581667b3.18.1728047084814; Fri, 04 Oct 2024
- 06:04:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728047096; x=1728651896;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NB+OTwv7KhCxQhNRfvwJ8makfTxQYrktnchDrBIeFU8=;
+        b=TxYvRCoynk0u9v454F7YZsGex6OgUKbUfd7VePNghJBGp7IKxQnTqg9ptqf4595jg5
+         GW3ZIvTyMnjnGE1tjpQ8Spe7OC8z97VaZ/3obtZLGhJydbd3EomFflv5KWz8L1tXX69q
+         LcDizaqUrFm5OCvwLgLse9fN8OdDz7u3bJ3w6tMnaOZ5PlsG98w2sjImjhbFU2NPVou1
+         Jx6USKUGkL7JffqVH3ZiKOcIVDHAINpq7whUzwpEXWRV7T0EZaxocgOEglA65OnMkHGA
+         PQBIaagjNVQ3Urbz4sViC9VQZ6KZbzjD627MXk9EInhDijdlESERplEz/75zv8CW8N7d
+         UcBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVGsPmQsTD3nOv6J6tgoFP4h2iKILRdYWJkD725HwPlzGmkb4KIP2+DaXJ26JtMcnNMkIV5YzYi8YnHTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZmfpY3sEsRX6beMDOVgf5hN0fq4r7u8NQmY5sDvfah2j5gc97
+	RJamjs7kzBUbtgfWH79IbqMH8Z8zaXBEFQcZuwwLAZGVt0fhET1nIDo7opzZxhZgItoRes0FU+9
+	9
+X-Google-Smtp-Source: AGHT+IFvlYUaMQp7mO2HKne9Jf+cx0RUIFDz10F2F9W4zeht5Ec8QoZE0iLidX28kk1iLsnrlmOCFA==
+X-Received: by 2002:adf:e541:0:b0:37c:bafd:5624 with SMTP id ffacd0b85a97d-37d04a783bemr4483343f8f.25.1728047095862;
+        Fri, 04 Oct 2024 06:04:55 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:80ea:d045:eb77:2d3b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d0822b94fsm3219041f8f.46.2024.10.04.06.04.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 06:04:55 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] power: sequencing: make the QCom PMU pwrseq driver depend on CONFIG_OF
+Date: Fri,  4 Oct 2024 15:04:49 +0200
+Message-ID: <20241004130449.51725-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004123658.764557-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241004123658.764557-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241004123658.764557-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Oct 2024 15:04:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV2MXE3XhRQuSxX1Du0Tu4d2ucigfZopVBJZ7tJL8mcVQ@mail.gmail.com>
-Message-ID: <CAMuHMdV2MXE3XhRQuSxX1Du0Tu4d2ucigfZopVBJZ7tJL8mcVQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
- schmitt and open drain properties
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 4, 2024 at 2:37=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> On the RZ/V2H(P) SoC we can configure the 'input-schmitt-{enable,disable}=
-'
-> , 'drive-open-drain' and 'drive-push-pull' of multiplexed pins. Update th=
-e
-> binding documentation to include these properties.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> Hi Rob,
-> I have dropped your Ack from v1 as I have updated the commit message and
-> included `drive-push-pull` property in v2.
->
-> Cheers, Prabhakar
->
-> v1->v2
-> - Added `drive-push-pull` property
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.13.
+This driver uses various OF-specific functions and depends on phandle
+parsing. There's no reason to make it available to non-OF systems so add
+a relevant dependency switch to its Kconfig entry.
 
-Gr{oetje,eeting}s,
+Fixes: 2f1630f437df ("power: pwrseq: add a driver for the PMU module on the QCom WCN chipsets")
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/power/sequencing/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-                        Geert
+diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/Kconfig
+index c9f1cdb66524..ddcc42a98492 100644
+--- a/drivers/power/sequencing/Kconfig
++++ b/drivers/power/sequencing/Kconfig
+@@ -16,6 +16,7 @@ if POWER_SEQUENCING
+ config POWER_SEQUENCING_QCOM_WCN
+ 	tristate "Qualcomm WCN family PMU driver"
+ 	default m if ARCH_QCOM
++	depends on OF
+ 	help
+ 	  Say Y here to enable the power sequencing driver for Qualcomm
+ 	  WCN Bluetooth/WLAN chipsets.
+-- 
+2.43.0
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
