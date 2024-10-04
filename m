@@ -1,120 +1,150 @@
-Return-Path: <linux-kernel+bounces-351460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75179991179
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C54099117A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D4B91C234D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:33:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8F41C23709
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A27612E1CD;
-	Fri,  4 Oct 2024 21:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFB114373F;
+	Fri,  4 Oct 2024 21:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kXK1pPkq"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WoTc22z+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B69D231C9D
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860E7231C9D
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728077616; cv=none; b=bRdlswl7jf9dzULOspN6gIlcP5FmB9fNHfouplvRpOooajHxWs4RuxriqwIPFzysPFGU+XwGKsJLlLwPzcagaY51peWeqcoieOa+n5nFlygJk2ROk7/7QvFA1BdKsUQ8iV7z/xqvyTujvHit9M8VOmMg1oHaNhIcRBjrmSlbJlg=
+	t=1728077686; cv=none; b=D7BkTFD0kIiVK2qY5Rc3/lrAk3zKwzIiPrcMh4qor5e9PX1bVJJEeGcAxb/P82cbkpdQSVUwlG4UWCdCSKAwijtUKVfhI/IGXHZwXghf8QTyOsILkKAxhimdRcjh4yvb3j9l9oqVcq77dios4vYCpCH4bxQbscsOJSKZeBj5Tg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728077616; c=relaxed/simple;
-	bh=KpNAlnNNQR3ZYwTAsI4VXp7PC9LokjG3OFYlBinwNQw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Q/bsxvo8aF8Pk0ZoWpBCid6KJRfJ8vxtSloIZm9ghV8m8/2iSwV3fRFovMF4ddgF5cexMwFqKukJsnOFfqrjzG9ESePAX8sWltxcFaoET4d8fBVsc93qz/ASFUe9q3wJtnHgZ5vTcQwp18hQnbCK2wvtxyIkqbiStZLvezqPT1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kXK1pPkq; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-718d6ad6050so2259139b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 14:33:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728077615; x=1728682415; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HoYuRewxdam2BJkXXk6YiCo/fRJyTjJYkbtETeaOEpA=;
-        b=kXK1pPkqDnrlqD7aW3VMwtjlyqUCeR2Nu4FTe3qHjq7z4+v6iCM4NgG9Axkp7BsxPu
-         A/kp1ldrAv6MR0S0oNpQFuDKWXnCORCIuSAd1XzsOGOjNYKISIesjglim+iwY4EJxkC9
-         to2SWuLWCve6pO6YDoVABw9eop6asJj7DhpMbom+H/EZdQCzGZoTBtJSamf4RKIVHtSz
-         ip5gRU10LqBTU5YU2x3znQ6GhYZ7t02HGyh4wDT3sp+maqBm96kf3o5F2O1QY7PgO2Qi
-         HUBvw1dDkb/XFIb75fAFDTdsy57hCUueUypcS7WdBVe4Adjyd60H2WrcrUKdvaxaVrIB
-         GS+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728077615; x=1728682415;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HoYuRewxdam2BJkXXk6YiCo/fRJyTjJYkbtETeaOEpA=;
-        b=V7MGm0DQdvop5H0PQFDeZjcxA/Q/Mz+497CKmju3OadjumPqmEybuSbV8+XEg6PaEp
-         Xt6cwM2tx7OrBZKpAJIbjO+r6LRW26WgkqPBPN2O02NRin3aDkPFfzfq1PoJb6q4RoPf
-         9LyTbre322/VSafZiofmV4BsHRxaRUWKX0dRwNQqU16DXXlShDSDORqsdXdsN9s19abJ
-         RPh8Y+ucdK3cglQ3EYYCz7/Ct7aafIcaht5TNn+002ydCvWUhxL9riOXpWEwpgTPmXsi
-         5FLGf8WZe28ErQ/dQBCwxzLdr2amExYZaxLAIsZyuDdIN/tPPDykYIkP1Jc7YhzsNxmb
-         o0Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvVrz55d21MSCnGiympPTsr7TiKEFLo287SSqwTMBFgJ03BNDtz0LxVE9YZq6hlR0qZO2NlR5YeMIcnXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl5L4CLbQKkkVulwlqGtlUq+v8Hh0s90fJEgnZGNZ6XcvTHtAt
-	KLRAB+uVZs/0sWHOc77IK7ooPKGx/NXh1qnHcaHkAiXlTxg9L71iRVxOuv5aOls=
-X-Google-Smtp-Source: AGHT+IFKUIRhdQ9l5znjAusOODIMyqip8Esq800APLLqiTkfo42Xc52cIX97i1QDAVolizS/F4U07Q==
-X-Received: by 2002:a05:6a00:a91:b0:71d:d2a9:6ebf with SMTP id d2e1a72fcca58-71de23a9290mr7008106b3a.6.1728077614681;
-        Fri, 04 Oct 2024 14:33:34 -0700 (PDT)
-Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cbbab7sm345980b3a.18.2024.10.04.14.33.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 14:33:34 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Enric Balletbo i Serra <eballetbo@gmail.com>, 
- Javier Martinez Canillas <javier@dowhile0.org>, 
- Roger Quadros <rogerq@kernel.org>
-Cc: Nishanth Menon <nm@ti.com>, srk@ti.com, linux-omap@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20240903-gpmc-dtb-v1-0-380952952e34@kernel.org>
-References: <20240903-gpmc-dtb-v1-0-380952952e34@kernel.org>
-Subject: Re: [PATCH 0/3] ARM: dts: ti: omap: fix dtbs_check warnings for
- ti,gpmc-nand and ti,gpmc-onenend
-Message-Id: <172807761391.805138.5382543711248730495.b4-ty@baylibre.com>
-Date: Fri, 04 Oct 2024 14:33:33 -0700
+	s=arc-20240116; t=1728077686; c=relaxed/simple;
+	bh=ersxdiXFUUZ4cgzB+ytXinB0vFK9DFCDoKuyqqg8ODA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=haCPgoWy0m/Alt+2r5MMA70Eu+FoT8SuLqJ6T6uoLybFWaoSwPFWbpUvBE5n2+cEgZsWWP1QTte4OBqz1dY00QC+pUYXA0z6ab6ZLtx031sFnbmW4hdNWUJ/lhazMZr2xJq7L/S3yDOxgdcCblIISXegw3QMwXf4iVxMD+TwgW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WoTc22z+; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728077685; x=1759613685;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=ersxdiXFUUZ4cgzB+ytXinB0vFK9DFCDoKuyqqg8ODA=;
+  b=WoTc22z+2twy22Ab4EIErEHIAfSPdvaooqUNQcZ8kVknHKFCIymbbPAU
+   7wsAzkmgMwbbxtdfABm1yxKCThbJN0eZE6lZ8EOG/hd7O37QR7A3LcK27
+   MFN69tVEzrg1GeBE2r2W+5oY7oJUELg2RlV6NEw+TuoHD1oi6ATQssSmP
+   4dutzraNOU2KnB0zF/TdwuNCsVfypFq5pQptVJXF3EksOYvPfmbv4JceU
+   jPlgvpZCdcMXE50iCq4LdOAuGTFcdJ8JiAIrghQRLMdflW8OzqaO39aOP
+   UZIZRwM3upA1SXS6G6NNzhHpLV+51mxpS5y4ft8Wlzj1Pt/Xdm8J6djFp
+   A==;
+X-CSE-ConnectionGUID: K1+my43CRkKJxzX6i+cbDQ==
+X-CSE-MsgGUID: fI5ZbLTpQz2PJOP866C1cw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="38446534"
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="38446534"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 14:34:44 -0700
+X-CSE-ConnectionGUID: KbiuiijZR62+BaMVgSMd9Q==
+X-CSE-MsgGUID: 5siTwgfMRG+J65B7oQSBqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="79661601"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 04 Oct 2024 14:34:43 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swpwe-0002FG-1o;
+	Fri, 04 Oct 2024 21:34:40 +0000
+Date: Sat, 5 Oct 2024 05:34:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20241003 5/14]
+ include/linux/build_bug.h:78:41: error: static assertion failed: "struct
+ member likely outside of struct_group_tagged()"
+Message-ID: <202410050536.vCru1pn6-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cb14d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241003
+head:   ec64acf2dce7577a42c01241e78b24afebc26e96
+commit: f44c92244302b0ac9d17ccf3eb21786a9be55163 [5/14] RDMA/uverbs: Use static_assert() to check struct sizes
+config: mips-allmodconfig (https://download.01.org/0day-ci/archive/20241005/202410050536.vCru1pn6-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410050536.vCru1pn6-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410050536.vCru1pn6-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/module.h:12,
+                    from drivers/infiniband/core/nldev.c:33:
+>> include/linux/build_bug.h:78:41: error: static assertion failed: "struct member likely outside of struct_group_tagged()"
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                         ^~~~~~~~~~~~~~
+   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ^~~~~~~~~~~~~~~
+   include/rdma/uverbs_ioctl.h:643:1: note: in expansion of macro 'static_assert'
+     643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
+         | ^~~~~~~~~~~~~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
 
-On Tue, 03 Sep 2024 19:43:43 +0300, Roger Quadros wrote:
-> This series fixes dtbs_check warnings on OMAP platforms
-> for ti,gpmc-nand and ti,gpmc-onenand.
-> 
-> The following warnings are fixed
-> - "nand@0,0: Unevaluated properties are not allowed ('linux,mtd-name' was unexpected)"
-> - "nand@0,0: Unevaluated properties are not allowed ('gpmc,device-nand' was unexpected)"
-> - "omap3430-sdp.dtb: onenand@2,0: Unevaluated properties are not allowed ('linux,mtd-name' was unexpected)"
-> 
-> [...]
+vim +78 include/linux/build_bug.h
 
-Applied, thanks!
+bc6245e5efd70c Ian Abbott       2017-07-10  60  
+6bab69c65013be Rasmus Villemoes 2019-03-07  61  /**
+6bab69c65013be Rasmus Villemoes 2019-03-07  62   * static_assert - check integer constant expression at build time
+6bab69c65013be Rasmus Villemoes 2019-03-07  63   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  64   * static_assert() is a wrapper for the C11 _Static_assert, with a
+6bab69c65013be Rasmus Villemoes 2019-03-07  65   * little macro magic to make the message optional (defaulting to the
+6bab69c65013be Rasmus Villemoes 2019-03-07  66   * stringification of the tested expression).
+6bab69c65013be Rasmus Villemoes 2019-03-07  67   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  68   * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
+6bab69c65013be Rasmus Villemoes 2019-03-07  69   * scope, but requires the expression to be an integer constant
+6bab69c65013be Rasmus Villemoes 2019-03-07  70   * expression (i.e., it is not enough that __builtin_constant_p() is
+6bab69c65013be Rasmus Villemoes 2019-03-07  71   * true for expr).
+6bab69c65013be Rasmus Villemoes 2019-03-07  72   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  73   * Also note that BUILD_BUG_ON() fails the build if the condition is
+6bab69c65013be Rasmus Villemoes 2019-03-07  74   * true, while static_assert() fails the build if the expression is
+6bab69c65013be Rasmus Villemoes 2019-03-07  75   * false.
+6bab69c65013be Rasmus Villemoes 2019-03-07  76   */
+6bab69c65013be Rasmus Villemoes 2019-03-07  77  #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+6bab69c65013be Rasmus Villemoes 2019-03-07 @78  #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+6bab69c65013be Rasmus Villemoes 2019-03-07  79  
+07a368b3f55a79 Maxim Levitsky   2022-10-25  80  
 
-[1/3] ARM: dts: ti: drop linux,mtd-name from NAND nodes
-      commit: ea453dc2d4d6b7bed89386fe76916252993676ab
-[2/3] ARM: dts: ti: omap: am335x-baltos: drop "gpmc,device-nand" from NAND node
-      commit: a9c81b1d47baf1a187d240da6e4e6cac2dd668e5
-[3/3] ARM: dts: ti: omap3434-sdp: drop linux,mtd-name from onenand node
-      commit: 9fe9af0ba275f0109d118ccbd8a438989ca6708a
+:::::: The code at line 78 was first introduced by commit
+:::::: 6bab69c65013bed5fce9f101a64a84d0385b3946 build_bug.h: add wrapper for _Static_assert
 
-Best regards,
+:::::: TO: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+
 -- 
-Kevin Hilman <khilman@baylibre.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
