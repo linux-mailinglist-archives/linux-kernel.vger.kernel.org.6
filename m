@@ -1,182 +1,113 @@
-Return-Path: <linux-kernel+bounces-351390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A20991056
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:24:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD5399104A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 951041C21725
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:24:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B76791C23070
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA721E7C1D;
-	Fri,  4 Oct 2024 20:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D6A1E3DEA;
+	Fri,  4 Oct 2024 20:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CsbIGiaK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="d7yWeA6z";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CsbIGiaK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="d7yWeA6z"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y4rSMPJL"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924DF1E5738;
-	Fri,  4 Oct 2024 20:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB511DF730
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 20:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728072358; cv=none; b=Yyb1P0B7E80uvnNNdhdziUVMbK3qGgsSkXW3Xa4VSSDM/cuyaXjWB1a7r1aRI+Fax2StIXvJzh0p2d9WYo8s7Q/Y0Y6g99hvMvcjS3Ls9KeFMqETao0l636S0d58YNlHrciQMXckpedGCRxii57cj3AhxaL0kBjd1uEoKd37NPo=
+	t=1728072339; cv=none; b=Fiai+JAY4AUpEgDGTXSzaJ8kpoNLlkG/Gu86J0iIVHzVfLvJXt+b50k0suYuLKCJkvoMDoq4IvhveHScDzmHWTTDoLqUt64H1PNrtySneEUJc52xA6CH9ygsHfjICNAkMDnv5E4GI5/AntLK5cxoPkR7Ln7x0UOATMZ7sinTfjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728072358; c=relaxed/simple;
-	bh=jfjst3E5k0T2B6zwqixGj4yYauvR0JGYmKe7AjK0JHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UHUAEKy9ncZWHunb91gmy4L8gV5p03NbuQX3tIXpX4wFKfPlufm+/DPhDx1GvDQcV8XBxp1MzXM+NpmImm5GPL/dFh2b44GmOiFhOB5zY5W1TyqaOH0AhX1X1g1W8LAFcHNwNJ4mNLtz39F98/HldVQVphwDsk0f00e15I2V9Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CsbIGiaK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=d7yWeA6z; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CsbIGiaK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=d7yWeA6z; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D5ADA1F7B4;
-	Fri,  4 Oct 2024 20:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728072354; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f4bhyoD+vXWDSv7I9433nLLALeIWNmirY85fvj5iloo=;
-	b=CsbIGiaKDGGN2nqjI53FXD00QOoqin/aPN8c7JdYHSgcHKhOd1+CoHWO5yaIEwSfxHCCh0
-	TXbld0F7GwBlI0gQNYd7rhTtSu+2uiP9yTaEsdsF3CWxrBw1jsFT4DdralN2eNJq7GQ+ZS
-	3JcCJD7KXXqOdNWNDyMvsyh9QY/2LOo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728072354;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f4bhyoD+vXWDSv7I9433nLLALeIWNmirY85fvj5iloo=;
-	b=d7yWeA6zvalmhHwcTTgWyG1nkkXiJVhJOZeyVXS/vymXeJpZ0HhzSBSnKcgNOILL5DuBog
-	hLSZX88KUFWQt3BQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728072354; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f4bhyoD+vXWDSv7I9433nLLALeIWNmirY85fvj5iloo=;
-	b=CsbIGiaKDGGN2nqjI53FXD00QOoqin/aPN8c7JdYHSgcHKhOd1+CoHWO5yaIEwSfxHCCh0
-	TXbld0F7GwBlI0gQNYd7rhTtSu+2uiP9yTaEsdsF3CWxrBw1jsFT4DdralN2eNJq7GQ+ZS
-	3JcCJD7KXXqOdNWNDyMvsyh9QY/2LOo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728072354;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f4bhyoD+vXWDSv7I9433nLLALeIWNmirY85fvj5iloo=;
-	b=d7yWeA6zvalmhHwcTTgWyG1nkkXiJVhJOZeyVXS/vymXeJpZ0HhzSBSnKcgNOILL5DuBog
-	hLSZX88KUFWQt3BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6AF5F13883;
-	Fri,  4 Oct 2024 20:05:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dzjgDaJKAGcqRgAAD6G6ig
-	(envelope-from <rgoldwyn@suse.de>); Fri, 04 Oct 2024 20:05:54 +0000
-From: Goldwyn Rodrigues <rgoldwyn@suse.de>
-To: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 12/12] btrfs: switch to iomap for buffered reads
-Date: Fri,  4 Oct 2024 16:04:39 -0400
-Message-ID: <edc8da1d3d6c5a09662a7a788dc17c963f50dfab.1728071257.git.rgoldwyn@suse.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <cover.1728071257.git.rgoldwyn@suse.com>
-References: <cover.1728071257.git.rgoldwyn@suse.com>
+	s=arc-20240116; t=1728072339; c=relaxed/simple;
+	bh=JiMxay4gnW+6wgKIgt9nl2obDExo8a/GF1PhTk/kOIA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DSlnOe9hwGVNCZVWJtDAq9HEbdDktt0+ExCEyGNDJEVDTzpqiVXmDTkODWAjOg7u/I6OVXX9bF7c/M7eAFkZohQmIdPv0Q57mui1c8sV4930rdIvxS0sN1y1IGx2wkxpcolCM/NJ6gIgsNyFqpZspkD1Ff0hsw1DJFq0SkkzZok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y4rSMPJL; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c87a7782beso921a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 13:05:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728072336; x=1728677136; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JiMxay4gnW+6wgKIgt9nl2obDExo8a/GF1PhTk/kOIA=;
+        b=Y4rSMPJLXHmImyc9TcWFVcyPr2WszUekMzKkg3UtAAlSBLaBUYvrFYg6OfhT6u/iGm
+         OFjQdQnGI/b7h+CU74FtcbQEaS+d+/lHBEcpL/uioBXdy3Aewt9ZXVPlCu1JN9SjB+0B
+         7d0d0aayzk8M9ZiL2q+xsJpcpxm0lflFyZoQ2Ix5L31mFOVd4+7Qtp77fi7ifAySQ2dY
+         sIG34iCjiFUWFnzrvPLwkw8Fwnv4jX4QrCFbqaWH95OSXwrbk8ay6ZWboBelPXAqD2QU
+         myY2/qaQBnt+ARpaoPYanM/GZn9xi7L7BWKjz/hDMVOqZcXLFw1nEZ5GJqJhc+r7Q7IN
+         4NOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728072336; x=1728677136;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JiMxay4gnW+6wgKIgt9nl2obDExo8a/GF1PhTk/kOIA=;
+        b=elM6Rzw8S8rdTTiFvVtLObRXS1XRVrlV3Rdn8KHOYq0B1pA8jK0URBpRaPHMUwNGWF
+         dBmKDNGG04efV30/pJm5oj+FGekBP8Y/XGUYoPXeEF2Akm3ad2nnE6rTNSibCmTGEd4y
+         /RmqGwcA035uHDHa1rD60dPFvyIOfemVX3Hv3xcoF6TjvKgyYxKSVNaAX/EY0Jx6+YCG
+         JQwksy8g1Lw7AY9mPgqd5qnHIK3DIRCFfjjxJp9cfdRpKFuQozKxd9MBYYy9AeK0C+QH
+         f3fZs55R05+AubwUI2k/Hee0fFRI/6/Me7xYQ9gTNJgqF8OQe0GRz5Bx7SZ5nQjP0wiU
+         zZnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ5mWJL/YubIcEwqJWfb6WUtFaxrdBc7A0Mi+97V459utMaoZYXvaMszlwVj7EdiCR1wLdAknT/qmCS04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyojLFl6tnLOgJp3BChc5dhiQDXwCDvkJooP+UfS4z9lFlfKIYP
+	GL2B+uSBo4p7ELK1Tqtwer4h7f8/6h40TGp1YyLCNrYvvi8NWox3/lhsm2xDn9UGPm/JMO5ERPe
+	8P6E4eS/sLURtUxsDbJHeZbfEAuD3X6yrxQo7
+X-Google-Smtp-Source: AGHT+IGKj4ecSq7kiQmR5mFeEjukbtjqOAnsrq9GPARLECwAIVL7N3BRgGkc9MB+SMxU+dPJJPhJacrNmaMHMUr9wxo=
+X-Received: by 2002:a05:6402:42cb:b0:5c7:18f8:38a6 with SMTP id
+ 4fb4d7f45d1cf-5c8e124ffe2mr74647a12.5.1728072335495; Fri, 04 Oct 2024
+ 13:05:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+References: <20241004195540.210396-1-vipinsh@google.com> <20241004195540.210396-3-vipinsh@google.com>
+In-Reply-To: <20241004195540.210396-3-vipinsh@google.com>
+From: Vipin Sharma <vipinsh@google.com>
+Date: Fri, 4 Oct 2024 13:04:58 -0700
+Message-ID: <CAHVum0eXVwpwsrVC21XN1H0JvJ_QWnr3ERPYvSyRpwudVFtg8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] KVM: x86/mmu: Use MMU shrinker to shrink KVM MMU
+ memory caches
+To: seanjc@google.com, pbonzini@redhat.com, dmatlack@google.com
+Cc: zhi.wang.linux@gmail.com, weijiang.yang@intel.com, mizhang@google.com, 
+	liangchen.linux@gmail.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Fri, Oct 4, 2024 at 12:55=E2=80=AFPM Vipin Sharma <vipinsh@google.com> w=
+rote:
+>
+> Use MMU shrinker to iterate through all the vCPUs of all the VMs and
+> free pages allocated in MMU memory caches. Protect cache allocation in
+> page fault and MMU load path from MMU shrinker by using a per vCPU
+> mutex. In MMU shrinker, move the iterated VM to the end of the VMs list
+> so that the pain of emptying cache spread among other VMs too.
+>
+> The specific caches to empty are mmu_shadow_page_cache and
+> mmu_shadowed_info_cache as these caches store whole pages. Emptying them
+> will give more impact to shrinker compared to other caches like
+> mmu_pte_list_desc_cache{} and mmu_page_header_cache{}
+>
+> Holding per vCPU mutex lock ensures that a vCPU doesn't get surprised
+> by finding its cache emptied after filling them up for page table
+> allocations during page fault handling and MMU load operation. Per vCPU
+> mutex also makes sure there is only race between MMU shrinker and all
+> other vCPUs. This should result in very less contention.
+>
+> Signed-off-by: Vipin Sharma <vipinsh@google.com>
 
-For buffered reads, call iomap_readahead() and iomap_read_folio().
+I also meant to add
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Suggested-by: David Matlack <dmatlack@google.com>
 
-This is limited to non-subpage calls.
-
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
----
- fs/btrfs/extent_io.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 01408bc5b04e..cfe771cebb36 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -1205,9 +1205,15 @@ static int btrfs_do_readpage(struct folio *folio, struct extent_map **em_cached,
- int btrfs_read_folio(struct file *file, struct folio *folio)
- {
- 	struct btrfs_bio_ctrl bio_ctrl = { .opf = REQ_OP_READ };
-+	struct inode *inode = folio->mapping->host;
-+	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
- 	struct extent_map *em_cached = NULL;
- 	int ret;
- 
-+	if (!btrfs_is_subpage(fs_info, inode->i_mapping))
-+		return iomap_read_folio(folio, &btrfs_buffered_read_iomap_ops,
-+				&btrfs_iomap_read_folio_ops);
-+
- 	ret = btrfs_do_readpage(folio, &em_cached, &bio_ctrl, NULL);
- 	free_extent_map(em_cached);
- 
-@@ -2449,10 +2455,17 @@ int btrfs_writepages(struct address_space *mapping, struct writeback_control *wb
- void btrfs_readahead(struct readahead_control *rac)
- {
- 	struct btrfs_bio_ctrl bio_ctrl = { .opf = REQ_OP_READ | REQ_RAHEAD };
-+	struct inode *inode = rac->mapping->host;
-+	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
- 	struct folio *folio;
- 	struct extent_map *em_cached = NULL;
- 	u64 prev_em_start = (u64)-1;
- 
-+	if (!btrfs_is_subpage(fs_info, rac->mapping)) {
-+		iomap_readahead(rac, &btrfs_buffered_read_iomap_ops, &btrfs_iomap_read_folio_ops);
-+		return;
-+	}
-+
- 	while ((folio = readahead_folio(rac)) != NULL)
- 		btrfs_do_readpage(folio, &em_cached, &bio_ctrl, &prev_em_start);
- 
--- 
-2.46.1
-
+I can send v3 or please take it from v2.
 
