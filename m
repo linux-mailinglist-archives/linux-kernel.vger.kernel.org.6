@@ -1,186 +1,222 @@
-Return-Path: <linux-kernel+bounces-350822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2158C990A15
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:24:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A69990A16
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BCEBB2220E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:24:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70FAE1C220E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BE21C3021;
-	Fri,  4 Oct 2024 17:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRnK+Hc8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46711CACDE;
+	Fri,  4 Oct 2024 17:24:18 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B451E378D;
-	Fri,  4 Oct 2024 17:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA81A157492
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728062629; cv=none; b=ZdnBnUtW3BSPtp4NNg9iiPEDnP0cL6O7/GcIIVUr/8pGxrRpmFmoiIaHH2APIHfHho2dxXAp0e9QgNfTU7/lNISIu7A2dFHpg7U1SZa6HCl1Qwbc/taSbOxALZ7nxr6HJh/wR4G1NmRVn40zqYXINZlF4Ht8tZzd3k6yl2cPERk=
+	t=1728062658; cv=none; b=Lec5zLRQztMHsSAKO44BXrIXwwsKHXKwHRz/AJbR03cWt7I+Bzu8klSFFRc/snAkl/PoC5GXntTNAVDkKtM8Nc2Mg68JykDSqqcyw7wDAYfyNQP2Acc/SQAIfOI2Elqk9+46Xk9RJsK/XN99sgHK7xSuaEXbMH4fFQmhLgIZP5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728062629; c=relaxed/simple;
-	bh=Ck04ZwAJLUC52xG8xW/cvhMb6CgIDBwDNggWk8T5Z6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q40Uzpe5+nK8FpJjhhi74OUtL4ew3Pp9OtHME3vyQo8WEJuf+f0bceVYKBnSk8svaypEmZ+ZxPFQux0yUPZNaEgA5Oqb7qYaOl4LzJaLK5kBBbwZ8EWIgz8zbdX9ctJ4cudHV/F1NSm/NIobftqi5qZfQ5AeLF9n7Eb+rkVm3Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRnK+Hc8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 459D2C4CEC6;
-	Fri,  4 Oct 2024 17:23:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728062629;
-	bh=Ck04ZwAJLUC52xG8xW/cvhMb6CgIDBwDNggWk8T5Z6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qRnK+Hc8fbZvqSga/zsdsMP74yY2Pz6jVlLqCCHwKxGGmm8KNdEr4zdpu2IAhCLPb
-	 lRaZbchE7zyY27Ol9Hnw1uWRbliPl8I/+/zilZPSKXUzKJC12bSV7HSlWpl5DiSMLB
-	 HEtpGPskvn2MfPZvV+vmD81CeSXVEr7PaNhTPCm2Rkd2jjSIGGFWJfsUKASwbMQNHs
-	 uP2JSq3E6dNWwubN3+b+dfKgeVeIX661LoHrOpwP6Zyl5LE3pLKdri5Mk8VL0E2nli
-	 COSe9o3f5MkB154n+3I+MJydU/ZNq9U612HB6Fs44DljKJXML+LxDLyynurnyC1mM5
-	 lmi9vJ1Zilt0g==
-Date: Fri, 4 Oct 2024 10:23:46 -0700
-From: Kees Cook <kees@kernel.org>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
-	Marco Elver <elver@google.com>, linux-mm@kvack.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3] slab: Introduce kmalloc_obj() and family
-Message-ID: <202410041014.7DE8981@keescook>
-References: <20240822231324.make.666-kees@kernel.org>
- <eae36648-6f9f-486d-b352-c92a315431a1@intel.com>
+	s=arc-20240116; t=1728062658; c=relaxed/simple;
+	bh=EmoHa8FaFyVL7Z1GSWqvvyNiResVTgGVxkK+1B2SBaU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hRzVBl9fVuKFEU8hsOt8Dj0fDplIp4cfGmlFD3vVn2mEc8iN5yCQA5mfhoY/BuQGQI7uKF1GSp+yCNZOvi+wgEl1bNk8XNgCr9z//zBSyMCFE0n1FSjN3GZkgqgIALJ2CFDUxfo/W+HPLUovqOyUXEzRAWECj7N4ZjX4giHbeUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a342e872a7so27388515ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:24:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728062656; x=1728667456;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oFJi+zD7QTScJAa7VViMozX/t6MTB1OGWcLLN5k1oyg=;
+        b=dMZaf7YyIhFcgFy85eFReHTqdf64RF92IVXioqbnURDTEv2gfoF4BqYbL5G6fP0p59
+         ZoW6U8+H8KzCHyKV7OIPk6aAeEPo8mt2v5eZGsf2v6kZ1mfihLAaslKewq7rQ5KM7uch
+         g7U/Mh4sioaXid8pgb2SWx6bzLMNC6uhzRaerQQnXG/jz6PwpP3C+3Qh6FJRSfT0wy50
+         y2dh2sv8xvTPUp0gG8Xe/nDfH3NUoE5cWo5dUnnG0NSoFVBn8CDuMYuqWBelvF6CvBJB
+         HPPd/n2gW6I05gJnj4+VGyBGtOWou8ZbOFk7vaN7rlEXt3E4TiQBgRVahb8XoIMrxMSg
+         qFcg==
+X-Gm-Message-State: AOJu0YyI0KBiY0jXdSn88eRGMgrQloDmHsROSirvdQO0MYiCqkV74dEy
+	m9K+KbK7Fdcdozic8BPadM7BLgAwUhD4w1R4YBWUvI1tBHAdZFcsNPhBZeTGQ5owTxCbMtMZVIy
+	rEICA6/7FBCBF8jf0mE8jM0M+AfFGFhccHTKorLpJweqaawA6ph74bgA=
+X-Google-Smtp-Source: AGHT+IEA72hEupiTV0Hw0dPbeG7j0tr9d60tvqasfKq4R+eQZbAaE5Yw4JPI2YruV+TS4D4bcv/4ynaTAdDg0rtf8CoAEJXtJbIS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eae36648-6f9f-486d-b352-c92a315431a1@intel.com>
+X-Received: by 2002:a05:6e02:180d:b0:3a3:67b1:3080 with SMTP id
+ e9e14a558f8ab-3a375997255mr35986755ab.7.1728062656092; Fri, 04 Oct 2024
+ 10:24:16 -0700 (PDT)
+Date: Fri, 04 Oct 2024 10:24:16 -0700
+In-Reply-To: <000000000000797bd1060a457c08@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670024c0.050a0220.49194.0494.GAE@google.com>
+Subject: Re: [syzbot] Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
+From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 06:27:58AM +0200, Przemek Kitszel wrote:
-> On 8/23/24 01:13, Kees Cook wrote:
-> 
-> > (...) For cases where the total size of the allocation is needed,
-> > the kmalloc_obj_sz(), kmalloc_objs_sz(), and kmalloc_flex_sz() family
-> > of macros can be used. For example:
-> > 
-> > 	info->size = struct_size(ptr, flex_member, count);
-> > 	ptr = kmalloc(info->size, gfp);
-> > 
-> > becomes:
-> > 
-> > 	kmalloc_flex_sz(ptr, flex_member, count, gfp, &info->size);
-> > 
-> > Internal introspection of allocated type now becomes possible, allowing
-> > for future alignment-aware choices and hardening work. For example,
-> > adding __alignof(*ptr) as an argument to the internal allocators so that
-> > appropriate/efficient alignment choices can be made, or being able to
-> > correctly choose per-allocation offset randomization within a bucket
-> > that does not break alignment requirements.
-> > 
-> > Introduces __flex_count() for when __builtin_get_counted_by() is added
-> > by GCC[1] and Clang[2]. The internal use of __flex_count() allows for
-> > automatically setting the counter member of a struct's flexible array
-> > member when it has been annotated with __counted_by(), avoiding any
-> > missed early size initializations while __counted_by() annotations are
-> > added to the kernel. Additionally, this also checks for "too large"
-> > allocations based on the type size of the counter variable. For example:
-> > 
-> > 	if (count > type_max(ptr->flex_count))
-> > 		fail...;
-> > 	info->size = struct_size(ptr, flex_member, count);
-> > 	ptr = kmalloc(info->size, gfp);
-> > 	ptr->flex_count = count;
-> > 
-> > becomes (i.e. unchanged from earlier example):
-> > 
-> > 	kmalloc_flex_sz(ptr, flex_member, count, gfp, &info->size);
-> 
-> As there could be no __builtin_get_counted_by() available, caller still
-> needs to fill the counted-by variable, right? So it is possible to just
-> pass the in the struct pointer to fill? (last argument "&f->cnt" of the
-> snippet below):
-> 
-> struct foo {
-> 	int cnt;
-> 	struct bar[] __counted_by(cnt);
-> };
-> 
-> //...
-> 	struct foo *f;
-> 
-> 	kmalloc_flex_sz(f, cnt, 42, gfp, &f->cnt);
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I specifically want to avoid this because it makes adding the
-counted_by attribute more difficult -- requiring manual auditing of
-all allocation sites, even if we switch all the alloc macros. But if
-allocation macros are all replaced with a treewide change, it becomes
-trivial to add counted_by annotations without missing "too late" counter
-assignments. (And note that the "too late" counter assignments are only
-a problem for code built with compilers that support counted_by, so
-there's no problem that __builtin_get_counted_by() isn't available.)
+***
 
-Right now we have two cases in kernel code:
+Subject: Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
+Author: luiz.dentz@gmail.com
 
-case 1:
-- allocate
-- assign counter
-- access array
+#syz test
 
-case 2:
-- allocate
-- access array
-- assign counter
+On Fri, Oct 4, 2024 at 12:06=E2=80=AFPM Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
+>
+> #syz test
+>
+> On Thu, Oct 3, 2024 at 3:21=E2=80=AFPM Luiz Augusto von Dentz
+> <luiz.dentz@gmail.com> wrote:
+> >
+> > #syz test
+> >
+> > On Thu, Oct 3, 2024 at 12:32=E2=80=AFPM Luiz Augusto von Dentz
+> > <luiz.dentz@gmail.com> wrote:
+> > >
+> > > #syz test
+> > >
+> > > On Thu, Oct 3, 2024 at 11:38=E2=80=AFAM Luiz Augusto von Dentz
+> > > <luiz.dentz@gmail.com> wrote:
+> > > >
+> > > > #syz test
+> > > >
+> > > > On Wed, Oct 2, 2024 at 4:46=E2=80=AFPM Luiz Augusto von Dentz
+> > > > <luiz.dentz@gmail.com> wrote:
+> > > > >
+> > > > > #syz test
+> > > > >
+> > > > > On Wed, Oct 2, 2024 at 3:46=E2=80=AFPM Luiz Augusto von Dentz
+> > > > > <luiz.dentz@gmail.com> wrote:
+> > > > > >
+> > > > > > #syz test
+> > > > > >
+> > > > > > On Wed, Oct 2, 2024 at 3:19=E2=80=AFPM Luiz Augusto von Dentz
+> > > > > > <luiz.dentz@gmail.com> wrote:
+> > > > > > >
+> > > > > > > #syz test
+> > > > > > >
+> > > > > > > On Wed, Oct 2, 2024 at 3:04=E2=80=AFPM Luiz Augusto von Dentz
+> > > > > > > <luiz.dentz@gmail.com> wrote:
+> > > > > > > >
+> > > > > > > > From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> > > > > > > >
+> > > > > > > > This makes use of disable_delayed_work_sync instead
+> > > > > > > > cancel_delayed_work_sync as it not only cancel the ongoing =
+work but also
+> > > > > > > > disables new submit which is disarable since the object hol=
+ding the work
+> > > > > > > > is about to be freed.
+> > > > > > > >
+> > > > > > > > In addition to it remove call to sco_sock_set_timer on __sc=
+o_sock_close
+> > > > > > > > since at that point it is useless to set a timer as the sk =
+will be freed
+> > > > > > > > there is nothing to be done in sco_sock_timeout.
+> > > > > > > >
+> > > > > > > > Reported-by: syzbot+4c0d0c4cde787116d465@syzkaller.appspotm=
+ail.com
+> > > > > > > > Closes: https://syzkaller.appspot.com/bug?extid=3D4c0d0c4cd=
+e787116d465
+> > > > > > > > Fixes: ba316be1b6a0 ("Bluetooth: schedule SCO timeouts with=
+ delayed_work")
+> > > > > > > > Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel=
+.com>
+> > > > > > > > ---
+> > > > > > > >  net/bluetooth/sco.c | 13 +------------
+> > > > > > > >  1 file changed, 1 insertion(+), 12 deletions(-)
+> > > > > > > >
+> > > > > > > > diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+> > > > > > > > index a5ac160c592e..2b1e66976068 100644
+> > > > > > > > --- a/net/bluetooth/sco.c
+> > > > > > > > +++ b/net/bluetooth/sco.c
+> > > > > > > > @@ -208,7 +208,7 @@ static void sco_conn_del(struct hci_con=
+n *hcon, int err)
+> > > > > > > >         }
+> > > > > > > >
+> > > > > > > >         /* Ensure no more work items will run before freein=
+g conn. */
+> > > > > > > > -       cancel_delayed_work_sync(&conn->timeout_work);
+> > > > > > > > +       disable_delayed_work_sync(&conn->timeout_work);
+> > > > > > > >
+> > > > > > > >         hcon->sco_data =3D NULL;
+> > > > > > > >         kfree(conn);
+> > > > > > > > @@ -442,17 +442,6 @@ static void __sco_sock_close(struct so=
+ck *sk)
+> > > > > > > >
+> > > > > > > >         case BT_CONNECTED:
+> > > > > > > >         case BT_CONFIG:
+> > > > > > > > -               if (sco_pi(sk)->conn->hcon) {
+> > > > > > > > -                       sk->sk_state =3D BT_DISCONN;
+> > > > > > > > -                       sco_sock_set_timer(sk, SCO_DISCONN_=
+TIMEOUT);
+> > > > > > > > -                       sco_conn_lock(sco_pi(sk)->conn);
+> > > > > > > > -                       hci_conn_drop(sco_pi(sk)->conn->hco=
+n);
+> > > > > > > > -                       sco_pi(sk)->conn->hcon =3D NULL;
+> > > > > > > > -                       sco_conn_unlock(sco_pi(sk)->conn);
+> > > > > > > > -               } else
+> > > > > > > > -                       sco_chan_del(sk, ECONNRESET);
+> > > > > > > > -               break;
+> > > > > > > > -
+> > > > > > > >         case BT_CONNECT2:
+> > > > > > > >         case BT_CONNECT:
+> > > > > > > >         case BT_DISCONN:
+> > > > > > > > --
+> > > > > > > > 2.46.1
+> > > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > > > --
+> > > > > > > Luiz Augusto von Dentz
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > > --
+> > > > > > Luiz Augusto von Dentz
+> > > > >
+> > > > >
+> > > > >
+> > > > > --
+> > > > > Luiz Augusto von Dentz
+> > > >
+> > > >
+> > > >
+> > > > --
+> > > > Luiz Augusto von Dentz
+> > >
+> > >
+> > >
+> > > --
+> > > Luiz Augusto von Dentz
+> >
+> >
+> >
+> > --
+> > Luiz Augusto von Dentz
+>
+>
+>
+> --
+> Luiz Augusto von Dentz
 
-When we add a counted_by annotation, all "case 2" code but be found and
-refactored into "case 1". This has proven error-prone already, and we're
-still pretty early in adding annotations. The reason refactoring is
-needed is because when the compiler supports counted_by instrumentation,
-at run-time, we get:
 
-case 1:
-- allocate
-- assign counter
-- access array // no problem!
 
-case 2:
-- allocate
-- access array // trap!
-- assign counter
-
-I want to change this to be:
-
-case 1:
-- allocate & assign counter
-- assign counter
-- access array
-
-case 2:
-- allocate & assign counter
-- access array
-- assign counter
-
-Once the kernel reaches a minimum compiler version where counted_by is
-universally available, we can remove all the "open coded" counter
-assignments.
-
--Kees
-
--- 
-Kees Cook
+--=20
+Luiz Augusto von Dentz
 
