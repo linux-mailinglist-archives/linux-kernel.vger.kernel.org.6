@@ -1,69 +1,84 @@
-Return-Path: <linux-kernel+bounces-350219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB349901A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:53:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E599901AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2C82829AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:53:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029BD1F224D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772E0155C98;
-	Fri,  4 Oct 2024 10:53:51 +0000 (UTC)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C2614B07A;
+	Fri,  4 Oct 2024 10:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="F3Uxvg5B"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F93F179BB;
-	Fri,  4 Oct 2024 10:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40972179BB
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728039231; cv=none; b=VCkWqLm1a0hBkAdcUWMwhGDZzVzoxo7yy/H2vjQcxfZS1yaCg7PQKNoMnR6uFjNUd50y8vp9ZtYhkL2DjjIT90N0yW+Mr9U6uh5/989LmQNAyzqJ6zqPu/1RoPj3tRvVJYpveqTrXArTHnFd7g//Vz5WcOy+hKjHFklF+hX6ohY=
+	t=1728039318; cv=none; b=rbA/1tW6Y9giTtmoLCTg/fNZ147wNMfHcKHXHuf0amKk3bNZ4dIrwL1WMzhkO5o3kok/C2K2Fs5kH4H2XJxS8485eG42U3+Kua9hiDbMUFYKTDrN8gmZ3zt/zNFZeHxP6vchd1hd3PHZiAbW7isNt1IDwGfyHB9Zao3O/h7vcqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728039231; c=relaxed/simple;
-	bh=DWljU3qY0qrV3vkJD6O/Pj957vWPw6Dblsqa2v44Za0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jGDhNubu2DO2QSt6wqYqrCTja9uvJ7wiu1KD/YHgt3Si02gPjhRyEJKd47boNHG3Anagi6u0GXpWKXSAqFwYAPIgNyWztbWuKiG1tp09gztwX+MQP2+/FIr5Z7kK5FvVZ8WTNA9baIpDptID0FR4VsSMXPUFRyVTLIJEF8TZ1Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so17228085e9.2;
-        Fri, 04 Oct 2024 03:53:49 -0700 (PDT)
+	s=arc-20240116; t=1728039318; c=relaxed/simple;
+	bh=/gnDSOyQALnlFj9T36lVAVNTTFzwHZFyTNcrltNvd2g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pyNEpSEQdGEXCoixPMwLWUJZszSMU63jZBkRu40Yo2IpXpwhlT979KJJ/yySRavtd3SrI45hH4U+K+DHdQ3phf+gWekCzG+rf+sHQDP5vToEZKGESKW97bcu9pqsT7mJLiNE+qu3/c/zyVqGG94hTEIGrKm/Ej+D0O7MUXEtP88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=F3Uxvg5B; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e21b4d7236so16614007b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 03:55:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1728039316; x=1728644116; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b3xnIJ9xJEF5dZzVmcC3z99NvsX4DJMfYW3BHeBLqjE=;
+        b=F3Uxvg5BYG4riCe0g7eys0lu6wnY+rx9rcmMNsC61DAzpId8r7UgTkS36Q132zjcKc
+         hZxD4VF6j/46DlAl7naQwTiCCOpRd5TiNqyDWlsCRjTp1k5RE39JfWlkQDpM22iAG/jQ
+         nZktDL6+JoZxkQvz8WD9DhQaBjgnmAdjEBvOg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728039227; x=1728644027;
+        d=1e100.net; s=20230601; t=1728039316; x=1728644116;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GXeNJHAmVvczEIHZ6e0IC5Zzi8tqawU4KHZ04kqvtdo=;
-        b=QnJ1p0gQOsA2H4GAVbTKEivQIDI+VFmQrn8KAs6zb+YnS28I6/ne9xECsec/6m7tn0
-         v5ZKShUDbSYAJszlEQUPUQ6PD9+IzlHCDu+wm5XWJ+DilCH3Vwbe5Ysf3E0jCdP096i6
-         8gfyV2NXF7tbQEb3Z4lBCRt11U3qh4X1ldUOdlHZCwDcJc3bbQ1IqNfMBhu90epiYH6y
-         7FTG1BMk4l8g9jIOZSmRPnMBtVWQxmvv87XHEU2uBnz6TBbJM3iDrvErm0cbnKYBpr7z
-         QHiSQNlKga1KnktCog0A7IIlpHoUHzLKPLINERGYq6d09+T4844SzsIwz8PYlR8a/7Vt
-         Y3ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ5YH0od+MxSiznZc0Fwi01VbpoQr3nz2iGg/WIFCku+5r90FFXiw57qZTcVw9m0K8IspYX36EhgjHyQps@vger.kernel.org, AJvYcCW6HZeWFQ0I2k123v0dcARetkwO8qkBCu0NL5gV49QAw5LiUrWBKw80j+dB7Y2Muc5kRd3mUmjoUQGJQw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy91s2ZFPbabdcD5evw7buzWiBqHzgx/7s8H5YhidWeLHtNfLdW
-	riSuPyXm1JEHmyoo1HKr0kpDk38Q2K6Im6sPAfjhjPnohAi9gQzA
-X-Google-Smtp-Source: AGHT+IF2EQKxiuA9l2LyCz/uiARYjibI9Ko1W2SK2tVAFXFXqlvo8qU1RXfY39ODJvXWoJs7lFZopA==
-X-Received: by 2002:a05:600c:1d2a:b0:42f:7ed4:4c25 with SMTP id 5b1f17b1804b1-42f85ab5db4mr15549825e9.14.1728039227324;
-        Fri, 04 Oct 2024 03:53:47 -0700 (PDT)
-Received: from nuc.fritz.box (p200300f6f71aeb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71a:eb00:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86a1f6a7sm12745745e9.8.2024.10.04.03.53.46
+        bh=b3xnIJ9xJEF5dZzVmcC3z99NvsX4DJMfYW3BHeBLqjE=;
+        b=GnBkdvTewLN2yjzYJaKt7VDx837UB6ltfr/k7zlfeqauwM5ECcIUf6yj1h/veYgw0r
+         xmGvn8RJc5UWvxK5B5QmzS5a0J3uAorEIxw8j2AmH3MovzxvHkl43fifYBWeenaiAJqB
+         f/69VOkEI49KQlFrdoj7nR+5jAYyPl/i+5aIncjZ6yqlhOu4U8XeGV3VSfEISgP9JdQp
+         u5IB+hBmGNSLOXh4jHEbJlt3lxuX5o5aod7DWED962II5t7XSMoge2mYQ4mZyqIpuRzj
+         F503iWblch+s0WYY/ba1hpDMp2I17GzXztUukN0ewmpTPFEss74Wi3gH80+xh9+ISfJS
+         i0LA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEGFoQpIpH2Fz8d8KOuMgdmJPrz4GbaJAW4lO7WDw7Nbvh3Nci5OaLuJDYZdoehQHLwsh1Tq7QePqn3Dg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUFQirEI/MuVpn5ZVbRDZQihdfHjqdt8rPgLZUqAOvq0arRdZF
+	Qc76CyaaXIBbfp7KF2KrnRu8fyyA4AmidHA1kcEb88TnPNerF3AyGH/KVtQIdFyYTG5ih7RaD8h
+	d
+X-Google-Smtp-Source: AGHT+IHJtTMAHM+5jlGXnRFZgIzHdU4AHpitlBbCf/IAKX/gSdYDh1zGCko+1M5sDXvKG26SjRXZ9Q==
+X-Received: by 2002:a05:6902:1ac9:b0:e28:6f55:1283 with SMTP id 3f1490d57ef6-e28937e3e02mr1501823276.30.1728039316176;
+        Fri, 04 Oct 2024 03:55:16 -0700 (PDT)
+Received: from localhost.localdomain ([12.191.77.58])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e2885d69bd6sm549817276.27.2024.10.04.03.55.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 03:53:46 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
+        Fri, 04 Oct 2024 03:55:15 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: aleksander.lobakin@intel.com,
+	przemyslaw.kitszel@intel.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	Joe Damato <jdamato@fastly.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
 	linux-kernel@vger.kernel.org (open list)
-Cc: Qu Wenruo <wqu@suse.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Filipe Manana <fdmanana@suse.com>
-Subject: [PATCH v2] btrfs: don't BUG_ON() NOCOW ordered-extents with checksum list
-Date: Fri,  4 Oct 2024 12:53:31 +0200
-Message-ID: <20241004105333.15266-1-jth@kernel.org>
-X-Mailer: git-send-email 2.43.0
+Subject: [net-next v3] idpf: Don't hard code napi_struct size
+Date: Fri,  4 Oct 2024 10:54:07 +0000
+Message-Id: <20241004105407.73585-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,44 +87,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+The sizeof(struct napi_struct) can change. Don't hardcode the size to
+400 bytes and instead use "sizeof(struct napi_struct)".
 
-Currently we BUG_ON() in btrfs_finish_one_ordered() if we finishing an
-ordered-extent that is flagged as NOCOW, but it's checsum list is non-empty.
-
-This is clearly a logic error which we can recover from by aborting the
-transaction.
-
-For developer builds which enable CONFIG_BTRFS_ASSERT, also ASSERT() that the
-list is empty.
-
-Suggested-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Suggested-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+Signed-off-by: Joe Damato <jdamato@fastly.com>
 ---
-Changes to v1:
-* Fixup if () and ASSERT() (Qu)
-* Fix spelling of 'Currently'
----
- fs/btrfs/inode.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/intel/idpf/idpf_txrx.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 103ec917ca9d..e57b73943ab8 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -3088,7 +3088,10 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_extent *ordered_extent)
+diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.h b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
+index f0537826f840..9c1fe84108ed 100644
+--- a/drivers/net/ethernet/intel/idpf/idpf_txrx.h
++++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
+@@ -438,7 +438,8 @@ struct idpf_q_vector {
+ 	__cacheline_group_end_aligned(cold);
+ };
+ libeth_cacheline_set_assert(struct idpf_q_vector, 112,
+-			    424 + 2 * sizeof(struct dim),
++			    24 + sizeof(struct napi_struct) +
++			    2 * sizeof(struct dim),
+ 			    8 + sizeof(cpumask_var_t));
  
- 	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
- 		/* Logic error */
--		BUG_ON(!list_empty(&ordered_extent->list));
-+		if (!list_empty(&ordered_extent->list)) {
-+			ASSERT(list_empty(&ordered_extent->list));
-+			btrfs_abort_transaction(trans, -EINVAL);
-+		}
- 
- 		btrfs_inode_safe_disk_i_size_write(inode, 0);
- 		ret = btrfs_update_inode_fallback(trans, inode);
+ struct idpf_rx_queue_stats {
 -- 
-2.43.0
+2.34.1
 
 
