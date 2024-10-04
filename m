@@ -1,126 +1,127 @@
-Return-Path: <linux-kernel+bounces-350433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F138499050C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:59:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA396990509
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8DB284D06
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:59:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E60E9B22AA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79D32141DB;
-	Fri,  4 Oct 2024 13:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="COdlk9UB"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D509C212F1D;
+	Fri,  4 Oct 2024 13:56:52 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBA92139C6;
-	Fri,  4 Oct 2024 13:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCB0212F1C
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728050236; cv=none; b=OE8mp12gCC6SPZhx2P1ID2Ii7yhEX/Oo6WHJviSijuoCr6CEwwVwTrmttAJPbwQgdQNEYUn8UNNaPq4rmUGIIjZBRdAsUmdw0cYJNU2Uc6HvYvwWTZzA5YHuWGNMdWyEp3Oc+KAU6J06cnVq4vUFlYIUh+2O4szfCey+kUJRAwo=
+	t=1728050212; cv=none; b=M8MQwpvygnXkI0dB+14lUakrg1VB5yUZjYy5p6DiASHJLx6M/ocLDMvkKNWkkPgHE5Pwy+/tbYdQxf9oM3SJscyuqjvDP1nqNvZduk1i5dcb9m0MXOVOj7nydvJOgLKqlGQ06ibvXZxeij5fz0/JkuwW3/30VJmomHnkw19PTNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728050236; c=relaxed/simple;
-	bh=7Hwq9uEJINWh6lbq0eDSkjI/LwWpxKdFjo1dFmCmg70=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Lh0oChPKuqovZUeT+au20NctxE5QzgTBIAYLCV6uhwAS6bw7UnMz57YnHjNJnD7hSJbfx/Q+mMV0RDknzDlAeItcYkLfQxiW11Q0MgMYFQtCIicqSaT2PDNZeSqX8t0XDvP3Y8z+jkqQaV7gCqCVb1FqxWZH9ID/rFkplpUWVCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=COdlk9UB; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728050209; x=1728655009; i=markus.elfring@web.de;
-	bh=l5sBalEVeHVqU+tztsDZkdHezcT8/Y4LuI15YAud/Os=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=COdlk9UBKuCaUvN8clv+FF4S1THVbAJVqWB2QPda56DLfiExkrEEV3YXwSBlszS8
-	 cyvkQjedLlpKoTRmW5jNCcuYvapidFV3QR63Ie6xHybvmVh61mHIjkP6oGgAPZYVt
-	 9c9x9KuTBrgITV4twZSTlEsZzwLIowJVSDnkIlCgKngpdsJ3KBjkRoH4706QriDe5
-	 CrePkqpy4471HXcIzvv+q5vzvbIymU4ay7aWsLDMtITNc4VVtwudGk1pHSUNL6+99
-	 1ACB5JD3eSIKk9ySyUJgBkkCshQk7Evi8cly/P0cbISptAlAzi76DCah5i1JG8TD3
-	 SzfFny4QSQkyCRbIxQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MKuKF-1sbU7g1DCv-00JJaN; Fri, 04
- Oct 2024 15:56:49 +0200
-Message-ID: <5d8222c5-d564-4e27-9a85-ec4a526e84f8@web.de>
-Date: Fri, 4 Oct 2024 15:56:40 +0200
+	s=arc-20240116; t=1728050212; c=relaxed/simple;
+	bh=CzR4Eb4/dDwTsmdyJTm8D0cje2IzafzkjG1aBbd2qBU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=h2bcvsh35JPuos8QkWmIlCBJNZfUKOAwBR5lTYkikTYanwJhfwG129OC+b9fbKLQmZqeyhl6HajV9FXDItzu3t+oSyvxdVIQ+5p8WakaMFvOQ+r6d8lJxd6v7FuzkOd0N33anXrmnjF9UO7YamWdvwANQD+/EyetmIgANhMRaWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a34988d6b4so33555675ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 06:56:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728050210; x=1728655010;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cBnxlWIdj3TpJzvieBbIOYmpLQb69r0U9EKYM5qsgUY=;
+        b=kIzTHhPtDaOZqLhn9Kn8u9PAaxyEuYpEgkX0STqMx1ypdqzneXMKkGWy3Ma2Ccv4Dy
+         AaT+DHsm6VxsSk5BKrwtd+qpe6+BPj3Z77PzNNtTG7JIn1moE0ZkKYPOv58bvoT15E74
+         lVKTUhk8GkrTtzEJr3BOgYqkjbB2wL8PSpilEkmHa+B8InJjb70+Y4PkI4Q0Qu/FIIC5
+         TcFGyoomLAFvjBio3wq1eeICD2Qkheb1mV04jNsxlxr2hF0f5jNsl/+tswDvjITR9OvP
+         1By1ndyyQr9K6zbbhorIejOZQlL4ohvfqG387KWgHMjYIyENnNVnvrgRv2B3zThe7Y5Z
+         F36g==
+X-Gm-Message-State: AOJu0YyWz/wHTw7hp4lLCldymyOKZFqCAuWWILPqs5zD8yNq5kfBzaqv
+	H543Hwnsmd8KmqJAL2O3OYIuOZ2Wf4rLJQ4oiOIwhrJe4c8xctymJDDKboib8FwZT0Oj7wlSGiW
+	cd6602WHRjowFNk2bzLKKnECmA2hNC/2+iB9yb+2H7q2nicbmqTbZd0M=
+X-Google-Smtp-Source: AGHT+IGMLRzh6dyTSDuVDCekIrPVau34uaA5eLHv6dAagoe50toZB9r2DEBh/n/0WzDxSRUPGXmQOFQjkqmn+s655PTr9m1aoloL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- Peter Griffin <peter.griffin@linaro.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] media: c8sectpfe: Call of_node_put(i2c_bus) only once in
- c8sectpfe_probe()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+QCmwZmgCaEV2v9LZCjjGJaghSVTSAFn4GQRGdBCM9HPGmzrnAE
- Lcb0ITz5R+EmIIdpN813CxVRkg9rEs4rJj5QfVKUDzyVC0xUoeTpb5ZUmPFowDwCD86gcQN
- 3D+EVcUyEqJ1jyRRdS9PmFc6wvHSUAQjGc2K1KSm9HFjwekFdsQxZqBjMvd4DZn9mew7iOX
- tuPcpy+p7rU5mGdoyxx9g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:29mHHnh0jhA=;z6wggkJyybQu1vD86KEzN9mdlr8
- XjiZLv7SDj+hTW2IAtItSG0mfxETpxsAF/fPdld+Lnv/Kr7Gdp340FB7Q/Co9oUYRNmgvZndJ
- WhWZq8ICA5j+QUrXL1Qm5AMV82ETLRV7aZ9SRNrm4tcQ3CqcmVT8KM2aqky+3VuG2mhbwa1mj
- d9BxiVsmTyzGrUoam8ZbwFIBaFRuOuz+TP4BZu0ERcEAZWpwhr0V4DTTr+JJPl6kDdpueGmb2
- 2B3Fmb0Rcb3CoNg7FegMIROggaKA5HybxuPryDiz2d+d6W6sGUMBQAdGtHXCL1sLu6VYRhshU
- G8xjxkOjJILfCNP6u6uIE1HZRjNZP7sLV4WbKEIL/ahrrxRRG05YLi/zKA/W4VRDC/gGf7B3k
- uGdYm/JOF3a36aUYzUCaWvnmnLncr8SUl4UIze9OPSYan8ZL1C3sSoik63Hi82/IMxAkyM+LB
- laPtlpzek5cm23EZ+3A/FfjqSuTbUaDrovRgWLydEXFrocKHOp8YBXRcG5YNlHb6MW/nZmxju
- yDvK7YyPV8BSX4szIs9sgh5aDbszp66CohurHr4BZV507rwlVJtqg3aRTYHDH8wQdjqxENdoX
- XpdDQr2wugfyCHIQChrUJFSdBG90tBzukuZH37+2g+Mh3iAUE++MVUG43J/bzMNhfgufX7/Jy
- d/3sZJxObfIL07opdp1mNivSu7Jo8jiq05PQunXjaNr9LHe8AjHQmB8fDIOGVUw8AyK8tFkin
- jbrbWHP/ceV24LF+P6nWU5e2LgDBkyJop6oJ0gsOaByJ2uSvI+vKMnVit5TnDuqXbir+tzorf
- aWhhbgXbpWa4szLljX4G17ng==
+X-Received: by 2002:a05:6e02:1685:b0:3a0:98b2:8f3b with SMTP id
+ e9e14a558f8ab-3a3759925d4mr26726875ab.7.1728050210188; Fri, 04 Oct 2024
+ 06:56:50 -0700 (PDT)
+Date: Fri, 04 Oct 2024 06:56:50 -0700
+In-Reply-To: <000000000000932e45061d45f6e8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fff422.050a0220.49194.048b.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free
+ Read in set_powered_sync
+From: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 4 Oct 2024 15:50:15 +0200
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-An of_node_put(i2c_bus) call was immediately used after a pointer check
-for an of_find_i2c_adapter_by_node() call in this function implementation.
-Thus call such a function only once instead directly before the check.
+***
 
-This issue was transformed by using the Coccinelle software.
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
+Author: dmantipov@yandex.ru
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git b63c755cb65d43c8aba987c4f6b57c77c6f123f2
 
-diff --git a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c b/dr=
-ivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-index 67d3d6e50d2e..ed3a107965cc 100644
-=2D-- a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-+++ b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-@@ -797,13 +797,12 @@ static int c8sectpfe_probe(struct platform_device *p=
-dev)
+diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+index bab1e3d7452a..492723a22e68 100644
+--- a/include/net/bluetooth/hci.h
++++ b/include/net/bluetooth/hci.h
+@@ -345,6 +345,7 @@ enum {
+ 	HCI_UP,
+ 	HCI_INIT,
+ 	HCI_RUNNING,
++	HCI_CLOSING,
+ 
+ 	HCI_PSCAN,
+ 	HCI_ISCAN,
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index 629c302f7407..95f55cfb6da6 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -501,12 +501,16 @@ int hci_dev_close(__u16 dev)
+ 		goto done;
+ 	}
+ 
++	set_bit(HCI_CLOSING, &hdev->flags);
++
+ 	cancel_work_sync(&hdev->power_on);
+ 	if (hci_dev_test_and_clear_flag(hdev, HCI_AUTO_OFF))
+ 		cancel_delayed_work(&hdev->power_off);
+ 
+ 	err = hci_dev_do_close(hdev);
+ 
++	if (unlikely(err))
++		clear_bit(HCI_CLOSING, &hdev->flags);
+ done:
+ 	hci_dev_put(hdev);
+ 	return err;
+diff --git a/net/bluetooth/hci_sock.c b/net/bluetooth/hci_sock.c
+index 2272e1849ebd..ff43718822d4 100644
+--- a/net/bluetooth/hci_sock.c
++++ b/net/bluetooth/hci_sock.c
+@@ -1671,6 +1671,11 @@ static int hci_mgmt_cmd(struct hci_mgmt_chan *chan, struct sock *sk,
+ 			goto done;
  		}
- 		tsin->i2c_adapter =3D
- 			of_find_i2c_adapter_by_node(i2c_bus);
-+		of_node_put(i2c_bus);
- 		if (!tsin->i2c_adapter) {
- 			dev_err(&pdev->dev, "No i2c adapter found\n");
--			of_node_put(i2c_bus);
- 			ret =3D -ENODEV;
- 			goto err_node_put;
- 		}
--		of_node_put(i2c_bus);
-
- 		/* Acquire reset GPIO and activate it */
- 		tsin->rst_gpio =3D devm_fwnode_gpiod_get(dev,
-=2D-
-2.46.1
-
+ 
++		if (unlikely(test_bit(HCI_CLOSING, &hdev->flags))) {
++			err = -ENODEV;
++			goto done;
++		}
++
+ 		if (hci_dev_test_flag(hdev, HCI_SETUP) ||
+ 		    hci_dev_test_flag(hdev, HCI_CONFIG) ||
+ 		    hci_dev_test_flag(hdev, HCI_USER_CHANNEL)) {
 
