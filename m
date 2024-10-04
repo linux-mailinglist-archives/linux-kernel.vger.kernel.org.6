@@ -1,98 +1,172 @@
-Return-Path: <linux-kernel+bounces-350444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5198999053E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:04:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A63990548
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0837B1F23E6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:04:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76966286951
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FF02139DF;
-	Fri,  4 Oct 2024 14:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810D32141A2;
+	Fri,  4 Oct 2024 14:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="StHn2pU4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="azN1IfGa"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1C8212EF8
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3118F2101B2
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728050620; cv=none; b=on2FqaUU8OKwErnOtIgBMLgKGnntwQBsPWfXPM+rYcYVaE64ZdShDzoJi3l7g23PcIcn8rs9PdVqQ/agi/mtQS33vKMPCf8rNcoEkWchTr7gmEaNWn5ELU+iPd2Y8t+SAzn61OxeXGLW5FUi2t/aN4RlyiUfBzC7yxXIAM7qN00=
+	t=1728050736; cv=none; b=kckg0fKMuHQuaG3FyV8DlQycW0akkArz6J1GhYGeD25+xhylxgDgPjDZk0egw6Ax7TtUSjCw0+0irG3KmQoV6RZ14m5U0pKDPO1CC2yxBf5hbwuQZyEI0d6SGL498ZRgNdwe8R2Y7hAiC0I7cxiZ8yijTILH76hqZukrVgaGeb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728050620; c=relaxed/simple;
-	bh=zf53D21lgDvTB6JUEfxVqZbm+BFThNNWH3xiD7g2/co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZcfY1/+SYiwGuGJwUM00z+Kz/okVAH+Tmhd9x6N9Xg4gaXBannU9tXC/34+tHr+io+7ARIjvR2YUlfUFQXhxB4IaiXmJwNYCiPy1rq/z3iiCb6L3LvxAANPA9ArPCyXY6rFdaIfdtIcfFL7cqf7vkKt6EeVLsTwUW7vGOu5nXcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=StHn2pU4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 849B5C4CEC6;
-	Fri,  4 Oct 2024 14:03:39 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="StHn2pU4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1728050617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ur282vCe+GXFVEXwlujjDhdyy2V/Vuv1h16vjS6nUtY=;
-	b=StHn2pU4xLJWhZVZK448TxKQ6FtqpJbfgl4I87by9m2cpC6X/W8LL4Vb/d0ru61jMYw2Hg
-	styy1k3tnm8bcS24kai8Q7kWTg4FzDsyQn22SHoEiwhDCmyRHZ1N6CGZFWqt+kb9GfXiLr
-	2UczYNwEOpZtn454CCVJ4STdz01xr8E=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id febb0452 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 4 Oct 2024 14:03:36 +0000 (UTC)
-Date: Fri, 4 Oct 2024 16:03:34 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Michael Ellerman <michael@ellerman.id.au>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, mpe@ellerman.id.au,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 2/2] powerpc/vdso: Implement __arch_get_vdso_rng_data()
-Message-ID: <Zv_1tqMf-RIXapBD@zx2c4.com>
-References: <0557d3ec898c1d0ea2fc59fa8757618e524c5d94.1727858295.git.christophe.leroy@csgroup.eu>
- <a1a9bd0df508f1b5c04684b7366940577dfc6262.1727858295.git.christophe.leroy@csgroup.eu>
- <Zv7HcuhVH1uM9BNI@zx2c4.com>
- <EF78F2DB-7219-407B-9017-990462128B13@ellerman.id.au>
+	s=arc-20240116; t=1728050736; c=relaxed/simple;
+	bh=gRqRTWmg+rWkHl62ec5Ha2rtKjOwiMVK2MEXoSt+C5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BN3z4y8V8uOPvhKCsXvwaWAJlphC8IioT47M+ykPtxuZ6tSpI0aqTzalr24TN2MNSAaIPSU9n0Lap/JbdtNVy/lphPCUvKkRAtI2+0hlFzJdYnzgVgJ4yA029Xs/aJ/pr+kHqUwxQRnmwSraLZEZc3e0hHvrlnnbzm2ihqRLnmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=azN1IfGa; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e28833f1c31so1337101276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 07:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728050734; x=1728655534; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DJytvBuB/Bsj41TS+0yXamimG68++P3s2DCi3Nn0Lro=;
+        b=azN1IfGaYoM9ltQwwfwBs7yural4ByjSEkvSHBd7hWmRqx0tsukmzWnlh7tqyqIW2p
+         VRPd/Hg2Xb2Yfx4HUClXuSY0BKO9WuQy6RX0qflguNSPBMJl19Enu3kETr2UPYfkogzT
+         DtINIQeFXEMctauhHl/JtgIPMYAYMTnoSJOjuAeTfLMIeUAfGyFnHQVKeRtzkalqhxkp
+         DBVoZvZY7AknOHdqgLF/vol83pjUZepoY9Bc8CQ8MmRvDdW5NRVzR7m25CaIgaJmmVVX
+         BWQ38Zi0aPy5EsC/vTXdAXw7n64yK2lvF5NpsymNSAKIh+PeVBjAC+5ZIySNRIT8LehI
+         fvUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728050734; x=1728655534;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DJytvBuB/Bsj41TS+0yXamimG68++P3s2DCi3Nn0Lro=;
+        b=eoG9SXbR1G8YUKtUTCzeCyqDUCbSk6t9DeSulV4PnwHdeuy91js15Tkt2SiE9/Pdth
+         NODrrDpL0L8Y0ogGXouMY+ZjMsbVu6s73LIuyp9FP16XT93+fZemVfpbstYkzD4aPIqw
+         5fHANqScysKi0WIkxfnTQdj/5btP9065zHUn5w1E4YBlCnigYP1LEcfyj2w/jbJ5TuSc
+         AjLXQVR2nxkcV7jrqfQPm5VN1OUTAaSzf4fatQSB8MGybh6VRqSJ6CxxczbevK7vWkqs
+         4t+c+QMraEZyBrybFeCa8MVYu5GSS5S9hPPZtD0L5AJfaAj/dAoT6XWlxoHtlbcUA1iQ
+         k5CA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuCRsHEObpityYUv2IisfIU8WD1YzeWYvSizc5pY6Ocz8ukH6cctKLyTCpidRi035e2319nqXQ/GyQjzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG6+yb61DoONPHO8DHj3dZQ4qVaGw1fVcEkibAwlyx0slQKkLQ
+	NBl561sIf5we2STL9q8NGmPxpAUvLG5XGmnJ6/zXG2wv51b1KpH/SH8Q6ZqFR8bcsMgWEjElZdo
+	vBVNujY55ZcKK5eFMS5BlT2+t5q986kXM1q6p
+X-Google-Smtp-Source: AGHT+IFawfBRfIvYMmrmR6dbUrMgAbTY0IrMAlq+YHUoQVcHDUJpjj2XE/pJaQnFFpXbKi6Xl9jZYPoFoutTfyVTz4M=
+X-Received: by 2002:a05:690c:6382:b0:64b:b7e:3313 with SMTP id
+ 00721157ae682-6e2c7c3d563mr19656677b3.13.1728050734071; Fri, 04 Oct 2024
+ 07:05:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <EF78F2DB-7219-407B-9017-990462128B13@ellerman.id.au>
+References: <20241002142516.110567-1-luca.boccassi@gmail.com> <20241004-signal-erfolg-c76d6fdeee1c@brauner>
+In-Reply-To: <20241004-signal-erfolg-c76d6fdeee1c@brauner>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 4 Oct 2024 10:05:23 -0400
+Message-ID: <CAHC9VhRaS2Hjx1ao7x3BEURGk1Tb1z5_OHFnpHYa-y=62HuvLg@mail.gmail.com>
+Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
+To: Christian Brauner <brauner@kernel.org>
+Cc: luca.boccassi@gmail.com, Jeff Layton <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 04, 2024 at 08:52:40PM +1000, Michael Ellerman wrote:
-> 
-> 
-> On October 4, 2024 2:33:54 AM GMT+10:00, "Jason A. Donenfeld" <Jason@zx2c4.com> wrote:
-> >Hey Christophe, Michael,
+On Fri, Oct 4, 2024 at 5:29=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
+> On Wed, Oct 02, 2024 at 03:24:33PM GMT, luca.boccassi@gmail.com wrote:
+> > From: Luca Boccassi <bluca@debian.org>
 > >
-> >This series actually looks pretty okay to me. I realize ThomasW is
-> >working on more generic cleanups that might obliterate the need for
-> >this, and that may or may not wind up in 6.13. But, I was thinking, this
-> >seems like a good correct thing to do, and to do it now for 6.12, maybe
-> >as a fix through the powerpc tree. Then ThomasW can base his work atop
-> >this, which might wind up including the nice lr optimizations you've
-> >made. And then also if ThomasW's work doesn't land or gets reverted or
-> >whatever, at least we'll have this in tree for 6.12.
+> > A common pattern when using pid fds is having to get information
+> > about the process, which currently requires /proc being mounted,
+> > resolving the fd to a pid, and then do manual string parsing of
+> > /proc/N/status and friends. This needs to be reimplemented over
+> > and over in all userspace projects (e.g.: I have reimplemented
+> > resolving in systemd, dbus, dbus-daemon, polkit so far), and
+> > requires additional care in checking that the fd is still valid
+> > after having parsed the data, to avoid races.
 > >
-> >Michael - what do you think of that? Worth taking these two patches into
-> >your fixes?
-> 
-> I agree the series looks good. But they're not fixes by my reading, so I'd be inclined to put them in next for v6.13?
+> > Having a programmatic API that can be used directly removes all
+> > these requirements, including having /proc mounted.
 
-They're "close enough" to fixes. The get_realdatapage stuff is super
-wonky and weird and it's quite good Christophe has gotten rid of it.
-Returning NULL from the generic accesor function never really sat right
-and looks buggy even if it does work. But more to the point, given the
-other scheduled churn for 6.13, it's going to be a tree-clashing
-nightmare to get this in later. And this Sunday is rc2 only, so why not.
+...
 
-Jason
+> > +             const struct cred *c =3D get_task_cred(task);
+> > +             if (!c)
+> > +                     return -ESRCH;
+> > +
+> > +             info.uid =3D from_kuid_munged(current_user_ns(), c->uid);
+> > +             info.gid =3D from_kgid_munged(current_user_ns(), c->gid);
+> > +     }
+> > +
+> > +     if (uinfo.request_mask & PIDFD_INFO_CGROUPID) {
+> > +             struct cgroup *cgrp =3D task_css_check(task, pids_cgrp_id=
+, 1)->cgroup;
+> > +             if (!cgrp)
+> > +                     return -ENODEV;
+> > +
+> > +             info.cgroupid =3D cgroup_id(cgrp);
+> > +     }
+> > +
+> > +     if (uinfo.request_mask & PIDFD_INFO_SECURITY_CONTEXT) {
+>
+> It would make sense for security information to get a separate ioctl so
+> that struct pidfd_info just return simple and fast information and the
+> security stuff can include things such as seccomp, caps etc pp.
+
+I'm okay with moving the security related info to a separate ioctl,
+but I'd like to strongly request that it be merged at the same time as
+the process ID related info.  It can be a separate patch as part of a
+single patchset if you want to make the ID patch backport friendly for
+distros, but I think we should treat the security related info with
+the same importance as the ID info.
+
+> > +struct pidfd_info {
+> > +        __u64 request_mask;
+> > +        __u32 size;
+> > +        uint pid;
+>
+> The size is unnecessary because it is directly encoded into the ioctl
+> command.
+>
+> > +        uint uid;
+> > +        uint gid;
+> > +        __u64 cgroupid;
+> > +        char security_context[NAME_MAX];
+> > +} __packed;
+>
+> The packed attribute should be unnecessary. The structure should simply
+> be correctly padded and should use explicitly sized types:
+>
+> struct pidfd_info {
+>         /* Let userspace request expensive stuff explictly. */
+>         __u64 request_mask;
+>         /* And let the kernel indicate whether it knows about it. */
+>         __u64 result_mask;
+>         __u32 pid;
+>         __u32 uid;
+>         __u32 gid;
+>         __u64 cgroup_id;
+>         __u32 spare0[1];
+> };
+>
+> I'm not sure what LSM info to be put in there and we can just do it as
+> an extension.
+
+See my original response to Luca on October 2nd, you were on the To/CC line=
+.
+
+--=20
+paul-moore.com
 
