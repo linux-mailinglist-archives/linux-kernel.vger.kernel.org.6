@@ -1,87 +1,61 @@
-Return-Path: <linux-kernel+bounces-350025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED1998FEE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:19:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2183898FEE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8000D1C21500
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:19:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06651F2203F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0674E13D503;
-	Fri,  4 Oct 2024 08:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3838E13D279;
+	Fri,  4 Oct 2024 08:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IYdlAZ7G"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S4IQEsx+"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B9F6F305;
-	Fri,  4 Oct 2024 08:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FE96F305
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 08:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728029979; cv=none; b=Ufr25xnhFQCg9ExMvlKX3dv9RPSy/tYl+2Nm2UIIvHCmkW8oFSGW5VMZ1CXXs3T+jRp2PkaEOKlbM7yXVwwuBLeneP8FvalHj84r/F5D/XVGXnPvA70RP/QQ0Eeg+WR+S2mIGRmuTmxoSQTAeg6inEDYVGNGRIQGdt4MZJwmmIg=
+	t=1728030033; cv=none; b=rm6ZqeI0FjQn0z9yuYRuzXC3bl1VYDzBsULIiI/A9Pjeu/FtU7ES17szLfbL9tnbaDEJszSSUrDP5qh16s8DU7hOdvd/t3bgsKmEPa/3FHwPVa+nCcEjC3tZVIPCZiTUb+xuqnNDh7OZ5dvAAvRB3Pr3c05RXJArJV8D1phuXNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728029979; c=relaxed/simple;
-	bh=4UTXZkIFGFbc0k5aTW5Glndm6A1FS4TT2eFG8lT5SOk=;
+	s=arc-20240116; t=1728030033; c=relaxed/simple;
+	bh=ZTytNPoI1VsiU8vbCiKMrPwgYutTd9w1EooYJZH5ciI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qwrag+QVCR0QobqJUxjqFCphCbaUlEaqjTlGFzRrDDmtUscK/Uk4wIv0o/dqGv+3xlYzR0gzmYA0Ejrxz+sOlizDqrMomONIJDpQDHlTGru4FyoGblfh5EDKma11cILh7hZJxuFqLBHEnqq444bpTqz0X61nHvh7Q0n7rsMCCs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IYdlAZ7G; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37ccbd93c48so141030f8f.2;
-        Fri, 04 Oct 2024 01:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728029976; x=1728634776; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LImwOZEfhpoMkP1/IM/x4FXT4qsuxZjmY2D85dNagIY=;
-        b=IYdlAZ7G0vl6UtLrKY3rlscM74RhsEsSyIXYpBZbBAj36oluquKcQ1pwTWAo7MJ7C3
-         MImqFi25Rso2zaZA9aIYukyL62+MvMP3M3SyXUNBwvVvTUPe47p7RzwXt/gVYnJvcZwa
-         RBf6Sv0ucGYQwqt3mPD9tusFtQ7X0+2KHbm2D+KKI3r3//Rmq8r4FjtKxfsHXpiQqNem
-         0zysv0DczLI+X/U8uO5hi7Ce9+gff1gfWHY48P2rOK9Su6UEMyAvMKpBp6C0ksh71pa6
-         0dTJp7zGzQTBBY9z9S5P2z6633YNb2Zd4pa02w+6/8D/PWlTVJdEiht8zk+dXoUUxMVR
-         CSnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728029976; x=1728634776;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LImwOZEfhpoMkP1/IM/x4FXT4qsuxZjmY2D85dNagIY=;
-        b=pHZMbVpObuM/AHDqqftcciIs+IYDyZNvc+Vt7jt8Sju8SH+bLMblURz+hAf4UGqVt4
-         JeoYFzGtjwhP3girn5UGVUEBw7jhRxtYu1+vZYzSOKtIJFHCUdKloAZjnoUO/7wo5eh2
-         2l8C+LOo2/y7m2YoDV9dlqc5pRCjaZZEjWOW9hORRgOGgX18yv8rUSsB7dwoOfddVLeF
-         M2HtCjGptWuGmHlGELG/iAtoSdOaDThcBotefKj2qr8YFLNatUM9LL8xj5Qkc9eF5Fbe
-         sJWZQXZwYIF9JaR6uM9MRvY5gD0V60sht2+zzbnaUuBZa4gvnqt1YWzgB+FxawUkRpUj
-         HAfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSO1UP4uEFtU3gLgiyTzxbk1UF1929Ls/TibSyQFDTdz0nAXzZR4XvTLGg0tc/9HcP4Plm6bUu@vger.kernel.org, AJvYcCXTD5wed+zgMl+Smoj1BgRPM0BKZLOJl11be4nH0XTprBqUThyvcmrmhK61rEL3dZqDMlPlYFllvbHwdEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysKf8f78orocVxlEDnGhB00fMjGuZIaedRCvTvq/Xiz5wYrMWt
-	SxtCmONhyD7YsuhaIZOB+qbNnKwNYFtyS9zSopviM1dJ7Ye6t1TQ
-X-Google-Smtp-Source: AGHT+IHBkTy0pN3h3HdI8NlpobpwEHwPrlOrqbpXIGgda96ZwkIm8ybi7xMUbmCvfWiQRaWpeOpm+Q==
-X-Received: by 2002:a05:6000:186c:b0:374:c800:dc3d with SMTP id ffacd0b85a97d-37d0e6f362fmr595966f8f.1.1728029975832;
-        Fri, 04 Oct 2024 01:19:35 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8ca4f6ff5sm1584702a12.88.2024.10.04.01.19.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 01:19:34 -0700 (PDT)
-Date: Fri, 4 Oct 2024 11:19:31 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH] net: phy: Validate PHY LED OPs presence before
- registering
-Message-ID: <20241004081931.srnluq3f2gma6ohe@skbuf>
-References: <20241003221250.5502-1-ansuelsmth@gmail.com>
- <20241003222400.q46szutlnxivzrup@skbuf>
- <66ff1bb3.7b0a0220.135f57.013e@mx.google.com>
- <f275660f-79cb-4044-8f02-c4341bdad6e5@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NKxciZBHyUNYYMGBqi7+/Vk/u/7P1MbYUso3M0TOZKKi1Kqd1+lzRClYIeHp8B2BckmQJkOTbC/xdnmnWj6lNBo+EZCE6VkWW8ugbFkQ4VkbteRwELERrVXWZgzz54TY3NU+z1VPFUIimolimE9ad4AM73o78jqUQ7QksAaAHfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=S4IQEsx+; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OG2Hy7O/HuXLeaaWC5ImIXY8TC2ou3U1Aw6NVwwEboQ=; b=S4IQEsx+yNb/ccTKq3NGKtvJRL
+	afXVh60mkDKwdRjNdfa6YpDDUKNqhj/A6wdDe1m8H+we33Vodik+fpzCrAQgA1+YNhgH98OlbcHn1
+	ozjbZywBO6GACH4ZlEHD7fC0GPFaznPm5akgprqNlYsiZPoJJsVD9B31cz53PuMPojfOO8aUdG9UJ
+	0S13H0EQzKvbfSgrvKObcrDBJZblN1HB+6t5U68OXWLSsWvZ5+cWmhYPgwH8dxM7+5ARE7OuwpnqG
+	Im/34Gt606nJ4FatadBG+rhIBhDLd61LEaEgRECB9STcmC/3vF8P5MNO2ByXxWUXM9AxpZza93tf0
+	qcdZGdVA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1swdY5-00000003nmV-2Kdk;
+	Fri, 04 Oct 2024 08:20:29 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 38AB030083E; Fri,  4 Oct 2024 10:20:29 +0200 (CEST)
+Date: Fri, 4 Oct 2024 10:20:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] objtool: Detect non-relocated text references
+Message-ID: <20241004082029.GG18071@noisy.programming.kicks-ass.net>
+References: <05fd690797ea4e1ee798b7fa497857519ae840d4.1728001850.git.jpoimboe@kernel.org>
+ <CAMj1kXHt3GTVx-Ow0OZaP4WW7k=RVc+jgtC-4qOSZM3js4jo0g@mail.gmail.com>
+ <20241004072847.zihm6dw7y5m4e2lb@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,25 +64,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f275660f-79cb-4044-8f02-c4341bdad6e5@lunn.ch>
+In-Reply-To: <20241004072847.zihm6dw7y5m4e2lb@treble>
 
-On Fri, Oct 04, 2024 at 12:51:32AM +0200, Andrew Lunn wrote:
-> On Fri, Oct 04, 2024 at 12:33:17AM +0200, Christian Marangi wrote:
-> > On Fri, Oct 04, 2024 at 01:24:00AM +0300, Vladimir Oltean wrote:
-> > > On Fri, Oct 04, 2024 at 12:12:48AM +0200, Christian Marangi wrote:
-> > > > Validate PHY LED OPs presence before registering and parsing them.
-> > > > Defining LED nodes for a PHY driver that actually doesn't supports them
-> > > > is wrong and should be reported.
-> > > 
-> > > What about the case where a PHY driver gets LED support in the future?
-> > > Shouldn't the current kernel driver work with future device trees which
-> > > define LEDs, and just ignore that node, rather than fail to probe?
+On Fri, Oct 04, 2024 at 12:28:47AM -0700, Josh Poimboeuf wrote:
+> On Fri, Oct 04, 2024 at 08:54:16AM +0200, Ard Biesheuvel wrote:
+> > On Fri, 4 Oct 2024 at 02:31, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> > > However there are some "lea xxx(%rip)" cases which don't use relocations
+> > > because they're referencing code in the same translation unit.
 > > 
-> > Well this just skip leds node parse and return 0, so no fail to probe.
-> > This just adds an error. Maybe I should use warn instead?
+> > input section
 > 
-> Yes, a phydev_warn() would be better.
+> "in the same translation unit and section" ?
+> 
+> > > However if we enable -fpie, the compiler would start generating them and
+> > > there would definitely be bugs in the IBT sealing.
+> > >
+> > 
+> > -fpie is guaranteed to break things, but even without it, Clang may
+> > issue RIP-relative LEA instructions (or LLD when it performs
+> > relaxations), so this is definitely worth addressing even if we don't
+> > enable -fpie.
+> 
+> I haven't seen this with Clang either.  Also, objtool runs before the
+> linker so LLD relaxations shouldn't matter.
 
-I'm thinking even KERN_WARN is too much. There's nothing actionable
-about the message.
+LTO might have a few more cases, the input sections are bigger there.
+But even there we run before the final link stage.
 
