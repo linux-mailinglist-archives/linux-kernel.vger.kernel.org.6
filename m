@@ -1,128 +1,86 @@
-Return-Path: <linux-kernel+bounces-351423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581C79910E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:51:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5936A9910F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B9671F22EEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:51:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BAB61C22D5B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45411ADFF7;
-	Fri,  4 Oct 2024 20:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssunGc54"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FA41AE00C;
+	Fri,  4 Oct 2024 20:54:04 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3133B231C8B
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 20:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F36231CAC
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 20:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728075059; cv=none; b=Fs2QrxZO+o4rH0LqNjKo+n+FOMbKzbdxuWUVFrYZqP96ERbQ/AOmWZCCeoHu7vqJ0vq9UuZrNR9fbB7/PUERWuogLWHfBVe/cfZHDhbNGcGwUCvcs8vcdnl6ONYMvC63ePHnvTaAQ88tpcpTXXvhTpn3sEqjFGLcVUcdeR7fDOw=
+	t=1728075244; cv=none; b=XxxaurYYiQHm7bO/wQLbR8cpwCdIlc8f4WOmHpx2TjwKtbwuzounT6QIXYHEbx+xYApzcK9VGlirRlNPhJd+n6TPArAeAg3hETYlFDCgYSftoDI5m4b7dbot3C6Fjxgge4q4cTyxRI9QSDJYXO4CI9d70+xeO5GEXIjNKKCKp+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728075059; c=relaxed/simple;
-	bh=UBMO/CJwcVxp6gwu2q8OsQBUbBql585BseXSfGZoxWw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a40Dce5PCXysPomFkfIJ8uQ3rjLtsmL+Tq0te2PvspPOPNP7NzCehLBzAut6iVuK7Ke5UWeg2j/XR7308f89RDg/2R7gVJOwIa1gdr84LnvtLs/D57gNQydC207z/3MqrDEiJUgXkXfLiga9Zoj6ddQLpStfmVs4v0vZqwWX/Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssunGc54; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF0C9C4CEC6;
-	Fri,  4 Oct 2024 20:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728075058;
-	bh=UBMO/CJwcVxp6gwu2q8OsQBUbBql585BseXSfGZoxWw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ssunGc54RTKxmty38LstRzYO8SrL34yq9GlQOuRgtYnO7KdBDinrJnzM/tbp0jnSN
-	 ddbAnDU3WkrPUmp6iTiXKUmNEpEz7OxqOOhca0MYvDN3Qs+E5v4dohk2xKJFUWkRPp
-	 +UaL7ablghfMXdKy0C0OyB7hhUI2cL6ixFosdyRB+heZrXM7XV5N1ri8x/u16/cnGv
-	 ga2p40GiZ1O2KT5zEVJFBTmj/4u5HIQc3Sj6m9SzvxnrUTf7B+c+kGI+EqQ9JM6nIW
-	 ZhXYQLbR4ru3ayRVARUAFbz/mZVfccprOS2oB9sy0bI/B/EUG6neIwf/k6Q71TQPff
-	 zmDnK75+uLDoA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Zack Rusin <zack.rusin@broadcom.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Martin Krastev <martin.krastev@broadcom.com>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Ian Forbes <ian.forbes@broadcom.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] vmwgfx: allow building with CONFIG_HAS_IOPORT disabled
-Date: Fri,  4 Oct 2024 20:50:34 +0000
-Message-Id: <20241004205053.1068629-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1728075244; c=relaxed/simple;
+	bh=sHrNFovkx7cIfUOdmMEBpo+snV8G9B0mz8ruz/fphSs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ah9ns4LMpSLI1jFUsWDc4Y8XUPOcwZpEoW4H4fuWyD06wmQUODY7Ml94Q1uJhgJuIRGf61cqnYU7cP+oONxTjpKjjmpr3+/Y61gqVaA0WKmrIewoPYFLkOQFtAS93azBv0ecBfvO7jLJgpYxOOOEHT5G/Tp/SqeRe07WlK2C2Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1925177fdso30082215ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 13:54:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728075242; x=1728680042;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=le2JLJB1ZWwLNcK4vQGN5IO/HRsEugT8/CIAYs9lFSM=;
+        b=wM/CGMbHpAqnCgXNrZfiU/sCl5l6mG946rDpR3vRCaGBWrHmS1nFCu4wN1VvLug0wD
+         Kb3TlwVQxAkAGDgOTS0lma3PU0/Ym6ltAfd+aDhPtw6uVZI7griLWyzXla0QV5P3y8qu
+         4l3kFoXhLm+jfmLyp+AsG3gNM+rkEtWmFdXaBXQcyIoo0+kl1pPtRBnZ7qbpymS3wxwh
+         0jf9LXR9Sz7w6A7L6YoZvBoMWSTcA6GvfwplrEZHFuBUZl/2FZeGqTrXjwVZqW3wGH+3
+         1xWl0VPOSa/bACM06bI1L1FH1f9W1qNGCZi2j2c9nrFtXwXsGZErPbIFAGbVaJ6WJrdn
+         ZjOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0GyrL6K+RKBpP/Af7CA4dUavE79yYvQuzxV2Ui2xVWgUA6Gh1fLqiYVa41wdQ6FVeM3iC8dmp+K96COU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw93yQVPArHEb2p3p9X9vF7YZD1YIoBFBohWtbFP7Qio8EN4PnW
+	7sVsGgVNQOcG6Qa6H1axa8d8M0ixh9qjcrXT0YXhZoMHWWkVv44FWlp5Hn39+nM0pnvRIU9IwvE
+	pJTq1wlTHD+6PXKM/NafGO0sl8eHb0pCCHFarqji/mj/YwWmXpTOub0Y=
+X-Google-Smtp-Source: AGHT+IHgv5TMs/7T7aq6PVZ8bJabIyYEU37Oudywg8Kmi+ABr5pCKc0/mWyTJLeSCIbUDmzgSMeSQPcoul6ZVlBdS1iliKDhzoev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a65:b0:3a0:9d2b:2420 with SMTP id
+ e9e14a558f8ab-3a375be1cedmr41886895ab.25.1728075242253; Fri, 04 Oct 2024
+ 13:54:02 -0700 (PDT)
+Date: Fri, 04 Oct 2024 13:54:02 -0700
+In-Reply-To: <CABBYNZKxOsgd6FpfdOKGUD9tbSadCnBzzsnf1K8sVZQ5Tn0cQQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670055ea.050a0220.49194.04a0.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
+From: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	qianqiang.liu@163.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hello,
 
-The older version of the vmwgfx driver requires port I/O in order to work:
+syzbot tried to test the proposed patch but the build/boot failed:
 
-In file included from arch/arm64/include/asm/io.h:298,
-                 from drivers/gpu/drm/vmwgfx/vmwgfx_kms.c:28:
-drivers/gpu/drm/vmwgfx/vmwgfx_drv.h: In function 'vmw_read':
-include/asm-generic/io.h:626:15: error: call to '_outl' declared with attribute error: outl() requires CONFIG_HAS_IOPORT
-  626 | #define _outl _outl
-include/asm-generic/io.h:663:14: note: in expansion of macro '_outl'
-  663 | #define outl _outl
-      |              ^~~~~
-drivers/gpu/drm/vmwgfx/vmwgfx_drv.h:692:17: note: in expansion of macro 'outl'
-  692 |                 outl(offset, dev_priv->io_start + SVGA_INDEX_PORT);
-      |                 ^~~~
+patch is already applied
 
-Change the version check to hardcode the v3 version and remove the PCI
-ID for v2 in configurations that only support v3.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 2 ++
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.h | 5 ++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+Tested on:
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index 2825dd3149ed..dfb4b2ba23c6 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -262,7 +262,9 @@ static const struct drm_ioctl_desc vmw_ioctls[] = {
- };
- 
- static const struct pci_device_id vmw_pci_id_list[] = {
-+#ifdef CONFIG_HAS_IOPORT
- 	{ PCI_DEVICE(PCI_VENDOR_ID_VMWARE, VMWGFX_PCI_ID_SVGA2) },
-+#endif
- 	{ PCI_DEVICE(PCI_VENDOR_ID_VMWARE, VMWGFX_PCI_ID_SVGA3) },
- 	{ }
- };
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-index 3f4719b3c268..a2fda4d43b4e 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-@@ -655,8 +655,11 @@ static inline struct vmw_fpriv *vmw_fpriv(struct drm_file *file_priv)
- /*
-  * SVGA v3 has mmio register access and lacks fifo cmds
-  */
--static inline bool vmw_is_svga_v3(const struct vmw_private *dev)
-+static __always_inline bool vmw_is_svga_v3(const struct vmw_private *dev)
- {
-+	if (!IS_ENABLED(CONFIG_HAS_IOPORT))
-+		return true;
-+
- 	return dev->pci_id == VMWGFX_PCI_ID_SVGA3;
- }
- 
--- 
-2.39.2
+commit:         5c2ab978 ethtool: rss: fix rss key initialization warn..
+git tree:       net-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=37742f4fda0d1b09
+dashboard link: https://syzkaller.appspot.com/bug?extid=03d6270b6425df1605bf
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11cb079f980000
 
 
