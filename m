@@ -1,115 +1,115 @@
-Return-Path: <linux-kernel+bounces-350218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524649901A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:53:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB349901A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 093671F2244C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:53:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2C82829AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459FB148FF3;
-	Fri,  4 Oct 2024 10:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y2R7lRzx"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772E0155C98;
+	Fri,  4 Oct 2024 10:53:51 +0000 (UTC)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0585A14B07A
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F93F179BB;
+	Fri,  4 Oct 2024 10:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728039213; cv=none; b=DSvetrgNr0AeQRINtqbNlXZK0AimUIvMhHDH0uDHJyo0MFeHKmI25igsdIN8Jj0Y/gxqtLafi9WtUaBQGAlqBzLs0b6KfyJ+nmom4xnmw/qXvcZ5q0wL6DVIo4GILhzcuu6VwebfZulOJnynVvzihT5gxDKXz4/610GjxEKckj0=
+	t=1728039231; cv=none; b=VCkWqLm1a0hBkAdcUWMwhGDZzVzoxo7yy/H2vjQcxfZS1yaCg7PQKNoMnR6uFjNUd50y8vp9ZtYhkL2DjjIT90N0yW+Mr9U6uh5/989LmQNAyzqJ6zqPu/1RoPj3tRvVJYpveqTrXArTHnFd7g//Vz5WcOy+hKjHFklF+hX6ohY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728039213; c=relaxed/simple;
-	bh=PzKdKo+6viG8ybT5p4aenEuVziOs5E1Eia4x/Wj74Vo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PqlHQ1bvXi5uLCDrg4Bs/zqCadEz7kSNZGhbr/d1NU8IGjkztmCTtmSu+zVg4WkSQl4zG6TJDGfNPn/6ypxG+em7aEpN7CIOGncX/n4jEDegrgzmB87ZRKMeR0O+egWT+iDWjVFbOv4sJod4EFsRh6Mq9TRU6A33cEaK20K0tRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y2R7lRzx; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37cd831ab06so1218323f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 03:53:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728039209; x=1728644009; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ABWVEZnDfVLeVPAj/zUum6wdsVi6WG7u6OOY9X43WV4=;
-        b=y2R7lRzxr8Pw023GiX61Nv6KGlyPVEFGabjNDBVcVXNC1KuY4y0UUXdoeG95g8TpKm
-         0N/x3T37m5409q5ympbbfaADRHtgmgKbbEDR8CuDR/EBU1ScoyHnxif2PquzmMdcGCdP
-         sqTCRh1np/KXb3MmWkNUlFpPlT+gHZLtzojKIccD2CynlurUXDJGAmOGl5XCnYpfFYG7
-         uTNXrORyx3k4azi2rkpy2m26j1u2Tg5s63URCbFINfeKKCKcZrGvquRIFEVRKajPyN0N
-         yf/itP2XmoWDI1jdylicpkkpJROT4IwQtOTpM6m5+xjow4KPbCfr6bkN0Ig8PL11lfeB
-         Bx+w==
+	s=arc-20240116; t=1728039231; c=relaxed/simple;
+	bh=DWljU3qY0qrV3vkJD6O/Pj957vWPw6Dblsqa2v44Za0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jGDhNubu2DO2QSt6wqYqrCTja9uvJ7wiu1KD/YHgt3Si02gPjhRyEJKd47boNHG3Anagi6u0GXpWKXSAqFwYAPIgNyWztbWuKiG1tp09gztwX+MQP2+/FIr5Z7kK5FvVZ8WTNA9baIpDptID0FR4VsSMXPUFRyVTLIJEF8TZ1Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so17228085e9.2;
+        Fri, 04 Oct 2024 03:53:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728039209; x=1728644009;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ABWVEZnDfVLeVPAj/zUum6wdsVi6WG7u6OOY9X43WV4=;
-        b=LV2qdPbS5uIqFUNQeCDXeR+RbMReCrsZIvCXAp4iTSEjUI+5q/ksRq9d3T/IIL5c6W
-         rYMLb2CABSlUpGs4ZRvIh5A/L2lrteGpQeYWOQZnOqXcR9Vpko0Nhork6+vqi7n43shX
-         iiF6BoX5y+5JYtIuLDSBsVzrq+C+HnKHoUHCt30zjqJIzQq2xt2R4hhhoekjLKCxEcQT
-         03Q1djZHn8mZLP3y8eoD8t820jGIzFjcjbiy8YcvefZD80ofEJsUzOxQMPNZYZhJS1Hk
-         lloXpF35ypctED/dsbBZ4wSNFLpsPBe2itpPTx7jSWeQMr9jQ+nRjpPWmjJiv/HfOexQ
-         +EAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU87Omph29SMjuSz2zOZZDBSxNfZmbSJ76l3J6Nd1/J6DcsmnOQ0ZL45Z5edEWEZiBZicTro7abIal7E7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmOTNLUZxO1uEuO9WUPLUrWZ/huf9+WoAr5OXKP8LgdP9aX5JR
-	Ms0NnrzNiBL8uAo/WmqlSfS+Osr6VZm09UJTN6BDcsyfZXrBKRHCqch28XsZAT4=
-X-Google-Smtp-Source: AGHT+IEkdLbehk6VGRk0CI7zwvonPN6LVZnevW4vIzHsEFitfQTuqEF+iuYKEYiJ2wMybm3F0oINLA==
-X-Received: by 2002:adf:ce8f:0:b0:371:8a3a:680a with SMTP id ffacd0b85a97d-37d0e782737mr1354874f8f.32.1728039209176;
-        Fri, 04 Oct 2024 03:53:29 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d0826240csm2993941f8f.65.2024.10.04.03.53.27
+        d=1e100.net; s=20230601; t=1728039227; x=1728644027;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GXeNJHAmVvczEIHZ6e0IC5Zzi8tqawU4KHZ04kqvtdo=;
+        b=QnJ1p0gQOsA2H4GAVbTKEivQIDI+VFmQrn8KAs6zb+YnS28I6/ne9xECsec/6m7tn0
+         v5ZKShUDbSYAJszlEQUPUQ6PD9+IzlHCDu+wm5XWJ+DilCH3Vwbe5Ysf3E0jCdP096i6
+         8gfyV2NXF7tbQEb3Z4lBCRt11U3qh4X1ldUOdlHZCwDcJc3bbQ1IqNfMBhu90epiYH6y
+         7FTG1BMk4l8g9jIOZSmRPnMBtVWQxmvv87XHEU2uBnz6TBbJM3iDrvErm0cbnKYBpr7z
+         QHiSQNlKga1KnktCog0A7IIlpHoUHzLKPLINERGYq6d09+T4844SzsIwz8PYlR8a/7Vt
+         Y3ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ5YH0od+MxSiznZc0Fwi01VbpoQr3nz2iGg/WIFCku+5r90FFXiw57qZTcVw9m0K8IspYX36EhgjHyQps@vger.kernel.org, AJvYcCW6HZeWFQ0I2k123v0dcARetkwO8qkBCu0NL5gV49QAw5LiUrWBKw80j+dB7Y2Muc5kRd3mUmjoUQGJQw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy91s2ZFPbabdcD5evw7buzWiBqHzgx/7s8H5YhidWeLHtNfLdW
+	riSuPyXm1JEHmyoo1HKr0kpDk38Q2K6Im6sPAfjhjPnohAi9gQzA
+X-Google-Smtp-Source: AGHT+IF2EQKxiuA9l2LyCz/uiARYjibI9Ko1W2SK2tVAFXFXqlvo8qU1RXfY39ODJvXWoJs7lFZopA==
+X-Received: by 2002:a05:600c:1d2a:b0:42f:7ed4:4c25 with SMTP id 5b1f17b1804b1-42f85ab5db4mr15549825e9.14.1728039227324;
+        Fri, 04 Oct 2024 03:53:47 -0700 (PDT)
+Received: from nuc.fritz.box (p200300f6f71aeb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71a:eb00:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86a1f6a7sm12745745e9.8.2024.10.04.03.53.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 03:53:28 -0700 (PDT)
-Date: Fri, 4 Oct 2024 13:53:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Waiman Long <longman@redhat.com>,
-	Yu Kuai <yukuai3@huawei.com>, Josef Bacik <josef@toxicpanda.com>,
-	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
-Message-ID: <43245907-0b08-4e18-b58c-a36ab0f804de@stanley.mountain>
-References: <Zv0kudA9xyGdaA4g@stanley.mountain>
- <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
- <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
- <df1cc7cb-bac6-4ec2-b148-0260654cc59a@redhat.com>
- <3083c357-9684-45d3-a9c7-2cd2912275a1@stanley.mountain>
- <fe7ce685-f7e3-4963-a0d3-b992354ea1d8@kernel.dk>
- <68f3e5f8-895e-416b-88cf-284a263bd954@stanley.mountain>
- <c26e5b36-d369-4353-a5a8-9c9b381ce239@kernel.dk>
- <Zv8LAaeuJQkvscWF@slm.duckdns.org>
- <Zv8NBM4mOVoMoBQS@slm.duckdns.org>
+        Fri, 04 Oct 2024 03:53:46 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Qu Wenruo <wqu@suse.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Filipe Manana <fdmanana@suse.com>
+Subject: [PATCH v2] btrfs: don't BUG_ON() NOCOW ordered-extents with checksum list
+Date: Fri,  4 Oct 2024 12:53:31 +0200
+Message-ID: <20241004105333.15266-1-jth@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zv8NBM4mOVoMoBQS@slm.duckdns.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 03, 2024 at 11:30:44AM -1000, Tejun Heo wrote:
-> On Thu, Oct 03, 2024 at 11:22:09AM -1000, Tejun Heo wrote:
-> > Yeah, that should be spin_lock_irq() for consistency but at the same time it
-> > doesn't look like anything is actually grabbing that lock (or blkcg->lock
-> > nesting outside of it) from an IRQ context, so no actual deadlock scenario
-> > exists and lockdep doesn't trigger.
-> 
-> Oh, wait, it's not that. blkg_conf_prep() implies queue_lock, so the IRQ is
-> disabled around it and adding _irq will trigger lockdep.
-> 
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Ugh...  Yeah.  Sorry for the noise on this.  I've fixed my checker to not
-print this warning any more.
+Currently we BUG_ON() in btrfs_finish_one_ordered() if we finishing an
+ordered-extent that is flagged as NOCOW, but it's checsum list is non-empty.
 
-regards,
-dan carpenter
+This is clearly a logic error which we can recover from by aborting the
+transaction.
+
+For developer builds which enable CONFIG_BTRFS_ASSERT, also ASSERT() that the
+list is empty.
+
+Suggested-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+Changes to v1:
+* Fixup if () and ASSERT() (Qu)
+* Fix spelling of 'Currently'
+---
+ fs/btrfs/inode.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 103ec917ca9d..e57b73943ab8 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -3088,7 +3088,10 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_extent *ordered_extent)
+ 
+ 	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
+ 		/* Logic error */
+-		BUG_ON(!list_empty(&ordered_extent->list));
++		if (!list_empty(&ordered_extent->list)) {
++			ASSERT(list_empty(&ordered_extent->list));
++			btrfs_abort_transaction(trans, -EINVAL);
++		}
+ 
+ 		btrfs_inode_safe_disk_i_size_write(inode, 0);
+ 		ret = btrfs_update_inode_fallback(trans, inode);
+-- 
+2.43.0
 
 
