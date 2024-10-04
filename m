@@ -1,103 +1,109 @@
-Return-Path: <linux-kernel+bounces-350406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AEE69904B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:44:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6F89904B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B3A21C212ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:44:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132691F2292F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C41F212EEB;
-	Fri,  4 Oct 2024 13:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C1C2101B0;
+	Fri,  4 Oct 2024 13:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RdYf4yZF"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RTIkHCOG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBE521019A;
-	Fri,  4 Oct 2024 13:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B0A2101A7;
+	Fri,  4 Oct 2024 13:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728049484; cv=none; b=khLBIuMgNaAjKinAsAt2OW8fXmx4Fm3BsBQPdWeb6vjLvA6JBVW7ITUm38m/0hb4rlbIYhYc5LxyIyuotqnqRgATcyR/cnOyWeoGF/r/ZOjQ83MZhniqMgTsM0rxx/x87IfSsRN4ANMDNWtZ46yWbOuPn9Bizb2kPnVlo31AD3M=
+	t=1728049510; cv=none; b=JNxfo2wY4bOsuOkPwRTZGKOMAAGC9RaCIhkQjrsiKXAVeF90WfMwolaM3vsrUFoJkzxDU/IqwpFEJ9nFjK1mlgZlO4WR3KX4o6EaiW21xx3gXJk2S8FApbDQtACfL2CYMTy9R4B0c7YZTQ1MzYHaIRhcgw4akck/RZd4TYELlUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728049484; c=relaxed/simple;
-	bh=nFkpUBaSkOjroiOgtmi/s2NOYwCeHe9+t0TpqsxGNP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DW3TbVoGzfcsb+47EWNexoFG7HvU2NxbSDQOkzn45+LvQLY7N6fslqyzhERSuulIfA1YB9S1WtzJ0osNnvncNvYYbMPWsupaVaY/AHXryoB6Iawy22L4GZSRU7eLDAoiAcLXgAbM1ZevTK44Djr6meEBPCMM1JxvFaYQaXafdq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RdYf4yZF; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=j4MR7MK6UIoUL6xo7ckBr43ZKx+btlvoJgILcC51T50=; b=RdYf4yZFwPCSEdhvCuQoBha7Wo
-	4L876ajhLK0PqZvjEg3Skh0Fdo44uiLebbLdWVEVOmOGTJM8MgUID4vj07yzB2L06aCp6VqgNcnDG
-	c5JEk9nWNKpRez3GxRRfUF29DaZmEVwJ/ClVQFvl5sQyjYSLbsNyhjr1GDFDu0Im5WOU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1swibh-00938d-7f; Fri, 04 Oct 2024 15:44:33 +0200
-Date: Fri, 4 Oct 2024 15:44:33 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>,
-	stable@vger.kernel.org
-Subject: Re: [net PATCH 2/2] net: phy: Skip PHY LEDs OF registration for
- Generic PHY driver
-Message-ID: <a463ca8c-ebd7-4fd4-98a9-bc869a92548c@lunn.ch>
-References: <20241003221006.4568-1-ansuelsmth@gmail.com>
- <20241003221006.4568-2-ansuelsmth@gmail.com>
- <2dcd127d-ab41-4bf7-aea4-91f175443e62@lunn.ch>
- <66ffb1c2.df0a0220.1b4c87.ce13@mx.google.com>
+	s=arc-20240116; t=1728049510; c=relaxed/simple;
+	bh=4xjpn1cjbsUT4BC0qUmd0788DGsHynkEwz3qlxz8VHU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=DJByGnOILDA9jC6BX3Phape4luq+0LzIWylVxWh0Yxtiel7Fa/hXvE9/UYQpAhspeB4boL+bV2gPIoPvK+qu+w2BwXw5m+5j7s/+IRnINculE+sJzmFnbvkLe2hFteiWoHBNiHY9JgHw7IwlLRzpH3IRpZ5fiYxBWVATfb1it/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RTIkHCOG; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728049508; x=1759585508;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=4xjpn1cjbsUT4BC0qUmd0788DGsHynkEwz3qlxz8VHU=;
+  b=RTIkHCOGVpNgSoM7cteJbOjq04Pw8MYwfm76sExEjhD96VamEuWBOCQw
+   2po5aAVGZKq52P/jW3QKSie7n9jbDC6M7Jg0dDUoze3oBvNmARO5i6NjK
+   0GhIryGuyv54XUmA7m68W7lKOvR9+3GSOT2OBpbMz+Y6KZUaXl1cfEKJp
+   Hql28SY3fu2xwp4mIksFg0UfD2eSDS1Bo7McOHCv8SIXpySsCjm+CX6P2
+   aKEbosZ4hMTU8+73m1VujlYUaMjrI9Ybyb17M9jqnQij/pHlWmSwMYGA8
+   rDB2PLFnApqifB7Em/RhX37nS4rYrCFkluhJpx44CDTb7lb0ALEKAZgnt
+   A==;
+X-CSE-ConnectionGUID: /+3fc0EvQzm1XG8ub+eEYQ==
+X-CSE-MsgGUID: y2sYQbtqRt2d0bOy8ASzoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="52676068"
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="52676068"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 06:45:07 -0700
+X-CSE-ConnectionGUID: wsYMkoOtR16eh6tZtJ3edw==
+X-CSE-MsgGUID: gLED+iWsR2uW0MRjW36TVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="105451370"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.148])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 06:45:05 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 4 Oct 2024 16:45:01 +0300 (EEST)
+To: Crag Wang <crag0715@gmail.com>
+cc: mario.limonciello@amd.com, Prasanth Ksr <prasanth.ksr@dell.com>, 
+    Hans de Goede <hdegoede@redhat.com>, crag.wang@dell.com, 
+    Crag Wang <crag_wang@dell.com>, Dell.Client.Kernel@dell.com, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv3 1/2] platform/x86: dell-sysman: remove match on
+ www.dell.com
+In-Reply-To: <20241004024209.201244-1-crag_wang@dell.com>
+Message-ID: <eb6c6347-e665-8057-f825-1acfec682ea3@linux.intel.com>
+References: <20241004024209.201244-1-crag_wang@dell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66ffb1c2.df0a0220.1b4c87.ce13@mx.google.com>
+Content-Type: text/plain; charset=US-ASCII
 
-> While the patch in net-next fix a broken condition (PHY driver exist but
-> doesn't have LEDs OPs), this account a much possible scenario.
+On Fri, 4 Oct 2024, Crag Wang wrote:
+
+> The URL is dynamic and may change according to the OEM. It was mainly used
+> for old systems that do not have "Dell System" in the OEM String.
 > 
-> It's totally ok if the PHY driver is not loaded and we fallback to the
-> Generic PHY and there are LEDs node.
+> Signed-off-by: Crag Wang <crag_wang@dell.com>
+> ---
+>  drivers/platform/x86/dell/dell-wmi-sysman/sysman.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> This is the case with something like
-> ip link set eth0 down
-> rmmod air_en8811h
-> ip link set eth0 up
-> 
-> On this up, the Generic PHY is loaded and LEDs will wrongly be
-> registered. We should not add the LED to the phydev LEDs list.
-> 
-> Do you think this logic is wrong and we should print a warning also in
-> this case? Or should we bite it and just return 0 with no warning at
-> all? (again my concern is the additional LEDs entry in sysfs that won't
-> be actually usable as everything will be rejected)
+> diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c b/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
+> index 9def7983d7d6..c05474f1ed70 100644
+> --- a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
+> +++ b/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
+> @@ -520,8 +520,7 @@ static int __init sysman_init(void)
+>  {
+>  	int ret = 0;
+>  
+> -	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) &&
+> -	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL)) {
+> +	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL)) {
 
-We should not add LEDs which we cannot drive. That much is clear to
-me.
+I suggested making the changes in the opposite order, that was to 
+faciliate easy revert of the URL patch if needed which is not the case if
+things are changed in this order.
 
-I would also agree that LEDs in DT which we cannot drive is not
-fatal. So the return value should be 0.
+-- 
+ i.
 
-The only really open point is phydev_err(), phydev_warn() or
-phydev_dbg(). Since it is not fatal, phydev_err() is wrong. I would
-probably go with phydev_dbg(), to aid somebody debugging why the LEDs
-don't appear in some conditions.
-
-	Andrew
 
