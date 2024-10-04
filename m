@@ -1,375 +1,169 @@
-Return-Path: <linux-kernel+bounces-351361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0D4991005
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:15:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8A3991009
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF3A284D36
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:15:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9491C23884
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20B51E0E05;
-	Fri,  4 Oct 2024 19:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18954231C9C;
+	Fri,  4 Oct 2024 19:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZkxIVZu"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6RWkwW+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7831E0DDA
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 19:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738D3231C93;
+	Fri,  4 Oct 2024 19:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728071282; cv=none; b=efZrFTofxb2FqymC8cudvvx1dt9YEnug10GrRpBf4K2V7Hm+8ytexj4Wbbjylf97BGkJtj6mE7L9S+7FCja19MBiEB2jh8n+/h8GUwq3Cwluv9xnOdPU0wB28Y63s3oJv2Eq1dXe1V8GTebqwTnpql5vOe3J7jAWO3+fw4wMfLo=
+	t=1728071445; cv=none; b=P+BHIktevKmfqpsP9t26BNs3OX6jVN2Ih59cDj/fsVRzURu2elChPCrFcRUtokhOjr2grHFea5TQGiMi4mf6cPdJybAWpmLH9Q4u/vw6t1Qe/RoB7hWr4lBw30fYwX+bb0Xuk29sg8f3fe4hopTddjQHmI+Nys0NDmm3VVnSrxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728071282; c=relaxed/simple;
-	bh=VY/hRY8i9++4TS9FUJxR8tGWUYC/CJStwEAyhlk+Em4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lNHmkmLJfgiHwrgicxGXoBa6kG+3QQCbt/AILxSn4AzAt17pFHA0MC8416a9FYwEqeajAOfNGV3YGDoa32THJQHa3raR077YfWOR/jkYpxbX8dcrv/Yb19s9KpNjR1mN0ftxyMALP4sOwrZUHvvPGqfW2x7siFog5i1IljNvUh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZkxIVZu; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42e82f7f36aso21924645e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 12:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728071279; x=1728676079; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7UznPqTvN7fqfKJJRYWFcLZq36QxAU7mZZHzGCL2ja0=;
-        b=eZkxIVZudcQsZ+odGIk0F+RWzgsZwqeoomJBSJwqMfA5yW2G/vE2l703jTA72lhKWa
-         zZRKit3+sYcmV3jxJ5nCdqchtW26PmtAou16CiCq0i4FFLghX34QlNJVshNJ2iJ2kMp9
-         e5hyFjag4TXdeVq3DVUawg+iGh6s40YWFAtfSVxSP76zagmLv0aOuaDaIEgpLo9YOSjn
-         65WWMGnu6XE9yyEYqhWbGQrZK3v5/h9WNowRfIcJA2AREfO3PdDJfgCcbwIPP25uDWc8
-         RHMVWAofgsH9kkKpq8f6m9E0abOkOtIHgVKWYuoD3TcLVr9mQ2XvfTVEBmvfRvHhX3hs
-         aa5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728071279; x=1728676079;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7UznPqTvN7fqfKJJRYWFcLZq36QxAU7mZZHzGCL2ja0=;
-        b=QE7gkNNZn1PEsWMV97bLViQNIt3wveDt2gOs+JfkYJ9go0RWQEMlZOtWWLJcdzyGDJ
-         bNRwV8VcWPUsHt9BUonVbIrMbrTsFq/ahFPb6C0miSzBEudPH2hgosf15kR+wLRfZ6lw
-         kJuCgwp5pL2+yPFPo5O+tZ4AU05u8UGhSMomxgrkdH/jS6g31vbBTpJbZQHHTg2vCjGM
-         wHsAPwG8+vV4HXLJUihKYDqlRJbta6syAoIFSM3SzPUcpuQSUSr3mIjnBiSoJLKwNGqV
-         9QXTGPmjBpN9teWMVJ4aFiaN2BCgteJ2fp08cMFYh9QmnTt617is3YCHzgbtJGi6ZWnb
-         CiQw==
-X-Gm-Message-State: AOJu0Ywd6jyhsAbcSst+PZLCK5efLMerlAmc0scWD7oSvh0+vgVHXVXD
-	ARfR1NoWSUzkqsZp+vPRMWky/wpCv/xfeUTCCj82A+EHsgPynBHPxGT04Q==
-X-Google-Smtp-Source: AGHT+IFpnQAIJjL0w+k/3Ji8xBHfaLwd1U1g6lJBNDs19YI0NW67s4CTS4DLKdxJVEAdSAExQDmImg==
-X-Received: by 2002:a05:600c:350c:b0:42c:b750:19ce with SMTP id 5b1f17b1804b1-42f85aa33bemr28276615e9.1.1728071278383;
-        Fri, 04 Oct 2024 12:47:58 -0700 (PDT)
-Received: from localhost ([2a01:4b00:d036:ae00:a3f4:1a10:8066:7b14])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b445d2sm22665945e9.36.2024.10.04.12.47.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 12:47:57 -0700 (PDT)
-From: luca.boccassi@gmail.com
-To: linux-kernel@vger.kernel.org
-Cc: christian@brauner.io
-Subject: [PATCH v4] pidfd: add ioctl to retrieve pid info
-Date: Fri,  4 Oct 2024 20:47:03 +0100
-Message-ID: <20241004194751.215507-1-luca.boccassi@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1728071445; c=relaxed/simple;
+	bh=SvQmEK73Iauaibm9H5yENY81Kh+90v+wpP0MuGa3eHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XRqOUbLe7wBtyB43/bE6dYHOUJ5mXN+qxL6HSmX0ChDJo1sSwuTtZjhhLx3nLqHm0simXB8tmANep0dDoTpQRlsMc+Nkx/Cq0rhlStPI194YajXjV6G5ejjtCPe6iKVRqVbw9oI4k6KKNMydsEqbUtlKkA/m6zfNsWxxxDbAapY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6RWkwW+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0921C4CEC6;
+	Fri,  4 Oct 2024 19:50:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728071445;
+	bh=SvQmEK73Iauaibm9H5yENY81Kh+90v+wpP0MuGa3eHI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k6RWkwW+joiajpbMGmrG9Cp1DLrQk1fKbmuMQBZkZg3LLQJor2ZwZxBA98m5IqwB0
+	 /zZ1fF19XXE8G91PuIOzPdNeJKlb1AvYAyHLFYrTuCb8eILS9Y9nuy8eBxeCiJ6DLD
+	 LMgoo8lZQGYkdGfkq5maYsSN/YjNUtVuqjhoypLDeLO9k9zvry/Fy7PIEKXsN4bb8e
+	 k1Dqn6IziERplqlPy7IoupfLjtX57yo66C7EgLe2U87fvfkhfOour6NmGqfyG6LztU
+	 dxgIhXFG7ypQ0GYLX+jxUJP5Jw+6x9SUfTae6URYdDXEDMh2REZ4WrIQ2wwDrJ36Mh
+	 9FythXHgmn97A==
+Message-ID: <f41f65bd-104c-44de-82a2-73be59802d96@kernel.org>
+Date: Fri, 4 Oct 2024 22:50:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3 2/2] net: ethernet: ti: am65-cpsw: avoid
+ devm_alloc_etherdev, fix module removal
+To: Nicolas Pitre <nico@fluxnic.net>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Grygorii Strashko
+ <grygorii.strashko@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241004041218.2809774-1-nico@fluxnic.net>
+ <20241004041218.2809774-3-nico@fluxnic.net>
+ <b055cea5-6f03-4c73-aae4-09b5d2290c29@kernel.org>
+ <s5000qsr-8nps-87os-np52-oqq6643o35o2@syhkavp.arg>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <s5000qsr-8nps-87os-np52-oqq6643o35o2@syhkavp.arg>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Luca Boccassi <luca.boccassi@gmail.com>
 
-A common pattern when using pid fds is having to get information
-about the process, which currently requires /proc being mounted,
-resolving the fd to a pid, and then do manual string parsing of
-/proc/N/status and friends. This needs to be reimplemented over
-and over in all userspace projects (e.g.: I have reimplemented
-resolving in systemd, dbus, dbus-daemon, polkit so far), and
-requires additional care in checking that the fd is still valid
-after having parsed the data, to avoid races.
 
-Having a programmatic API that can be used directly removes all
-these requirements, including having /proc mounted.
+On 04/10/2024 18:37, Nicolas Pitre wrote:
+> On Fri, 4 Oct 2024, Roger Quadros wrote:
+> 
+>> Hi Nicolas,
+>>
+>> On 04/10/2024 07:10, Nicolas Pitre wrote:
+>>> From: Nicolas Pitre <npitre@baylibre.com>
+>>>
+>>> Usage of devm_alloc_etherdev_mqs() conflicts with
+>>> am65_cpsw_nuss_cleanup_ndev() as the same struct net_device instances
+>>> get unregistered twice. Switch to alloc_etherdev_mqs() and make sure
+>>
+>> Do we know why the same net device gets unregistered twice?
+> 
+> When using devm_alloc_etherdev_mqs() every successful allocation is put 
+> in a resource list tied to the device. When the driver is removed, 
+> there's a net device unregister from am65_cpsw_nuss_cleanup_ndev() and 
+> another one from devm_free_netdev().
 
-As discussed at LPC24, add an ioctl with an extensible struct
-so that more parameters can be added later if needed. Start with
-returning pid/tgid/ppid and creds unconditionally, and cgroupid
-optionally.
+I couldn't find out where devm_free_netdev() calls unregister_netdev().
+Also we didn't use devm_register_netdev() so resource manager will not
+call unregister_netdev().
 
-Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
----
-v4: fix arg check in pidfd_ioctl() by moving it after the new call
-v3: switch from pid_vnr() to task_pid_vnr()
-v2: Apply comments from Christian, apart from the one about pid namespaces
-    as I need additional hints on how to implement it.
-    Drop the security_context string as it is not the appropriate
-    metadata to give userspace these days.
+> 
+> We established in patch #1 that net devices must be unregistered before 
+> devlink_port_unregister() is invoked, meaning we can't rely on the 
+> implicit devm_free_netdev() as it happens too late, hence the explicit 
+> am65_cpsw_nuss_cleanup_ndev().
+> 
+>>> am65_cpsw_nuss_cleanup_ndev() unregisters and frees those net_device
+>>> instances properly.
+>>>
+>>> With this, it is finally possible to rmmod the driver without oopsing
+>>> the kernel.
+>>>
+>>> Fixes: 93a76530316a ("net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver")
+>>> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+>>> ---
+>>>  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 20 ++++++++++++--------
+>>>  1 file changed, 12 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+>>> index f6bc8a4dc6..e95457c988 100644
+>>> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+>>> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+>>> @@ -2744,10 +2744,9 @@ am65_cpsw_nuss_init_port_ndev(struct am65_cpsw_common *common, u32 port_idx)
+>>>  		return 0;
+>>>  
+>>>  	/* alloc netdev */
+>>> -	port->ndev = devm_alloc_etherdev_mqs(common->dev,
+>>> -					     sizeof(struct am65_cpsw_ndev_priv),
+>>> -					     AM65_CPSW_MAX_QUEUES,
+>>> -					     AM65_CPSW_MAX_QUEUES);
+>>> +	port->ndev = alloc_etherdev_mqs(sizeof(struct am65_cpsw_ndev_priv),
+>>> +					AM65_CPSW_MAX_QUEUES,
+>>> +					AM65_CPSW_MAX_QUEUES);
+>>
+>> Can we solve this issue without doing this change as
+>> there are many error cases relying on devm managed freeing of netdev.
+> 
+> If you know of a way to do this differently I'm all ears.
 
- fs/pidfs.c                                    | 70 +++++++++++++++-
- include/uapi/linux/pidfd.h                    | 24 ++++++
- .../testing/selftests/pidfd/pidfd_open_test.c | 81 ++++++++++++++++++-
- 3 files changed, 171 insertions(+), 4 deletions(-)
+I sent another approach already. please check.
+https://lore.kernel.org/all/67c9ede4-9751-4255-b752-27dd60495ff3@kernel.org/
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 7ffdc88dfb52..9ef63c1053d4 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -2,6 +2,7 @@
- #include <linux/anon_inodes.h>
- #include <linux/file.h>
- #include <linux/fs.h>
-+#include <linux/cgroup.h>
- #include <linux/magic.h>
- #include <linux/mount.h>
- #include <linux/pid.h>
-@@ -114,6 +115,65 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
- 	return poll_flags;
- }
- 
-+static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
-+{
-+	struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
-+	size_t usize = _IOC_SIZE(cmd);
-+	struct pidfd_info kinfo = {};
-+	struct user_namespace *user_ns;
-+	const struct cred *c;
-+	__u64 request_mask;
-+
-+	if (!uinfo)
-+		return -EINVAL;
-+	if (usize < sizeof(struct pidfd_info))
-+		return -EINVAL; /* First version, no smaller struct possible */
-+
-+	if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
-+		return -EFAULT;
-+
-+	c = get_task_cred(task);
-+	if (!c)
-+		return -ESRCH;
-+
-+	/* Unconditionally return identifiers and credentials, the rest only on request */
-+
-+	kinfo.pid = task_pid_vnr(task);
-+	kinfo.tgid = task_tgid_vnr(task);
-+	kinfo.ppid = task_ppid_nr_ns(task, task_active_pid_ns(task));
-+
-+	user_ns = current_user_ns();
-+	kinfo.ruid = from_kuid_munged(user_ns, c->uid);
-+	kinfo.rgid = from_kgid_munged(user_ns, c->gid);
-+	kinfo.euid = from_kuid_munged(user_ns, c->euid);
-+	kinfo.egid = from_kgid_munged(user_ns, c->egid);
-+	kinfo.suid = from_kuid_munged(user_ns, c->suid);
-+	kinfo.sgid = from_kgid_munged(user_ns, c->sgid);
-+	kinfo.fsuid = from_kuid_munged(user_ns, c->fsuid);
-+	kinfo.fsgid = from_kgid_munged(user_ns, c->fsgid);
-+
-+	if (request_mask & PIDFD_INFO_CGROUPID) {
-+		struct cgroup *cgrp = task_css_check(task, pids_cgrp_id, 1)->cgroup;
-+		if (!cgrp)
-+			return -ENODEV;
-+
-+		kinfo.cgroupid = cgroup_id(cgrp);
-+		kinfo.result_mask |= PIDFD_INFO_CGROUPID;
-+	}
-+
-+	/*
-+	 * If userspace and the kernel have the same struct size it can just
-+	 * be copied. If userspace provides an older struct, only the bits that
-+	 * userspace knows about will be copied. If userspace provides a new
-+	 * struct, only the bits that the kernel knows about will be copied and
-+	 * the size value will be set to the size the kernel knows about.
-+	 */
-+	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
- static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	struct task_struct *task __free(put_task) = NULL;
-@@ -121,13 +181,17 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	struct pid *pid = pidfd_pid(file);
- 	struct ns_common *ns_common = NULL;
- 
--	if (arg)
--		return -EINVAL;
--
- 	task = get_pid_task(pid, PIDTYPE_PID);
- 	if (!task)
- 		return -ESRCH;
- 
-+	/* Extensible IOCTL that does not open namespace FDs, take a shortcut */
-+	if (_IOC_NR(cmd) == _IOC_NR(PIDFD_GET_INFO))
-+		return pidfd_info(task, cmd, arg);
-+
-+	if (arg)
-+		return -EINVAL;
-+
- 	scoped_guard(task_lock, task) {
- 		nsp = task->nsproxy;
- 		if (nsp)
-diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
-index 565fc0629fff..f278db1a3fe8 100644
---- a/include/uapi/linux/pidfd.h
-+++ b/include/uapi/linux/pidfd.h
-@@ -16,6 +16,29 @@
- #define PIDFD_SIGNAL_THREAD_GROUP	(1UL << 1)
- #define PIDFD_SIGNAL_PROCESS_GROUP	(1UL << 2)
- 
-+/* Flags for pidfd_info. */
-+#define PIDFD_INFO_CGROUPID		(1UL << 0)
-+
-+struct pidfd_info {
-+	/* Let userspace request expensive stuff explictly. */
-+	__u64 request_mask;
-+	/* And let the kernel indicate whether it knows about it. */
-+	__u64 result_mask;
-+	__u64 cgroupid;
-+	__u32 pid;
-+	__u32 tgid;
-+	__u32 ppid;
-+	__u32 ruid;
-+	__u32 rgid;
-+	__u32 euid;
-+	__u32 egid;
-+	__u32 suid;
-+	__u32 sgid;
-+	__u32 fsuid;
-+	__u32 fsgid;
-+	__u32 spare0[1];
-+};
-+
- #define PIDFS_IOCTL_MAGIC 0xFF
- 
- #define PIDFD_GET_CGROUP_NAMESPACE            _IO(PIDFS_IOCTL_MAGIC, 1)
-@@ -28,5 +51,6 @@
- #define PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE _IO(PIDFS_IOCTL_MAGIC, 8)
- #define PIDFD_GET_USER_NAMESPACE              _IO(PIDFS_IOCTL_MAGIC, 9)
- #define PIDFD_GET_UTS_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 10)
-+#define PIDFD_GET_INFO                        _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info)
- 
- #endif /* _UAPI_LINUX_PIDFD_H */
-diff --git a/tools/testing/selftests/pidfd/pidfd_open_test.c b/tools/testing/selftests/pidfd/pidfd_open_test.c
-index c62564c264b1..30c50a8ae10b 100644
---- a/tools/testing/selftests/pidfd/pidfd_open_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_open_test.c
-@@ -13,6 +13,7 @@
- #include <stdlib.h>
- #include <string.h>
- #include <syscall.h>
-+#include <sys/ioctl.h>
- #include <sys/mount.h>
- #include <sys/prctl.h>
- #include <sys/wait.h>
-@@ -21,6 +22,35 @@
- #include "pidfd.h"
- #include "../kselftest.h"
- 
-+#ifndef PIDFS_IOCTL_MAGIC
-+#define PIDFS_IOCTL_MAGIC 0xFF
-+#endif
-+
-+#ifndef PIDFD_GET_INFO
-+#define PIDFD_GET_INFO _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info)
-+#define PIDFD_INFO_CGROUPID		(1UL << 0)
-+
-+struct pidfd_info {
-+	/* Let userspace request expensive stuff explictly. */
-+	__u64 request_mask;
-+	/* And let the kernel indicate whether it knows about it. */
-+	__u64 result_mask;
-+	__u64 cgroupid;
-+	__u32 pid;
-+	__u32 tgid;
-+	__u32 ppid;
-+	__u32 ruid;
-+	__u32 rgid;
-+	__u32 euid;
-+	__u32 egid;
-+	__u32 suid;
-+	__u32 sgid;
-+	__u32 fsuid;
-+	__u32 fsgid;
-+	__u32 spare0[1];
-+};
-+#endif
-+
- static int safe_int(const char *numstr, int *converted)
- {
- 	char *err = NULL;
-@@ -120,10 +150,13 @@ static pid_t get_pid_from_fdinfo_file(int pidfd, const char *key, size_t keylen)
- 
- int main(int argc, char **argv)
- {
-+	struct pidfd_info info = {
-+		.request_mask = PIDFD_INFO_CGROUPID,
-+	};
- 	int pidfd = -1, ret = 1;
- 	pid_t pid;
- 
--	ksft_set_plan(3);
-+	ksft_set_plan(4);
- 
- 	pidfd = sys_pidfd_open(-1, 0);
- 	if (pidfd >= 0) {
-@@ -153,6 +186,52 @@ int main(int argc, char **argv)
- 	pid = get_pid_from_fdinfo_file(pidfd, "Pid:", sizeof("Pid:") - 1);
- 	ksft_print_msg("pidfd %d refers to process with pid %d\n", pidfd, pid);
- 
-+	if (ioctl(pidfd, PIDFD_GET_INFO, &info) < 0) {
-+		ksft_print_msg("%s - failed to get info from pidfd\n", strerror(errno));
-+		goto on_error;
-+	}
-+	if (info.pid != pid) {
-+		ksft_print_msg("pid from fdinfo file %d does not match pid from ioctl %d\n",
-+			       pid, info.pid);
-+		goto on_error;
-+	}
-+	if (info.ppid != getppid()) {
-+		ksft_print_msg("ppid %d does not match ppid from ioctl %d\n",
-+			       pid, info.pid);
-+		goto on_error;
-+	}
-+	if (info.ruid != getuid()) {
-+		ksft_print_msg("uid %d does not match uid from ioctl %d\n",
-+			       getuid(), info.ruid);
-+		goto on_error;
-+	}
-+	if (info.rgid != getgid()) {
-+		ksft_print_msg("gid %d does not match gid from ioctl %d\n",
-+			       getgid(), info.rgid);
-+		goto on_error;
-+	}
-+	if (info.euid != geteuid()) {
-+		ksft_print_msg("euid %d does not match euid from ioctl %d\n",
-+			       geteuid(), info.euid);
-+		goto on_error;
-+	}
-+	if (info.egid != getegid()) {
-+		ksft_print_msg("egid %d does not match egid from ioctl %d\n",
-+			       getegid(), info.egid);
-+		goto on_error;
-+	}
-+	if (info.suid != geteuid()) {
-+		ksft_print_msg("suid %d does not match suid from ioctl %d\n",
-+			       geteuid(), info.suid);
-+		goto on_error;
-+	}
-+	if (info.sgid != getegid()) {
-+		ksft_print_msg("sgid %d does not match sgid from ioctl %d\n",
-+			       getegid(), info.sgid);
-+		goto on_error;
-+	}
-+	ksft_test_result_pass("get info from pidfd test: passed\n");
-+
- 	ret = 0;
- 
- on_error:
+> 
+> About the many error cases needing the freeing of net devices, as far as 
+> I know they're all covered with this patch.
 
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+No they are not. you now have to explicitly call free_netdev() in error paths of am65_cpsw_nuss_init_port_ndev().
+I see 3 places directly returning error code.
+i.e.
+        default:
+                dev_err(dev, "selected phy-mode is not supported\n");
+                return -EOPNOTSUPP;
+        }
+...
+        if (IS_ERR(phylink))
+                return PTR_ERR(phylink);
+...
+        ndev_priv->stats = netdev_alloc_pcpu_stats(struct am65_cpsw_ndev_stats);
+        if (!ndev_priv->stats)
+                return -ENOMEM;
+
+> 
+>> I still can't see what we are doing wrong in existing code.
+> 
+> Did you try to rmmod this driver lately?
+
+Yes and it throws an oops, so we do need a fix.
+> 
+> 
+> Nicolas
+
 -- 
-2.45.2
-
+cheers,
+-roger
 
