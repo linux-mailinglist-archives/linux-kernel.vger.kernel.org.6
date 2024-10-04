@@ -1,126 +1,201 @@
-Return-Path: <linux-kernel+bounces-350518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB9A99066B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:41:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F60A99066D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A3A1F2189B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:41:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21A9BB21231
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9A9217900;
-	Fri,  4 Oct 2024 14:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BWLPWWSm"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34153212EFD;
-	Fri,  4 Oct 2024 14:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7625F21790B;
+	Fri,  4 Oct 2024 14:43:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FBC20FAA1;
+	Fri,  4 Oct 2024 14:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728052890; cv=none; b=h+O28+C0nZAiMtU2VTByPcuWYXrvJrm4eMyjKWV5+b620ZHoNeZVmTW8YR0zabxqtOKX6Gu9/o5tjKaAY2QqauwwU3MxxszYkY3sS7D2q6ycqUJo7kJ3EGQqmOg3Sr4Zxb+bN3KLcnX1G5ENeN5nNKCVIfdoS5xBF2vW8mSz19M=
+	t=1728053010; cv=none; b=cYaedbL6LlE7TZhSPkTuhNTfn7zMf+fBJAXxU5c6AQwhV9dQPZxiErQLIAt3/zQUNXLrb4L83lCcAAkA3QSnFAgKWisDJ+05BhUlDYIULw4GzzC9c0G9EMqcH7VDr/BhdSbg/BiRbc+xgAXP9d9axMfGiA9fjk3CB/3jiTDVfaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728052890; c=relaxed/simple;
-	bh=6vZ9ZZ2+8UkQgXbyVgwYaztAjeD8tlbGKHEGBkwI3R4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SoHns1Rg9eQbgvl7IQiaoIsPnKmrTwniXMEz1gq7WZROaEsNeIclp5rqy+qMnXT3d0A0PfQ1qXhSZz6tf+0aQmNDOScWx9KmYYMTWCeAYKWpgpMfgDBBOcEcYGhVNSyARxAkru10fDcFF8w0R84d3GlazVZPg3JvztfLi+AnAlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BWLPWWSm; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2877d7ae431so1179780fac.0;
-        Fri, 04 Oct 2024 07:41:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728052888; x=1728657688; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WpwvhreYRuWCJg/9GLsajWKdBRP2ezNYkowaWEKQfpQ=;
-        b=BWLPWWSmU+V10ELkaXZENURLNWQbfEEG4wgVDuYOGF741EKtwCumXJqMzmY9RDhe3v
-         rHUT6UmLxb7vAA0jFt4FHeL7zDdCmfzR75tKoAEu1/kku1Kl+zd4+QglWaxEp3d4ym0N
-         5Fg4vuA3wEBVXwW2d4oiH8nvPLn9anNp+8XylF6mskfWqgFqKOZw5GXh6BTxdDhG9w99
-         Ol6LqiwUw4ukfhL1UqAOylJmNginfFwyrjB1PVldlyAESLqE3EbaXKF/4XLy504kz70+
-         ZrSHR6l7s9G723jramMMQSD3+sSVqk/sKxnaVmcThZGbC7UpYqN6e2yYXkBBFvtWPy1E
-         ptnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728052888; x=1728657688;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WpwvhreYRuWCJg/9GLsajWKdBRP2ezNYkowaWEKQfpQ=;
-        b=nsloinMa4Ivwuf7D05pveeJK5lwvc6vsOkGt8fbFjnkAJk1eK4ne4gMsDdE2E7DFui
-         04u7g0ogdgSf4z2gc6FHvfJtkeHnll4YoZhLP3Ad6SKblGxFsDGakm3Wh44qWxpl1mqA
-         hxkFSgyJ+vhEIMa9GV+I8mJN8BHVP6NPwbatLk5jOV836UOoESQ017riSrLEUKVx+krT
-         f/OCYaTizi2QNVIbKXKL221YR1jm0L8pSOD3hmb11hWkVtliFIydXQ5gYadr7x2ly9py
-         i7Y4Bgb/ntpQMMlMsHQ/lMBbugQzgLNLP/2kvB3qC1XuxhIhAoEK7wCsogCSkdd5Q+vl
-         393w==
-X-Forwarded-Encrypted: i=1; AJvYcCWBfJBDDS19+KVQjh4nuOEZdxHhn7ZvSPBK18Lk6x8C7wSavAFie43INpuUwhj3dvcUomF0y0TlETdsRQ1+DGX4@vger.kernel.org, AJvYcCWs/+Uj9s5Dvuk6T7bEMo4hfxixlnOWSEHOjvnN4NNxesQ8juy5sNJJpkDcGfmrtJxybidzzf5z@vger.kernel.org, AJvYcCXaWeNnXOwkfiK2+gcSclfgHuLST0PynVx2erikNBFVDUuLUTYUhJR1h3zrr5N2Y/VDCOQYX6/FR4fIsuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN+ywtchGOUgChvPIhPkgynT2rrNTYy0lE4Ft2h++wbWHSrxri
-	n9waUxEUg2/7b58zQCFJFof50y7hHmimn3SVpPzHOvOiZJcJROz6HqYyjk5nzhlY5mo/f56umvj
-	uqRBIAz7xWMVcEDRvzCL4iHW4QBg=
-X-Google-Smtp-Source: AGHT+IH5NERFZsDJilgPCrkzxJYp3AF3EavawqcoLwXWFg9KBsUJL305SG7pAygMndGuG5VqmupLa4rp6BmP8XW6Msc=
-X-Received: by 2002:a05:6870:1490:b0:25e:1382:864d with SMTP id
- 586e51a60fabf-287c229144amr2109346fac.30.1728052888218; Fri, 04 Oct 2024
- 07:41:28 -0700 (PDT)
+	s=arc-20240116; t=1728053010; c=relaxed/simple;
+	bh=V/n3a/RmyEFaEXOi7ye94B3gyl3XifclsxOHGAcIQLQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bBn/uWKwaf0/BERX0aisEckLrKtKVMcvX4PVLkmLRw/DG9QusV8JZ+Jdr3SLo6tjsPac4PXOUjNq94WVGQHKZMtb3OpXtuoj7iyQK0AZlcaPbPYkSsoigPK16n6h+aYV6EiNYk2toCXhV0aRbD22cFn4ciJa8E2k9rDVzbpR6ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1388A339;
+	Fri,  4 Oct 2024 07:43:56 -0700 (PDT)
+Received: from e122027.cambridge.arm.com (unknown [10.1.25.25])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2305E3F58B;
+	Fri,  4 Oct 2024 07:43:21 -0700 (PDT)
+From: Steven Price <steven.price@arm.com>
+To: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Cc: Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+Subject: [PATCH v6 00/11] arm64: Support for running as a guest in Arm CCA
+Date: Fri,  4 Oct 2024 15:42:55 +0100
+Message-Id: <20241004144307.66199-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002-b4-ovpn-v8-0-37ceffcffbde@openvpn.net>
- <20241002-b4-ovpn-v8-1-37ceffcffbde@openvpn.net> <m2msjkf2jn.fsf@gmail.com> <20241004063855.1a693dd1@kernel.org>
-In-Reply-To: <20241004063855.1a693dd1@kernel.org>
-From: Donald Hunter <donald.hunter@gmail.com>
-Date: Fri, 4 Oct 2024 15:41:16 +0100
-Message-ID: <CAD4GDZxR5LzEo0ksFd3FbhVpeoeEMSWg2dL_RNyFRfB2bx052g@mail.gmail.com>
-Subject: Re: [PATCH net-next v8 01/24] netlink: add NLA_POLICY_MAX_LEN macro
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Antonio Quartulli <antonio@openvpn.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	sd@queasysnail.net, ryazanov.s.a@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 4 Oct 2024 at 14:38, Jakub Kicinski <kuba@kernel.org> wrote:
->
-> On Fri, 04 Oct 2024 13:58:04 +0100 Donald Hunter wrote:
-> > > @@ -466,6 +466,8 @@ class TypeBinary(Type):
-> > >      def _attr_policy(self, policy):
-> > >          if 'exact-len' in self.checks:
-> > >              mem = 'NLA_POLICY_EXACT_LEN(' + str(self.get_limit('exact-len')) + ')'
-> > > +        elif 'max-len' in self.checks:
-> > > +            mem = 'NLA_POLICY_MAX_LEN(' + str(self.get_limit('max-len')) + ')'
-> >
-> > This takes precedence over min-length. What if both are set? The logic
-> > should probably check and use NLA_POLICY_RANGE
->
-> Or we could check if len(self.checks) <= 1 early and throw our hands up
-> if there is more, for now?
->
-> > >          else:
-> > >              mem = '{ '
-> > >              if len(self.checks) == 1 and 'min-len' in self.checks:
-> >
-> > Perhaps this should use NLA_POLICY_MIN_LEN ? In fact the current code
-> > looks broken to me because the NLA_BINARY len check in validate_nla() is
-> > a max length check, right?
-> >
-> > https://elixir.bootlin.com/linux/v6.11.1/source/lib/nlattr.c#L499
-> >
-> > The alternative is you emit an explicit initializer that includes the
-> > correct NLA_VALIDATE_* type and sets type, min and/or max.
->
-> Yeah, this code leads to endless confusion. We use NLA_UNSPEC (0)
-> if min-len is set (IOW we don't set .type to NLA_BINARY). NLA_UNSPEC
-> has different semantics for len.
+This series adds support for running Linux in a protected VM under the
+Arm Confidential Compute Architecture (CCA). This is a trimmed down
+series following the feedback from the v5 posting[1]. Thanks for the
+feedback!
 
-Oh, I see it now. So it's dropping through to here:
+Individual patches have a change log. But things to highlight:
 
-https://elixir.bootlin.com/linux/v6.11.1/source/lib/nlattr.c#L555
+ * Some patches have been merged already. The first two patches from v4
+   were borrowed from pKVM were merged as part of that series. The GIC
+   ITS patches[2][3] have been merged via the tip tree.
 
-> Agreed that we should probably clean this up, but no bug AFAICT.
+ * Final RMM v1.0 spec[4] - only minor changes over the previous spec,
+   but we've now got a proper release.
 
-Yeah, it's definitely surprising that the meaning of .len varies.
+ * Probing/initialisation of the RMM is now done later. This means
+   there's no need for finding the PSCI conduit and can drop the patch
+   for that.
+
+ * The patches for set_fixmap_io() is also gone - we the RMM is detected
+   later it's now too late for earlycon. See below for instructions on
+   how to use earlycon.
+
+ * Mainline no longer uses PHYS_MASK_SHIFT for manipulating PTEs, so we
+   can drop the patch for making that dynamic.
+
+ * There's now some documentation! In particular this clarifies a change
+   in the boot requirements - memory must now be RIPAS RAM for a realm
+   guest.
+
+This series is based on v6.12-rc1.
+
+Testing
+=======
+
+Since a couple of the patches have been merged separately, and there was
+also a bug[5] in -rc1 which impacts 9p filesystems, I've provided the
+below git tree with everything you need for a CCA guest:
+
+https://gitlab.arm.com/linux-arm/linux-cca cca-guest/v6
+
+Back by popular demand is also a tree with both host and guest changes:
+
+https://gitlab.arm.com/linux-arm/linux-cca cca-full/v5+v6
+
+(I'll post the v5 series of the host changes shortly)
+
+You will also need an up-to-date RMM - the necessary changes have been
+merged into the 'main' branch of upstream:
+
+https://git.trustedfirmware.org/TF-RMM/tf-rmm.git main
+
+And you also need an updated kvmtool, there's a branch with the
+necessary changes here:
+
+https://git.gitlab.arm.com/linux-arm/kvmtool-cca.git cca/v3
+
+earlycon
+--------
+
+If using 'earlycon' on the kernel command line it is now necessary to
+pass the address of the serial port *in the unprotected IPA*. This is
+because the fixmap changes were dropped (due to the late probing of the
+RMM). E.g. for kvmtool you will need:
+
+  earlycon=uart,mmio,0x101000000
+
+This is the main drawback to late probing. One potential improvement
+would be an option like "earlycon=realm" to identify that the earlycon
+uart is in the unprotected space without having to know the actual IPA.
+I've left this out for now as I'm not sure whether there is any actual
+interest in this.
+
+[1] https://lore.kernel.org/r/20240819131924.372366-1-steven.price%40arm.com
+[2] e36d4165f079 ("irqchip/gic-v3-its: Rely on genpool alignment")
+[3] b08e2f42e86b ("irqchip/gic-v3-its: Share ITS tables with a non-trusted hypervisor")
+[4] https://developer.arm.com/documentation/den0137/1-0rel0/
+[5] https://lore.kernel.org/all/cbaf141ba6c0e2e209717d02746584072844841a.1727722269.git.osandov@fb.com/
+
+Sami Mujawar (1):
+  virt: arm-cca-guest: TSM_REPORT support for realms
+
+Steven Price (4):
+  arm64: realm: Query IPA size from the RMM
+  arm64: Enforce bounce buffers for realm DMA
+  arm64: mm: Avoid TLBI when marking pages as valid
+  arm64: Document Arm Confidential Compute
+
+Suzuki K Poulose (6):
+  arm64: rsi: Add RSI definitions
+  arm64: Detect if in a realm and set RIPAS RAM
+  arm64: rsi: Add support for checking whether an MMIO is protected
+  arm64: rsi: Map unprotected MMIO as decrypted
+  efi: arm64: Map Device with Prot Shared
+  arm64: Enable memory encrypt for Realms
+
+ Documentation/arch/arm64/arm-cca.rst          |  67 ++++++
+ Documentation/arch/arm64/booting.rst          |   3 +
+ Documentation/arch/arm64/index.rst            |   1 +
+ arch/arm64/Kconfig                            |   3 +
+ arch/arm64/include/asm/io.h                   |   8 +
+ arch/arm64/include/asm/mem_encrypt.h          |   9 +
+ arch/arm64/include/asm/pgtable-prot.h         |   4 +
+ arch/arm64/include/asm/pgtable.h              |   5 +
+ arch/arm64/include/asm/rsi.h                  |  68 ++++++
+ arch/arm64/include/asm/rsi_cmds.h             | 160 +++++++++++++
+ arch/arm64/include/asm/rsi_smc.h              | 193 ++++++++++++++++
+ arch/arm64/include/asm/set_memory.h           |   3 +
+ arch/arm64/kernel/Makefile                    |   3 +-
+ arch/arm64/kernel/efi.c                       |  12 +-
+ arch/arm64/kernel/rsi.c                       | 141 ++++++++++++
+ arch/arm64/kernel/setup.c                     |   3 +
+ arch/arm64/mm/init.c                          |  10 +-
+ arch/arm64/mm/pageattr.c                      |  98 +++++++-
+ drivers/virt/coco/Kconfig                     |   2 +
+ drivers/virt/coco/Makefile                    |   1 +
+ drivers/virt/coco/arm-cca-guest/Kconfig       |  11 +
+ drivers/virt/coco/arm-cca-guest/Makefile      |   2 +
+ .../virt/coco/arm-cca-guest/arm-cca-guest.c   | 211 ++++++++++++++++++
+ 23 files changed, 1010 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/arch/arm64/arm-cca.rst
+ create mode 100644 arch/arm64/include/asm/rsi.h
+ create mode 100644 arch/arm64/include/asm/rsi_cmds.h
+ create mode 100644 arch/arm64/include/asm/rsi_smc.h
+ create mode 100644 arch/arm64/kernel/rsi.c
+ create mode 100644 drivers/virt/coco/arm-cca-guest/Kconfig
+ create mode 100644 drivers/virt/coco/arm-cca-guest/Makefile
+ create mode 100644 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
+
+-- 
+2.34.1
+
 
