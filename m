@@ -1,170 +1,134 @@
-Return-Path: <linux-kernel+bounces-350492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C979905F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:24:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA5B9905F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9335B23BEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:24:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD2C1C213F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2653E215F49;
-	Fri,  4 Oct 2024 14:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF8E215F49;
+	Fri,  4 Oct 2024 14:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="QetrKEKQ"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt6CT1tz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B945212EEA;
-	Fri,  4 Oct 2024 14:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790B9215F6A;
+	Fri,  4 Oct 2024 14:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728051877; cv=none; b=cmkSpvimQC9fkzUdhHPK4AO6Yo+S1PXdiqV+fTGLBqM4yvZwNv6h4jXKIFW2muaklrPEqT+x0kwJleTSeVsdWMRQSpv2kOZOE2jzPPTg655mBG3/IgN+4jFEMUwwrO0lsYkKszbxYuYJgaEPXef6hLOlWYFeZv4fLeTmylB84L8=
+	t=1728051919; cv=none; b=MQuQUrhkKF6Jht7OcERBs+zbRNyS6Gx9SklUETAtLnAfZsY0FbRAeQAXklPU6CLh4ohIuFuVjzg8iJOLDExNJ7yfTJgqsyrjTlyr4S8TNKfSrOrESlzVAnnMnObaGq2exaaihOg9Xn9Fz6pu5eHRb9i3guOJJqpRB8EKplEhuLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728051877; c=relaxed/simple;
-	bh=k2Z8ShT2r7R8KmgI+SKVyfuHijsDXcJj/b/kQ+6RNpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ME4AiviWUPOYmdfLF/iyIDOvvwtaOC4n/7O3u5cIO++jZ3Z68ZgJLqiJlhYWTwJFn3yKY2TlH9Kw553+rYdB78KF8F/XJtBlRqMRGFMmRpA4Km5HWRYS/o/irZpa1lr+5pUYaxMlY14QVFRDB2bNwgMG3JJXEhfJDIBq1EFH3oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=QetrKEKQ; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=C6gDhg5uZqEI92mtooZVl3bYs4A2EKsq3515ZSfhgMM=; b=QetrKEKQfmTAf7eNdumMK32yJT
-	lCznHpHmqOh21Kh9kf2THI1Ed+QeADXiV+OANcknL0D4GE6dwe9hTMuKZ5xvKU4C4PH2UHVkwoEwP
-	62RQl8uR5EEfeIs8Vn37LefY0JhVRfVoRwet6yNckxjg6Tw3t0qtYTiG1BAjAjxcH0OHy5fVLsm6R
-	VtbfoxwYs5CT6PYOPoY55zVfc937tt4inBgi9n0fhDJbxoq1MDwo0tFd5vRwg/ZvZg1pJjXe4h6pD
-	oTuebIVrT4BTAV5s1SBygxaOJHjk6xYCH5Cq3SZ/NbeiLZSOCHkYHAJ83VoYLcD+UrFi0mZlSwFEP
-	jg5IQjUA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54974)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1swjEM-00026c-0K;
-	Fri, 04 Oct 2024 15:24:29 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1swjEH-0001FE-13;
-	Fri, 04 Oct 2024 15:24:25 +0100
-Date: Fri, 4 Oct 2024 15:24:25 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Kiran Kumar C.S.K" <quic_kkumarcs@quicinc.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, vsmuthu@qti.qualcomm.com,
-	arastogi@qti.qualcomm.com, linchen@qti.qualcomm.com,
-	john@phrozen.org, Luo Jie <quic_luoj@quicinc.com>,
-	Pavithra R <quic_pavir@quicinc.com>,
-	"Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
-	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
-Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
-Message-ID: <Zv_6mf3uYcqtHC2j@shell.armlinux.org.uk>
-References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
- <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
- <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
- <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
+	s=arc-20240116; t=1728051919; c=relaxed/simple;
+	bh=wp87TzXy8arOOizSxy3nPf0PPkUbIlH0ZKswDWUROkU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DnRaiMlBi1xbR2iKgW99Efw/trhfEN+oTVCfV6Rv+cd/BLZ4TdA8x5W41fFNInUxEdPeS7jE8nfDiFHZN2Fel1ROiWwRyPA1i6UJWEn28YdyV/yS6L+COgI5qsDJxht/9f8I0iu5laBrslKDYspUybl2lZVu9J94hfBAiuzcLUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt6CT1tz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B1D2C4CECF;
+	Fri,  4 Oct 2024 14:25:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728051918;
+	bh=wp87TzXy8arOOizSxy3nPf0PPkUbIlH0ZKswDWUROkU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Xt6CT1tzAyUvGuvWWqFcHNtzgz8NWRQnKRDa2T8kQ7WGvHiERZZbV3a1JQvN7tX6c
+	 otWpG739daOu6B7rwu3fBTK3uQTExcD0mNI80Stk3gwK04ofIr9HTdAY9yThCS9WvO
+	 rkWBKHGPG3ZGabPkFBM30NhGd8db30/+jbRuXTzNXLp5JVCn4Xjrl6XtAqFSnlzTVf
+	 H9iy9f+bjghl/HinJtBCJ/pHY9UGx1wGUlYqe/aQL+vrh43Qthghr+2KjZZ+4wjY4O
+	 X2Qd5Q34JA8AOHyGFUgttaUvEqsnWoDFb9Ok53G16nNMWGwIsNsWb4tFLauBdFstwz
+	 1F6VbF8KCc9lg==
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8ce5db8668so343899366b.1;
+        Fri, 04 Oct 2024 07:25:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUg9BD1UDLxDke5CTa8Xw8kxk9dOpAv7tlUubp/qYKA45EiXvxac0dEA3eG6bvOnY8evtH6E/lRrIA4gg==@vger.kernel.org, AJvYcCWlsArqJEC2505+0EoO1l5hRY02Qxh0e3nzdcaKUS7ljwACJbqRydgZ8di0py+qmsS0ynqdH2cV/x9xJNEL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwexKYO5GX9Vvzii3xIinzeX1cHco3/lNfPsgkoHZphtxZtUfWP
+	zOpkvFwHt17r3S3guF6Wlz48GQHKWUMVqDNR8iAg/pOO58VnoUqGHZ9BJ6Wmw2sB/LHg9M/isfg
+	Qxs4wuPMoI3HN1t99+4uvYqN/LL4=
+X-Google-Smtp-Source: AGHT+IG9JcV+Te1SmvxoahUcxOg6QuaJAQN16qmFLfUGKgYUBZVSSC2m6JqzJk6Cm2lD0uIUsWOcf5QNy+dJvIhUIpY=
+X-Received: by 2002:a17:907:6eab:b0:a86:9793:350d with SMTP id
+ a640c23a62f3a-a991c077e20mr343049866b.62.1728051916466; Fri, 04 Oct 2024
+ 07:25:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20241004131901.21720-1-jth@kernel.org>
+In-Reply-To: <20241004131901.21720-1-jth@kernel.org>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Fri, 4 Oct 2024 15:24:39 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H6JVtZsr38yy9cwGA8kHvO=r2FpkHdTQVeVRbUrK8UbnA@mail.gmail.com>
+Message-ID: <CAL3q7H6JVtZsr38yy9cwGA8kHvO=r2FpkHdTQVeVRbUrK8UbnA@mail.gmail.com>
+Subject: Re: [PATCH v3] btrfs: don't BUG_ON() NOCOW ordered-extents with
+ checksum list
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	Qu Wenruo <wqu@suse.com>, Naohiro Aota <naohiro.aota@wdc.com>, 
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 03, 2024 at 11:20:03PM +0530, Kiran Kumar C.S.K wrote:
-> >>          +---------+
-> >>          |  48MHZ  |
-> >>          +----+----+
-> >>               |(clock)
-> >>               v
-> >>          +----+----+
-> >>   +------| CMN PLL |
-> >>   |      +----+----+
-> >>   |           |(clock)
-> >>   |           v
-> >>   |      +----+----+           +----+----+  clock   +----+----+
-> >>   |  +---|  NSSCC  |           |   GCC   |--------->|   MDIO  |
-> >>   |  |   +----+----+           +----+----+          +----+----+
-> >>   |  |        |(clock & reset)      |(clock & reset)
-> >>   |  |        v                     v
-> >>   |  |   +-----------------------------+----------+----------+---------+
-> >>   |  |   |       +-----+               |EDMA FIFO |          | EIP FIFO|
-> >>   |  |   |       | SCH |               +----------+          +---------+
-> >>   |  |   |       +-----+                      |               |        |
-> >>   |  |   |  +------+   +------+            +-------------------+       |
-> >>   |  |   |  |  BM  |   |  QM  |            | L2/L3 Switch Core |       |
-> >>   |  |   |  +------+   +------+            +-------------------+       |
-> >>   |  |   |                                   |                         |
-> >>   |  |   | +-------+ +-------+ +-------+ +-------+ +-------+ +-------+ |
-> >>   |  |   | |  MAC0 | |  MAC1 | |  MAC2 | |  MAC3 | | XGMAC4| |XGMAC5 | |
-> >>   |  |   | +---+---+ +---+---+ +---+---+ +---+---+ +---+---+ +---+---+ |
-> >>   |  |   |     |         |         |         |         |         |     |
-> >>   |  |   +-----+---------+---------+---------+---------+---------+-----+
-> >>   |  |         |         |         |         |         |         |
-> >>   |  |     +---+---------+---------+---------+---+ +---+---+ +---+---+
-> >>   +--+---->|             PCS0                    | |  PCS1 | | PCS2  |
-> >>   | clock  +---+---------+---------+---------+---+ +---+---+ +---+---+
-> >>   |            |         |         |         |         |         |
-> >>   |        +---+---------+---------+---------+---+ +---+---+ +---+---+
-> >>   | clock  +----------------+                    | |       | |       |
-> >>   +------->|Clock Controller|   4-port Eth PHY   | | PHY4  | | PHY5  |
-> >>            +----------------+--------------------+ +-------+ +-------+
-...
-> >> 3) PCS driver patch series:
-> >>         Driver for the PCS block in IPQ9574. New IPQ PCS driver will
-> >>         be enabled in drivers/net/pcs/
-> >> 	Dependent on NSS CC patch series (2).
-> > 
-> > I assume this dependency is pure at runtime? So the code will build
-> > without the NSS CC patch series?
-> 
-> The MII Rx/Tx clocks are supplied from the NSS clock controller to the
-> PCS's MII channels. To represent this in the DTS, the PCS node in the
-> DTS is configured with the MII Rx/Tx clock that it consumes, using
-> macros for clocks which are exported from the NSS CC driver in a header
-> file. So, there will be a compile-time dependency for the dtbindings/DTS
-> on the NSS CC patch series. We will clearly call out this dependency in
-> the cover letter of the PCS driver. Hope that this approach is ok.
+On Fri, Oct 4, 2024 at 2:21=E2=80=AFPM Johannes Thumshirn <jth@kernel.org> =
+wrote:
+>
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>
+> Currently we BUG_ON() in btrfs_finish_one_ordered() if we finishing an
+> ordered-extent that is flagged as NOCOW, but it's checsum list is non-emp=
+ty.
+>
+> This is clearly a logic error which we can recover from by aborting the
+> transaction.
+>
+> For developer builds which enable CONFIG_BTRFS_ASSERT, also ASSERT() that=
+ the
+> list is empty.
+>
+> Suggested-by: Filipe Manana <fdmanana@suse.com>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> Reviewed-by: Qu Wenruo <wqu@suse.com>
 
-Please distinguish between the clocks that are part of the connection
-between the PCS and PHY and additional clocks.
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
 
-For example, RGMII has its own clocks that are part of the RGMII
-interface. Despite DT having a way to describe clocks, these clocks
-are fundamental to the RGMII interface and are outside of the scope
-of DT to describe. Their description is implicit in the relationship
-between the PHY and network driver.
+Looks good, thanks.
 
-Also, the PCS itself is a subset of the network driver, and we do
-not (as far as I know) ever describe any kind of connection between
-a PCS and PHY. That would be madness when we have situations where
-the PHY can change its serdes mode, causing the MAC to switch
-between several PCS - which PCS would one associate the PHY with in
-DT when the "mux" is embedded in the ethernet driver and may be
-effectively transparent?
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> ---
+> Changes to v2:
+> * Move ASSERT() out of if () block (Filipe)
+> * goto 'out' after aborting the transaction (Filipe)
+>
+> Changes to v1:
+> * Fixup if () and ASSERT() (Qu)
+> * Fix spelling of 'Currently'
+> ---
+>  fs/btrfs/inode.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 103ec917ca9d..ef82579dfe09 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -3088,7 +3088,12 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_=
+extent *ordered_extent)
+>
+>         if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
+>                 /* Logic error */
+> -               BUG_ON(!list_empty(&ordered_extent->list));
+> +               ASSERT(list_empty(&ordered_extent->list));
+> +               if (!list_empty(&ordered_extent->list)) {
+> +                       ret =3D -EINVAL;
+> +                       btrfs_abort_transaction(trans, ret);
+> +                       goto out;
+> +               }
+>
+>                 btrfs_inode_safe_disk_i_size_write(inode, 0);
+>                 ret =3D btrfs_update_inode_fallback(trans, inode);
+> --
+> 2.43.0
+>
+>
 
