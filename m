@@ -1,116 +1,166 @@
-Return-Path: <linux-kernel+bounces-350220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54E599901AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB3E9901B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029BD1F224D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:55:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D8351F229E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C2614B07A;
-	Fri,  4 Oct 2024 10:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF7C156C4B;
+	Fri,  4 Oct 2024 10:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="F3Uxvg5B"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="Hj+wIeAe"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40972179BB
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E2D13B5B7;
+	Fri,  4 Oct 2024 10:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728039318; cv=none; b=rbA/1tW6Y9giTtmoLCTg/fNZ147wNMfHcKHXHuf0amKk3bNZ4dIrwL1WMzhkO5o3kok/C2K2Fs5kH4H2XJxS8485eG42U3+Kua9hiDbMUFYKTDrN8gmZ3zt/zNFZeHxP6vchd1hd3PHZiAbW7isNt1IDwGfyHB9Zao3O/h7vcqE=
+	t=1728039428; cv=none; b=BpeNC870iHYQeUQtcqbYPZSQuvJWDFs22i59M1EB9TCYjy/cNLu6yRfno3S2BBwtRt2MVuEarxBA3tZ2jyual+NMshxBRPnhANsujNFVERa/mJjaYeKEcmo13zoXoRFIhvQXzKG5BwZ4RAN0h4DV5cft/odjvqkY3WIGXtfIUTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728039318; c=relaxed/simple;
-	bh=/gnDSOyQALnlFj9T36lVAVNTTFzwHZFyTNcrltNvd2g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pyNEpSEQdGEXCoixPMwLWUJZszSMU63jZBkRu40Yo2IpXpwhlT979KJJ/yySRavtd3SrI45hH4U+K+DHdQ3phf+gWekCzG+rf+sHQDP5vToEZKGESKW97bcu9pqsT7mJLiNE+qu3/c/zyVqGG94hTEIGrKm/Ej+D0O7MUXEtP88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=F3Uxvg5B; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e21b4d7236so16614007b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 03:55:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1728039316; x=1728644116; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b3xnIJ9xJEF5dZzVmcC3z99NvsX4DJMfYW3BHeBLqjE=;
-        b=F3Uxvg5BYG4riCe0g7eys0lu6wnY+rx9rcmMNsC61DAzpId8r7UgTkS36Q132zjcKc
-         hZxD4VF6j/46DlAl7naQwTiCCOpRd5TiNqyDWlsCRjTp1k5RE39JfWlkQDpM22iAG/jQ
-         nZktDL6+JoZxkQvz8WD9DhQaBjgnmAdjEBvOg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728039316; x=1728644116;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b3xnIJ9xJEF5dZzVmcC3z99NvsX4DJMfYW3BHeBLqjE=;
-        b=GnBkdvTewLN2yjzYJaKt7VDx837UB6ltfr/k7zlfeqauwM5ECcIUf6yj1h/veYgw0r
-         xmGvn8RJc5UWvxK5B5QmzS5a0J3uAorEIxw8j2AmH3MovzxvHkl43fifYBWeenaiAJqB
-         f/69VOkEI49KQlFrdoj7nR+5jAYyPl/i+5aIncjZ6yqlhOu4U8XeGV3VSfEISgP9JdQp
-         u5IB+hBmGNSLOXh4jHEbJlt3lxuX5o5aod7DWED962II5t7XSMoge2mYQ4mZyqIpuRzj
-         F503iWblch+s0WYY/ba1hpDMp2I17GzXztUukN0ewmpTPFEss74Wi3gH80+xh9+ISfJS
-         i0LA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEGFoQpIpH2Fz8d8KOuMgdmJPrz4GbaJAW4lO7WDw7Nbvh3Nci5OaLuJDYZdoehQHLwsh1Tq7QePqn3Dg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUFQirEI/MuVpn5ZVbRDZQihdfHjqdt8rPgLZUqAOvq0arRdZF
-	Qc76CyaaXIBbfp7KF2KrnRu8fyyA4AmidHA1kcEb88TnPNerF3AyGH/KVtQIdFyYTG5ih7RaD8h
-	d
-X-Google-Smtp-Source: AGHT+IHJtTMAHM+5jlGXnRFZgIzHdU4AHpitlBbCf/IAKX/gSdYDh1zGCko+1M5sDXvKG26SjRXZ9Q==
-X-Received: by 2002:a05:6902:1ac9:b0:e28:6f55:1283 with SMTP id 3f1490d57ef6-e28937e3e02mr1501823276.30.1728039316176;
-        Fri, 04 Oct 2024 03:55:16 -0700 (PDT)
-Received: from localhost.localdomain ([12.191.77.58])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e2885d69bd6sm549817276.27.2024.10.04.03.55.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 03:55:15 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: aleksander.lobakin@intel.com,
-	przemyslaw.kitszel@intel.com,
-	horms@kernel.org,
-	kuba@kernel.org,
-	Joe Damato <jdamato@fastly.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [net-next v3] idpf: Don't hard code napi_struct size
-Date: Fri,  4 Oct 2024 10:54:07 +0000
-Message-Id: <20241004105407.73585-1-jdamato@fastly.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728039428; c=relaxed/simple;
+	bh=eb52MeZ5/aT1GCwF5NcVQ+kFxaTXTIpnpTKJUrLlbeI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nMw4dr7MOR2lHYo4TODml+Gwff7VHX5CmU96wCJCcbuZnXqr3bbaz53nRr360BHURCzQ6VYJ3Z91EFvbTjuJqlVWQbkrRxUIQHkGsN30DVUZooULjUo+42iSR0BD5TWAn2yoVURwprUm1nIyPN6PjkjQjiM71g6r6uuFgu3Caq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=Hj+wIeAe; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1728039411; x=1728644211; i=quwenruo.btrfs@gmx.com;
+	bh=U/4Vt3Aob1zk7qyucu3162PTeTZLjehtvOpwuoaODuA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Hj+wIeAetQrxy1Eyav8Vt5So8Zzq/7xpbicf3sxyHxPox0O7vnv7+pg/p8ENwKpE
+	 euySAXAzmh2oSkgeUjBRyNl1ueVOXRyYxVuT2vKLN8Go4fwgCr348vbNAhg9Z0RQ0
+	 TbCu6BOmH0WTaVclK1NJNbz2uhPbrO/I5r74Q2XfB3WctETm16gg5DcEkxdYtbfg+
+	 ozdLBDfT/xPu0El7EnvrKLqCYb7RFlZEhcxbcaHAr18TJVGsnbPkwf/yi/RqrEMje
+	 4b1PvDdi5f5VsDGhUE3E8MXlIKsT9DtexwpDnkvBs8PwJp4xaQ3HZ+29iHTuAt9Y9
+	 jcfSpkkaNJL4M6Acxw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MrhQ6-1s96503JAK-00pf3P; Fri, 04
+ Oct 2024 12:56:51 +0200
+Message-ID: <6f6f9521-a724-48ae-8695-5af7227427af@gmx.com>
+Date: Fri, 4 Oct 2024 20:26:46 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] btrfs: don't BUG_ON() NOCOW ordered-extents with
+ checksum list
+To: Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ "open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+Cc: Qu Wenruo <wqu@suse.com>, Johannes Thumshirn
+ <johannes.thumshirn@wdc.com>, Filipe Manana <fdmanana@suse.com>
+References: <20241004105333.15266-1-jth@kernel.org>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <20241004105333.15266-1-jth@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:A4VTj0tOWT5DGbTJiTOOSlHAga5EiZ26pGQMtP0eWn9esC6/kxL
+ GyoFdh7NmYjXbVbFtVpyvh1Xoam6DrA4H6QdQe6ULiMoza9fsInZjpL0v/ut/ywvyLEmL0X
+ nhNQlNrWyTbDdw3hkriLdKws42arYuKfHp0NjWVCANIPxYvAFi3BuPKRzPfvp4lBnd1HCFJ
+ anP1zQxsuwr63Pix1Ht3w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CWtKdr+ERYs=;nUqzWwFWgi2OIpYAIGVJ9ReU7lF
+ mqt4wjvAjaFbUrCzgWNt04tor1L1yKBaZel59G2JYsAGhbhRSRmvMYHwobtuTpPuvs9AjvB2h
+ PIlpXlAEndE5Vf29548/D0TwQ25XZVnvK797Qrzu2I5C3YKpue+mBs1dk0z5sgxf4CppAmMLZ
+ w+wf3SrXZhRwn4fNLrt1uyeWacMpFQ27DWQiey11qCXrZ6WcmNcY+GobTiecC/BPIgG/zgiyS
+ x+L0/CiYczFrEd2Wh72/XsAi7PjTwGy87ZUWpeukrhVmkTFUlPtPz7cR23o0HWeWb1f2YswAw
+ NbsDI98+8dQXV9+Ii3cArRuSNmH06vcAvpjd9RvzE+OALqNJV6pj4Vl7U4GbrpjYeFkqv1OtB
+ D/jwXxsnIkkpiehhwAkavCtOwG2M2JBrgxKVxUU8NeqgVFipJJae+TJAtGVKHtKL+FfvJ8PK+
+ iymRgF4r1ANdRY8ofcvU0Ak+m+HMPxJO2RyCgwAIuk1sTPY/oIHl+igMOlklqa2Yr/USYvEXh
+ PA9zUiqvY0i+pH3nVFL1yfZQhhY1qdw69YoF6qgJu9jrhmnA6M9buiHbC0Q7NeUM2WaAelIUI
+ GEMz1+yYqApKs/Pj4Ppa3J641yil53919A5LpfxFMTxrndEB87MOV6NOa/72nLs8nYALStyNI
+ Kt3Kt9h2O79h6XYHOqK/a2mQUICvKy4gXhfumTrkd/qaBEGsdlKferIE+tjmeyDNLzs/jwWKf
+ HfiZPJ/RpfXHHyJdte8m1GCPWrxFpxMgIaI+Rp1xhMBxs+UJym6++tksKdITXGGa1m/DagXAi
+ NnvqhHvNbOvJ+b66ZexBTwVQ==
 
-The sizeof(struct napi_struct) can change. Don't hardcode the size to
-400 bytes and instead use "sizeof(struct napi_struct)".
 
-Suggested-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- drivers/net/ethernet/intel/idpf/idpf_txrx.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.h b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-index f0537826f840..9c1fe84108ed 100644
---- a/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-+++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-@@ -438,7 +438,8 @@ struct idpf_q_vector {
- 	__cacheline_group_end_aligned(cold);
- };
- libeth_cacheline_set_assert(struct idpf_q_vector, 112,
--			    424 + 2 * sizeof(struct dim),
-+			    24 + sizeof(struct napi_struct) +
-+			    2 * sizeof(struct dim),
- 			    8 + sizeof(cpumask_var_t));
- 
- struct idpf_rx_queue_stats {
--- 
-2.34.1
+=E5=9C=A8 2024/10/4 20:23, Johannes Thumshirn =E5=86=99=E9=81=93:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>
+> Currently we BUG_ON() in btrfs_finish_one_ordered() if we finishing an
+> ordered-extent that is flagged as NOCOW, but it's checsum list is non-em=
+pty.
+>
+> This is clearly a logic error which we can recover from by aborting the
+> transaction.
+>
+> For developer builds which enable CONFIG_BTRFS_ASSERT, also ASSERT() tha=
+t the
+> list is empty.
+>
+> Suggested-by: Filipe Manana <fdmanana@suse.com>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+
+Thanks,
+Qu
+> ---
+> Changes to v1:
+> * Fixup if () and ASSERT() (Qu)
+> * Fix spelling of 'Currently'
+> ---
+>   fs/btrfs/inode.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 103ec917ca9d..e57b73943ab8 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -3088,7 +3088,10 @@ int btrfs_finish_one_ordered(struct btrfs_ordered=
+_extent *ordered_extent)
+>
+>   	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
+>   		/* Logic error */
+> -		BUG_ON(!list_empty(&ordered_extent->list));
+> +		if (!list_empty(&ordered_extent->list)) {
+> +			ASSERT(list_empty(&ordered_extent->list));
+> +			btrfs_abort_transaction(trans, -EINVAL);
+> +		}
+>
+>   		btrfs_inode_safe_disk_i_size_write(inode, 0);
+>   		ret =3D btrfs_update_inode_fallback(trans, inode);
 
 
