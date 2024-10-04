@@ -1,347 +1,233 @@
-Return-Path: <linux-kernel+bounces-350719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84ACF99086B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:04:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9086399086D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B771C217C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:04:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A52E01C21CE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7631C3021;
-	Fri,  4 Oct 2024 16:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F37D1AA7AD;
+	Fri,  4 Oct 2024 16:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mq/IQNd+"
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="F/4QE4ix"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BF21C7273;
-	Fri,  4 Oct 2024 16:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C131E377D;
+	Fri,  4 Oct 2024 16:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728057814; cv=none; b=Zut6yIeEDGtOijeTRSKAVY5K1qygDrOUzsE4zR2TZ3ueh2IioG6uOMFPgE4qwF1Iq4b/wM5yW3dQUuQubanB3BVMBnh+utF6vflWxNZGLz+b+T9rnWadBnCqMkM2j8FpK9boA2YjjsU+gO484vBSYTETZpU+YjP3VhjFfQeaXx8=
+	t=1728057839; cv=none; b=fzuBytcU2hBiF03TE3yuNAtNNJCWdVb6iI3vkZk3VgyaY49NS8Zb21R1/oGRwUvHcQG7Rk4wfEv7b5Cwyzgnj0PZFHjjZBUwR0fpwXI9bxpZru8zekzCfaq4A/P4E1eJ3ctJ0+Fl67wCCxXm1MuP8w2qLFWzb/oZKPZquVikVdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728057814; c=relaxed/simple;
-	bh=VttJyk7OKdJrFXqMZJgo01OKXgvxq+5OApCXwUhMwXY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AomayDbYP02dUH/QmwpA0NxQ87jMjrqfhSYhYm+UHMrZ/0E/bw+ivxZR/agTM+z+z3ckFVYlrqcrxXa5LMew9xGrkFsS9HrKa+vOqUh2bgLgPlnw+ILc+mZ7rgkT4/M46RtLqy+k8oD0+eGJ6Y4vdXO/cyxK+qjSzTk0X0onw5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mq/IQNd+; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4a3b67e719aso901796137.0;
-        Fri, 04 Oct 2024 09:03:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728057810; x=1728662610; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TIgiVdq7cFc+ljJH5YQyVg/lbKqFOvpmQ2EmQXCShK0=;
-        b=Mq/IQNd+iT1VcarWq82GHp/6aYmhrzSUaTp/EjLBnzOB8+f8iw3MVBQp3vZkcFOfD2
-         hI09gnJY7/dYJiN/BWxN0Lw02Z01sCLZp8C1iVE0dwNjFgZQvTSzMXx4zkVUcwbsizqj
-         gBzKsSSh/3kCOCPAZHtQjtpgLTw4FjBo1S8Ktqcd1NWhdCKuSCDUkGiRF0K19gIpiaIe
-         vB4RNyuem5LmNnsvZ2SHap140Uy0+2DyY79ViUisb1cLsHWv7jBBBX3MK3ZzxuAQH3o3
-         vrm15jFnGU3TGfd207Witwmh/ij40pN4RFkFcNMzpoFbt5OCkPUazj5BiYnEOnYPep6g
-         7eDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728057810; x=1728662610;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TIgiVdq7cFc+ljJH5YQyVg/lbKqFOvpmQ2EmQXCShK0=;
-        b=H8L/P1uN+v/ypnHofpfNXfl9qUQVQ+NXf7fHD6st6f7bje21yXvljqh/b5I3Ox3yWH
-         6P91ZKRQRoCUvP+sGiKf7b+8U88qUgztuGxoEFtQ7zQHQLHHDqc5+EzPwGdsoWUYKuGB
-         MzR9n8JFcaMLKclAMu1eojlV+5wPn71tX7x+cIEZEqcTf3S4udUEctTEyaAdjIHjS6Ij
-         mjWUpiQyrexnSo0qVrS8nJqcBduCtrT3ZmYxuHLQhKFpmWT7nXWqyuhZH27LkYipo6MJ
-         Yrnp3nMqgSpQF+GktfILvVOR9Mz3wiYRrzahgJoxtELcyRDU3ahH5Owoc2uq7sP3dfjd
-         L23A==
-X-Forwarded-Encrypted: i=1; AJvYcCVJtYrPgCfFwzxxEosFvFcttNZu5e11IKO/jy3hFJX63Et9eLyk5IWuAQjEPNmWatRBC6KntZcF2QJg2iA=@vger.kernel.org, AJvYcCWeFcj7J9Hmx0Pw5wcLNsgANO/LhA1pjaVhQgjoa68YoebMYGbni8du9VijBp62bUuT/PRXq66G@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0scPRBaWuTZMC72vPecBNOsJYQ3vaJ8FrS/rb7aQgvoDNohUY
-	uQsXanUOEY1+wKq/iTCrQ484xKAYh/sjY8b7sv/nhOqRBXvIuFtcQEhgJSYKwPIV60x4bukmVZZ
-	nB5C111gI32XCHwVZl+YMOqRamug=
-X-Google-Smtp-Source: AGHT+IEljj8mGywrE15eU1pVonuWf9T9gUqMpdm4BprMd36TM8glAoaRJODh9Mpb0Q3n6IKnfjrvAtOFHgRSoMH4zG8=
-X-Received: by 2002:a05:6122:4687:b0:50c:4bcf:2727 with SMTP id
- 71dfb90a1353d-50c852ff1bamr3866868e0c.0.1728057810171; Fri, 04 Oct 2024
- 09:03:30 -0700 (PDT)
+	s=arc-20240116; t=1728057839; c=relaxed/simple;
+	bh=9ea+zWqqt7siqy6qOXzP3uto4QAFiHkliWHiG5UbJss=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mf9fCsZ3pcBhdOkrrZc+Oq9MXrnZHzG/PNF+Qd8GK7BnSLi04eRXocgUzRZml0KsiG8BId0m+l/Rt47mpXbHTKCrBrsH9bJYjWEG6LHfpFhr7z+nyZQ5pzwEjH+c6IUn/PDcKFeCs+ZGc0gn7x80ekYatlf5S4yCAHGikYa/KHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=F/4QE4ix; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494Fv0wJ019827;
+	Fri, 4 Oct 2024 16:03:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	jQ+wFzVfxPX35cujQ6GKn6bMYeR2bpXlEYcS8vgA8KM=; b=F/4QE4ixnDdhXNAM
+	/dgaMgRih8r1GXCniF/7uaZLS1VbrMpapYXv1zHdVYKNZltPkL/viEq/ZmKZEqBO
+	T6EdfAov62st6+L2/nSfpGG1X79cIjmpTaytU2LVs/BzPnV1+7Oi6Ylj3IG6h+J/
+	yqGwaG0GfA5DI7lgemgJtQCqLiQpE3/NsmIDx9Yhld/fAwjXLKuqCJZItLYTKg6Y
+	lkhG7nT5vOlz5UHzk6kf4Wl8nid2RLejz/lBrpActInJaKGzl5JlB3MqSDVuuYe7
+	7HoIo1/CMXYH3cI8MXt9HpH6g9iU+J2XYzGnANBcTPvHYMeKxfYfo23BMAraMPCt
+	Jlx9hQ==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 422kejg19f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 16:03:48 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 494DqsmE017912;
+	Fri, 4 Oct 2024 16:03:47 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42207jcw8f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 16:03:47 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 494G3leU37355964
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 4 Oct 2024 16:03:47 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6CB1958067;
+	Fri,  4 Oct 2024 16:03:47 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F05535805D;
+	Fri,  4 Oct 2024 16:03:45 +0000 (GMT)
+Received: from [9.171.87.189] (unknown [9.171.87.189])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  4 Oct 2024 16:03:45 +0000 (GMT)
+Message-ID: <d5c4e2aa1cc04bf1259fb6bd44f269621693b114.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Arnd Bergmann <arnd@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby
+ <jirislaby@kernel.org>,
+        Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,
+        linux-serial@vger.kernel.org, Heiko
+ Carstens <hca@linux.ibm.com>,
+        linux-kernel@vger.kernel.org
+Date: Fri, 04 Oct 2024 18:03:45 +0200
+In-Reply-To: <eedc037b-8790-4269-8ed6-d641b9cbc4ad@app.fastmail.com>
+References: <20240405152924.252598-1-schnelle@linux.ibm.com>
+	 <20240405152924.252598-2-schnelle@linux.ibm.com>
+	 <alpine.DEB.2.21.2405230244140.1257@angie.orcam.me.uk>
+	 <ef2912910d006c573324bcf063cb76e843dc8267.camel@linux.ibm.com>
+	 <alpine.DEB.2.21.2410011707550.45128@angie.orcam.me.uk>
+	 <7bcec0eb88c3891d23f5c9f224e708e4a9bb8b89.camel@linux.ibm.com>
+	 <alpine.DEB.2.21.2410021632150.45128@angie.orcam.me.uk>
+	 <84bbda13-ded1-4ada-a765-9d012d3f4abd@app.fastmail.com>
+	 <alpine.DEB.2.21.2410022305040.45128@angie.orcam.me.uk>
+	 <e916ff3347cef88981d8e519fe1bcedfabfbea24.camel@linux.ibm.com>
+	 <eedc037b-8790-4269-8ed6-d641b9cbc4ad@app.fastmail.com>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87y137nxqs.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <20241002015754.969-1-21cnbao@gmail.com> <87ikuani1f.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <CANeU7Qn3f=HYiuuU5AL_WDYUy6fLJcqgj6+fPO=xVSxbB_DBQg@mail.gmail.com>
-In-Reply-To: <CANeU7Qn3f=HYiuuU5AL_WDYUy6fLJcqgj6+fPO=xVSxbB_DBQg@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Sat, 5 Oct 2024 00:03:17 +0800
-Message-ID: <CAGsJ_4ysvUj1OWobTpWhgJ1TAwRvVU+X0S8qgeBPE8=z2SbumQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
- swapcache_prepare fails
-To: Chris Li <chrisl@kernel.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>, akpm@linux-foundation.org, david@redhat.com, 
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
-	kasong@tencent.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	liyangouwen1@oppo.com, mhocko@suse.com, minchan@kernel.org, sj@kernel.org, 
-	stable@vger.kernel.org, surenb@google.com, v-songbaohua@oppo.com, 
-	willy@infradead.org, yosryahmed@google.com, yuzhao@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: f7farfyOx9g5_m6IR_CEmrzVVB8AzlLg
+X-Proofpoint-GUID: f7farfyOx9g5_m6IR_CEmrzVVB8AzlLg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-04_13,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ mlxlogscore=844 adultscore=0 clxscore=1015 impostorscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040110
 
-On Fri, Oct 4, 2024 at 7:03=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote:
->
-> On Wed, Oct 2, 2024 at 5:35=E2=80=AFPM Huang, Ying <ying.huang@intel.com>=
- wrote:
-> >
-> > Barry Song <21cnbao@gmail.com> writes:
-> >
-> > > On Wed, Oct 2, 2024 at 8:43=E2=80=AFAM Huang, Ying <ying.huang@intel.=
-com> wrote:
-> > >>
-> > >> Barry Song <21cnbao@gmail.com> writes:
-> > >>
-> > >> > On Tue, Oct 1, 2024 at 7:43=E2=80=AFAM Huang, Ying <ying.huang@int=
-el.com> wrote:
-> > >> >>
-> > >> >> Barry Song <21cnbao@gmail.com> writes:
-> > >> >>
-> > >> >> > On Sun, Sep 29, 2024 at 3:43=E2=80=AFPM Huang, Ying <ying.huang=
-@intel.com> wrote:
-> > >> >> >>
-> > >> >> >> Hi, Barry,
-> > >> >> >>
-> > >> >> >> Barry Song <21cnbao@gmail.com> writes:
-> > >> >> >>
-> > >> >> >> > From: Barry Song <v-songbaohua@oppo.com>
-> > >> >> >> >
-> > >> >> >> > Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapca=
-che")
-> > >> >> >> > introduced an unconditional one-tick sleep when `swapcache_p=
-repare()`
-> > >> >> >> > fails, which has led to reports of UI stuttering on latency-=
-sensitive
-> > >> >> >> > Android devices. To address this, we can use a waitqueue to =
-wake up
-> > >> >> >> > tasks that fail `swapcache_prepare()` sooner, instead of alw=
-ays
-> > >> >> >> > sleeping for a full tick. While tasks may occasionally be wo=
-ken by an
-> > >> >> >> > unrelated `do_swap_page()`, this method is preferable to two=
- scenarios:
-> > >> >> >> > rapid re-entry into page faults, which can cause livelocks, =
-and
-> > >> >> >> > multiple millisecond sleeps, which visibly degrade user expe=
-rience.
-> > >> >> >>
-> > >> >> >> In general, I think that this works.  Why not extend the solut=
-ion to
-> > >> >> >> cover schedule_timeout_uninterruptible() in __read_swap_cache_=
-async()
-> > >> >> >> too?  We can call wake_up() when we clear SWAP_HAS_CACHE.  To =
-avoid
-> > >> >> >
-> > >> >> > Hi Ying,
-> > >> >> > Thanks for your comments.
-> > >> >> > I feel extending the solution to __read_swap_cache_async() shou=
-ld be done
-> > >> >> > in a separate patch. On phones, I've never encountered any issu=
-es reported
-> > >> >> > on that path, so it might be better suited for an optimization =
-rather than a
-> > >> >> > hotfix?
-> > >> >>
-> > >> >> Yes.  It's fine to do that in another patch as optimization.
-> > >> >
-> > >> > Ok. I'll prepare a separate patch for optimizing that path.
-> > >>
-> > >> Thanks!
-> > >>
-> > >> >>
-> > >> >> >> overhead to call wake_up() when there's no task waiting, we ca=
-n use an
-> > >> >> >> atomic to count waiting tasks.
-> > >> >> >
-> > >> >> > I'm not sure it's worth adding the complexity, as wake_up() on =
-an empty
-> > >> >> > waitqueue should have a very low cost on its own?
-> > >> >>
-> > >> >> wake_up() needs to call spin_lock_irqsave() unconditionally on a =
-global
-> > >> >> shared lock.  On systems with many CPUs (such servers), this may =
-cause
-> > >> >> severe lock contention.  Even the cache ping-pong may hurt perfor=
-mance
-> > >> >> much.
-> > >> >
-> > >> > I understand that cache synchronization was a significant issue be=
-fore
-> > >> > qspinlock, but it seems to be less of a concern after its implemen=
-tation.
-> > >>
-> > >> Unfortunately, qspinlock cannot eliminate cache ping-pong issue, as
-> > >> discussed in the following thread.
-> > >>
-> > >> https://lore.kernel.org/lkml/20220510192708.GQ76023@worktop.programm=
-ing.kicks-ass.net/
-> > >>
-> > >> > However, using a global atomic variable would still trigger cache =
-broadcasts,
-> > >> > correct?
-> > >>
-> > >> We can only change the atomic variable to non-zero when
-> > >> swapcache_prepare() returns non-zero, and call wake_up() when the at=
-omic
-> > >> variable is non-zero.  Because swapcache_prepare() returns 0 most ti=
-mes,
-> > >> the atomic variable is 0 most times.  If we don't change the value o=
-f
-> > >> atomic variable, cache ping-pong will not be triggered.
-> > >
-> > > yes. this can be implemented by adding another atomic variable.
-> >
-> > Just realized that we don't need another atomic variable for this, just
-> > use waitqueue_active() before wake_up() should be enough.
-> >
-> > >>
-> > >> Hi, Kairui,
-> > >>
-> > >> Do you have some test cases to test parallel zram swap-in?  If so, t=
-hat
-> > >> can be used to verify whether cache ping-pong is an issue and whethe=
-r it
-> > >> can be fixed via a global atomic variable.
-> > >>
-> > >
-> > > Yes, Kairui please run a test on your machine with lots of cores befo=
-re
-> > > and after adding a global atomic variable as suggested by Ying. I am
-> > > sorry I don't have a server machine.
-> > >
-> > > if it turns out you find cache ping-pong can be an issue, another
-> > > approach would be a waitqueue hash:
-> >
-> > Yes.  waitqueue hash may help reduce lock contention.  And, we can have
-> > both waitqueue_active() and waitqueue hash if necessary.  As the first
-> > step, waitqueue_active() appears simpler.
->
-> Interesting. Just take a look at the waitqueue_active(), it requires
-> smp_mb() if using without holding the lock.
-> Quote from the comment of waitqueue_active():
-> * Also note that this 'optimization' trades a spin_lock() for an smp_mb()=
-,
->  * which (when the lock is uncontended) are of roughly equal cost.
->
+On Fri, 2024-10-04 at 12:48 +0000, Arnd Bergmann wrote:
+> On Fri, Oct 4, 2024, at 10:09, Niklas Schnelle wrote:
+>=20
+> > I'm working on a new proposal for 8250 now. Basically I think we can
+> > put the warning/error in serial8250_pci_setup_port(). And then for
+> > those 8250_pci.c "sub drivers" that require I/O ports instead of just
+> > ifdeffing out their setup/init/exit we can define anything but setup to
+> > NULL and setup to pci_default_setup() such that the latter will find
+> > the I/O port BAR via FL_GET_BASE() and subsequently cause the error
+> > print in serial8250_pci_setup_port(). It's admittedly a bit odd but it
+> > also keeps the #ifdefs to just around the code that wouldn't compile.
+>=20
+> Right, makes sense.
+>=20
+> > One thing I'm not happy with yet is the handling around
+> > is_upf_fourport(port) in 8250_pci.c. With !HAS_IOPORT this is defined
+> > as false. With that it makes sure that inb_p()/outb_p() aren't called
+> > but I think this only works because the compiler usually drops the dead
+> > if clause. I think there were previous discussions around this but I
+> > think just like IS_ENABLED() checks this isn't quite correct.
+>=20
+> Not sure what you mean, we rely on dead code elimination in all
+> kinds of places. The only bit to be aware of is that normal
+> 'inline' functions may not get constant-folded all the time,
+> but anything that is either a macro or __always_inline does
+> work.
 
-probably not a problem in our case. two reasons:
-1. we don't have a condition here
-2. false postive/negative wake_up() won't cause a problem here.
+Ah ok, didn't know this was okay to rely on. Then I can roll the extra
+#ifdefs back. Need to address the test bot's finding anyway. There we
+can get #ifdef __i386__ but also !HAS_IOPORT on um.
 
-We used to always sleep at least 4ms for an embedded system, if we can
-kill 99% of the possibilities, it is all good.
+>=20
+> I just verified that the version below does what Maciej
+> suggested with IS_ENABLED() in 8250-pci, and this works fine.
+>=20
+>        Arnd
 
-Ideally, we could combine wait queue hash and wakeup_active(), but
-Kairui's test shows even if we did neither of the above, it is still accept=
-able
-in performance. so probably we can make things simple by just
-adding a if(waitqueue_active()) before wake_up().
+Your version below is also pretty nice a bit more spread out but less
+#ifdefs. That said at least in my NeoVim setup the #ifdefs are nicely
+grayed out via clang-analyzer / lsp which to me actually makes #ifdefs
+quite easy to see at a glance but that's probably a niche opinion.
 
-> Chris
->
-> >
-> > > diff --git a/mm/memory.c b/mm/memory.c
-> > > index 2366578015ad..aae0e532d8b6 100644
-> > > --- a/mm/memory.c
-> > > +++ b/mm/memory.c
-> > > @@ -4192,6 +4192,23 @@ static struct folio *alloc_swap_folio(struct v=
-m_fault *vmf)
-> > >  }
-> > >  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-> > >
-> > > +/*
-> > > + * Alleviating the 'thundering herd' phenomenon using a waitqueue ha=
-sh
-> > > + * when multiple do_swap_page() operations occur simultaneously.
-> > > + */
-> > > +#define SWAPCACHE_WAIT_TABLE_BITS 5
-> > > +#define SWAPCACHE_WAIT_TABLE_SIZE (1 << SWAPCACHE_WAIT_TABLE_BITS)
-> > > +static wait_queue_head_t swapcache_wqs[SWAPCACHE_WAIT_TABLE_SIZE];
-> > > +
-> > > +static int __init swapcache_wqs_init(void)
-> > > +{
-> > > +     for (int i =3D 0; i < SWAPCACHE_WAIT_TABLE_SIZE; i++)
-> > > +             init_waitqueue_head(&swapcache_wqs[i]);
-> > > +
-> > > +        return 0;
-> > > +}
-> > > +late_initcall(swapcache_wqs_init);
-> > > +
-> > >  /*
-> > >   * We enter with non-exclusive mmap_lock (to exclude vma changes,
-> > >   * but allow concurrent faults), and pte mapped but not yet locked.
-> > > @@ -4204,6 +4221,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> > >  {
-> > >       struct vm_area_struct *vma =3D vmf->vma;
-> > >       struct folio *swapcache, *folio =3D NULL;
-> > > +     DECLARE_WAITQUEUE(wait, current);
-> > > +     wait_queue_head_t *swapcache_wq;
-> > >       struct page *page;
-> > >       struct swap_info_struct *si =3D NULL;
-> > >       rmap_t rmap_flags =3D RMAP_NONE;
-> > > @@ -4297,12 +4316,16 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> > >                                * undetectable as pte_same() returns t=
-rue due
-> > >                                * to entry reuse.
-> > >                                */
-> > > +                             swapcache_wq =3D &swapcache_wqs[hash_lo=
-ng(vmf->address & PMD_MASK,
-> > > +                                                     SWAPCACHE_WAIT_=
-TABLE_BITS)];
-> > >                               if (swapcache_prepare(entry, nr_pages))=
- {
-> > >                                       /*
-> > >                                        * Relax a bit to prevent rapid
-> > >                                        * repeated page faults.
-> > >                                        */
-> > > +                                     add_wait_queue(swapcache_wq, &w=
-ait);
-> > >                                       schedule_timeout_uninterruptibl=
-e(1);
-> > > +                                     remove_wait_queue(swapcache_wq,=
- &wait);
-> > >                                       goto out_page;
-> > >                               }
-> > >                               need_clear_cache =3D true;
-> > > @@ -4609,8 +4632,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> > >               pte_unmap_unlock(vmf->pte, vmf->ptl);
-> > >  out:
-> > >       /* Clear the swap cache pin for direct swapin after PTL unlock =
-*/
-> > > -     if (need_clear_cache)
-> > > +     if (need_clear_cache) {
-> > >               swapcache_clear(si, entry, nr_pages);
-> > > +             wake_up(swapcache_wq);
-> > > +     }
-> > >       if (si)
-> > >               put_swap_device(si);
-> > >       return ret;
-> > > @@ -4625,8 +4650,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> > >               folio_unlock(swapcache);
-> > >               folio_put(swapcache);
-> > >       }
-> > > -     if (need_clear_cache)
-> > > +     if (need_clear_cache) {
-> > >               swapcache_clear(si, entry, nr_pages);
-> > > +             wake_up(swapcache_wq);
-> > > +     }
-> > >       if (si)
-> > >               put_swap_device(si);
-> > >       return ret;
-> >
-> > --
-> > Best Regards,
-> > Huang, Ying
+>=20
+> diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250=
+/8250_pci.c
+> index 6709b6a5f301..784190824aad 100644
+> --- a/drivers/tty/serial/8250/8250_pci.c
+> +++ b/drivers/tty/serial/8250/8250_pci.c
+> @@ -928,6 +928,14 @@ static int pci_netmos_init(struct pci_dev *dev)
+>  	return num_serial;
+>  }
+> =20
+> +static int serial_8250_need_ioport(struct pci_dev *dev)
+> +{
+> +	dev_warn(&dev->dev,
+> +		 "Serial port not supported because of missing I/O resource\n");
+> +
+> +	return -ENXIO;
+> +}
+> +
+---8<---
 
-Thanks
-Barry
 
