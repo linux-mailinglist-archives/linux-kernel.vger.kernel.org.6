@@ -1,82 +1,99 @@
-Return-Path: <linux-kernel+bounces-350238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC449901E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:15:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A329901EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1F81F25146
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:15:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5741F2815F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0958F158534;
-	Fri,  4 Oct 2024 11:15:03 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C827415666B;
+	Fri,  4 Oct 2024 11:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nm0xAEjV"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D0A13DDD3;
-	Fri,  4 Oct 2024 11:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D3B224D1;
+	Fri,  4 Oct 2024 11:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728040502; cv=none; b=DeoXB1rNkjYKYFF/I2ChepplcCJ9/Jw8Nf5Niy1Evg+s+BnP4QhBwd2ZbjJ70UMJVNtqlv/qfrOLPQzpd/cg2fZGVkFb7Sd1lXBO/tHIAT1Emb1Hnxm2M++86Z+lut8VwFZiFBaV3EBL5PfuBnAhtOMSl/g0ZRmkit8/jaEam0Q=
+	t=1728040623; cv=none; b=KW9LH+IHL+PEabKIJ7Hog/mEqEyEnozK0r4g3OcDumVxjPKWQ/yyfVHwIG394sXrEILMQzGxD/e37d0C1wnbSK+o0B/apvXA+UOH2qsU+ABTohEKYNmDp9p45IDxfqYI9ARm3pb+G7cWiQVa0/bxKDgOSa/LpD6Flx2BddpmfY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728040502; c=relaxed/simple;
-	bh=LW23ndT1CxeC4h6uYTBagZ3oCm4WR+VrDPZOUEWaIBI=;
+	s=arc-20240116; t=1728040623; c=relaxed/simple;
+	bh=YyLTiomqQ6TSxJyR30lzcROF9cPW32e3GhYgtOPTgew=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mwd6jSgXxOqPglwuUugYZ1MLBm6f+U+Oa3QTDbRUVA+/FfOSk+wZzZLCUb4XvFVJXGQVNA6DMacJf/aINee/rte6nuWf9v0vaibdNyDxbL+BF4dTH9qDTKCvAn0YlBFegZe2oIIgUyJa6QOe6t+fFYC2tLOgYVI/jowKXFKXdH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=54078 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1swgGt-00FAWP-Bk; Fri, 04 Oct 2024 13:14:57 +0200
-Date: Fri, 4 Oct 2024 13:14:54 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Justin Stitt <justinstitt@google.com>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Roopa Prabhu <roopa@nvidia.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	bridge@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH] netfilter: nf_tables: replace deprecated strncpy with
- strscpy_pad
-Message-ID: <Zv_OLpeDYCPiPH19@calendula>
-References: <20240909-strncpy-net-bridge-netfilter-nft_meta_bridge-c-v1-1-946180aa7909@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jy3LW32pwrR0wsnaL87zfJecWQpXAmffA2zFwXspGNWDJXnc4j/YBRRClwMAxtfYTczIlEiyyMZIcv+CPid3l57lDRMS8ShuccX3rxZF/0VvT5oIhiwJEirCa0LGc/huUY1YVy0ZvZ4JJae0BJ8p1cSAOxOsLbhGipJ6SpY7aao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nm0xAEjV; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20b5affde14so15245205ad.3;
+        Fri, 04 Oct 2024 04:17:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728040621; x=1728645421; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4JGGLXYFztMV/0fUe6OuC/kyD9hrYXAZAqVRzK4LsKs=;
+        b=nm0xAEjVYQVp3oDuB75qhemaUa1BZpYC1hNRc2OlvVdDh/+W+3iUfP6t6Ke1Ake/x6
+         URfCgkIGUWkAfxmPgUMROxpT4p2GvFicnH4Z9v1eBesqgLhB5SZ+R956A6iJ2PDLRaQF
+         iQrLJVAkXThCoqtk+WWdywdZVnuQiLyXeIInYl/L5KqpKDf4t4ZPKrWfoOimBq3SPazj
+         CIWpRz31wxr/ujr5NK1dMAVx3zg1eJTJ33YvnOZEG2cAJdgif/YdnPurwjACsOgYqKyo
+         ZmhoxjWB4KiLCiR5is2f35c/qFGHviGWB6CrYr6RVtuLEDZftQq6O5OpFC2C11fHvef4
+         hjrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728040621; x=1728645421;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4JGGLXYFztMV/0fUe6OuC/kyD9hrYXAZAqVRzK4LsKs=;
+        b=bcIyfdPdgiJUr89ShH7wPAn2o0jQ8HHuZwDRD8ffdKy6Spj8/FYqYWQemvMDQ9C2tM
+         Z2cQPcTWxaZ++EmlpqCZ2W5SYLyPS7d30D1RTsx5sgBilZFfWyWzMhcn56G+OsYR7Ebh
+         JmuQfS1KsuVWCcP1mAfv9w9J59yuqg+RWN/TVvzhuy2LPQDUjnldsKFpsxDbG11Iufx7
+         /X3/AjVioLsArfPLXQcR2HiwpeWYjeS6xtpaEJnISundIgIwWxC7eFH71L/md+5kVxMI
+         z9DK+FF/etBi1V2TXN2Ni9bg+4MkZhsC9MWgbKIRQRRwBcfBQF/gYzpda+ZK+a9t4zxx
+         AlVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUpDXBzA1WzpETno2n7Rra9rLLKCPkwknNLaec8WsrfdX+8vR+p/KtOxeMOuu7xFM6a1+QtXe1mKXVrCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN11fJ9lxKsjgfOIGKF2O+WbJ9vrmh2lt0W1g8NBGUHYMFvvT9
+	USO/kFGA1FEy6ohMIpwTAulZzju0ulEC/e6qluR2rcyeU+f32NHW6vea+9UD
+X-Google-Smtp-Source: AGHT+IGEezjSxQ5pCOb98oeSdfx36nnKAzBr04tyF8g/ReJ/sQ93DVf278brTyX2J1IAS8P5jisBtw==
+X-Received: by 2002:a17:902:f550:b0:20b:a728:d130 with SMTP id d9443c01a7336-20bfdfd93ebmr38169455ad.14.1728040621141;
+        Fri, 04 Oct 2024 04:17:01 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1b2:add:2542:c298])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20bef707040sm22164085ad.269.2024.10.04.04.17.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 04:17:00 -0700 (PDT)
+Date: Fri, 4 Oct 2024 04:16:58 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Yang Li <yang.lee@linux.alibaba.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next] Input: matrix_keypad: Remove duplicated include in
+ matrix_keypad.c
+Message-ID: <Zv_OqtnB5plGVAUv@google.com>
+References: <20240910010133.44579-1-yang.lee@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909-strncpy-net-bridge-netfilter-nft_meta_bridge-c-v1-1-946180aa7909@google.com>
-X-Spam-Score: -1.8 (-)
+In-Reply-To: <20240910010133.44579-1-yang.lee@linux.alibaba.com>
 
-On Mon, Sep 09, 2024 at 03:48:39PM -0700, Justin Stitt wrote:
-> strncpy() is deprecated for use on NUL-terminated destination strings [1] and
-> as such we should prefer more robust and less ambiguous string interfaces.
+On Tue, Sep 10, 2024 at 09:01:33AM +0800, Yang Li wrote:
+> The header files consumer.h is included twice in matrix_keypad.c,
+> so one inclusion of each can be removed.
 > 
-> In this particular instance, the usage of strncpy() is fine and works as
-> expected. However, towards the goal of [2], we should consider replacing
-> it with an alternative as many instances of strncpy() are bug-prone. Its
-> removal from the kernel promotes better long term health for the
-> codebase.
-> 
-> The current usage of strncpy() likely just wants the NUL-padding
-> behavior offered by strncpy() and doesn't care about the
-> NUL-termination. Since the compiler doesn't know the size of @dest, we
-> can't use strtomem_pad(). Instead, use strscpy_pad() which behaves
-> functionally the same as strncpy() in this context -- as we expect
-> br_dev->name to be NUL-terminated itself.
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=10823
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 
-Applied to nf-next
+Applied, thank you.
+
+-- 
+Dmitry
 
