@@ -1,209 +1,168 @@
-Return-Path: <linux-kernel+bounces-350438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B300990526
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:01:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0406699052F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05509282C6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:01:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAACB282C8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7775C212EE3;
-	Fri,  4 Oct 2024 14:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF842139C6;
+	Fri,  4 Oct 2024 14:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IFXmXkPS"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vGDjZQ0Z"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463B015748E
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4BB15748E;
+	Fri,  4 Oct 2024 14:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728050473; cv=none; b=dETM+VVAiGabIShAXOWfozxAuwT0eXO0sSGB3zfOyuZIj9jNPMXK6F1lZQL1CJkJ573BuPU7ZhXO12UtERDcqJ7KVEVSlSmPS5IoQ3wyhDz7Cr1V0wAVtBf58dWkNKbyxjMgmd0bSZVtM3JAa9su+d8eH4OWR79+izyX328BbbQ=
+	t=1728050543; cv=none; b=ah+gc/bW0T5KtoG/iBjAD2uCmFLkmURXvBHABT56u21B6j9L6/wTTrs1MGUdysCoTy/IJdt4sDlSpD4vK2vDg6XPVaCk4BS6qy8hgP9NVRN0WgCQ1LvXXGtjDICefZ/1CunIquyIg9kSvXjc5RdpU31eboYrPqW41U7QzmkRkns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728050473; c=relaxed/simple;
-	bh=/zMrKxC8mpcCh8PWGsWshD5vTxrsSfWP0tQd1Iy3mJc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ku5g40lqvFNxQRE+VvtFRM/eYMeb92+MvBwrEfyjnxAawXvdiKnJLgteQ8o6bfT0a4cnCYfLfnNaCF5oKS8DbnGDvUaUI6usxSZYbAiN6tVLc3XvS18d9gKBVQOqy9dgMfVMcRnDgOPL/W+KTC2t/jRHwGqssIrXw/hCL00Y9Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IFXmXkPS; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e0752be2d1so308486a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 07:01:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728050471; x=1728655271; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KMwn901ZRLoRHXVyYDozCoh9nimOdyplKHDEtmswe7U=;
-        b=IFXmXkPSquvdcAbfVm5N2Pc6mbPjwEWoaQvT1Rlb1AiwbTqbK6O/vpaL47IspyHOHN
-         AYjCHwWVuXN1HlOJ6IF21MIsfuRtrDvSHXszl4dtsOkfPm68Tbdt0cAkuQMaPZpIsUlw
-         AdGu8lM5SRq72MknI4zKmFDW6jVN27Eoa8/PV5HyEg7HzxGbbCLKg++D0Ri5hTs18oGF
-         5PV+Qnri/YCV+tPUtTJx14yX94JYF9js1smlxmymZ84bRsZmxOhYx5+8m1LrcMLAebc6
-         l31Vk1LHd3r9ONIkWyWmTnTUztYOZpCBlXVmb+zqK5NKGFnakcynm4gBzx7uJ2fD81/W
-         RSPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728050471; x=1728655271;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KMwn901ZRLoRHXVyYDozCoh9nimOdyplKHDEtmswe7U=;
-        b=ii4U4sCvcwqiv2vXVTkXhQ9mc6pgch5BzKQFocMWuR2El2e1Cv+AqHwl2erPlAknjH
-         e/OjuhLouyowss1xki/WsneXjhWinHdhFQB0EoiUqJxKOpo+/rYpwRojbR3m9TkFnuxt
-         60lbewsmMZjtYd8oljgXr9JRzFZBDaOKu7AoOJmdsiOQUsSDG27tVk4o2JLUU6Yc1W4L
-         u8bcUA9Z6Wyc50satXP/NkxHp5hGilTnRbqezPcB0dmLEMTJGBFjGjGFV8sDboQCnIus
-         yqSKag+YQNkYyQUNhmGvstQmN9LVJdaDMF8wRiNJizcqQRZ6rupHnNcx1WVjr+fzp0v7
-         AkmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW51j3OgdXbpKkbTg7hYHMcVq25wrgStKGLG0d2XcNGs6MnsqDqcRbNMGgmaS/jHtWtr/e+zpxaTKS9um8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHqlRx4/hs9hzM2kKao2ATEdCmmcYbfELm6rvMT90F+h5nk99D
-	GsLke65UsMWY8mCEIBfIymOdUqEZc+dL5giBD7+JprkuPRQLFUMfZFugkxUc79Nx+48qI5i0cwz
-	q1Ol5xYQWOyIGpgR6QynwOkA1tHM=
-X-Google-Smtp-Source: AGHT+IEJ1tRqM5NLWvzkRdlOsKIDAq7K9+lPQKlj31f3AEwobSgsbCs+ky8e9auMeCNS8p7/tSoWstvR8FyH9iCmeAs=
-X-Received: by 2002:a17:90a:c88:b0:2e0:9d3f:4292 with SMTP id
- 98e67ed59e1d1-2e1e62117bemr1411095a91.1.1728050471300; Fri, 04 Oct 2024
- 07:01:11 -0700 (PDT)
+	s=arc-20240116; t=1728050543; c=relaxed/simple;
+	bh=QW0C9c3/EVKwVlM57ULE+y2nHs7/G/DlCmIwV5GuFm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gu5RflgWuXoOjGiGjZjW3sy/V0egx2b+HJ5ydjWM0D7cjDYX7n8RpdV7OjEik3tdZd8J2ZAPhR2owofd7S51OnUzb8JiGt44w2ldDETQdGqCjw+2/WfnObXEt5OpGgjrp2QP59f5r4HWlQdoKRgQ4KvGb3Hozs6td8cjwz10eVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vGDjZQ0Z; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=fu3VaCt1xTWMku+JYWxGDTg9qgPJOaVq3TcXvd2ZQk0=; b=vG
+	DjZQ0Z6kq+zCzKgcW5p0z5r/rfnsOF4L0viMGGQkKkh3IyoHMaplUQgf/gEKCcdUv69jL7InwOmt8
+	EqWV6vC1fJA07as/7eE2OthCZbCAbBCKynUK/CVI1slEiIr0i5nCOlpVB7EyYRYgR2GYQTG/v85KD
+	Kt/cztepW5f4grs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1swisa-0093HV-S5; Fri, 04 Oct 2024 16:02:00 +0200
+Date: Fri, 4 Oct 2024 16:02:00 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: Devi Priya <quic_devipriy@quicinc.com>, andersson@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@linaro.org,
+	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+	richardcochran@gmail.com, geert+renesas@glider.be,
+	dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
+	arnd@arndb.de, m.szyprowski@samsung.com, nfraprado@collabora.com,
+	u-kumar1@ti.com, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH V4 5/7] clk: qcom: Add NSS clock Controller driver for
+ IPQ9574
+Message-ID: <6a431336-621d-4284-a0ca-b68921de22eb@lunn.ch>
+References: <20240625070536.3043630-1-quic_devipriy@quicinc.com>
+ <20240625070536.3043630-6-quic_devipriy@quicinc.com>
+ <f9d3f263-8559-4357-a1c6-8d4b5fa20b8c@lunn.ch>
+ <302298ef-7827-49e1-8b0f-04467cb38ad7@quicinc.com>
+ <29b84acf-2c57-4b0e-81f0-82eb6c1e5b18@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004010601.3387-1-wuhoipok@gmail.com>
-In-Reply-To: <20241004010601.3387-1-wuhoipok@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 4 Oct 2024 10:00:59 -0400
-Message-ID: <CADnq5_Nt=8Lx6KOXHf0DHmqo2O7dYKDTfGCz-w_Hv+__=BqP9w@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/radeon: add late_register for connector
-To: Wu Hoi Pok <wuhoipok@gmail.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Christian Zigotzky <chzigotzky@xenosoft.de>, Alex Deucher <alexander.deucher@amd.com>, 
-	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, 
-	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>, 
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <29b84acf-2c57-4b0e-81f0-82eb6c1e5b18@quicinc.com>
 
-On Thu, Oct 3, 2024 at 9:18=E2=80=AFPM Wu Hoi Pok <wuhoipok@gmail.com> wrot=
-e:
->
-> The patch is to solve null dereference in 'aux.dev', which is
-> introduced in recent radeon rework. By having 'late_register',
-> the connector should be registered after 'drm_dev_register'
-> automatically, where in before it is the opposite.
->
-> Fixes: 90985660ba48 ("drm/radeon: remove load callback from kms_driver")
-> Tested-by: Hans de Goede <hdegoede@redhat.com>
-> Suggested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Signed-off-by: Wu Hoi Pok <wuhoipok@gmail.com>
+On Fri, Oct 04, 2024 at 01:25:52PM +0530, Manikanta Mylavarapu wrote:
+> 
+> 
+> On 6/26/2024 8:09 PM, Devi Priya wrote:
+> > 
+> > 
+> > On 6/25/2024 8:09 PM, Andrew Lunn wrote:
+> >>> +static struct clk_alpha_pll ubi32_pll_main = {
+> >>> +    .offset = 0x28000,
+> >>> +    .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
+> >>> +    .flags = SUPPORTS_DYNAMIC_UPDATE,
+> >>> +    .clkr = {
+> >>> +        .hw.init = &(const struct clk_init_data) {
+> >>> +            .name = "ubi32_pll_main",
+> >>> +            .parent_data = &(const struct clk_parent_data) {
+> >>> +                .index = DT_XO,
+> >>> +            },
+> >>> +            .num_parents = 1,
+> >>> +            .ops = &clk_alpha_pll_huayra_ops,
+> >>> +        },
+> >>> +    },
+> >>> +};
+> >>> +
+> >>> +static struct clk_alpha_pll_postdiv ubi32_pll = {
+> >>> +    .offset = 0x28000,
+> >>> +    .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
+> >>> +    .width = 2,
+> >>> +    .clkr.hw.init = &(const struct clk_init_data) {
+> >>> +        .name = "ubi32_pll",
+> >>> +        .parent_hws = (const struct clk_hw *[]) {
+> >>> +            &ubi32_pll_main.clkr.hw
+> >>> +        },
+> >>> +        .num_parents = 1,
+> >>> +        .ops = &clk_alpha_pll_postdiv_ro_ops,
+> >>> +        .flags = CLK_SET_RATE_PARENT,
+> >>> +    },
+> >>> +};
+> >>
+> >> Can these structures be made const? You have quite a few different
+> >> structures in this driver, some of which are const, and some which are
+> >> not.
+> >>
+> > Sure, will check and update this in V6
+> > 
+> > Thanks,
+> > Devi Priya
+> >>     Andrew
+> >>
+> 
+> Hi Andrew,
+> 
+> Sorry for the delayed response.
+> 
+> The ubi32_pll_main structure should be passed to clk_alpha_pll_configure() API to configure UBI32 PLL. clk_alpha_pll_configure() API expects a non-const structure. Declaring it as const will result in the following compilation warning
+> 
+> drivers/clk/qcom/nsscc-ipq9574.c:3067:26: warning: passing argument 1 of ‘clk_alpha_pll_configure’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+>   clk_alpha_pll_configure(&ubi32_pll_main, regmap, &ubi32_pll_config);
+>                           ^
+> In file included from drivers/clk/qcom/nsscc-ipq9574.c:22:0:
+> drivers/clk/qcom/clk-alpha-pll.h:200:6: note: expected ‘struct clk_alpha_pll *’ but argument is of type ‘const struct clk_alpha_pll *’
+>  void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>       ^~~~~~~~~~~~~~~~~~~~~~~
 
-Applied.  Thanks!
+As far as i can see, clk_alpha_pll_configure() does not modify pll.
 
-Alex
+https://elixir.bootlin.com/linux/v6.12-rc1/source/drivers/clk/qcom/clk-alpha-pll.c#L391
 
-> ---
->  drivers/gpu/drm/radeon/atombios_dp.c       |  9 ++-------
->  drivers/gpu/drm/radeon/radeon_connectors.c | 17 +++++++++++++++++
->  2 files changed, 19 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/radeon/atombios_dp.c b/drivers/gpu/drm/radeo=
-n/atombios_dp.c
-> index fca8b08535a5..6328627b7c34 100644
-> --- a/drivers/gpu/drm/radeon/atombios_dp.c
-> +++ b/drivers/gpu/drm/radeon/atombios_dp.c
-> @@ -228,10 +228,8 @@ void radeon_dp_aux_init(struct radeon_connector *rad=
-eon_connector)
->  {
->         struct drm_device *dev =3D radeon_connector->base.dev;
->         struct radeon_device *rdev =3D dev->dev_private;
-> -       int ret;
->
->         radeon_connector->ddc_bus->rec.hpd =3D radeon_connector->hpd.hpd;
-> -       radeon_connector->ddc_bus->aux.dev =3D radeon_connector->base.kde=
-v;
->         radeon_connector->ddc_bus->aux.drm_dev =3D radeon_connector->base=
-.dev;
->         if (ASIC_IS_DCE5(rdev)) {
->                 if (radeon_auxch)
-> @@ -242,11 +240,8 @@ void radeon_dp_aux_init(struct radeon_connector *rad=
-eon_connector)
->                 radeon_connector->ddc_bus->aux.transfer =3D radeon_dp_aux=
-_transfer_atom;
->         }
->
-> -       ret =3D drm_dp_aux_register(&radeon_connector->ddc_bus->aux);
-> -       if (!ret)
-> -               radeon_connector->ddc_bus->has_aux =3D true;
-> -
-> -       WARN(ret, "drm_dp_aux_register() failed with error %d\n", ret);
-> +       drm_dp_aux_init(&radeon_connector->ddc_bus->aux);
-> +       radeon_connector->ddc_bus->has_aux =3D true;
->  }
->
->  /***** general DP utility functions *****/
-> diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm=
-/radeon/radeon_connectors.c
-> index 528a8f3677c2..f9c73c55f04f 100644
-> --- a/drivers/gpu/drm/radeon/radeon_connectors.c
-> +++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-> @@ -1786,6 +1786,20 @@ static enum drm_mode_status radeon_dp_mode_valid(s=
-truct drm_connector *connector
->         return MODE_OK;
->  }
->
-> +static int
-> +radeon_connector_late_register(struct drm_connector *connector)
-> +{
-> +       struct radeon_connector *radeon_connector =3D to_radeon_connector=
-(connector);
-> +       int r =3D 0;
-> +
-> +       if (radeon_connector->ddc_bus->has_aux) {
-> +               radeon_connector->ddc_bus->aux.dev =3D radeon_connector->=
-base.kdev;
-> +               r =3D drm_dp_aux_register(&radeon_connector->ddc_bus->aux=
-);
-> +       }
-> +
-> +       return r;
-> +}
-> +
->  static const struct drm_connector_helper_funcs radeon_dp_connector_helpe=
-r_funcs =3D {
->         .get_modes =3D radeon_dp_get_modes,
->         .mode_valid =3D radeon_dp_mode_valid,
-> @@ -1800,6 +1814,7 @@ static const struct drm_connector_funcs radeon_dp_c=
-onnector_funcs =3D {
->         .early_unregister =3D radeon_connector_unregister,
->         .destroy =3D radeon_connector_destroy,
->         .force =3D radeon_dvi_force,
-> +       .late_register =3D radeon_connector_late_register,
->  };
->
->  static const struct drm_connector_funcs radeon_edp_connector_funcs =3D {
-> @@ -1810,6 +1825,7 @@ static const struct drm_connector_funcs radeon_edp_=
-connector_funcs =3D {
->         .early_unregister =3D radeon_connector_unregister,
->         .destroy =3D radeon_connector_destroy,
->         .force =3D radeon_dvi_force,
-> +       .late_register =3D radeon_connector_late_register,
->  };
->
->  static const struct drm_connector_funcs radeon_lvds_bridge_connector_fun=
-cs =3D {
-> @@ -1820,6 +1836,7 @@ static const struct drm_connector_funcs radeon_lvds=
-_bridge_connector_funcs =3D {
->         .early_unregister =3D radeon_connector_unregister,
->         .destroy =3D radeon_connector_destroy,
->         .force =3D radeon_dvi_force,
-> +       .late_register =3D radeon_connector_late_register,
->  };
->
->  void
-> --
-> 2.46.2
->
+So you can add a const there as well.
+
+> The ubi32_pll is the source for nss_cc_ubi0_clk_src, nss_cc_ubi1_clk_src, nss_cc_ubi2_clk_src, nss_cc_ubi3_clk_src. Therefore, to register ubi32_pll with clock framework, it should be assigned to UBI32_PLL index of nss_cc_ipq9574_clocks array. This assignment will result in the following compilation warning if the ubi32_pll structure is declared as const.
+> 
+> drivers/clk/qcom/nsscc-ipq9574.c:2893:16: warning: initialization discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+>   [UBI32_PLL] = &ubi32_pll.clkr,
+
+Which suggests you are missing a const somewhere else.
+
+Getting these structures const correct has a few benefits. It makes
+you code smaller, since at the moment at load time it needs to copy
+these structures in to the BSS so they are writable, rather than
+keeping them in the .rodata segment. Also, by making them const, you
+avoid a few security issues, they cannot be overwritten, the MMU will
+protect them. The compiler can also make some optimisations, since it
+knows the values cannot change.
+
+Now, it could be getting this all const correct needs lots of patches,
+because it has knock-on effects in other places. If so, then don't
+bother. But if it is simple to do, please spend a little time to get
+this right.
+
+	Andrew
 
