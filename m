@@ -1,170 +1,112 @@
-Return-Path: <linux-kernel+bounces-349878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F9298FC93
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:55:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833BA98FC99
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C355283D15
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:55:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7A51F2358F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BA645007;
-	Fri,  4 Oct 2024 03:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739522E646;
+	Fri,  4 Oct 2024 03:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pOYvXYg0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="muhJ49DD"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3C8175AD;
-	Fri,  4 Oct 2024 03:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31027175AD
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 03:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728014138; cv=none; b=GTp34V1oD+/ptefXR0bRc+70o7sAz4CdqVKmCgoRMswjxFtzdV9R7/uJSiG4xF2QWJa8O+5l3QeT05p1ZGPKfHx0gWXeOYtVq4kFwiyQ65eYBSbaxinFxKlm9aMKzZt04uuHsU/gVRD7iBLkWbwsLKhTTlUmDIhYbUX/FRj1+P4=
+	t=1728014286; cv=none; b=kNnYq1t6q3dQO3xBrB/vXrJILGOo4Ki54dEUIoHRfZgkTTcdtGN70wkGL9dgzcGHwSwoH+1Yiwogkchya56mtoaacnzUH6b9ebEKUV0LHR5QJrakI8xNJ72+qX3dnYRjyhFgO6gdguIYPScPybkZyLyy9mJT/eZIel0voRxeVXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728014138; c=relaxed/simple;
-	bh=EFQL2PsqMhqgzsp3EO6jdxtxH85VSlbFbjaFlbVLCuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KOA8mv7yD2Gdgv1dpd7JTFIHgdZmAdFe6Qd9Pe8vxTTd/JL5KO/BcxUaFs2dMNNDrOkK5a9VdBSQ0T6o0u3QDFd6/yuVAHpK4PkJrxxrM23LzxNphAcC0SeU+lEPydiz2o9KxnqV0b2NXkZSd6fBRM7fzgofAS3KCShOfU9YGSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pOYvXYg0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728014129;
-	bh=eVYr4UF7D4ddfUGuHX9CtKLzk9YDRMng+T5NgKOt3bU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pOYvXYg0prj4qyCbDZLpXTMwCpRphIG5TW6ewi+ASs9U3AFrOV5zUcs+M9PRj5HOV
-	 QwxBDjL2plHkfh5OTs8Xp4nMk7KXxPE9Nihm2DEMdcDAI0bv14i41Pn2Dq9Ny4iAYe
-	 UEhOCO4teVGCiQWBwRsuSS8Mr4iI4yM7I3yC5qscauVH3jDTL0/AVqpSrABSMm6oEc
-	 wGnBgcv2Hym4BpyD0qDkCp2SxlalSKk1SxtIBHmhd1BmKxBXIjwTEKzPnUtOIr68yE
-	 ZTpd6jH0h1Op7vJ6yF0vZBrdaBWIXHdG933n35xSOGiCk3OPua6+8FCIHUUKPjyMsM
-	 O9pc3asDEnZwQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XKZSx0Myfz4x8h;
-	Fri,  4 Oct 2024 13:55:28 +1000 (AEST)
-Date: Fri, 4 Oct 2024 13:55:27 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Shuah Khan <skhan@linuxfoundation.org>, Brendan Higgins
- <brendanhiggins@google.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Bruno Sobreira =?UTF-8?B?RnJhbsOnYQ==?= <brunofrancadevsec@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Luis Felipe Hernandez
- <luis.hernandez093@gmail.com>
-Subject: linux-next: manual merge of the kunit-next tree with the mm tree
-Message-ID: <20241004135527.1e2fc747@canb.auug.org.au>
+	s=arc-20240116; t=1728014286; c=relaxed/simple;
+	bh=kjYW+QziEcVJXhaCqljSKWk/0TU8L4We7FSabEho0l8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BqrVP/Swh7QXRRVNig+EnlPUSM1w3H2gouOfW1TmVv5D56Wx5Lcdcvu/oRHPeIecXlQMYqKCw4kVBjNGy1+tyxeGM6tDJyx0cRVfjrVlW3K790WaOsVeKoAda6WSm8jY2I1tcpoUtDzShBq0U55FaLY2rKcBYgTWxmLmz2B3FHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=muhJ49DD; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5398e53ca28so1915723e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 20:58:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728014283; x=1728619083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kjYW+QziEcVJXhaCqljSKWk/0TU8L4We7FSabEho0l8=;
+        b=muhJ49DDdDv70KFp+KUb7EQGohzret80q3sPOsidq508tJGnblLU8S7/GQ5NbBnKyl
+         5ogCjedh0afteJm1S5fHanT2vem3iVTht+kAac0o4+CSlTrevaF4Njf4l9yZL7WFtZ+I
+         Iz7Oldrytx8OqpccbVXGxoF+6GNgNQFh9vcVU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728014283; x=1728619083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kjYW+QziEcVJXhaCqljSKWk/0TU8L4We7FSabEho0l8=;
+        b=kW6RzeVvWwPZik6IZsHYJvPMbHd7/p+ihHSCe+BkMtTGaOghGWTA75Ch9UDWBIFdj4
+         C8zFAG6WKGmVv8IQrxgqLZnRHjL7+UAd++CA+W/IOXBaWy8o6BR820dxQd24DUUvU2NT
+         tetBOwg1AIKoVpqq1ar9ezfxE9ObCWncPqRFsvw4LNw5JlJPAu5TS7PWara4taPp6Y8D
+         omh0Byi6mUutt3HoczD1xJU7OboXktnA4k+JqDoGb1ok3f1OlWTLswL2yoXnrCo8gyzL
+         s7q18WMtkOyz/whrKp0HNyVdYg+U77IZL6ObIfwJF8l/iddCodf/GUi6jCOmAKhI7XDd
+         RJ1w==
+X-Forwarded-Encrypted: i=1; AJvYcCU7cznBll98S9ZS5s1simNn6BBaOB+cFByU+WIF3ihBnYq4JgF4gqvUsX1BdJ1Rdhmy2DPKW2ciiyAi8rY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8D4xYg2e0bU2MVDVYACsCNPX9D3PkHKO7O7/rWCVYR/mlZi+/
+	xjC0UIPYBs8ZrPAH/3jcy4wul131/27MYDqchKUH2/+3u49WyC/M+Kpo5JMICsEVZKbQut1wXu+
+	8P5rRfGkex5BME6nbTFYXoCQ2UhfTgxRdPFjT
+X-Google-Smtp-Source: AGHT+IGCSauXsJLec2oJrPfkYs9NEcva9UvjTHFkP+w1oM/AcTWaw9QXjbewWHBIo/wx6d90jb2ssOchDoJfghPpNZY=
+X-Received: by 2002:a05:6512:282b:b0:539:8b1d:80b2 with SMTP id
+ 2adb3069b0e04-539ab88c3e8mr685562e87.33.1728014283144; Thu, 03 Oct 2024
+ 20:58:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/sqZ9viu.bjIr850I6ZxrXQF";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/sqZ9viu.bjIr850I6ZxrXQF
-Content-Type: text/plain; charset=US-ASCII
+References: <20241001093815.2481899-1-wenst@chromium.org> <ZvvHdlD6E5bzsWwV@google.com>
+ <ZvvX5KcKaVBLedD1@finisterre.sirena.org.uk> <ZvvyEux8f2ylRQOn@google.com>
+ <7db1299f-f925-4689-806f-f1ea4191fd4c@sirena.org.uk> <Zvv1FuXBZpjDefb8@google.com>
+ <6626b1f3-7c3a-4531-b006-9e29155025f0@sirena.org.uk>
+In-Reply-To: <6626b1f3-7c3a-4531-b006-9e29155025f0@sirena.org.uk>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 4 Oct 2024 11:57:51 +0800
+Message-ID: <CAGXv+5HYv3v3MMknjPvOf_hKEHM_UEmz7R3ATmpindebcK_FKQ@mail.gmail.com>
+Subject: Re: [PATCH] Input: elan_i2c - Wait for initialization after enabling
+ regulator supply
+To: Mark Brown <broonie@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Oct 1, 2024 at 9:13=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
+e:
+>
+> On Tue, Oct 01, 2024 at 06:11:50AM -0700, Dmitry Torokhov wrote:
+> > On Tue, Oct 01, 2024 at 02:06:19PM +0100, Mark Brown wrote:
+>
+> > > Yeah, but that's got to get washed through the individual system
+> > > firmwares to get deployed and my confidence in vendors is not high.
+>
+> > I think native Elan is only used in Chromebooks where firmware is
+> > decent, the rest are I2C-HID.
+>
+> Ah, OK - in that case I agree there should be no problems with ACPI.
 
-Today's linux-next merge of the kunit-next tree got conflicts in:
+FWIW all the users on ARM (at least in kernel) are also Chromebooks,
+and all their supplies are either missing or marked as always on.
 
-  lib/math/Makefile
-  lib/math/tests/Makefile
+So I suppose to avoid affecting the power sequencing time, we should delay
+this until there is proper support to handle wait times with the regulator
+API.
 
-between commit:
+I might find time to work on that but I make no promises at the moment.
 
-  aa2cc84cfeb0 ("lib/math: add int_log test suite")
 
-from the mm-nonmm-unstable branch of the mm tree and commit:
-
-  f099bda563dd ("lib: math: Move kunit tests into tests/ subdir")
-
-from the kunit-next tree.
-
-I fixed it up (I used the latter version of lib/math/Makefile and see
-below the signature by the patch immediately below) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
-
-rom: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 4 Oct 2024 13:51:56 +1000
-Subject: [PATCH] fix up for "lib: math: Move kunit tests into tests/ subdir"
-
-interacting with "lib/math: add int_log test suite" from the mm tree.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- lib/Kconfig.debug       | 2 +-
- lib/math/tests/Makefile | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 9ed36fec4390..d3e44b17876d 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -3105,7 +3105,7 @@ config INT_POW_KUNIT_TEST
-=20
- 	  If unsure, say N
-=20
--config INT_LOG_TEST
-+config INT_LOG_KUNIT_TEST
- 	tristate "Integer log (int_log) test" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
- 	default KUNIT_ALL_TESTS
-diff --git a/lib/math/tests/Makefile b/lib/math/tests/Makefile
-index 64b9bfe3381d..89a266241e98 100644
---- a/lib/math/tests/Makefile
-+++ b/lib/math/tests/Makefile
-@@ -2,6 +2,6 @@
-=20
- obj-$(CONFIG_DIV64_KUNIT_TEST)    +=3D div64_kunit.o
- obj-$(CONFIG_INT_POW_KUNIT_TEST)  +=3D int_pow_kunit.o
--obj-$(CONFIG_INT_LOG_TEST) +=3D int_log_kunit.o
-+obj-$(CONFIG_INT_LOG_KUNIT_TEST)  +=3D int_log_kunit.o
- obj-$(CONFIG_MULDIV64_KUNIT_TEST) +=3D mul_u64_u64_div_u64_kunit.o
- obj-$(CONFIG_RATIONAL_KUNIT_TEST) +=3D rational_kunit.o
---=20
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc lib/math/tests/Makefile
-index 83bbf1e47940,f9a0a0e6b73a..000000000000
---- a/lib/math/tests/Makefile
-+++ b/lib/math/tests/Makefile
-@@@ -1,4 -1,6 +1,7 @@@
-  # SPDX-License-Identifier: GPL-2.0-only
- =20
-- obj-$(CONFIG_INT_POW_TEST) +=3D int_pow_kunit.o
-+ obj-$(CONFIG_DIV64_KUNIT_TEST)    +=3D div64_kunit.o
-+ obj-$(CONFIG_INT_POW_KUNIT_TEST)  +=3D int_pow_kunit.o
- +obj-$(CONFIG_INT_LOG_TEST) +=3D int_log_kunit.o
-+ obj-$(CONFIG_MULDIV64_KUNIT_TEST) +=3D mul_u64_u64_div_u64_kunit.o
-+ obj-$(CONFIG_RATIONAL_KUNIT_TEST) +=3D rational_kunit.o
-
---Sig_/sqZ9viu.bjIr850I6ZxrXQF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb/Zy8ACgkQAVBC80lX
-0GziLAf9Fgu7ULRZktqIjkS4Rc2byZ5Dd1g4sbquVDeeHEnTu7WouIIWf/fFx0kl
-yS3nRSjcpUTrDgOTEMNhZTrKRzUtouY3rw3iNlerubSZQ0qysvdqHSsks3qJnj39
-+GCkFeD2qPosJ3v4PiESXsDXa1vh2zKEFPeCPbwQutpQFle9XfxpfAAAZkA0JPZL
-4QR7tWffcGGXuFIJm7Bk8hpOkhslpb5vKgMGkMm8i6loXsk9YJ6b1VWBdrJiDeFl
-DAHIk/AayHN0AmF5T64jb85Bn5y5W9a2IMh0vqv8+Y3fkdrg/8WpoLjj9WF0T2VZ
-gzRA3PtmbD2dbSp6/XhVJCUqjDgl4A==
-=T6/8
------END PGP SIGNATURE-----
-
---Sig_/sqZ9viu.bjIr850I6ZxrXQF--
+ChenYu
 
