@@ -1,117 +1,108 @@
-Return-Path: <linux-kernel+bounces-349882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691E398FCA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:11:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E8698FCAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 964921C22E74
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F6761F235C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245D24E1B3;
-	Fri,  4 Oct 2024 04:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04A24D8C1;
+	Fri,  4 Oct 2024 04:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jF3a7J9e"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="saJifZQZ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AD943ABD;
-	Fri,  4 Oct 2024 04:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4064963C;
+	Fri,  4 Oct 2024 04:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728015090; cv=none; b=ESJmTMmKCaUV/y8/Gggfj3utp22fq2ZrYK+LLEHJSrMEs8eUyPv8tlYK1B3yR5pfIbeH/ki3KR1QVi2ZIjAT4fbakMZln6J2XzRxewzlGVLClJ/Myd8UvZerJgr04zpGivWUr/Z1tHlmNYgCVlA73467B1FeF+9rL55suumzhKU=
+	t=1728015113; cv=none; b=uT8b9l61XoLrwg7MLGoo5+aASZPnCnATFn7/ZJkQvWAwaBF7yTzjYVKCwIOgc3WUubqHUw2BBvuIheXokDfYmnDhxpEL9501qartfMDUISOc26mBfjBgMxDbpfKD7BQ8URl2fDu+sk8XPxmLL4tlnDQvbmlQUX8Lo/CbmdsiEsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728015090; c=relaxed/simple;
-	bh=mWEOE9nswXDaTVB00jH1eq6MCyPSkMFdNPKlHkn8Yns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V1aW+BUqlgKv5zXQbpTMwUjZCJ52GBfjVgekYvfeVIvg6NfBAJ2VxMah/1yiANtai+hvQdHCmpDBvrkMnFH7vkslheUvIIRin8f5Nz5muUV9VLG+uHx9fMHf29SE7bSvnLe1sAlDOkCv6PHGXtmJsMLE+BQVyCuJ85cLE6JYcl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jF3a7J9e; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-27d045a73easo914583fac.0;
-        Thu, 03 Oct 2024 21:11:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728015088; x=1728619888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7KG5NyyXcoddyKNeeQDgE4xPxgRSIlRvqW3eOyOluoc=;
-        b=jF3a7J9en/K+uzKbEHu2hHbWs9BqE75H1+EHEt/Lnz1svJC4PYq46C0C4lwZABQ/CZ
-         AjTw4bSS/sEx9eLUb/VKGGp4YfoTTa+XzyRFqkw0OQ3AcdGbTD49LaJ2R8nnHWKR6J6x
-         OSuVroCUfKWR/jLRdIC5pGl8yKNQ/iYXq2DsFf/obk709MRiJqw5d9IEnZVDUqqXkMoE
-         OXUTLnqW5rvKFDf1Kbvx1hLsFUyaO5cVmu1enu78onGRMcwLU9OSYzw3yfGjW0u9iM2z
-         BD6kHfs7fNn/XTHic5QDxskUDP26UyzSXuFfKlzFXTWdzvhPMRy91948dHCtTXnfi09Y
-         7/xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728015088; x=1728619888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7KG5NyyXcoddyKNeeQDgE4xPxgRSIlRvqW3eOyOluoc=;
-        b=Rnc6tDcuWaTsFq70bJW1O6T0xFftnvSnReYFb6U/2aKJnl/pNrAQSUYB1jsOByqfrM
-         K1ef2zUkP2rlfRk1BAwu1QhP6b8xhKq14GSBTQkV9qTrqxAMF18qP7IXBCLfc0+JY4ov
-         ux7W8FinJvu9d9JOkXjiFCQj+v2Fn+CW6kgqCT8CgluU4QJCnOY4Hco980DWNWwrKgyt
-         44/lfFX2gbnfKE7D5DEqenDGDm84nMVr2V/2jlRCXXfdytJvfXVTxpYQ9IpUxPUDClXB
-         lpoizsCJQoM2K/FbSazGo1y7Z1YN1boJssODTU2sw/8D9ZV/gbYyxxQkniWvPe/544QB
-         /6rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVm/1+QqzCrz8LO/J8f+kCBTb571LFqTyksXepWH7tL0T//+llndG+sWqJS88zVDlyMn+JYjT02PDwP5k7JUBGQvDM=@vger.kernel.org, AJvYcCVr5KWmJoMEfnVIXdUI5xIJa8gw57doKFnV3+849bpsJ3/xHMynQ0wfgcJzX/A8rPEqvUw/n+5lesFM@vger.kernel.org, AJvYcCW7/7l6oBhVgQf5LYjv12SSc4rvdOqn/BANnlxRFejfX/eJl+TqA7wH6WqmKYnvYhnhDPm+JeOWduARrw==@vger.kernel.org, AJvYcCWXcl8Y92qeEKUuhOZ5q/GPw7vLEHa5CLN9VK2weOlX5MwCI5dN/T15sv/AqjIpmaa9aXc2co0MPf7nH5Y=@vger.kernel.org, AJvYcCWux2NQyF7KM9Tk3cCZAa5jaFF6vVdLDnPvkAqiMm2qkHhwyhlBy8/9XaoNTc/CafdiYPuoJsgLmdCpBJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6s5Eik8exAXCJJhKOpjVXnRq+g3fSRfQAYwF/HcftLGxgM3Hw
-	IjbbuHVmkd0JFAuPSJNNkcxFJatWSuJKoO4xIOiu0FdDewq1oa7JvWgbgvbyP9k2iRPg30WizE1
-	gYZi8M3wPSkEm5v/asAJLoFglJQM=
-X-Google-Smtp-Source: AGHT+IH/oQQS/mnVkBMVZavu+1GJwds/AMzKCb97mcp7UAcOj1YhpcUbl3S8U4Ofo7beYWzVZu+XAyXSDZXvx8Nnsww=
-X-Received: by 2002:a05:6870:2191:b0:261:1f7d:cf70 with SMTP id
- 586e51a60fabf-287c2154afamr1028179fac.36.1728015088169; Thu, 03 Oct 2024
- 21:11:28 -0700 (PDT)
+	s=arc-20240116; t=1728015113; c=relaxed/simple;
+	bh=MgTVqtBlJXjWxKPbn0IZKf6SX3fSkLXskHoz1Fa8XIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EQKUd64wWDPc15OC2zOcIQRRSUdoPmgb3SRyTY5gy5nKztOLkzCjPJ6c1EIDE62vU7gSrjAwhG3hsd02Z61/V3UASnzcEDADvG2aXUmQBmJZNT9TX3YzeHERWUjGpBrYLOKXbHpk0Rdg4r7E2lKui8Kh+pg6XtYV68A7VCh/eNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=saJifZQZ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728015107;
+	bh=C8X3wp19MhYN6j9HIQkJ3k0aYHJRnUwd2WunUFnqad4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=saJifZQZbupn+qOOs5IQJ/PQHFdQZOGdUL7YHEfmCuw7mo3e+lpTO4STtNugYuh1r
+	 ixiY7YP1O1hDbWEQxeRrfWYqsWaLKEANHerGteYTo2fVPf/1IfCTgJoEkRjvD2ucER
+	 oANpf4yqoyQvYMtJFvbRNrx3Y/tMgoD9Es0G1qhW3wYB2FN3XPP/Z1XRfgieQQ4F7C
+	 1c0vTHHw4Fr+siHXQaf+OKfMEZoGc8/M9fh0rVLZ977CoRd6/NjKob71WwXktwKHOu
+	 LsOkdrvPyW+83Iq5DQPrfiW6gLq+cB55MbCFM0gGfcYBMg4wuS3rmzf/y/RW9ZOvT6
+	 bTiKmTOK4DPRQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XKZqk4JGgz4x9G;
+	Fri,  4 Oct 2024 14:11:46 +1000 (AEST)
+Date: Fri, 4 Oct 2024 14:11:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Danilo Pereira <dpereira@lkcamp.dev>, Gabriela Bittencourt
+ <gbittencourt@lkcamp.dev>, Pedro Orlando <porlando@lkcamp.dev>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the kunit-next tree
+Message-ID: <20241004141146.3ce262b1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tdxrmmqyzcufupnwkdbg7lwgadizm7v3lxjirykijbml7x54ze@upbdzycdsilm> <20241003215217.GA326383@bhelgaas>
-In-Reply-To: <20241003215217.GA326383@bhelgaas>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Fri, 4 Oct 2024 06:11:17 +0200
-Message-ID: <CAMhs-H8q95jAvo65yQ5x0NxyU3Hzu0HeNQxZSa+5CHd7REgQuA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: controller: Switch back to struct platform_driver::remove()
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	linux-pci@vger.kernel.org, vigneshr@ti.com, s-vadapalli@ti.com, 
-	lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
-	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com, krzk@kernel.org, 
-	alim.akhtar@samsung.com, shawn.guo@linaro.org, songxiaowei@hisilicon.com, 
-	marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com, 
-	thierry.reding@gmail.com, jonathanh@nvidia.com, thomas.petazzoni@bootlin.com, 
-	pali@kernel.org, florian.fainelli@broadcom.com, 
-	angelogioacchino.delregno@collabora.com, ryder.lee@mediatek.com, 
-	heiko@sntech.de, kevin.xie@starfivetech.com, kishon@kernel.org, 
-	dlemoal@kernel.org, shawn.lin@rock-chips.com, 
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/a_2bMlQPhEsExZ=HF+cmP1q";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/a_2bMlQPhEsExZ=HF+cmP1q
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 3, 2024 at 11:52=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
-wrote:
->
-> On Thu, Oct 03, 2024 at 12:17:08PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> > Hello,
-> >
-> > I found this patch in next as 712359cb5e9d9553c1383fc5005593aa1988efc4.
-> >
-> > While rebasing my patches with the same purpose I found that this patch
-> > handled the indention differently than I did for two files:
->
-> Updated 712359cb5e9d ("PCI: controller: Switch back to struct
-> platform_driver::remove()") to adopt your indentation changes and also
-> convert drivers/pci/controller/pcie-xilinx-nwl.c, thank you very much
-> for noticing this!
+Hi all,
 
-Thanks a lot for noticing and correcting this!
+After merging the kunit-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Best regards,
-    Sergio Paracuellos
+ERROR: modpost: "utf8nlen" [fs/unicode/tests/utf8_kunit.ko] undefined!
+ERROR: modpost: "utf8ncursor" [fs/unicode/tests/utf8_kunit.ko] undefined!
+ERROR: modpost: "utf8byte" [fs/unicode/tests/utf8_kunit.ko] undefined!
+ERROR: modpost: "utf8version_is_supported" [fs/unicode/tests/utf8_kunit.ko]=
+ undefined!
+
+Caused by commit
+
+  94d8a0976d2d ("unicode: kunit: refactor selftest to kunit tests")
+
+I have used the kunit-next tree from next-20241003 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/a_2bMlQPhEsExZ=HF+cmP1q
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb/awIACgkQAVBC80lX
+0GxFTwf+IUm5/TfcPcVqNuPGAhJVvYVMRuWAidG0PxMHKD4oxu42+Sln/XzQXWfv
+vZldAH0bCQstq0RJGLczRKlrMGnPGiDPwg/s6y57O2kWuRWjuwaL0POSJNOhC5cM
+jm1cT6RMSTv5gMA8XQllGfDJ/nE9Om5/n6p6wunxll4y1Ayoy4fHlQGnYh2J8z45
+j38U7RmP8Ip0YQjetCMdAvTTY2Tz4XkjkEDoM2Z6GK+kLat3iBgKj8iiL+rkDaVj
+MEiuDUs6SWgEGbNs7JRiz85xX0SO4JmDy1AS2FY4VrWyRKK4XgPQwkQXCKflQ00B
+guwyp/8/dta10qrGSd9eTnazwtH4iA==
+=Sj5B
+-----END PGP SIGNATURE-----
+
+--Sig_/a_2bMlQPhEsExZ=HF+cmP1q--
 
