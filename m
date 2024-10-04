@@ -1,145 +1,366 @@
-Return-Path: <linux-kernel+bounces-351346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6609E990FE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:12:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC84D990FD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2E71F24549
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:12:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FC871C23163
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F051F1E25ED;
-	Fri,  4 Oct 2024 19:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FAE81E;
+	Fri,  4 Oct 2024 19:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="h9WBaLHd"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gBARbEMb"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011000.outbound.protection.outlook.com [52.101.70.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88791DFDBA;
-	Fri,  4 Oct 2024 19:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728070993; cv=none; b=EHRoJB7g2cY8hiPCzE4BA55xItermUlygUrmOOlEAJTn2dj5mBznwcQ3LkO9ASpFAlhwp7GUloUkVwZWBM/b2f5sMrNDlFh5tp0AOCnmYClUoHuBpq8csjqBmCe/nfNy6oUdAkkTLQ0aAc0ArSwRJkQ30D4B0P926FPxmL2e5G8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728070993; c=relaxed/simple;
-	bh=2E7p4xDIjiqESb8HjztsoX4HPtZwOjx8IWDVhvI2xHI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OYQbzHpK1lJ7heOfQCVZWbRtCyGRqeNEjh0m6TyhJ3RembVkzjSwIZPXXzvjbqVzY4xGhdh1WS9TBAFqQPAAyoW/yCIALBoU5xVxPQ/QqR+JLic8vkgopMO3x9OIPSeOJaPSIw+fosd2O1Tnjo6L2CYassw9OzUpCffyX4YtKLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=h9WBaLHd reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id ac159aa11a076184; Fri, 4 Oct 2024 21:43:03 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 2CD0E6A9505;
-	Fri,  4 Oct 2024 21:43:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1728070983;
-	bh=2E7p4xDIjiqESb8HjztsoX4HPtZwOjx8IWDVhvI2xHI=;
-	h=From:Subject:Date;
-	b=h9WBaLHdxIkBceiEZ3weXYNHdu/axLVNeNpU9VgHm2MseQ/3tPIQds3AAGFWquUyt
-	 fQAmCW/NLYsNqlI+ep1XU0YO1wa0ewvifY9IaJk65LwKuOuatHYkW1amh4VEoFQGo0
-	 PKbRDirn/4DrX0/w/ARuTbHtGaR+WTEyZnQ6wOhdYVP/1SpmKlMY8VOySJQ7dAko5K
-	 Q08fJDfPzbj1buwjV87/LnhZbRIRHv9vc7Vq/rMOXwDPIanr2GGq949kr+3tmEbVz8
-	 OKp+naZxIjghTEHQBNqvpaq3oOO0tdrWiEXtKS0CNF8tW2ew4xrX23dHqcCxZnBi7b
-	 SztEmxKUap21w==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject:
- [PATCH v2 10/12] thermal: core: Drop need_update field from struct
- thermal_zone_device
-Date: Fri, 04 Oct 2024 21:35:16 +0200
-Message-ID: <2495061.jE0xQCEvom@rjwysocki.net>
-In-Reply-To: <2215082.irdbgypaU6@rjwysocki.net>
-References: <2215082.irdbgypaU6@rjwysocki.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F383873466;
+	Fri,  4 Oct 2024 19:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728070555; cv=fail; b=kBIUCz6MCwHEzkt6SCei/ZtCs0XKlIBT2QAIKu1lpXqtSDg6pP8gV5wculerbNLXQNV118IGRIwILx3Az1NZduhxgerkysFkrCPAdsIK5AoN8ao/1KGctqg3bRy2rRqoXzfaZM2GPkka+nO8Owzevj2xqN/dL9w/LjqRkQzDN2g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728070555; c=relaxed/simple;
+	bh=2K5Xs6ynqtBnznUvSCxGyUqzqTSbuWzq1c713oGuakk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=D1CiOzJ0UJDWVRpDLZEMBU8xylwTApOraOnTOXe3mlFVQd9CfyI9L7kRbidTeaqTdkH8am7u3eNI1ZPU5pVYyzvwQ94/ZZOQDpkGBNOaVFwkIGuG7grrXUQnVQ2qofh8qqjQjQ1Tms/qyIqToYAW4/J1hbkW0cgWZ8JGkR+TNw4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gBARbEMb; arc=fail smtp.client-ip=52.101.70.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rprdCCn+aR75CiF0fypnRJqRRi1NQF+AgFviU26binxCVd0mNR/GeUN876oOEDGamexxQwAN5qCZoMajT9sFaN9kKwN4eUhKUmDiuFM/j7rOImdu8IxC20fH/K4sXST0sf9mhlFyn7iePd4ejGfm4EE3oP/KrikZSEC9k1AShYfYUdqu1f0yId0/PEjGo51uXVzabw9lkHP4HE/yfzj1byeL46p/WY4IQNyip5wBPnVMdTOKAa5+0IL/yhDDovsGLSMSU5yXG2P+iF1+chrkg5yD0MdQALQp34ICxsH4VKLfphveidaq0pyCOt3GYFdWCDgTQrrmrjZpXoKPuBdbkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8Q49TfIINT6iI8oLu6wHk4SvR4hWXJ3iXD79wzZ8b6E=;
+ b=YpkNDR5URYA++c7yqJzSRjJbnH+zEUvRKNGwrMD2vMhhGU9V3bUNTCaYG93/Yp3WTkouau51nqzfnhA6uN9TgQRZsYcsTHK5rqZ89NV+l5IXe+VrYKECvVEqHKXp7JJ0dr+fcdkzpF5PxrQvBOh2KxIMxwK0lt/PMkrT2VjcWmdJU36JyzhVb5FAUsVDuD5rpDFz9h9YlSrzBN40jSgRJX7kUWMz3FrlEU3u5kPwgOzyaFn0Bw+u4BNuHd4hjk2PZH8XGiIr2rBFmug33ciGl7AWHCk+v7qTArlno9SEhBN/FmJt8238WOXpkTejkNC5dfBC/NoOIBkN2MEjgp0hJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8Q49TfIINT6iI8oLu6wHk4SvR4hWXJ3iXD79wzZ8b6E=;
+ b=gBARbEMbQc6Sf0M4/duEd7WFe5svbwvRXjHg0LUToMGL4swOKhTgErAtoEiL06Fl8FPJWAbJgznIya5DROKjmDDEYWLw+FFm/XyvMG7mP7YT2w9oqtj4rY9oVLpo8YUfQSY2lOv3AylontIbiPZP8mdtVQrfMyUmdnYjSTrT1e/+N+dB52FM8FDapWkcI3hnWOvu02Mr9XGTFHrI6tcaCXtybZc2sk6Fu5YPpGmIDWL7ol/zTncIFv1SxRU7GwoFhDYta85faDXi96nXBmn0y0priPpAYg3anEreB7uosliMGaAupGSt+w6U6wE7nLsXAolZRGjcoKF15QL1puLf5Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DU2PR04MB8695.eurprd04.prod.outlook.com (2603:10a6:10:2de::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Fri, 4 Oct
+ 2024 19:35:50 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8026.016; Fri, 4 Oct 2024
+ 19:35:49 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: marex@denx.de
+Cc: Frank.li@nxp.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	festevam@gmail.com,
+	francesco@dolcini.it,
+	imx@lists.linux.dev,
+	jun.li@nxp.com,
+	kernel@pengutronix.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	pratikmanvar09@gmail.com,
+	robh@kernel.org,
+	s.hauer@pengutronix.de,
+	shawnguo@kernel.org,
+	ukleinek@kernel.org,
+	xiaoning.wang@nxp.com
+Subject: [PATCH v7 1/1] pwm: imx27: workaround of the pwm output bug when decrease the duty cycle
+Date: Fri,  4 Oct 2024 15:35:31 -0400
+Message-Id: <20241004193531.673488-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR13CA0202.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c3::27) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvfedgudegtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeefudduuedtuefgleffudeigeeitdeufeelvdejgefftdethffhhfethfeljefgteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdi
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU2PR04MB8695:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf7ac0ea-d2fc-459f-67a1-08dce4abc045
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|7416014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L0Y2enFUS3Qya1JVcHp5ZGMxUmwwYUpETzdHNHllZGlrMXNtMS92WGEvdEEz?=
+ =?utf-8?B?MERQOUhianhKV3FQL0NJV1c1YjRzaS9IRVMrRnJjSm16VVcvSmJDbG9MTGFp?=
+ =?utf-8?B?aVlLNmY2MlVJT0kwME1Kbk9FTHJxS1dENzNXVGN0eVlzMnMxYndMdWRlUFVR?=
+ =?utf-8?B?WHJtSENLTXIwN3AvbFBTZmVjVjJ0ZUpoUkExVDRTbFdGTFd2UTl0YTcvaGs2?=
+ =?utf-8?B?Z3JHUThQaVpuNCtLdmJDYklxNTk2cU1BS2svSGE0UGNPeUkveGFLZzQ5T2xl?=
+ =?utf-8?B?cEJuT1licUhGKzFXWlZES2FjTk5aSTVnb3ZZeXovVUFLSm14OHB3R21JQkda?=
+ =?utf-8?B?NVgvWEhSYUtFZVhJbHgrQ1ZmNVRFVGUzUlJMeG9uKzZHRkNxaitDLytmYU85?=
+ =?utf-8?B?MG9lSUhaaGRPUUlDNVhNOVpXS0l4OWY0cWliZ2Z6emRSNUZGSm9Leit5UTdl?=
+ =?utf-8?B?ZUIxaWVhZUxBTEVKcHoweDF1YzJtWkZYK21qQk5QNWFpZkJ1N29uaEM0V1hP?=
+ =?utf-8?B?a09sY1FyMEV6clVGdTVtQnF6V1RoSVZMRXhwZTMzSm90TjJJWG1aRXRncmlt?=
+ =?utf-8?B?dW1HU1g4QWVtQUg5Y0FmSDJFbmppYkltaS9QR01FWWtPaFlGTVlaL0hLdVZ4?=
+ =?utf-8?B?Tzh5eTRwV2g4SHcvZ2E5VlVLTzBvVSt1RDcvb2lTL0JtaGdjOGZMTWhXRGp0?=
+ =?utf-8?B?aUpuS1luU1ptTmVNYm01QTJxcmNaeDlXTDZiamNEYnFwQXFQVjZkaHNSdkUv?=
+ =?utf-8?B?MlpWbVFiYXFzaHFmWkpJVmlYeEdxOHRCMElRdGRUM2JoaTFicVI1VTgzbkNU?=
+ =?utf-8?B?TVJHNk5Mc0FMRFB2eFJHZThUaERCN0ZwNUV3WlY3SkFDaTZobTFkbVFmV0d1?=
+ =?utf-8?B?TUN6b3UyU0JhU3ZUN1dQS3Uzd1dPaFMzNjZzSmxGcXVJdWhacFZTWEFFRXha?=
+ =?utf-8?B?UDdYZWFBbTJidU1kaDN1VGd4cjNHbDcyL0Z1OHJpVVQydldOQWhtL0VoaVpJ?=
+ =?utf-8?B?cEtMeG9HaHZkdHo2eWwzL29EZGxLOEtkYytNSmVseFVBamVINXRCUjZUNHdp?=
+ =?utf-8?B?K3FPSk5PL0Mya0s1cTJsMmRvYjdVWVhqVjFrUDhvRWFIMnMrWll5MlB0Ym81?=
+ =?utf-8?B?b2tGRDJWKzRHU3RKUkNXNHZUeDZWVTBEV3hiMDI1MHVXcmdEWE9qSTM0UVZ1?=
+ =?utf-8?B?SWM4RFFEOWd1d0hxRlMrQ2QrTlRVRHdVL25Mb0h0WElLeWhybXYyQWJWdStU?=
+ =?utf-8?B?aksvYktOeG9ENkgvVXo5a2JLVDhxVVU2WW5LaUZCL0NQd092V3pTSTFzNTB3?=
+ =?utf-8?B?ZWVld2N2SXVwT0Zib0VxWk85ZGErUXBwQmIwVVRZcHVoM3JvNU1sWjMyWERP?=
+ =?utf-8?B?dUtsQlJNdERqTVhTL3BuNHhSQnYwS2hUMlVLVmc5b2RFeDZ4Y3VRb3A2Q1pi?=
+ =?utf-8?B?Sm8xVHdoRVNSUUVEVVNHSE81c0xhRFdmbUxxNTBreHIrTlFmLzZScUZJSFNJ?=
+ =?utf-8?B?dWtKTEV5N2tKWGR2OVVjZ3A5emx5bGpaSUdVeWw5ZXlKMlZTeU9kQ1VmWGE3?=
+ =?utf-8?B?SHRTcWZhNXBkMTBNcThJeHpYM0J0bjlncWtGV0Yyb05pRUpUekpDeENXQTBm?=
+ =?utf-8?B?aEN4Zndnc0tCWUtvSU9PNHorMmxUTlBNdGJlUFVSbHJXUHhyQ1NVd0hkdlVK?=
+ =?utf-8?B?QmpzZVIwSzFkMTcvb2ZWb3dtOXVIMmpyTnFqOStCTWtHY1VRODYvOWVGVHdy?=
+ =?utf-8?B?QkdQNEpGditNdFBlZWVFYnIyd1lVNUNQbXRKK2NrcEY3NXg1aEtvZHQxaG53?=
+ =?utf-8?B?RUV5dFRjMTJiZnFiUUQ3QT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UXNwc2lDL3hzY3ZMWHFMTGdMTzBrMUdKbDJOS1ZweDhNMU15NjNKVlpBWDl2?=
+ =?utf-8?B?ZGorRWs3bUVrcmt4eUJTVTlrdEtRUzRFVXNNMXgvc3pRVDJzS2h1ck1waGRC?=
+ =?utf-8?B?eVN3aWxCZXhpUnJ4WTExSDZIS2VuRjV6emZQM09jZEFaSytFaHVKV2M5RHZZ?=
+ =?utf-8?B?Vk82ZWdWdkN6bVpCelpZQW52NFhjTU9QeGRGK1ZtUXVQMTNMb2d6WkxnYmxy?=
+ =?utf-8?B?WDh4dmw5aVFib3c2Zm1rbHhVRWduU2c4bDFaQisxZHpuVHdSWmVndVpmbGxr?=
+ =?utf-8?B?S2pKU2pRUmNOZmVnNTZhSmt1dklkcktvSmJmaXRMbFhNd3lEVHJZNmpqRGhB?=
+ =?utf-8?B?RGh6Q2FCSHFpS3JIdjdHT1NmZVpWT0tNTnd4b3dycWZZR2gzYldBZlFhMTlM?=
+ =?utf-8?B?SjhLUisrcmFob1Nkam9EdXQrQnc1Ri9LMll5TTFNOXJHMHFUVS9qRXJZaFR0?=
+ =?utf-8?B?L3o1cmxOOUx2eHYwbWl0bDVaeG8raXFBcUVtWHhIVEtlMUoxZUVGNi9TRjNN?=
+ =?utf-8?B?S0M0MWVGZzYwOHQzamlvaENNcmM5YWppY2c5aTIzV0FKdHU1M05aNUpnZXNG?=
+ =?utf-8?B?QU9JbTBpM042bDBPTDkzeHNpSWJZZWdGUDdJM3p2YXlRQ3RhN2s4YlZtRkg3?=
+ =?utf-8?B?aG1lVVJVelZsZ2FtYkNuODhPNDlMRG5sdXRXN3V0L1ZVUHB4UzBQMXB3Z0hn?=
+ =?utf-8?B?amFGT2JrSWpBdlVHRTJXSFpmOWsxeUNCRlArK2JhUE5Ba1lrb2pBRmI0bitN?=
+ =?utf-8?B?SWZjUzRpbUVDTDZIc0s4elhhVjhHY3FseG0yQmlieXBCOWprLzU0UWRuM0s4?=
+ =?utf-8?B?T0lKVngwNEdhWnVMR2NUcDJQR3c0TXBnTG9VTHZ4U21oNWlKWjBJWjV1RkZD?=
+ =?utf-8?B?ejhEanFxZHdGQys3dXhQNEJma2poNzFMMVpaaStPWENtbVQ0WDNRQ3ZpWno3?=
+ =?utf-8?B?UkZQNHJUMEw1eGZqb0JGQlRVanFTUURnKy8wL0FKSjhQUnlRdXlIY3lVdlZ6?=
+ =?utf-8?B?L3g5SzNQOWlORlZRSlNDMTk1a0lueTk5QnZBbjRhTnF0Rnh0T1dNODBrQ2tx?=
+ =?utf-8?B?ZnIrdmphbjlJS3dMUkV1YmZMMWNRL21MMkxXOXFZblNTYzd4Q1htYThGTWJm?=
+ =?utf-8?B?VDRmVisrZVhMdzd1VlNsMGtDSnpRYUJDaDVYRmIwVnVIV1prOXZGTmp3NUxa?=
+ =?utf-8?B?cXFOdGo0VXFidWdEQ2tKODZjckE4Q1hvQkVkM0ZDS2wyd0pZSTVUOUlyOU1E?=
+ =?utf-8?B?bnRTd2M3SytTRDNJN3ZKZmxJcGpUYkxkems5VzljMVdKWVpNampFMkEzQ2ZF?=
+ =?utf-8?B?dU5jcXZyeERNK01jMitTZ1RLT3l0anNlQlQyMmUxTi9ZY1R3RXVuODUyNGtw?=
+ =?utf-8?B?bGJwQXNqMStPcTUzL1h0d1RHa1N6b0VUbGFxcTdhZmdkN1h6UjljVGpSTzVa?=
+ =?utf-8?B?WVh3Qi9hS0hBeVYxcUtBMkRBZ1F4Q0xtd01zVm9DVVdmZi9nRXVOcmozRkQv?=
+ =?utf-8?B?K2xKWGwrU1pHaTkwTXlwRk9BdTJTditTN0VITml4NGtoVlpNZ0wzRzlVQjN6?=
+ =?utf-8?B?VWlFTUoyYjFIenpUd3RpanFNZzdmd1BlTnZrUko2T0pwQWdMTjgvcjZNd3Z6?=
+ =?utf-8?B?S0JJU3hJN2xLUXY3L3lDeGVNV1cwREhQajJ2ZXhDaGZzOWYwejFvT3J0cXJT?=
+ =?utf-8?B?QjlKNGRDVjM3RWRnTUg1cTBXb2xsWkNjcFBvRTNRT3NqdG0zdS9DSkx4Y3Z3?=
+ =?utf-8?B?RXc1TWpWUWl3alZQOWN0OW5ybXNSL1NRVDBHN1YvSWZnRU1YZGlwd0dkN0dU?=
+ =?utf-8?B?UWxSSkZiTDRMVGRyelJCNnpIZ0F3NVExdlVmdUxQNjZoTXdib2hTTFNBOXJZ?=
+ =?utf-8?B?WC82azhHS0dBUWUwN1hpRDM2VC94ODJ2aTdGWjdOdzRrUXY0VGdPaUVsd05U?=
+ =?utf-8?B?OWdrbHV4cWM4MWNXdjdkZlBlQUtCVzJna1V3Rkg0QTB4cWVpZ3JwRHFtWjhr?=
+ =?utf-8?B?QndHWSsreERIWlVIOEpRY3lxaVRZL1Nna21FeDR1Q1c4czJmS1NaR1hyYnEv?=
+ =?utf-8?B?anpTRWhFRXRKYVFCbmJsbDh4MXZvYVZzcHpnL0s4L3NPdWU5VjNsZmI0NEN0?=
+ =?utf-8?Q?ul78=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf7ac0ea-d2fc-459f-67a1-08dce4abc045
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 19:35:49.7423
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9CEmh1UY1SS4t+npBYWBeelX5eawgYA1DlevpiYoka9k/mxyFZ/QmnNPsmy4FU1C8e6V6zadX1dpx4QRyL593A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8695
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Clark Wang <xiaoning.wang@nxp.com>
 
-After previous changes, the need_update field in struct thermal_zone_device
-is only set and never read, so drop it.
+Implement workaround for ERR051198
+(https://www.nxp.com/docs/en/errata/IMX8MN_0N14Y.pdf)
 
-No functional impact.
+PWM output may not function correctly if the FIFO is empty when a new SAR
+value is programmed
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Description:
+  When the PWM FIFO is empty, a new value programmed to the PWM Sample
+  register (PWM_PWMSAR) will be directly applied even if the current timer
+  period has not expired. If the new SAMPLE value programmed in the
+  PWM_PWMSAR register is less than the previous value, and the PWM counter
+  register (PWM_PWMCNR) that contains the current COUNT value is greater
+  than the new programmed SAMPLE value, the current period will not flip
+  the level. This may result in an output pulse with a duty cycle of 100%.
+
+Workaround:
+  Program the current SAMPLE value in the PWM_PWMSAR register before
+  updating the new duty cycle to the SAMPLE value in the PWM_PWMSAR
+  register. This will ensure that the new SAMPLE value is modified during
+  a non-empty FIFO, and can be successfully updated after the period
+  expires.
+
+Write the old SAR value before updating the new duty cycle to SAR. This
+avoids writing the new value into an empty FIFO.
+
+This only resolves the issue when the PWM period is longer than 2us
+(or <500kHz) because write register is not quick enough when PWM period is
+very short.
+
+Reproduce steps:
+  cd /sys/class/pwm/pwmchip1/pwm0
+  echo 2000000000 > period     # It is easy to observe by using long period
+  echo 1000000000 > duty_cycle
+  echo 1 > enable
+  echo  800000000 > duty_cycle # One full high plus will be seen by scope
+
+Fixes: 166091b1894d ("[ARM] MXC: add pwm driver for i.MX SoCs")
+Reviewed-by: Jun Li <jun.li@nxp.com>
+Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
+Change from v6 to v7
+- Add continue write for < 500hz case to try best to workaround this
+problem.
 
-This is a new iteration of
+Change from v5 to v6
+- KHz to KHz
+- sar to SAR
+- move comments above if
 
-https://lore.kernel.org/linux-pm/3261209.5fSG56mABF@rjwysocki.net/
+Change from v4 to v5
+- fix typo PMW & If
+- using imx->mmio_base + MX3_PWMSAR
 
-v1 -> v2: Rebase.
+Change from v3 to v4
+- none, wrong bump version number
+Change from v2 to v3
+- simple workaround implement.
+- add reproduce steps.
 
+Change from v1 to v2
+- address comments in https://lore.kernel.org/linux-pwm/20211221095053.uz4qbnhdqziftymw@pengutronix.de/
+  About disable/enable pwm instead of disable/enable irq:
+  Some pmw periphal may sensitive to period. Disable/enable pwm will
+increase period, althouhg it is okay for most case, such as LED backlight
+or FAN speed. But some device such servo may require strict period.
+
+- address comments in https://lore.kernel.org/linux-pwm/d72d1ae5-0378-4bac-8b77-0bb69f55accd@gmx.net/
+  Using official errata number
+  fix typo 'filp'
+  add {} for else
+
+I supposed fixed all previous issues, let me know if I missed one.
 ---
- drivers/thermal/thermal_core.c |    4 ----
- drivers/thermal/thermal_core.h |    2 --
- 2 files changed, 6 deletions(-)
+ drivers/pwm/pwm-imx27.c | 75 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 74 insertions(+), 1 deletion(-)
 
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -840,7 +840,6 @@ static int thermal_bind_cdev_to_trip(str
- 	if (!result) {
- 		list_add_tail(&dev->tz_node, &tz->thermal_instances);
- 		list_add_tail(&dev->cdev_node, &cdev->thermal_instances);
--		atomic_set(&tz->need_update, 1);
+diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
+index 9e2bbf5b4a8ce..00a7189ba46ca 100644
+--- a/drivers/pwm/pwm-imx27.c
++++ b/drivers/pwm/pwm-imx27.c
+@@ -26,6 +26,7 @@
+ #define MX3_PWMSR			0x04    /* PWM Status Register */
+ #define MX3_PWMSAR			0x0C    /* PWM Sample Register */
+ #define MX3_PWMPR			0x10    /* PWM Period Register */
++#define MX3_PWMCNR			0x14    /* PWM Counter Register */
  
- 		thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
+ #define MX3_PWMCR_FWM			GENMASK(27, 26)
+ #define MX3_PWMCR_STOPEN		BIT(25)
+@@ -223,6 +224,8 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
+ 	unsigned long long c;
+ 	unsigned long long clkrate;
++	unsigned long flags;
++	int val;
+ 	int ret;
+ 	u32 cr;
+ 
+@@ -263,7 +266,77 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 		pwm_imx27_sw_reset(chip);
  	}
-@@ -1505,9 +1504,6 @@ thermal_zone_device_register_with_trips(
- 	if (result)
- 		goto remove_id;
  
--	/* A new thermal zone needs to be updated anyway. */
--	atomic_set(&tz->need_update, 1);
--
- 	result = dev_set_name(&tz->device, "thermal_zone%d", tz->id);
- 	if (result) {
- 		thermal_zone_destroy_device_groups(tz);
-Index: linux-pm/drivers/thermal/thermal_core.h
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.h
-+++ linux-pm/drivers/thermal/thermal_core.h
-@@ -95,7 +95,6 @@ struct thermal_governor {
- 			trip point.
-  * @prev_high_trip:	the above current temperature if you've crossed a
- 			passive trip point.
-- * @need_update:	if equals 1, thermal_zone_device_update needs to be invoked.
-  * @ops:	operations this &thermal_zone_device supports
-  * @tzp:	thermal zone parameters
-  * @governor:	pointer to the governor for this thermal zone
-@@ -129,7 +128,6 @@ struct thermal_zone_device {
- 	int passive;
- 	int prev_low_trip;
- 	int prev_high_trip;
--	atomic_t need_update;
- 	struct thermal_zone_device_ops ops;
- 	struct thermal_zone_params *tzp;
- 	struct thermal_governor *governor;
-
-
+-	writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
++	/*
++	 * This is a limited workaround. When the SAR FIFO is empty, the new
++	 * write value will be directly applied to SAR even the current period
++	 * is not over.
++	 *
++	 *           ─────────────────────┐
++	 * PWM OUTPUT                     │
++	 *                                └─────────────────────────
++	 *
++	 *           ┌──────────────────────────────────────────────┐
++	 * Counter   │       XXXXXXXXXXXXXX                         │
++	 *           └──────────────────────────────────────────────┘
++	 *                   ▲            ▲
++	 *                   │            │
++	 *                 New SAR      Old SAR
++	 *
++	 *           XXXX  Errata happen window
++	 *
++	 * If the new SAR value is less than the old one, and the counter is
++	 * greater than the new SAR value (see above diagram XXXX), the current
++	 * period will not flip the level. This will result in a pulse with a
++	 * duty cycle of 100%.
++	 *
++	 * Check new SAR less than old SAR and current counter is in errata
++	 * windows, write extra old SAR into FIFO and new SAR will effect at
++	 * next period.
++	 *
++	 * Sometime period is quite long, such as over 1 second. If add old SAR
++	 * into FIFO unconditional, new SAR have to wait for next period. It
++	 * may be too long.
++	 *
++	 * Turn off the interrupt to ensure that not IRQ and schedule happen
++	 * during above operations. If any irq and schedule happen, counter
++	 * in PWM will be out of data and take wrong action.
++	 *
++	 * Add a safety margin 1.5us because it needs some time to complete
++	 * IO write.
++	 *
++	 * Use __raw_writel() to minimize the interval between two writes to
++	 * the SAR register to increase the fastest PWM frequency supported.
++	 *
++	 * When the PWM period is longer than 2us(or <500kHz), this workaround
++	 * can solve this problem. No software workaround is available if PWM
++	 * period is shorter than IO write.
++	 */
++	c = clkrate * 1500;
++	do_div(c, NSEC_PER_SEC);
++
++	local_irq_save(flags);
++	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
++
++	if (duty_cycles < imx->duty_cycle) {
++		if (state->period < 2000) { /* 2000ns = 500 kHz */
++			/* Best effort attempt to fix up >500 kHz case */
++			udelay(6); /* 2us per FIFO entry, 3 FIFO entries written => 6 us */
++			writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
++			writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
++		} else if (val < MX3_PWMSR_FIFOAV_2WORDS) {
++			val = readl_relaxed(imx->mmio_base + MX3_PWMCNR);
++			/*
++			 * If counter is close to period, controller may roll over when
++			 * next IO write.
++			 */
++			if ((val + c >= duty_cycles && val < imx->duty_cycle) ||
++			    val + c >= period_cycles)
++				writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
++		}
++	}
++	writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
++	local_irq_restore(flags);
++
+ 	writel(period_cycles, imx->mmio_base + MX3_PWMPR);
+ 
+ 	/*
+-- 
+2.34.1
 
 
