@@ -1,332 +1,372 @@
-Return-Path: <linux-kernel+bounces-351338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293A7990FDC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:10:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 596A1990FDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1F5028177A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:10:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B85E2827E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035AE1DF732;
-	Fri,  4 Oct 2024 19:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66C91DF754;
+	Fri,  4 Oct 2024 19:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="vF9XlVY9"
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iuNwLBuY"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECC41DED73
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 19:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70D61DF744
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 19:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728070753; cv=none; b=ESKhMbPinfYg8yyxttzY9ruebFUZiw3oPpZ9C7pUxs8M922qyvkQTFKZcrFuDWST8LAgcxJr5ILc6Kexj9Ru08CWAGc1fYV6MR+ajAPQgBh2vbJ8yOYHklZC64m0qXCCg3WkMwpOjC4BNRETFCqPcaNggf3EfDwRu/i3OUdsyY0=
+	t=1728070806; cv=none; b=acqYQa7r8UiCnHM7ZJCnWVsMHwVQYILC9WWZ4Ob+CFTH2E+B6vriM1JGwT0ArkVHEPZc0T+HPyxybJQ53tqTmrDZVeTrS5VaZgnp4lePaMwgVy+ipzxpFKvFYGAMi/pk8dIt7PYB5/0YtVXSvJv2tx4+Z9tTpx2fUg5e/4IFSZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728070753; c=relaxed/simple;
-	bh=CQbvnaddX1I+CQ0sFwW5hTSBrgGw3Cbm9ThCcYHIRZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ShDrnwEpMcS4Gie5ENooV5KAkAcYX6Gs1EMrY/5RMh6SXhGq6hk952+R7zGXD+owO14HSDUb0tt/Mnh/mBB1EOwEBF6612vIVSaAN3RF/xy1yybU3MpiF0b55dmpKE3kvWWs+9vY23AZg8kfoT7pSAuAiYc5l6g5Y+HxfQ5/nSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=vF9XlVY9; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
-	by cmsmtp with ESMTPS
-	id wOOGsCJGdnNFGwo8ssPt6e; Fri, 04 Oct 2024 19:39:11 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id wo8ss2Y9IAYrQwo8ssYdsu; Fri, 04 Oct 2024 19:39:10 +0000
-X-Authority-Analysis: v=2.4 cv=Arzo3v9P c=1 sm=1 tr=0 ts=6700445e
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=B3fuDwYyW55wTQKIj88FGw==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=aLwh8JLyV31UtTAnTHUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YD83euQ/CrdNqu2HK+EXXkiD66z+NLpPhH9n7OO1i0s=; b=vF9XlVY9Z/m/50EpCAlvYuKvcA
-	5Ge1rDhOFPESFDxGO3Xe8FtnO6EC6mCVNQGtyEvqJ5/mjS63VidtbrM9AF87UWMi1s8ZAN6w0FOxQ
-	HK5Kw9E50zRvmZd1Ja5HxB/Hqv8qofqKzz3aMdyhvDWQ7wGjvQh7Nj03lwAIKRSC9BZJ0auXSWAlF
-	5Iaq/bqHv8qRfAhCJxKpWZWwy6kTRKdzcZ6Fg+U2VDXCwHeB5jjTu+uuFHi/iR7bA0cQRaCYoQCpN
-	VyLPp9xHV3KgBOXHJbRm+QzFWRjYdmGQUzMHaYaL/QqM+qlW67O2awBKXOnlFMTbcFWExP5Ve5F/s
-	yltbqk2Q==;
-Received: from [201.172.174.147] (port=58090 helo=[192.168.15.5])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1swo8r-002kZQ-1a;
-	Fri, 04 Oct 2024 14:39:09 -0500
-Message-ID: <b0f25000-396c-4a83-abc1-1a07b3065c10@embeddedor.com>
-Date: Fri, 4 Oct 2024 13:39:08 -0600
+	s=arc-20240116; t=1728070806; c=relaxed/simple;
+	bh=kZnDXonFnkFIJiRpDEAv2ndmbyVCAZCSm5JJKrDoA3A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KmtfFGApayT876C/0xR8G+KGWcwLF7PdVsHe/pZ5r7yAdEkGgSgnBMkwKNTylgRJ/pWRptOlThWuBCDOARfEg1RJ+ZsgsjPj/TRvkWXMy1hyyfSaAdigBAULF+BUKIE7VheZthZrHjFiYyAIWGsezJw1qr6xs0Pc5J4sP4wUleI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iuNwLBuY; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so31464005e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 12:40:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728070803; x=1728675603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6XVUpBvJFzerTUZsTaQ0P7VbnsPqllnSnoHnX2FMvSE=;
+        b=iuNwLBuYHGHbIcDwwM02yNiMFqeBmftdh46Vcn9C3bzkMPrSq6LLtT4yOgXzkm/JoT
+         2SezSUDtn9akW2M7shYmu//3STaABwv1EipYKRRyO1pSEWqqBpQgrfPTUNz2OoocyUGz
+         ziohzq/UXu6YxF1F0P4k/eWvv7YPuGYLVXeTZqnG0hTEJgl99/DzZQaubcz08nLWVAvx
+         NKbfBFtV5bGkpkokjWkl2Az2UUbxyu9ylA0P6Uzs4QG21KPz9gPy2tPFGzrmXDtEebxe
+         6ayFMboQHV2jKMakpzPduVFmp4RDtntW/fstlNozBTXhw64VVxio/RRkBVloRYZvuZYJ
+         kkag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728070803; x=1728675603;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6XVUpBvJFzerTUZsTaQ0P7VbnsPqllnSnoHnX2FMvSE=;
+        b=IXTiv0HMBlqa+AgRvI+oJCBVSizdWl1aHv8pWjY3haJVxucKcMhP9bmB+rvoS6ZA+R
+         9RnfR4H7jmKivHe5dbX1ScG8d6LaxCkr5akb3RsbadiIVGHR8bcgs0T3OPSEI7Nwk3s5
+         ehTLPuFatr5ucG5R0AAH7BuYhQiPW2iYM34AbzmcG29h60wuCdGnpXU4uCAsKh3oirfa
+         X3NO/0eKJl0SP1K1ZbP1mkS1acBLENk/kgYL34MjBZut8WokCDShk3FuqN4B4M7m/JCo
+         JZgxm7ISbavfg7X8u8JDZqJ20PQ9dgThoCvR3itAK5Wog25A/+oO2gbARrnxWK1sH7Jb
+         LYFw==
+X-Gm-Message-State: AOJu0Yx9LGoUjcQYlIHjua37dzIYzMD1ZKHvSGFr93A0tk76btd7GZGe
+	PXdibJrHXX4G7ioIbZ7NkAgWiqs4wmKwH9Tlos7aEPornwoOgEriy2tJOA==
+X-Google-Smtp-Source: AGHT+IGfOMKHEDkEkhgKbiUcXGNuaG/JKGnjszrskswIYPoZkNNm9fZTnTvDTs0Psx9f9d7+kdYdSA==
+X-Received: by 2002:a05:600c:3ca2:b0:42e:94ff:7ac with SMTP id 5b1f17b1804b1-42f85ab89famr36878385e9.21.1728070802599;
+        Fri, 04 Oct 2024 12:40:02 -0700 (PDT)
+Received: from localhost ([2a01:4b00:d036:ae00:a3f4:1a10:8066:7b14])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89e8af91sm4681075e9.19.2024.10.04.12.40.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 12:40:01 -0700 (PDT)
+From: luca.boccassi@gmail.com
+To: linux-kernel@vger.kernel.org
+Cc: christian@brauner.io
+Subject: [PATCH v3] pidfd: add ioctl to retrieve pid info
+Date: Fri,  4 Oct 2024 20:39:10 +0100
+Message-ID: <20241004193945.206532-2-luca.boccassi@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] wifi: iwlwifi: dvm: Avoid
- -Wflex-array-member-not-at-end warnings
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <Zr5QR03+wyw571zd@elsanto>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <Zr5QR03+wyw571zd@elsanto>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.174.147
-X-Source-L: No
-X-Exim-ID: 1swo8r-002kZQ-1a
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.5]) [201.172.174.147]:58090
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfLTbJEJvtFLvCr4iHmweCLjrL+J4hJDAOwX+0JIX+w2AL8OBlzquEo0rsObfhU2RhYElupqJkeu3R+R/tHbpVXnGkSI30aGuKj3S3ZT7PSZZT/Q6HCjP
- SD+l0X04BptFunuBiWRj9lZIjh9Md2wZjcI+GBr/FBH8qMWaoVmH4sx7Pzc7UBSVrNqlUTmeBse7+03yt6OP1hfTcECwuN8YtvzV1GDbvK4/nIphlFl2YW/K
 
-Hi all,
+From: Luca Boccassi <luca.boccassi@gmail.com>
 
-Friendly ping: who can take this, please? 🙂
+A common pattern when using pid fds is having to get information
+about the process, which currently requires /proc being mounted,
+resolving the fd to a pid, and then do manual string parsing of
+/proc/N/status and friends. This needs to be reimplemented over
+and over in all userspace projects (e.g.: I have reimplemented
+resolving in systemd, dbus, dbus-daemon, polkit so far), and
+requires additional care in checking that the fd is still valid
+after having parsed the data, to avoid races.
 
-Thanks
--Gustavo
+Having a programmatic API that can be used directly removes all
+these requirements, including having /proc mounted.
 
-On 15/08/24 13:00, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> So, in order to avoid ending up with a flexible-array member in the
-> middle of multiple other structs, we use the `__struct_group()`
-> helper to create a new tagged `struct iwl_tx_cmd_hdr`. This structure
-> groups together all the members of the flexible `struct iwl_tx_cmd`
-> except the flexible array.
-> 
-> As a result, the array is effectively separated from the rest of the
-> members without modifying the memory layout of the flexible structure.
-> We then change the type of the middle struct members currently causing
-> trouble from `struct iwl_tx_cmd` to `struct iwl_tx_cmd_hdr`.
-> 
-> We also want to ensure that when new members need to be added to the
-> flexible structure, they are always included within the newly created
-> tagged struct. For this, we use `static_assert()`. This ensures that the
-> memory layout for both the flexible structure and the new tagged struct
-> is the same after any changes.
-> 
-> This approach avoids having to implement `struct iwl_tx_cmd_hdr`
-> as a completely separate structure, thus preventing having to maintain
-> two independent but basically identical structures, closing the door
-> to potential bugs in the future.
-> 
-> So, with these changes, fix the following warnings:
-> 
-> drivers/net/wireless/intel/iwlwifi/dvm/commands.h:2315:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/iwlwifi/dvm/commands.h:2426:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->   .../net/wireless/intel/iwlwifi/dvm/commands.h | 154 +++++++++---------
->   1 file changed, 78 insertions(+), 76 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/commands.h b/drivers/net/wireless/intel/iwlwifi/dvm/commands.h
-> index 3f49c0bccb28..96ea6c8dfc89 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/dvm/commands.h
-> +++ b/drivers/net/wireless/intel/iwlwifi/dvm/commands.h
-> @@ -1180,85 +1180,87 @@ struct iwl_dram_scratch {
->   } __packed;
->   
->   struct iwl_tx_cmd {
-> -	/*
-> -	 * MPDU byte count:
-> -	 * MAC header (24/26/30/32 bytes) + 2 bytes pad if 26/30 header size,
-> -	 * + 8 byte IV for CCM or TKIP (not used for WEP)
-> -	 * + Data payload
-> -	 * + 8-byte MIC (not used for CCM/WEP)
-> -	 * NOTE:  Does not include Tx command bytes, post-MAC pad bytes,
-> -	 *        MIC (CCM) 8 bytes, ICV (WEP/TKIP/CKIP) 4 bytes, CRC 4 bytes.i
-> -	 * Range: 14-2342 bytes.
-> -	 */
-> -	__le16 len;
-> -
-> -	/*
-> -	 * MPDU or MSDU byte count for next frame.
-> -	 * Used for fragmentation and bursting, but not 11n aggregation.
-> -	 * Same as "len", but for next frame.  Set to 0 if not applicable.
-> -	 */
-> -	__le16 next_frame_len;
-> -
-> -	__le32 tx_flags;	/* TX_CMD_FLG_* */
-> -
-> -	/* uCode may modify this field of the Tx command (in host DRAM!).
-> -	 * Driver must also set dram_lsb_ptr and dram_msb_ptr in this cmd. */
-> -	struct iwl_dram_scratch scratch;
-> -
-> -	/* Rate for *all* Tx attempts, if TX_CMD_FLG_STA_RATE_MSK is cleared. */
-> -	__le32 rate_n_flags;	/* RATE_MCS_* */
-> -
-> -	/* Index of destination station in uCode's station table */
-> -	u8 sta_id;
-> -
-> -	/* Type of security encryption:  CCM or TKIP */
-> -	u8 sec_ctl;		/* TX_CMD_SEC_* */
-> -
-> -	/*
-> -	 * Index into rate table (see REPLY_TX_LINK_QUALITY_CMD) for initial
-> -	 * Tx attempt, if TX_CMD_FLG_STA_RATE_MSK is set.  Normally "0" for
-> -	 * data frames, this field may be used to selectively reduce initial
-> -	 * rate (via non-0 value) for special frames (e.g. management), while
-> -	 * still supporting rate scaling for all frames.
-> -	 */
-> -	u8 initial_rate_index;
-> -	u8 reserved;
-> -	u8 key[16];
-> -	__le16 next_frame_flags;
-> -	__le16 reserved2;
-> -	union {
-> -		__le32 life_time;
-> -		__le32 attempt;
-> -	} stop_time;
-> -
-> -	/* Host DRAM physical address pointer to "scratch" in this command.
-> -	 * Must be dword aligned.  "0" in dram_lsb_ptr disables usage. */
-> -	__le32 dram_lsb_ptr;
-> -	u8 dram_msb_ptr;
-> -
-> -	u8 rts_retry_limit;	/*byte 50 */
-> -	u8 data_retry_limit;	/*byte 51 */
-> -	u8 tid_tspec;
-> -	union {
-> -		__le16 pm_frame_timeout;
-> -		__le16 attempt_duration;
-> -	} timeout;
-> -
-> -	/*
-> -	 * Duration of EDCA burst Tx Opportunity, in 32-usec units.
-> -	 * Set this if txop time is not specified by HCCA protocol (e.g. by AP).
-> -	 */
-> -	__le16 driver_txop;
-> -
-> +	/* New members MUST be added within the __struct_group() macro below. */
-> +	__struct_group(iwl_tx_cmd_hdr, __hdr, __packed,
-> +		/*
-> +		 * MPDU byte count:
-> +		 * MAC header (24/26/30/32 bytes) + 2 bytes pad if 26/30 header size,
-> +		 * + 8 byte IV for CCM or TKIP (not used for WEP)
-> +		 * + Data payload
-> +		 * + 8-byte MIC (not used for CCM/WEP)
-> +		 * NOTE:  Does not include Tx command bytes, post-MAC pad bytes,
-> +		 *        MIC (CCM) 8 bytes, ICV (WEP/TKIP/CKIP) 4 bytes, CRC 4 bytes.i
-> +		 * Range: 14-2342 bytes.
-> +		 */
-> +		__le16 len;
-> +
-> +		/*
-> +		 * MPDU or MSDU byte count for next frame.
-> +		 * Used for fragmentation and bursting, but not 11n aggregation.
-> +		 * Same as "len", but for next frame.  Set to 0 if not applicable.
-> +		 */
-> +		__le16 next_frame_len;
-> +
-> +		__le32 tx_flags;	/* TX_CMD_FLG_* */
-> +
-> +		/* uCode may modify this field of the Tx command (in host DRAM!).
-> +		 * Driver must also set dram_lsb_ptr and dram_msb_ptr in this cmd. */
-> +		struct iwl_dram_scratch scratch;
-> +
-> +		/* Rate for *all* Tx attempts, if TX_CMD_FLG_STA_RATE_MSK is cleared. */
-> +		__le32 rate_n_flags;	/* RATE_MCS_* */
-> +
-> +		/* Index of destination station in uCode's station table */
-> +		u8 sta_id;
-> +
-> +		/* Type of security encryption:  CCM or TKIP */
-> +		u8 sec_ctl;		/* TX_CMD_SEC_* */
-> +
-> +		/*
-> +		 * Index into rate table (see REPLY_TX_LINK_QUALITY_CMD) for initial
-> +		 * Tx attempt, if TX_CMD_FLG_STA_RATE_MSK is set.  Normally "0" for
-> +		 * data frames, this field may be used to selectively reduce initial
-> +		 * rate (via non-0 value) for special frames (e.g. management), while
-> +		 * still supporting rate scaling for all frames.
-> +		 */
-> +		u8 initial_rate_index;
-> +		u8 reserved;
-> +		u8 key[16];
-> +		__le16 next_frame_flags;
-> +		__le16 reserved2;
-> +		union {
-> +			__le32 life_time;
-> +			__le32 attempt;
-> +		} stop_time;
-> +
-> +		/* Host DRAM physical address pointer to "scratch" in this command.
-> +		 * Must be dword aligned.  "0" in dram_lsb_ptr disables usage. */
-> +		__le32 dram_lsb_ptr;
-> +		u8 dram_msb_ptr;
-> +
-> +		u8 rts_retry_limit;	/*byte 50 */
-> +		u8 data_retry_limit;	/*byte 51 */
-> +		u8 tid_tspec;
-> +		union {
-> +			__le16 pm_frame_timeout;
-> +			__le16 attempt_duration;
-> +		} timeout;
-> +
-> +		/*
-> +		 * Duration of EDCA burst Tx Opportunity, in 32-usec units.
-> +		 * Set this if txop time is not specified by HCCA protocol (e.g. by AP).
-> +		 */
-> +		__le16 driver_txop;
-> +
-> +	);
->   	/*
->   	 * MAC header goes here, followed by 2 bytes padding if MAC header
->   	 * length is 26 or 30 bytes, followed by payload data
->   	 */
-> -	union {
-> -		DECLARE_FLEX_ARRAY(u8, payload);
-> -		DECLARE_FLEX_ARRAY(struct ieee80211_hdr, hdr);
-> -	};
-> +	struct ieee80211_hdr hdr[];
->   } __packed;
-> +static_assert(offsetof(struct iwl_tx_cmd, hdr) == sizeof(struct iwl_tx_cmd_hdr),
-> +	      "struct member likely outside of __struct_group()");
->   
->   /*
->    * TX command response is sent after *agn* transmission attempts.
-> @@ -2312,7 +2314,7 @@ struct iwl_scan_cmd {
->   
->   	/* For active scans (set to all-0s for passive scans).
->   	 * Does not include payload.  Must specify Tx rate; no rate scaling. */
-> -	struct iwl_tx_cmd tx_cmd;
-> +	struct iwl_tx_cmd_hdr tx_cmd;
->   
->   	/* For directed active scans (set to all-0s otherwise) */
->   	struct iwl_ssid_ie direct_scan[PROBE_OPTION_MAX];
-> @@ -2423,7 +2425,7 @@ struct iwlagn_beacon_notif {
->    */
->   
->   struct iwl_tx_beacon_cmd {
-> -	struct iwl_tx_cmd tx;
-> +	struct iwl_tx_cmd_hdr tx;
->   	__le16 tim_idx;
->   	u8 tim_size;
->   	u8 reserved1;
+As discussed at LPC24, add an ioctl with an extensible struct
+so that more parameters can be added later if needed. Start with
+returning pid/tgid/ppid and creds unconditionally, and cgroupid
+optionally.
+
+Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
+---
+v3: switch from pid_vnr() to task_pid_vnr()
+v2: Apply comments from Christian, apart from the one about pid namespaces
+    as I need additional hints on how to implement it.
+    Drop the security_context string as it is not the appropriate
+    metadata to give userspace these days.
+
+ fs/pidfs.c                                    | 66 ++++++++++++++-
+ include/uapi/linux/pidfd.h                    | 24 ++++++
+ .../testing/selftests/pidfd/pidfd_open_test.c | 81 ++++++++++++++++++-
+ 3 files changed, 169 insertions(+), 2 deletions(-)
+
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index 7ffdc88dfb52..f9c71e2c5911 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -2,6 +2,7 @@
+ #include <linux/anon_inodes.h>
+ #include <linux/file.h>
+ #include <linux/fs.h>
++#include <linux/cgroup.h>
+ #include <linux/magic.h>
+ #include <linux/mount.h>
+ #include <linux/pid.h>
+@@ -114,6 +115,65 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+ 	return poll_flags;
+ }
+ 
++static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
++{
++	struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
++	size_t usize = _IOC_SIZE(cmd);
++	struct pidfd_info kinfo = {};
++	struct user_namespace *user_ns;
++	const struct cred *c;
++	__u64 request_mask;
++
++	if (!uinfo)
++		return -EINVAL;
++	if (usize < sizeof(struct pidfd_info))
++		return -EINVAL; /* First version, no smaller struct possible */
++
++	if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
++		return -EFAULT;
++
++	c = get_task_cred(task);
++	if (!c)
++		return -ESRCH;
++
++	/* Unconditionally return identifiers and credentials, the rest only on request */
++
++	kinfo.pid = task_pid_vnr(task);
++	kinfo.tgid = task_tgid_vnr(task);
++	kinfo.ppid = task_ppid_nr_ns(task, task_active_pid_ns(task));
++
++	user_ns = current_user_ns();
++	kinfo.ruid = from_kuid_munged(user_ns, c->uid);
++	kinfo.rgid = from_kgid_munged(user_ns, c->gid);
++	kinfo.euid = from_kuid_munged(user_ns, c->euid);
++	kinfo.egid = from_kgid_munged(user_ns, c->egid);
++	kinfo.suid = from_kuid_munged(user_ns, c->suid);
++	kinfo.sgid = from_kgid_munged(user_ns, c->sgid);
++	kinfo.fsuid = from_kuid_munged(user_ns, c->fsuid);
++	kinfo.fsgid = from_kgid_munged(user_ns, c->fsgid);
++
++	if (request_mask & PIDFD_INFO_CGROUPID) {
++		struct cgroup *cgrp = task_css_check(task, pids_cgrp_id, 1)->cgroup;
++		if (!cgrp)
++			return -ENODEV;
++
++		kinfo.cgroupid = cgroup_id(cgrp);
++		kinfo.result_mask |= PIDFD_INFO_CGROUPID;
++	}
++
++	/*
++	 * If userspace and the kernel have the same struct size it can just
++	 * be copied. If userspace provides an older struct, only the bits that
++	 * userspace knows about will be copied. If userspace provides a new
++	 * struct, only the bits that the kernel knows about will be copied and
++	 * the size value will be set to the size the kernel knows about.
++	 */
++	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
++		return -EFAULT;
++
++	return 0;
++}
++
+ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+ 	struct task_struct *task __free(put_task) = NULL;
+@@ -121,13 +181,17 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	struct pid *pid = pidfd_pid(file);
+ 	struct ns_common *ns_common = NULL;
+ 
+-	if (arg)
++	if (!!arg != (cmd == PIDFD_GET_INFO))
+ 		return -EINVAL;
+ 
+ 	task = get_pid_task(pid, PIDTYPE_PID);
+ 	if (!task)
+ 		return -ESRCH;
+ 
++	/* Extensible IOCTL that does not open namespace FDs, take a shortcut */
++	if (_IOC_NR(cmd) == _IOC_NR(PIDFD_GET_INFO))
++		return pidfd_info(task, cmd, arg);
++
+ 	scoped_guard(task_lock, task) {
+ 		nsp = task->nsproxy;
+ 		if (nsp)
+diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
+index 565fc0629fff..f278db1a3fe8 100644
+--- a/include/uapi/linux/pidfd.h
++++ b/include/uapi/linux/pidfd.h
+@@ -16,6 +16,29 @@
+ #define PIDFD_SIGNAL_THREAD_GROUP	(1UL << 1)
+ #define PIDFD_SIGNAL_PROCESS_GROUP	(1UL << 2)
+ 
++/* Flags for pidfd_info. */
++#define PIDFD_INFO_CGROUPID		(1UL << 0)
++
++struct pidfd_info {
++	/* Let userspace request expensive stuff explictly. */
++	__u64 request_mask;
++	/* And let the kernel indicate whether it knows about it. */
++	__u64 result_mask;
++	__u64 cgroupid;
++	__u32 pid;
++	__u32 tgid;
++	__u32 ppid;
++	__u32 ruid;
++	__u32 rgid;
++	__u32 euid;
++	__u32 egid;
++	__u32 suid;
++	__u32 sgid;
++	__u32 fsuid;
++	__u32 fsgid;
++	__u32 spare0[1];
++};
++
+ #define PIDFS_IOCTL_MAGIC 0xFF
+ 
+ #define PIDFD_GET_CGROUP_NAMESPACE            _IO(PIDFS_IOCTL_MAGIC, 1)
+@@ -28,5 +51,6 @@
+ #define PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE _IO(PIDFS_IOCTL_MAGIC, 8)
+ #define PIDFD_GET_USER_NAMESPACE              _IO(PIDFS_IOCTL_MAGIC, 9)
+ #define PIDFD_GET_UTS_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 10)
++#define PIDFD_GET_INFO                        _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info)
+ 
+ #endif /* _UAPI_LINUX_PIDFD_H */
+diff --git a/tools/testing/selftests/pidfd/pidfd_open_test.c b/tools/testing/selftests/pidfd/pidfd_open_test.c
+index c62564c264b1..30c50a8ae10b 100644
+--- a/tools/testing/selftests/pidfd/pidfd_open_test.c
++++ b/tools/testing/selftests/pidfd/pidfd_open_test.c
+@@ -13,6 +13,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <syscall.h>
++#include <sys/ioctl.h>
+ #include <sys/mount.h>
+ #include <sys/prctl.h>
+ #include <sys/wait.h>
+@@ -21,6 +22,35 @@
+ #include "pidfd.h"
+ #include "../kselftest.h"
+ 
++#ifndef PIDFS_IOCTL_MAGIC
++#define PIDFS_IOCTL_MAGIC 0xFF
++#endif
++
++#ifndef PIDFD_GET_INFO
++#define PIDFD_GET_INFO _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info)
++#define PIDFD_INFO_CGROUPID		(1UL << 0)
++
++struct pidfd_info {
++	/* Let userspace request expensive stuff explictly. */
++	__u64 request_mask;
++	/* And let the kernel indicate whether it knows about it. */
++	__u64 result_mask;
++	__u64 cgroupid;
++	__u32 pid;
++	__u32 tgid;
++	__u32 ppid;
++	__u32 ruid;
++	__u32 rgid;
++	__u32 euid;
++	__u32 egid;
++	__u32 suid;
++	__u32 sgid;
++	__u32 fsuid;
++	__u32 fsgid;
++	__u32 spare0[1];
++};
++#endif
++
+ static int safe_int(const char *numstr, int *converted)
+ {
+ 	char *err = NULL;
+@@ -120,10 +150,13 @@ static pid_t get_pid_from_fdinfo_file(int pidfd, const char *key, size_t keylen)
+ 
+ int main(int argc, char **argv)
+ {
++	struct pidfd_info info = {
++		.request_mask = PIDFD_INFO_CGROUPID,
++	};
+ 	int pidfd = -1, ret = 1;
+ 	pid_t pid;
+ 
+-	ksft_set_plan(3);
++	ksft_set_plan(4);
+ 
+ 	pidfd = sys_pidfd_open(-1, 0);
+ 	if (pidfd >= 0) {
+@@ -153,6 +186,52 @@ int main(int argc, char **argv)
+ 	pid = get_pid_from_fdinfo_file(pidfd, "Pid:", sizeof("Pid:") - 1);
+ 	ksft_print_msg("pidfd %d refers to process with pid %d\n", pidfd, pid);
+ 
++	if (ioctl(pidfd, PIDFD_GET_INFO, &info) < 0) {
++		ksft_print_msg("%s - failed to get info from pidfd\n", strerror(errno));
++		goto on_error;
++	}
++	if (info.pid != pid) {
++		ksft_print_msg("pid from fdinfo file %d does not match pid from ioctl %d\n",
++			       pid, info.pid);
++		goto on_error;
++	}
++	if (info.ppid != getppid()) {
++		ksft_print_msg("ppid %d does not match ppid from ioctl %d\n",
++			       pid, info.pid);
++		goto on_error;
++	}
++	if (info.ruid != getuid()) {
++		ksft_print_msg("uid %d does not match uid from ioctl %d\n",
++			       getuid(), info.ruid);
++		goto on_error;
++	}
++	if (info.rgid != getgid()) {
++		ksft_print_msg("gid %d does not match gid from ioctl %d\n",
++			       getgid(), info.rgid);
++		goto on_error;
++	}
++	if (info.euid != geteuid()) {
++		ksft_print_msg("euid %d does not match euid from ioctl %d\n",
++			       geteuid(), info.euid);
++		goto on_error;
++	}
++	if (info.egid != getegid()) {
++		ksft_print_msg("egid %d does not match egid from ioctl %d\n",
++			       getegid(), info.egid);
++		goto on_error;
++	}
++	if (info.suid != geteuid()) {
++		ksft_print_msg("suid %d does not match suid from ioctl %d\n",
++			       geteuid(), info.suid);
++		goto on_error;
++	}
++	if (info.sgid != getegid()) {
++		ksft_print_msg("sgid %d does not match sgid from ioctl %d\n",
++			       getegid(), info.sgid);
++		goto on_error;
++	}
++	ksft_test_result_pass("get info from pidfd test: passed\n");
++
+ 	ret = 0;
+ 
+ on_error:
+
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+-- 
+2.45.2
+
 
