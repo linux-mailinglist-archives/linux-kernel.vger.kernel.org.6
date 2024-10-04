@@ -1,125 +1,90 @@
-Return-Path: <linux-kernel+bounces-349789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3F398FB91
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:32:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 809E298FB9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89501F23A3B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:32:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28D461F228D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE961D5AC8;
-	Fri,  4 Oct 2024 00:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DF98836;
+	Fri,  4 Oct 2024 00:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="xzs47SUN"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=permerror (0-bit key) header.d=aaront.org header.i=@aaront.org header.b="t/xQ3V7/";
+	dkim=pass (2048-bit key) header.d=aaront.org header.i=@aaront.org header.b="HZhDi49H"
+Received: from smtp-out0.aaront.org (smtp-out0.aaront.org [52.10.12.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1561D5AC2;
-	Fri,  4 Oct 2024 00:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BF217C9;
+	Fri,  4 Oct 2024 00:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.10.12.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728001937; cv=none; b=L/w8OY07z+914Sfggj+GEmnZA0EpFJayrsDPf3whMRP/CGRHO8X2XRft4Fa+911pU8i1oORs5RaNsvDOztwFj5ellB77VxBbYDyw2JRPjRPO7BAFcPGIu5D0jnyWjdnOtJ2EkfF1OYSQHgE8/oSRlcdX+sEIA3gImjH0wEbToKo=
+	t=1728002305; cv=none; b=ohqAE3iCwsfGSCjzIvsdT1Cz9hxQheoBtCDMh5rtnIN/SiX4VUgDRVBVuQS3hTqeZvhrgf8Pwyiy7EJIrD+rA8jQPZ1nsvj5c00RxZpPS8pLepjjaDP9uxF8w+sJby5fh/8Yqm5cXb+9Ds+Vm/U423M0s1Hasj90DTSVOygIB/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728001937; c=relaxed/simple;
-	bh=O2H3vc11MgBRrINpzG1oDmNKYI4OvzcH5leqfi8lxLA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XMR0DttMkYQvU7r4p6bO5DGhZHZ0285+nl4YTxPo+y1T4LcZE/vNK3qB3Ne5ArgKxgb8sCcB2lZm4V+Vb7RUya+998/uXfBStw+MJopwp33iJ65HYnrp555kP8XuI97HZXq5lVeQNQrBPv1EIVL9/sekPcJPjhdyw3QYCjk1Hdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=xzs47SUN; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728001934;
-	bh=O2H3vc11MgBRrINpzG1oDmNKYI4OvzcH5leqfi8lxLA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=xzs47SUNK5Qi/EJALn0fKLBW0nJOHh3dr8N6yEB9YNXBgTfgyd2MPEzkNwEJkV/Qz
-	 Hz/M2pH0Ww8cFJzJcM/TPLJMUAPhKEBOXCLvjl3B15JSA+ZlHwKgdDTQGGrNVyOwcB
-	 J1wihdqZQjwaz3knqxsAZx4wN8ivvdh3pznfnw7gdVEwL/T6KpQghUZGpM0PpUGOsb
-	 4NmKixF/FhZ1GgPdfLjPPMSUtx81Zfp2LTAxVv14QFRShMObvfhJBjU9tYW7kFySly
-	 HjBuI+3ef54DQEgwXLDKRot0jajGYrG2x/NpJMFNNQo5HSrFCqukiPpQ2hmjTEetRW
-	 cWhE6YFx1ehCA==
-Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKTyQ3wBFzB6q;
-	Thu,  3 Oct 2024 20:32:14 -0400 (EDT)
-Message-ID: <2d841991-5cae-4de4-9f10-2b65d1b0715e@efficios.com>
-Date: Thu, 3 Oct 2024 20:30:13 -0400
+	s=arc-20240116; t=1728002305; c=relaxed/simple;
+	bh=fy5ywXs76Pb+xeflNQJh6/EAulNeH2bY3Xst/VNsM8g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h9F0p/wNpnXOyM29nYR5YxilUuFukrOPqia/Fo4exXZispYsEOdI+Iyu731yV9307XaSVDkkh9Tsz0dMqxfnmA3fogMTmn2DASdzAUdn0wtkMJ9qoyakAfqfCdL/6vYz1CnHcbc42Fyiit1DG55Bmt54L1Yf6RQbaZ7l7T+uYAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aaront.org; spf=pass smtp.mailfrom=aaront.org; dkim=permerror (0-bit key) header.d=aaront.org header.i=@aaront.org header.b=t/xQ3V7/; dkim=pass (2048-bit key) header.d=aaront.org header.i=@aaront.org header.b=HZhDi49H; arc=none smtp.client-ip=52.10.12.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aaront.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aaront.org
+Received: by smtp-out0.aaront.org (Postfix) with ESMTP id 4XKTxS6YtzzPT;
+	Fri,  4 Oct 2024 00:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/simple; d=aaront.org;
+    h=from:to:cc:subject:date:message-id:mime-version
+    :content-transfer-encoding; s=bgzxjfijqntwovyv; bh=fy5ywXs76Pb+x
+    eflNQJh6/EAulNeH2bY3Xst/VNsM8g=; b=t/xQ3V7/JUNuSxnfugRg9NFFiJ05F
+    XRrxrE3GN+m49eqaqCbdgbYxVJvOzqBbN6ppl7dckFHbfiO9Ew3ZkrjBA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aaront.org; h=
+    from:to:cc:subject:date:message-id:mime-version
+    :content-transfer-encoding; s=elwxqanhxhag6erl; bh=fy5ywXs76Pb+x
+    eflNQJh6/EAulNeH2bY3Xst/VNsM8g=; b=HZhDi49HiYGl+8br4vw/s3jqYQ+RW
+    ZOKyybN/HC8Ju7qVJPl1IqoV6uIsiMABR4509oslgC+GrZQenCRO4CUKeVTs0DYQ
+    WIzRN63c1W+AhpFG1VKy1YjwFF9SbUjQtQFsBiCkDhGO8+eFKUAa8SaR3N+3D37W
+    s2ZYZ+TRMoiB3Zqmjof5UN2sJU9cjafcKlAZ0dba5vGj4EyQPlNXGmDDm07qGS9m
+    uFepazL6HDZLjfpQzetjxPjEYw589TKXwuw2t88rT/rScybeXkewgh8Blg7bDrvN
+    yxnC0hrRpny6RGaLgepjXi4mvjQ1Buv/ZBc1PbTYC/1dDTBZe4d1+KlVA==
+From: Aaron Thompson <dev@aaront.org>
+To: Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Aaron Thompson <dev@aaront.org>
+Subject: [PATCH 0/3] Bluetooth: Fix a few module init/deinit bugs
+Date: Fri,  4 Oct 2024 00:30:27 +0000
+Message-Id: <20241004003030.160721-1-dev@aaront.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/8] tracing/bpf: guard syscall probe with
- preempt_notrace
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
- "Paul E . McKenney" <paulmck@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf <bpf@vger.kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>, Michael Jeanson <mjeanson@efficios.com>
-References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
- <20241003151638.1608537-5-mathieu.desnoyers@efficios.com>
- <20241003182604.09e4851d@gandalf.local.home>
- <CAADnVQJf535hwud5XtQKStOge9=pYVYWSiq_8Q2YAvN5rba==A@mail.gmail.com>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <CAADnVQJf535hwud5XtQKStOge9=pYVYWSiq_8Q2YAvN5rba==A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2024-10-04 01:05, Alexei Starovoitov wrote:
-> On Thu, Oct 3, 2024 at 3:25 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->>
->> On Thu,  3 Oct 2024 11:16:34 -0400
->> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
->>
->>> In preparation for allowing system call enter/exit instrumentation to
->>> handle page faults, make sure that bpf can handle this change by
->>> explicitly disabling preemption within the bpf system call tracepoint
->>> probes to respect the current expectations within bpf tracing code.
->>>
->>> This change does not yet allow bpf to take page faults per se within its
->>> probe, but allows its existing probes to adapt to the upcoming change.
->>>
->>
->> I guess the BPF folks should state if this is needed or not?
->>
->> Does the BPF hooks into the tracepoints expect preemption to be disabled
->> when called?
-> 
-> Andrii pointed it out already.
-> bpf doesn't need preemption to be disabled.
-> Only migration needs to be disabled.
+Hi all,
 
-I'm well aware of this. Feel free to relax those constraints in
-follow up patches in your own tracers. I'm simply not introducing
-any behavior change in the "big switch" patch introducing faultable
-syscall tracepoints. It's just too easy to overlook a dependency on
-preempt off deep inside some tracer code for me to make assumptions
-at the tracepoint level.
+These patches fix a few bugs in init and deinit for the bluetooth
+module. I ran into the first one when I started running a kernel with
+debugfs disabled on my laptop, and I ran into the next two when I was
+working on the fix for the first one.
 
-If a regression happens, it will be caused by the tracer-specific
-patch that relaxes the constraints, not by the tracepoint change
-that affects multiple tracers at once.
+Aaron Thompson (3):
+  Bluetooth: ISO: Fix multiple init when debugfs is disabled
+  Bluetooth: Call iso_exit() on module unload
+  Bluetooth: Remove debugfs directory on module init failure
 
-Thanks,
+ net/bluetooth/af_bluetooth.c | 1 +
+ net/bluetooth/iso.c          | 6 +-----
+ net/bluetooth/mgmt.c         | 1 +
+ 3 files changed, 3 insertions(+), 5 deletions(-)
 
-Mathieu
 
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.39.5
 
 
