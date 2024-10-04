@@ -1,210 +1,133 @@
-Return-Path: <linux-kernel+bounces-349976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A557B98FE1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:54:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584DD98FE24
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCC211C228A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:54:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A70A1B22B90
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C78B13A86A;
-	Fri,  4 Oct 2024 07:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mfUHIsPJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8904413AD2F;
+	Fri,  4 Oct 2024 07:54:16 +0000 (UTC)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7CD2209F;
-	Fri,  4 Oct 2024 07:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED3313A884;
+	Fri,  4 Oct 2024 07:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728028442; cv=none; b=F1qKOySdff8sDokV3H3/VGsE9u0RWDzZ2eHnzK1HrJ60gsxQCARjhN6RflbjhpExfH9H4udMVtWsNXkQdeoILtUlIzt5Js+cWvncMzViyRn19BBqeax+TaoTza398dXyjZ+OWOAMADelSgSdtWI800rnOOXapksOzHlw1UP8M8s=
+	t=1728028456; cv=none; b=EoBfVtYQQQtZMZYsHwRykuJ/n7OfdhxBxaTXuAA7yvHy8pxYzsabsiCEyix6BlWqhxeyfp38ouwewW0FhbthsK05qAknv+eCGfeTshkKG7WmSN25kqG+/lEwEwMNaCNIKDdWmdmg/pdUOyDrbzksWBVUOMXfO38+mU6b4KBQNYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728028442; c=relaxed/simple;
-	bh=J5dh8/U6klIOJiHQqsa0/Rvfb9Wi7dZw7ideSxoiabU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qZd54aSXxfHSAFZZifG1A72uxwcZAp4Kewf+FDaTIeowSfB6pa+QLPClq1zYTKpimuDl/BeL4CJbM/O2AgzefpzdFMGZJfLizeBu/nz+Vh09+bzCdogQedA1WDxLh4Q+BNya3hZZvhP1IPBdT7Pv74li+nnw2jEvGZAqm+quWmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mfUHIsPJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 865EDC4CEC6;
-	Fri,  4 Oct 2024 07:53:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728028441;
-	bh=J5dh8/U6klIOJiHQqsa0/Rvfb9Wi7dZw7ideSxoiabU=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=mfUHIsPJsA+9mGTXsmuZGxG7H4/uEd51CuGw+iYDqccD/Z5JEO+KUIDjtUks3dFA0
-	 gLefPYOwQ/fcQiB8lRpmfPtkSfs0WmWLwYRQ/F25JVcIuKCr+1F8Ykee9VwmhMeFJr
-	 aDP3aXANzPa2gmgRLIFGPiOXHn027ZH2QegsVkVV54frmzM/ImSo40PAfJz+u7OPsF
-	 qkzv/bPTxsdaNDf41TUwdoBP1fpMM9GXk0hUC9T9y6A629PFW0lkCn0XJ9QanZo/OL
-	 XG+Wi64zlSZXBLRnve+SWH2Qvj+KWdX1EXRChP3rOfAMl0L8Bx7xPd5KF7snXTaQc2
-	 UiECHkZoZhcfg==
-Message-ID: <7fc3cf75-bf48-4bcc-8c74-09fb89655a72@kernel.org>
-Date: Fri, 4 Oct 2024 10:53:57 +0300
+	s=arc-20240116; t=1728028456; c=relaxed/simple;
+	bh=Wg7ul4YZSmWzSUMBwlfWIpZgmFJpPiFMzQOvVLNoDP0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gAi1DBcY5bRpT8Kwi+9QSMNUt4OkbvlBgMu4EAFKQtTC6wYvVcssw3ry3CUXg6Ezo7x4QSdm1eI5iYOTLEaKlws9VPLXz+65OEDyS1c/xcVP3/A3J7qnTZdKFPVLDbkPkV4IgmM1pRSYjtHNnYNqZcovKsavqxL0poQICTbsZxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e25ccdffcc5so1683261276.1;
+        Fri, 04 Oct 2024 00:54:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728028453; x=1728633253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WKYPD1a2MwpDAh7rgvBPhraVJ6bG7cu3U6Mm6tadaOg=;
+        b=PNajY66EEz9Q79kE0mEJ55s9qmtX9lMrYaVIGWP8w9+EFGyp2vPcuz8T6DxT37FKLb
+         7Hs6JoJbuSIBZbcRwp4D4VOtF5yhjM3fa1ke2lA58KEqo+Ie7xr3bJLsnj0evfo6EwtM
+         MloqlzHmhbB9cFObjE+JbAipI9j/n1joLVd5Lae1riJ/ek+P9RWFECGNZmj17ZIqZUB0
+         99p2aRrHXU64gmOk/3m4cjETRkhTTsleouBgWSvXscw+CBpaJlDPWneYUEoMMNjLM3pa
+         1KXsDMHLESoqG0+qdc2Omr1CFcSu9fsQEFf0aGIJZkKBQLaxU5dwP6eYn/gaCNWSD8Qy
+         Ya3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUL3hHM4VIyyUvGi832yeflS1D3VoinYg4/mMbiaDYNd/D+f1p1qvz19W062ZjlCUcaQVMiRuJO212a@vger.kernel.org, AJvYcCUemvmsTV86saOVU0oxNXGq9RYFKCQJVQDX7yV/AGn7I9UO8zJIpyz76vKyM8uY9CrDQ0pDeAWZWeBk4rwA@vger.kernel.org, AJvYcCUo1WL06Y3dEKJrkptEzCxcKLjbYKngmI+bB9s2QKZJxlJoETXT/7cf78LWWyA9p28OkAPBU2ahL1PpUOd3kg9uVZc=@vger.kernel.org, AJvYcCVh82roSM+wB2BH2kzrKskI3usd9dvdRV4zLZs5OPZ91e3Cdo8vhpWzM6U5b0+oxay4VNeh4i4iEcG6pA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywuk/eFDCGsIaJTMyPSYYy36RhZMymapnbJc77tI3ML0UOPICeB
+	ahW/gDQbYxiZndJhzp+WG/2Qg0gxU0nfjgtN1S2b8DvVPNOl3KnBjgGLlzBarYw=
+X-Google-Smtp-Source: AGHT+IF0qW0aHCCIqgYmt95gwlS+6dhhA/vMYHaxSM+ejOhu+Ld/5K8AY7/7HlikYRL9EkDhumR+Gw==
+X-Received: by 2002:a05:6902:2412:b0:e26:ab6:e49b with SMTP id 3f1490d57ef6-e28937e37a0mr1250803276.28.1728028453010;
+        Fri, 04 Oct 2024 00:54:13 -0700 (PDT)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e2885d15b73sm517074276.7.2024.10.04.00.54.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 00:54:12 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e1651f48c31so1747520276.0;
+        Fri, 04 Oct 2024 00:54:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUKWV4KfLKLXepBKjEwD/KoD9fh+4z2LH2kFS8EvtP7No3mZKnFK0xnHjVXvNzlFRgKtidt8JDskeB7@vger.kernel.org, AJvYcCWCUkDnRoNS4RDjO8Gh/ytYVoC4beu9ntVkpvLYHYnSUcVHMwNCRK9OVQEUpz2DpapbcEo6Z0TPim1c6w==@vger.kernel.org, AJvYcCXbg99CfRzewa3X+i+65rwKndU73FAZxNglSIjENINiWWLwUy2Y4dIJizSmbJxb9DJ3BgdEaJ9eolIC9vnm@vger.kernel.org, AJvYcCXiKOgl2nQoQMy8N5Cd3mEW5jG4TAq6Cs+nm4HlE2UzeMyC6MoBJpiONxcqzEgN/DN04/VKJJrSJBAMo1vN9bVBOTY=@vger.kernel.org
+X-Received: by 2002:a05:690c:b:b0:6e2:167e:814f with SMTP id
+ 00721157ae682-6e2c7289b2emr16053787b3.31.1728028451953; Fri, 04 Oct 2024
+ 00:54:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] ARM: dts: omap: omap4-epson-embt2ws: add unknown gpio
- outputs
-To: Andreas Kemnade <andreas@kemnade.info>, Conor Dooley
- <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
- khilman@baylibre.com, devicetree@vger.kernel.org, tony@atomide.com,
- aaro.koskinen@iki.fi, linux-omap@vger.kernel.org
-References: <20240930213008.159647-1-andreas@kemnade.info>
- <20240930213008.159647-4-andreas@kemnade.info>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20240930213008.159647-4-andreas@kemnade.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240918120909.284930-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240918120909.284930-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240918120909.284930-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 4 Oct 2024 09:53:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWkHvHh=AhJhOutFRAJMczpCGdUCPvPuqjY_V4aiMvmAg@mail.gmail.com>
+Message-ID: <CAMuHMdWkHvHh=AhJhOutFRAJMczpCGdUCPvPuqjY_V4aiMvmAg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
+ 'input-schmitt-{enable,disable}' and 'drive-open-drain' properties
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Fabrizio,
 
+On Wed, Sep 18, 2024 at 2:09=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> On the RZ/V2H(P) SoC we can configure the 'input-schmitt-{enable,disable}=
+'
+> and 'drive-open-drain' of multiplexed pins. Update the binding
+> documentation to include these properties.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 01/10/2024 00:30, Andreas Kemnade wrote:
-> Set them to the state seen in a running system, initialized
-> by vendor u-boot or kernel. Add line names where they are defined in the
-> vendor kernel.
-> gpio15 resets something in the display, otherwise meaning of the
-> gpios is not known.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 84 +++++++++++++++++++
->  1 file changed, 84 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-> index cc1b6080bf95..c8205ae89840 100644
-> --- a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-> +++ b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-> @@ -115,6 +115,65 @@ wl12xx_vmmc: wl12xx-vmmc {
->  	};
->  };
->  > +&gpio1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&gpio1_hog_pins &gpio1wk_hog_pins>;
-> +
-> +	lb-reset-hog {
-> +		gpio-hog;
-> +		gpios = <9 GPIO_ACTIVE_HIGH>;
-> +		output-low;
-> +		line-name = "lb_reset";
-> +	};
+Thanks for your patch!
 
-Just curious, what does lb stand for.
+> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yam=
+l
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yam=
+l
+> @@ -119,6 +119,9 @@ additionalProperties:
+>          bias-disable: true
+>          bias-pull-down: true
+>          bias-pull-up: true
+> +        input-schmitt-enable: true
+> +        input-schmitt-disable: true
+> +        drive-open-drain: true
 
-> +
-> +	power-en-hog {
-> +		gpio-hog;
-> +		gpios = <10 GPIO_ACTIVE_HIGH>;
-> +		output-high;
-> +		line-name = "power_en";
-> +	};
-> +
-> +	panel-power-en-hog {
-> +		gpio-hog;
-> +		gpios = <14 GPIO_ACTIVE_HIGH>;
-> +		output-low;
-> +		line-name = "panel_power_en";
-> +	};
+I think you also need "drive-push-pull", to disable open drain.
 
-Is panel always enabled? I didn't see a panel driver
-else it could be hooked to panel regulator?
+>          renesas,output-impedance:
+>            description:
+>              Output impedance for pins on the RZ/V2H(P) SoC. The value pr=
+ovided by this
 
-> +
-> +	blc-r-hog {
-> +		gpio-hog;
-> +		gpios = <17 GPIO_ACTIVE_HIGH>;
-> +		output-low;
-> +		line-name = "blc_r";
-> +	};
+Gr{oetje,eeting}s,
 
-this should be modeled as a gpio regulator and paried to backlight left?
+                        Geert
 
-> +
-> +	blc-l-hog {
-> +		gpio-hog;
-> +		gpios = <16 GPIO_ACTIVE_HIGH>;
-> +		output-low;
-> +		line-name = "blc_l";
-> +	};
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
-this should be modeled as a gpio regulator and paried to backlight right?
-
-> +
-> +	high-hog {
-> +		gpio-hog;
-> +		gpios = <15 GPIO_ACTIVE_HIGH /* maybe dsi to dpi chip reset? */
-> +			 21 GPIO_ACTIVE_HIGH
-> +			 26 GPIO_ACTIVE_HIGH>;
-> +		output-high;
-> +		line-name = "unknown-high";
-> +	};
-> +
-> +	low-hog {
-> +		gpio-hog;
-> +		gpios = <18 GPIO_ACTIVE_HIGH
-> +			 19 GPIO_ACTIVE_HIGH
-> +			 20 GPIO_ACTIVE_HIGH
-> +			 22 GPIO_ACTIVE_HIGH>;
-> +		output-low;
-> +		line-name = "unknown-low";
-> +	};
-
-These are probably OK as we don't know their actual function.
-
-> +};
-> +
->  &i2c1 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&i2c1_pins>;
-> @@ -406,6 +465,22 @@ OMAP4_IOPAD(0x56, PIN_INPUT_PULLUP | MUX_MODE3) /* gpio35 */
->  		>;
->  	};
->  
-> +	gpio1_hog_pins: pinmux-gpio1-hog-pins {
-> +		pinctrl-single,pins = <
-> +			OMAP4_IOPAD(0x1b4, PIN_OUTPUT | MUX_MODE3) /* gpio14 */
-> +			OMAP4_IOPAD(0x1b8, PIN_OUTPUT | MUX_MODE3) /* gpio16 */
-> +			OMAP4_IOPAD(0x1ba, PIN_OUTPUT | MUX_MODE3) /* gpio17 */
-> +
-> +			OMAP4_IOPAD(0x1b6, PIN_OUTPUT | MUX_MODE3) /* gpio15 */
-> +			OMAP4_IOPAD(0x1bc, PIN_OUTPUT | MUX_MODE3) /* gpio18 */
-> +			OMAP4_IOPAD(0x1be, PIN_OUTPUT | MUX_MODE3) /* gpio19 */
-> +			OMAP4_IOPAD(0x1c0, PIN_OUTPUT | MUX_MODE3) /* gpio20 */
-> +			OMAP4_IOPAD(0x1c2, PIN_OUTPUT | MUX_MODE3) /* gpio21 */
-> +			OMAP4_IOPAD(0x1c4, PIN_OUTPUT | MUX_MODE3) /* gpio22 */
-> +			OMAP4_IOPAD(0x1cc, PIN_OUTPUT | MUX_MODE3) /* gpio26 */
-> +		>;
-> +	};
-> +
->  	i2c1_pins: pinmux-i2c1-pins {
->  		pinctrl-single,pins = <
->  			   OMAP4_IOPAD(0x122, PIN_INPUT_PULLUP | MUX_MODE0)	/* i2c1_scl */
-> @@ -527,6 +602,15 @@ OMAP4_IOPAD(0x1c8, PIN_OUTPUT | MUX_MODE3)  /* gpio_24 / WLAN_EN */
->  	};
->  };
->  
-> +&omap4_pmx_wkup {
-> +	gpio1wk_hog_pins: pinmux-gpio1wk-hog-pins {
-> +		pinctrl-single,pins = <
-> +			OMAP4_IOPAD(0x68, PIN_INPUT_PULLDOWN | MUX_MODE3) /* gpio9 */
-> +			OMAP4_IOPAD(0x6a, PIN_INPUT | MUX_MODE3) /* gpio10 */
-> +		>;
-> +	};
-> +};
-> +
->  &uart2 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart2_pins &bt_pins>;
-
--- 
-cheers,
--roger
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
