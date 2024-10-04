@@ -1,93 +1,153 @@
-Return-Path: <linux-kernel+bounces-349766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C802098FB57
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:02:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC0298FB5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B06282EBE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:02:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33A63283145
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3150B1D1F6C;
-	Fri,  4 Oct 2024 00:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33828149005;
+	Fri,  4 Oct 2024 00:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASYwYzhW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BqfCbb4G"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844971D14F8;
-	Fri,  4 Oct 2024 00:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006D12CAB
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 00:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728000034; cv=none; b=Dr6M+TT1tHRO7hl3W/n793pxrLm8d6b2X2K6c0S4s8BX1xm0LILp/2pVygdcBOTq19w0RjnSk7dzCjlzKFRx1ow6lwc6wABziSeFweqoAIKn6EY4Qmt5gkhYrXPPEK7AZWl10Enxsnljwsazna1FECh4+6WGBBat/UmaS8JpsOs=
+	t=1728000066; cv=none; b=PApWj4Z49jajyAvYOd47zjagFJIlu5VSSB+tEGc2A39ds/D5tr3cl7HPGsLGSCeJ7ZzCZYndGO9vOA/zzoSngB7Byd/YajpOplTj6QdRlAlv6BC3y3mn0+7uJpzWJOr3u7V9cBM1H77X3ul9KJk1eOf46nI6xAqpcHiSftxvecY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728000034; c=relaxed/simple;
-	bh=FJgSz8Q0Gg2vj8ui2TV2ie76jXIudkVW9NQHhbjtFk0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GWvG7YvpOMcwJPjxv22z4kyT3h8cm39Eet96mPG4AYd1WapV5BCBnSvdu4dLTsVz3DrFT0R14xEAJypugPeFd3rx1UjRj0f8olYSfFf4t+dcxjdPvD0KyI1SjdsdIcfCGZcD/XbI9fj/HY7QRVGbaxBlHrSTb7YKUiDinAR8j48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASYwYzhW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 069D9C4CEC5;
-	Fri,  4 Oct 2024 00:00:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728000034;
-	bh=FJgSz8Q0Gg2vj8ui2TV2ie76jXIudkVW9NQHhbjtFk0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ASYwYzhWxsWyZ5AuV17YmHdN2AB0fId1HuYaH+TKwYOgccZHq1NpmRLkJJWrHVH4o
-	 Y+2ZnMIDGvSVKfH5VJvsAeaOSRdGwOfVXHdCH/6tXC01K9hLIDbpK3lgGHgeZK8lZw
-	 xHkuQG9Lg1jGhApC3ZZxPP5UIkt8yocjGI7YHHuOVWDOZ0f6jd/SyXAkKwzgqDjXm1
-	 hpdI7iArQdfKqowuJ89dHz7823OHZ99StVosgdO09F6x5g2PYfnoJNVvA4v5qGUz8P
-	 xw7DuJiHJg11sBk/jhUqH9HsSzKJqrrosEf3RPSCJ/Npvj+qavWtP/5ITPVQKuJQTv
-	 Hw0IkFdYa2N9Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0193803263;
-	Fri,  4 Oct 2024 00:00:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728000066; c=relaxed/simple;
+	bh=Uk8PYF1jkvRqrAuznedTKDFcx8jh6uWwYlptJbhFscM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LDSQkKMuLrpFw+9Rx2T2OGJcmhk2fqgqeGYA7LtNQhY8BB1/GefqM4lxly7nos+MTCyMBGluQjf0I3WUs+w+uG/SpmVxl+DTUS1HstxZfaWZiOv4+MTPVCyfStJpWpxTrQfIpW9o2EO/CmV24hMtY3kBffHn10D34vwl+Wosn14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BqfCbb4G; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-82cdb749598so73399939f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 17:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1728000063; x=1728604863; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WOGFPQ6jAXNerE13UVZtADeZtxdDJrEYc49/QlGda6k=;
+        b=BqfCbb4GBQcGoUnkKnnRxaIxl6McRiM5QFoe9y7D3A7JsZYekXFMo5uErHMiHHFDKY
+         Jz5J2b3qROZUL6vmarEB2psk4NaKYjif/2SmSECImRmraXHW+GqWQ6D6nYsTCU3V6bT1
+         IzieV48Gp5K3jZVqOV1S7LCae9S1egDHDWwyA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728000063; x=1728604863;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WOGFPQ6jAXNerE13UVZtADeZtxdDJrEYc49/QlGda6k=;
+        b=C4mtMPPOrd5/31N/Za9nM0QgnVnL9fuzEozSZa6KyuMZLwtNhHSfpbSTYx/7t7f79U
+         CwNNjD197PxpB3W/ieEd4GtiXfLJlr+Yq1wRz5k6RwEEtOYcDxAIpawVBM0N1jlV4WtC
+         LhrovBh59i9ufRVbihfl3aj3IX/kG3aNeUCOWAmX4ECEPI8jVOTGsMmaPsWU8BJN86KT
+         kwVYATM2PEBB+ngrbNqub+zam4NgJmIZZw9gaifh0BcJmm/1KphVk5wyPrQyI95yP/Si
+         nsyvMYZTXb7BL44cSbQLIkQ2q/G3+mXMn54XrQjFQgK2LCj+d/NMC0nhhKjhpRAwlS0C
+         mm6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVOVInI0NSlg6HKkuiemPRo0XgGy/+8OIM0PmudsgKxFLvoWKQT3PTaJSJzi52m1ymOZSnS1PlJ5TkCflo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytS1k91dFbqNKHQSsXGjAFS4z2qo9/2DShnJ/QjExKt282XCIw
+	S/Mu5ArNc6G6YRqSs66flbEOoBegrBHw1+q2RDPFjIikx1IU6cWwKtEIbJTTGv8=
+X-Google-Smtp-Source: AGHT+IHIccZXhQUNgi92VPytZaHIJ6MpIN1peJv8CYFwgdHXLLxczbVb2tz1DUdVGBu72XFuQ8IYrA==
+X-Received: by 2002:a05:6602:1412:b0:82a:2a0b:1c7d with SMTP id ca18e2360f4ac-834f7c7f15emr145501039f.5.1728000062948;
+        Thu, 03 Oct 2024 17:01:02 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db55ad6608sm489068173.171.2024.10.03.17.01.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 17:01:02 -0700 (PDT)
+Message-ID: <5a926b36-59e8-465d-a824-e869959f2b10@linuxfoundation.org>
+Date: Thu, 3 Oct 2024 18:01:01 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net/rds: remove unused struct 'rds_ib_dereg_odp_mr'
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172800003749.2035955.1490460545040983997.git-patchwork-notify@kernel.org>
-Date: Fri, 04 Oct 2024 00:00:37 +0000
-References: <20240930134358.48647-1-linux@treblig.org>
-In-Reply-To: <20240930134358.48647-1-linux@treblig.org>
-To: Dr. David Alan Gilbert <linux@treblig.org>
-Cc: allison.henderson@oracle.com, edumazet@google.com, kuba@kernel.org,
- linux-rdma@vger.kernel.org, davem@davemloft.net, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org,
- yanjun.zhu@linux.dev
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: Makefile: create OUTPUT dir
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, shuah@kernel.org, willemb@google.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240916075655.4117151-1-anders.roxell@linaro.org>
+ <952aeec9-c21f-46ce-bf68-e6ffce51630c@linuxfoundation.org>
+ <20240920123827.715ff109@kernel.org>
+ <3f0d12ba-0e52-41f9-9cbd-34bc1225121e@linuxfoundation.org>
+ <CADYN=9JO-h5L8+CBE9rKY9fnA2sJmam6_MzpZB38Bmn5D4fdPQ@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CADYN=9JO-h5L8+CBE9rKY9fnA2sJmam6_MzpZB38Bmn5D4fdPQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 30 Sep 2024 14:43:58 +0100 you wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On 10/2/24 00:15, Anders Roxell wrote:
+> On Wed, 25 Sept 2024 at 19:26, Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>
+>> On 9/20/24 04:38, Jakub Kicinski wrote:
+>>> On Thu, 19 Sep 2024 09:51:47 -0600 Shuah Khan wrote:
+>>>>> @@ -261,6 +261,7 @@ ifdef INSTALL_PATH
+>>>>>      @ret=1; \
+>>>>>      for TARGET in $(TARGETS) $(INSTALL_DEP_TARGETS); do \
+>>>>>              BUILD_TARGET=$$BUILD/$$TARGET;  \
+>>>>> +           mkdir -p $$BUILD_TARGET;        \
+>>>>>              $(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET install \
+>>>>>                              INSTALL_PATH=$(INSTALL_PATH)/$$TARGET \
+>>>>>                              SRC_PATH=$(shell readlink -e $$(pwd)) \
+>>>>
+>>>> Doesn't the "all" target mkdir work for this case? Why do we need another mkdir here?
+>>>
+>>> I was wondering about that, too. Looks like the code from the all
+>>> target is copy/pasted in the install target except the mkdir line.
+>>> Best fix would be to make the dependency work, I don't understand
+>>> why it doesn't already, tho.
+>>
+>> I think this could be the issue:
+>>
+>> net main Makefile doesn't have handling for subdirs. It looks
+>> like the way this is handled is by adding an entry to the main
+>> Makefile:
+>>
+>> TARGETS += net/af_unix
+>> TARGETS += net/forwarding
+>> TARGETS += net/hsr
+>> TARGETS += net/mptcp
+>> TARGETS += net/openvswitch
+>> TARGETS += net/tcp_ao
+>> TARGETS += net/netfilter
+>>
+>> So the solution would be similar adding net/lib to the main
+>> Makefile.
+>>
+>> Anders, can you try the above and see if it works.
 > 
-> 'rds_ib_dereg_odp_mr' has been unused since the original
-> commit 2eafa1746f17 ("net/rds: Handle ODP mr
-> registration/unregistration").
+> Sadly that didn't help.
 > 
-> Remove it.
-> 
-> [...]
 
-Here is the summary with links:
-  - [net-next] net/rds: remove unused struct 'rds_ib_dereg_odp_mr'
-    https://git.kernel.org/netdev/net-next/c/25ba2a5adab2
+Okay. I tried the following:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+make kselftest-all TARGETS=net/lib O=/tmp
 
+I see /tmp/kselftest/net/lib/csum
 
+Can you give me the exact command you are running?
+
+The following from selftests/Makefile should take care of this.
+
+# Networking tests want the net/lib target, include it automatically
+ifneq ($(filter net drivers/net drivers/net/hw,$(TARGETS)),)
+ifeq ($(filter net/lib,$(TARGETS)),)
+         INSTALL_DEP_TARGETS := net/lib
+endif
+endif
+
+thanks,
+-- Shuah
 
