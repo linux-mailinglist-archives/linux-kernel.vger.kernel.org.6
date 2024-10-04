@@ -1,295 +1,164 @@
-Return-Path: <linux-kernel+bounces-350653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38EC990814
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:55:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B445C9907C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EDC6B2C095
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:44:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B7028896A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BF01E32A2;
-	Fri,  4 Oct 2024 15:31:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545051E2839;
-	Fri,  4 Oct 2024 15:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B540219483;
+	Fri,  4 Oct 2024 15:31:31 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5EB1C728D
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 15:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728055895; cv=none; b=A6QfXov7NQRFMGcHIi4NQwH4XdKK5IFKsnOyCMCSb633YUToXq7vezJfxmOGnBgdVlXqTKNlYYCT2R/D8AaqAt5XZ0gUTxnPMPZ12hVk4e92LSMn0LbUGXLShGGUgOdPSAUzwp6THcBlwK2UjrO3zdQA+KNleD0N2fkFTtvsfGw=
+	t=1728055890; cv=none; b=RQvbMRVpsvxYC5x6k3bK6ljmin7Amm0F9Fxox4hfadDzdrwrrW8A0SJAzic/tqpK0OrWnBhiKCnz/ohzCD+HXswUH7F0AIa3SYvXumECGAgt8/AsJxVP7oOt7lizgKGjj6GW2qJFLah8MFB0hO5QsiGGiwL8r91AfTeVEvpNstM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728055895; c=relaxed/simple;
-	bh=yjCydSrT28KK2pfUD6jjBLvMYyTWM0/AvMJzm/IyH18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n9Wz3wunC05Nzyxyw8nd8NXc9SvXmVEO/24qrLrNxvFJ7rm4kgVTIp1XxCsJGYoiWp17lc9LIAveERERK7JK+G7cDvYEj449WlCaiAc5PULo2rCrs1JEynaNJ1JIjb/zkajyIFwjwaAS6PsAJW8AR4N30TUmIvvpoKK2eD4x83I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D07F150C;
-	Fri,  4 Oct 2024 08:32:01 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7051D3F7C5;
-	Fri,  4 Oct 2024 08:31:27 -0700 (PDT)
-Date: Fri, 4 Oct 2024 16:31:25 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Colton Lewis <coltonlewis@google.com>
-Cc: kvm@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>,
-	Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v5 5/5] perf: Correct perf sampling with guest VMs
-Message-ID: <ZwAKTUrwQH9Xk-ET@J2N7QTR9R3.cambridge.arm.com>
-References: <20240920174740.781614-1-coltonlewis@google.com>
- <20240920174740.781614-6-coltonlewis@google.com>
+	s=arc-20240116; t=1728055890; c=relaxed/simple;
+	bh=J6VxOPQ3yJ6pzuGqghBFVlsBvc1MZIIqVbieS5Xlc6k=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VKny2NpqLIa4JxCCyAS+IXMKIqHKxSp5vfvOssU720As7Dw383jrj9PoApluJjcNgumZ0JNAfYL7a6p9cjSRrzfaHNJ7MQO0+AwSxdtdIkPVRoaHcn31NX4sSsj0zpwqAI9zC0vvTzarjm+k9t+wYclFjWv+GHRTZmXITgdYPn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a364acbd2eso22437345ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 08:31:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728055888; x=1728660688;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jbla0eHaAdJ6mpRqRRvSS7o67NpRjr2UUX0/SHYJaKc=;
+        b=BQD+dBnqkCrjkjTenM5K7OYAbrmliVgykpYPRsV/tLs7rYCMfbGFz3pmGjDV62rDEh
+         gjkw0svU62sQoM1zOX8YPwX6QNxIoy2JEsO8CjslXls5gwYFCPgw8kKp1/knAUA/5CiK
+         j/249t8/kusMV8VleoKu7h8lZyYeVnbGKvtNn2KH9PxQypEUsoP2WNUAJjoJz4s4YrLM
+         UZH5YEsrFIjdcyeqOgjU2/5sSpHI6GLJYtFsW7risvT4b6kEXHBIEdDft2PUnYT2SAXX
+         EQ+dEnL5n677+9xTBNnX3aXhzLM7ZogSlsPBpDEwfAADFocLy9CLUWanSRRnp/00wQFu
+         kXHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVS8gas2UjvHeqnbfQJa/3TWf4TIa+MsXhZ1TGz6JP6fZCZpG7peMsMid2YBA+vEAVYouoMsiUQALO6Ku4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2DyXG+h9Lifp59wOHwoRdQ4fFBZLkYFv0TvcL7XTWjUcVZWFw
+	mH+TO0lbhDzo8KulbEN3mxtmUxlD+/R5478ww1oKQuF96NkNm5yyR7HEwquLAsOhIXrk+hAAkE9
+	aRzFtwxpCIkkE3oX9htMk7woWP8O8peblD8PlncFni1qx0R3b7ffpnkk=
+X-Google-Smtp-Source: AGHT+IHrvnriS81w0JuOxC/SjA0QT12vE6vWCuwAdxqr7zsO6IgFLkhuRo1pu5jffmMpYWAKGuwUyLphP4n6CY//BnhGuTtjGOLw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240920174740.781614-6-coltonlewis@google.com>
+X-Received: by 2002:a05:6e02:b4d:b0:3a2:5b:7065 with SMTP id
+ e9e14a558f8ab-3a375bb2a47mr31591525ab.18.1728055888266; Fri, 04 Oct 2024
+ 08:31:28 -0700 (PDT)
+Date: Fri, 04 Oct 2024 08:31:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67000a50.050a0220.49194.048d.GAE@google.com>
+Subject: [syzbot] [mm?] WARNING in page_counter_cancel (5)
+From: syzbot <syzbot+013715179d3f910d4c86@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 20, 2024 at 05:47:40PM +0000, Colton Lewis wrote:
-> Previously any PMU overflow interrupt that fired while a VCPU was
-> loaded was recorded as a guest event whether it truly was or not. This
-> resulted in nonsense perf recordings that did not honor
-> perf_event_attr.exclude_guest and recorded guest IPs where it should
-> have recorded host IPs.
-> 
-> Rework the sampling logic to only record guest samples for events with
-> exclude_guest = 0. This way any host-only events with exclude_guest
-> set will never see unexpected guest samples. The behaviour of events
-> with exclude_guest = 0 is unchanged.
-> 
-> Note that events configured to sample both host and guest may still
-> misattribute a PMI that arrived in the host as a guest event depending
-> on KVM arch and vendor behavior.
-> 
-> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+Hello,
 
-This looks good to me, though I wonder if we should handle all of the
-exclude_* flags in one go and pick the right user/kernel/guest regs to
-sample from...
+syzbot found the following issue on:
 
-As this stands, it's definitely an improvement on what we have, so:
+HEAD commit:    9852d85ec9d4 Linux 6.12-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15c07d07980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1671921cf1ab80dd
+dashboard link: https://syzkaller.appspot.com/bug?extid=013715179d3f910d4c86
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c15dd0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=102c839f980000
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f3d84bc921e1/disk-9852d85e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/90a9eb597a2f/vmlinux-9852d85e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f013a91b893b/bzImage-9852d85e.xz
 
-Mark.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+013715179d3f910d4c86@syzkaller.appspotmail.com
 
-> ---
->  arch/arm64/include/asm/perf_event.h |  4 ----
->  arch/arm64/kernel/perf_callchain.c  | 28 ----------------------------
->  arch/x86/events/core.c              | 16 ++++------------
->  include/linux/perf_event.h          | 21 +++++++++++++++++++--
->  kernel/events/core.c                | 21 +++++++++++++++++----
->  5 files changed, 40 insertions(+), 50 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/perf_event.h b/arch/arm64/include/asm/perf_event.h
-> index 31a5584ed423..ee45b4e77347 100644
-> --- a/arch/arm64/include/asm/perf_event.h
-> +++ b/arch/arm64/include/asm/perf_event.h
-> @@ -10,10 +10,6 @@
->  #include <asm/ptrace.h>
->  
->  #ifdef CONFIG_PERF_EVENTS
-> -struct pt_regs;
-> -extern unsigned long perf_arch_instruction_pointer(struct pt_regs *regs);
-> -extern unsigned long perf_arch_misc_flags(struct pt_regs *regs);
-> -#define perf_arch_misc_flags(regs)	perf_misc_flags(regs)
->  #define perf_arch_bpf_user_pt_regs(regs) &regs->user_regs
->  #endif
->  
-> diff --git a/arch/arm64/kernel/perf_callchain.c b/arch/arm64/kernel/perf_callchain.c
-> index 01a9d08fc009..9b7f26b128b5 100644
-> --- a/arch/arm64/kernel/perf_callchain.c
-> +++ b/arch/arm64/kernel/perf_callchain.c
-> @@ -38,31 +38,3 @@ void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
->  
->  	arch_stack_walk(callchain_trace, entry, current, regs);
->  }
-> -
-> -unsigned long perf_arch_instruction_pointer(struct pt_regs *regs)
-> -{
-> -	if (perf_guest_state())
-> -		return perf_guest_get_ip();
-> -
-> -	return instruction_pointer(regs);
-> -}
-> -
-> -unsigned long perf_arch_misc_flags(struct pt_regs *regs)
-> -{
-> -	unsigned int guest_state = perf_guest_state();
-> -	int misc = 0;
-> -
-> -	if (guest_state) {
-> -		if (guest_state & PERF_GUEST_USER)
-> -			misc |= PERF_RECORD_MISC_GUEST_USER;
-> -		else
-> -			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
-> -	} else {
-> -		if (user_mode(regs))
-> -			misc |= PERF_RECORD_MISC_USER;
-> -		else
-> -			misc |= PERF_RECORD_MISC_KERNEL;
-> -	}
-> -
-> -	return misc;
-> -}
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index d51e5d24802b..3c5f512d2bcf 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -2942,9 +2942,6 @@ static unsigned long code_segment_base(struct pt_regs *regs)
->  
->  unsigned long perf_arch_instruction_pointer(struct pt_regs *regs)
->  {
-> -	if (perf_guest_state())
-> -		return perf_guest_get_ip();
-> -
->  	return regs->ip + code_segment_base(regs);
->  }
->  
-> @@ -2971,17 +2968,12 @@ unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
->  
->  unsigned long perf_arch_misc_flags(struct pt_regs *regs)
->  {
-> -	unsigned int guest_state = perf_guest_state();
->  	unsigned long misc = common_misc_flags(regs);
->  
-> -	if (guest_state) {
-> -		misc |= perf_arch_guest_misc_flags(regs);
-> -	} else {
-> -		if (user_mode(regs))
-> -			misc |= PERF_RECORD_MISC_USER;
-> -		else
-> -			misc |= PERF_RECORD_MISC_KERNEL;
-> -	}
-> +	if (user_mode(regs))
-> +		misc |= PERF_RECORD_MISC_USER;
-> +	else
-> +		misc |= PERF_RECORD_MISC_KERNEL;
->  
->  	return misc;
->  }
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index d061e327ad54..968f3edd95e4 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -1633,8 +1633,9 @@ extern void perf_tp_event(u16 event_type, u64 count, void *record,
->  			  struct task_struct *task);
->  extern void perf_bp_event(struct perf_event *event, void *data);
->  
-> -extern unsigned long perf_misc_flags(struct pt_regs *regs);
-> -extern unsigned long perf_instruction_pointer(struct pt_regs *regs);
-> +extern unsigned long perf_misc_flags(struct perf_event *event, struct pt_regs *regs);
-> +extern unsigned long perf_instruction_pointer(struct perf_event *event,
-> +					      struct pt_regs *regs);
->  
->  #ifndef perf_arch_misc_flags
->  # define perf_arch_misc_flags(regs) \
-> @@ -1645,6 +1646,22 @@ extern unsigned long perf_instruction_pointer(struct pt_regs *regs);
->  # define perf_arch_bpf_user_pt_regs(regs) regs
->  #endif
->  
-> +#ifndef perf_arch_guest_misc_flags
-> +static inline unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
-> +{
-> +	unsigned long guest_state = perf_guest_state();
-> +
-> +	if (guest_state & PERF_GUEST_USER)
-> +		return PERF_RECORD_MISC_GUEST_USER;
-> +
-> +	if (guest_state & PERF_GUEST_ACTIVE)
-> +		return PERF_RECORD_MISC_GUEST_KERNEL;
-> +
-> +	return 0;
-> +}
-> +# define perf_arch_guest_misc_flags(regs)	perf_arch_guest_misc_flags(regs)
-> +#endif
-> +
->  static inline bool has_branch_stack(struct perf_event *event)
->  {
->  	return event->attr.sample_type & PERF_SAMPLE_BRANCH_STACK;
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index eeabbf791a8c..c5e57c024d9a 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -6921,13 +6921,26 @@ void perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *cbs)
->  EXPORT_SYMBOL_GPL(perf_unregister_guest_info_callbacks);
->  #endif
->  
-> -unsigned long perf_misc_flags(struct pt_regs *regs)
-> +static bool should_sample_guest(struct perf_event *event)
->  {
-> +	return !event->attr.exclude_guest && perf_guest_state();
-> +}
-> +
-> +unsigned long perf_misc_flags(struct perf_event *event,
-> +			      struct pt_regs *regs)
-> +{
-> +	if (should_sample_guest(event))
-> +		return perf_arch_guest_misc_flags(regs);
-> +
->  	return perf_arch_misc_flags(regs);
->  }
->  
-> -unsigned long perf_instruction_pointer(struct pt_regs *regs)
-> +unsigned long perf_instruction_pointer(struct perf_event *event,
-> +				       struct pt_regs *regs)
->  {
-> +	if (should_sample_guest(event))
-> +		return perf_guest_get_ip();
-> +
->  	return perf_arch_instruction_pointer(regs);
->  }
->  
-> @@ -7743,7 +7756,7 @@ void perf_prepare_sample(struct perf_sample_data *data,
->  	__perf_event_header__init_id(data, event, filtered_sample_type);
->  
->  	if (filtered_sample_type & PERF_SAMPLE_IP) {
-> -		data->ip = perf_instruction_pointer(regs);
-> +		data->ip = perf_instruction_pointer(event, regs);
->  		data->sample_flags |= PERF_SAMPLE_IP;
->  	}
->  
-> @@ -7907,7 +7920,7 @@ void perf_prepare_header(struct perf_event_header *header,
->  {
->  	header->type = PERF_RECORD_SAMPLE;
->  	header->size = perf_sample_data_size(data, event);
-> -	header->misc = perf_misc_flags(regs);
-> +	header->misc = perf_misc_flags(event, regs);
->  
->  	/*
->  	 * If you're adding more sample types here, you likely need to do
-> -- 
-> 2.46.0.792.g87dc391469-goog
-> 
+R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000001
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+------------[ cut here ]------------
+page_counter underflow: -512 nr_pages=512
+WARNING: CPU: 1 PID: 5225 at mm/page_counter.c:60 page_counter_cancel+0x110/0x170 mm/page_counter.c:60
+Modules linked in:
+CPU: 1 UID: 0 PID: 5225 Comm: syz-executor334 Not tainted 6.12.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:page_counter_cancel+0x110/0x170 mm/page_counter.c:60
+Code: e8 55 23 98 ff 45 84 ed 75 24 e8 6b 21 98 ff c6 05 1a ef 10 0e 01 90 48 c7 c7 c0 9d 5c 8b 4c 89 e2 48 89 ee e8 91 9a 59 ff 90 <0f> 0b 90 90 e8 47 21 98 ff be 08 00 00 00 48 89 df e8 9a 71 f9 ff
+RSP: 0018:ffffc900032dfae8 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff8881404a9440 RCX: ffffffff814e2a49
+RDX: ffff88801df38000 RSI: ffffffff814e2a56 RDI: 0000000000000001
+RBP: fffffffffffffe00 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000200
+R13: 0000000000000000 R14: 0000000000000001 R15: ffff888077bbdc18
+FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6b788f5243 CR3: 000000007ec10000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ page_counter_uncharge+0x32/0x70 mm/page_counter.c:182
+ hugetlb_cgroup_uncharge_counter+0xd6/0x410 mm/hugetlb_cgroup.c:431
+ hugetlb_vm_op_close+0x3fe/0x5b0 mm/hugetlb.c:5065
+ remove_vma+0xa8/0x1a0 mm/vma.c:330
+ exit_mmap+0x4e0/0xb30 mm/mmap.c:1888
+ __mmput+0x12a/0x480 kernel/fork.c:1347
+ mmput+0x62/0x70 kernel/fork.c:1369
+ exit_mm kernel/exit.c:571 [inline]
+ do_exit+0x9bf/0x2d70 kernel/exit.c:926
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6b7889d879
+Code: Unable to access opcode bytes at 0x7f6b7889d84f.
+RSP: 002b:00007ffcea637828 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f6b7889d879
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+RBP: 00007f6b78911350 R08: ffffffffffffffb8 R09: 0000000000000000
+R10: 0000000000000003 R11: 0000000000000246 R12: 00007f6b78911350
+R13: 0000000000000000 R14: 00007f6b78911da0 R15: 00007f6b78866f40
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
