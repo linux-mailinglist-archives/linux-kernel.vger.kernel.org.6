@@ -1,150 +1,169 @@
-Return-Path: <linux-kernel+bounces-351461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C54099117A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:34:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70CC99117C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8F41C23709
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:34:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B1B1F2406C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFB114373F;
-	Fri,  4 Oct 2024 21:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288F31ADFE9;
+	Fri,  4 Oct 2024 21:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WoTc22z+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KU+xSg0z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860E7231C9D
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FE0748D;
+	Fri,  4 Oct 2024 21:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728077686; cv=none; b=D7BkTFD0kIiVK2qY5Rc3/lrAk3zKwzIiPrcMh4qor5e9PX1bVJJEeGcAxb/P82cbkpdQSVUwlG4UWCdCSKAwijtUKVfhI/IGXHZwXghf8QTyOsILkKAxhimdRcjh4yvb3j9l9oqVcq77dios4vYCpCH4bxQbscsOJSKZeBj5Tg0=
+	t=1728077802; cv=none; b=ItlKEqKv/9oiF0dSoLukXdPa1N7xs+dfS787n7lIpb2f2nF/ZF3WvI4ejOTR1JmW6+kuFTuO4VqL73VMWI3ctUr4Sv54xc9Xr/kKEB7Zgc13vfwNmZ39JP3d1hXkO/C8U013rNaY5mPbp2THnYsRPG/S707e75D0jaibLDqizSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728077686; c=relaxed/simple;
-	bh=ersxdiXFUUZ4cgzB+ytXinB0vFK9DFCDoKuyqqg8ODA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=haCPgoWy0m/Alt+2r5MMA70Eu+FoT8SuLqJ6T6uoLybFWaoSwPFWbpUvBE5n2+cEgZsWWP1QTte4OBqz1dY00QC+pUYXA0z6ab6ZLtx031sFnbmW4hdNWUJ/lhazMZr2xJq7L/S3yDOxgdcCblIISXegw3QMwXf4iVxMD+TwgW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WoTc22z+; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728077685; x=1759613685;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ersxdiXFUUZ4cgzB+ytXinB0vFK9DFCDoKuyqqg8ODA=;
-  b=WoTc22z+2twy22Ab4EIErEHIAfSPdvaooqUNQcZ8kVknHKFCIymbbPAU
-   7wsAzkmgMwbbxtdfABm1yxKCThbJN0eZE6lZ8EOG/hd7O37QR7A3LcK27
-   MFN69tVEzrg1GeBE2r2W+5oY7oJUELg2RlV6NEw+TuoHD1oi6ATQssSmP
-   4dutzraNOU2KnB0zF/TdwuNCsVfypFq5pQptVJXF3EksOYvPfmbv4JceU
-   jPlgvpZCdcMXE50iCq4LdOAuGTFcdJ8JiAIrghQRLMdflW8OzqaO39aOP
-   UZIZRwM3upA1SXS6G6NNzhHpLV+51mxpS5y4ft8Wlzj1Pt/Xdm8J6djFp
-   A==;
-X-CSE-ConnectionGUID: K1+my43CRkKJxzX6i+cbDQ==
-X-CSE-MsgGUID: fI5ZbLTpQz2PJOP866C1cw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="38446534"
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="38446534"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 14:34:44 -0700
-X-CSE-ConnectionGUID: KbiuiijZR62+BaMVgSMd9Q==
-X-CSE-MsgGUID: 5siTwgfMRG+J65B7oQSBqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="79661601"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 04 Oct 2024 14:34:43 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swpwe-0002FG-1o;
-	Fri, 04 Oct 2024 21:34:40 +0000
-Date: Sat, 5 Oct 2024 05:34:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20241003 5/14]
- include/linux/build_bug.h:78:41: error: static assertion failed: "struct
- member likely outside of struct_group_tagged()"
-Message-ID: <202410050536.vCru1pn6-lkp@intel.com>
+	s=arc-20240116; t=1728077802; c=relaxed/simple;
+	bh=tLVzY+4cfIDGv/DqkfAQeMn1mAqp55H2GITgeqvm/bw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gG4bIplk7P2Saj51ztX2oHjUDcxKdOsecZguyTymgPbsiV9QTA1coLMADAArMLA645m2G0mmbCDi+4M6yi3J4CkprQ13Np/2ocSOdtmqikka7XYy2TExDCO8+WxTgQz/H+x7ARB5G6KQNYx8Yf+W4WCAHNa2eZ9dpr/Pb+mnzKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KU+xSg0z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F5EC4CECE;
+	Fri,  4 Oct 2024 21:36:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728077802;
+	bh=tLVzY+4cfIDGv/DqkfAQeMn1mAqp55H2GITgeqvm/bw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KU+xSg0z0ZWdLmz31EvdCa/rBMmUl3fUTiIurEjQKM57uSkjVIyjqIrP2qv19t8WQ
+	 y2d1aP1UAqW8l/qSaaywNWl6MKYbDrRUpQwOrXIlV4xy+vfIN51TP22lRO9i+dH3JL
+	 VN11s8McJNCflwCkehWeHX7cJur07Tugpna10jmYfVAhqV6ZRAuobbgECSiZr1rvVb
+	 HxzAkf0a7XCqwRlFf6eu4o23M0CfUu0kplkg9309BpbQv8f1kx5/xZUSod4Yjcaaao
+	 QP3fLJB5L8u/caFSMx9iHAZ5qqm3uZb5YwHValXi2CDrfgygCV2esDVu4cbJJxwOz3
+	 hve4dkGXBGK7g==
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-83493f2dda4so121977939f.1;
+        Fri, 04 Oct 2024 14:36:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUs/txxNeArKPdphDa2XmQnfjA82pSvwu0e79LLO03c6JORlWfLtWFOg6cJekXzAXWkFVns4rslokeE2Vai@vger.kernel.org, AJvYcCVkrFHaugwjAgwBMEwBdaAJlaoZqGHpkJ+uyFoHEbvoOb3IjgeVeIPrzE4wu7gXM3OSxUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGNvxLm95rXmYPwlWOSztMgy07p4FY3qF//Y4bvswBCBPsyEWr
+	IIxwtJRTt9cEMoGdf9KgZyDf+EiMKhaak/aY8ghi4uFXjsN7DJGpn0TuSEtzkJEarDkOfXyU2kd
+	VHvdmba1CE/OWmE6Yhses0QUNCBo=
+X-Google-Smtp-Source: AGHT+IHwuU8Ytfh6/vkTZ4Bu0hIeg5mmvs6MtkEM320QDJhcaGmiislzSh0eFAXqWr8AuOwNmgeksYD2rTn1Fqqj6as=
+X-Received: by 2002:a92:c264:0:b0:3a2:463f:fd86 with SMTP id
+ e9e14a558f8ab-3a375c4ae02mr35495085ab.4.1728077801367; Fri, 04 Oct 2024
+ 14:36:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241002180956.1781008-1-namhyung@kernel.org> <20241002180956.1781008-3-namhyung@kernel.org>
+ <CAPhsuW7Bh-ZXfM2aYB=Yj8WaJHFc==AKmv6LDRgBq-TfdQ3s8A@mail.gmail.com> <ZwBdS86yBtOWy3iD@google.com>
+In-Reply-To: <ZwBdS86yBtOWy3iD@google.com>
+From: Song Liu <song@kernel.org>
+Date: Fri, 4 Oct 2024 14:36:30 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6AhfG7Xv2izDYnMM+z03X29peZfmWNy0rf98aEaAUfVg@mail.gmail.com>
+Message-ID: <CAPhsuW6AhfG7Xv2izDYnMM+z03X29peZfmWNy0rf98aEaAUfVg@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Namhyung Kim <namhyung@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241003
-head:   ec64acf2dce7577a42c01241e78b24afebc26e96
-commit: f44c92244302b0ac9d17ccf3eb21786a9be55163 [5/14] RDMA/uverbs: Use static_assert() to check struct sizes
-config: mips-allmodconfig (https://download.01.org/0day-ci/archive/20241005/202410050536.vCru1pn6-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410050536.vCru1pn6-lkp@intel.com/reproduce)
+On Fri, Oct 4, 2024 at 2:25=E2=80=AFPM Roman Gushchin <roman.gushchin@linux=
+.dev> wrote:
+>
+> On Fri, Oct 04, 2024 at 01:10:58PM -0700, Song Liu wrote:
+> > On Wed, Oct 2, 2024 at 11:10=E2=80=AFAM Namhyung Kim <namhyung@kernel.o=
+rg> wrote:
+> > >
+> > > The bpf_get_kmem_cache() is to get a slab cache information from a
+> > > virtual address like virt_to_cache().  If the address is a pointer
+> > > to a slab object, it'd return a valid kmem_cache pointer, otherwise
+> > > NULL is returned.
+> > >
+> > > It doesn't grab a reference count of the kmem_cache so the caller is
+> > > responsible to manage the access.  The intended use case for now is t=
+o
+> > > symbolize locks in slab objects from the lock contention tracepoints.
+> > >
+> > > Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> > > Acked-by: Roman Gushchin <roman.gushchin@linux.dev> (mm/*)
+> > > Acked-by: Vlastimil Babka <vbabka@suse.cz> #mm/slab
+> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > ---
+> > >  kernel/bpf/helpers.c |  1 +
+> > >  mm/slab_common.c     | 19 +++++++++++++++++++
+> > >  2 files changed, 20 insertions(+)
+> > >
+> > > diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> > > index 4053f279ed4cc7ab..3709fb14288105c6 100644
+> > > --- a/kernel/bpf/helpers.c
+> > > +++ b/kernel/bpf/helpers.c
+> > > @@ -3090,6 +3090,7 @@ BTF_ID_FLAGS(func, bpf_iter_bits_new, KF_ITER_N=
+EW)
+> > >  BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)
+> > >  BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
+> > >  BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
+> > > +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RET_NULL)
+> > >  BTF_KFUNCS_END(common_btf_ids)
+> > >
+> > >  static const struct btf_kfunc_id_set common_kfunc_set =3D {
+> > > diff --git a/mm/slab_common.c b/mm/slab_common.c
+> > > index 7443244656150325..5484e1cd812f698e 100644
+> > > --- a/mm/slab_common.c
+> > > +++ b/mm/slab_common.c
+> > > @@ -1322,6 +1322,25 @@ size_t ksize(const void *objp)
+> > >  }
+> > >  EXPORT_SYMBOL(ksize);
+> > >
+> > > +#ifdef CONFIG_BPF_SYSCALL
+> > > +#include <linux/btf.h>
+> > > +
+> > > +__bpf_kfunc_start_defs();
+> > > +
+> > > +__bpf_kfunc struct kmem_cache *bpf_get_kmem_cache(u64 addr)
+> > > +{
+> > > +       struct slab *slab;
+> > > +
+> > > +       if (!virt_addr_valid(addr))
+> > > +               return NULL;
+> > > +
+> > > +       slab =3D virt_to_slab((void *)(long)addr);
+> > > +       return slab ? slab->slab_cache : NULL;
+> > > +}
+> >
+> > Do we need to hold a refcount to the slab_cache? Given
+> > we make this kfunc available everywhere, including
+> > sleepable contexts, I think it is necessary.
+>
+> It's a really good question.
+>
+> If the callee somehow owns the slab object, as in the example
+> provided in the series (current task), it's not necessarily.
+>
+> If a user can pass a random address, you're right, we need to
+> grab the slab_cache's refcnt. But then we also can't guarantee
+> that the object still belongs to the same slab_cache, the
+> function becomes racy by the definition.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410050536.vCru1pn6-lkp@intel.com/
+To be safe, we can limit the kfunc to sleepable context only. Then
+we can lock slab_mutex for virt_to_slab, and hold a refcount
+to slab_cache. We will need a KF_RELEASE kfunc to release
+the refcount later.
 
-All errors (new ones prefixed by >>):
+IIUC, this limitation (sleepable context only) shouldn't be a problem
+for perf use case?
 
-   In file included from include/linux/container_of.h:5,
-                    from include/linux/list.h:5,
-                    from include/linux/module.h:12,
-                    from drivers/infiniband/core/nldev.c:33:
->> include/linux/build_bug.h:78:41: error: static assertion failed: "struct member likely outside of struct_group_tagged()"
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                         ^~~~~~~~~~~~~~
-   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ^~~~~~~~~~~~~~~
-   include/rdma/uverbs_ioctl.h:643:1: note: in expansion of macro 'static_assert'
-     643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
-         | ^~~~~~~~~~~~~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
-
-
-vim +78 include/linux/build_bug.h
-
-bc6245e5efd70c Ian Abbott       2017-07-10  60  
-6bab69c65013be Rasmus Villemoes 2019-03-07  61  /**
-6bab69c65013be Rasmus Villemoes 2019-03-07  62   * static_assert - check integer constant expression at build time
-6bab69c65013be Rasmus Villemoes 2019-03-07  63   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  64   * static_assert() is a wrapper for the C11 _Static_assert, with a
-6bab69c65013be Rasmus Villemoes 2019-03-07  65   * little macro magic to make the message optional (defaulting to the
-6bab69c65013be Rasmus Villemoes 2019-03-07  66   * stringification of the tested expression).
-6bab69c65013be Rasmus Villemoes 2019-03-07  67   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  68   * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
-6bab69c65013be Rasmus Villemoes 2019-03-07  69   * scope, but requires the expression to be an integer constant
-6bab69c65013be Rasmus Villemoes 2019-03-07  70   * expression (i.e., it is not enough that __builtin_constant_p() is
-6bab69c65013be Rasmus Villemoes 2019-03-07  71   * true for expr).
-6bab69c65013be Rasmus Villemoes 2019-03-07  72   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  73   * Also note that BUILD_BUG_ON() fails the build if the condition is
-6bab69c65013be Rasmus Villemoes 2019-03-07  74   * true, while static_assert() fails the build if the expression is
-6bab69c65013be Rasmus Villemoes 2019-03-07  75   * false.
-6bab69c65013be Rasmus Villemoes 2019-03-07  76   */
-6bab69c65013be Rasmus Villemoes 2019-03-07  77  #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-6bab69c65013be Rasmus Villemoes 2019-03-07 @78  #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-6bab69c65013be Rasmus Villemoes 2019-03-07  79  
-07a368b3f55a79 Maxim Levitsky   2022-10-25  80  
-
-:::::: The code at line 78 was first introduced by commit
-:::::: 6bab69c65013bed5fce9f101a64a84d0385b3946 build_bug.h: add wrapper for _Static_assert
-
-:::::: TO: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Song
 
