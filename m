@@ -1,93 +1,84 @@
-Return-Path: <linux-kernel+bounces-351298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9813D990F70
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:59:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91146990F77
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F59C2823AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:59:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C3102820D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A481F7077;
-	Fri,  4 Oct 2024 19:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5F01F8926;
+	Fri,  4 Oct 2024 19:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmM1uMf3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="BLPC8FrP"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7331DACA0;
-	Fri,  4 Oct 2024 19:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D3B1F891E;
+	Fri,  4 Oct 2024 19:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728068429; cv=none; b=bsQnZvDRds18wlQRPbFQN2oG8ZhFysxCNeWPhQSoUU3JIhkK6xQ5Fyq9+nmBZCazTcqyapgpGbKegtccp9BLVQvjrk+CN1wASHoKDHCNAQ/MyN7juydl0Vbin6sT2UCIXkcaP0Uh8fN4kStWhn8JdgGQzav06RW4aZFaKJRS+zY=
+	t=1728068560; cv=none; b=ZJMGEHMrwcfbKpf1g+zrThvLm+aqsiX+9Tw1tCh0DNBXsonWupW7jUHOXQVWgetd8mDu3BKPi9otB8Og/35ahfi2HfZh5/RtqfXepLGEXKSUo6qratfqpJaQ84tHhf+T6zTmwe2jxQCwd4g9TBp9+UxksiYwsaKqnTrh1iAfc5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728068429; c=relaxed/simple;
-	bh=N/ZatbjZOH0Y9cs2ghz2vcC4f5g1kAKnYaJxLjbL1dQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=p8giTpt8AIikzL+ic7wwEA9OFnYLAtMCVfQo+1GIgiC+UKPXpjniHtZQupqR74Sr+rJgGrD9Xw39sqJ8xgZo4nz7OojSIAhV/Mlq+2bZAz2mVlt7cWbG5mKNcS8BD5PwMjgmfYw3G/XhlBHdoq2D+OZ3tYEODm/DsmtpcBjosYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmM1uMf3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC7CAC4CECC;
-	Fri,  4 Oct 2024 19:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728068428;
-	bh=N/ZatbjZOH0Y9cs2ghz2vcC4f5g1kAKnYaJxLjbL1dQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=gmM1uMf3YYQT8wg8OjqI3NwDPQvCzSVkaRka9B8pZvqAf6XsEuBqDvtdVH9MV2x/l
-	 Q8ymqOQh4uqQFtdFjNhArZtOR6TwkzpqI8AcUdDIBSga0klNDk48UY5NtZF/xJELMp
-	 a4ZH4S8ARgZAJRPbryk0uUjyUgXGniyYNRCXhToTe8xOXj2ZlSmsFqrtowbIW5odoY
-	 FlKSBwYfdQEejHK/MJZY9jYzrLNcMjAMk7ObC2188JqoF3BvuEHfSBjr27N9gYOyNE
-	 3aXI4Ux7h+K6vx1M46aAnCTkto9X70d4YviYGK46/PgcT9uMtzylyyOBrSzResHLoA
-	 lxyKIuuLfnwKA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE35F39F76FF;
-	Fri,  4 Oct 2024 19:00:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728068560; c=relaxed/simple;
+	bh=8cPfv1CMzvFTyW1STkPhWYztPeK4NqLJWODU2BD8IEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=amBe0M7nVxYTBimmkga0tLcEUNLWJ3pm1skU0+OcHpcN8K9FsutJS3j2Rx57TTstmfb9gNZ1u37H92iKufvfBb+mTf+aB6qYMPYxAv9XXLoK3j8DFoYl8UH4+KayIFGDZVc20p6GahS52vO4cXmg6IJmgEXWemZWZXiF2OlAkQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=BLPC8FrP; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ivQY6V/u0jBvC6PqC9zx+ri2q1Em0IGwsgDgYmQ9PlQ=; b=BLPC8FrPnzm5nF+tH3QUqt1EHj
+	h5x5/F7MhWDL+JcW0KwnaTBfpnMymP2ZiPEffJ+LgkP32NkeQnxqo9voz5pIC1bBWcQqU8LGRdnNY
+	STeAhM5sgBXgJtRiIEdx8rS0nSxlw8TrrNY7LWdOkUqntHkNbIFxFN2ESMXKmICFckNJpgy5OJa2i
+	nbf0FinfPQGdJ32OtR5wj6WBgyruUshAznxTyAUZmtLTVMj8Zsc8ZSUOyfu/5qCx3SaEkCyeUcixn
+	TmnHJ2N649IAjScSxIabYc3eEw31Q7VSp+2J4Ht05+dYp3f2lf9qy9LdA0k3gIILspmjNMJoRmPtD
+	lRMsG8hw==;
+Received: from [2001:9e8:9c9:1501:3235:adff:fed0:37e6] (port=57150 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1swnZK-00Cp6k-Rm;
+	Fri, 04 Oct 2024 21:02:26 +0200
+Date: Fri, 4 Oct 2024 21:02:21 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 21/23] kbuild: use absolute path in the generated wrapper
+ Makefile
+Message-ID: <20241004-impressive-chowchow-of-charisma-9c5e6b@lindesnes>
+References: <20240917141725.466514-1-masahiroy@kernel.org>
+ <20240917141725.466514-22-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: dsa: sja1105: fix reception from VLAN-unaware
- bridges
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172806843252.2704625.9394573592680839438.git-patchwork-notify@kernel.org>
-Date: Fri, 04 Oct 2024 19:00:32 +0000
-References: <20241001140206.50933-1-vladimir.oltean@nxp.com>
-In-Reply-To: <20241001140206.50933-1-vladimir.oltean@nxp.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, andrew@lunn.ch, f.fainelli@gmail.com,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917141725.466514-22-masahiroy@kernel.org>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue,  1 Oct 2024 17:02:06 +0300 you wrote:
-> The blamed commit introduced an unexpected regression in the sja1105
-> driver. Packets from VLAN-unaware bridge ports get received correctly,
-> but the protocol stack can't seem to decode them properly.
+On Tue, Sep 17, 2024 at 11:16:49PM +0900, Masahiro Yamada wrote:
+> Keep the consistent behavior when this Makefile is invoked from another
+> directory.
 > 
-> For ds->untag_bridge_pvid users (thus also sja1105), the blamed commit
-> did introduce a functional change: dsa_switch_rcv() used to call
-> dsa_untag_bridge_pvid(), which looked like this:
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 > 
-> [...]
+>  Makefile | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-Here is the summary with links:
-  - [net] net: dsa: sja1105: fix reception from VLAN-unaware bridges
-    https://git.kernel.org/netdev/net/c/1f9fc48fd302
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
