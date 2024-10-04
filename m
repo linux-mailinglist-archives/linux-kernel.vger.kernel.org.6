@@ -1,89 +1,97 @@
-Return-Path: <linux-kernel+bounces-351334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC84D990FD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:09:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1857B990FD6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FC871C23163
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:09:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8389283B38
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FAE81E;
-	Fri,  4 Oct 2024 19:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C23D1DE3CD;
+	Fri,  4 Oct 2024 19:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gBARbEMb"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011000.outbound.protection.outlook.com [52.101.70.0])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kCbr3YkM"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2081.outbound.protection.outlook.com [40.107.94.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F383873466;
-	Fri,  4 Oct 2024 19:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2F31CACFB;
+	Fri,  4 Oct 2024 19:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.81
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728070555; cv=fail; b=kBIUCz6MCwHEzkt6SCei/ZtCs0XKlIBT2QAIKu1lpXqtSDg6pP8gV5wculerbNLXQNV118IGRIwILx3Az1NZduhxgerkysFkrCPAdsIK5AoN8ao/1KGctqg3bRy2rRqoXzfaZM2GPkka+nO8Owzevj2xqN/dL9w/LjqRkQzDN2g=
+	t=1728070614; cv=fail; b=dQn6ZMEO8jc6Tv9p+QMiDAadbNCIVSOaFPXnbJsr8rHY3kdqMG4CKW/J3BIWR/gSVv/1tOll4AsCEXYexeZj91BIRhqeNhrMlJeahsA58fIKG1U8+u+36+J8MX/tOliQbFuuv40OeOu9n277MEvOR7vEI9xHwOBfHz5mgDF9Th8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728070555; c=relaxed/simple;
-	bh=2K5Xs6ynqtBnznUvSCxGyUqzqTSbuWzq1c713oGuakk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=D1CiOzJ0UJDWVRpDLZEMBU8xylwTApOraOnTOXe3mlFVQd9CfyI9L7kRbidTeaqTdkH8am7u3eNI1ZPU5pVYyzvwQ94/ZZOQDpkGBNOaVFwkIGuG7grrXUQnVQ2qofh8qqjQjQ1Tms/qyIqToYAW4/J1hbkW0cgWZ8JGkR+TNw4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gBARbEMb; arc=fail smtp.client-ip=52.101.70.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1728070614; c=relaxed/simple;
+	bh=jSU/B91s88sRPn4tt2MVHeXlhaKJzghkpjw77GrnD64=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nYt8xH7QFdJkxtIZMJGEQZ4/9f1ib2Ymx+Eu3/MhoG0zNmyU4Q5Ye9d/qkIDZySbrH3QL8ftOH+Ir5wau/mbtszYStsYI0ASZ8/C0H+Q3RiXvr8TVGILrcjRhe6H+twmcncwVx8lMAIEqe27k9Lrsm9lNeXlf7ryOrWC5Ano53M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kCbr3YkM; arc=fail smtp.client-ip=40.107.94.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rprdCCn+aR75CiF0fypnRJqRRi1NQF+AgFviU26binxCVd0mNR/GeUN876oOEDGamexxQwAN5qCZoMajT9sFaN9kKwN4eUhKUmDiuFM/j7rOImdu8IxC20fH/K4sXST0sf9mhlFyn7iePd4ejGfm4EE3oP/KrikZSEC9k1AShYfYUdqu1f0yId0/PEjGo51uXVzabw9lkHP4HE/yfzj1byeL46p/WY4IQNyip5wBPnVMdTOKAa5+0IL/yhDDovsGLSMSU5yXG2P+iF1+chrkg5yD0MdQALQp34ICxsH4VKLfphveidaq0pyCOt3GYFdWCDgTQrrmrjZpXoKPuBdbkw==
+ b=ovhtshJmyaapnl+CrvTdyxME8vpJu27ZNBLO3vkLxtHHm/DCq90Lja0vEGXTqnRe9XfTf2OF9ATDafKEh9Z3ArsfabWcYTJ06aBCr4VN/tmbFjCHmtXf2YPPHYNPwHwe6Qm9s5EJGR4CQ4SVI3btlhGDCpBfHe6HtUDyhImxRBYFj/u5IcUNRo/ZLxwjnBIxLYp5WnXBoHDG6SDGiWuFl9/BSopPishl+1TjgwbTyXuXUJU6Dtm+LygNBggaHC0hE3izn095oPtjmOpefDSl1utviMlJU+jFVMf5/q/a5+sI1h+ZcTIZZkeeeGs+E4JsWZBUBBLXvfwuHqYuCCNudw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8Q49TfIINT6iI8oLu6wHk4SvR4hWXJ3iXD79wzZ8b6E=;
- b=YpkNDR5URYA++c7yqJzSRjJbnH+zEUvRKNGwrMD2vMhhGU9V3bUNTCaYG93/Yp3WTkouau51nqzfnhA6uN9TgQRZsYcsTHK5rqZ89NV+l5IXe+VrYKECvVEqHKXp7JJ0dr+fcdkzpF5PxrQvBOh2KxIMxwK0lt/PMkrT2VjcWmdJU36JyzhVb5FAUsVDuD5rpDFz9h9YlSrzBN40jSgRJX7kUWMz3FrlEU3u5kPwgOzyaFn0Bw+u4BNuHd4hjk2PZH8XGiIr2rBFmug33ciGl7AWHCk+v7qTArlno9SEhBN/FmJt8238WOXpkTejkNC5dfBC/NoOIBkN2MEjgp0hJQ==
+ bh=R2n+xneBQzSvbqgKvOODAJX+wTo7XJNQa3uGLmmh5Q4=;
+ b=DslObqZUtOUhQ2fuzhStco5xBdRROa+cCbGajOQZRlFHU3hNZYXI6fHKBed2/hFLxFlxPtJnOikkT4ZXPPaE+NSRGZUOOCZNQ0TzgbJ0h1iP+ubyupmJtwUPLSxeQAhGXRNkR7LkpYcLMxqUbEljrFzvf9k7RoY6t+nfZbgwP9+lxJ+kB/qSwCWyoXYWJe64v7N77jddwexFbgYcqNDHrTcxec5/JigNWHOlEPh0mDJIs8Ndfu1O9nKqZMOdnjpFlcP/p0GGCguiMjcywg231gex1/S+Pe/7ebzhqApxrYjHwF1WxGjIQqyT4Gbr6yGcOyecM/txWU5pVhUx6N9bXQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Q49TfIINT6iI8oLu6wHk4SvR4hWXJ3iXD79wzZ8b6E=;
- b=gBARbEMbQc6Sf0M4/duEd7WFe5svbwvRXjHg0LUToMGL4swOKhTgErAtoEiL06Fl8FPJWAbJgznIya5DROKjmDDEYWLw+FFm/XyvMG7mP7YT2w9oqtj4rY9oVLpo8YUfQSY2lOv3AylontIbiPZP8mdtVQrfMyUmdnYjSTrT1e/+N+dB52FM8FDapWkcI3hnWOvu02Mr9XGTFHrI6tcaCXtybZc2sk6Fu5YPpGmIDWL7ol/zTncIFv1SxRU7GwoFhDYta85faDXi96nXBmn0y0priPpAYg3anEreB7uosliMGaAupGSt+w6U6wE7nLsXAolZRGjcoKF15QL1puLf5Q==
+ bh=R2n+xneBQzSvbqgKvOODAJX+wTo7XJNQa3uGLmmh5Q4=;
+ b=kCbr3YkMxOmXK9fCIusdlTnxJoj/El7CvIjeeq1xmns3cTCDM3fYLSYwPVoEK/kQI6W0jkG5tzayIPdrFYhVaJC7D0YGYiGZXATE8FPVWZlG/yYvG2jMKetBNblrLqzBegDjkbJguCRwjE0tC+XfzASzI2FQKB8BBooz5ZgoKwk=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU2PR04MB8695.eurprd04.prod.outlook.com (2603:10a6:10:2de::8) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by SN7PR12MB6743.namprd12.prod.outlook.com (2603:10b6:806:26d::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Fri, 4 Oct
- 2024 19:35:50 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8026.016; Fri, 4 Oct 2024
- 19:35:49 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: marex@denx.de
-Cc: Frank.li@nxp.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	festevam@gmail.com,
-	francesco@dolcini.it,
-	imx@lists.linux.dev,
-	jun.li@nxp.com,
-	kernel@pengutronix.de,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	pratikmanvar09@gmail.com,
-	robh@kernel.org,
-	s.hauer@pengutronix.de,
-	shawnguo@kernel.org,
-	ukleinek@kernel.org,
-	xiaoning.wang@nxp.com
-Subject: [PATCH v7 1/1] pwm: imx27: workaround of the pwm output bug when decrease the duty cycle
-Date: Fri,  4 Oct 2024 15:35:31 -0400
-Message-Id: <20241004193531.673488-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Type: text/plain; charset=UTF-8
+ 2024 19:36:50 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.8026.017; Fri, 4 Oct 2024
+ 19:36:50 +0000
+Message-ID: <1f7addbf-51e3-7f24-ad64-b8a6d9c5e0ba@amd.com>
+Date: Fri, 4 Oct 2024 14:36:46 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v7 24/24] x86/resctrl: Introduce interface to modify
+ assignment states of the groups
+Content-Language: en-US
+To: Reinette Chatre <reinette.chatre@intel.com>, babu.moger@amd.com,
+ corbet@lwn.net, fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
+ tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
+ kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
+ jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
+ rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
+ jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
+ daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
+ ilpo.jarvinen@linux.intel.com, peternewman@google.com,
+ maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
+References: <cover.1725488488.git.babu.moger@amd.com>
+ <68c8ef0592c653c5b99cd26d982966cd4a41cb31.1725488488.git.babu.moger@amd.com>
+ <faf50d1f-d3c1-4a9b-a87f-4598e88dc9a1@intel.com>
+ <c43171f4-48c6-b6c3-d71e-1f23367932d7@amd.com>
+ <1d987ed1-0065-4e4b-a719-65af93907974@intel.com>
+ <ca7b1d14-e37d-5f0d-9371-32d8506e51eb@amd.com>
+ <cd2d835b-cc63-4416-b0ee-20334b9b43dd@intel.com>
+ <3b6a8ec9-5e4f-e4ff-cd01-96ecc366565a@amd.com>
+ <4c212746-6d61-44aa-abc6-2d2155ee538f@intel.com>
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <4c212746-6d61-44aa-abc6-2d2155ee538f@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR13CA0202.namprd13.prod.outlook.com
- (2603:10b6:a03:2c3::27) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+X-ClientProxiedBy: SA9PR13CA0090.namprd13.prod.outlook.com
+ (2603:10b6:806:23::35) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,276 +99,180 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU2PR04MB8695:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf7ac0ea-d2fc-459f-67a1-08dce4abc045
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|SN7PR12MB6743:EE_
+X-MS-Office365-Filtering-Correlation-Id: c4c29d97-94c8-4df5-3d2e-08dce4abe451
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|7416014|52116014|1800799024|38350700014;
+	BCL:0;ARA:13230040|376014|7416014|366016|10070799003|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L0Y2enFUS3Qya1JVcHp5ZGMxUmwwYUpETzdHNHllZGlrMXNtMS92WGEvdEEz?=
- =?utf-8?B?MERQOUhianhKV3FQL0NJV1c1YjRzaS9IRVMrRnJjSm16VVcvSmJDbG9MTGFp?=
- =?utf-8?B?aVlLNmY2MlVJT0kwME1Kbk9FTHJxS1dENzNXVGN0eVlzMnMxYndMdWRlUFVR?=
- =?utf-8?B?WHJtSENLTXIwN3AvbFBTZmVjVjJ0ZUpoUkExVDRTbFdGTFd2UTl0YTcvaGs2?=
- =?utf-8?B?Z3JHUThQaVpuNCtLdmJDYklxNTk2cU1BS2svSGE0UGNPeUkveGFLZzQ5T2xl?=
- =?utf-8?B?cEJuT1licUhGKzFXWlZES2FjTk5aSTVnb3ZZeXovVUFLSm14OHB3R21JQkda?=
- =?utf-8?B?NVgvWEhSYUtFZVhJbHgrQ1ZmNVRFVGUzUlJMeG9uKzZHRkNxaitDLytmYU85?=
- =?utf-8?B?MG9lSUhaaGRPUUlDNVhNOVpXS0l4OWY0cWliZ2Z6emRSNUZGSm9Leit5UTdl?=
- =?utf-8?B?ZUIxaWVhZUxBTEVKcHoweDF1YzJtWkZYK21qQk5QNWFpZkJ1N29uaEM0V1hP?=
- =?utf-8?B?a09sY1FyMEV6clVGdTVtQnF6V1RoSVZMRXhwZTMzSm90TjJJWG1aRXRncmlt?=
- =?utf-8?B?dW1HU1g4QWVtQUg5Y0FmSDJFbmppYkltaS9QR01FWWtPaFlGTVlaL0hLdVZ4?=
- =?utf-8?B?Tzh5eTRwV2g4SHcvZ2E5VlVLTzBvVSt1RDcvb2lTL0JtaGdjOGZMTWhXRGp0?=
- =?utf-8?B?aUpuS1luU1ptTmVNYm01QTJxcmNaeDlXTDZiamNEYnFwQXFQVjZkaHNSdkUv?=
- =?utf-8?B?MlpWbVFiYXFzaHFmWkpJVmlYeEdxOHRCMElRdGRUM2JoaTFicVI1VTgzbkNU?=
- =?utf-8?B?TVJHNk5Mc0FMRFB2eFJHZThUaERCN0ZwNUV3WlY3SkFDaTZobTFkbVFmV0d1?=
- =?utf-8?B?TUN6b3UyU0JhU3ZUN1dQS3Uzd1dPaFMzNjZzSmxGcXVJdWhacFZTWEFFRXha?=
- =?utf-8?B?UDdYZWFBbTJidU1kaDN1VGd4cjNHbDcyL0Z1OHJpVVQydldOQWhtL0VoaVpJ?=
- =?utf-8?B?cEtMeG9HaHZkdHo2eWwzL29EZGxLOEtkYytNSmVseFVBamVINXRCUjZUNHdp?=
- =?utf-8?B?K3FPSk5PL0Mya0s1cTJsMmRvYjdVWVhqVjFrUDhvRWFIMnMrWll5MlB0Ym81?=
- =?utf-8?B?b2tGRDJWKzRHU3RKUkNXNHZUeDZWVTBEV3hiMDI1MHVXcmdEWE9qSTM0UVZ1?=
- =?utf-8?B?SWM4RFFEOWd1d0hxRlMrQ2QrTlRVRHdVL25Mb0h0WElLeWhybXYyQWJWdStU?=
- =?utf-8?B?aksvYktOeG9ENkgvVXo5a2JLVDhxVVU2WW5LaUZCL0NQd092V3pTSTFzNTB3?=
- =?utf-8?B?ZWVld2N2SXVwT0Zib0VxWk85ZGErUXBwQmIwVVRZcHVoM3JvNU1sWjMyWERP?=
- =?utf-8?B?dUtsQlJNdERqTVhTL3BuNHhSQnYwS2hUMlVLVmc5b2RFeDZ4Y3VRb3A2Q1pi?=
- =?utf-8?B?Sm8xVHdoRVNSUUVEVVNHSE81c0xhRFdmbUxxNTBreHIrTlFmLzZScUZJSFNJ?=
- =?utf-8?B?dWtKTEV5N2tKWGR2OVVjZ3A5emx5bGpaSUdVeWw5ZXlKMlZTeU9kQ1VmWGE3?=
- =?utf-8?B?SHRTcWZhNXBkMTBNcThJeHpYM0J0bjlncWtGV0Yyb05pRUpUekpDeENXQTBm?=
- =?utf-8?B?aEN4Zndnc0tCWUtvSU9PNHorMmxUTlBNdGJlUFVSbHJXUHhyQ1NVd0hkdlVK?=
- =?utf-8?B?QmpzZVIwSzFkMTcvb2ZWb3dtOXVIMmpyTnFqOStCTWtHY1VRODYvOWVGVHdy?=
- =?utf-8?B?QkdQNEpGditNdFBlZWVFYnIyd1lVNUNQbXRKK2NrcEY3NXg1aEtvZHQxaG53?=
- =?utf-8?B?RUV5dFRjMTJiZnFiUUQ3QT09?=
+	=?utf-8?B?Z3Vjd0c2QitvUHpiRmR3RmNLYnBaMVU4OFBxNFpLVCtjc3VNYmFnOHQ5YjVo?=
+ =?utf-8?B?Nmo4dms3bTFlQmV2OUZOS0k1ek1Pd0NZSHVlYXZDN0w2NHRIa1ZialBtRHoy?=
+ =?utf-8?B?K0ZycUdsQjA5dnRQY3VFSWpOZURUNUJlNHE2cWtJaEIyTFdEd3ZvMFBsL2VR?=
+ =?utf-8?B?YTl4SnVUODVQdGJnOUxkUnQ4Z1pqUUZrTzgrSmpRQnZLcm5nazVnN0tFTXlN?=
+ =?utf-8?B?WUpEN2J4U3NZTXhrVTQ3b29BajE0aE5jdlhuRHZyMHFtTUxCSEZINWNYVnRw?=
+ =?utf-8?B?WGFzY2hXZzJDbk1JOTlHQ1dVVlF5MEM3UUhVN1JDWmxTS0E5L0t5M09POEVa?=
+ =?utf-8?B?S1k1ckpobXVEaFpCVW1ySTJkVml2a1lsSzZEZndFaXRoUDhhSi9Dc2NmUnRG?=
+ =?utf-8?B?cUtCTUcrMVBYZlFvLzYwc2VsYy9CNEJVeG5VVC9WbXVNOHU5bGFIUC9TTkZk?=
+ =?utf-8?B?TnIvRS9INndKUjAwbE5sODgyVlU1OWFoMlNSYWhvd2RIMGFzdEp2Y1ZtRTdI?=
+ =?utf-8?B?Qm9pa0g4SzQzM3htSnFGOGV5ZDZjMkZSelV4WHdGdjNQRWZMZWpBRFRHcHNU?=
+ =?utf-8?B?UFVPL0wvbHg5RjFjVU1oMjUrTkRTeE8wRVM5VXlQQzRlVForUlJpUjZQSmVs?=
+ =?utf-8?B?MUxSTFl1aDJDdEZPOHZ0N0FEd0xSSU1uVTE2dUZwekROSzBya2dLSjVQUjh5?=
+ =?utf-8?B?c1ozdWNvaVpIUit6ZVhqUGpLLy9leU8wdVBRb05MaU5mT1VET2JQbFVyaFRu?=
+ =?utf-8?B?SngzTkxVbFd6M0dqdXpkc2h0L3RYY3NQeDA1cFdxYzR3Zlh3YTY2Nm9ZaWRH?=
+ =?utf-8?B?M0RyOElzTVFzRkE1a2J4d3VHa2l3MmtIRkZqQjErL29nVGgyWThJd0FJUWMy?=
+ =?utf-8?B?cDhHcS9KY2xWeEx1WWNneWxCOTdIalVLVzJrTHpiVjBYUmtSeGd2dkc0NWhD?=
+ =?utf-8?B?SnJTWGt2UHRpWVNsS0dtQWZxQnRMek51YWFlcWt2VnQrM2I2c3piZWtuS2Z3?=
+ =?utf-8?B?RDRBdGVpUEtSRVkvbVVQdU9CVTJGWDRKdTlKM3JDWjhiRWhqdFB6Ukc1WFlz?=
+ =?utf-8?B?bUY3Sjd0OFFLN21EVXpCMXUvc0JaM3pjUzRvdzNLMlFuQjJLRFVBY0xzaHZZ?=
+ =?utf-8?B?NjdzNElRdnByTFpEcnU4cVM5M3hqOC9XMUxiaHFSVjFNU1NHUHdGd2JSdEw4?=
+ =?utf-8?B?ci80YityUzg0akg1cjVyRmFDcHIxS2ZzMWJvMG9XdlgvV3NuNmpzVllTTnow?=
+ =?utf-8?B?azZYMEZOVGFMYzYwVXJwS3RRQXQ4MFQ2ZFVPdk1ZdVpHOHZNc1MrREdlTTlm?=
+ =?utf-8?B?WW9YdlhYc3dMWTJzUFdNM0JhVXBUSEhEaWVHNW55V3hndFZGUTAveWhDN2pz?=
+ =?utf-8?B?QmJ0YmIwMHpQNjZ1VURpTTFvUVB1NTBTN1VnZ0hBU2pJWGFpekpZN0ZSdUdp?=
+ =?utf-8?B?UlJiNExiQ0U4TVIvSHI1YUlyTFBBT1E0Ri8rSmp3M29pcXVadGVPZHFlWlFz?=
+ =?utf-8?B?WWlMektPci8wcjM3dFFodW90cWhRRThBMXdRdmttN1VDOVBmclhDOVpmME54?=
+ =?utf-8?B?RW5xbHVTTEJmdVE3UWN1RlhQUExvOUEyZ2loNWgwalRyUFBwTmUzQ1FrU3dU?=
+ =?utf-8?B?WGpSQVJmUldZejVTM3BUZWRQTy8rQWFnNjd4Z1JpQktydk92S2E0em9VdTYz?=
+ =?utf-8?B?dGJqTlVlTGNzTDJZcEx5akIzVzhIeUlrVlEyek9hSUtxWGhwNDhFVGF3PT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UXNwc2lDL3hzY3ZMWHFMTGdMTzBrMUdKbDJOS1ZweDhNMU15NjNKVlpBWDl2?=
- =?utf-8?B?ZGorRWs3bUVrcmt4eUJTVTlrdEtRUzRFVXNNMXgvc3pRVDJzS2h1ck1waGRC?=
- =?utf-8?B?eVN3aWxCZXhpUnJ4WTExSDZIS2VuRjV6emZQM09jZEFaSytFaHVKV2M5RHZZ?=
- =?utf-8?B?Vk82ZWdWdkN6bVpCelpZQW52NFhjTU9QeGRGK1ZtUXVQMTNMb2d6WkxnYmxy?=
- =?utf-8?B?WDh4dmw5aVFib3c2Zm1rbHhVRWduU2c4bDFaQisxZHpuVHdSWmVndVpmbGxr?=
- =?utf-8?B?S2pKU2pRUmNOZmVnNTZhSmt1dklkcktvSmJmaXRMbFhNd3lEVHJZNmpqRGhB?=
- =?utf-8?B?RGh6Q2FCSHFpS3JIdjdHT1NmZVpWT0tNTnd4b3dycWZZR2gzYldBZlFhMTlM?=
- =?utf-8?B?SjhLUisrcmFob1Nkam9EdXQrQnc1Ri9LMll5TTFNOXJHMHFUVS9qRXJZaFR0?=
- =?utf-8?B?L3o1cmxOOUx2eHYwbWl0bDVaeG8raXFBcUVtWHhIVEtlMUoxZUVGNi9TRjNN?=
- =?utf-8?B?S0M0MWVGZzYwOHQzamlvaENNcmM5YWppY2c5aTIzV0FKdHU1M05aNUpnZXNG?=
- =?utf-8?B?QU9JbTBpM042bDBPTDkzeHNpSWJZZWdGUDdJM3p2YXlRQ3RhN2s4YlZtRkg3?=
- =?utf-8?B?aG1lVVJVelZsZ2FtYkNuODhPNDlMRG5sdXRXN3V0L1ZVUHB4UzBQMXB3Z0hn?=
- =?utf-8?B?amFGT2JrSWpBdlVHRTJXSFpmOWsxeUNCRlArK2JhUE5Ba1lrb2pBRmI0bitN?=
- =?utf-8?B?SWZjUzRpbUVDTDZIc0s4elhhVjhHY3FseG0yQmlieXBCOWprLzU0UWRuM0s4?=
- =?utf-8?B?T0lKVngwNEdhWnVMR2NUcDJQR3c0TXBnTG9VTHZ4U21oNWlKWjBJWjV1RkZD?=
- =?utf-8?B?ejhEanFxZHdGQys3dXhQNEJma2poNzFMMVpaaStPWENtbVQ0WDNRQ3ZpWno3?=
- =?utf-8?B?UkZQNHJUMEw1eGZqb0JGQlRVanFTUURnKy8wL0FKSjhQUnlRdXlIY3lVdlZ6?=
- =?utf-8?B?L3g5SzNQOWlORlZRSlNDMTk1a0lueTk5QnZBbjRhTnF0Rnh0T1dNODBrQ2tx?=
- =?utf-8?B?ZnIrdmphbjlJS3dMUkV1YmZMMWNRL21MMkxXOXFZblNTYzd4Q1htYThGTWJm?=
- =?utf-8?B?VDRmVisrZVhMdzd1VlNsMGtDSnpRYUJDaDVYRmIwVnVIV1prOXZGTmp3NUxa?=
- =?utf-8?B?cXFOdGo0VXFidWdEQ2tKODZjckE4Q1hvQkVkM0ZDS2wyd0pZSTVUOUlyOU1E?=
- =?utf-8?B?bnRTd2M3SytTRDNJN3ZKZmxJcGpUYkxkems5VzljMVdKWVpNampFMkEzQ2ZF?=
- =?utf-8?B?dU5jcXZyeERNK01jMitTZ1RLT3l0anNlQlQyMmUxTi9ZY1R3RXVuODUyNGtw?=
- =?utf-8?B?bGJwQXNqMStPcTUzL1h0d1RHa1N6b0VUbGFxcTdhZmdkN1h6UjljVGpSTzVa?=
- =?utf-8?B?WVh3Qi9hS0hBeVYxcUtBMkRBZ1F4Q0xtd01zVm9DVVdmZi9nRXVOcmozRkQv?=
- =?utf-8?B?K2xKWGwrU1pHaTkwTXlwRk9BdTJTditTN0VITml4NGtoVlpNZ0wzRzlVQjN6?=
- =?utf-8?B?VWlFTUoyYjFIenpUd3RpanFNZzdmd1BlTnZrUko2T0pwQWdMTjgvcjZNd3Z6?=
- =?utf-8?B?S0JJU3hJN2xLUXY3L3lDeGVNV1cwREhQajJ2ZXhDaGZzOWYwejFvT3J0cXJT?=
- =?utf-8?B?QjlKNGRDVjM3RWRnTUg1cTBXb2xsWkNjcFBvRTNRT3NqdG0zdS9DSkx4Y3Z3?=
- =?utf-8?B?RXc1TWpWUWl3alZQOWN0OW5ybXNSL1NRVDBHN1YvSWZnRU1YZGlwd0dkN0dU?=
- =?utf-8?B?UWxSSkZiTDRMVGRyelJCNnpIZ0F3NVExdlVmdUxQNjZoTXdib2hTTFNBOXJZ?=
- =?utf-8?B?WC82azhHS0dBUWUwN1hpRDM2VC94ODJ2aTdGWjdOdzRrUXY0VGdPaUVsd05U?=
- =?utf-8?B?OWdrbHV4cWM4MWNXdjdkZlBlQUtCVzJna1V3Rkg0QTB4cWVpZ3JwRHFtWjhr?=
- =?utf-8?B?QndHWSsreERIWlVIOEpRY3lxaVRZL1Nna21FeDR1Q1c4czJmS1NaR1hyYnEv?=
- =?utf-8?B?anpTRWhFRXRKYVFCbmJsbDh4MXZvYVZzcHpnL0s4L3NPdWU5VjNsZmI0NEN0?=
- =?utf-8?Q?ul78=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf7ac0ea-d2fc-459f-67a1-08dce4abc045
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+	=?utf-8?B?OWtQRmVpWmxaUjE4ZEp3MXFTcTJZeDIyeG54R0FvVzg2Tlk3d3oyVnVYb1l6?=
+ =?utf-8?B?RVF0a3c0NGR2SlZOVlZpTm1iMmVKRWY3TVdZeDRZcnVreEFmeHVBajIyU2xC?=
+ =?utf-8?B?b1dhUWc0K1F2Wk1kbGFDN2tJTlM3d1JqcVhVL1cwWkI4Z3VhWmgyZEVQS043?=
+ =?utf-8?B?N3JGS3hIZ1dQZFBEWkprd3c1VG1vVTY3aHdyeFREVGgzT09DNy9tVFJLV3RZ?=
+ =?utf-8?B?aGE0UDg2SmhoZVdRcXh2ZnZKdGhOUmRmOUw1N2FFc0NVallKcVdSUWVIbFAw?=
+ =?utf-8?B?ZUl1N3owR2VBdFlzWXZQN0VZOEE0WUd1YlF5MVFHa1lhQVR4YjBnV3FUNHFH?=
+ =?utf-8?B?ZndLZGFkclBJUlhqckZKNEMzOFF6VTFDMnVUZFNDMVg1SUpOdUZpb2JGUjJy?=
+ =?utf-8?B?U2hmaTZLKy9hRDdJTG10VXN4MkdkWTdoSUN5NUU4ay9CUklFbEdwdHp4UXJV?=
+ =?utf-8?B?T3RyeFByWjRzVVJzMnZmaXp0UFQ5STdiNURIRXZsZWdDeUZSM2R3L1dXaHBr?=
+ =?utf-8?B?K1pVMEpDeEQvcGp0dUVyOWIxOFYzdFJmaEdVQ0x1VW5jTTRwcFBMd09ldDdk?=
+ =?utf-8?B?TFNlUDhWUEx2aXJJdytBcmUwNUJ5VEdIZ3k2d2Qyc2lyenhId1ZoZGhWTUE1?=
+ =?utf-8?B?T09ocHFxZTZESUJzcGU5L2tYTWwvc3NzNnBjQ1gvY2c0K0VtTGZ1Ulh3b09G?=
+ =?utf-8?B?NWRpWmhZZEhOODB0MlhlYXN3SFZ6b2NTR2Ryc2ZKMjY1dkpCcDB5K3pGZGZV?=
+ =?utf-8?B?TEJWQVlCaHNFRlUrSFlhMnlBaS9kbE1yOTdTZmQ1VCsreUYwaVNjT1dMZjk2?=
+ =?utf-8?B?NFczWlRDREhpamF6Z2hScVpqWHc4N3pCNFZFangycU1zaTRyL3liTi9sUmFQ?=
+ =?utf-8?B?eG5vcmhBbTh0UHJCUU4yVWh1d2xacEpsN082QWU3aVNBODBaM3lQTUl3VUxM?=
+ =?utf-8?B?ZEFLYXNxY3BzelRvRkNUbzg1ZWlIQUZqSzk0TlJRWFN4ZktvRW9ya3ZITDFo?=
+ =?utf-8?B?eTk2QXVwQWdHVWxwNGk1THoxcW5jUjRjbi9jdTM0S0JpSHR5eEFxYUx6b0V2?=
+ =?utf-8?B?MlJ3NndUeUhybENFamJqd0NmSTg1cHgvU1pOSW8raFpIWWNNUTU3c280ZGZS?=
+ =?utf-8?B?RzYzR01WQ3FDS2MyZGpaSm1icjlINExQeEFmMzJuZDNQOXZXb3kwNldCZ3Ax?=
+ =?utf-8?B?ZlVqOWV1aUo1eVNMM25JTFdmeGRXdW1rSS9xT25OalBMU09HT05hU2hCOHk0?=
+ =?utf-8?B?aEdnSkthVXJKNGJINXdHQ3ljU0Y5eVhRNUNZRkNrUkpocFI5QjdBRnBLYlN1?=
+ =?utf-8?B?c09HZkthTFpjNGg5MDNnanNkVExZaTZqanNrcER0QXBGbzJETTdtZkhZb255?=
+ =?utf-8?B?UzVNN3ZqOXZjUll2d2JCbjEwUGgrUHRaVmFYd0NhY2Y0YW1WU1FZU1k5UTV2?=
+ =?utf-8?B?dTd3aEpVdWFCV2VaSGJKMEFxQXhPWU9mVTBzbURYZlhnZm9oTzBDOXIzeDNN?=
+ =?utf-8?B?dGNyYnIvZnBIL0JqeUFxTXNNRzMvVWNPNmZsalJRVStRSW1EV2p0eUhrYnMv?=
+ =?utf-8?B?WW5sQTlvQjNSWFE5RVpKQkxVMmxld2ZkcktvdjRIRzZUNmlsbTJpaUFmNDJ2?=
+ =?utf-8?B?OGR6eXRpSTA4UmFDNE1XRVdpaVRDMDZZSE1vQk5Mamd6cXhVOTBUWCsxdldB?=
+ =?utf-8?B?M0ZZZllkandmU0gwcUpxNW1lSDNCUk95WS9GSFdyTnJYOU91OHlvM0FpT285?=
+ =?utf-8?B?cUx2UUErY1VRdUVGZmJuWGg4SHl1dkJ0NjRzVW1jNkU0MHduc3RDVk82Qmdl?=
+ =?utf-8?B?b0hLcWpwVklnMkhJYjlINjIxZ2Fwd2VsdiszbDhsd3RBNGE1ZDdSckpmUzNp?=
+ =?utf-8?B?Zm5Od0t2dTkyL2hGTWF5TXhPNEY2Q1hJK1VIZVFSN2Z1Rm5heC9OWUZ0dGRi?=
+ =?utf-8?B?enBtV3FOWHl0K1c4NWhFakM5aFprRzFXcEpKL1pvMHFRVEpqUHFnSTl4cld1?=
+ =?utf-8?B?THlIcG5FTElWbWUwRGxjSmkvL0c4bEk2YlU2T2hFRy9CYmFDdnpMVnFQaUJv?=
+ =?utf-8?B?RFZJS3djQXB2QkJEVzVXUGNZNHEyb1VNMUFYNDlWR0pWNUkvNjA5V1k5TkhI?=
+ =?utf-8?B?aEl4dWx4LzdtNDJqKzlEczFCVE5meTlDbnoxU3Z0Qjk0d0NSMlpoWUUxdTQv?=
+ =?utf-8?Q?/hcPk4kvotdUonye+hujhiW3ATWL9d7NKvE+SYsVLkD2?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4c29d97-94c8-4df5-3d2e-08dce4abe451
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 19:35:49.7423
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 19:36:50.2511
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9CEmh1UY1SS4t+npBYWBeelX5eawgYA1DlevpiYoka9k/mxyFZ/QmnNPsmy4FU1C8e6V6zadX1dpx4QRyL593A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8695
+X-MS-Exchange-CrossTenant-UserPrincipalName: b4reBQ14w+6663QwGP3EyWg98QSD+jCqU2ZphRrh13LPh1XHxsuMeHKm0V6M38rF
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6743
 
-From: Clark Wang <xiaoning.wang@nxp.com>
+Hi Reinette,
 
-Implement workaround for ERR051198
-(https://www.nxp.com/docs/en/errata/IMX8MN_0N14Y.pdf)
+On 10/4/2024 11:52 AM, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> On 10/4/24 9:38 AM, Moger, Babu wrote:
+>> Hi Reinette,
+>>
+>> On 10/3/2024 9:17 PM, Reinette Chatre wrote:
+>>> Hi Babu,
+>>>
+>>> On 10/3/24 6:11 PM, Moger, Babu wrote:
+>>>> Hi Reinette,
+>>>>
+>>>> On 10/2/2024 1:19 PM, Reinette Chatre wrote:
+>>>>> Hi Babu,
+>>>>>
+>>>>> On 9/27/24 10:47 AM, Moger, Babu wrote:
+>>>>>> On 9/19/2024 12:59 PM, Reinette Chatre wrote:
+>>>>>>> On 9/4/24 3:21 PM, Babu Moger wrote:
+>>>>>
+>>>>>>>> v7: Simplified the parsing (strsep(&token, "//") in rdtgroup_mbm_assign_control_write().
+>>>>>>>>         Added mutex lock in rdtgroup_mbm_assign_control_write() while processing.
+>>>>>>>>         Renamed rdtgroup_find_grp to rdtgroup_find_grp_by_name.
+>>>>>>>>         Fixed rdtgroup_str_to_mon_state to return error for invalid flags.
+>>>>>>>>         Simplified the calls rdtgroup_assign_cntr by merging few functions earlier.
+>>>>>>>>         Removed ABMC reference in FS code.
+>>>>>>>>         Reinette commented about handling the combination of flags like 'lt_' and '_lt'.
+>>>>>>>>         Not sure if we need to change the behaviour here. Processed them sequencially right now.
+>>>>>>>>         Users have the liberty to pass the flags. Restricting it might be a problem later.
+>>>>>>>
+>>>>>>> Could you please give an example of what problem may be encountered later? An assignment
+>>>>>>> like "domain=_lt" seems like a contradiction to me since user space essentially asks
+>>>>>>> for "None of the MBM events" as well as "MBM total event" and "MBM local event".
+>>>>>>
+>>>>>> I agree it is contradiction. But user is the one who decides to do that. I think we should allow it. Also, there is some value to it as well.
+>>>>>>
+>>>>>> "domain=_lt" This will also reset the counters if the total and local events are assigned earlier this action.
+>>>>>
+>>>>> The last sentence is not clear to me. Could you please elaborate what
+>>>>> you mean with "are assigned earlier this action"?
+>>>>>
+>>>>
+>>>> I think I confused you here. "domain=_lt" is equivalent to "domain=lt".  My reasoning is handling all the combination in the code adds code complexity and leave it the user what he wants to do.
+>>>
+>>> hmmm ... and how about "domain=lt_"? Do you think this should also be equivalent to
+>>> "domain=lt" or perhaps an expectation that counters should be assigned to the two events
+>>> and then immediately unassigned?
+>>
+>> Yes. "domain=lt_" should be "domain=lt".
+>>
+>>>
+>>> Giving user such flexibility may be interpreted as the assignment seen as acting
+>>> sequentially through the flags provided. Ideally the interface should behave in
+>>> a predictable way if the goal is to provide flexibility to the user.
+>>>
+>>
+>> My only concern is adding the check now and reverting it back later.
+>> Basically process the flags sequentially and don't differentiate between the flags. I feel it fits the predictable behavior. No?
+> 
+> This is the point I was trying to make. If flags are processed sequentially then it would be
+> predictable behavior and if that is documented expectation then that should be ok. The problem
+> that I want to highlight is that if predictable sequential processing is the goal then
+> "domain=_lt" cannot be interpreted the same as "domain="lt_". When flags in "domain=lt_"
+> are processed sequentially then final state should be "domain=_", no?
 
-PWM output may not function correctly if the FIFO is empty when a new SAR
-value is programmed
+Yes. that is correct.
+> 
+> If sequential processing is done then "domain=_lt" means "unassign all counters followed
+> by assign of counter to local MBM monitoring, followed by assign of counter to total MBM
+> monitoring". Similarly, "domain=lt_" means "assign a counter to local MBM monitoring, then
+> assign a counter to total MBM monitoring, then unassign all counters".
 
-Description:
-  When the PWM FIFO is empty, a new value programmed to the PWM Sample
-  register (PWM_PWMSAR) will be directly applied even if the current timer
-  period has not expired. If the new SAMPLE value programmed in the
-  PWM_PWMSAR register is less than the previous value, and the PWM counter
-  register (PWM_PWMCNR) that contains the current COUNT value is greater
-  than the new programmed SAMPLE value, the current period will not flip
-  the level. This may result in an output pulse with a duty cycle of 100%.
+Yes. That is correct.
+> 
+> If this sequential processing is the goal then the implementation would still need to be
+> adapted. Consider, for example, "domain=lt" ... with sequential processing the user
+> indicates/expects that "local MBM monitoring" has priority if there is only one counter
+> available, but the current implementation does not process it sequentially and would end up
+> assigning counter to "total MBM monitoring" first.
 
-Workaround:
-  Program the current SAMPLE value in the PWM_PWMSAR register before
-  updating the new duty cycle to the SAMPLE value in the PWM_PWMSAR
-  register. This will ensure that the new SAMPLE value is modified during
-  a non-empty FIFO, and can be successfully updated after the period
-  expires.
-
-Write the old SAR value before updating the new duty cycle to SAR. This
-avoids writing the new value into an empty FIFO.
-
-This only resolves the issue when the PWM period is longer than 2us
-(or <500kHz) because write register is not quick enough when PWM period is
-very short.
-
-Reproduce steps:
-  cd /sys/class/pwm/pwmchip1/pwm0
-  echo 2000000000 > period     # It is easy to observe by using long period
-  echo 1000000000 > duty_cycle
-  echo 1 > enable
-  echo  800000000 > duty_cycle # One full high plus will be seen by scope
-
-Fixes: 166091b1894d ("[ARM] MXC: add pwm driver for i.MX SoCs")
-Reviewed-by: Jun Li <jun.li@nxp.com>
-Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Change from v6 to v7
-- Add continue write for < 500hz case to try best to workaround this
-problem.
-
-Change from v5 to v6
-- KHz to KHz
-- sar to SAR
-- move comments above if
-
-Change from v4 to v5
-- fix typo PMW & If
-- using imx->mmio_base + MX3_PWMSAR
-
-Change from v3 to v4
-- none, wrong bump version number
-Change from v2 to v3
-- simple workaround implement.
-- add reproduce steps.
-
-Change from v1 to v2
-- address comments in https://lore.kernel.org/linux-pwm/20211221095053.uz4qbnhdqziftymw@pengutronix.de/
-  About disable/enable pwm instead of disable/enable irq:
-  Some pmw periphal may sensitive to period. Disable/enable pwm will
-increase period, althouhg it is okay for most case, such as LED backlight
-or FAN speed. But some device such servo may require strict period.
-
-- address comments in https://lore.kernel.org/linux-pwm/d72d1ae5-0378-4bac-8b77-0bb69f55accd@gmx.net/
-  Using official errata number
-  fix typo 'filp'
-  add {} for else
-
-I supposed fixed all previous issues, let me know if I missed one.
----
- drivers/pwm/pwm-imx27.c | 75 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 74 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
-index 9e2bbf5b4a8ce..00a7189ba46ca 100644
---- a/drivers/pwm/pwm-imx27.c
-+++ b/drivers/pwm/pwm-imx27.c
-@@ -26,6 +26,7 @@
- #define MX3_PWMSR			0x04    /* PWM Status Register */
- #define MX3_PWMSAR			0x0C    /* PWM Sample Register */
- #define MX3_PWMPR			0x10    /* PWM Period Register */
-+#define MX3_PWMCNR			0x14    /* PWM Counter Register */
- 
- #define MX3_PWMCR_FWM			GENMASK(27, 26)
- #define MX3_PWMCR_STOPEN		BIT(25)
-@@ -223,6 +224,8 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
- 	unsigned long long c;
- 	unsigned long long clkrate;
-+	unsigned long flags;
-+	int val;
- 	int ret;
- 	u32 cr;
- 
-@@ -263,7 +266,77 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 		pwm_imx27_sw_reset(chip);
- 	}
- 
--	writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-+	/*
-+	 * This is a limited workaround. When the SAR FIFO is empty, the new
-+	 * write value will be directly applied to SAR even the current period
-+	 * is not over.
-+	 *
-+	 *           ─────────────────────┐
-+	 * PWM OUTPUT                     │
-+	 *                                └─────────────────────────
-+	 *
-+	 *           ┌──────────────────────────────────────────────┐
-+	 * Counter   │       XXXXXXXXXXXXXX                         │
-+	 *           └──────────────────────────────────────────────┘
-+	 *                   ▲            ▲
-+	 *                   │            │
-+	 *                 New SAR      Old SAR
-+	 *
-+	 *           XXXX  Errata happen window
-+	 *
-+	 * If the new SAR value is less than the old one, and the counter is
-+	 * greater than the new SAR value (see above diagram XXXX), the current
-+	 * period will not flip the level. This will result in a pulse with a
-+	 * duty cycle of 100%.
-+	 *
-+	 * Check new SAR less than old SAR and current counter is in errata
-+	 * windows, write extra old SAR into FIFO and new SAR will effect at
-+	 * next period.
-+	 *
-+	 * Sometime period is quite long, such as over 1 second. If add old SAR
-+	 * into FIFO unconditional, new SAR have to wait for next period. It
-+	 * may be too long.
-+	 *
-+	 * Turn off the interrupt to ensure that not IRQ and schedule happen
-+	 * during above operations. If any irq and schedule happen, counter
-+	 * in PWM will be out of data and take wrong action.
-+	 *
-+	 * Add a safety margin 1.5us because it needs some time to complete
-+	 * IO write.
-+	 *
-+	 * Use __raw_writel() to minimize the interval between two writes to
-+	 * the SAR register to increase the fastest PWM frequency supported.
-+	 *
-+	 * When the PWM period is longer than 2us(or <500kHz), this workaround
-+	 * can solve this problem. No software workaround is available if PWM
-+	 * period is shorter than IO write.
-+	 */
-+	c = clkrate * 1500;
-+	do_div(c, NSEC_PER_SEC);
-+
-+	local_irq_save(flags);
-+	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
-+
-+	if (duty_cycles < imx->duty_cycle) {
-+		if (state->period < 2000) { /* 2000ns = 500 kHz */
-+			/* Best effort attempt to fix up >500 kHz case */
-+			udelay(6); /* 2us per FIFO entry, 3 FIFO entries written => 6 us */
-+			writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-+			writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-+		} else if (val < MX3_PWMSR_FIFOAV_2WORDS) {
-+			val = readl_relaxed(imx->mmio_base + MX3_PWMCNR);
-+			/*
-+			 * If counter is close to period, controller may roll over when
-+			 * next IO write.
-+			 */
-+			if ((val + c >= duty_cycles && val < imx->duty_cycle) ||
-+			    val + c >= period_cycles)
-+				writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
-+		}
-+	}
-+	writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-+	local_irq_restore(flags);
-+
- 	writel(period_cycles, imx->mmio_base + MX3_PWMPR);
- 
- 	/*
+Sure. Lets accommodate the sequential processing. Process the  flags in 
+the order it is provided. I need to make few changes to 
+rdtgroup_process_flags() to address it. Hopefully, it can be done 
+without much complexity. Thanks
 -- 
-2.34.1
-
+- Babu Moger
 
