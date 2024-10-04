@@ -1,146 +1,262 @@
-Return-Path: <linux-kernel+bounces-350029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B066798FEE7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:24:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DBE898FEE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBC4B1C23116
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:24:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2ED1F2281C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E275A13D2BB;
-	Fri,  4 Oct 2024 08:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E9C13D503;
+	Fri,  4 Oct 2024 08:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="krQc/+Tu"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qAWulZVI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Q1v8H98C";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qAWulZVI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Q1v8H98C"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69D76F305
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 08:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD6F13C810;
+	Fri,  4 Oct 2024 08:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728030292; cv=none; b=F9jKY7w6nQCyKvIPI+uAUVj27epX46ZPjg2CzSliO3tzjMqwpJhzMHU9gCJDtLj0LF+MSpfY8Z7M0bfZp6oQurPxumNmikVEktn0DtjDN3x4C1zduy2f2zaimlcj8PK7z4XrE4jrWyUcPVoULCYlcn08h6MYaAlCmsRJpHm2KJc=
+	t=1728030304; cv=none; b=UcvL9ujdK6A2zX+4TDQZzBidG8DrvzG+b6/6xNQ0zTDRao76716dhVpo9BmFLTewbgjzZZI0HMi6BnV1u0eb+JkeWtzNxIyIosR3pj412n++Fume8G5+CpOoXVvAjFJyrrk5dD52t16EaKAjbMThLmZrVp4TgvER39VCPCqXDys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728030292; c=relaxed/simple;
-	bh=HUcJoHr6ENwP47f7Wut9FgKSjqccN5f/YJP3DW047Ew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hl5cqEoiB8b8hDP54UJMKmPdnNoB1RszGOxrfm+SwT+HnU1giXRWEuc/PtHPUZ7XHpj4KI2qQkxzvnCpB45f0lwZqcBXscAUVmnsRxd8QUwCaNjWHQtGAdyxk5iXbu6H8q7t4TJWJlqU1b5XmggqDuLay+D6zxYpELX/+u8BJxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=krQc/+Tu; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4a3be8c420cso550513137.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 01:24:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728030289; x=1728635089; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9oxZyp3eZ8k8zuivapL9rT1F6bBI1eaH4lwdCzl24o8=;
-        b=krQc/+TuFFXN37wmIK+Z6phCoasPpXvxSvoS6PxpoblitNkJWXeQn/Q2J/eeL0wOGq
-         EOsk36prMtFjYBFf6l2E6/CH4T2ev1kYUVGZw5cuQPO2gptaA4U/XpAyjv43auzM3qGZ
-         ItG1jCy+1MJ2FQbYl40k2ifnR8jYiNfKK+wYs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728030289; x=1728635089;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9oxZyp3eZ8k8zuivapL9rT1F6bBI1eaH4lwdCzl24o8=;
-        b=cdLHnQq1PWgfpa0DknHE/qlnxGVkdLnJZ/YSPN6m1zQHMVUhyRT1X5FbXolMjw+jlb
-         4l5Y0WlZ2SP51pumOLZhTUaoIelhUD0W0rBnIiue93nRlYIY/pW2NG22vk9FQZl2gfXZ
-         ool109+V6YqjVZouCbnYZfKGLBZHvOf1jZTOLxLUDlLw80eqPKP17Bo0ua+vaWxe5OuK
-         sZC8qugiX8TDRjtXdjXk2OznOEqcEm15f7WmcomLNZZ7igvwgIsVC3MC9KE+A3mpINRY
-         xVUpEAzBPnEs09RNcYNt+G3apXe89/LtXfjQvKzZ25eWn8a7mlwWsTKrJij9UxIevL9j
-         aNEA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8aGy6VRnRa/R4dXzhf079HPYgQ8pRUwZD4KLDqicWAxdSJaxAw0ZgF4EH43N/aB2MJ/DSGUXHiXex7d4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM3vz8BYNMtq5ImfOS4g4FAkPwqGnioFUItHPgJj4YWWlkQHaB
-	pl9nk/7iQBjxAc8KIZwzQUhUGd4c4jv99K9NfjX9L39viUJRFovqrWBajtgl/dsRf3tGXzIrn2s
-	oWw==
-X-Google-Smtp-Source: AGHT+IEPOXx0KXh0Lp9Tp/HWKFWrV2o1ZcUaFqOsYCcHkYRCvV6ZgWx6IHAeuvIsRyyxlRlnnxXGUw==
-X-Received: by 2002:a05:6102:c88:b0:4a3:e196:4579 with SMTP id ada2fe7eead31-4a40573aee4mr1336579137.2.1728030289074;
-        Fri, 04 Oct 2024 01:24:49 -0700 (PDT)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-84f3ae77612sm374163241.20.2024.10.04.01.24.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 01:24:48 -0700 (PDT)
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-50923780607so524023e0c.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 01:24:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7ueIzA9kTns8/NHmpykW+BW+4qAcvdZlNGCnZXb/F5wNeyvcywwPAwNbtdjVBd/70tMndxaDYISAo72o=@vger.kernel.org
-X-Received: by 2002:a05:6122:78d:b0:50a:c19b:e712 with SMTP id
- 71dfb90a1353d-50c855597a5mr1192054e0c.8.1728030287686; Fri, 04 Oct 2024
- 01:24:47 -0700 (PDT)
+	s=arc-20240116; t=1728030304; c=relaxed/simple;
+	bh=kEtZfjO1cFf2dqeUqn3yUw3hXQzDL0kwAhldAv5SE7A=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ddof0JisYm2HPsTwITrUAZmn2lrl1//UVRFG1kOln8IreuXxGpxiqJFT9KFfcK0C/8k2a7y7OK6ug5Ngq9FGDdDg5Jj/PdDkjT1RziyYN8gxSYEfE/iNQ25kD4Pr+731wJEDJ9uJ7BKec5THlpKuu+r5UeCH+BA34/HZ0tqPIXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qAWulZVI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Q1v8H98C; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qAWulZVI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Q1v8H98C; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 144451FB91;
+	Fri,  4 Oct 2024 08:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728030301; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ac5BUvnjyZ2mQgkwpda1ad9P9Ze6M0e1i8mt340OuIM=;
+	b=qAWulZVIyr4Mso9RMUFbOBd34H4eX/7fcEm7RrKbn9HZCq+SkhS1XDTR1J9SqHJB15JW68
+	WgxuTU5StG0jk6OtB9UhrPC33Y3FlgAx/N5nqM1lfVaDPm0TB0isMOWB+Il6q+hBBG7h+R
+	4gk7u6DzgU6lMmd8CjQ7RerazzVTvSs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728030301;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ac5BUvnjyZ2mQgkwpda1ad9P9Ze6M0e1i8mt340OuIM=;
+	b=Q1v8H98CpxJ0RpPlgpjhUIvdeKNDg0e9vWE20Jq62HZO9jsJufYG6/hyv0m0aae1w71CZr
+	+Md8EzvWD042p7Dw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qAWulZVI;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Q1v8H98C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728030301; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ac5BUvnjyZ2mQgkwpda1ad9P9Ze6M0e1i8mt340OuIM=;
+	b=qAWulZVIyr4Mso9RMUFbOBd34H4eX/7fcEm7RrKbn9HZCq+SkhS1XDTR1J9SqHJB15JW68
+	WgxuTU5StG0jk6OtB9UhrPC33Y3FlgAx/N5nqM1lfVaDPm0TB0isMOWB+Il6q+hBBG7h+R
+	4gk7u6DzgU6lMmd8CjQ7RerazzVTvSs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728030301;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ac5BUvnjyZ2mQgkwpda1ad9P9Ze6M0e1i8mt340OuIM=;
+	b=Q1v8H98CpxJ0RpPlgpjhUIvdeKNDg0e9vWE20Jq62HZO9jsJufYG6/hyv0m0aae1w71CZr
+	+Md8EzvWD042p7Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B7C2113A6E;
+	Fri,  4 Oct 2024 08:25:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ODmUK1ym/2aUdQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 04 Oct 2024 08:25:00 +0000
+Date: Fri, 04 Oct 2024 10:25:54 +0200
+Message-ID: <87iku8mfzh.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Christoffer Sandberg <cs@tuxedo.de>
+Cc: Jerry Luo <jerryluo225@gmail.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	christian@heusel.eu,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	perex@perex.cz,
+	regressions@lists.linux.dev,
+	wse@tuxedocomputers.com
+Subject: Re: [REGRESSION][BISECTED] Audio volume issues since 4178d78cd7a8
+In-Reply-To: <dbc783cc2608ac63ffd420b1dc3eeaa9@tuxedo.de>
+References: <87jzfbh5tu.wl-tiwai@suse.de>
+	<ea6e5168-238f-41f5-9600-36b75ed990a1@gmail.com>
+	<87jzetk2l0.wl-tiwai@suse.de>
+	<b38b5947482a5ca4b55e0ddb908c2f34@tuxedo.de>
+	<87seteli51.wl-tiwai@suse.de>
+	<d348ca06-38ca-474f-8673-dff2248331e5@gmail.com>
+	<dbc783cc2608ac63ffd420b1dc3eeaa9@tuxedo.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241004074938.6571-1-macpaul.lin@mediatek.com>
-In-Reply-To: <20241004074938.6571-1-macpaul.lin@mediatek.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Fri, 4 Oct 2024 16:24:10 +0800
-X-Gmail-Original-Message-ID: <CAC=S1nhW7ervk-b31mxtx_c-KUeLuC0P_Yr=9jtumUXAm6AZ_A@mail.gmail.com>
-Message-ID: <CAC=S1nhW7ervk-b31mxtx_c-KUeLuC0P_Yr=9jtumUXAm6AZ_A@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: power: mediatek: Refine multiple level power
- domain nodes
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, Alexandre Mergnat <amergnat@baylibre.com>, 
-	Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>, 
-	Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, 
-	Chris-qj chen <chris-qj.chen@mediatek.com>, 
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
-	Chen-Yu Tsai <wenst@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 144451FB91
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[gmail.com,suse.de,heusel.eu,vger.kernel.org,perex.cz,lists.linux.dev,tuxedocomputers.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
+X-Spam-Flag: NO
 
-On Fri, Oct 4, 2024 at 3:53=E2=80=AFPM Macpaul Lin <macpaul.lin@mediatek.co=
-m> wrote:
->
-> Extract duplicated properties and support more levels of power
-> domain nodes.
->
-> This change fix following error when do dtbs_check,
->   mt8390-genio-700-evk.dtb:
->     power-controller: power-domain@15:power-domain@16:power-domain@29:pow=
-er-domain@30:
->     Unevaluated properties are not allowed ('power-domain@31', 'power-dom=
-ain@32'
->     were unexpected)
->
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> ---
->  .../devicetree/bindings/power/mediatek,power-controller.yaml  | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/power/mediatek,power-contr=
-oller.yaml b/Documentation/devicetree/bindings/power/mediatek,power-control=
-ler.yaml
-> index 8985e2df8a56..a7df4041b745 100644
-> --- a/Documentation/devicetree/bindings/power/mediatek,power-controller.y=
-aml
-> +++ b/Documentation/devicetree/bindings/power/mediatek,power-controller.y=
-aml
-> @@ -54,6 +54,10 @@ patternProperties:
->              patternProperties:
->                "^power-domain@[0-9a-f]+$":
->                  $ref: "#/$defs/power-domain-node"
-> +                patternProperties:
-> +                  "^power-domain@[0-9a-f]+$":
-> +                    $ref: "#/$defs/power-domain-node"
-> +                    unevaluatedProperties: false
->                  unevaluatedProperties: false
->              unevaluatedProperties: false
->          unevaluatedProperties: false
+On Fri, 04 Oct 2024 10:18:10 +0200,
+Christoffer Sandberg wrote:
+> 
+> 
+> 
+> On 2.10.2024 23:28, Jerry Luo wrote:
+> > On 10/2/24 10:00 AM, Takashi Iwai wrote:
+> >> On Wed, 02 Oct 2024 10:21:22 +0200,
+> >> Christoffer Sandberg wrote:
+> >>> 
+> >>> 
+> >>> On 30.9.2024 09:44, Takashi Iwai wrote:
+> >>>> On Mon, 23 Sep 2024 21:37:42 +0200,
+> >>>> Jerry Luo wrote:
+> >>>>> 
+> >>>>> Hi Takashi,
+> >>>>> 
+> >>>>> On Mon, 16 Sep 2024 19:22:05 +0200,
+> >>>>> 
+> >>>>> Takashi Iwai wrote:
+> >>>>> 
+> >>>>>      Could you give alsa-info.sh output from both working and
+> >>>>> non-working
+> >>>>>      cases?  Run the script with --no-upload option and attach the
+> >>>>> outputs.
+> >>>>> 
+> >>>>>      thanks,
+> >>>>> 
+> >>>>>      Takashi
+> >>>>> 
+> >>>>> Issue now reappear, output from alsa-info.sh are attached. If they
+> >>>>> are still
+> >>>>> needed.
+> >>>> Thanks.  The obvious difference seems to be the assignment of two
+> >>>> DACs
+> >>>> 0x10 and 0x11 for headphone and speaker outputs.
+> >>>> 
+> >>>> Christoffer, how are those on your machines?
+> >>> I attached alsa-info from the Sirius Gen2 device.
+> >>> 
+> >>> Comparing the working/nonworking of Jerry, yeah, the assignment of
+> >>> 0x10 and 0x11 looks switched around. I don't see what difference this
+> >>> would make. Also, node 0x22 has "bass speaker" controls in the
+> >>> non-working version.
+> >>> 
+> >>> Comparing the Sirius Gen2 alsa-info with Jerrys, to me it looks like
+> >>> the non-working version corresponds to our working version.
+> >>> 
+> >>> I would expect the non-working version to happen all the time though
+> >>> with regards to the "bass speaker" controls. Why would this only
+> >>> happen sometimes?
+> >> Thanks!  The assignment of DACs depend on the pins and topology, so it
+> >> can be a bit sensitive.
+> >> 
+> >> Now looking more closely at both outputs, I wonder how the commit
+> >> breaks pang14.  Maybe it has a PCI SSID 2782:12c5 (or 12c3) while the
+> >> codec SSID is 2782:12b3?  If so, the patch below should fix.
+> 
+> Interesting, you're right, PCI SSID c3/c5 and codec SSID c3/c5 for the
+> Siriuses.
+> 
+> I had a look around. In patch_realtek there are some cases where codec
+> SSID match is needed as well. Would it be better/safer to directly do
+> this immediately or keep it as an exception where it breaks or for
+> known sensitive models/brands?
 
-For reference, I sent the exact same patch and it's been acked:
-https://lore.kernel.org/all/20241001113052.3124869-2-fshao@chromium.org/
+It needs a better handling, yes.  OTOH, the driver became gigantic and
+it's very tough to change the basic matching stuff.  That is, we can't
+flip from PCI SSID to codec SSID out of sudden, as it'll break
+certainly many other systems.
 
-Regards,
-Fei
+What I have in mind is to add an extra flag to the matching table to
+indicate the codec SSID matching, something like:
+
+--- a/sound/pci/hda/hda_local.h
++++ b/sound/pci/hda/hda_local.h
+@@ -282,6 +282,7 @@ struct hda_fixup {
+ 	int type;
+ 	bool chained:1;		/* call the chained fixup(s) after this */
+ 	bool chained_before:1;	/* call the chained fixup(s) before this */
++	bool match_codec_ssid:1; /* match with codec SSID instead of PCI SSID */
+ 	int chain_id;
+ 	union {
+ 		const struct hda_pintbl *pins;
+
+Although this will help in this case, many of existing code do check
+codec ID in addition to PCI SSID, and this flag won't help for them as
+is.
+
+> >> Could you guys try it and verify whether it fixes for Pangolin and
+> >> doesn't break Sirius?
+> >> 
+> >> 
+> >> Takashi
+> >> 
+> > It does seems to fix the issue on Pangolin. It might worth mention
+> > that the headphone output will have the same issue when the speaker is
+> > not working. Now they are all good. Thanks!
+> > 
+> > 
+> > Jerry
+> 
+> Tested on our devices, both speakers still active.
+> 
+> That's an ok from my side as well, thanks!
+
+OK, I'll submit it properly and merge for the next PR.
+
+
+thanks,
+
+Takashi
 
