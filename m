@@ -1,139 +1,127 @@
-Return-Path: <linux-kernel+bounces-350123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D01990033
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:49:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA87990032
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0357E1C23A28
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:49:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 656051F218FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00C114659B;
-	Fri,  4 Oct 2024 09:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1605B1482FE;
+	Fri,  4 Oct 2024 09:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AfraqvrA"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GVPaHC0x"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEBC12EBE9
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 09:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8B912EBE9
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 09:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728035379; cv=none; b=ZUflJOHk89TIxuo6ZNonBHnCpas58FJkQ+1epoaTEtZRp09PCWd5X+czK8go8qh1koFoOULQYR/W6uVgifyyPv7ScCIMOe4ITn+Qnql4UJWMcrvS7ObbkzCx4g/5xybVwCNCFJKlIQ6Nk99YbP1f8PIQkNe0aRLwbWtJ17LoyUE=
+	t=1728035371; cv=none; b=LpkDrTf7gX9N1Sb0JV1xgKWbWrPsmeprbTpL/jAblH3zN4jhUzRnvazw5QNfTwhDomt1URTrI4/lJLT203Y6DwNAg//zsFszO88pyFAJoLuI457XiEzyCLl3ivcDL4DUVaIytj2J4380zOS8wKVcsWXjyc1YpU6eOogf0urpVl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728035379; c=relaxed/simple;
-	bh=QwrHhQEOoV6HwIhkdVUxUa+cK6xZUQ0Cwcm0Z1tT8yE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PDanQbdkoSEPYf9pf7/0IWMm5hjc4r92OhsJ6CrPIDk532XoBKGLmB3ZCGuDXyKHjdpofuuK1r/gl17CkMbTR9GsVs4Ip3wZ4v8gBkVX+L8FALRVHwEHO0vhD9V3Azm7cxOtu2d3JZkUa65+0HKMqlfe2iX5EADEthMd9FuJEGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AfraqvrA; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso372767566b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 02:49:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728035375; x=1728640175; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C5nno9AxmL4fjgx+Nmnu5E92l7a2IplrqZRTQzvBl+A=;
-        b=AfraqvrAT2wy+5pnXho7VwPkF6hAuDaZ2+FNHuN5g6YvloaOkQVaGzz6PWxG4gBILn
-         8dljOYAlxAD3Eb6yFUKdy+BNkIuNktA5YVEWLKa+mmlpS6akKylT64fTbi74aR8hu1F3
-         SoPEpAnjl5wkT2Z+7W3cQ8FkqLzF84aLGPNlbwX9Dxf4MGM0DsUf5N4QpQQfTl+w2qtm
-         V+oFZsx4c3jXt4z/lxuGER7e+XIK1u4e/WFIB7DiPxN50MDwu18VfuMffefPfjO0c4vt
-         D5fInufs3LQHRzoPeiFi2jGW1Y6ehaDyJ8ipjBYmKI2mM1WVJawHarNrWtISfRAdfI1v
-         F9eA==
+	s=arc-20240116; t=1728035371; c=relaxed/simple;
+	bh=GR+OPGRfst2Mb+eMleklXlSAEUmzXvrK+37Gg7Gnzzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gxgXvrkBpMcx9bR57sL5StUkVZ8HFVQnKR7engNdIx6yyg6TwbHIYLpUntn6PBa8bHC1bi5cWR+xL5EPswLCJLfeS1L0cowyPLx6jGhTYQ4ZFcDAoVB7VxBz/uEfuSX6sDyjbGE8Rhlx0r/ywtYyzmCVP9k65JdhGjWTmDtkp7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GVPaHC0x; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493I09B7019333
+	for <linux-kernel@vger.kernel.org>; Fri, 4 Oct 2024 09:49:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4sUSnrd4e5lZEDXd4xBFPsvz32Jb1tbfs3pMahNY3mI=; b=GVPaHC0xXFeQTmbM
+	DGS05vrCZ8jpYwN5eTcpKWf0S8IlB8EJhIUOmV13mjKrAuWjwNQ8uzlMUOnReL9+
+	n7lRZdYGuF47qXp6Ih07E32ijuZrfD7z8tjZeVQ3dOTaAPqJiy3BiqEJbBbR4gMM
+	syVtDw/nISfddkIYShGwzKuqI+le2bMDQ7i2klxrQJLEP8w7lK59G5ZfgvfLeMlO
+	uYmW5DIE0ClVpyEGqpqOqK/HAtaibX/rdQz9ZiJzLXgy3SBd9/9JX9rI7+RqKdQ+
+	43x5H2lwSpog9E8PNxBq2Nnyj769DqyrziACi9xDIWUCMj23bAEpz4mIwK8y6U+X
+	RFp01Q==
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205n1pq2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:49:28 +0000 (GMT)
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5c8828b03a3so212956a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 02:49:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728035375; x=1728640175;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C5nno9AxmL4fjgx+Nmnu5E92l7a2IplrqZRTQzvBl+A=;
-        b=wrt9TusbvVy2fbXK6vO2wkgmSOoBLD3ehAUb7SLq/AIML4R9ZVbynn0uOfNYDWrbYb
-         961WZM9ikoDaNt4r26JkVZkAc71k0t0BubBlIXsifL1gHvIIx/UArqLsUg0+ojqcb6lY
-         d8Wnk2FXHP3fuZamDxWWodv5wJO3f2SSi+wuVip3u1LlIvOvRLFqWr9rHTZO1r1YP5Wq
-         pMD2TxECQ2HHB1fl4Pk4uPXos7TLLF35RUivYiYR2L5wzOjCgVJeg8IIU+4Lyjfyo1gS
-         oDxMMO6pMg3Ee8kLYtN4OFslTmKEYZSAULbbl2KZ9HqGLrFhp82JueYWocJJuJG3FYZv
-         xAXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFyM3tgYS+3Wz9DIADn/E+LXhJaW2U7zBelmhpOj34MtWjkXG6FrR04c+/h4Z2c7/nb2LOehksSdNq3LE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfBd0TugTVPNBbnJFSsqPw9OYcIt3qferXlc5ZqAaJ/gqAjw2Y
-	k0QN/OjawSd5doM5hJmkaE5j9uLEaOi5VTXXtObtB4GngrMhoGTwtVekU0Z5
-X-Google-Smtp-Source: AGHT+IFAIkTnVxgaVsYwItgwlhdRz81oydUSOjUrE58NjeHPi/i2OCCkPp6Dc+RMaRzKLJcUw/JexQ==
-X-Received: by 2002:a17:906:f59e:b0:a90:9879:582b with SMTP id a640c23a62f3a-a991cf3807dmr204625166b.14.1728035375265;
-        Fri, 04 Oct 2024 02:49:35 -0700 (PDT)
-Received: from azathoth.prg2.suse.org ([45.250.247.85])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a99103b4c17sm201312966b.135.2024.10.04.02.49.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 02:49:35 -0700 (PDT)
-From: Brahmajit Das <brahmajit.xyz@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] fs/qnx6: Fix building with GCC 15
-Date: Fri,  4 Oct 2024 15:19:21 +0530
-Message-ID: <20241004094921.615688-1-brahmajit.xyz@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <vch6gmzqaeo22c7473qyabrfwxlkdhx5vgvosjyp5l2nwgqnxl@5x3ny35qyfgx>
-References: <vch6gmzqaeo22c7473qyabrfwxlkdhx5vgvosjyp5l2nwgqnxl@5x3ny35qyfgx>
+        d=1e100.net; s=20230601; t=1728035367; x=1728640167;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4sUSnrd4e5lZEDXd4xBFPsvz32Jb1tbfs3pMahNY3mI=;
+        b=eMX0FPwmUllYiXF1apAF4IStIv+/qylrJ3WCS/gG0Jd9RzcFq6mmYLyppw3vJ1QRIZ
+         itrY0fYvsFjgjgB3GCaSTmIBlxCJsBKlaRtWUrcBMhYtWSrII1KwJ+uYEj+gGs3oPr6N
+         5bgTKDy1FwIZSzeuBR3BaAOAbpX3EZOIzGARj+vPsV03cUckIZ5Cla8ASIFHPf9BmfZo
+         TtyFOK/DfT120c6fOUCphFio1T3B0qsJmXR+qwomqRbwbGJlSG3Tgh6w0UC5j6tBUTEA
+         18rmdjF90LsJsSZNn6nv3kEeA47RblK1cUy33H2YX9ZlRN9nSkoEuwIvrxxpRqikPP/E
+         Bt0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWJYRJGrezKD+XYGheh3QL38wSitwsaPd1mvTMiTzu6Um6rSCWXOQgNeiTjKmQ1JLWOULMMy+4ZaafP29c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL4EbTi2AyrITdfQi7IV5qY8Pld95WlqzMFlY5nWNQXRaV+5Cd
+	HEj1fgOwP9wmxqS1Gd31J0cxGXFIfg8bNOP/X5Xfg77XwrVUN0Upnyg4B+hOz/PeitZ4Y4egD1M
+	elj3SVQB4yACVtBvTqyDB6XSjgUESmPoVQLpX1qHneFJ15UGVsjzrgoP9C9rb3sc=
+X-Received: by 2002:a17:907:86a8:b0:a91:158d:363 with SMTP id a640c23a62f3a-a991bd8506fmr91353066b.7.1728035367141;
+        Fri, 04 Oct 2024 02:49:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE0gMuL+gB5AGKramZKBM72BiyTxDFQnkFInQ+SuQNnCHF+AgrRg2k57y4/QEmJ4cnhir/Txg==
+X-Received: by 2002:a17:907:86a8:b0:a91:158d:363 with SMTP id a640c23a62f3a-a991bd8506fmr91351466b.7.1728035366716;
+        Fri, 04 Oct 2024 02:49:26 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99102ae6e0sm203135866b.95.2024.10.04.02.49.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 02:49:26 -0700 (PDT)
+Message-ID: <ae662017-e377-4821-b668-b65d764d5205@oss.qualcomm.com>
+Date: Fri, 4 Oct 2024 11:49:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100: describe tcsr download
+ mode register
+To: Johan Hovold <johan+linaro@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Mukesh Ojha <quic_mojha@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241002100122.18809-1-johan+linaro@kernel.org>
+ <20241002100122.18809-3-johan+linaro@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241002100122.18809-3-johan+linaro@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: yiWPXwJBomhdszVaq5ykZLZFvaivRU1f
+X-Proofpoint-GUID: yiWPXwJBomhdszVaq5ykZLZFvaivRU1f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=956 adultscore=0
+ clxscore=1015 bulkscore=0 malwarescore=0 phishscore=0 spamscore=0
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040071
 
-GCC 15 enables -Werror=unterminated-string-initialization by default.
-This results in the following build error
+On 2.10.2024 12:01 PM, Johan Hovold wrote:
+> Describe the TCSR download mode register to enable download mode
+> control.
+> 
+> This specifically allows the OS to disable download mode in case the
+> boot firmware has left it enabled to avoid entering the crash dump mode
+> after a hypervisor reset by default.
+> 
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
 
-fs/qnx6/inode.c: In function ‘qnx6_checkroot’:
-fs/qnx6/inode.c:182:41: error: initializer-string for array of ‘char’ is too long [-Werror=unterminated-string-initialization]
-  182 |         static char match_root[2][3] = {".\0\0", "..\0"};
-      |                                         ^~~~~~~
-fs/qnx6/inode.c:182:50: error: initializer-string for array of ‘char’ is too long [-Werror=unterminated-string-initialization]
-  182 |         static char match_root[2][3] = {".\0\0", "..\0"};
-      |                                                  ^~~~~~
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Dropping to match_root array and drictly comparing dir_entry entries via
-memcmp provides a work aroud for the build error.
-
-Signed-off-by: Brahmajit Das <brahmajit.xyz@gmail.com>
----
- fs/qnx6/inode.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
-index 85925ec0051a..3310d1ad4d0e 100644
---- a/fs/qnx6/inode.c
-+++ b/fs/qnx6/inode.c
-@@ -179,8 +179,7 @@ static int qnx6_statfs(struct dentry *dentry, struct kstatfs *buf)
-  */
- static const char *qnx6_checkroot(struct super_block *s)
- {
--	static char match_root[2][3] = {".\0\0", "..\0"};
--	int i, error = 0;
-+	int error = 0;
- 	struct qnx6_dir_entry *dir_entry;
- 	struct inode *root = d_inode(s->s_root);
- 	struct address_space *mapping = root->i_mapping;
-@@ -189,11 +188,9 @@ static const char *qnx6_checkroot(struct super_block *s)
- 	if (IS_ERR(folio))
- 		return "error reading root directory";
- 	dir_entry = kmap_local_folio(folio, 0);
--	for (i = 0; i < 2; i++) {
--		/* maximum 3 bytes - due to match_root limitation */
--		if (strncmp(dir_entry[i].de_fname, match_root[i], 3))
--			error = 1;
--	}
-+	if (memcmp(dir_entry[0].de_fname, ".", 2) ||
-+	    memcmp(dir_entry[1].de_fname, "..", 3))
-+		error = 1;
- 	folio_release_kmap(folio, dir_entry);
- 	if (error)
- 		return "error reading root directory.";
--- 
-2.46.2
-
+Konrad
 
