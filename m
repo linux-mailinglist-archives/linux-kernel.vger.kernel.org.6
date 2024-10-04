@@ -1,287 +1,130 @@
-Return-Path: <linux-kernel+bounces-351325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89057990FBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:07:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A49990FBD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164851F22B7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:07:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3BE128114F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BAC1F8F15;
-	Fri,  4 Oct 2024 19:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19431DD52F;
+	Fri,  4 Oct 2024 19:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKmyqMoJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BN9Ss0xr"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF171D95A2;
-	Fri,  4 Oct 2024 19:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36A51D8A09;
+	Fri,  4 Oct 2024 19:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728069818; cv=none; b=qnFVaG0Onp+5J+TA7Bt3u3W8WD4upF4xii/hbMKRvY2rnrGTEafz51awN1IkOPKIdwWuGMMu3nw+3NznHOgUTZsJaXGJQKkEMpCZaVW955/GCmHFwviK76tySvBznSBaAdOXJ2/I/ma3sWGcDDROS2gHRiqe/+nZv6UXMoXHsrw=
+	t=1728069934; cv=none; b=jS1vf+hYxi1lhhHww2x4E8rG99uxhp7wgR736Q8lGLpFjoCgJofWbexLGyME9pVjOvsQ8CbzgSBCidfbXLacFzMpID+KMsMnFuApGuCBD6D6Zml4eq4KzCY4FpmdhfrJYGadXES6uhnSRbDT4shKDrkGdLHJk4JY2d1EWJ7Nqk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728069818; c=relaxed/simple;
-	bh=otK0x2nuRoYkX6AVr+3xhfdRrkCNDV/nxTPPVs2qFb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ex/jov0B9hRRjdUyhTza+LKEvJ64gVJqTrQqx6bKKqRJ66VqT01OxzDej9iRxozUcmlj22lgjtEd4LZ0WTKFhWO0liEMMOU+cfwqSno7yCFL22vfH2Cvnldjn+i5YqkR8K/pc/KAoHRng5QIYcQb/lWaM2QeHKUpMEJg1MGHG60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKmyqMoJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C4C3C4CEC6;
-	Fri,  4 Oct 2024 19:23:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728069817;
-	bh=otK0x2nuRoYkX6AVr+3xhfdRrkCNDV/nxTPPVs2qFb8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YKmyqMoJ7ZnbYJTm8k6NflxxW657q4myATsgm25ito4zDtfxBI1zOXdU5DdvhBppd
-	 XBBkZfreg2lZ5zdKB7drh6TOuu1yjNuaivh4oPQSP3hKtrce/nN0OVgjuSsq94EtPX
-	 1s+zXl6wfOU3JiBAslKte7RR74AaouE1AxnM8lsX0Q2ug1SqGPfF3feObAJyuxeAZR
-	 PCA/z7IAfVldOT8AgpiZR7mUevwfW46LvjxQUCFbw4Un99mMArhAmYAsmf3xkajo6c
-	 b4seT6nGNggX0dRqBYaPo1xPE8lbOPOqDlqRETxe2BfdwvNAI7UyNsv1OGLE6EgZan
-	 LmPArfsDkFdLw==
-Date: Fri, 4 Oct 2024 12:23:33 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Guo Ren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
-	Guilherme Amadio <amadio@gentoo.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
-	Kajol Jain <kjain@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
-	Shenlin Liang <liangshenlin@eswincomputing.com>,
-	Atish Patra <atishp@rivosinc.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Chen Pei <cp0613@linux.alibaba.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Yang Jihong <yangjihong@bytedance.com>
-Subject: Re: [PATCH v1 11/11] perf build: Rename PERF_HAVE_DWARF_REGS to
- PERF_HAVE_LIBDW_REGS
-Message-ID: <ZwBAtbF9GWD4HQ6y@google.com>
-References: <CAP-5=fX7=EuZgnaG2-cXDU9eVqLyncdMTQF7=Nso__D1H0vMmw@mail.gmail.com>
- <20241002082859.8821e441024fe873a4301afc@kernel.org>
- <CAP-5=fWcOpF4+mgnkHOG=ntGMafJ7JSks_4j1JWVvgccApn+Ng@mail.gmail.com>
- <20241002225614.774bdd0742a826557f142d0e@kernel.org>
- <CAP-5=fWoiD=7XbB3FbE++1RSo3BZKeOOyNg81t4GQ7Ve6ejpSg@mail.gmail.com>
- <Zv8fIh4jaY7QbeDZ@google.com>
- <CAP-5=fVvzNMDPUpAvK0itjG0ZptrSg-_BN3t6UwB4XAvSsDt8w@mail.gmail.com>
- <Zv95OTflePPTMi7I@google.com>
- <20241004234544.76317dc8c7027bcd4b70fda3@kernel.org>
- <CAP-5=fUr9X4TKd8RA9SEJfsaAvvBJxh5UzKToJoOS_M=0mEpCQ@mail.gmail.com>
+	s=arc-20240116; t=1728069934; c=relaxed/simple;
+	bh=K1FynadGlz7V3pHQQA57EuCuje0t0xMwDt4S8EOAfVo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oNmqjJCmDpphWB86hjd7nqWfNTWy7/I8ZBA68dR9yRQlIhn+b5rKwvvbq26OnT1qHWC30NlVr8oYDSJxVJrjbZisnBS24XXCd5/MizX3neAmUxi/wDcglpzN5Tkk4EqoE1B0KUefXibLKu81z7NxAAAXMBjo/YqDZ4OpWCCEucc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BN9Ss0xr; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso476972666b.1;
+        Fri, 04 Oct 2024 12:25:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728069931; x=1728674731; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TFvtVp7qirynZb3z2+4/4h9Ar96qEvmsqtgrcr31hec=;
+        b=BN9Ss0xraVhUKb7edYSmRagGvYPU7GKz96SrmTW4U98Z6SACZCBcxKrKbiV6mbm64p
+         cNnBrtlzQV0bCSBbVKWUVb3tTspNi0dFi9H0UER5lK+R/LxbD8/AOmt+FABchPIQbt/S
+         fzxj2d/Ytd+zI+apPeozvVUF6oufMl6ALXU+pHb0JM553DIvkTFwHaVspj3OigoqzpMO
+         k4hWq3Tyt4hQ/d8hy0bvAeK0CJc/rWfYP3XcrsrkLdHoaDaHGFjFFgKs0ojSOngrYytK
+         Axhyx4k+MF8xgD+XJWVs2WaDCKOHbPRob2Uw73/pKftzw4xJjdqNv1PyuTIwEYrCLNv8
+         P2qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728069931; x=1728674731;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TFvtVp7qirynZb3z2+4/4h9Ar96qEvmsqtgrcr31hec=;
+        b=MfeQkuHQUXOm6rpmp3qnioEVlbYM/ExyqeyY8pRKkloGuDcuT3sBc7qgm96hmFw6Sr
+         AjXR+IYtAgALu6AahvsVg7yz2OhTrMEw2ABDMyBL4F+Dzu8bLluWSWH5boqA+geK+X7u
+         jb5wvgfEM9nFWqlb5eiCDm+ultHy+RQhAmLrGtBZunYVFxyoPfcOlRdRwzCjrq1q2E1t
+         Ave8Kow81cb3ucze9iuWLmdI2ucaij2gvkiFDjnBKFT21MrWQ7ceAmNl6MGmmqTgHQ/0
+         Jy9fssoseKnwDCL2/3CRE4Y6vjzlTOBOTr5htBZoGWEAaoQFE7uzyQ9EotMU3XQHiJr5
+         7EMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULYVsWvM8xhSpBaXt2N0+Pnmy2ldRRJuVImfWtV9A9LwuHZ0q8u8bXSMFw7LpwqKCFnbiO+7KGBc0d/2RXLg==@vger.kernel.org, AJvYcCVEAgo4A4WXNqIF+sMvrSe4tZDWI5j16S3nHGcTr0oI8mORPuf11LVqFMh6BJu2Dwk7NFkxrkzyBhebwGKx@vger.kernel.org, AJvYcCXC8TtF3a4dd4SVE2n0uyAYyBEU3hlBV+lI7AKmKNiNqKt6S7FxXifgGGCoFR9Hw6xRLdBHaHeErA/v@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWJojdMZy+kQjz1phqhsWJ8Ewd6q9ytoj/yEr/SgsoB5pArsOf
+	zUQB+OqJjafIEXu8z/6rPrgNXWmwzu4hsJ0/0OaYWF67ZynrGQqNO6G7XA/o
+X-Google-Smtp-Source: AGHT+IGmho45+TPI13RGkzc9JQ1tKVu2tM0a3OakI2HB6lBsgAaaG0POhSm+BGjnDz5rxq9qO9fNMA==
+X-Received: by 2002:a17:906:1b0a:b0:a99:1929:40fc with SMTP id a640c23a62f3a-a991929414amr365172866b.10.1728069930780;
+        Fri, 04 Oct 2024 12:25:30 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:a311:80b0:1c80:9433:9060:39fc:2954])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e784a3asm31136966b.111.2024.10.04.12.25.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 12:25:30 -0700 (PDT)
+From: Maya Matuszczyk <maccraft123mc@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Maya Matuszczyk <maccraft123mc@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: x1e80100: Add debug uart to Lenovo Yoga Slim 7x
+Date: Fri,  4 Oct 2024 21:24:36 +0200
+Message-ID: <20241004192436.16195-2-maccraft123mc@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUr9X4TKd8RA9SEJfsaAvvBJxh5UzKToJoOS_M=0mEpCQ@mail.gmail.com>
 
-On Fri, Oct 04, 2024 at 08:15:22AM -0700, Ian Rogers wrote:
-> On Fri, Oct 4, 2024 at 7:45 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > On Thu, 3 Oct 2024 22:12:25 -0700
-> > Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > > On Thu, Oct 03, 2024 at 05:58:13PM -0700, Ian Rogers wrote:
-> > > > On Thu, Oct 3, 2024 at 3:48 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > I agree renaming libdw-specific parts.  But the register is for DWARF,
-> > > > > not libdw even if it's currently used by libdw only.   So I don't want
-> > > > > to rename it.
-> > > >
-> > > > So your objection is that we have files called:
-> > > > tools/perf/arch/*/util/dwarf-regs.c
-> > > > and PERF_HAVE_DRWARF_REGS is an indication that this file exists. This
-> > > > file declares a single get_arch_regnum function. The building of the
-> > > > file after this series is:
-> > > > perf-util-$(CONFIG_LIBDW)     += dwarf-regs.o
-> > >
-> > > Well.. I think we can even make it
-> > >
-> > > perf-util-y += dwarf-regs.o
-> > >
-> > > since it doesn't have any dependency on libdw.  But it'd be inefficent
-> > > to ship the dead code and data.  Anyway we may remove the condition to
-> > > define the PERF_HAVE_DWARF_REGS like below.
-> > >
-> > > diff --git a/tools/perf/arch/x86/Makefile b/tools/perf/arch/x86/Makefile
-> > > index 67b4969a673836eb..f1eb1ee1ea25ca53 100644
-> > > --- a/tools/perf/arch/x86/Makefile
-> > > +++ b/tools/perf/arch/x86/Makefile
-> > > @@ -1,7 +1,5 @@
-> > >  # SPDX-License-Identifier: GPL-2.0
-> > > -ifndef NO_DWARF
-> > >  PERF_HAVE_DWARF_REGS := 1
-> > > -endif
-> > >  HAVE_KVM_STAT_SUPPORT := 1
-> > >  PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET := 1
-> > >  PERF_HAVE_JITDUMP := 1
-> > >
-> > > >
-> > > > My objection is that PERF_HAVE_DWARF_REGS is controlling the #define
-> > > > HAVE_LIBDW_SUPPORT, so dwarf (that can mean libunwind, libdw, etc.) is
-> > > > guarding having libdw which is backward and part of what this series
-> > > > has been trying to clean up.
-> > >
-> > > Why not?  If the arch doesn't define DWARF registers, it can refuse
-> > > libdw support because it won't work well.
-> >
-> > It actually does not DWARF registers, but just "dwarf-regs.c" file
-> > since arch should define DWARF registers if the compiler generates
-> > the DWARF.
-> > Here the flag means only "we implemented dwarf-regs.c file for this
-> > arch." So if it is called as "libdw-helper.c" then we can rename the
-> > flag as PERF_HAVE_ARCH_LIBDW_HELPER simply.
-> >
-> > > > If we rename tools/perf/arch/*/util/dwarf-regs.c to
-> > > > tools/perf/arch/*/util/libdw-helpers.c the PERF_HAVE_DWARF_REGS can be
-> > > > renamed to PERF_HAVE_LIBDW_HELPERS to align. Then
-> > > > PERF_HAVE_LIBDW_HELPERS guarding the #define PERF_HAVE_LIBDW makes
-> > > > sense to me and I think we achieve the filename alignment you are
-> > > > looking for.
-> > >
-> > > I don't think it's a good idea.  The logic is not specific to libdw.
-> >
-> > Yes, the logic (DWARF register mapping to the ISA register name) is
-> > not libdw. But I think we can also implement it in "libdw-helper.c".
-> > (In fact, this implementation does not depend only on Dwarf, but
-> >  rather on the convenience of ftrace.)
-> >
-> > > >
-> > > > Yes get_arch_regnum could make sense out of libdw and needn't just be
-> > > > a helper for it, but let's worry about that when there's a need.
-> > > > What's confusing at the moment is does libdw provide dwarf support,
-> > > > which I'd say is expected, or does dwarf provide libdw support?
-> > >
-> > > As I said, it's about refusing libdw.
-> >
-> > I think Ian pointed this part, even if libdw is available, dwarf-regs.c
-> > controls its usage, but libunwind is not.
-> >
-> > >
-> > >   ifndef NO_LIBDW
-> > >     ifeq ($(origin PERF_HAVE_DWARF_REGS), undefined)
-> > >       $(warning DWARF register mappings have not been defined for architecture $(SRCARCH), DWARF support disabled)
-> >
-> > I think *this message* is the root cause of this discussion. It should be
-> > changed to
-> >
-> > "DWARF register mappings have not been defined for architecture $(SRCARCH), libdw support disabled."
-> >
-> > or (if changed to libdw-helper)
-> >
-> > "libdw-helper.c is not implemented for architecture $(SRCARCH), libdw support disabled."
-> 
-> So looking at the code I think the whole thing looks wrong. The
-> get_arch_regnum function is used by get_dwarf_regnum which is used in
-> 2 places in annotate.c:
-> ```
-> static int extract_reg_offset(struct arch *arch, const char *str,
->                              struct annotated_op_loc *op_loc)
-> ...
-> int annotate_get_insn_location(struct arch *arch, struct disasm_line *dl,
->                               struct annotated_insn_loc *loc)
-> ```
-> So these functions are passing in an architecture. In get_dwarf_regnum:
-> ```
-> /* Return DWARF register number from architecture register name */
-> int get_dwarf_regnum(const char *name, unsigned int machine)
-> {
->        char *regname = strdup(name);
->        int reg = -1;
->        char *p;
-> 
->        if (regname == NULL)
->                return -EINVAL;
-> 
->        /* For convenience, remove trailing characters */
->        p = strpbrk(regname, " ,)");
->        if (p)
->                *p = '\0';
-> 
->        switch (machine) {
->        case EM_NONE:   /* Generic arch - use host arch */
->                reg = get_arch_regnum(regname);
->                break;
->        default:
->                pr_err("ELF MACHINE %x is not supported.\n", machine);
->        }
->        free(regname);
->        return reg;
-> }
-> ```
-> But why, if the machine is EM_X86_64 and I'm on an x86-64, can't I
-> call get_arch_regnum? The code should be something like:
-> ```
-> if (machine == EM_NONE) {
-> #ifdef __x86_64__
->   machine = EM_X86_64;
-> #elf...
-> ```
-> Once we have an architecture specific machine then instead of
-> get_arch_regnum it should call get_x86_64_regnum or
-> get_aarch64_regnum.
-> ```
-> switch(machine) }
-> case EM_X86_64:
->          reg = get_x86_64_regnum(regname);
->          break;
-> ...
-> ```
-> Is this better? Yes, it means that the annotate logic can work if,
-> say, annotating/disassembling an ARM binary on an x86-64.
-> 
-> So we need to pull all the tools/perf/arch/<arch>/util/dwarf-regs.c
-> files into tools/perf/util/dwarf-regs-<arch>.c files. We need to
-> rename the get_arch_regnum to reflect the <arch> in the file name. The
-> Makefile logic can include all of this unconditionally and
-> PERF_HAVE_DWARF_REGS can just be removed. In the process the ability
-> to annotate binaries from one architecture on another is improved. It
-> needn't be the case that we have dwarf regs for the architecture perf
-> is being run on as we may be annotating an x86-64 binary where there
-> is support.
-> 
-> What's strange is that get_dwarf_regstr in the common code already
-> does things pretty much this way. This whole Makefile, arch, weak
-> function, PERF_HAVE... logic just looks like a mistake that is making
-> the tool worse than it needs to be. I think this is frequently the
-> case with code in arch/, a lot of the functionality there can be moved
-> into pmu.c and doing things conditional on the pmu, which is
-> inherently architecture dependent. This can fix unusual cases of say
-> running the perf tool on user land qemu, where we may have an ARM perf
-> binary but see the PMUs of an x86.
-> 
-> I can work to put this into a v2 so please scream if my reasoning
-> doesn't make sense.
+This commit enables the debug UART found on the motherboard under the SSD
 
-Sounds good, it'd be easier if we merge patch 1-10 first and you would
-work on the register thing separately.
+Signed-off-by: Maya Matuszczyk <maccraft123mc@gmail.com>
+---
+ .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts   | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Thanks,
-Namhyung
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+index 3c13331a9ef4..1f292cd4a713 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+@@ -15,6 +15,14 @@ / {
+ 	model = "Lenovo Yoga Slim 7x";
+ 	compatible = "lenovo,yoga-slim7x", "qcom,x1e80100";
+ 
++	aliases {
++		serial0 = &uart21;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
+ 	pmic-glink {
+ 		compatible = "qcom,x1e80100-pmic-glink",
+ 			     "qcom,sm8550-pmic-glink",
+@@ -883,6 +891,11 @@ reset-n-pins {
+ 
+ };
+ 
++&uart21 {
++	compatible = "qcom,geni-debug-uart";
++	status = "okay";
++};
++
+ &usb_1_ss0_hsphy {
+ 	vdd-supply = <&vreg_l3j_0p8>;
+ 	vdda12-supply = <&vreg_l2j_1p2>;
+-- 
+2.45.2
 
 
