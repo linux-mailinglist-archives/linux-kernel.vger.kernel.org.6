@@ -1,79 +1,126 @@
-Return-Path: <linux-kernel+bounces-351495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3324991216
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:03:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A0099121A
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8470B1F242F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:03:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E641C2366C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B075E1A0708;
-	Fri,  4 Oct 2024 22:02:27 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D321A0708;
+	Fri,  4 Oct 2024 22:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="meT76XwF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F143140E50;
-	Fri,  4 Oct 2024 22:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E3E4437F;
+	Fri,  4 Oct 2024 22:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728079347; cv=none; b=CxNx6tawfd4l/FWwHxvHPRoFgmp9ExKjbYhLUI0HNKKgpEm+gbArHfHEnx/2/fH/2OOG0GzmFAL9zxnI7DLBlG0OGsj6rzyE8gbADk8panQYIcm8dzjUD/dlLNe4ecI0LPGtnlSmtD81/7qYuCFRb3PFOD++neyc/5FOsPRUjxk=
+	t=1728079417; cv=none; b=fwA219/ZGz1wufZmjIEm+34cWsIo6r/04C8fvIrPX96XZOgmHZJiZWXtTXJwsJmBvI5xHScMvtp7g2UBnKI7oMq8XcaPr632MJwLh4FgSgVLw5dSAFpGI/EdpiH3giVXqKquUh5P+kvCkVPvE9X5k6pNnKEiRbxpDqdSSRsJbMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728079347; c=relaxed/simple;
-	bh=Y5Zp0NtxDlZ8LvFkxIEgQFAHbtGPzd9WZpF7R8Wkx+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oUujPAcXuj7Kd3rwhpC4/lRncL/f2Pni4vLS3cpUMRhz8TKJHfubkaxERjjSRVBQ9Q5jtR82RHRKnIS2eHgxyKpqtU1y5978c6IjXrYdX5TIqGcCW87lKFQZhBRmeQy1m1KquO1jOtWPgH9EuNE+j7ov/VGtPf0mgmbwM/8Smgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1swqNN-000000001Je-2SSR;
-	Fri, 04 Oct 2024 22:02:17 +0000
-Date: Fri, 4 Oct 2024 23:02:13 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: realtek: make sure paged read is
- protected by mutex
-Message-ID: <ZwBl5XBPGRS_eL9Y@makrotopia.org>
-References: <792b8c0d1fc194e2b53cb09d45a234bc668e34c6.1728057091.git.daniel@makrotopia.org>
- <398aed77-2c9c-4a43-b73a-459b415d439b@lunn.ch>
+	s=arc-20240116; t=1728079417; c=relaxed/simple;
+	bh=PciJuGU3l4jP8BemO+yHVHD1zY9sEkpCqasr2WXeRqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=i7NqVmqQFhqNqoFsEgw7yWQLoNh03FodGUlOH2shcw+E2hTqLYf/pYJ1xiB6fU73miRMpXyq/5LrqPj+jtqJnPdFMsVKbtw1KpaUDsiPKN3Pso1p425Snk43o5pBBxAGO9zsn1PaX7T/2iPWiQsTyyeGQ2nWlb3ew53JJ/47lT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=meT76XwF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B58DC4CEC6;
+	Fri,  4 Oct 2024 22:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728079416;
+	bh=PciJuGU3l4jP8BemO+yHVHD1zY9sEkpCqasr2WXeRqo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=meT76XwFp3KLO1ZA98MJm1nN39CfWBN88X1V4mUT4Ib88Y9MJZAjqjt5+5qMX74Il
+	 qoKMOzOnQ3ZzvhSlFRYHfpUWLg7UZYmQLO2DnHLJZ+hhlwghKM4W+QwTS4ZZ2cZCXn
+	 /sLS0ZGWslLkTBUgMlAs0AKSCcuBcagVwbLYnp0DuaY8fDTrOQkWP+0hC6eFNELXwP
+	 IzdsXaLfPTNlg1G/Ho4W4wX+aFGQxXF9xz+C7fEPkR6z2cRee/D7tYx3UAvyUK1JpS
+	 ggjCYvmlkP0SjFKxQwiOPWH8w5DvKp8HHPHE0HptwtOatGhzMK9MwJmMqe7MFrJY9V
+	 W0YyJS5y5q+xw==
+Date: Fri, 4 Oct 2024 17:03:33 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Lukas Wunner <lukas@wunner.de>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] PCI: Cleanup convoluted logic in pci_create_slot()
+Message-ID: <20241004220333.GA363904@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <398aed77-2c9c-4a43-b73a-459b415d439b@lunn.ch>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241004152240.7926-1-ilpo.jarvinen@linux.intel.com>
 
-On Fri, Oct 04, 2024 at 11:25:29PM +0200, Andrew Lunn wrote:
-> On Fri, Oct 04, 2024 at 04:52:04PM +0100, Daniel Golle wrote:
-> > As we cannot rely on phy_read_paged function before the PHY is
-> > identified, the paged read in rtlgen_supports_2_5gbps needs to be open
-> > coded as it is being called by the match_phy_device function, ie. before
-> > .read_page and .write_page have been populated.
-> > 
-> > Make sure it is also protected by the MDIO bus mutex and use
-> > rtl821x_write_page instead of 3 individually locked MDIO bus operations.
+On Fri, Oct 04, 2024 at 06:22:40PM +0300, Ilpo Järvinen wrote:
+> pci_create_slot() has an if () which can be made simpler by splitting
+> it into two parts. In order to not duplicate error handling, add a new
+> label too to handle kobj put.
 > 
-> match_phy_device() as far as i know, is only used during bus probe,
-> when trying to match a driver to a device. What are you trying to lock
-> against during probe?
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-The idea is to reduce the amount of unnecessary lock/unlock cycles (1 vs
-3). Of course, we could just omit locking entirely here, but that seemed
-a bit wild to me, and even if it would work in that specific case, it
-just serve as a bad example.
+Applied to pci/misc for v6.13, thank you!
+
+> ---
+>  drivers/pci/slot.c | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
+> index 0f87cade10f7..9ac5a4f26794 100644
+> --- a/drivers/pci/slot.c
+> +++ b/drivers/pci/slot.c
+> @@ -244,12 +244,13 @@ struct pci_slot *pci_create_slot(struct pci_bus *parent, int slot_nr,
+>  	slot = get_slot(parent, slot_nr);
+>  	if (slot) {
+>  		if (hotplug) {
+> -			if ((err = slot->hotplug ? -EBUSY : 0)
+> -			     || (err = rename_slot(slot, name))) {
+> -				kobject_put(&slot->kobj);
+> -				slot = NULL;
+> -				goto err;
+> +			if (slot->hotplug) {
+> +				err = -EBUSY;
+> +				goto put_slot;
+>  			}
+> +			err = rename_slot(slot, name);
+> +			if (err)
+> +				goto put_slot;
+>  		}
+>  		goto out;
+>  	}
+> @@ -278,10 +279,8 @@ struct pci_slot *pci_create_slot(struct pci_bus *parent, int slot_nr,
+>  
+>  	err = kobject_init_and_add(&slot->kobj, &pci_slot_ktype, NULL,
+>  				   "%s", slot_name);
+> -	if (err) {
+> -		kobject_put(&slot->kobj);
+> -		goto err;
+> -	}
+> +	if (err)
+> +		goto put_slot;
+>  
+>  	down_read(&pci_bus_sem);
+>  	list_for_each_entry(dev, &parent->devices, bus_list)
+> @@ -296,6 +295,9 @@ struct pci_slot *pci_create_slot(struct pci_bus *parent, int slot_nr,
+>  	kfree(slot_name);
+>  	mutex_unlock(&pci_slot_mutex);
+>  	return slot;
+> +
+> +put_slot:
+> +	kobject_put(&slot->kobj);
+>  err:
+>  	slot = ERR_PTR(err);
+>  	goto out;
+> -- 
+> 2.39.5
+> 
 
