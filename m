@@ -1,117 +1,159 @@
-Return-Path: <linux-kernel+bounces-350414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C9D9904D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:52:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A509904EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523041F22E0C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C141F2270B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034412101BA;
-	Fri,  4 Oct 2024 13:52:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC8C156678;
-	Fri,  4 Oct 2024 13:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC35212F1E;
+	Fri,  4 Oct 2024 13:54:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CEA1BC59;
+	Fri,  4 Oct 2024 13:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728049928; cv=none; b=O8X+2q3WLyjw/IBg9MVD3sjALotwA9TEvOTq4W3Qm08Os+W/C7NVDE3HR/ZZ25dKPgdnDkolyMXVOrpvLlaEDs4PTNJ7e57CvJky+t1QyUR+PFicUw7rflZyk7iOSWpmtInPXGCbjWnu+Yt9tYxL6Uo5qKtGF9ETM31GQUQeci0=
+	t=1728050078; cv=none; b=Dp+ow6OIDIupPzD2KqUUaRGCF8U2/nNM6EcbC/K/UNBY8OpotMnQsqftcZb+Q5Qj/Rukbmk0HI1xSFoyAKgwA4mLinY33YUzUKF8u2jRQlI/zZ9cD7rTv1amKolpHlsTREIXVEihDAA83OBZvYkvQd/Dmbi5snpefwQ21QAS1yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728049928; c=relaxed/simple;
-	bh=z9rJf3VSM5rW82ltr4/yb3bcP3enExc8iYKWhR+CLec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YLWNSgBemk3Uli9IFjzmzi4LWn9VGfOpplzEiKjidYcE56nPR92bo3SS0nSAlD4wZ/H8juAS/+w5792cJAvdnyg0zQJ9E7BetDR+t/CyD7FRJOZXTrA7I1m5oJkLjfZgLOycIWMvvb4bw8e5aSfLCMf38e5mzblRHq2R/P16SaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F2FA339;
-	Fri,  4 Oct 2024 06:52:35 -0700 (PDT)
-Received: from [10.57.77.142] (unknown [10.57.77.142])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 394B73F58B;
-	Fri,  4 Oct 2024 06:52:04 -0700 (PDT)
-Message-ID: <a42ebcff-10f8-4888-a3d8-fd2705da41b3@arm.com>
-Date: Fri, 4 Oct 2024 14:53:03 +0100
+	s=arc-20240116; t=1728050078; c=relaxed/simple;
+	bh=6Zyc5VBb+/KicI9y1i9ewO+fiOtM8228SQyczy9uL9U=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DF98CUxg3emRzShQ2Vduvulz/Q4+ZkjVRG2AYawvIQtsNtgQ4aEcTqoK6jNePhXigwW4y7pCHhtbLOQ3ATyCvtRV5by+vAE7ZyssNalos7mcuA3Co+6TC9mCled5EySCAVz5nnLJkhkZEVIyArBRW8alxbt2h8hD1LveFOMvkYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XKqm52z9Qz6HJV3;
+	Fri,  4 Oct 2024 21:54:29 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 061481408F9;
+	Fri,  4 Oct 2024 21:54:33 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Oct
+ 2024 15:54:32 +0200
+Date: Fri, 4 Oct 2024 14:54:30 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Alexandru Ardelean <aardelean@baylibre.com>
+CC: Jonathan Cameron <jic23@kernel.org>, David Lechner
+	<dlechner@baylibre.com>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<krzk+dt@kernel.org>, <robh@kernel.org>, <lars@metafoo.de>,
+	<michael.hennerich@analog.com>, <gstols@baylibre.com>
+Subject: Re: [PATCH v7 8/8] iio: adc: ad7606: add support for
+ AD7606C-{16,18} parts
+Message-ID: <20241004145430.000012f4@Huawei.com>
+In-Reply-To: <CA+GgBR_HTwNT6WKdweuuTZ_t+ZmMXrMkYNK+b3pp4f2MmTWzGw@mail.gmail.com>
+References: <20240919130444.2100447-1-aardelean@baylibre.com>
+	<20240919130444.2100447-9-aardelean@baylibre.com>
+	<CA+GgBR_kKYOgPUHM5-LUAZboy6nab1tLvC4TFtzpqkjP+5A8wg@mail.gmail.com>
+	<047034ae-135b-4ce9-a407-9b2a00841324@baylibre.com>
+	<20241001194114.16e0ffa5@jic23-huawei>
+	<CA+GgBR_HTwNT6WKdweuuTZ_t+ZmMXrMkYNK+b3pp4f2MmTWzGw@mail.gmail.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] thermal: core: Reference count the zone in
- thermal_zone_get_by_id()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <12549318.O9o76ZdvQC@rjwysocki.net>
- <6112242.lOV4Wx5bFT@rjwysocki.net>
- <b2d949a2-2586-44ec-b0e7-0879fd3ac7cf@arm.com>
- <CAJZ5v0g494bUwLbFDF_WHwLSMbu1iTxiynNwDqKktv3-4049Sw@mail.gmail.com>
- <5222419a-2664-4bb5-b1d4-77a46677bb4d@arm.com>
- <CAJZ5v0jkbQG4A+saKDfCz6g2-A=rZ2y34k2v9jA9uhp9A17ZBw@mail.gmail.com>
- <CAJZ5v0iSb=RGiuXrBPq6V0ZObhPedznuv7CGgAyO1MMshCQrMg@mail.gmail.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <CAJZ5v0iSb=RGiuXrBPq6V0ZObhPedznuv7CGgAyO1MMshCQrMg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Wed, 2 Oct 2024 09:12:09 +0300
+Alexandru Ardelean <aardelean@baylibre.com> wrote:
 
+> On Tue, Oct 1, 2024 at 9:41=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> >
+> > On Tue, 1 Oct 2024 08:42:23 -0500
+> > David Lechner <dlechner@baylibre.com> wrote:
+> > =20
+> > > On 10/1/24 3:26 AM, Alexandru Ardelean wrote: =20
+> > > > On Thu, Sep 19, 2024 at 4:05=E2=80=AFPM Alexandru Ardelean
+> > > > <aardelean@baylibre.com> wrote: =20
+> > > >> =20
+> > >
+> > > ...
+> > > =20
+> > > >> @@ -153,7 +349,19 @@ static int ad7606_scan_direct(struct iio_dev =
+*indio_dev, unsigned int ch,
+> > > >>         if (ret)
+> > > >>                 goto error_ret;
+> > > >>
+> > > >> -       *val =3D sign_extend32(st->data[ch], 15);
+> > > >> +       chan =3D &indio_dev->channels[ch + 1];
+> > > >> +       if (chan->scan_type.sign =3D=3D 'u') {
+> > > >> +               if (storagebits > 16)
+> > > >> +                       *val =3D st->data.buf32[ch];
+> > > >> +               else
+> > > >> +                       *val =3D st->data.buf16[ch];
+> > > >> +               return 0; =20
+> > > >
+> > > > Arrggh...
+> > > > I messed up here.
+> > > > Guillaume found a bug here, where this should be "goto error_ret" or
+> > > > do an "if ()  {} else {}"
+> > > > How should we do it here? =20
+> > if / else. Goto an error label when it's not an error would be horrible=
+! =20
+> > > >
+> > > > Do we send a fix-patch or send a new series?
+> > > > =20
+> > >
+> > > Since this patch is already applied, just follow up with another
+> > > patch with a Fixes: tag. =20
+> >
+> > I sometimes tweak these sort of things if I haven't pushed out
+> > as togreg yet (or they are really bad!) but in this case I'm not
+> > 100% sure what the comment is, so I'll just apply a fix on top.
+> >
+> > So David is entirely correct in general but by luck of timing
+> > this time I'll tweak it.
+> >
+> > Please check the result in iio.git/testing
+> > I'll hold off pushing that out as togreg until at least end of
+> > tomorrow.  One more day o =20
+>=20
+> The "return 0" needs to be removed in the driver.
+>=20
+>         if (chan->scan_type.sign =3D=3D 'u') {
+>                 if (storagebits > 16)
+>                         *val =3D st->data.buf32[ch];
+>                 else
+>                         *val =3D st->data.buf16[ch];
+> -                return 0;
+Doh!.   Just goes to show why I shouldn't just edit these things.
+Stupid mistake.  I'll fix when on right machine.
 
-On 10/4/24 14:48, Rafael J. Wysocki wrote:
-> On Fri, Oct 4, 2024 at 3:43 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>
->> On Fri, Oct 4, 2024 at 3:37 PM Lukasz Luba <lukasz.luba@arm.com> wrote:
->>>
->>>
->>>
->>> On 10/4/24 14:25, Rafael J. Wysocki wrote:
->>>> Hi Łukasz,
->>>>
->>>> On Fri, Oct 4, 2024 at 10:01 AM Lukasz Luba <lukasz.luba@arm.com> wrote:
->>>>>
->>>>> Hi Rafael,
->>>>>
->>>>> On 10/3/24 13:25, Rafael J. Wysocki wrote:
->>>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>>>
+Jonathan
 
-[snip]
+>         } else {
+>                 if (storagebits > 16)
+>                         *val =3D sign_extend32(st->data.buf32[ch], 17);
+>                 else
+>                         *val =3D sign_extend32(st->data.buf16[ch], 15);
+>         }
+>=20
+>=20
+>=20
+> >
+> > Jonathan
+> >
+> > =20
+> > >
+> > >
+> > > =20
+> > =20
+>=20
 
->>>>>>
->>>>>
->>>>> I wasn't aware of that helpers in cleanup.h.
->>>>>
->>>>> Could you help me to understand when this this
->>>>> 'if (_T) put_device((&_T->device)' will be called?
->>>>
->>>> When the pointer variable initialized via the CLASS() macro goes out
->>>> of scope (that is, before freeing the memory occupied by the pointer
->>>> itself).
->>>
->>>
->>> OK, so do we still need the old code in
->>> thermal_zone_device_unregister(), which calls
->>> put_device(&tz->device) ?
->>
->> Yes, we do.
->>
->>> Maybe that code can go away?
->>
->> That particular one drops the reference acquired by device_register()
->> and I don't see an alternative clean way to drop it.
-> 
-> The problem there is that local variable tz goes out of scope at the
-> end of the function (at least formally) and put_device(&tz->device)
-> needs to be called before the wait_for_completion(&tz->removal) which
-> definitely needs tz to be still around.
-
-OK, I see now. That makes sense. With that feel free to add:
-
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
