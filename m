@@ -1,68 +1,53 @@
-Return-Path: <linux-kernel+bounces-349787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3FB98FB8C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:31:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0957F98FB86
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A16102831D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:31:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7CC1C221B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E822E11C92;
-	Fri,  4 Oct 2024 00:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EBE1876;
+	Fri,  4 Oct 2024 00:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=aaront.org header.i=@aaront.org header.b="BaUcvNxo";
-	dkim=pass (2048-bit key) header.d=aaront.org header.i=@aaront.org header.b="RYzUmZTC"
-Received: from smtp-out0.aaront.org (smtp-out0.aaront.org [52.10.12.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/04/dEW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB02A955;
-	Fri,  4 Oct 2024 00:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.10.12.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C2B17C9
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 00:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728001899; cv=none; b=LXCPLqIpxvZZH/s28BY7pkvemPVA9Qt6by+DWlOyJ/KNUpITsPZhn/MO/R3yxfFOKy0g0V9R0MPPqgx9sgkaqpdmF9rv/RogyIZuLav4EupVZaSRwKYALadRSQu4TA+nLOnuHsU8Tvtd5qQWwHQZRJXuJVCzr+rL4gBfq0AnPlE=
+	t=1728001878; cv=none; b=UHe2CKTeRayQSkR3MljQPPf8LLhjPthtAiR+SiTk/O+9xg6LvJaSA+B/HtoZPijni+bsrA2IXJwCdJQvGSi86QnB5yVHxSUfFKKXAdmS9W4mcLXri9wuldqr9BlMEoF+7/i4bFFVTdiaEnS4aerCSpp0v8MJLzvYjDlpm23kTvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728001899; c=relaxed/simple;
-	bh=f0FQOyiYq7FpaBC/Z+gvQXYwpERUJNHDeFsnskdp8kg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cIlx4MYu1Sj/6SzQKiJOqMb0F387i3Jc5bBUHcpfzCyOQbawOx2o2c/tlyt18FMWWy7plGpEmeC6NjHdJsBbCrIjySC8cZe8XavxB1scDZgLN7m4lt4A+YlxQou80JzCFmbGYoIuEJ8OZKQ9ZPe4jGq7YNJKicFJl+g2GodOlaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aaront.org; spf=pass smtp.mailfrom=aaront.org; dkim=permerror (0-bit key) header.d=aaront.org header.i=@aaront.org header.b=BaUcvNxo; dkim=pass (2048-bit key) header.d=aaront.org header.i=@aaront.org header.b=RYzUmZTC; arc=none smtp.client-ip=52.10.12.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aaront.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aaront.org
-Received: by smtp-out0.aaront.org (Postfix) with ESMTP id 4XKTxj0NhpzRj;
-	Fri,  4 Oct 2024 00:31:37 +0000 (UTC)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/simple; d=aaront.org;
-    h=from:to:cc:subject:date:message-id:in-reply-to:references
-    :mime-version:content-transfer-encoding; s=bgzxjfijqntwovyv; bh=
-    f0FQOyiYq7FpaBC/Z+gvQXYwpERUJNHDeFsnskdp8kg=; b=BaUcvNxo9vK/8Y9J
-    +SKv7rgse3m3vjeAeGt0M451L15SmSrzYNnmkHl9RIZykMapV2JCcxUbDJpverVh
-    HBEwAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aaront.org; h=
-    from:to:cc:subject:date:message-id:in-reply-to:references
-    :mime-version:content-transfer-encoding; s=elwxqanhxhag6erl; bh=
-    f0FQOyiYq7FpaBC/Z+gvQXYwpERUJNHDeFsnskdp8kg=; b=RYzUmZTCxYVdJUAq
-    FDkVjIAy2EyvrYyJgzVF3xozkaeMgRKz6Ht4J/hHAqQ3l4dRPKKZQM0phu011sU8
-    YZuYBNCSahCg9yR6l1zQNTfbW/ojBR2IrATVS6b9dqR4bNRb7RIw5SJREASVWcFo
-    ho1Lc3dP0kELPM04St0kpAZuwuQwM8P/wvas85DFp+VNEEPY2Z1GZKwlxKXo+ytr
-    0FACIeLA2VL+gU+oZr1sHQdwC3puUGDQ3G2Nyvp1CmoBgRQh4wG/0+IG4whKNte6
-    FC77CRtDVyfvKmWJKMn9KBxtLlhKpHfsY0MbbuFfh8L+HN7XDKnl+z2PrJSx6SlQ
-    mQryWA==
-From: Aaron Thompson <dev@aaront.org>
-To: Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Aaron Thompson <dev@aaront.org>,
-	stable@vger.kernel.org
-Subject: [PATCH 3/3] Bluetooth: Remove debugfs directory on module init failure
-Date: Fri,  4 Oct 2024 00:30:30 +0000
-Message-Id: <20241004003030.160721-4-dev@aaront.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241004003030.160721-1-dev@aaront.org>
-References: <20241004003030.160721-1-dev@aaront.org>
+	s=arc-20240116; t=1728001878; c=relaxed/simple;
+	bh=hpWm/hBe6sHZ5y33PSHJ0FLujKF9kajq2ycH2wUTOMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qhwa1/GJ+lMQ1e3SJYSNX4Siht+7SqAU1SkDkGjZociFGwmtmMaQ0zMB8CG4mUl2LeGIGKGUs0L82FV1KqiihPeCBKLnpiFM+ei/wIc5yCqgevkbOigUQOhednixY+oCW8I37WLmMkLMfVT67Ib6O18HKI8GOTQKdQmLD471aRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/04/dEW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC3DC4CEC5;
+	Fri,  4 Oct 2024 00:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728001877;
+	bh=hpWm/hBe6sHZ5y33PSHJ0FLujKF9kajq2ycH2wUTOMA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=m/04/dEWnSVyVUkxRymwaKw80oriAmXFqOA8+B0wQlMICKtx48kQJD+hds77pTnum
+	 AaW8XUFEp6fsvoB41g61rNiR5yO9ALx4vmG1zP0VkpKfN8DHuDBsifDXZv8c5Bxx6y
+	 pgKM1pdCIjfpGH3LfbMHAT4KDsG6tOW6xEpaYD2kqi2XBKFZPiJTdt/dA0UxpcwtD4
+	 h+uNOHAr3oM4Qt17+XRlRibQxrJ+JtP6MeTXaAKPUaIkTQpTrUk4esOiBcbv6dtUFF
+	 VNyqSH+Um/HVhfJ5CXH/ojfYosvoguUu9mMyP/zXY9IN3djTtGt62bejorbPVjDyFo
+	 3IuqBNA1gVUoA==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: [PATCH] objtool: Detect non-relocated text references
+Date: Thu,  3 Oct 2024 17:31:10 -0700
+Message-ID: <05fd690797ea4e1ee798b7fa497857519ae840d4.1728001850.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,74 +56,271 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Aaron Thompson <dev@aaront.org>
+When kernel IBT is enabled, objtool detects all text references in order
+to determine which functions can be indirectly branched to.
 
-If bt_init() fails, the debugfs directory currently is not removed. If
-the module is loaded again after that, the debugfs directory is not set
-up properly due to the existing directory.
+In text, such references look like one of the following:
 
-  # modprobe bluetooth
-  # ls -laF /sys/kernel/debug/bluetooth
-  total 0
-  drwxr-xr-x  2 root root 0 Sep 27 14:26 ./
-  drwx------ 31 root root 0 Sep 27 14:25 ../
-  -r--r--r--  1 root root 0 Sep 27 14:26 l2cap
-  -r--r--r--  1 root root 0 Sep 27 14:26 sco
-  # modprobe -r bluetooth
-  # ls -laF /sys/kernel/debug/bluetooth
-  ls: cannot access '/sys/kernel/debug/bluetooth': No such file or directory
-  #
+   mov    $0x0,%rax        R_X86_64_32S     .init.text+0x7e0a0
+   lea    0x0(%rip),%rax   R_X86_64_PC32    autoremove_wake_function-0x4
 
-  # modprobe bluetooth
-  modprobe: ERROR: could not insert 'bluetooth': Invalid argument
-  # dmesg | tail -n 6
-  Bluetooth: Core ver 2.22
-  NET: Registered PF_BLUETOOTH protocol family
-  Bluetooth: HCI device and connection manager initialized
-  Bluetooth: HCI socket layer initialized
-  Bluetooth: Faking l2cap_init() failure for testing
-  NET: Unregistered PF_BLUETOOTH protocol family
-  # ls -laF /sys/kernel/debug/bluetooth
-  total 0
-  drwxr-xr-x  2 root root 0 Sep 27 14:31 ./
-  drwx------ 31 root root 0 Sep 27 14:26 ../
-  #
+Either way the function pointer is denoted by a relocation, so objtool
+just reads that.
 
-  # modprobe bluetooth
-  # dmesg | tail -n 7
-  Bluetooth: Core ver 2.22
-  debugfs: Directory 'bluetooth' with parent '/' already present!
-  NET: Registered PF_BLUETOOTH protocol family
-  Bluetooth: HCI device and connection manager initialized
-  Bluetooth: HCI socket layer initialized
-  Bluetooth: L2CAP socket layer initialized
-  Bluetooth: SCO socket layer initialized
-  # ls -laF /sys/kernel/debug/bluetooth
-  total 0
-  drwxr-xr-x  2 root root 0 Sep 27 14:31 ./
-  drwx------ 31 root root 0 Sep 27 14:26 ../
-  #
+However there are some "lea xxx(%rip)" cases which don't use relocations
+because they're referencing code in the same translation unit.  Objtool
+doesn't have visibility to those.
 
-Cc: stable@vger.kernel.org
-Fixes: ffcecac6a738 ("Bluetooth: Create root debugfs directory during module init")
-Signed-off-by: Aaron Thompson <dev@aaront.org>
+The only currently known instances of that are a few hand-coded asm text
+references which don't actually need ENDBR.  So it's not actually a
+problem at the moment.
+
+However if we enable -fpie, the compiler would start generating them and
+there would definitely be bugs in the IBT sealing.
+
+Detect non-relocated text references and handle them appropriately.
+
+[ Note: I removed the manual static_call_tramp check -- that should
+  already be handled by the noendbr check. ]
+
+Reported-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- net/bluetooth/af_bluetooth.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/acpi/wakeup_64.S     |   1 +
+ arch/x86/kernel/head_64.S            |   1 +
+ tools/objtool/arch/x86/decode.c      |  15 ++--
+ tools/objtool/check.c                | 112 +++++++++++++++------------
+ tools/objtool/include/objtool/arch.h |   1 +
+ 5 files changed, 77 insertions(+), 53 deletions(-)
 
-diff --git a/net/bluetooth/af_bluetooth.c b/net/bluetooth/af_bluetooth.c
-index 67604ccec2f4..0d4b171b939a 100644
---- a/net/bluetooth/af_bluetooth.c
-+++ b/net/bluetooth/af_bluetooth.c
-@@ -825,6 +825,7 @@ static int __init bt_init(void)
- 	bt_sysfs_cleanup();
- cleanup_led:
- 	bt_leds_cleanup();
-+	debugfs_remove_recursive(bt_debugfs);
- 	return err;
+diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
+index af2f2ed57658..5e4472f788b3 100644
+--- a/arch/x86/kernel/acpi/wakeup_64.S
++++ b/arch/x86/kernel/acpi/wakeup_64.S
+@@ -85,6 +85,7 @@ SYM_FUNC_START(do_suspend_lowlevel)
+ 
+ 	.align 4
+ .Lresume_point:
++	ANNOTATE_NOENDBR
+ 	/* We don't restore %rax, it must be 0 anyway */
+ 	leaq	saved_context(%rip), %rax
+ 	movq	saved_context_cr4(%rax), %rbx
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 88cdc5a0c7a3..9e95599b58cf 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -88,6 +88,7 @@ SYM_CODE_START_NOALIGN(startup_64)
+ 	lretq
+ 
+ .Lon_kernel_cs:
++	ANNOTATE_NOENDBR
+ 	UNWIND_HINT_END_OF_STACK
+ 
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
+diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
+index ed6bff0e01dc..fe1362c34564 100644
+--- a/tools/objtool/arch/x86/decode.c
++++ b/tools/objtool/arch/x86/decode.c
+@@ -456,10 +456,6 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+ 		if (!rex_w)
+ 			break;
+ 
+-		/* skip RIP relative displacement */
+-		if (is_RIP())
+-			break;
+-
+ 		/* skip nontrivial SIB */
+ 		if (have_SIB()) {
+ 			modrm_rm = sib_base;
+@@ -467,6 +463,12 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+ 				break;
+ 		}
+ 
++		/* lea disp(%rip), %dst */
++		if (is_RIP()) {
++			insn->type = INSN_LEA_RIP;
++			break;
++		}
++
+ 		/* lea disp(%src), %dst */
+ 		ADD_OP(op) {
+ 			op->src.offset = ins.displacement.value;
+@@ -737,7 +739,10 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+ 		break;
+ 	}
+ 
+-	insn->immediate = ins.immediate.nbytes ? ins.immediate.value : 0;
++	if (ins.immediate.nbytes)
++		insn->immediate = ins.immediate.value;
++	else if (ins.displacement.nbytes)
++		insn->immediate = ins.displacement.value;
+ 
+ 	return 0;
+ }
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 94a56099e22d..d33bf36d36a3 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -4354,6 +4354,51 @@ static bool noendbr_range(struct objtool_file *file, struct instruction *insn)
+ 	return insn->offset == sym->offset + sym->len;
  }
  
++static int __validate_ibt_insn(struct objtool_file *file, struct instruction *insn,
++			       struct instruction *dest)
++{
++	if (dest->type == INSN_ENDBR) {
++		mark_endbr_used(dest);
++		return 0;
++	}
++
++	if (insn_func(dest) && insn_func(insn) &&
++	    insn_func(dest)->pfunc == insn_func(insn)->pfunc) {
++		/*
++		 * Anything from->to self is either _THIS_IP_ or
++		 * IRET-to-self.
++		 *
++		 * There is no sane way to annotate _THIS_IP_ since the
++		 * compiler treats the relocation as a constant and is
++		 * happy to fold in offsets, skewing any annotation we
++		 * do, leading to vast amounts of false-positives.
++		 *
++		 * There's also compiler generated _THIS_IP_ through
++		 * KCOV and such which we have no hope of annotating.
++		 *
++		 * As such, blanket accept self-references without
++		 * issue.
++		 */
++		return 0;
++	}
++
++	/*
++	 * Accept anything ANNOTATE_NOENDBR.
++	 */
++	if (dest->noendbr)
++		return 0;
++
++	/*
++	 * Accept if this is the instruction after a symbol
++	 * that is (no)endbr -- typical code-range usage.
++	 */
++	if (noendbr_range(file, dest))
++		return 0;
++
++	WARN_INSN(insn, "relocation to !ENDBR: %s", offstr(dest->sec, dest->offset));
++	return 1;
++}
++
+ static int validate_ibt_insn(struct objtool_file *file, struct instruction *insn)
+ {
+ 	struct instruction *dest;
+@@ -4366,6 +4411,7 @@ static int validate_ibt_insn(struct objtool_file *file, struct instruction *insn
+ 	 * direct/indirect branches:
+ 	 */
+ 	switch (insn->type) {
++
+ 	case INSN_CALL:
+ 	case INSN_CALL_DYNAMIC:
+ 	case INSN_JUMP_CONDITIONAL:
+@@ -4375,6 +4421,23 @@ static int validate_ibt_insn(struct objtool_file *file, struct instruction *insn
+ 	case INSN_RETURN:
+ 	case INSN_NOP:
+ 		return 0;
++
++	case INSN_LEA_RIP:
++		if (!insn_reloc(file, insn)) {
++			/* local function pointer reference without reloc */
++
++			off = arch_jump_destination(insn);
++
++			dest = find_insn(file, insn->sec, off);
++			if (!dest) {
++				WARN_INSN(insn, "corrupt function pointer reference");
++				return 1;
++			}
++
++			return __validate_ibt_insn(file, insn, dest);
++		}
++		break;
++
+ 	default:
+ 		break;
+ 	}
+@@ -4385,13 +4448,6 @@ static int validate_ibt_insn(struct objtool_file *file, struct instruction *insn
+ 					      reloc_offset(reloc) + 1,
+ 					      (insn->offset + insn->len) - (reloc_offset(reloc) + 1))) {
+ 
+-		/*
+-		 * static_call_update() references the trampoline, which
+-		 * doesn't have (or need) ENDBR.  Skip warning in that case.
+-		 */
+-		if (reloc->sym->static_call_tramp)
+-			continue;
+-
+ 		off = reloc->sym->offset;
+ 		if (reloc_type(reloc) == R_X86_64_PC32 ||
+ 		    reloc_type(reloc) == R_X86_64_PLT32)
+@@ -4403,47 +4459,7 @@ static int validate_ibt_insn(struct objtool_file *file, struct instruction *insn
+ 		if (!dest)
+ 			continue;
+ 
+-		if (dest->type == INSN_ENDBR) {
+-			mark_endbr_used(dest);
+-			continue;
+-		}
+-
+-		if (insn_func(dest) && insn_func(insn) &&
+-		    insn_func(dest)->pfunc == insn_func(insn)->pfunc) {
+-			/*
+-			 * Anything from->to self is either _THIS_IP_ or
+-			 * IRET-to-self.
+-			 *
+-			 * There is no sane way to annotate _THIS_IP_ since the
+-			 * compiler treats the relocation as a constant and is
+-			 * happy to fold in offsets, skewing any annotation we
+-			 * do, leading to vast amounts of false-positives.
+-			 *
+-			 * There's also compiler generated _THIS_IP_ through
+-			 * KCOV and such which we have no hope of annotating.
+-			 *
+-			 * As such, blanket accept self-references without
+-			 * issue.
+-			 */
+-			continue;
+-		}
+-
+-		/*
+-		 * Accept anything ANNOTATE_NOENDBR.
+-		 */
+-		if (dest->noendbr)
+-			continue;
+-
+-		/*
+-		 * Accept if this is the instruction after a symbol
+-		 * that is (no)endbr -- typical code-range usage.
+-		 */
+-		if (noendbr_range(file, dest))
+-			continue;
+-
+-		WARN_INSN(insn, "relocation to !ENDBR: %s", offstr(dest->sec, dest->offset));
+-
+-		warnings++;
++		warnings += __validate_ibt_insn(file, insn, dest);
+ 	}
+ 
+ 	return warnings;
+diff --git a/tools/objtool/include/objtool/arch.h b/tools/objtool/include/objtool/arch.h
+index 0b303eba660e..d63b46a19f39 100644
+--- a/tools/objtool/include/objtool/arch.h
++++ b/tools/objtool/include/objtool/arch.h
+@@ -28,6 +28,7 @@ enum insn_type {
+ 	INSN_CLD,
+ 	INSN_TRAP,
+ 	INSN_ENDBR,
++	INSN_LEA_RIP,
+ 	INSN_OTHER,
+ };
+ 
 -- 
-2.39.5
+2.46.0
 
 
