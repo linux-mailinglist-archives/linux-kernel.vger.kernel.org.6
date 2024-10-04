@@ -1,109 +1,231 @@
-Return-Path: <linux-kernel+bounces-350407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6F89904B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:45:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93B59904BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132691F2292F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:45:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8E341C20E10
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C1C2101B0;
-	Fri,  4 Oct 2024 13:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D2F149DF4;
+	Fri,  4 Oct 2024 13:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RTIkHCOG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cUtJWK0k"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B0A2101A7;
-	Fri,  4 Oct 2024 13:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052A92139AC
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728049510; cv=none; b=JNxfo2wY4bOsuOkPwRTZGKOMAAGC9RaCIhkQjrsiKXAVeF90WfMwolaM3vsrUFoJkzxDU/IqwpFEJ9nFjK1mlgZlO4WR3KX4o6EaiW21xx3gXJk2S8FApbDQtACfL2CYMTy9R4B0c7YZTQ1MzYHaIRhcgw4akck/RZd4TYELlUk=
+	t=1728049610; cv=none; b=AxNK1yOmJW13UxQnQTVDHEI9yLIAhrWgn+4Kd1Kr8IIcrrQNsRGL3Ro8aIJ70Lo+gko2Yz1OLaIUdh/nxnGvIwaF4htMvLq5nJqYHilXstzqYrG8MjfHW1Bjsu9Z9XzJgGKyYVaLmUqfk0e9GMtEikSTIIzxGhS9neGcHFvFPn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728049510; c=relaxed/simple;
-	bh=4xjpn1cjbsUT4BC0qUmd0788DGsHynkEwz3qlxz8VHU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DJByGnOILDA9jC6BX3Phape4luq+0LzIWylVxWh0Yxtiel7Fa/hXvE9/UYQpAhspeB4boL+bV2gPIoPvK+qu+w2BwXw5m+5j7s/+IRnINculE+sJzmFnbvkLe2hFteiWoHBNiHY9JgHw7IwlLRzpH3IRpZ5fiYxBWVATfb1it/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RTIkHCOG; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728049508; x=1759585508;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=4xjpn1cjbsUT4BC0qUmd0788DGsHynkEwz3qlxz8VHU=;
-  b=RTIkHCOGVpNgSoM7cteJbOjq04Pw8MYwfm76sExEjhD96VamEuWBOCQw
-   2po5aAVGZKq52P/jW3QKSie7n9jbDC6M7Jg0dDUoze3oBvNmARO5i6NjK
-   0GhIryGuyv54XUmA7m68W7lKOvR9+3GSOT2OBpbMz+Y6KZUaXl1cfEKJp
-   Hql28SY3fu2xwp4mIksFg0UfD2eSDS1Bo7McOHCv8SIXpySsCjm+CX6P2
-   aKEbosZ4hMTU8+73m1VujlYUaMjrI9Ybyb17M9jqnQij/pHlWmSwMYGA8
-   rDB2PLFnApqifB7Em/RhX37nS4rYrCFkluhJpx44CDTb7lb0ALEKAZgnt
-   A==;
-X-CSE-ConnectionGUID: /+3fc0EvQzm1XG8ub+eEYQ==
-X-CSE-MsgGUID: y2sYQbtqRt2d0bOy8ASzoA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="52676068"
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="52676068"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 06:45:07 -0700
-X-CSE-ConnectionGUID: wsYMkoOtR16eh6tZtJ3edw==
-X-CSE-MsgGUID: gLED+iWsR2uW0MRjW36TVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="105451370"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.148])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 06:45:05 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 4 Oct 2024 16:45:01 +0300 (EEST)
-To: Crag Wang <crag0715@gmail.com>
-cc: mario.limonciello@amd.com, Prasanth Ksr <prasanth.ksr@dell.com>, 
-    Hans de Goede <hdegoede@redhat.com>, crag.wang@dell.com, 
-    Crag Wang <crag_wang@dell.com>, Dell.Client.Kernel@dell.com, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv3 1/2] platform/x86: dell-sysman: remove match on
- www.dell.com
-In-Reply-To: <20241004024209.201244-1-crag_wang@dell.com>
-Message-ID: <eb6c6347-e665-8057-f825-1acfec682ea3@linux.intel.com>
-References: <20241004024209.201244-1-crag_wang@dell.com>
+	s=arc-20240116; t=1728049610; c=relaxed/simple;
+	bh=GMPZMjlkQcqXyBH1Ka//qE03cBrrpDcnxDCaWkbgejk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a7r7GS3ZC6qnXw8wnyh681Zki6mdzjiadfnpOoV3qtr5zkobpbko4sp1o5w3ehJJhXZUSd4L1LRWTzxp7yyRVSWAgMGYzlXJ9r0z6p5hoOXJp9IsCyC0F6QgQteJH9A3GCDEQY9xjk5xkznDlIWfnENl9lNLbtrvVJAxlTAqRvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cUtJWK0k; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42e5e758093so18865135e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 06:46:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728049606; x=1728654406; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+l6NR9x5ynudfzAve4vmqteAo7Egm7pljeYYNvDo0zU=;
+        b=cUtJWK0kA2JldIKf0JUXs4qhXaDMKI3G9UQhv8c/WxVkowMELH8qDi0wChNsa7USKK
+         b3e3a7WZ7mN0AVOEsKCj0WUZRb8WbWlTeY75RSWcdbtEz08Ia2RCjuOhRcf7OdUlo9lo
+         UD2PItGb6d3JHaM+0EcyM3AOsRWxJwEXFByoU6oXNectMPHwirem5iLpbea6PyiH8r26
+         upbo37xIltNxghLfHawoL+DsM3g0RdrDScRVaLs9NI+gZyt5lMeZ8X1Sm8WanCkzqC0d
+         bwxFKTCscW2WW0WIvt55pp9cHgCJHmnd1ejHEo3txUB1iRxwwXWGFMqWi4s1J7fqgXbp
+         xZhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728049606; x=1728654406;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+l6NR9x5ynudfzAve4vmqteAo7Egm7pljeYYNvDo0zU=;
+        b=AMOqCjTkO5NE4xtFNXb/KkV5NK07T+n7MpFO9nr5en3q7Uq3Nw/6D6NgH9/FhYyltp
+         99B1fPH7bKceppvVYjW2VaAowBU6ibk4Li/r4MHdYGiuha784b3wTAPdF2jvaAY2zm/0
+         fhs/Nm16KjZljd/TVRFivdz8MkFI0sBuP7Ikx5/4Kwsm0DjBNzfOTwYyw5lRmLzRv3tK
+         mzsGGXMRBWgfrzKYqokVbPK0MEekdMcqdSmQOAQyHHE79+ENN+44GM+9KNcgznrONtKz
+         kjAhnjgx49/1DhLjij0QtoBRjZ6c42u8FvN3P7bBNuJpatTCKC+N+y1J2ykn2bULcOGn
+         flzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCeJh9MpqQfOWHhY3mgRinv1ETFXzffeDb3+mh0gMPBBdC2lGgcwm86EH4/yN1/rNcSYCHKhU/QwBl4Fc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA37aVr4mJE8wDXMt9cI3il820FRKhCrVseSLU7+adhcs0KzYX
+	fk5ry7rToXJfNZsX++MJlzjYB9olUYnm9inLXqdXhH9SVBsNV/B0wQxmJenCj6k=
+X-Google-Smtp-Source: AGHT+IHsrIDaJTASrH2355pi8O3jwbrwP0InvMA5HPzpqiIAC7Q0Np/5g3AmiIejnI+RwiEdOFLGhA==
+X-Received: by 2002:adf:ce8f:0:b0:371:8a3a:680a with SMTP id ffacd0b85a97d-37d0e782737mr1706155f8f.32.1728049606166;
+        Fri, 04 Oct 2024 06:46:46 -0700 (PDT)
+Received: from dfj (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082a6c2fsm3316540f8f.72.2024.10.04.06.46.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 06:46:45 -0700 (PDT)
+Date: Fri, 4 Oct 2024 15:45:21 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mihail Chindris <mihail.chindris@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org, dlechner@baylibre.com, 
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v4 06/11] iio: backend: extend features
+Message-ID: <ihkd45xlg3hejchdw6ksmuzoxu3cazmx5rd4d4zca7xl4rfcrd@krururfftdlx>
+References: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
+ <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-6-ceb157487329@baylibre.com>
+ <451aaf360690cf60704e8a2880e98501156bda73.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <451aaf360690cf60704e8a2880e98501156bda73.camel@gmail.com>
 
-On Fri, 4 Oct 2024, Crag Wang wrote:
+Hi Nuno,
 
-> The URL is dynamic and may change according to the OEM. It was mainly used
-> for old systems that do not have "Dell System" in the OEM String.
+On 04.10.2024 14:54, Nuno Sá wrote:
+> On Thu, 2024-10-03 at 19:29 +0200, Angelo Dureghello wrote:
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> > 
+> > Extend backend features with new calls needed later on this
+> > patchset from axi version of ad3552r.
+> > 
+> > The follwoing calls are added:
+> > 
+> > iio_backend_ddr_enable
+> > 	enable ddr bus transfer
+> > iio_backend_ddr_disable
+> > 	disable ddr bus transfer
+> > iio_backend_buffer_enable
+> > 	enable buffer
+> > iio_backend_buffer_disable
+> > 	disable buffer
+> > iio_backend_data_transfer_addr
+> > 	define the target register address where the DAC sample
+> > 	will be written.
+> > 
+> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > ---
+> >  drivers/iio/industrialio-backend.c | 79 ++++++++++++++++++++++++++++++++++++++
+> >  include/linux/iio/backend.h        | 17 ++++++++
+> >  2 files changed, 96 insertions(+)
+> > 
+> > diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-
+> > backend.c
+> > index 20b3b5212da7..d5e0a4da761e 100644
+> > --- a/drivers/iio/industrialio-backend.c
+> > +++ b/drivers/iio/industrialio-backend.c
+> > @@ -718,6 +718,85 @@ static int __devm_iio_backend_get(struct device *dev, struct
+> > iio_backend *back)
+> >  	return 0;
+> >  }
+> >  
+> > +/**
+> > + * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
+> > + * @back: Backend device
+> > + *
+> > + * Enable DDR, data is generated by the IP at each front (raising and falling)
+> > + * of the bus clock signal.
+> > + *
+> > + * RETURNS:
+> > + * 0 on success, negative error number on failure.
+> > + */
+> > +int iio_backend_ddr_enable(struct iio_backend *back)
+> > +{
+> > +	return iio_backend_op_call(back, ddr_enable);
+> > +}
+> > +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_enable, IIO_BACKEND);
+> > +
+> > +/**
+> > + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate) mode
+> > + * @back: Backend device
+> > + *
+> > + * Disable DDR, setting into SDR mode (Single Data Rate).
+> > + *
+> > + * RETURNS:
+> > + * 0 on success, negative error number on failure.
+> > + */
+> > +int iio_backend_ddr_disable(struct iio_backend *back)
+> > +{
+> > +	return iio_backend_op_call(back, ddr_disable);
+> > +}
+> > +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
+> > +
+> > +/**
+> > + * iio_backend_dma_stream_enable - Enable iio buffering
+> > + * @back: Backend device
+> > + *
+> > + * Enabling sending the dma data stream over the bus.
+> > + * bus interface.
+> > + *
+> > + * RETURNS:
+> > + * 0 on success, negative error number on failure.
+> > + */
+> > +int iio_backend_dma_stream_enable(struct iio_backend *back)
+> > +{
+> > +	return iio_backend_op_call(back, dma_stream_enable);
+> > +}
+> > +EXPORT_SYMBOL_NS_GPL(iio_backend_dma_stream_enable, IIO_BACKEND);
+> > +
+> > +/**
+> > + * iio_backend_dma_stream_disable - Disable iio buffering
+> > + * @back: Backend device
+> > + *
+> > + * Disable sending the dma data stream over the bus.
+> > + *
+> > + * RETURNS:
+> > + * 0 on success, negative error number on failure.
+> > + */
+> > +int iio_backend_dma_stream_disable(struct iio_backend *back)
+> > +{
+> > +	return iio_backend_op_call(back, dma_stream_disable);
+> > +}
+> > +EXPORT_SYMBOL_NS_GPL(iio_backend_dma_stream_disable, IIO_BACKEND);
+> > +
 > 
-> Signed-off-by: Crag Wang <crag_wang@dell.com>
-> ---
->  drivers/platform/x86/dell/dell-wmi-sysman/sysman.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> I'm not sure if this is what Jonathan was suggesting... Ate least I don't really
+> agree with it. I mean, yes, this is about buffering and to start receiving (or
+> sending) a stream of data. But AFAICT, it might have nothing to do with DMA. Same as
+> .request_buffer() - It's pretty much always a DMA one but we should not take that for
+> granted.
 > 
-> diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c b/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
-> index 9def7983d7d6..c05474f1ed70 100644
-> --- a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
-> +++ b/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
-> @@ -520,8 +520,7 @@ static int __init sysman_init(void)
->  {
->  	int ret = 0;
->  
-> -	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) &&
-> -	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL)) {
-> +	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL)) {
+> So going back to the RFC [1], you can see I was suggesting something like struct
+> iio_buffer_setup_ops. Maybe just add the ones we use for now? So that would
+> be.buffer_postenable() and .buffer_predisable(). Like this, it should be obvious the
+> intent of the ops.
+> 
+ok, thanks,
 
-I suggested making the changes in the opposite order, that was to 
-faciliate easy revert of the URL patch if needed which is not the case if
-things are changed in this order.
+so something as :
+
+struct iio_backend_setup_ops {
+	int (*buffer_postenable)(struct iio_backend *back);
+	int (*buffer_predisable)(struct iio_backend *back);
+};
+
+struct iio_backend_ops {
+	struct iio_backend_setup_ops setup_ops;
+
+?
+
+> - Nuno Sá
+> 
+> 
 
 -- 
- i.
 
+Regards,
+  Angelo
 
