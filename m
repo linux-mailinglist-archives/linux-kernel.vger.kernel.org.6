@@ -1,125 +1,124 @@
-Return-Path: <linux-kernel+bounces-350836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83892990A4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2A8990A53
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4339328280E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:40:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE25A280DB5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFA21DAC85;
-	Fri,  4 Oct 2024 17:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DB71D9A78;
+	Fri,  4 Oct 2024 17:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0ZlecNm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b="ajOj/gIb"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771E01CACDA;
-	Fri,  4 Oct 2024 17:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AAA1D9A6D
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728063619; cv=none; b=uudBSAe7jR047NHBsuCIQkj7uDDc5sJC9HRcF0uDdlJene4MP3iPpfAXTEx1lWiUHT6DN80PrqBtYEAF2+i2GHv2R/4CVRDEPzDwzgUPCgDrjuwZ4Ja12aVgffv+fx0SkzYP40RjhNjiIEIIX6TCXKu2dpOIXorqK0U4ExBSG/g=
+	t=1728063650; cv=none; b=rvQGlRAkNiD06TCdxMkwTo0KGXrNyBZMRRdh8Wyyid5teUC/57TJ4a9wyozbGOTLENjyAQZwN1LMfjtZhXVco2NL8bxhAhRyFhlQFb8B18O2hFWcv9xLphmuZ18ugwiRXdfHK/WGbUKfuxMkFdPSJXd3SiebKiH5SaYXNjzUv6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728063619; c=relaxed/simple;
-	bh=h1nYm8NEPy7Smjifx3kUXv9T7YUzQH5JrPdypLWGo94=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=OZoAXnA26PrtzO10XaJD0whXm9pc7S+2xQADeYipJxzRazhTwGW3vqch/wLZZsUYdx8AEF26zdQEPfEu4o7zCMOWUyuze1RO++nHf7PIJFN8VxRxowilYP/M3sO/bJZdgxH9RvpvfQ2y1r7iJK0h38USikZkosAqod8PSSsX8wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0ZlecNm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC44EC4CEC6;
-	Fri,  4 Oct 2024 17:40:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728063619;
-	bh=h1nYm8NEPy7Smjifx3kUXv9T7YUzQH5JrPdypLWGo94=;
-	h=From:Date:Subject:To:Cc:From;
-	b=q0ZlecNmg8esJ6sMtpBdjhdWiQzuHesZ3UCY5D+oMJqBW74tL8P/Q9CKhANiOmuk8
-	 nzqI9/sAHGeE36uIVtvrD/pwhW3k3NrIP4cCfM3IJUpw8GZ8tXHFP0BEiZEAmtfTbr
-	 uGg9OmC7dQQJcza85UuMialEzDG+7asu2B6D9xHPbPrmdKyDFgCUbX7Vwm7XlsxzhL
-	 AkNu2gqR8gWlaSMSOAurtJgv4IXWn1UkLlNBDLDcY1Pj7SR2IjxjboYH8hzOdrYMhk
-	 dY/ShjICaA5G7av05B1ti9JNyvOMYJu8RMCemFGzl/bgc75VtLXDZy3AqV/A6Op1LF
-	 Uo+pjrq0hWhfg==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5e1c49f9b9aso990011eaf.2;
-        Fri, 04 Oct 2024 10:40:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW+rocu2+B5bHrRKp5jiBEidBudufZh4qW7WE0FUDS15YcdewBBKP0QVEbZr78c8EL8D3uz+OqvRE4=@vger.kernel.org, AJvYcCWpOsiQyUOWNUN9cZQLfTMOBMsfLPd4eyO3VsLaXA+1oiUXrzOSelurzwfP6zo/L34P+iWhvanYaYJKxKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsGw9/kbO8EF2VNunC0xq3kTkySaoCozmbMEZThVr+eh6rUfJz
-	LtABxdn0JrYs2Ahlnio3SA4dbqg6ZSXC7jkYJWjghjskDlNB2Z/kJTpKKYz8hjMRUb19GYBiM0C
-	Q4wOWstFp+9mv2n8yfKFlh3DfYnE=
-X-Google-Smtp-Source: AGHT+IH9+Wn4qVnoqyr7EuJuCz7EOG/6vxcUg31Lo2N8ui1LGyTQwA/opB8DrBW+WUb8Y5l80X+mG8jAlU4FTTjdNHw=
-X-Received: by 2002:a05:6820:2283:b0:5e3:b6f9:1f8e with SMTP id
- 006d021491bc7-5e7cc05c9dbmr2329688eaf.3.1728063618292; Fri, 04 Oct 2024
- 10:40:18 -0700 (PDT)
+	s=arc-20240116; t=1728063650; c=relaxed/simple;
+	bh=ihsMZg9Wwb5wnkNU0osqiAc+lJizu5sHA5+TYwsmFqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wo2zBoub0WCpA1W8Xs19rml4knFa4pcrsefLsH5/EY2KhQNKsnmiWIfmu9vte4M8rZLwFfJ+Oj1fwwufzc9FOq5JBnMh44gXW6SUKP/pZMSTWPrsd8Ws9Z1jH8++HmNfZvUZXNO3mniqzrHZGb9DgXYyqKf32Lv4kK/Mid5xPgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in; spf=pass smtp.mailfrom=iiitd.ac.in; dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b=ajOj/gIb; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iiitd.ac.in
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7db299608e7so1549309a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:40:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=iiitd.ac.in; s=google; t=1728063646; x=1728668446; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gipk7tZ2gHWfXWt09uDNRITU//gp2sMa6qCxHdj3Mzc=;
+        b=ajOj/gIbkUOHGWxvx3jYk0vGH9Ys7WZcHIQ9XzA3oNqQw0Hh6TIq1FiB5+/yd/sLLs
+         8orW0Uys9ClOHUSXawZG+5rehtNtbiHVvZGrG/kXDigWWmbWNzvVy9EeZFfn0+RC08PX
+         R/OsTer3CkVvT5xeE+ZfKSfhQRkrbmogHlxhA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728063646; x=1728668446;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gipk7tZ2gHWfXWt09uDNRITU//gp2sMa6qCxHdj3Mzc=;
+        b=H01eYCjhJOpSSUF1cDXk5Ofx0LijiViSfutLcvTOMXEobc9+/Bt67aphfPiAKKNQWr
+         NkMn3EgX5vQjPLQutdXB7GffanssS6eNoKOBRz0lMkV6ez7nvYOWLxTkBMA6B68Lsxvy
+         wh2PRdqWiDDJXda/cGMldGNe3Ir07OE+BNp7RtG+FPUKKGYm4nJIt8dCxzEEPuPsKQTl
+         0AkqfdP0k49Fwl9C9YEOafvTdW+bnQeMkGfp+Kk9zyD9feyptTCtiNlBBRu+hPG/s+HM
+         yrPtmNk2zrkc5keEQ7Wm0ksM1sozFuFvJRT7eT1pyb0b0JtRzZaJdhctyhCUSJxblMxD
+         L7Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAjlFhGRRQTZrK9r5hbPYz3xkymIiiIuZHsKO1CxUBAaxUFIy+/iiio/D8onYGgyF9UdZviDJy2mguXtQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8efLyulVCWR6ovgqiSqUfbqrjWj5Yw1x6O0zYhottjHZD5eHX
+	UEkXAKgHQ/aVz12ZVT2a6T2ENpg+yGfUhvdD/8/mnhczpbDioOGinMpwdvZhgvo=
+X-Google-Smtp-Source: AGHT+IGgamVQRcGOh/R/rIbHRa9Yfyqlrpw7tGzWKPgyIC71DXw8qw9b3gT+FD5JEJTsgWDm/bo/HQ==
+X-Received: by 2002:a05:6a20:d492:b0:1d2:f124:a1cb with SMTP id adf61e73a8af0-1d6dfa27999mr5401546637.9.1728063646247;
+        Fri, 04 Oct 2024 10:40:46 -0700 (PDT)
+Received: from fedora ([103.3.204.140])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cd5006sm123518b3a.77.2024.10.04.10.40.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 10:40:45 -0700 (PDT)
+Date: Fri, 4 Oct 2024 23:10:37 +0530
+From: Manas <manas18244@iiitd.ac.in>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Peter Xu <peterx@redhat.com>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Anup Sharma <anupnewsmail@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
+Subject: Re: [PATCH v3] Fixes: null pointer dereference in
+ pfnmap_lockdep_assert
+Message-ID: <mvf3iorotqyioegxrre67a745ewk2dhqiuttn2vfwemv5kyjh4@m2x22dnxesjr>
+References: <20241004-fix-null-deref-v3-1-f9459b1cc95f@iiitd.ac.in>
+ <ZwAHFtAmMq9BNuGv@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 4 Oct 2024 19:40:07 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0izSML-nVycdK69DwRuqdixnvriqkMm2ZM1eYRiqddYMQ@mail.gmail.com>
-Message-ID: <CAJZ5v0izSML-nVycdK69DwRuqdixnvriqkMm2ZM1eYRiqddYMQ@mail.gmail.com>
-Subject: [GIT PULL] ACPI updates for v6.12-rc2
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <ZwAHFtAmMq9BNuGv@casper.infradead.org>
 
-Hi Linus,
+Hi Matthew,
 
-Please pull from the tag
+On 04.10.2024 16:17, Matthew Wilcox wrote:
+>On Fri, Oct 04, 2024 at 07:15:48PM +0530, Manas via B4 Relay wrote:
+>> +++ b/mm/memory.c
+>> @@ -6346,10 +6346,10 @@ static inline void pfnmap_args_setup(struct follow_pfnmap_args *args,
+>>  static inline void pfnmap_lockdep_assert(struct vm_area_struct *vma)
+>>  {
+>>  #ifdef CONFIG_LOCKDEP
+>> -	struct address_space *mapping = vma->vm_file->f_mapping;
+>> +	struct address_space *mapping = vma->vm_file ? vma->vm_file->f_mapping : NULL;
+>
+>Overly long and complex line.  Much simpler to write:
+>
+>	struct address_space *mapping = NULL;
+>
+>	if (vma->vm_file)
+>		mapping = vma->vm_file->f_mapping;
+>
+Thank you for reviewing! I am sending v4.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-6.12-rc2
+>>  	if (mapping)
+>> -		lockdep_assert(lockdep_is_held(&vma->vm_file->f_mapping->i_mmap_rwsem) ||
+>> +		lockdep_assert(lockdep_is_held(&mapping->i_mmap_rwsem) ||
+>>  			       lockdep_is_held(&vma->vm_mm->mmap_lock));
+>>  	else
+>>  		lockdep_assert(lockdep_is_held(&vma->vm_mm->mmap_lock));
+>
+>This one should have been lockdep_assert_held(&vma->vm_mm->mmap_lock).
+>
+>I'm not sure that the previous one is correct.  The
+>lockdep_assert_held() macro is pretty careful about checking
+>LOCK_STATE_NOT_HELD to avoid the LOCK_STATE_UNKNOWN possibility.
+>But I'll leave that for Peter to fix.
 
-with top-most commit 3be5c171025baece9a0793170eb3b47ad08bf6c9
-
- Merge branches 'acpi-video' and 'acpi-battery'
-
-on top of commit 9852d85ec9d492ebef56dc5f229416c925758edc
-
- Linux 6.12-rc1
-
-to receive ACPI updates for 6.12-rc2.
-
-These fix up the ACPI IRQ override quirk list and add two new entries
-to it, add a new quirk to the ACPI backlight (video) driver, and fix
-the ACPI battery driver.
-
-Specifics:
-
- - Add a quirk for Dell OptiPlex 5480 AIO to the ACPI backlight (video)
-   driver (Hans de Goede).
-
- - Prevent the ACPI battery driver from crashing when unregistering a
-   battery hook and simplify battery hook locking in it (Armin Wolf).
-
- - Fix up the ACPI IRQ override quirk list and add quirks for Asus
-   Vivobook X1704VAP and Asus ExpertBook B2502CVA to it (Hans de Goede).
-
-Thanks!
-
-
----------------
-
-Armin Wolf (2):
-      ACPI: battery: Simplify battery hook locking
-      ACPI: battery: Fix possible crash when unregistering a battery hook
-
-Hans de Goede (5):
-      ACPI: resource: Remove duplicate Asus E1504GAB IRQ override
-      ACPI: resource: Loosen the Asus E1404GAB DMI match to also cover
-the E1404GA
-      ACPI: resource: Add Asus Vivobook X1704VAP to
-irq1_level_low_skip_override[]
-      ACPI: resource: Add Asus ExpertBook B2502CVA to
-irq1_level_low_skip_override[]
-      ACPI: video: Add backlight=native quirk for Dell OptiPlex 5480 AIO
-
----------------
-
- drivers/acpi/battery.c      | 28 +++++++++++++++++-----------
- drivers/acpi/resource.c     | 19 +++++++++++++------
- drivers/acpi/video_detect.c |  9 +++++++++
- 3 files changed, 39 insertions(+), 17 deletions(-)
+-- 
+Manas
 
