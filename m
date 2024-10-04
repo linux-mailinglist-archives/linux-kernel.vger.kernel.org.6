@@ -1,148 +1,239 @@
-Return-Path: <linux-kernel+bounces-350337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9DE9903AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:15:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C479903B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A962825AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:15:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98AE1C21844
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5A12101B3;
-	Fri,  4 Oct 2024 13:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112E221019E;
+	Fri,  4 Oct 2024 13:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kjjnc/L9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dIDy1U+L"
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0FD33D5;
-	Fri,  4 Oct 2024 13:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA871581E0;
+	Fri,  4 Oct 2024 13:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728047737; cv=none; b=d9DT47shIa10mgdOzP7sht/xD87J/ufz2CffKYROPQt2ndY1t8yyk65uoxHtIchvcC14WQfGctnnhLrtWZ1jhcJ+/CI0nmW1n5RxnLHmlm5ZyHdfJ7vHcqyvLagyxdkNG4DLXA1/WsMZ7XiiWzpdVxE9uJ3tDnbThUp8OvbFKtU=
+	t=1728047818; cv=none; b=dKmbRnvON9iun3wW3aHw0KdOFubbbLED0WzFXOgDalfi5/XNL5uHEjHpNP5GpzIN8Xk/zOZz8k/OsG23q9v3y4CmQyA+eBHqN/jO1gLmWpZSOVP6Wxexot7D6Cz2Tc12SpUinBV1gu8IABcpcTaSbiMPO0vVAC2KlQBOmhtpO2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728047737; c=relaxed/simple;
-	bh=1JZwYefyhSOCZB3CuZertgMGY1R4ZnxNXU0IyQGN6qM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FlgaPWhJ+EOxi1ZQc3ajSdI5kBpOAuwHU4/d0jOy2WK63DXND8085wBbMLqOEhRwllPAyrD60ssL8NqnMcMxSIRPtI390w+HDBYQdQvdhu99zZozOOPrNHB9bvHZvzBXnWMtkyVTASefFQ6kSJrzjqWiZWEr8c0DruvIhJ1f7mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kjjnc/L9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8116C4CEC7;
-	Fri,  4 Oct 2024 13:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728047736;
-	bh=1JZwYefyhSOCZB3CuZertgMGY1R4ZnxNXU0IyQGN6qM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Kjjnc/L90TMtexTjGYxAYy1SQ1QLyKkvF/CbvX4DRZe3QZLNjgmA043In5Mn3i/rw
-	 6B5X+WF05mnRkF5MPsreCu1/RWhlYy0+kTzNNOgDa8rsLpPqegA7XxXK7Rhx0nUxa6
-	 IBkZJ2pdiTlc6pHGbh4RfTk0ZTnhtJZsbARiZlcRcR6BaSSw9ooGopO2oN7M88zaKP
-	 i9ZukewwH6dgft/J+7smkC7XLiCKWNYuCiKQdA/fHzzcPvpm6QIq/WKqZBvWKoD11P
-	 SHCZ55g+iyuo9/ex9afVt1+UpR3QIha2xI0NPLiyaKR+gtHkWFsHfMyaquC5SiCFd1
-	 mpOvPGs/3yVlw==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539983beb19so2824507e87.3;
-        Fri, 04 Oct 2024 06:15:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+38R09j1hQxllWs0EaTrFh1t2MRF8v0dzcOegKbfaiS5alnA6Rjl00TvgfJBZhTuhQYhmcALOH+cVNDXP@vger.kernel.org, AJvYcCULDnRsmKZmGZZ98TwuF1ZH4+GH7Fr530imtFW9lxbETVqJVXZfU65rPPvDlmojIxNvhVcVdFKYkLvoQKojN1s=@vger.kernel.org, AJvYcCUVTF6W9Sbppy6KFSyHwLvooq67LPP5VL802W4CWiAe7IpDMTY6khkzpo7hGsWxMvwFstIz5DO0q5KIahrn@vger.kernel.org, AJvYcCV91q/sGry1hbxKADzHDs0ju/SACiuwk/yFnHXON8Sb0iW9D5RNGxPFtCuSBgKe3pXkmkRh4WRAhxiRcOjz@vger.kernel.org, AJvYcCVVVpSpkuylnUz66AK6tJcyw4LZB2j74FsXSFsP0DqiHVPWk5fLLwyai5rqa4y17bBqWT4cJHG5vKMj+jMXhkLiSg==@vger.kernel.org, AJvYcCWA2gfASVi9frLe93G6t17nR1yShVtHaTnLCkoVFhtMIjQ5GeUHLYmbOeTOkZumD6zxFAnLKKMrieJQ@vger.kernel.org, AJvYcCWFdmrYIxjlAVrycNuUVzUwiS2ehdmzsxQi5FyJdWnVQlacT2uPeomp2Rj39SXjQvFEJI54ElEmzJRZ@vger.kernel.org, AJvYcCWtd9b6skN2pLy2u9KwqX+NKHfaGn0v4Eo1OIzGas8ESpGURmF32XiV/9LlvVt1ROFCivAcoJZkyJU=@vger.kernel.org, AJvYcCXKOkcGvbcFlTu4Hf/DZIPOnRvbIM9GbnXAqdnXQ5I5efT3uUdsXrog/lxFo5cNHWM2sZtyCkhdBINWFA==@vger.kernel.org, AJvYcCXrnVncpaUX
- YrLcbTnyhKaiVGFWHwnAFNkCOaIqEWUE9xcl3y/O9QfJdzbzJLPzS8sXceg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI7+FGOM+QMg4bA9wtb9EgMm5mg3L7T78RlRBywebeG3xWaWEe
-	xwsBzJ8fB6aGyarypEtg6a+7SG31yiREjBfrIsOIqHnNPvJniclUQgEP7RblozXftN1YC0//0MZ
-	a5IzbyggY1NuLWKORTrUOKMOkzQ8=
-X-Google-Smtp-Source: AGHT+IEuHrt3V5yx40A/FQDIn91vq5WH5zeRnx8eS4s+O/De09fFFzzyl2W2oN2bUPJ3C1JSY+Ea24ADde6nXP4PqRA=
-X-Received: by 2002:a05:6512:3096:b0:539:a2e0:4e75 with SMTP id
- 2adb3069b0e04-539ab8662d1mr1636973e87.14.1728047734917; Fri, 04 Oct 2024
- 06:15:34 -0700 (PDT)
+	s=arc-20240116; t=1728047818; c=relaxed/simple;
+	bh=8PSo2DIypTXDb/TKuaNwWxyZQeUAK6b2eKsf8YBpur8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DIjJOO1zM7DvnPl/2WrKm89vVWWs/hWB7ldHQabbnbA5Gg2C8Wbr3ASgX+2Mn25vh9jl1Y5KC+uLqP48TbXXexd9Zar3BHzLSbDMiUfpwZdz8NRiYzqwiVXInHMHMMr30U8Yj66fsHNC4qXdpQ9j6cj3uZ02BRriC04YlWpwgbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dIDy1U+L; arc=none smtp.client-ip=80.12.242.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id wi9ksLfHdWgzbwi9kshUS6; Fri, 04 Oct 2024 15:15:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728047741;
+	bh=nRWH9XpiDQTzL94CS1nb47ffVIXOhin5jmNHlLBiMic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=dIDy1U+L/vYne/XH2vKiOD1wJhQ4KCqzffTGciZsdwVuTqjFxzzPHq+q6boDldrIc
+	 JGQcLctsMbQqJod7l/hN3Lhns43PuEQTS9NqUoGMjui6VoEgWWUYRjDXT6uzWzer8E
+	 SzH5NZrNOt8a5hBnYPi0Vu+RZq+XQqVFLiAfPERTq1Mkt5e5POm61rvTcMX/YY7ykf
+	 ZB+fP0C+2qCUtZUCTu22dJgA1TmEV+/pYWPLPxUEbE6HOjDMcZwiQQJ26fFn6Am/Ur
+	 5qqz2YP3ooG2XQZcmvRudtfYGoJxx2XTgEqk5o1FcKinpL/Iv0cXaILcSGpmg7gvpC
+	 tUBM4tmCjIsCA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 04 Oct 2024 15:15:41 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <2669052d-752f-416a-9d5e-a03848f30904@wanadoo.fr>
+Date: Fri, 4 Oct 2024 15:15:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925150059.3955569-30-ardb+git@google.com>
- <20240925150059.3955569-35-ardb+git@google.com> <CAFULd4ZNwfPZO-yDjrtT2ANV509HeeYgR80b9AFachaVW5zqrg@mail.gmail.com>
- <CAMzpN2j4uj=mhdi7QHaA7y_NLtaHuRpnit38quK6RjvxdUYQew@mail.gmail.com>
-In-Reply-To: <CAMzpN2j4uj=mhdi7QHaA7y_NLtaHuRpnit38quK6RjvxdUYQew@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 4 Oct 2024 15:15:22 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXF3_Hj9j2f_cBtwTFWvEmB0UoEs_cGkRiWc4AErDx0ftQ@mail.gmail.com>
-Message-ID: <CAMj1kXF3_Hj9j2f_cBtwTFWvEmB0UoEs_cGkRiWc4AErDx0ftQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 05/28] x86: Define the stack protector guard symbol explicitly
-To: Brian Gerst <brgerst@gmail.com>
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
-	Christoph Lameter <cl@linux.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
-	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org, 
-	linux-pm@vger.kernel.org, kvm@vger.kernel.org, xen-devel@lists.xenproject.org, 
-	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: ethernet: adi: adin1110: Fix some error handling
+ path in adin1110_read_fifo()
+To: Simon Horman <horms@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Lennart Franzen <lennart@lfdomain.com>,
+ Alexandru Tachici <alexandru.tachici@analog.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
+ <20241004113735.GF1310185@kernel.org>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241004113735.GF1310185@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, 28 Sept 2024 at 15:41, Brian Gerst <brgerst@gmail.com> wrote:
->
-> On Wed, Sep 25, 2024 at 2:33=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> w=
-rote:
-> >
-> > On Wed, Sep 25, 2024 at 5:02=E2=80=AFPM Ard Biesheuvel <ardb+git@google=
-.com> wrote:
-> > >
-> > > From: Ard Biesheuvel <ardb@kernel.org>
-> > >
-> > > Specify the guard symbol for the stack cookie explicitly, rather than
-> > > positioning it exactly 40 bytes into the per-CPU area. Doing so remov=
-es
-> > > the need for the per-CPU region to be absolute rather than relative t=
-o
-> > > the placement of the per-CPU template region in the kernel image, and
-> > > this allows the special handling for absolute per-CPU symbols to be
-> > > removed entirely.
-> > >
-> > > This is a worthwhile cleanup in itself, but it is also a prerequisite
-> > > for PIE codegen and PIE linking, which can replace our bespoke and
-> > > rather clunky runtime relocation handling.
-> >
-> > I would like to point out a series that converted the stack protector
-> > guard symbol to a normal percpu variable [1], so there was no need to
-> > assume anything about the location of the guard symbol.
-> >
-> > [1] "[PATCH v4 00/16] x86-64: Stack protector and percpu improvements"
-> > https://lore.kernel.org/lkml/20240322165233.71698-1-brgerst@gmail.com/
-> >
-> > Uros.
->
-> I plan on resubmitting that series sometime after the 6.12 merge
-> window closes.  As I recall from the last version, it was decided to
-> wait until after the next LTS release to raise the minimum GCC version
-> to 8.1 and avoid the need to be compatible with the old stack
-> protector layout.
->
+Le 04/10/2024 à 13:37, Simon Horman a écrit :
+> On Thu, Oct 03, 2024 at 08:53:15PM +0200, Christophe JAILLET wrote:
+>> If 'frame_size' is too small or if 'round_len' is an error code, it is
+>> likely that an error code should be returned to the caller.
+>>
+>> Actually, 'ret' is likely to be 0, so if one of these sanity checks fails,
+>> 'success' is returned.
+> 
+> Hi Christophe,
+> 
+> I think we can say "'ret' will be 0".
 
-Hi Brian,
+Agreed.
 
-I'd be more than happy to compare notes on that - I wasn't aware of
-your intentions here, or I would have reached out before sending this
-RFC.
+	ret = adin1110_read_reg()
+	--> spi_sync_transfer()
+	--> spi_sync()
 
-There are two things that you would need to address for Clang support
-to work correctly:
-- the workaround I cc'ed you on the other day [0],
-- a workaround for the module loader so it tolerates the GOTPCRELX
-relocations that Clang emits [1]
+which explicitly documents "zero on success, else a negative error code."
+
+> At least that is what my brief investigation tells me.
+> 
+>>
+>> Return -EINVAL instead.
+> 
+
+If the patch is considered as correct, can you confirm that -EINVAL is 
+the correct error code to use? If not, which one would be preferred?
+
+
+> Please include some information on how this was found and tested.
+> e.g.
+> 
+> Found by inspection / Found using widget-ng.
+
+I would say: found by luck! :)
+
+The explanation below will be of no help in the commit message and won't 
+be added. I just give you all the gory details because you asked for it ;-)
+
+(and after reading bellow, you can call me crazy!)
 
 
 
-[0] https://lore.kernel.org/all/20241002092534.3163838-2-ardb+git@google.co=
-m/
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/commit/?=
-id=3Da18121aabbdd
+I was looking at functions that propagate error codes as their last 
+argument. The idea came after submitting [1].
+
+I read cci_read() and wondered if functions with such a semantic could 
+use an un-initialized last argument. In such a case, this function could 
+not behave as expected if the initial value of "err" was not 0.
+
+So I wrote the following coccinelle script and several other variations.
+
+
+// Options: --include-headers
+
+@ok@
+identifier fct, err;
+type T;
+@@
+
+	int fct(..., T *err)
+	{
+		...
+	}
+
+@test depends on ok@
+identifier x, fct = ok.fct;
+expression res;
+type T = ok.T;
+@@
+
+*	T x;
+	...
+(
+	fct(..., &x);
+|
+	res = fct(..., &x);
+)
+
+(For the record, I have not found any issue with it...)
+
+
+BUT, adin1110_read_fifo() was spotted because of the prototype of 
+adin1110_read_reg().
+
+When I reviewed the code, I quickly saw that it was a false positive and 
+that using "type T" in my script was not that logical...
+
+Anyway, when reviewing the code, I saw:
+
+	if (ret < 0)
+		return ret;
+
+	/* The read frame size includes the extra 2 bytes
+	 * from the  ADIN1110 frame header.
+	 */
+	if (frame_size < ADIN1110_FRAME_HEADER_LEN + ADIN1110_FEC_LEN)
+		return ret;
+
+	round_len = adin1110_round_len(frame_size);
+	if (round_len < 0)
+		return ret;
+
+which looks really strange and likely broken...
+
+Then I sent the patch we are talking about!
+
+
+(yes some real people really search such things and write such 
+coccinelle scripts, and now you can call me crazy)
+
+
+[1]: 
+https://lore.kernel.org/all/666ac169157f0af1c2e1d47926b68870cb39d587.1727977974.git.christophe.jaillet@wanadoo.fr/
+
+> Compile tested only.
+
+As a "speculative" patch, it was only compile tested, you are correct.
+
+> 
+>>
+>> Fixes: bc93e19d088b ("net: ethernet: adi: Add ADIN1110 support")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> This patch is speculative.
+>> If returning 0 is what was intended, then an explicit 0 would be better.
+> 
+> In my brief investigation I see that adin1110_read_fifo()
+> is only called by adin1110_read_frames(), like this:
+> 
+> 	while (budget) {
+> 		...
+> 
+> 		ret = adin1110_read_fifo(port_priv);
+> 		if (ret < 0)
+> 			return;
+> 
+> 		budget--;
+> 	}
+> 
+> So the question becomes, should a failure in reading the fifo,
+> because of an invalid frame size, be treated as an error
+> and terminate reading frames.
+> 
+> Like you, I speculate the answer is yes.
+> But I think we need a bit more certainty to take this patch.
+
+I won't be of any help here.
+
+I can just say that "it looks strange" and is "certainly" bogus, but 
+won't be able the prove it nor test it.
+
+
+I'll wait a bit before sending a v2. If confirming this point is a 
+requirement for accepting the patch, there is no need to urge for a v2 
+if no-one cares about answering your point.
+
+CJ
+
+
+> 
+
 
