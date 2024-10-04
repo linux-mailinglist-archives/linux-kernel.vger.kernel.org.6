@@ -1,116 +1,74 @@
-Return-Path: <linux-kernel+bounces-350901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082BF990ABF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:14:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A082990AC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B32691F2321A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B0D3B25B2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F481DAC8E;
-	Fri,  4 Oct 2024 18:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2671DD899;
+	Fri,  4 Oct 2024 18:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZBOpzVOh"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XeoiiwRP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F3F47F5F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BB11DAC90;
+	Fri,  4 Oct 2024 18:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728065295; cv=none; b=sGGTDgiUEuirX/fkcDk4roZVWzztIPX266rUmvL+eVBZ49s4abCOgK9E5zq+kpssX+71ZBYazvp+gS5TWb2V+HRLEoqGBM+s0jCUubKObjxCSM94iaEdGNHtKZ9xb6K5QUCwIZMHXwnygZvXXF/gfC7qTntGOKhDBoZFFvOWsv0=
+	t=1728065394; cv=none; b=GNUPcTZb76QZtsos5narYk+1JHX5pzGuNNPucGSXOy7pQo6s4Rr2rHZlFr6wjmQfwvw4z50ysKrqwyx/gl3CmklPqf7J6fvwfS5T/nqQBzBjLbXmw2ClrjazXDV3oujqaRoEDQ66QJZcG2KXoP/LQDbQM6yF9y/YqyXxih5KE6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728065295; c=relaxed/simple;
-	bh=wYPflgd1ybEdWikH4catwh/Hx8dom7saLAa8vbMooLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DxbpLY5bkk0C7DpX0dRmaMxmwSAjWqA/mPcuQD6xZ9W/kmXDub7VsmnOkczw8lnEwAcReSNlZ7J/NXVL79ochDzqj57FA13gvbIsHm6P+60DXnhWYfoC7A86ij06zwVgDjczqO/T8njIbkBEjZS8fD6RiHrDomjSwdk8PtcYDRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZBOpzVOh; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494ALgD1031149;
-	Fri, 4 Oct 2024 18:08:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	y4QC37OxQXSNGhOjdjZvbGKEKAY7MLVfsRD4BEm29tk=; b=ZBOpzVOhW23l2CRZ
-	/MDGdSpR6yPXfixE7UR31e5JmF2XFO/7jiCorkzwkmntx2i0B94iERW0hZxmjnK6
-	tqsxJm2kSrmhHlKWYXzkMzGDMJjZoRRUpNSFFT4Kkdp9pAswjUINkitsHRs1eZci
-	YT2SvDWljwy94u0ILnPmZw49zgY1BSzhEjue5Z/zgSrNCR70mvjDaaaEgQoPEGzT
-	QJMgURxENvYk1EIUtXzdLe2OL08Jc2BhuswB8VSMuXQY2mD6iCKDwB2Wu0TFtlx0
-	c526papYDJpSN9+kMKXaZuWNsdxT5GtZvF+bILbZQ6KTXWds0rsNP8MATZi5Ne4/
-	GcLIZA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205njwfu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 18:08:08 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494I86Ub011485
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 18:08:06 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 11:08:06 -0700
-Message-ID: <fd84e624-a534-26a1-a434-3c8390bbb311@quicinc.com>
-Date: Fri, 4 Oct 2024 12:08:05 -0600
+	s=arc-20240116; t=1728065394; c=relaxed/simple;
+	bh=1b0KlwUhNqg/XeSKf7cJicZ9rbENT+XgkJYsWOJSG7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MryF+5jDLprmcr06lm5JNinyOVrYXfgHO6RipiWq7c7NJL+2XUNbfXrBSeKysL4SVNMJeWz/M+ANyPTeLcmLXg/CaCzPHJwikKMfyBeJnGMsiGhq39+C3Ue1WbpL/u1dycudHUqDTSHV7ST29xJskDcD5TYan4qxVjv5sJTmAgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XeoiiwRP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50DC0C4CEC6;
+	Fri,  4 Oct 2024 18:09:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728065393;
+	bh=1b0KlwUhNqg/XeSKf7cJicZ9rbENT+XgkJYsWOJSG7o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XeoiiwRPmH/niGgmgL0yPM+f4Uf2XyXzizbl1q7/ZJmWAgjiVW/zlUy8ZD4OxGB0V
+	 OC2NT+9MTICDI1L2ma9kuNa+/PySSeo2N2ssNTtbln2u7N6J2o9D8d+YD8eLBDnS82
+	 1Xf+h2pteCwHasokG1UB9aTdxGuEiG49IGsVeiQ/+7WC0aF453JfuJGQYWtFMysbIL
+	 KKNDYpv5N3+ca7YNY/yoY3zMh+w5MV2qbL3R51qxm/MRbrWnxuP6vpSr7csOLVrAYY
+	 aA/POpohPDOvF71jHy0dXnk42B8roxOqGWxS7bJ998DFBV3hdkU3rlXTNmpvS9TtJP
+	 Sl4NN7D6rLZCg==
+Date: Fri, 4 Oct 2024 11:09:52 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Lennart Franzen <lennart@lfdomain.com>, Alexandru
+ Tachici <alexandru.tachici@analog.com>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net] net: ethernet: adi: adin1110: Fix some error
+ handling path in adin1110_read_fifo()
+Message-ID: <20241004110952.545402d0@kernel.org>
+In-Reply-To: <63dbd539-2f94-4b68-ab4e-c49e7b9d2ddd@stanley.mountain>
+References: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
+	<63dbd539-2f94-4b68-ab4e-c49e7b9d2ddd@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH V3 08/11] accel/amdxdna: Add suspend and resume
-Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>,
-        Narendra Gutta
-	<VenkataNarendraKumar.Gutta@amd.com>,
-        Xiaoming Ren <xiaoming.ren@amd.com>
-References: <20240911180604.1834434-1-lizhi.hou@amd.com>
- <20240911180604.1834434-9-lizhi.hou@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240911180604.1834434-9-lizhi.hou@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hrFOmLt4ScfA4mm4fiOB8Sl_OzoaWU-4
-X-Proofpoint-ORIG-GUID: hrFOmLt4ScfA4mm4fiOB8Sl_OzoaWU-4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 impostorscore=0 clxscore=1011 phishscore=0 adultscore=0
- spamscore=0 suspectscore=0 bulkscore=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410040124
 
-On 9/11/2024 12:06 PM, Lizhi Hou wrote:
-> +static int amdxdna_rpmops_suspend(struct device *dev)
-> +{
-> +	struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
-> +	int ret;
-> +
-> +	mutex_lock(&xdna->dev_lock);
-> +	WARN_ON(!list_empty(&xdna->client_list));
+On Fri, 4 Oct 2024 14:47:22 +0300 Dan Carpenter wrote:
+> It's a pity that deliberately doing a "return ret;" when ret is zero is so
+> common.  Someone explained to me that it was "done deliberately to express that
+> we were propagating the success from frob_whatever()".  No no no!
 
-This feels weird. Can you explain?
-
-> +	ret = amdxdna_dev_suspend_nolock(xdna);
-> +	mutex_unlock(&xdna->dev_lock);
-> +
-> +	XDNA_DBG(xdna, "Runtime suspend done ret: %d", ret);
-> +	return ret;
-> +}
-> +
+FWIW I pitched to Linus that we should have a err_t of some sort for
+int variables which must never be returned with value of 0.
+He wasn't impressed, but I still think it would be useful :)
 
