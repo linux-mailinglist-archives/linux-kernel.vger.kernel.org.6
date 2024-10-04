@@ -1,191 +1,192 @@
-Return-Path: <linux-kernel+bounces-349890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CEA598FCBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:33:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3140898FCC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6290283C30
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:33:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1269A1C224E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE6D4D59F;
-	Fri,  4 Oct 2024 04:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B724E1B3;
+	Fri,  4 Oct 2024 04:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H9cNpvhZ"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nMv0YZwp"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0928828F3;
-	Fri,  4 Oct 2024 04:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9164E33FD;
+	Fri,  4 Oct 2024 04:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728016405; cv=none; b=Wg3UqfJYicZWUMCX9BiefR4PmJ2gguikZw1ANQJDixf5y5hPsBPNnTDHzAoczhaKYIpfzTyRlFaH/9DqGZtl98nsYBG9j42UGbXGwUrN3ANkCgUF7PeomzeFLLg3DqjGMM0n1vcE/5l825TCckI1ioMwJf0g7sxfe7uxi6Wyqf0=
+	t=1728016929; cv=none; b=tXCyia0WjO9wvmIXCt1yAAqqxK/bbyVLb5r0F/vEEsWAHdP400mlsfLVhND3/HD/Rz0EbUjthMR82Ga/vb4rmjGxv9diK0HhWTSMhU7jRaRzuotxX7KJMSdxK4CBIUaC+c8yJJWC/mPFM060Ut51XsNNYdTn02fUE7lkFFCqbzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728016405; c=relaxed/simple;
-	bh=F2URxu3+s9T4/haLxi1mElRi/bRX+TcMYZp/lHnLGIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ppkNLe+Nv43KoHbUypl3pxwfRDx50pKl0eJdxFE/bj1W4pC12fH/bNC9gB249xc8VXWUy+9DLoTD3e/uR8d1dgRAJiGSh+m3h4CHsHMRQzWfF2Pi00oEBX6ss6WXLrLvYIe/ib/vdgOjl4veMJHUH1uBGmD0aRmx7ZJRF/s+Ylk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H9cNpvhZ; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-718d6ad6050so1500444b3a.0;
-        Thu, 03 Oct 2024 21:33:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728016402; x=1728621202; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4H3N+8kws/awip/ldfxoLN4w9GM+lHkkjqCa2TtcbMw=;
-        b=H9cNpvhZoPFe1x5nh9lZtv/rYrmRzg0BUoC0LpPjPizC4JjkjFJTWwnTuAiHQizAMs
-         Izh6e7AAlGFDaav9grDaHYnG7kG4oxQSySWczLGeq39Qpr0D3jmIBT28ZmJ4piIDgCQ1
-         EEW8Qg7rxv8OvIw5zJ9FnQqdkeRZRMi4icCVn7TwmBdfb7M0HYfwhB+C0uhhB/drehvb
-         ffUNIqlBpni1I6H8pu14pNUQ91AGX8WpDGJke7akVX0S8t7N08wBXEtEGgXPTgJBnG9R
-         uk2jR/GuzsMYO3rPbdDIEha1wNodHgIF2ODQp70oLuICAg6rAejF1oV+WjjbY3yUNtyc
-         9sLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728016402; x=1728621202;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4H3N+8kws/awip/ldfxoLN4w9GM+lHkkjqCa2TtcbMw=;
-        b=YB14CJ4oFAY8F8NPs9OEMC10MBZH75Gkr33r+b23icFCfoGzbPY5WWcxb+3j1jseBD
-         dtr/+zmirK+j32YyyJzHdlnhhJihfWMGiuIb4r+MxXPHHFEmgysc+JdW449n1XVh5rbc
-         uNrkY5jmXZM3Y7QgpwV3zAqkuCL7q//4+sgAB26HJyIORRfhJ79B86YfZOqurr425jpS
-         Z0fqayv8LiCinwyb8FgW23z+SLaRHZqZ7iyUuQaN999+Q5cnpn4xwuUh98z1OuOM2lX2
-         iUH2sDKLkz01YMFmZWtcRG+1JZM1STMZkecA1w9exIDLKwLzSpvxwzMRSmDJ9xd536H2
-         FGgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLTWga3hUz+JGqMi/uGK01kEscVyAgMXZlXAuxUj4Lbu/Th1JGVgIx8B+I6POE0uWqqq0feT2Ge2GNejo=@vger.kernel.org, AJvYcCXg9w00+4w1ItHFgwzrA0hJkqFVpJsISTnBo4S7SshA2FvoYSj9Q4+s7dr6CtEKnGpzkj4hRvsT+fE=@vger.kernel.org, AJvYcCXs63Rx6hhBm2hlCrsmykasYGHqx4RJp9qEg+lnZ2czzGf5q5z6I4Yx9dpxvmSBfFn+x60q2ia61j7M@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUYStziQlAu4uCB3uy3SRyCY3qLcgFMZrrOsJ0w/pQssDmQit2
-	Q5okx1Des20Sr8JIngvWNOqZqvYPXOm+2mRJBVLAR/DDVurr1QaH
-X-Google-Smtp-Source: AGHT+IHZ/dlDw1HTSCwlBso46egI2fiF3PmvQAr4tfWTXWWWlKdvB8u+56cni/cWhWAl+GoC/F8YYA==
-X-Received: by 2002:a05:6a00:a470:b0:71d:ea77:e954 with SMTP id d2e1a72fcca58-71dea7814b1mr315163b3a.14.1728016402200;
-        Thu, 03 Oct 2024 21:33:22 -0700 (PDT)
-Received: from acelan-precision5470 (220-135-95-34.hinet-ip.hinet.net. [220.135.95.34])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9d8bfcdsm2258221b3a.80.2024.10.03.21.33.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 21:33:21 -0700 (PDT)
-Sender: AceLan Kao <acelan@gmail.com>
-Date: Fri, 4 Oct 2024 12:33:16 +0800
-From: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>, bhelgaas@google.com,
-	mika.westerberg@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/PM: Put devices to low power state on shutdown
-Message-ID: <Zv9wDGp-7-lC8FhZ@acelan-precision5470>
-References: <20240911190516.GA644336@bhelgaas>
- <319e5419-3b12-4672-9f51-f90c5e142e29@amd.com>
- <fa504022-acb3-4930-b6b8-87a8dcb912c3@amd.com>
+	s=arc-20240116; t=1728016929; c=relaxed/simple;
+	bh=ZCU4rzWW8nYo6znPQJ3a5zENZq5BAyna+xiVRTgloC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WpTeD+oUMSz4qjtzgHIMmqJO6D3LUDn2YlpCjTPbNCWpk4wCgyvye9rTfMgl9KT8Xx/Wx5yh1IxgFqa69rf2l2b6+8bka5MGPBVrZ9DqtRPYmefcec1Rn8evhKM2UunwEKL0z2D6hQb6Jch0RE9H6JWHESn8XaQQG4bwt+NmU94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nMv0YZwp; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728016923;
+	bh=WP3QY5cWHPQzIelK2LCRXAQqVf2dA1gMNgETdawsXBc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nMv0YZwpzkPFGGxFeO43i61+5Nv32xNs19cK/h4eWHyVnczlOaCQyZ5qvObPSD4Qz
+	 qQP6dm8j2ovqK923KSHPO6ZTifRxVQo+AvuY9GL2NaNVDwO6J4vcN/4McvAaDivuMf
+	 +SpjM/Y+6k2GUBsADbQSaNvfXnb6IuNmjYsugiS5S2Kp5vKyhHxWMtMHntT6cPlBs+
+	 V3WQMHtigVY+EADvsUAuAZGARhJbXSY3ae6u+Cnjg2FlN5Vyl+YxhBoijX7/oIlRHp
+	 4suzN89k9ibn7kkJrcm8ujXkNzi2ZGr7klSUA+q6jCPWO12bR+yxBoJAIkb59y9A+y
+	 dd2DZSAq1p9Og==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XKbVg05jrz4x8h;
+	Fri,  4 Oct 2024 14:42:02 +1000 (AEST)
+Date: Fri, 4 Oct 2024 14:42:02 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the rust tree with the vfs-brauner tree
+Message-ID: <20241004144202.24a9f0ef@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fa504022-acb3-4930-b6b8-87a8dcb912c3@amd.com>
+Content-Type: multipart/signed; boundary="Sig_/EeTqXcoSBaggvR0ct99RPBD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Sep 11, 2024 at 02:38:20PM -0500, Mario Limonciello wrote:
-> On 9/11/2024 14:16, Mario Limonciello wrote:
-> > On 9/11/2024 14:05, Bjorn Helgaas wrote:
-> > > On Fri, Jul 12, 2024 at 02:24:11PM +0800, Kai-Heng Feng wrote:
-> > > > Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
-> > > > connected.
-> > > > 
-> > > > The following error message can be found during shutdown:
-> > > > pcieport 0000:00:1d.0: AER: Correctable error message received
-> > > > from 0000:09:04.0
-> > > > pcieport 0000:09:04.0: PCIe Bus Error: severity=Correctable,
-> > > > type=Data Link Layer, (Receiver ID)
-> > > > pcieport 0000:09:04.0:   device [8086:0b26] error
-> > > > status/mask=00000080/00002000
-> > > > pcieport 0000:09:04.0:    [ 7] BadDLLP
-> > > > 
-> > > > Calling aer_remove() during shutdown can quiesce the error message,
-> > > > however the spurious wakeup still happens.
-> > > > 
-> > > > The issue won't happen if the device is in D3 before system shutdown, so
-> > > > putting device to low power state before shutdown to solve the issue.
-> > > > 
-> > > > I don't have a sniffer so this is purely guesswork, however I believe
-> > > > putting device to low power state it's the right thing to do.
-> > > 
-> > > My objection here is that we don't have an explanation of why this
-> > > should matter or a pointer to any spec language about this situation,
-> > > so it feels a little bit random.
-> > > 
-> > > I suppose the problem wouldn't happen if AER interrupts were disabled?
-> > > We already do disable them in aer_suspend(), but maybe that's not used
-> > > in the shutdown path?
-> > > 
-> > > My understanding is that .shutdown() should turn off device interrupts
-> > > and stop DMA.  So maybe we need an aer_shutdown() that disables
-> > > interrupts?
-> > > 
-> > 
-> > IMO I see this commit as two problems with the same solution.
-> > 
-> > I don't doubt that cleaning up AER interrupts in the shutdown path would
-> > help AER messages, but you really don't "want" devices to be in D0 when
-> > the system is "off" because even if the system is off some rails are
-> > still active and the device might still be powered.
-> > 
-> > A powered device could cause interrupts (IE a spurious wakeup).
-> 
-> It's a bit of a stretch, but ACPI 7.4.2.5 and 7.4.2.6 are the closest
-> corollary to a spec I can find.
-> 
-> "Devices states are compatible with the current Power Resource states. In
-> other words, all devices are in the D3 state when the system state is S4."
-> 
-> https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/07_Power_and_Performance_Mgmt/oem-supplied-system-level-control-methods.html
-Hi,
+--Sig_/EeTqXcoSBaggvR0ct99RPBD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'd like to revive this thread and support this description from the
-ACPI spec.
+Hi all,
 
-In ACPI 7.4.2.5, it states: "All devices are in the D3 state when the
-system state is S4," and in ACPI 7.4.2.6, it says: "The S5 state is
-similar to the S4 state except that OSPM does not save any context."
+Today's linux-next merge of the rust tree got a conflict in:
 
-I believe this implies that devices should also be in D3 when the
-system is in S5.
+  rust/kernel/types.rs
 
-> 
-> > 
-> > > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=219036
-> > > > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> > > > ---
-> > > >   drivers/pci/pci-driver.c | 8 ++++++++
-> > > >   1 file changed, 8 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> > > > index af2996d0d17f..4c6f66f3eb54 100644
-> > > > --- a/drivers/pci/pci-driver.c
-> > > > +++ b/drivers/pci/pci-driver.c
-> > > > @@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *dev)
-> > > >       if (drv && drv->shutdown)
-> > > >           drv->shutdown(pci_dev);
-> > > > +    /*
-> > > > +     * If driver already changed device's power state, it can mean the
-> > > > +     * wakeup setting is in place, or a workaround is used.
-> > > > Hence keep it
-> > > > +     * as is.
-> > > > +     */
-> > > > +    if (!kexec_in_progress && pci_dev->current_state == PCI_D0)
-> > > > +        pci_prepare_to_sleep(pci_dev);
-> > > > +
-> > > >       /*
-> > > >        * If this is a kexec reboot, turn off Bus Master bit on the
-> > > >        * device to tell it to not continue to do DMA. Don't touch
-> > > > -- 
-> > > > 2.43.0
-> > > > 
-> > 
-> 
+between commit:
+
+  e7572e5deaf3 ("rust: types: add `NotThreadSafe`")
+
+from the vfs-brauner tree and commits:
+
+  c4277ae2a630 ("rust: types: avoid repetition in `{As,From}Bytes` impls")
+  432526d4ff32 ("rust: enable `clippy::undocumented_unsafe_blocks` lint")
+
+from the rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc rust/kernel/types.rs
+index 3238ffaab031,28d9e5ea3df4..000000000000
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@@ -514,42 -527,23 +527,44 @@@ impl_frombytes!=20
+  /// mutability.
+  pub unsafe trait AsBytes {}
+ =20
+- // SAFETY: Instances of the following types have no uninitialized portion=
+s.
+- unsafe impl AsBytes for u8 {}
+- unsafe impl AsBytes for u16 {}
+- unsafe impl AsBytes for u32 {}
+- unsafe impl AsBytes for u64 {}
+- unsafe impl AsBytes for usize {}
+- unsafe impl AsBytes for i8 {}
+- unsafe impl AsBytes for i16 {}
+- unsafe impl AsBytes for i32 {}
+- unsafe impl AsBytes for i64 {}
+- unsafe impl AsBytes for isize {}
+- unsafe impl AsBytes for bool {}
+- unsafe impl AsBytes for char {}
+- unsafe impl AsBytes for str {}
+- // SAFETY: If individual values in an array have no uninitialized portion=
+s, then the array itself
+- // does not have any uninitialized portions either.
+- unsafe impl<T: AsBytes> AsBytes for [T] {}
+- unsafe impl<T: AsBytes, const N: usize> AsBytes for [T; N] {}
++ macro_rules! impl_asbytes {
++     ($($({$($generics:tt)*})? $t:ty, )*) =3D> {
++         // SAFETY: Safety comments written in the macro invocation.
++         $(unsafe impl$($($generics)*)? AsBytes for $t {})*
++     };
++ }
++=20
++ impl_asbytes! {
++     // SAFETY: Instances of the following types have no uninitialized por=
+tions.
++     u8, u16, u32, u64, usize,
++     i8, i16, i32, i64, isize,
++     bool,
++     char,
++     str,
++=20
++     // SAFETY: If individual values in an array have no uninitialized por=
+tions, then the array
++     // itself does not have any uninitialized portions either.
++     {<T: AsBytes>} [T],
++     {<T: AsBytes, const N: usize>} [T; N],
++ }
+ +
+ +/// Zero-sized type to mark types not [`Send`].
+ +///
+ +/// Add this type as a field to your struct if your type should not be se=
+nt to a different task.
+ +/// Since [`Send`] is an auto trait, adding a single field that is `!Send=
+` will ensure that the
+ +/// whole type is `!Send`.
+ +///
+ +/// If a type is `!Send` it is impossible to give control over an instanc=
+e of the type to another
+ +/// task. This is useful to include in types that store or reference task=
+-local information. A file
+ +/// descriptor is an example of such task-local information.
+ +///
+ +/// This type also makes the type `!Sync`, which prevents immutable acces=
+s to the value from
+ +/// several threads in parallel.
+ +pub type NotThreadSafe =3D PhantomData<*mut ()>;
+ +
+ +/// Used to construct instances of type [`NotThreadSafe`] similar to how =
+`PhantomData` is
+ +/// constructed.
+ +///
+ +/// [`NotThreadSafe`]: type@NotThreadSafe
+ +#[allow(non_upper_case_globals)]
+ +pub const NotThreadSafe: NotThreadSafe =3D PhantomData;
+
+--Sig_/EeTqXcoSBaggvR0ct99RPBD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb/choACgkQAVBC80lX
+0GzctAf/Q/buPiqF7EVmv4bl8M23zY46ShWKq5fQGxN+10682npm4R544RAuFc2N
+4w3nBjWh7h9gb0E5X2n/SDQZuyP3TM/QdYAPBbUv78X5Hr0dU6tdXjvj5Lm0+9uW
+yPB2kLfkzPOyJAXcGgpgMP6P1pqFwxtKLshNkDQpYgOwH/1XVaHRobvP8qPnBpXA
+JGMR0EAG0kYh4UOd2OOUI+zjHvtFPCKfayrVaugRirIo328xMQdUaOFKRD73Gofk
+QyzIyYdldd9GloRSb4UocPmBJUXUtmWh3wVkPKtlPea4ISys6RPyX308GBS7MlOa
+tMMeC6KdYNM87ThBGig7Om+qUyRGUg==
+=Smv2
+-----END PGP SIGNATURE-----
+
+--Sig_/EeTqXcoSBaggvR0ct99RPBD--
 
