@@ -1,131 +1,286 @@
-Return-Path: <linux-kernel+bounces-350659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A889907E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:46:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C809907E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE389288B64
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:46:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6EA51F25110
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23E5215F51;
-	Fri,  4 Oct 2024 15:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C5B21B421;
+	Fri,  4 Oct 2024 15:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GdzuIYyx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="izym0GRK"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012022.outbound.protection.outlook.com [52.101.66.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D104E1CACC1
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 15:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728056177; cv=none; b=QbilxOwigVrILrgvib7WUTzE8bijBjOqRKUNvpkadH7+/MIXqDCrXYHnv1zKp8V1l3jDifBYPm4KL+GfwDJETtl66Kq8fYNNrvKwrEMldLS+IIg96HMNQ65MuQWWpI2jh8PqpVf1laTXeriKgt4oDHyDyrsjkUa4Sr8ty0QFt0c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728056177; c=relaxed/simple;
-	bh=Pc19oH7Ih4scqQQSq4nE+w2PUEeIHkT/kLjOwm8Auuw=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=UsW17CuGLvqnSOHaimf31Ivj6p32kahc6DgoLkuF2Mpwd+KAurIYIoazLDWwKGRD4Vi5VC+Vup2oFSK4GoXLw58XvNOcNlElHoteloFEnLJZ2i6MtoyfggKyOKupqpewuuVFORblm55Q4XaKTnUkZh6r9l6mfuUEhITHwaS3ZJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GdzuIYyx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728056174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JEi5RExZjbpGuczCWNpHYgyJ/zRUFnev8Ha101ZiYXI=;
-	b=GdzuIYyx3dK7AtHO8moeLNdQvjTGGcytuGOgYbglfT+JNNfDlJ464453Zz1NRsEw1I5bbP
-	zUrqxsSDFWpaX9TeB+P9VqGjxA56StxJK6Dc2CEJLLMUt6/czsCAM60PPDKScNVDtgNbZa
-	z+vvzaYJcRglk9WbeRRx9gUJRoZKo0o=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-673-kZnPuEmfPOevldP0kGwdkQ-1; Fri,
- 04 Oct 2024 11:36:11 -0400
-X-MC-Unique: kZnPuEmfPOevldP0kGwdkQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 41ED9195422F;
-	Fri,  4 Oct 2024 15:36:10 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CF9DD1956054;
-	Fri,  4 Oct 2024 15:36:07 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20241003010512.58559-1-batrick@batbytes.com>
-References: <20241003010512.58559-1-batrick@batbytes.com>
-To: Patrick Donnelly <batrick@batbytes.com>
-Cc: dhowells@redhat.com, Xiubo Li <xiubli@redhat.com>,
-    Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
-    Patrick Donnelly <pdonnell@redhat.com>, stable@vger.kernel.org,
-    ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ceph: fix cap ref leak via netfs init_request
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9002E1C3040;
+	Fri,  4 Oct 2024 15:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728056208; cv=fail; b=dg7f9iyBcaCWtT0sZi9nPry2Z1mNvtFuDiDOTogTooxMIhLO6+sFd9cIXWmDZFur8mQAGIHT6hSRCTxiiaB+tvPRjfJVDicTcmyO2Q8XANqfJCL4p0laX5PK2Ony5eG3QJUXTNRy7YHFnRfmyMgV94wG26Ui6xxWSVqY0hyhplU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728056208; c=relaxed/simple;
+	bh=r6BvrRMImv5bwKprdqoqRN4sHKK6VKYk5kTQ9se6mXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XOTWalGqUSceHZtGrNgnq2/nr9TYy8XtJZJRwtCrom/6tZBjA8h0dkVN0HPol7cQXZ50WbXJuLR6xY4aRv9UDL4fgqvVMBhJGMKLNsCDVHxg/cPbDsUTh7on7w/SAPgMTJyNcEojnqCQgxgZc+Sn/lkCmNLehiTQsRmCKP7Z7Bw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=izym0GRK; arc=fail smtp.client-ip=52.101.66.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wJ/Ccuy5etaeVOZfON30cZKOeNfmm1YmEaaFraT7+AoiqdSTedQn24zDI5Pu0x3K2uBjHseOgl4kRkM3/OjLeuJjzpladYgyM/gnJ98OzzEFd8fTNXXNXe5FvviPyaAadFOBYcXi4FfkxMBWCLhPXT44MEonY60dRKiQYyQCkaw0pfLVwVZCzdtPPtrdd38si9pBWKVoBiMieLj92JacD7uHTtXCRgl2u3oLomzq+Qh/KnnAzwcFOW+sDvex8YwiLSUpAAfJGOh0zZrdE5S0kdcSHC7M4v6N+XJLO3PIM0vJvEgoJG48y21eJXlFNzCSt/EnWTQAtbRF/yGAQSshlw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QEYC3YPqVqFVv2MTJfKw6vNuxP5rm717Bcg6US2iYZE=;
+ b=MyiHrdVEaUVWUNdNwVjQw7x61gm+7VSGT3Ps5jsGT8rP12NsAJxO1zHDbBNnbO1Qth7fw8c6YNri8XjaJDsClAgCNmtEQw+RAWoLMzoFZPBLUtuXOxxq2AnOAAgptbTuzYAYZAiw8NF971cgUODScpxIIqNKOO6H7EAXJl9yY8fXwCp2zIJ9ZFNCd3zrX+EY7rj+QKcUN/Mo1Nh0u1GIUPE5sBUNwTUEBddwMO4gXr3ifGJ+V9pT0bT8qn2DDQCRxXefQiNHXzgDm278t0a4FWh0YSrNXwridke6HN4QCO9/kPVcCDB+UKhR7a6Ybmd8N/CKf27QlCwKMIHMAMj9OQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QEYC3YPqVqFVv2MTJfKw6vNuxP5rm717Bcg6US2iYZE=;
+ b=izym0GRKe04ciESJJYQG2PrWgDa8VBpBKgOxEAO1CG38NAgd+rURHogg1arXr4qRJJkj/DTLvjuAZtTx8zxTLqW/fGrPkwRWLtzFcdwIAdiuAgilADuNGlw2c0qX/3s5KNAChOk+SWE3zYInoXQnStX4uTBCNpRveXE4+tyS14HSCi0FjCprB4sVz/2weJho5P2yhKxLd2blaJpAM3wm6ZL6fOCx963Y5lxmequd9UbHicVoSstErcJLZ/H6LTVo8nSTsaYCgQxmxfJWs6kGU78t9vR1off295Nt1meSzmfEw0yhubDpVb0hMVmULGex2jrf4cHxWZTxfJo/ClQX/g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by PA1PR04MB10747.eurprd04.prod.outlook.com (2603:10a6:102:48a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18; Fri, 4 Oct
+ 2024 15:36:37 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d%3]) with mapi id 15.20.8026.016; Fri, 4 Oct 2024
+ 15:36:37 +0000
+Date: Fri, 4 Oct 2024 11:36:29 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	"open list:IRQCHIP DRIVERS" <linux-kernel@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: interrupt-controller: fsl,ls-extirq:
+ workaround wrong interrupt-map number
+Message-ID: <ZwALfcJYTOuXqPuP@lizhi-Precision-Tower-5810>
+References: <20241003214315.638668-1-Frank.Li@nxp.com>
+ <gre52gkd325yfnjwoqyfot4yrb3rim4pi2ye3hjcp4bd7yimba@tq2drzuwlc6f>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <gre52gkd325yfnjwoqyfot4yrb3rim4pi2ye3hjcp4bd7yimba@tq2drzuwlc6f>
+X-ClientProxiedBy: BY5PR16CA0008.namprd16.prod.outlook.com
+ (2603:10b6:a03:1a0::21) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3822869.1728056166.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 04 Oct 2024 16:36:06 +0100
-Message-ID: <3822870.1728056166@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|PA1PR04MB10747:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53246040-9954-4034-b4a7-08dce48a55ac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?14icp139CN+tn1zzbvnLnplh8fNYlbHMKOn4vkob5NwVj9ZcObF2Ilfxv681?=
+ =?us-ascii?Q?ur5j76ZVatBP/DdvHlbKBpGOrBJUv48QhdxdHu7BxX6utGXrJ0HLgpIJ6anX?=
+ =?us-ascii?Q?NCliSurugrgntsh40gn1qfwamf4sSyQWW7w6gB3OzJgn8KjHxF2UsKC8J0Nv?=
+ =?us-ascii?Q?Zf9reH/VXpPyF6Yvia1ZudB6ZwpV9hGbFM5xVBdgrhraVjKNVrgv6uIS7zOO?=
+ =?us-ascii?Q?RgoJJsfWidSGzSYLrNHyvCgqnSans+y5h+955ySYNGf2pwBxkhizbJ4+q9cC?=
+ =?us-ascii?Q?+Lo7EDr/NXLlxocxVZ5i+lQsEcYjm63HE24oj1CCzEo8aeRKJC4Cme6qzMQB?=
+ =?us-ascii?Q?AacpkIEYm9renadxNF6ZmmhUMHqO4G7eaPaO/fvxuTcksGOOUu31Hh4ZRhUX?=
+ =?us-ascii?Q?sCOGz4QunAnlJZ2QlfAyftnryeYk015SR5jnf5OLoDZpxMSfs08eReVczcWc?=
+ =?us-ascii?Q?OxJRLSimeQ8g0sX8m6rRjtcOWGjWBBGEpL1rkvC29Tzz6quqt1pkNZP+ejfz?=
+ =?us-ascii?Q?CtH4K6Ekgw9tsvfbGb9BNC3dhBwLF6AeSi8Ci9LdCX8qxRbdgWyN2epnEVFp?=
+ =?us-ascii?Q?XRsR3c49ib3piatiljf+zUCRR9NBRTBmAvV8WbpIoiPXmmZvyWwTAC2ZNVE+?=
+ =?us-ascii?Q?ePQ8tm3Opmh9oTrlyQLkE4R2lPrsRhC2K36eY7Sm22G/upzvWrwlzGQ2Awft?=
+ =?us-ascii?Q?/yOaGFf0Hq4MF8ex747j1ebZVSE7RHzi+MrFCVRlXVvhZa1sj2PqPGGLkOzM?=
+ =?us-ascii?Q?+8Lz7SSdlwr7+npLESea4MpGD0GgSelMXS6Ml/PhCnoN4nD5RAMpK95hZyrb?=
+ =?us-ascii?Q?A3G80kz5ohyGisxdLWY+BwrLA70sYYtXfqEJPGZ++XPAN3eQz/xmb4VYXlUk?=
+ =?us-ascii?Q?du+lJ0cZbAVQgRS6wTkKnHy7QHlVrQ5JNeXROwafkQN05ioWuSMSwfP7uOca?=
+ =?us-ascii?Q?GyVwsTyazBXrTfDPNLPcK7CTkoiFlGXdBYaC+VgS667fkucTWCwYK1OOX1QP?=
+ =?us-ascii?Q?XdtRCBb3f40o6h9p4MvDx4fBpkwgYdVTiuWQxY7UBp5QLA1+hp0X93H6ibxj?=
+ =?us-ascii?Q?QhdCn08qmsEAdJkvrlLWTO0/xdFSRXj8rO/6BZDn1vUVzA2NmekJkb9BSbOJ?=
+ =?us-ascii?Q?8s4IgAqfM17OHkSHSqPLS5ZSE4WEKOSnj6e+BSSKVTwh48qMb+0Hbn5Cbtge?=
+ =?us-ascii?Q?a1MjJ1fNVRUtzYd/lcJIcWYhdt2HL5WKYrI/4bKFltAORQCUvi2cDs9JFDGQ?=
+ =?us-ascii?Q?Bx3QQNhQAHa0178m+hHk85YMX8kujPfkMSa+7DFzsTzJxe5L4HrSzkcDgiHe?=
+ =?us-ascii?Q?s9Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/aVm/5JwqOpqdPvnq+PZaKYokr7TQOuUqSP2Qfv+tW7ErJhE9uDQufbXp9Qf?=
+ =?us-ascii?Q?B3D6oS4yCwZUvZWcvUfPUYkQmYrfDTIO+Wj6tZeBrVelAnVp7HkI783BlRDx?=
+ =?us-ascii?Q?CUxAivLr18DgSSzeuPQaMUpLValm0QHFvZyRfm0aK1rF0ACnqCJqt8P3kHgy?=
+ =?us-ascii?Q?8BVFDUWGKBB1oSPMVRsZeBMor9D7WNegRlbbmdxHewvP/cVS8au6pWzdOmHC?=
+ =?us-ascii?Q?ofd5zOeFZ5mQQVrqDiBxiY55lBTEbfNrSRjy9zMqgxZq1nHFtjUcPyOGWyEg?=
+ =?us-ascii?Q?yKDLq/PO8u5UvlJQ3mYEyztZriTD2DmNE4n/6WgKYuQ9iydbeuiILcxzgbQ4?=
+ =?us-ascii?Q?cJQFtXEI4NgJ/MUavYMAXE1Nn2dU/i+tufxM6Akl9zwt0v+GDagrwGxSurIa?=
+ =?us-ascii?Q?o+YVujSnEn2k/w0+m1YDE1bBWU7yCll17p8Ep6RDslYgoOTAwbtGzI30g6KT?=
+ =?us-ascii?Q?S46VNzLll5KDasW9ErZersK+r/dV1ZrLdvYJtNvGMH7osPID/DAKePIMscFN?=
+ =?us-ascii?Q?aaPV/cS8lNt7KZQbDs0a+LjvyQQqVoJ2cQV7SMc0jvkOMa1RCDbMd85xXQgQ?=
+ =?us-ascii?Q?XtFmWC4sV0PZWPZpIy9uC6PGOsI0s3E27yH35cHZuvbOwSkQB4DkZSzmLloT?=
+ =?us-ascii?Q?mblBRK9JPcAwNnpwv8I51Oy8ys956CFZ37CmUWchuP7M5/08PyWpWeETnYkA?=
+ =?us-ascii?Q?oJMtwWUBa2AbUOutEwGVWw32n/us7wxkx2MYHqVpDgmkorE/JJOaU5lkSWHU?=
+ =?us-ascii?Q?v6TEELazngxl+wuNfjkl5sa1t8dDfPLWgp5cnpB+ZHAILjulHuSuVo/zIPvZ?=
+ =?us-ascii?Q?hDv7zkNyzGpIzvQ29DAOdZmKMDUmuBeHtc+3CP5qtyEq4lMGQrW8pjBcIGpk?=
+ =?us-ascii?Q?O6JK7IQRvUviENbqIeonL9P9Wsy3fTvvRAhdQZxx/KPnB2W+GBNjf4YdtCOI?=
+ =?us-ascii?Q?DzvR+dZV621ZqvVXrzjgB898DIy/AlO81p1pAivTV0DAowI9MHXDYJ3U0Avn?=
+ =?us-ascii?Q?DO+nsh0Ov4r0P6yjmjQw6TpNbikryETmD0KExrQQvoOAmxMpTgcG0KY2/KCS?=
+ =?us-ascii?Q?syis+LSZfd2/IMpU77suOhVRxdosyOI131aRUSUvMCCPSFO1gymJb/LMecGS?=
+ =?us-ascii?Q?JPYB4CPQ5ryKlhLlLka6pkNO+eD1BNTCEX1ge76ANSr3tMQVUR5ZkKBD1YKH?=
+ =?us-ascii?Q?xWoKN7HM6mXgK/D67NAEfwHBdtV9xXlZszJCbtDkqed99HCMvVpKqe7djpcJ?=
+ =?us-ascii?Q?8y/3k7KJU9YqvgdbUnlyhwRh9flTRu8Ce4NtlTwj3HbXeqesa93cgtaFj3ZM?=
+ =?us-ascii?Q?nFhNGRQxE1tFnhNG8vAWXLRvk3Jdo6z8f07MIacJyObt3klcd4Sxe+OARVdE?=
+ =?us-ascii?Q?0TZN3jNMrJSfSOFgVXzXRUU0GHGzY8EXG/SlZChUyQrmpSHI2IWKUXSNIo34?=
+ =?us-ascii?Q?eNbLaaJim55EnDzY8/fL15Lb0F/TGx4bCdMNor50jO9RkaxUyq3mPch5S05a?=
+ =?us-ascii?Q?opEMwfbRgePVpNF7sRJE4byQ4antkZp0kJhskZotAAOM/iD1FJhmX+sDhPi6?=
+ =?us-ascii?Q?0uEp/lX2vnPHWuj5l+k=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53246040-9954-4034-b4a7-08dce48a55ac
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 15:36:37.4898
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DIuvwttNwKxeC+HD3WnH23GzqpXPhJpUh/8kVAld0Q37nCRc2P51tBAkej8qMd3PUgMNDzGpwhxjHejZo75erQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10747
 
-Patrick Donnelly <batrick@batbytes.com> wrote:
+On Fri, Oct 04, 2024 at 08:43:23AM +0200, Krzysztof Kozlowski wrote:
+> On Thu, Oct 03, 2024 at 05:43:15PM -0400, Frank Li wrote:
+> > The driver(drivers/irqchip/irq-ls-extirq.c) have not use standard DT
+> > function to parser interrupt-map. So it doesn't consider '#address-size'
+> > in parent interrupt controller, such as GIC.
+> >
+> > When dt-binding verify interrupt-map, item data matrix is spitted at
+> > incorrect position. So cause below warning:
+> >
+> > arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dtb: interrupt-controller@14:
+> > interrupt-map: [[0, 0, 1, 0, 0, 4, 1, 0], [1, 0, 1, 4, 2, 0, 1, 0], ...
+> > is too short
+> >
+> > Reduce minItems and maxItems to workaround this warning for
+> > 'fsl,ls1088a-extirq', 'fsl,ls2080a-extirq' and fsl,lx2160a-extirq.
+> > Other keep the same restriction.
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> > Change from v1 to v2
+> > - remove duplicate function in commit message
+> > - only reduce miniItems for after 1088a chips
+> > - maxItems change to 9. Otherwise report too long.
+> > ---
+> >  .../interrupt-controller/fsl,ls-extirq.yaml   | 27 +++++++++++++++++--
+> >  1 file changed, 25 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
+> > index 199b34fdbefc4..1bfced6ed620c 100644
+> > --- a/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
+> > @@ -82,14 +82,37 @@ allOf:
+> >              enum:
+> >                - fsl,ls1043a-extirq
+> >                - fsl,ls1046a-extirq
+> > +    then:
+> > +      properties:
+> > +        interrupt-map:
+> > +          minItems: 12
+> > +          maxItems: 12
+> > +        interrupt-map-mask:
+> > +          items:
+> > +            - const: 0xf
+> > +            - const: 0
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> >                - fsl,ls1088a-extirq
+> >                - fsl,ls2080a-extirq
+> >                - fsl,lx2160a-extirq
+> > +# The driver(drivers/irqchip/irq-ls-extirq.c) have not use standard DT
+> > +# function function to parser interrupt-map. So it doesn't consider
+>
+> Same issue as last time, double function.
+>
+> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+> run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
+> Some warnings can be ignored, especially from --strict run, but the code
+> here looks like it needs a fix. Feel free to get in touch if the warning
+> is not clear.
 
-> Log recovered from a user's cluster:
-> =
+Thanks, I forget add --strict this time.
 
->     <7>[ 5413.970692] ceph:  get_cap_refs 00000000958c114b ret 1 got Fr
->     <7>[ 5413.970695] ceph:  start_read 00000000958c114b, no cache cap
->     ...
->     <7>[ 5473.934609] ceph:   my wanted =3D Fr, used =3D Fr, dirty -
->     <7>[ 5473.934616] ceph:  revocation: pAsLsXsFr -> pAsLsXs (revoking =
-Fr)
->     <7>[ 5473.934632] ceph:  __ceph_caps_issued 00000000958c114b cap 000=
-00000f7784259 issued pAsLsXs
->     <7>[ 5473.934638] ceph:  check_caps 10000000e68.fffffffffffffffe fil=
-e_want - used Fr dirty - flushing - issued pAsLsXs revoking Fr retain pAsL=
-sXsFsr  AUTHONLY NOINVAL FLUSH_FORCE
-> =
+>
+>
+> > +# '#address-size' in parent interrupt controller, such as GIC.
+> > +#
+> > +# When dt-binding verify interrupt-map, item data matrix is spitted at
+> > +# incorrect position. Reduce minItems and maxItems to workaround this
+> > +# problem.
+> > +
+> >      then:
+> >        properties:
+> >          interrupt-map:
+> > -          minItems: 12
+> > -          maxItems: 12
+> > +          minItems: 8
+> > +          maxItems: 9
+>
+> Are you sure it works? I see 12 items in fsl-ls1088a.dtsi.
 
-> The MDS subsequently complains that the kernel client is late releasing =
-caps.
-> =
+interrupt-map =
+   <0 0 &gic GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+   <1 0 &gic GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+   ...
+   <11 0 &gic GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
 
-> Approximately, a series of changes to this code by the three commits cit=
-ed
-> below resulted in subtle resource cleanup to be missed. The main culprit=
- is the
-> change in error handling in 2d31604 which meant that a failure in init_r=
-equest
-> would no longer cause cleanup to be called. That would prevent the
-> ceph_put_cap_refs which would cleanup the leaked cap ref.
-> =
+Total 12*6 = 72 data.
 
-> Closes: https://tracker.ceph.com/issues/67008
-> Fixes: 49870056005ca9387e5ee31451991491f99cc45f ("ceph: convert ceph_rea=
-dpages to ceph_readahead")
-> Fixes: 2de160417315b8d64455fe03e9bb7d3308ac3281 ("netfs: Change ->init_r=
-equest() to return an error code")
-> Fixes: a5c9dc4451394b2854493944dcc0ff71af9705a3 ("ceph: Make ceph_init_r=
-equest() check caps on readahead")
+Normal each row should be 6 data.
 
-Note that you only need the first 12 digits of the SHA1 sum.
+but when GIC have #address-size, <2>,  dt-schemal split at at (6+2=8).
 
-> Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
-> Cc: stable@vger.kernel.org
+"interrupt-map: [[0, 0, 1, 0, 0, 4, 1, 0], [1, 0, 1, 4, 2, 0, 1, 0]"
 
-Reviewed-by: David Howells <dhowells@redhat.com>
+So 72/8 = 9, I just realize it can divide to whole number.  so minItems
+can be set 9 also.
 
+>
+> What's more, I do not see your errors/warnings at all.
+
+I using below command
+
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@main
+...
+Resolved https://github.com/devicetree-org/dt-schema.git to commit 0934678abc36614cd3c5165ca49ba78b881ee2fa
+
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8 CHECK_DTBS=y  fsl-ls1088a-qds.dtb
+
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8 CHECK_DTBS=y  fsl-ls1088a-qds.dtb
+  SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+  DTC [C] arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dtb
+arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dtb: syscon@1f70000: interrupt-controller@14:interrupt-map: [[0, 0, 1, 0, 0, 4, 1, 0], [1, 0, 1, 4, 2, 0, 1, 0], [2, 4, 3, 0, 1, 0, 3, 4], [4, 0, 1, 0, 4, 4, 5, 0], [1, 0, 5, 4, 6, 0, 1, 0], [6, 4, 7, 0, 1, 0, 7, 4], [8, 0, 1, 0, 8, 4, 9, 0], [1, 0, 9, 4, 10, 0, 1, 0], [10, 4, 11, 0, 1, 0, 11, 4]] is too short
+	from schema $id: http://devicetree.org/schemas/soc/fsl/fsl,layerscape-scfg.yaml#
+arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dtb: interrupt-controller@14: interrupt-map: [[0, 0, 1, 0, 0, 4, 1, 0], [1, 0, 1, 4, 2, 0, 1, 0], [2, 4, 3, 0, 1, 0, 3, 4], [4, 0, 1, 0, 4, 4, 5, 0], [1, 0, 5, 4, 6, 0, 1, 0], [6, 4, 7, 0, 1, 0, 7, 4], [8, 0, 1, 0, 8, 4, 9, 0], [1, 0, 9, 4, 10, 0, 1, 0], [10, 4, 11, 0, 1, 0, 11, 4]] is too short
+	from schema $id: http://devicetree.org/schemas/interrupt-controller/fsl,ls-extirq.yaml#
+arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dtb: fsl-mc@80c000000: msi-parent:0: [16, 0] is too long
+	from schema $id: http://devicetree.org/schemas/misc/fsl,qoriq-mc.yaml#
+
+Frank
+
+>
+> Best regards,
+> Krzysztof
+>
 
