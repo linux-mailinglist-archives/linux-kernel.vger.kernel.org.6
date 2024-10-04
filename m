@@ -1,330 +1,320 @@
-Return-Path: <linux-kernel+bounces-350801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69CC29909D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:02:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F39B9909D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8BF91F222F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0469B1F2240B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7901CACF9;
-	Fri,  4 Oct 2024 17:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852AF1CACD5;
+	Fri,  4 Oct 2024 17:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ATsCVGSA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JnoLKOC0"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775B41E3787;
-	Fri,  4 Oct 2024 17:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817331741DC;
+	Fri,  4 Oct 2024 17:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728061332; cv=none; b=q1zl10bnWXjgbuDrjatv9MS1ITrEVryKnUN/zfdUT3WNT/AcMi17/ZlTjZA2nkYOvqzLOb1jAmR3Q+rgW4NOzDQyYIpkBl7d7sWhf52jqXPeX7MJ4MhtfFau+PDsD9YNMMRT3rf1XX3Z+jKveh9W9CzpryrgX3b/eKZxvVL3ozU=
+	t=1728061351; cv=none; b=q7NCirfDd7P5z0n0czhN9A03DIGf0lVphcPfPNVVHPodnrJJcPcOQ3h0z/yFIhB7eBbvhxFKq5tNgFgRQFN7biQ0mHWVgpPC9VeAquc4uJr8qGgu5rmkP5006/Ivm8eh/4eIFpK7r+IVi156hDRs735F2v7axnDegeHwgGkJw88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728061332; c=relaxed/simple;
-	bh=qDpMplMgxytGjNYaLrwu1Ta+OkMlq1ik67+NV4u5L98=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VnzQdDO8NfqvRxGcue0ngCtBAoAOt65VRelULqn7c0DoORv8Nwkh1V0THQEg3R9Hsh+J8LUB7BMRobDbY0ASV8LnRNS0g4hgDWnWTkK6sLnntkYetd/XxdBZynUZ2fA6BpUHcgenI4hEe7F4k9OPnmsRYQpZ0RqjMyIyVMp9/2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ATsCVGSA; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728061330; x=1759597330;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=qDpMplMgxytGjNYaLrwu1Ta+OkMlq1ik67+NV4u5L98=;
-  b=ATsCVGSAAUWT3jOZCLfvGO7cuxnIw4+OectpbOuUVeIdQ1RiqCNFqums
-   fT2LCv1O6I1e0G9L6PV6PkZT3Nl34z2SMuJtdOSHcBlNMVcCMTRYADE3w
-   s96a6E8TAcLhvpupPqpRahyE8Ujw8f6sFAfo05vt4KYfs7M+5aUas0Bw8
-   g6pn+xBmwzhIx+OuLjZZyAtPxTqp82MR+zrfuTtv7F2bI9VpzD/NJmvWt
-   aoDG6hhPrG+Gx2fj1qqFAttBpQpSFIMVDly0IEmDVQKobjaFZdPIYlQYi
-   82fsCShZGm81cLZSdZCCtcIv+RlE+KaJRUc3xrs6Ck3TRD8/w78SXW6J2
-   g==;
-X-CSE-ConnectionGUID: ekyl2gnsQCqQU+OviaxbmA==
-X-CSE-MsgGUID: CCxUJUPmQNeP5Zm3n4a3sg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="38684809"
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="38684809"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 10:02:10 -0700
-X-CSE-ConnectionGUID: OiBFHAZeRWKuRfDw2NqBDA==
-X-CSE-MsgGUID: eCujfT4nS961gNw3nQeuhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="75577640"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.166.93])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 10:02:02 -0700
-Message-ID: <2404a427-a1fb-44fb-99f1-a6dc25d4c21e@intel.com>
-Date: Fri, 4 Oct 2024 20:01:56 +0300
+	s=arc-20240116; t=1728061351; c=relaxed/simple;
+	bh=Ht9t8OsVMf7Pv4CGdQOAzpuyOqLZKTrKwOVUH/bmhRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G0nT8w36zp4BcPpwaZgNlPu5BkldYDolZ0VBL2Qo07tlyhp4tIX2n/LUNTZo2A0DuckVQZ3iuSSIHTpa3DedmoUz/OR2JVyn41GxO4v/xKuTj+tIrGDPr4zuDFSyU5wZYOfni9FAD+BZtDSEf8/YuBLbZWD+vhoNPfNJjVTMuSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JnoLKOC0; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb2191107so21442795e9.1;
+        Fri, 04 Oct 2024 10:02:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728061348; x=1728666148; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JJw4/UeiRQMts5EdhkhnYEPBapPPSq1WmYpPKALcDQE=;
+        b=JnoLKOC0wu1OB2wih8tyb2QKGSh+QGkNcUab7AXAR3h6bsB4O+R37+4TCov4XK0opM
+         Mj2fmFZ1vnuAY3KCLMj/mAQB/4qaG42MRZeX57q80GdRnxWBPaZND6EbbLYYCtIvmlDt
+         9p0V5PKJLPbdUnQaVjvGVH4KK0n8v504WXtqaPdSHCItbdI+eIVlcEF61iiIzU0qIcwQ
+         OPkgZHFCEMPIFNyo6x0Qu2KjamYpfjrcxUH6i5x9uMNhJFk4fm3mn/PSui188DEcST/+
+         RgaJyrmPGVYdlifrx9Pi7ByhJM/F76YIvtFTyFFoEd8XPYYknkyR0arm2pFTEUoZRjcD
+         QW9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728061348; x=1728666148;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JJw4/UeiRQMts5EdhkhnYEPBapPPSq1WmYpPKALcDQE=;
+        b=JOtFwu9cFqPyOmfWFMtR+gm8Zd1V5+Wl5ExPWuE1aLyOay/xTo2cVXRFWqqgasw9NQ
+         UiumlSDaYG8eQJepc6CozUtURUvXAdc1zZDFaRFxMSDe9flz3fD83F9WXtCMgKtoGf3f
+         NeRuHCaGtv1AiKhmbFxAYtd60VjSPVYQtRTaRHwrPIYbJ7dnQKhaAbt5abByxWh0fnhC
+         M1eYezfvPhzrR8L9DPNUt6WqgEEBbXhEv8cGo33XkhDR0WrAWXJIfQV7ob/ySmw6kPAX
+         nduGHyulYQmOTj7oPacvvlWL27U/9gL5A4dd4Qv1eQ+GZ22Bb8qf5guXtglg3q7x+DqS
+         E+Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWRsdzbKcgt8sF/W1YwY8Fp+WNtsabW6g8YCCXaQwAaK9/+Bxl8jiP9fgkY6S+N9m8ihZ+ahFMIGq99Dy3@vger.kernel.org, AJvYcCV2c3BTuoDJVxnVus9lDlyicrGd2Q4pS1BHbJOxO7H3FK2t40JvjSsOd13qvkmKU8LsOEF45u1LfEVHxI1OsSdu@vger.kernel.org, AJvYcCVKYg8BQB8lBTNsoRf8YX6XR8L4U2EFfeybbfmwqzobOL8YlD4Po8+3pIrAMd9RZSi+dSjYVb1K84iECvLS8e0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNxhqjJJPYj5Ikl1+uEaPThAnMm9TZuhmHzP9mWkvH3/tI8mKs
+	H4f8bPhOagfq/q2weHGDF6VlPdm8j3k/folEwmEB6ngoQS2PyzmS
+X-Google-Smtp-Source: AGHT+IHgyKEVCMvFOFJlwxR71UPbgQZJ2TM5z1lsH7M0nd+dKaJ3zHAChkE2Y5QMLxyfF4CZC3zmkA==
+X-Received: by 2002:a05:600c:4fcc:b0:426:60b8:d8ba with SMTP id 5b1f17b1804b1-42f85aef9c7mr23760955e9.28.1728061347467;
+        Fri, 04 Oct 2024 10:02:27 -0700 (PDT)
+Received: from PC-PEDRO-ARCH ([2001:818:e92f:6400:a118:25f3:b27f:9f34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ec71aesm1965205e9.33.2024.10.04.10.02.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 10:02:26 -0700 (PDT)
+Date: Fri, 4 Oct 2024 18:02:24 +0100
+From: Pedro Falcato <pedro.falcato@gmail.com>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: akpm@linux-foundation.org, keescook@chromium.org, corbet@lwn.net, 
+	jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, jannh@google.com, sroettger@google.com, 
+	linux-hardening@vger.kernel.org, willy@infradead.org, gregkh@linuxfoundation.org, 
+	torvalds@linux-foundation.org, deraadt@openbsd.org, usama.anjum@collabora.com, 
+	surenb@google.com, merimus@google.com, rdunlap@infradead.org, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, enh@google.com
+Subject: Re: [PATCH v1 1/1] mseal: update mseal.rst
+Message-ID: <uwwg47m4mwo3g32qavzr2mjmh4r6lcm3irr3wtlvedlylbq74z@flcq2kwvmh46>
+References: <20240927185211.729207-1-jeffxu@chromium.org>
+ <20240927185211.729207-2-jeffxu@chromium.org>
+ <2vkppisejac42wnawjkd7qzyybuycu667yxwmsd4pfk5rwhiqc@gszyo5lu24ge>
+ <CABi2SkU62r8bLCeitzVwAW-r7L8-Lfmy8Cp73DE2HaeLzUXVXQ@mail.gmail.com>
+ <2q6hzkvep2g3z6m2jrwbw2j3sbydf6tgj2obwd6hgmm7xzgsg3@ddr5ghmsia5k>
+ <CABi2SkUUdbzgGkfr3YjvfUywkC7ciumwMPdLsCCHscr8uJPUeQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V11 00/10] perf/core: Add ability for an event to "pause"
- or "resume" AUX area tracing
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Heiko Carstens <hca@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Hendrik Brueckner <brueckner@linux.ibm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon
- <will@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <20240806155514.17900-1-adrian.hunter@intel.com>
-Content-Language: en-US
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240806155514.17900-1-adrian.hunter@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABi2SkUUdbzgGkfr3YjvfUywkC7ciumwMPdLsCCHscr8uJPUeQ@mail.gmail.com>
 
-On 6/08/24 18:55, Adrian Hunter wrote:
-> Hi
+On Mon, Sep 30, 2024 at 05:24:39PM -0700, Jeff Xu wrote:
+> Hi Pedro
 > 
-> Note for V11:
-> 	Moving aux_paused into a union within struct hw_perf_event caused
-> 	a regression because aux_paused was being written unconditionally
-> 	even though it is valid only for AUX (e.g. Intel PT) PMUs.
-> 	That is fixed in V11.
+> On Sat, Sep 28, 2024 at 6:43 AM Pedro Falcato <pedro.falcato@gmail.com> wrote:
+> >
+> > On Fri, Sep 27, 2024 at 06:29:30PM GMT, Jeff Xu wrote:
+> > > Hi Pedro,
+> > >
+> > > On Fri, Sep 27, 2024 at 3:59 PM Pedro Falcato <pedro.falcato@gmail.com> wrote:
+> > <snip>
+> > > > > +
+> > > > > +   Blocked mm syscall:
+> > > > > +      - munmap
+> > > > > +      - mmap
+> > > > > +      - mremap
+> > > > > +      - mprotect and pkey_mprotect
+> > > > > +      - some destructive madvise behaviors: MADV_DONTNEED, MADV_FREE,
+> > > > > +        MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEONFORK
+> > > > > +
+> > > > > +   The first set of syscall to block is munmap, mremap, mmap. They can
+> > > > > +   either leave an empty space in the address space, therefore allow
+> > > > > +   replacement with a new mapping with new set of attributes, or can
+> > > > > +   overwrite the existing mapping with another mapping.
+> > > > > +
+> > > > > +   mprotect and pkey_mprotect are blocked because they changes the
+> > > >                                                           change
+> > > > > +   protection bits (rwx) of the mapping.
+> > > > > +
+> > > > > +   Some destructive madvice behaviors (MADV_DONTNEED, MADV_FREE,
+> > > > > +   MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEONFORK)
+> > > > > +   for anonymous memory, when users don't have write permission to the
+> > > > > +   memory. Those behaviors can alter region contents by discarding pages,
+> > > > > +   effectively a memset(0) for anonymous memory.
+> > > >
+> > > > What's the difference between anonymous memory and MAP_PRIVATE | MAP_FILE?
+> > > >
+> > > MAP_FILE seems not used ?
+> > > anonymous mapping is the mapping that is not backed by a file.
+> >
+> > MAP_FILE is actually defined as 0 usually :) But I meant file-backed private mappings.
+> >
+> OK, we are on the same page for this.
+> 
+> > > > The feature now, as is (as far as I understand!) will allow you to do things like MADV_DONTNEED
+> > > > on a read-only file mapping. e.g .text. This is obviously wrong?
+> > > >
+> > > When a MADV_DONTNEED is called, pages will be freed, on file-backed
+> > > mapping,  if the process reads from the mapping again, the content
+> > > will be retrieved from the file.
+> > >
+> >
+> > Sorry, it was late and I gave you a crap example. Consider this:
+> > a file-backed MAP_PRIVATE vma is marked RW. I write to it, then RO-it + mseal.
+> >
+> > The attacker later gets me to MADV_DONTNEED that VMA. You've just lost data.
+> >
+> > The big problem here is with anon _pages_, not anon vmas.
+> >
+> That depends on the app's threat-model. What you described seems to be
+> a case below
+> 1. The file is rw
+> 2. The process opens the file as rw
+> 3. the process mmap the fd as rw
+> 4 The process writes the memory, and the change isn't flushed to the
+> file on disk.
+> 5 The process  changes the mapping to RO
+> 6. The process seals the mapping
+> 7. The process is called MADV_DONTNEED , and because the change isn't
+> flush to file on disk, so it loses the change, (retrieve the old data
+> from disk when read from the mapped address later)
+> 
+> I'm not sure this is a valid use case, the problem here seems to be
+> that the app needs to flush the change from memory to disk if the
+> expectation is writing is permanent.
+>
 
-Any comments?
+MAP_PRIVATE never does writeback. That's not what this is about.
+I can trivially discard anonymous pages for private "file VMAs", which aren't
+refilled with the exact same contents. This is a problem.
+
+> In any case, the mseal currently just blocks a subset of madvise, those
+> we know with a security implication.  If there is something mseal needs
+> to block additionally, one can always extend it by using the "flags" field.
+> I do think the bar is high though, e.g. a valid use case to support that.
+
+No, this has nothing to do with a flag. It's about providing sane semantics.
 
 > 
-> Hardware traces, such as instruction traces, can produce a vast amount of
-> trace data, so being able to reduce tracing to more specific circumstances
-> can be useful.
+> > > For anonymous mapping, since  there is no file backup, if process
+> > > reads from the mapping, 0 is filled, hence equivalent to memset(0)
+> > >
+> > > > > +
+> > > > > +   Kernel will return -EPERM for blocked syscalls.
+> > > > > +
+> > > > > +   When blocked syscall return -EPERM due to sealing, the memory regions may or may not be changed, depends on the syscall being blocked:
+> > > > > +      - munmap: munmap is atomic. If one of VMAs in the given range is
+> > > > > +        sealed, none of VMAs are updated.
+> > > > > +      - mprotect, pkey_mprotect, madvise: partial update might happen, e.g.
+> > > > > +        when mprotect over multiple VMAs, mprotect might update the beginning
+> > > > > +        VMAs before reaching the sealed VMA and return -EPERM.
+> > > > > +      - mmap and mremap: undefined behavior.
+> > > >
+> > > > mmap and mremap are actually not undefined as they use munmap semantics for their unmapping.
+> > > > Whether this is something we'd want to document, I don't know honestly (nor do I think is ever written down in POSIX?)
+> > > >
+> > > I'm not sure if I can declare mmap/mremap as atomic.
+> > >
+> > > Although, it might be possible to achieve this due to munmap being
+> > > atomic. I'm not sure  as I didn't test this. Would you like to find
+> > > out ?
+> >
+> > I just told you they use munmap under the hood. It's just that the requirement isn't actually
+> > written down anywhere.
+> >
+> I knew about mmap/mremap calling munmap. I don't know what exactly you
+> are asking though. In your patch and its discussion, you did not mention
+> the mmap/mremap (for sealing) is or should be atomic.
 > 
-> The ability to pause or resume tracing when another event happens, can do
-> that.
+> My point is: since there isn't a clear statement from your patch description
+> or POSIX, that mremap/mmap is atomic,  and I haven't tested it myself with
+> regards to sealing, let's  leave them as "undefined" for now. (I could get back
+> to this later after the merging window)
 > 
-> These patches add such a facilty and show how it would work for Intel
-> Processor Trace.
-> 
-> Maintainers of other AUX area tracing implementations are requested to
-> consider if this is something they might employ and then whether or not
-> the ABI would work for them.  Note, thank you to James Clark (ARM) for
-> evaluating the API for Coresight.  Suzuki K Poulose (ARM) also responded
-> positively to the RFC.
-> 
-> Changes to perf tools are now (since V4) fleshed out.
-> 
-> Please note, Intel® Architecture Instruction Set Extensions and Future
-> Features Programming Reference March 2024 319433-052, currently:
-> 
-> 	https://cdrdv2.intel.com/v1/dl/getContent/671368
-> 
-> introduces hardware pause / resume for Intel PT in a feature named
-> Intel PT Trigger Tracing.
-> 
-> For that more fields in perf_event_attr will be necessary.  The main
-> differences are:
-> 	- it can be applied not just to overflows, but optionally to
-> 	every event
-> 	- a packet is emitted into the trace, optionally with IP
-> 	information
-> 	- no PMI
-> 	- works with PMC and DR (breakpoint) events only
-> 
-> Here are the proposed additions to perf_event_attr, please comment:
-> 
-> diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-> index 0c557f0a17b3..05dcc43f11bb 100644
-> --- a/tools/include/uapi/linux/perf_event.h
-> +++ b/tools/include/uapi/linux/perf_event.h
-> @@ -369,6 +369,22 @@ enum perf_event_read_format {
->  	PERF_FORMAT_MAX = 1U << 5,		/* non-ABI */
->  };
->  
-> +enum {
-> +	PERF_AUX_ACTION_START_PAUSED		=   1U << 0,
-> +	PERF_AUX_ACTION_PAUSE			=   1U << 1,
-> +	PERF_AUX_ACTION_RESUME			=   1U << 2,
-> +	PERF_AUX_ACTION_EMIT			=   1U << 3,
-> +	PERF_AUX_ACTION_NR			= 0x1f << 4,
-> +	PERF_AUX_ACTION_NO_IP			=   1U << 9,
-> +	PERF_AUX_ACTION_PAUSE_ON_EVT		=   1U << 10,
-> +	PERF_AUX_ACTION_RESUME_ON_EVT		=   1U << 11,
-> +	PERF_AUX_ACTION_EMIT_ON_EVT		=   1U << 12,
-> +	PERF_AUX_ACTION_NR_ON_EVT		= 0x1f << 13,
-> +	PERF_AUX_ACTION_NO_IP_ON_EVT		=   1U << 18,
-> +	PERF_AUX_ACTION_MASK			= ~PERF_AUX_ACTION_START_PAUSED,
-> +	PERF_AUX_PAUSE_RESUME_MASK		= PERF_AUX_ACTION_PAUSE | PERF_AUX_ACTION_RESUME,
-> +};
-> +
->  #define PERF_ATTR_SIZE_VER0	64	/* sizeof first published struct */
->  #define PERF_ATTR_SIZE_VER1	72	/* add: config2 */
->  #define PERF_ATTR_SIZE_VER2	80	/* add: branch_sample_type */
-> @@ -515,10 +531,19 @@ struct perf_event_attr {
->  	union {
->  		__u32	aux_action;
->  		struct {
-> -			__u32	aux_start_paused :  1, /* start AUX area tracing paused */
-> -				aux_pause        :  1, /* on overflow, pause AUX area tracing */
-> -				aux_resume       :  1, /* on overflow, resume AUX area tracing */
-> -				__reserved_3     : 29;
-> +			__u32	aux_start_paused  :  1, /* start AUX area tracing paused */
-> +				aux_pause         :  1, /* on overflow, pause AUX area tracing */
-> +				aux_resume        :  1, /* on overflow, resume AUX area tracing */
-> +				aux_emit          :  1, /* generate AUX records instead of events */
-> +				aux_nr            :  5, /* AUX area tracing reference number */
-> +				aux_no_ip         :  1, /* suppress IP in AUX records */
-> +				/* Following apply to event occurrence not overflows */
-> +				aux_pause_on_evt  :  1, /* on event, pause AUX area tracing */
-> +				aux_resume_on_evt :  1, /* on event, resume AUX area tracing */
-> +				aux_emit_on_evt   :  1, /* generate AUX records instead of events */
-> +				aux_nr_on_evt     :  5, /* AUX area tracing reference number */
-> +				aux_no_ip_on_evt  :  1, /* suppress IP in AUX records */
-> +				__reserved_3      : 13;
->  		};
->  	};
-> 
-> 
-> Changes in V11:
->       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Make assignment to event->hw.aux_paused conditional on
-> 	(pmu->capabilities & PERF_PMU_CAP_AUX_PAUSE).
-> 
->       perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-> 	Remove definition of has_aux_action() because it has
-> 	already been added as an inline function.
-> 
->       perf/x86/intel/pt: Fix sampling synchronization
->       perf tools: Enable evsel__is_aux_event() to work for ARM/ARM64
->       perf tools: Enable evsel__is_aux_event() to work for S390_CPUMSF
-> 	Dropped because they have already been applied
-> 
-> Changes in V10:
->       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Move aux_paused into a union within struct hw_perf_event.
-> 	Additional comment wrt PERF_EF_PAUSE/PERF_EF_RESUME.
-> 	Factor out has_aux_action() as an inline function.
-> 	Use scoped_guard for irqsave.
-> 	Move calls of perf_event_aux_pause() from __perf_event_output()
-> 	to __perf_event_overflow().
-> 
-> Changes in V9:
->       perf/x86/intel/pt: Fix sampling synchronization
-> 	New patch
-> 
->       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Move aux_paused to struct hw_perf_event
-> 
->       perf/x86/intel/pt: Add support for pause / resume
-> 	Add more comments and barriers for resume_allowed and
-> 	pause_allowed
-> 	Always use WRITE_ONCE with resume_allowed
-> 
-> 
-> Changes in V8:
-> 
->       perf tools: Parse aux-action
-> 	Fix clang warning:
-> 	     util/auxtrace.c:821:7: error: missing field 'aux_action' initializer [-Werror,-Wmissing-field-initializers]
-> 	     821 |         {NULL},
-> 	         |              ^
-> 
-> Changes in V7:
-> 
-> 	Add Andi's Reviewed-by for patches 2-12
-> 	Re-base
-> 
-> Changes in V6:
-> 
->       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Removed READ/WRITE_ONCE from __perf_event_aux_pause()
-> 	Expanded comment about guarding against NMI
-> 
-> Changes in V5:
-> 
->     perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Added James' Ack
-> 
->     perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-> 	New patch
-> 
->     perf tools
-> 	Added Ian's Ack
-> 
-> Changes in V4:
-> 
->     perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Rename aux_output_cfg -> aux_action
-> 	Reorder aux_action bits from:
-> 		aux_pause, aux_resume, aux_start_paused
-> 	to:
-> 		aux_start_paused, aux_pause, aux_resume
-> 	Fix aux_action bits __u64 -> __u32
-> 
->     coresight: Have a stab at support for pause / resume
-> 	Dropped
-> 
->     perf tools
-> 	All new patches
-> 
-> Changes in RFC V3:
-> 
->     coresight: Have a stab at support for pause / resume
-> 	'mode' -> 'flags' so it at least compiles
-> 
-> Changes in RFC V2:
-> 
-> 	Use ->stop() / ->start() instead of ->pause_resume()
-> 	Move aux_start_paused bit into aux_output_cfg
-> 	Tighten up when Intel PT pause / resume is allowed
-> 	Add an example of how it might work for CoreSight
-> 
-> 
-> Adrian Hunter (10):
->       perf/core: Add aux_pause, aux_resume, aux_start_paused
->       perf/x86/intel/pt: Add support for pause / resume
->       perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
->       perf tools: Add aux_start_paused, aux_pause and aux_resume
->       perf tools: Add aux-action config term
->       perf tools: Parse aux-action
->       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
->       perf intel-pt: Improve man page format
->       perf intel-pt: Add documentation for pause / resume
->       perf intel-pt: Add a test for pause / resume
-> 
->  arch/x86/events/intel/core.c               |   4 +-
->  arch/x86/events/intel/pt.c                 |  69 +++-
->  arch/x86/events/intel/pt.h                 |   4 +
->  include/linux/perf_event.h                 |  28 ++
->  include/uapi/linux/perf_event.h            |  11 +-
->  kernel/events/core.c                       |  72 +++-
->  kernel/events/internal.h                   |   1 +
->  tools/include/uapi/linux/perf_event.h      |  11 +-
->  tools/perf/Documentation/perf-intel-pt.txt | 596 ++++++++++++++++++-----------
->  tools/perf/Documentation/perf-record.txt   |   4 +
->  tools/perf/builtin-record.c                |   4 +-
->  tools/perf/tests/shell/test_intel_pt.sh    |  28 ++
->  tools/perf/util/auxtrace.c                 |  67 +++-
->  tools/perf/util/auxtrace.h                 |   6 +-
->  tools/perf/util/evsel.c                    |  13 +-
->  tools/perf/util/evsel.h                    |   1 +
->  tools/perf/util/evsel_config.h             |   1 +
->  tools/perf/util/parse-events.c             |  10 +
->  tools/perf/util/parse-events.h             |   1 +
->  tools/perf/util/parse-events.l             |   1 +
->  tools/perf/util/perf_event_attr_fprintf.c  |   3 +
->  tools/perf/util/pmu.c                      |   1 +
->  22 files changed, 698 insertions(+), 238 deletions(-)
-> 
-> 
-> Regards
-> Adrian
+> > >
+> > > > >
+> > > > >  Use cases:
+> > > > >  ==========
+> > > > >  - glibc:
+> > > > >    The dynamic linker, during loading ELF executables, can apply sealing to
+> > > > > -  non-writable memory segments.
+> > > > > +  mapping segments.
+> > > > >
+> > > > >  - Chrome browser: protect some security sensitive data-structures.
+> > > > >
+> > > > > -Notes on which memory to seal:
+> > > > > -==============================
+> > > > > -
+> > > > > -It might be important to note that sealing changes the lifetime of a mapping,
+> > > > > -i.e. the sealed mapping won’t be unmapped till the process terminates or the
+> > > > > -exec system call is invoked. Applications can apply sealing to any virtual
+> > > > > -memory region from userspace, but it is crucial to thoroughly analyze the
+> > > > > -mapping's lifetime prior to apply the sealing.
+> > > > > +Don't use mseal on:
+> > > > > +===================
+> > > > > +Applications can apply sealing to any virtual memory region from userspace,
+> > > > > +but it is *crucial to thoroughly analyze the mapping's lifetime* prior to
+> > > > > +apply the sealing. This is because the sealed mapping *won’t be unmapped*
+> > > > > +till the process terminates or the exec system call is invoked.
+> > > >
+> > > > There should probably be a nice disclaimer as to how most people don't need this or shouldn't use this.
+> > > > At least in its current form.
+> > > >
+> > > Ya, the mseal is not for most apps. I mention the malloc example to stress that.
+> > >
+> > > > <snip>
+> > > > > -
+> > > > > -
+> > > > > -Additional notes:
+> > > > > -=================
+> > > > >  As Jann Horn pointed out in [3], there are still a few ways to write
+> > > > > -to RO memory, which is, in a way, by design. Those cases are not covered
+> > > > > -by mseal(). If applications want to block such cases, sandbox tools (such as
+> > > > > -seccomp, LSM, etc) might be considered.
+> > > > > +to RO memory, which is, in a way, by design. And those could be blocked
+> > > > > +by different security measures.
+> > > > >
+> > > > >  Those cases are:
+> > > > > -
+> > > > > -- Write to read-only memory through /proc/self/mem interface.
+> > > > > -- Write to read-only memory through ptrace (such as PTRACE_POKETEXT).
+> > > > > -- userfaultfd.
+> > > > > +   - Write to read-only memory through /proc/self/mem interface (FOLL_FORCE).
+> > > > > +   - Write to read-only memory through ptrace (such as PTRACE_POKETEXT).
+> > > > > +   - userfaultfd.
+> > > >
+> > > > I don't understand how this is not a problem, but MADV_DONTNEED is.
+> > > > To me it seems that what we have now is completely useless, because you can trivially
+> > > > bypass it using /proc/self/mem, which is enabled on most Linux systems.
+> > > >
+> > > > Before you mention ChromeOS or Chrome, I don't care. Kernel features aren't designed
+> > > > for Chrome. They need to work with every other distro and application as well.
+> > > >
+> > > > It seems to me that the most sensible change is blocking/somehow distinguishing between /proc/self/mem and
+> > > > /proc/<pid>/mem (some other process) and ptrace. As in blocking /proc/self/mem but allowing the other FOLL_FORCE's
+> > > > as the traditional UNIX permission model allows.
+> > > >
+> > > IMO, it is a matter of  Divide and Conquer.  In a nutshell, mseal only
+> > > prevents VMA's certain attributes (such as prot bits) from changing.
+> > > It doesn't mean to say that sealed RO memory is immutable. To achieve
+> > > that, the system needs to apply multiple security measures.
+> >
+> > No, it's a matter of providing a sane API without tons of edgecases. Making a VMA immutable should make a VMA
+> > immutable, and not require you to provide a crap ton of other mechanisms in order to truly make it immutable.
+> > If I call mseal, I expect it to be sealed, not "sealed except when it's not, lol".
+> >
+> > You haven't been able to quite specify what semantics are desirable out of this whole thing. Making
+> > prot flags "immutable" is completely worthless if you can simply write to a random pseudofile and
+> > have it bypass the whole thing (where a write to /proc/self/mem is semantically equivalent to
+> > mprotect RW + write + mprotect RO). Making the vma immutable is completely worthless
+> > if I can simply wipe anon pages. There has to be some end goal here (make contents immutable?
+> > make sure VMA protection can't be changed? both?) which seems to be unclear from the kernel mmap-side.
+> >
+> > If you insist on providing half-baked APIs (and waving off any concerns), I'm sure this would've been better
+> > implemented as a random bpf program for chrome. Maybe we could revert this whole thing and give eBPF one
+> > or two bits of vma flags for their own uses :)
+> >
 
+Please reply to the above. We're struggling to understand exactly what semantics you want from this.
+*That* is what we want to document and get set in stone, and we'll move from there.
+
+> > >
+> > > For writing to /proc/pid/mem, it can be disabled via [1].  SELINUX and
+> > > Landlock can achieve the same protection too.
+> >
+> > I'm not blocking /proc/pid/mem, and my distro doesn't run any of those security modules :/
+> >
+> It is a choice you can make :-)
+
+Your feature needs to work without "extra choices".
+
+-- 
+Pedro
 
