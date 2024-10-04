@@ -1,294 +1,102 @@
-Return-Path: <linux-kernel+bounces-351078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A0D990D0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:02:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079DA990DB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 245B91C22934
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:02:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0AA11F212BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986A0202F95;
-	Fri,  4 Oct 2024 18:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69EF1D8A16;
+	Fri,  4 Oct 2024 18:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CIHIVUEY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1444A202F81;
-	Fri,  4 Oct 2024 18:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F3B1D90CE;
+	Fri,  4 Oct 2024 18:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066333; cv=none; b=VS1v9rrm7ewMZKmv50tbgDsEItwErG30lYt3TwoVv43B9w5dJEkE4nkPghGgjDEDYe+SsYzWsqyIcci19PhC/mUq3FHQhYQFspDCAm3yWDmVzLWj0Hk0L5nzC6X3+mXuVgViCfesJ6vYbKQfl25g3med6cBk/V3XoOYOIKWap58=
+	t=1728066471; cv=none; b=TxK0GpOCpXjSRltQSjhFryOG5WL5kFWVtjeoW4TqQX3u73x+/Es2BnCFffE1Nx8JOXjCHzEjPzcLT0Ei9uC2KoFyxxeRRBrqzIYoed1OKjFmPnKc8XGSNwYLtgbl4sW2aWrbYAx1AQWjvtmMozJtuMQP8X4HAvqgHU2sC6GAo6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066333; c=relaxed/simple;
-	bh=CEZQon3Wxq6Cxy5a968iQk+0LicPfMclMQDxxe/GeZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ke+I2XScEcvOprGBMZEfgbcfc80b0/pfnyFp+H6uM+iG0CE/CAKGikfCiegqR7MIzEVnoboJMoztzRTvKJYvz63MEYCHiFEUEw9KiGG0H4Z8Ey1pB5PzHTKMkv4XKb8Eab7Yh8cju8xDrk8EgOcEx/HwxhMxUhLSbisUhXZbkeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D958C4CECC;
-	Fri,  4 Oct 2024 18:25:31 +0000 (UTC)
-Date: Fri, 4 Oct 2024 14:26:28 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>, Tom Zanussi <zanussi@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] tracing/hist: Add poll(POLLIN) support on hist
- file
-Message-ID: <20241004142628.660bd9fe@gandalf.local.home>
-In-Reply-To: <172398711398.295714.5203663482865135771.stgit@devnote2>
-References: <172398710447.295714.4489282566285719918.stgit@devnote2>
-	<172398711398.295714.5203663482865135771.stgit@devnote2>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728066471; c=relaxed/simple;
+	bh=ABc0QBjQCqeraLJRnvc3Amm0w2qOe4YTPG226MAJ5fw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QOEnucXJES6hpuu9joptsdxNXiKdYu/UmB980yM8f5AceObPeAGZqJVcIQLiaSawf2Y1Zd5Zwy9QMEFwZoQSF6mHyhhU3ognfQ3FABT+Nl69WxAkxmT6MqlcWw6sdJozxC8aemBwzwr/cMCiiOKi46b1XXueT92BwxbbYMTnaWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CIHIVUEY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D889BC4CECC;
+	Fri,  4 Oct 2024 18:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728066470;
+	bh=ABc0QBjQCqeraLJRnvc3Amm0w2qOe4YTPG226MAJ5fw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CIHIVUEYDmWjeJTlkZnvdARM/t+5rIkmnmoEYvAAZlfC4DTya4YX0jikurpljwSJm
+	 KhwpLtB7CUmHpD/qZjUJKevdqnI/q8FUir/YBFRklIM2CTvFZzj5H0oOC5INp1vZ5Z
+	 ap/VEaO2KErimfiJgy6qkFSRBsFDAJzoVfHyT91hADOX/+fZ4x2MsjTcoVJHSgnltf
+	 K2xtj9EO9GIe1xS1l95fIDKjS0qLeX+2lOffR4BTg7lczjT1VjaD3PnnjIHLbi317p
+	 o89UzXKXJ9aI72awXoQeXQTmM9yVhhkJctECHaC50/RYIkTa9xQMv6hqRixU6crCjE
+	 rD6/VjT+eJC9w==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 17/42] clk: bcm: bcm53573: fix OF node leak in init
+Date: Fri,  4 Oct 2024 14:26:28 -0400
+Message-ID: <20241004182718.3673735-17-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241004182718.3673735-1-sashal@kernel.org>
+References: <20241004182718.3673735-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.112
+Content-Transfer-Encoding: 8bit
 
-On Sun, 18 Aug 2024 22:18:34 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Add poll syscall support on the `hist` file. The Waiter will be waken
-> up when the histogram is updated with POLLIN.
-> 
-> Currently, there is no way to wait for a specific event in userspace.
-> So user needs to peek the `trace` periodicaly, or wait on `trace_pipe`.
-> But that is not good idea to peek the `trace` for the event randomely
-> happens. And `trace_pipe` is not coming back until a page is filled
-> with events.
-> 
-> This allows user to wait for a specific events on `hist` file. User
-> can set a histogram trigger on the event which they want to monitor.
-> And poll() on its `hist` file. Since this poll() returns POLLIN,
-> the next poll() will return soon unless you do read() on hist file.
-> 
-> NOTE: To read the hist file again, you must set the file offset to 0,
-> but just for monitoring the event, you may not need to read the
-> histogram.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Reviewed-by: Tom Zanussi <zanussi@kernel.org>
-> ---
->  include/linux/trace_events.h     |    5 +++
->  kernel/trace/trace_events.c      |   18 +++++++++
->  kernel/trace/trace_events_hist.c |   76 +++++++++++++++++++++++++++++++++++++-
->  3 files changed, 96 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-> index 42bedcddd511..f3ec67d34097 100644
-> --- a/include/linux/trace_events.h
-> +++ b/include/linux/trace_events.h
-> @@ -663,6 +663,11 @@ struct trace_event_file {
->  	struct trace_subsystem_dir	*system;
->  	struct list_head		triggers;
->  
-> +#ifdef CONFIG_HIST_TRIGGERS
-> +	struct irq_work			hist_work;
-> +	wait_queue_head_t		hist_wq;
-> +#endif
+[ Upstream commit f92d67e23b8caa81f6322a2bad1d633b00ca000e ]
 
-I really hate to add this to the trace_event_file, as that is created for
-every event. If there are 1853 events (that's what my machine shows), and
-sizeof(struct irq_work) = 32 bytes, and sizeof(wait_queue_head_t) is 24
-bytes, this ends up adding 103,768 bytes to every instance!
+Driver code is leaking OF node reference from of_get_parent() in
+bcm53573_ilp_init().  Usage of of_get_parent() is not needed in the
+first place, because the parent node will not be freed while we are
+processing given node (triggered by CLK_OF_DECLARE()).  Thus fix the
+leak by accessing parent directly, instead of of_get_parent().
 
-That's a bit of bloat.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://lore.kernel.org/r/20240826065801.17081-1-krzysztof.kozlowski@linaro.org
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/bcm/clk-bcm53573-ilp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can we make this a global work queue, and perhaps add a flag to flags that
-states there's a waiter? Then on poll wakeup, we can check if the change
-happened to hist that the waiter is waiting on (which it actually already does!)
-
-> +
->  	/*
->  	 * 32 bit flags:
->  	 *   bit 0:		enabled
-> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-> index 7266ec2a4eea..0f077b32eea4 100644
-> --- a/kernel/trace/trace_events.c
-> +++ b/kernel/trace/trace_events.c
-> @@ -2972,6 +2972,20 @@ static bool event_in_systems(struct trace_event_call *call,
->  	return !*p || isspace(*p) || *p == ',';
->  }
->  
-> +#ifdef CONFIG_HIST_TRIGGERS
-> +/*
-> + * Wake up waiter on the hist_wq from irq_work because the hist trigger
-> + * may happen in any context.
-> + */
-> +static void hist_event_irq_work(struct irq_work *work)
-> +{
-> +	struct trace_event_file *event_file;
-> +
-> +	event_file = container_of(work, struct trace_event_file, hist_work);
-> +	wake_up_all(&event_file->hist_wq);
-> +}
-> +#endif
-> +
->  static struct trace_event_file *
->  trace_create_new_event(struct trace_event_call *call,
->  		       struct trace_array *tr)
-> @@ -3004,6 +3018,10 @@ trace_create_new_event(struct trace_event_call *call,
->  	INIT_LIST_HEAD(&file->triggers);
->  	list_add(&file->list, &tr->events);
->  	refcount_set(&file->ref, 1);
-> +#ifdef CONFIG_HIST_TRIGGERS
-> +	init_irq_work(&file->hist_work, hist_event_irq_work);
-> +	init_waitqueue_head(&file->hist_wq);
-> +#endif
->  
->  	return file;
->  }
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> index 5f9119eb7c67..d27b60f54f68 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -5314,6 +5314,9 @@ static void event_hist_trigger(struct event_trigger_data *data,
->  
->  	if (resolve_var_refs(hist_data, key, var_ref_vals, true))
->  		hist_trigger_actions(hist_data, elt, buffer, rec, rbe, key, var_ref_vals);
-> +
-> +	if (hist_data->event_file && wq_has_sleeper(&hist_data->event_file->hist_wq))
-> +		irq_work_queue(&hist_data->event_file->hist_work);
-
-Instead of using wq_has_sleeper() we can use the event_file->flags instead.
-
->  }
->  
->  static void hist_trigger_stacktrace_print(struct seq_file *m,
-> @@ -5593,15 +5596,36 @@ static void hist_trigger_show(struct seq_file *m,
->  		   n_entries, (u64)atomic64_read(&hist_data->map->drops));
->  }
->  
-> +struct hist_file_data {
-> +	struct file *file;
-> +	u64 last_read;
-> +};
-> +
-> +static u64 get_hist_hit_count(struct trace_event_file *event_file)
-> +{
-> +	struct hist_trigger_data *hist_data;
-> +	struct event_trigger_data *data;
-> +	u64 ret = 0;
-> +
-> +	list_for_each_entry(data, &event_file->triggers, list) {
-> +		if (data->cmd_ops->trigger_type == ETT_EVENT_HIST) {
-> +			hist_data = data->private_data;
-> +			ret += atomic64_read(&hist_data->map->hits);
-> +		}
-> +	}
-> +	return ret;
-> +}
-> +
->  static int hist_show(struct seq_file *m, void *v)
->  {
-> +	struct hist_file_data *hist_file = m->private;
->  	struct event_trigger_data *data;
->  	struct trace_event_file *event_file;
->  	int n = 0, ret = 0;
->  
->  	mutex_lock(&event_mutex);
->  
-> -	event_file = event_file_file(m->private);
-> +	event_file = event_file_file(hist_file->file);
->  	if (unlikely(!event_file)) {
->  		ret = -ENODEV;
->  		goto out_unlock;
-> @@ -5611,6 +5635,7 @@ static int hist_show(struct seq_file *m, void *v)
->  		if (data->cmd_ops->trigger_type == ETT_EVENT_HIST)
->  			hist_trigger_show(m, data, n++);
->  	}
-> +	hist_file->last_read = get_hist_hit_count(event_file);
->  
->   out_unlock:
->  	mutex_unlock(&event_mutex);
-> @@ -5618,24 +5643,69 @@ static int hist_show(struct seq_file *m, void *v)
->  	return ret;
->  }
->  
-> +static __poll_t event_hist_poll(struct file *file, struct poll_table_struct *wait)
-> +{
-> +	struct trace_event_file *event_file;
-> +	struct seq_file *m = file->private_data;
-> +	struct hist_file_data *hist_file = m->private;
-> +	__poll_t ret = 0;
-> +
-> +	mutex_lock(&event_mutex);
-> +
-> +	event_file = event_file_data(file);
-> +	if (!event_file) {
-> +		ret = EPOLLERR;
-> +		goto out_unlock;
-> +	}
-> +
-> +	poll_wait(file, &event_file->hist_wq, wait);
-> +
-> +	if (hist_file->last_read != get_hist_hit_count(event_file))
-> +		ret = EPOLLIN | EPOLLRDNORM;
-
-Even if this gets woken up early, it will still not go back to user space.
-
-I don't expect a lot of hist waiters so this should not be an issue.
-
-I don't see an issue if we just have the hist wait queue global.
-
--- Steve
-
-
-> +
-> +out_unlock:
-> +	mutex_unlock(&event_mutex);
-> +
-> +	return ret;
-> +}
-> +
-> +static int event_hist_release(struct inode *inode, struct file *file)
-> +{
-> +	struct seq_file *m = file->private_data;
-> +	struct hist_file_data *hist_file = m->private;
-> +
-> +	kfree(hist_file);
-> +	return tracing_single_release_file_tr(inode, file);
-> +}
-> +
->  static int event_hist_open(struct inode *inode, struct file *file)
->  {
-> +	struct hist_file_data *hist_file;
->  	int ret;
->  
->  	ret = tracing_open_file_tr(inode, file);
->  	if (ret)
->  		return ret;
->  
-> +	hist_file = kzalloc(sizeof(*hist_file), GFP_KERNEL);
-> +	if (!hist_file)
-> +		return -ENOMEM;
-> +	hist_file->file = file;
-> +
->  	/* Clear private_data to avoid warning in single_open() */
->  	file->private_data = NULL;
-> -	return single_open(file, hist_show, file);
-> +	ret = single_open(file, hist_show, hist_file);
-> +	if (ret)
-> +		kfree(hist_file);
-> +	return ret;
->  }
->  
->  const struct file_operations event_hist_fops = {
->  	.open = event_hist_open,
->  	.read = seq_read,
->  	.llseek = seq_lseek,
-> -	.release = tracing_single_release_file_tr,
-> +	.release = event_hist_release,
-> +	.poll = event_hist_poll,
->  };
->  
->  #ifdef CONFIG_HIST_TRIGGERS_DEBUG
+diff --git a/drivers/clk/bcm/clk-bcm53573-ilp.c b/drivers/clk/bcm/clk-bcm53573-ilp.c
+index 84f2af736ee8a..83ef41d618be3 100644
+--- a/drivers/clk/bcm/clk-bcm53573-ilp.c
++++ b/drivers/clk/bcm/clk-bcm53573-ilp.c
+@@ -112,7 +112,7 @@ static void bcm53573_ilp_init(struct device_node *np)
+ 		goto err_free_ilp;
+ 	}
+ 
+-	ilp->regmap = syscon_node_to_regmap(of_get_parent(np));
++	ilp->regmap = syscon_node_to_regmap(np->parent);
+ 	if (IS_ERR(ilp->regmap)) {
+ 		err = PTR_ERR(ilp->regmap);
+ 		goto err_free_ilp;
+-- 
+2.43.0
 
 
