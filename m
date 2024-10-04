@@ -1,201 +1,117 @@
-Return-Path: <linux-kernel+bounces-349886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCA898FCB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:12:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 691E398FCA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80499284170
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:12:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 964921C22E74
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026FC78B50;
-	Fri,  4 Oct 2024 04:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245D24E1B3;
+	Fri,  4 Oct 2024 04:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="M5mCmZvx";
-	dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b="mK2dEOAy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qXQIYR+Y"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jF3a7J9e"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE3577107;
-	Fri,  4 Oct 2024 04:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AD943ABD;
+	Fri,  4 Oct 2024 04:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728015149; cv=none; b=rszl1I7S2RpElbh/NmqIv1WgDPh6sVxXA1XnQ3I6nlnPTHfsCnJ1MSiByHa0kh3JiejRt+jjUcaSI4ZoKh4/GMr6Lvmq9v5GK/mBZzRNgzLxZdTDe0l12r855iXa/5BxAv6g2yS4UESG+Q0lFbRYgWpfSSCNO4l95dzNweIUspw=
+	t=1728015090; cv=none; b=ESJmTMmKCaUV/y8/Gggfj3utp22fq2ZrYK+LLEHJSrMEs8eUyPv8tlYK1B3yR5pfIbeH/ki3KR1QVi2ZIjAT4fbakMZln6J2XzRxewzlGVLClJ/Myd8UvZerJgr04zpGivWUr/Z1tHlmNYgCVlA73467B1FeF+9rL55suumzhKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728015149; c=relaxed/simple;
-	bh=ShIQQg1VHwsJok8ffAk6GFo1fdSFrP8iYTRSiNnc4TM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qHdMuCMZ0wG6VHJsF46hEcdjlJrX9y4jY+0ieaEfIGfmt5G3rP4EyJ3WRIEj6zLhfeL+GEaulJQnR0Y/cYQe5wlTQNqKDnD7T3xTy6BNWiRUIMANFIUyp7MZJPxMVBKD8yYxp5MVrv2jDl07TxwefzbIGSL/1CpMbjx9ryvj7lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=M5mCmZvx; dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b=mK2dEOAy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qXQIYR+Y; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7299E1140249;
-	Fri,  4 Oct 2024 00:12:25 -0400 (EDT)
-Received: from phl-frontend-01 ([10.202.2.160])
-  by phl-compute-04.internal (MEProxy); Fri, 04 Oct 2024 00:12:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=2016-12.pbsmtp; t=1728015145;
-	 x=1728101545; bh=eHTbyG0oDxNayxdZzQC2GQk/sSeoZeAzVlGODWuCYCs=; b=
-	M5mCmZvxmOaxor32TdsyASTZrEzbNkOeGLQiZvHTEu+7b3AQy9o+Cg7Cc9rFI/r1
-	HLzQ8Oj5vPCNjx6UrNxfA89KARqyD3UXiNLwcMkZJv/8TV1b5strpTZIdsY6lEgL
-	qyRzjP5I2Ik6GlwtrdTWKyeCokOnDfdLvGeMX1hQfB4=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pobox.com; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1728015145; x=
-	1728101545; bh=eHTbyG0oDxNayxdZzQC2GQk/sSeoZeAzVlGODWuCYCs=; b=m
-	K2dEOAyTrD3PlKBJbn8G1QTW6UAFv3SlARcK4u9ajcl3KrN8KTmqvMsIL5nIpJ07
-	2y816aYJ0ZDf+w77XW3lym9maIGAjKMImkBjSZhj+PlCQ5UMbpsAOvbNVJbhXgKp
-	UwpobebX0E8P+3Ohz5eTIX5b4Usiyiw3ie0yulY2bhKAsRkVzO0z5aQuP+jvhe2V
-	daT5AEdui+4P1mqk0Uibq/+VuoXfzKRW9T2FwEoCLnKz1XKe56ntG6KDv7k3qzrU
-	Xgr+eQZk1TYaEMBXF2ZkjU+j+6OALSJc/5pkbj3WL/Gn2Sw0nIikb8twWX/YIAfq
-	Gz7sQA/WI/0EHzGfIW0MQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728015145; x=
-	1728101545; bh=eHTbyG0oDxNayxdZzQC2GQk/sSeoZeAzVlGODWuCYCs=; b=q
-	XQIYR+YbfambeDm1BBQ4PbibKMo2CF6VKLqxYXvUj0Pj03r4VJfNNJLfokSwxwzn
-	i/+Rsd0EXyZX6Z8vvCA8eJmf0My4/5VxbaCZFCSr4nD0/FF7wCxR1mafvNgXWIRA
-	JcXSgMt41qP83FoKloeD+pqRNjMAhCTKONnW822g0L8yQTisQCS0EzWZU+G1sVCN
-	zHNChAZEnECxGKnmpLU6fKOiWF3stjOHn5sqWLEvvvxwVVTJWncrSaJNYseiSub3
-	5sQfSe8L7rBJoYcfFcC2OuhLDaanLE6hHqomygfGv/1GVQHkrz3doIURk2PfZVrN
-	NeKILUQsNgI9qgp2JQt8g==
-X-ME-Sender: <xms:KGv_ZqMGYDIboClYF_aHAmG9ZwzS5RAiKUjfHlVwIJ7u0Y4RC6o0BA>
-    <xme:KGv_Zo9hE3nMfYCEG0x1sKMR0FyZx7dtMGcT26_SCHqmkEM_iyLfikB49kK2hG0st
-    F5BufgfbsCkqPdXQO4>
-X-ME-Received: <xmr:KGv_ZhRcG-AyPLpInxC3CaaEopGKxTZvgjc-ANVjf0s404zZXsU3EXuV4LBmhrBwFAfLOXwA7sDm-Q5eflARg8PtCoDDbsR4xx3rcJ7PS23mnKKoLg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvvddgkedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttden
-    ucfhrhhomheppfhitgholhgrshcurfhithhrvgcuoehnihgtohesfhhluhignhhitgdrnh
-    gvtheqnecuggftrfgrthhtvghrnheptdejueeiieehieeuffduvdffleehkeelgeekudek
-    feffhfduffdugedvteeihfetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepnhhitghosehflhhugihnihgtrdhnvghtpdhnsggprhgtphhtthho
-    pedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhhpihhtrhgvsegsrgihlh
-    hisghrvgdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvght
-    pdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhope
-    hkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhoghgvrhhqsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpth
-    htohepghhrhihgohhrihhirdhsthhrrghshhhkohesthhirdgtohhmpdhrtghpthhtohep
-    vhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:KWv_ZquYs3_NkeU6fs4TiEIzdPVz2M0zNwYj9NKQW5546DFp3X0v9g>
-    <xmx:KWv_Zidnif5WIpn_gI4mwuNwMpYaHTU7FC8cNHfRtW9ezAuXO2Ne0Q>
-    <xmx:KWv_Zu2RCD5bkA2HgT6lL4sh2Ckh4YevTWOrY9HQxqrd9RSPGvjhqQ>
-    <xmx:KWv_Zm-h2puIn882H3ZaRHra9WvFcRitHf8PZbeSgEJf7iND-iUePw>
-    <xmx:KWv_Zu35Sg-a0FT80dAr0GXirZxNx6CFKjW-r2N2MIbYtSJ0TvOulO5J>
-Feedback-ID: i58514971:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 4 Oct 2024 00:12:24 -0400 (EDT)
-Received: from xanadu.lan (OpenWrt.lan [192.168.1.1])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 4AA92E3D83E;
-	Fri,  4 Oct 2024 00:12:24 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Roger Quadros <rogerq@kernel.org>
-Cc: Nicolas Pitre <npitre@baylibre.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v3 2/2] net: ethernet: ti: am65-cpsw: avoid devm_alloc_etherdev, fix module removal
-Date: Fri,  4 Oct 2024 00:10:34 -0400
-Message-ID: <20241004041218.2809774-3-nico@fluxnic.net>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241004041218.2809774-1-nico@fluxnic.net>
-References: <20241004041218.2809774-1-nico@fluxnic.net>
+	s=arc-20240116; t=1728015090; c=relaxed/simple;
+	bh=mWEOE9nswXDaTVB00jH1eq6MCyPSkMFdNPKlHkn8Yns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V1aW+BUqlgKv5zXQbpTMwUjZCJ52GBfjVgekYvfeVIvg6NfBAJ2VxMah/1yiANtai+hvQdHCmpDBvrkMnFH7vkslheUvIIRin8f5Nz5muUV9VLG+uHx9fMHf29SE7bSvnLe1sAlDOkCv6PHGXtmJsMLE+BQVyCuJ85cLE6JYcl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jF3a7J9e; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-27d045a73easo914583fac.0;
+        Thu, 03 Oct 2024 21:11:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728015088; x=1728619888; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7KG5NyyXcoddyKNeeQDgE4xPxgRSIlRvqW3eOyOluoc=;
+        b=jF3a7J9en/K+uzKbEHu2hHbWs9BqE75H1+EHEt/Lnz1svJC4PYq46C0C4lwZABQ/CZ
+         AjTw4bSS/sEx9eLUb/VKGGp4YfoTTa+XzyRFqkw0OQ3AcdGbTD49LaJ2R8nnHWKR6J6x
+         OSuVroCUfKWR/jLRdIC5pGl8yKNQ/iYXq2DsFf/obk709MRiJqw5d9IEnZVDUqqXkMoE
+         OXUTLnqW5rvKFDf1Kbvx1hLsFUyaO5cVmu1enu78onGRMcwLU9OSYzw3yfGjW0u9iM2z
+         BD6kHfs7fNn/XTHic5QDxskUDP26UyzSXuFfKlzFXTWdzvhPMRy91948dHCtTXnfi09Y
+         7/xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728015088; x=1728619888;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7KG5NyyXcoddyKNeeQDgE4xPxgRSIlRvqW3eOyOluoc=;
+        b=Rnc6tDcuWaTsFq70bJW1O6T0xFftnvSnReYFb6U/2aKJnl/pNrAQSUYB1jsOByqfrM
+         K1ef2zUkP2rlfRk1BAwu1QhP6b8xhKq14GSBTQkV9qTrqxAMF18qP7IXBCLfc0+JY4ov
+         ux7W8FinJvu9d9JOkXjiFCQj+v2Fn+CW6kgqCT8CgluU4QJCnOY4Hco980DWNWwrKgyt
+         44/lfFX2gbnfKE7D5DEqenDGDm84nMVr2V/2jlRCXXfdytJvfXVTxpYQ9IpUxPUDClXB
+         lpoizsCJQoM2K/FbSazGo1y7Z1YN1boJssODTU2sw/8D9ZV/gbYyxxQkniWvPe/544QB
+         /6rw==
+X-Forwarded-Encrypted: i=1; AJvYcCVm/1+QqzCrz8LO/J8f+kCBTb571LFqTyksXepWH7tL0T//+llndG+sWqJS88zVDlyMn+JYjT02PDwP5k7JUBGQvDM=@vger.kernel.org, AJvYcCVr5KWmJoMEfnVIXdUI5xIJa8gw57doKFnV3+849bpsJ3/xHMynQ0wfgcJzX/A8rPEqvUw/n+5lesFM@vger.kernel.org, AJvYcCW7/7l6oBhVgQf5LYjv12SSc4rvdOqn/BANnlxRFejfX/eJl+TqA7wH6WqmKYnvYhnhDPm+JeOWduARrw==@vger.kernel.org, AJvYcCWXcl8Y92qeEKUuhOZ5q/GPw7vLEHa5CLN9VK2weOlX5MwCI5dN/T15sv/AqjIpmaa9aXc2co0MPf7nH5Y=@vger.kernel.org, AJvYcCWux2NQyF7KM9Tk3cCZAa5jaFF6vVdLDnPvkAqiMm2qkHhwyhlBy8/9XaoNTc/CafdiYPuoJsgLmdCpBJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6s5Eik8exAXCJJhKOpjVXnRq+g3fSRfQAYwF/HcftLGxgM3Hw
+	IjbbuHVmkd0JFAuPSJNNkcxFJatWSuJKoO4xIOiu0FdDewq1oa7JvWgbgvbyP9k2iRPg30WizE1
+	gYZi8M3wPSkEm5v/asAJLoFglJQM=
+X-Google-Smtp-Source: AGHT+IH/oQQS/mnVkBMVZavu+1GJwds/AMzKCb97mcp7UAcOj1YhpcUbl3S8U4Ofo7beYWzVZu+XAyXSDZXvx8Nnsww=
+X-Received: by 2002:a05:6870:2191:b0:261:1f7d:cf70 with SMTP id
+ 586e51a60fabf-287c2154afamr1028179fac.36.1728015088169; Thu, 03 Oct 2024
+ 21:11:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <tdxrmmqyzcufupnwkdbg7lwgadizm7v3lxjirykijbml7x54ze@upbdzycdsilm> <20241003215217.GA326383@bhelgaas>
+In-Reply-To: <20241003215217.GA326383@bhelgaas>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Fri, 4 Oct 2024 06:11:17 +0200
+Message-ID: <CAMhs-H8q95jAvo65yQ5x0NxyU3Hzu0HeNQxZSa+5CHd7REgQuA@mail.gmail.com>
+Subject: Re: [PATCH] PCI: controller: Switch back to struct platform_driver::remove()
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	linux-pci@vger.kernel.org, vigneshr@ti.com, s-vadapalli@ti.com, 
+	lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
+	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com, krzk@kernel.org, 
+	alim.akhtar@samsung.com, shawn.guo@linaro.org, songxiaowei@hisilicon.com, 
+	marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com, 
+	thierry.reding@gmail.com, jonathanh@nvidia.com, thomas.petazzoni@bootlin.com, 
+	pali@kernel.org, florian.fainelli@broadcom.com, 
+	angelogioacchino.delregno@collabora.com, ryder.lee@mediatek.com, 
+	heiko@sntech.de, kevin.xie@starfivetech.com, kishon@kernel.org, 
+	dlemoal@kernel.org, shawn.lin@rock-chips.com, 
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Nicolas Pitre <npitre@baylibre.com>
+On Thu, Oct 3, 2024 at 11:52=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
+wrote:
+>
+> On Thu, Oct 03, 2024 at 12:17:08PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> > Hello,
+> >
+> > I found this patch in next as 712359cb5e9d9553c1383fc5005593aa1988efc4.
+> >
+> > While rebasing my patches with the same purpose I found that this patch
+> > handled the indention differently than I did for two files:
+>
+> Updated 712359cb5e9d ("PCI: controller: Switch back to struct
+> platform_driver::remove()") to adopt your indentation changes and also
+> convert drivers/pci/controller/pcie-xilinx-nwl.c, thank you very much
+> for noticing this!
 
-Usage of devm_alloc_etherdev_mqs() conflicts with
-am65_cpsw_nuss_cleanup_ndev() as the same struct net_device instances
-get unregistered twice. Switch to alloc_etherdev_mqs() and make sure
-am65_cpsw_nuss_cleanup_ndev() unregisters and frees those net_device
-instances properly.
+Thanks a lot for noticing and correcting this!
 
-With this, it is finally possible to rmmod the driver without oopsing
-the kernel.
-
-Fixes: 93a76530316a ("net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver")
-Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
----
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index f6bc8a4dc6..e95457c988 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -2744,10 +2744,9 @@ am65_cpsw_nuss_init_port_ndev(struct am65_cpsw_common *common, u32 port_idx)
- 		return 0;
- 
- 	/* alloc netdev */
--	port->ndev = devm_alloc_etherdev_mqs(common->dev,
--					     sizeof(struct am65_cpsw_ndev_priv),
--					     AM65_CPSW_MAX_QUEUES,
--					     AM65_CPSW_MAX_QUEUES);
-+	port->ndev = alloc_etherdev_mqs(sizeof(struct am65_cpsw_ndev_priv),
-+					AM65_CPSW_MAX_QUEUES,
-+					AM65_CPSW_MAX_QUEUES);
- 	if (!port->ndev) {
- 		dev_err(dev, "error allocating slave net_device %u\n",
- 			port->port_id);
-@@ -2868,8 +2867,12 @@ static void am65_cpsw_nuss_cleanup_ndev(struct am65_cpsw_common *common)
- 
- 	for (i = 0; i < common->port_num; i++) {
- 		port = &common->ports[i];
--		if (port->ndev && port->ndev->reg_state == NETREG_REGISTERED)
-+		if (!port->ndev)
-+			continue;
-+		if (port->ndev->reg_state == NETREG_REGISTERED)
- 			unregister_netdev(port->ndev);
-+		free_netdev(port->ndev);
-+		port->ndev = NULL;
- 	}
- }
- 
-@@ -3613,16 +3616,17 @@ static int am65_cpsw_nuss_probe(struct platform_device *pdev)
- 
- 	ret = am65_cpsw_nuss_init_ndevs(common);
- 	if (ret)
--		goto err_free_phylink;
-+		goto err_ndevs_clear;
- 
- 	ret = am65_cpsw_nuss_register_ndevs(common);
- 	if (ret)
--		goto err_free_phylink;
-+		goto err_ndevs_clear;
- 
- 	pm_runtime_put(dev);
- 	return 0;
- 
--err_free_phylink:
-+err_ndevs_clear:
-+	am65_cpsw_nuss_cleanup_ndev(common);
- 	am65_cpsw_nuss_phylink_cleanup(common);
- 	am65_cpts_release(common->cpts);
- err_of_clear:
--- 
-2.46.1
-
+Best regards,
+    Sergio Paracuellos
 
