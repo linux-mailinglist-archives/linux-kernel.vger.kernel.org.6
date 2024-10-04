@@ -1,595 +1,174 @@
-Return-Path: <linux-kernel+bounces-349877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC76198FC90
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:43:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92EBB98FC95
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88E30283CF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:43:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7D541C221B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C8E2868E;
-	Fri,  4 Oct 2024 03:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DF1481CE;
+	Fri,  4 Oct 2024 03:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FlAHgl/T"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="es8xXIDu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECE347796
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 03:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4B13D982
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 03:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728013360; cv=none; b=Ij+hPspYQUUCbvpLlv0RRCyMDEnDSNpLT9qsW2qRW+A/pq8wLWYO7OW1wTmPKBUCuMMuRQgaZ/b3SZK4loPb4jXPUbFBRiGBTlN24lwb2u/Wx9/atoUkclL6Ug8jgrOYiucBzJ6H3gLnSDyVPpYAKpBuD/dlmvi8862Rs2NqcTQ=
+	t=1728014167; cv=none; b=mZZbAbmgLkddBD4LpO90oxF7vps//xYgJlx1RdAWYRtKb8zef+n0aeDCY91tK3yIItJ5COMOetCJz30VjW4BqofG+VBGh+HUnKgimXtKjWgo68b76UaESQ6SfoIIPZ8qaeCU1CMRwW3U+3rpswiYC1fmJKowaOYIGSMHiQa8MIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728013360; c=relaxed/simple;
-	bh=EUi/lDOJgA/oG0FXX3AITdsoA6NhPWx/jDRKGvbNT7o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BJxF5M3dJ16wgJ69i3BxEGBtpgjdr8U47xpXFkQuKZk9wwK0+6WHBnZUY3p9D+tJEPdLt6H89Ez7e7yBKy+Nz7TT3lO6xT1cATW63aD5fg/dJDrnhTZl5bjo8AgSL7rPgh5EIRL0zgfVKUGmAmSRHK1L5B18PHmIQOMHkofhD7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FlAHgl/T; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e0a5088777so1382521a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 20:42:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728013357; x=1728618157; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=td7qCuLHgt/0KgxjjIp7LWyTAbnqZ9CAI959aiJcvbQ=;
-        b=FlAHgl/TEltX58ZM8V+fX6MAXn7BvlGKaI8ssx7B4/N1hjHv4NQm/D2w2rwcaby/Hl
-         dZIH4ewRDwXjd8PS08febOCYRbw7HOGALhW0bd/HjqwaN8F/BOUbPigYj+wgOrqgTTuw
-         /FX+0LnlLTzIxnHbIAiuT837RWVfMcx+LN7f6c6UpGvDx1CX/inCzOV0BmGCaWOZL0k7
-         fkVoJToA/kGUAlYxyKZk1HVb+xA/03EQ5Y0DY4JHMXyBrrWK03loDOVRzbjt3sT/gdlx
-         WzAD/uuxylkMgTwZ4UBo49CDxTo9ITf/LDJ/xQXt1JRpskqqBy5c4SsEq3qY9Rj4Nu0D
-         vvZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728013357; x=1728618157;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=td7qCuLHgt/0KgxjjIp7LWyTAbnqZ9CAI959aiJcvbQ=;
-        b=D1Pminz6s6AGfEvSNt7KUjjHjTDhi1l3mYLku+fqGwyYBjsdKHV/5cHYm++Lk6Xtdt
-         fsDp4b2F3e1IkPnsZwb3BUOgaeiY9lhEaEHRFG1Szl1Va2Ix6JhOaUMJy2Uqo9I67fbN
-         uWHkG/sQ8ZNczhV7GDKWIT7zBuAhB2MpUNA3ek1UAIoxn9JfRgPrpNTuN2oF3LoYXtcx
-         JkgU5aluc5ac98yJpKeoVuT9KZo48c/1WH/D359z6hrpFWG94Al06yWkw0m+mtJPPqSM
-         UMs7FrbocC85mVoy0Wjvo4SQ05eIySMpGZ+9LDgB8FhghPiejxpOPGAsp88sxkLGTdYE
-         CFvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUrW9VmM9PXuqIiD7DPCSRLleFbZBD7I2DJD4Wy6EqtSlIqY/Mz+WjhJsS3p1HN3cKqjH/45AshYjt2hg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVwlBR9jEEBmmcjaC49uNpafEeaTCjeG3I6S17kVyR5gb547P7
-	l5d1aonKrlaY9HEg5yxANiUiwAmVKFGqQ7MLBNd0VGI4YQMgQr52
-X-Google-Smtp-Source: AGHT+IEOexwkZ10GUbrLL7LiWxFdUUY/jBxTty94bDVZwJAAVGO5eY58JJJnlPfABNt+c3QYTmiv7g==
-X-Received: by 2002:a17:90b:1b05:b0:2e0:a77e:82ff with SMTP id 98e67ed59e1d1-2e1e6365024mr1689922a91.33.1728013357407;
-        Thu, 03 Oct 2024 20:42:37 -0700 (PDT)
-Received: from luna.turtle.lan ([2601:1c2:c184:dc00:b8ac:3fa:437b:85fa])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beef8ec6bsm15806365ad.158.2024.10.03.20.42.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 20:42:36 -0700 (PDT)
-From: Sam Edwards <cfsworks@gmail.com>
-X-Google-Original-From: Sam Edwards <CFSworks@gmail.com>
-To: Justin Chen <justin.chen@broadcom.com>,
-	Al Cooper <alcooperx@gmail.com>
-Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	Sam Edwards <CFSworks@gmail.com>
-Subject: [PATCH v2 2/2] phy: usb: update Broadcom driver table to use designated initializers
-Date: Thu,  3 Oct 2024 20:41:31 -0700
-Message-ID: <20241004034131.1363813-3-CFSworks@gmail.com>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <20241004034131.1363813-1-CFSworks@gmail.com>
-References: <20241004034131.1363813-1-CFSworks@gmail.com>
+	s=arc-20240116; t=1728014167; c=relaxed/simple;
+	bh=f60efwpdEBV93DkMJWkEPoTaEsnIHKFyT4bxtSaqAvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P3YfRZxhdT4duMUzFwFEPtuE8LJ1Ot4P/FrIod7M/vKHzINoqWMWT9JMOQuP4ILo1ZE9R/1pG8dmaBFIFOzgKfmSG2Fyqb1O29uzR9Xw0nj/S+yWKVJxOJSWmG8Z4WQ3809kd1g1GE1kxW8AGddkTyPAP8+QA80wbgfvHROPkjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=es8xXIDu; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728014164; x=1759550164;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=f60efwpdEBV93DkMJWkEPoTaEsnIHKFyT4bxtSaqAvw=;
+  b=es8xXIDuevMZ/Oc7fURlsQYadqExtGkFTR6sZIuk3AxCR+JB1WWuOi++
+   pfLZfvAb41AC+rwP16E/dGNGmwhVMDSv31qu6MKY17yk8v9QREwoj3R0u
+   GVXGoor5CAQUSkzlTSjQdSMW6g44vlWeZcNy4+LH2IfgXuILxQCvMdNg1
+   oCLjZdwYcM+8s+2Pw0A8uvw1nAnSjgqgjwve83q8M9zPYhsQJYaUziOPE
+   GR7qPWNI2Q0CDx+DwneSnwoYtt6dFayNAi9S8dmGEO2o/NRNqlSjnqmUp
+   EMw2I1fG4F+wYiCwQRO869e22gMn+5y5tNkfwlqAeTzPIbJ8ya8aiAnRq
+   Q==;
+X-CSE-ConnectionGUID: I/N0U2oeSZq2e6woX/8UTQ==
+X-CSE-MsgGUID: I0DCjrtGRgK2k+53QmmV+g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="30106525"
+X-IronPort-AV: E=Sophos;i="6.11,176,1725346800"; 
+   d="scan'208";a="30106525"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 20:56:04 -0700
+X-CSE-ConnectionGUID: sE+3s6lUSYevPkDpdN0sgA==
+X-CSE-MsgGUID: OKm3xyatREWI5eCILuxpAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,176,1725346800"; 
+   d="scan'208";a="74409699"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 03 Oct 2024 20:56:02 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swZQ7-0001Bq-2s;
+	Fri, 04 Oct 2024 03:55:59 +0000
+Date: Fri, 4 Oct 2024 11:55:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: luca.boccassi@gmail.com, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, christian@brauner.io,
+	paul@paul-moore.com
+Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
+Message-ID: <202410041128.tLVDbeJB-lkp@intel.com>
+References: <20241002142516.110567-1-luca.boccassi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002142516.110567-1-luca.boccassi@gmail.com>
 
-The Broadcom USB PHY driver contains a lookup table
-(`reg_bits_map_tables`) to resolve register bitmaps unique to certain
-versions of the USB PHY as found in various Broadcom chip families.
-Historically, this table was just kept carefully in sync with the
-"selector" enum every time the latter changed to ensure consistency.
-However, a recent commit [1] introduced two new enumerators but did not
-adjust the array for BCM4908, thus breaking the xHCI controller (and
-boot process) on this platform and revealing the fragility of this
-approach.
+Hi,
 
-Since these arrays are a little sparse (many elements are zero) and the
-position of the array elements is significant only insofar as they agree
-with the enumerators, designated initializers are a better fit than
-positional initializers here. Convert this table accordingly.
+kernel test robot noticed the following build warnings:
 
-[1] 4536fe9640b6 ("phy: usb: suppress OC condition for 7439b2")
+[auto build test WARNING on shuah-kselftest/next]
+[also build test WARNING on shuah-kselftest/fixes linus/master v6.12-rc1 next-20241003]
+[cannot apply to brauner-vfs/vfs.all]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Sam Edwards <CFSworks@gmail.com>
----
- drivers/phy/broadcom/phy-brcm-usb-init.c | 435 +++++++++++------------
- 1 file changed, 215 insertions(+), 220 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/luca-boccassi-gmail-com/pidfd-add-ioctl-to-retrieve-pid-info/20241002-223302
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
+patch link:    https://lore.kernel.org/r/20241002142516.110567-1-luca.boccassi%40gmail.com
+patch subject: [PATCH] pidfd: add ioctl to retrieve pid info
+config: x86_64-randconfig-123-20241004 (https://download.01.org/0day-ci/archive/20241004/202410041128.tLVDbeJB-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410041128.tLVDbeJB-lkp@intel.com/reproduce)
 
-diff --git a/drivers/phy/broadcom/phy-brcm-usb-init.c b/drivers/phy/broadcom/phy-brcm-usb-init.c
-index 5ebb3a616115..da23078878a9 100644
---- a/drivers/phy/broadcom/phy-brcm-usb-init.c
-+++ b/drivers/phy/broadcom/phy-brcm-usb-init.c
-@@ -193,256 +193,251 @@ static const u32
- usb_reg_bits_map_table[BRCM_FAMILY_COUNT][USB_CTRL_SELECTOR_COUNT] = {
- 	/* 3390B0 */
- 	[BRCM_FAMILY_3390A0] = {
--		USB_CTRL_SETUP_SCB1_EN_MASK,
--		USB_CTRL_SETUP_SCB2_EN_MASK,
--		USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
--		USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_MASK,
--		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
--		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
--		USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
--		USB_CTRL_USB_PM_USB_PWRDN_MASK,
--		0, /* USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IOC_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IPP_MASK */
--		USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK,
--		0, /* USB_CTRL_USB_PM_SOFT_RESET_MASK */
--		0, /* USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK */
--		0, /* USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK */
--		USB_CTRL_USB_PM_USB20_HC_RESETB_VAR_MASK,
--		ENDIAN_SETTINGS, /* USB_CTRL_SETUP ENDIAN bits */
-+		[USB_CTRL_SETUP_SCB1_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB1_EN_MASK,
-+		[USB_CTRL_SETUP_SCB2_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB2_EN_MASK,
-+		[USB_CTRL_SETUP_SS_EHCI64BIT_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
-+		[USB_CTRL_SETUP_STRAP_IPP_SEL_SELECTOR] =
-+			USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT0_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT1_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_MASK,
-+		[USB_CTRL_USB_PM_XHC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB_PM_USB_PWRDN_SELECTOR] =
-+			USB_CTRL_USB_PM_USB_PWRDN_MASK,
-+		[USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_SELECTOR] =
-+			USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK,
-+		[USB_CTRL_USB_PM_USB20_HC_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_USB20_HC_RESETB_VAR_MASK,
-+		[USB_CTRL_SETUP_ENDIAN_SELECTOR] = ENDIAN_SETTINGS,
- 	},
- 	/* 4908 */
- 	[BRCM_FAMILY_4908] = {
--		0, /* USB_CTRL_SETUP_SCB1_EN_MASK */
--		0, /* USB_CTRL_SETUP_SCB2_EN_MASK */
--		0, /* USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK */
--		0, /* USB_CTRL_SETUP_STRAP_IPP_SEL_MASK */
--		0, /* USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK */
--		0, /* USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK */
--		0, /* USB_CTRL_SETUP_OC3_DISABLE_MASK */
--		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
--		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
--		USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
--		USB_CTRL_USB_PM_USB_PWRDN_MASK,
--		0, /* USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IOC_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IPP_MASK */
--		0, /* USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK */
--		0, /* USB_CTRL_USB_PM_SOFT_RESET_MASK */
--		0, /* USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK */
--		0, /* USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK */
--		0, /* USB_CTRL_USB_PM_USB20_HC_RESETB_VAR_MASK */
--		0, /* USB_CTRL_SETUP ENDIAN bits */
-+		[USB_CTRL_USB_PM_XHC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB_PM_USB_PWRDN_SELECTOR] =
-+			USB_CTRL_USB_PM_USB_PWRDN_MASK,
- 	},
- 	/* 7250b0 */
- 	[BRCM_FAMILY_7250B0] = {
--		USB_CTRL_SETUP_SCB1_EN_MASK,
--		USB_CTRL_SETUP_SCB2_EN_MASK,
--		USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
--		0, /* USB_CTRL_SETUP_STRAP_IPP_SEL_MASK */
--		USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_MASK,
--		USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
--		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
--		USB_CTRL_USB_PM_XHC_SOFT_RESETB_VAR_MASK,
--		0, /* USB_CTRL_USB_PM_USB_PWRDN_MASK */
--		0, /* USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IOC_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IPP_MASK */
--		0, /* USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK */
--		0, /* USB_CTRL_USB_PM_SOFT_RESET_MASK */
--		0, /* USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK */
--		0, /* USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK */
--		USB_CTRL_USB_PM_USB20_HC_RESETB_MASK,
--		ENDIAN_SETTINGS, /* USB_CTRL_SETUP ENDIAN bits */
-+		[USB_CTRL_SETUP_SCB1_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB1_EN_MASK,
-+		[USB_CTRL_SETUP_SCB2_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB2_EN_MASK,
-+		[USB_CTRL_SETUP_SS_EHCI64BIT_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT0_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT1_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_MASK,
-+		[USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_SELECTOR] =
-+			USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
-+		[USB_CTRL_USB_PM_XHC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_XHC_SOFT_RESETB_VAR_MASK,
-+		[USB_CTRL_USB_PM_USB20_HC_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_USB20_HC_RESETB_MASK,
-+		[USB_CTRL_SETUP_ENDIAN_SELECTOR] = ENDIAN_SETTINGS,
- 	},
- 	/* 7271a0 */
- 	[BRCM_FAMILY_7271A0] = {
--		0, /* USB_CTRL_SETUP_SCB1_EN_MASK */
--		0, /* USB_CTRL_SETUP_SCB2_EN_MASK */
--		USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
--		USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_MASK,
--		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
--		USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
--		USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
--		USB_CTRL_USB_PM_USB_PWRDN_MASK,
--		0, /* USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IOC_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IPP_MASK */
--		USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK,
--		USB_CTRL_USB_PM_SOFT_RESET_MASK,
--		USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK,
--		USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK,
--		USB_CTRL_USB_PM_USB20_HC_RESETB_VAR_MASK,
--		ENDIAN_SETTINGS, /* USB_CTRL_SETUP ENDIAN bits */
-+		[USB_CTRL_SETUP_SS_EHCI64BIT_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
-+		[USB_CTRL_SETUP_STRAP_IPP_SEL_SELECTOR] =
-+			USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT0_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT1_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_MASK,
-+		[USB_CTRL_USB_PM_BDC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB_PM_XHC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB_PM_USB_PWRDN_SELECTOR] =
-+			USB_CTRL_USB_PM_USB_PWRDN_MASK,
-+		[USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_SELECTOR] =
-+			USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK,
-+		[USB_CTRL_USB_PM_SOFT_RESET_SELECTOR] =
-+			USB_CTRL_USB_PM_SOFT_RESET_MASK,
-+		[USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_SELECTOR] =
-+			USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK,
-+		[USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_SELECTOR] =
-+			USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK,
-+		[USB_CTRL_USB_PM_USB20_HC_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_USB20_HC_RESETB_VAR_MASK,
-+		[USB_CTRL_SETUP_ENDIAN_SELECTOR] = ENDIAN_SETTINGS,
- 	},
- 	/* 7364a0 */
- 	[BRCM_FAMILY_7364A0] = {
--		USB_CTRL_SETUP_SCB1_EN_MASK,
--		USB_CTRL_SETUP_SCB2_EN_MASK,
--		USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
--		0, /* USB_CTRL_SETUP_STRAP_IPP_SEL_MASK */
--		USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_MASK,
--		USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
--		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
--		USB_CTRL_USB_PM_XHC_SOFT_RESETB_VAR_MASK,
--		0, /* USB_CTRL_USB_PM_USB_PWRDN_MASK */
--		0, /* USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IOC_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IPP_MASK */
--		0, /* USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK */
--		0, /* USB_CTRL_USB_PM_SOFT_RESET_MASK */
--		0, /* USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK */
--		0, /* USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK */
--		USB_CTRL_USB_PM_USB20_HC_RESETB_MASK,
--		ENDIAN_SETTINGS, /* USB_CTRL_SETUP ENDIAN bits */
-+		[USB_CTRL_SETUP_SCB1_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB1_EN_MASK,
-+		[USB_CTRL_SETUP_SCB2_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB2_EN_MASK,
-+		[USB_CTRL_SETUP_SS_EHCI64BIT_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT0_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT1_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_MASK,
-+		[USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_SELECTOR] =
-+			USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
-+		[USB_CTRL_USB_PM_XHC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_XHC_SOFT_RESETB_VAR_MASK,
-+		[USB_CTRL_USB_PM_USB20_HC_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_USB20_HC_RESETB_MASK,
-+		[USB_CTRL_SETUP_ENDIAN_SELECTOR] = ENDIAN_SETTINGS,
- 	},
- 	/* 7366c0 */
- 	[BRCM_FAMILY_7366C0] = {
--		USB_CTRL_SETUP_SCB1_EN_MASK,
--		USB_CTRL_SETUP_SCB2_EN_MASK,
--		USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
--		0, /* USB_CTRL_SETUP_STRAP_IPP_SEL_MASK */
--		USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_MASK,
--		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
--		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
--		USB_CTRL_USB_PM_XHC_SOFT_RESETB_VAR_MASK,
--		USB_CTRL_USB_PM_USB_PWRDN_MASK,
--		0, /* USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IOC_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IPP_MASK */
--		0, /* USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK */
--		0, /* USB_CTRL_USB_PM_SOFT_RESET_MASK */
--		0, /* USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK */
--		0, /* USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK */
--		USB_CTRL_USB_PM_USB20_HC_RESETB_MASK,
--		ENDIAN_SETTINGS, /* USB_CTRL_SETUP ENDIAN bits */
-+		[USB_CTRL_SETUP_SCB1_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB1_EN_MASK,
-+		[USB_CTRL_SETUP_SCB2_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB2_EN_MASK,
-+		[USB_CTRL_SETUP_SS_EHCI64BIT_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT0_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT1_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_MASK,
-+		[USB_CTRL_USB_PM_XHC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_XHC_SOFT_RESETB_VAR_MASK,
-+		[USB_CTRL_USB_PM_USB_PWRDN_SELECTOR] =
-+			USB_CTRL_USB_PM_USB_PWRDN_MASK,
-+		[USB_CTRL_USB_PM_USB20_HC_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_USB20_HC_RESETB_MASK,
-+		[USB_CTRL_SETUP_ENDIAN_SELECTOR] = ENDIAN_SETTINGS,
- 	},
- 	/* 74371A0 */
- 	[BRCM_FAMILY_74371A0] = {
--		USB_CTRL_SETUP_SCB1_EN_MASK,
--		USB_CTRL_SETUP_SCB2_EN_MASK,
--		USB_CTRL_SETUP_SS_EHCI64BIT_EN_VAR_MASK,
--		0, /* USB_CTRL_SETUP_STRAP_IPP_SEL_MASK */
--		0, /* USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK */
--		0, /* USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK */
--		0, /* USB_CTRL_SETUP_OC3_DISABLE_MASK */
--		USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
--		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB_PM_USB_PWRDN_MASK */
--		USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK,
--		USB_CTRL_USB30_CTL1_USB3_IOC_MASK,
--		USB_CTRL_USB30_CTL1_USB3_IPP_MASK,
--		0, /* USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK */
--		0, /* USB_CTRL_USB_PM_SOFT_RESET_MASK */
--		0, /* USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK */
--		0, /* USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK */
--		0, /* USB_CTRL_USB_PM_USB20_HC_RESETB_MASK */
--		ENDIAN_SETTINGS, /* USB_CTRL_SETUP ENDIAN bits */
-+		[USB_CTRL_SETUP_SCB1_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB1_EN_MASK,
-+		[USB_CTRL_SETUP_SCB2_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB2_EN_MASK,
-+		[USB_CTRL_SETUP_SS_EHCI64BIT_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SS_EHCI64BIT_EN_VAR_MASK,
-+		[USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_SELECTOR] =
-+			USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
-+		[USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB30_CTL1_USB3_IOC_SELECTOR] =
-+			USB_CTRL_USB30_CTL1_USB3_IOC_MASK,
-+		[USB_CTRL_USB30_CTL1_USB3_IPP_SELECTOR] =
-+			USB_CTRL_USB30_CTL1_USB3_IPP_MASK,
-+		[USB_CTRL_SETUP_ENDIAN_SELECTOR] = ENDIAN_SETTINGS,
- 	},
- 	/* 7439B0 */
- 	[BRCM_FAMILY_7439B0] = {
--		USB_CTRL_SETUP_SCB1_EN_MASK,
--		USB_CTRL_SETUP_SCB2_EN_MASK,
--		USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
--		USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_MASK,
--		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
--		USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
--		USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
--		USB_CTRL_USB_PM_USB_PWRDN_MASK,
--		0, /* USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IOC_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IPP_MASK */
--		USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK,
--		0, /* USB_CTRL_USB_PM_SOFT_RESET_MASK */
--		0, /* USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK */
--		0, /* USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK */
--		USB_CTRL_USB_PM_USB20_HC_RESETB_VAR_MASK,
--		ENDIAN_SETTINGS, /* USB_CTRL_SETUP ENDIAN bits */
-+		[USB_CTRL_SETUP_SCB1_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB1_EN_MASK,
-+		[USB_CTRL_SETUP_SCB2_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB2_EN_MASK,
-+		[USB_CTRL_SETUP_SS_EHCI64BIT_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
-+		[USB_CTRL_SETUP_STRAP_IPP_SEL_SELECTOR] =
-+			USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT0_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT1_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_MASK,
-+		[USB_CTRL_USB_PM_BDC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB_PM_XHC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB_PM_USB_PWRDN_SELECTOR] =
-+			USB_CTRL_USB_PM_USB_PWRDN_MASK,
-+		[USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_SELECTOR] =
-+			USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK,
-+		[USB_CTRL_USB_PM_USB20_HC_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_USB20_HC_RESETB_VAR_MASK,
-+		[USB_CTRL_SETUP_ENDIAN_SELECTOR] = ENDIAN_SETTINGS,
- 	},
- 	/* 7445d0 */
- 	[BRCM_FAMILY_7445D0] = {
--		USB_CTRL_SETUP_SCB1_EN_MASK,
--		USB_CTRL_SETUP_SCB2_EN_MASK,
--		USB_CTRL_SETUP_SS_EHCI64BIT_EN_VAR_MASK,
--		0, /* USB_CTRL_SETUP_STRAP_IPP_SEL_MASK */
--		USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_MASK,
--		USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
--		0, /* USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB_PM_USB_PWRDN_MASK */
--		USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK,
--		0, /* USB_CTRL_USB30_CTL1_USB3_IOC_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IPP_MASK */
--		0, /* USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK */
--		0, /* USB_CTRL_USB_PM_SOFT_RESET_MASK */
--		0, /* USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK */
--		0, /* USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK */
--		USB_CTRL_USB_PM_USB20_HC_RESETB_VAR_MASK,
--		ENDIAN_SETTINGS, /* USB_CTRL_SETUP ENDIAN bits */
-+		[USB_CTRL_SETUP_SCB1_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB1_EN_MASK,
-+		[USB_CTRL_SETUP_SCB2_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SCB2_EN_MASK,
-+		[USB_CTRL_SETUP_SS_EHCI64BIT_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SS_EHCI64BIT_EN_VAR_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT0_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT1_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_MASK,
-+		[USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_SELECTOR] =
-+			USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK,
-+		[USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB_PM_USB20_HC_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_USB20_HC_RESETB_VAR_MASK,
-+		[USB_CTRL_SETUP_ENDIAN_SELECTOR] = ENDIAN_SETTINGS,
- 	},
- 	/* 7260a0 */
- 	[BRCM_FAMILY_7260A0] = {
--		0, /* USB_CTRL_SETUP_SCB1_EN_MASK */
--		0, /* USB_CTRL_SETUP_SCB2_EN_MASK */
--		USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
--		USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_MASK,
--		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
--		USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
--		USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
--		USB_CTRL_USB_PM_USB_PWRDN_MASK,
--		0, /* USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IOC_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IPP_MASK */
--		USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK,
--		USB_CTRL_USB_PM_SOFT_RESET_MASK,
--		USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK,
--		USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK,
--		USB_CTRL_USB_PM_USB20_HC_RESETB_VAR_MASK,
--		ENDIAN_SETTINGS, /* USB_CTRL_SETUP ENDIAN bits */
-+		[USB_CTRL_SETUP_SS_EHCI64BIT_EN_SELECTOR] =
-+			USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK,
-+		[USB_CTRL_SETUP_STRAP_IPP_SEL_SELECTOR] =
-+			USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT0_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT1_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_MASK,
-+		[USB_CTRL_USB_PM_BDC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB_PM_XHC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB_PM_USB_PWRDN_SELECTOR] =
-+			USB_CTRL_USB_PM_USB_PWRDN_MASK,
-+		[USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_SELECTOR] =
-+			USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK,
-+		[USB_CTRL_USB_PM_SOFT_RESET_SELECTOR] =
-+			USB_CTRL_USB_PM_SOFT_RESET_MASK,
-+		[USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_SELECTOR] =
-+			USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK,
-+		[USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_SELECTOR] =
-+			USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK,
-+		[USB_CTRL_USB_PM_USB20_HC_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_USB20_HC_RESETB_VAR_MASK,
-+		[USB_CTRL_SETUP_ENDIAN_SELECTOR] = ENDIAN_SETTINGS,
- 	},
- 	/* 7278a0 */
- 	[BRCM_FAMILY_7278A0] = {
--		0, /* USB_CTRL_SETUP_SCB1_EN_MASK */
--		0, /* USB_CTRL_SETUP_SCB2_EN_MASK */
--		0, /*USB_CTRL_SETUP_SS_EHCI64BIT_EN_MASK */
--		USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
--		USB_CTRL_SETUP_OC3_DISABLE_MASK,
--		0, /* USB_CTRL_PLL_CTL_PLL_IDDQ_PWRDN_MASK */
--		USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
--		USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
--		USB_CTRL_USB_PM_USB_PWRDN_MASK,
--		0, /* USB_CTRL_USB30_CTL1_XHC_SOFT_RESETB_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IOC_MASK */
--		0, /* USB_CTRL_USB30_CTL1_USB3_IPP_MASK */
--		USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK,
--		USB_CTRL_USB_PM_SOFT_RESET_MASK,
--		0, /* USB_CTRL_SETUP_CC_DRD_MODE_ENABLE_MASK */
--		0, /* USB_CTRL_SETUP_STRAP_CC_DRD_MODE_ENABLE_SEL_MASK */
--		0, /* USB_CTRL_USB_PM_USB20_HC_RESETB_MASK */
--		0, /* USB_CTRL_SETUP ENDIAN bits */
-+		[USB_CTRL_SETUP_STRAP_IPP_SEL_SELECTOR] =
-+			USB_CTRL_SETUP_STRAP_IPP_SEL_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT0_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT0_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_PORT1_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_PORT1_MASK,
-+		[USB_CTRL_SETUP_OC3_DISABLE_SELECTOR] =
-+			USB_CTRL_SETUP_OC3_DISABLE_MASK,
-+		[USB_CTRL_USB_PM_BDC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_BDC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB_PM_XHC_SOFT_RESETB_SELECTOR] =
-+			USB_CTRL_USB_PM_XHC_SOFT_RESETB_MASK,
-+		[USB_CTRL_USB_PM_USB_PWRDN_SELECTOR] =
-+			USB_CTRL_USB_PM_USB_PWRDN_MASK,
-+		[USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_SELECTOR] =
-+			USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK,
-+		[USB_CTRL_USB_PM_SOFT_RESET_SELECTOR] =
-+			USB_CTRL_USB_PM_SOFT_RESET_MASK,
- 	},
- };
- 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410041128.tLVDbeJB-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> fs/pidfs.c:121:37: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got struct pidfd_info * @@
+   fs/pidfs.c:121:37: sparse:     expected void const [noderef] __user *from
+   fs/pidfs.c:121:37: sparse:     got struct pidfd_info *
+
+vim +121 fs/pidfs.c
+
+   116	
+   117	static long pidfd_info(struct task_struct *task, struct pid *pid, unsigned long arg)
+   118	{
+   119		struct pidfd_info uinfo = {}, info = {};
+   120	
+ > 121		if (copy_from_user(&uinfo, (struct pidfd_info *)arg, sizeof(struct pidfd_info)))
+   122			return -EFAULT;
+   123		if (uinfo.size > sizeof(struct pidfd_info))
+   124			return -E2BIG;
+   125		if (uinfo.size < sizeof(struct pidfd_info))
+   126			return -EINVAL; /* First version, no smaller struct possible */
+   127	
+   128		if (uinfo.request_mask & ~(PIDFD_INFO_PID | PIDFD_INFO_CREDS | PIDFD_INFO_CGROUPID | PIDFD_INFO_SECURITY_CONTEXT))
+   129			return -EINVAL;
+   130	
+   131		memcpy(&info, &uinfo, uinfo.size);
+   132	
+   133		if (uinfo.request_mask & PIDFD_INFO_PID)
+   134			info.pid = pid_nr_ns(pid, task_active_pid_ns(task));
+   135	
+   136		if (uinfo.request_mask & PIDFD_INFO_CREDS) {
+   137			const struct cred *c = get_task_cred(task);
+   138			if (!c)
+   139				return -ESRCH;
+   140	
+   141			info.uid = from_kuid_munged(current_user_ns(), c->uid);
+   142			info.gid = from_kgid_munged(current_user_ns(), c->gid);
+   143		}
+   144	
+   145		if (uinfo.request_mask & PIDFD_INFO_CGROUPID) {
+   146			struct cgroup *cgrp = task_css_check(task, pids_cgrp_id, 1)->cgroup;
+   147			if (!cgrp)
+   148				return -ENODEV;
+   149	
+   150			info.cgroupid = cgroup_id(cgrp);
+   151		}
+   152	
+   153		if (uinfo.request_mask & PIDFD_INFO_SECURITY_CONTEXT) {
+   154			char *secctx;
+   155			u32 secid, secctx_len;
+   156			const struct cred *c = get_task_cred(task);
+   157			if (!c)
+   158				return -ESRCH;
+   159	
+   160			security_cred_getsecid(c, &secid);
+   161			if (security_secid_to_secctx(secid, &secctx, &secctx_len))
+   162				return -EFAULT;
+   163	
+   164			memcpy(info.security_context, secctx, min_t(u32, secctx_len, NAME_MAX-1));
+   165		}
+   166	
+   167		if (copy_to_user((void __user *)arg, &info, uinfo.size))
+   168			return -EFAULT;
+   169	
+   170		return 0;
+   171	}
+   172	
+
 -- 
-2.44.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
