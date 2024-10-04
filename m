@@ -1,103 +1,107 @@
-Return-Path: <linux-kernel+bounces-349965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71BB98FE01
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:45:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A218E98FE04
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2271F22E31
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:45:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E55BB21311
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B005A13AA2E;
-	Fri,  4 Oct 2024 07:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2573D13A868;
+	Fri,  4 Oct 2024 07:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mRPmirEG"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Y932Q8Wc"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609C07F7CA
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 07:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D5B1BDC8;
+	Fri,  4 Oct 2024 07:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728027908; cv=none; b=VmHFudEdcl8/oaBOZ2KlqUy/tEQH5nfTn+i2OElLuSoDzUmLWEpy9UHKg6TKlZUNk2TcZepUCxxYLUwOtyQ/vaYh0aoDoCyfFcI1iS4hmx94dTabNLmjbOwrZrIaO6vBaQa/fXhmtbZoxoRytwIKMB9xi2GlGKjcTWuRI2V88C4=
+	t=1728028058; cv=none; b=q0rOWmZWp0WHmc+wNOdjb7KjvnXDcnr75Vmk6bfuafLM/CSbEnBgv3Se9ybdj2FFCpq9tPQdBe1pQlh6NsPq2GBRcb4ZTCB/yQnAfArxQ6QTc7vfeTBIN8N0UkfVPkNQnQ1VpK9FiI+/VzbUSaZAe5y5BmjsqRS3orxu6YKG7mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728027908; c=relaxed/simple;
-	bh=MfbTlDMuL+WsRgs+I3YOldQ4c3Kj/sI/ZzyAKzI8PJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hWUWU+VJKgZeIDgj3Kj7xFUZyO73W90cLzwV+3CW4dHfahi85cg5Ua1Dwa+55h2ThkeJ9lgZTt1HDOUPtpXQ8KjcNbyDq4qazY5LVQRdKMPYtjwSsNV2bTUrAZ9z/uq40zt9ipCYJsMukKhy6gJg3SZPsxiGi5WR7naPe7Kl3R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mRPmirEG; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fad0f66d49so29113641fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 00:45:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728027904; x=1728632704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MfbTlDMuL+WsRgs+I3YOldQ4c3Kj/sI/ZzyAKzI8PJM=;
-        b=mRPmirEG9WQVVTMGlxpyyiJ71E1o3czSLN8cjFbc/CEKMwcwYvNvrBEznl1aArrlJT
-         zUNOfw5BwUbp2rWrNn3D85pXPTYTZZUiGnZgfiZgCOnUXZfnY09EXyJxwP1GkkB/PuJm
-         rQEBdfhQWI6mVJOV5MA15NOy1R4VeL9UTwwsWXz27V2pdyVlXHZXYJOZpaMGPWR3WH0T
-         lxd2R5kxP+9oEWM8KjxwU+O4gRXTs16NVB0Bqb9ODds0diY7YxDGp2PnuE20j9sJS+/P
-         0NNfA3td/jJKl+3hgVde/knw4zcc29o34N6d+l7iBgbVv2H/VCkJPD0FQFZURphoL7x5
-         xkUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728027904; x=1728632704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MfbTlDMuL+WsRgs+I3YOldQ4c3Kj/sI/ZzyAKzI8PJM=;
-        b=LlRQ3rCtDFgKMISfGOz5OGit3+qi8HZd584pGdfY/WV5D+2Tz2FLIAMyls/nAJVm6r
-         r8ob8fCJSqHYpcRxLaZVoH37EyQcu6PkZPqwQ03/Z+wyvcUnk3LVdT6MCewKM1tqGWG9
-         7wJ68Ab0EqwStPkXtlJuRbrBuLM2xW4Hg5ktn2v5l7hBZfue85klWqpJo9O6oN4wL2bR
-         k3oh7zSI45T45mKgx7EQDnLiQ1a1KbT0rv1TS+nDXKY1ul57gXRATMwqZaCm4332TykL
-         oLP/LVE1yrPlXZKoIszEk2qEKOyUtz/Y5iiLsfzURHuAwfhInJNDbQPH8Rcau4LKzVPK
-         WLLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGn8ZuWgrJn7wp/S/iHljDPURzTSGsEuBioZ2dvHPyeJW7+/aKD1mLWaizIwsUehacJhJOpzwlCvKMGW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU9PbILytfeBB9AjRYnY1LUN30TRhzjJggqrKf3fY9nQws7pYr
-	gEWAmLuQ0J+iSQq3bTKimjKHIfbJ1EOJKFIlKay8kDc39EHbpCtQNQVUEtMerVJAETirXMwPzcv
-	JSXXWfWGTsdAKhYsYDacLdrWaglSj93E8PN7IdQ==
-X-Google-Smtp-Source: AGHT+IE6irVReFP2ncLXpVBWf5d0/G2Dfqxfwx/uKcOnBdIxnheNH8zcv5Ovuh8vOE6l6RHXoOQLjKbet3msXUEIajQ=
-X-Received: by 2002:a05:651c:2105:b0:2fa:c59d:1ae2 with SMTP id
- 38308e7fff4ca-2faf3c15473mr9424951fa.12.1728027904312; Fri, 04 Oct 2024
- 00:45:04 -0700 (PDT)
+	s=arc-20240116; t=1728028058; c=relaxed/simple;
+	bh=++/KKWzs7prm4yllVHBOfXPL6NRiEkY/fuSjlIooHF4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r5J1PUJ+kziTEINFjIbd+mEmRVY0fLQT7NVXAPDGe+G9tGqBixslnRr4ur1jAxR4j6eaJtdtsvYBp331TyMmBk924IO20lw/BUR8z0dnxrBaq+uovy4RXqmyeATUbJHEzaRtSR3Mkpwy3vWN2WHxOuHbJ6WIHJ+PyZ95sOTudu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Y932Q8Wc; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4947lIPi094496;
+	Fri, 4 Oct 2024 02:47:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728028038;
+	bh=QzkOuFZig08kdm9e97Q1gLZzLJHtWQJG6ARYQos6Ntg=;
+	h=From:To:CC:Subject:Date;
+	b=Y932Q8Wcugj0PAU9s+NEiL+9467Agncq1qj6XHoUMa/rs14wN0sdi2MsQULOr6S4+
+	 WrdGf2JJ8AIxq7uTT3on/QAr890/Y/91It4VjagyNOt8TzCLMFQBCJvttKvR3y6Yi7
+	 I00tHOTAZ6QST3wwsFcfXZsf4Mozs457+NW6LmO4=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4947lIG4005511
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 4 Oct 2024 02:47:18 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 4
+ Oct 2024 02:47:17 -0500
+Received: from fllvsmtp8.itg.ti.com (10.64.41.158) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 4 Oct 2024 02:47:17 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by fllvsmtp8.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4947lHQC031559;
+	Fri, 4 Oct 2024 02:47:17 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4947lGMa025130;
+	Fri, 4 Oct 2024 02:47:16 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: <jiri@resnulli.us>, <aleksander.lobakin@intel.com>, <lukma@denx.de>,
+        <horms@kernel.org>, <robh@kernel.org>, <jan.kiszka@siemens.com>,
+        <dan.carpenter@linaro.org>, <diogo.ivo@siemens.com>,
+        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net-next 0/3] Introduce VLAN support in HSR
+Date: Fri, 4 Oct 2024 13:17:12 +0530
+Message-ID: <20241004074715.791191-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003214746.146207-1-rosenp@gmail.com>
-In-Reply-To: <20241003214746.146207-1-rosenp@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 4 Oct 2024 09:44:52 +0200
-Message-ID: <CACRpkdZ3dG46YxC9_3RmEpH-D0jgn5d35=TwEotsa8KU=qpxng@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: aw9523: use devm_mutex_init
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-gpio@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Oct 3, 2024 at 11:47=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
-e:
+This series adds VLAN support to HSR framework.
+This series also adds VLAN support to HSR mode of ICSSG Ethernet driver.
 
-> Simplifies probe by removing all gotos and removing mutex_destroy from
-> _remove.
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Murali Karicheri (1):
+  net: hsr: Add VLAN CTAG filter support
 
-Patch applied!
+Ravi Gunasekaran (1):
+  net: ti: icssg-prueth: Add VLAN support for HSR mode
 
-As it depended on the patch already in fixes I first cherry-picked
-that patch, I suppose this is one of these few occasions where
-we can allow ourselves to apply the same patch in fixes
-and -next, as it is so small.
+WingMan Kwok (1):
+  net: hsr: Add VLAN support
 
-Git will figure it out textually anyway.
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 45 +++++++++++-
+ net/hsr/hsr_device.c                         | 76 ++++++++++++++++++--
+ net/hsr/hsr_forward.c                        | 19 +++--
+ 3 files changed, 128 insertions(+), 12 deletions(-)
 
-Yours,
-Linus Walleij
+
+base-commit: 6b67e098c9c95bdccb6b0cd2d63d4db9f5b64fbd
+-- 
+2.34.1
+
 
