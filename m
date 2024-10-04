@@ -1,154 +1,144 @@
-Return-Path: <linux-kernel+bounces-350727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1BFC9908B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:08:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40839908B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1E572816FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B9F7283709
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7AD1C3027;
-	Fri,  4 Oct 2024 16:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE4A1AA794;
+	Fri,  4 Oct 2024 16:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="pPcbefJj"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bn9NoN7w"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98F510A24;
-	Fri,  4 Oct 2024 16:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC9D1AA79F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728058131; cv=none; b=WeDc5LVOtSXGUHuNIQjFFs5tMHk3rObSF2CcRY3uaxC+Z61sZ4pFH2mE3N8k/VssZzZjhfsS4pUEch8MaZWEP2M2WtaUROQ1xRnleh8QyXmdlEw0cTJc5XN4qomy7OGitnqRXE7ZoZTHWYX2lvGeZN37jZEU5mtBiNst+J4Gc6o=
+	t=1728058174; cv=none; b=VSknv+TCe0hgOvOHVo86UTG2XWcrgSKlNkvin2yZUqwPnxblBXBF1r2wpc8rkvNdwcQHSGPu5gC/ROoD3G/Gnoai8Sd1suqfszapwG0cPine+wPDb1FH9KDXeQJ1gnbkshEUiiwA4l3OZQ5D1k4Yckwq0mCLyREesQGlZ0QKo3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728058131; c=relaxed/simple;
-	bh=dGQ7Witn8O6kjYqDrprDqyRKEhDoof7f2lKcqEROOnA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=U+F0Zx2gxZMBRc6lVWMqD8BPPLx4Pc7lm8G85GC1Tp0oOw5t179IdAmHKOEl98TtML64M4LBFaRO8glnE9P4lrJqfzIsO44IKHNLShKM2TXZAlWdFJBl7d/WeFJPzPS+xj2654UTSnAjuzgW+Bjry/hHq5nLtcDuQ6TcbOHhl24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=pPcbefJj; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 96E6A20B47;
-	Fri,  4 Oct 2024 18:08:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1728058126;
-	bh=/Y0C0EEPQSM8rb7ufcWWlBjaRsWiR64xGnNPRTAiK5I=; h=From:To:Subject;
-	b=pPcbefJjFcEgc5rUML4/Q1lhiX1XETfN8q2VyAwJ3nwPc7Qj9qEW8ECIgW9AO5vKe
-	 EthhDim8IHHqam98EZubvyLxO53zLA24XtC0dFVDMgG9LlckSr2gZu8wHxmJJ34/Ou
-	 GJbUi57GjUas2lT72AAOsUBjzynjs+ojF0zDZqGzJuGiC2rvZiz6Rx2Jvkja2PNN8o
-	 /M0wRgtTwyOe/nEVjwtJzhtPUwHWj6IgJUuy+OHzWqaV7c8b1wS5v85QXX+S9X6Nwe
-	 J0E+BWLYDCrYv11+SSrf3g1KuN1Ovtavg//kEEf/YcPnzK1X3mOV3pYzSoY62xgFX7
-	 H0ll33Ix+Ff3g==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: arm: fsl: drop usage of Toradex SOMs compatible alone
-Date: Fri,  4 Oct 2024 18:08:42 +0200
-Message-Id: <20241004160842.110079-1-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1728058174; c=relaxed/simple;
+	bh=eoaWatCnhBU62iXtHmx39mSv9OQWXaKw4pJX9ho+iJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G+QUVUQFQuUWM7QQqMvD/x2o74LJQMlyb6+d5ayyB06ZJ16ZACxAmSGDv8BE+OIcR4iS51MzTax62M4psnpHMec3VGWbZ469O9ByGyy6qLW9E25PqJzrh5tO2w+IXPTujqJwRfYCm5yna+M7GgZ9bdqRjxAmWFukmQtFFtUvUek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=bn9NoN7w; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7ae3fcec5feso217932385a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:09:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1728058171; x=1728662971; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=5h8wpPh30s6KF37peScNelcNl3ZFS3xlRdD1aJCpMMs=;
+        b=bn9NoN7wvaqsVKOpRoKBYsxzISiRpBSmr1TXhlV+uNOhsZmeffXquUUomILkUmWQ9t
+         0/M19NiUAvJcICOcxxVewDrxDPXYptUzNRN6xBpE3l7BaRk1VWpAQvG4qbG3rK/1sOOj
+         xSp5F/wNWnwM7Xq/9+2Xdvnqwvrag0dBJzisI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728058171; x=1728662971;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5h8wpPh30s6KF37peScNelcNl3ZFS3xlRdD1aJCpMMs=;
+        b=j0bIX2xr3CQXuYw9TN1jQl/HVX3iyP1kGOTrsOx0TK7IjQPoHQAVi14aRHLyOh9N18
+         V0ZwI5uWsJNXRiJVBfmOifEiD2mkPj+6Xe4nL1YTmfgnYY/78POYSMtrp6KRwtlbVbx0
+         tIU2ukl3LyUG94WsbuJ7kqsLqZf2jtPpNGId8A/diPoiKld8VgXkxt4OZuXV6glOYx7Z
+         uO6vKwJBlumV+VN88v+xPqjPSG1trCUF1/D+gfiBeM+MYl88c1D2AR8jHC5+45yjgnwt
+         T8P2IpqEI7uGvMqzeDHhCANc7zuhZUk0yAqLbjgbvOfqKl7oP7qb+bYL+NymM48/D5qR
+         Grsg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9lDmZ25OiR09t0dcsjgeVhCTaSptfoJIoNyEu1zM7hcL9bLeT+Cxl0nASQUBc1VmWQ9kfCkGK4PQHExk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfc7gIg50/ClGxzVsGETavRO6H/JWVHOLbFppz/8dkKHukRjCk
+	P3+YR/hEMtCC7wrw4cf4n/McOxrEj7+48we9fkLLQlocvEazurn1DWc0K/sEuw==
+X-Google-Smtp-Source: AGHT+IGtCk7ebsbdtPTQyF7KwUl+f/hTvdermQbklRaY7Diuv4J09nixlWJsdMN8MEXs3rPHxFGdUQ==
+X-Received: by 2002:a05:620a:4108:b0:7a9:beaf:ce61 with SMTP id af79cd13be357-7ae6f486860mr569681385a.45.1728058170895;
+        Fri, 04 Oct 2024 09:09:30 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae6b29f0dbsm150110485a.24.2024.10.04.09.09.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 09:09:29 -0700 (PDT)
+Message-ID: <64c13754-79b2-4480-9f97-7987fe097d8c@broadcom.com>
+Date: Fri, 4 Oct 2024 09:09:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: dsa: bcm_sf2: fix crossbar port bitwidth logic
+To: Sam Edwards <cfsworks@gmail.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241003212301.1339647-1-CFSworks@gmail.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20241003212301.1339647-1-CFSworks@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Francesco Dolcini <francesco.dolcini@toradex.com>
+On 10/3/24 14:23, Sam Edwards wrote:
+> The SF2 crossbar register is a packed bitfield, giving the index of the
+> external port selected for each of the internal ports. On BCM4908 (the
+> only currently-supported switch family with a crossbar), there are 2
+> internal ports and 3 external ports, so there are 2 bits per internal
+> port.
+> 
+> The driver currently conflates the "bits per port" and "number of ports"
+> concepts, lumping both into the `num_crossbar_int_ports` field. Since it
+> is currently only possible for either of these counts to have a value of
+> 2, there is no behavioral error resulting from this situation for now.
+> 
+> Make the code more readable (and support the future possibility of
+> larger crossbars) by adding a `num_crossbar_ext_bits` field to represent
+> the "bits per port" count and relying on this where appropriate instead.
+> 
+> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
 
-The Toradex SOMs cannot be used alone without a carrier board, so drop
-the usage of its compatible alone.
-
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
- Documentation/devicetree/bindings/arm/fsl.yaml | 16 ----------------
- 1 file changed, 16 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index b39a7e031177..5f0e8e1cd6fb 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -296,7 +296,6 @@ properties:
-               - technexion,imx6q-pico-pi      # TechNexion i.MX6Q Pico-Pi
-               - technologic,imx6q-ts4900
-               - technologic,imx6q-ts7970
--              - toradex,apalis_imx6q      # Apalis iMX6 Modules
-               - udoo,imx6q-udoo           # Udoo i.MX6 Quad Board
-               - uniwest,imx6q-evi         # Uniwest Evi
-               - variscite,dt6customboard
-@@ -488,7 +487,6 @@ properties:
-               - technexion,imx6dl-pico-pi      # TechNexion i.MX6DL Pico-Pi
-               - technologic,imx6dl-ts4900
-               - technologic,imx6dl-ts7970
--              - toradex,colibri_imx6dl      # Colibri iMX6 Modules
-               - udoo,imx6dl-udoo          # Udoo i.MX6 Dual-lite Board
-               - vdl,lanmcu                # Van der Laan LANMCU board
-               - wand,imx6dl-wandboard     # Wandboard i.MX6 Dual Lite Board
-@@ -718,9 +716,6 @@ properties:
-               - joz,jozacp                # JOZ Access Point
-               - kontron,sl-imx6ull        # Kontron SL i.MX6ULL SoM
-               - myir,imx6ull-mys-6ulx-eval # MYiR Tech iMX6ULL Evaluation Board
--              - toradex,colibri-imx6ull      # Colibri iMX6ULL Modules
--              - toradex,colibri-imx6ull-emmc # Colibri iMX6ULL 1GB (eMMC) Module
--              - toradex,colibri-imx6ull-wifi # Colibri iMX6ULL Wi-Fi / BT Modules
-               - uni-t,uti260b             # UNI-T UTi260B Thermal Camera
-           - const: fsl,imx6ull
- 
-@@ -879,8 +874,6 @@ properties:
-               - technexion,imx7d-pico-hobbit  # TechNexion i.MX7D Pico-Hobbit
-               - technexion,imx7d-pico-nymph   # TechNexion i.MX7D Pico-Nymph
-               - technexion,imx7d-pico-pi      # TechNexion i.MX7D Pico-Pi
--              - toradex,colibri-imx7d         # Colibri iMX7D Module
--              - toradex,colibri-imx7d-emmc    # Colibri iMX7D 1GB (eMMC) Module
-               - zii,imx7d-rmu2            # ZII RMU2 Board
-               - zii,imx7d-rpu2            # ZII RPU2 Board
-           - const: fsl,imx7d
-@@ -950,9 +943,6 @@ properties:
-               - innocomm,wb15-evk         # i.MX8MM Innocomm EVK board with WB15 SoM
-               - kontron,imx8mm-sl         # i.MX8MM Kontron SL (N801X) SOM
-               - kontron,imx8mm-osm-s      # i.MX8MM Kontron OSM-S (N802X) SOM
--              - toradex,verdin-imx8mm     # Verdin iMX8M Mini Modules
--              - toradex,verdin-imx8mm-nonwifi  # Verdin iMX8M Mini Modules without Wi-Fi / BT
--              - toradex,verdin-imx8mm-wifi  # Verdin iMX8M Mini Wi-Fi / BT Modules
-               - prt,prt8mm                # i.MX8MM Protonic PRT8MM Board
-           - const: fsl,imx8mm
- 
-@@ -1085,9 +1075,6 @@ properties:
-               - skov,imx8mp-skov-revb-hdmi # SKOV i.MX8MP climate control without panel
-               - skov,imx8mp-skov-revb-lt6 # SKOV i.MX8MP climate control with 7” panel
-               - skov,imx8mp-skov-revb-mi1010ait-1cp1 # SKOV i.MX8MP climate control with 10.1" panel
--              - toradex,verdin-imx8mp     # Verdin iMX8M Plus Modules
--              - toradex,verdin-imx8mp-nonwifi  # Verdin iMX8M Plus Modules without Wi-Fi / BT
--              - toradex,verdin-imx8mp-wifi  # Verdin iMX8M Plus Wi-Fi / BT Modules
-           - const: fsl,imx8mp
- 
-       - description: Avnet (MSC Branded) Boards with SM2S i.MX8M Plus Modules
-@@ -1223,8 +1210,6 @@ properties:
-         items:
-           - enum:
-               - fsl,imx8qm-mek           # i.MX8QM MEK Board
--              - toradex,apalis-imx8      # Apalis iMX8 Modules
--              - toradex,apalis-imx8-v1.1 # Apalis iMX8 V1.1 Modules
-           - const: fsl,imx8qm
- 
-       - description: i.MX8QM Boards with Toradex Apalis iMX8 Modules
-@@ -1384,7 +1369,6 @@ properties:
-               - fsl,vf610-twr             # VF610 Tower Board
-               - lwn,bk4                   # Liebherr BK4 controller
-               - phytec,vf610-cosmic       # PHYTEC Cosmic/Cosmic+ Board
--              - toradex,vf610-colibri_vf61 # Colibri VF61 Modules
-           - const: fsl,vf610
- 
-       - description: Toradex Colibri VF61 Module on Colibri Evaluation Board
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.39.5
-
+Florian
 
