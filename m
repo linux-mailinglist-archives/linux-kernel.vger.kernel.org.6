@@ -1,96 +1,128 @@
-Return-Path: <linux-kernel+bounces-349773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B694298FB6B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:10:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BB498FB6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEAB31C22A37
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:10:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB952B21D23
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9F528F3;
-	Fri,  4 Oct 2024 00:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5721A17FE;
+	Fri,  4 Oct 2024 00:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5v4guce"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="J1A4bD9R"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E831F1849;
-	Fri,  4 Oct 2024 00:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103631849;
+	Fri,  4 Oct 2024 00:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728000629; cv=none; b=u5N2dxP/81Mgxiy9w3xsAJrZiZgOy9aoaS1IM6o/TEHDTQ9FKG26Xc3m9MhtkRPvlr46P278+yF2+u8LJNlU6at9vpMPJ7gz7PA3QX3RS79MqLBMTNjDtEq2Lyw/nYurukikQPr8H0T57RXHX+2kyg3ctA+dwrqKkblnAbTAFXg=
+	t=1728000792; cv=none; b=GxMI0Aif3ke4IGA7Oem3/+jlbDGN1UDwr6GV/wMKgcOZZmNvgjbtzuqcMHOGOlC49lV5eEHMpawUR57xs44eF3ixtg7nqTFKfc/9QPuDGxCs2KnEzr6NUGOPkNeTKNLhy8lk/WwYvucmEfKsLFnIBzQQVF69G5NNk3ggg+PxyOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728000629; c=relaxed/simple;
-	bh=7l1gmmc/IGZjYE9QCDSMMar+bgB/Tz/DmU2vvKW4gjU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Zl6JUgmEKDAZIgCnEsDZElzqe9Gd9nCBrAMc9SqOxK1Jc7hZDvzQnXIE/+CSsRwpIeOGPLFjecNwwpY5yi+MpYDLuk5WuIPxoE1vztrqAmWLrvXm/ffrFjmvpnyFZv95rNkDcAp67OKq0z8FGES5QEa3BGB8SPG1kxkkoBy1txg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5v4guce; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9110EC4CEC5;
-	Fri,  4 Oct 2024 00:10:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728000628;
-	bh=7l1gmmc/IGZjYE9QCDSMMar+bgB/Tz/DmU2vvKW4gjU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=G5v4gucemcwOyZ1Se+C18+t1KIjN4jmEA2aPyjXXsZksl2SgoCc3yNVXaPt3S80T1
-	 RApXELc2ecMfRnmx+qO/pfobu3tNh6VK23a3ncHPOaScPF7RuQjvGdVB5NPGg74ddG
-	 koN/C8hRSg2ToYpSno6EJxhL7uGfI3b3+FB/zLtXi2KvsbhpmwCMGCX0uIqPt1kiKH
-	 0OORAvxKlttinnEO0/pX9GQ7EEsF7IO6YTJnDsY39TKZTf0ebWfciXX0/O2GZiQcMh
-	 qgJ1gIaCll4/GyuLTuDyFX0BylzkDMyNS9ZG+LJU3MUMn2gV7NJVXi/lkSfvxlRtAa
-	 qnQ48VYdm3Gbg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34D2C3803263;
-	Fri,  4 Oct 2024 00:10:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728000792; c=relaxed/simple;
+	bh=Uf2DyIAPcgBpMm6RGTIKd696N0dyton8J3Ol+EHVsp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=abgaQ3zPB/ALuRUGNzHu4q4N0elZABvyDuLJ0mDTGbmVsMSbsgc9PUdA+qWOe7gg0Wll/W5CM50qn/iy7EZUzoOeH/qqk1iHgCP22vy2f0XpGYVakr6VoNFjavAEhkhHP6jcveMbB5evQwOtsR0OOp7HuaFkp5eaQJAYWUzpNTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=J1A4bD9R; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1728000788;
+	bh=Uf2DyIAPcgBpMm6RGTIKd696N0dyton8J3Ol+EHVsp4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=J1A4bD9RdfZCJjWdfHXeAs/sHyhCzm1THQfI5PbXzaWU5J+qwWVy2cP/j63UBgJ0S
+	 4s8AiyZaFnmXN0a6XVfQg8gClp7xZDkGv1n8ZAP79o9T2ODHxEBcTi/Mk9NaKb+97D
+	 NWNAvl8PM5SStMkwBtEqpimu5oRjJsoE4vrO4mRWRrJPqxb0aH/XHyXSfhrK+4EvEl
+	 HdRVZdyeIrLrJzVTFeQgjYogvhKd4Jf+aCpcTzk5oWYKL6/11Wrg1i9yLe4ZbjMqyf
+	 JnSXT4nHLdzaeWyG8cZeSAaUqj6Pax6t/71UR9meBny54BVBoWiulwtK9ysTUw935K
+	 y6nO4IEAEbzXw==
+Received: from [192.168.18.201] (unknown [198.16.233.254])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKTXN3vqDzBPL;
+	Thu,  3 Oct 2024 20:13:08 -0400 (EDT)
+Message-ID: <a5c1160f-79a4-42ba-97b9-bb7f10ffcb21@efficios.com>
+Date: Thu, 3 Oct 2024 20:11:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next v2 0/2] gve: Link IRQs, queues, and NAPI instances
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172800063204.2038698.8514793410721572832.git-patchwork-notify@kernel.org>
-Date: Fri, 04 Oct 2024 00:10:32 +0000
-References: <20240930210731.1629-1-jdamato@fastly.com>
-In-Reply-To: <20240930210731.1629-1-jdamato@fastly.com>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, pkaligineedi@google.com, horms@kernel.org,
- davem@davemloft.net, edumazet@google.com, hramamurthy@google.com,
- kuba@kernel.org, jeroendb@google.com, pabeni@redhat.com, shailend@google.com,
- willemb@google.com, ziweixiao@google.com, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 6/8] tracing/ftrace: Add might_fault check to syscall
+ probes
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
+ Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
+ Michael Jeanson <mjeanson@efficios.com>
+References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
+ <20241003151638.1608537-7-mathieu.desnoyers@efficios.com>
+ <20241003183649.0290f0d1@gandalf.local.home>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20241003183649.0290f0d1@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 30 Sep 2024 21:07:06 +0000 you wrote:
-> Greetings:
+On 2024-10-04 00:36, Steven Rostedt wrote:
+> On Thu,  3 Oct 2024 11:16:36 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 > 
-> Welcome to v2. The previous revision was an RFC [1].
+>> diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
+>> index 0228d9ed94a3..e0d4850b0d77 100644
+>> --- a/include/trace/trace_events.h
+>> +++ b/include/trace/trace_events.h
+>> @@ -446,6 +446,7 @@ __DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
+>>   static notrace void							\
+>>   trace_event_raw_event_##call(void *__data, proto)			\
+>>   {									\
+>> +	might_fault();							\
 > 
-> This series uses the netdev-genl API to link IRQs and queues to NAPI IDs
-> so that this information is queryable by user apps. This is particularly
-> useful for epoll-based busy polling apps which rely on having access to
-> the NAPI ID.
+> I don't think we want "might_fault()" here, as this is called for every
+> tracepoint that is created by the TRACE_EVENT() macro. That means, there's
+> going to be plenty of locations this gets called at that do not allow faults.
+
+Here is the full context where this line applies:
+
+#undef DECLARE_EVENT_SYSCALL_CLASS
+#define DECLARE_EVENT_SYSCALL_CLASS(call, proto, args, tstruct, assign, print) \
+__DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
+                       PARAMS(assign), PARAMS(print))                    \
+static notrace void                                                     \
+trace_event_raw_event_##call(void *__data, proto)                       \
+{                                                                       \
+         might_fault();                                                  \
+         guard(preempt_notrace)();                                       \
+         do_trace_event_raw_event_##call(__data, args);                  \
+}
+
+Not an issue, since it's only for syscall tracepoints.
+
+Thanks,
+
+Mathieu
+
 > 
-> [...]
+> -- Steve
+> 
+> 
+>>   	guard(preempt_notrace)();					\
+>>   	do_trace_event_raw_event_##call(__data, args);			\
+>>   }
 
-Here is the summary with links:
-  - [net-next,v2,1/2] gve: Map IRQs to NAPI instances
-    https://git.kernel.org/netdev/net-next/c/3017238b60d3
-  - [net-next,v2,2/2] gve: Map NAPI instances to queues
-    https://git.kernel.org/netdev/net-next/c/021f9e671e4a
-
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
