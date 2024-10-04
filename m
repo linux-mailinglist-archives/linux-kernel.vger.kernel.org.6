@@ -1,182 +1,214 @@
-Return-Path: <linux-kernel+bounces-350752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0AB899090F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:24:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14BB99092F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C10FE1C21E0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:24:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04F82B28B43
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD911C75F5;
-	Fri,  4 Oct 2024 16:24:11 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670EE1C75E4;
-	Fri,  4 Oct 2024 16:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0021C82E7;
+	Fri,  4 Oct 2024 16:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKvzX1Xo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A2F1C305B;
+	Fri,  4 Oct 2024 16:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728059051; cv=none; b=en2hEHwvTcC0RE6DynxsCLxFuBozYAC3jbkER+dBmtBmz8+YMkfIBp+Vu6gpGbYTqb3rl6xUHDv4Rpe4ZZtPIRpmm6wZc0QTiq25GN1OlhULXKTiYt6SyI6iPkr+YANbeAr8TdoMTKqsdfP1lE/8Q1p5aWnejXbT8iKS8RRsijg=
+	t=1728059055; cv=none; b=qYm3LHfzhMVzpzDof+2Shl6SyvLmtu5e3fZS6PhB45AvIm8hzPPOSszoUoASxoVQPtuaF7rhK3MTfcQhNbAQdVceJYOFzqdMoIDwTxB2dHNE9RN0EgYGPoDmS0KMHqNKdkSNhyyN275yYeeRFc7MxbCYH0+FAiOQNXKjGHqsUss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728059051; c=relaxed/simple;
-	bh=MIXwu4c46lO6pDES3z40SL2p1LX6813TKrzziANSpO4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=miBlHO8xZ4XJk/HphM8nlVEd8fKH3RYd/lwchE1yFNWT81iO4YMPg633dqKQB/pbcDFaVRnTkiws/C0mssS0wawO+l2s8AHOLAS+lBXSt9NFTWHJaoTr1dSXduIKuGLsZi5Oi6ZXDcqVpV/HN7qaObmNhn2lGyIBScaRTT0ahDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 0A92992009C; Fri,  4 Oct 2024 18:24:01 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 0673C92009B;
-	Fri,  4 Oct 2024 17:24:01 +0100 (BST)
-Date: Fri, 4 Oct 2024 17:24:00 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Arnd Bergmann <arnd@kernel.org>
-cc: Niklas Schnelle <schnelle@linux.ibm.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, 
-    =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-    linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-In-Reply-To: <b59d81ee-04af-4557-9d35-ec2c03fbcbe7@app.fastmail.com>
-Message-ID: <alpine.DEB.2.21.2410041642140.45128@angie.orcam.me.uk>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com> <20240405152924.252598-2-schnelle@linux.ibm.com> <alpine.DEB.2.21.2405230244140.1257@angie.orcam.me.uk> <ef2912910d006c573324bcf063cb76e843dc8267.camel@linux.ibm.com> <alpine.DEB.2.21.2410011707550.45128@angie.orcam.me.uk>
- <7bcec0eb88c3891d23f5c9f224e708e4a9bb8b89.camel@linux.ibm.com> <alpine.DEB.2.21.2410021632150.45128@angie.orcam.me.uk> <84bbda13-ded1-4ada-a765-9d012d3f4abd@app.fastmail.com> <alpine.DEB.2.21.2410022305040.45128@angie.orcam.me.uk>
- <b59d81ee-04af-4557-9d35-ec2c03fbcbe7@app.fastmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1728059055; c=relaxed/simple;
+	bh=hVvLps8cKyzFGZExjbnrb234A3fMUPEOtwAa17AqzdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s9qgQ+ciAnuydrsw3QygyV9/g/ey07Tkpmfvfex7THbc6RAmXGmc+LgIAeZiTKNFml/2ZZ4xMu5qsJFjEC8ovRuTshd4P5YVToiCFGUAitj/0TyjysxiNV/960JBoZL70wLfgOcz7QQAAzcAocxcqDE/YM6vvZnwQS4PBwrw+jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKvzX1Xo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800DCC4CEC6;
+	Fri,  4 Oct 2024 16:24:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728059055;
+	bh=hVvLps8cKyzFGZExjbnrb234A3fMUPEOtwAa17AqzdA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uKvzX1Xo2EggaHvvT46eUWVsEr55f6J5csr/HrC68ln02BXwhOzBbnJ3uRAgUP88N
+	 c4mUrJaCwVTLI1LD8W3fFuqDBDW8hEdHi8ch8vfFo+8O7Vkz57SBvS50/CwwhK2bEw
+	 ZonTI1mn82qfXC4GXh6Pja4xdaXSr92qqxOymx6yseY0Bx66XJVbplTiBXmCSMshaV
+	 PfEWwvC9oDCSN4HZ8yK3BZLUqVZDoWz1ZiO/aplXKLVfCWIPRedhx8Eqq9lAiDWLZs
+	 4f3UfL+EzhzRnM0wr1iqPDBlx4r4MeYvkni6a4gBvX6pWQvt9J8YtW2Mf/NkzVP1gt
+	 AHFixd3s7FWsA==
+Date: Fri, 4 Oct 2024 17:24:11 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] dt-bindings: arm: fsl: drop usage of Toradex SOMs
+ compatible alone
+Message-ID: <20241004-enforcer-absently-e3a056284991@spud>
+References: <20241004160842.110079-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="beB6SG7Y976RyMgX"
+Content-Disposition: inline
+In-Reply-To: <20241004160842.110079-1-francesco@dolcini.it>
 
-On Fri, 4 Oct 2024, Arnd Bergmann wrote:
 
-> >  It can be worse than that.  Part of my confusion with the defxx driver 
-> > trying to do port I/O with my POWER9 system came from the mapping actually 
-> > resulting in non-NULL invalid pointers, dereferencing which caused a flood 
-> > of obscure messages produced to the system console by the system firmware:
-> >
-> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
-> > IPMI: dropping non severe PEL event
-> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
-> > IPMI: dropping non severe PEL event
-> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
-> > IPMI: dropping non severe PEL event
-> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
-> > IPMI: dropping non severe PEL event
-> > [...]
-> >
-> > from which it was all but obvious that they were caused by an attempt to 
-> > use PCI port I/O with a system lacking support for it.
-> 
-> Ah, that's too bad. I think this is a result of the patch that
-> Michael did to shut up the NULL pointer warning we get, see
-> be140f1732b5 ("powerpc/64: Set _IO_BASE to POISON_POINTER_DELTA
-> not 0 for CONFIG_PCI=n"). I really wish we could have finished
-> Niklas' series earlier to avoid this.
+--beB6SG7Y976RyMgX
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- That was back in 2020 (5.9.0), so long before be140f1732b5, and it's a 
-production system, so I don't want to fiddle with it beyond necessity:
+On Fri, Oct 04, 2024 at 06:08:42PM +0200, Francesco Dolcini wrote:
+> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+>=20
+> The Toradex SOMs cannot be used alone without a carrier board, so drop
+> the usage of its compatible alone.
 
-$ uptime
- 16:53:27 up 466 days,  9:49,  5 users,  load average: 0.14, 0.12, 0.09
-$ 
+FYI, alot of what you're removing here appears in the $som.dtsi files.
+I don't think that matters at all, since the dtsi files need to be
+included somewhere - but figured I'd point it out in case the platform
+maintainer for fsl cares.
 
- Essentially defxx has this code (not changed much since, except that 
-`dfx_use_mmio' is now always true for PCI):
+>=20
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 16 ----------------
+>  1 file changed, 16 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentati=
+on/devicetree/bindings/arm/fsl.yaml
+> index b39a7e031177..5f0e8e1cd6fb 100644
+> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> @@ -296,7 +296,6 @@ properties:
+>                - technexion,imx6q-pico-pi      # TechNexion i.MX6Q Pico-Pi
+>                - technologic,imx6q-ts4900
+>                - technologic,imx6q-ts7970
+> -              - toradex,apalis_imx6q      # Apalis iMX6 Modules
 
-	if (!dfx_use_mmio)
-		region = request_region(bar_start[0], bar_len[0],
-					bdev->driver->name);
-	if (!region) {
-		dfx_register_res_err(print_name, dfx_use_mmio,
-				     bar_start[0], bar_len[0]);
-		err = -EBUSY;
-		goto err_out_disable;
-	}
-	/* ... */
-	if (dfx_use_mmio) {
-		/* ... */
-	} else {
-		bp->base.port = bar_start[0];
-		dev->base_addr = bar_start[0];
-	}
+This one is in arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi
 
-so whatever came out of BAR[1]:
+>                - udoo,imx6q-udoo           # Udoo i.MX6 Quad Board
+>                - uniwest,imx6q-evi         # Uniwest Evi
+>                - variscite,dt6customboard
+> @@ -488,7 +487,6 @@ properties:
+>                - technexion,imx6dl-pico-pi      # TechNexion i.MX6DL Pico=
+-Pi
+>                - technologic,imx6dl-ts4900
+>                - technologic,imx6dl-ts7970
+> -              - toradex,colibri_imx6dl      # Colibri iMX6 Modules
 
-pci 0031:02:04.0: [1011:000f] type 00 class 0x020200
-pci 0031:02:04.0: reg 0x10: [mem 0x620c080020000-0x620c08002007f]
-pci 0031:02:04.0: reg 0x14: [io  0x0000-0x007f]
-pci 0031:02:04.0: reg 0x18: [mem 0x620c080030000-0x620c08003ffff]
-pci 0031:02:04.0: BAR0 [mem size 0x00000080]: requesting alignment to 0x10000
+This one appears in arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi
 
-was supplied to `inl'/`outl' and wreaked havoc.
+>                - udoo,imx6dl-udoo          # Udoo i.MX6 Dual-lite Board
+>                - vdl,lanmcu                # Van der Laan LANMCU board
+>                - wand,imx6dl-wandboard     # Wandboard i.MX6 Dual Lite Bo=
+ard
+> @@ -718,9 +716,6 @@ properties:
+>                - joz,jozacp                # JOZ Access Point
+>                - kontron,sl-imx6ull        # Kontron SL i.MX6ULL SoM
+>                - myir,imx6ull-mys-6ulx-eval # MYiR Tech iMX6ULL Evaluatio=
+n Board
+> -              - toradex,colibri-imx6ull      # Colibri iMX6ULL Modules
+> -              - toradex,colibri-imx6ull-emmc # Colibri iMX6ULL 1GB (eMMC=
+) Module
+> -              - toradex,colibri-imx6ull-wifi # Colibri iMX6ULL Wi-Fi / B=
+T Modules
+>                - uni-t,uti260b             # UNI-T UTi260B Thermal Camera
+>            - const: fsl,imx6ull
+> =20
+> @@ -879,8 +874,6 @@ properties:
+>                - technexion,imx7d-pico-hobbit  # TechNexion i.MX7D Pico-H=
+obbit
+>                - technexion,imx7d-pico-nymph   # TechNexion i.MX7D Pico-N=
+ymph
+>                - technexion,imx7d-pico-pi      # TechNexion i.MX7D Pico-Pi
+> -              - toradex,colibri-imx7d         # Colibri iMX7D Module
+> -              - toradex,colibri-imx7d-emmc    # Colibri iMX7D 1GB (eMMC)=
+ Module
+>                - zii,imx7d-rmu2            # ZII RMU2 Board
+>                - zii,imx7d-rpu2            # ZII RPU2 Board
+>            - const: fsl,imx7d
+> @@ -950,9 +943,6 @@ properties:
+>                - innocomm,wb15-evk         # i.MX8MM Innocomm EVK board w=
+ith WB15 SoM
+>                - kontron,imx8mm-sl         # i.MX8MM Kontron SL (N801X) S=
+OM
+>                - kontron,imx8mm-osm-s      # i.MX8MM Kontron OSM-S (N802X=
+) SOM
+> -              - toradex,verdin-imx8mm     # Verdin iMX8M Mini Modules
+> -              - toradex,verdin-imx8mm-nonwifi  # Verdin iMX8M Mini Modul=
+es without Wi-Fi / BT
+> -              - toradex,verdin-imx8mm-wifi  # Verdin iMX8M Mini Wi-Fi / =
+BT Modules
+>                - prt,prt8mm                # i.MX8MM Protonic PRT8MM Board
+>            - const: fsl,imx8mm
+> =20
+> @@ -1085,9 +1075,6 @@ properties:
+>                - skov,imx8mp-skov-revb-hdmi # SKOV i.MX8MP climate contro=
+l without panel
+>                - skov,imx8mp-skov-revb-lt6 # SKOV i.MX8MP climate control=
+ with 7=E2=80=9D panel
+>                - skov,imx8mp-skov-revb-mi1010ait-1cp1 # SKOV i.MX8MP clim=
+ate control with 10.1" panel
+> -              - toradex,verdin-imx8mp     # Verdin iMX8M Plus Modules
+> -              - toradex,verdin-imx8mp-nonwifi  # Verdin iMX8M Plus Modul=
+es without Wi-Fi / BT
+> -              - toradex,verdin-imx8mp-wifi  # Verdin iMX8M Plus Wi-Fi / =
+BT Modules
+>            - const: fsl,imx8mp
+> =20
+>        - description: Avnet (MSC Branded) Boards with SM2S i.MX8M Plus Mo=
+dules
+> @@ -1223,8 +1210,6 @@ properties:
+>          items:
+>            - enum:
+>                - fsl,imx8qm-mek           # i.MX8QM MEK Board
+> -              - toradex,apalis-imx8      # Apalis iMX8 Modules
+> -              - toradex,apalis-imx8-v1.1 # Apalis iMX8 V1.1 Modules
 
- First of all I think `request_region', etc. ought to fail in the first 
-place with non-port-I/O systems: why does a request for a resource that 
-cannot be satisfied succeed?  It would have already solved the issue with 
-defxx, making the driver gracefully fail to register the device.  I don't 
-know if this has been fixed since.
+These two appear in arch/arm64/boot/dts/freescale/imx8qm-apalis.dtsi and
+the v1.1 equivalent.
 
- Second, rather than relying on a magic mapping in the physical space 
-causing a bus error (unless you are absolutely sure it is going to work in 
-100% cases), I think it would make sense to make port I/O accessors call 
-BUG_ON(no_port_io) explicitly for platforms where it is only known at run 
-time whether PCI/e port I/O is available or not.  Port I/O is the opposite 
-of performance already, so a couple of extra instructions will be lost in 
-the latency and at least POWER has conditional traps, so there'd be no 
-branch penalty.
+>            - const: fsl,imx8qm
+> =20
+>        - description: i.MX8QM Boards with Toradex Apalis iMX8 Modules
+> @@ -1384,7 +1369,6 @@ properties:
+>                - fsl,vf610-twr             # VF610 Tower Board
+>                - lwn,bk4                   # Liebherr BK4 controller
+>                - phytec,vf610-cosmic       # PHYTEC Cosmic/Cosmic+ Board
+> -              - toradex,vf610-colibri_vf61 # Colibri VF61 Modules
 
-> >  Well, virtually all non-x86 systems continue supporting PCI/e port I/O 
-> > via a suitably decoded CPU-side MMIO window, so I think coming across one 
-> > that doesn't can still be a nasty surprise even in 2024.  For instance 
-> > I've been happily using a PC parallel port PCIe option card, one of the 
-> > very few interfaces if not the only one remaining that have not ever seen 
-> > an MMIO variant, with my RISC-V hardware, newer than said POWER9 system.
-> >
-> >  So far it's been the s390 and a couple of POWER system implementations 
-> > that have support for PCI/e port I/O removed.  Have I missed anything?
-> 
-> I meant PCIe cards with I/O space here, not host bridges. I know you
-> have a lot of them, but what I've heard from Arm platform maintainers
-> is that they tend to struggle finding any PCIe cards to test their
-> hsot bridge drivers on, and I expect that a lot of them are actually
-> broken because they have never been tested and just copied the
-> implementation badly from some other driver.
+And this one is in arch/arm/boot/dts/nxp/vf/vf610-colibri.dtsi.
 
- I would expect serial ports to be the most common PCIe options still 
-using port I/O.  Sadly OxSemi was acquired and their line of devices, 
-which support MMIO, cancelled at one point and my observations seem to 
-indicate that what is still manufactured uses port I/O (correct me if I'm 
-wrong please).  Last time I checked OxSemi-based option cards were still 
-available though, but one may have to check with the supplier as to 
-whether they have been configured for MMIO or port I/O, as they're not 
-dual-mapped.
+>            - const: fsl,vf610
+> =20
+>        - description: Toradex Colibri VF61 Module on Colibri Evaluation B=
+oard
+> --=20
+> 2.39.5
+>=20
 
-> I think the only new PCIe devices you can find today that still use
-> I/O space are ones with compatibility registers for IBM PC style
-> hardware (vga, uart, parport), but most users would never have used
-> one of those and instead use the native register interface of their
-> GPU (on non-x86), USB-serial and no parport. Other devices that
-> needed I/O space never worked on PCIe anyway because of the lack
-> of ISA style DMA.
+--beB6SG7Y976RyMgX
+Content-Type: application/pgp-signature; name="signature.asc"
 
- I think serial port options are the most likely devices still in use, 
-given that UARTs continue being widely used in industrial applications.  
-Depending on application a USB serial adapter may or may not be suitable 
-to interface those.
+-----BEGIN PGP SIGNATURE-----
 
-> There are also a lot of Arm systems that have no I/O space support at
-> all, such as the Apple M2 I'm using at the moment.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwAWqwAKCRB4tDGHoIJi
+0kxuAQC5OOkPjVSRKD0SauqoX7AQDn6WPrBkuhYmLoJ+Ge4bVgEAjklWkyA34mBv
+/jVW0SLGeZIAeBzJL0F6+bAa3mR7wAg=
+=Qolo
+-----END PGP SIGNATURE-----
 
- Thanks for letting me know.  Is it AArch64 only that has no port I/O 
-support in the PCIe root complex nowadays, or is it 32-bit ARM as well?
-
-  Maciej
+--beB6SG7Y976RyMgX--
 
