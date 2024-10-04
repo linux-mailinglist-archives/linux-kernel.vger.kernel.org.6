@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-349883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E8698FCAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:11:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2919998FCC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F6761F235C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:11:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 860E1B22766
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04A24D8C1;
-	Fri,  4 Oct 2024 04:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80774DA04;
+	Fri,  4 Oct 2024 04:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="saJifZQZ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="XmdwPeRc"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4064963C;
-	Fri,  4 Oct 2024 04:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355CF43ADE;
+	Fri,  4 Oct 2024 04:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728015113; cv=none; b=uT8b9l61XoLrwg7MLGoo5+aASZPnCnATFn7/ZJkQvWAwaBF7yTzjYVKCwIOgc3WUubqHUw2BBvuIheXokDfYmnDhxpEL9501qartfMDUISOc26mBfjBgMxDbpfKD7BQ8URl2fDu+sk8XPxmLL4tlnDQvbmlQUX8Lo/CbmdsiEsw=
+	t=1728017141; cv=none; b=P6RAJ7H4Qio6oIpg0hIrso1/165e6hYKg5OKpQmogbdnTFzlJP4JBLx9LZpLVI31s9nknuP5peGynwcfMkefJPc7Qtk1IRGoI222E0bwZni9mblmHtBS7luLSMU37syGVuyT3W0008sf7AWr7e4gnsq3NnHbSAIlJG5Q9Uzlgp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728015113; c=relaxed/simple;
-	bh=MgTVqtBlJXjWxKPbn0IZKf6SX3fSkLXskHoz1Fa8XIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EQKUd64wWDPc15OC2zOcIQRRSUdoPmgb3SRyTY5gy5nKztOLkzCjPJ6c1EIDE62vU7gSrjAwhG3hsd02Z61/V3UASnzcEDADvG2aXUmQBmJZNT9TX3YzeHERWUjGpBrYLOKXbHpk0Rdg4r7E2lKui8Kh+pg6XtYV68A7VCh/eNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=saJifZQZ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728015107;
-	bh=C8X3wp19MhYN6j9HIQkJ3k0aYHJRnUwd2WunUFnqad4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=saJifZQZbupn+qOOs5IQJ/PQHFdQZOGdUL7YHEfmCuw7mo3e+lpTO4STtNugYuh1r
-	 ixiY7YP1O1hDbWEQxeRrfWYqsWaLKEANHerGteYTo2fVPf/1IfCTgJoEkRjvD2ucER
-	 oANpf4yqoyQvYMtJFvbRNrx3Y/tMgoD9Es0G1qhW3wYB2FN3XPP/Z1XRfgieQQ4F7C
-	 1c0vTHHw4Fr+siHXQaf+OKfMEZoGc8/M9fh0rVLZ977CoRd6/NjKob71WwXktwKHOu
-	 LsOkdrvPyW+83Iq5DQPrfiW6gLq+cB55MbCFM0gGfcYBMg4wuS3rmzf/y/RW9ZOvT6
-	 bTiKmTOK4DPRQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XKZqk4JGgz4x9G;
-	Fri,  4 Oct 2024 14:11:46 +1000 (AEST)
-Date: Fri, 4 Oct 2024 14:11:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Danilo Pereira <dpereira@lkcamp.dev>, Gabriela Bittencourt
- <gbittencourt@lkcamp.dev>, Pedro Orlando <porlando@lkcamp.dev>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the kunit-next tree
-Message-ID: <20241004141146.3ce262b1@canb.auug.org.au>
+	s=arc-20240116; t=1728017141; c=relaxed/simple;
+	bh=hLxLxxqcH20B8NE8c4LJhTZCLM7EwOlW3EAyKKY2aYs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=muaYgTyquVKYYW9A571g3W5mJn2AmZPyo2uoeeeWRZ8tomJob8ct6zn9gSsfwsqFIrccgbDZ1ekEZcgQ0Y9kDNzPadz0yhnjHiAgMAmdhPcBAWOt49blCMdHCgIi1JUjQuCfLFMKgSYIVzwb6DAVQXAkVe61ufPOPjE/8+I4Nmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=XmdwPeRc; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4944jLkT5899102, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1728017121; bh=hLxLxxqcH20B8NE8c4LJhTZCLM7EwOlW3EAyKKY2aYs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=XmdwPeRccvSSI0RVPFfQ5FRciKos5hhsxdnbopYUjl3zYaS2QRCTheDmpVdd93dzS
+	 kJ0rhJFxA5xHYNtd3gIJgnTsb7hJs4cDNKKoZAArC/m0R0cRnAZvRLxJ+vHSGZrJXz
+	 44iXL4wg8HHU0sAoqtF330WufcRyl+aLzaG0T/sPyFDVt+BEnt+mZ3bHrbn346LQcC
+	 Nxaaw4JWhaTkpr27iLu1qbGAXTHU3bPpgdEUTb39fV/Qq1dKsSzVNlKCXHe2D69sju
+	 n3J/hCvAzyuH1s0dxG9PJuY/JBlh30X/nKkyUjRusvsK4rG4KE+VMISaVDorjS32tj
+	 GjLEp869hTrLA==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.05/5.92) with ESMTPS id 4944jLkT5899102
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 4 Oct 2024 12:45:21 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 4 Oct 2024 12:13:42 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 4 Oct 2024 12:13:42 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
+ RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
+ 15.01.2507.035; Fri, 4 Oct 2024 12:13:42 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Alessandro Zanni <alessandro.zanni87@gmail.com>,
+        "kvalo@kernel.org"
+	<kvalo@kernel.org>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+        "anupnewsmail@gmail.com" <anupnewsmail@gmail.com>
+Subject: RE: [PATCH] wifi: rtw89: wow: Add unlock mutex before to return
+Thread-Topic: [PATCH] wifi: rtw89: wow: Add unlock mutex before to return
+Thread-Index: AQHbE+I9QVaDgaDOqkyKjaFSL02uQLJ1/uyA
+Date: Fri, 4 Oct 2024 04:13:42 +0000
+Message-ID: <61b75a0d3b7047bb93c4abfa7de8c046@realtek.com>
+References: <20241001091320.38687-1-alessandro.zanni87@gmail.com>
+In-Reply-To: <20241001091320.38687-1-alessandro.zanni87@gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/a_2bMlQPhEsExZ=HF+cmP1q";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
---Sig_/a_2bMlQPhEsExZ=HF+cmP1q
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Alessandro Zanni <alessandro.zanni87@gmail.com> wrote:
+> In error handling code for "ieee80211_gtk_rekey_add failed", release
+> the mutex before to return.
+>=20
+> Found with Coccinelle static analisys tool,
+> script: https://coccinelle.gitlabpages.inria.fr/website/rules/mut.cocci
+>=20
+> Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+> ---
+>  drivers/net/wireless/realtek/rtw89/wow.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw89/wow.c b/drivers/net/wirel=
+ess/realtek/rtw89/wow.c
+> index 86e24e07780d..8045acb27cf9 100644
+> --- a/drivers/net/wireless/realtek/rtw89/wow.c
+> +++ b/drivers/net/wireless/realtek/rtw89/wow.c
+> @@ -624,6 +624,7 @@ static struct ieee80211_key_conf *rtw89_wow_gtk_rekey=
+(struct rtw89_dev *rtwdev,
+>         kfree(rekey_conf);
+>         if (IS_ERR(key)) {
+>                 rtw89_err(rtwdev, "ieee80211_gtk_rekey_add failed\n");
+> +               mutex_unlock(&rtwdev->mutex);
+>                 return NULL;
+>         }
 
-Hi all,
+The driver mutex is held across this function. Only unlock before calling=20
+ieee80211_gtk_rekey_add() and lock after that, because the function enters
+driver again and lock mutex again causing deadlock.=20
 
-After merging the kunit-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Thus this Coccinelle finding is false alarm. NACK this patch.=20
 
-ERROR: modpost: "utf8nlen" [fs/unicode/tests/utf8_kunit.ko] undefined!
-ERROR: modpost: "utf8ncursor" [fs/unicode/tests/utf8_kunit.ko] undefined!
-ERROR: modpost: "utf8byte" [fs/unicode/tests/utf8_kunit.ko] undefined!
-ERROR: modpost: "utf8version_is_supported" [fs/unicode/tests/utf8_kunit.ko]=
- undefined!
 
-Caused by commit
-
-  94d8a0976d2d ("unicode: kunit: refactor selftest to kunit tests")
-
-I have used the kunit-next tree from next-20241003 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/a_2bMlQPhEsExZ=HF+cmP1q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb/awIACgkQAVBC80lX
-0GxFTwf+IUm5/TfcPcVqNuPGAhJVvYVMRuWAidG0PxMHKD4oxu42+Sln/XzQXWfv
-vZldAH0bCQstq0RJGLczRKlrMGnPGiDPwg/s6y57O2kWuRWjuwaL0POSJNOhC5cM
-jm1cT6RMSTv5gMA8XQllGfDJ/nE9Om5/n6p6wunxll4y1Ayoy4fHlQGnYh2J8z45
-j38U7RmP8Ip0YQjetCMdAvTTY2Tz4XkjkEDoM2Z6GK+kLat3iBgKj8iiL+rkDaVj
-MEiuDUs6SWgEGbNs7JRiz85xX0SO4JmDy1AS2FY4VrWyRKK4XgPQwkQXCKflQ00B
-guwyp/8/dta10qrGSd9eTnazwtH4iA==
-=Sj5B
------END PGP SIGNATURE-----
-
---Sig_/a_2bMlQPhEsExZ=HF+cmP1q--
 
