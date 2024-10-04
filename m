@@ -1,126 +1,126 @@
-Return-Path: <linux-kernel+bounces-350213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BEF990197
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:50:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD4EE99019B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2D92820E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15C2D1C21E47
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED91156F55;
-	Fri,  4 Oct 2024 10:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05352179BB;
+	Fri,  4 Oct 2024 10:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="DrSOV8v9"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GdOo/AxX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7ACA146D65
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD0013AD03
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728039009; cv=none; b=B0poCxGBdO1nd3DTh5H/u6bRX2kj0M96UNoIyvC2zrKuW9xERtY1+jkb+8IT2uK639vidBl8sxBPNHF+E/wIS1MInZNoonnrWj0aUm6Lh9R/MVDeIJU+bGWQCH+HnrvQjLstuMvOUbBJzUKjlJg7zHQAlzMVg78Cf7ffnuUFgBI=
+	t=1728039047; cv=none; b=b97mVIRR3b6IqelTpOZl4H6SX3tG5Le/0mvfg/ja87uYwPoDsxQYnvjtMP/BrX2Kjh+tMw4w4GY2jrzNHIbFq+SSDDgN2EgOHxcxgM72hvAiuZ7fLhRh72qKXqP0Ere3rHeaA0TVIPRbkTW15k08UF1QzhA7sGoSecFZ/tURtSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728039009; c=relaxed/simple;
-	bh=xEusqPbHWqC2kSvOa0CNTBI7KMX/dFPG15n+u2klxls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pXFLKpErKFsxe0D6JPahi3dfZd9SJuOVMD5hChkvDcGqAcQygBdlZ6hhWILMSCtlKO+iYfsBWd7arygOXhkCfjA7Q4TwANoXCTDdg1ThEllhzEyH5iWfNw9lB0SIYjdRGtUaR+h+J6iyyETxX8F6ZdmEY7J+k5JrMiadxydknzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=DrSOV8v9; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e03981dad2so1775159b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 03:50:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1728039006; x=1728643806; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ywSS2L490J8CU6HcXGs1TjYnaQVhnORicV0t1QQIhzc=;
-        b=DrSOV8v97XvumGn5kHUJgA8MaOlUWIbaw+Ktv/H+U/ss/oiZi7xQSZJzZL/pKUY3Gb
-         T4pXWd01O0MIBFcYWPrNsy24NgnVfTDIE9QJBNEM5vuNoOTrqQcn8zJ81BHvPm4rTlyk
-         zY4oH/3z/7vBBhxH62keek9azUrTNHs3p04S70N77PxZE2tu4X2nsmz8nDTcoO1ZLr1h
-         J3loSpqm9f0YGg2t0scvVonMBIjYeWYQmolFlq2LoIg1pelpHzGNEf2Qx97QYdZlZGMF
-         N2OId7Kw51nEPhDimsshT7+8ZMV3krHQSRy1Rxl013ILvaizcWXFoK6cu5Nz58se6Atq
-         Yp7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728039006; x=1728643806;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ywSS2L490J8CU6HcXGs1TjYnaQVhnORicV0t1QQIhzc=;
-        b=DnnQ0FCKe1QgujK8BE9coGPIUhzScUOn2XA3Iq2EMTqC57oyLm3K3gslRoxJiZfTkK
-         nJT967G9c+7SSFJRhC6dTXKkYGzxAAswJfgCpXVis2J8UZW4ziOPRVwDjIa9Ia80BUFv
-         fpiIdDpAJKvWDS7Z+Upo93MnxK3pVtnZh5TE0WwruGd28vgPPWzJ0OnJYR5MzrDNof7s
-         NRWlld+lJY5Gds7XZYvUEjWakcCq8Zt/u482s3MoKlvYFEWhgMi01HzC9kLxa21UPyQS
-         AK04F/73VbZvf/15AsjOMlWjCbeL7VXyJD7kOpdfYpoggS4wdkhiXD3eSzx8buMOSIf9
-         R/9w==
-X-Gm-Message-State: AOJu0YxPtAHh6v7hTKttL1iTNM3ClWp2C47WMaPPZb1NP34+y8etpb2z
-	tuguPjO7+QEG040TGv3YHnAejOceCDjxOwD+fxMK3CeNIZzfAXTp4s30+3uaIty6awrAbZpQAFJ
-	NNAgS379QrhBFgTZSip/om02vedlnKDU7CJnfkfBH7P2qXwkK6vo=
-X-Google-Smtp-Source: AGHT+IFdS1NgCgffh0R0p2aEd2ZRC4hGoiJ1ekyWkNR4iWURqjLghfq2K21CKe2rjB4nMhlYIqLz4cS31CYnPsoOl4o=
-X-Received: by 2002:aca:1118:0:b0:3e3:b291:833e with SMTP id
- 5614622812f47-3e3ba1adb0dmr2801841b6e.9.1728039006554; Fri, 04 Oct 2024
- 03:50:06 -0700 (PDT)
+	s=arc-20240116; t=1728039047; c=relaxed/simple;
+	bh=r6rL3L5eTw5B0T8Ujpsb9LXOrepEYcMhL1hmLv1gie4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cw8eTxVADSwId0qXNoSz7UViY/DdoV1CHVpcgsfZK02eG1vhfJ186SbXZONFaw9mTTFZgTW5qTgKiw/FFg3bs/6K4UlfIfrjMQjWuz/A98C3uA8wFF/qWnKyRvfvbwEoLnEaDDXXAXUZmNHeP35KmAf+mIowf/viOLCmHxQVjYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GdOo/AxX; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728039046; x=1759575046;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=r6rL3L5eTw5B0T8Ujpsb9LXOrepEYcMhL1hmLv1gie4=;
+  b=GdOo/AxX9nSQCoCbtRCTn2kaMOMfV2VhtEtsGwnkSog9SqSMzVqgKJhT
+   3oChd6aeh8yqfU/4w1zlEka5kU535/3+XPPkFvkLVFl9I1XTmvAjwgWoz
+   crGH6IP1bzKhNUpgJDOk+Bbzh3yzEf2X7MUK+8H1Tc6tefFOPcL5cpfnp
+   2s5+tC/mdV6J3+rwfff9SdVawkmurkZ8yZJLlEtErN3oFjkUeg0SDYj7y
+   D40KeaAvh3mvyFgwpwSR54k46CzLAMVBCSNe1G+BDQ06EhGw9X1zmSPTZ
+   +MB4432doI0ld/hpLRzw87faAfCKkfpwK/7RGb3yQ+3YFnkW3zfsgqS6n
+   w==;
+X-CSE-ConnectionGUID: 1gPdD9cISDCIrMutl90Y+g==
+X-CSE-MsgGUID: 6zEzzXDFR5Kzq/qel6js6w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="27141832"
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="27141832"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 03:50:44 -0700
+X-CSE-ConnectionGUID: dGyipNc9TmmqCR0NFbAMCQ==
+X-CSE-MsgGUID: 8hET29gKTpmKLsqOju4K6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="79438667"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO [10.245.245.128]) ([10.245.245.128])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 03:50:41 -0700
+Message-ID: <c8f3278c442de947a167876a565c2c96c6264cc3.camel@linux.intel.com>
+Subject: Re: [PATCH RESEND] locking/ww_mutex: Adjust to lockdep nest_lock
+ requirements
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: intel-xe@lists.freedesktop.org, Ingo Molnar <mingo@redhat.com>, Will
+ Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Maarten Lankhorst <maarten@lankhorst.se>, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+ dri-devel@lists.freedesktop.org,  linux-kernel@vger.kernel.org
+Date: Fri, 04 Oct 2024 12:50:27 +0200
+In-Reply-To: <20241004101601.GQ18071@noisy.programming.kicks-ass.net>
+References: <20241002125611.361001-1-thomas.hellstrom@linux.intel.com>
+	 <20241004101601.GQ18071@noisy.programming.kicks-ass.net>
+Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808081439.24661-1-yongxuan.wang@sifive.com>
-In-Reply-To: <20240808081439.24661-1-yongxuan.wang@sifive.com>
-From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Date: Fri, 4 Oct 2024 18:49:55 +0800
-Message-ID: <CAMWQL2gBOma5c_A4JPnTK6uDfbyqcbcf_4qZ4Pt_S3mvBY3s0w@mail.gmail.com>
-Subject: Re: [PATCH 1/1] RISC-V: KVM: Fix APLIC in_clrip and clripnum write emulation
-To: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org
-Cc: greentime.hu@sifive.com, vincent.chen@sifive.com, 
-	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-ping
+On Fri, 2024-10-04 at 12:16 +0200, Peter Zijlstra wrote:
+> On Wed, Oct 02, 2024 at 02:56:11PM +0200, Thomas Hellstr=C3=B6m wrote:
+> > When using mutex_acquire_nest() with a nest_lock, lockdep refcounts
+> > the
+> > number of acquired lockdep_maps of mutexes of the same class, and
+> > also
+> > keeps a pointer to the first acquired lockdep_map of a class. That
+> > pointer
+> > is then used for various comparison-, printing- and checking
+> > purposes,
+> > but there is no mechanism to actively ensure that lockdep_map stays
+> > in
+> > memory. Instead, a warning is printed if the lockdep_map is freed
+> > and
+> > there are still held locks of the same lock class, even if the
+> > lockdep_map
+> > itself has been released.
+> >=20
+> > In the context of WW/WD transactions that means that if a user
+> > unlocks
+> > and frees a ww_mutex from within an ongoing ww transaction, and
+> > that
+> > mutex happens to be the first ww_mutex grabbed in the transaction,
+> > such a warning is printed and there might be a risk of a UAF.
+>=20
+> I'm assuming you actually hit this?
 
-On Thu, Aug 8, 2024 at 4:14=E2=80=AFPM Yong-Xuan Wang <yongxuan.wang@sifive=
-.com> wrote:
->
-> In the section "4.7 Precise effects on interrupt-pending bits"
-> of the RISC-V AIA specification defines that:
->
-> If the source mode is Level1 or Level0 and the interrupt domain
-> is configured in MSI delivery mode (domaincfg.DM =3D 1):
-> The pending bit is cleared whenever the rectified input value is
-> low, when the interrupt is forwarded by MSI, or by a relevant
-> write to an in_clrip register or to clripnum.
->
-> Update the aplic_write_pending() to match the spec.
->
-> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> Reviewed-by: Vincent Chen <vincent.chen@sifive.com>
-> ---
->  arch/riscv/kvm/aia_aplic.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/arch/riscv/kvm/aia_aplic.c b/arch/riscv/kvm/aia_aplic.c
-> index da6ff1bade0d..97c6dbcabf47 100644
-> --- a/arch/riscv/kvm/aia_aplic.c
-> +++ b/arch/riscv/kvm/aia_aplic.c
-> @@ -142,8 +142,6 @@ static void aplic_write_pending(struct aplic *aplic, =
-u32 irq, bool pending)
->
->         if (sm =3D=3D APLIC_SOURCECFG_SM_LEVEL_HIGH ||
->             sm =3D=3D APLIC_SOURCECFG_SM_LEVEL_LOW) {
-> -               if (!pending)
-> -                       goto skip_write_pending;
->                 if ((irqd->state & APLIC_IRQ_STATE_INPUT) &&
->                     sm =3D=3D APLIC_SOURCECFG_SM_LEVEL_LOW)
->                         goto skip_write_pending;
-> --
-> 2.17.1
->
+Yes, but there was a change merged to drm_exec, a main ww_mutex user
+that makes it less likely to happen. (Unlocking in reverse unless the
+user explicitly requests an unlock which will be a more common use-case
+moving forward).
+
+>=20
+> Anyway, work around seems sane enough, thanks!
+
+Thanks,
+Thomas
+
+
 
