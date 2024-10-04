@@ -1,105 +1,149 @@
-Return-Path: <linux-kernel+bounces-351363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A571399100A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:16:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E81991083
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50ACC1F273E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:16:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AC8CB3162B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0465C231CBA;
-	Fri,  4 Oct 2024 19:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846AE1DAC92;
+	Fri,  4 Oct 2024 19:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5IbmUoK"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OVZHy+Bo"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D737F231C91
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 19:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407DE231C91
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 19:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728071489; cv=none; b=HJ9kBU76Z226zLj5g0sB283XUbwONtsXy0VUl8Tv/1+OaFnTPY28tk+C8wiINnfkiy50BgvtRXBP15Wr3CtkgPtVpq5zKfjHDrQM19e8frKjOA6oY+RBQBzokrUKjYpWeVmNdjlG1JWlcVM/pvitOWHjztbZmVkfZ4xChfIzpfw=
+	t=1728071505; cv=none; b=PqkSS/3Z6DOLUbKXh0yDSYTZg5YGK980kTbRW6HkkHSePeRhAxboY4Ik/mxqg8tYhCWp1w9SOutq9gHXBYSFhdz83lp252cJx9UWehkgHwrKchr1G8D2zfuAGR46OuY/qwy0LQpsQzRt9gD7BCgOeiCPb6+KTqTCcTN23RUiyaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728071489; c=relaxed/simple;
-	bh=7KR/7GoMBymZDQCzfBPhQD+6VkyHQhFG5FZMeAYZPYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RtVHdZGxSQ0nSS1ZCJXQFu9gTn4Do60Z56s4cHG5ZRGH8bZgjQkyqgzDTvFikOHDwLo3AhTnY1+k7j5PpMDGnq/a39zFE2SKXWeXkTbbi84suV02jCqEuj1QrY/Jww0z5+ynsrnE4OZloP0H8Kg1L/7WPc0T7jFmZA1y7ZeXS00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z5IbmUoK; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1728071505; c=relaxed/simple;
+	bh=bzVY4oLhiUvaPvPZJvjsoD+ueWk4FOH0nwbjN4VWr+w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tfBc0rnUgZdkAyY+lmOZfT9scVl5h+RfaeIxK9z8upYOCJT9ONN74RTzr1nm4RBCrR2j7XwCk8daWQHep2M9Hu9nRvY9LJfni/L2nxnVzGttTVnw5PWwdRLqVqoAORswgbtvhDqilulHzf1bgW1t33cvmT77JoxtinZkRkjOy2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OVZHy+Bo; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d446adf6eso389242266b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 12:51:27 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d3cde1103so314848866b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 12:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728071486; x=1728676286; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UtwLUxMuGBoEZtFCzefxrU1o3PrTceG3MOpdppWQn+8=;
-        b=Z5IbmUoK1BttcuMuyZoOXfKqhj8V/bWOdEhd5h57cylflLzSuAglL1/qBjCFhxRe0m
-         aoZy628oAiDLcDLLauQ6byO3hEJAlAzH+ritp48QHylUGUau7G2B8/JXOU4w1IzS8P3T
-         dWT0IjRQD+Jxk6DVdQaolt8jtigkD2rYMZasFcKxJaof8mZRLO81l7XM9sKm6AF0VlxU
-         mY1h0Ns+Q6T7tcYaVlK5LYuT4EcvNE3fFszsXnBZ5IksxQce3yUIaSrLi910gfKyXJVm
-         FK2YhdOGpXiXBPvDo9hTE/c/TXpmzqAcnEGxnTZZ5POoirkmuz1Mth57iWK7YW8Sb3xg
-         WEAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728071486; x=1728676286;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728071502; x=1728676302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UtwLUxMuGBoEZtFCzefxrU1o3PrTceG3MOpdppWQn+8=;
-        b=BNGPyo9yEvg99huPD93kzRjuPb+JAcZKmx64LI2QIBqKp6eALnvFr9PSC902j4zThs
-         Hu0ysU5+OO7baymCaXf12B2ZuDbN09djAL5ttrDUMvbC4dgToWu82tBnW2r+TUfuegf5
-         B8jwQCifoXfEsUTwHX9p2trUco7FKltE9VXVt15kgQsvXPGhXj79h2IYYx4b57I8T/2o
-         W+cYH5MlIc2Uz9id5mrXSA2tHHgkRO77SQDOFEddNqXxPE8P7Kswc/2SnCJBY/pbKV7n
-         onzxZScU0FEmQgIYRVohvGFlSb3BAEDNV0TU1D3EnjCSC74F/T/FoYsvYL1IdByxRIqU
-         FxcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2Xw3lxceY08xUYvqb7MqoSAV6QxvnHCo229wEJqOnF7OYIvsUWbEAK10yaWk/sY963Z09rQ8Jv2mdz/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDmWGqkp8jgbIDDA9j934k1JV5Gtg6U52xK77Ikd1BO9csStEM
-	XbCk6CK2nQC3fWtbUBwWGIz2UpzVBqR8sw1H6mXpKUsACKRt07zy
-X-Google-Smtp-Source: AGHT+IFyzhbjt/f+t0FTkE5WXLqceQp16zOe/Y+dc+GNEjdNUWLgWCrBYVXpz5UIN212re2tlyClYg==
-X-Received: by 2002:a17:907:971b:b0:a91:15dc:34e4 with SMTP id a640c23a62f3a-a991c051636mr405033666b.59.1728071485952;
-        Fri, 04 Oct 2024 12:51:25 -0700 (PDT)
-Received: from gmail.com ([45.250.247.85])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7ecb52sm32772566b.217.2024.10.04.12.51.23
+        bh=8OAvHUpolebuIOw9EXSJ+sr6FDBYi/qKxGtk4yJNJ9g=;
+        b=OVZHy+BoZi+Mn+OGSH+coDbr9QIarTxkeerg+aWQnf+BwUQGAb3q0MTTaTHk3p81oM
+         0Op5PUcVT5GQKI5BlpsznCve8UL0nfu9wVTtERE2t3H3TdMcgOpCmRCTpfNNeDI+GipC
+         xWOL6dZ6+TVGno/scbtkBrt/pteC0xMXfW5CcHq0LW+Cm3/Yb8G5zN9WYqlJXQtbezNW
+         Vb9zO8yLzwnu+0hNX+T/DIunBl3wDubzY9jz4dXjs0BQcNNN2L+gdcCsidEDWRU46Snj
+         BtmABJlQl/R42JOgG3ggDnYREkIBt01eZi9oNaqJljbCtgeBJguY3RNp4mHUXHgcZgmK
+         3HCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728071502; x=1728676302;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8OAvHUpolebuIOw9EXSJ+sr6FDBYi/qKxGtk4yJNJ9g=;
+        b=rf37VVMZeWsqjgZQEi1kPy/PCbGPbD4nB3i0x/+zajuo6rPjLlHnGNGmkBLXSQY+oF
+         WoFSOw9TSVRow9IdumE0z+d6KrtUJ9d8oGowH3a264e78BUDzKJHMQ8j32vzASikQ+3Q
+         nX85N3upNE781Ovf+UdpMpEEnAN125EcOW0dcMlf8r+BZH0MjIIvnq0vMkmJDShSSjB/
+         hG7q3vAFXhTZ5N2T8ELRVDkd/99ebNhusF8IULoRlglTvBoOrgEB8FqZ/WWPPIt4IJr/
+         q9QLg94SHi/Obk7GThPO3hEmfyZujTAmKaf3BHRh4gRi1X+Jptj/HFvy0MfKAZoZX/ho
+         hUaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdUH/IVz0FpCdXq55tknyXi/oBRW3mx4gMrPuBFeoPFcZsO+elydfZjU/jaa7k6UMzLHbGQbvYPHfFc2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlF0dvZy8y0NYGD6q0eujl3T5QZjRliZuBHK80I+ZjSAkBHRdW
+	VJ4Si8H49pDpk/PheJk2IGXGXKJUmIK8PbERnGMPLvmtKu0FEVBWkM0TVFU+
+X-Google-Smtp-Source: AGHT+IFrOCZvT/ERMarX5FM1A2zaXE7D1ehwOzwz5iqgHT94MjbzAOOJaH0tTt1qlM53Bzl+Nn6kkw==
+X-Received: by 2002:a17:906:7303:b0:a99:22e:9658 with SMTP id a640c23a62f3a-a991c031334mr405570566b.40.1728071502139;
+        Fri, 04 Oct 2024 12:51:42 -0700 (PDT)
+Received: from azathoth.prg2.suse.org ([45.250.247.85])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a992e78757asm33917966b.102.2024.10.04.12.51.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 12:51:25 -0700 (PDT)
-Date: Sat, 5 Oct 2024 01:21:20 +0530
-From: Brahmajit <brahmajit.xyz@gmail.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] fs/qnx6: Fix building with GCC 15
-Message-ID: <hcjto6ziie4vlzw3baotdzh6km54nggzihs6htfxgii5bkuhx4@iopcp2buiawh>
-References: <vch6gmzqaeo22c7473qyabrfwxlkdhx5vgvosjyp5l2nwgqnxl@5x3ny35qyfgx>
- <20241004094921.615688-1-brahmajit.xyz@gmail.com>
- <20241004184440.GQ4017910@ZenIV>
+        Fri, 04 Oct 2024 12:51:41 -0700 (PDT)
+From: Brahmajit Das <brahmajit.xyz@gmail.com>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] fs/qnx6: Fix building with GCC 15
+Date: Sat,  5 Oct 2024 01:21:32 +0530
+Message-ID: <20241004195132.1393968-1-brahmajit.xyz@gmail.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241004184440.GQ4017910@ZenIV>
+References: <20241004184440.GQ4017910@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241004184440.GQ4017910@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 04.10.2024 19:44, Al Viro wrote:
-> LGTM, except that I'd probably make the commit message less warning-centric -
-> something like
-> ...
-> would explain what was really going on - the point is not to make gcc STFU, it's
-> to make the code more straightforward.  The warning is basically "it smells
-> somewhat fishy around >here<, might be worth taking a look".  And yes, it turned
-> out to be fishy; minimal "make it STFU" would be to strip those NULs from
-> the initializers (i.e. just go for static char match_root[2][3] = {".", ".."}; -
-> an array initializer is zero-padded if it's shorter than the array), but that
-> wasn't the only, er, oddity in that code.
+qnx6_checkroot() had been using weirdly spelled initializer - it needed
+to initialize 3-element arrays of char and it used NUL-padded
+3-character string literals (i.e. 4-element initializers, with
+completely pointless zeroes at the end).
 
-Thank you very much for the feedback, sending the patch with updates
-commit shortly.
+That had been spotted by gcc-15[*]; prior to that gcc quietly dropped
+the 4th element of initializers.
 
+However, none of that had been needed in the first place - all this
+array is used for is checking that the first directory entry in root
+directory is "." and the second - "..".  The check had been expressed as
+a loop, using that match_root[] array.  Since there is no chance that we
+ever want to extend that list of entries, the entire thing is much too
+fancy for its own good; what we need is just a couple of explicit
+memcmp() and that's it.
+
+[*]: fs/qnx6/inode.c: In function ‘qnx6_checkroot’:
+fs/qnx6/inode.c:182:41: error: initializer-string for array of ‘char’ is too long [-Werror=unterminated-string-initialization]
+  182 |         static char match_root[2][3] = {".\0\0", "..\0"};
+      |                                         ^~~~~~~
+fs/qnx6/inode.c:182:50: error: initializer-string for array of ‘char’ is too long [-Werror=unterminated-string-initialization]
+  182 |         static char match_root[2][3] = {".\0\0", "..\0"};
+      |                                                  ^~~~~~
+
+Signed-off-by: Brahmajit Das <brahmajit.xyz@gmail.com>
+---
+ fs/qnx6/inode.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
+index 85925ec0051a..3310d1ad4d0e 100644
+--- a/fs/qnx6/inode.c
++++ b/fs/qnx6/inode.c
+@@ -179,8 +179,7 @@ static int qnx6_statfs(struct dentry *dentry, struct kstatfs *buf)
+  */
+ static const char *qnx6_checkroot(struct super_block *s)
+ {
+-	static char match_root[2][3] = {".\0\0", "..\0"};
+-	int i, error = 0;
++	int error = 0;
+ 	struct qnx6_dir_entry *dir_entry;
+ 	struct inode *root = d_inode(s->s_root);
+ 	struct address_space *mapping = root->i_mapping;
+@@ -189,11 +188,9 @@ static const char *qnx6_checkroot(struct super_block *s)
+ 	if (IS_ERR(folio))
+ 		return "error reading root directory";
+ 	dir_entry = kmap_local_folio(folio, 0);
+-	for (i = 0; i < 2; i++) {
+-		/* maximum 3 bytes - due to match_root limitation */
+-		if (strncmp(dir_entry[i].de_fname, match_root[i], 3))
+-			error = 1;
+-	}
++	if (memcmp(dir_entry[0].de_fname, ".", 2) ||
++	    memcmp(dir_entry[1].de_fname, "..", 3))
++		error = 1;
+ 	folio_release_kmap(folio, dir_entry);
+ 	if (error)
+ 		return "error reading root directory.";
 -- 
-Regards,
-listout
+2.46.2
+
 
