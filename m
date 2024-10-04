@@ -1,361 +1,135 @@
-Return-Path: <linux-kernel+bounces-351037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CEF990C97
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:52:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41106990BD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9282282B03
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:52:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFD041F210CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AB51FA259;
-	Fri,  4 Oct 2024 18:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E6C1EABDD;
+	Fri,  4 Oct 2024 18:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMDyQWiH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GGkDwsV9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3711F9A94;
-	Fri,  4 Oct 2024 18:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE741EABBC
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066217; cv=none; b=EdHsgjtvZ4VK0PQOdMDsc3+XRdeMUl95tQkas+iXnL2SwPb7V3ZYPReA2KQWqJK4klirXF6+MuQLkFNHNsvoCumOs0ChppUi1cVpz8U/CVPvqfEGfujkDhKoO6JVRxFuCOSXKnHmO9cRKL2bs3hcc4gOtkkUTH/ZiQgwUXrNwdU=
+	t=1728066055; cv=none; b=Ro1RxcysvUt+Zm4giP6W3MVK62CyMAoe3zRR3VekDoZv7f/ird9e3Tikji4efOAFgqcYfrvOVUr2oeZEIkmnWPPLngo2tQPE+SZaJRIsniN4tzv2pbyG8XXjg+hgjSv7s5cVBkh6AcLnI6C8q5uO8DU7ooLtWnlCAncIQGVqQpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066217; c=relaxed/simple;
-	bh=v2f3zP+/WVZDh8GMvlexKRuJC8gRctxdpGKq0v6YoA4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d0NUr9UAL5mwwQiYRePt+9rumL4qcmLBGUZUbNio5O3Kvw0J4/i0RzoKs4J6qdvxnQvI6jS0JMi3W7tnLCEk6skQt+p2+lSPmnlfPiH5sUcH6qc7OlhOtAJlsTk2uAT/Dc8K3+N8T3fVvD0B3ReM486UvgXBDDC3NvKuk7zvot4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PMDyQWiH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1308DC4CED0;
-	Fri,  4 Oct 2024 18:23:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066217;
-	bh=v2f3zP+/WVZDh8GMvlexKRuJC8gRctxdpGKq0v6YoA4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PMDyQWiH7lVie4sJLpMzHUmgvILpM3DVWyDt9PTPlsp4jqdCW4adJHoH3TCZ63fNU
-	 7JKRP4qUMAyA2n9iWPtOW6xuk5wIEPJH2Jg0Rq5vCKJg2QCvXbexzGzqWm2z3gjGUF
-	 P3PrWHIbC315o37Ov62Xi0RHnZ3FX3v48J1Mk8LqmXVCjiTIXfHsRv71CJXpthOwn0
-	 YH3AAc53r3PL3xKdttu6uKiUA5YBx0UG9NJsRtxtXG46mIpUZ7ZoCvwk6KjxQU0QuN
-	 VpSpZVC09UcmjPEODFQ1+SHkrsuUkUXh9cZ+oHv7XErbeUPF7j6AhTsJPhrkb2jqPn
-	 UoDDPDVZtw/jQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>,
-	=?UTF-8?q?=C5=81ukasz=20Bartosik?= <ukaszb@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	mathias.nyman@intel.com,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.10 50/70] xhci: dbc: Fix STALL transfer event handling
-Date: Fri,  4 Oct 2024 14:20:48 -0400
-Message-ID: <20241004182200.3670903-50-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004182200.3670903-1-sashal@kernel.org>
-References: <20241004182200.3670903-1-sashal@kernel.org>
+	s=arc-20240116; t=1728066055; c=relaxed/simple;
+	bh=FCEOV28vZFeo2JvsOrDKak1h2a8bL4EbET6FPhzohpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gAChRndsQKWNU7zZeD8OSziojeGnEORMaH6nUBDGTVr0O7QtKR1AvDNZQSsD670GMgGHZFVOMNIDcL7CxW66ZcPz7BqaTo40eUCKVsFMFvXmrERMV3hqBAwdP89BJ/pO2nzz6b5xM9YAxoJLpvhKelMvBlxV0aS6F1cQGWQMIuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GGkDwsV9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494AE7qO032696;
+	Fri, 4 Oct 2024 18:20:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	w7U9Iz4T63Hri05kLr6t2UzHA17vtCnF+ABQccaowb8=; b=GGkDwsV9dSxWTcyo
+	KZ9dUiWA3kEis+j7W4sJ0s1rgJH7H/J5BgvjG4f1jkv1vSqvT3wD+XuGjk8jSd0N
+	EB9BnOPCDf8dv2oafzj7XcGirhcSZyejX7Mg0XKhMpcx++PdJN4719apVb5pCGOy
+	cOIAx3G3ibNGAgJXfIoTmko06EjwmPvF2UJAya1U2mI3814+kYiQh5DTTORzcSP4
+	hj+o7k523T5IBA8t3Xkt/435oA11okY1QAaJfEW9fUSGjYfuECdgKVRDO3EtUlrs
+	cnQBPPFujLLXBX4hRAUldgxlGdlIYh8wteVvcUWtXtCBTvmHvh142iORZa7N816T
+	h6iWng==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205f2xf8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 18:20:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494IKoc5017971
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 18:20:50 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
+ 11:20:49 -0700
+Message-ID: <016d4da1-a139-30ef-a9ed-970564e710ac@quicinc.com>
+Date: Fri, 4 Oct 2024 12:20:49 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.10.13
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V3 09/11] accel/amdxdna: Add error handling
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240911180604.1834434-1-lizhi.hou@amd.com>
+ <20240911180604.1834434-10-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240911180604.1834434-10-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yH9b4g-Jfh1ntK-D2fdIWceiw4WrK5Kn
+X-Proofpoint-ORIG-GUID: yH9b4g-Jfh1ntK-D2fdIWceiw4WrK5Kn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=895 priorityscore=1501 phishscore=0 bulkscore=0
+ impostorscore=0 clxscore=1015 lowpriorityscore=0 spamscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040126
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+On 9/11/2024 12:06 PM, Lizhi Hou wrote:
+> +/*
+> + * Below enum, struct and lookup tables are porting from XAIE util header file.
+> + *
+> + * Below data is defined by AIE device and it is used for decode error message
+> + * from the device.
+> + */
+> +
+> +enum aie_module_type {
+> +	AIE_MEM_MOD = 0,
+> +	AIE_CORE_MOD,
+> +	AIE_PL_MOD,
+> +};
+> +
+> +enum aie_error_category {
+> +	AIE_ERROR_SATURATION = 0,
+> +	AIE_ERROR_FP,
+> +	AIE_ERROR_STREAM,
+> +	AIE_ERROR_ACCESS,
+> +	AIE_ERROR_BUS,
+> +	AIE_ERROR_INSTRUCTION,
+> +	AIE_ERROR_ECC,
+> +	AIE_ERROR_LOCK,
+> +	AIE_ERROR_DMA,
+> +	AIE_ERROR_MEM_PARITY,
+> +	/* Unknown is not from XAIE, added for better category */
+> +	AIE_ERROR_UNKNOWN,
+> +};
+> +
+> +/* Don't pack, unless XAIE side changed */
+> +struct aie_error {
+> +	u8			row;
+> +	u8			col;
+> +	enum aie_module_type	mod_type;
 
-[ Upstream commit 9044ad57b60b0556d42b6f8aa218a68865e810a4 ]
+As far as I am aware, the compiler will use multiple variable sizes to 
+define an enum. This feels very fragile.
 
-Don't flush all pending DbC data requests when an endpoint halts.
-
-An endpoint may halt and xHC DbC triggers a STALL error event if there's
-an issue with a bulk data transfer. The transfer should restart once xHC
-DbC receives a ClearFeature(ENDPOINT_HALT) request from the host.
-
-Once xHC DbC restarts it will start from the TRB pointed to by dequeue
-field in the endpoint context, which might be the same TRB we got the
-STALL event for. Turn the TRB to a no-op in this case to make sure xHC
-DbC doesn't reuse and tries to retransmit this same TRB after we already
-handled it, and gave its corresponding data request back.
-
-Other STALL events might be completely bogus.
-Lukasz Bartosik discovered that xHC DbC might issue spurious STALL events
-if hosts sends a ClearFeature(ENDPOINT_HALT) request to non-halted
-endpoints even without any active bulk transfers.
-
-Assume STALL event is spurious if it reports 0 bytes transferred, and
-the endpoint stopped on the STALLED TRB.
-Don't give back the data request corresponding to the TRB in this case.
-
-The halted status is per endpoint. Track it with a per endpoint flag
-instead of the driver invented DbC wide DS_STALLED state.
-DbC remains in DbC-Configured state even if endpoints halt. There is no
-Stalled state in the DbC Port state Machine (xhci section 7.6.6)
-
-Reported-by: Łukasz Bartosik <ukaszb@chromium.org>
-Closes: https://lore.kernel.org/linux-usb/20240725074857.623299-1-ukaszb@chromium.org/
-Tested-by: Łukasz Bartosik <ukaszb@chromium.org>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20240905143300.1959279-2-mathias.nyman@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/usb/host/xhci-dbgcap.c | 133 ++++++++++++++++++++-------------
- drivers/usb/host/xhci-dbgcap.h |   2 +-
- 2 files changed, 83 insertions(+), 52 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-dbgcap.c b/drivers/usb/host/xhci-dbgcap.c
-index 872d9cddbcefa..885cab5be9773 100644
---- a/drivers/usb/host/xhci-dbgcap.c
-+++ b/drivers/usb/host/xhci-dbgcap.c
-@@ -173,16 +173,18 @@ static void xhci_dbc_giveback(struct dbc_request *req, int status)
- 	spin_lock(&dbc->lock);
- }
- 
--static void xhci_dbc_flush_single_request(struct dbc_request *req)
-+static void trb_to_noop(union xhci_trb *trb)
- {
--	union xhci_trb	*trb = req->trb;
--
- 	trb->generic.field[0]	= 0;
- 	trb->generic.field[1]	= 0;
- 	trb->generic.field[2]	= 0;
- 	trb->generic.field[3]	&= cpu_to_le32(TRB_CYCLE);
- 	trb->generic.field[3]	|= cpu_to_le32(TRB_TYPE(TRB_TR_NOOP));
-+}
- 
-+static void xhci_dbc_flush_single_request(struct dbc_request *req)
-+{
-+	trb_to_noop(req->trb);
- 	xhci_dbc_giveback(req, -ESHUTDOWN);
- }
- 
-@@ -649,7 +651,6 @@ static void xhci_dbc_stop(struct xhci_dbc *dbc)
- 	case DS_DISABLED:
- 		return;
- 	case DS_CONFIGURED:
--	case DS_STALLED:
- 		if (dbc->driver->disconnect)
- 			dbc->driver->disconnect(dbc);
- 		break;
-@@ -669,6 +670,23 @@ static void xhci_dbc_stop(struct xhci_dbc *dbc)
- 	pm_runtime_put_sync(dbc->dev); /* note, was self.controller */
- }
- 
-+static void
-+handle_ep_halt_changes(struct xhci_dbc *dbc, struct dbc_ep *dep, bool halted)
-+{
-+	if (halted) {
-+		dev_info(dbc->dev, "DbC Endpoint halted\n");
-+		dep->halted = 1;
-+
-+	} else if (dep->halted) {
-+		dev_info(dbc->dev, "DbC Endpoint halt cleared\n");
-+		dep->halted = 0;
-+
-+		if (!list_empty(&dep->list_pending))
-+			writel(DBC_DOOR_BELL_TARGET(dep->direction),
-+			       &dbc->regs->doorbell);
-+	}
-+}
-+
- static void
- dbc_handle_port_status(struct xhci_dbc *dbc, union xhci_trb *event)
- {
-@@ -697,6 +715,7 @@ static void dbc_handle_xfer_event(struct xhci_dbc *dbc, union xhci_trb *event)
- 	struct xhci_ring	*ring;
- 	int			ep_id;
- 	int			status;
-+	struct xhci_ep_ctx	*ep_ctx;
- 	u32			comp_code;
- 	size_t			remain_length;
- 	struct dbc_request	*req = NULL, *r;
-@@ -706,8 +725,30 @@ static void dbc_handle_xfer_event(struct xhci_dbc *dbc, union xhci_trb *event)
- 	ep_id		= TRB_TO_EP_ID(le32_to_cpu(event->generic.field[3]));
- 	dep		= (ep_id == EPID_OUT) ?
- 				get_out_ep(dbc) : get_in_ep(dbc);
-+	ep_ctx		= (ep_id == EPID_OUT) ?
-+				dbc_bulkout_ctx(dbc) : dbc_bulkin_ctx(dbc);
- 	ring		= dep->ring;
- 
-+	/* Match the pending request: */
-+	list_for_each_entry(r, &dep->list_pending, list_pending) {
-+		if (r->trb_dma == event->trans_event.buffer) {
-+			req = r;
-+			break;
-+		}
-+		if (r->status == -COMP_STALL_ERROR) {
-+			dev_warn(dbc->dev, "Give back stale stalled req\n");
-+			ring->num_trbs_free++;
-+			xhci_dbc_giveback(r, 0);
-+		}
-+	}
-+
-+	if (!req) {
-+		dev_warn(dbc->dev, "no matched request\n");
-+		return;
-+	}
-+
-+	trace_xhci_dbc_handle_transfer(ring, &req->trb->generic);
-+
- 	switch (comp_code) {
- 	case COMP_SUCCESS:
- 		remain_length = 0;
-@@ -718,31 +759,49 @@ static void dbc_handle_xfer_event(struct xhci_dbc *dbc, union xhci_trb *event)
- 	case COMP_TRB_ERROR:
- 	case COMP_BABBLE_DETECTED_ERROR:
- 	case COMP_USB_TRANSACTION_ERROR:
--	case COMP_STALL_ERROR:
- 		dev_warn(dbc->dev, "tx error %d detected\n", comp_code);
- 		status = -comp_code;
- 		break;
-+	case COMP_STALL_ERROR:
-+		dev_warn(dbc->dev, "Stall error at bulk TRB %llx, remaining %zu, ep deq %llx\n",
-+			 event->trans_event.buffer, remain_length, ep_ctx->deq);
-+		status = 0;
-+		dep->halted = 1;
-+
-+		/*
-+		 * xHC DbC may trigger a STALL bulk xfer event when host sends a
-+		 * ClearFeature(ENDPOINT_HALT) request even if there wasn't an
-+		 * active bulk transfer.
-+		 *
-+		 * Don't give back this transfer request as hardware will later
-+		 * start processing TRBs starting from this 'STALLED' TRB,
-+		 * causing TRBs and requests to be out of sync.
-+		 *
-+		 * If STALL event shows some bytes were transferred then assume
-+		 * it's an actual transfer issue and give back the request.
-+		 * In this case mark the TRB as No-Op to avoid hw from using the
-+		 * TRB again.
-+		 */
-+
-+		if ((ep_ctx->deq & ~TRB_CYCLE) == event->trans_event.buffer) {
-+			dev_dbg(dbc->dev, "Ep stopped on Stalled TRB\n");
-+			if (remain_length == req->length) {
-+				dev_dbg(dbc->dev, "Spurious stall event, keep req\n");
-+				req->status = -COMP_STALL_ERROR;
-+				req->actual = 0;
-+				return;
-+			}
-+			dev_dbg(dbc->dev, "Give back stalled req, but turn TRB to No-op\n");
-+			trb_to_noop(req->trb);
-+		}
-+		break;
-+
- 	default:
- 		dev_err(dbc->dev, "unknown tx error %d\n", comp_code);
- 		status = -comp_code;
- 		break;
- 	}
- 
--	/* Match the pending request: */
--	list_for_each_entry(r, &dep->list_pending, list_pending) {
--		if (r->trb_dma == event->trans_event.buffer) {
--			req = r;
--			break;
--		}
--	}
--
--	if (!req) {
--		dev_warn(dbc->dev, "no matched request\n");
--		return;
--	}
--
--	trace_xhci_dbc_handle_transfer(ring, &req->trb->generic);
--
- 	ring->num_trbs_free++;
- 	req->actual = req->length - remain_length;
- 	xhci_dbc_giveback(req, status);
-@@ -762,7 +821,6 @@ static void inc_evt_deq(struct xhci_ring *ring)
- static enum evtreturn xhci_dbc_do_handle_events(struct xhci_dbc *dbc)
- {
- 	dma_addr_t		deq;
--	struct dbc_ep		*dep;
- 	union xhci_trb		*evt;
- 	u32			ctrl, portsc;
- 	bool			update_erdp = false;
-@@ -814,43 +872,17 @@ static enum evtreturn xhci_dbc_do_handle_events(struct xhci_dbc *dbc)
- 			return EVT_DISC;
- 		}
- 
--		/* Handle endpoint stall event: */
-+		/* Check and handle changes in endpoint halt status */
- 		ctrl = readl(&dbc->regs->control);
--		if ((ctrl & DBC_CTRL_HALT_IN_TR) ||
--		    (ctrl & DBC_CTRL_HALT_OUT_TR)) {
--			dev_info(dbc->dev, "DbC Endpoint stall\n");
--			dbc->state = DS_STALLED;
--
--			if (ctrl & DBC_CTRL_HALT_IN_TR) {
--				dep = get_in_ep(dbc);
--				xhci_dbc_flush_endpoint_requests(dep);
--			}
--
--			if (ctrl & DBC_CTRL_HALT_OUT_TR) {
--				dep = get_out_ep(dbc);
--				xhci_dbc_flush_endpoint_requests(dep);
--			}
--
--			return EVT_DONE;
--		}
-+		handle_ep_halt_changes(dbc, get_in_ep(dbc), ctrl & DBC_CTRL_HALT_IN_TR);
-+		handle_ep_halt_changes(dbc, get_out_ep(dbc), ctrl & DBC_CTRL_HALT_OUT_TR);
- 
- 		/* Clear DbC run change bit: */
- 		if (ctrl & DBC_CTRL_DBC_RUN_CHANGE) {
- 			writel(ctrl, &dbc->regs->control);
- 			ctrl = readl(&dbc->regs->control);
- 		}
--
- 		break;
--	case DS_STALLED:
--		ctrl = readl(&dbc->regs->control);
--		if (!(ctrl & DBC_CTRL_HALT_IN_TR) &&
--		    !(ctrl & DBC_CTRL_HALT_OUT_TR) &&
--		    (ctrl & DBC_CTRL_DBC_RUN)) {
--			dbc->state = DS_CONFIGURED;
--			break;
--		}
--
--		return EVT_DONE;
- 	default:
- 		dev_err(dbc->dev, "Unknown DbC state %d\n", dbc->state);
- 		break;
-@@ -939,7 +971,6 @@ static const char * const dbc_state_strings[DS_MAX] = {
- 	[DS_ENABLED] = "enabled",
- 	[DS_CONNECTED] = "connected",
- 	[DS_CONFIGURED] = "configured",
--	[DS_STALLED] = "stalled",
- };
- 
- static ssize_t dbc_show(struct device *dev,
-diff --git a/drivers/usb/host/xhci-dbgcap.h b/drivers/usb/host/xhci-dbgcap.h
-index 92661b555c2a2..48931102bfbc7 100644
---- a/drivers/usb/host/xhci-dbgcap.h
-+++ b/drivers/usb/host/xhci-dbgcap.h
-@@ -81,7 +81,6 @@ enum dbc_state {
- 	DS_ENABLED,
- 	DS_CONNECTED,
- 	DS_CONFIGURED,
--	DS_STALLED,
- 	DS_MAX
- };
- 
-@@ -90,6 +89,7 @@ struct dbc_ep {
- 	struct list_head		list_pending;
- 	struct xhci_ring		*ring;
- 	unsigned int			direction:1;
-+	unsigned int			halted:1;
- };
- 
- #define DBC_QUEUE_SIZE			16
--- 
-2.43.0
-
+> +	u8			event_id;
+> +};
 
