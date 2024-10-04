@@ -1,284 +1,141 @@
-Return-Path: <linux-kernel+bounces-349944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2905898FDA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:06:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA29D98FDAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46CC1F22F76
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:06:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDAFA283E3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771A8132132;
-	Fri,  4 Oct 2024 07:06:24 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059DB136664;
+	Fri,  4 Oct 2024 07:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xz8lIaMC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1511D5AC1
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 07:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8C01D5AC1
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 07:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728025583; cv=none; b=HEHYJ4mCU1DPIrYvS3UnUxDa8IqcA2H6ZOaI+rn6hNfUPfj4msFcoEMneVUYRvhSBdljOXOMARLrpSMZNlJ1gns7S1DutBmEOwQthzqYCXMI9gOGLmpBdSkOeeILCLhqeFrXvO9pNZi7y7UTmf6/KBJynNTnbEYyreCUlAv1mgc=
+	t=1728026054; cv=none; b=cz2PoGs1HUM8tyiMbq6gzHlM0UxJZ0qF48Cgk2/5A0y/qt9Y2cXU3QxgLbTUWztCMaBq5POcEkIQ276E8gVnx4aS6cyX7yYskapOwiBqHBA1uwt3z14zFp6fDc9Z/UDABPxbG/1abX0rkh2q6D4yEiIixVr3tNLht6JnVQdSObw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728025583; c=relaxed/simple;
-	bh=zybZiAPIOa76AoBsExSrJnXtPu5kBgBSwIYmbtYExPo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gmfda+RVYd6wVDtMe05o69eXRVabY7BW/OvDlO8o3u1+5uvZPgn3KC2gAymnfk+/KRXLkFyYmS8NMWssHOKWbhiv7FfuEick28n+8jMkyi4RQnw0yxTXRIu2+rH/ZhsmQdZhEqTEQadqn+M5kAkCmAzMWe6lXMCdrm6P4GdBZSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0cb7141adso22730315ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 00:06:21 -0700 (PDT)
+	s=arc-20240116; t=1728026054; c=relaxed/simple;
+	bh=1iMOmJ43CP6yXp20Vygffsp0eQ0LJHRK+2+LtCsCQqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gtV4y+4opBDybnCHthBWjBBClIUF7ahZHlJRWTz6nSFBREI8ItioKQyu0cKLJZLwJDuUKESxwm0zHfgPy1bNp/y48VFKCe1BUPfp9amI6IpGBy7kHd2cXQjSyN7i0uM77DycaVIUtUaDRNd4GvMTtsECQzz42WnnSdKwaFxYG9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xz8lIaMC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728026051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hBtwnr0LZruEJbvlzvyuk1+vZcUV6rsB3LNlgkW3ppA=;
+	b=Xz8lIaMCGdSjd6MC/L6xu23krO2Twlt5boqi/vp+M7oY+tMSzWtizv18bFnnmdLisje5Cz
+	zQz0vwKGT+KMnMEvGLGEIoy2y2Vhuif5alhjIbOBGABD2DOUF51HSICsXfa+p7ZBpWIc61
+	0IE/LjeD/v2u4V0TFJrnN1RRsxjZhpA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-116-4BH6ZVE_NUKmZ-YVNr_QGQ-1; Fri, 04 Oct 2024 03:14:10 -0400
+X-MC-Unique: 4BH6ZVE_NUKmZ-YVNr_QGQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37cc4f28e88so1286612f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 00:14:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728025581; x=1728630381;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H4RgaKRUXG9iuzRH10Vq9HXdkhKb+sa0Ko+zLWfBr4k=;
-        b=bsRrNfP7WFRvgAWhwnvBmE7c2H2XVg9kSk6qgra7iRvTJLDtk2cSXq0AL6hd/pDh2A
-         oAmbVPprRzdqH4w6IuQyy806eJkjvJjGxHgTBpuedOe4Wn5ktiQPOlp0Tek3pWUlE0A2
-         g4sz1U8+9L9Vd0RFhmXj6K8ldKeuIML34PZQ4R0A0BKRs09qZRAe0lK8wZbONvKsB6l6
-         53u3YDRUlBj1VmFACURCEZYUO446eD2EVbkrae2wtjfsgaGfFcVIiQxaLdVUnldTQm8F
-         46zJ+WrSU0ywRJcrLPhWzqaYitE1jESiYp86CMsoC73x+UUjqOUmaZiat2AeTGbMaips
-         iLEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXva3U+aOtE2oyk7MF23Fb2nVhmPjjH9n2i8JJx1ELTm3WnTxJgB5b6ipmeOJazhXkvNfC7063buC+F7Gc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPgebiSq1Gv+aWh/kRhoLPW8l0s/pODTQdGwruE6LjansHK/Dz
-	VOEKfOUAPiLdCt+Ds5dgCqsupXo9tjPCZkoGu7hPvlujGQx499t9l02D0Rg74aL2jr9eAdKvo0P
-	hpGjwEUWZBd/D7mJGf9d8x4QNGfOuKv7EDWXj8ydLT/k0VnieFutgwDg=
-X-Google-Smtp-Source: AGHT+IGNIeQTXM9v8wy6wsDb0jiZtpJt4ldUKfqOWX3hPtPHNnpx2pMrgadXFzPZi0tTmrV9dOVB/8TdeLwcdK92BI14ovQP7F/g
+        d=1e100.net; s=20230601; t=1728026049; x=1728630849;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hBtwnr0LZruEJbvlzvyuk1+vZcUV6rsB3LNlgkW3ppA=;
+        b=lbF0tc2P2g14KvLS/Mgrbdv/bNuVNmsJXUHQbCTUdUykSi+EnGakQbI7q+QhhklQ2N
+         9pt8LiovZnCU/2JEDrF5vlxNBGbcJmmUsw9WdDvekqAlfh13p9ArN1mFo15ArcscN1LB
+         JFFljb+3ExPkNLR+K+Ek8JKykmK2jNnilPXweGdmdT3KHNG8fBZ3GZQRzv9xNkn4tpTU
+         aZh2LEQZuA+avbNDg9pRQX42fme5srX0DmdWkSk1/q15Rh26pgRfo0sbUtuouzM/mlMp
+         F1AoRPg4x+N1JN/NFTnPKm6BQitzCE/0GcqvwAJkYR7Qkt9r0v4jO4kPbQCixn319N5w
+         v/tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVl590SPvstZBMxMnzKvUImGKypzwvD1sJ44oeMDBjW3Gu//IRnlHGFu7H0j0Ss3gIzAu9FZvzimOvKNY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzqP7TlUjEl+As0AWGycCpbpnc5XiBVhdnkyNpiNkfyIGhoG9u
+	oIJlIZ+NDDYTVOwWXo+ymz7wm5zoQ4PK3YizKqzDsPET/k79Er+et67GkXPPmhDk3mRbtiqQ06Y
+	+YeuYCB707uOugRUAI5jH3TvepC9Qz9qxjTDRsqUIs5pichUrbvLNwTonao0cQw==
+X-Received: by 2002:a5d:5f54:0:b0:37c:cfdc:19ba with SMTP id ffacd0b85a97d-37d0e751784mr2002739f8f.28.1728026048946;
+        Fri, 04 Oct 2024 00:14:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF5EgGjYY0JfV/z7iaa59W+QZpz8ppmjKMbpPUYbcvmPnVnctrVU3GxGrg0lDO74dDBrAfR4w==
+X-Received: by 2002:a5d:5f54:0:b0:37c:cfdc:19ba with SMTP id ffacd0b85a97d-37d0e751784mr2002722f8f.28.1728026048613;
+        Fri, 04 Oct 2024 00:14:08 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d0822995fsm2673066f8f.38.2024.10.04.00.14.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 00:14:08 -0700 (PDT)
+Message-ID: <609cf7e5-0fd6-4636-b5b1-b63fe319db28@redhat.com>
+Date: Fri, 4 Oct 2024 09:14:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16c9:b0:3a2:6ce9:19c6 with SMTP id
- e9e14a558f8ab-3a375be2ec4mr14684555ab.25.1728025581293; Fri, 04 Oct 2024
- 00:06:21 -0700 (PDT)
-Date: Fri, 04 Oct 2024 00:06:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ff93ed.050a0220.49194.045c.GAE@google.com>
-Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_remove_inode
-From: syzbot <syzbot+32016adc6d19e9612861@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panic: Select ZLIB_DEFLATE for
+ DRM_PANIC_SCREEN_QR_CODE
+To: Miguel Ojeda <ojeda@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev
+References: <20241003230734.653717-1-ojeda@kernel.org>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20241003230734.653717-1-ojeda@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 04/10/2024 01:07, Miguel Ojeda wrote:
+> Under `CONFIG_DRM_PANIC_SCREEN_QR_CODE=y`, zlib is used:
+> 
+>      ld.lld: error: undefined symbol: zlib_deflate_workspacesize
+>      >>> referenced by drm_panic.c
+>      >>>               drivers/gpu/drm/drm_panic.o:(drm_panic_qr_init) in archive vmlinux.a
+> 
+> Thus select `CONFIG_ZLIB_DEFLATE`.
 
-syzbot found the following issue on:
+Hi, good catch, yes it should select the zlib deflate.
 
-HEAD commit:    e7ed34365879 Merge tag 'mailbox-v6.12' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=147dfd9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf263a6a5debbeef
-dashboard link: https://syzkaller.appspot.com/bug?extid=32016adc6d19e9612861
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Best regards,
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/74f7ccd405cc/disk-e7ed3436.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ef3b18bc5269/vmlinux-e7ed3436.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/54ef06c52fbb/bzImage-e7ed3436.xz
+-- 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+32016adc6d19e9612861@syzkaller.appspotmail.com
+Jocelyn
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-syzkaller-12113-ge7ed34365879 #0 Not tainted
-------------------------------------------------------
-syz-executor/5236 is trying to acquire lock:
-ffff88805fba5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#2){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
-ffff88805fba5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#2){+.+.}-{3:3}, at: ocfs2_remove_inode+0x15c/0x8a0 fs/ocfs2/inode.c:655
+> 
+> Fixes: cb5164ac43d0 ("drm/panic: Add a QR code panic screen")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+>   drivers/gpu/drm/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> index 1cb5a4f19293..cf5bc77e2362 100644
+> --- a/drivers/gpu/drm/Kconfig
+> +++ b/drivers/gpu/drm/Kconfig
+> @@ -152,6 +152,7 @@ config DRM_PANIC_SCREEN
+>   config DRM_PANIC_SCREEN_QR_CODE
+>   	bool "Add a panic screen with a QR code"
+>   	depends on DRM_PANIC && RUST
+> +	select ZLIB_DEFLATE
+>   	help
+>   	  This option adds a QR code generator, and a panic screen with a QR
+>   	  code. The QR code will contain the last lines of kmsg and other debug
+> --
+> 2.46.2
+> 
 
-but task is already holding lock:
-ffff88807afb5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
-ffff88807afb5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}, at: ocfs2_wipe_inode+0x2e6/0x1220 fs/ocfs2/inode.c:776
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}:
-       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
-       inode_lock include/linux/fs.h:815 [inline]
-       ocfs2_del_inode_from_orphan+0x112/0x700 fs/ocfs2/namei.c:2726
-       ocfs2_dio_end_io_write+0x2cc/0xf30 fs/ocfs2/aops.c:2329
-       ocfs2_dio_end_io+0x139/0x2a0 fs/ocfs2/aops.c:2427
-       dio_complete+0x21b/0x8e0 fs/direct-io.c:281
-       __blockdev_direct_IO+0x3139/0x3d10 fs/direct-io.c:1303
-       ocfs2_direct_IO+0x263/0x360 fs/ocfs2/aops.c:2464
-       generic_file_direct_write+0x19a/0x410 mm/filemap.c:3977
-       __generic_file_write_iter+0x11b/0x240 mm/filemap.c:4141
-       ocfs2_file_write_iter+0xb70/0x20e0 fs/ocfs2/file.c:2456
-       do_iter_readv_writev+0x535/0x7f0 fs/read_write.c:834
-       vfs_writev+0x363/0xdd0 fs/read_write.c:1064
-       do_pwritev+0x1b4/0x270 fs/read_write.c:1165
-       __do_sys_pwritev2 fs/read_write.c:1224 [inline]
-       __se_sys_pwritev2 fs/read_write.c:1215 [inline]
-       __x64_sys_pwritev2+0xef/0x160 fs/read_write.c:1215
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&ocfs2_quota_ip_alloc_sem_key){++++}-{3:3}:
-       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
-       ocfs2_create_local_dquot+0x158/0xb40 fs/ocfs2/quota_local.c:1231
-       ocfs2_acquire_dquot+0x629/0xaf0 fs/ocfs2/quota_global.c:878
-       dqget+0x694/0x1160 fs/quota/dquot.c:976
-       ocfs2_setattr+0x1cb0/0x2460 fs/ocfs2/file.c:1230
-       notify_change+0x6a9/0x1230 fs/attr.c:503
-       chown_common+0x538/0x670 fs/open.c:793
-       vfs_fchown fs/open.c:861 [inline]
-       vfs_fchown fs/open.c:853 [inline]
-       ksys_fchown+0x11a/0x180 fs/open.c:872
-       __do_sys_fchown fs/open.c:880 [inline]
-       __se_sys_fchown fs/open.c:878 [inline]
-       __x64_sys_fchown+0x72/0xb0 fs/open.c:878
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&dquot->dq_lock){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       wait_on_dquot fs/quota/dquot.c:355 [inline]
-       dqget+0x5f2/0x1160 fs/quota/dquot.c:971
-       __dquot_initialize+0x588/0xd50 fs/quota/dquot.c:1504
-       ocfs2_get_init_inode+0xe8/0x1a0 fs/ocfs2/namei.c:202
-       ocfs2_mknod+0x938/0x2440 fs/ocfs2/namei.c:308
-       ocfs2_create+0x185/0x450 fs/ocfs2/namei.c:672
-       lookup_open.isra.0+0x1177/0x14c0 fs/namei.c:3595
-       open_last_lookups fs/namei.c:3694 [inline]
-       path_openat+0x904/0x2d60 fs/namei.c:3930
-       do_filp_open+0x1dc/0x430 fs/namei.c:3960
-       do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
-       do_sys_open fs/open.c:1430 [inline]
-       __do_sys_openat fs/open.c:1446 [inline]
-       __se_sys_openat fs/open.c:1441 [inline]
-       __x64_sys_openat+0x175/0x210 fs/open.c:1441
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#2){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain kernel/locking/lockdep.c:3904 [inline]
-       __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
-       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
-       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
-       inode_lock include/linux/fs.h:815 [inline]
-       ocfs2_remove_inode+0x15c/0x8a0 fs/ocfs2/inode.c:655
-       ocfs2_wipe_inode+0x455/0x1220 fs/ocfs2/inode.c:818
-       ocfs2_delete_inode fs/ocfs2/inode.c:1079 [inline]
-       ocfs2_evict_inode+0x6c5/0x15d0 fs/ocfs2/inode.c:1216
-       evict+0x40c/0x970 fs/inode.c:723
-       iput_final fs/inode.c:1875 [inline]
-       iput fs/inode.c:1901 [inline]
-       iput+0x530/0x890 fs/inode.c:1887
-       d_delete_notify include/linux/fsnotify.h:332 [inline]
-       vfs_rmdir fs/namei.c:4353 [inline]
-       vfs_rmdir+0x487/0x690 fs/namei.c:4317
-       do_rmdir+0x3a2/0x410 fs/namei.c:4399
-       __do_sys_unlinkat fs/namei.c:4575 [inline]
-       __se_sys_unlinkat fs/namei.c:4569 [inline]
-       __x64_sys_unlinkat+0xef/0x130 fs/namei.c:4569
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &ocfs2_sysfile_lock_key[args->fi_sysfile_type]#2 --> &ocfs2_quota_ip_alloc_sem_key --> &ocfs2_sysfile_lock_key[args->fi_sysfile_type]
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]);
-                               lock(&ocfs2_quota_ip_alloc_sem_key);
-                               lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]);
-  lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#2);
-
- *** DEADLOCK ***
-
-4 locks held by syz-executor/5236:
- #0: ffff8880227e2420 (sb_writers#15){.+.+}-{0:0}, at: do_rmdir+0x1e4/0x410 fs/namei.c:4383
- #1: ffff88807afb2640 (&type->i_mutex_dir_key#10/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:850 [inline]
- #1: ffff88807afb2640 (&type->i_mutex_dir_key#10/1){+.+.}-{3:3}, at: do_rmdir+0x235/0x410 fs/namei.c:4387
- #2: ffff88804f59cbd0 (&osb->nfs_sync_rwlock){.+.+}-{3:3}, at: ocfs2_nfs_sync_lock+0xe5/0x2e0 fs/ocfs2/dlmglue.c:2876
- #3: ffff88807afb5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
- #3: ffff88807afb5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}, at: ocfs2_wipe_inode+0x2e6/0x1220 fs/ocfs2/inode.c:776
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5236 Comm: syz-executor Not tainted 6.11.0-syzkaller-12113-ge7ed34365879 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_circular_bug+0x41c/0x610 kernel/locking/lockdep.c:2074
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain kernel/locking/lockdep.c:3904 [inline]
- __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
- down_write+0x93/0x200 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:815 [inline]
- ocfs2_remove_inode+0x15c/0x8a0 fs/ocfs2/inode.c:655
- ocfs2_wipe_inode+0x455/0x1220 fs/ocfs2/inode.c:818
- ocfs2_delete_inode fs/ocfs2/inode.c:1079 [inline]
- ocfs2_evict_inode+0x6c5/0x15d0 fs/ocfs2/inode.c:1216
- evict+0x40c/0x970 fs/inode.c:723
- iput_final fs/inode.c:1875 [inline]
- iput fs/inode.c:1901 [inline]
- iput+0x530/0x890 fs/inode.c:1887
- d_delete_notify include/linux/fsnotify.h:332 [inline]
- vfs_rmdir fs/namei.c:4353 [inline]
- vfs_rmdir+0x487/0x690 fs/namei.c:4317
- do_rmdir+0x3a2/0x410 fs/namei.c:4399
- __do_sys_unlinkat fs/namei.c:4575 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __x64_sys_unlinkat+0xef/0x130 fs/namei.c:4569
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fcf15b7d5d7
-Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 07 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffff1fa0fd8 EFLAGS: 00000207 ORIG_RAX: 0000000000000107
-RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 00007fcf15b7d5d7
-RDX: 0000000000000200 RSI: 00007ffff1fa2180 RDI: 00000000ffffff9c
-RBP: 00007fcf15bf0134 R08: 0000555573d0e66b R09: 0000000000000000
-R10: 0000000000001000 R11: 0000000000000207 R12: 00007ffff1fa2180
-R13: 00007fcf15bf0134 R14: 0000000000042eb7 R15: 00007ffff1fa4330
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
