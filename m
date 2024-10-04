@@ -1,102 +1,120 @@
-Return-Path: <linux-kernel+bounces-351500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF060991222
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75179991179
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B2341C23613
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:08:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D4B91C234D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1C51AE000;
-	Fri,  4 Oct 2024 22:08:13 +0000 (UTC)
-Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A27612E1CD;
+	Fri,  4 Oct 2024 21:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kXK1pPkq"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353CA231CAD;
-	Fri,  4 Oct 2024 22:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B69D231C9D
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728079692; cv=none; b=SZyu5XntaQusPHWMXM7bVAAwwC6soZvj0gWxp960jJUFlGQ7GpWL/R3ksv40T2zbNsu+unx24CDC6nE2QIX45WCiTphR1bbTOR4b30OPZtrbib8aHJrbtj6L86sJLPl8Pl/kFEui1NOGRRoJ+rPfXMhIoa8CX4FN8Y7N8rcBnWI=
+	t=1728077616; cv=none; b=bRdlswl7jf9dzULOspN6gIlcP5FmB9fNHfouplvRpOooajHxWs4RuxriqwIPFzysPFGU+XwGKsJLlLwPzcagaY51peWeqcoieOa+n5nFlygJk2ROk7/7QvFA1BdKsUQ8iV7z/xqvyTujvHit9M8VOmMg1oHaNhIcRBjrmSlbJlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728079692; c=relaxed/simple;
-	bh=cSflEgaFKMaHFtX/YbDDjEzFRDjwFue/n4BmMmc/ppE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JxA7o46Dbc+AWnR4sOv9mkoatdV4QsMywFKR5KNXPale5bytZZl5Ar5JggJk5pwc9beRQtkK1g7HS0ypXv2PCGAsOrBYV/KRkj0LqfAbrbJXPkp9fi960mwHryzLOMIQ5HUpWFoVu65uHiXHfeWd7xpVKI1rzavbjbSWyIMU9oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
-	by finn.localdomain with esmtp (Exim 4.95)
-	(envelope-from <tharvey@gateworks.com>)
-	id 1swpug-000iqZ-FK;
-	Fri, 04 Oct 2024 21:32:38 +0000
-From: Tim Harvey <tharvey@gateworks.com>
-To: Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH] net: phy: disable eee due to errata on various KSZ switches
-Date: Fri,  4 Oct 2024 14:32:35 -0700
-Message-Id: <20241004213235.3353398-1-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1728077616; c=relaxed/simple;
+	bh=KpNAlnNNQR3ZYwTAsI4VXp7PC9LokjG3OFYlBinwNQw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Q/bsxvo8aF8Pk0ZoWpBCid6KJRfJ8vxtSloIZm9ghV8m8/2iSwV3fRFovMF4ddgF5cexMwFqKukJsnOFfqrjzG9ESePAX8sWltxcFaoET4d8fBVsc93qz/ASFUe9q3wJtnHgZ5vTcQwp18hQnbCK2wvtxyIkqbiStZLvezqPT1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kXK1pPkq; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-718d6ad6050so2259139b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 14:33:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728077615; x=1728682415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HoYuRewxdam2BJkXXk6YiCo/fRJyTjJYkbtETeaOEpA=;
+        b=kXK1pPkqDnrlqD7aW3VMwtjlyqUCeR2Nu4FTe3qHjq7z4+v6iCM4NgG9Axkp7BsxPu
+         A/kp1ldrAv6MR0S0oNpQFuDKWXnCORCIuSAd1XzsOGOjNYKISIesjglim+iwY4EJxkC9
+         to2SWuLWCve6pO6YDoVABw9eop6asJj7DhpMbom+H/EZdQCzGZoTBtJSamf4RKIVHtSz
+         ip5gRU10LqBTU5YU2x3znQ6GhYZ7t02HGyh4wDT3sp+maqBm96kf3o5F2O1QY7PgO2Qi
+         HUBvw1dDkb/XFIb75fAFDTdsy57hCUueUypcS7WdBVe4Adjyd60H2WrcrUKdvaxaVrIB
+         GS+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728077615; x=1728682415;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HoYuRewxdam2BJkXXk6YiCo/fRJyTjJYkbtETeaOEpA=;
+        b=V7MGm0DQdvop5H0PQFDeZjcxA/Q/Mz+497CKmju3OadjumPqmEybuSbV8+XEg6PaEp
+         Xt6cwM2tx7OrBZKpAJIbjO+r6LRW26WgkqPBPN2O02NRin3aDkPFfzfq1PoJb6q4RoPf
+         9LyTbre322/VSafZiofmV4BsHRxaRUWKX0dRwNQqU16DXXlShDSDORqsdXdsN9s19abJ
+         RPh8Y+ucdK3cglQ3EYYCz7/Ct7aafIcaht5TNn+002ydCvWUhxL9riOXpWEwpgTPmXsi
+         5FLGf8WZe28ErQ/dQBCwxzLdr2amExYZaxLAIsZyuDdIN/tPPDykYIkP1Jc7YhzsNxmb
+         o0Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvVrz55d21MSCnGiympPTsr7TiKEFLo287SSqwTMBFgJ03BNDtz0LxVE9YZq6hlR0qZO2NlR5YeMIcnXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl5L4CLbQKkkVulwlqGtlUq+v8Hh0s90fJEgnZGNZ6XcvTHtAt
+	KLRAB+uVZs/0sWHOc77IK7ooPKGx/NXh1qnHcaHkAiXlTxg9L71iRVxOuv5aOls=
+X-Google-Smtp-Source: AGHT+IFKUIRhdQ9l5znjAusOODIMyqip8Esq800APLLqiTkfo42Xc52cIX97i1QDAVolizS/F4U07Q==
+X-Received: by 2002:a05:6a00:a91:b0:71d:d2a9:6ebf with SMTP id d2e1a72fcca58-71de23a9290mr7008106b3a.6.1728077614681;
+        Fri, 04 Oct 2024 14:33:34 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cbbab7sm345980b3a.18.2024.10.04.14.33.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 14:33:34 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Enric Balletbo i Serra <eballetbo@gmail.com>, 
+ Javier Martinez Canillas <javier@dowhile0.org>, 
+ Roger Quadros <rogerq@kernel.org>
+Cc: Nishanth Menon <nm@ti.com>, srk@ti.com, linux-omap@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20240903-gpmc-dtb-v1-0-380952952e34@kernel.org>
+References: <20240903-gpmc-dtb-v1-0-380952952e34@kernel.org>
+Subject: Re: [PATCH 0/3] ARM: dts: ti: omap: fix dtbs_check warnings for
+ ti,gpmc-nand and ti,gpmc-onenend
+Message-Id: <172807761391.805138.5382543711248730495.b4-ty@baylibre.com>
+Date: Fri, 04 Oct 2024 14:33:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cb14d
 
-The well-known errata regarding EEE not being functional on various KSZ
-switches has been refactored a few times. Recently the refactoring has
-excluded several switches that the errata should also apply to.
 
-Disable EEE for these switches based on errata.
+On Tue, 03 Sep 2024 19:43:43 +0300, Roger Quadros wrote:
+> This series fixes dtbs_check warnings on OMAP platforms
+> for ti,gpmc-nand and ti,gpmc-onenand.
+> 
+> The following warnings are fixed
+> - "nand@0,0: Unevaluated properties are not allowed ('linux,mtd-name' was unexpected)"
+> - "nand@0,0: Unevaluated properties are not allowed ('gpmc,device-nand' was unexpected)"
+> - "omap3430-sdp.dtb: onenand@2,0: Unevaluated properties are not allowed ('linux,mtd-name' was unexpected)"
+> 
+> [...]
 
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
----
- drivers/net/dsa/microchip/ksz_common.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index b074b4bb0629..d2bd82a1067c 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -2578,11 +2578,19 @@ static u32 ksz_get_phy_flags(struct dsa_switch *ds, int port)
- 		if (!port)
- 			return MICREL_KSZ8_P1_ERRATA;
- 		break;
-+	case KSZ8795_CHIP_ID:
-+	case KSZ8794_CHIP_ID:
-+	case KSZ8765_CHIP_ID:
-+		/* KSZ87xx DS80000687C Module 2 */
-+	case KSZ9896_CHIP_ID:
-+		/* KSZ9896 Errata DS80000757A Module 2 */
-+	case KSZ9897_CHIP_ID:
-+		/* KSZ9897 Errata DS00002394C Module 4 */
-+	case KSZ9567_CHIP_ID:
-+		/* KSZ9567 Errata DS80000756A Module 4 */
- 	case KSZ9477_CHIP_ID:
--		/* KSZ9477 Errata DS80000754C
--		 *
--		 * Module 4: Energy Efficient Ethernet (EEE) feature select must
--		 * be manually disabled
-+		/* KSZ9477 Errata DS80000754C Module 4 */
-+		/* Energy Efficient Ethernet (EEE) feature select must be manually disabled
- 		 *   The EEE feature is enabled by default, but it is not fully
- 		 *   operational. It must be manually disabled through register
- 		 *   controls. If not disabled, the PHY ports can auto-negotiate
+[1/3] ARM: dts: ti: drop linux,mtd-name from NAND nodes
+      commit: ea453dc2d4d6b7bed89386fe76916252993676ab
+[2/3] ARM: dts: ti: omap: am335x-baltos: drop "gpmc,device-nand" from NAND node
+      commit: a9c81b1d47baf1a187d240da6e4e6cac2dd668e5
+[3/3] ARM: dts: ti: omap3434-sdp: drop linux,mtd-name from onenand node
+      commit: 9fe9af0ba275f0109d118ccbd8a438989ca6708a
+
+Best regards,
 -- 
-2.25.1
+Kevin Hilman <khilman@baylibre.com>
 
 
