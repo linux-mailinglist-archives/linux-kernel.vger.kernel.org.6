@@ -1,96 +1,448 @@
-Return-Path: <linux-kernel+bounces-351528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59E3991289
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:56:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CFDF99128D
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F1328564B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:56:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFCB2B21849
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC99714D2A2;
-	Fri,  4 Oct 2024 22:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F9D147C86;
+	Fri,  4 Oct 2024 22:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aGuwIpkM"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="kiNgiya4"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B829514BF92
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 22:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CB114BF8A
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 22:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728082574; cv=none; b=B5VzKyhW5Yr0WI7aGugXRuqJ+Mu1aXQk4YN8fObI3uXslX8qbI1MDxScRmDdBmPHZUYB68czrydBbHuqESO9AClR6bnhAsZf7sdanLarDM6sIsFgrtTaMbtBKI11wp6Nm04HVKMmeOUYyqytalodlvKsMKyHQJX5HvHU62gcJhs=
+	t=1728082610; cv=none; b=XcT19Dynh/nsby1mnNvpT9ccCbEq8er+38hrPRxfLqcpZC0TVi7qtTf8wif5aCrrgcABXiqjFCZs5mmkIq2HonmrLXVz15ddcIvfu2QeQNx9oVgPY4VOkdJuYXnBTUiCbzXhmU4uB7q3ngdnmr4IZQtrgOweGcBFPYpkYWD21rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728082574; c=relaxed/simple;
-	bh=vSVmowQuOxKR6DuGxvZIDGlX/xY6PERh9dFLSMSYa7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c3jiN+pX4UNLogI7HGRQNBjhJvZ4nGfrwS0kbLKzY2KPjIfkN3o1AHAZlKVnkPzEQqko+t7QA8dBd4MD9MW5zekklZg3a4gEUyndLRYZcK5kDAcUGdY0IofXzYl4wjnGxvCSe69PzZSg8qIjEn2k1qfit1rhlg+HQDRV1kb5b3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aGuwIpkM; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20b6c311f62so23917045ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 15:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728082572; x=1728687372; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i/GyTrIjov/Q+/DDFg8zN5CnnVd536FyJYodwBH8Fzo=;
-        b=aGuwIpkMcn5q/XeBM8A68GrDLIuSZ6tFTj0BuFAop8+QPnsOtWOmak4qp/lJTudndX
-         0ebdZRMmohWvC9GMVg+1dvJaQ5P8Yzi4Lj5fNE4SmOM4smh1nIIPn3PInUHqJvRmPOS0
-         +wa4PrjnqG9ZFiIXg4ZnO6Jp7z0c+79aDFqFQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728082572; x=1728687372;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i/GyTrIjov/Q+/DDFg8zN5CnnVd536FyJYodwBH8Fzo=;
-        b=soZQOQda27Nl5com2BnMp9V4RQzYsob2sqlOWL0aa9hkLlSwmsacQdqwDfxsrkHmT4
-         BmAdGqsYGu4ltkkOmllRG05zVg/WHFXrQ/irryXUOrFfIzBxrJ5WATIKdpzzUx2rEONQ
-         IIPsHw6ZIOyFvTyfA03L5N4PHq4Mz7jhc6u1KnNQl3fobx3xPOGkKxJAixZ5Dg0M+FoS
-         w8+QNTaeUa5MoFvSmaPP7WhPViOBhFHkSaR+Y9Fft05t4oVXgkVruyGBOZETfnH2Kv3q
-         5V9uXODWea5FCAQRNV2hiFBCgo4mxu4nO+3455XCnUhquZb433nLJg1dgD5DrZBTcJAz
-         OLbw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfNDyg4WnXPZzy5r8AueElQPAQwb/oRLCaEeezycFQ5Dl2BwCE8BS3Q0zVJBQRdl5Cof7zEFb0jdQuRa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/N82SvD4CVTKlMnkFddUBxwIf8QAbgSKGSo/rDr4q4E/mhEVa
-	NSz5wIs6hm9nIIM9OM3v4PKP7Fe7V2U+d9i8q6mGgyPzi0q5K5tVPF7rBbPMRhFRZNxqC5Ji/UA
-	=
-X-Google-Smtp-Source: AGHT+IH6icUWoo4zdrKPw2th4xxk94nYEcoQEUxeyVS111ASawmnl79xThXdwoJ/OkAtj0v4Vq37qw==
-X-Received: by 2002:a17:903:2452:b0:205:6552:1099 with SMTP id d9443c01a7336-20bfe022cd9mr46260195ad.8.1728082572054;
-        Fri, 04 Oct 2024 15:56:12 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:431c:f73a:93be:1ac2])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-20c138d1568sm3516015ad.75.2024.10.04.15.56.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 15:56:11 -0700 (PDT)
-Date: Fri, 4 Oct 2024 15:56:09 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Lin <yu-hao.lin@nxp.com>, kernel@pengutronix.de,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v2 01/12] wifi: mwifiex: add missing locking
-Message-ID: <ZwByifOXJMO6PX2t@google.com>
-References: <20240918-mwifiex-cleanup-1-v2-0-2d0597187d3c@pengutronix.de>
- <20240918-mwifiex-cleanup-1-v2-1-2d0597187d3c@pengutronix.de>
+	s=arc-20240116; t=1728082610; c=relaxed/simple;
+	bh=Insi0YGfQ88Vw355OVq2PkCxMwItARRGwB8n98yOyo8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g1yz3/YoRbf6+94bGwJy1xw1H64iXYGHzgyxzDwzbRwscBTy4ECJ3ypbq0XIDNUNIqaIUngmVTHDNN77pZNfgIKVknS1QSd0u25l+WH+tlXwb2ViU2sdr7DzGJHkHYe9am4PbJEr+uZGc7YgxMzJVrBO1jzKxEAqVHSlQWAQQYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=kiNgiya4; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=FN4JOMsiKWWAmejdS2L0j2XRB8TBUWM1mrrmECl6/d0=; b=kiNgiya4fZLu/PzQ
+	4NvTxWltAErUp1Mhhr6nxO6B6WvGjp5GL4aq0rcgfWcCQnsOhYYkmbkGxhJYVTZoNKu77e151ch3Q
+	rnC9oB6gTCpaIHUs+Ls+Vs3azAMFgILib+hcIic/5x5a4B7drzWPIsc3Xcws0XKaX6hfBONyaOG0j
+	DOiXxA2oKNUXI+iO6riy7++pxuWcUvzfuut5AEpjEXt4Tgw+CwLGB+TCGaJRc4KxzHiDo55FpOKSW
+	H2zYXdsaTBsJ+wnT7tvTqCxF8l6zWIwl9ta+O5/mAJnTV4z0Gj87ZOH0OpfQxSLuUUaxVN+VQ4iqR
+	SFQHekDM6pXK7XRkRg==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1swrE3-0090pr-0H;
+	Fri, 04 Oct 2024 22:56:43 +0000
+From: linux@treblig.org
+To: harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com
+Cc: airlied@gmail.com,
+	simona@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] drm/amd/display: Remove unused regamma functions
+Date: Fri,  4 Oct 2024 23:56:42 +0100
+Message-ID: <20241004225642.280616-1-linux@treblig.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240918-mwifiex-cleanup-1-v2-1-2d0597187d3c@pengutronix.de>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 18, 2024 at 01:10:26PM +0200, Sascha Hauer wrote:
-> cfg80211_rx_assoc_resp() and cfg80211_rx_mlme_mgmt() need to be called
-> with the wiphy locked, so lock it before calling these functions.
-> 
-> Fixes: 36995892c271 ("wifi: mwifiex: add host mlme for client mode")
-> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Acked-by: Brian Norris <briannorris@chromium.org>
+calculate_user_regamma_coeff() and calculate_user_regamma_ramp() were
+added in 2018 in commit
+55a01d4023ce ("drm/amd/display: Add user_regamma to color module")
+
+but never used.
+
+Remove them and their helpers.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ .../amd/display/modules/color/color_gamma.c   | 307 ------------------
+ .../amd/display/modules/color/color_gamma.h   |  11 -
+ 2 files changed, 318 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
+index 3699e633801d..a71df052cf25 100644
+--- a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
++++ b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
+@@ -1399,71 +1399,6 @@ static void scale_gamma_dx(struct pwl_float_data *pwl_rgb,
+ 				pwl_rgb[i-1].b, 2), pwl_rgb[i-2].b);
+ }
+ 
+-/* todo: all these scale_gamma functions are inherently the same but
+- *  take different structures as params or different format for ramp
+- *  values. We could probably implement it in a more generic fashion
+- */
+-static void scale_user_regamma_ramp(struct pwl_float_data *pwl_rgb,
+-		const struct regamma_ramp *ramp,
+-		struct dividers dividers)
+-{
+-	unsigned short max_driver = 0xFFFF;
+-	unsigned short max_os = 0xFF00;
+-	unsigned short scaler = max_os;
+-	uint32_t i;
+-	struct pwl_float_data *rgb = pwl_rgb;
+-	struct pwl_float_data *rgb_last = rgb + GAMMA_RGB_256_ENTRIES - 1;
+-
+-	i = 0;
+-	do {
+-		if (ramp->gamma[i] > max_os ||
+-				ramp->gamma[i + 256] > max_os ||
+-				ramp->gamma[i + 512] > max_os) {
+-			scaler = max_driver;
+-			break;
+-		}
+-		i++;
+-	} while (i != GAMMA_RGB_256_ENTRIES);
+-
+-	i = 0;
+-	do {
+-		rgb->r = dc_fixpt_from_fraction(
+-				ramp->gamma[i], scaler);
+-		rgb->g = dc_fixpt_from_fraction(
+-				ramp->gamma[i + 256], scaler);
+-		rgb->b = dc_fixpt_from_fraction(
+-				ramp->gamma[i + 512], scaler);
+-
+-		++rgb;
+-		++i;
+-	} while (i != GAMMA_RGB_256_ENTRIES);
+-
+-	rgb->r = dc_fixpt_mul(rgb_last->r,
+-			dividers.divider1);
+-	rgb->g = dc_fixpt_mul(rgb_last->g,
+-			dividers.divider1);
+-	rgb->b = dc_fixpt_mul(rgb_last->b,
+-			dividers.divider1);
+-
+-	++rgb;
+-
+-	rgb->r = dc_fixpt_mul(rgb_last->r,
+-			dividers.divider2);
+-	rgb->g = dc_fixpt_mul(rgb_last->g,
+-			dividers.divider2);
+-	rgb->b = dc_fixpt_mul(rgb_last->b,
+-			dividers.divider2);
+-
+-	++rgb;
+-
+-	rgb->r = dc_fixpt_mul(rgb_last->r,
+-			dividers.divider3);
+-	rgb->g = dc_fixpt_mul(rgb_last->g,
+-			dividers.divider3);
+-	rgb->b = dc_fixpt_mul(rgb_last->b,
+-			dividers.divider3);
+-}
+-
+ /*
+  * RS3+ color transform DDI - 1D LUT adjustment is composed with regamma here
+  * Input is evenly distributed in the output color space as specified in
+@@ -1663,106 +1598,6 @@ static bool calculate_interpolated_hardware_curve(
+ 	return true;
+ }
+ 
+-/* The "old" interpolation uses a complicated scheme to build an array of
+- * coefficients while also using an array of 0-255 normalized to 0-1
+- * Then there's another loop using both of the above + new scaled user ramp
+- * and we concatenate them. It also searches for points of interpolation and
+- * uses enums for positions.
+- *
+- * This function uses a different approach:
+- * user ramp is always applied on X with 0/255, 1/255, 2/255, ..., 255/255
+- * To find index for hwX , we notice the following:
+- * i/255 <= hwX < (i+1)/255  <=> i <= 255*hwX < i+1
+- * See apply_lut_1d which is the same principle, but on 4K entry 1D LUT
+- *
+- * Once the index is known, combined Y is simply:
+- * user_ramp(index) + (hwX-index/255)*(user_ramp(index+1) - user_ramp(index)
+- *
+- * We should switch to this method in all cases, it's simpler and faster
+- * ToDo one day - for now this only applies to ADL regamma to avoid regression
+- * for regular use cases (sRGB and PQ)
+- */
+-static void interpolate_user_regamma(uint32_t hw_points_num,
+-		struct pwl_float_data *rgb_user,
+-		bool apply_degamma,
+-		struct dc_transfer_func_distributed_points *tf_pts)
+-{
+-	uint32_t i;
+-	uint32_t color = 0;
+-	int32_t index;
+-	int32_t index_next;
+-	struct fixed31_32 *tf_point;
+-	struct fixed31_32 hw_x;
+-	struct fixed31_32 norm_factor =
+-			dc_fixpt_from_int(255);
+-	struct fixed31_32 norm_x;
+-	struct fixed31_32 index_f;
+-	struct fixed31_32 lut1;
+-	struct fixed31_32 lut2;
+-	struct fixed31_32 delta_lut;
+-	struct fixed31_32 delta_index;
+-	const struct fixed31_32 one = dc_fixpt_from_int(1);
+-
+-	i = 0;
+-	/* fixed_pt library has problems handling too small values */
+-	while (i != 32) {
+-		tf_pts->red[i] = dc_fixpt_zero;
+-		tf_pts->green[i] = dc_fixpt_zero;
+-		tf_pts->blue[i] = dc_fixpt_zero;
+-		++i;
+-	}
+-	while (i <= hw_points_num + 1) {
+-		for (color = 0; color < 3; color++) {
+-			if (color == 0)
+-				tf_point = &tf_pts->red[i];
+-			else if (color == 1)
+-				tf_point = &tf_pts->green[i];
+-			else
+-				tf_point = &tf_pts->blue[i];
+-
+-			if (apply_degamma) {
+-				if (color == 0)
+-					hw_x = coordinates_x[i].regamma_y_red;
+-				else if (color == 1)
+-					hw_x = coordinates_x[i].regamma_y_green;
+-				else
+-					hw_x = coordinates_x[i].regamma_y_blue;
+-			} else
+-				hw_x = coordinates_x[i].x;
+-
+-			if (dc_fixpt_le(one, hw_x))
+-				hw_x = one;
+-
+-			norm_x = dc_fixpt_mul(norm_factor, hw_x);
+-			index = dc_fixpt_floor(norm_x);
+-			if (index < 0 || index > 255)
+-				continue;
+-
+-			index_f = dc_fixpt_from_int(index);
+-			index_next = (index == 255) ? index : index + 1;
+-
+-			if (color == 0) {
+-				lut1 = rgb_user[index].r;
+-				lut2 = rgb_user[index_next].r;
+-			} else if (color == 1) {
+-				lut1 = rgb_user[index].g;
+-				lut2 = rgb_user[index_next].g;
+-			} else {
+-				lut1 = rgb_user[index].b;
+-				lut2 = rgb_user[index_next].b;
+-			}
+-
+-			// we have everything now, so interpolate
+-			delta_lut = dc_fixpt_sub(lut2, lut1);
+-			delta_index = dc_fixpt_sub(norm_x, index_f);
+-
+-			*tf_point = dc_fixpt_add(lut1,
+-				dc_fixpt_mul(delta_index, delta_lut));
+-		}
+-		++i;
+-	}
+-}
+-
+ static void build_new_custom_resulted_curve(
+ 	uint32_t hw_points_num,
+ 	struct dc_transfer_func_distributed_points *tf_pts)
+@@ -1784,29 +1619,6 @@ static void build_new_custom_resulted_curve(
+ 	}
+ }
+ 
+-static void apply_degamma_for_user_regamma(struct pwl_float_data_ex *rgb_regamma,
+-		uint32_t hw_points_num, struct calculate_buffer *cal_buffer)
+-{
+-	uint32_t i;
+-
+-	struct gamma_coefficients coeff;
+-	struct pwl_float_data_ex *rgb = rgb_regamma;
+-	const struct hw_x_point *coord_x = coordinates_x;
+-
+-	build_coefficients(&coeff, TRANSFER_FUNCTION_SRGB);
+-
+-	i = 0;
+-	while (i != hw_points_num + 1) {
+-		rgb->r = translate_from_linear_space_ex(
+-				coord_x->x, &coeff, 0, cal_buffer);
+-		rgb->g = rgb->r;
+-		rgb->b = rgb->r;
+-		++coord_x;
+-		++rgb;
+-		++i;
+-	}
+-}
+-
+ static bool map_regamma_hw_to_x_user(
+ 	const struct dc_gamma *ramp,
+ 	struct pixel_gamma_point *coeff128,
+@@ -1855,125 +1667,6 @@ static bool map_regamma_hw_to_x_user(
+ 
+ #define _EXTRA_POINTS 3
+ 
+-bool calculate_user_regamma_coeff(struct dc_transfer_func *output_tf,
+-		const struct regamma_lut *regamma,
+-		struct calculate_buffer *cal_buffer,
+-		const struct dc_gamma *ramp)
+-{
+-	struct gamma_coefficients coeff;
+-	const struct hw_x_point *coord_x = coordinates_x;
+-	uint32_t i = 0;
+-
+-	do {
+-		coeff.a0[i] = dc_fixpt_from_fraction(
+-				regamma->coeff.A0[i], 10000000);
+-		coeff.a1[i] = dc_fixpt_from_fraction(
+-				regamma->coeff.A1[i], 1000);
+-		coeff.a2[i] = dc_fixpt_from_fraction(
+-				regamma->coeff.A2[i], 1000);
+-		coeff.a3[i] = dc_fixpt_from_fraction(
+-				regamma->coeff.A3[i], 1000);
+-		coeff.user_gamma[i] = dc_fixpt_from_fraction(
+-				regamma->coeff.gamma[i], 1000);
+-
+-		++i;
+-	} while (i != 3);
+-
+-	i = 0;
+-	/* fixed_pt library has problems handling too small values */
+-	while (i != 32) {
+-		output_tf->tf_pts.red[i] = dc_fixpt_zero;
+-		output_tf->tf_pts.green[i] = dc_fixpt_zero;
+-		output_tf->tf_pts.blue[i] = dc_fixpt_zero;
+-		++coord_x;
+-		++i;
+-	}
+-	while (i != MAX_HW_POINTS + 1) {
+-		output_tf->tf_pts.red[i] = translate_from_linear_space_ex(
+-				coord_x->x, &coeff, 0, cal_buffer);
+-		output_tf->tf_pts.green[i] = translate_from_linear_space_ex(
+-				coord_x->x, &coeff, 1, cal_buffer);
+-		output_tf->tf_pts.blue[i] = translate_from_linear_space_ex(
+-				coord_x->x, &coeff, 2, cal_buffer);
+-		++coord_x;
+-		++i;
+-	}
+-
+-	if (ramp && ramp->type == GAMMA_CS_TFM_1D)
+-		apply_lut_1d(ramp, MAX_HW_POINTS, &output_tf->tf_pts);
+-
+-	// this function just clamps output to 0-1
+-	build_new_custom_resulted_curve(MAX_HW_POINTS, &output_tf->tf_pts);
+-	output_tf->type = TF_TYPE_DISTRIBUTED_POINTS;
+-
+-	return true;
+-}
+-
+-bool calculate_user_regamma_ramp(struct dc_transfer_func *output_tf,
+-		const struct regamma_lut *regamma,
+-		struct calculate_buffer *cal_buffer,
+-		const struct dc_gamma *ramp)
+-{
+-	struct dc_transfer_func_distributed_points *tf_pts = &output_tf->tf_pts;
+-	struct dividers dividers;
+-
+-	struct pwl_float_data *rgb_user = NULL;
+-	struct pwl_float_data_ex *rgb_regamma = NULL;
+-	bool ret = false;
+-
+-	if (regamma == NULL)
+-		return false;
+-
+-	output_tf->type = TF_TYPE_DISTRIBUTED_POINTS;
+-
+-	rgb_user = kcalloc(GAMMA_RGB_256_ENTRIES + _EXTRA_POINTS,
+-			   sizeof(*rgb_user),
+-			   GFP_KERNEL);
+-	if (!rgb_user)
+-		goto rgb_user_alloc_fail;
+-
+-	rgb_regamma = kcalloc(MAX_HW_POINTS + _EXTRA_POINTS,
+-			      sizeof(*rgb_regamma),
+-			      GFP_KERNEL);
+-	if (!rgb_regamma)
+-		goto rgb_regamma_alloc_fail;
+-
+-	dividers.divider1 = dc_fixpt_from_fraction(3, 2);
+-	dividers.divider2 = dc_fixpt_from_int(2);
+-	dividers.divider3 = dc_fixpt_from_fraction(5, 2);
+-
+-	scale_user_regamma_ramp(rgb_user, &regamma->ramp, dividers);
+-
+-	if (regamma->flags.bits.applyDegamma == 1) {
+-		apply_degamma_for_user_regamma(rgb_regamma, MAX_HW_POINTS, cal_buffer);
+-		copy_rgb_regamma_to_coordinates_x(coordinates_x,
+-				MAX_HW_POINTS, rgb_regamma);
+-	}
+-
+-	interpolate_user_regamma(MAX_HW_POINTS, rgb_user,
+-			regamma->flags.bits.applyDegamma, tf_pts);
+-
+-	// no custom HDR curves!
+-	tf_pts->end_exponent = 0;
+-	tf_pts->x_point_at_y1_red = 1;
+-	tf_pts->x_point_at_y1_green = 1;
+-	tf_pts->x_point_at_y1_blue = 1;
+-
+-	if (ramp && ramp->type == GAMMA_CS_TFM_1D)
+-		apply_lut_1d(ramp, MAX_HW_POINTS, &output_tf->tf_pts);
+-
+-	// this function just clamps output to 0-1
+-	build_new_custom_resulted_curve(MAX_HW_POINTS, tf_pts);
+-
+-	ret = true;
+-
+-	kfree(rgb_regamma);
+-rgb_regamma_alloc_fail:
+-	kfree(rgb_user);
+-rgb_user_alloc_fail:
+-	return ret;
+-}
+-
+ bool mod_color_calculate_degamma_params(struct dc_color_caps *dc_caps,
+ 		struct dc_transfer_func *input_tf,
+ 		const struct dc_gamma *ramp, bool map_user_ramp)
+diff --git a/drivers/gpu/drm/amd/display/modules/color/color_gamma.h b/drivers/gpu/drm/amd/display/modules/color/color_gamma.h
+index ee5c466613de..97e55278940e 100644
+--- a/drivers/gpu/drm/amd/display/modules/color/color_gamma.h
++++ b/drivers/gpu/drm/amd/display/modules/color/color_gamma.h
+@@ -115,15 +115,4 @@ bool mod_color_calculate_degamma_params(struct dc_color_caps *dc_caps,
+ 		struct dc_transfer_func *output_tf,
+ 		const struct dc_gamma *ramp, bool mapUserRamp);
+ 
+-bool calculate_user_regamma_coeff(struct dc_transfer_func *output_tf,
+-		const struct regamma_lut *regamma,
+-		struct calculate_buffer *cal_buffer,
+-		const struct dc_gamma *ramp);
+-
+-bool calculate_user_regamma_ramp(struct dc_transfer_func *output_tf,
+-		const struct regamma_lut *regamma,
+-		struct calculate_buffer *cal_buffer,
+-		const struct dc_gamma *ramp);
+-
+-
+ #endif /* COLOR_MOD_COLOR_GAMMA_H_ */
+-- 
+2.46.2
+
 
