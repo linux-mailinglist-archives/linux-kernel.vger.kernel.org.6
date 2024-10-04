@@ -1,200 +1,111 @@
-Return-Path: <linux-kernel+bounces-350271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C717C990299
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:02:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 644C199029D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA5A281F9C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:02:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9441F219FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E8715B570;
-	Fri,  4 Oct 2024 12:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B3015A868;
+	Fri,  4 Oct 2024 12:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0n8bqCyF"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LU6PQ0jA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14C3158534
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 12:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0771FAA;
+	Fri,  4 Oct 2024 12:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728043312; cv=none; b=fUHzLJoz4yzop7/MF5YKwXmeyYYbAj6baGF3KqYWj+klCBYFQMm5ocIl2l7zSraKufDJuKOWBxxlIdWvJ4yjYk2U72Npss8S1xZHYM6R3aEU4GmdSWBCb9IqjFdviBUtfZ21lWiC0bmE/uFr2d4/91b7YYL8RplCbED7yYRZ1WE=
+	t=1728043452; cv=none; b=QMLJzgSoyXtPqDMt9BHsOtJ9Lg+kqzy4/+57TeuIg2gUme/qVHskUF6yluBaLgKiAykcJSJ+sMmDeqqqahzLvxFBnR2rfont+Vm1qBFFA02mmjQ74h6NXZjEcO4fRU/J2AqeXvMAmjrKIPDi5B+RmvLXTiBn7PMDbCyNV3s9SWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728043312; c=relaxed/simple;
-	bh=bVrMBs0CrOjOoAR7i6eKmzV5c+8J2r1zokBipbTZ7Og=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N9kfCOGGY4ig+Hprncq8nI3pvqurFTK6Kl/cs9uBWi8jDKitNcIdsnpILiVvJE+QuSTs/YQQqwFCbeyaFLIIOQEVLNrIC+15abFdfQp5mZfSPxIQGYDmoA+68iUuQUXRiNZCHb2EN0lLjCYvDtdNRLrXHb2NkA2EeTcmgmFPYFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0n8bqCyF; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cde6b5094so20619475e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 05:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728043309; x=1728648109; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GOom1Jkoy4BQFztAW4256sSNg2cH9tlbYpqxilJfV6k=;
-        b=0n8bqCyFzbFKJw0gKcc8wJUG7n65UvMdzdIXAnprtE0eIj4K/105vchveIo5pDo62e
-         QJdUW0N+WNzQtgJa8riaCzKaTTnJLqe/S5pKr+UJHJ2KjHO+4DxHXX5jhHLJLjS6z1Zm
-         eIR6HqpVtMI15/27R7HdVJmQq2vwxzKac0CaCRnBlyQTBKnVwncTP6oH1hOtRIcCwc79
-         idjX2nxK/4LAmvg3/1F2RawNTXyVJ3vkStuzskkmsyB0XiKGb4jFgqGF7h0jyqDLkNPf
-         /ibpst08K3LZUEbvIs2a1edmxiUApZa0hu6lNs1iDWdF65n4lVGoe9HAQ/3atjfUSbnX
-         NBmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728043309; x=1728648109;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GOom1Jkoy4BQFztAW4256sSNg2cH9tlbYpqxilJfV6k=;
-        b=VmlguEbnXIAsETCo3GY23jwIkEAlzt3Zyx4Ioe0RfI0UW/sjMi/jJTXEizduDTh9Us
-         3gMg9dM1JcCHQ793qOhMd4yoXHUTfViJKqsfkI0tiW+z92oEet0PUk5mUL1L71Yde5Ce
-         33clmzuFacZldZjcU/4C+xXsquszNkl/r2hLzl8JinoHOwcnOUuy5ivlra6QyB3CfJQw
-         OMwp9gKsUzJv3Qg0j4DaDbQ4Ai5YI9PjsLvCSu7TYLTpxDk7iUU3+IcWh7zRxN+qhbke
-         DWy2AvboB47QO8xZDCOV+NyiBgROuAiYqBUFF64dPPKybx0WprWxcmD6RlgVcuja8nNw
-         6yLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGLq8R2aIm0BlULxvLva5oPaWVfCevL7GIW26aPmbO1K2Ol8AaLJQM4y5Wf1MM2ytmqXrjczG+3aCylzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzkls4jxGduOCNrVvj3yQP7HHdJLP5NQgJXaBLID+FTV59HeiKN
-	PDbU9150EYuxZVaztUjKgrtqh7n6Sy3x26C6ZNtYIS/0aJco30E5oqkjUinCLbXnY99wLTDC5yN
-	oH/hh/Nttb/TdDmzxoP6C5Ki2uulM8D4q/hRI
-X-Google-Smtp-Source: AGHT+IFSxpuFoLIKo3xZcb3aLkK001iUGVcwYMaj98CyRyr/Gc5dKmCpozl6LE5XE5+L+/WMEBkSYOvi9zZWsA434Zw=
-X-Received: by 2002:a05:600c:68d9:b0:42f:512f:fafc with SMTP id
- 5b1f17b1804b1-42f8947de8dmr287875e9.29.1728043308993; Fri, 04 Oct 2024
- 05:01:48 -0700 (PDT)
+	s=arc-20240116; t=1728043452; c=relaxed/simple;
+	bh=OEW/TsqnqgLFx9h4HePvE4V09nvFPccYDELGmyxvkzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qkfVOTj/I/Kv6l29tYLUcwl4pogKyw32mTw4s9lPdiwFs7Uf8EOudQTEJ2D7WKWImv8PWSvS5QRLpW755qdaCB/1QzK3a4+Vmfz3TtXrUJijm00G7IAmQizB8dffLotQDuE66r8YJVbgz+t+fP4zOsmzDPhJJmvqV+TUCnDgml8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LU6PQ0jA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B609FC4CEC6;
+	Fri,  4 Oct 2024 12:04:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728043451;
+	bh=OEW/TsqnqgLFx9h4HePvE4V09nvFPccYDELGmyxvkzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LU6PQ0jAsXyGGohI/eId0raGTWH2LhKRjheq42e+U/ExabwOAq8NOU5sfkZfJxCtt
+	 /lToZouDXj5jUhQQXARqXRsej4ANMMTVOMaeJigyU3pgFKDsZ0KqDoiXsOfZkcYGs/
+	 0q+GNTsayXk1n7Qji5aXoUJN0NiEKyy8mRo43jJyC4sd7qeXc09Jn8TZn1pr+PiWDr
+	 0IK4Kmn6Z8VJHt2c9hPuDBA1qOhxVtE+SvzjCX27txnSMfjnzqv5LgoTWef468IPCC
+	 bpDZ6mTDUrP8gl9BV7EogUeDBYF5ow9G13ZjVXm/D5BtvlBbx3TYeit951PiqZMQrQ
+	 J0KAZtGWaCy2g==
+Date: Fri, 4 Oct 2024 14:04:03 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, akpm@linux-foundation.org,
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com, lina@asahilina.net,
+	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v8 11/29] rust: alloc: implement kernel `Box`
+Message-ID: <Zv_Zs1fJso1-Fl2R@pollux>
+References: <20241001150008.183102-1-dakr@kernel.org>
+ <20241001150008.183102-12-dakr@kernel.org>
+ <CANiq72nN7regVGe_FfONSKE5waG3L2xr-cdY8c0v8Y6xn297EQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002-brauner-rust-pid_namespace-v5-1-a90e70d44fde@kernel.org>
-In-Reply-To: <20241002-brauner-rust-pid_namespace-v5-1-a90e70d44fde@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 4 Oct 2024 14:01:36 +0200
-Message-ID: <CAH5fLgg+zsU4q5mrv19+0MhVvTZARsJJzw9aonj6g6tAo5av1g@mail.gmail.com>
-Subject: Re: [PATCH v5] rust: add PidNamespace
-To: Christian Brauner <brauner@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Bjoern Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arve Hjonnevag <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72nN7regVGe_FfONSKE5waG3L2xr-cdY8c0v8Y6xn297EQ@mail.gmail.com>
 
-On Wed, Oct 2, 2024 at 1:38=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> The lifetime of `PidNamespace` is bound to `Task` and `struct pid`.
->
-> The `PidNamespace` of a `Task` doesn't ever change once the `Task` is
-> alive. A `unshare(CLONE_NEWPID)` or `setns(fd_pidns/pidfd, CLONE_NEWPID)`
-> will not have an effect on the calling `Task`'s pid namespace. It will
-> only effect the pid namespace of children created by the calling `Task`.
-> This invariant guarantees that after having acquired a reference to a
-> `Task`'s pid namespace it will remain unchanged.
->
-> When a task has exited and been reaped `release_task()` will be called.
-> This will set the `PidNamespace` of the task to `NULL`. So retrieving
-> the `PidNamespace` of a task that is dead will return `NULL`. Note, that
-> neither holding the RCU lock nor holding a referencing count to the
-> `Task` will prevent `release_task()` being called.
->
-> In order to retrieve the `PidNamespace` of a `Task` the
-> `task_active_pid_ns()` function can be used. There are two cases to
-> consider:
->
-> (1) retrieving the `PidNamespace` of the `current` task (2) retrieving
-> the `PidNamespace` of a non-`current` task
->
-> From system call context retrieving the `PidNamespace` for case (1) is
-> always safe and requires neither RCU locking nor a reference count to be
-> held. Retrieving the `PidNamespace` after `release_task()` for current
-> will return `NULL` but no codepath like that is exposed to Rust.
->
-> Retrieving the `PidNamespace` from system call context for (2) requires
-> RCU protection. Accessing `PidNamespace` outside of RCU protection
-> requires a reference count that must've been acquired while holding the
-> RCU lock. Note that accessing a non-`current` task means `NULL` can be
-> returned as the non-`current` task could have already passed through
-> `release_task()`.
->
-> To retrieve (1) the `current_pid_ns!()` macro should be used which
-> ensure that the returned `PidNamespace` cannot outlive the calling
-> scope. The associated `current_pid_ns()` function should not be called
-> directly as it could be abused to created an unbounded lifetime for
-> `PidNamespace`. The `current_pid_ns!()` macro allows Rust to handle the
-> common case of accessing `current`'s `PidNamespace` without RCU
-> protection and without having to acquire a reference count.
->
-> For (2) the `task_get_pid_ns()` method must be used. This will always
-> acquire a reference on `PidNamespace` and will return an `Option` to
-> force the caller to explicitly handle the case where `PidNamespace` is
-> `None`, something that tends to be forgotten when doing the equivalent
-> operation in `C`. Missing RCU primitives make it difficult to perform
-> operations that are otherwise safe without holding a reference count as
-> long as RCU protection is guaranteed. But it is not important currently.
-> But we do want it in the future.
->
-> Note for (2) the required RCU protection around calling
-> `task_active_pid_ns()` synchronizes against putting the last reference
-> of the associated `struct pid` of `task->thread_pid`. The `struct pid`
-> stored in that field is used to retrieve the `PidNamespace` of the
-> caller. When `release_task()` is called `task->thread_pid` will be
-> `NULL`ed and `put_pid()` on said `struct pid` will be delayed in
-> `free_pid()` via `call_rcu()` allowing everyone with an RCU protected
-> access to the `struct pid` acquired from `task->thread_pid` to finish.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Fri, Oct 04, 2024 at 01:00:51AM +0200, Miguel Ojeda wrote:
+> On Tue, Oct 1, 2024 at 5:01 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > +    /// # Examples
+> > +    ///
+> > +    /// ```
+> > +    /// let x = KBox::new(24, GFP_KERNEL)?;
+> > +    /// let ptr = KBox::into_raw(x);
+> > +    /// let x = unsafe { KBox::from_raw(ptr) };
+> 
+> This is the only place that, after applying your series on top of the
+> lints one (i.e. current `rust-next`), triggered a missing `// SAFETY`
+> comment lint :)
+> 
+> If there is no new version, what do you want me to write when I apply it?
 
-Overall looks good! A few comments below.
+diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+index 5d20f6112cc2..ef1add933f60 100644
+--- a/rust/kernel/alloc/kbox.rs
++++ b/rust/kernel/alloc/kbox.rs
+@@ -147,6 +147,7 @@ impl<T, A> Box<T, A>
+     /// ```
+     /// let x = KBox::new(24, GFP_KERNEL)?;
+     /// let ptr = KBox::into_raw(x);
++    /// // SAFETY: `ptr` comes from a previous call to `KBox::into_raw`.
+     /// let x = unsafe { KBox::from_raw(ptr) };
+     ///
+     /// assert_eq!(*x, 24);
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+But maybe it's better to just send a new version, to also fix the missing
+`#![feature(inline_const)]` for `Vec` and missing import for `size_of` in
+`ArrayLayout`.
 
-> +            task: unsafe { &*PidNamespace::from_ptr(pidns) },
-
-I think you can simplify this to:
-task: unsafe { PidNamespace::from_ptr(pidns) },
-
-> +    /// Returns the given task's pid in the provided pid namespace.
-> +    #[doc(alias =3D "task_tgid_nr_ns")]
-> +    pub fn tgid_nr_ns(&self, pidns: Option<&PidNamespace>) -> Pid {
-> +        match pidns {
-> +            // SAFETY: By the type invariant, we know that `self.0` is v=
-alid. We received a valid
-> +            // PidNamespace that we can use as a pointer.
-> +            Some(pidns) =3D> unsafe { bindings::task_tgid_nr_ns(self.0.g=
-et(), pidns.as_ptr()) },
-> +            // SAFETY: By the type invariant, we know that `self.0` is v=
-alid. We received an empty
-> +            // PidNamespace and thus pass a null pointer. The underlying=
- C function is safe to be
-> +            // used with NULL pointers.
-> +            None =3D> unsafe { bindings::task_tgid_nr_ns(self.0.get(), p=
-tr::null_mut()) },
-
-The compiler generates better code if you do this:
-
-let pidns =3D match pidns {
-    Some(pidns) =3D> pidns.as_ptr(),
-    None =3D> core::ptr::null_mut(),
-};
-unsafe { bindings::task_tgid_nr_ns(self.0.get(), pidns) };
-
-Here it should be able to compile the entire match statement down to a
-no-op since None is represented as a null pointer.
-
-
-Alice
+> 
+> Thanks!
+> 
+> Cheers,
+> Miguel
+> 
 
