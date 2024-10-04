@@ -1,106 +1,110 @@
-Return-Path: <linux-kernel+bounces-350565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A1C9906DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:57:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DAD9906D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E43901F21B73
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:57:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34B07B24AC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8512194B5;
-	Fri,  4 Oct 2024 14:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134A12178E3;
+	Fri,  4 Oct 2024 14:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="y/ZfHfUh"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DPw70e0r"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD41C2141A2;
-	Fri,  4 Oct 2024 14:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2774E1CACE9
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728053427; cv=none; b=XW2oz3C05HgIVniV2gz+lAUFThpxYebSjUneguaeZKrABvX0K304NEOXgss5lv2ZFaHl3kRXGz0bUGiHXd/jS06E+qTGwLwqGzmCpVvnld6O7UblmWW/HgY48kGLMNpGKAdJOC4/D76Jd7TSkNdlou3CsYqSEurbsmDrWyYe9Fk=
+	t=1728053426; cv=none; b=l507rAghYl1KfQsmm1O8znbsaMMVy3EVLNiqlC2OhtkpenL2hcgVZy/4Fi/bW9GbFoWmePn6b1UFH5D8B/nCmYcWEXS05zjyIr2Pr5C+13aGvk+vQgkgHx5Z/4Wz12ryi4NTtXhyHhnKdwwPvZ2alsRBssnIeYHCVr8Sz6Rjsiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728053427; c=relaxed/simple;
-	bh=jrI4QlmUIOZtU2+vT3cnGSIxeka4ceUwjqasJSUfzAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZrkgxOETux7vCp2/x164uU1veW/3aBqxmvzwyM0a1dmQoTJBOvNRV+ZXwKXGfidOD1WbYcnzNb3snuXnDmcxeLxswvwy6W6r/sIHg0hTii26sQUAVHuyi0KCsVbSjZUxU4c0mH9egDd3SELOpN3f2stdYXRCk7InySWocVum0HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=y/ZfHfUh; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=8esOpvwhEAMg9FOrIHhtovLDXASj97AUVvZ8pGi+W44=; b=y/ZfHfUheaDUZgFmYnraZxdIUy
-	FZHLsDhrZcdPaM/JoSKzUjVwd9HMvIgJk53ZuxAux3LxwSCzbY/nkBeJGNwQFXW+UKT05RkhC04yJ
-	NLo7svj22cERP2UkRlgAJ65XaxDrlatTSoJ/+TLqC3HvkMsyp4xSKLHOAQS73GkYypck=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1swjdB-0093gB-CL; Fri, 04 Oct 2024 16:50:09 +0200
-Date: Fri, 4 Oct 2024 16:50:09 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Kiran Kumar C.S.K" <quic_kkumarcs@quicinc.com>
-Cc: Bjorn Andersson <quic_bjorande@quicinc.com>, netdev@vger.kernel.org,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, vsmuthu@qti.qualcomm.com,
-	arastogi@qti.qualcomm.com, linchen@qti.qualcomm.com,
-	john@phrozen.org, Luo Jie <quic_luoj@quicinc.com>,
-	Pavithra R <quic_pavir@quicinc.com>,
-	"Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
-	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
-Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
-Message-ID: <ac4b5546-366b-437a-a05b-52a53c3bd8a8@lunn.ch>
-References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
- <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
- <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
- <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
- <Zv7ubCFWz2ykztcR@hu-bjorande-lv.qualcomm.com>
- <7f413748-905d-4250-ad57-fc83969aad28@quicinc.com>
+	s=arc-20240116; t=1728053426; c=relaxed/simple;
+	bh=LdW3UEgWBNutR+58RAbUeVOQb38u3IT4Cej/3Sl76dg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C/wkCV1dWIwJLurtWcEXn3Iya0Ly6DQXOQCgIeL9V7EZ3dKJcoJvhxGPD+8f3LeNI16zwhHWkF6KQh/rEoiNKCYTS38nlo4Cb09ZB4R8PRrzlVia2NJ06hTtLOZsP08bRR5nSPXPlakMUgX5BR2OYlN9gThAlTRmv+i3SSilB68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DPw70e0r; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e137183587so1891009a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 07:50:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728053424; x=1728658224; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0iYyQjY9l/Hm6uV697ftkwU4KvJRwNy+C34ebXXW2p4=;
+        b=DPw70e0r+pqc3C8ydu3d9NL67xQhL3hAJbIhDNME4AfXebpgW/3uAoL7bW3PmHAHcL
+         TaIn43AKx4AmpEoW0yH3ErhdVuWbOFyeGaF3UcqoK7WRDeSKjwqHxuJYtXtbT+BYrZxG
+         9ydtUqvvAqjYkqJ5APVJP/M42pbdhzzsSjzovi/XB22BtSap1/W7WfFPyz58TEvi27dJ
+         jJZ4D8IgA5p75lCSkT+tU7htE+d8He243vkBPQPfsQyCpM9bdF08p5Ol9axQhFNn7d1+
+         OE1ZO6DI9Za80r9ptXNl90lMT7mGkRCsgdQqu3ZbTWB86jXhxio3c5LW1s+viSimKcii
+         MHaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728053424; x=1728658224;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0iYyQjY9l/Hm6uV697ftkwU4KvJRwNy+C34ebXXW2p4=;
+        b=IGAf+pBPCe/UPBhMnUFxjpyZIEXq5XSSMnI8u/npsa/Hj0K1FgpAR43ypug0FcZ/DF
+         iKyXVwi65/NkxskFPGDuwKRff3KmjErJ65KEVLgceebcm3k4WUPRPeGjyk7XcHyEZaZx
+         SGazUjX9wmzRXxToKJIUfodt2o6JvDcEesCOfxmG39BR0uMA8O3f1dazwhMnG+D6+BiZ
+         /mY+tXkP8TrBLfXiBaH6epWiweQBbPxYA0ARh0yNSSlNdS82j1V+ISCeV6nVvBBP+miU
+         dhahYYsbQgVrdTvY7bo0iP2fupa1Q0ncXBPHxa/ydx2CRIULSDNsQ5QlI/uD9/jGnlKl
+         Phsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiml/iRzvCenybuMadOgoYw/7ECaShTKCEkYFXhhLBK1XqFAwKGf4n2bepT0vhMLNUguH+7jhYNZbAIyw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyicOAqidYFpujtgpe1r+O+Y4+ysGY2rJjgWMaNM0qJRN7vaKhs
+	YbUyV8qexH1w6Oxtyh77A7PWARQCnmm1BWCCj6aZHsvKKzA6V31rM7cNmm8WUHj5BbeQLWaoc7+
+	sx7s22ok7Pkkv3u+vIHZ1Z2QMeL4=
+X-Google-Smtp-Source: AGHT+IF5IC1gwxI+aw756xi7KHV4VtxMtcLesqQhTDuECFzNrcNninDtelTrg/3KomYxxGW2E7G6xWl1j1ybLe0RxZY=
+X-Received: by 2002:a17:90a:7084:b0:2e0:74c9:ecea with SMTP id
+ 98e67ed59e1d1-2e1e622759bmr4067501a91.10.1728053424350; Fri, 04 Oct 2024
+ 07:50:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f413748-905d-4250-ad57-fc83969aad28@quicinc.com>
+References: <20241004142504.4379-1-aha310510@gmail.com> <Zv_87TBZnh2lIwyH@casper.infradead.org>
+In-Reply-To: <Zv_87TBZnh2lIwyH@casper.infradead.org>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Fri, 4 Oct 2024 23:50:12 +0900
+Message-ID: <CAO9qdTEZW74N_XDM0N1UkRy9BfrKE1SL-S4h2bvtEJ9QROTETA@mail.gmail.com>
+Subject: Re: [PATCH] mm: swap: prevent possible data-race in __try_to_reclaim_swap
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, kasong@tencent.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+fa43f1b63e3aa6f66329@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-> The only compile-time dependency from PCS driver to NSS CC driver is
-> with the example section in PCS driver's dtbindings file. The PCS DTS
-> node example definitions include a header file exported by the NSS CC
-> driver, to access certain macros for referring to the MII Rx/Tx clocks.
+Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Fri, Oct 04, 2024 at 11:25:04PM +0900, Jeongjun Park wrote:
+> > A report [1] was uploaded from syzbot.
+> >
+> > In the previous commit 862590ac3708 ("mm: swap: allow cache reclaim to skip
+> > slot cache"), the __try_to_reclaim_swap() function reads offset and nr_pages
+> > from folio without folio_lock protection.
+>
+> Umm.  You don't need folio_lock to read nr_pages.  Holding a refcount
+> is sufficient to stabilise nr_pages.  I cannot speak to folio->swap
+> though (and the KCSAN report does appear to be pointing to folio->swap).
+>
 
-> So, although there is no dependency in the driver code, a successful
-> dtbindings check will require the NSS CC driver to be available.
+That's right. It looks like KCSAN log occurs when reading folio->swap.
+In fact, since most of the code reads folio->swap under the protection
+of folio_lock, it is possible to modify only the part that reads folio->swap
+and the code that reads offset to operate under the protection of
+folio_lock.
 
-You are doing something wrong. A clock is just a phandle. The
-dtbindings check does not care where the phandle points to, just that
-it looks like a phandle. You can hard code the instance to 42 and all
-is good.
+However, even if reading nr_pages does not require folio_lock, I don't
+think it is very desirable to modify only this code to not be protected
+by folio_lock.
 
-And this is all just basic getting SoC stuff merged, nothing
-special. So why do you not know this? Have you not been subscribed to
-arm-soc for the last six months and watched other drivers get merged?
-I also really hope you have been on the netdev list for the last few
-months and have watched other pcs and ethernet drivers get merged.
-
-	Andrew
+Regards,
+Jeongjun Park
 
