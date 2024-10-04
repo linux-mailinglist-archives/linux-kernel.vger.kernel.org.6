@@ -1,183 +1,122 @@
-Return-Path: <linux-kernel+bounces-351061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB00990CD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:58:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E1B990D8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D00691F219E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:58:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12F561C21644
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4367A1C3029;
-	Fri,  4 Oct 2024 18:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFD01ADFEC;
+	Fri,  4 Oct 2024 18:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PhUUoToC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtUXRX9/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CA01FF7D3;
-	Fri,  4 Oct 2024 18:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A1620CCF6;
+	Fri,  4 Oct 2024 18:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066291; cv=none; b=JOb30AG9S4JjNniACtOLaaW50f9uWBwfKPQ0zao+XyjbOW/IMYXB1XTtC9or2s3CriWyr4OIajZI0YPgVTIKSipcq5AcFsJJ3Eaj2jLFm7QKaJXAUfMheW+s4WMZ6WAmqwSOC2W2z5BfJPMBJZR0t7Qi8ki1zIuYLxGFSmwEy3U=
+	t=1728066441; cv=none; b=mvm9A0JzNWcPRbJ4CbyokuxtJ/SW138U6jwNw/dcxCvFks6cdYAYaGFkgBw+XCA4lAl40Bde7+3v70/6kypHubPCWhYLuxlcdXS9dCNLLuOyb/abfwI5P2Tt4DcBBcKGg8ROFNuB3eX6u9epEYMMCeIpmb/cJ42H1KeYwOhhppQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066291; c=relaxed/simple;
-	bh=/uyLIjKkeW1+k+CLAi17bdjWQPVQkMSjEal7Yxc0ZI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=liogXyppuxajrbcvLU+S8rW6kZx/p/j4iPDRO0GuRaqqzb3qwC+zeGXIMelY/3u8XDrfRgrBh5Fj2o/360OWldRjkUXgqfIO2gGP5PiMZlyX4bWTIGPkOdYqFAfBAg+3aFVaXhta44iClJyYXL9YBjKE+l5Cv89mAoa+10xHL7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PhUUoToC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494A58xn026296;
-	Fri, 4 Oct 2024 18:24:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TBWex6u4gz8UD4S4kL8WJfJhp2YY6MPdyOuVv5hzhrk=; b=PhUUoToC/O697ZJE
-	f1HI9H75FTni1+GsTvdjq9H1rYkQYHomliM/qCp7ZNYIwmaY2QgsgvOcgrVWKfcG
-	Ldm5k/Do18rxkCakDHDuldg5mq6xSlE+Nsse4bpPGTTgV3Cnbjdg+nfqm9th3uyZ
-	ZpoYmryueAufJDyJc6qBOMnSXdyV2iMaWYV6p8LeXX/VnmBCtLCzyw+xNXB0ZZ0s
-	gbhJjxVAMGtUTeRQx6YAPQpa0llXX6EGKXkAuOB2x54fj91sQTjjQfcZVw66z6BZ
-	L9d96YvfYhimvVwqdWbYSgu9CsC/PmR/zYpUHlR21q0tZIfXSmj8sr89GVeTn4cO
-	dTCBDQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205jjyt5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 18:24:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494IOjui001441
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 18:24:45 GMT
-Received: from [10.110.70.43] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 11:24:45 -0700
-Message-ID: <17db9ffe-4e30-4776-a1f1-6da81cc0fcc2@quicinc.com>
-Date: Fri, 4 Oct 2024 11:24:44 -0700
+	s=arc-20240116; t=1728066441; c=relaxed/simple;
+	bh=rmXlFXvX2i0g7iDDOufjOW+wE0Y8IqrZd8O5QGgACSs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K1VMTQPZd83D2twZH5G1tzDXB4xiIJbiWWYwzyV8si1wyBXiFYt8cV2lkLdpoEWSKAixAPrsFSnYRvc2WNjNvfPSNXQVxhS3B9JWPmrxwwsNi/Zp0vYWEw211TJp8vvWzDYe/iadrzn9A7y8RU+sH53u0k8LoVHOZxwXxPPji9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtUXRX9/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67E44C4CEC6;
+	Fri,  4 Oct 2024 18:27:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728066440;
+	bh=rmXlFXvX2i0g7iDDOufjOW+wE0Y8IqrZd8O5QGgACSs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RtUXRX9/Al14XlSX6UwNdb5N/bId2bVGu128NhUARWDh3JXwPbwN77VZWO8qbqzZW
+	 YJq4fekNV6RtHnRXi4hDrq27KltLWFYV2XOctqYFXBakMQEPzU+LgiW4JtyigWDi7+
+	 xzJZ64SvYkLufOW+sZKqHbLnrtFbO3iwNgWNbLw6+3OHr7Yrh3G9hpIUcp2PlB643I
+	 hFq0xZO4+vywZ6nalDfrVqJPYKSybdSfHqgSo2KHpns6PWtglPyACEvQmX9dvOM6fE
+	 7I8X9o2exmmb9BqtBRDPGCyhhIoVAc+vea7UbIQhlkdaQFc6KYag2LdE48HxonBwEj
+	 ayHYllRqXk5og==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Tao Chen <chen.dylane@gmail.com>,
+	Jinke Han <jinkehan@didiglobal.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 01/42] bpf: Check percpu map value size first
+Date: Fri,  4 Oct 2024 14:26:12 -0400
+Message-ID: <20241004182718.3673735-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bus/mhi: Switch trace_mhi_gen_tre fields to native endian
-To: Carl Vanderlip <quic_carlv@quicinc.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-CC: kernel test robot <lkp@intel.com>, Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241004170321.4047492-1-quic_carlv@quicinc.com>
-Content-Language: en-US
-From: Mayank Rana <quic_mrana@quicinc.com>
-In-Reply-To: <20241004170321.4047492-1-quic_carlv@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: th9RbYqWOVEIVoJ_gKtswMOY_tXK0B7g
-X-Proofpoint-ORIG-GUID: th9RbYqWOVEIVoJ_gKtswMOY_tXK0B7g
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 malwarescore=0 clxscore=1011 phishscore=0 bulkscore=0
- impostorscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410040127
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.112
+Content-Transfer-Encoding: 8bit
 
+From: Tao Chen <chen.dylane@gmail.com>
 
+[ Upstream commit 1d244784be6b01162b732a5a7d637dfc024c3203 ]
 
-On 10/4/2024 10:03 AM, Carl Vanderlip wrote:
-> Each of the __field() macros were triggering sparse warnings similar to:
-> trace.h:87:1: sparse: sparse: cast to restricted __le64
-> trace.h:87:1: sparse: sparse: restricted __le64 degrades to integer
-> trace.h:87:1: sparse: sparse: restricted __le64 degrades to integer
-> 
-> Change each little endian type to its similarly sized native integer.
-> Convert inputs into native endian.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202402071859.8qMhgJEQ-lkp@intel.com/
-do you want to add Fixes tag as:
-Fixes: ceeb64f41fe6 ("bus: mhi: host: Add tracing support")
-> Signed-off-by: Carl Vanderlip <quic_carlv@quicinc.com>
-> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-> ---
->   drivers/bus/mhi/host/trace.h | 25 +++++++++++++------------
->   1 file changed, 13 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/bus/mhi/host/trace.h b/drivers/bus/mhi/host/trace.h
-> index 95613c8ebe06..3e0c41777429 100644
-> --- a/drivers/bus/mhi/host/trace.h
-> +++ b/drivers/bus/mhi/host/trace.h
-> @@ -9,6 +9,7 @@
->   #if !defined(_TRACE_EVENT_MHI_HOST_H) || defined(TRACE_HEADER_MULTI_READ)
->   #define _TRACE_EVENT_MHI_HOST_H
->   
-> +#include <linux/byteorder/generic.h>
->   #include <linux/tracepoint.h>
->   #include <linux/trace_seq.h>
->   #include "../common.h"
-> @@ -97,18 +98,18 @@ TRACE_EVENT(mhi_gen_tre,
->   		__string(name, mhi_cntrl->mhi_dev->name)
->   		__field(int, ch_num)
->   		__field(void *, wp)
-> -		__field(__le64, tre_ptr)
-> -		__field(__le32, dword0)
-> -		__field(__le32, dword1)
-> +		__field(uint64_t, tre_ptr)
-> +		__field(uint32_t, dword0)
-> +		__field(uint32_t, dword1)
->   	),
->   
->   	TP_fast_assign(
->   		__assign_str(name);
->   		__entry->ch_num = mhi_chan->chan;
->   		__entry->wp = mhi_tre;
-> -		__entry->tre_ptr = mhi_tre->ptr;
-> -		__entry->dword0 = mhi_tre->dword[0];
-> -		__entry->dword1 = mhi_tre->dword[1];
-> +		__entry->tre_ptr = le64_to_cpu(mhi_tre->ptr);
-> +		__entry->dword0 = le32_to_cpu(mhi_tre->dword[0]);
-> +		__entry->dword1 = le32_to_cpu(mhi_tre->dword[1]);
->   	),
->   
->   	TP_printk("%s: Chan: %d TRE: 0x%p TRE buf: 0x%llx DWORD0: 0x%08x DWORD1: 0x%08x\n",
-> @@ -176,19 +177,19 @@ DECLARE_EVENT_CLASS(mhi_process_event_ring,
->   
->   	TP_STRUCT__entry(
->   		__string(name, mhi_cntrl->mhi_dev->name)
-> -		__field(__le32, dword0)
-> -		__field(__le32, dword1)
-> +		__field(uint32_t, dword0)
-> +		__field(uint32_t, dword1)
->   		__field(int, state)
-> -		__field(__le64, ptr)
-> +		__field(uint64_t, ptr)
->   		__field(void *, rp)
->   	),
->   
->   	TP_fast_assign(
->   		__assign_str(name);
->   		__entry->rp = rp;
-> -		__entry->ptr = rp->ptr;
-> -		__entry->dword0 = rp->dword[0];
-> -		__entry->dword1 = rp->dword[1];
-> +		__entry->ptr = le64_to_cpu(rp->ptr);
-> +		__entry->dword0 = le32_to_cpu(rp->dword[0]);
-> +		__entry->dword1 = le32_to_cpu(rp->dword[1]);
->   		__entry->state = MHI_TRE_GET_EV_STATE(rp);
->   	),
->   
-Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
+Percpu map is often used, but the map value size limit often ignored,
+like issue: https://github.com/iovisor/bcc/issues/2519. Actually,
+percpu map value size is bound by PCPU_MIN_UNIT_SIZE, so we
+can check the value size whether it exceeds PCPU_MIN_UNIT_SIZE first,
+like percpu map of local_storage. Maybe the error message seems clearer
+compared with "cannot allocate memory".
 
-Regards,
-Mayank
+Signed-off-by: Jinke Han <jinkehan@didiglobal.com>
+Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Link: https://lore.kernel.org/bpf/20240910144111.1464912-2-chen.dylane@gmail.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/bpf/arraymap.c | 3 +++
+ kernel/bpf/hashtab.c  | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
+index c04e69f34e4d5..50b9bf57a4e3e 100644
+--- a/kernel/bpf/arraymap.c
++++ b/kernel/bpf/arraymap.c
+@@ -73,6 +73,9 @@ int array_map_alloc_check(union bpf_attr *attr)
+ 	/* avoid overflow on round_up(map->value_size) */
+ 	if (attr->value_size > INT_MAX)
+ 		return -E2BIG;
++	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
++	if (percpu && round_up(attr->value_size, 8) > PCPU_MIN_UNIT_SIZE)
++		return -E2BIG;
+ 
+ 	return 0;
+ }
+diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+index 0c74cc9012d5c..dae9ed02a75be 100644
+--- a/kernel/bpf/hashtab.c
++++ b/kernel/bpf/hashtab.c
+@@ -455,6 +455,9 @@ static int htab_map_alloc_check(union bpf_attr *attr)
+ 		 * kmalloc-able later in htab_map_update_elem()
+ 		 */
+ 		return -E2BIG;
++	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
++	if (percpu && round_up(attr->value_size, 8) > PCPU_MIN_UNIT_SIZE)
++		return -E2BIG;
+ 
+ 	return 0;
+ }
+-- 
+2.43.0
+
 
