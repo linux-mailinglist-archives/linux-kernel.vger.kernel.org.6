@@ -1,106 +1,286 @@
-Return-Path: <linux-kernel+bounces-349828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6EB98FBF3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:36:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5616B98FBF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE021C21185
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:36:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D990C1F21CEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA3913FF6;
-	Fri,  4 Oct 2024 01:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ht5UvNmu"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAC017FE;
+	Fri,  4 Oct 2024 01:35:29 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A31D29E;
-	Fri,  4 Oct 2024 01:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADF91AACB
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 01:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728005773; cv=none; b=hoS+a4oRF1gf7QqqQ6JXnagb+9Ps/r8lgXLIV4qS8cE/cq4I6nVBePh4dG2kNj5rB1l/ZqWp6aaK57pve/Y+nKZgtkE8Ib7RCkFlj9KxQk57WBnVjTCFf8k59JjvGvXDcUptMK975+5GCveI/SzvFbSA63xTPn5OqTdfhbicyfQ=
+	t=1728005729; cv=none; b=ZLxymGGHUndirsxTLBxClXYzX7QI8NFD4QfxxAsyKVSEY4Lp+FnGa19IJ2ygKOpO7DRQUYPgDnhqtI0nswDrsVSwo/O6HprYawKPelsCii2jztgM2PjdFTcbPUyIE4j3N85IWX1GAmTmferNh8JXNjT9fKFe4JETonZYZXyqIJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728005773; c=relaxed/simple;
-	bh=a/aPymda4W16ux4IAgQFTKgKS+k2ZBZVZpG58sBbX3o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uV480I2fokB5wrx57sQ0paNyrk8ETQY6braaie85BYNVAr+/0ojdMKvFPxvBgnKrNPlOmjfw08uk+S1PkPA71rAMKnf18RWjD3BfQ8MV59eBLvTXA16NVdjxAiJheQNODEMoG7UCx7aD855rYiMtRIaucrTq2mTXe/OC6LXUJDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=ht5UvNmu; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728005770;
-	bh=a/aPymda4W16ux4IAgQFTKgKS+k2ZBZVZpG58sBbX3o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ht5UvNmuWkSbel9GpM5PTnZ1574PNVLSEmXbBOuIQPVC5PPs6LLSumUvuOuMnB5qf
-	 ASvn3zH0Clr4MFFHvcCm6G2tJCNqRQeZDxxa4O05E2cYXbT9s3iMNs9T/uJnaaPtgt
-	 AkpVOYdUrLtP8Meh+6OLgFJ5pGW6mQqnvqhOseSZlIswfwY3iRssS6caUix+jTAsab
-	 Iv9PR+kZWiwM7AxRAiFA+4u8R77PAhZqpqOpy0bLTDYyiwKvRXJ2P14Y7a2u3DeoAi
-	 dmBbiCi8GdzecIW70crYt5/9gBUcsYfgfqNvAoaaWWo5qZhmhP3easpqSgH8MM2k+X
-	 STLxF1ZKFrHYQ==
-Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKWNB4PcdzCCk;
-	Thu,  3 Oct 2024 21:36:10 -0400 (EDT)
-Message-ID: <58ecf4b1-28af-495e-9f9e-f9fb2dc67f7e@efficios.com>
-Date: Thu, 3 Oct 2024 21:34:09 -0400
+	s=arc-20240116; t=1728005729; c=relaxed/simple;
+	bh=legLJrCYR7zOGX0wIR+H/cndK6PjMAlqdCmgs0Mt6NQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XZFR/nDCaDF52OZXNTR9dfbnChTxP0JvQmUeiLFc2SPBSrrjshshZXjwDh0tzohNTvH7ZmuUpxsqD7QqejKMbGG44QJek+mdDzcndkNKMS9iaQna6wvBx/VMTeSfdve/CbIkN/VlblnbBf2C9s5UEbgiF++FSFgTh3ekb7faDIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a1925177fdso18142455ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 18:35:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728005726; x=1728610526;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dLeIhql/IKKeROf8ziR6GXTw3ynZAZr4UgrHA8vD87c=;
+        b=bUadhkIza9ot31kc5qVBsylfPQpngTMzHURA9QyYTb01goksRQeWiY3Sm5juT28OEK
+         Wr/+93kYvC5lXJjt1oIq5ZuMAZpeU8fRsD0BZhIGi7VHKL3ZHFyeESos9tF0qT24ipuy
+         MOBl7CvKx/F3qjME1vgwiRNxA5kz0o/6ZPKLVWl7KjK5MYM6CvsPovQElqeAvDXbfxEc
+         brFa9TdEooIl83RRvYhaFwZdyROB9Onr0llGdfT4Vhbs84dpUgUOonqOjTyDsb10/8gn
+         8MUaOVNJIaUAkhSrJplrIlhibADZl5lR/x/FfblDCtiwew36mx3sgPa1hLjGrk7PkdIZ
+         ZxBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOywcEHfNjfMSpSTqN2DoqDCOaum+9QR/NKjvr/BFfAPLmqV3+BkLXehMZY1a8ou9sk6Qd8t2ytsZGr60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhZ9Aw3Fx/R/1bYuXH8IL30SBbifUpr77k8fy0jWvzeDQS5AKg
+	k2elnUwVAWCrCK0YWtSqFedwW0xN4kykNiRnzfOxk/mHEJ84MvNQ7Slyt235TVELvZ7Lf9m+Eug
+	YY7G82RWTkiaIOWDlxF8HjNcKYr/kz6xPtg/+HhFGHJplodnPkXhm5eo=
+X-Google-Smtp-Source: AGHT+IFtzPm18aBQd8WK8eiL26MsyDEn/kSKHKieoCKO8+b5/p16Nfs6Fj+NqjsQxuADeW0j9zIj4ueQFHPQJQ7shETYVKqjix3P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/8] tracing: Declare system call tracepoints with
- TRACE_EVENT_SYSCALL
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>
-References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
- <20241003151638.1608537-2-mathieu.desnoyers@efficios.com>
- <20241003173225.7670a4f0@gandalf.local.home>
- <ecd8a2fe-22f4-4340-a80b-5bf7ccd74815@efficios.com>
- <20241003210636.497cbb61@gandalf.local.home>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241003210636.497cbb61@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:184d:b0:3a0:451b:ade3 with SMTP id
+ e9e14a558f8ab-3a375a978dbmr9465535ab.10.1728005726424; Thu, 03 Oct 2024
+ 18:35:26 -0700 (PDT)
+Date: Thu, 03 Oct 2024 18:35:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ff465e.050a0220.49194.0403.GAE@google.com>
+Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_calc_xattr_init
+From: syzbot <syzbot+6f7edba4b1e2ca109d7f@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-10-04 03:06, Steven Rostedt wrote:
-> On Thu, 3 Oct 2024 20:15:25 -0400
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> 
->>> Feel free to rebase on top of this patch:
->>>
->>>     https://lore.kernel.org/all/20241003173051.6b178bb3@gandalf.local.home/
->>>    
->>
->> I will. But you realize that you could have done all this SRCU and
->> rcuidle nuking on top of my own series rather than pull the rug
->> under my feet and require me to re-do this series again ?
-> 
-> I thought I was doing you a favor! It's removing a lot of code and would
-> make your code simpler. ;-)
+Hello,
 
-The rebase was indeed not so bad.
+syzbot found the following issue on:
 
-Thanks,
+HEAD commit:    e7ed34365879 Merge tag 'mailbox-v6.12' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1000c127980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf263a6a5debbeef
+dashboard link: https://syzkaller.appspot.com/bug?extid=6f7edba4b1e2ca109d7f
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Mathieu
+Unfortunately, I don't have any reproducer for this issue yet.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/74f7ccd405cc/disk-e7ed3436.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ef3b18bc5269/vmlinux-e7ed3436.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/54ef06c52fbb/bzImage-e7ed3436.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6f7edba4b1e2ca109d7f@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-syzkaller-12113-ge7ed34365879 #0 Not tainted
+------------------------------------------------------
+syz.0.131/5956 is trying to acquire lock:
+ffff888051572378 (&oi->ip_xattr_sem){++++}-{3:3}, at: ocfs2_calc_xattr_init+0x5e7/0xcc0 fs/ocfs2/xattr.c:627
+
+but task is already holding lock:
+ffff8880542c5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ffff8880542c5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4){+.+.}-{3:3}, at: ocfs2_reserve_suballoc_bits+0x11d/0x4940 fs/ocfs2/suballoc.c:786
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4){+.+.}-{3:3}:
+       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
+       inode_lock include/linux/fs.h:815 [inline]
+       ocfs2_remove_inode+0x15c/0x8a0 fs/ocfs2/inode.c:655
+       ocfs2_wipe_inode+0x455/0x1220 fs/ocfs2/inode.c:818
+       ocfs2_delete_inode fs/ocfs2/inode.c:1079 [inline]
+       ocfs2_evict_inode+0x6c5/0x15d0 fs/ocfs2/inode.c:1216
+       evict+0x40c/0x970 fs/inode.c:723
+       iput_final fs/inode.c:1875 [inline]
+       iput fs/inode.c:1901 [inline]
+       iput+0x530/0x890 fs/inode.c:1887
+       ocfs2_dentry_iput+0x13a/0x340 fs/ocfs2/dcache.c:411
+       dentry_unlink_inode+0x282/0x480 fs/dcache.c:410
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:615
+       dput.part.0+0x4b1/0x9b0 fs/dcache.c:857
+       dput+0x1f/0x30 fs/dcache.c:847
+       ovl_check_rename_whiteout fs/overlayfs/super.c:586 [inline]
+       ovl_make_workdir fs/overlayfs/super.c:685 [inline]
+       ovl_get_workdir fs/overlayfs/super.c:808 [inline]
+       ovl_fill_super+0x1300/0x6720 fs/overlayfs/super.c:1376
+       vfs_get_super fs/super.c:1280 [inline]
+       get_tree_nodev+0xdd/0x190 fs/super.c:1299
+       vfs_get_tree+0x92/0x380 fs/super.c:1800
+       do_new_mount fs/namespace.c:3507 [inline]
+       path_mount+0x14e6/0x1f20 fs/namespace.c:3834
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4055 [inline]
+       __se_sys_mount fs/namespace.c:4032 [inline]
+       __x64_sys_mount+0x294/0x320 fs/namespace.c:4032
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}:
+       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
+       inode_lock include/linux/fs.h:815 [inline]
+       ocfs2_del_inode_from_orphan+0x112/0x700 fs/ocfs2/namei.c:2726
+       ocfs2_dio_end_io_write+0x2cc/0xf30 fs/ocfs2/aops.c:2329
+       ocfs2_dio_end_io+0x139/0x2a0 fs/ocfs2/aops.c:2427
+       dio_complete+0x21b/0x8e0 fs/direct-io.c:281
+       __blockdev_direct_IO+0x3139/0x3d10 fs/direct-io.c:1303
+       ocfs2_direct_IO+0x263/0x360 fs/ocfs2/aops.c:2464
+       generic_file_direct_write+0x19a/0x410 mm/filemap.c:3977
+       __generic_file_write_iter+0x11b/0x240 mm/filemap.c:4141
+       ocfs2_file_write_iter+0xb70/0x20e0 fs/ocfs2/file.c:2456
+       do_iter_readv_writev+0x535/0x7f0 fs/read_write.c:834
+       vfs_writev+0x363/0xdd0 fs/read_write.c:1064
+       do_pwritev+0x1b4/0x270 fs/read_write.c:1165
+       __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+       __se_sys_pwritev2 fs/read_write.c:1215 [inline]
+       __x64_sys_pwritev2+0xef/0x160 fs/read_write.c:1215
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&oi->ip_alloc_sem){++++}-{3:3}:
+       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
+       ocfs2_try_remove_refcount_tree+0xa8/0x320 fs/ocfs2/refcounttree.c:932
+       ocfs2_xattr_set+0x103c/0x2a30 fs/ocfs2/xattr.c:3670
+       __vfs_removexattr+0x156/0x1c0 fs/xattr.c:518
+       __vfs_removexattr_locked+0x166/0x480 fs/xattr.c:553
+       vfs_removexattr+0xcf/0x270 fs/xattr.c:575
+       ovl_do_removexattr fs/overlayfs/overlayfs.h:332 [inline]
+       ovl_removexattr fs/overlayfs/overlayfs.h:340 [inline]
+       ovl_make_workdir fs/overlayfs/super.c:728 [inline]
+       ovl_get_workdir fs/overlayfs/super.c:808 [inline]
+       ovl_fill_super+0x4fb3/0x6720 fs/overlayfs/super.c:1376
+       vfs_get_super fs/super.c:1280 [inline]
+       get_tree_nodev+0xdd/0x190 fs/super.c:1299
+       vfs_get_tree+0x92/0x380 fs/super.c:1800
+       do_new_mount fs/namespace.c:3507 [inline]
+       path_mount+0x14e6/0x1f20 fs/namespace.c:3834
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4055 [inline]
+       __se_sys_mount fs/namespace.c:4032 [inline]
+       __x64_sys_mount+0x294/0x320 fs/namespace.c:4032
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&oi->ip_xattr_sem){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain kernel/locking/lockdep.c:3904 [inline]
+       __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
+       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+       down_read+0x9a/0x330 kernel/locking/rwsem.c:1524
+       ocfs2_calc_xattr_init+0x5e7/0xcc0 fs/ocfs2/xattr.c:627
+       ocfs2_mknod+0x9f2/0x2440 fs/ocfs2/namei.c:328
+       ocfs2_create+0x185/0x450 fs/ocfs2/namei.c:672
+       vfs_create fs/namei.c:3294 [inline]
+       vfs_create+0x4c5/0x770 fs/namei.c:3278
+       do_mknodat+0x3d5/0x5d0 fs/namei.c:4185
+       __do_sys_mknod fs/namei.c:4218 [inline]
+       __se_sys_mknod fs/namei.c:4216 [inline]
+       __x64_sys_mknod+0x87/0xb0 fs/namei.c:4216
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &oi->ip_xattr_sem --> &ocfs2_sysfile_lock_key[args->fi_sysfile_type] --> &ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4);
+                               lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]);
+                               lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4);
+  rlock(&oi->ip_xattr_sem);
+
+ *** DEADLOCK ***
+
+3 locks held by syz.0.131/5956:
+ #0: ffff88807f8de420 (sb_writers#19){.+.+}-{0:0}, at: filename_create+0x10d/0x530 fs/namei.c:4019
+ #1: ffff888051572640 (&type->i_mutex_dir_key#13/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:850 [inline]
+ #1: ffff888051572640 (&type->i_mutex_dir_key#13/1){+.+.}-{3:3}, at: filename_create+0x1c2/0x530 fs/namei.c:4026
+ #2: ffff8880542c5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ #2: ffff8880542c5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4){+.+.}-{3:3}, at: ocfs2_reserve_suballoc_bits+0x11d/0x4940 fs/ocfs2/suballoc.c:786
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 5956 Comm: syz.0.131 Not tainted 6.11.0-syzkaller-12113-ge7ed34365879 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x41c/0x610 kernel/locking/lockdep.c:2074
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain kernel/locking/lockdep.c:3904 [inline]
+ __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+ down_read+0x9a/0x330 kernel/locking/rwsem.c:1524
+ ocfs2_calc_xattr_init+0x5e7/0xcc0 fs/ocfs2/xattr.c:627
+ ocfs2_mknod+0x9f2/0x2440 fs/ocfs2/namei.c:328
+ ocfs2_create+0x185/0x450 fs/ocfs2/namei.c:672
+ vfs_create fs/namei.c:3294 [inline]
+ vfs_create+0x4c5/0x770 fs/namei.c:3278
+ do_mknodat+0x3d5/0x5d0 fs/namei.c:4185
+ __do_sys_mknod fs/namei.c:4218 [inline]
+ __se_sys_mknod fs/namei.c:4216 [inline]
+ __x64_sys_mknod+0x87/0xb0 fs/namei.c:4216
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9c6537dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9c661e3038 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
+RAX: ffffffffffffffda RBX: 00007f9c65535f80 RCX: 00007f9c6537dff9
+RDX: 0000000000000701 RSI: 0000000000000800 RDI: 0000000020000500
+RBP: 00007f9c653f0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f9c65535f80 R15: 00007ffcd340d568
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
