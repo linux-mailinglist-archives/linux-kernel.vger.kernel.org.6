@@ -1,138 +1,145 @@
-Return-Path: <linux-kernel+bounces-350796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C56E9909CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:57:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7DA9909CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12C1128273F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:57:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E1511F22406
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9041CACF4;
-	Fri,  4 Oct 2024 16:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0EB1D9A57;
+	Fri,  4 Oct 2024 17:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQ5hjuCT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E4/e1zkf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A02D1CACC7
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1526B1C3040;
+	Fri,  4 Oct 2024 17:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728061043; cv=none; b=BDxLwhgNrEJykrSftb/xan4jpjQXieqpNabikiVyYM003GLpRNSxrpM18k+Dpca1Th0UC1Y2tncz1oQN4OGvX3SwOmwSG6K27isVaVrE4Et0TFIjNslY9U+IJHYJhYwPz4yuisWimDlcT1fmpXzwJuKbtpStPWX6jL0ZtiT6YEM=
+	t=1728061206; cv=none; b=U6aOPUJnLpFufbLwGo0Fq7o8mN01RbIsyXc/GxW+5GR4O2WJTmnccuD3PUETy9w/EXFVP5IenN0R+WEA//yDZbnEvxZoExsbd6ZDRIMDEiIGqGXcEr7cosVmB1wcWosdfalYix8VHD2oXk90ay6gk1eir4Q7G3vZ39v/WGwTyH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728061043; c=relaxed/simple;
-	bh=mBIgP43hFA332wU/wQG7YLLmCpJoVABP/u7z1pRmDBc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=k5b70pyPyJy1QIqQ2UIBtwzaqc46wMBLmKmag0DUSXvejlNC2Q7zVmjiskZzgH9MAxn66O9/Vwyte0jEyJX/nRKbEqOiH89YfPTThpEB6LSKKVGCerfuILr0Yc9Np+etYVmMxIjrqJUmwQ5zCpHjL17S7i3WEHHLC7kXgJ3n6Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQ5hjuCT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02834C4CEC6;
-	Fri,  4 Oct 2024 16:57:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728061043;
-	bh=mBIgP43hFA332wU/wQG7YLLmCpJoVABP/u7z1pRmDBc=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=AQ5hjuCTtjWaEiY0KN0MuiNo0cJoVvRdJATqYT2QiRx4m/X/eVCCA0UnV42qQyVxN
-	 hxSAoounLztU0pUmXqf5zhh8/53+lCKRep5QtIWvJzIK0trDhQUPcIoeMU1TBuiKiX
-	 guZO7aIJldCjD6yhFrjzeh3xd1y2Ktx3fS/QwLKJR7iXPfwhWrCcUgzGxAI+AZoF6V
-	 ChDSsSMZd9HzHygRULkmkX0BnJiq9fsz4qcSWfOF6zBbKGRevVKhJ1uAvPmCk/XfVO
-	 p7WgHcd4qtdRTfLgtNmXJSy9/mk8FJ+xYBE8foZ8kuDFxTNt04YL226XeB+mD6KKWC
-	 SiIHmS6hRrd2A==
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 000931200043;
-	Fri,  4 Oct 2024 12:57:21 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 04 Oct 2024 12:57:22 -0400
-X-ME-Sender: <xms:cR4AZ8gTM0i9tbbhc_5jErCz7g3sMfFzTbOTejazRXSgeF_KmXfX7g>
-    <xme:cR4AZ1A425XkaAu7Luv3qx9utPd187Dbvhlx4MvvsZwOx8y4GeTOO7sa98GL0rONM
-    Vazc44gBTAAGvEIh98>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvfedguddtiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvg
-    hlrdhorhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeef
-    iedtudeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlh
-    drohhrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehhtggrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepshgthhhnvghl
-    lhgvsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinh
-    gvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhi
-    nhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmrggtrhhosehorhgtrg
-    hmrdhmvgdruhhkpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:cR4AZ0EyDwR_4kMZSw3G0PRrTj9HGULuUPHmCX-q356OFLmZbmqnpQ>
-    <xmx:cR4AZ9Q3blhZPQ7fiSoXfO4JKSCsz315YRyQYDmuzuzkF2ip3pE7IQ>
-    <xmx:cR4AZ5wByjji00qWzDAmApNWfZolVcHpaXLiRpewjtUmgIMOhwu3sA>
-    <xmx:cR4AZ75zK_An49-mwDyagl1TWjkn21YRRTM_Zl0_KEOmZafWPpbbyw>
-    <xmx:cR4AZ2yNQjaqRvSQRmtOD00K9fwtijtHDZbVgNrKaI4W4Zp9xHdzG2bn>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BC6C32220073; Fri,  4 Oct 2024 12:57:21 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1728061206; c=relaxed/simple;
+	bh=kGMr9XJwmR/6XMbdyM0sz2yO0/poueWM7SpCkZ9rr1E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sU295U3c4fX8bO7koIimxwnnObFKFySmLee/6IfNjfFdDOWRN9iMp/+CHeJbynKmetbaF4eyus7q8C8uM351BZzmNY/iJX6iqvhXPTxFtNj53AOdPXRxg1WwcuAWxY1LSlUn7I0ywAg/d/cwCOkN7rXszE8X0mf+RpP4n9LDHv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E4/e1zkf; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728061205; x=1759597205;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=kGMr9XJwmR/6XMbdyM0sz2yO0/poueWM7SpCkZ9rr1E=;
+  b=E4/e1zkfcV8/YbYYullDUZHy95C9+/VUkTTxnikeOJuOHF8Vg2B/ynM/
+   RZ3TeaM8IUL6E2BZLflJVR/Z1/W/crSLrD1ruTsLAMXXwNTfl5o7c2l44
+   gR/1NbeK7kgNfMlMYxDGgqXYBY1eO9ugoCIvHfzqtP3e+uy0e9sB9wDck
+   6gsF+ZMq3/vXyQhopeLT/BMsIC+RizWXDmJRsTCq6AG7q52TbR5eIvjJ4
+   1aUMySWz3c4DXkHtXspg0rkHxZfQau39lX09HFvDzrcJXOq8lidFRVwZY
+   NrhTG4ivVshk7Ky4/vYuZyl2CCi3rh7z8rMbmCbGTBYp91e3013RmhFgC
+   w==;
+X-CSE-ConnectionGUID: Y9tpcUhzTDCcf1qReMs4ZA==
+X-CSE-MsgGUID: wnRrIcKwTnudsTfabq89mQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="37895482"
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="37895482"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 10:00:04 -0700
+X-CSE-ConnectionGUID: JcEuj40hRqKVOfr6zgygJg==
+X-CSE-MsgGUID: KKBvCfawQvirj++5TeV3Xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="105614661"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.166.93])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 09:59:56 -0700
+Message-ID: <ddf6960c-a48a-48df-b09d-f70797042413@intel.com>
+Date: Fri, 4 Oct 2024 19:59:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 04 Oct 2024 16:57:01 +0000
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: "Niklas Schnelle" <schnelle@linux.ibm.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jiri Slaby" <jirislaby@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
- linux-kernel@vger.kernel.org
-Message-Id: <be4faaed-be22-42e5-bcc2-6a992b4f9b58@app.fastmail.com>
-In-Reply-To: <alpine.DEB.2.21.2410041642140.45128@angie.orcam.me.uk>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
- <20240405152924.252598-2-schnelle@linux.ibm.com>
- <alpine.DEB.2.21.2405230244140.1257@angie.orcam.me.uk>
- <ef2912910d006c573324bcf063cb76e843dc8267.camel@linux.ibm.com>
- <alpine.DEB.2.21.2410011707550.45128@angie.orcam.me.uk>
- <7bcec0eb88c3891d23f5c9f224e708e4a9bb8b89.camel@linux.ibm.com>
- <alpine.DEB.2.21.2410021632150.45128@angie.orcam.me.uk>
- <84bbda13-ded1-4ada-a765-9d012d3f4abd@app.fastmail.com>
- <alpine.DEB.2.21.2410022305040.45128@angie.orcam.me.uk>
- <b59d81ee-04af-4557-9d35-ec2c03fbcbe7@app.fastmail.com>
- <alpine.DEB.2.21.2410041642140.45128@angie.orcam.me.uk>
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] KVM: x86: Fix Intel PT Host/Guest mode when host
+ tracing also
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Zhenyu Wang <zhenyuw@linux.intel.com>, kvm@vger.kernel.org,
+ Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, H Peter Anvin <hpa@zytor.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, mizhang@google.com
+References: <20240906130026.10705-1-adrian.hunter@intel.com>
+ <b2671dab-9efa-4a56-bbe4-9b9140708120@intel.com>
+Content-Language: en-US
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <b2671dab-9efa-4a56-bbe4-9b9140708120@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 4, 2024, at 16:24, Maciej W. Rozycki wrote:
-> On Fri, 4 Oct 2024, Arnd Bergmann wrote:
->> There are also a lot of Arm systems that have no I/O space support at
->> all, such as the Apple M2 I'm using at the moment.
->
->  Thanks for letting me know.  Is it AArch64 only that has no port I/O 
-> support in the PCIe root complex nowadays, or is it 32-bit ARM as well?
+On 26/09/24 17:05, Adrian Hunter wrote:
+> On 6/09/24 16:00, Adrian Hunter wrote:
+>> Hi
+>>
+>> There is a long-standing problem whereby running Intel PT on host and guest
+>> in Host/Guest mode, causes VM-Entry failure.
+>>
+>> The motivation for this patch set is to provide a fix for stable kernels
+>> prior to the advent of the "Mediated Passthrough vPMU" patch set:
+>>
+>> 	https://lore.kernel.org/kvm/20240801045907.4010984-1-mizhang@google.com/
+>>
+>> which would render a large part of the fix unnecessary but likely not be
+>> suitable for backport to stable due to its size and complexity.
+>>
+>> Ideally, this patch set would be applied before "Mediated Passthrough vPMU"
+>>
+>> Note that the fix does not conflict with "Mediated Passthrough vPMU", it
+>> is just that "Mediated Passthrough vPMU" will make the code to stop and
+>> restart Intel PT unnecessary.
+> 
+> Any comments?
 
-I'm fairly sure we have some on 32-bit as well, it's certainly
-up to the specific SoC rather than the architecture.
+Any comments?
 
-I think I've seen three different cases:
+> 
+>>
+>>
+>> Adrian Hunter (3):
+>>       KVM: x86: Fix Intel PT IA32_RTIT_CTL MSR validation
+>>       KVM: x86: Fix Intel PT Host/Guest mode when host tracing also
+>>       KVM: selftests: Add guest Intel PT test
+>>
+>>  arch/x86/events/intel/pt.c                         | 131 ++++++-
+>>  arch/x86/events/intel/pt.h                         |  10 +
+>>  arch/x86/include/asm/intel_pt.h                    |   4 +
+>>  arch/x86/kvm/vmx/vmx.c                             |  26 +-
+>>  arch/x86/kvm/vmx/vmx.h                             |   1 -
+>>  tools/testing/selftests/kvm/Makefile               |   1 +
+>>  .../selftests/kvm/include/x86_64/processor.h       |   1 +
+>>  tools/testing/selftests/kvm/x86_64/intel_pt.c      | 381 +++++++++++++++++++++
+>>  8 files changed, 532 insertions(+), 23 deletions(-)
+>>  create mode 100644 tools/testing/selftests/kvm/x86_64/intel_pt.c
+>>
+>> base-commit: d45aab436cf06544abeeffc607110f559a3af3b4
+>>
+>>
+>> Regards
+>> Adrian
+> 
 
-- Apple leaves out every feature from hardware that they don't
-  have to do for compliance, this also includes CPU stuff like
-  32-bit mode, big-endian or cacheable PCI mappings. I think IBMs
-  ppc64 chips are in a similar situation
-
-- Some devices can probably do I/O space in hardware, but this is
-  left out from the driver or the DT because it has not been
-  validated to work
-
-- Some devices have a limited number of mapping windows that
-  are shared between prefetchable-memory, non-prefetchable-memory,
-  config and io space. Leaving out I/O space completely is
-  easier than runtime remapping of the windows
-
-      Arnd
 
