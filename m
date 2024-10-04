@@ -1,144 +1,130 @@
-Return-Path: <linux-kernel+bounces-350104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0A098FFCF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:33:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C21698FFD1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ADF8B2298C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:33:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7AC1C22FE9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84E51487D6;
-	Fri,  4 Oct 2024 09:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A67147C86;
+	Fri,  4 Oct 2024 09:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZfgwYR2X"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="l0j2Sq28"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6983F1448DF;
-	Fri,  4 Oct 2024 09:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69C31465AC;
+	Fri,  4 Oct 2024 09:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728034397; cv=none; b=TSl4cuyH/DxSH8pyplf6sb6lWXvex+L3VI50uv7UlAiITNf6j8VV4mE40ShKusvgeooIpWZNb+uNh4XYeQ0sgFPEeVmXh2cfiIOXIZxE9dtAEhNqU2kEWjxZaUqQLuYyzrAXA4aJYWohGhdlJisRSpyBfX5ZrhKJD83rwWg3qtU=
+	t=1728034419; cv=none; b=sILOiqyoNWlpNCcg3uDKiJ8oajXywhp3z6KVIQ/Gn8KLEdtiQRfte9jfXTp41iLTZj742ZQ5XqZkhhWK5welRaiXttKNNXA9BPhQRyrPc0ylFQMD0GURjzXQ9Um/jwT7qhWcwpuk5wPC+aUxRiepIiqXgY0dO7si82ivMg0AjwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728034397; c=relaxed/simple;
-	bh=15PXJDPEpkT6NOSIzX8RENsvPLMNV0sN4TqJKOdxNgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MLbpehxSMnriL4gkZzOjEomowvmP463VI289t1nGvaqc4SgTTiw8jCnt1vuxxkn9E/+g2bzCFENrHEdfkmqPC90Z+OCjBps8kiTJRVTs6Z9CDUEPt3EE2Ron7owDzidWjiZSwhDjPz6467hXSU98GfCW7o4BQEd7Evh9XlV12IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZfgwYR2X; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=14KluE/LHokBuCB5SwHA3aLDg/3wRxJ1KUVsPcYEMV0=; b=ZfgwYR2X2HIh0n+zkwcif++5Ai
-	iZQwnJrVTnwoekEU874sQ44vLmFeamWV5PA1DmstnKEo4dV3EhtFngcIuIO+e2nqMzvFCBzqleyM9
-	LjN7dR5cmxKtdqXvJ3ZFj5Jt7ob7LAVsC8/OAB0yJyGkngio0GBnPcq/odSQc9jmQxvevVJYWl6cn
-	860yshwi7sX33w41P+xWwiCNN1uo9SjGKSPELc1TdHLxK/cxBzLDtJlRE8XIB3JeX/aAg/RB1W8V7
-	tpjY2+TYxkCARcJSfNOCcOB3PszfmVuRb9L/rSL2o7y8KGRo68UHNj44xIRzJyEWxhJMcabZG44YF
-	OUnOCxeQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1swegP-00000003oNd-3udH;
-	Fri, 04 Oct 2024 09:33:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4B56030083E; Fri,  4 Oct 2024 11:33:08 +0200 (CEST)
-Date: Fri, 4 Oct 2024 11:33:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-kernel@vger.kernel.org, amadeuszx.slawinski@linux.intel.com,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>, Kees Cook <kees@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH v1] cleanup: adjust scoped_guard() to avoid potential
- warning
-Message-ID: <20241004093308.GI18071@noisy.programming.kicks-ass.net>
-References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
- <Zv6RZS3bjfNcwh-B@smile.fi.intel.com>
- <Zv6SIHeN_nOWSH41@smile.fi.intel.com>
- <20241003141221.GT5594@noisy.programming.kicks-ass.net>
- <Zv7ZsieITDle2lgl@smile.fi.intel.com>
+	s=arc-20240116; t=1728034419; c=relaxed/simple;
+	bh=lYH7i3scXm5wsbzJSm6pT1NMbSAV+hb2CZmSFlix9O8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dp4c4LGfdnEXyrtswoMcldGZ20lK1bTfWKMedH8UdERA27CLm89fSqV/8813XoLzON4QTSkqj35zXY7hJo8xsRG/wj/XHZufzvL1+UAimGa0KyH8rbZxyOFVL59jqi2uETiB0fWLemRT0+Ac+Z1/MyO3uZWmPukQq3YxRUabP5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=l0j2Sq28; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728034409;
+	bh=lYH7i3scXm5wsbzJSm6pT1NMbSAV+hb2CZmSFlix9O8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l0j2Sq28nEGkc3kbl2+ymSu1dWRJRUaI7SQjjUIv4zVsDu9n5BSeb6Waf2XnQEpVu
+	 MGFHJjEtOHr6AzzAMshKfzTVbkp1MoWmwzugnOE3krEP+qQDgVdTWQ+EPkTHYtAFwA
+	 6KEL4X+pHawTQc5BPEFGFOi0EgZSvbgQtNT1aduKFhh1w8WurPUH0xXj0LDy5AljwG
+	 atLMS1VBgwBO7QTzeZ2Ftn/pAbO6deZh54O9b/1RARLlSBRSpL672jk7vbTkZAovbC
+	 xx45WXl9T6rJ++94fYT3zx44rlLWx/NJrPiw56bxDKw7JJan4ZhVJjQxhnICuxxzho
+	 BJRvI5q8VFc8g==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8995817E1147;
+	Fri,  4 Oct 2024 11:33:29 +0200 (CEST)
+Message-ID: <1432ee2c-ef74-41ba-a9ea-6a70943a929c@collabora.com>
+Date: Fri, 4 Oct 2024 11:33:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zv7ZsieITDle2lgl@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/9] Add platform supports to MediaTek MT8188 SoC (part
+ 2)
+To: Fei Shao <fshao@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20241004081218.55962-1-fshao@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241004081218.55962-1-fshao@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 03, 2024 at 08:51:46PM +0300, Andy Shevchenko wrote:
-
-> > I would really like to understand why you don't like this; care to
-> > elaborate Andy?
+Il 04/10/24 10:11, Fei Shao ha scritto:
+> Hi all,
 > 
-> To me the idea of
+> This series is based on top of my previous "Add platform supports to
+> MediaTek MT8188 SoC" v3 series[*].
 > 
-> int my_foo(...)
-> {
-> 	NOT_my_foo_macro(...)
-> 		return X;
-> }
+> There's nothing to change or address in that series at the point of
+> writing, so I decided not to resend it and start this new "part 2"
+> series instead.
+> (if I need to update both series next time I might consider merging them
+> into one)
 > 
-> is counter intuitive from C programming. Without knowing the magic behind the
-> scenes of NOT_my_foo_macro() I would eager to ask for adding a dead code like
+> Specifically, this continues to introduce the following platform supports
+> in MediaTek MT8188 SoC to lay the groundwork for the board device trees:
+> - PCIe
+> - MIPI DSI
+> - video decoder and encoder
+> - JPEG decoder and encoder
+> - vdosys0 and vdosys1 display pipelines
+> - DP-INTF
+> - eDP and DP TX
+> - aliases
 > 
-> int my_foo(...)
-> {
-> 	NOT_my_foo_macro(...)
-> 		return X;
-> 	return 0;
-> }
-
-Well, this is kernel coding, we don't really do (std) C anymore, and
-using *anything* without knowing the magic behind it is asking for fail.
-
-Also, something like:
-
-int my_foo()
-{
-	for (;;)
-		return X;
-}
-
-or
-
-int my_foo()
-{
-	do {
-		return X;
-	} while (0);
-}
-
-is perfectly valid C that no compiler should be complaining about. Yes
-its a wee bit daft, but if you want to write it, that's fine.
-
-The point being that the compiler can determine there is no path not
-hitting that return.
-
-Apparently the current for loop is defeating the compiler, I see no
-reason not to change it in such a way that the compiler is able to
-determine wtf happens -- that can only help.
-
-> What I would agree on is
+> Please have a look and feedback are welcome, thanks.
 > 
-> int my_foo(...)
-> {
-> 	return NOT_my_foo_macro(..., X);
-> }
+> [*]: https://lore.kernel.org/all/20240911143429.850071-1-fshao@chromium.org/
+> [v1]: https://lore.kernel.org/all/20241002114614.847553-1-fshao@chromium.org/
+> [v2]: https://lore.kernel.org/all/20241003070139.1461472-1-fshao@chromium.org/
+> 
+> Regards,
+> Fei
+> 
+> Changes in v3:
+> - add the secondary MIPI DSI
+> 
+> Changes in v2:
+> - add linux,pci-domain to PCIe node
+> - add power domain to PCIe PHY node
+> 
+> Fei Shao (9):
+>    arm64: dts: mediatek: mt8188: Assign GCE aliases
+>    arm64: dts: mediatek: mt8188: Add PCIe nodes
+>    arm64: dts: mediatek: mt8188: Add MIPI DSI nodes
+>    arm64: dts: mediatek: mt8188: Add video decoder and encoder nodes
+>    arm64: dts: mediatek: mt8188: Add JPEG decoder and encoder nodes
+>    arm64: dts: mediatek: mt8188: Add display nodes for vdosys0
+>    arm64: dts: mediatek: mt8188: Add display nodes for vdosys1
+>    arm64: dts: mediatek: mt8188: Add DP-INTF nodes
+>    arm64: dts: mediatek: mt8188: Add eDP and DP TX nodes
+> 
+>   arch/arm64/boot/dts/mediatek/mt8188.dtsi | 668 +++++++++++++++++++++++
+>   1 file changed, 668 insertions(+)
+> 
 
-That just really won't work with things as they are ofcourse.
+Whole series is
 
-> Or just using guard()().
-
-That's always an option. You don't *have* to use the -- to you -- weird
-form.
-
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
