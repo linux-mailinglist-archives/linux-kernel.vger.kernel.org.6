@@ -1,142 +1,357 @@
-Return-Path: <linux-kernel+bounces-350076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42BEF98FF6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:15:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A59A98FF5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E59A2811CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0B4DB21E3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3E81459F7;
-	Fri,  4 Oct 2024 09:14:47 +0000 (UTC)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA0613D899;
+	Fri,  4 Oct 2024 09:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="crzufK7X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3022139D0B;
-	Fri,  4 Oct 2024 09:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AC914659C
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 09:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728033287; cv=none; b=jH/nFEMe6cD+P5a/u99Rc+LoX8sK1DpaqNvOnHS1KlpVor4gRsdzFSmDFt2cQenFI/8dS0bwnUwnuqZhMzqAgpd6zGmuXMA25gkHXK3yJwEqW5pO5Pr8wEh5lKhkzhvZPMoRxOXATLmTPD+WAViXMpNL95M3OCcRip1yl2akIdg=
+	t=1728032977; cv=none; b=WzgoyPIXsRT1fBBJzhfQC+xqBXXJ5e2mGo16AifHll2AqPU15Q5Ta0dPF52lrfLfsRLPvK6o+mB2X/tqi9hexLX8brcQltq4aa41ZHeKW1ItnwmqLs9YR6iH91L+zAOSi+Ec7v3yN5fRCG8HZE8RpGQY6IAgb3ptcT0NqBqpJJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728033287; c=relaxed/simple;
-	bh=Pf4GmLXQoQ2W68DP1c87CA7klKU82fS2YGTZSKNS2Fc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eM0ctCGr55z/3fKW0NT3G+pJ9z/PMCwtoC8d621E0Wk1bjpXaggYpfHh+EI0mP7xxHKRXRkMzVZRONFzBezAOuftb7yaIpsW/CR6OtoGzXrQ0GL4DOOSkz24R+FYhWJVYW9Yh8aIXw40cidTIp+3DkM9ZequbC9eqz0MQ9XkfTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-84e857bc0feso1084061241.0;
-        Fri, 04 Oct 2024 02:14:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728033282; x=1728638082;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6chgMlM/7sl+CMw3ASA+dhKJBOdZlXw4dSmmetI2ODY=;
-        b=FUbwyJUw/XsMWLUj26DN+wMiNtO+KzyIZ3jGeFHhBMAJCCLek8vZkiWCUTE+iOY6lm
-         6fHamYT8XTi7aKKnKpn3ltGIW0mGfwwg+swdegncu35cTEY1/O9K6g1MsyunHOvKZ0T3
-         ZTt7ITZXjgw484SZSP967Fn2FIYgWbWxlarET0cIFOQ4Z4vZuCFCxpmFbRaeLE8ofIy/
-         O1S8CqxbngT5RTY7K3U9KJuLoxCLDYW6K+zHZzcxXJ1/kC8HDQBRPuwtomXI+EwsKobe
-         aYibhVBWg2NucHUIDgPbJM0ZOrZaZ320MNcI1TsSIP6zd1igJBhWQVWHB0IeGqZ4fX4o
-         lDxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJh8J74JQp0UhNGaytk+PlKWqoKdFMSYoXyQ/zdN/4NG4GShbEpFfEKN8qgSubOd9irbE7Kqw3ingu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8yqFpaYyl+qXcDGO+vDxSc2+G5GJJ+50jd+rRU1HtLvZPu/bM
-	s+uVjCwp/kxbkeA4rm7lR62wS4sUmU72Z9t3Dm3vtfMgTaGg/AcRbWYB22m4
-X-Google-Smtp-Source: AGHT+IGU6C/bFWdWXY/GvOLTqQ/oJV/lZPlQWHFSigxQNrzMk6AVLsDs+84z6FBZ/OZ/iV+wRPva+Q==
-X-Received: by 2002:a05:6102:c8d:b0:492:76e9:961a with SMTP id ada2fe7eead31-4a405cc19d1mr1031726137.1.1728033282336;
-        Fri, 04 Oct 2024 02:14:42 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4a3f9be47c6sm452141137.17.2024.10.04.02.14.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 02:14:42 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-84e857bc0feso1084049241.0;
-        Fri, 04 Oct 2024 02:14:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXuEm14tQNXCfGlvDTvlfO81AcgApat3WBtsnOr3o3gYSYpQXsoz5Oc3rUcacYgkxEI1hpY/79IrWoU@vger.kernel.org
-X-Received: by 2002:a05:690c:6185:b0:6e2:2684:7f62 with SMTP id
- 00721157ae682-6e2b534de12mr42115587b3.8.1728032856220; Fri, 04 Oct 2024
- 02:07:36 -0700 (PDT)
+	s=arc-20240116; t=1728032977; c=relaxed/simple;
+	bh=V+RixZSjGrTzxO9wVeJtMYL3mAuDqMaHU7I7qNk6B/c=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=R71Tg7HVJOyAXzaMH919nsvSlZgdxlDB7sNxaNVe8ouZrxYqA+iiN//JZPJFQHdXzog2wo21cBxFXr/7Pdv/gcX78rhQY7mhWNI+M4tHlVePikwKvB9r5JsBw2dwX2Zec+uDBGcIh4Vc5xxP2XhRqZvPd/5GEDxtU9pIcNgQ7wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=crzufK7X; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728032974;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KeAMh0T1DMYBfSkg4rMFIKsLXbl/1FZfHzQE7MzILB0=;
+	b=crzufK7XCQ3n/PFg8dY/tMRiXN+kj101bXZ6e1HhDS9BDQDsn59tQkkI77kV5CejGt9Xpe
+	fJdjVuJzRrHkJJAEvj5NvcvRYdB/jqZYsOvaKeaJf7gMqU3VypyyPpeC8/V9M7zGN4lfzp
+	B5qkKN7DbZsGxbyypvBr3TD5YpWh3g4=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-632-srQA7pafMfuBXjA6m1retg-1; Fri,
+ 04 Oct 2024 05:09:29 -0400
+X-MC-Unique: srQA7pafMfuBXjA6m1retg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FB9619560AF;
+	Fri,  4 Oct 2024 09:09:24 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.39.192.229])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1B6401956054;
+	Fri,  4 Oct 2024 09:09:16 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Aurabindo Pillai <aurabindo.pillai@amd.com>,
+	Melissa Wen <mwen@igalia.com>,
+	Joshua Ashton <joshua@froggi.es>,
+	=?UTF-8?q?Marek=20Ol=C5=A1=C3=A1k?= <marek.olsak@amd.com>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Hersen Wu <hersenxs.wu@amd.com>,
+	Tom Chung <chiahsuan.chung@amd.com>,
+	Roman Li <roman.li@amd.com>,
+	Bhuvana Chandra Pinninti <bhuvanachandra.pinninti@amd.com>,
+	Alvin Lee <alvin.lee2@amd.com>,
+	Sung Joon Kim <sungkim@amd.com>,
+	Duncan Ma <duncan.ma@amd.com>,
+	Hamza Mahfooz <hamza.mahfooz@amd.com>,
+	Lu Yao <yaolu@kylinos.cn>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/amdgpu: Add dcn30 drm_panic support
+Date: Fri,  4 Oct 2024 11:07:54 +0200
+Message-ID: <20241004090850.460668-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003152910.3287259-1-vincenzo.frascino@arm.com> <20241003152910.3287259-3-vincenzo.frascino@arm.com>
-In-Reply-To: <20241003152910.3287259-3-vincenzo.frascino@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Oct 2024 11:07:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXBF_aCmROPX3gfU5APt-v2QOvsqdEa-8ZpwuuxnFLaXQ@mail.gmail.com>
-Message-ID: <CAMuHMdXBF_aCmROPX3gfU5APt-v2QOvsqdEa-8ZpwuuxnFLaXQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] vdso: Introduce vdso/page.h
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Jason A . Donenfeld" <Jason@zx2c4.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Oct 3, 2024 at 5:30=E2=80=AFPM Vincenzo Frascino
-<vincenzo.frascino@arm.com> wrote:
-> The VDSO implementation includes headers from outside of the
-> vdso/ namespace.
->
-> Introduce vdso/page.h to make sure that the generic library
-> uses only the allowed namespace.
->
-> Note: on a 32-bit architecture UL is an unsigned 32 bit long. Hence when
-> it supports 64-bit phys_addr_t we might end up in situation in which the
-> top 32 bit are cleared. To prevent this issue this patch provides
-> separate macros for PAGE_MASK.
->
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Add support for the drm_panic module, which displays a pretty user
+friendly message on the screen when a Linux kernel panic occurs.
 
-Thanks for your patch!
+It should work on all readeon using amdgpu_dm_plane.c, when the
+framebuffer is linear (like when in a VT). For tiled framebuffer, it
+will only work on radeon with dcn30. It should be easy to add support
+for dcn20 or dcn31, but I can't test it.
+I've tested it on a Radeon W6400 pro.
 
->  arch/m68k/include/asm/page.h       |  6 ++----
+Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+---
+ .../amd/display/amdgpu_dm/amdgpu_dm_plane.c   | 137 +++++++++++++++++-
+ .../amd/display/dc/hubp/dcn30/dcn30_hubp.c    |  17 +++
+ .../amd/display/dc/hubp/dcn30/dcn30_hubp.h    |   2 +
+ drivers/gpu/drm/amd/display/dc/inc/hw/hubp.h  |   1 +
+ 4 files changed, 155 insertions(+), 2 deletions(-)
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> # m68k
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+index 25f63b2e7a8e2..a62b197ab6833 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+@@ -26,7 +26,9 @@
+ 
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_blend.h>
++#include "drm/drm_framebuffer.h"
+ #include <drm/drm_gem_atomic_helper.h>
++#include <drm/drm_panic.h>
+ #include <drm/drm_plane_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_fourcc.h>
+@@ -36,6 +38,7 @@
+ #include "amdgpu_display.h"
+ #include "amdgpu_dm_trace.h"
+ #include "amdgpu_dm_plane.h"
++#include "bif/bif_4_1_d.h"
+ #include "gc/gc_11_0_0_offset.h"
+ #include "gc/gc_11_0_0_sh_mask.h"
+ 
+@@ -1420,6 +1423,125 @@ static void amdgpu_dm_plane_atomic_async_update(struct drm_plane *plane,
+ 	amdgpu_dm_plane_handle_cursor_update(plane, old_state);
+ }
+ 
++/* panic_bo is set in amdgpu_dm_plane_get_scanout_buffer() and only used in amdgpu_dm_set_pixel()
++ * they are called from the panic handler, and no race condition can occurs.
++ */
++static struct amdgpu_bo *panic_abo;
++
++/* Use the indirect MMIO to write each pixel to the GPU VRAM,
++ * This is a simplified version of amdgpu_device_mm_access()
++ */
++static void amdgpu_dm_set_pixel(struct drm_scanout_buffer *sb,
++				unsigned int x,
++				unsigned int y,
++				u32 color)
++{
++	struct amdgpu_res_cursor cursor;
++	unsigned long offset;
++	struct amdgpu_bo *abo = panic_abo;
++	struct amdgpu_device *adev = amdgpu_ttm_adev(abo->tbo.bdev);
++	uint32_t tmp;
++
++	offset = x * 4 + y * sb->pitch[0];
++	amdgpu_res_first(abo->tbo.resource, offset, 4, &cursor);
++
++	tmp = cursor.start >> 31;
++	WREG32_NO_KIQ(mmMM_INDEX, ((uint32_t) cursor.start) | 0x80000000);
++	if (tmp != 0xffffffff)
++		WREG32_NO_KIQ(mmMM_INDEX_HI, tmp);
++	WREG32_NO_KIQ(mmMM_DATA, color);
++}
++
++static int amdgpu_dm_plane_disable_tiling(struct dc_plane_state *dc_plane_state)
++{
++	struct dc_state *dc_state;
++	int i;
++
++	if (!dc_plane_state)
++		return -EINVAL;
++
++	dc_state = dc_plane_state->ctx->dc->current_state;
++	if (!dc_state)
++		return -EINVAL;
++
++	for (i = 0; i < dc_plane_state->ctx->dc->res_pool->pipe_count; i++) {
++		struct pipe_ctx *pipe_ctx = &dc_state->res_ctx.pipe_ctx[i];
++		struct hubp *hubp;
++
++		if (!pipe_ctx)
++			continue;
++
++		hubp = pipe_ctx->plane_res.hubp;
++		if (!hubp)
++			continue;
++
++		if (!hubp->funcs->hubp_clear_tiling)
++			return -EINVAL;
++
++		hubp->funcs->hubp_clear_tiling(hubp);
++		hubp->funcs->hubp_program_surface_flip_and_addr(hubp,
++								&dc_plane_state->address,
++								dc_plane_state->flip_immediate);
++	}
++	return 0;
++}
++
++static int amdgpu_dm_plane_get_scanout_buffer(struct drm_plane *plane,
++					      struct drm_scanout_buffer *sb)
++{
++	struct dm_plane_state *dm_plane_state = to_dm_plane_state(plane->state);
++	struct amdgpu_bo *abo;
++	struct drm_framebuffer *fb = plane->state->fb;
++
++	if (!fb)
++		return -EINVAL;
++
++	DRM_DEBUG_KMS("Framebuffer %dx%d %p4cc\n", fb->width, fb->height, &fb->format->format);
++
++	abo = gem_to_amdgpu_bo(fb->obj[0]);
++	if (!abo)
++		return -EINVAL;
++
++	/* disable tiling */
++	if (fb->modifier && amdgpu_dm_plane_disable_tiling(dm_plane_state->dc_state))
++		return -EINVAL;
++
++	sb->width = fb->width;
++	sb->height = fb->height;
++	/* Use the generic linear format, because we just disabled tiling */
++	sb->format = drm_format_info(fb->format->format);
++	if (!sb->format)
++		return -EINVAL;
++
++	sb->pitch[0] = fb->pitches[0];
++
++	if (abo->flags & AMDGPU_GEM_CREATE_NO_CPU_ACCESS) {
++		if (abo->tbo.resource->mem_type != TTM_PL_VRAM) {
++			DRM_WARN("amdgpu panic, framebuffer not in VRAM\n");
++			return -EINVAL;
++		}
++		/* Only handle 32bits format, to simplify mmio access */
++		if (fb->format->cpp[0] != 4) {
++			DRM_WARN("amdgpu panic, pixel format is not 32bits\n");
++			return -EINVAL;
++		}
++		sb->set_pixel = amdgpu_dm_set_pixel;
++		panic_abo = abo;
++		return 0;
++	}
++	if (!abo->kmap.virtual &&
++	    ttm_bo_kmap(&abo->tbo, 0, PFN_UP(abo->tbo.base.size), &abo->kmap)) {
++		DRM_WARN("amdgpu bo map failed, panic won't be displayed\n");
++		return -ENOMEM;
++	}
++	if (abo->kmap.bo_kmap_type & TTM_BO_MAP_IOMEM_MASK)
++		iosys_map_set_vaddr_iomem(&sb->map[0], abo->kmap.virtual);
++	else
++		iosys_map_set_vaddr(&sb->map[0], abo->kmap.virtual);
++
++	return 0;
++}
++
+ static const struct drm_plane_helper_funcs dm_plane_helper_funcs = {
+ 	.prepare_fb = amdgpu_dm_plane_helper_prepare_fb,
+ 	.cleanup_fb = amdgpu_dm_plane_helper_cleanup_fb,
+@@ -1428,6 +1550,15 @@ static const struct drm_plane_helper_funcs dm_plane_helper_funcs = {
+ 	.atomic_async_update = amdgpu_dm_plane_atomic_async_update
+ };
+ 
++static const struct drm_plane_helper_funcs dm_primary_plane_helper_funcs = {
++	.prepare_fb = amdgpu_dm_plane_helper_prepare_fb,
++	.cleanup_fb = amdgpu_dm_plane_helper_cleanup_fb,
++	.atomic_check = amdgpu_dm_plane_atomic_check,
++	.atomic_async_check = amdgpu_dm_plane_atomic_async_check,
++	.atomic_async_update = amdgpu_dm_plane_atomic_async_update,
++	.get_scanout_buffer = amdgpu_dm_plane_get_scanout_buffer,
++};
++
+ static void amdgpu_dm_plane_drm_plane_reset(struct drm_plane *plane)
+ {
+ 	struct dm_plane_state *amdgpu_state = NULL;
+@@ -1854,7 +1985,10 @@ int amdgpu_dm_plane_init(struct amdgpu_display_manager *dm,
+ 	    plane->type != DRM_PLANE_TYPE_CURSOR)
+ 		drm_plane_enable_fb_damage_clips(plane);
+ 
+-	drm_plane_helper_add(plane, &dm_plane_helper_funcs);
++	if (plane->type == DRM_PLANE_TYPE_PRIMARY)
++		drm_plane_helper_add(plane, &dm_primary_plane_helper_funcs);
++	else
++		drm_plane_helper_add(plane, &dm_plane_helper_funcs);
+ 
+ #ifdef AMD_PRIVATE_COLOR
+ 	dm_atomic_plane_attach_color_mgmt_properties(dm, plane);
+@@ -1876,4 +2010,3 @@ bool amdgpu_dm_plane_is_video_format(uint32_t format)
+ 
+ 	return false;
+ }
+-
+diff --git a/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.c b/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.c
+index 60a64d2903527..3b16c3cda2c3e 100644
+--- a/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.c
++++ b/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.c
+@@ -334,6 +334,22 @@ void hubp3_program_tiling(
+ 
+ }
+ 
++void hubp3_clear_tiling(struct hubp *hubp)
++{
++	struct dcn20_hubp *hubp2 = TO_DCN20_HUBP(hubp);
++
++	REG_UPDATE(DCHUBP_REQ_SIZE_CONFIG, SWATH_HEIGHT, 0);
++	REG_UPDATE(DCSURF_TILING_CONFIG, SW_MODE, DC_SW_LINEAR);
++
++	REG_UPDATE_6(DCSURF_SURFACE_CONTROL,
++		PRIMARY_SURFACE_DCC_EN, 0,
++		PRIMARY_SURFACE_DCC_IND_BLK, 0,
++		PRIMARY_SURFACE_DCC_IND_BLK_C, 0,
++		SECONDARY_SURFACE_DCC_EN, 0,
++		SECONDARY_SURFACE_DCC_IND_BLK, 0,
++		SECONDARY_SURFACE_DCC_IND_BLK_C, 0);
++}
++
+ void hubp3_dcc_control(struct hubp *hubp, bool enable,
+ 		enum hubp_ind_block_size blk_size)
+ {
+@@ -512,6 +528,7 @@ static struct hubp_funcs dcn30_hubp_funcs = {
+ 	.hubp_in_blank = hubp1_in_blank,
+ 	.hubp_soft_reset = hubp1_soft_reset,
+ 	.hubp_set_flip_int = hubp1_set_flip_int,
++	.hubp_clear_tiling = hubp3_clear_tiling,
+ };
+ 
+ bool hubp3_construct(
+diff --git a/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.h b/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.h
+index b010531a7fe88..cfb01bf340a1a 100644
+--- a/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.h
++++ b/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.h
+@@ -297,6 +297,8 @@ void hubp3_read_state(struct hubp *hubp);
+ 
+ void hubp3_init(struct hubp *hubp);
+ 
++void hubp3_clear_tiling(struct hubp *hubp);
++
+ #endif /* __DC_HUBP_DCN30_H__ */
+ 
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/inc/hw/hubp.h b/drivers/gpu/drm/amd/display/dc/inc/hw/hubp.h
+index 16580d6242789..d0878fc0cc948 100644
+--- a/drivers/gpu/drm/amd/display/dc/inc/hw/hubp.h
++++ b/drivers/gpu/drm/amd/display/dc/inc/hw/hubp.h
+@@ -275,6 +275,7 @@ struct hubp_funcs {
+ 			enum hubp_3dlut_fl_crossbar_bit_slice bit_slice_cb_b,
+ 			enum hubp_3dlut_fl_crossbar_bit_slice bit_slice_cr_r);
+ 	int (*hubp_get_3dlut_fl_done)(struct hubp *hubp);
++	void (*hubp_clear_tiling)(struct hubp *hubp);
+ };
+ 
+ #endif
 
-> --- /dev/null
-> +++ b/include/vdso/page.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __VDSO_PAGE_H
-> +#define __VDSO_PAGE_H
-> +
-> +#include <uapi/linux/const.h>
-> +
-> +/*
-> + * PAGE_SHIFT determines the page size.
-> + *
-> + * Note: This definition is required because PAGE_SHIFT is used
-> + * in several places throuout the codebase.
+base-commit: a5c2320151ff7cdf9ec50630d638a417ff927e31
+-- 
+2.46.1
 
-throughout
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
