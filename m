@@ -1,200 +1,108 @@
-Return-Path: <linux-kernel+bounces-351350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33415990FF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:13:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8F2990FCB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6F661F25218
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:13:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E48BCB2DA61
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F241FCC79;
-	Fri,  4 Oct 2024 19:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B0A1ADFF6;
+	Fri,  4 Oct 2024 19:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="emSxUHkO"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4AxrR7i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15F01E049A;
-	Fri,  4 Oct 2024 19:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C011ADFE7;
+	Fri,  4 Oct 2024 19:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728070994; cv=none; b=rLS83BXy0xwXXFvxxJuh5/HsSi9F2Uz26zBhX/XdZpVszXIoH33EzJUaW+h7LJlfkZPamJzZAppwTiLCGVWNMBUygULGSZZXgzUCwrN30ke2Uvphjccda8fxlkBZD5w+E6D6B+URt6jGiL3LYz/OSgYGOFCK+F7czYHxaBCHGR0=
+	t=1728069224; cv=none; b=c3FeOqjAEXcfoTM6Y1WvuyLk7B+IAYAee9OFXlJmwg/i8ZwRI+FX6V1bSpkTIxaHZWaVVLhknXKg7fwtk0vYbYVnvMKro2Fgphf2eYOOdfdEeuJ56kFxvF2VR1DDdjjD/jD5JE3KE8TcOxZ8AfLT8uJKJZtgDYCJPPXg7siXorM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728070994; c=relaxed/simple;
-	bh=8ITfIM6Ec9kdNrhJlk2YKl1wKqmsQ5rBxLCWpRIt5Cg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uqOsJLt1q1axLTyGpF7WUqyzYop+0E97Wmkyj1x60bosSGtg8S2xVx6+LFbvmuyVn003EHRHG6eqbpjPBS8h/WQxU8U1XZ6I7r0rpR1zVL0BcoAXtmvZCv40ax+/TZ63MSYb5sLZOZZvMr++PnREopUKK1U38/dMeNCoksj8Lrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=emSxUHkO reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 3f5ef314220bde20; Fri, 4 Oct 2024 21:43:07 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 9500A6A9505;
-	Fri,  4 Oct 2024 21:43:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1728070987;
-	bh=8ITfIM6Ec9kdNrhJlk2YKl1wKqmsQ5rBxLCWpRIt5Cg=;
-	h=From:Subject:Date;
-	b=emSxUHkOYVT3uGd3hrbElDd80xCPBkIFrmW177CPtF7zASBRnG+3zjexTapO4RhCT
-	 t3IrwkxHESDgQ6WzTtGPy8Sd+LAWyQVXLubpIo9qqLljIkS6R4ixhQ0NlmZOOIk1GL
-	 v9/5bgHRHme+tZC7eoO8T8SldE5Z0bTMhaiql7WnKoEOgnWfRbTPZ5J22sPEZnSfrW
-	 G5UAlv+InZnw5XGHHNWHouKW2Y4/VlRF96PL9303uzsitocmgwF4p8Zt1Kw6/L7eCG
-	 3lgujA3DPu9wFxMkInLNMbMNEbQldFuhk+ogqjxck53Q2bymr3a9+YIOc09sFdqHRv
-	 NL3Cp6YbR/iGQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject:
- [PATCH v2 03/12] thermal: core: Represent suspend-related thermal zone flags
- as bits
-Date: Fri, 04 Oct 2024 21:11:53 +0200
-Message-ID: <7733910.EvYhyI6sBW@rjwysocki.net>
-In-Reply-To: <2215082.irdbgypaU6@rjwysocki.net>
-References: <2215082.irdbgypaU6@rjwysocki.net>
+	s=arc-20240116; t=1728069224; c=relaxed/simple;
+	bh=LO7IT7YT1qD7yM7AZD5y61ywl5y1t7QTlluAg+gpH6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SoVD3FCnOWd13Ikaee6ah5XJ1g0ncKMvXVV4ZHKZuQrMulN65iCC7um3JycRMl1Bf/vOu1DrO+EFoga1SuJRrPs2uMVHX2k2MnEFvKZmJkqxEwABMdJZcslUbE4httIDHKee3nVGkamO05ARMZKv+xWdL+TsBeIbdFHZIqbP8Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4AxrR7i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C786BC4CEC6;
+	Fri,  4 Oct 2024 19:13:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728069223;
+	bh=LO7IT7YT1qD7yM7AZD5y61ywl5y1t7QTlluAg+gpH6A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A4AxrR7iqWKCHfmYLaiYLbU/xQvHK4wZ83aSmDGQ7Zn80DJ7NTPhISoM5jxKTN7u5
+	 tFxT9yZ0yQW+Q8tqwIUb4hSWbnUSespXXO5fI1jFl7TGljrRg4H91qqheql/2qCmcd
+	 Towrz29qpcofP54F1gEZ0YM5iuknG0TElu7tLnrbU7zJi8OxKRezkCOBBz/G9I4D+Y
+	 Wl2rPeGl1mn1Il6lzeYwUlKoeG+/yflZrMfW5Ed7+bxNRtHlRe0cCOc/Ve62rJHLF5
+	 q07GPbmfhyOaScGz+4T+1/aMLVFHWSNia4WLPRsrfQHkKIeS+O539yTB36vkrLZNYg
+	 HcPYFmAcYl8mw==
+Date: Fri, 4 Oct 2024 20:13:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: =?utf-8?B?KO+/vdC777+9KSDvv73vv73vv73Ose+/vSAo77+977+9x7vvv73NsO+/vQ==?=
+	=?utf-8?B?77+90LDvv70p?= <ingyujang25@unist.ac.kr>
+Cc: "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
+	"hayashi.kunihiko@socionext.com" <hayashi.kunihiko@socionext.com>,
+	"mhiramat@kernel.org" <mhiramat@kernel.org>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sound: soc: uniphier: Handle regmap_write errors in
+ aio_src_set_param()
+Message-ID: <1fe9cb78-2412-47fd-a0b1-1d3a42385684@sirena.org.uk>
+References: <SE1P216MB2287F4D575CFBDC9755E896BFD6A2@SE1P216MB2287.KORP216.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvfedgudegtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeefudduuedtuefgleffudeigeeitdeufeelvdejgefftdethffhhfethfeljefgteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdi
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Instead of using two separate fields in struct thermal_zone_device for
-representing flags related to thermal zone suspend, represent them
-explicitly as bits in one u8 "state" field.
-
-Subsequently, that field will be used for addressing race conditions
-related to thermal zone initialization and exit.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-This is a new iteration of
-
-https://lore.kernel.org/linux-pm/2215885.irdbgypaU6@rjwysocki.net/
-
-v1 -> v2: The thermal zone guard has not been introduced yet, so adjust for that.
-
----
- drivers/thermal/thermal_core.c |   11 +++++------
- drivers/thermal/thermal_core.h |   11 +++++++----
- 2 files changed, 12 insertions(+), 10 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -547,7 +547,7 @@ void __thermal_zone_device_update(struct
- 	int low = -INT_MAX, high = INT_MAX;
- 	int temp, ret;
- 
--	if (tz->suspended || tz->mode != THERMAL_DEVICE_ENABLED)
-+	if (tz->state != TZ_STATE_READY || tz->mode != THERMAL_DEVICE_ENABLED)
- 		return;
- 
- 	ret = __thermal_zone_get_temp(tz, &temp);
-@@ -1662,7 +1662,7 @@ static void thermal_zone_device_resume(s
- 
- 	mutex_lock(&tz->lock);
- 
--	tz->suspended = false;
-+	tz->state &= ~(TZ_STATE_FLAG_SUSPENDED | TZ_STATE_FLAG_RESUMING);
- 
- 	thermal_debug_tz_resume(tz);
- 	thermal_zone_device_init(tz);
-@@ -1670,7 +1670,6 @@ static void thermal_zone_device_resume(s
- 	__thermal_zone_device_update(tz, THERMAL_TZ_RESUME);
- 
- 	complete(&tz->resume);
--	tz->resuming = false;
- 
- 	mutex_unlock(&tz->lock);
- }
-@@ -1679,7 +1678,7 @@ static void thermal_zone_pm_prepare(stru
- {
- 	mutex_lock(&tz->lock);
- 
--	if (tz->resuming) {
-+	if (tz->state & TZ_STATE_FLAG_RESUMING) {
- 		/*
- 		 * thermal_zone_device_resume() queued up for this zone has not
- 		 * acquired the lock yet, so release it to let the function run
-@@ -1692,7 +1691,7 @@ static void thermal_zone_pm_prepare(stru
- 		mutex_lock(&tz->lock);
- 	}
- 
--	tz->suspended = true;
-+	tz->state |= TZ_STATE_FLAG_SUSPENDED;
- 
- 	mutex_unlock(&tz->lock);
- }
-@@ -1704,7 +1703,7 @@ static void thermal_zone_pm_complete(str
- 	cancel_delayed_work(&tz->poll_queue);
- 
- 	reinit_completion(&tz->resume);
--	tz->resuming = true;
-+	tz->state |= TZ_STATE_FLAG_RESUMING;
- 
- 	/*
- 	 * Replace the work function with the resume one, which will restore the
-Index: linux-pm/drivers/thermal/thermal_core.h
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.h
-+++ linux-pm/drivers/thermal/thermal_core.h
-@@ -61,6 +61,11 @@ struct thermal_governor {
- 	struct list_head	governor_list;
- };
- 
-+#define	TZ_STATE_FLAG_SUSPENDED	BIT(0)
-+#define	TZ_STATE_FLAG_RESUMING	BIT(1)
-+
-+#define TZ_STATE_READY		0
-+
- /**
-  * struct thermal_zone_device - structure for a thermal zone
-  * @id:		unique id number for each thermal zone
-@@ -100,8 +105,7 @@ struct thermal_governor {
-  * @node:	node in thermal_tz_list (in thermal_core.c)
-  * @poll_queue:	delayed work for polling
-  * @notify_event: Last notification event
-- * @suspended: thermal zone suspend indicator
-- * @resuming:	indicates whether or not thermal zone resume is in progress
-+ * @state: 	current state of the thermal zone
-  * @trips:	array of struct thermal_trip objects
-  */
- struct thermal_zone_device {
-@@ -134,8 +138,7 @@ struct thermal_zone_device {
- 	struct list_head node;
- 	struct delayed_work poll_queue;
- 	enum thermal_notify_event notify_event;
--	bool suspended;
--	bool resuming;
-+	u8 state;
- #ifdef CONFIG_THERMAL_DEBUGFS
- 	struct thermal_debugfs *debugfs;
- #endif
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Z8USiPpMzZodHO/3"
+Content-Disposition: inline
+In-Reply-To: <SE1P216MB2287F4D575CFBDC9755E896BFD6A2@SE1P216MB2287.KORP216.PROD.OUTLOOK.COM>
+X-Cookie: A bachelor is an unaltared male.
 
 
+--Z8USiPpMzZodHO/3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 26, 2024 at 09:15:18PM +0000, (=EF=BF=BD=D0=BB=EF=BF=BD) =EF=BF=
+=BD=EF=BF=BD=EF=BF=BD=CE=B1=EF=BF=BD (=EF=BF=BD=EF=BF=BD=C7=BB=EF=BF=BD=CD=
+=B0=EF=BF=BD=EF=BF=BD=D0=B0=EF=BF=BD) wrote:
+> From 791716bf359b8540c519810848fd1f8006d7c3c5 Mon Sep 17 00:00:00 2001
+> From: Ingyu Jang <ingyujang25@unist.ac.kr>
+> Date: Thu, 26 Sep 2024 19:40:04 +0900
+> Subject: [PATCH] sound: soc: uniphier: Handle regmap_write errors in
+>  aio_src_set_param()
+
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
+
+--Z8USiPpMzZodHO/3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcAPmIACgkQJNaLcl1U
+h9CViAf/e5GEbzMuPdV1VC3qzLJlu8BlGwAP2eFN0CsIpEOGlvD8UoyDbmG4tHhb
+Hh50h1x8mEF9kLS8pnpP+z137DhTDy4LreUXSGyQywl3r1gn4anWTLzaDy8ed7+E
+1xRO3IXBttz/FVt84rx8PPidcz87NYDpb4+oJmEYnwWdGj3Wf9ADeIJlqcf2c3Mz
+dyQId5XyAJJ8Pf1RAi+TfAMV5wh7gjP5UmQ/tkcFuxSEdc9KqlcsBiYUimnRFaBh
+Qwli+uvo8lelH6m2hj20GfgBt15jviaC3gvovs1odVw1VNakCay9Xsxa5b3rJ0Li
+Fybnn7jTP7DNQYfDu3H03Mo2FEfM5A==
+=eplN
+-----END PGP SIGNATURE-----
+
+--Z8USiPpMzZodHO/3--
 
