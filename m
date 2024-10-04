@@ -1,180 +1,123 @@
-Return-Path: <linux-kernel+bounces-350348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481269903E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:20:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE399903E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE7851F21EBD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:20:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970BA1F22133
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38736219495;
-	Fri,  4 Oct 2024 13:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJeOmtbi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7396A2101BE;
+	Fri,  4 Oct 2024 13:19:16 +0000 (UTC)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA75217919;
-	Fri,  4 Oct 2024 13:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B8E20FAA4;
+	Fri,  4 Oct 2024 13:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728047903; cv=none; b=iuOqIRn30vQgykfCUnqaLdXQvqHPcPs5ORYU8PNIRsY9DcZe9sPW+cSjRlGdl70+U9RxmuZwLr8IDvi3XwQccJCuh683mQGc1QnERL0wE0xJXT9hPG7vLhGP/gvLb3FekotptuS09Exyw8vY8qd7iPauWbBLsd5dsjq7Q/PDhKY=
+	t=1728047956; cv=none; b=KseBsdpAOa+bevQwHi4JF3nMZPlIGlQE5pAQjv180PUKdD+v6z7YKPWcGauVgozS3aDw/Uish3qZUNNl8ITC+jzuT/vPy/b+Ja5UUtGHgr77RJK0OZ1QgpFHzKRiUn/Stzbf5dz/ywg7G2feS4ZnvsWNDm3J2V2X38QFD2q0LAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728047903; c=relaxed/simple;
-	bh=9CCT4emkgZ4aNhjimaMLoft7waX5qJm3j1Zwi+hAwSw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RoTA4ChBSkpXeU0PGj72MtMljL/nsH90xVj+VEi8M8HVW4i0+KH1ZToIsKN34F9Se82A3Gz2cLLMizlNef+Pi4pAak51hUyYsZnjapyYtNav9vkI0O/17yj+75MyWU+XuET9pOmqBbFInRfo69JcujVdZtUPIOT5tmh0RK9XyOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJeOmtbi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFFA0C4CED2;
-	Fri,  4 Oct 2024 13:18:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728047903;
-	bh=9CCT4emkgZ4aNhjimaMLoft7waX5qJm3j1Zwi+hAwSw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SJeOmtbiwFM5KNFReOpcRr58z6Vv32jKCXkme8V5nD9wRXfYUlPqZ44zfyYHt22Sn
-	 FGJ5Ubj7IXI6cj+bRTwhFXtZ1xKITx1s+b3dTOVvEUYsTTZ5xygVBn6ZnvS8e0dPzQ
-	 M+nx0ginjF6gVSfsh3crMvrlDm0ECoOb0e9T8EAe/Yke+x+dscjYTtGuOEuKCYknF6
-	 e7+6BKUHg0dYZ5o42NZh9yqD+udz28l9wdwzpLcVTtFNc2KAGNK2AXoavaW6Z3doz8
-	 Qf2jyLEopuNRQUhU77DnXZtLn6Dgxa0mDiOeJmMksURHgVkU9wQG3d32086APchGb7
-	 gfeLQDqiO6glw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 04 Oct 2024 09:16:52 -0400
-Subject: [PATCH v4 9/9] nfsd: handle delegated timestamps in SETATTR
+	s=arc-20240116; t=1728047956; c=relaxed/simple;
+	bh=9pd0g5NRuW0OoKQvQfD4kc4y5rgN6O3XZmxtYDj6WzI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=plumWzZVcf/dyf5qRvbXz2vu07SStFXO9BJVBAKsEdDolFztXnUNvdFlhAbted+40XvluAxh/IuTThVqiVggmwuFtAta7RzIxAqcg9z2JZMlcP4NZvxywFSFCYJS+tZjirO49A2jLyD2pRERTs8VXl/NXj2V025Xy2RYirKXaNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37ce9644daaso1440994f8f.3;
+        Fri, 04 Oct 2024 06:19:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728047953; x=1728652753;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rNnCppYLxIGhffsDy6p+mSN8RvEoWQUoD8xWvgVlqA0=;
+        b=vgDuCTN7+zNahxU7uV2de+2cl7JcxyGAcpMRgjIQrgcoEEuppuU2HNZfCyYYOMwkL8
+         luXWr7ZtEzSaaC354w/nQfZBKDhuBX3MaGhKbhAOnb1m2fXeKi+P8yxWht7V1K6fmWob
+         BOsGsCDPtlQ7rc6N/k83maoDJkmMY5SDv+n1JqV7U2YNAYdH8vwopoe8qjV6iNrgndZG
+         Bfp8Xo6xr6o4EZXZe3VIHr10w8niCywCWD844VxILIVVkRosLmANMja7+iBoZ8VI/Hjc
+         R/nY0onbUFVaCRMx/1UF969V9eR6S+U1Pz0I5SgJdezRBit//CLi/oQLbtV2hh6i5Kj0
+         mb/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU+pJyNtdcM3V73tLkxsHo7OTOT/38ehEM30/q5l3VaOT1O5W96Na/qsf+9kPGfGJ5XBty+36mQmgTQo2zm@vger.kernel.org, AJvYcCWcmPZXa+4zugQTx7sO9b4tA+EKJ6JY3xz3A2c4GosYhjxybb+h9ESfmSejX+/JU+NLFZcpKHgzgjNfJQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaQNJ3ZFw+nxQQ3tjQn+ctjt7KpBv/ubpr6zoK3oScav1LC6wZ
+	QiD+G29tc8Ky+ZMRYWL7Tc94spryDmJLpqZqJwIss439HWPIsvOo
+X-Google-Smtp-Source: AGHT+IFp/kBkMK6qU0pGozVHgf+5tR134P1Et7KYZWsoNYK8MOLyJUAbwGxztfbviOS4pjLO92GP3A==
+X-Received: by 2002:a5d:44cf:0:b0:374:c621:62a6 with SMTP id ffacd0b85a97d-37d0e8f065dmr1708929f8f.47.1728047952463;
+        Fri, 04 Oct 2024 06:19:12 -0700 (PDT)
+Received: from nuc.fritz.box (p200300f6f71aeb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71a:eb00:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d08234048sm3246607f8f.47.2024.10.04.06.19.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 06:19:12 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Qu Wenruo <wqu@suse.com>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Filipe Manana <fdmanana@suse.com>
+Subject: [PATCH v3] btrfs: don't BUG_ON() NOCOW ordered-extents with checksum list
+Date: Fri,  4 Oct 2024 15:19:01 +0200
+Message-ID: <20241004131901.21720-1-jth@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-delstid-v4-9-62ac29c49c2e@kernel.org>
-References: <20241004-delstid-v4-0-62ac29c49c2e@kernel.org>
-In-Reply-To: <20241004-delstid-v4-0-62ac29c49c2e@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: Tom Haynes <loghyr@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3267; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=9CCT4emkgZ4aNhjimaMLoft7waX5qJm3j1Zwi+hAwSw=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm/+sOxNR5js1OIdEyD1VBjMkxCXAGZG1EmjsFO
- +rnBCNLV1GJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZv/rDgAKCRAADmhBGVaC
- FS/UEADWn9vKI2kmakUnaeIm9XrD2SgscYnwNiaR7ogtsv1R1SqMwSTFrACpzpmcL8clOH42T0d
- bBOAbNMqKR3Q5J+CAh6uNzxUWMOm450tRDf14pJTI2fOVh2IqPGG3NlTJAFrpLTKxVI36Q77ycI
- Q+byF+DC0+Sl3GNeV/XVhAe2BwCiuOetx5Zi1nXZGRV13+hboIUNN0L/thANIdbxQjjg3Jg7SNm
- eJZTf8sM9yEAbFy7Fmb1S4bEHtTBgvLaa2QTAxq3gzLAm6tCVpd2IXdHBF5GpMczeYl2C5/BLUe
- garxMC4Fc9ISxLWkonuA0U6tORJpW7QDsVglUVrj7s1zlg+lKrvBRHz8zbCoS2HKbeUka3GYNdT
- 8gnAjX6yI09cZH7mn322IzX+gCj06MdvNDGzvY1mQSip/9oNcxksOD++tPMptXATsAk/hT5ef+Y
- FQ40XOjy8bGnqaEklyYqABL8tB+lyV8wJGQk5QzgZW0zbUfsZLsjAp711rtetkk1oL17oOHQn80
- RVx1FRMbjUneqdMU3SQYuT1C6BEU4WI4iubfoEGKpPJ1G8djt7TXiyDLXJJU1tez8/k8+PG64zq
- vQWcTbE2PGf7Td+mxz5odPRGWfPukadhykK3SKCCwv9lFsM9fM2Fc5wxji8fturpa/MdPteBDEv
- 66w8RymIK3+hhkA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Transfer-Encoding: 8bit
 
-Allow SETATTR to handle delegated timestamps. This patch assumes that
-only the delegation holder has the ability to set the timestamps in this
-way, so we only allow this if the SETATTR stateid refers to the
-delegation.
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Currently we BUG_ON() in btrfs_finish_one_ordered() if we finishing an
+ordered-extent that is flagged as NOCOW, but it's checsum list is non-empty.
+
+This is clearly a logic error which we can recover from by aborting the
+transaction.
+
+For developer builds which enable CONFIG_BTRFS_ASSERT, also ASSERT() that the
+list is empty.
+
+Suggested-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
 ---
- fs/nfsd/nfs4proc.c | 29 ++++++++++++++++++++++++++---
- fs/nfsd/nfs4xdr.c  | 20 ++++++++++++++++++++
- 2 files changed, 46 insertions(+), 3 deletions(-)
+Changes to v2:
+* Move ASSERT() out of if () block (Filipe)
+* goto 'out' after aborting the transaction (Filipe)
 
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index b5a6bf4f459fb2309a0ccc9f585c5d6318ceedf1..7f874943583c86dcfe686d38e69949e86b2a723e 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1133,18 +1133,41 @@ nfsd4_setattr(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 		.na_iattr	= &setattr->sa_iattr,
- 		.na_seclabel	= &setattr->sa_label,
- 	};
-+	struct nfs4_stid *st = NULL;
- 	struct inode *inode;
- 	__be32 status = nfs_ok;
--	bool save_no_wcc;
-+	bool save_no_wcc, deleg_attrs;
- 	int err;
+Changes to v1:
+* Fixup if () and ASSERT() (Qu)
+* Fix spelling of 'Currently'
+---
+ fs/btrfs/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 103ec917ca9d..ef82579dfe09 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -3088,7 +3088,12 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_extent *ordered_extent)
  
--	if (setattr->sa_iattr.ia_valid & ATTR_SIZE) {
-+	deleg_attrs = setattr->sa_bmval[2] & (FATTR4_WORD2_TIME_DELEG_ACCESS |
-+					      FATTR4_WORD2_TIME_DELEG_MODIFY);
-+
-+	if (deleg_attrs || (setattr->sa_iattr.ia_valid & ATTR_SIZE)) {
- 		status = nfs4_preprocess_stateid_op(rqstp, cstate,
- 				&cstate->current_fh, &setattr->sa_stateid,
--				WR_STATE, NULL, NULL);
-+				WR_STATE, NULL, &st);
- 		if (status)
- 			return status;
- 	}
-+
-+	/*
-+	 * If client is trying to set delegated timestamps, ensure that the
-+	 * stateid refers to a write delegation.
-+	 */
-+	if (deleg_attrs) {
-+		status = nfserr_bad_stateid;
-+		if (st->sc_type & SC_TYPE_DELEG) {
-+			struct nfs4_delegation *dp = delegstateid(st);
-+
-+			if (dp->dl_type == NFS4_OPEN_DELEGATE_WRITE)
-+				status = nfs_ok;
+ 	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
+ 		/* Logic error */
+-		BUG_ON(!list_empty(&ordered_extent->list));
++		ASSERT(list_empty(&ordered_extent->list));
++		if (!list_empty(&ordered_extent->list)) {
++			ret = -EINVAL;
++			btrfs_abort_transaction(trans, ret);
++			goto out;
 +		}
-+	}
-+	if (st)
-+		nfs4_put_stid(st);
-+	if (status)
-+		return status;
-+
- 	err = fh_want_write(&cstate->current_fh);
- 	if (err)
- 		return nfserrno(err);
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index 6241e93e9e13410b4fa926c0992127b1cc757b5e..bad75451d18f6d60faf33d6317a79011247ed7e6 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -521,6 +521,26 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 		*umask = mask & S_IRWXUGO;
- 		iattr->ia_valid |= ATTR_MODE;
- 	}
-+	if (bmval[2] & FATTR4_WORD2_TIME_DELEG_ACCESS) {
-+		fattr4_time_deleg_access access;
-+
-+		if (!xdrgen_decode_fattr4_time_deleg_access(argp->xdr, &access))
-+			return nfserr_bad_xdr;
-+		iattr->ia_atime.tv_sec = access.seconds;
-+		iattr->ia_atime.tv_nsec = access.nseconds;
-+		iattr->ia_valid |= ATTR_ATIME | ATTR_ATIME_SET | ATTR_DELEG;
-+	}
-+	if (bmval[2] & FATTR4_WORD2_TIME_DELEG_MODIFY) {
-+		fattr4_time_deleg_modify modify;
-+
-+		if (!xdrgen_decode_fattr4_time_deleg_modify(argp->xdr, &modify))
-+			return nfserr_bad_xdr;
-+		iattr->ia_mtime.tv_sec = modify.seconds;
-+		iattr->ia_mtime.tv_nsec = modify.nseconds;
-+		iattr->ia_ctime.tv_sec = modify.seconds;
-+		iattr->ia_ctime.tv_nsec = modify.seconds;
-+		iattr->ia_valid |= ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET | ATTR_DELEG;
-+	}
  
- 	/* request sanity: did attrlist4 contain the expected number of words? */
- 	if (attrlist4_count != xdr_stream_pos(argp->xdr) - starting_pos)
-
+ 		btrfs_inode_safe_disk_i_size_write(inode, 0);
+ 		ret = btrfs_update_inode_fallback(trans, inode);
 -- 
-2.46.2
+2.43.0
 
 
