@@ -1,169 +1,80 @@
-Return-Path: <linux-kernel+bounces-351396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03A6991061
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:25:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A653991062
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6860D28329E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:25:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572091C22E58
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCEC1DD526;
-	Fri,  4 Oct 2024 20:12:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD98A1DBB28;
+	Fri,  4 Oct 2024 20:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8AG33z9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FE01DBB28
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 20:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C0B1DD52B
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 20:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728072726; cv=none; b=JyM3U668/FJQ6hti6iP19+uojt2k+hLIdWse1RLjWemVir4Q4R3gTuQvseVjr7b4E02usp5gNNUJc/TDPcggIAbnkFstG3mQjenBtrpKXJCKh7EQ6YneDIs+IyPUStGvKx9VbQYJq9D7jCZGq2QoEptSKiAxQJtGgG3xqgJj8IU=
+	t=1728072748; cv=none; b=D/jjEuw18S0tiWJTt5gACV1rq/Mjwq35nKfFuc6BhsSkxh1+sMuJDEss6mymixfmGYf+1sxHu55W2ou2YWEOqXxQcpbcfuya3HKujFio1oxJIZvR+YbUP+4JZ2De8eRZ7UUIpSI7E940Az41ac5M+JwRRWTOpSGvXQGZempaSKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728072726; c=relaxed/simple;
-	bh=X88w8RQ6K+zQ4wt5kN0vDXSD8cgMQUB+4DsQpTmFR2U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=C+RYVvevCbE3GCqbOMwt0h7bu4pFf7C4GWXOtzcy7ttOiEM6ZI4sz6X4B0L6ACnHph6C3uFQcAOACjaa6qEgBardTssDfDiHqKBMZlo7wOdjNNnGRBGYJsVddDlAPUXnI7LSNugJg5PNmQQi00HzgxNCPpf5wBaJLTxSde4Alvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82b930cd6b2so317854739f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 13:12:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728072724; x=1728677524;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jmIt0HQ28ig9VW5dszp7clB7AW2MI/mu9GCWmof2RM4=;
-        b=b+DGSPaW1HXDNSzGjnW/RlfEd0gxJIe+fC/YjRXc4qyCriZhClXFYDluV21j5V4Xoa
-         g8Knr+t9OdH4K7OF4+55dll3p/LPCSIxxvTvcghRDPqmf1Kvx/4MHzAeWeXh8xUN72uD
-         Jj9MzVpL/y1H7cZu89MgSBo/IrWjdzVwFH0LrGRwHVHpMXAJh4P6Y/aywCbTikiSXVY3
-         2qRmifONE7zHI9F353Blpbw5JPvtePd7sJbjw/HE1GsiWWduy04GTlEUYStS0N83rRjT
-         UyIxSeOMOCjV9cWWDFmEGTjEPvHraD8tjrIj41C8Osbwoz2dQLboTlNS4yCQzbxAzj9T
-         VB/Q==
-X-Gm-Message-State: AOJu0YzdA2dkbAbHNaxQByhGqvB3jTj/kZSgPSsMr1auwJDgsO3WwJI/
-	xOzAyEInv7703pXcbUhJJXE3ZvJ6kmy2/fWbvrW+RtrD9CCEax+OE6u4PZmbW8WvvdLxc2wE87u
-	1ZqcEBUsBoLlZ4aCQq/izsuZM38itmBK0vGFX429T5chLlPcA4lU2IYM=
-X-Google-Smtp-Source: AGHT+IGn+QyCuRUz6EJ+XaFa1JON8LXN5DiH40F5yzy8VJAK57KGJtNdotEE2coyRoqsESt7U0sa9lrGGyEGX9D8NagB0f3LUJNh
+	s=arc-20240116; t=1728072748; c=relaxed/simple;
+	bh=/t+JI7LJn7b8j0uy1UK3lHClhHJHM0PnBxFurgi2Eb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Imc8Q/yun8aCCCSwDpgwi6BuXrwFSwEagBvKs/J0LqDILyk4sbdGQd20YgjZRAxe0XiOjRIMCmgvRbBVXU5k916MKpeOk0oz0NtNUtAMvRja9AUBTTMsqcdbuXcu5sbfIACi0RKxsM98D7mAgcMWiQh3K1U5nkOKxjnUrUE/9jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8AG33z9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CDB2C4CEC6;
+	Fri,  4 Oct 2024 20:12:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728072747;
+	bh=/t+JI7LJn7b8j0uy1UK3lHClhHJHM0PnBxFurgi2Eb8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E8AG33z9KhlCOXqPR86fYqh6orexquc7XC/1PaL08Rfj0Zvs1Rq/MxugMUGKfTESN
+	 VqR4k7xPFcgONAMWGozAQfWuqTUNy1gpUPlIupqjTeQcMOvRB5SIw7pgz2cYaLaUIx
+	 m+elXaV0zIlzNBC/SAgWmURFUZtkcj2cfsayQT9o3/aC00xv1uOLJuvJ0SMS8uCc/7
+	 iiEb3jYiWwmAIOCnY/IDOufJRN7T39hRtNVpgJmDS+PShsc+P8Wo2dZXDofjh2JhEn
+	 jVwKHFuPhqpm1zSZE0DediYcDpB6WLZObhmORyJH8DzV+Bd1YLMqL6HtHDNLcp8Hy1
+	 CPe7/Q/P1wk7Q==
+Date: Fri, 4 Oct 2024 10:12:26 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.comm, sched-ext@meta.com
+Subject: Re: [PATCH sched_ext/for-6.12-fixes] sched_ext: scx_cgroup_exit()
+ may be called without successful scx_cgroup_init()
+Message-ID: <ZwBMKoANSjGzjAhp@slm.duckdns.org>
+References: <Zv2uXn0bP-YDCkc_@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1e02:b0:3a2:aed1:1285 with SMTP id
- e9e14a558f8ab-3a3757d4e76mr47209875ab.0.1728072723712; Fri, 04 Oct 2024
- 13:12:03 -0700 (PDT)
-Date: Fri, 04 Oct 2024 13:12:03 -0700
-In-Reply-To: <860bbf96-65f1-4afd-a117-18cfb3542ef8@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67004c13.050a0220.49194.049d.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in __btree_node_pinned
-From: syzbot <syzbot+9f41e4b255897d99d4e9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, niharchaithanya@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zv2uXn0bP-YDCkc_@slm.duckdns.org>
 
-Hello,
+On Wed, Oct 02, 2024 at 10:34:38AM -1000, Tejun Heo wrote:
+> 568894edbe48 ("sched_ext: Add scx_cgroup_enabled to gate cgroup operations
+> and fix scx_tg_online()") assumed that scx_cgroup_exit() is only called
+> after scx_cgroup_init() finished successfully. This isn't true.
+> scx_cgroup_exit() can be called without scx_cgroup_init() being called at
+> all or after scx_cgroup_init() failed in the middle.
+> 
+> As init state is tracked per cgroup, scx_cgroup_exit() can be used safely to
+> clean up in all cases. Remove the incorrect WARN_ON_ONCE().
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Fixes: 568894edbe48 ("sched_ext: Add scx_cgroup_enabled to gate cgroup operations and fix scx_tg_online()")
 
-syzbot has tested the proposed patch but the reproducer is still triggering=
- an issue:
-possible deadlock in bch2_replicas_entry_validate
+Applied to sched_ext/for-6.12-fixes.
 
-bcachefs (loop0): starting version 1.7: mi_btree_bitmap opts=3Derrors=3Dcon=
-tinue,metadata_checksum=3Dnone,data_checksum=3Dnone,compression=3Dlz4,metad=
-ata_target=3Dinvalid device 255,noshard_inode_numbers,noinodes_use_key_cach=
-e,journal_flush_delay=3D1001,nojournal_transaction_names
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-WARNING: possible recursive locking detected
-6.12.0-rc1-syzkaller-00296-gac308609567d-dirty #0 Not tainted
---------------------------------------------
-syz.0.15/5554 is trying to acquire lock:
-ffff88804b880908 (&c->sb_lock){+.+.}-{3:3}, at: bch2_replicas_entry_validat=
-e+0x2a/0x80 fs/bcachefs/replicas.c:101
+Thanks.
 
-but task is already holding lock:
-ffff88804b880908 (&c->sb_lock){+.+.}-{3:3}, at: bch2_read_superblock_clean+=
-0x36/0x520 fs/bcachefs/sb-clean.c:149
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&c->sb_lock);
-  lock(&c->sb_lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by syz.0.15/5554:
- #0: ffff88804b880278 (&c->state_lock){+.+.}-{3:3}, at: bch2_fs_start+0x45/=
-0x5b0 fs/bcachefs/super.c:1007
- #1: ffff88804b880908 (&c->sb_lock){+.+.}-{3:3}, at: bch2_read_superblock_c=
-lean+0x36/0x520 fs/bcachefs/sb-clean.c:149
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5554 Comm: syz.0.15 Not tainted 6.12.0-rc1-syzkaller-002=
-96-gac308609567d-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16=
-.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3037
- check_deadlock kernel/locking/lockdep.c:3089 [inline]
- validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3891
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- bch2_replicas_entry_validate+0x2a/0x80 fs/bcachefs/replicas.c:101
- journal_entry_data_usage_validate+0x2b6/0x690 fs/bcachefs/journal_io.c:608
- bch2_sb_clean_validate_late fs/bcachefs/sb-clean.c:40 [inline]
- bch2_read_superblock_clean+0x207/0x520 fs/bcachefs/sb-clean.c:168
- bch2_fs_recovery+0x1f4/0x39c0 fs/bcachefs/recovery.c:639
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2071
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ffafa97f79a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 =
-00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff f=
-f 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffafb710e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffafb710ef0 RCX: 00007ffafa97f79a
-RDX: 0000000020000180 RSI: 0000000020000140 RDI: 00007ffafb710eb0
-RBP: 0000000020000180 R08: 00007ffafb710ef0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020000140
-R13: 00007ffafb710eb0 R14: 00000000000058f7 R15: 00000000200001c0
- </TASK>
-
-
-Tested on:
-
-commit:         ac308609 Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D153b8d80580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3Df95955e3f7b5790=
-c
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D9f41e4b255897d99d=
-4e9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
-n) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D155c8d279800=
-00
-
+-- 
+tejun
 
