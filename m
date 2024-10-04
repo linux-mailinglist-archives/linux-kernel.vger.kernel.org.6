@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-350007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25CF98FE9C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:07:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409CB98FE9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16EA3B2108F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:07:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF28280124
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E63144D01;
-	Fri,  4 Oct 2024 08:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF71D146017;
+	Fri,  4 Oct 2024 08:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pa6z8+4G"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVWFwtag"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BF913E022;
-	Fri,  4 Oct 2024 08:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08309142903;
+	Fri,  4 Oct 2024 08:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728029198; cv=none; b=KHwwsxdr56r7vYCAMXfZWyGx1IXqDZEmoIUUydpOV7I0QeGSQfCOJ7fulwqIMUYwC7IuinSlVja7eFvRFzZU/byBPmuAt2oPIpNo0kdGoIodMqT8gHSKR5FbwrhcWESuhXGNVEgzebUuZRsVpf+69V4ZkdYoeSmmRF5X4PFKwLM=
+	t=1728029200; cv=none; b=uRcgGBcIFH84CyeYkEziC4X9ugXJxXBSqPqeY8E0B65ThzkHgPm5GDrwX8nSiPTcKTODBq9YRPcDf3MJE9ftbM2FUmZDP+YwD0UK8KtKYm5ByaPT1MoAMGX7Q0km8E7mIz9cP01KHy5HXnk98KU4cnqji5X3WrE8UQSn936vB7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728029198; c=relaxed/simple;
-	bh=+vCPUVtODDEZmpA/odzEVJgwaRyPQ9tusdV4hgiTR6s=;
+	s=arc-20240116; t=1728029200; c=relaxed/simple;
+	bh=y73WDyKyJEYsN8PN22hVxCPugmFrQFKaxxQTk+Xrnpw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AIfpEUV5w56KTRZ5hTcU52lD5aF7Y5bCJWzfzXpl9Z/4OY+4g0F4oEhM5/1tvxe0SjAbPJ8Ak3WfctChZdMsX3f9Z+LYSoMfM75f5LALF225pBsDIQmAPfgkc3jWr89sfF6g++8hjGtzc6x3MrTpqW2CwJJhSWmN11zUkrPLqfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pa6z8+4G; arc=none smtp.client-ip=209.85.215.178
+	 MIME-Version; b=DBu9GnAl0xTaJzrENLNsDv/lhlfl8BeLATo0ViE5dLPyZ8dSwduuxxuXacIqVSkiWJizaowcuMKTTHInk4bE2R8KugqScijO3K/UgiSFvYDCuA3EyZUzXyjLrC9VD8Qt9f1bydCNenIkCY7hbl5sGOtwIedjQ+Xr8/rJIZN7tQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVWFwtag; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-6e7b121be30so1171399a12.1;
-        Fri, 04 Oct 2024 01:06:36 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e082bf1c7fso1362531a91.3;
+        Fri, 04 Oct 2024 01:06:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728029196; x=1728633996; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728029198; x=1728633998; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nOeki1FFkiSfFu4/uP0XEVkPckonCqIa/H1tZhw+oW8=;
-        b=Pa6z8+4GvDM2whg8UB8uKzbz168wE5HweHKucNd5mCPM8qVgM5tKFPtbH8qzcO4Nsj
-         OgHK/aJrSpn/9tjbwUHUw6uY6P7q3ToAF4wp2N2Rgt9HP/prrzq734olLbin6TfZkg1T
-         RA/6lRo3MZUKXAGKXyVQr64DDaJP6popAgF+ICsITOBxKfaX6d9sWH17u6HtCCI0NSI7
-         Y1NYfyypYED4/XJ91/ybdIzk5ydV073ipshJcC/AJMEQv7pAPFMJQHsNN96YEXGBqiPy
-         Xz5/uucgbXgNjToe4OXN9ByeS1vr2XZYNIDg3sZYIeNHCFP6QoRzt5QqTSXwpwVAhdDX
-         qY3A==
+        bh=y73WDyKyJEYsN8PN22hVxCPugmFrQFKaxxQTk+Xrnpw=;
+        b=DVWFwtagbCdBbO0fSv9a/c7vGcNQ9WMweqZzIq22mAWNHhqdi7z6MYf9Ie7oZePD/T
+         1bN6/C9cpeOEQFiE/HVpgZe2kIpc/D8f2eA8nxOfbXaA6JPLNI/vgSHcsCmZ67YammSh
+         GeRdxzDmWAryrBP/B2INtXz14WVEBf2yr3k4Rpbr3NgzQFxkLeQYwfoCOoAuTZb50sMP
+         qT8nzDB2EdskrSIZ2uhvaudIythGDFEiAR3lpV1ZY7D1uSpW3k/+XRASV38s5NNh/WRR
+         206lTCXhnU1aSNB5l4F4vZKlE6l3xwzWtUd8k6KJSF9Djh1ooEMfw8n2osxdxcu/VHlX
+         sYTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728029196; x=1728633996;
+        d=1e100.net; s=20230601; t=1728029198; x=1728633998;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nOeki1FFkiSfFu4/uP0XEVkPckonCqIa/H1tZhw+oW8=;
-        b=Cu+UZZOT2j03LuyYRiyf8jtOP2RBq5BOS6i0EIbIRBF//wWfwtsAbFZuV1rEAReb5x
-         ZDDMWli9DwfPVMW+KcVwNUwMJQ2D7Z6KYbkSL4NjJ7rX9NHx196Xp7HRA/vLHHgWThIr
-         GDIy8/JB4Wsb4GaW1ptIKFpEqEiyI70Hsq5AdlEQmIKSOZhhqA0n5WT47+gEctgqbzYh
-         DJ0p84Tb9yIgi8f6AGSgqi29ACz9EM/dhmMgzxaqvN68KD/Farxqedwqb/8C44vnjwD3
-         30QPbLfLna2AKRvJVCxqY1S21116Xm/ZQvYmKDEbCCsbRLEc28yoVEZG0ztqUlWk9sgS
-         5h7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVGvgtcXA1gpLGAd1K3axWdo4xk/w85i7E4v4vgtOmIF6UM9sJe/kYf11SmtGNiC17fbHTOKLCG/+wfN+hh@vger.kernel.org, AJvYcCWcgm63QwGv3lhIgZqu/0DpjiO/xzzZMWOIsknfuLVFHQTsXEFu20QVy0kXyqyR9C6X/dBn/vc70DVw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2GrjDHoyh7wn0dIt7Kgd1S665WN67QHCH3gJuQtkpENWxwND+
-	WTH6PQ3Yz3XD/HgUk3QPlHO1Y38H3KvWvt8XoWX+28dHrA9oCC8c
-X-Google-Smtp-Source: AGHT+IELUKe6yfSED3d2riw0GkuDfFvQjLbY9zF5jW+IyaNrLOoL3ohm/AHnRCoVb/dkQ4mGPps5uw==
-X-Received: by 2002:a05:6a20:c997:b0:1d1:1795:4b43 with SMTP id adf61e73a8af0-1d6dfa476cemr3067956637.26.1728029195546;
-        Fri, 04 Oct 2024 01:06:35 -0700 (PDT)
+        bh=y73WDyKyJEYsN8PN22hVxCPugmFrQFKaxxQTk+Xrnpw=;
+        b=EU78B7kiRGA8NtqZ46Fhb0XUg7+v6MsvnklEGgaD10Vijye57iKZ7ir5cDQOVQvGS1
+         prfpFRL7l96pg285HMbY1rqdkw0cDbjXE4PEbhMeynqtxF/EbYS1j+pWYcnV9iBWHGDL
+         08xwk01M6ChUF+YM4IaVm5uNNS/chC3e9Ab20UVS+2neUuHM/+PIQaqhsx3nXa2itdfp
+         H4hWMrdzPFPzkeW3y6DK8jfhrJkdIAq3Cl8w21xseAFenazcx++TcrPgGUruLTfvTfrV
+         nOlJZ4tOSsHC9y4Dzpy4QnDiRjWoery9ahnDPA+o9Sb22ju71kcfBlI6DKQlKhvszcnZ
+         Cq5A==
+X-Forwarded-Encrypted: i=1; AJvYcCX6pPtGEIauR6XsgIP5ORa0krczs4usdG5WdJgClaL8dqter3tVcuANnS2jr/wYGsiSwrFMldlTNGMQGqrm@vger.kernel.org, AJvYcCXoEYm8s1klFFynP5hPQC/W32RiSHx3ns0be7g5TEz1Xc4R//KrAdX/UBe0bbE1WuKcTQk3EHsVMDsw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4jK2JlEGJTOWzokIgV2n8AXv598PZK6PxKNHbIytVj7WzPP/x
+	jeQUi9uabptKTMtafPNY13PKCPtMrJatgLmdkixfAGU8CL2Fpcm5
+X-Google-Smtp-Source: AGHT+IF6O1aW5lW097FsX4Qpu8qZu9bKqcaxB0twSRt7bC2I6twpaDw4gXeZNQiDtRGPSVjNOqKEMA==
+X-Received: by 2002:a17:90b:504:b0:2e1:dcb5:361d with SMTP id 98e67ed59e1d1-2e1e636f4a2mr2337155a91.30.1728029198222;
+        Fri, 04 Oct 2024 01:06:38 -0700 (PDT)
 Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71de9473894sm601482b3a.211.2024.10.04.01.06.34
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e83cab42sm927448a91.2.2024.10.04.01.06.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 01:06:35 -0700 (PDT)
+        Fri, 04 Oct 2024 01:06:37 -0700 (PDT)
 From: Inochi Amaoto <inochiama@gmail.com>
 To: Chen Wang <unicorn_wang@outlook.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -87,9 +87,9 @@ Cc: Yixun Lan <dlan@gentoo.org>,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org
-Subject: [PATCH 2/3] irqchip: add T-HEAD C900 ACLINT SSWI driver
-Date: Fri,  4 Oct 2024 16:05:56 +0800
-Message-ID: <20241004080557.2262872-3-inochiama@gmail.com>
+Subject: [PATCH 3/3] riscv: defconfig: Enable T-HEAD C900 ACLINT SSWI drivers
+Date: Fri,  4 Oct 2024 16:05:57 +0800
+Message-ID: <20241004080557.2262872-4-inochiama@gmail.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241004080557.2262872-1-inochiama@gmail.com>
 References: <20241004080557.2262872-1-inochiama@gmail.com>
@@ -101,239 +101,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a driver for the T-HEAD C900 ACLINT SSWI device, which is an
-enhanced implementation of the RISC-V ACLINT SSWI specification.
-This device allows the system to send ipi via fast device interface.
+Add support for T-HEAD C900 ACLINT SSWI irqchip.
 
 Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
 ---
- drivers/irqchip/Kconfig                      |  10 ++
- drivers/irqchip/Makefile                     |   1 +
- drivers/irqchip/irq-thead-c900-aclint-sswi.c | 169 +++++++++++++++++++
- include/linux/cpuhotplug.h                   |   1 +
- 4 files changed, 181 insertions(+)
- create mode 100644 drivers/irqchip/irq-thead-c900-aclint-sswi.c
+ arch/riscv/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 341cd9ca5a05..32671385cbb7 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -611,6 +611,16 @@ config STARFIVE_JH8100_INTC
-
- 	  If you don't know what to do here, say Y.
-
-+config THEAD_C900_ACLINT_SSWI
-+	bool "THEAD C9XX ACLINT S-mode IPI Interrupt Controller"
-+	depends on RISCV
-+	select IRQ_DOMAIN_HIERARCHY
-+	help
-+	  This enables support for T-HEAD specific ACLINT SSWI device
-+	  support.
-+
-+	  If you don't know what to do here, say Y.
-+
- config EXYNOS_IRQ_COMBINER
- 	bool "Samsung Exynos IRQ combiner support" if COMPILE_TEST
- 	depends on (ARCH_EXYNOS && ARM) || COMPILE_TEST
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index e3679ec2b9f7..583418261253 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -101,6 +101,7 @@ obj-$(CONFIG_RISCV_APLIC_MSI)		+= irq-riscv-aplic-msi.o
- obj-$(CONFIG_RISCV_IMSIC)		+= irq-riscv-imsic-state.o irq-riscv-imsic-early.o irq-riscv-imsic-platform.o
- obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
- obj-$(CONFIG_STARFIVE_JH8100_INTC)	+= irq-starfive-jh8100-intc.o
-+obj-$(CONFIG_THEAD_C900_ACLINT_SSWI)	+= irq-thead-c900-aclint-sswi.o
- obj-$(CONFIG_IMX_IRQSTEER)		+= irq-imx-irqsteer.o
- obj-$(CONFIG_IMX_INTMUX)		+= irq-imx-intmux.o
- obj-$(CONFIG_IMX_MU_MSI)		+= irq-imx-mu-msi.o
-diff --git a/drivers/irqchip/irq-thead-c900-aclint-sswi.c b/drivers/irqchip/irq-thead-c900-aclint-sswi.c
-new file mode 100644
-index 000000000000..7bd06369b409
---- /dev/null
-+++ b/drivers/irqchip/irq-thead-c900-aclint-sswi.c
-@@ -0,0 +1,169 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Inochi Amaoto <inochiama@gmail.com>
-+ */
-+
-+#define pr_fmt(fmt) "thead-c900-aclint-sswi: " fmt
-+#include <linux/acpi.h>
-+#include <linux/cpu.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/irq.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+#include <linux/pci.h>
-+#include <linux/spinlock.h>
-+#include <linux/smp.h>
-+
-+#define ACLINT_xSWI_REGISTER_SIZE	4
-+
-+struct aclint_sswi_cpu_config {
-+	void __iomem	*reg;
-+	u32		offset;
-+};
-+
-+static int sswi_ipi_virq __ro_after_init;
-+static DEFINE_PER_CPU(struct aclint_sswi_cpu_config, sswi_cpus);
-+
-+static void thead_aclint_sswi_ipi_send(unsigned int cpu)
-+{
-+	struct aclint_sswi_cpu_config *config = per_cpu_ptr(&sswi_cpus, cpu);
-+
-+	writel_relaxed(0x1, config->reg + config->offset);
-+}
-+
-+static void thead_aclint_sswi_ipi_clear(void)
-+{
-+	unsigned int cpu = smp_processor_id();
-+	struct aclint_sswi_cpu_config *config = per_cpu_ptr(&sswi_cpus, cpu);
-+
-+	writel_relaxed(0x0, config->reg + config->offset);
-+}
-+
-+static void thead_aclint_sswi_ipi_handle(struct irq_desc *desc)
-+{
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+
-+	chained_irq_enter(chip, desc);
-+
-+	csr_clear(CSR_IP, IE_SIE);
-+	thead_aclint_sswi_ipi_clear();
-+
-+	ipi_mux_process();
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static int aclint_sswi_ipi_starting_cpu(unsigned int cpu)
-+{
-+	enable_percpu_irq(sswi_ipi_virq, irq_get_trigger_type(sswi_ipi_virq));
-+	return 0;
-+}
-+
-+static int aclint_sswi_parse_irq(struct fwnode_handle *fwnode,
-+				 void __iomem *reg)
-+{
-+	struct of_phandle_args parent;
-+	unsigned long hartid;
-+	u32 contexts, i;
-+	int rc, cpu;
-+	struct aclint_sswi_cpu_config *config;
-+
-+	contexts = of_irq_count(to_of_node(fwnode));
-+	if (WARN_ON(!(contexts))) {
-+		pr_err("%pfwP: no ACLINT SSWI context available\n", fwnode);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < contexts; i++) {
-+		rc = of_irq_parse_one(to_of_node(fwnode), i, &parent);
-+		if (rc)
-+			return rc;
-+
-+		rc = riscv_of_parent_hartid(parent.np, &hartid);
-+		if (rc)
-+			return rc;
-+
-+		if (parent.args[0] != RV_IRQ_SOFT)
-+			return -ENOTSUPP;
-+
-+		cpu = riscv_hartid_to_cpuid(hartid);
-+		config = per_cpu_ptr(&sswi_cpus, cpu);
-+
-+		config->offset = i * ACLINT_xSWI_REGISTER_SIZE;
-+		config->reg = reg;
-+	}
-+
-+	pr_info("%pfwP: register %u CPU\n", fwnode, contexts);
-+
-+	return 0;
-+}
-+
-+static int __init aclint_sswi_probe(struct fwnode_handle *fwnode)
-+{
-+	void __iomem *reg;
-+	struct irq_domain *domain;
-+	int virq, rc;
-+
-+	if (!is_of_node(fwnode))
-+		return -EINVAL;
-+
-+	reg = of_iomap(to_of_node(fwnode), 0);
-+	if (!reg)
-+		return -ENOMEM;
-+
-+	/* Parse SSWI setting */
-+	rc = aclint_sswi_parse_irq(fwnode, reg);
-+	if (rc < 0)
-+		return rc;
-+
-+	/* If mulitple SSWI devices are present, do not register irq again */
-+	if (sswi_ipi_virq)
-+		return 0;
-+
-+	/* Find and create irq domain */
-+	domain = irq_find_matching_fwnode(riscv_get_intc_hwnode(), DOMAIN_BUS_ANY);
-+	if (!domain) {
-+		pr_err("%pfwP: Failed to find INTC domain\n", fwnode);
-+		return -ENOENT;
-+	}
-+
-+	sswi_ipi_virq = irq_create_mapping(domain, RV_IRQ_SOFT);
-+	if (!sswi_ipi_virq) {
-+		pr_err("unable to create ACLINT SSWI IRQ mapping\n");
-+		return -ENOMEM;
-+	}
-+
-+	/* Register SSWI irq and handler */
-+	virq = ipi_mux_create(BITS_PER_BYTE, thead_aclint_sswi_ipi_send);
-+	if (virq <= 0) {
-+		pr_err("unable to create muxed IPIs\n");
-+		irq_dispose_mapping(sswi_ipi_virq);
-+		return virq < 0 ? virq : -ENOMEM;
-+	}
-+
-+	irq_set_chained_handler(sswi_ipi_virq, thead_aclint_sswi_ipi_handle);
-+
-+	cpuhp_setup_state(CPUHP_AP_IRQ_THEAD_ACLINT_SSWI_STARTING,
-+			  "irqchip/thead-aclint-sswi:starting",
-+			  aclint_sswi_ipi_starting_cpu, NULL);
-+
-+	riscv_ipi_set_virq_range(virq, BITS_PER_BYTE);
-+
-+	/* Announce that SSWI is providing IPIs */
-+	pr_info("providing IPIs using THEAD ACLINT SSWI\n");
-+
-+	return 0;
-+}
-+
-+static int __init aclint_sswi_early_probe(struct device_node *node,
-+					  struct device_node *parent)
-+{
-+	return aclint_sswi_probe(&node->fwnode);
-+}
-+
-+IRQCHIP_DECLARE(thead_aclint_sswi, "thead,c900-aclint-sswi", aclint_sswi_early_probe);
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 2361ed4d2b15..799052249c7b 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -147,6 +147,7 @@ enum cpuhp_state {
- 	CPUHP_AP_IRQ_EIOINTC_STARTING,
- 	CPUHP_AP_IRQ_AVECINTC_STARTING,
- 	CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
-+	CPUHP_AP_IRQ_THEAD_ACLINT_SSWI_STARTING,
- 	CPUHP_AP_IRQ_RISCV_IMSIC_STARTING,
- 	CPUHP_AP_IRQ_RISCV_SBI_IPI_STARTING,
- 	CPUHP_AP_ARM_MVEBU_COHERENCY,
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index 2341393cfac1..5b1d6325df85 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -256,6 +256,7 @@ CONFIG_RPMSG_CTRL=y
+ CONFIG_RPMSG_VIRTIO=y
+ CONFIG_PM_DEVFREQ=y
+ CONFIG_IIO=y
++CONFIG_THEAD_C900_ACLINT_SSWI=y
+ CONFIG_PHY_SUN4I_USB=m
+ CONFIG_PHY_STARFIVE_JH7110_DPHY_RX=m
+ CONFIG_PHY_STARFIVE_JH7110_PCIE=m
 --
 2.46.2
 
