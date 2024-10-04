@@ -1,124 +1,99 @@
-Return-Path: <linux-kernel+bounces-351578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8C199133D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 01:43:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D027B99133F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 01:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D7E71C20CB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:43:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94144284948
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A61715ADA0;
-	Fri,  4 Oct 2024 23:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6F7154BE0;
+	Fri,  4 Oct 2024 23:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OK1547E9"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksFxmUkx"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB001B4F18
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 23:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A041514D299;
+	Fri,  4 Oct 2024 23:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728085304; cv=none; b=cbaDb99B4dXOB+WTWLndyrt5OD1JxfWQKPjlvdBOMGOzMYPKb5XYoxhP/BG/SUoQ1Zzaqfxv5R/Kshtx8nDnEtONPzj+cINMATDEqjZtromxeQa4rRdTkV/r2g7hZAEdOFefDY2a+GYZ7Pd/aWIZErA82thUhnFCi6MqXxYFSJs=
+	t=1728085442; cv=none; b=pzrUwHrOa0klHmu4KK5aI0OCFAgYxqmICjo1ahAWBgEEtehvjT4IfeM58eQRjtgWQDOseO7R1X+Hy5uaGJe3cXE4Rwz/AFv65g16ZS9uGNYLntzT7P3hLtO0RVX8IuUScrlJwHeHUPsFFVMyo2tpSTDHcQqzxg2zIMe80uoHH30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728085304; c=relaxed/simple;
-	bh=/EG7+O6Y5sI1sqJ9JCrlN0rHuPRE3RnaTN8M5JC+X/s=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=C3rPc5ADRpdSeZG4Y0h7tgoADvbBsEUwcQAta8sqHQmFS+pzrsSwy/69SrTrMV+TMK6MNJEUzt3qPiiINGzH/8WG/YGqKtVDayJNh6G71kpsz2SYl0OL0IWGioyQcebzgVh/wTGZQcN6rw8VTwaPLBh1P2STVFBBf5gGdN9naJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OK1547E9; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6db791c42e3so38961197b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 16:41:42 -0700 (PDT)
+	s=arc-20240116; t=1728085442; c=relaxed/simple;
+	bh=OUxaZuY8ic7WGFEDvWFfvjip/QopsHOu/8/nlWZQbAc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XE68G1tJmzLQXvgQvC6whXURnY6Y2LGkhU7SPuewAeqwwZ1IX5rc9EfNGCnhaBNx9zsMgOK1J+Ktb1uotJsaxD7DghGeurKKEvwz5kcZ+3KdCK5uVOvPlGGXHOkWpeM/uC4FhPgKwhy9RLtkXVXBp2O8bx+vgvhFqO56n1zxpP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ksFxmUkx; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6dbc75acbfaso23458287b3.3;
+        Fri, 04 Oct 2024 16:44:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728085302; x=1728690102; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Htru2Ya5IP3NbTe9LfBJEaUggdoz7+W4SDsNaFUqUv8=;
-        b=OK1547E95ij7pBJQiVeOvbylIS5wdJ3gDamK+V9oHSZ9rsXDvm+vcanYufpFkD7TlY
-         vN0T9syH7IfR1R9+WcchNtV/oXuPodZE1nD4SjUE8EJh6NZNiPNnaVqdwcC1n5nEzkhM
-         lnMv5yE9+33Yi3z57ClA+Q7SMrOfB3vEl2WSQe1tNDFz66i7FN6GZKHTq/Z9o8L/ggEw
-         Yd3nPe/zh58KB9kDzXh92HTLn6XaV05H2Km9Ru3VSdqOLAtaa+lkpLNh9/D3EBKg32bD
-         emSznUT6EJ0EColU8b81O37g4qa5q0+LX1qC3z/KSW8UluU9ptNigAefstA6Sbfrrf5N
-         HsMw==
+        d=gmail.com; s=20230601; t=1728085439; x=1728690239; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Wk5bK0hzjw1W2+MwCw9cbBC7uwCJBJPCY/t6d3ZGjs=;
+        b=ksFxmUkxtDJ3n2ZpmQXIB4MAdovVPowbcflAsuY7gKTfdbQCrDznxDEMgPt6abaAxB
+         n5DFlyPlgRHxgqO0LJGs81rioGxLTjI+Xc/yh+wauufC+TFLIA++fC543K/73l5cGMgw
+         R0oNEFzR4CXd+z9U9Q8AEekODVUgLk5EcFdQyGNySrVfVnTO0sLTrKjMFyaIVwdLt1BV
+         /QTTLY0HU0PYQ6XdPtgz4KAT3pJHAlGS0bfQtpaZh9r5F0AIdZzZegRYltOXeBa/XG9Z
+         l2Ak8h+sodOc7AeTOWD/3TYLNrlFpobNB6ltltH03qytWylblbUPa8AUYGD05vWwY8+t
+         4D4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728085302; x=1728690102;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Htru2Ya5IP3NbTe9LfBJEaUggdoz7+W4SDsNaFUqUv8=;
-        b=eIFgnUFTZqHNMSFlU5fo1fajnuHhK2txJM5RqXSsAtaMiHsZTBouQZLGZ4r5BBLUyy
-         ZLWj9FZUxNuVFs146oL0LtQ71BH0pDPm5t6SNjOFw99qJmcuqnR3+3pdjylo6BCCN6uF
-         3ionbXVQ3t2WKDEjhnwrzkjTtCuEqDHomQsp7DtrV5YOpGE40b/apThcqEhEe67ez9jV
-         hbY2mwrlhNvZe1x8f1lws/ZfH9ced9Ry1fUPq5il/5ukIMyKF76unlgjDs0u/w/WGFFO
-         vK8+ZJMa7s6cje6TPVdxqUraz80FzciSf+it4xHEqy0LzyXgp2Z5pMfSIJvEg+z63qRu
-         3Qgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAryqBrts/u2zk2qqFlTPWE7PI3jOptHMnT/qYR8bbqbNw0HkSJ56IGwV/MrpTOnckH9sOkvrftWGjwtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzotMzSaWRAh5Pg7OKHXo/8zI14tSWA2+lNwJFSbOYyEdU2AZwY
-	Pmyrm35SOK+vr8jiW8S6vmahGIG1GZqAGlGe/lfXtxs3XlFwmXO6AhB/2tgdhMkXz2N0xA145eU
-	bAMYvEg==
-X-Google-Smtp-Source: AGHT+IGn6EqBSWKYjPESqwVXd7FRY2h0IBlixSFdyZwjmp6nCTeyU5aGOeNbDZK2kjK0BzmIwzspzqBUa+VL
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:8d23:e3c7:679f:19df])
- (user=irogers job=sendgmr) by 2002:a05:690c:2d83:b0:6e0:1ad:b197 with SMTP id
- 00721157ae682-6e2c728ffa8mr430617b3.3.1728085302109; Fri, 04 Oct 2024
- 16:41:42 -0700 (PDT)
-Date: Fri,  4 Oct 2024 16:41:20 -0700
-In-Reply-To: <20241004234120.1495209-1-irogers@google.com>
-Message-Id: <20241004234120.1495209-9-irogers@google.com>
+        d=1e100.net; s=20230601; t=1728085439; x=1728690239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3Wk5bK0hzjw1W2+MwCw9cbBC7uwCJBJPCY/t6d3ZGjs=;
+        b=E+Ve/q3Fr7edon1BFORivIBPW57DKC52Whb1cX4E37NIQ6++hUeWt3XYmmdmCFDswF
+         HND/eCfeYJfuINaGGw6bgCM6C7BuO+rG85UlXK31ITcAJ6JVhrb4zw539xZ2z9w2Tv+p
+         yo0qNbxP/tkiSF0JQUx5HDpNzCHKGMLjWOb9WUlxyHY6vqV2+XFIHxuWj37DrC2nbx+d
+         LcVJZt9JPXKQLjixsQ6u7FXyRDfWwepHYPgqXIltTZF2bIZaTXpNkiaIqEO4EKm1w0+3
+         SVGWfe9vr2Cp2Bi0CdZQ8xfY/z1tFz2YeZEfZZtzhrSFWECpPWDeOyzraDEmuXvB3IPa
+         i3gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUifeIYkLzHJgeysbWIIOuUmXF6ee7VPB32M5hYcZm1O2sIVCz0OkrkOp4H0CEIBjpzmj/J7PN7trB/G6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxenatMbApVdItg1RkH5/M24T47/NgYwmpXrW3NgghhHt5xoFO
+	8aGja/A748LYBLxJv5rqlF1YCNiBLumNMBG/EXyD//ZSehCs6rWtFgFdNFcI21SXI0nMe6gBNv+
+	0cdzEX/fMFxE3AGPtj52gtvrrWno=
+X-Google-Smtp-Source: AGHT+IFN/LbcP41zeoX4ForAz3NmGr56y19ZxkRmueBkfL1nSRWhqccBGXSCxG/reAk+YFciHUnV3OHvte3MB119vcU=
+X-Received: by 2002:a05:690c:26c2:b0:6be:3601:7189 with SMTP id
+ 00721157ae682-6e2c7014e8amr44820367b3.10.1728085439656; Fri, 04 Oct 2024
+ 16:43:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241004234120.1495209-1-irogers@google.com>
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-Subject: [PATCH v1 8/8] perf stat: Disable metric thresholds for CSV/JSON
- metric-only mode
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Tim Chen <tim.c.chen@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Sumanth Korikkar <sumanthk@linux.ibm.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+References: <20241003021135.1952928-1-rosenp@gmail.com> <20241003021135.1952928-18-rosenp@gmail.com>
+ <20241004163613.553b8abe@kernel.org>
+In-Reply-To: <20241004163613.553b8abe@kernel.org>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Fri, 4 Oct 2024 16:43:48 -0700
+Message-ID: <CAKxU2N-F+Gcv_LVvH5uB+x5gGABwzFsvxZOg+ApQ-DAHaFz3iw@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 17/17] net: ibm: emac: mal: move dcr map down
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
+	jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net, 
+	chunkeey@gmail.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-These modes don't use the threshold, so don't compute it saving time
-and potentially reducing events.
-
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/builtin-stat.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 3e6b9f216e80..936800c01c72 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -2560,6 +2560,14 @@ int cmd_stat(int argc, const char **argv)
- 		goto out;
- 	}
- 
-+	if (stat_config.metric_only && (stat_config.csv_output || stat_config.json_output)) {
-+		/*
-+		 * Current metric-only CSV and JSON output doesn't display the
-+		 * metric threshold so don't compute it.
-+		 */
-+		stat_config.metric_no_threshold = true;
-+	}
-+
- 	if (stat_config.walltime_run_table && stat_config.run_count <= 1) {
- 		fprintf(stderr, "--table is only supported with -r\n");
- 		parse_options_usage(stat_usage, stat_options, "r", 1);
--- 
-2.47.0.rc0.187.ge670bccf7e-goog
-
+On Fri, Oct 4, 2024 at 4:36=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
+te:
+>
+> On Wed,  2 Oct 2024 19:11:35 -0700 Rosen Penev wrote:
+> > There's actually a bug above where it returns instead of calling goto.
+> > Instead of calling goto, move dcr_map and friends down as they're used
+> > right after the spinlock in mal_reset.
+>
+> Not a fix?
+It's a fix for a prior commit, yes. 6d3ba097ee81d if I'm using git
+blame correctly.
 
