@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-349927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2617D98FD72
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:43:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53AF98FD76
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD32028342D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CDDE1F23395
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596631311A7;
-	Fri,  4 Oct 2024 06:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC8113210D;
+	Fri,  4 Oct 2024 06:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQs1W6vB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUqi5YL3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B290912D758;
-	Fri,  4 Oct 2024 06:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D347935280;
+	Fri,  4 Oct 2024 06:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728024207; cv=none; b=AIZnz5I8qMuELIty5ywAtpAIRv85vyHbd2rucsnY5WBEW67QYTgHPI//YPaOx5GU/W3XIP+cUt+FlzEMZUXVh91AY9gAS+3mu1tSmyGw52HlL3AMPidEwguO22DWUZYb/6ePabgprF4g/5JMHf0KDOoCct/zYQ37WE4jaK/e7Ik=
+	t=1728024286; cv=none; b=XTv5QZPzHzPP83kHJA5pvfQk/8lddcvXUldpkFMYDHCEhBjqxgMXtMvpV7q+ETMG3PTP0PBG2A2PW+DZqL8WjN9r6AkQxYA0V8XxA/kLiFsP6zO7C9tIoFJ5k13wNbn8sseReq53MuNokQNfr5UY/wWFiB6J2WfL+e5qMwYR7wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728024207; c=relaxed/simple;
-	bh=yj1cVDpC+pHE9UFWN5sSN/8jUO5Z0hUC1u0IFF/l9iw=;
+	s=arc-20240116; t=1728024286; c=relaxed/simple;
+	bh=hRRsY7h9P+J+jzsOIjFTtgHQRBKWcW9QYy9H7fPvjcE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OGnb+sjwvx6L/13vHoLE/1Kmd1Dv3fb0HeC5P0fBQPBMi0QY+RbpnlLZQ7L3hAoLfgP4xwgcOQHqj7em3UPQd8B+uJ7Uv/uXNH2UkC3E0MTujHBOiAz4Ob/oFKve3731PGZOWE1GpOgpogh9Xj1s4jA6t6Xz5owhY8hz/llemKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQs1W6vB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E952C4CEC6;
-	Fri,  4 Oct 2024 06:43:25 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=C8VdHhO1Zd5kh7HsAbTqlAAgF+2VkFOezTVsyvNqVk3ikvplaPZoZ/Gbu5ot+7NTtZbqrenx8iJNdeOV7EejMN9H+k6OX8ISi/0NvNtK/q5y87mPnwQYkxCmIZd8FljOvZoWQcgfkZLERbpUyXXoKHcfEqzi/8aejybwMfA3rpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUqi5YL3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BFABC4CEC6;
+	Fri,  4 Oct 2024 06:44:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728024207;
-	bh=yj1cVDpC+pHE9UFWN5sSN/8jUO5Z0hUC1u0IFF/l9iw=;
+	s=k20201202; t=1728024286;
+	bh=hRRsY7h9P+J+jzsOIjFTtgHQRBKWcW9QYy9H7fPvjcE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DQs1W6vBxMk9U8zxcs8SLDjiBadl4jg/gfAsSVBGZRA6caLKOLw+SBzKvff0do4/s
-	 Vdp4P8cxN8hqpcoUC80u2FPhxEEjUhV5t7vpX71KIRuUTCsyqgWCIqhcrWX8Cbi/Gr
-	 VUDTuSgIFp0Q1W2zHwfWKY+Z5bHT1huv3QD1Z8LrgbEbgMC6MESZH/08O826RltDpi
-	 RiXqsNxe+lz8yuHhkReAJ74HZGUxyfPzuIyhAg8cUJJYkK7fnByalsVNBybDHjlXSN
-	 lx0yIUtvksVexr2tXYJTZnIcDGBVQiKHwLociqFyBmsmylBsM0s3nSqP279mCWKXrF
-	 3RxdMOLv+u/Sg==
-Date: Fri, 4 Oct 2024 08:43:23 +0200
+	b=sUqi5YL3lSKBvN4bjhPjS+SLBDZ8jGWDCmQWCxSq5AYi5UPM5Az9rmp9cPqiErdyX
+	 YwBhNBSc6ypoVIdnemuqglSLoUv6OC7ZWhD5c4RQyXWUfxO57YRoeZFDXhGZpxdqtj
+	 YX1YnhTV34zX5M5H/QKiSimqqAL/Zovhymfr6/pYrbRZgLxuT3gDsEtvvMLi6KCULi
+	 SVXCkgHkzwTPAhTu1lcOPIYjInr9vyOLJNdjlUkFYnvW4hDEQYdE9wNXEwvp4mN4ZT
+	 iFxy8fVbhBO2jzFqsGWFI3VqrJcihsm/b1GzF+cVTcnszDqOCmCHKyw10cIXp62cli
+	 zhLwj3i2eHXaw==
+Date: Fri, 4 Oct 2024 08:44:42 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+To: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, "open list:IRQCHIP DRIVERS" <linux-kernel@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: interrupt-controller: fsl,ls-extirq:
- workaround wrong interrupt-map number
-Message-ID: <gre52gkd325yfnjwoqyfot4yrb3rim4pi2ye3hjcp4bd7yimba@tq2drzuwlc6f>
-References: <20241003214315.638668-1-Frank.Li@nxp.com>
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Alexandre Mergnat <amergnat@baylibre.com>, 
+	Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>, 
+	Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, 
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: mfd: mediatek: mt6397: add adc,
+ codec and regulators for mt6359
+Message-ID: <cv7icg65qhq52purvfrvlns7akejmqzuqodoujrlgbq4o24jpn@krjzrb3rqmtb>
+References: <20241004030148.13366-1-macpaul.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,89 +65,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241003214315.638668-1-Frank.Li@nxp.com>
+In-Reply-To: <20241004030148.13366-1-macpaul.lin@mediatek.com>
 
-On Thu, Oct 03, 2024 at 05:43:15PM -0400, Frank Li wrote:
-> The driver(drivers/irqchip/irq-ls-extirq.c) have not use standard DT
-> function to parser interrupt-map. So it doesn't consider '#address-size'
-> in parent interrupt controller, such as GIC.
+On Fri, Oct 04, 2024 at 11:01:47AM +0800, Macpaul Lin wrote:
+> Since MT6359 PMIC has been added as one of the compatibles of
+> "mediatek,mt6397.yaml", the sub-device node of "MT6359 PMIC AUXADC",
+> "MT6359 Audio Codec"  and "MT6359 PMIC Regulators" should also be
+> contained in this DT Schema as well.
 > 
-> When dt-binding verify interrupt-map, item data matrix is spitted at
-> incorrect position. So cause below warning:
+> This patch includes:
+>  - add 'adc' property and $ref for 'mediatek,mt6359-auxadc'.
+>  - add 'mt6359-regulator' to the compatibles of regulators.
+>  - add 'mt6359-codec' to the compatibles of audio-codec.
 > 
-> arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dtb: interrupt-controller@14:
-> interrupt-map: [[0, 0, 1, 0, 0, 4, 1, 0], [1, 0, 1, 4, 2, 0, 1, 0], ...
-> is too short
-> 
-> Reduce minItems and maxItems to workaround this warning for
-> 'fsl,ls1088a-extirq', 'fsl,ls2080a-extirq' and fsl,lx2160a-extirq.
-> Other keep the same restriction.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
 > ---
-> Change from v1 to v2
-> - remove duplicate function in commit message
-> - only reduce miniItems for after 1088a chips
-> - maxItems change to 9. Otherwise report too long.
-> ---
->  .../interrupt-controller/fsl,ls-extirq.yaml   | 27 +++++++++++++++++--
->  1 file changed, 25 insertions(+), 2 deletions(-)
+>  .../devicetree/bindings/mfd/mediatek,mt6397.yaml          | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
-> index 199b34fdbefc4..1bfced6ed620c 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
-> @@ -82,14 +82,37 @@ allOf:
->              enum:
->                - fsl,ls1043a-extirq
->                - fsl,ls1046a-extirq
-> +    then:
-> +      properties:
-> +        interrupt-map:
-> +          minItems: 12
-> +          maxItems: 12
-> +        interrupt-map-mask:
-> +          items:
-> +            - const: 0xf
-> +            - const: 0
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
->                - fsl,ls1088a-extirq
->                - fsl,ls2080a-extirq
->                - fsl,lx2160a-extirq
-> +# The driver(drivers/irqchip/irq-ls-extirq.c) have not use standard DT
-> +# function function to parser interrupt-map. So it doesn't consider
-
-Same issue as last time, double function.
-
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
+> Changes for v2:
+>  - Rebase on top of the DT schema conversion patch V8 (should be final version)
+>    without adc, audio-codec, and regulator.
+>    [1] https://lore.kernel.org/all/20241001104145.24054-3-macpaul.lin@mediatek.com/
+>  - Add 'mt6359-codec' to the compatibles of 'audio-codec' property.
+>    Please help to review it again.
 
 
-> +# '#address-size' in parent interrupt controller, such as GIC.
-> +#
-> +# When dt-binding verify interrupt-map, item data matrix is spitted at
-> +# incorrect position. Reduce minItems and maxItems to workaround this
-> +# problem.
-> +
->      then:
->        properties:
->          interrupt-map:
-> -          minItems: 12
-> -          maxItems: 12
-> +          minItems: 8
-> +          maxItems: 9
-
-Are you sure it works? I see 12 items in fsl-ls1088a.dtsi.
-
-What's more, I do not see your errors/warnings at all.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
