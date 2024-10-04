@@ -1,143 +1,102 @@
-Return-Path: <linux-kernel+bounces-351275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B32991055
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:24:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC6D991066
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42037B2DD81
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:52:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FD89B3033C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70941E7C27;
-	Fri,  4 Oct 2024 18:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76641F4711;
+	Fri,  4 Oct 2024 18:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="egOAVtTQ"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6dqzA50"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780A31E7C1B
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2F01B4F21;
+	Fri,  4 Oct 2024 18:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728067314; cv=none; b=Q4IOAwFzKlFXLomQRw6NbKUHEh9lNoRV3/hifO/k+u+6INEhKkjc+3VknWIzndtiGV7KmhLGlQ5va4YByPM8u36q/JtkgwfSD8EHBrJsYuQv2zCpJlnn2ulEhwgWM+XIIy9R3mcAeZk7EtWEPmSIG3+dGwPpb5sFuwntVcsnqYo=
+	t=1728067893; cv=none; b=IGoRrxUODs9gaUmfeYQ9jFY4BLpJzR1+pAXEPDgVLxmU3ozVriGzr48tvPKpaGCo4X62ZOQDn5uPF9OhJXuuOPk1HSCw1FhYpTgBQ+uzL5FMKzkgSmhHJQPq/O+oGrfGRDdfwfT3g3M57rrH+a6oKh1gXEFht/O5xyeqa9/VVFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728067314; c=relaxed/simple;
-	bh=4TK0He8dwCtdTdLxI3+U12GZbKcleL278kKQAMrdJKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NC6rlHn3kCED61CEcFybySYPcRSQli/0d62AOXTF9ZrIIHhqVTYZWJ2iu2aGVNnDFjzxMG15CcFIltoqxSRaD17h5LrgQro66OVLCey8/eyjT7x2nFoSwIE5i4AsDAb3KafxCSnyRzqb5Y/e6KLEkLVpMGdUmRmH+MaIDfVy2v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=egOAVtTQ; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a0c9ff90b1so9032905ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 11:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1728067311; x=1728672111; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wwwzeEiJ51opqJhPS5gdsXb8wf45NCbyQcZ446sEan4=;
-        b=egOAVtTQtrQOlbXthuXG/9kL4F0hEEOD6k9IfhFzUFNiTzzrffCe79KS45OzJOpWhG
-         Fjns4A3jtKGTS3fRTVdEUYG7t8zfVpj70rVpHy5OtEYkWdmPdBR0nyBW88d1Foj3wByA
-         Cjw8kt/S112/uGELF2Pnu+4dkX6GfiZWUgNGY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728067311; x=1728672111;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wwwzeEiJ51opqJhPS5gdsXb8wf45NCbyQcZ446sEan4=;
-        b=Oh71hZj30BrstBHNHBwgoY2B/u9O1APFy+WtgCzo6zfjFgWdKPsJAiNUtzRTxULzhY
-         DJqYUpLSt6G5Ru09rm9DVXgq4w88dVs03oHxlKnTSulmgYtal3SsiREYO1GaFTxjlZWW
-         2cV1CCwI5xk3ZApXZ+0UNR9yrCzBFGc1q+eUWWzHQGUW1sMy1KxPYz6HxxjahbBXPBs0
-         +niAL+kVVu+fDXrkW1zIhREIrwP/fpyaOQRQhCkZGBBrROFH13ci4MRR2rDTp5UqbB60
-         2BCLqwuveZywIzg5A571gglulPNKsn5sPo94l5nSdEVlaEydc3bsBxURfMDBpJYVLtu0
-         KPhw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/rR/nvkjhfXcrnKZi7r9AVsWyR70sYrumJTuELAeYvZKoVUnV+nBrTIMX97qL+u+MDkZzom27MIkmAVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylWZHirtrNjna32eHozU29f2wOdo82mHefA0UedjgN2gTs2LBf
-	+0iYH13eK9qYzp45RdI1QN3ShOHLtAmK5+yXQvWeI7Ipi2ecck5lZfUf0kDedE8=
-X-Google-Smtp-Source: AGHT+IH6mnLmqEkMpwU9kQVlZPZu54bW9Eh6OfVXFm/vCfvFb75bqD/YaW5wJrThyLGG3oGPjMxzCQ==
-X-Received: by 2002:a05:6e02:190e:b0:3a0:8eb3:5160 with SMTP id e9e14a558f8ab-3a3759a102dmr37743035ab.11.1728067311627;
-        Fri, 04 Oct 2024 11:41:51 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db6eb868e3sm84295173.75.2024.10.04.11.41.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 11:41:51 -0700 (PDT)
-Message-ID: <67224962-4ea4-4d78-923f-2c520488a090@linuxfoundation.org>
-Date: Fri, 4 Oct 2024 12:41:50 -0600
+	s=arc-20240116; t=1728067893; c=relaxed/simple;
+	bh=UuZy6A6LuFUhlQOeTvkyHBMAN4IBW/fb9Y4T/BE/DQE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RL5APu6GqPafDNcJh3/mHJwaaVhbJYe4wDC1HKKAKcgFQ3f7WsUfCNFj+uSiTMRrb1U9HdtNIw/6wAyP0FI/rHqpak1VGvHrwKjJoR0W4s9IebZLMRCzhtZ4MwcTo/az12JBgveEnU0Wxw0Q1l5Mq+tCnaUc4JS43kcmjtCgMPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6dqzA50; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8470EC4CEC6;
+	Fri,  4 Oct 2024 18:51:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728067892;
+	bh=UuZy6A6LuFUhlQOeTvkyHBMAN4IBW/fb9Y4T/BE/DQE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=S6dqzA50OWy5mLDaFh/bCL7R2eDXUfEVbi89sYlvycWNhKa4alDc90XskYHLLrsjR
+	 o9OAgjxtKkznQ7tcA3QwaQhRbZMEsaoZJTOc6E0wPaJK90THQBZNhQScdeatioEKCR
+	 /7Hv72VXsOsIIA7oFNnZCgr/r9tky/0AUVjmHs+PPUffqGzHmEJ5HdNkNMUOqdGhKx
+	 6S0h9OFdhX1psPM5C9TNqFOIDwGP8qB0Fysj/rZcTKQxyIRb2/1pIGbphJGLSLeLE5
+	 L8GqFhoiUTFw1J74t/z6p2xvtQn09iReAqfd5D9/cGcTgq+NNI9tCIc9eY+xR80PdG
+	 izA2YfJHe4udQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Gary Guo" <gary@garyguo.net>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,
+  =?utf-8?Q?Bj=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>,  "Benno Lossin"
+ <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Martin Rodriguez Reboredo"
+ <yakoyoku@gmail.com>,  "Will Deacon" <will@kernel.org>,  "Peter Zijlstra"
+ <peterz@infradead.org>,  "Mark Rutland" <mark.rutland@arm.com>,  "Dirk
+ Behme" <dirk.behme@de.bosch.com>,  <linux-kernel@vger.kernel.org>,
+  <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH 1/3] rust: implement `kernel::sync::Refcount`
+In-Reply-To: <20241004155247.2210469-2-gary@garyguo.net> (Gary Guo's message
+	of "Fri, 04 Oct 2024 16:52:22 +0100")
+References: <20241004155247.2210469-1-gary@garyguo.net>
+	<pKZ-hxxNoouLWnfXzFGWvcgGgfjpEixPzJ--cZeEufWI9_MoG_mpToSPflheyUhYmZ4qTKLVypVLRuvX7rfyxg==@protonmail.internalid>
+	<20241004155247.2210469-2-gary@garyguo.net>
+Date: Fri, 04 Oct 2024 20:51:22 +0200
+Message-ID: <87cykfpuqd.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: sched_ext: Add sched_ext as proper selftest
- target
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
- Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
- bpf@vger.kernel.org, linux-riscv@lists.infradead.org,
- Anders Roxell <anders.roxell@linaro.org>
-References: <20241004094247.795385-1-bjorn@kernel.org>
- <60dd0240-8e45-4958-acf2-7eeee917785b@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <60dd0240-8e45-4958-acf2-7eeee917785b@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 10/4/24 11:46, Shuah Khan wrote:
-> On 10/4/24 03:42, Björn Töpel wrote:
->> From: Björn Töpel <bjorn@rivosinc.com>
->>
->> The sched_ext selftests is missing proper cross-compilation support, a
->> proper target entry, and out-of-tree build support.
->>
->> When building the kselftest suite, e.g.:
->>
->>    make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- \
->>      SKIP_TARGETS="" O=/output/foo -C tools/testing/selftests install
->>
->> The expectation is that the sched_ext is included, cross-built, and
->> placed into /output/foo.
->>
->> Add CROSS_COMPILE, OUTPUT, and TARGETS support to the sched_ext
->> selftest.
->>
->> Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
->> ---
->>   tools/testing/selftests/Makefile           |  1 +
->>   tools/testing/selftests/sched_ext/Makefile | 59 +++++++++++++++-------
->>   2 files changed, 41 insertions(+), 19 deletions(-)
->>
-> 
-> Thank you for the find. It appears *sched* is also missing
-> from the default TARGETS in selftests/Makefile
-> 
-> This change looks good to me.
-> 
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-> 
-> Tejun, Do let me know if you like me to take this through kselftest tree.
-> 
+Hi Gary,
 
-Please don't take this patch at the moment.
+"Gary Guo" <gary@garyguo.net> writes:
 
-Adding Mark.
+[...]
 
-After catching up with my Inbox - this is a no for me. This test
-depends on bpf and will fail in CIs that don't have the support.
+> diff --git a/rust/helpers/refcount.c b/rust/helpers/refcount.c
+> index f47afc148ec3..39649443426b 100644
+> --- a/rust/helpers/refcount.c
+> +++ b/rust/helpers/refcount.c
+> @@ -8,11 +8,26 @@ refcount_t rust_helper_REFCOUNT_INIT(int n)
+>  	return (refcount_t)REFCOUNT_INIT(n);
+>  }
+>
+> +unsigned int rust_helper_refcount_read(refcount_t *r)
+> +{
+> +	return refcount_read(r);
+> +}
 
-We are discussing the issue here in this thread.
++EXPORT_SYMBOL_GPL(rust_helper_refcount_read);
 
-https://patchwork.kernel.org/project/linux-kselftest/patch/20241004095348.797020-1-bjorn@kernel.org/
+> +
+> +void rust_helper_refcount_set(refcount_t *r, int n)
+> +{
+> +	refcount_set(r, n);
+> +}
 
-thanks,
--- Shuah
++EXPORT_SYMBOL_GPL(rust_helper_refcount_set);
 
-
+BR Andreas
 
 
