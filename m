@@ -1,73 +1,54 @@
-Return-Path: <linux-kernel+bounces-350767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C5F990952
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:35:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB39990957
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47AB2281FB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:35:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8F61F219A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1E41CACD6;
-	Fri,  4 Oct 2024 16:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273601CACDB;
+	Fri,  4 Oct 2024 16:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lgWuawTm"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LXMyixRN"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B39F1C879A;
-	Fri,  4 Oct 2024 16:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987121E3788;
+	Fri,  4 Oct 2024 16:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728059696; cv=none; b=G7+g1Za89vzb+A2/hQZSC6J/yvsTipfbz0h6MOPaiF9PkdfLgjr5/eCkKfTzjA0T/6AQEIEm++qyI5KgwIChPTTTykvdp+UlrvwCgyK3hw8liD1RNz8ZI5OdDolEkbYjiNLKc8a9CpIDiSL1xOh65ZNA/xmz+0cvWxShbfzAW4k=
+	t=1728059708; cv=none; b=VnuDkMHpdhEN+tAbEaanecdiMksw5E5fTfuWykUMDOM8iNHyoLGqGDjmNjQkdkAKgLgbdMbBpTIh/xHyZY3g5o1MCARPzek0CT9pmVRzooM5o6AXnCKSQ3MFSQoUc0h3YDEr93QNqa7KAykJILvBVQHlJ4cEZJAYu2fZJGmChA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728059696; c=relaxed/simple;
-	bh=9ENwwudg030fJgcl+vjTcgyu268HFLjrYWuJYFeIkq4=;
+	s=arc-20240116; t=1728059708; c=relaxed/simple;
+	bh=diUUycR6+ooXPRLOO+BIOHZpS588LA7rLTJGJatDnms=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hhWxoonjfhVYBbkhANTegaTLBTyqCzsqPWAo/oxonD8jre7nbxzP4XQxsHD19urO2rEcMZvM+FVkA1dhBUiyD8vnoqaPyOczrPbVfxtLR+Tmmgjml7BQrm0jXOxepb7Ubv3AvReFrc/z99O4jpR8wEOTYaMhUZ5a3DgyZs/z+r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lgWuawTm; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c88e4a7c53so2522208a12.0;
-        Fri, 04 Oct 2024 09:34:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728059693; x=1728664493; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xQbOO5HC+JdFXp1E+CQRNx6GHpoeDUgITIDDOfrGswE=;
-        b=lgWuawTmTeLtx087NcKBBSEivZJbNkcvDNljGtn14pjtewTyjFSuBSn4OKYFkPI8BK
-         vAT8giEX81K2UAlL8DbxibSCE+CYFXgccyyx93byt01NF4A1OOdGfuFdQAgsJW7o4rLe
-         L4KhjcHSuA2Ku/T3i0E64n/0G0BbPoj0WEwdRO3FKvg3Ncgm3TLUSnfcBz7mUEGUeToH
-         A+daJp+XXo+3+YghPN+vfkUqUzJkopoLGIUgHf3zlQzhGCgcya/VbU+qdsosDqylpoyb
-         lzKcIBD8ySxXLpR64BkWkmJ8+TRtqtz2YavRWdaAxXLFvYLPbA/7+bzef4xp0nOA6yeP
-         gMhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728059693; x=1728664493;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xQbOO5HC+JdFXp1E+CQRNx6GHpoeDUgITIDDOfrGswE=;
-        b=w2JzP46nFGJu5lUF4YAgauq/aeRRxshWVQ4/oxDWZLNbeHbv18azngNP5v7NU/ocdd
-         /nhWSi+ZZDwTN2nOiuqa2kHguwy+l/Ujhoww7EjdRMkscWbRyVkG4Oq4g3VAbSLwKWnU
-         mx4kFDPS92dU6/gyQJRkBSkCwsXKzcRxehWGNb9aLzOhK6WU5Lubcm6nIkOQnV93v8eY
-         EBz+fwKxg1k0vzZ+Y4mYtTvoB4l7z94XaPVjniCS7CJtEzpKrye11jevdFKHzoBsSpG4
-         4C45kxilwtVYQXq0Cq5YOET85q2ZB/sxiMJiSAYlHFkRP0nWDdUcvRatBZZAULywx8yW
-         SdzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2KAkClUfAnN7dJgECja2VCk2cDgoUAwuMZUNCPLDpVxW+1J3VcFAdNwP1M6iG+QyK5HEaSDCjvTRp/jo=@vger.kernel.org, AJvYcCWqDtX1EkArVOZqsGEZI5AG9o2W5lxu0hGEFAVktSt1eFeoZ5c0sDNUK5zNdol7cCf5nyPESBh7E82QeMjfy40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIvHaECHD7uQCvdWdbSl6xCiI5CMWuSYsmthJ0Ec2B+NlF9WEJ
-	gxp3XrBP41lN2Hfa6l5RuRLSs0RYt/AkYxe1zzz0f0f8WSpm8TNSRkK3zYX6
-X-Google-Smtp-Source: AGHT+IFnO3CnbUWAx6MepKKGtrtp4DIUPORykSnQ8CpAB7o51PU61NixeMkOLusO1NA+TquR9dW5FQ==
-X-Received: by 2002:a05:6402:13cd:b0:5c8:9548:f28b with SMTP id 4fb4d7f45d1cf-5c8d2e0ff65mr2307139a12.11.1728059692442;
-        Fri, 04 Oct 2024 09:34:52 -0700 (PDT)
-Received: from ?IPV6:2003:df:bf2f:2200:c8eb:5450:fddc:5d96? (p200300dfbf2f2200c8eb5450fddc5d96.dip0.t-ipconnect.de. [2003:df:bf2f:2200:c8eb:5450:fddc:5d96])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e0597824sm49663a12.15.2024.10.04.09.34.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 09:34:52 -0700 (PDT)
-Message-ID: <55e1fdeb-97f8-40e4-b3a8-bc7ce8271b9a@gmail.com>
-Date: Fri, 4 Oct 2024 18:34:51 +0200
+	 In-Reply-To:Content-Type; b=g18Mf0Aj5t3fh0RRTSvEvz9clw6zqKXKfQBtw5li9x32y/ydUye3B1oZP9FnwsxuVz37d2jk1ghtBPoE4pYovfNr8inqJYcpkQDonvC5aET3+Yz+Ik4HgGknpapk6S9qU6RxJBCgl5QaKMBaM5ttXzVKJzFvnhZgKQz95LBtq0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LXMyixRN; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id wlGbsPLnFNgC2wlGbstPZy; Fri, 04 Oct 2024 18:34:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728059698;
+	bh=0M0uxOekSSBYumgofd6cg8jRm/StSafXgAMhA9nh22s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=LXMyixRNqutaKsdCewv4YGQ6iZQOeECWvsey6Xmda2IuyePW2k8ON0Mge6rNwFu6o
+	 V4pZ58jqp8BpUm+6zPmuSlBz3rQ146svxCL8Te2voBLyDqbaYU5+n23TcNRMXcgdwZ
+	 efTnCD8i3/APr2Ee0QVGEoBZ83BkiEt4Y5Z4xvaFm0nSmdzmOwFmWzVBhL57qqIhXa
+	 FOPYl0X5M2V8ypiS5qzLkhZuCIQzq4pxw7KcjfFyj5qVJEaQyk5OFeezleJoGSEjnf
+	 VX81mSnyypCUf2UZHq/v9imAR2ZZ2jzTChLD94VyQrSifbJas5rM+b7WxJmZENw2Qu
+	 caLp1Oai0uPEw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 04 Oct 2024 18:34:58 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <75884d07-f052-435d-9f1a-44e9e0bb755f@wanadoo.fr>
+Date: Fri, 4 Oct 2024 18:34:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,90 +56,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] rust: implement `kernel::sync::Refcount`
-To: Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-Cc: Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>, Dirk Behme <dirk.behme@de.bosch.com>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20241004155247.2210469-1-gary@garyguo.net>
- <20241004155247.2210469-2-gary@garyguo.net>
-Content-Language: de-AT-frami
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <20241004155247.2210469-2-gary@garyguo.net>
+Subject: Re: [PATCH v4 4/4] clk: eyeq: add driver
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+References: <20241004-mbly-clk-v4-0-c72c2e348e1f@bootlin.com>
+ <20241004-mbly-clk-v4-4-c72c2e348e1f@bootlin.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241004-mbly-clk-v4-4-c72c2e348e1f@bootlin.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Am 04.10.24 um 17:52 schrieb Gary Guo:
-> This is a wrapping layer of `include/linux/refcount.h`. Currently only
-> the most basic operations (read/set/inc/dec/dec_and_test) are implemented,
-> additional methods can be implemented when they are needed.
+Le 04/10/2024 à 17:45, Théo Lebrun a écrit :
+> Add Mobileye EyeQ5, EyeQ6L and EyeQ6H clock controller driver. It is
+> both a platform driver and a hook onto of_clk_init() used for clocks
+> required early (GIC timer, UARTs).
 > 
-> Currently the kernel refcount has already been used in `Arc`, however it
-> calls into FFI directly.
+> For some compatible, it is both at the same time. eqc_early_init()
+> initialises early PLLs and stores clock array in a static linked list.
+> It marks other clocks as deferred. eqc_probe() retrieves the clock
+> array and adds all remaining clocks.
 > 
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Gary Guo <gary@garyguo.net>
+> It exposes read-only PLLs derived from the main crystal on board.
+> It also exposes another type of clocks: divider clocks.
+> They always have even divisors and have one PLL as parent.
+> 
+> This driver also bears the responsability for optional reset and pinctrl
+> auxiliary devices. The match data attached to the devicetree node
+> compatible indicate if such devices should be created. They all get
+> passed a pointer to the start of the OLB region.
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 > ---
->   rust/helpers/refcount.c      | 15 ++++++
-...
-> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-> index 0ab20975a3b5..534f098a44eb 100644
-> --- a/rust/kernel/sync.rs
-> +++ b/rust/kernel/sync.rs
-> @@ -11,12 +11,14 @@
->   mod condvar;
->   pub mod lock;
->   mod locked_by;
-> +mod refcount;
->   
->   pub use arc::{Arc, ArcBorrow, UniqueArc};
->   pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
->   pub use lock::mutex::{new_mutex, Mutex};
->   pub use lock::spinlock::{new_spinlock, SpinLock};
->   pub use locked_by::LockedBy;
-> +pub use refcount::Refcount;
->   
->   /// Represents a lockdep class. It's a wrapper around C's `lock_class_key`.
->   #[repr(transparent)]
-> diff --git a/rust/kernel/sync/refcount.rs b/rust/kernel/sync/refcount.rs
-> new file mode 100644
-> index 000000000000..4a5b815adc05
-> --- /dev/null
-> +++ b/rust/kernel/sync/refcount.rs
-> @@ -0,0 +1,94 @@
-> +// SPDX-License-Identifier: GPL-2.0
+
+Hi,
+
+> +static void eqc_probe_init_plls(struct device *dev, struct eqc_priv *priv)
+> +{
+> +	const struct eqc_match_data *data = priv->data;
+> +	unsigned long mult, div, acc;
+> +	const struct eqc_pll *pll;
+> +	struct clk_hw *hw;
+> +	unsigned int i;
+> +	u32 r0, r1;
+> +	u64 val;
+> +	int ret;
 > +
-> +//! Atomic reference counting.
-> +//!
-> +//! C header: [`include/linux/refcount.h`](srctree/include/linux/refcount.h)
+> +	for (i = 0; i < data->pll_count; i++) {
+> +		pll = &data->plls[i];
 > +
-> +use crate::types::Opaque;
-> +use core::sync::atomic::AtomicI32;
+> +		val = readq(priv->base + pll->reg64);
+> +		r0 = val;
+> +		r1 = val >> 32;
 > +
-> +/// Atomic reference counter.
-> +///
-> +/// This type is conceptually an atomic integer, but provides a saturation semantics compared to
+> +		ret = eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
+> +		if (ret) {
+> +			dev_warn(dev, "failed parsing state of %s\n", pll->name);
+> +			priv->cells->hws[pll->index] = ERR_PTR(ret);
+> +			continue;
+> +		}
+> +
+> +		hw = clk_hw_register_fixed_factor_with_accuracy_fwname(dev,
+> +				dev->of_node, pll->name, "ref", 0, mult, div, acc);
 
-"a ... samantics": Do you like to check that? Either "a ... semantic" 
-(without 's')? Or if it shall be plural drop the 'a'?
+Should this be freed somewhere or is it auto-magically freed by a 
+put_something()?
+Maybe devm_action_or_reset()?
 
-...
-> +    /// Increment a refcount.
-> +    ///
-> +    /// It will saturate if overflows and `WARN`. It will also `WARN` is the refcount is 0, as this
+> +		priv->cells->hws[pll->index] = hw;
+> +		if (IS_ERR(hw))
+> +			dev_warn(dev, "failed registering %s: %pe\n", pll->name, hw);
+> +	}
+> +}
+> +
+> +static void eqc_probe_init_divs(struct platform_device *pdev, struct device *dev,
+> +				struct eqc_priv *priv)
+> +{
+> +	const struct eqc_match_data *data = priv->data;
+> +	const struct eqc_div *div;
+> +	struct clk_hw *parent;
+> +	void __iomem *reg;
+> +	struct clk_hw *hw;
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < data->div_count; i++) {
+> +		div = &data->divs[i];
+> +		reg = priv->base + div->reg;
+> +		parent = priv->cells->hws[div->parent];
+> +
+> +		hw = clk_hw_register_divider_table_parent_hw(dev, div->name,
+> +				parent, 0, reg, div->shift, div->width,
+> +				CLK_DIVIDER_EVEN_INTEGERS, NULL, NULL);
 
-WARN if ? Not "is" ?
+Same.
 
-Best regards
+CJ
 
-Dirk
+> +		priv->cells->hws[div->index] = hw;
+> +		if (IS_ERR(hw))
+> +			dev_warn(dev, "failed registering %s: %pe\n",
+> +				 div->name, hw);
+> +	}
+> +}
 
