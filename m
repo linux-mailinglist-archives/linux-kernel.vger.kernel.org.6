@@ -1,87 +1,72 @@
-Return-Path: <linux-kernel+bounces-350064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F204798FF43
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:04:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B413098FF45
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250D11C21837
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:04:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 171912816F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3EE13FD83;
-	Fri,  4 Oct 2024 09:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26909144D0A;
+	Fri,  4 Oct 2024 09:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KqRptNBu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QaRllJzD"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E49781ACA
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 09:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCCB136671;
+	Fri,  4 Oct 2024 09:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728032658; cv=none; b=it0d7I8MbK/O7DoZr18NPLql/WSDEqJq0K0D8GMPzUDUmwcsP7vJCTs5z8qUq6/lxWC4qRhlnvxxmKKuRL3aHtTjxw/EIWcLAqy3DjKukmCjcAKPDu66YZQVjAjwLTX6y6bqdCtJIdmUymvKKHmCpbTdeFldE9+zjh2A4KE6H68=
+	t=1728032708; cv=none; b=PRwyK/RArW/isnB/eCXO+vqe/kY7le0hl0J7U/q4YAAfTB/LdlG/7l9N3HSJVtmjsU7dldTUIkusEs6KFqLSoj/9NRg6iMXdt1HhHq3arTKiSnzXw7nCKnzAh1/BJGAvIZeQII/4lR3uTE7Q63qB5zJN/7yEt3Zygx0dPngKSRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728032658; c=relaxed/simple;
-	bh=ZnnyuXNFVICI+SzzG8WbBqu6A9lH+PhQvaNki3KNcEI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HA5s/zREz4NNkW9oXvRzTz+TVlIIOAv5iOebCwbxKU7VvaKuBq5WuGoO9yjxnQfQXOJKdcz9vdjX6mvXm3AI1UOnlz+CCNcri0csfVhmqmsJr6z+vqQCYWvS+EKX4dEMd/CWsXFQAAHKSC+ywT4EH9uGKrF198rKdcQW+KEdwF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KqRptNBu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728032655;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pm6ndtAn1q8+idFufOTXT4a/EfTyQS3zONVFfujpzYE=;
-	b=KqRptNBumVBNsBqArCqPrxYlR9v3OJoMUFu0VtJGyx+l/8wJFf2UQOqg5Z0eOTtpUhlIyJ
-	g6qwhIjvwArDdsFWoTmYg6X/5c/TL5HgD1hmVhE1JaIuBWTq/gxHEzTtkjK50a2B4uZCBr
-	fdtdYwT8QdHAAcxvV3FfE9lpMp+y9Xk=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-ig7bL7WgMzSuGVaRVf95NQ-1; Fri, 04 Oct 2024 05:04:14 -0400
-X-MC-Unique: ig7bL7WgMzSuGVaRVf95NQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37ccd40aad4so816671f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 02:04:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728032653; x=1728637453;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pm6ndtAn1q8+idFufOTXT4a/EfTyQS3zONVFfujpzYE=;
-        b=B6yETS4FmMm4F1lCsgwF/VxfcgstUlYamgYWZt3DzXnl4D0xZfKmGPMo+ylwkkhOkr
-         LMmjwFWZ3taAHS0wqhf8pFElDd1xOqxWQpjNm9YLxy8HqKvYAduyX087jVMkETk5RPMC
-         YrPtE+b4T3TjN9vOukThgx7TBIJ2Zhc1NbwpQTIc4HT+nRz8kdZgr/fFSP72VJgsv4ZJ
-         vi3Q6yeO9+DO67Ru8Sx6RZIyGR6MRjPi4ZLtuqRPJGmSXS/4DP0RNsdmA8BJaz4y8Huc
-         n0cEbeqDeqIKgQ/I46bfVZvoGEoTJaZDOTLha5QxUUqhQkUGufKtnCN5+1D3TP4yD7wG
-         CNvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfewicwhumFfJZaaTVAp9/Cynuin8ZdbmwlGSAbrNSvFKUF4I9l6Qbu5A5UYuOWuaj2IxUqzvWmFJVHZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFk1w8PFVSwIrMBfJMTBwyFbcJOtSCaPTqHK8y1A9aN7bFdRU5
-	1/SiO+Zl3Rd5ZWaeR/jn9i51svN5wxG+Vv+uw9HN0g1MD3sLW0Fft9HJpK3iJv3SAKRaym2OjZA
-	N0IDa+dd8LqxIYls20HYzhNQxdsO2GucUDiVYhJd8w+F7V1uDV7i8E4+opNxZ4r73xFLAx6rEpk
-	XJ+Qlye1LVtzKSlbyv05sSLrnRS3fdwrjAEdX4qHjB6JJ/HQ==
-X-Received: by 2002:a5d:59a2:0:b0:374:bb1b:d8a1 with SMTP id ffacd0b85a97d-37d0e746f3cmr1415469f8f.13.1728032652951;
-        Fri, 04 Oct 2024 02:04:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHfG1MFeWmhwXUn9wRJSt39ET0vsHHWNvNq9ie+ynt77MAK8P20ZOwDvzMFKZTuF3rhJrk1Fw==
-X-Received: by 2002:a5d:59a2:0:b0:374:bb1b:d8a1 with SMTP id ffacd0b85a97d-37d0e746f3cmr1415441f8f.13.1728032652515;
-        Fri, 04 Oct 2024 02:04:12 -0700 (PDT)
-Received: from fedora (g2.ign.cz. [91.219.240.8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082e6ecbsm2829776f8f.116.2024.10.04.02.04.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 02:04:12 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Sean Christopherson <seanjc@google.com>, Sean Christopherson
- <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/11] KVM: selftests: Verify XCR0 can be "downgraded"
- and "upgraded"
-In-Reply-To: <20241003234337.273364-7-seanjc@google.com>
-References: <20241003234337.273364-1-seanjc@google.com>
- <20241003234337.273364-7-seanjc@google.com>
-Date: Fri, 04 Oct 2024 11:04:11 +0200
-Message-ID: <87o740i6ic.fsf@redhat.com>
+	s=arc-20240116; t=1728032708; c=relaxed/simple;
+	bh=ekrJAzQHgmb7SrlgSVzWYYeMB5Dtk+b5F9HcO2t22eE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TbSmAkSBeeoqeH/WBdxfMl1HPnR6m5EZBOTkv18uQBI5twxaJfgjrRbojmCRKHG8xI2G7Ero+GU3N64EopeM97LVI7SRpFoUYDP5XMLKnwcMYJNj+1Np/QINR3u5uc+U9++o+8mI8L+wgkD2uSbpxyVBcu0r4l1KqaHCDjJ556o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QaRllJzD; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493HxP4Q022359;
+	Fri, 4 Oct 2024 09:04:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=TKAMJCGYluAljQZ3DGnwueN7JfG9iy5KF83bzr85e4g=; b=Qa
+	RllJzDxovvPEpYVu5Vf9g0NWU+DPtanMPay77VXJNxG8M/9lQY46RtTAu9zsbwnx
+	1EeR6aUFuQb4YBGL72W3MnB69Bde2UjnmoDLwr8ylom866YhHJQCjy094qWBjW0i
+	ZPbnw8pr4y1bGl2iGv5Q2GOd9F386G2RVwbusXv9cBUXQJV2gZpcKYS0tV8vDs/j
+	Qdo7l9jF/FaDRxHQG9XsGqpS2ou/Sy++avw0eYTD71yP9Mm5lQQLg0pBZwpFnFpb
+	TCThpYYrec03SggP5tUUlkQMNeV2ppuhcIS1byLLLAPKvVKHhA0nWI6JOoRknI7z
+	Duq5HBy9pl2IHK2tvBhQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205d9k0e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 09:04:51 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49494oD2015431
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 09:04:50 GMT
+Received: from hu-pbrahma-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 4 Oct 2024 02:04:45 -0700
+From: Pratyush Brahma <quic_pbrahma@quicinc.com>
+To: <will@kernel.org>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@ziepe.ca>,
+        <jsnitsel@redhat.com>, <robdclark@chromium.org>,
+        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <linux-kernel@vger.kernel.org>, <quic_charante@quicinc.com>,
+        <stable@vger.kernel.org>, Pratyush Brahma
+	<quic_pbrahma@quicinc.com>,
+        Prakash Gupta <quic_guptap@quicinc.com>
+Subject: [PATCH v2] iommu/arm-smmu: Defer probe of clients after smmu device bound
+Date: Fri, 4 Oct 2024 14:34:28 +0530
+Message-ID: <20241004090428.2035-1-quic_pbrahma@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,40 +74,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ckNOfJst3dsdkrxNv-SatKxSmw7sAbLX
+X-Proofpoint-ORIG-GUID: ckNOfJst3dsdkrxNv-SatKxSmw7sAbLX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 impostorscore=0 bulkscore=0
+ suspectscore=0 mlxlogscore=978 lowpriorityscore=0 adultscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040065
 
-Sean Christopherson <seanjc@google.com> writes:
+Null pointer dereference occurs due to a race between smmu
+driver probe and client driver probe, when of_dma_configure()
+for client is called after the iommu_device_register() for smmu driver
+probe has executed but before the driver_bound() for smmu driver
+has been called.
 
-> Now that KVM selftests enable all supported XCR0 features by default, add
-> a testcase to the XCR0 vs. CPUID test to verify that the guest can disable
-> everything except the legacy FPU in XCR0, and then re-enable the full
-> feature set, which is kinda sorta what the test did before XCR0 was setup
-> by default.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c b/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c
-> index a4aecdc77da5..c8a5c5e51661 100644
-> --- a/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c
-> +++ b/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c
-> @@ -79,6 +79,11 @@ static void guest_code(void)
->  	ASSERT_ALL_OR_NONE_XFEATURE(supported_xcr0,
->  				    XFEATURE_MASK_XTILE);
->  
-> +	vector = xsetbv_safe(0, XFEATURE_MASK_FP);
-> +	__GUEST_ASSERT(!vector,
-> +		       "Expected success on XSETBV(FP), got vector '0x%x'",
-> +		       vector);
-> +
->  	vector = xsetbv_safe(0, supported_xcr0);
->  	__GUEST_ASSERT(!vector,
->  		       "Expected success on XSETBV(0x%lx), got vector '0x%x'",
+Following is how the race occurs:
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+T1:Smmu device probe		T2: Client device probe
 
+really_probe()
+arm_smmu_device_probe()
+iommu_device_register()
+					really_probe()
+					platform_dma_configure()
+					of_dma_configure()
+					of_dma_configure_id()
+					of_iommu_configure()
+					iommu_probe_device()
+					iommu_init_device()
+					arm_smmu_probe_device()
+					arm_smmu_get_by_fwnode()
+						driver_find_device_by_fwnode()
+						driver_find_device()
+						next_device()
+						klist_next()
+						    /* null ptr
+						       assigned to smmu */
+					/* null ptr dereference
+					   while smmu->streamid_mask */
+driver_bound()
+	klist_add_tail()
+
+When this null smmu pointer is dereferenced later in
+arm_smmu_probe_device, the device crashes.
+
+Fix this by deferring the probe of the client device
+until the smmu device has bound to the arm smmu driver.
+
+Fixes: 021bb8420d44 ("iommu/arm-smmu: Wire up generic configuration support")
+Cc: stable@vger.kernel.org
+Co-developed-by: Prakash Gupta <quic_guptap@quicinc.com>
+Signed-off-by: Prakash Gupta <quic_guptap@quicinc.com>
+Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
+---
+Changes in v2:
+ Fix kernel test robot warning
+ Add stable kernel list in cc
+ Link to v1: https://lore.kernel.org/all/20241001055633.21062-1-quic_pbrahma@quicinc.com/
+
+ drivers/iommu/arm/arm-smmu/arm-smmu.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+index 723273440c21..7c778b7eb8c8 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+@@ -1437,6 +1437,9 @@ static struct iommu_device *arm_smmu_probe_device(struct device *dev)
+ 			goto out_free;
+ 	} else {
+ 		smmu = arm_smmu_get_by_fwnode(fwspec->iommu_fwnode);
++		if (!smmu)
++			return ERR_PTR(dev_err_probe(dev, -EPROBE_DEFER,
++						"smmu dev has not bound yet\n"));
+ 	}
+ 
+ 	ret = -EINVAL;
 -- 
-Vitaly
+2.17.1
 
 
