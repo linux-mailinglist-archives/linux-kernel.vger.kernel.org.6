@@ -1,74 +1,69 @@
-Return-Path: <linux-kernel+bounces-350103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E4998FFCD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:33:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0A098FFCF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9DE2840DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:33:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ADF8B2298C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA029146D6E;
-	Fri,  4 Oct 2024 09:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84E51487D6;
+	Fri,  4 Oct 2024 09:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VL7rGx6V"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZfgwYR2X"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7D013AA26
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 09:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6983F1448DF;
+	Fri,  4 Oct 2024 09:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728034395; cv=none; b=si5nTYFW8cZb5NB4toFXI3KElK+FXc8kD8LdakJWL0jOfoQShTNqf9exQHvJVcxoOIOwJEYsIp5XTD69HLxxDm72OK292+USh8jtvi2lr9yAlDgBJrGSb3Uo811atis6NwK/wBfY5bUmKAbfTAELVsBrPWAgCMe8FY7OnrDMMRQ=
+	t=1728034397; cv=none; b=TSl4cuyH/DxSH8pyplf6sb6lWXvex+L3VI50uv7UlAiITNf6j8VV4mE40ShKusvgeooIpWZNb+uNh4XYeQ0sgFPEeVmXh2cfiIOXIZxE9dtAEhNqU2kEWjxZaUqQLuYyzrAXA4aJYWohGhdlJisRSpyBfX5ZrhKJD83rwWg3qtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728034395; c=relaxed/simple;
-	bh=qrDtkExd0SSxbEcyTCpEGO8tVqPmhvCaO0aKMA7EwZw=;
+	s=arc-20240116; t=1728034397; c=relaxed/simple;
+	bh=15PXJDPEpkT6NOSIzX8RENsvPLMNV0sN4TqJKOdxNgo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i9DIPxkwbRcltaMyC6OwujQWY3SjRf/KJtql0C3t1F+JURAumP1GR/YBJL205+K8BDUVC/FHmrzqBL+UEVoiaepK71ll9pFjoOQWe0jQE4dxZ/EuH8kN9+tUvybbHOxHFpSHB+s+dx1U/jpJAZ2/UcG+uqfVLeMn9wMXtxHC5R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VL7rGx6V; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728034392; x=1759570392;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qrDtkExd0SSxbEcyTCpEGO8tVqPmhvCaO0aKMA7EwZw=;
-  b=VL7rGx6VRYFMgxbdZumwPNF/wTWsE4hcX+Uztlm7YXkc5akTAPxSXTnq
-   yP2RBzoG1F1YDOI+heI8UnYhPwP/M5oycD8J+wLzbvtpFnw/LzexfM+Th
-   dtAmDqXULwASFkXCr+IZiCQ2tKQzeyABlOa1o2iIMUTfWtz/KhG3BBKb2
-   ZBiCSQ3e/lwW5wIh1nk5hWVw7eIOnl8WeyDWmIjI6k2uXDs6ManAORO1G
-   /K81FlSZMcFCfiOAszWdHiaNpMpoU6/9bO4CCoH4Xz0fPR8KCN2o6aXf5
-   Aj6BBFEbNslGHTaZp4Jl4G9DqKV5ethPlJj+lmQHP7rxqOtB0g+CcAOYW
-   g==;
-X-CSE-ConnectionGUID: f9/lTyF9QaKCOXu3uHE7pw==
-X-CSE-MsgGUID: trknuVGpThmVSYzcMmVung==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="27135695"
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="27135695"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 02:33:12 -0700
-X-CSE-ConnectionGUID: DlzfAyp1T46vQOdm3O7PpQ==
-X-CSE-MsgGUID: gg+HTlwvQuaISNacb4PWlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="74666496"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 04 Oct 2024 02:33:10 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swegO-0001QW-2I;
-	Fri, 04 Oct 2024 09:33:08 +0000
-Date: Fri, 4 Oct 2024 17:33:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Xiaofeng Lian <1198715581lxf@gmail.com>, stefani@seibold.net,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Xiaofeng Lian <1198715581lxf@gmail.com>
-Subject: Re: [PATCH] include/linux/kfifo.h
-Message-ID: <202410041700.hpvbX22r-lkp@intel.com>
-References: <20241002161437.376042-1-1198715581lxf@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLbpehxSMnriL4gkZzOjEomowvmP463VI289t1nGvaqc4SgTTiw8jCnt1vuxxkn9E/+g2bzCFENrHEdfkmqPC90Z+OCjBps8kiTJRVTs6Z9CDUEPt3EE2Ron7owDzidWjiZSwhDjPz6467hXSU98GfCW7o4BQEd7Evh9XlV12IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZfgwYR2X; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=14KluE/LHokBuCB5SwHA3aLDg/3wRxJ1KUVsPcYEMV0=; b=ZfgwYR2X2HIh0n+zkwcif++5Ai
+	iZQwnJrVTnwoekEU874sQ44vLmFeamWV5PA1DmstnKEo4dV3EhtFngcIuIO+e2nqMzvFCBzqleyM9
+	LjN7dR5cmxKtdqXvJ3ZFj5Jt7ob7LAVsC8/OAB0yJyGkngio0GBnPcq/odSQc9jmQxvevVJYWl6cn
+	860yshwi7sX33w41P+xWwiCNN1uo9SjGKSPELc1TdHLxK/cxBzLDtJlRE8XIB3JeX/aAg/RB1W8V7
+	tpjY2+TYxkCARcJSfNOCcOB3PszfmVuRb9L/rSL2o7y8KGRo68UHNj44xIRzJyEWxhJMcabZG44YF
+	OUnOCxeQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1swegP-00000003oNd-3udH;
+	Fri, 04 Oct 2024 09:33:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4B56030083E; Fri,  4 Oct 2024 11:33:08 +0200 (CEST)
+Date: Fri, 4 Oct 2024 11:33:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	linux-kernel@vger.kernel.org, amadeuszx.slawinski@linux.intel.com,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	Markus Elfring <Markus.Elfring@web.de>, Kees Cook <kees@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH v1] cleanup: adjust scoped_guard() to avoid potential
+ warning
+Message-ID: <20241004093308.GI18071@noisy.programming.kicks-ass.net>
+References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
+ <Zv6RZS3bjfNcwh-B@smile.fi.intel.com>
+ <Zv6SIHeN_nOWSH41@smile.fi.intel.com>
+ <20241003141221.GT5594@noisy.programming.kicks-ass.net>
+ <Zv7ZsieITDle2lgl@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,462 +72,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241002161437.376042-1-1198715581lxf@gmail.com>
+In-Reply-To: <Zv7ZsieITDle2lgl@smile.fi.intel.com>
 
-Hi Xiaofeng,
+On Thu, Oct 03, 2024 at 08:51:46PM +0300, Andy Shevchenko wrote:
 
-kernel test robot noticed the following build errors:
+> > I would really like to understand why you don't like this; care to
+> > elaborate Andy?
+> 
+> To me the idea of
+> 
+> int my_foo(...)
+> {
+> 	NOT_my_foo_macro(...)
+> 		return X;
+> }
+> 
+> is counter intuitive from C programming. Without knowing the magic behind the
+> scenes of NOT_my_foo_macro() I would eager to ask for adding a dead code like
+> 
+> int my_foo(...)
+> {
+> 	NOT_my_foo_macro(...)
+> 		return X;
+> 	return 0;
+> }
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.12-rc1 next-20241004]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Well, this is kernel coding, we don't really do (std) C anymore, and
+using *anything* without knowing the magic behind it is asking for fail.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiaofeng-Lian/include-linux-kfifo-h/20241003-002015
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241002161437.376042-1-1198715581lxf%40gmail.com
-patch subject: [PATCH] include/linux/kfifo.h
-config: sparc64-randconfig-r073-20241004 (https://download.01.org/0day-ci/archive/20241004/202410041700.hpvbX22r-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410041700.hpvbX22r-lkp@intel.com/reproduce)
+Also, something like:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410041700.hpvbX22r-lkp@intel.com/
+int my_foo()
+{
+	for (;;)
+		return X;
+}
 
-All errors (new ones prefixed by >>):
+or
 
-   In file included from drivers/gpio/gpiolib-cdev.c:20:
-   drivers/gpio/gpiolib-cdev.c: In function 'linereq_create':
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_event' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:61:17: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      61 |                 datatype        *type; \
-         |                 ^~~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:1782:9: note: in expansion of macro 'INIT_KFIFO'
-    1782 |         INIT_KFIFO(lr->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_event' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:62:23: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      62 |                 const datatype  *const_type; \
-         |                       ^~~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:1782:9: note: in expansion of macro 'INIT_KFIFO'
-    1782 |         INIT_KFIFO(lr->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_event' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:64:17: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      64 |                 ptrtype         *ptr; \
-         |                 ^~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:1782:9: note: in expansion of macro 'INIT_KFIFO'
-    1782 |         INIT_KFIFO(lr->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_event' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:65:17: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      65 |                 ptrtype const   *ptr_const; \
-         |                 ^~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:1782:9: note: in expansion of macro 'INIT_KFIFO'
-    1782 |         INIT_KFIFO(lr->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_event' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:80:9: note: in definition of macro '__STRUCT_KFIFO_PTR'
-      80 |         type            buf[0]; \
-         |         ^~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:1782:9: note: in expansion of macro 'INIT_KFIFO'
-    1782 |         INIT_KFIFO(lr->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_event' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:139:66: note: in expansion of macro 'get_stack_data_type'
-     139 |                 (sizeof(*(fifo)) - sizeof(__tmp_stack)) / sizeof(get_stack_data_type(fifo));\
-         |                                                                  ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:1782:9: note: in expansion of macro 'INIT_KFIFO'
-    1782 |         INIT_KFIFO(lr->events);
-         |         ^~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c: In function 'lineevent_create':
->> include/linux/kfifo.h:130:49: error: 'struct gpioevent_data' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:61:17: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      61 |                 datatype        *type; \
-         |                 ^~~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2245:9: note: in expansion of macro 'INIT_KFIFO'
-    2245 |         INIT_KFIFO(le->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpioevent_data' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:62:23: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      62 |                 const datatype  *const_type; \
-         |                       ^~~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2245:9: note: in expansion of macro 'INIT_KFIFO'
-    2245 |         INIT_KFIFO(le->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpioevent_data' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:64:17: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      64 |                 ptrtype         *ptr; \
-         |                 ^~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2245:9: note: in expansion of macro 'INIT_KFIFO'
-    2245 |         INIT_KFIFO(le->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpioevent_data' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:65:17: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      65 |                 ptrtype const   *ptr_const; \
-         |                 ^~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2245:9: note: in expansion of macro 'INIT_KFIFO'
-    2245 |         INIT_KFIFO(le->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpioevent_data' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:80:9: note: in definition of macro '__STRUCT_KFIFO_PTR'
-      80 |         type            buf[0]; \
-         |         ^~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2245:9: note: in expansion of macro 'INIT_KFIFO'
-    2245 |         INIT_KFIFO(le->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpioevent_data' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:139:66: note: in expansion of macro 'get_stack_data_type'
-     139 |                 (sizeof(*(fifo)) - sizeof(__tmp_stack)) / sizeof(get_stack_data_type(fifo));\
-         |                                                                  ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2245:9: note: in expansion of macro 'INIT_KFIFO'
-    2245 |         INIT_KFIFO(le->events);
-         |         ^~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c: In function 'gpio_chrdev_open':
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_info_changed' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:61:17: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      61 |                 datatype        *type; \
-         |                 ^~~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2777:9: note: in expansion of macro 'INIT_KFIFO'
-    2777 |         INIT_KFIFO(cdev->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_info_changed' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:62:23: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      62 |                 const datatype  *const_type; \
-         |                       ^~~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2777:9: note: in expansion of macro 'INIT_KFIFO'
-    2777 |         INIT_KFIFO(cdev->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_info_changed' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:64:17: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      64 |                 ptrtype         *ptr; \
-         |                 ^~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2777:9: note: in expansion of macro 'INIT_KFIFO'
-    2777 |         INIT_KFIFO(cdev->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_info_changed' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:65:17: note: in definition of macro '__STRUCT_KFIFO_COMMON'
-      65 |                 ptrtype const   *ptr_const; \
-         |                 ^~~~~~~
-   include/linux/kfifo.h:84:16: note: in expansion of macro '__STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ^~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2777:9: note: in expansion of macro 'INIT_KFIFO'
-    2777 |         INIT_KFIFO(cdev->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_info_changed' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:80:9: note: in definition of macro '__STRUCT_KFIFO_PTR'
-      80 |         type            buf[0]; \
-         |         ^~~~
-   include/linux/kfifo.h:116:41: note: in expansion of macro 'STRUCT_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:17: note: in expansion of macro 'DECLARE_KFIFO_PTR'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                 ^~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:48: note: in expansion of macro 'get_stack_data_type'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-         |                                                ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2777:9: note: in expansion of macro 'INIT_KFIFO'
-    2777 |         INIT_KFIFO(cdev->events);
-         |         ^~~~~~~~~~
->> include/linux/kfifo.h:130:49: error: 'struct gpio_v2_line_info_changed' has no member named 'type'
-     130 | #define get_stack_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^~
-   include/linux/kfifo.h:139:66: note: in expansion of macro 'get_stack_data_type'
-     139 |                 (sizeof(*(fifo)) - sizeof(__tmp_stack)) / sizeof(get_stack_data_type(fifo));\
-         |                                                                  ^~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:53: note: in expansion of macro '__STACK_SIZE'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~
-   drivers/gpio/gpiolib-cdev.c:2777:9: note: in expansion of macro 'INIT_KFIFO'
-    2777 |         INIT_KFIFO(cdev->events);
-         |         ^~~~~~~~~~
-..
+int my_foo()
+{
+	do {
+		return X;
+	} while (0);
+}
 
+is perfectly valid C that no compiler should be complaining about. Yes
+its a wee bit daft, but if you want to write it, that's fine.
 
-vim +130 include/linux/kfifo.h
+The point being that the compiler can determine there is no path not
+hitting that return.
 
-   125	
-   126	/**
-   127	 * get_kfifo_data_type - macro to get type of kfifo's member
-   128	 * @fifo: pointer of kfifo
-   129	 */
- > 130	#define get_stack_data_type(fifo) typeof(*(fifo)->type)
-   131	
-   132	/**
-   133	 * __STACK_SIZE - macro to calculate kfifo's buffer size
-   134	 * @fifo: pointer of kfifo
-   135	 */
-   136	#define __STACK_SIZE(fifo)\
-   137		({\
-   138			DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
-   139			(sizeof(*(fifo)) - sizeof(__tmp_stack)) / sizeof(get_stack_data_type(fifo));\
-   140		 })
-   141	/**
-   142	 * INIT_KFIFO - Initialize a fifo declared by DECLARE_KFIFO
-   143	 * @fifo: name of the declared fifo datatype
-   144	 */
-   145	#define INIT_KFIFO(fifo) \
-   146	(void)({ \
-   147		typeof(&(fifo)) __tmp = &(fifo); \
-   148		struct __kfifo *__kfifo = &__tmp->kfifo; \
-   149		__kfifo->in = 0; \
-   150		__kfifo->out = 0; \
- > 151		__kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
-   152		__kfifo->esize = sizeof(*__tmp->buf); \
-   153		__kfifo->data = __is_kfifo_ptr(__tmp) ?  NULL : __tmp->buf; \
-   154	})
-   155	
+Apparently the current for loop is defeating the compiler, I see no
+reason not to change it in such a way that the compiler is able to
+determine wtf happens -- that can only help.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> What I would agree on is
+> 
+> int my_foo(...)
+> {
+> 	return NOT_my_foo_macro(..., X);
+> }
+
+That just really won't work with things as they are ofcourse.
+
+> Or just using guard()().
+
+That's always an option. You don't *have* to use the -- to you -- weird
+form.
+
 
