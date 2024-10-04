@@ -1,167 +1,161 @@
-Return-Path: <linux-kernel+bounces-349954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FA098FDD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:29:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F3A98FDE4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23ABE1C21C24
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:29:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F220528435F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1883C139579;
-	Fri,  4 Oct 2024 07:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8B413957C;
+	Fri,  4 Oct 2024 07:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L/UbZ7LX"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DS/0HvMN"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDAA69D2B
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 07:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37DB130499
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 07:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728026961; cv=none; b=Mz1Py97RK9F+yQg0TvqZgWu/q7LT0Si/CgxaIm5u1vmoaEj3ML5kS/zjUN0HXc8YxEvg4ctYZeZxxjjqU6rIJU5JnbBMAuRwtVhZ5X+1j+oNhTSa5IVw+qdRZT146VRyUMjtfid75v0upRXa0pu0h0jLLTXVDYx0Wg6/INNNlHg=
+	t=1728027287; cv=none; b=Ho0Ww9WnKtKrH/Ikn0/v2wjOftwgb61hjtjUI48kXAk9fRqHKAQpPbRDdxjROqpSbdJmTRs8lvG+xYvZQQEcFeVPIS6T1W0Zr+FyoP9iKI8jD/owcYvcS3xO3CDC9m2Cbacxqh/9qJzxqGLJ+yjf77X9xwTn2o+O28zXkL8C+pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728026961; c=relaxed/simple;
-	bh=OKTalwAfmZPrK30DJvgcKg0WV9e6RurHz1166FHQk1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FHAe4ed5IlTSTCUKLDZlWT9CDSzcN0GWLCm0Yh+OD1uNVp7mRLxx/UcIcpQGhKgz6XgAQi5AhvwBYOL7e+8u3cLhHW+OSYV/BiuSYMjm9Kbo2mWrzGTalHpD20rFXRJ1sgnN1tSaNHFci8ZS1jKc3l0e+Ggnk2CEAn0BdPwRJ4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L/UbZ7LX; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 09B37240008;
-	Fri,  4 Oct 2024 07:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728026956;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k3TTnuR28kslWEwBM5pyA9qaAOzOesXM2P5x5soXKlY=;
-	b=L/UbZ7LXGUN/3HkPF6ZE6gq/YEeIC9acHhUTIOU8ZWEFtcbBccwLW55PzEpNEgi7EJ68Jm
-	PEQ1RBotR3N3WMpiVfup4bVAIpnB+XN+6PFrsluhkXdZaqkjOvHjkiA8GP7NdgLxIDorGa
-	VjC3BThwK/N6lX8Ncnhv6ymRO3FZ66gi0cJ9fSomrMYE2a2CO0XB7Ie8OqLZtDhtB8DhXW
-	FDAcaQfk6WlAHln+mtWyYUWR2FEMNG1/f/8QQB73WM6npBm84Ii66O/B6bkRmgCypG4JKr
-	6M5v2reYu0ifPmXbOIWhOtJa2YMsjhecYMDIwAXeKH/IJ7wip6BrvgJ6gtR+JA==
-Date: Fri, 4 Oct 2024 09:29:14 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
- bbrezillon@kernel.org, boris.brezillon@collabora.com,
- conor.culhane@silvaco.com, gregkh@linuxfoundation.org, imx@lists.linux.dev,
- pthombar@cadence.com, ravindra.yashvant.shinde@nxp.com
-Subject: Re: [PATCH v6 2/3] i3c: master: Extend address status bit to 4 and
- add I3C_ADDR_SLOT_EXT_DESIRED
-Message-ID: <20241004092914.42701e56@xps-13>
-In-Reply-To: <20241003-i3c_dts_assign-v6-2-eae2569c92ca@nxp.com>
-References: <20241003-i3c_dts_assign-v6-0-eae2569c92ca@nxp.com>
-	<20241003-i3c_dts_assign-v6-2-eae2569c92ca@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728027287; c=relaxed/simple;
+	bh=qnKJngIhxH2qKkZlANdqo2TVAMoAbY339ChpitTXjWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kL1cslGgHX95ZFRSzP7dxYgvA2To1/xHMvz0ejQ4yK/IXkv3xeYp52QsVVy8CtPbWt0ygZUHzggASPbMCT229LiwPQ8FMbBPGFZUI35DqiPe1SBKCRG1WT4bm333YsB6sTnQyxaNo874iSr/mu+zPnpCd2A/5q85fhqYx7YcR8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DS/0HvMN; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb1e623d1so17860195e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 00:34:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728027282; x=1728632082; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GS0qee4Dr9zBFYyHFbF+n8hA/AdRBxswxsHNws6eERg=;
+        b=DS/0HvMNv510rSqczHVgc1U/FZz1MkHp9a1VpqAJyv0gOUnZldStaR62MKGu32MDtz
+         tqh5aHT9PiFNBTqyUrReOpy3keLNEbjGWGe5oJoqTOmByqVUuCR7x/sXj3kH8FV/NfBF
+         ga1muPDbvZNuZR9oPfxeIkRsPLSilD9BNzYWKP6q1mtYDBQe1jsiYz/1l82TpBCMQZTC
+         dsxLBpkjlp0xizLHl5okNX0+s0KRb8onrOtvq6yvjGLiOuOGGe/WkKUzY5Gn8pajkjTt
+         83BuCCaTgrU9aWxGVGAeS/qGRJWvAPGOPMYCrB3TqJGc9gtuKwoD33YzUs/NG+Cx08Kq
+         u3fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728027282; x=1728632082;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GS0qee4Dr9zBFYyHFbF+n8hA/AdRBxswxsHNws6eERg=;
+        b=wMtGi+NBPC6wW0q7a5bVHppLveNaIGvkb6+U3DAiwCe1lXFuPaYzMDe6qSHc9Z2/Jp
+         63cCP+R6Qdfzt3bgxLcThDRb2pofhyCoRdUhV0sbfDQ5s0L7FVE5yqkwPgM01AxMZF3U
+         IzHrhsjaRDdrnJkNHLD2TpexRpo0n58MxvdOIiMUj22RtQODwjA5CxUjSbZvvQfgT5fP
+         fUK+QXtimwi8QO9ehrQjUddUDC3P/pqHAyut7+OPS4ZIBa7X0F6aOWdv2AXw09mVgOqy
+         1YIWTCIDni++NyI7azavJF/AYB2TDv4YusEsmyqZv2+FHLNiSeY2/yrRKccL4kPxlaRR
+         fOqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJQNbtkrzPW20ZbC3C+tt1MQVts9BIo7Eu4fFLtEj44ICIbLf83OanhWHqlu9qyIudEIODGPO/BKChLU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIbp5k+FKr7f7aXKmg3/2XFGqaNZGpJCJ3UU8pdwugZTP6OwxU
+	lpAzRupHYRWUbaIDwekIOl6KqM/aUjw+5jhKsGXDC2XKxOgqKGFF/oSYiHpGPUnLkHJ7CV3GSfJ
+	m
+X-Google-Smtp-Source: AGHT+IEj4DCuoWSM5WAIE5JyIBBND08HEFzqdyuMahA96VYXnu+qJdDkIgKQRM07Ovg6cYhr1mRArQ==
+X-Received: by 2002:a05:600c:3509:b0:426:5416:67e0 with SMTP id 5b1f17b1804b1-42f85aef6f8mr11996925e9.31.1728027281735;
+        Fri, 04 Oct 2024 00:34:41 -0700 (PDT)
+Received: from dfj (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d081f70b1sm2680774f8f.22.2024.10.04.00.34.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 00:34:41 -0700 (PDT)
+Date: Fri, 4 Oct 2024 09:33:17 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: dlechner@baylibre.com, Nuno Sa <nuno.sa@analog.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, 
+	Mihail Chindris <mihail.chindris@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	linux-iio@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 03/11] dt-bindings: iio: dac: adi-axi-dac: add ad3552r
+ axi variant
+Message-ID: <744n6dut2ayboh6gilavqy65bgljmu5sz5embvtxcq5v4fhp3f@pfud6d2hiplo>
+References: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
+ <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-3-ceb157487329@baylibre.com>
+ <172799847830.1778120.2943655597402379925.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172799847830.1778120.2943655597402379925.robh@kernel.org>
 
-Hi Frank,
+Hi Rob,
 
-> + * However, some I3C targets may request specific addresses (called as "=
-init_dyn_addr"), which is
-> + * typically specified by the DT-'s assigned-address property. Lower add=
-resses having higher IBI
-> + * priority. If it is available, i3c_bus_get_free_addr() preferably retu=
-rn a free address that is
-> + * not in the list of desired addresses (called as "init_dyn_addr"). Thi=
-s allows the device with
-> + * the "init_dyn_addr" to switch to its "init_dyn_addr" when it hot-join=
-s the I3C bus. Otherwise,
-> + * if the "init_dyn_addr" is already in use by another I3C device, the t=
-arget device will not be
-> + * able to switch to its desired address.
-> + *
-> + * If the previous step fails, fallback returning one of the remaining u=
-nassigned address,
-> + * regardless of its state in the desired list.
-> + */
->  static int i3c_bus_get_free_addr(struct i3c_bus *bus, u8 start_addr)
->  {
->  	enum i3c_addr_slot_status status;
->  	u8 addr;
-> =20
-> +	for (addr =3D start_addr; addr < I3C_MAX_ADDR; addr++) {
-> +		status =3D i3c_bus_get_addr_slot_status_mask(bus, addr,
-> +							   I3C_ADDR_SLOT_EXT_STATUS_MASK);
-> +		if (status =3D=3D I3C_ADDR_SLOT_FREE)
-> +			return addr;
-> +	}
-> +
->  	for (addr =3D start_addr; addr < I3C_MAX_ADDR; addr++) {
->  		status =3D i3c_bus_get_addr_slot_status(bus, addr);
+On 03.10.2024 18:34, Rob Herring (Arm) wrote:
+> 
+> On Thu, 03 Oct 2024 19:29:00 +0200, Angelo Dureghello wrote:
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> > 
+> > Add a new compatible and related bindigns for the fpga-based
+> > "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
+> > 
+> > The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
+> > generic AXI "DAC" IP, intended to control ad3552r and similar chips,
+> > mainly to reach high speed transfer rates using a QSPI DDR
+> > (dobule-data-rate) interface.
+> > 
+> > The ad3552r device is defined as a child of the AXI DAC, that in
+> > this case is acting as an SPI controller.
+> > 
+> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > ---
+> >  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 49 +++++++++++++++++++++-
+> >  1 file changed, 48 insertions(+), 1 deletion(-)
+> > 
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.example.dtb: dac@0: spi-max-frequency: 66000000 is greater than the maximum of 30000000
+> 	from schema $id: http://devicetree.org/schemas/iio/dac/adi,ad3552r.yaml#
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.example.dtb: dac@0: 'io-backends' does not match any of the regexes: '^channel@([0-1])$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/iio/dac/adi,ad3552r.yaml#
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-3-ceb157487329@baylibre.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
 
-Maybe here we could also use the same status_mask() with the other mask,
-just to clarify the difference.
+before sending the patchset i did
 
->  		if (status =3D=3D I3C_ADDR_SLOT_FREE)
-> @@ -1918,9 +1959,10 @@ static int i3c_master_bus_init(struct i3c_master_c=
-ontroller *master)
->  			goto err_rstdaa;
->  		}
-> =20
-> -		i3c_bus_set_addr_slot_status(&master->bus,
-> -					     i3cboardinfo->init_dyn_addr,
-> -					     I3C_ADDR_SLOT_I3C_DEV);
-> +		i3c_bus_set_addr_slot_status_mask(&master->bus,
-> +						 i3cboardinfo->init_dyn_addr,
-> +						 I3C_ADDR_SLOT_I3C_DEV | I3C_ADDR_SLOT_EXT_DESIRED,
-> +						 I3C_ADDR_SLOT_EXT_STATUS_MASK);
+make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+  CHKDT   Documentation/devicetree/bindings
+  LINT    Documentation/devicetree/bindings
+  DTC [C] Documentation/devicetree/bindings/iio/dac/adi,ad3552r.example.dtb
 
-However I'm not sure I understand the use of the
-set_addr_slot_status_mask() function. Can't we just use the normal
-function and just extend the mask in the fist place?
-
->  		/*
->  		 * Only try to create/attach devices that have a static
-> diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
-> index 2100547b2d8d2..6e5328c6c6afd 100644
-> --- a/include/linux/i3c/master.h
-> +++ b/include/linux/i3c/master.h
-> @@ -298,7 +298,8 @@ enum i3c_open_drain_speed {
->   * @I3C_ADDR_SLOT_I2C_DEV: address is assigned to an I2C device
->   * @I3C_ADDR_SLOT_I3C_DEV: address is assigned to an I3C device
->   * @I3C_ADDR_SLOT_STATUS_MASK: address slot mask
-> - *
-> + * @I3C_ADDR_SLOT_EXT_DESIRED: the bitmask represents addresses that are=
- preferred by some devices,
-> + *			       such as the "assigned-address" property in a device tree sou=
-rce.
->   * On an I3C bus, addresses are assigned dynamically, and we need to kno=
-w which
->   * addresses are free to use and which ones are already assigned.
->   *
-> @@ -311,9 +312,11 @@ enum i3c_addr_slot_status {
->  	I3C_ADDR_SLOT_I2C_DEV,
->  	I3C_ADDR_SLOT_I3C_DEV,
->  	I3C_ADDR_SLOT_STATUS_MASK =3D 3,
-> +	I3C_ADDR_SLOT_EXT_STATUS_MASK =3D 7,
-> +	I3C_ADDR_SLOT_EXT_DESIRED =3D BIT(2),
->  };
-> =20
-> -#define I3C_ADDR_SLOT_STATUS_BITS 2
-> +#define I3C_ADDR_SLOT_STATUS_BITS 4
-> =20
->  /**
->   * struct i3c_bus - I3C bus object
->=20
-
-Otherwise lgtm.
+no issues.
+How can i detect the issue so ?
 
 Thanks,
-Miqu=C3=A8l
+-- 
+
+Regards,
+  Angelo
 
