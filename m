@@ -1,169 +1,141 @@
-Return-Path: <linux-kernel+bounces-350768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB39990957
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:35:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73829990975
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8F61F219A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:35:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35C01287FD7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273601CACDB;
-	Fri,  4 Oct 2024 16:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9421CACE5;
+	Fri,  4 Oct 2024 16:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LXMyixRN"
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+QEy5UQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987121E3788;
-	Fri,  4 Oct 2024 16:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D407E1E3795;
+	Fri,  4 Oct 2024 16:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728059708; cv=none; b=VnuDkMHpdhEN+tAbEaanecdiMksw5E5fTfuWykUMDOM8iNHyoLGqGDjmNjQkdkAKgLgbdMbBpTIh/xHyZY3g5o1MCARPzek0CT9pmVRzooM5o6AXnCKSQ3MFSQoUc0h3YDEr93QNqa7KAykJILvBVQHlJ4cEZJAYu2fZJGmChA4=
+	t=1728059924; cv=none; b=WqsS/35RMxRD9EpkvD2rNA3+0YaOjnKo6X7RvHrd2N6OwUl+DFcowkslKqyO2XoSGh1B10nzI1JfvsBqAj3sSWvIykGz3heJwzVigjRQcHLGLjPb38vLJhDahSvmxVD81i5vGXpHkKGW1xas/vXa4vvkV/dNEL7PTn1fUnmoBj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728059708; c=relaxed/simple;
-	bh=diUUycR6+ooXPRLOO+BIOHZpS588LA7rLTJGJatDnms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g18Mf0Aj5t3fh0RRTSvEvz9clw6zqKXKfQBtw5li9x32y/ydUye3B1oZP9FnwsxuVz37d2jk1ghtBPoE4pYovfNr8inqJYcpkQDonvC5aET3+Yz+Ik4HgGknpapk6S9qU6RxJBCgl5QaKMBaM5ttXzVKJzFvnhZgKQz95LBtq0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LXMyixRN; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id wlGbsPLnFNgC2wlGbstPZy; Fri, 04 Oct 2024 18:34:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1728059698;
-	bh=0M0uxOekSSBYumgofd6cg8jRm/StSafXgAMhA9nh22s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=LXMyixRNqutaKsdCewv4YGQ6iZQOeECWvsey6Xmda2IuyePW2k8ON0Mge6rNwFu6o
-	 V4pZ58jqp8BpUm+6zPmuSlBz3rQ146svxCL8Te2voBLyDqbaYU5+n23TcNRMXcgdwZ
-	 efTnCD8i3/APr2Ee0QVGEoBZ83BkiEt4Y5Z4xvaFm0nSmdzmOwFmWzVBhL57qqIhXa
-	 FOPYl0X5M2V8ypiS5qzLkhZuCIQzq4pxw7KcjfFyj5qVJEaQyk5OFeezleJoGSEjnf
-	 VX81mSnyypCUf2UZHq/v9imAR2ZZ2jzTChLD94VyQrSifbJas5rM+b7WxJmZENw2Qu
-	 caLp1Oai0uPEw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 04 Oct 2024 18:34:58 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <75884d07-f052-435d-9f1a-44e9e0bb755f@wanadoo.fr>
-Date: Fri, 4 Oct 2024 18:34:57 +0200
+	s=arc-20240116; t=1728059924; c=relaxed/simple;
+	bh=EixHNaPPAkeoDcpdBs00MRfg/QdKJO3PxpRNIrzAAoo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FaSDGU0Wy/eJL5mnEoZyMyGYW/gOoIYu0ACgo/F+Zrm4fpg9wB0wKfMkezSu9Z0SNJeudwWtjIM2lILP9EJHOv6SEM3Dkyrxg9UGn9FQaBjWej24xaJ1usaOTNwLgcK0T2eU/JqXCHAKNzkVPvfgI4QquflzgARCyczO67f+EGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+QEy5UQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95FC1C4CEC6;
+	Fri,  4 Oct 2024 16:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728059923;
+	bh=EixHNaPPAkeoDcpdBs00MRfg/QdKJO3PxpRNIrzAAoo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r+QEy5UQZ7GlHaUwc+RkIpxbgzDi3nb6zoGk7fJWELHNOVn/a6kqYoqhwYTjjtUtA
+	 HLN173WN7VQ9r/4cXKND2OaXnBiWj3isq+OvQ/2tKN+G1LbJKzzCSdPkqEARtSquq8
+	 S0pbWPN7erj8u6mqJ9HQMZI6g563nX4W7ObXkwLnrq69CzLFx9QtyJQM8p/ViyHzEi
+	 cKxlzoUaN0C66zzItaSS/hLhTkUhON+6Kvb4OfJvi7TFi3QL4RlsTcFEHjQV3yfZIn
+	 wK4ar2G90hKokxv4b5g19gdgrWBvs+RjT57QFt3pEt4S0Vi7LGsHYQ0JngDFMUyYoT
+	 u8hYo/RMJlkrg==
+Date: Fri, 4 Oct 2024 19:35:10 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Rong Xu <xur@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Jonathan Corbet <corbet@lwn.net>, Han Shen <shenhan@google.com>,
+	Sriraman Tallam <tmsriram@google.com>,
+	David Li <davidxl@google.com>,
+	Krzysztof Pszeniczny <kpszeniczny@google.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
+	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
+	Brian Gerst <brgerst@gmail.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Jann Horn <jannh@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Juergen Gross <jgross@suse.com>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
+	x86@kernel.org, "Xin Li (Intel)" <xin@zytor.com>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v2 1/6] Add AutoFDO support for Clang build
+Message-ID: <ZwAZPklXayA1gbQw@kernel.org>
+References: <20241002233409.2857999-1-xur@google.com>
+ <20241002233409.2857999-2-xur@google.com>
+ <20241003154143.GW5594@noisy.programming.kicks-ass.net>
+ <CAKwvOdnS-vyTXHaGm4XiLMtg4rsTuUTJ6ao7Ji-fUobZjdBVLw@mail.gmail.com>
+ <20241003160309.GY5594@noisy.programming.kicks-ass.net>
+ <CAKwvOd=CRiHitKeYtHH=tmT8yfDa2RSALbYn5uCC8nRq8ud79g@mail.gmail.com>
+ <20241003161257.GZ5594@noisy.programming.kicks-ass.net>
+ <CAF1bQ=RAizpP-T_sRGpE2-Kjsk_RZD3r_iz_dpn25W+uDzpWOw@mail.gmail.com>
+ <Zv-Fy4hnuscnLH1k@kernel.org>
+ <CAF1bQ=S8Hg0FUThaDU0snVqerVos6ztzVvN6sm1Ng3FnTpJt_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] clk: eyeq: add driver
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-References: <20241004-mbly-clk-v4-0-c72c2e348e1f@bootlin.com>
- <20241004-mbly-clk-v4-4-c72c2e348e1f@bootlin.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241004-mbly-clk-v4-4-c72c2e348e1f@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF1bQ=S8Hg0FUThaDU0snVqerVos6ztzVvN6sm1Ng3FnTpJt_A@mail.gmail.com>
 
-Le 04/10/2024 à 17:45, Théo Lebrun a écrit :
-> Add Mobileye EyeQ5, EyeQ6L and EyeQ6H clock controller driver. It is
-> both a platform driver and a hook onto of_clk_init() used for clocks
-> required early (GIC timer, UARTs).
+On Fri, Oct 04, 2024 at 09:28:36AM -0700, Rong Xu wrote:
+> On Thu, Oct 3, 2024 at 11:09 PM Mike Rapoport <rppt@kernel.org> wrote:
+> >
+> > On Thu, Oct 03, 2024 at 11:20:17AM -0700, Rong Xu wrote:
+> > > Writing the doc with all these code-blocks was not fun either.
+> > > We are happy to change if there is a better way for this.
+> > >
+> > > -Rong
+> > >
+> > > On Thu, Oct 3, 2024 at 9:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > >
+> > > > On Thu, Oct 03, 2024 at 09:11:34AM -0700, Nick Desaulniers wrote:
+> > > >
+> > > > > > It makes it absolute crap for all of us who 'render' text documents
+> > > > > > using less or vi.
+> > > > >
+> > > > > "It hurts when I punch myself in the face."
+> > > >
+> > > > Weirdly enough I have a job that entails staring at text documents in
+> > > > text editors all day every day :-) sorry for thinking that's a sane
+> > > > thing to do.
+> >
+> > Something like this should do:
+> >
+> > > +- For enabling a single file (e.g. foo.o)::
+> > > +
+> > > +        AUTOFDO_PROFILE_foo.o := y
 > 
-> For some compatible, it is both at the same time. eqc_early_init()
-> initialises early PLLs and stores clock array in a static linked list.
-> It marks other clocks as deferred. eqc_probe() retrieves the clock
-> array and adds all remaining clocks.
-> 
-> It exposes read-only PLLs derived from the main crystal on board.
-> It also exposes another type of clocks: divider clocks.
-> They always have even divisors and have one PLL as parent.
-> 
-> This driver also bears the responsability for optional reset and pinctrl
-> auxiliary devices. The match data attached to the devicetree node
-> compatible indicate if such devices should be created. They all get
-> passed a pointer to the start of the OLB region.
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> ---
+> Do you mean we don't use ".. code-block:: " here and just use indented
+> text separated with blank lines?
 
-Hi,
+The double column (::) in the end of a paragraph means that the next paragraph
+is a literal block:
 
-> +static void eqc_probe_init_plls(struct device *dev, struct eqc_priv *priv)
-> +{
-> +	const struct eqc_match_data *data = priv->data;
-> +	unsigned long mult, div, acc;
-> +	const struct eqc_pll *pll;
-> +	struct clk_hw *hw;
-> +	unsigned int i;
-> +	u32 r0, r1;
-> +	u64 val;
-> +	int ret;
-> +
-> +	for (i = 0; i < data->pll_count; i++) {
-> +		pll = &data->plls[i];
-> +
-> +		val = readq(priv->base + pll->reg64);
-> +		r0 = val;
-> +		r1 = val >> 32;
-> +
-> +		ret = eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
-> +		if (ret) {
-> +			dev_warn(dev, "failed parsing state of %s\n", pll->name);
-> +			priv->cells->hws[pll->index] = ERR_PTR(ret);
-> +			continue;
-> +		}
-> +
-> +		hw = clk_hw_register_fixed_factor_with_accuracy_fwname(dev,
-> +				dev->of_node, pll->name, "ref", 0, mult, div, acc);
+https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#literal-blocks
 
-Should this be freed somewhere or is it auto-magically freed by a 
-put_something()?
-Maybe devm_action_or_reset()?
+You'd loose the coloring, but other than that it won't be different from
+the ".. code-block::" and easier to read in a text form.
+ 
+> -Rong
 
-> +		priv->cells->hws[pll->index] = hw;
-> +		if (IS_ERR(hw))
-> +			dev_warn(dev, "failed registering %s: %pe\n", pll->name, hw);
-> +	}
-> +}
-> +
-> +static void eqc_probe_init_divs(struct platform_device *pdev, struct device *dev,
-> +				struct eqc_priv *priv)
-> +{
-> +	const struct eqc_match_data *data = priv->data;
-> +	const struct eqc_div *div;
-> +	struct clk_hw *parent;
-> +	void __iomem *reg;
-> +	struct clk_hw *hw;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < data->div_count; i++) {
-> +		div = &data->divs[i];
-> +		reg = priv->base + div->reg;
-> +		parent = priv->cells->hws[div->parent];
-> +
-> +		hw = clk_hw_register_divider_table_parent_hw(dev, div->name,
-> +				parent, 0, reg, div->shift, div->width,
-> +				CLK_DIVIDER_EVEN_INTEGERS, NULL, NULL);
-
-Same.
-
-CJ
-
-> +		priv->cells->hws[div->index] = hw;
-> +		if (IS_ERR(hw))
-> +			dev_warn(dev, "failed registering %s: %pe\n",
-> +				 div->name, hw);
-> +	}
-> +}
+-- 
+Sincerely yours,
+Mike.
 
