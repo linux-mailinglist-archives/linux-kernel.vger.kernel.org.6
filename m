@@ -1,124 +1,200 @@
-Return-Path: <linux-kernel+bounces-350376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B90A99044F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:29:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7A59902AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD992829BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:29:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1FC1F21405
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642C8212F1B;
-	Fri,  4 Oct 2024 13:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DAB161902;
+	Fri,  4 Oct 2024 12:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EHF1MGNE"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="ifc5V/sA"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2087.outbound.protection.outlook.com [40.107.103.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A55149DF4;
-	Fri,  4 Oct 2024 13:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048451; cv=none; b=Q/XLr5BWjzEFvhe0KAkOJZh7KcWOEuTZJJ/PbY0IsgZZIDnzHDr+PbzRmqDLBbbfehZopAOf2bKh/gMeXyfC+ztzDxZFDRXPZ3YInV/rutO9ttkTTAYwysPaLaqlHhhPTAXgxa/3vfmjmlSlR/p2z63WX33GKi4sG1tMhDqYbYg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728048451; c=relaxed/simple;
-	bh=a93hVSkItuu3hCe0uBJSZlAAwH2LqSJVgJljySUsJm0=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=hTfrWNDCe1yJLX2/UsabU9YfH3DpCtvoOHJync3zuXbuFCAzMJW0NkyX0c8+mtyTcfHXDvfnXp0A4HEzNQ0INd2QnLuc6KchjsUXMPfOE4xScUCj0Rct7qkQIPUwtx3EPQlHt2XL3H5kaeIknM8paN7ckcNJF4H4gVRr2klkXH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EHF1MGNE; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb0f28bfbso18431355e9.1;
-        Fri, 04 Oct 2024 06:27:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728048448; x=1728653248; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=22cBRwE57Xw0sioNBB/NhLn4DPgBWGUrQGpJqtIVHq0=;
-        b=EHF1MGNEizcZ1/XVgly+zR8gvTHJpnwPYL9/97TgrWzvL+07D50gLHKbxQY1aYh5V3
-         WEOUAXXcVgoDfcWKOYJCrwYYwF+FJ6viFRyq1wZolJjXLKjErtRTyCoOHo7vjJRvF306
-         NohzWoesjZ/934aBgM0+h5EySNYjFf8zrrgYO0f8wwAeOEbzOQrSoOlhY0l1/0v8qHz6
-         jx1+QnGoe2J8dH2gvCVCjwbeeukiOUdy2fcVSwITCCGoY2WjMH2JwlwJSEZF4mQUvNjy
-         qFaS9AScbvrQMjntfplNoKpxB3D49xqaABiK6HIvDRqK4ro0MFQTg6O8SjGdeu7TDpW9
-         S2XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728048448; x=1728653248;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=22cBRwE57Xw0sioNBB/NhLn4DPgBWGUrQGpJqtIVHq0=;
-        b=RNo8V5pKGEuKCVlpo5Rii5temWPieXxTloWtAhNwRwwrKnPgzrotgkXW6a6JaWe3+a
-         A84tY0uX+5nT8tq4CXRtRF6VboKZFsQoAdldLklV/aYl6zOBWWHnsJCQJkQy7kudyBaV
-         9AxKYoQ/bOmVseAFwcZW0xHEAl22KeHikjf5cW2o0LpVdrw0vWNQObZqqV5aS7ZbZB7I
-         hRbTMgAvVeHzYXpUJ22Krm1ibELffG49b4R8RKm5M6PLy3oF0JEBGzuPJ/dDdEyVuLkI
-         elKq+kP1rPZ4D9vrpEZVitwwFTjS6UBTDX3xpY6sPN3As/ktvsJI+xRrtisY8H4ZgdSq
-         fbBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmhvoYKebDfU3OPCqt+13bgmbXfeRhc2JKsCMFG3LVrKoMrDkNe+zUXu5XGDa9BwI79vXkSoJ7@vger.kernel.org, AJvYcCUu6C9vpPrV6XuVvFbXu5i4J36Ztej7Gbag21bIbGXxm3ARwjW6VBjxh3zpoZhgTntjubC4xrDaHkc=@vger.kernel.org, AJvYcCXLzNNrrjDbtGKdDsWLz0gvw1Bw4u9civeQCPhEwPrQrW0rSYIuCwSnpd/EAqflEgCsqQD27R66i6a5HuAh@vger.kernel.org
-X-Gm-Message-State: AOJu0YywBDHCTE6yxFFWpUq/ADrwXsnBPnCsboQ+X9dxmRI72D5Rfsd2
-	tjBX0ftyueNx9u1xd8ZEYDjCrk1CKQZs35b877Jz6u95ELbQI7OD
-X-Google-Smtp-Source: AGHT+IH3yRfRGBBOHC0hZKS9HHSTVHJgXqCz4P71fKXwCQTPx3XtSJMJI4pbwzjjO5SWKJWuVhC+aw==
-X-Received: by 2002:a05:600c:3507:b0:42c:b309:8d18 with SMTP id 5b1f17b1804b1-42f85ac1ff6mr20186185e9.19.1728048448049;
-        Fri, 04 Oct 2024 06:27:28 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:395e:c10e:1999:d9f1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d07fde1fesm3303168f8f.0.2024.10.04.06.27.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 06:27:27 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Jonathan
- Corbet <corbet@lwn.net>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-  linux-kernel@vger.kernel.org,  netdev@vger.kernel.org,
-  linux-doc@vger.kernel.org,  Kyle Swenson <kyle.swenson@est.tech>,  Dent
- Project <dentproject@linuxfoundation.org>,  kernel@pengutronix.de
-Subject: Re: [PATCH net-next 07/12] netlink: specs: Expand the PSE netlink
- command with C33 prio attributes
-In-Reply-To: <20241002-feature_poe_port_prio-v1-7-787054f74ed5@bootlin.com>
-	(Kory Maincent's message of "Wed, 02 Oct 2024 18:28:03 +0200")
-Date: Fri, 04 Oct 2024 11:44:47 +0100
-Message-ID: <m2r08wf8ps.fsf@gmail.com>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
-	<20241002-feature_poe_port_prio-v1-7-787054f74ed5@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA951FAA;
+	Fri,  4 Oct 2024 12:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728043669; cv=fail; b=vEEih9bK2vMvmYiVZi8o/h7uBjgQSjPYvCpf7fKe4POtLfDvcLlOoKA0xJjS8JbWa5VzuLY0oKK9x4MslqUhLKHZP3mAenjeNbOFJUBQB1f1Gi7Ny0e/ndsNEwTyidfn4B5q9Wf9mjtleFOSduB0ti2BUVptqao4Y7KvCfrcvMk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728043669; c=relaxed/simple;
+	bh=zA+8xOj5XpFM2Wvn2mGYoAxCBw2Xptl3UhwUdidTQlA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EKlibjlxHvaeSN3RK+dpJA8RodSB0LY5JG6+X5ZXVGGX2M6ZDpgG8wZfM5mz1m8AdBgeQqWTQRhQ+lvO89Kl+VrgavjiMAPoy9OEACrwTDxxteAiaAsn1bPJQkzKZ1b85iWaw+UAPt5oE7ZhnDuFQ0qtnSQWOQx9xx0vHtRL6cc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=ifc5V/sA; arc=fail smtp.client-ip=40.107.103.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o/8EcFVSICFSX4jSKSyCJvj3/pvFQ4eVZwy5D/L5V2OzLIfoTmRNDjSG02h6EOlfeiI9ahg+deSgoA8Lrg3ZIrCoW/6AXuBwiY2zicQXFnidpHB361NKsiF2tMjZ/LIKs+cFZCb89V5qQ8T8JrpFUF0/nmAqCyQAAKpFzgqFPTPLyGjY8mz0n2yUHWJnDdrDR/tDVETCYc5s/I+rfP4EZAA5krEEAsY5mAzvtjkWfu+o0p3Ql4OQsAAVxlxLW0U+b4GK0YWeKF7NDiaBGlgoOoOdjSrf+3qsz7Rrojt4/ZPAXoEUFWjsUdYJM2U7czBQQ4xSLjIQf5qX6msva4b9fw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NCUWttN/BnOXjnZLtlhpD54NykMZK0LnB4i37A0SyQk=;
+ b=uiNzq2Gi/9wM4oCrfE1iXfemUkG3Di8SOcj7upe9ZouP8uuWOeM+BQWQH6BkZqJA/7ZmcJsId1+YsFzy4jBmrapvW6soHSuhZUP6lmA5im4HlyYM9noS6vryT/aZsS17WVhDRg+ecBOI6OTpncN9zHl6QqaxuJj0YIvxGv6jImEkis6rrkH5Rq4qceBkHTntmoxZzEnXir3M7nET4o6Ob0Ycytl/PEfeqU8kWDVfpPG/XmgQ1y73bjNeM9Qt6gP02yjyzGto7tMXTigkcTaBemSy4z9lfKAYGn1MBmtPBXAg+o5fOCKD9RtgDlGI16BGZotd/pLrpbgqxYaHZTtijQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=leica-geosystems.com; dmarc=pass (p=reject sp=reject pct=100)
+ action=none header.from=leica-geosystems.com; dkim=none (message not signed);
+ arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NCUWttN/BnOXjnZLtlhpD54NykMZK0LnB4i37A0SyQk=;
+ b=ifc5V/sAJqFTAOIw4X+NXlwR/5vTIxjraks+S9GFfsltRl9NEVacSVdIj9NEDlXMavo897Cfp2t4ucwvZOF5/aHTeh4kAOWrqdHgVKc5kGPZvwJzL3GslMQhdFqHLVg8uyq/eyvP137pj0fd3Qobt3sTu5FiZHsqxK0EZGRBqAo=
+Received: from AS4P191CA0030.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:5d9::16)
+ by GVXPR06MB9226.eurprd06.prod.outlook.com (2603:10a6:150:1b7::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18; Fri, 4 Oct
+ 2024 12:07:42 +0000
+Received: from AM4PEPF00027A5D.eurprd04.prod.outlook.com
+ (2603:10a6:20b:5d9:cafe::2c) by AS4P191CA0030.outlook.office365.com
+ (2603:10a6:20b:5d9::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18 via Frontend
+ Transport; Fri, 4 Oct 2024 12:07:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
+ smtp.mailfrom=leica-geosystems.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=leica-geosystems.com;
+Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com
+ designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
+ client-ip=193.8.40.94; helo=hexagon.com; pr=C
+Received: from hexagon.com (193.8.40.94) by
+ AM4PEPF00027A5D.mail.protection.outlook.com (10.167.16.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8026.11 via Frontend Transport; Fri, 4 Oct 2024 12:07:42 +0000
+Received: from aherlnxbspsrv01.lgs-net.com ([10.60.34.116]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
+	 Fri, 4 Oct 2024 14:07:42 +0200
+From: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+To: ulf.hansson@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de
+Cc: linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	m.felsch@pengutronix.de,
+	bsp-development.geo@leica-geosystems.com,
+	Catalin Popescu <catalin.popescu@leica-geosystems.com>
+Subject: [PATCH 1/2] dt-bindings: mmc: mmc-pwrseq-simple: add support for reset control
+Date: Fri,  4 Oct 2024 14:07:39 +0200
+Message-Id: <20241004120740.2887776-1-catalin.popescu@leica-geosystems.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 04 Oct 2024 12:07:42.0411 (UTC) FILETIME=[03C9B1B0:01DB1656]
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM4PEPF00027A5D:EE_|GVXPR06MB9226:EE_
 Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: d854b761-5f60-48de-de58-08dce46d2666
+X-SET-LOWER-SCL-SCANNER: YES
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TjLXER6F2Hwl5ThEbhTctIgBJbbj5FZcO+zoQynxQyYN7yhg+oFTw2LVvTRO?=
+ =?us-ascii?Q?4UdUrUAUFVI+ihldHOHGY/Jab0lUGPTL/hqmMbqvpJWxNNWjY/trlMy1NaAJ?=
+ =?us-ascii?Q?d9PUuGwPE3gh+0IkvS3BOYLemv4P9DtaEwAUCuMFRKRy8zVFBDsh2tcxKn7k?=
+ =?us-ascii?Q?BrYHqBrHMfbJmK8uYJyCHQweFWKkRS7FlftQ/tNTgFk/ZMrDtTeOECYEtmHX?=
+ =?us-ascii?Q?U0ZcURs/jJ9aMqMbgf96apOQHY5Lsp1CyiBW5rO1xh/0YxcVNHz/Mtb7D7YN?=
+ =?us-ascii?Q?jg9riMngZzXMMPXWUpUzpb5L1drhqiSPGA4UnFrPcDrD2DXMDSiXHFXj/Xfl?=
+ =?us-ascii?Q?Yv7HZW+PCTEp56Y0yWqqcx+oAz+fLZvyWI8KC7WaycKBdIbhyMkevTJ/UqgC?=
+ =?us-ascii?Q?xSwqYx/CImK3QxbtlSl/FoYXbVTkw+qUOJWTdE6WZpGFnLGazLtUCZHmkw3p?=
+ =?us-ascii?Q?NlOxTi2zyQ4KGqC77fjNlv2INBW+ejAjWBAnH0cmRv3dAx3WGBA323JhzbKK?=
+ =?us-ascii?Q?Jg/IngKSX3ZQGslAX+iBtZZDMu4YlFWNlNcwgq3jWHP28NbS3r7qWAPXVTda?=
+ =?us-ascii?Q?qJdweUMgKeEMTMC5n80r08w71M0ZmqeqOBBbFI9FGmIU11dQRNPxtyHlXo4V?=
+ =?us-ascii?Q?1ono93tX5GuwpsY1vhq2S/7GulYmuW2WETDlbCkDef1sLpUBx1UTuuDGwcr/?=
+ =?us-ascii?Q?8ajX54Fsp7y8/pAYKs7a7nW8Cm+fekstA1OyMKX70099s2qF9gB23lDuWli5?=
+ =?us-ascii?Q?9HrpUzNgxzT8NcVeawXqusxEEH1feAMPtKBJSaXNcnAASE+y5Oix++ahWCnh?=
+ =?us-ascii?Q?7FXFoWa+0cJSMhRz4H2uhgKFgtEDMsNnUjQApSkqIDK/Df5+LCUAW0/3els8?=
+ =?us-ascii?Q?NtKpDKBbqhvEACt+eZDT0xJVlgFKzoPpq64PN2lf2cy4HH9LAWE5N9p6MWBz?=
+ =?us-ascii?Q?gI+sDdxJdSREIkJYuAAzviVAqqogXP8f7+Nv0Yszf65oLKyaFva2oNnKNHP7?=
+ =?us-ascii?Q?Fbvn612lxBrDYVG7mmw2wE3EoDZU0ON3mhY8zzEdBTdP8IhAVxrIopO/muep?=
+ =?us-ascii?Q?JrI0bTXWNO9VB1IBWDgyvEoUp3TRnJYagcPjgZAQ9V4H9CKASasf6Hg4iCaz?=
+ =?us-ascii?Q?HUwo5iachRHwY3ZdXITEjN3c2ZwNGiZZWM+0oUX5LrpMutUuSyGSc0oWgKxa?=
+ =?us-ascii?Q?GE0nv6ENZqc+MnM8ilExmID9ixqN++ODgyq0WOaCpWMMdqq8dDfoi0ZBHvv3?=
+ =?us-ascii?Q?dlKhNfYprthTMmKemTTY8C/uT2W9QOi/BOgl7VSHSzCyRymkOULiH4PkAb3V?=
+ =?us-ascii?Q?C3QfHGoSOgtJAz25X4HgTzANwskFIaAKeGC7xgfFzZ5van2wlQjF0iF8gK8u?=
+ =?us-ascii?Q?Ho9A1owTfcMm2NzdglxcX+pvSLpT?=
+X-Forefront-Antispam-Report:
+	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: leica-geosystems.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 12:07:42.5674
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d854b761-5f60-48de-de58-08dce46d2666
+X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM4PEPF00027A5D.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR06MB9226
 
-Kory Maincent <kory.maincent@bootlin.com> writes:
+Add compatible value "mmc-pwrseq-simple-reset" to support reset control
+instead of gpios. Reset controls being refcounted, they allow to use
+shared resets or gpios across drivers. Support of reset control is
+limited to one single reset control.
 
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
->
-> Expand the c33 PSE attributes with priority and priority max to be able to
-> set and get the PSE Power Interface priority.
->
-> ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-get
->              --json '{"header":{"dev-name":"eth1"}}'
-> {'c33-pse-actual-pw': 1700,
->  'c33-pse-admin-state': 3,
->  'c33-pse-avail-pw-limit': 97500,
->  'c33-pse-prio': 2,
->  'c33-pse-prio-max': 2,
->  'c33-pse-pw-class': 4,
->  'c33-pse-pw-d-status': 4,
->  'c33-pse-pw-limit-ranges': [{'max': 18100, 'min': 15000},
->                              {'max': 38000, 'min': 30000},
->                              {'max': 65000, 'min': 60000},
->                              {'max': 97500, 'min': 90000}],
->  'header': {'dev-index': 5, 'dev-name': 'eth1'}}
->
-> ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-set
->              --json '{"header":{"dev-name":"eth1"},
->                       "c33-pse-prio":1}'
-> None
->
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+---
+ .../bindings/mmc/mmc-pwrseq-simple.yaml       | 21 +++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+diff --git a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml
+index 00feaafc1063..da218260af01 100644
+--- a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml
++++ b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml
+@@ -16,12 +16,13 @@ description:
+ 
+ properties:
+   compatible:
+-    const: mmc-pwrseq-simple
++    enum:
++      - mmc-pwrseq-simple
++      - mmc-pwrseq-simple-reset
+ 
+   reset-gpios:
+     minItems: 1
+     # Put some limit to avoid false warnings
+-    maxItems: 32
+     description:
+       contains a list of GPIO specifiers. The reset GPIOs are asserted
+       at initialization and prior we start the power up procedure of the card.
+@@ -50,6 +51,22 @@ properties:
+ required:
+   - compatible
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - mmc-pwrseq-simple-reset
++    then:
++      properties:
++        reset-gpios:
++          maxItems: 1
++    else:
++      properties:
++        reset-gpios:
++          maxItems: 32
++
+ additionalProperties: false
+ 
+ examples:
+-- 
+2.34.1
+
 
