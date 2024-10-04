@@ -1,117 +1,93 @@
-Return-Path: <linux-kernel+bounces-350503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D835990623
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:32:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC69A990627
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD8C91C21828
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:32:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83FC9281141
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B892217901;
-	Fri,  4 Oct 2024 14:32:13 +0000 (UTC)
-Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D0821948E;
+	Fri,  4 Oct 2024 14:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="qt1TIu6e"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF452141DB;
-	Fri,  4 Oct 2024 14:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34962141DB;
+	Fri,  4 Oct 2024 14:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728052333; cv=none; b=fblSww+V0R8XXp2jvmC6VkgV6RzFUJ/pZkpyGzPMqrr2HCqQp0D1Lll/z7PG/XtW6QOrrqIHCqJbti4oSw1Ql55zOpqWIYfi1GmES4C0BIQHTyWqzjIIdqJmEVY1bTenKWz6OVyaTirJblW1TrPElEZEd7wPMnohTqKmlN5kJmI=
+	t=1728052345; cv=none; b=YgOMnK1i4aPI3kPxqwDEq2aMZ6gWgdOeXb6doXzvjFXDEaJMztPPtVkwcD2+U0WBLfmeLksIYm3N8x0s6LtjTj04NpCz+3R4KLY5ENoJcHcYPeUeY3AY5tlmpdrxQ3fQSHmmN4V8uPjNEUzeuRr89LyNJSj7D2AntZ6TZHuZShc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728052333; c=relaxed/simple;
-	bh=H4L13hMinSbhFmqrQvfHvDsJehnHyv3AWfzb8bWgRyg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fVlM+wvZTpfths2GTLJs8kWJu3b2I5Fv0xvDxbVIS1qbbBv6Y89wmfb3Rmt+TY30LzgfF1UHJZo8eO+fhSCWl9ivMlR8YHCN5JDGS/OGMDztH4AsZDM40eIuwpn5A9Jlil2M96W58tSAcXHeCqYxWScrhjxsR/7eY7BphiMqK84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from [10.177.185.111] (helo=new-mail.astralinux.ru)
-	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <adiupina@astralinux.ru>)
-	id 1swjJh-00HM6a-82; Fri, 04 Oct 2024 17:30:01 +0300
-Received: from [10.198.27.192] (unknown [10.198.27.192])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4XKrZw5Cdrz1c051;
-	Fri,  4 Oct 2024 17:31:36 +0300 (MSK)
-Message-ID: <2e33446a-5b02-44aa-be69-376755aaf3eb@astralinux.ru>
-Date: Fri, 4 Oct 2024 17:31:30 +0300
+	s=arc-20240116; t=1728052345; c=relaxed/simple;
+	bh=c2rK3yLoT9rGelUuUHpH+PCjDo01JmJtLXCwJGFYb+U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NylltjE5vkxdjU7HFrNXsJmTJJNsUai4e7HvYW693OGagMS8zY3IylZvAYj9/vj6l+pxfbJVnyubKD8qo8iTCuw/4qNB6j2y6hfYgBVx2SmCyuHnrk2cpLt7131gjZEkVngniw+h63VfluPXAfbIqakOkEHKb/8SqiO3KhVcSEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=qt1TIu6e; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=c2rK3yLoT9rGelUuUHpH+PCjDo01JmJtLXCwJGFYb+U=;
+	t=1728052343; x=1729261943; b=qt1TIu6e4QvQoD3SPspqnDfIupSFPkg1l1M2MAiiw6BPN7X
+	BCOJMAFxc0popBBmMkuc28DPUq65x8sFPvrAQPOe3cTBjJ3S6Nmg2Nosp/6SGRJrH9jyaWFELpM/P
+	fP2+aigwBsSnEDgbKkA4buz1irlcdbEpiRD6alw0Eq85b2wQYI5N76xJ4VCiNUbeWALDZ0HUxc3+M
+	2sF1+N30+YVn9rDPuRwspEg9472A/pyDX586W5Mn8Jb+i/haC57yYcqkW/pvc5O8Q/I6ZcvniZo0N
+	pZz24GLSyzCchYF8JjltTaMD11foP3lxbv2ClW4xjdwKItiQ9DnYVkVgOhVHauqA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1swjLl-0000000HUMw-2zAw;
+	Fri, 04 Oct 2024 16:32:10 +0200
+Message-ID: <4f827b3720bdf09768651d4b008c9716f467c9dd.camel@sipsolutions.net>
+Subject: Re: [PATCH RFC net 1/2] MAINTAINERS: consistently exclude wireless
+ files from NETWORKING [GENERAL]
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Simon Horman <horms@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org
+Date: Fri, 04 Oct 2024 16:32:08 +0200
+In-Reply-To: <20241004-maint-net-hdrs-v1-1-41fd555aacc5@kernel.org>
+References: <20241004-maint-net-hdrs-v1-0-41fd555aacc5@kernel.org>
+	 <20241004-maint-net-hdrs-v1-1-41fd555aacc5@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: RuPost Desktop
-Subject: Re: [PATCH v4] clk: mvebu: Prevent division by zero in
- clk_double_div_recalc_rate()
-Content-Language: ru
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-References: <20240930104934.4342-1-adiupina@astralinux.ru>
-From: Alexandra Diupina <adiupina@astralinux.ru>
-In-Reply-To: <20240930104934.4342-1-adiupina@astralinux.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-DrWeb-SpamScore: 0
-X-DrWeb-SpamState: legit
-X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttderjeenucfhrhhomheptehlvgigrghnughrrgcuffhiuhhpihhnrgcuoegrughiuhhpihhnrgesrghsthhrrghlihhnuhigrdhruheqnecuggftrfgrthhtvghrnhepveefleetjeetfffgleeuvedujeffieffgedttdegudejheetfeeikeffueefgffgnecuffhomhgrihhnpehlihhnuhigthgvshhtihhnghdrohhrghenucfkphepuddtrdduleekrddvjedrudelvdenucfrrghrrghmpehhvghloheplgdutddrudelkedrvdejrdduledvngdpihhnvghtpedutddrudelkedrvdejrdduledvmeehfedtheeipdhmrghilhhfrhhomheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopeelpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehsvggsrghsthhirghnrdhhvghsshgvlhgsrghrthhhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehssghohigusehkvghrnhgvlh
- drohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhvtgdqphhrohhjvggttheslhhinhhugihtvghsthhinhhgrdhorhhgnecuffhrrdghvggsucetnhhtihhsphgrmhemucenucfvrghgshem
-X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1728047265#02
-X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12194451, Updated: 2024-Oct-04 13:07:03 UTC]
+X-malware-bazaar: not-scanned
 
-just a friendly reminder
+On Fri, 2024-10-04 at 11:03 +0100, Simon Horman wrote:
+> We already exclude wireless drivers from the netdev@ traffic, to
+> delegate it to linux-wireless@, and avoid overwhelming netdev@.
+>=20
+> Many of the following wireless-related sections MAINTAINERS
+> are already not included in the NETWORKING [GENERAL] section.
+> For consistency, exclude those that are.
+>=20
+> * 802.11 (including CFG80211/NL80211)
+> * MAC80211
+> * RFKILL
+>=20
+> Signed-off-by: Simon Horman <horms@kernel.org>
 
+Makes sense to me!
 
-30/09/24 13:49, Alexandra Diupina пишет:
-> get_div() may return zero, so it is necessary to check
-> before calling DIV_ROUND_UP_ULL().
->
-> Return value of get_div() depends on reg1, reg2, shift1, shift2
-> fields of clk_double_div structure which are filled using the
-> PERIPH_DOUBLEDIV macro. This macro is called from the
-> PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
->
-> It is not known exactly what values can be contained in the registers
-> at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
-> div can be zero. Print an error message and return 0 in this case.
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->
-> Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
-> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
-> ---
-> v4: replace hw->init->name with clk_hw_get_name(hw)
-> v3: fix indentation
-> v2: added explanations to the commit message and printing
-> of an error message when div==0
->   drivers/clk/mvebu/armada-37xx-periph.c | 7 ++++++-
->   1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-> index 13906e31bef8..2f0145a76f22 100644
-> --- a/drivers/clk/mvebu/armada-37xx-periph.c
-> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
-> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
->   	div = get_div(double_div->reg1, double_div->shift1);
->   	div *= get_div(double_div->reg2, double_div->shift2);
->   
-> -	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-> +	if (!div) {
-> +		pr_err("Can't recalculate the rate of clock %s\n", clk_hw_get_name(hw));
-> +		return 0;
-> +	} else {
-> +		return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-> +	}
->   }
->   
->   static const struct clk_ops clk_double_div_ops = {
+Acked-by: Johannes Berg <johannes@sipsolutions.net>
+
+johannes
 
 
