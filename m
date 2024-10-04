@@ -1,185 +1,127 @@
-Return-Path: <linux-kernel+bounces-350251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3200099021F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D74990222
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA42628466A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:33:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 626B52846B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9213F158DC5;
-	Fri,  4 Oct 2024 11:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63EF157492;
+	Fri,  4 Oct 2024 11:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="bj18ZsoE"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="cmDPgSDJ"
+Received: from relay2.mymailcheap.com (relay2.mymailcheap.com [151.80.165.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5873113D503;
-	Fri,  4 Oct 2024 11:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90881459E0;
+	Fri,  4 Oct 2024 11:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=151.80.165.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728041603; cv=none; b=l9P4wQqb34REGIySZcd03Xylcari7OGGuAW0k7ipQbaAqTeAC9hMdjEx7Otkvau6Jt7p/hxYfRMyi379PMnIa5mZ0dXi+7QPTIpe2kQehDp00OlSuMfYCPpxEVMSS+ZGd5jvRdmO3L+gm+x75EiGmWFZH5x58JCGNnm1zm2Xz5Y=
+	t=1728041677; cv=none; b=etngrmNlrYVtj972P3+3fs53/iNEN2eYOnoob8Hp6Uq4muHr3QsSqupeCDzQPCB7PZ3EOsWaFBDUeLTrDD3xDmZgMZRBkxSQLoLHcclF72eUtXro8fIZ+78eL2+lCtOwC482wJ1KCsevK7XdqWhuB3eQ2j9e++V0Zl6y0w/JCRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728041603; c=relaxed/simple;
-	bh=n2DQGx6sLpxG7m4RhOiPABl3mL/dfUc4rZyw9Plq7Nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=asE1vBP+U6aR7wCwBB9nz97l4Gu9ARWPwVIuyL3LuHLYYjEmNTfmBRVKTJYZZVZxoa/adXeVsIwWi0OmZxO0k8xGjpXqXoGV9tbJLmiV6w7V9ihYFa9Yu7o7fLJ4wQKDTuVsEVOHxxb6AITHsDUtL1q/FY/V3F5b6NlK8g3QS/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=bj18ZsoE; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=CR/nAxuulTVBoX6b+47+Ns0Bly6gE/me/kF5jIfzXlQ=; b=bj18ZsoEzyqF24zq8DG6noP1nM
-	faVVaSMpOqZdTAkXo+x0utyqtFPPtG3yK8tD6nuZfBhO934kZvjmW9wuHuBz5rMbSedIHGh0yv9dz
-	bc6sCwSeQtMiSER8psjKaJycR90fqDwLzJHiImqtmnQTpbopquthykF/o3tK0tWfh0+OGrOGNsUaF
-	H+ty8RY63Lg5c3azmy7Zu/v6brH/JRL1L49l4MGa4uLUJripQdMlelcrh90hcYu89qUgDvX1UJJtc
-	RPUZ1MOfAjR2nkAbq1OB/GOwdfB6U5dYpryNRmy4XtqwGjY1p56VLMGl6lRhvMGi2MpyPAa63PMeQ
-	neMxqjIg==;
-Date: Fri, 4 Oct 2024 13:33:11 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, Rob Herring
- <robh@kernel.org>, khilman@baylibre.com, devicetree@vger.kernel.org,
- tony@atomide.com, aaro.koskinen@iki.fi, linux-omap@vger.kernel.org
-Subject: Re: [PATCH 3/4] ARM: dts: omap: omap4-epson-embt2ws: add unknown
- gpio outputs
-Message-ID: <20241004133311.116ee074@akair>
-In-Reply-To: <7fc3cf75-bf48-4bcc-8c74-09fb89655a72@kernel.org>
-References: <20240930213008.159647-1-andreas@kemnade.info>
-	<20240930213008.159647-4-andreas@kemnade.info>
-	<7fc3cf75-bf48-4bcc-8c74-09fb89655a72@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728041677; c=relaxed/simple;
+	bh=r3byHRX1DD/b6lnSg+ZhhlLMhZNxtPG3BhwsndUIWZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FL28LWNZLPd1niAFbtw1ElBGvyVXgS55sQQNQVQnAlFiz1nvdUuN33GuRoaR+jDDYudu5ByEmJf8nB+i6PoPqh8tkx+gy6zJZblP+KoauUg9FLg/osy3oURPbXy8HOUpN1IlHcwZOuchqAkThy5UwKVH0hK4nk6Pm2hxeiQhhkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=cmDPgSDJ; arc=none smtp.client-ip=151.80.165.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay2.mymailcheap.com (Postfix) with ESMTPS id 0B91C3E8B0;
+	Fri,  4 Oct 2024 13:34:34 +0200 (CEST)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 9D46B40092;
+	Fri,  4 Oct 2024 11:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1728041673; bh=r3byHRX1DD/b6lnSg+ZhhlLMhZNxtPG3BhwsndUIWZI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cmDPgSDJDUGFZl5Pwl3sgFi+WFko/fSHOhTIhB4YzO9jNCFQp4ogSAbfakUEYLtDp
+	 C3oijIKzugW2x2C8jTUMrsUxFyO7/ufIDfFzaeidwz5zHWXc/GVo8COZ9r61JgiEkd
+	 PkkLTKVdcwLAkrf1nJWB9cWx5P5uZVEqmC5F7Yto=
+Received: from [198.18.0.1] (unknown [58.32.43.121])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 8078B405DE;
+	Fri,  4 Oct 2024 11:34:29 +0000 (UTC)
+Message-ID: <e71a5888-306f-4047-aa01-6df301297dd6@aosc.io>
+Date: Fri, 4 Oct 2024 19:34:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Thunderbird Daily
+Subject: Re: [PATCH 6.10 000/634] 6.10.13-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241002125811.070689334@linuxfoundation.org>
+Content-Language: en-US
+From: Kexy Biscuit <kexybiscuit@aosc.io>
+In-Reply-To: <20241002125811.070689334@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 9D46B40092
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Spamd-Result: default: False [1.29 / 10.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	BAYES_HAM(-0.12)[66.67%];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	RCVD_COUNT_ONE(0.00)[1];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,nvidia.com,gmail.com,sladewatkins.net,gmx.de];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Action: no action
 
-Am Fri, 4 Oct 2024 10:53:57 +0300
-schrieb Roger Quadros <rogerq@kernel.org>:
-
-> On 01/10/2024 00:30, Andreas Kemnade wrote:
-> > Set them to the state seen in a running system, initialized
-> > by vendor u-boot or kernel. Add line names where they are defined
-> > in the vendor kernel.
-> > gpio15 resets something in the display, otherwise meaning of the
-> > gpios is not known.
-> > 
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> >  .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 84
-> > +++++++++++++++++++ 1 file changed, 84 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-> > b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts index
-> > cc1b6080bf95..c8205ae89840 100644 ---
-> > a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts +++
-> > b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts @@ -115,6
-> > +115,65 @@ wl12xx_vmmc: wl12xx-vmmc { };
-> >  };  
-> >  > +&gpio1 {  
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&gpio1_hog_pins &gpio1wk_hog_pins>;
-> > +
-> > +	lb-reset-hog {
-> > +		gpio-hog;
-> > +		gpios = <9 GPIO_ACTIVE_HIGH>;
-> > +		output-low;
-> > +		line-name = "lb_reset";
-> > +	};  
+On 10/2/2024 8:51 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.13 release.
+> There are 634 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Just curious, what does lb stand for.
+> Responses should be made by Fri, 04 Oct 2024 12:56:13 +0000.
+> Anything received after that time might be too late.
 > 
-me too. Maybe b is the same as in cb 
-
-static struct gpio bt2ws_lb_gpios[] = {
-        {BLC_L_GPIO,   GPIOF_OUT_INIT_LOW,  "gpio_blc_l"   },
-        {BLC_R_GPIO,   GPIOF_OUT_INIT_LOW,  "gpio_blc_r"   },
-        {LB_RESET_GPIO,GPIOF_OUT_INIT_LOW,  "gpio_lb_reset"},
-        {POWER_EN_GPIO,GPIOF_OUT_INIT_HIGH, "gpio_power_en"},
-        {PANEL_POWER_EN_GPIO,GPIOF_OUT_INIT_LOW, "gpio_panel_power_en"},
-};
-
-That is what is in the vendor kernel and matches 
-
-> > +
-> > +	power-en-hog {
-> > +		gpio-hog;
-> > +		gpios = <10 GPIO_ACTIVE_HIGH>;
-> > +		output-high;
-> > +		line-name = "power_en";
-> > +	};
-> > +
-> > +	panel-power-en-hog {
-> > +		gpio-hog;
-> > +		gpios = <14 GPIO_ACTIVE_HIGH>;
-> > +		output-low;
-> > +		line-name = "panel_power_en";
-> > +	};  
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.13-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
 > 
-> Is panel always enabled? I didn't see a panel driver
-> else it could be hooked to panel regulator?
+> thanks,
 > 
-Panels are behind two dsi to dpi converters.
-I have a driver. At the moment, I boot into vendor
-v3.0 kernel, reprogram boot order, warm reboot into mainline u-boot +
-kernel to get display working. I can read registers via dsi at least
-after blanking the panel for the first time. Blanking/unblanking seems
-to work.
-With a low pulse on gpio15 I can reset something in the display which
-the vendor kernel can recover from but not my mainline driver. Then no
-communication with the display seem to work.
+> greg k-h
 
-About gpio 10/14 I know only the name (from the possibly kernel sources
-and matching /sys/kernel/debug/gpio). And that knowledge I want to
-forward into the formal hardware description, the device tree.
+Building passed on amd64, arm64, loongarch64, ppc64el, and riscv64. 
+Smoke testing passed on 9 amd64 and 1 arm64 test systems.
 
-$ grep -R PANEL_POWER_EN *
-arch/arm/mach-omap2/board-bt2ws.c:
-{PANEL_POWER_EN_GPIO,GPIOF_OUT_INIT_LOW, "gpio_panel_power_en"},
-arch/arm/mach-omap2/board-bt2ts.c:
-{PANEL_POWER_EN_GPIO,GPIOF_OUT_INIT_LOW, "gpio_panel_power_en"},
-include/video/omap-panel-bt2.h:#define PANEL_POWER_EN_GPIO 14	// GPIO
+Tested-by: Kexy Biscuit <kexybiscuit@aosc.io>
 
-But I did not get the supposed vendor kernel to fully boot. I have the verdict
-that I do not have the exact sources of the kernel which is running.
-I also did not notice any change in behaviour when toggling these gpios.
-So either they are a leftover from another board revision or something
-gets supplied by some parasitic ways.
+https://github.com/AOSC-Dev/aosc-os-abbs/pull/8157
 
-I think the best is to explain the situation more in the comments.
-What is a bit difficult is here is that there is something done in the m3
-processors but apparently nothing vital to having display output (tried
-with an initrd without any m3 firmware), probably
-doing something camera-related, so the kernel sources do not give a full
-picture of the hardware anyways.
-
-BTW: do you know how to best trace gpio changes done by the vendor kernel
-without recompiling it? I managed to write a module deviating the master_xfre
-function for i2c to log things.
-
-> > +
-> > +	blc-r-hog {
-> > +		gpio-hog;
-> > +		gpios = <17 GPIO_ACTIVE_HIGH>;
-> > +		output-low;
-> > +		line-name = "blc_r";
-> > +	};  
-> 
-> this should be modeled as a gpio regulator and paried to backlight
-> left?
-> 
-Discussed in patch 2.
-
-Regards,
-Andreas
+-- 
+Best Regards,
+Kexy Biscuit
 
