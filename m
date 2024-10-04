@@ -1,101 +1,134 @@
-Return-Path: <linux-kernel+bounces-350368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7189099040C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A033D99043D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28D1D1F217D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67E92281806
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246DD210188;
-	Fri,  4 Oct 2024 13:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA02217307;
+	Fri,  4 Oct 2024 13:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNyAjT7E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Q7ywr9YU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZsO+X6FZ"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8268F1D6DB1;
-	Fri,  4 Oct 2024 13:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FD12141D4;
+	Fri,  4 Oct 2024 13:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048121; cv=none; b=Lg4f9oOVDjSX99vlkIJhd9reR2jjw9qh8LPEsb7zwtA6rPYTN5Ri+OG7cN5UUnmPnZMlz7BK6mahGLyWCn+E0p5h3hygq58Gmr+CmQrcThm5WI/Xs5+h+7tyQj8N+UQq6zMhAAXBcrHBm8gN3YxC+HTschbHdokcXPPKMfJBmac=
+	t=1728048214; cv=none; b=VX509WaBEWLjdsPPIM+sccsuLqA5vMifhjM0WeN7FDlr2tXWHBJdsx0j1h2dIjBGMjGxA4Xi/Chr++tl8tBYwMDgn8y2BmqtChScnpnnuTMDnvdUA1KR4w4izpOYvJJWmNDM+W3/e6U9OVS8yAOPiuYOxf/M/PZb9RgHXKEh6l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728048121; c=relaxed/simple;
-	bh=qCy53I1M0/DdB8Aj+1450EATivvLI4YRoldZLx1+CCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rqql26AhRBUjMaos3m6eSriVBnpjvKkgDuXUROwKz5XNIllNm3ZD9S+21mqeStakyvwwWQnn2zkezFqwcS7sqIPDjYdN/ONwHC5YiPYfjsS/urOmNVg72qCKI6lXK+rJ3bbKd2rtG66hjY4c6SvUc+pbGMzyjD5xYSG02BXExMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNyAjT7E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BFCFC4CEC6;
-	Fri,  4 Oct 2024 13:22:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728048121;
-	bh=qCy53I1M0/DdB8Aj+1450EATivvLI4YRoldZLx1+CCc=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=hNyAjT7ETMEtcZPTEGZI1/bDt4dJerpHB+/iUejbfLIyt30A0Vi1Ab4pj7x6NKQyh
-	 730pjlIlVIesn8xYZPcsznvAFuFwh2eyKcRzBYoay52U1fKzWBeAEhDQsR5HKQEd19
-	 4bYPUVBhW7WZJ/Hkbj0RRej1JFga5yAZ+abWkY66x8+82QX+phLyvgC1at+FsTNbRT
-	 eXp7HhUt7cl1lPYCcoYAR3knDeuW04fUenCzXrCJ3PynHt6h5MSm/uVbD6mnpeE8VZ
-	 BYUSNaHZt730N1nVmq7F0qi2X7FfLA9CKrzzedUN+CXCFoRbsv7ZrLYv9dYoO3AJZ4
-	 HmbNPJOKAZw7w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id B1726CE0E09; Fri,  4 Oct 2024 06:22:00 -0700 (PDT)
-Date: Fri, 4 Oct 2024 06:22:00 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <6d23bd45-91c8-4a66-95e2-98a6da1b906e@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
- <20241003084039.GS5594@noisy.programming.kicks-ass.net>
- <20241003084743.GC33184@noisy.programming.kicks-ass.net>
- <20241003092707.GD33184@noisy.programming.kicks-ass.net>
- <20241003122824.GE33184@noisy.programming.kicks-ass.net>
- <83d29a0c-dab2-4570-8be0-539b43237724@paulmck-laptop>
- <20241003142240.GU5594@noisy.programming.kicks-ass.net>
- <7b14822a-ee98-4e46-9828-1e41b1ce76f3@paulmck-laptop>
- <20241003185037.GA5594@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1728048214; c=relaxed/simple;
+	bh=gc5Bj43ryAY1oE6FSGL2XIpGq2sHaR5xJn2aTP+LGi8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ozcVNnTmJAMeoW4K58/B6asxEIEv/CWT6EgRiknClHGHXxUM4KtLKKaP2NIk5RByVyimKOFe7S2oE6HCPxRIjcHlZ+TlrEV6MpeMouM7vF32oOOqpFt0nJkvJ6u5RqDf44NGjiE3EGHQQK0v3DXx82ef42oykrAuIKU1WVINpQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Q7ywr9YU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZsO+X6FZ; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 38DF81380143;
+	Fri,  4 Oct 2024 09:23:32 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 04 Oct 2024 09:23:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1728048212;
+	 x=1728134612; bh=RhriD/TaXPb7FLVOWI5XPRBOIRiLBtQKDlWAplC3PTE=; b=
+	Q7ywr9YUlpA9VKMoAFHkVgrXn7CAueGpYpS07rO6lbtXzWBe6tRCoo6zllYjqoDK
+	AH7eqccovk5q0kOkROCqBeaOUnoxG+mUrcqZNhxi0owEuuo7vnYA3+2ya9nsdUdj
+	wfRzrwxChgD/ht6LPpuRC1f6VusAMZ6yE2yD2EoZFl49fXNlK8OyeF/jtbgYKb51
+	5214wMKuDz149A1NezrBjqbmpY+MUsD7LVFlbQ9DKXfShPijE2bBQlbljpqBLwaB
+	eu22KBsktDDm5wYklu4ChIO5Y4QltXnhTg240gIo2HiDgxQyjg2hv06KLOZpCswF
+	KMb1LdYxXNFfpqCTd2uTAQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728048212; x=
+	1728134612; bh=RhriD/TaXPb7FLVOWI5XPRBOIRiLBtQKDlWAplC3PTE=; b=Z
+	sO+X6FZuCN95SMgAcwM7P3JIZmqO1WG0K5n1UBIKZ1OkFcbPtqAdyt9K2Y77QrFY
+	cSp/I06eDg4moPep63yqOmvWY7o+uLmMU/0jwzrVKEc+/VwGUmrmV1KLlJ5rMWj2
+	tfnUst/FdMpRT2+UVdphHFSELfN+eohNP8FTdURXmcNJS2zCqlMVisivA/gSFZXt
+	dypzqd5GH1Bj4cosaeDTQIJDO/6/kQruNFyZDGAFM4f0Z3caO2dTLM9lQIuoSGUO
+	9AFWvkx3QrtXvksOCMAE70Vx0o49HwZr3yE1bGA7u/jcus/ojtnrZELf8ZNplUys
+	YKDjtfXPuJzjgOwcNVJzg==
+X-ME-Sender: <xms:U-z_ZlsUxv2KKPTmFb_TzDCs00AkiD4oOcYqq2OirOs3yXwFFr7lzw>
+    <xme:U-z_ZueIevmx1bXc9XtTviZrwM86H2imuMCZnzbtyV3KR1kThyJk341Kcg5vacDNw
+    bUPCFXqacad63k2U0A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvfedgieefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddt
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghsse
+    hglhhiuggvrhdrsggvpdhrtghpthhtohepmhgrghhnuhhsrdgurghmmhesghhmrghilhdr
+    tghomhdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrkhgrnhgurghgrghtlh
+    grsehlihhnrghrohdrohhrghdprhgtphhtthhopeihohhshhhihhhirhhordhshhhimhho
+    uggrrdhuhhesrhgvnhgvshgrshdrtghomhdprhgtphhtthhopeguvghvihgtvghtrhgvvg
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:U-z_ZowsgM60VriucCaqilzX5Q9oNbFSfaiqxtf43ezfPRrpfoICvw>
+    <xmx:U-z_ZsMrjNJ5d_Wmt4uJlSV0XQsU_rXyK6Va5-0nCqhbpS39MYFugg>
+    <xmx:U-z_Zl-YB0PCfxTzLBnp_eIH3GncGJ_26hxz7A2buEywkGZqcWvtPQ>
+    <xmx:U-z_ZsXWm7dZVqoXHUoKdDI8lF2gwLJfVcBsLNGYipKM7FwRLGvYuw>
+    <xmx:VOz_ZkbDX58cSU443AkUNKmapm2MD2-qzxMM9i3sHnKOSyIyMcRY9V63>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 825E22220071; Fri,  4 Oct 2024 09:23:31 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241003185037.GA5594@noisy.programming.kicks-ass.net>
+Date: Fri, 04 Oct 2024 13:23:11 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Srinivas Kandagatla" <srinivas.kandagatla@linaro.org>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Magnus Damm" <magnus.damm@gmail.com>,
+ "Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>
+Cc: devicetree@vger.kernel.org,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <5b4afe5b-a7aa-483f-be53-cd6a8de777db@app.fastmail.com>
+In-Reply-To: 
+ <563d35a3613c3356536978c0e5dc5ad5e47bbd7d.1727963347.git.geert+renesas@glider.be>
+References: <cover.1727963347.git.geert+renesas@glider.be>
+ <563d35a3613c3356536978c0e5dc5ad5e47bbd7d.1727963347.git.geert+renesas@glider.be>
+Subject: Re: [PATCH v3 resend 2/7] nvmem: Add R-Car E-FUSE driver
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 03, 2024 at 08:50:37PM +0200, Peter Zijlstra wrote:
-> On Thu, Oct 03, 2024 at 09:04:30AM -0700, Paul E. McKenney wrote:
-> > On Thu, Oct 03, 2024 at 04:22:40PM +0200, Peter Zijlstra wrote:
-> > > On Thu, Oct 03, 2024 at 05:45:47AM -0700, Paul E. McKenney wrote:
-> > > 
-> > > > I ran 100*TREE03 for 18 hours each, and got 23 instances of *something*
-> > > > happening (and I need to suppress stalls on the repeat).  One of the
-> > > > earlier bugs happened early, but sadly not this one.
-> > > 
-> > > Damn, I don't have the amount of CPU hours available you mention in your
-> > > later email. I'll just go up the rounds to 20 minutes and see if
-> > > something wants to go bang before I have to shut down the noise
-> > > pollution for the day...
-> > 
-> > Indeed, this was one reason I was soliciting debug patches.  ;-)
-> 
-> Sooo... I was contemplating if something like the below might perhaps
-> help some. It's a bit of a mess (I'll try and clean up if/when it
-> actually proves to work), but it compiles and survives a hand full of 1m
-> runs.
+On Thu, Oct 3, 2024, at 14:04, Geert Uytterhoeven wrote:
+> R-Car Gen4 SoCs contain fuses indicating hardware support or hardware
+> (e.g. tuning) parameters.  Add a driver to access the state of the
+> fuses.  This supports two types of hardware fuse providers:
+>   1. E-FUSE non-volatile memory accessible through the Pin Function
+>      Controller on R-Car V3U and S4-8,
+>   2. E-FUSE non-volatile memory accessible through OTP_MEM on R-Car V4H
+>      and V4M.
+>
+> The state of the cells can be read using the NVMEM framework, either
+> from kernel space (e.g. by the Renesas UFSHCD driver), or from
+> userspace.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-And here is the ftrace dump from one of the failures in the past
-18-hour run.  Idiot here re-enabled RCU CPU stall warnings after doing
-ftrace_dump(), forgetting the asynchronous nature of new-age printk(),
-so I don't have the CPU number that the failure happened on.
-
-Of to test your new patch...
-
-							Thanx, Paul
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
