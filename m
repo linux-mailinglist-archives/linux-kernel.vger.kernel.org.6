@@ -1,131 +1,137 @@
-Return-Path: <linux-kernel+bounces-350261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D41A3990274
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:48:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B566990279
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92328281DC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:48:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E90C328189E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE80155C9E;
-	Fri,  4 Oct 2024 11:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF5517A93C;
+	Fri,  4 Oct 2024 11:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UvMtY0W1"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9CU8R5T"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2357F15852E
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 11:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D6E15C15A;
+	Fri,  4 Oct 2024 11:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728042451; cv=none; b=rjHR8m3WP6SH2u+VFVTxvGKgup4rY2sHZKIwWbqgl0BcuR5yac8reH3guK2jUO6SKSPoolhT61WgKEUJnzO5udWGCsjc/BwMq0peJiSewJVi3WquEs/alIijIodZ8ZQWbNi3vBUmIQhVqRKlr/vJfjR5ir4knxNeW/OgKgdSYjI=
+	t=1728042486; cv=none; b=Zs/a3jEzGz7drufQvnrovn9aMgQSVMMtBIpzQxv9q4FkiNSrMhb+Xu/Tc1j96i7bph7QRXHdUBGrKb+VzMiIwL6Ub74NYpG2TWnuOMWeqOEnNnyqr4jmS+qko44cWuzc/rPLJjxixUyHMLMEk9EbFEjYrOL9bNkChPpn4IEdsT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728042451; c=relaxed/simple;
-	bh=9Bftv/ViHvya+hAel1EI0cggVPhQ0jLcj2WxYo+AdIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aDwWRuN2oz5bpH9VbYEl+kba6WHTjngyr3ISOsfGFCR19Tx8DSf6UxhtBs5ARDpTH9HlkFNZOJuJU/GYLfoZF7BY57gPXLhIJcP1K6A80PKxKemo/bXWUfobh1rwWySoKHRy4eigrUxCz5rSTkhc5ZT+K1g7+K8j6gNbGI1m+As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UvMtY0W1; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37ccfbbd467so1525094f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 04:47:29 -0700 (PDT)
+	s=arc-20240116; t=1728042486; c=relaxed/simple;
+	bh=28fDmlUX5NjGOYHp9tQ2SOIUz7KVqVCbQL0VHomDVEs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I9cfL/a+EFINoIp4kP1zfP0lpPJiZKdfBudVaLSAaQ68E6zdzMqmgR28vVXy3AFvZdjKQOp6xURRevGcPhuqo0wZjsdPOUUWXKJbeOookamNPpQKOpDYZ+gaQgxtXerWSCxF9MPzzvBLcv6X7YniyRBWP6ujGq43o8JrKc6pZCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T9CU8R5T; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-505a9e521b8so651233e0c.0;
+        Fri, 04 Oct 2024 04:48:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728042448; x=1728647248; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DeDKJXnQ2GOHAMqg9c7Xaq3R7hTT7ZgpuGbhp8lo2vI=;
-        b=UvMtY0W1J6LuUmC8RuOFydnLjFTvgs/6Bc3+PG3csmCRyN+TMQIVSFyhoWR12vTnus
-         izKjiWFtN0niuCU0h4E4H1yD+zb61jEpJ6BXqcrI1zQ+RRjayza/GCnyghXxJXwFt4p8
-         4rQ2DTM/J9oRuiumKiZN05OPCFGiuMredcmrQrsulcQ8qvVmq8FEkpf0/tp178Xm1KVc
-         +eQC4iqZfRjQ8wk89GkNMDt8s6dLBTwZ9m0K5nmogysGlEvVmFhCHw4WhryKXUBf27iD
-         mf0P6SiZu4AFcaN9sTiW6BZISWpwyteJ+uQ2kGB5hfsN/J1TN8UiLQz+YQrgfQ4yt3PX
-         8m6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728042448; x=1728647248;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728042484; x=1728647284; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DeDKJXnQ2GOHAMqg9c7Xaq3R7hTT7ZgpuGbhp8lo2vI=;
-        b=MsRKT9/RgeOORA6vu63nT+OlpkwaBHy94JlczIyn+N6645pdmLkVKHdEG0HwUDJujs
-         qMBGMlBn55OscHKuDGM/44zNQKc61QQXOJFlMZQsiLp+qChgrN33nhXssvlwSWo5OWjz
-         cC1CvxzOXZxgnscuNra+/RrR5Q2HjFjZskygzbyUwvcJvcpjBhlV1VZCLmpgNXUEcAlJ
-         Rz2qwR1s/puoybVjnoB5v1I4R6+HTeJN1L6xvkkXxFlsAk8eCe+tW9Mn+qGEyi9usK8p
-         hc/MfmI5YWhyzqJLBtpUm3aFaBfRGrosADtyo97TXDmFBIiLoxqIHNLnnrJmch0YVq0y
-         jnmw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4ruSsJg0QG6D1r3QBFmv5d1VssDj7zWDW786xcMXP/cNn91FgTUxq8eWE9+4Do+DGb9r/BO7fZ0tMvEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKAPuNXKViZcPZ41xyrqMxw/+8PGLmlt5YYKNDfA3Xw/UNua9L
-	lVflRnFvw6oqQqdXN/VhdlqveQ112caUXRm96zKVi3JUMowZ1HLbwXjnZeca8Nk=
-X-Google-Smtp-Source: AGHT+IG2dPHDnsTK9NmP0VSAoPEMolEgwVq80QcHsxaDBbtih2FVohfyldaIM7Y5wPIrqGUshgyIbQ==
-X-Received: by 2002:a5d:59a1:0:b0:367:9d05:cf1f with SMTP id ffacd0b85a97d-37d0e7374acmr2312722f8f.14.1728042448380;
-        Fri, 04 Oct 2024 04:47:28 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f869a39adsm13960695e9.0.2024.10.04.04.47.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 04:47:26 -0700 (PDT)
-Date: Fri, 4 Oct 2024 14:47:22 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lennart Franzen <lennart@lfdomain.com>,
-	Alexandru Tachici <alexandru.tachici@analog.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net] net: ethernet: adi: adin1110: Fix some error
- handling path in adin1110_read_fifo()
-Message-ID: <63dbd539-2f94-4b68-ab4e-c49e7b9d2ddd@stanley.mountain>
-References: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
+        bh=t+J+o8bA1sOwgxomCtJnrHlAGu038hdKn1LQii9U8Ks=;
+        b=T9CU8R5THIYmfbWvglTtqqoPvdvv1FVG4mfUniVuPiEAX5jfGnlGw+kh7BGgnOiPAp
+         NEPjj8GBbiEiVclzYwMJ1nOj2GgsRBqa+7F/23haPKUZmhJvkX8o4mp5g7pys2hd6QXG
+         xXB2AnKXUn27q1iuVgEdvNdE7t4m/jYsuXM6DC5IF9GAR4yV06SMYbvm9mTfqc3pZfd5
+         f0dSOqiQcrn1WSRDOkYMyrA1OvmwoJl1645iD+VKFSgOhbNahdsqhfTW1Q9+NKVoR89D
+         zm1VxY3BduKeOBqrOls7woGJgqhvfHPh0u1kOQFutmdJU3L1MZRQuUazk4O6Q+7isYU3
+         zZlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728042484; x=1728647284;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t+J+o8bA1sOwgxomCtJnrHlAGu038hdKn1LQii9U8Ks=;
+        b=famfdH4b7kw4xxkrHtXuX7RHHWKj3T8xh3nSv5OcLU2WCjMLZB2L/TgnMz82w7+avk
+         xetULGe+5ZOWXY9Ueno5sf5KiqFvoc870Tlb72WhH0we8QnUoW8779bYc0i5unbRNo5a
+         K1NhfRoworao1HHnqQaxViL2sK0AQgYNZlQ3sQOd/qEeAm6omCvZY2vfMAq4VLjQlUE5
+         491Z79K4Dog34r6WCSvwSpaq25wznWLlzOz65C6rSKCrluypPt/oGF6DThsYpgN2+GHG
+         En69sZdoFOBK4HvNGt/zTvG8ZV4aEgGaPU5K7foH+aezA5vHC3oT1EMuMHi0I9gvjQtM
+         78KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYATFLAYkGnwSpbkf3kSUMPrn1sduAaEshpulLfFUDNCQPTqpG3eRaDHZHc9s2Tk743xuVMeqFfl/Z@vger.kernel.org, AJvYcCWIuSxfCMAoVEbmWpm9YwHd9cAGdrqTV0zMDA7WSiTPTJsQX/XAp3FiBz5pcEYD4f92pkoTFovhN/gqGPEf@vger.kernel.org, AJvYcCWUTxsBR8Lz6Ew3yn6EL6h5pB9jlFfhn9CRgVTiRGPZn6zZ/cq0z0LLUZMs3NQdAyVAz99jAj4b9JTiDzaSnZ8XU/E=@vger.kernel.org, AJvYcCWgj7P3+ETdMdRDtWEZW3SEeSkOQsp+IByvimuhoBftt0J151zPBuO5PxlN5rUqCVQO15qgiOLzG57YtA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKEel8h4r9Wrtpwre/XquN0AYJCePxv9RFHj4nRc9mw6GDlG+I
+	ogxaWkafLOnkSOmwP9F6oZ8dnXkckLAj9IFlE03XNSI+Uvxx46k4nLGUY4fPm4F5hgXgLZpZ5Be
+	cClAs/eCbsskT1lst66MrUwo9y0c=
+X-Google-Smtp-Source: AGHT+IGdvmFCkBqF4SYCEoULbl/hYtOCQsXaZoLmC5cMXPmEqUZLKHUpPK6yOPB0dkrKn1mSJ2YWX60pe2g2EClXDqk=
+X-Received: by 2002:a05:6122:3c4a:b0:50c:55f4:fbb1 with SMTP id
+ 71dfb90a1353d-50c855b087dmr3002092e0c.11.1728042484221; Fri, 04 Oct 2024
+ 04:48:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
+References: <20240918120909.284930-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240918120909.284930-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdW6OqLEWSyRZg_EOWoFJgEBVSLfuDJNxs+c_ucZxXwebQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdW6OqLEWSyRZg_EOWoFJgEBVSLfuDJNxs+c_ucZxXwebQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 4 Oct 2024 12:47:38 +0100
+Message-ID: <CA+V-a8uF2Ajh-X27_tqpT1VK_bzxOJbFQNhkXsfcGNkz9aX4Dw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] pinctrl: renesas: rzg2l: Add support for configuring
+ open-drain outputs
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 03, 2024 at 08:53:15PM +0200, Christophe JAILLET wrote:
-> If 'frame_size' is too small or if 'round_len' is an error code, it is
-> likely that an error code should be returned to the caller.
-> 
-> Actually, 'ret' is likely to be 0, so if one of these sanity checks fails,
-> 'success' is returned.
-> 
-> Return -EINVAL instead.
-> 
-> Fixes: bc93e19d088b ("net: ethernet: adi: Add ADIN1110 support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is speculative.
-> If returning 0 is what was intended, then an explicit 0 would be better.
+Hi Geert,
 
-I have an unpublished Smatch warning for these:
+Thank you for the review.
 
-drivers/net/ethernet/adi/adin1110.c:321 adin1110_read_fifo() info: returning a literal zero is cleaner
-drivers/net/ethernet/adi/adin1110.c:325 adin1110_read_fifo() info: returning a literal zero is cleaner
+On Fri, Oct 4, 2024 at 8:56=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Wed, Sep 18, 2024 at 2:09=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support for configuring the multiplexed pins as open-drain outputs.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>
+> > @@ -1466,6 +1477,13 @@ static int rzg2l_pinctrl_pinconf_set(struct pinc=
+trl_dev *pctldev,
+> >                         rzg2l_rmw_pin_config(pctrl, IOLH(off), bit, IOL=
+H_MASK, index);
+> >                         break;
+> >
+> > +               case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+> > +                       if (!(cfg & PIN_CFG_NOD))
+> > +                               return -EINVAL;
+> > +
+> > +                       rzg2l_rmw_pin_config(pctrl, NOD(off), bit, NOD_=
+MASK, 1);
+> > +                       break;
+> > +
+>
+> I think you also need a case for PIN_CONFIG_DRIVE_PUSH_PULL,
+> so you can disable the NOD bit again.
+>
+Ok, I will implement PIN_CONFIG_DRIVE_PUSH_PULL to disable open drain
+and send a v2.
 
-It's a pity that deliberately doing a "return ret;" when ret is zero is so
-common.  Someone explained to me that it was "done deliberately to express that
-we were propagating the success from frob_whatever()".  No no no!
-
-I don't review these warnings unless I'm fixing a bug in the driver because
-they're too common.  The only ones I review are:
-
-	ret = frob();
-	if (!ret)
-		return ret;
-
-Maybe 20% of the time those warnings indicate a reversed if statement.
-
-Your heuristic here is very clever and I'll try steal it to create a new more
-specific warning.
-
-regards,
-dan carpenter
-
+Cheers,
+Prabhakar
 
