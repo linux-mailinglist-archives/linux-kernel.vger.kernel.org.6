@@ -1,148 +1,97 @@
-Return-Path: <linux-kernel+bounces-350838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA396990A52
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:42:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26AFC990A7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79277B2102C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:42:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 542201C21035
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928B21DACA7;
-	Fri,  4 Oct 2024 17:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2NwM+QZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB441DAC8D;
+	Fri,  4 Oct 2024 17:58:28 +0000 (UTC)
+Received: from EX-PRD-EDGE02.vmware.com (EX-PRD-EDGE02.vmware.com [208.91.3.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015DE1DAC95
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35811DAC81;
+	Fri,  4 Oct 2024 17:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.91.3.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728063741; cv=none; b=s9veMwJu3q6FjT6xdiSBJ9/IgqB+Z7e0VgU5MeP5tVM/q8ZfUGzYABUkdSxv9vOKlzUTdQ3LTeD6P5UPQiUUMLqJHwye90BH3Dij/8ow9dMyXTwoPZxrFR1Sg94inzOdlua8oTUlDEisG57Y7kd/8D6D/uuRDqNfAQqbPfHEqa8=
+	t=1728064708; cv=none; b=oJ7tRp6XQxjvZmRdjlfBb1221OeoWk71RZnA5YZzbzaWu+H6uLOgLANVKqXyX6FYCbhszf3v8y5onHO9zmfI0roPop20/gWQ6RKP4gLYmZyfeWXR8/XFTUlEd/5tn8etzuapwXGfEangLhEU4DUt9U5JZCtSuAtkX91rXEWtaRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728063741; c=relaxed/simple;
-	bh=Ci6UDfbEkgVHJ1O4+ijHMWfFl/HnYN5BhA5QGugHCIQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JXEADqq2cj+OQpe+6ijYKYWQTZyUXr3Ph7YfPXilUvUt7t0jY6e7n6TOMLgPqLMeP154DhOvUXZCYi7SQd8YlUP/n1SSWlSxUepyUYiiWT2feQ+EFMPf0/vRrZsTFHrKIrlcgiNPuGU+b9dqrO2GhEb6KMeM7P+2tU1bpuSGA4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2NwM+QZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 658B7C4CEC6;
-	Fri,  4 Oct 2024 17:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728063739;
-	bh=Ci6UDfbEkgVHJ1O4+ijHMWfFl/HnYN5BhA5QGugHCIQ=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=O2NwM+QZbvTbzSsnrATl5bbMRoudsCzXv2DY1qyUHAvYhzasK/Pe9TEDOy3JjNo76
-	 USZW9Ok+uAGfQLZhN92Edshlfbts1zjYEcGnpcaa/L2A5BqqwD4KyHJdvIzhLouP9e
-	 xRuP/jXF8hhUOA5y/LEIlV9U+apffT2KHDCQYuCevX1EqPRQmNZiLJPuc3ubcoK+d8
-	 ZGXYENKP0RHwKk+a2dmq9afgcwYrzFEqmEXWY8sEWq9QXnK7PxedhGU8vW1n5gPcL0
-	 PqKN784rkkliPkn10NHfqbWhL+pWlasMdO5Oq5lqsGhfN88SfbmwfDQaMRV1PXgys5
-	 Pu/EkfVmPvuZw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 471CFCF8854;
-	Fri,  4 Oct 2024 17:42:19 +0000 (UTC)
-From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Date: Fri, 04 Oct 2024 23:12:16 +0530
-Subject: [PATCH v4] Fixes: null pointer dereference in
- pfnmap_lockdep_assert
+	s=arc-20240116; t=1728064708; c=relaxed/simple;
+	bh=82Q7svt3R4M4yC3bhbWJtKCF34dSkGAdVUDAFHdGfxU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lRrg9B30drVvBOpnyVp6yAslYkQXxaSSWnFEGTCGbJkNFSR7iTAYXPyQtYzcTUkjjabfCvOQQQr0YGb/PaZg3X2JL0RuCsgQ+yexyOdkIAOc/tD8mQgIv3CQtYb/BmMLwgUVSFB8D4sBjvk7x1vcgjKJ+DmOxK9ZKe8RzuiNOmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; arc=none smtp.client-ip=208.91.3.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
+ EX-PRD-EDGE02.vmware.com (10.188.245.7) with Microsoft SMTP Server id
+ 15.1.2375.34; Fri, 4 Oct 2024 10:42:09 -0700
+Received: from htb-1n-eng-dhcp122.eng.vmware.com (unknown [10.172.6.252])
+	by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 9A21926071;
+	Fri,  4 Oct 2024 10:43:07 -0700 (PDT)
+From: Ronak Doshi <ronak.doshi@broadcom.com>
+To: <netdev@vger.kernel.org>
+CC: Ronak Doshi <ronak.doshi@broadcom.com>, Broadcom internal kernel review
+ list <bcm-kernel-feedback-list@broadcom.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 net-next] vmxnet3: support higher link speeds from vmxnet3 v9
+Date: Fri, 4 Oct 2024 10:43:03 -0700
+Message-ID: <20241004174303.5370-1-ronak.doshi@broadcom.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-fix-null-deref-v4-1-d0a8ec01ac85@iiitd.ac.in>
-X-B4-Tracking: v=1; b=H4sIAPcoAGcC/33MSwrCMBSF4a1Ixqbk1cp15D7EQZqHvVBSSWqol
- O7dtCOl6PA/cL6ZJBfRJXI+zCS6jAmHUEIdD8R0OtwdRVuaCCYUZ0xSjxMNz76n1kXnadN6zaQ
- 8OW8kKadHGXHawOutdIdpHOJr8zNf159U5pRTplVtPVjGG31BxNFW2lQYyIpl8QmoHSAKIKS2w
- ADAWL4H5H9AFsCDqqHlxkDtv4FlWd4ZavzqMAEAAA==
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>, Shuah Khan <skhan@linuxfoundation.org>, 
- Anup Sharma <anupnewsmail@gmail.com>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, 
- syzbot+093d096417e7038a689b@syzkaller.appspotmail.com, 
- Manas <manas18244@iiitd.ac.in>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728063737; l=2269;
- i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
- bh=I6Jr34YY5WytSnppfZbbp0DlHGTntvqBvZhYI28pyh8=;
- b=ME9HVvF5BLf+ljmXjMr9EboNjFIhb6RD+gVbB7g2RRx5amHDSoLOzjd2z8J/zMByP+poVufwN
- wdbqRHYDoPoD+JIj9naERulOdKx0/x45vCt8hXKnMzwqnZDLR/Z1MRA
-X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
- pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
-X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
- auth_id=196
-X-Original-From: Manas <manas18244@iiitd.ac.in>
-Reply-To: manas18244@iiitd.ac.in
+Content-Type: text/plain
+Received-SPF: SoftFail (EX-PRD-EDGE02.vmware.com: domain of transitioning
+ ronak.doshi@broadcom.com discourages use of 10.113.161.72 as permitted
+ sender)
 
-From: Manas <manas18244@iiitd.ac.in>
+Until now, vmxnet3 was default reporting 10Gbps as link speed.
+Vmxnet3 v9 adds support for user to configure higher link speeds.
+User can configure the link speed via VMs advanced parameters options
+in VCenter. This speed is reported in gbps by hypervisor.
 
-syzbot has pointed to a possible null pointer dereference in
-pfnmap_lockdep_assert. vm_file member of vm_area_struct is being
-dereferenced without any checks.
+This patch adds support for vmxnet3 to report higher link speeds and
+converts it to mbps as expected by Linux stack.
 
-This fix assigns mapping only if vm_file is not NULL.
-
-Reported-by: syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
+Signed-off-by: Ronak Doshi <ronak.doshi@broadcom.com>
+Acked-by: Guolin Yang <guolin.yang@broadcom.com>
 ---
-This bug[1] triggers a general protection fault in follow_pfnmap_start
-function. An assertion pfnmap_lockdep_assert inside this function
-dereferences vm_file member of vm_area_struct. And panic gets triggered
-when vm_file is NULL.
-
-This patch assigns mapping only if vm_file is not NULL.
-
-[1] https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
-
-Signed-off-by: Manas <manas18244@iiitd.ac.in>
+Changes in v1:
+  - Add a comment to explain the changes
 ---
-Changes in v4:
-- v4: simplify ternary conditional
-- Link to v3: https://lore.kernel.org/r/20241004-fix-null-deref-v3-1-f9459b1cc95f@iiitd.ac.in
+ drivers/net/vmxnet3/vmxnet3_drv.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Changes in v3:
-- v3: use assigned var instead of accessing member again 
-- Link to v2: https://lore.kernel.org/r/20241004-fix-null-deref-v2-1-23ad90999cd1@iiitd.ac.in
-
-Changes in v2:
-- v2: use ternary operator according to feedback
-- Link to v1: https://lore.kernel.org/r/20241003-fix-null-deref-v1-1-0a45df9d016a@iiitd.ac.in
----
- mm/memory.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/mm/memory.c b/mm/memory.c
-index 2366578015ad..4e4d598496a8 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -6346,10 +6346,13 @@ static inline void pfnmap_args_setup(struct follow_pfnmap_args *args,
- static inline void pfnmap_lockdep_assert(struct vm_area_struct *vma)
- {
- #ifdef CONFIG_LOCKDEP
--	struct address_space *mapping = vma->vm_file->f_mapping;
-+	struct address_space *mapping = NULL;
-+
-+	if (vma->vm_file)
-+		mapping = vma->vm_file->f_mapping;
+diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
+index b70654c7ad34..6793fa09f9d1 100644
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -201,6 +201,14 @@ vmxnet3_check_link(struct vmxnet3_adapter *adapter, bool affectTxQueue)
  
- 	if (mapping)
--		lockdep_assert(lockdep_is_held(&vma->vm_file->f_mapping->i_mmap_rwsem) ||
-+		lockdep_assert(lockdep_is_held(&mapping->i_mmap_rwsem) ||
- 			       lockdep_is_held(&vma->vm_mm->mmap_lock));
- 	else
- 		lockdep_assert(lockdep_is_held(&vma->vm_mm->mmap_lock));
-
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241003-fix-null-deref-6bfa0337efc3
-
-Best regards,
+ 	adapter->link_speed = ret >> 16;
+ 	if (ret & 1) { /* Link is up. */
++		/*
++		 * From vmxnet3 v9, the hypervisor reports the speed in Gbps.
++		 * Convert the speed to Mbps before rporting it to the kernel.
++		 * Max link speed supported is 10000G.
++		 */
++		if (VMXNET3_VERSION_GE_9(adapter) &&
++		    adapter->link_speed < 10000)
++			adapter->link_speed = adapter->link_speed * 1000;
+ 		netdev_info(adapter->netdev, "NIC Link is Up %d Mbps\n",
+ 			    adapter->link_speed);
+ 		netif_carrier_on(adapter->netdev);
 -- 
-Manas <manas18244@iiitd.ac.in>
-
+2.11.0
 
 
