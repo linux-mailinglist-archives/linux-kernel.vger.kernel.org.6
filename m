@@ -1,65 +1,55 @@
-Return-Path: <linux-kernel+bounces-350814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C87990A02
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:13:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E2C990A04
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71BB31C21EE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:13:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73FF41C222C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB791D9A54;
-	Fri,  4 Oct 2024 17:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31B31E377D;
+	Fri,  4 Oct 2024 17:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6r2BjFf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiFRSEYE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34011E377D;
-	Fri,  4 Oct 2024 17:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3F91D9A54;
+	Fri,  4 Oct 2024 17:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728062004; cv=none; b=gPBEnuYAd5W2W3Iz346v5vcTIEa4CCzAr05kdKp89+XCPMQTv48zF8qg7MrWqFLTEVTKGP5LFhZD3x/L83NF7C54xzBMUJPDCoB2xdtECt6umDq8R6dww/Mu504gqmsokm2HZpIuFw3H8tiJB4FGah7c4twzMyXfVepLNeCvCQw=
+	t=1728062065; cv=none; b=Lnefauei+vbS1OM+jp5SF5xVHEhfyYoC22M9AwW5v+Wnydf0+y3ypkQeI+hct6FFs1ZFiE7Pfwws3SGC99E+V2IO3DTKajMhtQoxwfDzO2jbf/0xkd271GuCaur5gKItmdmjG44O7wziSD1ETdRQ289dgKUm8tORWr6+w23ugBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728062004; c=relaxed/simple;
-	bh=LHqprxKT11QQbqhmJEZLGqpjDxBSH8wKedLsZeJ9SFg=;
+	s=arc-20240116; t=1728062065; c=relaxed/simple;
+	bh=c+tR2k4Sw0XcX3b7P8u3lqeiL2Sgi57l1khjfQ51leM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t9EF+H6jjqdniNT4J/nN6kUxT/B102w4g8hjJ1wvdma/wx1CyrtSvxilUDqH63zfA4tbgMzDQcsw+feu60iEip3uDySCshDqtcQC8wsENhAbs+RHaNhH/1Yan4qnkF+cB6T5XpfPopUiSCJ41qdJEkGQ2m8Acu8Bks6z8Djq9Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6r2BjFf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77FC8C4CEC6;
-	Fri,  4 Oct 2024 17:13:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q+ylQZIKSa6FR27lJskBYcJHiDWwu7D3GBzDLLEeXGEJcofygvIcJAbqS9A7thVqrZUwcmSVJxezmmd1V33+GYtL+kWubeEo/gIKuBfcbPFq83HlzXEzmN7oONtwZV1+PoINX6J1hMz4kGqpapHCITCbve1RTmk6P2f0Apbczqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiFRSEYE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52BE5C4CEC6;
+	Fri,  4 Oct 2024 17:14:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728062003;
-	bh=LHqprxKT11QQbqhmJEZLGqpjDxBSH8wKedLsZeJ9SFg=;
+	s=k20201202; t=1728062064;
+	bh=c+tR2k4Sw0XcX3b7P8u3lqeiL2Sgi57l1khjfQ51leM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X6r2BjFfRCr0TwxhIfOZo85dwkHZ7eA4brv7n52yDVjDmU2ObBGfmw+OD/84qH3aw
-	 OxBMrc9dtCJt7/GeqOImJ2rpZXD/VS7kK3L9lVuC/8RBKAdZK+NNSWcVLL5B2BGbug
-	 Cvcqz3iznVBbrC2JAutYRWcKW+pQoARP7VQQddfVszeRqc0rC6cqPKoO/Go4GNLk2s
-	 ketrT9wSomi4uouunvddXrzSMmy383L9RkLF3ruq/85r06UNmGn3bU1DYFbrdQ39Fq
-	 wiRFYceVT149BYmlTNe2Q2B97mbTDqf54If1ia3uMpy9RPzhhf2AIjk49kRQLZ8hlc
-	 w3U1aDXzvyhqw==
-Date: Fri, 4 Oct 2024 10:13:20 -0700
-From: Kees Cook <kees@kernel.org>
-To: Jan Hendrik Farr <kernel@jfarr.cc>
-Cc: Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ardb@kernel.org, morbo@google.com
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <202410040958.C19D3B9E48@keescook>
-References: <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
- <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
- <Zvg-mDsvvOueGpzs@archlinux>
- <202409281331.1F04259@keescook>
- <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
- <Zv6BEO-1Y0oJ3krr@archlinux>
- <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
- <Zv61dCaxScXuOjZg@archlinux>
- <202410031424.45E5D19@keescook>
- <Zv8RIs-htdc-PtXB@archlinux>
+	b=BiFRSEYE9+CAbXahdleSGzRuAvLRRr6OE6YXy1KnOcMkbcN/mlTIbtp7TWMRMJlIz
+	 eKBY6Al+d52oYrWpDvOrJyhhnQXO/4m55EqcWBo1Ll9yFebgSa5z3nu18/18nUGwKP
+	 BmQOKey8aKo6xu7uDEG/THXlYeHXLDf3o1nSZz0RIjiDRBq0OgZryh1XxtC8+V0zFK
+	 Dpn8wCuMdYGbbw9aASV/0Futpe4h3wjGXqc4aSy9kPaW45RQcHbsttzoLajS7I8g8D
+	 HRO4bqc6jWtdmaxythwvrA7SZcmC9oQDnpEMuYfSC4AQRlmKGIZmNRo/Ld/b38fWfV
+	 CQr4xkhomt/eg==
+Date: Fri, 4 Oct 2024 10:14:22 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Aaron Thompson <dev@aaront.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: deb-pkg: Remove blank first line from maint
+ scripts
+Message-ID: <20241004171422.GA3142084@thelio-3990X>
+References: <20241004075245.169046-1-dev@aaront.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,144 +58,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zv8RIs-htdc-PtXB@archlinux>
+In-Reply-To: <20241004075245.169046-1-dev@aaront.org>
 
-On Thu, Oct 03, 2024 at 11:48:18PM +0200, Jan Hendrik Farr wrote:
-> On 03 14:28:01, Kees Cook wrote:
-> > On Thu, Oct 03, 2024 at 05:17:08PM +0200, Jan Hendrik Farr wrote:
-> > > gcc currently says that the __bdos of struct containing a flexible array
-> > > member is:
-> > > 
-> > > sizeof(<whole struct>) + sizeof(<flexible array element>) * <count>
-> > > 
-> > > clang however does the following:
-> > > 
-> > > max(sizeof(<whole struct>), offsetof(<flexible array member>) + sizeof(<flexible array element>) * <count>)
-> > 
-> > Clang's calculation seems very wrong. I would expect it to match GCC's.
-> > 
+On Fri, Oct 04, 2024 at 07:52:45AM +0000, Aaron Thompson wrote:
+> From: Aaron Thompson <dev@aaront.org>
 > 
-> I was on the very same train of thought, but I have since changed my
-> mind a bit. A struct containing a flexible array member can be allocated in
-> two ways:
+> The blank line causes execve() to fail:
 > 
-> (1):
+>   # strace ./postinst
+>   execve("./postinst", ...) = -1 ENOEXEC (Exec format error)
+>   strace: exec: Exec format error
+>   +++ exited with 1 +++
 > 
-> struct posix_acl *acl = malloc(sizeof(struct posix_acl) + sizeof(struct posix_acl_entry) * 1);
-> acl.a_count = 1;
+> However running the scripts via shell does work (at least with bash)
+> because the shell attempts to execute the file as a shell script when
+> execve() fails.
 > 
-> or (2):
+> Fixes: b611daae5efc ("kbuild: deb-pkg: split image and debug objects staging out into functions")
+> Signed-off-by: Aaron Thompson <dev@aaront.org>
+
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
+> ---
+>  scripts/package/builddeb | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> struct posix_acl *acl = malloc(offsetof(struct posix_acl, a_entries) + sizeof(struct posix_acl_entry) * 1);
-> acl.a_count = 1;
+> diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+> index c1757db6aa8a..404587fc71fe 100755
+> --- a/scripts/package/builddeb
+> +++ b/scripts/package/builddeb
+> @@ -74,7 +74,6 @@ install_linux_image () {
+>  
+>  		mkdir -p "${pdir}/DEBIAN"
+>  		cat <<-EOF > "${pdir}/DEBIAN/${script}"
+> -
+>  		#!/bin/sh
+>  
+>  		set -e
 > 
-> Both are valid ways to allocate it. __bdos does not know which of these
-> methods was used to allocate the struct whose size it has to determine,
-> so it's giving the lower bound that doesn't include the (potential)
-> padding at the end.
-
-I want to separate several easily confused issues. Instead of just
-saying __bdos, let's clearly refer to what calculation within bdos is
-being used. There are 3 choices currently:
-- alloc_size attribute
-- counted_by attribute
-- fallback to __bos (which is similar to sizeof(), except that FAMs are 0 sized)
-
-Additionally there are (for all intents and purposes) 2 size
-determinations to be made by __bos and __bdos, via argument 2:
-- containing object size (type 0) ("maximum size")
-- specific object size (type 1) ("minimum size")
-
-For example, consider:
-
-struct posix_acl *acl = malloc(1024);
-acl->a_count = 1;
-
-what should these return:
-
-	__bos(acl, 0)
-	__bos(acl, 1)
-	__bdos(acl, 0)
-	__bdos(acl, 1)
-	__bos(acl->a_entries, 0)
-	__bos(acl->a_entries, 1)
-	__bdos(acl->a_entries, 0)
-	__bdos(acl->a_entries, 1)
-
-> So it comes down to false positives vs false negatives...
-> More details here:
-> https://github.com/llvm/llvm-project/pull/111015
+> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> -- 
+> 2.39.5
 > 
-> Clangs current behavior would essentially force kernel code to always
-> assume option (2) is used. So
-> 
-> struct posix_acl *
-> posix_acl_clone(const struct posix_acl *acl, gfp_t flags)
-> {
-> 	struct posix_acl *clone = NULL;
-> 
-> 	if (acl) {
-> 		int size = sizeof(struct posix_acl) + acl->a_count *
-> 		           sizeof(struct posix_acl_entry);
-> 		clone = kmemdup(acl, size, flags);
-> 		if (clone)
-> 			refcount_set(&clone->a_refcount, 1);
-> 	}
-> 	return clone;
-> }
-> EXPORT_SYMBOL_GPL(posix_acl_clone);
-> 
-> from linux/fs/posix_acl.c would have to turn into something like:
-> 
-> struct posix_acl *
-> posix_acl_clone(const struct posix_acl *acl, gfp_t flags)
-> {
-> 	struct posix_acl *clone = NULL;
-> 
-> 	if (acl) {
-> 		int size = offsetof(struct posix_acl, a_entries) + acl->a_count *
-> 		           sizeof(struct posix_acl_entry);
-> 		clone = kmemdup(acl, size, flags);
-> 		if (clone)
-> 			refcount_set(&clone->a_refcount, 1);
-> 	}
-> 	return clone;
-> }
-> EXPORT_SYMBOL_GPL(posix_acl_clone);
-> 
-> Which is actually safer, because can you actually be sure this posix_acl
-> wasn't allocated using method (2)?
-
-First, this should not be using an open coded calculation at all; it
-should use the struct_size() macro.
-
-Secondly, if we want to change struct_size(), then we must (via
-allmodconfig builds) determine all the places in the kernel
-where the calculated size changes, and audit those for safety.
-
-Right now, struct_size() over-estimates in the face of padding.
-
-We're already moving the kernel toward not even calling struct_size()
-externally from the allocation, and instead using the it within the
-allocation macros themselves:
-https://lore.kernel.org/lkml/20240822231324.make.666-kees@kernel.org/
-
-> After looking at the assembly produced by gcc more, it actually looks
-> like it's using the allocation size if it's known in the current context
-> (for example if the struct was just malloced in the same function)
-> and otherwise returns INT_MAX for the __bdos of a struct containing a
-> flexible array member. It's only returning the size based on the
-> __counted_by attribute of you ask it for the __bdos of the flexible
-> array member itself.
-
-Here is my test case for all the corner cases we've found so far:
-https://github.com/kees/kernel-tools/blob/trunk/fortify/array-bounds.c
-
-I'd prefer we add cases there so we can all be talking about the same
-things. :)
-
--Kees
-
--- 
-Kees Cook
 
