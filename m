@@ -1,84 +1,99 @@
-Return-Path: <linux-kernel+bounces-350454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC00E990569
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:09:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BEA990587
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9442B28789E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:09:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22B7CB210BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7285D2178EB;
-	Fri,  4 Oct 2024 14:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A449216A06;
+	Fri,  4 Oct 2024 14:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tV50QnDt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRQhRwdB"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70EA215F43;
-	Fri,  4 Oct 2024 14:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52122139C9;
+	Fri,  4 Oct 2024 14:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728050928; cv=none; b=IrqmmCVhzmJ61K6CYwGV6aBkTLZMGp3JfNFp276HdpTECCc95dlkPF7eou7tl0k9Pf2MTydBTTIKEmP19dRf8L1otXsBHmTrYtopk5uvghMPXq579+bvAYpCPlZsLCdK7BgxJ6pTAUKyj46t+S12pK+zAa6c4L6FvZmK3m4oPvU=
+	t=1728051048; cv=none; b=t/p+TAvAVJ+05kphIH2qiBv4TyitVs6KV+fN67A6InKuthsPW+vpeu52/n8bjAscALURcGP36jHL6CCxX/uQpOlWXUJI5sK4TaRHBqBhbljl0dH1tP7Qc1LLXQFKQd/0plbl8BinzWqOPIBNxLH7EjFm3nECRFle4/XR+I6ovfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728050928; c=relaxed/simple;
-	bh=RqtN0IiayrMqwFC0YAGSB1NwED1SqgkSMsUtIuQEZxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iEdWrFCMvL+HKdnkhUeok++JMY5WL6HzkU/QeqxqMLGNgCO7xbaLkzXm2t+DOpOwaAQicgktgwtTFXTz1beR1lKF64QuN5BEJf1ziKy5coWCAUgzlDo3raZ+VMft4GED6tyk9iujMXH6UzbuSN5iZhDBeeJJ16hlFHAVCZnsE3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tV50QnDt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD08C4CEC6;
-	Fri,  4 Oct 2024 14:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728050928;
-	bh=RqtN0IiayrMqwFC0YAGSB1NwED1SqgkSMsUtIuQEZxQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tV50QnDtI0FPg/I2E+nUTsQhaqinxg4bvX6OxXRmtL3IM1ZB7+EhSfuy1+bpm1LHG
-	 rSenjrHbD51tCh/cJhmLWlyu4tdQNnT+gVYNd13Dn3zo8SfsNnd9UIU8YxqHda6NfR
-	 y1w5zzh2I7BlMTk3gAYFj1eEsezPrFI8tkzH9l8cnVMATQbweZ/Hx7e1pMfwVHYOIa
-	 ZCjfq+KRaB+Sz7LJUk1+sGIKm+8z+h7zibo7MTR5ZECCFXD2NVOcLChzmqUGX+DbvB
-	 D7B5sUPm/xA2nS5qVKGkKhG78osuWbhJq/9T1LkowVHDQgVRsVZYVAomYXz5cmPl3h
-	 9qKbBHUnLzJdg==
-Date: Fri, 4 Oct 2024 07:08:46 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Furong Xu <0x1207@gmail.com>, Ong Boon Leong <boon.leong.ong@intel.com>,
- "David S. Miller" <davem@davemloft.net>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, Joao Pinto <jpinto@synopsys.com>,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- rmk+kernel@armlinux.org.uk, linux@armlinux.org.uk, xfr@outlook.com,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- regressions@lists.linux.dev, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH net v2] net: stmmac: set PP_FLAG_DMA_SYNC_DEV only if
- XDP is enabled
-Message-ID: <20241004070846.2502e9ea@kernel.org>
-In-Reply-To: <28f05bbe-78f6-408a-ae53-c40f6a86eed9@nvidia.com>
-References: <20240919121028.1348023-1-0x1207@gmail.com>
-	<28f05bbe-78f6-408a-ae53-c40f6a86eed9@nvidia.com>
+	s=arc-20240116; t=1728051048; c=relaxed/simple;
+	bh=JcoAozjGe6KJwo8JlLKfy7dzBgqW2BEBvSTA/VAxTfw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=m/nAilbIGqjDRneNtlu+EGZ+cG21ZlG+6t8NJE6LGLVYVImt2BqmjOt9VIjSrQUEmjWzHhceHeR6j0OFvErmEqZH9P6JrOL/1iO6JG06G9b6Mr4UFu5fKzs4OAZqTsSSVNIOa5MoU/AF2a+zss+roqeAH8Qrl+snj1hUczEUcsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FRQhRwdB; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20aff65aa37so18681845ad.1;
+        Fri, 04 Oct 2024 07:10:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728051044; x=1728655844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sfd0dihu7gfegBqVS9/NP6tMEUAcyFXZ5iJaoj+m2kw=;
+        b=FRQhRwdBAPr+1DR6VheuSOxfMQmi0PDbg4/odiyghl+4k/BxmEL0i+U0qd8Z1wCx6Y
+         8sUxN8VZef8yaWMW/clve1/6budN7YnCUHl8WR/KFsWzVucogxXKJw57psTpdFmXMjdW
+         8LMfdXClFwevZjjkF3hics5swOYZ0LAZt5YMBWwyWWlL3lLS29Sk/mbWcRUuNlQPiHaM
+         pCFWMEi1BvMRcflqwP5SeXGVXi15dZ8Sgb/hHUWBOw6mOYWzZxAeRDTqLubsgmMWawTx
+         GGp8oS3nXfX49rn+PEPIpNcO7tjf0fPjX83dD/SPyDJzfec8iVgQXX9Zjo06kA9qkRKp
+         IGHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728051044; x=1728655844;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sfd0dihu7gfegBqVS9/NP6tMEUAcyFXZ5iJaoj+m2kw=;
+        b=c0sJnvKJV5osiHFZcwktyJk2SetLAz1cwatIW6G+tEOi3I1MyqtPk3ZBY96xXhkisT
+         Bu+DtpRbwZtR+JDGUaMm0xCzk2UJ1t16U/COHBW5dBGcl6V6FTWNs5b+wndlIK6lYSlC
+         UKLnhWmVDZWS2rBQKY4BVA6RoxKtJS2FohzGj9/tKsgRPkewLFhrnVgZA80dv8j+ZBjj
+         qoWnZc9obsbQ8F0sWXb0qqzLoDPcivGxGWgo4uAAK25VFkznKBGHo4lTeQBUux/GO7Lw
+         VfT/T2JGtQHCzuB/eakjSq1eh8sQCvDu7adlWo3wezeB9ethBSSs+U/cmxl5yPQnrfZJ
+         4o9w==
+X-Forwarded-Encrypted: i=1; AJvYcCW5XWFDDisJ8PBrFL2wBQCROhfB0a53hTlyZYIdbgKljDilyzar/Xjuy7vddFgAzE51pVhGWDLQx9E8BQ==@vger.kernel.org, AJvYcCXciPvyKfe7vCbIsb0ChaHcR2QouPwBDqNP6uWkSrBVn3BElgWfv0cqpqSbWe3IqAL2iIS+wwI3zq57Vdtk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDMhdqBQoyCE31K0pU03eZHFCk0fWyQSv3nXw0K1dR92bIX10m
+	m7Qz+1iXpEOsD+qLXNcW2GyKoVo6LcD3dGg7c0A5e6V+Vpe+yXBP
+X-Google-Smtp-Source: AGHT+IEC6qnaS9VbQbPqrtFDm5c4hbnrAi1LBKJRSfHwE5682SXEXs7jSskoTR2Yjzx112qTn+aKyg==
+X-Received: by 2002:a17:902:db0d:b0:20b:8642:9863 with SMTP id d9443c01a7336-20bfdfc268dmr44096215ad.18.1728051043743;
+        Fri, 04 Oct 2024 07:10:43 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2405:204:20:6275:2654:2317:92c7:7b80])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beeca00a5sm24580825ad.113.2024.10.04.07.10.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 07:10:43 -0700 (PDT)
+From: SurajSonawane2415 <surajsonawane0215@gmail.com>
+To: hch@infradead.org
+Cc: axboe@kernel.dk,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	surajsonawane0215@gmail.com
+Subject: Explanation on Uninitialized Variable bio in blk_rq_prep_clone
+Date: Fri,  4 Oct 2024 19:40:37 +0530
+Message-Id: <20241004141037.43277-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <Zv_eFIjstVns-ebG@infradead.org>
+References: <Zv_eFIjstVns-ebG@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 1 Oct 2024 11:22:32 +0100 Jon Hunter wrote:
-> We have noticed a boot regression in both -next and mainline v6.12-rc1. 
-> Bisect is pointing to this commit. Reverting this commit fixes the problem.
-> 
-> This boot regression is seen on our Tegra234 Jetson AGX Orin platform 
-> that uses the drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c driver. 
-> We are booting with NFS and although the network interface does come up, 
-> we fail to mount the rootfs via NFS.
-> 
-> So it would appear that we need to set this flag for this device. Any 
-> thoughts?
+Explaination of how bio could be used uninitialized in this function:
 
-This patch doesn't make sense to me. I'll send a revert shortly.
+In the function blk_rq_prep_clone, the variable bio is declared but can remain uninitialized 
+if the allocation with bio_alloc_clone fails. This can lead to undefined behavior when the 
+function attempts to free bio in the error handling section using bio_put(bio). 
+By initializing bio to NULL at declaration, we ensure that the cleanup code will only 
+interact with bio if it has been successfully allocated.
+
+Best regards,
+Suraj Sonawane
 
