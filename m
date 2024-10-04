@@ -1,277 +1,163 @@
-Return-Path: <linux-kernel+bounces-350277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D529902AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:08:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA3F9902B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76B231F21A82
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:08:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 259B81F22203
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9160E15C130;
-	Fri,  4 Oct 2024 12:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872E415C123;
+	Fri,  4 Oct 2024 12:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="uwOYQ/kB"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2089.outbound.protection.outlook.com [40.107.21.89])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="qqOsVPUC"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E1815A849;
-	Fri,  4 Oct 2024 12:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728043669; cv=fail; b=JmjIYxZRinKpD1OhLv3Z5LuSBSZBCdf84H8+H9aWslCqH3N/0hrGw4dOKWzQ58ngvZ5CC6X2kdc+xysVHpyubB0IaJlwIZBfGgDVQRqIr03I7UkhBnturAkYG5mzL/oLgdnpH9LHbBz31JAk2E2t2I0khYkaynT0v/nMTQuZZ0o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728043669; c=relaxed/simple;
-	bh=Moj2Oip1PQ8rXBx6SMLlr9zeA7XcM5ORv26+rf/qDvI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iMlgtHv7LKht/Nze09uAcQi/46wtEgNWJMCDbHts3yHfHNxkHbGm1Y90CNKv/gUYwYuoMwsLsLZSwJpyNoF7HGAcjnwUEUTl9/tIh1maE23eiDGzeYNMfG+HNgISNcloIgvR2wDXItxvKBrS194z6nTD+HeYJxm/AP9vqG7abuM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=uwOYQ/kB; arc=fail smtp.client-ip=40.107.21.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YuiYFquqEFUjpO7um3uPhZuJxYb+DTHsoCKCdtG8DbPfWY4BqrWOqfEfuy1ng+8gvGYhqV0P0D/3OxnRJipZlg9Np+0usIosyInOYhQUJnUzVZAvWB1ZEnRdgjWN3npO0YYJDCpzNgMR+LBGSDCiHWGu0IoY68oU/Rw2slC/HAHTY9T/1ZUZPWAnyoLaSyY1OA0tISnh6SGLfgtWNiYPURd0qZ8Wo1ZANzZsEdpeqoU4R0X7Uo6c4RAEICDhN9lAK8ePff/gX8fOmEbroCuQlPh4x+c3XbPRA87S0M90Y4cXAaeZQQLk31h1I3VI0mYeZyGdRK1NsXNXrmVfrTxX3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RtinHPJCX0Ghf1AHtH9ixH1p5qJwB7vMIjeRtYao5fY=;
- b=eTv/AHn1+ka4EPNmz/SMm2vY2EUa34dpo6XXUMIzOabxyeTn7EGHC3Qyu+ffP96iG7iZ0/UKriGpXpYXMYwLKj8lRWn29vSz4MdELa66h7ikN0NCvno1iK6tOysCvWN9mDIpEuwTBMTJ1Av7cd99U/Z+RdNytPtUKrYHwwvbJKrWAcydJ1Qd0YwTBM/0haDFuj7yhZr3GAY4T9O7hf7E6zOqH1CSPPAkprv3myV61ul6hUVsNCl4/fXgY/uNreRQgCx1CgbnDkXrtwAZuNGBn1spF17HPuQJ7kT141LNP/F9/ZG1zeJRd7KEQhFPgmOm4COFcKfX5Ar6gEGWhj2TWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
- smtp.mailfrom=leica-geosystems.com; dmarc=pass (p=reject sp=reject pct=100)
- action=none header.from=leica-geosystems.com; dkim=none (message not signed);
- arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RtinHPJCX0Ghf1AHtH9ixH1p5qJwB7vMIjeRtYao5fY=;
- b=uwOYQ/kBFObaE8KzggIfSVK9fr6RfPG++slp667SOdbvavfLgBfutzTuxCMKrq+4MM5XXdR+bF91jUfJcTx0GxpKpKoIEBdLlKMovxdioRdgDG8v5SKuoaY9fTChxBFP4gOqOmJo5++mRO920IOmrPvakJajwX4JYJCtx4C+8As=
-Received: from AS4P191CA0026.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:5d9::17)
- by PAXPR06MB7775.eurprd06.prod.outlook.com (2603:10a6:102:157::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Fri, 4 Oct
- 2024 12:07:43 +0000
-Received: from AM4PEPF00027A5D.eurprd04.prod.outlook.com
- (2603:10a6:20b:5d9:cafe::88) by AS4P191CA0026.outlook.office365.com
- (2603:10a6:20b:5d9::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18 via Frontend
- Transport; Fri, 4 Oct 2024 12:07:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
- smtp.mailfrom=leica-geosystems.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=leica-geosystems.com;
-Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com
- designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
- client-ip=193.8.40.94; helo=hexagon.com; pr=C
-Received: from hexagon.com (193.8.40.94) by
- AM4PEPF00027A5D.mail.protection.outlook.com (10.167.16.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8026.11 via Frontend Transport; Fri, 4 Oct 2024 12:07:43 +0000
-Received: from aherlnxbspsrv01.lgs-net.com ([10.60.34.116]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
-	 Fri, 4 Oct 2024 14:07:43 +0200
-From: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-To: ulf.hansson@linaro.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	p.zabel@pengutronix.de
-Cc: linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	m.felsch@pengutronix.de,
-	bsp-development.geo@leica-geosystems.com,
-	Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Subject: [PATCH 2/2] mmc: pwrseq_simple: add support for reset control
-Date: Fri,  4 Oct 2024 14:07:40 +0200
-Message-Id: <20241004120740.2887776-2-catalin.popescu@leica-geosystems.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241004120740.2887776-1-catalin.popescu@leica-geosystems.com>
-References: <20241004120740.2887776-1-catalin.popescu@leica-geosystems.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987EE1494D4;
+	Fri,  4 Oct 2024 12:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728043693; cv=none; b=QsUyI/vlJEYIorWEmdiviGJfYUwOOvQsayMVIuZiBQ8aXeLNk8X1FcLTPstYWey5AQVII78ULasnTJbqy3zCzIjLh2EcbV4gGMvCN3LT6uNr/cBQZmy4H8TC2dX1/cbvmPD2MebjXojQtz8+2OmQU6cSMCCVstQIjYHJXjMhJyA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728043693; c=relaxed/simple;
+	bh=FiSZSy/7mmJmtWGTNZA0nZxQ9VRZYcf5NldOZufVz8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gQgxD8GMZX7t33iL806DjiAEselVRCK8UpIm1Qs2pQYgT2TbRXOsro5S8JgSpk7BNQcNTsXykq24xUkWDzrt4FgP+716EWpdisAj+TV/iVt/SRRtM8bumEwk05QHSY+pooSKb9aP1b1dzZF2Dt6L2W6MVWJVImntZsrqRR22x98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=qqOsVPUC; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Gjkpj7klBDx4CtJ5kaQxWvklTYn7Jg83Vuq32kjyQEA=; b=qqOsVPUC7pi+5Idm9LgCg/j6Ts
+	0CfnRuuIZesmuPfkSBRC8LGDUQw55gLfwTnw022eB4RdQPSXHCydnY+s0QBAsB7PkmviwNEOzQO6y
+	+NWPYhl+ravyBhbNfpAdK8NwumIR1ozgD9qjibiDHZpMSPs7kUtYatX9c+4hMHzoogWQsw+WMRPLy
+	dwjs/5YBseAuAzC+5+H8bdKvYp0VrEJNIwk1g9qRLXFDEZAqksf2bj96gHk5213tiWATwp/qqwnRb
+	jpvRu0WgaDaN1ae1OqwrzQp6zoI9ctt+M+G2X1r49vWlUG77JnlXc50t4KUQsKa3rbRIMJR0PN/gy
+	AnfadSbw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56390)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1swh6A-0001ui-1q;
+	Fri, 04 Oct 2024 13:07:54 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1swh64-0001AB-2a;
+	Fri, 04 Oct 2024 13:07:48 +0100
+Date: Fri, 4 Oct 2024 13:07:48 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next 8/9] net: phy: mediatek: Change mtk-ge-soc.c
+ line wrapping
+Message-ID: <Zv_alBqCPvrSzRPL@shell.armlinux.org.uk>
+References: <20241004102413.5838-1-SkyLake.Huang@mediatek.com>
+ <20241004102413.5838-9-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 04 Oct 2024 12:07:43.0067 (UTC) FILETIME=[042DCAB0:01DB1656]
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A5D:EE_|PAXPR06MB7775:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 02af0b58-1fdb-4f5f-d8f0-08dce46d26e2
-X-SET-LOWER-SCL-SCANNER: YES
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?K3jhXyyr/8nt94IoGhplXWgCb0EzvLd5iWA7/ESC6/KnqgD8uNKXe8/7ekSV?=
- =?us-ascii?Q?+wKubzYc0zsSRRaps0M9/BaQIcGwNIpXEOH2ONv2RxhacBTWk/GftB4kljEf?=
- =?us-ascii?Q?pi9p6HzZn6iY9gb+4tIcFozEoW2Niwb+rIDbLFoKfrZnk4jI5WMppYSxf5B6?=
- =?us-ascii?Q?01WHsbpPjfPg5yMdK598ZgF+rqcPB0TxQ4AI+0+fgR1XWLRlLcOBFF5k4+H6?=
- =?us-ascii?Q?ilIamrJgXqe+5PeZOAvUYEDd34imKPB+hfcMTuk4p2n+Nnjs+EzZxTis7H0s?=
- =?us-ascii?Q?tJ4643nmqJ6170H7eQWvBhfTHdXgRWqam0lcBC7RwAHpIyUulSEMSfyMsnNt?=
- =?us-ascii?Q?ZnAVbrwtGMS5LOXFIaBsFfhTa8oij2XZg/HCv4jx0jlOPA31KnCnPQGcDqJz?=
- =?us-ascii?Q?19MmLg6r1GobYEiI04Pe32zgDUn66HgiKMYqu0xvieuQHvKVfSxrvPrPeySb?=
- =?us-ascii?Q?t066ybShVhe6lEuNd7jDrsPZ3owU4c1NpFRktVTT+1AKwtDPv6TENv7H4JlT?=
- =?us-ascii?Q?ixstQJJXwUJU565Wa0WHdZ6V9w5zqFb9XE7pCJtKJ/KRXHu/MgxznSmHmB93?=
- =?us-ascii?Q?tl0GtVrH3hlUpJtnNT3P7xp//6rKtYWZ6C4wQGBvYlodgjXrg+5D2qfNM6yK?=
- =?us-ascii?Q?65v0jrAGJnCA77yyNWpRizIGN378Mr7LAyuNokKRRJ58qtKcNeRVGaiv6O6d?=
- =?us-ascii?Q?LAFWkRz7FTPLmNtV3skkGnSVcGolg8ih4Xi+Omxsm+5OL/WUu/iKQCYjc5cd?=
- =?us-ascii?Q?+ozUMfDDRz+zYxL7qbCA/IlQAaLChvfqVCQZtChz2d9Pv7i8xmDem8LHHDHO?=
- =?us-ascii?Q?zIQlNcw6ecINxNN4T+k4FrMBwbuuRpZs+2i2HDEnd1UM3Y9iYPSkVIF7Yvwg?=
- =?us-ascii?Q?2oS7bw8LOcSo01M5CnwAM+MXyVfa2YNgbjINpMjSjcC8NA4Kb2XC21m7ybJd?=
- =?us-ascii?Q?wMhuI6mIkNHhRJquUPlywkNbsxx+EgfeUMBPIfx5uxSMrn1T6O8zDqVSx3+5?=
- =?us-ascii?Q?i/qC4PThrC5HvDxlQzBgFWtSBC20nyXKvY0eJ48daMfBwehL3pB01e6mdWwC?=
- =?us-ascii?Q?weYMb2yglyLZE2jr4eLhusc6K7fShBid44eRouTqAumg4RuIIfKrWa74465y?=
- =?us-ascii?Q?gvNJojRKxO1A/bNMJ5CxiTGer3WLigYw4uMSyHQ+FUJz5saIwitz65VlOsj1?=
- =?us-ascii?Q?d8npu8WPj1wm0f15n4QceswZde/rL8Eysa2Kl6veLtORiaZMt/phDgUKZVeA?=
- =?us-ascii?Q?NZcDWSVlQuOndS3qedgqhGduwaFZrHdQxWRZmD2tuEcBrpD3oN4FvXsoBqZO?=
- =?us-ascii?Q?pT6I02c3ZI+WEJDGGbQcyuw6/M6F/njlEgUzQ/waAHsemrWpUMwqgVqmY2Vs?=
- =?us-ascii?Q?Ws4VCZ56VdrqK+LDtNTWh+Ij+6/b?=
-X-Forefront-Antispam-Report:
-	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: leica-geosystems.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 12:07:43.3799
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02af0b58-1fdb-4f5f-d8f0-08dce46d26e2
-X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00027A5D.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR06MB7775
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004102413.5838-9-SkyLake.Huang@mediatek.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Reset controls are refcounted and as such allows to use shared resets or
-gpios across drivers. Add support for reset control while keeping in
-place the support for gpios. Use compatible string to choose between
-reset control ("mmc-pwrseq-simple-reset") and reset gpios
-("mmc-pwrseq-simple"). Only one reset control is supported.
+Hi,
 
-Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
----
- drivers/mmc/core/pwrseq_simple.c | 58 ++++++++++++++++++++++++++------
- 1 file changed, 48 insertions(+), 10 deletions(-)
+On Fri, Oct 04, 2024 at 06:24:12PM +0800, Sky Huang wrote:
+> diff --git a/drivers/net/phy/mediatek/mtk-ge-soc.c b/drivers/net/phy/mediatek/mtk-ge-soc.c
+> index 26c2183..cb6838b 100644
+> --- a/drivers/net/phy/mediatek/mtk-ge-soc.c
+> +++ b/drivers/net/phy/mediatek/mtk-ge-soc.c
+> @@ -295,7 +295,8 @@ static int cal_cycle(struct phy_device *phydev, int devad,
+>  	ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+>  					MTK_PHY_RG_AD_CAL_CLK, reg_val,
+>  					reg_val & MTK_PHY_DA_CAL_CLK, 500,
+> -					ANALOG_INTERNAL_OPERATION_MAX_US, false);
+> +					ANALOG_INTERNAL_OPERATION_MAX_US,
+> +					false);
 
-diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
-index 9e016b0746f5..6495b97d48d9 100644
---- a/drivers/mmc/core/pwrseq_simple.c
-+++ b/drivers/mmc/core/pwrseq_simple.c
-@@ -17,11 +17,17 @@
- #include <linux/gpio/consumer.h>
- #include <linux/delay.h>
- #include <linux/property.h>
-+#include <linux/of.h>
-+#include <linux/reset.h>
- 
- #include <linux/mmc/host.h>
- 
- #include "pwrseq.h"
- 
-+struct mmc_pwrseq_simple_data {
-+	bool use_reset;
-+};
-+
- struct mmc_pwrseq_simple {
- 	struct mmc_pwrseq pwrseq;
- 	bool clk_enabled;
-@@ -29,6 +35,8 @@ struct mmc_pwrseq_simple {
- 	u32 power_off_delay_us;
- 	struct clk *ext_clk;
- 	struct gpio_descs *reset_gpios;
-+	struct reset_control *reset_ctrl;
-+	const struct mmc_pwrseq_simple_data *data;
- };
- 
- #define to_pwrseq_simple(p) container_of(p, struct mmc_pwrseq_simple, pwrseq)
-@@ -67,14 +75,21 @@ static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
- 		pwrseq->clk_enabled = true;
- 	}
- 
--	mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
-+	if (pwrseq->data->use_reset) {
-+		reset_control_deassert(pwrseq->reset_ctrl);
-+		reset_control_assert(pwrseq->reset_ctrl);
-+	} else
-+		mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
- }
- 
- static void mmc_pwrseq_simple_post_power_on(struct mmc_host *host)
- {
- 	struct mmc_pwrseq_simple *pwrseq = to_pwrseq_simple(host->pwrseq);
- 
--	mmc_pwrseq_simple_set_gpios_value(pwrseq, 0);
-+	if (pwrseq->data->use_reset)
-+		reset_control_deassert(pwrseq->reset_ctrl);
-+	else
-+		mmc_pwrseq_simple_set_gpios_value(pwrseq, 0);
- 
- 	if (pwrseq->post_power_on_delay_ms)
- 		msleep(pwrseq->post_power_on_delay_ms);
-@@ -84,7 +99,10 @@ static void mmc_pwrseq_simple_power_off(struct mmc_host *host)
- {
- 	struct mmc_pwrseq_simple *pwrseq = to_pwrseq_simple(host->pwrseq);
- 
--	mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
-+	if (pwrseq->data->use_reset)
-+		reset_control_assert(pwrseq->reset_ctrl);
-+	else
-+		mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
- 
- 	if (pwrseq->power_off_delay_us)
- 		usleep_range(pwrseq->power_off_delay_us,
-@@ -102,8 +120,17 @@ static const struct mmc_pwrseq_ops mmc_pwrseq_simple_ops = {
- 	.power_off = mmc_pwrseq_simple_power_off,
- };
- 
-+struct mmc_pwrseq_simple_data mmc_pwrseq_simple_gpio = {
-+	.use_reset = false,
-+};
-+
-+struct mmc_pwrseq_simple_data mmc_pwrseq_simple_reset = {
-+	.use_reset = true,
-+};
-+
- static const struct of_device_id mmc_pwrseq_simple_of_match[] = {
--	{ .compatible = "mmc-pwrseq-simple",},
-+	{ .compatible = "mmc-pwrseq-simple", .data = &mmc_pwrseq_simple_gpio },
-+	{ .compatible = "mmc-pwrseq-simple-reset", .data = &mmc_pwrseq_simple_reset },
- 	{/* sentinel */},
- };
- MODULE_DEVICE_TABLE(of, mmc_pwrseq_simple_of_match);
-@@ -121,12 +148,23 @@ static int mmc_pwrseq_simple_probe(struct platform_device *pdev)
- 	if (IS_ERR(pwrseq->ext_clk) && PTR_ERR(pwrseq->ext_clk) != -ENOENT)
- 		return dev_err_probe(dev, PTR_ERR(pwrseq->ext_clk), "external clock not ready\n");
- 
--	pwrseq->reset_gpios = devm_gpiod_get_array(dev, "reset",
--							GPIOD_OUT_HIGH);
--	if (IS_ERR(pwrseq->reset_gpios) &&
--	    PTR_ERR(pwrseq->reset_gpios) != -ENOENT &&
--	    PTR_ERR(pwrseq->reset_gpios) != -ENOSYS) {
--		return dev_err_probe(dev, PTR_ERR(pwrseq->reset_gpios), "reset GPIOs not ready\n");
-+	pwrseq->data = of_device_get_match_data(dev);
-+	if (!pwrseq->data)
-+		return -EINVAL;
-+
-+	if (pwrseq->data->use_reset) {
-+		pwrseq->reset_ctrl = devm_reset_control_get_optional_shared(dev, NULL);
-+		if (IS_ERR(pwrseq->reset_ctrl))
-+			return dev_err_probe(dev, PTR_ERR(pwrseq->reset_ctrl),
-+					     "reset controls not ready\n");
-+	} else {
-+		pwrseq->reset_gpios = devm_gpiod_get_array(dev, "reset", GPIOD_OUT_HIGH);
-+		if (IS_ERR(pwrseq->reset_gpios) &&
-+		    PTR_ERR(pwrseq->reset_gpios) != -ENOENT &&
-+		    PTR_ERR(pwrseq->reset_gpios) != -ENOSYS) {
-+			return dev_err_probe(dev, PTR_ERR(pwrseq->reset_gpios),
-+					     "reset GPIOs not ready\n");
-+		}
- 	}
- 
- 	device_property_read_u32(dev, "post-power-on-delay-ms",
+This is fine.
+
+>  	if (ret) {
+>  		phydev_err(phydev, "Calibration cycle timeout\n");
+>  		return ret;
+> @@ -304,7 +305,7 @@ static int cal_cycle(struct phy_device *phydev, int devad,
+>  	phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1, MTK_PHY_RG_AD_CALIN,
+>  			   MTK_PHY_DA_CALIN_FLAG);
+>  	ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, MTK_PHY_RG_AD_CAL_COMP) >>
+> -			   MTK_PHY_AD_CAL_COMP_OUT_SHIFT;
+> +	      MTK_PHY_AD_CAL_COMP_OUT_SHIFT;
+
+Before cleaning this up, please first make it propagate any error code
+correctly (a bug fix):
+
+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, MTK_PHY_RG_AD_CAL_COMP);
+	if (ret < 0)
+		return ret;
+
+	ret >>= MTK_PHY_AD_CAL_COMP_OUT_SHIFT;
+
+and then you won't need to change it in this patch. A better solution to
+the shift would be to look at FIELD_GET().
+
+>  	phydev_dbg(phydev, "cal_val: 0x%x, ret: %d\n", cal_val, ret);
+>  
+>  	return ret;
+> @@ -394,38 +395,46 @@ static int tx_amp_fill_result(struct phy_device *phydev, u16 *buf)
+>  	}
+>  
+>  	phy_modify_mmd(phydev, MDIO_MMD_VEND1, MTK_PHY_TXVLD_DA_RG,
+> -		       MTK_PHY_DA_TX_I2MPB_A_GBE_MASK, (buf[0] + bias[0]) << 10);
+> +		       MTK_PHY_DA_TX_I2MPB_A_GBE_MASK,
+> +		       (buf[0] + bias[0]) << 10);
+
+Another cleanup would be to use FIELD_PREP() for these.
+
+> -static const unsigned long supported_triggers = (BIT(TRIGGER_NETDEV_FULL_DUPLEX) |
+> -						 BIT(TRIGGER_NETDEV_HALF_DUPLEX) |
+> -						 BIT(TRIGGER_NETDEV_LINK)        |
+> -						 BIT(TRIGGER_NETDEV_LINK_10)     |
+> -						 BIT(TRIGGER_NETDEV_LINK_100)    |
+> -						 BIT(TRIGGER_NETDEV_LINK_1000)   |
+> -						 BIT(TRIGGER_NETDEV_RX)          |
+> -						 BIT(TRIGGER_NETDEV_TX));
+> +static const unsigned long supported_triggers =
+> +	(BIT(TRIGGER_NETDEV_FULL_DUPLEX) |
+> +	 BIT(TRIGGER_NETDEV_HALF_DUPLEX) |
+> +	 BIT(TRIGGER_NETDEV_LINK)        |
+> +	 BIT(TRIGGER_NETDEV_LINK_10)     |
+> +	 BIT(TRIGGER_NETDEV_LINK_100)    |
+> +	 BIT(TRIGGER_NETDEV_LINK_1000)   |
+> +	 BIT(TRIGGER_NETDEV_RX)          |
+> +	 BIT(TRIGGER_NETDEV_TX));
+
+The outer parens are unnecessary, and thus could be removed.
+
+Thanks.
+
 -- 
-2.34.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
