@@ -1,179 +1,349 @@
-Return-Path: <linux-kernel+bounces-349916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7AD398FD4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:25:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB87598FD57
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0106DB22486
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F69283CE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E062612CDAE;
-	Fri,  4 Oct 2024 06:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A032C12BF02;
+	Fri,  4 Oct 2024 06:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrIS+4y+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BdIsqzfY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F25A55;
-	Fri,  4 Oct 2024 06:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFD54437F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 06:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728023107; cv=none; b=N5iJTFp1yKIyrE7LRRVTTpzaSEeIq3uhXe9coKOlb7PD8TuybNLoLLQGd4QstXI9bRDiyRq2R4GNroxnbc4UWBNwF57P6TXhcYorbjiP36J0vH7bpj+R42Ucha/nMGW0eKZItfl51O5v3B7n92zVNY+3cwLfJiAI6CkDintBPbI=
+	t=1728023452; cv=none; b=SrI7R8godb3UAYsE7NEf8DAcYitDPBv6fToEOIOm9fkq8xQToNgJ+ujL0HlmO7ofJ2tF+8MENktarHSf/wOQ5cRRwbymt/0JndIM5WlugBlEJs1JDxLBZmd63wj7htQjpBHTIF9PnNvLm7PrLX57vB5xfF+D/nCOYVuAPhSJOtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728023107; c=relaxed/simple;
-	bh=QLlbe7kMB+b9u7ZG3irWvRK0uRuPGQO24j2MgfFK5EY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IY4Ib39wmXAa4BlA0lMni1MWkkVHc/9VO5Di2EZyMV/aeXJqG5x0LzDkL5MXO2+Kt9CE94xXNGDOKuoWMfUbFbgXhHZFswGROwWalX+Zxa669N+f/0ZELSSyAx4fjA0fIVI25+7XERS9FoBAPHINXPmbcykolME1qIRTdhNnYuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrIS+4y+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC17C4CEC6;
-	Fri,  4 Oct 2024 06:24:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728023106;
-	bh=QLlbe7kMB+b9u7ZG3irWvRK0uRuPGQO24j2MgfFK5EY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WrIS+4y+bVQsJZ2N5ELjeQLmRaCNi0iV5mBdewlZ9/HlEVqMEj3x/UxXvgYbq3HBG
-	 OptA/6pJNiyQTaf/ypXbnBhrXjL4wF1TGLPydRUAdTFgl4F3g7p4jFYUUbQ8WWEh0Q
-	 S3EynK4slr4vG3wZizivpclUHqKDSyXTs4dMhiN1F+ejiqYfJ6LDF7hY9W2ycqC+0m
-	 +Bad2Vi2d6YR97s6k4DuYx6hv/r/r6BQ8o3dPTKTPEtNwN6mNLS2k/kno717/0+ahM
-	 /1j4t8hh/rmw1OjW7/SWEJvilCMMyjtlqA8x0RB5JfrLUnsoYxUHy6s3DTQraEBw/s
-	 5tPaKj8sj3odQ==
-Message-ID: <39dcfa4b-1a22-4296-b190-ac39480d034a@kernel.org>
-Date: Fri, 4 Oct 2024 08:24:52 +0200
+	s=arc-20240116; t=1728023452; c=relaxed/simple;
+	bh=LaGiGAECZr45n/baVNQi60sTw49ldZJO96unEcccBlU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EiNlor+TL5/ca+2gp+RI8qCDoZANmTgSHk1IwZzsJVe2zDbGIC22EfFyUdzP+ZZM2JAbcXhk4MkTRYfzPZ3kf480a1HKJp8MfNxYvQBsmyPUTewkrys8MKiEQOvsa75tK3REemRy4Top9l9LY3Hi4+noey1eYOUEwRcs9b6sCdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BdIsqzfY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728023449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+I9rmxkkilny0d+zpLla4rs5gqMYbuLbi7iIDhgZOGY=;
+	b=BdIsqzfYLiOHUufDd5kORWzCYVNXc0yu5deudXadZxxzGPAvRpy+YzU1xTiVjeaaks7MP7
+	ZkJCZ0Dh+WDQfK7Oj4P+5ptZXshpuN+imksgWl5mUAM0no7P8xm5BsA+BdUEm2s1h0iSbz
+	+R5m4sr6ornltSK2EjD4yAn9LlKXC7g=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-213-pO-Ians7Oca1jrXPk4WwaA-1; Fri, 04 Oct 2024 02:30:48 -0400
+X-MC-Unique: pO-Ians7Oca1jrXPk4WwaA-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2e18d5b9a25so2301930a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 23:30:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728023446; x=1728628246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+I9rmxkkilny0d+zpLla4rs5gqMYbuLbi7iIDhgZOGY=;
+        b=bYn0fs6yHGAnZHmdGRc2X2AhkR3j8uICdvbW0/+Zhn43kSIAwWrPmDwPHs9IfKAYh/
+         Y+qvHlcCQLTz/91mtfrNlsdCbpRFHmZc23ELe/OryDOLVLGJzN0423A8Ni+2LizFnX3N
+         GeTm0aZSX/4K819Mq4ehjQoO+DJ6U0rJdnduQTkNXKt8GbxgjWvurns6Mo1aDklLkuMB
+         T5LA4FdivgMNLtw/i4TvhpoK5wbSUtZ3obLyRou6hbu704sb3dhCX+U41bSuU9jm2lRF
+         d3yWddGpr7Vrr8HtN6AosdjBgYqEwdXQtDzWrFctBrmp/+CGwSwriAEquyR8MsJjHP5X
+         yZmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZI7Su3WFWhDcF4uQu90oaGTIM+276et/NYQINgPUYOObUeMVrmmlXhQRqgfeGdJ57AhSIh7r8BRwQKAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhkudFTVzZUmurkXtKrVoHM+IzJUPLyPsFrrrAvMVWzoA7MeEQ
+	fs/gz+B+GCS8QhW1On6VBB3e+o4vbGi30LQrVvXqsFsFbpDIFn4bWJuCxzPes07ItKN/JZGJWwy
+	cXAq8TtT//CPUJuiayzGeDd5p0gKkjxhPRmp6feMM9OIN5w8B5RI6dgCf7S2lHFNuhUEcAaTc6z
+	kFCiQJHy9Yr+W8tLq9Baa6x0SWUYSDPLDn6ZEQHzuCnp891eI=
+X-Received: by 2002:a17:90a:5511:b0:2e1:89aa:65b7 with SMTP id 98e67ed59e1d1-2e1e621d451mr2203491a91.9.1728023446442;
+        Thu, 03 Oct 2024 23:30:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxUTZiay529AOqdX6JJRM2qykWvfiZx9Ht9ZYHN/gKSBxdgyT+RO2tCdRamuPyc5zPfHok6h13smnQ7MSlMaM=
+X-Received: by 2002:a17:90a:5511:b0:2e1:89aa:65b7 with SMTP id
+ 98e67ed59e1d1-2e1e621d451mr2203474a91.9.1728023446086; Thu, 03 Oct 2024
+ 23:30:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 5/5] documentation: use nvmem-layout in examples
-To: Rosen Penev <rosenp@gmail.com>, devicetree@vger.kernel.org
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- William Zhang <william.zhang@broadcom.com>,
- Anand Gore <anand.gore@broadcom.com>, Kursad Oney
- <kursad.oney@broadcom.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <rafal@milecki.pl>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Christian Marangi <ansuelsmth@gmail.com>,
- "open list:MEMORY TECHNOLOGY DEVICES (MTD)" <linux-mtd@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
- "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
- "moderated list:BROADCOM BCMBCA ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "moderated list:ARM/Mediatek SoC support"
- <linux-mediatek@lists.infradead.org>
-References: <20241004000015.544297-1-rosenp@gmail.com>
- <20241004000015.544297-6-rosenp@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241004000015.544297-6-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241002093037.50875-1-hpa@redhat.com> <70231d35-a114-4b26-92c7-d33fec01d2b5@wanadoo.fr>
+In-Reply-To: <70231d35-a114-4b26-92c7-d33fec01d2b5@wanadoo.fr>
+From: Kate Hsuan <hpa@redhat.com>
+Date: Fri, 4 Oct 2024 14:30:34 +0800
+Message-ID: <CAEth8oG-FjR+TDE_bd94i3ODaVBJGAuouXyoTrSPtfrM+OOJPg@mail.gmail.com>
+Subject: Re: [PATCH] media: Add t4ka3 camera sensor driver
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans de Goede <hdegoede@redhat.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/10/2024 02:00, Rosen Penev wrote:
-> nvmem-cells are deprecated and replaced with nvmem-layout. For these
-> examples, replace. They're not relevant to the main point of the
-> document anyway.
+Hi Christophe,
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Thank you for reviewing.
 
+On Thu, Oct 3, 2024 at 5:03=E2=80=AFAM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Le 02/10/2024 =C3=A0 11:30, Kate Hsuan a =C3=A9crit :
+> > Add the t4ka3 driver from:
+> > https://github.com/kitakar5525/surface3-atomisp-cameras.git
+> >
+> > With many cleanups / changes (almost a full rewrite) to make it suitabl=
+e
+> > for upstream:
+> >
+> > * Remove the VCM and VCM-OTP support, the mainline kernel models VCMs a=
+nd
+> >    calibration data eeproms as separate v4l2-subdev-s.
+> >
+> > * Remove the integration-factor t4ka3_get_intg_factor() support and IOC=
+TL,
+> >    this provided info to userspace through an atomisp private IOCTL.
+> >
+> > * Turn atomisp specific exposure/gain IOCTL into standard v4l2 controls=
+.
+> >
+> > * Use normal ACPI power-management in combination with runtime-pm suppo=
+rt
+> >    instead of atomisp specific GMIN power-management code.
+> >
+> > * Turn into a standard V4L2 sensor driver using
+> >    v4l2_async_register_subdev_sensor().
+> >
+> > * Add vblank, hblank, and link-freq controls; drop get_frame_interval()=
+.
+> >
+> > * Use CCI register helpers.
+> >
+> > * Calculate values for modes instead of using fixed register-value list=
+s,
+> >    allowing arbritrary modes.
+> >
+> > * Add get_selection() and set_selection() support
+> >
+> > * Add a CSI2 bus configuration check
+> >
+> > This been tested on a Xiaomi Mipad2 tablet which has a T4KA3 sensor wit=
+h
+> > DW9761 VCM as back sensor.
+> >
+> > Co-developed-by: Hans de Goede <hdegoede@redhat.com>
+> > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> > Signed-off-by: Kate Hsuan <hpa@redhat.com>
+> > ---
+>
+> Hi,
+>
+> a few comments, should it help.
+>
+> > +static int t4ka3_s_stream(struct v4l2_subdev *sd, int enable)
+> > +{
+> > +     struct t4ka3_data *sensor =3D to_t4ka3_sensor(sd);
+> > +     int ret;
+> > +
+> > +     mutex_lock(&sensor->lock);
+> > +
+> > +     if (sensor->streaming =3D=3D enable) {
+> > +             dev_warn(sensor->dev, "Stream already %s\n", enable ? "st=
+arted" : "stopped");
+> > +             goto error_unlock;
+> > +     }
+> > +
+> > +     if (enable) {
+> > +             ret =3D pm_runtime_get_sync(sensor->sd.dev);
+> > +             if (ret) {
+> > +                     dev_err(sensor->dev, "power-up err.\n");
+> > +                     goto error_unlock;
+> > +             }
+> > +
+> > +             cci_multi_reg_write(sensor->regmap, t4ka3_init_config,
+> > +                                 ARRAY_SIZE(t4ka3_init_config), &ret);
+> > +             /* enable group hold */
+> > +             cci_write(sensor->regmap, T4KA3_REG_PARAM_HOLD, 1, &ret);
+> > +             cci_multi_reg_write(sensor->regmap, t4ka3_pre_mode_set_re=
+gs,
+> > +                                 ARRAY_SIZE(t4ka3_pre_mode_set_regs), =
+&ret);
+> > +             if (ret)
+> > +                     goto error_powerdown;
+> > +
+> > +             ret =3D t4ka3_set_mode(sensor);
+> > +             if (ret)
+> > +                     goto error_powerdown;
+> > +
+> > +             ret =3D cci_multi_reg_write(sensor->regmap, t4ka3_post_mo=
+de_set_regs,
+> > +                                       ARRAY_SIZE(t4ka3_post_mode_set_=
+regs), NULL);
+> > +             if (ret)
+> > +                     goto error_powerdown;
+> > +
+> > +             /* Restore value of all ctrls */
+> > +             ret =3D __v4l2_ctrl_handler_setup(&sensor->ctrls.handler)=
+;
+> > +             if (ret)
+> > +                     goto error_powerdown;
+> > +
+> > +             /* disable group hold */
+> > +             cci_write(sensor->regmap, T4KA3_REG_PARAM_HOLD, 0, &ret);
+> > +             cci_write(sensor->regmap, T4KA3_REG_STREAM, 1, &ret);
+> > +             if (ret)
+> > +                     goto error_powerdown;
+> > +
+> > +             sensor->streaming =3D 1;
+> > +     } else {
+> > +             ret =3D cci_write(sensor->regmap, T4KA3_REG_STREAM, 0, NU=
+LL);
+> > +             if (ret)
+> > +                     goto error_powerdown;
+> > +
+> > +             ret =3D pm_runtime_put(sensor->sd.dev);
+> > +             if (ret)
+> > +                     goto error_unlock;
+> > +
+> > +             sensor->streaming =3D 0;
+> > +     }
+> > +
+> > +     mutex_unlock(&sensor->lock);
+> > +     return ret;
+> > +
+> > +error_powerdown:
+> > +     ret =3D pm_runtime_put(sensor->sd.dev);
+>
+> I think that the "ret =3D " should be removed here.
 
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  .../mtd/partitions/qcom,smem-part.yaml        | 19 +++++++++++--------
->  .../bindings/net/marvell,aquantia.yaml        | 13 ++++++++-----
->  2 files changed, 19 insertions(+), 13 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-> index 1c2b4e780ca9..8ae149534b23 100644
-> --- a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-> +++ b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-> @@ -45,17 +45,20 @@ examples:
->              compatible = "qcom,smem-part";
->  
->              partition-art {
-> -                compatible = "nvmem-cells";
-> -                #address-cells = <1>;
-> -                #size-cells = <1>;
->                  label = "0:art";
->  
-> -                macaddr_art_0: macaddr@0 {
-> -                    reg = <0x0 0x6>;
-> -                };
-> +                nvmem-layout {
-> +                    compatible = "fixed-layout";
+Okay, make sense.
 
-This does not look right - the binding still expects nvmem-cells. I
-wonder how does the nvmem-cells.yaml work if the compatible is being
-removed so it is not being selected.
+>
+> > +error_unlock:
+> > +     mutex_unlock(&sensor->lock);
+> > +     return ret;
+> > +}
+>
+> ...
+>
+> > +static int t4ka3_probe(struct i2c_client *client)
+> > +{
+> > +     struct t4ka3_data *sensor;
+> > +     int ret;
+> > +
+> > +     /* allocate sensor device & init sub device */
+> > +     sensor =3D devm_kzalloc(&client->dev, sizeof(*sensor), GFP_KERNEL=
+);
+> > +     if (!sensor)
+> > +             return -ENOMEM;
+> > +
+> > +     sensor->dev =3D &client->dev;
+> > +
+> > +     ret =3D t4ka3_check_hwcfg(sensor);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     mutex_init(&sensor->lock);
+> > +
+> > +     sensor->link_freq[0] =3D T4KA3_LINK_FREQ;
+> > +     sensor->mode.crop =3D t4ka3_default_crop;
+> > +     t4ka3_fill_format(sensor, &sensor->mode.fmt, T4KA3_ACTIVE_WIDTH, =
+T4KA3_ACTIVE_HEIGHT);
+> > +     t4ka3_calc_mode(sensor);
+> > +
+> > +     v4l2_i2c_subdev_init(&(sensor->sd), client, &t4ka3_ops);
+> > +     sensor->sd.internal_ops =3D &t4ka3_internal_ops;
+> > +
+> > +     sensor->powerdown_gpio =3D devm_gpiod_get(&client->dev, "powerdow=
+n",
+> > +                                             GPIOD_OUT_HIGH);
+> > +     if (IS_ERR(sensor->powerdown_gpio))
+> > +             return dev_err_probe(&client->dev, PTR_ERR(sensor->powerd=
+own_gpio),
+> > +                                  "getting powerdown GPIO\n");
+> > +
+> > +     sensor->reset_gpio =3D devm_gpiod_get_optional(&client->dev, "res=
+et",
+> > +                                                  GPIOD_OUT_HIGH);
+> > +     if (IS_ERR(sensor->reset_gpio))
+> > +             return dev_err_probe(&client->dev, PTR_ERR(sensor->reset_=
+gpio),
+> > +                                  "getting reset GPIO\n");
+> > +
+> > +     pm_runtime_set_suspended(&client->dev);
+> > +     pm_runtime_enable(&client->dev);
+> > +     pm_runtime_set_autosuspend_delay(&client->dev, 1000);
+> > +     pm_runtime_use_autosuspend(&client->dev);
+> > +
+> > +     sensor->regmap =3D devm_cci_regmap_init_i2c(client, 16);
+> > +     if (IS_ERR(sensor->regmap))
+> > +             return PTR_ERR(sensor->regmap);
+>
+> I thing this should goto err_pm_runtime;
 
+Okay, I'll get the regmap information before setting up runtime pm.
+So, probe() can return without diable the pm.
 
-Best regards,
-Krzysztof
+>
+> > +
+> > +     ret =3D t4ka3_s_config(&sensor->sd);
+> > +     if (ret)
+> > +             goto err_pm_runtime;
+> > +
+> > +     sensor->sd.flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE;
+> > +     sensor->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+> > +     sensor->sd.entity.function =3D MEDIA_ENT_F_CAM_SENSOR;
+> > +
+> > +     ret =3D t4ka3_init_controls(sensor);
+> > +     if (ret)
+> > +             goto err_controls;
+> > +
+> > +     ret =3D media_entity_pads_init(&sensor->sd.entity, 1, &sensor->pa=
+d);
+> > +     if (ret)
+> > +             goto err_controls;
+> > +
+> > +     ret =3D v4l2_async_register_subdev_sensor(&sensor->sd);
+> > +     if (ret)
+> > +             goto err_media_entity;
+> > +
+> > +     return 0;
+> > +
+> > +err_media_entity:
+> > +     media_entity_cleanup(&sensor->sd.entity);
+> > +err_controls:
+> > +     v4l2_ctrl_handler_free(&sensor->ctrls.handler);
+> > +err_pm_runtime:
+> > +     pm_runtime_disable(&client->dev);
+> > +     return ret;
+> > +}
+> > +
+> > +static struct acpi_device_id t4ka3_acpi_match[] =3D {
+> > +     { "XMCC0003" },
+> > +     {},
+>
+> No need for ending comma after terminator.
+Okay.
+
+>
+> > +};
+>
+> ...
+>
+> CJ
+>
+
+I'll propose a v2 patch to include the improvements.
+
+--=20
+BR,
+Kate
 
 
