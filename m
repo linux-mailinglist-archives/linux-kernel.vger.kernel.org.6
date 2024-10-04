@@ -1,304 +1,98 @@
-Return-Path: <linux-kernel+bounces-350156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B6E990093
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:10:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0011990096
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7D211C23BD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:10:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 862781C23BF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CEE14B946;
-	Fri,  4 Oct 2024 10:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gHo35eFx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B84514AD32;
+	Fri,  4 Oct 2024 10:11:27 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3843514A0B9
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B81E14A095
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728036631; cv=none; b=QxugsmUMxDwxAa7Q6gzCQfzGYkHlVnKYhkkOY1LrD6BIW0ErMU3PsWutM7iQjQB4xn05+2XcHgukFPKIPZtYE52HYahbkpFGFpM4c18tRG1FUf2erEd+YsWq/6rqVdh5JuQfjb30gBD2OYm4bYEJTmlRHA/5ZYUTq1Fj1KrGhY8=
+	t=1728036686; cv=none; b=SFJ6FWicTnUEAeHB+v+XM0CRVLwskFYKMsRR0KaaXK9C9mXN7oAG1015Diu/wpZDDIS1rrwq9Ykzya2B3dkIW1wNu1LS55a9vWpC0th1m6E5RLJ+3IkxRtGVaniioOq1APsaP7nys9HM5WT/PbOXu7EDO4vNZ2H9v7TN6K8XNiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728036631; c=relaxed/simple;
-	bh=cbPszOCbBhjcg6DhE8k/CQH5gCsEbG59fQMrmoBU6Yo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XQKMJPdF1d1Hzby7z0fXlBzfewIqJ9CmJ6ZVobqxRpgRV+6LowavVlAllMRpfSPw3gLkX+2YUQOz4vXwVW2ccv/3d/l6uphY+ehh7cf/nSnKVnX/OObFmFhYvDPIlqzXmLH3y5IkE8RJWSe1MZgIFdUeOQurxfDgV2PUCsrRU4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gHo35eFx; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728036630; x=1759572630;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cbPszOCbBhjcg6DhE8k/CQH5gCsEbG59fQMrmoBU6Yo=;
-  b=gHo35eFxlKRFJfSPX5nLzmfcWEETw/0ZBMrMos9g6w3BYpGYeTJYjCSx
-   kv998Xwy9Fmm5DUMcwAKskEhb77YSzYEMNZqvkNQY+sV/LTyBW3f7Yp6M
-   KSWONEL/pF/cDTsABxKe3fnQeiTee/K4w02MKLzEXdVYzQr2qVlvkPCZb
-   CWFhi0gnUaBqhUr5fiE6LNmU9rCxS5m3RK7ZkSx3wbIlBrT8y3UttYNqb
-   MNlrIgDoTwlK15rsdlVl30H700rRSKGBvsOTmG+lplqeelp0dFmrhQ/Qx
-   JnnXcuN7T+VIsCjzYaAkr7TtouI+rNVIMKiXnv1PFNrf/2FITWUApaEDt
-   g==;
-X-CSE-ConnectionGUID: Dn//wk1GTn6rLnE5x15WOA==
-X-CSE-MsgGUID: KlMyR3EHTdOj+1HvoPoIxQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="44784895"
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="44784895"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 03:10:30 -0700
-X-CSE-ConnectionGUID: oXfu1ehtSBCJqK2UHrEfkg==
-X-CSE-MsgGUID: 1cI0wbkfQsGC4/DcQC62vg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="74658823"
-Received: from olympicsflex1.amr.corp.intel.com (HELO tkristo-desk.intel.com) ([10.245.245.54])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 03:10:28 -0700
-From: Tero Kristo <tero.kristo@linux.intel.com>
-To: 
-Cc: linux-kernel@vger.kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	linux-nvme@lists.infradead.org,
-	sagi@grimberg.me,
-	kbusch@kernel.org
-Subject: [PATCH 1/1] nvme-pci: Add CPU latency pm-qos handling
-Date: Fri,  4 Oct 2024 13:09:28 +0300
-Message-ID: <20241004101014.3716006-2-tero.kristo@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004101014.3716006-1-tero.kristo@linux.intel.com>
-References: <20241004101014.3716006-1-tero.kristo@linux.intel.com>
+	s=arc-20240116; t=1728036686; c=relaxed/simple;
+	bh=x2O7TS00RicfPt6G+WI0X138zcI334CP9Dx2o5AECSg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aIyBa7N2VtfTUZ5PYYgeEHjE0YuN90p+4okWD/qTUGVfJk/diXfuoJhxM8fWH5XKpy5RaDhP+/77pL4S/6dylLqIOQIpp+RmP0nI5GBdUOCIzB7aD97GmB65ZS/S+fWSv4dF8uYz+siNUdr44O/2xceOv/OwPUkmCWhb4XDL+JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0ce3a623eso17126765ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 03:11:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728036684; x=1728641484;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vgrEqgbT4gTBIvHYHiHmpH8MQDGJqj6FO+l00kf1JG4=;
+        b=UGOcpgJofc8FsQO3GPdBfy0kLPIcOVgSxFKJ43FJ4TobT1+pwA9LJ5lOyEay+oKZk2
+         GTOlHDFvMaxtMKQa000ACT+i8guMjQEDvUOOOeDRrP6XwhxlwpfpAizrigkTFR4bdQDJ
+         sXCZ2cd7VKZtA9K/TFprPxDyIteTCHKQ+iZpa14NXUXB97YKYwMAavdasJ12kSFLK/91
+         oTc+6f0WMd6pzNl8AC9b0H0T02ZYvcoPiaNRcgMX1iZnyY+TVqTE3P+MbYRdxVa7LE5G
+         firIr8kiMiUxS33PSHETWJJ5NeOGuDX7y+2TQNM5MYWaye0vsTgbvN+rvs2gPELcWvOk
+         ZzoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVh7xiVikkeboBZuk3DlPlNRfOXodTCaUMhfHSetbkiQGLNeUGSjG1Y3a7yRaNFcpyKraP4W2EF/QXVQbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC76tgKwPLDazZkG9lENHf5NVZAt7x59iHiMuOoRfEhLTjSPmy
+	kK4zX6yNyhn6xxOYdyHXyAZTK8VCFuYbInvlptwz84lOPeER8+HCJFnN84VN5c5twGaUTsyXEaX
+	fTAspo6EbEUXefCYFUP4XKek2fWI75QKcqD+PuhI4GCvwhu+6xQLzyN0=
+X-Google-Smtp-Source: AGHT+IEgF5qLKJShXi+y0+519ebwQbROqt63ZqpT+BMHXJSu3IlAa1Ve+1roHFw52YWzrTjljzxhlo4344nJtZBgasj5o0CIA5MH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1c8b:b0:3a0:8d2f:2914 with SMTP id
+ e9e14a558f8ab-3a375bd4f33mr21615385ab.23.1728036684412; Fri, 04 Oct 2024
+ 03:11:24 -0700 (PDT)
+Date: Fri, 04 Oct 2024 03:11:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ffbf4c.050a0220.49194.0485.GAE@google.com>
+Subject: [syzbot] Monthly can report (Oct 2024)
+From: syzbot <syzbot+list142a88e98c5a6a6358e7@syzkaller.appspotmail.com>
+To: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mkl@pengutronix.de, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for limiting CPU latency while NVME IO is running. When a
-NVME IO is started, it will add a user configurable CPU latency limit
-in place (if any.) The limit is removed after 3ms of inactivity.
+Hello can maintainers/developers,
 
-The CPU latency limit is configurable via a sysfs parameter;
-cpu_latency_us under the NVME device.
+This is a 31-day syzbot report for the can subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/can
 
-Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
+During the period, 1 new issues were detected and 1 were fixed.
+In total, 5 issues are still open and 53 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 4408    Yes   WARNING: refcount bug in j1939_session_put
+                  https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
+<2> 2347    Yes   WARNING: refcount bug in j1939_xtp_rx_cts
+                  https://syzkaller.appspot.com/bug?extid=5a1281566cc25c9881e0
+<3> 2184    Yes   WARNING: refcount bug in sk_skb_reason_drop
+                  https://syzkaller.appspot.com/bug?extid=d4e8dc385d9258220c31
+
 ---
- drivers/nvme/host/pci.c | 95 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 90 insertions(+), 5 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 7990c3f22ecf..de8ddc9b36de 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -21,6 +21,7 @@
- #include <linux/mutex.h>
- #include <linux/once.h>
- #include <linux/pci.h>
-+#include <linux/pm_qos.h>
- #include <linux/suspend.h>
- #include <linux/t10-pi.h>
- #include <linux/types.h>
-@@ -112,6 +113,14 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
- static void nvme_delete_io_queues(struct nvme_dev *dev);
- static void nvme_update_attrs(struct nvme_dev *dev);
- 
-+#define NVME_CPU_LATENCY_TIMEOUT_MS	3
-+
-+struct nvme_cpu_latency_qos {
-+	struct dev_pm_qos_request	req;
-+	struct delayed_work		work;
-+	unsigned long			active;
-+};
-+
- /*
-  * Represents an NVM Express device.  Each nvme_dev is a PCI function.
-  */
-@@ -141,6 +150,8 @@ struct nvme_dev {
- 	struct nvme_ctrl ctrl;
- 	u32 last_ps;
- 	bool hmb;
-+	int cpu_latency;
-+	struct nvme_cpu_latency_qos __percpu *cpu_latency_qos;
- 
- 	mempool_t *iod_mempool;
- 
-@@ -213,6 +224,7 @@ struct nvme_queue {
- 	__le32 *dbbuf_cq_db;
- 	__le32 *dbbuf_sq_ei;
- 	__le32 *dbbuf_cq_ei;
-+	const struct cpumask *irq_aff_mask;
- 	struct completion delete_done;
- };
- 
-@@ -470,6 +482,9 @@ static void nvme_pci_map_queues(struct blk_mq_tag_set *set)
-  */
- static inline void nvme_write_sq_db(struct nvme_queue *nvmeq, bool write_sq)
- {
-+	struct nvme_dev *dev;
-+	int cpu;
-+
- 	if (!write_sq) {
- 		u16 next_tail = nvmeq->sq_tail + 1;
- 
-@@ -483,6 +498,27 @@ static inline void nvme_write_sq_db(struct nvme_queue *nvmeq, bool write_sq)
- 			nvmeq->dbbuf_sq_db, nvmeq->dbbuf_sq_ei))
- 		writel(nvmeq->sq_tail, nvmeq->q_db);
- 	nvmeq->last_sq_tail = nvmeq->sq_tail;
-+
-+	/* Kick CPU latency while updating queue. */
-+	dev = nvmeq->dev;
-+	if (!dev || dev->cpu_latency < 0)
-+		return;
-+
-+	for_each_cpu(cpu, nvmeq->irq_aff_mask) {
-+		struct nvme_cpu_latency_qos *qos;
-+
-+		qos = per_cpu_ptr(dev->cpu_latency_qos, cpu);
-+
-+		qos->active = jiffies + msecs_to_jiffies(NVME_CPU_LATENCY_TIMEOUT_MS);
-+
-+		if (dev_pm_qos_request_active(&qos->req))
-+			continue;
-+
-+		dev_pm_qos_add_request(get_cpu_device(cpu), &qos->req,
-+				       DEV_PM_QOS_RESUME_LATENCY,
-+				       dev->cpu_latency);
-+		schedule_delayed_work(&qos->work, msecs_to_jiffies(NVME_CPU_LATENCY_TIMEOUT_MS));
-+	}
- }
- 
- static inline void nvme_sq_copy_cmd(struct nvme_queue *nvmeq,
-@@ -1600,14 +1636,19 @@ static int queue_request_irq(struct nvme_queue *nvmeq)
- {
- 	struct pci_dev *pdev = to_pci_dev(nvmeq->dev->dev);
- 	int nr = nvmeq->dev->ctrl.instance;
-+	int ret;
- 
- 	if (use_threaded_interrupts) {
--		return pci_request_irq(pdev, nvmeq->cq_vector, nvme_irq_check,
--				nvme_irq, nvmeq, "nvme%dq%d", nr, nvmeq->qid);
-+		ret = pci_request_irq(pdev, nvmeq->cq_vector, nvme_irq_check,
-+				      nvme_irq, nvmeq, "nvme%dq%d", nr, nvmeq->qid);
- 	} else {
--		return pci_request_irq(pdev, nvmeq->cq_vector, nvme_irq,
--				NULL, nvmeq, "nvme%dq%d", nr, nvmeq->qid);
-+		ret = pci_request_irq(pdev, nvmeq->cq_vector, nvme_irq,
-+				      NULL, nvmeq, "nvme%dq%d", nr, nvmeq->qid);
- 	}
-+
-+	nvmeq->irq_aff_mask = pci_irq_get_affinity(pdev, nvmeq->cq_vector);
-+
-+	return ret;
- }
- 
- static void nvme_init_queue(struct nvme_queue *nvmeq, u16 qid)
-@@ -2171,6 +2212,26 @@ static ssize_t hmb_store(struct device *dev, struct device_attribute *attr,
- }
- static DEVICE_ATTR_RW(hmb);
- 
-+static ssize_t cpu_latency_us_show(struct device *dev, struct device_attribute *attr,
-+				   char *buf)
-+{
-+	struct nvme_dev *ndev = to_nvme_dev(dev_get_drvdata(dev));
-+
-+	return sysfs_emit(buf, "%d\n", ndev->cpu_latency);
-+}
-+
-+static ssize_t cpu_latency_us_store(struct device *dev, struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	struct nvme_dev *ndev = to_nvme_dev(dev_get_drvdata(dev));
-+
-+	if (kstrtoint(buf, 10, &ndev->cpu_latency) < 0)
-+		return -EINVAL;
-+
-+	return count;
-+}
-+static DEVICE_ATTR_RW(cpu_latency_us);
-+
- static umode_t nvme_pci_attrs_are_visible(struct kobject *kobj,
- 		struct attribute *a, int n)
- {
-@@ -2195,6 +2256,7 @@ static struct attribute *nvme_pci_attrs[] = {
- 	&dev_attr_cmbloc.attr,
- 	&dev_attr_cmbsz.attr,
- 	&dev_attr_hmb.attr,
-+	&dev_attr_cpu_latency_us.attr,
- 	NULL,
- };
- 
-@@ -2731,6 +2793,7 @@ static void nvme_pci_free_ctrl(struct nvme_ctrl *ctrl)
- 	nvme_free_tagset(dev);
- 	put_device(dev->dev);
- 	kfree(dev->queues);
-+	free_percpu(dev->cpu_latency_qos);
- 	kfree(dev);
- }
- 
-@@ -2989,6 +3052,17 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
- 	return 0;
- }
- 
-+static void nvme_cpu_latency_work(struct work_struct *work)
-+{
-+	struct nvme_cpu_latency_qos *qos =
-+		container_of(work, struct nvme_cpu_latency_qos, work.work);
-+	if (time_after(jiffies, qos->active)) {
-+		dev_pm_qos_remove_request(&qos->req);
-+	} else {
-+		schedule_delayed_work(&qos->work, msecs_to_jiffies(NVME_CPU_LATENCY_TIMEOUT_MS));
-+	}
-+}
-+
- static struct nvme_dev *nvme_pci_alloc_dev(struct pci_dev *pdev,
- 		const struct pci_device_id *id)
- {
-@@ -2996,6 +3070,7 @@ static struct nvme_dev *nvme_pci_alloc_dev(struct pci_dev *pdev,
- 	int node = dev_to_node(&pdev->dev);
- 	struct nvme_dev *dev;
- 	int ret = -ENOMEM;
-+	int cpu;
- 
- 	dev = kzalloc_node(sizeof(*dev), GFP_KERNEL, node);
- 	if (!dev)
-@@ -3003,13 +3078,21 @@ static struct nvme_dev *nvme_pci_alloc_dev(struct pci_dev *pdev,
- 	INIT_WORK(&dev->ctrl.reset_work, nvme_reset_work);
- 	mutex_init(&dev->shutdown_lock);
- 
-+	dev->cpu_latency_qos = alloc_percpu(struct nvme_cpu_latency_qos);
-+	if (!dev->cpu_latency_qos)
-+		goto out_free_dev;
-+	for_each_possible_cpu(cpu)
-+		INIT_DELAYED_WORK(per_cpu_ptr(&dev->cpu_latency_qos->work, cpu),
-+				  nvme_cpu_latency_work);
-+	dev->cpu_latency = -1;
-+
- 	dev->nr_write_queues = write_queues;
- 	dev->nr_poll_queues = poll_queues;
- 	dev->nr_allocated_queues = nvme_max_io_queues(dev) + 1;
- 	dev->queues = kcalloc_node(dev->nr_allocated_queues,
- 			sizeof(struct nvme_queue), GFP_KERNEL, node);
- 	if (!dev->queues)
--		goto out_free_dev;
-+		goto out_free_pm_qos;
- 
- 	dev->dev = get_device(&pdev->dev);
- 
-@@ -3055,6 +3138,8 @@ static struct nvme_dev *nvme_pci_alloc_dev(struct pci_dev *pdev,
- out_put_device:
- 	put_device(dev->dev);
- 	kfree(dev->queues);
-+out_free_pm_qos:
-+	free_percpu(dev->cpu_latency_qos);
- out_free_dev:
- 	kfree(dev);
- 	return ERR_PTR(ret);
--- 
-2.43.1
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
