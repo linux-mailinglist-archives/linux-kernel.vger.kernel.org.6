@@ -1,89 +1,214 @@
-Return-Path: <linux-kernel+bounces-351291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3675990F5C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:57:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23688990F5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9A39280C4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:57:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F6A41C20DC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5681F4731;
-	Fri,  4 Oct 2024 18:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0191F4FB0;
+	Fri,  4 Oct 2024 18:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="pHPqcg5S"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fVZLaCzY"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EEA1B4F21;
-	Fri,  4 Oct 2024 18:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE411F473B
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728067915; cv=none; b=K4oLUY3w3qMISwBdgHzggAzdF7UAiROzxI8oWwcNz1ohwwKOrPLdv3WDnTWnWhOfx/PGwDIX66dX8LfhK48+smvI9TiBl+G+Bn87H8jxtOeO+h0AZF+g2mOBowocOcatdIfRxCoZYiqU5+cNXRc4NIudK5ETryQoxxEUnKJpgbc=
+	t=1728067962; cv=none; b=WxWoFBpaJqs5HsJWLRjIaRDL9DaNswiaOLVgB9ABxswNlVyqelGXQQemzIn42ltsScXs32+X0xe1WxPoYigbJOQot4F/vZb/l8MMWXv/iU/+V1unHWdCoLVVmfb8DvNcMW7mfv1YCK4miNwOED5xTSxNNTy5bvrSmaOgF0nzpzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728067915; c=relaxed/simple;
-	bh=pWuFZrwN4wtkilryw/UMy9cLsTNLyiM1dKKnNINkga0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hCYFq1w/HFHnfylmkj1EjN0yFItoHYMmtz0Sqzswwy64B5Hx25qkgcfDBbuZuhYOjnBqnhQgR6pYfSDlgqtFg6Q3fubwdnUEFQeBaG8RxlVmq5h5Egma8Jk/h6bZEU6RziDMQAP9Kr3SXlJg8GHl+GY2j40uldBfye++Nb7Glr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=pHPqcg5S; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+QJWjJSXtNottcZdqX67V05rKODxR7ykGq3H14xUESc=; b=pHPqcg5S/RCjSaVyJgnDXzKNVQ
-	w3IlDkCcuHjavGSu/y90BWIaUwZI80S0uS39BULxJkGJZuSyJphiEv1UcnjYA9cSR0amvX4t5Oz5l
-	niNYzpees2PCyJFOo3jjp/9vbm1aga5Xo7CTuA8AzEGVhLb9twrLYgvgHR31RTp+koSiDdH/VL8LV
-	EQdyW0P3cEmk/sfj+sxxa+Inbyjra6lb8M6bZ9CTXQ1hX1z/1Q9j1Tp762M1lXS/UeUnOFIGdXLej
-	WA96GF8PF30nkL74XVyY+u/pWi+9u6MVEqCpe7NIPuKgU96KbFUkg8CfzaO5PbpP/pyTCBCzm6SOw
-	wFhlExdw==;
-Received: from [2001:9e8:9c9:1501:3235:adff:fed0:37e6] (port=55002 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1swnOw-00Cmid-Dj;
-	Fri, 04 Oct 2024 20:51:42 +0200
-Date: Fri, 4 Oct 2024 20:51:38 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 20/23] kbuild: support -fmacro-prefix-map for external
- modules
-Message-ID: <20241004-xanthic-shrew-of-trust-0f9e1d@lindesnes>
-References: <20240917141725.466514-1-masahiroy@kernel.org>
- <20240917141725.466514-21-masahiroy@kernel.org>
+	s=arc-20240116; t=1728067962; c=relaxed/simple;
+	bh=H1liXl6WCRf3d4p+fcBF0FY77yXoXZmEbZj3EeAnJ5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iyiEx3zRaabxGHoAEvTFQTfixkk8NM9WwSuJ8dzEU+vBMhhyO66ximiCbFMW7AuReqgjGVEh3ANm2+HWB1tC2UyInZNUr+a33oVZ1uN5Ji284A042vW+SEXHz8aOOBOZB5dp7T/wjgJUuermTVa0TIaSow8eM6baVtXfQSPJGIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fVZLaCzY; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-82aa7c3b498so77690039f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 11:52:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1728067959; x=1728672759; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l/Rv0sqGHNVWqlijFNhSwA2zn4yItvy6FMRE0t4wpkI=;
+        b=fVZLaCzYI+dr80W43/77o3oMuD7jfPWinOchrAhBBbe6dIAe0GDjouHH7YUeUZj3C4
+         EZWfmyGC5svPeeysS4rqpIzKTnBb5UwLTavzW57HL4dJazle42YKE0YDUIugXLbfrvDA
+         QrcT7GMJgjXbhysdPgvMnrKMshAVZjaGQeKS8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728067959; x=1728672759;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l/Rv0sqGHNVWqlijFNhSwA2zn4yItvy6FMRE0t4wpkI=;
+        b=ormGpj+twlsT2tio4QWgYVqqKwWSLtGlSXu+kDuNOHxmzBjqiexRHDB/ZYB5a4tu8A
+         rXdYxjbez0Dy+oU1qiJ2MBrudrjVnt1NjiQky08zprm7y/kmblfdb623sO4cYJ5rWUAn
+         /RVJFSQXb33yu7ykl1zPRZPZEZ0vlQ0ZYQLl1oM+Vhs+JwwYePXtpSih0RImfc74gwnl
+         Bk9ZaDiV7Hw7oTC+lI85bd4McUB1UEESfxt+DWHarPfsgEPj1jS0/Bl6Kh9eFfC5lmsM
+         wmrTmwgpeaoNdsXX5FNleRf1yCFp1CIKR2iSZf0aOX1XP3x2nhst8M3CDDrK2Oa0Dxq2
+         dhxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSoQsY1TC3SXhUD3QE+TvWDz1XuY5svZNkbr2ZdBX3rm35v9uwDHzClfbER+9L4aiHP+jnfrepDmrO1OA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyApgoNnFjk9332LTpCxzuJEjCwv4EW8n2XvKCGwHnLNMqH73ZR
+	l8J55vVT1ddLevyplMpQ+i5QnzwQNTPBntSE6dTuT1o2W9Q3E6vPs2RmVF84YtA=
+X-Google-Smtp-Source: AGHT+IEXjDH5NQ6LBrFWdalYdLYXSsRTT0eo0VO5eqEv564M8JzXzPttDhozW5v38kXoIzRDxfoLQQ==
+X-Received: by 2002:a6b:6818:0:b0:831:e9eb:dea7 with SMTP id ca18e2360f4ac-834e77687c7mr574002039f.8.1728067959455;
+        Fri, 04 Oct 2024 11:52:39 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83503a756b2sm7310139f.4.2024.10.04.11.52.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 11:52:38 -0700 (PDT)
+Message-ID: <fd9fb256-11ac-45f6-b584-c2e9c1b04c58@linuxfoundation.org>
+Date: Fri, 4 Oct 2024 12:52:37 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917141725.466514-21-masahiroy@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: Do not skip BPF selftests by default
+To: Mark Brown <broonie@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+ bpf@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
+ =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+ linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Nick Desaulniers <ndesaulniers@google.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Anders Roxell <anders.roxell@linaro.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241004095348.797020-1-bjorn@kernel.org>
+ <96023ef4-fa0b-4fc2-a6a7-ac32bc777c44@sirena.org.uk>
+ <875xq82dqe.fsf@all.your.base.are.belong.to.us>
+ <bb579569-1451-414f-aac4-12757024d9a5@sirena.org.uk>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <bb579569-1451-414f-aac4-12757024d9a5@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 17, 2024 at 11:16:48PM +0900, Masahiro Yamada wrote:
-> This commit makes -fmacro-prefix-map work for external modules built in
-> a separate output directory. It improves the reproducibility of external
-> modules and provides the benefits described in commit a73619a845d5
-> ("kbuild: use -fmacro-prefix-map to make __FILE__ a relative path").
+On 10/4/24 08:46, Mark Brown wrote:
+> On Fri, Oct 04, 2024 at 03:34:49PM +0200, Björn Töpel wrote:
+>> Mark Brown <broonie@kernel.org> writes:
+>>> On Fri, Oct 04, 2024 at 11:53:47AM +0200, Björn Töpel wrote:
 > 
-> When VPATH is not defined (e.g., when the kernel or external module is
-> built in the source directory), this option is unnecessary.
+>>>> This effectively is a revert of commit 7a6eb7c34a78 ("selftests: Skip
+>>>> BPF seftests by default"). At the time when this was added, BPF had
+>>>> "build time dependencies on cutting edge versions". Since then a
+>>>> number of BPF capable tests has been included in net, hid, sched_ext.
 > 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
+>>> The issue was always requiring a bleeding edge version of clang, not
+>>> sure if that's been relaxed yet, IIRC sometimes it required git
+>>> versions.  I have clang 20 installed here so that's not an issue for me
+>>> but given that that's not released yet it wouldn't be reasonable to
+>>> expect CI systems to install it.
 > 
->  Makefile | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>> Yeah, but I'd say that is not the case anymore. LLVM 18 and 19 works.
+> 
+> Hrm, that's definitely a lot better then though still a little cutting
+> edge - the 24.10 Ubuntu release has clang 17, never mind any of the
+> stables or LTSs (Debian is very popular for build containers).  Not
+> quite at the "you can just install your distro package" level yet though
+> it's definitely substantial progress.  Is this requirement documented
+> somewhere someone could reasonably be expected to discover it?
+> 
+> It's a bit unfortunate having to pull clang into GCC build containers,
+> and needing a newer version than the minimum clang for the kernel itself
+> too :/
+> 
+>>> We also get a bunch of:
+> 
+>>> die__process_unit: DW_TAG_label (0xa) @ <0x58eb7> not handled!
+>>> die__process_unit: tag not supported 0xa (label)!
+> 
+>>> if we do turn enable CONFIG_DEBUG_INFO_BTF for arm64.
+> 
+>> This is pahole version related.
+> 
+> Which version is needed?  I've got 1.24 (from Debian) here...
+> 
+>>> The whole thing is also broken for cross compilation with clang since
+>>> everything is assuming that CROSS_COMPILE will be set for cross builds
+>>> but that's not the case for LLVM=1 builds - net gives:
+> 
+>> A lot can be said about kselftest, and cross-building. It's a bit of a
+>> mess. Maybe we should move to meson or something for kselftest (that
+>> requires less work for lazy developers like me). ;-)
+> 
+> AFAICT it pretty much works fine?  It's certainly widely used.
+> 
+>> I'm simply arguing that the *default* should be: BPF (and
+>> hid/net/sched_ext) turned on. Default on would surface these kind of
+>> problems, rather than hiding them. (And let the CI exclude tests it
+>> cannot handle).
+> 
+> The original motivation behind that patch was that there were a bunch of
+> CI systems all trying to run as many of the selftests as they can,
+> running into BPF and getting frustrated at the amount of time it was
+> consuming (or not managing to get it working at all).  Everyone was
+> assuming they were missing something or somehow doing the wrong thing to
+> satisfy the dependencies and it was burning a bunch of time and
+> discouraging people from using the selftests at all since it doesn't
+> create a good impression if stuff just doesn't build.  People did often
+> end up skipping BPF, but only after banging their heads against it for a
+> while, and then went and compared notes with other CI systems and found
+> everyone else had the same problem.
+> 
+> I think we before defaulting BPF stuff on we should at the very least
+> fix the builds for commonly covered architectures, it looks like as well
+> as arm64 we're also seeing BTF not generated on 32 bit arm:
+> 
+>     https://storage.kernelci.org/next/master/next-20241004/arm/multi_v7_defconfig%2Bkselftest/gcc-12/config/kernel.config
+> 
+> but everything else I spot checked looks fine.  It'd be much better to
+> skip gracefully if the kernel doesn't have BPF too.
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
++1 on this. I would rather have tests check for their dependencies
+and skip them. Let's fix the tests to fail gracefully before adding
+bpf and bpf dependent tests to default run.
+
+I saw your patch to add sched_ext which shouldn't be added until
+we get these resolved. Maybe you could include the checks to the
+following patch to fail gracefully if kernel doesn't have BPF
+and the environment doesn't have the dependencies installed.
+
+Makefile could handle some of these and skip build instead of
+failing the build. Individual test build failures shouldn't stop
+kselftest-all build.
+
+https://patchwork.kernel.org/project/linux-kselftest/patch/20241004094247.795385-1-bjorn@kernel.org/
+
+> 
+> We should probably also have explicit clang presence and feature/version
+> checks in the builds since clang is now fairly widely available in
+> distros but many of them have older versions than are needed so I
+> imagine a common failure pattern might be that people see clang is
+> needed, install their distro clang package and then run into errors from
+> clang.  That'd mean people would get a graceful skip with a clear
+> description of what's needed rather than build errors.
+> 
+> This is all a particular issue for the net tests where the addition of BPF
+> is a regression, not only can't you run the BPF based tests without
+> getting BPF working we've now lost the entire net testsuite if BPF isn't
+> working since it breaks the build.  TBH I didn't notice this getting
+> broken because I forgot that I was expecting to see net tests on
+> kernelci.org and the build break means they just disappear entirely from
+> the runtime results.  That really does need a graceful skip.
+
+This is unfortunate. We have to fix the bpf dependent tests to do build
+and run-time checks.
+
+We can add the tests to default once they can work properly without their
+dependencies.
+
+thanks,
+-- Shuah
 
