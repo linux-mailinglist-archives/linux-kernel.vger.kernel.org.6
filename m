@@ -1,104 +1,180 @@
-Return-Path: <linux-kernel+bounces-350512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36AC699063D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BECA99063F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 658511C220D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:36:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B948E1C20B26
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CED02178F5;
-	Fri,  4 Oct 2024 14:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15922178FA;
+	Fri,  4 Oct 2024 14:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="SDc7TUOv"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="F7bPzap/";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="F7bPzap/"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE3B158214;
-	Fri,  4 Oct 2024 14:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EC4212EEA;
+	Fri,  4 Oct 2024 14:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728052601; cv=none; b=fcewXy0ZNf6sNZ0JqD2aR4DAhd96zWGTEaOlHXSzu8kOXiBve8mVwYNE2986uc46h36g9bhuL/KbyskXq6EOVZFQTmdj4cNjI8QCMFBxZgJ5tFCQaUvxMYKo5uwCJjjWLfiD1jnxhLMpM6sf/EHNC2jHXIC7eHHeyT8tBNfvCWU=
+	t=1728052643; cv=none; b=C1/olsBje5EtwuN5cD6kUtX4SNPQk2GdngFw5ZSNBXG32WEN1prkXGdEDHk3MuzEalWJ02bHTBz3NK1YLdu5qOuTmpKIaQby1diuN+tW3A6rSPmN1MabBU3J66SR9jmsFRJFtOd+ucwTDUgwLE2BvfJA2K4LbQd4w5iqR+Q8dWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728052601; c=relaxed/simple;
-	bh=RJKBM5wE8Sg1Sz/kWp0mcf7pouATIatiWngJXJEPGZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d8/r/CJPVjOjQc7n2ZvxnB6hzJKBrmCJqHJ0XKFkXGD4BegtS/+rVrbZfz0AyiV4bK7tG6G5J0hzuSkcweUDqlHbfp+0pgRfPbsMr9SWMIgH7KuYkNpb4/Z7cyiW58xw4WFwd3kZwFboC29pf4jCyr6NKJahfjD+UakNyDxdDqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=SDc7TUOv; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 415F52FC0050;
-	Fri,  4 Oct 2024 16:36:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1728052596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vP3PFpRd2ZOwvuuhtver3jyV6yAM41O3MdWKWJJcVYY=;
-	b=SDc7TUOvYNDRmv+uX4S5nk1hUVTvVtCzA6Kf3EmorrP51VL1iS3un4f9YtTHNYjBKh7nk5
-	Otp8VS3kbGEy7SgpFbpQK/eZiP1BbOu6LJdCuZKHfflt5Se1booSIohW0Y2GRhBCHwPmc7
-	OkQq1vo+NLEm1BKSapn8rJmO5XC8Bwc=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <8874c084-20b2-44d8-9a0d-67aedad4b456@tuxedocomputers.com>
-Date: Fri, 4 Oct 2024 16:36:36 +0200
+	s=arc-20240116; t=1728052643; c=relaxed/simple;
+	bh=MAK8JWmVjNO8FXi5tEdbRgJHHAYoZFtJbZOaHkJe1xg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hFmHCnzeUnwNAsbTwREKOV5ZwAoLBVdddZu0W1BaA4Kr2JdJopZCGF6JlVpU3kcyiFgYNxNfQum3KZpzzzh979FifOQFsXh0ZhP6h5R814IbTtDYYIj3bxmn9SiFOrRsTtNuEMmnLvfuGUITwpPCogsSm69WHjBZKCKWawzdWLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=F7bPzap/; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=F7bPzap/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 78F631F78E;
+	Fri,  4 Oct 2024 14:37:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1728052638; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=IoNx+MylgNQZdr8mAZLP2m82RL0nRPwe/aXde4USFqI=;
+	b=F7bPzap/Id7sGjj8LHb22rgPLxHE7JjE7W6/VetKVujQ5nQUwDLJE6zmje1YIc/7lygLq5
+	73QTo5FoKwIDqslRS1qp9H92k+c3oByo5WquBWory2Ywd8c1YNEWorzUrykao4TwYeOh4r
+	nU6bCH+UfwTi6Xn4xFIgn8R3QwlepS4=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b="F7bPzap/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1728052638; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=IoNx+MylgNQZdr8mAZLP2m82RL0nRPwe/aXde4USFqI=;
+	b=F7bPzap/Id7sGjj8LHb22rgPLxHE7JjE7W6/VetKVujQ5nQUwDLJE6zmje1YIc/7lygLq5
+	73QTo5FoKwIDqslRS1qp9H92k+c3oByo5WquBWory2Ywd8c1YNEWorzUrykao4TwYeOh4r
+	nU6bCH+UfwTi6Xn4xFIgn8R3QwlepS4=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 70C9813A55;
+	Fri,  4 Oct 2024 14:37:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8QCFG579/2YoawAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Fri, 04 Oct 2024 14:37:18 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 6.12-rc2
+Date: Fri,  4 Oct 2024 16:37:13 +0200
+Message-ID: <cover.1728050979.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO
-To: Lee Jones <lee@kernel.org>
-Cc: bentiss@kernel.org, dri-devel@lists.freedesktop.org, hdegoede@redhat.com,
- jelle@vdwaa.nl, jikos@kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
- miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com,
- pavel@ucw.cz, cs@tuxedo.de
-References: <20240927124152.139099-1-wse@tuxedocomputers.com>
- <20241002125243.GC7504@google.com>
- <4bfc188c-0873-490f-bfef-119c7fa74be5@tuxedocomputers.com>
- <20241003075927.GI7504@google.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <20241003075927.GI7504@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 78F631F78E
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+Hi,
 
-Am 03.10.24 um 09:59 schrieb Lee Jones:
-> On Wed, 02 Oct 2024, Werner Sembach wrote:
->
->> Hi,
->>
->> Am 02.10.24 um 14:52 schrieb Lee Jones:
->>> On Fri, 27 Sep 2024, Werner Sembach wrote:
->>>
->>>> Hi,
->>>> first revision integrating Armins feedback.
->>>>
->>>> Stuff I did not yet change and did not comment on previously:
->>>> - Still have to ask Christoffer why the mutex is required
->>>> - Still using acpi_size instad of size_t in the util functions, because the value is put directly into a struct using acpi_size
->>>> - Error messages for __wmi_method_acpi_object_out still in that method because they reference method internal variables
->>>>
->>>> Let me know if my reasoning is flawed
->>> Use `git format-patch`'s --annotate and --compose next time please.
->>>
->> I did but --compose does not automatically insert the subject line, that's
->> why i copied it but forgot to change it to 0/1
->>
->> Sorry for the flawed subject line
-> And the missing diff-stat?
->
-Also not automatically created by git send-email --compose. is there a flag I'm 
-not aware of?
+please pull the following fixes, thanks.
+
+- in incremental send, fix invalid clone operation for file that got its
+  size decreased
+
+- fix __counted_by() annotation of send path cache entries, we don not
+  store the terminating NUL
+
+- fix a longstanding bug in relocation (and quite hard to hit by
+  chance), drop back reference cache that can get out of sync after
+  transaction commit
+
+- wait for fixup worker kthread before finishing umount
+
+- add missing raid-stripe-tree extent for NOCOW files, zoned mode
+  cannot have NOCOW files but RST is meant to be a standalone feature
+
+- handle transaction start error during relocation, avoid potential NULL
+  pointer dereference of relocation control structure (reported by syzbot)
+
+- disable module-wide rate limiting of debug level messages
+
+- minor fix to tracepoint definition (reported by checkpatch.pl)
+
+----------------------------------------------------------------
+The following changes since commit 7f1b63f981b8284c6d8238cb49b5cb156d9a833e:
+
+  btrfs: fix use-after-free on rbtree that tracks inodes for auto defrag (2024-09-17 17:35:53 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.12-rc1-tag
+
+for you to fetch changes up to d6e7ac65d4c106149d08a0ffba39fc516ae3d21b:
+
+  btrfs: disable rate limiting when debug enabled (2024-10-01 19:29:41 +0200)
+
+----------------------------------------------------------------
+Filipe Manana (4):
+      btrfs: send: fix buffer overflow detection when copying path to cache entry
+      btrfs: tracepoints: end assignment with semicolon at btrfs_qgroup_extent event class
+      btrfs: send: fix invalid clone operation for file that got its size decreased
+      btrfs: wait for fixup workers before stopping cleaner kthread during umount
+
+Johannes Thumshirn (1):
+      btrfs: also add stripe entries for NOCOW writes
+
+Josef Bacik (1):
+      btrfs: drop the backref cache during relocation if we commit
+
+Leo Martins (1):
+      btrfs: disable rate limiting when debug enabled
+
+Qu Wenruo (1):
+      btrfs: fix a NULL pointer dereference when failed to start a new trasacntion
+
+ fs/btrfs/backref.c           | 12 ++++---
+ fs/btrfs/disk-io.c           | 11 +++++++
+ fs/btrfs/inode.c             |  5 +++
+ fs/btrfs/messages.c          |  3 +-
+ fs/btrfs/relocation.c        | 77 +++-----------------------------------------
+ fs/btrfs/send.c              | 31 +++++++++++++++---
+ include/trace/events/btrfs.h |  2 +-
+ 7 files changed, 58 insertions(+), 83 deletions(-)
 
