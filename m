@@ -1,177 +1,117 @@
-Return-Path: <linux-kernel+bounces-350374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB4D99044A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:29:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6906399044C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CE742829F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9989D1C22127
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A21212EE5;
-	Fri,  4 Oct 2024 13:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59E6212EED;
+	Fri,  4 Oct 2024 13:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HmKkVbK1"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="iEtBaBjw"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B182101BA
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D41D2101A6;
+	Fri,  4 Oct 2024 13:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048388; cv=none; b=NdOxapOAteFLwxGY1k/I38KMhgfEt8Uorv6qbIOgP0CYaSkIv8NrPDuO+pMWRMYZt6MMizbNkpbn+6F+i93uoJR7FyMa7HjgI7pQeFmUIuupFnj/C4mgxOLswgAiL/NlQtQ6ZJgZE32Alqf9I6AdTPU4kjyQyIqPgrG3v8WLXbs=
+	t=1728048414; cv=none; b=DWn/0cO/HJoGAcg0hTkfDkRNZZ4WgBFxnPbRGl7sxnUrkKlD92Hhv4GiYkPy5+/h2ns6jMNSzpyihn2YPLXtk7Nht6s+ljNqwVinvONH2Ic6XONKtuK2F0tLmCU2zAcIXk+bVDiRL1+ie5gDho3oG3dxlzMVsqYx9XKAmFcI7tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728048388; c=relaxed/simple;
-	bh=kLpfYpjN7hBTTNjwKDBAnyESdPp55s0Z+2n88W92KlA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F9Ks3HmXYCk8FmLAPR+1wkQM96OtcZivb34tt+fNYkCkwGHJD1VQApK7PNsrguopkdq2U+fSWlg2eusRzToQ8Pv8tzRFCsiB987HwoJptHvHPpnhYZVKAsM/yAddgpVLPat5zXRHkn9KkvXPF/KKfNHqg6UnM6HZBHKSL63M38Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HmKkVbK1; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e04b7b3c6dso1128765b6e.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 06:26:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728048385; x=1728653185; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dor1Hehoddjqsld8OAN62L2MZYDwDDLrJAOii0XS1Fo=;
-        b=HmKkVbK1dFA2DVvGH+MSywMUMlGwwbMVaEuv4cqlxgHiFZ9lowFRG1+qEK0dYkiIKx
-         McGrqJrO1FDp1YuOteurnD6IUZEEycx1pKw6XDPHNAJQVzTUsI5se4ULIZXkHTUt9h7M
-         G9xfm/U6UcZMUOL1Qs2PwVvZsFVN9zyOIJI+NOg2EFc12JtccAd5uioJmQjRW8pvUfOb
-         Rmp3DxsJI+HqT+kUPINiSyGs5+PLNbs//ZQDWYgxyIQAtJQgxpP8lW69L+TVQN1t8342
-         YhHH56wGqB2bCDRPBJfxzF15HASxnkbKpe3ex43V1HOzO2WukwDIEgBUQKNHWJbp7cUd
-         QdZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728048385; x=1728653185;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dor1Hehoddjqsld8OAN62L2MZYDwDDLrJAOii0XS1Fo=;
-        b=G3ftjs2U26HYc/QaXTufEFg8eTJjmQwXRxq5jectM6aNgRXxkHKUkKxqIItYX61SZT
-         Yu4w9eU8LfOqNk5bfVvXtQGgogsjWOb13SxxsShNJJGR1vOMVBMIjj0qumw7bpGKt04U
-         7obGo8umca63NJi9X0zYF9VHk6ySHE7u/elTpcrP6wGfZ6gz7acLnlhw2rNgiNoPRetH
-         iNfO6afyB/DQ0xyzp6hEdboSiMCKaX0ScDArjVvmtDyr7sRHSXdZ2+IYuBu7NkPphZM8
-         /bJmc/TeP13LzTrAD62MI6h51XyvVZ54uuv1nT7XcA696YNBIaGx6eee0UoQkaqrxZt1
-         J3iA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNjvpYBoA4eHsaby7Zqis3FR153BPsvUHNY4P6NbrEYjcZLTx+SQJBtPhniOeMw1e/oxmOds+p4TJrCF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYlffzJQw9ZqbmirfcB8hQ8NFLNvCorrLgBHkGv2biYi3McAbL
-	1wURpHDtPI9k+DFj+OcjYTBarUmVekwuXfayj+2g+QJbur0sNzcEHRZCyKEebMI=
-X-Google-Smtp-Source: AGHT+IH0fXZFdXaTWMBB85h1CntC6ecOa/OyBp/FNnm/vZ+UgPrGG35oP4F4wojgTWASo0zHEH563Q==
-X-Received: by 2002:a05:6808:3022:b0:3e3:97cf:2ecd with SMTP id 5614622812f47-3e3c155921emr1700339b6e.16.1728048384758;
-        Fri, 04 Oct 2024 06:26:24 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e3bc36ef91sm959718b6e.34.2024.10.04.06.26.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 06:26:23 -0700 (PDT)
-Message-ID: <8faf440b-2ea0-45f3-aa87-db303dc8d6fe@baylibre.com>
-Date: Fri, 4 Oct 2024 08:26:21 -0500
+	s=arc-20240116; t=1728048414; c=relaxed/simple;
+	bh=1qMYlcMYOPeZl8/+7khLu3IU0pxqRBqTbCIHeV11Uio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b8+BCeyDwu/DQjBhTusx5f7kh7+JhhS+oN12fNixBUr/EtK8zY0lJU9gCFZIMW3XihneEyLgAR8rkAvWHYZ9sx5ob9HRnwH2kBGmXqpMqhe+1SWG6LyFn4ZxY8lZdf+LopBke3HJrq297JwIgjf85NoTywoQz9ba0ZE5EF9lOAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=iEtBaBjw; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=C8gS7fToqe6BJ0Q1SvpFc5Yl0jX/XTl2WKyQ7F7YwtM=; b=iE
+	tBaBjwl3xDN1/hqlVEmhMMlmyopzfuci33jUkjH9bjJFKsR/JKocxiFQFjdxUu7mNtkRH6lQqJNMb
+	uLKZ1uAdsFuJ9xjI7+eIVzn1x670ac2dBn2iL+q9q7NE4VaKFLOuGwRNy6Hz0Ey0++5XrL526QwuW
+	XwFSjR2L/rXMRdM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1swiKH-0092y1-CB; Fri, 04 Oct 2024 15:26:33 +0200
+Date: Fri, 4 Oct 2024 15:26:33 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Qingtao Cao <qingtao.cao.au@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] net: phy: marvell: avoid bringing down fibre link
+ when autoneg is bypassed
+Message-ID: <927d5266-503c-499f-877c-5350108334dc@lunn.ch>
+References: <20241003022512.370600-1-qingtao.cao@digi.com>
+ <30f9c0d0-499c-47d6-bdf2-a86b6d300dbf@lunn.ch>
+ <CAPcThSHa82QDT6sSrqcGMf7Zx4J15P7KpgfnD-LjJQi0DFh7FA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/11] dt-bindings: iio: dac: adi-axi-dac: add ad3552r
- axi variant
-To: Angelo Dureghello <adureghello@baylibre.com>,
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Nuno Sa <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Jonathan Cameron <jic23@kernel.org>,
- Mihail Chindris <mihail.chindris@analog.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
- Mark Brown <broonie@kernel.org>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
-References: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
- <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-3-ceb157487329@baylibre.com>
- <172799847830.1778120.2943655597402379925.robh@kernel.org>
- <744n6dut2ayboh6gilavqy65bgljmu5sz5embvtxcq5v4fhp3f@pfud6d2hiplo>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <744n6dut2ayboh6gilavqy65bgljmu5sz5embvtxcq5v4fhp3f@pfud6d2hiplo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcThSHa82QDT6sSrqcGMf7Zx4J15P7KpgfnD-LjJQi0DFh7FA@mail.gmail.com>
 
-On 10/4/24 2:33 AM, Angelo Dureghello wrote:
-> Hi Rob,
+On Fri, Oct 04, 2024 at 11:35:30AM +1000, Qingtao Cao wrote:
+> Hi Andrew,
 > 
-> On 03.10.2024 18:34, Rob Herring (Arm) wrote:
->>
->> On Thu, 03 Oct 2024 19:29:00 +0200, Angelo Dureghello wrote:
->>> From: Angelo Dureghello <adureghello@baylibre.com>
->>>
->>> Add a new compatible and related bindigns for the fpga-based
->>> "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
->>>
->>> The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
->>> generic AXI "DAC" IP, intended to control ad3552r and similar chips,
->>> mainly to reach high speed transfer rates using a QSPI DDR
->>> (dobule-data-rate) interface.
->>>
->>> The ad3552r device is defined as a child of the AXI DAC, that in
->>> this case is acting as an SPI controller.
->>>
->>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
->>> ---
->>>  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 49 +++++++++++++++++++++-
->>>  1 file changed, 48 insertions(+), 1 deletion(-)
->>>
->>
->> My bot found errors running 'make dt_binding_check' on your patch:
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.example.dtb: dac@0: spi-max-frequency: 66000000 is greater than the maximum of 30000000
->> 	from schema $id: http://devicetree.org/schemas/iio/dac/adi,ad3552r.yaml#
-
-I think this error is just due to patch ordering. The patch
-"dt-bindings: iio: dac: ad3552r: fix maximum spi speed"
-should come before this one. (In general, it is always best
-to put fixes first anyway.)
-
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.example.dtb: dac@0: 'io-backends' does not match any of the regexes: '^channel@([0-1])$', 'pinctrl-[0-9]+'
-
-I've seen this pinctrl error pop up a few other times.
-I don't really understand it since none of the bindings
-involved reference pinctrl. Maybe an issue in the tooling?
-
->> 	from schema $id: http://devicetree.org/schemas/iio/dac/adi,ad3552r.yaml#
->>
->> doc reference errors (make refcheckdocs):
->>
->> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-3-ceb157487329@baylibre.com
->>
->> The base for the series is generally the latest rc1. A different dependency
->> should be noted in *this* patch.
->>
->> If you already ran 'make dt_binding_check' and didn't see the above
->> error(s), then make sure 'yamllint' is installed and dt-schema is up to
->> date:
->>
->> pip3 install dtschema --upgrade
->>
->> Please check and re-submit after running the above command yourself. Note
->> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
->> your schema. However, it must be unset to test all examples with your schema.
->>
+> Please see my inline replies.
 > 
-> before sending the patchset i did
+> On Fri, Oct 4, 2024 at 12:30 AM Andrew Lunn <andrew@lunn.ch> wrote:
 > 
-> make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
->   CHKDT   Documentation/devicetree/bindings
->   LINT    Documentation/devicetree/bindings
->   DTC [C] Documentation/devicetree/bindings/iio/dac/adi,ad3552r.example.dtb
+>     On Thu, Oct 03, 2024 at 12:25:12PM +1000, Qingtao Cao wrote:
+>     > On 88E151x the SGMII autoneg bypass mode defaults to be enabled. When it
+>     is
+>     > activated, the device assumes a link-up status with existing
+>     configuration
+>     > in BMCR, avoid bringing down the fibre link in this case
+>     >
+>     > Test case:
+>     > 1. Two 88E151x connected with SFP, both enable autoneg, link is up with
+>     speed
+>     >    1000M
+>     > 2. Disable autoneg on one device and explicitly set its speed to 1000M
+>     > 3. The fibre link can still up with this change, otherwise not.
 > 
-> no issues.
-> How can i detect the issue so ?
+>     What is actually wrong here?
 > 
-> Thanks,
+>     If both ends are performing auto-neg, i would expect a link at the
+>     highest speeds both link peers support.
+> 
+>     If one peer is doing autoneg, the other not, i expect link down, this
+>     is not a valid configuration, since one peer is going to fail to
+>     auto-neg.
+> 
+> 
+> Well, technically speaking, thanks to the 88E151X's bypass mode, in such case
+> with one end using autoneg but the other is using 1000M explicitly, the link
+> could still be up, but not with the current code.
 
+So we can make an invalid configuration work. Question is, should we?
+
+Are we teaching users they can wrongly configure their system and
+expect it to work? They then think it is actually a valid
+configuration and try the same on some other board with other PHYs,
+and find it does not work?
+
+Does Marvell document why this bypass mode exists? When it should be
+used? What do they see as its use cases?
+
+	Andrew
 
