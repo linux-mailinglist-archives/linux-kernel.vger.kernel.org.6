@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-350522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90BB990674
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:44:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA0E990678
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 726172811CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2F51C21DAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D75D21B44B;
-	Fri,  4 Oct 2024 14:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6323621BAF1;
+	Fri,  4 Oct 2024 14:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="WVd4Tw54"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OrB2OOTB"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0903B2194BE
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D4021B42A
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728053018; cv=none; b=kdTYmX17iqRNQ2DLOifBWHv+GX/L8wJ32YGc2HmfUAIM4tR38jynXWWhL5mutcszaameJd16mqc+n+7gbKRkCOj0MABVeA5PwXA1CPYG4i5yBpUT3icJsDQdZPIhJkXOx5f+NLBQ3/fkyE2W4/dCBvtjcmixuYCQ2LIT+DWYUvY=
+	t=1728053019; cv=none; b=q20enQ86UOQ+vOgmdvlHIAoM1EMO9RS4RpJAws605rvev/Daz0NvJjipjNOrdzNJm1k+dXM5q491ChzSXfmBBd1qLekeVQreXFYHM4Sovof7F4EDbZErFNjjIId0WYxV5wmmV2vFLpGtgrGFwbSJoE4Xyn82sIb+hzAffAL7g8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728053018; c=relaxed/simple;
-	bh=mTbxUxfH/W1IhTrQ77MjGIe1i70HdR5QpW2zw30Atk8=;
+	s=arc-20240116; t=1728053019; c=relaxed/simple;
+	bh=LvSUVHCEYa75B76/06/pgPDfGMpyB/pmvNoZX5DqpsU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=R4toJs4XHJx2PMt5JGH3/04cOjGqeGyZlqcMViN4gDg51egrkRI+he9aiwj5teS+0Q8pDB/EwxVoQowcZXIBT8BRYVeiGWr208hsz3pJFCOAez+R6toGnu4Xr0or6Vw0lsEtNllSKQjZXjfhoZVj+Kpphmzs/LaHC6V37kWC3ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=WVd4Tw54; arc=none smtp.client-ip=209.85.128.44
+	 In-Reply-To:To:Cc; b=gX1l7uAF1NSUr+zGhng29cueI+KjC145vLw3fp5eaHIUFawsEah/MXfmDeXeD1O1tPaZDaogOQebEIFf03pH3EucrF77K1wQrqQ/YXPTiWI0AelMFhBJ6QDxrtMvgB0FXt4rYD633CsIc7slTOPxSzFD6NMwHHmG8cY/s1O14mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OrB2OOTB; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cae102702so18020515e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 07:43:36 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37ccebd7f0dso1488739f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 07:43:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728053015; x=1728657815; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728053016; x=1728657816; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=H9HtJhv2OgjVrkOPzzQfXaqIVpBHmCwwecKLw+BCJgo=;
-        b=WVd4Tw54rnxHr9ul1e9wHHu0ZIyQkKTyF05t7oMu4DmyF3k1Df4KTOQQluXTpRLMrm
-         iH7KEWDa6PEchbBTk3iyxhMP7jOdcpMc3IYap7uUjcVY+DfKEFFINv6F+eZV0cH1sgwz
-         GGVwy2qrzncR1w7sTsBZUM7qU/45M7rB0RuZ9Dt2CVGh2nEIksrVG+LRYxnSMXHAiysL
-         63cUUoxAQ7pvQ6WaFvuBhqCvfd/vMmBpQbCPrV6uH3IPrP4QDPVXB1bps8YgGmT3o/jJ
-         rOcjTgmTrWE4oTyxsoMSA9uCfgW04B0hqEKasCGt7iT8UqbeaCN5R1D7pm2tZ2GAcLht
-         8gow==
+        bh=1Ee5xWEeq7S4uSTcaRJnj1WAmTtYVkRiu3mWNu5ZDDk=;
+        b=OrB2OOTBbNyh5g6l+EoRLPHnwLFEJfW/RI91dAkkXnSPjEcV29hwlrGicE1+K37xqd
+         NnabvnC3IuYjXETKrbmKw10Z7jPsgokSuMk89u+kheZYttn5VdkyOFAumRrBYHlJUP2K
+         sezrNzVUyVG77F0z12WAtFNzeKkSwdM+QUG5i9G8u7vP85auHFjCvH4F9NCKvMR/3p1e
+         kYZuiqcagxehmOZ4232upMH605CKTgPZ0VAoizOcfzAzxoLoySxwdNnt+1og352jxPTR
+         jXfMFLp2pkqE/N7S7d0sv1jR7ZNCEJHMSRhjC0qBssS1g/2U0fRsvFOCLbZ3eIXBaWxn
+         oOyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728053015; x=1728657815;
+        d=1e100.net; s=20230601; t=1728053016; x=1728657816;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H9HtJhv2OgjVrkOPzzQfXaqIVpBHmCwwecKLw+BCJgo=;
-        b=WL0aL/tMWtk2wC277lwePeabgTx1cdtfl2X37nb9CU437cAXxD9W1FmZlHfeSmmf+e
-         2DzYBzLGHeM9IhYySQgsxA3KhQNKZ4gHpe+WqIb8lzkcdy+gQJ7zQw/SEQZIYi4pFM15
-         pVQ6yapQJ/8q0Q1cdvHzux86ZvTvb/sMGfN67t3yM5K6VsObMequ96quQx8S5V7y6oBW
-         aUYvYD91ecTVqpidgrt5jeb++lUNaKnXK/D+SpCK3G0PFcZOMCS3HPYaCKGIJyFfcJbr
-         kDlE8pBdQVE9pmNF1fIAP3WoWaKUZO4iXbaX9p5FMm1aolcT/Iuc4BkMisTxm7NlF7RR
-         ULKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWN7sK7yAM5co8qPGBNyakPvfLoiMEoqHE0cEGSgvN9T/28bhkSJJilzJjqgghOaH64oRApchJj4xFJ/sk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVxahkZUOmOUOLGyFfAafKtLvk9SJS5Vj0uyVKukSrxhISgouY
-	IeTSnRY2DHsrWvzQ4lHrqz4Ee/gQ2wci4QRGKS/3gRQLWW+a+Lgi+nva4OXdZXE=
-X-Google-Smtp-Source: AGHT+IFm1vI2G+l7T6P3prtOY6eLRKhJJSDE0Bi64Yrs+Vw1dbkHWJHdthPe2RMFv/gUgvZjkgdSZg==
-X-Received: by 2002:a05:6000:1f11:b0:374:c847:85c with SMTP id ffacd0b85a97d-37d0e74d1a9mr1775876f8f.24.1728053015231;
-        Fri, 04 Oct 2024 07:43:35 -0700 (PDT)
+        bh=1Ee5xWEeq7S4uSTcaRJnj1WAmTtYVkRiu3mWNu5ZDDk=;
+        b=XFzuKsT7ax6ifAj3zvfizmDxCPo7+cydHEOsfUJ5fdWmQjxAnIxpjQICuc1ATicTBO
+         waLU9BUu5eYMnA20V4xhci3ttx4rT73OtbXFZQuTpf2Dp8cv8MW4sJuBpJodnAiWoXKG
+         REUOrHDbcd8q5YN6N52iYkcaQ5Oj1wQgJ9d9MoFDNONzfX7nYTBJ/TRvZO+1Uh3dm8lq
+         LyGOnkU3aXBi2ehlqx4GLMCwUxA2+inPz0Jc7NWzG+f19cUv35H1taReUK8hgpc/Xx4j
+         5CDOm3kXjrJY/c+Cwj+rW0i8HU26Ehg3RJ1TgJkOvbM+a1SM8rO1q4/7a37ZCaT5UyxO
+         GmfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYqpbdVdTR2NpvQiNxAM1CJXiWDjjFabmHgk35Lgy6vjebjqnqAMj04cI7bj3dSjwPOYQGpyuAPH653HU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8Kk6ZbXfidr2nS2sUdtQAZM31BCFz8H0e2gen2v13tneLL1ez
+	oKs+w6N6AtrMYzOtJORK5kfaCT3e/OaQ74nNyTRZ7GqgRt6/lRbhR5tzkyYgyWo=
+X-Google-Smtp-Source: AGHT+IH4ieDJNPwdvgv8ZCcUJ8Tih8/86uatD7Q7cdXsunzkfCocXl7DsElBA37H6akaQbNlgbRBqA==
+X-Received: by 2002:a5d:67cd:0:b0:37c:cd7e:6638 with SMTP id ffacd0b85a97d-37d0e6f2717mr1848046f8f.19.1728053016315;
+        Fri, 04 Oct 2024 07:43:36 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:80ea:d045:eb77:2d3b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d20bcsm3361370f8f.100.2024.10.04.07.43.34
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d20bcsm3361370f8f.100.2024.10.04.07.43.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 07:43:34 -0700 (PDT)
+        Fri, 04 Oct 2024 07:43:35 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 04 Oct 2024 16:43:22 +0200
-Subject: [PATCH 1/5] gpiolib: use v2 defines for line state change events
+Date: Fri, 04 Oct 2024 16:43:23 +0200
+Subject: [PATCH 2/5] gpiolib: unify two loops initializing GPIO descriptors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-gpio-notify-in-kernel-events-v1-1-8ac29e1df4fe@linaro.org>
+Message-Id: <20241004-gpio-notify-in-kernel-events-v1-2-8ac29e1df4fe@linaro.org>
 References: <20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org>
 In-Reply-To: <20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -85,59 +85,59 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1145;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1327;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=GV9UbQrF97SgoHpvOQBfdX3GKi4ST9w/X7XOWpTaA0U=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBm//8U7avLQBDR+Jk16XDKwbBZucLe8em4mqFCg
- xIOM7R8TR6JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZv//FAAKCRARpy6gFHHX
- cpX6D/9krtQVe7uAEsAQ9QkLe5k4mu/RKjXoceGhMIgvZ9Nzkeihm8fJs+YFjsVX+EA83aKVeMX
- vPqtplrZU9E16y5otu0ERAZckZlyGGx8vuhUhPzWYPBBgnJKsnmGc9v95mLe0gBLBHJ8y/Jqo+d
- H9y9s0ScWo461RMxa5VadZRZqxWaS9+6Rx+24zlEAQ5vzCbEPVjMgyq1heo9uE57nbXb4gUKcXf
- m11S+Jl1YVJb5YUgWGSHS4xOA67ffgQV5MgDABhcZMhxbJ0IhRmaSBXlX1JeyDJ+u+qHLc7KcAG
- LTfcpJh5x7TJuZ5U2gXANEvgTaKi9Pl/zqzCty5WFGYPYBimod3DRSqwBysOXwzC0HXUkKJXlcH
- mBc3U3w29FlEhaOFzjfOgZXZndXcWf0Q3+PQsKvA+bod6fvKtxhohuJLIm3LMSoVIPDNPEoHwuW
- BuagJHTusdCCANPzD30cNpbNvOakFVa91sJJw6tWN15FLvvQKTgm9WqMknF4ujhei77sjtxiNZ/
- uV86UFXXRKk+gg3emEnx+RmeNM7F/4pxgB0I2XOgHtvyME0evUprYRPGD6gIWbPhgvzAn9HEQQh
- TGBWutuvSJW8l+qX4H7RRTfSbGm0sxYQAD2cWe5KXdpNL3tckKySLkNbDKlAHpe8pwJ/0wfFNM1
- BS6dCHl5LgBZGLA==
+ bh=ZDhG5KXyIkg99fKOqS3EbGyFcZRvR3MZeXd4yD4FiSk=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBm//8VwLw9BPyfaJK7F1XyQuwU0v+1yL8kdJkRI
+ df+Jf7Q3nyJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZv//FQAKCRARpy6gFHHX
+ ciXfD/9gDhzfHmJyWP9oWZ2apaHgQM6rVNByAOpE/kriCMCLAG3KBOntI4oZgxzz6QUpiuh3mdB
+ 2V6Qhos9yBVcKz+mSU1PCzeEQRe7SFHHw0N8KypvgwuegMFOvbKd16AYJj5x6lXLn4IMs7N/Apw
+ /He4PoSl1jIYrrC3CmcY+2nRWo5Lf4qOc02TZkuUr7WCMaxFURxpb56XUizXYsLYsOwc9WAz8dj
+ dn42OAih1Iop40J2FZbwaqP0MXPO8ASYwsibcirI5HF2WVvObQdAS9JMd6o1Ge8bVS3Kb4FdVL2
+ FM9XNzQMYChBOefgeFfjbdyyjT0axb/RE1Ze1S/a4XMkZzmJXwjwxJgoP6wZyGu5s+ZTV5cBeev
+ jD5CsjiOKwbAz8k7HyqwbHhMHNW9bT/hqaYag9hn07MJ6cm6Ke3rqvOwgZyG9xkwjywYPLcnyo+
+ ASePfDY3VAxu0RD8hjCG7cpsbQGMidmUMOMuMs/lBzemL5Mvhsp46kT2qqx6yhTeM6/IPZviZbl
+ 15WHdpXXilU9DxVISpsCgqMwea5uefZd3gHV8bZ/5SSxrat/xblUzmQ5VWeO2boLFJV5HgxjhFw
+ jwyjASE4azh+fBOMVxPuu7B6r+sHezH/kzf2ifgXI25PlCCvR/S8+8IZnSALifTlVuqWn18yqrU
+ 6yr2M0NNvsfGjog==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We should only use v2 defines for line state change events. They will get
-tranlated to v1 if needed by gpio_v2_line_info_changed_to_v1().
-
-This isn't really a functional change as they have the same values but
-let's do it for consistency.
+We currently iterate over the descriptors owned by the GPIO device we're
+adding twice with the first loop just setting the gdev pointer. It's not
+used anywhere between this and the second loop so just drop the first
+one and move the assignment to the second.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 6a5c28babf35..c1051d77fb88 100644
+index c1051d77fb88..97346b746ef5 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -2434,7 +2434,7 @@ static void gpiod_free_commit(struct gpio_desc *desc)
- 		desc_set_label(desc, NULL);
- 		WRITE_ONCE(desc->flags, flags);
- 
--		gpiod_line_state_notify(desc, GPIOLINE_CHANGED_RELEASED);
-+		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_RELEASED);
- 	}
- }
- 
-@@ -4366,7 +4366,7 @@ struct gpio_desc *gpiod_find_and_request(struct device *consumer,
- 		return ERR_PTR(ret);
+@@ -1026,9 +1026,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 		}
  	}
  
--	gpiod_line_state_notify(desc, GPIOLINE_CHANGED_REQUESTED);
-+	gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_REQUESTED);
+-	for (desc_index = 0; desc_index < gc->ngpio; desc_index++)
+-		gdev->descs[desc_index].gdev = gdev;
+-
+ 	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
+ 	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
  
- 	return desc;
- }
+@@ -1058,6 +1055,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 	for (desc_index = 0; desc_index < gc->ngpio; desc_index++) {
+ 		struct gpio_desc *desc = &gdev->descs[desc_index];
+ 
++		desc->gdev = gdev;
++
+ 		if (gc->get_direction && gpiochip_line_is_valid(gc, desc_index)) {
+ 			assign_bit(FLAG_IS_OUT,
+ 				   &desc->flags, !gc->get_direction(gc, desc_index));
 
 -- 
 2.43.0
