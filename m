@@ -1,128 +1,240 @@
-Return-Path: <linux-kernel+bounces-350066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C387298FF4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:05:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094E698FF4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45510B20995
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:05:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21B611C213E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF57A14658D;
-	Fri,  4 Oct 2024 09:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB20A145A07;
+	Fri,  4 Oct 2024 09:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OOg8pXuH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eo3BWshq"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABEB140E38
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 09:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155DD13B7B3;
+	Fri,  4 Oct 2024 09:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728032727; cv=none; b=KbDUWIzCVGBEIyBu4Z9OTe3qeHh1Fuo+X+cJJ6m6X84Sf9T4prrTFK3RPqDZ1G0UoCkaeqaZG3sMNOP/fHDrTJpRPae8WaB7c3aJVU0xqkFCuqlyvJHmzkuBa1AXrnyQV/f7RKdcT47Pkvz0PcdgQJVG7IQ0KI/a0ANexEoVy8A=
+	t=1728032745; cv=none; b=hjmbCnsZxq0o8yG1RdaQlQeACYkR1ilKjK1Q8J2hTkhhhGENLG4ISO7buF3MBxlWGNYR2o5lO2j75O4vf9edoHAveCjZW1ghrz0k0VfvIKn0LUMQIM86R23uwPu0lmIMDlkf5e5VzKeZVdL3wKzLAxf0Qlfojd7GzjLqP9GAwyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728032727; c=relaxed/simple;
-	bh=Sq4OcjY0EeQRIC1hZSJmdjUw6cPr6dDZEOS3Jwdd+DI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AOZaUaKSeiq09Bda7elsQBuAfVXlc5/U17F3SfwaB/3stZ4u9SeH9VS7S3T1RX0yuQycTUXe1MCHfNYhPTJytBkag0O0i+zH/g4qrJgHIx90yDsrul8ifXe+6pOstXWmdLKd2BxC//in+y6H2z2PeJ7C6hKs1KRBJp2MuwB4LE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OOg8pXuH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728032725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+34TNPttbqJWXuUaZlwkoaWIFsW5o7Y4R1pY/2NowPU=;
-	b=OOg8pXuHABwLA0IwJ2MeKMIf5/9SoCKI0RwAwA9dnfDgLSUcSCo7KCUT+cyP7YCgEMHmST
-	5Dw9ZTIr9L9DNnOFb7ZX8dqMIZzu4y984IzngdKawM6fdTn/RW4BD7mxWHlrqBQMSbia5m
-	G0G5UYeZdRcink/0tBZDxEgF+5FIknw=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-670-oiXSK1yaNqyUFXEG5Uco_w-1; Fri, 04 Oct 2024 05:05:23 -0400
-X-MC-Unique: oiXSK1yaNqyUFXEG5Uco_w-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37cda7514f8so975580f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 02:05:23 -0700 (PDT)
+	s=arc-20240116; t=1728032745; c=relaxed/simple;
+	bh=/v+RmHRKOZfo9tGe2MELmqxLuPDg9FWIOOY+FSuUWw4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lqOMbUI/61ncLc8s9+i6XWOMH9c+F+2TUgXmk3SQyK/kuMmW/WimLiKsqcIYa4zWgx+EaYUzYG1tMa0cn9xeUpCFD+GtXq7HgkIc9Oe5jh31MsukI7u7QgIYB+/b/nsjLXo58dUkOc8QYlVBp2CYZjZ+hV6E6DmQxYSB+EgeU9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eo3BWshq; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c883459b19so2141871a12.2;
+        Fri, 04 Oct 2024 02:05:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728032741; x=1728637541; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ulig9z8NcPhVqGwL6CNSUzcF2wRPT7yl9E653OjmFD4=;
+        b=eo3BWshqakmrOEVRX6xaliDJBL4x/qdjjy9gB8P/tnyUBN9QKGupBYbGbIJY4NZAS4
+         z5SBj7K0qNxQVWozZQkUVtxiycweC+LlJASmcpXtJ9S6fYn6cZ7gRM32kQD2n30vOp9f
+         qFeeNsWxKAyxdKDP7mObyI0S81W/EuiRbJ88ykXsMrv1QVEnSdOcppUw1x5cO2jtC/EM
+         YTuUQbN6doNIPI4xaUsM1Z7gKOYrXCQNZPMqrgjDPYC70BNZHuDiNgMUDwUIqwEgMvHR
+         DPzYgGNbKfdORCneebZsWCb1BLGy90rBaa11Yt1Cpg8jdEqlcDXefWGW3hOIHHblFF2c
+         52ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728032722; x=1728637522;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+34TNPttbqJWXuUaZlwkoaWIFsW5o7Y4R1pY/2NowPU=;
-        b=vTwrJAeEGcinEusjoFQaSNN6a8nODFNd4q1y++LlGPS6zgVVtjWzr0DrkH/49YYKRy
-         VEm3pWnak6LSTdumXzrrU/dHN2LF+lwR3Moqp7Pl/COa4crtqt2GB69zJThrxnX0M6PI
-         Q02qnKA/9+MLOarZIl3wZxWxP0PyunG4IsV2CMmFFrI/vYAKvYDGOq08NQiQUXSpmWK9
-         Xtgd8S2ciiFVTQR8d8cFzf1RcGXCpNLEzwU7dw1XZpMTJRFDUhsHLJDlVTiHjUpYOp6Q
-         Sjkmj4Ll5U2t8N0e4rg0TC+ocVeQzO/y9kD7q6uz0ThGniY8RBFVbZ+ZpiAb304DbnOh
-         vifw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7pVpxDCSnJVQcvWKk7lilOREx3aHjwxp2os3xbtF94ThdosJW2qf7G+HWRxDeUlCy1elLhbnGPD7A71c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBkWdMie0caYzd0J/12nCwKT1td+1eyKDCyZV0wflSJqY7WJ5t
-	5J4oi6LZZWEf3Gh1mjWPdGTesyGVza95P+eghsTPd5csyTb7+IFp7hmQgyoNbnW1k+SI6AI3P8z
-	Ed23Wzc8SM0AjA13G1Q4k61j/wBx4xucKLAGweZdGpUiDclna4mo+BaklTClUN3etwN43ws62iy
-	1gljv1yT/0IiqiZHDpuzfAHjKhpQ8XZB1HH1rmAVYM0FMJLg==
-X-Received: by 2002:a05:6000:1884:b0:37c:cce8:4acc with SMTP id ffacd0b85a97d-37d049ea723mr4822650f8f.13.1728032722462;
-        Fri, 04 Oct 2024 02:05:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZI65a4E0MWEudDsjrxjK4F+K9QmGtEmB+a+SuWRzGXeJWhv4eMOaxMFsitqPTzNLlOrah9g==
-X-Received: by 2002:a05:6000:1884:b0:37c:cce8:4acc with SMTP id ffacd0b85a97d-37d049ea723mr4822609f8f.13.1728032721982;
-        Fri, 04 Oct 2024 02:05:21 -0700 (PDT)
-Received: from fedora (g2.ign.cz. [91.219.240.8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86a0afc1sm10545735e9.1.2024.10.04.02.05.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 02:05:21 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Sean Christopherson <seanjc@google.com>, Sean Christopherson
- <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] KVM: selftests: Drop manual CR4.OSXSAVE enabling
- from CR4/CPUID sync test
-In-Reply-To: <20241003234337.273364-8-seanjc@google.com>
-References: <20241003234337.273364-1-seanjc@google.com>
- <20241003234337.273364-8-seanjc@google.com>
-Date: Fri, 04 Oct 2024 11:05:20 +0200
-Message-ID: <87ldz4i6gf.fsf@redhat.com>
+        d=1e100.net; s=20230601; t=1728032741; x=1728637541;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ulig9z8NcPhVqGwL6CNSUzcF2wRPT7yl9E653OjmFD4=;
+        b=oHk5yO//4WoaBlI8bAl2+X6dRk2jinjTYnYE5DbVgyVr/1TY+n3F9cMErd/JnKtfmu
+         0VSBiap2tpy5HcIVXWVaxHrPja2yebZWDZuq8V3Xpcnx/UeGGMNMKXGHK7T/pFFY5QDx
+         1rVyBmPhKqEoa6DvmqmDMf+P6XIML/+H9bCrDC2abv7R7BE1wp3p7wRFIVBl8Dej/4jt
+         qzM/2eIqJZw/2DNMMTrz/PmmYEEyjGlx/3Qrg6WDir5Gmf9ixEDZyTDZ+FtRhhKU5gAZ
+         qd+rppH8RHHrEsoi4biqjKtFvQRgGIVkIv/yQ/YzVRjJym3FI+gbKe4UQR6x2nJyB0sV
+         39RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBStkfJfFfnmn74ftetcUpFQg/A0FXvddpufDqXYm52mI/s2TTSWoT40Oj4AAKd9+k+8rmgtx1ciDd@vger.kernel.org, AJvYcCVGVNhd6kTpWXx8LSVWmzi7Um1uFubLEURKsmFkxrI6dseZG3fopPRWsdh7EoUG/ueabd8OK29dg1Xf+us=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCYvJZm/b6EpMNnsOeHFq7zl72OngBNOItB7yCfMFHx+MttWtj
+	CkSEnBKSBZvKQRSpNHLNYhA8WnXPIfPu9Boys+iub7tWOfqZAssqIAYHqVqsQQbzDAWMHf0SRaV
+	y0RG8TbgxLDQf2rhdu5Awgj3P6y0=
+X-Google-Smtp-Source: AGHT+IER2GadSsBs7Lnu4hsc2+Ty7XF36iHDLYqf7DOJwYWgma0rBl9oPn28YylVLhc/vwpQKHxRm808Mk/rmsG62+A=
+X-Received: by 2002:a17:907:96a4:b0:a8a:af0c:dba9 with SMTP id
+ a640c23a62f3a-a991bd3f93bmr147966066b.16.1728032740760; Fri, 04 Oct 2024
+ 02:05:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240926141956.2386374-1-alvinzhou.tw@gmail.com>
+ <20240926141956.2386374-2-alvinzhou.tw@gmail.com> <28ac1c39-5592-4e5c-8fce-53489e0135ee@linaro.org>
+In-Reply-To: <28ac1c39-5592-4e5c-8fce-53489e0135ee@linaro.org>
+From: Alvin Zhou <alvinzhou.tw@gmail.com>
+Date: Fri, 4 Oct 2024 17:05:21 +0800
+Message-ID: <CAPhrvRQirexA9QJzBSqjfmPnbnF62-hzg-neQ-cZX2hnkP_Zwg@mail.gmail.com>
+Subject: Re: [PATCH v10 1/6] mtd: spi-nor: add Octal DTR support for Macronix flash
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pratyush@kernel.org, mwalle@kernel.org, 
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com, 
+	broonie@kernel.org, chengminglin@mxic.com.tw, leoyu@mxic.com.tw, 
+	AlvinZhou <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sean Christopherson <seanjc@google.com> writes:
+Hi Tudor,
 
-> Now that CR4.OSXSAVE is enabled by default, drop the manual enabling from
-> CR4/CPUID sync test and instead assert that CR4.OSXSAVE is enabled.
+Tudor Ambarus <tudor.ambarus@linaro.org> =E6=96=BC 2024=E5=B9=B410=E6=9C=88=
+2=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=883:16=E5=AF=AB=E9=81=93=EF=
+=BC=9A
 >
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  tools/testing/selftests/kvm/x86_64/cr4_cpuid_sync_test.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
 >
-> diff --git a/tools/testing/selftests/kvm/x86_64/cr4_cpuid_sync_test.c b/tools/testing/selftests/kvm/x86_64/cr4_cpuid_sync_test.c
-> index da818afb7031..28cc66454601 100644
-> --- a/tools/testing/selftests/kvm/x86_64/cr4_cpuid_sync_test.c
-> +++ b/tools/testing/selftests/kvm/x86_64/cr4_cpuid_sync_test.c
-> @@ -27,12 +27,9 @@ static void guest_code(void)
->  		[KVM_CPUID_EAX] = X86_FEATURE_OSXSAVE.function,
->  		[KVM_CPUID_ECX] = X86_FEATURE_OSXSAVE.index,
->  	};
-> -	uint64_t cr4;
->  
-> -	/* turn on CR4.OSXSAVE */
-> -	cr4 = get_cr4();
-> -	cr4 |= X86_CR4_OSXSAVE;
-> -	set_cr4(cr4);
-> +	/* CR4.OSXSAVE should be enabled by default (for selftests vCPUs). */
-> +	GUEST_ASSERT(get_cr4() & X86_CR4_OSXSAVE);
->  
->  	/* verify CR4.OSXSAVE == CPUID.OSXSAVE */
->  	GUEST_ASSERT(this_cpu_has(X86_FEATURE_OSXSAVE));
+>
+> On 26.09.2024 17:19, AlvinZhou wrote:
+> > From: AlvinZhou <alvinzhou@mxic.com.tw>
+> >
+> > Create Macronix specify method for enable Octal DTR mode and
+> > set 20 dummy cycles to allow running at the maximum supported
+> > frequency for Macronix Octal flash.
+> >
+> > Use number of dummy cycles which is parse by SFDP then convert
+> > it to bit pattern and set in CR2 register.
+> > Set CR2 register for enable octal DTR mode.
+> >
+> > Use Read ID to confirm that enabling/disabling octal DTR mode
+> > was successful.
+> >
+> > Macronix ID format is A-A-B-B-C-C in octal DTR mode.
+> > To ensure the successful enablement of octal DTR mode, confirm
+> > that the 6-byte data is entirely correct.
+> >
+> > Co-developed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> > Signed-off-by: JaimeLiao <jaimeliao@mxic.com.tw>
+> > Signed-off-by: AlvinZhou <alvinzhou@mxic.com.tw>
+> > ---
+> >  drivers/mtd/spi-nor/macronix.c | 91 ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 91 insertions(+)
+> >
+> > diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macro=
+nix.c
+> > index ea6be95e75a5..f039819a5252 100644
+> > --- a/drivers/mtd/spi-nor/macronix.c
+> > +++ b/drivers/mtd/spi-nor/macronix.c
+> > @@ -8,6 +8,24 @@
+> >
+> >  #include "core.h"
+> >
+> > +#define MXIC_NOR_OP_RD_CR2   0x71            /* Read configuration reg=
+ister 2 opcode */
+> > +#define MXIC_NOR_OP_WR_CR2   0x72            /* Write configuration re=
+gister 2 opcode */
+> > +#define MXIC_NOR_ADDR_CR2_MODE       0x00000000      /* CR2 address fo=
+r setting spi/sopi/dopi mode */
+> > +#define MXIC_NOR_ADDR_CR2_DC 0x00000300      /* CR2 address for settin=
+g dummy cycles */
+> > +#define MXIC_NOR_REG_DOPI_EN 0x2             /* Enable Octal DTR */
+> > +#define MXIC_NOR_REG_SPI_EN  0x0             /* Enable SPI */
+> > +
+> > +/* Convert dummy cycles to bit pattern */
+> > +#define MXIC_NOR_REG_DC(p) \
+> > +     ((20 - (p)) >> 1)
+>
+> This is unfortunate as we convert dummy cycles to bytes in mtd and then
+> we convert back from bytes to cycles in spi. I had an attempt fixing
+> this in the past, but couldn't allocate more time for spinning another
+> version for the patch set.
+>
+> I won't block the patch set for this, but if someone cares to fix it,
+> would be great to take over.
+>
+> > +
+> > +/* Macronix write CR2 operations */
+>
+> I'll drop this comment when applying, as I can already see what the
+> macro is doing from its name.
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Got it, I will pay attention to it, thanks!
 
--- 
-Vitaly
+>
+> > +#define MXIC_NOR_WR_CR2(addr, ndata, buf)                    \
+> > +     SPI_MEM_OP(SPI_MEM_OP_CMD(MXIC_NOR_OP_WR_CR2, 0),       \
+> > +                SPI_MEM_OP_ADDR(4, addr, 0),                 \
+> > +                SPI_MEM_OP_NO_DUMMY,                         \
+> > +                SPI_MEM_OP_DATA_OUT(ndata, buf, 0))
+> > +
+> >  static int
+> >  mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
+> >                           const struct sfdp_parameter_header *bfpt_head=
+er,
+> > @@ -185,6 +203,78 @@ static const struct flash_info macronix_nor_parts[=
+] =3D {
+> >       }
+> >  };
+> >
+> > +static int macronix_nor_octal_dtr_en(struct spi_nor *nor)
+> > +{
+> > +     struct spi_mem_op op;
+> > +     u8 *buf =3D nor->bouncebuf, i;
+> > +     int ret;
+> > +
+> > +     /* Use dummy cycles which is parse by SFDP and convert to bit pat=
+tern. */
+> > +     buf[0] =3D MXIC_NOR_REG_DC(nor->params->reads[SNOR_CMD_READ_8_8_8=
+_DTR].num_wait_states);
+> > +     op =3D (struct spi_mem_op)MXIC_NOR_WR_CR2(MXIC_NOR_ADDR_CR2_DC, 1=
+, buf);
+> > +     ret =3D spi_nor_write_any_volatile_reg(nor, &op, nor->reg_proto);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     /* Set the octal and DTR enable bits. */
+> > +     buf[0] =3D MXIC_NOR_REG_DOPI_EN;
+> > +     op =3D (struct spi_mem_op)MXIC_NOR_WR_CR2(MXIC_NOR_ADDR_CR2_MODE,=
+ 1, buf);
+> > +     ret =3D spi_nor_write_any_volatile_reg(nor, &op, nor->reg_proto);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     /* Read flash ID to make sure the switch was successful. */
+> > +     ret =3D spi_nor_read_id(nor, 4, 4, buf, SNOR_PROTO_8_8_8_DTR);
+>
+> can we use nor->addr_nbytes for the second argument? Please test and
+> confirm. No need to resend for this, just confirm and I can amend when
+> applying.
 
+The following is the process of spi_nor_scan()
+int spi_nor_scan(...)
+{
+......
+ret =3D spi_nor_init_params(nor);
+......
+ret =3D spi_nor_setup(nor, hwcaps);
+......
+}
+First, within the spi_nor_parse_sfdp() function inside
+spi_nor_init_params(): nor->params->addr_nbytes is set based on the
+SFDP, while nor->addr_nbytes is not available. Therefore, the second
+argument cannot use nor->addr_nbytes but can use
+nor->params->addr_nbytes. Additionally, For Macronix Octal NOR Flash
+in Octal DDR mode, both the address and dummy cycles are fixed at 4
+in READID, so setting the second and third argument to 4 is also valid.
+Moreover, nor->addr_nbytes is set within the spi_nor_setup() function.
+
+>
+> What about the third argument, the number of dummy nbytes. Can we get
+> the cycles needed for READID from somewhere in SFDP?
+
+Currently, the SFDP does not provide the number of dummy cycles for the
+READID.
+
+>
+> Looks good.
+
+Thanks,
+Alvin
 
