@@ -1,152 +1,77 @@
-Return-Path: <linux-kernel+bounces-351457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B434799116F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F29B7991172
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7304D284B08
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3FB2282F15
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6161D8A14;
-	Fri,  4 Oct 2024 21:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED391448E0;
+	Fri,  4 Oct 2024 21:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FxvE+Uxp"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bZJyBOUO"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C351AA7BA
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32AE1AE00E;
+	Fri,  4 Oct 2024 21:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728077145; cv=none; b=VdBKIt/8fmrh4cWpxu9mtiU7yh4VNolfRWxQzCyfOmBKSAEuwP1i/N0FqPnCYtn/GctweFx3i0ljE07ZHEtkrIC1Ela7A+kr6J3sJnQ744ROU2l5gKCVT/j56ms/XvOT2dDPdeTooY+sdwKulP76QHLBAzLTIOALo9gp37lmVco=
+	t=1728077188; cv=none; b=pWJu67nAubhLeg3GPIqj9Rk9A6R4rwIU//r+oofEqrJY9hMhuPc4UmD75fW7Z+OEsxy/VCtVlnYTS7T8GfcjGxJrzx670Z3Yyqwz9VAFaPmyc1BHXkvVFykYor+pyF4/vKBSqMqGDJ7Wuc2ZaCQ5cxwpaxAV3pxmfJrMW6thR9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728077145; c=relaxed/simple;
-	bh=jANsz80qnisMNU35j5tgfQhGH2pfxSnXspLE31Mdo1c=;
+	s=arc-20240116; t=1728077188; c=relaxed/simple;
+	bh=i7IKJ5Z++uwc/zj5PeCouwzc/5+BYJMSYcRAJ261usg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ot3QtVmhddozY4P+w/Y/BTpON3AJ1sBmo0VQH+OLucMSqUM9jjxRd8Uut2VLvhSDydmL3xOf9PslaSNXkA5gKco5HkkhRt6j/12wk6i4d7dg8vcFUweaIce+v6Bu4iNs9rtnYR4suf8K7Mt2IRtee90rfWtIPmbRoLEFQgfu2HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FxvE+Uxp; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 4 Oct 2024 21:25:31 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728077141;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cYKtCoATsBvcWFCPa9gSKY/ijfwd28CJD3PnHOgkIHI=;
-	b=FxvE+UxpYBlx5VXP9BMFUDR0DbPw5dRg4ki38HZdOgHbyUHZOCjxs+3RCBzrk9Ul3dR6ES
-	WCgCACAbUMJ96/3xlLzK18PATEwAjKsgYjN1+pCyQm+rqJ008fos8JS4p6WzI+g0NsqNib
-	dzRBetNMBukPqAoUfVQf5oo1WKjAPeI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Song Liu <song@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v4 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
-Message-ID: <ZwBdS86yBtOWy3iD@google.com>
-References: <20241002180956.1781008-1-namhyung@kernel.org>
- <20241002180956.1781008-3-namhyung@kernel.org>
- <CAPhsuW7Bh-ZXfM2aYB=Yj8WaJHFc==AKmv6LDRgBq-TfdQ3s8A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VrlBYYvyMxb+TwN3sWaCj6gJ1SZLEZx/W8SKNRlfhKqY4Zk8MkhTtpkrDmzC9qomz7WQT1O1ehvdh+5LIQNPtG6CdpxanwJlH/BAso608eBaelyh4cKeK3nHl7J6wwQhxm9vN0kMiV1gNAY4cnhdqwjs7hq+dH61ltclOAuBSKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bZJyBOUO; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=EdO7wXsRKn/qN7YZ2kPGzXiUIaom7K6LtlH4zBELlDo=; b=bZJyBOUOIb2uZnW0XOozuZUsH6
+	3WHwWXWrXMD2q2Hrgt26Z+456Qpw9KpdzCTsojc9yy3E8pO9adhgrKKDvHF2YpNHRpmaDnatZEylm
+	wmGdvu9z2W9sL/BF+5sQ1/7JVK2hYT8g5a9f8zRFMwOXih4DpJaUWkMcRmZ1AtMlhDlw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1swpoR-0095u6-FA; Fri, 04 Oct 2024 23:26:11 +0200
+Date: Fri, 4 Oct 2024 23:26:11 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Xu Liang <lxu@maxlinear.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: mxl-gpy: add missing support for
+ TRIGGER_NETDEV_LINK_10
+Message-ID: <5cf6e7d2-2303-4bd8-bfa4-2ea9915ac00d@lunn.ch>
+References: <cc5da0a989af8b0d49d823656d88053c4de2ab98.1728057367.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW7Bh-ZXfM2aYB=Yj8WaJHFc==AKmv6LDRgBq-TfdQ3s8A@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <cc5da0a989af8b0d49d823656d88053c4de2ab98.1728057367.git.daniel@makrotopia.org>
 
-On Fri, Oct 04, 2024 at 01:10:58PM -0700, Song Liu wrote:
-> On Wed, Oct 2, 2024 at 11:10 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > The bpf_get_kmem_cache() is to get a slab cache information from a
-> > virtual address like virt_to_cache().  If the address is a pointer
-> > to a slab object, it'd return a valid kmem_cache pointer, otherwise
-> > NULL is returned.
-> >
-> > It doesn't grab a reference count of the kmem_cache so the caller is
-> > responsible to manage the access.  The intended use case for now is to
-> > symbolize locks in slab objects from the lock contention tracepoints.
-> >
-> > Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> > Acked-by: Roman Gushchin <roman.gushchin@linux.dev> (mm/*)
-> > Acked-by: Vlastimil Babka <vbabka@suse.cz> #mm/slab
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  kernel/bpf/helpers.c |  1 +
-> >  mm/slab_common.c     | 19 +++++++++++++++++++
-> >  2 files changed, 20 insertions(+)
-> >
-> > diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> > index 4053f279ed4cc7ab..3709fb14288105c6 100644
-> > --- a/kernel/bpf/helpers.c
-> > +++ b/kernel/bpf/helpers.c
-> > @@ -3090,6 +3090,7 @@ BTF_ID_FLAGS(func, bpf_iter_bits_new, KF_ITER_NEW)
-> >  BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)
-> >  BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
-> >  BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
-> > +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RET_NULL)
-> >  BTF_KFUNCS_END(common_btf_ids)
-> >
-> >  static const struct btf_kfunc_id_set common_kfunc_set = {
-> > diff --git a/mm/slab_common.c b/mm/slab_common.c
-> > index 7443244656150325..5484e1cd812f698e 100644
-> > --- a/mm/slab_common.c
-> > +++ b/mm/slab_common.c
-> > @@ -1322,6 +1322,25 @@ size_t ksize(const void *objp)
-> >  }
-> >  EXPORT_SYMBOL(ksize);
-> >
-> > +#ifdef CONFIG_BPF_SYSCALL
-> > +#include <linux/btf.h>
-> > +
-> > +__bpf_kfunc_start_defs();
-> > +
-> > +__bpf_kfunc struct kmem_cache *bpf_get_kmem_cache(u64 addr)
-> > +{
-> > +       struct slab *slab;
-> > +
-> > +       if (!virt_addr_valid(addr))
-> > +               return NULL;
-> > +
-> > +       slab = virt_to_slab((void *)(long)addr);
-> > +       return slab ? slab->slab_cache : NULL;
-> > +}
+On Fri, Oct 04, 2024 at 04:56:35PM +0100, Daniel Golle wrote:
+> The PHY also support 10MBit/s links as well as the corresponding link
+> indication trigger to be offloaded. Add TRIGGER_NETDEV_LINK_10 to the
+> supported triggers.
 > 
-> Do we need to hold a refcount to the slab_cache? Given
-> we make this kfunc available everywhere, including
-> sleepable contexts, I think it is necessary.
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-It's a really good question.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-If the callee somehow owns the slab object, as in the example
-provided in the series (current task), it's not necessarily.
-
-If a user can pass a random address, you're right, we need to
-grab the slab_cache's refcnt. But then we also can't guarantee
-that the object still belongs to the same slab_cache, the
-function becomes racy by the definition.
+    Andrew
 
