@@ -1,138 +1,158 @@
-Return-Path: <linux-kernel+bounces-350757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78EF4990923
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:28:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B0E6990924
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27216286437
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:28:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3974D1C20D5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D001C8779;
-	Fri,  4 Oct 2024 16:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4145C1C8772;
+	Fri,  4 Oct 2024 16:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTKzspeT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="N5MAvhXP"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01AF1C8761;
-	Fri,  4 Oct 2024 16:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8079E1C8784
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728059311; cv=none; b=b/BUqGifCvY6sjA1KPWXfFySygUudiVHNwHXomAeGpIbWDxCdZBmKtUfhKbiiNlD3h0uRhJm6BTzJrrDh5aZaQlrDsZR6JZ8LwyC12WKqJOVHu1ABIzgiLjlunFEWFQOeQiaSNQMJqtSsWJlcITrWxIikbNkzj411wNgN5jetx0=
+	t=1728059316; cv=none; b=D+o6Y04VGMW4EOiYcXFlMSrExM+uchC9H2dTLS/or4nFEogW83ul8B1n+xhxGaF9dIllC4jgQ4s6i9g52WRvY8Y+7ICC9R3vV2C2OzqQbQGaKDUHmJVHvT8wI3CoQaHkKYUcHTJluPEQVtBYqQ+X+zWMWB6sNbEaXOy+mXkYkyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728059311; c=relaxed/simple;
-	bh=VcdWpeZzXXVqcK7mmUjpmFx69LyvMwwPTL+mrgVzoxw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CcdjhRJpXRwI9iMHtqHiSsBvh9wpzzH+qwjNOVBmf0vy5ctZKoeJTzKcx9dM3rIRMU57yStJ9Mi5th/+OxLsmMHuf8YtmCVw2i5dfZwlXrhSqAzNCyoNTcdohaIubnfLvNf03fQr0R/wn7CmEGaaA+qFjf4by7QrpIblsK3GMic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTKzspeT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9100CC4CED2;
-	Fri,  4 Oct 2024 16:28:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728059311;
-	bh=VcdWpeZzXXVqcK7mmUjpmFx69LyvMwwPTL+mrgVzoxw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VTKzspeTzmvZrslylxG4PwSjopfV9MtmLXGzc8SB91iQQKLSqL5t4KVy79J1UCIec
-	 O/MlXYn5uJ3X+/+XLDxetcyWNtEGyMWPjm/MeKvFZzwfSYN1M04UjI/MUvWowSwIpk
-	 a4IeBnMFkdGXjdl5jcJ2anrXSVoDbviA9HFidjNFg0NsMeX1yJKzSAr/YtDUEYa3tm
-	 JEdB85y1eBBfcJpPY0TZwlYuvA7to5GeGy73ViSdo9Qv48uKH3qXAXe7E8hoNE1UaL
-	 q2lJFx2mpDp5u/0Ne3FxzNE08X+elL6RHg9SHeOyGPX07fNhZesa/CPs4D01fEsFR3
-	 Rpp8YB6Wp8ziw==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5e1baf0f764so753298eaf.1;
+	s=arc-20240116; t=1728059316; c=relaxed/simple;
+	bh=l7+/OOnbPo59NRdHU4hf39heIHqnVwgUybEyl/BT7zY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=joJFhnxfbyS7EOhOYneywdUeM1BKXGTWDueYMifaY2JKvKHQTPtvO7gTOy36+Grjpzz7oVB8mXKeZjpTLfFRHl8xO1Y/5hV+ep6z7ks984IEJJX4xB8DPdk/q0NOVpAyXoJ0JXvO1lcYk4l5cTRBFpmlpGVSxfUViQxJLK8uwbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=N5MAvhXP; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cb2f344dbbso17642226d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:28:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1728059312; x=1728664112; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g9cpx8Hyi6dy6qO2dUhiRIRpdrteVAK0AMuAZrMnAe0=;
+        b=N5MAvhXPocpXL+3MRnLl6U8seb48TXhzIBXVAGF6Z5WylKzfg0PGkMinuwXG8cdnS/
+         raQH7qudNAX3v1B/9Qy3c5Hzk1i75y3HHgpVLDnNWTzg9pKA9hI91i9zbS8fkvBRzbhL
+         yDmknpHxL8IoHp+fne7pCvc5KTG7wzoc234m6tS2ePyNmurrsfezA97BnnePodjMbDWY
+         FXAPzWSJx+qYyc2kLa/btg7cqB4xWXJuLy6/a2AXezMquOZah862dfX8qAHQ8YRHztEU
+         MHoIpaiotQi/NjTH3AnQxWKN+5riQplWeni+ontCtxV05YncNV4ObPO8IopM6J3olyTJ
+         I2eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728059312; x=1728664112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g9cpx8Hyi6dy6qO2dUhiRIRpdrteVAK0AMuAZrMnAe0=;
+        b=cJLH4y9Kdd+3hlYKlijXRaSEH2eEUXzuzR4rKXtT+i1nVlj5H50XQmrsTZmGSzO+rw
+         8er8OxsXYKHyu+C6ob0knGKBG+Hy5YW3qdVytes/6rHVvoJ+dEExIeDBpARZt4kpeLC3
+         +A2jNhL6WQY2tHIWzocawWycKFFnYUyzP8NhU60U4ZKalcDTuhNpDeh5wWzM4QZxiEAm
+         z65Ry/4PU7IUNXWlSctpmA6rqhuoh2NBeUVdEBQDCoYV0AuEaLYruRCb/A1U0HnoECUY
+         REw+/P12lNiuPZEsbsK6XMh+uoZHakf6TO3kH33BpU6giuOp1634velhyQHkxGtOwU0r
+         HKrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwSbV4YjNXFByySEBCq807mBFpa1BecnEbkW8+PLDaxwW/ZPSgrCq57CrLPeSfcP5TduM25KYVm/ZT6kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ4wsc0bGPT1OTwQ4ZdjQTaJUjNjzpHa9nIsqCtH6YA5C+XFDA
+	U4WX2zbm08WOGh+lP4ovgR9Z+wd1ys1MzdOzzjtbpu+mNKxwZ7kYdfkZWQcq8n8=
+X-Google-Smtp-Source: AGHT+IHCGTgu+cqiGiiZGFp3IkE06rob+xgV+iZNNZ8TyR776du/mFsmvAe7H6wEvrhSrVYdAin9FQ==
+X-Received: by 2002:a05:6214:5504:b0:6cb:4a84:e02a with SMTP id 6a1803df08f44-6cb9a32d338mr50523826d6.16.1728059312390;
+        Fri, 04 Oct 2024 09:28:32 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba4751920sm573476d6.98.2024.10.04.09.28.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 04 Oct 2024 09:28:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWKNY2WCueN2HhvYKRXfbJNXorz8OyYlElDPzoIGa4gKMd2FDZJwMz1bwrJg8U50Tl//fxu/1u4vQs+ykk=@vger.kernel.org, AJvYcCX7+D/F0D09w2DjfGswjnBFAYtGFh567C716YAG37YVQ60KrziWVrwFKzWvrWmpMEPOfe6iRBZ813c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHVPByDX5qbhJy9wsG70mIXqmlQced0csROFUleK0oM6Jb6t9r
-	aDKdUOKv87WwGmoeCsiB+ak2fRM+79IKvOTqQtlCmSz2x1zWIYhF0VcCFo9cTtvlhaX7/x/qUD4
-	gGpUqfHUtRfc8BL6heW6DF4GIj48=
-X-Google-Smtp-Source: AGHT+IGkH3eSm76Y+dAOdUFbEPIXaTIyenB3X/AcSew8S5ibDCXnIBU1uMFOM/zBtCsbcpw5PaQCUkC9W4rNc8coyOg=
-X-Received: by 2002:a05:6820:82a:b0:5e7:c925:af3 with SMTP id
- 006d021491bc7-5e7cc079e04mr1760542eaf.5.1728059310905; Fri, 04 Oct 2024
- 09:28:30 -0700 (PDT)
+From: Gregory Price <gourry@gourry.net>
+To: linux-pci@vger.kernel.org
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lukas@wunner.de,
+	dan.j.williams@intel.com,
+	bhelgaas@google.com,
+	dave@stgolabs.net,
+	dave.jiang@intel.com,
+	vishal.l.verma@intel.com,
+	Jonathan.Cameron@Huawei.com
+Subject: [PATCH] PCI/DOE: Poll DOE Busy bit for up to 1 second in pci_doe_send_req
+Date: Fri,  4 Oct 2024 12:28:28 -0400
+Message-ID: <20241004162828.314-1-gourry@gourry.net>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12549318.O9o76ZdvQC@rjwysocki.net> <6112242.lOV4Wx5bFT@rjwysocki.net>
- <b2d949a2-2586-44ec-b0e7-0879fd3ac7cf@arm.com> <CAJZ5v0g494bUwLbFDF_WHwLSMbu1iTxiynNwDqKktv3-4049Sw@mail.gmail.com>
- <5222419a-2664-4bb5-b1d4-77a46677bb4d@arm.com> <CAJZ5v0jkbQG4A+saKDfCz6g2-A=rZ2y34k2v9jA9uhp9A17ZBw@mail.gmail.com>
- <CAJZ5v0iSb=RGiuXrBPq6V0ZObhPedznuv7CGgAyO1MMshCQrMg@mail.gmail.com> <a42ebcff-10f8-4888-a3d8-fd2705da41b3@arm.com>
-In-Reply-To: <a42ebcff-10f8-4888-a3d8-fd2705da41b3@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 4 Oct 2024 18:28:19 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i-Y9qwKTc=EOOxRGHqMitZpqti6addKPMP45byZ18K5Q@mail.gmail.com>
-Message-ID: <CAJZ5v0i-Y9qwKTc=EOOxRGHqMitZpqti6addKPMP45byZ18K5Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] thermal: core: Reference count the zone in thermal_zone_get_by_id()
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 4, 2024 at 3:52=E2=80=AFPM Lukasz Luba <lukasz.luba@arm.com> wr=
-ote:
->
->
->
-> On 10/4/24 14:48, Rafael J. Wysocki wrote:
-> > On Fri, Oct 4, 2024 at 3:43=E2=80=AFPM Rafael J. Wysocki <rafael@kernel=
-.org> wrote:
-> >>
-> >> On Fri, Oct 4, 2024 at 3:37=E2=80=AFPM Lukasz Luba <lukasz.luba@arm.co=
-m> wrote:
-> >>>
-> >>>
-> >>>
-> >>> On 10/4/24 14:25, Rafael J. Wysocki wrote:
-> >>>> Hi =C5=81ukasz,
-> >>>>
-> >>>> On Fri, Oct 4, 2024 at 10:01=E2=80=AFAM Lukasz Luba <lukasz.luba@arm=
-.com> wrote:
-> >>>>>
-> >>>>> Hi Rafael,
-> >>>>>
-> >>>>> On 10/3/24 13:25, Rafael J. Wysocki wrote:
-> >>>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>>>>
->
-> [snip]
->
-> >>>>>>
-> >>>>>
-> >>>>> I wasn't aware of that helpers in cleanup.h.
-> >>>>>
-> >>>>> Could you help me to understand when this this
-> >>>>> 'if (_T) put_device((&_T->device)' will be called?
-> >>>>
-> >>>> When the pointer variable initialized via the CLASS() macro goes out
-> >>>> of scope (that is, before freeing the memory occupied by the pointer
-> >>>> itself).
-> >>>
-> >>>
-> >>> OK, so do we still need the old code in
-> >>> thermal_zone_device_unregister(), which calls
-> >>> put_device(&tz->device) ?
-> >>
-> >> Yes, we do.
-> >>
-> >>> Maybe that code can go away?
-> >>
-> >> That particular one drops the reference acquired by device_register()
-> >> and I don't see an alternative clean way to drop it.
-> >
-> > The problem there is that local variable tz goes out of scope at the
-> > end of the function (at least formally) and put_device(&tz->device)
-> > needs to be called before the wait_for_completion(&tz->removal) which
-> > definitely needs tz to be still around.
->
-> OK, I see now. That makes sense. With that feel free to add:
->
-> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+During initial device probe, the PCI DOE busy bit for some CXL
+devices may be left set for a longer period than expected by the
+current driver logic. Despite local comments stating DOE Busy is
+unlikely to be detected, it appears commonly specifically during
+boot when CXL devices are being probed.
 
-Thank you!
+This was observed on a single socket AMD platform with 2 CXL memory
+expanders attached to the single socket. It was not the case that
+concurrent accesses were being made, as validated by monitoring
+mailbox commands on the device side.
+
+This behavior has been observed with multiple CXL memory expanders
+from different vendors - so it appears unrelated to the model.
+
+In all observed tests, only a small period of the retry window is
+actually used - typically only a handful of loop iterations.
+
+Polling on the PCI DOE Busy Bit for (at max) one PCI DOE timeout
+interval (1 second), resolves this issues cleanly.
+
+Per PCIe r6.2 sec 6.30.3, the DOE Busy Bit being cleared does not
+raise an interrupt, so polling is the best option in this scenario.
+
+Subsqeuent code in doe_statemachine_work and abort paths also wait
+for up to 1 PCI DOE timeout interval, so this order of (potential)
+additional delay is presumed acceptable.
+
+Suggested-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Gregory Price <gourry@gourry.net>
+---
+ drivers/pci/doe.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/doe.c b/drivers/pci/doe.c
+index 652d63df9d22..27ba5d281384 100644
+--- a/drivers/pci/doe.c
++++ b/drivers/pci/doe.c
+@@ -149,14 +149,26 @@ static int pci_doe_send_req(struct pci_doe_mb *doe_mb,
+ 	size_t length, remainder;
+ 	u32 val;
+ 	int i;
++	unsigned long timeout_jiffies;
+ 
+ 	/*
+ 	 * Check the DOE busy bit is not set. If it is set, this could indicate
+ 	 * someone other than Linux (e.g. firmware) is using the mailbox. Note
+ 	 * it is expected that firmware and OS will negotiate access rights via
+ 	 * an, as yet to be defined, method.
++	 *
++	 * Wait up to one PCI_DOE_TIMEOUT period to allow the prior command to
++	 * finish. Otherwise, simply error out as unable to field the request.
++	 *
++	 * PCIe r6.2 sec 6.30.3 states no interrupt is raised when the DOE Busy
++	 * bit is cleared, so polling here is our best option for the moment.
+ 	 */
+-	pci_read_config_dword(pdev, offset + PCI_DOE_STATUS, &val);
++	timeout_jiffies = jiffies + PCI_DOE_TIMEOUT;
++	do {
++		pci_read_config_dword(pdev, offset + PCI_DOE_STATUS, &val);
++	} while (FIELD_GET(PCI_DOE_STATUS_BUSY, val) &&
++		 !time_after(jiffies, timeout_jiffies));
++
+ 	if (FIELD_GET(PCI_DOE_STATUS_BUSY, val))
+ 		return -EBUSY;
+ 
+-- 
+2.43.0
+
 
