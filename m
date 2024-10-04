@@ -1,128 +1,127 @@
-Return-Path: <linux-kernel+bounces-351372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C721991020
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D6C991023
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7A5E1F27428
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B89A1F274A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532761B4F16;
-	Fri,  4 Oct 2024 19:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687081DD893;
+	Fri,  4 Oct 2024 20:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DWqCXwYz"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="anUMBa7m";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="D611fMmw"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6141B4F0C;
-	Fri,  4 Oct 2024 19:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999EE1DD887
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 20:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728071894; cv=none; b=c69aBIE2dev95s1hnkNL9iUmzPC63t0fMpFYeZlljB7qN1zcPcVkb+Ih8oWE54iqcyC3/1q9vPqYWuIiJwI8t0OLyBI3VEABaXiXgWvT+QMwnjIMZ7sgMRXATo9vaSJ5JqHTtW91UNg9llACK8K7T/RMCCQ0+8n/UYgj3bXJGjs=
+	t=1728072024; cv=none; b=EYNZz9b6NtUz0dLTEFlVFMLe8KAYVHi5VMOcY4rpyQgkP0Ss6f+KjXSvph+/T6IZhFXYdzLa7oGs7ak+DK/xhdNiNvnQ4J6ylixzSgGNi+GwkAYndm1Q6rU+DKrSi6j5XGyJV8igYCGmde30ls19WSF8yj16Z3iVCYKgHQjdbHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728071894; c=relaxed/simple;
-	bh=jGYwHtJUP8CJSvTmfTnBLjBMRqwmyxvX78RTi0aovuc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o57ZU5Bux57Q0D0042s/X14eLrDBXwTCvum4PlbHe3+2lqOu07kBT1UHyVpI8o7h6vRqSq4Qn0X9LRW/GwfFipyU0gS5RU3VU3PieVPC1xDRqHDgobw26t115aq5ZUcVqD8CQrz82yYIEn7JM2kBeTjIeuvsIRJ+sx1qFmo/bD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DWqCXwYz; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7db174f9050so691531a12.3;
-        Fri, 04 Oct 2024 12:58:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728071892; x=1728676692; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jGYwHtJUP8CJSvTmfTnBLjBMRqwmyxvX78RTi0aovuc=;
-        b=DWqCXwYzs9qQWa+iq2SyEoSXT+f1xXxT9EeYNDDjPeD1OPw1X41m7BfcLM3tHyq3Qq
-         FvLrf5dGs6wRmi72RkjV8S0RRMofjlS1O1L0F8XxTtq1S//1lbA7GIHOslmDYA6yqpUu
-         RWjWxxIE2MQQsfrvk0EnO734Ug7zMCDI+UIg1mLnp5rjK9Yt4jPGXa3Rs4wgj1KJnbJW
-         kdFdmyZZE6Jav/xOg8E0LNkfOaMRY8oVfMV6nXUF8oaP9JdFjfWZ8YNs1BwQfzmjUZnE
-         TYEkwqxIsEGTMWdLlN/c+9IdKB/gQy3AU0AEldLQv0lpI0jB2CahXKvOm3mfA8Wa7Pfs
-         4bcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728071892; x=1728676692;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jGYwHtJUP8CJSvTmfTnBLjBMRqwmyxvX78RTi0aovuc=;
-        b=krn8WYOCEM2K+Kvm3uxDFR0pSMPVnC0tiJIkQNfetcOKcpOvtbf7bqGS7KMo0O9Pvy
-         gU3PIkT9bxKJtgy9XfF1BntWs/iNzSgDq+skl10thsH7x2CLJnvjfSIdtAIE/V9W/JoW
-         oF51Qx06zrbfipCwL0PVr7wKTHhfeQV96rAh5cxPinXCDdgjK6VUV+SLnbyFYL6e1mR6
-         jENE8/kgZTiRoY5TfvIop0auP85GeM8qtQFZRTUtDGlIMmFAxDcgj9HNFzNBx4f25yrg
-         5Sb0sNUHh20Jb5xQwdxdfVIT99LooK00A5Mtbo7gLdugG7dCknTKji/FOZg6QNajK0ee
-         hK+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVSGw6wXTt1yaGZr1x7zW+EGqgjuXiJFRIomQYl/p9MVFixEzaqYHfmT5Sx1PfwZkbHONzKYpOa3yDEseHBOI0G7aqf@vger.kernel.org, AJvYcCVpDH+0tH7iPBf5+jWwHmOnikWTepOILzpAceXE0UvI7lgQFLtig4Xh+dh9To78+YVbz/Y=@vger.kernel.org, AJvYcCW52r/TYVNNZoGaybhEBBXFKMcgqmF4SXNLV7qVJIYt/ake46PmgXMUq/VPiQYtEEjVkqA3VhuCwnFqJmQW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHsSGgCCbHTkbgr6VEu48zGJVMkSD1qUdQrCL0l1SETr0X9hz/
-	SifkJPvZKs5p918xDmM8i2Lgg/KqE2O4iBZOIzggNdtr5/cEsB8jC/xvREq4ooDjujVMowU9sEr
-	m5ZP1/T/1owNJwE3BCOGRpOHI+mc=
-X-Google-Smtp-Source: AGHT+IEWzIrSjrNtEvKMO440O7fdoRp62ef79uEnejMaUjsk0dIVB65DxKQYHNe6tCIKxr+tm1ziHTzX0Fh2nUC80Bw=
-X-Received: by 2002:a17:90b:889:b0:2d8:77cc:85e with SMTP id
- 98e67ed59e1d1-2e1e6391a8bmr5375612a91.37.1728071892548; Fri, 04 Oct 2024
- 12:58:12 -0700 (PDT)
+	s=arc-20240116; t=1728072024; c=relaxed/simple;
+	bh=ekDVyd3HSW+N9GGe5wx6qgFGUh9DrSzRbbdlNF11H4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r1+UUY9We4hBgtiEMuB9l+TRYUMuzk9gfwoS4rNkeMXHx3lEfH9fR6HS8nvecqf0ghweS/OIz1B8dr8e+LFWXw3aCyC/wNtQ1I4IoIvy/ggyXbxe9XmWrzLFuhYzXPUVulR7jNJZJJTMJdT7TyAraasg+9FrVkkwg/L4uzkAeo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=anUMBa7m; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=D611fMmw; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=anUMBa7miv2KnYlo9FugDs76NEAcaNgSgg4eueR2Pq2z53fDGz+QPAmvkkj8Y0QVkLCoFryqNrSAviLLoIOwhLxzY6soStO2/CV5nZq6gS7vv5sXYO06iOeHylKl4vG3f24SEzR3irbLv3kfQYBwsex2AzqhV5ek1ouxzVyqdxxDDAxFLSxYZn48hEkbkFtljNNUe0IvVjcDPPuVKvBn9uy57eKAIUtcHru/nr7LEhS82edJ7yNz2krP/+7kfi1q/RFBIA4Xl2KGI5aH1h2DZSTawFDYRrKwYjC/KSqubc2IRJug2iq/+TmJBweGE8SgPBdBXZ1zeB9ZSdWB0s4N5g==; s=purelymail2; d=lkcamp.dev; v=1; bh=ekDVyd3HSW+N9GGe5wx6qgFGUh9DrSzRbbdlNF11H4U=; h=Received:Date:Subject:To:From;
+DKIM-Signature: a=rsa-sha256; b=D611fMmwfmIh/7exGGLPv9bEV0vft4x2GewhYmdBmzzTTvpeH0HYpK9wQ9GbFYu2/KkFloJFOuNEP0ZlQZVByfnQ+8Uo/BOioJekOAxINrL2YEFwR0ELXHdV/lMc0/DH7NSps2VbHM5mkB0uD3ldEeCqi/p8lSuQU3S/oC9023QhKpN20/zoOLZ5CMnJu2qGxzg6Dd69oPqDUiOM1AdyeQXFmaZJCsRGY71Nl9u85rxOIE13asVzWTo4OPghnWu7Z7jU1STc5Lxtv4nkXJiLOcEZiE8i6MAkIc+GsBUQ6LCx5ns5SV/TalhM3Ev19geALSoEAIxQDKPNhXETky2dAw==; s=purelymail2; d=purelymail.com; v=1; bh=ekDVyd3HSW+N9GGe5wx6qgFGUh9DrSzRbbdlNF11H4U=; h=Feedback-ID:Received:Date:Subject:To:From;
+Feedback-ID: 40580:7130:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1324637488;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Fri, 04 Oct 2024 20:00:02 +0000 (UTC)
+Message-ID: <6a5c9c54-54d9-45d6-b739-269985956513@lkcamp.dev>
+Date: Fri, 4 Oct 2024 16:59:58 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001225207.2215639-1-andrii@kernel.org> <20241001225207.2215639-4-andrii@kernel.org>
- <20241003-lachs-handel-4f3a9f31403d@brauner> <20241004-holzweg-wahrgemacht-c1429b882127@brauner>
-In-Reply-To: <20241004-holzweg-wahrgemacht-c1429b882127@brauner>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 4 Oct 2024 12:58:00 -0700
-Message-ID: <CAEf4BzY5fy1VVykbSdcLbVhaHRuT6pRNYNgpYteaD79vRM7N5A@mail.gmail.com>
-Subject: Re: [PATCH v2 tip/perf/core 3/5] fs: add back RCU-delayed freeing of
- FMODE_BACKING file
-To: Christian Brauner <brauner@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, surenb@google.com, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com, 
-	jannh@google.com, mhocko@kernel.org, vbabka@suse.cz, mingo@kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] lib/crc16_kunit.c: add KUnit tests for crc16
+To: kernel test robot <lkp@intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ Enzo Bertoloti <ebertoloti@lkcamp.dev>,
+ Fabricio Gasperin <fgasperin@lkcamp.dev>,
+ David Laight <David.Laight@aculab.com>
+References: <20241003-crc16-kunit-v2-1-5fe74b113e1e@lkcamp.dev>
+ <202410050215.eU9509xy-lkp@intel.com>
+Content-Language: en-US
+From: Vinicius Peixoto <vpeixoto@lkcamp.dev>
+In-Reply-To: <202410050215.eU9509xy-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 4, 2024 at 1:01=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Thu, Oct 03, 2024 at 11:13:54AM GMT, Christian Brauner wrote:
-> > On Tue, Oct 01, 2024 at 03:52:05PM GMT, Andrii Nakryiko wrote:
-> > > 6cf41fcfe099 ("backing file: free directly") switched FMODE_BACKING
-> > > files to direct freeing as back then there were no use cases requirin=
-g
-> > > RCU protected access to such files.
-> > >
-> > > Now, with speculative lockless VMA-to-uprobe lookup logic, we do need=
- to
-> > > have a guarantee that struct file memory is not going to be freed fro=
-m
-> > > under us during speculative check. So add back RCU-delayed freeing
-> > > logic.
-> > >
-> > > We use headless kfree_rcu_mightsleep() variant, as file_free() is onl=
-y
-> > > called for FMODE_BACKING files in might_sleep() context.
-> > >
-> > > Suggested-by: Suren Baghdasaryan <surenb@google.com>
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Cc: Amir Goldstein <amir73il@gmail.com>
-> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > ---
-> >
-> > Reviewed-by: Christian Brauner <brauner@kernel.org>
->
-> Fwiw, I have another patch series for files that I'm testing that will
-> require me to switch FMODE_BACKING to a SLAB_TYPSAFE_BY_RCU cache. That
-> shouldn't matter for your use-case though.
+On 10/4/24 15:40, kernel test robot wrote:
+> Hi Vinicius,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on 9852d85ec9d492ebef56dc5f229416c925758edc]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Vinicius-Peixoto/lib-crc16_kunit-c-add-KUnit-tests-for-crc16/20241004-050248
+> base:   9852d85ec9d492ebef56dc5f229416c925758edc
+> patch link:    https://lore.kernel.org/r/20241003-crc16-kunit-v2-1-5fe74b113e1e%40lkcamp.dev
+> patch subject: [PATCH v2] lib/crc16_kunit.c: add KUnit tests for crc16
+> config: parisc-randconfig-r071-20241005 (https://download.01.org/0day-ci/archive/20241005/202410050215.eU9509xy-lkp@intel.com/config)
+> compiler: hppa-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410050215.eU9509xy-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410050215.eU9509xy-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>>> lib/crc16_kunit.c:29: warning: Excess struct member 'crc16' description in 'crc16_test'
+>     lib/crc16_kunit.c:96: warning: Function parameter or struct member 'test' not described in 'crc16_test_empty'
+>     lib/crc16_kunit.c:111: warning: Function parameter or struct member 'test' not described in 'crc16_test_correctness'
+>     lib/crc16_kunit.c:132: warning: Function parameter or struct member 'test' not described in 'crc16_test_combine'
+> 
 
-Correct, we assume SLAB_TYPESAFE_BY_RCU semantics for the common case
-anyways. But hopefully my change won't cause major merge conflicts
-with your patch set.
+Ah, oops, I forgot to update the function documentation for v2. I will 
+fix these warnings in v3.
+
+> Kconfig warnings: (for reference only)
+>     WARNING: unmet direct dependencies detected for GET_FREE_REGION
+>     Depends on [n]: SPARSEMEM [=n]
+>     Selected by [m]:
+>     - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+> 
+> 
+> vim +29 lib/crc16_kunit.c
+> 
+>      17	
+>      18	/**
+>      19	 * struct crc16_test - CRC16 test data
+>      20	 * @crc: initial input value to CRC16
+>      21	 * @start: Start index within the data buffer
+>      22	 * @length: Length of the data
+>      23	 * @crc16: Expected CRC16 value for the test
+>      24	 */
+>      25	static struct crc16_test {
+>      26		u16 crc;
+>      27		u16 start;
+>      28		u16 length;
+>    > 29	} tests[CRC16_KUNIT_TEST_SIZE];
+>      30	
+> 
+
 
