@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-351476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3DE29911B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:50:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D59DB9911B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B0AE1F22330
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 857F0284EB3
 	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB711D8E1F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCF01D90A6;
 	Fri,  4 Oct 2024 21:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nXCKFoPh"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Jzbd2nIU"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB551CACF0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3A71B4F3A
 	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728078536; cv=none; b=P+HMjml5Pw68+zsDibv//G8MJTrqQPpBSEAeib9aK+rQXYmqrRv5z+e/LOHw5CxwQHju2LWcj9EkyOhFtEpHuwbswe2LRckF1dWV3A3Zuub3AgXwx6ur55RAgIFzr+7CM7t/I8hZIOnqbu87hrTDSIAgIiwIP67wPp7rv8mzeWw=
+	t=1728078536; cv=none; b=Fxf8p+oatr6naEGawoCM18gW5zIywTRLvHYVrMUsV4g5ENCp1+sgVRGXpDgFV5lf69yAOni2NYoRLR7SbVgQMl2BsRsYk3NwfUDe5p/tgsdkqBIAOtwr87EtgmrHH7WR3mqLw++vA5UXEKPTYhMROvIOMjK8GJUKabxFnck7vgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728078536; c=relaxed/simple;
-	bh=jVSeA1GybXKEqinyGc0o/mVBc+cGPLYZuh+OWslR0Lg=;
+	bh=5Ycpog1y0e3qZRjWPMcOyX7VO13ZytSC6dJsgRajg3E=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UkTON4Vn2PHD1+beXLBASPZ5e47ZMolC8SDK2amZxT0AOZqR0gCgyMRQgfak80oU2oGEwSliwA50N9e/WmF5ii6ANBskXMhSLU1L9WxMqe6lm90/s9wVdGAtFS6n+ebnwuQ+cV5EA6WdW4R6rqAjncg/EiZjjgdWS41LHAWppg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nXCKFoPh; arc=none smtp.client-ip=209.85.128.50
+	 In-Reply-To:To:Cc; b=l8U7PMirUlXYoq4cgNYwz73xPyzk1rjVA3jSw0PAg27FsaMokXOkdjcdHwA4ZSvnZhEnEQ4qYNKq0zKPRy/GdLkQL+P+LSTR/dYOCIttIsTbtV71VWN74gUQQlmJEJnsUv4w/kUzoVVajvHu0qrZDFj/VNmUJ85VVBJHVutQmNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Jzbd2nIU; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cde6b5094so25949695e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 14:48:52 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb9a0c300so22670805e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 14:48:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728078531; x=1728683331; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728078532; x=1728683332; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ws6OvwIpBgzbrhXwN/bI0GwmZw37Oa3ub3+JwbGz+M4=;
-        b=nXCKFoPh+Zk0Y08lyb2vuk4nDlt1ReSas6f2gHvyz9JN3lDiQ7JJRXx+l+za0FPjFb
-         jrJdcWxrHl7SIf553HuN5NSQs/QzmVSGA7diN+RKuU6u0dAuPZqWLI1ITOBhyNoqIQjQ
-         HYXXt0QjffTXelSfUNKtalD0d2rGLSdR+Y3maVxHoQLw+oanE05xpR/2ZZYo2r6dLoB7
-         Z8NCFX9dhiXpZWy1YkGc+384e7PucbPsrjljYyU7VmC2m6cAmmCv+5q3NpYG2atC+C94
-         i+yWHXsYlYdjwRTehnwzPgwXld3pBZ8G4MIoLE7EFTThXN8qbBJLYRFTAnuJfmk4Px5M
-         fWYQ==
+        bh=okScCkfMzGgedKYFN2GyI9KcfEQ5eNPKFeZu3bGaiC0=;
+        b=Jzbd2nIUne4lFi9dSUxNJS0oZFjhni8Bb8BJsEdTLRFRKPYrr05O0b5Vp7X2U/nHu6
+         bx/Lo6d4VmUOB2LfEaCTFQe7hlmH02hRhAogBsQQSTfZ7nbjlSMe4q9Pwrzot1iPzvX7
+         3XBAIJatpGpgOhxJM75JZbSFhPKFVC2tU92qLg1xCoNXHItXvOk5CCk47HHIXgci/2Eh
+         QjcAsScj4EWabOMnl2vfFGwsMJtp2EMGP3VrER0IFidZUTMJ0r+OtV/LFlcvvcODk1+z
+         vId40RegUaNO6wjl+VZU2cqOH/3r9SZExMXtbWOvICXJSDo5JCfUEwUBojpEqgsk7bff
+         9b4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728078531; x=1728683331;
+        d=1e100.net; s=20230601; t=1728078532; x=1728683332;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ws6OvwIpBgzbrhXwN/bI0GwmZw37Oa3ub3+JwbGz+M4=;
-        b=FWQiOzGl0Om2WjJGfJqHXNkzScGMej4q6YUokQTMPS6xoWAJso4vu/vol0vrmpWHHz
-         lPv5oVn9TqNmHjhDmyg5XlhqRT114jfDBrtmYx6DoMphYgp4ypWed9WUZPH2XcEIJ2E9
-         7AlAMYdZhrLuXmrl6KY0c7RfBnuyvEHc6Si6LoaLf7ykmAhvgUJD8IMflRUR1jQDwOHS
-         Dm1GIUjb2qprJb/ZWXEvYVS6DCwxznDem2SjoFaMRmWrBHtW0WQnYnAeppk0L7SoRiYD
-         +KDR1FgmMQW7aiTyC3qJZCOQDokpkDGiRTsa878Uo8KeH2Bw/rSQwlwscJ3shO2HZNBT
-         m7hg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4F5OtWJUlkoKP41vQk+RVYABGkau0YG80yTyns3qJdnaDJm7l0X1ZX1FP0Eydw32Aus5VZMiMfV/MSuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ/JzVRH/15fhpv8AQLXKcIHGqeLEW+djqs7Wrn9xurX/+U56K
-	K+UmDGF3CPqa1rHtqBg83qZqlBSXChH5q+W20bBEgG0Zm0UElCBCYF/PrItHnnI=
-X-Google-Smtp-Source: AGHT+IEp8lVDApG6/0v+gqntIFP0H2r8NnVYzaeUF9YEnuWGMOZ09DXkJeh3ASsOFaRjuQwShIJQWQ==
-X-Received: by 2002:a05:600c:4e89:b0:42c:b750:19d8 with SMTP id 5b1f17b1804b1-42f85a700ecmr30381585e9.4.1728078531059;
+        bh=okScCkfMzGgedKYFN2GyI9KcfEQ5eNPKFeZu3bGaiC0=;
+        b=fbs/zM97Nh8TAH1XQ9mcvnitIQpmFTD4MvoKwvHONyv2eFB/YN8YkWGMVureBN2pgm
+         yo+mKM0Tf7cc+QyOdxCXtBAkpJcIJUvRgAGovpTiM1BtZMbo42V8I8PqiGhHOc+Vfq1H
+         UA2sqcPmd80sHK8eumWGVwulXovVWZiEZ9wTMkEmqygDpf07nqAtidWh5tgxNwJBpo0A
+         qOzCSuWKrFhZn71Mh/OPWa2FprwQ67iMG5TvtBG8/f7IERi8JZR9GWyjTPuydkDo0cgr
+         mOu1rA4e7JQykt2pIz9kFKhb/3VXrMEYH3oVWtvTaXyQwbcGElmz93wQcZRHVVuR7+0d
+         ob/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXnvr4UkMVwxrm5BztdVW0VCxNsyUUx3hKyTuBlvmmCJVpwsysCSu/hu4SHLfM5fLnS1W1vRA/QY3pazD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTy4nIYe4Ko4dOK9463bzsZoDGDCIwOAOD+ZcSeL+2dLq7Zoyj
+	vOph9OKjuLSD6bRaYpBbFemU7oVTkAY9ol/kMu9Q0RJRYCu9WEIWgB0cdz2RuZ0=
+X-Google-Smtp-Source: AGHT+IH/aDnr0Lb84keonMSILnv9Q4qkD3NNA7237N3xWpGCLK+u5jL/aJvh6q1g7ZpNSr4f4/nDqA==
+X-Received: by 2002:a05:600c:5123:b0:42c:bd5a:945b with SMTP id 5b1f17b1804b1-42f85ac909fmr31454125e9.21.1728078531845;
         Fri, 04 Oct 2024 14:48:51 -0700 (PDT)
 Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b4ab63sm24680375e9.40.2024.10.04.14.48.49
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b4ab63sm24680375e9.40.2024.10.04.14.48.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 14:48:50 -0700 (PDT)
+        Fri, 04 Oct 2024 14:48:51 -0700 (PDT)
 From: Guillaume Stols <gstols@baylibre.com>
-Date: Fri, 04 Oct 2024 21:48:38 +0000
-Subject: [PATCH v3 04/10] Documentation: iio: Document ad7606 driver
+Date: Fri, 04 Oct 2024 21:48:39 +0000
+Subject: [PATCH v3 05/10] iio: adc: ad7606: Sort includes in alphabetical
+ order
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-ad7606_add_iio_backend_support-v3-4-38757012ce82@baylibre.com>
+Message-Id: <20241004-ad7606_add_iio_backend_support-v3-5-38757012ce82@baylibre.com>
 References: <20241004-ad7606_add_iio_backend_support-v3-0-38757012ce82@baylibre.com>
 In-Reply-To: <20241004-ad7606_add_iio_backend_support-v3-0-38757012ce82@baylibre.com>
 To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
@@ -96,201 +97,75 @@ Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
  Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
  Guillaume Stols <gstols@baylibre.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728078523; l=6859;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728078523; l=1822;
  i=gstols@baylibre.com; s=20240417; h=from:subject:message-id;
- bh=jVSeA1GybXKEqinyGc0o/mVBc+cGPLYZuh+OWslR0Lg=;
- b=GaY3nxCWEFM2NgxV+4xbSLb9wBvMIgJLyCLCMlhKHcOFI1tfKQUpHa2pswAJP8b6Kwp3hWoSV
- OSyZmLuSxlvCFOk2/W62joq0HB/6y8CTGWodgDZ+b5XgM4NR8ZrngxU
+ bh=5Ycpog1y0e3qZRjWPMcOyX7VO13ZytSC6dJsgRajg3E=;
+ b=iyd18HM5iYsjPSUVsDwv80YQI2sNtNIKcU6HziJHtPsbJ9TUXE6mspgK0fmvolO8PKyGQN1a1
+ M9OmZJyhEtdDgFpGOlwcMR6/P95etqcdNDci9LQWHvTTO50azPkbb2i
 X-Developer-Key: i=gstols@baylibre.com; a=ed25519;
  pk=XvMm5WHuV67sGYOJZqIYzXndbaJOlNd8Q6li6vnb4Cs=
 
-The Analog Devices Inc. AD7606 (and similar chips) are complex ADCs that
-will benefit from a detailed driver documentation.
-
-This documents the current features supported by the driver.
+Some of the includes were not in alphabetical order, this commit fixes
+it.
 
 Signed-off-by: Guillaume Stols <gstols@baylibre.com>
 ---
- Documentation/iio/ad7606.rst | 145 +++++++++++++++++++++++++++++++++++++++++++
- Documentation/iio/index.rst  |   1 +
- MAINTAINERS                  |   1 +
- 3 files changed, 147 insertions(+)
+ drivers/iio/adc/ad7606.c     | 2 +-
+ drivers/iio/adc/ad7606_par.c | 6 +++---
+ drivers/iio/adc/ad7606_spi.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/iio/ad7606.rst b/Documentation/iio/ad7606.rst
-new file mode 100644
-index 000000000000..a1173708b489
---- /dev/null
-+++ b/Documentation/iio/ad7606.rst
-@@ -0,0 +1,145 @@
-+.. SPDX-License-Identifier: GPL-2.0-only
-+
-+=============
-+AD7606 driver
-+=============
-+
-+ADC driver for Analog Devices Inc. AD7606 and similar devices. The module name
-+is ``ad7606``.
-+
-+Supported devices
-+=================
-+
-+The following chips are supported by this driver:
-+
-+* `AD7605 <https://www.analog.com/en/products/ad7605.html>`_
-+* `AD7606 <https://www.analog.com/en/products/ad7606.html>`_
-+* `AD7606B <https://www.analog.com/en/products/ad7606b.html>`_
-+* `AD7616 <https://www.analog.com/en/products/ad7616.html>`_
-+
-+Supported features
-+==================
-+
-+SPI wiring modes
-+----------------
-+
-+These ADCs can output data on several SDO lines (1/2/4/8). The driver
-+currently supports only 1 SDO line.
-+
-+Parallel wiring mode
-+--------------------
-+
-+There is also a parallel interface, with 16 lines (that can be reduced to 8 in
-+byte mode). The parallel interface is selected by declaring the device as
-+platform in the device tree (with no io-backends node defined, see below).
-+
-+IIO-backend mode
-+----------------
-+
-+This mode allows to reach the best sample rates, but it requires an external
-+hardware (eg HDL or APU) to handle the low level communication.
-+The backend mode is enabled when through the definition of the "io-backends"
-+property in the device tree.
-+
-+The reference configuration for the current implementation of IIO-backend mode
-+is the HDL reference provided by ADI:
-+https://wiki.analog.com/resources/eval/user-guides/ad7606x-fmc/hdl
-+
-+This implementation embeds an IIO-backend compatible IP (adi-axi-adc) and a PWM
-+connected to the conversion trigger pin.
-+
-+.. code-block::
-+
-+    +---+                                       +----------------------------
-+    |   |               +-------+               |AD76xx
-+    | A |  controls     |       |               |
-+    | D |-------------->|  PWM  |-------------->| cnvst
-+    | 7 |               |       |               |
-+    | 6 |               +-------+               |
-+    | 0 | controls  +-----------+-----------+   |
-+    | 6 |---------->|           |           |<--| frstdata
-+    |   |           | Backend   |  Backend  |<--| busy
-+    | D |           | Driver    |           |   |
-+    | R |           |           |           |-->| clk
-+    | I |  requests |+---------+| DMA       |   |
-+    | V |----------->|  Buffer ||<----      |<=>| DATA
-+    | E |           |+---------+|           |   |
-+    | R |           +-----------+-----------+   |
-+    |   |-------------------------------------->| reset/configuration gpios
-+    +---+                                       +-----------------------------
-+
-+
-+Software and hardware modes
-+---------------------------
-+
-+While all the AD7606/AD7616 series parts can be configured using GPIOs, some of
-+them can be configured using register.
-+
-+The chips that support software mode have more values available for configuring
-+the device, as well as more settings, and allow to control the range and
-+calibration per channel.
-+
-+The following settings are available per channel in software mode:
-+ - Scale
-+
-+Also, there is a broader choice of oversampling ratios in software mode.
-+
-+Conversion triggering
-+---------------------
-+
-+The conversion can be triggered by two distinct ways:
-+
-+ - A GPIO is connected to the conversion trigger pin, and this GPIO is controlled
-+   by the driver directly.  In this configuration, the driver sets back the
-+   conversion trigger pin to high as soon as it has read all the conversions.
-+
-+ - An external source is connected to the conversion trigger pin. In the
-+   current implementation, it must be a PWM. In this configuration, the driver
-+   does not control directly the conversion trigger pin. Instead, it can
-+   control the PWM's frequency. This trigger is enabled only for iio-backend.
-+
-+Reference voltage
-+-----------------
-+
-+2 possible reference voltage sources are supported:
-+
-+ - Internal reference (2.5V)
-+ - External reference (2.5V)
-+
-+The source is determined by the device tree. If ``refin-supply`` is present,
-+then the external reference is used, otherwise the internal reference is used.
-+
-+Oversampling
-+------------
-+
-+This family supports oversampling to improve SNR.
-+In software mode, the following ratios are available:
-+1 (oversampling disabled)/2/4/8/16/32/64/128/256.
-+
-+Unimplemented features
-+----------------------
-+
-+- 2/4/8 SDO lines
-+- CRC indication
-+- Calibration
-+
-+Device buffers
-+==============
-+
-+IIO triggered buffer
-+--------------------
-+
-+This driver supports IIO triggered buffers, with a "built in" trigger, i.e the
-+trigger is allocated and linked by the driver, and a new conversion is triggered
-+as soon as the samples are transferred, and a timestamp channel is added to make
-+up for the potential jitter induced by the delays in the interrupt handling.
-+
-+IIO backend buffer
-+------------------
-+
-+When IIO backend is used, the trigger is not needed, and the sample rate is
-+considered as stable. There is no timestamp channel. The communication is
-+delegated to an external logic, called a backend, and the backend's driver
-+handles the buffer. When this mode is enabled, the driver cannot control the
-+conversion pin, because the busy pin is bound to the backend.
-+
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index dfcf9618568a..88bc36326b74 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -21,6 +21,7 @@ Industrial I/O Kernel Drivers
-    ad4000
-    ad4695
-    ad7380
-+   ad7606
-    ad7944
-    adis16475
-    adis16480
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bcdf43f37660..45c33d1a4403 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1561,6 +1561,7 @@ F:	Documentation/ABI/testing/sysfs-bus-iio-frequency-adf4350
- F:	Documentation/devicetree/bindings/iio/*/adi,*
- F:	Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
- F:	Documentation/devicetree/bindings/iio/adc/lltc,ltc2497.yaml
-+F:	Documentation/iio/ad7606.rst
- F:	drivers/iio/*/ad*
- F:	drivers/iio/adc/ltc249*
- F:	drivers/iio/amplifiers/hmc425a.c
+diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+index ffa551a4e41d..d1aec53e0bcf 100644
+--- a/drivers/iio/adc/ad7606.c
++++ b/drivers/iio/adc/ad7606.c
+@@ -19,8 +19,8 @@
+ #include <linux/sysfs.h>
+ #include <linux/util_macros.h>
+ 
+-#include <linux/iio/iio.h>
+ #include <linux/iio/buffer.h>
++#include <linux/iio/iio.h>
+ #include <linux/iio/sysfs.h>
+ #include <linux/iio/trigger.h>
+ #include <linux/iio/triggered_buffer.h>
+diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
+index 02d8c309304e..d651639c45eb 100644
+--- a/drivers/iio/adc/ad7606_par.c
++++ b/drivers/iio/adc/ad7606_par.c
+@@ -5,13 +5,13 @@
+  * Copyright 2011 Analog Devices Inc.
+  */
+ 
++#include <linux/err.h>
++#include <linux/gpio/consumer.h>
++#include <linux/io.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+-#include <linux/gpio/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/types.h>
+-#include <linux/err.h>
+-#include <linux/io.h>
+ 
+ #include <linux/iio/iio.h>
+ #include "ad7606.h"
+diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+index 143440e73aab..d12e55123888 100644
+--- a/drivers/iio/adc/ad7606_spi.c
++++ b/drivers/iio/adc/ad7606_spi.c
+@@ -5,10 +5,10 @@
+  * Copyright 2011 Analog Devices Inc.
+  */
+ 
++#include <linux/err.h>
+ #include <linux/module.h>
+ #include <linux/spi/spi.h>
+ #include <linux/types.h>
+-#include <linux/err.h>
+ 
+ #include <linux/iio/iio.h>
+ #include "ad7606.h"
 
 -- 
 2.34.1
