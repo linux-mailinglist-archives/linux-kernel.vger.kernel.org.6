@@ -1,274 +1,183 @@
-Return-Path: <linux-kernel+bounces-349906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0614A98FD07
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:33:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E8398FD16
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 130261C21192
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:33:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2941C218F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F4A3A28B;
-	Fri,  4 Oct 2024 05:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88AD8286F;
+	Fri,  4 Oct 2024 05:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nBpC0nil"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2053.outbound.protection.outlook.com [40.107.95.53])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="f5VS20yM"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBE7A55;
-	Fri,  4 Oct 2024 05:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728020013; cv=fail; b=ky8364ZP+C7kKN5/dECsSXC7Cahu4FOonmyl353PvkZOjc3Xzerp2uB+tS0oDJFxs10UYjXJuHm0gSmBbGM1FORQlU2lzog4GeSRl1IyPOXyyxXRZCVW4ncJfN3TWYwfASVzrgk4c3743heZOvP56zaNUKKrdqCHyFhnUuhlEqU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728020013; c=relaxed/simple;
-	bh=SpO3onBzAK5EHmXMYzuMvBQTFbeuPNCIydcJLZvWnro=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tj4rVAfttWTgg4QhLYLwbPlmuQq2xXkqPZuRjM9pkCh4g2AanLfVWR5hjwidtX8yeZ8g7g8oqVTBoMwUVlgkI0k+JHaIvW0+WK3fYNgHXcSO1vAaJCXCz8Cg46+BgZqoKWANWRegILbazNsK4C6ZIP6RAyazBRRUqHG/M4BsSVI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nBpC0nil; arc=fail smtp.client-ip=40.107.95.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IXTDYPOdQtl68kXBPGS+4fzEW69Sga+675VXxwumhO2auSRvrFjBjVa/xybJIfSEyW8z1KISEfXKLUSkHuan077UtupJuasKFkGzKgXQZQdD5IN3O0/REOOQvF8Y0cnZNPlZZQGAF6frjDOyUvHQEmGo5oqdonSckDLV1uKMPlGcBCNfOYUNigW36T2XcDUrXXq9RzYL/8mJIsVit/3wXKh1IlINuM9ShFukF5jAJw1z8rrRVT4cjpffOP9CzzcZ+OGJ/1MzdDcjvI+AxBxBVcSpALAOfMYfLOkk7K0Ey6JYZBoYJYZC6SbA2s78G9AR1to4nRzIuRluyQhPwbh15A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CcdpJE9jFr2Flrs6gJDDo4yPMIAU+lNdut+ayE3A3NU=;
- b=uiF7QruESjBWwL56lZmwfyv8PMdFIIHHSbNsFizpFSRpTQ4Mz5SbWVAPY4LBKhwxLc/dkN8tLhxS6JZ9mYnZSq38C2i0nR070eO9lCuvgoZHOt7n9E2GWxjWe+JcAIMfa/RMAt6rAncOa92yRD941PH6fjnIu8oLM6As2kmRvgBI6bVneAKn/An7S9si+KZczbnUrWq2nr4Nvgt863xYgfo6yvdYQRltS3gOdalYncdcQwNWY/ispM7nkfMnOW1hr9kn1VG8lBrgWeRMtWzTzI5peQjZgvpHTiG2CPA6UO1fpUsJxoo7sE3BsBZ+dXt+2XLv9ITU8NM8iLY0OWo3Pw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CcdpJE9jFr2Flrs6gJDDo4yPMIAU+lNdut+ayE3A3NU=;
- b=nBpC0nileSG9B2/bLNSIFlR4sDE+aqFYwYQt2W9UZRN/BuV+W8r2uwkqjOaLao7Gdr+U7dYhePvJkPGvFL/eDH8G0bZ6Trw8+GK6CrhHEtbu0cyBQL6eP+xjSSXZl7HeMp1Z1O+XZMRhdg0J2ck4h0bCFG9zCj+4Okien5qJ6MbkXO9KTPRCqgsx93HO4nmdq4Byr+JYnUAtpJFsVxAuSyPtg/sh+O4epaTNbBPV0o4ZpVgDVzcY5DUaf4wIUaA+7DBAw6O4+EpbkdrS9ccsuxU/lFYPo39GcF4a0aNQf8+kJFFEL/mowxQ+lnHlIztOSdAUO110gA27bpA0E1P3PA==
-Received: from SJ0PR03CA0056.namprd03.prod.outlook.com (2603:10b6:a03:33e::31)
- by BL3PR12MB6593.namprd12.prod.outlook.com (2603:10b6:208:38c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Fri, 4 Oct
- 2024 05:33:23 +0000
-Received: from CO1PEPF000044EE.namprd05.prod.outlook.com
- (2603:10b6:a03:33e:cafe::b9) by SJ0PR03CA0056.outlook.office365.com
- (2603:10b6:a03:33e::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18 via Frontend
- Transport; Fri, 4 Oct 2024 05:33:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CO1PEPF000044EE.mail.protection.outlook.com (10.167.241.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8026.11 via Frontend Transport; Fri, 4 Oct 2024 05:33:22 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 3 Oct 2024
- 22:33:16 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 3 Oct 2024 22:33:15 -0700
-Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Thu, 3 Oct 2024 22:33:14 -0700
-Date: Thu, 3 Oct 2024 22:33:13 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Alexey Kardashevskiy <aik@amd.com>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <will@kernel.org>,
-	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<eric.auger@redhat.com>, <jean-philippe@linaro.org>, <mdf@kernel.org>,
-	<mshavit@google.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<smostafa@google.com>, <yi.l.liu@intel.com>
-Subject: Re: [PATCH v2 06/19] iommufd/viommu: Add
- IOMMU_VIOMMU_SET/UNSET_VDEV_ID ioctl
-Message-ID: <Zv9+GWM/r8+QxEEk@Asurada-Nvidia>
-References: <cover.1724776335.git.nicolinc@nvidia.com>
- <6348cc7a72ce9f2ac0e9caf9737e70177a01eb74.1724776335.git.nicolinc@nvidia.com>
- <35701c5e-030a-4f52-b6f6-ed18368fb2cd@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C7480C0A
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 05:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728020296; cv=none; b=hb4g9aqKKGB+fQJ/HcwYC8XyRIWrKgl/SuX/n249mDQJ0TumKGvCiJSJwl4Nucl06v0xc11j9Fxg8k+9IEudAzUkI+vIt9w14unWSKJ5uswIFsmsGe1WhkhAqzhSo1Xg0XKn1da2qZMJg10Vu4eC+un4kmiyprtxnx54Fu5eGgw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728020296; c=relaxed/simple;
+	bh=FxmJxS9uBAdGBa7PUdCZF781yGWwspWbs/fEs3AcUl4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uoCzEWQ5z3aQwR2yYfsvrh93cDdOA1qYRXjO81W+EjC3QREZLcuJ1jDu1M39lvKOIzA8iwf6V2ME9tOEpipR5hHgPBoGcgjUbN4v1f3zUWswg7WuC2N4TDVvNJXSBbmAw+5BrQJxisTNEcoq3sQQJkI52dMshP5wVyTEnxoo0Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=f5VS20yM; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1728020287; x=1730612287;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FxmJxS9uBAdGBa7PUdCZF781yGWwspWbs/fEs3AcUl4=;
+	b=f5VS20yMDpMzyfH47b6/diOmEsVlaRf+5Wky8UZL6/Pi+jyJ+6W809zfi1s9oIOT
+	IhMwyZfi8H36GKvJmUXrQNoGsukc10z3wIgKYZhnPUz2x6U5TM8T230P0firvgHa
+	/CIvl3okzw1yYOJpa56adOnqQsRHYpnrwxyiOYfi7fw=;
+X-AuditID: ac14000a-4577e70000004e2a-44-66ff7f3fe620
+Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id FF.28.20010.F3F7FF66; Fri,  4 Oct 2024 07:38:07 +0200 (CEST)
+Received: from [192.168.10.3] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Fri, 4 Oct 2024
+ 07:38:05 +0200
+Message-ID: <b993461c-96df-4855-988e-f24540168271@phytec.de>
+Date: Fri, 4 Oct 2024 07:38:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <35701c5e-030a-4f52-b6f6-ed18368fb2cd@amd.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044EE:EE_|BL3PR12MB6593:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7e6ace7a-4352-4f39-95e5-08dce4360fe4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|82310400026|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c3o1MTZEdjhRblJ3U2tSNUFFTVFZNmZhQkVYRlkzQlVtcjVNVXF1YWdseGJQ?=
- =?utf-8?B?dXZOTDljZndZSVZGdUpoMkN1SWJZeDV4T2YvK3ZkZGpaRmtNZ0JVelRJOUkr?=
- =?utf-8?B?MlFZTkIxUVhIVWt3ZFpOcUk4TTZvME93Yy8vd2tvMTRFeWhtTkFZbE0vSjc3?=
- =?utf-8?B?d1NDQkhUMnFYT3hBN3lJeG5ZNzJYdEkwcC9VRzdnRHpsQjdZQkV4a0xVNC9C?=
- =?utf-8?B?V21sZllCbDR0bFhyUXF4R0huTTZBUGhPVm4zR25yekErMzNGS1JuUDhlMUlW?=
- =?utf-8?B?TE9ENHBXMER1SFE3QmlUZUd1aU94enNSTGpQWkU4WGFKV0RyRldERHR3TWNC?=
- =?utf-8?B?QXFqNmdscTBKSzNYYnZNRllCV24vbzdFSmh2NmFac05qTThHbFBOUjMxeUlD?=
- =?utf-8?B?SnFJcnROQmZ5ZDZ5TE1xd0pXQUsxZlpDOUVkcTRBNUVXZndQWjhCTEFmZGZB?=
- =?utf-8?B?aVlrek5LeTZBd2lnd013UHlXbkZRZmViNDc3ZXgwVXI2eWZWaFNpWG54T3FD?=
- =?utf-8?B?NktIWFByV2FZVi8vdXB1dzFzNmttR0ViVkJwNlhKOE4vVTUzYVJsQ05hOWR5?=
- =?utf-8?B?OU50aThrVStWNFViZWlObjZ1M1ZUYzhtWERGMk85S3N4RVVKdGpEZVlhT1Fa?=
- =?utf-8?B?TW41L1ZxM2oyUU5COHd1VnNsWURhRUNTbHZ0SnhlVkM5Vjgzd1JsL1R3Mytt?=
- =?utf-8?B?RU1ZYmlaYXpjaDNYb25ldUdQVTkwa1YwL2RUa0JmWWFYdlk4WTBLOCs0TjJp?=
- =?utf-8?B?cHljd2xHVldhQkZaVW83ZVB5V0J1cDRYMEUwYnpGOWF2SkdCblIrR3FkMmVN?=
- =?utf-8?B?TjN4WS93OHNmYTZLc0tlU3Jkem5UdHdtU2ZhaUxlN2UvSDFScmdmbWsybHRK?=
- =?utf-8?B?dWlYbEdMVWVvWWM1L3FteE54UkdhNUR5UGZlaVBaakdOMnZkcTgwU1Q2WDRy?=
- =?utf-8?B?QlNWMGU3WFdZOTZScWZ4aGtJVzlVVzd6QTVGNTlYRlgrY1hKREQ4bDZDaFY4?=
- =?utf-8?B?aVBvMFVLUDIxbG1welRPOFZWYkE0Y1pqZXFQTEZTUStVU2haZklVZzZBTXZ1?=
- =?utf-8?B?dURrZ0VuZUtPOXQzd3BnK2kzcUl0bm1qYThsV3VxYWUycUtoeUpRcWRtWjBH?=
- =?utf-8?B?VzNwSkkvL0Y5RUQ5NTFWTFI4NjJQbVJJYVg2aWRNWkw5bUZDeW5mVU9rNFZZ?=
- =?utf-8?B?ZEREMk5RRjFDeW5pd2sxU3NzK1pVck1KQ0ZKRk9PeUZuZ0lNendnVnN2Z0pC?=
- =?utf-8?B?amtkSnFnb09yRk1TcUxsT2h0ejNNb3ZpYWhVdzJTQmswenhOYXVVOVpBNUxP?=
- =?utf-8?B?dk1Ua1FrQXRHczcxZEF5ekxSalhuOWtvNitQSFVKKzRGN1NIc2FVMFVjSWJ1?=
- =?utf-8?B?RkRsbVQrb3JwdjZkQmxLNzVvRXVNaFJVOUYxc3Q1aHoyYWpJUms2Y0N0N3Nx?=
- =?utf-8?B?ck04OEk5N0hxN0NUSTErV0ttSXFOT01vN3lLanBVcU9zbnlzaWh1KzNpaXUr?=
- =?utf-8?B?ZDkrcnVhWUJxTHhYWjRGZEZSKzdFRkNzeWRHcVUyL1M0N2YwMCsrbmUyTE9k?=
- =?utf-8?B?ZTFxTVdlbHlZYUFYL0U5M1B4VEE2c2FidU44eDczZU5lM2FOSHZ4RjRuNllQ?=
- =?utf-8?B?a3NsYnBwUFVMWWtsQ091OHRyK0E3NjhQVFdvdWNtNkE5OTlxTFJSMEluV1hn?=
- =?utf-8?B?WXdCNFVnT3dubGQyWUp1SExJZkJzODljcWFVWDFQcjZCUVVWcWY1YXQ4dDBO?=
- =?utf-8?B?Ykx4MXFTdU9HOWxmMmRrQ0VoTDhQMnVLQjRLSWkrR251RFlzcFVpL3ZORjNw?=
- =?utf-8?B?T0srOFFDc01EMnk0ZUR1dzM3SDgrUFZPWEJQSGNaUWZ5NGgzbmhVRjF6MmJU?=
- =?utf-8?Q?zCYw7B0eAvwCR?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 05:33:22.5148
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e6ace7a-4352-4f39-95e5-08dce4360fe4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044EE.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6593
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dt-bindings: display: bridge: sil,sii9022: Add
+ data-lines
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andrzej.hajda@intel.com>,
+	<neil.armstrong@linaro.org>, <rfoss@kernel.org>
+CC: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<bbrezillon@kernel.org>, <conor+dt@kernel.org>, <krzk+dt@kernel.org>,
+	<robh@kernel.org>, <upstream@lists.phytec.de>
+References: <20241003082006.2728617-1-w.egorov@phytec.de>
+ <20241003082006.2728617-2-w.egorov@phytec.de>
+ <fbb7d268-76f9-4d2e-9168-c927ccfdac50@kernel.org>
+ <d28be8e9-b235-43e0-aaed-dd65a87c5797@phytec.de>
+ <ca913f6a-c028-456d-9f9f-0c3183d8a921@kernel.org>
+Content-Language: en-US
+From: Wadim Egorov <w.egorov@phytec.de>
+In-Reply-To: <ca913f6a-c028-456d-9f9f-0c3183d8a921@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
+ (172.25.0.12)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLIsWRmVeSWpSXmKPExsWyRpKBR9e+/n+awZyrmhYnri9isri/+DOL
+	xeqW6YwWa/aeY7KYf+Qcq8WVr+/ZLJ7PX8docfLNVRaLl7PusVmcP7+B3aJz4hJ2i8u75rBZ
+	LPy4lcWirXMZq8X7nbcYLSbNu8lq8X/PDnaL2e/2s1tseTOR1aL7nbqDiMfebwtYPHbOusvu
+	MbtjJqvH4j0vmTw2repk8zgx4RKTx51re9g85p0M9LjffZzJo7+7hdVj8+lqj8+b5AJ4orhs
+	UlJzMstSi/TtErgyLv5tZCvYIVHx4kgjawPjKuEuRk4OCQETid/H37KA2EICS5gkft5T7GLk
+	ArLvMErsm/yNESTBK2Aj8f3TVyYQm0VARWLiivPMEHFBiZMzn4A1iwrIS9y/NYMdxBYWCJH4
+	cvYGWFxEoFxiwrsmFpChzAKbmCU+v97NCrGhhUni9s1zYFXMAuISt57MB9vAJqAucWfDN1YQ
+	m1PATuLgtxvsEDUWEovfHISy5SW2v53DDHG2vMSLS8tZIN6Rl5h27jUzhB0qsfXLdqYJjMKz
+	kBw7C8m6WUjGzkIydgEjyypGodzM5OzUosxsvYKMypLUZL2U1E2MoCQgwsC1g7FvjschRiYO
+	xkOMEhzMSiK887b/TRPiTUmsrEotyo8vKs1JLT7EKM3BoiTOu7ojOFVIID2xJDU7NbUgtQgm
+	y8TBKdXAGHcpW4PzzSn1J/Pup651VGnb8EAmbfbU6szvBb19AjPKmH583nzNLvB+7AJ+8XOL
+	TC0Ly0PvbffcHXl57rwlX9TbHy2on+bp+fX3ZlEp7Rn3ZI8y9Ry87//4eVtfzOTLkVrHlp/S
+	T9E5fa9gTnx2wh7H9WyRTEfcNRXO56rpO55W6qx6UCb1QomlOCPRUIu5qDgRAD08O2TwAgAA
 
-On Fri, Oct 04, 2024 at 02:32:28PM +1000, Alexey Kardashevskiy wrote:
-> > +/**
-> > + * struct iommu_viommu_set_vdev_id - ioctl(IOMMU_VIOMMU_SET_VDEV_ID)
-> > + * @size: sizeof(struct iommu_viommu_set_vdev_id)
-> > + * @viommu_id: viommu ID to associate with the device to store its virtual ID
-> > + * @dev_id: device ID to set its virtual ID
-> > + * @__reserved: Must be 0
-> > + * @vdev_id: Virtual device ID
-> > + *
-> > + * Set a viommu-specific virtual ID of a device
-> > + */
-> > +struct iommu_viommu_set_vdev_id {
-> > +     __u32 size;
-> > +     __u32 viommu_id;
-> > +     __u32 dev_id;
+
+
+Am 03.10.24 um 15:26 schrieb Krzysztof Kozlowski:
+> On 03/10/2024 13:56, Wadim Egorov wrote:
+>>
+>>
+>> Am 03.10.24 um 12:03 schrieb Krzysztof Kozlowski:
+>>> On 03/10/2024 10:20, Wadim Egorov wrote:
+>>>> The SI9022 HDMI transmitter can be configured with 16, 18, or 24 input
+>>>> data lines. This commit introduces the data-lines property to the input
+>>>
+>>> lines? lanes? What are lines? like pins?
+>>
+>> Yes, "lines" in this context refers to the number of pins used for the
+>> input pixel data bus, which can support 16, 18, or 24-bit wide data
+>> buses. These are parallel data lines (or pins) that carry uncompressed
+>> digital video to the HDMI transmitter.
+>>
+>>>
+>>>> endpoint, specifying the number of parallel RGB input pins connected
+>>>> to the transmitter.
+>>>>
+>>>> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+>>>> ---
+>>>>    .../bindings/display/bridge/sil,sii9022.yaml        | 13 ++++++++++++-
+>>>>    1 file changed, 12 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml b/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
+>>>> index 5a69547ad3d7..24306f8eb107 100644
+>>>> --- a/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
+>>>> +++ b/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
+>>>> @@ -81,9 +81,20 @@ properties:
+>>>>    
+>>>>        properties:
+>>>>          port@0:
+>>>> -        $ref: /schemas/graph.yaml#/properties/port
+>>>> +        unevaluatedProperties: false
+>>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>>>>            description: Parallel RGB input port
+>>>>    
+>>>> +        properties:
+>>>> +          endpoint:
+>>>> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
+>>>> +            unevaluatedProperties: false
+>>>> +
+>>>> +            properties:
+>>>> +              data-lines:
+>>>
+>>> No, this will confuse everyone. Considering lack of description how
+>>> anyone would figure out what this means?
+>>
+>> I guess from working with the hardware/reference manual and using this chip?
+>>
+>> I don't think it is overly confusing, especially since the port is
+>> already described as the "Parallel RGB input port" which clearly implies
+>> the use of pins for data transmission.
 > 
-> Is this ID from vfio_device_bind_iommufd.out_devid?
-
-Yes.
-
-> > +     __u32 __reserved;
-> > +     __aligned_u64 vdev_id;
 > 
-> What is the nature of this id? It is not the guest's BDFn, is it? The
-
-Not exactly but certainly can be related. Explaining below..
-
-> code suggests it is ARM's "SID" == "stream ID" and "
-
-Yes. That's the first use case of that.
-
-> a device might be
-> able to generate multiple StreamIDs" (how, why?) 🤯 And these streams
-> seem to have nothing to do with PCIe IDE streams, right?
-
-PCI device only has one stream ID per its SMMU.
-
-So the Stream ID is more like a channel ID or client ID from the
-SMMU (IOMMU) view. A PCI device's Stream ID can be calculated from
-the BDF numbers + the Stream-ID base of that PCI bus.
-
-That said, this is all about IOMMU. So, it is likely more natural
-to forward an IOMMU-specific ID (vStream ID for a vSMMU) v.s. BDF.
-
-> For my SEV-TIO exercise ("trusted IO"), I am looking for a kernel
-> interface to pass the guest's BDFs for a specific host device (which is
-> passed through) and nothing in the kernel has any knowledge of it atm,
-> is this the right place, or another ioctl() is needed here?
+> I am surprised you do not find data-lanes and data-lines confusing. For
+> non-native English speakers this even might sound the same.
 > 
-> Sorry, I am too ignorant about ARM :)
+> You used earlier pins and bits, so maybe it's the same as bus-width,
+> which is already used all over the bindings, including one of the bridges.
 
-We are reworking this ioctl to an IOMMU_VDEVICE_ALLOC cmd, meaning
-a virtual device allocation. A virtual device is another bond when
-an iommufd_device connects to an iommufd_viommu in the VM. The name
-"vDEVICE" and "virtual device" still need to go through discussion,
-so they aren't finalized. But the idea here is to have a structure
-to gather all virtualization information of the intersection of the
-device and the vIOMMU in the VM.
+Thanks, the bus-width property seems to be a better fit here. I'll 
+rework my patches.
 
-On the other hand, BDF is very PCI specific yet IOMMU independent.
-E.g. it could exist for a PCI device even without a vIOMMU in the
-VM, i.e. there is no vDEVICE in such case. Right?
-
-So, if your use case relies on IOMMU and it is even a part of the
-IOMMU virtualization features, I think you are looking at the right
-place. And we should discuss how to incorporate that. Otherwise, I
-feel the struct vfio_pci might be the one to extend?
-
-> > +};
-> > +#define IOMMU_VIOMMU_SET_VDEV_ID _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VIOMMU_SET_VDEV_ID)
-> > +
-> > +/**
-> > + * struct iommu_viommu_unset_vdev_id - ioctl(IOMMU_VIOMMU_UNSET_VDEV_ID)
-> > + * @size: sizeof(struct iommu_viommu_unset_vdev_id)
-> > + * @viommu_id: viommu ID associated with the device to delete its virtual ID
-> > + * @dev_id: device ID to unset its virtual ID
-> > + * @__reserved: Must be 0
-> > + * @vdev_id: Virtual device ID (for verification)
-> > + *
-> > + * Unset a viommu-specific virtual ID of a device
-> > + */
-> > +struct iommu_viommu_unset_vdev_id {
-> > +     __u32 size;
-> > +     __u32 viommu_id;
-> > +     __u32 dev_id;
-> > +     __u32 __reserved;
-> > +     __aligned_u64 vdev_id;
-> > +};
-> > +#define IOMMU_VIOMMU_UNSET_VDEV_ID _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VIOMMU_UNSET_VDEV_ID)
-> >   #endif
 > 
-> Nit: "git format-patch -O orderfile" makes patches nicer by putting the
-> documentation first (.h before .c, in this case) with the "ordefile"
-> looking like this:
+> Anyway a generic property should go to video-interfaces.
 > 
-> ===
-> *.txt
-> configure
-> *Makefile*
-> *.json
-> *.h
-> *.c
-> ===
+>>
+>> I am open to other suggestions if you believe a different name would
+>> improve clarity.
+>>
+>> Btw, bridge/toshiba,tc358768.yaml, which performs a similar function,
+>> also uses the term data-lines.
+> 
+> Then this has to go to common schema.
+> 
+> Oh, wait, video-interfaces already have it!
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Interesting :)
-
-Will try it!
-
-Thanks
-Nicolin
 
