@@ -1,114 +1,100 @@
-Return-Path: <linux-kernel+bounces-350222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66619901B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C37949901B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56B491F2265A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:57:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09D1D1F22939
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8031581F2;
-	Fri,  4 Oct 2024 10:57:15 +0000 (UTC)
-Received: from out28-61.mail.aliyun.com (out28-61.mail.aliyun.com [115.124.28.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B552A15B0EC;
+	Fri,  4 Oct 2024 10:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXxNVbiV"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B43156F3A;
-	Fri,  4 Oct 2024 10:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A197D13B5B7;
+	Fri,  4 Oct 2024 10:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728039435; cv=none; b=kaClvl0p+pPtwV75mmgmjRX1QEAIG+7kLYxPQF9MIbdBsrRpQXi1Lrgn9pOd9lZs6YFO0rrZt4HTE0epyKkhhHfxH1QfMEZ0DVGVfNVWfeI2RNIydYnul4YMfwegRSyrK85eH5WbbPf7RzdIYJJGPSJtl7J1PzFJI+rtkZeyCT4=
+	t=1728039445; cv=none; b=CIh7TN6IhUkzWnWD/GTxxXCD8TR5XknOMHun4HXg9jrA55skGaCiZkmPjk7KaXZckPeHNwACZT+vaeAahyuXJ+Gr2zxe6Mj66C5KfQNYORvdxtzMayheQFeHrN1WDjvrU5GA3ajt/OhV/vnqI0+QT4MUd/GaRHqdWhiHn6MeREA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728039435; c=relaxed/simple;
-	bh=xgotsJYrQkUik75kgemkKnDvJIXuzfmllRMSabhTQYA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:Message-Id:
-	 MIME-Version:Content-Type; b=h6mc87mkjiOAq5geamCRXMP1t5wltx9eYuWAE+Wq8k9Kz9yEUn2weJ2XiVZFXB5unNcrQBMXuThG8akB+1z8KEko39edt95AXmVJ1u7igpVeHzd8Q1GT3Gtfk3cz5N5YlubYylzHI9kWrJ6LKUarBQxYRUglLOT0Up15Nd+Bhh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e16-tech.com; spf=pass smtp.mailfrom=e16-tech.com; arc=none smtp.client-ip=115.124.28.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e16-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e16-tech.com
-Received: from 192.168.2.112(mailfrom:wangyugui@e16-tech.com fp:SMTPD_---.ZYwd.tJ_1728039424)
-          by smtp.aliyun-inc.com;
-          Fri, 04 Oct 2024 18:57:05 +0800
-Date: Fri, 04 Oct 2024 18:57:07 +0800
-From: Wang Yugui <wangyugui@e16-tech.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 6.6 000/533] 6.6.54-rc2 review
-Cc: stable@vger.kernel.org,
- patches@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org,
- akpm@linux-foundation.org,
- linux@roeck-us.net,
- shuah@kernel.org,
- patches@kernelci.org,
- lkft-triage@lists.linaro.org,
- pavel@denx.de,
- jonathanh@nvidia.com,
- f.fainelli@gmail.com,
- sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net,
- rwarsow@gmx.de,
- conor@kernel.org,
- allen.lkml@gmail.com,
- broonie@kernel.org
-In-Reply-To: <2024100426-wheat-heavily-68d1@gregkh>
-References: <20241004071723.69AD.409509F4@e16-tech.com> <2024100426-wheat-heavily-68d1@gregkh>
-Message-Id: <20241004185705.7AA1.409509F4@e16-tech.com>
+	s=arc-20240116; t=1728039445; c=relaxed/simple;
+	bh=v7Vv7GA+VqMX6iSrPiE74byWiyNiCNo3GfLjUO8Psts=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type; b=l8v+GTGx0g+EQGxDZqPfYnJfo0aZJK7YbkkfE4616DoqiAvYrD52oayN4Ax2oFsRrU7OBqCaafPFAsH9IENBLy2a9IpC7Y4B/cLPpCys0OwHwDI6T5mO6wxS+qPqErPuJNUkcA0ZyMwt0oGtAixTEAlzdRJgtp4OXn1CSUp+hmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HXxNVbiV; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so2096163e87.1;
+        Fri, 04 Oct 2024 03:57:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728039442; x=1728644242; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=v7Vv7GA+VqMX6iSrPiE74byWiyNiCNo3GfLjUO8Psts=;
+        b=HXxNVbiVSX3x5eauDnuV1eweE96g4FhjYD9MfXq0vjEbhWqMk3V5JT7GSUgiFLueBm
+         FNSCRxeYgue+NHR5yvNh9Qf3IbjfcFBfaFTFgiqDjAqjMDXzffMylfJSLLw/sdgf0QRh
+         wRXnGfHxQVLiW+FeS5VhBFLPQuxynlbaQfh/m1lxg10HZGsLCBD7PLkNZ4YfSh0I0WcV
+         YKLJdZWJgp9xnjx9Nd5Cc+G7teB43aBM4wcDvYVcruWJ/bnhAGooaxNKmNY19eGyaoRF
+         W8L0u8xf52pAvR9lPGCKkYQc5I+q0HLBWlrele7i4vEpmP0CSpm2c5WZRQcIFJuUT1VS
+         Cwew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728039442; x=1728644242;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v7Vv7GA+VqMX6iSrPiE74byWiyNiCNo3GfLjUO8Psts=;
+        b=vuOpM+pJrL7hJ5Bpw7TNGUJZCg7JG7VYBn2gX6LFCItX61HtJSOTbMkj0ZnTJisvBw
+         BsWye2mVObe8+8bSzkDcNbZs95WnllT5tph0wA+hW9y4lj4JNUK0gsdwfQNEJOJnzhSJ
+         ah2P7FqQdrfWqnqA7PYSgitQYXn31hRnxWE3WPaiyLxDfp+mbnLjsvMs7K14Lpb1RwfF
+         1UmZJJ/MPkwpvvbKzF7jZIBqBC3KA0iy4pQhgIGkv3SCOwxbnEH+xdKZpJrXQ4JWp2uU
+         DXn4vCYd2dNTddKXjX+pg2+kZQ99IksvOjP20yFHP/Mk8Y1Tm5yidk4UPchPnOAs+dDT
+         HldA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2eOCx+SUMmjE9ZznOWm3oeKasPRGXWrgy1UOW5YiOTz9pYHpDhVHDnMFy7qOZeJn09wLjEMJz0TWW@vger.kernel.org, AJvYcCVK9L3i/vh5pPKMY3zs4wKCvwLaRuXiWWihYrxR7ih4OMYsiueg5JjSeYCk6M+DPpKKyl2FEjlmaJ1eoDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtgGciso0VVUZe1k9+Z+BXYy+mDNo1qN+gjCADw+uk2RdyI3GS
+	gWvvu/YsKCPdJdPRKrU2qn+mgBWyQWeQpMVtmlshCL0AVNB5Y90F
+X-Google-Smtp-Source: AGHT+IF1ryAV96Yu5IKqvIzK5MqWdCDLIetIQCfucm6oLdmraibMZrQwp4bxulv7kjK2QZqx8/S2uw==
+X-Received: by 2002:a05:6512:ba2:b0:536:9f02:17b4 with SMTP id 2adb3069b0e04-539ab9cf41bmr1417313e87.40.1728039441397;
+        Fri, 04 Oct 2024 03:57:21 -0700 (PDT)
+Received: from foxbook (bfk18.neoplus.adsl.tpnet.pl. [83.28.48.18])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539a8e4e8dasm354920e87.28.2024.10.04.03.57.20
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Fri, 04 Oct 2024 03:57:20 -0700 (PDT)
+Date: Fri, 4 Oct 2024 12:57:16 +0200
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: olivierdautricourt@gmail.com
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, mathias.nyman@intel.com
+Subject: Re: [PATCH] usb: xhci: xhci_setup_port_arrays: early -ENODEV if
+ maxports is 0.
+Message-ID: <20241004125716.75c857ae@foxbook>
+In-Reply-To: <20240930052336.80589-1-olivierdautricourt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.81.07 [en]
 
 Hi,
 
-> On Fri, Oct 04, 2024 at 07:17:24AM +0800, Wang Yugui wrote:
-> > Hi,
-> > 
-> > > This is the start of the stable review cycle for the 6.6.54 release.
-> > > There are 533 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Sat, 05 Oct 2024 10:30:30 +0000.
-> > > Anything received after that time might be too late.
-> > > 
-> > > The whole patch series can be found in one patch at:
-> > > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.54-rc2.gz
-> > > or in the git tree and branch at:
-> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> > > and the diffstat can be found below.
-> > 
-> > A new waring is report by 'make bzImage' in 6.6.54-rc2, 
-> > but that is not reported in 6.6.53 and 6.12-rc1.
-> > 
-> > arch/x86/tools/insn_decoder_test: warning: Found an x86 instruction decoder bug, please report this.
-> > arch/x86/tools/insn_decoder_test: warning: ffffffff8103c4d5:    c4 03 81 48 cf e9       vpermil2ps $0x9,%xmm15,%xmm14,%xmm15,%xmm9
-> > arch/x86/tools/insn_decoder_test: warning: objdump says 6 bytes, but insn_get_length() says 0
-> > arch/x86/tools/insn_decoder_test: warning: Decoded and checked 6968668 instructions with 1 failures
-> > 
-> > the root cause is yet not clear.
-> 
-> I've been seeing this locally for all 6.6.y releases, so for me it isn't
-> new, and I can't seem to track down the root cause.  As it's just now
-> showing up for you, can you do a 'git bisect' to find out the issue?
+> If the controller reports HCSPARAMS1.maxports==0 then we can skip the
+> whole function: it would fail later after doing a bunch of unnecessary
+> stuff. It can occur on a buggy hardware (the value is driven by external
+> signals).
 
-'git bisect'  show that the root cause is
-	x86/entry: Remove unwanted instrumentation in common_interrupt()
+This function runs once during HC initialization, so what's the benefit
+of bypassing it? Does it take unusually long time? Does it panic?
 
-after reverting this patch to 6.6.54-rc2, this warning does not happen.
+It seems to alreday be written to handle such abnormal cases gracefully.
 
-gcc --version:
-gcc (GCC) 8.3.1 20190311 (Red Hat 8.3.1-3)
-
-Best Regards
-Wang Yugui (wangyugui@e16-tech.com)
-2024/10/04
-
+Regards,
+Michal
 
