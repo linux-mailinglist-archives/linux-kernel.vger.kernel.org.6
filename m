@@ -1,96 +1,85 @@
-Return-Path: <linux-kernel+bounces-350147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B7599007B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:04:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA6A99007C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69AF1C230B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:04:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B835F1C221EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072AA1527A7;
-	Fri,  4 Oct 2024 10:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B97714A08E;
+	Fri,  4 Oct 2024 10:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFPjPb8V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j5MWeWeu"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618B214F108;
-	Fri,  4 Oct 2024 10:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E550E1482E1;
+	Fri,  4 Oct 2024 10:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728036213; cv=none; b=Q91F4HpcfXzIQSC+yGJUGQx9dRDCAxCkC5xo9YuNk3ny90voLj9aPU5yoxkcXHVFnkozrNM14H/Cdp7cSTUCevChA4TcynBnP4d+4boXeYTXww5+m8yru9sdTi8gWubwLceZD5Zn3mqhTvCOD63pXs3JnWXXzjcKYD1upOq3jjQ=
+	t=1728036261; cv=none; b=Atkfb4jN9mR/CzIiB4cHUh3dXuYnNFjMlbBy3ntOX3QE6S8HHiVuhPtLYjx1nppYDdl5CNy0FXZfLMHqk0BZ2IhZpsynZiEiXKkQku6qcccs6A55JmaD5c7+FLED5o6xsuJoFJEPNAqDkS32prCKOOFD4aQvnMPgZ53hh4O7CYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728036213; c=relaxed/simple;
-	bh=/u/BTCA2RCcOV7Qrd+JkcQvXdbVt8hEgOqSwOK3/wqg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dFrONPVuEWQpoJjs6UQ+RdeynTn/3Y1tPW5Hqn0o8+S5pFY/T3N5wmLgeI1KXwVBQ8IpJlxSKTgbQP1Qw0bvoLOzXxwR7uP0T/Wgz0WHPhlTKTsuAxfgw6oPGsS73X5+wdNEstkKZWNr/lolAfUvGLSrpGNE0osxablcepuoGRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFPjPb8V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CB65C4CEC6;
-	Fri,  4 Oct 2024 10:03:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728036212;
-	bh=/u/BTCA2RCcOV7Qrd+JkcQvXdbVt8hEgOqSwOK3/wqg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mFPjPb8VsyXMk+h0p1fcTGJzwq+WZb9ypQl/T73zLBp/S/BhmB8+ckK5XT6Hhty02
-	 IjJOKlNwftij9QjF65y6wD/WWUwjm3DCS/egIKDUwGhNwRchB5ksPIIdSPPc0QIjIX
-	 9WQ1sYXx5SzFnxJDMd64ZRH5OB/b6U9xBFtN9Lcwjz1alVJJjf/XHRZ3HN019F22tm
-	 6EBwh1YcLeta+xUhql81NYtO4I1slXoLETvQbUrjs//NCIDy3kd2zgjerjVQoDnOIK
-	 qhwADEjBA3WcQ0Z/ImNvAjHWvsdtdziykixudtZKHwEYlU4+G8NA3VFQhUjIvstmTd
-	 QAL3aHngX2XQQ==
-From: Simon Horman <horms@kernel.org>
-Date: Fri, 04 Oct 2024 11:03:22 +0100
-Subject: [PATCH RFC net 2/2] MAINTAINERS: Add headers and mailing list to
- UDP section
+	s=arc-20240116; t=1728036261; c=relaxed/simple;
+	bh=qN/eJn4Pirir29JZzvANdMFmYnfZiW6w+vCXfNiKdEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hRRxuuSeDPpLns9ShCRvt7Cba3+f7ZlQ2d0KE7NkxjyZFHi1AMrB/0ZoMFINuXPDvO2w+cbissQWnenB8NpqHFFEK34kMdARHbtMYhpWfZe6kcr7zvqwA/Bx3iJ8xCPkhOZSyhTtFhlO0tlGdQhG2sLr/YwevrPt3bsh6LLG0AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j5MWeWeu; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+BqI/9/ZiDN0/J5cE6AuUCWowLXJdtdoUMniEvzx5bU=; b=j5MWeWeuMPglXx4G6eSd6b9Ng0
+	Epu/TlV6yYXcvfH3588Ed+OGnDqE5mlxI5fBENvSKgroHW9Ib3m3uzlHDB9avZJsXqh02U8LZtxex
+	H+iT6DaPr+93pCeC0OV9JocWcpEDPpgOfquKrToOWl1pP9e/fVvYImgIG7RcsoVfcbKTROeyToXLR
+	Oz6Q/MBRCVo6o94CqV5yApNorLTwWcVa0NOH9YBOYfAUmXyvgXjQGHpqYARfSc5QmeJh8YgrE4+g0
+	ol3Lz6jcyaIkXoNZRCppKCJ1YDPl0/qkitF9GlrvYQpPZa7RFMys9R0gfKzJjTaprvvNeuYJm6QKG
+	JQRyAYEw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1swfAR-0000000A8XJ-3jYT;
+	Fri, 04 Oct 2024 10:04:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1F84130083E; Fri,  4 Oct 2024 12:04:12 +0200 (CEST)
+Date: Fri, 4 Oct 2024 12:04:11 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [PATCH] tracepoint: Remove SRCU protection
+Message-ID: <20241004100411.GN18071@noisy.programming.kicks-ass.net>
+References: <20241003184220.0dc21d35@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-maint-net-hdrs-v1-2-41fd555aacc5@kernel.org>
-References: <20241004-maint-net-hdrs-v1-0-41fd555aacc5@kernel.org>
-In-Reply-To: <20241004-maint-net-hdrs-v1-0-41fd555aacc5@kernel.org>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
- netdev@vger.kernel.org
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003184220.0dc21d35@gandalf.local.home>
 
-Add netdev mailing list and some more udp.h headers to the UDP section.
-This is now more consistent with the TCP section.
+On Thu, Oct 03, 2024 at 06:42:20PM -0400, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> With the removal of the trace_*_rcuidle() tracepoints, there is no reason
+> to protect tracepoints with SRCU. The reason the SRCU protection was
+> added, was because it can protect tracepoints when RCU is not "watching".
+> Now that tracepoints are only used when RCU is watching, remove the SRCU
+> protection. It just made things more complex and confusing anyway.
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
 
-Signed-off-by: Simon Horman <horms@kernel.org>
----
- MAINTAINERS | 4 ++++
- 1 file changed, 4 insertions(+)
+Nice!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ea3ea2c0d3fa..1ce8c86cdbaa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -24184,8 +24184,12 @@ F:	drivers/usb/host/xhci*
- 
- USER DATAGRAM PROTOCOL (UDP)
- M:	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-+L:	netdev@vger.kernel.org
- S:	Maintained
- F:	include/linux/udp.h
-+F:	include/net/udp.h
-+F:	include/trace/events/udp.h
-+F:	include/uapi/linux/udp.h
- F:	net/ipv4/udp.c
- F:	net/ipv6/udp.c
- 
-
--- 
-2.45.2
-
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
