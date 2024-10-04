@@ -1,164 +1,162 @@
-Return-Path: <linux-kernel+bounces-350331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06A2990394
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:09:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0BF99039A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B931C21A9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:09:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6697B1C21BB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA902139DF;
-	Fri,  4 Oct 2024 13:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D8A21018D;
+	Fri,  4 Oct 2024 13:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXL7uCgc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="swTec+dz"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923C920FAAD;
-	Fri,  4 Oct 2024 13:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD63F20FAAE
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728047275; cv=none; b=FGNIbriuJjfytu+uMq6V7G51fiG8V2nrZ63mCXDjXBSLjc5e5fD9RzV/rqHySB4neXBmuLw2MT01SVsl0HH7yd/CMXtkHLMIEYBZey+v9ZMNSZPHPWHik2eYi1oAHFLiXFM/B+3jlYMGVzrTxnR/a55hzKfbwoYR88MIAPlftWk=
+	t=1728047336; cv=none; b=HH/d20mShavM955OIW4Ings/k2Wg3iS9+Mv5Lf9R5HC50Vxb9sT7F7kWLag7HDvxRi35YFMFGUeWJ94m2vM3LXFgh/4/PaFlLs+Xz/dP3QO/rM8GFBbkaP0pNKeamJQIT8Rflk0GCUiAkUJpBG87e8/T6JVmQYuZkPq/kaaf7OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728047275; c=relaxed/simple;
-	bh=HbfE2h4vxKWvyg/eWGYjSKRVkib46D2fF4m5DahMOHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m7BLMWXdJe7I5I/1NkD34hzr4UqizDXeWX/4Ha6Da7lHVloMYJNhCQweW5eu00I2LQYOayinpptUy7JlyR2bpQ2ii2FdMM+XvH+bnYgrxJDzcDCLjP8wDUBMtrfBgBK3MlbuwFCEZ7mrBSHXPwNWgOXP17/+qbN8GiHcsQzoNek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXL7uCgc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63CC4C4CEC6;
-	Fri,  4 Oct 2024 13:07:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728047275;
-	bh=HbfE2h4vxKWvyg/eWGYjSKRVkib46D2fF4m5DahMOHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YXL7uCgcRJdTD5uPtadv/zeAPIOM3nXWZFcBCtsYSDWbL+yCwSE2oaASKHLTWC8yT
-	 MgezIgpxB6qcVEEsJ3w93VX4N0XrsK/G90JwtSB1OuzMFHfnbRmmgP3NQLpSWnJ5tH
-	 hYfaZQ4rzX4yozAEK69I0Iac6n7gH5/rSrjIsOpriLvV/gOXIhSVGC5fYNGxYvNdEr
-	 wCoSJeMxE3xt91QmtwypraxjdH0f0sQQI19yAYLImp8Rl5SVV+XQ7iz9zvF8Wg5GaW
-	 EXJCbEXwjp6b2m4Ks+1FWUpkEBGZxyTGk5lRdeu/xUrhmiYS+Px0L/RA1ZssPyQnRl
-	 k8pyCrkJ+lVmQ==
-Date: Fri, 4 Oct 2024 14:07:49 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-	bpf@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	s=arc-20240116; t=1728047336; c=relaxed/simple;
+	bh=tF/nPfzcP4R3ACI8M/wyhrpEI3K4Z4ckVMNRUoBu3FA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PZsPdnihWHjd0mlamjpxgP7qSJ2Jvp/dciH2ZwFJp67xyNu8mI3mgXDkm52X/0/Uc65qb6tOHTeedD7SCe/hIfRit3a18f1cK1N//AEK2lHYjH10EghZ+pCGunFUP1bTdfX/nARrxgkYfQttW3TKStSl1TMxj/mRl87oUpHPvL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=swTec+dz; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so554149266b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 06:08:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728047333; x=1728652133; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L4/AYJ0iM81mUlzV+Cv9ihjHBRLe4vDHy6tsndRIor4=;
+        b=swTec+dzqbOKXdDH0yRc/7/GXtrHKjhcwpVfEHRq70oKRrfbwP/u9koyefhvNpwQgL
+         kep7MCft0GIKS+17QNu/j3xvXakLFc64FcBhlbvKRAea7xUITEmtJyxXIKi3BmXjNpJZ
+         ItjB9zGbhxXpAeiNKzKQevHC2JF3dH6t+4sMI+fNaYv5MsvB9xdyhRaMB6uzAmk+1OMT
+         uyLtSBUOGFgEJ400wvojzPLsflNUTaGRzHSfVrzoMg6HjshnKQIQLay/DJhZluJOKPv5
+         GB4XFvmnp3lPE3JPGQ1Hs5KX0ANYRXiBMvuiK0M3YszYCy8wTSZR2FrGtAdXJ3dCwO7J
+         3tjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728047333; x=1728652133;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L4/AYJ0iM81mUlzV+Cv9ihjHBRLe4vDHy6tsndRIor4=;
+        b=vazXSjJW29U6DyrOafnJlzZVPVCleOYLvm0U1BhTw43yDobq2DhafXGp2kmjQTkxSO
+         qrmJllDwQKZkjT8+X5IoQV99cxB1eTD7UxvxC292pNGYopX3WITExKI5MMy+XapekEuv
+         7VPTtp6AKUMR+urwULpeAG3wVFu1z9RWUkyOo5o3ksi8fa/OzU+sk0U7JaBFGc65hkY9
+         Utk4segSrYxd+0+PpT+lSqhoqfVolwUrck369H0jdmydKdjZCzJOFc4/vmjxP+QQnQgI
+         gq5AGOXfwFSBbzDqb99tjbw1jwkcYRL387vfFRmjgNjWLinkWJ6qsb64jiSELOT8iSm8
+         rNwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhkjG7AdWbZVrgxvyivUDU7zkNXFtDDJn85eZhFqO4cnaEptJH9DCs+vh+Yhw4wpoaS1W20H8b0pcAAa4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzwr8vaZSPTu4zXQeAtee/TP33eBXpc41VklfYrGCSTu1rHCJuk
+	FIvsNsq9iilPh9FfbsTq23GHJJc5EHmc0H0fxpQvJbDzwlD1txxiKuKAC88Ke3I=
+X-Google-Smtp-Source: AGHT+IHiJ3v9CjBWrTt3qRr2xzF/A7zLY9mPcR2zAOy1KSRnmopFSHDNXZvYDIFtDM+HRc42v+GGqA==
+X-Received: by 2002:a17:907:7e82:b0:a8d:4c83:d85d with SMTP id a640c23a62f3a-a990a04e25bmr686995066b.12.1728047332978;
+        Fri, 04 Oct 2024 06:08:52 -0700 (PDT)
+Received: from localhost.localdomain ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99102859casm222477766b.47.2024.10.04.06.08.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 06:08:52 -0700 (PDT)
+From: srinivas.kandagatla@linaro.org
+To: andersson@kernel.org
+Cc: konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH] selftests: Do not skip BPF selftests by default
-Message-ID: <96023ef4-fa0b-4fc2-a6a7-ac32bc777c44@sirena.org.uk>
-References: <20241004095348.797020-1-bjorn@kernel.org>
+	johan+linaro@kernel.org,
+	abel.vesa@linaro.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3] arm64: dts: qcom: x1e80100-t14s: add another trackpad support
+Date: Fri,  4 Oct 2024 14:08:49 +0100
+Message-Id: <20241004130849.2944-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0C1Go1cXuSqgJ8u8"
-Content-Disposition: inline
-In-Reply-To: <20241004095348.797020-1-bjorn@kernel.org>
-X-Cookie: A bachelor is an unaltared male.
+Content-Transfer-Encoding: 8bit
 
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
---0C1Go1cXuSqgJ8u8
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Trackpad HID device on T14s could be found on two possible slave addresses
+(hid@15 and hid@2c) on i2c0 instance.
+With the current state of DT boot, there is no way to patch the device
+tree at runtime during boot. This, however results in non-functional
+trackpad on Product Models 21N2ZC5PUS which have trackpad on hid@2c
+slave address.
 
-On Fri, Oct 04, 2024 at 11:53:47AM +0200, Bj=F6rn T=F6pel wrote:
-> From: Bj=F6rn T=F6pel <bjorn@rivosinc.com>
->=20
-> This effectively is a revert of commit 7a6eb7c34a78 ("selftests: Skip
-> BPF seftests by default"). At the time when this was added, BPF had
-> "build time dependencies on cutting edge versions". Since then a
-> number of BPF capable tests has been included in net, hid, sched_ext.
->=20
-> There is no reason not to include BPF by default in the build.
+This patch adds hid@2c device along with hid@15 to get it working on
+both the variants. This should work as i2c-hid driver will stop
+probing the device if there is nothing on the slave address, we can
+actually keep both devices enabled in DT, and i2c-hid driver will
+only probe the existing one.
 
-The issue was always requiring a bleeding edge version of clang, not
-sure if that's been relaxed yet, IIRC sometimes it required git
-versions.  I have clang 20 installed here so that's not an issue for me
-but given that that's not released yet it wouldn't be reasonable to
-expect CI systems to install it.
+The only problem is that we cannot setup pinctrl in both device nodes,
+as two devices with the same pinctrl will cause pin conflict that makes
+the second device fail to probe.  Let's move the pinctrl state up to
+parent node along with the parent pinctrl to solve this problem.
 
-There's a few other substantial issues with all of these suites now I
-look, none of them build on arm64 since arm64 defconfig has
-DEBUG_INFO_REDUCED=3Dy which isn't compatible with CONFIG_DEBUG_INFO_BTF
-so that gets turned off and the build splats trying to read the BTF out
-of the kernel binary (which is a new build dep for the selftests
-too...). =20
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
 
-   https://storage.kernelci.org/next/master/next-20241004/arm64/defconfig%2=
-Bkselftest/gcc-12/config/
+Changes since v2:
+- updated commit log
+- added missing parent pinctrl
 
-We also get a bunch of:
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts  | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-die__process_unit: DW_TAG_label (0xa) @ <0x58eb7> not handled!
-die__process_unit: tag not supported 0xa (label)!
+diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+index 08ec2419f95f..5aa295404800 100644
+--- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
++++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+@@ -551,6 +551,9 @@ zap-shader {
+ &i2c0 {
+ 	clock-frequency = <400000>;
+ 
++	pinctrl-0 = <&qup_i2c0_data_clk>, <&tpad_default>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ 
+ 	/* ELAN06E2 or ELAN06E3 */
+@@ -561,13 +564,19 @@ touchpad@15 {
+ 		hid-descr-addr = <0x1>;
+ 		interrupts-extended = <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
+ 
+-		pinctrl-0 = <&tpad_default>;
+-		pinctrl-names = "default";
+-
+ 		wakeup-source;
+ 	};
+ 
+-	/* TODO: second-sourced SYNA8022 or SYNA8024 touchpad @ 0x2c */
++	/* SYNA8022 or SYNA8024 */
++	touchpad@2c {
++		compatible = "hid-over-i2c";
++		reg = <0x2c>;
++
++		hid-descr-addr = <0x20>;
++		interrupts-extended = <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
++
++		wakeup-source;
++	};
+ 
+ 	/* ELAN06F1 or SYNA06F2 */
+ 	keyboard@3a {
+-- 
+2.39.2
 
-if we do turn enable CONFIG_DEBUG_INFO_BTF for arm64. =20
-
-The whole thing is also broken for cross compilation with clang since
-everything is assuming that CROSS_COMPILE will be set for cross builds
-but that's not the case for LLVM=3D1 builds - net gives:
-
-  BPF_PROG nat6to4.bpf.o
-  BPF_PROG sample_map_ret0.bpf.o
-/usr/lib/gcc-cross/aarch64-linux-gnu/12/../../../../aarch64-linux-gnu/bin/l=
-d: /home/broonie/git/linux/tools/testing/selftests/net/libynl.a(ynl.o): Rel=
-ocations in generic ELF (EM: 62)
-/usr/lib/gcc-cross/aarch64-linux-gnu/12/../../../../aarch64-linux-gnu/bin/l=
-d: /home/broonie/git/linux/tools/testing/selftests/net/libynl.a(ynl.o): Rel=
-ocations in generic ELF (EM: 62)
-/usr/lib/gcc-cross/aarch64-linux-gnu/12/../../../../aarch64-linux-gnu/bin/l=
-d: /home/broonie/git/linux/tools/testing/selftests/net/libynl.a(ynl.o): Rel=
-ocations in generic ELF (EM: 62)
-/usr/lib/gcc-cross/aarch64-linux-gnu/12/../../../../aarch64-linux-gnu/bin/l=
-d: /home/broonie/git/linux/tools/testing/selftests/net/libynl.a: error addi=
-ng symbols: file in wrong format
-  BPF_PROG sample_ret0.bpf.o
-collect2: error: ld returned 1 exit status
-
-with similar errors in libbpf for HID:
-
-/usr/bin/aarch64-linux-gnu-ld: /home/broonie/git/linux/tools/testing/selfte=
-sts/hid/tools/build/libbpf/libbpf.a(libbpf-in.o): Relocations in generic EL=
-F (EM: 62)
-/usr/bin/aarch64-linux-gnu-ld: /home/broonie/git/linux/tools/testing/selfte=
-sts/hid/tools/build/libbpf/libbpf.a(libbpf-in.o): Relocations in generic EL=
-F (EM: 62)
-
-KernelCI is seeing failures earlier with HID:
-
-   https://storage.kernelci.org/next/master/next-20241004/arm64/defconfig%2=
-Bkselftest/gcc-12/logs/kselftest.log
-
-and an unrelated missing dependency on libssl for net that needs to be
-fixed.
-
---0C1Go1cXuSqgJ8u8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb/6KQACgkQJNaLcl1U
-h9AHHQf+JDjGvFF361rxHw+hdwcRUWLxLvZAPuNs8ktIA5ZgxlHb+lmSm0sIMUQB
-EnidDI8Vej+ZgTm/eoWr3WV/iAfOOKibzaqx9QaNCJ4UDCPDlSnqcBkAJ9QvhBYa
-ucq37YdKNwPmJl1s70ppWeAWlB6k7R55Xz6PiiTwhnkiXG+7o9R0Y5UdbZKqIBJG
-dZi0RhVmBGutGG47Ksrm3xSAr6JLr8qotM4hKff8fDnoGsDVquUtRLG4ucd+tYtK
-9RFAtQZ5BTYX/1h7lCwz/DnmJs79Wpyey6RgDUpB0Nj15sZbPkRxS+k28SASxsTg
-UK8eLqsacdzwVRB9Oii1XfOmVB628g==
-=fk9l
------END PGP SIGNATURE-----
-
---0C1Go1cXuSqgJ8u8--
 
