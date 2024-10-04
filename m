@@ -1,295 +1,247 @@
-Return-Path: <linux-kernel+bounces-350709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87550990853
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:00:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74A6990857
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02FF01F215BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:00:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C83B1C2202D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0F71C878E;
-	Fri,  4 Oct 2024 15:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A021DD889;
+	Fri,  4 Oct 2024 15:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XJ2ZVKJ+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="arz3TUWM"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E770A1C8771;
-	Fri,  4 Oct 2024 15:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728057223; cv=fail; b=gA+uIQuQA3+iU/uMsyLMlAkzheCyWjYH+3P4sagG4wHg+9K5Scie4qWYnMk9TZ9YO2kFceFPq6NLBvv+xojDL7jNCuQANiDW9GJ8iZPRWiXsek87XABwyTFogLbEg9xW4OBfurbG+AiBx3HAw2O+tarFvJMTqBB45wUitOfC1Po=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728057223; c=relaxed/simple;
-	bh=k04LDEVic2f0DTCg/GgnP7j5A1fYvIQ64pjBiD0Dr+c=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pv1g/G6LIzakXxK4rTfpek6LS4b0g11U2l8AeZvLFHNIYbXwBIb1iR9b1nSoycgU8WPKV5PjQ7CEnpYaNEXPRJHtHJZchVrzp1R24l2v9avMaBejVCfv8EXNCWOXPwy12x+AEFJLId3k+4aXrg21IkukrStTEtdcWy/9KYRb6bo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XJ2ZVKJ+; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728057222; x=1759593222;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=k04LDEVic2f0DTCg/GgnP7j5A1fYvIQ64pjBiD0Dr+c=;
-  b=XJ2ZVKJ+C2IE5vaVNgoqYzMrFop+svqvDQVsx/kfkB3I9ijS00mcoO8C
-   TksBn4auZN/nHbCrBUbVi6e/c2+Qvbq3GeK6tjedai/o/0JDPOv9xdefp
-   rSiLFgzw9RLeLiAwaFQ9NJfeidlclcbyBbENlpBaRS4sGjtwQ6NiRAwH2
-   w4cV7fA0iWBQWvfHoL9JTJdqXXYO7XfGjb8HFWnxPbt1u2Qxv81sZy+3n
-   HPCcrw/EHbeLccFlmV/BnJU2n2s/D3fJeTmadR8MMwm1kcBT8JmoXaFsA
-   VVUPJSni29Gq8DQ1ayy7iENirjmNLI268ksEikV9qfwlxQ0w4Dwn2dXBC
-   g==;
-X-CSE-ConnectionGUID: AOfNxGa+QpqwyvTJt+rMnw==
-X-CSE-MsgGUID: 02d2k/yMTxqILWxbVZyH7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="27460205"
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="27460205"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 08:53:41 -0700
-X-CSE-ConnectionGUID: TbmsPRktTmGxtkcJ/XiJvA==
-X-CSE-MsgGUID: mCSOo67BSD2civrguPANwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="74572479"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Oct 2024 08:53:40 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 4 Oct 2024 08:53:40 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 4 Oct 2024 08:53:40 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 4 Oct 2024 08:53:40 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.45) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 4 Oct 2024 08:53:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EOgQLJSvlnEzA7p2Lx7vsdD5dGfwYqqB65YVpCsCL1oD/Q1y0laLo6QWTPOc9kgASzthIK+5vycHFpM+P3cyG/ewKNiqnh7JyDN9g5aafaWUGuhZ9bNZ6qxg4EjvsBEc5jSwb3hvgWLcyz+vOp/FKN+CG9eLmXK3+F9Mqbf6jtZaWRqr2gX0+so5KW1bZHLr10kQ8BcycflsRC1EOiMKP5SPdnFKb7wZ48ZV2CGtbXG2KxmWczCGsXdPwTaMHNJfObq4pSEQwNbTUC6awubiwvM0bt+dPQSL8pumbNZlAW66jlP9seV5o3tzCXRxuocmTpfVZSP8jJGOcwRlycdShA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AdGzuDYmE7TYTM7l5lpv7SelaP7R2gYDjNlSE6I0XJE=;
- b=QpoQvNbP7MzorB8eBn/nDy5ia38cISym41lzp9yn8ilkTMctu6xa4ZlMFJY1RtqmOx7ibwRb3hdKb46kEsIfOACJSF5ROp3ljDHhRRgTwIBes6Qp3mbR5OX42cOQiBt1C4RScpjWibTzEUEdio7j9gRMd60rEAuZnWsYOU/q5HaO49FLa2+bhOvpH3ZRqQsxD9cgBBVkllh67XORR0Mqj1YqT2E0okWrm7vepqfNl1HxD77ECoRQhD+GjWRTT05yInFaIhtJ7MY+ggkitXnvuZtMKHe0QlICNEgNib5xDagNNQGQzJOt6ouewE2qJ3OiXs8RHGmhPfbUgKUGtf7JOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SA1PR11MB8278.namprd11.prod.outlook.com (2603:10b6:806:25b::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18; Fri, 4 Oct
- 2024 15:53:36 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8026.017; Fri, 4 Oct 2024
- 15:53:35 +0000
-Message-ID: <a28382ed-3c09-4a63-91ec-ea3cdd07fb54@intel.com>
-Date: Fri, 4 Oct 2024 08:53:31 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 22/24] x86/resctrl: Update assignments on event
- configuration changes
-To: <babu.moger@amd.com>, <corbet@lwn.net>, <fenghua.yu@intel.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>
-CC: <x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
-	<rdunlap@infradead.org>, <tj@kernel.org>, <peterz@infradead.org>,
-	<yanjiewtw@gmail.com>, <kim.phillips@amd.com>, <lukas.bulwahn@gmail.com>,
-	<seanjc@google.com>, <jmattson@google.com>, <leitao@debian.org>,
-	<jpoimboe@kernel.org>, <rick.p.edgecombe@intel.com>,
-	<kirill.shutemov@linux.intel.com>, <jithu.joseph@intel.com>,
-	<kai.huang@intel.com>, <kan.liang@linux.intel.com>,
-	<daniel.sneddon@linux.intel.com>, <pbonzini@redhat.com>,
-	<sandipan.das@amd.com>, <ilpo.jarvinen@linux.intel.com>,
-	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<eranian@google.com>, <james.morse@arm.com>
-References: <cover.1725488488.git.babu.moger@amd.com>
- <ff0cd2a73c78fdb7487632381b4aec642a0af5ef.1725488488.git.babu.moger@amd.com>
- <384c2074-0076-4686-bebd-ba3ac3c05188@intel.com>
- <f77737ac-d3f6-3e4b-3565-564f79c86ca8@amd.com>
- <d2147cb6-9d1a-49af-9be8-5d788ce7ee7b@intel.com>
- <c514416e-4320-3826-21dd-7e79ebc83351@amd.com>
- <33c56f32-4e56-47b5-890c-fbf1d45d7213@intel.com>
- <9621def4-2753-0f50-ceb6-3185c1789fec@amd.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <9621def4-2753-0f50-ceb6-3185c1789fec@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4PR04CA0194.namprd04.prod.outlook.com
- (2603:10b6:303:86::19) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDB91C75ED;
+	Fri,  4 Oct 2024 15:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728057353; cv=none; b=EqYRPy8NyA6YfCz+PScM3nbkCr1HPXfagvqMmqg5N9OVc8wMNYJcYNppYCuKWr485AoEefwzRX2KpLX5KhY+TMmrqOqa1Tvbraqtae0a76B9nahJbmmXK8Ld6jFW9rLPUcTtUSbkdgw7bQ57lqWgjr6buw406g+ouH/2JtnH7VA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728057353; c=relaxed/simple;
+	bh=hSMcRIMRt7R2gF4BI0KGMvNBBzG5kLRpwYaRrJQiC3M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GDGjWIwZArafXhzzeJgH9odSzGSCQ1dn4QfFvcFLaX4i1DrxDTF1ixACAEKLm3IcXS2UP4E19/t7OokBoyz9hdw0QINdLooE21hujitOERBYjoLKs2NTF6IxrVqm+r14RevCyno0mI6ABHwUaYVAwX6Fj9mvgWOhkfs1mvC8+Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=arz3TUWM; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-50958a19485so628282e0c.2;
+        Fri, 04 Oct 2024 08:55:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728057350; x=1728662150; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CsgdlqI1YjSaf2hjQX57eOCOui/ZtRhCSadX2PuXtI0=;
+        b=arz3TUWMtvxmFxtwQMA7vUgUVl2WW4MlGBhewkipPOM0lo48IMdyX3GTTfRcJAEYBS
+         hTl7x+0RT2LasJ7ZRK2OU3Sqh5S/SmQ847Q0uPTdCBqLHWm1y26+mQd2FRInFdWEENTS
+         cXmMhm5fi2OZ9CF1eVcUKFOJvyiT9j1BHj+f9QIG+PEFMRhIU4EA+iTObJxgw+FaDV5u
+         /M12Sc7jbtYltSgBq0BXWITfFTK4kHc5fHHt4fRiM5JQgSSudWrB6YmRnfeB3vXWDQbb
+         wX+pcjRMg7QU+kIC8Y3aHEt4Ihrqj2rFo/cmc9jsWeoF7pva+qG5qrsoo34InmwDVT3D
+         0hAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728057350; x=1728662150;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CsgdlqI1YjSaf2hjQX57eOCOui/ZtRhCSadX2PuXtI0=;
+        b=pax/Hb+pkgHjuyhDL6hy45Ot3lUS1/0Ff5llJBx4FB2QwxNIfFLFj3bIGt5FRvG8ZB
+         /jWlWH483YLzIzmxRuYGp2hSwxkfd5Qhk6n1o7vqVEoFymFUWIQEr4yULLQPm7HcMESZ
+         SSVFYqddw1qU10PKjO8/Oe0W/jTZULfnrJE/c/iCleugn+fG05ybuGKXs2KB6BgcJl/y
+         noDMXg2ILJ4TFEJLOrCB1gsMrgS4w7vr0xeKMldo/FLWt1Vqr9zuVk6R2pT3lM4Mz7e2
+         03YIENKlG8yQO9oAb40T9C5LIwQMH1DcFgCzgqpoE+iidcwouFGn0dT/R11Dd78maqO+
+         Ulgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWc+UVYM3Nnuwkd97wRezkVXt7tzql7h0RzYhUy6qhtc5hfvHKuuUH/GH/eUtM4DAYuzp4Cx7ohxVZpqc=@vger.kernel.org, AJvYcCUnrTh3gmI8KGrOdxu/edZImnPoYKaMV+4uxUyLN3qyvNR5T8TLnS4/0N0j1dTY1uGQcuIm83xA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCIX43KGB0Jcsy0HIGexsTvUjIajJtvDSleg/352iZVDuTiGV2
+	YZ9hswPL8er4aYcc6eFTnmAzWTXl2h9mgusmU+JCk8BDeAKSxY34iem6pkouNY8wHdBQLZ4jDQo
+	Tp6gugbkZZUC/M4a6SLxagMffaKM=
+X-Google-Smtp-Source: AGHT+IE1+ALhrfxE+7vJ3rstPkNZK5+mqKB3Ed/IXMiEy2VUyBOBJj9QvbRmwLnRt7fU0W2iXr5aihcesw1afW9Zs9U=
+X-Received: by 2002:a05:6122:169c:b0:50a:bd10:e9a5 with SMTP id
+ 71dfb90a1353d-50c8547f0edmr2338209e0c.4.1728057350482; Fri, 04 Oct 2024
+ 08:55:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SA1PR11MB8278:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b7da0ba-3156-471a-54a8-08dce48cb457
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?WXYwQUsxOWtwTXRsb2hwTS96MEFYVVFXbC9lc2hreHRmb282UDR2K3h1ek5H?=
- =?utf-8?B?aTBNOHpxWWdHMEJWWkRPck1xNEJaZGtkUHhVK3Q4aGorMTJvelVxSDZPMHNF?=
- =?utf-8?B?bGQ2MDNma2hlTkNnTGd2THhzdjNiaHcyNU9zOWl3L01QVzJKNm5hbUt4OWpP?=
- =?utf-8?B?eUJuRDhML09iUWM4VnQyOFVXLzlIQWM0SVk0THp4eWd2dWNNYWc1elZzeVBN?=
- =?utf-8?B?RTljSDBRNzJ2bXFnWUNuWVY3UHdtbmY4dXdmRTUxcFQ4Qk5KaGJ4cmtVSzlZ?=
- =?utf-8?B?VWpxRGxGdHhuV2NXTTVsMjZEMlBLaHFzcWI1WURFZ2lHZjdtUVlOa2FwNTBm?=
- =?utf-8?B?Q1R4UXJZc1pBK3Brdm5ZQzZ0QW94YnZpL0RIbmZ4NVFvOXR6RWJiREVMRnhT?=
- =?utf-8?B?VCsreTFVM1ZvOEptdDBmV2tzd2V1T3Y5cEZvNkZVSFRycFJOdHpzU2M3emx1?=
- =?utf-8?B?Q2thZ2pSNEpGaEpTd0crZkpDZStwUmYxemwxRUh1WWFyVGF3UUpMb3ViMzdn?=
- =?utf-8?B?a0R5ZCtvWmZJMGd3cE95T1ZqZWtETEhKcng1Sm9UWHg3WlRkMDZmcTVtT2xE?=
- =?utf-8?B?elh5RS9mZFhuZzJJaTBNYUprOThHbWFoQXJyWk1OVzFWUGZYcE1xRFVnZHQ4?=
- =?utf-8?B?aG51c2cwK0tMK2krMHVERzc5VmlrZkxjektxYkdvdkE1eHZxZ2Q4NEFvUzRF?=
- =?utf-8?B?TWRKWUczQUQyZTlPa0pldTh3UkMwVVdnVnRMZjZjbVJHa2N0VDBiMUNQQ0My?=
- =?utf-8?B?TEJwdUJzRG4wL05QSEhMc0l3UUYxSWNzS3ExSE1JRGZOQUJVMmFYSU02OC9t?=
- =?utf-8?B?SXM4SGxzUnI5bTNoRU90TW8yNy8zRnZNRU9lbGU5QW5IbXAyVVA2K3lFODRI?=
- =?utf-8?B?K21wWmFNNGtGOGFud0Q4QmpWT3FlRzFmaG9hL1NNNVFhK3Z2QU9EaTVoWHBt?=
- =?utf-8?B?a1JJNVh3RXU4S1M2SHpvWUh1QUlCR2xyYnRkM0c5aXhUeWx1cVZQQWwwWGdw?=
- =?utf-8?B?RUF5eEk5Y0VpZldLYzlTc0RxYzdjR0tOWXpIREF1QVVIZThUS3VBdXl6bmxI?=
- =?utf-8?B?dncvVThITDNQblo0dVFuY0x2aWlnTVpOcmhyRlVjMWc5NDJQak1WbmF1SjdR?=
- =?utf-8?B?WWVEVGRlQ2krTnl2dFo0ODBNVjB3RnFXUkRxUW5aMnFWY2U2OURWRGNHanZN?=
- =?utf-8?B?VXBOQnEvaUt3ZmZYZEQ2TGw3dFRvR1NpcXRJMDFKSnhUd2hhYS9LWVFweXpm?=
- =?utf-8?B?OXM1U0hVakpEc2hvb005UngwUkdvMFBVVXZGa2tBaG90Sm1RQ3RreERia3dM?=
- =?utf-8?B?QTRESkxvY2szd0ZGZ2tIMkNOVnNNTDBibjlObW1MZDlHSTd1a2tBRjRYM040?=
- =?utf-8?B?VW9ObysvcHltL09CSXJjSEljNmphZy80eGx0Q2ZjL1hUTkdlTXdzL2FwY0Zy?=
- =?utf-8?B?UnNMaFhLSTFaSFFrM3FwbUlYZGtrTjg0UFRIcS9YUjJTRWgzcm8zbFJ2bExZ?=
- =?utf-8?B?L01hYmoxUE9zZ1pSeW5zdmFRZDZZSWJEWjNpanFhQ0E3N3pKUXp1U1VOSGlI?=
- =?utf-8?B?WUlERkpwbXlreHFXSGNrQXNUUytiWnU2MWV0RXpoZ0IwYzZEWElvZUthT0pF?=
- =?utf-8?B?aVBMeXphRXE2MnRKM09xTTRTZGpwKzdTSGJvdFBLdzEvOUk4S3VrK2RnTFlS?=
- =?utf-8?B?RW9lZTV4bmVjblh2cElDd0Fzb3E5LzhHYVgyUjh5SlU5MC8rQkswRnR3PT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TUp0SjVPRXZ6UXJDRGMwTW9qWEtBS2JLdU0yam1oakVxeURpMDVSdm94UVZT?=
- =?utf-8?B?eHpZbE1LTENjRW5RVkF4MjZuelNhWTBoaWdFQmNPV0VkbUNSUW9PZ3lKSnJV?=
- =?utf-8?B?MzFIamxYZUxFSmp3ckZIYTBKaVpzQjVoSkpod25NMVB1MExPZ1hqc2ZKaElD?=
- =?utf-8?B?NkwxYjNQNUQ5OVhHNFVVKzdkRWkyOWxvbkZQeU5MVXh4Vm9kV25tM1Y5WmxE?=
- =?utf-8?B?a2NXeFF3QUs1Zm45MlZia0ZYakJsOG9sSm1ERXVXSU51WGRLMHVBV0hsTklO?=
- =?utf-8?B?dm13UWNGVE0wQlM4TjN0d1ROa3ZzUzArTFdseGo3NzFWL2prcjFhSGRGbVd5?=
- =?utf-8?B?Qkt0L2REc3FWNGZHcHJMQjFvOStzVlRQQzVpMXJ6Nmw4dWIyb25PTGpnUVNS?=
- =?utf-8?B?a3JsZXovalNIdXJXVHhPMzBFVkxMc3pXaEo0Ym53dWM5clhOWldsaGJ2OFV4?=
- =?utf-8?B?WDBmRUJBS3l3MTZNZGZVNGJlNU9DR2FqWWhtbHhOVWN4NHpiOEFhTm5tRXd0?=
- =?utf-8?B?bktEcktXVVBscEcrQ2wweGxIU09NZFRzMXhDUmVZKzVzVWJNbmI2ZkFjd1ZO?=
- =?utf-8?B?bnM2QTRpdDgzVDJoRFhxZUZQcWlEZ2tQTmZyOVowZ21reS9kakZDLy95QVBW?=
- =?utf-8?B?azJNNWdpZFg2ZWdSR2tYYjhOTURob1dtSXlkK2dURnVRd3ppOVFhZ011Qlk4?=
- =?utf-8?B?eFJXMXBBWENRb2VYMWhTd3pKSDlRc1JuVXF6MDU3SEdMdGtjRVlFOE1Na0ZC?=
- =?utf-8?B?VjFibm1OM1dXVWtsWmxTQVFIUFJ1MGtuVm5wODY2RVJqNDE0ODNzbVNXLzFU?=
- =?utf-8?B?MTl2dWlNaWs5d09yRE9XdlpRUjEyci9tU0JVL0tpcjYyR2d4WUVPMUs2dGs5?=
- =?utf-8?B?OHM4WlhrSVROclVQdVFESUxCdTVrdnFPL1lCdnRzWkUwb2kvQWlsNzhnWE0x?=
- =?utf-8?B?TWc5TWpubUVNSzNpS1FWQmJRRGc1OXhFTUlTK2pFanVjN3lMb1dySG5ZSGY0?=
- =?utf-8?B?WS9HNTFWUm5KQXRUQ29iakNvMUFkREVab3JxUm5OVkQ3d25iRjBjM3YvaUUz?=
- =?utf-8?B?RHMrNUpLb2lMb1VCSkV5N0NGVGd5YWFDYUMzQ2VJSHVIMitzRU5vcUg3R0dy?=
- =?utf-8?B?aSt5UDZwM2VYVFVuRXd3M2ppWHBETDI4b3ZRc2ZSZXNXOTdUYmttVHdkY2Iw?=
- =?utf-8?B?eFJzc2JPUXp2SlgvTFA5ZFd2QkIrak4rcng3djBkcEV1VnB4YmJZNUlyY3pw?=
- =?utf-8?B?TGFpWmhuTWZDRS91dXIrb1pReHR6dGpZOWZxQ3VnUXdrY0VBS3htUVkyTUhq?=
- =?utf-8?B?TFd4amttK3VFekVlZWtTcjNFeHZGRnMwdnJ6eWpwcFIzQVdEbGltMExXVEFy?=
- =?utf-8?B?bmxkN0ZHTUcvc0g5WEJQbUR0RXFySXdaQ1l0OE5xRHJyeHlBaVlVNzVFZXI0?=
- =?utf-8?B?UzRNbXJGWnhKWGZya2hQdWJ1SFhlN0hOZ1JySjUrZndxQUdyWVh4WnMySzhQ?=
- =?utf-8?B?SHh2Qkl4b0wrYWRvc1EzOHlPaEdVVHAvMm1wRXdQcU9KWGRaaTJnZWVJU1RT?=
- =?utf-8?B?YnY5L0UvQ094WU10Mlc2WHRMUlN6R3FEVXhmUmdYMHRadzN2YVcvS3VMb3Vq?=
- =?utf-8?B?U2FZclpXVXcwbEhJNmtPR1U3Q0kyQkQzS0hJWkhBT2txS3FkcWJuR05zamxI?=
- =?utf-8?B?eUJhV1I5TWxtNzdZc3l2RWtQUzNWU2RsZjI2Z2wvVlZVaXBpVkNvNmk5NktN?=
- =?utf-8?B?Zk83QXl0TjViU0daMmhhaFBFK3RFckZVdDFOSUNJVFZMNXlNY3lxRUtXNFpV?=
- =?utf-8?B?RDhyWmYyc0pzaWdWRzhhbVdWQTRqQUJsZC9TZUJUNUZVKzVyUllWVUUxMm8v?=
- =?utf-8?B?aitRRVMrTzJNaVFEOXQ2NUpMK2V4eGgxS3l3R2VsR0NUbWtTWG9KT2JkdXY2?=
- =?utf-8?B?ZlFDTnp0R1IxTlkyd0lOd043MVVNdXFUUlVTMVRjRGtyWlhPM3ZXSjEzbE1K?=
- =?utf-8?B?RGp0ZXZJRDdxdjE2T0RseGZtRjBFUm0zNUdtTU42dmFjUThPck0xV1VGWG5r?=
- =?utf-8?B?T21ITG14RFJDOTdsU2JIL1NPbS9CaHFZSmZGcmZXS0padDFzYWNSUUxEUmx5?=
- =?utf-8?B?WXI4aFBWazQ4OHpxbkVub1kyVFREb0Q5TmJRZDhTS295Z3lWZzhjVGRvUDlI?=
- =?utf-8?B?cVE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b7da0ba-3156-471a-54a8-08dce48cb457
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 15:53:35.3487
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zK+uV4tUq57A52QyCq1NOqznkRiSr7l05/hoYy25WEty7tD37ab/Njcu3ScZog246LCYUw7MRx9VwwFq3jKCp+U16rfafXPoaiV/b94s2A0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8278
-X-OriginatorOrg: intel.com
+References: <20240926211936.75373-1-21cnbao@gmail.com> <CANeU7QmSN_aVqgqNsCjqpGAZj5fAQJA90DVy1-duXxYicmPA+A@mail.gmail.com>
+In-Reply-To: <CANeU7QmSN_aVqgqNsCjqpGAZj5fAQJA90DVy1-duXxYicmPA+A@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 4 Oct 2024 23:55:28 +0800
+Message-ID: <CAGsJ_4xb+h7EVG8WQxt9BpAz6EYC4V+M9+ijw47Pt0-6iOZtog@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
+ swapcache_prepare fails
+To: Chris Li <chrisl@kernel.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
+	Kairui Song <kasong@tencent.com>, "Huang, Ying" <ying.huang@intel.com>, Yu Zhao <yuzhao@google.com>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@suse.com>, 
+	Minchan Kim <minchan@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	SeongJae Park <sj@kernel.org>, Kalesh Singh <kaleshsingh@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, stable@vger.kernel.org, 
+	Oven Liyang <liyangouwen1@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Babu,
+On Fri, Oct 4, 2024 at 6:22=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote:
+>
+> On Thu, Sep 26, 2024 at 2:20=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
+ote:
+> >
+> > From: Barry Song <v-songbaohua@oppo.com>
+> >
+> > Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcache")
+> > introduced an unconditional one-tick sleep when `swapcache_prepare()`
+> > fails, which has led to reports of UI stuttering on latency-sensitive
+> > Android devices. To address this, we can use a waitqueue to wake up
+> > tasks that fail `swapcache_prepare()` sooner, instead of always
+> > sleeping for a full tick. While tasks may occasionally be woken by an
+> > unrelated `do_swap_page()`, this method is preferable to two scenarios:
+> > rapid re-entry into page faults, which can cause livelocks, and
+> > multiple millisecond sleeps, which visibly degrade user experience.
+> >
+> > Oven's testing shows that a single waitqueue resolves the UI
+> > stuttering issue. If a 'thundering herd' problem becomes apparent
+> > later, a waitqueue hash similar to `folio_wait_table[PAGE_WAIT_TABLE_SI=
+ZE]`
+> > for page bit locks can be introduced.
+> >
+> > Fixes: 13ddaf26be32 ("mm/swap: fix race when skipping swapcache")
+> > Cc: Kairui Song <kasong@tencent.com>
+> > Cc: "Huang, Ying" <ying.huang@intel.com>
+> > Cc: Yu Zhao <yuzhao@google.com>
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Cc: Chris Li <chrisl@kernel.org>
+> > Cc: Hugh Dickins <hughd@google.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > Cc: Michal Hocko <mhocko@suse.com>
+> > Cc: Minchan Kim <minchan@kernel.org>
+> > Cc: Yosry Ahmed <yosryahmed@google.com>
+> > Cc: SeongJae Park <sj@kernel.org>
+> > Cc: Kalesh Singh <kaleshsingh@google.com>
+> > Cc: Suren Baghdasaryan <surenb@google.com>
+> > Cc: <stable@vger.kernel.org>
+> > Reported-by: Oven Liyang <liyangouwen1@oppo.com>
+> > Tested-by: Oven Liyang <liyangouwen1@oppo.com>
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > ---
+> >  mm/memory.c | 13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 2366578015ad..6913174f7f41 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -4192,6 +4192,8 @@ static struct folio *alloc_swap_folio(struct vm_f=
+ault *vmf)
+> >  }
+> >  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+> >
+> > +static DECLARE_WAIT_QUEUE_HEAD(swapcache_wq);
+> > +
+> >  /*
+> >   * We enter with non-exclusive mmap_lock (to exclude vma changes,
+> >   * but allow concurrent faults), and pte mapped but not yet locked.
+> > @@ -4204,6 +4206,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >  {
+> >         struct vm_area_struct *vma =3D vmf->vma;
+> >         struct folio *swapcache, *folio =3D NULL;
+> > +       DECLARE_WAITQUEUE(wait, current);
+> >         struct page *page;
+> >         struct swap_info_struct *si =3D NULL;
+> >         rmap_t rmap_flags =3D RMAP_NONE;
+> > @@ -4302,7 +4305,9 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >                                          * Relax a bit to prevent rapid
+> >                                          * repeated page faults.
+> >                                          */
+> > +                                       add_wait_queue(&swapcache_wq, &=
+wait);
+> >                                         schedule_timeout_uninterruptibl=
+e(1);
+> > +                                       remove_wait_queue(&swapcache_wq=
+, &wait);
+>
+> There is only one "swapcache_wq", if we don't care about the memory
+> overhead, ideally should be per swap entry that fails to grab the
+> HAS_CACHE bit and has one wait queue. Currently all swap entries using
+> one wait queue will likely cause other swap entries (if any) get wait
+> up then find out the swap entry it cares hasn't been served yet.
+>
 
-On 10/4/24 8:02 AM, Moger, Babu wrote:
-> On 10/3/2024 9:17 PM, Reinette Chatre wrote:
->> On 10/3/24 5:51 PM, Moger, Babu wrote:
->>> On 10/2/2024 1:20 PM, Reinette Chatre wrote:
->>>> On 9/27/24 9:22 AM, Moger, Babu wrote:
->>>>> On 9/19/2024 12:45 PM, Reinette Chatre wrote:
->>>>>> On 9/4/24 3:21 PM, Babu Moger wrote:
+even page bit locks do have a waitqueue for one page, i believe that
+case has much serious contention then swap-in. page bit lock depends
+on a waitqueue hash to decrease unrelated wake-up.
 
->>>>> Using the domain bitmap we can figure out which of the counters are assigned in the domain. I can use the hardware help to update the assignment for each counter.  This has to be done via IPI.
->>>>> Something like this.
->>>>>
->>>>> static void rdtgroup_abmc_dom_cfg(void *info)
->>>>> {
->>>>>       union l3_qos_abmc_cfg *abmc_cfg = info;
->>>>>           u32 val = abmc_cfg->bw_type;
->>>>>
->>>>>           /* Get the counter configuration */
->>>>>       wrmsrl(MSR_IA32_L3_QOS_ABMC_CFG, *abmc_cfg);
->>>>>       rdmsrl(MGR_IA32_L3_QOS_ABMC_DSC, *abmc_cfg);
->>>>>
->>>>
->>>> This is not clear to me. I expected MSR_IA32_L3_QOS_ABMC_DSC
->>>> to return the bw_type that was just written to
->>>> MSR_IA32_L3_QOS_ABMC_CFG.
->>>>
->>>> It is also not clear to me how these registers can be
->>>> used without a valid counter ID. I seem to miss
->>>> the context of this call.
->>>
->>> Event configuration changes are domain specific. We have the domain data structure and we have the bitmap(mbm_cntr_map) in rdt_mon_domain. This bitmap tells us which of the counters in the domain are configured. So, we can get the  counter id from this bitmap. Using the counter id, we can query the hardware to get the current configuration by this sequence.
->>>
->>> /* Get the counter configuration */
->>> for (i=0; i< r->mon.num_mbm_cntrs; i++) {
->>>   if (test_bit(i, d->mbm_cntr_map)) {
->>>     abmc_cfg->cntr_id = i;
->>>     abmc_cfg.split.cfg_en = 0;
->>>     wrmsrl(MSR_IA32_L3_QOS_ABMC_CFG, *abmc_cfg);
->>>
->>>     /* Reading L3_QOS_ABMC_DSC returns the configuration of the
->>>      * counter id specified in L3_QOS_ABMC_CFG.cntr_id with RMID(bw_src)
->>>      * and event configuration(bw_type)  Get the counter configuration
->>>      */
->>>     rdmsrl(MGR_IA32_L3_QOS_ABMC_DSC, *abmc_cfg);
->>>
->>
->> Apologies but I do still have the same question as before ... wouldn't
->> MSR_IA32_L3_QOS_ABMC_DSC return the value that was just written to
->> MSR_IA32_L3_QOS_ABMC_CFG? If so, the previous wrmsrl() would set the
->> counter's bw_type to what is set in *abmc_cfg provided as parameter. It
->> thus still seems unclear why reading it back is necessary.
-> 
-> Yes. It is not clear in the spec.
-> 
-> QOS_ABMC_DSC is read-only MSR and used only to get the configured counter id information.
-> 
-> The configuration is only updated when QOS_ABMC_CFG.cfg_en = 1.
-> 
-> When you write QOS_ABMC_CFG with cntr_id = n, abmc_cfg.split.cfg_en
-> = 0 and reading the QOS_ABMC_DSC back will return the configuration
-> of cntr_id. Note that when abmc_cfg.split.cfg_en = 0, it will not
-> change the counter id configuration. when you read QOS_ABMC_DSC back
-> here, we will get bw_type (event config), bw_src (RMID) etc.
+if one process is woken-up by unrelated do_swap_page() and its swapcache
+is not released, it will sleep again after re-checking swapcache_prepare().
 
-ah. I see now. Thank you very much for clarifying.
+Too many unrelated wake-ups would be just a 'thundering herd' but not
+a livelock.
 
-Reinette
+> Another thing to consider is that, if we are using a wait queue, the
+> 1ms is not relevant any more. It can be longer than 1ms and it is
+> getting waited up by the wait queue anyway. Here you might use
+> indefinitely sleep to reduce the unnecessary wait up and the
+> complexity of the timer.
 
+not quite sure what you mean for 1ms, in an embedded system, we never
+use 1000HZ, the typical/maximum HZ is 250.  not quite sure what
+you mean by "indefinitely sleep", my understanding is that we can't
+poll the result of swapcache_prepare() as the winner process
+which does swapcache_prepare() successfully will drop the
+swap slots.
+
+>
+> >                                         goto out_page;
+> >                                 }
+> >                                 need_clear_cache =3D true;
+> > @@ -4609,8 +4614,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >                 pte_unmap_unlock(vmf->pte, vmf->ptl);
+> >  out:
+> >         /* Clear the swap cache pin for direct swapin after PTL unlock =
+*/
+> > -       if (need_clear_cache)
+> > +       if (need_clear_cache) {
+> >                 swapcache_clear(si, entry, nr_pages);
+> > +               wake_up(&swapcache_wq);
+>
+> Agree with Ying that here the common path will need to take a lock to
+> wait up the wait queue.
+
+waitqueue_active() might be a good candidate.
+
+>
+> Chris
+>
+>
+> > +       }
+> >         if (si)
+> >                 put_swap_device(si);
+> >         return ret;
+> > @@ -4625,8 +4632,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >                 folio_unlock(swapcache);
+> >                 folio_put(swapcache);
+> >         }
+> > -       if (need_clear_cache)
+> > +       if (need_clear_cache) {
+> >                 swapcache_clear(si, entry, nr_pages);
+> > +               wake_up(&swapcache_wq);
+> > +       }
+> >         if (si)
+> >                 put_swap_device(si);
+> >         return ret;
+> > --
+> > 2.34.1
+> >
+
+Thanks
+Barry
 
