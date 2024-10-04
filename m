@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-350812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 092289909FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:11:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA53990A01
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2FAB1F22F07
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EFCC28409F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E893E1CACFE;
-	Fri,  4 Oct 2024 17:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3591CACC0;
+	Fri,  4 Oct 2024 17:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HrT7CNNe"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="S/kFGKA1"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4571C879B
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101D11CACDE
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728061903; cv=none; b=cR/KSAqH4W3KrP5TBSEh3e65O7ai82+g5ZBhtL9wH9h3NFD+M7Z+MhqKbyuZXnfy019x5VbcIP9e2lPX6efzpSfNw8jbWgG/o8RASEF8Huzh5VC/J1whsWUr10C5DvwRGLfm3XIKbU9m/cSNvUl5E1ul1VnfFIDm+F7sk7+OdbI=
+	t=1728061921; cv=none; b=uXZjNKkuOFfrK+7nDTRdwqvvNez5a0KWKA018Hi11iyXZHhVCegL2e2L2nGEA6qx4/9xHxe2Ql85Kr1/yzAylNLoMCy6MwOcL3zO1kzF3KOCcEoF5R25vO9rLcNhqxk6Jrb7KE59YrdHmD6pYuxda7j3tPhu8QMTt7RhhXlansk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728061903; c=relaxed/simple;
-	bh=Wc12BS3NasrIry+uAPk9MjgqH3msxi+QthvkQTUoSdc=;
+	s=arc-20240116; t=1728061921; c=relaxed/simple;
+	bh=FbOJJOM3C21piIGCEoT1PnIBWiQi2gJhK77KWad+6OA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J3Rgu2Dm1viSUgkrOD48HAW23341w2DcWDHTXSVBZrdycfNocphY4pqhM40pIE0HZ99zTAZ67aM7frTEi/9NgpSxnlxNshjh8il9k0M4HmwzIg3NH9GRHoIFv7I1SH862AAtrQE6kr6bD+h/A8a2dvrSHf+XgMXOomqvoPbl2dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=HrT7CNNe; arc=none smtp.client-ip=209.85.210.171
+	 In-Reply-To:Content-Type; b=nGFfxuLv3muJduZjXm8aZZ2jwC8ysD7VsrFT03ZTi2csvdgwGs8w/A1dTd7VqxLIwUdnE1pSIYcXO7gJYi07JexAU2LZZgK6XCX6+4WWXiUG6XH4vt4Q6No14lA6TslL7BOvnjpLnkYCTw4rXSdWx/XTtZEyx1LKBpd7EWiarVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=S/kFGKA1; arc=none smtp.client-ip=209.85.167.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71dd92e3718so1934806b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:11:41 -0700 (PDT)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e3bda8b6fbso894622b6e.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:11:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1728061901; x=1728666701; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1728061918; x=1728666718; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=J4RqBBR2gTR1jLy3l2HoZvtWsqW9LXx1qQ79MVcSG/0=;
-        b=HrT7CNNeEE3rUTJ0S2NCG5y5JH14cspVx50osGdvRaBRHkc3bz08rijHvdLvoAka6z
-         b2qvN1UP7a70ynTdsV/5AJ/ZevtZWa3i/oMv0HDKF/1CC/9zkO9eT05vot9yu1D1ujFO
-         LO5HFcjZyeyVaE1DqLAxt8TTN4Kp8ifrQB45E=
+        bh=DX3a8LNIL/T0dZCq6vj7iBGRI8KMTX6Fm4ZrI6JYfmM=;
+        b=S/kFGKA14MxQIZSvRa39AHTauBdF2HQuFqOEFtlnj7YePVecpSsWiOAALgMPqkXlKA
+         F5eatWd/I0QTtrPsrai1aI7FIaqwU/duKNwT8fhAH9zEO41NQMxCw6nJDPbZ0O994rfJ
+         Osid1m8eRLTvD6avJGfi+Q4mBv1USvi5ZrlSQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728061901; x=1728666701;
+        d=1e100.net; s=20230601; t=1728061918; x=1728666718;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J4RqBBR2gTR1jLy3l2HoZvtWsqW9LXx1qQ79MVcSG/0=;
-        b=MQwjXTDvEupTJMbAmfxjDugG4v/VdxLjFB3wIkGOnlkLNXOSVT2OisA0K93rBpw+K/
-         NcuZyZe6cCn5QBBFaJ7GmARlC31ymA0Rdz74qYaJXruht7l6kWb78HQIaXQeh2te/Nsi
-         ERjK7z28I/yMNS1LrDNUjJ8AUqytGuSWNaAa+vTmSVG4zNsp3M0WBdliZKSEQXffxMWq
-         cJ87UsnJV8LKSVRb0XXvhC9ZTHp5XP3hcCT4WsQNDtIdiSm8gtUqCQnMfArmUORKqe0+
-         szixSVnLNO1lIpaaJ/hNZ/Uw1Cznq6vjv9bKPfJ+pFC8jYTlxRpb/1VunizocnIPJGa4
-         VPzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgAj8MebSRtgvyRfDwRL3HQG4C5EqNOzwvwRxhwCamhAa714fRNp+Y249E60yZHO2uaFxONrSVd0DLW3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlzKG8r+FWzyq2KAHM1RBToppqtZuiIz+Cjmsiy/LksD+ICZ6m
-	YQyO6zOAC/Jw45PhMG7GZr7c6CDPRUxgY+wvvGrFIlugHNjM31z69XxelQhhqg==
-X-Google-Smtp-Source: AGHT+IH4nWlAOkfOUKHYzla1Do/N/yEfEqh0e/w6l4PQAG784OWTsu0uqkDnXcb7xezeWYoz0PAcqA==
-X-Received: by 2002:a05:6a00:2343:b0:70d:3777:da8b with SMTP id d2e1a72fcca58-71de2460338mr4505964b3a.25.1728061901134;
-        Fri, 04 Oct 2024 10:11:41 -0700 (PDT)
+        bh=DX3a8LNIL/T0dZCq6vj7iBGRI8KMTX6Fm4ZrI6JYfmM=;
+        b=lUwHy+upuga+bU97V/z4BEoPAQO7cWSTooSw7MKvJde/fCw2gY1Ho0OFAwn8p1LA1X
+         Wte7tBvzpldgNd8y8bN7MpRh4f2vL+EdAPeZZR5gKcJi4ox+N2dkupvd0RI2m1RV4LJH
+         hgRUi95aiAF2zti+Uc6K6FLBixzVlveZwdmix4Xi6X8p1rt4+8e6gRUrLG8crw70dRA/
+         PYDAnhYiDcbqa1ymq0jt/hy8G4VdhT+dXubW2V4tuRl/R8gNwZ0dLvFRoPqiqAejWIpU
+         hoAFhBL65NT4qXUy3DhKyJfe6leOgj4aPgPPaNOzSy1yxSYA2yu2tt6b5WC4KNlomESS
+         HxOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSeSQrh1R805z4P7Qf0zfxCBz0VlPLq7VXi8nBi3hjA8gtHLbhO0tLmp4g/gIdQTCl6oGGxO2HBYi5URo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnnzLURWoPuoKPb/bP1YvoZv0THz54Vza/xD/2WYbI69RiWwKb
+	pcpWYxPobUhQuPss+FVvgSkuw7wo1TuhqhscCNoyhNbN4YAUbfY49/mE5gGlAsLHLWXptrO14EA
+	=
+X-Google-Smtp-Source: AGHT+IHWLXiFheqEvcpcKH/iTcEInY4sqxF3uncfe3L4/zjoF9UnbCLYYIJ6TBQvDKvtCBpc5vzuRg==
+X-Received: by 2002:a05:6808:2114:b0:3e0:3b81:6b26 with SMTP id 5614622812f47-3e3c1329c0fmr2934052b6e.15.1728061918120;
+        Fri, 04 Oct 2024 10:11:58 -0700 (PDT)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d7e5bdsm84386b3a.218.2024.10.04.10.11.38
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f683eddasm165562a12.56.2024.10.04.10.11.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 10:11:39 -0700 (PDT)
-Message-ID: <333903e5-c899-4502-abce-07d5893f3427@broadcom.com>
-Date: Fri, 4 Oct 2024 10:11:38 -0700
+        Fri, 04 Oct 2024 10:11:57 -0700 (PDT)
+Message-ID: <3566d8aa-c166-4d4c-bf78-4bdf652b2674@broadcom.com>
+Date: Fri, 4 Oct 2024 10:11:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,17 +74,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mips: bmips: bcm6358/6368: define required
- brcm,bmips-cbr-reg
-To: Christian Marangi <ansuelsmth@gmail.com>,
+Subject: Re: [PATCH] ARM: bcm: brcmstb: Drop custom init_irq callback
+To: linux-arm-kernel@lists.infradead.org
+Cc: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
  Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: kernel test robot <lkp@intel.com>
-References: <20241001152404.15830-1-ansuelsmth@gmail.com>
+ <bcm-kernel-feedback-list@broadcom.com>, Russell King
+ <linux@armlinux.org.uk>, open list <linux-kernel@vger.kernel.org>
+References: <20240925173839.29315-1-florian.fainelli@broadcom.com>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -118,22 +115,17 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20241001152404.15830-1-ansuelsmth@gmail.com>
+In-Reply-To: <20240925173839.29315-1-florian.fainelli@broadcom.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/1/24 08:23, Christian Marangi wrote:
-> For the bcm6358/6368 SoC the brcm,bmips-cbr-reg due to bootloader
-> misconfiguration or HW bug from running the system from TP1.
+On 9/25/24 10:38, Florian Fainelli wrote:
+> The default is to call irqchip_init() in the absence of a machine
+> descriptor init_irq callback.
 > 
-> A workaround is now present to handle broken system that suffer from
-> this bug hence add the now required property.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202409251520.pE12GzHd-lkp@intel.com/
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
---
+Applied
+-- 
 Florian
 
