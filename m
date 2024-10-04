@@ -1,231 +1,141 @@
-Return-Path: <linux-kernel+bounces-350410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93B59904BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:47:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD7B9904B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8E341C20E10
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:47:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 232981F2285E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D2F149DF4;
-	Fri,  4 Oct 2024 13:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D651420FAA6;
+	Fri,  4 Oct 2024 13:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cUtJWK0k"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kY5smuTo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052A92139AC
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C5F33D5
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728049610; cv=none; b=AxNK1yOmJW13UxQnQTVDHEI9yLIAhrWgn+4Kd1Kr8IIcrrQNsRGL3Ro8aIJ70Lo+gko2Yz1OLaIUdh/nxnGvIwaF4htMvLq5nJqYHilXstzqYrG8MjfHW1Bjsu9Z9XzJgGKyYVaLmUqfk0e9GMtEikSTIIzxGhS9neGcHFvFPn0=
+	t=1728049552; cv=none; b=VrzJ5C8WuxxaJRdtcJeb6FQGXo4Wgmz8Nmvj+TvYs9xGQUgzuKogMZCD3M4MelXA4q0fr/p7o4tr6iB0JHu2BM4X+1BbOeKjsCg/+PvtRuYEfNtXuU0nm2R4DrlsyCJxSe/pY959Mhb9u2RJP3OOjZY5TkrI7n+MAg3kq2bnIqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728049610; c=relaxed/simple;
-	bh=GMPZMjlkQcqXyBH1Ka//qE03cBrrpDcnxDCaWkbgejk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a7r7GS3ZC6qnXw8wnyh681Zki6mdzjiadfnpOoV3qtr5zkobpbko4sp1o5w3ehJJhXZUSd4L1LRWTzxp7yyRVSWAgMGYzlXJ9r0z6p5hoOXJp9IsCyC0F6QgQteJH9A3GCDEQY9xjk5xkznDlIWfnENl9lNLbtrvVJAxlTAqRvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cUtJWK0k; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42e5e758093so18865135e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 06:46:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728049606; x=1728654406; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+l6NR9x5ynudfzAve4vmqteAo7Egm7pljeYYNvDo0zU=;
-        b=cUtJWK0kA2JldIKf0JUXs4qhXaDMKI3G9UQhv8c/WxVkowMELH8qDi0wChNsa7USKK
-         b3e3a7WZ7mN0AVOEsKCj0WUZRb8WbWlTeY75RSWcdbtEz08Ia2RCjuOhRcf7OdUlo9lo
-         UD2PItGb6d3JHaM+0EcyM3AOsRWxJwEXFByoU6oXNectMPHwirem5iLpbea6PyiH8r26
-         upbo37xIltNxghLfHawoL+DsM3g0RdrDScRVaLs9NI+gZyt5lMeZ8X1Sm8WanCkzqC0d
-         bwxFKTCscW2WW0WIvt55pp9cHgCJHmnd1ejHEo3txUB1iRxwwXWGFMqWi4s1J7fqgXbp
-         xZhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728049606; x=1728654406;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+l6NR9x5ynudfzAve4vmqteAo7Egm7pljeYYNvDo0zU=;
-        b=AMOqCjTkO5NE4xtFNXb/KkV5NK07T+n7MpFO9nr5en3q7Uq3Nw/6D6NgH9/FhYyltp
-         99B1fPH7bKceppvVYjW2VaAowBU6ibk4Li/r4MHdYGiuha784b3wTAPdF2jvaAY2zm/0
-         fhs/Nm16KjZljd/TVRFivdz8MkFI0sBuP7Ikx5/4Kwsm0DjBNzfOTwYyw5lRmLzRv3tK
-         mzsGGXMRBWgfrzKYqokVbPK0MEekdMcqdSmQOAQyHHE79+ENN+44GM+9KNcgznrONtKz
-         kjAhnjgx49/1DhLjij0QtoBRjZ6c42u8FvN3P7bBNuJpatTCKC+N+y1J2ykn2bULcOGn
-         flzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCeJh9MpqQfOWHhY3mgRinv1ETFXzffeDb3+mh0gMPBBdC2lGgcwm86EH4/yN1/rNcSYCHKhU/QwBl4Fc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA37aVr4mJE8wDXMt9cI3il820FRKhCrVseSLU7+adhcs0KzYX
-	fk5ry7rToXJfNZsX++MJlzjYB9olUYnm9inLXqdXhH9SVBsNV/B0wQxmJenCj6k=
-X-Google-Smtp-Source: AGHT+IHsrIDaJTASrH2355pi8O3jwbrwP0InvMA5HPzpqiIAC7Q0Np/5g3AmiIejnI+RwiEdOFLGhA==
-X-Received: by 2002:adf:ce8f:0:b0:371:8a3a:680a with SMTP id ffacd0b85a97d-37d0e782737mr1706155f8f.32.1728049606166;
-        Fri, 04 Oct 2024 06:46:46 -0700 (PDT)
-Received: from dfj (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082a6c2fsm3316540f8f.72.2024.10.04.06.46.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 06:46:45 -0700 (PDT)
-Date: Fri, 4 Oct 2024 15:45:21 +0200
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mihail Chindris <mihail.chindris@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org, dlechner@baylibre.com, 
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 06/11] iio: backend: extend features
-Message-ID: <ihkd45xlg3hejchdw6ksmuzoxu3cazmx5rd4d4zca7xl4rfcrd@krururfftdlx>
-References: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
- <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-6-ceb157487329@baylibre.com>
- <451aaf360690cf60704e8a2880e98501156bda73.camel@gmail.com>
+	s=arc-20240116; t=1728049552; c=relaxed/simple;
+	bh=1RS+17mH4AXNIN1g+vb0r2cDyMfutwB690D0Mhv8Yh8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NBlXuszL60Nfw+mqzOGbRoZvrUMhhiPtATms/kpQ3zkhfE41Y6lLxYIUwRMl1UJzdBBJbAVjGQIybcf7eyNQ0dTmLAd73HpyinSUB2SSsNmyEioxtEYAm8cp0hc0rEF8f9sPx6LBqWDkeUqTE6wiPRApfPz1JEGvuz6QMCd+x0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kY5smuTo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B6B62C4CEC6;
+	Fri,  4 Oct 2024 13:45:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728049551;
+	bh=1RS+17mH4AXNIN1g+vb0r2cDyMfutwB690D0Mhv8Yh8=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=kY5smuToRMZKl6xm4yZRdHQApYQ3/XOLtSnwsedUdU/Cef+xb1HiPFi64SBlYsCba
+	 VJk8LxCL1zCGUEMyhNTlSfC7QtMehfn1KfI6iNaqaWWrWn9/7H0++Ch27GuDPFU1QZ
+	 dzrxaFui6BnRPXq1c9lHK5ZSkMA/RgnOHg3uWk8m/LqlLv6C3qpi/LmK0iD4/LI699
+	 V8+w/dpS7AGDo1MjeStmezhRKBjqr+HETrNxVVTCfdTn6LvvT2ZFxaIleoR6p/k96b
+	 d1VSfJngByDPXxN7JRlq7utRdNgXkZ99otxezBc04F53JV7cZmJWaXPQvIpmf1G39Q
+	 TRF7o+2YMggTA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB61DCFA775;
+	Fri,  4 Oct 2024 13:45:51 +0000 (UTC)
+From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
+Date: Fri, 04 Oct 2024 19:15:48 +0530
+Subject: [PATCH v3] Fixes: null pointer dereference in
+ pfnmap_lockdep_assert
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <451aaf360690cf60704e8a2880e98501156bda73.camel@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241004-fix-null-deref-v3-1-f9459b1cc95f@iiitd.ac.in>
+X-B4-Tracking: v=1; b=H4sIAIvx/2YC/3XMSwrCMBSF4a2UOzYlj1qJo+5DHMTkxl4oqSQ1V
+ Er3btqRIg7/A+dbIGEkTHCuFoiYKdEYSqhDBbY34Y6MXGmQXDaCc8U8zSw8h4E5jOhZe/OGK3V
+ CbxWU06OMNO/g5Vq6pzSN8bX7WWzrXyoLJhg3zdF57bhoTUdEk6uNrSnAhmX5CTQ/gCyAVMZpr
+ rW2TnwD67q+Ac2cABzvAAAA
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Xu <peterx@redhat.com>, Shuah Khan <skhan@linuxfoundation.org>, 
+ Anup Sharma <anupnewsmail@gmail.com>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, 
+ syzbot+093d096417e7038a689b@syzkaller.appspotmail.com, 
+ Manas <manas18244@iiitd.ac.in>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728049550; l=2095;
+ i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
+ bh=ew+qGxm4Lxxrd6Mo6kl+2EOEGjzE1+x1lwHF41mIdfg=;
+ b=8TyYBtUuYhyHZVRpCSzgDVmHLuJkeS15eZxJViSrrKRr3LtHwGkO1VBNGFwq2t3iosIWnHmIn
+ SRsaG1T5cwhDUs0SpaHKlXe9E97qDUHK29VN1sdeSx7taszr+x56E9Z
+X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
+ pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
+X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
+ auth_id=196
+X-Original-From: Manas <manas18244@iiitd.ac.in>
+Reply-To: manas18244@iiitd.ac.in
 
-Hi Nuno,
+From: Manas <manas18244@iiitd.ac.in>
 
-On 04.10.2024 14:54, Nuno Sá wrote:
-> On Thu, 2024-10-03 at 19:29 +0200, Angelo Dureghello wrote:
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> > 
-> > Extend backend features with new calls needed later on this
-> > patchset from axi version of ad3552r.
-> > 
-> > The follwoing calls are added:
-> > 
-> > iio_backend_ddr_enable
-> > 	enable ddr bus transfer
-> > iio_backend_ddr_disable
-> > 	disable ddr bus transfer
-> > iio_backend_buffer_enable
-> > 	enable buffer
-> > iio_backend_buffer_disable
-> > 	disable buffer
-> > iio_backend_data_transfer_addr
-> > 	define the target register address where the DAC sample
-> > 	will be written.
-> > 
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > ---
-> >  drivers/iio/industrialio-backend.c | 79 ++++++++++++++++++++++++++++++++++++++
-> >  include/linux/iio/backend.h        | 17 ++++++++
-> >  2 files changed, 96 insertions(+)
-> > 
-> > diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-
-> > backend.c
-> > index 20b3b5212da7..d5e0a4da761e 100644
-> > --- a/drivers/iio/industrialio-backend.c
-> > +++ b/drivers/iio/industrialio-backend.c
-> > @@ -718,6 +718,85 @@ static int __devm_iio_backend_get(struct device *dev, struct
-> > iio_backend *back)
-> >  	return 0;
-> >  }
-> >  
-> > +/**
-> > + * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
-> > + * @back: Backend device
-> > + *
-> > + * Enable DDR, data is generated by the IP at each front (raising and falling)
-> > + * of the bus clock signal.
-> > + *
-> > + * RETURNS:
-> > + * 0 on success, negative error number on failure.
-> > + */
-> > +int iio_backend_ddr_enable(struct iio_backend *back)
-> > +{
-> > +	return iio_backend_op_call(back, ddr_enable);
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_enable, IIO_BACKEND);
-> > +
-> > +/**
-> > + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate) mode
-> > + * @back: Backend device
-> > + *
-> > + * Disable DDR, setting into SDR mode (Single Data Rate).
-> > + *
-> > + * RETURNS:
-> > + * 0 on success, negative error number on failure.
-> > + */
-> > +int iio_backend_ddr_disable(struct iio_backend *back)
-> > +{
-> > +	return iio_backend_op_call(back, ddr_disable);
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
-> > +
-> > +/**
-> > + * iio_backend_dma_stream_enable - Enable iio buffering
-> > + * @back: Backend device
-> > + *
-> > + * Enabling sending the dma data stream over the bus.
-> > + * bus interface.
-> > + *
-> > + * RETURNS:
-> > + * 0 on success, negative error number on failure.
-> > + */
-> > +int iio_backend_dma_stream_enable(struct iio_backend *back)
-> > +{
-> > +	return iio_backend_op_call(back, dma_stream_enable);
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(iio_backend_dma_stream_enable, IIO_BACKEND);
-> > +
-> > +/**
-> > + * iio_backend_dma_stream_disable - Disable iio buffering
-> > + * @back: Backend device
-> > + *
-> > + * Disable sending the dma data stream over the bus.
-> > + *
-> > + * RETURNS:
-> > + * 0 on success, negative error number on failure.
-> > + */
-> > +int iio_backend_dma_stream_disable(struct iio_backend *back)
-> > +{
-> > +	return iio_backend_op_call(back, dma_stream_disable);
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(iio_backend_dma_stream_disable, IIO_BACKEND);
-> > +
-> 
-> I'm not sure if this is what Jonathan was suggesting... Ate least I don't really
-> agree with it. I mean, yes, this is about buffering and to start receiving (or
-> sending) a stream of data. But AFAICT, it might have nothing to do with DMA. Same as
-> .request_buffer() - It's pretty much always a DMA one but we should not take that for
-> granted.
-> 
-> So going back to the RFC [1], you can see I was suggesting something like struct
-> iio_buffer_setup_ops. Maybe just add the ones we use for now? So that would
-> be.buffer_postenable() and .buffer_predisable(). Like this, it should be obvious the
-> intent of the ops.
-> 
-ok, thanks,
+syzbot has pointed to a possible null pointer dereference in
+pfnmap_lockdep_assert. vm_file member of vm_area_struct is being
+dereferenced without any checks.
 
-so something as :
+This fix assigns mapping only if vm_file is not NULL.
 
-struct iio_backend_setup_ops {
-	int (*buffer_postenable)(struct iio_backend *back);
-	int (*buffer_predisable)(struct iio_backend *back);
-};
+Reported-by: syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
+---
+This bug[1] triggers a general protection fault in follow_pfnmap_start
+function. An assertion pfnmap_lockdep_assert inside this function
+dereferences vm_file member of vm_area_struct. And panic gets triggered
+when vm_file is NULL.
 
-struct iio_backend_ops {
-	struct iio_backend_setup_ops setup_ops;
+This patch assigns mapping only if vm_file is not NULL.
 
-?
+[1] https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
 
-> - Nuno Sá
-> 
-> 
+Signed-off-by: Manas <manas18244@iiitd.ac.in>
+---
+Changes in v3:
+- v3: use assigned var instead of accessing member again 
+- Link to v2: https://lore.kernel.org/r/20241004-fix-null-deref-v2-1-23ad90999cd1@iiitd.ac.in
 
+Changes in v2:
+- v2: use ternary operator according to feedback
+- Link to v1: https://lore.kernel.org/r/20241003-fix-null-deref-v1-1-0a45df9d016a@iiitd.ac.in
+---
+ mm/memory.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index 2366578015ad..828967a13596 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -6346,10 +6346,10 @@ static inline void pfnmap_args_setup(struct follow_pfnmap_args *args,
+ static inline void pfnmap_lockdep_assert(struct vm_area_struct *vma)
+ {
+ #ifdef CONFIG_LOCKDEP
+-	struct address_space *mapping = vma->vm_file->f_mapping;
++	struct address_space *mapping = vma->vm_file ? vma->vm_file->f_mapping : NULL;
+ 
+ 	if (mapping)
+-		lockdep_assert(lockdep_is_held(&vma->vm_file->f_mapping->i_mmap_rwsem) ||
++		lockdep_assert(lockdep_is_held(&mapping->i_mmap_rwsem) ||
+ 			       lockdep_is_held(&vma->vm_mm->mmap_lock));
+ 	else
+ 		lockdep_assert(lockdep_is_held(&vma->vm_mm->mmap_lock));
+
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241003-fix-null-deref-6bfa0337efc3
+
+Best regards,
 -- 
+Manas <manas18244@iiitd.ac.in>
 
-Regards,
-  Angelo
+
 
