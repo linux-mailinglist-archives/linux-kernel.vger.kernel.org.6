@@ -1,177 +1,146 @@
-Return-Path: <linux-kernel+bounces-349993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21BB98FE5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:01:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B1C98FE71
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F1D6B21A3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:01:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31341281F52
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A44513D291;
-	Fri,  4 Oct 2024 08:01:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8782913B58F;
-	Fri,  4 Oct 2024 08:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DA513C83D;
+	Fri,  4 Oct 2024 08:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F33xiuW1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FE417758;
+	Fri,  4 Oct 2024 08:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728028895; cv=none; b=nTdD/B6Elx1irIvGyKcOlnsCziyAlcF5LyXJt0CbOfSkgIT0U8J6/FsulgjYSHpMeDemx2GfWei/6iZm/7/c8027hqNYUbrT7b1tvxwkhXVAonFEGXaM2sd3MEgEEiGR/BGCxoPLdf2+AkX/jjsl275l60SdE4+Y/e4ns3yumvk=
+	t=1728029056; cv=none; b=rpcwJwRawsrXLm5vM4KwqtHBXAWdz8ZmpTsNUuaLZ0wQfvsBjhk/ppez6LN974BuGCFH9orMbyEosYd56yIwyfBseD27hOfMUUFjphka8W880kPqm/bo0QH3zc2pnqaI0TcAn91rlVI3hYEEKTRERCQWcQefNIxixhLqz61YRgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728028895; c=relaxed/simple;
-	bh=ZZ2+6eYhBqp1fE5+pAZtMP2mpfuyj8H7GtB08YmVhd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kYIfxdeoTyvDZvAosFMzr8PBKcfV/6ajkWYLsovftvv4rZOrN54rJJ6OngvG1Te3GJS0SPsSaNN8SdDuWyC6pTYc3M/rj3mRgjXlElAPwmOdqwqWv5VuKMgC6LuYeleA8Zr+KZxHg0w6e9poFqIuneVUTrQwiyExUvVW9Pv8Lpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51A3C339;
-	Fri,  4 Oct 2024 01:02:02 -0700 (PDT)
-Received: from [10.57.77.142] (unknown [10.57.77.142])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7576F3F64C;
-	Fri,  4 Oct 2024 01:01:31 -0700 (PDT)
-Message-ID: <b2d949a2-2586-44ec-b0e7-0879fd3ac7cf@arm.com>
-Date: Fri, 4 Oct 2024 09:02:30 +0100
+	s=arc-20240116; t=1728029056; c=relaxed/simple;
+	bh=h65RflRz+Xc0XBbJWFdolvGQoCRw+HnI0KTHw3iymG0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ScAHWETJufpwvaZUia6k4jBTMAPq9gDfp4+U1ge2AlJNaeBh43b65OJdVB5THj9H1NFK2+/L71zbp/tkosxzjOdF8S5I/jf6sVrJuGTVV8Rz7L/ajCh/eCylUpae8USpI9mNh1yaSkoLkjMmYi2IcyGQXtO3Yqs/1dAl2BjA71c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F33xiuW1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493HxVmg032513;
+	Fri, 4 Oct 2024 08:03:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=fPzENCrFbQEL+3tzaioQaX
+	RGXU639jL92m3bGnqv5aQ=; b=F33xiuW1MVJGZOWNdP05XFDxsqFVaP7/wqreHg
+	sEMPAxnsb6qhGXNxiYOfboqHQPAGFdj8Wl55QvUZ88+4sCtur+3fEBfrCzLeFL9s
+	8tMG7qm6HImi/CP/+Bk3bc7MkdTuuhHnmDFk7a2hhKoG1t5NcgOvlbEML/2q7nBP
+	9Xjfj3Xnj7RgQbCn3dz5JRgtbr0b4ZHUWOIPkS68eL5DT+ZSyOzbgTAiYqAJsl+z
+	W+5n0rvGbq2W2n5RQO1FTmi8eT2DUxH7FtFWx4tvOir21FieU9kHuBIGmVA7H6QI
+	+RW9kTlvm4jPhF5y0WJkRZ8L9FMc1H1sO9b/upqGjFMsq6Nw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205f1e77-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 08:03:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49483t7o021626
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 08:03:55 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 4 Oct 2024 01:03:48 -0700
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
+        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
+        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
+        <nfraprado@collabora.com>, <quic_anusha@quicinc.com>,
+        <quic_mmanikan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <netdev@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+Subject: [PATCH v6 0/7] Add NSS clock controller support for IPQ9574
+Date: Fri, 4 Oct 2024 13:33:25 +0530
+Message-ID: <20241004080332.853503-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] thermal: core: Reference count the zone in
- thermal_zone_get_by_id()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <12549318.O9o76ZdvQC@rjwysocki.net>
- <6112242.lOV4Wx5bFT@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <6112242.lOV4Wx5bFT@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PyY0lqtlkLSgrmBQ-hSQRsmFdCvSznSr
+X-Proofpoint-ORIG-GUID: PyY0lqtlkLSgrmBQ-hSQRsmFdCvSznSr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=901 priorityscore=1501 phishscore=0 bulkscore=0
+ impostorscore=0 clxscore=1015 lowpriorityscore=0 spamscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040057
 
-Hi Rafael,
+Add bindings, driver and devicetree node for networking sub system clock 
+controller on IPQ9574. Also add support for NSS Huayra type alpha PLL
+and add support for gpll0_out_aux clock which serves as the parent for 
+some nss clocks.
 
-On 10/3/24 13:25, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> There are places in the thermal netlink code where nothing prevents
-> the thermal zone object from going away while being accessed after it
-> has been returned by thermal_zone_get_by_id().
-> 
-> To address this, make thermal_zone_get_by_id() get a reference on the
-> thermal zone device object to be returned with the help of get_device(),
-> under thermal_list_lock, and adjust all of its callers to this change
-> with the help of the cleanup.h infrastructure.
-> 
-> Fixes: 1ce50e7d408e ("thermal: core: genetlink support for events/cmd/sampling")
-> Cc: 6.8+ <stable@vger.kernel.org> # 6.8+
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> v1 -> v2: Use the cleanup.h infrastructure to reduce the amount of code changes.
-> 
-> ---
->   drivers/thermal/thermal_core.c    |    1 +
->   drivers/thermal/thermal_core.h    |    3 +++
->   drivers/thermal/thermal_netlink.c |    9 +++------
->   3 files changed, 7 insertions(+), 6 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -728,6 +728,7 @@ struct thermal_zone_device *thermal_zone
->   	mutex_lock(&thermal_list_lock);
->   	list_for_each_entry(tz, &thermal_tz_list, node) {
->   		if (tz->id == id) {
-> +			get_device(&tz->device);
->   			match = tz;
->   			break;
->   		}
-> Index: linux-pm/drivers/thermal/thermal_core.h
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.h
-> +++ linux-pm/drivers/thermal/thermal_core.h
-> @@ -194,6 +194,9 @@ int for_each_thermal_governor(int (*cb)(
->   
->   struct thermal_zone_device *thermal_zone_get_by_id(int id);
->   
-> +DEFINE_CLASS(thermal_zone_get_by_id, struct thermal_zone_device *,
-> +	     if (_T) put_device(&_T->device), thermal_zone_get_by_id(id), int id)
-> +
->   static inline bool cdev_is_power_actor(struct thermal_cooling_device *cdev)
->   {
->   	return cdev->ops->get_requested_power && cdev->ops->state2power &&
-> Index: linux-pm/drivers/thermal/thermal_netlink.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_netlink.c
-> +++ linux-pm/drivers/thermal/thermal_netlink.c
-> @@ -443,7 +443,6 @@ static int thermal_genl_cmd_tz_get_trip(
->   {
->   	struct sk_buff *msg = p->msg;
->   	const struct thermal_trip_desc *td;
-> -	struct thermal_zone_device *tz;
->   	struct nlattr *start_trip;
->   	int id;
->   
-> @@ -452,7 +451,7 @@ static int thermal_genl_cmd_tz_get_trip(
->   
->   	id = nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
->   
-> -	tz = thermal_zone_get_by_id(id);
-> +	CLASS(thermal_zone_get_by_id, tz)(id);
->   	if (!tz)
->   		return -EINVAL;
->   
-> @@ -488,7 +487,6 @@ out_cancel_nest:
->   static int thermal_genl_cmd_tz_get_temp(struct param *p)
->   {
->   	struct sk_buff *msg = p->msg;
-> -	struct thermal_zone_device *tz;
->   	int temp, ret, id;
->   
->   	if (!p->attrs[THERMAL_GENL_ATTR_TZ_ID])
-> @@ -496,7 +494,7 @@ static int thermal_genl_cmd_tz_get_temp(
->   
->   	id = nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
->   
-> -	tz = thermal_zone_get_by_id(id);
-> +	CLASS(thermal_zone_get_by_id, tz)(id);
->   	if (!tz)
->   		return -EINVAL;
->   
-> @@ -514,7 +512,6 @@ static int thermal_genl_cmd_tz_get_temp(
->   static int thermal_genl_cmd_tz_get_gov(struct param *p)
->   {
->   	struct sk_buff *msg = p->msg;
-> -	struct thermal_zone_device *tz;
->   	int id, ret = 0;
->   
->   	if (!p->attrs[THERMAL_GENL_ATTR_TZ_ID])
-> @@ -522,7 +519,7 @@ static int thermal_genl_cmd_tz_get_gov(s
->   
->   	id = nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
->   
-> -	tz = thermal_zone_get_by_id(id);
-> +	CLASS(thermal_zone_get_by_id, tz)(id);
->   	if (!tz)
->   		return -EINVAL;
->   
-> 
-> 
-> 
+Changes in V6:
+	- Detailed change logs are added to the respective patches.
 
-I wasn't aware of that helpers in cleanup.h.
+V5 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240626143302.810632-1-quic_devipriy@quicinc.com/
 
-Could you help me to understand when this this
-'if (_T) put_device((&_T->device)' will be called?
+V4 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240625070536.3043630-1-quic_devipriy@quicinc.com/
 
-Regards,
-Lukasz
+V3 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240129051104.1855487-1-quic_devipriy@quicinc.com/
+
+V2 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230825091234.32713-1-quic_devipriy@quicinc.com/
+
+Devi Priya (7):
+  clk: qcom: clk-alpha-pll: Add NSS HUAYRA ALPHA PLL support for ipq9574
+  dt-bindings: clock: gcc-ipq9574: Add definition for GPLL0_OUT_AUX
+  clk: qcom: gcc-ipq9574: Add support for gpll0_out_aux clock
+  dt-bindings: clock: Add ipq9574 NSSCC clock and reset definitions
+  clk: qcom: Add NSS clock Controller driver for IPQ9574
+  arm64: dts: qcom: ipq9574: Add nsscc node
+  arm64: defconfig: Build NSS Clock Controller driver for IPQ9574
+
+ .../bindings/clock/qcom,ipq9574-nsscc.yaml    |   74 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   23 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c              |   11 +
+ drivers/clk/qcom/clk-alpha-pll.h              |    1 +
+ drivers/clk/qcom/gcc-ipq9574.c                |   15 +
+ drivers/clk/qcom/nsscc-ipq9574.c              | 3084 +++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |    1 +
+ .../dt-bindings/clock/qcom,ipq9574-nsscc.h    |  152 +
+ .../dt-bindings/reset/qcom,ipq9574-nsscc.h    |  134 +
+ 12 files changed, 3504 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+ create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+ create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+
+-- 
+2.34.1
+
 
