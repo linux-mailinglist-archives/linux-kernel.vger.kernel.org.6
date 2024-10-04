@@ -1,123 +1,212 @@
-Return-Path: <linux-kernel+bounces-350373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E43F990446
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:28:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E5A990445
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3746282AA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:28:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D50AB20CDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994BC219485;
-	Fri,  4 Oct 2024 13:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAF0217913;
+	Fri,  4 Oct 2024 13:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PpkGJL3C";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Drtxg1i/"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+58fu4i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B6B217907;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193ED215F4A;
 	Fri,  4 Oct 2024 13:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048334; cv=none; b=MGhuiriDuUln6Te+vNOk/oXVfLpGutvYF5sD9hZ5Nw6lXi2baP7nRIeNmnAfrri2DhFQbM0z7soXcusmO00c72ofoAa3j8MnnQrIHIShYpAzZqBTjEkhZT8MB6u43Npt2bzQsi71p/C29qX6JRG53NVxJXmZnH2liblo0uXuSr4=
+	t=1728048334; cv=none; b=Ho9hksiFZe81AstNVDTbQaNIYTeNqW04ohrqhi2gHc6ciNeLWyTiwc2HhWbvwSbMwjxW2SXxsRLvll4YtEIKSPSFa/gumsM32AyMds7d26TtlViGeZN+pVrbGgWsDghFRcC2DGwBTQfYPXfGQ1d4qte7gHjNa9migh1hhEPTEfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728048334; c=relaxed/simple;
-	bh=7ClJ3sAN7SIcD7DktMGV2qyfk2KhaTbquYwInl+3V7s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=VA0piUGV8IGrcTRnHql9mlb2mP7krWSdq+VcDooSHFVGyFL0r1WTt0FhHz68DXfUNpO5go0+WGuloFL2+CKd31bO7lSSi9jePQ+JCm4xIIV7K1R2jReDGAaFcveraKyJNcTof7wk06XOLetuAKBqtFN/8YMcYiEbq8XbakGw1Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PpkGJL3C; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Drtxg1i/; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8C501114017E;
-	Fri,  4 Oct 2024 09:25:32 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 04 Oct 2024 09:25:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1728048332;
-	 x=1728134732; bh=cc9La4QN0dfEV0HU2X84WhVbfANEZU3wSpI2fa6yTmQ=; b=
-	PpkGJL3CidFRPjlvZwqHd7zdsoiQl4sEGdtOAYkyZ0R9SbbGH+eVah+JsY9HiU0U
-	OklNJkvBxVCwph+0pYC0w9iuK/LCUOkZK4I9OCeeubQis0m+cmKoMsUgIKWpE2f5
-	C4H9pQjOxhJWwHKe2xiMh8GYZmvB4ck4SFW6IQtpbyLORaawQBxYV5hFFwofLrb/
-	ocqhfoAh9dxxWYhB1CqGzUmEjuoTEQakRiBqDTeV5bUcaeS2EMidVK4xEvf5wm+A
-	an00sO+8vLMrxi2CpElSqAfXsNRbYwEdyneLe9lULl/aPtjS1HiFyzE+rebxcNMz
-	/sp2u3jjwsmFrEKJkr51bQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728048332; x=
-	1728134732; bh=cc9La4QN0dfEV0HU2X84WhVbfANEZU3wSpI2fa6yTmQ=; b=D
-	rtxg1i/tASW+l3oYRbh/8ueRvssV6lhZxGdPd3rXUHvBDUf/Ai+PM5j7V9u7CgFU
-	f9atrwZlKqn39ry0T7qy3V+baJxGTQKk/jduvfv8EgPZa7hDGIK3zdBikgo16uRS
-	IwTr40n+P6Bes25gvG+iE9b/oy6/cpZW3DXlnb0N5s8YOskGk4E1o+KN8FrWsQwE
-	ETOVR3/ppR7aF4fALq68YS7OZRAY4rTdKSN6c7YxursoNeLPXJ86OtFPIVTphALB
-	9bGuSYT3Gzp/spKZWIBajDqQfsWDFUk//n2c2GnjG4tYxWWEj5hnRvydgNhNbI49
-	9uE3NxH7kWlZDtuUc7GWw==
-X-ME-Sender: <xms:y-z_ZknBC-5FtoE0YNff0pUkjzbq3xI67nwmWtZCnZonM0u2VJvbcw>
-    <xme:y-z_Zj3-6q8eMMKr9S3MKsEO5Cs2RBLll39dIAmtgqWbN6EVZBLkMaZvhABWvm9cH
-    nHzvuo_FIM0-bS_SwA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvfedgieegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepfefhheetffduvdfgieeghfejtedvkeetkeejfeek
-    keelffejteevvdeghffhiefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghr
-    nhgusgdruggvpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepnhhp
-    ihhtrhgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehnihgtohesfhhluhignh
-    hitgdrnhgvthdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnh
-    gvlhdrohhrgh
-X-ME-Proxy: <xmx:y-z_ZipmFUXJw9HbAlPHTjOh1Wj0HG-kb__sCvPpSsPfYfi5fr6Xtg>
-    <xmx:y-z_ZgmogYMiezizZB5XQ2ljzvatL7KT4oRvddxKiFj32KZKaiYmvA>
-    <xmx:y-z_Zi1mvG3PRQ1WdrFWxOy6bpn7VIJWvhxH0qTHk87KU7O4B6dP0Q>
-    <xmx:y-z_ZnuLZrW57WHox-7BEOJOnjwF5EXwGuSABr_ErVKnjf6wkCB3SQ>
-    <xmx:zOz_ZlQdTf3rPCcaxcgZGxygOi0QrMJapDJnhnK_-b0a2sHyr_66Rii5>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C999F2220071; Fri,  4 Oct 2024 09:25:31 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	bh=WBVZ7UKdnyypyGouTe2l8Jx14RrNbmDRtVhGvKKQBEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AC8dbOsoL/eDU8cZd6nodt9LWwDhYVwNs60G0m7sa7ZlhVmtPe75aHeQCDBjafutYpMWiAFt9g/NtoUdsDTRlBu0sI3tZOTCQWGwytyorJMrE6eXt41NGsPNYEOQ3t+5DXQQ0Pq44D1UiYpQC9MK/lSW35QQo2Ebiwm+8k9z878=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+58fu4i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F58DC4AF09;
+	Fri,  4 Oct 2024 13:25:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728048333;
+	bh=WBVZ7UKdnyypyGouTe2l8Jx14RrNbmDRtVhGvKKQBEg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=R+58fu4i/A2SM0RBrwwJrF/ZFXbnW9WmekQfVIi0hABJrnrQ/xBsiCZUDvK8RjuiT
+	 pO38dWZpfvwxp+RUzc7U8vFaeYm+hqm+RGvb9TixZOserYzRfvvo1EB+Cq/n9/hQW8
+	 II3cPi5InTEu0BHBuU9aNv1gGuC/yjVkVXDsPZ5UE9M47EgPNqlfNbg4vU3rd+t++c
+	 /RKpQ8X66G2wDT4Py/57EWn14m0mkBp6fEsEf05Itq28OBdHkb0YE8zrVN4xNLEgfa
+	 Hh7hSrlgSl8WRhkymQUhlngx4KyTz28Nz3WjuzZKELokPY+ys+j5dpSjnwm33GjLep
+	 BoxzA/zteLQiA==
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-710f0415ac8so1051112a34.1;
+        Fri, 04 Oct 2024 06:25:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUv2CTDt8A7EHriq1YCo5/ZCgEq1AF/CiNK4Vay+HM6O4cGpyoSIzCDIV8Pgc+2Hxe+P5/L2Hmv/nZ5u0Y=@vger.kernel.org, AJvYcCXjweE0SfQ6OYTZX+jBcPZyC5UAOdR0Nn+mPE/DHlGsOkFXTbAFGZw6vXQ9dkIP8Xk79op5SVokBHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5Nlfg7+Q5V2oh+ILOWUMItfOUiX34JilX1ppkYnUOyOJ5exc1
+	ozztK77+UvvbHQG3v/J5hSkNiQ5aetDhLUOEExVR7cYXpqNR9AzCRgUP4Xk3QUJadp4/dJ7oUXG
+	3IHglwgdvbuCIxGIgIu6x/vfHcV4=
+X-Google-Smtp-Source: AGHT+IE3llxHH4/WG5H8D0b2lj61mTLUhoMrDZBMZA53ph5hFQUF2xSwzfr+BFaZiVnbISGxKKMiyvQBUh1yi2UBW9w=
+X-Received: by 2002:a05:6830:6a95:b0:715:3817:71cd with SMTP id
+ 46e09a7af769-7154e83a611mr2350961a34.19.1728048332891; Fri, 04 Oct 2024
+ 06:25:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 04 Oct 2024 13:25:11 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nicolas Pitre" <nico@fluxnic.net>, "Russell King" <linux@armlinux.org.uk>
-Cc: "Nicolas Pitre" <npitre@baylibre.com>,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Message-Id: <75c272ce-b4dd-4360-9489-b9af33b87a33@app.fastmail.com>
-In-Reply-To: <20241003211829.2750436-1-nico@fluxnic.net>
-References: <20241003211829.2750436-1-nico@fluxnic.net>
-Subject: Re: [PATCH v4 0/4] simplify do_div() with constant divisor
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <12549318.O9o76ZdvQC@rjwysocki.net> <6112242.lOV4Wx5bFT@rjwysocki.net>
+ <b2d949a2-2586-44ec-b0e7-0879fd3ac7cf@arm.com>
+In-Reply-To: <b2d949a2-2586-44ec-b0e7-0879fd3ac7cf@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 4 Oct 2024 15:25:19 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g494bUwLbFDF_WHwLSMbu1iTxiynNwDqKktv3-4049Sw@mail.gmail.com>
+Message-ID: <CAJZ5v0g494bUwLbFDF_WHwLSMbu1iTxiynNwDqKktv3-4049Sw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] thermal: core: Reference count the zone in thermal_zone_get_by_id()
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux PM <linux-pm@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 3, 2024, at 21:16, Nicolas Pitre wrote:
-> While working on mul_u64_u64_div_u64() improvements I realized that there
-> is a better way to perform a 64x64->128 bits multiplication with overflow
-> handling.
->
-> Change from v3:
->
-> - Added timings to commit log of patch #4.
->
-> Link to v3: 
-> https://lore.kernel.org/lkml/20240708012749.2098373-2-nico@fluxnic.net/T/
+Hi =C5=81ukasz,
 
-Looks good to me. There are no other comments, I would apply this
-in the asm-generic tree for 6.13.
+On Fri, Oct 4, 2024 at 10:01=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> w=
+rote:
+>
+> Hi Rafael,
+>
+> On 10/3/24 13:25, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > There are places in the thermal netlink code where nothing prevents
+> > the thermal zone object from going away while being accessed after it
+> > has been returned by thermal_zone_get_by_id().
+> >
+> > To address this, make thermal_zone_get_by_id() get a reference on the
+> > thermal zone device object to be returned with the help of get_device()=
+,
+> > under thermal_list_lock, and adjust all of its callers to this change
+> > with the help of the cleanup.h infrastructure.
+> >
+> > Fixes: 1ce50e7d408e ("thermal: core: genetlink support for events/cmd/s=
+ampling")
+> > Cc: 6.8+ <stable@vger.kernel.org> # 6.8+
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >
+> > v1 -> v2: Use the cleanup.h infrastructure to reduce the amount of code=
+ changes.
+> >
+> > ---
+> >   drivers/thermal/thermal_core.c    |    1 +
+> >   drivers/thermal/thermal_core.h    |    3 +++
+> >   drivers/thermal/thermal_netlink.c |    9 +++------
+> >   3 files changed, 7 insertions(+), 6 deletions(-)
+> >
+> > Index: linux-pm/drivers/thermal/thermal_core.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/thermal_core.c
+> > +++ linux-pm/drivers/thermal/thermal_core.c
+> > @@ -728,6 +728,7 @@ struct thermal_zone_device *thermal_zone
+> >       mutex_lock(&thermal_list_lock);
+> >       list_for_each_entry(tz, &thermal_tz_list, node) {
+> >               if (tz->id =3D=3D id) {
+> > +                     get_device(&tz->device);
+> >                       match =3D tz;
+> >                       break;
+> >               }
+> > Index: linux-pm/drivers/thermal/thermal_core.h
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/thermal_core.h
+> > +++ linux-pm/drivers/thermal/thermal_core.h
+> > @@ -194,6 +194,9 @@ int for_each_thermal_governor(int (*cb)(
+> >
+> >   struct thermal_zone_device *thermal_zone_get_by_id(int id);
+> >
+> > +DEFINE_CLASS(thermal_zone_get_by_id, struct thermal_zone_device *,
+> > +          if (_T) put_device(&_T->device), thermal_zone_get_by_id(id),=
+ int id)
+> > +
+> >   static inline bool cdev_is_power_actor(struct thermal_cooling_device =
+*cdev)
+> >   {
+> >       return cdev->ops->get_requested_power && cdev->ops->state2power &=
+&
+> > Index: linux-pm/drivers/thermal/thermal_netlink.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/thermal_netlink.c
+> > +++ linux-pm/drivers/thermal/thermal_netlink.c
+> > @@ -443,7 +443,6 @@ static int thermal_genl_cmd_tz_get_trip(
+> >   {
+> >       struct sk_buff *msg =3D p->msg;
+> >       const struct thermal_trip_desc *td;
+> > -     struct thermal_zone_device *tz;
+> >       struct nlattr *start_trip;
+> >       int id;
+> >
+> > @@ -452,7 +451,7 @@ static int thermal_genl_cmd_tz_get_trip(
+> >
+> >       id =3D nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
+> >
+> > -     tz =3D thermal_zone_get_by_id(id);
+> > +     CLASS(thermal_zone_get_by_id, tz)(id);
+> >       if (!tz)
+> >               return -EINVAL;
+> >
+> > @@ -488,7 +487,6 @@ out_cancel_nest:
+> >   static int thermal_genl_cmd_tz_get_temp(struct param *p)
+> >   {
+> >       struct sk_buff *msg =3D p->msg;
+> > -     struct thermal_zone_device *tz;
+> >       int temp, ret, id;
+> >
+> >       if (!p->attrs[THERMAL_GENL_ATTR_TZ_ID])
+> > @@ -496,7 +494,7 @@ static int thermal_genl_cmd_tz_get_temp(
+> >
+> >       id =3D nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
+> >
+> > -     tz =3D thermal_zone_get_by_id(id);
+> > +     CLASS(thermal_zone_get_by_id, tz)(id);
+> >       if (!tz)
+> >               return -EINVAL;
+> >
+> > @@ -514,7 +512,6 @@ static int thermal_genl_cmd_tz_get_temp(
+> >   static int thermal_genl_cmd_tz_get_gov(struct param *p)
+> >   {
+> >       struct sk_buff *msg =3D p->msg;
+> > -     struct thermal_zone_device *tz;
+> >       int id, ret =3D 0;
+> >
+> >       if (!p->attrs[THERMAL_GENL_ATTR_TZ_ID])
+> > @@ -522,7 +519,7 @@ static int thermal_genl_cmd_tz_get_gov(s
+> >
+> >       id =3D nla_get_u32(p->attrs[THERMAL_GENL_ATTR_TZ_ID]);
+> >
+> > -     tz =3D thermal_zone_get_by_id(id);
+> > +     CLASS(thermal_zone_get_by_id, tz)(id);
+> >       if (!tz)
+> >               return -EINVAL;
+> >
+> >
+> >
+> >
+>
+> I wasn't aware of that helpers in cleanup.h.
+>
+> Could you help me to understand when this this
+> 'if (_T) put_device((&_T->device)' will be called?
 
-       Arnd
+When the pointer variable initialized via the CLASS() macro goes out
+of scope (that is, before freeing the memory occupied by the pointer
+itself).
 
