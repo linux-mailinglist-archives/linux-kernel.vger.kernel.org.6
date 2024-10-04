@@ -1,97 +1,137 @@
-Return-Path: <linux-kernel+bounces-350594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A27B990746
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:17:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF1F99074B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CBECB219FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:17:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C4ACB22F53
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B866E1AA785;
-	Fri,  4 Oct 2024 15:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7D21AA7A2;
+	Fri,  4 Oct 2024 15:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="blYdJ9EQ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BN2wHc3l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE221D9A7A
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 15:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D001D9A65;
+	Fri,  4 Oct 2024 15:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728055069; cv=none; b=sxFv418RgfAIfxK+3EnSMbYNCfnwjZLpxeIvoKPP0ofvYwWtSeaRS1S7nmSdzvrhrTiqPgAlabmWoKqZbfoWfRaWb7NVlpDx2LkdRuBiC3r6qgR5UwQIpObkmcuUboetdgxyMcAhID9BGhoTTpcgmCcD1bMUJjFK/N30o9V97Mw=
+	t=1728055145; cv=none; b=Ydk8kUibMjrxUyWNtaSPLazFbiu+6qpDSXAniJqYsHWYSX96szt3sYEVKqMTYc5jwQU0mIWghWmK1XPuEFdw2wF01TE1zFYH+u/60X9U5nwqcms3ABwJwZj05xnN2fY1bd2iVfva9SIPqq0D6TDDWY5gD6amWi8yPC5u6Rud+AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728055069; c=relaxed/simple;
-	bh=Vhe5a/pCOXoNV1H+TJfJIiYDSHbQZMOXIJLV1km79KQ=;
+	s=arc-20240116; t=1728055145; c=relaxed/simple;
+	bh=dD5eDkooA+Ex+iOJP1TfV+XBZ6LzXb1q2bQOSb1wOR8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMiOaQVExqRwbJXTtLhnYBZPLeTdcq7Q9SRDCu1oJ73IB6j2BXT9UDwwCAuG4Hi44+Rw/dEbLstEWdLC5eDwO++4Ix4Jz0KLBtW7QNqFW2H0X07IswaYSgKKK5syj9OPCiCYmOPljuQTowyyna3MQ5oCT1zGVnStRPtvzMpEtlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=blYdJ9EQ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=qcm0qXDs+Vr+WT+3nup9fENclVZeuo+9akDQMUTWbUY=; b=blYdJ9EQNTYCY7YVSQdNnJi5sX
-	YksPjB4ryRppE7hBSVJj/WSQD/gwzjk4GElNU3ijhaRjPh/xMReOFFfLLWUSuaz84pmA0//+hIogM
-	JIQCSNvdD6LgVwHs20tWu0ZFcNF+LmwW/8iWGrxl587LH87yt7GWhtpCdAqvbT7JityL0iEmeqLH3
-	IcAfATmEJ0lA1VMA5Fud941YJVc28k985ID1u8qmH4kwEg+W6lRx0lN2FJGo9P8pqiccan33hR/kW
-	rwrB6aivgLeet67J52N/jh7SN8u/8wvIKE2/POpMCEM0iWlz5y4ghp6bfu4OM65L86/ZUNUuerVTh
-	K7bnN1Lw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1swk3q-0000000Agm7-1p4w;
-	Fri, 04 Oct 2024 15:17:42 +0000
-Date: Fri, 4 Oct 2024 16:17:42 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: manas18244@iiitd.ac.in
-Cc: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Anup Sharma <anupnewsmail@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
-Subject: Re: [PATCH v3] Fixes: null pointer dereference in
- pfnmap_lockdep_assert
-Message-ID: <ZwAHFtAmMq9BNuGv@casper.infradead.org>
-References: <20241004-fix-null-deref-v3-1-f9459b1cc95f@iiitd.ac.in>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nKH3RTfbIu1DAl0VYhk0JFe/VxG2e3+HGHh7tDyTLJ0O8vr1Eho55IjYuELeIhlSMkUrFAJM+eJINAKnPWifIlJCj4cghCtFudCsKWbctm70S820guMiX7Ci0TWf03AKtBKE55igROXPb2JHO3dUdtb3orfz9lEw9+WBNasjrR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BN2wHc3l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E3EEC4CEC6;
+	Fri,  4 Oct 2024 15:19:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728055145;
+	bh=dD5eDkooA+Ex+iOJP1TfV+XBZ6LzXb1q2bQOSb1wOR8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BN2wHc3lP8DgDuHmh1XEeafshXW3bH/+cAOCmwKqQs3d/p/My2rGRs9mZfvoz12EY
+	 41G1vt1s6XY+HSVR5DiRpmkcjc7/wz9nLKw2vgVidRW3nW7H6XpMv7bgkY3e51hUNt
+	 l1Qz8TCUj7c687rW094KYQxK+E2GV79y4BuR2LO4qI/OybH5tHBSSy2b30onU51tL4
+	 1k76F9Q+O1IaPKLpgy4z6H4xD+dgeQg5As5kPk4+pMEBJI5TwNezuAkh86CXaDVC6q
+	 yngD5k5OIp+3WoKFq2u16oZYD7r46oKtxtrExfB63WpXzlxp77QTcdtBaX5LHCu80J
+	 LuqHNTGSGXJWQ==
+Date: Fri, 4 Oct 2024 16:18:58 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] dt-bindings: iio: adc: add ad485x
+Message-ID: <20241004-elixir-italicize-b7c339903ab7@spud>
+References: <20241004140922.233939-1-antoniu.miclaus@analog.com>
+ <20241004140922.233939-5-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="L8pXIauJ0N/ie8Sx"
+Content-Disposition: inline
+In-Reply-To: <20241004140922.233939-5-antoniu.miclaus@analog.com>
+
+
+--L8pXIauJ0N/ie8Sx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241004-fix-null-deref-v3-1-f9459b1cc95f@iiitd.ac.in>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 04, 2024 at 07:15:48PM +0530, Manas via B4 Relay wrote:
-> +++ b/mm/memory.c
-> @@ -6346,10 +6346,10 @@ static inline void pfnmap_args_setup(struct follow_pfnmap_args *args,
->  static inline void pfnmap_lockdep_assert(struct vm_area_struct *vma)
->  {
->  #ifdef CONFIG_LOCKDEP
-> -	struct address_space *mapping = vma->vm_file->f_mapping;
-> +	struct address_space *mapping = vma->vm_file ? vma->vm_file->f_mapping : NULL;
+On Fri, Oct 04, 2024 at 05:07:54PM +0300, Antoniu Miclaus wrote:
+> Add devicetree bindings for ad485x family.
+>=20
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v2:
+>  - link all public parts in the description
+>  - add $ref: /schemas/spi/spi-peripheral-props.yaml#
+>  - add vee-supply
+>  - add vddl-supply
+>  - add description for pwms
+>  - add pd-gpios
+>  - update spi-max-frequency value
+>  - make vddh-supply optional, not required.
+>  - update example based on new properties added.
+>  - fix typos in commit message/title.
+>  - update year to 2024
+>  - drop "DAS" and "device driver" from bindings description.
+>  .../bindings/iio/adc/adi,ad485x.yaml          | 96 +++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad485x.=
+yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad485x.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad485x.yaml
+> new file mode 100644
+> index 000000000000..899a65504f12
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad485x.yaml
 
-Overly long and complex line.  Much simpler to write:
+With a filename matching a compatible,
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-	struct address_space *mapping = NULL;
+Cheers,
+Conor.
 
-	if (vma->vm_file)
-		mapping = vma->vm_file->f_mapping;
+--L8pXIauJ0N/ie8Sx
+Content-Type: application/pgp-signature; name="signature.asc"
 
->  	if (mapping)
-> -		lockdep_assert(lockdep_is_held(&vma->vm_file->f_mapping->i_mmap_rwsem) ||
-> +		lockdep_assert(lockdep_is_held(&mapping->i_mmap_rwsem) ||
->  			       lockdep_is_held(&vma->vm_mm->mmap_lock));
->  	else
->  		lockdep_assert(lockdep_is_held(&vma->vm_mm->mmap_lock));
+-----BEGIN PGP SIGNATURE-----
 
-This one should have been lockdep_assert_held(&vma->vm_mm->mmap_lock).
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwAHYgAKCRB4tDGHoIJi
+0q31AP4z8Ye1WaISeqNGwUvkApurW7SFE1T1HbG/d5koitug7AEAjJlaen6+2Fow
+/3oQ7tpZyEvfVkraqxSQvIRDjjQrwgM=
+=7XWM
+-----END PGP SIGNATURE-----
 
-I'm not sure that the previous one is correct.  The
-lockdep_assert_held() macro is pretty careful about checking
-LOCK_STATE_NOT_HELD to avoid the LOCK_STATE_UNKNOWN possibility.
-But I'll leave that for Peter to fix.
+--L8pXIauJ0N/ie8Sx--
 
