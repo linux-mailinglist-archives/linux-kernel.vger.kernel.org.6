@@ -1,170 +1,94 @@
-Return-Path: <linux-kernel+bounces-349857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A6798FC49
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:24:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE62998FC4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060211C220C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:24:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 814FF1F2243A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFDE208D1;
-	Fri,  4 Oct 2024 02:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PHmdj+Vp"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6426721340;
+	Fri,  4 Oct 2024 02:26:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5337EDDA1;
-	Fri,  4 Oct 2024 02:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9914C18C08
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 02:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728008682; cv=none; b=Ok+C0cC674roxhDoAO3P/ct+5WM0Q0xHCpqjc+68GYKBAf5DVXBbp5S95G4TlnGfUcGrjI4ddXCElYxkfz/zdDJjJnsSLx6g4aZM1jOlqpfRj/zlBHQSnC/RhzxSSHgBoIRig92WgwIjWEKCZsUgGhZQD1OX9MpwQfr3L6Qeh5A=
+	t=1728008765; cv=none; b=pxj7AaM46KsXbWi3PXaDtWNjre2uHfGwKvSXe2XVmTshOBv25UHr05ESCybYoGQAn7j07BgLoXFAchUOCy0eu3qJ1/pxzt4vup4nLtTUIYGskI1gl8RNoZ9YIWk0fHA6MhWXlU6rCDDXy0QY1VnHC/mJXr2DuCfpNAArjK7tu2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728008682; c=relaxed/simple;
-	bh=BW65+7mAxbbksZMjyHZtyEB+oDA+79HwcdaDbGz/hEY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cQhrEftWBnYQIimI6LbhPOgLaMLm4mDwZGCvaDMn1P0Q87Q8u+N9XFEHhwjjSEfEKwJei6dstmTOYxXyHoKFeW2R7OiUk0o+lTwVwleRQFHFW/ECf0TsDoer3EMVQxo+wt9CcgxPvKSaDdxzXI3NT/J7zbEwZQa9xWoFpzEn3Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PHmdj+Vp; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: cbca511281f711ef8b96093e013ec31c-20241004
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Kjly8y7UsTFJRLhG7/ML1Rzsva3stHv/nqE2+gId9i0=;
-	b=PHmdj+VpDl2JpLLFmDqlEyZnu5NOwJBHjvqErE1rOKAdt9SRhLD6H15ihBSqylIkGQLVgYkjRcBP9kGRC2TZXwyT1JeGQ/lwMjQwMLtIRDcnvYgY6A+udfbesN/1BS3zi3IGNRXPLiNcAweNsd1iZS98D7eBch1wyy+kLydrSII=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:1d3fec9a-5c26-4386-af91-88a132c3c040,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:c850b764-444a-4b47-a99a-591ade3b04b2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: cbca511281f711ef8b96093e013ec31c-20241004
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
-	(envelope-from <moudy.ho@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1183843751; Fri, 04 Oct 2024 10:24:34 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 4 Oct 2024 10:24:31 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 4 Oct 2024 10:24:31 +0800
-From: Moudy Ho <moudy.ho@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, "jason-jh . lin"
-	<jason-jh.lin@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Moudy Ho <moudy.ho@mediatek.com>
-Subject: [PATCH v3] dt-bindings: display: mediatek: split: add subschema property constraints
-Date: Fri, 4 Oct 2024 10:24:30 +0800
-Message-ID: <20241004022430.19689-1-moudy.ho@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1728008765; c=relaxed/simple;
+	bh=4HWecSz4M7EUkOXXBP9/ZooJcAR5jb16syVtiRjEbuE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uVbGjv79WbghMhU6ISoom8hagjVTIDh/blJYIkd55+cvbjPUu6eHCNeXFvrAqBvPPJ2z2A8xwRUy357DnHwDe4i9xi/Xw+pb9Wf60MzXu9Rf1gcm6q6fD/Ph6vAWlzMU1Thx6odUCjPQmdLLOht+wz95S6Xrn3zK8yq9FjAR4/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cf147a566so147311839f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 19:26:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728008763; x=1728613563;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b0TKGVjZnvG+gbyWukrboF5mMhpG4D08XO678TzzDo8=;
+        b=CyuuZRTqa47TGjw+8TLspnSkPbTLxXcW/kTE3sr+UrB8SdYNlipnS2AS7cujVYHeKg
+         SZHuE3Js0ZO7AM/cNJjpXBQim+10w2yh5pPoLwJk2rwj1dCbMJTYmJBGoWezdgNxAlUV
+         /c2UZp92/vO3Ss7BkMF+p8sobXMNNlNUQEb4GBxKHSh0rXYAQgfXXNQhhXsUc73fwVfr
+         hzm8CNidpSotcQV98R0zAAxlSzo3rFRYSjKwqB4I/OR8eDhj/T/sMT0axI3OtoOvEwDZ
+         BB/Uv4LkzwmRjqKOSfrHCysT1NgjqysXRnKn+Ph93lB/kvs4BkLpfIi9xWHbjx8i02mX
+         exBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpTf6D/AW4ZlJ+9W4tw9W/vA4AUXZMfxXFYW/8cKcNInDKky/Cf65JG2CVnb3lwYQz7Xhyf+eM7NDIUbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6OpN4nJ7k2uzq4ZguTa6ah0LIfstUQpDWVDe2vJm54+7uClFz
+	YX+OanVKEBiOkoQgxiGWew/WDXXJIuxj8+n2JFJihUWS3Bxg3kpcb2O/t7wnnMSTXclgbKrstjl
+	oxMsBBywhELViXOteqjjNvn8W42o7JACjXHkMGb3pxIsl1NAJgN4dUMQ=
+X-Google-Smtp-Source: AGHT+IEDAq1L/9hrIQmAijk45oUjCKIMrvI/y9UrO5WjjEY5d2oTq1wpaIDF3b9kOodsAS2tymqxR4Uv1qQWjX4YOA7zaZ9iXeNT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--3.848600-8.000000
-X-TMASE-MatchedRID: Ru+54+IMWaQ72d2F4DOSZIzb2GR6Ttd3MZm0+sEE9mtb6PBUqmq+Utdh
-	dhqLxa0jj6kCfX0Edc5fvtuIsaf1Zbf0EuHoGRzu/IBH0OAL+EeusS9CiBzL8VSkag5D7Fg8O0i
-	2vQl58jgZoBsQWiqLArpjAjMHHtZlHxPMjOKY7A9qHXONfTwSQsRB0bsfrpPInxMyeYT53RnDa+
-	4JklccgJy6v5kFJZhEinJ4I5Ggj8rhkRPh6jPIcsP7/0dW/TeQ+mRKzDVuOcuVSFhjFH946aGuH
-	qXWE6OVz8eQmvI53il5lSmbrC6fdtr/To2FgNrjDLMIOOVTHz2nbLeYgH6K31Zca9RSYo/b
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--3.848600-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 9DECDB592F3AC4DFB91808774BE073A28B4AF3D9B721064985D5E56E3CF704D42000:8
-X-MTK: N
+X-Received: by 2002:a92:ca07:0:b0:3a3:6b20:5e33 with SMTP id
+ e9e14a558f8ab-3a375a9b3a2mr8900805ab.12.1728008762724; Thu, 03 Oct 2024
+ 19:26:02 -0700 (PDT)
+Date: Thu, 03 Oct 2024 19:26:02 -0700
+In-Reply-To: <00000000000094740b0620b32b4e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ff523a.050a0220.49194.0413.GAE@google.com>
+Subject: Re: [syzbot] [net?] general protection fault in phy_start_cable_test_tdr
+From: syzbot <syzbot+5cf270e2069645b6bd2c@syzkaller.appspotmail.com>
+To: andrew@lunn.ch, christophe.leroy@csgroup.eu, davem@davemloft.net, 
+	djahchankoike@gmail.com, eadavis@qq.com, edumazet@google.com, 
+	florian.fainelli@broadcom.com, hkallweit1@gmail.com, kuba@kernel.org, 
+	larysa.zaremba@intel.com, linux-kernel@vger.kernel.org, linux@armlinux.org.uk, 
+	maxime.chevallier@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The display node in mt8195.dtsi was triggering a CHECK_DTBS error due
-to an excessively long 'clocks' property:
-  display@14f06000: clocks: [[31, 14], [31, 43], [31, 44]] is too long
+syzbot suspects this issue was fixed by commit:
 
-To resolve this issue, the constraints for 'clocks' and
-other properties within the subschemas will be reinforced.
+commit ad78337cb20c1a52781a7b329b1a747d91be3491
+Author: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Date:   Tue Aug 27 09:23:13 2024 +0000
 
-Fixes: 739058a9c5c3 ("dt-bindings: display: mediatek: split: add compatible for MT8195")
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Signed-off-by: Moudy Ho <moudy.ho@mediatek.com>
+    net: ethtool: cable-test: Release RTNL when the PHY isn't found
 
---
-This is based on [v2] dt-bindings: display: mediatek: split: add clocks count constraint for MT8195
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17bee307980000
+start commit:   f9db28bb09f4 Merge branch 'net-redundant-judgments'
+git tree:       net-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
+dashboard link: https://syzkaller.appspot.com/bug?extid=5cf270e2069645b6bd2c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10542a33980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=178c6225980000
 
-Changes since v2:
-  - Revise the commit message.
-  - Enhance the descriptions of 'clocks'.
-  - Strengthen the conditions within the subschema.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Changes since v1:
-  - Adding functional descriptions and quantity restrictions.
----
- .../display/mediatek/mediatek,split.yaml      | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
+#syz fix: net: ethtool: cable-test: Release RTNL when the PHY isn't found
 
-diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
-index e4affc854f3d..0ffcd9d2b718 100644
---- a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
-+++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
-@@ -57,6 +57,9 @@ properties:
-   clocks:
-     items:
-       - description: SPLIT Clock
-+      - description: Used for interfacing with the HDMI RX signal source.
-+      - description: Paired with receiving HDMI RX metadata.
-+    minItems: 1
- 
- required:
-   - compatible
-@@ -72,9 +75,30 @@ allOf:
-             const: mediatek,mt8195-mdp3-split
- 
-     then:
-+      properties:
-+        clocks:
-+          maxItems: 3
-+
-+        power-domains:
-+          maxItems: 1
-+
-       required:
-         - mediatek,gce-client-reg
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: mediatek,mt8173-mdp3-split
-+
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 1
-+
-+        power-domains:
-+          maxItems: 1
-+
- additionalProperties: false
- 
- examples:
--- 
-2.34.1
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
