@@ -1,171 +1,195 @@
-Return-Path: <linux-kernel+bounces-350852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445DB990A84
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:00:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 844A5990A85
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1772281668
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:00:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF041F22C07
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDC31DAC8B;
-	Fri,  4 Oct 2024 17:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD47C1C3044;
+	Fri,  4 Oct 2024 18:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="T40dcfB8"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Eq9SHr+4"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4997D1E3786
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C8747F5F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728064797; cv=none; b=HyWKrNGhMWPQnJdRN5ljtokdVtVdlF337qDicwt6oGQSk03nmdzUgE0i/qqw0kg73LBNaEAInctVytGYKX+aUsh9O/H2nYKI89Qa+AcCbjSnSfK4A4Xlygry5KamUki2wRa/6xO/MWkgBROjFDI+O2Ym4oh6CzJX6MP0d3qKRng=
+	t=1728064816; cv=none; b=r2xgFhqLDmRuCXVpR8NmuHyhPQO+JfjbayPJvsJ6WCZQaVO1QL7rrugo18gkJqSUclHaVBxCDN6BN8rjSabLE3xpHXpJElNyUzhfad1PdY2CHJDyNNpDuJen79U1WzW+OxecXi1rYD/aU5W7zWpNOImo7KYLm2PA+Y04Lz6eytk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728064797; c=relaxed/simple;
-	bh=inuFU3NXMCe9t8sJPID56GbyaIR3FjwYuD3KDJW0AyM=;
+	s=arc-20240116; t=1728064816; c=relaxed/simple;
+	bh=PMOM/qjJaiv5NGfVvQQtJMlId91TctdxelpJsDxocLg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HM8CXe/J5BIITyTXxAw8bglveNYRArWFDTOA5bR9pSYGIBlOoKfzcxAaQJVBkJBF18jUnWpSMNiJfhYV7fvcq4hxeF2BZiDMmyZ9XNVvaiKg0TyIUJIAkHfd990jIK2QXEjYjvQlTEk3NVnqZQiF+FwF8SYCCpqzpepUcDv2Om8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=T40dcfB8; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5389917ef34so2881135e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:59:54 -0700 (PDT)
+	 To:Cc:Content-Type; b=JM49T9h+TRDQwSP+JP5xTmIb/SdR1Yr3KsTV+kcsY+3TESkuPtMLpEEf06mhViRktHmGF/ndMlFjWA+FA6LtljFFWpRfeJ/ocIZORT+AuZ6dGwOdT3w2TBO3vzdcjn3uyzp4IgUwcz9igPl6shO9MEyuY4/D2ygXVqBbCiiOJ5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Eq9SHr+4; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-277e42a451dso119246fac.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 11:00:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728064793; x=1728669593; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1728064813; x=1728669613; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZIc2Q/g7SzIUf5LcQlTpJjF6kt6YPBe5J0bTkqMkNrs=;
-        b=T40dcfB8p+1OQXYcJBLq1LnKRinIm1xPRCxHOd0bvQ7vuKOKp17ZYqUPjAc41efDNQ
-         WONMm4DGQoVnjumLkuiZAEMumFCIm/xIKs1mP6O/YABc3hv1XSeOovpPJFx3x6HqxcfC
-         ySS1Mus6NsHzR4DU/2DBfScjNNj6VxZFs6fvyqo0E3NO3KlQFUzMNiTBcVgHbY+Zr5oL
-         injtWkYhdQINmHsAHPNAd7jeOstdpe+dUHZHmgQm6OG0Db8vJ77rk2IKQ0eKzwUXeSja
-         PBofJzYmhcTe8FkFW3JVuMQHJkd+WpM4eJg6JfNatf56gQX1K5prly10DYZKr+l+EjUX
-         Fg7Q==
+        bh=OmLcbw3dTY3w/Owkai0ppDRQaaYIubHSutnZXhKguwE=;
+        b=Eq9SHr+4qUPHIzc8DhfY+DnGvB4FwWhvTkcJXiRvfVVenpN1CnUl81H9jr6t9Pu7+x
+         H1cCxma8PriJQN7v6oXmKpkFG5kpfr22D3GiHXrI93NO9knN8+U1qx20aEc/I3Tru+nm
+         ZhQr7pSVXZWL5oQKap4hjwRUZFh3htCtza+nc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728064793; x=1728669593;
+        d=1e100.net; s=20230601; t=1728064813; x=1728669613;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZIc2Q/g7SzIUf5LcQlTpJjF6kt6YPBe5J0bTkqMkNrs=;
-        b=RiNyEG9iTOo5PV5VEcHAFKjez7CffipkIczWE/Bp204PzKp58CzGlwW27iLExRIkW3
-         2IVOIUmbW4blF7cz50X5sX6lgrjQOzrdmstqLYBJDMy0joxmwEMDgX/sjZKA2wOJhCNY
-         0sZDqwAL+N9Ae5XWXudryEtu5a53WrSvwBoCQoFryFkCvdh6A2lb84FlTy+dbc86JsC+
-         e991DJwItMrtLoDkesuB4sQ0T9n/UT1vwUAR4rkFIeBcvbx1ZTvSNiX+a4o9djFdArgZ
-         tHeWrsXpmTmR8kqamMwsq60Iq3NcXIAduqKS9cKAHgtaw68N+I2Lr36t0IGDLGO7tuCs
-         /Y5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWqg+A6dxCy0NOR76NyZebRBdbaCCZqJNf3EX+2Eb2ZcrIlppcbvRs66ponJ69ogyF9e6XzZtKF4HmWM1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkIVXh+YpLw01IE/1apPf2SxLMCYuh+TtZJdfcl2kqLMQfEVuO
-	Izun50V2xReK8vCGC7/oqUqarRq75ARRhUfaqfqMLtaB81EIlF3GBROU+YNKsgp2vYiBO70G77e
-	MvPOelZyj7W/CuYmswsU0FTjuzZOfjTWLzjyRKA==
-X-Google-Smtp-Source: AGHT+IHHz8Cr6VTmIusVTwt1IY2wWXjjxXJuyGY5S7lxceFUPPBU36GfG5fFHG9WIFrL0iFdylF/a642abnf9QcKd5c=
-X-Received: by 2002:a05:6512:b9c:b0:530:aeea:27e1 with SMTP id
- 2adb3069b0e04-539ab9e6cfcmr2638044e87.50.1728064792965; Fri, 04 Oct 2024
- 10:59:52 -0700 (PDT)
+        bh=OmLcbw3dTY3w/Owkai0ppDRQaaYIubHSutnZXhKguwE=;
+        b=oKnXpwtZrKTWUap+bYF1KHy2rQPCP0ERNg8kUYf7W7uIn1kSKAPDN+EYvUrGvuU6cD
+         ji7tSAzpZ+ZcLytN96AR/REMJcAWCJIAUTljacGxRkuxiaIDbUk91EspOIS4i4BhwHFn
+         n0+PWRlzAGyz5yuY13ZLS2AYR8ShkPF3j42/oxy8nMCbHYnG+GScbnKD/Fuhcr4BI1w7
+         AiHmy45a9nBMF0+hz6dsZuQaIHp4wlu2tNGvqPLah/vwJDIJVoeHtJT34t/c94M+ieaa
+         1d27z+xVJ4US2CSzA0WuLpQn18hfhGGhPku8iCcbxuTphoLTiI+4GEh8nDnGmjAH99Lh
+         sP2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXE50cr7bcE7ZijKjK8kdHYe1cOGwsn+7lQP5BjEHjeiMjBtAZnr5wHQsOcpGUwz7UVIM5rOQNvzjvY0nc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHqWZQ97ep2xR2uJntMdHnN36P/FCKlhM9XxXK8+QweoO4l/zn
+	nX8VZ4l2M351er/d+rtlpa00f94JlQs4quFO5xGLLFnm7/354zA5SPWWVtmyxzCNcX4hfPno+5X
+	2yhvF7s/Ux2pFTRu80PF2XYvQOH1Q8Wsvo4lr
+X-Google-Smtp-Source: AGHT+IG1zOkPi9cSpKoSowBdUikBePmdVz5SvwucHk6LYufziJDiV0GIln1NM20ppD8iWK+zVkJ9Tq1c8Kj3vOZeY5g=
+X-Received: by 2002:a05:6870:89a3:b0:286:f523:4d76 with SMTP id
+ 586e51a60fabf-287c1e16b7dmr727983fac.6.1728064813669; Fri, 04 Oct 2024
+ 11:00:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004125227.46514-1-brgl@bgdev.pl> <rog6wbda7rdk6rebjyprnofgz4twzpg6kt4pnmeap4m4hga532@3ffxora5yutf>
-In-Reply-To: <rog6wbda7rdk6rebjyprnofgz4twzpg6kt4pnmeap4m4hga532@3ffxora5yutf>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 4 Oct 2024 19:59:41 +0200
-Message-ID: <CAMRc=MekMuV6ULeX_x8mgQiL=XoHuH3PrJLihqucWqowN-YRLQ@mail.gmail.com>
-Subject: Re: [PATCH] PCI/pwrctl: pwrseq: abandon probe on pre-pwrseq device-trees
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Johan Hovold <johan@kernel.org>, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>
+References: <zghnfw2vvrvlxenzx3oi55hzznxbx2nhcuwfk5zpe42bm4dxzv@zknjtfa2fu7n> <20240925152509.87152-1-faresx@amazon.de>
+In-Reply-To: <20240925152509.87152-1-faresx@amazon.de>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 4 Oct 2024 11:00:00 -0700
+Message-ID: <CABi2SkWrQOdxdai7YLoYKKc6GAwxue=jc+bH1=CgE-bKRO-GhA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/7] mseal: expose interface to seal / unseal user
+ memory ranges
+To: Fares Mehanna <faresx@amazon.de>, Kees Cook <keescook@chromium.org>
+Cc: liam.howlett@oracle.com, akpm@linux-foundation.org, ardb@kernel.org, 
+	arnd@arndb.de, bhelgaas@google.com, broonie@kernel.org, 
+	catalin.marinas@arm.com, david@redhat.com, james.morse@arm.com, 
+	javierm@redhat.com, jean-philippe@linaro.org, joey.gouly@arm.com, 
+	kristina.martsenko@arm.com, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, mark.rutland@arm.com, maz@kernel.org, 
+	nh-open-source@amazon.com, oliver.upton@linux.dev, ptosi@google.com, 
+	rdunlap@infradead.org, rkagan@amazon.de, rppt@kernel.org, 
+	shikemeng@huaweicloud.com, suzuki.poulose@arm.com, tabba@google.com, 
+	will@kernel.org, yuzenghui@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 4, 2024 at 7:31=E2=80=AFPM Bjorn Andersson <andersson@kernel.or=
-g> wrote:
+Hi Fares,
+
+Please add me to this series and I'm interested in everything related
+to mseal :-)
+
+I also added Kees, since mseal is a security feature, and kees is CCed
+on security matters.
+
+On Wed, Sep 25, 2024 at 8:25=E2=80=AFAM Fares Mehanna <faresx@amazon.de> wr=
+ote:
 >
-> >
-> > +     /*
-> > +      * Old device trees for some platforms already define wifi nodes =
-for
-> > +      * the WCN family of chips since before power sequencing was adde=
-d
-> > +      * upstream.
-> > +      *
-> > +      * These nodes don't consume the regulator outputs from the PMU a=
-nd
-> > +      * if we allow this driver to bind to one of such "incomplete" no=
-des,
-> > +      * we'll see a kernel log error about the indefinite probe deferr=
-al.
-> > +      *
-> > +      * Let's check the existence of the regulator supply that exists =
-on all
-> > +      * WCN models before moving forward.
-> > +      *
-> > +      * NOTE: If this driver is ever used to support a device other th=
-an
-> > +      * a WCN chip, the following lines should become conditional and =
-depend
-> > +      * on the compatible string.
+> Hi,
 >
-> What do you mean "is ever used ... other than WCN chip"?
+> Thanks for taking a look and apologies for my delayed response.
 >
-
-This driver was released as part of v6.11 and so far (until v6.12) is
-only used to support the WCN chips. That's not to say that it cannot
-be extended to support more hardware. I don't know how to put it in
-simpler words.
-
-> This driver and the power sequence framework was presented as a
-> completely generic solution to solve all kinds of PCI power sequence
-> problems - upon which the WCN case was built.
+> > It is not clear from the change log above or the cover letter as to why
+> > you need to go this route instead of using the mmap lock.
 >
-
-I never presented anything as "completely generic". You demanded that
-I make it into a miraculous catch-all solution. I argued that there's
-no such thing and this kind of attitude is precisely why it's so hard
-to get anything done in the kernel. I made it *generic enough* and we
-can cross any bridge requiring new features when we get to it. This is
-why we have no stable APIs in the kernel! And why every long-lived
-user-space library is at major API version 2 or 3. You can never
-possibly get *everything* right.
-
-Also: there's a big difference between the framework and this driver.
-A driver is just a consumer of the larger framework. We could possibly
-make it WCN-specific and create a new one for QPS615 (even if it was
-to use pwrseq as well) instead of cramming a solution for every
-possible corner case into a single compilation unit.
-
-> In fact, if I read this correctly, the second user of the power sequence
-> implementation (the QPS615, proposed in [1]), would break if this check
-> is added.
+> In the current form of the patches I use memfd_secret() to allocate the p=
+ages
+> and remove them from kernel linear address. [1]
 >
-
-Is it queued for v6.13 yet? If not, then we make no guarantees. A
-regression is when something upstream stops working, not when
-yet-unmerged patches from the list do. Have you really never had to
-modify existing code to accommodate new one?
-
-This is a fix that needs to go into v6.12 and be backported to v6.11.
-Hence a simple patch. For v6.13 we can easily extend the match data to
-become a structure indicating whether we should do the check or not.
-That's a really simple change too. But it would grow the fix
-needlessly.
-
-> Add to this that your colleagues are pushing people to implement simple
-> power supplies for M.2-connected devices into this framework - which I
-> can only assume would trip on this as well (the one supply pin in a M.2.
-> connector isn't named "vddaon").
+> This allocate pages, map them in user virtual addresses and track them in=
+ a VMA.
 >
-> [1] https://lore.kernel.org/all/20240803-qps615-v2-3-9560b7c71369@quicinc=
-.com/
+> Before flipping the permissions on those pages to be used by the kernel, =
+I need
+> to make sure that those virtual addresses and this VMA is off-limits to t=
+he
+> owning process.
 >
+> memfd_secret() pages are locked by default, so they won't swap out. I nee=
+d to
+> seal the VMA to make sure the owner process can't unmap/remap/... or chan=
+ge the
+> protection of this VMA.
+>
+> So before changing the permissions on the secret pages, I make sure the p=
+ages
+> are faulted in, locked and sealed. So userspace can't influence this mapp=
+ing.
+>
+> > We can't use the mseal feature for this; it is supposed to be a one way
+> > transition.
+>
+> For this approach, I need the unseal operation when releasing the memory =
+range.
+>
+> The kernel can be done with the secret pages in one of two scenarios:
+> 1. During lifecycle of the process.
+> 2. When the process terminates.
+>
+> For the first case, I need to unmap the VMA so it can be reused by the ow=
+ning
+> process later, so I need the unseal operation. For the second case howeve=
+r we
+> don't need that since the process mm is already destructed or just about =
+to be
+> destructed anyway, regardless of sealed/unsealed VMAs. [1]
+>
+> I didn't expose the unseal operation to userspace.
+>
+In general, we should avoid having do_unseal, even though the
+operation is restricted to the kernel itself.
 
-I'm not sure what exactly you're referring to here.
+However, from what you have described, without looking at your code,
+the case is closer to mseal, except that you need to unmap it within
+the kernel code.
 
-Bart
+For this, there might be two options that I can think of now, post
+here for discussion:
+
+1> Add a new flag in vm_flags, to allow unmap while sealed. However,
+this will not prevent user space from unmap the area.
+
+2> pass a flag in do_vmi_align_munmap() to skip sealing checks for
+your particular call. The do_vmi_align_munmap() already has a flag
+such as unlock.
+
+will the above work for your case ? or I  miss-understood the requirement.
+
+Thanks
+-Jeff
+
+
+
+> [1] https://lore.kernel.org/linux-arm-kernel/20240911143421.85612-3-fares=
+x@amazon.de/
+>
+> Thanks!
+> Fares.
+>
+>
+>
+> Amazon Web Services Development Center Germany GmbH
+> Krausenstr. 38
+> 10117 Berlin
+> Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+> Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+> Sitz: Berlin
+> Ust-ID: DE 365 538 597
+>
+>
 
