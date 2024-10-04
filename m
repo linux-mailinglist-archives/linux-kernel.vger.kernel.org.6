@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-351401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7086099106B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:27:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 732D899106E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37E802817CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:27:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36510282268
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A123231C97;
-	Fri,  4 Oct 2024 20:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AAD1C7612;
+	Fri,  4 Oct 2024 20:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="kmUEZQDX"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Mvpix5kL"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7226B231C8D;
-	Fri,  4 Oct 2024 20:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AD2231CA5;
+	Fri,  4 Oct 2024 20:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728073032; cv=none; b=mE5Yj6VEFGXn1EA4bVsoxYUkCmuMV/dlnVhPcdDcf9CyNL2l7FpR0CzenO5E7BcvWXA7VrAt15mm83UJLTMsxAl+/DJqWe/ANRVuhvPCyb3Ra6ytoG80vEF8rUSuhtalPHemYvXqEHc3zIZcltFfyDYOJPB8b3MYlpvONDbAnsA=
+	t=1728073042; cv=none; b=ndndAlb1mMiFpwQCKNXkYMELQX78Rmr2X5DSleiD+1I50Gqs3bI8XLsTQSXo4GPwSg4BdA32Y48VNXzWWKVCcvNsRp+F55/R1AHiUMhg5OfMYG+qHvLojf+x3mj6gj/ezxl4uylMGnYbMgFKFnvflRSgu5Hr3qRgsRtpCZxxcGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728073032; c=relaxed/simple;
-	bh=iUSgIAano9orVaigWsPHPZU8j88wY3jKpzUL2a6AEs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ds+mhp72txDg8c6fsEvvPlUyQ5fEiYfLozjHQM38NnUkNRQVu7h1e2e+44j16AYg3eNXLpM8fVvBGkBTTUgPjNiwec/Nwf7NjMKWdQC9vvaGF+lgZC603BM9DralZFjUBYiI8fSi5kLS85aTw+uWZI6fxzqoMyiRiZHzrwk4zU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=kmUEZQDX; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=XHtZ1kzdzTmHTPpF0tTkbVytUrH8OZbSiYvFnbqtHMo=; b=kmUEZQDXpmX7+uvwITP4JiVzwM
-	V0KBEfhaLF465sjovVmsQVmvZlewfCj+ZbjMs0IZyRxMa9N0BC/ZI0y7nK3ePJqqJPo7zKKYh3PHM
-	ypoqjt5+/NW7ztrnHsMiFlsQ3M2Bu0kmeTf2yqBITWMvvhzrkByEwhphk9wCYXNgtsriK8aRzKZMy
-	skWXO8L57eUKOiz7ZaRPblm8oncSDLTZWLzX1hu8JN2efTz5aCJ/onq62JmFgmL/nAGEUvi7jEIfJ
-	LUuTUrHZ/Qgqjso/ffINEtf74enGoBE+ixnrrZ7Cog/KXG5uFiN5Q7qRdMurzIa14zyCOJIUwc0+C
-	hqy/V/zQ==;
-Received: from i5e8601c9.versanet.de ([94.134.1.201]:38552 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1swojS-00D4KN-28;
-	Fri, 04 Oct 2024 22:16:58 +0200
-Date: Fri, 4 Oct 2024 22:16:53 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 00/23] kbuild: support building external modules in a
- separate build directory
-Message-ID: <20241004-clever-powerful-hoatzin-2cebfb@lindesnes>
-References: <20240917141725.466514-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1728073042; c=relaxed/simple;
+	bh=R7ofc7BUsJgAI+HbPx78qvcddXfCuxMxe24ralzHk3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=clrM7gk9EgXj/dBTkyqE4/MT1tv/SjL5KUAcXt+PavG4VvNTLQgiY694HISib3dO4OxuizmU4JEp+fsiVg2dCBBpdKjG8yLV8bVk5rGzAK69dnnvmou4hgJruOFI8zrfUmV3aaPC5Y7FmhcPri8KzwxI8Hy4Mc94VxaXSpCI+xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Mvpix5kL; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XL0Fr1nR3z6ClSq7;
+	Fri,  4 Oct 2024 20:17:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1728073038; x=1730665039; bh=lTXL/Dz1oBJXvLrR6pwgSAxa
+	29xr1iIqzNXMrLo4jNw=; b=Mvpix5kLc2oIoIqW6o4Vhm+p8em9/ylzV3bVFoUC
+	NPoQ/+UmpIxqLYQYV4FgldlcePzY4U5qZ4UBmNwnRPkitT5+WPsCpOWQCGMkF67f
+	MusmS54gFpulmGDTn+PitK7+yUPM7wmqdgOZ9OL8pw7QjOmNesdgiLXJm8FBizxM
+	xnd/4do5KbvSzqXz3s8ESRb0IISNKtRnKTry6nEhxeVguuFaaCAXFpuVgDmn1avh
+	aMaQejNg+a6WDgYY9U4wuKwjia1c8GM2WsC7Z1YPJB/yQqQ2iWuooquw4+eyPKBr
+	mQF0sTxKmFQKemUtW47MheXwiEfYHPKJuQC4ylF06iTK4Q==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id MoKYJnH8YtKY; Fri,  4 Oct 2024 20:17:18 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XL0Fn079dz6ClSq6;
+	Fri,  4 Oct 2024 20:17:16 +0000 (UTC)
+Message-ID: <5af3a653-d4b8-4e73-bffc-5583f17e00eb@acm.org>
+Date: Fri, 4 Oct 2024 13:17:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917141725.466514-1-masahiroy@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] dm-inlinecrypt: add target for inline block device
+ encryption
+To: Eric Biggers <ebiggers@kernel.org>, dm-devel@lists.linux.dev
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Md Sadre Alam <quic_mdalam@quicinc.com>, Israel Rukshin <israelr@nvidia.com>
+References: <20241004004152.8845-1-ebiggers@kernel.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241004004152.8845-1-ebiggers@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 17, 2024 at 11:16:28PM +0900, Masahiro Yamada wrote:
-> 
-> There has been a long-standing request to support building external
-> modules in a separate build directory.
-> 
-> The first half is cleanups of documents and Makefiles.
-> 
-> The last part adds KBUILD_EXTMOD_OUTPUT (MO=).
-> This is too big changes, and too late for the current MW.
-> (I did not test kselftest at all.)
-> I hope people test this and may uncover some issues.
+On 10/3/24 5:41 PM, Eric Biggers wrote:
+> +	u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE] = { 0 };
 
-thanks again for the whole series.  I really appreciated to go through
-this patch set and am sorry for that it took so long.  I have tested
-only with some in-tree kmods and with kmods' testsuite modules (but only
-on amd64) and could not find any major issue, only the minor things
-reported.  I also did not test the kselftest or similar.
+Hi Eric,
 
-Kind regards,
-Nicolas
+Isn't the preferred style in the Linux kernel for aggregate
+initialization "{}" instead of "{ 0 }"?
+
+Thanks,
+
+Bart.
+
 
