@@ -1,192 +1,217 @@
-Return-Path: <linux-kernel+bounces-350269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288F399028E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:52:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89262990290
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479991C20CAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:52:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41BCD281765
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F5415B149;
-	Fri,  4 Oct 2024 11:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0164015AAB1;
+	Fri,  4 Oct 2024 11:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Q/kZrgof"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fFx1/JX9"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D0C15ADB3
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 11:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C16A148316
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 11:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728042758; cv=none; b=a6RmCMwPMm2M/nApJp0DJotsfSLlc40Dfb7s1t5L7RWkIyC/n+3yYKuwbHsnb6OcevJkByxz1tPfUGfRyTLXP6/+02eVg/J0NvYQv2vWyhMfAayxw0dhx/M7tceGR2Dd6X4T7CAXCd35QnL75QrQb0mKYNSvH1hr6hxPik6Pc/s=
+	t=1728042921; cv=none; b=TG/V21SON41gg/yVXzKZwfD3vFMpHrSloGskYVMFN8H9YcTjBtquzGU/DqRVnsD2W6ttcOmo/0sLGXqeU1+j/a/O9LQcJWrpZ2kvVdg/bYSQgO56KwatZRPfttjw4n8ChIJ6Vl2ZQXLO4X1Vxha1xJCZ+vcoAd3cuW1fZ5hdqV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728042758; c=relaxed/simple;
-	bh=ON6DrslYXWB/ZmGPt3jwO8A/AguBGTwo8imwe3TmbNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bQf8q1dNuDhtFqdJDP6jD9lL9Tq3I/0Yv53FfxwUDC/YXHCpBj11/sJQNUifCAVVe4TqgLlTYEmIOxxbbvJd0WgcFZMmYazwokakkTeocpHtz1pN4c8QpsRBBMUv0CoFQznruf4M5JctPaIOfNh/QrxhdHZb5C+OKu+6TcLBQvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Q/kZrgof; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5A17B4C9;
-	Fri,  4 Oct 2024 13:50:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728042653;
-	bh=ON6DrslYXWB/ZmGPt3jwO8A/AguBGTwo8imwe3TmbNQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q/kZrgofnAHR0XHO235lJQ32XNSBUlvUlu3X2MQ2RIMRMnoaNOVuGkcQq4fXMShFB
-	 afvFkJ6R2jE8iEOSUWESFu7NgDw7lQpPC99sFfV4VKn/bWsh3LRzvW5a9r2aGZTElU
-	 LHvcblS6UggwWyIQDC320dguWDKnaUEDR3TqIMzQ=
-Message-ID: <babeae17-488d-4428-aa55-fdd904a5425e@ideasonboard.com>
-Date: Fri, 4 Oct 2024 14:52:24 +0300
+	s=arc-20240116; t=1728042921; c=relaxed/simple;
+	bh=lW4WYgkssxVBDl6uNjKBsszdRCDAxXm8ViV/nvdlr1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kAlSGK2wo51b9Ldd9fh2+dYyjZoo1ExMgz2Joa0PRKWZOBAkvpML11i1xxw4ZErKaTIb8BbXc830jqswgmFjIM0lSUvp4+YTXj3RVdljTbCaHRyFDEJtcFWxOtXbiMry+rG5AJrqiastllsjn9sIb7/PrXyOYRfSDuNWsBEmGX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fFx1/JX9; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e25d15846baso1864224276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 04:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728042918; x=1728647718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wTaeamx6DcDUAZ9BpfuVVEl85CSz9b541yZH8Gp9Gkk=;
+        b=fFx1/JX9eoe+64XPdM6zVjGuUXYuOUV0QwDSk9hGDXcYo15L2V3G1Gj0yH1f/pwVXW
+         ranYZL9P5RMNObO3Jcm54/q+DJc8dc9kE6RsCb6ScBabFOEnLJzmkxv3q5DrWCsVaukE
+         Jom/E1KjCqZJnq25xvi0Y0egkvCh9kSnKJsmOqNP3ETBi1YEy6UYq4/BrB47Xx0i6BnO
+         K3XugRyEEjFYfSkvxiowsmEB+XiGuvK/vCxn6zXiFrx8yv5fq6vhcR16HVaPgg6MfnY9
+         DvRCQ3Ut/nFZ7Rn6eV40UcZgtu23pMsqMYZCeYgaqavEKup2oYntn/OXCTX4e2bHllz+
+         WwWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728042918; x=1728647718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wTaeamx6DcDUAZ9BpfuVVEl85CSz9b541yZH8Gp9Gkk=;
+        b=J9O8hIfAWsWhorGh5R/pM4Gin43rxwBr06zjxIKzVf0XQHmtHqhsXy3vWYC3aM4Q9e
+         l571Wd+uQWPpFx0m7Id4lRgU6XrE5rVCe2t1+zkdprnzh0ZOiUoK2dCLnmRdfneRGFoA
+         whcQI+af5QiaG3WBOYXSIncYt0D3SmDFSU30qDQXzO+AKvTifJaJbbkDTn/4mQQwqJu6
+         REnvSO1u6Zt/eAv+fi0Bp1Ec1shAVBR/E9iNAVu/VBMkCxAYjvBisq9O3/tEpHnfAshb
+         kGYdkqIp8Xo8x6env4HkP0IeFZSFKG5aG25ctGO9Wv8WVLZ1hEWJ8YEGxSzGOllnkZwB
+         rMVg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0gH5uVx9JcQiLmvKOrZrtI9DdmNvWme5fFluZZVs+dKy8BC5Clsq1SzFMSt45aBQ87yTv6Aj79hQTiUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi5/ah7PmlYikXrvOqkkRsX9xFvRnnwFl8nE1UK4BaCBuNpmCJ
+	xXPlRfShVPk2NxYV79CptqSSbqL1fDg5KOWmOqcuW9aAvHwX3gjDOoHX9ErdG32Bp8Z2p5CX1I4
+	1f2g/Lt8pFAcmzkTUXtEanHl+ve695mIBZCUB+w==
+X-Google-Smtp-Source: AGHT+IFOHbZCszBR3ogOu1f/JhER/gzMihu7gc5SjpNsnu2X6RNavWmU6/W2zmAtwXas+DdPqNCvqMeG+iyhpAHKMzo=
+X-Received: by 2002:a05:6902:11ce:b0:e26:bea:9580 with SMTP id
+ 3f1490d57ef6-e28939513f8mr1470314276.53.1728042918520; Fri, 04 Oct 2024
+ 04:55:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fw_devlinks preventing a panel driver from probing
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>,
- Saravana Kannan <saravanak@google.com>,
- Aradhya Bhatia <aradhya.bhatia@linux.dev>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Devarsh Thakkar <devarsht@ti.com>
-References: <1a1ab663-d068-40fb-8c94-f0715403d276@ideasonboard.com>
- <34mewzvfyjsvyud3lzy6swxs7sr64xkgrbkxtvyw3czvoerct7@7guo32ehwa52>
- <5a540bdb-e3ca-494a-b68d-8f81f4d1cc1a@ideasonboard.com>
- <il3s26owmtyf3knniv7klkmw3uuz4dffrump7jo47dk6hxdsya@v5plmtjcbukf>
- <bed619c7-1a82-4328-825c-117c2ee3639d@ideasonboard.com>
- <CAA8EJprDdst-mcwMsWs=0AHGCNa_5Ng90tubSJ7VAHamx2T93g@mail.gmail.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <CAA8EJprDdst-mcwMsWs=0AHGCNa_5Ng90tubSJ7VAHamx2T93g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240913102836.6144-1-victorshihgli@gmail.com>
+ <dfde5172-c1b7-4c22-94ab-87a1d5d5ee9d@intel.com> <CAK00qKAOd9_bSGs8sxaZjOjkpw3ge-jzXdmkZMcFmm=eg70KVQ@mail.gmail.com>
+In-Reply-To: <CAK00qKAOd9_bSGs8sxaZjOjkpw3ge-jzXdmkZMcFmm=eg70KVQ@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 4 Oct 2024 13:54:42 +0200
+Message-ID: <CAPDyKFqrSS=AhcQxVET9V_SN008Cu=n5PuBF70_yBt2CDjMK-w@mail.gmail.com>
+Subject: Re: [PATCH V22 00/22] Add support UHS-II for GL9755 and GL9767
+To: Victor Shih <victorshihgli@gmail.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
+	Lucas.Lai@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
+	Greg.tu@genesyslogic.com.tw, dlunev@chromium.org, 
+	Victor Shih <victor.shih@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+On Mon, 30 Sept 2024 at 12:47, Victor Shih <victorshihgli@gmail.com> wrote:
+>
+> Hi, Ulf
+>
+> Sorry for bothering you.
+> In this series of patches I have reached the final comments of the sdhci =
+parts.
+> Please help review this series of patches.
+> I hope to get your feedback to confirm whether there are any needs to
+> be modified.
+> If you already have a closer look at a paragraph in the series, could
+> you let me know your opinions first.
+> I look forward to your reply.
 
-On 27/09/2024 11:35, Dmitry Baryshkov wrote:
-> On Fri, 27 Sept 2024 at 08:41, Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
->>
->> On 27/09/2024 02:26, Dmitry Baryshkov wrote:
->>> On Thu, Sep 26, 2024 at 02:52:35PM GMT, Tomi Valkeinen wrote:
->>>> Hi,
->>>>
->>>> On 21/09/2024 23:15, Dmitry Baryshkov wrote:
->>>>> On Mon, Sep 16, 2024 at 02:51:57PM GMT, Tomi Valkeinen wrote:
->>>>>> Hi,
->>>>>>
->>>>>> We have an issue where two devices have dependencies to each other,
->>>>>> according to drivers/base/core.c's fw_devlinks, and this prevents them from
->>>>>> probing. I've been adding debugging to the core.c, but so far I don't quite
->>>>>> grasp the issue, so I thought to ask. Maybe someone can instantly say that
->>>>>> this just won't work...
->>>>>
->>>>> Well, just 2c from my side. I consider that fw_devlink adds devlinks for
->>>>> of-graph nodes to be a bug. It doesn't know about the actual direction
->>>>> of dependencies between corresponding devices or about the actual
->>>>> relationship between drivers. It results in a loop which is then broken
->>>>> in some way. Sometimes this works. Sometimes it doesn't. Sometimes this
->>>>> hides actual dependencies between devices. I tried reverting offending
->>>>> parts of devlink, but this attempt failed.
->>>>
->>>> I was also wondering about this. The of-graphs are always two-way links, so
->>>> the system must always mark them as a cycle. But perhaps there are other
->>>> benefits in the devlinks than dependency handling?
->>>>
->>>>>> If I understand the fw_devlink code correctly, in a normal case the links
->>>>>> formed with media graphs are marked as a cycle (FWLINK_FLAG_CYCLE), and then
->>>>>> ignored as far as probing goes.
->>>>>>
->>>>>> What we see here is that when using a single-link OLDI panel, the panel
->>>>>> driver's probe never gets called, as it depends on the OLDI, and the link
->>>>>> between the panel and the OLDI is not a cycle.
->>>>>
->>>>> I think in your case you should be able to fix the issue by using the
->>>>> FWNODE_FLAG_NOT_DEVICE, which is intented to be used in such cases. You
->>>>
->>>> How would I go using FWNODE_FLAG_NOT_DEVICE? Won't this only make a
->>>> difference if the flag is there at early stage when the linux devices are
->>>> being created? I think it's too late if I set the flag when the dss driver
->>>> is being probed.
->>>
->>> I think you have the NOT_DEVICE case as the DSS device corresponds to
->>> the parent of your OLDI nodes. There is no device which corresponds to
->>> the oldi@0 / oldi@1 device nodes (which contain corresponding port
->>> nodes).
->>
->> Do you mean that I should already see FWNODE_FLAG_NOT_DEVICE set in the
->> fwnode?
-> 
-> No, I think you should set it for you DSS links. If I understand
-> correctly, this should prevent fwdevlink from waiting on the OLDI to
-> materialize as a device.
-> Note: my understanding is based on a quick roaming through the code
-> some time ago.
+Hi Victor,
 
-Ok. Well, I did experiment with that, but I didn't figure out how to use 
-it. Afaics, even if I set FWNODE_FLAG_NOT_DEVICE to the oldi nodes (just 
-as an experiment I also set it to all the nodes from dss to oldi) in the 
-DSS driver's probe, it doesn't help: the panel driver still doesn't probe.
+Just wanted to let you know that I have re-started the review. I am
+looking at patch7 right now. Hopefully I should be able to complete
+the review later today or on Monday.
 
-I also wonder whether it would work reliably even if it did work. First 
-the panel driver is prevented from probing as the oldi dependency is not 
-present. Then the DSS driver probes, sets the above flag, but then it 
-fails to probe as the panel is missing. At this point something should 
-trigger the probing of the panel driver again, and I wonder if there's 
-anything to trigger it.
+Kind regards
+Uffe
 
-  Tomi
 
+>
+> Thanks, Victor Shih
+>
+> On Wed, Sep 18, 2024 at 12:47=E2=80=AFPM Adrian Hunter <adrian.hunter@int=
+el.com> wrote:
+> >
+> > On 13/09/24 13:28, Victor Shih wrote:
+> > > From: Victor Shih <victor.shih@genesyslogic.com.tw>
+> > >
+> > > Summary
+> > > =3D=3D=3D=3D=3D=3D=3D
+> > > These patches[1] support UHS-II and fix GL9755 and GL9767
+> > > UHS-II compatibility.
+> > >
+> > > About UHS-II, roughly deal with the following three parts:
+> > > 1) A UHS-II detection and initialization:
+> > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
+> > >   Sequence[2]).
+> > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequen=
+ce
+> > >   [2]).
+> > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inclu=
+de
+> > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
+> > >   Setting Register Setup Sequence.
+> > >
+> > > 2) Send Legacy SD command through SD-TRAN
+> > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure L=
+egacy
+> > >   SD compatibility and preserve Legacy SD infrastructures (Section 7.=
+1.1
+> > >   Packet Types and Format Overview[3]).
+> > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UH=
+S-II
+> > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2=
+]).
+> > >
+> > > 3) UHS-II Interrupt
+> > > - Except for UHS-II error interrupts, most interrupts share the origi=
+nal
+> > >   interrupt registers.
+> > >
+> > > Patch structure
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > patch#1-#7:  for core
+> > > patch#8-#20: for sdhci
+> > > patch#21:    for GL9755
+> > > patch#22:    for GL9767
+> > >
+> > > Tests
+> > > =3D=3D=3D=3D=3D
+> > > Ran 'dd' command to evaluate the performance 3 times:
+> > > (SanDisk UHS-II card on GL9755 controller)
+> > >                              Read    Write
+> > > UHS-II disabled (UHS-I): 85.5MB/s 56.3MB/s
+> > > UHS-II enabled         :  182MB/s 75.5MB/s
+> > >                              Read    Write
+> > > UHS-II disabled (UHS-I): 86.7MB/s 52.1MB/s
+> > > UHS-II enabled         :  179MB/s 77.6MB/s
+> > >                              Read    Write
+> > > UHS-II disabled (UHS-I): 85.8MB/s 49.1MB/s
+> > > UHS-II enabled         :  181MB/s 89.8MB/s
+> > > (SanDisk UHS-II card on GL9767 controller)
+> > >                              Read    Write
+> > > UHS-II disabled (UHS-I): 81.9MB/s 49.0MB/s
+> > > UHS-II enabled         :  186MB/s 87.9MB/s
+> > >                              Read    Write
+> > > UHS-II disabled (UHS-I): 80.8MB/s 53.5MB/s
+> > > UHS-II enabled         :  192MB/s 87.3MB/s
+> > >                              Read    Write
+> > > UHS-II disabled (UHS-I): 81.0MB/s 53.9MB/s
+> > > UHS-II enabled         :  199MB/s 73.6MB/s
+> > >
+> > > Test command
+> > > =3D=3D=3D=3D=3D
+> > > Read: dd if=3D/dev/mmcxxx of=3D/dev/null bs=3D4096k count=3D2000 ifla=
+g=3Ddirect
+> > > Write:dd if=3D/dev/zero of=3D/dev/mmcxxx bs=3D4096k count=3D2000 ofla=
+g=3Ddirect
+> > >
+> > > Changes in v22 (September. 13, 2024)
+> > > * Rebase on latest mmc/next.
+> > > * Adjust patch order to avoid defined but nt used warnings:
+> > >   v21 patch#18 to v22 patch#14.
+> > >   v21 patch#14 to v22 patch#15.
+> > >   v21 patch#15 to v22 patch#16.
+> > >   v21 patch#16 to v22 patch#18.
+> > > * Patch#14: Remove unnecessary code to avoid defined but not used war=
+nings.
+> > > * Patch#15: Add necessary code to avoid defined but not used warnings=
+.
+> > > * Patch#16: Remove unnecessary code to avoid defined but not used war=
+nings.
+> > >             Modify commit message.
+> > > * Patch#17: Remove unnecessary code to avoid defined but not used war=
+nings.
+> > > * Patch#18: Add necessary code to avoid defined but not used warnings=
+.
+> >
+> > For SDHCI:
+> >
+> > Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> >
+> >
 
