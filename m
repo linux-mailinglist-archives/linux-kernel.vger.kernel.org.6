@@ -1,146 +1,142 @@
-Return-Path: <linux-kernel+bounces-350232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B5829901D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:09:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE399901D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D73BB284630
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:09:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71BD0283B21
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147CE156F42;
-	Fri,  4 Oct 2024 11:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBBF157A55;
+	Fri,  4 Oct 2024 11:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZCVKWpS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fvoXmcew"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677771553A3;
-	Fri,  4 Oct 2024 11:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66403156C5E;
+	Fri,  4 Oct 2024 11:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728040153; cv=none; b=OIVdb8uQMoMbjdzwRz/Z9uBCHEZ1Xy5UCiA7s/G5fABeptfZa9kROPTUClQv184JUeiPnTbYiDvPcVZEO2OYCzYrfzbXOKk/7ptrW06RnUfjZMnq8WrLqr8gHwo4E4anrtOaA7UnFHqi3wV7dxNpXwyQXMBQVLyUJXMsJ6cFupw=
+	t=1728040137; cv=none; b=msj0sMJoHjlltw8IhOwsbogbFplYfGYTOESaSt/7F/XeBaYrduPOZMmxMAhUibC0Plc+P5aPFeHykq2p4pebVn67Wg40ANWkAghBGcTS8rIfK5lAwmGdZaKv/U6lvFMnN5Y6ANAu5totIkurJD/2NWG++1Tpy/XvqFasyLZW2RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728040153; c=relaxed/simple;
-	bh=5dobc/ppI/GY4fjwxBSWrqeHqEpC0NCOBHNV47QAtuM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iibd3EdejzZ3vOrWETU7U4jNJpR4Qr9yMg9ngKvdvtDxRA9reBBTB29rmvAFrJgJMVwdaxJ+jhQ+io/y54tAFNcbCrwOD+etvmysGJjDeea/K/gNWQa5qtD/cw3IYY9uU9dCTv3zLZ5UShBypASgB5E92V/F8o1OJQH245HckwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZCVKWpS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05517C4CECF;
-	Fri,  4 Oct 2024 11:09:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728040153;
-	bh=5dobc/ppI/GY4fjwxBSWrqeHqEpC0NCOBHNV47QAtuM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NZCVKWpSDYHcm1wtW94b5oCB/ho8uqizVZGqtnkZh4W7h8J2Srx39qVi5y6SvmtOB
-	 giiRO90Fx3K2OcmUpcITOgYQG34OrKdlNhqPWGmgvINeR1O44ExExh0LmC7JyCsdYp
-	 vmxHnU4ngPY8Q2h0tPQCn7VKCOsWGBjdc5WyVEIw9XmaQ2HCv1/wWWiDIdH5JkHGCW
-	 9rVbiQkkbiJTNGpwLkYEIB6VwVYF3injZZklRNnm7R4teus/TJjtYjL978doOJ99T9
-	 xD/IvhhZcc6r4jpAK+Q52lYBXG77BLq6bbWRTlzbCu48p5tLS8z6LoJqD6lPkpsZvS
-	 Ka2eaqogDvPIQ==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c88e4a7c53so2176372a12.0;
-        Fri, 04 Oct 2024 04:09:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVDGWeIeGPUtrD5R+wSPGpTn8TAY4W/xxvcWi9D2qnh4lX15bUXR7pECHcMVNLecaZ9Q1zy21OtbKn1bSZW@vger.kernel.org, AJvYcCVam7K9Fe+Ctv5bBcQuzfzvDpyk0rOu/wjxMVcvnVEY6AQiAYgum7ak2WxUvRaO32+aRXphHKaKLhHLJQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmiVNpnZ+xXiloroD9c06LY/FUv1n2J9e0rWE6gf5IkyYkIl3D
-	TJYdwtsRAOjXX5/PkoFLqReQE3QdH+8djgbE9niKgdzv7+EjDDafnqUkKrVMT9+6MaYA9D3jgiz
-	VdvkEJAfSR/0eiAm7odSME0flFSk=
-X-Google-Smtp-Source: AGHT+IF2gktiypMt1MSg0qcwWQompkJIKptsfPY2AM5dPRFfG9SRpi5mqScOBaEbBVOUB/J9GuJ0ZTjGRV6HIRZodeA=
-X-Received: by 2002:a17:907:f153:b0:a8a:8c04:ce95 with SMTP id
- a640c23a62f3a-a991bdbffa4mr227548666b.43.1728040151461; Fri, 04 Oct 2024
- 04:09:11 -0700 (PDT)
+	s=arc-20240116; t=1728040137; c=relaxed/simple;
+	bh=7rAw765mVqpfGMDlakPXuedrwOSDBmggj4LOKJK75wc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rBpMwXIQtG9J+tr3l9SuWFPFfTfsjGN6iCNe4VZdIR1t9+9X/1fCynlKJgejMaaHi7LTAsrOhSQTa6/CFwo8UAYXFAPpHTU4QHHpeBlY7uIH8L1WuPj5Z3ttm5imZs+mVzKa6NhYIG4+cEQxRRL21Fs/UMDCfMbLynHedHAEAFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=fvoXmcew; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 085499c8824111ef8b96093e013ec31c-20241004
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=Rg57b2C8DB3sjeiJUSQURXizNpt/OycVgwR/X0Z5Pt4=;
+	b=fvoXmcewBUYl/9P/erl4TFyRotvP8gssBISM6N4a8s1EcsUYF2JrIVUQKc/vzqyOUxvwEHukJZO4jszPt2UXhDKmHhZQJSH7KimWerq4ndYQTpL+Vk0ZC2oUy2YfHmm1V5aBBiJAtDNDOQTIRv+E42JqnR/Khhf5xnhm8P+AkcA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:457c511d-21cd-4134-92a2-be47e2a32547,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6dc6a47,CLOUDID:1c55c140-8751-41b2-98dd-475503d45150,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 085499c8824111ef8b96093e013ec31c-20241004
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <pablo.sun@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1682741167; Fri, 04 Oct 2024 19:08:49 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 4 Oct 2024 19:08:48 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Fri, 4 Oct 2024 19:08:48 +0800
+Message-ID: <0aa5a003-46d5-4dc7-c720-c847cae95f65@mediatek.com>
+Date: Fri, 4 Oct 2024 19:08:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004105333.15266-1-jth@kernel.org>
-In-Reply-To: <20241004105333.15266-1-jth@kernel.org>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 4 Oct 2024 12:08:34 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H48ntW+Fi-=FrZyCgxSBv25KAyh-H5tDGwLFQsOnWmXAQ@mail.gmail.com>
-Message-ID: <CAL3q7H48ntW+Fi-=FrZyCgxSBv25KAyh-H5tDGwLFQsOnWmXAQ@mail.gmail.com>
-Subject: Re: [PATCH v2] btrfs: don't BUG_ON() NOCOW ordered-extents with
- checksum list
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Qu Wenruo <wqu@suse.com>, Johannes Thumshirn <johannes.thumshirn@wdc.com>, 
-	Filipe Manana <fdmanana@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v3 3/6] dt-bindings: nvmem: mediatek: efuse: Reuse
+ mt8186-efuse in mt8188
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+References: <20241002022138.29241-1-pablo.sun@mediatek.com>
+ <20241002022138.29241-4-pablo.sun@mediatek.com>
+ <mh7upw2y2dclyosved3chw7chpqgdg4a3j5ftwftfhm6v5uqpt@cotoeuopfbqg>
+ <559fc2a5-631c-440a-812f-2907f84b16b4@collabora.com>
+ <20241002211130.GA1316112-robh@kernel.org>
+From: Pablo Sun <pablo.sun@mediatek.com>
+In-Reply-To: <20241002211130.GA1316112-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 4, 2024 at 11:53=E2=80=AFAM Johannes Thumshirn <jth@kernel.org>=
- wrote:
->
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->
-> Currently we BUG_ON() in btrfs_finish_one_ordered() if we finishing an
-> ordered-extent that is flagged as NOCOW, but it's checsum list is non-emp=
-ty.
->
-> This is clearly a logic error which we can recover from by aborting the
-> transaction.
->
-> For developer builds which enable CONFIG_BTRFS_ASSERT, also ASSERT() that=
- the
-> list is empty.
->
-> Suggested-by: Filipe Manana <fdmanana@suse.com>
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
-> Changes to v1:
-> * Fixup if () and ASSERT() (Qu)
-> * Fix spelling of 'Currently'
-> ---
->  fs/btrfs/inode.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 103ec917ca9d..e57b73943ab8 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -3088,7 +3088,10 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_=
-extent *ordered_extent)
->
->         if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
->                 /* Logic error */
-> -               BUG_ON(!list_empty(&ordered_extent->list));
-> +               if (!list_empty(&ordered_extent->list)) {
-> +                       ASSERT(list_empty(&ordered_extent->list));
+Hi Rob, Angelo, and Krzysztof,
 
-I find this confusing and not so easy to grasp immediately. It's the
-same as older places where we have:
+Thanks for the thoughtful review, I'd like to follow-up on
+Rob's comment:
 
-if (unexpected condition) {
-   ASSERT(0);
-   (...)
-}
+On 10/3/24 05:11, Rob Herring wrote:
+[snip]
+> > > diff --git a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
+> > > index 32b8c1eb4e80..70815a3329bf 100644
+> > > --- a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
+> > > +++ b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
+> > > @@ -39,6 +39,10 @@ properties:
+> > >                 - mediatek,mt8195-efuse
+> > >                 - mediatek,mt8516-efuse
+> > >             - const: mediatek,efuse
+> > > +      - items:
+> > > +          - enum:
+> > > +              - mediatek,mt8188-efuse
+> > > +          - const: mediatek,mt8186-efuse
+[snip]
+> 
+> What about all the other efuses? The fallback needs to be a subset of
+> the 1st compatible.
+[snip]
+> 
+> No, but any fallback seems seems a bit odd here. It's one of those
+> things that's going to change with every chip.
 
-I find it more natural and less confusing to just do:
+I think you all agree that the common fallback "mediatek,efuse" should
+not longer be used, and such deprecation should be commented both commit
+message and the YAML, same as "rockchip,rockchip-efuse" in rockchip-efuse.yaml.
 
-ASSERT(list_empty(&ordered_extent->list));
-if (unlikely(!list_empty(&ordered_extent->list))) {
-    ret =3D -EINVAL;
-    btrfs_abort_transaction(trans, ret);
-    goto out;
-}
+But, Rob has mentioned that I should only define a fallback
+if and only if mediatek,mt8186-efuse is a **subset** of mediatek,mt8188-efuse.
 
-> +                       btrfs_abort_transaction(trans, -EINVAL);
-> +               }
+It is true that I can merely confirm that they share the same "GPU speed bin"
+efuse bit definition and conversion routines.
 
-This also misses setting 'ret' to the error and the goto into the
-label 'out', as I've placed in the example above.
+At this moment I cannot confirm:
 
-Thanks.
+- mt8188 has every efuse cells mt8186 defined.
+- Every mt8188 efuse cells values must be interpreted the same as mt8186.
 
->
->                 btrfs_inode_safe_disk_i_size_write(inode, 0);
->                 ret =3D btrfs_update_inode_fallback(trans, inode);
-> --
-> 2.43.0
->
->
+So, I don't think mt8186-efuse is a subset of mt8188-efuse in this sense.
+
+Do you think it would be better that we re-use this GPU speed bin conversion
+in the eFuse driver implementation, rather than reuse it in the dt-binding?
+
+This is also what Angelo suggested initially for v2 modification.
+
+Many thanks,
+Pablo
 
