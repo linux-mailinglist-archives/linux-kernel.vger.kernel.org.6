@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-351266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D6C990F28
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:50:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD79990F2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 731341C22F65
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:50:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D0361C22F3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A513231C8B;
-	Fri,  4 Oct 2024 18:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04439231CA0;
+	Fri,  4 Oct 2024 18:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2bZ6Tvu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QgSK3jpE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866C51E1C37;
-	Fri,  4 Oct 2024 18:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B3C231C91
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066736; cv=none; b=Wsh3RZ1r/aqK5YhjwaxDATEXMeYg8r1X/4ng74MMfwV5EeAUQqQw4lshsN+YYbBdQ5cgTcrXMMUxyuDPps2aJJdZAChLJn9ZgunNPQXs8sfiZSkSWjP6UeHs1bFY5PRn6GrL7SZKChwvjYx8kKgFHjhw/4JY76/yusksBdrKWWI=
+	t=1728066791; cv=none; b=QST4yVHWeMUXCZS+2xCLDBChVtfP2eGHT2OzsdxcWYXrgR5mCDlYR0A8VRuqGn4ph9arE9gZho0t56sfURKo/GlNa6HTgW9aeMWoRipliC/mU8iOEr2c9qZbBhjmq5ClZaUM7glXuemp5gok7nr0416uXyd7KUbODGAP8Em4Drg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066736; c=relaxed/simple;
-	bh=kqds2NyBuVvxYXnbgrMcfF/YXMYOO/t54toLJN9wb8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aVRnpelHAHEIcCaq7H8w3niJ25qN8SHsxUIw3Z7yA9nEothmCAQeI3inxh4hJS1jRDLgSTHzsLx43aKO0LRSsf8zCNHMWFYcYeGB7z3TPR6tOrthX6Jj8i8ix7jm722Nxrla/O9GBo8whMkOmXzNoOMx3VeP52jARoTa5HoH/gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2bZ6Tvu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 535E7C4CECC;
-	Fri,  4 Oct 2024 18:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066736;
-	bh=kqds2NyBuVvxYXnbgrMcfF/YXMYOO/t54toLJN9wb8A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=j2bZ6Tvu05cnoTx6BnLQS0kkDB1cC9aRIVRXUIz2erDN5TTLSn/C5Hyza3cQei28G
-	 Dc84eYO4opEa9pWoA9AT2N/Q/Y6HvrRiAmnxZ0BjxZdqaWO/51QLbua4nG+pCpMhQk
-	 vRwcm5Fn56kD9g1arwd/Jdm1LoFNZZp/HXMjUzczeL1PPW/1V1X3cwvXxTi6jbHHxy
-	 6/jKMyT+PGQjS0g0k7k367IMKjRbMmUjDkiUzvomR4CPJeGHRXHaVLOjE9WRLW7YLr
-	 rKwk8qoKJmXXdb7OpeYABTknYW3QWXgQc/3tMCAES7nEvfKmmx+IIfiKuszul1BVST
-	 drzkpNbh3vEEg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Andrey Shumilin <shum.sdl@nppct.ru>,
-	Helge Deller <deller@gmx.de>,
-	Sasha Levin <sashal@kernel.org>,
-	tzimmermann@suse.de,
-	javierm@redhat.com,
-	fullwaywang@outlook.com,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 16/16] fbdev: sisfb: Fix strbuf array overflow
-Date: Fri,  4 Oct 2024 14:31:43 -0400
-Message-ID: <20241004183150.3676355-16-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004183150.3676355-1-sashal@kernel.org>
-References: <20241004183150.3676355-1-sashal@kernel.org>
+	s=arc-20240116; t=1728066791; c=relaxed/simple;
+	bh=CJkthIwbyQ2P295Vy9Qj+ckjweCDMd6jXFZiFV0zFWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G1ZkK8nt2AHQs4H5Tsbn5TUrsziW4N1Qpf4/En0thTVyAjca0mWUOz7avIq7PuAFta/WPG5sWVefYq5kUO+v9LgWv6K7wYFHi1K0HrfACUSTUATXmXKnjKpq3DoEa0v4H945ocBV2M8hrpS7lSlXTu4e76oik0yueo1WgZKNbCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QgSK3jpE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494AqpHV005396;
+	Fri, 4 Oct 2024 18:33:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3+xaBo+tQwgmphShqtZjZP+Jn+aYi/Hz1R5K3p9jxYY=; b=QgSK3jpE0wHwBrG8
+	dYCR3VAaVYJKOM7c4qXfBQ2zQEA50s0Gm5wVaifEfkgAOaK1901CZ46QKmMOHbo8
+	Da1+eGgOcGNMaCeMMhs2vpJLXoe5K/fK9pGU0TmeCGE29tnmqKVZe7rGkwlnJftn
+	7o4QE3mKVVVaqvr0b7HHiuvMJB8UUAxRCpBHpPEVHKW9UpDJJ2f/Mtv0J4Fd++Bz
+	SM9LFkVbSFJcNArVG8nPxWECbOKAaDxzqNF8Hb/lCr3XIZdqtVwMwMWrQzxSvAzi
+	fqFCYDsX26EU5MVAl9eQWW2aPioozlYzfzI9Radwzq2HY4y5V38OxCC3I6IKVUa4
+	DFIRbw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205e315e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 18:33:04 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494IX38b028853
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 18:33:03 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
+ 11:33:02 -0700
+Message-ID: <1a2bb8fc-0242-d86b-1de0-cc9eec1c61c0@quicinc.com>
+Date: Fri, 4 Oct 2024 12:33:01 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.322
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V3 11/11] accel/amdxdna: Add firmware debug buffer support
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240911180604.1834434-1-lizhi.hou@amd.com>
+ <20240911180604.1834434-12-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240911180604.1834434-12-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FfKdEFuTcf_7m05uejgdJZu_GnxXU5gl
+X-Proofpoint-ORIG-GUID: FfKdEFuTcf_7m05uejgdJZu_GnxXU5gl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 phishscore=0 mlxlogscore=956
+ mlxscore=0 adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040128
 
-From: Andrey Shumilin <shum.sdl@nppct.ru>
+On 9/11/2024 12:06 PM, Lizhi Hou wrote:
+> User application may allocate a debug buffer and attach it to an NPU
+> context through the driver. Then the NPU firmware prints its debug
+> information to this buffer for debugging.
 
-[ Upstream commit 9cf14f5a2746c19455ce9cb44341b5527b5e19c3 ]
-
-The values of the variables xres and yres are placed in strbuf.
-These variables are obtained from strbuf1.
-The strbuf1 array contains digit characters
-and a space if the array contains non-digit characters.
-Then, when executing sprintf(strbuf, "%ux%ux8", xres, yres);
-more than 16 bytes will be written to strbuf.
-It is suggested to increase the size of the strbuf array to 24.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Signed-off-by: Andrey Shumilin <shum.sdl@nppct.ru>
-Signed-off-by: Helge Deller <deller@gmx.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/video/fbdev/sis/sis_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/video/fbdev/sis/sis_main.c b/drivers/video/fbdev/sis/sis_main.c
-index b7f9da690db27..38a772582bc3e 100644
---- a/drivers/video/fbdev/sis/sis_main.c
-+++ b/drivers/video/fbdev/sis/sis_main.c
-@@ -197,7 +197,7 @@ static void sisfb_search_mode(char *name, bool quiet)
- {
- 	unsigned int j = 0, xres = 0, yres = 0, depth = 0, rate = 0;
- 	int i = 0;
--	char strbuf[16], strbuf1[20];
-+	char strbuf[24], strbuf1[20];
- 	char *nameptr = name;
- 
- 	/* We don't know the hardware specs yet and there is no ivideo */
--- 
-2.43.0
-
+I feel like I must be missing something. It looks like this patch 
+accepts a buffer from the user, and stores it. However I don't see how 
+the NPU firmware ever learns that this special buffer exists to then use it.
 
