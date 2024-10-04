@@ -1,90 +1,93 @@
-Return-Path: <linux-kernel+bounces-351394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD0B99107A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:28:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C591199105F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79A1FB32DDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:25:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70DC91F242B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB151DBB0E;
-	Fri,  4 Oct 2024 20:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5091DBB2E;
+	Fri,  4 Oct 2024 20:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xsqmyNDa"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sV+eyGXw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A651DBB0F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 20:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB851DBB26
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 20:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728072682; cv=none; b=OUYSR4MNj96fWnWgyw9QySmbaqWWd5VuFpWrYohOKZyBWRtu8rMgXsl3I63xlkGfzV3gqKLU5/dRoWPWubvF8z9HY89uJN1+0Sb9f9dAvY9uC1VEfc3A9pSWhbqflN7wJD39j+x/DmhwblmxbMG8JEl7x+mQgyDpN0L/k833Qok=
+	t=1728072720; cv=none; b=YpsdDM3ze0gFPoh2Djw5nMsYrHTVVrO4bO+iJ60mF1xy3eroXHZFQgkVv/zIiJgVKCY56c+ulj2OY9xcnHy3f929vY1Kac0rYYv5f1xnbA+pRo4Wv21rAjyWPVBj7w2v3DlLSJz+cKvcw4is8XAQHGL4uv6ws1lYFteJZNqd/Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728072682; c=relaxed/simple;
-	bh=1Q3ARqpo6ucPEOgOBCTE4UmqiP9jx666un4nzKeXtWs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=cPIrtmwjlkXEeeb2K5RmzSP6Vj6ccpRF1MxVb1VPB5HPLWUqdr6YhJCdA9sYkHHdBVcxncRGcN41uH9XZB9n7KZKGasYDceeqVFPDQSQrfp9/pGm0FLeXUHLhVcchjm0XzNH3ee4WDlDIoroWA1Znq4RwAOhoXQH04zr8V1KdsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xsqmyNDa; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728072678;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Q3ARqpo6ucPEOgOBCTE4UmqiP9jx666un4nzKeXtWs=;
-	b=xsqmyNDaawfekWLDyNGp7gdxln8Ak7E1Yp4mB+h+AAETE0UYT6oGDzD8De+h82823Bs5Rs
-	41+Z4+M2t8KWjzMXFGaW9xODwM8NXxdTgLr8C13psHTOKF9bReajNsHoulaGEa0+2CAe/b
-	5i/btTPP0bgKEAyE3H04pPpFAdVfhwc=
+	s=arc-20240116; t=1728072720; c=relaxed/simple;
+	bh=7r7hHmFyeP0fOr7m0Qjy49aO6iWo6eIdszxngxKbEr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rh43NmQK1yPw5RtNNFyoJnJ+YHZUY6EQzRl1qGUyIS7YdwRPOfzUB2R5UbdG1QJ1Gq1vIhvQGksGO1vzxSPBIW/TY/nqfZ72j8ghK1DQFEICvT3c+whdEbwzJIoffdIleaHMjJ+R3DYrH95DjcDpr5wMpr6QHjh2xh1h2OuFFb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sV+eyGXw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CCFBC4CEC6;
+	Fri,  4 Oct 2024 20:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728072719;
+	bh=7r7hHmFyeP0fOr7m0Qjy49aO6iWo6eIdszxngxKbEr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sV+eyGXwyPXXI/65SBuOA0Rc5ntKGDUqHFngpRC9BUaI0QZ7mGAp1wm+7+2o4HXDp
+	 Vvgotb3Loq4Gji+v66por6Ndt49ONSNPkpaH41wFLFFBiJytYVxw4LGfxiwc/uWPj5
+	 wsrwJfxNRxqFw1Po4CfjZTObSzkEgVh3k2Z6rlxJfUD5bivFz0kuAkoCC9YXELvbEJ
+	 J3JNT+gEwHE/zD0JfJzzcOJLnpTxxc1hTTlCqVY4VHlLQ60I+tdhskXYqoKtReIUj+
+	 RdmZZfZICdX1Ivm+q9GnFJ5zOGf8usKTcicAwHW9Z2RHQ4l44ri2OrELXQfBHKrNxr
+	 t2E/wbZtSbFEw==
+Date: Fri, 4 Oct 2024 10:11:58 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com,
+	Daniel Hodges <hodges.daniel.scott@gmail.com>,
+	Changwoo Min <multics69@gmail.com>,
+	Andrea Righi <andrea.righi@linux.dev>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>
+Subject: Re: [PATCH sched_ext/for-6.12-fixes] sched_ext: Improve error
+ reporting during loading
+Message-ID: <ZwBMDpTJMyq1z7-s@slm.duckdns.org>
+References: <Zv2uIXK53_Dqtw8T@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH] acl: Realign struct posix_acl to reduce its size by 8
- bytes
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <20241004133716.enkqnmosn42oagos@quack3>
-Date: Fri, 4 Oct 2024 22:11:00 +0200
-Cc: Christian Brauner <brauner@kernel.org>,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5BDFB946-8E51-4A8F-B7F8-40290FCB0011@linux.dev>
-References: <20241004103401.38579-2-thorsten.blum@linux.dev>
- <20241004133716.enkqnmosn42oagos@quack3>
-To: Jan Kara <jack@suse.cz>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zv2uIXK53_Dqtw8T@slm.duckdns.org>
 
-On 4. Oct 2024, at 15:37, Jan Kara wrote:
-> On Fri 04-10-24 12:33:57, Thorsten Blum wrote:
->> Reduce posix_acl's struct size by 8 bytes by realigning its members.
->>=20
->> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
->=20
-> Looks good. Feel free to add:
->=20
-> Reviewed-by: Jan Kara <jack@suse.cz>
+On Wed, Oct 02, 2024 at 10:33:37AM -1000, Tejun Heo wrote:
+> When the BPF scheduler fails, ops.exit() allows rich error reporting through
+> scx_exit_info. Use scx.exit() path consistently for all failures which can
+> be caused by the BPF scheduler:
+> 
+> - scx_ops_error() is called after ops.init() and ops.cgroup_init() failure
+>   to record error information.
+> 
+> - ops.init_task() failure now uses scx_ops_error() instead of pr_err().
+> 
+> - The err_disable path updated to automatically trigger scx_ops_error() to
+>   cover cases that the error message hasn't already been generated and
+>   always return 0 indicating init success so that the error is reported
+>   through ops.exit().
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Cc: David Vernet <void@manifault.com>
+> Cc: Daniel Hodges <hodges.daniel.scott@gmail.com>
+> Cc: Changwoo Min <multics69@gmail.com>
+> Cc: Andrea Righi <andrea.righi@linux.dev>
+> Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
 
-We should probably add:
+Applied to sched_ext/for-6.12-fixes.
 
-Fixes: b0ab04a8ffd8 ("acl: Annotate struct posix_acl with =
-__counted_by()")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: =
-https://lore.kernel.org/oe-lkp/202409260949.a1254989-oliver.sang@intel.com=
+Thanks.
 
-
-as this patch is also a workaround for a Clang __bdos() bug (see the
-Closes: link for details).
-
-Thanks,
-Thorsten=
+-- 
+tejun
 
