@@ -1,95 +1,119 @@
-Return-Path: <linux-kernel+bounces-349913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E0098FD3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:20:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F370498FD54
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6495B223E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:20:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D1BEB229CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F6D84A2C;
-	Fri,  4 Oct 2024 06:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mAbQL6VG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D27152F76;
-	Fri,  4 Oct 2024 06:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C138C12BF02;
+	Fri,  4 Oct 2024 06:28:45 +0000 (UTC)
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB19A6F305;
+	Fri,  4 Oct 2024 06:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728022808; cv=none; b=IZXe8hxlVSQfKNF8C2shkbYzkpdPZqhw8MH7hxk0/qgD9z6MPE8+LPIdGs/d2MAl2r9MiPefn0YPJlM6bTzDw7CbdFP4fjyEqPStoRodReGPWZTHI/T/IhWhlHb4+ZWyYcFW/ad99OuZyj4cR8Clf82lk8Di87hTpPPreFo02cs=
+	t=1728023325; cv=none; b=ce/ix3OxStDkGLjvIv+ODtsfCblfgzlKLbTG95EjEa0LTi3Si1bEAz/i1HGto6BJLY/YWf8l4JCJPU+C1On459XYAchkJLikPmdTlHTOPUGr/wvygBHfAJmg/tUM8gQOnQoO26zfagQjZoUninK0WlGqLeOBK7m6y7c9EJYu8Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728022808; c=relaxed/simple;
-	bh=xvs7Byxkt/+mjYKAblL+8K44lPFq+HdKaS1cAe+vdTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lrtehbr+18hACDe4/Qtz6m7M94GplogOg1byEE2pLXuEa4MQmJUV1/w33AanBrqolXtGODHKX4/SkmOrBTktc+8Wmfc7FL1HzHh4zja8l+iasb07q1oS7Iell9hVcLV2mqGCahG2+W+WfO+aJaVFQyPFZcJjTRXMt/PV/zaJSik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mAbQL6VG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64E81C4CEC6;
-	Fri,  4 Oct 2024 06:20:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728022807;
-	bh=xvs7Byxkt/+mjYKAblL+8K44lPFq+HdKaS1cAe+vdTw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mAbQL6VGiOUxy39OfUeFH1cZ69jKowGPXsCs5LrAvCM5thTdwzDKIabOJtux8zeLL
-	 sIe+HZzxfIJTV0BTmFXuSWjJcdBj+YtpGexT0QUI6oZb0uUZi33AgkRlxMDH0/LP7C
-	 nY316QXfPGQAbIg6vIEyZgWG1/4sfqqVgkjXTRZY=
-Date: Fri, 4 Oct 2024 08:20:04 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Manuel Quintero F <sakunix@yahoo.com>
-Cc: duncan.sands@free.fr, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: atm: speedtch: do not use assignment in if condition
-Message-ID: <2024100400-whiff-unspoiled-0e1a@gregkh>
-References: <20241004030512.2036-1-sakunix.ref@yahoo.com>
- <20241004030512.2036-1-sakunix@yahoo.com>
+	s=arc-20240116; t=1728023325; c=relaxed/simple;
+	bh=jkkJMMrSbK6C7UmCv6f9H/qFBHejsFq/miM9SZS//V0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u0BSyLrkwfyiBFWo7mj8nBdby8Qhvx8CBor8pDijJYAuv3xtB24TDdFntd+FOvqYcQ++HRoimDt1vm6s5tL4oFXneYTspyOGCj6yRLIxZ3fUrGlU3HdYvsUBP1MNZRvcgsBMbwLH0IyeD4mATzvzATAuQjUuSthKJu2814bGkcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id 916082055FA3;
+	Fri,  4 Oct 2024 15:20:36 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4946KZSC103714
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 15:20:36 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4946KZVf731528
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 15:20:35 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 4946KZ5c731527;
+	Fri, 4 Oct 2024 15:20:35 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: syzbot <syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linkinjeon@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in vfat_rename2
+In-Reply-To: <66ff2c95.050a0220.49194.03e9.GAE@google.com> (syzbot's message
+	of "Thu, 03 Oct 2024 16:45:25 -0700")
+References: <66ff2c95.050a0220.49194.03e9.GAE@google.com>
+Date: Fri, 04 Oct 2024 15:20:34 +0900
+Message-ID: <87r08wjsnh.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004030512.2036-1-sakunix@yahoo.com>
+Content-Type: text/plain
 
-On Thu, Oct 03, 2024 at 08:05:12PM -0700, Manuel Quintero F wrote:
-> Fix checkpatch error "do not use assignment in if condition"
-> 
-> Signed-off-by: Manuel Quintero F <sakunix@yahoo.com>
-> Signed-off-by: Manuel Quintero F <sakunix@yahoo.com>
+syzbot <syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com> writes:
 
-Why twice?
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    e7ed34365879 Merge tag 'mailbox-v6.12' of git://git.kernel..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=11b54ea9980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=92da5062b0d65389
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ef0d7bc412553291aa86
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b7ed07980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101dfd9f980000
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/66cc3d8c5c10/disk-e7ed3436.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c7769a88b445/vmlinux-e7ed3436.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/c1fe4c6ee436/bzImage-e7ed3436.xz
+> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/2ab98c65fd49/mount_0.gz
+> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/7ffc0eb73060/mount_5.gz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com
 
-> ---
->  drivers/usb/atm/speedtch.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/atm/speedtch.c b/drivers/usb/atm/speedtch.c
-> index 973548b5c15c..dfd362abf602 100644
-> --- a/drivers/usb/atm/speedtch.c
-> +++ b/drivers/usb/atm/speedtch.c
-> @@ -324,7 +324,9 @@ static int speedtch_upload_firmware(struct speedtch_instance_data *instance,
->  	   because we're in our own kernel thread anyway. */
->  	msleep_interruptible(1000);
->  
-> -	if ((ret = usb_set_interface(usb_dev, INTERFACE_DATA, instance->params.altsetting)) < 0) {
-> +	ret = usb_set_interface(usb_dev, INTERFACE_DATA, instance->params.altsetting
-> +
-> +	if (ret < 0) {
+The patch fixes this bug. Please apply.
+Thanks.
 
-Why the extra blank line?
 
-When learning to do kernel changes, I recommend doing so in
-drivers/staging/ first, as that is what it is there for.  Only after
-getting experience would I recommend doing this in other areas of the
-kernel, and even then, only do checkpatch cleanups for code that you can
-test, or that the subsystem maintainer has explicitly asked for.
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: [PATCH] fat: Fix uninitialized variable
+Date: Fri, 04 Oct 2024 15:03:49 +0900
 
-good luck!
+Reported-by: syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+---
+ fs/fat/namei_vfat.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index 6423e1d..15bf32c 100644
+--- a/fs/fat/namei_vfat.c	2024-10-04 14:51:50.473038530 +0900
++++ b/fs/fat/namei_vfat.c	2024-10-04 14:56:53.108618655 +0900
+@@ -1037,7 +1037,7 @@ error_inode:
+ 	if (corrupt < 0) {
+ 		fat_fs_error(new_dir->i_sb,
+ 			     "%s: Filesystem corrupted (i_pos %lld)",
+-			     __func__, sinfo.i_pos);
++			     __func__, new_i_pos);
+ 	}
+ 	goto out;
+ }
+_
+
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
