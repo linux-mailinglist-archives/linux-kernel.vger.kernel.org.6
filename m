@@ -1,120 +1,90 @@
-Return-Path: <linux-kernel+bounces-350998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B424990C09
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:42:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A01990BAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DECB92810B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123E6283D63
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F20B1F22B5;
-	Fri,  4 Oct 2024 18:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D271E5736;
+	Fri,  4 Oct 2024 18:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9VPROM7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RF+GTfnv"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F431F22A2;
-	Fri,  4 Oct 2024 18:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC7B1E47D6;
+	Fri,  4 Oct 2024 18:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066143; cv=none; b=JNvy4TmPQmeFFkUPbGHPtiw4w+iymHpCu8O7Bg8FxMNSRPz+KVhfNtC+BKytLjSzN+YQeHKOFMh5DJKzogjT1cYy2WDQA16iKiE6Ab2Gvf0RgDNssENxHIGq9iyaG2094EXgxChN6f/BM8K0ltlxWynz70bjyDO/kxQUmmHn2mk=
+	t=1728066015; cv=none; b=iQMoUYJhy78++yiuOaHH+r/fPXB7sP6DFFyJgQSOmFZqbtRuguKRS4/Tr65+G0KE5p7d/Vg/zjWbB442vFP1iATudJtIHWzYR3FZdgzi0vNOIODrmr+L1haJovzKqmrn4m71cUVM6QDUpeONPqPEqrpRzbp5FvJsAUkTmLK9/8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066143; c=relaxed/simple;
-	bh=v2mvxM65+HybBi/a2juuSaSOAdhlM+sU0raG1huyRQ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pEk62a5bRp685LRQWF4NlZlCKo+js+dKLXR3JiIRD/J3+ei4DcyUsx1vBUwevtaqx1RmemH2SqdQvhGxHL/8DpUjJKJ8iA0n61vZtsB852qbd2Q3UtcIR+fYB23+UQZDRsm+eCx3LbLKU86Wzyt0wmka/8BZMcUlExewYhRkRCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9VPROM7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E575C4CED0;
-	Fri,  4 Oct 2024 18:22:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066142;
-	bh=v2mvxM65+HybBi/a2juuSaSOAdhlM+sU0raG1huyRQ0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=I9VPROM7unD7Gw6er1cs7/Tm1PdUyitpwhgmkwXg5t0Lv5i2UpP7GVCF0GUAZtwJo
-	 GUUI4LqisPKVjkmMxQTRRL5Bs7Mu16smUQgsLlMSD0tLuP15xJ2puDz5BAMI3n4pMx
-	 N/muVxIQ30oZDJ3RM94A3Qn4RnUsV/yslP1qVcyVVE4sbyW6o+kus5puQs6icm/lR0
-	 CiRByZ79cgNJqppvlXvkq10XDw1XOKa6Ip82OK24J02Uz0h/gBqCd60lQ8OOAft8Bd
-	 +bTKJCRYWVCrfo/BzRg3j73IroBLHistmZ87GfyDhTEiz1co4oEZ+zA7qo/Cvf56pM
-	 dP0Q/M2ejzs2g==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Artem Sadovnikov <ancowi69@gmail.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Mikhail Ukhin <mish.uxin2012@yandex.ru>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Sasha Levin <sashal@kernel.org>,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.10 11/70] ext4: fix i_data_sem unlock order in ext4_ind_migrate()
-Date: Fri,  4 Oct 2024 14:20:09 -0400
-Message-ID: <20241004182200.3670903-11-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004182200.3670903-1-sashal@kernel.org>
-References: <20241004182200.3670903-1-sashal@kernel.org>
+	s=arc-20240116; t=1728066015; c=relaxed/simple;
+	bh=e7Pt9dk06k5wArD4fbGTpcQ2wpH0fZyNTg2rsIWFrvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XNbtklZfEMi4+8QyuvYsXWH4hkqn54gSSVaWJNYGFD4xHLE7qA2M1bKtdg4VEpDYjByvJNwgWaiA7bO3zuP31NeJPwNTc2fmCAG7IKkBX6TezI/jUdOBqYKk7D9uz65rSRoU7IWAcpEzZgZFqSaDoQR5eXLe5HPYWyveKXOz0cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RF+GTfnv; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=TbsE1H3TrmvZMXxn8umMjBNefx95zTIgFXP2rPdpWQQ=; b=RF+GTfnvGyb3Lbk4EfTd7E0qfO
+	j+KuhIH8i2/heOJfkBdmF5VoK57f3jQ+uSje6V/5izea5C1f+dGo7560L0AxfJZLEnOVDHsgyPuIW
+	FuQmrGsxxJ50yHbFFZ7TWbZNhqiXFs4+D2wUfVzVfJIllXABj5Wqe1w4ObuScoC8ABZ0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1swmuQ-00954O-6G; Fri, 04 Oct 2024 20:20:10 +0200
+Date: Fri, 4 Oct 2024 20:20:10 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [PATCH net-next v2 3/9] net: phy: Allow PHY drivers to report
+ isolation support
+Message-ID: <cf015eee-0d09-4fc7-b214-f9b0db12016e@lunn.ch>
+References: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
+ <20241004161601.2932901-4-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.10.13
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004161601.2932901-4-maxime.chevallier@bootlin.com>
 
-From: Artem Sadovnikov <ancowi69@gmail.com>
+> +static bool phy_can_isolate(struct phy_device *phydev)
+> +{
+> +	if (phydev->drv && phydev->drv->can_isolate)
+> +		return phydev->drv->can_isolate(phydev);
+> +
+> +	return true;
 
-[ Upstream commit cc749e61c011c255d81b192a822db650c68b313f ]
+Reading Russells comment, and the fact that this feature is nearly
+unused, so we have no idea how well PHYs actually support this, i
+would flip the logic. Default to false. A PHY driver needs to actively
+sign up to supporting isolation, with the understanding it has been
+tested on at least one board with two or more PHYs.
 
-Fuzzing reports a possible deadlock in jbd2_log_wait_commit.
-
-This issue is triggered when an EXT4_IOC_MIGRATE ioctl is set to require
-synchronous updates because the file descriptor is opened with O_SYNC.
-This can lead to the jbd2_journal_stop() function calling
-jbd2_might_wait_for_commit(), potentially causing a deadlock if the
-EXT4_IOC_MIGRATE call races with a write(2) system call.
-
-This problem only arises when CONFIG_PROVE_LOCKING is enabled. In this
-case, the jbd2_might_wait_for_commit macro locks jbd2_handle in the
-jbd2_journal_stop function while i_data_sem is locked. This triggers
-lockdep because the jbd2_journal_start function might also lock the same
-jbd2_handle simultaneously.
-
-Found by Linux Verification Center (linuxtesting.org) with syzkaller.
-
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-Co-developed-by: Mikhail Ukhin <mish.uxin2012@yandex.ru>
-Signed-off-by: Mikhail Ukhin <mish.uxin2012@yandex.ru>
-Signed-off-by: Artem Sadovnikov <ancowi69@gmail.com>
-Rule: add
-Link: https://lore.kernel.org/stable/20240404095000.5872-1-mish.uxin2012%40yandex.ru
-Link: https://patch.msgid.link/20240829152210.2754-1-ancowi69@gmail.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ext4/migrate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ext4/migrate.c b/fs/ext4/migrate.c
-index d98ac2af8199f..a5e1492bbaaa5 100644
---- a/fs/ext4/migrate.c
-+++ b/fs/ext4/migrate.c
-@@ -663,8 +663,8 @@ int ext4_ind_migrate(struct inode *inode)
- 	if (unlikely(ret2 && !ret))
- 		ret = ret2;
- errout:
--	ext4_journal_stop(handle);
- 	up_write(&EXT4_I(inode)->i_data_sem);
-+	ext4_journal_stop(handle);
- out_unlock:
- 	ext4_writepages_up_write(inode->i_sb, alloc_ctx);
- 	return ret;
--- 
-2.43.0
-
+	Andrew
 
