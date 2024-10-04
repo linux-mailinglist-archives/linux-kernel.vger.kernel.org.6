@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-351255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DADC991026
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:19:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B66990FC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05666B2E0E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:47:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B022FB24473
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C127322F8E2;
-	Fri,  4 Oct 2024 18:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C80A230E12;
+	Fri,  4 Oct 2024 18:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgBIBt96"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQf0aqBi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234A522F276;
-	Fri,  4 Oct 2024 18:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AD7230DF8;
+	Fri,  4 Oct 2024 18:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066719; cv=none; b=IpZy/U61zJTBxuMiotO3VjiXHP6oWOYSRkk5umH0fI4CaR6OexeHs5LmUnraVbMlGKkPkOd2CH7qugYqmAane0p15cRFCL0LLXydwyyTKj3r0cl38fc9QlJQIu+MHIUfugDN24hZPOfb1xHc783iW0gF+41SSBRj5HDRIOPzKCk=
+	t=1728066731; cv=none; b=gN5y500Th1CpAdB5UX28t5w2ClWhnB9trEFpvn6Cur7RQ90o2c+AOae1g/qaJ+6W9uKnP/kHhiBmElaQePWCtoGaGerTQShi6yuIpRjlx0qpWBe3wE2hrgv1ryJUgabXLc7iHNjUq/E74bb2OoUPynB/WyOe+oc1TIkSjF5VPVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066719; c=relaxed/simple;
-	bh=JfCfNyA1QXgico1DtpJL27YBJTBzAiIbh+kl2HmvZZQ=;
+	s=arc-20240116; t=1728066731; c=relaxed/simple;
+	bh=hyDw1l3XAa2qhiMVPI224fKp6u0AkjplnujYGbkdQPo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QHodIR3abRq3gY3xLgL55xKA2IKDdDAZdqM6udbDpqL2VNNh/JtmeNJsha6hDP2viqUIYN2zqAJArreSPRz1OISmcFmdv1Qytyplktq7j82HexSWXHMoAvgn0pA5L9NrtI5b4KefKj8HmTpLObzCdaTC2z+pRgtFKmKH6yelhlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VgBIBt96; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ED80C4CEC6;
-	Fri,  4 Oct 2024 18:31:58 +0000 (UTC)
+	 MIME-Version; b=MVp/yumoHKIiil10fhDom119cndDAMIA6/ytMu0t1kSpYiqvJGyKXUbeiZVe83V7LNWa1VGZ64CIIB7ZnF8ln8GOVpkoJY04dml45ZGRmAAS0XkCNIUP1dxOYd8KVdTkfImyzVmLeuFvET/Oj8J8L+yXnJty3wWuM3W2SQrTMkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQf0aqBi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95647C4CECE;
+	Fri,  4 Oct 2024 18:32:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066719;
-	bh=JfCfNyA1QXgico1DtpJL27YBJTBzAiIbh+kl2HmvZZQ=;
+	s=k20201202; t=1728066731;
+	bh=hyDw1l3XAa2qhiMVPI224fKp6u0AkjplnujYGbkdQPo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VgBIBt96v1VVg46HVwY/RR1K3N38Q/tJO5Vj27YGCzFYK/xSb9TvUMac7JHMPojc0
-	 gkN5ZDOFNLF/yZ/MuSC14cZCEWWmWRFimXn/GA+H7CrI/Ns5G2Y7qz1fm3V/ETsomJ
-	 4RKvDP7FE7pxgSzMUWZDM2mPDJPlm7qk9vyhe4bs1tJdnwoBMtfnNoxOXA4RZlvn5p
-	 lRMwlQYoWERoPvmEnxdG58NtZSIy4bQvFGKk5hZb7MaTNXIZ4zdhVznF8Sfu2P4nb2
-	 McxHITdf9twMUXKV9gusNqyIZcGmIS/8OU6h9W14rAfB7cIGT3cXsYye/QQ983siyf
-	 YEjtkQZlDqsWw==
+	b=KQf0aqBio6oOXcxBFnzF2zskQVIo/+L9DvsB421GidtYWFpq0+vw0OeHQISltUnjt
+	 bFRAmQmwnajJpX4M8jDQzhXOJfd120U2+fC+ELJmctcJ3Z2rWhdXynofYVJIiP3B/T
+	 fVJ1vHW8yRlQRSnNr3iNWm1RGfajRjxMb8T5vBVOiThT+F5tx9lCWqk9TrWhCtppU3
+	 lK4Uu/OTORjVryAkjKIZeuZziEtYOiihY/OH+lrZdvj4amTuQ+G+B36icwiam56AOx
+	 Co0W9MhJPt8/XGFfnya/hlI6iJPKXQbeBaj7pCmYAa+iqA5HeuxEk8sfYJAzo1qxV1
+	 4jUv1jiC5O99w==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
-	Theodore Ts'o <tytso@mit.edu>,
+Cc: Xu Yang <xu.yang_2@nxp.com>,
+	Peter Chen <peter.chen@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Sasha Levin <sashal@kernel.org>,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 05/16] ext4: ext4_search_dir should return a proper error
-Date: Fri,  4 Oct 2024 14:31:32 -0400
-Message-ID: <20241004183150.3676355-5-sashal@kernel.org>
+	linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 13/16] usb: chipidea: udc: enable suspend interrupt after usb reset
+Date: Fri,  4 Oct 2024 14:31:40 -0400
+Message-ID: <20241004183150.3676355-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241004183150.3676355-1-sashal@kernel.org>
 References: <20241004183150.3676355-1-sashal@kernel.org>
@@ -65,84 +65,57 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 4.19.322
 Content-Transfer-Encoding: 8bit
 
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+From: Xu Yang <xu.yang_2@nxp.com>
 
-[ Upstream commit cd69f8f9de280e331c9e6ff689ced0a688a9ce8f ]
+[ Upstream commit e4fdcc10092fb244218013bfe8ff01c55d54e8e4 ]
 
-ext4_search_dir currently returns -1 in case of a failure, while it returns
-0 when the name is not found. In such failure cases, it should return an
-error code instead.
+Currently, suspend interrupt is enabled before pullup enable operation.
+This will cause a suspend interrupt assert right after pullup DP. This
+suspend interrupt is meaningless, so this will ignore such interrupt
+by enable it after usb reset completed.
 
-This becomes even more important when ext4_find_inline_entry returns an
-error code as well in the next commit.
-
--EFSCORRUPTED seems appropriate as such error code as these failures would
-be caused by unexpected record lengths and is in line with other instances
-of ext4_check_dir_entry failures.
-
-In the case of ext4_dx_find_entry, the current use of ERR_BAD_DX_DIR was
-left as is to reduce the risk of regressions.
-
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Link: https://patch.msgid.link/20240821152324.3621860-2-cascardo@igalia.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+Acked-by: Peter Chen <peter.chen@kernel.org>
+Link: https://lore.kernel.org/r/20240823073832.1702135-1-xu.yang_2@nxp.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/namei.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/usb/chipidea/udc.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 8594feea2d932..d85be8255d790 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1334,7 +1334,7 @@ static inline bool ext4_match(const struct ext4_filename *fname,
- }
- 
- /*
-- * Returns 0 if not found, -1 on failure, and 1 on success
-+ * Returns 0 if not found, -EFSCORRUPTED on failure, and 1 on success
-  */
- int ext4_search_dir(struct buffer_head *bh, char *search_buf, int buf_size,
- 		    struct inode *dir, struct ext4_filename *fname,
-@@ -1355,7 +1355,7 @@ int ext4_search_dir(struct buffer_head *bh, char *search_buf, int buf_size,
- 			 * a full check */
- 			if (ext4_check_dir_entry(dir, NULL, de, bh, search_buf,
- 						 buf_size, offset))
--				return -1;
-+				return -EFSCORRUPTED;
- 			*res_dir = de;
- 			return 1;
- 		}
-@@ -1363,7 +1363,7 @@ int ext4_search_dir(struct buffer_head *bh, char *search_buf, int buf_size,
- 		de_len = ext4_rec_len_from_disk(de->rec_len,
- 						dir->i_sb->s_blocksize);
- 		if (de_len <= 0)
--			return -1;
-+			return -EFSCORRUPTED;
- 		offset += de_len;
- 		de = (struct ext4_dir_entry_2 *) ((char *) de + de_len);
+diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
+index 3bda856ff2cab..6a626f41cded1 100644
+--- a/drivers/usb/chipidea/udc.c
++++ b/drivers/usb/chipidea/udc.c
+@@ -81,7 +81,7 @@ static int hw_device_state(struct ci_hdrc *ci, u32 dma)
+ 		hw_write(ci, OP_ENDPTLISTADDR, ~0, dma);
+ 		/* interrupt, error, port change, reset, sleep/suspend */
+ 		hw_write(ci, OP_USBINTR, ~0,
+-			     USBi_UI|USBi_UEI|USBi_PCI|USBi_URI|USBi_SLI);
++			     USBi_UI|USBi_UEI|USBi_PCI|USBi_URI);
+ 	} else {
+ 		hw_write(ci, OP_USBINTR, ~0, 0);
  	}
-@@ -1514,8 +1514,10 @@ static struct buffer_head *__ext4_find_entry(struct inode *dir,
- 			goto cleanup_and_exit;
- 		} else {
- 			brelse(bh);
--			if (i < 0)
-+			if (i < 0) {
-+				ret = ERR_PTR(i);
- 				goto cleanup_and_exit;
-+			}
- 		}
- 	next:
- 		if (++block >= nblocks)
-@@ -1609,7 +1611,7 @@ static struct buffer_head * ext4_dx_find_entry(struct inode *dir,
- 		if (retval == 1)
- 			goto success;
- 		brelse(bh);
--		if (retval == -1) {
-+		if (retval < 0) {
- 			bh = ERR_PTR(ERR_BAD_DX_DIR);
- 			goto errout;
- 		}
+@@ -748,6 +748,7 @@ __releases(ci->lock)
+ __acquires(ci->lock)
+ {
+ 	int retval;
++	u32 intr;
+ 
+ 	spin_unlock(&ci->lock);
+ 	if (ci->gadget.speed != USB_SPEED_UNKNOWN)
+@@ -761,6 +762,11 @@ __acquires(ci->lock)
+ 	if (retval)
+ 		goto done;
+ 
++	/* clear SLI */
++	hw_write(ci, OP_USBSTS, USBi_SLI, USBi_SLI);
++	intr = hw_read(ci, OP_USBINTR, ~0);
++	hw_write(ci, OP_USBINTR, ~0, intr | USBi_SLI);
++
+ 	ci->status = usb_ep_alloc_request(&ci->ep0in->ep, GFP_ATOMIC);
+ 	if (ci->status == NULL)
+ 		retval = -ENOMEM;
 -- 
 2.43.0
 
