@@ -1,78 +1,108 @@
-Return-Path: <linux-kernel+bounces-351331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2C7990FC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:08:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22132990FC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5CC1F22BC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:08:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C02631F22C60
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B961DE4E3;
-	Fri,  4 Oct 2024 19:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9E61DE4EF;
+	Fri,  4 Oct 2024 19:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAqixJ6t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aveOjx9+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529461DE4DB
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 19:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D421DD869
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 19:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728070162; cv=none; b=MCp+HvUKOC/qgX6mrRRjgONqbX5xwnlyj9GkiGs1aZu9p3bDFdcntjCR7gW+cLi49QOLBoROX44IIh+L3I5/IHb9Yv0Jo6TjZUY6134c4nPQkTJkG+bKm7NmOEaNILMaog/Lg6YygZ41t7lQ8xqR71WUX5gHpWqzmVH+PoA0/58=
+	t=1728070224; cv=none; b=cKYvUc4KvVkJIAWDZnTV6ZY2snQwRCZnfK3+75PYsielmlEWQ4uO7A1Iy4PtOjuwS8Ezu/0ZnmYlqdzJ89ZobjXcWuKyxnvqzWXIjDY0vvW/FbvmG+RChofEqGWfpvgXMCDN/aJAfUcFE25RGqayYuvM5q/JWC5Lx7PTESHccJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728070162; c=relaxed/simple;
-	bh=kTdAcJZPhx85pyMtTZ/vfwqnkuyOG7HOAMI8NnYr77g=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=oLLwwqzAWWTloPQ8rpf9b5vzssqjkI/S9DjVogb7vDoolriRN9bH4xd9ozuTkr+U1otsprYodiipj7MXe2C3+K+QKxFuSUwd6wlTAwxteqP8Mz/IPxJu1gYTYxwFKdm50I+5ukFEn/VT6Rp+pzq1+ixDZmjQvK06Fvs+bzb8F/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAqixJ6t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9DD7C4CEC6;
-	Fri,  4 Oct 2024 19:29:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728070161;
-	bh=kTdAcJZPhx85pyMtTZ/vfwqnkuyOG7HOAMI8NnYr77g=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=FAqixJ6tIYpbthOYN8JShD3yUt1EFfZKzOuWfaGYUuPRBrHcPHzIcOzXuWW3/6NZQ
-	 r54TlwSz7gr+pFsSZaS+5jVME2Pb+ZfwSSv/06wnmEcG5Qf3RMjmRof4s7zRz1GUxA
-	 5HJKrifloMGZHIHkqOzP7iWMkgwyiEUu/UfTElNLCpdOoId4xVxk27qDbCO3TfQS6L
-	 c2GywVS1xdw/18ly2vDIJVWkmp2PjGFVF4HkwBr27Odg9IpTkOQbJEvl60wX/1AJ8g
-	 I14iXcgy5ffgHH7BJm9NMb7tFHm3Wi9QOnBpzrqE3ReCZBlIcEhBjX9jroh2g59dFV
-	 WDIv7gpOLR+AA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEEB39F76FF;
-	Fri,  4 Oct 2024 19:29:26 +0000 (UTC)
-Subject: Re: [GIT PULL] arm64 fixes for 6.12-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZwAWOkX7bBvhXP6m@arm.com>
-References: <ZwAWOkX7bBvhXP6m@arm.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZwAWOkX7bBvhXP6m@arm.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
-X-PR-Tracked-Commit-Id: 3eddb108abe3de6723cc4b77e8558ce1b3047987
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ac308609567d31fe44be80ab757a5ddf062362ef
-Message-Id: <172807016521.2715268.1709781748972726390.pr-tracker-bot@kernel.org>
-Date: Fri, 04 Oct 2024 19:29:25 +0000
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1728070224; c=relaxed/simple;
+	bh=B3vUUCJGsKA7mZnavt4trN1cRu21gZHx5EKJyIUKwvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f4flCIyGrieKk4BqhfTqj6aihI8XWcrqEW6H+jtKrKR8zMqOWAyx/2rSj8QUqZB+CnGW8MnWSfDRdm2NFSzgInhxZ7DI5Wqw/HPHXCWhfoez3XyTdYq0VPmNZdrwHZVRorK1ixynfti8lW99sIdpv+os+GA0Jmlc0TDhiniOm1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aveOjx9+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728070222;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eBJUsA54LDTHRivkwXp0/G9Nmh/C5aglOwfA6E1tGOY=;
+	b=aveOjx9+NakYV6x54AvUQoSS704Dko6Am9OJ2W7aFaGtkmnw7zntUwj8txCO1fdldOuTD8
+	iQ17qDgQsq/UfVBBqOU6OnL3AcV2CmMuhs2r657hP0MVtlM7nSD0BbUyoyLb4ARiMocRKc
+	xF0JEjkszQHKaxDMBpvP8jkYil5OtHM=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-590-xqOW-Z1VMEinNVQb3FmpKg-1; Fri,
+ 04 Oct 2024 15:30:19 -0400
+X-MC-Unique: xqOW-Z1VMEinNVQb3FmpKg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 37DCE19560BF;
+	Fri,  4 Oct 2024 19:30:17 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.210])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6765919560A3;
+	Fri,  4 Oct 2024 19:30:14 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  4 Oct 2024 21:30:03 +0200 (CEST)
+Date: Fri, 4 Oct 2024 21:29:59 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Luca Boccassi <luca.boccassi@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
+	paul@paul-moore.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
+Message-ID: <20241004192958.GA28441@redhat.com>
+References: <20241002142516.110567-1-luca.boccassi@gmail.com>
+ <20241004-signal-erfolg-c76d6fdeee1c@brauner>
+ <CAMw=ZnRt3Zvmf9Nt0sDHGPUn06HP3NE3at=x+infO=Ms4gYDGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMw=ZnRt3Zvmf9Nt0sDHGPUn06HP3NE3at=x+infO=Ms4gYDGA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-The pull request you sent on Fri, 4 Oct 2024 17:22:18 +0100:
+I wasn't CC'ed, so I didn't see the patch, but looking at Christian's
+reply ...
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
+On 10/04, Luca Boccassi wrote:
+> On Fri, 4 Oct 2024 at 10:29, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Wed, Oct 02, 2024 at 03:24:33PM GMT, luca.boccassi@gmail.com wrote:
+> > > +             info.pid = pid_nr_ns(pid, task_active_pid_ns(task));
+> >
+> > I think this is wrong what this should return is the pid of the process
+> > as seen from the caller's pid namespace.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ac308609567d31fe44be80ab757a5ddf062362ef
+Agreed,
 
-Thank you!
+> Thanks for the review, I applied the rest of the comments in v2 (I
+> think at least), but for this one I can't tell, how should I do it?
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I guess Christian meant you should simply use
+
+		info.pid = task_pid_vnr(task);
+
+task_pid_vnr(task) returns the task's pid in the caller's namespace.
+
+Oleg.
+
 
