@@ -1,130 +1,151 @@
-Return-Path: <linux-kernel+bounces-350105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C21698FFD1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:34:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DB898FFD6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7AC1C22FE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:34:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6198A1C23257
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A67147C86;
-	Fri,  4 Oct 2024 09:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAE11482E1;
+	Fri,  4 Oct 2024 09:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="l0j2Sq28"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UUdMGzcF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69C31465AC;
-	Fri,  4 Oct 2024 09:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EAC1448DF;
+	Fri,  4 Oct 2024 09:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728034419; cv=none; b=sILOiqyoNWlpNCcg3uDKiJ8oajXywhp3z6KVIQ/Gn8KLEdtiQRfte9jfXTp41iLTZj742ZQ5XqZkhhWK5welRaiXttKNNXA9BPhQRyrPc0ylFQMD0GURjzXQ9Um/jwT7qhWcwpuk5wPC+aUxRiepIiqXgY0dO7si82ivMg0AjwA=
+	t=1728034525; cv=none; b=g8ldRVPEuOyU9E+dEQpT0imar6goCv8qIDpy2sT1bzPv7XPkLRogn6EQhHZM2GajwQ7H8+Fy/77SA47vdkxBXkR/sbWRHO341kRGIl/bA/z3lkJNzp5m4iqq5UnyPJrdd2C9O7gUDFoslPq5nQBiMRSbePk4NpDtrXRemQKtbMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728034419; c=relaxed/simple;
-	bh=lYH7i3scXm5wsbzJSm6pT1NMbSAV+hb2CZmSFlix9O8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dp4c4LGfdnEXyrtswoMcldGZ20lK1bTfWKMedH8UdERA27CLm89fSqV/8813XoLzON4QTSkqj35zXY7hJo8xsRG/wj/XHZufzvL1+UAimGa0KyH8rbZxyOFVL59jqi2uETiB0fWLemRT0+Ac+Z1/MyO3uZWmPukQq3YxRUabP5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=l0j2Sq28; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1728034409;
-	bh=lYH7i3scXm5wsbzJSm6pT1NMbSAV+hb2CZmSFlix9O8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l0j2Sq28nEGkc3kbl2+ymSu1dWRJRUaI7SQjjUIv4zVsDu9n5BSeb6Waf2XnQEpVu
-	 MGFHJjEtOHr6AzzAMshKfzTVbkp1MoWmwzugnOE3krEP+qQDgVdTWQ+EPkTHYtAFwA
-	 6KEL4X+pHawTQc5BPEFGFOi0EgZSvbgQtNT1aduKFhh1w8WurPUH0xXj0LDy5AljwG
-	 atLMS1VBgwBO7QTzeZ2Ftn/pAbO6deZh54O9b/1RARLlSBRSpL672jk7vbTkZAovbC
-	 xx45WXl9T6rJ++94fYT3zx44rlLWx/NJrPiw56bxDKw7JJan4ZhVJjQxhnICuxxzho
-	 BJRvI5q8VFc8g==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8995817E1147;
-	Fri,  4 Oct 2024 11:33:29 +0200 (CEST)
-Message-ID: <1432ee2c-ef74-41ba-a9ea-6a70943a929c@collabora.com>
-Date: Fri, 4 Oct 2024 11:33:29 +0200
+	s=arc-20240116; t=1728034525; c=relaxed/simple;
+	bh=UQxt7P3rJbVv3nJmizgjQW+tNdKSX/yyh7YNv4PHuRA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mAk3GccknT4TG+S9R6xu0HDx7R7nZdZ4A3zBedU/5pykQy8v3w1hzeApO83+zcToPN9oIxKYwAd0Sp2I9d8shpH1GS+5gxwKc0lSMkfSzKsnRdt+i1Vy2QPSYCYFubk39W0jk4c+MC8B/cXH2hmscQDGo3Wmct9i04GzQy590CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UUdMGzcF; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728034523; x=1759570523;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=UQxt7P3rJbVv3nJmizgjQW+tNdKSX/yyh7YNv4PHuRA=;
+  b=UUdMGzcFGYIGJvLKDaE7IW47dpA/quS7NN9jLGRVzP+zTptl3gOcAyoR
+   wX8FD8xD2Z0p1pOhnxF6lTGDxBaze5UpeSl4mUwGG+5DRimEVzLbIJQ3J
+   5SbHW/n7J5mxfH9iL0C4aAXWvnIkv3u59CrlTjGd+zBInrOgxK9ZEOtIb
+   ybu2wB4D+/c01ZCndakH7XYR6LIs8is3chsEa+uQIgzi+8e24174MEoJl
+   sgGJGvM6NlEvEhtSOww/uXXNKqGyGzVH+Ze5pqRriGu/20gB5OC6j4KJf
+   IDuEUz4Z2CLrxv2CSUBXNgWhxQcQdm6Zj6sFegUytmH2C5VRjEfu9aM2w
+   w==;
+X-CSE-ConnectionGUID: zIyDAzPlQw+Iz/sjVYXZpw==
+X-CSE-MsgGUID: DXda5GW+RseFdYjwX8I9ow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="26719593"
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="26719593"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 02:35:21 -0700
+X-CSE-ConnectionGUID: 9qP1XI4tTc6Zuy+qvAB0Ig==
+X-CSE-MsgGUID: KQ5uu+XfSyipBbo8HVA2ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="79493790"
+Received: from dneilan-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.89])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 02:35:17 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/i915/display: Remove kstrdup_const() and
+ kfree_const() usage
+In-Reply-To: <f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727977199.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727977199.git.christophe.jaillet@wanadoo.fr>
+Date: Fri, 04 Oct 2024 12:35:13 +0300
+Message-ID: <87h69srz1q.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/9] Add platform supports to MediaTek MT8188 SoC (part
- 2)
-To: Fei Shao <fshao@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20241004081218.55962-1-fshao@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241004081218.55962-1-fshao@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Il 04/10/24 10:11, Fei Shao ha scritto:
-> Hi all,
-> 
-> This series is based on top of my previous "Add platform supports to
-> MediaTek MT8188 SoC" v3 series[*].
-> 
-> There's nothing to change or address in that series at the point of
-> writing, so I decided not to resend it and start this new "part 2"
-> series instead.
-> (if I need to update both series next time I might consider merging them
-> into one)
-> 
-> Specifically, this continues to introduce the following platform supports
-> in MediaTek MT8188 SoC to lay the groundwork for the board device trees:
-> - PCIe
-> - MIPI DSI
-> - video decoder and encoder
-> - JPEG decoder and encoder
-> - vdosys0 and vdosys1 display pipelines
-> - DP-INTF
-> - eDP and DP TX
-> - aliases
-> 
-> Please have a look and feedback are welcome, thanks.
-> 
-> [*]: https://lore.kernel.org/all/20240911143429.850071-1-fshao@chromium.org/
-> [v1]: https://lore.kernel.org/all/20241002114614.847553-1-fshao@chromium.org/
-> [v2]: https://lore.kernel.org/all/20241003070139.1461472-1-fshao@chromium.org/
-> 
-> Regards,
-> Fei
-> 
-> Changes in v3:
-> - add the secondary MIPI DSI
-> 
-> Changes in v2:
-> - add linux,pci-domain to PCIe node
-> - add power domain to PCIe PHY node
-> 
-> Fei Shao (9):
->    arm64: dts: mediatek: mt8188: Assign GCE aliases
->    arm64: dts: mediatek: mt8188: Add PCIe nodes
->    arm64: dts: mediatek: mt8188: Add MIPI DSI nodes
->    arm64: dts: mediatek: mt8188: Add video decoder and encoder nodes
->    arm64: dts: mediatek: mt8188: Add JPEG decoder and encoder nodes
->    arm64: dts: mediatek: mt8188: Add display nodes for vdosys0
->    arm64: dts: mediatek: mt8188: Add display nodes for vdosys1
->    arm64: dts: mediatek: mt8188: Add DP-INTF nodes
->    arm64: dts: mediatek: mt8188: Add eDP and DP TX nodes
-> 
->   arch/arm64/boot/dts/mediatek/mt8188.dtsi | 668 +++++++++++++++++++++++
->   1 file changed, 668 insertions(+)
-> 
+On Thu, 03 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> kstrdup_const() and kfree_const() can be confusing in code built as a
+> module. In such a case, it does not do what one could expect from the name
+> of the functions.
+>
+> The code is not wrong by itself, but in such a case, it is equivalent to
+> kstrdup() and kfree().
+>
+> So, keep thinks simple and straightforward.
+>
+> This reverts commit 379b63e7e682 ("drm/i915/display: Save a few bytes of
+> memory in intel_backlight_device_register()")
 
-Whole series is
+Sorry, I guess I'm confused here. Or I just didn't read the commit
+message to [1] properly. Or both.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+So the whole point of [1] was that the _const versions can be confusing
+if i915 is builtin? But not wrong?
+
+BR,
+Jani.
+
+
+[1] https://lore.kernel.org/r/3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727533674.git.christophe.jaillet@wanadoo.fr
+
+
+
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/gpu/drm/i915/display/intel_backlight.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/gpu/drm/i915/display/intel_backlight.c
+> index 9e05745d797d..3f81a726cc7d 100644
+> --- a/drivers/gpu/drm/i915/display/intel_backlight.c
+> +++ b/drivers/gpu/drm/i915/display/intel_backlight.c
+> @@ -949,7 +949,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  	else
+>  		props.power = BACKLIGHT_POWER_OFF;
+>  
+> -	name = kstrdup_const("intel_backlight", GFP_KERNEL);
+> +	name = kstrdup("intel_backlight", GFP_KERNEL);
+>  	if (!name)
+>  		return -ENOMEM;
+>  
+> @@ -963,7 +963,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  		 * compatibility. Use unique names for subsequent backlight devices as a
+>  		 * fallback when the default name already exists.
+>  		 */
+> -		kfree_const(name);
+> +		kfree(name);
+>  		name = kasprintf(GFP_KERNEL, "card%d-%s-backlight",
+>  				 i915->drm.primary->index, connector->base.name);
+>  		if (!name)
+> @@ -987,7 +987,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  		    connector->base.base.id, connector->base.name, name);
+>  
+>  out:
+> -	kfree_const(name);
+> +	kfree(name);
+>  
+>  	return ret;
+>  }
+
+-- 
+Jani Nikula, Intel
 
