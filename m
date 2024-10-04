@@ -1,444 +1,255 @@
-Return-Path: <linux-kernel+bounces-350528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030BC990680
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:46:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900DF990697
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F50DB24570
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:46:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ACBB1F244DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B7221D2CA;
-	Fri,  4 Oct 2024 14:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DEF2178FC;
+	Fri,  4 Oct 2024 14:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="K+wwARGH"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rxeTqOkD"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3786217911
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8D42178F1;
+	Fri,  4 Oct 2024 14:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728053024; cv=none; b=bSjaAL0ixA2bIkSFgmcLWSqahbSE1Y95ZeYPCkKqfj2lmj9YCiUA5I76bCO36htTBVr+dVH0VeWitZ73f7+HtfZQx8l9phbQaQKT2DkfnP7AGrFPEIth/17lpsiovSwImzfOKFueOe3Z7TxNp8fxs48MgznSWk2iEtxEB0q0Scs=
+	t=1728053063; cv=none; b=iVikp/RRp7gCeXi+P/LTZOwEAIWGZAiPQY2pDv/ljWSOy5SbbbQ7Y9QdwyxAp60Trd3SyK9Swa1GeUrOVzOALQ/W7qltzmzhzLOH7xi/+5fXDdfWNo2+VdhBkhk5IIEEJN+7GudtBUIn9wmMjLq7qsX1zegj7H5JwvDsgWJvwqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728053024; c=relaxed/simple;
-	bh=/Zd1cgX1HwVAzft6FhAsQIQ8nKeMY7GUJrxKl5LGOLA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iZhMwFqtqBQ581dBA4ZcROm5YVkv2jHx8i67GW+wdE2okGyHj/iRI72HBOnpT4Gby9L5xizplOMUZKlnVJR2fK6+5i3p3J/FLddd9wkKSveOyHrp5df20jARj6wmJeCYAcl9dF8vrjyClXpfGPareuYKl2S2FkmKtOkTwkGHUUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=K+wwARGH; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cb58d810eso19695305e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 07:43:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728053020; x=1728657820; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jfb6YI80rw3zHCFbKnEyH1U6ooQ/9EXSdd+jltWULAY=;
-        b=K+wwARGHfaxcKVQ1iOI8WE2FvVEnnPcg1b8S8kSf9t3xMFwDh0Xr+kHYCcf89sttpt
-         +E0bijh6CXVeYDhFFrJlCCYj0anuaEqoeOWxWt1Oesh1oFh7MxkBCVEA2Ipnj2PfTeuL
-         iO2PCEQhypTyTk5KCIrD6Wi8UbkIgP4zM6bZQnzyV3Q/y0rXzfYt6Uh4t2gm7XbnPqiQ
-         fZZttrJlE+EaheJGudf56dKkK3qP1GTbhbJkCopHZP6Uy5VEMoPiD7mA3x0lXswYjFfj
-         P8LVlZLXwlHK45u/FU1s5vudlHMLv5Sk/yPgPD1iKal9UfAkT69chFXv0qtrJym5gkxU
-         4YQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728053020; x=1728657820;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jfb6YI80rw3zHCFbKnEyH1U6ooQ/9EXSdd+jltWULAY=;
-        b=sBgBw1scUfSP/9HyQoy2YJud7oecRk8ltH5cxWMkz9WDpQ9r2xvGHiSc1YePySBBAD
-         TCxz2YNbr+zhm3Z0ZBhjjFDnbF/CfzUlQNMqDH13Ps1mX+EYlyvRbjOPz4bclCpH0l8k
-         4p65dH64OZxhzHNXhaPogD99BR4Anbz7YaF816UcMW9QndbOeJQCA/9hG88dXu63W+zL
-         Rur43Cu6RxgQ4kt/G4xRfjvCtYhTa1qzYv7aS9UuCN5rTjODDCu7LLnX3Fqw5Q2RIS83
-         GOC8x4RiscEBLkUgh5zab/nCqrbth9CeRgmgyuXRDEZ9BT2u2t/CCNY3P1tFUOnJB5ne
-         n7vg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNkmQjZo9a+WcJ9OAYjTiO9ccFcN6x+Iuu0uCTRCAFASTTXYmXNy4XTox28CrDPtVnGP6t/eRSroA7mh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/jY3+cEA4PiRSjce5PVfh4+q70tJes12so6PO7jIOt+3VKMmO
-	rHTUxMNt5Q0oj91Z1eoplp/gPiJXkOeRdXvcb+uZY7jG4QHTommj+KGt3M4n8pA=
-X-Google-Smtp-Source: AGHT+IHl5Rwr13sP+gPr8mcUXq2K80wxzjjVKpp/yJWkdKYWjp/EW/nqphwrAkXEN5+Ks3owEwlDdg==
-X-Received: by 2002:a5d:4152:0:b0:374:b6e4:16a7 with SMTP id ffacd0b85a97d-37d049e12d3mr4362850f8f.8.1728053019938;
-        Fri, 04 Oct 2024 07:43:39 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:80ea:d045:eb77:2d3b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d20bcsm3361370f8f.100.2024.10.04.07.43.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 07:43:39 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 04 Oct 2024 16:43:26 +0200
-Subject: [PATCH 5/5] gpiolib: notify user-space about in-kernel line state
- changes
+	s=arc-20240116; t=1728053063; c=relaxed/simple;
+	bh=c2f4wjWndb0oUKVDRlhoacnlrzzFZKKdtwtL6jC5O1U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pERgvcg3Wdm0sx+3Yf697izuzjvNNO8a3Id91Sb75IBgM8VmPXZErJCaR4ahfHMpGQWhx0DDonUkXIj/T+GXgTh4iVqBitQ2S39012SSSlY3mEUQMgML/uToV67/zcT86LqnB6MCQiMfGDWsJs/vxGhDMBgR2Iijvk/1eh6vONw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rxeTqOkD; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494DnaOt006946;
+	Fri, 4 Oct 2024 14:44:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	zpDY2+Mo91IH7ru01R+RLsb8SsQF3OYQ3s8Q+4K8eCQ=; b=rxeTqOkDcffu4yGw
+	jzS2TLwT5KmWRVG3XnbWZfpv6f3XmT9FiofgyzA9vEXtTQfh9SF0Eu2QK9jnqMoH
+	TaRO5E22rIXQR49p+y/PSAh5Uxtfcpj6S07oXo6yh3y36fA3SnDf7V2hE/er6QpZ
+	ih4Omgd2y1V7cm5Ke22wK577GkJXQm4xG8f/ZZ7eTNH5UlbdXbGwgq2e5Sa7T4qE
+	yLq6KYySlgz1D1BZUOLG+a4fRXdlLdx+zHTwaSWX34i4NHIOsQ/0mU+pSCISmZDe
+	M39M2jFP9j3oEuYXFAO9UIc8snp19OLlHOU8CktzeefBPgeBHArmQMHz+1DtziYr
+	j19e5Q==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 422hk6g814-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 14:44:08 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 494DmLDU009297;
+	Fri, 4 Oct 2024 14:44:07 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42207kmjfj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 14:44:07 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 494Ei6nB48759488
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 4 Oct 2024 14:44:06 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 94A1958059;
+	Fri,  4 Oct 2024 14:44:06 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D75745804B;
+	Fri,  4 Oct 2024 14:44:04 +0000 (GMT)
+Received: from [9.171.87.189] (unknown [9.171.87.189])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  4 Oct 2024 14:44:04 +0000 (GMT)
+Message-ID: <bcd2ef21b387ee4cd3a4aa78cad85f8fae02699b.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>, Arnd Bergmann <arnd@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby
+ <jirislaby@kernel.org>,
+        Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,
+        linux-serial@vger.kernel.org, Heiko
+ Carstens <hca@linux.ibm.com>,
+        linux-kernel@vger.kernel.org
+Date: Fri, 04 Oct 2024 16:44:04 +0200
+In-Reply-To: <e916ff3347cef88981d8e519fe1bcedfabfbea24.camel@linux.ibm.com>
+References: <20240405152924.252598-1-schnelle@linux.ibm.com>
+	 <20240405152924.252598-2-schnelle@linux.ibm.com>
+	 <alpine.DEB.2.21.2405230244140.1257@angie.orcam.me.uk>
+	 <ef2912910d006c573324bcf063cb76e843dc8267.camel@linux.ibm.com>
+	 <alpine.DEB.2.21.2410011707550.45128@angie.orcam.me.uk>
+	 <7bcec0eb88c3891d23f5c9f224e708e4a9bb8b89.camel@linux.ibm.com>
+	 <alpine.DEB.2.21.2410021632150.45128@angie.orcam.me.uk>
+	 <84bbda13-ded1-4ada-a765-9d012d3f4abd@app.fastmail.com>
+	 <alpine.DEB.2.21.2410022305040.45128@angie.orcam.me.uk>
+	 <e916ff3347cef88981d8e519fe1bcedfabfbea24.camel@linux.ibm.com>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 3NTYzQI5m5Wy7SGGvJ6rn2aOCydiMFkN
+X-Proofpoint-GUID: 3NTYzQI5m5Wy7SGGvJ6rn2aOCydiMFkN
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-gpio-notify-in-kernel-events-v1-5-8ac29e1df4fe@linaro.org>
-References: <20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org>
-In-Reply-To: <20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10719;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=wknoPtX1dNfD1bs2G/w2vi/UQ2Iy2lVZXz1DzFv12YE=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBm//8Vlfd4WUuwSf0BjR/U8tazYo87l9su6YW2p
- NW7KwuqMoWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZv//FQAKCRARpy6gFHHX
- cutBEAC50WpKefyDXfPMvn6fvV1iP5lOHB9x2nNdV2B3GmZI2AeIOVlb8SORSs6hkP8c9UYuMI/
- uxLf1GEztlkepIRDVBEqCOlStrKjyxRq8xZZcoIAujPjag6JRnLj6SzunBoMk4Py2sN/gJdUpOE
- UAW7bzupBlA+v++1gKA5/uOG+aPfqJYkXddwzunpsKplqDFYs8hL10xeqq5B7UO7mXqNn+BDnoU
- BgBiCIG6T4rAgAVJmv2CcJtQEmzKH0BKnyVJvYTvddA7jXieOIa8YVtPpSuRPvPOsKaull/jSIz
- +2YzdxoCEFSN3Ns/XX7MXUDCsX56Zcltupck3HPYyHfT6sW3lnCnUx8gO+GYznX7DEl92SbR8mc
- 3zn4PGe4iB9kTvk3i39J2D829mu2iC0fVo/9q7BDbpreGrY4Fn6p5CMGkehaKmVJjIvGZBeHZiW
- 90dpQS8bmYqc4Lu+WNsouEXHkJDh738GBkK79ZaVdMCfjzf4xIUkyDLwSLfD68xPM0y615kdTDy
- iCKlc7xsd2v+qarIzVsAvR75IjHfvUk0rG9Mq1tEAmnHPbEM23EuztMV0hVx/zNvQRm7nFDdv30
- LK4mddKfJWvtYFcIVltn0xDrOd/p9sfkckl8bUiaZCk+nI+W0aj34f9ctmLyK8cNanTRZLUCym1
- H4SO+QUru36IXOQ==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-04_10,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 mlxlogscore=999 spamscore=0 lowpriorityscore=0
+ impostorscore=0 phishscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040100
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Fri, 2024-10-04 at 12:09 +0200, Niklas Schnelle wrote:
+> On Wed, 2024-10-02 at 23:59 +0100, Maciej W. Rozycki wrote:
+> > On Wed, 2 Oct 2024, Arnd Bergmann wrote:
+> >=20
+---8<---
+> > > Part of the problem that Niklas is trying to solve with the
+> > > CONFIG_HAS_IOPORT annotations is to prevent an invalid inb()/outb()
+> > > from turning into a NULL pointer dereference as it currently does
+> > > on architectures that have no way to support PIO but get the
+> > > default implementation from asm-generic/io.h.
+> >=20
+> >  It can be worse than that.  Part of my confusion with the defxx driver=
+=20
+> > trying to do port I/O with my POWER9 system came from the mapping actua=
+lly=20
+> > resulting in non-NULL invalid pointers, dereferencing which caused a fl=
+ood=20
+> > of obscure messages produced to the system console by the system firmwa=
+re:
+> >=20
+> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> > IPMI: dropping non severe PEL event
+> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> > IPMI: dropping non severe PEL event
+> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> > IPMI: dropping non severe PEL event
+> > LPC[000]: Got SYNC no-response error. Error address reg: 0xd0010014
+> > IPMI: dropping non severe PEL event
+> > [...]
+> >=20
+> > from which it was all but obvious that they were caused by an attempt t=
+o=20
+> > use PCI port I/O with a system lacking support for it.
+> >=20
+> > > It's not clear if having a silently non-working driver or one
+> > > that crashes makes it easier to debug for users. Having a clear
+> > > warning message in the PCI probe code is probably the best
+> > > we can hope for.
+> >=20
+> >  I agree.  Enthusiastically.
+>=20
+> I think there was also a bit of a misunderstanding. My argument that
+> this would be very ugly in the general case was really meant as general
+> case outside of drivers like 8250 that deals with both I/O port and
+> MMIO i.e. we can't warn/error when !HAS_IOPORT deactivates a whole
+> driver because seeing an I/O port BAR in common PCI code doesn't mean
+> that it is required for use of the device.
+>=20
+> I'm working on a new proposal for 8250 now. Basically I think we can
+> put the warning/error in serial8250_pci_setup_port(). And then for
+> those 8250_pci.c "sub drivers" that require I/O ports instead of just
+> ifdeffing out their setup/init/exit we can define anything but setup to
+> NULL and setup to pci_default_setup() such that the latter will find
+> the I/O port BAR via FL_GET_BASE() and subsequently cause the error
+> print in serial8250_pci_setup_port(). It's admittedly a bit odd but it
+> also keeps the #ifdefs to just around the code that wouldn't compile.
 
-We currently only notify user-space about line config changes that are
-made from user-space. Any kernel config changes are not signalled.
+I've now got this to compile on s390x with the !S390 check removed in
+Kconfig. Instead of "misusing" pci_default_setup() I instead added a
+pci_fail_io_port_setup() helper that prints the error and returns -
+EINVAL.
 
-Let's improve the situation by emitting the events closer to the source.
-To that end let's call the relevant notifier chain from the functions
-setting direction, gpiod_set_config(), gpiod_set_consumer_name() and
-gpiod_toggle_active_low(). This covers all the options that we can
-inform the user-space about.
+>=20
+> One thing I'm not happy with yet is the handling around
+> is_upf_fourport(port) in 8250_pci.c. With !HAS_IOPORT this is defined
+> as false. With that it makes sure that inb_p()/outb_p() aren't called
+> but I think this only works because the compiler usually drops the dead
+> if clause. I think there were previous discussions around this but I
+> think just like IS_ENABLED() checks this isn't quite correct.
 
-There is a problem with gpiod_direction_output/input(), namely the fact
-that they can be called both from sleeping as well as atomic context. We
-cannot call the blocking notifier from atomic and we cannot switch to
-atomic notifier because the pinctrl functions we call higher up the stack
-take a mutex. Let's instead use a workqueue and schedule a task to emit
-the event from process context on the unbound system queue for minimal
-latencies.
+It's not the nicest but I added the necessary #ifdefs in 8250_port.c
+and at least they are small sections. As Arnd said we will go back to a
+single series. So I've also switched to a b4 prep workflow which I
+usually use nowadays and so the current code can be found here:
 
-In tests, I typically get around 5 microseconds between scheduling the
-work and it being executed. That could of course differ during heavy
-system load but in general it should be enough to not miss direction
-change events which typically are not in hot paths.
+https://git.kernel.org/pub/scm/linux/kernel/git/niks/linux.git/log/?h=3Db4/=
+has_ioport
 
-Let's also add non-notifying wrappers around the direction setters in
-order to not emit superfluous reconfigure events when requesting the
-lines.
+I plan to resend on Monday based on v6.12-rc2 which will also include
+the bcachefs fix to fix building on Big Endian which I was previously
+carrying for my s390x development convenience.
 
-We can also now make gpiod_line_state_notify() static.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpiolib-cdev.c | 12 ++----
- drivers/gpio/gpiolib.c      | 99 +++++++++++++++++++++++++++++++++++++++------
- drivers/gpio/gpiolib.h      |  9 ++++-
- 3 files changed, 97 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index f614a981253d..bb00c9c29613 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -196,8 +196,6 @@ static long linehandle_set_config(struct linehandle_state *lh,
- 			if (ret)
- 				return ret;
- 		}
--
--		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
- 	}
- 	return 0;
- }
-@@ -363,11 +361,11 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
- 		if (lflags & GPIOHANDLE_REQUEST_OUTPUT) {
- 			int val = !!handlereq.default_values[i];
- 
--			ret = gpiod_direction_output(desc, val);
-+			ret = gpiod_direction_output_nonotify(desc, val);
- 			if (ret)
- 				goto out_free_lh;
- 		} else if (lflags & GPIOHANDLE_REQUEST_INPUT) {
--			ret = gpiod_direction_input(desc);
-+			ret = gpiod_direction_input_nonotify(desc);
- 			if (ret)
- 				goto out_free_lh;
- 		}
-@@ -1566,8 +1564,6 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
- 		}
- 
- 		WRITE_ONCE(line->edflags, edflags);
--
--		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
- 	}
- 	return 0;
- }
-@@ -1824,11 +1820,11 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
- 		if (flags & GPIO_V2_LINE_FLAG_OUTPUT) {
- 			int val = gpio_v2_line_config_output_value(lc, i);
- 
--			ret = gpiod_direction_output(desc, val);
-+			ret = gpiod_direction_output_nonotify(desc, val);
- 			if (ret)
- 				goto out_free_linereq;
- 		} else if (flags & GPIO_V2_LINE_FLAG_INPUT) {
--			ret = gpiod_direction_input(desc);
-+			ret = gpiod_direction_input_nonotify(desc);
- 			if (ret)
- 				goto out_free_linereq;
- 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 190ece4d6850..281502923482 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -870,6 +870,26 @@ static void gpiochip_set_data(struct gpio_chip *gc, void *data)
- 	gc->gpiodev->data = data;
- }
- 
-+static void gpiod_line_state_notify(struct gpio_desc *desc,
-+				    unsigned long action)
-+{
-+	blocking_notifier_call_chain(&desc->gdev->line_state_notifier,
-+				     action, desc);
-+}
-+
-+static void gpiod_config_change_func(struct work_struct *work)
-+{
-+	struct gpio_desc *desc = container_of(work, struct gpio_desc,
-+					      line_state_work);
-+
-+	gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-+}
-+
-+static void gpiod_line_config_change_notify(struct gpio_desc *desc)
-+{
-+	queue_work(system_unbound_wq, &desc->line_state_work);
-+}
-+
- /**
-  * gpiochip_get_data() - get per-subdriver data for the chip
-  * @gc: GPIO chip
-@@ -1064,6 +1084,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 			assign_bit(FLAG_IS_OUT,
- 				   &desc->flags, !gc->direction_input);
- 		}
-+
-+		INIT_WORK(&desc->line_state_work, gpiod_config_change_func);
- 	}
- 
- 	ret = of_gpiochip_add(gc);
-@@ -2673,6 +2695,18 @@ int gpio_set_debounce_timeout(struct gpio_desc *desc, unsigned int debounce)
-  * 0 on success, or negative errno on failure.
-  */
- int gpiod_direction_input(struct gpio_desc *desc)
-+{
-+	int ret;
-+
-+	ret = gpiod_direction_input_nonotify(desc);
-+	if (ret == 0)
-+		gpiod_line_config_change_notify(desc);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(gpiod_direction_input);
-+
-+int gpiod_direction_input_nonotify(struct gpio_desc *desc)
- {
- 	int ret = 0;
- 
-@@ -2720,7 +2754,6 @@ int gpiod_direction_input(struct gpio_desc *desc)
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(gpiod_direction_input);
- 
- static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
- {
-@@ -2782,8 +2815,15 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
-  */
- int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
- {
-+	int ret;
-+
- 	VALIDATE_DESC(desc);
--	return gpiod_direction_output_raw_commit(desc, value);
-+
-+	ret = gpiod_direction_output_raw_commit(desc, value);
-+	if (ret == 0)
-+		gpiod_line_config_change_notify(desc);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(gpiod_direction_output_raw);
- 
-@@ -2801,6 +2841,18 @@ EXPORT_SYMBOL_GPL(gpiod_direction_output_raw);
-  * 0 on success, or negative errno on failure.
-  */
- int gpiod_direction_output(struct gpio_desc *desc, int value)
-+{
-+	int ret;
-+
-+	ret = gpiod_direction_output_nonotify(desc, value);
-+	if (ret == 0)
-+		gpiod_line_config_change_notify(desc);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(gpiod_direction_output);
-+
-+int gpiod_direction_output_nonotify(struct gpio_desc *desc, int value)
- {
- 	unsigned long flags;
- 	int ret;
-@@ -2863,7 +2915,6 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
- 		set_bit(FLAG_IS_OUT, &desc->flags);
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(gpiod_direction_output);
- 
- /**
-  * gpiod_enable_hw_timestamp_ns - Enable hardware timestamp in nanoseconds.
-@@ -2942,13 +2993,34 @@ EXPORT_SYMBOL_GPL(gpiod_disable_hw_timestamp_ns);
-  */
- int gpiod_set_config(struct gpio_desc *desc, unsigned long config)
- {
-+	int ret;
-+
- 	VALIDATE_DESC(desc);
- 
- 	CLASS(gpio_chip_guard, guard)(desc);
- 	if (!guard.gc)
- 		return -ENODEV;
- 
--	return gpio_do_set_config(guard.gc, gpio_chip_hwgpio(desc), config);
-+	ret = gpio_do_set_config(guard.gc, gpio_chip_hwgpio(desc), config);
-+	if (ret == 0) {
-+		/* These are the only options we notify the userspace about. */
-+		switch (pinconf_to_config_param(config)) {
-+		case PIN_CONFIG_BIAS_DISABLE:
-+		case PIN_CONFIG_BIAS_PULL_DOWN:
-+		case PIN_CONFIG_BIAS_PULL_UP:
-+		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		case PIN_CONFIG_DRIVE_OPEN_SOURCE:
-+		case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		case PIN_CONFIG_INPUT_DEBOUNCE:
-+			gpiod_line_state_notify(desc,
-+						GPIO_V2_LINE_CHANGED_CONFIG);
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(gpiod_set_config);
- 
-@@ -3015,6 +3087,7 @@ void gpiod_toggle_active_low(struct gpio_desc *desc)
- {
- 	VALIDATE_DESC_VOID(desc);
- 	change_bit(FLAG_ACTIVE_LOW, &desc->flags);
-+	gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
- }
- EXPORT_SYMBOL_GPL(gpiod_toggle_active_low);
- 
-@@ -3659,9 +3732,15 @@ EXPORT_SYMBOL_GPL(gpiod_cansleep);
-  */
- int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
- {
-+	int ret;
-+
- 	VALIDATE_DESC(desc);
- 
--	return desc_set_label(desc, name);
-+	ret = desc_set_label(desc, name);
-+	if (ret == 0)
-+		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(gpiod_set_consumer_name);
- 
-@@ -4087,12 +4166,6 @@ int gpiod_set_array_value_cansleep(unsigned int array_size,
- }
- EXPORT_SYMBOL_GPL(gpiod_set_array_value_cansleep);
- 
--void gpiod_line_state_notify(struct gpio_desc *desc, unsigned long action)
--{
--	blocking_notifier_call_chain(&desc->gdev->line_state_notifier,
--				     action, desc);
--}
--
- /**
-  * gpiod_add_lookup_table() - register GPIO device consumers
-  * @table: table of consumers to register
-@@ -4537,10 +4610,10 @@ int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
- 
- 	/* Process flags */
- 	if (dflags & GPIOD_FLAGS_BIT_DIR_OUT)
--		ret = gpiod_direction_output(desc,
-+		ret = gpiod_direction_output_nonotify(desc,
- 				!!(dflags & GPIOD_FLAGS_BIT_DIR_VAL));
- 	else
--		ret = gpiod_direction_input(desc);
-+		ret = gpiod_direction_input_nonotify(desc);
- 
- 	return ret;
- }
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 067197d61d57..e07e053c7860 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/notifier.h>
- #include <linux/srcu.h>
-+#include <linux/workqueue.h>
- 
- #define GPIOCHIP_NAME	"gpiochip"
- 
-@@ -137,6 +138,9 @@ struct gpio_array {
- 	for_each_gpio_desc(gc, desc)					\
- 		if (!test_bit(flag, &desc->flags)) {} else
- 
-+int gpiod_direction_output_nonotify(struct gpio_desc *desc, int value);
-+int gpiod_direction_input_nonotify(struct gpio_desc *desc);
-+
- int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				  unsigned int array_size,
- 				  struct gpio_desc **desc_array,
-@@ -150,8 +154,6 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 
- int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
- 
--void gpiod_line_state_notify(struct gpio_desc *desc, unsigned long action);
--
- struct gpio_desc_label {
- 	struct rcu_head rh;
- 	char str[];
-@@ -165,6 +167,8 @@ struct gpio_desc_label {
-  * @label:		Name of the consumer
-  * @name:		Line name
-  * @hog:		Pointer to the device node that hogs this line (if any)
-+ * @line_state_work:	Used to schedule line state updates to user-space from
-+ *			atomic context.
-  *
-  * These are obtained using gpiod_get() and are preferable to the old
-  * integer-based handles.
-@@ -202,6 +206,7 @@ struct gpio_desc {
- #ifdef CONFIG_OF_DYNAMIC
- 	struct device_node	*hog;
- #endif
-+	struct work_struct	line_state_work;
- };
- 
- #define gpiod_not_found(desc)		(IS_ERR(desc) && PTR_ERR(desc) == -ENOENT)
-
--- 
-2.43.0
-
+Thanks,
+Niklas=20
 
