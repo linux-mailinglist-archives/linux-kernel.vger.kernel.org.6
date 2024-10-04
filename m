@@ -1,85 +1,104 @@
-Return-Path: <linux-kernel+bounces-350832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1E5990A3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:37:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA99990A3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D1451C20A82
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:37:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10B9CB2127B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EAF1D9A70;
-	Fri,  4 Oct 2024 17:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8C31D9A56;
+	Fri,  4 Oct 2024 17:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Mhj16Aad"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XoPV9jSj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CF51E376C;
-	Fri,  4 Oct 2024 17:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2029C1E376C
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728063431; cv=none; b=chwsZPg4E8uZFvI+t0tEYUG40D2bRcCH0+sQewHof/xPfuwupbz53206EzjYTSmXxcx9sTFUYcOlxMV9tsAzXZ1s0maGVAxJ7WimlEFnlWVrv2Jx7T0Mrz+2Z5AK6Zpne1/toQQ5fvtcdXXQ75Uycvw8f9Kr3z39K6iJ9z1T4RM=
+	t=1728063423; cv=none; b=ejQ2+e7rUgW3wY8zM7Kf7+fHqE6ALJs6mD3sE/C+5lfvXngEitxNkK+F27/IVrODWVXhKWgWBONhzOm0UprQ8+2LHtY5NUS4XkwHjI/sjHMvxnpHSJNRtdcvbhPs1wfM2XBfYobov6E8e4gmWbYAZ6ITWO5rHlMCFYyIBE4oMu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728063431; c=relaxed/simple;
-	bh=Rp57pMGyAcU9nt9TEmfZs9lMFXdF3AL13y1sIqxt0jw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qZTGB6EmIPhk+wc4nwIkLHaEpWjcLAhtRPVEcQBP2D6vgqnuEiZPHl8vl3JFw44BZujEH68Pk3H0I1auOQRS4gZaYVGcHCZ8+28UmpRE4JaoM4580fGTDhV2oJxef4balb4IKpC0ojCcGMZ5RoHrp4y9y03+HMredpVDjKsiAGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Mhj16Aad; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4963841043
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1728063423; bh=Rp57pMGyAcU9nt9TEmfZs9lMFXdF3AL13y1sIqxt0jw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Mhj16AadZP7RomdIpj5dg+10RMHWhF8r7BbPSO2sBURlkqPLBIi9hdu3Zk35Rr7HG
-	 ogjKSp1JC9n93TMEglqicv9/j9+7EQ0pwzCij8mhisUmQoFZS8BPQglx28baH3v9JO
-	 pFB5Pe5zHPsNiihluDVq65AVCCV5MSEQnx6VonvFe3La+7dBpRZ+FZbUcUXu6hdw3h
-	 5eZQ73jQhC0ocQUAk3D88kndYPt9RKOJ+KY022z9waveHuhRkHZafVzXrpa+YSRnEG
-	 bwKV+WGFvLPleDbqhxdiQEJDMiCcNv80Jr/esR5KOvi0BoESRCJy/maF5SZ+e5fnTO
-	 Xp8gmM4A8G2MA==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 4963841043;
-	Fri,  4 Oct 2024 17:37:00 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Shuah Khan <skhan@linuxfoundation.org>, =?utf-8?Q?N=C3=ADcolas_F=2E_R?=
- =?utf-8?Q?=2E_A=2E_Prado?=
- <nfraprado@collabora.com>
-Cc: Shuah Khan <shuah@kernel.org>, kernel@collabora.com,
- linux-kselftest@vger.kernel.org, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernelci@lists.linux.dev, Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH] docs: dev-tools: Add documentation for the device
- focused kselftests
-In-Reply-To: <e3602786-d656-40ae-9e22-0e8195d33f0f@linuxfoundation.org>
-References: <20241001-kselftest-device-docs-v1-1-be28b70dd855@collabora.com>
- <0040a842-de9c-4f9c-9d61-c1bfbd010470@linuxfoundation.org>
- <ef428a44-783c-43c3-81c6-9abf88ae8949@notapiano>
- <e3602786-d656-40ae-9e22-0e8195d33f0f@linuxfoundation.org>
-Date: Fri, 04 Oct 2024 11:36:51 -0600
-Message-ID: <87ldz33h3g.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1728063423; c=relaxed/simple;
+	bh=TWlDeZg6JyE3bGN++PzTfb6eLZ7CqJzB+545DU1cZEM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ujrKcIxxyhECZ0Fsoo+LC2uP6tAuZy3ebJw2q2rck/txR+Hz09HRUuvnkcTvZeKLCOq8a7RL5Gll0/NwHCVh3yp76CvSqN8ldEOIi+QK21XMeUZL/lL14IdHd5N6d1MQJukOo+Q1wi2izhj/7whJsYK0sPzo3bRFPjJIkMqkrFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XoPV9jSj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494B3xJE026679;
+	Fri, 4 Oct 2024 17:36:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HgKIT8BZ3ztNxKX0avm9NUOnO59kZYDTDcSiYSXcKio=; b=XoPV9jSjqTaKNhkZ
+	Y+Lr4tvdhQk2jS/g2ViTguQsWrWWZn8QMfbeqZvhXwpuF2dU2EL+ZtS7D45Oro/B
+	kPpWDgmyD7fT9By4CsfjZb2/tcvoIVLdqeY2vg8g+iwi/DwWyNpqvYJj5LbnBmpN
+	Nhw52pFDm8J6xXhOzSNDJlWuvA9753RzM6fWWNs4Fuz/pXU+RsvkhIqaedUI7PLM
+	D2eguar3ijcoIikWz3yISgfMs6V/Uh4VDPoFuGt/F5wGXDFlvVTL6DcZCNs3uVlx
+	LAoPdq1Jc1jtQpKZcnW1AWc5savOs/q3CFeoaNntUMhsrJ5SAPt4r+jIW08AY81a
+	SThrUQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42207v2ug4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 17:36:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494Has6J022922
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 17:36:54 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
+ 10:36:53 -0700
+Message-ID: <d4e451ed-20b8-6aab-9690-a86026d29f40@quicinc.com>
+Date: Fri, 4 Oct 2024 11:36:53 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V3 04/11] accel/amdxdna: Add hardware resource solver
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240911180604.1834434-1-lizhi.hou@amd.com>
+ <20240911180604.1834434-5-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240911180604.1834434-5-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: zKNWz0AqHHPbP5utygXYenlreMO7dg0K
+X-Proofpoint-ORIG-GUID: zKNWz0AqHHPbP5utygXYenlreMO7dg0K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ bulkscore=0 spamscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=847
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040121
 
-Shuah Khan <skhan@linuxfoundation.org> writes:
+On 9/11/2024 12:05 PM, Lizhi Hou wrote:
+> The AI Engine consists of 2D array of tiles arranged as columns. Provides
+> the basic column allocation and release functions for the tile columns.
+> 
+> Co-developed-by: Min Ma <min.ma@amd.com>
+> Signed-off-by: Min Ma <min.ma@amd.com>
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
 
-> Jon, Let me know if you would like me to take this through kselftest
-> tree.
-
-I'm happy either way - go ahead and grab it if you like, just let me
-know.
-
-Thanks,
-
-jon
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 
