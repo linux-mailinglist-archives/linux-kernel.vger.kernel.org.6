@@ -1,150 +1,284 @@
-Return-Path: <linux-kernel+bounces-349943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B1E98FDA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:05:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2905898FDA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A279A1C215E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:05:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46CC1F22F76
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED77135A54;
-	Fri,  4 Oct 2024 07:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eFaHnsLn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="usps7IjM";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eFaHnsLn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="usps7IjM"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771A8132132;
+	Fri,  4 Oct 2024 07:06:24 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5841D5AC1;
-	Fri,  4 Oct 2024 07:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1511D5AC1
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 07:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728025495; cv=none; b=PDwj/3T2e6D1gzom2PcZwoHFpLY/yYBODCDXC5SBStvrZTbHiXz314GWH+nSeJnqLyAmqCXVVyqj5vnztkweCPO9tTHr1Icat8t1uqjHVUKUBly9u5fOcRz1fGrL7umAUA87fQSVxRWdM2udXDlkPQzH91P24VWJN30yHifhHSQ=
+	t=1728025583; cv=none; b=HEHYJ4mCU1DPIrYvS3UnUxDa8IqcA2H6ZOaI+rn6hNfUPfj4msFcoEMneVUYRvhSBdljOXOMARLrpSMZNlJ1gns7S1DutBmEOwQthzqYCXMI9gOGLmpBdSkOeeILCLhqeFrXvO9pNZi7y7UTmf6/KBJynNTnbEYyreCUlAv1mgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728025495; c=relaxed/simple;
-	bh=02OxzDxOgls4GMwzupW0yz4DITd3y+pOaJC6zYFXW0g=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EceSeVUTmiOqeiVYCH9ztuRpmFqTEwZnMotORtgVTuN4O7+DIa7ipSP3ANrCS7msP48Mj5MWcZghgq26TXcXGTTVYxef7mbWO+2y/HocEzMkjtUfIVnC0f2YRSwr05H//XtE2A2t5yL3hOo/Hv1IG8VN/sMkjVXxPmDUYuyaZYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eFaHnsLn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=usps7IjM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eFaHnsLn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=usps7IjM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 115041FEE5;
-	Fri,  4 Oct 2024 07:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728025492; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2z4otWxjdPcCdjNkRrjOiTHRc7iq16jflnfryrKXjII=;
-	b=eFaHnsLnYdZy2PimhDJm+qNMBxNLpV14HT0WyLhiXzQ0M1jmoTQOXg555pJk6XLlZuOZYu
-	BpGxZbOL1MzpgDIOAuYwOL1Idq9dhJziQhafXTs9w91qZ5Oc1g5/q9AJZP+1sichxUkQQE
-	bp3DS7MkxWzQTbM8l2dSFJbCyhCHoPA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728025492;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2z4otWxjdPcCdjNkRrjOiTHRc7iq16jflnfryrKXjII=;
-	b=usps7IjMJKFoHI56HNPTW0VP7UK3pT/r/Recm9iuzU83Zu+g72pClf5T3ySuJDq9fsuuj7
-	lLf/lIsWaWbo1kBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=eFaHnsLn;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=usps7IjM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728025492; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2z4otWxjdPcCdjNkRrjOiTHRc7iq16jflnfryrKXjII=;
-	b=eFaHnsLnYdZy2PimhDJm+qNMBxNLpV14HT0WyLhiXzQ0M1jmoTQOXg555pJk6XLlZuOZYu
-	BpGxZbOL1MzpgDIOAuYwOL1Idq9dhJziQhafXTs9w91qZ5Oc1g5/q9AJZP+1sichxUkQQE
-	bp3DS7MkxWzQTbM8l2dSFJbCyhCHoPA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728025492;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2z4otWxjdPcCdjNkRrjOiTHRc7iq16jflnfryrKXjII=;
-	b=usps7IjMJKFoHI56HNPTW0VP7UK3pT/r/Recm9iuzU83Zu+g72pClf5T3ySuJDq9fsuuj7
-	lLf/lIsWaWbo1kBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E009D13A55;
-	Fri,  4 Oct 2024 07:04:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ONKbNZOT/2YqXQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 04 Oct 2024 07:04:51 +0000
-Date: Fri, 04 Oct 2024 09:05:45 +0200
-Message-ID: <87ttdsmjp2.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Hans P Moller <hmoller@uc.cl>
-Cc: tiwai@suse.com,
-	perex@perex.cz,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: line6: add hw monitor volume control to POD HD500X
-In-Reply-To: <20241003232828.5819-1-hmoller@uc.cl>
-References: <20241003232828.5819-1-hmoller@uc.cl>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1728025583; c=relaxed/simple;
+	bh=zybZiAPIOa76AoBsExSrJnXtPu5kBgBSwIYmbtYExPo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gmfda+RVYd6wVDtMe05o69eXRVabY7BW/OvDlO8o3u1+5uvZPgn3KC2gAymnfk+/KRXLkFyYmS8NMWssHOKWbhiv7FfuEick28n+8jMkyi4RQnw0yxTXRIu2+rH/ZhsmQdZhEqTEQadqn+M5kAkCmAzMWe6lXMCdrm6P4GdBZSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0cb7141adso22730315ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 00:06:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728025581; x=1728630381;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H4RgaKRUXG9iuzRH10Vq9HXdkhKb+sa0Ko+zLWfBr4k=;
+        b=bsRrNfP7WFRvgAWhwnvBmE7c2H2XVg9kSk6qgra7iRvTJLDtk2cSXq0AL6hd/pDh2A
+         oAmbVPprRzdqH4w6IuQyy806eJkjvJjGxHgTBpuedOe4Wn5ktiQPOlp0Tek3pWUlE0A2
+         g4sz1U8+9L9Vd0RFhmXj6K8ldKeuIML34PZQ4R0A0BKRs09qZRAe0lK8wZbONvKsB6l6
+         53u3YDRUlBj1VmFACURCEZYUO446eD2EVbkrae2wtjfsgaGfFcVIiQxaLdVUnldTQm8F
+         46zJ+WrSU0ywRJcrLPhWzqaYitE1jESiYp86CMsoC73x+UUjqOUmaZiat2AeTGbMaips
+         iLEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXva3U+aOtE2oyk7MF23Fb2nVhmPjjH9n2i8JJx1ELTm3WnTxJgB5b6ipmeOJazhXkvNfC7063buC+F7Gc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPgebiSq1Gv+aWh/kRhoLPW8l0s/pODTQdGwruE6LjansHK/Dz
+	VOEKfOUAPiLdCt+Ds5dgCqsupXo9tjPCZkoGu7hPvlujGQx499t9l02D0Rg74aL2jr9eAdKvo0P
+	hpGjwEUWZBd/D7mJGf9d8x4QNGfOuKv7EDWXj8ydLT/k0VnieFutgwDg=
+X-Google-Smtp-Source: AGHT+IGNIeQTXM9v8wy6wsDb0jiZtpJt4ldUKfqOWX3hPtPHNnpx2pMrgadXFzPZi0tTmrV9dOVB/8TdeLwcdK92BI14ovQP7F/g
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 115041FEE5
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.991];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Flag: NO
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:16c9:b0:3a2:6ce9:19c6 with SMTP id
+ e9e14a558f8ab-3a375be2ec4mr14684555ab.25.1728025581293; Fri, 04 Oct 2024
+ 00:06:21 -0700 (PDT)
+Date: Fri, 04 Oct 2024 00:06:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ff93ed.050a0220.49194.045c.GAE@google.com>
+Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_remove_inode
+From: syzbot <syzbot+32016adc6d19e9612861@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 04 Oct 2024 01:28:28 +0200,
-Hans P Moller wrote:
-> 
-> Add hw monitor volume control for POD HD500X. This is done adding
-> LINE6_CAP_HWMON_CTL to the capabilities
-> 
-> Signed-off-by: Hans P. Moller <hmoller@uc.cl>
+Hello,
 
-Applied now.  Thanks.
+syzbot found the following issue on:
+
+HEAD commit:    e7ed34365879 Merge tag 'mailbox-v6.12' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=147dfd9f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf263a6a5debbeef
+dashboard link: https://syzkaller.appspot.com/bug?extid=32016adc6d19e9612861
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/74f7ccd405cc/disk-e7ed3436.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ef3b18bc5269/vmlinux-e7ed3436.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/54ef06c52fbb/bzImage-e7ed3436.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+32016adc6d19e9612861@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-syzkaller-12113-ge7ed34365879 #0 Not tainted
+------------------------------------------------------
+syz-executor/5236 is trying to acquire lock:
+ffff88805fba5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#2){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ffff88805fba5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#2){+.+.}-{3:3}, at: ocfs2_remove_inode+0x15c/0x8a0 fs/ocfs2/inode.c:655
+
+but task is already holding lock:
+ffff88807afb5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ffff88807afb5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}, at: ocfs2_wipe_inode+0x2e6/0x1220 fs/ocfs2/inode.c:776
+
+which lock already depends on the new lock.
 
 
-Takashi
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}:
+       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
+       inode_lock include/linux/fs.h:815 [inline]
+       ocfs2_del_inode_from_orphan+0x112/0x700 fs/ocfs2/namei.c:2726
+       ocfs2_dio_end_io_write+0x2cc/0xf30 fs/ocfs2/aops.c:2329
+       ocfs2_dio_end_io+0x139/0x2a0 fs/ocfs2/aops.c:2427
+       dio_complete+0x21b/0x8e0 fs/direct-io.c:281
+       __blockdev_direct_IO+0x3139/0x3d10 fs/direct-io.c:1303
+       ocfs2_direct_IO+0x263/0x360 fs/ocfs2/aops.c:2464
+       generic_file_direct_write+0x19a/0x410 mm/filemap.c:3977
+       __generic_file_write_iter+0x11b/0x240 mm/filemap.c:4141
+       ocfs2_file_write_iter+0xb70/0x20e0 fs/ocfs2/file.c:2456
+       do_iter_readv_writev+0x535/0x7f0 fs/read_write.c:834
+       vfs_writev+0x363/0xdd0 fs/read_write.c:1064
+       do_pwritev+0x1b4/0x270 fs/read_write.c:1165
+       __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+       __se_sys_pwritev2 fs/read_write.c:1215 [inline]
+       __x64_sys_pwritev2+0xef/0x160 fs/read_write.c:1215
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&ocfs2_quota_ip_alloc_sem_key){++++}-{3:3}:
+       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
+       ocfs2_create_local_dquot+0x158/0xb40 fs/ocfs2/quota_local.c:1231
+       ocfs2_acquire_dquot+0x629/0xaf0 fs/ocfs2/quota_global.c:878
+       dqget+0x694/0x1160 fs/quota/dquot.c:976
+       ocfs2_setattr+0x1cb0/0x2460 fs/ocfs2/file.c:1230
+       notify_change+0x6a9/0x1230 fs/attr.c:503
+       chown_common+0x538/0x670 fs/open.c:793
+       vfs_fchown fs/open.c:861 [inline]
+       vfs_fchown fs/open.c:853 [inline]
+       ksys_fchown+0x11a/0x180 fs/open.c:872
+       __do_sys_fchown fs/open.c:880 [inline]
+       __se_sys_fchown fs/open.c:878 [inline]
+       __x64_sys_fchown+0x72/0xb0 fs/open.c:878
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&dquot->dq_lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       wait_on_dquot fs/quota/dquot.c:355 [inline]
+       dqget+0x5f2/0x1160 fs/quota/dquot.c:971
+       __dquot_initialize+0x588/0xd50 fs/quota/dquot.c:1504
+       ocfs2_get_init_inode+0xe8/0x1a0 fs/ocfs2/namei.c:202
+       ocfs2_mknod+0x938/0x2440 fs/ocfs2/namei.c:308
+       ocfs2_create+0x185/0x450 fs/ocfs2/namei.c:672
+       lookup_open.isra.0+0x1177/0x14c0 fs/namei.c:3595
+       open_last_lookups fs/namei.c:3694 [inline]
+       path_openat+0x904/0x2d60 fs/namei.c:3930
+       do_filp_open+0x1dc/0x430 fs/namei.c:3960
+       do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
+       do_sys_open fs/open.c:1430 [inline]
+       __do_sys_openat fs/open.c:1446 [inline]
+       __se_sys_openat fs/open.c:1441 [inline]
+       __x64_sys_openat+0x175/0x210 fs/open.c:1441
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#2){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain kernel/locking/lockdep.c:3904 [inline]
+       __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
+       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
+       inode_lock include/linux/fs.h:815 [inline]
+       ocfs2_remove_inode+0x15c/0x8a0 fs/ocfs2/inode.c:655
+       ocfs2_wipe_inode+0x455/0x1220 fs/ocfs2/inode.c:818
+       ocfs2_delete_inode fs/ocfs2/inode.c:1079 [inline]
+       ocfs2_evict_inode+0x6c5/0x15d0 fs/ocfs2/inode.c:1216
+       evict+0x40c/0x970 fs/inode.c:723
+       iput_final fs/inode.c:1875 [inline]
+       iput fs/inode.c:1901 [inline]
+       iput+0x530/0x890 fs/inode.c:1887
+       d_delete_notify include/linux/fsnotify.h:332 [inline]
+       vfs_rmdir fs/namei.c:4353 [inline]
+       vfs_rmdir+0x487/0x690 fs/namei.c:4317
+       do_rmdir+0x3a2/0x410 fs/namei.c:4399
+       __do_sys_unlinkat fs/namei.c:4575 [inline]
+       __se_sys_unlinkat fs/namei.c:4569 [inline]
+       __x64_sys_unlinkat+0xef/0x130 fs/namei.c:4569
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &ocfs2_sysfile_lock_key[args->fi_sysfile_type]#2 --> &ocfs2_quota_ip_alloc_sem_key --> &ocfs2_sysfile_lock_key[args->fi_sysfile_type]
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]);
+                               lock(&ocfs2_quota_ip_alloc_sem_key);
+                               lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]);
+  lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#2);
+
+ *** DEADLOCK ***
+
+4 locks held by syz-executor/5236:
+ #0: ffff8880227e2420 (sb_writers#15){.+.+}-{0:0}, at: do_rmdir+0x1e4/0x410 fs/namei.c:4383
+ #1: ffff88807afb2640 (&type->i_mutex_dir_key#10/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:850 [inline]
+ #1: ffff88807afb2640 (&type->i_mutex_dir_key#10/1){+.+.}-{3:3}, at: do_rmdir+0x235/0x410 fs/namei.c:4387
+ #2: ffff88804f59cbd0 (&osb->nfs_sync_rwlock){.+.+}-{3:3}, at: ocfs2_nfs_sync_lock+0xe5/0x2e0 fs/ocfs2/dlmglue.c:2876
+ #3: ffff88807afb5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ #3: ffff88807afb5f40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}, at: ocfs2_wipe_inode+0x2e6/0x1220 fs/ocfs2/inode.c:776
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5236 Comm: syz-executor Not tainted 6.11.0-syzkaller-12113-ge7ed34365879 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x41c/0x610 kernel/locking/lockdep.c:2074
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain kernel/locking/lockdep.c:3904 [inline]
+ __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+ down_write+0x93/0x200 kernel/locking/rwsem.c:1577
+ inode_lock include/linux/fs.h:815 [inline]
+ ocfs2_remove_inode+0x15c/0x8a0 fs/ocfs2/inode.c:655
+ ocfs2_wipe_inode+0x455/0x1220 fs/ocfs2/inode.c:818
+ ocfs2_delete_inode fs/ocfs2/inode.c:1079 [inline]
+ ocfs2_evict_inode+0x6c5/0x15d0 fs/ocfs2/inode.c:1216
+ evict+0x40c/0x970 fs/inode.c:723
+ iput_final fs/inode.c:1875 [inline]
+ iput fs/inode.c:1901 [inline]
+ iput+0x530/0x890 fs/inode.c:1887
+ d_delete_notify include/linux/fsnotify.h:332 [inline]
+ vfs_rmdir fs/namei.c:4353 [inline]
+ vfs_rmdir+0x487/0x690 fs/namei.c:4317
+ do_rmdir+0x3a2/0x410 fs/namei.c:4399
+ __do_sys_unlinkat fs/namei.c:4575 [inline]
+ __se_sys_unlinkat fs/namei.c:4569 [inline]
+ __x64_sys_unlinkat+0xef/0x130 fs/namei.c:4569
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fcf15b7d5d7
+Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 07 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffff1fa0fd8 EFLAGS: 00000207 ORIG_RAX: 0000000000000107
+RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 00007fcf15b7d5d7
+RDX: 0000000000000200 RSI: 00007ffff1fa2180 RDI: 00000000ffffff9c
+RBP: 00007fcf15bf0134 R08: 0000555573d0e66b R09: 0000000000000000
+R10: 0000000000001000 R11: 0000000000000207 R12: 00007ffff1fa2180
+R13: 00007fcf15bf0134 R14: 0000000000042eb7 R15: 00007ffff1fa4330
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
