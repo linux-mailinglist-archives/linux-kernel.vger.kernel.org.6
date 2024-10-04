@@ -1,268 +1,328 @@
-Return-Path: <linux-kernel+bounces-350586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9115990715
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:04:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E16990726
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36B14B253FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:04:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03F021F21C7A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5EC1AA78F;
-	Fri,  4 Oct 2024 15:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="XEXvz92t"
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8563B1D9A4B
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 15:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF721C3043;
+	Fri,  4 Oct 2024 15:05:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B140A1AA7A7;
+	Fri,  4 Oct 2024 15:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728054275; cv=none; b=VwEu88O7D7M+XsjwNVGywRUNXtM/5ZIbAjaZgRQ908hhpdnHig2Z2qTTvZqjAbun/9XeAoSztQexmrUg6/CS3uYBxsaC3b7gSs+7a/scbcA+NmOYfq8oRagL+rNy10SzBrQX3On+r4/W9jY1RlXpiQR+SFUvQkamAfqX8Ogmito=
+	t=1728054326; cv=none; b=SeMihjQI3ffDRx8HVB5z6ycbD7VeSAmcFTxFuwxupG/3HwBAYDFSFc7KWmaZtUNoNX+mXCBaHU2Z1JvLy2EChbtnZSJy8Etwcj6/GuMt7aqnWwCtZwfFBNHKVd/G48xNyt8b3bMCgWQeFTb/1kP4sxhqR3brEkjE2MaspTTckc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728054275; c=relaxed/simple;
-	bh=lT0XRAqjOTPeWuN8bb0XCVgCD/rTTCENAWcimJ8sjxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CSMxSu3XZZhyVRIauV53GyE54XzzHEW5+UHio6zNBB3+Mr+q+kqZ2HqY/zdnydlHGyDZHuHRzpTRzyFqAk7wtbGqII9nQdo1cVlgFnoVSylRyO26+c7LxvGGi/CC/fJKef7KluK4K/jcvoMUhOjh9+L9DhLPendtvkQIFlV+GsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=XEXvz92t; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XKsJr2VQgzC1c;
-	Fri,  4 Oct 2024 17:04:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1728054268;
-	bh=iSe7t8jGuIY2A3QPYUnH1aJ3yZ/co8bw8960T0QeURI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XEXvz92t+oY93jUSeepGVYDlD/holMGvGGDjbGDW5VZv+z9SAYrcBpTC3rYL+th5w
-	 X/ugZKUtvxpYnwtguwP3ZXObApgh7o2ItwX0zxet5GQkmSQ1cr2nhw1py3NjnfjebZ
-	 OlvMuX3OfyebkK6f0qhT2MaGxffbfYuPod+4PNwk=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XKsJp6q1hz630;
-	Fri,  4 Oct 2024 17:04:26 +0200 (CEST)
-Date: Fri, 4 Oct 2024 17:04:23 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Subject: Re: [RFC PATCH v1 5/7] samples/landlock: Add sandboxer UDP access
- control
-Message-ID: <20241004.ohc2aeYei1oo@digikod.net>
-References: <20240916122230.114800-1-matthieu@buffet.re>
- <20240916122230.114800-6-matthieu@buffet.re>
+	s=arc-20240116; t=1728054326; c=relaxed/simple;
+	bh=2CmLgUGcu2mav0PWca+261/vB/u7pLjpuKZvF8743S4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yq8fQkxtMNldQJD2DeD3uWlT2erjpzS+Hwb2jB7NEgZG5fzShhcrzyXlu1yx0BKZngXMDIB/nHE8mjKKsiPJ3YORgf5HGtQ8oyirAPyS90DtFxYLdhrcdpF6sckTD7sUk/1ES7kLclx7/Gz1hFgVAr22zIcZMDmaR4smELplRqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 862B6339;
+	Fri,  4 Oct 2024 08:05:53 -0700 (PDT)
+Received: from [10.1.25.25] (unknown [10.1.25.25])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2E1C73F640;
+	Fri,  4 Oct 2024 08:05:19 -0700 (PDT)
+Message-ID: <085896de-9a39-4f90-9a2d-3f8662c2e2a2@arm.com>
+Date: Fri, 4 Oct 2024 16:05:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240916122230.114800-6-matthieu@buffet.re>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 02/11] arm64: Detect if in a realm and set RIPAS RAM
+To: kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>
+References: <20241004144307.66199-1-steven.price@arm.com>
+ <20241004144307.66199-3-steven.price@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241004144307.66199-3-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 16, 2024 at 02:22:28PM +0200, Matthieu Buffet wrote:
-> Add environment variables to control associated access rights:
-> (each one takes a list of ports separated by colons, like other
-> list options)
+On 04/10/2024 15:42, Steven Price wrote:
+> From: Suzuki K Poulose <suzuki.poulose@arm.com>
 > 
-> - LL_UDP_BIND
-> - LL_UDP_CONNECT
-> - LL_UDP_RECVMSG
-> - LL_UDP_SENDMSG
+> Detect that the VM is a realm guest by the presence of the RSI
+> interface. This is done after PSCI has been initialised so that we can
+> check the SMCCC conduit before making any RSI calls.
 > 
-> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+> If in a realm then all memory needs to be marked as RIPAS RAM initially,
+> the loader may or may not have done this for us. To be sure iterate over
+> all RAM and mark it as such. Any failure is fatal as that implies the
+> RAM regions passed to Linux are incorrect - which would mean failing
+> later when attempting to access non-existent RAM.
+
+And it appears I didn't review this closely enough before posting ;)
+Suzuki pointed out to me that this patch description doesn't make sense
+given my comments in the cover letter about the VMM or bootloader having
+to set everything RIPAS RAM.
+
+I should have reworded this commit message to something like:
+
+"""
+Detect that the VM is a realm guest by the presence of the RSI
+interface. This is done after PSCI has been initialised so that we can
+check the SMCCC conduit before making any RSI calls.
+
+If in a realm then iterate over all memory ensuring that it is marked as
+RIPAS RAM. The loader is required to do this for us, however if some
+memory is missed this will cause the guest to receive a hard to debug
+external abort at some random point in the future. So for a
+belt-and-braces approach set all memory to RIPAS RAM. Any failure here
+implies that the RAM regions passed to Linux are incorrect so panic()
+promptly to make the situation clear.
+"""
+
+Steve
+
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Co-developed-by: Steven Price <steven.price@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
->  samples/landlock/sandboxer.c | 88 ++++++++++++++++++++++++++++++++----
->  1 file changed, 80 insertions(+), 8 deletions(-)
+> Changes since v5:
+>  * Replace BUG_ON() with a panic() call that provides a message with the
+>    memory range that couldn't be set to RIPAS_RAM.
+>  * Move the call to arm64_rsi_init() later so that it is after PSCI,
+>    this means we can use arm_smccc_1_1_get_conduit() to check if it is
+>    safe to make RSI calls.
+> Changes since v4:
+>  * Minor tidy ups.
+> Changes since v3:
+>  * Provide safe/unsafe versions for converting memory to protected,
+>    using the safer version only for the early boot.
+>  * Use the new psci_early_test_conduit() function to avoid calling an
+>    SMC if EL3 is not present (or not configured to handle an SMC).
+> Changes since v2:
+>  * Use DECLARE_STATIC_KEY_FALSE rather than "extern struct
+>    static_key_false".
+>  * Rename set_memory_range() to rsi_set_memory_range().
+>  * Downgrade some BUG()s to WARN()s and handle the condition by
+>    propagating up the stack. Comment the remaining case that ends in a
+>    BUG() to explain why.
+>  * Rely on the return from rsi_request_version() rather than checking
+>    the version the RMM claims to support.
+>  * Rename the generic sounding arm64_setup_memory() to
+>    arm64_rsi_setup_memory() and move the call site to setup_arch().
+> ---
+>  arch/arm64/include/asm/rsi.h | 66 +++++++++++++++++++++++++++++++
+>  arch/arm64/kernel/Makefile   |  3 +-
+>  arch/arm64/kernel/rsi.c      | 75 ++++++++++++++++++++++++++++++++++++
+>  arch/arm64/kernel/setup.c    |  3 ++
+>  4 files changed, 146 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm64/include/asm/rsi.h
+>  create mode 100644 arch/arm64/kernel/rsi.c
 > 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index 08704504dc51..dadd30dad712 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -55,6 +55,10 @@ static inline int landlock_restrict_self(const int ruleset_fd,
->  #define ENV_FS_RW_NAME "LL_FS_RW"
->  #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
->  #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
-> +#define ENV_UDP_BIND_NAME "LL_UDP_BIND"
-> +#define ENV_UDP_CONNECT_NAME "LL_UDP_CONNECT"
-> +#define ENV_UDP_RECVMSG_NAME "LL_UDP_RECVMSG"
-> +#define ENV_UDP_SENDMSG_NAME "LL_UDP_SENDMSG"
->  #define ENV_DELIMITER ":"
+> diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
+> new file mode 100644
+> index 000000000000..e4c01796c618
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/rsi.h
+> @@ -0,0 +1,66 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2024 ARM Ltd.
+> + */
+> +
+> +#ifndef __ASM_RSI_H_
+> +#define __ASM_RSI_H_
+> +
+> +#include <linux/errno.h>
+> +#include <linux/jump_label.h>
+> +#include <asm/rsi_cmds.h>
+> +
+> +DECLARE_STATIC_KEY_FALSE(rsi_present);
+> +
+> +void __init arm64_rsi_init(void);
+> +
+> +static inline bool is_realm_world(void)
+> +{
+> +	return static_branch_unlikely(&rsi_present);
+> +}
+> +
+> +static inline int rsi_set_memory_range(phys_addr_t start, phys_addr_t end,
+> +				       enum ripas state, unsigned long flags)
+> +{
+> +	unsigned long ret;
+> +	phys_addr_t top;
+> +
+> +	while (start != end) {
+> +		ret = rsi_set_addr_range_state(start, end, state, flags, &top);
+> +		if (WARN_ON(ret || top < start || top > end))
+> +			return -EINVAL;
+> +		start = top;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Convert the specified range to RAM. Do not use this if you rely on the
+> + * contents of a page that may already be in RAM state.
+> + */
+> +static inline int rsi_set_memory_range_protected(phys_addr_t start,
+> +						 phys_addr_t end)
+> +{
+> +	return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
+> +				    RSI_CHANGE_DESTROYED);
+> +}
+> +
+> +/*
+> + * Convert the specified range to RAM. Do not convert any pages that may have
+> + * been DESTROYED, without our permission.
+> + */
+> +static inline int rsi_set_memory_range_protected_safe(phys_addr_t start,
+> +						      phys_addr_t end)
+> +{
+> +	return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
+> +				    RSI_NO_CHANGE_DESTROYED);
+> +}
+> +
+> +static inline int rsi_set_memory_range_shared(phys_addr_t start,
+> +					      phys_addr_t end)
+> +{
+> +	return rsi_set_memory_range(start, end, RSI_RIPAS_EMPTY,
+> +				    RSI_CHANGE_DESTROYED);
+> +}
+> +#endif /* __ASM_RSI_H_ */
+> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+> index 2b112f3b7510..71c29a2a2f19 100644
+> --- a/arch/arm64/kernel/Makefile
+> +++ b/arch/arm64/kernel/Makefile
+> @@ -33,7 +33,8 @@ obj-y			:= debug-monitors.o entry.o irq.o fpsimd.o		\
+>  			   return_address.o cpuinfo.o cpu_errata.o		\
+>  			   cpufeature.o alternative.o cacheinfo.o		\
+>  			   smp.o smp_spin_table.o topology.o smccc-call.o	\
+> -			   syscall.o proton-pack.o idle.o patching.o pi/
+> +			   syscall.o proton-pack.o idle.o patching.o pi/	\
+> +			   rsi.o
 >  
->  static int parse_path(char *env_path, const char ***const path_list)
-> @@ -219,7 +223,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+>  obj-$(CONFIG_COMPAT)			+= sys32.o signal32.o			\
+>  					   sys_compat.o
+> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+> new file mode 100644
+> index 000000000000..9bf757b4b00c
+> --- /dev/null
+> +++ b/arch/arm64/kernel/rsi.c
+> @@ -0,0 +1,75 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2023 ARM Ltd.
+> + */
+> +
+> +#include <linux/jump_label.h>
+> +#include <linux/memblock.h>
+> +#include <linux/psci.h>
+> +#include <asm/rsi.h>
+> +
+> +DEFINE_STATIC_KEY_FALSE_RO(rsi_present);
+> +EXPORT_SYMBOL(rsi_present);
+> +
+> +static bool rsi_version_matches(void)
+> +{
+> +	unsigned long ver_lower, ver_higher;
+> +	unsigned long ret = rsi_request_version(RSI_ABI_VERSION,
+> +						&ver_lower,
+> +						&ver_higher);
+> +
+> +	if (ret == SMCCC_RET_NOT_SUPPORTED)
+> +		return false;
+> +
+> +	if (ret != RSI_SUCCESS) {
+> +		pr_err("RME: RMM doesn't support RSI version %lu.%lu. Supported range: %lu.%lu-%lu.%lu\n",
+> +		       RSI_ABI_VERSION_MAJOR, RSI_ABI_VERSION_MINOR,
+> +		       RSI_ABI_VERSION_GET_MAJOR(ver_lower),
+> +		       RSI_ABI_VERSION_GET_MINOR(ver_lower),
+> +		       RSI_ABI_VERSION_GET_MAJOR(ver_higher),
+> +		       RSI_ABI_VERSION_GET_MINOR(ver_higher));
+> +		return false;
+> +	}
+> +
+> +	pr_info("RME: Using RSI version %lu.%lu\n",
+> +		RSI_ABI_VERSION_GET_MAJOR(ver_lower),
+> +		RSI_ABI_VERSION_GET_MINOR(ver_lower));
+> +
+> +	return true;
+> +}
+> +
+> +static void __init arm64_rsi_setup_memory(void)
+> +{
+> +	u64 i;
+> +	phys_addr_t start, end;
+> +
+> +	/*
+> +	 * Iterate over the available memory ranges and convert the state to
+> +	 * protected memory. We should take extra care to ensure that we DO NOT
+> +	 * permit any "DESTROYED" pages to be converted to "RAM".
+> +	 *
+> +	 * panic() is used because if the attempt to switch the memory to
+> +	 * protected has failed here, then future accesses to the memory are
+> +	 * simply going to be reflected as a SEA (Synchronous External Abort)
+> +	 * which we can't handle.  Bailing out early prevents the guest limping
+> +	 * on and dying later.
+> +	 */
+> +	for_each_mem_range(i, &start, &end) {
+> +		if (rsi_set_memory_range_protected_safe(start, end))
+> +			panic("Failed to set memory range to protected: %pa-%pa",
+> +			      &start, &end);
+> +	}
+> +}
+> +
+> +void __init arm64_rsi_init(void)
+> +{
+> +	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_SMC)
+> +		return;
+> +	if (!rsi_version_matches())
+> +		return;
+> +
+> +	arm64_rsi_setup_memory();
+> +
+> +	static_branch_enable(&rsi_present);
+> +}
+> +
+> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+> index b22d28ec8028..b5e1e306fa51 100644
+> --- a/arch/arm64/kernel/setup.c
+> +++ b/arch/arm64/kernel/setup.c
+> @@ -43,6 +43,7 @@
+>  #include <asm/cpu_ops.h>
+>  #include <asm/kasan.h>
+>  #include <asm/numa.h>
+> +#include <asm/rsi.h>
+>  #include <asm/scs.h>
+>  #include <asm/sections.h>
+>  #include <asm/setup.h>
+> @@ -351,6 +352,8 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
+>  	else
+>  		psci_acpi_init();
 >  
->  /* clang-format on */
->  
-> -#define LANDLOCK_ABI_LAST 5
-> +#define LANDLOCK_ABI_LAST 6
->  
->  static void print_help(const char *prog)
->  {
-> @@ -247,11 +251,25 @@ static void print_help(const char *prog)
->  		"to allow nothing, e.g. %s=\"\"):\n",
->  		ENV_TCP_BIND_NAME);
->  	fprintf(stderr,
-> -		"* %s: list of ports allowed to bind (server).\n",
-> +		"* %s: list of TCP ports allowed to bind (server)\n",
->  		ENV_TCP_BIND_NAME);
->  	fprintf(stderr,
-> -		"* %s: list of ports allowed to connect (client).\n",
-> +		"* %s: list of TCP ports allowed to connect (client)\n",
->  		ENV_TCP_CONNECT_NAME);
-> +	fprintf(stderr,
-> +		"* %s: list of UDP ports allowed to bind (client: set as "
-> +		"source port/server: listen on port)\n",
-> +		ENV_UDP_BIND_NAME);
-> +	fprintf(stderr,
-> +		"* %s: list of UDP ports allowed to connect (client: set as "
-> +		"destination port/server: only receive from one client)\n",
-> +		ENV_UDP_CONNECT_NAME);
-> +	fprintf(stderr,
-> +		"* %s: list of UDP ports allowed to send to (client/server)\n",
-> +		ENV_UDP_SENDMSG_NAME);
-> +	fprintf(stderr,
-> +		"* %s: list of UDP ports allowed to recv from (client/server)\n",
-> +		ENV_UDP_RECVMSG_NAME);
->  	fprintf(stderr,
->  		"\n"
->  		"Example:\n"
-> @@ -259,9 +277,12 @@ static void print_help(const char *prog)
->  		"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
->  		"%s=\"9418\" "
->  		"%s=\"80:443\" "
-> +		"%s=\"0\" "
-> +		"%s=\"53\" "
->  		"%s bash -i\n\n",
->  		ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> -		ENV_TCP_CONNECT_NAME, prog);
-> +		ENV_TCP_CONNECT_NAME, ENV_UDP_RECVMSG_NAME,
-> +		ENV_UDP_SENDMSG_NAME, prog);
->  	fprintf(stderr,
->  		"This sandboxer can use Landlock features "
->  		"up to ABI version %d.\n",
-> @@ -280,7 +301,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  	struct landlock_ruleset_attr ruleset_attr = {
->  		.handled_access_fs = access_fs_rw,
->  		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
-> -				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP |
-> +				      LANDLOCK_ACCESS_NET_BIND_UDP |
-> +				      LANDLOCK_ACCESS_NET_CONNECT_UDP |
-> +				      LANDLOCK_ACCESS_NET_RECVMSG_UDP |
-> +				      LANDLOCK_ACCESS_NET_SENDMSG_UDP,
->  	};
->  
->  	if (argc < 2) {
-> @@ -354,6 +379,14 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  			"provided by ABI version %d (instead of %d).\n",
->  			LANDLOCK_ABI_LAST, abi);
->  		__attribute__((fallthrough));
+> +	arm64_rsi_init();
+> +
+>  	init_bootcpu_ops();
+>  	smp_init_cpus();
+>  	smp_build_mpidr_hash();
 
-> +	case 5:
-> +		/* Removes UDP support for ABI < 6 */
-> +		ruleset_attr.handled_access_net &=
-> +			~(LANDLOCK_ACCESS_NET_BIND_UDP |
-> +			  LANDLOCK_ACCESS_NET_CONNECT_UDP |
-> +			  LANDLOCK_ACCESS_NET_RECVMSG_UDP |
-> +			  LANDLOCK_ACCESS_NET_SENDMSG_UDP);
-> +		__attribute__((fallthrough));
-
-This hunk should go just after the "scoped" field cleanup and before the
-hint.  This way the hint is always printed if the current ABI is not the
-last (known) one.  This hunk should then start with a fullthrough
-attribute.
-
->  	case LANDLOCK_ABI_LAST:
->  		break;
->  	default:
-> @@ -366,18 +399,42 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  	access_fs_ro &= ruleset_attr.handled_access_fs;
->  	access_fs_rw &= ruleset_attr.handled_access_fs;
->  
-> -	/* Removes bind access attribute if not supported by a user. */
-> +	/* Removes TCP bind access attribute if not supported by a user. */
-
-You can send a separate patch with these comment fixes.
-
->  	env_port_name = getenv(ENV_TCP_BIND_NAME);
->  	if (!env_port_name) {
->  		ruleset_attr.handled_access_net &=
->  			~LANDLOCK_ACCESS_NET_BIND_TCP;
->  	}
-> -	/* Removes connect access attribute if not supported by a user. */
-> +	/* Removes TCP connect access attribute if not supported by a user. */
->  	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
->  	if (!env_port_name) {
->  		ruleset_attr.handled_access_net &=
->  			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
->  	}
-> +	/* Removes UDP bind access attribute if not supported by a user. */
-> +	env_port_name = getenv(ENV_UDP_BIND_NAME);
-> +	if (!env_port_name) {
-> +		ruleset_attr.handled_access_net &=
-> +			~LANDLOCK_ACCESS_NET_BIND_UDP;
-> +	}
-> +	/* Removes UDP bind access attribute if not supported by a user. */
-> +	env_port_name = getenv(ENV_UDP_CONNECT_NAME);
-> +	if (!env_port_name) {
-> +		ruleset_attr.handled_access_net &=
-> +			~LANDLOCK_ACCESS_NET_CONNECT_UDP;
-> +	}
-> +	/* Removes UDP recv access attribute if not supported by a user. */
-> +	env_port_name = getenv(ENV_UDP_RECVMSG_NAME);
-> +	if (!env_port_name) {
-> +		ruleset_attr.handled_access_net &=
-> +			~LANDLOCK_ACCESS_NET_RECVMSG_UDP;
-> +	}
-> +	/* Removes UDP send access attribute if not supported by a user. */
-> +	env_port_name = getenv(ENV_UDP_SENDMSG_NAME);
-> +	if (!env_port_name) {
-> +		ruleset_attr.handled_access_net &=
-> +			~LANDLOCK_ACCESS_NET_SENDMSG_UDP;
-> +	}
->  
->  	ruleset_fd =
->  		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> @@ -392,7 +449,6 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
->  		goto err_close_ruleset;
->  	}
-> -
->  	if (populate_ruleset_net(ENV_TCP_BIND_NAME, ruleset_fd,
->  				 LANDLOCK_ACCESS_NET_BIND_TCP)) {
->  		goto err_close_ruleset;
-> @@ -401,6 +457,22 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
->  		goto err_close_ruleset;
->  	}
-> +	if (populate_ruleset_net(ENV_UDP_BIND_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_BIND_UDP)) {
-> +		goto err_close_ruleset;
-> +	}
-> +	if (populate_ruleset_net(ENV_UDP_CONNECT_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_CONNECT_UDP)) {
-> +		goto err_close_ruleset;
-> +	}
-> +	if (populate_ruleset_net(ENV_UDP_RECVMSG_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_RECVMSG_UDP)) {
-> +		goto err_close_ruleset;
-> +	}
-> +	if (populate_ruleset_net(ENV_UDP_SENDMSG_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_SENDMSG_UDP)) {
-> +		goto err_close_ruleset;
-> +	}
->  
->  	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
->  		perror("Failed to restrict privileges");
-> -- 
-> 2.39.5
-> 
-> 
 
