@@ -1,110 +1,186 @@
-Return-Path: <linux-kernel+bounces-350821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C82D1990A14
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:23:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2158C990A15
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082F81C2221D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:23:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BCEBB2220E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413B11C3021;
-	Fri,  4 Oct 2024 17:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BE21C3021;
+	Fri,  4 Oct 2024 17:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fmxRHCZu"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622621E378D
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRnK+Hc8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B451E378D;
+	Fri,  4 Oct 2024 17:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728062624; cv=none; b=lW+JJLTZqUJbV6cX45PbBSMB5zA3zwhw2RSfS81lr+O6qcPeN+H6tCGoe3aeawHKcTzwmYQLgeAu2ro7rfMCLZ+XUcRMzLH86+hFe0G/wJ/6WHbTzC9/hnT4SkBoATxtpRiaZMpxEWD3ZzqDk8OnSvF10jdrDzSpIK7LjZluwGg=
+	t=1728062629; cv=none; b=ZdnBnUtW3BSPtp4NNg9iiPEDnP0cL6O7/GcIIVUr/8pGxrRpmFmoiIaHH2APIHfHho2dxXAp0e9QgNfTU7/lNISIu7A2dFHpg7U1SZa6HCl1Qwbc/taSbOxALZ7nxr6HJh/wR4G1NmRVn40zqYXINZlF4Ht8tZzd3k6yl2cPERk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728062624; c=relaxed/simple;
-	bh=fgHaoikfsRBStlU0bGSvmpaGxBdQYiG8RsEgE0RudNA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MiXdHIjGOiu/w2ZBzXDgjfDNdAEyCd0HGBQTYI0z5OUk3uq6jnKyfsSGkLJQLX27jhRA9/zeEDEGeJfdduraW8jH73ptLIsGQ8vvmD28iJdePWW0pH7Gpo/UGC1KvD9xCxN5RIa443CsGo6gUCagYFv/4rHAZ07dG52Ahc/mhK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fmxRHCZu; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from rrs24-12-35.corp.microsoft.com (unknown [131.107.1.176])
-	by linux.microsoft.com (Postfix) with ESMTPSA id AA01720DB372;
-	Fri,  4 Oct 2024 10:23:42 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AA01720DB372
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1728062622;
-	bh=1YbPP75pGZfs6660HAPrOyUhcs0kb5K2kzLWLPdt6zM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fmxRHCZuzH3vOlH8LRH2P74niodZNV++3gBPU4pKo5uPmtrefCfQExxbgeuJF+EHL
-	 +Px8cKn/RNyoY5j9ymRA0W4pkrb9kzLfMd7A8I+RXQvLLyxRp8wGscNchK62UAqS/6
-	 Yhf6xvmbUd8wFvGRO7F3BMGmAuAC0dZzPJY5o/bU=
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Chen Haonan <chen.haonan2@zte.com.cn>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT),
-	linux-kernel@vger.kernel.org (open list)
-Cc: jacob.pan@linux.microsoft.com
-Subject: [PATCH] ARM/dma-mapping: Disambiguate ops from iommu_ops in IOMMU core
-Date: Fri,  4 Oct 2024 17:23:31 +0000
-Message-ID: <20241004172335.386904-1-eahariha@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728062629; c=relaxed/simple;
+	bh=Ck04ZwAJLUC52xG8xW/cvhMb6CgIDBwDNggWk8T5Z6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q40Uzpe5+nK8FpJjhhi74OUtL4ew3Pp9OtHME3vyQo8WEJuf+f0bceVYKBnSk8svaypEmZ+ZxPFQux0yUPZNaEgA5Oqb7qYaOl4LzJaLK5kBBbwZ8EWIgz8zbdX9ctJ4cudHV/F1NSm/NIobftqi5qZfQ5AeLF9n7Eb+rkVm3Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRnK+Hc8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 459D2C4CEC6;
+	Fri,  4 Oct 2024 17:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728062629;
+	bh=Ck04ZwAJLUC52xG8xW/cvhMb6CgIDBwDNggWk8T5Z6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qRnK+Hc8fbZvqSga/zsdsMP74yY2Pz6jVlLqCCHwKxGGmm8KNdEr4zdpu2IAhCLPb
+	 lRaZbchE7zyY27Ol9Hnw1uWRbliPl8I/+/zilZPSKXUzKJC12bSV7HSlWpl5DiSMLB
+	 HEtpGPskvn2MfPZvV+vmD81CeSXVEr7PaNhTPCm2Rkd2jjSIGGFWJfsUKASwbMQNHs
+	 uP2JSq3E6dNWwubN3+b+dfKgeVeIX661LoHrOpwP6Zyl5LE3pLKdri5Mk8VL0E2nli
+	 COSe9o3f5MkB154n+3I+MJydU/ZNq9U612HB6Fs44DljKJXML+LxDLyynurnyC1mM5
+	 lmi9vJ1Zilt0g==
+Date: Fri, 4 Oct 2024 10:23:46 -0700
+From: Kees Cook <kees@kernel.org>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
+	Marco Elver <elver@google.com>, linux-mm@kvack.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3] slab: Introduce kmalloc_obj() and family
+Message-ID: <202410041014.7DE8981@keescook>
+References: <20240822231324.make.666-kees@kernel.org>
+ <eae36648-6f9f-486d-b352-c92a315431a1@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eae36648-6f9f-486d-b352-c92a315431a1@intel.com>
 
-The architecture dma ops collides with the struct iommu_ops {} defined in
-/include/linux/iommu.h. This isn't a major issue, just a nagging annoyance.
+On Fri, Aug 23, 2024 at 06:27:58AM +0200, Przemek Kitszel wrote:
+> On 8/23/24 01:13, Kees Cook wrote:
+> 
+> > (...) For cases where the total size of the allocation is needed,
+> > the kmalloc_obj_sz(), kmalloc_objs_sz(), and kmalloc_flex_sz() family
+> > of macros can be used. For example:
+> > 
+> > 	info->size = struct_size(ptr, flex_member, count);
+> > 	ptr = kmalloc(info->size, gfp);
+> > 
+> > becomes:
+> > 
+> > 	kmalloc_flex_sz(ptr, flex_member, count, gfp, &info->size);
+> > 
+> > Internal introspection of allocated type now becomes possible, allowing
+> > for future alignment-aware choices and hardening work. For example,
+> > adding __alignof(*ptr) as an argument to the internal allocators so that
+> > appropriate/efficient alignment choices can be made, or being able to
+> > correctly choose per-allocation offset randomization within a bucket
+> > that does not break alignment requirements.
+> > 
+> > Introduces __flex_count() for when __builtin_get_counted_by() is added
+> > by GCC[1] and Clang[2]. The internal use of __flex_count() allows for
+> > automatically setting the counter member of a struct's flexible array
+> > member when it has been annotated with __counted_by(), avoiding any
+> > missed early size initializations while __counted_by() annotations are
+> > added to the kernel. Additionally, this also checks for "too large"
+> > allocations based on the type size of the counter variable. For example:
+> > 
+> > 	if (count > type_max(ptr->flex_count))
+> > 		fail...;
+> > 	info->size = struct_size(ptr, flex_member, count);
+> > 	ptr = kmalloc(info->size, gfp);
+> > 	ptr->flex_count = count;
+> > 
+> > becomes (i.e. unchanged from earlier example):
+> > 
+> > 	kmalloc_flex_sz(ptr, flex_member, count, gfp, &info->size);
+> 
+> As there could be no __builtin_get_counted_by() available, caller still
+> needs to fill the counted-by variable, right? So it is possible to just
+> pass the in the struct pointer to fill? (last argument "&f->cnt" of the
+> snippet below):
+> 
+> struct foo {
+> 	int cnt;
+> 	struct bar[] __counted_by(cnt);
+> };
+> 
+> //...
+> 	struct foo *f;
+> 
+> 	kmalloc_flex_sz(f, cnt, 42, gfp, &f->cnt);
 
-Rename iommu_ops to arm_dma_iommu_ops to disambiguate and better match the
-other architectures. No functional changes intended.
+I specifically want to avoid this because it makes adding the
+counted_by attribute more difficult -- requiring manual auditing of
+all allocation sites, even if we switch all the alloc macros. But if
+allocation macros are all replaced with a treewide change, it becomes
+trivial to add counted_by annotations without missing "too late" counter
+assignments. (And note that the "too late" counter assignments are only
+a problem for code built with compilers that support counted_by, so
+there's no problem that __builtin_get_counted_by() isn't available.)
 
-Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
----
- arch/arm/mm/dma-mapping.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Right now we have two cases in kernel code:
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 88c2d68a69c9e..51b5319e8f519 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -1510,7 +1510,7 @@ static void arm_iommu_sync_single_for_device(struct device *dev,
- 	__dma_page_cpu_to_dev(page, offset, size, dir);
- }
- 
--static const struct dma_map_ops iommu_ops = {
-+static const struct dma_map_ops arm_dma_iommu_ops = {
- 	.alloc		= arm_iommu_alloc_attrs,
- 	.free		= arm_iommu_free_attrs,
- 	.mmap		= arm_iommu_mmap_attrs,
-@@ -1680,7 +1680,7 @@ int arm_iommu_attach_device(struct device *dev,
- 	if (err)
- 		return err;
- 
--	set_dma_ops(dev, &iommu_ops);
-+	set_dma_ops(dev, &arm_dma_iommu_ops);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(arm_iommu_attach_device);
-@@ -1734,7 +1734,7 @@ static void arm_setup_iommu_dma_ops(struct device *dev)
- 		return;
- 	}
- 
--	set_dma_ops(dev, &iommu_ops);
-+	set_dma_ops(dev, &arm_dma_iommu_ops);
- }
- 
- static void arm_teardown_iommu_dma_ops(struct device *dev)
+case 1:
+- allocate
+- assign counter
+- access array
+
+case 2:
+- allocate
+- access array
+- assign counter
+
+When we add a counted_by annotation, all "case 2" code but be found and
+refactored into "case 1". This has proven error-prone already, and we're
+still pretty early in adding annotations. The reason refactoring is
+needed is because when the compiler supports counted_by instrumentation,
+at run-time, we get:
+
+case 1:
+- allocate
+- assign counter
+- access array // no problem!
+
+case 2:
+- allocate
+- access array // trap!
+- assign counter
+
+I want to change this to be:
+
+case 1:
+- allocate & assign counter
+- assign counter
+- access array
+
+case 2:
+- allocate & assign counter
+- access array
+- assign counter
+
+Once the kernel reaches a minimum compiler version where counted_by is
+universally available, we can remove all the "open coded" counter
+assignments.
+
+-Kees
+
 -- 
-2.43.0
-
+Kees Cook
 
