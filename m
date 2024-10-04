@@ -1,147 +1,109 @@
-Return-Path: <linux-kernel+bounces-350245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21F799020A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:26:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4432099020C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C9C1B20AD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:26:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02AB1283634
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EF3157481;
-	Fri,  4 Oct 2024 11:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eSBFWzBd"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A916157492;
+	Fri,  4 Oct 2024 11:28:50 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84D0137903;
-	Fri,  4 Oct 2024 11:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191E7137903
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 11:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728041208; cv=none; b=KfJbHQ+Bd6pHnh6eFK5xcDXjJgfSbRlC/qZK91UOfVGALRYgqihRzVXzOXroKu3kfnw3GGuV93ZMOI+YPt0Z0pJqccgrG+4SgO9abqBfHqKl4W7qFHr4g+iUle4yHqIDcaGmoYMfBeWtwV5YQAqkdv3pJoH2/HVNFjkQ3ISWmoA=
+	t=1728041330; cv=none; b=VY6knPJ21NpA6KZcbyJB5lrZ2/+t8pnZauFb+Y4ksncWMVGhs0fK/Kb+uduVrUVRAqAnPyQYz33rpnY3HsSYF1Vd2LoesCHDFrgFIdNCGd93bSGm/rL4ZaccbdeilV/CkzrTNJcwlPsQzb8jFyNN+3ZkjolIQAuiRc7mvEaOU7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728041208; c=relaxed/simple;
-	bh=/ixClVEw6P8y4JUgO/HEYdgh8vFcnmAPQaFNMxoXLJI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fK/+WtSK9RaTpYiShp+ikg2dpDgnfbBguejxH87Pfh3AaSJoAW5GF+TYr4GrOB+QspkOTFeXVF+LNXazjGTt0Jo9eqXjqxxK0dtzIeGKJx2YhieOwDm7NI3Q+iI0VGPUBtwFA9Z4Mi+WK5j49iQztk2MJmqE5x1fhxCDDBFhF9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eSBFWzBd; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 494BQbJl081014;
-	Fri, 4 Oct 2024 06:26:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1728041197;
-	bh=KPdjKo7hFMxWG9jf55ps3sg0vmoM9vRjCReXoVQKtGE=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=eSBFWzBdgqjFuyy657N7/kJjseTGVRvUu6AnJMaSBVjWME6VyxIwmo/blrtKGyyvW
-	 /4ATWPvP6X90rJijdvDYsPLe72FbCP4TZ66qWD2295sH7z+nzAUWEbQNTCitp6a70/
-	 8px0fXL5QJAkXyZLVD2WUfwEeAJiTaBluSlpIVYo=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 494BQbpu026567
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 4 Oct 2024 06:26:37 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 4
- Oct 2024 06:26:37 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 4 Oct 2024 06:26:37 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 494BQb37065159;
-	Fri, 4 Oct 2024 06:26:37 -0500
-Date: Fri, 4 Oct 2024 06:26:37 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Bryan Brattlof <bb@ti.com>
-CC: Andrew Davis <afd@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 2/5] arm64: dts: ti: k3-am625-sk: Add M4F remoteproc
- node
-Message-ID: <20241004112637.nc2qcquiuwdhdrye@thirteen>
-References: <20241003170118.24932-1-afd@ti.com>
- <20241003170118.24932-3-afd@ti.com>
- <20241003210606.2k7wyssklwfziod4@bryanbrattlof.com>
+	s=arc-20240116; t=1728041330; c=relaxed/simple;
+	bh=TMCTua+WSh+xta2fTLxp7TAvOG3Qg5iX+WemrbYBX/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHHjlH4Dj+qxIudr39ICzLuSUKFsWjCSH7Vsf2fx/OtTpFNdau4V5FpqMUSCTOFNjJ/vdqN+cr0KbhRXnk/veyx3k3xsc4xQgD3DYmHRnl878VIZH0q1Odp8fr0c/ttMBgt7hhZ1Zw3OyITMvz+WRrYFih2G3uwSMzRByVts7uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1swgU2-0005Pf-UB; Fri, 04 Oct 2024 13:28:30 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1swgU0-003YgO-WE; Fri, 04 Oct 2024 13:28:29 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1swgU0-00Ag87-2r;
+	Fri, 04 Oct 2024 13:28:28 +0200
+Date: Fri, 4 Oct 2024 13:28:28 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Divya.Koppera@microchip.com
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, krzk+dt@kernel.org, f.fainelli@gmail.com,
+	maxime.chevallier@bootlin.com, kory.maincent@bootlin.com,
+	lukma@denx.de, corbet@lwn.net, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux@armlinux.org.uk
+Subject: Re: [PATCH net-next v2 1/1] Documentation: networking: add Twisted
+ Pair Ethernet diagnostics at OSI Layer 1
+Message-ID: <Zv_RXMRn83Tshf0H@pengutronix.de>
+References: <20241003060602.1008593-1-o.rempel@pengutronix.de>
+ <CO1PR11MB477100FB112A842674009A1AE2712@CO1PR11MB4771.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241003210606.2k7wyssklwfziod4@bryanbrattlof.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <CO1PR11MB477100FB112A842674009A1AE2712@CO1PR11MB4771.namprd11.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 16:06-20241003, Bryan Brattlof wrote:
-> Hi Andrew!
+Hi Divya,
+
+On Thu, Oct 03, 2024 at 10:00:21AM +0000, Divya.Koppera@microchip.com wrote:
+> Hi @Oleksij Rempel<mailto:o.rempel@pengutronix.de>,
 > 
-> On October  3, 2024 thus sayeth Andrew Davis:
-> > From: Hari Nagalla <hnagalla@ti.com>
-> > 
-> > The AM62x SoCs of the TI K3 family have a Cortex M4F core in the MCU
-> > domain. This core can be used by non safety applications as a remote
-> > processor. When used as a remote processor with virtio/rpmessage IPC,
-> > two carveout reserved memory nodes are needed. The first region is used
-> > as a DMA pool for the rproc device, and the second region will furnish
-> > the static carveout regions for the firmware memory.
-> > 
-> > The current carveout addresses and sizes are defined statically for
-> > each rproc device. The M4F processor does not have an MMU, and as such
-> > requires the exact memory used by the firmware to be set-aside.
-> > 
-> > Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> > Signed-off-by: Andrew Davis <afd@ti.com>
-> > ---
-> >  .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> > index 44ff67b6bf1e4..6957b3e44c82f 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> > +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> > @@ -56,6 +56,18 @@ linux,cma {
-> >  			linux,cma-default;
-> >  		};
-> >  
-> > +		mcu_m4fss_dma_memory_region: m4f-dma-memory@9cb00000 {
-> > +			compatible = "shared-dma-pool";
-> > +			reg = <0x00 0x9cb00000 0x00 0x100000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		mcu_m4fss_memory_region: m4f-memory@9cc00000 {
-> > +			compatible = "shared-dma-pool";
-> > +			reg = <0x00 0x9cc00000 0x00 0xe00000>;
-> > +			no-map;
-> > +		};
+> 
+....
+> 
+> > +  - **Advertised auto-negotiation**:
+> 
 > > +
 > 
-> The only issue I have here is this takes away memory from people who do 
-> not use these firmware or causes them to work around this patch if they 
-> choose to have different carveouts.
-
-They can define their own overlays.
-
+> > +    - For **SPE** links (except **10BaseT1L**), this will be **No**.
 > 
-> Would an overlay be appropriate for this?
+> 
+> 
+> May be to generalize statement for T1 phys, I would suggest it should be referred as "Yes" in case of auto-negotiation is enabled, "No" if auto-negotiation is disabled.
+> 
+> 
+> 
+> We are submitting patches for lan887x(100/1000BaseT1) and soon we will add support for auto-negotiation as well.
 
-Why is this any different from existing boards? Are you suggesting a
-change for all existing boards as well?
+Ah, I see. Thank you!
 
--- 
 Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
