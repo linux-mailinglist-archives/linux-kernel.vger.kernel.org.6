@@ -1,157 +1,114 @@
-Return-Path: <linux-kernel+bounces-350024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB9698FEDE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:18:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED1998FEE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD0B1C212F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:18:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8000D1C21500
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F1113D25E;
-	Fri,  4 Oct 2024 08:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0674E13D503;
+	Fri,  4 Oct 2024 08:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxedo.de header.i=@tuxedo.de header.b="EeaRuE8R"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IYdlAZ7G"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0134D6F305;
-	Fri,  4 Oct 2024 08:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B9F6F305;
+	Fri,  4 Oct 2024 08:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728029902; cv=none; b=IVLXVLbRTJKNUimGOJcwMZJ6g5hmro98vKOLSRiKJfxlekT4/Kp8WH8FMXJ/cssLyTPhpw7LP0TN8KCTzsYO8qoNnasVPymcmVwSBJz/PHCWfOPE2+uEX+NVd5qvRmKZ4iqTyG+U1AK9Lc8jh2ufCGy3+SqF4msofJ566Hq17U4=
+	t=1728029979; cv=none; b=Ufr25xnhFQCg9ExMvlKX3dv9RPSy/tYl+2Nm2UIIvHCmkW8oFSGW5VMZ1CXXs3T+jRp2PkaEOKlbM7yXVwwuBLeneP8FvalHj84r/F5D/XVGXnPvA70RP/QQ0Eeg+WR+S2mIGRmuTmxoSQTAeg6inEDYVGNGRIQGdt4MZJwmmIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728029902; c=relaxed/simple;
-	bh=vEVx02YeXFs1Ck3x9SmNG7bAkUKtAAM5e0JVmiFheKE=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=n50SGis27FZmO42oHaius9DXTUK+8ebj44jrrdZ9ADsmqdzturtl9N+DE3iEinUXf1Rzm9nxF8Xz5hY1vJZIrxYzWC3+58iYroUmrG6YP9GpKoZjIIEPEFgUgCguyl9tZKsTXXH14YU0VU4g+u1yarN2HvvS5TI2/iuJoBR7fLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tuxedo.de; spf=pass smtp.mailfrom=tuxedo.de; dkim=pass (2048-bit key) header.d=tuxedo.de header.i=@tuxedo.de header.b=EeaRuE8R; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tuxedo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedo.de
-Received: from mail.tuxedocomputers.com (localhost [IPv6:::1])
-	(Authenticated sender: cs@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id B95CD2FC0064;
-	Fri,  4 Oct 2024 10:18:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedo.de; s=default;
-	t=1728029890;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+CpL4Sl5F+f6FBlOiTv4ia09midQCrE4QrZcBntnkKI=;
-	b=EeaRuE8RPsGjp8wzk/S3kRhFvF7BTozX6DMp/XJnkHT2lYEoqclf5o5COivn3FaAOA718F
-	BJGwsO+naHqt+QhDd9swWSjHnoO3/wtjQtbvGqUc3y2LZgr2IRskf1Uv6VrHDCJLQ1s7aF
-	TuK34/uqQ7DMmrDvmFLV3LJFvTRr5O1QmXJEcqa3U27dxhD1Wo3Fln5DdXcvy67wtbC2cf
-	gUcAq5QFVZS/VkFNFaUqeyuR3BewVx753bFsidtfsd//Ua/suhjhT0jNOcQL8CyGZ89L+/
-	rXAZ7nAYS+iijXgrDyh4nLvpdZXeIZXf9jouVsekjum36C49YNdv6Ppuy+y41g==
+	s=arc-20240116; t=1728029979; c=relaxed/simple;
+	bh=4UTXZkIFGFbc0k5aTW5Glndm6A1FS4TT2eFG8lT5SOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qwrag+QVCR0QobqJUxjqFCphCbaUlEaqjTlGFzRrDDmtUscK/Uk4wIv0o/dqGv+3xlYzR0gzmYA0Ejrxz+sOlizDqrMomONIJDpQDHlTGru4FyoGblfh5EDKma11cILh7hZJxuFqLBHEnqq444bpTqz0X61nHvh7Q0n7rsMCCs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IYdlAZ7G; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37ccbd93c48so141030f8f.2;
+        Fri, 04 Oct 2024 01:19:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728029976; x=1728634776; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LImwOZEfhpoMkP1/IM/x4FXT4qsuxZjmY2D85dNagIY=;
+        b=IYdlAZ7G0vl6UtLrKY3rlscM74RhsEsSyIXYpBZbBAj36oluquKcQ1pwTWAo7MJ7C3
+         MImqFi25Rso2zaZA9aIYukyL62+MvMP3M3SyXUNBwvVvTUPe47p7RzwXt/gVYnJvcZwa
+         RBf6Sv0ucGYQwqt3mPD9tusFtQ7X0+2KHbm2D+KKI3r3//Rmq8r4FjtKxfsHXpiQqNem
+         0zysv0DczLI+X/U8uO5hi7Ce9+gff1gfWHY48P2rOK9Su6UEMyAvMKpBp6C0ksh71pa6
+         0dTJp7zGzQTBBY9z9S5P2z6633YNb2Zd4pa02w+6/8D/PWlTVJdEiht8zk+dXoUUxMVR
+         CSnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728029976; x=1728634776;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LImwOZEfhpoMkP1/IM/x4FXT4qsuxZjmY2D85dNagIY=;
+        b=pHZMbVpObuM/AHDqqftcciIs+IYDyZNvc+Vt7jt8Sju8SH+bLMblURz+hAf4UGqVt4
+         JeoYFzGtjwhP3girn5UGVUEBw7jhRxtYu1+vZYzSOKtIJFHCUdKloAZjnoUO/7wo5eh2
+         2l8C+LOo2/y7m2YoDV9dlqc5pRCjaZZEjWOW9hORRgOGgX18yv8rUSsB7dwoOfddVLeF
+         M2HtCjGptWuGmHlGELG/iAtoSdOaDThcBotefKj2qr8YFLNatUM9LL8xj5Qkc9eF5Fbe
+         sJWZQXZwYIF9JaR6uM9MRvY5gD0V60sht2+zzbnaUuBZa4gvnqt1YWzgB+FxawUkRpUj
+         HAfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSO1UP4uEFtU3gLgiyTzxbk1UF1929Ls/TibSyQFDTdz0nAXzZR4XvTLGg0tc/9HcP4Plm6bUu@vger.kernel.org, AJvYcCXTD5wed+zgMl+Smoj1BgRPM0BKZLOJl11be4nH0XTprBqUThyvcmrmhK61rEL3dZqDMlPlYFllvbHwdEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysKf8f78orocVxlEDnGhB00fMjGuZIaedRCvTvq/Xiz5wYrMWt
+	SxtCmONhyD7YsuhaIZOB+qbNnKwNYFtyS9zSopviM1dJ7Ye6t1TQ
+X-Google-Smtp-Source: AGHT+IHBkTy0pN3h3HdI8NlpobpwEHwPrlOrqbpXIGgda96ZwkIm8ybi7xMUbmCvfWiQRaWpeOpm+Q==
+X-Received: by 2002:a05:6000:186c:b0:374:c800:dc3d with SMTP id ffacd0b85a97d-37d0e6f362fmr595966f8f.1.1728029975832;
+        Fri, 04 Oct 2024 01:19:35 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8ca4f6ff5sm1584702a12.88.2024.10.04.01.19.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 01:19:34 -0700 (PDT)
+Date: Fri, 4 Oct 2024 11:19:31 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH] net: phy: Validate PHY LED OPs presence before
+ registering
+Message-ID: <20241004081931.srnluq3f2gma6ohe@skbuf>
+References: <20241003221250.5502-1-ansuelsmth@gmail.com>
+ <20241003222400.q46szutlnxivzrup@skbuf>
+ <66ff1bb3.7b0a0220.135f57.013e@mx.google.com>
+ <f275660f-79cb-4044-8f02-c4341bdad6e5@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 04 Oct 2024 10:18:10 +0200
-From: Christoffer Sandberg <cs@tuxedo.de>
-To: Jerry Luo <jerryluo225@gmail.com>
-Cc: Takashi Iwai <tiwai@suse.de>, christian@heusel.eu,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz,
- regressions@lists.linux.dev, wse@tuxedocomputers.com
-Subject: Re: [REGRESSION][BISECTED] Audio volume issues since 4178d78cd7a8
-In-Reply-To: <d348ca06-38ca-474f-8673-dff2248331e5@gmail.com>
-References: <87jzfbh5tu.wl-tiwai@suse.de>
- <ea6e5168-238f-41f5-9600-36b75ed990a1@gmail.com>
- <87jzetk2l0.wl-tiwai@suse.de> <b38b5947482a5ca4b55e0ddb908c2f34@tuxedo.de>
- <87seteli51.wl-tiwai@suse.de>
- <d348ca06-38ca-474f-8673-dff2248331e5@gmail.com>
-User-Agent: Roundcube Webmail/1.4.15
-Message-ID: <dbc783cc2608ac63ffd420b1dc3eeaa9@tuxedo.de>
-X-Sender: cs@tuxedo.de
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f275660f-79cb-4044-8f02-c4341bdad6e5@lunn.ch>
 
-
-
-On 2.10.2024 23:28, Jerry Luo wrote:
-> On 10/2/24 10:00 AM, Takashi Iwai wrote:
->> On Wed, 02 Oct 2024 10:21:22 +0200,
->> Christoffer Sandberg wrote:
->>> 
->>> 
->>> On 30.9.2024 09:44, Takashi Iwai wrote:
->>>> On Mon, 23 Sep 2024 21:37:42 +0200,
->>>> Jerry Luo wrote:
->>>>> 
->>>>> Hi Takashi,
->>>>> 
->>>>> On Mon, 16 Sep 2024 19:22:05 +0200,
->>>>> 
->>>>> Takashi Iwai wrote:
->>>>> 
->>>>>      Could you give alsa-info.sh output from both working and
->>>>> non-working
->>>>>      cases?  Run the script with --no-upload option and attach the
->>>>> outputs.
->>>>> 
->>>>>      thanks,
->>>>> 
->>>>>      Takashi
->>>>> 
->>>>> Issue now reappear, output from alsa-info.sh are attached. If they
->>>>> are still
->>>>> needed.
->>>> Thanks.  The obvious difference seems to be the assignment of two 
->>>> DACs
->>>> 0x10 and 0x11 for headphone and speaker outputs.
->>>> 
->>>> Christoffer, how are those on your machines?
->>> I attached alsa-info from the Sirius Gen2 device.
->>> 
->>> Comparing the working/nonworking of Jerry, yeah, the assignment of
->>> 0x10 and 0x11 looks switched around. I don't see what difference this
->>> would make. Also, node 0x22 has "bass speaker" controls in the
->>> non-working version.
->>> 
->>> Comparing the Sirius Gen2 alsa-info with Jerrys, to me it looks like
->>> the non-working version corresponds to our working version.
->>> 
->>> I would expect the non-working version to happen all the time though
->>> with regards to the "bass speaker" controls. Why would this only
->>> happen sometimes?
->> Thanks!  The assignment of DACs depend on the pins and topology, so it
->> can be a bit sensitive.
->> 
->> Now looking more closely at both outputs, I wonder how the commit
->> breaks pang14.  Maybe it has a PCI SSID 2782:12c5 (or 12c3) while the
->> codec SSID is 2782:12b3?  If so, the patch below should fix.
-
-Interesting, you're right, PCI SSID c3/c5 and codec SSID c3/c5 for the 
-Siriuses.
-
-I had a look around. In patch_realtek there are some cases where codec 
-SSID match is needed as well. Would it be better/safer to directly do 
-this immediately or keep it as an exception where it breaks or for known 
-sensitive models/brands?
-
->> 
->> Could you guys try it and verify whether it fixes for Pangolin and
->> doesn't break Sirius?
->> 
->> 
->> Takashi
->> 
-> It does seems to fix the issue on Pangolin. It might worth mention
-> that the headphone output will have the same issue when the speaker is
-> not working. Now they are all good. Thanks!
+On Fri, Oct 04, 2024 at 12:51:32AM +0200, Andrew Lunn wrote:
+> On Fri, Oct 04, 2024 at 12:33:17AM +0200, Christian Marangi wrote:
+> > On Fri, Oct 04, 2024 at 01:24:00AM +0300, Vladimir Oltean wrote:
+> > > On Fri, Oct 04, 2024 at 12:12:48AM +0200, Christian Marangi wrote:
+> > > > Validate PHY LED OPs presence before registering and parsing them.
+> > > > Defining LED nodes for a PHY driver that actually doesn't supports them
+> > > > is wrong and should be reported.
+> > > 
+> > > What about the case where a PHY driver gets LED support in the future?
+> > > Shouldn't the current kernel driver work with future device trees which
+> > > define LEDs, and just ignore that node, rather than fail to probe?
+> > 
+> > Well this just skip leds node parse and return 0, so no fail to probe.
+> > This just adds an error. Maybe I should use warn instead?
 > 
-> 
-> Jerry
+> Yes, a phydev_warn() would be better.
 
-Tested on our devices, both speakers still active.
-
-That's an ok from my side as well, thanks!
-
-Christoffer
+I'm thinking even KERN_WARN is too much. There's nothing actionable
+about the message.
 
