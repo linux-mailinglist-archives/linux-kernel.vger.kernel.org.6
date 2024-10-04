@@ -1,121 +1,202 @@
-Return-Path: <linux-kernel+bounces-350286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF9B9902DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:23:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C44EB9902E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6566F1C21675
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E183C1C21135
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91539158531;
-	Fri,  4 Oct 2024 12:23:41 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.122])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4A92747B
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 12:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B063215B145;
+	Fri,  4 Oct 2024 12:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T1is47nf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SMLHzTAq";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T1is47nf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SMLHzTAq"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC502747B;
+	Fri,  4 Oct 2024 12:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728044621; cv=none; b=B/iwG/KGQ9TAxH4ym09TvhsmMAJz3kwxtc0Q+qASznhosPGby3YfCznHQcusqvbXEE0+3RCIIFSTtOXAGq9czphoNu674X4yqL9pB8SRIKq+wt7ZcqBkedSKRikR6rggm5gzzry1Kcumb6ije33D8CViLNDSyFLu7aFEoZ/sQAU=
+	t=1728044880; cv=none; b=HurspF4gxCKWBlgFHu5htOrDEZyYEwSQXdJOR5459oDCbieGJ7s9FaQhHAb2/lravnv8q1Wkh9gVLbS/qbgqzR0huoxA4czGr5xCi9lhMvS/YQp+0aMhhMNLsS/vzHzgPDHFcntBkPUYfRuCIRs3o/A/VQxo8kIueI7c0z2HeZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728044621; c=relaxed/simple;
-	bh=CRZcmjSIcFD8XU0GK7jNwnJodgHcgTk0BKBgoO4i4p8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=b+unVGa1Wl6KL1/EgwFITUOkAsMaoUfbgFMCn6hUHsZV/geBWVDlwsHtj2rBuYHEzmK9RCiMZG0FLA4HLjFzi7rkyof3MqUe3jo30XYSwmaEE7+/DkxSbMheEZ3UgzZ4U5ud/2rF+WdMgogId5aSlCGAQVcQ/EquKQEq8f95aYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: 99WfucRSSGSCvoic1wmNQA==
-X-CSE-MsgGUID: SJbPCQoUQtSNTdbyisd44Q==
-X-IronPort-AV: E=Sophos;i="6.11,177,1725292800"; 
-   d="scan'208";a="123716249"
-From: =?utf-8?B?6auY57+U?= <gaoxiang17@xiaomi.com>
-To: Frank van der Linden <fvdl@google.com>, David Hildenbrand
-	<david@redhat.com>
-CC: Xiang Gao <gxxa03070307@gmail.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: =?utf-8?B?5Zue5aSNOiBbRXh0ZXJuYWwgTWFpbF1SZTogW1BBVENIIHYyXSBtbS9jbWE6?=
- =?utf-8?Q?_print_total_and_used_count_in_cma=5Falloc()?=
-Thread-Topic: [External Mail]Re: [PATCH v2] mm/cma: print total and used count
- in cma_alloc()
-Thread-Index: AQHbExvuUXqGmfuj+0Ctu2enzH7obbJzXD0AgAMru1A=
-Date: Fri, 4 Oct 2024 12:23:30 +0000
-Message-ID: <2a7b7fc3a48d4bb9a6394e51af074017@xiaomi.com>
-References: <20240929032757.404707-1-gxxa03070307@gmail.com>
- <f8dde346-8a81-4cca-8497-987f6e4b5e58@redhat.com>
- <CAPTztWY-CD9REdJq_-HeELJ+dX68+OZC76T0F+YMyZKMc-DHug@mail.gmail.com>
-In-Reply-To: <CAPTztWY-CD9REdJq_-HeELJ+dX68+OZC76T0F+YMyZKMc-DHug@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1728044880; c=relaxed/simple;
+	bh=uj1Jm+M6EKlUMwu0HHcQnfsV7WFP4tK/uifjBub0kPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLO0voXgQaI1VL+8Wdk80sdwy3QyPeU+SKgKawWI4W4VoNL0AFLz1orEicJstYruw6m4uclf0YdFeq/E2VkMh5K2oS/UEiOD3jTKjD0VaAcJqt/J8zOoPa5yfjNS81Idjrh+QdvroYbStZ11PWzAZ3d02jZ5hQCE8HgGPLsfFzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T1is47nf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SMLHzTAq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T1is47nf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SMLHzTAq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 924E621C0A;
+	Fri,  4 Oct 2024 12:27:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728044876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lXp7igrrMbPqIGVIgIjKBeis7bIH0t2FfQZ+ezRMfPU=;
+	b=T1is47nfyxMdOtKTGigP6/dFW2NI+qUZMYCUfNPuu7ovEfnVTDCibbZJq6QgeLLkBdnGEB
+	4f25K17Ds88Ls6NKklgdMM5GluYYtzEywVpZ9APYQfBzBe8FkFyMyQgxtWUHq603BctYZF
+	0bildl1RlRpBTjNbdhSUMd8UK6wyBWM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728044876;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lXp7igrrMbPqIGVIgIjKBeis7bIH0t2FfQZ+ezRMfPU=;
+	b=SMLHzTAqWmsRHwSLbKPRx+Fa9WYLoZBof6raaSSU/WL2SDKLpp35Hx+/RIxDxYSvkVfQEh
+	iuLH/YPcSS39x7BQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728044876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lXp7igrrMbPqIGVIgIjKBeis7bIH0t2FfQZ+ezRMfPU=;
+	b=T1is47nfyxMdOtKTGigP6/dFW2NI+qUZMYCUfNPuu7ovEfnVTDCibbZJq6QgeLLkBdnGEB
+	4f25K17Ds88Ls6NKklgdMM5GluYYtzEywVpZ9APYQfBzBe8FkFyMyQgxtWUHq603BctYZF
+	0bildl1RlRpBTjNbdhSUMd8UK6wyBWM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728044876;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lXp7igrrMbPqIGVIgIjKBeis7bIH0t2FfQZ+ezRMfPU=;
+	b=SMLHzTAqWmsRHwSLbKPRx+Fa9WYLoZBof6raaSSU/WL2SDKLpp35Hx+/RIxDxYSvkVfQEh
+	iuLH/YPcSS39x7BQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 842EA13A6E;
+	Fri,  4 Oct 2024 12:27:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bDQ/IEzf/2YmQgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 04 Oct 2024 12:27:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 38A2AA0877; Fri,  4 Oct 2024 14:27:56 +0200 (CEST)
+Date: Fri, 4 Oct 2024 14:27:56 +0200
+From: Jan Kara <jack@suse.cz>
+To: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: inode insertion kdoc corrections
+Message-ID: <20241004122756.3szmzyetiir435ua@quack3>
+References: <20241004115151.44834-1-agruenba@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004115151.44834-1-agruenba@redhat.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-LS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0K5Y+R5Lu25Lq6OiBGcmFuayB2YW4gZGVyIExpbmRlbiA8
-ZnZkbEBnb29nbGUuY29tPiANCuWPkemAgeaXtumXtDogMjAyNOW5tDEw5pyIM+aXpSAzOjUwDQrm
-lLbku7bkuro6IERhdmlkIEhpbGRlbmJyYW5kIDxkYXZpZEByZWRoYXQuY29tPg0K5oqE6YCBOiBY
-aWFuZyBHYW8gPGd4eGEwMzA3MDMwN0BnbWFpbC5jb20+OyBha3BtQGxpbnV4LWZvdW5kYXRpb24u
-b3JnOyBsaW51eC1tbUBrdmFjay5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IOmr
-mOe/lCA8Z2FveGlhbmcxN0B4aWFvbWkuY29tPg0K5Li76aKYOiBbRXh0ZXJuYWwgTWFpbF1SZTog
-W1BBVENIIHYyXSBtbS9jbWE6IHByaW50IHRvdGFsIGFuZCB1c2VkIGNvdW50IGluIGNtYV9hbGxv
-YygpDQoNClvlpJbpg6jpgq7ku7ZdIOatpOmCruS7tuadpea6kOS6juWwj+exs+WFrOWPuOWklumD
-qO+8jOivt+iwqOaFjuWkhOeQhuOAguiLpeWvuemCruS7tuWuieWFqOaAp+WtmOeWke+8jOivt+Ww
-humCruS7tui9rOWPkee7mW1pc2VjQHhpYW9taS5jb23ov5vooYzlj43ppogNCg0KT24gTW9uLCBT
-ZXAgMzAsIDIwMjQgYXQgMjozNOKAr0FNIERhdmlkIEhpbGRlbmJyYW5kIDxkYXZpZEByZWRoYXQu
-Y29tPiB3cm90ZToNCj4NCj4gT24gMjkuMDkuMjQgMDU6MjcsIFhpYW5nIEdhbyB3cm90ZToNCj4g
-PiBGcm9tOiBnYW94aWFuZzE3IDxnYW94aWFuZzE3QHhpYW9taS5jb20+DQo+ID4NCj4NCj4gV2Ug
-c2hvdWxkIGFkZCBoZXJlDQo+DQo+ICJUbyBkZWJ1ZyBDTUEgYWxsb2NhdGlvbnMgKGVzcGVjaWFs
-bHkgZmFpbGluZyBvbmVzKSwgaXQgaXMgdmFsdWFibGUgdG8gDQo+IGtub3cgdGhlIHN0YXRlIG9m
-IENNQTogaG93IG1hbnkgcGFnZXMgb3V0IG9mIHRoZSB0b3RhbCBvbmVzIGFyZSANCj4gYWxsb2Nh
-dGVkLCBhbmQgaG93IG1hbnkgd2VyZSByZXF1ZXN0ZWQgdG8gYmUgYWxsb2NhdGVkLiBMZXQncyBw
-cmludCANCj4gc29tZSBtb3JlIGluZm9ybWF0aW9uLiINCj4NCj4gSSBhc3N1bWUgQW5kcmV3IGNh
-biBmaXggdGhhdCB1cCB3aGVuIGFwcGx5aW5nLg0KPg0KPiA+IGJlZm9yZToNCj4gPiBbICAgMjQu
-NDA3ODE0XSBjbWE6IGNtYV9hbGxvYyhjbWEgKF9fX19wdHJ2YWxfX19fKSwgbmFtZTogcmVzZXJ2
-ZWQsIGNvdW50IDEsIGFsaWduIDApDQo+ID4gWyAgIDI0LjQxMzM5N10gY21hOiBjbWFfYWxsb2Mo
-Y21hIChfX19fcHRydmFsX19fXyksIG5hbWU6IHJlc2VydmVkLCBjb3VudCAxLCBhbGlnbiAwKQ0K
-PiA+IFsgICAyNC40MTU4ODZdIGNtYTogY21hX2FsbG9jKGNtYSAoX19fX3B0cnZhbF9fX18pLCBu
-YW1lOiByZXNlcnZlZCwgY291bnQgMSwgYWxpZ24gMCkNCj4gPg0KPiA+IGFmdGVyOg0KPiA+IFsg
-ICAyNC4wNjk3MzhdIGNtYTogY21hX2FsbG9jKGNtYSAoX19fX3B0cnZhbF9fX18pLCBuYW1lOiBy
-ZXNlcnZlZCwgdG90YWwgcGFnZXM6IDE2Mzg0LCB1c2VkIHBhZ2VzOiA2NCwgcmVxdWVzdCBwYWdl
-czogMSwgYWxpZ24gMCkNCj4gPiBbICAgMjQuMDc1MzE3XSBjbWE6IGNtYV9hbGxvYyhjbWEgKF9f
-X19wdHJ2YWxfX19fKSwgbmFtZTogcmVzZXJ2ZWQsIHRvdGFsIHBhZ2VzOiAxNjM4NCwgdXNlZCBw
-YWdlczogNjUsIHJlcXVlc3QgcGFnZXM6IDEsIGFsaWduIDApDQo+ID4gWyAgIDI0LjA3ODQ1NV0g
-Y21hOiBjbWFfYWxsb2MoY21hIChfX19fcHRydmFsX19fXyksIG5hbWU6IHJlc2VydmVkLCB0b3Rh
-bCBwYWdlczogMTYzODQsIHVzZWQgcGFnZXM6IDY2LCByZXF1ZXN0IHBhZ2VzOiAxLCBhbGlnbiAw
-KQ0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogZ2FveGlhbmcxNyA8Z2FveGlhbmcxN0B4aWFvbWku
-Y29tPg0KPiA+IC0tLQ0KPiA+ICAgbW0vY21hLmMgfCAxNSArKysrKysrKysrKysrLS0NCj4gPiAg
-IDEgZmlsZSBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiA+DQo+
-ID4gZGlmZiAtLWdpdCBhL21tL2NtYS5jIGIvbW0vY21hLmMNCj4gPiBpbmRleCAyZDlmYWU5Mzky
-ODMuLjkwYjNmZGJhYzE5YyAxMDA2NDQNCj4gPiAtLS0gYS9tbS9jbWEuYw0KPiA+ICsrKyBiL21t
-L2NtYS5jDQo+ID4gQEAgLTQwMyw2ICs0MDMsMTcgQEAgc3RhdGljIHZvaWQgY21hX2RlYnVnX3No
-b3dfYXJlYXMoc3RydWN0IGNtYSAqY21hKQ0KPiA+ICAgICAgIHNwaW5fdW5sb2NrX2lycSgmY21h
-LT5sb2NrKTsNCj4gPiAgIH0NCj4gPg0KPiA+ICtzdGF0aWMgdW5zaWduZWQgbG9uZyBjbWFfZ2V0
-X3VzZWRfcGFnZXMoc3RydWN0IGNtYSAqY21hKSB7DQo+ID4gKyAgICAgdW5zaWduZWQgbG9uZyB1
-c2VkOw0KPiA+ICsNCj4gPiArICAgICBzcGluX2xvY2tfaXJxKCZjbWEtPmxvY2spOw0KPiA+ICsg
-ICAgIHVzZWQgPSBiaXRtYXBfd2VpZ2h0KGNtYS0+Yml0bWFwLCAoaW50KWNtYV9iaXRtYXBfbWF4
-bm8oY21hKSk7DQo+ID4gKyAgICAgc3Bpbl91bmxvY2tfaXJxKCZjbWEtPmxvY2spOw0KPg0KPiBU
-aGlzIGFkZHMgb3ZlcmhlYWQgdG8gZWFjaCBhbGxvY2F0aW9uLCBldmVuIGlmIGRlYnVnIG91dHB1
-dHMgYXJlIA0KPiBpZ25vcmVkIEkgYXNzdW1lPw0KPg0KPiBJIHdvbmRlciBpZiB3ZSdkIHdhbnQg
-dG8gcHJpbnQgdGhlc2UgZGV0YWlscyBvbmx5IHdoZW4gb3VyIGFsbG9jYXRpb24gDQo+IGZhaWxl
-ZD8NCj4NCj4gQWx0ZXJuYXRpdmVseSwgd2UgY291bGQgYWN0dWFsbHkgdHJhY2sgaG93IG1hbnkg
-cGFnZXMgYXJlIGFsbG9jYXRlZCBpbiANCj4gdGhlIGNtYSwgc28gd2UgZG9uJ3QgaGF2ZSB0byB0
-cmF2ZXJzZSB0aGUgY29tcGxldGUgYml0bWFwIG9uIGV2ZXJ5IA0KPiBhbGxvY2F0aW9uLg0KPg0K
-DQpZZXAsIHRoYXQncyB3aGF0IEkgZGlkIGFzIHBhcnQgb2YNCmh0dHBzOi8vbG9yZS5rZXJuZWwu
-b3JnL2FsbC8yMDI0MDcyNDEyNDg0NS42MTRjMDNhZDM5ZjhhZjM3MjljZWJlZTZAbGludXgtZm91
-bmRhdGlvbi5vcmcvVC8NCg0KVGhhdCBwYXRjaCBkaWRuJ3QgbWFrZSBpdCBpbiAoeWV0KS4gSSdt
-IGhhcHB5IGZvciBpdCB0byBiZSBjb21iaW5lZCB3aXRoIHRoaXMgb25lIGlmIHRoYXQncyBlYXNp
-ZXIuDQoNCi0gRnJhbmsNCg0KWWVzLCBJIHRoaW5rIGl0J3Mgc2ltcGxlciB0byBhZGQgbmV3IG1l
-bWJlcnMgdG8gdGhlIGNtYSBzdHJ1Y3R1cmUgdG8gbWFuYWdlLiANClRoaXMgZG9lcyBub3QgYWRk
-IG11Y2ggb3ZlcmhlYWQgdG8gdGhlIHVzZWQgY291bnQgcGVyIHByaW50Lg0KDQpJZiB0aGlzIGlz
-IHBvc3NpYmxlLCB3ZSBjYW4gYWxzbyBhZGQgImNhbGxlciIgbWVtYmVycyB0byB0cm91Ymxlc2hv
-b3QgcHJvYmxlbXMuDQo=
+On Fri 04-10-24 13:51:51, Andreas Gruenbacher wrote:
+> Some minor corrections to the inode_insert5 and iget5_locked kernel
+> documentation.
+> 
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/inode.c | 25 ++++++++++++-------------
+>  1 file changed, 12 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 471ae4a31549..6b3ff38df7f7 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1239,16 +1239,15 @@ EXPORT_SYMBOL(unlock_two_nondirectories);
+>   * @data:	opaque data pointer to pass to @test and @set
+>   *
+>   * Search for the inode specified by @hashval and @data in the inode cache,
+> - * and if present it is return it with an increased reference count. This is
+> - * a variant of iget5_locked() for callers that don't want to fail on memory
+> - * allocation of inode.
+> + * and if present return it with an increased reference count. This is a
+> + * variant of iget5_locked() that doesn't allocate an inode.
+>   *
+> - * If the inode is not in cache, insert the pre-allocated inode to cache and
+> + * If the inode is not present in the cache, insert the pre-allocated inode and
+>   * return it locked, hashed, and with the I_NEW flag set. The file system gets
+>   * to fill it in before unlocking it via unlock_new_inode().
+>   *
+> - * Note both @test and @set are called with the inode_hash_lock held, so can't
+> - * sleep.
+> + * Note that both @test and @set are called with the inode_hash_lock held, so
+> + * they can't sleep.
+>   */
+>  struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+>  			    int (*test)(struct inode *, void *),
+> @@ -1312,16 +1311,16 @@ EXPORT_SYMBOL(inode_insert5);
+>   * @data:	opaque data pointer to pass to @test and @set
+>   *
+>   * Search for the inode specified by @hashval and @data in the inode cache,
+> - * and if present it is return it with an increased reference count. This is
+> - * a generalized version of iget_locked() for file systems where the inode
+> + * and if present return it with an increased reference count. This is a
+> + * generalized version of iget_locked() for file systems where the inode
+>   * number is not sufficient for unique identification of an inode.
+>   *
+> - * If the inode is not in cache, allocate a new inode and return it locked,
+> - * hashed, and with the I_NEW flag set. The file system gets to fill it in
+> - * before unlocking it via unlock_new_inode().
+> + * If the inode is not present in the cache, allocate and insert a new inode
+> + * and return it locked, hashed, and with the I_NEW flag set. The file system
+> + * gets to fill it in before unlocking it via unlock_new_inode().
+>   *
+> - * Note both @test and @set are called with the inode_hash_lock held, so can't
+> - * sleep.
+> + * Note that both @test and @set are called with the inode_hash_lock held, so
+> + * they can't sleep.
+>   */
+>  struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
+>  		int (*test)(struct inode *, void *),
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
