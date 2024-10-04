@@ -1,194 +1,135 @@
-Return-Path: <linux-kernel+bounces-350839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8397990A58
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:46:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F44990A59
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5211F1F21E33
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:46:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E911C21B97
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03C21DAC8C;
-	Fri,  4 Oct 2024 17:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDA11CACF8;
+	Fri,  4 Oct 2024 17:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="czXVXQa6"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S7MqRoLY"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDC415B149
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429FD1E376B
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728063960; cv=none; b=KG1B2oMQY4Dvb95DhavDKWvO1zdg33cG1In2QJB2NRKzq+vgSxheDpu6wxFCcvs2EeZIPKig0Ta6HSbXoGNjiQTksemd5G6VtGSxUWo2wjQGQTtHMnG5utZK1tKyxuM5PqjqDIhz4IZBVdT1mwD/37thzzWkoi196rZSNelQI7A=
+	t=1728064016; cv=none; b=WvplziTgW0B/nocGz1YHTwEpL8f6HgTucp1F9Ov7M5/LarTArfoFrKuQH5MeHCOoXBMgKCvzfMY/Wnjc/U5IPTcR6j8hCvGtD4QRVgZE+rjWNKMlUDk0TyN2pWTi6V30rzF0Sf4T4wslX0PMfO+ScWcUfnzFSQ4CTrPaqx0nMTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728063960; c=relaxed/simple;
-	bh=TI6mcXb4V5s95OY28ThDa+Nttx+DA0b7i9XYbIv6P9Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iG1lBPNbsCqZNm3gk+HPGXT83HQqjllZ/cah72m+H4hpXGom9SoYx2uHl4ZU2hp8vcVCZu6r487freZQZC3SGssZLiQ3P4u8iVq0OyTIs0efQMOLacbPWBVZxUWJ8nT/YGwf8h0GWAN23v4xmrva85G3GBG9RteM8mFR8Q04F7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=czXVXQa6; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e09fe0a878so1779914a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:45:57 -0700 (PDT)
+	s=arc-20240116; t=1728064016; c=relaxed/simple;
+	bh=GwoXEC+JDw3AOgTRVFZNEvsljq1NfcUkok84EeESg7o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=loKr2Y7vFXR4xeLOkJ6Qj3GywZQgs15z1uvfMK8o5PsyeZ0P1yssZg+0wRDKaB9GsphAlIHkOrxnzyJc80S/gQHDExREZP7DvmU8bCEey7q/qFo7pRoZaamHRTfHTtFVu7gDyNnJxmZYeHZRolFzQTlAfa1P5u1cezfoj8O+FuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=S7MqRoLY; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a3445ab7b5so10771855ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:46:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728063957; x=1728668757; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1hTEi2pGCxMRGUpF5+1bzMouLoBbQyVgP6nKgujfGZc=;
-        b=czXVXQa6G8RKpVl+LXqeGG5NAMDaNjrmc2aFC9su4i+4o2mYNhGVUZuerndqTUKZr3
-         s8IGpIJY4nefcD2RayfvF58nsfOXNj/UMjvFhl2ckpP0qbZFnyw/EHW23r4IMwrZBBDD
-         qyHmSa1Ru2pqQO/eszofGVSeV91wCIVWWC6cM=
+        d=linuxfoundation.org; s=google; t=1728064014; x=1728668814; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qXmmCzvSCA40I9sZAZE8zqvwLWduBtnIuV1E1NtN9Hw=;
+        b=S7MqRoLY3kVu6m/HorMGqSrdcKPCr8Al5f+urgd68E8GIR1SyyWZtMORP7+GwLJ147
+         2p1BIS5zFybWuhZG4gZY38lVsVHgn+GH0zZ11aOi/q28HhpV1MG4VPGxdqlPvf5Mo6+J
+         xHTJdZaaScyTJtkNTCvnHel8XiFYvXBaCr8eo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728063957; x=1728668757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1hTEi2pGCxMRGUpF5+1bzMouLoBbQyVgP6nKgujfGZc=;
-        b=jt845BCXCUVg68TvL4kb68dBws46ZfkXZwQ9rOw49OLNaSWpUMegVmuFbb5LgZ7yJ8
-         G2nfqkIdGrX4Q+M1picjLR/Q/Pfw517W/PjVWGTg3NAfiP/HJM6iXgVNsKm67IXYrPhF
-         MqCIbnG9OHRYl5tlC+MSQA6iZBxuLqs0aiLlvJwdStXno+2s6ALfSzfGB/J8xhe69dZV
-         hlCU7jDz0JINnu+xilcSUP1qeFjD0pzgNxghd1uMlk/kUtexb1kPYfpEnt4PAAYdHwXU
-         pHPQX0PpqDCcM10hdsd0fVTAgzTozvNfi38JnuplD8IIq9lzAvhW8vGgJ3iY/fYRWAsU
-         7whA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcUMNaP9s/RCVgAhSvENHrI/t43I6AL2lGm43nAqRiXyRg7V++utRFsJAvyrEfmm6ZcuIKo7xuXrk09GI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXux4RV0N/+/v3cXpNwqnupSMRFxU44aUmij4hNBif5YGHSrrr
-	CCC/buSNmvpFUNNjw+872Xa5V0Htzx4pUXOJzKkH6TjXxd+OMpEZeS5jYDPfv9zTCgaXtron6pc
-	=
-X-Google-Smtp-Source: AGHT+IFGMFBoNNNard1Lfzi4uue5YCLpWqP+VEeLpPYgy1VhvsvO+TSTaxt80VhsNOKdGw7LbktG9Q==
-X-Received: by 2002:a17:90a:d56:b0:2e0:58e8:264a with SMTP id 98e67ed59e1d1-2e1e6296d1amr4592170a91.20.1728063956666;
-        Fri, 04 Oct 2024 10:45:56 -0700 (PDT)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com. [209.85.215.174])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e7ec5253sm1130965a91.1.2024.10.04.10.45.53
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1728064014; x=1728668814;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qXmmCzvSCA40I9sZAZE8zqvwLWduBtnIuV1E1NtN9Hw=;
+        b=wzlmqqRBcNYu1igA+fUwHWllzE5+/uPvfHvVWoux0bBG77EeKGHh96inEXLnkR8WVu
+         5SvVykTpbraOf4XZrwgtXplUTD9u5FuiyggI9inl+EHuItDR/xzkxHdCJDlxi0U7AC0U
+         j102QYjQsqScP39iR1RrPs3GJZieoSqV3zwXB9Gq0LiQmvAhz5P4XoQgTTFEjIjRDXAr
+         slHbVOHP5ym91V1iGwLmd9f4Vm2jj7APYiyfC0IQQaSLOhDPOlQTiQFj5v8dX1zRpxS3
+         zoFG3mpAVdaOaP/91iN1hqOfUcBr0bvAQ8Q/L0o/DMUDSKYRmey8YAp3mHsZTJ6Spwdw
+         /o4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUxDtArm6BA7ApEW1/YnyAnxlYY+wH65nooXI/IEDp00PFycyTzYox7rg4fTpZxDNyY/eNqg84uU55DIM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBxdyNCX8IdDP39dlHcdtlTZ50K2jQUR3mWZrf73y3QR+Ky5xi
+	6dj6X1UFSPCfW0AffXS8rTII1TJOnSL1SLQrStbumXi2p355N46c/0ZlTSY0BGc=
+X-Google-Smtp-Source: AGHT+IHqCu+1mXToIuh6Tj4b/PxFjs4AwlFkKnHoWB5eAWJ3yVV9VQlGQ32A8LuSsorPiDQr9x55Pw==
+X-Received: by 2002:a05:6e02:1886:b0:39f:325f:78e6 with SMTP id e9e14a558f8ab-3a375baaad3mr27799905ab.0.1728064014394;
+        Fri, 04 Oct 2024 10:46:54 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a37a7fd6cdsm656365ab.21.2024.10.04.10.46.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 10:45:54 -0700 (PDT)
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7db637d1e4eso1749075a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:45:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/47fHFu6FYVVl1+oUFamFhp2RVTY+0a+goK2XUSTGmUHR3061cKNl8UuUP8dxBU7uv5RPnMsC6mrI3qM=@vger.kernel.org
-X-Received: by 2002:a05:6a20:9f8f:b0:1d2:e1b5:2b51 with SMTP id
- adf61e73a8af0-1d6dfa1e516mr5534269637.8.1728063952820; Fri, 04 Oct 2024
- 10:45:52 -0700 (PDT)
+        Fri, 04 Oct 2024 10:46:53 -0700 (PDT)
+Message-ID: <60dd0240-8e45-4958-acf2-7eeee917785b@linuxfoundation.org>
+Date: Fri, 4 Oct 2024 11:46:52 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912173901.3969597-1-rrangel@chromium.org>
- <20240912113616.3.I1b7a5033a2191cb0cdbadc2d51666a97f16cc663@changeid> <CAJZ5v0hmf55OA1f4egzE7F0ET+7af_+pcxmnOSxO5Snd6L5CrQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hmf55OA1f4egzE7F0ET+7af_+pcxmnOSxO5Snd6L5CrQ@mail.gmail.com>
-From: Raul Rangel <rrangel@chromium.org>
-Date: Fri, 4 Oct 2024 11:45:39 -0600
-X-Gmail-Original-Message-ID: <CAHQZ30CRYoH_-rY7hMgasbkyqEBpgVfH6PZRzuaU=2g4S_oGtA@mail.gmail.com>
-Message-ID: <CAHQZ30CRYoH_-rY7hMgasbkyqEBpgVfH6PZRzuaU=2g4S_oGtA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ACPI: SPCR: Add support for rev 3
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-serial@vger.kernel.org, pmladek@suse.com, rafael.j.wysocki@intel.com, 
-	ribalda@chromium.org, Len Brown <lenb@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, acpica-devel@lists.linux.dev, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: sched_ext: Add sched_ext as proper selftest
+ target
+To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+ Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+ Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+ bpf@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Anders Roxell <anders.roxell@linaro.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241004094247.795385-1-bjorn@kernel.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241004094247.795385-1-bjorn@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 2, 2024 at 12:13=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Thu, Sep 12, 2024 at 7:39=E2=80=AFPM Raul E Rangel <rrangel@chromium.o=
-rg> wrote:
-> >
-> > Revision 3 supports specifying the UART input clock. This allows for
-> > proper computation of the UART divisor when the baud rate is specified.
-> >
-> > The earlycon code can accept the following format (See `parse_options`
-> > in `earlycon.c`.):
-> > * <name>,io|mmio|mmio32|mmio32be,<addr>,<baud>,<uartclk>,<options>
-> >
-> > This change makes it so the uartclk is passed along if it's defined in
-> > the SPCR table.
-> >
-> > Booting with `earlycon` and a SPCR v3 table that has the uartclk and
-> > baud defined:
-> > [    0.028251] ACPI: SPCR: console: uart,mmio32,0xfedc9000,115200,48000=
-000
-> > [    0.028267] earlycon: uart0 at MMIO32 0x00000000fedc9000 (options '1=
-15200,48000000')
-> > [    0.028272] printk: legacy bootconsole [uart0] enabled
-> >
-> > Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/serpor=
-ts/serial-port-console-redirection-table
-> >
-> > Signed-off-by: Raul E Rangel <rrangel@chromium.org>
-> >
-> > ---
-> >
-> >  drivers/acpi/spcr.c   | 5 ++++-
-> >  include/acpi/actbl3.h | 6 +++---
-> >  2 files changed, 7 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
-> > index cd36a97b0ea2c7..67ae42afcc59ef 100644
-> > --- a/drivers/acpi/spcr.c
-> > +++ b/drivers/acpi/spcr.c
-> > @@ -209,9 +209,12 @@ int __init acpi_parse_spcr(bool enable_earlycon, b=
-ool enable_console)
-> >         if (!baud_rate) {
-> >                 snprintf(opts, sizeof(opts), "%s,%s,0x%llx", uart, ioty=
-pe,
-> >                          table->serial_port.address);
-> > -       } else {
-> > +       } else if (table->header.revision <=3D 2 || !table->uartclk) {
-> >                 snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d", uart, i=
-otype,
-> >                          table->serial_port.address, baud_rate);
-> > +       } else {
-> > +               snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d,%d", uart=
-, iotype,
-> > +                        table->serial_port.address, baud_rate, table->=
-uartclk);
-> >         }
-> >
-> >         pr_info("console: %s\n", opts);
-> > diff --git a/include/acpi/actbl3.h b/include/acpi/actbl3.h
-> > index 8f775e3a08fdfb..afe45a2379866a 100644
-> > --- a/include/acpi/actbl3.h
-> > +++ b/include/acpi/actbl3.h
->
-> The part of the patch below is outdated - SPCR v4 is supported already.
->
-> Please rebase on the current mainline kernel source.
+On 10/4/24 03:42, Björn Töpel wrote:
+> From: Björn Töpel <bjorn@rivosinc.com>
+> 
+> The sched_ext selftests is missing proper cross-compilation support, a
+> proper target entry, and out-of-tree build support.
+> 
+> When building the kselftest suite, e.g.:
+> 
+>    make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- \
+>      SKIP_TARGETS="" O=/output/foo -C tools/testing/selftests install
+> 
+> The expectation is that the sched_ext is included, cross-built, and
+> placed into /output/foo.
+> 
+> Add CROSS_COMPILE, OUTPUT, and TARGETS support to the sched_ext
+> selftest.
+> 
+> Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+> ---
+>   tools/testing/selftests/Makefile           |  1 +
+>   tools/testing/selftests/sched_ext/Makefile | 59 +++++++++++++++-------
+>   2 files changed, 41 insertions(+), 19 deletions(-)
+> 
 
-Oh awesome. Should I send out all three patches again? Or just this
-one? I think patches 1 and 2 can be merged.
+Thank you for the find. It appears *sched* is also missing
+from the default TARGETS in selftests/Makefile
 
->
-> > @@ -92,10 +92,10 @@ struct acpi_table_slit {
-> >  /*********************************************************************=
-**********
-> >   *
-> >   * SPCR - Serial Port Console Redirection table
-> > - *        Version 2
-> > + *        Version 3
-> >   *
-> >   * Conforms to "Serial Port Console Redirection Table",
-> > - * Version 1.03, August 10, 2015
-> > + * Version 1.08, October 7, 2021
-> >   *
-> >   *********************************************************************=
-*********/
-> >
-> > @@ -120,7 +120,7 @@ struct acpi_table_spcr {
-> >         u8 pci_function;
-> >         u32 pci_flags;
-> >         u8 pci_segment;
-> > -       u32 reserved2;
-> > +       u32 uartclk;
-> >  };
-> >
-> >  /* Masks for pci_flags field above */
-> > --
-> > 2.46.0.662.g92d0881bb0-goog
-> >
+This change looks good to me.
+
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+
+Tejun, Do let me know if you like me to take this through kselftest tree.
+
+thanks,
+-- Shuah
+
+
+
+thanks,
+-- Shuah
+
+
+
 
