@@ -1,224 +1,160 @@
-Return-Path: <linux-kernel+bounces-351283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18BAD990F4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:54:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89EEE990F54
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 213831C22FED
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6411F21C9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124621EBA1F;
-	Fri,  4 Oct 2024 18:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193C61EF93A;
+	Fri,  4 Oct 2024 18:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZRUuA4d"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AWJL/Slo"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82381DD863
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65501EF927;
+	Fri,  4 Oct 2024 18:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728067645; cv=none; b=hdSM5ZwmEix3LVdbHEE2gEU6iKH+Lo/Rvzjdj74+wwFzcgVpOto4t5WpPIlk7CcfvqxWqArrGKvUBelZhhaEcLUKg9cT4CCDMz5OUijnDarqZmuClxXPxFafp/jWLgOBD6H00LMb+WwZrTEagSDGlGgyKj/z5+4K4o5np5itQTc=
+	t=1728067708; cv=none; b=YPGF2P30Xu+Nv0jGSvy6qU9W6w4a8ILD+y3lS5DZ/sjJAvkdIoBkylPDWobUYQDt12K89SRYKqGWmQB/isogcMR35vZ+gkN6SeoubH/nrssa/j8YRZ5/fDKjqpQc1F1Zkv8E4x3kUTNTbXfem/D6e9svBgGmbZ485srgwuHhm7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728067645; c=relaxed/simple;
-	bh=V03GFNzD11CECPmUTDDQ0S68l5jzC/7sxNfkJ3eRzXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j7f9gcdSU4W+lUGGUniTzFuSmru7Qf1qTdeXssCZBaqgwGURtOInIptukUkU8/aOyExOVbWNH8EzRT/4ghEHyWkVfqn0RPhP52H6zkHK7Fj++x8fFxEcq3aydsAKsy8PZvl6xi+Wg+rt0fu7cVskvmnuugdl6BUtVplb+d5JCYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZRUuA4d; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1728067708; c=relaxed/simple;
+	bh=ji34y9m3JNoj4xmNOaRuHTmJoLzrL7XEtankYx1PobY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hvoG+AbpoqY8gBG709XlHwlVlDQhFjIAyeiCwUJ5qEt5Ro1UmAuOsdqQnv5qI6jda1eMXNKS8S0ZuMPt895n8ciSTGQlNOk3HCjcLyCKs7EE26S+OXrEkusvIwgmfsN/3CgQyLnWm+tBsT6xuLvO9AI5yqBn0RZXU7EOoWp/+I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AWJL/Slo; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-207115e3056so23343285ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 11:47:23 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6dde476d3dfso18999667b3.3;
+        Fri, 04 Oct 2024 11:48:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728067643; x=1728672443; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qFdjl4nnT3iOUyZk1xlx2SlCDfY3Jc7r1BLQPkD7dFI=;
-        b=VZRUuA4dK1fFASt+Ls8P0TkEMHL9WuLae89f50D0OZmGvHlPc9m4iwCQ01XF10en2N
-         EOcuX0/a4wmb0p/jMuGB4viMr42seeMieiviykh2fqqjcOQDyOZ2P7LoiyTRNNN4M/4q
-         0c8ZVD7ouz1ZmL1sUKVdmupoJssoZMbdkxlQObujqMnXRlxMamPgw8tWdQdYBuxetO9I
-         33xCpXjmfH+huWlnU7jXuS5XypaoFuPeROCKxgSUh9LqUL9G7LayEVotk5OQeBhfH0eC
-         DiTyrHshSbH9isiGS2sLFS856Qz604YUJ102j/1CLsL0yGVcYQFab9D2rxCRzJTMB0Ys
-         X8Lw==
+        d=gmail.com; s=20230601; t=1728067706; x=1728672506; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mDJ7CzWS8BYgyEa+1aUfpxDHORBOxc/T4XVGwWZLO1A=;
+        b=AWJL/SloUVIWfImktLBR5jN7mAwS7HgE0iBBU0in3YUogNphnoTjqnwzi+8Y6w0zfT
+         VTwpT9bHRLl3BRBtGtEe5NrNBcXUcThXpYvKESl9P4AlhrThyDrOEjxCax/+WqIiGwWo
+         f0Xhlpw/Cq30lxxvXI/0bTfPz0AQbcbQ9FOrwvSqUM1RoEYV/p3554s0BK+jpXH5aLvU
+         bNNm+Xemg4nuK49ad53BdAAyWB5uupLoh9Rlg1/opVhWTajJNt20XVRP7i2x8l0poD74
+         vdIIQ6nFtxwPICKjleijF31s3H3RUO9YEQbENfcAWkW/BfS844f9MJliJxCB+oK6qsxK
+         prYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728067643; x=1728672443;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qFdjl4nnT3iOUyZk1xlx2SlCDfY3Jc7r1BLQPkD7dFI=;
-        b=hel8raA4ikTHg+S+Tqua0l/Qsg1rFF/IQQnGVizvGEV+16513RzRIe5X21KDCDXOz0
-         +WUhglyFlHpprJeR/yrCbMOAnJ/ozWX9J6BffD6dGOBhVOdgt50t36Tk/8WA3LAhK8/o
-         Pv7aNlsDoAY3vxBvu3O7ppfaghY3w0jg+uCMNbj//6SYeMrZbZK7zkaVY030ZvmCpQ5y
-         I44TrnLvr1vYQEkKwYSCdaAfbXV880AAd/J2aAuKr2eX0fqXZ6D2+pdmyqxNt7t+wP48
-         JeixuKyQgOjoZZZvgsbjStj5n6jPdJvSz2j6OI+SeCzSS3cWHwfRljYnKQ72r3w0Dv6P
-         Luqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWR/pKNcf9fU4TYBLX7eHkd1Gyj89VSK0kH9I219r2+9ybqZQfU0kjYpU7eNbW+YSz9Q4lLuZcAyjQgzls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlJje3JbNboNGb9pCWQ12zLU/f0B+RgibO0oEx3EH4BfxoeaBw
-	HF2y1Ux9H3j3qdoVkuMjmezH1TdtRJidESmlD+ygiDlt5MQ4+NNvOs4WOQ==
-X-Google-Smtp-Source: AGHT+IE0R45d5ZL7xzZwuhvtXQOf1xTSCs3ElYiEDg7HQMY+coEv+ZPf5ecm+PFaWRxFNyOKSd8k8g==
-X-Received: by 2002:a17:902:fb0b:b0:20b:9224:11c9 with SMTP id d9443c01a7336-20bff047bbfmr44710025ad.39.1728067643119;
-        Fri, 04 Oct 2024 11:47:23 -0700 (PDT)
-Received: from hilb.unicamp.br ([143.106.58.82])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7e9f678202asm314295a12.0.2024.10.04.11.47.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 11:47:22 -0700 (PDT)
-From: =?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
-To: akpm@linux-foundation.org,
-	davidgow@google.com,
-	linux-kernel@vger.kernel.org,
-	rmoar@google.com
-Cc: kunit-dev@googlegroups.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	=?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
-Subject: [PATCH v4] lib/math: Add int_log test suite
-Date: Fri,  4 Oct 2024 18:47:13 +0000
-Message-ID: <20241004184713.25262-1-brunofrancadevsec@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1728067706; x=1728672506;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mDJ7CzWS8BYgyEa+1aUfpxDHORBOxc/T4XVGwWZLO1A=;
+        b=NDsCV9cNEzbzJRmcTGIVmYv6SHHedmZAuNwGAm5zUtC238cSyeB8gnnZeyXGfsR44h
+         4IjaGOFVVi82jH/2IEBZxf9jsATfIUN6EV/24kU8WxjKjwIpUE6h18BZZRNi5TzCxOZz
+         TCzQ5Aed4yWmPWVH2/bltnliJw+Zc4WkWq483zdPVckw/YaIlp0wMkW0nE/de1Ka2oQ0
+         hkKcIZDCXCumXcIpaAeiCv5DbkJAkjZxLOHWquKSNUuuiqvfyj7300+JA03bAm3Fepgv
+         aE/7OTp3bGGRYNkbVjc2GOut9AtWaCN7eAwXpzs80i/GL43Snw/0Fjd8FrB1jSIM8VCW
+         j36Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXmVYLZoIAwgv89Kj14pH3e8xjVhqZQuzKcZE4GIt4R2rFvuyHNG0EdNu1J1jYn76iZU+WzZFZSBd50wMCEAIUccy06pcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypToXyuBM/4jxNxaQBYx2PqvgP+BvrulUqP/9Orjt5+4smMCFN
+	u7CP2UFSk/WyT9FjKXYYgyvpMv37HkBIQvM7Ki1cRiaW3DBSxuMuxgXCZwc5QSz0VWyN/aqwEp2
+	kjVOJeyHuhSITTrnJaCA56NBqfxM=
+X-Google-Smtp-Source: AGHT+IF0vhRjP0YeWa9+wIWQR5A8z6QvYZRaSXc0grvJ5GXUz0S7FVxoOZ8diwZsoJ1meN9sgFxvlI0KwZLC2RCvTfI=
+X-Received: by 2002:a05:690c:2d11:b0:6e2:63e:f087 with SMTP id
+ 00721157ae682-6e2c72b2c87mr28755247b3.42.1728067705863; Fri, 04 Oct 2024
+ 11:48:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241002142516.110567-1-luca.boccassi@gmail.com> <CAHC9VhRV3KcNGRw6_c-97G6w=HKNuEQoUGrfKhsQdWywzDDnBQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRV3KcNGRw6_c-97G6w=HKNuEQoUGrfKhsQdWywzDDnBQ@mail.gmail.com>
+From: Luca Boccassi <luca.boccassi@gmail.com>
+Date: Fri, 4 Oct 2024 19:48:14 +0100
+Message-ID: <CAMw=ZnSkm1U-gBEy9MBbjo2gP2+WHV2LyCsKmwYu2cUJqSUeXg@mail.gmail.com>
+Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-kernel@vger.kernel.org, christian@brauner.io, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This commit introduces KUnit tests for the intlog2 and intlog10
-functions, which compute logarithms in base 2 and base 10, respectively.
-The tests cover a range of inputs to ensure the correctness of these
-functions across common and edge cases.
+On Wed, 2 Oct 2024 at 15:48, Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Wed, Oct 2, 2024 at 10:25=E2=80=AFAM <luca.boccassi@gmail.com> wrote:
+> >
+> > From: Luca Boccassi <bluca@debian.org>
+> >
+> > A common pattern when using pid fds is having to get information
+> > about the process, which currently requires /proc being mounted,
+> > resolving the fd to a pid, and then do manual string parsing of
+> > /proc/N/status and friends. This needs to be reimplemented over
+> > and over in all userspace projects (e.g.: I have reimplemented
+> > resolving in systemd, dbus, dbus-daemon, polkit so far), and
+> > requires additional care in checking that the fd is still valid
+> > after having parsed the data, to avoid races.
+> >
+> > Having a programmatic API that can be used directly removes all
+> > these requirements, including having /proc mounted.
+> >
+> > As discussed at LPC24, add an ioctl with an extensible struct
+> > so that more parameters can be added later if needed. Start with
+> > exposing: pid, uid, gid, groupid, security label (the latter was
+> > requested by the LSM maintainer).
+> >
+> > Signed-off-by: Luca Boccassi <bluca@debian.org>
+> > ---
+> >  fs/pidfs.c                                    | 61 ++++++++++++++++++-
+> >  include/uapi/linux/pidfd.h                    | 17 ++++++
+> >  .../testing/selftests/pidfd/pidfd_open_test.c | 50 ++++++++++++++-
+> >  3 files changed, 126 insertions(+), 2 deletions(-)
+>
+> ...
+>
+> > diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
+> > index 565fc0629fff..bfd0965e01f3 100644
+> > --- a/include/uapi/linux/pidfd.h
+> > +++ b/include/uapi/linux/pidfd.h
+> > @@ -16,6 +16,22 @@
+> >  #define PIDFD_SIGNAL_THREAD_GROUP      (1UL << 1)
+> >  #define PIDFD_SIGNAL_PROCESS_GROUP     (1UL << 2)
+> >
+> > +/* Flags for pidfd_info. */
+> > +#define PIDFD_INFO_PID                 (1UL << 0)
+> > +#define PIDFD_INFO_CREDS                   (1UL << 1)
+> > +#define PIDFD_INFO_CGROUPID                (1UL << 2)
+> > +#define PIDFD_INFO_SECURITY_CONTEXT        (1UL << 3)
+> > +
+> > +struct pidfd_info {
+> > +        __u64 request_mask;
+> > +        __u32 size;
+> > +        uint pid;
+> > +        uint uid;
+> > +        uint gid;
+> > +        __u64 cgroupid;
+> > +        char security_context[NAME_MAX];
+>
+> [NOTE: please CC the LSM list on changes like this]
+>
+> Thanks Luca :)
+>
+> With the addition of the LSM syscalls we've created a lsm_ctx struct
+> (see include/uapi/linux/lsm.h) that properly supports multiple LSMs.
+> The original char ptr "secctx" approach worked back when only a single
+> LSM was supported at any given time, but now that multiple LSMs are
+> supported we need something richer, and it would be good to use this
+> new struct in any new userspace API.
+>
+> See the lsm_get_self_attr(2) syscall for an example (defined in
+> security/lsm_syscalls.c but effectively implemented via
+> security_getselfattr() in security/security.c).
 
-Signed-off-by: Bruno Sobreira França <brunofrancadevsec@gmail.com>
----
-Changes in v4:
-  - Rebase on top of linux-kselftest kunit branch
-  - Fix spelling mistake in a literal string
-Changes in v3:
-  - Fix checkpatch issues reintroduced in v2
-Changes in v2:
-  - Fix the overflow warning reported by the kernel test robot
----
- lib/Kconfig.debug              | 11 +++++
- lib/math/tests/Makefile        |  1 +
- lib/math/tests/int_log_kunit.c | 75 ++++++++++++++++++++++++++++++++++
- 3 files changed, 87 insertions(+)
- create mode 100644 lib/math/tests/int_log_kunit.c
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 0d6c979f0..1d7dc494c 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -3104,3 +3104,14 @@ config INT_POW_KUNIT_TEST
- 	  function.
- 
- 	  If unsure, say N
-+
-+config INT_LOG_KUNIT_TEST
-+        tristate "Integer log (int_log) test" if !KUNIT_ALL_TESTS
-+        depends on KUNIT
-+        default KUNIT_ALL_TESTS
-+        help
-+          This option enables the KUnit test suite for the int_log library, which
-+          provides two functions to compute the integer logarithm in base 2 and
-+          base 10, called respectively as intlog2 and intlog10.
-+
-+          If unsure, say N
-diff --git a/lib/math/tests/Makefile b/lib/math/tests/Makefile
-index f9a0a0e6b..89a266241 100644
---- a/lib/math/tests/Makefile
-+++ b/lib/math/tests/Makefile
-@@ -2,5 +2,6 @@
- 
- obj-$(CONFIG_DIV64_KUNIT_TEST)    += div64_kunit.o
- obj-$(CONFIG_INT_POW_KUNIT_TEST)  += int_pow_kunit.o
-+obj-$(CONFIG_INT_LOG_KUNIT_TEST)  += int_log_kunit.o
- obj-$(CONFIG_MULDIV64_KUNIT_TEST) += mul_u64_u64_div_u64_kunit.o
- obj-$(CONFIG_RATIONAL_KUNIT_TEST) += rational_kunit.o
-diff --git a/lib/math/tests/int_log_kunit.c b/lib/math/tests/int_log_kunit.c
-new file mode 100644
-index 000000000..40b5a6813
---- /dev/null
-+++ b/lib/math/tests/int_log_kunit.c
-@@ -0,0 +1,75 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <kunit/test.h>
-+#include <linux/int_log.h>
-+
-+struct test_case_params {
-+	u32 value;
-+	unsigned int expected_result;
-+	const char *name;
-+};
-+
-+
-+/* The expected result takes into account the log error */
-+static const struct test_case_params intlog2_params[] = {
-+	{0, 0, "Log base 2 of 0"},
-+	{1, 0, "Log base 2 of 1"},
-+	{2, 16777216, "Log base 2 of 2"},
-+	{3, 26591232, "Log base 2 of 3"},
-+	{4, 33554432, "Log base 2 of 4"},
-+	{8, 50331648, "Log base 2 of 8"},
-+	{16, 67108864, "Log base 2 of 16"},
-+	{32, 83886080, "Log base 2 of 32"},
-+	{U32_MAX, 536870911, "Log base 2 of MAX"},
-+};
-+
-+static const struct test_case_params intlog10_params[] = {
-+	{0, 0, "Log base 10 of 0"},
-+	{1, 0, "Log base 10 of 1"},
-+	{6, 13055203, "Log base 10 of 6"},
-+	{10, 16777225, "Log base 10 of 10"},
-+	{100, 33554450, "Log base 10 of 100"},
-+	{1000, 50331675, "Log base 10 of 1000"},
-+	{10000, 67108862, "Log base 10 of 10000"},
-+	{U32_MAX, 161614247, "Log base 10 of MAX"}
-+};
-+
-+static void get_desc(const struct test_case_params *tc, char *desc)
-+{
-+	strscpy(desc, tc->name, KUNIT_PARAM_DESC_SIZE);
-+}
-+
-+
-+KUNIT_ARRAY_PARAM(intlog2, intlog2_params, get_desc);
-+
-+static void intlog2_test(struct kunit *test)
-+{
-+	const struct test_case_params *tc = (const struct test_case_params *)test->param_value;
-+
-+	KUNIT_EXPECT_EQ(test, tc->expected_result, intlog2(tc->value));
-+}
-+
-+KUNIT_ARRAY_PARAM(intlog10, intlog10_params, get_desc);
-+
-+static void intlog10_test(struct kunit *test)
-+{
-+	const struct test_case_params *tc = (const struct test_case_params *)test->param_value;
-+
-+	KUNIT_EXPECT_EQ(test, tc->expected_result, intlog10(tc->value));
-+}
-+
-+static struct kunit_case math_int_log_test_cases[] = {
-+	KUNIT_CASE_PARAM(intlog2_test, intlog2_gen_params),
-+	KUNIT_CASE_PARAM(intlog10_test, intlog10_gen_params),
-+	{}
-+};
-+
-+static struct kunit_suite int_log_test_suite = {
-+	.name = "math-int_log",
-+	.test_cases =  math_int_log_test_cases,
-+};
-+
-+kunit_test_suites(&int_log_test_suite);
-+
-+MODULE_DESCRIPTION("math.int_log KUnit test suite");
-+MODULE_LICENSE("GPL");
-+
--- 
-2.43.0
-
+Thanks for the review, makes sense to me - I had a look at those
+examples but unfortunately it is getting a bit beyond my (very low)
+kernel skills, so I've dropped the string-based security_context from
+v2 but without adding something else, is there someone more familiar
+with the LSM world that could help implementing that side?
 
