@@ -1,124 +1,114 @@
-Return-Path: <linux-kernel+bounces-349911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A181098FD2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:09:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1F198FCF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57B001F23842
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:09:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D49D1F22D46
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE1184E14;
-	Fri,  4 Oct 2024 06:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5C96EB5B;
+	Fri,  4 Oct 2024 05:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILz5sw52"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d7gy4O5y"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E651FAA;
-	Fri,  4 Oct 2024 06:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC7D81E;
+	Fri,  4 Oct 2024 05:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728022179; cv=none; b=tU14WwCCl8uam/FOiW2JESCcE7DRji+EK0kigON8WrMuDdqI4vRdbsOA520Kf2PiD+nrUPNHzFJ7/F8kVenLeQteFvBulR9WMv4pKccgvMm7MXLr0QX1BUoO7ONtypS+AEfmqGedaY4myM//yimv6RgMxr36DKAAhFJoGKxOrXU=
+	t=1728019073; cv=none; b=Wy4d+VN3R52Xw43zW0TJomqBMsehJ+YdTs/Qkmr6uAEGUbZUvnVNV6pLkkFYGzk/ipjOUspe+e/gjfG1kipkS/AKXzm0UaO8CUwZukC2nV3ovGT63RNz5e42Fi9wW35SBG0oliBNBl8IWKggrxnZaWg1wFYzBXAjJymlVC2ByoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728022179; c=relaxed/simple;
-	bh=icX4k6iWTdwKihZml0I/rYivU6TQM0+2sfvP4RFAs1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSL0m8t3rXf31bGqzDqLgQugtaImpzEHezkOgp/ogBtsKWSjXNf77B32az80F8gIdQa0gBc5ek1zhNCnw1AfxG9NIBnjztEM5FcfDZK0Gj/zT1t2qBlmmHZ71IX9RH1D8jjslab7meAQG/SSar6/+rc2FLH3g2za0wxhsn/vGA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILz5sw52; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AD8FC4CEC6;
-	Fri,  4 Oct 2024 06:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728022178;
-	bh=icX4k6iWTdwKihZml0I/rYivU6TQM0+2sfvP4RFAs1A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ILz5sw52smTqREU1uQRy6iDVVRulopDAfhVCQtjKebS7rQmIY9wxFCwxg9Oaxd+16
-	 DtN64eLDAhW+4TwvsIJMZc6RQlAIYHpM+/SjdbaGC1IrE6fVK0Efy+leFQ7kmFyiB5
-	 Z5uPVpYjMGtqaK1Hiea3m6q3mBtxYuuQdbX7+wRzAdupjEbX6v1cDRJgbgAZNbaJlF
-	 JsvJVTepTEI3qkdLdGM76JM+Q59gMRlIDO7ojCDusM4GqbdeyyTkRuBp7IcszSGW/R
-	 k7WIIvhAJoa+miQwNmF+RlLuwQTUWbMMo4o7g3QJ3QAv40TCC5aYBBzOPkF1VhbLO4
-	 V2ZF0uwTsw58A==
-Date: Fri, 4 Oct 2024 09:06:03 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Rong Xu <xur@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, Han Shen <shenhan@google.com>,
-	Sriraman Tallam <tmsriram@google.com>,
-	David Li <davidxl@google.com>,
-	Krzysztof Pszeniczny <kpszeniczny@google.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
-	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
-	Brian Gerst <brgerst@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jann Horn <jannh@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Juergen Gross <jgross@suse.com>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
-	x86@kernel.org, "Xin Li (Intel)" <xin@zytor.com>,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v2 1/6] Add AutoFDO support for Clang build
-Message-ID: <Zv-Fy4hnuscnLH1k@kernel.org>
-References: <20241002233409.2857999-1-xur@google.com>
- <20241002233409.2857999-2-xur@google.com>
- <20241003154143.GW5594@noisy.programming.kicks-ass.net>
- <CAKwvOdnS-vyTXHaGm4XiLMtg4rsTuUTJ6ao7Ji-fUobZjdBVLw@mail.gmail.com>
- <20241003160309.GY5594@noisy.programming.kicks-ass.net>
- <CAKwvOd=CRiHitKeYtHH=tmT8yfDa2RSALbYn5uCC8nRq8ud79g@mail.gmail.com>
- <20241003161257.GZ5594@noisy.programming.kicks-ass.net>
- <CAF1bQ=RAizpP-T_sRGpE2-Kjsk_RZD3r_iz_dpn25W+uDzpWOw@mail.gmail.com>
+	s=arc-20240116; t=1728019073; c=relaxed/simple;
+	bh=+fBk7IFqCNjsUwRi2FqXzXYFk6+tw3wIA3m6oDtIunI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xy2k7ON24skoMB6URG4IKa01dOq/uD/vknF5Nam4kHAPAO5hJVIHqxDpY33TEkLIJl1YO90Q4kW7nlhIbjuK+wNtBwdjq/YrmQso2CGD7Mn9VkvihhpucWKHKH6Z7jHGj1kIHGyb5qc7SoI7KKbaAae/ZQ3m/jtbxdk2FW++c7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d7gy4O5y; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539973829e7so1689892e87.0;
+        Thu, 03 Oct 2024 22:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728019070; x=1728623870; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7aCFDyHoHoDbgO0v7sJEQUIlTXYtnKJqT6KUQfPrH/I=;
+        b=d7gy4O5yJk73WW7AfAyWufkhTX6sVL7FzAj6mC4Y+PrikEBBw8UH2znHVCVPKzm66j
+         OVos9Bo35djopkGTXBt/j8hPgbK8G+juLz3MHmIi/JlhrxhOeDV57JeSPg6d2tmxl7Ra
+         qoAf91uuFczhlzkuDYtd9WEmQKfiXGYuPqWHvNhIOuu6EPqQQUhZixamEfFJ81ram0oj
+         /oQl/2gl7Gmv73wSFJ9r4kbqQAzcUa2WRvj9A+KAbqp0n51fCoUAp3x+9O7/mlYffRTK
+         /B/90fbIx985wr61YHB+78gmKSTKhdCxz2NhLrpkgk1dEZKbIloFi4JRXKTx+sSiWfAc
+         Zy3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728019070; x=1728623870;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7aCFDyHoHoDbgO0v7sJEQUIlTXYtnKJqT6KUQfPrH/I=;
+        b=ilhXdV4xhKqVey8w37lYM6yAAV6b9rryBjf+uhZz90xEhAfRGIoxtMf185IKwxfdiR
+         iPFGBxd+FUGXjkXuz3iPVskxk3+sNhr6lrFWMV+4tumSAH7pw6LFn8nIs7amVDTWhdgu
+         g8RNbZxrmfY3EUYYbmyHVcHS++rztLKwx7Tcr/JsO/c6qTgBG5V1uU8SRSoMpib4ptCD
+         5OiffGXHoP0zqYyJxds8ZO7LB5PAe/aEZ1HC0d/+PuT80cHhHn/nr4jeUmu+lyp8Oo1l
+         SR4woL3AohiilZkqBOpG2JfIVUlet31TGhZ+eZrOy2cQV0qLHUofKkY5eL/sNHirSRLx
+         BxLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHsXrfKWjElLNevwmkN5MnPLlPI2+H3KyPDivSCiK5ps1ASnZA4qLNlG81cLbLk/f+a/v3A2gNQ0A=@vger.kernel.org, AJvYcCXCC5ieEojpkqptNdBbvT7K4VSX0t6A7g9Phw5AQUU63TiHAnhPkc5MSwXS9o44xaNlhSwubztYlxzI+ZD3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKKbMe7G0UiNxDKNqqPaOyAOsKGaZAhGcfos2iY6VVPjm6UkQb
+	2/24amYfgpQiEqmwNLFqPOYixE3ZodwloQjfE+waqGeEIAgVUvSv
+X-Google-Smtp-Source: AGHT+IEFiNK95lx/7Iu4CaSwTSzEGHBwKDwH9RpCrRqbcly5HgYkF711zz+cHyLHKH7FQlFz/+D5jA==
+X-Received: by 2002:a05:6512:234f:b0:539:9510:117c with SMTP id 2adb3069b0e04-539ab9ed82fmr677400e87.59.1728019069343;
+        Thu, 03 Oct 2024 22:17:49 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539a82a2f43sm327874e87.186.2024.10.03.22.17.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 22:17:48 -0700 (PDT)
+Message-ID: <c30c46c5-7f6d-4230-be7f-d7fd766bc1c9@gmail.com>
+Date: Fri, 4 Oct 2024 11:16:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF1bQ=RAizpP-T_sRGpE2-Kjsk_RZD3r_iz_dpn25W+uDzpWOw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/13] iio: light: bu27008: add missing select
+ IIO_(TRIGGERED_)BUFFER in Kconfig
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ David Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>,
+ Dan Murphy <dmurphy@ti.com>, Sean Nyekjaer <sean@geanix.com>,
+ =?UTF-8?Q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>,
+ Mihail Chindris <mihail.chindris@analog.com>,
+ Alexandru Ardelean <ardeleanalex@gmail.com>,
+ Gustavo Silva <gustavograzs@gmail.com>, Shoji Keita <awaittrot@shjk.jp>,
+ Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+ Dalton Durst <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>,
+ Andreas Klinger <ak@it-klinger.de>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ondrej Jirman <megi@xff.cz>
+References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
+ <20241003-iio-select-v1-10-67c0385197cd@gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20241003-iio-select-v1-10-67c0385197cd@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 03, 2024 at 11:20:17AM -0700, Rong Xu wrote:
-> Writing the doc with all these code-blocks was not fun either.
-> We are happy to change if there is a better way for this.
+On 04/10/2024 00:04, Javier Carrasco wrote:
+> This driver makes use of triggered buffers, but does not select the
+> required modules.
 > 
-> -Rong
+> Add the missing 'select IIO_BUFFER' and 'select IIO_TRIGGERED_BUFFER'.
 > 
-> On Thu, Oct 3, 2024 at 9:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Thu, Oct 03, 2024 at 09:11:34AM -0700, Nick Desaulniers wrote:
-> >
-> > > > It makes it absolute crap for all of us who 'render' text documents
-> > > > using less or vi.
-> > >
-> > > "It hurts when I punch myself in the face."
-> >
-> > Weirdly enough I have a job that entails staring at text documents in
-> > text editors all day every day :-) sorry for thinking that's a sane
-> > thing to do.
+> Fixes: 41ff93d14f78 ("iio: light: ROHM BU27008 color sensor")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Something like this should do:
+Acked-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-> +- For enabling a single file (e.g. foo.o)::
-> +
-> +        AUTOFDO_PROFILE_foo.o := y
-
-
--- 
-Sincerely yours,
-Mike.
 
