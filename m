@@ -1,123 +1,106 @@
-Return-Path: <linux-kernel+bounces-349960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A87F98FDF0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:40:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF4E98FDFA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ABEB1C216BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:40:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 468631C21CA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92005139590;
-	Fri,  4 Oct 2024 07:40:16 +0000 (UTC)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635DD13A865;
+	Fri,  4 Oct 2024 07:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="DudPDvJG"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56C11862;
-	Fri,  4 Oct 2024 07:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D6481AB4;
+	Fri,  4 Oct 2024 07:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728027616; cv=none; b=Bg/NOQvs8pu+37jXL8em3Ky3IvhOIylw0gAe+Lc67HldqyKIWG4E3a7ikRN9bEEAc0njSu5yG9DYzyui+XJgcftSa8JXG2jVW6XYq+liFQIA5+dd6qM16++gdoERP0+upx8/fP1RLFbhzOku2QzPKwMxZ5LjD75Eu4vAREWdu08=
+	t=1728027697; cv=none; b=A/kmPuUplODt6Zcba1aWVhgdv6lbJj8+VXkxvVTagXeJtQukR4JyQX8FLgbhSjmC4RrCRDFp7YEAXHh76NR/dAfxb7z63FZDj1WiEHXk9hdzkTZmmdJC/6I/Ql5DFxw4EnXBGMTZW1GRZ2CTz6/cMs2e8jXmcMYcEFCuNFdOybY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728027616; c=relaxed/simple;
-	bh=s+U7mPA4cuZ5ZhEywjO1q5MFBt0+X41WS0Xgg54VSWs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lhhv1QKmVF81L7GbA12TCsoNWB3x3vkibHdBuYDMVILAvzVRsySwOItsMjKqyPsxeLUhwF17++Tzo6C1Vpvt0fKAMamycUMUqH1E8YodtnDiOpOC/mDrIZzmxuZej1gVyPjf2Tmgh/Doj+i4FgS+d28lGLgFNCOj+ZVnsE8cZEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e026a2238d8so1760667276.0;
-        Fri, 04 Oct 2024 00:40:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728027612; x=1728632412;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RO0BXZepgLq8tijgrMu3ZUSo4QDTL+V9orOPGhbqOUs=;
-        b=PLrxKN2kE2dMTRtJVuZX93YHLOHJ06c/b7oNy0bDuZyyHWUDIjWOgnl7wYdElla2ne
-         TCnt/3y6SEEK221SnDM7i/4IVfV5uZ2zqgtCS3QTChVJb+wZwMT/mHQlXNBadzK5o2zg
-         gKZo3CDvylHPot35ObS8poBWSvSY/eg1VhJ57wd/OIZ1gM51vaT5ZSfElw/uI9rWAE/v
-         nsRxinMXroMAfJ5WzqnUXfRS4CBOyaTZczXTv8GUV8LvzHTR3EXTW0GmjOds3TlgiW1L
-         cl3qowJqPLCLs5QSuBtJ0SmUCz08JgUQyxqlk0drMrNqlpdNTdnnYg6SbONmPACC9EtC
-         fR+g==
-X-Forwarded-Encrypted: i=1; AJvYcCU7bMNL1ldJOZSb56NVn85oxzFewRDuTblnkFKxzQDbFLyXgHqu3oOxxjXBXiyE7Cf4vSqLnrA/tTiLF0G8@vger.kernel.org, AJvYcCVp8zS7Lxvp64owCtnFau/TdJk4LDO+1gIcCQMEjw6YWyTwirUjr0xX3NfYaflURhyvvjvak9gPpYMH@vger.kernel.org, AJvYcCWPG/8/17uIW6gr581nNVkhBxtwSiCagfFD/dqN+1Ep21M48SfHGi2mPlf0Q8P9lmiVfzsT3dp4zBI4xxW0K45i1Dg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw0rNGthB70J/XSqihUCfnBJep9azwNJ5wL49i9AbxDGEtqNlW
-	Lb+QQD9uV2K63GCjOhChjMoTjhKH9L0tdbqWzo3S8EXY4cIER33E8mD44jRPFMA=
-X-Google-Smtp-Source: AGHT+IHaQzLGFnkmSQQ8PwO1b1buyQSq5jmZUnXPcYzWP1WlMkO/RDtuwRpj3L+nxZG3H3K40WhibA==
-X-Received: by 2002:a05:6902:1882:b0:e26:12fb:1d98 with SMTP id 3f1490d57ef6-e28937e3a9fmr1183615276.31.1728027612566;
-        Fri, 04 Oct 2024 00:40:12 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2bbbb7843sm5623237b3.26.2024.10.04.00.40.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 00:40:11 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e21b4d7236so15458807b3.2;
-        Fri, 04 Oct 2024 00:40:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+EA5QAfrWEipaR6FTrTiq6RvzrdZ1XP0a0Zp56++wQuxsfPwwBwcNEmOJh57tAo1HEEtsYlgbhLtt@vger.kernel.org, AJvYcCW6915BRpWyXyf8+YKKNVO3QPQB/Pg7jRuSSJQaxMaiPFUscyKKmZo2Mgsl1N2zDDzo3MbhAsucpuCSZcnjpWoU7BY=@vger.kernel.org, AJvYcCXHhJp4GwcXyTJt+2pKhMnpWd2oNX8/4KU3zqEBkCRP161958hrxvhC7uw3yJsWC/et5e0ylBmJ0i2TI75A@vger.kernel.org
-X-Received: by 2002:a05:690c:60c1:b0:6e2:1a41:ebe5 with SMTP id
- 00721157ae682-6e2c72b07d0mr17527947b3.41.1728027611475; Fri, 04 Oct 2024
- 00:40:11 -0700 (PDT)
+	s=arc-20240116; t=1728027697; c=relaxed/simple;
+	bh=7x5oaqKNm9fzzIVj3sGF2E1qvsKH6Te4wVR9BrWq/wQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fnr3fgY0nIeNxYl7GW6M+TNW/zL69PF1kjsbPsdWl7MvL9ay9l/nZk8BulM0aX7bRY9uC1Lb0q3DEP7x/PRgTZF/mkakmBiEXN3L9ZB6AguU9GsOnJTyHPntBdAw6f1Bk8T4QOIwI+FNI7Nz3LyIiyVxtyL1w2TrPBNdPZ30cWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=DudPDvJG; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=C/akXsAuA4lvqwOPwxkIDhFyhVuPjA8UxoZPSkDsbgY=; b=DudPDvJGJOZeadblFUiUMPUUGf
+	bLCQ9TpmDrwrzkir3h/JBGmabNPYwG0LvsnVBlSXxELA98xzCQius8cawoFnd8prrXKGIQoIBp5Mq
+	+Dj/CCZ6PzGM8Vi1XKo/iwOLDLwPOcCfuNIqzOx5ZHSIxpLemrvEDx28i5mYKY1u/KaVLDAkCKis0
+	U2qWJpI2rLdxelCHDLtAPhrF/2sHK4UzKCJH9hULJk1/STJiUJU7wAxbInNwYs5sa/R183lYrKz4H
+	r/XfU0rtbsGKdCcVSSKwf7fWkTOD6Dn2nXnE7ofXdRNXCmD07T9Q1yMexBkpXXTL4ouo4VdQBivJE
+	XDbPtP7g==;
+Date: Fri, 4 Oct 2024 09:41:17 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, Rob Herring
+ <robh@kernel.org>, khilman@baylibre.com, devicetree@vger.kernel.org,
+ tony@atomide.com, aaro.koskinen@iki.fi, linux-omap@vger.kernel.org
+Subject: Re: [PATCH 1/4] ARM: dts: omap: omap4-epson-embt2ws: define GPIO
+ regulators
+Message-ID: <20241004094117.51c8adcd@akair>
+In-Reply-To: <3c83c399-708c-41e2-988d-4ccec63c6042@kernel.org>
+References: <20240930213008.159647-1-andreas@kemnade.info>
+	<20240930213008.159647-2-andreas@kemnade.info>
+	<3c83c399-708c-41e2-988d-4ccec63c6042@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003131351.472015-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241003131351.472015-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Oct 2024 09:40:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU-79wt71k_kCE5OrRzsKG+qDu+W6E1JJe0LnfjywRkQg@mail.gmail.com>
-Message-ID: <CAMuHMdU-79wt71k_kCE5OrRzsKG+qDu+W6E1JJe0LnfjywRkQg@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: Fix potential NULL pointer dereference in gpiod_get_label()
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 3, 2024 at 3:14=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> In `gpiod_get_label()`, it is possible that `srcu_dereference_check()` ma=
-y
-> return a NULL pointer, leading to a scenario where `label->str` is access=
-ed
-> without verifying if `label` itself is NULL.
->
-> This patch adds a proper NULL check for `label` before accessing
-> `label->str`. The check for `label->str !=3D NULL` is removed because
-> `label->str` can never be NULL if `label` is not NULL.
->
-> This fixes the issue where the label name was being printed as `(efault)`
-> when dumping the sysfs GPIO file when `label =3D=3D NULL`.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Am Fri, 4 Oct 2024 10:24:32 +0300
+schrieb Roger Quadros <rogerq@kernel.org>:
 
-Neat!
+> On 01/10/2024 00:30, Andreas Kemnade wrote:
+> > To properly have things running after cold boot, define
+> > GPIO regulators. Naming is based on board file.
+> > 
+> > In the vendor kernel they are enabled in a function
+> > called bt2ws_dcdc_init() if the system is not booted just
+> > to charge the battery.
+> > 
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---
+> >  .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 73
+> > +++++++++++++++++++ 1 file changed, 73 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
+> > b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts index
+> > 339e52ba3614..d6b0abba19f6 100644 ---
+> > a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts +++
+> > b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts @@ -29,6 +29,42
+> > @@ backlight-right { power-supply = <&unknown_supply>;
+> >  	};
+> >  
+> > +	cb_v18: cb-v18 {  
+> 
+> https://devicetree-specification.readthedocs.io/en/v0.3/devicetree-basics.html#generic-names-recommendation
+> 
+> 
+> So regulator@n
+> where n is some index if it can't be address.
+> 
+No, no @n. The above link says: "If the node has no reg property, the
+@unit-address must be omitted and the node-name alone differentiates
+the node from other nodes at the same level in the tree." So
+probably regulator-cb-v18.
 
-Took me an aha-erlebnis to realize why it didn't crash immediately when
-accessing label->str, but it just returns the address relative to the
-zero base...
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Regards,
+Andreas
 
