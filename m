@@ -1,68 +1,85 @@
-Return-Path: <linux-kernel+bounces-351494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E39C999120F
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:02:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F276991218
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1B8E1F22CA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:02:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C04A61C23578
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30B01CACF1;
-	Fri,  4 Oct 2024 22:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F12A1B4F3B;
+	Fri,  4 Oct 2024 22:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SodTg4g7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkRMApVR"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B7AF9D9
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 22:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357781B4F10;
+	Fri,  4 Oct 2024 22:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728079321; cv=none; b=d1SqcvAxMvktFEVcdVay9oB21oisbKdn9wx3rPwLK9YRC/rZsuJ34M5Brb2e1PwX4uf7I+7QF3BNnrm1PTumGFgPqdukby+50oDVh1b2x8qI0goHq3JCdIV/CQlt4J4xsNjW7EZE0T8y7qLKuQY5WWKY+HqXa0TlckCJhzZIaW0=
+	t=1728079357; cv=none; b=YUyErEWsFZzJEHA0MCQUIqOknbkLq14qgWt4qT6bJUifBFC8SYpn6qMdYk/wg3fjpLFuUXyY+7dZQ5U+rvVEB6tJ3uI6uxkl1BFE7KaIxDy8kZE50XgyMFPnPFKmS18T5/Xkrg+ykfpmLle+CWX3pAw39WF9tm7JKKl76+EH1C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728079321; c=relaxed/simple;
-	bh=hGc2tT+Mkvp9Uct3RiuCNP3syOpeJxVUm2NsIQXbuyg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mSwTHeA4jTudgSPTUjPRCzjejjfaTqGKRqigTuC+69JHhqgJKxWexpFp3iV+q5L2Y9/7w6Yalupb96O9HcElzDF2HGer+PUqZeDJDX3MfkG9iUxjb8jmKJUeOevNAwU98nUTWOP3LT4NGNbwaV8jpx6YcENllmzoiKRbqYf4MDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SodTg4g7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728079318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=szW3LFz6JagwXYMVlYdGhQ1/qZOpFV//HtNqCZA+SAY=;
-	b=SodTg4g7bgoX9RnOVo86ofVIRvQNwSiyBAMGLYHA8hi8Tv5F5EpxMZgzbr5/O6/TIX5oiL
-	RZ9+r9iZHoxeZVB1m8RjTmxlNygxwyf7YpwwbVCJhHio3OpgrUCotytow+ud2J5KIJL7oi
-	il9l9o3slgzEP6mQbr4GkddXkTEwnfc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-636-DPCdrPTtNdycPuOu_xu1TQ-1; Fri,
- 04 Oct 2024 18:01:57 -0400
-X-MC-Unique: DPCdrPTtNdycPuOu_xu1TQ-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 332D91955F41;
-	Fri,  4 Oct 2024 22:01:56 +0000 (UTC)
-Received: from starship.lan (unknown [10.22.9.208])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BF4693000198;
-	Fri,  4 Oct 2024 22:01:54 +0000 (UTC)
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	linux-kselftest@vger.kernel.org,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Maxim Levitsky <mlevitsk@redhat.com>
-Subject: [PATCH] KVM: selftests: memslot_perf_test: increase guest sync timeout
-Date: Fri,  4 Oct 2024 18:01:53 -0400
-Message-Id: <20241004220153.287459-1-mlevitsk@redhat.com>
+	s=arc-20240116; t=1728079357; c=relaxed/simple;
+	bh=9NEI04r9pk8boDaYvXCembqpldoBVVZtbkdO8qRVlM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bXea+BlcQV7fhLrXhn/qXZsXDXsKQAPG+UHGlFu8aP3ilIn6wJmPP+GOEEVLk16ZdE0w0r5f/MyWrOEnHnwtE14YpGPQrkNLva9BOxlY5qUgbHH8PhZEznXcx/fGNzMNuc0f2CT1SIe5DNTGkb7cIrcAT5j+v78W4GmeB1aqnRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkRMApVR; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20b86298710so22684495ad.1;
+        Fri, 04 Oct 2024 15:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728079355; x=1728684155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o7LQPL2dp8286H1r4DQT1emsDyU52+A7xIUGZ0lQE+Y=;
+        b=lkRMApVRjo5qEgTs6+Xi2BPfY+o2BolGLbsWvtKJHFp4r+Nsg68+D/ngfY50C1Ixvm
+         17Sr8I5u7igr8OWlXWCepZWpigdH0+ZUdkq9R3jguLkOW7Sr7Brm6SZx8h7KJrPfmSJb
+         UjUDoFt/J5yEQf1LS3xDhJpUCKtqs3msWFD0jup4yQ6AJpfmDwAoOQNtrqJft26TOsbb
+         o0W46N9IwCsnmhiIzmPuCJnwdpWZDIdPoB3nOkrJqLqhnVzIwlgx6sedAvpgcRerMpth
+         Bt8VO3DQJMHG5pD9/PQzAT6DAMc7SHvVWfvO0rlwU1L1WYcB7aN+uFiDMlhkLGikfBSa
+         mAqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728079355; x=1728684155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o7LQPL2dp8286H1r4DQT1emsDyU52+A7xIUGZ0lQE+Y=;
+        b=kbXm2Z7ty0blDKJs3/UgZnjkGd7A8+Ilt44bA++Me2tfXs0qx02MzP78z7DTNy3Bzr
+         I5W5nfzOu8uGs69QVCC8CdTnj/gp49AzNMrXk/qIWZU0mVvgvsROmeOHO7OvyUWSuJBi
+         b0cmPMLmIRWP7lZRcMf7B2QGxPWIIlVw0p8ud+KniZM2urJOh32YUHHxBTpqvSwZPjEy
+         X/wFOXJoyPSJ6jsThaKtZ+m44qxUV462qNJWtuYg0OB6IMSmw+XnfnjxqxR5Bp8cdMaZ
+         DYa/xYoHST+k0fgqEVeCxl1b5MpLJTdxaBQtCpIaUC2MobqtejcBrXPcksel85iWscfk
+         fvVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+Fworl1yv/pqfTjFEOCTHJ+MIIvJ3i0bmXYGn9CzcEr9DrmjENUWrIK7NHNCmJOqw2oQCPg1w92UoBIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPrxXQ+k6VIAjAA1dUIodL367KiYNfgjKXeY1wiMvY7zTIJhaC
+	yAn4orJqxBqPH1cR+jRzbsV9wuUyI9V1V2qnIrChRDrSAu7VIwslm/AuqYm7
+X-Google-Smtp-Source: AGHT+IHOBlqK4t0Ugk1DYhbg8qvWKMMjeYMRSHbROPVg7LgukuY2HwwNWTs9c2+uLUryf/d0ZanPQg==
+X-Received: by 2002:a17:902:e806:b0:20b:7ed8:3990 with SMTP id d9443c01a7336-20bfdf81003mr59860875ad.12.1728079354324;
+        Fri, 04 Oct 2024 15:02:34 -0700 (PDT)
+Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20c13968b54sm3045795ad.207.2024.10.04.15.02.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 15:02:33 -0700 (PDT)
+From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Mohammed Anees <pvmohammedanees2003@gmail.com>
+Subject: [PATCH] net: dsa: Fix conditional handling of Wake-on-Lan configuration in dsa_user_set_wol
+Date: Sat,  5 Oct 2024 03:32:06 +0530
+Message-ID: <20241004220206.7576-1-pvmohammedanees2003@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,34 +87,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-When memslot_perf_test is run nested, first iteration of test_memslot_rw_loop
-testcase, sometimes takes more than 2 seconds due to build of shadow page tables.
+The WOL configuration now checks if the DSA switch supports setting WOL
+before attempting to apply settings via phylink. This prevents
+unnecessary calls to phylink_ethtool_set_wol when WOL is not supported.
 
-Following iterations are fast.
-
-To be on the safe side, bump the timeout to 10 seconds.
-
-Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
 ---
- tools/testing/selftests/kvm/memslot_perf_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/dsa/user.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/memslot_perf_test.c b/tools/testing/selftests/kvm/memslot_perf_test.c
-index 893366982f77b..e9189cbed4bb6 100644
---- a/tools/testing/selftests/kvm/memslot_perf_test.c
-+++ b/tools/testing/selftests/kvm/memslot_perf_test.c
-@@ -415,7 +415,7 @@ static bool _guest_should_exit(void)
-  */
- static noinline void host_perform_sync(struct sync_area *sync)
- {
--	alarm(2);
-+	alarm(10);
+diff --git a/net/dsa/user.c b/net/dsa/user.c
+index 74eda9b30608..c685ccea9ddf 100644
+--- a/net/dsa/user.c
++++ b/net/dsa/user.c
+@@ -1217,10 +1217,12 @@ static int dsa_user_set_wol(struct net_device *dev, struct ethtool_wolinfo *w)
+ 	struct dsa_switch *ds = dp->ds;
+ 	int ret = -EOPNOTSUPP;
  
- 	atomic_store_explicit(&sync->sync_flag, true, memory_order_release);
- 	while (atomic_load_explicit(&sync->sync_flag, memory_order_acquire))
+-	phylink_ethtool_set_wol(dp->pl, w);
+-
+-	if (ds->ops->set_wol)
++	if (ds->ops->set_wol) {
+ 		ret = ds->ops->set_wol(ds, dp->index, w);
++		if (ret)
++			return ret;
++		phylink_ethtool_set_wol(dp->pl, w);
++	}
+ 
+ 	return ret;
+ }
 -- 
-2.26.3
+2.46.0
 
 
