@@ -1,123 +1,113 @@
-Return-Path: <linux-kernel+bounces-351281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E729D990F49
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:54:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B63990F4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E32D1F27171
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:54:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F3D4282F71
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4801EB9E1;
-	Fri,  4 Oct 2024 18:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716241EB9F6;
+	Fri,  4 Oct 2024 18:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6NQLArO"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="XxQD4dDR"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302091DD863;
-	Fri,  4 Oct 2024 18:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5D01DD863;
+	Fri,  4 Oct 2024 18:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728067576; cv=none; b=YImM9rGM0vbnQBgI7qBKhBwg0XPYolxBflseYAmBxsRZjLuNpGY2n9tRWRfSwS6sSscXYjjAvmd7xwyee465OTnJafHDYdSMJ/g/vDI5j23IagljzGj/Jhh81QNxKvB+SZFkfIoxnXdtvfbA/uAn2pArvju4bGKMZjcJVCs1d64=
+	t=1728067624; cv=none; b=QeAFl3oDyQNYkBghtguqVW4ZFjClCv42LF2siX7WVGQg9jflnhCIhBE0uS3P/pxohgidcd3Av9ZNbYqyfyOOBMd92dPDSeTO5I3uxNIOSOh6dp8y7khqZ0PzsyA5oBFpLJRrLFgPyW5Ns2SbkhUDmSXOPkLo3DsvFKPij7ch6xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728067576; c=relaxed/simple;
-	bh=k9q3R0pxsWmTTbakmAC1U3EJ9dFWovW9rJrwDCsmEpM=;
+	s=arc-20240116; t=1728067624; c=relaxed/simple;
+	bh=xddue20JJVosrUgttbTHKBMmNPNpt18+k7Z9d2ZVQm0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e14voWQ/KSlQYHRdsIeSiqe3KA8yUB1YOdnLPBQs5zkd5mm4UpUmhbZq+vf0eiPbijIJR2MuRwQr4hvR4mY7EuEDw3lD2iJEmCbS5WbPQih4iGQuwx6tpo9OW3WLCiHyGUYT4czjV8yx+id8jWIz8WU0VElQmUVn3FMVMqm7ff4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6NQLArO; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e09d9f2021so1822564a91.0;
-        Fri, 04 Oct 2024 11:46:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728067574; x=1728672374; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IrTg0kaopkLeKlPu7sTXTEx4d7ujCV3P+a2ZN/l+SlA=;
-        b=g6NQLArO8P2b7Te1b8RgmMhIRMeUPRnvQGUT3yFG/QwNMrlQDWKS9O3K11IlM+wiMi
-         ZgUy5w1HFgF8aBwvPKshRpRPquQMAWh4XXg7gsjdAHuOny/RsIhdqOTglcS87HKlWa9p
-         bsuQRdbn+4ROMKHH5k/3AhhSpI6VmzSIxz6RaRbxiu19sfMIpkh4wIFETPqev7xxcC94
-         ZSWKAmPbVvAc/sMK5WCbDCLQ5QjpdPLYGaSI6GItjJ7dx5kcc0E3wvJOy1uq/KNywK24
-         v29L2DXG4KF0SDUQ6KpiDwUK/qH9nk+73Z5UBv8laTjgOsoUFQ6TEiY3GnTRmV5fESgt
-         DFVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728067574; x=1728672374;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IrTg0kaopkLeKlPu7sTXTEx4d7ujCV3P+a2ZN/l+SlA=;
-        b=fNODX08sZJKKuY5+qmZNQnNjKf3cJKbFjcoeUd+7/YvIk6m4cYHgybcGHdZSaSz/IC
-         E/1GE62r37nZ6AE3A8WNNpCyrRNRSZthe2d/+8kYbCHuff6xD9jnMtqiUkLjpbk2IqNS
-         CuE2NnWJJij+DfiYQ4C7JLsijjTmcci3cLKo5hD657x2gSIKIJ7+vqQwYg08kRfMSaXh
-         RUcVQlCMLR5ZGa0j3GVawlSdrZ4N+2jd+HYgNgOX/F3n3MlTKe4VCIuJxOh2pddypO2k
-         2Yq9RuVjeDsvk8uhgLsDaODhOzIiJKCGnyXtc4q0T1/hd+KVOo6UdyaW2rjed3yFGmzi
-         LYHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJsq4Mt3VRhANuf1GNOYlPKXxXWsGy2IINMpP45bU1MlAUYRTgJJlHy4/rGeHe9v6z9Obc8bYblJk1h5xG@vger.kernel.org, AJvYcCVyLFGcBOKj4hHItkCrIhUSpUnMTIhXshzdbuVwSnpVyHedsUX97MV9tapCQ98biN7CBAM+evBlNXotfNO/jE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG+KrMqRrnDEtjsLEWLQam4wtvTReJ5N/flPPMLVF8qF5pZQGG
-	Zj/4fl5JyoRsbcKVlis8OMtYQobiIDZn/9rUXyiP8JuA5t8fhQuM
-X-Google-Smtp-Source: AGHT+IHVr5A5Oa1U5sfqmIduA2f6Mb43CYYv1LjnCC6EfjKhOV38SAV9u4aOc+k7yBHEeaIqQFUr4Q==
-X-Received: by 2002:a17:90b:80e:b0:2c9:5c67:dd9e with SMTP id 98e67ed59e1d1-2e1e626dc29mr4752757a91.19.1728067574318;
-        Fri, 04 Oct 2024 11:46:14 -0700 (PDT)
-Received: from mail.google.com (125-239-144-11-fibre.sparkbb.co.nz. [125.239.144.11])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e83ca28fsm2007631a91.7.2024.10.04.11.46.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 11:46:13 -0700 (PDT)
-Date: Sat, 5 Oct 2024 07:46:08 +1300
-From: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=W186rvEuFxjt0I53YmEKy648kN1gl2Gp8QKVP741BUA2h7usi3cXft4DGqXlkuD8EhT0/dO6Y0L3Vj3EcGrAPtfXvTV/aRtiTlrj3UAoYG7G0f0pf6q39RaxeQfT5XVFjACCKzBjfJHhs1j+BKDLMGR474L7evuuQY51t8Zjqro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=XxQD4dDR; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=+XYXSvT60QiwXsMKvAAFrIJ3OH8NqC5cLlNbnh0tr6Y=; b=XxQD4dDRoolTy1W5oWDlKXWcDJ
+	hdgpkW/9iDkzD/APy+G8r/c6cTCTPnuDbcuMr4l7HtFKEBMySYJP40dvPedUa7TIPyCE9X0B0eLAm
+	bCJ1URX2wdSv4EesrgVxr4RwyTenRlW65mXLP6eMaHoCXUjIoPwN8ynOekq5JDPTXQuPVQJK7piwf
+	eHVh0QNVQO0HaTLO+r6tA5Ltpr6RwN0F5FKVO5uwC8KkWgw2gVgbxaa0CZKPX/Y8X0o8TQ+cj89iP
+	ngZy6pc7rSJsFv/3MZrSql18vtfq+GSQayBhV9q/5GLHE5auz8WE94op88KpG9RB4n1zAjOAy+hqh
+	9LHz1FaQ==;
+Received: from [2001:9e8:9c9:1501:3235:adff:fed0:37e6] (port=34676 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1swnKA-00ClbX-W8;
+	Fri, 04 Oct 2024 20:46:47 +0200
+Date: Fri, 4 Oct 2024 20:46:41 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Aaron Thompson <dev@aaront.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [next] ARM: Replace snprintf() with the safer
- scnprintf() variant
-Message-ID: <ZwA38C2qBDYkm7ce@mail.google.com>
-References: <Zv9aEoDo1k36Hg3H@mail.google.com>
- <Zv-w3rXt1OLnAbX6@shell.armlinux.org.uk>
+Subject: Re: [PATCH] kbuild: deb-pkg: Remove blank first line from maint
+ scripts
+Message-ID: <20241004-discerning-hedgehog-of-education-33b0e9@lindesnes>
+References: <20241004075245.169046-1-dev@aaront.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zv-w3rXt1OLnAbX6@shell.armlinux.org.uk>
+In-Reply-To: <20241004075245.169046-1-dev@aaront.org>
 
-On Fri, Oct 04, 2024 at 10:09:50AM +0100, Russell King (Oracle) wrote:
-> On Fri, Oct 04, 2024 at 03:59:30PM +1300, Paulo Miguel Almeida wrote:
-> > There is a general misunderstanding amongst engineers that {v}snprintf()
-> > returns the length of the data *actually* encoded into the destination
-> > array.  However, as per the C99 standard {v}snprintf() really returns
-> > the length of the data that *would have been* written if there were
-> > enough space for it.  This misunderstanding has led to buffer-overruns
-> > in the past.  It's generally considered safer to use the {v}scnprintf()
-> > variants in their place (or even sprintf() in simple cases).
+On Fri, Oct 04, 2024 at 07:52:45AM +0000, Aaron Thompson wrote:
+> From: Aaron Thompson <dev@aaront.org>
 > 
-> So, basically, it's unsafe to use the result of (v)snprintf(). So why
-> do we need to change locations that do not use the result?
+> The blank line causes execve() to fail:
 > 
-> This patch is mere noise. Sorry, I won't be applying it.
+>   # strace ./postinst
+>   execve("./postinst", ...) = -1 ENOEXEC (Exec format error)
+>   strace: exec: Exec format error
+>   +++ exited with 1 +++
 > 
-Thanks for taking the time to review this patch.
+> However running the scripts via shell does work (at least with bash)
+> because the shell attempts to execute the file as a shell script when
+> execve() fails.
+> 
+> Fixes: b611daae5efc ("kbuild: deb-pkg: split image and debug objects staging out into functions")
+> Signed-off-by: Aaron Thompson <dev@aaront.org>
+> ---
+>  scripts/package/builddeb | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+> index c1757db6aa8a..404587fc71fe 100755
+> --- a/scripts/package/builddeb
+> +++ b/scripts/package/builddeb
+> @@ -74,7 +74,6 @@ install_linux_image () {
+>  
+>  		mkdir -p "${pdir}/DEBIAN"
+>  		cat <<-EOF > "${pdir}/DEBIAN/${script}"
+> -
+>  		#!/bin/sh
+>  
+>  		set -e
+> 
+> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> -- 
+> 2.39.5
+> 
 
-My take on this is that it boils down to nipping it in the bud proactively,
-so if the result starts being used, no one has to remember to change from
-scprint() to scnprint(), which can be easy to miss.
+Thanks.
 
-There have been other instances where the result wasn't being used, yet the
-patch was still accepted [1] — should that help sway your opinion. :)
-
-I understand that each maintainer has different approaches to what they deem
-trivial patches, but I hope you reconsider accepting this one. That said, 
-if there is no utilization of snprint(), we could eventually deprecate or
-remove the function altogether.
-
-[1] https://lore.kernel.org/lkml/20231213164246.1021885-11-lee@kernel.org/
-
-Paulo A.
-
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
