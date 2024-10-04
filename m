@@ -1,159 +1,123 @@
-Return-Path: <linux-kernel+bounces-351307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE399910B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:36:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55594990FEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AA59B25DD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:01:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 083D21F249D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57BD1FA260;
-	Fri,  4 Oct 2024 19:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E211B1E2826;
+	Fri,  4 Oct 2024 19:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LmHB+6+y"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="FWl2ii+J"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1EE1F9ABD;
-	Fri,  4 Oct 2024 19:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45A01E04AC;
+	Fri,  4 Oct 2024 19:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728068680; cv=none; b=ElaLe8W4GR9YRIJ+YdCidlJdPFAOjC6dvtq9csBvwlm1bg0KUkgxN54huXchnmJjTdSyU2k6ByFnZ+FTSVXvjlYMRypN8kfj1TRtvHiedh5mbeZL/T1mXbId7f+MUm7tXVwPfin0+QQ6/ffWR2W8TfPmAgJ8sshFPVUUKOGf8nw=
+	t=1728070994; cv=none; b=kfbFGBpstAc981T/rh+g041IcpwzxRJIqYS45qb51r6BIaZTZf1Pps5gozl0PzOiczNSBIV+ocg27stDs5L+PoqMD83z8dqDEh5Wcbe4Q8y6F/zpJqsvImu3iwC27sC0zBV58GxQK47ASstSmm5s42+6cxloM3UIrtJVEw4yLW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728068680; c=relaxed/simple;
-	bh=dg2TEPNt6m3xvH7rSPBqehMHHHswR0bUQaAIRYJds+0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FWSQoyMZkYA2vwYsM1H+eOK8EUBZEJ6myBYM8vBjVkZAmXfynGTZx5ux+uBw0RU3VIWvb8ZB9omQv6l7r6WomrhWfJvaz3ndgJTERdsA1G/EAP9hxOeZfcDBcyiwJkk2QN1Fki/7Rg12BqXtnQr03bUg9OBg7V8Dkph5+QeQwvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LmHB+6+y; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6de14e0f050so20180547b3.0;
-        Fri, 04 Oct 2024 12:04:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728068677; x=1728673477; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B5HfbdgHbABODTaTjHs2WrlvZ31IfcWLv08zvorE0ME=;
-        b=LmHB+6+y5me57h2Jk+M7zorgLBLfmL4lbkatp2t3LUeC3pVz7J+H4dpKFDKHcJSSaz
-         EekHA4TmlvuNo3y55Bsli43rvvFYgUoUx2dgLsH0fM/OV19h02yPoQexGrNgafiwE3jL
-         J6yfPeZnoyGbn6ll2KteKWQtNiapYdXz+AwKFy02aKQr3G7jgl30IT8T5qQbbJi7kUND
-         Ddt5Lko8xuZ5okuD0yMfozBlMQym7So+zqr2r4IAu83IOWHNYQ8TMMnk+LJFuRhDcQac
-         LJNfRPjw+cRPL3jpbAe1NoxCpcTBQWkj+ogTqr6uwXvwaAA2oeBd85p53hqOzVH+gT5R
-         aR5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728068677; x=1728673477;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B5HfbdgHbABODTaTjHs2WrlvZ31IfcWLv08zvorE0ME=;
-        b=CEVNcRkRYm1dadIdoZMW/UZJl4mDZRcxBeLmZK0+1nyRa2Js5aGT3lLg1ePwD/qGN0
-         n60p5Z6YpT6LwpRW4IhwxJXb4lH8VKhP8vaAgzKTsg2zP3ak2Xio4Y1OBQaLr38UyEa8
-         rdEywqEQigUBAekFfS8meRlec+QoUiBS3efBTsYymA7r64ZRmEFhRebGDbQ4B/sbA5fa
-         tToR3jJmDRx/9O9KSI/fQmmByrlKWkwtAxhwGeed+lixwGvAxAqVrWuCfGVprlphRaB3
-         1HLh2YT0zkJu/Y0Bdy/hGZNa6hmE2Z77t++pABAf/l+/W81uW03Dg9c0kFqitZ/g16Fy
-         vk3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUbLlQKH0pBe53j9sM2WJf9nGM2xgwDdohp5nRpn8QmEz6JhBQiu7KY9riY5WGY15jEsoHMSVMBjRGf5Tcy@vger.kernel.org, AJvYcCVYfE4tKprEzFA9Ew9X6oplWIYkdajE6anDvdKzqwnsyLTpnUuZRxQ7VdrQ6EVuw6E2kmZ7Hh1B@vger.kernel.org, AJvYcCXeIhL2Rru3MGaykU/nSFE8m0nYHsxfP/HOttpaAOa8oqQB2TbI7qOI25IHLXnp+OBkw2UX+THO4XiYNy2u@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoB0PzttdmvOADSle2f/BSOvYnn0apuEn1oqI3QSd5o3ZUIXVp
-	OhybWp5XLjWLZQIx2/qD3hjErPbwPkQL2g4fzP918qbMDjVcm+hWsHvzVZmcK7h41TeoTI09FA6
-	iqeZbj6lKniW7ulc/pBYvFXloyVI=
-X-Google-Smtp-Source: AGHT+IH9scQLWNqJQHayBVbx3/oOvir8TuLyhF6I1u9sp0NdVUUfeeiiIOFw8tGmDwqe/ZpBUA1tc6SRGklljrBAiUA=
-X-Received: by 2002:a05:690c:6813:b0:6e2:2600:ed86 with SMTP id
- 00721157ae682-6e2c72f779cmr34932837b3.45.1728068677613; Fri, 04 Oct 2024
- 12:04:37 -0700 (PDT)
+	s=arc-20240116; t=1728070994; c=relaxed/simple;
+	bh=SP2LqI+kjSAviE0zBp9D61PWBSCXxvORO4Tr/lochTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uPUcTDSq88i08EFHoqz5ugD0d7qf2Ujs9ZG2KatZjY63UxFqNUi40tGmQpcS4nEFzq1tVEGDcNCUZna4etCx7r2oQ+CXvQhV1ErpfLHcMS3G3eO5wQZAA0eFcS4GgnY+KyqpZW70cKxvlO3yycHQvESnO50SnuUn8fCD4cZrbl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=FWl2ii+J reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 3f226a37cbbad1de; Fri, 4 Oct 2024 21:43:08 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 692526A9505;
+	Fri,  4 Oct 2024 21:43:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1728070988;
+	bh=SP2LqI+kjSAviE0zBp9D61PWBSCXxvORO4Tr/lochTM=;
+	h=From:Subject:Date;
+	b=FWl2ii+JAWmGTQP/2/qeiLsYkth43Lr4+aQafeQ5EskioYc1Rp4CB47NfWxn9tyEM
+	 jBtX4gaXAxpCJ9/r5E1fvnhId+gCFC0h/F+u32BENF+z8WugB6uTon964vZMBH9ZaE
+	 /wXEXm4BqKmRRQvCm9emLMdi9Fnu78cY5/Wpi5x1LMDdWIdSRra4Qbk8azmnT3RM7o
+	 jIcCPYnQFZZq4/xpMdrL/eXp4Nwpv+lAGFFbAFgnx0uyeM5nQ3UCVJwO9ZhN2O4j91
+	 GLeJyLTO4Dn4ELXNJROm8dX2IjyD5Fj5m7bZbWXCzr+Vkmj5jKESAJ7eALYS9VBFwr
+	 ys0skxZwvD4Dw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject:
+ [PATCH v2 01/12] thermal: core: Initialize thermal zones before registering
+ them
+Date: Fri, 04 Oct 2024 21:05:49 +0200
+Message-ID: <3336146.44csPzL39Z@rjwysocki.net>
+In-Reply-To: <2215082.irdbgypaU6@rjwysocki.net>
+References: <2215082.irdbgypaU6@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004000015.544297-1-rosenp@gmail.com> <20241004000015.544297-6-rosenp@gmail.com>
- <39dcfa4b-1a22-4296-b190-ac39480d034a@kernel.org>
-In-Reply-To: <39dcfa4b-1a22-4296-b190-ac39480d034a@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Fri, 4 Oct 2024 12:04:26 -0700
-Message-ID: <CAKxU2N9-DxfsANMfT8DZ-LuKJ3bqjckyfd=+Lg_qtRn985BuoQ@mail.gmail.com>
-Subject: Re: [PATCHv2 5/5] documentation: use nvmem-layout in examples
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	William Zhang <william.zhang@broadcom.com>, Anand Gore <anand.gore@broadcom.com>, 
-	Kursad Oney <kursad.oney@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Christian Marangi <ansuelsmth@gmail.com>, 
-	"open list:MEMORY TECHNOLOGY DEVICES (MTD)" <linux-mtd@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, 
-	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>, 
-	"moderated list:BROADCOM BCMBCA ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvfedgudegtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeefudduuedtuefgleffudeigeeitdeufeelvdejgefftdethffhhfethfeljefgteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdi
+X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
 
-On Thu, Oct 3, 2024 at 11:25=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 04/10/2024 02:00, Rosen Penev wrote:
-> > nvmem-cells are deprecated and replaced with nvmem-layout. For these
-> > examples, replace. They're not relevant to the main point of the
-> > document anyway.
->
-> Please use subject prefixes matching the subsystem. You can get them for
-> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> your patch is touching. For bindings, the preferred subjects are
-> explained here:
-> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-pat=
-ches.html#i-for-patch-submitters
->
->
-> >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  .../mtd/partitions/qcom,smem-part.yaml        | 19 +++++++++++--------
-> >  .../bindings/net/marvell,aquantia.yaml        | 13 ++++++++-----
-> >  2 files changed, 19 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem=
--part.yaml b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-par=
-t.yaml
-> > index 1c2b4e780ca9..8ae149534b23 100644
-> > --- a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.y=
-aml
-> > +++ b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.y=
-aml
-> > @@ -45,17 +45,20 @@ examples:
-> >              compatible =3D "qcom,smem-part";
-> >
-> >              partition-art {
-> > -                compatible =3D "nvmem-cells";
-> > -                #address-cells =3D <1>;
-> > -                #size-cells =3D <1>;
-> >                  label =3D "0:art";
-> >
-> > -                macaddr_art_0: macaddr@0 {
-> > -                    reg =3D <0x0 0x6>;
-> > -                };
-> > +                nvmem-layout {
-> > +                    compatible =3D "fixed-layout";
->
-> This does not look right - the binding still expects nvmem-cells. I
-> wonder how does the nvmem-cells.yaml work if the compatible is being
-> removed so it is not being selected.
-Not sure I follow here. You mean replace nvmem-cells.yaml with
-nvmem-layout.yaml ?
->
->
-> Best regards,
-> Krzysztof
->
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Since user space can start interacting with a new thermal zone as soon
+as device_register() called by thermal_zone_device_register_with_trips()
+returns, it is better to initialize the thermal zone before calling
+device_register() on it.
+
+Fixes: d0df264fbd3c ("thermal/core: Remove pointless thermal_zone_device_reset() function")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+This is a new iteration of
+
+https://lore.kernel.org/linux-pm/10527854.nUPlyArG6x@rjwysocki.net/
+
+v1 -> v2: Fix typo in the subject
+
+---
+ drivers/thermal/thermal_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -1465,6 +1465,7 @@ thermal_zone_device_register_with_trips(
+ 		thermal_zone_destroy_device_groups(tz);
+ 		goto remove_id;
+ 	}
++	thermal_zone_device_init(tz);
+ 	result = device_register(&tz->device);
+ 	if (result)
+ 		goto release_device;
+@@ -1503,7 +1504,6 @@ thermal_zone_device_register_with_trips(
+ 
+ 	mutex_unlock(&thermal_list_lock);
+ 
+-	thermal_zone_device_init(tz);
+ 	/* Update the new thermal zone and mark it as already updated. */
+ 	if (atomic_cmpxchg(&tz->need_update, 1, 0))
+ 		thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
+
+
+
 
