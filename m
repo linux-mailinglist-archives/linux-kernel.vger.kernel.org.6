@@ -1,115 +1,156 @@
-Return-Path: <linux-kernel+bounces-349873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE3D98FC89
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:36:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0DA98FC7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1309D1C21E2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:36:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E2F0282ABF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817B53D982;
-	Fri,  4 Oct 2024 03:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7584501E;
+	Fri,  4 Oct 2024 03:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Cr6KkxBG"
-Received: from sonic314-22.consmr.mail.ne1.yahoo.com (sonic314-22.consmr.mail.ne1.yahoo.com [66.163.189.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ulEN/Oui"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C1E22067
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 03:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1335A374D1;
+	Fri,  4 Oct 2024 03:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728012966; cv=none; b=SgDXcv1b7iEY9iefOqOjGm8tS1hvITtsKJwpdRDrubgdwkxoAmaK6ZB6zehkn2CaWQc7twLRYT24n1c8pdlY3dLFih6XCufYbKxiIKeUyc8GSe1GtsvpwtnwZSdb5X5/stEA8DQp8cYd+9g8lFWMuVDLDs+elTgfBnSkmlgJWYg=
+	t=1728011397; cv=none; b=fZtkzTur6tPgSmlfjcox+9fidiadzTVfEk2BVDZD3RmBoDPrtiQmYXt4qSgQbSCb2JGafO5QC/rQG0AGcJSSTL9OrFa8Q+ZgrnUuGTYhmInyf1gZ50HjVSYQgb/27ub86uoV9yU8kaH4AtnzUcUwey6J47LALHq957z2qq0dS5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728012966; c=relaxed/simple;
-	bh=VJuuzroqJgZYENLBrsW3aheh2WTfa0sOcRL9hbIbKUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=HYiKx+wXvLWDhzCiE3HWYUELof2q6DmvQo9bLR4Pu+3yXN7+CumPNxFIwXFoP5Q3MxPrU1M6H8196llxshUX3VwruSnc3hN71ro5iisHxvYY/fj/K5nUmWwIA0z4B6hqR/V8MFDxxYM3BbqqDpYTuyqHRo5j5wmyLd2cg5L0exY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Cr6KkxBG; arc=none smtp.client-ip=66.163.189.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728012964; bh=fxOLENbaZk22qLVdZz3DCzbj36kx6WCUGmr+2MaK+U8=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=Cr6KkxBGzCw+X9/J+190Mg8FY6jKxG1Dj0rsZPHkg6NwI2snY33ozEvQeVmf2Xmvb9t2DMSnpcTig3GD1ScqktgEYDDUWUQxbGd7G0yPCLa1LyoXW3u589+hzU7fDeT7+M1LOb1cXGYGJDmzcCW8THJJqzEjXRRLm5LKQj6DTEujlktXNU/usEFsvMwiqh7Okrcmcbae/iULO3lesOdsv++YEbV69sFBOwPSlO8kxiwuTxWuIb67mLha+QUygSoxxoB39uUVtUusm+F7MOEuB1d111cUUcv6QWAJUk9hxI6MjEkIhWOD0r3agz+LO8zl0HVIq9lplHABpebqy1G09A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728012964; bh=Ser77fXLRxjJXREjUFK/rp6RhmUEwg4+1xIRNchgJlW=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=hc/9Y/bEIIop/3s4xzxcu1B8mI1RryOvWTNX8mUr1ds6wik2xgAf8UAkvPOj0YHBcjAkwZRS4fw7DDsYRWQiKRiZRe6hePzoNoN9l7RqhV6ZYihKx2RrfIMsQAG3Cx3ial/bKBgbNfG2dg9IgQVzru5qT/CUz39t0nKtHZSnuHPIo+V5c1lT2HOfc/8Fjf2A2zeHi9X4FHVyM40pFJADCI0dKrrq2eId1M1CR+f/2+MyDplRMn0rgsN9ADEdkcWpe4dP/2ePE0JFIxLaWD9UbYzmcM60D5rIR9kZPuL/VieT23oEP+v9jGQ2GpRzltkhtoIcOMfK7Urp9RNTw6a7zA==
-X-YMail-OSG: xCE0O_0VM1n_xotxNcZHDv19peA5qp5wy4JsF8ze8yFcUc0YIOVGwt.6dzFIq_P
- Z52fsYrNv61YGF__DbjgNkEYykhuFJ1qTfO8YpBeEtYmd0hHI3bZ5iry54IqiJBv47Mgdx60Plmd
- AfHHKCQWw3trF8xxPZMUpAzw8ryRLJLdVyerJiHM_abK2NPGVcCJaxyCOjpNVmKOidF63RjzR4SM
- g16UEZkYHQ51tPb.ZW6lK5X_Keg21XUJ50eHDclD7AIFfTtozyaWKbzXsDtRMsiM53j.MoHL5bt.
- BgupeJVjoMN0fiQXq3Oxy5FUAtfso89MYiu0WkKAqfEuYd1lVxhtoXWAKZDtvQKAe3ZUVsCf8czN
- p6WKNO9j3rFw0HzsWiKfbKoxV5pRxtU2hbne1LXatKNgYyyZCP4Ioao0g993MQicZgF00MOa3ecr
- 8b5Bmdsjmi_8RqLB65X_mhVLvWxB4lZZihPlDQ9RlY._L3cU7CeU5nwOOEF5ef8DZhgYF6Rnz9mg
- LqeRtsL1t8OkFEuFn0yr96robJMC0oJML..dh.qWB3Iw0VqyO4s2FPLRv6RzvfoWlfLwBH1qW8H_
- .SdeZrkn4Ms8LhSFWE0IH1KpWh2OEDRQA3eN7DoVqmtFTmfpeKDahCIrSE3Kx7kO1_F1lNho6crq
- 2VskS_QnWXD.HcaUt.EwiStOCmCFzKp8thzFAILqTZpt7eEZSvbQxUl3_GR.EVAJPKiyy.rm.3T3
- m9um4c8mfNpmlJEQxoPZ28i_iVBR7JJjZAXUGeTnRH7LiOqwlP8iU52Lwm7W0vGva.KLk_O0LlvE
- 5osZlHj.Nqc8qhxaBjs2oSkkEWPRhfLgtTBBT_lBvjUePoyJJmTgw1Tgk_iSsLwLuBziWTjevs0M
- qvgKM2gQb93P5NcdJSpKf7lFq5SnveCgbKGKYeNMN90AkA8qyDru51ujtFDYBnxu_R5et6ZtSdIZ
- yijs097FA51Zcc6osh9pKqQX2wDr8NUNkGL_UV4SufUG.7rlm6nEi7fQZDahgjOicngmCAn0r4bQ
- tgLAK7DP8mlP80TpIZ4gFJ8aeVPt_6yzj2fp7IqGVkJINp2yWHh59SdE92Yd.1s0YEVKihMs4RvF
- JA2_zMVDapo5D1UbqgAph.APvQQUSnYhiVT.rOjCODRLGCH7CvB4SYpW5MxgVDptDvq21He8K.Jo
- Jd7N8V7blO79BOCfqb60kQmXzRTgd5BSRQ67VW9xJXP9TtyGDBl5xJbByfQSKcjtxD5vGHMFc_qF
- 1Q70a7BKb2SXo5TILXd6nCeqaMUZ0UnHyFPNSmUWN6qvVAddhHvQtisscv095Hku6qXADM_iEe1Z
- fW1TizvcBhtGT_u9EEURr2fw9ZYnmo4ZI1dPxFEuwu2u.a1.pT3L7ZYe_Xs9QSqeTmdGSMgXsqqS
- E6CeONvx_J3_HkFlaxnczzfXCOfWHWSElvTrlqOxxKMkuAjHDnzXFD6cFOds6gQwmGw04_RWFliV
- 8kJfVh0y6RM.CZbc8aGHCjIy8Jdc_Hu6s7IXFR9NItH.fA0sJchUESqQqubQ4NZCnp8uzHNkuuB5
- AGA1dYNfuf1EvtxLdI5K.yPyFCS2K5CNqoAchlrMpZQ5mjR63jW6cnsedUo3Tq6qMb.mFvpdFcFs
- YkQm2VwpJ73H2PUkscPHC5o9cGFER_SqtlLJAg6H.QAww3CnkZ7BAzDLbslUtiToWkb51.woRifm
- NukZuf5GJFrL61cH1qrCXZCJbnFj6h4ouHp2EIUY_SPf9ePPcHcgnUQ5_LvbJtuvb2ZPm9ZfxSQI
- NWKoGl.Y92rEL1O7TZ1fPcdrpkdR44cjARTSlXt_jWMq358zQs_fi8YwnJy04AckJWiAf3Y6vjhs
- CS5jEmAwGQx2ke5gbuaYSdgdp8ZsRCklWAEtzhspn7dVkHr.HfpWMxdnxAgspaYkp5Vxfbl.qIc6
- myfgNysfR0zDj7cBce7zgF1cTQmukiVVkQLZBu0X38FMEYLmjN79Jdq.kvbipdBbdiqqCTfJyf0X
- UWMWLdr4zFEyby5ARfKp.dnG89D.RjcmNnRovae0simqIbG7DeAV4yC077vAopeGT_tKhYDizW7R
- NQ4IetVtDF6fvjR5tMjN2gbjk0rIT43DmnOy9eWqdPRiqa8Oo1WicJLIlD.3cdgQLUgvHStZ15Q9
- 1O4EWp6jCBNxBMgvgB9mkcoOjh9OFR3fcs7_NOSD6eZQnB5ye2lvWkdENv3Y0kCjckUsdmwLQP7I
- 1v3zC0HB9iBOSXhex1InKnEc9M3ueVlFAYX69INSTQa8SD5m.HLYKlA9cjqPXhOk-
-X-Sonic-MF: <sakunix@yahoo.com>
-X-Sonic-ID: 091dc0ee-1610-478a-ba36-5e008efc94f0
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Fri, 4 Oct 2024 03:36:04 +0000
-Received: by hermes--production-gq1-5d95dc458-5n5gs (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 976521b2d41838e24b741dfbee830839;
-          Fri, 04 Oct 2024 03:05:38 +0000 (UTC)
-From: Manuel Quintero F <sakunix@yahoo.com>
-To: duncan.sands@free.fr
-Cc: gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Manuel Quintero F <sakunix@yahoo.com>
-Subject: [PATCH] USB: atm: speedtch: do not use assignment in if condition
-Date: Thu,  3 Oct 2024 20:05:12 -0700
-Message-ID: <20241004030512.2036-1-sakunix@yahoo.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1728011397; c=relaxed/simple;
+	bh=TakFGvtVJzmBRexHftyc2Tev3KJSy9KNVE0p6Xlr594=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=Z1bjYvNBFJb3ZTlw0KPdbjpSpid+GrjEfRRKk2bwaW0RRYAV2iCzOWuHGtC3iHsuroxZIb64xYHOe30h3owtB4wByz1YIZ0yIK7qnzsoOMX8Es/Nv4CpSzfjRCuo2hgvMCuD1dM4vjEUw70KMMhNFjpKD2P8EtoKOwv/aYrAk/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ulEN/Oui; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 1ebf174481fe11efb66947d174671e26-20241004
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:CC:To:From:Subject:MIME-Version:Date:Message-ID; bh=FCUbhenGMf5+wIxJ4JWL1bgoO1/T6c4+0JMhIL3Tzh0=;
+	b=ulEN/OuimOcgB0b9XoKJLbkQyPoPM8fTE3lDVpnUMKVjr+dhtyra98dUNgbzdX55cq141b6cKj/MAJlT75yi2znK3E2jjV1LSeE2kFDAQngit8LIG5uYBXtZrWCRE1cVxtSN8i/MWpRoTcfmti+7XvvFlrZyfTqS6m3+C0MZmK8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:530f634c-5443-4f95-8eff-879c3814e4ee,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:875bba40-8751-41b2-98dd-475503d45150,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 1ebf174481fe11efb66947d174671e26-20241004
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1417756100; Fri, 04 Oct 2024 11:09:50 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 4 Oct 2024 11:09:48 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n1.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Fri, 4 Oct 2024 11:09:47 +0800
+Message-ID: <ced5e434-c2f8-9900-5a00-1808540ab2d7@mediatek.com>
+Date: Fri, 4 Oct 2024 11:09:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 1/2] dt-bindings: mfd: mediatek: mt6397: add adc and
+ regulators for mt6359
+Content-Language: en-US
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>
+CC: Pablo Sun <pablo.sun@mediatek.com>, Alexandre Mergnat
+	<amergnat@baylibre.com>, Sean Wang <sean.wang@mediatek.com>, Sen Chu
+	<sen.chu@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+	<linux-arm-kernel@lists.infradead.org>, Chris-qj chen
+	<chris-qj.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	<linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, "MediaTek
+ Chromebook Upstream" <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-pm@vger.kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>, Bear Wang
+	<bear.wang@mediatek.com>
+References: <20240925171156.9115-1-macpaul.lin@mediatek.com>
+ <172731883694.2430476.10157265874067724564.robh@kernel.org>
+ <bd6376df-baea-d29d-6b74-68d350cbf797@mediatek.com>
+In-Reply-To: <bd6376df-baea-d29d-6b74-68d350cbf797@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-References: <20241004030512.2036-1-sakunix.ref@yahoo.com>
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--10.508200-8.000000
+X-TMASE-MatchedRID: 7ySqCuYCpfgOwH4pD14DsPHkpkyUphL9meN8m2FdGic3xO2R3boBWFbu
+	qIY+/skQkABPgKBt/0qOGmN9nEzx3i2W7Y+Npd9RqWsZCJMnBwQmlwEyKUIIaFwpnAAvAwaz8Sd
+	VWKPY/enHIiXypGH+EHXdOQc5s1eB9ZRkVakSSW2eAiCmPx4NwFkMvWAuahr8+gD2vYtOFhgqtq
+	5d3cxkNeZmFbgdmZJSvU+7a+iFp4LJ+ob9w+Cdu3jDsGn4QLiDwUyMN90/km4=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--10.508200-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: BA7F69DBC496223544DAB2C3B492BC27F1AD1D744F94D11AD6B13F73221C96B02000:8
 
-Fix checkpatch error "do not use assignment in if condition"
 
-Signed-off-by: Manuel Quintero F <sakunix@yahoo.com>
-Signed-off-by: Manuel Quintero F <sakunix@yahoo.com>
----
- drivers/usb/atm/speedtch.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/atm/speedtch.c b/drivers/usb/atm/speedtch.c
-index 973548b5c15c..dfd362abf602 100644
---- a/drivers/usb/atm/speedtch.c
-+++ b/drivers/usb/atm/speedtch.c
-@@ -324,7 +324,9 @@ static int speedtch_upload_firmware(struct speedtch_instance_data *instance,
- 	   because we're in our own kernel thread anyway. */
- 	msleep_interruptible(1000);
- 
--	if ((ret = usb_set_interface(usb_dev, INTERFACE_DATA, instance->params.altsetting)) < 0) {
-+	ret = usb_set_interface(usb_dev, INTERFACE_DATA, instance->params.altsetting
-+
-+	if (ret < 0) {
- 		usb_err(usbatm, "%s: setting interface to %d failed (%d)!\n", __func__, instance->params.altsetting, ret);
- 		goto out_free;
- 	}
--- 
-2.45.2
+On 9/30/24 13:53, Macpaul Lin wrote:
+> 
+> 
+> On 9/26/24 10:47, Rob Herring (Arm) wrote:
+>>
+>>
+>> External email : Please do not click links or open attachments until 
+>> you have verified the sender or the content.
+>>
+>> On Thu, 26 Sep 2024 01:11:55 +0800, Macpaul Lin wrote:
+>>> Since MT6359 PMIC has been added as one of the compatibles of
+>>> "mediatek,mt6397.yaml", the sub-device node of "MT6359 PMIC AUXADC" and
+>>> "MT6359 PMIC Regulators" should also be contained in this DT Schema as
+>>> well.
+>>>
+>>> This patch includes:
+>>>  - add 'adc' property and $ref for 'mediatek,mt6359-auxadc'.
+>>>  - add 'mt6359-regulator' to the compatibles of regulators.
+>>>
+>>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml | 7 +++++++
+>>>  1 file changed, 7 insertions(+)
+>>>
+>>
+>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>>
+> 
+> Thanks for the review. This patch will be merged into v7 patch of
+> the conversion of
+> Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml'
+> 
+> Thanks!
+> Macpaul Lin
+> 
 
+Updated:
+Since the nearly the final version patch of v8 of 
+'mfd/mediatek,mt6397.yaml' is without adc, audio-codec, and regulator
+of mt6359
+([1] 
+https://lore.kernel.org/all/20241001104145.24054-3-macpaul.lin@mediatek.com/),
+a patchset v2 has been send.
+[2] 
+https://lore.kernel.org/all/20241004030148.13366-1-macpaul.lin@mediatek.com/
+
+Thanks
+Macpaul Lin
 
