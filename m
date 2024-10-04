@@ -1,143 +1,129 @@
-Return-Path: <linux-kernel+bounces-350377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D86A8990452
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:29:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B8F990363
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A148E282934
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:29:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340E61C2190B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7732141A8;
-	Fri,  4 Oct 2024 13:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167BF20FAA6;
+	Fri,  4 Oct 2024 12:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vq3C08dL"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="oLcUbZTl"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303EC2139B1;
-	Fri,  4 Oct 2024 13:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0231D20FA97
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 12:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048454; cv=none; b=Lr83v7qWffO1sZzkrdit6Q5KNAz9fzyVxkgQK7e2CPtpikoJb+e4Six68Z0JPwj6oRI+WVceAHkuFaG7cHyr6WzQ08mxxEj57BJmaqw6IjWCYmHlnhSTmuiLXEz/C+6Ii0WZe7fn0hpJitpWcNQRUkvBkJuB7Xshlrk6UxOnZS0=
+	t=1728046707; cv=none; b=YxeeNP957zPr/T1NFz32pT3Sd0oTkImkCJWXstJ1vz5JhQ3/nqwkSWYPRqww+RS06DUuM5yvX1ZCA5/gKZ2pKK25UJXVAVjx020NHAw0ZmAquxM1E0GZamC5S9/aupvEB2KxtJGgLqlNyMlRuITpO7kMMbinPHCjTxnvmZRZHAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728048454; c=relaxed/simple;
-	bh=wcg9NfwkZy7+ePoluepbaDrhRVrYMrqO3WU8+R2Sdjo=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=qhNAmWiBfr+IdYVKf6qB2Wu2bEWG8HBKMIrFb7aIaB2LpLth2bQF9CoLoZxibinDIgEwmORYcLUNoQUywqnVpO3vhIV8w09Dw6GVAxRi+6iOfF2fSIaDhXpZ3KbxrE6eD2FofeRqCchSEmo2UuRhoiRXud2p759x0zgtTHN5lnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vq3C08dL; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cbc22e1c4so17144325e9.2;
-        Fri, 04 Oct 2024 06:27:31 -0700 (PDT)
+	s=arc-20240116; t=1728046707; c=relaxed/simple;
+	bh=81lZz6tvQXAZ8py6IHRzmNqwYHG/0FHSLJkeNNpuEjo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GuOZMwETkXYtTMTPatzbF4KuiObn9D1qqpcEOEZIUzESUN569zDoEf9SPsSAyAifDY2q1tKXczuPmBYHy6JTq0U85TCU04HX4cQ0KmcTc78cRmtdpq+xycQbrU/9EUq7znwRRK34BDP8Q8gHG72tNMKtRiwNM7EiSWMlifk2Rjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=oLcUbZTl; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so20496205e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 05:58:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728048450; x=1728653250; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pPs9699qh78nUh7Ck+Zku3WQCWqQe2zlzey+/CEixmM=;
-        b=Vq3C08dLkcjZKhN1lszEaZNgjjVQSyqQaRcLYWdqrsW92OWYqzHXzm5x/QkW+vXELE
-         MCRcZvLIgnqcrAklaKLoxsqE09y47e2QA9Lj+TiQ/mxlPeC8Opfk5/gAAfGytrDMtt/g
-         2v7Ivr/k8TgQvLhZ+xHPpXOgUoClszUZTl+9oKmnSwOhc5dUkzTYtn05Dl4JFdl7L6oN
-         pscTi+bX5DCjEnfS8pAdQHeuRLrJC8+Vb2oxCJMM1PMFJCpiGEZIEoIEg/xSXG0V3nyQ
-         BF0SJy1VpBq/hZPOajEqAtgVdTtQY4ekPnbmvxO2zJXfgrtf92LCXztc3Y41DO2E/sc2
-         kGYg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728046704; x=1728651504; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wq33e40qq5B5EGnE1SLGXv5afGtNdJFNQ/iJq5Jz7zc=;
+        b=oLcUbZTlb3HhIavsJXgSmHAE091Gi7EQio7jc/C7NN6dUKtINImO1+sIZeIxCdBVqc
+         voW/9gIovd/Bx0tdlpf5FFkRP7ZZcDegtlCU7f1LcJHQ1zsquin8EoSVnxr9HyJvkALJ
+         NfIrqNWOmDcK9Yvb2csBRCqfF0jrzh8j6K4yg4wsIUs3NX5dkc8kxRBzqu1RUCz2yx6H
+         No+/wq3IfwG/mAKYE7U6FYvLQ75SpLwjYIGZdMviafaBPPS+G4v0RKI8+3CbHae0Q3u3
+         Zplzss3F9aO0RC1+CpNMrXXgKfwXrkzxiKWYLeTG9NozFzenp3EGl9Kf1Cez9yu9JCSP
+         SkVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728048450; x=1728653250;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pPs9699qh78nUh7Ck+Zku3WQCWqQe2zlzey+/CEixmM=;
-        b=pTm6s3G/rKHTD+TRErc8CqT6lViqE023DMy+sv+SYmPxjRSV4BW2wJ87uBYI48GpzC
-         /MlwjEafO+yJlDPQh2Y8g4PzS1CCeV+YCIKjRWOFd81DP5jK5Jt4dXvB9PBBkgOe4Vdj
-         +7S3THArM8s1WbJn6WwKbBDbIMuqe9h1YyELgKIADCt0dDAPGPROb0DBrj+g5VVuqwE1
-         Dr2hxXFY33BvloNcbBrgIeKU34BfazlfLlz6uLnPlVvLiD2m+8K88n/dn01dwtm5E9h6
-         1CXWZ91Ao/BxNPeVNAdbod19MKfprMnXylasnUdMXzrawe1xah5qHi97vQ7T/17xFqxq
-         gK0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUY1yj8up7dl/KoRmmSwYMlFsD2JcaeURzzahkfFXfNvnlbLD6TDVkJDZrOzYw2PM7Q8/DZSOfUYWcSjl0=@vger.kernel.org, AJvYcCWIsY3ErXIFXRmaEUykEvGP3/jUmS04P+714UT6PPg0ffW0VgIblI19//H7QHTGWzL5KBxM6SHR66FTnye8khld@vger.kernel.org, AJvYcCX+iAY7pzf47G/u2nlYab5DXemEP38FxNXhOKMx6pNs3Pnls1PF6AKyDt0bwF/YP1bGRrvRFkc6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhXwaUVvnXvoyhBW3dyOzYlNJ4utb59MY/pN2GJJ+MsIF+ZOvR
-	+ytTpAA4RuBDceO+BXQ90RaU6emHXoinaG4kyHP5OjjAvqS9/uzp
-X-Google-Smtp-Source: AGHT+IHkTjRLCXy9DjHO9CfeCffvqDeVVM2xUdtxUAAf2e/y3hOMv6kLqLuJ+2bAFdJRO5VpoQPmtg==
-X-Received: by 2002:a05:6000:dcc:b0:37c:d0f9:58c with SMTP id ffacd0b85a97d-37d0e7843e7mr1782737f8f.35.1728048449696;
-        Fri, 04 Oct 2024 06:27:29 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:395e:c10e:1999:d9f1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d081f736esm3257450f8f.18.2024.10.04.06.27.28
+        d=1e100.net; s=20230601; t=1728046704; x=1728651504;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wq33e40qq5B5EGnE1SLGXv5afGtNdJFNQ/iJq5Jz7zc=;
+        b=rBsO2WBwlxRjtNW7ascbr4yiqO9eEdWXXvnKjZCriXcWDVBY5LCG0vGuxSv9HmTYig
+         YXAIERCN0mWEhFmNxeo4dDpvkXTqAzIB6h//ob2i7V2im8gILouv01DCIAyXKcbarMcT
+         DJDU4y9QDq2EYsHR8VsP2/GpF41H3mZBKhSNTYDNySwp33dbTE0urfowX53JBjEqbCV3
+         PPybcXclFHaHGZ5ITEL7euPynGEomqKMMsm25/RHKp1VWwTu/NAAFC9Q/kp7Uh9YIUqu
+         R80Cw+vgwa/uTRCKmBxpemL3Ksj5VuIfCgrtIkv+gZTKqdyHFo9fNc2fGdXgAPICeSJ4
+         oz2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUiEWwQ/t8d224u9hbCAWR1apXm4YVbQ8EWiCiyAXYm9+sHRq8K3rW25g0komEtwqaIJRQuOKTZrKiqZHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkPxKyWp45/VC6fH00h0myhVrhEQH0n4ZezJFNBYC7pi4plXXT
+	LnGIEZnMhf6CnpuyQpimYtM8tE0X+W/4WZN+ln2YH3O/4P0e5NvnDnROW+gVaoE=
+X-Google-Smtp-Source: AGHT+IFtD2pF+3S+hWKaj35gJuRRUik/oqclbdt4ZgQcGB8oQY5sk3Cx9/zxl70fxbiUrrsytYJcsw==
+X-Received: by 2002:adf:8b5c:0:b0:374:c142:80e7 with SMTP id ffacd0b85a97d-37d0e6bba99mr1881280f8f.1.1728046703929;
+        Fri, 04 Oct 2024 05:58:23 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:80ea:d045:eb77:2d3b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d20bcsm3197815f8f.100.2024.10.04.05.58.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 06:27:29 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,
-  Paolo Abeni <pabeni@redhat.com>,  Shuah Khan <shuah@kernel.org>,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  sd@queasysnail.net,
-  ryazanov.s.a@gmail.com
-Subject: Re: [PATCH net-next v8 01/24] netlink: add NLA_POLICY_MAX_LEN macro
-In-Reply-To: <20241002-b4-ovpn-v8-1-37ceffcffbde@openvpn.net> (Antonio
-	Quartulli's message of "Wed, 02 Oct 2024 11:02:15 +0200")
-Date: Fri, 04 Oct 2024 13:58:04 +0100
-Message-ID: <m2msjkf2jn.fsf@gmail.com>
-References: <20241002-b4-ovpn-v8-0-37ceffcffbde@openvpn.net>
-	<20241002-b4-ovpn-v8-1-37ceffcffbde@openvpn.net>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        Fri, 04 Oct 2024 05:58:23 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] PCI/pwrctl: pwrseq: don't use OF-specific routines
+Date: Fri,  4 Oct 2024 14:58:21 +0200
+Message-ID: <20241004125821.47525-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Antonio Quartulli <antonio@openvpn.net> writes:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> Similarly to NLA_POLICY_MIN_LEN, NLA_POLICY_MAX_LEN defines a policy
-> with a maximum length value.
->
-> The netlink generator for YAML specs has been extended accordingly.
->
-> Cc: donald.hunter@gmail.com
-> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
-> ---
->  include/net/netlink.h      | 1 +
->  tools/net/ynl/ynl-gen-c.py | 2 ++
->  2 files changed, 3 insertions(+)
->
-> diff --git a/include/net/netlink.h b/include/net/netlink.h
-> index db6af207287c839408c58cb28b82408e0548eaca..2dc671c977ff3297975269d236264907009703d3 100644
-> --- a/include/net/netlink.h
-> +++ b/include/net/netlink.h
-> @@ -469,6 +469,7 @@ struct nla_policy {
->  	.max = _len						\
->  }
->  #define NLA_POLICY_MIN_LEN(_len)	NLA_POLICY_MIN(NLA_BINARY, _len)
-> +#define NLA_POLICY_MAX_LEN(_len)	NLA_POLICY_MAX(NLA_BINARY, _len)
->  
->  /**
->   * struct nl_info - netlink source information
-> diff --git a/tools/net/ynl/ynl-gen-c.py b/tools/net/ynl/ynl-gen-c.py
-> index 717530bc9c52e7cfa897814870b4583c88618a27..3ccbb301be87f80bbcf03da63d60f58c4fedc1c8 100755
-> --- a/tools/net/ynl/ynl-gen-c.py
-> +++ b/tools/net/ynl/ynl-gen-c.py
-> @@ -466,6 +466,8 @@ class TypeBinary(Type):
->      def _attr_policy(self, policy):
->          if 'exact-len' in self.checks:
->              mem = 'NLA_POLICY_EXACT_LEN(' + str(self.get_limit('exact-len')) + ')'
-> +        elif 'max-len' in self.checks:
-> +            mem = 'NLA_POLICY_MAX_LEN(' + str(self.get_limit('max-len')) + ')'
+This driver doesn't need to use OF interfaces directly. Replace the
+single usage of an of_ function and replace it with a generic device
+property variant. Drop the of.h header and pull in property.h instead.
 
-This takes precedence over min-length. What if both are set? The logic
-should probably check and use NLA_POLICY_RANGE
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bjorn: This may conflict with [1] but this should go for v6.13 while [1]
+is a fix that's targetting v6.12. If git doesn't figure it out then the
+resolution is trivial, just add <linux/property.h> in both and drop
+<linux/of.h>.
 
->          else:
->              mem = '{ '
->              if len(self.checks) == 1 and 'min-len' in self.checks:
+[1] https://lore.kernel.org/linux-pci/20241004125227.46514-1-brgl@bgdev.pl/
 
-Perhaps this should use NLA_POLICY_MIN_LEN ? In fact the current code
-looks broken to me because the NLA_BINARY len check in validate_nla() is
-a max length check, right?
+ drivers/pci/pwrctl/pci-pwrctl-pwrseq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-https://elixir.bootlin.com/linux/v6.11.1/source/lib/nlattr.c#L499
+diff --git a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
+index a23a4312574b..d3f960612cf3 100644
+--- a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
++++ b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
+@@ -6,9 +6,9 @@
+ #include <linux/device.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
+ #include <linux/pci-pwrctl.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ #include <linux/pwrseq/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+@@ -35,7 +35,7 @@ static int pci_pwrctl_pwrseq_probe(struct platform_device *pdev)
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	data->pwrseq = devm_pwrseq_get(dev, of_device_get_match_data(dev));
++	data->pwrseq = devm_pwrseq_get(dev, device_get_match_data(dev));
+ 	if (IS_ERR(data->pwrseq))
+ 		return dev_err_probe(dev, PTR_ERR(data->pwrseq),
+ 				     "Failed to get the power sequencer\n");
+-- 
+2.43.0
 
-The alternative is you emit an explicit initializer that includes the
-correct NLA_VALIDATE_* type and sets type, min and/or max.
 
