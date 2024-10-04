@@ -1,265 +1,209 @@
-Return-Path: <linux-kernel+bounces-350241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B0B9901F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:19:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A03F9901FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58B311C23138
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:19:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 517512815EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB8C157472;
-	Fri,  4 Oct 2024 11:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCDF157492;
+	Fri,  4 Oct 2024 11:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R1x+1Ral"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pRlx2wSZ"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A8C156F3A;
-	Fri,  4 Oct 2024 11:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728040775; cv=none; b=gqROsj/D9dodD3SiuespB4YujrKmIttmo8KJJAXPxgxYCJ7GTJyPKP6UlGn+UtlA10Uka98JNMeB/hL0SKOKO3Xfhs7/Ze9U3Ct2qTXo2ItOIE4SSx0HVBVE9zf64GCX1d91YvcxPy1cgSJW+VGz7yk5LrR9onCSAqUM9PepgjA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728040775; c=relaxed/simple;
-	bh=q2AvsOVyUkic1oE1P69fwE8Gz0OHYhUM+UMTMFtyaoQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=imr/LNPo5vXdcTix5hRNkX5fh48/R9BLvvfw+Kk9CTtCuySkAymIuhGy9CdStVRuMfklg8zhopTkquO8JI5BYEk8jXYBGh1iUgHwLMQhkqT6gTHYB+TlrkqX8nie2/4B98NZEdLcnpsyTXcuS5FYevibKSKhUQDwwDhvq6Qc4hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R1x+1Ral; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5398cc2fcb7so2365227e87.1;
-        Fri, 04 Oct 2024 04:19:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728040771; x=1728645571; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zktV/mRUwGxv1kHISHwiNcf4IsYspxE7szSWe5gIhO8=;
-        b=R1x+1Ral3v/XWK+/DmjWqX4YWHO9S7nTyt8/YAjc0WXnft0lCBYsOtPRKItzPeVkw1
-         1h2CxTn66M2WnRYtBbZf8coAT6pMbEHMyhba+MpkLsLlUDso5LQOnSQjfM2jZA1uiD1Q
-         Fr5SW+96APK+Ss58BrXdn6ruHs6fY5Hi5M7Xd9hzc6a6QOKKsx/KynoByPf3oNuowAW2
-         IE8IEUMpmLetd9dk0uTc6GMFxXH3cWrRaPBIhoOT4I7Hy27ie5GGWQfjsZGnInNug+cJ
-         DZKoOo41Hxnol9TfFwQysHlx91eE7uwV2LVvR2k04awN4bJA52ef1S5gMC4rSi5wvPEF
-         hY7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728040771; x=1728645571;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zktV/mRUwGxv1kHISHwiNcf4IsYspxE7szSWe5gIhO8=;
-        b=b+bMZNM8Yt3YTeIIx7obFYseZ4yxM6JZQGzeHwVNW/PV08gst74FoT02KrbC5r6JZ8
-         HsQ1e0D5QWyV2dytzGN5req0Lfi1jyICY24ZZZKJaAcaq7FJ98o+AWm4+T+iRLldSH2L
-         7YSIAK/6wtPs4QEo+FbDsN1sllJ7lbmBgasSq7T4D2hOrAyK/RYo6MfH4LSjKtAtr836
-         ws8PDVlSNS4QnwHsRttZy1fOv78atEHwE+H/S6d1JwfpTt3OjJeGdVbtk/eGLABpbuYm
-         qIEabW7XIcMcPwLyRV4GNlIIj04OnnmwFPv47nLY8IHzDhi7KDb4wxF9XObn+7KKKB2u
-         BY6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU4jyagd6GA6Ges0pt2AVyBbCD5fDow3f4b+bnXT+9no59TiGpqLdOjIP7X8Z+6kkm0jG4AlD404XNdLg3qHG6R@vger.kernel.org, AJvYcCVC/dTpcBFLB1YXqzNMjOQ3Z21fVoHOWJPDs/DTcm1k7O4TQJPaI5tIpmfph15fMvAzGCw=@vger.kernel.org, AJvYcCXy4xFry9OWc9WneNa5EupaYnb/LqpsbncUjGtwmkiBjThFMSlD4zYWUJO61m56RD/qAwqZXQ0EibrMOmSD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUqWNBGHiI78PfqO6Wh+v/sZAq4cgDWJrDh25mvdTvSdDT8e48
-	4T5qtzQE6vnjHZG5KExDuFfJLG970GAlkqwdD1T8FqdTnJ46q1b+
-X-Google-Smtp-Source: AGHT+IFrhLy+Cluejqj7sIouP+mRQBl3i3ABcgX9aCDCQXfkBFF5E01d1GjVWEsjOE1nuq5wRsbeGg==
-X-Received: by 2002:a05:6512:3e01:b0:530:aea3:4659 with SMTP id 2adb3069b0e04-539ab84a2f2mr1561103e87.9.1728040770998;
-        Fri, 04 Oct 2024 04:19:30 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86a0a8a0sm13351885e9.6.2024.10.04.04.19.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 04:19:30 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 4 Oct 2024 13:19:27 +0200
-To: tyrone-wu <wudevelops@gmail.com>
-Cc: olsajiri@gmail.com, andrii.nakryiko@gmail.com, andrii@kernel.org,
-	ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-	eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
-	kernel-patches-bot@fb.com, kpsingh@kernel.org, laoar.shao@gmail.com,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	martin.lau@linux.dev, mykolal@fb.com, sdf@fomichev.me,
-	shuah@kernel.org, song@kernel.org, yonghong.song@linux.dev
-Subject: Re: [PATCH bpf v3] bpf: fix unpopulated name_len field in perf_event
- link info
-Message-ID: <Zv_PP6Gs5cq3W2Ey@krava>
-References: <Zv7sISV0yEyGlEM3@krava>
- <20241003202300.56429-1-wudevelops@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77834157481
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 11:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728040792; cv=fail; b=MkuilFj4vNJ1Bef3hbCI0MHiHZsElgUcIH9vvh8p7PttTfxfD86ckIiGt0sC+FL0E5h91Wkge2KqssJ3SlrVj1jLGqmMxfSsbpr2X+yFVW6MnBEbcnavIfX/6GWzP9395CXz7OD4fE49QcBCl+66f8hpSNWfwv0Us3oVCkkjz9Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728040792; c=relaxed/simple;
+	bh=N9XiyWIZZNauuL3Na9oV2iHEkEDfXNZldYYJ82r/wJ4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=C1Nr9kB7CSsUh7o6ZSXXXPj10b8YxIm3T4D4zBt4DG89jwtUgGI/EFjP/jtre3i2qwtxZq56v7b9BXrRNTem5tU7HFadc0F48azP0p+lXWmdDLAtuElEbe3OU+56aw3HWJW4IB6Myrr7EL5JXomYkIjI5IqpIW+imO0O5NsSomc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pRlx2wSZ; arc=fail smtp.client-ip=40.107.236.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PmwlOVkJ1+KlYBwZeZDC0xN4mmlk9Clksn0yE+TSXreFb/x5DfZLOXlx/6JqZ8qOE9CAmVLe3ioVgNlbDeCIzpdN+4YE4VMFkzNoT966n9uqS47P4A5KpaC1RfIgCKtHxPUZfwLHA0TxNts8JgvsLOcMcnGQI/qAKqdJ33lKPtjX0oAsD2xbJXzQWlWP1gbbykpvJYGek3T1e4ob/6dVknb7oWTlj6S029E802bNw+sYiLxYsmbyYFBaiG6l+B/SED4o5EUWyDAdZjFegkVIdiovnREqb2zL1M9okqzgw2s/1wnpMP74/kUE7388FKe4qL5AzR5T0EtJETBBr4Xpeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O5ykewNLRva8vXYpUSlaVDkJxKm/vrHurwSwp6AWVD0=;
+ b=xwH2QYNOpN2SH3EyhO4JQimmNh+DiUM7dDpc6C+5eQi8uWhEMNOCZ02fp0i1qvxCMS9ohgCAofag9ixogyhBxPnmoRfjM1rYmQ594hRiLbViFtgRl85hiIn9ZvAVimTTRDt9R5llA89SigLFr0Avor5MQIaJpmuE1YjnbvjPRvb0HUOQA4+1vw6cUK7n0hxP0Xl2RC+GkhUGARX2Rg6skro8aVziNYIhSdnQYKbr3m7bXx0u5ZCRlPs1z/wPU1Zg5d6VNpReXHqPA8ziFPiOZacKiOrQ8emT/zUzsMmJAgXZKxNoVfhcqW0732JeKBdbMcTdWzxXzX42+Pv3mjWpRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O5ykewNLRva8vXYpUSlaVDkJxKm/vrHurwSwp6AWVD0=;
+ b=pRlx2wSZdCXwPgXLzL05zGBzJzoX/bRS9sFr4hE7UdqXmfjGW6tBmfkpDB9n0AQsAat7tGpUTKklUFWCjIEyDUwZZDWV0VrnvKnpVOK6gvI7G+QRWjuBdD8L8PsGBUMOQwpg/+4l1XmgH8kRkO7Qluac2sz55Pm+4zLRBbqQR7o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB7804.namprd12.prod.outlook.com (2603:10b6:8:142::5) by
+ MN2PR12MB4095.namprd12.prod.outlook.com (2603:10b6:208:1d1::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Fri, 4 Oct
+ 2024 11:19:48 +0000
+Received: from DS0PR12MB7804.namprd12.prod.outlook.com
+ ([fe80::8327:d71a:ce21:a290]) by DS0PR12MB7804.namprd12.prod.outlook.com
+ ([fe80::8327:d71a:ce21:a290%5]) with mapi id 15.20.8026.017; Fri, 4 Oct 2024
+ 11:19:47 +0000
+Message-ID: <1dbd3687-ab21-421e-a978-3fdd8597046c@amd.com>
+Date: Fri, 4 Oct 2024 16:49:36 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH-next v2] Fix unintentional integer overflow
+To: Advait Dhamorikar <advaitdhamorikar@gmail.com>,
+ alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com,
+ airlied@gmail.com, simona@ffwll.ch, leo.liu@amd.com,
+ sathishkumar.sundararaju@amd.com, saleemkhan.jamadar@amd.com,
+ Veerabadhran.Gopalakrishnan@amd.com, sonny.jiang@amd.com
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ anupnewsmail@gmail.com
+References: <20241003102623.11262-1-advaitdhamorikar@gmail.com>
+Content-Language: en-US
+From: "Lazar, Lijo" <lijo.lazar@amd.com>
+In-Reply-To: <20241003102623.11262-1-advaitdhamorikar@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0102.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:27::17) To DS0PR12MB7804.namprd12.prod.outlook.com
+ (2603:10b6:8:142::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241003202300.56429-1-wudevelops@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7804:EE_|MN2PR12MB4095:EE_
+X-MS-Office365-Filtering-Correlation-Id: 299f2b78-b012-4086-86e7-08dce466749e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QnJvNm5ENWllMWxHZ2Ixd0x5WXJ0eGpuN0UxMVhQcXBvZW5ZU29MMHRoRWt0?=
+ =?utf-8?B?UjlqK0J6dVB2US9JZHNCTjhaU3Q3YS9IMWswL2srNHVSMVFYT3lMTDRSS3VH?=
+ =?utf-8?B?T1VkajdJeEowUytOSi9VaHc3VUZQa015OFRhVFhmeVNuUWRSTGNHdHp2S3RB?=
+ =?utf-8?B?cHVqSUd3cFV0RmRLcjNkb0IyNkpSRmVrK0VtNEhlaWM5YVpPSWtMTEdWVnU3?=
+ =?utf-8?B?LzgvVGxGYVM4M0V1REgzWEpRM0VzU1k1VnN4YThqV2IyU0dtT1ZlTTR4VXZi?=
+ =?utf-8?B?czVVNTFKMUIxMm9MS01MQXJmUm4yYVNmeU4rTmRPcEUrbkhHekFzcWZOdHNa?=
+ =?utf-8?B?WTVOaTA0WUxNWkY3UjYvQ0hTU1lEdnREUUVla2U0WnZ6alUrYTZqRkJrVzly?=
+ =?utf-8?B?eVVNcHNZaDFEaDltM0xBcHRTZnhFRFllN0NqRjNKU0lWR3BjdXRvdnJsS3k5?=
+ =?utf-8?B?SXVMc09zR2Y5NERpQ3lzNk8vVkJiNUg2VXI0b3Q2UEZjWkU2bnJXZHlvS0Vr?=
+ =?utf-8?B?Q2wwd0MzOTRoek1SQkd6K0FsSFhUMTNIaGFmQWdsVU1pT3NwTzUrTXB3WDVV?=
+ =?utf-8?B?ZUpiTk5nWDEzanNBZG1mU0VXNUFLZVJsSTJhbEtIRU81YTNMckdNWmtxaFRU?=
+ =?utf-8?B?SWtKS0FTSHlCN3VnV3pNa0c1QXNkenVtZDQ1UFg3WG9ER1BPTGxNdmsxWjRW?=
+ =?utf-8?B?bjl2V0kzc09WV2dtQUZPNXlPS3hrUEtGTjJSVTRYb1MxcXhJa1FKdVVRZE1t?=
+ =?utf-8?B?M29FM3FPL1lFTXk0SlJtV2JRN3Q1K3ZPQlFuQ0IrVm1WUVN2d0xFRHJiME1C?=
+ =?utf-8?B?QWc1dElZSDZsczY4UTRVdFRaYU52NVJhVFVqV3FoaUhCUWFvRy9qZkJqVUU2?=
+ =?utf-8?B?eGs5dmJ0ZDEvQjA3TzBzSmZJS0VDSVFRS1liVEZWQjRlVklXS1R2eUJPYWc4?=
+ =?utf-8?B?RzNDdXY2dXdFZFhCV3NCdU5pQ0ZteFpvY1lHeDVBeFF2ZFUyTkpWY1llQWtX?=
+ =?utf-8?B?UTR4ZXpTVEsvOXNFNUVWNFcreHN3WUFUL09lb1EwVkJBc0NJTExpQ2l0SVBY?=
+ =?utf-8?B?R3E3RU5NSlBTcGh0M0Z1dVdQTzZHK3c0ZXF4MndNaHVGOUJJWWxSM0trYU85?=
+ =?utf-8?B?dTBHTXBjSkJYS0VLNmd3R25iVzExY0l6aHpTRTFRdmlDOExTLytFdXh6YXk2?=
+ =?utf-8?B?enlPU0hzdnVpM0RuNmE0bzlSS3FuYVVZVHNqWC9abDVRNjg3cFJ2Zm9IOG5W?=
+ =?utf-8?B?UVlKK0paN200eXJSTXUxT0NyUlJDNSs1SXpCaXc4ZmpzSTZaSWR0YUhuMFJL?=
+ =?utf-8?B?NU1abXpiRm0vczB4L3lFZWRJV2czTkpkZ2hvcUlvSHBrY0tydm1XdzZtbXJ5?=
+ =?utf-8?B?MFJGZElFamE1OWZ1M3ZVM3pXMndjTUVrOFRYaUdBQ1ZMK3lvYTNZSEJ1UEsr?=
+ =?utf-8?B?dkF2SFErUExCSVFhTW9uUkphb0hGLzRMYlBpclFYQUZnbjZ4TzcyUzE4WGJO?=
+ =?utf-8?B?QlNKNzB1NG5aNXBVU0djNWVpUkFmc3ExMTdTYXZ2MmllaGxTbDJxeFhrSVBw?=
+ =?utf-8?B?a0hnNms0bVhlaTNtN2lNcHhyU0Nia0FWeEovWEtMck9vdTNwck8rZ3NqdWJB?=
+ =?utf-8?B?NEk0TU9GbktWMmR6SWVOS1ltS0NkWWlybTNQOFAvQ293eVp4OElCdVc3Zlcx?=
+ =?utf-8?B?VVNBU3A1VDF2bEJVQ3BzU3lGWWxkVzkrTUFobEdQWXIvb01iZDdORkczbmxl?=
+ =?utf-8?Q?/TNtXlXy5Dz+ixvhamSLpNLv434vJ9wc+feaBJq?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7804.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VGtMOElhK1grUkdkRDlLY3BTZjZWNGhyZFk2b01WeEJ0WGZrU3B4RkoxN0ho?=
+ =?utf-8?B?dW5SUU13M09LZFZJZFY3NVBDaHQ5SzF5UFh5R1IvZ2oya0hVbFRyeVhaNEtS?=
+ =?utf-8?B?aWxDcnZ0NnYrSU1lZGlzQVlwZm5iT0x1S2JGbkZHU09JR1ZyNjhFeitiZEVy?=
+ =?utf-8?B?aVJBcjF1eWJFczJmVGtSOU1ZQmMxdkYyUmIxVG5maUNRakVWNXcvOUN1cXBO?=
+ =?utf-8?B?ektpMG1OaGtqK0Jzdm85ZDZndEM5YldRTU5hNTMzK0hFVGdDcFFVK2NXK0ts?=
+ =?utf-8?B?NGlxckNTRitLcWRiSll6dEx3SmF1QlU5UHV5cHB3d1BCQTFvUlhsUUt0Mk1U?=
+ =?utf-8?B?MkJ6d3RwUytwSEhlWWR1MlcxWGlMNWxFTXdrMlFZaHltdUNxZDJQMjhHc0hQ?=
+ =?utf-8?B?TU5WU21VSXBJWTZCYmFCcmxwVUlWMDVWekdqY2UwcEhxNm5vbHlIMnBYYmov?=
+ =?utf-8?B?VHpzYVdseURhWDduSjY3NGpqSEhsZ1VjbUE3bmM3WVpvMjNYd2ZRZ05RZERD?=
+ =?utf-8?B?UFJXSndWN2dRM1BLc0ZqYU4xRUw2SVFpU3I2enY2MW41dUtVdXl1a2pLcEhK?=
+ =?utf-8?B?QVZhUUEvblRHVU5paUpNWHpLL04zUHpvT1Fhbjg4aUZIMzlCUXI1OG5MQ0tL?=
+ =?utf-8?B?QkVlY2xCaTlMVjkvcGVUVVkrVmx1MENnQnlYRmR1SndTMjVDRW9xM25YdEZu?=
+ =?utf-8?B?RWloeGxDWU5paGR1aEVUa1ExNkpPR05GMjJTT1B1ajBJK2FqMWwrMjVoUUlp?=
+ =?utf-8?B?Rmt1TEhGNnRSblk3QXhOcGRwL2cxZkdCck4yL0syaUFGSlpNT2xtR09VWEdQ?=
+ =?utf-8?B?WTB4YXlMbllNWFVpYzRlMk1RUXRsV1BkMnRnZ2lmczlobXVvMHV3azJZQXZt?=
+ =?utf-8?B?eFNzT2ZjSTdIcmtWRS93M2RzVm9ySFlTLytudXJXeGZISnMxbGo1cWt6V2Ux?=
+ =?utf-8?B?N1AyRkJpbndoUjNSSWNNWndzcmdZUnQ2T3FTSWxhQ3NxUDdMd2dlcUo3QVdp?=
+ =?utf-8?B?VTdvcHdJODhwVVVGNHZMU2JxT3NiOXdKSjlJSWt1L3FGcDJQa1JXM1FwMi9l?=
+ =?utf-8?B?MEh2ZTFYRVdtdGVuMzY1eFFvNVJZK09qV3dxbVhnYUI1eFBmUGRpVC9BVDlW?=
+ =?utf-8?B?TzV1Vnh1bWZpV2d6NTMzRjRBOGNMYmVwQVBlekRkekdQZUZGeVJtQlFZQVo1?=
+ =?utf-8?B?SXdGbnlJU0s1b21yRWh0ejhlTmVKM1piQmw5ZnlhK2VWSjBmOGZLeDRHTkZI?=
+ =?utf-8?B?WnQ0Y243dHZJUFA5d2VUaUQ0UGtmRnNPQlFDWnJlaUZ2aUM2OEpLWXJEK1B3?=
+ =?utf-8?B?OTVGQXZlQXdrNFAxWlQrTVVmRGN6bDBKL0ZGMWxJWXpMOG5IOTVKenZqYVIv?=
+ =?utf-8?B?MTlpWFZUSXJ0NHgrUUFMMmUrY3VJbFJsUmxEUEpROHRvR1RIMHMvZmVBaktI?=
+ =?utf-8?B?cGFrNzVDSTk0T3N5ZkN3TUxkVzRDZ1RCVnI2bmluYTRqWENqY01HS2t3aFIr?=
+ =?utf-8?B?TVRIbjNaQlRaWXB3bjIrQkg5aWtNQ2lHcU40ZnAxQkFRT2tWQnRnUkRiVllR?=
+ =?utf-8?B?UjQ2YkRybWlZVnd1OW5UUS81WlJDZmVKWXpiVWJCU0R3bDg2Y1hzUVBsWjRM?=
+ =?utf-8?B?UWR0ZVNla0RtWmZQWGxJL0dYMmVHQXZpbGk0ZXdrb001aUgxWS9MY2xaMzNT?=
+ =?utf-8?B?YTd5L1FSL0hka2xFSkF3a2xMRGg5WXZKWE4wSmd2ZUtpQkU3eGdkalhUTTZo?=
+ =?utf-8?B?dlg2VnBYSVdWVlJ4c3cyWVNZWVh2TGsreTdyU3RMdmVLQytzU0JiNnI1YTRY?=
+ =?utf-8?B?SGprT2d5a052MURHM2lqTzJZZVozSnZkQUVOR291dVRoRThlZjN4ZllwdVVq?=
+ =?utf-8?B?YU1DUG9XbkhVK3lnQ0wrYngzeEFBaVZGd2xaVUNESmhYUUc5dFhxYUNCOE9m?=
+ =?utf-8?B?Y01UN0FMS1lZWmZhYXpjaGlBQkxtbU1hNXhjL2NVR3o1WnpadXo2TGY2YkJ1?=
+ =?utf-8?B?eUUzMytwYmNYcWZ2Z0oxQ1RXZ3BETDJUV21LWFpoQkt2RitsSVBvMjFwUTVK?=
+ =?utf-8?B?USt4VzR6c0d0Nk5Hem4xUEI1KzJVOWtRVHppU2tqc21SUGdUK3A0K2JGcFNP?=
+ =?utf-8?Q?K90Rav3S7bPQwQdrM+ZKSWssX?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 299f2b78-b012-4086-86e7-08dce466749e
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7804.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 11:19:47.8044
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FKs+XgOqLWEsA5XJocxX25foOL+O+Ac7CV+EgpqA7w4oXtmufPjv5TuqVqQt8bpj
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4095
 
-On Thu, Oct 03, 2024 at 08:23:00PM +0000, tyrone-wu wrote:
-> Previously when retrieving `bpf_link_info.perf_event` for
-> kprobe/uprobe/tracepoint, the `name_len` field was not populated by the
-> kernel, leaving it to reflect the value initially set by the user. This
-> behavior was inconsistent with how other input/output string buffer
-> fields function (e.g. `raw_tracepoint.tp_name_len`).
+
+
+On 10/3/2024 3:56 PM, Advait Dhamorikar wrote:
+> Fix shift-count-overflow in JPEG instance
+> multiplication. The expression's value may not be
+> what the programmer intended, because the expression
+> is evaluated using a narrower integer type.
 > 
-> This patch fills `name_len` with the actual size of the string name. The
->  relevant selftests have also been updated to assert that `name_len`
-> contains the correct size rather than 0.
-> 
-> Link: https://lore.kernel.org/bpf/CABVU1kXwQXhqQGe0RTrr7eegtM6SVW_KayZBy16-yb0Snztmtg@mail.gmail.com/
-> Fixes: 1b715e1b0ec5 ("bpf: Support ->fill_link_info for perf_event")
-> Signed-off-by: tyrone-wu <wudevelops@gmail.com>
+> Fixes: f0b19b84d391 ("drm/amdgpu: add amdgpu_jpeg_sched_mask debugfs")
+> Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
 > ---
-> V2 -> V3:
-> Link: https://lore.kernel.org/bpf/Zv7sISV0yEyGlEM3@krava/
-> - Use clearer variable name for user set/inputted name len (name_len -> input_len)
-> - Change (name_len -> input_len) type from size_t to u32 since it's only received and used as u32
-
-looks good, I checked with Daniel and it's better to separate
-kernel and selftest changes, so it's easier to get this applied
-in stable branches
-
-could you split the change in 2 changes and repost? please keep my ack
-
-thanks,
-jirka
-
-> 
-> V1 -> V2:
-> Link: https://lore.kernel.org/bpf/Zv0wl-S13WJnIkb_@krava/
-> - Use user set *ulen in bpf_copy_to_user before overwriting *ulen
-> 
->  kernel/bpf/syscall.c                          | 29 +++++++++++++------
->  .../selftests/bpf/prog_tests/fill_link_info.c |  6 ++--
->  2 files changed, 23 insertions(+), 12 deletions(-)
-> 
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index a8f1808a1ca5..56c556fcf325 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -3565,27 +3565,31 @@ static void bpf_perf_link_dealloc(struct bpf_link *link)
->  }
+>  V1 -> V2: addressed review comments
 >  
->  static int bpf_perf_link_fill_common(const struct perf_event *event,
-> -				     char __user *uname, u32 ulen,
-> +				     char __user *uname, u32 *ulen,
->  				     u64 *probe_offset, u64 *probe_addr,
->  				     u32 *fd_type, unsigned long *missed)
->  {
->  	const char *buf;
-> -	u32 prog_id;
-> +	u32 prog_id, input_len;
->  	size_t len;
->  	int err;
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
+> index 95e2796919fc..b6f0435f56ba 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
+> @@ -357,7 +357,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_set(void *data, u64 val)
+>  	if (!adev)
+>  		return -ENODEV;
 >  
-> -	if (!ulen ^ !uname)
-> +	if (!(*ulen) ^ !uname)
+> -	mask = (1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
+> +	mask = ((uint64_t)1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
+
+Using 1ULL here is more legible.
+
+Thanks,
+Lijo
+
+>  	if ((val & mask) == 0)
 >  		return -EINVAL;
 >  
->  	err = bpf_get_perf_event_info(event, &prog_id, fd_type, &buf,
->  				      probe_offset, probe_addr, missed);
->  	if (err)
->  		return err;
-> +
-> +	input_len = *ulen;
-> +	len = strlen(buf);
-> +	*ulen = len + 1;
->  	if (!uname)
->  		return 0;
-> +
->  	if (buf) {
-> -		len = strlen(buf);
-> -		err = bpf_copy_to_user(uname, buf, ulen, len);
-> +		err = bpf_copy_to_user(uname, buf, input_len, len);
->  		if (err)
->  			return err;
->  	} else {
-> @@ -3609,7 +3613,7 @@ static int bpf_perf_link_fill_kprobe(const struct perf_event *event,
->  
->  	uname = u64_to_user_ptr(info->perf_event.kprobe.func_name);
->  	ulen = info->perf_event.kprobe.name_len;
-> -	err = bpf_perf_link_fill_common(event, uname, ulen, &offset, &addr,
-> +	err = bpf_perf_link_fill_common(event, uname, &ulen, &offset, &addr,
->  					&type, &missed);
->  	if (err)
->  		return err;
-> @@ -3617,7 +3621,7 @@ static int bpf_perf_link_fill_kprobe(const struct perf_event *event,
->  		info->perf_event.type = BPF_PERF_EVENT_KRETPROBE;
->  	else
->  		info->perf_event.type = BPF_PERF_EVENT_KPROBE;
-> -
-> +	info->perf_event.kprobe.name_len = ulen;
->  	info->perf_event.kprobe.offset = offset;
->  	info->perf_event.kprobe.missed = missed;
->  	if (!kallsyms_show_value(current_cred()))
-> @@ -3639,7 +3643,7 @@ static int bpf_perf_link_fill_uprobe(const struct perf_event *event,
->  
->  	uname = u64_to_user_ptr(info->perf_event.uprobe.file_name);
->  	ulen = info->perf_event.uprobe.name_len;
-> -	err = bpf_perf_link_fill_common(event, uname, ulen, &offset, &addr,
-> +	err = bpf_perf_link_fill_common(event, uname, &ulen, &offset, &addr,
->  					&type, NULL);
->  	if (err)
->  		return err;
-> @@ -3648,6 +3652,7 @@ static int bpf_perf_link_fill_uprobe(const struct perf_event *event,
->  		info->perf_event.type = BPF_PERF_EVENT_URETPROBE;
->  	else
->  		info->perf_event.type = BPF_PERF_EVENT_UPROBE;
-> +	info->perf_event.uprobe.name_len = ulen;
->  	info->perf_event.uprobe.offset = offset;
->  	info->perf_event.uprobe.cookie = event->bpf_cookie;
->  	return 0;
-> @@ -3673,12 +3678,18 @@ static int bpf_perf_link_fill_tracepoint(const struct perf_event *event,
->  {
->  	char __user *uname;
->  	u32 ulen;
-> +	int err;
->  
->  	uname = u64_to_user_ptr(info->perf_event.tracepoint.tp_name);
->  	ulen = info->perf_event.tracepoint.name_len;
-> +	err = bpf_perf_link_fill_common(event, uname, &ulen, NULL, NULL, NULL, NULL);
-> +	if (err)
-> +		return err;
-> +
->  	info->perf_event.type = BPF_PERF_EVENT_TRACEPOINT;
-> +	info->perf_event.tracepoint.name_len = ulen;
->  	info->perf_event.tracepoint.cookie = event->bpf_cookie;
-> -	return bpf_perf_link_fill_common(event, uname, ulen, NULL, NULL, NULL, NULL);
-> +	return 0;
->  }
->  
->  static int bpf_perf_link_fill_perf_event(const struct perf_event *event,
-> diff --git a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-> index f3932941bbaa..59077f260404 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-> @@ -67,8 +67,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
->  
->  		ASSERT_EQ(info.perf_event.kprobe.cookie, PERF_EVENT_COOKIE, "kprobe_cookie");
->  
-> +		ASSERT_EQ(info.perf_event.kprobe.name_len, strlen(KPROBE_FUNC) + 1, "name_len");
->  		if (!info.perf_event.kprobe.func_name) {
-> -			ASSERT_EQ(info.perf_event.kprobe.name_len, 0, "name_len");
->  			info.perf_event.kprobe.func_name = ptr_to_u64(&buf);
->  			info.perf_event.kprobe.name_len = sizeof(buf);
->  			goto again;
-> @@ -79,8 +79,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
->  		ASSERT_EQ(err, 0, "cmp_kprobe_func_name");
->  		break;
->  	case BPF_PERF_EVENT_TRACEPOINT:
-> +		ASSERT_EQ(info.perf_event.tracepoint.name_len, strlen(TP_NAME) + 1, "name_len");
->  		if (!info.perf_event.tracepoint.tp_name) {
-> -			ASSERT_EQ(info.perf_event.tracepoint.name_len, 0, "name_len");
->  			info.perf_event.tracepoint.tp_name = ptr_to_u64(&buf);
->  			info.perf_event.tracepoint.name_len = sizeof(buf);
->  			goto again;
-> @@ -96,8 +96,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
->  	case BPF_PERF_EVENT_URETPROBE:
->  		ASSERT_EQ(info.perf_event.uprobe.offset, offset, "uprobe_offset");
->  
-> +		ASSERT_EQ(info.perf_event.uprobe.name_len, strlen(UPROBE_FILE) + 1, "name_len");
->  		if (!info.perf_event.uprobe.file_name) {
-> -			ASSERT_EQ(info.perf_event.uprobe.name_len, 0, "name_len");
->  			info.perf_event.uprobe.file_name = ptr_to_u64(&buf);
->  			info.perf_event.uprobe.name_len = sizeof(buf);
->  			goto again;
-> -- 
-> 2.43.0
-> 
 
