@@ -1,109 +1,101 @@
-Return-Path: <linux-kernel+bounces-350715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622CE99085C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:02:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E31990866
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 045991F211BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0142C1F21BB5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FEF1DACB2;
-	Fri,  4 Oct 2024 15:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16DF1AA79F;
+	Fri,  4 Oct 2024 16:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fn1ikhRY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhCZlF+z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEE91C727E;
-	Fri,  4 Oct 2024 15:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099A01E378A;
+	Fri,  4 Oct 2024 16:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728057423; cv=none; b=oH9many8WHMtuKBVDyH5doIyuIznLOizb1MsVS9ng4gSsWLSQv8KKuCtQgLp1CYf+P0HMDIsfEh0kw7Jtgz+trbPcVkUQvxYu/4rRDlzFGuJhLKWEtBwx8/5RrhmNtBg/fchDx1CjagNKYW12r5Sbq/YI6n3zaewZ/9NNk15do0=
+	t=1728057630; cv=none; b=XV5cd+ZlYn4tDtTeUHYzCesjMqNxbK2J7neLiP02eGLgAKIJLVC96aTCMiJ0zjhUGgsd/yD67RFQmPjbofsOJdKxX9brVHe13iSJuG8zAXaeEf1U2gfrjnFw2GRKwUjtOtXZZ2b66JEbuXiAP2DpFGbv3eTQW6a8JuszAZsdMcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728057423; c=relaxed/simple;
-	bh=JPtd9OTrFQ/NTQ4tNNCsAoJSiK8RIDxBRo0hG1VDX3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jl8a/A8UbqxfB0vws8v9rBQfly3mcl7jmXqmRxmaYvdm1dr14NlS6oh5pFNv+ma481vvADyDp9GZ/H61lve0T4xFYWSRiNEaFLwi7ApmduTxcaVHkwJrb2VzRR8IV9xzbnOW1Jogj2BI9zsvL13wAIxlOs5X8Jj+4NZ++utj6Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fn1ikhRY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1127C4CEC6;
-	Fri,  4 Oct 2024 15:56:58 +0000 (UTC)
+	s=arc-20240116; t=1728057630; c=relaxed/simple;
+	bh=JNZ8HspAV68Ys6XzkHl++/2UMiIrKbHOvCUq48tzyYQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=U7jpzaluynhhTa1n0tkWEUeXkjZ27E2pV2C3sRywooUQ4oAiX19KdLikMvyReNu5RXm0uy/g2yKdxGMTlR5knoMTWYtwoQETcVMBBUINUGmzNJBBWBAXvc25slmHMEIhqiM0Q+KzOlwdKayBp/+UO0hmUH+S+apP2mPkrxcKzUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhCZlF+z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E290C4CEC6;
+	Fri,  4 Oct 2024 16:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728057423;
-	bh=JPtd9OTrFQ/NTQ4tNNCsAoJSiK8RIDxBRo0hG1VDX3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fn1ikhRYItcXP1tJ7MGJjbB9c/Ub80ivXQ9ezcDtjjPmweLju3ttw3VDbewhUu+R9
-	 wKYXPOP7TLUPu7XyRqBYrGPTIkk6sdvYUI4Hmn9f/WuS2nTLkTEHvHN5vg9VGNql6I
-	 vIroUmDHMDzuH7XImxiogS0evVj3gkXCcP1qHQXQzYl5z563E1kfztuMW9gYXP0BJR
-	 kpIa1nWRiW+W9gPdxlom9TA8GRsI3jRuytT4qBzNewGJf9MHSB0Scv7lFI6j0qikQ6
-	 Di3eC1WxI6kWhJEiMXcunLy+kjqp8Z90HIyEFhBS5NlWBh176XmgF4oqkoURcIh7ji
-	 d/xw6wJMG0Kaw==
-Date: Fri, 4 Oct 2024 16:56:56 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Linux Team <linux-imx@nxp.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	imx@lists.linux.dev, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next v4 1/3] dt-bindings: net: fec: add pps channel
- property
-Message-ID: <20241004-engraved-founding-89b8fe2ac38b@spud>
-References: <20241004152419.79465-1-francesco@dolcini.it>
- <20241004152419.79465-2-francesco@dolcini.it>
+	s=k20201202; t=1728057629;
+	bh=JNZ8HspAV68Ys6XzkHl++/2UMiIrKbHOvCUq48tzyYQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=LhCZlF+zUi+U5zqgBu2FJyjp8j3IGzhnFx8sPH2cg5u8yAhvbYtf0IGu+f5gjPn9H
+	 Q2yJQw7QCcIeQl9WgZYo0lDBYtdbcjq3Hx+py1CSTz5ISYhv1+LnTi5agAGCEprY3F
+	 o1cwrE6nBz/45gCsf5tNCDzAPgJpL/j1JjPiNsMamvyOhQG1hzewquKTbkoC6erusE
+	 CWlPY0KlXWQ3tcMD9ExMxgR1RHgTt/yY8hAplaPulUagyZ/aod1QhnqzgTZUlAiK5a
+	 etScC4vV27sVb4Wd1SH4CnuNwbMn1N+m0Od4PfVBcXiSz9TynVhodb6OwV4lF2iGkz
+	 PfQmW/T4hwl9w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 717D739F76FF;
+	Fri,  4 Oct 2024 16:00:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6opbeSP1XEYEgk8P"
-Content-Disposition: inline
-In-Reply-To: <20241004152419.79465-2-francesco@dolcini.it>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 0/5] net: ag71xx: small cleanups
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172805763329.2643552.7781892599754804264.git-patchwork-notify@kernel.org>
+Date: Fri, 04 Oct 2024 16:00:33 +0000
+References: <20240930181823.288892-1-rosenp@gmail.com>
+In-Reply-To: <20240930181823.288892-1-rosenp@gmail.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
+ linux-kernel@vger.kernel.org, o.rempel@pengutronix.de, p.zabel@pengutronix.de
+
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 30 Sep 2024 11:18:18 -0700 you wrote:
+> More devm and some loose ends.
+> 
+> Rosen Penev (5):
+>   net: ag71xx: use devm_ioremap_resource
+>   net: ag71xx: use some dev_err_probe
+>   net: ag71xx: remove platform_set_drvdata
+>   net: ag71xx: replace INIT_LIST_HEAD
+>   net: ag71xx: move assignment into main loop
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,1/5] net: ag71xx: use devm_ioremap_resource
+    https://git.kernel.org/netdev/net-next/c/ab4239c8a724
+  - [net-next,2/5] net: ag71xx: use some dev_err_probe
+    https://git.kernel.org/netdev/net-next/c/27dc497b7b7e
+  - [net-next,3/5] net: ag71xx: remove platform_set_drvdata
+    https://git.kernel.org/netdev/net-next/c/94656823c1ac
+  - [net-next,4/5] net: ag71xx: replace INIT_LIST_HEAD
+    https://git.kernel.org/netdev/net-next/c/8b4ed4d5ffb6
+  - [net-next,5/5] net: ag71xx: move assignment into main loop
+    https://git.kernel.org/netdev/net-next/c/d14fe43e0007
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---6opbeSP1XEYEgk8P
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Oct 04, 2024 at 05:24:17PM +0200, Francesco Dolcini wrote:
-> From: Francesco Dolcini <francesco.dolcini@toradex.com>
->=20
-> Add fsl,pps-channel property to select where to connect the PPS signal.
-> This depends on the internal SoC routing and on the board, for example
-> on the i.MX8 SoC it can be connected to an external pin (using channel 1)
-> or to internal eDMA as DMA request (channel 0).
->=20
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---6opbeSP1XEYEgk8P
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwAQSAAKCRB4tDGHoIJi
-0m5rAQCOr4EbyOnpEdVGrd4gx204KckfFCN/GDv3dStrHmoKBAD/YzZHrp7v/wzZ
-fKWFhWfuYlUlpYmycAk4sAU0NH7qNAo=
-=PX3v
------END PGP SIGNATURE-----
-
---6opbeSP1XEYEgk8P--
 
