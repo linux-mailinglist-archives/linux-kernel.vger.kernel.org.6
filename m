@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-351175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8BD990E20
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:27:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA66990E66
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBA771F22710
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54C751F27006
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D9A21D196;
-	Fri,  4 Oct 2024 18:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E671DF270;
+	Fri,  4 Oct 2024 18:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cnnSoO+x"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jEwknbi6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF1B21CAD5;
-	Fri,  4 Oct 2024 18:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF5B1DF25A;
+	Fri,  4 Oct 2024 18:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066555; cv=none; b=CYFT8xnSAm9fSN7QATCLrzOm04oKsxFjGcXLKX3+QkHA2iEdTrPvYrdEz67KR1vSl2Kz48nzzxwQhh4EdN+bC2Mxw9YZEPgqQaRBWQoj84cvEGA2AH/HQFc9iAQhmaUojMW6NYK1pWVIaZRUXFs/ZX5cCngREw5n3b8X5mGg9XQ=
+	t=1728066608; cv=none; b=AsX00zByIHPuHvqWM7d9KLRCVh5ANUcn8GJX/rqF+mlaNIAXNQv8t+1ndHxIKW0WMiOzqO9ae779y2H2vKkNvGM2C35cddm4fCoNiJ++kdzC8ziX74zVfat2SsIjHIUpMssAfXaYl43dRMMSLb6P61YvfBGQ17gZne+w+qQC92Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066555; c=relaxed/simple;
-	bh=6lBCjiRF4B46nhbZCs3k/e4Z0301LBosumkSAIOX6LI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EarPHt+fL0R3x/3UtggcW6zIqjMSUdXaClxx94kkrF1a1iwsjZdt9+4rbYX5D7eRMt/BxIjpHqe0/6uzhDKgOaBPjY8Hcll5eQSHDzFau3YXV9K6UfPzKH6VFRk9jYcuEJkX5PMhNmcJIBXOGvW9ASzW0ABfM+hUxttyyE617sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cnnSoO+x; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fOb9M6ZRjRfvVCqDlasosWrUHjFjp7Hur2fhf3PBfgg=; b=cnnSoO+x6ifbk2XZl8GRTZm8Kf
-	Co4+zcisD6SR3lxix0PIP9Jh4m4Pv+xHhyh7i2N1aWvSENqf735ZdKFu3jV/Op1hKu+/Amc1ebVpQ
-	jzzYwasH3PDPVdgZCCQih6N9/3qgQOsoEPOyQUPkwg8MBeG3NG6FoWaZg7GOEnzU8ASije6iYVn0g
-	QKj1o/K7Cbv1VL5d4ApJkG4PMbtD+Br/8f2CgUZJMzqUnkSSngEuptT7K4ADE3JVoUFSkEUADU0bB
-	++C4Mvx4vGExNnCMtNMO2zc0LYl7AMLUxTHioVqT8B7lqCBpqBrLdFdRgsXe7z6FX7Sp7Wav/lN3c
-	mMDTiZbA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1swn2l-0000000B26f-1O0A;
-	Fri, 04 Oct 2024 18:28:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 94FA230083E; Fri,  4 Oct 2024 20:28:47 +0200 (CEST)
-Date: Fri, 4 Oct 2024 20:28:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>,
-	Sriraman Tallam <tmsriram@google.com>,
-	David Li <davidxl@google.com>,
-	Krzysztof Pszeniczny <kpszeniczny@google.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
-	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
-	Brian Gerst <brgerst@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jann Horn <jannh@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Juergen Gross <jgross@suse.com>,
-	Justin Stitt <justinstitt@google.com>, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
-	x86@kernel.org, "Xin Li (Intel)" <xin@zytor.com>,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v2 1/6] Add AutoFDO support for Clang build
-Message-ID: <20241004182847.GU18071@noisy.programming.kicks-ass.net>
-References: <20241002233409.2857999-1-xur@google.com>
- <20241002233409.2857999-2-xur@google.com>
- <20241003154143.GW5594@noisy.programming.kicks-ass.net>
- <202410041106.6C1BC9BDA@keescook>
+	s=arc-20240116; t=1728066608; c=relaxed/simple;
+	bh=+KaJrIRtLYyTg1NyKVAJTDMq3P9Oib12WipD/KF9iSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z0s1GDZFo5M+/o1Tw93uZWgx50kHm66WKxXEk2K35DAhaN28YI8HrmrVfTShNGGoXbeWJNEa1Nyemihn7j7hjZ6I/gtxwtkIVs1ZvOb/pJ4WcbOPxJfz5rbFoHyboGGWs7UhP2EsuNfkfbTbpGH+6PxxJND7TR7Y0u0SqWPTALE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jEwknbi6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21D2FC4CEC6;
+	Fri,  4 Oct 2024 18:30:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728066608;
+	bh=+KaJrIRtLYyTg1NyKVAJTDMq3P9Oib12WipD/KF9iSg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jEwknbi60kddwXGyEyqUhUs3DjDNRB7fhd3ia6beW6VvTYD8brq5mR7QBJOOg4QMb
+	 xx4Tpw66Y9WmR9mygwR6Q/IDAcfI35HSroTouC/vbqwjpqZBcIPeiF1ZbdSxMHR11i
+	 B5sNN9JsNA6lPnn1OSSDYqtym4YdTnIdqSXcB7EB5XTgiH8m12GNMkSAYnDhFYH4v4
+	 GoS/B0VwtQHuYg0M4AckloEUD1J/ozI2zjMfUgzbROp8j59hzoU5Kn9a41uDBXZOUF
+	 OU7Ocidx3fRm1L5azItU13u+fyxZOVyDg87QfO2J6cLpmcjouqCxS4/YuliTO+tpQy
+	 cBMY3+LhIOjyQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Tao Chen <chen.dylane@gmail.com>,
+	Jinke Han <jinkehan@didiglobal.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 01/26] bpf: Check percpu map value size first
+Date: Fri,  4 Oct 2024 14:29:27 -0400
+Message-ID: <20241004183005.3675332-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202410041106.6C1BC9BDA@keescook>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.10.226
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 04, 2024 at 11:10:04AM -0700, Kees Cook wrote:
+From: Tao Chen <chen.dylane@gmail.com>
 
-> +Configure the kernel with::(make)
-> +
-> +     CONFIG_AUTOFDO_CLANG=y
-> 
-> Then we could avoid the extra 2 lines but still gain the rendered language
-> highlights?
+[ Upstream commit 1d244784be6b01162b732a5a7d637dfc024c3203 ]
 
-The whole double-colon thing is already a pain to read; you're making it
-worse again.
+Percpu map is often used, but the map value size limit often ignored,
+like issue: https://github.com/iovisor/bcc/issues/2519. Actually,
+percpu map value size is bound by PCPU_MIN_UNIT_SIZE, so we
+can check the value size whether it exceeds PCPU_MIN_UNIT_SIZE first,
+like percpu map of local_storage. Maybe the error message seems clearer
+compared with "cannot allocate memory".
+
+Signed-off-by: Jinke Han <jinkehan@didiglobal.com>
+Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Link: https://lore.kernel.org/bpf/20240910144111.1464912-2-chen.dylane@gmail.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/bpf/arraymap.c | 3 +++
+ kernel/bpf/hashtab.c  | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
+index 5102338129d5f..3d92e42c3895a 100644
+--- a/kernel/bpf/arraymap.c
++++ b/kernel/bpf/arraymap.c
+@@ -74,6 +74,9 @@ int array_map_alloc_check(union bpf_attr *attr)
+ 		 * access the elements.
+ 		 */
+ 		return -E2BIG;
++	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
++	if (percpu && round_up(attr->value_size, 8) > PCPU_MIN_UNIT_SIZE)
++		return -E2BIG;
+ 
+ 	return 0;
+ }
+diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+index 72bc5f5752543..4c7cab79d90e5 100644
+--- a/kernel/bpf/hashtab.c
++++ b/kernel/bpf/hashtab.c
+@@ -404,6 +404,9 @@ static int htab_map_alloc_check(union bpf_attr *attr)
+ 		 * kmalloc-able later in htab_map_update_elem()
+ 		 */
+ 		return -E2BIG;
++	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
++	if (percpu && round_up(attr->value_size, 8) > PCPU_MIN_UNIT_SIZE)
++		return -E2BIG;
+ 
+ 	return 0;
+ }
+-- 
+2.43.0
+
 
