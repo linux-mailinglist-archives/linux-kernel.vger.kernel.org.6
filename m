@@ -1,113 +1,189 @@
-Return-Path: <linux-kernel+bounces-350381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E633199045C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:31:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7C699045F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF223283036
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:31:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E71F28127F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666F8212EEE;
-	Fri,  4 Oct 2024 13:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DF021019B;
+	Fri,  4 Oct 2024 13:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fwmitTmp"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lb9E1CKk"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2149033D5
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D271D5ACD;
+	Fri,  4 Oct 2024 13:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048638; cv=none; b=mAVLk2h1JVCNiPzt+/SeUChgTaFjx3tkqUfOFUI4v//y9oVocKvX0YjCD6ms2MPXozTkLZbN6pJCOOR0Od9brrry8LQCh5U0yJSFHXIoe5bEuiaVf6qoHI9N4JK8rhsh3Ck4TyFpkZfhnaS9PDyLTto9JfATW8PrtoQ9l7A2Urc=
+	t=1728048681; cv=none; b=eKtogSNVOeUgdzIcs6zp2eUT1q9oXNoiA0RJW7L0KGd3cXaDICVu/cfZkHgy+mU96jL+xHu7X4CyIFEwtBepfYInFT614Xu+EDhAzF6YQnreMLR4HeuqZ6XTZZLLChzw0n12G3yVAiKmADFaEZ/vIL4YIXNR/WjpBbyg5OTbJ8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728048638; c=relaxed/simple;
-	bh=PVxhKrEyWijKHMWdwhZC/YRs5099qukyA3185jt5uLA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kZMok5gbKRQxuFX9knUgQ+0i3AS/HqAZAlsI4u6mjXQhNto1JE1Tjbkj6yGrUV5MB5TJfjVxgp3n3Uasrbazz8hbAiW9FJZqad1TDG//PjLkZtP4S6SwqXGDthsyLd0C0a4xvjAJZOPgpEHwsBfUgTMQlpoWTygPltHEDiUdbfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fwmitTmp; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb1758e41so17235795e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 06:30:36 -0700 (PDT)
+	s=arc-20240116; t=1728048681; c=relaxed/simple;
+	bh=Iu1gv/k8F2h1dC66UWRL5I/bhTJBJoJ3l4bcLLGXRwQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZskJy5gHusHyVoCKAiEp7EWtGfyYEyFyqCk9+DQYtrzq6TW+/qLsFn3wc08uo9RHY7Mvt6NROIyV5Lljcx+GIv5/jgzzRHJzhwPlLCH/g7wmSqx3MOab9cZ64YSop7ZCTtXDeiHeLZkTZJCYLY3+V0EGOlZK5vfwjU9WctKqr38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lb9E1CKk; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d446adf6eso335974566b.2;
+        Fri, 04 Oct 2024 06:31:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728048635; x=1728653435; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PL12oHhNupzORthJ0SyLBGQ2sKgGXlY+AklWKmc3OZs=;
-        b=fwmitTmpdYAuyJ+3rV8uPyiD1WIqB08n1XrgqA9cddNyvPZoWmB8z+xHqvw5NLqCeC
-         cXYbpWnzNUZk+F25iJZ6rQNWklh77RHUz28yWj7XVGSLG98CBO3zkPkstdP70XF2PSUa
-         C4xgLAjoGX8YK6RKWtbKj2PQXnTlKD1w3ognFkT4XJ5P3ICYfDtrKZRMqncOEI5EDuTd
-         VHiN/Zw4p7FOiU228dHG2Q5Bs9/vOl+igs4hfAKLsD+0sURzTQ+L6INilN/4yWhNrOeQ
-         yHgx3KzH4pydxGziNRgiB8clrT/Hg9zxqP9pFx7iy9ai//gg12fXSX+z66GPMJ+eLR2F
-         +mQA==
+        d=gmail.com; s=20230601; t=1728048676; x=1728653476; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6yETtxhYfKgePwSm8il+6GbuYmopjTBTmbDRGz8idKI=;
+        b=lb9E1CKkzAX2E8rLFBrQaEHam6DTYK3h0khqsRLXepdp9Y6rEGbp9FZH1/WZ57qWlP
+         eiEgYEM6JYq6oCxSDMgZhPMDbRNN0v8qQsWjCgGSns27B3ZMiRZLCHcUZ9eM6nGLkr5C
+         +RItxrXVYkfY38410tAKuraK9gBl0aJYGAMvzm6NLdBsGzze26os85KQTf9rvAU8oUjB
+         3CssObcQtyBOPjXESRiVPU699IY3B0f+Eo/m58iB7crclLLSeKJBwhhGQBfguOHo/AZt
+         v4ndsxO7uXmRv5672jhZDHffeAmlxHGspw5fruQ2J9uq99VMu8reH/q5bn0Tu68oeGoa
+         7Qyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728048635; x=1728653435;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PL12oHhNupzORthJ0SyLBGQ2sKgGXlY+AklWKmc3OZs=;
-        b=pH726wS5+SJzMkzuvZblasgd4c/AKY3Y/FrGrGHRHlODEoejiFOmBtbyBg9ZgPeqqB
-         KxU3Qu7AKNeXchUlTNf4GrDzbPnn8TFWer3F6GNPbWmDzNYxu4+Lhf2YTF0OH64EUXrJ
-         rOPfoP5LWpSXVvn/lrSyGWCT6I34dcMEnu6jZv1+xaK44jrSa0vXr8s30132dbCfiBMk
-         rIm9cQy9WUmuqgCDHXn+GjbYDd44Ck6qvkEBoJvq6Gj5uGdtHfk+03hsbuKFJgVS0Ocs
-         i46sziMrE6hzglF05kFTgJj9a08k2cHbmPbVMyzzxdR1Bqqp6MxQLrjhhx3KyDPxs3/2
-         AKQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzRbL+Kfc4zNke2NzDTAxmXY59MgLIBMv1p7E+kJSt8pctqU1II3OCHERv32xww8/sHce3k5MlGhKQ0UA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl1MN5gOReulYpPcHo+f8nF2exFLCc2fVnkfttZhJuB5Y0uORE
-	0M/eOlMurdjIECsAVQN0MOpdb99lkWpjnyg8CGLOSNY7u+0c/YFDLFC4vB1LQwI=
-X-Google-Smtp-Source: AGHT+IHtZmn6OQssLbni+42dDDNbAXZ5rxq7ZlG7Jnlgb+spldqzmQavRoTAVSMSi1whdFtbCdGAbw==
-X-Received: by 2002:a05:600c:1c23:b0:426:63b4:73b0 with SMTP id 5b1f17b1804b1-42f85af551cmr20227755e9.34.1728048635370;
-        Fri, 04 Oct 2024 06:30:35 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:6080:c6bd:7a14:2250])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b444a4sm15637085e9.29.2024.10.04.06.30.29
+        d=1e100.net; s=20230601; t=1728048676; x=1728653476;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6yETtxhYfKgePwSm8il+6GbuYmopjTBTmbDRGz8idKI=;
+        b=vMDfjJBR2C8e9sCfiss4cbhyBa1y+f7WAbkrDtg98j62L8K48zJOTKUERJ+/SHVewO
+         nLXvRVY5nH7AXXPn9vhCD2CtAcRtGno89eRs1nBv2Ahub4mAD/AQccPFsgtVjR0+Bo6Y
+         OFk09BttTE12uljBfMiOOG4JThlJyrTlbyus5S3YiqbTO7Ijiw537JwYvV1iv+Ypul4A
+         LxNcl6ILP4bc/YF06MrGjJ+A6ki21eoa+zoGHLpfb9XJEdkE57Xl5goFZWvYg0ouL88Z
+         PqNekgYGAaLn5uPzerNTdHfCN5J9qWppG2FlXU2vp3K/Fc+XrgyZ5LcJA02vMuXOXdZB
+         gexA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBEVfp1sCks0Ej+6RwvvE9W93AAS3baF0CnAI/xrEKGSyKYMRTxWps8SlaxhWm8504E74StDcOZjd7hX4=@vger.kernel.org, AJvYcCWXFmiPeJyNRfJru0j3CCFs02e/WzuoxZbyl6BOkZJv4GfARDi8DwZsfwc4A/T7QerzlPT5LYE044VkyysRHKoVBFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3VVo3UYmcdWJYq3iOs50nBMN1tVvq+EJWc46MabmPXloI8NAh
+	sSz80ymozVxE4BmuN9gPKljdusfWjUfHFcAFAPqGcJ3SMU0BIKXE
+X-Google-Smtp-Source: AGHT+IFTWB2e+/9sAS1muQWqQEY27QPrKJQFlfd715jG48tdjQfeL/fF/bJhskBq6A6/Ea/Sm1lxkQ==
+X-Received: by 2002:a17:907:70d:b0:a77:c30c:341 with SMTP id a640c23a62f3a-a991bac3142mr274226266b.0.1728048675574;
+        Fri, 04 Oct 2024 06:31:15 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99103b36d0sm228486366b.137.2024.10.04.06.31.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 06:30:31 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Stephen Boyd <sboyd@kernel.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,  Jiucheng Xu
- <jiucheng.xu@amlogic.com>,  linux-arm-kernel@lists.infradead.org,
-  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 8/9] reset: amlogic: split the device core and
- platform probe
-In-Reply-To: <01aff9c0f129f8c1cf41c7ae53dac38048aa34a8.camel@pengutronix.de>
-	(Philipp Zabel's message of "Mon, 30 Sep 2024 18:56:05 +0200")
-References: <20240910-meson-rst-aux-v5-0-60be62635d3e@baylibre.com>
-	<20240910-meson-rst-aux-v5-8-60be62635d3e@baylibre.com>
-	<8cb81058c8f45e378675e078e296336a2cf74308.camel@pengutronix.de>
-	<1jldzwkpsu.fsf@starbuckisacylon.baylibre.com>
-	<01aff9c0f129f8c1cf41c7ae53dac38048aa34a8.camel@pengutronix.de>
-Date: Fri, 04 Oct 2024 15:30:28 +0200
-Message-ID: <1jsetcro5n.fsf@starbuckisacylon.baylibre.com>
+        Fri, 04 Oct 2024 06:31:15 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] arm64: dts: renesas: r9a09g057: Add OPP table
+Date: Fri,  4 Oct 2024 14:31:08 +0100
+Message-ID: <20241004133108.779934-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Mon 30 Sep 2024 at 18:56, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+Add OPP table for RZ/V2H(P) SoC.
 
-> I've applied them to reset/next them unchanged, at:
-> https://git.pengutronix.de/cgit/pza/linux/commit/?id=5b93105afcdc
-> and sent a follow-up patch to fix the alignment.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+Note, this patch depends on [0] for frequency scaling to work.
 
-Thanks Philipp.
+[0] https://lore.kernel.org/all/20240918135957.290101-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+---
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 41 ++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-Would it be possible for you to tag it, so I can pull it the amlogic
-without waiting for the next rc1 ?
-
-We have couple of changes pending depending on this.
-
->
-> regards
-> Philipp
-
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+index 1ad5a1b6917f..396c95bc1b4e 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+@@ -20,6 +20,39 @@ audio_extal_clk: audio-clk {
+ 		clock-frequency = <0>;
+ 	};
+ 
++	/*
++	 * The default cluster table is based on the assumption that the PLLCA55 clock
++	 * frequency is set to 1.7GHz. The PLLCA55 clock frequency can be set to
++	 * 1.7/1.6/1.5/1.1 GHz based on the BOOTPLLCA_0/1 pins (and additionally can be
++	 * clocked to 1.8GHz as well). The table below should be overridden in the board
++	 * DTS based on the PLLCA55 clock frequency.
++	 */
++	cluster0_opp: opp-table-0 {
++		compatible = "operating-points-v2";
++
++		opp-1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-850000000 {
++			opp-hz = /bits/ 64 <850000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-425000000 {
++			opp-hz = /bits/ 64 <425000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-212500000 {
++			opp-hz = /bits/ 64 <212500000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -30,6 +63,8 @@ cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK0>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		cpu1: cpu@100 {
+@@ -38,6 +73,8 @@ cpu1: cpu@100 {
+ 			device_type = "cpu";
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK1>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		cpu2: cpu@200 {
+@@ -46,6 +83,8 @@ cpu2: cpu@200 {
+ 			device_type = "cpu";
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK2>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		cpu3: cpu@300 {
+@@ -54,6 +93,8 @@ cpu3: cpu@300 {
+ 			device_type = "cpu";
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK3>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		L3_CA55: cache-controller-0 {
 -- 
-Jerome
+2.43.0
+
 
