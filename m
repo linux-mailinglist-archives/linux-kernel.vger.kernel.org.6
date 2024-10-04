@@ -1,169 +1,144 @@
-Return-Path: <linux-kernel+bounces-351274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9AC990F37
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EBA990F35
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F0501C22B66
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:52:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2A081C22CF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1AC1E7C06;
-	Fri,  4 Oct 2024 18:41:08 +0000 (UTC)
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0611E573E;
-	Fri,  4 Oct 2024 18:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5A71E572F;
+	Fri,  4 Oct 2024 18:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kVCrPpZ5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5751E5726;
+	Fri,  4 Oct 2024 18:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728067267; cv=none; b=jTrcki5p17LnPsHPBPyLN+tfH2uc/hXEirPZ7I1xPYxOxNRziLyZ1qp3vFskHrwZHFllqziYWJPFo18SqwbB+jV8+pyV/rOGwpEOFrGgkLgc8WA11Eh+J1sBalMwN1dayeWMWoJdvk7Nd4c3ZY799Gf+nVr3fhYJX+nqJ2Oqc9w=
+	t=1728067240; cv=none; b=Zr1dISHFs27vzeIcXsJGBoLzxXC/QcXbJbQ650OwhyRcJqhiQbExkfvN2ZkwcQmpHejtzMCf5cSu7tPHFnQykgebhLjJaWuHDzUk18jBr+bb5R79zNSd722ksLOt+2INPs/0UrB5RcrZbNI8Ytktc6tWSeZrYAEZgsQBuKkP4AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728067267; c=relaxed/simple;
-	bh=augURPccsdIY9LZoN8gxtoUuNUyj6/brJ7N31RDwniE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AhWd18JlST1a8Jk01uo0tBi8KSQB61Clbm1euzKyl8lDIXR1xqnrWqcsvNqXHpjmCIzBJ33q9R7nSD8l+9SukQwnw10vslpeKy8VQMTIm20U/Pc+lxhqlafnv4m+OhNsioRsGA83Vo6HlKBMBUng9mkeyfImClJQHVbEsjHuZtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 494IeLVM016535;
-	Fri, 4 Oct 2024 13:40:21 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 494IeJhT016534;
-	Fri, 4 Oct 2024 13:40:19 -0500
-Date: Fri, 4 Oct 2024 13:40:19 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: John Johansen <john.johansen@canonical.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>, Jonathan Corbet <corbet@lwn.net>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-Message-ID: <20241004184019.GA16388@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp> <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com> <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com> <20241002103830.GA22253@wind.enjellic.com> <033eb4d9-482b-4b70-a251-dc8bcc738f40@canonical.com>
+	s=arc-20240116; t=1728067240; c=relaxed/simple;
+	bh=rCgZOpHDQFFi3/FMJI74LvTPZIfZw8kodL5qilZLE1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eb6ezZ/yAyiPMY3jJ2bXW0NxogwK2KG2tsSPVySBLrhAzhVHYzKDs/QGxYfJXcBZGqta3gYUz+r2/G6lT7DUw6MTAcp74wz1iNHbdNDmjpvlXYqSxvUWgFS1vah19p9YdHRp83g0Crt7skC5OX4Y6iqEo4IzUA/1Fm3TRPfM0ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kVCrPpZ5; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728067239; x=1759603239;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rCgZOpHDQFFi3/FMJI74LvTPZIfZw8kodL5qilZLE1g=;
+  b=kVCrPpZ577mYR00LEnQ3vpMVhIfKjaecNzLAPsizcg2yZ+yfhPauQV75
+   HvkmM0lufPSKwZ1iBvxnDNbQhOyMqrKiecVAPXRkA+zyV7hobDaiDqgTB
+   IhxgF/9jHH2CegNrPCBsFeOrFre7S2/6MWZTKqDFT/8VkSRfQBjz+ydx2
+   o4CIasvCVRNTPTaTZp/vQRy3QPCwknWAPvMQoLSWyXUNRyUrcHKW0sSKa
+   A0gSDePufE0ya6U34230vBwmkeJORMXrFBv1Xa7YzWbLf5yGa3MnczCVV
+   OXa+IVnXBnNrvew5EIxsF9H6a5Jzuhh32wl/jEnKCTPN9SORn+mWD+MAW
+   A==;
+X-CSE-ConnectionGUID: gyt+iew3TLyW2FQY+ypX4g==
+X-CSE-MsgGUID: CFi/0kbJTzeoFytiOex/pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="27184400"
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="27184400"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 11:40:38 -0700
+X-CSE-ConnectionGUID: SA1PQIikQQGTHsIKJbMGbw==
+X-CSE-MsgGUID: sS6mPp/xQA6gJBI0Dl4vqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="105637362"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 04 Oct 2024 11:40:35 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swnE8-000254-1T;
+	Fri, 04 Oct 2024 18:40:32 +0000
+Date: Sat, 5 Oct 2024 02:40:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vinicius Peixoto <vpeixoto@lkcamp.dev>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	Vinicius Peixoto <vpeixoto@lkcamp.dev>,
+	Enzo Bertoloti <ebertoloti@lkcamp.dev>,
+	Fabricio Gasperin <fgasperin@lkcamp.dev>,
+	David Laight <David.Laight@aculab.com>
+Subject: Re: [PATCH v2] lib/crc16_kunit.c: add KUnit tests for crc16
+Message-ID: <202410050215.eU9509xy-lkp@intel.com>
+References: <20241003-crc16-kunit-v2-1-5fe74b113e1e@lkcamp.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <033eb4d9-482b-4b70-a251-dc8bcc738f40@canonical.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 04 Oct 2024 13:40:21 -0500 (CDT)
+In-Reply-To: <20241003-crc16-kunit-v2-1-5fe74b113e1e@lkcamp.dev>
 
-On Wed, Oct 02, 2024 at 07:27:47PM -0700, John Johansen wrote:
+Hi Vinicius,
 
-Hi, I hope the week has gone well for everyone.
+kernel test robot noticed the following build warnings:
 
-> On 10/2/24 03:38, Dr. Greg wrote:
-> >On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
-> >
-> >Good morning Linus, I hope the week is going well for you.
-> >
-> >Some reflections, for the record, on this issue.
-> >
-> >>On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
-> >>>
-> >>>Linus, it's unclear if you're still following this thread after the
-> >>>pull, but can you provide a little insight on your thoughts here?
-> >
-> >>I absolutely hate the whole "security people keep arguing", and I
-> >>cannot personally find it in myself to care about tomoyo.  I don't
-> >>even know where it is used - certainly not in Fedora, which is the
-> >>only distro I can check quickly.
-> >>
-> >>If the consensus is that we should revert, I'll happily revert. This
-> >>was all inside of the tomoyo subdirectory, so I didn't see it as
-> >>some kind of sidestepping, and treated the pull request as a regular
-> >>"another odd security subsystem update".
-> >
-> >I see that Paul Moore has further responded with commentary about the
-> >'LSM community' responding to this issue.  I wanted, on behalf of our
-> >project and in support of Tetsuo's concerns, to register directly with
-> >you a sense of jaded skepticism about the notion of a community
-> >response.
-> >
-> >Fixing Tetsuo's issue, at least to the extent it can be fixed,
-> >requires technical improvements in the Linux security architecture.
+[auto build test WARNING on 9852d85ec9d492ebef56dc5f229416c925758edc]
 
-> yes and that is correct place to do it. Doing it within a single LSM
-> is very much the wrong approach
+url:    https://github.com/intel-lab-lkp/linux/commits/Vinicius-Peixoto/lib-crc16_kunit-c-add-KUnit-tests-for-crc16/20241004-050248
+base:   9852d85ec9d492ebef56dc5f229416c925758edc
+patch link:    https://lore.kernel.org/r/20241003-crc16-kunit-v2-1-5fe74b113e1e%40lkcamp.dev
+patch subject: [PATCH v2] lib/crc16_kunit.c: add KUnit tests for crc16
+config: parisc-randconfig-r071-20241005 (https://download.01.org/0day-ci/archive/20241005/202410050215.eU9509xy-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410050215.eU9509xy-lkp@intel.com/reproduce)
 
-I don't disagree and have publically stated that a number of times
-over the last 10 months or so that this issue has been raging,
-including in e-mail to Tetsuo himself.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410050215.eU9509xy-lkp@intel.com/
 
-Our opinion or ACK doesn't matter much in the grand scheme of things,
-but Paul can feel free to take his black sharpie pen and place a mark
-in the column that indicates that it is in everyone's interest to have
-a standard framework for security event dispatch, on our behalf.
+All warnings (new ones prefixed by >>):
 
-That being said, if we are actually serious about responding properly
-to this event/crisis, we need to step back and have an intellectually
-honest engineering discussing surrounding the following question:
+>> lib/crc16_kunit.c:29: warning: Excess struct member 'crc16' description in 'crc16_test'
+   lib/crc16_kunit.c:96: warning: Function parameter or struct member 'test' not described in 'crc16_test_empty'
+   lib/crc16_kunit.c:111: warning: Function parameter or struct member 'test' not described in 'crc16_test_correctness'
+   lib/crc16_kunit.c:132: warning: Function parameter or struct member 'test' not described in 'crc16_test_combine'
 
-Has the threat environment, its significance to society and industry
-and the scale and scope of the solutions needed to mount a response to
-it, changed since the inception of the LSM 22 years ago?
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
-Colleagues I have in the counseling industry tell me that the first
-step in resolving a problem is recognizing that there is a problem.
 
-> >Currently, potential technical improvements in this venue are
-> >struggling to receive any kind of acknowledgement or review, to the
-> >ultimate detriment of enhancements that Linux should be bringing
-> >forward to address, not only this issue, but the security industry
-> >writ-large.
+vim +29 lib/crc16_kunit.c
 
-> everyone in the LSM community is struggling with available time, and
-> yes there are disagreements around how this should be done so it
-> moves slow.
+    17	
+    18	/**
+    19	 * struct crc16_test - CRC16 test data
+    20	 * @crc: initial input value to CRC16
+    21	 * @start: Start index within the data buffer
+    22	 * @length: Length of the data
+    23	 * @crc16: Expected CRC16 value for the test
+    24	 */
+    25	static struct crc16_test {
+    26		u16 crc;
+    27		u16 start;
+    28		u16 length;
+  > 29	} tests[CRC16_KUNIT_TEST_SIZE];
+    30	
 
-With respect to bandwidth there are two problems that need to addressed:
-
-1.) The amount of time and talent it takes for developers to implement
-security policies with mandatory enforcement capabilities.
-
-2.) The ability to implement security technology solutions on linux,
-based on a standardized infrastructure, in less than 4-5+ year
-timeframes.
-
-The third problem to be addressed, and you acknowledge it above, is
-that there needs to be a flexible pathway for security innovation on
-Linux that doesn't require broad based consensus and yet doesn't
-imperil the kernel.
-
-This latter issue is the most fundamental problem with security on
-Linux and something that Linus has publically complained about
-multiple times, as we all know.
-
-With TSEM we placed a design on the table, influenced by individuals
-with significant experience in the field and its challenges, that was
-a legitimate attempt to address these issues, including the problem
-that Tetuso has.  Unfortunately it sat on the cutting room floor for
-20 months without even a legitimate technical discussion as to its
-motivation and design and the fact that it could have provided a
-method to derail this current crisis/controversy.
-
-We fully recognize and respect the bandwidth crisis.  If it is as bad
-as everyone claims it is, and there is no reason to assume otherwise,
-then we need to acknowledge and address this issue as one of the two
-roots of our problem, if security innovation on Linux is to remain
-even remotely relevant and healthy.
-
-We appreciate your willingness to review TSEM sometime down the road
-and will look forward to your thoughts.
-
-Have a good weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
