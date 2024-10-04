@@ -1,490 +1,154 @@
-Return-Path: <linux-kernel+bounces-350722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E145E9908F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:21:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1BFC9908B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C76E6B273DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:06:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1E572816FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8E71C3021;
-	Fri,  4 Oct 2024 16:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7AD1C3027;
+	Fri,  4 Oct 2024 16:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="F3qc8Qd3"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="pPcbefJj"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B0F1E377D
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98F510A24;
+	Fri,  4 Oct 2024 16:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728057952; cv=none; b=kxgTH5A1fC+Yneb1eZSYmMVO1oH6IWH0pTrjnAygJTrSgRFzAL4mhftbTDVx0udq9ZcRiZSXkXKRhAtKUEC6VSqGTIHpoUX9Sy+bL7Eqcd/Lh7MVUJ6m/jElhMUBVfkQgwCiCSDZuN6T4Hx9JEnPQ3a+odKXPnxKW4fgDYqplmY=
+	t=1728058131; cv=none; b=WeDc5LVOtSXGUHuNIQjFFs5tMHk3rObSF2CcRY3uaxC+Z61sZ4pFH2mE3N8k/VssZzZjhfsS4pUEch8MaZWEP2M2WtaUROQ1xRnleh8QyXmdlEw0cTJc5XN4qomy7OGitnqRXE7ZoZTHWYX2lvGeZN37jZEU5mtBiNst+J4Gc6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728057952; c=relaxed/simple;
-	bh=C8+E70IFc21tJxm8gLF2f1jcbOmUmoHB0iUH41CAWSE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bwQWZQJduu7HtGEAoCjaWa4Ak5pcWCVGsUAnDvrxSZjDyQPt+GXAmvWADa3ccIRwzWXJk3cV9II1qhLr9cL9ikYgiw0rYQa5x6tk5vZgkNhOmmUumvqb1TEjImqyMMEM3orbgopyUMyxxxRZei8ueibuF0k9H12O7gC7wCL2EmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=F3qc8Qd3; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71def18fe1cso264617b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:05:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1728057949; x=1728662749; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8DgA6gQLk526uv5nFhNrX9l/ATz98WfN6ETaxfWgW3g=;
-        b=F3qc8Qd3RjfKHYvn1G8MhMrSkkKzqTD75KL1qmbtaRLu0HCDGDRuPf4+O60MYQrHnp
-         63ptz+/JYMzh8zsMUgNpcgfBEYVuRmxJq9g2hX61IYmaltQpTn2DH9LJsOIo6m6Fo8e6
-         6H6iymPv424qWY1ll0cbUEMEaOrKeXTv4w9Kg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728057949; x=1728662749;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8DgA6gQLk526uv5nFhNrX9l/ATz98WfN6ETaxfWgW3g=;
-        b=SeA8Y+vmDjLssncqmsyq2nC9+DX4XqXTffWOLjP99mLKV7IvEiUJCNLFMFhqT0yal+
-         4eHgk2jd+/q1CNMQ6TzAh6R1n56A1Vsx/ZC4VoEqVUvEoMRz0Dont5UL8BFbaL+IUVhN
-         842sJlZedlnqUS2shZG1qXb/yg3X+Q7X9hXx6O9VDqf8Jfn1R9aYLY/dbfla3Uco3PH5
-         grdzejy4ME1k3YZr0RIhrDuLawjdD80Gu1p2HNBcM99W1LP04LGZvKvapX2xkhME5JkG
-         GFJsMpVIIHTf20ClpJsQ41YIbMzDbP1MHWQzYUbvpkbnwAWN8GBh3kz74kx+lY6zIF76
-         R0ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUeYHrFDe/ZLEPQV/6us4EzVnXmqOd5yhpIJaopWdnqW5plXqXtbXnvNODbrB59B1kMEKHdYQm3mcg95M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNu+ndQ2riUHsxJGTnYHGuQo3WtnCz+7IrD5wLMQ9buzL4SRzt
-	wnvGe2DFcFrKrlD7X4Sn1VS4rWeM6I6W7LXTe/nHLKdk/PFbmSKyPgg7kLnwuxWIFRKQ2Z+bA5n
-	65avaNBZYU3jC5oHBkeDTumayt59hVxBp/3Jh
-X-Google-Smtp-Source: AGHT+IHrvnHw3FVjvTTNKr1bqXznfvQlmxItSYcov9d1t4vebXm+9FqwtiPXmIQyXN0EnDWTP6aS6+x4KFr52zqJG+s=
-X-Received: by 2002:a05:6a00:a09:b0:710:5848:8ae1 with SMTP id
- d2e1a72fcca58-71de239d27bmr5411024b3a.4.1728057949123; Fri, 04 Oct 2024
- 09:05:49 -0700 (PDT)
+	s=arc-20240116; t=1728058131; c=relaxed/simple;
+	bh=dGQ7Witn8O6kjYqDrprDqyRKEhDoof7f2lKcqEROOnA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=U+F0Zx2gxZMBRc6lVWMqD8BPPLx4Pc7lm8G85GC1Tp0oOw5t179IdAmHKOEl98TtML64M4LBFaRO8glnE9P4lrJqfzIsO44IKHNLShKM2TXZAlWdFJBl7d/WeFJPzPS+xj2654UTSnAjuzgW+Bjry/hHq5nLtcDuQ6TcbOHhl24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=pPcbefJj; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 96E6A20B47;
+	Fri,  4 Oct 2024 18:08:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1728058126;
+	bh=/Y0C0EEPQSM8rb7ufcWWlBjaRsWiR64xGnNPRTAiK5I=; h=From:To:Subject;
+	b=pPcbefJjFcEgc5rUML4/Q1lhiX1XETfN8q2VyAwJ3nwPc7Qj9qEW8ECIgW9AO5vKe
+	 EthhDim8IHHqam98EZubvyLxO53zLA24XtC0dFVDMgG9LlckSr2gZu8wHxmJJ34/Ou
+	 GJbUi57GjUas2lT72AAOsUBjzynjs+ojF0zDZqGzJuGiC2rvZiz6Rx2Jvkja2PNN8o
+	 /M0wRgtTwyOe/nEVjwtJzhtPUwHWj6IgJUuy+OHzWqaV7c8b1wS5v85QXX+S9X6Nwe
+	 J0E+BWLYDCrYv11+SSrf3g1KuN1Ovtavg//kEEf/YcPnzK1X3mOV3pYzSoY62xgFX7
+	 H0ll33Ix+Ff3g==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] dt-bindings: arm: fsl: drop usage of Toradex SOMs compatible alone
+Date: Fri,  4 Oct 2024 18:08:42 +0200
+Message-Id: <20241004160842.110079-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904054815.1341712-1-jitendra.vegiraju@broadcom.com>
- <20240904054815.1341712-3-jitendra.vegiraju@broadcom.com> <mhfssgiv7unjlpve45rznyzr72llvchcwzk4f7obnvp5edijqc@ilmxqr5gaktb>
- <CAMdnO-+CcCAezDXLwTe7fEZPQH6_B1zLD2g1J6uWiKi12vOxzg@mail.gmail.com>
-In-Reply-To: <CAMdnO-+CcCAezDXLwTe7fEZPQH6_B1zLD2g1J6uWiKi12vOxzg@mail.gmail.com>
-From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-Date: Fri, 4 Oct 2024 09:05:36 -0700
-Message-ID: <CAMdnO-JZ2crBaOEtvgMupQs7nTZ8r0_7TTQdX3B3n6F_owAMZA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 2/5] net: stmmac: Add basic dw25gmac support
- in stmmac core
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
-	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	hawk@kernel.org, john.fastabend@gmail.com, rmk+kernel@armlinux.org.uk, 
-	ahalaney@redhat.com, xiaolei.wang@windriver.com, rohan.g.thomas@intel.com, 
-	Jianheng.Zhang@synopsys.com, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, andrew@lunn.ch, 
-	linux@armlinux.org.uk, horms@kernel.org, florian.fainelli@broadcom.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Serge,
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-On Mon, Sep 16, 2024 at 4:32=E2=80=AFPM Jitendra Vegiraju
-<jitendra.vegiraju@broadcom.com> wrote:
->
-> Hi Serge,
->
-> On Tue, Sep 10, 2024 at 12:25=E2=80=AFPM Serge Semin <fancer.lancer@gmail=
-.com> wrote:
-> >
-> > > +static u32 decode_vdma_count(u32 regval)
-> > > +{
-> > > +     /* compressed encoding for vdma count
-> > > +      * regval: VDMA count
-> > > +      * 0-15  : 1 - 16
-> > > +      * 16-19 : 20, 24, 28, 32
-> > > +      * 20-23 : 40, 48, 56, 64
-> > > +      * 24-27 : 80, 96, 112, 128
-> > > +      */
-> > > +     if (regval < 16)
-> > > +             return regval + 1;
-> > > +     return (4 << ((regval - 16) / 4)) * ((regval % 4) + 5);
-> >
-> > The shortest code isn't always the best one. This one gives me a
-> > headache in trying to decipher whether it really matches to what is
-> > described in the comment. What about just:
-> >
-> >         if (regval < 16) /* Direct mapping */
-> >                 return regval + 1;
-> >         else if (regval < 20) /* 20, 24, 28, 32 */
-> >                 return 20 + (regval - 16) * 4;
-> >         else if (regval < 24) /* 40, 48, 56, 64 */
-> >                 return 40 + (regval - 20) * 8;
-> >         else if (regval < 28) /* 80, 96, 112, 128 */
-> >                 return 80 + (regval - 24) * 16;
-> >
-> > ?
-> Couldn't agree more :)
-> Thanks, I will replace it with your code, which is definitely more readab=
-le.
->
-> >
-> > > +}
-> > > +
-> > > +static void dw25gmac_read_hdma_limits(void __iomem *ioaddr,
-> > > +                                   struct stmmac_hdma_cfg *hdma)
-> > > +{
-> > > +     u32 hw_cap;
-> > > +
-> > > +     /* Get VDMA/PDMA counts from HW */
-> > > +     hw_cap =3D readl(ioaddr + XGMAC_HW_FEATURE2);
-> >
-> >
-> > > +     hdma->tx_vdmas =3D decode_vdma_count(FIELD_GET(XXVGMAC_HWFEAT_V=
-DMA_TXCNT,
-> > > +                                                  hw_cap));
-> > > +     hdma->rx_vdmas =3D decode_vdma_count(FIELD_GET(XXVGMAC_HWFEAT_V=
-DMA_RXCNT,
-> > > +                                                  hw_cap));
-> > > +     hdma->tx_pdmas =3D FIELD_GET(XGMAC_HWFEAT_TXQCNT, hw_cap) + 1;
-> > > +     hdma->rx_pdmas =3D FIELD_GET(XGMAC_HWFEAT_RXQCNT, hw_cap) + 1;
-> >
-> > Hmm, these are the Tx/Rx DMA-channels and Tx/Rx MTL-queues count
-> > fields. Can't you just use the
-> > dma_features::{number_tx_channel,number_tx_queues} and
-> > dma_features::{number_rx_channel,number_rx_queues} fields to store the
-> > retrieved data?
-> >
-> > Moreover why not to add the code above to the dwxgmac2_get_hw_feature()=
- method?
-> >
-> Thanks, I missed the reuse of existing fields.
-> However, since the VDMA count has a slightly bigger bitmask, we need to e=
-xtract
-> VDMA channel count as per DW25GMAC spec.
-> Instead of duplicating dwxgmac2_get_hw_feature(), should we add wrapper f=
-or
-> dw25gmac, something like the following?
-> dw25gmac_get_hw_feature(ioaddr, dma_cap)
-> {
->     u32 hw_cap;
->     int rc;
->     rc =3D dwxgmac2_get_hw_feature(ioaddr, dma_cap);
->     /* Get VDMA counts from HW */
->     hw_cap =3D readl(ioaddr + XGMAC_HW_FEATURE2);
->    dma_cap->num_tx_channels =3D
-> decode_vdma_count(FIELD_GET(XXVGMAC_HWFEAT_VDMA_TXCNT,
->      hw_cap));
->    dma_cap->num_rx_channels =3D
-> decode_vdma_count(FIELD_GET(XXVGMAC_HWFEAT_VDMA_RXCNT,
->      hw_cap));
->    return rc;
-> }
->
-> > > +}
-> > > +
-> > > +int dw25gmac_hdma_cfg_init(struct stmmac_priv *priv)
-> > > +{
-> > > +     struct plat_stmmacenet_data *plat =3D priv->plat;
-> > > +     struct device *dev =3D priv->device;
-> > > +     struct stmmac_hdma_cfg *hdma;
-> > > +     int i;
-> > > +
-> > > +     hdma =3D devm_kzalloc(dev,
-> > > +                         sizeof(*plat->dma_cfg->hdma_cfg),
-> > > +                         GFP_KERNEL);
-> > > +     if (!hdma)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     dw25gmac_read_hdma_limits(priv->ioaddr, hdma);
-> > > +
-> > > +     hdma->tvdma_tc =3D devm_kzalloc(dev,
-> > > +                                   sizeof(*hdma->tvdma_tc) * hdma->t=
-x_vdmas,
-> > > +                                   GFP_KERNEL);
-> > > +     if (!hdma->tvdma_tc)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     hdma->rvdma_tc =3D devm_kzalloc(dev,
-> > > +                                   sizeof(*hdma->rvdma_tc) * hdma->r=
-x_vdmas,
-> > > +                                   GFP_KERNEL);
-> > > +     if (!hdma->rvdma_tc)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     hdma->tpdma_tc =3D devm_kzalloc(dev,
-> > > +                                   sizeof(*hdma->tpdma_tc) * hdma->t=
-x_pdmas,
-> > > +                                   GFP_KERNEL);
-> > > +     if (!hdma->tpdma_tc)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     hdma->rpdma_tc =3D devm_kzalloc(dev,
-> > > +                                   sizeof(*hdma->rpdma_tc) * hdma->r=
-x_pdmas,
-> > > +                                   GFP_KERNEL);
-> > > +     if (!hdma->rpdma_tc)
-> > > +             return -ENOMEM;
-> > > +
-> >
-> > > +     /* Initialize one-to-one mapping for each of the used queues */
-> > > +     for (i =3D 0; i < plat->tx_queues_to_use; i++) {
-> > > +             hdma->tvdma_tc[i] =3D i;
-> > > +             hdma->tpdma_tc[i] =3D i;
-> > > +     }
-> > > +     for (i =3D 0; i < plat->rx_queues_to_use; i++) {
-> > > +             hdma->rvdma_tc[i] =3D i;
-> > > +             hdma->rpdma_tc[i] =3D i;
-> > > +     }
-> >
-> > So the Traffic Class ID is initialized for the
-> > tx_queues_to_use/rx_queues_to_use number of channels only, right? What
-> > about the Virtual and Physical DMA-channels with numbers greater than
-> > these values?
-> >
-> You have brought up a question that applies to remaining comments in
-> this file as well.
-> How the VDMA/PDMA mapping is used depends on the device/glue driver.
-> For example in
-> our SoC the remaining VDMAs are meant to be used with SRIOV virtual
-> functions and not
-> all of them are available for physical function.
-> Since additional VDMAs/PDMAs remain unused in hardware I let them stay at=
- their
-> default values. No traffic is expected to be mapped to unused V/PDMAs.
->  I couldn't think of a reason for it to be an issue from a driver perspec=
-tive.
-> Please let me know, if I am missing something or we need to address a
-> use case with bigger scope.
-> The responses for following comments also depend on what approach we take=
- here.
->
-> > > +     plat->dma_cfg->hdma_cfg =3D hdma;
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +
-> > > +void dw25gmac_dma_init(void __iomem *ioaddr,
-> > > +                    struct stmmac_dma_cfg *dma_cfg)
-> > > +{
-> > > +     u32 value;
-> > > +     u32 i;
-> > > +
-> > > +     value =3D readl(ioaddr + XGMAC_DMA_SYSBUS_MODE);
-> > > +     value &=3D ~(XGMAC_AAL | XGMAC_EAME);
-> > > +     if (dma_cfg->aal)
-> > > +             value |=3D XGMAC_AAL;
-> > > +     if (dma_cfg->eame)
-> > > +             value |=3D XGMAC_EAME;
-> > > +     writel(value, ioaddr + XGMAC_DMA_SYSBUS_MODE);
-> > > +
-> > > +     for (i =3D 0; i < dma_cfg->hdma_cfg->tx_vdmas; i++) {
-> > > +             value =3D rd_dma_ch_ind(ioaddr, MODE_TXDESCCTRL, i);
-> > > +             value &=3D ~XXVGMAC_TXDCSZ;
-> > > +             value |=3D FIELD_PREP(XXVGMAC_TXDCSZ,
-> > > +                                 XXVGMAC_TXDCSZ_256BYTES);
-> > > +             value &=3D ~XXVGMAC_TDPS;
-> > > +             value |=3D FIELD_PREP(XXVGMAC_TDPS, XXVGMAC_TDPS_HALF);
-> > > +             wr_dma_ch_ind(ioaddr, MODE_TXDESCCTRL, i, value);
-> > > +     }
-> > > +
-> > > +     for (i =3D 0; i < dma_cfg->hdma_cfg->rx_vdmas; i++) {
-> > > +             value =3D rd_dma_ch_ind(ioaddr, MODE_RXDESCCTRL, i);
-> > > +             value &=3D ~XXVGMAC_RXDCSZ;
-> > > +             value |=3D FIELD_PREP(XXVGMAC_RXDCSZ,
-> > > +                                 XXVGMAC_RXDCSZ_256BYTES);
-> > > +             value &=3D ~XXVGMAC_RDPS;
-> > > +             value |=3D FIELD_PREP(XXVGMAC_TDPS, XXVGMAC_RDPS_HALF);
-> > > +             wr_dma_ch_ind(ioaddr, MODE_RXDESCCTRL, i, value);
-> > > +     }
-> > > +
-> >
-> > > +     for (i =3D 0; i < dma_cfg->hdma_cfg->tx_pdmas; i++) {
-> > > +             value =3D rd_dma_ch_ind(ioaddr, MODE_TXEXTCFG, i);
-> > > +             value &=3D ~(XXVGMAC_TXPBL | XXVGMAC_TPBLX8_MODE);
-> > > +             if (dma_cfg->pblx8)
-> > > +                     value |=3D XXVGMAC_TPBLX8_MODE;
-> > > +             value |=3D FIELD_PREP(XXVGMAC_TXPBL, dma_cfg->pbl);
-> > > +             wr_dma_ch_ind(ioaddr, MODE_TXEXTCFG, i, value);
-> > > +             xgmac4_tp2tc_map(ioaddr, i, dma_cfg->hdma_cfg->tpdma_tc=
-[i]);
-> > > +     }
-> > > +
-> > > +     for (i =3D 0; i < dma_cfg->hdma_cfg->rx_pdmas; i++) {
-> > > +             value =3D rd_dma_ch_ind(ioaddr, MODE_RXEXTCFG, i);
-> > > +             value &=3D ~(XXVGMAC_RXPBL | XXVGMAC_RPBLX8_MODE);
-> > > +             if (dma_cfg->pblx8)
-> > > +                     value |=3D XXVGMAC_RPBLX8_MODE;
-> > > +             value |=3D FIELD_PREP(XXVGMAC_RXPBL, dma_cfg->pbl);
-> > > +             wr_dma_ch_ind(ioaddr, MODE_RXEXTCFG, i, value);
-> > > +             xgmac4_rp2tc_map(ioaddr, i, dma_cfg->hdma_cfg->rpdma_tc=
-[i]);
-> >
-> > What if tx_pdmas doesn't match plat_stmmacenet_data::tx_queues_to_use
-> > and rx_pdmas doesn't match to plat_stmmacenet_data::rx_queues_to_use?
-> >
-> > If they don't then you'll get out of the initialized tpdma_tc/rpdma_tc
-> > fields and these channels will be pre-initialized with the zero TC. Is
-> > that what expected? I doubt so.
-> >
-> As mentioned in the previous response the remaining resources are unused
-> and no traffic is mapped to those resources.
->
-> > > +     }
-> > > +}
-> > > +
-> >
-> > > +void dw25gmac_dma_init_tx_chan(struct stmmac_priv *priv,
-> > > +                            void __iomem *ioaddr,
-> > > +                            struct stmmac_dma_cfg *dma_cfg,
-> > > +                            dma_addr_t dma_addr, u32 chan)
-> > > +{
-> > > +     u32 value;
-> > > +
-> >
-> > > +     value =3D readl(ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
-> > > +     value &=3D ~XXVGMAC_TVDMA2TCMP;
-> > > +     value |=3D FIELD_PREP(XXVGMAC_TVDMA2TCMP,
-> > > +                         dma_cfg->hdma_cfg->tvdma_tc[chan]);
-> > > +     writel(value, ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
-> >
-> > Please note this will have only first
-> > plat_stmmacenet_data::{tx_queues_to_use,rx_queues_to_use} VDMA
-> > channels initialized. Don't you have much more than just 4 channels?
-> >
-> Yes, there are 32 VDMA channels on this device. In our application the
-> additional channels are partitioned for use with SRIOV virtual functions.
-> Similar to PDMA comment above, the additional VDMAs are not enabled,
-> and left in default state.
-> My thinking is, when another 25gmac device comes along that requires a
-> different mapping we may need to add the ability to set the mapping in
-> glue driver.
-> We can support this by adding a check in dw25gmac_setup()
-> @@ -1708,8 +1708,10 @@ int dw25gmac_setup(struct stmmac_priv *priv)
->         mac->mii.clk_csr_shift =3D 19;
->         mac->mii.clk_csr_mask =3D GENMASK(21, 19);
->
-> -       /* Allocate and initialize hdma mapping */
-> -       return dw25gmac_hdma_cfg_init(priv);
-> +       /* Allocate and initialize hdma mapping, if not done by glue driv=
-er. */
-> +       if (!priv->plat->dma_cfg->hdma_cfg)
-> +               return dw25gmac_hdma_cfg_init(priv);
-> +       return 0;
->  }
->
-> > > +
-> > > +     writel(upper_32_bits(dma_addr),
-> > > +            ioaddr + XGMAC_DMA_CH_TxDESC_HADDR(chan));
-> > > +     writel(lower_32_bits(dma_addr),
-> > > +            ioaddr + XGMAC_DMA_CH_TxDESC_LADDR(chan));
-> > > +}
-> > > +
-> > > +void dw25gmac_dma_init_rx_chan(struct stmmac_priv *priv,
-> > > +                            void __iomem *ioaddr,
-> > > +                            struct stmmac_dma_cfg *dma_cfg,
-> > > +                            dma_addr_t dma_addr, u32 chan)
-> > > +{
-> > > +     u32 value;
-> > > +
-> >
-> > > +     value =3D readl(ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
-> > > +     value &=3D ~XXVGMAC_RVDMA2TCMP;
-> > > +     value |=3D FIELD_PREP(XXVGMAC_RVDMA2TCMP,
-> > > +                         dma_cfg->hdma_cfg->rvdma_tc[chan]);
-> > > +     writel(value, ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
-> >
-> > The same question.
-> >
-> > > +
-> > > +     writel(upper_32_bits(dma_addr),
-> > > +            ioaddr + XGMAC_DMA_CH_RxDESC_HADDR(chan));
-> > > +     writel(lower_32_bits(dma_addr),
-> > > +            ioaddr + XGMAC_DMA_CH_RxDESC_LADDR(chan));
-> > > +}
-> >
-> > These methods are called for each
-> > plat_stmmacenet_data::{tx_queues_to_use,rx_queues_to_use}
-> > DMA-channel/Queue. The static mapping means you'll have each
-> > PDMA/Queue assigned a static traffic class ID corresponding to the
-> > channel ID. Meanwhile the VDMA channels are supposed to be initialized
-> > with the TC ID corresponding to the matching PDMA ID.
-> >
-> > The TC ID in this case is passed as the DMA/Queue channel ID. Then the
-> > Tx/Rx DMA-channels init methods can be converted to:
-> >
-> > dw25gmac_dma_init_Xx_chan(chan)
-> > {
-> >         /* Map each chan-th VDMA to the single chan PDMA by assigning
-> >          * the static TC ID.
-> >          */
-> >         for (i =3D chan; i < Xx_vdmas; i +=3D (Xx_vdmas / Xx_queues_to_=
-use)) {
-> >                 /* Initialize VDMA channels */
-> >                 XXVGMAC_TVDMA2TCMP =3D chan;
-> >         }
-> >
-> >         /* Assign the static TC ID to the specified PDMA channel */
-> >         xgmac4_rp2tc_map(chan, chan)
-> > }
-> >
-> > , where X=3D{t,r}.
-> >
-> > Thus you can redistribute the loops implemented in dw25gmac_dma_init()
-> > to the respective Tx/Rx DMA-channel init methods.
-> >
-> > Am I missing something?
-> I think your visualization of HDMA may be going beyond the application
-> I understand.
-> We are allocating a VDMA for each of the TX/RX channels. The use of
-> additional VDMAs
-> depends on how the device is partitioned for virtualization.
-> In the non-SRIOV case the remaining VDMAs will remain unused.
-> Please let me know if I missed your question.
-> >
-> > -Serge()
-> >
-> > > [...]
+The Toradex SOMs cannot be used alone without a carrier board, so drop
+the usage of its compatible alone.
 
-When you get a chance, I would like to get your input on the approach we ne=
-ed
-to take to incrementally add dw25gmac support.
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+ Documentation/devicetree/bindings/arm/fsl.yaml | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-In the last conversation there were some open questions around the case of
-initializing unused VDMA channels and related combination scenarios.
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index b39a7e031177..5f0e8e1cd6fb 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -296,7 +296,6 @@ properties:
+               - technexion,imx6q-pico-pi      # TechNexion i.MX6Q Pico-Pi
+               - technologic,imx6q-ts4900
+               - technologic,imx6q-ts7970
+-              - toradex,apalis_imx6q      # Apalis iMX6 Modules
+               - udoo,imx6q-udoo           # Udoo i.MX6 Quad Board
+               - uniwest,imx6q-evi         # Uniwest Evi
+               - variscite,dt6customboard
+@@ -488,7 +487,6 @@ properties:
+               - technexion,imx6dl-pico-pi      # TechNexion i.MX6DL Pico-Pi
+               - technologic,imx6dl-ts4900
+               - technologic,imx6dl-ts7970
+-              - toradex,colibri_imx6dl      # Colibri iMX6 Modules
+               - udoo,imx6dl-udoo          # Udoo i.MX6 Dual-lite Board
+               - vdl,lanmcu                # Van der Laan LANMCU board
+               - wand,imx6dl-wandboard     # Wandboard i.MX6 Dual Lite Board
+@@ -718,9 +716,6 @@ properties:
+               - joz,jozacp                # JOZ Access Point
+               - kontron,sl-imx6ull        # Kontron SL i.MX6ULL SoM
+               - myir,imx6ull-mys-6ulx-eval # MYiR Tech iMX6ULL Evaluation Board
+-              - toradex,colibri-imx6ull      # Colibri iMX6ULL Modules
+-              - toradex,colibri-imx6ull-emmc # Colibri iMX6ULL 1GB (eMMC) Module
+-              - toradex,colibri-imx6ull-wifi # Colibri iMX6ULL Wi-Fi / BT Modules
+               - uni-t,uti260b             # UNI-T UTi260B Thermal Camera
+           - const: fsl,imx6ull
+ 
+@@ -879,8 +874,6 @@ properties:
+               - technexion,imx7d-pico-hobbit  # TechNexion i.MX7D Pico-Hobbit
+               - technexion,imx7d-pico-nymph   # TechNexion i.MX7D Pico-Nymph
+               - technexion,imx7d-pico-pi      # TechNexion i.MX7D Pico-Pi
+-              - toradex,colibri-imx7d         # Colibri iMX7D Module
+-              - toradex,colibri-imx7d-emmc    # Colibri iMX7D 1GB (eMMC) Module
+               - zii,imx7d-rmu2            # ZII RMU2 Board
+               - zii,imx7d-rpu2            # ZII RPU2 Board
+           - const: fsl,imx7d
+@@ -950,9 +943,6 @@ properties:
+               - innocomm,wb15-evk         # i.MX8MM Innocomm EVK board with WB15 SoM
+               - kontron,imx8mm-sl         # i.MX8MM Kontron SL (N801X) SOM
+               - kontron,imx8mm-osm-s      # i.MX8MM Kontron OSM-S (N802X) SOM
+-              - toradex,verdin-imx8mm     # Verdin iMX8M Mini Modules
+-              - toradex,verdin-imx8mm-nonwifi  # Verdin iMX8M Mini Modules without Wi-Fi / BT
+-              - toradex,verdin-imx8mm-wifi  # Verdin iMX8M Mini Wi-Fi / BT Modules
+               - prt,prt8mm                # i.MX8MM Protonic PRT8MM Board
+           - const: fsl,imx8mm
+ 
+@@ -1085,9 +1075,6 @@ properties:
+               - skov,imx8mp-skov-revb-hdmi # SKOV i.MX8MP climate control without panel
+               - skov,imx8mp-skov-revb-lt6 # SKOV i.MX8MP climate control with 7” panel
+               - skov,imx8mp-skov-revb-mi1010ait-1cp1 # SKOV i.MX8MP climate control with 10.1" panel
+-              - toradex,verdin-imx8mp     # Verdin iMX8M Plus Modules
+-              - toradex,verdin-imx8mp-nonwifi  # Verdin iMX8M Plus Modules without Wi-Fi / BT
+-              - toradex,verdin-imx8mp-wifi  # Verdin iMX8M Plus Wi-Fi / BT Modules
+           - const: fsl,imx8mp
+ 
+       - description: Avnet (MSC Branded) Boards with SM2S i.MX8M Plus Modules
+@@ -1223,8 +1210,6 @@ properties:
+         items:
+           - enum:
+               - fsl,imx8qm-mek           # i.MX8QM MEK Board
+-              - toradex,apalis-imx8      # Apalis iMX8 Modules
+-              - toradex,apalis-imx8-v1.1 # Apalis iMX8 V1.1 Modules
+           - const: fsl,imx8qm
+ 
+       - description: i.MX8QM Boards with Toradex Apalis iMX8 Modules
+@@ -1384,7 +1369,6 @@ properties:
+               - fsl,vf610-twr             # VF610 Tower Board
+               - lwn,bk4                   # Liebherr BK4 controller
+               - phytec,vf610-cosmic       # PHYTEC Cosmic/Cosmic+ Board
+-              - toradex,vf610-colibri_vf61 # Colibri VF61 Modules
+           - const: fsl,vf610
+ 
+       - description: Toradex Colibri VF61 Module on Colibri Evaluation Board
+-- 
+2.39.5
 
-The hdma mapping provides flexibility for virtualization. However, our
-SoC device cannot use all VDMAs with one PCI function. The VDMAs are
-partitioned for SRIOV use in the firmware. This SoC defaults to 8 functions
-with 4 VDMA channels each. The initial effort is to support one PCI physica=
-l
-function with 4 VDMA channels.
-Also, currently the stmmac driver has inferred one-to-one relation between
-netif channels and physical DMAs. It would be a complex change to support
-each VDMA as its own netif channel and mapping fewer physical DMAs.
-Hence, for initial submission one-to-one mapping is assumed.
-
-As you mentioned, a static one-to-one mapping of VDMA-TC-PDMA doesn't
-require the additional complexity of managing these mappings as proposed
-in the current patch series with *struct stmmac_hdma_cfg*.
-
-To introduce dw25gmac incrementally, I am thinking of two approaches,
-  1. Take the current patch series forward using *struct stmmac_hdma_cfg*,
-     keeping the unused VDMAs in default state. We need to fix the
-initialization
-     loops to only initialize the VDMA and PDMAs being used.
-  2. Simplify the initial patch by removing *struct hdma_cfg* from the patc=
-h
-     series and still use static VDMA-TC-PDMA mapping.
-Please share your thoughts.
-If it helps, I can send patch series with option 2 above after
-addressing all other
-review comments.
-
-Appreciate your guidance!
--Jitendra
 
