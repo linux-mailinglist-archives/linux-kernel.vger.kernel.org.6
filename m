@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-350035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E5898FEF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:40:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798F998FF05
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5066282993
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:40:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20EB01F23339
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA98A13D619;
-	Fri,  4 Oct 2024 08:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA68C1428F1;
+	Fri,  4 Oct 2024 08:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="YgBYMD1f"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHQ1QOFf"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466211802E;
-	Fri,  4 Oct 2024 08:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AAC179BB;
+	Fri,  4 Oct 2024 08:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728031225; cv=none; b=M4qXWFr086gFJeQrHrAKKq3MMI8/J5u3azj7Zgkqunag3MhsS14HrRpv4yu0PBM/HcU81x//sPYauwn+3AmrLlZ4tf4f4OUvr3sbP/2InsP7KPLtbe79zqWz7Pfx3L1Jhzej0tceNmWyFmeyfCR5EAw3AjkVh7902O7qIhB4er4=
+	t=1728031644; cv=none; b=JT5CwJYMUJvcBBTBNFb/A0vywoCY3/b8oAGqZk9dYfqJnfyFg3R8N6Zjy7HDazJxkQIGs9Bg2kZ3EkuoYgbm+knmK3E3YG1qrABNHfENAT/XvLApcSH5EhWMo2HkeNBqZUXHQ5DGtu3nS+uEhHxPqpsh3JrbB/TLnEq2cJe9XFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728031225; c=relaxed/simple;
-	bh=905AVJ1+V+02nok2d5huU149NOyTw9kkB582lLm4Kgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=geSeiaFGvH6WFnAguu+h5zs7L0dvm9KqAU1h8zfJMo4HNxAL62CuBGk0viscmyJbT3IW6uj+D8Cc+dftmA9qcK9zh+uJ7ltEdu7JamFSRUV3oZoKCkPMRlhzklVO2i1q/kgkJjvsJI4zXvXO/LJUvhlem8lFMDX9dUo3ewmRnZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=YgBYMD1f; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 481a7984822c11ef8b96093e013ec31c-20241004
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=sKwcQTdi1z6XfJ8YlR6rEfMwt8LTLhlGfQB2vS/hKN8=;
-	b=YgBYMD1fRUnkI/89E+ASjzC8doSN3zYbu7/pziuMZfjYLrCS9QbqmK8G6vUW6BF7eTvhw+rgX0up3+ZnyQS++yJ+EV2jTsoQBwIj2z+32GAq+HJ4tcw6ewIpsitn6H/HIdHqqoVKwTh1VwLYUs4kfNYoTrM94oCxZFbKmWUutpc=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:5eb5d169-94e7-4a79-8332-7e0a6f97473f,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:9b1cbd64-444a-4b47-a99a-591ade3b04b2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
-X-UUID: 481a7984822c11ef8b96093e013ec31c-20241004
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 953801011; Fri, 04 Oct 2024 16:40:17 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 4 Oct 2024 16:40:13 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Fri, 4 Oct 2024 16:40:10 +0800
-Message-ID: <b07db9a3-62c1-f0e6-33db-98999a517c3f@mediatek.com>
-Date: Fri, 4 Oct 2024 16:40:10 +0800
+	s=arc-20240116; t=1728031644; c=relaxed/simple;
+	bh=S/mtysJ+SnAvkGVSn7jpeG6A4WkS4GStEEJvAXH7Us4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qzzxOcEYCraa6VX3nqjjWAg5hNDT5Dhj1gWh/kI87iPDNT8IfpGunrZt5UGbNJeQWMtQszl15A5JCEFnLjR+dBjn67ct20J+qYEe+kcg2tXzvn7AOD3udHxWjvfrjBkvXOe8XVoIRjIjjnC9fmb7DnUQeX26jcjvFhRiYhHI3dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHQ1QOFf; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2facf48157dso20769891fa.2;
+        Fri, 04 Oct 2024 01:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728031641; x=1728636441; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q/gMAqx3YAfBdraUdRz64TKXx5/XCsIKjgPgTol4xoE=;
+        b=RHQ1QOFfcktGq7rA0tVL36qFeaLeie0pZjqMcxI3nychLGpiXlXOt3jxqCh7A4QGB6
+         5Onzpef7XCmD6tQGyp3GoqY4fC15y41v2bUhu8idN2jWfSkfSc52eHXeYnzXMVv0X4rS
+         /lcupZsykqoIvxhbmS2nGYKT7ewX5Rd2v8IBAfvozbmlO70HMIWZsI5XOUp3L9mJFrO1
+         2DXZrSTfa/xdJKnOuZ+/6+8hUZ5U5bP91nVdTa0vGQwqKidn8BfPDr0te3YYAdiHr4Pl
+         MUEew9yEfGBeAiscxzoEkW3aMvbN7LpDOE9bmInK2LNiE7WRrA++y+LD9154sktfz230
+         UjQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728031641; x=1728636441;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q/gMAqx3YAfBdraUdRz64TKXx5/XCsIKjgPgTol4xoE=;
+        b=GAYOT2MQfNgUmivT9lxIDAUlp0JPn8xwCuWmnSVN9ed+V2zNZl6xsjSaJ/t9t4BIh5
+         UEibLx9xb0mei7qXqiz6N4aDItBSEPqPT5bbNd0bzaxqEnaA7RvN5oqGfGipea0cU44p
+         liulseYcX9GuXGd/m13ioNpanS1duZh6YDk8lzHyegISQGUXSi8fF8xvPTvrSX3zrzcH
+         gmr/TA0RDg9W+xD5eP6Hf7Oicpoc+0ZqtE5OpGlMVGJJxUBBvBwJ6JUjRe57VqDwJ+3+
+         D72+primxnOgSg5DgrdnH+RcAEj1jdl8yWlI8E3NM7jErjLNlfH4lGjd0FCT9oyrGrAF
+         nVmg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3AXRTuMjqf81PRoFyDG51/zRj2I9eJxwRV+/gom0BMQuiebqTvVdVymrXiY7SGGEn0t2mAtCkPYRb0XM=@vger.kernel.org, AJvYcCX7U4OBe9vgJY0Ok+insJ3UjTluEzrHKHinzHpEX5W74iOKKEkl7AUjSuMh41FFxRMvGXZHTT/j@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEN+u/dF5X59i56CoJh1lKziMkftqLVhk5DyTKuMOQuW6q+lFV
+	r1bYMMg7XSg1KUd3zHLA6EG0eSARdofdvhjcjMQvwi04Jd/e+6x6
+X-Google-Smtp-Source: AGHT+IEQ78jEiDdrT9fKfs+ZsduDzr4bWmCtUq8cpX+7tpOQHuNmFPY2rU9EorfvSH0VGm2CgI6iLQ==
+X-Received: by 2002:a2e:241a:0:b0:2fa:dd6a:924a with SMTP id 38308e7fff4ca-2faf3c1c9dbmr7996591fa.24.1728031639524;
+        Fri, 04 Oct 2024 01:47:19 -0700 (PDT)
+Received: from localhost (dslb-002-200-173-220.002.200.pools.vodafone-ip.de. [2.200.173.220])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8ca3fce32sm1606973a12.57.2024.10.04.01.47.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 01:47:19 -0700 (PDT)
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Subject: [PATCH 0/5] net: dsa: b53: assorted jumbo frame fixes
+Date: Fri, 04 Oct 2024 10:47:16 +0200
+Message-Id: <20241004-b53_jumbo_fixes-v1-0-ce1e54aa7b3c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] dt-bindings: power: mediatek: Refine multiple level power
- domain nodes
-Content-Language: en-US
-To: Fei Shao <fshao@chromium.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
-	<amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, Pablo Sun
-	<pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen Chu
-	<sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, MediaTek
- Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Chen-Yu Tsai <wenst@chromium.org>
-References: <20241004074938.6571-1-macpaul.lin@mediatek.com>
- <CAC=S1nhW7ervk-b31mxtx_c-KUeLuC0P_Yr=9jtumUXAm6AZ_A@mail.gmail.com>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <CAC=S1nhW7ervk-b31mxtx_c-KUeLuC0P_Yr=9jtumUXAm6AZ_A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJSr/2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwNj3SRT4/is0tyk/Pi0zIrUYl1L07Q0M0uDJMMUy1QloK6ColSwBFB
+ TdGxtLQD6frDUYQAAAA==
+X-Change-ID: 20241003-b53_jumbo_fixes-95ff690b1d9e
+To: Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Murali Krishna Policharla <murali.policharla@broadcom.com>, 
+ Russell King <linux@armlinux.org.uk>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, 
+ Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
+While investigating the capabilities of BCM63XX's integrated switch and
+its DMA engine, I noticed a few issues in b53's jumbo frame code.
 
+Mostly a confusion of MTU vs frame length, but also a few missing cases
+for 100M switches.
 
-On 10/4/24 16:24, Fei Shao wrote:
-> 	
-> 
-> External email : Please do not click links or open attachments until you 
-> have verified the sender or the content.
-> 
-> On Fri, Oct 4, 2024 at 3:53 PM Macpaul Lin <macpaul.lin@mediatek.com> wrote:
->>
->> Extract duplicated properties and support more levels of power
->> domain nodes.
->>
->> This change fix following error when do dtbs_check,
->>   mt8390-genio-700-evk.dtb:
->>     power-controller: power-domain@15:power-domain@16:power-domain@29:power-domain@30:
->>     Unevaluated properties are not allowed ('power-domain@31', 'power-domain@32'
->>     were unexpected)
->>
->> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
->> ---
->>  .../devicetree/bindings/power/mediatek,power-controller.yaml  | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml b/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml
->> index 8985e2df8a56..a7df4041b745 100644
->> --- a/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml
->> +++ b/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml
->> @@ -54,6 +54,10 @@ patternProperties:
->>              patternProperties:
->>                "^power-domain@[0-9a-f]+$":
->>                  $ref: "#/$defs/power-domain-node"
->> +                patternProperties:
->> +                  "^power-domain@[0-9a-f]+$":
->> +                    $ref: "#/$defs/power-domain-node"
->> +                    unevaluatedProperties: false
->>                  unevaluatedProperties: false
->>              unevaluatedProperties: false
->>          unevaluatedProperties: false
-> 
-> For reference, I sent the exact same patch and it's been acked:
-> https://lore.kernel.org/all/20241001113052.3124869-2-fshao@chromium.org/
-> 
-> Regards,
-> Fei
-> 
+Tested on BCM63XX and BCM53115 with intel 1G and realtek 1G NICs,
+which support MTUs of 9000 or slightly above, but significantly less
+than the 9716/9720 supported by BCM53115, so I couldn't verify the
+actual maximum frame length.
 
-Thanks for the reminder.
-This patch could be dropped by duplicate works.
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+---
+Jonas Gorski (5):
+      net: dsa: b53: fix jumbo frame mtu check
+      net: dsa: b53: fix max MTU for 1g switches
+      net: dsa: b53: fix max MTU for BCM5325/BCM5365
+      net: dsa: b53: allow lower MTUs on BCM5325/5365
+      net: dsa: b53: fix jumbo frames on 10/100 ports
 
-Regards,
-Macpaul Lin
+ drivers/net/dsa/b53/b53_common.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+---
+base-commit: 8beee4d8dee76b67c75dc91fd8185d91e845c160
+change-id: 20241003-b53_jumbo_fixes-95ff690b1d9e
+
+Best regards,
+-- 
+Jonas Gorski <jonas.gorski@gmail.com>
+
 
