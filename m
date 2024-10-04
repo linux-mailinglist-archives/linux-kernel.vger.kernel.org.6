@@ -1,204 +1,236 @@
-Return-Path: <linux-kernel+bounces-351308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF57990F89
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:02:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AD5990F91
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70A5E1C20B95
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:02:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 114C41C22BA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4162A1FAC4D;
-	Fri,  4 Oct 2024 19:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6C91FB3E7;
+	Fri,  4 Oct 2024 19:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="xqDKFSO5"
-Received: from GBR01-LO4-obe.outbound.protection.outlook.com (mail-lo4gbr01on2120.outbound.protection.outlook.com [40.107.122.120])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYfU5nCF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02911DD869;
-	Fri,  4 Oct 2024 19:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.122.120
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728068926; cv=fail; b=NxNlyN4ta6uMM27niOZRVw3T6JR5tjdyMRO3z9Hu2msKyQp8pQGNX8rIN1EihUjWd4a6HN1v2ired0zjujjNMNi9zfeRruwjmgFxq01ltF24HjzACddDvbK2TfDAbX6MuX46tA5whV5m3OKldxBEiFxqfC8r3m8xBdUk4NlK6AY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728068926; c=relaxed/simple;
-	bh=LyF7+koiSDxi+HBadWUAthh0ymCi1q5dI3UNF/QCAls=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NcdoUVU9LmpDZ++awDhjda9o3VqSydnorWMaVOxnlmletI9Y2Zbe28uJhy236+aPgChyuvmukBmtfuQgdIPPzHeFlB6wIHXGhR2chrDEzQGxCoCOE1OUXLx1hDBuGQv3uumGMTPZL0BPQJMTiMrK/TXH7Z3YufUFWSLVrnbmvkA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=xqDKFSO5; arc=fail smtp.client-ip=40.107.122.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Uze4YMxGX5b6k1EH7wKWSGzYAlCJA43MYtyet6ebZHtU3nCaYQefs3rDN5KBlj1yTU8CVSalkHyw/L9i+/cDXW09RoBy9SHH3WK8GlPX+PDXRVRepZdCeuck35xCZRVKlScDQPefJAXt1VyVMFJQRD/BG/U+vVU+G0gSBdRAkuHMlpZdfa1c6CYF+nCy3VGFzt0pULS1WCGQOgYk4CaF/DB4mVXjbl/Y5diHgHGts4wJG0+cOquJUfvg2muuV5V7DPcXYRqalsajjymshVSVZ60vCTnIdOP8jd/1E4WPcBP6bfJpk5U/KeGlMkpvWtsy46LBEK8apYdpiCWLxBqLfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B9TXnd+6n8rXzDan47aHjOrNXX13M1Z3Q3Wj2ACEEWk=;
- b=XAZ8ah6hhuw93ncUDDxwqnf16ZYHXXrithcp5LOw9EF3O+T708zEtNTXDWGcsjdV8V4s68BpvQEL3z/YFRoPXFgxoZ6mENJu0RJbcg/9TttkylueS7rHA4RjdQFa9b1V6ZC8KlL1sgMhgyRe24wFiPlPIX5L4DTVl5h0JiVH6CUcTxVk4HNtZjyfK1P85wwlNVk3uXkms+vJNddOLu3EPrG1HolQsmU+6lu+4IhQ0slLTOXZlc8W5BrwamcsscoLZ2ruPGU6Up/Lo47AVh0kOJ8VNYlg5I58UkynQx542ewOgVTVmCLW7yhj6gZDZl/QJC0+YEGGsYaa7xV0zKSbVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B9TXnd+6n8rXzDan47aHjOrNXX13M1Z3Q3Wj2ACEEWk=;
- b=xqDKFSO5eS98J0AyxTWQ+xx/Gxkh1YUPYF6OUgQ5YQXIzv6GHd417PKoKuFUHWYf0hORfAJ+ph1N10Yjko3DB+KAuZmxene66sxpaAQwHI885XOknFTSTqUXXw3hZTq9lIYNrlETQ+wA7jTMIjWcQkAL7ik6T4aOpzxJtmFs3Mg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by CWLP265MB5866.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1a3::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.19; Fri, 4 Oct
- 2024 19:08:41 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8026.017; Fri, 4 Oct 2024
- 19:08:41 +0000
-Date: Fri, 4 Oct 2024 20:08:36 +0100
-From: Gary Guo <gary@garyguo.net>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
- Gross" <tmgross@umich.edu>, "Martin Rodriguez Reboredo"
- <yakoyoku@gmail.com>, "Will Deacon" <will@kernel.org>, "Peter Zijlstra"
- <peterz@infradead.org>, "Mark Rutland" <mark.rutland@arm.com>, "Dirk Behme"
- <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 1/3] rust: implement `kernel::sync::Refcount`
-Message-ID: <20241004200836.137ce41f.gary@garyguo.net>
-In-Reply-To: <87cykfpuqd.fsf@kernel.org>
-References: <20241004155247.2210469-1-gary@garyguo.net>
-	<pKZ-hxxNoouLWnfXzFGWvcgGgfjpEixPzJ--cZeEufWI9_MoG_mpToSPflheyUhYmZ4qTKLVypVLRuvX7rfyxg==@protonmail.internalid>
-	<20241004155247.2210469-2-gary@garyguo.net>
-	<87cykfpuqd.fsf@kernel.org>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0190.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a::34) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87471DDC02;
+	Fri,  4 Oct 2024 19:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728069075; cv=none; b=Td1tO3vdfWUccAsCTmcT/S2izMHAP/UrkuqznWewkh/iXnA3UB0TrZtW198U6KRHiB9AmrP49GTwXunnA9pUWEUAxzT/XEe2tCpMcHprUdDPOD24TqpjX60mQLfAEM1SV/+JcVaSnN40Wqd6+Wtnvt+CeI3a4pglWMnuAvKtPRA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728069075; c=relaxed/simple;
+	bh=YYYFR4xM6pq64tyhxGwfZ3sPFhLIXiPYgsZ0dStL10M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=drByXn6E+WvRJYgCQxuk7XS/szLTW1Y7Q646CX38oIcjFp28X5ZJYCSieDG5BrdQ05ZLpHl2fv8wtBRjfWKRYS8CrcjRHbdEv3hJA1utieY6gMqwSb4/TjASoMT8CaaNPaESw6Oo2NE0CTMylVklkgQuWsKIx6n+/6MoiWhRHhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYfU5nCF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 109CEC4CEC6;
+	Fri,  4 Oct 2024 19:11:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728069074;
+	bh=YYYFR4xM6pq64tyhxGwfZ3sPFhLIXiPYgsZ0dStL10M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LYfU5nCF1IhcG9r/BLUlZ83fopNKYX/W4gNeO7INGLlb3hG5q7ZfL/MItsNOF7lvD
+	 Z0TfCzp7GYj74VR2pfNgN7Q//fzAy3lRSXTLX/YNyIB2c4P24z0ZJizhfSxu/y8/Bn
+	 xtlL5gXdG/ygxQ8t7ZTAswkYupUyG+14LV5wjlxC3QTC+B4Tkat8cU/9fQIjRu407n
+	 Y2dIB/ITsG6b2oH0nwxPpgrhcjKCN2rWwK6UkDUe5m6pkwrygKAZJO1vGsl8PPR86D
+	 dHzMujwLCbQYn7S/FYdKe9qAowdS8s5p4I9nlpPVoY+oHL3F3dHvy5JJATMDW8qHln
+	 fk6pRwV/iNalA==
+Date: Fri, 4 Oct 2024 20:11:04 +0100
+From: Simon Horman <horms@kernel.org>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	iommu@lists.linux.dev, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	virtualization@lists.linux.dev, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	catalin.marinas@arm.com, will@kernel.org, luto@kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
+	daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, bhelgaas@google.com, arnd@arndb.de,
+	sgarzare@redhat.com, jinankjain@linux.microsoft.com,
+	muminulrussell@gmail.com, skinsburskii@linux.microsoft.com,
+	mukeshrathor@microsoft.com
+Subject: Re: [PATCH 5/5] hyperv: Use hvhdk.h instead of hyperv-tlfs.h in
+ Hyper-V code
+Message-ID: <20241004191104.GI1310185@kernel.org>
+References: <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1727985064-18362-6-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWLP265MB5866:EE_
-X-MS-Office365-Filtering-Correlation-Id: 013f2599-c78c-411a-f145-08dce4a7f5f4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5ZC2g5q0kExnVL1T790OvHgv2ouqzLcRGHEQPfbzCu3ibvYgDuZVMTB0DpdV?=
- =?us-ascii?Q?TYEHEMay4eHn9H3A4wVWS7ql6yyEkHKSuw/6kvHbA1S31PnxIl4NrPUvWJaU?=
- =?us-ascii?Q?ZELCOsuu5zc4778/97fSRik00lFRMSdryyk8EzGOYND9b5PBuosaI6jJsjzh?=
- =?us-ascii?Q?URSrbymA8NOmBa1tYo18pCurevMrq7If+vNV8FOkTfRBFrcmGssioqlUkZ54?=
- =?us-ascii?Q?7JdYvbbzc8FWofjd59FRc6XWnmi/47nGs47TMEJKFp+GsY7G761eLJgSeUS2?=
- =?us-ascii?Q?vAhD1T6gU6RMBgaGewZ4tRIm4eFEZcN26xyz7zZyvcwn3qmEaLnK4FxEN7Fb?=
- =?us-ascii?Q?u+7Whu9Cn/sqZA0z8AklDxs1Fg48vvQzGw+t7jyXf0gUutIIP5cvzw5iexw9?=
- =?us-ascii?Q?4N36bdUHS/GccWhDm/kzaMs+MYQRabPSuSXXm6az1b2AWuwSpmitPssT2iL/?=
- =?us-ascii?Q?HvnrYiyiix4Xu7NsQtvwmq78A2dMsm2DS+AK43HyvJsh8EHZGeiC0ylaJ7fS?=
- =?us-ascii?Q?ogGxgRiYwemxkecSIrkQslvsrsbC9XuRKZEnhg55Et+I7nsg0vhqOU4arPvE?=
- =?us-ascii?Q?sG7uEw/42zX6PGVpTH665oyBRnGG5g6AoUpM0WjqEKoMb8Q/3wOV1PQwcTD1?=
- =?us-ascii?Q?IbD62joIB3jDnQmWrDvGdX+IfMrpCAEzhSclv/FIb20PnwAP43XvT4Hq5bGc?=
- =?us-ascii?Q?yYuesO/9vypYoGWRiQ7KmfP8twieD8+SAYIt6UQ2gUdJwaIJ/UHuUIbNStaT?=
- =?us-ascii?Q?F5NR6S9HPq4e2XEpxDCxupgVf1xqjktqx0rOQn5n/LEXVoXIm7YL1iJQ1REM?=
- =?us-ascii?Q?3O2fsEK63dkawhhAsIgOlxJaVnZsPKXRFwli4vajWBOhNffaRxL0ogm4OfBi?=
- =?us-ascii?Q?mDPXxz3YFD3T+V50MzxHR1mC3S0uEo6qWEnheNec6ZxEVTSPk44NE9Wo9fvK?=
- =?us-ascii?Q?JN/St7ngxtfT2KyMiU09boMGmjDnvvym34nWFpGBNIP4HShzlz2LgibL2LO0?=
- =?us-ascii?Q?oHkPLJl/LZyzTIPPR4Sd5b1uvDxuBo1Wl2yQMD19Xm6ukVSiiD3QRUy9CjXh?=
- =?us-ascii?Q?Ffymjl3QormrMpnLRiLE88ie2avSe7V5LOiZFycz6FgIbg+Qn9vlLVyuSCRZ?=
- =?us-ascii?Q?RdjyHtYsbs+WJNX+MeOorOLi+TzsfI2HywOX+fkcejSsW+4uz0R8B8XuXPbC?=
- =?us-ascii?Q?iqDW57ma3JaqkR5pXp3SRzSIXOfZeOEP42XXj8oLpJVg+BTOBTkabVv4AsTb?=
- =?us-ascii?Q?RiG82e8sShbP1hmEHl2X1XHkoVvE8w23n9hQd8wLWA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vxYSrYTVHTdmJxhWy8c9qkPlsL4kAFozjdjmTDwn8HWRFDpDvp6ETq4UUsxA?=
- =?us-ascii?Q?/JoJqhMs6JqKmJYvveN2szHs3AS2Bz4LVMdCik13+TMkICwfV6MKzpWBzI7F?=
- =?us-ascii?Q?XnI+eE+s6YurNRHgnEQy6WVL5Io6Q4+S2qJ1vHtp+8ixP7N8MDPhxvP6UJDx?=
- =?us-ascii?Q?ZLLGA5uMqJKF68PiWcp6a5jsqf1/FPp4rQgVxE89lakh5Ot1zsJbnxUzTiJF?=
- =?us-ascii?Q?a8OlpESSfJ8XDfEQJ8XQtkvYdbvV+gmxcwIWSxlscZejO7D6kYim/37bFXpH?=
- =?us-ascii?Q?AOhfNq9pKdHBRPTbWGn3DpV/OTQAzZg9nPPR5K0bSv/OjcFrUwCipS9RDBDy?=
- =?us-ascii?Q?2OTlphoQf9a2DbWt4ESBwKwi5dMJMrpw8Hg6a0zGVhIisiUmxNYP9xYV2kN3?=
- =?us-ascii?Q?4pG03gbvDdShXE2wzzcNgTFSMyZXC5ZcQw4Bj2Oy4itKLoKeLYJkyzePRPB2?=
- =?us-ascii?Q?nq8a1eTnCqjKmYfuHWcZ7oUzBejhoO17wU9CT3YGw2S7acrV7K+d+CvyFPK7?=
- =?us-ascii?Q?eCZAw4etZmAbr5qUDbISfxsIjHyTfU6NdluG9HTIsnYTNU3yytNWQkzBYMJ2?=
- =?us-ascii?Q?G/ZfgXnRCiQBcnUfnW1Wo1Sm6kdY/ZvYC2n7WH5j63wxkOfHMeraeXeJJHC4?=
- =?us-ascii?Q?mEaQ+MvP0fpY2rWeu6M6b+y1dzd2Ogs7M26CfAUzY9X4QnPihgG+S0RWs0l0?=
- =?us-ascii?Q?fRRBbi5JJYxB/UzxGjjqgGreiRa5EWuL48t6Z1HiMRi6OGl580/i2Wx6DawN?=
- =?us-ascii?Q?ZvmK58NbZSc2yXEALLQdgWyQU/DFzPJlYr3NXzaCFbDP5TOxAqN9kGtdwrOY?=
- =?us-ascii?Q?EOl8JN2q20v2Nn6lCil9As9tBwxCYMWBE52A1aVfG6nIiHeOrgaWjrNm3Ebt?=
- =?us-ascii?Q?XtRWfO92L5v0z14fUn21Nw2if0QOWKKPMXhSZtPbvqmu36tzjzR3La6iCkKg?=
- =?us-ascii?Q?L/sT7ibR6uDlBpAlzbXftnv8ACr6Ybf6Hjw1tTG8nAcbYEAybPlma1Q6N91+?=
- =?us-ascii?Q?65WiNiprcYhkN68vjqCf1DtUIn0Ndj4/S+i5XBuSdsW/dubjhqANoCl5w81E?=
- =?us-ascii?Q?8q0A4mtop5TN9k42J97tfEC2i/bCDkglaNihp6zd7IGP7SsikN2eqQogc4o8?=
- =?us-ascii?Q?6F3PJpFqnbooh+kinCwDdg6i6za9JwrvClPNvf0GPa2o1LGnmrTcZJiossVj?=
- =?us-ascii?Q?BSfnE9VsI+ZckxuRQ4WfcrQAOlMjqtt6SNWTBCoWvRCKj4Y4C6KgcSdV3hgp?=
- =?us-ascii?Q?0VBFq8LUdoK4pxFBNLZbqrPXIXS8ig5hGtMZykc2zw6tGa72V6T2f+EP55oR?=
- =?us-ascii?Q?6kW5OSVh0n4AwWscgwJWbLbYvkz7lpW/xCM51y2SbK4y2yCPlFYCP3KSerrt?=
- =?us-ascii?Q?yMN9DETeIWXTNq6MeDwyIRxwLnjRjIV0tqeTCbOSBaH/KbX/W0BwUMpPcHAG?=
- =?us-ascii?Q?TXtGztVjE36vA93b/NHQtjWNX6bQXfKKSFQiXk3iXju026eb4xRlPEth7b/w?=
- =?us-ascii?Q?tW1+T0gZ89NGe/QbphaCjL/BgnJ1cqSutZ8nBImmgTHs0A8SQ/raVD77Q20n?=
- =?us-ascii?Q?ra+dWWb8pRK6xyS+K89qTBN2MDviXlZbC0mWhbzsa2HGvPnhsaq2WKKFigcs?=
- =?us-ascii?Q?8Q=3D=3D?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 013f2599-c78c-411a-f145-08dce4a7f5f4
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 19:08:41.8242
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zIPOxU95Yeli2mEpJZjAR/O71Idyr9pluEAfMorwj1CtPA66D+t8tVBUAEipXLOGylIvizwPOqGf/hmVdmXcHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB5866
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1727985064-18362-6-git-send-email-nunodasneves@linux.microsoft.com>
 
-On Fri, 04 Oct 2024 20:51:22 +0200
-Andreas Hindborg <a.hindborg@kernel.org> wrote:
+On Thu, Oct 03, 2024 at 12:51:04PM -0700, Nuno Das Neves wrote:
+> To move toward importing headers from Hyper-V directly, switch to
+> using hvhdk.h in all Hyper-V code. KVM code that uses Hyper-V
+> definitions from hyperv-tlfs.h remains untouched.
+> 
+> Add HYPERV_NONTLFS_HEADERS everywhere mshyperv.h, asm/svm.h,
+> clocksource/hyperv_timer.h is included in Hyper-V code.
+> 
+> Replace hyperv-tlfs.h with hvhdk.h directly in linux/hyperv.h, and
+> define HYPERV_NONTLFS_HEADERS there, since it is only used in
+> Hyper-V device code.
+> 
+> Update a couple of definitions to updated names found in the new
+> headers: HV_EXT_MEM_HEAT_HINT, HV_SUBNODE_TYPE_ANY.
+> 
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
-> Hi Gary,
-> 
-> "Gary Guo" <gary@garyguo.net> writes:
-> 
-> [...]
-> 
-> > diff --git a/rust/helpers/refcount.c b/rust/helpers/refcount.c
-> > index f47afc148ec3..39649443426b 100644
-> > --- a/rust/helpers/refcount.c
-> > +++ b/rust/helpers/refcount.c
-> > @@ -8,11 +8,26 @@ refcount_t rust_helper_REFCOUNT_INIT(int n)
-> >  	return (refcount_t)REFCOUNT_INIT(n);
-> >  }
-> >
-> > +unsigned int rust_helper_refcount_read(refcount_t *r)
-> > +{
-> > +	return refcount_read(r);
-> > +}  
-> 
-> +EXPORT_SYMBOL_GPL(rust_helper_refcount_read);
-> 
-> > +
-> > +void rust_helper_refcount_set(refcount_t *r, int n)
-> > +{
-> > +	refcount_set(r, n);
-> > +}  
-> 
-> +EXPORT_SYMBOL_GPL(rust_helper_refcount_set);
-> 
-> BR Andreas
-> 
+...
 
-Helper symbol export is automatic after
-e26fa546042a (rust: kbuild: auto generate helper exports)
+> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
+> index b1a4de4eee29..62b2a270ae65 100644
+> --- a/arch/arm64/hyperv/mshyperv.c
+> +++ b/arch/arm64/hyperv/mshyperv.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/version.h>
+>  #include <linux/cpuhotplug.h>
+> +#define HYPERV_NONTLFS_HEADERS
+>  #include <asm/mshyperv.h>
+>  
+>  static bool hyperv_initialized;
 
-Best,
-Gary
+Hi,
+
+With this change in place I see allmodconfig x86_64 builds reporting that
+HV_REGISTER_FEATURES is undeclared.
+
+arch/arm64/hyperv/mshyperv.c: In function 'hyperv_init':
+arch/arm64/hyperv/mshyperv.c:53:26: error: 'HV_REGISTER_FEATURES' undeclared (first use in this function); did you mean 'HV_REGISTER_FEATURES_INFO'?
+   53 |         hv_get_vpreg_128(HV_REGISTER_FEATURES, &result);
+      |                          ^~~~~~~~~~~~~~~~~~~~
+      |                          HV_REGISTER_FEATURES_INFO
+arch/arm64/hyperv/mshyperv.c:53:26: note: each undeclared identifier is reported only once for each function it appears in
+arch/arm64/hyperv/mshyperv.c:58:26: error: 'HV_REGISTER_ENLIGHTENMENTS' undeclared (first use in this function); did you mean 'HV_ACCESS_REENLIGHTENMENT'?
+   58 |         hv_get_vpreg_128(HV_REGISTER_ENLIGHTENMENTS, &result);
+      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                          HV_ACCESS_REENLIGHTENMENT
+
+> diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
+> index 6d83ceb7f1ba..5f4053c49658 100644
+> --- a/arch/x86/entry/vdso/vma.c
+> +++ b/arch/x86/entry/vdso/vma.c
+> @@ -25,6 +25,7 @@
+>  #include <asm/page.h>
+>  #include <asm/desc.h>
+>  #include <asm/cpufeature.h>
+> +#define HYPERV_NONTLFS_HEADERS
+>  #include <clocksource/hyperv_timer.h>
+>  
+>  #undef _ASM_X86_VVAR_H
+> diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+> index f022d5f64fb6..4fe3b3b13256 100644
+> --- a/arch/x86/hyperv/hv_apic.c
+> +++ b/arch/x86/hyperv/hv_apic.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/cpuhotplug.h>
+>  #include <asm/hypervisor.h>
+> +#define HYPERV_NONTLFS_HEADERS
+>  #include <asm/mshyperv.h>
+>  #include <asm/apic.h>
+>  
+> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+> index fc3c3d76c181..680c4abc456e 100644
+> --- a/arch/x86/hyperv/hv_init.c
+> +++ b/arch/x86/hyperv/hv_init.c
+> @@ -19,6 +19,7 @@
+>  #include <asm/sev.h>
+>  #include <asm/ibt.h>
+>  #include <asm/hypervisor.h>
+> +#define HYPERV_NONTLFS_HEADERS
+>  #include <asm/mshyperv.h>
+>  #include <asm/idtentry.h>
+>  #include <asm/set_memory.h>
+
+And here too, with x86_64 allmodconfig.
+
+In file included from ./include/linux/string.h:390,
+                 from ./include/linux/efi.h:16,
+                 from arch/x86/hyperv/hv_init.c:12:
+arch/x86/hyperv/hv_init.c: In function 'get_vtl':
+./include/linux/overflow.h:372:23: error: invalid application of 'sizeof' to incomplete type 'struct hv_get_vp_registers_input'
+  372 |                 sizeof(*(p)) + flex_array_size(p, member, count),       \
+      |                       ^
+./include/linux/fortify-string.h:502:42: note: in definition of macro '__fortify_memset_chk'
+  502 |         size_t __fortify_size = (size_t)(size);                         \
+      |                                          ^~~~
+arch/x86/hyperv/hv_init.c:427:9: note: in expansion of macro 'memset'
+  427 |         memset(input, 0, struct_size(input, element, 1));
+      |         ^~~~~~
+arch/x86/hyperv/hv_init.c:427:26: note: in expansion of macro 'struct_size'
+  427 |         memset(input, 0, struct_size(input, element, 1));
+      |                          ^~~~~~~~~~~
+
+[errors trimmed for the sake of brevity]
+
+...
+
+> diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
+> index 04775346369c..a8bb6ad7efb6 100644
+> --- a/arch/x86/hyperv/hv_vtl.c
+> +++ b/arch/x86/hyperv/hv_vtl.c
+> @@ -10,6 +10,7 @@
+>  #include <asm/boot.h>
+>  #include <asm/desc.h>
+>  #include <asm/i8259.h>
+> +#define HYPERV_NONTLFS_HEADERS
+>  #include <asm/mshyperv.h>
+>  #include <asm/realmode.h>
+>  #include <../kernel/smpboot.h>
+
+And, likewise, with this patch applied I see a number of errors when
+compiling this file. This is with allmodconfig on x86_64 with:
+
+Modified: CONFIG_HYPERV=y (instead of m)
+Added: CONFIG_HYPERV_VTL_MODE=y
+
+arch/x86/hyperv/hv_vtl.c: In function 'hv_vtl_bringup_vcpu':
+arch/x86/hyperv/hv_vtl.c:154:34: error: 'HVCALL_ENABLE_VP_VTL' undeclared (first use in this function)
+  154 |         status = hv_do_hypercall(HVCALL_ENABLE_VP_VTL, input, NULL);
+      |                                  ^~~~~~~~~~~~~~~~~~~~
+arch/x86/hyperv/hv_vtl.c:154:34: note: each undeclared identifier is reported only once for each function it appears in
+In file included from ./include/linux/string.h:390,
+                 from ./include/linux/bitmap.h:13,
+                 from ./include/linux/cpumask.h:12,
+                 from ./arch/x86/include/asm/apic.h:5,
+                 from arch/x86/hyperv/hv_vtl.c:9:
+arch/x86/hyperv/hv_vtl.c: In function 'hv_vtl_apicid_to_vp_id':
+arch/x86/hyperv/hv_vtl.c:189:32: error: invalid application of 'sizeof' to incomplete type 'struct hv_get_vp_from_apic_id_in'
+  189 |         memset(input, 0, sizeof(*input));
+      |                                ^
+./include/linux/fortify-string.h:502:42: note: in definition of macro '__fortify_memset_chk'
+  502 |         size_t __fortify_size = (size_t)(size);                         \
+      |                                          ^~~~
+arch/x86/hyperv/hv_vtl.c:189:9: note: in expansion of macro 'memset'
+  189 |         memset(input, 0, sizeof(*input));
+      |         ^~~~~~
+arch/x86/hyperv/hv_vtl.c:190:14: error: invalid use of undefined type 'struct hv_get_vp_from_apic_id_in'
+  190 |         input->partition_id = HV_PARTITION_ID_SELF;
+      |              ^~
+arch/x86/hyperv/hv_vtl.c:191:14: error: invalid use of undefined type 'struct hv_get_vp_from_apic_id_in'
+  191 |         input->apic_ids[0] = apic_id;
+      |              ^~
+arch/x86/hyperv/hv_vtl.c:195:45: error: 'HVCALL_GET_VP_ID_FROM_APIC_ID' undeclared (first use in this function)
+  195 |         control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_ID_FROM_APIC_ID;
+      |                                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+...
 
