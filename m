@@ -1,127 +1,105 @@
-Return-Path: <linux-kernel+bounces-350432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA396990509
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:59:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3189904F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E60E9B22AA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:59:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 439801C2099D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D509C212F1D;
-	Fri,  4 Oct 2024 13:56:52 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969C42139AC;
+	Fri,  4 Oct 2024 13:56:27 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCB0212F1C
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A624212EFA
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728050212; cv=none; b=M8MQwpvygnXkI0dB+14lUakrg1VB5yUZjYy5p6DiASHJLx6M/ocLDMvkKNWkkPgHE5Pwy+/tbYdQxf9oM3SJscyuqjvDP1nqNvZduk1i5dcb9m0MXOVOj7nydvJOgLKqlGQ06ibvXZxeij5fz0/JkuwW3/30VJmomHnkw19PTNY=
+	t=1728050187; cv=none; b=OiR7dYGv6APM+9qrCoQYJkLjQPfsVBe0uzaLz0wtoFOTO30R6Uw8vGVAx1KsyFYi597RttvKSjYfh88OaqdBc3rhRi3vCNnSXZbH2xLk2cZf4f3GsQheJx/F6cILmV58P753EeNYqlJRKIflEw4eScx1691owSeIk7Cb1K/r5Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728050212; c=relaxed/simple;
-	bh=CzR4Eb4/dDwTsmdyJTm8D0cje2IzafzkjG1aBbd2qBU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=h2bcvsh35JPuos8QkWmIlCBJNZfUKOAwBR5lTYkikTYanwJhfwG129OC+b9fbKLQmZqeyhl6HajV9FXDItzu3t+oSyvxdVIQ+5p8WakaMFvOQ+r6d8lJxd6v7FuzkOd0N33anXrmnjF9UO7YamWdvwANQD+/EyetmIgANhMRaWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a34988d6b4so33555675ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 06:56:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728050210; x=1728655010;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cBnxlWIdj3TpJzvieBbIOYmpLQb69r0U9EKYM5qsgUY=;
-        b=kIzTHhPtDaOZqLhn9Kn8u9PAaxyEuYpEgkX0STqMx1ypdqzneXMKkGWy3Ma2Ccv4Dy
-         AaT+DHsm6VxsSk5BKrwtd+qpe6+BPj3Z77PzNNtTG7JIn1moE0ZkKYPOv58bvoT15E74
-         lVKTUhk8GkrTtzEJr3BOgYqkjbB2wL8PSpilEkmHa+B8InJjb70+Y4PkI4Q0Qu/FIIC5
-         TcFGyoomLAFvjBio3wq1eeICD2Qkheb1mV04jNsxlxr2hF0f5jNsl/+tswDvjITR9OvP
-         1By1ndyyQr9K6zbbhorIejOZQlL4ohvfqG387KWgHMjYIyENnNVnvrgRv2B3zThe7Y5Z
-         F36g==
-X-Gm-Message-State: AOJu0YyWz/wHTw7hp4lLCldymyOKZFqCAuWWILPqs5zD8yNq5kfBzaqv
-	H543Hwnsmd8KmqJAL2O3OYIuOZ2Wf4rLJQ4oiOIwhrJe4c8xctymJDDKboib8FwZT0Oj7wlSGiW
-	cd6602WHRjowFNk2bzLKKnECmA2hNC/2+iB9yb+2H7q2nicbmqTbZd0M=
-X-Google-Smtp-Source: AGHT+IGMLRzh6dyTSDuVDCekIrPVau34uaA5eLHv6dAagoe50toZB9r2DEBh/n/0WzDxSRUPGXmQOFQjkqmn+s655PTr9m1aoloL
+	s=arc-20240116; t=1728050187; c=relaxed/simple;
+	bh=jROLv1v3Df5+smgMGICTvuEjQR+GIYLhC3znIL7OpXU=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=QOdv9JIGJllKJ6aJT0ulP8G2Dxa7CN8SHP+N5tOk7XezxxeNNLdV5DX5cAbAki1tPUDNhNmDViils7AIuXNswMM3inESi3NAdBaaXFbT7PVpkISHrOCpI006Ymc/K5E7W7MfZIh+8EluS6lRCLg6OXmlVdiaomesoW33oii5EC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A98C4CEC6;
+	Fri,  4 Oct 2024 13:56:26 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1swio7-00000005C7a-0VDt;
+	Fri, 04 Oct 2024 09:57:23 -0400
+Message-ID: <20241004135655.993267242@goodmis.org>
+User-Agent: quilt/0.68
+Date: Fri, 04 Oct 2024 09:56:55 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-linus][PATCH 0/8] tracing: Fixes for v6.12 and earlier
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1685:b0:3a0:98b2:8f3b with SMTP id
- e9e14a558f8ab-3a3759925d4mr26726875ab.7.1728050210188; Fri, 04 Oct 2024
- 06:56:50 -0700 (PDT)
-Date: Fri, 04 Oct 2024 06:56:50 -0700
-In-Reply-To: <000000000000932e45061d45f6e8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fff422.050a0220.49194.048b.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free
- Read in set_powered_sync
-From: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
+Various fixes for tracing:
 
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
-Author: dmantipov@yandex.ru
+- Fix tp_printk crashing the kernel
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git b63c755cb65d43c8aba987c4f6b57c77c6f123f2
+  With the code that can handle a buffer from a previous boot, the
+  trace_check_vprintf() needed access to the delta of the address
+  space used by the old buffer and the current buffer. To do so,
+  the trace_array (tr) parameter was used. But when tp_printk is
+  enabled on the kernel command line, no trace buffer is used and
+  the trace event is sent directly to printk(). That meant the tr
+  field of the iterator descriptor was NULL, and since tp_printk still
+  uses trace_check_vprintf() it caused a NULL dereference.
 
-diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
-index bab1e3d7452a..492723a22e68 100644
---- a/include/net/bluetooth/hci.h
-+++ b/include/net/bluetooth/hci.h
-@@ -345,6 +345,7 @@ enum {
- 	HCI_UP,
- 	HCI_INIT,
- 	HCI_RUNNING,
-+	HCI_CLOSING,
- 
- 	HCI_PSCAN,
- 	HCI_ISCAN,
-diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-index 629c302f7407..95f55cfb6da6 100644
---- a/net/bluetooth/hci_core.c
-+++ b/net/bluetooth/hci_core.c
-@@ -501,12 +501,16 @@ int hci_dev_close(__u16 dev)
- 		goto done;
- 	}
- 
-+	set_bit(HCI_CLOSING, &hdev->flags);
-+
- 	cancel_work_sync(&hdev->power_on);
- 	if (hci_dev_test_and_clear_flag(hdev, HCI_AUTO_OFF))
- 		cancel_delayed_work(&hdev->power_off);
- 
- 	err = hci_dev_do_close(hdev);
- 
-+	if (unlikely(err))
-+		clear_bit(HCI_CLOSING, &hdev->flags);
- done:
- 	hci_dev_put(hdev);
- 	return err;
-diff --git a/net/bluetooth/hci_sock.c b/net/bluetooth/hci_sock.c
-index 2272e1849ebd..ff43718822d4 100644
---- a/net/bluetooth/hci_sock.c
-+++ b/net/bluetooth/hci_sock.c
-@@ -1671,6 +1671,11 @@ static int hci_mgmt_cmd(struct hci_mgmt_chan *chan, struct sock *sk,
- 			goto done;
- 		}
- 
-+		if (unlikely(test_bit(HCI_CLOSING, &hdev->flags))) {
-+			err = -ENODEV;
-+			goto done;
-+		}
-+
- 		if (hci_dev_test_flag(hdev, HCI_SETUP) ||
- 		    hci_dev_test_flag(hdev, HCI_CONFIG) ||
- 		    hci_dev_test_flag(hdev, HCI_USER_CHANNEL)) {
+- Add ptrace.h include to x86 ftrace file for completeness
+
+- Fix rtla installation when done with out-of-tree build
+
+- Fix the help messages in rtla that were incorrect
+
+- Several fixes to fix races with the timerlat and hwlat code
+
+  Several locking issues were discovered with the coordination
+  between timerlat kthread creation and hotplug. As timerlat has
+  callbacks from hotplug code to start kthreads when CPUs come online.
+  There are also locking issues with grabbing the cpu_read_lock()
+  and the locks within timerlat.
+
+Ben Hutchings (1):
+      tools/rtla: Fix installation from out-of-tree build
+
+Eder Zulian (1):
+      rtla: Fix the help text in osnoise and timerlat top tools
+
+Sami Tolvanen (1):
+      x86/ftrace: Include <asm/ptrace.h>
+
+Steven Rostedt (1):
+      tracing: Fix trace_check_vprintf() when tp_printk is used
+
+Wei Li (4):
+      tracing/timerlat: Fix duplicated kthread creation due to CPU online/offline
+      tracing/timerlat: Drop interface_lock in stop_kthread()
+      tracing/timerlat: Fix a race during cpuhp processing
+      tracing/hwlat: Fix a race during cpuhp processing
+
+----
+ arch/x86/include/asm/ftrace.h         |  2 ++
+ kernel/trace/trace.c                  | 15 +++++++++++++--
+ kernel/trace/trace_hwlat.c            |  2 ++
+ kernel/trace/trace_osnoise.c          | 22 +++++++++++++---------
+ tools/tracing/rtla/Makefile.rtla      |  2 +-
+ tools/tracing/rtla/src/osnoise_top.c  |  2 +-
+ tools/tracing/rtla/src/timerlat_top.c |  4 ++--
+ 7 files changed, 34 insertions(+), 15 deletions(-)
 
