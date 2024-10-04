@@ -1,82 +1,128 @@
-Return-Path: <linux-kernel+bounces-350274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D4A9902A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:05:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D5E9902A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF132B22679
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:05:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7BD1F21A35
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E0115DBBA;
-	Fri,  4 Oct 2024 12:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10C115B11D;
+	Fri,  4 Oct 2024 12:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpdB7NcN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0SU/NGJ"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A588615C15C;
-	Fri,  4 Oct 2024 12:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF871FAA;
+	Fri,  4 Oct 2024 12:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728043515; cv=none; b=UwIQuWxQPcnyAiZYuwjOVjsrw6g8uoGKGbg9qyoJ9ty3QWHvH6/4M94g2avBcgpyGxMForvkqW0uIlSMnCkPmQ/hrm98n2a6HhKiOfku2XJigkpwbxK9dk+qJ7AhCIrFx81VdBUcOpJqoshDPeNSTPoJFw45tuFu3guF+R/9TvI=
+	t=1728043654; cv=none; b=J+bYK88dLP3vIJeWwSZiq8uJKXz1P2r9CtIy+Jaj6bqma54qh/KcdbsERWu6YIhG1feYdH3Ydux0U++X+NEJ6sOllvZmE3UKhsUbtWGBTKDyV7li1WCyHZ5MTBhfTTq3UXjV1Au4VvvsYhW2avJLQ00miH5PV91OgguWgacHlkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728043515; c=relaxed/simple;
-	bh=6oRFHKvnNGQ24oCMoi6tq54XurS/Y72vq8LcKQauZio=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bYLD4aax9/oEwWmqlnff2jwcB5uMdNoYTUiwjxHM7H5jBYvHPiW/3+lOl9Mc/114r9tVWGYYzoi+Os+f9DAN74CTrZiDjqzGBhFY1zPZn7IloeFbv515tGlK0Z0ylGqiHTrrPFZJwOGRDPgDfPli6c50dktWT5lLJ9V+NhvKCHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpdB7NcN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24545C4CECE;
-	Fri,  4 Oct 2024 12:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728043514;
-	bh=6oRFHKvnNGQ24oCMoi6tq54XurS/Y72vq8LcKQauZio=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=tpdB7NcND1qZKh+dGmCXY0JwHJPYzh9N+NvGyuwhJ8628CoSGs9Pi6eQbajI14Ndn
-	 N951rLSI4NLLkG6X+cKscDSEWRkkpkYAUdjga9vXEcmU5QUMnFHVm8Q/pUXBToHfVj
-	 2om8ST5zhKnAtNreMoyqlZTo4gl/e5vL0Cg6ertPto9N+WI0vmGn8jYetKPyTTvWiX
-	 r2uWJ1N0vy9cFU8zZETVJfsSpcgH/NWmWB64sZWbsuYpgCfjgGFBACzOIoEMxsioir
-	 PpN0jHPpsaNvvV2aHlaRChG9hnTxJTiEekUn41bUkiMmFG3uBAWMx83REq9Yfme8df
-	 k1RVM25f8Kylg==
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: =?utf-8?q?Filipe_La=C3=ADns?= <lains@riseup.net>, 
- Bastien Nocera <hadess@hadess.net>, linux-input@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241003144656.3786064-1-dmitry.torokhov@gmail.com>
-References: <20241003144656.3786064-1-dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 1/2] HID: simplify snto32()
-Message-Id: <172804351288.292746.16655039610911027501.b4-ty@kernel.org>
-Date: Fri, 04 Oct 2024 14:05:12 +0200
+	s=arc-20240116; t=1728043654; c=relaxed/simple;
+	bh=/nlhZDMw86a8EL1I6PUDXGIEBWPdc7RMixIl26A0uPE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fDDdSyFoXRNsLCdez8JOlAEVHBZ49Sddmf4qYuEmKTYlOoaN94rBpV27tG1B6EqbeLWOKqj250JLyH0AWkrGb5cj04FLXYfcUtmGqEzqglujv0KuzjNkGHad+GqkuFBBB565Ve5N8fHj8GMw6hLM9yqrc8kfP7XBbrq+tQuLfTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W0SU/NGJ; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c5b9d2195eso2756514a12.1;
+        Fri, 04 Oct 2024 05:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728043651; x=1728648451; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dJVK921w3iFUMPjOsedY5HobXgKXFD8ikd8FUYg1RJY=;
+        b=W0SU/NGJwiGrVoeP5fYedNbW9APJU+k4HFZClkqbWfBOiujOfSxS/bOlY/mN8ne3ea
+         JIBfHIvewi/rDHb3iq+glxzzpEAKao9AlDONS8JUD5JjNRRhhvK/XHCdTBJxpqeBm7ju
+         +X5FJRUHAONVMx20ceX2vqeHIqVI5shrb86NwlPU2jd0RxwPgEYuhR7fnbgecJ/jmRdx
+         mklwNF82GyYINxQBw+cHkHHMa28lGzfEtXvHWkK1gBeC8/6JgMznebaY/h9Y4Qvkdurt
+         fCXiKrT0e+cweWX9Iq31g8j6U9aYdHcPfhRr0FVAUyfqLmvX0SU1eIQkQSlj00TM5Ctz
+         2g8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728043651; x=1728648451;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dJVK921w3iFUMPjOsedY5HobXgKXFD8ikd8FUYg1RJY=;
+        b=ODDMfUD2x5RiQmGy0y5tn65tRlUsxTdc3ALaX5Ou7inRX3EqW/O0UaeoJdQEEqofDP
+         IrYjffM+A/WAbp8y17rJhJ9GJ3/gpJcAafTM/XplBYLRsPS/caE8QGUvkeIYpBgvACC7
+         v2KnjTXB/m960pmVQ6bjkP0ud8s4oETiNi1HtoF6bjeug6QxBnnzGPz6KLK8LCQk2vII
+         aqOtmHu75e66oxGcQRW719YJ6hTW2KCJSRz8tMKIj84qITEVa/q/P+Uo82/fu3BhEKej
+         HGHrC/U9EFKDzPa+InbLsFzS8/zermZxWnaEZpVPFXXeIs23vm4hs4Gb3Lv5RSngnraq
+         HVtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyqwChQ6niv1D5r3ItzA/7aMxeKQwb7UkMkxOLER4hN6fnIZQaDWJkTW62oCP18tjYBs0fM6x8zyNaeUpP@vger.kernel.org, AJvYcCXX5ZSfoCAPBbnUi/JC4Iv9CHIPAYmFHnr6owBGGRvm9SECrfnlIthTwmFXVEdqNVM8eGI60/UYoFf+P48W@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb1s8WqUJbfE2tb2lIaJEcDjcxsJNCyV43OyODC9zNuu3Obyek
+	U0hsq37mFtCUwXKhYzDjeyZ++9kwsQgSwJkQTpoZTgqSmVvaehWfJMMEdCfA
+X-Google-Smtp-Source: AGHT+IGCmBA6NptMvevhseiOieqkBOfft0hRfl6fCcaTQKwAPYzIHgU2oHNiwCMzms/GqgiqijKR0w==
+X-Received: by 2002:a05:6402:538a:b0:5c5:b9c2:c5bb with SMTP id 4fb4d7f45d1cf-5c8d2e9f05dmr1729696a12.35.1728043650570;
+        Fri, 04 Oct 2024 05:07:30 -0700 (PDT)
+Received: from ?IPV6:2a01:e11:5400:7400:cad:e881:e8d:c87? ([2a01:e11:5400:7400:cad:e881:e8d:c87])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8ca4f713asm1766441a12.97.2024.10.04.05.07.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 05:07:29 -0700 (PDT)
+Message-ID: <991c8404-1c1c-47c7-ab27-2117d134b59b@gmail.com>
+Date: Fri, 4 Oct 2024 14:07:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Fix NULL pointer dereference in read_cache_folio
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, skhan@linuxfoundation.org,
+ syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
+References: <20240929230548.370027-3-gianf.trad@gmail.com>
+ <20240930090225.28517-2-gianf.trad@gmail.com>
+ <ZvrqotTfw06vAK9Y@casper.infradead.org>
+Content-Language: en-US, it
+From: Gianfranco Trad <gianf.trad@gmail.com>
+In-Reply-To: <ZvrqotTfw06vAK9Y@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
 
-On Thu, 03 Oct 2024 07:46:50 -0700, Dmitry Torokhov wrote:
-> snto32() does exactly what sign_extend32() does, but handles
-> potentially malformed data coming from the device. Keep the checks,
-> but then call sign_extend32() to perform the actual conversion.
+On 30/09/24 20:14, Matthew Wilcox wrote:
+> On Mon, Sep 30, 2024 at 11:02:26AM +0200, Gianfranco Trad wrote:
+>> @@ -2360,6 +2360,8 @@ static int filemap_read_folio(struct file *file, filler_t filler,
+>>   	/* Start the actual read. The read will unlock the page. */
+>>   	if (unlikely(workingset))
+>>   		psi_memstall_enter(&pflags);
+>> +	if (!filler)
+>> +		return -EIO;
 > 
+> This is definitely wrong because you enter memstall, but do not exit it.
+
+Got it, thanks.
+
 > 
+> As Andrew says, the underlying problem is that the filesystem does not
+> implement ->read_folio.  Which filesystem is this?
 
-Applied to hid/hid.git (for-6.13/core), thanks!
+Reproducer via procfs accesses a bpf map backed by an anonymous
+inode (anon_inode_fs_type), with mapping->a_ops pointing to anon_aops,
+hence, read_folio() undefined.
 
-[1/2] HID: simplify snto32()
-      https://git.kernel.org/hid/hid/c/ae9b956cb26c
-[2/2] HID: stop exporting hid_snto32()
-      https://git.kernel.org/hid/hid/c/c653ffc28340
+> 
+>>   	error = filler(file, folio);
+>>   	if (unlikely(workingset))
+>>   		psi_memstall_leave(&pflags);
+>> -- 
+>> 2.43.0
+>>
 
-Cheers,
--- 
-Benjamin Tissoires <bentiss@kernel.org>
+I suppose the next step would be to contact the proper maintainers(?)
+If you have any additional suggestions, I'd be more than glad to listen.
+
+Thanks to both of you for your time,
+
+--Gian
 
 
