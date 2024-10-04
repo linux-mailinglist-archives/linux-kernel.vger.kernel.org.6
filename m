@@ -1,174 +1,136 @@
-Return-Path: <linux-kernel+bounces-349984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7828D98FE36
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:57:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D5398FE34
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D3C41C2300B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:57:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8281F238E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA2C13AD2F;
-	Fri,  4 Oct 2024 07:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n2eppVIG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA3113C9A2;
+	Fri,  4 Oct 2024 07:56:18 +0000 (UTC)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F9B2209F;
-	Fri,  4 Oct 2024 07:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1377C2209F;
+	Fri,  4 Oct 2024 07:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728028603; cv=none; b=WgYu1DAQZndzOJKwi6vMjHmNXHrwdPefkIQf2oNay1V7ovZLPWD4bD3Zo9evmHugQwPAsuG6nk+CJ2Tlhi/f3m2g3ZWsfDT+iYpDrC0VgZSNlfcFVRU4g+K5Gh+37Rt1EmdJEvHZ/kQEMYIXgP/KcpdBtPvh6R/u5c+dJe/ZmB0=
+	t=1728028577; cv=none; b=G2YSFGL2GlYvyzincJFnbA2VoM+KIR70Fhs1B4SF9q2RaVi37A2Bt/1Ha711CxdvefHGciUezG5jRXksR9oDjnn99XtEYiE207vbUslaMKqecKYhrJqODrPhIRvEYxfu1O3AChhuXBgF88UZWycVbk+s1LUoRJ6YJ5n7NOfTQlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728028603; c=relaxed/simple;
-	bh=PcPze1/DJEdMFElqqHRyHunjej/ZOfjziPx+ZnegZao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pYTxuA2MgespPNZldcrYKKD1oJyHFBUWmFNL/YZO6l43eIVxZebeci2JOCP77yOpCCT7DtPltdqtc10CcRA4tMTsz14eqjssNwuj047VTAQOqRAffpB4olzQhiPq3inm2XqguTImga8CzyfKtOioD0ETPKPfU5f0aOLmFZ5t6kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n2eppVIG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493HxcGC032546;
-	Fri, 4 Oct 2024 07:56:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KsvgYx+KH7zUUV1MmVWgTxZABnioJlH3TTYH+TOCfiY=; b=n2eppVIGVR2qxATJ
-	rH/W0zfMh9Sr1o+ChyFm6o+NtLOImoWNh9/o8QKfAT7QL6PRM75BjLiLY/WoJ4mv
-	Pbu8T5MQ99Ll7KumLmhrzAQZf2irjuO4BDYLPjAqo4A0vXaTPzZexFS5g7H+Fr7U
-	plVRw5sjG7ieHtj3W1IPvcz02GOT2ln8Svuh9XCfWwqYS3AXfSMToEUiJE1AxBVR
-	ejdi92FsG4ZkhutIYNSEA+VoQ8ODBsOS1vUu/QuZHEr7r4PHbC/zv5Z9EHCt7k5j
-	J0V/miQdj6gUEG7BxjaB8CMyjscDeEy02fXxQuKAr4QvyK637Ib8QjC9n/j1BHvE
-	7eAxzQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205f1dj2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 07:56:05 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4947u4Vg026453
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 07:56:04 GMT
-Received: from [10.50.18.17] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 00:55:56 -0700
-Message-ID: <29b84acf-2c57-4b0e-81f0-82eb6c1e5b18@quicinc.com>
-Date: Fri, 4 Oct 2024 13:25:52 +0530
+	s=arc-20240116; t=1728028577; c=relaxed/simple;
+	bh=TXa2IBei25ITtocRtX3mHCjtTw1WfsAY3jFNmx8sA+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l95yP1PN1bRN9U04Q2/mqtR/8oJGFmF0R67OUJZM/OiefIVLMDfe7o5UmvnM8e1oReU1apxwf+R97eVhf6kOjGudKHm1sm/hU/eJiR0M2ogWE5y/WFchWI4uaDwy/aR7zgVvg5EZ1AWYBdBHBxWNrU76wmqlJeJI60Nsi4YHELo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e22f10cc11so14004997b3.1;
+        Fri, 04 Oct 2024 00:56:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728028574; x=1728633374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vw3UDrgN0eDorp0S+FlFbzBDQPM+Tat1+5k3CwngP4Y=;
+        b=kPJxFSxhvHt1ihQnUVO16UvEX3usG/Oj9Tsb5s4r7tSha+LMhTVVdYqDYMg4D6YwLs
+         ZaSR7qFZHY7ilIII0hQfU7BJe+6mdCbQ7qdRgBZMKKCYyZdIgRc8s+YnFZILVmDzin+V
+         vtK2V6C4o/7f9Wy+sZZWN4SGOFqLk870ZOvTPsT4NKf4x8v/6yhdFcBpKMBsnYuMzdZY
+         Abriouu2v1+9nzJaV5q2Ka3KDJxrIWvXI4uQni9HMfWd57UvGIJw+hy98wrw9ghLt61O
+         Kengm0h/Vo05JKXQMWoFnZi/T0/taej4B/qSFm5Kc46DcGr/184o5A3tRiKNIo1r7ZFy
+         a9Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHuENUQaMIMoEU8W11cJ3hNaE2gyusjoq3bOsVwGfiVMsA5OrhO0C52RQoy53+7a8P14Ag45G0XNpdhRp0ACd9/Xw=@vger.kernel.org, AJvYcCUdpe7Cn7vbFtjmVThwBKL6cETvhyfucm0WQ+KcdTRmSPjczbvpDLRuuzHX41mBU6prYaZ+YUGGcKfgUQbI@vger.kernel.org, AJvYcCUnEwlmnCUVSyP5ThlxepKFqBSEt3Vr1HxGn9zUhAhzA/W6C44MrPnwXdjElNsvqZLdwo37ln8r6Xqo@vger.kernel.org, AJvYcCVC/hL8S4/3GtOprAxScVWssaOp75QQgSse9NaH4V/PuT9+pR7b6og0RpRKo15WlXQa8WeBQXhZzTsvJw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIUHeD6HZuuPglCLd5HgYrvvj1Z+1EqFLbQbl8caq5EaMmdqT5
+	1Dgw+AiCI+HPShiXGb8UQOpfM2y2Ja0psYGoEVdWfa9jGuovdce/1UOTP94HNBo=
+X-Google-Smtp-Source: AGHT+IGWFvudqknuySB+gKmyEmWX5j0mxyv4tKvbWeCtZjljDeiiEGN51IcZV2/hv72R3iFdF6wVnQ==
+X-Received: by 2002:a05:690c:dcc:b0:6e2:636:d9ee with SMTP id 00721157ae682-6e2c724118emr19478157b3.9.1728028574359;
+        Fri, 04 Oct 2024 00:56:14 -0700 (PDT)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2bd1cf38asm5348107b3.140.2024.10.04.00.56.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 00:56:13 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e1f48e7c18so14513347b3.3;
+        Fri, 04 Oct 2024 00:56:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVZXjuvHEVVrOXlnvJJXO7FKjI7WrCJdGBA17jJF//yiE/jHOuBPbcrbNE6r737e7RJq2xtNSQ2zaYUJV58@vger.kernel.org, AJvYcCW90UaVdDfPPGqTneoN+uLHubCdI6XwrGHiQmHBJX0gxpRE/GZ7cL9FkUBDmCQjYJeGu9CeYZ9XIj1Rwg==@vger.kernel.org, AJvYcCWdjiXXtgHNP0fMRVox6As5elQiJ1d3c5KzGNcNTV1XtkaHFUZIk/fuD1AB4ZCSrfwclcqEEsCpUMN0@vger.kernel.org, AJvYcCWmyoa9rqEAVr7pRBi396Cnwf3L0cj45HxsaCube4fiZ8ylPuHSWmvnMjURyRiUTzN0Px71cwi/DW7fJ2sf9qvu5wk=@vger.kernel.org
+X-Received: by 2002:a05:690c:60c1:b0:6e2:b537:3085 with SMTP id
+ 00721157ae682-6e2c72f6d27mr18822777b3.34.1728028572524; Fri, 04 Oct 2024
+ 00:56:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 5/7] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-To: Devi Priya <quic_devipriy@quicinc.com>, Andrew Lunn <andrew@lunn.ch>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konrad.dybcio@linaro.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <p.zabel@pengutronix.de>,
-        <richardcochran@gmail.com>, <geert+renesas@glider.be>,
-        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
-        <arnd@arndb.de>, <m.szyprowski@samsung.com>, <nfraprado@collabora.com>,
-        <u-kumar1@ti.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <netdev@vger.kernel.org>
-References: <20240625070536.3043630-1-quic_devipriy@quicinc.com>
- <20240625070536.3043630-6-quic_devipriy@quicinc.com>
- <f9d3f263-8559-4357-a1c6-8d4b5fa20b8c@lunn.ch>
- <302298ef-7827-49e1-8b0f-04467cb38ad7@quicinc.com>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <302298ef-7827-49e1-8b0f-04467cb38ad7@quicinc.com>
+References: <20240918120909.284930-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240918120909.284930-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240918120909.284930-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 4 Oct 2024 09:56:01 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW6OqLEWSyRZg_EOWoFJgEBVSLfuDJNxs+c_ucZxXwebQ@mail.gmail.com>
+Message-ID: <CAMuHMdW6OqLEWSyRZg_EOWoFJgEBVSLfuDJNxs+c_ucZxXwebQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] pinctrl: renesas: rzg2l: Add support for configuring
+ open-drain outputs
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Z9D4SyW2vd3ZpZXfwb_X7_BFgizJUutd
-X-Proofpoint-ORIG-GUID: Z9D4SyW2vd3ZpZXfwb_X7_BFgizJUutd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxlogscore=838 priorityscore=1501 phishscore=0 bulkscore=0
- impostorscore=0 clxscore=1011 lowpriorityscore=0 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410040056
+Content-Transfer-Encoding: quoted-printable
 
+Hi Prabhakar,
 
+On Wed, Sep 18, 2024 at 2:09=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support for configuring the multiplexed pins as open-drain outputs.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 6/26/2024 8:09 PM, Devi Priya wrote:
-> 
-> 
-> On 6/25/2024 8:09 PM, Andrew Lunn wrote:
->>> +static struct clk_alpha_pll ubi32_pll_main = {
->>> +    .offset = 0x28000,
->>> +    .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
->>> +    .flags = SUPPORTS_DYNAMIC_UPDATE,
->>> +    .clkr = {
->>> +        .hw.init = &(const struct clk_init_data) {
->>> +            .name = "ubi32_pll_main",
->>> +            .parent_data = &(const struct clk_parent_data) {
->>> +                .index = DT_XO,
->>> +            },
->>> +            .num_parents = 1,
->>> +            .ops = &clk_alpha_pll_huayra_ops,
->>> +        },
->>> +    },
->>> +};
->>> +
->>> +static struct clk_alpha_pll_postdiv ubi32_pll = {
->>> +    .offset = 0x28000,
->>> +    .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
->>> +    .width = 2,
->>> +    .clkr.hw.init = &(const struct clk_init_data) {
->>> +        .name = "ubi32_pll",
->>> +        .parent_hws = (const struct clk_hw *[]) {
->>> +            &ubi32_pll_main.clkr.hw
->>> +        },
->>> +        .num_parents = 1,
->>> +        .ops = &clk_alpha_pll_postdiv_ro_ops,
->>> +        .flags = CLK_SET_RATE_PARENT,
->>> +    },
->>> +};
->>
->> Can these structures be made const? You have quite a few different
->> structures in this driver, some of which are const, and some which are
->> not.
->>
-> Sure, will check and update this in V6
-> 
-> Thanks,
-> Devi Priya
->>     Andrew
->>
+Thanks for your patch!
 
-Hi Andrew,
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
 
-Sorry for the delayed response.
+> @@ -1466,6 +1477,13 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctr=
+l_dev *pctldev,
+>                         rzg2l_rmw_pin_config(pctrl, IOLH(off), bit, IOLH_=
+MASK, index);
+>                         break;
+>
+> +               case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+> +                       if (!(cfg & PIN_CFG_NOD))
+> +                               return -EINVAL;
+> +
+> +                       rzg2l_rmw_pin_config(pctrl, NOD(off), bit, NOD_MA=
+SK, 1);
+> +                       break;
+> +
 
-The ubi32_pll_main structure should be passed to clk_alpha_pll_configure() API to configure UBI32 PLL. clk_alpha_pll_configure() API expects a non-const structure. Declaring it as const will result in the following compilation warning
+I think you also need a case for PIN_CONFIG_DRIVE_PUSH_PULL,
+so you can disable the NOD bit again.
 
-drivers/clk/qcom/nsscc-ipq9574.c:3067:26: warning: passing argument 1 of ‘clk_alpha_pll_configure’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
-  clk_alpha_pll_configure(&ubi32_pll_main, regmap, &ubi32_pll_config);
-                          ^
-In file included from drivers/clk/qcom/nsscc-ipq9574.c:22:0:
-drivers/clk/qcom/clk-alpha-pll.h:200:6: note: expected ‘struct clk_alpha_pll *’ but argument is of type ‘const struct clk_alpha_pll *’
- void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-      ^~~~~~~~~~~~~~~~~~~~~~~
+>                 case RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE:
+>                         if (!(cfg & PIN_CFG_IOLH_RZV2H))
+>                                 return -EINVAL;
 
-The ubi32_pll is the source for nss_cc_ubi0_clk_src, nss_cc_ubi1_clk_src, nss_cc_ubi2_clk_src, nss_cc_ubi3_clk_src. Therefore, to register ubi32_pll with clock framework, it should be assigned to UBI32_PLL index of nss_cc_ipq9574_clocks array. This assignment will result in the following compilation warning if the ubi32_pll structure is declared as const.
+Gr{oetje,eeting}s,
 
-drivers/clk/qcom/nsscc-ipq9574.c:2893:16: warning: initialization discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
-  [UBI32_PLL] = &ubi32_pll.clkr,
+                        Geert
 
-Thanks & Regards,
-Manikanta.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
