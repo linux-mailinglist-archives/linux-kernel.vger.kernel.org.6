@@ -1,183 +1,90 @@
-Return-Path: <linux-kernel+bounces-349907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E8398FD16
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:38:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF33098FD19
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2941C218F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:38:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D340C1C220E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88AD8286F;
-	Fri,  4 Oct 2024 05:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690F584037;
+	Fri,  4 Oct 2024 05:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="f5VS20yM"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YgnuRnLW"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C7480C0A
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 05:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A6252F76;
+	Fri,  4 Oct 2024 05:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728020296; cv=none; b=hb4g9aqKKGB+fQJ/HcwYC8XyRIWrKgl/SuX/n249mDQJ0TumKGvCiJSJwl4Nucl06v0xc11j9Fxg8k+9IEudAzUkI+vIt9w14unWSKJ5uswIFsmsGe1WhkhAqzhSo1Xg0XKn1da2qZMJg10Vu4eC+un4kmiyprtxnx54Fu5eGgw=
+	t=1728020652; cv=none; b=KxhGT6Nn4h7kAhFT/Dy7VikgOZb18vubRsk68JtYJ9VdP5FSDVR3HhXxdqjmwvzEy4Vj55Jnma4DHRbvfxfpuTysiDy2MF1lHwRPyM/4f6U2h44Rz1lzFMinwqXOwLsMPCwNe0nsyb/CDPgppzCe/FIBtGhcZ1gW1v3n61M5XXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728020296; c=relaxed/simple;
-	bh=FxmJxS9uBAdGBa7PUdCZF781yGWwspWbs/fEs3AcUl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uoCzEWQ5z3aQwR2yYfsvrh93cDdOA1qYRXjO81W+EjC3QREZLcuJ1jDu1M39lvKOIzA8iwf6V2ME9tOEpipR5hHgPBoGcgjUbN4v1f3zUWswg7WuC2N4TDVvNJXSBbmAw+5BrQJxisTNEcoq3sQQJkI52dMshP5wVyTEnxoo0Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=f5VS20yM; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1728020287; x=1730612287;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FxmJxS9uBAdGBa7PUdCZF781yGWwspWbs/fEs3AcUl4=;
-	b=f5VS20yMDpMzyfH47b6/diOmEsVlaRf+5Wky8UZL6/Pi+jyJ+6W809zfi1s9oIOT
-	IhMwyZfi8H36GKvJmUXrQNoGsukc10z3wIgKYZhnPUz2x6U5TM8T230P0firvgHa
-	/CIvl3okzw1yYOJpa56adOnqQsRHYpnrwxyiOYfi7fw=;
-X-AuditID: ac14000a-4577e70000004e2a-44-66ff7f3fe620
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id FF.28.20010.F3F7FF66; Fri,  4 Oct 2024 07:38:07 +0200 (CEST)
-Received: from [192.168.10.3] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Fri, 4 Oct 2024
- 07:38:05 +0200
-Message-ID: <b993461c-96df-4855-988e-f24540168271@phytec.de>
-Date: Fri, 4 Oct 2024 07:38:04 +0200
+	s=arc-20240116; t=1728020652; c=relaxed/simple;
+	bh=oC5K0/ShitYL7GsFKHIJR4DTrOAXzRqRN4nxDpVmbjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ScLgFe8F+yuuK+K1dMmSDOBcpf9t8Y1EqFNVp7M2ptzEQgCOsNdSTqSEcPatfc7O0EKmvebDWJ/jrQCdJBVVfC8xsxrByPvZ7zR1bC2eM34eL9IBfL0ff05w+G9m+U2EJDt9TaPZiY0+BjzuYqVgfub7jgTK1iyK7lvefnQwkYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YgnuRnLW; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=i66gyaXy5MtT8DBNJKCiC/vQxjyIN5X0O8CftA6PRzY=; b=YgnuRnLW8omOzvzmlPNlQw3Pov
+	Qw00vim6Gq9m+up48Dtft3BLd33hiKI0EMTLJF9T54pClM3ANxD1sf7Ao/cNJxCNyDUjrlDxC+fM8
+	iPfajZJcNrOEFae+kJfkpzNZ1A0kXhHEKpmjV4LEDzyMlcYXabuw3cs2PxSBj1nqc5MID1un9n1LM
+	Bed90RaqVQhYRuYp0oRvIbOq/HX222k1LGWrf9JDMgHFzAFRPj0r/m0Zj4AVWpLib/ZCt7q99NIFr
+	MTzxSHpQI+zPlwkKweY4j5x5cKhEZyIj9VhtYrRQCHq+rS/ZnD1a3Juj3So8pK5mMPtYfSTsHBm0+
+	G5H4MjSA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1swb6l-0000000B5OE-2uOp;
+	Fri, 04 Oct 2024 05:44:07 +0000
+Date: Thu, 3 Oct 2024 22:44:07 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Md Sadre Alam <quic_mdalam@quicinc.com>,
+	Israel Rukshin <israelr@nvidia.com>
+Subject: Re: [RFC PATCH] dm-inlinecrypt: add target for inline block device
+ encryption
+Message-ID: <Zv-Ap9E2r1bRT2Wm@infradead.org>
+References: <20241004004152.8845-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: display: bridge: sil,sii9022: Add
- data-lines
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andrzej.hajda@intel.com>,
-	<neil.armstrong@linaro.org>, <rfoss@kernel.org>
-CC: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<bbrezillon@kernel.org>, <conor+dt@kernel.org>, <krzk+dt@kernel.org>,
-	<robh@kernel.org>, <upstream@lists.phytec.de>
-References: <20241003082006.2728617-1-w.egorov@phytec.de>
- <20241003082006.2728617-2-w.egorov@phytec.de>
- <fbb7d268-76f9-4d2e-9168-c927ccfdac50@kernel.org>
- <d28be8e9-b235-43e0-aaed-dd65a87c5797@phytec.de>
- <ca913f6a-c028-456d-9f9f-0c3183d8a921@kernel.org>
-Content-Language: en-US
-From: Wadim Egorov <w.egorov@phytec.de>
-In-Reply-To: <ca913f6a-c028-456d-9f9f-0c3183d8a921@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLIsWRmVeSWpSXmKPExsWyRpKBR9e+/n+awZyrmhYnri9isri/+DOL
-	xeqW6YwWa/aeY7KYf+Qcq8WVr+/ZLJ7PX8docfLNVRaLl7PusVmcP7+B3aJz4hJ2i8u75rBZ
-	LPy4lcWirXMZq8X7nbcYLSbNu8lq8X/PDnaL2e/2s1tseTOR1aL7nbqDiMfebwtYPHbOusvu
-	MbtjJqvH4j0vmTw2repk8zgx4RKTx51re9g85p0M9LjffZzJo7+7hdVj8+lqj8+b5AJ4orhs
-	UlJzMstSi/TtErgyLv5tZCvYIVHx4kgjawPjKuEuRk4OCQETid/H37KA2EICS5gkft5T7GLk
-	ArLvMErsm/yNESTBK2Aj8f3TVyYQm0VARWLiivPMEHFBiZMzn4A1iwrIS9y/NYMdxBYWCJH4
-	cvYGWFxEoFxiwrsmFpChzAKbmCU+v97NCrGhhUni9s1zYFXMAuISt57MB9vAJqAucWfDN1YQ
-	m1PATuLgtxvsEDUWEovfHISy5SW2v53DDHG2vMSLS8tZIN6Rl5h27jUzhB0qsfXLdqYJjMKz
-	kBw7C8m6WUjGzkIydgEjyypGodzM5OzUosxsvYKMypLUZL2U1E2MoCQgwsC1g7FvjschRiYO
-	xkOMEhzMSiK887b/TRPiTUmsrEotyo8vKs1JLT7EKM3BoiTOu7ojOFVIID2xJDU7NbUgtQgm
-	y8TBKdXAGHcpW4PzzSn1J/Pup651VGnb8EAmbfbU6szvBb19AjPKmH583nzNLvB+7AJ+8XOL
-	TC0Ly0PvbffcHXl57rwlX9TbHy2on+bp+fX3ZlEp7Rn3ZI8y9Ry87//4eVtfzOTLkVrHlp/S
-	T9E5fa9gTnx2wh7H9WyRTEfcNRXO56rpO55W6qx6UCb1QomlOCPRUIu5qDgRAD08O2TwAgAA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004004152.8845-1-ebiggers@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Thu, Oct 03, 2024 at 05:41:52PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Add a new device-mapper target "dm-inlinecrypt" that is similar to
+> dm-crypt but uses the blk-crypto API instead of the regular crypto API.
+> This allows it to take advantage of inline encryption hardware such as
+> that commonly built into UFS host controllers.
+> 
+> The table syntax matches dm-crypt's, but for now only a stripped-down
+> set of parameters is supported.  For example, for now AES-256-XTS is the
+> only supported cipher.
 
+Maybe I'm stepping into a mine-field here, but if this simply uses
+blk-crypto to accellerate a subset of dm-crypt, why isn't dm-crypt
+simply enhanced to use blk-crypto when available?
+compatible,
 
-Am 03.10.24 um 15:26 schrieb Krzysztof Kozlowski:
-> On 03/10/2024 13:56, Wadim Egorov wrote:
->>
->>
->> Am 03.10.24 um 12:03 schrieb Krzysztof Kozlowski:
->>> On 03/10/2024 10:20, Wadim Egorov wrote:
->>>> The SI9022 HDMI transmitter can be configured with 16, 18, or 24 input
->>>> data lines. This commit introduces the data-lines property to the input
->>>
->>> lines? lanes? What are lines? like pins?
->>
->> Yes, "lines" in this context refers to the number of pins used for the
->> input pixel data bus, which can support 16, 18, or 24-bit wide data
->> buses. These are parallel data lines (or pins) that carry uncompressed
->> digital video to the HDMI transmitter.
->>
->>>
->>>> endpoint, specifying the number of parallel RGB input pins connected
->>>> to the transmitter.
->>>>
->>>> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
->>>> ---
->>>>    .../bindings/display/bridge/sil,sii9022.yaml        | 13 ++++++++++++-
->>>>    1 file changed, 12 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml b/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
->>>> index 5a69547ad3d7..24306f8eb107 100644
->>>> --- a/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
->>>> +++ b/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
->>>> @@ -81,9 +81,20 @@ properties:
->>>>    
->>>>        properties:
->>>>          port@0:
->>>> -        $ref: /schemas/graph.yaml#/properties/port
->>>> +        unevaluatedProperties: false
->>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
->>>>            description: Parallel RGB input port
->>>>    
->>>> +        properties:
->>>> +          endpoint:
->>>> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
->>>> +            unevaluatedProperties: false
->>>> +
->>>> +            properties:
->>>> +              data-lines:
->>>
->>> No, this will confuse everyone. Considering lack of description how
->>> anyone would figure out what this means?
->>
->> I guess from working with the hardware/reference manual and using this chip?
->>
->> I don't think it is overly confusing, especially since the port is
->> already described as the "Parallel RGB input port" which clearly implies
->> the use of pins for data transmission.
-> 
-> 
-> I am surprised you do not find data-lanes and data-lines confusing. For
-> non-native English speakers this even might sound the same.
-> 
-> You used earlier pins and bits, so maybe it's the same as bus-width,
-> which is already used all over the bindings, including one of the bridges.
+> +EXPORT_SYMBOL_GPL(bio_crypt_set_ctx);
 
-Thanks, the bus-width property seems to be a better fit here. I'll 
-rework my patches.
-
-> 
-> Anyway a generic property should go to video-interfaces.
-> 
->>
->> I am open to other suggestions if you believe a different name would
->> improve clarity.
->>
->> Btw, bridge/toshiba,tc358768.yaml, which performs a similar function,
->> also uses the term data-lines.
-> 
-> Then this has to go to common schema.
-> 
-> Oh, wait, video-interfaces already have it!
-> 
-> Best regards,
-> Krzysztof
-> 
+Please split the exports in a separate subsystem into a separate prep
+patch, documenting why it makes sense to have these as exported APIs.
 
 
