@@ -1,146 +1,96 @@
-Return-Path: <linux-kernel+bounces-349772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3CE998FB67
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:07:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B694298FB6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89B0E1F232D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:07:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEAB31C22A37
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB142CA6;
-	Fri,  4 Oct 2024 00:07:27 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9F528F3;
+	Fri,  4 Oct 2024 00:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5v4guce"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306111FAA
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 00:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E831F1849;
+	Fri,  4 Oct 2024 00:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728000446; cv=none; b=hMNZJgdeZEpo4oHa7Jkmf+ovrpiGSb4IDumhD40CXtsnp1qe2D4YN2uN21iXq1RwtZ99yLrSu/FPO6vV0dmpzV139L+Dt6zXp2SNX8LjavTne9a2jp1u9xEZS7kyM8PjWJEtHCx11ljuKmQipxBPlGtiIfIMcMoeGsAf+42Mh0A=
+	t=1728000629; cv=none; b=u5N2dxP/81Mgxiy9w3xsAJrZiZgOy9aoaS1IM6o/TEHDTQ9FKG26Xc3m9MhtkRPvlr46P278+yF2+u8LJNlU6at9vpMPJ7gz7PA3QX3RS79MqLBMTNjDtEq2Lyw/nYurukikQPr8H0T57RXHX+2kyg3ctA+dwrqKkblnAbTAFXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728000446; c=relaxed/simple;
-	bh=LyC74rRI0iQAJHCgyiC2wJvEUqlfviFnqukLtxlo0TY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Hhu7+eqe1BLSIBKQcQCGzHYrPW2Ee6kITBAOn20iSlv5kJwLYyK5LsMDGVtdjHuBpBvzoat0Z23ug0eGzpLygDAC5ykTbU82RfoWVxsT/C/8GfzFKV0icbaUxvbSQyUDhsnBD88SSa+LTjt1eGPWx9PcgojIDsiQluVMkexoDSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a1a969fabfso19246975ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 17:07:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728000444; x=1728605244;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/W5GlTpuUgl+FRJBXdCziNEzD6hutSONS/xAErxl+zo=;
-        b=CnGLNmcnNV42HRvpru4D2xI9uB5MNbBzr6zQ21nPlTBtniu4e32J7p4qG0xBdSV3Ek
-         VeuYQ7SH7y+y4MzgrfkDpN59u1vZpbDmp3nFY00e1i+kAXYN+6n1RF6ug1R+aH46+J0A
-         SXgctdJbvnef+VMlJmHLJ7GRvfwPLIBfcVxOZTIIJC4RZc8XfharyihzWB4aklcI0ipo
-         oE3A4uqtwuzBR2HpM1jFIkD22Uoxk1UVCyYPZ5wTH1PS4cLoilDnuHlYDROSGI+6Ogbm
-         L8AsYe+p/a4kPduejBgmEkDcUykJ9ruFzdsfCAeoP5sFNXzuxVuPDXxlz7X3US++Z5IH
-         Ttxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJVB4/oT4BeO3heJxu1J7nb6iHJkEfcwgasU+v4d+3ndFPsPVDuzLai2HduZ9TbicYBXxu3hsKmzrCwGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1AMvXSlwAwW0vjPsLKOn2afJgehQuzSqLUskEWfLO1Hf06yEM
-	Xag2oeDmV1OcLDEYTxzuro08J7fEI06MxEr8oGer4Z8AlriUcC4lOLG5Z2U0wdydgTZKpU66qG9
-	FjjOSsFKRwjMslhuHpFCyZLJWOLdRvbKnw7+oQNQxcM5BemQNDrrwUBY=
-X-Google-Smtp-Source: AGHT+IHl+QHQUXjyMPC8Igx8/eEfmHQR7q2W5EkHdqRrXQ1oxikownohCNGcFpK/mFhklYydUvNvG0czHUYClzWtJzi48CEK8Lt/
+	s=arc-20240116; t=1728000629; c=relaxed/simple;
+	bh=7l1gmmc/IGZjYE9QCDSMMar+bgB/Tz/DmU2vvKW4gjU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Zl6JUgmEKDAZIgCnEsDZElzqe9Gd9nCBrAMc9SqOxK1Jc7hZDvzQnXIE/+CSsRwpIeOGPLFjecNwwpY5yi+MpYDLuk5WuIPxoE1vztrqAmWLrvXm/ffrFjmvpnyFZv95rNkDcAp67OKq0z8FGES5QEa3BGB8SPG1kxkkoBy1txg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5v4guce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9110EC4CEC5;
+	Fri,  4 Oct 2024 00:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728000628;
+	bh=7l1gmmc/IGZjYE9QCDSMMar+bgB/Tz/DmU2vvKW4gjU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=G5v4gucemcwOyZ1Se+C18+t1KIjN4jmEA2aPyjXXsZksl2SgoCc3yNVXaPt3S80T1
+	 RApXELc2ecMfRnmx+qO/pfobu3tNh6VK23a3ncHPOaScPF7RuQjvGdVB5NPGg74ddG
+	 koN/C8hRSg2ToYpSno6EJxhL7uGfI3b3+FB/zLtXi2KvsbhpmwCMGCX0uIqPt1kiKH
+	 0OORAvxKlttinnEO0/pX9GQ7EEsF7IO6YTJnDsY39TKZTf0ebWfciXX0/O2GZiQcMh
+	 qgJ1gIaCll4/GyuLTuDyFX0BylzkDMyNS9ZG+LJU3MUMn2gV7NJVXi/lkSfvxlRtAa
+	 qnQ48VYdm3Gbg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34D2C3803263;
+	Fri,  4 Oct 2024 00:10:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174a:b0:396:e8b8:88d with SMTP id
- e9e14a558f8ab-3a37599e77amr10251375ab.11.1728000444318; Thu, 03 Oct 2024
- 17:07:24 -0700 (PDT)
-Date: Thu, 03 Oct 2024 17:07:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ff31bc.050a0220.49194.03ee.GAE@google.com>
-Subject: [syzbot] [btrfs?] WARNING in btrfs_remove_qgroup
-From: syzbot <syzbot+f446972e621930b149d8@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [net-next v2 0/2] gve: Link IRQs, queues, and NAPI instances
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172800063204.2038698.8514793410721572832.git-patchwork-notify@kernel.org>
+Date: Fri, 04 Oct 2024 00:10:32 +0000
+References: <20240930210731.1629-1-jdamato@fastly.com>
+In-Reply-To: <20240930210731.1629-1-jdamato@fastly.com>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, pkaligineedi@google.com, horms@kernel.org,
+ davem@davemloft.net, edumazet@google.com, hramamurthy@google.com,
+ kuba@kernel.org, jeroendb@google.com, pabeni@redhat.com, shailend@google.com,
+ willemb@google.com, ziweixiao@google.com, linux-kernel@vger.kernel.org
 
-Hello,
+Hello:
 
-syzbot found the following issue on:
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-HEAD commit:    5f5673607153 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=14444127980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
-dashboard link: https://syzkaller.appspot.com/bug?extid=f446972e621930b149d8
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+On Mon, 30 Sep 2024 21:07:06 +0000 you wrote:
+> Greetings:
+> 
+> Welcome to v2. The previous revision was an RFC [1].
+> 
+> This series uses the netdev-genl API to link IRQs and queues to NAPI IDs
+> so that this information is queryable by user apps. This is particularly
+> useful for epoll-based busy polling apps which rely on having access to
+> the NAPI ID.
+> 
+> [...]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Here is the summary with links:
+  - [net-next,v2,1/2] gve: Map IRQs to NAPI instances
+    https://git.kernel.org/netdev/net-next/c/3017238b60d3
+  - [net-next,v2,2/2] gve: Map NAPI instances to queues
+    https://git.kernel.org/netdev/net-next/c/021f9e671e4a
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/40172aed5414/disk-5f567360.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/58372f305e9d/vmlinux-5f567360.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d2aae6fa798f/Image-5f567360.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f446972e621930b149d8@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 7433 at fs/btrfs/qgroup.c:1855 btrfs_remove_qgroup+0xab0/0xd60 fs/btrfs/qgroup.c:1856
-Modules linked in:
-CPU: 1 UID: 0 PID: 7433 Comm: btrfs-cleaner Not tainted 6.11.0-rc7-syzkaller-g5f5673607153 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : btrfs_remove_qgroup+0xab0/0xd60 fs/btrfs/qgroup.c:1856
-lr : btrfs_remove_qgroup+0x854/0xd60 fs/btrfs/qgroup.c:1854
-sp : ffff8000a3797a20
-x29: ffff8000a3797b40 x28: ffff0000da08d800 x27: ffff0000da08d7f0
-x26: 0000000000000000 x25: dfff800000000000 x24: 1fffe0001b411afe
-x23: ffffffffffff0000 x22: ffff0000ed8738b8 x21: 0000000000000100
-x20: ffff0000da08c000 x19: ffff7000146f2f50 x18: ffff8000a3797700
-x17: 000000000003c15e x16: ffff8000803600cc x15: ffff7000146f2f2c
-x14: 1ffff000146f2f2c x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff7000146f2f2c x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000ef1b3c80 x7 : 0000000000000000 x6 : 0000000000000000
-x5 : 0000000000000020 x4 : 0000000000000000 x3 : ffff8000803601f4
-x2 : 0000000000000001 x1 : ffff80008ec0334d x0 : ffff80008fcb3300
-Call trace:
- btrfs_remove_qgroup+0xab0/0xd60 fs/btrfs/qgroup.c:1856
- btrfs_qgroup_cleanup_dropped_subvolume+0x158/0x194 fs/btrfs/qgroup.c:1904
- btrfs_drop_snapshot+0x2a0/0x1be4 fs/btrfs/extent-tree.c:6260
- btrfs_clean_one_deleted_snapshot+0x238/0x32c
- cleaner_kthread+0x208/0x3dc fs/btrfs/disk-io.c:1520
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-irq event stamp: 6130
-hardirqs last  enabled at (6129): [<ffff800080a88010>] kasan_quarantine_put+0x1a0/0x1c8 mm/kasan/quarantine.c:234
-hardirqs last disabled at (6130): [<ffff80008b3363f4>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
-softirqs last  enabled at (5920): [<ffff8000800307f8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (5918): [<ffff8000800307c4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-BTRFS warning (device loop3): to be deleted qgroup 0/256 has non-zero numbers, rfer 18446744073709486080 rfer_cmpr 18446744073709486080 excl 0 excl_cmpr 0
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
