@@ -1,73 +1,72 @@
-Return-Path: <linux-kernel+bounces-350014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D071D98FEB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:13:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9782398FEB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ACD21F2599A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC4A2838CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A4C140E50;
-	Fri,  4 Oct 2024 08:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2CF145324;
+	Fri,  4 Oct 2024 08:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NAjYK6iV"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BHsG2S9v"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BF213D2A9
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 08:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B110B142E83
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 08:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728029573; cv=none; b=hJEqnEaIV3j2Pu8+vs5Cb1+wzrK8isrpfxfx2JQkBCuPsClxFbdJsv0ivais8vkfBoaqRrAACH6FB6WqmfK5jhu19qWZiz4fUDcI/zVZjjaVJBzR1rRPJOtUQKGkOS0mah6IOt0WGNgUABo6XJ/j6bB6yesBTX4+abH2itYS4Fk=
+	t=1728029576; cv=none; b=K6Vp0J6qK++yps8bmaKy7T2a81d8i9USpb6JtZOmVDIha7O54yoPrOIL0SEU7V0GM6U5/dGvYh6++n/kVB0q4LWjxbQz1hXQa60q9lp8P2grPdMb+gp8cPK9lMzTP4TIsdHaLKN5D7Qjrcg/hPcQaLzLmwL4DQHkITeYCgZBx08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728029573; c=relaxed/simple;
-	bh=H1VJkOfMZE2T04HxxlpkY8dN0P5tJJDnmZJxfggidqg=;
+	s=arc-20240116; t=1728029576; c=relaxed/simple;
+	bh=ktyNSJEmZrFqLacRbYRrGLXVnOKksih9fHzTLW7sVes=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fCn+/juhHS2PzMniQsWhCNdULmRYgp6Cnbs2+Vai+7dydpop9+fW9qbx1b33gRcEUI0IwGnoIbA9hwJsVEUwUakW1aQNlOY1VVMJTwmmHTyh7gVOxLKAQNE2hLaU+uQABsnCfzEB9e6jUcYajxLPTrY/15vxK7voeRrRLGzzo1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NAjYK6iV; arc=none smtp.client-ip=209.85.214.170
+	 MIME-Version; b=lNPTpBa3dJnNzONIplU0lTlbnEtXoRxLS5Q3GBePTc8qt5C01lHYpqlFJIX2UNmPTY8ols8tQ8NK+ryFHqhesWRubnyifjyMVWhER5nH0QWjgyf6+c8rTepyizIY6IQ8hvCA2Y7q0+3Vka6hEyOqLLFBGI3Cr4LQvrcYaBqbOmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BHsG2S9v; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20b9b35c7c3so18595745ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 01:12:51 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20ba8d92af9so13756325ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 01:12:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728029571; x=1728634371; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1728029574; x=1728634374; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=51XTVsZzEt4mq71MSs0yqggO8rkXWZxGhVvPUO2dS4I=;
-        b=NAjYK6iVVLFEQ4gGSZ9IYFzUOj4/F7KzKd/FOz6DRBbckLpVyEzjhUvh+NIYOnd7Gh
-         lIy/95EJYhFornWJrNMo2tvzE5r/hPUUKw+ZmDeBEviAewUcXtPzgqQAR8yUoMN4wide
-         YdJY3v5sUk1B8JJnm9TD+xTbZEL3jbTcXqpiM=
+        bh=eVWeCDa6r/g+qpS30FWGjNuOpH4g9qcvSdYTe3L1GXw=;
+        b=BHsG2S9vF6hw2bDuJLHFtrC9218ocGU4HTrigEv0xkP9PnbLJojpjcPdSk4dxJRuMu
+         Nnx+NE2HallZNbYKN7MY/c8+01Bn3PbHGdOC8F2rNaZaDPyrig9mSdOPZk3+X/vHqsWA
+         fo31cQQfilfuVtnPijj+UcQkfNIQuEtBY33uA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728029571; x=1728634371;
+        d=1e100.net; s=20230601; t=1728029574; x=1728634374;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=51XTVsZzEt4mq71MSs0yqggO8rkXWZxGhVvPUO2dS4I=;
-        b=rDCKELiS2XdSeqnQVuIE2Lp/bgB46JYiVEr3WsF6YjMLRfsPOV9q7C0D9VvdumQKn7
-         a9YYrZQ0Q8EWdq+YnhbTNcWBArfzf9OGHiqyAqPQfl4bbeOWjThxsX7vq3nctrIAT0hv
-         OxQHj+GGl/FkM6hs6YsWpW4nPrWEtGd9invHezsp88qSYPVSgPaQHmLPkQGONDEbr1Ai
-         LwBVYwqONBkDn4k92Rq/Y+31OFWCA6htcDt4n3Idkxzlv36BuF3DjDvDEmqL53HRnQY+
-         2wlOnO5589jURJApMRLy/w8tChZ6mPh7JMhSFBCYt1pPhulgzfbgrte/A5fRStRsH2Z7
-         e4iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnve1JTIw6d4li8LrfDkBGrZ3pzIUf81x7a/+55qOBO1QDrRMtKsGAGrPpKiR2oZ9LpAdJT21u4L1haMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznPGswci2yByqZacuRmGi3HyOLQ9FZ+cYAkodIDLUT6ElPee9q
-	mAIR0qWqsvEZvYKP0/5PzKx4mQZuaU7YfFv+Xfx1Ylznp9i9K6ZRFP4qY9V8Jg==
-X-Google-Smtp-Source: AGHT+IFyMA3M/DNWq/zKUz0UfhJqSPFA7wlM693F6oloupjh2iNEoH5dRNi6WQAnKOnmbqg42ucsIA==
-X-Received: by 2002:a17:903:32cc:b0:20b:a9f3:7996 with SMTP id d9443c01a7336-20bff17b269mr28842715ad.51.1728029571249;
-        Fri, 04 Oct 2024 01:12:51 -0700 (PDT)
+        bh=eVWeCDa6r/g+qpS30FWGjNuOpH4g9qcvSdYTe3L1GXw=;
+        b=ncYoAh7JmWGop8SUK+t46BdpDNhDm8JApvMD40hSu0IyxJL1ee0tJZ5swyUI3HTYzQ
+         EZotCa1ei+qpB8KgmIrZV7oO05C3HZhBQw36PY69rNW0b2D+oKqrpWSc8WLQIamm1XCn
+         cVig738cpgdSzAq3e8FwxKUSLBw9EqMSxSPdIh+mWaWoJbHCOeTwmjWgrW7elv7PCsr5
+         myenlCMaCKddjXVy5LODNzGzpCE60rcAjuI679qxehfolUoo0E6p/OpOqw68e6G3+n13
+         LENdy30E7DYcPlCz/SviYF9g9LRDoKnmEwpDmjNokVQ9iASTZEPgwOxjc/O22MeAEvyE
+         v9DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhBYNFVm8hRHNQSsxvJyb0cWQInOEdS6uoN91QHe2mj74U7XM5x3qpmXnXghmw6sQxjHFkspJ1XEz3C9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyakrxZ/X21ekZ88Pcz9qGDLOeU8Up5XJqUrXK+a8vOCzVX2RSW
+	SOdYywORZ6VetBI3Jo9Vuqbz0U22fhEvD5F2SjsUe02OZx7vkZ24VZNMcL5UvA==
+X-Google-Smtp-Source: AGHT+IGP0jvF/5pSOypEO+vc/qNSUNVQ+HbJ9vh7v4FjbPL7yc7D1XiNikXcjrWfP5UtVy01MXm7SA==
+X-Received: by 2002:a17:902:ecc9:b0:20b:4f95:9325 with SMTP id d9443c01a7336-20bfdfb4cdbmr30094245ad.17.1728029573988;
+        Fri, 04 Oct 2024 01:12:53 -0700 (PDT)
 Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:73bb:cecf:e651:2ce6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beefad264sm19401305ad.205.2024.10.04.01.12.49
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beefad264sm19401305ad.205.2024.10.04.01.12.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 01:12:50 -0700 (PDT)
+        Fri, 04 Oct 2024 01:12:53 -0700 (PDT)
 From: Fei Shao <fshao@chromium.org>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Matthias Brugger <matthias.bgg@gmail.com>
 Cc: Fei Shao <fshao@chromium.org>,
-	Macpaul Lin <macpaul.lin@mediatek.com>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -75,9 +74,9 @@ Cc: Fei Shao <fshao@chromium.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 2/9] arm64: dts: mediatek: mt8188: Add PCIe nodes
-Date: Fri,  4 Oct 2024 16:11:54 +0800
-Message-ID: <20241004081218.55962-3-fshao@chromium.org>
+Subject: [PATCH v3 3/9] arm64: dts: mediatek: mt8188: Add MIPI DSI nodes
+Date: Fri,  4 Oct 2024 16:11:55 +0800
+Message-ID: <20241004081218.55962-4-fshao@chromium.org>
 X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
 In-Reply-To: <20241004081218.55962-1-fshao@chromium.org>
 References: <20241004081218.55962-1-fshao@chromium.org>
@@ -89,106 +88,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add PCIe node and the associated PHY node.
+Add two MIPI DSI nodes and the associated PHY nodes to support DSI
+panels.
 Individual board device tree should enable the nodes as needed.
 
-Reviewed-by: Macpaul Lin <macpaul.lin@mediatek.com>
 Signed-off-by: Fei Shao <fshao@chromium.org>
 ---
 
-(no changes since v2)
+Changes in v3:
+- add the secondary MIPI DSI
 
-Changes in v2:
-- add linux,pci-domain to PCIe node
-- add power domain to PCIe PHY node
-  The binding patch:
-  https://lore.kernel.org/all/20240926101804.22471-1-macpaul.lin@mediatek.com/
-
- arch/arm64/boot/dts/mediatek/mt8188.dtsi | 64 ++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi | 51 ++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-index e216a0b40b9e..3cc00a898cc9 100644
+index 3cc00a898cc9..d39940ed6f5c 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-@@ -1766,6 +1766,54 @@ xhci0: usb@112b0000 {
- 			status = "disabled";
+@@ -1844,6 +1844,26 @@ pcieport: pcie-phy@0 {
+ 			};
  		};
  
-+		pcie: pcie@112f0000 {
-+			compatible = "mediatek,mt8188-pcie", "mediatek,mt8192-pcie";
-+			reg = <0 0x112f0000 0 0x2000>;
-+			reg-names = "pcie-mac";
-+			ranges = <0x82000000 0 0x20000000 0 0x20000000 0 0x4000000>;
-+			bus-range = <0 0xff>;
-+			device_type = "pci";
-+			linux,pci-domain = <0>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			clocks = <&infracfg_ao CLK_INFRA_AO_PCIE_PL_P_250M_P0>,
-+				 <&infracfg_ao CLK_INFRA_AO_PCIE_TL_26M>,
-+				 <&infracfg_ao CLK_INFRA_AO_PCIE_TL_96M>,
-+				 <&infracfg_ao CLK_INFRA_AO_PCIE_TL_32K>,
-+				 <&infracfg_ao CLK_INFRA_AO_PCIE_PERI_26M>,
-+				 <&pericfg_ao CLK_PERI_AO_PCIE_P0_FMEM>;
-+			clock-names = "pl_250m", "tl_26m", "tl_96m", "tl_32k",
-+				      "peri_26m", "peri_mem";
-+
-+			#interrupt-cells = <1>;
-+			interrupts = <GIC_SPI 791 IRQ_TYPE_LEVEL_HIGH 0>;
-+			interrupt-map = <0 0 0 1 &pcie_intc 0>,
-+					<0 0 0 2 &pcie_intc 1>,
-+					<0 0 0 3 &pcie_intc 2>,
-+					<0 0 0 4 &pcie_intc 3>;
-+			interrupt-map-mask = <0 0 0 7>;
-+
-+			iommu-map = <0 &infra_iommu IFR_IOMMU_PORT_PCIE_0 0xffff>;
-+			iommu-map-mask = <0>;
-+
-+			phys = <&pcieport PHY_TYPE_PCIE>;
-+			phy-names = "pcie-phy";
-+
-+			power-domains = <&spm MT8188_POWER_DOMAIN_PEXTP_MAC_P0>;
-+
-+			resets = <&watchdog MT8188_TOPRGU_PCIE_SW_RST>;
-+			reset-names = "mac";
-+
++		mipi_tx_config0: dsi-phy@11c80000 {
++			compatible = "mediatek,mt8188-mipi-tx", "mediatek,mt8183-mipi-tx";
++			reg = <0 0x11c80000 0 0x1000>;
++			clocks = <&clk26m>;
++			clock-output-names = "mipi_tx0_pll";
++			#clock-cells = <0>;
++			#phy-cells = <0>;
 +			status = "disabled";
-+
-+			pcie_intc: interrupt-controller {
-+				#address-cells = <0>;
-+				#interrupt-cells = <1>;
-+				interrupt-controller;
-+			};
 +		};
 +
- 		nor_flash: spi@1132c000 {
- 			compatible = "mediatek,mt8188-nor", "mediatek,mt8186-nor";
- 			reg = <0 0x1132c000 0 0x1000>;
-@@ -1780,6 +1828,22 @@ nor_flash: spi@1132c000 {
- 			status = "disabled";
- 		};
- 
-+		pciephy: t-phy@11c20700 {
-+			compatible = "mediatek,mt8188-tphy", "mediatek,generic-tphy-v3";
-+			ranges = <0 0 0x11c20700 0x700>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			power-domains = <&spm MT8188_POWER_DOMAIN_PEXTP_PHY_TOP>;
++		mipi_tx_config1: dsi-phy@11c90000 {
++			compatible = "mediatek,mt8188-mipi-tx", "mediatek,mt8183-mipi-tx";
++			reg = <0 0x11c90000 0 0x1000>;
++			clocks = <&clk26m>;
++			clock-output-names = "mipi_tx0_pll";
++			#clock-cells = <0>;
++			#phy-cells = <0>;
 +			status = "disabled";
-+
-+			pcieport: pcie-phy@0 {
-+				reg = <0 0x700>;
-+				clocks = <&topckgen CLK_TOP_CFGREG_F_PCIE_PHY_REF>;
-+				clock-names = "ref";
-+				#phy-cells = <1>;
-+			};
 +		};
 +
  		i2c1: i2c@11e00000 {
  			compatible = "mediatek,mt8188-i2c";
  			reg = <0 0x11e00000 0 0x1000>,
+@@ -2229,10 +2249,41 @@ larb19: smi@1a010000 {
+ 			mediatek,smi = <&vdo_smi_common>;
+ 		};
+ 
++		disp_dsi0: dsi@1c008000 {
++			compatible = "mediatek,mt8188-dsi";
++			reg = <0 0x1c008000 0 0x1000>;
++			clocks = <&vdosys0 CLK_VDO0_DSI0>,
++				 <&vdosys0 CLK_VDO0_DSI0_DSI>,
++				 <&mipi_tx_config0>;
++			clock-names = "engine", "digital", "hs";
++			interrupts = <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH 0>;
++			phys = <&mipi_tx_config0>;
++			phy-names = "dphy";
++			power-domains = <&spm MT8188_POWER_DOMAIN_VDOSYS0>;
++			resets = <&vdosys0 MT8188_VDO0_RST_DSI0>;
++			status = "disabled";
++		};
++
++		disp_dsi1: dsi@1c012000 {
++			compatible = "mediatek,mt8188-dsi";
++			reg = <0 0x1c012000 0 0x1000>;
++			clocks = <&vdosys0 CLK_VDO0_DSI1>,
++				 <&vdosys0 CLK_VDO0_DSI1_DSI>,
++				 <&mipi_tx_config1>;
++			clock-names = "engine", "digital", "hs";
++			interrupts = <GIC_SPI 654 IRQ_TYPE_LEVEL_HIGH 0>;
++			phys = <&mipi_tx_config1>;
++			phy-names = "dphy";
++			power-domains = <&spm MT8188_POWER_DOMAIN_VDOSYS0>;
++			resets = <&vdosys0 MT8188_VDO0_RST_DSI1>;
++			status = "disabled";
++		};
++
+ 		vdosys0: syscon@1c01d000 {
+ 			compatible = "mediatek,mt8188-vdosys0", "syscon";
+ 			reg = <0 0x1c01d000 0 0x1000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 			mboxes = <&gce0 0 CMDQ_THR_PRIO_4>;
+ 			mediatek,gce-client-reg = <&gce0 SUBSYS_1c01XXXX 0xd000 0x1000>;
+ 		};
 -- 
 2.47.0.rc0.187.ge670bccf7e-goog
 
