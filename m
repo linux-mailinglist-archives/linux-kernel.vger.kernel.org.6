@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-351262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D456990F21
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:49:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB37990F24
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4CF281ABE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:49:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B6D11C22F37
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CFD230DE2;
-	Fri,  4 Oct 2024 18:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDC823146C;
+	Fri,  4 Oct 2024 18:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvoLdZ36"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rsQAYb91"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402901E2318;
-	Fri,  4 Oct 2024 18:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D751E1C2F;
+	Fri,  4 Oct 2024 18:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066730; cv=none; b=edkDMdZ4m6mQYa4K+Ya+dVvjADMniLrCxNAJN/taVEc7zCAehmxss6NnBIE+6+j4qEpClrLpHlk7+jp+4oMnNDomKfvr83WRPWa4hOyacYP7iM2ke/t83LPq+SCsc/8yJZ/ByvV89DOn11Ez9oR/GiXuEr6I/XbzFNtg+IB7ze0=
+	t=1728066733; cv=none; b=aCimjuSKZu0VS2yiJ/8gbEauQc4es6s0Lvz3Ltvv8zZ2wOEtM9MWuojXxXaa6GRP/2LeiJspeI4tMCz5hQ5MKgtu+YH0fNHM73cuuIwJR6m5rDQGNpnFWpGUUaeZVO0kkgbIx/f3h5TaDU9UJa9nABxA4kbKbHV/lZymoX8K9sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066730; c=relaxed/simple;
-	bh=UERdAUIIkKO+mZatMfXd1r7F1mxOceEUePgfj0ybgDM=;
+	s=arc-20240116; t=1728066733; c=relaxed/simple;
+	bh=+koxMIZM77Tt7I8tTJn8hOJqD1LRiVGBhCi9CP4N6G0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P/ohvCljZPpttlGTBMDmbVhZKTZiPHkxL/G/kKZAU/hr23zaxVDKGODy1k7UehoBlIcIcLqwSuv+1WlIvwMcjAFcemF202hHUrMNbxOXp8RHbziCz8Fxg2VIDaXxqR9FGmdniDBqbqS0fuBaGh4lg8IU1sOCL4PNrXDn67RNWG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvoLdZ36; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24323C4CEC6;
-	Fri,  4 Oct 2024 18:32:09 +0000 (UTC)
+	 MIME-Version; b=SzlcLAF+iwAoOpIrds3HcFi55k7Hc8tHqqfIM+vfn9RVwaavlwALiLCrWPpFwfByu2pstkPtsltfkyb2kLkRANAd4mR/bfHWUCzViLqEp3M8dlf32hX9/OLRJqTK/rd3n/+4hs31Vk84NamzZUulKDQmppxqT/EBox5z8Nfl+sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rsQAYb91; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D37D3C4CECC;
+	Fri,  4 Oct 2024 18:32:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066730;
-	bh=UERdAUIIkKO+mZatMfXd1r7F1mxOceEUePgfj0ybgDM=;
+	s=k20201202; t=1728066732;
+	bh=+koxMIZM77Tt7I8tTJn8hOJqD1LRiVGBhCi9CP4N6G0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pvoLdZ36VjJdGNIu17WVueLhBUNQrIPBxLX1FmREzNuNVhHPoyTAFRIIcNk6Hf/SO
-	 kbBHRHdB4/mI94BDBHMR0bYUOW2mry8QN12HVLQ6oqeUuZQsSXo0CSAZwmpZtOYgYG
-	 l/WOGPaO+hakr6lPWZV9DS3xk+XRcuzU7+aQKcGz/ecQF2ICbj7z+u6PlikgPeT0Z+
-	 xZm9shEoam8ERB+hQfQfRxvfBRZZj2uvcVpT2uMalpy9dQzBSfEWbn+x5QUkn/GQt8
-	 IXXZ60ogF02m9uJ7s/QX4ot113/FY6NBUZSMpLWS+rN9+KnsVgzOmxccNvGWF/7cnc
-	 xwQCEmaOOkDvQ==
+	b=rsQAYb918FJHnYZgBhdRZJ1s0efE0kMEWcy3rqtNboo9VtVO2wEIwKghjyj0Edati
+	 vNX8H/X37+q1SMRvhc4tDUuXLww321BbzcTXoge2YbEUJO0sGZjrj9EGJUW4sHyF9J
+	 1W/6ytq3vtfyyrwRgEqElSbd8hd5kwxtimRYCKF5OJ4xuL0acajBnkk+IuWGdE8WZ7
+	 LDk260gjrQl3ed3VdHObOUfaUpVayFlvr8aSjon6B9hVlE9/X60BMcZcCLdythJt92
+	 dOs0qJ1T12wV42YGRNJNV5nuPg53sYvC/wvEOBnri8e19N5KZNaOU1l6PQz/REoeVP
+	 H2UyltkCkCOhw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Yunke Cao <yunkec@chromium.org>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+Cc: Zhu Jun <zhujun2@cmss.chinamobile.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	Sasha Levin <sashal@kernel.org>,
-	m.szyprowski@samsung.com,
-	mchehab@kernel.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 12/16] media: videobuf2-core: clear memory related fields in __vb2_plane_dmabuf_put()
-Date: Fri,  4 Oct 2024 14:31:39 -0400
-Message-ID: <20241004183150.3676355-12-sashal@kernel.org>
+	jic23@kernel.org,
+	linux-iio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 14/16] tools/iio: Add memory allocation failure check for trigger_name
+Date: Fri,  4 Oct 2024 14:31:41 -0400
+Message-ID: <20241004183150.3676355-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241004183150.3676355-1-sashal@kernel.org>
 References: <20241004183150.3676355-1-sashal@kernel.org>
@@ -67,49 +65,36 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 4.19.322
 Content-Transfer-Encoding: 8bit
 
-From: Yunke Cao <yunkec@chromium.org>
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
 
-[ Upstream commit 6a9c97ab6b7e85697e0b74e86062192a5ffffd99 ]
+[ Upstream commit 3c6b818b097dd6932859bcc3d6722a74ec5931c1 ]
 
-Clear vb2_plane's memory related fields in __vb2_plane_dmabuf_put(),
-including bytesused, length, fd and data_offset.
+Added a check to handle memory allocation failure for `trigger_name`
+and return `-ENOMEM`.
 
-Remove the duplicated code in __prepare_dmabuf().
-
-Signed-off-by: Yunke Cao <yunkec@chromium.org>
-Acked-by: Tomasz Figa <tfiga@chromium.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Link: https://patch.msgid.link/20240828093129.3040-1-zhujun2@cmss.chinamobile.com
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/common/videobuf2/videobuf2-core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/iio/iio_generic_buffer.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
-index 50015a2ea5ce0..98719aa986bb9 100644
---- a/drivers/media/common/videobuf2/videobuf2-core.c
-+++ b/drivers/media/common/videobuf2/videobuf2-core.c
-@@ -281,6 +281,10 @@ static void __vb2_plane_dmabuf_put(struct vb2_buffer *vb, struct vb2_plane *p)
- 	p->mem_priv = NULL;
- 	p->dbuf = NULL;
- 	p->dbuf_mapped = 0;
-+	p->bytesused = 0;
-+	p->length = 0;
-+	p->m.fd = 0;
-+	p->data_offset = 0;
- }
- 
- /*
-@@ -1169,10 +1173,6 @@ static int __prepare_dmabuf(struct vb2_buffer *vb, const void *pb)
- 
- 		/* Release previously acquired memory if present */
- 		__vb2_plane_dmabuf_put(vb, &vb->planes[plane]);
--		vb->planes[plane].bytesused = 0;
--		vb->planes[plane].length = 0;
--		vb->planes[plane].m.fd = 0;
--		vb->planes[plane].data_offset = 0;
- 
- 		/* Acquire each plane's memory */
- 		mem_priv = call_ptr_memop(vb, attach_dmabuf,
+diff --git a/tools/iio/iio_generic_buffer.c b/tools/iio/iio_generic_buffer.c
+index ca9f33fa51c9f..e8cf3dc8de72c 100644
+--- a/tools/iio/iio_generic_buffer.c
++++ b/tools/iio/iio_generic_buffer.c
+@@ -483,6 +483,10 @@ int main(int argc, char **argv)
+ 			return -ENOMEM;
+ 		}
+ 		trigger_name = malloc(IIO_MAX_NAME_LENGTH);
++		if (!trigger_name) {
++			ret = -ENOMEM;
++			goto error;
++		}
+ 		ret = read_sysfs_string("name", trig_dev_name, trigger_name);
+ 		free(trig_dev_name);
+ 		if (ret < 0) {
 -- 
 2.43.0
 
