@@ -1,128 +1,165 @@
-Return-Path: <linux-kernel+bounces-350449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8BE9990551
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:07:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8698990556
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5D51F22D31
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:07:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69552879CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858C62139CB;
-	Fri,  4 Oct 2024 14:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA70215F41;
+	Fri,  4 Oct 2024 14:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9bnCF9b"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KS/GQHSZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16001D365A;
-	Fri,  4 Oct 2024 14:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332E12139C9;
+	Fri,  4 Oct 2024 14:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728050834; cv=none; b=h5mGynEVFmiuyuTFdTOSXlE43KD4DdhCpW0sIA3hacFPgOtgqKDCeAuHgIJs+2fD/6bR61A2+0F+vINeuVOckqRkE3u+eMUXarpMUqmkCoA3+jhFNEGBbmIugFVqLSjkMtRxy1dF2Wfet5bIMv9z7tDUl5mdNzf9R7E0++/JXGM=
+	t=1728050862; cv=none; b=DcuT+TPRwkv+2i0ENloR0NFYX25O6DPw92CUQ0+ulsRHv5rG0okPd9AZveGRSXYaHlxczyfZxLNSd2kHADqZ5mWfFUKc4mrR5ySHM45HnWBcOfDWTRd4Il5Igf6ySOABED5/hFXgD0G8IDDgLqO5DrARAUeBSFQAuKYGIYaAZTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728050834; c=relaxed/simple;
-	bh=rr76t+eNUFUu22tXb5MX5QD++j2YLcuNv+jV/Zy6IE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SVPZ/X7eDDfSZRyQL6BTEqZj6kX8P3ChjSAt+britrgBf/s7RkLpTeO2zO1zh/3tCWd4jTgNWGAseJrDkRfHWRw4UzlqI6aFWSWdALzhPr9W2InFBVuVa6gAo/7EMbzq/CdlR2YuIiU9pfnSsfMgJMIHiL7SpGUlC4LLvm5RrJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9bnCF9b; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71b8d10e9b3so1664392b3a.3;
-        Fri, 04 Oct 2024 07:07:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728050832; x=1728655632; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cCrO2ENXGB+obQ8ppHzPkSfNMb0RVRrSN6ueUlMlRkE=;
-        b=j9bnCF9bVaqggkgNCjrPhFGcsIQ2wsqxILTfCoVdQ4uHZKPTt5/HfBOHheQfODHfXT
-         jj2cDAN+Xij+RRK0GlUSChyYAgWki74pOxDYVZSj/OwOFs3MS2QSQKNzOcSVJP26nYc8
-         JmU+OGCqOCsdocaug+D0py2DmMTg/Paprj2twZZXxnf1QUDCXa8Nz6dJNdw57ueA3dYa
-         FXbGENh8Ao/fj9e71ERdz3QkyB7p+fhozssRJjl5StgvoR/NlDBCOfgZgsLGUTdtjGRJ
-         zNHAKAqAR0tltSs+MV8IWgUEHolXcvvy4t956ROVeaG/sw6EUXNa22S9ExgvfBK+9gv0
-         1z4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728050832; x=1728655632;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cCrO2ENXGB+obQ8ppHzPkSfNMb0RVRrSN6ueUlMlRkE=;
-        b=UEm93BVYfgbxeZboIXOygvtRXeYUIaJj0GEKNI2JlxeOnXMHfUWihOhyxsIFiLCzbJ
-         8XUh5UK3N8CiZzKUWzxiD0EM6GBD+YKn0DdedkvP3m404TMLC9n9peTM0wxtjwvUeDog
-         pj0moi/dM30eTipxDGfJNaWTuJpLLHiJaSyYAQeLlX8pgsL7k/3aHcjjpVLw8i0qQTZ0
-         4KVqLXXMkHULe9gw77LAG/dT6YdeWRwFZgopjV/OvdvgcJpIDaPz4IiQo1d5gSRWRTcR
-         jJRVUOBjFmY8RzyDf5Ll2jL8jWeKelkPj/xQ6T8rPG1jj/E2yKMg67281vxrMmYC0DRy
-         p2dA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKf0TE6Y2XEdz3NQiS8N2fH0ZmU9WO8ZZNROjCAn6mNxpCM5BOXI6kXz9tS3JaLtrJeS8Nr1V2pXzT35jD@vger.kernel.org, AJvYcCXOk3IMGImDBinv8T4kTWVAat0jm9mB7k6YkhW3fhV9Vep11zoEu29gP1QU0I2R1a3ui62deo3sQEt5Aw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr3xJKEFaaSqk2up9kxF7qKxWvxgKXSWV6hk6nwxixjGarVJU1
-	hpjN4zoSlo37esVtAwO085bd+vhGfdye95E4gOuSKoqq2tnS7RNGb1LiZ4Al
-X-Google-Smtp-Source: AGHT+IHrf7BKXWDRmVPpd9hRJMmRKjPvLv+YOwYBaIHsB0oterAf1OB7S4lryeDYv456lAWVsOcd3A==
-X-Received: by 2002:a05:6a00:23d4:b0:714:1bd8:35f7 with SMTP id d2e1a72fcca58-71de23e8e45mr4349226b3a.15.1728050831799;
-        Fri, 04 Oct 2024 07:07:11 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:1b2:add:2542:c298])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dedcdb3d7sm662238b3a.26.2024.10.04.07.07.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 07:07:11 -0700 (PDT)
-Date: Fri, 4 Oct 2024 07:07:08 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno Sa <nuno.sa@analog.com>
-Cc: Utsav Agarwal <utsav.agarwal@analog.com>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: adp5588-keys - do not try to disable interrupt 0
-Message-ID: <Zv_2jEMYSWDw2gKs@google.com>
+	s=arc-20240116; t=1728050862; c=relaxed/simple;
+	bh=uEQAShnggjr5nqIOHpTJeRMq0ADz79WFWaz9pF8A+Gg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gQ3qKCj/Pl33MP7HuBsKQrU/Y9h3sWGMQEoX19brJPup8B27FBvoLbcTHeFunp5IzQV+FN9BKPkfssR94I5b9QBQe6hQmIRGQgKQ4uTaUWLhq19dpQhJ/wqlv+DFePizruPfVC1jSAW+zsHMuA4zyiyXs8Y8KqbLYz1FFUYU1ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KS/GQHSZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D24C4CEC6;
+	Fri,  4 Oct 2024 14:07:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728050861;
+	bh=uEQAShnggjr5nqIOHpTJeRMq0ADz79WFWaz9pF8A+Gg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KS/GQHSZnva577tebsJ6gZScMy89dnub71y2v73Zo4qFE8trKkybgL8ZT4v5cfHkZ
+	 tOc/YzUmbQ//hrqtqh9xAgjwR8p60H72ssIj3i3WuvgI4wo55qDHG9++XgoO80LIeo
+	 6/OwHzGAk1BnuQ1QNoJDcZ+nY/XSziZ1tiIoTuOuNeCPlh2zf3a3Gv0xD6ivpaDtjy
+	 gSHl/Mq6YkAvNswRfIh8ALJslGQ1rgFo5hf5WOXyvdZHXg5lXPpKHEe1OC/9Cax19V
+	 ZRw5GIWMXZXdwEYkfVcOHULIA79AeR+V1u+EtL7L48bo7gLvxogoD6jzdnHr+34Odf
+	 hDQfQ3G1BodXw==
+Message-ID: <7a9e1523-675b-4e1e-9233-51a0b4ed2895@kernel.org>
+Date: Fri, 4 Oct 2024 16:07:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/8] dt-bindings: clock: qcom: Add SA8775P display
+ clock controllers
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ quic_imrashai@quicinc.com, quic_jkona@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com>
+ <20240816-sa8775p-mm-v3-v1-5-77d53c3c0cef@quicinc.com>
+ <5kaz5wcvxhjtny5yy5i2e63ylzpor74lknvtvdkgpygxkf7yim@m6p5zof755lp>
+ <65d129b5-088e-4cdb-a2fa-62448cfd2ad6@kernel.org>
+ <52d2ee37-5a83-4ca2-902c-8e48b63b93b3@quicinc.com>
+ <7ebe76e5-ed89-4ebd-bf3d-6b130b79c811@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <7ebe76e5-ed89-4ebd-bf3d-6b130b79c811@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Commit dc748812fca0 ("Input: adp5588-keys - add support for pure gpio")
-made having interrupt line optional for the device, however it neglected
-to update suspend and resume handlers that try to disable interrupts
-for the duration of suspend.
+On 04/10/2024 11:31, Taniya Das wrote:
+> 
+> 
+> On 9/13/2024 10:35 AM, Taniya Das wrote:
+>>
+>>
+>> On 9/6/2024 5:54 PM, Krzysztof Kozlowski wrote:
+>>> On 18/08/2024 20:02, Krzysztof Kozlowski wrote:
+>>>> On Fri, Aug 16, 2024 at 12:01:47PM +0530, Taniya Das wrote:
+>>>>> Add device tree bindings for the display clock controllers
+>>>>> on Qualcomm SA8775P platform.
+>>>>>
+>>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>>> ---
+>>>>>   .../bindings/clock/qcom,sa8775p-dispcc.yaml        | 79 
+>>>>> ++++++++++++++++++++
+>>>>>   include/dt-bindings/clock/qcom,sa8775p-dispcc.h    | 87 
+>>>>> ++++++++++++++++++++++
+>>>>>   2 files changed, 166 insertions(+)
+>>>>>
+>>>>
+>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>
+>>> Un-reviewed.
+>>>
+>>> We achieved consensus allowing sa8775p to stay, but now Qualcomm changes
+>>> point of view and insists on new approach of dropping sa8775p. Therefore
+>>> this change does not make much sense in the new approach.
+>>>
+>>
+>> Krzysztof could you please re-review the patches again? As I understand 
+>> that Qualcomm will support both SA8775p and QCS9100 in Kernel. There’s 
+>> no plan to drop SA8775p support. These two SoCs will keep compatible.
+>>
+> Krzysztof, Could you please help reviewing the patches again?
 
-Fix this by checking if interrupt number assigned to the i2c device is
-not 0 before trying to disable or reenable it.
+They are not in the patchwork anymore, not in my inbox, so I cannot
+review them.
 
-Fixes: dc748812fca0 ("Input: adp5588-keys - add support for pure gpio")
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/keyboard/adp5588-keys.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Please resend.
 
-diff --git a/drivers/input/keyboard/adp5588-keys.c b/drivers/input/keyboard/adp5588-keys.c
-index d25d63a807f2..dc734974ce06 100644
---- a/drivers/input/keyboard/adp5588-keys.c
-+++ b/drivers/input/keyboard/adp5588-keys.c
-@@ -822,7 +822,8 @@ static int adp5588_suspend(struct device *dev)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
- 
--	disable_irq(client->irq);
-+	if (client->irq)
-+		disable_irq(client->irq);
- 
- 	return 0;
- }
-@@ -831,7 +832,8 @@ static int adp5588_resume(struct device *dev)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
- 
--	enable_irq(client->irq);
-+	if (client->irq)
-+		enable_irq(client->irq);
- 
- 	return 0;
- }
--- 
-2.47.0.rc0.187.ge670bccf7e-goog
+That's generic rule - don't ping needlessly multiple times, but resend.
 
+Best regards,
+Krzysztof
 
--- 
-Dmitry
 
