@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-350895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 392A7990AB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:13:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DAF990ABA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C72CDB250DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:13:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AC341F25AE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D98D220805;
-	Fri,  4 Oct 2024 18:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED4922081D;
+	Fri,  4 Oct 2024 18:07:03 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780AE220804
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F011DD872
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728065219; cv=none; b=h6ukEr7fILqjcImw2ppkOF0CJuJMd3Pc7yoqu00g019EGXLHzT3PPAHKCln9+Ax95qPjIpgnRvI6pVGoeUFkqm/07ZPJbnJSWU8MPVqSVVa1+iPMh+dZ3tdbcqi/wusMZqEqsCKYs/dtDjeEzYT4UZaNiEJSaP319EHEHpv1TIQ=
+	t=1728065222; cv=none; b=sL8we9CChxxn4VrElBk63kPap0Ex68Q+y6/RP8kn+qblhIOIbVxK0g4nk0jGIPuWsnC+nAacUc7n9Dxpbei6dxVtPhcITb6O5f45Myc01t7HjnuNe8nv39d3U5UO4CV/g/Sw+PifnBfbiDa5nLfwP2sbKbo/RqIq7agFnCNhT+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728065219; c=relaxed/simple;
-	bh=lnm3989ZkVwht/pQMI9xO6goYm9YUuDr77D5AmSfj20=;
+	s=arc-20240116; t=1728065222; c=relaxed/simple;
+	bh=5LTohyj7kw/uLwXsxBS0/zGWWRi8H8FrMQACiAPPsZ8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CaVudxOzzoCtz/yGJC6RQJy/BBzgRgmOS45kc0BwQDNJpC002yJGfsCp8yPTQimxmrygHbkO6Jw3IAJcRZeZAIgAO6s+VJy+Ww3G/vnOHNLrSf6IFJxBFlKyi+QDb1azTBTlubwWXvLFfmJmM2vbeiZ3BaVb5wdkIWtVFUca+UM=
+	 MIME-Version; b=E0H99/4qn5ffsNziFqJ9KIqXZo9jULO2ZyiEUBtJjO1N87WaE46iV2iBOWflZBTnBj6CvnPfhpAMcuxLxJUWwF6b44efM+afBT2P6Isn9zD3sca03rJS5272eDBKJd6HH8N05m7YH62VW1vDVZlsCbfEHlTXt/Dq00SQ4s8ryPI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59AD31063;
-	Fri,  4 Oct 2024 11:07:27 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9087150C;
+	Fri,  4 Oct 2024 11:07:30 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B80893F58B;
-	Fri,  4 Oct 2024 11:06:54 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1264B3F58B;
+	Fri,  4 Oct 2024 11:06:57 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -59,9 +59,9 @@ Cc: Fenghua Yu <fenghua.yu@intel.com>,
 	Rex Nie <rex.nie@jaguarmicro.com>,
 	Dave Martin <dave.martin@arm.com>,
 	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: [PATCH v5 35/40] x86/resctrl: Add end-marker to the resctrl_event_id enum
-Date: Fri,  4 Oct 2024 18:03:42 +0000
-Message-Id: <20241004180347.19985-36-james.morse@arm.com>
+Subject: [PATCH v5 36/40] x86/resctrl: Remove a newline to avoid confusing the code move script
+Date: Fri,  4 Oct 2024 18:03:43 +0000
+Message-Id: <20241004180347.19985-37-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20241004180347.19985-1-james.morse@arm.com>
 References: <20241004180347.19985-1-james.morse@arm.com>
@@ -73,35 +73,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The resctrl_event_id enum gives names to the counter event numbers on x86.
-These are used directly by resctrl.
+The resctrl filesystem code will shortly be moved to /fs/. This involves
+splitting all the existing files, with some functions remaining under
+arch/x86, and others moving to fs/resctrl.
 
-To allow the MPAM driver to keep an array of these the size of the enum
-needs to be known.
+To make this reproducible, a python script does the heavy lif^W
+copy-and-paste. This involves some clunky parsing of C code.
 
-Add a 'num_events' define which can be used to size an array. This isn't
-a member of the enum to avoid updating switch statements that would
-otherwise be missing a case.
+The parser gets confused by the newline after this #ifdef.
+Just remove it.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
 Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 ---
- include/linux/resctrl_types.h | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/include/linux/resctrl_types.h b/include/linux/resctrl_types.h
-index 51c51a1aabfb..70226f5ab3e3 100644
---- a/include/linux/resctrl_types.h
-+++ b/include/linux/resctrl_types.h
-@@ -51,4 +51,6 @@ enum resctrl_event_id {
- 	QOS_L3_MBM_LOCAL_EVENT_ID	= 0x03,
- };
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 7a4716fb1604..9696bdcc39f2 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -874,7 +874,6 @@ static int rdtgroup_rmid_show(struct kernfs_open_file *of,
+ }
  
-+#define QOS_NUM_EVENTS		(QOS_L3_MBM_LOCAL_EVENT_ID + 1)
-+
- #endif /* __LINUX_RESCTRL_TYPES_H */
+ #ifdef CONFIG_PROC_CPU_RESCTRL
+-
+ /*
+  * A task can only be part of one resctrl control group and of one monitor
+  * group which is associated to that control group.
 -- 
 2.39.2
 
