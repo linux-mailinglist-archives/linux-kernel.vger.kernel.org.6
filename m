@@ -1,280 +1,174 @@
-Return-Path: <linux-kernel+bounces-351530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B15B991292
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:57:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E5B991293
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E220F286409
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EE9F2867F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A449E14EC4B;
-	Fri,  4 Oct 2024 22:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE5214C59A;
+	Fri,  4 Oct 2024 22:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAcVqJTb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d67D/qVD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D067214BF92;
-	Fri,  4 Oct 2024 22:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5837F14C582
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 22:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728082658; cv=none; b=P/Hl8VYZmMKebUqLwRUGmZDSMnzjRiP57tpKj2w9fYqPiw0MRnhQJMKEWDj0oX5knpTM8dOl9Yl/71adVEmCIGCoR3fZ76u+3zlq3OVz0vnnU+UBLAezrDvIdc4/JtFdQ/BG1eDmT0C/5F5XyDgaRDXh2AegjNybeYukiBB1cQ8=
+	t=1728082669; cv=none; b=XKZrc8dui/2PNhD4esv5qPCyIT880zvaAKx7CzoNiiBtzQTdHeqNRZ4qo7ddZGzLQPagdlQku9eAINmwOfp7APLqYQhZ0MQirB0zEQXX1QfpXbexyCRZSeAWWXzRH0gCysqa+hSowJTXZCFfvYap1M1OX9J4KGNXtGnH0JjKj6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728082658; c=relaxed/simple;
-	bh=qVjDmqSZwjw9opZT+5TeJEUEe/n3oLyxDf4L24muHzk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UFkAV5mpJEWlC+kljPQX0WyW9lulnepUjwS2O1w92SveymB6vkudHgc55mE5lfH8fYNH1/PH3yXJ5DeBt/WoTg2lOCF9a1hr9CvnmdRzgYUI+P+6CLTDhvH2MNkCoHXf2ep+HxA6NiQx27KMxsNUFLG+dT9ti3PrB0TvVvdoiLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAcVqJTb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4DEC4CED2;
-	Fri,  4 Oct 2024 22:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728082658;
-	bh=qVjDmqSZwjw9opZT+5TeJEUEe/n3oLyxDf4L24muHzk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IAcVqJTbpoSqWwg6W7hK2MFIU8Ijvon0F3DYu9FVRhDWnOAZ7tpai5CDPmZ6GESfm
-	 5k4UfJRAZf1M1Qgs/CoDKUI+/j0t+hVrAfmXz7CN4yNjVD0/9AIiGsg1SWksyDUTkY
-	 q97lltyPUj/FDep7HpfIHy3bDo3rwRuyJqh0YjFrkXFaQqPagVqDFE5jD6Z7NqXYLK
-	 u8+7iOwhOTEY6OM2HRtFSOQWfPpANogTptch092aSauSzzhY08DAH3J1rcul7ttiBB
-	 dWOaH/0QVPGfrVEi24v4rqVT1Hm4OzFDUWBNXI/ajRYkqPn3qYs+5YhrYC9gEShly1
-	 Ff4pWyeyB4zxA==
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a1a412638fso11022695ab.1;
-        Fri, 04 Oct 2024 15:57:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU2f7+RvAX1hk3CoaEvy/PizsUQUTfnMTUYmmOiBp+SJVoUK1fZt/QluQODIuBWdU64+JY8xnpauFyPQ3xA@vger.kernel.org, AJvYcCUyL53XwJFRKmj7O059rdndfazdO5eD862BCEPo3fN8Q7qvaD7EOigQIUUd9mHShI2Im+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNzZDvx0XVctW1De1UA+OU5fAzvuMYpBirgnRmuju7e7l6BtfE
-	swMvAsR1CI59FfrFwMRxGnNn0yS8XUc0I5YqmrGfCNAmPoEQ2CFSzD4TK4+ebfhcYTC2kIaLLQk
-	+9cXT1RN1RZD7ZYIWsJaWMaIJLIE=
-X-Google-Smtp-Source: AGHT+IFxRndEcVq6a0ZjsKN35u+f0Bwc6BGCMWePGg+IW0DnMklxekOyLQfc291uwPNil47MRqUyEBZPrNFtxWwugsc=
-X-Received: by 2002:a05:6e02:1fcf:b0:3a0:533e:3c0a with SMTP id
- e9e14a558f8ab-3a3759925c7mr47646525ab.7.1728082657742; Fri, 04 Oct 2024
- 15:57:37 -0700 (PDT)
+	s=arc-20240116; t=1728082669; c=relaxed/simple;
+	bh=iP3PjDg8C0QSZuYcbelqYi2MY8Tu+CV22cnPKpdI3cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SN6pffyhd/dLdhj+FbED44fpE7OwmxUM95Z16EhqWn1v3/ixLIWnYwVX+QVZxrn97TKDPE0dIzEXjld4Zf9yGacRonMtFcRYJB9nx+4B6oT9Q4D3ONsLJuilCXirHdOYRf6s8Q4jCOXjcp4Fvq50POLThsM/BhSPYlBGdRYY3zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d67D/qVD; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728082667; x=1759618667;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=iP3PjDg8C0QSZuYcbelqYi2MY8Tu+CV22cnPKpdI3cE=;
+  b=d67D/qVDbzuo4K8sEV5yZNZpCfPF+IrwM/WMjC+DTqYrbQ+ifkZZnVrh
+   DmTeYzedFkhw90dnUweq2gFtrVM8VBzNqALzm/30WqTIXLAVE6Z9CKN8Q
+   s25bqbstaKE+yeDbgtC9eo5EmIMvKoFjTGnQeFN9VuYjDKCq6d+8/k/IQ
+   VSTBsObF3yQ1rWOzXf5DkNx4IeVfndecEuc5uNPOH8T02fY/slSZInj+X
+   JVjnK9YqLsOuvzYHx9oyf0zDGURy9B6wxtOFCaerTh0DTIh7vwHHwn0ok
+   I6OBtQAvzECHbLgHmxDD+teojc6S3xQ73sWoBRSxwZgxi2AxKJQBjIyVC
+   A==;
+X-CSE-ConnectionGUID: jMWFkidzQF+hFDa+Yd6Ovg==
+X-CSE-MsgGUID: hW21lr3MR2Kt449LEYPjaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="37973938"
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="37973938"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 15:57:46 -0700
+X-CSE-ConnectionGUID: WnQuzELMTWy0I7Pr1r1FmA==
+X-CSE-MsgGUID: wLelGjFqRmi3GVLXf9V7eA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="75095287"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 04 Oct 2024 15:57:45 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swrF0-0002JQ-2Z;
+	Fri, 04 Oct 2024 22:57:42 +0000
+Date: Sat, 5 Oct 2024 06:57:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20241003 5/14]
+ include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to
+ requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) ==
+ sizeof(struct uverbs_attr_bundle_hdr)': struct member likely outside of
+ struct_group_tagged()
+Message-ID: <202410050637.FRCKvVql-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002180956.1781008-1-namhyung@kernel.org> <20241002180956.1781008-3-namhyung@kernel.org>
- <CAPhsuW7Bh-ZXfM2aYB=Yj8WaJHFc==AKmv6LDRgBq-TfdQ3s8A@mail.gmail.com>
- <ZwBdS86yBtOWy3iD@google.com> <CAPhsuW6AhfG7Xv2izDYnMM+z03X29peZfmWNy0rf98aEaAUfVg@mail.gmail.com>
- <ZwBk8i23odCe7qVK@google.com>
-In-Reply-To: <ZwBk8i23odCe7qVK@google.com>
-From: Song Liu <song@kernel.org>
-Date: Fri, 4 Oct 2024 15:57:26 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4AjZMQxCbqYmEgbnkP0gWenKo4wVi8tW1zYcsaF5h7iQ@mail.gmail.com>
-Message-ID: <CAPhsuW4AjZMQxCbqYmEgbnkP0gWenKo4wVi8tW1zYcsaF5h7iQ@mail.gmail.com>
-Subject: Re: [PATCH v4 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
-	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, Oct 4, 2024 at 2:58=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
-rote:
->
-> On Fri, Oct 04, 2024 at 02:36:30PM -0700, Song Liu wrote:
-> > On Fri, Oct 4, 2024 at 2:25=E2=80=AFPM Roman Gushchin <roman.gushchin@l=
-inux.dev> wrote:
-> > >
-> > > On Fri, Oct 04, 2024 at 01:10:58PM -0700, Song Liu wrote:
-> > > > On Wed, Oct 2, 2024 at 11:10=E2=80=AFAM Namhyung Kim <namhyung@kern=
-el.org> wrote:
-> > > > >
-> > > > > The bpf_get_kmem_cache() is to get a slab cache information from =
-a
-> > > > > virtual address like virt_to_cache().  If the address is a pointe=
-r
-> > > > > to a slab object, it'd return a valid kmem_cache pointer, otherwi=
-se
-> > > > > NULL is returned.
-> > > > >
-> > > > > It doesn't grab a reference count of the kmem_cache so the caller=
- is
-> > > > > responsible to manage the access.  The intended use case for now =
-is to
-> > > > > symbolize locks in slab objects from the lock contention tracepoi=
-nts.
-> > > > >
-> > > > > Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> > > > > Acked-by: Roman Gushchin <roman.gushchin@linux.dev> (mm/*)
-> > > > > Acked-by: Vlastimil Babka <vbabka@suse.cz> #mm/slab
-> > > > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > > > > ---
-> > > > >  kernel/bpf/helpers.c |  1 +
-> > > > >  mm/slab_common.c     | 19 +++++++++++++++++++
-> > > > >  2 files changed, 20 insertions(+)
-> > > > >
-> > > > > diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> > > > > index 4053f279ed4cc7ab..3709fb14288105c6 100644
-> > > > > --- a/kernel/bpf/helpers.c
-> > > > > +++ b/kernel/bpf/helpers.c
-> > > > > @@ -3090,6 +3090,7 @@ BTF_ID_FLAGS(func, bpf_iter_bits_new, KF_IT=
-ER_NEW)
-> > > > >  BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NUL=
-L)
-> > > > >  BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
-> > > > >  BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
-> > > > > +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RET_NULL)
-> > > > >  BTF_KFUNCS_END(common_btf_ids)
-> > > > >
-> > > > >  static const struct btf_kfunc_id_set common_kfunc_set =3D {
-> > > > > diff --git a/mm/slab_common.c b/mm/slab_common.c
-> > > > > index 7443244656150325..5484e1cd812f698e 100644
-> > > > > --- a/mm/slab_common.c
-> > > > > +++ b/mm/slab_common.c
-> > > > > @@ -1322,6 +1322,25 @@ size_t ksize(const void *objp)
-> > > > >  }
-> > > > >  EXPORT_SYMBOL(ksize);
-> > > > >
-> > > > > +#ifdef CONFIG_BPF_SYSCALL
-> > > > > +#include <linux/btf.h>
-> > > > > +
-> > > > > +__bpf_kfunc_start_defs();
-> > > > > +
-> > > > > +__bpf_kfunc struct kmem_cache *bpf_get_kmem_cache(u64 addr)
-> > > > > +{
-> > > > > +       struct slab *slab;
-> > > > > +
-> > > > > +       if (!virt_addr_valid(addr))
-> > > > > +               return NULL;
-> > > > > +
-> > > > > +       slab =3D virt_to_slab((void *)(long)addr);
-> > > > > +       return slab ? slab->slab_cache : NULL;
-> > > > > +}
-> > > >
-> > > > Do we need to hold a refcount to the slab_cache? Given
-> > > > we make this kfunc available everywhere, including
-> > > > sleepable contexts, I think it is necessary.
-> > >
-> > > It's a really good question.
-> > >
-> > > If the callee somehow owns the slab object, as in the example
-> > > provided in the series (current task), it's not necessarily.
-> > >
-> > > If a user can pass a random address, you're right, we need to
-> > > grab the slab_cache's refcnt. But then we also can't guarantee
-> > > that the object still belongs to the same slab_cache, the
-> > > function becomes racy by the definition.
-> >
-> > To be safe, we can limit the kfunc to sleepable context only. Then
-> > we can lock slab_mutex for virt_to_slab, and hold a refcount
-> > to slab_cache. We will need a KF_RELEASE kfunc to release
-> > the refcount later.
->
-> Then it needs to call kmem_cache_destroy() for release which contains
-> rcu_barrier. :(
->
-> >
-> > IIUC, this limitation (sleepable context only) shouldn't be a problem
-> > for perf use case?
->
-> No, it would be called from the lock contention path including
-> spinlocks. :(
->
-> Can we limit it to non-sleepable ctx and not to pass arbtrary address
-> somehow (or not to save the result pointer)?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241003
+head:   ec64acf2dce7577a42c01241e78b24afebc26e96
+commit: f44c92244302b0ac9d17ccf3eb21786a9be55163 [5/14] RDMA/uverbs: Use static_assert() to check struct sizes
+config: arm-randconfig-002-20241005 (https://download.01.org/0day-ci/archive/20241005/202410050637.FRCKvVql-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project fef3566a25ff0e34fb87339ba5e13eca17cec00f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410050637.FRCKvVql-lkp@intel.com/reproduce)
 
-I hacked something like the following. It is not ideal, because we are
-taking spinlock_t pointer instead of void pointer. To use this with void
-'pointer, we will need some verifier changes.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410050637.FRCKvVql-lkp@intel.com/
 
-Thanks,
-Song
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/infiniband/core/uverbs_cmd.c:43:
+   In file included from include/rdma/uverbs_types.h:10:
+   In file included from include/rdma/ib_verbs.h:15:
+   In file included from include/linux/ethtool.h:18:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/arm/include/asm/cacheflush.h:10:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/infiniband/core/uverbs_cmd.c:44:
+   In file included from include/rdma/uverbs_std_types.h:10:
+>> include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr)': struct member likely outside of struct_group_tagged()
+     643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
+         | ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     644 |               "struct member likely outside of struct_group_tagged()");
+         |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/stddef.h:16:32: note: expanded from macro 'offsetof'
+      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+         |                                 ^
+   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/rdma/uverbs_ioctl.h:643:58: note: expression evaluates to '56 == 52'
+     643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     644 |               "struct member likely outside of struct_group_tagged()");
+         |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   1 warning and 1 error generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
 
-diff --git i/kernel/bpf/helpers.c w/kernel/bpf/helpers.c
-index 3709fb142881..7311a26ecb01 100644
---- i/kernel/bpf/helpers.c
-+++ w/kernel/bpf/helpers.c
-@@ -3090,7 +3090,7 @@ BTF_ID_FLAGS(func, bpf_iter_bits_new, KF_ITER_NEW)
- BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)
- BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
- BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
--BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RET_NULL)
-+BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RET_NULL | KF_TRUSTED_ARGS
-| KF_RCU_PROTECTED)
- BTF_KFUNCS_END(common_btf_ids)
+vim +643 include/rdma/uverbs_ioctl.h
 
- static const struct btf_kfunc_id_set common_kfunc_set =3D {
-diff --git i/mm/slab_common.c w/mm/slab_common.c
-index 5484e1cd812f..3e3e5f172f2e 100644
---- i/mm/slab_common.c
-+++ w/mm/slab_common.c
-@@ -1327,14 +1327,15 @@ EXPORT_SYMBOL(ksize);
+   630	
+   631	struct uverbs_attr_bundle {
+   632		/* New members MUST be added within the struct_group() macro below. */
+   633		struct_group_tagged(uverbs_attr_bundle_hdr, hdr,
+   634			struct ib_udata driver_udata;
+   635			struct ib_udata ucore;
+   636			struct ib_uverbs_file *ufile;
+   637			struct ib_ucontext *context;
+   638			struct ib_uobject *uobject;
+   639			DECLARE_BITMAP(attr_present, UVERBS_API_ATTR_BKEY_LEN);
+   640		);
+   641		struct uverbs_attr attrs[];
+   642	};
+ > 643	static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
+   644		      "struct member likely outside of struct_group_tagged()");
+   645	
 
- __bpf_kfunc_start_defs();
-
--__bpf_kfunc struct kmem_cache *bpf_get_kmem_cache(u64 addr)
-+__bpf_kfunc struct kmem_cache *bpf_get_kmem_cache(spinlock_t *addr)
- {
-        struct slab *slab;
-+       unsigned long a =3D (unsigned long)addr;
-
--       if (!virt_addr_valid(addr))
-+       if (!virt_addr_valid(a))
-                return NULL;
-
--       slab =3D virt_to_slab((void *)(long)addr);
-+       slab =3D virt_to_slab(addr);
-        return slab ? slab->slab_cache : NULL;
- }
-
-@@ -1346,4 +1347,3 @@ EXPORT_TRACEPOINT_SYMBOL(kmalloc);
- EXPORT_TRACEPOINT_SYMBOL(kmem_cache_alloc);
- EXPORT_TRACEPOINT_SYMBOL(kfree);
- EXPORT_TRACEPOINT_SYMBOL(kmem_cache_free);
--
-diff --git i/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-w/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-index 3f6ec15a1bf6..8238155a5055 100644
---- i/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-+++ w/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-@@ -16,7 +16,7 @@ struct {
-        __uint(max_entries, 1024);
- } slab_hash SEC(".maps");
-
--extern struct kmem_cache *bpf_get_kmem_cache(__u64 addr) __ksym;
-+extern struct kmem_cache *bpf_get_kmem_cache(spinlock_t *addr) __ksym;
-
- /* result, will be checked by userspace */
- int found;
-@@ -46,21 +46,23 @@ int slab_info_collector(struct bpf_iter__kmem_cache *ct=
-x)
- SEC("raw_tp/bpf_test_finish")
- int BPF_PROG(check_task_struct)
- {
--       __u64 curr =3D bpf_get_current_task();
-+       struct task_struct *curr =3D bpf_get_current_task_btf();
-        struct kmem_cache *s;
-        char *name;
-
--       s =3D bpf_get_kmem_cache(curr);
-+       s =3D bpf_get_kmem_cache(&curr->alloc_lock);
-        if (s =3D=3D NULL) {
-                found =3D -1;
-                return 0;
-        }
-
-+       bpf_rcu_read_lock();
-        name =3D bpf_map_lookup_elem(&slab_hash, &s);
-        if (name && !bpf_strncmp(name, 11, "task_struct"))
-                found =3D 1;
-        else
-                found =3D -2;
-+       bpf_rcu_read_unlock();
-
-        return 0;
- }
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
