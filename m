@@ -1,248 +1,159 @@
-Return-Path: <linux-kernel+bounces-350203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08B699016F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:35:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20380990173
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3807B1F21965
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:35:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F062281419
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31320156678;
-	Fri,  4 Oct 2024 10:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D90015572E;
+	Fri,  4 Oct 2024 10:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FTzVqcgi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=syndicat.com header.i=@syndicat.com header.b="NTzg6eCi"
+Received: from mail.syndicat.com (mail.syndicat.com [62.146.89.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55193155C98;
-	Fri,  4 Oct 2024 10:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC911369BB;
+	Fri,  4 Oct 2024 10:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.89.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728038122; cv=none; b=e/nHo16SroFhYhjsKsKC9BCb00B3NlKzGVEjFDSjNbNv3tycYIrxfIBA661mX3kKzw2ohGutjyp4LJwndfHFOhsx8dKeeyvKBaBG5IbQCO8Rmd+lNZK+nnGwlQD+WoIyyZIcJuZWfl7ycRrkp+bx4IPTBND94ManaCnD8xNfN/U=
+	t=1728038195; cv=none; b=ql3Sfevd8iyTysK6uvu5gEABSyxKMX3N05FI4+Hx5HsTF0MalbCMQa6Nkj8DpfqvC0FKdXNwr52t4pnYdLUpZWqAMaCNfhNZCWahIJsgUCPyPNaYFJtJBzc1+GDrrxwFbRjoTZRWq22GNzF+oa1s8Gbdl/5IhqWfBd0Xn7M1wUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728038122; c=relaxed/simple;
-	bh=eCX4FHv21F1UmXbzAcke3XRP+BTSB2fq8+NGQdMcpuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=szq4vaGdANYxHf5s+xXChjK0xzC51M8fgkq+4OMhfRVtDQgIpTSavPzDl4dTQxrENBxJdSSmhHwOC43epqT497ojtBAEai8sfxm65wYqm6EdL7qPRVNV3NuBH6+GBH1c1zzDePjfsK85F/yhyKgmobKgr4CFrW+SCR7nCLwh/cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FTzVqcgi; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728038120; x=1759574120;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eCX4FHv21F1UmXbzAcke3XRP+BTSB2fq8+NGQdMcpuI=;
-  b=FTzVqcgi3nij3bPKFHKne9XtXpQUSis3dUPrhtVnfvdSa1c+oI75si20
-   g5f4PPNyRxvf5q5p11l32a+ZMHsDMKATOzCX0G3tOfNOgSarQcBT/9i2r
-   95POICDyeQkSEYXn5a8wVqArxuCeDAaOylOJufnq9rFCH6dIntqjTRRlH
-   fPiFgcREWTWOWnphang+/fQ8GTxl4sNOJehOmGtIoC6/Pib2fPEGNNUsy
-   TaAbaBn2mWqPhiUltFTczIV4bpdusRP75OqesDqYanAQoqnGURlP4Bir6
-   GCt2d2eiG3sr0g7BYHzPJcI+7ChQEf8Eb2lAL6jfbTTJGZtQ4OOdp22uu
-   Q==;
-X-CSE-ConnectionGUID: wKqU3NOIT0O3Rx9jMfcyRQ==
-X-CSE-MsgGUID: uLNqej0ETF+09abN/FO4kg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="30963942"
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="30963942"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 03:35:18 -0700
-X-CSE-ConnectionGUID: 5p8A3KL0Sia6ey7VuKWtCA==
-X-CSE-MsgGUID: oQePmqGWQpulC3Rr1s1WeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="74992841"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 04 Oct 2024 03:35:12 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swfeQ-0001Ui-26;
-	Fri, 04 Oct 2024 10:35:10 +0000
-Date: Fri, 4 Oct 2024 18:34:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	linux-trace-kernel@vger.kernel.org,
-	Michael Jeanson <mjeanson@efficios.com>
-Subject: Re: [PATCH v1 1/8] tracing: Declare system call tracepoints with
- TRACE_EVENT_SYSCALL
-Message-ID: <202410041838.pOZuOGTX-lkp@intel.com>
-References: <20241003151638.1608537-2-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1728038195; c=relaxed/simple;
+	bh=GrbPeAK5qkQQQwjlzw5HoXFZHBNyvLny9Hy3BfR+P00=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B7UM5j5KXvqwjLdW5rQ/RLNnB4GBbOdkOaw6qWPOnGivLT1BZYTi8fn1rhmLrIHoy8ZhXM9NltHmBEz/hymsV8qArnU/K5x0AzpiVJ4Ya0pdQWaQGl9Vr/IfyeBOohnVoImnfGGI992JTb87Z4XsjCbAdMuUFXUsKhzhR/PHIX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=syndicat.com; spf=pass smtp.mailfrom=syndicat.com; dkim=pass (1024-bit key) header.d=syndicat.com header.i=@syndicat.com header.b=NTzg6eCi; arc=none smtp.client-ip=62.146.89.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=syndicat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=syndicat.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=syndicat.com; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/QkDROfGDvJqG3hdiAViZ9A3NRJn+vKEY02ZDZuWBAs=; b=NTzg6eCip1bXj4b+mJrtsVSKkG
+	brkV800C7iWdYj9nQZOiN9GF1wqVl54fU3p0Wu0Yf821ssjmHMCtrH2QrbT6sN395/Mmo+gXkU1QU
+	1h8d2eG9N6Iv5FVjJx+aTEiqb2cYcvp5F4bC7eexjmRPrQhPvCkKN76xU3pDHnxTtPnc=;
+Received: from localhost.syndicat.com ([127.0.0.1]:54665 helo=localhost)
+	by mail.syndicat.com with esmtp (Syndicat PostHamster 12.2 4.96.1)
+	(envelope-from <nd@syndicat.com>)
+	id 1swffQ-0005tE-0T;
+	Fri, 04 Oct 2024 12:36:12 +0200
+X-Virus-Scanned: amavisd-new at syndicat.com
+Received: from mail.syndicat.com ([127.0.0.1])
+	by localhost (mail.syndicat.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Yx5r5LuOo7ZZ; Fri,  4 Oct 2024 12:36:11 +0200 (CEST)
+Received: from [62.89.4.53] (port=48282 helo=gongov.localnet)
+	by mail.syndicat.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Syndicat PostHamster 12.2 4.96.1)
+	(envelope-from <nd@syndicat.com>)
+	id 1swffP-0003ug-1l;
+	Fri, 04 Oct 2024 12:36:11 +0200
+From: Niels Dettenbach <nd@syndicat.com>
+To: x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+ =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH 1/1] x86: SMP broken on Xen PV DomU since 6.9
+Date: Fri, 04 Oct 2024 12:36:09 +0200
+Message-ID: <14053472.RDIVbhacDa@gongov>
+Organization: Syndicat IT&Internet
+Disposition-Notification-To: Niels Dettenbach <nd@syndicat.com>
+In-Reply-To: <45f3a10c-8695-42cb-abb8-8c13ce1a476b@suse.com>
+References:
+ <2210883.Icojqenx9y@gongov> <864022534.0ifERbkFSE@gongov>
+ <45f3a10c-8695-42cb-abb8-8c13ce1a476b@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241003151638.1608537-2-mathieu.desnoyers@efficios.com>
+Content-Type: multipart/signed; boundary="nextPart13610981.dW097sEU6C";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-Report-Abuse-To: abuse@syndicat.com (see https://www.syndicat.com/kontakt/kontakte/)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - mail.syndicat.com
+X-AntiAbuse: Original Domain - 
+X-AntiAbuse: Sender Address Domain - syndicat.com
 
-Hi Mathieu,
+--nextPart13610981.dW097sEU6C
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Niels Dettenbach <nd@syndicat.com>
+Subject: Re: [PATCH 1/1] x86: SMP broken on Xen PV DomU since 6.9
+Date: Fri, 04 Oct 2024 12:36:09 +0200
+Message-ID: <14053472.RDIVbhacDa@gongov>
+Organization: Syndicat IT&Internet
+Disposition-Notification-To: Niels Dettenbach <nd@syndicat.com>
+In-Reply-To: <45f3a10c-8695-42cb-abb8-8c13ce1a476b@suse.com>
+MIME-Version: 1.0
 
-kernel test robot noticed the following build errors:
+Am Freitag, 4. Oktober 2024, 12:29:57  schrieben Sie:
+> On 04.10.24 12:05, Niels Dettenbach wrote:
+> > Virtual machines under Xen Hypervisor (DomU) running in Xen PV mode use=
+ a
+> > special, nonstandard synthetized CPU topology which "just works" under
+> > kernels 6.9.x while newer kernels wrongly assuming a "crash kernel" and
+> > disable SMP (reducing to one CPU core) because the newer topology
+> > implementation produces a wrong error "[Firmware Bug]: APIC enumeration
+> > order not specification compliant" after new topology checks which are
+> > improper for Xen PV platform. As a result, the kernel disables SMP and
+> > activates just one CPU core within the PV DomU "VM" (DomU in PV mode).
+> >=20
+> > The patch disables the regarding checks if it is running in Xen PV
+> > mode (only) and bring back SMP / all CPUs as in the past to such DomU
+> > VMs. The Xen subsystem takes care of the proper interaction between
+> > "guest" (DomU) and the "host" (Dom0).
+> >=20
+> > Signed-off-by: Niels Dettenbach <nd@syndicat.com>
+>=20
+> Does the attached patch instead of yours help?
+>=20
+> Compile tested only.
 
-[auto build test ERROR on peterz-queue/sched/core]
-[also build test ERROR on linus/master tip/core/entry v6.12-rc1 next-20241004]
-[cannot apply to rostedt-trace/for-next rostedt-trace/for-next-urgent]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mathieu-Desnoyers/tracing-Declare-system-call-tracepoints-with-TRACE_EVENT_SYSCALL/20241003-232114
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/core
-patch link:    https://lore.kernel.org/r/20241003151638.1608537-2-mathieu.desnoyers%40efficios.com
-patch subject: [PATCH v1 1/8] tracing: Declare system call tracepoints with TRACE_EVENT_SYSCALL
-config: powerpc-randconfig-r071-20241004 (https://download.01.org/0day-ci/archive/20241004/202410041838.pOZuOGTX-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410041838.pOZuOGTX-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410041838.pOZuOGTX-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arch/powerpc/kernel/ptrace/ptrace.c: In function 'do_syscall_trace_enter':
->> arch/powerpc/kernel/ptrace/ptrace.c:298:17: error: implicit declaration of function 'trace_sys_enter'; did you mean 'ftrace_nmi_enter'? [-Wimplicit-function-declaration]
-     298 |                 trace_sys_enter(regs, regs->gpr[0]);
-         |                 ^~~~~~~~~~~~~~~
-         |                 ftrace_nmi_enter
-   arch/powerpc/kernel/ptrace/ptrace.c: In function 'do_syscall_trace_leave':
->> arch/powerpc/kernel/ptrace/ptrace.c:329:17: error: implicit declaration of function 'trace_sys_exit'; did you mean 'ftrace_nmi_exit'? [-Wimplicit-function-declaration]
-     329 |                 trace_sys_exit(regs, regs->result);
-         |                 ^~~~~~~~~~~~~~
-         |                 ftrace_nmi_exit
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [y]:
-   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+Thanks J=C3=BCrgen - will try until monday...
 
 
-vim +298 arch/powerpc/kernel/ptrace/ptrace.c
+niels.
 
-2449acc5348b94 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  235  
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  236  /**
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  237   * do_syscall_trace_enter() - Do syscall tracing on kernel entry.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  238   * @regs: the pt_regs of the task to trace (current)
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  239   *
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  240   * Performs various types of tracing on syscall entry. This includes seccomp,
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  241   * ptrace, syscall tracepoints and audit.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  242   *
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  243   * The pt_regs are potentially visible to userspace via ptrace, so their
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  244   * contents is ABI.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  245   *
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  246   * One or more of the tracers may modify the contents of pt_regs, in particular
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  247   * to modify arguments or even the syscall number itself.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  248   *
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  249   * It's also possible that a tracer can choose to reject the system call. In
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  250   * that case this function will return an illegal syscall number, and will put
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  251   * an appropriate return value in regs->r3.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  252   *
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  253   * Return: the (possibly changed) syscall number.
-^1da177e4c3f41 arch/ppc/kernel/ptrace.c            Linus Torvalds    2005-04-16  254   */
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  255  long do_syscall_trace_enter(struct pt_regs *regs)
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  256  {
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  257  	u32 flags;
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  258  
-985faa78687de6 arch/powerpc/kernel/ptrace/ptrace.c Mark Rutland      2021-11-29  259  	flags = read_thread_flags() & (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE);
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  260  
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  261  	if (flags) {
-153474ba1a4aed arch/powerpc/kernel/ptrace/ptrace.c Eric W. Biederman 2022-01-27  262  		int rc = ptrace_report_syscall_entry(regs);
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  263  
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  264  		if (unlikely(flags & _TIF_SYSCALL_EMU)) {
-5521eb4bca2db7 arch/powerpc/kernel/ptrace.c        Breno Leitao      2018-09-20  265  			/*
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  266  			 * A nonzero return code from
-153474ba1a4aed arch/powerpc/kernel/ptrace/ptrace.c Eric W. Biederman 2022-01-27  267  			 * ptrace_report_syscall_entry() tells us to prevent
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  268  			 * the syscall execution, but we are not going to
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  269  			 * execute it anyway.
-a225f156740555 arch/powerpc/kernel/ptrace.c        Elvira Khabirova  2018-12-07  270  			 *
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  271  			 * Returning -1 will skip the syscall execution. We want
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  272  			 * to avoid clobbering any registers, so we don't goto
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  273  			 * the skip label below.
-5521eb4bca2db7 arch/powerpc/kernel/ptrace.c        Breno Leitao      2018-09-20  274  			 */
-5521eb4bca2db7 arch/powerpc/kernel/ptrace.c        Breno Leitao      2018-09-20  275  			return -1;
-5521eb4bca2db7 arch/powerpc/kernel/ptrace.c        Breno Leitao      2018-09-20  276  		}
-5521eb4bca2db7 arch/powerpc/kernel/ptrace.c        Breno Leitao      2018-09-20  277  
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  278  		if (rc) {
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  279  			/*
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  280  			 * The tracer decided to abort the syscall. Note that
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  281  			 * the tracer may also just change regs->gpr[0] to an
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  282  			 * invalid syscall number, that is handled below on the
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  283  			 * exit path.
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  284  			 */
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  285  			goto skip;
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  286  		}
-8dbdec0bcb416d arch/powerpc/kernel/ptrace.c        Dmitry V. Levin   2018-12-16  287  	}
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  288  
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  289  	/* Run seccomp after ptrace; allow it to set gpr[3]. */
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  290  	if (do_seccomp(regs))
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  291  		return -1;
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  292  
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  293  	/* Avoid trace and audit when syscall is invalid. */
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  294  	if (regs->gpr[0] >= NR_syscalls)
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  295  		goto skip;
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  296  
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02  297  	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02 @298  		trace_sys_enter(regs, regs->gpr[0]);
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02  299  
-cab175f9fa2973 arch/powerpc/kernel/ptrace.c        Denis Kirjanov    2010-08-27  300  	if (!is_32bit_task())
-91397401bb5072 arch/powerpc/kernel/ptrace.c        Eric Paris        2014-03-11  301  		audit_syscall_entry(regs->gpr[0], regs->gpr[3], regs->gpr[4],
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  302  				    regs->gpr[5], regs->gpr[6]);
-cfcd1705b61ecc arch/powerpc/kernel/ptrace.c        David Woodhouse   2007-01-14  303  	else
-91397401bb5072 arch/powerpc/kernel/ptrace.c        Eric Paris        2014-03-11  304  		audit_syscall_entry(regs->gpr[0],
-cfcd1705b61ecc arch/powerpc/kernel/ptrace.c        David Woodhouse   2007-01-14  305  				    regs->gpr[3] & 0xffffffff,
-cfcd1705b61ecc arch/powerpc/kernel/ptrace.c        David Woodhouse   2007-01-14  306  				    regs->gpr[4] & 0xffffffff,
-cfcd1705b61ecc arch/powerpc/kernel/ptrace.c        David Woodhouse   2007-01-14  307  				    regs->gpr[5] & 0xffffffff,
-cfcd1705b61ecc arch/powerpc/kernel/ptrace.c        David Woodhouse   2007-01-14  308  				    regs->gpr[6] & 0xffffffff);
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  309  
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  310  	/* Return the possibly modified but valid syscall number */
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  311  	return regs->gpr[0];
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  312  
-1addc57e111b92 arch/powerpc/kernel/ptrace.c        Kees Cook         2016-06-02  313  skip:
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  314  	/*
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  315  	 * If we are aborting explicitly, or if the syscall number is
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  316  	 * now invalid, set the return value to -ENOSYS.
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  317  	 */
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  318  	regs->gpr[3] = -ENOSYS;
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  319  	return -1;
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  320  }
-d38374142b2560 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2015-07-23  321  
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  322  void do_syscall_trace_leave(struct pt_regs *regs)
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  323  {
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  324  	int step;
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  325  
-d7e7528bcd456f arch/powerpc/kernel/ptrace.c        Eric Paris        2012-01-03  326  	audit_syscall_exit(regs);
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  327  
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02  328  	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02 @329  		trace_sys_exit(regs, regs->result);
-02424d8966d803 arch/powerpc/kernel/ptrace.c        Ian Munsie        2011-02-02  330  
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  331  	step = test_thread_flag(TIF_SINGLESTEP);
-4f72c4279eab1e arch/powerpc/kernel/ptrace.c        Roland McGrath    2008-07-27  332  	if (step || test_thread_flag(TIF_SYSCALL_TRACE))
-153474ba1a4aed arch/powerpc/kernel/ptrace/ptrace.c Eric W. Biederman 2022-01-27  333  		ptrace_report_syscall_exit(regs, step);
-ea9c102cb0a796 arch/ppc/kernel/ptrace.c            David Woodhouse   2005-05-08  334  }
-002af9391bfbe8 arch/powerpc/kernel/ptrace.c        Michael Ellerman  2018-10-12  335  
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+
+
+
+--nextPart13610981.dW097sEU6C
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEen+3H2N8RDyGzUZnDbtaiEWSKkQFAmb/xRkACgkQDbtaiEWS
+KkRfZA//XvrnCNs6eEXQKRO7D+ih4l5qYPj4xxrC3yP2Kf6syfIVEHPmC+wCSTZF
+qGS11tqp7ePVeyWGvmjJ1M28XDY0tKXM32v937OpqN4L6ynohlEa/zk6ibaKUvg7
+eEQpMOQ9aDeKMH0MUvdB4YWewmHvV/a3zv3rEiUHvFFsaEQBGwv32+t8ShuiCm+p
+e430u+L0fDcLbkLjmGpW3zyehkRImVY/gvQ05LM7/JR6C49HzXSSB/juqfmQimf4
+y9PkbmbzxRqwUjSGxHF1dj6c/ypak+kdS+/J8ht39kcVk4vOOmTuaj3xp7cGU7O1
+WSLvDzB+YA2cB0xeLBq+tJi6AVdS9iCVfUcz4yopq3U5V4uju1qTubUP3K9VfUs9
+Blsvfk79Gf5eaBAp78dZFPiJ0f5ZujHpg4e99wL7F2HLa0XQJjIGCw/jeQuYNFxe
+WfpM7Lv+RTFt8xkBMTZWE13J69yd+6GIibEsupt1A3017uhltNXtnQdIzbhtcQkZ
+wNnHqR4n+T0UJArieDQ/wxhPW25o6+3xcrZEWZHWQgmfOpmybyRlTLX/Sukd6N0W
+uxMjchWf6+jTvMTFipjKHGIWs37svWEvcj563ufgIe8/qSV/FDHoo/DZvcIgBxdl
+Es4tYKVHUu6iqAOHsiTuHvjXUJ8tk/nTXE8TA58c1XhF/7IjhmQ=
+=JRW+
+-----END PGP SIGNATURE-----
+
+--nextPart13610981.dW097sEU6C--
+
+
+
 
