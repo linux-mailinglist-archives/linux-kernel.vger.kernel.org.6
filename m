@@ -1,83 +1,68 @@
-Return-Path: <linux-kernel+bounces-351273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0EBA990F35
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56615990F3D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2A081C22CF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:52:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 800341C22F95
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5A71E572F;
-	Fri,  4 Oct 2024 18:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45641E8826;
+	Fri,  4 Oct 2024 18:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kVCrPpZ5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FXKqe7eL"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5751E5726;
-	Fri,  4 Oct 2024 18:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705961DACBC;
+	Fri,  4 Oct 2024 18:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728067240; cv=none; b=Zr1dISHFs27vzeIcXsJGBoLzxXC/QcXbJbQ650OwhyRcJqhiQbExkfvN2ZkwcQmpHejtzMCf5cSu7tPHFnQykgebhLjJaWuHDzUk18jBr+bb5R79zNSd722ksLOt+2INPs/0UrB5RcrZbNI8Ytktc6tWSeZrYAEZgsQBuKkP4AU=
+	t=1728067367; cv=none; b=LanZcssal7onpBa4/0PwQeYlefaczRhnmmJbpo6uGU/wHZHf8DmuTMB/Pt+eCIySqd2Pa5JKp5u8xTHBoS4zEAW2Su4FBm216DI8QS796VwCqH/X8oids3EI6wil4jvOrhU9urkgqNKeBPNGylwnviA/O3FvWi+S/8qbHns84TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728067240; c=relaxed/simple;
-	bh=rCgZOpHDQFFi3/FMJI74LvTPZIfZw8kodL5qilZLE1g=;
+	s=arc-20240116; t=1728067367; c=relaxed/simple;
+	bh=DVwVmCYlY2xYuTUAMRS287RHTSutmXYS2Obhz0TvmWI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eb6ezZ/yAyiPMY3jJ2bXW0NxogwK2KG2tsSPVySBLrhAzhVHYzKDs/QGxYfJXcBZGqta3gYUz+r2/G6lT7DUw6MTAcp74wz1iNHbdNDmjpvlXYqSxvUWgFS1vah19p9YdHRp83g0Crt7skC5OX4Y6iqEo4IzUA/1Fm3TRPfM0ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kVCrPpZ5; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728067239; x=1759603239;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rCgZOpHDQFFi3/FMJI74LvTPZIfZw8kodL5qilZLE1g=;
-  b=kVCrPpZ577mYR00LEnQ3vpMVhIfKjaecNzLAPsizcg2yZ+yfhPauQV75
-   HvkmM0lufPSKwZ1iBvxnDNbQhOyMqrKiecVAPXRkA+zyV7hobDaiDqgTB
-   IhxgF/9jHH2CegNrPCBsFeOrFre7S2/6MWZTKqDFT/8VkSRfQBjz+ydx2
-   o4CIasvCVRNTPTaTZp/vQRy3QPCwknWAPvMQoLSWyXUNRyUrcHKW0sSKa
-   A0gSDePufE0ya6U34230vBwmkeJORMXrFBv1Xa7YzWbLf5yGa3MnczCVV
-   OXa+IVnXBnNrvew5EIxsF9H6a5Jzuhh32wl/jEnKCTPN9SORn+mWD+MAW
-   A==;
-X-CSE-ConnectionGUID: gyt+iew3TLyW2FQY+ypX4g==
-X-CSE-MsgGUID: CFi/0kbJTzeoFytiOex/pw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="27184400"
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="27184400"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 11:40:38 -0700
-X-CSE-ConnectionGUID: SA1PQIikQQGTHsIKJbMGbw==
-X-CSE-MsgGUID: sS6mPp/xQA6gJBI0Dl4vqg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="105637362"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 04 Oct 2024 11:40:35 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swnE8-000254-1T;
-	Fri, 04 Oct 2024 18:40:32 +0000
-Date: Sat, 5 Oct 2024 02:40:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vinicius Peixoto <vpeixoto@lkcamp.dev>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	Vinicius Peixoto <vpeixoto@lkcamp.dev>,
-	Enzo Bertoloti <ebertoloti@lkcamp.dev>,
-	Fabricio Gasperin <fgasperin@lkcamp.dev>,
-	David Laight <David.Laight@aculab.com>
-Subject: Re: [PATCH v2] lib/crc16_kunit.c: add KUnit tests for crc16
-Message-ID: <202410050215.eU9509xy-lkp@intel.com>
-References: <20241003-crc16-kunit-v2-1-5fe74b113e1e@lkcamp.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VDcxQSCtlHCDWeZRlziH2WKWfD4bgtudm8+NtuBLobsUZJMGmfafrBPInmPLAA4aFblXBUQIS9SkvrKAZu0Nnr+Kq55Fcn8+pypny4XkltrPFMFrCbU7zVLjFI1fkqQHuSluur/XdME4ns1i4oDIqO5JG7bhdZIEH2ck5+JeUfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FXKqe7eL; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=GBgC9Tb8pPsezOHqVbYJMt9DxjXu6D55yaLDt4AVW3A=; b=FXKqe7eL3fuCrKk/VvGwsO7NAb
+	he2EKZoQxyZ9e8whbZl4MKnVqCQ/gWnBiVFdsB3egy7IxZOCQdN3BwEVUadgf6HgiIt4pp8JVGZ/a
+	4mNzqjmyGyn428sBurI+dbrjtzW1LAeOTnM3PXLnzAtS+ujx67vrdyWEMiVOxeSpNKZI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1swnGE-0095Ce-Jl; Fri, 04 Oct 2024 20:42:42 +0200
+Date: Fri, 4 Oct 2024 20:42:42 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [PATCH net-next v2 7/9] net: phy: introduce ethtool_phy_ops to
+ get and set phy configuration
+Message-ID: <4d4c0c85-ec27-4707-9613-2146aa68bf8c@lunn.ch>
+References: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
+ <20241004161601.2932901-8-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,59 +71,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241003-crc16-kunit-v2-1-5fe74b113e1e@lkcamp.dev>
+In-Reply-To: <20241004161601.2932901-8-maxime.chevallier@bootlin.com>
 
-Hi Vinicius,
+> +int phy_set_config(struct phy_device *phydev,
+> +		   const struct phy_device_config *phy_cfg,
+> +		   struct netlink_ext_ack *extack)
+> +{
+> +	bool isolate_change;
+> +	int ret;
+> +
+> +	mutex_lock(&phydev->lock);
+> +	isolate_change = (phy_cfg->isolate != phydev->isolated);
+> +	mutex_unlock(&phydev->lock);
+> +
+> +	if (!isolate_change)
+> +		return 0;
+> +
+> +	ret = phy_isolate(phydev, phy_cfg->isolate);
+> +	if (ret)
+> +		NL_SET_ERR_MSG(extack, "Error while configuring PHY isolation");
 
-kernel test robot noticed the following build warnings:
+This seems overly simplistic to me. Don't you need to iterate over all
+the other PHYs attached to this MAC and ensure they are isolated? Only
+one can be unisolated at once.
 
-[auto build test WARNING on 9852d85ec9d492ebef56dc5f229416c925758edc]
+It is also not clear to me how this is going to work from a MAC
+perspective. Does the MAC call phy_connect() multiple times? How does
+ndev->phydev work? Who is responsible for the initial configuration,
+such that all but one PHY is isolated?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vinicius-Peixoto/lib-crc16_kunit-c-add-KUnit-tests-for-crc16/20241004-050248
-base:   9852d85ec9d492ebef56dc5f229416c925758edc
-patch link:    https://lore.kernel.org/r/20241003-crc16-kunit-v2-1-5fe74b113e1e%40lkcamp.dev
-patch subject: [PATCH v2] lib/crc16_kunit.c: add KUnit tests for crc16
-config: parisc-randconfig-r071-20241005 (https://download.01.org/0day-ci/archive/20241005/202410050215.eU9509xy-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410050215.eU9509xy-lkp@intel.com/reproduce)
+I assume you have a real board that needs this. So i think we need to
+see a bit more of the complete solution, including the MAC changes and
+the device tree for the board, so we can see the big picture.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410050215.eU9509xy-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> lib/crc16_kunit.c:29: warning: Excess struct member 'crc16' description in 'crc16_test'
-   lib/crc16_kunit.c:96: warning: Function parameter or struct member 'test' not described in 'crc16_test_empty'
-   lib/crc16_kunit.c:111: warning: Function parameter or struct member 'test' not described in 'crc16_test_correctness'
-   lib/crc16_kunit.c:132: warning: Function parameter or struct member 'test' not described in 'crc16_test_combine'
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
-
-
-vim +29 lib/crc16_kunit.c
-
-    17	
-    18	/**
-    19	 * struct crc16_test - CRC16 test data
-    20	 * @crc: initial input value to CRC16
-    21	 * @start: Start index within the data buffer
-    22	 * @length: Length of the data
-    23	 * @crc16: Expected CRC16 value for the test
-    24	 */
-    25	static struct crc16_test {
-    26		u16 crc;
-    27		u16 start;
-    28		u16 length;
-  > 29	} tests[CRC16_KUNIT_TEST_SIZE];
-    30	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	Andrew
 
