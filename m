@@ -1,172 +1,126 @@
-Return-Path: <linux-kernel+bounces-350805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2643B9909E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 271529909EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 872DEB252D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:04:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85408B2521E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAB91CACFE;
-	Fri,  4 Oct 2024 17:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CFC1CACF8;
+	Fri,  4 Oct 2024 17:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QDVpKlof"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="avpm4ird"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D99B1E376B;
-	Fri,  4 Oct 2024 17:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1741E376B
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728061440; cv=none; b=gOS096ZPQHQCILX5AhyaBX5O680yeVAStf9gXrolwHjdrXk+pjeAzzYxn1NNpeOujrOoUnniG3sGNQrAoK4q5Bp1siQAX0FUc55tJC3g26DPatK0ZRnskIYRDR+O7Lso8V+oikrrj8PEiIauTi5lNXNuHOIZqQx1tK3VzlxAu2s=
+	t=1728061465; cv=none; b=MsTKW+j5RhquTsz90MPCAyRd7614PSZLJ3r1QnDb/Fv4DIFDHvr6byduBArYXAiJPaaEy/N4Zodq3wW/hm/mGuZSNsFEOjlerqZZs5snlbW2emddGpp8P2acMry7W7q3OLCyCCuz0bt+0lgrYu+F0/mNE+8mrb+49E8HbltC3yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728061440; c=relaxed/simple;
-	bh=sznZIHiLDeSmSbipNni5vB9jsCt+O6nsKUsc1EyG4xY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ECqO1iNdyxD96JCL9NXwV/5lccna7lEeWgjBxwvQBHJYuYajh6XvQ6rJHQ/8msRoHurZrORZwxvpaWaVa8AUzn1r1nBOekEYMvGejQAI0CiMqL0pBWc57oPjqNmPn/mqII0KLxw8LGQAjgvygl/xYjlGqhnSop+k3dswBCtH0eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QDVpKlof; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494AgupO013391;
-	Fri, 4 Oct 2024 17:03:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Kk+HM1Pmi7EADD72te/P0C
-	u+PfPui5Ooq/jn+8Np8l4=; b=QDVpKlofuvsWNpbBZllw1oaQCw6e2xmqDGgHtO
-	x/CxfUI/tq8egXpBDPI9Zzj603t83NdK4TZzz43CeA7LnIURuFrw78ceTll1xFll
-	Yoegq5vcNIwBJrp3Tci13/l3OsmLJT8G1joRQgdoAbFj8VCGOHg4J7n+8oarRPPP
-	EYwtxn9EY9QTeGXMS6BHBA634/EC0QtokcgP7kkQqWTxhEbaa+Tx+aDvqHhnfO0J
-	okir9U5TuSe/pTxQPbz+SGoBbTOlKbfMhuzSfU1pipa4UZTbNU6l7CsFeQ2SbkOw
-	bU8yv1v/CygfPoXBEYmDtvLHGIuYFNX0guZOCdvMvKEhC6JA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205kar7j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 17:03:55 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494H3sk4022644
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 17:03:54 GMT
-Received: from carlv-linux.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 4 Oct 2024 10:03:53 -0700
-From: Carl Vanderlip <quic_carlv@quicinc.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: Carl Vanderlip <quic_carlv@quicinc.com>,
-        kernel test robot
-	<lkp@intel.com>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>, <mhi@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] bus/mhi: Switch trace_mhi_gen_tre fields to native endian
-Date: Fri, 4 Oct 2024 10:03:20 -0700
-Message-ID: <20241004170321.4047492-1-quic_carlv@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1728061465; c=relaxed/simple;
+	bh=/bPZOo5ftCUQCx1+u79k3npMjvV++5WUJXtH24xcfs8=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=AfVbHRQAFT89aiUGshZb1bvWKd7HPWmW0VVqLFzY0UqfdOm+6R49xkjGRMD8QxIv0Fs5NscPcVjXeNSIMdQdVg7F8qTXGREScPmtsh6+8BNJwlkz6egROfVfi/rP/cHcLu65z2TqmlnBo/pUU7KVVnOXYTMHy1jo+IDz5GyEHM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=avpm4ird; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6cb2aaf4a73so20120536d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728061462; x=1728666262; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pBY4ItyzwqG9KiWzbNSgXF5ZKCYULObRiMPoCiH0Wpo=;
+        b=avpm4irdkOz5wpUtrzm+jdmieMeRdxjbIWKzI1NI72dsvDdNa6kwDELJg6ty9fZdGP
+         W31CtkS84ubYiKpoO/Y343m/2itDgU6lCb9V9UdB98O1KWp/gHedcGDcCLvgKa0TYmO/
+         3etuR9hU9v14ARCMsGiwmFpVN+Q4qoys/2H1OVMmZnrDpXXAH1eAIxOSv1nKGxyiLGIT
+         6+W4xQTKuZtvXKS2u/brB5pK0oX3LKexVu1IIdba5Mddfv15AmO0Qj2+vSxFH6Jnr7/4
+         Q9lZZfhCot3iq9POBqGKp1lshZO4YcOrU03O+2S+A/hmYX+eL/We6+8zJbem33tneNdY
+         u/IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728061462; x=1728666262;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pBY4ItyzwqG9KiWzbNSgXF5ZKCYULObRiMPoCiH0Wpo=;
+        b=CWfvKFWdiq4jAyEr0nA1E7cmt5eSfGvc+mTib0p1yFCYFpBeNs/nAZoLJo/btZBBEV
+         mSR449zcUqnB9FlQzwQPKDYInHuIxM0JNGIA+rpW5/OblI1wz2b4WyJeAvUeKJ3oJ4ng
+         6pjU/EpP6dx153laNezy6GBnZUWqb1h0eWyuT7rI+drHpMLuIDFRFQMj/qvocmUtNkwC
+         fHX3b0cu8deSRYnxJT+DeYWNoR/Pds4Q4jg3bqRjQqVd3p8/D0mfY9mL4N812OY8IjQU
+         5Sx93iFJYoEgFv+M7C5oIP5fYDAa2xgb0uzTMKQNvzMZeoXGqjOlJRHqTIvrH0ne4+Ue
+         gaOg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1Vb3JPMC8oJkSWi/KfwqrQ13heKoUyr+bieyfX5jg4r2pKU7LojlU9Vtm3eJp7LyRXNzzhDU/XAbzlr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8MR/wQHStHcg9rpxBtju5xE14v5yNjP90xW73GNVCLMrmOktu
+	/ymsB3a3MJJhgkyP7h2dF44nrocNThgpIwVFPWSTrktKBqY0zPj0yCesSGNMgQ==
+X-Google-Smtp-Source: AGHT+IFD9IuPnccoZlSjhYqXrJlLB28tnWkEcno497ozIMsWIdkkP77e/SSc29k/nA3kcuxjgMtoHQ==
+X-Received: by 2002:a05:6214:5d0a:b0:6c5:a40c:52ee with SMTP id 6a1803df08f44-6cb9a49d087mr56730856d6.45.1728061462567;
+        Fri, 04 Oct 2024 10:04:22 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46cad70sm914646d6.28.2024.10.04.10.04.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 10:04:22 -0700 (PDT)
+Date: Fri, 04 Oct 2024 13:04:21 -0400
+Message-ID: <a68d32deab61b1c4b1be66e5346ef547@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lsm/lsm-pr-20241004
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5IUBWfezCZGntg485woq_gCYam_VpM-H
-X-Proofpoint-ORIG-GUID: 5IUBWfezCZGntg485woq_gCYam_VpM-H
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
- clxscore=1011 impostorscore=0 mlxlogscore=916 malwarescore=0 spamscore=0
- phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410040118
 
-Each of the __field() macros were triggering sparse warnings similar to:
-trace.h:87:1: sparse: sparse: cast to restricted __le64
-trace.h:87:1: sparse: sparse: restricted __le64 degrades to integer
-trace.h:87:1: sparse: sparse: restricted __le64 degrades to integer
+Linus,
 
-Change each little endian type to its similarly sized native integer.
-Convert inputs into native endian.
+Here is the CONFIG_SECURITY_TOMOYO_LKM revert that we've been discussing
+this week.  With near unanimous agreement that the original TOMOYO
+patches were not the right way to solve the distro problem Tetsuo is
+trying the solve, reverting is our best option at this time.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202402071859.8qMhgJEQ-lkp@intel.com/
-Signed-off-by: Carl Vanderlip <quic_carlv@quicinc.com>
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
----
- drivers/bus/mhi/host/trace.h | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+Please merge for v6.12-rc2.
 
-diff --git a/drivers/bus/mhi/host/trace.h b/drivers/bus/mhi/host/trace.h
-index 95613c8ebe06..3e0c41777429 100644
---- a/drivers/bus/mhi/host/trace.h
-+++ b/drivers/bus/mhi/host/trace.h
-@@ -9,6 +9,7 @@
- #if !defined(_TRACE_EVENT_MHI_HOST_H) || defined(TRACE_HEADER_MULTI_READ)
- #define _TRACE_EVENT_MHI_HOST_H
- 
-+#include <linux/byteorder/generic.h>
- #include <linux/tracepoint.h>
- #include <linux/trace_seq.h>
- #include "../common.h"
-@@ -97,18 +98,18 @@ TRACE_EVENT(mhi_gen_tre,
- 		__string(name, mhi_cntrl->mhi_dev->name)
- 		__field(int, ch_num)
- 		__field(void *, wp)
--		__field(__le64, tre_ptr)
--		__field(__le32, dword0)
--		__field(__le32, dword1)
-+		__field(uint64_t, tre_ptr)
-+		__field(uint32_t, dword0)
-+		__field(uint32_t, dword1)
- 	),
- 
- 	TP_fast_assign(
- 		__assign_str(name);
- 		__entry->ch_num = mhi_chan->chan;
- 		__entry->wp = mhi_tre;
--		__entry->tre_ptr = mhi_tre->ptr;
--		__entry->dword0 = mhi_tre->dword[0];
--		__entry->dword1 = mhi_tre->dword[1];
-+		__entry->tre_ptr = le64_to_cpu(mhi_tre->ptr);
-+		__entry->dword0 = le32_to_cpu(mhi_tre->dword[0]);
-+		__entry->dword1 = le32_to_cpu(mhi_tre->dword[1]);
- 	),
- 
- 	TP_printk("%s: Chan: %d TRE: 0x%p TRE buf: 0x%llx DWORD0: 0x%08x DWORD1: 0x%08x\n",
-@@ -176,19 +177,19 @@ DECLARE_EVENT_CLASS(mhi_process_event_ring,
- 
- 	TP_STRUCT__entry(
- 		__string(name, mhi_cntrl->mhi_dev->name)
--		__field(__le32, dword0)
--		__field(__le32, dword1)
-+		__field(uint32_t, dword0)
-+		__field(uint32_t, dword1)
- 		__field(int, state)
--		__field(__le64, ptr)
-+		__field(uint64_t, ptr)
- 		__field(void *, rp)
- 	),
- 
- 	TP_fast_assign(
- 		__assign_str(name);
- 		__entry->rp = rp;
--		__entry->ptr = rp->ptr;
--		__entry->dword0 = rp->dword[0];
--		__entry->dword1 = rp->dword[1];
-+		__entry->ptr = le64_to_cpu(rp->ptr);
-+		__entry->dword0 = le32_to_cpu(rp->dword[0]);
-+		__entry->dword1 = le32_to_cpu(rp->dword[1]);
- 		__entry->state = MHI_TRE_GET_EV_STATE(rp);
- 	),
- 
--- 
-2.25.1
+-Paul
 
+--
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+    tags/lsm-pr-20241004
+
+for you to fetch changes up to c5e3cdbf2afedef77b64229fd0aed693abf0a0c4:
+
+  tomoyo: revert CONFIG_SECURITY_TOMOYO_LKM support
+    (2024-10-04 11:41:22 -0400)
+
+----------------------------------------------------------------
+lsm/stable-6.12 PR 20241004
+----------------------------------------------------------------
+
+Paul Moore (1):
+      tomoyo: revert CONFIG_SECURITY_TOMOYO_LKM support
+
+ security/tomoyo/Kconfig         |   15 -
+ security/tomoyo/Makefile        |    8 
+ security/tomoyo/common.c        |   14 -
+ security/tomoyo/common.h        |   72 ------
+ security/tomoyo/gc.c            |    3 
+ security/tomoyo/init.c          |  366 --------------------------------
+ security/tomoyo/load_policy.c   |   12 -
+ security/tomoyo/proxy.c         |   82 -------
+ security/tomoyo/securityfs_if.c |   10 
+ security/tomoyo/tomoyo.c        |  110 +++++++++
+ security/tomoyo/util.c          |    3 
+ 11 files changed, 118 insertions(+), 577 deletions(-)
+
+--
+paul-moore.com
 
