@@ -1,118 +1,223 @@
-Return-Path: <linux-kernel+bounces-350849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF00990A7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:57:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D925990A7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 931E3B215B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:57:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1A611C20E03
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0981DAC83;
-	Fri,  4 Oct 2024 17:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3921DAC80;
+	Fri,  4 Oct 2024 17:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dCFHK+Aq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D7C88yTa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3731E378C
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728064639; cv=none; b=LvPpdet87ZeP5rG3AUHdTp+l24X0MLkbVhDx4CeQiFBjYXqxFN4t8dj3ZbfJ+vLVQoZ9WqOXYGE3jbU5n76ZFE8tIG4W+9l3YdsAvJZSncBllpWJYx2jfjpdszxiN6gLJKh0MDUqOJJMpj8vDX2IPz6YTWTktY2DdP2yxm9dR0A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728064639; c=relaxed/simple;
-	bh=G1vf8AtsHpbMdFO5DG6cbwjT+Qn+ZOl3zyxy18tPSZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qZYiuRKaEsVamRCKIH6ZPgFk5YKJU+KW/kG6l1yyioAbsPpNRGOkjrZfyO6m+iItvJk86fb2sVL1ghv8JmVnCWU5iuocPexd0JhAMalmblhXUQ/e9IbU4QqwiX5DdS9preEmYqDld6PAAxKzwRN8r+qMCknuxg2puhBFqMU+QRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dCFHK+Aq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494Aeo9A014160;
-	Fri, 4 Oct 2024 17:57:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RjVAIODgIMe6TcbnIeo3RvgBeLIP865au+8FkWupWgM=; b=dCFHK+Aq1D39Kj8q
-	/8zZqnnMxcaPungOtziwi19nWb9Kdky8tavB4xRDm7/HgM+yavWP8Vf9WV356Y1S
-	JB7n6LUYGDGD2v+h7C/AdCyCNnB6TeG0XeP20nJ1dPcQXrKB2fuwlXwYEgP3Hnsp
-	sRjMXIhkVZYGV07590sBwexPoh2beoGoA8bqlYRvXO6S6EFI2e6dybc5xy/xYkQY
-	4vnGLIB1SkVwHWdtw+DtQIq+KRlwCTHyYVXJYibd7Ec5gmY6qfYxgu6spllS5snv
-	0WLnJg9e+FmP8q7uTKBwTfsOvQST7bwu/aHXze1xj/MEl7qEcvlEgodvCpORBvHY
-	slJ/kg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205e2xc9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 17:56:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494HuwkL016729
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 17:56:58 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 10:56:57 -0700
-Message-ID: <d5694bb9-e035-c4ba-392e-ca06562355d1@quicinc.com>
-Date: Fri, 4 Oct 2024 11:56:57 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801551DAC81;
+	Fri,  4 Oct 2024 17:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728064683; cv=fail; b=o0t6CLMoUOhi28z1r3defu93G2+Z0aQOs2640R/7VX3CjItzrlzblPNtXuCuFB4RdY0jHXFAF5Esp/f7SUZPxLeklZIgb9axnx0x//JzoZW7jhi8CJwvxgbLRE0LM4GdAMi/C70mgr/GaGTBTtKyYQ1T1KUz+6bMononATXKWaY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728064683; c=relaxed/simple;
+	bh=8nWkKtZQf9KJYmedo8wQnh7Q0OVF79OcpPp4LVEeeMY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LcXhpEIGL5u+hdzAVbFArCyoQaXVEuAwRhr5pD2YBwjVPEkLCBi0eXZ1cD52xwDPD11F1kCGUsPXeR390rauQmnVBLSO2d6OeBZtMYLKn4mssz3IyVjOPFJ+ohbH1Qtr5jZFtMaIqyBYPdtu7cYVbh+DEkW9Kyqchc4WIuc0hVg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D7C88yTa; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728064682; x=1759600682;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=8nWkKtZQf9KJYmedo8wQnh7Q0OVF79OcpPp4LVEeeMY=;
+  b=D7C88yTakxpHdJktG3SLSyjmINkrgL73ohN0z2/uKuuiuCi3E97rS1Tg
+   ts25fx/9d8Fz62jhW/sJBgi402NcoEAUEqLJlxEeuMLszU0J2Qw14HPG3
+   0UOKYgksWdYvcPuJKGiz3rTvzwC/mUs9XZyumUPEPdTll86p4rLqpP99q
+   kgiEuXIp0wl07yLCONl2Xn6rvBXGmzAyBlKwsnOsqXef8Cb31BQen118c
+   GmhtGB6mgreM/Pt+/CHBIe3hT/6Pv0ZjiVjFxNvBcNd5Wfyw9hjISx8gz
+   mmUf9VkY06jdMxHDuKBGKNt+796EaY+CiFrSWY/36ac6Lei84nEaXbhW0
+   A==;
+X-CSE-ConnectionGUID: WgqIuyPnQ1mkI/lFAVndJQ==
+X-CSE-MsgGUID: j4D2ci/+TbqO948pLriO4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="49825987"
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="49825987"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 10:58:01 -0700
+X-CSE-ConnectionGUID: KpsZ8adxSYa61gBFeD7oIg==
+X-CSE-MsgGUID: 8TfNIV/YRlS6xR7Kl8ISCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="112244315"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Oct 2024 10:58:02 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 4 Oct 2024 10:58:00 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 4 Oct 2024 10:58:00 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 4 Oct 2024 10:58:00 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 4 Oct 2024 10:57:59 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.172)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 4 Oct 2024 10:57:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OkLCRdeYaXZWl+zolSR0MMj98sn+bpniSrwSuijfpETdamW3ksc6TtD3SGk3OhBxvPwiMaYurd3zBvUKygTpa+RWg+9yA013XeNnJKKOMQZF/V+tue4QQQybqtJBl+CFNe8dPxhtBMt0XbC9YxWVkjuMWCafVxFo0lW72rz6qwt9L8dtWE6qVH4wu2sD9mxLl196QZ06eNZVS4OA9h6xjR+MtdUgin0P6YdN2rTqKdKllsDv2n5q0OHzrKv/Vx3kB6MeKbThylac2kXkRt91hIGs/4e9GdDceCY9HMWuf3JhuJ9mGi4eJ0+fvfJMNTXVQm9Xz0MBOYavxm3fYQFG5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Pujv89z+sUFIl0cwDrR2QxoIBnMULR9UDQDvbQ0JZJo=;
+ b=U1LbZjcXErhFL6WHSp4W86Ss6+5oXhRowQinbN2ZJD9stMAKStMcADTWMQKwqrLQlreSfM18XHShXBzAX0GhOt0c3GugsQGZi7W8Y/6VYCR4mGSZbWy3g77y7qlkJcb3Bp6ejALQfnQnS9QViPnDWfdfdRpVHDajuYbsW6NomjYijbqMe6WxUZkEStUX9UBkczY/peYpKTZgXLcPqanVV9OpylwdURLlFsU3SWs2GhSx9mtUNeKXOnwDBvyNV9h4HcetVinNPvwoR7MPrEMDaKZd25so+J7qxRQHnKCRu6UXg1i3fdNczXBRYBvj9tjqWUUH9L7s9xT5Wxb91B+UKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by CH3PR11MB8156.namprd11.prod.outlook.com (2603:10b6:610:165::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.19; Fri, 4 Oct
+ 2024 17:57:51 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8026.017; Fri, 4 Oct 2024
+ 17:57:51 +0000
+Date: Fri, 4 Oct 2024 10:57:48 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: kernel test robot <lkp@intel.com>, David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jic23@kernel.org>
+CC: <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Dan Williams
+	<dan.j.williams@intel.com>, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH] iio: core: make iio_device_claim_direct_mode()
+ __must_check
+Message-ID: <67002c9cdb068_10a0a294a7@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+References: <20241002-iio-must-check-claim-direct-v1-1-ab94ce728731@baylibre.com>
+ <202410040721.upAHwZJm-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <202410040721.upAHwZJm-lkp@intel.com>
+X-ClientProxiedBy: MW4PR04CA0331.namprd04.prod.outlook.com
+ (2603:10b6:303:8a::6) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH V3 06/11] accel/amdxdna: Add GEM buffer object management
-Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20240911180604.1834434-1-lizhi.hou@amd.com>
- <20240911180604.1834434-7-lizhi.hou@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240911180604.1834434-7-lizhi.hou@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gxZCMvLNNaZWAXU2vSgITrRDBLVmKIfm
-X-Proofpoint-ORIG-GUID: gxZCMvLNNaZWAXU2vSgITrRDBLVmKIfm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 phishscore=0 mlxlogscore=791
- mlxscore=0 adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410040123
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CH3PR11MB8156:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d15ab1b-96c2-43f2-b685-08dce49e108d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?PxD1NdWiV8f6mrFQMph5ZCTvllLJCMBcvMBjOQaPyRNQY0zy5BQS6Pw4z0zN?=
+ =?us-ascii?Q?q2TRRkNdyJSoZEu1UOjMKs2S/7YBcr7jhuhJmcLu3fJYvADEtjtwVPnJwN0s?=
+ =?us-ascii?Q?5QkSVi6blqsCZrAM/4o5p5rbC9Hfd41fFM1GfL0uCM21ns6b5IdpCpQCcYbj?=
+ =?us-ascii?Q?dOCRLFyOXv80Hg9uBaY422dAUuZuREBcgCCcoSG8BX6XcUdOPuvQ5Hm9vYEJ?=
+ =?us-ascii?Q?nAxo9q4uS09muyrxjPWkYJ+rWoTl80CoLjJv7ksj4UhUT3xv7pyowMdEIW68?=
+ =?us-ascii?Q?BZa3lAxb/TlGjxYv34eqNj64LUrMEWjzVaM029ceabnY09c6sZnzOyBR6e/7?=
+ =?us-ascii?Q?5x9amBrvAZ9OTdZ4tMY7KYzy2PYKf07KFRdRknuBLZtOCxzCpiPBbplHkFzA?=
+ =?us-ascii?Q?EGAZSxTgQXBxQd6aHTpoPGRzqcOplN9ifyeGuO8Qzzx8XuhZ2LfkGd/KYT2G?=
+ =?us-ascii?Q?f4vVd21DnW1dd5TkwKT75LTmazeRYbrn4Vil6jhTMw5m8BifLK0ZMQLhqrq3?=
+ =?us-ascii?Q?ngXOTw7EIe+vQENeuklKQYESegzN5XQ6bxRqj7NfPLoOaITtptrRZQVRMJ3D?=
+ =?us-ascii?Q?z1HdgZHAAyvq+vAHkW2VgpH/2w3avOYqdbGIWw7Rh+d/T/NyGOQHa14pT2Zz?=
+ =?us-ascii?Q?wEc7+/BAhRgSEKcJuwkGGJi+GnisIfoLKM2p02DlWwVux0cVStzX/z/NnsnW?=
+ =?us-ascii?Q?yoYziwBRPSk/LN39m9Mzm6SBvqExUi99bWz8PIe2xuTmofBdCYnQV79IJYA7?=
+ =?us-ascii?Q?msuAbl9v8WyEVEm0PgbmPyAvIA8zG0WZZXmYrCZ9dK+cYXWCQwhU5vJXR84b?=
+ =?us-ascii?Q?TNw5MhoEc2bO+uM0x7t53m2EpxEV2dS2B+/BrQTmvT8jSlGq4sx+uADbemfM?=
+ =?us-ascii?Q?HDXqVazIK2c220gYGmLcb61noQ9mhzkNLwuTQKpdNcTSS2TJpnZyDTwANRYJ?=
+ =?us-ascii?Q?S001nyubUO+kI0r2KH8Ctg/R+Ov18UOeFJBMzaBvTKHmSX2iAiIxYKnaliaV?=
+ =?us-ascii?Q?zt843rrmWEBimLy3qCos6NpaXpI0WpH6veV8cQ6wY7M9CLNPAaUNZrL9WH6a?=
+ =?us-ascii?Q?ICSNKkjfnuMd1UD4noHsUQ4Nmol3qVPsUt0TWkOGX9FvhsdWLR0UmdpD6CJS?=
+ =?us-ascii?Q?2OHEEUQzzQTyLUARaHifWmB9qMMgM/qGsaPwhbkmgAQFtMZ6dz2OkrAU6N+i?=
+ =?us-ascii?Q?1uPBDNCjtKx0WsIwytYTGubw7VpAiT9zYzXXODNT4OgmHH5sSdDinQKQPGE?=
+ =?us-ascii?Q?=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xwapfP3ddL4NwRC4cqV0of1sUu3pLFnG8korB+BCXk9dzAauYRIkCMxL8a04?=
+ =?us-ascii?Q?4AbYiLdsbj6ppNVAU2u7CD20wZEVqAJb3TemFt9gsUKmCB81LA9nTf40Lztv?=
+ =?us-ascii?Q?99agak0+tJumWTFqj6O4ZxN3ngQPQg5SD3WwhBIl7F31eF0Ey5CfpUfduK36?=
+ =?us-ascii?Q?sRq2P4DykbnuZiFl8PW5ZGZ54VC4+meDWLdrSU4K5J1VFKfeDQ148CkIE+Dh?=
+ =?us-ascii?Q?PGvzL2r7km4ZOxUujOEXtWvgIJc2kxHAyEV74dotreR8+0cT4nvcGCQ6cgQE?=
+ =?us-ascii?Q?r86HujJrnFCE3WtFPff84yUAGLoRvYksfoQC0l9Sn7YxcQWw6zEOzYQR3P5E?=
+ =?us-ascii?Q?R7cjuNMk6Yl4zJYy/m6d7N5G2BacH7dzpK6wMjREnUQbtCscbxyAj3h2H38q?=
+ =?us-ascii?Q?aGwVcMjBRFJw5Hc/UlX2hFwZWh+DLCci/hkdJHVfEmOAngiBm56t4ew59chP?=
+ =?us-ascii?Q?PQ1Ds4mm6S8eGUamjqxfPIsi+r5q9AtkI/W2CQkySYRxpdGDmBLL4K/X3MoJ?=
+ =?us-ascii?Q?jsK2sVvB7+1gknkGHiwVxFy8eyAqd+7+19xGsQ0cn4bgowgVy8pzGtLRkhGo?=
+ =?us-ascii?Q?boR365LLHs7XcIv7f6bWuCHfT7UJ3fTGQakw+uakVy0nl+d8jhAWHW5Bfvd7?=
+ =?us-ascii?Q?JpjmMdLDhSDn+OFkv5rOXen1il+9yJ+VMei6hI3MOWYtjQqeYKAaZ9Esf60d?=
+ =?us-ascii?Q?DKJlLew/3vFCM2fsTyLGHx34rFCjkyrDsMBAebaQ8KE5qePVHXYrCJX/OmgI?=
+ =?us-ascii?Q?VzREMuCQGlaVp5Dslz4gQCykWTSRBITExIaXSJH9IxJxYGOL8Xbj2KR/M/Xe?=
+ =?us-ascii?Q?kQogYAvZgrRQzcjbBdFZMygTeZu22Ry4UnrGAP8ysjaRd1fJQoWk+p3L3EOL?=
+ =?us-ascii?Q?s41kdxzJUwuPygLInjyRpsmhuvd+Qj4lVisdDDlg3GoO5jMG72Cfs1+LDqlQ?=
+ =?us-ascii?Q?Pw86jKOVWT8MpwrU0OR/yrWB8Wgk5oldNr69MeFhCDmdKcCPmMMvb+lB1pAj?=
+ =?us-ascii?Q?LACv9la9B8p6MyiLD/dfZyNxfDlW5DFXcDvYvQMeOuCxbbgqafdssmHPJw8h?=
+ =?us-ascii?Q?EeSri0j/iuXANSV+DTcHuagAaHHGYWRnUIDLX5OeTTABkyyDrc1pOs9tz5xr?=
+ =?us-ascii?Q?RYT5YegSRvcXpr++X7k/XoaKZRUyutdrcVOeRiXs/r4YsmUIS8ScEbV9RHis?=
+ =?us-ascii?Q?rCXrHnHxG5ym8ulPFfWEdYCL5pz8MopyD+7dwZfNjQs3OxY23EmFLyF2Rd7W?=
+ =?us-ascii?Q?X2sV5lqJpmoswzWaxD2cSGtUQqNtoYmBUcuIK39GR0+74On5WqqHFq0I+WDN?=
+ =?us-ascii?Q?ZWgxnIBda5bMZnFHs9LMdOaPr+kSFs3um6n/S6zqFexSq0T9RshBMjuzW4S5?=
+ =?us-ascii?Q?FWyyrznu2uF4jwxdPdD0N0o/V9qdv5yrUxFcLcCmsvIQwqyPNlsr+2qyHgYf?=
+ =?us-ascii?Q?1CxHNuhYSyo8GySYMOhzhDSGZdW53Gt8sdaKxSouXMWLWkQaVA/Nx4Kijviy?=
+ =?us-ascii?Q?6T8Lq2xrnT6CoBjWjiEasZfYgJno7fZXX3RJN+VwtIiXS7TWufjE2WcildfO?=
+ =?us-ascii?Q?hibu9cRedLOMEFof9l5xTLOkR3h1v1/9UgQQQmzamARaGZTeLoKugR6etw1U?=
+ =?us-ascii?Q?PA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d15ab1b-96c2-43f2-b685-08dce49e108d
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 17:57:51.4791
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KSKZGTCKwaVignOQiO4rpCjoMCEpAFQ50kkhyb7L0PA8KN5amPkuyqaVYfEGUjUeAIlOnYZE7hQAZzfiNBD/mpbLKv88fW5tjt6CH7duSOQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8156
+X-OriginatorOrg: intel.com
 
-On 9/11/2024 12:05 PM, Lizhi Hou wrote:
-> +/**
-> + * struct amdxdna_drm_create_bo - Create a buffer object.
-> + * @flags: Buffer flags. MBZ.
-> + * @type: Buffer type.
-> + * @pad1: MBZ.
-> + * @vaddr: User VA of buffer if applied. MBZ.
-> + * @size: Size in bytes.
-> + * @handle: Returned DRM buffer object handle.
-> + * @pad2: MBZ.
-> + */
-> +struct amdxdna_drm_create_bo {
-> +	__u64	flags;
-> +	__u32	type;
-> +	__u32	pad1;
-> +	__u64	vaddr;
-> +	__u64	size;
-> +	__u32	handle;
-> +	__u32	pad2;
-> +};
+kernel test robot wrote:
+> Hi David,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on 431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-core-make-iio_device_claim_direct_mode-__must_check/20241002-233644
+> base:   431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e
+> patch link:    https://lore.kernel.org/r/20241002-iio-must-check-claim-direct-v1-1-ab94ce728731%40baylibre.com
+> patch subject: [PATCH] iio: core: make iio_device_claim_direct_mode() __must_check
+[..]
+> >> include/linux/iio/iio.h:669:50: warning: ignoring return value of function declared with 'warn_unused_result' attribute [-Wunused-result]
+>      669 | DEFINE_GUARD(iio_claim_direct, struct iio_dev *, iio_device_claim_direct_mode(_T),
 
-Why not eliminate both padding fields by either moving "handle" up, or 
-"type" down?
+So I think this points to the fact that iio_device_claim_direct_mode()
+should not be using DEFINE_GUARD() in the first instance. I think
+iio_claim_direct() really wants to be using DEFINE_CLASS() directly.
+Skip usage of DEFINE_GUARD() which I now see is unable to interoperate
+with a __must_check locking function.
+
+Perhaps the new class can be something like:
+
+    DEFINE_GUARD_EXCL_COND()
+
+...which creates a guard that is exclusively conditional and has no
+unconditional flavor. However, maybe that only lives in iio unless and
+until another user arrives.
 
