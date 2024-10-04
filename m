@@ -1,203 +1,139 @@
-Return-Path: <linux-kernel+bounces-350402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD2D9904A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:41:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 116D19904AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98F331F22C52
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C68E3280FC2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3C4212EE0;
-	Fri,  4 Oct 2024 13:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA631D5ACD;
+	Fri,  4 Oct 2024 13:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhkjGeX5"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pvQQkBaL"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD001D5ACD;
-	Fri,  4 Oct 2024 13:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A2F210199;
+	Fri,  4 Oct 2024 13:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728049309; cv=none; b=JB2sV4kKMgGBcT4pJgVNavf3M8Y5SsGMGb0AiYilWc7ESZfwT1Gb8rAJS05iJHID32CYvosjdl/BJ6IQAMCYnfEAeUWmx7OIhBRVN+xgRcDLunxKJPtJmspBtL37zBCYchRHOmjr7ZIUY37kDRzydlXtCJ3T+nbFtxNYqX5VMKQ=
+	t=1728049357; cv=none; b=Fxp2J5d2X3ScRpYr9rWVSIyiPFkNd1/xtKAcSc0cuh12t0qJgO3/CsyuL/vHlKnxkX7LpXFoZqleTakiXx1+/D5zfM6mBSC/q8ol3+RrBE/SBhGGCIOpVtrLi8K7gz/pmH3f1j8aleO7ipZ96lTtcPzAHrre8KAOd9pas6bfn0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728049309; c=relaxed/simple;
-	bh=LYDX20T11oTAkXiIWin0BvpWWVUQQxkjYtmeZYuwNbk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PWcbGMmcwTaznbFje/UWBDeW9axPxhQBixLv0xeBq2wQxCppYq64seXue03XYWPdRv5iSkUl9NIPqEQteLdBVkiSiIsmH4Bhlhiv8ipNX5HAT0HYkGc6HH9aQVn+hkDaDhoWCrwzCb+6AkbMy0jZGxCTG/BBh3xU5+gRuWoXhFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhkjGeX5; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37ccd50faafso1560163f8f.3;
-        Fri, 04 Oct 2024 06:41:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728049306; x=1728654106; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TtPETmw7YzlFheFDK0xFqJOzi5ALYhNaiimnRlYGnho=;
-        b=KhkjGeX5EyDJ1fqgedbjOBbjSLDSBwVCwBcV6WmO9Sy8wvmWgeXVYctEbpHQWgNV82
-         HMII9l4lPtJaUkgvAeXAHfxYsDntv3XfSJ1vG+smhNj+pDgEjbzVLY/pGnvsW+6+Dr4R
-         H8hBP0v5lCW0iM8NJQLLs9MEupQFvu2Wd+u6GWW8ge6w5Iz0wWLrR8038XmwKBono4yq
-         B17rRZbmX5p/kJbU1P9TiWWKnrUgPssDcj6h1nnH3YqmA1SgGQLYrtyS6ufTs867W0Kd
-         WXTOgjE2vZiGOVCTtX4u5CnAlZIjsIP9vXB+/XU7wLhukHvipLipmOILTxqOpA6jdTdD
-         /Rsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728049306; x=1728654106;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TtPETmw7YzlFheFDK0xFqJOzi5ALYhNaiimnRlYGnho=;
-        b=uQ3YIAXzaaLWid2n+ASz/rDe0wPAcSsUuDBzvQttR7pujiP7ampb/j+f8FIBBQ/qF+
-         fGFD+OA+8BG0D6KMFbA71CjdGkc672Gu/0D1RzyB42k6Z9O0T8JT/TP+EsUdFWkepnhD
-         KyqYjKPtPlXDWcihHDxtQJ7/Vz5GZzmH7pPYkYbPj6s0Lua1ZpX147Wy8S7HdkDNH7k+
-         LYTDZBneHERVv1TZ8kieA/u8IE0+pq8yzexPfpbbyZfd2qNuYPaQscNxF9hNZhygBAty
-         WmMcSetrMEuEGC8LgD6kr3u6m4faHoaa2deopLF+SJQ2wNvW1uWhdRQPkJU6Lqq1IlmI
-         M03A==
-X-Forwarded-Encrypted: i=1; AJvYcCV0bex+GPn2GBr75CCyza1tZU0uCR5YVSYMsEebEzu05dGRtMqm61O9VZOuEj60kJ7LI8Yth46tsHcpAYLY@vger.kernel.org, AJvYcCXT/PKS5F42DZ3/G+Oc6G76B+teMxSt5XlPijDwgQPrrpnuS9KSfTSNmBX1qvKWoWpaLK/0zInI0iSm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB7ZB2YbMQHBQ4BKa9AeOweCmQ7sRs5JAj7BQST8AtkyMLsWAK
-	ONXsF5Il1YXVrFL1TVzCEA8AUT9EFrCHSph7XhhoQhAJ7xFPvaWv
-X-Google-Smtp-Source: AGHT+IHqD2bdoPdi+t0MPBoSOOzuYBARrS14pjEYuEfHFqsh5TfjoaZ/UoDdVNB9jU9Ke/rWwj3VkQ==
-X-Received: by 2002:adf:f00b:0:b0:37c:c5b6:ec2e with SMTP id ffacd0b85a97d-37d0e7d43bamr1875485f8f.46.1728049305631;
-        Fri, 04 Oct 2024 06:41:45 -0700 (PDT)
-Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d081f7141sm3322495f8f.6.2024.10.04.06.41.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 06:41:45 -0700 (PDT)
-Message-ID: <8def18e29299ea220d684bb6c963831071fded68.camel@gmail.com>
-Subject: Re: [PATCH v4 07/11] iio: dac: adi-axi-dac: extend features
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- Sa <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Mihail Chindris <mihail.chindris@analog.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan
- Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org, 
- dlechner@baylibre.com, Mark Brown <broonie@kernel.org>
-Date: Fri, 04 Oct 2024 15:41:44 +0200
-In-Reply-To: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-7-ceb157487329@baylibre.com>
-References: 
-	<20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
-	 <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-7-ceb157487329@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728049357; c=relaxed/simple;
+	bh=ccBU33sHPnb4JeeVDSYQAYn63MPtYlDxAbGq1Jf0w0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MWPrjU5zJevO18B64REwOBfNtYPbANwwqjXZ/Nv3003Sw2UHb9q0yoqX0xP0lxPArmED7yDcF1s9BdHsSloahvfXPLHVlOpW+h1SSKO54kYk4Nj+67YCXwGxcIcPWl111yUnrHP/bScQkqwKz/hzx4ndQ7Jc1WiydALm9M2G8q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pvQQkBaL; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=h4ZU7oedXEjsJ9UJ2oFvfz5XShfONeTd6y1jhVMzQis=; b=pvQQkBaLUGIT/ongx6MBFtMwRM
+	N7LuSA9V3oqaC1IRj3imazjro51DFe1b5pKj0f4jbB0X5lk90qiwhE7/ZjzomTQ4mDHY+WfS4FhZy
+	d/qxelTLUbXCXYMULJDKUrFi/T5D8dPHk7q4HlgDezyoFTKbGH1rru1QFnJBFO8ZipO5qN3IntZtb
+	F1lruX2yxiH9jcUHUlADtABL0cMIMdBYZBTIdjH/LWh94aNr/BWC0w+CiKIzgg1UUxnKW4sWB4hqS
+	J8yCgYsjA1pkPpWdL3V6ktgR+pDUUrZ1FHJlddTQyc8GBpd7eNjanaJtjJ23DjaVkVsCJesY2q2iN
+	varE6Dog==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33976)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1swiZe-00021X-2r;
+	Fri, 04 Oct 2024 14:42:26 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1swiZb-0001E9-2v;
+	Fri, 04 Oct 2024 14:42:23 +0100
+Date: Fri, 4 Oct 2024 14:42:23 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Qingtao Cao <qingtao.cao.au@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] net: phy: marvell: avoid bringing down fibre link
+ when autoneg is bypassed
+Message-ID: <Zv_wv67TGIUz5IZy@shell.armlinux.org.uk>
+References: <20241003022512.370600-1-qingtao.cao@digi.com>
+ <30f9c0d0-499c-47d6-bdf2-a86b6d300dbf@lunn.ch>
+ <CAPcThSHa82QDT6sSrqcGMf7Zx4J15P7KpgfnD-LjJQi0DFh7FA@mail.gmail.com>
+ <927d5266-503c-499f-877c-5350108334dc@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <927d5266-503c-499f-877c-5350108334dc@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, 2024-10-03 at 19:29 +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
->=20
-> Extend AXI-DAC backend with new features required to interface
-> to the ad3552r DAC. Mainly, a new compatible string is added to
-> support the ad3552r-axi DAC IP, very similar to the generic DAC
-> IP but with some customizations to work with the ad3552r.
->=20
-> Then, a serie of generic functions has been added to match with
-> ad3552r needs. Function names has been kept generic as much as
-> possible, to allow re-utilization from other frontend drivers.
->=20
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
-> =C2=A0drivers/iio/dac/adi-axi-dac.c | 278 +++++++++++++++++++++++++++++++=
-++++++++---
-> =C2=A01 file changed, 264 insertions(+), 14 deletions(-)
->=20
->=20
+On Fri, Oct 04, 2024 at 03:26:33PM +0200, Andrew Lunn wrote:
+> On Fri, Oct 04, 2024 at 11:35:30AM +1000, Qingtao Cao wrote:
+> > Hi Andrew,
+> > 
+> > Please see my inline replies.
+> > 
+> > On Fri, Oct 4, 2024 at 12:30 AM Andrew Lunn <andrew@lunn.ch> wrote:
+> > 
+> >     On Thu, Oct 03, 2024 at 12:25:12PM +1000, Qingtao Cao wrote:
+> >     > On 88E151x the SGMII autoneg bypass mode defaults to be enabled. When it
+> >     is
+> >     > activated, the device assumes a link-up status with existing
+> >     configuration
+> >     > in BMCR, avoid bringing down the fibre link in this case
+> >     >
+> >     > Test case:
+> >     > 1. Two 88E151x connected with SFP, both enable autoneg, link is up with
+> >     speed
+> >     >    1000M
+> >     > 2. Disable autoneg on one device and explicitly set its speed to 1000M
+> >     > 3. The fibre link can still up with this change, otherwise not.
+> > 
+> >     What is actually wrong here?
+> > 
+> >     If both ends are performing auto-neg, i would expect a link at the
+> >     highest speeds both link peers support.
+> > 
+> >     If one peer is doing autoneg, the other not, i expect link down, this
+> >     is not a valid configuration, since one peer is going to fail to
+> >     auto-neg.
+> > 
+> > 
+> > Well, technically speaking, thanks to the 88E151X's bypass mode, in such case
+> > with one end using autoneg but the other is using 1000M explicitly, the link
+> > could still be up, but not with the current code.
+> 
+> So we can make an invalid configuration work. Question is, should we?
+> 
+> Are we teaching users they can wrongly configure their system and
+> expect it to work? They then think it is actually a valid
+> configuration and try the same on some other board with other PHYs,
+> and find it does not work?
+> 
+> Does Marvell document why this bypass mode exists? When it should be
+> used? What do they see as its use cases?
 
-...
+The paragraph about it is couched in terms of "if the MAC or the PHY
+implements the auto-negotiation function and the other end does not".
 
-> +
-> +static int axi_dac_read_raw(struct iio_backend *back,
-> +			=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan,
-> +			=C2=A0=C2=A0=C2=A0 int *val, int *val2, long mask)
-> +{
-> +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
-> +	int err;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_FREQUENCY: {
-> +		int clk_in, reg;
-> +
-> +		if (!st->info->bus_controller)
-> +			return -EOPNOTSUPP;
+That seems to point towards a MAC <-> PHY link rather than across a
+media. So I tend to agree with you that we should not be enabling
+bypass mode on a media side link.
 
-Since we'll likely need a more explicitly flag for requesting the reference=
- clock, I
-think that can be used in here and so, replace this one. Sorry for suggesti=
-ng this
-one. More details below...
-
-> +
-> +		/*
-> +		 * As from ad3552r AXI IP documentation,
-> +		 * returning the SCLK depending on the stream mode.
-> +		 */
-> +		err =3D regmap_read(st->regmap, AXI_DAC_CUSTOM_CTRL_REG, &reg);
-> +		if (err)
-> +			return err;
-> +
-> +		clk_in =3D clk_get_rate(st->clk);
-> +
-
-I don't think the rate is likely to change (at least for now it does not ri=
-ght?). So
-we can cache the rate during probe (and then no need to save the struct clk=
-).
-
-> +		if (reg & AXI_DAC_CUSTOM_CTRL_STREAM)
-> +			*val =3D clk_in / 2;
-> +		else
-> +			*val =3D clk_in / 8;
-> +
-> +		return IIO_VAL_INT;
-> +		}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->=20
-
-...
-
-> =C2=A0
-> -	clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
-> -	if (IS_ERR(clk))
-> -		return dev_err_probe(&pdev->dev, PTR_ERR(clk),
-> +	st->clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
-> +	if (IS_ERR(st->clk))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(st->clk),
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get clock\n");
-
-I think this is wrong. If we look at the docs [1], the clock we want in ord=
-er to
-calculate SCLK is the dac_clk which should be the reference clock. The cloc=
-k we
-previously had in here is the axi clock (s_axi_aclk in the docs) which is t=
-he axi bus
-clock so we can read/write registers. So, before we had no clk_name before =
-we only
-had one clock but now you need proper names for the clocks. For the axi clk=
-, we can
-keep a local clock and just make sure we enable it. For the new dac_clk (as=
- named in
-the docs), you need to get it only if the IP needs one. And I'm not sure at=
-tach the
-clk need to the bus_controller flag is a great idea... So I would replace t=
-he
-bus_controller flag with an explicit has_clkin or has_dacclk (something alo=
-ng those
-lines) and use that to request (and enable) the extra clock conditionally.
-
-[1]: https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
-- Nuno S=C3=A1
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
