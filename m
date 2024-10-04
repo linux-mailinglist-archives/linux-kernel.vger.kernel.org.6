@@ -1,99 +1,56 @@
-Return-Path: <linux-kernel+bounces-350394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EF299048E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:37:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D50990490
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85E7A1C21082
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:37:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A638285891
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B8521018D;
-	Fri,  4 Oct 2024 13:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4D6212EF0;
+	Fri,  4 Oct 2024 13:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z7jzMBjj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4G8v1mwe";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xzOqGMhE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EIDMnngs"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XpfqaVrs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6012915747D
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819F32101B5;
+	Fri,  4 Oct 2024 13:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728049042; cv=none; b=fEWh6bYXZ1ZI0KfU+czmq3LpDiHmGjXzed/W/gYEvWU6CzNPfVly8zXLI3RrQV1gS1G87eHwxSMciDMo2ziOuZvlO2AHDfxqfTMIh6RTtWNmFyYwpQrW9IKqxCEpb4hH2xMICaubaNv/bO82nrKjOV+ROCE3ubITJElEjPKF4MY=
+	t=1728049044; cv=none; b=QzSubcMYLGObaU7f/nG5phTQ57vh++Z/gjvmXxefTw7ooR5Uvg+vBknkpiyc6PpxSq0WIa6fHQ8He85ch8RZqps0qZgkwiHPDxmOCrMJT5CTD43FAXqyQKxNvhkzPh6+HAMMOF/PJZsruoC7L4s8QQfHz3zo5kUv2VW3NvRlCrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728049042; c=relaxed/simple;
-	bh=C6SKWU5gzyUEhzF0dJ3GwEWubW4EM4M7ie7S8SwJBRA=;
+	s=arc-20240116; t=1728049044; c=relaxed/simple;
+	bh=VCQYCMDeLbPZDcPRtkc1G603J37v7olth2VxaQVhvz4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DvJqjUAZJydHOy8bBS4xOi3u+Qjq+LSaAfYkxvcOxLskqOC+w/xgPC0rgy7zAqZ7syqYccO14Oj96lLJRCxnpoZz9iBVQZwszdJge74ETv7nSN6kc3VCj/kbjy+xKq7ruIOJE7F4MLVZmfaIjwjZqOxaj1CsJXdqDu8VrnQAGj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Z7jzMBjj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4G8v1mwe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xzOqGMhE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EIDMnngs; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4A9EB21CFA;
-	Fri,  4 Oct 2024 13:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728049038; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZcRVJuVlfANx6SJZjEhdsTDI1vWWADF5UW+8hbd7eBc=;
-	b=Z7jzMBjj+P7z41YLCwRqwMPeCqxx8iz6yG7+NzUDgaWDeXuYlcYeG+mkSB/hWX3zl/7CO0
-	LpQR/Gqhdwy0GDDghsU/ZnzvTRBxnFIqLR6z/Z4h/pcJMiZgUzPHGSENNhZA1NxOj4Qeq/
-	Yw+m+lhyrwUdF3Hyypav3+TzXdQuAlU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728049038;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZcRVJuVlfANx6SJZjEhdsTDI1vWWADF5UW+8hbd7eBc=;
-	b=4G8v1mweg6B1M5naeijUxIzRFYPI+Vm6+2vi8DVS1HSw9TnEtrSksix3YYlLB99s1S/ogD
-	AppbCpU8qDzg7jDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728049037; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZcRVJuVlfANx6SJZjEhdsTDI1vWWADF5UW+8hbd7eBc=;
-	b=xzOqGMhEgEfVIYAI5sjqiiC2rVv5yHR2TYbUel8PIkjWtiIrrnx/78rC0h1Y3CTrWf793W
-	P1gJKMSbvXGC+XvKhFRDvyd+dUSRoxwLqs/c1vTX9L7fk27dEM2/7O+MZaGVTf8FRwIogR
-	aC9oD8Lq7qbIIIUtKEMN9YI9GOPMsbI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728049037;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZcRVJuVlfANx6SJZjEhdsTDI1vWWADF5UW+8hbd7eBc=;
-	b=EIDMnngscA7j0Ku8kjsCKhYtZ+pwGIJjHsE2NYGjsD+5qIeIcTLUBPSzCTD9hmZapx6lCT
-	MSYirES0Ul3hjqCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3D21413A6E;
-	Fri,  4 Oct 2024 13:37:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bwWMDo3v/2YsWAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 04 Oct 2024 13:37:17 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C4389A0877; Fri,  4 Oct 2024 15:37:16 +0200 (CEST)
-Date: Fri, 4 Oct 2024 15:37:16 +0200
-From: Jan Kara <jack@suse.cz>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] acl: Realign struct posix_acl to reduce its size by 8
- bytes
-Message-ID: <20241004133716.enkqnmosn42oagos@quack3>
-References: <20241004103401.38579-2-thorsten.blum@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zo23umqdLHGERaSEVUI/XS/X1VK2WBQfb5sGrT+Yw8E2yTM/pUWEd+w20JUK1Ol+8yKjg8MJLi92WwWivZRC3k4l6wK4ycqTriCHuoV3IP7IaAhI1yQs/7XtOuhbV0Hkhc3iTxKc05clO4w/jv3vvVOGyKaqH0N3XKxLrRSevvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XpfqaVrs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 427CFC4CEE9;
+	Fri,  4 Oct 2024 13:37:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728049043;
+	bh=VCQYCMDeLbPZDcPRtkc1G603J37v7olth2VxaQVhvz4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XpfqaVrs9UxEMSduJFeoUmIKN/iVYISdJ2r0COgFTfBx+hqY0h80HLSFF9ZsWVl0e
+	 /ZEeqjc+4ZA6777fFXNI+cMl4pf1arORMPZmAwiT4SeaVAzKx1rVhUD+2u0xkYXHEM
+	 gjNi6vWGeAmvb3Fgb/rXQI2Raf+cvG4nf0YVPPxU=
+Date: Fri, 4 Oct 2024 15:37:21 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: mka@chromium.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, wentong.wu@intel.com,
+	sakari.ailus@linux.intel.com, javier.carrasco@wolfvision.net,
+	matthias@kaehlcke.net, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	git@amd.com
+Subject: Re: [PATCH v2] usb: misc: onboard_usb_dev: introduce new config
+ symbol for usb5744 SMBus support
+Message-ID: <2024100406-spyglass-roulette-761d@gregkh>
+References: <1727529992-476088-1-git-send-email-radhey.shyam.pandey@amd.com>
+ <2024100442-yoyo-fifth-2125@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,64 +59,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241004103401.38579-2-thorsten.blum@linux.dev>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <2024100442-yoyo-fifth-2125@gregkh>
 
-On Fri 04-10-24 12:33:57, Thorsten Blum wrote:
-> Reduce posix_acl's struct size by 8 bytes by realigning its members.
+On Fri, Oct 04, 2024 at 03:36:11PM +0200, Greg KH wrote:
+> On Sat, Sep 28, 2024 at 06:56:32PM +0530, Radhey Shyam Pandey wrote:
+> > Introduce new kernel config symbol for Microchip usb5744 SMBus programming
+> > support. Since usb5744 i2c initialization routine uses i2c SMBus APIs these
+> > APIs should only be invoked when kernel has I2C support. This new kernel
+> > config describes the dependency on I2C kernel support and fix the below
+> > build issues when USB_ONBOARD_DEV=y and CONFIG_I2C=m.
+> > 
+> > riscv64-linux-ld: drivers/usb/misc/onboard_usb_dev.o:
+> > undefined reference to `i2c_find_device_by_fwnode'
+> > drivers/usb/misc/onboard_usb_dev.c:408:(.text+0xb24): undefined
+> > reference to `i2c_smbus_write_block_data'
+> > <snip>
+> > 
+> > Parsing of the i2c-bus bus handle is not put under usb5744 kernel config
+> > check as the intention is to report an error when DT is configured for
+> > usb5744 SMBus support and kernel has USB_ONBOARD_DEV_USB5744 disabled.
+> > 
+> > Fixes: 6782311d04df ("usb: misc: onboard_usb_dev: add Microchip usb5744 SMBus programming support")
+> > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> > Suggested-by: Matthias Kaehlcke <matthias@kaehlcke.net>
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202409140539.3Axwv38m-lkp@intel.com/
+> > Acked-by: Matthias Kaehlcke <matthias@kaehlcke.net>
+> > ---
+> > Changes for v2:
+> > - As suggested by Greg drop default 'y' and instead describe the
+> >   constraints in the kconfig description.
+> > ---
+> >  drivers/usb/misc/Kconfig           | 12 ++++++++++++
+> >  drivers/usb/misc/onboard_usb_dev.c |  6 ++++--
+> >  2 files changed, 16 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
+> > index 50b86d531701..6497c4e81e95 100644
+> > --- a/drivers/usb/misc/Kconfig
+> > +++ b/drivers/usb/misc/Kconfig
+> > @@ -331,3 +331,15 @@ config USB_ONBOARD_DEV
+> >  	  this config will enable the driver and it will automatically
+> >  	  match the state of the USB subsystem. If this driver is a
+> >  	  module it will be called onboard_usb_dev.
+> > +
+> > +config USB_ONBOARD_DEV_USB5744
+> > +	bool "Onboard USB Microchip usb5744 hub with SMBus support"
+> > +	depends on (USB_ONBOARD_DEV && I2C=y) || (USB_ONBOARD_DEV=m && I2C=m)
+> > +	help
+> > +	  Say Y here if you want to support onboard USB Microchip usb5744
+> > +	  hub that requires SMBus initialization.
+> > +
+> > +	  This options enables usb5744 i2c default initialization sequence
+> > +	  during hub start-up configuration stage. It is must to enable this
+> > +	  option on AMD Kria KR260 Robotics Starter Kit as this hub is
+> > +	  connected to USB-SD converter which mounts the root filesystem.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  include/linux/posix_acl.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> With this applied I get the following build warning:
 > 
-> diff --git a/include/linux/posix_acl.h b/include/linux/posix_acl.h
-> index 83b2c5fba1d9..e2d47eb1a7f3 100644
-> --- a/include/linux/posix_acl.h
-> +++ b/include/linux/posix_acl.h
-> @@ -28,8 +28,8 @@ struct posix_acl_entry {
->  
->  struct posix_acl {
->  	refcount_t		a_refcount;
-> -	struct rcu_head		a_rcu;
->  	unsigned int		a_count;
-> +	struct rcu_head		a_rcu;
->  	struct posix_acl_entry	a_entries[] __counted_by(a_count);
->  };
->  
-> -- 
-> 2.46.2
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> WARNING: unmet direct dependencies detected for MODVERSIONS
+>   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+>   Selected by [y]:
+>   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=n] || GCC_PLUGINS [=y]) && MODULES [=y]
+> 
+> WARNING: unmet direct dependencies detected for MODVERSIONS
+>   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+>   Selected by [y]:
+>   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=n] || GCC_PLUGINS [=y]) && MODULES [=y]
+> 
+> WARNING: unmet direct dependencies detected for MODVERSIONS
+>   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+>   Selected by [y]:
+>   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=n] || GCC_PLUGINS [=y]) && MODULES [=y]
+> 
+> 
+> Which is odd.
+> 
+> It's one extra "unmet direct ..." message than normal for now, so
+> something in this commit is not working properly.
+> 
+> Can you fix this up and send a new version?
+
+Nevermind, it's not this patch's fault, I'll go take this now, sorry for
+the noise...
+
+greg k-h
 
