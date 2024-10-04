@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-350689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885DB990811
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:54:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84AE990813
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD2451C20AD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:54:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 717B328C835
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D84221E29;
-	Fri,  4 Oct 2024 15:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C295221E46;
+	Fri,  4 Oct 2024 15:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VtrLQqOW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPfYaikd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A741E2849;
-	Fri,  4 Oct 2024 15:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC1E1E285B;
+	Fri,  4 Oct 2024 15:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728056646; cv=none; b=ghJcxqL25ypktUFFnnp3jKV8jfUTbIqHW4PMe/TZbFB0FRniP9PswHdxiaMdp04wd7SlxfgGlWZIYgI9VAV1TNpJJ6fjr+ALsop+kDv7Ot8BfQJZDIWMPf6MmmerHE43zFlzzr2GM25Mrsmq1kg4vF2amlk1XY1wYt/hAMmRSuE=
+	t=1728056652; cv=none; b=FSVtwPVDZRgjAJcWrLUKHTnF89npzEa1w8zTQJrkPPawp4PTTcP8FfYLvjCGD8kMcH4A2ZFcQazioF+dHW4Ecn/Tk1bt8IqN8chvqtb95GUQeX4u8rKa5pp2BR/pBt1eT8FHDMb1R1RgpqN2Duo/sYLaG2R+n2K5MOCTghGB5/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728056646; c=relaxed/simple;
-	bh=qja4/b6sVnAwfQIKsU5lFy64XWyVYKZfs5Hg8rSPng8=;
+	s=arc-20240116; t=1728056652; c=relaxed/simple;
+	bh=VajjPpTKjd92I7r04pL25dRwn4WQWZ1yOCCgBSYIXyw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gW3dM2FjQxvNczA/sVeITDAxNIdxNGsyuVOjYLLBwjwTUW45t/VF0YBd8TPkyJw9QPgJqM3Ix755VmWGrM4CDk/DISQ4qljVCpz4BXt41AakeGo2/VsYZg84IIFJi1U3sgxtqJyt2b1pj6XwqPA6/0A/5HK2638mSO2vL7riSss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VtrLQqOW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD494C4CEC6;
-	Fri,  4 Oct 2024 15:44:00 +0000 (UTC)
+	 MIME-Version; b=sp2xEGn6nntzaWgNlzT7UIFT7QvA7GcbkfnAVPk4QDu9K4l22HjBV4J2DRWHefB/qW5JsM771uM93U1tTthiTESNJlRTltWxs8cGd9avR7LgHmd2QXBCJetD9WbupRuBCfvW3QfLz3P3Z2aM9YZGSwqwgW0sciUsbPfHcZycWRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HPfYaikd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFC5DC4CECF;
+	Fri,  4 Oct 2024 15:44:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728056646;
-	bh=qja4/b6sVnAwfQIKsU5lFy64XWyVYKZfs5Hg8rSPng8=;
+	s=k20201202; t=1728056652;
+	bh=VajjPpTKjd92I7r04pL25dRwn4WQWZ1yOCCgBSYIXyw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VtrLQqOWPhsua2MiiwHzfBRPtDZBUM4nukUln7OZcH+uO8VGfzl9qTUcUMQ8O8sHx
-	 /ZQ5pQgnEhXA9wmaNudiiSJoWSZOzdV/+hTQzbtIStWz7jbFltFtR+/T8VpzqtMh4Z
-	 7QdhrRnqgG6sQDDwPVnGcLPxpGi3oDjR3OJ7ZYZIt13f6QS5wu2uMEWRqKhPucUtZn
-	 tRGYA0j1FyATkN+gUk6kfxXg9ZfLOHlGinUq2UQGUNDm6zqb9P5qFkgTvECWlClxXK
-	 6Us3ipus/DIagEIP8Gb5Lx2uB2nRZSnjTNhIBJmwB/LNx8kmOFSUz7C5ONTyktziYJ
-	 bX6v3bR1AVziA==
+	b=HPfYaikd0L/Vx+JqKeDTWx4hMoyf5HUOadWTknz+gONqrexWgDlw1ZuDMy1brwY88
+	 GtyfW1b2JKLCI1bQN6crBsF7amgUYsB1MNPSbPzIToO8N7xZ1iB+tvWogaPb/pis6E
+	 7scY361XwbntTfDE+WcJS9wSd62G0hKmXzmkaiwFcfelOZfj16trTfEETlcaW6nxSt
+	 pi2ABhYIO9QggEAtYzZheUDGuPHsVMqacsseRUGKmHuUhUtOIwS4Vh+jS+0AujyAo+
+	 JR8dVh76tKj5pcblkzaTkc2uvj6D97PC3eLEf5hAmjPyZjlN9YJTXlwMcQQvmjWyMf
+	 P/hOEN+8Mty6Q==
 From: Danilo Krummrich <dakr@kernel.org>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -66,9 +66,9 @@ Cc: daniel.almeida@collabora.com,
 	rust-for-linux@vger.kernel.org,
 	linux-mm@kvack.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v9 22/29] rust: error: use `core::alloc::LayoutError`
-Date: Fri,  4 Oct 2024 17:41:26 +0200
-Message-ID: <20241004154149.93856-23-dakr@kernel.org>
+Subject: [PATCH v9 23/29] rust: error: check for config `test` in `Error::name`
+Date: Fri,  4 Oct 2024 17:41:27 +0200
+Message-ID: <20241004154149.93856-24-dakr@kernel.org>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20241004154149.93856-1-dakr@kernel.org>
 References: <20241004154149.93856-1-dakr@kernel.org>
@@ -80,30 +80,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use `core::alloc::LayoutError` instead of `alloc::alloc::LayoutError` in
-preparation to get rid of Rust's alloc crate.
+Additional to `testlib` also check for `test` in `Error::name`. This is
+required by a subsequent patch that (indirectly) uses `Error` in test
+cases.
 
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 Reviewed-by: Gary Guo <gary@garyguo.net>
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/error.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ rust/kernel/error.rs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-index 2f1e4b783bfb..ca957bd262df 100644
+index ca957bd262df..99d505cd5ae1 100644
 --- a/rust/kernel/error.rs
 +++ b/rust/kernel/error.rs
-@@ -6,7 +6,7 @@
+@@ -142,7 +142,7 @@ pub fn to_ptr<T>(self) -> *mut T {
+     }
  
- use crate::{alloc::AllocError, str::CStr};
- 
--use alloc::alloc::LayoutError;
-+use core::alloc::LayoutError;
- 
- use core::fmt;
- use core::num::TryFromIntError;
+     /// Returns a string representing the error, if one exists.
+-    #[cfg(not(testlib))]
++    #[cfg(not(any(test, testlib)))]
+     pub fn name(&self) -> Option<&'static CStr> {
+         // SAFETY: Just an FFI call, there are no extra safety requirements.
+         let ptr = unsafe { bindings::errname(-self.0) };
+@@ -159,7 +159,7 @@ pub fn name(&self) -> Option<&'static CStr> {
+     /// When `testlib` is configured, this always returns `None` to avoid the dependency on a
+     /// kernel function so that tests that use this (e.g., by calling [`Result::unwrap`]) can still
+     /// run in userspace.
+-    #[cfg(testlib)]
++    #[cfg(any(test, testlib))]
+     pub fn name(&self) -> Option<&'static CStr> {
+         None
+     }
 -- 
 2.46.1
 
