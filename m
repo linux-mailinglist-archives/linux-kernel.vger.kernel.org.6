@@ -1,81 +1,69 @@
-Return-Path: <linux-kernel+bounces-351314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12ED9990F9C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:03:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53656990FA4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A311C21188
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:03:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB77280EF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9AA1AE01D;
-	Fri,  4 Oct 2024 19:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757D51D90D2;
+	Fri,  4 Oct 2024 19:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S2WDZQJp"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbPlofry"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68651AE010;
-	Fri,  4 Oct 2024 19:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D761D90B7;
+	Fri,  4 Oct 2024 19:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728069286; cv=none; b=h2qlzARjimwX3DlQVjvnQWfpcGyFs/2IzZkgLi9At8D1n7pICVX4GE0PjnVTknsxSljmUy1Q5oaLcRw/S1iMeL0GqbUTdo4tJsizrBt9EE5WXkNcP9Ce9HuSCB+Z3vVHTA6J/i4IKHmlSog7eLRAlcj8Co9wOVjDe0mkXZ3VGB0=
+	t=1728069429; cv=none; b=APg5Fo6RaA6z3mjp72Qpuk0TpLrcNpaGYGBklS3eoFB3o6vLdIaCGf7OyrCJ/dj9wl2QjX3XRC/ro5qZ3lnlCSNmFE3HHjA4QJAUi32vDMtcnccEzjFHj+PFhBu2NE4gaddYQRJi7spN7t8K3nZY9ZTVjXoEl+3NngY6Y39pPgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728069286; c=relaxed/simple;
-	bh=Vm5cwzVRBb2+9hU6XAIcq43yYLjs8dd8c1WLVKtaLP8=;
+	s=arc-20240116; t=1728069429; c=relaxed/simple;
+	bh=5zcDuZ5y1Bz3z7wOLQbZj+5Z6yMCB/6xtlNJHBVTBOM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sJx9oI7zVvfKz2pJUAzzkIxGN74DWCbF6Aex0o0qicuiD+hSTazfM2bj67nNYZsOr3Eu6+8DAMF6LxL5Ujx9P2OlncSJ3LYN0NGb/WzBrd8svwfqjgWGyR1eLYIZ/jPVlIJNk0LH9PsAwzQQfmj5ciPEZBqDm5e6Wk+UHvop8kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S2WDZQJp; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso23760185e9.2;
-        Fri, 04 Oct 2024 12:14:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728069283; x=1728674083; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8CycWNZFawBP96zK96WEn+kWaW4vTJKQJHVIc0au9Ow=;
-        b=S2WDZQJpY+B5HhYqkKNrcwTd8uqWJKPVI41nZyWsCNzOfYxLcnsCdiK+VEyU/M5LS/
-         fieCyL+LvW4aafa/SMG8IwWnqbmGMt+eQ0JkVJ6nCLzpf2RuXB90mM45qXoIVYlhV9M1
-         ItSRqm85eb7hqsX/BXS910lHAD/N5f3uJrG7UBqe+5v/PNpv/gUu8eu0NLUFLgdDWBTc
-         0GDea8i3q1bRpLd0LjWISLEW2fiWNgZ0OZqjqTbyZAinsX92TH//dug4+elxzpIthBQM
-         pdCMyQ+nJ5TIBjqU5iUnW6klGrhQjl7TGUd+DBMxzpU0IJ+DMMTqBPHUxiBHTH7xgenp
-         tU5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728069283; x=1728674083;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8CycWNZFawBP96zK96WEn+kWaW4vTJKQJHVIc0au9Ow=;
-        b=be3tAXwUMcbCJgczNiId/OExjf6KH1mVvJaFvF8Xe2my6xcrY80FJpRjMcpOL43WO5
-         iQmPbQuQ/hQEjTbNNxTLJp6tXI2Rrf2iaKTv63/u1R8+1jwFy56anvDtQmp9Jxu/DsdM
-         asXwdQQph+7v7CFT0DwcNNfEEB2FNIftln8n8eL1blIuJSLe9GU1eoj5evRi6b0LUj5E
-         BlYmuEIEFNTfV5JJExACdor5AHYK3wMKLALNuknmSTtydLibPYRCbgtEy2Ka+AbTbdLR
-         WvzZeKSx8xOTf0Say4ygr+lbUGyzhhPUyl6vo2hu9Rl2ASaT3w6bhqiJCfwFhUmALyQ4
-         El1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVV/JHj6b9MHyEqoAAxVL4UuZFtmYRZQagM/Im3evcghrDKZyrjBocnNuy60tHcRJgHG12H3QR9DDVw@vger.kernel.org, AJvYcCXlNYac2a0YtgAFHPQtbLBYhJr0NS9hGkCJQ/kpjRndlrJQoVVUUHTWAw8W1mD5nI+KX+sAFb1Zwx9E2bo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFr3D+WoINOBZy3AeVcapr2O+LhAnQyYhw6WyyiaUW1UiNXnEA
-	KeDwDmtkwZkYobBLPPzLkCx6mDwZRoQm8EDQLEBGG3nRzmUttnZ3
-X-Google-Smtp-Source: AGHT+IGCBOY3jHzzlTONE1G+8e4KYsJ+Y2gkCxsC/PCJoAHiPiLj0M+8frbC93RAc9jZzeID3U5I7Q==
-X-Received: by 2002:a05:600c:474a:b0:42f:6d3d:399f with SMTP id 5b1f17b1804b1-42f85ac193fmr29861845e9.21.1728069282796;
-        Fri, 04 Oct 2024 12:14:42 -0700 (PDT)
-Received: from freebase (oliv-cloud.duckdns.org. [78.196.47.215])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89eac29dsm4271285e9.26.2024.10.04.12.14.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 12:14:41 -0700 (PDT)
-Date: Fri, 4 Oct 2024 21:14:39 +0200
-From: Olivier Dautricourt <olivierdautricourt@gmail.com>
-To: =?utf-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, mathias.nyman@intel.com
-Subject: Re: [PATCH] usb: xhci: xhci_setup_port_arrays: early -ENODEV if
- maxports is 0.
-Message-ID: <ZwA-n56XlNkkLNXM@freebase>
-References: <20240930052336.80589-1-olivierdautricourt@gmail.com>
- <20241004125716.75c857ae@foxbook>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QvqO4QqeNXU/uM2phoQxAFKUpJiu1U1KawBrlJ2/gcziX9x4ZFdQuuG4Qg4kqWQeKiLpSa+tJTv/GyDK7WliQ/GeoT47Ih3MNxMdBNiB2mln1OP3jZ4PM3gXkLB0U8YWoVoWgC7wvZiHj+6Jl7ruyMyJzDw9draJtCFLULFmrf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbPlofry; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033A5C4CECC;
+	Fri,  4 Oct 2024 19:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728069429;
+	bh=5zcDuZ5y1Bz3z7wOLQbZj+5Z6yMCB/6xtlNJHBVTBOM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tbPlofryo7+1MvNVu1N/NoEjeK8MlvH5uUaIBMEPhU+fK83Zd9haCyVu1/OkEAYaG
+	 PM9JJaczCrX5f2+BJTFEdEXkBCnT+a5rHIj2Vv4w44C5eHt2TtT7n8eQtPd1dl8A1n
+	 KSQxjdFTsHT3348COnzgg7zNJ8F9IfFpSijQ2z+Ib4TYXZ2GoDYApl4LZFNwcBbTME
+	 MZ3H2zswojvegIHBEgucguk1O2cy44DiL6zxu7XkppTFVIu5Y9VhAx+pCXtZ1l8fZ9
+	 UdxyN3SSsissXfNgsIBxyEsqqKlfpt7wV9NaJmqb897nNjKyk5pcNktPZqFBvAY8LF
+	 KmTjkBvt1ryfg==
+Date: Fri, 4 Oct 2024 12:17:06 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: Re: [PATCHSET 0/8] perf tools: Do not set attr.exclude_guest by
+ default (v4)
+Message-ID: <ZwA_MshknG_N_0nM@google.com>
+References: <20241001002027.1272889-1-namhyung@kernel.org>
+ <b894eed7-15e0-4ec4-a9d6-07fe86326396@linaro.org>
+ <Zv2RIr8I04f8dEP2@google.com>
+ <eec7cdd2-e74b-4845-a898-320c911832fa@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,39 +72,138 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241004125716.75c857ae@foxbook>
+In-Reply-To: <eec7cdd2-e74b-4845-a898-320c911832fa@linaro.org>
 
-Hello,
-
-On Fri, Oct 04, 2024 at 12:57:16PM +0200, Michał Pecio wrote:
-> Hi,
+On Fri, Oct 04, 2024 at 04:40:18PM +0100, James Clark wrote:
 > 
-> > If the controller reports HCSPARAMS1.maxports==0 then we can skip the
-> > whole function: it would fail later after doing a bunch of unnecessary
-> > stuff. It can occur on a buggy hardware (the value is driven by external
-> > signals).
 > 
-> This function runs once during HC initialization, so what's the benefit
-> of bypassing it? Does it take unusually long time? Does it panic?
+> On 02/10/2024 19:29, Namhyung Kim wrote:
+> > On Wed, Oct 02, 2024 at 10:49:36AM +0100, James Clark wrote:
+> > > 
+> > > 
+> > > On 01/10/2024 1:20 am, Namhyung Kim wrote:
+> > > > Hello,
+> > > > 
+> > > > I found perf tools set exclude_guest bit inconsistently.  It used to
+> > > > set the bit but now the default event for perf record doesn't.  So I'm
+> > > > wondering why we want the bit in the first place.
+> > > > 
+> > > > Actually it's not good for PMUs don't support any exclusion like AMD
+> > > > IBS because it disables new features after the exclude_guest due to
+> > > > the missing feature detection logic.
+> > > > 
+> > > > v4 changes)
+> > > > 
+> > > >    * handle EOPNOTSUPP error in compatible way  (Kan)
+> > > >    * drop --exclude-guest option in perf stat
+> > > >    * not to separate exclude_hv fallback
+> > > >    * rename to exclude_GH_default  (Kan)
+> > > >    * drop the RFC from the subject
+> > > > 
+> > > > v3) https://lore.kernel.org/lkml/20240905202426.2690105-1-namhyung@kernel.org/
+> > > > 
+> > > >    * move exclude_guest fallback to the front
+> > > >    * fix precise_max handling on AMD
+> > > >    * simplify the default event for perf record
+> > > > 
+> > > > v2) https://lore.kernel.org/lkml/20240904064131.2377873-1-namhyung@kernel.org/
+> > > > 
+> > > >    * update the missing feature detection logic
+> > > >    * separate exclude_hv fallback
+> > > >    * add new fallback for exclude_guest
+> > > > 
+> > > > v1) https://lore.kernel.org/lkml/20240902014621.2002343-1-namhyung@kernel.org/
+> > > > 
+> > > > AFAIK it doesn't matter for the most cases but perf kvm.  If users
+> > > > need to set the bit, they can still use :H modifier.  For vPMU pass-
+> > > > through or Apple M1, it'd add the exclude_guest during the fallback
+> > > > logic.
+> > > > 
+> > > > Also the kernel feature detection logic should be separated from the
+> > > > exclude bit tests since it depends on the PMU implementation rather
+> > > > than the core kernel features.  So I changed it to use a software
+> > > > event for the detection and factor out some hw-specific checks.
+> > > > 
+> > > > The code is available at 'perf/exclude-v4' branch in
+> > > > git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+> > > > 
+> > > > Thanks,
+> > > > Namhyung
+> > > > 
+> > > > 
+> > > 
+> > > Looks like you need to allow for :H in the perf stat test on M1 now:
+> > > 
+> > > diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
+> > > index 5a2ca2bcf94d..77cb95859649 100755
+> > > --- a/tools/perf/tests/shell/stat.sh
+> > > +++ b/tools/perf/tests/shell/stat.sh
+> > > @@ -161,7 +161,7 @@ test_hybrid() {
+> > >     fi
+> > > 
+> > >     # Run default Perf stat
+> > > -  cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/|  cycles " |
+> > > wc -l)
+> > > +  cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/|  cycles |  cycles:H  " | wc -l)
+> > 
+> > Ok, what about "u"?  Probably it can be
+> > 
+> >    cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/(uH)*|  cycles(:[uH])* " | wc -l)
+> > 
 > 
-> It seems to alreday be written to handle such abnormal cases gracefully.
+> Yep that probably works too and is a bit more robust
 
-That is correct, the case is handled without panic, but the 0 value gets
-silently propagated until it eventually fails on line 2220:
-	if (xhci->usb2_rhub.num_ports == 0 && xhci->usb3_rhub.num_ports == 0) {
-		xhci_warn(xhci, "No ports on the roothubs?\n");
-		return -ENODEV;
-	}
-The benefits are only:
-  - Reporting a more precise issue
-  - Avoids iterating through the capability structures of the controller
-  - failsafe if future changes
+Great, I'll merge this change with the fix above if nobody objects.
+It'd be nice if more folks on other architectures could test this
+patchset too.
 
-This is totally a nitpick as the case is unusual, if you think it is not
-worth taking it upstream i'll understand.
+Thanks,
+Namhyung
 
-
-Kr,
-Olivier
+> 
+> > > 
+> > >     if [ "$pmus" -ne "$cycles_events" ]
+> > >     then
+> > > 
+> > > Other than that:
+> > > 
+> > > Reviewed-by: James Clark <james.clark@linaro.org>
+> > 
+> > Thanks for the review!
+> > Namhyung
+> > 
+> > > 
+> > > > Namhyung Kim (8):
+> > > >     perf tools: Add fallback for exclude_guest
+> > > >     perf tools: Don't set attr.exclude_guest by default
+> > > >     perf tools: Simplify evsel__add_modifier()
+> > > >     perf tools: Do not set exclude_guest for precise_ip
+> > > >     perf tools: Detect missing kernel features properly
+> > > >     perf tools: Move x86__is_amd_cpu() to util/env.c
+> > > >     perf tools: Check fallback error and order
+> > > >     perf record: Just use "cycles:P" as the default event
+> > > > 
+> > > >    tools/perf/arch/x86/util/Build              |   1 -
+> > > >    tools/perf/arch/x86/util/env.c              |  19 -
+> > > >    tools/perf/arch/x86/util/env.h              |   7 -
+> > > >    tools/perf/arch/x86/util/pmu.c              |   2 +-
+> > > >    tools/perf/builtin-kvm.c                    |   1 +
+> > > >    tools/perf/builtin-record.c                 |   4 +-
+> > > >    tools/perf/builtin-stat.c                   |  18 +-
+> > > >    tools/perf/dlfilters/dlfilter-test-api-v0.c |   2 +-
+> > > >    tools/perf/dlfilters/dlfilter-test-api-v2.c |   2 +-
+> > > >    tools/perf/tests/attr/test-record-dummy-C0  |   2 +-
+> > > >    tools/perf/tests/parse-events.c             |  30 +-
+> > > >    tools/perf/util/env.c                       |  24 ++
+> > > >    tools/perf/util/env.h                       |   4 +
+> > > >    tools/perf/util/evsel.c                     | 394 ++++++++++++++------
+> > > >    tools/perf/util/evsel.h                     |   1 -
+> > > >    tools/perf/util/parse-events.c              |   6 +-
+> > > >    tools/perf/util/util.c                      |  10 +-
+> > > >    tools/perf/util/util.h                      |   3 +
+> > > >    18 files changed, 364 insertions(+), 166 deletions(-)
+> > > >    delete mode 100644 tools/perf/arch/x86/util/env.c
+> > > >    delete mode 100644 tools/perf/arch/x86/util/env.h
+> > > > 
+> > > 
 
