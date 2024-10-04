@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-351475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238859911A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:49:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833019911A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B231C221E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:49:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 729E6B229C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3F81D8A1D;
-	Fri,  4 Oct 2024 21:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E676A1B4F0A;
+	Fri,  4 Oct 2024 21:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KHbKMBzO"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kYOv5Fgc"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F731B4F06
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4251AE00E
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728078534; cv=none; b=DtSDU3pEylxb3OcskXUoOC6e+edQUJCohFfuUyx7h8klYjxkmk1mM/q04Fa6vT8RP4hdA9azjDaT1M6SIGAKJoz4HqjHzhNNAdxSabWp31R7VqbKeYGclXzxCKw5kc5qvWKezxnHZqizmkaqNydMpWkTHOxRVNA4CZpTvuP9sds=
+	t=1728078533; cv=none; b=g/EXJclYonl2D+878gIJDrFBe7/h9nodXB8JO1yFyVatfS2R69oUf+KCSz/JC8aCQNrlR/+aZ2SqtxrYBwYjj0jEdsbd4TK/zRiBQSv8SHW+vLd6KX3SG3R2i+kJd+gTRpRgeJt/YQrJh41JnArP4HuBJRq7tvvfylcyhgo9MQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728078534; c=relaxed/simple;
-	bh=dW6NuJWAL0tnqJGgsGPu8j1VoVP4zCeNUzqvDunBNqs=;
+	s=arc-20240116; t=1728078533; c=relaxed/simple;
+	bh=EZV8dwpNecrxaA4gPBjayOFyXxpIgNERPQfdwxT0f2w=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XhbHKPLzhXCX68pttPLH/JTgO9NzdxYyj1A+nEgRciZN0OU4DkzMvYT4pK5M+o3pHemHi+Z+Y3sRxzyEOLu9INw42y0GgFZuH5KMT7Vhyu6YWuLkP9IeQNS8jEkI75OEyGPX4/vf13fZAVgbOC+YAkNGpiQXuMCC0UwIJHi8XuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KHbKMBzO; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:To:Cc; b=npyxYD3GP1Cse5RKWoE3uexmfPgZDHUDwLCXb+gHS85UE2v/KsTygdsQuXd3zWLHsO6HnEcQlfeCLGkLKWVuYfHhBAl9f/0v42G0a222EF1MF4w95p4DAXBiBaSpCOv5QE4xVPNB5HOMwcxq2DeGJ78t35bwjcynIj8CYkrGC7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kYOv5Fgc; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5398d171fa2so3190282e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 14:48:50 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso15985995e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 14:48:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728078529; x=1728683329; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728078530; x=1728683330; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Zi1jIhrpiRkiS4x4FePba+v93fkZAzTXFTnvV0Q7SJI=;
-        b=KHbKMBzOUkxinDQspNRqlLP9ZOOyfi6oFUC0tlAEzXGYDRRq9n2lJ3pAfBu6DymGB1
-         2fJmYNG21/XX3Whkxuf1dPcmVe925V4lEjK5oOht8EIc5v5HFqhhbSITVVR8co/cdPZB
-         nfeeSQhgaC4OZDQSgNVaZclcAwfZj/9U8Jh2TXw6zJKjOGI0yezjV2s1bdp9ZhqP3NXo
-         aGlc7KsarJFeJQBlFoB7LlsBjTcrekddx5p2Hh88YZrKlaKjIn1xg/rKCO1hI+8waQ5C
-         cpZWAY71bFDxtjCwCG42HEJ46s9wJW9l0xokQkG/q4shKIpFb2bMQosgnwtk+dYS20Sn
-         p49Q==
+        bh=aqWeA0LEyP3743aCtTxENnEYgzsdT+gARkI29iFfPOM=;
+        b=kYOv5Fgc5FhUoesPXstC1CzXi0At8wQ1Z7Pk3Gm1TxoWnMFIsprUlYKInvWImmaHef
+         9nBGV/B2YDeLyOUQ5V6+RVE1ASA2k6N8ERyLe9RaMC5T1cUK3xqtNMesmSVYKxAwSQjv
+         4AfH/dGXBNuXKKra8W5RH1foQSoQfBhZdfLXdk3Y3/m9ylIVTHdvXOSYXGupb00AWuir
+         TJTsky+SejqX0N6bf8XZfrulxqbBGJRWCaU2QiTc5lR/PhniIZK9tD6GkPYNI5+3aQ33
+         aD3ua8sbeJp7yucti26Xe5rDjc1Z6dobe5pC+n3kuXF0vMEXpWPNZIPrFN510qPMcpeX
+         H1/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728078529; x=1728683329;
+        d=1e100.net; s=20230601; t=1728078530; x=1728683330;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Zi1jIhrpiRkiS4x4FePba+v93fkZAzTXFTnvV0Q7SJI=;
-        b=w5dJ3tGR8vQ+ZlJa7cJfnXrVEtn9V/Xvv9FckZhzIhAGbH/T4VSzXjohpQlupEmYIv
-         AkO917c7W2dLv9vwKm917JnK8N5ZsRhscXM6rrpuaW7KfJAJk4fTEdS6MHxJUz7ewUpL
-         9QMkfDAz8z1WkUeFH50gNZKL6A2ulEA0NclevJO/2lgtPwvyv/7QnJMSiRg9gU7cVSXj
-         +heG2T9AMXAf941W1lA8dyyhA+2q0E6qTuDXHXqtXaKq3MP5yivsT5Tbsh9Ateem1Yz+
-         jrzZtxEFl/tUrM+Vqhi27SSzS4lxL2CgNSLc1DO3MERxg00ZChR9b4YoWQJrqnxEjVfm
-         l5qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/Ef9MMH/xOMU+Ur5Jh3rbLUlAZKv2g5ngqk3xwBvJP9tZBZIMuh+tmoPFGAljI+9ESqMnuiuXKSbEl3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp3gUVb2v+bNvEQV6z2G0EQRgKai20eenFmfza+zyDCyhkjef5
-	aBe6kBawz/VuWdP5JrYquU8TwGOPmY3TDLp9cL9EbO/275+qlBbVIdvJnuSwPBRD5VIXBCE/rBU
-	D
-X-Google-Smtp-Source: AGHT+IG9vKnlCyYpJNJyXVcqaNvjMhM227pXj314Ws0xBmbWWcURKzDXKJu6hWgq+z1B4KbbgtI7zg==
-X-Received: by 2002:a05:6512:3090:b0:52c:e1cd:39b7 with SMTP id 2adb3069b0e04-539ab85be3fmr2837875e87.5.1728078528670;
-        Fri, 04 Oct 2024 14:48:48 -0700 (PDT)
+        bh=aqWeA0LEyP3743aCtTxENnEYgzsdT+gARkI29iFfPOM=;
+        b=hHaEYL7q9/BJ/lODMIRJyU+GAHVyXpfMxjsY7HnfbJ+OEsLj+SVSUONqXJJNna7A+9
+         3r4WWmWfjkG7rUtBoRBW+H8zCWZkkKvywiGGHPqhpNy+/B6IDVYBEzHpC2SknulWQ/PF
+         1rW6AoXbrQo77QQvAwqnGZhmbNkSrImSJaYn5C6MbAh5EpZ4Om+NW3wjME962lyAI6TB
+         0TCCfvFAmFVDSTwB/YqVtOdd4ZC16vuxYvDDFw+2eBA9B6FucNlmflMi/Z1C+96qPx/G
+         0DLv/n867bv6OJNz0ucZt+M+/aAo2ND3Zik1yJgY4iLP0Lt1UTfp32/KlpMvwokTJ+yn
+         XO9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXvag9SsA041g27jIFiYFH/9ZqV7f/sIsEzGQjBgIZdI/64Asdzexx5jCKQUsy2Kz0YY5FuxaykVkESVrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8VI4ZKh97/bRayl50dAKSE1FfxU/hOgM9J9+GAxqiSzPBkOJy
+	Z4zsO8k9ArG79A4n2Feqqxp6/G5IYSNP+OcFJ616lRRlz8Rii5UN4y7qKTT+P0k=
+X-Google-Smtp-Source: AGHT+IFOelcSDljYwTZ3b1CqqshjojVPvrSodxfuXipBb6+t8a3QnlRE/fgX9Pqas+cEy3gWoq5beQ==
+X-Received: by 2002:a05:600c:1d1c:b0:42c:b697:a62c with SMTP id 5b1f17b1804b1-42f7df1cffbmr56193625e9.5.1728078529506;
+        Fri, 04 Oct 2024 14:48:49 -0700 (PDT)
 Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b4ab63sm24680375e9.40.2024.10.04.14.48.47
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b4ab63sm24680375e9.40.2024.10.04.14.48.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 14:48:47 -0700 (PDT)
+        Fri, 04 Oct 2024 14:48:49 -0700 (PDT)
 From: Guillaume Stols <gstols@baylibre.com>
-Date: Fri, 04 Oct 2024 21:48:36 +0000
-Subject: [PATCH v3 02/10] dt-bindings: iio: adc: ad7606: Remove spi-cpha
- from required
+Date: Fri, 04 Oct 2024 21:48:37 +0000
+Subject: [PATCH v3 03/10] dt-bindings: iio: adc: ad7606: Add iio backend
+ bindings
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-ad7606_add_iio_backend_support-v3-2-38757012ce82@baylibre.com>
+Message-Id: <20241004-ad7606_add_iio_backend_support-v3-3-38757012ce82@baylibre.com>
 References: <20241004-ad7606_add_iio_backend_support-v3-0-38757012ce82@baylibre.com>
 In-Reply-To: <20241004-ad7606_add_iio_backend_support-v3-0-38757012ce82@baylibre.com>
 To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
@@ -98,68 +97,129 @@ Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
  Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
  Guillaume Stols <gstols@baylibre.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728078523; l=2037;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728078523; l=3674;
  i=gstols@baylibre.com; s=20240417; h=from:subject:message-id;
- bh=dW6NuJWAL0tnqJGgsGPu8j1VoVP4zCeNUzqvDunBNqs=;
- b=1JBVnXogi8Y6VmRN4ENJTNsSU2nRs5+Y+Xu9FQStSslUOMfRP19G/XBoT+HQFyDiYJCMz/qD8
- NFHk3dWGBGUD1Y8O56KBx8G/wlK2ECH14DN83u6ihheoy5zIGdM+Ejb
+ bh=EZV8dwpNecrxaA4gPBjayOFyXxpIgNERPQfdwxT0f2w=;
+ b=rhqaKH6XB4tMlodHXcvh1879XCExdjmm3WkwiHwl2vsDT6KX7CZ/tBLm0AlR5QtNKDbHzV2r5
+ +j3Czol72YWDFIaM1qiiATSytiRQL1Eu9i8+7JXC5T/EfXecO5OGu//
 X-Developer-Key: i=gstols@baylibre.com; a=ed25519;
  pk=XvMm5WHuV67sGYOJZqIYzXndbaJOlNd8Q6li6vnb4Cs=
 
-The documentation is erroneously stating that spi-cpha is required, and
-the example is erroneously setting both spi-cpol and spi-cpha. According
-to the datasheet, only cpol should be set.
+Add the required properties for iio-backend support, as well as an
+example and the conditions to mutually exclude interruption and
+conversion trigger with iio-backend.
+The iio-backend's function is to controls the communication, and thus the
+interruption pin won't be available anymore.
+As a consequence, the conversion pin must be controlled externally since
+we will miss information about when every single conversion cycle (i.e
+conversion + data transfer) ends, hence a PWM is introduced to trigger
+the conversions.
 
-On zedboard for instance, setting the devicetree as in the example will
-simply not work.
-
-Fixes: 416f882c3b40 ("dt-bindings: iio: adc: Migrate AD7606 documentation to yaml")
-Fixes: 6e33a125df66 ("dt-bindings: iio: adc: Add docs for AD7606 ADC")
 Signed-off-by: Guillaume Stols <gstols@baylibre.com>
 ---
- Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 64 +++++++++++++++++++++-
+ 1 file changed, 62 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-index bec7cfba52a7..47081c79a1cf 100644
+index 47081c79a1cf..a389cfda824d 100644
 --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
 +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-@@ -39,6 +39,11 @@ properties:
-   "#size-cells":
-     const: 0
+@@ -129,6 +129,29 @@ properties:
+       assumed that the pins are hardwired to VDD.
+     type: boolean
  
-+  # According to the datasheet, "Data is clocked in from SDI on the falling
-+  # edge of SCLK, while data is clocked out on DOUTA on the rising edge of
-+  # SCLK".  Also, even if not stated textually in the datasheet, it is made
-+  # clear on the diagrams that sclk idles at high.  Subsequently, in case SPI
-+  # interface is used, the correct way is to only set spi-cpol.
-   spi-cpha: true
- 
-   spi-cpol: true
-@@ -168,7 +173,6 @@ patternProperties:
- required:
-   - compatible
++  pwms:
++    description:
++      In case the conversion is triggered by a PWM instead of a GPIO plugged to
++      the CONVST pin, the PWM must be referenced.
++      The first is the PWM connected to CONVST or CONVST1 for the chips with 2
++      PWM connected to CONVST2 if CONVST2 is available and not shorted to
++      CONVST1.
++    minItems: 1
++    maxItems: 2
++
++  pwm-names:
++    items:
++      - const: convst1
++      - const: convst2
++
++  io-backends:
++    description:
++      A reference to the iio-backend, which is responsible handling the BUSY
++      pin's falling edge and communication.
++      An example of backend can be found at
++      http://analogdevicesinc.github.io/hdl/library/axi_ad7606x/index.html
++
++
+ patternProperties:
+   "^channel@[1-8]$":
+     type: object
+@@ -175,12 +198,22 @@ required:
    - reg
--  - spi-cpha
    - avcc-supply
    - vdrive-supply
-   - interrupts
-@@ -255,7 +259,6 @@ examples:
-             reg = <0>;
-             spi-max-frequency = <1000000>;
-             spi-cpol;
--            spi-cpha;
+-  - interrupts
+-  - adi,conversion-start-gpios
  
-             avcc-supply = <&adc_vref>;
-             vdrive-supply = <&vdd_supply>;
-@@ -288,7 +291,6 @@ examples:
+ allOf:
+   - $ref: /schemas/spi/spi-peripheral-props.yaml#
  
-             spi-max-frequency = <1000000>;
-             spi-cpol;
--            spi-cpha;
++  - oneOf:
++      - required:
++          - adi,conversion-start-gpios
++      - required:
++          - pwms
++
++  - oneOf:
++      - required:
++          - interrupts
++      - required:
++          - io-backends
++
+   - if:
+       properties:
+         compatible:
+@@ -222,6 +255,10 @@ allOf:
+         adi,sw-mode: false
+     else:
+       properties:
++        pwms:
++          maxItems: 1
++        pwm-names:
++          maxItems: 1
+         adi,conversion-start-gpios:
+           maxItems: 1
  
-             avcc-supply = <&adc_vref>;
-             vdrive-supply = <&vdd_supply>;
+@@ -247,6 +284,29 @@ allOf:
+ unevaluatedProperties: false
+ 
+ examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    iio-backend {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        adi_adc@0 {
++            compatible = "adi,ad7606b";
++            reg = <0>;
++            pwms = <&axi_pwm_gen 0 0>;
++
++            avcc-supply = <&adc_vref>;
++            vdrive-supply = <&vdd_supply>;
++
++            reset-gpios = <&gpio0 91 GPIO_ACTIVE_HIGH>;
++            standby-gpios = <&gpio0 90 GPIO_ACTIVE_LOW>;
++            adi,range-gpios = <&gpio0 89 GPIO_ACTIVE_HIGH>;
++            adi,oversampling-ratio-gpios = <&gpio0 88 GPIO_ACTIVE_HIGH
++                                            &gpio0 87 GPIO_ACTIVE_HIGH
++                                            &gpio0 86 GPIO_ACTIVE_HIGH>;
++            io-backends = <&iio_backend>;
++        };
++    };
++
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
 
 -- 
 2.34.1
