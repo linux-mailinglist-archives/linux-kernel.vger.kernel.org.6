@@ -1,189 +1,158 @@
-Return-Path: <linux-kernel+bounces-350562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A9A9906D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 929969906B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90C85289E3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51E222868AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319451CACE1;
-	Fri,  4 Oct 2024 14:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291FB21D2DF;
+	Fri,  4 Oct 2024 14:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PFHTP/PH"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RBhXcd1A"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2A21C877F;
-	Fri,  4 Oct 2024 14:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EA421D2CD;
+	Fri,  4 Oct 2024 14:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728053259; cv=none; b=Bw04srtsD3tdVBBA4xLH/VQkzNzwo/bWlf1o5+ZBjWsdOKOx+QPa0KNZ6AxbO5ON7G9oO1khE33csGs9GwKcSCTkW2Z+hntKbjgLviQIZB79qurDsDo7VHEBR6S52DWxLbkOfALxxsiNrDdl3nngSEw9LPAZbxLSo0zlgDJ82CQ=
+	t=1728053223; cv=none; b=Bjtxrc8Aw2nNBtdC/Iq7hDd5QU1Cqd46pp6B4qyZ2oVeupoB/AeGj0nCw0gu3DR4Xe8iuQff7ng7W4pR7IaAUWPICihGppd+GUNTpc3vK0MHKBdRUmEs6S0dV+0S9AObO1c7IhXtuWeRaYz8F5unrRk8yABxmlIEIUkLC52HBdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728053259; c=relaxed/simple;
-	bh=h/Wucr0WK1pNJOQNFzwHPdnYZcspI5Mizs3II33asmI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lIJcdVeAs0xuEsyOOja7g/0irhWMGq4MNAbfyhe0hgIHn8CVpvTdvR9pc83jFMM+p4ttmNtkeTBO5qPBs1KlmjXlycgCeSBL1EtLyyFWB8oaOeCDEnFJwb/dSLf0FcmaXESpL+wQR4irrN/o/ZKVQ5EG8BK1OwlZfkWOH0acuOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PFHTP/PH; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 007CB182C;
-	Fri,  4 Oct 2024 16:45:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728053147;
-	bh=h/Wucr0WK1pNJOQNFzwHPdnYZcspI5Mizs3II33asmI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PFHTP/PHEIvwRYoNQV12iADtZoOr6b59TbPIT6LrTw4tr9qhZ/qHJKF9HZmrv8pxH
-	 VFNnD2PojyCLwh+Y8a8UiGSAERAEYq0sVfHmXZIeE2R2Yy91xKZuwgY1wB7KjpfUa8
-	 M2+rU7o9cyvHEXThYDLEUEHvXeZ1Cf9obqxuaIV8=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Fri, 04 Oct 2024 17:46:44 +0300
-Subject: [PATCH 13/13] media: i2c: ds90ub953: Add error handling for i2c
- reads/writes
+	s=arc-20240116; t=1728053223; c=relaxed/simple;
+	bh=gpDESdIH7u+B964YQBozH7uDbFJdt+fik9h9olFCT6A=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kPg+8BC2TKT9tNhmxaoxEnJWatbKnWwdLYWnyjQ/WQyAV4REGhFHUerMVPJZhutyha0bo54gNwIBkdZJkXKYX5I62zekud+iMRZqlnJlDehTsfgOdwk4GIg4AcDtKmOYs+cfPtFyWZV7OT5ObLNgd0DYKCezTj5AZTnPlp5hYok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RBhXcd1A; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728053220; x=1759589220;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=gpDESdIH7u+B964YQBozH7uDbFJdt+fik9h9olFCT6A=;
+  b=RBhXcd1AbS6A3HLUoc9KL+DoaEztpIybxq5fmNqPOksTFQYsRTtN2AcE
+   fbeNsn2UB8gcD4V+lVS82eChr0NPt+AkLVleA7e5Zqiojdr+MVCC0fRY2
+   aV66Pbxy1b0ff5MUP2w/w0hNcYantt/6aPFeJIK2NBP8bxrE6vhTNF8Ie
+   dz5xN7C0IsuTorQFPXYmAYkf8TLl3rr7YHi6VOKFAUX6LEc5XrfkjX5HW
+   22Mc7FQTrnrvovxKejNIgm3EJqacHAbiEE0O+ZN7JA3rvHLiadHfkQII+
+   gGJRhYPTYpgDAkIQ7IZ/5bvom+f7vXXGhA8mWeAO51ui4pROd1+x50+MF
+   w==;
+X-CSE-ConnectionGUID: TJ3Dv57CSZmNXD3AAo42FA==
+X-CSE-MsgGUID: zV6ofEreQdSk06W+jPKCgw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="37847128"
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="37847128"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 07:46:59 -0700
+X-CSE-ConnectionGUID: C1Gf8WVtQEKW3bGkYuLaDg==
+X-CSE-MsgGUID: ADnZZNiHRwSvD8wgaZf9KQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="78717018"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.148])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 07:46:52 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 4 Oct 2024 17:46:46 +0300 (EEST)
+To: Werner Sembach <wse@tuxedocomputers.com>
+cc: Hans de Goede <hdegoede@redhat.com>, bentiss@kernel.org, 
+    dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, 
+    lee@kernel.org, linux-input@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, 
+    miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
+    pavel@ucw.cz, cs@tuxedo.de, platform-driver-x86@vger.kernel.org
+Subject: Re: [RFC PATCH v4 1/1] platform/x86/tuxedo: Add virtual LampArray
+ for TUXEDO NB04 devices
+In-Reply-To: <98883fb1-c895-4aad-842b-ed525d4c42f6@tuxedocomputers.com>
+Message-ID: <07e29712-4c33-efa2-c8c6-ae19e21376fa@linux.intel.com>
+References: <20241001180658.76396-1-wse@tuxedocomputers.com> <20241001180658.76396-2-wse@tuxedocomputers.com> <bc3f5f2b-252e-0a66-df0f-f01197a5a17d@linux.intel.com> <fdfaaad5-59e7-4825-bc06-db44831ac741@tuxedocomputers.com> <49beebf1-db73-a3a1-3376-e1822ce2e569@linux.intel.com>
+ <98883fb1-c895-4aad-842b-ed525d4c42f6@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-ub9xx-fixes-v1-13-e30a4633c786@ideasonboard.com>
-References: <20241004-ub9xx-fixes-v1-0-e30a4633c786@ideasonboard.com>
-In-Reply-To: <20241004-ub9xx-fixes-v1-0-e30a4633c786@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jai Luthra <jai.luthra@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3421;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=h/Wucr0WK1pNJOQNFzwHPdnYZcspI5Mizs3II33asmI=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBm///w/p5A9tBK89OCs4dP21pfQLBqO7ah1tMbp
- 0zPmu/HoCSJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZv//8AAKCRD6PaqMvJYe
- 9bGgD/0VLLRgDAwwiOXAdxs/0NTOI5qUPxEAL+0mQy2F2F+4UrrNG+rbJqZMncYtkJWUHvKuZt2
- ut0sn/J6hTDxHU/gbI4KaVtnvmaUSioH72cTZlYSfp1hY2GH36sRYcAS6k62QA+B7Mvpfyzdx3m
- u2ZRodhIQX4H7CMGxPjROpoKrHKOXD4KHFzkjQfLJn582F+MU5mv9oUzIRErj86MSeiBC2CzFdc
- d7P/fUDtyW+yyyOjlwlvnTI/0V4IjReJ4/1NB9/v3S31BAqgCzB+V8JmXUkeiWrx6fZY0Zh/PjK
- nNm8DBQOVYQY7wt2sIspAGY5f+KK6NQZuhOIgcD8iPVBjTLwxyamuevwuyoEvdS4DhYGbIBmDve
- uR8GuDuybUCwct+KqINvKJhy5/Yv9VsEKDfygzWoqAt1AAZB6IoI/jV0XkrIkWuUOzBB8JmNS6h
- sk2GPqZ2dfMXSpohBqPnneQTTSOYpRI8LIGvFbknhqWY8yaa6sy64wI4HwCWFEFIC+NebpPZP2F
- 2vb7RmK+KTEssPS+OrjiwkYa0prZ2J/BPJwShQGyyaY1g53edB0Zw8BnRjKW9bJhWnjSp4dG1kp
- bDRTULpyLtusd78RoGNZKwy2i/W26BUKmCMnZlQWe1xK52ms9Wr/3MNwNENZlBWDiRTC8JzFXdl
- imnI9PYA7R3VLmg==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: multipart/mixed; BOUNDARY="8323328-558844353-1728053094=:957"
+Content-ID: <12779ba9-89e7-dc78-8aa4-3e38be204c34@linux.intel.com>
 
-Add error handling for i2c reads/writes in various places.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
----
- drivers/media/i2c/ds90ub953.c | 46 ++++++++++++++++++++++++++++++-------------
- 1 file changed, 32 insertions(+), 14 deletions(-)
+--8323328-558844353-1728053094=:957
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <1a604cdc-a092-b688-97b7-2cd68c9b909e@linux.intel.com>
 
-diff --git a/drivers/media/i2c/ds90ub953.c b/drivers/media/i2c/ds90ub953.c
-index b6451811f906..f8f3e31f0077 100644
---- a/drivers/media/i2c/ds90ub953.c
-+++ b/drivers/media/i2c/ds90ub953.c
-@@ -401,8 +401,13 @@ static int ub953_gpiochip_probe(struct ub953_data *priv)
- 	int ret;
- 
- 	/* Set all GPIOs to local input mode */
--	ub953_write(priv, UB953_REG_LOCAL_GPIO_DATA, 0);
--	ub953_write(priv, UB953_REG_GPIO_INPUT_CTRL, 0xf);
-+	ret = ub953_write(priv, UB953_REG_LOCAL_GPIO_DATA, 0);
-+	if (ret)
-+		return ret;
-+
-+	ret = ub953_write(priv, UB953_REG_GPIO_INPUT_CTRL, 0xf);
-+	if (ret)
-+		return ret;
- 
- 	gc->label = dev_name(dev);
- 	gc->parent = dev;
-@@ -970,10 +975,11 @@ static void ub953_calc_clkout_params(struct ub953_data *priv,
- 	clkout_data->rate = clkout_rate;
- }
- 
--static void ub953_write_clkout_regs(struct ub953_data *priv,
--				    const struct ub953_clkout_data *clkout_data)
-+static int ub953_write_clkout_regs(struct ub953_data *priv,
-+				   const struct ub953_clkout_data *clkout_data)
- {
- 	u8 clkout_ctrl0, clkout_ctrl1;
-+	int ret;
- 
- 	if (priv->hw_data->is_ub971)
- 		clkout_ctrl0 = clkout_data->m;
-@@ -983,8 +989,15 @@ static void ub953_write_clkout_regs(struct ub953_data *priv,
- 
- 	clkout_ctrl1 = clkout_data->n;
- 
--	ub953_write(priv, UB953_REG_CLKOUT_CTRL0, clkout_ctrl0);
--	ub953_write(priv, UB953_REG_CLKOUT_CTRL1, clkout_ctrl1);
-+	ret = ub953_write(priv, UB953_REG_CLKOUT_CTRL0, clkout_ctrl0);
-+	if (ret)
-+		return ret;
-+
-+	ret = ub953_write(priv, UB953_REG_CLKOUT_CTRL1, clkout_ctrl1);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
- }
- 
- static unsigned long ub953_clkout_recalc_rate(struct clk_hw *hw,
-@@ -1064,9 +1077,7 @@ static int ub953_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
- 	dev_dbg(&priv->client->dev, "%s %lu (requested %lu)\n", __func__,
- 		clkout_data.rate, rate);
- 
--	ub953_write_clkout_regs(priv, &clkout_data);
--
--	return 0;
-+	return ub953_write_clkout_regs(priv, &clkout_data);
- }
- 
- static const struct clk_ops ub953_clkout_ops = {
-@@ -1091,7 +1102,9 @@ static int ub953_register_clkout(struct ub953_data *priv)
- 
- 	/* Initialize clkout to 25MHz by default */
- 	ub953_calc_clkout_params(priv, UB953_DEFAULT_CLKOUT_RATE, &clkout_data);
--	ub953_write_clkout_regs(priv, &clkout_data);
-+	ret = ub953_write_clkout_regs(priv, &clkout_data);
-+	if (ret)
-+		return ret;
- 
- 	priv->clkout_clk_hw.init = &init;
- 
-@@ -1238,10 +1251,15 @@ static int ub953_hw_init(struct ub953_data *priv)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "i2c init failed\n");
- 
--	ub953_write(priv, UB953_REG_GENERAL_CFG,
--		    (priv->non_continous_clk ? 0 : UB953_REG_GENERAL_CFG_CONT_CLK) |
--		    ((priv->num_data_lanes - 1) << UB953_REG_GENERAL_CFG_CSI_LANE_SEL_SHIFT) |
--		    UB953_REG_GENERAL_CFG_CRC_TX_GEN_ENABLE);
-+	v = 0;
-+	v |= priv->non_continous_clk ? 0 : UB953_REG_GENERAL_CFG_CONT_CLK;
-+	v |= (priv->num_data_lanes - 1) <<
-+		UB953_REG_GENERAL_CFG_CSI_LANE_SEL_SHIFT;
-+	v |= UB953_REG_GENERAL_CFG_CRC_TX_GEN_ENABLE;
-+
-+	ret = ub953_write(priv, UB953_REG_GENERAL_CFG, v);
-+	if (ret)
-+		return ret;
- 
- 	return 0;
- }
+On Fri, 4 Oct 2024, Werner Sembach wrote:
+> Am 03.10.24 um 12:54 schrieb Ilpo J=E4rvinen:
+> > On Wed, 2 Oct 2024, Werner Sembach wrote:
+> > > Am 02.10.24 um 11:52 schrieb Ilpo J=E4rvinen:
+> > > > On Tue, 1 Oct 2024, Werner Sembach wrote:
+> > > >=20
+> > > > > The TUXEDO Sirius 16 Gen1 and TUXEDO Sirius 16 Gen2 devices have =
+a
+> > > > > per-key
+> > > > > controllable RGB keyboard backlight. The firmware API for it is
+> > > > > implemented
+> > > > > via WMI.
+> > > > >=20
+> > > > > To make the backlight userspace configurable this driver emulates=
+ a
+> > > > > LampArray HID device and translates the input from hidraw to the
+> > > > > corresponding WMI calls. This is a new approach as the leds subsy=
+stem
+> > > > > lacks
+> > > > > a suitable UAPI for per-key keyboard backlights, and like this no=
+ new
+> > > > > UAPI
+> > > > > needs to be established.
+> > > > >=20
+> > > > > v2: Integrated Armins feedback and fixed kernel test robot warnin=
+gs.
+> > > > > v3: Fixed borked subject line of v2.
+> > > > > v4: Remove unrequired WMI mutex.
+> > > > >       Move device checking from probe to init.
+> > > > >       Fix device checking working exactly reverse as it should.
+> > > > >       Fix null pointer dereference because, hdev->driver_data !=
+=3D
+> > > > > hdev->dev.driver_data.
+> > > > >=20
+> > > > > Co-developed-by: Christoffer Sandberg <cs@tuxedo.de>
+> > > > > Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
+> > > > > Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+> > > > > Link:
+> > > > > https://lore.kernel.org/all/1fb08a74-62c7-4d0c-ba5d-648e23082dcb@=
+tuxedocomputers.com/
+> > > > > ---
 
--- 
-2.43.0
+> > > That why i choose the rather generic names of just the input and outp=
+ut
+> > > length
+> > > because there is no semantic connection between the wmi methods in
+> > > tuxedo_nb04_wmi_8_b_in_80_b_out and tuxedo_nb04_wmi_496_b_in_80_b_out
+> > > respectively that would make for a good name.
+> > So the only valuable characters are prefix + 8/496/80 the rest doesn't
+> > really tell much despite all its characters :-). Details like which of =
+the
+> > numbers is in/out and that the numbers are in bytes could IMO be left t=
+o
+> > struct's comment without loss of much information value.
+> >=20
+> tuxedo_nb04_wmi_8_80 kinda looks strange to me, what about
+> tuxedo_nb04_wmi_8_in_80_out? but that's on 4 chars shorter.
 
+Perhaps just tuxedo_nb04_wmi_8in_80out ?
+
+I can see you like to use underscores a lot so I can understand if that=20
+feels a step too far :-) (no offence meant).
+
+--=20
+ i.
+--8323328-558844353-1728053094=:957--
 
