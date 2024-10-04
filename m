@@ -1,141 +1,95 @@
-Return-Path: <linux-kernel+bounces-350772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73829990975
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:38:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AE099095D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35C01287FD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:38:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 114251F21AC0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9421CACE5;
-	Fri,  4 Oct 2024 16:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01FA1CACE6;
+	Fri,  4 Oct 2024 16:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+QEy5UQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgYGy5+v"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D407E1E3795;
-	Fri,  4 Oct 2024 16:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF141C8317;
+	Fri,  4 Oct 2024 16:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728059924; cv=none; b=WqsS/35RMxRD9EpkvD2rNA3+0YaOjnKo6X7RvHrd2N6OwUl+DFcowkslKqyO2XoSGh1B10nzI1JfvsBqAj3sSWvIykGz3heJwzVigjRQcHLGLjPb38vLJhDahSvmxVD81i5vGXpHkKGW1xas/vXa4vvkV/dNEL7PTn1fUnmoBj4=
+	t=1728059803; cv=none; b=RQWdBYU68oUYCoJVkHH5mymvW7l/90PDrlP5G1rxsPMwqSGKL4ZryPRywvN8D6Er7rjz7ne7sExEeSIPfo4uNcaNl5AYaCLO3BBO7ozL7AF1hZH1I6p0soVGdlsBR+WnbmehRsUQxvX88c8v2xh4tU5ZvcQzK0mp/6QR/gI/1Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728059924; c=relaxed/simple;
-	bh=EixHNaPPAkeoDcpdBs00MRfg/QdKJO3PxpRNIrzAAoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FaSDGU0Wy/eJL5mnEoZyMyGYW/gOoIYu0ACgo/F+Zrm4fpg9wB0wKfMkezSu9Z0SNJeudwWtjIM2lILP9EJHOv6SEM3Dkyrxg9UGn9FQaBjWej24xaJ1usaOTNwLgcK0T2eU/JqXCHAKNzkVPvfgI4QquflzgARCyczO67f+EGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+QEy5UQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95FC1C4CEC6;
-	Fri,  4 Oct 2024 16:38:30 +0000 (UTC)
+	s=arc-20240116; t=1728059803; c=relaxed/simple;
+	bh=YCzCIpSyOCkaHHoXJm93ZdZBqFaZugX1OTf4JmTIj9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WueJjapLJ6w+uSbNCrSpTw/V2JslqB6XXNQQMYzACdtNn8ylv/JfZOG7z4mJBmy18pjRflAWgCj6olYCbd9AL1Y53OBdlPT5dl53JB4fGMdYLHUV4/HEFKm98fJhxjA3z2WwuwmgDnvb+cJWIYaX9aUGo2D+PXJN98h7i4PTUtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgYGy5+v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13E4DC4CEC6;
+	Fri,  4 Oct 2024 16:36:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728059923;
-	bh=EixHNaPPAkeoDcpdBs00MRfg/QdKJO3PxpRNIrzAAoo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r+QEy5UQZ7GlHaUwc+RkIpxbgzDi3nb6zoGk7fJWELHNOVn/a6kqYoqhwYTjjtUtA
-	 HLN173WN7VQ9r/4cXKND2OaXnBiWj3isq+OvQ/2tKN+G1LbJKzzCSdPkqEARtSquq8
-	 S0pbWPN7erj8u6mqJ9HQMZI6g563nX4W7ObXkwLnrq69CzLFx9QtyJQM8p/ViyHzEi
-	 cKxlzoUaN0C66zzItaSS/hLhTkUhON+6Kvb4OfJvi7TFi3QL4RlsTcFEHjQV3yfZIn
-	 wK4ar2G90hKokxv4b5g19gdgrWBvs+RjT57QFt3pEt4S0Vi7LGsHYQ0JngDFMUyYoT
-	 u8hYo/RMJlkrg==
-Date: Fri, 4 Oct 2024 19:35:10 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Rong Xu <xur@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, Han Shen <shenhan@google.com>,
-	Sriraman Tallam <tmsriram@google.com>,
-	David Li <davidxl@google.com>,
-	Krzysztof Pszeniczny <kpszeniczny@google.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
-	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
-	Brian Gerst <brgerst@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jann Horn <jannh@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Juergen Gross <jgross@suse.com>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
-	x86@kernel.org, "Xin Li (Intel)" <xin@zytor.com>,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v2 1/6] Add AutoFDO support for Clang build
-Message-ID: <ZwAZPklXayA1gbQw@kernel.org>
-References: <20241002233409.2857999-1-xur@google.com>
- <20241002233409.2857999-2-xur@google.com>
- <20241003154143.GW5594@noisy.programming.kicks-ass.net>
- <CAKwvOdnS-vyTXHaGm4XiLMtg4rsTuUTJ6ao7Ji-fUobZjdBVLw@mail.gmail.com>
- <20241003160309.GY5594@noisy.programming.kicks-ass.net>
- <CAKwvOd=CRiHitKeYtHH=tmT8yfDa2RSALbYn5uCC8nRq8ud79g@mail.gmail.com>
- <20241003161257.GZ5594@noisy.programming.kicks-ass.net>
- <CAF1bQ=RAizpP-T_sRGpE2-Kjsk_RZD3r_iz_dpn25W+uDzpWOw@mail.gmail.com>
- <Zv-Fy4hnuscnLH1k@kernel.org>
- <CAF1bQ=S8Hg0FUThaDU0snVqerVos6ztzVvN6sm1Ng3FnTpJt_A@mail.gmail.com>
+	s=k20201202; t=1728059802;
+	bh=YCzCIpSyOCkaHHoXJm93ZdZBqFaZugX1OTf4JmTIj9o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BgYGy5+vhGCyluUh+gDSoLENfBCY9njRgbQjsYxD6n+YJlMb8L7+69JiF7hFkC998
+	 RkzIHr3KBiDLHbAWKflHuNZCVwv8laizJ31R1kGIeM1AWirZ3kxpYrFY31vjssAVZm
+	 iRhpn2gTB8Wrjq1ERqsZxLK5XCgFKNiIZYu6XN0jK9e+y2o9oWwVCEHpDvFNF9Lcon
+	 xbiRhZsfHua5e0EsNgjmvMH1MKFgdJUV0Rtoq0fsTb5Kj56elu8ZWq/om2P1La2g7K
+	 NjXadUdEDPu+ojH3EzqwP+hJ000UHXTsku+8OmzR7Ftqfe4H50GyuT21oIq1uvRrF1
+	 6mbgN5IINbScA==
+Date: Fri, 4 Oct 2024 09:36:41 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: edumazet@google.com, atenart@kernel.org, davem@davemloft.net,
+ pabeni@redhat.com, dsahern@kernel.org, steffen.klassert@secunet.com,
+ herbert@gondor.apana.org.au, dongml2@chinatelecom.cn,
+ bigeasy@linutronix.de, toke@redhat.com, idosch@nvidia.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH net-next 1/7] net: ip: add drop reason to
+ ip_route_input_noref()
+Message-ID: <20241004093641.7f68b889@kernel.org>
+In-Reply-To: <20241001060005.418231-2-dongml2@chinatelecom.cn>
+References: <20241001060005.418231-1-dongml2@chinatelecom.cn>
+	<20241001060005.418231-2-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF1bQ=S8Hg0FUThaDU0snVqerVos6ztzVvN6sm1Ng3FnTpJt_A@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 04, 2024 at 09:28:36AM -0700, Rong Xu wrote:
-> On Thu, Oct 3, 2024 at 11:09 PM Mike Rapoport <rppt@kernel.org> wrote:
-> >
-> > On Thu, Oct 03, 2024 at 11:20:17AM -0700, Rong Xu wrote:
-> > > Writing the doc with all these code-blocks was not fun either.
-> > > We are happy to change if there is a better way for this.
-> > >
-> > > -Rong
-> > >
-> > > On Thu, Oct 3, 2024 at 9:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > >
-> > > > On Thu, Oct 03, 2024 at 09:11:34AM -0700, Nick Desaulniers wrote:
-> > > >
-> > > > > > It makes it absolute crap for all of us who 'render' text documents
-> > > > > > using less or vi.
-> > > > >
-> > > > > "It hurts when I punch myself in the face."
-> > > >
-> > > > Weirdly enough I have a job that entails staring at text documents in
-> > > > text editors all day every day :-) sorry for thinking that's a sane
-> > > > thing to do.
-> >
-> > Something like this should do:
-> >
-> > > +- For enabling a single file (e.g. foo.o)::
-> > > +
-> > > +        AUTOFDO_PROFILE_foo.o := y
-> 
-> Do you mean we don't use ".. code-block:: " here and just use indented
-> text separated with blank lines?
+no longer applies, please respin
 
-The double column (::) in the end of a paragraph means that the next paragraph
-is a literal block:
+On Tue,  1 Oct 2024 13:59:59 +0800 Menglong Dong wrote:
+> +	enum skb_drop_reason drop_reason = SKB_DROP_REASON_NOT_SPECIFIED;
+>  	const struct iphdr *iph = ip_hdr(skb);
+> -	int err, drop_reason;
+> +	int err;
+>  	struct rtable *rt;
 
-https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#literal-blocks
+reverse xmas tree
 
-You'd loose the coloring, but other than that it won't be different from
-the ".. code-block::" and easier to read in a text form.
- 
-> -Rong
+>  
+> -	drop_reason = SKB_DROP_REASON_NOT_SPECIFIED;
+> -
+>  	if (ip_can_use_hint(skb, iph, hint)) {
+>  		err = ip_route_use_hint(skb, iph->daddr, iph->saddr, iph->tos,
+>  					dev, hint);
+> @@ -363,7 +362,7 @@ static int ip_rcv_finish_core(struct net *net, struct sock *sk,
+>  	 */
+>  	if (!skb_valid_dst(skb)) {
+>  		err = ip_route_input_noref(skb, iph->daddr, iph->saddr,
+> -					   iph->tos, dev);
+> +					   iph->tos, dev, &drop_reason);
 
+I find the extra output argument quite ugly.
+I can't apply this now to try to suggest something better, perhaps you
+can come up with a better solution..
 -- 
-Sincerely yours,
-Mike.
+pw-bot: cr
 
