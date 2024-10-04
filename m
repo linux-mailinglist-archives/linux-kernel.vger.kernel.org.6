@@ -1,162 +1,92 @@
-Return-Path: <linux-kernel+bounces-351512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2025099125D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:36:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A38991266
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D990B226BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:36:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6214282E84
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F211B4F16;
-	Fri,  4 Oct 2024 22:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5B41B4F2F;
+	Fri,  4 Oct 2024 22:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mSJsj870"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UYpoEf3O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221FA231C9F;
-	Fri,  4 Oct 2024 22:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB81E1AE001
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 22:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728081359; cv=none; b=jh1OcnqgEBLjTNg415adXlRbR5JwhhtFfmZUVrL3zGt1qRkW9P1+F45YEcvzwr9ciy/+v1/hHcc/Qsb/bsEEEgkm9fJbYt/0L0+p5HUnvIW6qChcW+QHH8KwQjVbce5Xvq6uSYF12AgZANercphJ6qdiy9iQ8XqECKJxLJ3Z+uE=
+	t=1728081588; cv=none; b=sLLK2aSuyuv2JcECvIdqySIHXpF0bQ3xuwWHwYP5ekc53F5h07ALms5KVIJDE6ookUyaXMOY0YPfJPhhzr5Wz77Xkfo9J7MxpWUL9cakgg31LVSJiHGx3LX59u/28l0h5BGyAaluqUZ1LbYmNKQ/I0EtiSD3CX4DbFLtm1pXoOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728081359; c=relaxed/simple;
-	bh=NatadpHEzWoBR4S4+WAdu5u3eu/b96DInrWu0tePK18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gLofZRv7HcaKeSROBiRhe5TJuNR4u+MydxPttcA0mnEEzzIElhnLYk0FEupdd0C6PeQS1G2hq2RIY03rWBhx4KNC4nP0KNHU17TfKmKmUtoth9Aqqska72hj5f8C5aql789iN4EUakBRP+7EHbAwzu2ZL6c/zQ6KMZJaitH2l2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mSJsj870; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494AqPGQ022237;
-	Fri, 4 Oct 2024 22:35:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8vvWlUlBG9LiEOXGXDsCZuQHQTqb1u8zSsuk4WJvbAY=; b=mSJsj87075KRGY5e
-	TPQR9IUt9ID9B28wRQMIj+2bd3n/h1tXp7BrO1MmyM42Os8HMnbrcKspokq9qHdm
-	Y2GSLrO48Ocxhzhhr1PApAvau4U/kPG8A0sd6P8uQNJ4Fs4sLHU9R+abUOlOWCP9
-	LGyHf6KW4Vm5dKnL7liMzVXM9VBGj4Zf4jUUJnOnZtl8YisGZeKNgxDlv0RO2E0W
-	XI2vJXTuSlfyjdAKGbmkZJCO02vx1jw2MI0GZlxr6WDC3h2w95w0dHKWXQtsst7a
-	RYQbEL88Pdna0LcQbNja8WF56TjALGaMGP/JArPBMa/6wOynIVSWU1lvNcohJ611
-	vHEvtA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205dbdjk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 22:35:47 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494MZksl026135
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 22:35:46 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 15:35:46 -0700
-Message-ID: <92d5f299-b931-41a0-a337-001f4a0d9b90@quicinc.com>
-Date: Fri, 4 Oct 2024 15:35:45 -0700
+	s=arc-20240116; t=1728081588; c=relaxed/simple;
+	bh=tEnRZ1CBS1ziqRHjQFppqFl4cK5/fPc3AdB8hdfr7X4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=CYPhN5FZcK/mGBKQWjOWJlSj3S09m7gQyZa3zzPyKgmlpRkBPwBEUqrbpwljsVHKaG3edwafamXdb2FApwdK/LOZOP2BT3ewsbeNKI9VwHYMEsgwyX2PyzwxX5prELCjWondpRd/6Fh3gAJ5vX61Pt16ZtuSDNwWBXW3GNewQFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UYpoEf3O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 262F5C4CECC;
+	Fri,  4 Oct 2024 22:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1728081588;
+	bh=tEnRZ1CBS1ziqRHjQFppqFl4cK5/fPc3AdB8hdfr7X4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UYpoEf3OiIJX2B4yG4MqhZy+ZfcvOWrLLY3MM2JJuemYyp5Cy+FFXT6gHAbGROfbb
+	 PCZVofPX7veozsAFvIu8xu5dGPRfwOwScY8KecTBaiQZF3dYoeLZB0fINfBYvvec1C
+	 MLLg19IrUOxHjLsFJoIftSh6CYo5IqdfqqWFoQV4=
+Date: Fri, 4 Oct 2024 15:39:47 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: =?UTF-8?B?6auY57+U?= <gaoxiang17@xiaomi.com>
+Cc: Frank van der Linden <fvdl@google.com>, David Hildenbrand
+ <david@redhat.com>, Xiang Gao <gxxa03070307@gmail.com>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: =?UTF-8?B?5Zue5aSNOg==?= [External Mail]Re: [PATCH v2] mm/cma:
+ print total and used count in cma_alloc()
+Message-Id: <20241004153947.43c5b16b7f75b0f60e918019@linux-foundation.org>
+In-Reply-To: <2a7b7fc3a48d4bb9a6394e51af074017@xiaomi.com>
+References: <20240929032757.404707-1-gxxa03070307@gmail.com>
+	<f8dde346-8a81-4cca-8497-987f6e4b5e58@redhat.com>
+	<CAPTztWY-CD9REdJq_-HeELJ+dX68+OZC76T0F+YMyZKMc-DHug@mail.gmail.com>
+	<2a7b7fc3a48d4bb9a6394e51af074017@xiaomi.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFT 2/2] drm/msm/adreno: Setup SMMU aparture for
- per-process page table
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>
-References: <20241002-adreno-smmu-aparture-v1-0-e9a63c9ccef5@oss.qualcomm.com>
- <20241002-adreno-smmu-aparture-v1-2-e9a63c9ccef5@oss.qualcomm.com>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20241002-adreno-smmu-aparture-v1-2-e9a63c9ccef5@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cmSqWPSkbKUyLnkLWUe45Y7wUrxh-GFk
-X-Proofpoint-ORIG-GUID: cmSqWPSkbKUyLnkLWUe45Y7wUrxh-GFk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 impostorscore=0 bulkscore=0
- suspectscore=0 mlxlogscore=999 lowpriorityscore=0 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410040156
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Fri, 4 Oct 2024 12:23:30 +0000 高翔 <gaoxiang17@xiaomi.com> wrote:
 
-
-On 10/2/2024 8:01 PM, Bjorn Andersson wrote:
-> Support for per-process page tables requires the SMMU aparture to be
-> setup such that the GPU can make updates with the SMMU. On some targets
-> this is done statically in firmware, on others it's expected to be
-> requested in runtime by the driver, through a SCM call.
+> > > +static unsigned long cma_get_used_pages(struct cma *cma) {
+> > > +     unsigned long used;
+> > > +
+> > > +     spin_lock_irq(&cma->lock);
+> > > +     used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
+> > > +     spin_unlock_irq(&cma->lock);
+> >
+> > This adds overhead to each allocation, even if debug outputs are 
+> > ignored I assume?
+> >
+> > I wonder if we'd want to print these details only when our allocation 
+> > failed?
+> >
+> > Alternatively, we could actually track how many pages are allocated in 
+> > the cma, so we don't have to traverse the complete bitmap on every 
+> > allocation.
+> >
 > 
-> One place where configuration is expected to be done dynamically is the
-> QCS6490 rb3gen2.
+> Yep, that's what I did as part of
+> https://lore.kernel.org/all/20240724124845.614c03ad39f8af3729cebee6@linux-foundation.org/T/
 > 
-> The downstream driver does this unconditioanlly on any A6xx and newer,
-> so follow suite and make the call.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> That patch didn't make it in (yet). I'm happy for it to be combined with this one if that's easier.
 
-Hi Bjorn,
-
-Tested-by: Jessica Zhang <quic_jesszhan@quicinc.com> # Trogdor (sc7180)
-
-Thanks,
-
-Jessica Zhang
-
-> ---
->   drivers/gpu/drm/msm/adreno/adreno_gpu.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> index 465a4cd14a43..5b06f7a04fe6 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> @@ -572,8 +572,18 @@ struct drm_gem_object *adreno_fw_create_bo(struct msm_gpu *gpu,
->   
->   int adreno_hw_init(struct msm_gpu *gpu)
->   {
-> +	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
-> +	int ret;
-> +
->   	VERB("%s", gpu->name);
->   
-> +	if (adreno_gpu->info->family >= ADRENO_6XX_GEN1) {
-> +		/* We currently always use context bank 0, so hard code this */
-> +		ret = qcom_scm_set_gpu_smmu_aperture(0);
-> +		if (ret)
-> +			DRM_DEV_ERROR(gpu->dev->dev, "unable to set SMMU aperture: %d\n", ret);
-> +	}
-> +
->   	for (int i = 0; i < gpu->nr_rings; i++) {
->   		struct msm_ringbuffer *ring = gpu->rb[i];
->   
-> 
-> -- 
-> 2.45.2
-> 
-> 
-
+That patch has been forgotten about.  As I asked in July,
+"I suggest a resend, and add some Cc:s for likely reviewers."
 
