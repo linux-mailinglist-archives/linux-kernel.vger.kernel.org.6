@@ -1,111 +1,210 @@
-Return-Path: <linux-kernel+bounces-349975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3996798FE1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:53:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A557B98FE1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6A0282DAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCC211C228A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B2313A868;
-	Fri,  4 Oct 2024 07:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C78B13A86A;
+	Fri,  4 Oct 2024 07:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Cg6g097k"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mfUHIsPJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72323139D03
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 07:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7CD2209F;
+	Fri,  4 Oct 2024 07:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728028429; cv=none; b=PR0suRlBpwc20aXnbazbr2K+fnKPVmU4QUTPkdYoJI524Rwjsipck/y7wEzNofkiNG6GPxsp3wcxYUrqPnO2lth3aEwS55eonpGo8ovCm+gAgtkZGdErZCgWhv5XyLlnorF+U+oRGooVK7Ay418fsXatxy1bPFmakKC3lgMXUM4=
+	t=1728028442; cv=none; b=F1qKOySdff8sDokV3H3/VGsE9u0RWDzZ2eHnzK1HrJ60gsxQCARjhN6RflbjhpExfH9H4udMVtWsNXkQdeoILtUlIzt5Js+cWvncMzViyRn19BBqeax+TaoTza398dXyjZ+OWOAMADelSgSdtWI800rnOOXapksOzHlw1UP8M8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728028429; c=relaxed/simple;
-	bh=mBPw/l43WqpBhYb5GYphiZJqwn9HXtWJeKHPO72ZMY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ACTn5KVpaVi/i2x/zfidX6+2KzRes0JFiAA7jj1baPQq+ZruZdNgD4XOIMwtn2D8IpUItm81ipe19kv+oZ76y4l1Dowilt1NbLBNm+BbxRDjc4jNqPC3JfRVgkESvVaz7rf1HvbET+W6wbQM0GSHhU2O/Ntki9aEBe+t6durr3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Cg6g097k; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37ccdc0d7f6so1283705f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 00:53:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728028425; x=1728633225; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YSd4XkWxEjHWSImRXS/OrAr6nrk5as84KbJ9s1v67IM=;
-        b=Cg6g097kKsEnUo7+xHUI7rFaXN15XgSDdegE5fC6nC1tZYn9IA1mAhQYdR0Sgzar96
-         epY/yDuVnENeM5FYJrTCSYWvXm/PlrgxhJqboAkgb+bbO/eaqIy1xFAWUzy/myVLN2BR
-         YO5PrBqJYvuZErVY6T+DPSxB/PynIQvpb866r67Grl2g7xsz3fqWUxbAW1Z7i1HtOfJv
-         TBoX/pcpDnG4pWsBu6mdOCNzGoadPVs2MvfEiyeSMMwC90DYwHmQH5jkrbilZshRi5ra
-         xxnd7usN08Ezj8TQqrDkeEHuqaymy6gi/ZLPHQT9M6xBq53JqgtzRfpwk+K4fi8f1GPB
-         E6YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728028425; x=1728633225;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YSd4XkWxEjHWSImRXS/OrAr6nrk5as84KbJ9s1v67IM=;
-        b=ZOj3o4CpRAoJIBNS+gBEyEzlkBFFE6PiM7mDrZBJOe/fPdIi2+MzIWkcLjq9spkK50
-         NUaR/1l9aeUglQ1o1v6kPElJTLQiiLv6MKcK+oyYs2URRQQ5xBuAeyNroItnVm5iubBn
-         7xHbJnlodur7f8nTHN/yxYttgffPRGnPKF43DQ2GSaxN4kB2Yn/AXsjUitHVDJgxtKpa
-         Ka7W7axUb7llSwSqYzml3uzeYwPSGjYGYBc/fxrdBPZrhJQjByhkDXwDPtFACLMxXnI1
-         MvRLkJsREwEyeiFzzPhMN1cpUUDgrBdlQPRfuqGik1FdJTOznmYFE5hoHNj+xTm2N2Kg
-         USrg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1M9vYj3au1hU0KI83kY/9jRBCQE7odyHZxtJYJGth7NrLbs8WbInYlE+J1DMLTVoPua4l9W9sx6mSe9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg8vpkJXOpTaX4iCuZXfBz8SYupWFr0X1LWXcjhy/I3/9ulG5N
-	cUh1maydFeK3hC8M/7XG2kguVH6XMWeIG1AmBoNOhf8MSr0JfG7FN5ijV4hzv0w=
-X-Google-Smtp-Source: AGHT+IFN79cyZs/XWOlRSuLPxg/RKO30DUk3/AcaruChZ5ovj1sCHyhqFglIvrqyefPzf37H3UJWfQ==
-X-Received: by 2002:a05:6000:10a:b0:37c:c4f8:5e06 with SMTP id ffacd0b85a97d-37d0e6f26ffmr1079939f8f.20.1728028424395;
-        Fri, 04 Oct 2024 00:53:44 -0700 (PDT)
-Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beefafc76sm19158985ad.208.2024.10.04.00.53.42
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Oct 2024 00:53:43 -0700 (PDT)
-Date: Fri, 4 Oct 2024 15:53:40 +0800
-From: joeyli <jlee@suse.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Chun-Yi Lee <joeyli.kernel@gmail.com>,
-	Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
-	Pavel Emelianov <xemul@openvz.org>,
-	Kirill Korotaev <dev@openvz.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Nicolai Stange <nstange@suse.com>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] aoe: using wrappers instead of dev_hold/dev_put
- for tracking the references of net_device in aoeif
-Message-ID: <20241004075340.GM3296@linux-l9pv.suse>
-References: <20241002040616.25193-1-jlee@suse.com>
- <20241002040616.25193-3-jlee@suse.com>
- <2024100223-selection-thirsty-99b9@gregkh>
+	s=arc-20240116; t=1728028442; c=relaxed/simple;
+	bh=J5dh8/U6klIOJiHQqsa0/Rvfb9Wi7dZw7ideSxoiabU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qZd54aSXxfHSAFZZifG1A72uxwcZAp4Kewf+FDaTIeowSfB6pa+QLPClq1zYTKpimuDl/BeL4CJbM/O2AgzefpzdFMGZJfLizeBu/nz+Vh09+bzCdogQedA1WDxLh4Q+BNya3hZZvhP1IPBdT7Pv74li+nnw2jEvGZAqm+quWmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mfUHIsPJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 865EDC4CEC6;
+	Fri,  4 Oct 2024 07:53:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728028441;
+	bh=J5dh8/U6klIOJiHQqsa0/Rvfb9Wi7dZw7ideSxoiabU=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=mfUHIsPJsA+9mGTXsmuZGxG7H4/uEd51CuGw+iYDqccD/Z5JEO+KUIDjtUks3dFA0
+	 gLefPYOwQ/fcQiB8lRpmfPtkSfs0WmWLwYRQ/F25JVcIuKCr+1F8Ykee9VwmhMeFJr
+	 aDP3aXANzPa2gmgRLIFGPiOXHn027ZH2QegsVkVV54frmzM/ImSo40PAfJz+u7OPsF
+	 qkzv/bPTxsdaNDf41TUwdoBP1fpMM9GXk0hUC9T9y6A629PFW0lkCn0XJ9QanZo/OL
+	 XG+Wi64zlSZXBLRnve+SWH2Qvj+KWdX1EXRChP3rOfAMl0L8Bx7xPd5KF7snXTaQc2
+	 UiECHkZoZhcfg==
+Message-ID: <7fc3cf75-bf48-4bcc-8c74-09fb89655a72@kernel.org>
+Date: Fri, 4 Oct 2024 10:53:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024100223-selection-thirsty-99b9@gregkh>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] ARM: dts: omap: omap4-epson-embt2ws: add unknown gpio
+ outputs
+To: Andreas Kemnade <andreas@kemnade.info>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ khilman@baylibre.com, devicetree@vger.kernel.org, tony@atomide.com,
+ aaro.koskinen@iki.fi, linux-omap@vger.kernel.org
+References: <20240930213008.159647-1-andreas@kemnade.info>
+ <20240930213008.159647-4-andreas@kemnade.info>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240930213008.159647-4-andreas@kemnade.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Greg, 
 
-On Wed, Oct 02, 2024 at 08:30:49AM +0200, Greg KH wrote:
-> On Wed, Oct 02, 2024 at 12:06:16PM +0800, Chun-Yi Lee wrote:
-> > Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+
+On 01/10/2024 00:30, Andreas Kemnade wrote:
+> Set them to the state seen in a running system, initialized
+> by vendor u-boot or kernel. Add line names where they are defined in the
+> vendor kernel.
+> gpio15 resets something in the display, otherwise meaning of the
+> gpios is not known.
 > 
-> For obvious reasons, we can't take patches without any changelog
-> comments, nor really review them either :(
->
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>  .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 84 +++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
+> index cc1b6080bf95..c8205ae89840 100644
+> --- a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
+> +++ b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
+> @@ -115,6 +115,65 @@ wl12xx_vmmc: wl12xx-vmmc {
+>  	};
+>  };
+>  > +&gpio1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&gpio1_hog_pins &gpio1wk_hog_pins>;
+> +
+> +	lb-reset-hog {
+> +		gpio-hog;
+> +		gpios = <9 GPIO_ACTIVE_HIGH>;
+> +		output-low;
+> +		line-name = "lb_reset";
+> +	};
 
-I will merge the 'PATCH 2' with 'PATCH 1' in next version.
+Just curious, what does lb stand for.
 
-Thanks for your review!
+> +
+> +	power-en-hog {
+> +		gpio-hog;
+> +		gpios = <10 GPIO_ACTIVE_HIGH>;
+> +		output-high;
+> +		line-name = "power_en";
+> +	};
+> +
+> +	panel-power-en-hog {
+> +		gpio-hog;
+> +		gpios = <14 GPIO_ACTIVE_HIGH>;
+> +		output-low;
+> +		line-name = "panel_power_en";
+> +	};
 
-Joey Lee
+Is panel always enabled? I didn't see a panel driver
+else it could be hooked to panel regulator?
+
+> +
+> +	blc-r-hog {
+> +		gpio-hog;
+> +		gpios = <17 GPIO_ACTIVE_HIGH>;
+> +		output-low;
+> +		line-name = "blc_r";
+> +	};
+
+this should be modeled as a gpio regulator and paried to backlight left?
+
+> +
+> +	blc-l-hog {
+> +		gpio-hog;
+> +		gpios = <16 GPIO_ACTIVE_HIGH>;
+> +		output-low;
+> +		line-name = "blc_l";
+> +	};
+
+
+this should be modeled as a gpio regulator and paried to backlight right?
+
+> +
+> +	high-hog {
+> +		gpio-hog;
+> +		gpios = <15 GPIO_ACTIVE_HIGH /* maybe dsi to dpi chip reset? */
+> +			 21 GPIO_ACTIVE_HIGH
+> +			 26 GPIO_ACTIVE_HIGH>;
+> +		output-high;
+> +		line-name = "unknown-high";
+> +	};
+> +
+> +	low-hog {
+> +		gpio-hog;
+> +		gpios = <18 GPIO_ACTIVE_HIGH
+> +			 19 GPIO_ACTIVE_HIGH
+> +			 20 GPIO_ACTIVE_HIGH
+> +			 22 GPIO_ACTIVE_HIGH>;
+> +		output-low;
+> +		line-name = "unknown-low";
+> +	};
+
+These are probably OK as we don't know their actual function.
+
+> +};
+> +
+>  &i2c1 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&i2c1_pins>;
+> @@ -406,6 +465,22 @@ OMAP4_IOPAD(0x56, PIN_INPUT_PULLUP | MUX_MODE3) /* gpio35 */
+>  		>;
+>  	};
+>  
+> +	gpio1_hog_pins: pinmux-gpio1-hog-pins {
+> +		pinctrl-single,pins = <
+> +			OMAP4_IOPAD(0x1b4, PIN_OUTPUT | MUX_MODE3) /* gpio14 */
+> +			OMAP4_IOPAD(0x1b8, PIN_OUTPUT | MUX_MODE3) /* gpio16 */
+> +			OMAP4_IOPAD(0x1ba, PIN_OUTPUT | MUX_MODE3) /* gpio17 */
+> +
+> +			OMAP4_IOPAD(0x1b6, PIN_OUTPUT | MUX_MODE3) /* gpio15 */
+> +			OMAP4_IOPAD(0x1bc, PIN_OUTPUT | MUX_MODE3) /* gpio18 */
+> +			OMAP4_IOPAD(0x1be, PIN_OUTPUT | MUX_MODE3) /* gpio19 */
+> +			OMAP4_IOPAD(0x1c0, PIN_OUTPUT | MUX_MODE3) /* gpio20 */
+> +			OMAP4_IOPAD(0x1c2, PIN_OUTPUT | MUX_MODE3) /* gpio21 */
+> +			OMAP4_IOPAD(0x1c4, PIN_OUTPUT | MUX_MODE3) /* gpio22 */
+> +			OMAP4_IOPAD(0x1cc, PIN_OUTPUT | MUX_MODE3) /* gpio26 */
+> +		>;
+> +	};
+> +
+>  	i2c1_pins: pinmux-i2c1-pins {
+>  		pinctrl-single,pins = <
+>  			   OMAP4_IOPAD(0x122, PIN_INPUT_PULLUP | MUX_MODE0)	/* i2c1_scl */
+> @@ -527,6 +602,15 @@ OMAP4_IOPAD(0x1c8, PIN_OUTPUT | MUX_MODE3)  /* gpio_24 / WLAN_EN */
+>  	};
+>  };
+>  
+> +&omap4_pmx_wkup {
+> +	gpio1wk_hog_pins: pinmux-gpio1wk-hog-pins {
+> +		pinctrl-single,pins = <
+> +			OMAP4_IOPAD(0x68, PIN_INPUT_PULLDOWN | MUX_MODE3) /* gpio9 */
+> +			OMAP4_IOPAD(0x6a, PIN_INPUT | MUX_MODE3) /* gpio10 */
+> +		>;
+> +	};
+> +};
+> +
+>  &uart2 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&uart2_pins &bt_pins>;
+
+-- 
+cheers,
+-roger
 
