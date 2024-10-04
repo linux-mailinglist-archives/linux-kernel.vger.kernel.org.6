@@ -1,114 +1,263 @@
-Return-Path: <linux-kernel+bounces-351358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF8D990FFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:15:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A23991001
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BAD91F26648
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:15:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 586BE1C23790
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8541E0DA5;
-	Fri,  4 Oct 2024 19:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76031E0DB9;
+	Fri,  4 Oct 2024 19:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="BN88Dd13"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="SA8abkDJ"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1431DE4FF
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 19:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1651D8E0C;
+	Fri,  4 Oct 2024 19:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728071055; cv=none; b=GeNOTs+eSiFrD7nGdFLpbvQ7aFu0dakw6CGZ8B6XNoKDHbHKjL96Jm8PO2uqsikWnkoPuPHqME/2xM/XRlDjGEYdBOTTiSfp67t3T6086SsfzZgA7xAbKcbg5GcqoSVqAOBaocOSFjQDULxXaf/fs1uyOEJSwCwQsvFZoHVQMGw=
+	t=1728071158; cv=none; b=LAbHlid1Pjhzjvbiia9h5kgMf0PbDbVGSKRwYoJt3m8jI8vR9UkQWcZgPlHTrq4sUWOLPBfXALdxm/0jGnZlbGF5ypMvfnQaUj3WuM9OY4e42nb1W4N7CU91QXDpLVA0wKZTmulRLs6Jox3JuF5D2h8GCR87MVKmqfrCW+Hc/6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728071055; c=relaxed/simple;
-	bh=TrYVJfjyHQHRAQzKoL0ASI8joiGlm8dDP5uYge0bOwI=;
+	s=arc-20240116; t=1728071158; c=relaxed/simple;
+	bh=2yOu04m+J/lxs2YGcJSUcC4yV/95rmPjEHqBXtjLpuI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hrH0VEvn0JtmhgSzVpTp9EdwwHTttNCii5Ovks6v8N//+uDUx0uwGaZQgh5VA4Nch1J6SQRZ98WHRhyFBPA1cmH7AwzHVqb/dGvZRGz1s0BWn1B1VmyMb2gSjJkqenoYz/kwhGiWQIirGAhaklNTQPx41amyhYLp51t/OEF11f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=BN88Dd13; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=EamE
-	PJoZ9YuXjphhH8JC5qAA0fvN4OcCtfbUgSHwD1g=; b=BN88Dd13rdKlQ43saRv/
-	m382/GoUYy6v4b6EYVVU3Zi6o26jx7o1+Fl13Mi77phyEF5pax1yQ2IM8esXKYC0
-	SNaiAYRI7zVFzGZ87tZ8RoZx2m5SUoIiOeSdGA1oqJSF0306/06cYquuEAC8PCNq
-	nJW/Agk9l/kX6BFJIRahhE80tCNrvryB5elYXRtI85XX3l30KFHz0SvbCc66/NcY
-	cVJyNN9JxLiDGKeWQ1Nm8CsJDt6eWFjlL2zxtkj5c1GFiaFu1U2Qb+6pMu0mzhUk
-	sVgOohXK72jJBBtqA4r8GEmTWQDFhYdJLR6cT8O4EBfOdJ+8y32fOUczEVzuDJce
-	sQ==
-Received: (qmail 3542989 invoked from network); 4 Oct 2024 21:44:06 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Oct 2024 21:44:06 +0200
-X-UD-Smtp-Session: l3s3148p1@9yzc5KsjAK5QvCeD
-Date: Fri, 4 Oct 2024 21:44:05 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>, Marek Vasut <marex@denx.de>
-Subject: Re: [GIT PULL] i2c-host-fixes for v6.12-rc2
-Message-ID: <ZwBFhR9WVhuwhdM1@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>, Marek Vasut <marex@denx.de>
-References: <jtzq4rriyqzerfbxcb2hojrrmdj3cenooijz37u7ejh7twawfo@zussiajim3rt>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mR3JBNBXu9Re8O6XbTUZROM8xgBXQaBKt2tjj4VAEuer3lXzmHu2q2z4SDFr2R76nhovIXpAGwwuOuN2K9cBLk9TH0TsrOW3+Yi0CuzUcftwQ7LlHAAt+FOVzh05rWoYc8ofARN2whAG6RgAtaj/Os/OdaGiXJJavLpSoHSNvc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=SA8abkDJ; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=lxcyd3kP1f2Zt5+bCSqVIXJ3VaHKzTZaUtpasKgkkxE=; b=SA8abkDJtBYC8Qlk4vTPp+fZ3G
+	cxl8W/XF4yRH/0e+/zMK5Wf115EzEfrAMt6oDtFVLCnrRxDGP7QP8v5OVgWecQbU3ARd9Ec2Jg3cN
+	YV8PswG9gVtRDS+bpg7yPIsVJXH3q3DahNQgVqGx1/wBx/iDJ6lWWl3BspDffL2bk5ii/epVGKrKn
+	P0YTZAuw6AJVPaDkkxDByggSb/69Ec4NafvfYudDt8KVhGQtn4XwChik4eYyH72Vdlk8lkYSuwUql
+	dKXISScNjtNDsdaFNklj3QNst+sd9Zl7dbgWruA75A5e7q4ga4PitEb3TqlZdyy9k4OdYBxatcoss
+	Dh9IjUyg==;
+Received: from [2001:9e8:9c9:1501:3235:adff:fed0:37e6] (port=39614 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1swoFI-00Cy9y-Ni;
+	Fri, 04 Oct 2024 21:45:48 +0200
+Date: Fri, 4 Oct 2024 21:45:45 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 19/23] kbuild: support building external modules in a
+ separate build directory
+Message-ID: <20241004-precious-nightingale-of-pluck-b78ac3@lindesnes>
+References: <20240917141725.466514-1-masahiroy@kernel.org>
+ <20240917141725.466514-20-masahiroy@kernel.org>
+ <20241003-mustard-marmot-of-storm-af36a2@lindesnes>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xLGFq0V9Gp16vUw6"
-Content-Disposition: inline
-In-Reply-To: <jtzq4rriyqzerfbxcb2hojrrmdj3cenooijz37u7ejh7twawfo@zussiajim3rt>
-
-
---xLGFq0V9Gp16vUw6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241003-mustard-marmot-of-storm-af36a2@lindesnes>
 
-> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
-dc:
->=20
->   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags=
-/i2c-host-fixes-6.12-rc2
->=20
-> for you to fetch changes up to 048bbbdbf85e5e00258dfb12f5e368f908801d7b:
->=20
->   i2c: stm32f7: Do not prepare/unprepare clock during runtime suspend/res=
-ume (2024-10-01 16:39:00 +0200)
+On Thu, Oct 03, 2024 at 09:47:35PM +0200, Nicolas Schier wrote:
+> On Tue, Sep 17, 2024 at 11:16:47PM +0900, Masahiro Yamada wrote:
+> > There has been a long-standing request to support building external
+> > modules in a separate build directory.
+> > 
+> > This commit introduces a new environment variable, KBUILD_EXTMOD_OUTPUT,
+> > and its shorthand Make variable, MO.
+> > 
+> > A simple usage:
+> > 
+> >  $ make -C <kernel-dir> M=<module-src-dir> MO=<module-build-dir>
+> > 
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> > 
+> >  Documentation/kbuild/kbuild.rst  |  8 +++++-
+> >  Documentation/kbuild/modules.rst |  5 +++-
+> >  Makefile                         | 44 +++++++++++++++++++++++---------
+> >  3 files changed, 43 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/Documentation/kbuild/kbuild.rst b/Documentation/kbuild/kbuild.rst
+> > index 716f6fb70829..66a9dc44ea28 100644
+> > --- a/Documentation/kbuild/kbuild.rst
+> > +++ b/Documentation/kbuild/kbuild.rst
+> > @@ -132,12 +132,18 @@ Specify the output directory when building the kernel.
+> >  This variable can also be used to point to the kernel output directory when
+> >  building external modules using kernel build artifacts in a separate build
+> >  directory. Please note that this does NOT specify the output directory for the
+> > -external modules themselves.
+> > +external modules themselves. (Use KBUILD_EXTMOD_OUTPUT for that purpose.)
+> >  
+> >  The output directory can also be specified using "O=...".
+> >  
+> >  Setting "O=..." takes precedence over KBUILD_OUTPUT.
+> >  
+> > +KBUILD_EXTMOD_OUTPUT
+> > +--------------------
+> > +Specify the output directory for external modules.
+> > +
+> > +Setting "MO=..." takes precedence over KBUILD_EXTMOD_OUTPUT.
+> > +
+> >  KBUILD_EXTRA_WARN
+> >  -----------------
+> >  Specify the extra build checks. The same value can be assigned by passing
+> > diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modules.rst
+> > index 3a6e7bdc0889..03347e13eeb5 100644
+> > --- a/Documentation/kbuild/modules.rst
+> > +++ b/Documentation/kbuild/modules.rst
+> > @@ -95,7 +95,7 @@ executed to make module versioning work.
+> >  	of the kernel output directory if the kernel was built in a separate
+> >  	build directory.)
+> >  
+> > -	make -C $KDIR M=$PWD
+> > +	make -C $KDIR M=$PWD [MO=$BUILD_DIR]
+> >  
+> >  	-C $KDIR
+> >  		The directory that contains the kernel and relevant build
+> > @@ -109,6 +109,9 @@ executed to make module versioning work.
+> >  		directory where the external module (kbuild file) is
+> >  		located.
+> >  
+> > +	MO=$BUILD_DIR
+> > +		Speficies a separate output directory for the external module.
+> 
+> s/Speficies/Specifies/
+> 
+> > +
+> >  2.3 Targets
+> >  ===========
+> >  
+> > diff --git a/Makefile b/Makefile
+> > index 9fbf7ef6e394..b654baa0763a 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -134,6 +134,10 @@ ifeq ("$(origin M)", "command line")
+> >    KBUILD_EXTMOD := $(M)
+> >  endif
+> >  
+> > +ifeq ("$(origin MO)", "command line")
+> > +  KBUILD_EXTMOD_OUTPUT := $(MO)
+> > +endif
+> > +
+> >  $(if $(word 2, $(KBUILD_EXTMOD)), \
+> >  	$(error building multiple external modules is not supported))
+> 
+> Should we also check against multiple output directories?
+> 
+> >  
+> > @@ -187,7 +191,11 @@ ifdef KBUILD_EXTMOD
+> >      else
+> >          objtree := $(CURDIR)
+> >      endif
+> > -    output := $(KBUILD_EXTMOD)
+> > +    output := $(or $(KBUILD_EXTMOD_OUTPUT),$(KBUILD_EXTMOD))
+> > +    # KBUILD_EXTMOD might be a relative path. Remember its absolute path before
+> > +    # Make changes the working directory.
+> > +    export abs_extmodtree := $(realpath $(KBUILD_EXTMOD))
+> > +    $(if $(abs_extmodtree),,$(error specified external module directory "$(KBUILD_EXTMOD)" does not exist))
+> >  else
+> >      objtree := .
+> >      output := $(KBUILD_OUTPUT)
+> > @@ -246,7 +254,6 @@ else # need-sub-make
+> >  ifeq ($(abs_srctree),$(CURDIR))
+> >          # building in the source tree
+> >          srctree := .
+> > -	building_out_of_srctree :=
+> >  else
+> >          ifeq ($(abs_srctree)/,$(dir $(CURDIR)))
+> >                  # building in a subdirectory of the source tree
+> > @@ -254,22 +261,23 @@ else
+> >          else
+> >                  srctree := $(abs_srctree)
+> >          endif
+> > -	building_out_of_srctree := 1
+> >  endif
+> >  
+> >  ifneq ($(KBUILD_ABS_SRCTREE),)
+> >  srctree := $(abs_srctree)
+> >  endif
+> >  
+> > -VPATH		:=
+> > +export srctree
+> >  
+> > -ifeq ($(KBUILD_EXTMOD),)
+> > -ifdef building_out_of_srctree
+> > -VPATH		:= $(srctree)
+> > -endif
+> > -endif
+> > +_vpath = $(or $(abs_extmodtree),$(srctree))
+> >  
+> > -export building_out_of_srctree srctree VPATH
+> > +ifeq ($(realpath $(_vpath)),$(CURDIR))
+> 
+> Just a style consistency question: 'ifeq (,)' with a space after ',' (as a few
+> lines above) or without as used here?
+> 
+> > +building_out_of_srctree :=
+> > +VPATH :=
+> > +else
+> > +export building_out_of_srctree := 1
+> > +export VPATH := $(_vpath)
+> > +endif
+> >  
+> >  # To make sure we do not include .config for any of the *config targets
+> >  # catch them early, and hand them over to scripts/kconfig/Makefile
+> > @@ -550,7 +558,7 @@ USERINCLUDE    := \
+> >  LINUXINCLUDE    := \
+> >  		-I$(srctree)/arch/$(SRCARCH)/include \
+> >  		-I$(objtree)/arch/$(SRCARCH)/include/generated \
+> > -		$(if $(building_out_of_srctree),-I$(srctree)/include) \
+> > +		-I$(srctree)/include \
+> >  		-I$(objtree)/include \
+> >  		$(USERINCLUDE)
+> >  
+> > @@ -640,6 +648,7 @@ quiet_cmd_makefile = GEN     Makefile
+> >  	} > Makefile
+> >  
+> >  outputmakefile:
+> > +ifeq ($(KBUILD_EXTMOD),)
+> >  	@if [ -f $(srctree)/.config -o \
+> >  		 -d $(srctree)/include/config -o \
+> >  		 -d $(srctree)/arch/$(SRCARCH)/include/generated ]; then \
+> > @@ -649,7 +658,16 @@ outputmakefile:
+> >  		echo >&2 "***"; \
+> >  		false; \
+> >  	fi
+> > -	$(Q)ln -fsn $(srctree) source
+> > +else
+> > +	@if [ -f $(KBUILD_EXTMOD)/modules.order ]; then \
 
-Thanks, pulled!
+If I do
+
+    make O=build
+    touch fs/btrfs/modules.order
+    make O=build M=fs/btrfs/ MO=/tmp/btrfs CONFIG_BTRFS_FS=m
+
+the 'modules.order' check does not work correctly.  But a consequtive
+
+    make -C /tmp/btrfs CONFIG_BTRFS_FS=m
+
+shows the 'The external module source tree is not clean.' message as
+expected.
+
+If I replace $(KBUILD_EXTMOD) by $(abs_extmodtree), it works for me also
+in the first case.
 
 
---xLGFq0V9Gp16vUw6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcARYEACgkQFA3kzBSg
-KbbIGBAAj9j3BvUz1RiiFa2MAwYpAdV1FgMH2KwCBn8kdF3n89ufb+JyEqQ1+BvI
-NBYdbolAXqq9AqFyTSHrb/k1Y6IfW72vrsXmR6+0Tj9NWqLEaKh/TA1ybwLEC17j
-knReybo57SJtdS6Uy6tNy7jcUgkW3tFJtSnOPGBG0LAiJOC4PNAqLna5pxGl5GXy
-RV7J7+c5EaowncmVcE4ORJhOS8XVMQLTWUX3SlNWDRt+HiZ5P2xa199SvPZOF5P1
-5rIgAFssMGLZRJ+4LVpJkTF0mr3aHhgitGaQDW1nJ4de0oYl+PMU0CYmLw9+bb1/
-I9bmguwqizVHLHwkoPVsifUHBWWzOtMF8z0BVCuPWxGTLtz9BmNsVR/gA30trBBJ
-8hk9miKpnloSmPO7D8Z80YrH/gjh0fUDJLOJQxOQkomDRoHBO6mhiIQpn1DkYWyP
-ZmjbgEmtJAK4X7VNiAMdtOOYxcXU+RqD4ibIhN6KhRXS7dvgn5kJ//6R82vqJigz
-AgpCtXvsPtyxEInBatXxdns03fQF/UhSBAr6rBUL91yx4ghISRnHqNMXHDDb24z6
-MbIjEAC9oP9l0sUp5VOGCH9vkVijWkamD0ov8KlrtFXgf8u3XmOaz5oihIPeNQm6
-qiNfrZp2vXdspuN5iqi7cnjnoVruVe8E+FVG6AjSWb7aGc5QwfI=
-=gONl
------END PGP SIGNATURE-----
-
---xLGFq0V9Gp16vUw6--
+Kind regards,
+Nicolas
 
