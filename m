@@ -1,44 +1,63 @@
-Return-Path: <linux-kernel+bounces-350227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077C29901C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:01:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3497990188
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 373981C2349A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:01:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DC92B20EDF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59014156C5E;
-	Fri,  4 Oct 2024 11:01:48 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6631715666B;
+	Fri,  4 Oct 2024 10:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="oR3Of1Wf"
+Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D3712C81F;
-	Fri,  4 Oct 2024 11:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469B01553AF;
+	Fri,  4 Oct 2024 10:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728039708; cv=none; b=DKAWsjEGjWmORig86hA9MQyoMfOI3MgBICUrJI+Wie0po2AjMtlh1xHbkSAtdsK/XfL1Hi/4iaNQ60djmcmaxwCZDNP3e+deT4/25IKmTaPEWzPmud2VECaWceNPL7nxznKpXBk1o8ydoE65ht4wWnPua18blAJgCyehhFW1baw=
+	t=1728038694; cv=none; b=VTC1qoZVdqikqieLCW9evSw9D+A3mMBVJAMoYqmYk6XPEniGeJAALueCmfJEu6BVKYS/Br9LaOWAdK4SNnRflaInxw89umRUy1LcJMWfzJTQ11Mc4vCUorUmfc/G7Zt+d9MS7UM325IwNnrFXUyT7d66TEbmzxBE772d4NUA3p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728039708; c=relaxed/simple;
-	bh=NtDsvusRx+fsiFebmXuORxX16ZxXymuvfEFFLg91cOE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=G7iRozRtflyPMoI43NvImWJJ3z7GSXkRiDwxiXZtynZckIGdsPcuy46HST5UqTj+sjgUXB5RY0Ok1dOTqONNmenZTPLQUoUKXiKwoJsRE6ua5fssDCO8jkEx+pd+GsrJ4HHgKekSJUdLrvikMSj3dPVx6yYDPzf9cvX4fG2pbVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XKkx72wzVz9v7JQ;
-	Fri,  4 Oct 2024 18:16:59 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 537F5140935;
-	Fri,  4 Oct 2024 18:42:44 +0800 (CST)
-Received: from [10.81.200.188] (unknown [10.81.200.188])
-	by APP2 (Coremail) with SMTP id GxC2BwBH9saaxv9m_X80Ag--.35107S2;
-	Fri, 04 Oct 2024 11:42:43 +0100 (CET)
-Message-ID: <d5387ff4-06c7-4115-bd53-1c485e3743ec@huaweicloud.com>
-Date: Fri, 4 Oct 2024 12:42:32 +0200
+	s=arc-20240116; t=1728038694; c=relaxed/simple;
+	bh=pPE4/I601JrMIy+XM5295Vjl31RBUgIJ/rXqcSjo5c4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nlK6slzXIppXnp3zt4ZxM0EL3EXGaRtu2UADOLpoF4kyIQUIMMmnImmsNzhsEP0hM0DWtgUlMB5wutdzqD/fhfepEPL8IXH7ni+tGC4sN+rU5jm8XNe0nsv11n6Kj74OK/ENAQYcXSldnGNvjHbH6+T1IDJQRibRlZzvJfjKQE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=oR3Of1Wf; arc=none smtp.client-ip=207.171.190.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1728038694; x=1759574694;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pPE4/I601JrMIy+XM5295Vjl31RBUgIJ/rXqcSjo5c4=;
+  b=oR3Of1Wf3HEo0dnwjdj9QbOoKLlal8JmUjY1VqjmajiWOso5ovkldN2a
+   nW3HSKi2u16NPX0mCuCfjeOhqn2MYK1icoyhHtZwgINDo1LHvqJKtIGZM
+   dJkftOs02UjrtQ1EUALedb+9lnWyUkHF1IzVWw2JMVw2OxvCyZwR/u/Me
+   Y=;
+X-IronPort-AV: E=Sophos;i="6.11,177,1725321600"; 
+   d="scan'208";a="372905230"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 10:44:44 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:37237]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.45.76:2525] with esmtp (Farcaster)
+ id 1351fef0-1ef8-4c2c-b61d-a56b05783d23; Fri, 4 Oct 2024 10:44:42 +0000 (UTC)
+X-Farcaster-Flow-ID: 1351fef0-1ef8-4c2c-b61d-a56b05783d23
+Received: from EX19D041EUB003.ant.amazon.com (10.252.61.118) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 4 Oct 2024 10:44:41 +0000
+Received: from [10.95.86.80] (10.95.86.80) by EX19D041EUB003.ant.amazon.com
+ (10.252.61.118) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Fri, 4 Oct 2024
+ 10:44:35 +0000
+Message-ID: <3208be2b-7e9f-413b-a9dc-c36ef4e3d177@amazon.de>
+Date: Fri, 4 Oct 2024 12:44:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,110 +65,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Herbert Xu <herbert@gondor.apana.org.au>
-Cc: dhowells@redhat.com, dwmw2@infradead.org, davem@davemloft.net,
- linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
- linux-crypto@vger.kernel.org, zohar@linux.ibm.com,
- linux-integrity@vger.kernel.org, roberto.sassu@huawei.com,
- linux-security-module@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
-References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
- <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
- <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com>
- <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
- <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
- <a991cf4187bced19485e28a5542ac446b92f864e.camel@huaweicloud.com>
+Subject: Re: [PATCH 00/15] KVM: x86: Introduce new ioctl KVM_TRANSLATE2
+To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+	<seanjc@google.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
+CC: Nicolas Saenz Julienne <nsaenz@amazon.com>, Alexander Graf
+	<graf@amazon.de>, James Gowans <jgowans@amazon.com>,
+	<nh-open-source@amazon.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <linux-kernel@vger.kernel.org>,
+	<kvm@vger.kernel.org>, <x86@kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <kvmarm@lists.linux.dev>,
+	<kvm-riscv@lists.infradead.org>, Nikolas Wipper <nik.wipper@gmx.de>
+References: <20240910152207.38974-1-nikwip@amazon.de>
+From: Nikolas Wipper <nikwip@amazon.de>
 Content-Language: en-US
-In-Reply-To: <a991cf4187bced19485e28a5542ac446b92f864e.camel@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwBH9saaxv9m_X80Ag--.35107S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxur4xCFW5Jw4rGrW8CFyDZFb_yoW5XF13pa
-	9aqFy2kr1kJr1Ik3Z7Ca18ZFWFyws3ta45Gr9xXryrA34YqF12yryfKF43ZFy2krn5Ga1j
-	vrZ8try5A3Z8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAGBGb-TvcIKQAAsC
+In-Reply-To: <20240910152207.38974-1-nikwip@amazon.de>
+X-ClientProxiedBy: EX19D046UWB003.ant.amazon.com (10.13.139.174) To
+ EX19D041EUB003.ant.amazon.com (10.252.61.118)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-On 9/26/2024 11:41 AM, Roberto Sassu wrote:
-> On Sun, 2024-09-15 at 10:40 +0200, Linus Torvalds wrote:
->> On Sun, 15 Sept 2024 at 10:08, Herbert Xu <herbert@gondor.apana.org.au> wrote:
->>>
->>> If the aformentioned EFI use-case is bogus, then distro package
->>> verification is going to be the only application for PGP keys in
->>> the kernel.
->>
->> So I haven't actually seen _that_ series, but as mentioned it does
->> smell pretty conceptually broken to me.
->>
->> But hey, code talks, bullshit walks. People can most certainly try to
->> convince me.
-> 
-> The solution has three parts.
-> 
-> 1. The kernel verifies the RPM header with a PGP key embedded in the
-> kernel, and provided by the Linux distribution vendor.
-> 
-> 2. The Integrity Digest Cache parses the verified RPM header in the
-> kernel and feeds one of the existing LSMs (IMA, IPE and BPF LSM) with
-> the digests extracted from the RPM header.
-> 
-> 3. The LSMs compare the fsverity digest they find in the filesystem
-> with the authenticated ones from the RPM header, and might deny access
-> to the file if the digests don't match.
-> 
-> At this point, RPM headers don't contain fsverity digests, only file
-> content digests, but this is an orthogonal problem.
-> 
-> 
-> I had a look at previous threads on similar topics, to find your
-> position on the matter.
-> 
-> I got that you would not be probably against (1), and maybe not (3).
-> 
-> However, we still need a source telling whether the fsverity digest in
-> the filesystem is the same of one calculated by Linux distributions
-> during build. That is what the Integrity Digest Cache provides.
-> 
-> Regarding (2), maybe I'm missing something fundamental, but isn't
-> parsing the ELF format of kernel modules from the kernel similar?
-> 
-> Cannot really go to user space at this point, since the authenticated
-> fsverity digests are directly consumed by LSMs. Also, as David pointed
-> out in this thread [1], there is no obligation for user space to call
-> any signature verification function before executing a file, this task
-> must be done by an LSM.
-> 
-> I'm aware that we should not run unnecessary code in the kernel. I
-> tried to mitigate this issue by striping the parsing functionality to
-> the minimum (220 LOC), and formally verifying it with the Frama-C
-> static analyzer. The parser is available here [2].
-> 
-> I'm also aware that this is not the long term solution, but I didn't
-> find much support on the alternatives, like a trustworthy user mode
-> driver [3][4] (isolated from other root processes) and signed eBPF
-> programs [5].
-> 
-> What it would be the right way to proceed, in your opinion?
-
-If I remove the parsers completely from the kernel, and attach them 
-dynamically with eBPF, would you reconsider my patch set?
-
-Thanks
-
-Roberto
+SSBzYXcgdGhpcyBvbiBhbm90aGVyIHNlcmllc1sqXToKCj4gaWYgS1ZNX1RSQU5TTEFURTIgbGFu
+ZHMgKHRob3VnaCBJJ20gc29tZXdoYXQgY3VyaW91cyBhcyB0byB3aHkgUUVNVSBkb2Vzbid0IGRv
+Cj4gdGhlIHBhZ2Ugd2Fsa3MgaXRzZWxmKS4KClRoZSBzaW1wbGUgcmVhc29uIGZvciBrZWVwaW5n
+IHRoaXMgZnVuY3Rpb25hbGl0eSBpbiBLVk0sIGlzIHRoYXQgaXQgYWxyZWFkeQpoYXMgYSBtYXR1
+cmUsIHByb2R1Y3Rpb24tbGV2ZWwgcGFnZSB3YWxrZXIgKHdoaWNoIGlzIGFscmVhZHkgZXhwb3Nl
+ZCkgYW5kCmNyZWF0aW5nIHNvbWV0aGluZyBzaW1pbGFyIFFFTVUgd291bGQgdGFrZSBhIGxvdCBs
+b25nZXIgYW5kIHdvdWxkIGJlIG11Y2gKaGFyZGVyIHRvIG1haW50YWluIHRoYW4ganVzdCBjcmVh
+dGluZyBhbiBBUEkgdGhhdCBsZXZlcmFnZXMgdGhlIGV4aXN0aW5nCndhbGtlci4KClsqXSBodHRw
+czovL2xvcmUua2VybmVsLm9yZy9sa21sL1p2SnNlVm9UN2dOX0dCRzNAZ29vZ2xlLmNvbS9ULyNt
+YjBiMjNhMWY1MDIzMTkyYTQ0MmRiNGExNjYyOWQ5Y2E3NGViNmI1ZQoKcHM6IHRoaXMgaXMgYWxz
+byBhIGdlbnRsZSBwaW5nIGZvciByZXZpZXcsIGlmIHRoaXMgZ290IGxvc3QgaW4gYmV0d2Vlbgpj
+b25mZXJlbmNlcwoKCgpBbWF6b24gV2ViIFNlcnZpY2VzIERldmVsb3BtZW50IENlbnRlciBHZXJt
+YW55IEdtYkgKS3JhdXNlbnN0ci4gMzgKMTAxMTcgQmVybGluCkdlc2NoYWVmdHNmdWVocnVuZzog
+Q2hyaXN0aWFuIFNjaGxhZWdlciwgSm9uYXRoYW4gV2Vpc3MKRWluZ2V0cmFnZW4gYW0gQW10c2dl
+cmljaHQgQ2hhcmxvdHRlbmJ1cmcgdW50ZXIgSFJCIDI1Nzc2NCBCClNpdHo6IEJlcmxpbgpVc3Qt
+SUQ6IERFIDM2NSA1MzggNTk3Cg==
 
 
