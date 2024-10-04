@@ -1,133 +1,115 @@
-Return-Path: <linux-kernel+bounces-349977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584DD98FE24
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:54:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2575098FE2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A70A1B22B90
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:54:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BE14B21D05
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8904413AD2F;
-	Fri,  4 Oct 2024 07:54:16 +0000 (UTC)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AF8139D03;
+	Fri,  4 Oct 2024 07:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9XZ/+pN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED3313A884;
-	Fri,  4 Oct 2024 07:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D3D13790B;
+	Fri,  4 Oct 2024 07:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728028456; cv=none; b=EoBfVtYQQQtZMZYsHwRykuJ/n7OfdhxBxaTXuAA7yvHy8pxYzsabsiCEyix6BlWqhxeyfp38ouwewW0FhbthsK05qAknv+eCGfeTshkKG7WmSN25kqG+/lEwEwMNaCNIKDdWmdmg/pdUOyDrbzksWBVUOMXfO38+mU6b4KBQNYI=
+	t=1728028507; cv=none; b=O5BL8NDyPF2uve0C5LZrzpHkDyAxQSkY2uQp3aSIFWtNCQ6+rDnQoQwZrfBZr+blWjBjNJU38mq7/Q7n7k5uP7VVCKjepsLDq6LmLWzDIqPDvuBx2qXb+WMg/MmvXljwAGgAdMcY4C19SsOjLCB0kSDy0HtX6LpkW6Oo4rUeGfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728028456; c=relaxed/simple;
-	bh=Wg7ul4YZSmWzSUMBwlfWIpZgmFJpPiFMzQOvVLNoDP0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gAi1DBcY5bRpT8Kwi+9QSMNUt4OkbvlBgMu4EAFKQtTC6wYvVcssw3ry3CUXg6Ezo7x4QSdm1eI5iYOTLEaKlws9VPLXz+65OEDyS1c/xcVP3/A3J7qnTZdKFPVLDbkPkV4IgmM1pRSYjtHNnYNqZcovKsavqxL0poQICTbsZxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e25ccdffcc5so1683261276.1;
-        Fri, 04 Oct 2024 00:54:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728028453; x=1728633253;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WKYPD1a2MwpDAh7rgvBPhraVJ6bG7cu3U6Mm6tadaOg=;
-        b=PNajY66EEz9Q79kE0mEJ55s9qmtX9lMrYaVIGWP8w9+EFGyp2vPcuz8T6DxT37FKLb
-         7Hs6JoJbuSIBZbcRwp4D4VOtF5yhjM3fa1ke2lA58KEqo+Ie7xr3bJLsnj0evfo6EwtM
-         MloqlzHmhbB9cFObjE+JbAipI9j/n1joLVd5Lae1riJ/ek+P9RWFECGNZmj17ZIqZUB0
-         99p2aRrHXU64gmOk/3m4cjETRkhTTsleouBgWSvXscw+CBpaJlDPWneYUEoMMNjLM3pa
-         1KXsDMHLESoqG0+qdc2Omr1CFcSu9fsQEFf0aGIJZkKBQLaxU5dwP6eYn/gaCNWSD8Qy
-         Ya3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUL3hHM4VIyyUvGi832yeflS1D3VoinYg4/mMbiaDYNd/D+f1p1qvz19W062ZjlCUcaQVMiRuJO212a@vger.kernel.org, AJvYcCUemvmsTV86saOVU0oxNXGq9RYFKCQJVQDX7yV/AGn7I9UO8zJIpyz76vKyM8uY9CrDQ0pDeAWZWeBk4rwA@vger.kernel.org, AJvYcCUo1WL06Y3dEKJrkptEzCxcKLjbYKngmI+bB9s2QKZJxlJoETXT/7cf78LWWyA9p28OkAPBU2ahL1PpUOd3kg9uVZc=@vger.kernel.org, AJvYcCVh82roSM+wB2BH2kzrKskI3usd9dvdRV4zLZs5OPZ91e3Cdo8vhpWzM6U5b0+oxay4VNeh4i4iEcG6pA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywuk/eFDCGsIaJTMyPSYYy36RhZMymapnbJc77tI3ML0UOPICeB
-	ahW/gDQbYxiZndJhzp+WG/2Qg0gxU0nfjgtN1S2b8DvVPNOl3KnBjgGLlzBarYw=
-X-Google-Smtp-Source: AGHT+IF0qW0aHCCIqgYmt95gwlS+6dhhA/vMYHaxSM+ejOhu+Ld/5K8AY7/7HlikYRL9EkDhumR+Gw==
-X-Received: by 2002:a05:6902:2412:b0:e26:ab6:e49b with SMTP id 3f1490d57ef6-e28937e37a0mr1250803276.28.1728028453010;
-        Fri, 04 Oct 2024 00:54:13 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e2885d15b73sm517074276.7.2024.10.04.00.54.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 00:54:12 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e1651f48c31so1747520276.0;
-        Fri, 04 Oct 2024 00:54:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKWV4KfLKLXepBKjEwD/KoD9fh+4z2LH2kFS8EvtP7No3mZKnFK0xnHjVXvNzlFRgKtidt8JDskeB7@vger.kernel.org, AJvYcCWCUkDnRoNS4RDjO8Gh/ytYVoC4beu9ntVkpvLYHYnSUcVHMwNCRK9OVQEUpz2DpapbcEo6Z0TPim1c6w==@vger.kernel.org, AJvYcCXbg99CfRzewa3X+i+65rwKndU73FAZxNglSIjENINiWWLwUy2Y4dIJizSmbJxb9DJ3BgdEaJ9eolIC9vnm@vger.kernel.org, AJvYcCXiKOgl2nQoQMy8N5Cd3mEW5jG4TAq6Cs+nm4HlE2UzeMyC6MoBJpiONxcqzEgN/DN04/VKJJrSJBAMo1vN9bVBOTY=@vger.kernel.org
-X-Received: by 2002:a05:690c:b:b0:6e2:167e:814f with SMTP id
- 00721157ae682-6e2c7289b2emr16053787b3.31.1728028451953; Fri, 04 Oct 2024
- 00:54:11 -0700 (PDT)
+	s=arc-20240116; t=1728028507; c=relaxed/simple;
+	bh=1rmn9mgHgl3weh7NzIfLqPn3lhDo4MFolXnng4SzFaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hg7nMfnb8lnFQKmPaWmvF15G5RWWUqC1cdwPebBV0/TkJ5bOABy91Yhn3Ah4LPdyNinDkTlvJKnmLChOsdB8qZVFMbjL22HM25LgcDYG/PM+zfmyj41b1dwqZaaH1oYsvSmDXbW/HZ9H/cOh9imFnwtlZ3JS4Jxqxd9RJez/FrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9XZ/+pN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2F96C4CECC;
+	Fri,  4 Oct 2024 07:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728028507;
+	bh=1rmn9mgHgl3weh7NzIfLqPn3lhDo4MFolXnng4SzFaU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l9XZ/+pNVkF3L9myb7e8hwq0l3jOHXxFwO6z0LaGfTSbcoIgu9NwpZ0YBO6/n6FbA
+	 xUs27AG/fd0zovRdhPGi4YKPGJKET9zBkdxBG8ehrZthl+Px6LPmnjd5GD49P4BdVP
+	 ty/0Qu8hcE/1kxqrsVGFX6PNhZze3jc/E4YF3oH8lQfAymLTA6FZTP1SIGNnw0NZ8z
+	 zT0PeDnowf7TGE8ddeN3fkwxdIv6mud/HYFoAFZ/ga/UajrEmebXXyUVCw6wowJpdf
+	 FE5Z94eWbARGQe8D20MfSRNSbEDwONw3Y02W/8UIbNpThPRoOHXe5ORx8LvEAWquiY
+	 SpObda5m08E/A==
+Message-ID: <2bf32fb2-6b1d-4527-8ca2-96e21b8a813e@kernel.org>
+Date: Fri, 4 Oct 2024 10:55:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918120909.284930-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240918120909.284930-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240918120909.284930-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Oct 2024 09:53:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWkHvHh=AhJhOutFRAJMczpCGdUCPvPuqjY_V4aiMvmAg@mail.gmail.com>
-Message-ID: <CAMuHMdWkHvHh=AhJhOutFRAJMczpCGdUCPvPuqjY_V4aiMvmAg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
- 'input-schmitt-{enable,disable}' and 'drive-open-drain' properties
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] ARM: dts: omap: omap4-epson-embt2ws: define GPIO
+ regulators
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, khilman@baylibre.com,
+ devicetree@vger.kernel.org, tony@atomide.com, aaro.koskinen@iki.fi,
+ linux-omap@vger.kernel.org
+References: <20240930213008.159647-1-andreas@kemnade.info>
+ <20240930213008.159647-2-andreas@kemnade.info>
+ <3c83c399-708c-41e2-988d-4ccec63c6042@kernel.org>
+ <20241004094117.51c8adcd@akair>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20241004094117.51c8adcd@akair>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Fabrizio,
 
-On Wed, Sep 18, 2024 at 2:09=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> On the RZ/V2H(P) SoC we can configure the 'input-schmitt-{enable,disable}=
-'
-> and 'drive-open-drain' of multiplexed pins. Update the binding
-> documentation to include these properties.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks for your patch!
+On 04/10/2024 10:41, Andreas Kemnade wrote:
+> Am Fri, 4 Oct 2024 10:24:32 +0300
+> schrieb Roger Quadros <rogerq@kernel.org>:
+> 
+>> On 01/10/2024 00:30, Andreas Kemnade wrote:
+>>> To properly have things running after cold boot, define
+>>> GPIO regulators. Naming is based on board file.
+>>>
+>>> In the vendor kernel they are enabled in a function
+>>> called bt2ws_dcdc_init() if the system is not booted just
+>>> to charge the battery.
+>>>
+>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+>>> ---
+>>>  .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 73
+>>> +++++++++++++++++++ 1 file changed, 73 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
+>>> b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts index
+>>> 339e52ba3614..d6b0abba19f6 100644 ---
+>>> a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts +++
+>>> b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts @@ -29,6 +29,42
+>>> @@ backlight-right { power-supply = <&unknown_supply>;
+>>>  	};
+>>>  
+>>> +	cb_v18: cb-v18 {  
+>>
+>> https://devicetree-specification.readthedocs.io/en/v0.3/devicetree-basics.html#generic-names-recommendation
+>>
+>>
+>> So regulator@n
+>> where n is some index if it can't be address.
+>>
+> No, no @n. The above link says: "If the node has no reg property, the
+> @unit-address must be omitted and the node-name alone differentiates
+> the node from other nodes at the same level in the tree." So
+> probably regulator-cb-v18.
 
-> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yam=
-l
-> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yam=
-l
-> @@ -119,6 +119,9 @@ additionalProperties:
->          bias-disable: true
->          bias-pull-down: true
->          bias-pull-up: true
-> +        input-schmitt-enable: true
-> +        input-schmitt-disable: true
-> +        drive-open-drain: true
+Yes, I agree.
 
-I think you also need "drive-push-pull", to disable open drain.
-
->          renesas,output-impedance:
->            description:
->              Output impedance for pins on the RZ/V2H(P) SoC. The value pr=
-ovided by this
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+cheers,
+-roger
 
