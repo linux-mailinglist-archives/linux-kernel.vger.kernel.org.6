@@ -1,217 +1,155 @@
-Return-Path: <linux-kernel+bounces-350848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FFC5990A76
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:55:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008FF990A74
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E546F1F21D23
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:55:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDC74280A4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235C61DACAA;
-	Fri,  4 Oct 2024 17:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426371DAC88;
+	Fri,  4 Oct 2024 17:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RZ83lulQ"
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqi76Il4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A621E378C;
-	Fri,  4 Oct 2024 17:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CF11CACEF;
+	Fri,  4 Oct 2024 17:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728064493; cv=none; b=cAxWyUxCyNtDp5It9Rj6TAo3HuplkNhBKzwkoykeWyO01bGj45NWjsFDIuMFtD4VNe/33gXaYx/ciFwd/tsU3a3j8DYj0HA7o+mdd1JfXz2ZoCp/0KVd/hpYO7QjYtHBfzuCJeF0NyZ0qnoAwRjJGIv9xKZUiFJP2Lsk4OAJU7E=
+	t=1728064491; cv=none; b=vE37iE+RyiRiP/mcGWiCLXsWtAXyvWx28MXLbUCfppvxqPDoiC8T2TjbzP00VoUi/SX1QlvIm4YaSzha46heDtz4NgOlaBWHO8pz5XxDanWNMK4RMD0KXFmKhpHHpHHTcNUaVwLZRjB0ZdJEP1NEYrSDafc+iE2dspeYAoaMIGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728064493; c=relaxed/simple;
-	bh=A5yeQGefwk+GqKoc11ZmiObjjbKtYkHX6x7SjJOkOAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VwGqIFyk0sat8R5XFI7sHSznhLeN1HXdYXPODCIUpRH9xw34KU1TIsfP+OK5Ie4OcDOTegl2SXaGrZ0VQxRfQWBd2wNX5qs1/2vMQui6GwztURBqM6+HEOGdX3rtZi525a0mYtuc8lAOmJ2DSemZwPDbcDaPiCXQuz6DVqOEd2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RZ83lulQ; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id wmVksyfpFTdlvwmVlsjM8t; Fri, 04 Oct 2024 19:54:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1728064487;
-	bh=5/9qc1wj5VBrWaCuWdDjCcwU0H/Qapv4qLyWjHhEANA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=RZ83lulQI7hSHE6j6QNSb9hXP5VJ601NGIFBkt464weGSSU9KICkhe71UYPaC4PVz
-	 yXXL3vPRu/5IfDEBnVB1a8q7wDeeTI6wShTvP/znJY1fBKkA6dRDwzFLfmjptl/kR6
-	 25auBgnY/yow3MOvMOHf8V+x+AKcdY/g3b0B/oy80x3Id6DJuk1kplLVSswCF+r+Rn
-	 KqCq3q3L67euPpj8Tp581uRR81sQyFU5bBOaz1Px0jvYqU+x+0FjZoxgzI4o4qtRF2
-	 O3ELFtYJNX9SM+8g/glhoDVY8tjT/VVGMcVM4X4L6gkJLvVWKaWowXyBivqr2omwIM
-	 L66FEyH+4eFsw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 04 Oct 2024 19:54:47 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <6673435f-250a-4fb7-9843-20f050e85c7c@wanadoo.fr>
-Date: Fri, 4 Oct 2024 19:54:37 +0200
+	s=arc-20240116; t=1728064491; c=relaxed/simple;
+	bh=vIoN4GpuCg59a4ErFTCIsZ4mtSc4k/xM/7/QF23owDI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AHwlOU/4HCWn4TpMG/VOsPTVIAMjw/AGEYAtk/kmEhXhfg6x/SYnpgOK4JXOAamMc2QOeV85LDROxG7wznV6QxevXQFwsXaCNoOvnHsYLlwX5zRCj1KNW0GKEifKrfuvKuf+9jSKNag3DRYZ0jXHRY5S/jjIzDIU1AAUk4UUdxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqi76Il4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB0DC4CED0;
+	Fri,  4 Oct 2024 17:54:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728064491;
+	bh=vIoN4GpuCg59a4ErFTCIsZ4mtSc4k/xM/7/QF23owDI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cqi76Il4uC5ZPz19N2cJc0migHOoPqFW6D/vmSvlKnGLGNqMwT8US9jaZHWdEjTg1
+	 UkFKPeyKiMz0q86Kdheon9VX0TebhH4ATyAFzUjvMLD6Fp2wtR12gN99HmDSUWAXGW
+	 ATNU9LX94cErNndZ0PCZ/3euBiLAzOTwFZW8Qc3+FWTON/p7ydS01yEBn1M3xe98yR
+	 pdwIt+zTTyshpyfkJLlyuo5xhM3VOrH1bg8UbMAhx0mB9mehwbMbit53V2h3Tz60wf
+	 4R5rsQ6a25M9FPRQ/kYq3cfgDbGfwBhU0xRxNtQ+tN9P4L7Rb2mXLmJdHXFoQ31OG/
+	 DX5h3m+pHQr0g==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5e5568f1b6eso1210456eaf.1;
+        Fri, 04 Oct 2024 10:54:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUCQAi7MvXeCp51UE4dBSSXHaQyIiHwJbpb1MGy0oXarB16dl9WoNsh5TmaEsA6krTOYpXa7vdKqFnDzP6K@vger.kernel.org, AJvYcCUmIMvV6nURTfsQQyVeUqeZKC3ebe12uNqDX63wJFRcU99lou8FsvsIFIkuIA/XS6TvAgOyApOHnrfm3Of8@vger.kernel.org, AJvYcCViicSO/8i4rJFUS/DJTGt0ph/rYpWk7ZfMp6QrPZbHqZ2mAhZPUq7TT5S5ZQ2095T8CfF98az1Fg/X@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+WldRt0+OvQ6wcMVTCD89MzblRZ5KD1uQayyTQnCirUJKZna+
+	WUSxeMQlqJjRGTJgBH1p2q2W7lOLlyFC/MgaZlbwSHG4mfUbbBqUBUY5b+BknRLJe2NLseJSX22
+	KG5lg07EV/oBqV1hQ5Q1joSrXRTA=
+X-Google-Smtp-Source: AGHT+IHHU5oF+bEJbOmmVNOobDQq8hExkxmIB2OVr3TpoNANPW2L8tWMdr0JMDOM05w0lfgNI2DdzksEHdeqzKI/MAc=
+X-Received: by 2002:a05:6820:2283:b0:5ba:ec8b:44b5 with SMTP id
+ 006d021491bc7-5e7cc05e00amr2315276eaf.3.1728064490629; Fri, 04 Oct 2024
+ 10:54:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/i915/display: Remove kstrdup_const() and
- kfree_const() usage
-To: Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-References: <f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727977199.git.christophe.jaillet@wanadoo.fr>
- <87h69srz1q.fsf@intel.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <87h69srz1q.fsf@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240912173901.3969597-1-rrangel@chromium.org>
+ <20240912113616.3.I1b7a5033a2191cb0cdbadc2d51666a97f16cc663@changeid>
+ <CAJZ5v0hmf55OA1f4egzE7F0ET+7af_+pcxmnOSxO5Snd6L5CrQ@mail.gmail.com> <CAHQZ30CRYoH_-rY7hMgasbkyqEBpgVfH6PZRzuaU=2g4S_oGtA@mail.gmail.com>
+In-Reply-To: <CAHQZ30CRYoH_-rY7hMgasbkyqEBpgVfH6PZRzuaU=2g4S_oGtA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 4 Oct 2024 19:54:39 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hQicgscfoOhkh8DN5MmYBK8-5gJvzM=ixs6k75XqE2og@mail.gmail.com>
+Message-ID: <CAJZ5v0hQicgscfoOhkh8DN5MmYBK8-5gJvzM=ixs6k75XqE2og@mail.gmail.com>
+Subject: Re: [PATCH 3/3] ACPI: SPCR: Add support for rev 3
+To: Raul Rangel <rrangel@chromium.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-serial@vger.kernel.org, pmladek@suse.com, 
+	rafael.j.wysocki@intel.com, ribalda@chromium.org, Len Brown <lenb@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, acpica-devel@lists.linux.dev, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le 04/10/2024 à 11:35, Jani Nikula a écrit :
-> On Thu, 03 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
->> kstrdup_const() and kfree_const() can be confusing in code built as a
->> module. In such a case, it does not do what one could expect from the name
->> of the functions.
->>
->> The code is not wrong by itself, but in such a case, it is equivalent to
->> kstrdup() and kfree().
->>
->> So, keep thinks simple and straightforward.
->>
->> This reverts commit 379b63e7e682 ("drm/i915/display: Save a few bytes of
->> memory in intel_backlight_device_register()")
-> 
-> Sorry, I guess I'm confused here. Or I just didn't read the commit
-> message to [1] properly. Or both.
-> 
-> So the whole point of [1] was that the _const versions can be confusing
-> if i915 is builtin? But not wrong?
+On Fri, Oct 4, 2024 at 7:45=E2=80=AFPM Raul Rangel <rrangel@chromium.org> w=
+rote:
+>
+> On Wed, Oct 2, 2024 at 12:13=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
+> >
+> > On Thu, Sep 12, 2024 at 7:39=E2=80=AFPM Raul E Rangel <rrangel@chromium=
+.org> wrote:
+> > >
+> > > Revision 3 supports specifying the UART input clock. This allows for
+> > > proper computation of the UART divisor when the baud rate is specifie=
+d.
+> > >
+> > > The earlycon code can accept the following format (See `parse_options=
+`
+> > > in `earlycon.c`.):
+> > > * <name>,io|mmio|mmio32|mmio32be,<addr>,<baud>,<uartclk>,<options>
+> > >
+> > > This change makes it so the uartclk is passed along if it's defined i=
+n
+> > > the SPCR table.
+> > >
+> > > Booting with `earlycon` and a SPCR v3 table that has the uartclk and
+> > > baud defined:
+> > > [    0.028251] ACPI: SPCR: console: uart,mmio32,0xfedc9000,115200,480=
+00000
+> > > [    0.028267] earlycon: uart0 at MMIO32 0x00000000fedc9000 (options =
+'115200,48000000')
+> > > [    0.028272] printk: legacy bootconsole [uart0] enabled
+> > >
+> > > Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/serp=
+orts/serial-port-console-redirection-table
+> > >
+> > > Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+> > >
+> > > ---
+> > >
+> > >  drivers/acpi/spcr.c   | 5 ++++-
+> > >  include/acpi/actbl3.h | 6 +++---
+> > >  2 files changed, 7 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
+> > > index cd36a97b0ea2c7..67ae42afcc59ef 100644
+> > > --- a/drivers/acpi/spcr.c
+> > > +++ b/drivers/acpi/spcr.c
+> > > @@ -209,9 +209,12 @@ int __init acpi_parse_spcr(bool enable_earlycon,=
+ bool enable_console)
+> > >         if (!baud_rate) {
+> > >                 snprintf(opts, sizeof(opts), "%s,%s,0x%llx", uart, io=
+type,
+> > >                          table->serial_port.address);
+> > > -       } else {
+> > > +       } else if (table->header.revision <=3D 2 || !table->uartclk) =
+{
+> > >                 snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d", uart,=
+ iotype,
+> > >                          table->serial_port.address, baud_rate);
+> > > +       } else {
+> > > +               snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d,%d", ua=
+rt, iotype,
+> > > +                        table->serial_port.address, baud_rate, table=
+->uartclk);
+> > >         }
+> > >
+> > >         pr_info("console: %s\n", opts);
+> > > diff --git a/include/acpi/actbl3.h b/include/acpi/actbl3.h
+> > > index 8f775e3a08fdfb..afe45a2379866a 100644
+> > > --- a/include/acpi/actbl3.h
+> > > +++ b/include/acpi/actbl3.h
+> >
+> > The part of the patch below is outdated - SPCR v4 is supported already.
+> >
+> > Please rebase on the current mainline kernel source.
+>
+> Oh awesome. Should I send out all three patches again? Or just this
+> one? I think patches 1 and 2 can be merged.
 
-I'll try to explain the whole story and (try to) be clearer.
-
-
-[2] the intent of this initial patch was a micro-optimization which was 
-expected to save a few bytes of memory. The naming of the function 
-looked promising. However kstrdup_const() only saves the allocation 
-within the rodata section of the kernel [5,6]. The mechanism does not 
-work for code built as module.
-
-This patch *is not* broken by itself, it is just pointless most of the 
-time. So keeping it as-is is just fine, from my point of view.
-
-If built as a module, kstrdup_const() is just a plain kstrdup() and 
-kfree_const() is just kfree().
-
-
-
-[3] was a variation that tried to avoid the allocation in all cases, 
-should it be built as a module or not.
-Being a micro-optimization of a slow path, your argument of keeping 
-things simple is just fine for me.
-
-
-
-[4] just revert [2].
-[2] was not broken, so [4] does not fix anything. It just makes things 
-simpler and as before.
-
-
-So the whole point of [1,3] was that the _const versions can be 
-confusing if i915 is *NOT* builtin.
-But it *is* not wrong, just likely useless in such a case.
-
-So, from my point of view, keeping [2] as is, or applying [3] or [4] on 
-top of it does not change things much, and each solution is correct.
-
-
-
-The idea behind removing some usage of _const() function in modules is 
-related to the patch proposal [7] and more precisely the response of 
-Christoph Hellwig [8]. The patch [7] will not be applied because it 
-breaks things.
-So, should this API be removed one day, or at least removed for modules, 
-the more preparation work is already done (up to now: 4,9,10] the better 
-it is.
-
-CJ
-
-
-
-[2]: 379b63e7e682 ("drm/i915/display: Save a few bytes of memory in 
-intel_backlight_device_register()")
-
-[3]: 
-https://lore.kernel.org/all/3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727533674.git.christophe.jaillet@wanadoo.fr/
-
-[4]: 
-https://lore.kernel.org/all/f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727977199.git.christophe.jaillet@wanadoo.fr/
-
-[5]: https://elixir.bootlin.com/linux/v6.12-rc1/source/mm/util.c#L84
-[6]: 
-https://elixir.bootlin.com/linux/v6.12-rc1/source/include/asm-generic/sections.h#L177
-
-[7]: 
-https://lore.kernel.org/all/20240924050937.697118-1-senozhatsky@chromium.org/
-[8]: https://lore.kernel.org/all/ZvJfhDrv-eArtU8Y@infradead.org/
-
-[9]: 
-https://lore.kernel.org/all/63ac20f64234b7c9ea87a7fa9baf41e8255852f7.1727374631.git.christophe.jaillet@wanadoo.fr/
-[10]: 
-https://lore.kernel.org/all/06630f9ec3e153d0e7773b8d97a17e7c53e0d606.1727375615.git.christophe.jaillet@wanadoo.fr/
-
-> 
-> BR,
-> Jani.
-> 
-> 
-> [1] https://lore.kernel.org/r/3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727533674.git.christophe.jaillet@wanadoo.fr
-> 
-> 
-> 
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/gpu/drm/i915/display/intel_backlight.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/gpu/drm/i915/display/intel_backlight.c
->> index 9e05745d797d..3f81a726cc7d 100644
->> --- a/drivers/gpu/drm/i915/display/intel_backlight.c
->> +++ b/drivers/gpu/drm/i915/display/intel_backlight.c
->> @@ -949,7 +949,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
->>   	else
->>   		props.power = BACKLIGHT_POWER_OFF;
->>   
->> -	name = kstrdup_const("intel_backlight", GFP_KERNEL);
->> +	name = kstrdup("intel_backlight", GFP_KERNEL);
->>   	if (!name)
->>   		return -ENOMEM;
->>   
->> @@ -963,7 +963,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
->>   		 * compatibility. Use unique names for subsequent backlight devices as a
->>   		 * fallback when the default name already exists.
->>   		 */
->> -		kfree_const(name);
->> +		kfree(name);
->>   		name = kasprintf(GFP_KERNEL, "card%d-%s-backlight",
->>   				 i915->drm.primary->index, connector->base.name);
->>   		if (!name)
->> @@ -987,7 +987,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
->>   		    connector->base.base.id, connector->base.name, name);
->>   
->>   out:
->> -	kfree_const(name);
->> +	kfree(name);
->>   
->>   	return ret;
->>   }
-> 
-
+I have only received patch [3/3] and this one needs to be resent as
+far as I'm concerned.
 
