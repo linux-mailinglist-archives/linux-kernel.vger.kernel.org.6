@@ -1,222 +1,130 @@
-Return-Path: <linux-kernel+bounces-350823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A69990A16
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:24:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38054990A18
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70FAE1C220E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:24:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA0C2841AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46711CACDE;
-	Fri,  4 Oct 2024 17:24:18 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EE81C877E;
+	Fri,  4 Oct 2024 17:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kqi93/3c"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA81A157492
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FC715B984
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728062658; cv=none; b=Lec5zLRQztMHsSAKO44BXrIXwwsKHXKwHRz/AJbR03cWt7I+Bzu8klSFFRc/snAkl/PoC5GXntTNAVDkKtM8Nc2Mg68JykDSqqcyw7wDAYfyNQP2Acc/SQAIfOI2Elqk9+46Xk9RJsK/XN99sgHK7xSuaEXbMH4fFQmhLgIZP5k=
+	t=1728062680; cv=none; b=rgTHvP/+spXgdT1My7Oz3cVWzr5770iZVvo1bQOOXnAFHY148lbmq89Wdsa9A8isxTz4FuqqN71ENtDChfBwMamIhOrFqLMYNIvF4wWkdnsHq4yRUQXXcCFIev+MKaRqynMRsACWEVV62dDhkw5328YuAlqup0Cmv/8mOvLB7i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728062658; c=relaxed/simple;
-	bh=EmoHa8FaFyVL7Z1GSWqvvyNiResVTgGVxkK+1B2SBaU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hRzVBl9fVuKFEU8hsOt8Dj0fDplIp4cfGmlFD3vVn2mEc8iN5yCQA5mfhoY/BuQGQI7uKF1GSp+yCNZOvi+wgEl1bNk8XNgCr9z//zBSyMCFE0n1FSjN3GZkgqgIALJ2CFDUxfo/W+HPLUovqOyUXEzRAWECj7N4ZjX4giHbeUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a342e872a7so27388515ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:24:16 -0700 (PDT)
+	s=arc-20240116; t=1728062680; c=relaxed/simple;
+	bh=WBUEm231XggB4DjsI1kKzX6lb6Qv2wdaTxUXmNFPvqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FEzMaIFpxglyLopk347gl63t+KM/+U3J23gEmwQ+x40GUMLtmaYLNT20P3CRTKxA5SMDs6Jcz6o/IZ4ShfD0ieEcLfH2BKOXgXxtUExjMYCPsIrbybhZEPtb+kxOGDa3J9Ug7Pt6BerfT28HZV4aqQ4x4qxQvOXGGtT4O1R15Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kqi93/3c; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20b95359440so21708485ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 10:24:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728062678; x=1728667478; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JfPDqk3U8PSTNFTg3vYc/v2JFHCSEwqe3iTNavlxTFQ=;
+        b=kqi93/3c4IIXzIMP0rp3o6hQ4KBr0OlZJKuOsduKyvZkRuZvKqRVh5P3i+BQNlM65s
+         Vn0vfjyf9h4mBtwRep/5ioRJ+ZupZaOfk0z5a4Phj2f6wkEnIsdYrr8uLi6Js/HxdTGY
+         tizCRqapjXYIcgl/sJvgQKkiYYuv1ospNZ8HI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728062656; x=1728667456;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oFJi+zD7QTScJAa7VViMozX/t6MTB1OGWcLLN5k1oyg=;
-        b=dMZaf7YyIhFcgFy85eFReHTqdf64RF92IVXioqbnURDTEv2gfoF4BqYbL5G6fP0p59
-         ZoW6U8+H8KzCHyKV7OIPk6aAeEPo8mt2v5eZGsf2v6kZ1mfihLAaslKewq7rQ5KM7uch
-         g7U/Mh4sioaXid8pgb2SWx6bzLMNC6uhzRaerQQnXG/jz6PwpP3C+3Qh6FJRSfT0wy50
-         y2dh2sv8xvTPUp0gG8Xe/nDfH3NUoE5cWo5dUnnG0NSoFVBn8CDuMYuqWBelvF6CvBJB
-         HPPd/n2gW6I05gJnj4+VGyBGtOWou8ZbOFk7vaN7rlEXt3E4TiQBgRVahb8XoIMrxMSg
-         qFcg==
-X-Gm-Message-State: AOJu0YyI0KBiY0jXdSn88eRGMgrQloDmHsROSirvdQO0MYiCqkV74dEy
-	m9K+KbK7Fdcdozic8BPadM7BLgAwUhD4w1R4YBWUvI1tBHAdZFcsNPhBZeTGQ5owTxCbMtMZVIy
-	rEICA6/7FBCBF8jf0mE8jM0M+AfFGFhccHTKorLpJweqaawA6ph74bgA=
-X-Google-Smtp-Source: AGHT+IEA72hEupiTV0Hw0dPbeG7j0tr9d60tvqasfKq4R+eQZbAaE5Yw4JPI2YruV+TS4D4bcv/4ynaTAdDg0rtf8CoAEJXtJbIS
+        d=1e100.net; s=20230601; t=1728062678; x=1728667478;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JfPDqk3U8PSTNFTg3vYc/v2JFHCSEwqe3iTNavlxTFQ=;
+        b=rwgvTQFzf+k3ts0S3O4kyZfmD7kJNbCy0uAF3QP8pNpJZkWzxAd5DBjzwrc3JH8S7L
+         eUIFu/2/jL0wEXPeGK1Kj2oegq2iduxYJvUbZeblVSgtVRRoJbWnTrRRsvODqza+42Qz
+         ke4sYspUWKG5J0ORsEBvQWJTWkdYv6dE+Ai0z6AFjZee6YJYC+zqAiejy0FUkIi9EFno
+         nBd68BO81btp1MFGD9tF1zIbcRytnGPgPw9spRzXRt3Ukb6fZ1O5SazpT9iPG5DZy9wi
+         Zn4GgdaO+zc0+6nCdw29qpACYuWnvxhH5iTn0tIyy6IEXMXUC9Wd1GalXgZi2NMdueu4
+         imVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUz+J29ezbDmlWPGZMGd2YoNdvWcUSh/3KILnocQnGTp4x1/UKoNPEX2FL0oNQcijzO7j3GHV0buqUTnn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywdttx7tgOEOrxp/K82Ssv4tmFoC+kGh+fRNIhCjLSQ/Utg3MP
+	7p42Pb4R161gMX8G7kHRsW2ZGHNa4ebvIPdTI5NYjj/QJZl34FGiFMm3K5dEjQ==
+X-Google-Smtp-Source: AGHT+IFObaZACplJiv5YkoEQsCoFpl7ig2wihQyzVdhraEPOdDKHeKEPUCKLTtF4FtiqLiFmW4JozA==
+X-Received: by 2002:a17:903:18a:b0:20b:7d09:8c86 with SMTP id d9443c01a7336-20bfe49666fmr56055665ad.38.1728062678433;
+        Fri, 04 Oct 2024 10:24:38 -0700 (PDT)
+Received: from localhost ([2620:15c:9d:2:df8:441c:aa40:f4b0])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-20c139a408csm899515ad.307.2024.10.04.10.24.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 10:24:37 -0700 (PDT)
+From: Kenneth Albanowski <kenalba@chromium.org>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"Sean O'Brien" <seobrien@chromium.org>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kenneth Albanowski <kenalba@chromium.org>
+Subject: [PATCH] HID: Add quirk for Logitech Bolt receiver w/ Casa touchpad
+Date: Fri,  4 Oct 2024 10:24:29 -0700
+Message-ID: <20241004172434.854601-1-kenalba@chromium.org>
+X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180d:b0:3a3:67b1:3080 with SMTP id
- e9e14a558f8ab-3a375997255mr35986755ab.7.1728062656092; Fri, 04 Oct 2024
- 10:24:16 -0700 (PDT)
-Date: Fri, 04 Oct 2024 10:24:16 -0700
-In-Reply-To: <000000000000797bd1060a457c08@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670024c0.050a0220.49194.0494.GAE@google.com>
-Subject: Re: [syzbot] Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
-From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+The Logitech Casa Touchpad does not reliably send touch release signals
+when communicating through the Logitech Bolt wireless-to-USB receiver.
 
-***
+Adjusting the device class to add MT_QUIRK_NOT_SEEN_MEANS_UP to make
+sure that no touches become stuck, MT_QUIRK_FORCE_MULTI_INPUT is not
+needed, but harmless.
 
-Subject: Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
-Author: luiz.dentz@gmail.com
+Linux does not have information on which devices are connected to the
+Bolt receiver, so we have to enable this for the entire device.
 
-#syz test
+Signed-off-by: Kenneth Albanowski <kenalba@chromium.org>
+---
+ drivers/hid/hid-ids.h        | 1 +
+ drivers/hid/hid-multitouch.c | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-On Fri, Oct 4, 2024 at 12:06=E2=80=AFPM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> #syz test
->
-> On Thu, Oct 3, 2024 at 3:21=E2=80=AFPM Luiz Augusto von Dentz
-> <luiz.dentz@gmail.com> wrote:
-> >
-> > #syz test
-> >
-> > On Thu, Oct 3, 2024 at 12:32=E2=80=AFPM Luiz Augusto von Dentz
-> > <luiz.dentz@gmail.com> wrote:
-> > >
-> > > #syz test
-> > >
-> > > On Thu, Oct 3, 2024 at 11:38=E2=80=AFAM Luiz Augusto von Dentz
-> > > <luiz.dentz@gmail.com> wrote:
-> > > >
-> > > > #syz test
-> > > >
-> > > > On Wed, Oct 2, 2024 at 4:46=E2=80=AFPM Luiz Augusto von Dentz
-> > > > <luiz.dentz@gmail.com> wrote:
-> > > > >
-> > > > > #syz test
-> > > > >
-> > > > > On Wed, Oct 2, 2024 at 3:46=E2=80=AFPM Luiz Augusto von Dentz
-> > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > >
-> > > > > > #syz test
-> > > > > >
-> > > > > > On Wed, Oct 2, 2024 at 3:19=E2=80=AFPM Luiz Augusto von Dentz
-> > > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > > >
-> > > > > > > #syz test
-> > > > > > >
-> > > > > > > On Wed, Oct 2, 2024 at 3:04=E2=80=AFPM Luiz Augusto von Dentz
-> > > > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > > > >
-> > > > > > > > From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-> > > > > > > >
-> > > > > > > > This makes use of disable_delayed_work_sync instead
-> > > > > > > > cancel_delayed_work_sync as it not only cancel the ongoing =
-work but also
-> > > > > > > > disables new submit which is disarable since the object hol=
-ding the work
-> > > > > > > > is about to be freed.
-> > > > > > > >
-> > > > > > > > In addition to it remove call to sco_sock_set_timer on __sc=
-o_sock_close
-> > > > > > > > since at that point it is useless to set a timer as the sk =
-will be freed
-> > > > > > > > there is nothing to be done in sco_sock_timeout.
-> > > > > > > >
-> > > > > > > > Reported-by: syzbot+4c0d0c4cde787116d465@syzkaller.appspotm=
-ail.com
-> > > > > > > > Closes: https://syzkaller.appspot.com/bug?extid=3D4c0d0c4cd=
-e787116d465
-> > > > > > > > Fixes: ba316be1b6a0 ("Bluetooth: schedule SCO timeouts with=
- delayed_work")
-> > > > > > > > Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel=
-.com>
-> > > > > > > > ---
-> > > > > > > >  net/bluetooth/sco.c | 13 +------------
-> > > > > > > >  1 file changed, 1 insertion(+), 12 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
-> > > > > > > > index a5ac160c592e..2b1e66976068 100644
-> > > > > > > > --- a/net/bluetooth/sco.c
-> > > > > > > > +++ b/net/bluetooth/sco.c
-> > > > > > > > @@ -208,7 +208,7 @@ static void sco_conn_del(struct hci_con=
-n *hcon, int err)
-> > > > > > > >         }
-> > > > > > > >
-> > > > > > > >         /* Ensure no more work items will run before freein=
-g conn. */
-> > > > > > > > -       cancel_delayed_work_sync(&conn->timeout_work);
-> > > > > > > > +       disable_delayed_work_sync(&conn->timeout_work);
-> > > > > > > >
-> > > > > > > >         hcon->sco_data =3D NULL;
-> > > > > > > >         kfree(conn);
-> > > > > > > > @@ -442,17 +442,6 @@ static void __sco_sock_close(struct so=
-ck *sk)
-> > > > > > > >
-> > > > > > > >         case BT_CONNECTED:
-> > > > > > > >         case BT_CONFIG:
-> > > > > > > > -               if (sco_pi(sk)->conn->hcon) {
-> > > > > > > > -                       sk->sk_state =3D BT_DISCONN;
-> > > > > > > > -                       sco_sock_set_timer(sk, SCO_DISCONN_=
-TIMEOUT);
-> > > > > > > > -                       sco_conn_lock(sco_pi(sk)->conn);
-> > > > > > > > -                       hci_conn_drop(sco_pi(sk)->conn->hco=
-n);
-> > > > > > > > -                       sco_pi(sk)->conn->hcon =3D NULL;
-> > > > > > > > -                       sco_conn_unlock(sco_pi(sk)->conn);
-> > > > > > > > -               } else
-> > > > > > > > -                       sco_chan_del(sk, ECONNRESET);
-> > > > > > > > -               break;
-> > > > > > > > -
-> > > > > > > >         case BT_CONNECT2:
-> > > > > > > >         case BT_CONNECT:
-> > > > > > > >         case BT_DISCONN:
-> > > > > > > > --
-> > > > > > > > 2.46.1
-> > > > > > > >
-> > > > > > >
-> > > > > > >
-> > > > > > > --
-> > > > > > > Luiz Augusto von Dentz
-> > > > > >
-> > > > > >
-> > > > > >
-> > > > > > --
-> > > > > > Luiz Augusto von Dentz
-> > > > >
-> > > > >
-> > > > >
-> > > > > --
-> > > > > Luiz Augusto von Dentz
-> > > >
-> > > >
-> > > >
-> > > > --
-> > > > Luiz Augusto von Dentz
-> > >
-> > >
-> > >
-> > > --
-> > > Luiz Augusto von Dentz
-> >
-> >
-> >
-> > --
-> > Luiz Augusto von Dentz
->
->
->
-> --
-> Luiz Augusto von Dentz
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 86820a3d9766..ff3c17f76aa2 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -868,6 +868,7 @@
+ #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1	0xc539
+ #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_1	0xc53f
+ #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_POWERPLAY	0xc53a
++#define USB_DEVICE_ID_LOGITECH_BOLT_RECEIVER	0xc548
+ #define USB_DEVICE_ID_SPACETRAVELLER	0xc623
+ #define USB_DEVICE_ID_SPACENAVIGATOR	0xc626
+ #define USB_DEVICE_ID_DINOVO_DESKTOP	0xc704
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 638e36c6d0f1..481d2b798633 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -2137,6 +2137,10 @@ static const struct hid_device_id mt_devices[] = {
+ 		HID_DEVICE(BUS_BLUETOOTH, HID_GROUP_MULTITOUCH_WIN_8,
+ 			USB_VENDOR_ID_LOGITECH,
+ 			USB_DEVICE_ID_LOGITECH_CASA_TOUCHPAD) },
++	{ .driver_data = MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU,
++		HID_DEVICE(BUS_USB, HID_GROUP_MULTITOUCH_WIN_8,
++			USB_VENDOR_ID_LOGITECH,
++			USB_DEVICE_ID_LOGITECH_BOLT_RECEIVER) },
+ 
+ 	/* MosArt panels */
+ 	{ .driver_data = MT_CLS_CONFIDENCE_MINUS_ONE,
+-- 
+2.46.1.824.gd892dcdcdd-goog
 
-
-
---=20
-Luiz Augusto von Dentz
 
