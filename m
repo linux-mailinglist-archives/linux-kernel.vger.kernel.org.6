@@ -1,129 +1,212 @@
-Return-Path: <linux-kernel+bounces-350856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B39D9990A8C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:01:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62BD9990A8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC0931C21112
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:01:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2066B219D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1DF823DF;
-	Fri,  4 Oct 2024 18:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cEBnjt3C"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798371E377B
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54723823DF;
+	Fri,  4 Oct 2024 18:04:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADD52E83F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 18:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728064884; cv=none; b=SgGBmUKV44hw3EyMVYWBA0/Z84nUpaWbCz3dy6SYKulJvTcQODFn72w8AmFz2IAU4mEUeUVGYUviLhKK0HREWv8TwNCeT4QeZTz7/lkdFKwDE87wXlup3VR9TI+WEHPuRXBh8A3J/Yfr+dAN4ll0JvJ6ah3ma2xMAtlEhsAvyIU=
+	t=1728065043; cv=none; b=E4CyGgg+jYWuDrnz1ra4d/3BBZcBoQL0Ho3KhlsXfbkEFEHuliu75GTB9Op3VZ0e/VpPNzMkRLPmcfCyVGVK1S7d1HeOdUozVHkNzB/ZIM6srOt78mUclSNmZ15CyJ7hoUoJRtiJXvzvghn8TCohtu6rWUmR1sQdi4Gl2zmUEys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728064884; c=relaxed/simple;
-	bh=uWPZ3ufbC/wfGebvblqb3Mr0rz7AR9cnbkpxqvS2umE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gdz6TtWgahhUbAFHG+A+Wlyik75HUkNqlOsDaCsoOSK0RJsPDDQh2doPCa6Otz1W89aT1gkL5kOX9SWal9L/ikNd7ABqM+oQWjDuboXaQGzajb7GPlppj0jenRmSraBSdOX3VK4SqxP4JOMz9Z9W/PqQYIBbgdKNUq3hClBrt4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cEBnjt3C; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494APai9029115;
-	Fri, 4 Oct 2024 18:01:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qWeHTzzr5dKEVUmcLYSOmzmVGfE/02KwSjMavnSpS8w=; b=cEBnjt3CsOcpyUg6
-	g4oW1gkoeaQwbijs3SxX7cHQK8NDnHVIbl/9egJKaARbde0m8Qr3vo84p75BuLKs
-	7/jqPQrWsipJT7nl/rdChKz9VYtFZcVVM6t9KYiXgkesWS4knSmiaE2rtLJ8z2Mx
-	kd2ZA9HDZMkNzVOzEtbcBiKNP5/GQtQHIC8so6dNAjj0d+rMciif8RRzo84xf+ER
-	0ZqcYxwbLNwqiaXfn3a224zaC/C5tNLXxJf1QHQA+JbV0U2bKFMkKoO5mOSGrL9E
-	46hMmRfh2fG6ycXHaXuZUwOn+XevTwEMSjk3L+61eiU30ZFbm9hHeHxmtq77afZ+
-	QrpgIw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205hawq4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 18:01:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494I1H3f003827
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 18:01:17 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 11:01:17 -0700
-Message-ID: <8549424d-bd22-8308-c661-c2ef13cdc441@quicinc.com>
-Date: Fri, 4 Oct 2024 12:01:16 -0600
+	s=arc-20240116; t=1728065043; c=relaxed/simple;
+	bh=bunl0YGmyK03ZjgdS8qXTZxLYWNVemJpLIxszom5yks=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CrqGw3DKcE7jpgROSxPCNpIXlM2jqPyafmMGmw/daLbsixqUvxSKw7r5JrhsSY8nL4sa7cB0H+iuN0aQC25TbQmwIWtWvX1I3+Doms6AMWIvTFKl4DmEtDIiaSoLjODs/pZGWtdod0t9g1wOjOni4memMCKEwyXc44jDNQd6Q1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4EB87339;
+	Fri,  4 Oct 2024 11:04:30 -0700 (PDT)
+Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDC763F58B;
+	Fri,  4 Oct 2024 11:03:57 -0700 (PDT)
+From: James Morse <james.morse@arm.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	H Peter Anvin <hpa@zytor.com>,
+	Babu Moger <Babu.Moger@amd.com>,
+	James Morse <james.morse@arm.com>,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com,
+	lcherian@marvell.com,
+	bobo.shaobowang@huawei.com,
+	tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>,
+	peternewman@google.com,
+	dfustini@baylibre.com,
+	amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>,
+	Dave Martin <dave.martin@arm.com>
+Subject: [PATCH v5 00/40] x86/resctrl: Move the resctrl filesystem code to /fs/resctrl
+Date: Fri,  4 Oct 2024 18:03:07 +0000
+Message-Id: <20241004180347.19985-1-james.morse@arm.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH V3 07/11] accel/amdxdna: Add command execution
-Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20240911180604.1834434-1-lizhi.hou@amd.com>
- <20240911180604.1834434-8-lizhi.hou@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240911180604.1834434-8-lizhi.hou@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2cBXhKe3-JPb7Mob1bWJOBauxhG2eP64
-X-Proofpoint-ORIG-GUID: 2cBXhKe3-JPb7Mob1bWJOBauxhG2eP64
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- malwarescore=0 clxscore=1015 mlxlogscore=723 phishscore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 spamscore=0
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410040124
+Content-Transfer-Encoding: 8bit
 
-On 9/11/2024 12:06 PM, Lizhi Hou wrote:
-> +enum amdxdna_cmd_type {
-> +	AMDXDNA_CMD_SUBMIT_EXEC_BUF = 0,
-> +	AMDXDNA_CMD_SUBMIT_DEPENDENCY,
-> +	AMDXDNA_CMD_SUBMIT_SIGNAL,
-> +};
-> +
-> +/**
-> + * struct amdxdna_drm_exec_cmd - Execute command.
-> + * @ext: MBZ.
-> + * @ext_flags: MBZ.
+Changes since v4?:
+ * Dropped the percentage/mbps distinction, this can be future cleanup as I
+   think the difference matters to user-space. These are both treated as a
+   'range'.
+ * Picked a pre-requisite cleanup patch from Christophe to make merging
+   easier.
+ * More of the __init/__exit stuff has consolodated in the patch that removes
+   them from filesystem code.
+ Regardless, changes are noted on each patch.
 
-I see a check for ext_flags, but not ext
+~
 
-> + * @hwctx: Hardware context handle.
-> + * @type: One of command type in enum amdxdna_cmd_type.
-> + * @cmd_handles: Array of command handles or the command handle itself
-> + *               in case of just one.
-> + * @args: Array of arguments for all command handles.
-> + * @cmd_count: Number of command handles in the cmd_handles array.
-> + * @arg_count: Number of arguments in the args array.
-> + * @seq: Returned sequence number for this command.
-> + */
-> +struct amdxdna_drm_exec_cmd {
-> +	__u64 ext;
-> +	__u64 ext_flags;
-> +	__u32 hwctx;
-> +	__u32 type;
-> +	__u64 cmd_handles;
-> +	__u64 args;
-> +	__u32 cmd_count;
-> +	__u32 arg_count;
-> +	__u64 seq;
-> +};
+This is the final series that allows other architectures to implement resctrl.
+The final patch to move the code has been omited, but can be generated using
+the python script at the end of the series.
+The final move is a bit of a monster. I don't expect that to get merged as part
+of this series - we should wait for it to make less impact on other series.
+
+Otherwise this series renames functions and moves code around. With the
+exception of invalid configurations for the configurable-events, there should
+be no changes in behaviour caused by this series.
+
+The driving pattern is to make things like struct rdtgroup private to resctrl.
+Features like pseudo-lock aren't going to work on arm64, the ability to disable
+it at compile time is added.
+
+After this, I can start posting the MPAM driver to make use of resctrl on arm64.
+(What's MPAM? See the cover letter of the first series. [1])
+
+This series is based on v6.12-rc1 and can be retrieved from:
+https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move_to_fs/v5
+
+As ever - bugs welcome,
+Thanks,
+
+James
+
+[v4] https://lore.kernel.org/all/20240802172853.22529-1-james.morse@arm.com/
+[v3] https://lore.kernel.org/r/20240614150033.10454-1-james.morse@arm.com
+[v2] https://lore.kernel.org/r/20240426150537.8094-1-Dave.Martin@arm.com
+[v1] https://lore.kernel.org/r/20240321165106.31602-1-james.morse@arm.com
+[1] https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.com/
+
+
+
+
+Christophe JAILLET (1):
+  x86/resctrl: Slightly clean-up mbm_config_show()
+
+James Morse (39):
+  x86/resctrl: Fix allocation of cleanest CLOSID on platforms with no
+    monitors
+  x86/resctrl: Add a helper to avoid reaching into the arch code
+    resource list
+  x86/resctrl: Remove fflags from struct rdt_resource
+  x86/resctrl: Use schema type to determine how to parse schema values
+  x86/resctrl: Use schema type to determine the schema format string
+  x86/resctrl: Remove data_width and the tabular format
+  x86/resctrl: Add max_bw to struct resctrl_membw
+  x86/resctrl: Generate default_ctrl instead of sharing it
+  x86/resctrl: Add helper for setting CPU default properties
+  x86/resctrl: Remove rdtgroup from update_cpu_closid_rmid()
+  x86/resctrl: Export resctrl fs's init function
+  x86/resctrl: Wrap resctrl_arch_find_domain() around rdt_find_domain()
+  x86/resctrl: Move resctrl types to a separate header
+  x86/resctrl: Add a resctrl helper to reset all the resources
+  x86/resctrl: Move monitor exit work to a resctrl exit call
+  x86/resctrl: Move monitor init work to a resctrl init call
+  x86/resctrl: Rewrite and move the for_each_*_rdt_resource() walkers
+  x86/resctrl: Export the is_mbm_*_enabled() helpers to asm/resctrl.h
+  x86/resctrl: Add resctrl_arch_is_evt_configurable() to abstract BMEC
+  x86/resctrl: Change mon_event_config_{read,write}() to be arch helpers
+  x86/resctrl: Move mbm_cfg_mask to struct rdt_resource
+  x86/resctrl: Add resctrl_arch_ prefix to pseudo lock functions
+  x86/resctrl: Allow an architecture to disable pseudo lock
+  x86/resctrl: Make prefetch_disable_bits belong to the arch code
+  x86/resctrl: Make resctrl_arch_pseudo_lock_fn() take a plr
+  x86/resctrl: Move thread_throttle_mode_init() to be managed by resctrl
+  x86/resctrl: Move get_config_index() to a header
+  x86/resctrl: Claim get_{mon,ctrl}_domain_from_cpu() helpers for
+    resctrl
+  x86/resctrl: Describe resctrl's bitmap size assumptions
+  x86/resctrl: Rename resctrl_sched_in() to begin with "resctrl_arch_"
+  x86/resctrl: resctrl_exit() teardown resctrl but leave the mount point
+  x86/resctrl: Drop __init/__exit on assorted symbols
+  x86/resctrl: Move is_mba_sc() out of core.c
+  x86/resctrl: Add end-marker to the resctrl_event_id enum
+  x86/resctrl: Remove a newline to avoid confusing the code move script
+  x86/resctrl: Split trace.h
+  fs/resctrl: Add boiler plate for external resctrl code
+  x86/resctrl: Move the filesystem bits to headers visible to fs/resctrl
+  x86/resctrl: Add python script to move resctrl code to /fs/resctrl
+
+ MAINTAINERS                                   |   2 +
+ arch/Kconfig                                  |   8 +
+ arch/x86/Kconfig                              |  12 +-
+ arch/x86/include/asm/resctrl.h                |  45 +-
+ arch/x86/kernel/cpu/resctrl/Makefile          |   8 +-
+ arch/x86/kernel/cpu/resctrl/core.c            | 170 ++--
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c     |  67 +-
+ arch/x86/kernel/cpu/resctrl/internal.h        | 217 ++---
+ arch/x86/kernel/cpu/resctrl/monitor.c         | 104 ++-
+ arch/x86/kernel/cpu/resctrl/monitor_trace.h   |  31 +
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c     |  60 +-
+ .../resctrl/{trace.h => pseudo_lock_trace.h}  |  24 +-
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c        | 268 ++++--
+ arch/x86/kernel/process_32.c                  |   2 +-
+ arch/x86/kernel/process_64.c                  |   2 +-
+ fs/Kconfig                                    |   1 +
+ fs/Makefile                                   |   1 +
+ fs/resctrl/Kconfig                            |  37 +
+ fs/resctrl/Makefile                           |   6 +
+ fs/resctrl/ctrlmondata.c                      |   0
+ fs/resctrl/internal.h                         |   0
+ fs/resctrl/monitor.c                          |   0
+ fs/resctrl/monitor_trace.h                    |   0
+ fs/resctrl/pseudo_lock.c                      |   0
+ fs/resctrl/pseudo_lock_trace.h                |   0
+ fs/resctrl/rdtgroup.c                         |   0
+ include/linux/resctrl.h                       | 239 +++++-
+ include/linux/resctrl_types.h                 |  59 ++
+ resctrl_copy_pasta.py                         | 779 ++++++++++++++++++
+ 29 files changed, 1638 insertions(+), 504 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/resctrl/monitor_trace.h
+ rename arch/x86/kernel/cpu/resctrl/{trace.h => pseudo_lock_trace.h} (56%)
+ create mode 100644 fs/resctrl/Kconfig
+ create mode 100644 fs/resctrl/Makefile
+ create mode 100644 fs/resctrl/ctrlmondata.c
+ create mode 100644 fs/resctrl/internal.h
+ create mode 100644 fs/resctrl/monitor.c
+ create mode 100644 fs/resctrl/monitor_trace.h
+ create mode 100644 fs/resctrl/pseudo_lock.c
+ create mode 100644 fs/resctrl/pseudo_lock_trace.h
+ create mode 100644 fs/resctrl/rdtgroup.c
+ create mode 100644 include/linux/resctrl_types.h
+ create mode 100644 resctrl_copy_pasta.py
+
+-- 
+2.39.2
+
 
