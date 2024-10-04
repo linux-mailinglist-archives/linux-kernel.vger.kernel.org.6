@@ -1,192 +1,120 @@
-Return-Path: <linux-kernel+bounces-349891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3140898FCC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:42:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FACE98FCC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 06:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1269A1C224E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:42:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19F47B226D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B724E1B3;
-	Fri,  4 Oct 2024 04:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF7929CF7;
+	Fri,  4 Oct 2024 04:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nMv0YZwp"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cif02BMw"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9164E33FD;
-	Fri,  4 Oct 2024 04:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C40A210E9
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 04:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728016929; cv=none; b=tXCyia0WjO9wvmIXCt1yAAqqxK/bbyVLb5r0F/vEEsWAHdP400mlsfLVhND3/HD/Rz0EbUjthMR82Ga/vb4rmjGxv9diK0HhWTSMhU7jRaRzuotxX7KJMSdxK4CBIUaC+c8yJJWC/mPFM060Ut51XsNNYdTn02fUE7lkFFCqbzw=
+	t=1728017110; cv=none; b=GtG9EoyHCNEA9FEhyPOGPZaSoQ/X2HUrU5DKDbelO/3UkttDfdnaMDthZ79rFhiCMsj1kBGUWtO0UxodNFNWTtmg6s8j+FwUBbRZCADfcosGCzTcP19JWxUweoF3NKQ44wbW3AgOrL1XEbRDgA5vYj3McAVbuRklIB+p5OY3Dok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728016929; c=relaxed/simple;
-	bh=ZCU4rzWW8nYo6znPQJ3a5zENZq5BAyna+xiVRTgloC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WpTeD+oUMSz4qjtzgHIMmqJO6D3LUDn2YlpCjTPbNCWpk4wCgyvye9rTfMgl9KT8Xx/Wx5yh1IxgFqa69rf2l2b6+8bka5MGPBVrZ9DqtRPYmefcec1Rn8evhKM2UunwEKL0z2D6hQb6Jch0RE9H6JWHESn8XaQQG4bwt+NmU94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nMv0YZwp; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728016923;
-	bh=WP3QY5cWHPQzIelK2LCRXAQqVf2dA1gMNgETdawsXBc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nMv0YZwpzkPFGGxFeO43i61+5Nv32xNs19cK/h4eWHyVnczlOaCQyZ5qvObPSD4Qz
-	 qQP6dm8j2ovqK923KSHPO6ZTifRxVQo+AvuY9GL2NaNVDwO6J4vcN/4McvAaDivuMf
-	 +SpjM/Y+6k2GUBsADbQSaNvfXnb6IuNmjYsugiS5S2Kp5vKyhHxWMtMHntT6cPlBs+
-	 V3WQMHtigVY+EADvsUAuAZGARhJbXSY3ae6u+Cnjg2FlN5Vyl+YxhBoijX7/oIlRHp
-	 4suzN89k9ibn7kkJrcm8ujXkNzi2ZGr7klSUA+q6jCPWO12bR+yxBoJAIkb59y9A+y
-	 dd2DZSAq1p9Og==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XKbVg05jrz4x8h;
-	Fri,  4 Oct 2024 14:42:02 +1000 (AEST)
-Date: Fri, 4 Oct 2024 14:42:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the rust tree with the vfs-brauner tree
-Message-ID: <20241004144202.24a9f0ef@canb.auug.org.au>
+	s=arc-20240116; t=1728017110; c=relaxed/simple;
+	bh=VmwvU0W4CbtoHjdtRtYbUa1zfcrUwdOCsDV5l+mX1gQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=q+2oCKusCrEnLOUm3r8wSWt/mCptrNhPU6d8D1z5lCdwCODUm2zrLPF9bYg8IwVIcXMHUylk/HzmmLHFnX14KDQNdY5sMujsWhqMPn0GBqG8BNwe1u2e/Naz+m8DZcMYYvjTL+ydy49ECcF1hGGmvtPjiXaDezpeQytfiMbrGQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cif02BMw; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6d23b607-b6d6-4074-8778-c50bf3bd0b91@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728017103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ytssWJLKmXIWXSrDg9ABlNpbkQhbsJOWwycT6PoQRhQ=;
+	b=cif02BMw0GzdjzhEZDwFVDFEIppcN7DFA9RB7RJTWvYL/k1JyQxwrtdZ3o/ht160Nnev2+
+	MjCoa0xOwItozXfUK1vw63f/lurOBt0ZK2wv8UaJ7r97F1YtJeztgwwIFJKN+I4FgTXwUS
+	D5qe/rCsFpIY8ITEVkZkD1Gqg0UU6Go=
+Date: Thu, 3 Oct 2024 21:44:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/EeTqXcoSBaggvR0ct99RPBD";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Subject: Re: [PATCH bpf-next v2] selftests/bpf: convert test_xdp_features.sh
+ to test_progs
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+To: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Jakub Kicinski <kuba@kernel.org>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, ebpf@linuxfoundation.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
+References: <20240910-convert_xdp_tests-v2-1-a46367c9d038@bootlin.com>
+ <64df8d41-6cfb-45a9-8337-5cc04daedb60@linux.dev> <ZuVWmxoqXFI3qvVI@lore-desk>
+ <20240914063828.7bd73c5e@kernel.org>
+ <464e0ae0-d6e3-4da4-a157-f74260f96275@bootlin.com>
+ <366e4392-bd00-4120-8585-a71b3952e365@linux.dev>
+Content-Language: en-US
+In-Reply-To: <366e4392-bd00-4120-8585-a71b3952e365@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/EeTqXcoSBaggvR0ct99RPBD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 9/24/24 6:37 PM, Martin KaFai Lau wrote:
+> There are other .sh tests that could better use the test_progs migration. In 
+> particular the ones without existing test coverage. For non XDP related, 
+> test_tcp_check_syncookie.sh, test_flow_dissector.sh, and test_tc_edt.sh should 
+> be the good ones.
 
-Hi all,
+I just took a closer look at the test_tc_edt.* for another reason. It seems 
+doing some bandwidth test which may not be a good fit (e.g. too flaky) for 
+test_progs. I would leave it to the bottom of the todo list for now.
 
-Today's linux-next merge of the rust tree got a conflict in:
+> 
+> For XDP, test_xdp_meta.sh should be useful also. You may also want to check the 
+> test_xdp_redirect_*.sh.
+> 
+>> processes and tcp/udp channels involved), but if keeping the standalone version
+>> is really needed, I can give a try. Does it sound reasonable ?
+>> - one part of my overall goal is to clean up the tools/testing/selftests/bpf
+>> directory from anything that is not tested automatically. What should we do with
+>> the wrapping shell script (test_xdp_features.sh) ? Since test_progs will
+>> automate the test with veths, I guess it is still ok to just remove it ?
+>>
+>>> No preference but just to raise awareness - drivers/net's NetDrvEpEnv
+>>> class provides the setup for running tests with an endpoint.
+>>> XDP tests intended for HW would fit there pretty well.
+>>
+>> Thanks for the hint. If we want to keep some tooling for real hw xdp features
+>> testing, maybe we could add a small part in tools/testing/selftests/drivers/net
+>> and make it use this NetDrvEpEnv ? Or it is a bigger hint that the whole test
+>> about xdp features could be moved there (and then tested by net kselftests
+>> rather than by ebpf ci specifically) ? @Lorenzo and eBPF tests maintainers, any
+>> opinion ?
+>>
+>> Thanks,
+>>
+>> Alexis
+>>
+> 
+> 
 
-  rust/kernel/types.rs
-
-between commit:
-
-  e7572e5deaf3 ("rust: types: add `NotThreadSafe`")
-
-from the vfs-brauner tree and commits:
-
-  c4277ae2a630 ("rust: types: avoid repetition in `{As,From}Bytes` impls")
-  432526d4ff32 ("rust: enable `clippy::undocumented_unsafe_blocks` lint")
-
-from the rust tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc rust/kernel/types.rs
-index 3238ffaab031,28d9e5ea3df4..000000000000
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@@ -514,42 -527,23 +527,44 @@@ impl_frombytes!=20
-  /// mutability.
-  pub unsafe trait AsBytes {}
- =20
-- // SAFETY: Instances of the following types have no uninitialized portion=
-s.
-- unsafe impl AsBytes for u8 {}
-- unsafe impl AsBytes for u16 {}
-- unsafe impl AsBytes for u32 {}
-- unsafe impl AsBytes for u64 {}
-- unsafe impl AsBytes for usize {}
-- unsafe impl AsBytes for i8 {}
-- unsafe impl AsBytes for i16 {}
-- unsafe impl AsBytes for i32 {}
-- unsafe impl AsBytes for i64 {}
-- unsafe impl AsBytes for isize {}
-- unsafe impl AsBytes for bool {}
-- unsafe impl AsBytes for char {}
-- unsafe impl AsBytes for str {}
-- // SAFETY: If individual values in an array have no uninitialized portion=
-s, then the array itself
-- // does not have any uninitialized portions either.
-- unsafe impl<T: AsBytes> AsBytes for [T] {}
-- unsafe impl<T: AsBytes, const N: usize> AsBytes for [T; N] {}
-+ macro_rules! impl_asbytes {
-+     ($($({$($generics:tt)*})? $t:ty, )*) =3D> {
-+         // SAFETY: Safety comments written in the macro invocation.
-+         $(unsafe impl$($($generics)*)? AsBytes for $t {})*
-+     };
-+ }
-+=20
-+ impl_asbytes! {
-+     // SAFETY: Instances of the following types have no uninitialized por=
-tions.
-+     u8, u16, u32, u64, usize,
-+     i8, i16, i32, i64, isize,
-+     bool,
-+     char,
-+     str,
-+=20
-+     // SAFETY: If individual values in an array have no uninitialized por=
-tions, then the array
-+     // itself does not have any uninitialized portions either.
-+     {<T: AsBytes>} [T],
-+     {<T: AsBytes, const N: usize>} [T; N],
-+ }
- +
- +/// Zero-sized type to mark types not [`Send`].
- +///
- +/// Add this type as a field to your struct if your type should not be se=
-nt to a different task.
- +/// Since [`Send`] is an auto trait, adding a single field that is `!Send=
-` will ensure that the
- +/// whole type is `!Send`.
- +///
- +/// If a type is `!Send` it is impossible to give control over an instanc=
-e of the type to another
- +/// task. This is useful to include in types that store or reference task=
--local information. A file
- +/// descriptor is an example of such task-local information.
- +///
- +/// This type also makes the type `!Sync`, which prevents immutable acces=
-s to the value from
- +/// several threads in parallel.
- +pub type NotThreadSafe =3D PhantomData<*mut ()>;
- +
- +/// Used to construct instances of type [`NotThreadSafe`] similar to how =
-`PhantomData` is
- +/// constructed.
- +///
- +/// [`NotThreadSafe`]: type@NotThreadSafe
- +#[allow(non_upper_case_globals)]
- +pub const NotThreadSafe: NotThreadSafe =3D PhantomData;
-
---Sig_/EeTqXcoSBaggvR0ct99RPBD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb/choACgkQAVBC80lX
-0GzctAf/Q/buPiqF7EVmv4bl8M23zY46ShWKq5fQGxN+10682npm4R544RAuFc2N
-4w3nBjWh7h9gb0E5X2n/SDQZuyP3TM/QdYAPBbUv78X5Hr0dU6tdXjvj5Lm0+9uW
-yPB2kLfkzPOyJAXcGgpgMP6P1pqFwxtKLshNkDQpYgOwH/1XVaHRobvP8qPnBpXA
-JGMR0EAG0kYh4UOd2OOUI+zjHvtFPCKfayrVaugRirIo328xMQdUaOFKRD73Gofk
-QyzIyYdldd9GloRSb4UocPmBJUXUtmWh3wVkPKtlPea4ISys6RPyX308GBS7MlOa
-tMMeC6KdYNM87ThBGig7Om+qUyRGUg==
-=Smv2
------END PGP SIGNATURE-----
-
---Sig_/EeTqXcoSBaggvR0ct99RPBD--
 
