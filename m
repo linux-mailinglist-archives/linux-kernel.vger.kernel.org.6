@@ -1,240 +1,181 @@
-Return-Path: <linux-kernel+bounces-350489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5BC9905EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:23:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C9179905EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C0141C21225
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 715FE1C212CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2483217300;
-	Fri,  4 Oct 2024 14:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5444216A06;
+	Fri,  4 Oct 2024 14:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HQk4swDR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X/Iq1FxQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FCB1B7E9;
-	Fri,  4 Oct 2024 14:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728051790; cv=fail; b=Idz0FRrIoWRJsWm5wiNdePYA+eqCgpE62j6HKFYC4EHXGfvHa6P6Rvo00STt0TVyTCsftco5bkyqoM/OsUB0wXtetzD232gY/5kdtS3AlI6rmtteSC696Bvd4GEfiYG32sgYR+NIM6bjdbOWmtt3mknPGKJQwNUHZmC/a3rSg0I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728051790; c=relaxed/simple;
-	bh=MLkhh+EPEZJ5mYvmVbtrMjnAXdvnGEw9UaJLIKS8WUc=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jQD/AfQOu58mY320R4MSa6eUyL1JMtvAGsdaDTPDjfR4AgA7ZPnmuqQ8qKe++a930iRlBZ+Z9OmDBn9Cv2B34/HSnxU9FNSgrqjC43EIMPG7vpWVEA7n/Xu3tIt/i8EOZ5NErJpKMu0Np7Ea36ozvk5SLkk4GtBdlh5cck2vw5I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HQk4swDR; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE0A1B7E9;
+	Fri,  4 Oct 2024 14:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728051802; cv=none; b=eYL2Ycf3vGsdsV2e8Vu8bVsd9zuaDSLY+D7AN+ZtuWhSnEJlxtOg9Ja/jGba+wUXzG4YbNuJiUp+MhVyrl4qVDXrLs2CgsPjcBHCg3gy7FzQ554o93VvCBlLs+mD18h0XQ+LJJ8zuOQ2rEiC/uRaCKI+i7IPfMXhFAV2R1+AUAw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728051802; c=relaxed/simple;
+	bh=0Whr7Iiiz7JTv4iwA1dRvewJcTvZDGDXgwnUjPWvl5Q=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=hMlt2L9BJ/rBlOTEZjjiMADC3hUWd9ptQr7emoQNKs8YAj/8XWNXIJCGFJ/8Pdzj2HpH8s1KoC55uzd7n3TduXERDzg0hqP7Nu2emfi4hYwHjH+Ju/rEqJS17K1eqllCAHmLlSMt3pqJdHFpA4qgSF6WweFazUqPkTagbIaIcb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X/Iq1FxQ; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728051788; x=1759587788;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=MLkhh+EPEZJ5mYvmVbtrMjnAXdvnGEw9UaJLIKS8WUc=;
-  b=HQk4swDRRhw0zJz3q+DClO4w3k+B6Q5AMFzmCdgGpVxrQXHtgP+4TVFZ
-   t2oZXRTGXAbBj+Fgba2KcQpf4InFV6/yqO7kbjakCrnqHOcoWejsKvZWc
-   kVR4du41h3e6LJiDwALmXmqwkMvw8j6lPvo9EoRD1XYmwfKk+JypKoz3c
-   jpc7QJJAsOB6mUglrVQ/w67VFEJUP1dDgPcgE+Cy4RkhYsLCaS1HO4/sv
-   wIROlPewlC9iqyE1wjmpsyvIqo94jCLjIb0g77h/2+BJQhraBC2DGfKS8
-   BUR3IooBaBlFQlFMT34EW+yoJK5IInRjnl2yfdDSrJB7SP5e0t5XmVnBS
+  t=1728051801; x=1759587801;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=0Whr7Iiiz7JTv4iwA1dRvewJcTvZDGDXgwnUjPWvl5Q=;
+  b=X/Iq1FxQfFUyh7L9MpmOZWp+sUO17Nn6HDx/NiTyCaJy89BfxOB9GAu1
+   fgA9qUhUe2kJ97dkgQ7Alagd72bN0TXA+1eif4N95tf3p13ZypjdLi2hi
+   ZWy4Lhz44IOI6hyKMrenBU0rnqquIToFyGBA+TLH+C8Hd5mShVCykiaHl
+   p9hhzYt80uyTaVeYgADnl1pRo+j7Wy8mv6+ks1AA/X3LKWCgUqv8BnrYy
+   ikOC3J8+mF46KBaLqXj/mR+lvujnrh6TV6Z4q/71/pKtdducK4BTsAV3n
+   ls1P16L0muM4QW08PRO5W08+GVsX4jU7G8X07utVtTkkQSzh7uVVw3U3a
    Q==;
-X-CSE-ConnectionGUID: EsS1bHkmQVGWaEeRDJO+vQ==
-X-CSE-MsgGUID: 4X94p8juRR6a8/RUxftIIA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="26782815"
+X-CSE-ConnectionGUID: 3TFZyVC3RXevjnRF2oRjnQ==
+X-CSE-MsgGUID: o7ChRlSjRA6KomDPdd8Xiw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="37844905"
 X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="26782815"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 07:23:07 -0700
-X-CSE-ConnectionGUID: btWXKm8XR16gToLFUV4Ijg==
-X-CSE-MsgGUID: mOF8dg+OTdqLsyKXRuOBpA==
+   d="scan'208";a="37844905"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 07:23:20 -0700
+X-CSE-ConnectionGUID: NTNlezLZSxSGcR2JKlgWqA==
+X-CSE-MsgGUID: QyOuXLnnQuCNJzx0aclTvQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="79148655"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Oct 2024 07:23:06 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 4 Oct 2024 07:23:06 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 4 Oct 2024 07:23:06 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.173)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 4 Oct 2024 07:23:05 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IY7rdtGiMxzHKIRxuAXQDqEI4EUkJRtWroYkQJtRftw3r4qng20u6scNfn05eRMnEuh9+vJwRdHN0ZiEXr/Z2+QAm86Km1T2GsA9pu63POuK1EC8ZYQUa7dI+k9qzgMZZvZHPDPDWZ3H+diC7U3qNZjnjZ56b6KZNwqVxCe/EDZsGWUNanWmDp9NEY3H6e3N3ETaOSw0gJQ7FkSAOOZ1lR4/vTNuFApEVoACkCZjRUJaW0wEau9tm7vI1STsYmdHVvP/lqVV9VzPGVb2OGZWRUNrAsERroZJVzgvqaa2M89tW/jOY9RaqRy0t8XCnSZ4aQO1OFN3QxuADynbW1wvIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qF25a7QFmo+o8UqiHq+7OSxBYZPWbEmGDkcJly/Rej4=;
- b=DSxYNe7kvCC2uP3azNmyJYYKUwhkBqi1vKkXvCKDaHlb5vev8dAQSgJCnV8UL1mtT9fOLSozUtnP+PDKDtPPC8qX/5Cgt4SlTBu3a2m1PYMBuLA5CAhztgYFQIvCGX+m/hq7p8FbceLrU3Zs/kWN9zrAv7VpQ8u5ioZuxrcAau1zgxpnKhUgi7Hwh59ijxmkCGtq8cXrTrCa8V4mxV6yYKeoVzMy3u338JZ66SEI9cj1mN3IrAr9eDm4BbcEbpOyaEl7r49oFSRcbzZlkw8OGYmZFwvOUeraiSAWPKhOQPVwC41Waf2+dLDPUZ1avXgPbFNzEWHA6Sv/JpmWXszt5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
- by DS0PR11MB6373.namprd11.prod.outlook.com (2603:10b6:8:cb::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.19; Fri, 4 Oct
- 2024 14:23:02 +0000
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.8026.017; Fri, 4 Oct 2024
- 14:23:02 +0000
-Message-ID: <a2e5f614-5540-46a5-8438-23d6eea663fe@intel.com>
-Date: Fri, 4 Oct 2024 16:22:56 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next v3] idpf: Don't hard code napi_struct size
-To: Joe Damato <jdamato@fastly.com>
-CC: <netdev@vger.kernel.org>, <przemyslaw.kitszel@intel.com>,
-	<horms@kernel.org>, <kuba@kernel.org>, Tony Nguyen
-	<anthony.l.nguyen@intel.com>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, "moderated
- list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>, open list
-	<linux-kernel@vger.kernel.org>
-References: <20241004105407.73585-1-jdamato@fastly.com>
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-Content-Language: en-US
-In-Reply-To: <20241004105407.73585-1-jdamato@fastly.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZRAP278CA0014.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:10::24) To DS0PR11MB8718.namprd11.prod.outlook.com
- (2603:10b6:8:1b9::20)
+   d="scan'208";a="74830288"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.148])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 07:23:16 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 4 Oct 2024 17:23:13 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 12/13] selftests/resctrl: Do not compare performance
+ counters and resctrl at low bandwidth
+In-Reply-To: <955545d3377afc359d7b8b3915455bfdfc0d6605.1726164080.git.reinette.chatre@intel.com>
+Message-ID: <b728c9c2-49a3-50b8-433a-b38e47a25303@linux.intel.com>
+References: <cover.1726164080.git.reinette.chatre@intel.com> <955545d3377afc359d7b8b3915455bfdfc0d6605.1726164080.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|DS0PR11MB6373:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ee525b2-2fc7-4838-6c4f-08dce4800e40
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?SWRLOExBeTU5ekg5VythL1llQXFBYTRuNmJCUUhyY1JNNndhdUJRbkE4WkVm?=
- =?utf-8?B?cFV2MWpsaEVoWUtBMlRyNXJqODdNZ1B5NWFjdk1KM2ZwVDVEUUtMUmg3dmE3?=
- =?utf-8?B?MnJuWm5ZSkgxZ1hGcmgyMjN1Nk1PYU5rNjh1K3VUVXppc1dpTnN2ZGE3R3VL?=
- =?utf-8?B?ekxGZ0xKSnBtRTBMeSsySkg5UVVoV2dRbW5vUG1aY2pBam9laEsrRTREcno3?=
- =?utf-8?B?NGNPVk9RSUJ5eFhyRWhWK0srQ2N2WXVOdFhud1laUG9mVmZmSFVQaDE4Qkly?=
- =?utf-8?B?Rko3YWhudXFDd3ZFYkt0NlppZCtRcEcrZDlsbFg1ZnBiRU1hbmcxNjFUR2l1?=
- =?utf-8?B?ZkkvaHpiTS91Sko2aTA4eDMwU2IxSGlldnNsa0h5cmxiZFFqWGVERW11aEF4?=
- =?utf-8?B?WHBKdlkrTlAvYS9ycDlYc1RxWU9ZQ1NwV0d2TGYwMFkwK0hrK2JSbVBZL2J5?=
- =?utf-8?B?ejZ2aEhJTUExZi9CWVNmbE9kaXVWOHJhRzkxWnNJYWZrMGtMa1VvUzY2WC90?=
- =?utf-8?B?UFJsNS90Q3RQZVZ5NlR6MjZhbTI0SlMvblQyTGNxRzVmemw2MTVlTW1FMkZW?=
- =?utf-8?B?WkRZNDJUTDk4U3NGc3EwR0diSUpYelE5VW9aVXAxc1A4TVNNK1NDeGhXTzFJ?=
- =?utf-8?B?WUw3aFZ2elFIVFIxSHV3a1lRZVRGT24zdmtsVGZFSkxNSXNsTDA2UWhkVkty?=
- =?utf-8?B?M0ZvWXJTcDJ4S0xKK2xpMEk3c3NIUDVOdnl0SW9vcDRYNkRzM1FFbUdLWTZ1?=
- =?utf-8?B?MitIZ1VJZktoMWFaSGVuOS9QZVQ5NTYyS2xvd3BFcFFQa1NKbXkvWnp5R3F5?=
- =?utf-8?B?amZ0R3A5ckZ6RFhhaWUzUi9TS0lGeE84NXFzTkpxZVpjbk1hNTJuOE9sMnI0?=
- =?utf-8?B?clE0Y2xvQ2xxT0ora2ZMUEhCYmZFYmp5Ty9ZSStxTVZmUU45NEhneTkrMkRG?=
- =?utf-8?B?TkFDVERQTUFaRmZyUTg5amZxbk5HSlYwNjNUVThFTDh1eEJnZGN2ZnlxcHAx?=
- =?utf-8?B?Ri9lanhCNU5SRSswbCtyazkveU9qQURTckNUbno1Wkt2cjFSMzk4cGVxZ3VO?=
- =?utf-8?B?UkZRY1NTSHYzdExHNFg3R3VLL0ZuRzllNmc2ZFBsdHpKVDE1NUFnWTF6YTVY?=
- =?utf-8?B?TXRKVHh3cEswQ2dyUHVGS2JBTm5scWs5Y2dHMlJuMTVEWHNJaEF2TWlkUGNz?=
- =?utf-8?B?RGdKOU9lMTBLWlU4RFl3T0F1SWo0OGdGZkNocm82OHIrQmRuSGtCYVFqVlhK?=
- =?utf-8?B?WVVmVDlrbHhrVzdCRVBvZCtUU1ROZ2dzOTkyTGNUQ3pTWXR0bk5RdmRrUmpC?=
- =?utf-8?B?d0UvdjlSc1lkSnRSZnhkWlJoZ3RTTERKZ2tQSXFVU3RRbHAzNkFZaFROZGhy?=
- =?utf-8?B?SFZtNDBpL3I4cHNlb0lnVzUrbC9sNGNPeWFnK0VxNVlhSVRTRk9FVVVma0xi?=
- =?utf-8?B?UmxOUHJ3SE14OTN1d2Vnb0NnSSt3bFZvTWpDWUdoZVUvZ2x1SktONWlxWmNv?=
- =?utf-8?B?a1BaMUw0NkhhRUpqeE9rb0N2c2o4a25NZ2VGNEhTekVUbU15U25DL0toMUxp?=
- =?utf-8?B?TjJ4OUVMczhHbGZGWk1JUHpoWk03bVo0cWxPb2lLVUhZeklEdHkwQmNuY3Zy?=
- =?utf-8?B?a3VGS0prZnhUMVp4eTRwZE1kL3FIcTdUUW1nWmhmOU5wNldKNG1pYkVabndw?=
- =?utf-8?B?M0ZuV09yNldhMjBiUmhaeTFuRU5lOVJDT0VNYlJkSVk1SGFuOTJmN1VBPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QXBuTFc0VmhaQXlINWptSEtoOTJvWGQ0N2ZjdUhJdnpPZStEQUR6bHBiQ2Vo?=
- =?utf-8?B?NUg3ZytJK0U5MDVYNWdPRkZqK05wa05Yd0Fia2pDQjRpVHoyTUN5dzl5RnBu?=
- =?utf-8?B?KzkyRWZUK2tTQUxOUEhNUkNtbHZLVEJ1K2xCOXpGMU5iU1oxWDZkRURVTUhQ?=
- =?utf-8?B?TGNvMGd6WEtrVzg5TlVDWGR2NmxFQTQyZ1k5VWwxQnNFMHFuK3cxaUlDS1N5?=
- =?utf-8?B?RHIzR2NidDk1bWVXUGg1aHB1TXl6MUUxc1lLTE5nTEV3eWh2N0I3QnJScG44?=
- =?utf-8?B?RlR3RGFJQ1lZRkVoMEI2OFY1YjJWV0tVdXhjVVB3UXEyYmdoTEFGaVVqbWdo?=
- =?utf-8?B?UXJvSDVSOENMeFZtMkx3QlNIMUpCVGtUUlBKZnZvMDNFbVdZM3ZFTXFodnhG?=
- =?utf-8?B?SlVNT2VtOWFkQ04ydmVSRFM3VWJVQUxrK1lTVFhIeFRxSW1vVEsyd3M0VXFW?=
- =?utf-8?B?SVpTVlZhNjdtdkNKTlV3VkVoMFlDVHhNaEM3L2JnTThIVDRtQkFXYWxscmpB?=
- =?utf-8?B?eWs1Q1N5NmdMbC9IUk1uOU1DTzJyMU1FbzUwelAveEZXYlNibXFyNHlHb0l5?=
- =?utf-8?B?N2ZXQlNBZ0FQejdZQXFsWlVzbFNyU2JDU045VzVwNGNENXVmRURTQTNMU0lq?=
- =?utf-8?B?emZYeEthazNBdVJyRXoyOWZ1RXJ6c2FhU2I5NmlYbzFmVHd2aCtvZ0lrQm9w?=
- =?utf-8?B?Rk5XU0E1NHl1N2xWRWdjUVNjb2YyQmczM1lJTlVlVXVmZWdWT1ZOT2VLNEl5?=
- =?utf-8?B?REhWcUFmdnkyZGdRRHphb0hpbCtWbTNvUWxOMjN5YUtXZ2JkQ2ZJeXplWmd6?=
- =?utf-8?B?K1M3UHpiYkNzQks5bzVKdmh1TGZUL3J3ZWU0S0JuYy9OQkZ1TkNPWmJLOCsw?=
- =?utf-8?B?cEJvK0xPdlQyMlNaRDZqWHZCY3JGMkpxQzExNWU3c0hFUDg4U05nTElhM3do?=
- =?utf-8?B?dWVqWmoyWlFBTWo4RysrQ240d3VCUG9kdVhPRFdEQTlrT01DenBmTVhhNzBu?=
- =?utf-8?B?c3cyUDZtZEEvaGdjaVBRSTR3WEpQcVpzYi9EcU5hRTNvNU5FblhGMEhURmdp?=
- =?utf-8?B?YmRRZWY4TzJVZmFkT3dUa1MvRGxERmQ2Y2F5dGlMeFVDU0E3SllrdTJOSnU1?=
- =?utf-8?B?MUd2b2ZOUmxHOTBjM3VkbFlya1FlSjBURTF2VHVLMENROG9peGZCekJtYW1R?=
- =?utf-8?B?VTVyTEJJS3Zpa2FCMVJtM3pmeFg2MDZxb1ZmYXQ4WjVQWDBLV0NITVkvNVJO?=
- =?utf-8?B?NUo2QlZJdEhLR2NzS3lpMkZxNHFwdWkreGVHZmpUc2hQYm1uYzkzZjRLTXJw?=
- =?utf-8?B?aTVvUjFwSlU5bnIxZFRveWZyVTJPc1FYSnZHYjViOUpkVlJoM0MwbiszSGtB?=
- =?utf-8?B?dUtGRnRUa0FVbjBoQ3lIdGMveUEvbTFQNlBva0NYVXJsTW1OUHRjWTVVbUh2?=
- =?utf-8?B?b1VBSldiUlFtSTlkN0VUTWlKdWdPei9jVHp3dzdZUW5DOHVzeGxiSzlWNTlj?=
- =?utf-8?B?Uk9MbmRHeEx3Zm8wNUd0aW56ZzlXbitYMnNUT2ZEUW1OY3ljNTI5ZzRhRTJE?=
- =?utf-8?B?UW1GOGZJcjNBayt1YWFhcncwMmJGTk9VYWQvTG1LVlBQclpJUVZ2amd1R0JC?=
- =?utf-8?B?bXRBdGpSNmVzeGFqLzdCRCtsNUFoZC9jSlNtQjB5QTczMVpWNjVTakFpWits?=
- =?utf-8?B?VDRENjk4cmdMY0N1VFdQNkFlWmdwZWtDaHpUVWk3SVltRytTdjJUUHJGRkhj?=
- =?utf-8?B?SjlqN0hFUmdySDNTaEovUG1pcU15SXF2dGxNM2gyZFlpOVM2bTRmYUxIeGxJ?=
- =?utf-8?B?bXY4cSt1NW9CY3FrbmlRU1NJYytNblp0dnB0clJVdmpUd2Zqaml3QWZBZCs4?=
- =?utf-8?B?OGtWcVNMRThXOHJLYVpiTjFRSWt5Y0VhZ29URWw2MmhmcktZZFBQVkkvcFJN?=
- =?utf-8?B?MG44bTFSc0F5RDlzRkVoL2kzLzAra2JHTzRXTFNHS1pLQXFXVitkVG5OMEx1?=
- =?utf-8?B?SzZ3WjhlR1F6SEc5cDdVS3ZEWVhETkRjN2IwNWtiNjlGTW9uWVVaZmhSRFZU?=
- =?utf-8?B?SmJodzhST1JDNUlTR1hXNmsweHovdlE4b1AySU0vSG16L3U4Mm5DQ1F1Z0pL?=
- =?utf-8?B?WFlLTkFkZGVHSHBUd2s2cUpEWW04dUJDaEZrQUFiKzRrRTBmQk9DWm9CUjRU?=
- =?utf-8?B?R2c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ee525b2-2fc7-4838-6c4f-08dce4800e40
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 14:23:02.8565
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TMP6gpVDh5XHmQpHO3i3kDDxmZ/PSdieK3mVQqPr/iwCz12XuowqWSoC0/Y4sFscUcim36jBXffp0wnC7S55+Hany82RVySrhc0ea06qW94=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6373
-X-OriginatorOrg: intel.com
+Content-Type: multipart/mixed; boundary="8323328-1344179437-1728051793=:957"
 
-From: Joe Damato <jdamato@fastly.com>
-Date: Fri,  4 Oct 2024 10:54:07 +0000
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> The sizeof(struct napi_struct) can change. Don't hardcode the size to
-> 400 bytes and instead use "sizeof(struct napi_struct)".
-> 
-> Suggested-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
+--8323328-1344179437-1728051793=:957
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Acked-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+On Thu, 12 Sep 2024, Reinette Chatre wrote:
 
-I'm sorry that I complicated things a bit with those assertions =\
-
+> The MBA test incrementally throttles memory bandwidth, each time
+> followed by a comparison between the memory bandwidth observed
+> by the performance counters and resctrl respectively.
+>=20
+> While a comparison between performance counters and resctrl is
+> generally appropriate, they do not have an identical view of
+> memory bandwidth. For example RAS features or memory performance
+> features that generate memory traffic may drive accesses that are
+> counted differently by performance counters and MBM respectively,
+> for instance generating "overhead" traffic which is not counted
+> against any specific RMID. As a ratio, this different view of memory
+> bandwidth becomes more apparent at low memory bandwidths.
+>=20
+> It is not practical to enable/disable the various features that
+> may generate memory bandwidth to give performance counters and
+> resctrl an identical view. Instead, do not compare performance
+> counters and resctrl view of memory bandwidth when the memory
+> bandwidth is low.
+>=20
+> Bandwidth throttling behaves differently across platforms
+> so it is not appropriate to drop measurement data simply based
+> on the throttling level. Instead, use a threshold of 750MiB
+> that has been observed to support adequate comparison between
+> performance counters and resctrl.
+>=20
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 > ---
->  drivers/net/ethernet/intel/idpf/idpf_txrx.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.h b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-> index f0537826f840..9c1fe84108ed 100644
-> --- a/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-> +++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-> @@ -438,7 +438,8 @@ struct idpf_q_vector {
->  	__cacheline_group_end_aligned(cold);
->  };
->  libeth_cacheline_set_assert(struct idpf_q_vector, 112,
-> -			    424 + 2 * sizeof(struct dim),
-> +			    24 + sizeof(struct napi_struct) +
-> +			    2 * sizeof(struct dim),
->  			    8 + sizeof(cpumask_var_t));
->  
->  struct idpf_rx_queue_stats {
+> Changes since V1:
+> - Fix code alignment and spacing.
+> - Modify flow to use "continue" instead of "break" now that
+>   earlier changes decreases throttling.
+> - Expand comment of define to elaborate causes of discrepancy
+>   between performance counters and MBM.
+> ---
+>  tools/testing/selftests/resctrl/mba_test.c |  7 +++++++
+>  tools/testing/selftests/resctrl/resctrl.h  | 10 ++++++++++
+>  2 files changed, 17 insertions(+)
+>=20
+> diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/s=
+elftests/resctrl/mba_test.c
+> index d8d9637c1951..5c6063d0a77c 100644
+> --- a/tools/testing/selftests/resctrl/mba_test.c
+> +++ b/tools/testing/selftests/resctrl/mba_test.c
+> @@ -98,6 +98,13 @@ static bool show_mba_info(unsigned long *bw_imc, unsig=
+ned long *bw_resc)
+> =20
+>  =09=09avg_bw_imc =3D sum_bw_imc / (NUM_OF_RUNS - 1);
+>  =09=09avg_bw_resc =3D sum_bw_resc / (NUM_OF_RUNS - 1);
+> +=09=09if (avg_bw_imc < THROTTLE_THRESHOLD || avg_bw_resc < THROTTLE_THRE=
+SHOLD) {
+> +=09=09=09ksft_print_msg("Bandwidth below threshold (%d MiB). Dropping re=
+sults from MBA schemata %u.\n",
+> +=09=09=09=09       THROTTLE_THRESHOLD,
+> +=09=09=09=09       ALLOCATION_MIN + ALLOCATION_STEP * allocation);
+> +=09=09=09continue;
+> +=09=09}
+> +
+>  =09=09avg_diff =3D (float)labs(avg_bw_resc - avg_bw_imc) / avg_bw_imc;
+>  =09=09avg_diff_per =3D (int)(avg_diff * 100);
+> =20
+> diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/se=
+lftests/resctrl/resctrl.h
+> index dc01dc75cba5..eb151ac74938 100644
+> --- a/tools/testing/selftests/resctrl/resctrl.h
+> +++ b/tools/testing/selftests/resctrl/resctrl.h
+> @@ -43,6 +43,16 @@
+> =20
+>  #define DEFAULT_SPAN=09=09(250 * MB)
+> =20
+> +/*
+> + * Memory bandwidth (in MiB) below which the bandwidth comparisons
+> + * between iMC and resctrl are considered unreliable. For example RAS
+> + * features or memory performance features that generate memory traffic
+> + * may drive accesses that are counted differently by performance counte=
+rs
+> + * and MBM respectively, for instance generating "overhead" traffic whic=
+h
+> + * is not counted against any specific RMID.
+> + */
+> +#define THROTTLE_THRESHOLD=09750
+> +
+>  /*
+>   * fill_buf_param:=09"fill_buf" benchmark parameters
+>   * @buf_size:=09=09Size (in bytes) of buffer used in benchmark.
+>=20
 
-Thanks,
-Olek
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-1344179437-1728051793=:957--
 
