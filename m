@@ -1,155 +1,118 @@
-Return-Path: <linux-kernel+bounces-350847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 008FF990A74
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:54:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF00990A7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDC74280A4D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:54:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 931E3B215B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426371DAC88;
-	Fri,  4 Oct 2024 17:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0981DAC83;
+	Fri,  4 Oct 2024 17:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqi76Il4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dCFHK+Aq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CF11CACEF;
-	Fri,  4 Oct 2024 17:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3731E378C
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 17:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728064491; cv=none; b=vE37iE+RyiRiP/mcGWiCLXsWtAXyvWx28MXLbUCfppvxqPDoiC8T2TjbzP00VoUi/SX1QlvIm4YaSzha46heDtz4NgOlaBWHO8pz5XxDanWNMK4RMD0KXFmKhpHHpHHTcNUaVwLZRjB0ZdJEP1NEYrSDafc+iE2dspeYAoaMIGM=
+	t=1728064639; cv=none; b=LvPpdet87ZeP5rG3AUHdTp+l24X0MLkbVhDx4CeQiFBjYXqxFN4t8dj3ZbfJ+vLVQoZ9WqOXYGE3jbU5n76ZFE8tIG4W+9l3YdsAvJZSncBllpWJYx2jfjpdszxiN6gLJKh0MDUqOJJMpj8vDX2IPz6YTWTktY2DdP2yxm9dR0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728064491; c=relaxed/simple;
-	bh=vIoN4GpuCg59a4ErFTCIsZ4mtSc4k/xM/7/QF23owDI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AHwlOU/4HCWn4TpMG/VOsPTVIAMjw/AGEYAtk/kmEhXhfg6x/SYnpgOK4JXOAamMc2QOeV85LDROxG7wznV6QxevXQFwsXaCNoOvnHsYLlwX5zRCj1KNW0GKEifKrfuvKuf+9jSKNag3DRYZ0jXHRY5S/jjIzDIU1AAUk4UUdxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqi76Il4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB0DC4CED0;
-	Fri,  4 Oct 2024 17:54:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728064491;
-	bh=vIoN4GpuCg59a4ErFTCIsZ4mtSc4k/xM/7/QF23owDI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cqi76Il4uC5ZPz19N2cJc0migHOoPqFW6D/vmSvlKnGLGNqMwT8US9jaZHWdEjTg1
-	 UkFKPeyKiMz0q86Kdheon9VX0TebhH4ATyAFzUjvMLD6Fp2wtR12gN99HmDSUWAXGW
-	 ATNU9LX94cErNndZ0PCZ/3euBiLAzOTwFZW8Qc3+FWTON/p7ydS01yEBn1M3xe98yR
-	 pdwIt+zTTyshpyfkJLlyuo5xhM3VOrH1bg8UbMAhx0mB9mehwbMbit53V2h3Tz60wf
-	 4R5rsQ6a25M9FPRQ/kYq3cfgDbGfwBhU0xRxNtQ+tN9P4L7Rb2mXLmJdHXFoQ31OG/
-	 DX5h3m+pHQr0g==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5e5568f1b6eso1210456eaf.1;
-        Fri, 04 Oct 2024 10:54:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCQAi7MvXeCp51UE4dBSSXHaQyIiHwJbpb1MGy0oXarB16dl9WoNsh5TmaEsA6krTOYpXa7vdKqFnDzP6K@vger.kernel.org, AJvYcCUmIMvV6nURTfsQQyVeUqeZKC3ebe12uNqDX63wJFRcU99lou8FsvsIFIkuIA/XS6TvAgOyApOHnrfm3Of8@vger.kernel.org, AJvYcCViicSO/8i4rJFUS/DJTGt0ph/rYpWk7ZfMp6QrPZbHqZ2mAhZPUq7TT5S5ZQ2095T8CfF98az1Fg/X@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+WldRt0+OvQ6wcMVTCD89MzblRZ5KD1uQayyTQnCirUJKZna+
-	WUSxeMQlqJjRGTJgBH1p2q2W7lOLlyFC/MgaZlbwSHG4mfUbbBqUBUY5b+BknRLJe2NLseJSX22
-	KG5lg07EV/oBqV1hQ5Q1joSrXRTA=
-X-Google-Smtp-Source: AGHT+IHHU5oF+bEJbOmmVNOobDQq8hExkxmIB2OVr3TpoNANPW2L8tWMdr0JMDOM05w0lfgNI2DdzksEHdeqzKI/MAc=
-X-Received: by 2002:a05:6820:2283:b0:5ba:ec8b:44b5 with SMTP id
- 006d021491bc7-5e7cc05e00amr2315276eaf.3.1728064490629; Fri, 04 Oct 2024
- 10:54:50 -0700 (PDT)
+	s=arc-20240116; t=1728064639; c=relaxed/simple;
+	bh=G1vf8AtsHpbMdFO5DG6cbwjT+Qn+ZOl3zyxy18tPSZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qZYiuRKaEsVamRCKIH6ZPgFk5YKJU+KW/kG6l1yyioAbsPpNRGOkjrZfyO6m+iItvJk86fb2sVL1ghv8JmVnCWU5iuocPexd0JhAMalmblhXUQ/e9IbU4QqwiX5DdS9preEmYqDld6PAAxKzwRN8r+qMCknuxg2puhBFqMU+QRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dCFHK+Aq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494Aeo9A014160;
+	Fri, 4 Oct 2024 17:57:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RjVAIODgIMe6TcbnIeo3RvgBeLIP865au+8FkWupWgM=; b=dCFHK+Aq1D39Kj8q
+	/8zZqnnMxcaPungOtziwi19nWb9Kdky8tavB4xRDm7/HgM+yavWP8Vf9WV356Y1S
+	JB7n6LUYGDGD2v+h7C/AdCyCNnB6TeG0XeP20nJ1dPcQXrKB2fuwlXwYEgP3Hnsp
+	sRjMXIhkVZYGV07590sBwexPoh2beoGoA8bqlYRvXO6S6EFI2e6dybc5xy/xYkQY
+	4vnGLIB1SkVwHWdtw+DtQIq+KRlwCTHyYVXJYibd7Ec5gmY6qfYxgu6spllS5snv
+	0WLnJg9e+FmP8q7uTKBwTfsOvQST7bwu/aHXze1xj/MEl7qEcvlEgodvCpORBvHY
+	slJ/kg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205e2xc9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 17:56:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494HuwkL016729
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 17:56:58 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
+ 10:56:57 -0700
+Message-ID: <d5694bb9-e035-c4ba-392e-ca06562355d1@quicinc.com>
+Date: Fri, 4 Oct 2024 11:56:57 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912173901.3969597-1-rrangel@chromium.org>
- <20240912113616.3.I1b7a5033a2191cb0cdbadc2d51666a97f16cc663@changeid>
- <CAJZ5v0hmf55OA1f4egzE7F0ET+7af_+pcxmnOSxO5Snd6L5CrQ@mail.gmail.com> <CAHQZ30CRYoH_-rY7hMgasbkyqEBpgVfH6PZRzuaU=2g4S_oGtA@mail.gmail.com>
-In-Reply-To: <CAHQZ30CRYoH_-rY7hMgasbkyqEBpgVfH6PZRzuaU=2g4S_oGtA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 4 Oct 2024 19:54:39 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hQicgscfoOhkh8DN5MmYBK8-5gJvzM=ixs6k75XqE2og@mail.gmail.com>
-Message-ID: <CAJZ5v0hQicgscfoOhkh8DN5MmYBK8-5gJvzM=ixs6k75XqE2og@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ACPI: SPCR: Add support for rev 3
-To: Raul Rangel <rrangel@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-serial@vger.kernel.org, pmladek@suse.com, 
-	rafael.j.wysocki@intel.com, ribalda@chromium.org, Len Brown <lenb@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, acpica-devel@lists.linux.dev, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V3 06/11] accel/amdxdna: Add GEM buffer object management
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240911180604.1834434-1-lizhi.hou@amd.com>
+ <20240911180604.1834434-7-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240911180604.1834434-7-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gxZCMvLNNaZWAXU2vSgITrRDBLVmKIfm
+X-Proofpoint-ORIG-GUID: gxZCMvLNNaZWAXU2vSgITrRDBLVmKIfm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 phishscore=0 mlxlogscore=791
+ mlxscore=0 adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040123
 
-On Fri, Oct 4, 2024 at 7:45=E2=80=AFPM Raul Rangel <rrangel@chromium.org> w=
-rote:
->
-> On Wed, Oct 2, 2024 at 12:13=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
-org> wrote:
-> >
-> > On Thu, Sep 12, 2024 at 7:39=E2=80=AFPM Raul E Rangel <rrangel@chromium=
-.org> wrote:
-> > >
-> > > Revision 3 supports specifying the UART input clock. This allows for
-> > > proper computation of the UART divisor when the baud rate is specifie=
-d.
-> > >
-> > > The earlycon code can accept the following format (See `parse_options=
-`
-> > > in `earlycon.c`.):
-> > > * <name>,io|mmio|mmio32|mmio32be,<addr>,<baud>,<uartclk>,<options>
-> > >
-> > > This change makes it so the uartclk is passed along if it's defined i=
-n
-> > > the SPCR table.
-> > >
-> > > Booting with `earlycon` and a SPCR v3 table that has the uartclk and
-> > > baud defined:
-> > > [    0.028251] ACPI: SPCR: console: uart,mmio32,0xfedc9000,115200,480=
-00000
-> > > [    0.028267] earlycon: uart0 at MMIO32 0x00000000fedc9000 (options =
-'115200,48000000')
-> > > [    0.028272] printk: legacy bootconsole [uart0] enabled
-> > >
-> > > Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/serp=
-orts/serial-port-console-redirection-table
-> > >
-> > > Signed-off-by: Raul E Rangel <rrangel@chromium.org>
-> > >
-> > > ---
-> > >
-> > >  drivers/acpi/spcr.c   | 5 ++++-
-> > >  include/acpi/actbl3.h | 6 +++---
-> > >  2 files changed, 7 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
-> > > index cd36a97b0ea2c7..67ae42afcc59ef 100644
-> > > --- a/drivers/acpi/spcr.c
-> > > +++ b/drivers/acpi/spcr.c
-> > > @@ -209,9 +209,12 @@ int __init acpi_parse_spcr(bool enable_earlycon,=
- bool enable_console)
-> > >         if (!baud_rate) {
-> > >                 snprintf(opts, sizeof(opts), "%s,%s,0x%llx", uart, io=
-type,
-> > >                          table->serial_port.address);
-> > > -       } else {
-> > > +       } else if (table->header.revision <=3D 2 || !table->uartclk) =
-{
-> > >                 snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d", uart,=
- iotype,
-> > >                          table->serial_port.address, baud_rate);
-> > > +       } else {
-> > > +               snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d,%d", ua=
-rt, iotype,
-> > > +                        table->serial_port.address, baud_rate, table=
-->uartclk);
-> > >         }
-> > >
-> > >         pr_info("console: %s\n", opts);
-> > > diff --git a/include/acpi/actbl3.h b/include/acpi/actbl3.h
-> > > index 8f775e3a08fdfb..afe45a2379866a 100644
-> > > --- a/include/acpi/actbl3.h
-> > > +++ b/include/acpi/actbl3.h
-> >
-> > The part of the patch below is outdated - SPCR v4 is supported already.
-> >
-> > Please rebase on the current mainline kernel source.
->
-> Oh awesome. Should I send out all three patches again? Or just this
-> one? I think patches 1 and 2 can be merged.
+On 9/11/2024 12:05 PM, Lizhi Hou wrote:
+> +/**
+> + * struct amdxdna_drm_create_bo - Create a buffer object.
+> + * @flags: Buffer flags. MBZ.
+> + * @type: Buffer type.
+> + * @pad1: MBZ.
+> + * @vaddr: User VA of buffer if applied. MBZ.
+> + * @size: Size in bytes.
+> + * @handle: Returned DRM buffer object handle.
+> + * @pad2: MBZ.
+> + */
+> +struct amdxdna_drm_create_bo {
+> +	__u64	flags;
+> +	__u32	type;
+> +	__u32	pad1;
+> +	__u64	vaddr;
+> +	__u64	size;
+> +	__u32	handle;
+> +	__u32	pad2;
+> +};
 
-I have only received patch [3/3] and this one needs to be resent as
-far as I'm concerned.
+Why not eliminate both padding fields by either moving "handle" up, or 
+"type" down?
 
