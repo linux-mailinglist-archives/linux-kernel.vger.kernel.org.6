@@ -1,182 +1,91 @@
-Return-Path: <linux-kernel+bounces-350159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E22399009B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:13:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA57E9900B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D56E1F2356B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:13:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E91D41C2358A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDCC14B092;
-	Fri,  4 Oct 2024 10:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B6B14F9D0;
+	Fri,  4 Oct 2024 10:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b="YKfBlsd5"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gOMCkEWX"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7496214AD24
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1218F14C5B3
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728036805; cv=none; b=aaHtSRrftKi8bnm5lhPjXcUpVBlCbsXwAROTzWqpdxSTqrn/Lz4Qv/oc1cidWKQwo2wtjlFdsBXklg8xo0UcRdNgRMnTyd1h65U5cVuYWEirD6FZT9WZWFAUbfBdeo+qdjw0e5WX/hZ/j9CTcmFlyIitH3lsKibloLcETNGzXEc=
+	t=1728036970; cv=none; b=t6KKG6Va8AoAC5Xs0xjCke4kgNtkWuw5nQqNWgzzrNPVd55P9GWblNEbOP83IRJxpDWnm0myFe5EUscRAQ85rNynrDQqTuMZFdLH1wIElij9LQelihsORo90N5Y4ukY7Bz6dzLhORvKxDbU1Zcm18lo21UGM+57havHx3MigiWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728036805; c=relaxed/simple;
-	bh=wfKAsviBlVVb6S8QdL7Jq2f0uaNrbOZUXmDfvV4I/Zc=;
+	s=arc-20240116; t=1728036970; c=relaxed/simple;
+	bh=1+fHTvNXJJUizBom3bZq+hqVsjY65BX90vqBBAchQN0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DQQpYJ1/bIN6Pev3Oqwxe0OuYGeAwwD4hvzkBQJcWYeGn7T5Pn8mr3AvJd/vj0g2uv1utnWoFhx3pTVjUjx8FKglU4885J5fkAhsKpGOPCnRyk0tsoWBkuCkeaNZ6lVtAb6wHhqK5DoKCXqQcaX00P1OspufZAfEUKxGQFpLWJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in; spf=pass smtp.mailfrom=iiitd.ac.in; dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b=YKfBlsd5; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iiitd.ac.in
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71dee13061dso84464b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 03:13:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=iiitd.ac.in; s=google; t=1728036800; x=1728641600; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XPGRnLkJcNuyTgTIqxv1cy1FTj/54JB3cbTz2KFQ0BE=;
-        b=YKfBlsd5eFfVcHpHT3iuCZh1+IF3coV8HwbACWhs327Zd4my7NXx01C6+NAEqLpavV
-         NjWDzNuMWgcRe/JYcjvBMfLBJAjQrUn4D5CwdrPOq7zRtKPTYxVwJgdwObjZhOPckNNn
-         2rxWBtRNYjNEMY5SLTELW9JQyeCRISejpys1A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728036800; x=1728641600;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XPGRnLkJcNuyTgTIqxv1cy1FTj/54JB3cbTz2KFQ0BE=;
-        b=Ik2v/Xx0eqV9RYcuPSIRiDKFCSMEwaFqW6CjwjGMSi8Fs+sQ1sn/VBz7rcnGbkrIpo
-         nMVNmLGJ4t7FzLnMEuk6esLTJ9+kMftwhgigHCIDBLvNiXb2NCcHGcz7kY6aB0ZaYCw3
-         Ofh74ZAQ1vXwVmBvkAPGzjnXTzx0ftbKoXg6ScgxSW3vTVHvM1o+E6QDJqk4NmkyX7ft
-         +YGTW15EptfxBBdsWy9RBqG12B905xYvAsOz1pLRiAZF7Nr5DjTBH5/OnBcKkSa8nEST
-         0Fx1A+Cy36vpOK0ysvV/2aR/blZz2CYbKswhpWX21nJUbMeut67eT7GcmOXBXf5uS3YO
-         xaeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkiAC2biBhDAV24kJw23L4kkDiXf0R2x4PyDJb/uT92gdULs43LcsQBCuSKJ2lRP2X62RWq4FpJ6N7GcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq3zuxTPq342AvDzBhaorxLNgc7hopfsFbbBq2BRMsDE2rRyws
-	VT7sMXvxvpqjdUdvRba7dgBH8iRCCM2xplwN1NKVJOiM0+6C4KlZxV/twT5Km4t2LwfL3Fjp8VS
-	akA9NTw==
-X-Google-Smtp-Source: AGHT+IFpDRip7ZoLiaDkcYkyz5tKjOu56kdo3ARfMFyFPFHyuu3hykcKSxokPboYpQhFfAFyTwCeFg==
-X-Received: by 2002:a05:6a21:a4c1:b0:1d3:294e:65fb with SMTP id adf61e73a8af0-1d6dfa422b1mr3291408637.25.1728036799581;
-        Fri, 04 Oct 2024 03:13:19 -0700 (PDT)
-Received: from fedora ([103.3.204.140])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9defc6fsm2848697b3a.158.2024.10.04.03.13.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 03:13:18 -0700 (PDT)
-Date: Fri, 4 Oct 2024 15:43:12 +0530
-From: Manas <manas18244@iiitd.ac.in>
-To: Peter Xu <peterx@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Anup Sharma <anupnewsmail@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
-Subject: Re: [PATCH] Fixes: null pointer dereference in pfnmap_lockdep_assert
-Message-ID: <x4zctv3fdymenonaao2vwsy6ldab6d6pfappdzepfcax6ycc4n@nx46w3lncvqr>
-References: <20241003-fix-null-deref-v1-1-0a45df9d016a@iiitd.ac.in>
- <Zv7JPl_1mxNkvLQy@x1n>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EjN0nW69afL71+qCJpQAs1VWFfjISl9aLyULt/6oeklizTQbDm3ZeHNvprR+d4xFHTwzE+n9lmHi/OtrKvpzMAeuHA1Qr5qJJOPuAK+ExzWxtJ7UMyABFgoZUFBPM04vlXNgH8qgB792f30G2rzVEkqVVsQsU8bVIApaFIRoI+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gOMCkEWX; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=u1NWgOqMNyUtDvE04Axpn1gDc+Ve2ri/GBG7osPQrOg=; b=gOMCkEWXOJRBXfM0ddK81Q71DG
+	4OY3tAjYpeIZ8X/iteABsPzv77ZA/bJAu3Q1vTKBeCva1EhxUpS4Fjw6KI2BsZwc3So9Dr0EZVvm4
+	GE8SYL82QOlnDDDrAuWBaU4Yz3XmPDD2oa9PpNI6megKX3AAZRUVn+6xogNfat+DH8vZDdsw4wr06
+	gt5nDiZYX9ThnwqNjGBJgP0aWOzbA6rVSczOJGGSPHIL5K51nL3ZnjrJ5CPREIr7Nl5T4xcldr07s
+	HkgqUv0+UHFCQhRIdXvUsnbpd9Kcf/7WoZNNZAxJ4fFy+xRN4PtDpWtjMxdu9kGqxW1IGtpUTxaa7
+	Kw+7kjeQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1swfLt-0000000A9yn-0Mev;
+	Fri, 04 Oct 2024 10:16:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 56BDA30083E; Fri,  4 Oct 2024 12:16:01 +0200 (CEST)
+Date: Fri, 4 Oct 2024 12:16:01 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Cc: intel-xe@lists.freedesktop.org, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Maarten Lankhorst <maarten@lankhorst.se>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] locking/ww_mutex: Adjust to lockdep nest_lock
+ requirements
+Message-ID: <20241004101601.GQ18071@noisy.programming.kicks-ass.net>
+References: <20241002125611.361001-1-thomas.hellstrom@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Zv7JPl_1mxNkvLQy@x1n>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241002125611.361001-1-thomas.hellstrom@linux.intel.com>
 
-Hi Peter, thanks for reviewing.
+On Wed, Oct 02, 2024 at 02:56:11PM +0200, Thomas Hellström wrote:
+> When using mutex_acquire_nest() with a nest_lock, lockdep refcounts the
+> number of acquired lockdep_maps of mutexes of the same class, and also
+> keeps a pointer to the first acquired lockdep_map of a class. That pointer
+> is then used for various comparison-, printing- and checking purposes,
+> but there is no mechanism to actively ensure that lockdep_map stays in
+> memory. Instead, a warning is printed if the lockdep_map is freed and
+> there are still held locks of the same lock class, even if the lockdep_map
+> itself has been released.
+> 
+> In the context of WW/WD transactions that means that if a user unlocks
+> and frees a ww_mutex from within an ongoing ww transaction, and that
+> mutex happens to be the first ww_mutex grabbed in the transaction,
+> such a warning is printed and there might be a risk of a UAF.
 
-On 03.10.2024 12:41, Peter Xu wrote:
->On Thu, Oct 03, 2024 at 09:31:06PM +0530, Manas via B4 Relay wrote:
->> From: Manas <manas18244@iiitd.ac.in>
->>
->> syzbot has pointed to a possible null pointer dereference in
->> pfnmap_lockdep_assert. vm_file member of vm_area_struct is being
->> dereferenced without any checks.
->>
->> This fix returns if vm_file member in vm_area_struct is NULL.
->>
->> Reported-by: syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
->> ---
->> This bug[1] triggers a general protection fault in follow_pfnmap_start
->> function. An assertion pfnmap_lockdep_assert inside this function
->> dereferences vm_file member of vm_area_struct. And panic gets triggered
->> when vm_file is NULL.
->>
->> This patch returns from the assertion pfnmap_lockdep_assert if vm_file
->> is found to be NULL.
->>
->> [1] https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
->>
->> Signed-off-by: Manas <manas18244@iiitd.ac.in>
->
->Thanks for the patch!
->
->> ---
->>  mm/memory.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/mm/memory.c b/mm/memory.c
->> index 2366578015ad..b152a95e543f 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -6346,6 +6346,9 @@ static inline void pfnmap_args_setup(struct follow_pfnmap_args *args,
->>  static inline void pfnmap_lockdep_assert(struct vm_area_struct *vma)
->>  {
->>  #ifdef CONFIG_LOCKDEP
->> +	if (!vma->vm_file)
->> +		return;
->> +
->
->Hmm I guess I wasn't careful enough here as I was mostly only thinking
->about file mappings, but I just notice we have other pfnmaps like the vvar
->mappings.. the mapping var can also already be reused later when available.
->
->Logically even if !vm_file we can still check against mmap write lock.  So
->would it be better to do this instead:
->
->        struct address_space *mapping = vma->vm_file && vma->vm_file->f_mapping;
->
-This will lead to `-Wint-conversion` error in the assignment. We can either do a
-cast like the following:
+I'm assuming you actually hit this?
 
-         struct address_space *mapping = (struct address_space *)(vma->vm_file && vma->vm_file->f_mapping);
-
-But I am not sure if it is the canonical way of doing it. It will also lead to
-warning about pointer from integer casting.
-
-Or will a conditional like this work here?
-
-         struct address_space *mapping = vma->vm_file ? vma->vm_file->f_mapping : NULL;
-       
->        if (mapping)
->                lockdep_assert(lockdep_is_held(&mapping->i_mmap_rwsem) ||
->                               lockdep_is_held(&vma->vm_mm->mmap_lock));
->        else
->                lockdep_assert(lockdep_is_held(&vma->vm_mm->mmap_lock));
->
->?
->
-
->>  	struct address_space *mapping = vma->vm_file->f_mapping;
->>
->>  	if (mapping)
->>
->> ---
->> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
->> change-id: 20241003-fix-null-deref-6bfa0337efc3
->>
->> Best regards,
->> --
->> Manas <manas18244@iiitd.ac.in>
->>
->>
->>
->
->-- 
->Peter Xu
->
-
--- 
-Manas
+Anyway, work around seems sane enough, thanks!
 
