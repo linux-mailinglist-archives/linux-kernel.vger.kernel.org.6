@@ -1,131 +1,161 @@
-Return-Path: <linux-kernel+bounces-350378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0EA9990454
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:30:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CAB990456
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28F1CB24022
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:30:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782A81F2145A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5D8215F79;
-	Fri,  4 Oct 2024 13:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C6C215F60;
+	Fri,  4 Oct 2024 13:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="aP9vtyvq"
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b="PWWdnHmx"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8542E215F63;
-	Fri,  4 Oct 2024 13:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E809215F44
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048462; cv=none; b=CI61v9dDACp2CHE0i/NaVr+YTicYGsFmzA8RKLtuHzAxR27Wk56zXLfb1O1rA29ae/LSlP66//SJ/vNtlk0RSaaEyWJN+koeBn4XcmUT43X0goPLPuHMzMKODIEn6Rnjx1CJ58tHj5EV0vwNBO9ZJ6bKPOkcflkX+5WAmtO4XNs=
+	t=1728048489; cv=none; b=Auw8KL6Y/lTsl9dgUlZKXqmG4NIl4i9jCN/FEWY23Y/Ie9fD5dMAAqswfKqaFBPG8vzCS88OrxtCRseZG2Djtt0jJfkE3PTkBNHd8t+7SXaXwhwRzKjmmRT/ouLS8eD/24TEeXuqpdX4/czQ6eEgVnrBa0pUGjIJkTheM82gk/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728048462; c=relaxed/simple;
-	bh=wXOvCcdCOFnCU6NncgYUeYLI/oZaAgPJrFGjm1nUCac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qptqGAIB3zlRFL1234yIulHqOj8DXtUAmdzR/Ksq3YXHIqDMCSjWVNl0FB9ACLr4WEAP3NH91CvwdNxrFN8yUvwn8qDWPBYgfyFOrsj6Vs+Jc7FQbcFDd59E0XGNLDD0UGCtP3Avr5AOlAbZUGWWg6d6mtrwLy9IxmTA3Ku8MJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=aP9vtyvq; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id wiLHsrcDKQ2lWwiLHsVTtm; Fri, 04 Oct 2024 15:27:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1728048457;
-	bh=bzI6W4OG5I3nv3GvEI+4yHlLOPUJAHIjWK4G/3umQj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=aP9vtyvqNVC7LqYhz52g4D6jO7Z58BcXZrnZEzb6pwJs6b7pbRXUPuSHijzA3F+4y
-	 UH0wUu3fQwro/m3kxGnKmmF6650sCAmwbyYGvj493UhsBFqn4H6QcstWL8WNta0RqG
-	 FfhFiE2TCFyMF50WMgHMb7bPqLeWTlr8Ovj571XuMUteAvschfF9jAWk6+rRHRKJaF
-	 Fejd1HM22WU2MUOvWzRrXgt6vuvINSnCmlvSaBco+XdYsQ8Q+f9iwI9hsGFWGSTdPp
-	 b44nJ5+jRqtRS/VmXSPSM8GpBrBuG2uLXqKsKJAY2SI7fisw3cYYIix1h4HK2Amqti
-	 UHsrnEFGpP8lA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 04 Oct 2024 15:27:37 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <bf75a318-a3e1-4d03-85f3-63b316b22346@wanadoo.fr>
-Date: Fri, 4 Oct 2024 15:27:35 +0200
+	s=arc-20240116; t=1728048489; c=relaxed/simple;
+	bh=UNkNG8bLih8xS5nokDWWbZMzVi0ftdeLlTnEPsNL5t0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iiMAeKfJ6p608CByncyXhtynufDKM8yOvW4nifuYvOfc7AnflnkKnRtDDY33+CXOSBzRWzEgPGXAhjygyDye7AuQOWtr66nHqWJGQdnuNjB1fHIZJ6VmS9BnL4/yVrjD24nJHQtRGoGTNp7F3IipCeOX4fW43EvzTvUA/Kt28Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in; spf=pass smtp.mailfrom=iiitd.ac.in; dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b=PWWdnHmx; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iiitd.ac.in
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71dee13061dso228039b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 06:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=iiitd.ac.in; s=google; t=1728048484; x=1728653284; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+/XyuYW22hcloSOF5PeubqI6B5GS2FJzkX02uzF2Vdc=;
+        b=PWWdnHmxufWa3fQHnrnPjKLy0hLtM0dILRMmyKj8G/w3YuxocdeqKGYIlTl2+IICqo
+         lfQ/EXkcKVAMTzeGOUcUx1JnwiEjZLZxyLTNwKdndpXhBxUegEnIXODS63TE7b1b3K6U
+         TnKFa4wiMAb3H96WdMx7QtDQHGgXLurxWxcS0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728048484; x=1728653284;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+/XyuYW22hcloSOF5PeubqI6B5GS2FJzkX02uzF2Vdc=;
+        b=XrGSifJgNE2vTmD77m8m1DtCQEKwoS9lawYi6ntnfP9YbI4Ie/at2Z3Fx04z/nYR9y
+         PKx/5wVY4aCiUmVa6b6y+pN+Iw0O3Or/24j+nJSNdJjhMsGuOiSveu+0itUxOUUSiE8b
+         QFwkAySuXFWCVLA4HamZpHao0oI4Ww0ouItgUMG1pOB+FZEUDR/sfNw7w7ubkTvu6bJh
+         jG5tvYdiN3hvraiZA9B1Ja0Ps4XIfQQVWwfVkKu1zfp2c3tR3RZSy23z5VYATnIBs39H
+         40n8vuT37Sgwaw/vtZ6G+peiTNvJn03pjh3feRFifVT/YaffOK+ekUhTAlUfPlQdrQGp
+         +nkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBfeTDfuU21YWk7497LetUKSxBYIqoUfkyXh90oyJZh2Uxcb3wphJ/5D1mTm7PKKr/njU+pMW/M4ONpa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZiIa3retdfTPRXqj2z8Qb0X06FuwRbXVkOWEf1bgAw3V915gK
+	133zcCxfk7Qxt8stDdWCsNa90dyj7fnWcVRTsF8SK9FnKHoYX8qGECEmafQyqDI=
+X-Google-Smtp-Source: AGHT+IFrtukck/tWNOuDiKIC9Vr5Xn1b7TyPdD0qsuLFIVo2+GCHmHMPZiBEtVoIMNTJ6aY7tY0eWw==
+X-Received: by 2002:aa7:88c9:0:b0:710:50c8:ddcb with SMTP id d2e1a72fcca58-71de23a57efmr4221458b3a.5.1728048484567;
+        Fri, 04 Oct 2024 06:28:04 -0700 (PDT)
+Received: from fedora ([103.3.204.140])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9dcb049a7sm2415269a12.34.2024.10.04.06.28.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 06:28:04 -0700 (PDT)
+Date: Fri, 4 Oct 2024 18:57:57 +0530
+From: Manas <manas18244@iiitd.ac.in>
+To: Peter Xu <peterx@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Anup Sharma <anupnewsmail@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] Fixes: null pointer dereference in
+ pfnmap_lockdep_assert
+Message-ID: <i5g3nwyjrrmbdgrecedyzhvjwl2p6b7yuniiqpyphndnkszta4@xt2dukgff3f3>
+References: <20241004-fix-null-deref-v2-1-23ad90999cd1@iiitd.ac.in>
+ <Zv_rz2DRYENY0K5d@x1n>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: ethernet: adi: adin1110: Fix some error handling
- path in adin1110_read_fifo()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Lennart Franzen <lennart@lfdomain.com>,
- Alexandru Tachici <alexandru.tachici@analog.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- netdev@vger.kernel.org
-References: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
- <63dbd539-2f94-4b68-ab4e-c49e7b9d2ddd@stanley.mountain>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <63dbd539-2f94-4b68-ab4e-c49e7b9d2ddd@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <Zv_rz2DRYENY0K5d@x1n>
 
-Le 04/10/2024 à 13:47, Dan Carpenter a écrit :
-> On Thu, Oct 03, 2024 at 08:53:15PM +0200, Christophe JAILLET wrote:
->> If 'frame_size' is too small or if 'round_len' is an error code, it is
->> likely that an error code should be returned to the caller.
+On 04.10.2024 09:21, Peter Xu wrote:
+>On Fri, Oct 04, 2024 at 06:35:53PM +0530, Manas via B4 Relay wrote:
+>> From: Manas <manas18244@iiitd.ac.in>
 >>
->> Actually, 'ret' is likely to be 0, so if one of these sanity checks fails,
->> 'success' is returned.
+>> syzbot has pointed to a possible null pointer dereference in
+>> pfnmap_lockdep_assert. vm_file member of vm_area_struct is being
+>> dereferenced without any checks.
 >>
->> Return -EINVAL instead.
+>> This fix returns if vm_file member in vm_area_struct is NULL.
 >>
->> Fixes: bc93e19d088b ("net: ethernet: adi: Add ADIN1110 support")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> Reported-by: syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
 >> ---
->> This patch is speculative.
->> If returning 0 is what was intended, then an explicit 0 would be better.
-> 
-> I have an unpublished Smatch warning for these:
-> 
-> drivers/net/ethernet/adi/adin1110.c:321 adin1110_read_fifo() info: returning a literal zero is cleaner
-> drivers/net/ethernet/adi/adin1110.c:325 adin1110_read_fifo() info: returning a literal zero is cleaner
-> 
-> It's a pity that deliberately doing a "return ret;" when ret is zero is so
-> common.  Someone explained to me that it was "done deliberately to express that
-> we were propagating the success from frob_whatever()".  No no no!
-> 
-> I don't review these warnings unless I'm fixing a bug in the driver because
-> they're too common.  The only ones I review are:
-> 
-> 	ret = frob();
-> 	if (!ret)
-> 		return ret;
-> 
-> Maybe 20% of the time those warnings indicate a reversed if statement.
-> 
-> Your heuristic here is very clever and I'll try steal it to create a new more
-> specific warning.
+>> This bug[1] triggers a general protection fault in follow_pfnmap_start
+>> function. An assertion pfnmap_lockdep_assert inside this function
+>> dereferences vm_file member of vm_area_struct. And panic gets triggered
+>> when vm_file is NULL.
+>>
+>> This patch returns from the assertion pfnmap_lockdep_assert if vm_file
+>> is found to be NULL.
+>>
+>> [1] https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
+>>
+>> Signed-off-by: Manas <manas18244@iiitd.ac.in>
+>
+>Reviewed-by: Peter Xu <peterx@redhat.com>
+>
+>One nitpick:
+>
+>> ---
+>> Changes in v2:
+>> - v2: use ternary operator according to feedback
+>> - Link to v1: https://lore.kernel.org/r/20241003-fix-null-deref-v1-1-0a45df9d016a@iiitd.ac.in
+>> ---
+>>  mm/memory.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 2366578015ad..5ed109a8f02e 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -6346,7 +6346,7 @@ static inline void pfnmap_args_setup(struct follow_pfnmap_args *args,
+>>  static inline void pfnmap_lockdep_assert(struct vm_area_struct *vma)
+>>  {
+>>  #ifdef CONFIG_LOCKDEP
+>> -	struct address_space *mapping = vma->vm_file->f_mapping;
+>> +	struct address_space *mapping = vma->vm_file ? vma->vm_file->f_mapping : NULL;
+>>
+>>  	if (mapping)
+>>  		lockdep_assert(lockdep_is_held(&vma->vm_file->f_mapping->i_mmap_rwsem) ||
+>
+>This can use "mapping" directly, as I mentioned in previous email (but
+>probably got overlooked..).
+>
+>Thanks!
+Oh no! I missed it. Sending v3...
 
-Well my heuristic is mostly luck, here ;-)
+>
+>>
+>> ---
+>> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+>> change-id: 20241003-fix-null-deref-6bfa0337efc3
+>>
+>> Best regards,
+>> --
+>> Manas <manas18244@iiitd.ac.in>
+>>
+>>
+>
+>-- 
+>Peter Xu
+>
 
-Anyway, what I was looking for (un-initialized last argument in some 
-function) could be nice to have in smatch, if not already present.
-
-
-Finally, if you want, I can give a look at the warnings if you share the 
-log.
-
-CJ
-
-> 
-> regards,
-> dan carpenter
-> 
-> 
-> 
-
+-- 
+Manas
 
