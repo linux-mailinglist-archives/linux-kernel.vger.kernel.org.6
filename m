@@ -1,214 +1,147 @@
-Return-Path: <linux-kernel+bounces-351349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABA0990FF0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:12:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C72990FCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5DBF1F247F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:12:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34451F22AC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CC11E2845;
-	Fri,  4 Oct 2024 19:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F841DE8A9;
+	Fri,  4 Oct 2024 19:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="kp9zIl8H"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZjH6sYw5"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80EC1E04B3;
-	Fri,  4 Oct 2024 19:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE37A1DE3CD;
+	Fri,  4 Oct 2024 19:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728070994; cv=none; b=ujBX1CyXfI401YSCst+47hlQF3mUH3RUB58cge1tnwagJfmI5VApyfxHH9EfcG7yNogjesdvIGHxcVPu8WQsYYnWYNDvm1RTHtbV1lrD/9ptJuudCzExiQYotxbFKoxen96HrV2elGAOg4UbTYwi7ka4cxLMJ0EtQEv/b4V9YVA=
+	t=1728070253; cv=none; b=esR75WCdtykjtcOs8+RCR2D0Xzaz1WSR0bm8krdZzEOL/4X4PTM1bxnSI8v9jgx2F0HovHfIwP2hAwSesvZva6GeoM8oVMvsytqwYd0QKIyJ+ghF2uSo3U/5mQMNV3HVobgj+2v78f05jJwTQaFdYNCnlP4GvcsTFqMy1bZBiyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728070994; c=relaxed/simple;
-	bh=tn6TL0+ouOy1fUAc1oQFrAEeWQWWw6pLIkTVfe05XbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m+9p6kZplxXjAj9HaaeRSe7UKItJLSIMtd3XwlIZ9CGUInylg3dTdBIUV2svzYybAA7QDYFlkEliXzXt7zcWU63QP3w+qJzX/4w/Rf44o8Jh8x6tAAn/nLzu857KwPuoqlSkRdPC6+un+l94evuIwCxzNNrr8j7mUjmOF48WfmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=kp9zIl8H reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 9ec35dee432a5ec7; Fri, 4 Oct 2024 21:43:04 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 3403B6A9505;
-	Fri,  4 Oct 2024 21:43:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1728070984;
-	bh=tn6TL0+ouOy1fUAc1oQFrAEeWQWWw6pLIkTVfe05XbI=;
-	h=From:Subject:Date;
-	b=kp9zIl8HjThuugrCTKUyk3qsM2QazvseZ4f+Kqxszmb/+QFUNOwFX0j2cUEBtLG1r
-	 77mnwJWERzaYLAXy/qbeUqbRLdZIYVzKHHAhr6GQVKXRZ3yGfGVfYvr2jkoCGY7252
-	 s+6/LFPCiW1VloeJ5bU0DA3HpcY6tFcyg1lvrHuvSi3B8Te34t35iI+DRfcAJ+EFTa
-	 rPSJ0Il4BTuEoHni6yonOdoSOajmYyuxexosjYrXjsAzfNBNUQjamri+N3Fmaksjuj
-	 NkMxkbAzBbPJRqPwuJk+cnuYVn9mOTaoiE7POlmVka8JZEmYVl+XE6uPhjlouo06ku
-	 OMv16VLOf9hsw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject:
- [PATCH v2 08/12] thermal: core: Consolidate thermal zone locking in the exit
- path
-Date: Fri, 04 Oct 2024 21:30:26 +0200
-Message-ID: <1963152.taCxCBeP46@rjwysocki.net>
-In-Reply-To: <2215082.irdbgypaU6@rjwysocki.net>
-References: <2215082.irdbgypaU6@rjwysocki.net>
+	s=arc-20240116; t=1728070253; c=relaxed/simple;
+	bh=Xs6myaYJRTX41E9hzKSusMcX++FCX9dr2GqqaK7tPuo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rjy5YAh47bWczxe2H/u4HyeuWrkZe4wEuwY2Nmc8vSPEGDWgE+z3PjEwTp5++lGOhRB5MEvy85njotbEecxyt7IvGnf9GNHaV/oHuyNi25Nfu7gkXKXoj6d/cdAmo20R9UYwgSuYDrwgUzi4WJgVL3T4tUoqQMH1Z8YpSvuLV1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZjH6sYw5; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2facaa16826so23741371fa.0;
+        Fri, 04 Oct 2024 12:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728070250; x=1728675050; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cDiKk/gkNOho7a3SMHPhX41erbMC+PbTgZ41vTz/A78=;
+        b=ZjH6sYw5J79IaF6L/tQJkw2P2H6szxIo0G0+2sKOrpAjDSurJVOwyupONe/5Yh+fjo
+         R/WguWUrnLzExpCTwrgk6Ib0rosfX6AdadDEFplafCeClp0RDLBW8BL1ExrCQLAPi8/A
+         D/7Iz3k4O0dc5jz9LhW1i36oHR2YKjcPLTUCkprXRseqJM2EbzagWyQlkeU4bpxbPlzN
+         jCD01esnpkfItMN6cl2Y4fZt1/RGMGCWokKpQ5ptIQqnJxtMTYInZruRjvAnuGyD12cD
+         SvdHhfrfl95mYajlY1a8MRQeY3P/iG1O6eXvv1+vxmLwwyO5qX/numKvZKM9ae/YuCMy
+         Sthg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728070250; x=1728675050;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cDiKk/gkNOho7a3SMHPhX41erbMC+PbTgZ41vTz/A78=;
+        b=gKO8OXz7AnONzPXVLsdA0V/vAqvjQ0dU8eiSC++oIT26xzTl9TzRPdBiUykIPe3uk7
+         QZxSdF316R+BEGnd3x1mkuNYki87s4hHBScfoBcyP4989T0Q1ig1/m+V8eWDUfPRz+gQ
+         an4xf01okWtpulxjZGDkLz2OpIwaSt7xMJggKkrzrkjqhVL0EvgBfayMb/2meEFljO9N
+         vM5HbBpiYzrrX7tYPhFQT1JIKN9HSMfMvxxIFWqBHDLDlfveNooeyUXDboiEILzFO0Zf
+         r4235Ehv+/KZcRil1bOO3ZVOmHWU5IKo0gFgwGBNdPMtCx5fdy12YVTlqmxzmuLPs+gV
+         MROw==
+X-Forwarded-Encrypted: i=1; AJvYcCVibJLISNtuD8OSGLppxfNrvH3SnrwOntl9BAMG0bHW2YZ1vkzQV5UCVvQP9lO6tIxwYxNLGeerP98W59owYSM=@vger.kernel.org, AJvYcCWTy3HZ9x0ELF3Pviwa4JjII7KgSUxLAwAnDeE9o9YckJHhkHWm7vJ9GFrUvqfMKmEN5znsvavG@vger.kernel.org, AJvYcCX1Xfa4SFlSZoOgOT9Z0xzi7V3tSOe8cHitVaX1hHqjkqM83nruHCpDDNPvhMrHC9fAYpqbHmTR2wlXN/J/@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKa554IMmuWQLMT2vJHyFi/w6rcm0+0k8qmhsx8lQ9GCtbiySV
+	fF9GdE7gBnLVk/0MgPy+83ykAskbe/E3Tng7uAbc6/+rVZeKjk1Jevt67MtJRwNvwBSKZc+hm0U
+	nCLOVWwB8dV+M/LY7E8YYZUpkpF0=
+X-Google-Smtp-Source: AGHT+IEK4J8RH1M7kHAo0ZIttY6GbiyFoqPXMSiNpGQSfNVTLSrfmAUw2yTiwZw0tRf8+uzaC3DuhqVUNgoO5+zLRZE=
+X-Received: by 2002:a2e:be20:0:b0:2fa:e4ae:3362 with SMTP id
+ 38308e7fff4ca-2faf3c1403fmr20806571fa.6.1728070249701; Fri, 04 Oct 2024
+ 12:30:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20241004003030.160721-1-dev@aaront.org> <20241004003030.160721-3-dev@aaront.org>
+In-Reply-To: <20241004003030.160721-3-dev@aaront.org>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Fri, 4 Oct 2024 15:30:37 -0400
+Message-ID: <CABBYNZ+gOZ36CJpq5Z7zXSNnruRpGrau9gXWo-cXKwU814ybvg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] Bluetooth: Call iso_exit() on module unload
+To: Aaron Thompson <dev@aaront.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvfedgudegtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeefudduuedtuefgleffudeigeeitdeufeelvdejgefftdethffhhfethfeljefgteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdi
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi Aaron,
 
-In analogy with a previous change in the thermal zone initialization
-path, to avoid acquiring the thermal zone lock and releasing it multiple
-times back and forth unnecessarily, move all of the code running under
-thermal_list_lock in thermal_zone_device_unregister() into a new
-function called thermal_zone_exit() and make the latter acquire the
-thermal zone lock only once and release it along with thermal_list_lock.
+On Thu, Oct 3, 2024 at 8:31=E2=80=AFPM Aaron Thompson <dev@aaront.org> wrot=
+e:
+>
+> From: Aaron Thompson <dev@aaront.org>
+>
+> If iso_init() has been called, iso_exit() must be called on module
+> unload. Without that, the struct proto that iso_init() registered with
+> proto_register() becomes invalid, which could cause unpredictable
+> problems later. In my case, with CONFIG_LIST_HARDENED and
+> CONFIG_BUG_ON_DATA_CORRUPTION enabled, loading the module again usually
+> triggers this BUG():
+>
+>   list_add corruption. next->prev should be prev (ffffffffb5355fd0),
+>     but was 0000000000000068. (next=3Dffffffffc0a010d0).
+>   ------------[ cut here ]------------
+>   kernel BUG at lib/list_debug.c:29!
+>   Oops: invalid opcode: 0000 [#1] PREEMPT SMP PTI
+>   CPU: 1 PID: 4159 Comm: modprobe Not tainted 6.10.11-4+bt2-ao-desktop #1
+>   RIP: 0010:__list_add_valid_or_report+0x61/0xa0
+>   ...
+>     __list_add_valid_or_report+0x61/0xa0
+>     proto_register+0x299/0x320
+>     hci_sock_init+0x16/0xc0 [bluetooth]
+>     bt_init+0x68/0xd0 [bluetooth]
+>     __pfx_bt_init+0x10/0x10 [bluetooth]
+>     do_one_initcall+0x80/0x2f0
+>     do_init_module+0x8b/0x230
+>     __do_sys_init_module+0x15f/0x190
+>     do_syscall_64+0x68/0x110
+>   ...
+>
+> Cc: stable@vger.kernel.org
+> Fixes: ccf74f2390d6 ("Bluetooth: Add BTPROTO_ISO socket type")
+> Signed-off-by: Aaron Thompson <dev@aaront.org>
+> ---
+>  net/bluetooth/mgmt.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+> index e4f564d6f6fb..78a164fab3e1 100644
+> --- a/net/bluetooth/mgmt.c
+> +++ b/net/bluetooth/mgmt.c
+> @@ -10487,6 +10487,7 @@ int mgmt_init(void)
+>
+>  void mgmt_exit(void)
+>  {
+> +       iso_exit();
+>         hci_mgmt_chan_unregister(&chan);
+>  }
+>
+> --
+> 2.39.5
 
-For this purpose, provide an "unlocked" variant of
-thermal_zone_cdev_unbind() to be called by thermal_zone_exit() under the
-thermal zone lock.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-This is a new iteration of
-
-https://lore.kernel.org/linux-pm/7729094.EvYhyI6sBW@rjwysocki.net/
-
-v1 -> v2: Rebase, use list_del_init() for removing thermal zones from the
-          global list so that the new list_emty() check doesn't blow up.
-
----
- drivers/thermal/thermal_core.c |   66 ++++++++++++++++++++++++-----------------
- 1 file changed, 39 insertions(+), 27 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -1266,15 +1266,21 @@ unlock_list:
- }
- EXPORT_SYMBOL_GPL(thermal_cooling_device_update);
- 
--static void thermal_zone_cdev_unbind(struct thermal_zone_device *tz,
--				     struct thermal_cooling_device *cdev)
-+static void __thermal_zone_cdev_unbind(struct thermal_zone_device *tz,
-+				       struct thermal_cooling_device *cdev)
- {
- 	struct thermal_trip_desc *td;
- 
--	mutex_lock(&tz->lock);
--
- 	for_each_trip_desc(tz, td)
- 		thermal_unbind_cdev_from_trip(tz, &td->trip, cdev);
-+}
-+
-+static void thermal_zone_cdev_unbind(struct thermal_zone_device *tz,
-+				     struct thermal_cooling_device *cdev)
-+{
-+	mutex_lock(&tz->lock);
-+
-+	__thermal_zone_cdev_unbind(tz, cdev);
- 
- 	mutex_unlock(&tz->lock);
- }
-@@ -1588,43 +1594,49 @@ struct device *thermal_zone_device(struc
- }
- EXPORT_SYMBOL_GPL(thermal_zone_device);
- 
--/**
-- * thermal_zone_device_unregister - removes the registered thermal zone device
-- * @tz: the thermal zone device to remove
-- */
--void thermal_zone_device_unregister(struct thermal_zone_device *tz)
-+static bool thermal_zone_exit(struct thermal_zone_device *tz)
- {
- 	struct thermal_cooling_device *cdev;
--	struct thermal_zone_device *pos = NULL;
--
--	if (!tz)
--		return;
--
--	thermal_debug_tz_remove(tz);
-+	bool ret = true;
- 
- 	mutex_lock(&thermal_list_lock);
--	list_for_each_entry(pos, &thermal_tz_list, node)
--		if (pos == tz)
--			break;
--	if (pos != tz) {
--		/* thermal zone device not found */
--		mutex_unlock(&thermal_list_lock);
--		return;
-+
-+	if (list_empty(&tz->node)) {
-+		ret = false;
-+		goto unlock;
- 	}
- 
- 	mutex_lock(&tz->lock);
- 
- 	tz->state |= TZ_STATE_FLAG_EXIT;
--	list_del(&tz->node);
--
--	mutex_unlock(&tz->lock);
-+	list_del_init(&tz->node);
- 
--	/* Unbind all cdevs associated with 'this' thermal zone */
-+	/* Unbind all cdevs associated with this thermal zone. */
- 	list_for_each_entry(cdev, &thermal_cdev_list, node)
--		thermal_zone_cdev_unbind(tz, cdev);
-+		__thermal_zone_cdev_unbind(tz, cdev);
-+
-+	mutex_unlock(&tz->lock);
- 
-+unlock:
- 	mutex_unlock(&thermal_list_lock);
- 
-+	return ret;
-+}
-+
-+/**
-+ * thermal_zone_device_unregister - removes the registered thermal zone device
-+ * @tz: the thermal zone device to remove
-+ */
-+void thermal_zone_device_unregister(struct thermal_zone_device *tz)
-+{
-+	if (!tz)
-+		return;
-+
-+	thermal_debug_tz_remove(tz);
-+
-+	if (!thermal_zone_exit(tz))
-+		return;
-+
- 	cancel_delayed_work_sync(&tz->poll_queue);
- 
- 	thermal_set_governor(tz, NULL);
+I had it under bt_exit with the rest of the exit functions so that we
+don't have to move it once ISO sockets become stable.
 
 
-
+--=20
+Luiz Augusto von Dentz
 
