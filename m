@@ -1,113 +1,221 @@
-Return-Path: <linux-kernel+bounces-350313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8DC990355
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:54:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AAA2990358
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AB8A1F23EFA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:54:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E76D1C21B09
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE46920FAA1;
-	Fri,  4 Oct 2024 12:54:24 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4FB20FABF;
+	Fri,  4 Oct 2024 12:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFVhCi9M"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD33129422;
-	Fri,  4 Oct 2024 12:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD9D148FF6;
+	Fri,  4 Oct 2024 12:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728046464; cv=none; b=eXj7m43k1aHGwuFbJt/rWy1kTSFESq3z1UcdV8FN/hUzmsfdtfBGiGYv1VWIgwSJKx/w3iP+u/OKQY9akuuR5PTLZWfNOI1x4HwnLeK9qFPf/DElzsEgmGisNLm5L5jB9Glq9jDNpR7R+8XLGU5MI6IC+rsMMpOuJxkTvo/cmUw=
+	t=1728046465; cv=none; b=uY8swGAh9jenbXxP2OKP7hGFox5+IS0QDiVMoTnmJ8IbxkNHzkjzTrEa2ZHxU1AOU7ueykncJ+Quky6+rCVTf2faCeLf5lpxh7C+3H/G2V+eGXQB4hbB1uxVdFqEzgSwx65H8eB0qGt86yA2XqEVQWX5Ufw6J0yaucHx6DuImVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728046464; c=relaxed/simple;
-	bh=AYYJxzyv/TpHRMqYnZn+yNkjlce/nGXyDC83ozB/2+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cK63GUtw0LIBPmxAsU40jDbFdLs1KUXKOen7ecyxsu1oSTi3s6lAd1QzXx1suDudonIimfrI+9aybUUvVXHnSOL4GXDUwhNvaqfkoZEOsyd8p5Z+CjyScBDxcE+Z+ykN1JoIRTgDGzFZwEY1tm73+NywIFhWElYL+spEUFBgsC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1728046465; c=relaxed/simple;
+	bh=scoEf+kQQ8o70PYJN/CMkKfJxUEnWdjSkGJRV4O1hIM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ijofhc7iGIz90QtJR/BYZPQOzshwOyMupM/YJEuwKJVv9zDZMUYP0TzcKWKVidVAg2FRy82zgdxjEpLrRJefaclMlsmxzfVSGkrl4oheTQshGI9I80zHF5BV5dddv2lCAZeVEmZpCJVoXDY+9y9nHz1Wa8PvSjYsWQSBHJ7Y8lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFVhCi9M; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a93b2070e0cso235285066b.3;
-        Fri, 04 Oct 2024 05:54:22 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37cfa129074so1549985f8f.1;
+        Fri, 04 Oct 2024 05:54:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728046462; x=1728651262; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OkE24tdFnxW3nZI+5FIcOtn5bLZXY6cj+71W8xLv0ZI=;
+        b=CFVhCi9MZJzG89ZfR243xYdH+HPtH9m+yLSaq5gHrsgFfRexyL2aJusYuWVoyYYKBk
+         S6mSxPFEhDOThi1NL/T5Jp7WINESZXGenzhgVT7+G745hzKZ+TGItnnjGWpSIuzArr5k
+         hvhSxqNr6E18sYVhlcJehEaNhY73NBxJEQ+Voz29BXmXvFjldlRyir0iTAvfN9PdY2Xe
+         l+vBtEIQpDtgEy82tA1C98NodokCUC4NtLiTe6wykn5ED+z4xkye4c3WrIIIczIDS/1c
+         Vq6qxpLBG7bUXMPCTg3jOxv0URBcT4hRmgAAT0v8yqcRynoh8qwOnUpyQBku8BUFV8rV
+         +R2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728046461; x=1728651261;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M8WDb0ILMLp3TSVi/xUWRtDcWXKpkXxh5dKuJYT4rVo=;
-        b=H6bJXyDPaS+XecotA/7p6d5IhKXDTZu+bOZ/an9OlKIBEhXPwvm4efezVMLPcth7Zv
-         p/6eRdFbWKiLbnypmfEzJWUJaV2V7pvvVssRHgCjrMaaq8j+fcc51ApcwpnKvQ15cooe
-         P5x6IoNUOwUxYRpUw4cq88L0CY+Hzjh1FVQTLZcnI1nqjZUfIjhkhuZpiBbbeCHee51l
-         3kDy7h+n0K/pgy8tfWcv6/z+fAN+UIx/P1lJ8XOFUPWqNHLhC01jwgDmWjSGhCCoQc0O
-         vH+1skK8SwmtvNM3ezu/bsnFhRXmpQ8Nd0zaaLG2b+oEUNKGIZrxxp/JQx1TmuVfSVIY
-         0BGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7miMyooDgs5XNigFLwR4QczNCCgN+bbJxCGa3QRfqOVY1KF6lE2BtdkV+J+N0RpuBbawVHPuG2Ayz@vger.kernel.org, AJvYcCWFn2eXjA6dUCNbQmYXCG6LzieVZMFI42eH4Zr3rRc7vmXFU8HrsoPFrFXuKx/R2Paoe42VFQC+BEB+65o=@vger.kernel.org, AJvYcCX9r8lL7Hv3hxFZiq/40rTBcf5c68QPMyv+vgcSsbpW3tTB4Ob+G8+NFP2vjMT2oOLfjFUHnCSe4IxqVNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1CRoxYAj9PIrfO9WvLujmTFufe1nLku2FHLFMqpkNWNPupOHi
-	yzc2uXLq0EKMxJ7JyDsizew1BAxsueENyOb1DJJjbyRTWiH/ABkd
-X-Google-Smtp-Source: AGHT+IHPddgOhipGvQNn5hVJUpM0k4CMY0oO4dUHBdaDJkos2CoqPupmnPT1hXBwU/1MYxp7WC6qgw==
-X-Received: by 2002:a17:907:86a0:b0:a8d:3f6a:99ce with SMTP id a640c23a62f3a-a991c031444mr285956266b.49.1728046460594;
-        Fri, 04 Oct 2024 05:54:20 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-007.fbsv.net. [2a03:2880:30ff:7::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9910285a9bsm228197766b.14.2024.10.04.05.54.19
+        d=1e100.net; s=20230601; t=1728046462; x=1728651262;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OkE24tdFnxW3nZI+5FIcOtn5bLZXY6cj+71W8xLv0ZI=;
+        b=pPJpJDbxU/ISWjU05UDuW0oUM6LC/dbBsYvteiWZ7XmFrwD689tOJJYvBA3wpRntqU
+         doxI0bU1aQLhqGdwZy+ooBazS3scWL0lqKbcAmiGTWhKyX+CjdAjM/O6J9f2uDItYWeC
+         o53LEykzD1L+4h3UqfcH+s51FVoFso6Iu5GfsaYshHBM/xOebq5OGjk1W2g532SMLwEG
+         67WwGKk1i888qWWNhlXGDwFtrbsNRAh3FhwvNm9dQ5/S91UX8sRapnyvWtzAdrY1ms79
+         ezs52puibolPcjMhZH81JXQXlGJe0/+uKmOIh7/WWxsoEvxhCTVG8/+/FQDm0X0TKL3O
+         YFFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjJA8eMx2lEAMRe4RqY1N0HqKccBNva1g4YBfd+lpcQI9tU79+8Pmf1lHDVh9z8jGX4IbeuiCCqXR6Es/s@vger.kernel.org, AJvYcCWipZ5zixzSmm2PGi4jbi10I2NjnPVnHFIhn+50P/iw404tuAe+02LanuzHQcFkdRnOKxNxIYdMNvFB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc4/1YyiHufJRNqKjVLCj7dI74PmsDLZ9xTerRdWczX/KAvA/W
+	a93IeX1q9KXH6Y5ycjGyKGd3zhX6F0CeruK161tk9CsOMrJspbyK
+X-Google-Smtp-Source: AGHT+IH2NxZqBSgVBXnK5eFnmjV1tpYIrpENzrIAU1o5rfWqLqywaR28L48fLM5SXVAsGYLIPUALzw==
+X-Received: by 2002:adf:dd8d:0:b0:368:74c0:6721 with SMTP id ffacd0b85a97d-37d0e8de825mr1733676f8f.38.1728046461330;
+        Fri, 04 Oct 2024 05:54:21 -0700 (PDT)
+Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d0822b571sm3226763f8f.40.2024.10.04.05.54.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 05:54:19 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: rmikey@meta.com,
-	linux-tegra@vger.kernel.org (open list:TEGRA QUAD SPI DRIVER),
-	linux-spi@vger.kernel.org (open list:SPI SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] spi: tegra210-quad: Avoid shift-out-of-bounds
-Date: Fri,  4 Oct 2024 05:53:59 -0700
-Message-ID: <20241004125400.1791089-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
+        Fri, 04 Oct 2024 05:54:21 -0700 (PDT)
+Message-ID: <451aaf360690cf60704e8a2880e98501156bda73.camel@gmail.com>
+Subject: Re: [PATCH v4 06/11] iio: backend: extend features
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ Sa <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mihail Chindris <mihail.chindris@analog.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan
+ Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org, 
+ dlechner@baylibre.com, Mark Brown <broonie@kernel.org>
+Date: Fri, 04 Oct 2024 14:54:15 +0200
+In-Reply-To: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-6-ceb157487329@baylibre.com>
+References: 
+	<20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
+	 <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-6-ceb157487329@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-A shift-out-of-bounds issue was identified by UBSAN in the
-tegra_qspi_fill_tx_fifo_from_client_txbuf() function.
+On Thu, 2024-10-03 at 19:29 +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> Extend backend features with new calls needed later on this
+> patchset from axi version of ad3552r.
+>=20
+> The follwoing calls are added:
+>=20
+> iio_backend_ddr_enable
+> 	enable ddr bus transfer
+> iio_backend_ddr_disable
+> 	disable ddr bus transfer
+> iio_backend_buffer_enable
+> 	enable buffer
+> iio_backend_buffer_disable
+> 	disable buffer
+> iio_backend_data_transfer_addr
+> 	define the target register address where the DAC sample
+> 	will be written.
+>=20
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+> =C2=A0drivers/iio/industrialio-backend.c | 79 +++++++++++++++++++++++++++=
++++++++++++
+> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 17 ++++++++
+> =C2=A02 files changed, 96 insertions(+)
+>=20
+> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
+o-
+> backend.c
+> index 20b3b5212da7..d5e0a4da761e 100644
+> --- a/drivers/iio/industrialio-backend.c
+> +++ b/drivers/iio/industrialio-backend.c
+> @@ -718,6 +718,85 @@ static int __devm_iio_backend_get(struct device *dev=
+, struct
+> iio_backend *back)
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> +/**
+> + * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
+> + * @back: Backend device
+> + *
+> + * Enable DDR, data is generated by the IP at each front (raising and fa=
+lling)
+> + * of the bus clock signal.
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_ddr_enable(struct iio_backend *back)
+> +{
+> +	return iio_backend_op_call(back, ddr_enable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_enable, IIO_BACKEND);
+> +
+> +/**
+> + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate) mo=
+de
+> + * @back: Backend device
+> + *
+> + * Disable DDR, setting into SDR mode (Single Data Rate).
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_ddr_disable(struct iio_backend *back)
+> +{
+> +	return iio_backend_op_call(back, ddr_disable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
+> +
+> +/**
+> + * iio_backend_dma_stream_enable - Enable iio buffering
+> + * @back: Backend device
+> + *
+> + * Enabling sending the dma data stream over the bus.
+> + * bus interface.
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_dma_stream_enable(struct iio_backend *back)
+> +{
+> +	return iio_backend_op_call(back, dma_stream_enable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_dma_stream_enable, IIO_BACKEND);
+> +
+> +/**
+> + * iio_backend_dma_stream_disable - Disable iio buffering
+> + * @back: Backend device
+> + *
+> + * Disable sending the dma data stream over the bus.
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_dma_stream_disable(struct iio_backend *back)
+> +{
+> +	return iio_backend_op_call(back, dma_stream_disable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_dma_stream_disable, IIO_BACKEND);
+> +
 
-	 UBSAN: shift-out-of-bounds in drivers/spi/spi-tegra210-quad.c:345:27
-	 shift exponent 32 is too large for 32-bit type 'u32' (aka 'unsigned int')
-	 Call trace:
-	  tegra_qspi_start_cpu_based_transfer
+I'm not sure if this is what Jonathan was suggesting... Ate least I don't r=
+eally
+agree with it. I mean, yes, this is about buffering and to start receiving =
+(or
+sending) a stream of data. But AFAICT, it might have nothing to do with DMA=
+. Same as
+.request_buffer() - It's pretty much always a DMA one but we should not tak=
+e that for
+granted.
 
-The problem arises when shifting the contents of tx_buf left by 8 times
-the value of i, which can exceed 4 and result in an exponent larger than
-32 bits.
+So going back to the RFC [1], you can see I was suggesting something like s=
+truct
+iio_buffer_setup_ops. Maybe just add the ones we use for now? So that would
+be.buffer_postenable() and .buffer_predisable(). Like this, it should be ob=
+vious the
+intent of the ops.
 
-Resolve this by restrict the value of i to be less than 4, preventing
-the shift operation from overflowing.
+- Nuno S=C3=A1
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: 921fc1838fb0 ("spi: tegra210-quad: Add support for Tegra210 QSPI controller")
----
- drivers/spi/spi-tegra210-quad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index afbd64a217eb..43f11b0e9e76 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -341,7 +341,7 @@ tegra_qspi_fill_tx_fifo_from_client_txbuf(struct tegra_qspi *tqspi, struct spi_t
- 		for (count = 0; count < max_n_32bit; count++) {
- 			u32 x = 0;
- 
--			for (i = 0; len && (i < bytes_per_word); i++, len--)
-+			for (i = 0; len && (i < min(4, bytes_per_word)); i++, len--)
- 				x |= (u32)(*tx_buf++) << (i * 8);
- 			tegra_qspi_writel(tqspi, x, QSPI_TX_FIFO);
- 		}
--- 
-2.43.5
 
 
