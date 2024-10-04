@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-350679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA20990807
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:51:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD222990809
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89981F225FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:51:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3624828A2AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556B81C7283;
-	Fri,  4 Oct 2024 15:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F3121D2CB;
+	Fri,  4 Oct 2024 15:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QaWoBAj5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PY60yaBL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70E121D2A8;
-	Fri,  4 Oct 2024 15:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C165621D2BD;
+	Fri,  4 Oct 2024 15:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728056591; cv=none; b=I/eIZnU2TWlD2gRc/cpQKNl/RUIdFauQCG5k8v5FZpHAaKY71/VV/6+cwCnDIIA87UnUHZ4XY+tjtEdVsy+EAZbbN1m0e89+pSIQcnhRiPBNV3JoiVh4V+MHTW8ACHUj9oAY1QbAc5VmaWo7x4dcarODEb14874OijgF226oE+4=
+	t=1728056597; cv=none; b=JURRgsTNRIw/J0E5+T0m5FdEFOi2fL/yEmDBXQc8NHEpIQ6+WP/37fOKKgKvvKFaE6TPRveAzxdo6f4QZrcSRqf5qRqVq3ARIHlh461+p5leFrCXC2v/7rFe2ZTuTINr16EiJp7dzUmr/qIlsOq2+yAZEIJOz45rdoDdOwTKfjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728056591; c=relaxed/simple;
-	bh=32n8JgdHO+8eRlSHJI2uTCIWYY9WmRtXv+48HzSp4yQ=;
+	s=arc-20240116; t=1728056597; c=relaxed/simple;
+	bh=kazRakNrpHOowneaJN4zcTb6ci/LaZH4uk5yeLlVimc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I6HkNRniDwB4lmTapS/vEQrD4vI3tX4KRkzFdnHPDO3X2FHcqBKRElcurZ51r4su7Ac/yde3JsJCB0a+t9uqB+qAgA6VKzRbr6SH7L1nlKEgxCqZN39f05GoFmuSf3flQTeFzvF/Md8xpYow+OG/tyUpw3kHVeGPjJaDdI3lxh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QaWoBAj5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81019C4CED0;
-	Fri,  4 Oct 2024 15:43:05 +0000 (UTC)
+	 MIME-Version; b=ucjDObFmAPebfPDKDpauW8TfuVunpyEXkf7hkxSdlZ3/L5PQrGmJASQ66TfOc+YIUhSq/SQPXbA6ZfbjoFloxC0e7JvFk1hcP5XRRBjjXWK9wJr+ScAw0VoTcP+WWhjmLvs3Npq4uUIc64LdpE2MtL5wmekI86sRQ3aqIr8SAkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PY60yaBL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4582BC4CECE;
+	Fri,  4 Oct 2024 15:43:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728056590;
-	bh=32n8JgdHO+8eRlSHJI2uTCIWYY9WmRtXv+48HzSp4yQ=;
+	s=k20201202; t=1728056596;
+	bh=kazRakNrpHOowneaJN4zcTb6ci/LaZH4uk5yeLlVimc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QaWoBAj51CQQulLDgA+/1MISUmvSh6Lszi6gA5SuasW+PWmiOg2R9e4i0TjlqZKPE
-	 kiGKnr7Pc67AN/+909EVZ7/eLP3PZ7Hc8FJRqCdJLFzPVSm4TcbIW2K5RVBNPZIUfL
-	 m2jOcLFvFvPT3LyaRrTAszT2bISGm1L6NXqXgfWEBIVl+yLTSzvstMhkCt9j5DnHxs
-	 hwoGmxEIis6kbSj0TZG3Q9s1DjD+dAA5HgZjKJzM3aX8cNfZqdyqQXJk5MuYqKGpyl
-	 6kWEM51LjQPa2W+nlbigu22gAeyOylhyrEmMG04mIYdrgkkd2R6Y0r0NwLHnU8Yn3M
-	 pWO4486P0b82A==
+	b=PY60yaBLX5FkWroGne2wbiRf3YOduSZVZm5AHgfyk3WHkfWbM3EuOrVqXycz4PQq+
+	 L7kLm6ETYxc6+1xIy6vIEplED3xtKssri1U63By0v6Aprb3PO7CD48G/KQPD32sgtJ
+	 vci/dSKvPyxY601jRKNuA/LQ03a7e2hPiAZLWPQqRQUms6VALZyIA9L5y8jP4wxwV7
+	 O+XD4vvvKldAUaErm99zXSSYqGHqSfxaJm+IqSE2EyH5k/x7lOfsO7Gdrk0RwSzZXs
+	 UZB3fpr7e5dFB5csBMAGxrOWgFIN4xCvRqYtAUB2d6YvLLzFf1UgIPk0KrpdD0lUdG
+	 7FqY3nKH27GTg==
 From: Danilo Krummrich <dakr@kernel.org>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -66,9 +66,9 @@ Cc: daniel.almeida@collabora.com,
 	rust-for-linux@vger.kernel.org,
 	linux-mm@kvack.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v9 12/29] rust: treewide: switch to our kernel `Box` type
-Date: Fri,  4 Oct 2024 17:41:16 +0200
-Message-ID: <20241004154149.93856-13-dakr@kernel.org>
+Subject: [PATCH v9 13/29] rust: alloc: remove extension of std's `Box`
+Date: Fri,  4 Oct 2024 17:41:17 +0200
+Message-ID: <20241004154149.93856-14-dakr@kernel.org>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20241004154149.93856-1-dakr@kernel.org>
 References: <20241004154149.93856-1-dakr@kernel.org>
@@ -80,636 +80,315 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that we got the kernel `Box` type in place, convert all existing
-`Box` users to make use of it.
+Now that all existing `Box` users were moved to the kernel `Box` type,
+remove the `BoxExt` extension and all other related extensions.
 
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 Reviewed-by: Gary Guo <gary@garyguo.net>
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- drivers/block/rnull.rs            |  4 +--
- rust/kernel/init.rs               | 51 ++++++++++++++++---------------
- rust/kernel/init/__internal.rs    |  2 +-
- rust/kernel/rbtree.rs             | 49 ++++++++++++++++-------------
- rust/kernel/sync/arc.rs           | 17 +++++------
- rust/kernel/sync/condvar.rs       |  4 +--
- rust/kernel/sync/lock/mutex.rs    |  2 +-
- rust/kernel/sync/lock/spinlock.rs |  2 +-
- rust/kernel/workqueue.rs          | 20 ++++++------
- rust/macros/lib.rs                |  6 ++--
- 10 files changed, 81 insertions(+), 76 deletions(-)
+ rust/kernel/alloc.rs         |  1 -
+ rust/kernel/alloc/box_ext.rs | 89 ------------------------------------
+ rust/kernel/init.rs          | 46 +------------------
+ rust/kernel/lib.rs           |  1 -
+ rust/kernel/prelude.rs       |  4 +-
+ rust/kernel/types.rs         | 50 --------------------
+ 6 files changed, 3 insertions(+), 188 deletions(-)
+ delete mode 100644 rust/kernel/alloc/box_ext.rs
 
-diff --git a/drivers/block/rnull.rs b/drivers/block/rnull.rs
-index b0227cf9ddd3..5de7223beb4d 100644
---- a/drivers/block/rnull.rs
-+++ b/drivers/block/rnull.rs
-@@ -32,7 +32,7 @@
- }
+diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+index 12cd52f83222..ebe58247504f 100644
+--- a/rust/kernel/alloc.rs
++++ b/rust/kernel/alloc.rs
+@@ -4,7 +4,6 @@
  
- struct NullBlkModule {
--    _disk: Pin<Box<Mutex<GenDisk<NullBlkDevice>>>>,
-+    _disk: Pin<KBox<Mutex<GenDisk<NullBlkDevice>>>>,
- }
+ #[cfg(not(any(test, testlib)))]
+ pub mod allocator;
+-pub mod box_ext;
+ pub mod kbox;
+ pub mod vec_ext;
  
- impl kernel::Module for NullBlkModule {
-@@ -47,7 +47,7 @@ fn init(_module: &'static ThisModule) -> Result<Self> {
-             .rotational(false)
-             .build(format_args!("rnullb{}", 0), tagset)?;
- 
--        let disk = Box::pin_init(new_mutex!(disk, "nullb:disk"), flags::GFP_KERNEL)?;
-+        let disk = KBox::pin_init(new_mutex!(disk, "nullb:disk"), flags::GFP_KERNEL)?;
- 
-         Ok(Self { _disk: disk })
-     }
+diff --git a/rust/kernel/alloc/box_ext.rs b/rust/kernel/alloc/box_ext.rs
+deleted file mode 100644
+index 7009ad78d4e0..000000000000
+--- a/rust/kernel/alloc/box_ext.rs
++++ /dev/null
+@@ -1,89 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-
+-//! Extensions to [`Box`] for fallible allocations.
+-
+-use super::{AllocError, Flags};
+-use alloc::boxed::Box;
+-use core::{mem::MaybeUninit, ptr, result::Result};
+-
+-/// Extensions to [`Box`].
+-pub trait BoxExt<T>: Sized {
+-    /// Allocates a new box.
+-    ///
+-    /// The allocation may fail, in which case an error is returned.
+-    fn new(x: T, flags: Flags) -> Result<Self, AllocError>;
+-
+-    /// Allocates a new uninitialised box.
+-    ///
+-    /// The allocation may fail, in which case an error is returned.
+-    fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocError>;
+-
+-    /// Drops the contents, but keeps the allocation.
+-    ///
+-    /// # Examples
+-    ///
+-    /// ```
+-    /// use kernel::alloc::{flags, box_ext::BoxExt};
+-    /// let value = Box::new([0; 32], flags::GFP_KERNEL)?;
+-    /// assert_eq!(*value, [0; 32]);
+-    /// let mut value = Box::drop_contents(value);
+-    /// // Now we can re-use `value`:
+-    /// value.write([1; 32]);
+-    /// // SAFETY: We just wrote to it.
+-    /// let value = unsafe { value.assume_init() };
+-    /// assert_eq!(*value, [1; 32]);
+-    /// # Ok::<(), Error>(())
+-    /// ```
+-    fn drop_contents(this: Self) -> Box<MaybeUninit<T>>;
+-}
+-
+-impl<T> BoxExt<T> for Box<T> {
+-    fn new(x: T, flags: Flags) -> Result<Self, AllocError> {
+-        let mut b = <Self as BoxExt<_>>::new_uninit(flags)?;
+-        b.write(x);
+-        // SAFETY: We just wrote to it.
+-        Ok(unsafe { b.assume_init() })
+-    }
+-
+-    #[cfg(any(test, testlib))]
+-    fn new_uninit(_flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocError> {
+-        Ok(Box::new_uninit())
+-    }
+-
+-    #[cfg(not(any(test, testlib)))]
+-    fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocError> {
+-        let ptr = if core::mem::size_of::<MaybeUninit<T>>() == 0 {
+-            core::ptr::NonNull::<_>::dangling().as_ptr()
+-        } else {
+-            let layout = core::alloc::Layout::new::<MaybeUninit<T>>();
+-
+-            // SAFETY: Memory is being allocated (first arg is null). The only other source of
+-            // safety issues is sleeping on atomic context, which is addressed by klint. Lastly,
+-            // the type is not a SZT (checked above).
+-            let ptr =
+-                unsafe { super::allocator::krealloc_aligned(core::ptr::null_mut(), layout, flags) };
+-            if ptr.is_null() {
+-                return Err(AllocError);
+-            }
+-
+-            ptr.cast::<MaybeUninit<T>>()
+-        };
+-
+-        // SAFETY: For non-zero-sized types, we allocate above using the global allocator. For
+-        // zero-sized types, we use `NonNull::dangling`.
+-        Ok(unsafe { Box::from_raw(ptr) })
+-    }
+-
+-    fn drop_contents(this: Self) -> Box<MaybeUninit<T>> {
+-        let ptr = Box::into_raw(this);
+-        // SAFETY: `ptr` is valid, because it came from `Box::into_raw`.
+-        unsafe { ptr::drop_in_place(ptr) };
+-
+-        // CAST: `MaybeUninit<T>` is a transparent wrapper of `T`.
+-        let ptr = ptr.cast::<MaybeUninit<T>>();
+-
+-        // SAFETY: `ptr` is valid for writes, because it came from `Box::into_raw` and it is valid for
+-        // reads, since the pointer came from `Box::into_raw` and the type is `MaybeUninit<T>`.
+-        unsafe { Box::from_raw(ptr) }
+-    }
+-}
 diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
-index 25057cbed40b..c889f2640b56 100644
+index c889f2640b56..c9919ba0b683 100644
 --- a/rust/kernel/init.rs
 +++ b/rust/kernel/init.rs
-@@ -13,7 +13,7 @@
- //! To initialize a `struct` with an in-place constructor you will need two things:
- //! - an in-place constructor,
- //! - a memory location that can hold your `struct` (this can be the [stack], an [`Arc<T>`],
--//!   [`UniqueArc<T>`], [`Box<T>`] or any other smart pointer that implements [`InPlaceInit`]).
-+//!   [`UniqueArc<T>`], [`KBox<T>`] or any other smart pointer that implements [`InPlaceInit`]).
- //!
- //! To get an in-place constructor there are generally three options:
- //! - directly creating an in-place constructor using the [`pin_init!`] macro,
-@@ -68,7 +68,7 @@
- //! #     a <- new_mutex!(42, "Foo::a"),
- //! #     b: 24,
- //! # });
--//! let foo: Result<Pin<Box<Foo>>> = Box::pin_init(foo, GFP_KERNEL);
-+//! let foo: Result<Pin<KBox<Foo>>> = KBox::pin_init(foo, GFP_KERNEL);
- //! ```
- //!
- //! For more information see the [`pin_init!`] macro.
-@@ -92,14 +92,14 @@
- //! struct DriverData {
- //!     #[pin]
- //!     status: Mutex<i32>,
--//!     buffer: Box<[u8; 1_000_000]>,
-+//!     buffer: KBox<[u8; 1_000_000]>,
- //! }
- //!
- //! impl DriverData {
- //!     fn new() -> impl PinInit<Self, Error> {
- //!         try_pin_init!(Self {
- //!             status <- new_mutex!(0, "DriverData::status"),
--//!             buffer: Box::init(kernel::init::zeroed(), GFP_KERNEL)?,
-+//!             buffer: KBox::init(kernel::init::zeroed(), GFP_KERNEL)?,
- //!         })
- //!     }
- //! }
-@@ -211,7 +211,7 @@
+@@ -211,13 +211,12 @@
  //! [`pin_init!`]: crate::pin_init!
  
  use crate::{
--    alloc::{box_ext::BoxExt, AllocError, Flags},
-+    alloc::{box_ext::BoxExt, AllocError, Flags, KBox},
+-    alloc::{box_ext::BoxExt, AllocError, Flags, KBox},
++    alloc::{AllocError, Flags, KBox},
      error::{self, Error},
      sync::Arc,
      sync::UniqueArc,
-@@ -298,7 +298,7 @@ macro_rules! stack_pin_init {
- /// struct Foo {
- ///     #[pin]
- ///     a: Mutex<usize>,
--///     b: Box<Bar>,
-+///     b: KBox<Bar>,
- /// }
- ///
- /// struct Bar {
-@@ -307,7 +307,7 @@ macro_rules! stack_pin_init {
- ///
- /// stack_try_pin_init!(let foo: Result<Pin<&mut Foo>, AllocError> = pin_init!(Foo {
- ///     a <- new_mutex!(42),
--///     b: Box::new(Bar {
-+///     b: KBox::new(Bar {
- ///         x: 64,
- ///     }, GFP_KERNEL)?,
- /// }));
-@@ -324,7 +324,7 @@ macro_rules! stack_pin_init {
- /// struct Foo {
- ///     #[pin]
- ///     a: Mutex<usize>,
--///     b: Box<Bar>,
-+///     b: KBox<Bar>,
- /// }
- ///
- /// struct Bar {
-@@ -333,7 +333,7 @@ macro_rules! stack_pin_init {
- ///
- /// stack_try_pin_init!(let foo: Pin<&mut Foo> =? pin_init!(Foo {
- ///     a <- new_mutex!(42),
--///     b: Box::new(Bar {
-+///     b: KBox::new(Bar {
- ///         x: 64,
- ///     }, GFP_KERNEL)?,
- /// }));
-@@ -391,7 +391,7 @@ macro_rules! stack_try_pin_init {
- ///     },
- /// });
- /// # initializer }
--/// # Box::pin_init(demo(), GFP_KERNEL).unwrap();
-+/// # KBox::pin_init(demo(), GFP_KERNEL).unwrap();
- /// ```
- ///
- /// Arbitrary Rust expressions can be used to set the value of a variable.
-@@ -460,7 +460,7 @@ macro_rules! stack_try_pin_init {
- /// #         })
- /// #     }
- /// # }
--/// let foo = Box::pin_init(Foo::new(), GFP_KERNEL);
-+/// let foo = KBox::pin_init(Foo::new(), GFP_KERNEL);
- /// ```
- ///
- /// They can also easily embed it into their own `struct`s:
-@@ -592,7 +592,7 @@ macro_rules! pin_init {
- /// use kernel::{init::{self, PinInit}, error::Error};
- /// #[pin_data]
- /// struct BigBuf {
--///     big: Box<[u8; 1024 * 1024 * 1024]>,
-+///     big: KBox<[u8; 1024 * 1024 * 1024]>,
- ///     small: [u8; 1024 * 1024],
- ///     ptr: *mut u8,
- /// }
-@@ -600,7 +600,7 @@ macro_rules! pin_init {
- /// impl BigBuf {
- ///     fn new() -> impl PinInit<Self, Error> {
- ///         try_pin_init!(Self {
--///             big: Box::init(init::zeroed(), GFP_KERNEL)?,
-+///             big: KBox::init(init::zeroed(), GFP_KERNEL)?,
- ///             small: [0; 1024 * 1024],
- ///             ptr: core::ptr::null_mut(),
- ///         }? Error)
-@@ -692,16 +692,16 @@ macro_rules! init {
- /// # Examples
- ///
- /// ```rust
--/// use kernel::{init::{PinInit, zeroed}, error::Error};
-+/// use kernel::{alloc::KBox, init::{PinInit, zeroed}, error::Error};
- /// struct BigBuf {
--///     big: Box<[u8; 1024 * 1024 * 1024]>,
-+///     big: KBox<[u8; 1024 * 1024 * 1024]>,
- ///     small: [u8; 1024 * 1024],
- /// }
- ///
- /// impl BigBuf {
- ///     fn new() -> impl Init<Self, Error> {
- ///         try_init!(Self {
--///             big: Box::init(zeroed(), GFP_KERNEL)?,
-+///             big: KBox::init(zeroed(), GFP_KERNEL)?,
- ///             small: [0; 1024 * 1024],
- ///         }? Error)
- ///     }
-@@ -812,8 +812,8 @@ macro_rules! assert_pinned {
- /// A pin-initializer for the type `T`.
- ///
- /// To use this initializer, you will need a suitable memory location that can hold a `T`. This can
--/// be [`Box<T>`], [`Arc<T>`], [`UniqueArc<T>`] or even the stack (see [`stack_pin_init!`]). Use the
--/// [`InPlaceInit::pin_init`] function of a smart pointer like [`Arc<T>`] on this.
-+/// be [`KBox<T>`], [`Arc<T>`], [`UniqueArc<T>`] or even the stack (see [`stack_pin_init!`]). Use
-+/// the [`InPlaceInit::pin_init`] function of a smart pointer like [`Arc<T>`] on this.
- ///
- /// Also see the [module description](self).
- ///
-@@ -893,7 +893,7 @@ fn pin_chain<F>(self, f: F) -> ChainPinInit<Self, F, T, E>
- }
- 
- /// An initializer returned by [`PinInit::pin_chain`].
--pub struct ChainPinInit<I, F, T: ?Sized, E>(I, F, __internal::Invariant<(E, Box<T>)>);
-+pub struct ChainPinInit<I, F, T: ?Sized, E>(I, F, __internal::Invariant<(E, KBox<T>)>);
- 
- // SAFETY: The `__pinned_init` function is implemented such that it
- // - returns `Ok(())` on successful initialization,
-@@ -919,8 +919,8 @@ unsafe fn __pinned_init(self, slot: *mut T) -> Result<(), E> {
- /// An initializer for `T`.
- ///
- /// To use this initializer, you will need a suitable memory location that can hold a `T`. This can
--/// be [`Box<T>`], [`Arc<T>`], [`UniqueArc<T>`] or even the stack (see [`stack_pin_init!`]). Use the
--/// [`InPlaceInit::init`] function of a smart pointer like [`Arc<T>`] on this. Because
-+/// be [`KBox<T>`], [`Arc<T>`], [`UniqueArc<T>`] or even the stack (see [`stack_pin_init!`]). Use
-+/// the [`InPlaceInit::init`] function of a smart pointer like [`Arc<T>`] on this. Because
- /// [`PinInit<T, E>`] is a super trait, you can use every function that takes it as well.
- ///
- /// Also see the [module description](self).
-@@ -992,7 +992,7 @@ fn chain<F>(self, f: F) -> ChainInit<Self, F, T, E>
- }
- 
- /// An initializer returned by [`Init::chain`].
--pub struct ChainInit<I, F, T: ?Sized, E>(I, F, __internal::Invariant<(E, Box<T>)>);
-+pub struct ChainInit<I, F, T: ?Sized, E>(I, F, __internal::Invariant<(E, KBox<T>)>);
- 
- // SAFETY: The `__init` function is implemented such that it
- // - returns `Ok(())` on successful initialization,
-@@ -1076,8 +1076,9 @@ pub fn uninit<T, E>() -> impl Init<MaybeUninit<T>, E> {
- /// # Examples
- ///
- /// ```rust
--/// use kernel::{error::Error, init::init_array_from_fn};
--/// let array: Box<[usize; 1_000]> = Box::init::<Error>(init_array_from_fn(|i| i), GFP_KERNEL).unwrap();
-+/// use kernel::{alloc::KBox, error::Error, init::init_array_from_fn};
-+/// let array: KBox<[usize; 1_000]> =
-+///     KBox::init::<Error>(init_array_from_fn(|i| i), GFP_KERNEL).unwrap();
- /// assert_eq!(array.len(), 1_000);
- /// ```
- pub fn init_array_from_fn<I, const N: usize, T, E>(
-@@ -1453,7 +1454,7 @@ macro_rules! impl_zeroable {
-     //
-     // In this case we are allowed to use `T: ?Sized`, since all zeros is the `None` variant.
-     {<T: ?Sized>} Option<NonNull<T>>,
--    {<T: ?Sized>} Option<Box<T>>,
-+    {<T: ?Sized>} Option<KBox<T>>,
- 
-     // SAFETY: `null` pointer is valid.
-     //
-diff --git a/rust/kernel/init/__internal.rs b/rust/kernel/init/__internal.rs
-index 44431fba7aab..74329cc3262c 100644
---- a/rust/kernel/init/__internal.rs
-+++ b/rust/kernel/init/__internal.rs
-@@ -105,7 +105,7 @@ fn make_closure<F, O, E>(self, f: F) -> F
-     }
- }
- 
--pub struct AllData<T: ?Sized>(PhantomData<fn(Box<T>) -> Box<T>>);
-+pub struct AllData<T: ?Sized>(PhantomData<fn(KBox<T>) -> KBox<T>>);
- 
- impl<T: ?Sized> Clone for AllData<T> {
-     fn clone(&self) -> Self {
-diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-index d03e4aa1f481..cb4415a12258 100644
---- a/rust/kernel/rbtree.rs
-+++ b/rust/kernel/rbtree.rs
-@@ -7,7 +7,6 @@
- //! Reference: <https://docs.kernel.org/core-api/rbtree.html>
- 
- use crate::{alloc::Flags, bindings, container_of, error::Result, prelude::*};
--use alloc::boxed::Box;
- use core::{
-     cmp::{Ord, Ordering},
-     marker::PhantomData,
-@@ -497,7 +496,7 @@ fn drop(&mut self) {
-             // but it is not observable. The loop invariant is still maintained.
- 
-             // SAFETY: `this` is valid per the loop invariant.
--            unsafe { drop(Box::from_raw(this.cast_mut())) };
-+            unsafe { drop(KBox::from_raw(this.cast_mut())) };
-         }
-     }
- }
-@@ -764,7 +763,7 @@ pub fn remove_current(self) -> (Option<Self>, RBTreeNode<K, V>) {
-         // point to the links field of `Node<K, V>` objects.
-         let this = unsafe { container_of!(self.current.as_ptr(), Node<K, V>, links) }.cast_mut();
-         // SAFETY: `this` is valid by the type invariants as described above.
--        let node = unsafe { Box::from_raw(this) };
-+        let node = unsafe { KBox::from_raw(this) };
-         let node = RBTreeNode { node };
-         // SAFETY: The reference to the tree used to create the cursor outlives the cursor, so
-         // the tree cannot change. By the tree invariant, all nodes are valid.
-@@ -809,7 +808,7 @@ fn remove_neighbor(&mut self, direction: Direction) -> Option<RBTreeNode<K, V>>
-             // point to the links field of `Node<K, V>` objects.
-             let this = unsafe { container_of!(neighbor, Node<K, V>, links) }.cast_mut();
-             // SAFETY: `this` is valid by the type invariants as described above.
--            let node = unsafe { Box::from_raw(this) };
-+            let node = unsafe { KBox::from_raw(this) };
-             return Some(RBTreeNode { node });
-         }
-         None
-@@ -1038,7 +1037,7 @@ fn next(&mut self) -> Option<Self::Item> {
- /// It contains the memory needed to hold a node that can be inserted into a red-black tree. One
- /// can be obtained by directly allocating it ([`RBTreeNodeReservation::new`]).
- pub struct RBTreeNodeReservation<K, V> {
--    node: Box<MaybeUninit<Node<K, V>>>,
-+    node: KBox<MaybeUninit<Node<K, V>>>,
- }
- 
- impl<K, V> RBTreeNodeReservation<K, V> {
-@@ -1046,7 +1045,7 @@ impl<K, V> RBTreeNodeReservation<K, V> {
-     /// call to [`RBTree::insert`].
-     pub fn new(flags: Flags) -> Result<RBTreeNodeReservation<K, V>> {
-         Ok(RBTreeNodeReservation {
--            node: <Box<_> as BoxExt<_>>::new_uninit(flags)?,
-+            node: KBox::new_uninit(flags)?,
-         })
-     }
- }
-@@ -1062,14 +1061,15 @@ impl<K, V> RBTreeNodeReservation<K, V> {
-     /// Initialises a node reservation.
-     ///
-     /// It then becomes an [`RBTreeNode`] that can be inserted into a tree.
--    pub fn into_node(mut self, key: K, value: V) -> RBTreeNode<K, V> {
--        self.node.write(Node {
--            key,
--            value,
--            links: bindings::rb_node::default(),
--        });
--        // SAFETY: We just wrote to it.
--        let node = unsafe { self.node.assume_init() };
-+    pub fn into_node(self, key: K, value: V) -> RBTreeNode<K, V> {
-+        let node = KBox::write(
-+            self.node,
-+            Node {
-+                key,
-+                value,
-+                links: bindings::rb_node::default(),
-+            },
-+        );
-         RBTreeNode { node }
-     }
- }
-@@ -1079,7 +1079,7 @@ pub fn into_node(mut self, key: K, value: V) -> RBTreeNode<K, V> {
- /// The node is fully initialised (with key and value) and can be inserted into a tree without any
- /// extra allocations or failure paths.
- pub struct RBTreeNode<K, V> {
--    node: Box<Node<K, V>>,
-+    node: KBox<Node<K, V>>,
- }
- 
- impl<K, V> RBTreeNode<K, V> {
-@@ -1091,7 +1091,9 @@ pub fn new(key: K, value: V, flags: Flags) -> Result<RBTreeNode<K, V>> {
- 
-     /// Get the key and value from inside the node.
-     pub fn to_key_value(self) -> (K, V) {
--        (self.node.key, self.node.value)
-+        let node = KBox::into_inner(self.node);
-+
-+        (node.key, node.value)
-     }
- }
- 
-@@ -1113,7 +1115,7 @@ impl<K, V> RBTreeNode<K, V> {
-     /// may be freed (but only for the key/value; memory for the node itself is kept for reuse).
-     pub fn into_reservation(self) -> RBTreeNodeReservation<K, V> {
-         RBTreeNodeReservation {
--            node: Box::drop_contents(self.node),
-+            node: KBox::drop_contents(self.node),
-         }
-     }
- }
-@@ -1164,7 +1166,7 @@ impl<'a, K, V> RawVacantEntry<'a, K, V> {
-     /// The `node` must have a key such that inserting it here does not break the ordering of this
-     /// [`RBTree`].
-     fn insert(self, node: RBTreeNode<K, V>) -> &'a mut V {
--        let node = Box::into_raw(node.node);
-+        let node = KBox::into_raw(node.node);
- 
-         // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
-         // the node is removed or replaced.
-@@ -1238,21 +1240,24 @@ pub fn remove_node(self) -> RBTreeNode<K, V> {
-             // SAFETY: The node was a node in the tree, but we removed it, so we can convert it
-             // back into a box.
-             node: unsafe {
--                Box::from_raw(container_of!(self.node_links, Node<K, V>, links).cast_mut())
-+                KBox::from_raw(container_of!(self.node_links, Node<K, V>, links).cast_mut())
-             },
-         }
-     }
- 
-     /// Takes the value of the entry out of the map, and returns it.
-     pub fn remove(self) -> V {
--        self.remove_node().node.value
-+        let rb_node = self.remove_node();
-+        let node = KBox::into_inner(rb_node.node);
-+
-+        node.value
-     }
- 
-     /// Swap the current node for the provided node.
-     ///
-     /// The key of both nodes must be equal.
-     fn replace(self, node: RBTreeNode<K, V>) -> RBTreeNode<K, V> {
--        let node = Box::into_raw(node.node);
-+        let node = KBox::into_raw(node.node);
- 
-         // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
-         // the node is removed or replaced.
-@@ -1268,7 +1273,7 @@ fn replace(self, node: RBTreeNode<K, V>) -> RBTreeNode<K, V> {
-         // - `self.node_ptr` produces a valid pointer to a node in the tree.
-         // - Now that we removed this entry from the tree, we can convert the node to a box.
-         let old_node =
--            unsafe { Box::from_raw(container_of!(self.node_links, Node<K, V>, links).cast_mut()) };
-+            unsafe { KBox::from_raw(container_of!(self.node_links, Node<K, V>, links).cast_mut()) };
- 
-         RBTreeNode { node: old_node }
-     }
-diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-index 9325cc5a16a4..db9da352d588 100644
---- a/rust/kernel/sync/arc.rs
-+++ b/rust/kernel/sync/arc.rs
-@@ -17,13 +17,12 @@
- //! [`Arc`]: https://doc.rust-lang.org/std/sync/struct.Arc.html
- 
- use crate::{
--    alloc::{box_ext::BoxExt, AllocError, Flags},
-+    alloc::{AllocError, Flags, KBox},
-     bindings,
-     init::{self, InPlaceInit, Init, PinInit},
-     try_init,
-     types::{ForeignOwnable, Opaque},
+     types::{Opaque, ScopeGuard},
  };
 -use alloc::boxed::Box;
  use core::{
-     alloc::Layout,
-     fmt,
-@@ -201,11 +200,11 @@ pub fn new(contents: T, flags: Flags) -> Result<Self, AllocError> {
-             data: contents,
-         };
- 
--        let inner = <Box<_> as BoxExt<_>>::new(value, flags)?;
-+        let inner = KBox::new(value, flags)?;
- 
-         // SAFETY: We just created `inner` with a reference count of 1, which is owned by the new
-         // `Arc` object.
--        Ok(unsafe { Self::from_inner(Box::leak(inner).into()) })
-+        Ok(unsafe { Self::from_inner(KBox::leak(inner).into()) })
+     cell::UnsafeCell,
+     convert::Infallible,
+@@ -588,7 +587,6 @@ macro_rules! pin_init {
+ /// # Examples
+ ///
+ /// ```rust
+-/// # #![feature(new_uninit)]
+ /// use kernel::{init::{self, PinInit}, error::Error};
+ /// #[pin_data]
+ /// struct BigBuf {
+@@ -1245,26 +1243,6 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
      }
  }
  
-@@ -398,8 +397,8 @@ fn drop(&mut self) {
-         if is_zero {
-             // The count reached zero, we must free the memory.
-             //
--            // SAFETY: The pointer was initialised from the result of `Box::leak`.
--            unsafe { drop(Box::from_raw(self.ptr.as_ptr())) };
-+            // SAFETY: The pointer was initialised from the result of `KBox::leak`.
-+            unsafe { drop(KBox::from_raw(self.ptr.as_ptr())) };
-         }
+-impl<T> InPlaceInit<T> for Box<T> {
+-    type PinnedSelf = Pin<Self>;
+-
+-    #[inline]
+-    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Self::PinnedSelf, E>
+-    where
+-        E: From<AllocError>,
+-    {
+-        <Box<_> as BoxExt<_>>::new_uninit(flags)?.write_pin_init(init)
+-    }
+-
+-    #[inline]
+-    fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
+-    where
+-        E: From<AllocError>,
+-    {
+-        <Box<_> as BoxExt<_>>::new_uninit(flags)?.write_init(init)
+-    }
+-}
+-
+ impl<T> InPlaceInit<T> for UniqueArc<T> {
+     type PinnedSelf = Pin<Self>;
+ 
+@@ -1301,28 +1279,6 @@ pub trait InPlaceWrite<T> {
+     fn write_pin_init<E>(self, init: impl PinInit<T, E>) -> Result<Pin<Self::Initialized>, E>;
+ }
+ 
+-impl<T> InPlaceWrite<T> for Box<MaybeUninit<T>> {
+-    type Initialized = Box<T>;
+-
+-    fn write_init<E>(mut self, init: impl Init<T, E>) -> Result<Self::Initialized, E> {
+-        let slot = self.as_mut_ptr();
+-        // SAFETY: When init errors/panics, slot will get deallocated but not dropped,
+-        // slot is valid.
+-        unsafe { init.__init(slot)? };
+-        // SAFETY: All fields have been initialized.
+-        Ok(unsafe { self.assume_init() })
+-    }
+-
+-    fn write_pin_init<E>(mut self, init: impl PinInit<T, E>) -> Result<Pin<Self::Initialized>, E> {
+-        let slot = self.as_mut_ptr();
+-        // SAFETY: When init errors/panics, slot will get deallocated but not dropped,
+-        // slot is valid and will not be moved, because we pin it later.
+-        unsafe { init.__pinned_init(slot)? };
+-        // SAFETY: All fields have been initialized.
+-        Ok(unsafe { self.assume_init() }.into())
+-    }
+-}
+-
+ impl<T> InPlaceWrite<T> for UniqueArc<MaybeUninit<T>> {
+     type Initialized = UniqueArc<T>;
+ 
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index d59639e36db5..c9fb478f03b2 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -16,7 +16,6 @@
+ #![feature(coerce_unsized)]
+ #![feature(dispatch_from_dyn)]
+ #![feature(lint_reasons)]
+-#![feature(new_uninit)]
+ #![feature(unsize)]
+ 
+ // Ensure conditional compilation based on the kernel configuration works;
+diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+index a9210634a8c3..c1f8e5c832e2 100644
+--- a/rust/kernel/prelude.rs
++++ b/rust/kernel/prelude.rs
+@@ -14,10 +14,10 @@
+ #[doc(no_inline)]
+ pub use core::pin::Pin;
+ 
+-pub use crate::alloc::{box_ext::BoxExt, flags::*, vec_ext::VecExt, KBox, KVBox, VBox};
++pub use crate::alloc::{flags::*, vec_ext::VecExt, KBox, KVBox, VBox};
+ 
+ #[doc(no_inline)]
+-pub use alloc::{boxed::Box, vec::Vec};
++pub use alloc::vec::Vec;
+ 
+ #[doc(no_inline)]
+ pub use macros::{module, pin_data, pinned_drop, vtable, Zeroable};
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index 28d9e5ea3df4..f567494d4e54 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -3,13 +3,11 @@
+ //! Kernel types.
+ 
+ use crate::init::{self, PinInit};
+-use alloc::boxed::Box;
+ use core::{
+     cell::UnsafeCell,
+     marker::{PhantomData, PhantomPinned},
+     mem::{ManuallyDrop, MaybeUninit},
+     ops::{Deref, DerefMut},
+-    pin::Pin,
+     ptr::NonNull,
+ };
+ 
+@@ -71,54 +69,6 @@ unsafe fn try_from_foreign(ptr: *const core::ffi::c_void) -> Option<Self> {
      }
  }
-@@ -641,7 +640,7 @@ pub fn new(value: T, flags: Flags) -> Result<Self, AllocError> {
-     /// Tries to allocate a new [`UniqueArc`] instance whose contents are not initialised yet.
-     pub fn new_uninit(flags: Flags) -> Result<UniqueArc<MaybeUninit<T>>, AllocError> {
-         // INVARIANT: The refcount is initialised to a non-zero value.
--        let inner = Box::try_init::<AllocError>(
-+        let inner = KBox::try_init::<AllocError>(
-             try_init!(ArcInner {
-                 // SAFETY: There are no safety requirements for this FFI call.
-                 refcount: Opaque::new(unsafe { bindings::REFCOUNT_INIT(1) }),
-@@ -651,8 +650,8 @@ pub fn new_uninit(flags: Flags) -> Result<UniqueArc<MaybeUninit<T>>, AllocError>
-         )?;
-         Ok(UniqueArc {
-             // INVARIANT: The newly-created object has a refcount of 1.
--            // SAFETY: The pointer from the `Box` is valid.
--            inner: unsafe { Arc::from_inner(Box::leak(inner).into()) },
-+            // SAFETY: The pointer from the `KBox` is valid.
-+            inner: unsafe { Arc::from_inner(KBox::leak(inner).into()) },
-         })
-     }
- }
-diff --git a/rust/kernel/sync/condvar.rs b/rust/kernel/sync/condvar.rs
-index dec2e5ffc919..a1a29c0bdb3a 100644
---- a/rust/kernel/sync/condvar.rs
-+++ b/rust/kernel/sync/condvar.rs
-@@ -70,8 +70,8 @@ macro_rules! new_condvar {
- /// }
- ///
- /// /// Allocates a new boxed `Example`.
--/// fn new_example() -> Result<Pin<Box<Example>>> {
--///     Box::pin_init(pin_init!(Example {
-+/// fn new_example() -> Result<Pin<KBox<Example>>> {
-+///     KBox::pin_init(pin_init!(Example {
- ///         value <- new_mutex!(0),
- ///         value_changed <- new_condvar!(),
- ///     }), GFP_KERNEL)
-diff --git a/rust/kernel/sync/lock/mutex.rs b/rust/kernel/sync/lock/mutex.rs
-index 30632070ee67..f8f6d530db7d 100644
---- a/rust/kernel/sync/lock/mutex.rs
-+++ b/rust/kernel/sync/lock/mutex.rs
-@@ -58,7 +58,7 @@ macro_rules! new_mutex {
- /// }
- ///
- /// // Allocate a boxed `Example`.
--/// let e = Box::pin_init(Example::new(), GFP_KERNEL)?;
-+/// let e = KBox::pin_init(Example::new(), GFP_KERNEL)?;
- /// assert_eq!(e.c, 10);
- /// assert_eq!(e.d.lock().a, 20);
- /// assert_eq!(e.d.lock().b, 30);
-diff --git a/rust/kernel/sync/lock/spinlock.rs b/rust/kernel/sync/lock/spinlock.rs
-index ea5c5bc1ce12..a9096a4dc42a 100644
---- a/rust/kernel/sync/lock/spinlock.rs
-+++ b/rust/kernel/sync/lock/spinlock.rs
-@@ -56,7 +56,7 @@ macro_rules! new_spinlock {
- /// }
- ///
- /// // Allocate a boxed `Example`.
--/// let e = Box::pin_init(Example::new(), GFP_KERNEL)?;
-+/// let e = KBox::pin_init(Example::new(), GFP_KERNEL)?;
- /// assert_eq!(e.c, 10);
- /// assert_eq!(e.d.lock().a, 20);
- /// assert_eq!(e.d.lock().b, 30);
-diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
-index 10d2bc62e2cf..4d1d2062f6eb 100644
---- a/rust/kernel/workqueue.rs
-+++ b/rust/kernel/workqueue.rs
-@@ -216,7 +216,7 @@ pub fn try_spawn<T: 'static + Send + FnOnce()>(
-             func: Some(func),
-         });
  
--        self.enqueue(Box::pin_init(init, flags).map_err(|_| AllocError)?);
-+        self.enqueue(KBox::pin_init(init, flags).map_err(|_| AllocError)?);
-         Ok(())
-     }
- }
-@@ -239,9 +239,9 @@ fn project(self: Pin<&mut Self>) -> &mut Option<T> {
- }
+-impl<T: 'static> ForeignOwnable for Box<T> {
+-    type Borrowed<'a> = &'a T;
+-
+-    fn into_foreign(self) -> *const core::ffi::c_void {
+-        Box::into_raw(self) as _
+-    }
+-
+-    unsafe fn borrow<'a>(ptr: *const core::ffi::c_void) -> &'a T {
+-        // SAFETY: The safety requirements for this function ensure that the object is still alive,
+-        // so it is safe to dereference the raw pointer.
+-        // The safety requirements of `from_foreign` also ensure that the object remains alive for
+-        // the lifetime of the returned value.
+-        unsafe { &*ptr.cast() }
+-    }
+-
+-    unsafe fn from_foreign(ptr: *const core::ffi::c_void) -> Self {
+-        // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
+-        // call to `Self::into_foreign`.
+-        unsafe { Box::from_raw(ptr as _) }
+-    }
+-}
+-
+-impl<T: 'static> ForeignOwnable for Pin<Box<T>> {
+-    type Borrowed<'a> = Pin<&'a T>;
+-
+-    fn into_foreign(self) -> *const core::ffi::c_void {
+-        // SAFETY: We are still treating the box as pinned.
+-        Box::into_raw(unsafe { Pin::into_inner_unchecked(self) }) as _
+-    }
+-
+-    unsafe fn borrow<'a>(ptr: *const core::ffi::c_void) -> Pin<&'a T> {
+-        // SAFETY: The safety requirements for this function ensure that the object is still alive,
+-        // so it is safe to dereference the raw pointer.
+-        // The safety requirements of `from_foreign` also ensure that the object remains alive for
+-        // the lifetime of the returned value.
+-        let r = unsafe { &*ptr.cast() };
+-
+-        // SAFETY: This pointer originates from a `Pin<Box<T>>`.
+-        unsafe { Pin::new_unchecked(r) }
+-    }
+-
+-    unsafe fn from_foreign(ptr: *const core::ffi::c_void) -> Self {
+-        // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
+-        // call to `Self::into_foreign`.
+-        unsafe { Pin::new_unchecked(Box::from_raw(ptr as _)) }
+-    }
+-}
+-
+ impl ForeignOwnable for () {
+     type Borrowed<'a> = ();
  
- impl<T: FnOnce()> WorkItem for ClosureWork<T> {
--    type Pointer = Pin<Box<Self>>;
-+    type Pointer = Pin<KBox<Self>>;
- 
--    fn run(mut this: Pin<Box<Self>>) {
-+    fn run(mut this: Pin<KBox<Self>>) {
-         if let Some(func) = this.as_mut().project().take() {
-             (func)()
-         }
-@@ -297,7 +297,7 @@ unsafe fn __enqueue<F>(self, queue_work_on: F) -> Self::EnqueueOutput
- 
- /// Defines the method that should be called directly when a work item is executed.
- ///
--/// This trait is implemented by `Pin<Box<T>>` and [`Arc<T>`], and is mainly intended to be
-+/// This trait is implemented by `Pin<KBox<T>>` and [`Arc<T>`], and is mainly intended to be
- /// implemented for smart pointer types. For your own structs, you would implement [`WorkItem`]
- /// instead. The [`run`] method on this trait will usually just perform the appropriate
- /// `container_of` translation and then call into the [`run`][WorkItem::run] method from the
-@@ -329,7 +329,7 @@ pub unsafe trait WorkItemPointer<const ID: u64>: RawWorkItem<ID> {
- /// This trait is used when the `work_struct` field is defined using the [`Work`] helper.
- pub trait WorkItem<const ID: u64 = 0> {
-     /// The pointer type that this struct is wrapped in. This will typically be `Arc<Self>` or
--    /// `Pin<Box<Self>>`.
-+    /// `Pin<KBox<Self>>`.
-     type Pointer: WorkItemPointer<ID>;
- 
-     /// The method that should be called when this work item is executed.
-@@ -567,7 +567,7 @@ unsafe fn __enqueue<F>(self, queue_work_on: F) -> Self::EnqueueOutput
- }
- 
- // SAFETY: TODO.
--unsafe impl<T, const ID: u64> WorkItemPointer<ID> for Pin<Box<T>>
-+unsafe impl<T, const ID: u64> WorkItemPointer<ID> for Pin<KBox<T>>
- where
-     T: WorkItem<ID, Pointer = Self>,
-     T: HasWork<T, ID>,
-@@ -578,7 +578,7 @@ unsafe impl<T, const ID: u64> WorkItemPointer<ID> for Pin<Box<T>>
-         // SAFETY: This computes the pointer that `__enqueue` got from `Arc::into_raw`.
-         let ptr = unsafe { T::work_container_of(ptr) };
-         // SAFETY: This pointer comes from `Arc::into_raw` and we've been given back ownership.
--        let boxed = unsafe { Box::from_raw(ptr) };
-+        let boxed = unsafe { KBox::from_raw(ptr) };
-         // SAFETY: The box was already pinned when it was enqueued.
-         let pinned = unsafe { Pin::new_unchecked(boxed) };
- 
-@@ -587,7 +587,7 @@ unsafe impl<T, const ID: u64> WorkItemPointer<ID> for Pin<Box<T>>
- }
- 
- // SAFETY: TODO.
--unsafe impl<T, const ID: u64> RawWorkItem<ID> for Pin<Box<T>>
-+unsafe impl<T, const ID: u64> RawWorkItem<ID> for Pin<KBox<T>>
- where
-     T: WorkItem<ID, Pointer = Self>,
-     T: HasWork<T, ID>,
-@@ -601,9 +601,9 @@ unsafe fn __enqueue<F>(self, queue_work_on: F) -> Self::EnqueueOutput
-         // SAFETY: We're not going to move `self` or any of its fields, so its okay to temporarily
-         // remove the `Pin` wrapper.
-         let boxed = unsafe { Pin::into_inner_unchecked(self) };
--        let ptr = Box::into_raw(boxed);
-+        let ptr = KBox::into_raw(boxed);
- 
--        // SAFETY: Pointers into a `Box` point at a valid value.
-+        // SAFETY: Pointers into a `KBox` point at a valid value.
-         let work_ptr = unsafe { T::raw_get_work(ptr) };
-         // SAFETY: `raw_get_work` returns a pointer to a valid value.
-         let work_ptr = unsafe { Work::raw_get(work_ptr) };
-diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-index a626b1145e5c..ab93111a048c 100644
---- a/rust/macros/lib.rs
-+++ b/rust/macros/lib.rs
-@@ -243,7 +243,7 @@ pub fn concat_idents(ts: TokenStream) -> TokenStream {
- /// struct DriverData {
- ///     #[pin]
- ///     queue: Mutex<Vec<Command>>,
--///     buf: Box<[u8; 1024 * 1024]>,
-+///     buf: KBox<[u8; 1024 * 1024]>,
- /// }
- /// ```
- ///
-@@ -252,7 +252,7 @@ pub fn concat_idents(ts: TokenStream) -> TokenStream {
- /// struct DriverData {
- ///     #[pin]
- ///     queue: Mutex<Vec<Command>>,
--///     buf: Box<[u8; 1024 * 1024]>,
-+///     buf: KBox<[u8; 1024 * 1024]>,
- ///     raw_info: *mut Info,
- /// }
- ///
-@@ -282,7 +282,7 @@ pub fn pin_data(inner: TokenStream, item: TokenStream) -> TokenStream {
- /// struct DriverData {
- ///     #[pin]
- ///     queue: Mutex<Vec<Command>>,
--///     buf: Box<[u8; 1024 * 1024]>,
-+///     buf: KBox<[u8; 1024 * 1024]>,
- ///     raw_info: *mut Info,
- /// }
- ///
 -- 
 2.46.1
 
