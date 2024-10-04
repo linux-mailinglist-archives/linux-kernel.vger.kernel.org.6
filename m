@@ -1,102 +1,115 @@
-Return-Path: <linux-kernel+bounces-350469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FDA59905A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:13:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCA19905AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0675E2858E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:13:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B51E1F2164D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79D72194B3;
-	Fri,  4 Oct 2024 14:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD725219485;
+	Fri,  4 Oct 2024 14:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hs/rGzpg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SN1Ou5gr"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229492139B2;
-	Fri,  4 Oct 2024 14:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D37721790B;
+	Fri,  4 Oct 2024 14:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728051136; cv=none; b=O1tqYw7zdHOBBx/oleRphqmK7V46XQEhDUJBp6Pbn76MrUDLVRZC5glm69ium0yd9Cq6aBx+dKl8ssAk+RIXCNCNL1b1adXml9Aefz/Sr2PyL+NyaxQBycwV0zN++o5d+FLPdwJZiVJLXoAmUojzzgVJdo0vRPMab0OboUyod80=
+	t=1728051175; cv=none; b=jgIJv58JzcJd8fNYPOMugCwP6NcXOqtlcdr1WH6ai8jkIvhTBzE+dJ1ky2/fITXrKHEU6eCuw82eeMQASdDrtXaxn7GEjMlpgWSOqd9IAvBDOcMs77SiKnSctrGfPNKWY2JTP6leFjdsbom2KpzFsCgZTyPnte1leuZ15OYm0xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728051136; c=relaxed/simple;
-	bh=F1SQlcp5IkLNO1H2vORA9XiW8hozZMZLQRqYlz5sTkI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GJkv0GzCIy6pxoU5XbaIwCRI9oUr4HV3EW3owlts0IDWKUyq97hYFjrqiw5pX3eBv/R0OoF0tQuPS8ohOzZWkC7v1V7JuYYeyemwCBeOZzc/8+UzYuu1tIDbLJwACFIv4DJ7ifWE6+zpVeetPflnvMSGG627B1b64IFNAywmMMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hs/rGzpg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E587CC4CECE;
-	Fri,  4 Oct 2024 14:12:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728051135;
-	bh=F1SQlcp5IkLNO1H2vORA9XiW8hozZMZLQRqYlz5sTkI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Hs/rGzpg5Bl6ZC0v3dD6ZT6tvuOAlGRBcwmF+gLfitzEmtK0p7bIihKbCBC4W9atx
-	 Kpd2s+6NHcweWkzft1Q1gpgSvvtnXKNA6CkvUloVgDc78cRfKL6FFJrbjq/ypHOih3
-	 xnb7Ho09eQghGrWOYZclP3BZIopujd4L4LqGYEo4ak/5to1OxfvoDXbLwpvKxNpgyu
-	 C9TavjClxwUkgXmzjkptBZTWtRYxyBIV0RlqD66xF1CgB3TgUDH8e5bzNl2s7h29PS
-	 zPo+hUgaW5aM0bhzwb5ID1nZW0ccJHzWC4fcJO3e0kd+1OWu0Qq8jtWmOscv1reeyf
-	 eL5vFUpb1R2oA==
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, 
- Peter Hutterer <peter.hutterer@who-t.net>, Vicki Pfau <vi@endrift.com>, 
- Shuah Khan <shuah@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-In-Reply-To: <20241001-hid-bpf-hid-generic-v3-0-2ef1019468df@kernel.org>
-References: <20241001-hid-bpf-hid-generic-v3-0-2ef1019468df@kernel.org>
-Subject: Re: [PATCH HID v3 0/9] HID: bpf: add a new hook to control
- hid-generic
-Message-Id: <172805113364.312675.1594218264039046838.b4-ty@kernel.org>
-Date: Fri, 04 Oct 2024 16:12:13 +0200
+	s=arc-20240116; t=1728051175; c=relaxed/simple;
+	bh=KFi1jXYpPeiWz4kRbnCz1BASNcFRlFUNBNrtMEWM8/U=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T3QHKYYpUV8SpPc24eQ/zC2v74zAyN2ikRgAtHJIo8LnkgGwaA/velbLd7wl+BG5SJWGRDYRK4miWe+1zqg8+ep4JyvozA8XfgqQ9v6bXsnZFwh5ZddPstcTFc2BGAQE9BFnatVmBg02Jo1EQE4fGcyKCuj2/liT600UUVSB4Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SN1Ou5gr; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37cc84c12c2so1227761f8f.3;
+        Fri, 04 Oct 2024 07:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728051172; x=1728655972; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=LJ3ed/WBG9rJQ5Y6GF4Ay+xNTUZeksnK2kLLIlU2gZE=;
+        b=SN1Ou5gr58AWUYICy+zM6DbcKvgdCGIy02R+DCGDkUKI/o3DKQnF8n8SXxjCCZDS0n
+         7UI+y4h5kQhoF4pQ9FSXZYz/8v6b2RjoC8BUqw35kmcirqBYuTsbayy5Hndzn7ttLdgj
+         HCnoYahiJUOLkpYGJFjCtKkbpRt/fm/VddER9M1J1gll9Ky34UmUk+aj5H7KbREgAYt5
+         XacYSHONh9DHQe5v5+2BthvMUZxqId1NZ0JvEpqUaq+7XXasvBZWPF/ohAm49JDI9YN+
+         M5TvsJt5XHvCxDQv5RQhf3+RPv1rmwlTUM/KLGEwAD6bX5GTCTJdzGLXtSPxOdxyGzMM
+         Z9oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728051172; x=1728655972;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LJ3ed/WBG9rJQ5Y6GF4Ay+xNTUZeksnK2kLLIlU2gZE=;
+        b=JY/tYovG6Ja8K6oselK7SD4KgNXtckbb7q/SgZsTAIqTIBsh5Zx6vb91LbP4riBYyO
+         Y9eG9RhUGu+oiEgBKR+3duD2cJOOa/9mWK1ILMF4pB0MQu4yFg0dTRQZW/kLLUchiuvP
+         mbohGSD5HbHqeDRMMSthk6Zw4E0lMsWpMqpCI6S1nCXknLvfVuFOJkxy1oaohAf+s/PG
+         jobWilEfe4pUl9aK79R+0uKSwtQl7Q9hqIt1LCLPESAHZ9M2aZxRTOu8bTxCTiFWgm6R
+         7YWPChzymJ2CfSd3pAjg7mKyxGj1RamuuEwjpY230RIEwQqmygS0xh5VTpnAMb8gfKwS
+         cbBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaDgto1LaOi74MkZF0amcUMmGFq+E3kI0FI9+F6dwNWw82QZ5gu9q7THTRICbgBD8J2fUM3ta1e/4LygY=@vger.kernel.org, AJvYcCV265DRzI9JhtT/0805IfwzvHAQMQuov+sen5Uy2JCxqIDTJRvRInxONOp+85+XcAyShlOsg2zq@vger.kernel.org, AJvYcCWTwtMJLzWcin8WPuIjTWZVpTPQf3PFbD3yNbCE25XiGLW47yrPC20ixLOUmRZpQ3Jx29y4yUPZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYm0d2ai7xmEgco1U0/h9oFI260R/0OZuWm//Wxh39x4C3WeO9
+	phJdIBdsOZTv3L+vQG1AOtIbXpB0ggwP2YfWqqyu5Tz95qvpS0pK
+X-Google-Smtp-Source: AGHT+IH5qnO8v87Y+PtBzIsG2zvcReIsL7B/t3XYP1/RS6ppPLz7IXhWCk7CrV+Nr3L7bFDjzXKXBQ==
+X-Received: by 2002:a05:6000:1866:b0:37c:c870:b454 with SMTP id ffacd0b85a97d-37d0e8f708fmr2160057f8f.49.1728051171654;
+        Fri, 04 Oct 2024 07:12:51 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d08212a10sm3332442f8f.27.2024.10.04.07.12.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 07:12:51 -0700 (PDT)
+Message-ID: <66fff7e3.df0a0220.275e8c.fc30@mx.google.com>
+X-Google-Original-Message-ID: <Zv_33Ku4g204jViW@Ansuel-XPS.>
+Date: Fri, 4 Oct 2024 16:12:44 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>,
+	stable@vger.kernel.org
+Subject: Re: [net PATCH 2/2] net: phy: Skip PHY LEDs OF registration for
+ Generic PHY driver
+References: <20241003221006.4568-1-ansuelsmth@gmail.com>
+ <20241003221006.4568-2-ansuelsmth@gmail.com>
+ <2dcd127d-ab41-4bf7-aea4-91f175443e62@lunn.ch>
+ <66ffb1c2.df0a0220.1b4c87.ce13@mx.google.com>
+ <a463ca8c-ebd7-4fd4-98a9-bc869a92548c@lunn.ch>
+ <66fff1c0.050a0220.f97fa.fec2@mx.google.com>
+ <ce1feaa5-b9e0-4245-8e64-6e90bcf528eb@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce1feaa5-b9e0-4245-8e64-6e90bcf528eb@lunn.ch>
 
-On Tue, 01 Oct 2024 16:30:04 +0200, Benjamin Tissoires wrote:
-> This is a slight change from the fundamentals of HID-BPF.
-> In theory, HID-BPF is abstract to the kernel itself, and makes
-> only changes at the HID level (through report descriptors or
-> events emitted to/from the device).
+On Fri, Oct 04, 2024 at 04:11:22PM +0200, Andrew Lunn wrote:
+> > Ok I will squash this and the net-next patch and change to dbg.
+> > 
+> > Do you think it's still "net" content? I'm more tempted to post in
+> > net-next since I have to drop the Generic PHY condition.
 > 
-> However, we have seen a few use cases where HID-BPF might interact with
-> the running kernel when the target device is already handled by a
-> specific device.
-> 
-> [...]
+> Does it cause real problems for users? That is the requirement for
+> stable.
+>
 
-Applied to hid/hid.git (for-6.13/bpf), thanks!
+Not strictly bugs or kernel panic, just annoyance, ok will post to
+net-next. 
 
-[1/9] HID: bpf: move HID-BPF report descriptor fixup earlier
-      https://git.kernel.org/hid/hid/c/8b7fd6a15f8c
-[2/9] HID: core: save one kmemdup during .probe()
-      https://git.kernel.org/hid/hid/c/52cd1906ef6b
-[3/9] HID: core: remove one more kmemdup on .probe()
-      https://git.kernel.org/hid/hid/c/7316fef4b993
-[4/9] HID: bpf: allow write access to quirks field in struct hid_device
-      https://git.kernel.org/hid/hid/c/6fd47effe92b
-[5/9] selftests/hid: add dependency on hid_common.h
-      https://git.kernel.org/hid/hid/c/0b838d768ccd
-[6/9] selftests/hid: cleanup C tests by adding a common struct uhid_device
-      https://git.kernel.org/hid/hid/c/4fb41dfde069
-[7/9] selftests/hid: allow to parametrize bus/vid/pid/rdesc on the test device
-      https://git.kernel.org/hid/hid/c/72c55473fc8c
-[8/9] HID: add per device quirk to force bind to hid-generic
-      https://git.kernel.org/hid/hid/c/645c224ac5f6
-[9/9] selftests/hid: add test for assigning a given device to hid-generic
-      https://git.kernel.org/hid/hid/c/e14e0eaeb040
-
-Cheers,
 -- 
-Benjamin Tissoires <bentiss@kernel.org>
-
+	Ansuel
 
