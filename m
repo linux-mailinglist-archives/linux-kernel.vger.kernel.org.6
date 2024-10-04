@@ -1,199 +1,125 @@
-Return-Path: <linux-kernel+bounces-351411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ACCF99109B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:30:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D63839910D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39E9E1C23053
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:30:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C26A7B2E02F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5461B4F10;
-	Fri,  4 Oct 2024 20:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE235231C98;
+	Fri,  4 Oct 2024 20:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPfnVwr8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IEpU7hOs"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3683B231C80;
-	Fri,  4 Oct 2024 20:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A368231C88
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 20:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728073771; cv=none; b=Kxfy9FhO/80UMzuz/n0pUI1IP7Zc7j1M3n0W7oZoXreRdTkDtnzW+FmMi/i7H0zlAcKOwuyKgcnwP17RG3Hy2kMA7kYqwGYTzgpZCZyYUp1jwVJTpMVuTT/YdVHFhz5HACSEARvByRwO/M5VOUPj2lUHnMPLVfvODeO1nMkq7J8=
+	t=1728073641; cv=none; b=iEGCdiOcRpDMk4a4NS/YO59SgM3y8bVLqFo13rFcIi5IR9IrzxU1dmncud5ZFxqj/UgRfDa6yk8oyWyx+Xgjw4S0Y6X9Or7P8YtEJOR+DQqJpoaRmAaL9korqBXsNtJxBijtvlsldmMMVtDIYpdm3HZkfZ8nCBjyPR/42rbHpoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728073771; c=relaxed/simple;
-	bh=Q29JrkLZxdArYwY+rVpKpTkNxIyN30A+TtF5u4a+d1w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fz0QinmdQ422gKWIf7yHJMjurrp5Hs7e4TELNMvEzaGOYkI/A9RVqKPiukenZblMcEhFIsXm2CVVhAZ9QyKIiWb8h7C3W5uNwe14O8sgje2jMEKwFvITPU6kl3G2vZI6vh7T5nj/UgbvJyh2xF9uqY1BaLlI9e+ROgX8eL1lYxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPfnVwr8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9738C4CECD;
-	Fri,  4 Oct 2024 20:29:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728073770;
-	bh=Q29JrkLZxdArYwY+rVpKpTkNxIyN30A+TtF5u4a+d1w=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=kPfnVwr8SWBws2rU3nHv5pCJNfCkH6R5u4eQ6sEHY7b59UXTp/29XlR7QsZn9vLeY
-	 WxIgMlZAJkzfbjX23C1S0RchYA9z7k4Mx1MP0RNEhoqER0TOP5/zXDAd70UkVyVxHV
-	 BpmsVOnqD0ZsgItThc4CVUsNMAssHg/YGdBqsGcvUSkYp5Y1d5Hitf4F2Tx1QXnLFx
-	 oV3YoL7FLZOHQECi6q89+XiFzeErqfXK7h5pHa9lSLUNSps7JTqqC10yOUrBRM0Uno
-	 88hn/JpoqAeAZVNZulJ1piBT6ushRc5l8Crzi//csirZiLsV5XtSVEXa6Wy6Ld1Hqt
-	 V3bUp2d9d7Vfg==
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 04 Oct 2024 21:26:30 +0100
-Subject: [PATCH RFC v2 2/2] arm64: Support AT_HWCAP3
+	s=arc-20240116; t=1728073641; c=relaxed/simple;
+	bh=87zyUbMDCvZYIboVQ9XiY5te2PMtHviTll9I3vRMnwo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CMUcKdSY3GAhLsDsxuC1yIzvIIZq/BPtf2PK6Az0SgedNV7uKwLdyDDHsLxkBHv5o/6EfQpp10vIaMVshrD4DaD5I8EUZhm4pemXiOYumGLWTAQuJ3ygFFe31JtCJIvRfO9i5BtY6shmV4DGJzhkbOrFr+0v2XGUoTo8ufBXKFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IEpU7hOs; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-709339c91f9so1228757a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 13:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728073637; x=1728678437; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0lkN+owePYzX9OUPqu1bePV5kRPtGDKpTuT6etmjHWc=;
+        b=IEpU7hOsFumSdrkbY/b7VbPNm8Za86mfRyAhG0Kj0zePgEh2H6rwtbxaMg2C43hU5m
+         H3ZCx+vb/tiQLz5v/8cxVZs/cB5jkJ83qph1rmQq+x5LLZpOrMVipdboc7C5/fzsNHFH
+         4jPCaCLF7myyRLPHG9uzQGJAJXghenomW4XuUCax0CbLRO85Ct4CV8g1w8S9jkkb5xjY
+         Q+hY+BFEyMQaNh2bM1Vm6egAlfCW4rw//1jYuZoLRBdK3tdmksB50EVvFwR4Yl51WYit
+         FtsU9D46KXmQwCFxJ+SI9nNGRunG/XC5DObRJB2ZpN5zWUILBYrN40V4Kvlu6hJUGag+
+         nkLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728073637; x=1728678437;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0lkN+owePYzX9OUPqu1bePV5kRPtGDKpTuT6etmjHWc=;
+        b=Ncuep7SM2jX1/RGil4XT74I3w1tihEUso3VAFxd4eTJjiZvIVJo1GyKmyf1+6rweri
+         /ciuXd4ZeIoH0RubOpHsdcRclXharQ9wzguDrGn8FeWjd6uVh1jylg6grr38bJmtznN3
+         bSBGqz393B0zXZOkcTH3W3HerTYRAlwcSllP5XE3+Fel3rH8p4fMaP40CrdnMLkOSAHl
+         fcw6lZgMCYZUeGeTTb+IBclljggkiWAsjt5g2rSzDI+kH9JroTFLmok7nUQAGcFKqyZS
+         MNNnFPH+qtxLPS3FqYEb2y5JI/MBrspIYHZuebuHjQpK4//GmzuvxoIa85G71UCvr+Vw
+         B4Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMVlee2Jbue/Y3LVKXxUEhKDBvX4qCc9aGkzHUApl8gu03dCNKtOog4MBUPE0lIOYciGCSAMS4HEj7+ko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwiZJLQHEjSKPiF1HixjbvnS7ejROXd7niBup7wB7y/XM/XeX5
+	Z9cmJYy+PRhAXaEVasB66ZXa1d240ZVvV0QZ19gnlIGQ0VIVBQnZBMpUKuCH6BY=
+X-Google-Smtp-Source: AGHT+IF38+AB8lQEzZFWow7y7JkOMI+37u5HHOA5yhKxOY45jtr3wcA+I3RYof+fxU0yKggg1RIz2A==
+X-Received: by 2002:a05:6830:4107:b0:70f:36ff:ed09 with SMTP id 46e09a7af769-7154e982ceemr3038335a34.28.1728073637198;
+        Fri, 04 Oct 2024 13:27:17 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7155686d999sm166514a34.75.2024.10.04.13.27.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 13:27:16 -0700 (PDT)
+Message-ID: <f4cc471a-b602-48d8-8323-15efcd602814@baylibre.com>
+Date: Fri, 4 Oct 2024 15:27:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] cleanup: add conditional guard helper
+To: Dan Williams <dan.j.williams@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Michael Hennerich <michael.hennerich@analog.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-cxl@vger.kernel.org, fabio.maria.de.francesco@linux.intel.com
+References: <20241001-cleanup-if_not_cond_guard-v1-0-7753810b0f7a@baylibre.com>
+ <20241001-cleanup-if_not_cond_guard-v1-1-7753810b0f7a@baylibre.com>
+ <67002737aad27_10a0a29425@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <67002737aad27_10a0a29425@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-arm64-elf-hwcap3-v2-2-799d1daad8b0@kernel.org>
-References: <20241004-arm64-elf-hwcap3-v2-0-799d1daad8b0@kernel.org>
-In-Reply-To: <20241004-arm64-elf-hwcap3-v2-0-799d1daad8b0@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, Yury Khrustalev <yury.khrustalev@arm.com>, 
- Wilco Dijkstra <wilco.dijkstra@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4678; i=broonie@kernel.org;
- h=from:subject:message-id; bh=Q29JrkLZxdArYwY+rVpKpTkNxIyN30A+TtF5u4a+d1w=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnAFAfn7BPFjo4XljvMQXJ1vgo1LJghNjRRFv/EHRJ
- dSaDGdWJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZwBQHwAKCRAk1otyXVSH0HXCB/
- sHPZyH0C3p8kpDx3xx/v8pAStV7iXI+CDLK+jDe+taJ/8wYG3EaQtVb3UfwJFVBhine4yNr8GKd5td
- NnTguPxISjp9da3eMg+/Ev+VRxbfRCzTlCboqTDAIF602zHJu0z516cRbb7gcrKXWQkyZNk9jWj+NY
- JKt7w8bnejgF0i8MEbTOyvq8JpW2FCdeGqzLs60Lm15nNnHnUzno0S05Yi5fhQAfJv7ia0XTf8iSim
- 7FWdQhvTkjNAHa5BU2ro3B2dKdcr/Z3wKkaj4wlkWXdCuJIqCXpATbAiPSYX1GhNYCGtZA4QftstDo
- pX9bsUtoq7432pKjQDX0iVx2mJaUBA
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-We have filled all 64 bits of AT_HWCAP2 so in order to support discovery of
-further features provide the framework to use the already defined AT_HWCAP3
-for further CPU features.
+On 10/4/24 12:34 PM, Dan Williams wrote:
+> [ add Fabio ]
+> 
+> David Lechner wrote:
+>> Add a new if_not_cond_guard() macro to cleanup.h for handling
+>> conditional guards such as mutext_trylock().
+>>
+>> This is more ergonomic than scoped_cond_guard() for most use cases.
+>> Instead of hiding the error handling statement in the macro args, it
+>> works like a normal if statement and allow the error path to be indented
+>> while the normal code flow path is not indented. And it avoid unwanted
+>> side-effect from hidden for loop in scoped_cond_guard().
+>>
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> 
+> Hi David,
+> 
+> When you update this to the if_not_guard() name can you also add Fabio as a
+> co-developer? His work [1] contributed to eliciting the response from Linus,
+> and then this patch takes the novel additional step to create an "if ()" macro.
+> 
+> Thanks for pushing this forward!
+> 
+> [1]: http://lore.kernel.org/20240130164059.25130-1-fabio.maria.de.francesco@linux.intel.com
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/arch/arm64/elf_hwcaps.rst | 6 +++---
- arch/arm64/include/asm/cpufeature.h     | 3 ++-
- arch/arm64/include/asm/hwcap.h          | 6 +++++-
- arch/arm64/include/uapi/asm/hwcap.h     | 4 ++++
- arch/arm64/kernel/cpufeature.c          | 6 ++++++
- 5 files changed, 20 insertions(+), 5 deletions(-)
+Sure, I didn't dig deep enough to find that patch, but basically
+the same idea. :-)
 
-diff --git a/Documentation/arch/arm64/elf_hwcaps.rst b/Documentation/arch/arm64/elf_hwcaps.rst
-index 694f67fa07d196816b1292e896ebe6a1b599c125..dc1b11d6d1122bba928b054cd1874aad5073e05c 100644
---- a/Documentation/arch/arm64/elf_hwcaps.rst
-+++ b/Documentation/arch/arm64/elf_hwcaps.rst
-@@ -16,9 +16,9 @@ architected discovery mechanism available to userspace code at EL0. The
- kernel exposes the presence of these features to userspace through a set
- of flags called hwcaps, exposed in the auxiliary vector.
- 
--Userspace software can test for features by acquiring the AT_HWCAP or
--AT_HWCAP2 entry of the auxiliary vector, and testing whether the relevant
--flags are set, e.g.::
-+Userspace software can test for features by acquiring the AT_HWCAP,
-+AT_HWCAP2 or AT_HWCAP3 entry of the auxiliary vector, and testing
-+whether the relevant flags are set, e.g.::
- 
- 	bool floating_point_is_present(void)
- 	{
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index 3d261cc123c1e22ac7bc9cfcde463624c76b2084..38e7d1a44ea38ab0a06a6f22824ae023b128721b 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -12,7 +12,7 @@
- #include <asm/hwcap.h>
- #include <asm/sysreg.h>
- 
--#define MAX_CPU_FEATURES	128
-+#define MAX_CPU_FEATURES	192
- #define cpu_feature(x)		KERNEL_HWCAP_ ## x
- 
- #define ARM64_SW_FEATURE_OVERRIDE_NOKASLR	0
-@@ -438,6 +438,7 @@ void cpu_set_feature(unsigned int num);
- bool cpu_have_feature(unsigned int num);
- unsigned long cpu_get_elf_hwcap(void);
- unsigned long cpu_get_elf_hwcap2(void);
-+unsigned long cpu_get_elf_hwcap3(void);
- 
- #define cpu_set_named_feature(name) cpu_set_feature(cpu_feature(name))
- #define cpu_have_named_feature(name) cpu_have_feature(cpu_feature(name))
-diff --git a/arch/arm64/include/asm/hwcap.h b/arch/arm64/include/asm/hwcap.h
-index a775adddecf25633e87d58fb9ac9e6293beac1b3..3b5c50df419ee94193a4d9e3a47516eb0739e89a 100644
---- a/arch/arm64/include/asm/hwcap.h
-+++ b/arch/arm64/include/asm/hwcap.h
-@@ -159,17 +159,21 @@
- #define KERNEL_HWCAP_SME_SF8DP2		__khwcap2_feature(SME_SF8DP2)
- #define KERNEL_HWCAP_POE		__khwcap2_feature(POE)
- 
-+#define __khwcap3_feature(x)		(const_ilog2(HWCAP3_ ## x) + 128)
-+
- /*
-  * This yields a mask that user programs can use to figure out what
-  * instruction set this cpu supports.
-  */
- #define ELF_HWCAP		cpu_get_elf_hwcap()
- #define ELF_HWCAP2		cpu_get_elf_hwcap2()
-+#define ELF_HWCAP3		cpu_get_elf_hwcap3()
- 
- #ifdef CONFIG_COMPAT
- #define COMPAT_ELF_HWCAP	(compat_elf_hwcap)
- #define COMPAT_ELF_HWCAP2	(compat_elf_hwcap2)
--extern unsigned int compat_elf_hwcap, compat_elf_hwcap2;
-+#define COMPAT_ELF_HWCAP3	(compat_elf_hwcap3)
-+extern unsigned int compat_elf_hwcap, compat_elf_hwcap2, compat_elf_hwcap3;
- #endif
- 
- enum {
-diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
-index 055381b2c61595361c2d57d38be936c2dfeaa195..3dd4a53a438a14bfb41882b2ab15bdd7ce617475 100644
---- a/arch/arm64/include/uapi/asm/hwcap.h
-+++ b/arch/arm64/include/uapi/asm/hwcap.h
-@@ -124,4 +124,8 @@
- #define HWCAP2_SME_SF8DP2	(1UL << 62)
- #define HWCAP2_POE		(1UL << 63)
- 
-+/*
-+ * HWCAP3 flags - for AT_HWCAP3
-+ */
-+
- #endif /* _UAPI__ASM_HWCAP_H */
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 718728a85430fad5151b73fa213a510efac3f834..7221636b790709b153b49126e00246cc3032a7bc 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -103,6 +103,7 @@ static DECLARE_BITMAP(elf_hwcap, MAX_CPU_FEATURES) __read_mostly;
- 				 COMPAT_HWCAP_LPAE)
- unsigned int compat_elf_hwcap __read_mostly = COMPAT_ELF_HWCAP_DEFAULT;
- unsigned int compat_elf_hwcap2 __read_mostly;
-+unsigned int compat_elf_hwcap3 __read_mostly;
- #endif
- 
- DECLARE_BITMAP(system_cpucaps, ARM64_NCAPS);
-@@ -3499,6 +3500,11 @@ unsigned long cpu_get_elf_hwcap2(void)
- 	return elf_hwcap[1];
- }
- 
-+unsigned long cpu_get_elf_hwcap3(void)
-+{
-+	return elf_hwcap[2];
-+}
-+
- static void __init setup_boot_cpu_capabilities(void)
- {
- 	/*
-
--- 
-2.39.2
 
 
