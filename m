@@ -1,174 +1,170 @@
-Return-Path: <linux-kernel+bounces-349879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92EBB98FC95
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:56:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F9298FC93
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7D541C221B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:56:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C355283D15
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DF1481CE;
-	Fri,  4 Oct 2024 03:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BA645007;
+	Fri,  4 Oct 2024 03:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="es8xXIDu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pOYvXYg0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4B13D982
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 03:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3C8175AD;
+	Fri,  4 Oct 2024 03:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728014167; cv=none; b=mZZbAbmgLkddBD4LpO90oxF7vps//xYgJlx1RdAWYRtKb8zef+n0aeDCY91tK3yIItJ5COMOetCJz30VjW4BqofG+VBGh+HUnKgimXtKjWgo68b76UaESQ6SfoIIPZ8qaeCU1CMRwW3U+3rpswiYC1fmJKowaOYIGSMHiQa8MIQ=
+	t=1728014138; cv=none; b=GTp34V1oD+/ptefXR0bRc+70o7sAz4CdqVKmCgoRMswjxFtzdV9R7/uJSiG4xF2QWJa8O+5l3QeT05p1ZGPKfHx0gWXeOYtVq4kFwiyQ65eYBSbaxinFxKlm9aMKzZt04uuHsU/gVRD7iBLkWbwsLKhTTlUmDIhYbUX/FRj1+P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728014167; c=relaxed/simple;
-	bh=f60efwpdEBV93DkMJWkEPoTaEsnIHKFyT4bxtSaqAvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P3YfRZxhdT4duMUzFwFEPtuE8LJ1Ot4P/FrIod7M/vKHzINoqWMWT9JMOQuP4ILo1ZE9R/1pG8dmaBFIFOzgKfmSG2Fyqb1O29uzR9Xw0nj/S+yWKVJxOJSWmG8Z4WQ3809kd1g1GE1kxW8AGddkTyPAP8+QA80wbgfvHROPkjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=es8xXIDu; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728014164; x=1759550164;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=f60efwpdEBV93DkMJWkEPoTaEsnIHKFyT4bxtSaqAvw=;
-  b=es8xXIDuevMZ/Oc7fURlsQYadqExtGkFTR6sZIuk3AxCR+JB1WWuOi++
-   pfLZfvAb41AC+rwP16E/dGNGmwhVMDSv31qu6MKY17yk8v9QREwoj3R0u
-   GVXGoor5CAQUSkzlTSjQdSMW6g44vlWeZcNy4+LH2IfgXuILxQCvMdNg1
-   oCLjZdwYcM+8s+2Pw0A8uvw1nAnSjgqgjwve83q8M9zPYhsQJYaUziOPE
-   GR7qPWNI2Q0CDx+DwneSnwoYtt6dFayNAi9S8dmGEO2o/NRNqlSjnqmUp
-   EMw2I1fG4F+wYiCwQRO869e22gMn+5y5tNkfwlqAeTzPIbJ8ya8aiAnRq
-   Q==;
-X-CSE-ConnectionGUID: I/N0U2oeSZq2e6woX/8UTQ==
-X-CSE-MsgGUID: I0DCjrtGRgK2k+53QmmV+g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="30106525"
-X-IronPort-AV: E=Sophos;i="6.11,176,1725346800"; 
-   d="scan'208";a="30106525"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 20:56:04 -0700
-X-CSE-ConnectionGUID: sE+3s6lUSYevPkDpdN0sgA==
-X-CSE-MsgGUID: OKm3xyatREWI5eCILuxpAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,176,1725346800"; 
-   d="scan'208";a="74409699"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 03 Oct 2024 20:56:02 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swZQ7-0001Bq-2s;
-	Fri, 04 Oct 2024 03:55:59 +0000
-Date: Fri, 4 Oct 2024 11:55:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: luca.boccassi@gmail.com, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, christian@brauner.io,
-	paul@paul-moore.com
-Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
-Message-ID: <202410041128.tLVDbeJB-lkp@intel.com>
-References: <20241002142516.110567-1-luca.boccassi@gmail.com>
+	s=arc-20240116; t=1728014138; c=relaxed/simple;
+	bh=EFQL2PsqMhqgzsp3EO6jdxtxH85VSlbFbjaFlbVLCuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KOA8mv7yD2Gdgv1dpd7JTFIHgdZmAdFe6Qd9Pe8vxTTd/JL5KO/BcxUaFs2dMNNDrOkK5a9VdBSQ0T6o0u3QDFd6/yuVAHpK4PkJrxxrM23LzxNphAcC0SeU+lEPydiz2o9KxnqV0b2NXkZSd6fBRM7fzgofAS3KCShOfU9YGSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pOYvXYg0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728014129;
+	bh=eVYr4UF7D4ddfUGuHX9CtKLzk9YDRMng+T5NgKOt3bU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=pOYvXYg0prj4qyCbDZLpXTMwCpRphIG5TW6ewi+ASs9U3AFrOV5zUcs+M9PRj5HOV
+	 QwxBDjL2plHkfh5OTs8Xp4nMk7KXxPE9Nihm2DEMdcDAI0bv14i41Pn2Dq9Ny4iAYe
+	 UEhOCO4teVGCiQWBwRsuSS8Mr4iI4yM7I3yC5qscauVH3jDTL0/AVqpSrABSMm6oEc
+	 wGnBgcv2Hym4BpyD0qDkCp2SxlalSKk1SxtIBHmhd1BmKxBXIjwTEKzPnUtOIr68yE
+	 ZTpd6jH0h1Op7vJ6yF0vZBrdaBWIXHdG933n35xSOGiCk3OPua6+8FCIHUUKPjyMsM
+	 O9pc3asDEnZwQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XKZSx0Myfz4x8h;
+	Fri,  4 Oct 2024 13:55:28 +1000 (AEST)
+Date: Fri, 4 Oct 2024 13:55:27 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Shuah Khan <skhan@linuxfoundation.org>, Brendan Higgins
+ <brendanhiggins@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Bruno Sobreira =?UTF-8?B?RnJhbsOnYQ==?= <brunofrancadevsec@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Luis Felipe Hernandez
+ <luis.hernandez093@gmail.com>
+Subject: linux-next: manual merge of the kunit-next tree with the mm tree
+Message-ID: <20241004135527.1e2fc747@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002142516.110567-1-luca.boccassi@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/sqZ9viu.bjIr850I6ZxrXQF";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi,
+--Sig_/sqZ9viu.bjIr850I6ZxrXQF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-kernel test robot noticed the following build warnings:
+Hi all,
 
-[auto build test WARNING on shuah-kselftest/next]
-[also build test WARNING on shuah-kselftest/fixes linus/master v6.12-rc1 next-20241003]
-[cannot apply to brauner-vfs/vfs.all]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Today's linux-next merge of the kunit-next tree got conflicts in:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/luca-boccassi-gmail-com/pidfd-add-ioctl-to-retrieve-pid-info/20241002-223302
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
-patch link:    https://lore.kernel.org/r/20241002142516.110567-1-luca.boccassi%40gmail.com
-patch subject: [PATCH] pidfd: add ioctl to retrieve pid info
-config: x86_64-randconfig-123-20241004 (https://download.01.org/0day-ci/archive/20241004/202410041128.tLVDbeJB-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410041128.tLVDbeJB-lkp@intel.com/reproduce)
+  lib/math/Makefile
+  lib/math/tests/Makefile
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410041128.tLVDbeJB-lkp@intel.com/
+between commit:
 
-sparse warnings: (new ones prefixed by >>)
->> fs/pidfs.c:121:37: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got struct pidfd_info * @@
-   fs/pidfs.c:121:37: sparse:     expected void const [noderef] __user *from
-   fs/pidfs.c:121:37: sparse:     got struct pidfd_info *
+  aa2cc84cfeb0 ("lib/math: add int_log test suite")
 
-vim +121 fs/pidfs.c
+from the mm-nonmm-unstable branch of the mm tree and commit:
 
-   116	
-   117	static long pidfd_info(struct task_struct *task, struct pid *pid, unsigned long arg)
-   118	{
-   119		struct pidfd_info uinfo = {}, info = {};
-   120	
- > 121		if (copy_from_user(&uinfo, (struct pidfd_info *)arg, sizeof(struct pidfd_info)))
-   122			return -EFAULT;
-   123		if (uinfo.size > sizeof(struct pidfd_info))
-   124			return -E2BIG;
-   125		if (uinfo.size < sizeof(struct pidfd_info))
-   126			return -EINVAL; /* First version, no smaller struct possible */
-   127	
-   128		if (uinfo.request_mask & ~(PIDFD_INFO_PID | PIDFD_INFO_CREDS | PIDFD_INFO_CGROUPID | PIDFD_INFO_SECURITY_CONTEXT))
-   129			return -EINVAL;
-   130	
-   131		memcpy(&info, &uinfo, uinfo.size);
-   132	
-   133		if (uinfo.request_mask & PIDFD_INFO_PID)
-   134			info.pid = pid_nr_ns(pid, task_active_pid_ns(task));
-   135	
-   136		if (uinfo.request_mask & PIDFD_INFO_CREDS) {
-   137			const struct cred *c = get_task_cred(task);
-   138			if (!c)
-   139				return -ESRCH;
-   140	
-   141			info.uid = from_kuid_munged(current_user_ns(), c->uid);
-   142			info.gid = from_kgid_munged(current_user_ns(), c->gid);
-   143		}
-   144	
-   145		if (uinfo.request_mask & PIDFD_INFO_CGROUPID) {
-   146			struct cgroup *cgrp = task_css_check(task, pids_cgrp_id, 1)->cgroup;
-   147			if (!cgrp)
-   148				return -ENODEV;
-   149	
-   150			info.cgroupid = cgroup_id(cgrp);
-   151		}
-   152	
-   153		if (uinfo.request_mask & PIDFD_INFO_SECURITY_CONTEXT) {
-   154			char *secctx;
-   155			u32 secid, secctx_len;
-   156			const struct cred *c = get_task_cred(task);
-   157			if (!c)
-   158				return -ESRCH;
-   159	
-   160			security_cred_getsecid(c, &secid);
-   161			if (security_secid_to_secctx(secid, &secctx, &secctx_len))
-   162				return -EFAULT;
-   163	
-   164			memcpy(info.security_context, secctx, min_t(u32, secctx_len, NAME_MAX-1));
-   165		}
-   166	
-   167		if (copy_to_user((void __user *)arg, &info, uinfo.size))
-   168			return -EFAULT;
-   169	
-   170		return 0;
-   171	}
-   172	
+  f099bda563dd ("lib: math: Move kunit tests into tests/ subdir")
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+from the kunit-next tree.
+
+I fixed it up (I used the latter version of lib/math/Makefile and see
+below the signature by the patch immediately below) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+rom: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 4 Oct 2024 13:51:56 +1000
+Subject: [PATCH] fix up for "lib: math: Move kunit tests into tests/ subdir"
+
+interacting with "lib/math: add int_log test suite" from the mm tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ lib/Kconfig.debug       | 2 +-
+ lib/math/tests/Makefile | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 9ed36fec4390..d3e44b17876d 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -3105,7 +3105,7 @@ config INT_POW_KUNIT_TEST
+=20
+ 	  If unsure, say N
+=20
+-config INT_LOG_TEST
++config INT_LOG_KUNIT_TEST
+ 	tristate "Integer log (int_log) test" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT
+ 	default KUNIT_ALL_TESTS
+diff --git a/lib/math/tests/Makefile b/lib/math/tests/Makefile
+index 64b9bfe3381d..89a266241e98 100644
+--- a/lib/math/tests/Makefile
++++ b/lib/math/tests/Makefile
+@@ -2,6 +2,6 @@
+=20
+ obj-$(CONFIG_DIV64_KUNIT_TEST)    +=3D div64_kunit.o
+ obj-$(CONFIG_INT_POW_KUNIT_TEST)  +=3D int_pow_kunit.o
+-obj-$(CONFIG_INT_LOG_TEST) +=3D int_log_kunit.o
++obj-$(CONFIG_INT_LOG_KUNIT_TEST)  +=3D int_log_kunit.o
+ obj-$(CONFIG_MULDIV64_KUNIT_TEST) +=3D mul_u64_u64_div_u64_kunit.o
+ obj-$(CONFIG_RATIONAL_KUNIT_TEST) +=3D rational_kunit.o
+--=20
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc lib/math/tests/Makefile
+index 83bbf1e47940,f9a0a0e6b73a..000000000000
+--- a/lib/math/tests/Makefile
++++ b/lib/math/tests/Makefile
+@@@ -1,4 -1,6 +1,7 @@@
+  # SPDX-License-Identifier: GPL-2.0-only
+ =20
+- obj-$(CONFIG_INT_POW_TEST) +=3D int_pow_kunit.o
++ obj-$(CONFIG_DIV64_KUNIT_TEST)    +=3D div64_kunit.o
++ obj-$(CONFIG_INT_POW_KUNIT_TEST)  +=3D int_pow_kunit.o
+ +obj-$(CONFIG_INT_LOG_TEST) +=3D int_log_kunit.o
++ obj-$(CONFIG_MULDIV64_KUNIT_TEST) +=3D mul_u64_u64_div_u64_kunit.o
++ obj-$(CONFIG_RATIONAL_KUNIT_TEST) +=3D rational_kunit.o
+
+--Sig_/sqZ9viu.bjIr850I6ZxrXQF
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb/Zy8ACgkQAVBC80lX
+0GziLAf9Fgu7ULRZktqIjkS4Rc2byZ5Dd1g4sbquVDeeHEnTu7WouIIWf/fFx0kl
+yS3nRSjcpUTrDgOTEMNhZTrKRzUtouY3rw3iNlerubSZQ0qysvdqHSsks3qJnj39
++GCkFeD2qPosJ3v4PiESXsDXa1vh2zKEFPeCPbwQutpQFle9XfxpfAAAZkA0JPZL
+4QR7tWffcGGXuFIJm7Bk8hpOkhslpb5vKgMGkMm8i6loXsk9YJ6b1VWBdrJiDeFl
+DAHIk/AayHN0AmF5T64jb85Bn5y5W9a2IMh0vqv8+Y3fkdrg/8WpoLjj9WF0T2VZ
+gzRA3PtmbD2dbSp6/XhVJCUqjDgl4A==
+=T6/8
+-----END PGP SIGNATURE-----
+
+--Sig_/sqZ9viu.bjIr850I6ZxrXQF--
 
