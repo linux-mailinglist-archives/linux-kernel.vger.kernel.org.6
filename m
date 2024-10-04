@@ -1,142 +1,274 @@
-Return-Path: <linux-kernel+bounces-351305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E7EC990F83
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:01:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8905990F81
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB8EC1C23128
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:01:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E3731F2418F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0501F9AA0;
-	Fri,  4 Oct 2024 19:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hcd0bE5h"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2061F942F;
+	Fri,  4 Oct 2024 19:04:27 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAE41F9A82;
-	Fri,  4 Oct 2024 19:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C681F9427;
+	Fri,  4 Oct 2024 19:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728068671; cv=none; b=q3Q/5ujOfSn6BvyP3DT+3R6oMsnwNMIPFiht9LHJWaoqbaSgajBvTUKay2/klFqmGoJfgms9XcV1IbJaEaUtHaxfi6DrnYKBLoa0blCCx5CK5yKgPopreeypEaAopBNZKsFDjaQEBCrVvgdQUMPrhEfqoEADG5aDmz5SS33DDLo=
+	t=1728068667; cv=none; b=XIF0LngfPpw31Y3euVcYtdSoGa+u7drWUo5sSmuU7A6e5yDGoMnAkNDGuT1W+ysvdBYYns3+5rcBWe/og8WOiEVl/WFFdmAQu2NNeXdsveoRMTra0Cf3Ymg20G+WG7INn3F8Ei2cjeadULopnWcN2t+bzyJkqyqOKcIDEaIs+IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728068671; c=relaxed/simple;
-	bh=38FWtjNG7ztTk0vyl9goaMmj7S+4vdzAmiAK1g8t8Pc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dx2/gIa7nPt62mNCV9y1TvcBOmjCAJZMKuZ+2nIoDaKJSCKsXJ9yHwQMJGXsw/GhUo6bDypJIV7G8W6MXgTnc1kq3VbJvmiLRmiT3rwDVG2QlraSnlPhShfb8r8DAo23zaHXSP/c3LYkBqOsXzYqsuA+0NydHD0FTqlWXwxtWuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hcd0bE5h; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cdbdbbb1cso1312357f8f.3;
-        Fri, 04 Oct 2024 12:04:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728068668; x=1728673468; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uR17DBK3CgvuTP/A+YeEkLOp8ykg0LTLmIaNQYIZdOk=;
-        b=Hcd0bE5hkximu3zCNYhsb8uSZoDDio3JeyKtXxsJy0ZYlNImgSfEpJDHKY2XtPqoOB
-         YFRwIQVgq/MaDiz305Ytp6Eb5i2nAn8G3ssWM7VEUziQdsFfIUsNws6OfloABPqm44D1
-         +UlwwwQBjBcUb9xfziOw9RTd0qQh4lfdq/h9O25z/IepN1XQgs1i7YORc+Ygsr07kut5
-         NyXyjj2VOdt/bM1sXLtGnAAbckpJ56qfur3BmPg2C4gE/sTUdl2UuD/X4iCaCZbxQvHC
-         tVyJELn24FhJ3WcL9qjo3KNcd3HeZ4UqT4N4Iw0/ABrhO6KO/4dhj6Qk81ps0qb6dYsC
-         EyMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728068668; x=1728673468;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uR17DBK3CgvuTP/A+YeEkLOp8ykg0LTLmIaNQYIZdOk=;
-        b=szQZGI1Xb1n8QDKCA9fnLJhC9KjrHnk8Z1IFCznJ6f+Ie0L2Wa2OfD4nWTGurSjWb9
-         4CbJpgbLU6YRFAxMzN7kY5V317RGo6gW0jTtmDq6Ti3DnLxIB38lVuaSD9kjJLdFM1j/
-         kpxcsXMDPrtttKts1MsTZVHJ2PwDGQw4S80cTMMVDYT5OsA5pYcVrtbtYx2inFjvtm+c
-         600CnVrHYHX+7a4WXIGpt9pcRhpSGQEIL+o1oBaEwrykqpEV70KToGvlRYYtqzRZ15U2
-         /ZP2XcrjN8X/22VWP9HGbVT7Oc2wZAtELDa+GeCIj0wahXjyG9LRonozZuajESQMmLR5
-         dZ/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWJn4rrrrmt4nlqWdxRM5F3X1h5MNmF8hfk79cZ3YKMbt1yYWRrXQaUbCiuvjGzrgrK6x6r0ldTgbZy@vger.kernel.org, AJvYcCX18F4Pjn6EvmBr3v3eWWNbO9zqD7B1hlwOiW8VbTzoQgRlrUoUjtL5YFmYRblDrxzyC0wP99VvoYpPuUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz1y6DKvu3iI4Fp6bFaJBXBrRMqjJi+1aFJra3UsWIiw0peyIh
-	rVPSoZw8/6CjqjC3U4wLCD0zF3nQQEGFzI9qX+tgTOaMop9U8pAqT+pR5PSd0oo=
-X-Google-Smtp-Source: AGHT+IHXWeyAT0Q319kx0ragpDZHMmJzNX5IYvRvTuXIDWVixgz79SC/7C2QuZGKUee2/7nBHGGdlQ==
-X-Received: by 2002:a5d:6149:0:b0:37c:cd71:2ba2 with SMTP id ffacd0b85a97d-37d0e7bcdf8mr2106125f8f.38.1728068668374;
-        Fri, 04 Oct 2024 12:04:28 -0700 (PDT)
-Received: from freebase (oliv-cloud.duckdns.org. [78.196.47.215])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16920549sm247106f8f.54.2024.10.04.12.04.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 12:04:27 -0700 (PDT)
-Date: Fri, 4 Oct 2024 21:04:25 +0200
-From: Olivier Dautricourt <olivierdautricourt@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?utf-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>
-Subject: Re: [PATCH] usb: xhci: xhci_setup_port_arrays: early -ENODEV if
- maxports is 0.
-Message-ID: <ZwA8OWFJhAuvWDJh@freebase>
-References: <20240930052336.80589-1-olivierdautricourt@gmail.com>
- <2024100407-hatless-goofy-bf12@gregkh>
+	s=arc-20240116; t=1728068667; c=relaxed/simple;
+	bh=2MpuodfLJmLx8CQl8yY7IALszfE+GszCrpWSPCvHPlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qXYsMtOdk8C5NWzZ1YUrzQbsEH4+XjvhaxHyiVr3bg2B7+tgYly6XO4jM2Orklz5vC8xwA1mbEhU1+YDmKjT1TPOu3hka/H/qEcCNE55TwFPfYaayqqhnwjlQcD++vKGCsb1PF3M+xheYZm0eiVmTFcRvpQBZgvFVNWxe9Ra0AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C899CC4CEC6;
+	Fri,  4 Oct 2024 19:04:25 +0000 (UTC)
+Date: Fri, 4 Oct 2024 15:05:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yun Zhou <yun.zhou@windriver.com>
+Cc: <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
+ <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
+ <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kernel: add pid_max to pid_namespace
+Message-ID: <20241004150521.361af760@gandalf.local.home>
+In-Reply-To: <20240902114920.1534699-1-yun.zhou@windriver.com>
+References: <20240902114920.1534699-1-yun.zhou@windriver.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024100407-hatless-goofy-bf12@gregkh>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Mon, 2 Sep 2024 19:49:20 +0800
+Yun Zhou <yun.zhou@windriver.com> wrote:
 
-On Fri, Oct 04, 2024 at 10:07:01AM +0200, Greg Kroah-Hartman wrote:
-> On Mon, Sep 30, 2024 at 07:23:29AM +0200, Olivier Dautricourt wrote:
-> > If the controller reports HCSPARAMS1.maxports==0 then we can skip the
-> > whole function: it would fail later after doing a bunch of unnecessary
-> > stuff. It can occur on a buggy hardware (the value is driven by external
-> > signals).
+
+-ENOCHANGELOG
+
+What? Why? Why should I care about this?
+
+A change log *must* have all the information to say why this change is
+necessary. It's OK for the subject to state what it is doing, but there
+most definitely needs a "why?" in the change log.
+
+-- Steve
+
+
+> Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
+> ---
+>  include/linux/pid_namespace.h |  1 +
+>  kernel/pid.c                  | 12 ++++++------
+>  kernel/pid_namespace.c        | 33 ++++++++++++++++++++++++++++-----
+>  kernel/sysctl.c               |  9 ---------
+>  kernel/trace/pid_list.c       |  2 +-
+>  kernel/trace/trace.c          |  2 +-
+>  kernel/trace/trace.h          |  2 --
+>  7 files changed, 37 insertions(+), 24 deletions(-)
 > 
-> What "buggy hardware" is this that can not pass the USB testing for this
-> type of issue?
+> diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
+> index f9f9931e02d6..0e3c18f3cac5 100644
+> --- a/include/linux/pid_namespace.h
+> +++ b/include/linux/pid_namespace.h
+> @@ -27,6 +27,7 @@ struct pid_namespace {
+>  	struct idr idr;
+>  	struct rcu_head rcu;
+>  	unsigned int pid_allocated;
+> +	int pid_max;
+>  	struct task_struct *child_reaper;
+>  	struct kmem_cache *pid_cachep;
+>  	unsigned int level;
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index 6500ef956f2f..14da3f68ceed 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -59,8 +59,6 @@ struct pid init_struct_pid = {
+>  	}, }
+>  };
+>  
+> -int pid_max = PID_MAX_DEFAULT;
+> -
+>  #define RESERVED_PIDS		300
+>  
+>  int pid_max_min = RESERVED_PIDS + 1;
+> @@ -74,6 +72,7 @@ int pid_max_max = PID_MAX_LIMIT;
+>   */
+>  struct pid_namespace init_pid_ns = {
+>  	.ns.count = REFCOUNT_INIT(2),
+> +	.pid_max = PID_MAX_DEFAULT,
+>  	.idr = IDR_INIT(init_pid_ns.idr),
+>  	.pid_allocated = PIDNS_ADDING,
+>  	.level = 0,
+> @@ -194,7 +193,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+>  			tid = set_tid[ns->level - i];
+>  
+>  			retval = -EINVAL;
+> -			if (tid < 1 || tid >= pid_max)
+> +			if (tid < 1 || tid >= tmp->pid_max)
+>  				goto out_free;
+>  			/*
+>  			 * Also fail if a PID != 1 is requested and
+> @@ -234,7 +233,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+>  			 * a partially initialized PID (see below).
+>  			 */
+>  			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
+> -					      pid_max, GFP_ATOMIC);
+> +					      tmp->pid_max, GFP_ATOMIC);
+>  		}
+>  		spin_unlock_irq(&pidmap_lock);
+>  		idr_preload_end();
+> @@ -651,11 +650,12 @@ void __init pid_idr_init(void)
+>  	BUILD_BUG_ON(PID_MAX_LIMIT >= PIDNS_ADDING);
+>  
+>  	/* bump default and minimum pid_max based on number of cpus */
+> -	pid_max = min(pid_max_max, max_t(int, pid_max,
+> +	init_pid_ns.pid_max = min(pid_max_max, max_t(int, init_pid_ns.pid_max,
+>  				PIDS_PER_CPU_DEFAULT * num_possible_cpus()));
+>  	pid_max_min = max_t(int, pid_max_min,
+>  				PIDS_PER_CPU_MIN * num_possible_cpus());
+> -	pr_info("pid_max: default: %u minimum: %u\n", pid_max, pid_max_min);
+> +	pr_info("pid_max: default: %u minimum: %u\n", init_pid_ns.pid_max,
+> +			pid_max_min);
+>  
+>  	idr_init(&init_pid_ns.idr);
+>  
+> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+> index 3028b2218aa4..d6b3f34ecb25 100644
+> --- a/kernel/pid_namespace.c
+> +++ b/kernel/pid_namespace.c
+> @@ -110,6 +110,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
+>  	ns->user_ns = get_user_ns(user_ns);
+>  	ns->ucounts = ucounts;
+>  	ns->pid_allocated = PIDNS_ADDING;
+> +	ns->pid_max = parent_pid_ns->pid_max;
+>  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
+>  	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
+>  #endif
+> @@ -295,20 +296,44 @@ static int pid_ns_ctl_handler(struct ctl_table *table, int write,
+>  
+>  	return ret;
+>  }
+> +#endif	/* CONFIG_CHECKPOINT_RESTORE */
+> +
+> +static int pid_max_ns_ctl_handler(struct ctl_table *table, int write,
+> +		void *buffer, size_t *lenp, loff_t *ppos)
+> +{
+> +	struct pid_namespace *pid_ns = task_active_pid_ns(current);
+> +
+> +	if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
+> +		return -EPERM;
+> +
+> +	table->data = &pid_ns->pid_max;
+> +	if (pid_ns->parent)
+> +		table->extra2 = &pid_ns->parent->pid_max;
+> +
+> +	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+> +}
+>  
+> -extern int pid_max;
+>  static struct ctl_table pid_ns_ctl_table[] = {
+> +#ifdef CONFIG_CHECKPOINT_RESTORE
+>  	{
+>  		.procname = "ns_last_pid",
+>  		.maxlen = sizeof(int),
+>  		.mode = 0666, /* permissions are checked in the handler */
+>  		.proc_handler = pid_ns_ctl_handler,
+>  		.extra1 = SYSCTL_ZERO,
+> -		.extra2 = &pid_max,
+> +		.extra2 = &init_pid_ns.pid_max,
+> +	},
+> +#endif	/* CONFIG_CHECKPOINT_RESTORE */
+> +	{
+> +		.procname	= "pid_max",
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= pid_max_ns_ctl_handler,
+> +		.extra1		= &pid_max_min,
+> +		.extra2		= &pid_max_max,
+>  	},
+>  	{ }
+>  };
+> -#endif	/* CONFIG_CHECKPOINT_RESTORE */
+>  
+>  int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
+>  {
+> @@ -465,9 +490,7 @@ static __init int pid_namespaces_init(void)
+>  {
+>  	pid_ns_cachep = KMEM_CACHE(pid_namespace, SLAB_PANIC | SLAB_ACCOUNT);
+>  
+> -#ifdef CONFIG_CHECKPOINT_RESTORE
+>  	register_sysctl_init("kernel", pid_ns_ctl_table);
+> -#endif
+>  
+>  	register_pid_ns_sysctl_table_vm();
+>  	return 0;
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 157f7ce2942d..857bfdb39b15 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -1809,15 +1809,6 @@ static struct ctl_table kern_table[] = {
+>  		.proc_handler	= proc_dointvec,
+>  	},
+>  #endif
+> -	{
+> -		.procname	= "pid_max",
+> -		.data		= &pid_max,
+> -		.maxlen		= sizeof (int),
+> -		.mode		= 0644,
+> -		.proc_handler	= proc_dointvec_minmax,
+> -		.extra1		= &pid_max_min,
+> -		.extra2		= &pid_max_max,
+> -	},
+>  	{
+>  		.procname	= "panic_on_oops",
+>  		.data		= &panic_on_oops,
+> diff --git a/kernel/trace/pid_list.c b/kernel/trace/pid_list.c
+> index 95106d02b32d..ef52820e6719 100644
+> --- a/kernel/trace/pid_list.c
+> +++ b/kernel/trace/pid_list.c
+> @@ -414,7 +414,7 @@ struct trace_pid_list *trace_pid_list_alloc(void)
+>  	int i;
+>  
+>  	/* According to linux/thread.h, pids can be no bigger that 30 bits */
+> -	WARN_ON_ONCE(pid_max > (1 << 30));
+> +	WARN_ON_ONCE(init_pid_ns.pid_max > (1 << 30));
+>  
+>  	pid_list = kzalloc(sizeof(*pid_list), GFP_KERNEL);
+>  	if (!pid_list)
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index fbcd3bafb93e..6295679ce16c 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -5415,7 +5415,7 @@ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
+>  
+>  	if (mask == TRACE_ITER_RECORD_TGID) {
+>  		if (!tgid_map) {
+> -			tgid_map_max = pid_max;
+> +			tgid_map_max = init_pid_ns.pid_max;
+>  			map = kvcalloc(tgid_map_max + 1, sizeof(*tgid_map),
+>  				       GFP_KERNEL);
+>  
+> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+> index b7f4ea25a194..df61b1db86a2 100644
+> --- a/kernel/trace/trace.h
+> +++ b/kernel/trace/trace.h
+> @@ -700,8 +700,6 @@ extern unsigned long tracing_thresh;
+>  
+>  /* PID filtering */
+>  
+> -extern int pid_max;
+> -
+>  bool trace_find_filtered_pid(struct trace_pid_list *filtered_pids,
+>  			     pid_t search_pid);
+>  bool trace_ignore_this_task(struct trace_pid_list *filtered_pids,
 
-This is a behaviour found while debugging a custom firmware where this
-value happen to be controlled here, i don't know any hardware out there
-with such issue, this change should be seen as a software nitpick and is
-not trying to fix a specific hardware.
-
-> 
-> > 
-> > Signed-off-by: Olivier Dautricourt <olivierdautricourt@gmail.com>
-> > ---
-> >  drivers/usb/host/xhci-mem.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-> > index d2900197a49e..e8406db78782 100644
-> > --- a/drivers/usb/host/xhci-mem.c
-> > +++ b/drivers/usb/host/xhci-mem.c
-> > @@ -2160,6 +2160,11 @@ static int xhci_setup_port_arrays(struct xhci_hcd *xhci, gfp_t flags)
-> >  	struct device *dev = xhci_to_hcd(xhci)->self.sysdev;
-> >  
-> >  	num_ports = HCS_MAX_PORTS(xhci->hcs_params1);
-> > +	if (num_ports == 0) {
-> > +		xhci_warn(xhci, "Host controller has no port enabled\n");
-> > +		return -ENODEV;
-> > +	}
-> 
-> Should this be backported to older kernels, if so, how far back if this
-> is common hardware?
-
-I don't think this would have to be ported to stable trees: The function
-handles the case without failure: the 0 value is propagated until line
-2220 and fails on condition:
-	if (xhci->usb2_rhub.num_ports == 0 && xhci->usb3_rhub.num_ports == 0) {
-		xhci_warn(xhci, "No ports on the roothubs?\n");
-		return -ENODEV;
-	}
-
-The change merely avoids passing 0 value through kcalloc_node calls and
-unnecessary accesses to the capability structures of the controller.
-
-Kr,
-Olivier
 
