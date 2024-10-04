@@ -1,94 +1,188 @@
-Return-Path: <linux-kernel+bounces-349858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE62998FC4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:26:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B79D98FC52
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 04:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 814FF1F2243A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:26:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7EC7B220F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6426721340;
-	Fri,  4 Oct 2024 02:26:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5961321A1C;
+	Fri,  4 Oct 2024 02:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhSOALP2"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9914C18C08
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 02:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8E48F70;
+	Fri,  4 Oct 2024 02:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728008765; cv=none; b=pxj7AaM46KsXbWi3PXaDtWNjre2uHfGwKvSXe2XVmTshOBv25UHr05ESCybYoGQAn7j07BgLoXFAchUOCy0eu3qJ1/pxzt4vup4nLtTUIYGskI1gl8RNoZ9YIWk0fHA6MhWXlU6rCDDXy0QY1VnHC/mJXr2DuCfpNAArjK7tu2M=
+	t=1728008965; cv=none; b=nPPRlkexwV+OAf3y5ucLmicyCEqzeGKXMOaIIw/OsUfxpmjYmJVFfiBP4y0YjzwE8LkYN0cUV0D74O2EpITlfIcqD54n53LdDgVN0JmqFhqufzDDcnXQCeMisdU8nkA/9aSb0f5EClrYtA4upDlNorFA2sPq/z3Aku8zA5ahhJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728008765; c=relaxed/simple;
-	bh=4HWecSz4M7EUkOXXBP9/ZooJcAR5jb16syVtiRjEbuE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uVbGjv79WbghMhU6ISoom8hagjVTIDh/blJYIkd55+cvbjPUu6eHCNeXFvrAqBvPPJ2z2A8xwRUy357DnHwDe4i9xi/Xw+pb9Wf60MzXu9Rf1gcm6q6fD/Ph6vAWlzMU1Thx6odUCjPQmdLLOht+wz95S6Xrn3zK8yq9FjAR4/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cf147a566so147311839f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 19:26:03 -0700 (PDT)
+	s=arc-20240116; t=1728008965; c=relaxed/simple;
+	bh=+x43RBIAmDc3gAQhppM1DW3bNsYS04thwJNzbbd81dU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BYopLHBAWyMqS5QTHulmcPbjeKgPKWj+CIa65R9QYKkTCScnZvyCWwv314NemSbtDa6hBPYFBLkxEZsTbXBBqnCSq2u5Twdk2dLk5NLXS8OQGSLL1n7ixF71E5tdR2Y+m5bH707x/ud2UtNYk6nxVNbg+wvOyLVF3EQH/mgfWkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EhSOALP2; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so240032866b.3;
+        Thu, 03 Oct 2024 19:29:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728008962; x=1728613762; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/mhCMNngyFRcrq9Jaifi5sCxy3Lm9pQkHqN1LFTdRQ8=;
+        b=EhSOALP2y1PryravyUo4kI3K66yayMkdr1sBTY+zD9epV5pVjbyLkaHOkfIuBzNB6g
+         ydigCV8avf93Cpl7V7HGwPsy46N3G5nFQ3BcXX8L1zn1ROfBqpX0+EvAb0TfcyOwtkBo
+         NwIk3GlZkGVwBwn5scC+8eaa+jZpoVOcEoZk1xSurCQyPz2UpJnA6zQJcemtQ1OxjsEC
+         gTVnxnbCEyWyzh+7B7cHew/0rXfYdCdSomCTwwIvYdyBzXwxByySNphomBbaMtISpd/j
+         bfrGNq/hCWmMOTs99H9HjPiwFOYwZsEc/r2P6hYE0vxRz0kxuGrA3x3XL4EXx+en0aQd
+         6XYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728008763; x=1728613563;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b0TKGVjZnvG+gbyWukrboF5mMhpG4D08XO678TzzDo8=;
-        b=CyuuZRTqa47TGjw+8TLspnSkPbTLxXcW/kTE3sr+UrB8SdYNlipnS2AS7cujVYHeKg
-         SZHuE3Js0ZO7AM/cNJjpXBQim+10w2yh5pPoLwJk2rwj1dCbMJTYmJBGoWezdgNxAlUV
-         /c2UZp92/vO3Ss7BkMF+p8sobXMNNlNUQEb4GBxKHSh0rXYAQgfXXNQhhXsUc73fwVfr
-         hzm8CNidpSotcQV98R0zAAxlSzo3rFRYSjKwqB4I/OR8eDhj/T/sMT0axI3OtoOvEwDZ
-         BB/Uv4LkzwmRjqKOSfrHCysT1NgjqysXRnKn+Ph93lB/kvs4BkLpfIi9xWHbjx8i02mX
-         exBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpTf6D/AW4ZlJ+9W4tw9W/vA4AUXZMfxXFYW/8cKcNInDKky/Cf65JG2CVnb3lwYQz7Xhyf+eM7NDIUbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6OpN4nJ7k2uzq4ZguTa6ah0LIfstUQpDWVDe2vJm54+7uClFz
-	YX+OanVKEBiOkoQgxiGWew/WDXXJIuxj8+n2JFJihUWS3Bxg3kpcb2O/t7wnnMSTXclgbKrstjl
-	oxMsBBywhELViXOteqjjNvn8W42o7JACjXHkMGb3pxIsl1NAJgN4dUMQ=
-X-Google-Smtp-Source: AGHT+IEDAq1L/9hrIQmAijk45oUjCKIMrvI/y9UrO5WjjEY5d2oTq1wpaIDF3b9kOodsAS2tymqxR4Uv1qQWjX4YOA7zaZ9iXeNT
+        d=1e100.net; s=20230601; t=1728008962; x=1728613762;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/mhCMNngyFRcrq9Jaifi5sCxy3Lm9pQkHqN1LFTdRQ8=;
+        b=kgUWBIvuccnSFsbDQioJTo2IF61PHfZx/70EqoHDiTrr66Gv06rqlegYFpokNYhhvI
+         jjfsjQFT5VAI+3ihtqpK9gaO+8aNaXstPt9f6r3Im4u/xgQStl8sSbPNTsp5pcNpDHHm
+         iUheRoSc5bJBKJWw2GQLLCFL8QoEkQ/ruJRD5lsHFbAlTY1I6xIHh14HpQfzgaTo4YPL
+         I5iN38dlmBLgV/M9TXeA18or1ewnameg/KJ+XopjvdKtNf5LAwfnHLHeSgeOU40rLfGJ
+         4UaFqxkY8R5c3dz+yfG1ibHWKdM5b3mbAgXS9KHkPpGCzX1pYfd88gUnTIr3tLgaJbll
+         4icA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKTcbmSnYE3ifkYiDO9fk+LE3WFsgc8UwqOqNgQhQRtthNJ2odagPshqL80aRAfd6k2OHIqqwJUBk=@vger.kernel.org, AJvYcCWsOZ3QgnEIQF7cSP7DvkWjMIsX3oT2BwVAxuEe4vQzLBLZ7wzOdRtUQyESJnfpS+Kc7I/dUQHHMQTXpUue@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9IOrqzvff1fePkaglPHA7ZlVjyfG0GTUKOhNAeKacNVLO28ia
+	wOwfQRJoq7wEI4byo0wjnEIqXrcz6go2G9Nz7sBo7Hxux42fu9pnOpaBlTee7kMz0JkyIduRP3T
+	TPP1GsSi2LFguA8r5d6621A+M2g==
+X-Google-Smtp-Source: AGHT+IHyv/4HLv4MIflnH3aGXq3LiQKW2demZrfTWF98TpbeJidf5/cs0qnOwP+AZ07FFnPWLqfwC03CIfC+wk0jGVg=
+X-Received: by 2002:a17:907:9619:b0:a93:d088:8ac9 with SMTP id
+ a640c23a62f3a-a991bd71e36mr98775266b.36.1728008962227; Thu, 03 Oct 2024
+ 19:29:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca07:0:b0:3a3:6b20:5e33 with SMTP id
- e9e14a558f8ab-3a375a9b3a2mr8900805ab.12.1728008762724; Thu, 03 Oct 2024
- 19:26:02 -0700 (PDT)
-Date: Thu, 03 Oct 2024 19:26:02 -0700
-In-Reply-To: <00000000000094740b0620b32b4e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ff523a.050a0220.49194.0413.GAE@google.com>
-Subject: Re: [syzbot] [net?] general protection fault in phy_start_cable_test_tdr
-From: syzbot <syzbot+5cf270e2069645b6bd2c@syzkaller.appspotmail.com>
-To: andrew@lunn.ch, christophe.leroy@csgroup.eu, davem@davemloft.net, 
-	djahchankoike@gmail.com, eadavis@qq.com, edumazet@google.com, 
-	florian.fainelli@broadcom.com, hkallweit1@gmail.com, kuba@kernel.org, 
-	larysa.zaremba@intel.com, linux-kernel@vger.kernel.org, linux@armlinux.org.uk, 
-	maxime.chevallier@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20241001062855.6928-1-kfting@nuvoton.com> <20241001062855.6928-5-kfting@nuvoton.com>
+ <Zvv2Y10hJqGnUDvW@smile.fi.intel.com> <CACD3sJbJ0cNCRiBba73BOAkO=jn9KuJJXC1-Sy_iVf_8EJSjxA@mail.gmail.com>
+In-Reply-To: <CACD3sJbJ0cNCRiBba73BOAkO=jn9KuJJXC1-Sy_iVf_8EJSjxA@mail.gmail.com>
+From: Tyrone Ting <warp5tw@gmail.com>
+Date: Fri, 4 Oct 2024 10:29:10 +0800
+Message-ID: <CACD3sJa23TEfBQ_b8PGM8ot2L0g4n=GcqvPk0HJGjRf-d+=-pg@mail.gmail.com>
+Subject: Re: [PATCH v5 4/6] i2c: npcm: Modify the client address assignment
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
+	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot suspects this issue was fixed by commit:
+Hi Andy:
 
-commit ad78337cb20c1a52781a7b329b1a747d91be3491
-Author: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Date:   Tue Aug 27 09:23:13 2024 +0000
+Thank you for your comments.
 
-    net: ethtool: cable-test: Release RTNL when the PHY isn't found
+After a second thought, I'll explain why slave_addr << 1 is given here.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17bee307980000
-start commit:   f9db28bb09f4 Merge branch 'net-redundant-judgments'
-git tree:       net-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
-dashboard link: https://syzkaller.appspot.com/bug?extid=5cf270e2069645b6bd2c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10542a33980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=178c6225980000
+Tyrone Ting <warp5tw@gmail.com> =E6=96=BC 2024=E5=B9=B410=E6=9C=884=E6=97=
+=A5 =E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=889:49=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Hi Andy:
+>
+> Thank you for your comments and they'll be addressed.
+>
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=
+=B410=E6=9C=881=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=889:17=E5=AF=AB=
+=E9=81=93=EF=BC=9A
+> >
+> > On Tue, Oct 01, 2024 at 02:28:53PM +0800, Tyrone Ting wrote:
+> > > From: Tyrone Ting <kfting@nuvoton.com>
+> > >
+> > > Store the client address earlier since it might get called in
+> > > the i2c_recover_bus() logic flow at the early stage of
+> > > npcm_i2c_master_xfer().
+> >
+> > ...
+> >
+> > > +     /*
+> > > +      * Previously, the address was stored w/o left-shift by one bit=
+ and
+> > > +      * with that shift in the following call to npcm_i2c_master_sta=
+rt_xmit().
+> > > +      *
+> > > +      * Since there are cases that the i2c_recover_bus() gets called=
+ at the
+> > > +      * early stage of npcm_i2c_master_xfer(), the address is stored=
+ with
+> > > +      * the shift and used in the i2c_recover_bus().
+> > > +      *
+> > > +      * The address is stored from bit 1 to bit 7 in the register fo=
+r
+> > > +      * sending the i2c address later so it's left-shifted by 1 bit.
+> > > +      */
+> > > +     bus->dest_addr =3D slave_addr << 1;
+> >
+> > I'm wondering if it's better to use i2c_8bit_addr_from_msg() here?
+> >
 
-If the result looks correct, please mark the issue as fixed by replying with:
+The current implementation of i2c_8bit_addr_from_msg() (ref link:
+https://github.com/torvalds/linux/blob/master/include/linux/i2c.h#L947)
+is
+"return (msg->addr << 1) | (msg->flags & I2C_M_RD);" and it takes
+extra consideration about the read flag when retrieving the i2c
+address.
+IOW, if there is a read event, the i2c address contains a read
+indication (bit 0 of the i2c address is 1).
 
-#syz fix: net: ethtool: cable-test: Release RTNL when the PHY isn't found
+The patch code "bus->dest_addr =3D slave_addr << 1;" might get used in
+i2c_recover_bus() later. (ref link:
+https://github.com/torvalds/linux/blob/master/drivers/i2c/busses/i2c-npcm7x=
+x.c#L1691)
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Suppose there is a read event and the i2c address is 0x60.
+
+With i2c_8bit_addr_from_msg(), bus->dest_addr will be 0xc1.
+With the original patch, bus->dest_addr will be 0xc0.
+
+If some error condition occurs and it requires i2c_recover_bus() to
+recover the bus, according to the description at
+https://github.com/torvalds/linux/blob/master/drivers/i2c/busses/i2c-npcm7x=
+x.c#L1742,
+the address "0xc1" is used
+as a parameter to npcm_i2c_wr_byte() which is used to send the address
+in the write direction.
+
+If i2c_8bit_addr_from_msg() is applied, it might not fit the scenario
+described at
+https://github.com/torvalds/linux/blob/master/drivers/i2c/busses/i2c-npcm7x=
+x.c#L1742,
+which is about to send
+an address in a write direction since the address from
+i2c_8bit_addr_from_msg() contains a read indication.
+
+> > --
+> > With Best Regards,
+> > Andy Shevchenko
+> >
+> >
+>
+> Have a nice day.
+>
+> Regards,
+> Tyrone
+
+Thank you.
+
+Regards,
+Tyrone
 
