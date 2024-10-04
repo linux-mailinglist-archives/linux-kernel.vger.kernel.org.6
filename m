@@ -1,137 +1,101 @@
-Return-Path: <linux-kernel+bounces-350391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB10990486
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:35:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F8A6990489
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26B5D1F21E7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41CFE1C2232E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9004E21019F;
-	Fri,  4 Oct 2024 13:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9799F212EEE;
+	Fri,  4 Oct 2024 13:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nQZyQRxZ"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YDkCdg7/"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F1A15747D
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 13:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD4A15747D;
+	Fri,  4 Oct 2024 13:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048933; cv=none; b=Lon8kQNJlrNEaYXeUvMIUKR3xf7xdlWNNBf4ByeijhEMG04JD5GPRYRHJU8QhIweJQWdTGsceKmHHk+v7S0ceybIlAdHJ5hCUORlWiYDfidG53bHW5BA1ybZHM1DTJV//JE1NAiuFivASCF9SAtyditpYmUcg1BkJ8o3V1wfmcQ=
+	t=1728048942; cv=none; b=th1St6PaFsimcUU+QdxyubqFLcAoXhufL3mj+DT5S9Ws03f6QRMuNPnhqbiVumLECC4eQb74Gz5N8W2qQmbC1iQFZOSLgT5ZM+lzMLQ//55OqmAcDMTjOAQR1SrEhlDPJkM34QsQ+u3IMHZtjtidZLAIkBoNJU1WDPmVft2CbD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728048933; c=relaxed/simple;
-	bh=ZkmyxQ3QOTQso2mGTJ7hRHIUqp7vFnEruN8aoDO2Jok=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QOPqdgziXgr1Qdrb5ftg0sjjNTa6eWArDoUpAmupnqIPGrC6qQRvpFK+yqQFBDIZx7bT5Yewq6JDnfUoL+U2WJszVRJ4QvGCoRM3dgeIVfAY0CNX9y0uF9YjlFaAdAzq+M+W5LhRK2IVDS8XbhqvYC0KLcsFyeqYJ2tdgB8Qaro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nQZyQRxZ; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e25cae769abso2880505276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 06:35:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728048930; x=1728653730; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRKRcRUT8iLe/fkq4dl/vkLTjdTfTheBiakbS3Xtaxg=;
-        b=nQZyQRxZ3Gwr5xPE4/CkHe/lVN1U9IMNaO1D7fMmUM6rqVi4ryEwcqaScLovw+SK78
-         SV6njv7uAT/XO1sRhVO5FBsDKi6ewQyBgyXAvvux94UQnGpcBX3aEI64jFlqGtHzZM7F
-         aVsL2IMViUnztx4Y3uobrARcx+dZc4c7zeSevTJSXvbZkxWXcJjjNgmKt0lqJku+0Haf
-         H8iBbV1U5t1auqvuB0rAj1RXDt9ZXxO0XEWsLB+czn2LY3ZdhMidkej30HAuu11k2BnA
-         +JWgKM/PtDm37AQqPwA9mTHuXZ5sAcLbb+nyfpoAIKOmXl9z9xJw/uFTSFeZZcFNzkTD
-         VZ1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728048930; x=1728653730;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRKRcRUT8iLe/fkq4dl/vkLTjdTfTheBiakbS3Xtaxg=;
-        b=fdkBwKW3Cda4Ndw8lFnGr6u5bD4/GaAgPWXCj/c99P5IhSoQ6EZ+r8TC8xwjQkIQYp
-         Nw9OeuTf6ybkXku83b1n+uJoEz8pn5HFFZj1ze2q+AkcvcB8bZa3Jb4AUblOskLfUkuQ
-         7By/O2KWwtT4Uu6DFJCVxuKx0Et7IOflafjkJwOiRaOw1Ai0Xf7LnNx+S5A5smcsixb/
-         Xyw7QeFmb0DqkU0biho43M8F1nzuL4udesjL2VpSH+S4XgwS6PohYsas9vBSqsNHMLVu
-         sQ3pA6RBWY4qANzfvgQu/JmxpwRqDpYF1zb60Y0nZy9QgKnfhlzaGETgGZvwl7Co1dta
-         a8nA==
-X-Forwarded-Encrypted: i=1; AJvYcCWA+BI4Q6DfFHRt2zi5abgdzyrs1D3RHWUQ4gM2ttruC/9RrnLhPB4bBuZnxddEzpiQYkqSycA5AdHDjIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCpJbl6UgyRzQFwS+SU8BiXhfj3c9nIQo3PcEGb41jHoKTA4gq
-	qASZwGmJyCgskwwpaylpJfw7BHQM8oOy/9MArrVAI7E+KX0eVACD62khTuHu3hhhmBjXgcjGnDT
-	OqA==
-X-Google-Smtp-Source: AGHT+IGrQhmBThdQjeJmJqP3+NLqTBL86x6LnHPI+mDohnEHno+IVTKZ8ehf4O7OsYSKHm7wAkLZux85E7s=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:d804:0:b0:e28:8f00:896a with SMTP id
- 3f1490d57ef6-e289393a895mr1609276.8.1728048930376; Fri, 04 Oct 2024 06:35:30
- -0700 (PDT)
-Date: Fri, 4 Oct 2024 06:35:29 -0700
-In-Reply-To: <87v7y8i6m3.fsf@redhat.com>
+	s=arc-20240116; t=1728048942; c=relaxed/simple;
+	bh=Xw3Rk5rZwFBtFSjj2qL9MNa9T6SNgUCIeWAdcMO92y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nlazr93nvl4gOKolf1Hn/NNB3BHuBuMo1ZY+4E7BeNDHDll9tWvL2raKRkuirXx3o+O8gabYXjU9/0EYVrOM2AVYaDw0zw1dDfOQckhfzT+DL1vvWzZvybR9p2toR3Th1pMA917Czv6KDEQNad/2wIDRGHU1U5gU+3+pWpj26mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YDkCdg7/; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qowZPimobsknCTSPeZx61BV1Jj+jnSrfDL8WG2TTTYE=; b=YDkCdg7/f0SQNMRgFOtmQ7sdRd
+	SX0vVOTXP5dQnm7Ir1BUjaoVsN/eiuOYJ4X4FTOK2U9DiHoq99vSIsQySt6Uyr5Xrdzz+ApqG25kA
+	avywyKZ8Lhotb1C5mQhMwRttaRn1imHKn+Q8x147YEtmQamdNW8rKgMWUaL2COc4UwAgZeACxRWzq
+	WDRhUD4O6BDY2WZVrz4yst7u2v2Pb/Rq11tdb0/NoOSuAZ7kr5oXpAMwZ3/xXfZXZN5ObmpJ1uu13
+	uaf9W94PK1FXlJTHusJIaA+4vlDmnuBMQQvwQsnVPATKvi5IHHcLIYy/3dZ4CUra4CVYAwsRu/WsU
+	y+Nui4gA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1swiT0-00000003qF0-03z8;
+	Fri, 04 Oct 2024 13:35:34 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D23C630083E; Fri,  4 Oct 2024 15:35:32 +0200 (CEST)
+Date: Fri, 4 Oct 2024 15:35:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
+	linux-next@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <20241004133532.GH33184@noisy.programming.kicks-ass.net>
+References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
+ <20241003084039.GS5594@noisy.programming.kicks-ass.net>
+ <20241003084743.GC33184@noisy.programming.kicks-ass.net>
+ <20241003092707.GD33184@noisy.programming.kicks-ass.net>
+ <20241003122824.GE33184@noisy.programming.kicks-ass.net>
+ <83d29a0c-dab2-4570-8be0-539b43237724@paulmck-laptop>
+ <20241003142240.GU5594@noisy.programming.kicks-ass.net>
+ <7b14822a-ee98-4e46-9828-1e41b1ce76f3@paulmck-laptop>
+ <20241003185037.GA5594@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241003234337.273364-1-seanjc@google.com> <20241003234337.273364-6-seanjc@google.com>
- <87v7y8i6m3.fsf@redhat.com>
-Message-ID: <Zv_uvVT9RmiN84y_@google.com>
-Subject: Re: [PATCH 05/11] KVM: selftests: Configure XCR0 to max supported
- value by default
-From: Sean Christopherson <seanjc@google.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003185037.GA5594@noisy.programming.kicks-ass.net>
 
-On Fri, Oct 04, 2024, Vitaly Kuznetsov wrote:
-> Sean Christopherson <seanjc@google.com> writes:
+On Thu, Oct 03, 2024 at 08:50:37PM +0200, Peter Zijlstra wrote:
+> On Thu, Oct 03, 2024 at 09:04:30AM -0700, Paul E. McKenney wrote:
+> > On Thu, Oct 03, 2024 at 04:22:40PM +0200, Peter Zijlstra wrote:
+> > > On Thu, Oct 03, 2024 at 05:45:47AM -0700, Paul E. McKenney wrote:
+> > > 
+> > > > I ran 100*TREE03 for 18 hours each, and got 23 instances of *something*
+> > > > happening (and I need to suppress stalls on the repeat).  One of the
+> > > > earlier bugs happened early, but sadly not this one.
+> > > 
+> > > Damn, I don't have the amount of CPU hours available you mention in your
+> > > later email. I'll just go up the rounds to 20 minutes and see if
+> > > something wants to go bang before I have to shut down the noise
+> > > pollution for the day...
+> > 
+> > Indeed, this was one reason I was soliciting debug patches.  ;-)
 > 
-> > To play nice with compilers generating AVX instructions, set CR4.OSXSAVE
-> > and configure XCR0 by default when creating selftests vCPUs.  Some distros
-> > have switched gcc to '-march=x86-64-v3' by default, and while it's hard to
-> > find a CPU which doesn't support AVX today, many KVM selftests fail with
-> >
-> >   ==== Test Assertion Failure ====
-> >     lib/x86_64/processor.c:570: Unhandled exception in guest
-> >     pid=72747 tid=72747 errno=4 - Interrupted system call
-> >     Unhandled exception '0x6' at guest RIP '0x4104f7'
-> >
-> > due to selftests not enabling AVX by default for the guest.  The failure
-> > is easy to reproduce elsewhere with:
-> >
-> >    $ make clean && CFLAGS='-march=x86-64-v3' make -j && ./x86_64/kvm_pv_test
-> >
-> > E.g. gcc-13 with -march=x86-64-v3 compiles this chunk from selftests'
-> > kvm_fixup_exception():
-> >
-> >         regs->rip = regs->r11;
-> >         regs->r9 = regs->vector;
-> >         regs->r10 = regs->error_code;
-> >
-> > into this monstronsity (which is clever, but oof):
-> >
-> >   405313:       c4 e1 f9 6e c8          vmovq  %rax,%xmm1
-> >   405318:       48 89 68 08             mov    %rbp,0x8(%rax)
-> >   40531c:       48 89 e8                mov    %rbp,%rax
-> >   40531f:       c4 c3 f1 22 c4 01       vpinsrq $0x1,%r12,%xmm1,%xmm0
-> >   405325:       49 89 6d 38             mov    %rbp,0x38(%r13)
-> >   405329:       c5 fa 7f 45 00          vmovdqu %xmm0,0x0(%rbp)
-> >
-> > Alternatively, KVM selftests could explicitly restrict the compiler to
-> > -march=x86-64-v2, but odds are very good that punting on AVX enabling will
-> > simply result in tests that "need" AVX doing their own thing, e.g. there
-> > are already three or so additional cleanups that can be done on top.
+> Sooo... I was contemplating if something like the below might perhaps
+> help some. It's a bit of a mess (I'll try and clean up if/when it
+> actually proves to work), but it compiles and survives a hand full of 1m
+> runs.
 > 
-> Ideally, we may still want to precisely pin the set of instructions
-> which are used to generete guest code in selftests as the environment
-> where this code runs is defined by us and it may not match the host. I
-> can easily imaging future CPU features leading to similar issues in case
-> they require explicit enablement.
+> I'll try and give it more runs tomorrow when I can power up the big
+> machines again -- unless you've already told me it's crap by then :-)
 
-Maybe.  I suspect the cross-section of features that require explicit enablement
-*and* will be generated by the compiler for "regular" code will be limited to AVX
-and the like.  E.g. the only new in -v4 is AVX512.
-
-> To achive this, we can probably separate guest code from each test into its
-> own compilation unit.
-
-Hopefully we don't need to worry about that for years and years :-)
+I've given it 200*20m and the worst I got was one dl-server double
+enqueue. I'll go stare at that I suppose.
 
