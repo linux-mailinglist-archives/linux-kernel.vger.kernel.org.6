@@ -1,168 +1,137 @@
-Return-Path: <linux-kernel+bounces-349835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3945798FC0B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:51:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B9498FC0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 03:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BEF71C22825
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:51:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C5A91F21B22
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8AB17BB7;
-	Fri,  4 Oct 2024 01:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0C317547;
+	Fri,  4 Oct 2024 01:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AtjS1M7B"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="iKsdWQ3A"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9FB17547;
-	Fri,  4 Oct 2024 01:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E38134D1
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 01:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728006696; cv=none; b=jwIm9jj6VrlkMI5ppBa9UxDbI/zJ9m0J4jaRLHzeN2EabrPedEcFy2f+75HgW8ZIKKREtyMP2UtaKUoY+qxUG8JdPopvAlcPHDW+i4FjjEgSnsBCY9yrzVMPfcVyF8pAU+dlXynyp91oHooQ4W5uvCdZDis6TX0M5akp/E27WCI=
+	t=1728006868; cv=none; b=cAoH8Jj6CRtL372EpL69kAzMb/PNIVvw9FlzZtpNRklCaSEhzFUUZI2yyPT17Dw2vtj1+e6wcrT+5AueZyFznfFJLswU6bxnDeZH08DtllxKNKe7OUrCZkBqZnCaAuDqh8OcWDi7cbmqSfjYmvTg9qgTpM8cQ3KCOMcI7uZvVMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728006696; c=relaxed/simple;
-	bh=2TbQ2jJT8Gnh+uAuA/LCV5JNC4aeAp65rY23ATPV/rY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G2s+P8oevjECZu+1p68IXZNrUn3eDZpcs8t9dXKT/XdZIQqBDaWN0QPfXPjCUF00zUpQKNalOihOV8FaNpMxwU/kuly4BIq4DpgfNkxapczFMReKFrepTLrkxd6GmZO5cWQBOIANErJek++ireIRM1OJdeBwd1ZnnZ3A4noZsqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AtjS1M7B; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d100e9ce0so193070966b.2;
-        Thu, 03 Oct 2024 18:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728006693; x=1728611493; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2TbQ2jJT8Gnh+uAuA/LCV5JNC4aeAp65rY23ATPV/rY=;
-        b=AtjS1M7BGxVyIgbNvSKdhuorkEhQVoqzhjatAknCgcn/1EII4fuepW33t378U6NK96
-         SHx/cNE/qx+POgLM2gL94xKjM/7fp/3Qc5A+DfcP5zoGrtJ6Ze1vl1ujSU2R2yjT9ZJL
-         rm4AvA1le+g9aIZXJ9/o+ON3bCMR18BdQqDeX2bBjbJI1XPfVpJx4qi5q2kWssxB0oeb
-         1U56mrLSYPvFFklnr4CPyD9yJxQD4c7yVtWKpQxRigzxx3WS24xRCsReji01N/YmWU3f
-         Ihl4TUL0WXGT/t3TzBjC1UD8iino8xKiqnchdFk7lLQeyVlZN1aGXv5RVXLjzj3FaBi2
-         9rYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728006693; x=1728611493;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2TbQ2jJT8Gnh+uAuA/LCV5JNC4aeAp65rY23ATPV/rY=;
-        b=FxS00fqmRi/J1z+CER+PiF+r9IhOi5qZZ1JIhfAbceGKcYflLJutwpoHaXlcHDIPHi
-         AS70wZInlkDBA8h0DowRBhqH3PYe2/xVNwRE5eumyQi+WDK6OdCcvBA+27uR8ByQBVYW
-         XsPOnah8/cEnlKyvxbdONE0PQfXSY2eKbZGZL/ez/OLRpzUuTmSKfcS855vPA/cmfIiX
-         yAAV/mvZubXVA6iRJYIBSBGczuBv5FU3Aho36FvdDXWtRqt1FVWhmihH+LTDFnRO7fmO
-         kwuqDFaCz/AUfefWc4rXdRoF9VO4IE5nxmdC7z17v4ztxK42TWoJ7HH/8uQmglzvuW1U
-         fU8g==
-X-Forwarded-Encrypted: i=1; AJvYcCULpbJtg02tvfVQEC1x3wcX83MNJx3QceclCjs4KGdbZVXU4YZeIf3jHeg58rb8DcZwd7WM/GPkHpfOlIwc@vger.kernel.org, AJvYcCX8FqE3CKV4W+x+oEYb2KbHgksFWLUkf4uJC6oDiwH2H+K8CENasv01wteeIknBUuPmVU4BcyKFdts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUKzMwOBobQss5sP89wSsyQ4Fr273s5SY66UkE6PaTV8fNsYmH
-	btwx4ZIKyTu93qvle3bUY3D7beZLvLgUq+LZeYC3Q+73CYvYfUNQjBM5iKIdpO9ZDzXWzjbJjT1
-	PBNF1Aio5n7Pj8jFERGCE02cLZw==
-X-Google-Smtp-Source: AGHT+IHve9h3BM2sNzAq+GFrnYEqz82siIj/A5I9jY8K2jvgSEN8bFP+z0TNPEV8wdGZSf6DKw38vl6lLG3ULmyIVKY=
-X-Received: by 2002:a17:907:f788:b0:a7a:8da1:eb00 with SMTP id
- a640c23a62f3a-a991bcfdb73mr96396066b.7.1728006692826; Thu, 03 Oct 2024
- 18:51:32 -0700 (PDT)
+	s=arc-20240116; t=1728006868; c=relaxed/simple;
+	bh=atN6qSOHapkNDNM1pOjU4zYPXXOT3eQJsA7yB3twgis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fNcLjQuAT7C4JZIDCqOEjGLTjJnSsA7tR788mWryKvQgvqFOQA78U0Ul2/5npYZXfQMFLl8n8Poh1I1/GvYR2S8SvfXjubgvsBuhmN3auEiCpsnjk5ZRN4ZIw/CmnbaikVmjcvbQiH5GGb9ZtBHvSYiQeHo3bWppjeXby4VLmjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=iKsdWQ3A; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5001a.ext.cloudfilter.net ([10.0.29.139])
+	by cmsmtp with ESMTPS
+	id wOIhspTvrg2lzwXWTsMsov; Fri, 04 Oct 2024 01:54:25 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id wXWSswLHsmNYjwXWSs6Xbx; Fri, 04 Oct 2024 01:54:24 +0000
+X-Authority-Analysis: v=2.4 cv=fb9myFQF c=1 sm=1 tr=0 ts=66ff4ad0
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=B3fuDwYyW55wTQKIj88FGw==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10 a=pGLkceISAAAA:8
+ a=VwQbUJbxAAAA:8 a=IF2tD_PbCvr-fGPPTaoA:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
+ a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Vt4PmUivxb819zkb6zOIRD9RtOeOEpY6fOXiUKMFEpI=; b=iKsdWQ3AxaGRSMqNZzf8Yy7XHt
+	cxArIQCJnFDQKHhbFjr2ZDrnPrS0yQS1WXFsGwK7fh7ZLM9FGU07tu8SBRdRbeHRZnimJFJSRKCaY
+	mOw8Y5nvtrBx2jNRUkAJant2ddC7oe9bJikaly5EirbbVKG0zYolHFqHOSTc4IphFarjLtUN1+K10
+	03fE+r8Jc13cA+MWUgnJpGuwcQ7htHlkfsDV8ExrFAfpK8jDfRjDR935m3U3ZZYQBKMwvCAqtdeX+
+	8TMGSL+05ZJgwE6I34szTlA1tvApCjCx4JubfZsYGrKPEpcz0zdRW97/gnN7zJexfN5whuc8YwlPZ
+	VZoe9Dhw==;
+Received: from [201.172.174.147] (port=59556 helo=[192.168.15.5])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1swXWR-0009Il-2S;
+	Thu, 03 Oct 2024 20:54:23 -0500
+Message-ID: <674d86d6-4073-4630-b8b1-fe73ab7e995e@embeddedor.com>
+Date: Thu, 3 Oct 2024 19:54:22 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001062855.6928-1-kfting@nuvoton.com> <20241001062855.6928-6-kfting@nuvoton.com>
- <Zvv3ws1_jUMVnAAJ@smile.fi.intel.com>
-In-Reply-To: <Zvv3ws1_jUMVnAAJ@smile.fi.intel.com>
-From: Tyrone Ting <warp5tw@gmail.com>
-Date: Fri, 4 Oct 2024 09:51:21 +0800
-Message-ID: <CACD3sJZEUp3PQ=POGtHsN5su6LbXyOfUiXv5EsptiY3GxNrR7w@mail.gmail.com>
-Subject: Re: [PATCH v5 5/6] i2c: npcm: use i2c frequency table
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] include: linux: Fix flex array member not at the end in
+ bpf_empty_prog_array
+To: Philipp Hortmann <philipp.g.hortmann@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christian Brauner <brauner@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20240930181700.22839-1-philipp.g.hortmann@gmail.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20240930181700.22839-1-philipp.g.hortmann@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.174.147
+X-Source-L: No
+X-Exim-ID: 1swXWR-0009Il-2S
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.5]) [201.172.174.147]:59556
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 1
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfHBfsaIhiyg+tKR5J8iFZv2SGjzIZBVENrXnWdhQD53ZEh9dI5GGAeBLfVNy2uVhqGs5Tp/yhnZfY/e4l/pHJR3Nnpiy2bIE9MeFvfvy05t7jrqqlXGP
+ C7DJGCrUGXjDk6EcIUgh63YNzJ1pJ00bWucP0LzZAvweg4DGAhG7oEBTw/o45BBI14Zo1xrIx2IHFNa4xkvnIIE0bxLVeuoMG7+Hr6fG9Yq6ZHxnd/ZCZO2I
 
-Hi Andy:
 
-Thank you for your comments.
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=B4=
-10=E6=9C=881=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=889:23=E5=AF=AB=E9=
-=81=93=EF=BC=9A
->
-> On Tue, Oct 01, 2024 at 02:28:54PM +0800, Tyrone Ting wrote:
-> > From: Tyrone Ting <kfting@nuvoton.com>
-> >
-> > Modify i2c frequency from table parameters
-> > for NPCM i2c modules.
->
-> This two lines have a too small wrapping limit.
->
+On 30/09/24 12:16, Philipp Hortmann wrote:
+> Struct bpf_prog_array has a flex array member at the end and needs
+> therefore to be last in struct bpf_empty_prog_array.
+> 
+> Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 
-I'll make the statement in one line.
+Acked-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-> > Supported frequencies are:
-> >
-> > 1. 100KHz
-> > 2. 400KHz
-> > 3. 1MHz
-> >
-> > The original equations were tested on a variety of chips and base clock=
-s.
-> > Since we added devices that use higher frequencies of the module we
-> > saw that there is a mismatch between the equation and the actual
-> > results on the bus itself, measured on scope.
-> >
-> > Meanwhile, the equations were not accurate to begin with.
-> > They are an approximation of the ideal value. The ideal value is
-> > calculated per frequency of the core module.
-> >
-> > So instead of using the equations we did an optimization per module
-> > frequency, verified on a device.
-> >
-> > Most of the work was focused on the rise time of the SCL and SDA,
-> > which depends on external load of the bus and PU.
-> >
-> > Different PCB designs, or specifically to this case: the number
-> > and type of targets on the bus, impact the required values for
-> > the timing registers.
-> >
-> > Users can recalculate the numbers for each bus and get an even better
-> > optimization, but our users chose not to.
-> >
-> > We manually picked values per frequency that match the entire valid
-> > range of targets (from 1 to max number). Then we check against the
-> > AMR described in SMB spec and make sure that none of the values
-> > is exceeding.
-> >
-> > This process was led by the chip architect and included a lot of testin=
-g.
->
-> Personally I consider table approach is not so flexible and it is definit=
-ely
-> does not scale (in the result =E2=80=94 hard to maintain for all customer=
-s), but if
-> it's hard to calculate all necessary data and there are other pros of it,
-> I'm fine.
->
-> TL;DR: I don't like this patch, but I don't want to stop you, hence no ta=
-gs
-> from me.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+Thanks!
+--
+Gustavo
 
-Thank you again.
-
-Regards,
-Tyrone
+> ---
+>   include/linux/bpf.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index 19d8ca8ac960..1ce319045048 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -2018,8 +2018,8 @@ struct bpf_prog_array {
+>   };
+>   
+>   struct bpf_empty_prog_array {
+> -	struct bpf_prog_array hdr;
+>   	struct bpf_prog *null_prog;
+> +	struct bpf_prog_array hdr;
+>   };
+>   
+>   /* to avoid allocating empty bpf_prog_array for cgroups that
 
