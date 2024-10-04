@@ -1,183 +1,172 @@
-Return-Path: <linux-kernel+bounces-350487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496499905E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:21:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDCC9905D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ECF0B21576
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88B711F22911
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D68217333;
-	Fri,  4 Oct 2024 14:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD29215F6D;
+	Fri,  4 Oct 2024 14:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="WTIZc/dA"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E8TF5Opa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09DA212EF7;
-	Fri,  4 Oct 2024 14:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6238E20FA95;
+	Fri,  4 Oct 2024 14:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728051700; cv=none; b=PxGBpmkL/tA4IDb7vurBw6MbUq0RzivKAm1bZV6IIoyypdfVP4q1g1cNuGu4s3vWX5fNZ8QpshsB2/jRbtQxd0FADTlXa4KFgtjFUsEBozhYHfxzcLeXjoBjAmbshsxfgKQu4b1M5U6TqfPonx7MaUbIkdYNqHcmHfQCrzOH6A4=
+	t=1728051638; cv=none; b=j8RPy47ET+lcCVi+iMBd4AyqxbGn5oOJ303I9cvoyXbFHSuR8KP/fMN9+bEBUsi0f0ixikux/uF54P7AFranrnGTB8fpfZWt8AJUMIXKGPgz9Nil0ne9bRBCMvuszg2xd1ew9KggNIJpgdLx2aeV8ShTYRJXWzyQzEK4wtIhpbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728051700; c=relaxed/simple;
-	bh=wUIQxDpNC22HBgSkIzNLP3BRpMBM/W06OAMKb1RE5Q8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZrW9QNyTLE2G0D7d+Z2Kz5/EM6DBtAj0zwGhFDDA0h871PGe83wj1uvdupnL6FNKFp8gX88jE7JOdiSaxhujhwZLm4Dehg3AzFwYezUWmb9oHhFXn6poTWzfAqjGf7+JlTLRQ4XLuJTPQBlbBd1Y4yrq4vae568Dfd7TNKg/Xac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=WTIZc/dA; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728051697;
-	bh=wUIQxDpNC22HBgSkIzNLP3BRpMBM/W06OAMKb1RE5Q8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WTIZc/dAla9V4ybecg0rwQKX5gWpWez5cnSMCBB/ZVmcorfu5BQtbRIFtVxcWwvEF
-	 0QgteDqCF0LmVBSRRdd+BPcla6miC7MldOXJmX1W7GZB2YEGuQTmoyPXLO4oAu9U6f
-	 SdWMNfcLa7FdojYVxjy9MW+MgXEanKykHyEtupya1Pwxt9qZn8qUx9sh/a2PX+E043
-	 7s89htQwF0aJWebW1zt5h6ukjwg9wRxgH6h+JDMO07c0BAOq6MAy8keD7TqRJVyd/x
-	 LmUtYG+7tsYUdWAZB8csfPvc6Jl4HmaxvA6zGQ/bBjsy2tT5Mdj7OtWtiSH9HERKQV
-	 jqfhodnAlEpWA==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKrMN5bcPzL76;
-	Fri,  4 Oct 2024 10:21:36 -0400 (EDT)
-Message-ID: <e547819a-7993-4c80-b358-6719ca420cf8@efficios.com>
-Date: Fri, 4 Oct 2024 10:19:36 -0400
+	s=arc-20240116; t=1728051638; c=relaxed/simple;
+	bh=F7cWzNK/Hgdxmp1x/W631SvUiQj8lGT6Xv2d4USjyO8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bk4KjgFNzP3kdR8i+fBab5hQ56augAtBtFTDfrRfrf2mW/S1pqYsZ76FbfSTjP55aFRA1NAYIQeuJ189rzlc2Zkg14Rqa5mbBGZ8eXn84qgo+C7Pl2oWKuvpYjXcT0YqB3ivDyiocA5V7ymqQENMNtHqShmCcQ01c0hmRb1OVfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E8TF5Opa; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728051636; x=1759587636;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=F7cWzNK/Hgdxmp1x/W631SvUiQj8lGT6Xv2d4USjyO8=;
+  b=E8TF5OpaDwQRh8PQfYamYfyj4/XevxUI+UyK+M8jWovqxMvGeL7dob+m
+   aQ7YtgqHmqkhRbU95QkwWjboHg88FVeIQ66Tpz0Lhizg3v+xA2IQYBbGu
+   hr1b/mTMOWbNQNPl0+89GDFmLR76zxdvvaoqDEmFRAxlk0Kngt334vppY
+   WxlDvgfoX7U7VYlSX0WA8Ilu5jSA7PRb74+WDxZWWvZLfAmTnPaNIzz6L
+   nbnfkojdhy78BxtfcWmL1UphcWz1gWleFmltInveUxNci+aQs1GqdyyR2
+   EXuPcoHGlcDbVkp1PNbCRK4L5uwfbFOb7lZpc+UAapMxq3fpzzwNc1NIY
+   A==;
+X-CSE-ConnectionGUID: CN3QFgeRRzCuukUjUueHVw==
+X-CSE-MsgGUID: ryoHwIhuT5e9MOqG2v3KlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="37844421"
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="37844421"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 07:20:35 -0700
+X-CSE-ConnectionGUID: PWQctawlQEqABaPfO7r8LQ==
+X-CSE-MsgGUID: TkGOcvxhRhSUbTVgh9CB7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="78710900"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.148])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 07:20:31 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 4 Oct 2024 17:20:27 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 11/13] selftests/resctrl: Use cache size to determine
+ "fill_buf" buffer size
+In-Reply-To: <ad51e32e5d4f8d99b691e7269e5179228e6a13a7.1726164080.git.reinette.chatre@intel.com>
+Message-ID: <ea3aca92-1571-7220-6211-6424de0b21da@linux.intel.com>
+References: <cover.1726164080.git.reinette.chatre@intel.com> <ad51e32e5d4f8d99b691e7269e5179228e6a13a7.1726164080.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/8] tracing/ftrace: guard syscall probe with
- preempt_notrace
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>
-References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
- <20241003151638.1608537-3-mathieu.desnoyers@efficios.com>
- <20241003182304.2b04b74a@gandalf.local.home>
- <6dc21f67-52e1-4ed5-af7f-f047c3c22c11@efficios.com>
- <20241003210403.71d4aa67@gandalf.local.home>
- <90ca2fee-cdfb-4d48-ab9e-57d8d2b8b8d8@efficios.com>
- <20241004092619.0be53f90@gandalf.local.home>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241004092619.0be53f90@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-1727247519-1728051627=:957"
 
-On 2024-10-04 15:26, Steven Rostedt wrote:
-> On Thu, 3 Oct 2024 21:33:16 -0400
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> 
->> On 2024-10-04 03:04, Steven Rostedt wrote:
->>> On Thu, 3 Oct 2024 20:26:29 -0400
->>> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
->>>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-[...]
+--8323328-1727247519-1728051627=:957
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
->>>> So I rest my case. The change I'm introducing for tracepoints
->>>> don't make any assumptions about whether or not each tracer require
->>>> preempt off or not: it keeps the behavior the _same_ as it was before.
->>>>
->>>> Then it's up to each tracer's developer to change the behavior of their
->>>> own callbacks as they see fit. But I'm not introducing regressions in
->>>> tracers with the "big switch" change of making syscall tracepoints
->>>> faultable. This will belong to changes that are specific to each tracer.
->>>
->>>
->>> I rather remove these dependencies at the source. So, IMHO, these places
->>> should be "fixed" first.
->>>
->>> At least for the ftrace users. But I think the same can be done for the
->>> other users as well. BPF already stated it just needs "migrate_disable()".
->>> Let's see what perf has.
->>>
->>> We can then audit all the tracepoint users to make sure they do not need
->>> preemption disabled.
->>
->> Why does it need to be a broad refactoring of the entire world ? What is
->> wrong with the simple approach of introducing this tracepoint faultable
->> syscall support as a no-op from the tracer's perspective ?
-> 
-> Because we want in-tree users too ;-)
+On Thu, 12 Sep 2024, Reinette Chatre wrote:
 
-This series is infrastructure work that allows all in-tree tracers to
-start handling page faults for sys enter/exit events. Can we simply
-do the tracer-specific work on top of this infrastructure series rather
-than do everything at once ?
+> By default the MBM and MBA tests use the "fill_buf" benchmark to
+> read from a buffer with the goal to measure the memory bandwidth
+> generated by this buffer access.
+>=20
+> Care should be taken when sizing the buffer used by the "fill_buf"
+> benchmark. If the buffer is small enough to fit in the cache then
+> it cannot be expected that the benchmark will generate much memory
+> bandwidth. For example, on a system with 320MB L3 cache the existing
+> hardcoded default of 250MB is insufficient.
+>=20
+> Use the measured cache size to determine a buffer size that can be
+> expected to trigger memory access while keeping the existing default
+> as minimum that has been appropriate for testing so far.
+>=20
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> Changes since V1:
+> - Ensure buffer is at least double L3 cache size. (Ilpo)
+> - Support user override of default buffer size. (Ilpo)
+> ---
+>  tools/testing/selftests/resctrl/mba_test.c | 8 +++++++-
+>  tools/testing/selftests/resctrl/mbm_test.c | 8 +++++++-
+>  2 files changed, 14 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/s=
+elftests/resctrl/mba_test.c
+> index 7e43056c8737..d8d9637c1951 100644
+> --- a/tools/testing/selftests/resctrl/mba_test.c
+> +++ b/tools/testing/selftests/resctrl/mba_test.c
+> @@ -182,7 +182,13 @@ static int mba_run_test(const struct resctrl_test *t=
+est, const struct user_param
+>  =09=09fill_buf.memflush =3D uparams->fill_buf->memflush;
+>  =09=09param.fill_buf =3D &fill_buf;
+>  =09} else if (!uparams->benchmark_cmd[0]) {
+> -=09=09fill_buf.buf_size =3D DEFAULT_SPAN;
+> +=09=09unsigned long cache_total_size =3D 0;
+> +
+> +=09=09ret =3D get_cache_size(uparams->cpu, "L3", &cache_total_size);
+> +=09=09if (ret)
+> +=09=09=09return ret;
+> +=09=09fill_buf.buf_size =3D cache_total_size * 2 > DEFAULT_SPAN ?
+> +=09=09=09=09    cache_total_size * 2 : DEFAULT_SPAN;
+>  =09=09fill_buf.memflush =3D 1;
+>  =09=09param.fill_buf =3D &fill_buf;
+>  =09}
+> diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/s=
+elftests/resctrl/mbm_test.c
+> index b1f03a73333f..7635ee6b9339 100644
+> --- a/tools/testing/selftests/resctrl/mbm_test.c
+> +++ b/tools/testing/selftests/resctrl/mbm_test.c
+> @@ -149,7 +149,13 @@ static int mbm_run_test(const struct resctrl_test *t=
+est, const struct user_param
+>  =09=09fill_buf.memflush =3D uparams->fill_buf->memflush;
+>  =09=09param.fill_buf =3D &fill_buf;
+>  =09} else if (!uparams->benchmark_cmd[0]) {
+> -=09=09fill_buf.buf_size =3D DEFAULT_SPAN;
+> +=09=09unsigned long cache_total_size =3D 0;
+> +
+> +=09=09ret =3D get_cache_size(uparams->cpu, "L3", &cache_total_size);
+> +=09=09if (ret)
+> +=09=09=09return ret;
+> +=09=09fill_buf.buf_size =3D cache_total_size * 2 > DEFAULT_SPAN ?
+> +=09=09=09=09    cache_total_size * 2 : DEFAULT_SPAN;
+>  =09=09fill_buf.memflush =3D 1;
+>  =09=09param.fill_buf =3D &fill_buf;
+>  =09}
+>=20
 
-Regarding test coverage, this series modifies each tracer syscall probe
-code to add a might_fault(), which ensures a page fault can indeed be
-serviced at this point.
+It has a bit of code duplication feel in it so I'd consider adding=20
+something like ssize_t get_default_span() (perhaps there exists a better=20
+name for it that is not "span" based). Also DEFAULT_SPAN is no longer
+truly the default span.
 
->>
->> Then we can build on top and figure out if we want to relax things
->> on a tracer-per-tracer basis.
-> 
-> Looking deeper into how ftrace can implement this, it may require some more
-> work. Doing it your way may be fine for now, but we need this working for
-> something in-tree instead of having it only work for LTTng.
+But neither is the end of the world as is...
 
-There is nothing LTTng-specific here. LTTng only has feature branches
-to test it out for now. Once we have the infrastructure in place we
-can discuss how each tracer can use this. I've recently enumerated
-various approaches that can be taken by tracers to handle page faults:
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-https://lore.kernel.org/lkml/c2a2db4b-4409-4f3c-9959-53622fd8dfa7@efficios.com/
 
-> Note, it doesn't have to be ftrace either. It could be perf or BPF. Or
-> simply the sframe code (doing stack traces at the entry of system calls).
+--=20
+ i.
 
-Steven, we've been working on faultable tracepoints for four years now:
 
-https://lore.kernel.org/lkml/20201023195352.26269-1-mjeanson@efficios.com/ [2020]
-https://lore.kernel.org/lkml/20210218222125.46565-1-mjeanson@efficios.com/ [2021]
-https://lore.kernel.org/lkml/20231002202531.3160-1-mathieu.desnoyers@efficios.com/ [2023]
-https://lore.kernel.org/lkml/20231120205418.334172-1-mathieu.desnoyers@efficios.com/ [2023]
-https://lore.kernel.org/lkml/20240626185941.68420-1-mathieu.desnoyers@efficios.com/ [2024]
-https://lore.kernel.org/lkml/20240828144153.829582-1-mathieu.desnoyers@efficios.com/ [2024]
-https://lore.kernel.org/lkml/20240909201652.319406-1-mathieu.desnoyers@efficios.com/ [2024]
-https://lore.kernel.org/lkml/20241003151638.1608537-1-mathieu.desnoyers@efficios.com/ [2024] (current)
-
-The eBPF people want to leverage this. When I last discussed this with
-eBPF maintainers, they were open to adapt eBPF after this infrastructure
-series is merged. Based on this eBPF attempt from 2022:
-
-https://lore.kernel.org/lkml/c323bce9-a04e-b1c3-580a-783fde259d60@fb.com/
-
-The sframe code is just getting in shape (2024), but is far from being ready.
-
-Everyone appears to be waiting for this infrastructure work to go in
-before they can build on top. Once this infrastructure is available,
-multiple groups can start working on introducing use of this into their
-own code in parallel.
-
-Four years into this effort, and this is the first time we're told we need
-to adapt in-tree tracers to handle the page faults before this can go in.
-
-Could you please stop moving the goal posts ?
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+--8323328-1727247519-1728051627=:957--
 
