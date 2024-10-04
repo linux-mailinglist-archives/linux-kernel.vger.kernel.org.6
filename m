@@ -1,188 +1,90 @@
-Return-Path: <linux-kernel+bounces-350661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44DB99907E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:47:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB989907F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64D791C24090
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:47:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4631F21B68
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A0A1CACD6;
-	Fri,  4 Oct 2024 15:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4441C3032;
+	Fri,  4 Oct 2024 15:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="rR+cqQ2v";
-	dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b="btYKZf6a";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="isw0Fe7c"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ISZ4oeb3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3701C3040;
-	Fri,  4 Oct 2024 15:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE34A1C304F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 15:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728056245; cv=none; b=n3pVQkvC9829KA1yI5YNne++0kcMhn8Y1fCiCdW91r5SD/QUli94FvpENA5I6ozzfDQxvijA9JiZsPybyL+ZOLDCV2W2UlW2i+7pVkEWKDW4GmCNTgHCpFfJGuP9P9PrCyyJnueaUbPxz078pY5qa3skWBnqiA8EgGl+K3pNY2c=
+	t=1728056257; cv=none; b=pGyEpZLf6IYFShcTS/SZ7oiM4gvKgMeoXI3BZVKOVwKR7wIwKqSDSnxVXFW5pwzVVMrkSgRSbcIR0p13YZjJS7P9Mj5MQZblLSR+n4Yt/X0Ok+l/OMyimWoF+m4IJ3/xmYV9anqim8lgmr4WArL2+a23xOgN0SdFTOdOnWeUCUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728056245; c=relaxed/simple;
-	bh=nHG9gnm6cdb1wDhLh+FQhgucGmNZFslJCdnpG6HHYxk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PzCqYoZmKOXhTY/T6eoN5X0P2or3CnCm7EMRFwDLclKrmbA6B+qxvWtIqEmwy79WxPTZBXrhM94Ln89sgMacAmoYCgEakoLvLj4BZuidVYwUTnT5w9nggwshRgChc1LG9+C2tyongZvMjUsYFYvE9QAQMdReK/uReoaPGdPitCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=rR+cqQ2v; dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b=btYKZf6a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=isw0Fe7c; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 4A3A7138029C;
-	Fri,  4 Oct 2024 11:37:22 -0400 (EDT)
-Received: from phl-frontend-01 ([10.202.2.160])
-  by phl-compute-11.internal (MEProxy); Fri, 04 Oct 2024 11:37:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=2016-12.pbsmtp; t=1728056242; x=1728142642;
-	 bh=CBJMi8bQ9zvV3RcYivlREIe8Ph0havqqFVaXoFjviLw=; b=rR+cqQ2vW7uS
-	WVXm502epS12qnCGmXBk98L5y+LsKXpROzBzpV0DC47Nds+Ir2C3zts0WIWVVkKD
-	1MIhImWoQh8vDa0PkOUpkTQJpGLJQjPykvDOCsl6mF54nyf/6uxVReXOxWTkAHWo
-	47Qew4Os6am6dg+NdNEloBRi2jWPNP8=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pobox.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1728056242; x=1728142642; bh=CBJMi8bQ9z
-	vV3RcYivlREIe8Ph0havqqFVaXoFjviLw=; b=btYKZf6ar67CPN+MQTwDRYMw+2
-	1Yb6ZZ6ePhLl2y2BTxG7ArBtRWUzlZs3eQvbt8po8QOwLyo1XmVB+dCKVzIaWGdh
-	ZcVD0vsJvQSPFZaiFI1sQz+Z+0BOzebO91QV3XjWmkrSJkypgOLnYcpHBB43vxZh
-	VUneGfXbILDRQKVufNl7qgVDbCpRRi8S+LIALcA3/zptSVNh9GyvJq7wjKbtCwIm
-	URnEVGXDhL7qe6oq4gqQeQKNlUGmrgar8MLJdQO37jzVwvz6We20Jt5bIRYLyyzF
-	D2OB9mTKsyWGmstakfHdfStgGO7dMgLmnrGOCY4SMCRPE/CNKbidB3q1Bzog==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1728056242; x=1728142642; bh=CBJMi8bQ9zvV3RcYivlREIe8Ph0h
-	avqqFVaXoFjviLw=; b=isw0Fe7c4/BTuur98whXmusP5pV/+JG4ZIt78r89sJDu
-	wJXUd1nD5/1BxswxBoGb9/slwZheix39mBGPAa7UJVeAIg8F1HJozmwSzPj2YVO0
-	/caG/aaKxpr7iYUpQW2OFsWR5dEiK9QHtD6F7R/Mw1qWT20cMF+dsUXOnKSIDTP2
-	bkqh+Z4M2ncXF12RqKsCqCbvSSfcIzPngEVhsb5HOk7oYKj0gs2bmQcV/KdI/2qR
-	8fGFhmGn2it4V3crKB5G0v0+Fc4FHtJRfNUn7WqitilI6htOYZThYl9XFGyIoaaZ
-	3BKWmBCNGZ3GSMX57mKnlJwGQgbJriRDRjUe5TiuNg==
-X-ME-Sender: <xms:sQsAZ2FjpYGRLnBswRDbY9aNALxsXms26EOe4kM-Y2ZuVXE20lGOkw>
-    <xme:sQsAZ3WSFs58hjZo0jwDSKr1WqYvxOJ7Mhnhhz2Fuih0xGZ2vB0hSS1VrJlI8vAdR
-    Yru-XnNQ0MhmzlLdes>
-X-ME-Received: <xmr:sQsAZwLSbXjjj9meps0eWbwpYqzEo2iGiut3EDl3FQLJBfpCldV6GpXCG2bZXz5l-cf2t_KmsSozOZ2Kf9Y3XDQn_Zw44j6cykOwQkkDwXqWYaaycg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvfedgledtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecu
-    hfhrohhmpefpihgtohhlrghsucfrihhtrhgvuceonhhitghosehflhhugihnihgtrdhnvg
-    htqeenucggtffrrghtthgvrhhnpefgvedvhfefueejgefggfefhfelffeiieduvdehffdu
-    heduffekkefhgeffhfefveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehnihgtohesfhhluhignhhitgdrnhgvthdpnhgspghrtghpthhtohep
-    ledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhloh
-    hfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhr
-    tghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohhgvghrqh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtgho
-    mhdprhgtphhtthhopehgrhihghhorhhiihdrshhtrhgrshhhkhhosehtihdrtghomhdprh
-    gtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvg
-    hvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:sQsAZwGjK4yaCfse1CicNVVrrHoC4y_kE74QOyd-FuA1JqmMnNY-_Q>
-    <xmx:sQsAZ8URN0Iip1ysmzi2yQ6kcILGh7-5aj2rmINxq2MndX5JJDQBTg>
-    <xmx:sQsAZzMr7GNxpE-SKC7audR8e_vSGVBNqijbT-Pcb8j7cK3Sp_6Xpg>
-    <xmx:sQsAZz3I_zm3bCC7LpOUzgBVxI0zieC6NPbx96Rg6dA_GAbSmKsgcA>
-    <xmx:sgsAZ1OfybtDHEBeg1xuaIRNgVPUrp1_VO-uSVU-pFHDx-XP_SusOJQe>
-Feedback-ID: i58514971:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 4 Oct 2024 11:37:21 -0400 (EDT)
-Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 14E95E408A8;
-	Fri,  4 Oct 2024 11:37:21 -0400 (EDT)
-Date: Fri, 4 Oct 2024 11:37:20 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Roger Quadros <rogerq@kernel.org>
-cc: "David S. Miller" <davem@davemloft.net>, 
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-    Paolo Abeni <pabeni@redhat.com>, 
-    Grygorii Strashko <grygorii.strashko@ti.com>, 
-    Vignesh Raghavendra <vigneshr@ti.com>, netdev@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v3 2/2] net: ethernet: ti: am65-cpsw: avoid
- devm_alloc_etherdev, fix module removal
-In-Reply-To: <b055cea5-6f03-4c73-aae4-09b5d2290c29@kernel.org>
-Message-ID: <s5000qsr-8nps-87os-np52-oqq6643o35o2@syhkavp.arg>
-References: <20241004041218.2809774-1-nico@fluxnic.net> <20241004041218.2809774-3-nico@fluxnic.net> <b055cea5-6f03-4c73-aae4-09b5d2290c29@kernel.org>
+	s=arc-20240116; t=1728056257; c=relaxed/simple;
+	bh=0D1cYSeQQ+jhwWd4TLI5hO7NsEF3R3zty8OXiKh3+ps=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=BLptfiG3oDZNNfSlHqVMRHWFqzX0Ec28pE1076/JTGIRubBcR8cstRYmsWV2v9BJOiR/XJxmVrTdR3ragrsSB4nRJoA6kg5JFMjSAJj0zmm3DFAjUDlrMX7SW+qU0rLeyqx/6INTDxwqup920kCdr1VSsxkSbFG1vem5bQjOUzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ISZ4oeb3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728056255;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0D1cYSeQQ+jhwWd4TLI5hO7NsEF3R3zty8OXiKh3+ps=;
+	b=ISZ4oeb3sril25uP10lrVr0l9sn/EMQM5IGHls7rCxlNXu+P2U4RwJExM4iIhRm3SaOYQn
+	CEnYj0DfA5oryQKTbLHLzkD8RfXwF53JIjmOaBns8HsiYNjw02wGScZmnUynwqXh+QAj5w
+	FQRVtl7iGN2L9gk/JzGZ8Wk0uDGsV3E=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-536-5Gug8Q8zOBabFupWhhPBXw-1; Fri,
+ 04 Oct 2024 11:37:31 -0400
+X-MC-Unique: 5Gug8Q8zOBabFupWhhPBXw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 565A61955EB5;
+	Fri,  4 Oct 2024 15:37:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 37C221956054;
+	Fri,  4 Oct 2024 15:37:28 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20241003010512.58559-1-batrick@batbytes.com>
+References: <20241003010512.58559-1-batrick@batbytes.com>
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: dhowells@redhat.com, Xiubo Li <xiubli@redhat.com>,
+    Patrick Donnelly <batrick@batbytes.com>,
+    Jeff Layton <jlayton@kernel.org>,
+    Patrick Donnelly <pdonnell@redhat.com>, stable@vger.kernel.org,
+    ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ceph: fix cap ref leak via netfs init_request
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3822913.1728056247.1@warthog.procyon.org.uk>
+Date: Fri, 04 Oct 2024 16:37:27 +0100
+Message-ID: <3822914.1728056247@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, 4 Oct 2024, Roger Quadros wrote:
+Hi Ilya,
 
-> Hi Nicolas,
-> 
-> On 04/10/2024 07:10, Nicolas Pitre wrote:
-> > From: Nicolas Pitre <npitre@baylibre.com>
-> > 
-> > Usage of devm_alloc_etherdev_mqs() conflicts with
-> > am65_cpsw_nuss_cleanup_ndev() as the same struct net_device instances
-> > get unregistered twice. Switch to alloc_etherdev_mqs() and make sure
-> 
-> Do we know why the same net device gets unregistered twice?
+Are you going to pick this up, or should I ask Christian to take it through
+the vfs tree?
 
-When using devm_alloc_etherdev_mqs() every successful allocation is put 
-in a resource list tied to the device. When the driver is removed, 
-there's a net device unregister from am65_cpsw_nuss_cleanup_ndev() and 
-another one from devm_free_netdev().
+David
 
-We established in patch #1 that net devices must be unregistered before 
-devlink_port_unregister() is invoked, meaning we can't rely on the 
-implicit devm_free_netdev() as it happens too late, hence the explicit 
-am65_cpsw_nuss_cleanup_ndev().
-
-> > am65_cpsw_nuss_cleanup_ndev() unregisters and frees those net_device
-> > instances properly.
-> > 
-> > With this, it is finally possible to rmmod the driver without oopsing
-> > the kernel.
-> > 
-> > Fixes: 93a76530316a ("net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver")
-> > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
-> > ---
-> >  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 20 ++++++++++++--------
-> >  1 file changed, 12 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> > index f6bc8a4dc6..e95457c988 100644
-> > --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> > +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> > @@ -2744,10 +2744,9 @@ am65_cpsw_nuss_init_port_ndev(struct am65_cpsw_common *common, u32 port_idx)
-> >  		return 0;
-> >  
-> >  	/* alloc netdev */
-> > -	port->ndev = devm_alloc_etherdev_mqs(common->dev,
-> > -					     sizeof(struct am65_cpsw_ndev_priv),
-> > -					     AM65_CPSW_MAX_QUEUES,
-> > -					     AM65_CPSW_MAX_QUEUES);
-> > +	port->ndev = alloc_etherdev_mqs(sizeof(struct am65_cpsw_ndev_priv),
-> > +					AM65_CPSW_MAX_QUEUES,
-> > +					AM65_CPSW_MAX_QUEUES);
-> 
-> Can we solve this issue without doing this change as
-> there are many error cases relying on devm managed freeing of netdev.
-
-If you know of a way to do this differently I'm all ears.
-
-About the many error cases needing the freeing of net devices, as far as 
-I know they're all covered with this patch.
-
-> I still can't see what we are doing wrong in existing code.
-
-Did you try to rmmod this driver lately?
-
-
-Nicolas
 
