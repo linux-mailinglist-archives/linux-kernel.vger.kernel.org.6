@@ -1,143 +1,121 @@
-Return-Path: <linux-kernel+bounces-351587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F8C991354
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 01:57:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D637F991357
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 01:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91B101F23FB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:57:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F84A1F23F3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DC815530C;
-	Fri,  4 Oct 2024 23:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6CA1552EB;
+	Fri,  4 Oct 2024 23:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUh6INGL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SRzA/qLd"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615ED153838;
-	Fri,  4 Oct 2024 23:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4FD14D2B3
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 23:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728086230; cv=none; b=c+BKw7LoJ7DCo4mcvcnGxcD63pXFgPihG6/j2YuVBWwUp0PNkH4jPwWo5xF74G7sd8a0NQFh0h9mvapu9IOvISLRvYjhu9rIVjs9AZ1KP6AliUjPEyQxwehC9o1qEtueLG4b4UhxagmVAZr0cj5ILo/3dS41QyYqqO9cEVXdiGE=
+	t=1728086361; cv=none; b=GMncRzW4O4MkAjeY49WDwK3wa4viZjaQzrzxD0LRDHfKFEY36FVeEcmgEEjQ9SEpHMPzCxCxKhRb6WtRd76yO8UDMEEe6gl51/JguO4iLGQqETo/gyhOjxoGNnZGuRXH6bqO7lnxzcxHTayPgykTlmYXtL2QlG8Vamj+RIXQHJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728086230; c=relaxed/simple;
-	bh=4hUROC6DIqthBNdPrjAkuLOYME9aDS8/AsLjsPBVw98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T2EKIh86R5DIFfxziw1OEfpVG6U5SS1Ee4fgyIE44sqXrbM5IRzygZWjN59V8QXwkYcFjduiXABbaix0AEXOiWW/i3p/vmliLs78rTOvLFCW2WPBGWC3Wag5BE3I7+gtsdU6HrNHIKrqM03121f/khNlToOr5fOPBLxcw/KlWMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUh6INGL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27976C4CED8;
-	Fri,  4 Oct 2024 23:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728086230;
-	bh=4hUROC6DIqthBNdPrjAkuLOYME9aDS8/AsLjsPBVw98=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gUh6INGLLnvy7dBIymE9edcFKxmbRQqM8wMFskO2/RDmWX8yDEFNfcCjcNh6uh3nY
-	 Zt4Rc066ej2w6ySG6CdkKFzEdGGLWqeCxtfIQQJCWdUDbSbZq010e9BJwHTVvaU770
-	 b7BskwNywhXAgGuN8PQ5b3cO5FolUJd7/jCPoE0PZFwRjhmMkyiUJxJL8mtq5U4yUP
-	 hovFXCfJTL2Y3mNxEqpDYdSCjTEQSatOk8LOP0gKnI6c9e+cmKr7nWfIaXFkomUgnp
-	 hPhFd4pBxdAPo9oe9zRLpuzcdkicjAaSig1Koey5oTwsNscC3kMkG+GwVt6baEpYOB
-	 HtkYlYbu+reDw==
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a344f92143so11715355ab.2;
-        Fri, 04 Oct 2024 16:57:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU2FWXlC6gdH10uZyr5qFiuiBv+fLPrgRxQk5At9kqyjHQDy/7jv9aTuQVbqYcwHECwQkqcov8KIJ7Xqvv5@vger.kernel.org, AJvYcCXUCYNdqNIL6vep/wEKdjyQGDYABEjutkuHJPcX6j/5vfk26Z/nB96k8o3T1lFppyUFPXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+d5gB4Ha4g4KE2owTSK6vj/fd97QRrO5kXWzzlheb9XQodUxx
-	dOdsN8HGWB5WB7heB6shm9qt56wNTTDp4U2t0+CpAdHM6BYF9jTy7wgrBoXFsIO4KVJc8kJBweK
-	xQ2tjkmYKQd8MqRQLd86cD2yxxPY=
-X-Google-Smtp-Source: AGHT+IFcsGHVrHHVnjJ64LBTXNmEoO3SYFvavCZqFJHGHWwaRA2sGiCLcet+688mt3P53rIGxuvTLw01D3IM/zCyNlw=
-X-Received: by 2002:a05:6e02:1fcd:b0:39f:558a:e404 with SMTP id
- e9e14a558f8ab-3a3759780bemr46249655ab.4.1728086229441; Fri, 04 Oct 2024
- 16:57:09 -0700 (PDT)
+	s=arc-20240116; t=1728086361; c=relaxed/simple;
+	bh=LBxnYi6JWkEDu/s7q8rzjJg1t1F0DxG9EiKarQm6Bvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ysnq748YaKgF+J6/b50k0MSaGzh5uleWzFFAbn4XQqIKz3HOUK8M0K90/E4aUB7uzQSenuot7gzhj3yddQt8h9wQwB1y7xMFI51ZCOooArElfSdQ52pL1pVENVNqhhvdpn89Cj+nIoYd3yr4qjAJKQ4BdoHRvbN7ojH1qRjMOyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SRzA/qLd; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b78ee6298so17317625ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 16:59:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728086359; x=1728691159; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ELTyDzpdOksZjoNrVzCSOk+1T+6UJusdniGL8nRZ6BA=;
+        b=SRzA/qLdwh/G4TkatousfHl2dGr0tog7Zgs4u3fqy8EsUaAMk7kRgxfvweVNO+CGxR
+         9DqimyDuqLXwoZC1MxStWMnyi6OUWUscLlDjL7gg7veeYvyIrenQMkRCH5Ed8/nUcUY9
+         3NYClLoOuD3Es6jm+1bhVTYojvkbC43lsaQQE40vmCN3azUlRCiNOIsg1cTRx7rRJ7RE
+         2lr0sRuuWOZgp1Puf35Aq+EN5qUYYiFqXNRsqIfeaE1g2cmUg3ttHtcaXQjGHtA4fPPA
+         UIvdjdqbWYaZ3eqzEgXEWK+e8Bavg9JpyU+aYT/rHUvuYUUnGnriW0V+bjP0E4skCt9d
+         Spkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728086359; x=1728691159;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ELTyDzpdOksZjoNrVzCSOk+1T+6UJusdniGL8nRZ6BA=;
+        b=dd47YcJl9hrIneK+lIGyYljZNG63Ip1P4A0QYPzWHS4YJTCwBMnirOKMtr95gtdr37
+         J88lPx6fbT4zXPRNlk1cQpBIPlsjDA+DI/iMQdY1xxLkTJSFTtleA9kuH9GRDxwXHUj2
+         1GIYoHVmG5AVGXlZM84H6fibb5lUQSWtlHNiE5GJIQu2kteJ9i6HA+c0UkkVpGceyb5x
+         JSg20QyZ+IMz3ke7JzpMupMoqy9atlDUhS4Pqqjegv6+UpFcoNhAef2KaEgbvq+iB3nk
+         J59moJ6rP3/5VCxgT+v2aapCerqa5GfGeVTpcSCcxsZ1jD92K5YVWmT7MEsp3+bojcRV
+         74lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQPZFAApuZnRtXDS5l+Eu7f/zt1PuExMttCkE+x7Y+LMmrX9+lS9knL344V76aBKfixIlFWWULCq1OOzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjRQELCuH3JbBEaGX6E2GjZJbuKBkFSm3z9mHOmX1qWgG5ZNH4
+	nipNwMG6FhBRtcTYPrLUV6FFz0IS805xhWSBMp7pscO2pZe84MLn
+X-Google-Smtp-Source: AGHT+IE4KeUCrGU0raePMGcI+7No2gZ8fga25JYXVow+n45+mMfBY6vGLyd1AwU6nr8w1On2GvMBAQ==
+X-Received: by 2002:a17:902:e547:b0:20b:b75d:e8c1 with SMTP id d9443c01a7336-20bfde5567cmr72247025ad.4.1728086358935;
+        Fri, 04 Oct 2024 16:59:18 -0700 (PDT)
+Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20c13987571sm3841785ad.250.2024.10.04.16.59.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 16:59:18 -0700 (PDT)
+From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+To: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+	David Wu <David.Wu3@amd.com>,
+	Felix Kuehling <felix.kuehling@amd.com>,
+	Mohammed Anees <pvmohammedanees2003@gmail.com>
+Subject: [PATCH] drm/amdgpu: prevent BO_HANDLES error from being overwritten
+Date: Sat,  5 Oct 2024 05:29:04 +0530
+Message-ID: <20241004235904.8605-1-pvmohammedanees2003@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002180956.1781008-1-namhyung@kernel.org> <20241002180956.1781008-3-namhyung@kernel.org>
- <CAPhsuW7Bh-ZXfM2aYB=Yj8WaJHFc==AKmv6LDRgBq-TfdQ3s8A@mail.gmail.com>
- <ZwBdS86yBtOWy3iD@google.com> <CAPhsuW6AhfG7Xv2izDYnMM+z03X29peZfmWNy0rf98aEaAUfVg@mail.gmail.com>
- <ZwBk8i23odCe7qVK@google.com> <CAPhsuW4AjZMQxCbqYmEgbnkP0gWenKo4wVi8tW1zYcsaF5h7iQ@mail.gmail.com>
- <CAADnVQK0VQXvxqxm6WudyeLao1L+jMTvmUauciBc8_vcLcR=vQ@mail.gmail.com>
-In-Reply-To: <CAADnVQK0VQXvxqxm6WudyeLao1L+jMTvmUauciBc8_vcLcR=vQ@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Fri, 4 Oct 2024 16:56:57 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6gB5PaNDQ5x20oRXUtgf7KPNTQpN_WLvtYm=-7CLhn-g@mail.gmail.com>
-Message-ID: <CAPhsuW6gB5PaNDQ5x20oRXUtgf7KPNTQpN_WLvtYm=-7CLhn-g@mail.gmail.com>
-Subject: Re: [PATCH v4 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
-	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm <linux-mm@kvack.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 4, 2024 at 4:44=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
-[...]
-> > diff --git i/kernel/bpf/helpers.c w/kernel/bpf/helpers.c
-> > index 3709fb142881..7311a26ecb01 100644
-> > --- i/kernel/bpf/helpers.c
-> > +++ w/kernel/bpf/helpers.c
-> > @@ -3090,7 +3090,7 @@ BTF_ID_FLAGS(func, bpf_iter_bits_new, KF_ITER_NEW=
-)
-> >  BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)
-> >  BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
-> >  BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
-> > -BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RET_NULL)
-> > +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RET_NULL | KF_TRUSTED_ARGS
-> > | KF_RCU_PROTECTED)
->
-> I don't think KF_TRUSTED_ARGS approach would fit here.
-> Namhyung's use case is tracing. The 'addr' will be some potentially
-> arbitrary address from somewhere. The chance to see a trusted pointer
-> is probably very low in such a tracing use case.
+Before this patch, if multiple BO_HANDLES chunks were submitted,
+the error -EINVAL would be correctly set but could be overwritten
+by the return value from amdgpu_cs_p1_bo_handles(). This patch
+ensures that once an error condition is detected, the function
+returns immediately, avoiding the overwriting of the error code.
 
-I thought the primary use case was to trace lock contention, for
-example, queued_spin_lock_slowpath(). Of course, a more
-general solution is better.
+Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->
-> The verifier change can mainly be the following:
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 7d9b38ffd220..e09eb108e956 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -12834,6 +12834,9 @@ static int check_kfunc_call(struct
-> bpf_verifier_env *env, struct bpf_insn *insn,
->                         regs[BPF_REG_0].type =3D PTR_TO_BTF_ID;
->                         regs[BPF_REG_0].btf_id =3D ptr_type_id;
->
-> +                       if (meta.func_id =3D=3D
-> special_kfunc_list[KF_get_kmem_cache])
-> +                               regs[BPF_REG_0].type |=3D PTR_UNTRUSTED;
-> +
->                         if (is_iter_next_kfunc(&meta)) {
->                                 struct bpf_reg_state *cur_iter;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+index 1e475eb01417..543db0df9a31 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+@@ -266,8 +266,9 @@ static int amdgpu_cs_pass1(struct amdgpu_cs_parser *p,
+ 			/* Only a single BO list is allowed to simplify handling. */
+ 			if (p->bo_list)
+ 				ret = -EINVAL;
++			else
++				ret = amdgpu_cs_p1_bo_handles(p, p->chunks[i].kdata);
+ 
+-			ret = amdgpu_cs_p1_bo_handles(p, p->chunks[i].kdata);
+ 			if (ret)
+ 				goto free_partial_kdata;
+ 			break;
+-- 
+2.46.0
 
-This is easier than I thought.
-
-Thanks,
-Song
-
-> The returned 'struct kmem_cache *' won't be refcnt-ed (acquired).
-> It will be readonly via ptr_to_btf_id logic.
-> s->flags;
-> s->size;
-> s->offset;
-> access will be allowed but the verifier will sanitize them
-> with an inlined version of probe_read_kernel.
-> Even KF_RET_NULL can be dropped.
 
