@@ -1,120 +1,155 @@
-Return-Path: <linux-kernel+bounces-350049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A5198FF1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:56:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594E998FF20
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4B81F22161
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B381F22F21
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 08:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDF814265F;
-	Fri,  4 Oct 2024 08:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE311411EE;
+	Fri,  4 Oct 2024 08:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=timo.grautstueck@web.de header.b="UkSpj0pg"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MjllzRRr"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7195B12D75C;
-	Fri,  4 Oct 2024 08:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F4512D75C;
+	Fri,  4 Oct 2024 08:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728032174; cv=none; b=VyRqHRUYyr1Eo2jys8CM8UCOqT1MXjCtwZNhk98atFi41Ix0J2q+dikq7OtX3LLE7luefMdsw9892sPO+77bOQY+ixrfTETnBjcNFM1SFULS7Dd+ou3xZ1K49yPtj1mTaQACT0g5fBFhvcb1Wj4k0J5Ro139S4iVj7fFQtWp5zQ=
+	t=1728032186; cv=none; b=gYeXOqgn+TQNgYrTQT9RdtN84WK2V4cmdGAFQD+Jm+J7+bq4P8mx9+ph0pMsELhRDww47wkI4XAP/Matzgp7MadRgThlbI2UBcwSTOfWVcQ5+nw9NiS2/cSpzfVDNBv9uM/UJfSI7Hym/F7GmlULY2ndklHJ44YrdOsJZPcywlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728032174; c=relaxed/simple;
-	bh=nrVrmqZTOz0jFICZVZXoeoi9T43rXBdnSsToU18xjdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VEtYQsCOmGcBNiHyr1KkqDbXKvn8wyWalYWN6OsS00zgZxEJG4Zoym5bN74+YU+IQehqqGUScn8WwHLR3MCPivzeOl64j3br50IoPHhkLp1mWRd/JXpsdAo4ggPD3m3F0u3KCNfUVOeTiRxVYY7M7znGaVtque4O3bGFFcwOvRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=timo.grautstueck@web.de header.b=UkSpj0pg; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728032164; x=1728636964; i=timo.grautstueck@web.de;
-	bh=MZyv53s6FpMMt8ec7IEvvcKJ0aOKA10mDd3SOuvjVlU=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=UkSpj0pg1Dzv10NqsMhLlinrFDHbg5y+hSCVN8JRkm19HCv0i3dgek3TVSitih29
-	 +SmsPOcpfwp5DjtZf0bpXdNi19iptweDCmWssdLIqyxo1lwrPoYkVNxayzvhiAH36
-	 141epEdOjQV9x6X9SadC2h5FACTHJhZ3SIVN1B7OiwXadkz7kSGfyh2iulU/tUqff
-	 gfRtBCUM7LbrZd9WwNNvrX4u40OnpNf+vedLr3WXG8x0PagjEhMI9c1BQ+m1hleJb
-	 SWE3F6Fnwkz/woJp1pNPpJCeuGLCvx7sBAnT5bsaakEElGiKkYef3Zr7C18ZyYpis
-	 lWuOR7c5a3Ikv2jG2Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([95.223.78.106]) by smtp.web.de
- (mrweb106 [213.165.67.124]) with ESMTPSA (Nemesis) id
- 1MovnY-1s6EWL45mg-00nzff; Fri, 04 Oct 2024 10:56:04 +0200
-From: =?UTF-8?q?Timo=20Grautst=C3=BCck?= <timo.grautstueck@web.de>
-To: linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Cc: =?UTF-8?q?Timo=20Grautst=C3=BCck?= <timo.grautstueck@web.de>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	=?UTF-8?q?Timo=20Grautst=C3=BCck?= <timo.grautsautstueck@web.de>
-Subject: [PATCH v2] lib/Kconfig.debug: fix grammar in RUST_BUILD_ASSERT_ALLOW
-Date: Fri,  4 Oct 2024 10:55:33 +0200
-Message-ID: <20241004085534.14407-1-timo.grautstueck@web.de>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <CANiq72kxOEt2Kb_rxY0+WD6uu=NXy+6PGMvGjTHfNFVXucgH7w@mail.gmail.com>
-References: <CANiq72kxOEt2Kb_rxY0+WD6uu=NXy+6PGMvGjTHfNFVXucgH7w@mail.gmail.com>
+	s=arc-20240116; t=1728032186; c=relaxed/simple;
+	bh=lS3HUIKLQ8WqglmBcueM1aFx4v3vrUwt6x3/lWmlwzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=psOQjJji7myeXDPrhPqY99VjRwuwXXeAyd/Z1nDWUQIkvL2ec3vQFSLCTWfH1GS93aOnty61ioPVJJBNKUxUVHyfoCKOqTVM2b2kAtTyApq/4Rt4c1PYpdcUNeDPefYwLHi7v71Kio+znOZUd1+WZRWn/8Av//eqAynU+pPvHHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MjllzRRr; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4948qX9i024974;
+	Fri, 4 Oct 2024 08:56:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=nBwjeGPrXf2Nj/xVxGJ8mzlowNt
+	ZWESSqNzgTAsTDL8=; b=MjllzRRrlFRwK0VmZKhLsakynh7LXjqeVDgHUo0N8s7
+	nL1JWFxO2Z9DgyAbURKwth39LbC5zGfzTzVJhjTmc2EbR3/2dZZ2MZfWagCgxdqt
+	uFV6oxGSsP4CKDqoCmbvJv/46cmgJgfV7HsRIKzdZzbYx5Xq+Yv73qpgqeNPUIXU
+	+t9J53reSErsMB36zegoxL8qbZvdlum0lE3PMgK2q+wKyfPZWU75kHSsv7YJWRge
+	2u2JrccmJwl4LTxyppYWP4Mq2gGpVpmWUvj+NShZ36Hr9IBpyKHO0TBMQIY44Xic
+	kf/D0XIo2rf3g1vj5M8ufVHBU/SzWSWhzQaaWhTuaIg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 422d7vr0ss-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 08:56:15 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4948uErx002617;
+	Fri, 4 Oct 2024 08:56:14 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 422d7vr0sm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 08:56:14 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49471uM0001035;
+	Fri, 4 Oct 2024 08:56:13 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42207kk1q1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 08:56:13 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4948uBYj47972780
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 4 Oct 2024 08:56:11 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 75E4B2004B;
+	Fri,  4 Oct 2024 08:56:11 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0D50420040;
+	Fri,  4 Oct 2024 08:56:10 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.124.214.133])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  4 Oct 2024 08:56:09 +0000 (GMT)
+Date: Fri, 4 Oct 2024 14:26:07 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        linux-kernel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+        dchinner@redhat.com, Chandan Babu R <chandan.babu@oracle.com>
+Subject: Re: [PATCH] xfs: Check for deallayed allocations before setting
+ extsize
+Message-ID: <Zv+tfQhBdxuownfv@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20241003101207.205083-1-ojaswin@linux.ibm.com>
+ <Zv6sU5eF4OCPTzNH@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Vozpf40kYbTVjN/CZ2Ehulgjvujj1wQVtUHWpAcKLnNC99z5con
- uc8umorfxPUp2kUiAds0eGaQGWP67aOsD4drsDAXxhS3gCV4/xCBT4hJkPTkbEw1E5Fktnt
- UA1KGjW+SI5c7+enrD07FlTp4hmhJnJ2QB7/Ai1TZD74rXY7YiwPRqP5KSg7LOWItToO+Ri
- esh1LairPU/BnISPhoP5w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:CbyZVP5LGpo=;Myq/II5VuqPKJTQr619/NzsH0UR
- XudQypzeudY7TyNIiqPMbYc4Wminf5+D+B8Ahrz2W5Rw1nSI5n7E5LAzjFhWY5fz3lPg628zH
- 37rruJ4mFo+HK+Ty/yKPeFqx3T2qlN7/bpc+glKJYETrp0eK7rYSv6aXmhgXjYZAKs1JowhOq
- nkgk02uu1RwKDw5UuhjBT1iwsxvF4rdL+FLeco0TDyZyP1nl7cXKQ8GXouv1wmwMIlAEWubYc
- T+mEcs997qI7cdG+5kSuoy80hIR2wlwirXiv9Gsztj1mYW7c6Je7zF3h9tmy7pTm74kSLs3VN
- rm/77IzgBRxWK5CUliPcu1nxHXbIJN4LuArK28cjTOkGsEYNaUZOuIEdaF6iLKwzsOaKpBAL/
- IpzxJSqOZTcd77cStlUWEncTxcmbAdMk8UM0nkD0UG3tonpWiISui3pBHEM9LDM/CHQ/lbz04
- JEs8OMmkbPLS1HEaUI8f6JHMgrr1WUToQmVb23TXBf091unox59bz/XflwFDHJKC+PJkE+mGR
- VFRYYnMTPnL39fNz7QkZxT96ZeKItxz4nCgECImkJHE+30RsEGsBMuO853YfEp/LJ3BgVB7h3
- upWMj5D3iWljv701LCbRzuNQ6zWIrGZb8hs94YMOKyBLEogwJFFa5z0+zcK8nsVL3ooRMKrp/
- zjw64mTbtQ9ooj6zlZ4CUMNlEd2vEF1kcdVdgBc1luGWi9iqbnMrUg4B0DmRtcpzdjdG1lX6u
- iA3AgFV9T9p2NpzhnuFq1d4zptNxKyDaxMSgYzUecuFN+IJgmZm+ecYXpB6dIAgTDe55SyWzs
- XHwkAAVerhuWqB5NiHM7/Xj3O0A+pDJvZFqm3RGqZQb4o=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zv6sU5eF4OCPTzNH@infradead.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 86Jid2pEkAqYG89wWqwL4I6iq0w8Pjss
+X-Proofpoint-GUID: BWALg5qlPipqkLEwDiJzfOqXPkZtOG5u
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-04_06,2024-10-03_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 phishscore=0 mlxscore=0 bulkscore=0 adultscore=0
+ mlxlogscore=809 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410040064
 
-Just a grammar fix in lib/Kconfig.debug, under the config option RUST_BUIL=
-D_ASSERT_ALLOW.
+On Thu, Oct 03, 2024 at 07:38:11AM -0700, Christoph Hellwig wrote:
+> On Thu, Oct 03, 2024 at 03:42:07PM +0530, Ojaswin Mujoo wrote:
+> > Extsize is allowed to be set on files with no data in it. For this,
+> > we were checking if the files have extents but missed to check if
+> > delayed extents were present. This patch adds that check.
+> > 
+> > **Without the patch (SUCCEEDS)**
+> > 
+> > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> 
+> Can you add a testcase for this to xfstests?
 
-Reported-by: Miguel Ojeda <ojeda@kernel.org>
-Closes: https://github.com/Rust-for-Linux/linux/issues/1006
-Fixes: ecaa6ddff2fd ("rust: add `build_error` crate")
-Signed-off-by: Timo Grautst=C3=BCck <timo.grautsautstueck@web.de>
-=2D--
- lib/Kconfig.debug | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Christoph, actually now that we are also planning to use this for
+atomic writes, we are thinking to add a generic extsize ioctl 
+test to check for:
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 7315f643817a..7312ae7c3cc5 100644
-=2D-- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -3060,7 +3060,7 @@ config RUST_BUILD_ASSERT_ALLOW
- 	bool "Allow unoptimized build-time assertions"
- 	depends on RUST
- 	help
--	  Controls how are `build_error!` and `build_assert!` handled during bui=
-ld.
-+	  Controls how `build_error!` and `build_assert!` are handled during the=
- build.
+1. Setting hint on empty file should pass
+2. Setting hint on a file with delayed allocation data should fail
+3. Setting hint on a file with allocated data should fail
+4. Setting hint on a file which is truncated to size 0 after write should pass
 
- 	  If calls to them exist in the binary, it may indicate a violated invar=
-iant
- 	  or that the optimizer failed to verify the invariant during compilatio=
-n.
-=2D-
-2.44.0
+So that should cover this for ext4 and xfs as well.
 
+> 
+> > -	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
+> > +	if (S_ISREG(VFS_I(ip)->i_mode) &&
+> > +	    (ip->i_df.if_nextents || ip->i_delayed_blks) &&
+> 
+> We have two other copies of the
+> 
+> 	ip->i_df.if_nextents || ip->i_delayed_blks
+> 
+> pattern to check if there is any data on the inode in xfs_inactive and
+> xfs_ioctl_setattr_xflags.  Maybe facto this into a documented helper?
+
+Sure I can do this.
+
+> 
+> Otherwise looks good:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
+
+Thanks for the review.
+
+Regards,
+ojaswin
 
