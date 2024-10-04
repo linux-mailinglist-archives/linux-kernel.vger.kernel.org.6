@@ -1,97 +1,97 @@
-Return-Path: <linux-kernel+bounces-351583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747F699134A
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 01:50:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930B199134D
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 01:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D038A1F23B7C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AEEC1F239CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4224154BE0;
-	Fri,  4 Oct 2024 23:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A637154BFC;
+	Fri,  4 Oct 2024 23:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idvxjFbb"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O/yQWvvu"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED102148857;
-	Fri,  4 Oct 2024 23:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD7B1798C;
+	Fri,  4 Oct 2024 23:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728085802; cv=none; b=a1TJ/gYvykcTkrDjNuIvbzu+27eGa26Seg18a/P9M6UM5Y7CXonvYMXknoABADGFuv/0n+YEoT+KJXqNbb/vS2eWbcbi71T+RLt+CNGdmdvDfxPFitm8xGHAwsa0dFC8VR3n92G6EmOAafBsZGVIQhx5mk2nER0l2X16sAXEyjk=
+	t=1728085945; cv=none; b=Rcmsu747SCBujYHx6EuKZh6aCqauOkow0yGMuNXhYU2kRmSvJJx2Nccf3qfZDKo4cGLjJSdIgDd7+kUwhaStT5QP+tPqUXaOccc+D4tY3U3zhUgLZfiJJVOKa/RbcGS+H5X2d7mdEgnw0o3BluwdY1UvvZnNObytyRgJefv8WEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728085802; c=relaxed/simple;
-	bh=IU0uKQ7NNSwfhAvmIZe5KqaQE8LjFvT25OV4aOVkGpc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DriwxJPbMGVKIx2FeA4rFC903ait+G816J4eDOxmOrjARk/9ppGjGgs+ql+4vWMBsklkDw1V5jk266DHtQe+5E5pUK+27xqde17vprfsWzmD4QxSxrkV3Um8ksQ50vyVKKZtf8pzYnqIKAWSA5+Wu8M05SGjDfTBy3FBeIBIaGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=idvxjFbb; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e235a61bcbso25198987b3.1;
-        Fri, 04 Oct 2024 16:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728085799; x=1728690599; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3OuB8gV0+K6en0YKg8lKAiMSJyhnKncWwHTQm8Hm1+g=;
-        b=idvxjFbbev1fXEIHQMeSXGM5FWa88Q1GHWWwU1MA/YP+IH1OiadzXC7xSajsC7is25
-         8VKuQXL8R/4qmwV8up909VageBt0DvBPAMN+xNrShxaajTLFxeDEB/zIdQiZSagFSTKZ
-         CX2Ov7KMc/wvxEXeAftJyF8Hz7On8cfRfN0MRMZ98uWwp+KCq1wjgLfHFqWzwknlhWAR
-         8kepuC4QpYAnUoB1jKQBUmWCWnpdn2OrbaMF08Op6GmyIMNR/u/TXjFsUA6jfZx4RUZI
-         VRDSPe/HY15/iP8+XBf3S93vKQtpDHIQ2nYFxIoauSSVvkuv8zsaFa0S00z9Svh1p7mo
-         UTxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728085799; x=1728690599;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3OuB8gV0+K6en0YKg8lKAiMSJyhnKncWwHTQm8Hm1+g=;
-        b=QbgCsixSunVrKPLN0Fjq7NM1KY3Do6c5p7c6AnVlVzTPm/cWTwt85F812thbyh32wG
-         asnOBA9EmBlbktKPc33vbs0q6a1PxeP9cIxQjgRSnJZuG/mEFZz5ykTwlv1fxwbRer+I
-         JXXRkT8oR4u9EH9N99r0l6jlAXwqq47eJYuQLBLaxhf6ZhoYONCXu7yP8+/A5RjSG41Q
-         BwVP7F/+2Pdax8ZqNHbicUJ9SkmByL1v1tTKX9oL8dLwUG7OOiv3sMfUJJYfIVd/edAD
-         DpbOL4vaZo4v3smoJJrxcQkLSxBVDvXrsiBZAc4ekzZeqTkRaK4xny9IQjamtdH028bh
-         5OZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJn+MxJr4/wk3W/MdWknYIhUcgEtPKY2ueQXFMJ463onp9W19cL0u5u5GQEV+hK+GqyNaNSJcNJ61w+4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz37a0E75Y4l++Z28wqnQ6qk9RHOwBV9bzjrwEegRiZUqXA+rZH
-	AlKbDPOQf1Wm8DHmTgq83SdSz8fhnOIzGVO3oeS1AJ5J8tcBbLOy9k35/A78Q2/P9UGIDzkOboK
-	qhc1xj6j84+xyrpPxBzD930Edc1g=
-X-Google-Smtp-Source: AGHT+IEshj4Ix4marHxQfTyObrTWdBhuGm6EYlpou5ri4H8M4QKf36M6ccw/3E948OxmApn6jhTp6cX8nJvubeWqyRc=
-X-Received: by 2002:a05:690c:610d:b0:6e2:a250:a1bc with SMTP id
- 00721157ae682-6e2b540695amr64076467b3.22.1728085798929; Fri, 04 Oct 2024
- 16:49:58 -0700 (PDT)
+	s=arc-20240116; t=1728085945; c=relaxed/simple;
+	bh=e7uYEUVrwAmgJEKxlmdLdTFW6JlEeZeDh+5bDid9gok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RrmxltGQQNoEDf9k3dW9EtLv5MtXIqzZJuw+Uiw5+xV0uKco5NKCXV32dpP2FF1t1wRDePV4v56e9LqPi2Q01BvkwCEfosV02Z+S/gkQlyK426DErn33jG7u2IRMUUWoRbCFHhOiJOHua4oysMUBC99nTw1JYYUDYPX3aoH9hmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O/yQWvvu; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=Cy5y7ftGIYSuJU1GDHG1e2mx2IRBKUaxFGuxqtudW+o=; b=O/yQWvvu1ppQMMoFjbp9pRAD6b
+	etawhsfETbuSHSpHTtHfSM7ca2XXxf67ibJaFjhOugIdsI3zxLqJIgtx3pZcwz2Up1iSbrBCwdskN
+	+SRgWlN3d0marg8CO1LRbFRTSK888EvlBOd5YAAuGSsvLZli/ZtrPu5zovW46BFAUSl3e8nmb41Rh
+	EAYqPVjy6QMNA3i4aYgmHNSO2XdkE1Quk4cws66SOyNWz5ycPYsGVuUM9ZyC0wpuwyH4DwVX5niml
+	EYNVA/3L/PZpe1H9r3bIHdnrsQtvsCBUtrqaq40Ow4Qwq3ZIQzf+n4nS3OC07IThxqtlH2qT90dAE
+	R8djFPcQ==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sws5o-0000000Bb1Z-46SU;
+	Fri, 04 Oct 2024 23:52:17 +0000
+Message-ID: <78f05735-cca3-491e-b2d6-c673427efa07@infradead.org>
+Date: Fri, 4 Oct 2024 16:52:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003021135.1952928-1-rosenp@gmail.com> <20241003021135.1952928-17-rosenp@gmail.com>
- <20241004163541.67a15dd3@kernel.org>
-In-Reply-To: <20241004163541.67a15dd3@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Fri, 4 Oct 2024 16:49:48 -0700
-Message-ID: <CAKxU2N9GMRUAmeAsFO+fdbxsBctqH-LeOc1-zfGFf2tNrSY5Aw@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 16/17] net: ibm: emac: mal: add dcr_unmap to _remove
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
-	jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net, 
-	chunkeey@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] mseal: update mseal.rst
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: akpm@linux-foundation.org, keescook@chromium.org, corbet@lwn.net,
+ jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org, jannh@google.com,
+ sroettger@google.com, pedro.falcato@gmail.com,
+ linux-hardening@vger.kernel.org, willy@infradead.org,
+ gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+ deraadt@openbsd.org, usama.anjum@collabora.com, surenb@google.com,
+ merimus@google.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ enh@google.com
+References: <20241001002628.2239032-1-jeffxu@chromium.org>
+ <20241001002628.2239032-2-jeffxu@chromium.org>
+ <4544a4b3-d5b6-4f6b-b3d5-6c309eb8fa9d@infradead.org>
+ <CABi2SkUhcEY7KxuRX3edOHJZbo2kZOZfa0sWrcG2_T0rnvHCWQ@mail.gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <CABi2SkUhcEY7KxuRX3edOHJZbo2kZOZfa0sWrcG2_T0rnvHCWQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 4, 2024 at 4:35=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
-te:
->
-> On Wed,  2 Oct 2024 19:11:34 -0700 Rosen Penev wrote:
-> > It's done in probe so it should be done here.
->
-> second done -> undone ?
-> Also is this not a bug fix?
-Correct. Looking at git blame dcr_unmap has never been in remove.
+
+
+On 10/4/24 9:52 AM, Jeff Xu wrote:
+>> above is not a sentence but I don't know how to fix it.
+>>
+> Would below work ?
+> 
+> Certain destructive madvise behaviors, specifically MADV_DONTNEED,
+> MADV_FREE, MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK,
+> MADV_WIPEONFORK, can pose risks when applied to anonymous memory by
+> threads without write permissions. These behaviors have the potential
+> to modify region contents by discarding pages, effectively performing
+> a memset(0) operation on the anonymous memory.
+
+Yes, that works.
+Or at least it explains the problem, like Theo said.
+
+Thanks.
+-- 
+~Randy
 
