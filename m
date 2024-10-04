@@ -1,209 +1,261 @@
-Return-Path: <linux-kernel+bounces-350242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A03F9901FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:20:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101AF9901FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 517512815EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:20:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD2C1C23138
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCDF157492;
-	Fri,  4 Oct 2024 11:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33609157494;
+	Fri,  4 Oct 2024 11:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pRlx2wSZ"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EbhO+LLz"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77834157481
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 11:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728040792; cv=fail; b=MkuilFj4vNJ1Bef3hbCI0MHiHZsElgUcIH9vvh8p7PttTfxfD86ckIiGt0sC+FL0E5h91Wkge2KqssJ3SlrVj1jLGqmMxfSsbpr2X+yFVW6MnBEbcnavIfX/6GWzP9395CXz7OD4fE49QcBCl+66f8hpSNWfwv0Us3oVCkkjz9Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728040792; c=relaxed/simple;
-	bh=N9XiyWIZZNauuL3Na9oV2iHEkEDfXNZldYYJ82r/wJ4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=C1Nr9kB7CSsUh7o6ZSXXXPj10b8YxIm3T4D4zBt4DG89jwtUgGI/EFjP/jtre3i2qwtxZq56v7b9BXrRNTem5tU7HFadc0F48azP0p+lXWmdDLAtuElEbe3OU+56aw3HWJW4IB6Myrr7EL5JXomYkIjI5IqpIW+imO0O5NsSomc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pRlx2wSZ; arc=fail smtp.client-ip=40.107.236.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PmwlOVkJ1+KlYBwZeZDC0xN4mmlk9Clksn0yE+TSXreFb/x5DfZLOXlx/6JqZ8qOE9CAmVLe3ioVgNlbDeCIzpdN+4YE4VMFkzNoT966n9uqS47P4A5KpaC1RfIgCKtHxPUZfwLHA0TxNts8JgvsLOcMcnGQI/qAKqdJ33lKPtjX0oAsD2xbJXzQWlWP1gbbykpvJYGek3T1e4ob/6dVknb7oWTlj6S029E802bNw+sYiLxYsmbyYFBaiG6l+B/SED4o5EUWyDAdZjFegkVIdiovnREqb2zL1M9okqzgw2s/1wnpMP74/kUE7388FKe4qL5AzR5T0EtJETBBr4Xpeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O5ykewNLRva8vXYpUSlaVDkJxKm/vrHurwSwp6AWVD0=;
- b=xwH2QYNOpN2SH3EyhO4JQimmNh+DiUM7dDpc6C+5eQi8uWhEMNOCZ02fp0i1qvxCMS9ohgCAofag9ixogyhBxPnmoRfjM1rYmQ594hRiLbViFtgRl85hiIn9ZvAVimTTRDt9R5llA89SigLFr0Avor5MQIaJpmuE1YjnbvjPRvb0HUOQA4+1vw6cUK7n0hxP0Xl2RC+GkhUGARX2Rg6skro8aVziNYIhSdnQYKbr3m7bXx0u5ZCRlPs1z/wPU1Zg5d6VNpReXHqPA8ziFPiOZacKiOrQ8emT/zUzsMmJAgXZKxNoVfhcqW0732JeKBdbMcTdWzxXzX42+Pv3mjWpRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O5ykewNLRva8vXYpUSlaVDkJxKm/vrHurwSwp6AWVD0=;
- b=pRlx2wSZdCXwPgXLzL05zGBzJzoX/bRS9sFr4hE7UdqXmfjGW6tBmfkpDB9n0AQsAat7tGpUTKklUFWCjIEyDUwZZDWV0VrnvKnpVOK6gvI7G+QRWjuBdD8L8PsGBUMOQwpg/+4l1XmgH8kRkO7Qluac2sz55Pm+4zLRBbqQR7o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB7804.namprd12.prod.outlook.com (2603:10b6:8:142::5) by
- MN2PR12MB4095.namprd12.prod.outlook.com (2603:10b6:208:1d1::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Fri, 4 Oct
- 2024 11:19:48 +0000
-Received: from DS0PR12MB7804.namprd12.prod.outlook.com
- ([fe80::8327:d71a:ce21:a290]) by DS0PR12MB7804.namprd12.prod.outlook.com
- ([fe80::8327:d71a:ce21:a290%5]) with mapi id 15.20.8026.017; Fri, 4 Oct 2024
- 11:19:47 +0000
-Message-ID: <1dbd3687-ab21-421e-a978-3fdd8597046c@amd.com>
-Date: Fri, 4 Oct 2024 16:49:36 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH-next v2] Fix unintentional integer overflow
-To: Advait Dhamorikar <advaitdhamorikar@gmail.com>,
- alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com,
- airlied@gmail.com, simona@ffwll.ch, leo.liu@amd.com,
- sathishkumar.sundararaju@amd.com, saleemkhan.jamadar@amd.com,
- Veerabadhran.Gopalakrishnan@amd.com, sonny.jiang@amd.com
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- anupnewsmail@gmail.com
-References: <20241003102623.11262-1-advaitdhamorikar@gmail.com>
-Content-Language: en-US
-From: "Lazar, Lijo" <lijo.lazar@amd.com>
-In-Reply-To: <20241003102623.11262-1-advaitdhamorikar@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0102.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:27::17) To DS0PR12MB7804.namprd12.prod.outlook.com
- (2603:10b6:8:142::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6CC156644;
+	Fri,  4 Oct 2024 11:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728040812; cv=none; b=QykHX6Ynf1YEkgdU6J21NYQJ167FHZvW5xHecjPkpT44rc5IiZlFPPEjKx2FLfxulbT0T8TFzPQZVpk8GYMHfSyH3fwZe0t1OQ94nF1Ku2VJTH6i5Hc3jtCIG7M7HWxpA7gCwQgOazKNfykNsEC4oI0kOp+q9rhdOpteHfin/ds=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728040812; c=relaxed/simple;
+	bh=2ZGI4+LkSpEruLL8EnqsIqSTHwo9vb6w6YxxWCOgnGw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jMPsCD++KZbgSkyfgh1G80HCPs2c6HePgxhWP8GmusTE9lqkbuy9bvxRWj2XhqatLNunmawWTgtKVYx8UfjUFlW4QrZbQNaeqiEPKzhuViKxMasmHb8e4s8n45ZYauQeBVzn+19YACs2krozxKrZRtN+T//hvzo2oJLB0WkXA+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EbhO+LLz; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cafda818aso19560895e9.2;
+        Fri, 04 Oct 2024 04:20:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728040809; x=1728645609; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B+SmcQqURVxBycNPDlTxY63u5VTYQ9bCdSfxUOfW7HU=;
+        b=EbhO+LLzDhL4nd0F8Ka3WYcGhRHVRTuBUvs8yUiRMv7bmdMcFGXsWKYPKN6OPjRdML
+         E3GvuK2MmQfYF4ofy7559Wnkz82EvX7Jz9Q/QoIUG+aDegd1CeW0sNhCKayFirpgUK5g
+         5evij5jghEr5eC9fiKcwEfU1zzRDxlkZVF5/txrr4ysPTU6ixlGlizZ3thqyI0gjkPFy
+         In1cNpVi6DLjwA0tU0ZHguNatE3LmZCl/7MiPj8SkJ/SC1AJJ1T1sdU75Rdn6khIImAJ
+         j4vttl6aatmX1OhTTaTtvFhGbTuenA54YnJ4izCD7qaf834UNoG12l+lGMNjSYJb7oAu
+         D7fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728040809; x=1728645609;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B+SmcQqURVxBycNPDlTxY63u5VTYQ9bCdSfxUOfW7HU=;
+        b=QnVMY9gcw6BudBll+c7NHm1j9o50Vz1k06z4FtMxBxjDrevg8cjaACjkJ/Q5b0P4cx
+         cmdCuyTNRjjMyxstwiSy0YXm/OnGu86A1xCSUQYCtP4QGJKQOWfRXifik5KGNpxSxn4J
+         sRRQW1bUwxZeTTejY/hxVAUdJRGZDAUKiVUeRFRkjsmOgxbGkhMhHM28fu7f0v7etdpa
+         tC7DiS+DxXa90+gd+my3L6q5IipLV5WOlDrsJmeTHtDo3JU9f95H+4aEerYOLA9FAYd6
+         1qWp+Ji5Nl4PzJjLj+0QchzaKnVqGgJwt8O27fVwzbRFnhjU7nrCjWHrjIwpxZZNzVWy
+         NteQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3y/ql10Aw6dZ8j2hYjvP6ArHmzYCSpAuZPnO+Ktm1pLSLl1CQgiohD8JAonzK9ubJnQJGle96UZM3ZYQ=@vger.kernel.org, AJvYcCX+MDuXmGvyE9QdsvZaMccHbpLfxIqz2Y9JMwUFq0bxYVyAmrqXRVZz2gTKmqk8emzAhPNAXNQM@vger.kernel.org, AJvYcCX0OttE0qsPUlMFozzc0Agbq8rxlrhcgnx2VW4bcDNXU+4qxMwvA/7husqrEjYedG4o/Sl2KHpyJgzl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2EPWkalDrVeupwalh5qm2vc9lAbbWiYkJXtNdagX5xQx3d6Fe
+	+X878n5x9t7dP6/yKT3makhN1+yKMkhI0Pp2UgdsWIs99OgUuIcb
+X-Google-Smtp-Source: AGHT+IHhIuX+FJut2UgQgTKlSXaWRsoLbM1iDBCDl40PDBwCuEtm80W3kQYnoh/asgUs6qvwwyhhkg==
+X-Received: by 2002:a05:600c:4ecb:b0:42e:93eb:ca26 with SMTP id 5b1f17b1804b1-42f85aa9258mr18619375e9.11.1728040808673;
+        Fri, 04 Oct 2024 04:20:08 -0700 (PDT)
+Received: from ubuntu-20.04.myguest.virtualbox.org ([77.137.66.252])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42f86b1d981sm13263805e9.23.2024.10.04.04.20.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 04:20:08 -0700 (PDT)
+From: Liel Harel <liel.harel@gmail.com>
+To: Steve Glendinning <steve.glendinning@shawell.net>,
+	UNGLinuxDriver@microchip.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: liel.harel@gmail.com
+Subject: [PATCH net] smsc95xx: Add implementation for set_pauseparam for enabling to pause RX path.
+Date: Fri,  4 Oct 2024 14:20:00 +0300
+Message-Id: <20241004112000.421681-1-liel.harel@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7804:EE_|MN2PR12MB4095:EE_
-X-MS-Office365-Filtering-Correlation-Id: 299f2b78-b012-4086-86e7-08dce466749e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QnJvNm5ENWllMWxHZ2Ixd0x5WXJ0eGpuN0UxMVhQcXBvZW5ZU29MMHRoRWt0?=
- =?utf-8?B?UjlqK0J6dVB2US9JZHNCTjhaU3Q3YS9IMWswL2srNHVSMVFYT3lMTDRSS3VH?=
- =?utf-8?B?T1VkajdJeEowUytOSi9VaHc3VUZQa015OFRhVFhmeVNuUWRSTGNHdHp2S3RB?=
- =?utf-8?B?cHVqSUd3cFV0RmRLcjNkb0IyNkpSRmVrK0VtNEhlaWM5YVpPSWtMTEdWVnU3?=
- =?utf-8?B?LzgvVGxGYVM4M0V1REgzWEpRM0VzU1k1VnN4YThqV2IyU0dtT1ZlTTR4VXZi?=
- =?utf-8?B?czVVNTFKMUIxMm9MS01MQXJmUm4yYVNmeU4rTmRPcEUrbkhHekFzcWZOdHNa?=
- =?utf-8?B?WTVOaTA0WUxNWkY3UjYvQ0hTU1lEdnREUUVla2U0WnZ6alUrYTZqRkJrVzly?=
- =?utf-8?B?eVVNcHNZaDFEaDltM0xBcHRTZnhFRFllN0NqRjNKU0lWR3BjdXRvdnJsS3k5?=
- =?utf-8?B?SXVMc09zR2Y5NERpQ3lzNk8vVkJiNUg2VXI0b3Q2UEZjWkU2bnJXZHlvS0Vr?=
- =?utf-8?B?Q2wwd0MzOTRoek1SQkd6K0FsSFhUMTNIaGFmQWdsVU1pT3NwTzUrTXB3WDVV?=
- =?utf-8?B?ZUpiTk5nWDEzanNBZG1mU0VXNUFLZVJsSTJhbEtIRU81YTNMckdNWmtxaFRU?=
- =?utf-8?B?SWtKS0FTSHlCN3VnV3pNa0c1QXNkenVtZDQ1UFg3WG9ER1BPTGxNdmsxWjRW?=
- =?utf-8?B?bjl2V0kzc09WV2dtQUZPNXlPS3hrUEtGTjJSVTRYb1MxcXhJa1FKdVVRZE1t?=
- =?utf-8?B?M29FM3FPL1lFTXk0SlJtV2JRN3Q1K3ZPQlFuQ0IrVm1WUVN2d0xFRHJiME1C?=
- =?utf-8?B?QWc1dElZSDZsczY4UTRVdFRaYU52NVJhVFVqV3FoaUhCUWFvRy9qZkJqVUU2?=
- =?utf-8?B?eGs5dmJ0ZDEvQjA3TzBzSmZJS0VDSVFRS1liVEZWQjRlVklXS1R2eUJPYWc4?=
- =?utf-8?B?RzNDdXY2dXdFZFhCV3NCdU5pQ0ZteFpvY1lHeDVBeFF2ZFUyTkpWY1llQWtX?=
- =?utf-8?B?UTR4ZXpTVEsvOXNFNUVWNFcreHN3WUFUL09lb1EwVkJBc0NJTExpQ2l0SVBY?=
- =?utf-8?B?R3E3RU5NSlBTcGh0M0Z1dVdQTzZHK3c0ZXF4MndNaHVGOUJJWWxSM0trYU85?=
- =?utf-8?B?dTBHTXBjSkJYS0VLNmd3R25iVzExY0l6aHpTRTFRdmlDOExTLytFdXh6YXk2?=
- =?utf-8?B?enlPU0hzdnVpM0RuNmE0bzlSS3FuYVVZVHNqWC9abDVRNjg3cFJ2Zm9IOG5W?=
- =?utf-8?B?UVlKK0paN200eXJSTXUxT0NyUlJDNSs1SXpCaXc4ZmpzSTZaSWR0YUhuMFJL?=
- =?utf-8?B?NU1abXpiRm0vczB4L3lFZWRJV2czTkpkZ2hvcUlvSHBrY0tydm1XdzZtbXJ5?=
- =?utf-8?B?MFJGZElFamE1OWZ1M3ZVM3pXMndjTUVrOFRYaUdBQ1ZMK3lvYTNZSEJ1UEsr?=
- =?utf-8?B?dkF2SFErUExCSVFhTW9uUkphb0hGLzRMYlBpclFYQUZnbjZ4TzcyUzE4WGJO?=
- =?utf-8?B?QlNKNzB1NG5aNXBVU0djNWVpUkFmc3ExMTdTYXZ2MmllaGxTbDJxeFhrSVBw?=
- =?utf-8?B?a0hnNms0bVhlaTNtN2lNcHhyU0Nia0FWeEovWEtMck9vdTNwck8rZ3NqdWJB?=
- =?utf-8?B?NEk0TU9GbktWMmR6SWVOS1ltS0NkWWlybTNQOFAvQ293eVp4OElCdVc3Zlcx?=
- =?utf-8?B?VVNBU3A1VDF2bEJVQ3BzU3lGWWxkVzkrTUFobEdQWXIvb01iZDdORkczbmxl?=
- =?utf-8?Q?/TNtXlXy5Dz+ixvhamSLpNLv434vJ9wc+feaBJq?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7804.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VGtMOElhK1grUkdkRDlLY3BTZjZWNGhyZFk2b01WeEJ0WGZrU3B4RkoxN0ho?=
- =?utf-8?B?dW5SUU13M09LZFZJZFY3NVBDaHQ5SzF5UFh5R1IvZ2oya0hVbFRyeVhaNEtS?=
- =?utf-8?B?aWxDcnZ0NnYrSU1lZGlzQVlwZm5iT0x1S2JGbkZHU09JR1ZyNjhFeitiZEVy?=
- =?utf-8?B?aVJBcjF1eWJFczJmVGtSOU1ZQmMxdkYyUmIxVG5maUNRakVWNXcvOUN1cXBO?=
- =?utf-8?B?ektpMG1OaGtqK0Jzdm85ZDZndEM5YldRTU5hNTMzK0hFVGdDcFFVK2NXK0ts?=
- =?utf-8?B?NGlxckNTRitLcWRiSll6dEx3SmF1QlU5UHV5cHB3d1BCQTFvUlhsUUt0Mk1U?=
- =?utf-8?B?MkJ6d3RwUytwSEhlWWR1MlcxWGlMNWxFTXdrMlFZaHltdUNxZDJQMjhHc0hQ?=
- =?utf-8?B?TU5WU21VSXBJWTZCYmFCcmxwVUlWMDVWekdqY2UwcEhxNm5vbHlIMnBYYmov?=
- =?utf-8?B?VHpzYVdseURhWDduSjY3NGpqSEhsZ1VjbUE3bmM3WVpvMjNYd2ZRZ05RZERD?=
- =?utf-8?B?UFJXSndWN2dRM1BLc0ZqYU4xRUw2SVFpU3I2enY2MW41dUtVdXl1a2pLcEhK?=
- =?utf-8?B?QVZhUUEvblRHVU5paUpNWHpLL04zUHpvT1Fhbjg4aUZIMzlCUXI1OG5MQ0tL?=
- =?utf-8?B?QkVlY2xCaTlMVjkvcGVUVVkrVmx1MENnQnlYRmR1SndTMjVDRW9xM25YdEZu?=
- =?utf-8?B?RWloeGxDWU5paGR1aEVUa1ExNkpPR05GMjJTT1B1ajBJK2FqMWwrMjVoUUlp?=
- =?utf-8?B?Rmt1TEhGNnRSblk3QXhOcGRwL2cxZkdCck4yL0syaUFGSlpNT2xtR09VWEdQ?=
- =?utf-8?B?WTB4YXlMbllNWFVpYzRlMk1RUXRsV1BkMnRnZ2lmczlobXVvMHV3azJZQXZt?=
- =?utf-8?B?eFNzT2ZjSTdIcmtWRS93M2RzVm9ySFlTLytudXJXeGZISnMxbGo1cWt6V2Ux?=
- =?utf-8?B?N1AyRkJpbndoUjNSSWNNWndzcmdZUnQ2T3FTSWxhQ3NxUDdMd2dlcUo3QVdp?=
- =?utf-8?B?VTdvcHdJODhwVVVGNHZMU2JxT3NiOXdKSjlJSWt1L3FGcDJQa1JXM1FwMi9l?=
- =?utf-8?B?MEh2ZTFYRVdtdGVuMzY1eFFvNVJZK09qV3dxbVhnYUI1eFBmUGRpVC9BVDlW?=
- =?utf-8?B?TzV1Vnh1bWZpV2d6NTMzRjRBOGNMYmVwQVBlekRkekdQZUZGeVJtQlFZQVo1?=
- =?utf-8?B?SXdGbnlJU0s1b21yRWh0ejhlTmVKM1piQmw5ZnlhK2VWSjBmOGZLeDRHTkZI?=
- =?utf-8?B?WnQ0Y243dHZJUFA5d2VUaUQ0UGtmRnNPQlFDWnJlaUZ2aUM2OEpLWXJEK1B3?=
- =?utf-8?B?OTVGQXZlQXdrNFAxWlQrTVVmRGN6bDBKL0ZGMWxJWXpMOG5IOTVKenZqYVIv?=
- =?utf-8?B?MTlpWFZUSXJ0NHgrUUFMMmUrY3VJbFJsUmxEUEpROHRvR1RIMHMvZmVBaktI?=
- =?utf-8?B?cGFrNzVDSTk0T3N5ZkN3TUxkVzRDZ1RCVnI2bmluYTRqWENqY01HS2t3aFIr?=
- =?utf-8?B?TVRIbjNaQlRaWXB3bjIrQkg5aWtNQ2lHcU40ZnAxQkFRT2tWQnRnUkRiVllR?=
- =?utf-8?B?UjQ2YkRybWlZVnd1OW5UUS81WlJDZmVKWXpiVWJCU0R3bDg2Y1hzUVBsWjRM?=
- =?utf-8?B?UWR0ZVNla0RtWmZQWGxJL0dYMmVHQXZpbGk0ZXdrb001aUgxWS9MY2xaMzNT?=
- =?utf-8?B?YTd5L1FSL0hka2xFSkF3a2xMRGg5WXZKWE4wSmd2ZUtpQkU3eGdkalhUTTZo?=
- =?utf-8?B?dlg2VnBYSVdWVlJ4c3cyWVNZWVh2TGsreTdyU3RMdmVLQytzU0JiNnI1YTRY?=
- =?utf-8?B?SGprT2d5a052MURHM2lqTzJZZVozSnZkQUVOR291dVRoRThlZjN4ZllwdVVq?=
- =?utf-8?B?YU1DUG9XbkhVK3lnQ0wrYngzeEFBaVZGd2xaVUNESmhYUUc5dFhxYUNCOE9m?=
- =?utf-8?B?Y01UN0FMS1lZWmZhYXpjaGlBQkxtbU1hNXhjL2NVR3o1WnpadXo2TGY2YkJ1?=
- =?utf-8?B?eUUzMytwYmNYcWZ2Z0oxQ1RXZ3BETDJUV21LWFpoQkt2RitsSVBvMjFwUTVK?=
- =?utf-8?B?USt4VzR6c0d0Nk5Hem4xUEI1KzJVOWtRVHppU2tqc21SUGdUK3A0K2JGcFNP?=
- =?utf-8?Q?K90Rav3S7bPQwQdrM+ZKSWssX?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 299f2b78-b012-4086-86e7-08dce466749e
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7804.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 11:19:47.8044
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FKs+XgOqLWEsA5XJocxX25foOL+O+Ac7CV+EgpqA7w4oXtmufPjv5TuqVqQt8bpj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4095
+Content-Transfer-Encoding: 8bit
 
+Enable userspace applications to pause RX path by IOCTL.
+The function write to MAC control and status register for pausing RX path.
 
+Signed-off-by: Liel Harel <liel.harel@gmail.com>
+---
+ drivers/net/usb/smsc95xx.c | 79 ++++++++++++++++++++++++++------------
+ 1 file changed, 55 insertions(+), 24 deletions(-)
 
-On 10/3/2024 3:56 PM, Advait Dhamorikar wrote:
-> Fix shift-count-overflow in JPEG instance
-> multiplication. The expression's value may not be
-> what the programmer intended, because the expression
-> is evaluated using a narrower integer type.
-> 
-> Fixes: f0b19b84d391 ("drm/amdgpu: add amdgpu_jpeg_sched_mask debugfs")
-> Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-> ---
->  V1 -> V2: addressed review comments
->  
->  drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> index 95e2796919fc..b6f0435f56ba 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> @@ -357,7 +357,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_set(void *data, u64 val)
->  	if (!adev)
->  		return -ENODEV;
->  
-> -	mask = (1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
-> +	mask = ((uint64_t)1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index 8e82184be..98afdf635 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -137,7 +137,8 @@ static int __must_check smsc95xx_write_reg(struct usbnet *dev, u32 index,
+ }
+ 
+ /* Loop until the read is completed with timeout
+- * called with phy_mutex held */
++ * called with phy_mutex held
++ */
+ static int __must_check smsc95xx_phy_wait_not_busy(struct usbnet *dev)
+ {
+ 	unsigned long start_time = jiffies;
+@@ -470,7 +471,8 @@ static int __must_check smsc95xx_write_reg_async(struct usbnet *dev, u16 index,
+ 
+ /* returns hash bit number for given MAC address
+  * example:
+- * 01 00 5E 00 00 01 -> returns bit number 31 */
++ * 01 00 5E 00 00 01 -> returns bit number 31
++ */
+ static unsigned int smsc95xx_hash(char addr[ETH_ALEN])
+ {
+ 	return (ether_crc(ETH_ALEN, addr) >> 26) & 0x3f;
+@@ -772,6 +774,45 @@ static int smsc95xx_ethtool_get_sset_count(struct net_device *ndev, int sset)
+ 	}
+ }
+ 
++/* Starts the Receive path */
++static int smsc95xx_start_rx_path(struct usbnet *dev)
++{
++	struct smsc95xx_priv *pdata = dev->driver_priv;
++	unsigned long flags;
++
++	spin_lock_irqsave(&pdata->mac_cr_lock, flags);
++	pdata->mac_cr |= MAC_CR_RXEN_;
++	spin_unlock_irqrestore(&pdata->mac_cr_lock, flags);
++
++	return smsc95xx_write_reg(dev, MAC_CR, pdata->mac_cr);
++}
++
++/* Stops the Receive path */
++static int smsc95xx_stop_rx_path(struct usbnet *dev)
++{
++	struct smsc95xx_priv *pdata = dev->driver_priv;
++	unsigned long flags;
++
++	spin_lock_irqsave(&pdata->mac_cr_lock, flags);
++	pdata->mac_cr &= ~MAC_CR_RXEN_;
++	spin_unlock_irqrestore(&pdata->mac_cr_lock, flags);
++
++	return smsc95xx_write_reg(dev, MAC_CR, pdata->mac_cr);
++}
++
++static int smsc95xx_ethtool_set_pauseparam(struct net_device *netdev,
++									struct ethtool_pauseparam *pause)
++{
++	struct usbnet *dev = netdev_priv(netdev);
++
++	if (!pause->tx_pause || !pause->autoneg)
++		return -EINVAL;
++
++	if (pause->rx_pause)
++		return smsc95xx_start_rx_path(dev);
++	return smsc95xx_stop_rx_path(dev);
++}
++
+ static const struct ethtool_ops smsc95xx_ethtool_ops = {
+ 	.get_link	= smsc95xx_get_link,
+ 	.nway_reset	= phy_ethtool_nway_reset,
+@@ -791,6 +832,7 @@ static const struct ethtool_ops smsc95xx_ethtool_ops = {
+ 	.self_test	= net_selftest,
+ 	.get_strings	= smsc95xx_ethtool_get_strings,
+ 	.get_sset_count	= smsc95xx_ethtool_get_sset_count,
++	.set_pauseparam = smsc95xx_ethtool_set_pauseparam,
+ };
+ 
+ static int smsc95xx_ioctl(struct net_device *netdev, struct ifreq *rq, int cmd)
+@@ -863,26 +905,13 @@ static int smsc95xx_start_tx_path(struct usbnet *dev)
+ 	return smsc95xx_write_reg(dev, TX_CFG, TX_CFG_ON_);
+ }
+ 
+-/* Starts the Receive path */
+-static int smsc95xx_start_rx_path(struct usbnet *dev)
+-{
+-	struct smsc95xx_priv *pdata = dev->driver_priv;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&pdata->mac_cr_lock, flags);
+-	pdata->mac_cr |= MAC_CR_RXEN_;
+-	spin_unlock_irqrestore(&pdata->mac_cr_lock, flags);
+-
+-	return smsc95xx_write_reg(dev, MAC_CR, pdata->mac_cr);
+-}
+-
+ static int smsc95xx_reset(struct usbnet *dev)
+ {
+ 	struct smsc95xx_priv *pdata = dev->driver_priv;
+ 	u32 read_buf, burst_cap;
+ 	int ret = 0, timeout;
+ 
+-	netif_dbg(dev, ifup, dev->net, "entering smsc95xx_reset\n");
++	netif_dbg(dev, ifup, dev->net, "entering %s\n", __func__);
+ 
+ 	ret = smsc95xx_write_reg(dev, HW_CFG, HW_CFG_LRST_);
+ 	if (ret < 0)
+@@ -1065,7 +1094,7 @@ static int smsc95xx_reset(struct usbnet *dev)
+ 		return ret;
+ 	}
+ 
+-	netif_dbg(dev, ifup, dev->net, "smsc95xx_reset, return 0\n");
++	netif_dbg(dev, ifup, dev->net, "%s, return 0\n", __func__);
+ 	return 0;
+ }
+ 
+@@ -1076,7 +1105,7 @@ static const struct net_device_ops smsc95xx_netdev_ops = {
+ 	.ndo_tx_timeout		= usbnet_tx_timeout,
+ 	.ndo_change_mtu		= usbnet_change_mtu,
+ 	.ndo_get_stats64	= dev_get_tstats64,
+-	.ndo_set_mac_address 	= eth_mac_addr,
++	.ndo_set_mac_address = eth_mac_addr,
+ 	.ndo_validate_addr	= eth_validate_addr,
+ 	.ndo_eth_ioctl		= smsc95xx_ioctl,
+ 	.ndo_set_rx_mode	= smsc95xx_set_multicast,
+@@ -1471,7 +1500,8 @@ static int smsc95xx_autosuspend(struct usbnet *dev, u32 link_up)
+ 		/* link is down so enter EDPD mode, but only if device can
+ 		 * reliably resume from it.  This check should be redundant
+ 		 * as current FEATURE_REMOTE_WAKEUP parts also support
+-		 * FEATURE_PHY_NLP_CROSSOVER but it's included for clarity */
++		 * FEATURE_PHY_NLP_CROSSOVER but it's included for clarity
++		 */
+ 		if (!(pdata->features & FEATURE_PHY_NLP_CROSSOVER)) {
+ 			netdev_warn(dev->net, "EDPD not supported\n");
+ 			return -EBUSY;
+@@ -1922,11 +1952,11 @@ static u32 smsc95xx_calc_csum_preamble(struct sk_buff *skb)
+  */
+ static bool smsc95xx_can_tx_checksum(struct sk_buff *skb)
+ {
+-       unsigned int len = skb->len - skb_checksum_start_offset(skb);
++	unsigned int len = skb->len - skb_checksum_start_offset(skb);
+ 
+-       if (skb->len <= 45)
+-	       return false;
+-       return skb->csum_offset < (len - (4 + 1));
++	if (skb->len <= 45)
++		return false;
++	return skb->csum_offset < (len - (4 + 1));
+ }
+ 
+ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
+@@ -1955,7 +1985,8 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
+ 	if (csum) {
+ 		if (!smsc95xx_can_tx_checksum(skb)) {
+ 			/* workaround - hardware tx checksum does not work
+-			 * properly with extremely small packets */
++			 * properly with extremely small packets
++			 */
+ 			long csstart = skb_checksum_start_offset(skb);
+ 			__wsum calc = csum_partial(skb->data + csstart,
+ 				skb->len - csstart, 0);
+-- 
+2.25.1
 
-Using 1ULL here is more legible.
-
-Thanks,
-Lijo
-
->  	if ((val & mask) == 0)
->  		return -EINVAL;
->  
 
