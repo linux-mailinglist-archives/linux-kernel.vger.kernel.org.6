@@ -1,54 +1,93 @@
-Return-Path: <linux-kernel+bounces-349959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4193698FDEC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:38:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2884298FDF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779B5284832
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:38:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42EE5B2272D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA64A13957C;
-	Fri,  4 Oct 2024 07:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5598213B792;
+	Fri,  4 Oct 2024 07:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQZT/6Q6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hyVjzgjr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FA013211F;
-	Fri,  4 Oct 2024 07:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F19A13AD2A;
+	Fri,  4 Oct 2024 07:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728027516; cv=none; b=ETLdKd9CmSAL4rdZB7LziZUkdIQr77i6IZVr87ZqU36uJIFnTL9ZzXXB+GdyMmhIq14ITmBwZ0addEynbGOhcyuFV2YQFuLVbEehDY8J994BZj2JhBje4NovO2bmqw7cFz08SccfZRDeW5BM7kU9N60pVIh8681aaECMJZY1h8I=
+	t=1728027621; cv=none; b=P+5tAizxKz4vwr5z7VSY8FHpfKCTG14vPPTnCXUzMdXEEISpRRTS95zNSr10BMxKTztfSl9/um66ZEcUmtJjmvlQJW3mhHYg/p2js2b/TXmOZY4QumIYx/iyMIEDOfk8LaN35nfUnIff7gYd+Zvnut/INy3GSG/ddzf6Nt8C2NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728027516; c=relaxed/simple;
-	bh=ZlbYmRwkOsuRusS5YjxEG/WLJWwza8dhGo6FWakGMtI=;
+	s=arc-20240116; t=1728027621; c=relaxed/simple;
+	bh=jeuOprsNrHYvDhtbr8K1Fr4rBYGsHng5OzWZolAVMD0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=glw9Q69JImGvlwLxxLXOc5VTiWNC3WBaUGboJjib1m+ATe7jS/5vXcQ427Rcyv0Cwr13JkyF9PkALLLtgPPVNH7CGXWoAzGsU0Gr2eR8Kg8pxOuwaGRdadEv2QxOvMs5qYBp1cSLPP/xMYM+kZ97MaVf8eqslbXQsDRt3uEwurQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQZT/6Q6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2853C4CECD;
-	Fri,  4 Oct 2024 07:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728027515;
-	bh=ZlbYmRwkOsuRusS5YjxEG/WLJWwza8dhGo6FWakGMtI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PQZT/6Q6SP0VWVlafKkShFaX1AX3k3vJ1hqZl1uqtFNd8Xcd3cSoFFZdB10NACc/R
-	 tdVy0S0z9Ap96/91i4qQPz5J0pcevHxMIIUKlJSqgufrU9+t6SifbjDexihRqH9BET
-	 wT9mj+xi27/kqGY1oDVVeP3Sy/BmHuCljsBzKTG/Q/lSfLikurMINI+vS+/HjZ30wH
-	 wwFH2mPjtWbU1N+Y9K0wIvnfkymNM3CpSF038FuI9GpbxmotBrHXvW1r8pZ07TZwsi
-	 /epfQzvNquTik4q5Hi3Co+49zULUzjg1GrGZRERHNGF9qRUcZssahGdfOqeR7mps72
-	 8LWuyMZ/adFlQ==
-Date: Fri, 4 Oct 2024 09:38:31 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Vishnu Sankar <vishnuocv@gmail.com>
-Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mpearson-lenovo@squebb.ca, vsankar@lenovo.com
-Subject: Re: [PATCH] hid-lenovo: Support for TP-X12-TAB-1/2 Kbd Fn keys that
- use HID raw events.
-Message-ID: <fmirfyqbkuyxnvb3nqdp35x4uovlg3d546g2z4mi3yjdqbgqtj@qk62ds53ozvo>
-References: <20241003095124.7611-1-vishnuocv@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kK3QJlZ7lc0wTkRVw8n4f7ZkXSfQDSDcqsa0S/5gUQki1t7pcnHMgdLpwmTmESD+rK058OlBnIOmT+CegWJxUAhr2XxAPRbGVUJjEo6lELxuyAXuUg9jYUdZfOQz2oqnVLbziFzG+K5DA0+da+yV/6HONfDyln+AtwUMEaRhrqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hyVjzgjr; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728027620; x=1759563620;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jeuOprsNrHYvDhtbr8K1Fr4rBYGsHng5OzWZolAVMD0=;
+  b=hyVjzgjrhOq2s07v10OyPeB2ZqvGKMWsEJbFOmlr6BJvU5u3JQifYHju
+   1tDLhQBVw/imqmuyt/Jgr0izIBjaQ4fOVIYA//gb/05wEe6oYSTnwsGb+
+   WPENJe99KOLykQklEDeaTesFOrOhC1MakqdrH9DBXvhXajmSU/CuNNQoe
+   t8Jh4iEJrL/ZMzfvjjDRs6idhuQF4nxC9EgB5G1+cfgcdven0qPeGRD8m
+   lGbQtUTOCAiJPMBgm6GRypNrft+o5b39PNOX4H+wPYVudhmyiLqDCqG3V
+   sIkns2IPwFDkIp7qVsnjbW/B8wcc66gUR4/QC1wCzLtzVAx9g8CkZUDJC
+   Q==;
+X-CSE-ConnectionGUID: z+2r0mhWSDu33Gm0Z3+UhA==
+X-CSE-MsgGUID: DYgDRTGxTVanCS0NWhBIvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="49773667"
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="49773667"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 00:40:19 -0700
+X-CSE-ConnectionGUID: X57WiVEhQPqNeRPsnrVrMQ==
+X-CSE-MsgGUID: oupDzxnnRnqC/EiV8myw8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="105368585"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 04 Oct 2024 00:40:09 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swcv0-0001Ku-0l;
+	Fri, 04 Oct 2024 07:40:06 +0000
+Date: Fri, 4 Oct 2024 15:39:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= via B4 Relay <devnull+duje.mihanovic.skole.hr@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+	Lubomir Rintel <lkundrak@v3.sk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v13 10/12] arm64: Kconfig.platforms: Add config for
+ Marvell PXA1908 platform
+Message-ID: <202410041521.flkiRLrV-lkp@intel.com>
+References: <20241001-pxa1908-lkml-v13-10-6b9a7f64f9ae@skole.hr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,296 +96,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241003095124.7611-1-vishnuocv@gmail.com>
+In-Reply-To: <20241001-pxa1908-lkml-v13-10-6b9a7f64f9ae@skole.hr>
 
+Hi Duje,
 
-IIRC, we already saw a previous version of this patch on the list. So
-you are missing a v2, and the changelog after the first "---".
+kernel test robot noticed the following build warnings:
 
-All in all, the subject should be:
-[PATCH v2] HID: lenovo: Support for TP-X12-TAB-1/2 Kbd Fn keys
+[auto build test WARNING on 9852d85ec9d492ebef56dc5f229416c925758edc]
 
-(dropped the "that use HID raw events" to make it more concise, and
-split hid-lenovo into "HID: lenovo").
+url:    https://github.com/intel-lab-lkp/linux/commits/Duje-Mihanovi-via-B4-Relay/clk-mmp-Switch-to-use-struct-u32_fract-instead-of-custom-one/20241001-224233
+base:   9852d85ec9d492ebef56dc5f229416c925758edc
+patch link:    https://lore.kernel.org/r/20241001-pxa1908-lkml-v13-10-6b9a7f64f9ae%40skole.hr
+patch subject: [PATCH v13 10/12] arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
+config: arm64-kismet-CONFIG_I2C_GPIO-CONFIG_VIDEO_MMP_CAMERA-0-0 (https://download.01.org/0day-ci/archive/20241004/202410041521.flkiRLrV-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20241004/202410041521.flkiRLrV-lkp@intel.com/reproduce)
 
-If you are happy with my remarks below, please send a v3 with the
-subject following the pattern from above.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410041521.flkiRLrV-lkp@intel.com/
 
-On Oct 03 2024, Vishnu Sankar wrote:
-> Fn Keys like Mic mute, Power Modes/Airplane mode,Selective
-> screenshot/Pickup Phone, KBD Backlight, Display mode and
-> star/Favourites is emitted as HID raw events in X12 Tab1 and Tab2.
-> This support has been added.
-> 
-> Thinkpad X12 TAB 2 and TAB 1 Folio keyboard's raw events will get
-> detected as Fn keys with this patch.
-> 
-> Default fn_lock state for these Keyboards are OFF.
-> 
-> Other than these changes, we follow TP10UKBD's processes.
-> 
-> Tested on X12 Tab 2.
-> 
-> Signed-off-by: Vishnu Sankar <vishnuocv@gmail.com>
-> Signed-off-by: Vishnu Sankar <vsankar@lenovo.com>
-> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> ---
->  drivers/hid/hid-lenovo.c | 122 ++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 121 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
-> index 3b0c779ce8f7..86ce6152429d 100644
-> --- a/drivers/hid/hid-lenovo.c
-> +++ b/drivers/hid/hid-lenovo.c
-> @@ -31,12 +31,21 @@
->  #include <linux/input.h>
->  #include <linux/leds.h>
->  #include <linux/workqueue.h>
-> +#include <linux/platform_profile.h>
->  
->  #include "hid-ids.h"
->  
->  /* Userspace expects F20 for mic-mute KEY_MICMUTE does not work */
->  #define LENOVO_KEY_MICMUTE KEY_F20
->  
-> +/* HID raw events for ThinkPas X12 Tabs*/
-> +#define TP_X12_RAW_HOTKEY_FN_F4		0x000200
-> +#define TP_X12_RAW_HOTKEY_FN_F8		0x100038
-> +#define TP_X12_RAW_HOTKEY_FN_F10	0x080000
-> +#define TP_X12_RAW_HOTKEY_FN_F12	0x040000
-> +#define TP_X12_RAW_HOTKEY_FN_SPACE	0x100018
-> +#define TP_X12_RAW_HOTKEY_FN_F7		0x080013
-> +
->  struct lenovo_drvdata {
->  	u8 led_report[3]; /* Must be first for proper alignment */
->  	int led_state;
-> @@ -71,6 +80,14 @@ struct lenovo_drvdata {
->  #define TP10UBKBD_LED_OFF		1
->  #define TP10UBKBD_LED_ON		2
->  
-> +/* Function to report raw_events as key events*/
-> +static inline void report_key_event(struct input_dev *input, int keycode)
-> +{
-> +	input_report_key(input, keycode, 1);
-> +	input_report_key(input, keycode, 0);
-> +	input_sync(input);
-> +}
-> +
->  static int lenovo_led_set_tp10ubkbd(struct hid_device *hdev, u8 led_code,
->  				    enum led_brightness value)
->  {
-> @@ -472,6 +489,8 @@ static int lenovo_input_mapping(struct hid_device *hdev,
->  	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
->  		return lenovo_input_mapping_tp10_ultrabook_kbd(hdev, hi, field,
->  							       usage, bit, max);
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB:
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB2:
->  	case USB_DEVICE_ID_LENOVO_X1_TAB:
->  		return lenovo_input_mapping_x1_tab_kbd(hdev, hi, field, usage, bit, max);
->  	default:
-> @@ -581,6 +600,8 @@ static ssize_t attr_fn_lock_store(struct device *dev,
->  	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
->  		lenovo_features_set_cptkbd(hdev);
->  		break;
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB:
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB2:
->  	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
->  	case USB_DEVICE_ID_LENOVO_X1_TAB:
->  		ret = lenovo_led_set_tp10ubkbd(hdev, TP10UBKBD_FN_LOCK_LED, value);
-> @@ -678,9 +699,63 @@ static const struct attribute_group lenovo_attr_group_cptkbd = {
->  	.attrs = lenovo_attributes_cptkbd,
->  };
->  
-> +/* Function to handle Lenovo Thinkpad TAB X12's HID raw inputs for fn keys*/
-> +static int lenovo_raw_event_TP_X12_tab(struct hid_device *hdev, u32 raw_data)
-> +{
-> +	struct hid_input *hidinput;
-> +	struct input_dev *input = NULL;
-> +
-> +	/* Iterate through the associated inputs to find the correct input device */
-> +	list_for_each_entry(hidinput, &hdev->inputs, list) {
-> +		input = hidinput->input;
-> +		if (input)
-> +			break;  /* Use the first valid input device */
-> +	}
-> +
-> +	switch (raw_data) {
-> +		/* fn-F20 being used here for MIC mute*/
-> +	case TP_X12_RAW_HOTKEY_FN_F4:
-> +		report_key_event(input, LENOVO_KEY_MICMUTE);
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for I2C_GPIO when selected by VIDEO_MMP_CAMERA
+   WARNING: unmet direct dependencies detected for I2C_GPIO
+     Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (GPIOLIB [=n] || COMPILE_TEST [=n])
+     Selected by [y]:
+     - VIDEO_MMP_CAMERA [=y] && MEDIA_SUPPORT [=y] && MEDIA_PLATFORM_SUPPORT [=y] && MEDIA_PLATFORM_DRIVERS [=y] && V4L_PLATFORM_DRIVERS [=y] && I2C [=y] && VIDEO_DEV [=y] && (ARCH_MMP [=y] || COMPILE_TEST [=n]) && COMMON_CLK [=y]
 
-Now I'm puzzled: you are reporting in this function keys that you never
-declared in the input device.
-
-So how can you get the events in userspace, they should be filtered out
-by the input stack?
-
-This applies to all the reported keys from here.
-
-Are you sure using raw events is the correct approach?
-
-Also, in other words: could you please share a full hid-recorder output
-of the device when you press the keys so I understand where the events
-are mapped?
-
-> +		return 1;
-> +		/* Power-mode or Airplane mode will be called based on the device*/
-> +	case TP_X12_RAW_HOTKEY_FN_F8:
-> +		/*
-> +		 * TP X12 TAB uses Fn-F8 calls Airplanemode
-> +		 * Whereas TP X12 TAB2 uses Fn-F8 for toggling
-> +		 * Power modes
-> +		 */
-> +		(hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB) ?
-> +			report_key_event(input, KEY_RFKILL) :
-> +			platform_profile_cycle();
-> +		return 1;
-> +	case TP_X12_RAW_HOTKEY_FN_F10:
-> +		/* TAB1 has PICKUP Phone and TAB2 use Snipping tool*/
-> +		(hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB) ?
-> +		report_key_event(input, KEY_PICKUP_PHONE) :
-> +		report_key_event(input, KEY_SELECTIVE_SCREENSHOT);
-> +		return 1;
-> +	case TP_X12_RAW_HOTKEY_FN_F12:
-> +		/* BookMarks/STAR key*/
-> +		report_key_event(input, KEY_BOOKMARKS);
-> +		return 1;
-> +	case TP_X12_RAW_HOTKEY_FN_SPACE:
-> +		/* Keyboard LED backlight toggle*/
-> +		report_key_event(input, KEY_KBDILLUMTOGGLE);
-> +		return 1;
-> +	case TP_X12_RAW_HOTKEY_FN_F7:
-> +		/* DISPLAY switching when connecting to external monitors*/
-> +		report_key_event(input, KEY_SWITCHVIDEOMODE);
-> +		return 1;
-> +	default:
-> +		break;
-> +	}
-> +	return 0;
-> +}
-> +
->  static int lenovo_raw_event(struct hid_device *hdev,
->  			struct hid_report *report, u8 *data, int size)
->  {
-> +	u32 raw_data;
->  	/*
->  	 * Compact USB keyboard's Fn-F12 report holds down many other keys, and
->  	 * its own key is outside the usage page range. Remove extra
-> @@ -695,6 +770,32 @@ static int lenovo_raw_event(struct hid_device *hdev,
->  		data[2] = 0x01;
->  	}
->  
-> +	/*
-> +	 * Lenovo TP X12 Tab KBD's Fn+XX is HID raw data defined. Report ID is 0x03
-> +	 * For eg: Raw data received for MIC mute is 0x03000200.
-> +	 */
-> +	if (unlikely((hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB
-> +			|| hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB2)
-> +			&& size >= 3)) {
-> +		/*
-> +		 * data[0] is report ID and is same for all 4byte raw_events from this KBD
-> +		 * for eg: Fn+F8 0x03,0x10,0x00,0x38
-> +		 * report ID here for most of the keys are 0x03.
-> +		 */
-> +		if (report->id == 0x03)
-> +			raw_data = (data[1] << 16) | (data[2] << 8) | data[3];
-> +		/*
-> +		 * For some Keys the raw data is 6 bytes long but the last 3 bytes
-> +		 * will be always Zeros. There is no report-id documented.
-> +		 * For eg: for Fn+F7: 0x08,0x00,0x13,0x00,0x00,0x00.
-> +		 * In other words the last 3 bytes are dummy for now.
-> +		 */
-> +		else
-> +			raw_data = (data[0] << 16) | (data[1] << 8) | data[2];
-
-This seems error prone: in one case you takes bytes 1-3, and the other
-0-2.
-Why not using all the time 0-4, and change your #defines?
-
-Plus using 4 bytes means you can use le32_to_cpu(data) directly (if I'm
-not wrong).
-
-Which also means that raw_data can be skipped entirely with the
-following below:
-
-lenovo_raw_event_TP_X12_tab(hdev, le32_to_cpu(data));
-
-> +
-> +		/* Calling function to generate Key events */
-> +		lenovo_raw_event_TP_X12_tab(hdev, raw_data);
-> +	}
->  	return 0;
->  }
->  
-> @@ -774,6 +875,8 @@ static int lenovo_event(struct hid_device *hdev, struct hid_field *field,
->  	case USB_DEVICE_ID_LENOVO_TPIIUSBKBD:
->  	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
->  		return lenovo_event_cptkbd(hdev, field, usage, value);
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB:
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB2:
->  	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
->  	case USB_DEVICE_ID_LENOVO_X1_TAB:
->  		return lenovo_event_tp10ubkbd(hdev, field, usage, value);
-> @@ -1054,6 +1157,8 @@ static int lenovo_led_brightness_set(struct led_classdev *led_cdev,
->  	case USB_DEVICE_ID_LENOVO_TPKBD:
->  		lenovo_led_set_tpkbd(hdev);
->  		break;
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB:
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB2:
->  	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
->  	case USB_DEVICE_ID_LENOVO_X1_TAB:
->  		ret = lenovo_led_set_tp10ubkbd(hdev, tp10ubkbd_led[led_nr], value);
-> @@ -1239,8 +1344,15 @@ static int lenovo_probe_tp10ubkbd(struct hid_device *hdev)
->  	 * We cannot read the state, only set it, so we force it to on here
->  	 * (which should be a no-op) to make sure that our state matches the
->  	 * keyboard's FN-lock state. This is the same as what Windows does.
-> +	 *
-> +	 * For X12 TAB and TAB2, the default windows behavious Fn-lock Off.
-> +	 * Adding additional check to ensure the behaviour in case of
-> +	 * Thinkpad X12 Tabs.
->  	 */
-> -	data->fn_lock = true;
-> +
-> +	data->fn_lock = !(hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB ||
-> +			hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB2);
-
-If that list grows too much, we will probably have to rely on
-.driver_data. But something for later IMO.
-
-> +
->  	lenovo_led_set_tp10ubkbd(hdev, TP10UBKBD_FN_LOCK_LED, data->fn_lock);
->  
->  	ret = sysfs_create_group(&hdev->dev.kobj, &lenovo_attr_group_tp10ubkbd);
-> @@ -1284,6 +1396,8 @@ static int lenovo_probe(struct hid_device *hdev,
->  	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
->  		ret = lenovo_probe_cptkbd(hdev);
->  		break;
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB:
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB2:
->  	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
->  	case USB_DEVICE_ID_LENOVO_X1_TAB:
->  		ret = lenovo_probe_tp10ubkbd(hdev);
-> @@ -1370,6 +1484,8 @@ static void lenovo_remove(struct hid_device *hdev)
->  	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
->  		lenovo_remove_cptkbd(hdev);
->  		break;
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB:
-> +	case USB_DEVICE_ID_LENOVO_X12_TAB2:
->  	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
->  	case USB_DEVICE_ID_LENOVO_X1_TAB:
->  		lenovo_remove_tp10ubkbd(hdev);
-> @@ -1421,6 +1537,10 @@ static const struct hid_device_id lenovo_devices[] = {
->  	 */
->  	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
->  		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_X1_TAB) },
-> +	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
-> +		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_X12_TAB) },
-> +	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
-> +		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_X12_TAB2) },
->  	{ }
->  };
->  
-
-Cheers,
-Benjamin
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
