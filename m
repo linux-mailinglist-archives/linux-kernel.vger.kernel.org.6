@@ -1,172 +1,127 @@
-Return-Path: <linux-kernel+bounces-350484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FDCC9905D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:20:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E63E9905DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88B711F22911
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:20:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC19283351
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD29215F6D;
-	Fri,  4 Oct 2024 14:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADF6216A26;
+	Fri,  4 Oct 2024 14:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E8TF5Opa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="r0IIr95F"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6238E20FA95;
-	Fri,  4 Oct 2024 14:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAF420FA95
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728051638; cv=none; b=j8RPy47ET+lcCVi+iMBd4AyqxbGn5oOJ303I9cvoyXbFHSuR8KP/fMN9+bEBUsi0f0ixikux/uF54P7AFranrnGTB8fpfZWt8AJUMIXKGPgz9Nil0ne9bRBCMvuszg2xd1ew9KggNIJpgdLx2aeV8ShTYRJXWzyQzEK4wtIhpbk=
+	t=1728051666; cv=none; b=sPEb+aksm7Sq6RCTMcMfSlWA17CQbLY9J+PVvNxuE9mnN6gMTrmbXKbR6v8HQUR3izMR1Vi2taPtGwNO5K3Otc/n+eMhlUmhhFTGAJpg8S/dozJ4JEKEX/uniakhyDAarrLdVH7STnpgJlTVe8dtm9B/f1pnDbTvJKf9WqkdRXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728051638; c=relaxed/simple;
-	bh=F7cWzNK/Hgdxmp1x/W631SvUiQj8lGT6Xv2d4USjyO8=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=bk4KjgFNzP3kdR8i+fBab5hQ56augAtBtFTDfrRfrf2mW/S1pqYsZ76FbfSTjP55aFRA1NAYIQeuJ189rzlc2Zkg14Rqa5mbBGZ8eXn84qgo+C7Pl2oWKuvpYjXcT0YqB3ivDyiocA5V7ymqQENMNtHqShmCcQ01c0hmRb1OVfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E8TF5Opa; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728051636; x=1759587636;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=F7cWzNK/Hgdxmp1x/W631SvUiQj8lGT6Xv2d4USjyO8=;
-  b=E8TF5OpaDwQRh8PQfYamYfyj4/XevxUI+UyK+M8jWovqxMvGeL7dob+m
-   aQ7YtgqHmqkhRbU95QkwWjboHg88FVeIQ66Tpz0Lhizg3v+xA2IQYBbGu
-   hr1b/mTMOWbNQNPl0+89GDFmLR76zxdvvaoqDEmFRAxlk0Kngt334vppY
-   WxlDvgfoX7U7VYlSX0WA8Ilu5jSA7PRb74+WDxZWWvZLfAmTnPaNIzz6L
-   nbnfkojdhy78BxtfcWmL1UphcWz1gWleFmltInveUxNci+aQs1GqdyyR2
-   EXuPcoHGlcDbVkp1PNbCRK4L5uwfbFOb7lZpc+UAapMxq3fpzzwNc1NIY
-   A==;
-X-CSE-ConnectionGUID: CN3QFgeRRzCuukUjUueHVw==
-X-CSE-MsgGUID: ryoHwIhuT5e9MOqG2v3KlQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="37844421"
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="37844421"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 07:20:35 -0700
-X-CSE-ConnectionGUID: PWQctawlQEqABaPfO7r8LQ==
-X-CSE-MsgGUID: TkGOcvxhRhSUbTVgh9CB7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="78710900"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.148])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 07:20:31 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 4 Oct 2024 17:20:27 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
-    peternewman@google.com, babu.moger@amd.com, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 11/13] selftests/resctrl: Use cache size to determine
- "fill_buf" buffer size
-In-Reply-To: <ad51e32e5d4f8d99b691e7269e5179228e6a13a7.1726164080.git.reinette.chatre@intel.com>
-Message-ID: <ea3aca92-1571-7220-6211-6424de0b21da@linux.intel.com>
-References: <cover.1726164080.git.reinette.chatre@intel.com> <ad51e32e5d4f8d99b691e7269e5179228e6a13a7.1726164080.git.reinette.chatre@intel.com>
+	s=arc-20240116; t=1728051666; c=relaxed/simple;
+	bh=dJcgLRow2aaQQBfKxTUsuhyTu7/BG3s5t9lTT/eMid8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PDqPAOdcrxCQ20yrLqvrnjBhhtswZuruP5z79slMyEBmZ4Bmz3c10aHro6NnAe4RmlIqggaI3pqshHx/AR6pHcJhmsWh7yEJ9+EZHXL0sAdWR3Rk/sOeldAqTNJYQ1V5CxTuJs+KUjVFNL1Zi1CLdw9Mgmwpz4q9T1xQ0CpNktY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=r0IIr95F; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42f56ad2afaso27744205e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 07:21:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728051663; x=1728656463; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vKSqvrpEqeBm32KxHqmFUKeU0x5YA9JFbesDhu6KpkQ=;
+        b=r0IIr95FQt0fQcuC5vL94FxKBU3HUE0PwniQx/3zMT+Wpa3VUpv+jMaiNK6rVW5vwr
+         aDCG1jrOqvNlqQlhroyFxzAE8IcgfzxwCquTWX8Kw/FvNo4ZzjeFhmyEWH2QKd1c1ugT
+         cpaRy2/LdPzzuEqOr4i4fTkltaJFebBBzXmOwlVrPpS7XhNhjA4+OmzyRbPNLbb+2I3U
+         pHy+4OCHur0rE2BWWgwcKrRsUm/i+f+EEjF0qcYhZsL/0V8ln3NPRg7g9kZ3dKrjO1T7
+         HKQdeg37ZCyGH4MW1n8xaNqW/fq65j1F+N4b5pwB6/cfXT5ePuwsUj94Z4SwmVx+Lqv0
+         2jKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728051663; x=1728656463;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vKSqvrpEqeBm32KxHqmFUKeU0x5YA9JFbesDhu6KpkQ=;
+        b=eh/ZM/pDPamG1vCA/q4ZtQNG8vLVftlCnHf9pnYmOTKaXJyRu/Zk3vUeK1UkpfFiq2
+         LI09HPn4DrLzmuvvY1Ioi1MFBoTdSZMleEzhF+kMzEgVQoWfia98C2WnGLc2POjLwgIZ
+         cu+AddZyCvAy5c0At6HO+nEIoTKwO1L2SuEHWSvGUEga1WpG4H5DjonZ6p7RQiU/3bxz
+         j0eYnIkKtZn1YvvFlXdMasS+Vhj5out7DrfAAAvebxpyaDmbBRNBs4fLiruZlPQvn8wC
+         hD+SiIb6EjF28fx431BshuvR0XHOGYeJrA31CeSO4v5XByUdyuvQn1u45MkH8ElmNUDc
+         T3Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWGTBpWk4q6EWU+g1KTi/51/BSHwkZtH48vyFVaDWteIs0+q1bCwDXDFxsuJ8fBm8+Rd3nKYUyVZV+05hk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiXapwEN5yqKb4TtJPxxv9YoUNY24lCxBXIjtmVVX09nDb+goy
+	FcqV9d8uhrKWke/+LNrzpJ67kR7OeSa/p0aoTFrVWTNFPYnbOWSdMVcesC6Qe4T99thLIOoZtM6
+	7
+X-Google-Smtp-Source: AGHT+IHWgiHQFvysKVnpOzNkinC2CjZNNoOI4K/L06cIjvNqoUz6Mwnu+SLA25Rjpn5vC58pBeVYrQ==
+X-Received: by 2002:a05:600c:3ba9:b0:42c:ba83:3f00 with SMTP id 5b1f17b1804b1-42f85a6e0c0mr30150145e9.1.1728051662841;
+        Fri, 04 Oct 2024 07:21:02 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:80ea:d045:eb77:2d3b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b24003sm16771995e9.21.2024.10.04.07.21.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 07:21:02 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio fixes for v6.12-rc2
+Date: Fri,  4 Oct 2024 16:21:00 +0200
+Message-ID: <20241004142100.53097-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1727247519-1728051627=:957"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
---8323328-1727247519-1728051627=:957
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Linus,
 
-On Thu, 12 Sep 2024, Reinette Chatre wrote:
+Please pull the following set of fixes for the next RC. Details are in
+the signed tag.
 
-> By default the MBM and MBA tests use the "fill_buf" benchmark to
-> read from a buffer with the goal to measure the memory bandwidth
-> generated by this buffer access.
->=20
-> Care should be taken when sizing the buffer used by the "fill_buf"
-> benchmark. If the buffer is small enough to fit in the cache then
-> it cannot be expected that the benchmark will generate much memory
-> bandwidth. For example, on a system with 320MB L3 cache the existing
-> hardcoded default of 250MB is insufficient.
->=20
-> Use the measured cache size to determine a buffer size that can be
-> expected to trigger memory access while keeping the existing default
-> as minimum that has been appropriate for testing so far.
->=20
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-> ---
-> Changes since V1:
-> - Ensure buffer is at least double L3 cache size. (Ilpo)
-> - Support user override of default buffer size. (Ilpo)
-> ---
->  tools/testing/selftests/resctrl/mba_test.c | 8 +++++++-
->  tools/testing/selftests/resctrl/mbm_test.c | 8 +++++++-
->  2 files changed, 14 insertions(+), 2 deletions(-)
->=20
-> diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/s=
-elftests/resctrl/mba_test.c
-> index 7e43056c8737..d8d9637c1951 100644
-> --- a/tools/testing/selftests/resctrl/mba_test.c
-> +++ b/tools/testing/selftests/resctrl/mba_test.c
-> @@ -182,7 +182,13 @@ static int mba_run_test(const struct resctrl_test *t=
-est, const struct user_param
->  =09=09fill_buf.memflush =3D uparams->fill_buf->memflush;
->  =09=09param.fill_buf =3D &fill_buf;
->  =09} else if (!uparams->benchmark_cmd[0]) {
-> -=09=09fill_buf.buf_size =3D DEFAULT_SPAN;
-> +=09=09unsigned long cache_total_size =3D 0;
-> +
-> +=09=09ret =3D get_cache_size(uparams->cpu, "L3", &cache_total_size);
-> +=09=09if (ret)
-> +=09=09=09return ret;
-> +=09=09fill_buf.buf_size =3D cache_total_size * 2 > DEFAULT_SPAN ?
-> +=09=09=09=09    cache_total_size * 2 : DEFAULT_SPAN;
->  =09=09fill_buf.memflush =3D 1;
->  =09=09param.fill_buf =3D &fill_buf;
->  =09}
-> diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/s=
-elftests/resctrl/mbm_test.c
-> index b1f03a73333f..7635ee6b9339 100644
-> --- a/tools/testing/selftests/resctrl/mbm_test.c
-> +++ b/tools/testing/selftests/resctrl/mbm_test.c
-> @@ -149,7 +149,13 @@ static int mbm_run_test(const struct resctrl_test *t=
-est, const struct user_param
->  =09=09fill_buf.memflush =3D uparams->fill_buf->memflush;
->  =09=09param.fill_buf =3D &fill_buf;
->  =09} else if (!uparams->benchmark_cmd[0]) {
-> -=09=09fill_buf.buf_size =3D DEFAULT_SPAN;
-> +=09=09unsigned long cache_total_size =3D 0;
-> +
-> +=09=09ret =3D get_cache_size(uparams->cpu, "L3", &cache_total_size);
-> +=09=09if (ret)
-> +=09=09=09return ret;
-> +=09=09fill_buf.buf_size =3D cache_total_size * 2 > DEFAULT_SPAN ?
-> +=09=09=09=09    cache_total_size * 2 : DEFAULT_SPAN;
->  =09=09fill_buf.memflush =3D 1;
->  =09=09param.fill_buf =3D &fill_buf;
->  =09}
->=20
+Bartosz
 
-It has a bit of code duplication feel in it so I'd consider adding=20
-something like ssize_t get_default_span() (perhaps there exists a better=20
-name for it that is not "span" based). Also DEFAULT_SPAN is no longer
-truly the default span.
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-But neither is the end of the world as is...
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.12-rc2
 
---=20
- i.
+for you to fetch changes up to 7b99b5ab885993bff010ebcd93be5e511c56e28a:
 
+  gpiolib: Fix potential NULL pointer dereference in gpiod_get_label() (2024-10-03 20:51:47 +0200)
 
---8323328-1727247519-1728051627=:957--
+----------------------------------------------------------------
+gpio fixes for v6.12-rc2
+
+- fix a potential NULL-pointer dereference in gpiolib core
+- fix a probe() regression from the v6.12 merge window and an older bug
+  leading to missed interrupts in gpio-davinci
+
+----------------------------------------------------------------
+Emanuele Ghidoli (1):
+      gpio: davinci: fix lazy disable
+
+Lad Prabhakar (1):
+      gpiolib: Fix potential NULL pointer dereference in gpiod_get_label()
+
+Vignesh Raghavendra (1):
+      gpio: davinci: Fix condition for irqchip registration
+
+ drivers/gpio/gpio-davinci.c | 10 +++++-----
+ drivers/gpio/gpiolib.c      |  4 ++--
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
