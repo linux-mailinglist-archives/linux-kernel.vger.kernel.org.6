@@ -1,139 +1,188 @@
-Return-Path: <linux-kernel+bounces-350597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0C3990750
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:23:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D32F990754
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179331C20DE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:23:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32843B24A4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB91E1AA79E;
-	Fri,  4 Oct 2024 15:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947761C3032;
+	Fri,  4 Oct 2024 15:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I7LxE/XT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psX8SVor"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52A71D9A65;
-	Fri,  4 Oct 2024 15:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0401AA785;
+	Fri,  4 Oct 2024 15:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728055394; cv=none; b=Mn2grAmHhilpREtUHSQLpoxvqzBX0Pa2nVu8weyjOBTUpRpfrpNiPspuS4er36qv9vVCSfxtca/vxzQoCLxjD/J0WltJ6+I9NWWNv7m7i/+wPHWmj9Yi/K8C1Qvu/mvwofjqhWp5osFUKnUDH9V4mvMvY4kYWSTFYQZUrb1lRmQ=
+	t=1728055403; cv=none; b=jiMWaiWokDsd1bUawxC8fNaEfKZ80ZHhdKGeef/49UlZiwPycU9Epg+HrL7/6iHGeiv6C5MOR8SE+HQon6lwhHWRrvgY8yNaA+ozBMxMMzVtVZbl5iFf1jA4+UvqCqwaQgrd9SEKtExWNt1bAzct5Xnpr9LTzMZNML+YRv90OSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728055394; c=relaxed/simple;
-	bh=gB0lccy7osxLIluMlYyLJbXzP5wnHbf05pD8Z31ateg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YQWLDrQwjPI5Z2kG18u8WOGGmdpU5jdfThSMXe+1YU0faA6LRSF2YvzaTa3sG+gkhwEVzB0UgzcDrT4wYSF7XT21hfeFubH9O8tAiUzaENnUQbgOPFV3W7n92VBP3JYb7h+0RkI49wNcW0x0uSPxkEUBjrkxfP1In6gpiESvnsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I7LxE/XT; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728055393; x=1759591393;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=gB0lccy7osxLIluMlYyLJbXzP5wnHbf05pD8Z31ateg=;
-  b=I7LxE/XT8x59YcfSMk9oQb4Dyrc/Fnn4NmrOp3X2+5VoyZ+lbB8FXdId
-   P2w15fezUzT6tPVsT+t27NMoSu3ijlp8TspBbu3CRB0/d+0m/iMjUx2OK
-   HaNrwhHy11rGCJ+oaiRCZ3+aUEeufPQjQGxCB7zhM00nePt3xsnOlWHdV
-   BFb4iSRzR3pzfow5d0WM77enNbd3h0FHdNRyy9xhBkbcnBRejzLPHbjGi
-   D7nkwImV+KLtJp5VzO3aU1783vghruK4F/qRTpw/Pa9J4Kt5sgWpm303X
-   L/9JAIL6unCjPYxNBajTPyi/shXbWK8hASgxBtCQHPmhbY4BLeYYR2Nzn
-   A==;
-X-CSE-ConnectionGUID: HJo4rwpIQ4G57zeKSDGtTw==
-X-CSE-MsgGUID: AwBLi4k6RQaWEHbivOed3w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="27411425"
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="27411425"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 08:23:12 -0700
-X-CSE-ConnectionGUID: mhsfSZS2Sb+NlcD7qTdMFQ==
-X-CSE-MsgGUID: w8c1Px62TSmCZ4yZPMIxZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
-   d="scan'208";a="105476429"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.148])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 08:23:08 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Lukas Wunner <lukas@wunner.de>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	s=arc-20240116; t=1728055403; c=relaxed/simple;
+	bh=YPKJOA4O7l7qcf2lWUG6w4SHiaFgeMtmozI84gKNNwQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sihr3N/dcBImj54VUZ4Jdafp08wyQGRMQrYh6XEFVpuBZsJ8xBgUuteWrDC1kMbWJYIFrxdJbOm6x6zgwN+YOpMtv5jyBDmwZKhOjJ6UQ7k8+4oh1hpEnRrRQ7Tu+3be3lf3oGX2pEx55GIXrOTtEruEaQAUmuLsSbinmuSf9bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psX8SVor; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EA65C4CEC6;
+	Fri,  4 Oct 2024 15:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728055402;
+	bh=YPKJOA4O7l7qcf2lWUG6w4SHiaFgeMtmozI84gKNNwQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=psX8SVorWDHQsla9SmS6RSdD6W4MdM3Xgtbzy158JWRlIzVLzYc31F+nvYC33YdkF
+	 aDuGk3D0qUElsn0OM0rNEOkRLVI/qKnY3mAp9jPn4td6MeBPsFabHVEVIbU4+AotC2
+	 YVz1+mvec/JGb4jWZQtC3n84Mx8W80LfivnzpZ4r6FYBuT+IQ/lgSsYst7lKu2x3bA
+	 vNjmaQu7ULcVZOhohsZy/kmm0QuA5yCK5PoZoQFVpv5U34DaThddKvbwsa1NezzBzJ
+	 wzCmq88ARFCXRlTSFRn6yYuBV0plZs+T9D7XijYJgrlmE5sRkrUgSTNhVoOU/JHMeN
+	 0lUMF9fbffsQA==
+Date: Fri, 4 Oct 2024 16:23:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Parth Pancholi <parth.pancholi@toradex.com>,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 1/1] PCI: Cleanup convoluted logic in pci_create_slot()
-Date: Fri,  4 Oct 2024 18:22:40 +0300
-Message-Id: <20241004152240.7926-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+Subject: Re: [PATCH v1 1/2] dt-bindings: usb: add TUSB73x0 PCIe
+Message-ID: <20241004-calzone-sitcom-0f755e244497@spud>
+References: <20241004124521.53442-1-francesco@dolcini.it>
+ <20241004124521.53442-2-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="V9FnVDEiPWdWijWG"
+Content-Disposition: inline
+In-Reply-To: <20241004124521.53442-2-francesco@dolcini.it>
 
-pci_create_slot() has an if () which can be made simpler by splitting
-it into two parts. In order to not duplicate error handling, add a new
-label too to handle kobj put.
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/slot.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+--V9FnVDEiPWdWijWG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
-index 0f87cade10f7..9ac5a4f26794 100644
---- a/drivers/pci/slot.c
-+++ b/drivers/pci/slot.c
-@@ -244,12 +244,13 @@ struct pci_slot *pci_create_slot(struct pci_bus *parent, int slot_nr,
- 	slot = get_slot(parent, slot_nr);
- 	if (slot) {
- 		if (hotplug) {
--			if ((err = slot->hotplug ? -EBUSY : 0)
--			     || (err = rename_slot(slot, name))) {
--				kobject_put(&slot->kobj);
--				slot = NULL;
--				goto err;
-+			if (slot->hotplug) {
-+				err = -EBUSY;
-+				goto put_slot;
- 			}
-+			err = rename_slot(slot, name);
-+			if (err)
-+				goto put_slot;
- 		}
- 		goto out;
- 	}
-@@ -278,10 +279,8 @@ struct pci_slot *pci_create_slot(struct pci_bus *parent, int slot_nr,
- 
- 	err = kobject_init_and_add(&slot->kobj, &pci_slot_ktype, NULL,
- 				   "%s", slot_name);
--	if (err) {
--		kobject_put(&slot->kobj);
--		goto err;
--	}
-+	if (err)
-+		goto put_slot;
- 
- 	down_read(&pci_bus_sem);
- 	list_for_each_entry(dev, &parent->devices, bus_list)
-@@ -296,6 +295,9 @@ struct pci_slot *pci_create_slot(struct pci_bus *parent, int slot_nr,
- 	kfree(slot_name);
- 	mutex_unlock(&pci_slot_mutex);
- 	return slot;
-+
-+put_slot:
-+	kobject_put(&slot->kobj);
- err:
- 	slot = ERR_PTR(err);
- 	goto out;
--- 
-2.39.5
+On Fri, Oct 04, 2024 at 02:45:20PM +0200, Francesco Dolcini wrote:
+> From: Parth Pancholi <parth.pancholi@toradex.com>
+>=20
+> Add device tree bindings for TI's TUSB73x0 PCIe-to-USB 3.0 xHCI
+> host controller. The controller supports software configuration
+> through PCIe registers, such as controlling the PWRONx polarity
+> via the USB control register (E0h).
+>=20
+> Similar generic PCIe-based bindings can be found as qcom,ath11k-pci.yaml
+> as an example.
+>=20
+> Datasheet: https://www.ti.com/lit/ds/symlink/tusb7320.pdf
+> Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> ---
+>  .../bindings/usb/ti,tusb73x0-pci.yaml         | 60 +++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/ti,tusb73x0-pci=
+=2Eyaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml b=
+/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
+> new file mode 100644
+> index 000000000000..bcb619b08ad3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
+> @@ -0,0 +1,60 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/usb/ti,tusb73x0-pci.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TUSB73x0 USB 3.0 xHCI Host Controller (PCIe)
+> +
+> +maintainers:
+> +  - Francesco Dolcini <francesco.dolcini@toradex.com>
+> +
+> +description:
+> +  TUSB73x0 USB 3.0 xHCI Host Controller via PCIe x1 Gen2 interface.
+> +  The TUSB7320 supports up to two downstream ports, the TUSB7340 support=
+s up
+> +  to four downstream ports.
+> +
+> +properties:
+> +  compatible:
+> +    const: pci104C,8241
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  ti,tusb7320-pwron-polarity-invert:
 
+To me, "polarity-invert" makes less sense than calling this "active-high"
+making the property a flag. active-low would then be the case where the
+property is not provided. Given you don't make the property required,
+what you've got here is effectively a flag anyway.
+
+> +    type: boolean
+> +    description:
+> +      Configure the polarity of the PWRONx# signals. When this is false,=
+ the PWRONx#
+> +      pins are active low and their internal pull-down resistors are ena=
+bled.
+> +      When this is true, the PWRONx# pins are active high and their inte=
+rnal pull-down
+> +      resistors are disabled.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pcie {
+> +        #address-cells =3D <3>;
+> +        #size-cells =3D <2>;
+> +
+> +        pcie@0 {
+> +            device_type =3D "pci";
+> +            reg =3D <0x0 0x0 0x0 0x0 0x0>;
+> +            bus-range =3D <0x01 0xff>;
+> +
+> +            #address-cells =3D <3>;
+> +            #size-cells =3D <2>;
+> +            ranges;
+> +
+> +            usb@0 {
+> +                  compatible =3D "pci104C,8241";
+> +                  reg =3D <0x10000 0x0 0x0 0x0 0x0>;
+> +
+> +                  ti,tusb7320-pwron-polarity-invert;
+> +            };
+> +        };
+> +    };
+> --=20
+> 2.39.5
+>=20
+
+--V9FnVDEiPWdWijWG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwAIZgAKCRB4tDGHoIJi
+0iKZAPwOgDB1PntynaUDOdzztbuk8/zlRa83qjqvGescVWCeYwD9EOsb+Z0uA6L7
+uDkFqdExio2QXQcUTLk40LbWu+1HCgw=
+=rDkZ
+-----END PGP SIGNATURE-----
+
+--V9FnVDEiPWdWijWG--
 
