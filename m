@@ -1,92 +1,194 @@
-Return-Path: <linux-kernel+bounces-351413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AB29910A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:32:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885519910A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 276541F26995
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:32:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED81B28276E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5FC231CAD;
-	Fri,  4 Oct 2024 20:32:04 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2696A231CB3;
+	Fri,  4 Oct 2024 20:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tuc+VHDc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D655231C85
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 20:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A82A22067;
+	Fri,  4 Oct 2024 20:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728073924; cv=none; b=SDHCvutGs8IYw2X512iJCG2dNOzAPya0zpOanu5Od8a89cX8TNsytiJBBdHSubuYy0czyKKE0OJogwMlklOQ3FP3sy36rD21eIR69pia4+B7Cri4JHqDu0hKEPv8+GeAvveDMlvqBZmTOvfceD8tKwOwtl6vLx8dKcbtm190Y1c=
+	t=1728074011; cv=none; b=RNuc2s1W/5E0bTYMXJwgpM6dgOsxgoyZW8EDjy4J/1vtupDiYAAFjhEjP438TbwA1KcTbOlkF+H+F+1zC4yIJIA7EJZH2Tbxn1WOPtTxWbaZVXlfeEz5jZsocQwvd8OZ1Emirv2gGQRABK1ZPVkW8IRjuwgGeQIXR1nZznUhXNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728073924; c=relaxed/simple;
-	bh=pAOJWKcAkZSHJFHYNrsqn/eifMqWpJCZtqP9xZ/YN78=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ODGmhWlqL0GAFF6S91S5aGk4bkGJI8Ki6P6YsdV0ipzL6feiHhd/KbO/9UJ/6sBkDvG6NKLwDfrcuOKXdQ6TxT7HLyvTQePCaRWhcNdh5Z9z4xu61m8Pln7xKZegjb04lMEelYO96RdpKo8CV/vnjXHvPFaPuDX7NYA22mAjQo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82cf261659bso348740739f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 13:32:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728073922; x=1728678722;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KDZj8ZR5eJTu8r8Erb1fCbFIz+gdsYbjMxv3CKzv28Q=;
-        b=qHLetZRLkduSJY61Hh5w8euFVeQgkllxTLLByaqgxDLCFOO9HOuIQeu0cy3db0u+M/
-         uScRCrCdkS8nvWxVujwo22ziUuaXlBcJsxFfggqCEAtp0h7egZTbU+jiA5mQ4qTFlLUg
-         beJaP6QR8SsG9IWxaVA17LVF5Uz3N6ETv9nbIEVg3hX0IownAy2grPNVMVyFB5g8SSSu
-         MZsepdHM48aovlPi8D45vwVdqZjrwI2zDqtfFniDoRIYsZwpcKWSj4niqU23IFBL1Nfu
-         snrUgk43mETgs5iJtve2S3agcpxVqbQQH+RrUvfIlDZbSP93rxnjzTOKm59lAE7NkXzg
-         JDfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYOxHpQw7VuivNAnaURVuMyCZEiicjiJ5oavwk3gANxylCBcxlm+/38gYpk94mPru2G40ZF5URjffF20Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3XVuN8ulVmrSDXdTPBJ0k4KadJ5proYegcS7EDZJG3VokSu+m
-	drCipeCHm0VC+cZthNII42vqy9PxPsnJ//ydNTDLITvjFjd4BjH9llKtSqh9TtdCELeMjHekENb
-	Hru5OVdSZNWFwtttIPd8gYOO9zsdAt08DAQS4lqQ0p7ORakMZh5lgbSU=
-X-Google-Smtp-Source: AGHT+IHjj2c1FkgKMosbzum83+wvJ2/rJlcK9Dy1o7ZkrzLNRM91dtnQeMacqcSCVNi+sxpnbqAjWJI6gKF2InuGTgRJs782GmWH
+	s=arc-20240116; t=1728074011; c=relaxed/simple;
+	bh=dgu2VTGNBz0Q3vaF2UYNqERBE89cxhqUTRShhpNWnp0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ucsB+2+MLtgEbJDgsty9mpokGAvTVIbj6j8aonGshyJ1eAbEnPoCaf2atW5sYDgkYOYLIDWM6ORMf7x1LkJB8ADfJ7lQVI0+RrjZiaew5cQO+ts2r/BiOmgFZKfjV+2VNwrKfqFLnGgcU6TfuIlJWsIZoW6xpXIATV+NnLOpevk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tuc+VHDc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10140C4CECE;
+	Fri,  4 Oct 2024 20:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728074011;
+	bh=dgu2VTGNBz0Q3vaF2UYNqERBE89cxhqUTRShhpNWnp0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tuc+VHDccH39CXrTezK0z2rbgd7J0q7dlmwsAy5dKNHgSYcKWuroaqSstMCjRJGKj
+	 GoUXDiv3QuvVYH7tGzSefGkkl0hCBVAroujlYjJI2CEw1kxtNxtIppLExKoXxf6XzR
+	 vWzRQOBaPh5Yp3Zj62ndrGyW2DwIKxhIoKx3IcolAe0vymm82NLtHDqp3kr9n+AZw+
+	 V6fXqz0jM4s6BtLx5B6gqHoGMPKMJpY9CdRb8HJpxY0dieJrAyJtKaMWxdDNr/tpcl
+	 oFfCtQznBihdAnN39VinI/Z2erzEZz5nRdl/z1q4nE4qI9/y42HhXba+Uf3KkQ83Py
+	 LZ+8CVk8j8Uug==
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-82cdc21b5d8so120174839f.3;
+        Fri, 04 Oct 2024 13:33:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6rAe04mtZgi6pZLiU/TjWvg67RFEkuHelOtG2afllAyskGh2aD2ZtaT3ioj5AFgsNtO4CQ9E0RAVrm/vH@vger.kernel.org, AJvYcCWe2nlSHwlhKtjAQMLGSAqT1ld+YFDswIbPvJdQlYjoYANpRjS2LHGX0LDAv1GW86uwQps=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6fkY5LSf/s8PXPT1eYlcJJ0gIFqsDqKGHo3l42h6jHKA79y7E
+	t7KX9U4pX9G9Q33BOjudToibmZ3l8VFGBiibCqYXxQxNi9oTfRIKnYyTi2TfFEY40+1WWkZOjPn
+	bjQk7REt8v4YhNnfhq3qncDG3h4U=
+X-Google-Smtp-Source: AGHT+IHKcUX7A7EqBxhx0p8LA2IErluMnPnMlNw7uAMVTmuO7e0uQR4F1tGjJKCmJfYI5Lh+nTutnwcr1eMdldwatRU=
+X-Received: by 2002:a05:6e02:144d:b0:3a3:3e1f:1168 with SMTP id
+ e9e14a558f8ab-3a375bb6c76mr40195255ab.17.1728074010416; Fri, 04 Oct 2024
+ 13:33:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c24:b0:3a3:68bc:a16d with SMTP id
- e9e14a558f8ab-3a375badf5fmr43211105ab.18.1728073922436; Fri, 04 Oct 2024
- 13:32:02 -0700 (PDT)
-Date: Fri, 04 Oct 2024 13:32:02 -0700
-In-Reply-To: <0000000000009afb860616fa87cf@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670050c2.050a0220.49194.049e.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] INFO: rcu detected stall in rt_sigreturn
-From: syzbot <syzbot+f87fd2bd13a4c9c5af8a@syzkaller.appspotmail.com>
-To: bp@alien8.de, bristot@kernel.org, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, juri.lelli@redhat.com, linux-kernel@vger.kernel.org, 
-	mingo@redhat.com, peterz@infradead.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de, vineeth@bitbyteword.org, x86@kernel.org
+References: <20241002180956.1781008-1-namhyung@kernel.org> <20241002180956.1781008-2-namhyung@kernel.org>
+In-Reply-To: <20241002180956.1781008-2-namhyung@kernel.org>
+From: Song Liu <song@kernel.org>
+Date: Fri, 4 Oct 2024 13:33:19 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4HLM=v=eGyT5F7epEKc_tfh=Y643wvkDOJRLdow-RWpg@mail.gmail.com>
+Message-ID: <CAPhsuW4HLM=v=eGyT5F7epEKc_tfh=Y643wvkDOJRLdow-RWpg@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 1/3] bpf: Add kmem_cache iterator
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot suspects this issue was fixed by commit:
+On Wed, Oct 2, 2024 at 11:09=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+[...]
+> +
+> +       mutex_lock(&slab_mutex);
+> +
+> +       /*
+> +        * Find an entry at the given position in the slab_caches list in=
+stead
 
-commit 5f6bd380c7bdbe10f7b4e8ddcceed60ce0714c6d
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Mon May 27 12:06:55 2024 +0000
+Nit: style of multi-line comment: "/* Find ...".
 
-    sched/rt: Remove default bandwidth control
+> +        * of keeping a reference (of the last visited entry, if any) out=
+ of
+> +        * slab_mutex. It might miss something if one is deleted in the m=
+iddle
+> +        * while it releases the lock.  But it should be rare and there's=
+ not
+> +        * much we can do about it.
+> +        */
+> +       list_for_each_entry(s, &slab_caches, list) {
+> +               if (cnt =3D=3D *pos) {
+> +                       /*
+> +                        * Make sure this entry remains in the list by ge=
+tting
+> +                        * a new reference count.  Note that boot_cache e=
+ntries
+> +                        * have a negative refcount, so don't touch them.
+> +                        */
+> +                       if (s->refcount > 0)
+> +                               s->refcount++;
+> +                       found =3D true;
+> +                       break;
+> +               }
+> +               cnt++;
+> +       }
+> +       mutex_unlock(&slab_mutex);
+> +
+> +       if (!found)
+> +               return NULL;
+> +
+> +       ++*pos;
+> +       return s;
+> +}
+> +
+> +static void kmem_cache_iter_seq_stop(struct seq_file *seq, void *v)
+> +{
+> +       struct bpf_iter_meta meta;
+> +       struct bpf_iter__kmem_cache ctx =3D {
+> +               .meta =3D &meta,
+> +               .s =3D v,
+> +       };
+> +       struct bpf_prog *prog;
+> +       bool destroy =3D false;
+> +
+> +       meta.seq =3D seq;
+> +       prog =3D bpf_iter_get_info(&meta, true);
+> +       if (prog)
+> +               bpf_iter_run_prog(prog, &ctx);
+> +
+> +       if (ctx.s =3D=3D NULL)
+> +               return;
+> +
+> +       mutex_lock(&slab_mutex);
+> +
+> +       /* Skip kmem_cache_destroy() for active entries */
+> +       if (ctx.s->refcount > 1)
+> +               ctx.s->refcount--;
+> +       else if (ctx.s->refcount =3D=3D 1)
+> +               destroy =3D true;
+> +
+> +       mutex_unlock(&slab_mutex);
+> +
+> +       if (destroy)
+> +               kmem_cache_destroy(ctx.s);
+> +}
+> +
+> +static void *kmem_cache_iter_seq_next(struct seq_file *seq, void *v, lof=
+f_t *pos)
+> +{
+> +       struct kmem_cache *s =3D v;
+> +       struct kmem_cache *next =3D NULL;
+> +       bool destroy =3D false;
+> +
+> +       ++*pos;
+> +
+> +       mutex_lock(&slab_mutex);
+> +
+> +       if (list_last_entry(&slab_caches, struct kmem_cache, list) !=3D s=
+) {
+> +               next =3D list_next_entry(s, list);
+> +               if (next->refcount > 0)
+> +                       next->refcount++;
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15678d80580000
-start commit:   48cf398f15fc Merge tag 'char-misc-6.9-rc5' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=85dbe39cf8e4f599
-dashboard link: https://syzkaller.appspot.com/bug?extid=f87fd2bd13a4c9c5af8a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=152c59fd180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112d3227180000
+What if next->refcount <=3D0? Shall we find next of next?
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: sched/rt: Remove default bandwidth control
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> +       }
+> +
+> +       /* Skip kmem_cache_destroy() for active entries */
+> +       if (s->refcount > 1)
+> +               s->refcount--;
+> +       else if (s->refcount =3D=3D 1)
+> +               destroy =3D true;
+> +
+> +       mutex_unlock(&slab_mutex);
+> +
+> +       if (destroy)
+> +               kmem_cache_destroy(s);
+> +
+> +       return next;
+> +}
+[...]
 
