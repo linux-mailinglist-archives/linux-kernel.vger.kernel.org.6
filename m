@@ -1,125 +1,90 @@
-Return-Path: <linux-kernel+bounces-351365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E32899100C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:16:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BADD4991014
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B250281DBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:16:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9281F273FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB1E1E1041;
-	Fri,  4 Oct 2024 19:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3CE1E105F;
+	Fri,  4 Oct 2024 19:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="inUKv3Il"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="NMvq8+dr"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F771DACA8;
-	Fri,  4 Oct 2024 19:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0029C1E1C02
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 19:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728071508; cv=none; b=d8HYPrJCuN0ZrwpKw+Gk/bIPqDUwkszatI2eHVrJ6TuQ3KVE5SNy7Q8t4QbWV5B1G7o/XYhran0hULmYORu5kMcfAEtNeIyTnFI/91o8Yp6I0LWLcJUW8soFk7+qSl8PzV9TJubNYvuQn3xNh4x4gVFQsRu7nAwe7dHDCciEJmg=
+	t=1728071645; cv=none; b=IFpdwyOIQdh1/7L/bgm/ahNoh2stig3XuJ9dICEC3sV4mFE6pH86hyVPXsxrsA7SdrslYMpny5KjvNTXWXqKm+hdzEyvjuCwt/Q+V87FOCVdaS9zVOiczeBwxls3hwOXJKjSwbw0W/5KVssffkD4muqMowHwa8e6rGf9dPFRS1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728071508; c=relaxed/simple;
-	bh=ZqMO7zV/SWnkUyAYpItW9rq9PNiumdMNfFXOCtoE3Ww=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VgMlEVFKLqkz3WRt33E/HZ5gr9Y4kDhtmMoV21xIM1avMsVfc7FmusM/ylxoK0KTVS3+C722+4rROBkSaT4jJj2X4oeGPY98T4E+tV0J0ny8Mn80XbraiU60re0vl0SpYBCt3cFbRpDUs9f4mR3fZAAD8Zqhj8FR9nbmXnscbpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=inUKv3Il; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728071507; x=1759607507;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ZqMO7zV/SWnkUyAYpItW9rq9PNiumdMNfFXOCtoE3Ww=;
-  b=inUKv3Il1XMEs9ApSPjhxenEBfPM2JigKPJ/kO+mvkcEgcH+DL7yo8Ba
-   bk5ClwrfBo99j9idrNJsmG96ttA88m6P+bID1mfITyKkTFLf9AeKMYhZY
-   eZCibtXWTerKQBGruV5WOj+1+BjvR3xbGVSzpYZ2Eu12GuLAAVP8coVDq
-   9b96PRgqnveGshfT7qsDHDNkQ2z8oh6Vui5AEE51RKJrx58jseZJkCFjH
-   YPXhTqN9i2JClY2vurDwZvX5rdV27wb9odtQYA8KQwERqmWEzXh2F1nKR
-   6fHg+dPdcmeOJd93FdBY68EvqRkq5CLimiknvjtj7vrFfVwcMrN6IDcRR
-   w==;
-X-CSE-ConnectionGUID: Dz7VbBv/QOm33cmSQPLwsg==
-X-CSE-MsgGUID: sZWr9K83RUWtUUtcC944UQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="27451695"
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="27451695"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 12:51:45 -0700
-X-CSE-ConnectionGUID: mojvLxTPSYGK+a4ZkbDUgQ==
-X-CSE-MsgGUID: KLF5Sg/xRX276CTU/TinzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="112273157"
-Received: from fyu1.sc.intel.com ([172.25.103.126])
-  by orviesa001.jf.intel.com with ESMTP; 04 Oct 2024 12:51:44 -0700
-From: Fenghua Yu <fenghua.yu@intel.com>
-To: "Vinod Koul" <vkoul@kernel.org>,
-	"Dave Jiang" <dave.jiang@intel.com>
-Cc: dmaengine@vger.kernel.org,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH] dmaengine: idxd: Move DSA/IAA device IDs to IDXD driver
-Date: Fri,  4 Oct 2024 12:52:00 -0700
-Message-Id: <20241004195200.3398664-1-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.37.1
+	s=arc-20240116; t=1728071645; c=relaxed/simple;
+	bh=yr1t1az1fkPrbfZmPqn86xgCIBPXbCa19mAD4HFmjIM=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=bHWllwiMuivkdIi/rhjkdVNbWHPe4jhrh0XgOPEVCvUuS//LplQtus0M12Ul50rEBXiN+mFSpsUZOk48tjTM13+SRPpVVof/9X5ajA7R6ArlY8DN1t41+M8/xSRBY0fgjpGZJD/U/6PF8aeDPzzdJwxhz+6Y5nxdYyeeI02WiEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=NMvq8+dr; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1728071641;
+	bh=yr1t1az1fkPrbfZmPqn86xgCIBPXbCa19mAD4HFmjIM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NMvq8+drbdLjlqeWhKFVim9TbbihnWtMgEHmGa/djhNYlxMyQ6lDCS70VmYNxs2A4
+	 EiLQYDfFkn5p5CMErh+Ar9LZggBZzO30qhq/bmwya0K6GMu26VRsWiXM5ed7ve17ER
+	 CQNZEnX7kPHAYzrrgE0nxGYCOJ3kb37Gjm6Y6CK96EuMmi5i+eJMYEgp9eL0phmcpU
+	 +x8+vJ/V7d6QZYNjgjaZl8XA/VIxU0JUlzOqOAOARQLP3o5H3Mh+PIjkBcRrgGG4IX
+	 0yRms5NpIS09aLP6mYdkKHcrwFKeYxq/7/wpYxGgtED2yLOq9CO2CiCmve/FcJFt1V
+	 ioNiBLH37RzaQ==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKzkx4kVxzNbN;
+	Fri,  4 Oct 2024 15:54:01 -0400 (EDT)
+Message-ID: <3b749585-1286-4a4e-acd0-1534b60172da@efficios.com>
+Date: Fri, 4 Oct 2024 15:52:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, paulmck <paulmck@kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Hazard pointer enabled refcount prototype
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Since the DSA/IAA device IDs are only used by the IDXD driver, there is
-no need to define them as public IDs. Move their definitions to the IDXD
-driver to limit their scope. This change helps reduce unnecessary
-exposure of the device IDs in the global space, making the codebase
-cleaner and better encapsulated.
+Hi Greg,
 
-There is no functional change.
+After our discussion at KR2024, I've created a prototype adding hazard pointer
+dereference support to refcount.h:
 
-Fixes: 4fecf944c051 ("dmaengine: idxd: Add new DSA and IAA device IDs for Diamond Rapids platform")
-Fixes: f91f2a9879cc ("dmaengine: idxd: Add a new DSA device ID for Granite Rapids-D platform")
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
----
- drivers/dma/idxd/registers.h | 4 ++++
- include/linux/pci_ids.h      | 3 ---
- 2 files changed, 4 insertions(+), 3 deletions(-)
+https://github.com/compudj/linux-dev/commit/234523dc9be90f1bc9221bf2d430c9187ac61528
 
-diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
-index e16dbf9ab324..c426511f2104 100644
---- a/drivers/dma/idxd/registers.h
-+++ b/drivers/dma/idxd/registers.h
-@@ -6,6 +6,10 @@
- #include <uapi/linux/idxd.h>
- 
- /* PCI Config */
-+#define PCI_DEVICE_ID_INTEL_DSA_GNRD	0x11fb
-+#define PCI_DEVICE_ID_INTEL_DSA_DMR	0x1212
-+#define PCI_DEVICE_ID_INTEL_IAA_DMR	0x1216
-+
- #define DEVICE_VERSION_1		0x100
- #define DEVICE_VERSION_2		0x200
- 
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index 4cf6aaed5f35..e4bddb927795 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -2709,9 +2709,6 @@
- #define PCI_DEVICE_ID_INTEL_82815_MC	0x1130
- #define PCI_DEVICE_ID_INTEL_82815_CGC	0x1132
- #define PCI_DEVICE_ID_INTEL_SST_TNG	0x119a
--#define PCI_DEVICE_ID_INTEL_DSA_GNRD	0x11fb
--#define PCI_DEVICE_ID_INTEL_DSA_DMR	0x1212
--#define PCI_DEVICE_ID_INTEL_IAA_DMR	0x1216
- #define PCI_DEVICE_ID_INTEL_82092AA_0	0x1221
- #define PCI_DEVICE_ID_INTEL_82437	0x122d
- #define PCI_DEVICE_ID_INTEL_82371FB_0	0x122e
+Branch: https://github.com/compudj/linux-dev/tree/hp-6.11-refcount
+
+It allows dereferencing a pointer to a refcount and incrementing the refcount,
+without relying on RCU.
+
+A good candidate for this would be the "usblp" driver which is using a static mutex
+for existence guarantees. Introducing a refcount as first field of struct usblp
+should do the trick.
+
+I am not entirely sure if this kind of use-case justifies introducing hazard pointers
+though, as this can be done just as well with RCU. I'll let you be the judge on this.
+
+Thanks,
+
+Mathieu
+
 -- 
-2.37.1
-
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
