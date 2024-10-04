@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-350691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3274C990812
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:55:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B56990815
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D33341F2494A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:55:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1066D28CBDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9801221E5C;
-	Fri,  4 Oct 2024 15:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A852225B7;
+	Fri,  4 Oct 2024 15:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/1oasy2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="isdAQEK+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36EE41C729E;
-	Fri,  4 Oct 2024 15:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1472225A0;
+	Fri,  4 Oct 2024 15:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728056659; cv=none; b=VX50kEfdkJJjhLO2atS9sXruNbtM1h7JR4XHu+/VGNBaNzmsv3DN44ROdsP4HI+7ZM9bZ3UrQedMZt8db2gauWlUJPrZyHMG2ZWpt5f2jkt9osxVi+ehndhASBxs95fNpGft3LlBTmr4TaOvLIFNp5YbCfICifDLjnggRdyMd3c=
+	t=1728056663; cv=none; b=IGMFVDOvSLjfoPlyTHCcYEt0OdALTKFp/0ygDxacw4O3pnfcOCkwp2kQqoWAmSeU0Oyfsbnaz1N4zN+hajH7IFBNuYkbO0BW7cBUEGnrN4wzN6UHbbTkQMoAakdvJyhN3nMrEc7vbrwjPyQHUOWRcbytOq7ZwbrJEnAh0ClXei0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728056659; c=relaxed/simple;
-	bh=ZDmHNLUIwFFHS+R3VBXXGD9KVgIi1Tkfsy4gCUrqKAQ=;
+	s=arc-20240116; t=1728056663; c=relaxed/simple;
+	bh=co+B+qJ8g94Julx8Nci+IYL+QVSNE672qLhlTjw/JNg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G8E+2HdLSekv29pWFTSDfL48hUc3u09n/zdvhwqB/L9XZ4FleW2AoomdXecgGBpqyS1ZmLthF7kB+tOwaGbMl+0XffZM5S3VBuAY0Cy9L2ezyQE3DOowRxB+JJ/9QfSk6JfzypivFFHFoQQsRZFVc5unmpU1fSTKukWCgMd3Sps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/1oasy2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F94C4CED0;
-	Fri,  4 Oct 2024 15:44:12 +0000 (UTC)
+	 MIME-Version; b=dTWnWzZga8k9n3rL2XPPDTwiKu+4sK+XlpZoDY1aKrzYx6/SFH7lRY2aXdQXDW5Aw/nnUvhV5gRenJEhxXbd7nRoUMV0bi/UNs23IzCEOVvy5EO7F0uGFRp/dV7UDi4ayXfcgPvhVeofkWQAcxpRj6HX0LGA+4n6uB8EfVppFLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=isdAQEK+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5594AC4CEC6;
+	Fri,  4 Oct 2024 15:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728056657;
-	bh=ZDmHNLUIwFFHS+R3VBXXGD9KVgIi1Tkfsy4gCUrqKAQ=;
+	s=k20201202; t=1728056663;
+	bh=co+B+qJ8g94Julx8Nci+IYL+QVSNE672qLhlTjw/JNg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=m/1oasy24Cg4tn73r5ay0ehOqtkvBqrOSpcYKK3cBYeqKnDuemnNCxap5ZpiTC1ky
-	 8yY41UMuGwH4SHMAt8L9/bkl2mU0Ldiq36xAcZn9oRXdGrODP0ctZdz2E9s9RzL/As
-	 ffZt9RiMcsOvJtoIM59/Dxhh3g2xGB37pDSiyRQnGsBXXL8ov+s4SBV8+gpxYUo0aE
-	 I8sshYOkrsW+17NczK26zO1xu4nFjgyWR4HzbZCOm8vIG8kdCPsYnJ90J1n1p94kte
-	 OAwnDbfF9i/+9HC+bSZBHW12/Tlw88mUSlnfcwluRSpKXQYq2sSEFyJke/ZCPEY6ra
-	 1PuZUwr/XS+1w==
+	b=isdAQEK+fyU9LQiPmikCYp+he+tsGnTfNWAcIIkeyh6V5XNcGEHFQYit/ZlRDcAa2
+	 IOa1mMRJ6iOotZftnaTIpKf1+8I1A3Hg/20Da19AY13ysIGSwD2d6wdd9//ouP18cz
+	 y0vK4k+8CyjavjrnlM+d4IT9RtcikiE1zAT01ZjYBvp2LjtiMNLnYUBi+tMpu9okhH
+	 5o0W0NG6ln3yvuNyu4svUcpGRnWXsdthSUKYBLl5LxTgriaBcAVdVYh1O90kT6E8zM
+	 5+MyZjCtVE8HQAt0w4vXmUNmEaGCrcmgt79gmeSW+lbC0PhJyxa1jKO7Uuym76dtZO
+	 rkkHlrWKeoMAg==
 From: Danilo Krummrich <dakr@kernel.org>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -66,9 +66,9 @@ Cc: daniel.almeida@collabora.com,
 	rust-for-linux@vger.kernel.org,
 	linux-mm@kvack.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v9 24/29] rust: alloc: implement `contains` for `Flags`
-Date: Fri,  4 Oct 2024 17:41:28 +0200
-Message-ID: <20241004154149.93856-25-dakr@kernel.org>
+Subject: [PATCH v9 25/29] rust: alloc: implement `Cmalloc` in module allocator_test
+Date: Fri,  4 Oct 2024 17:41:29 +0200
+Message-ID: <20241004154149.93856-26-dakr@kernel.org>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20241004154149.93856-1-dakr@kernel.org>
 References: <20241004154149.93856-1-dakr@kernel.org>
@@ -80,45 +80,129 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Provide a simple helper function to check whether given flags do
-contain one or multiple other flags.
+So far the kernel's `Box` and `Vec` types can't be used by userspace
+test cases, since all users of those types (e.g. `CString`) use kernel
+allocators for instantiation.
 
-This is used by a subsequent patch implementing the Cmalloc `Allocator`
-to check for __GFP_ZERO.
+In order to allow userspace test cases to make use of such types as
+well, implement the `Cmalloc` allocator within the allocator_test module
+and type alias all kernel allocators to `Cmalloc`. The `Cmalloc`
+allocator uses libc's realloc() function as allocator backend.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 Reviewed-by: Gary Guo <gary@garyguo.net>
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/alloc.rs | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ rust/kernel/alloc/allocator_test.rs | 88 ++++++++++++++++++++++++++---
+ 1 file changed, 81 insertions(+), 7 deletions(-)
 
-diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-index e8955340fe62..8acaa24a8f1f 100644
---- a/rust/kernel/alloc.rs
-+++ b/rust/kernel/alloc.rs
-@@ -35,7 +35,7 @@
- /// They can be combined with the operators `|`, `&`, and `!`.
- ///
- /// Values can be used from the [`flags`] module.
--#[derive(Clone, Copy)]
-+#[derive(Clone, Copy, PartialEq)]
- pub struct Flags(u32);
+diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+index 1b2642c547ec..47c2b509898e 100644
+--- a/rust/kernel/alloc/allocator_test.rs
++++ b/rust/kernel/alloc/allocator_test.rs
+@@ -1,21 +1,95 @@
+ // SPDX-License-Identifier: GPL-2.0
  
- impl Flags {
-@@ -43,6 +43,11 @@ impl Flags {
-     pub(crate) fn as_raw(self) -> u32 {
-         self.0
-     }
++//! So far the kernel's `Box` and `Vec` types can't be used by userspace test cases, since all users
++//! of those types (e.g. `CString`) use kernel allocators for instantiation.
++//!
++//! In order to allow userspace test cases to make use of such types as well, implement the
++//! `Cmalloc` allocator within the allocator_test module and type alias all kernel allocators to
++//! `Cmalloc`. The `Cmalloc` allocator uses libc's realloc() function as allocator backend.
 +
-+    /// Check whether `flags` is contained in `self`.
-+    pub fn contains(self, flags: Flags) -> bool {
-+        (self & flags) == flags
-+    }
- }
+ #![allow(missing_docs)]
  
- impl core::ops::BitOr for Flags {
+-use super::{AllocError, Allocator, Flags};
++use super::{flags::*, AllocError, Allocator, Flags};
+ use core::alloc::Layout;
++use core::cmp;
++use core::ptr;
+ use core::ptr::NonNull;
+ 
+-pub struct Kmalloc;
++/// The userspace allocator based on libc.
++pub struct Cmalloc;
++
++pub type Kmalloc = Cmalloc;
+ pub type Vmalloc = Kmalloc;
+ pub type KVmalloc = Kmalloc;
+ 
+-unsafe impl Allocator for Kmalloc {
++extern "C" {
++    #[link_name = "aligned_alloc"]
++    fn libc_aligned_alloc(align: usize, size: usize) -> *mut core::ffi::c_void;
++
++    #[link_name = "free"]
++    fn libc_free(ptr: *mut core::ffi::c_void);
++}
++
++// SAFETY:
++// - memory remains valid until it is explicitly freed,
++// - passing a pointer to a valid memory allocation created by this `Allocator` is always OK,
++// - `realloc` provides the guarantees as provided in the `# Guarantees` section.
++unsafe impl Allocator for Cmalloc {
+     unsafe fn realloc(
+-        _ptr: Option<NonNull<u8>>,
+-        _layout: Layout,
+-        _flags: Flags,
++        ptr: Option<NonNull<u8>>,
++        layout: Layout,
++        old_layout: Layout,
++        flags: Flags,
+     ) -> Result<NonNull<[u8]>, AllocError> {
+-        panic!();
++        let src = match ptr {
++            Some(src) => {
++                if old_layout.size() == 0 {
++                    ptr::null_mut()
++                } else {
++                    src.as_ptr()
++                }
++            }
++            None => ptr::null_mut(),
++        };
++
++        if layout.size() == 0 {
++            // SAFETY: `src` is either NULL or was previously allocated with this `Allocator`
++            unsafe { libc_free(src.cast()) };
++
++            return Ok(NonNull::slice_from_raw_parts(
++                crate::alloc::dangling_from_layout(layout),
++                0,
++            ));
++        }
++
++        // SAFETY: Returns either NULL or a pointer to a memory allocation that satisfies or
++        // exceeds the given size and alignment requirements.
++        let dst = unsafe { libc_aligned_alloc(layout.align(), layout.size()) } as *mut u8;
++        let dst = NonNull::new(dst).ok_or(AllocError)?;
++
++        if flags.contains(__GFP_ZERO) {
++            // SAFETY: The preceeding calls to `libc_aligned_alloc` and `NonNull::new`
++            // guarantee that `dst` points to memory of at least `layout.size()` bytes.
++            unsafe { dst.as_ptr().write_bytes(0, layout.size()) };
++        }
++
++        if !src.is_null() {
++            // SAFETY:
++            // - `src` has previously been allocated with this `Allocator`; `dst` has just been
++            //   newly allocated, hence the memory regions do not overlap.
++            // - both` src` and `dst` are properly aligned and valid for reads and writes
++            unsafe {
++                ptr::copy_nonoverlapping(
++                    src,
++                    dst.as_ptr(),
++                    cmp::min(layout.size(), old_layout.size()),
++                )
++            };
++        }
++
++        // SAFETY: `src` is either NULL or was previously allocated with this `Allocator`
++        unsafe { libc_free(src.cast()) };
++
++        Ok(NonNull::slice_from_raw_parts(dst, layout.size()))
+     }
+ }
 -- 
 2.46.1
 
