@@ -1,230 +1,147 @@
-Return-Path: <linux-kernel+bounces-350244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD30990204
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:22:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21F799020A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 224A81F22FA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:22:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C9C1B20AD7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782611581E5;
-	Fri,  4 Oct 2024 11:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EF3157481;
+	Fri,  4 Oct 2024 11:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aMGeT2j7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eSBFWzBd"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEC5137903;
-	Fri,  4 Oct 2024 11:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84D0137903;
+	Fri,  4 Oct 2024 11:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728040965; cv=none; b=js3x4X7wOru1tcKdBclqxOw/fdVo57zM1yIkt7pW75NOLSxSQ/y5ALi/TsTd9EbVtmM8oipj6nzgj2k+Xtv/tz1eb36R2GhnXr4mLC9IrZ75/GwoAb2aCFvRj+SFaOahB6JJZ8RgdmnWfobMPCRdoVoSj7Wxuxu6y/2btFjDLqQ=
+	t=1728041208; cv=none; b=KfJbHQ+Bd6pHnh6eFK5xcDXjJgfSbRlC/qZK91UOfVGALRYgqihRzVXzOXroKu3kfnw3GGuV93ZMOI+YPt0Z0pJqccgrG+4SgO9abqBfHqKl4W7qFHr4g+iUle4yHqIDcaGmoYMfBeWtwV5YQAqkdv3pJoH2/HVNFjkQ3ISWmoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728040965; c=relaxed/simple;
-	bh=JuzY7QcYQMFTsKFhb6M6Epx2VLSYGJ5bXpDgThfuniw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ut5ba3jkN+IFrFMc5SNxBeNeyDkuDvy4NbBzRoKaUa1CbO3xBooQp6tYhhIdHv+eX7X06JEhk1Htgi5G7pht68G44+HsZDgnpq+96yG30x/HyCQqED8Z1GbzmBZFxxSR6o/3R+xRPh1M9d2n36eh3FOxxcGjjWg4EwBGRhe/UdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aMGeT2j7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494B4ZvR019120;
-	Fri, 4 Oct 2024 11:22:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0DfXXY9TOZZaA/uIw9ViWZGEVxfNaqj4IRcafnRdJVQ=; b=aMGeT2j7m6oL1xTa
-	7SvPwTStGHDLVsOALOdm1kdNu3POu03P9rF6fgxvcmZmi08XBS1yoRZpRGfltfKB
-	kL6Bng1CbbobZymGie9Kv73uTurWPIl79CCfzCVj3FXRMwYg/7HaXKlEv5Cyip3A
-	e6YzpjFrzX83JPGlLYf8kg0rE5QGgU5bUl0C0oVeXRPAtmsCPYOEu1AdMMmMnHM0
-	4wjmnvwRmDiYqADn7jFwb9Wjfx3UKhXMDQ5KDx2dYaF80YpgvnEJ1OQIE3RvvzjM
-	r5ojl0fWx1tgxLI21rBXw+N2X732+WN9QHqY+ArKmKU+/tTlLYuxjBQH1B1jLfkR
-	Ii6YLQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205n1wsv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 11:22:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494BMQRZ008219
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 11:22:26 GMT
-Received: from [10.151.37.217] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 04:22:19 -0700
-Message-ID: <1ac5e0e5-06c1-4930-8c03-f465d6e07848@quicinc.com>
-Date: Fri, 4 Oct 2024 16:51:57 +0530
+	s=arc-20240116; t=1728041208; c=relaxed/simple;
+	bh=/ixClVEw6P8y4JUgO/HEYdgh8vFcnmAPQaFNMxoXLJI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fK/+WtSK9RaTpYiShp+ikg2dpDgnfbBguejxH87Pfh3AaSJoAW5GF+TYr4GrOB+QspkOTFeXVF+LNXazjGTt0Jo9eqXjqxxK0dtzIeGKJx2YhieOwDm7NI3Q+iI0VGPUBtwFA9Z4Mi+WK5j49iQztk2MJmqE5x1fhxCDDBFhF9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eSBFWzBd; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 494BQbJl081014;
+	Fri, 4 Oct 2024 06:26:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728041197;
+	bh=KPdjKo7hFMxWG9jf55ps3sg0vmoM9vRjCReXoVQKtGE=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=eSBFWzBdgqjFuyy657N7/kJjseTGVRvUu6AnJMaSBVjWME6VyxIwmo/blrtKGyyvW
+	 /4ATWPvP6X90rJijdvDYsPLe72FbCP4TZ66qWD2295sH7z+nzAUWEbQNTCitp6a70/
+	 8px0fXL5QJAkXyZLVD2WUfwEeAJiTaBluSlpIVYo=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 494BQbpu026567
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 4 Oct 2024 06:26:37 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 4
+ Oct 2024 06:26:37 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 4 Oct 2024 06:26:37 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 494BQb37065159;
+	Fri, 4 Oct 2024 06:26:37 -0500
+Date: Fri, 4 Oct 2024 06:26:37 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Bryan Brattlof <bb@ti.com>
+CC: Andrew Davis <afd@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 2/5] arm64: dts: ti: k3-am625-sk: Add M4F remoteproc
+ node
+Message-ID: <20241004112637.nc2qcquiuwdhdrye@thirteen>
+References: <20241003170118.24932-1-afd@ti.com>
+ <20241003170118.24932-3-afd@ti.com>
+ <20241003210606.2k7wyssklwfziod4@bryanbrattlof.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 4/7] clk: qcom: add Global Clock controller (GCC)
- driver for IPQ5424 SoC
-To: Sricharan R <quic_srichara@quicinc.com>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <p.zabel@pengutronix.de>,
-        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: <quic_varada@quicinc.com>
-References: <20241004102342.2414317-1-quic_srichara@quicinc.com>
- <20241004102342.2414317-5-quic_srichara@quicinc.com>
-Content-Language: en-US
-From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-In-Reply-To: <20241004102342.2414317-5-quic_srichara@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: V8UXvjLB4DwVVK88mDCfD3_3xjLk1YGv
-X-Proofpoint-GUID: V8UXvjLB4DwVVK88mDCfD3_3xjLk1YGv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- clxscore=1011 bulkscore=0 malwarescore=0 phishscore=0 spamscore=0
- suspectscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410040083
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241003210606.2k7wyssklwfziod4@bryanbrattlof.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-
-
-On 10/4/2024 3:53 PM, Sricharan R wrote:
-> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+On 16:06-20241003, Bryan Brattlof wrote:
+> Hi Andrew!
 > 
-> Add support for the global clock controller found on IPQ5424 SoC.
+> On October  3, 2024 thus sayeth Andrew Davis:
+> > From: Hari Nagalla <hnagalla@ti.com>
+> > 
+> > The AM62x SoCs of the TI K3 family have a Cortex M4F core in the MCU
+> > domain. This core can be used by non safety applications as a remote
+> > processor. When used as a remote processor with virtio/rpmessage IPC,
+> > two carveout reserved memory nodes are needed. The first region is used
+> > as a DMA pool for the rproc device, and the second region will furnish
+> > the static carveout regions for the firmware memory.
+> > 
+> > The current carveout addresses and sizes are defined statically for
+> > each rproc device. The M4F processor does not have an MMU, and as such
+> > requires the exact memory used by the firmware to be set-aside.
+> > 
+> > Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+> > Signed-off-by: Andrew Davis <afd@ti.com>
+> > ---
+> >  .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+> > index 44ff67b6bf1e4..6957b3e44c82f 100644
+> > --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+> > +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+> > @@ -56,6 +56,18 @@ linux,cma {
+> >  			linux,cma-default;
+> >  		};
+> >  
+> > +		mcu_m4fss_dma_memory_region: m4f-dma-memory@9cb00000 {
+> > +			compatible = "shared-dma-pool";
+> > +			reg = <0x00 0x9cb00000 0x00 0x100000>;
+> > +			no-map;
+> > +		};
+> > +
+> > +		mcu_m4fss_memory_region: m4f-memory@9cc00000 {
+> > +			compatible = "shared-dma-pool";
+> > +			reg = <0x00 0x9cc00000 0x00 0xe00000>;
+> > +			no-map;
+> > +		};
+> > +
 > 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Co-developed-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> ---
->   [V3] Added Reviewed tag
+> The only issue I have here is this takes away memory from people who do 
+> not use these firmware or causes them to work around this patch if they 
+> choose to have different carveouts.
+
+They can define their own overlays.
+
 > 
->   drivers/clk/qcom/Kconfig       |    8 +
->   drivers/clk/qcom/Makefile      |    1 +
->   drivers/clk/qcom/gcc-ipq5424.c | 3309 ++++++++++++++++++++++++++++++++
->   3 files changed, 3318 insertions(+)
->   create mode 100644 drivers/clk/qcom/gcc-ipq5424.c
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index a3e2a09e2105..6a576bc2301c 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -213,6 +213,14 @@ config IPQ_GCC_5332
->   	  Say Y if you want to use peripheral devices such as UART, SPI,
->   	  i2c, USB, SD/eMMC, etc.
->   
-> +config IPQ_GCC_5424
-> +	tristate "IPQ5424 Global Clock Controller"
-> +	depends on ARM64 || COMPILE_TEST
-> +	help
-> +	  Support for the global clock controller on ipq5424 devices.
-> +	  Say Y if you want to use peripheral devices such as UART, SPI,
-> +	  i2c, USB, SD/eMMC, etc.
-> +
->   config IPQ_GCC_6018
->   	tristate "IPQ6018 Global Clock Controller"
->   	help
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 2b378667a63f..d58ba0f9a482 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -32,6 +32,7 @@ obj-$(CONFIG_IPQ_APSS_6018) += apss-ipq6018.o
->   obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
->   obj-$(CONFIG_IPQ_GCC_5018) += gcc-ipq5018.o
->   obj-$(CONFIG_IPQ_GCC_5332) += gcc-ipq5332.o
-> +obj-$(CONFIG_IPQ_GCC_5424) += gcc-ipq5424.o
->   obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
->   obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
->   obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
-> diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
-> new file mode 100644
-> index 000000000000..3458c1c98bb7
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-ipq5424.c
-> @@ -0,0 +1,3309 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018,2020 The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,ipq5424-gcc.h>
-> +#include <dt-bindings/reset/qcom,ipq5424-gcc.h>
-> +
-> +#include "clk-alpha-pll.h"
-> +#include "clk-branch.h"
-> +#include "clk-rcg.h"
-> +#include "clk-regmap.h"
-> +#include "clk-regmap-divider.h"
-> +#include "clk-regmap-mux.h"
-> +#include "clk-regmap-phy-mux.h"
-> +#include "common.h"
-> +#include "reset.h"
-> +
-> +enum {
-> +	DT_XO,
-> +	DT_SLEEP_CLK,
-> +	DT_PCIE30_PHY0_PIPE_CLK,
-> +	DT_PCIE30_PHY1_PIPE_CLK,
-> +	DT_PCIE30_PHY2_PIPE_CLK,
-> +	DT_PCIE30_PHY3_PIPE_CLK,
-> +	DT_USB_PCIE_WRAPPER_PIPE_CLK,
-> +};
-> +
-> +enum {
-> +	P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC,
-> +	P_GPLL0_OUT_AUX,
-> +	P_GPLL0_OUT_MAIN,
-> +	P_GPLL2_OUT_AUX,
-> +	P_GPLL2_OUT_MAIN,
-> +	P_GPLL4_OUT_AUX,
-> +	P_GPLL4_OUT_MAIN,
-> +	P_SLEEP_CLK,
-> +	P_XO,
-> +	P_USB3PHY_0_PIPE,
-> +};
-> +
+> Would an overlay be appropriate for this?
 
+Why is this any different from existing boards? Are you suggesting a
+change for all existing boards as well?
 
-<snip>
-
-> +
-> +static const struct freq_tbl ftbl_gcc_qupv3_uart0_clk_src[] = {
-> +	F(960000, P_XO, 10, 2, 5),
-> +	F(4800000, P_XO, 5, 0, 0),
-> +	F(9600000, P_XO, 2, 4, 5),
-> +	F(16000000, P_GPLL0_OUT_MAIN, 10, 1, 5),
-> +	F(24000000, P_XO, 1, 0, 0),
-> +	F(25000000, P_GPLL0_OUT_MAIN, 16, 1, 2),
-> +	F(50000000, P_GPLL0_OUT_MAIN, 16, 0, 0),
-> +	F(64000000, P_GPLL0_OUT_MAIN, 12.5, 0, 0),
-> +	{ }
-> +};
-> +
-
-There are few more frequencies got added to this table. Can we 
-incorporate that as well?
-
-Thanks, Kathiravan T.
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
