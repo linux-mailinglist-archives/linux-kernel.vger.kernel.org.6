@@ -1,79 +1,72 @@
-Return-Path: <linux-kernel+bounces-350239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A329901EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:17:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9269901F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5741F2815F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:17:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51ADC2817D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C827415666B;
-	Fri,  4 Oct 2024 11:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nm0xAEjV"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D3B224D1;
-	Fri,  4 Oct 2024 11:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601F815747D;
+	Fri,  4 Oct 2024 11:18:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CF1224D1;
+	Fri,  4 Oct 2024 11:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728040623; cv=none; b=KW9LH+IHL+PEabKIJ7Hog/mEqEyEnozK0r4g3OcDumVxjPKWQ/yyfVHwIG394sXrEILMQzGxD/e37d0C1wnbSK+o0B/apvXA+UOH2qsU+ABTohEKYNmDp9p45IDxfqYI9ARm3pb+G7cWiQVa0/bxKDgOSa/LpD6Flx2BddpmfY8=
+	t=1728040736; cv=none; b=VW7Knnu9G5xdq2hOvPhZdf5wFpQ4ZYtiqqW7ZsXreZgFgUvmvUIJ3OneaVbGXkGbba8VE7IN9F12Q26vQvtXyOzbO42ATL2Y9X2gIgl1+4WCUnBegCChwcT6FiUo5Hker+iekPhxAM8zkQk4Ct9jTQXnV1JzQxSe++lXdGKUPnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728040623; c=relaxed/simple;
-	bh=YyLTiomqQ6TSxJyR30lzcROF9cPW32e3GhYgtOPTgew=;
+	s=arc-20240116; t=1728040736; c=relaxed/simple;
+	bh=pZHox8K1Nmvgt3lxsApWtJFu8tZf+W8GEvc4spiFT0A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jy3LW32pwrR0wsnaL87zfJecWQpXAmffA2zFwXspGNWDJXnc4j/YBRRClwMAxtfYTczIlEiyyMZIcv+CPid3l57lDRMS8ShuccX3rxZF/0VvT5oIhiwJEirCa0LGc/huUY1YVy0ZvZ4JJae0BJ8p1cSAOxOsLbhGipJ6SpY7aao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nm0xAEjV; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20b5affde14so15245205ad.3;
-        Fri, 04 Oct 2024 04:17:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728040621; x=1728645421; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4JGGLXYFztMV/0fUe6OuC/kyD9hrYXAZAqVRzK4LsKs=;
-        b=nm0xAEjVYQVp3oDuB75qhemaUa1BZpYC1hNRc2OlvVdDh/+W+3iUfP6t6Ke1Ake/x6
-         URfCgkIGUWkAfxmPgUMROxpT4p2GvFicnH4Z9v1eBesqgLhB5SZ+R956A6iJ2PDLRaQF
-         iQrLJVAkXThCoqtk+WWdywdZVnuQiLyXeIInYl/L5KqpKDf4t4ZPKrWfoOimBq3SPazj
-         CIWpRz31wxr/ujr5NK1dMAVx3zg1eJTJ33YvnOZEG2cAJdgif/YdnPurwjACsOgYqKyo
-         ZmhoxjWB4KiLCiR5is2f35c/qFGHviGWB6CrYr6RVtuLEDZftQq6O5OpFC2C11fHvef4
-         hjrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728040621; x=1728645421;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4JGGLXYFztMV/0fUe6OuC/kyD9hrYXAZAqVRzK4LsKs=;
-        b=bcIyfdPdgiJUr89ShH7wPAn2o0jQ8HHuZwDRD8ffdKy6Spj8/FYqYWQemvMDQ9C2tM
-         Z2cQPcTWxaZ++EmlpqCZ2W5SYLyPS7d30D1RTsx5sgBilZFfWyWzMhcn56G+OsYR7Ebh
-         JmuQfS1KsuVWCcP1mAfv9w9J59yuqg+RWN/TVvzhuy2LPQDUjnldsKFpsxDbG11Iufx7
-         /X3/AjVioLsArfPLXQcR2HiwpeWYjeS6xtpaEJnISundIgIwWxC7eFH71L/md+5kVxMI
-         z9DK+FF/etBi1V2TXN2Ni9bg+4MkZhsC9MWgbKIRQRRwBcfBQF/gYzpda+ZK+a9t4zxx
-         AlVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUpDXBzA1WzpETno2n7Rra9rLLKCPkwknNLaec8WsrfdX+8vR+p/KtOxeMOuu7xFM6a1+QtXe1mKXVrCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN11fJ9lxKsjgfOIGKF2O+WbJ9vrmh2lt0W1g8NBGUHYMFvvT9
-	USO/kFGA1FEy6ohMIpwTAulZzju0ulEC/e6qluR2rcyeU+f32NHW6vea+9UD
-X-Google-Smtp-Source: AGHT+IGEezjSxQ5pCOb98oeSdfx36nnKAzBr04tyF8g/ReJ/sQ93DVf278brTyX2J1IAS8P5jisBtw==
-X-Received: by 2002:a17:902:f550:b0:20b:a728:d130 with SMTP id d9443c01a7336-20bfdfd93ebmr38169455ad.14.1728040621141;
-        Fri, 04 Oct 2024 04:17:01 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:1b2:add:2542:c298])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20bef707040sm22164085ad.269.2024.10.04.04.17.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 04:17:00 -0700 (PDT)
-Date: Fri, 4 Oct 2024 04:16:58 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Yang Li <yang.lee@linux.alibaba.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next] Input: matrix_keypad: Remove duplicated include in
- matrix_keypad.c
-Message-ID: <Zv_OqtnB5plGVAUv@google.com>
-References: <20240910010133.44579-1-yang.lee@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o3kjrljMSxvGGSKBmubQjma5vGj/0PH5b2OTKTPnb38LSrJXXp1rzelLuNM4O4KLwDJ1xbO5VoKcbuhTq0IBgtgfEqfZOHXuzG6M8SHwOJqxuZHNMDGUglk95mEY79PInsCOd+UDFA6B9EauP/xyLSDavspP6vyDyioJ5sToypg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DEE0339;
+	Fri,  4 Oct 2024 04:19:23 -0700 (PDT)
+Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DE1F3F640;
+	Fri,  4 Oct 2024 04:18:47 -0700 (PDT)
+Date: Fri, 4 Oct 2024 14:18:45 +0300
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	David Spickett <david.spickett@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v13 22/40] arm64/gcs: Ensure that new threads have a GCS
+Message-ID: <Zv_PFVffwIkKevzE@arm.com>
+References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
+ <20241001-arm64-gcs-v13-22-222b78d87eee@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,18 +75,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240910010133.44579-1-yang.lee@linux.alibaba.com>
+In-Reply-To: <20241001-arm64-gcs-v13-22-222b78d87eee@kernel.org>
 
-On Tue, Sep 10, 2024 at 09:01:33AM +0800, Yang Li wrote:
-> The header files consumer.h is included twice in matrix_keypad.c,
-> so one inclusion of each can be removed.
+On Tue, Oct 01, 2024 at 11:59:01PM +0100, Mark Brown wrote:
+> When a new thread is created by a thread with GCS enabled the GCS needs
+> to be specified along with the regular stack.
 > 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=10823
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> Unfortunately plain clone() is not extensible and existing clone3()
+> users will not specify a stack so all existing code would be broken if
+> we mandated specifying the stack explicitly.  For compatibility with
+> these cases and also x86 (which did not initially implement clone3()
+> support for shadow stacks) if no GCS is specified we will allocate one
+> so when a thread is created which has GCS enabled allocate one for it.
+> We follow the extensively discussed x86 implementation and allocate
+> min(RLIMIT_STACK/2, 2G).  Since the GCS only stores the call stack and not
+> any variables this should be more than sufficient for most applications.
+> 
+> GCSs allocated via this mechanism will be freed when the thread exits.
 
-Applied, thank you.
+I think Szabolcs mentioned a GCS leak with v12:
+
+https://lore.kernel.org/r/ZtrihWQFyb2/XrQV@arm.com
+
+(and in some private messages IIRC)
+
+Has this been identified? The changelog only mentions a leak in v8.
 
 -- 
-Dmitry
+Catalin
 
