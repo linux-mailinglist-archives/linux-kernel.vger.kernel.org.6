@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-349764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F4EF98FB4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:01:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C802098FB57
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 02:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 910231C22195
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:01:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B06282EBE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECA81D12EB;
-	Fri,  4 Oct 2024 00:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3150B1D1F6C;
+	Fri,  4 Oct 2024 00:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWj5ILNO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASYwYzhW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C0A1D0B8B;
-	Fri,  4 Oct 2024 00:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844971D14F8;
+	Fri,  4 Oct 2024 00:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728000031; cv=none; b=I8laOqnDGcZGdm6OGiyqneEMKv8E0J9KiRXasTrG7mqY9EROE6pVdfRtx1YagIcxjcI+33DNp5o1LrxBG+/YjWXFaOQM5lyGZwZkpy84XM1qf9z7c+EOr/Nt00etKvIZ+rGjmHB7geoOpLbfKwDdg5BFhwCpG6VsFoREXx2t5kM=
+	t=1728000034; cv=none; b=Dr6M+TT1tHRO7hl3W/n793pxrLm8d6b2X2K6c0S4s8BX1xm0LILp/2pVygdcBOTq19w0RjnSk7dzCjlzKFRx1ow6lwc6wABziSeFweqoAIKn6EY4Qmt5gkhYrXPPEK7AZWl10Enxsnljwsazna1FECh4+6WGBBat/UmaS8JpsOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728000031; c=relaxed/simple;
-	bh=+xvAIX6IJFp5VUob+EF6es/jA7D5vA7Q0y9G0s+Uvis=;
+	s=arc-20240116; t=1728000034; c=relaxed/simple;
+	bh=FJgSz8Q0Gg2vj8ui2TV2ie76jXIudkVW9NQHhbjtFk0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ASPt0YpqAhOS4316zaS3niRhhKdXISov6v0zf7RZMoEuYfdbSHwBWpTJHXWKpkOEqyIBSzTD+M1tweeyim7jUR8uEKpnuAnmElTq+HuDb9XSSZ0rbvbZF6b32BSdZFwtO8TrbDM0T523JbBYYyD1K4v0vPPqBULaYlTqGwpjaRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWj5ILNO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 418E7C4CEC7;
-	Fri,  4 Oct 2024 00:00:31 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=GWvG7YvpOMcwJPjxv22z4kyT3h8cm39Eet96mPG4AYd1WapV5BCBnSvdu4dLTsVz3DrFT0R14xEAJypugPeFd3rx1UjRj0f8olYSfFf4t+dcxjdPvD0KyI1SjdsdIcfCGZcD/XbI9fj/HY7QRVGbaxBlHrSTb7YKUiDinAR8j48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASYwYzhW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 069D9C4CEC5;
+	Fri,  4 Oct 2024 00:00:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728000031;
-	bh=+xvAIX6IJFp5VUob+EF6es/jA7D5vA7Q0y9G0s+Uvis=;
+	s=k20201202; t=1728000034;
+	bh=FJgSz8Q0Gg2vj8ui2TV2ie76jXIudkVW9NQHhbjtFk0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=UWj5ILNObymFnthWJ043Bs7QJwUOFAN3+39bezt06Cg/NqqBRg9RlpNlMGzPzvBXT
-	 3ACqN3i5SSiBDZlpD+ZsJw+ET7CzXPoxEpIRwNnuE7cOughzLQeTYgWLC43MveHNou
-	 AJpOJOaPL0DZDVcNJLiQ774WRPTpGJUAx8aetKg2355NsZnIPRf6wl60/uWT7+1J9A
-	 fUhAHz4O1nwepv96YNIgrPzP4kmgCNDX4l/aUN/Oaa7FRd8dsyXWTgiOwwr0z9hKzQ
-	 XzoZbu7Z5VchQ8quIgA9xuiB1EfDDFEgZlEgNkL5hF+JLDfcmKTgMMlv3Hq1/3djzf
-	 RsAswhqQNHW2g==
+	b=ASYwYzhWxsWyZ5AuV17YmHdN2AB0fId1HuYaH+TKwYOgccZHq1NpmRLkJJWrHVH4o
+	 Y+2ZnMIDGvSVKfH5VJvsAeaOSRdGwOfVXHdCH/6tXC01K9hLIDbpK3lgGHgeZK8lZw
+	 xHkuQG9Lg1jGhApC3ZZxPP5UIkt8yocjGI7YHHuOVWDOZ0f6jd/SyXAkKwzgqDjXm1
+	 hpdI7iArQdfKqowuJ89dHz7823OHZ99StVosgdO09F6x5g2PYfnoJNVvA4v5qGUz8P
+	 xw7DuJiHJg11sBk/jhUqH9HsSzKJqrrosEf3RPSCJ/Npvj+qavWtP/5ITPVQKuJQTv
+	 Hw0IkFdYa2N9Q==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB5BE3803263;
-	Fri,  4 Oct 2024 00:00:35 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0193803263;
+	Fri,  4 Oct 2024 00:00:38 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,38 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] selftests: net: csum: Clean up
- recv_verify_packet_ipv6
+Subject: Re: [PATCH net-next] net/rds: remove unused struct 'rds_ib_dereg_odp_mr'
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172800003451.2035955.15765832023119892490.git-patchwork-notify@kernel.org>
-Date: Fri, 04 Oct 2024 00:00:34 +0000
-References: <20240930162935.980712-1-sean.anderson@linux.dev>
-In-Reply-To: <20240930162935.980712-1-sean.anderson@linux.dev>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, willemb@google.com,
- shuah@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <172800003749.2035955.1490460545040983997.git-patchwork-notify@kernel.org>
+Date: Fri, 04 Oct 2024 00:00:37 +0000
+References: <20240930134358.48647-1-linux@treblig.org>
+In-Reply-To: <20240930134358.48647-1-linux@treblig.org>
+To: Dr. David Alan Gilbert <linux@treblig.org>
+Cc: allison.henderson@oracle.com, edumazet@google.com, kuba@kernel.org,
+ linux-rdma@vger.kernel.org, davem@davemloft.net, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org,
+ yanjun.zhu@linux.dev
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 30 Sep 2024 12:29:34 -0400 you wrote:
-> Rename ip_len to payload_len since the length in this case refers only
-> to the payload, and not the entire IP packet like for IPv4. While we're
-> at it, just use the variable directly when calling
-> recv_verify_packet_udp/tcp.
+On Mon, 30 Sep 2024 14:43:58 +0100 you wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> 'rds_ib_dereg_odp_mr' has been unused since the original
+> commit 2eafa1746f17 ("net/rds: Handle ODP mr
+> registration/unregistration").
+> 
+> Remove it.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] selftests: net: csum: Clean up recv_verify_packet_ipv6
-    https://git.kernel.org/netdev/net-next/c/d772cc25ccf7
+  - [net-next] net/rds: remove unused struct 'rds_ib_dereg_odp_mr'
+    https://git.kernel.org/netdev/net-next/c/25ba2a5adab2
 
 You are awesome, thank you!
 -- 
