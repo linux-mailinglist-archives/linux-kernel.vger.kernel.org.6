@@ -1,292 +1,278 @@
-Return-Path: <linux-kernel+bounces-350504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D947990624
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1AC990629
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41990280E89
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:32:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34E5280CE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7827C2178F5;
-	Fri,  4 Oct 2024 14:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814D2217906;
+	Fri,  4 Oct 2024 14:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fk2OKZRL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BhAJAjf7";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="kBCEioWu"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F95215F6C;
-	Fri,  4 Oct 2024 14:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728052343; cv=none; b=f3mNA/ff727AGIb7ve1KAp048LNPvQq/ML1V32/znq/GxZSO1OsGpZzQah2eM9mmzQp/nx+4DvXAxo6GVMBpTg9hWphItofaSxhU3mctMPTbqtHn6S9ndb1icPiRLhlzuu8ds9pTHhpnshR5KG/LXFYRQJP7z5O5XSHPf9fXIWA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728052343; c=relaxed/simple;
-	bh=ue9RC1IPgH+8LRbvJDFscoT+8kjbm6tKa4ROPjV0Apg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=AbgrVvj9pRue63mrhY5kds0KZpzi5RBFrlZ0xpgLbN6Dr2iowO1EC8m5oSaIpawHt7jwxCnT2EH4lv5O/IYogWyGK5DvCZg8ZbmmOWb8Idln0KcKBSsaooSdCNXMpAQZjDGMGV3GMq3Arig0+i8lvLmOozZW69FgxGGHMtN0yvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fk2OKZRL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28E76C4CED0;
-	Fri,  4 Oct 2024 14:32:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728052343;
-	bh=ue9RC1IPgH+8LRbvJDFscoT+8kjbm6tKa4ROPjV0Apg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fk2OKZRL7ORtnHMjBeO+pJeU55F3uGORgwSpNeG24GrPG+eZueXRjzcA3HO0m+SgF
-	 KT3xFc/lC+a/d+QPao2eOORSy+Ts/IhtEuuGBliag/Q0Vvh82NMZsVFbRR9NFqMdib
-	 TS/hv91BiU2Qacf4mf4VYpS/fLv84SQJCk/o0ZUxdMhRHmzCz0jFN66CSDDc7oPJj3
-	 pEod/bQbWgcmiabyVEnCyP4Kdna+XIxSDs48ElBrC89J6dNSmumyoftM43H4L4b1i5
-	 2s8jnV7Un9LQePrnXkqQuUqGHuloDHgxdJvV4nwc5+U3geH17eK0NoqO7dqfAftAW0
-	 7nPhiMXRn07dw==
-Date: Fri, 4 Oct 2024 23:32:11 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
- <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Adrian
- Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, James
- Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, Leo Yan
- <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, Guilherme Amadio
- <amadio@gentoo.org>, Changbin Du <changbin.du@huawei.com>,
- "Steinar H. Gunderson" <sesse@google.com>, Aditya Gupta
- <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
- Masahiro Yamada <masahiroy@kernel.org>, Huacai Chen
- <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>, Kajol Jain
- <kjain@linux.ibm.com>, Anup Patel <anup@brainfault.org>, Shenlin Liang
- <liangshenlin@eswincomputing.com>, Atish Patra <atishp@rivosinc.com>,
- Oliver Upton <oliver.upton@linux.dev>, Chen Pei <cp0613@linux.alibaba.com>,
- Dima Kogan <dima@secretsauce.net>, Alexander Lobakin
- <aleksander.lobakin@intel.com>, "David S. Miller" <davem@davemloft.net>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Yang Jihong
- <yangjihong@bytedance.com>
-Subject: Re: [PATCH v1 11/11] perf build: Rename PERF_HAVE_DWARF_REGS to
- PERF_HAVE_LIBDW_REGS
-Message-Id: <20241004233211.e3eecf45189f29d40d31d548@kernel.org>
-In-Reply-To: <CAP-5=fVvzNMDPUpAvK0itjG0ZptrSg-_BN3t6UwB4XAvSsDt8w@mail.gmail.com>
-References: <ZvbocHwtPkwJwDOA@google.com>
-	<CAP-5=fWn6ejdozTt8GHvDkv-QW_GF5+b4C3kTO_544H-fXZ+0w@mail.gmail.com>
-	<20240929113521.9b7e8fd67af154520e2c9d8e@kernel.org>
-	<CAP-5=fV8vZoieMrRxCrF5EkUBP0HWd=ZLHXEHTq1X_mni0wMsA@mail.gmail.com>
-	<ZvyBQ6xgGE4gZdoo@google.com>
-	<CAP-5=fX7=EuZgnaG2-cXDU9eVqLyncdMTQF7=Nso__D1H0vMmw@mail.gmail.com>
-	<20241002082859.8821e441024fe873a4301afc@kernel.org>
-	<CAP-5=fWcOpF4+mgnkHOG=ntGMafJ7JSks_4j1JWVvgccApn+Ng@mail.gmail.com>
-	<20241002225614.774bdd0742a826557f142d0e@kernel.org>
-	<CAP-5=fWoiD=7XbB3FbE++1RSo3BZKeOOyNg81t4GQ7Ve6ejpSg@mail.gmail.com>
-	<Zv8fIh4jaY7QbeDZ@google.com>
-	<CAP-5=fVvzNMDPUpAvK0itjG0ZptrSg-_BN3t6UwB4XAvSsDt8w@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF8B217330
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728052366; cv=fail; b=X+KVZDVISt0UyWeuZWHXYDA/+29W3ZF0OTgkRvgv3YUD65J94OhUgzFwaqj9ZuHmVHUOv2HbjuORYfuyQBQkzswCV4lYMf8KgY4Pgjj9Qlq181v1GW0NDoMByybUCqxj6jzE4idTaWJjAYyIfX0jzof9Cmmfs7I/am1g8skQr5Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728052366; c=relaxed/simple;
+	bh=WrYWpxDOUk7iNW+8S2RSS7L6IApXHMGGCo8BolREpBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Tr/35Bx+8Bb+fMCUNYH9qFgltQ4mLpnueqeBX1cg6PKcVge+NwTPRVJ3t/QU683FHm2O9k43cMtTNPtfIO+9AiKOKMiIvMDssPzB8gV5wYas+/T+u1sVQV1m2yKyrIVhDyySovTy/yJgpliPxW1nHGJStEPe+4ZpLB+vyqE7dOo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BhAJAjf7; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=kBCEioWu; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494E02PG031804;
+	Fri, 4 Oct 2024 14:32:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=ZwqVkrBuQCS55xf
+	pNgiuUWno0u3hEV8tzX8K8TKcwYk=; b=BhAJAjf716FO+X1b/nu854Mxc6ucPB3
+	NKaTyFf8gModQuN9cN1YapZAogo250af7eFAGKqkSVyq7gj4BlECXjN2v8fhHXiy
+	zmeSiBRxXupb+dQNXEkXnKs6J6AAeoCTPd8eyfeO/Si6DMfJlZbdVmdgRqhcbxAi
+	8Cwx8YH1F8Htzlw8HD7fILQS4d8sh5XMMU2KYK+UOX/71sepUy6zKVLSvDV4YSCe
+	4aLT0u4aNLBAg9A65YKFKdYsuqTXrfXAUZZqgubcEt7sfJ+xiER6o5UlNDpPxtD8
+	e2oux8eauM2Y4QlxWcf5j4Ofsk2PUcdxWJaDvvc0cTSKaFq+A7CWyvw==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42206m1q0s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 04 Oct 2024 14:32:39 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 494DWqNQ013254;
+	Fri, 4 Oct 2024 14:32:37 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2047.outbound.protection.outlook.com [104.47.55.47])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422057mqc2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 04 Oct 2024 14:32:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QFC7+iuVYkvMoraU+I95WoZr6FUeaUrOuiNUMvAV/5KtG4FRnHE6nWOkbmmJcqAwo4snexGaDgUwV4bUzVj5bsXHXTbm+4XK81ksvK33f3YBLRyHQBv12Hh0Bq/qIDE6Jvuzpipz8jy3M2QZ8LVTKHUvRt7nOGC3U4+fYMfueBprhHpCy1uXHKROt3tu3RfDm5OoySFTuVbHQpvwwE/Cjhg79Y1T1V2p0UuDiD3/XzawcvMpyvizUGYaQkNZuV54rYkoZ34diQeadmJuJxHBAtxadj96+Q+BUzKx539fSvOIndKUhpv6V4P4NwNMQBu/Q2kaJncGUzRPNB0iBBmv0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZwqVkrBuQCS55xfpNgiuUWno0u3hEV8tzX8K8TKcwYk=;
+ b=T/RXKvMoni5KbH5hOkU0XvmuzVDhqO1RMRaOmY5h0174vGW4sB40Mab40pnXo0Xb8fZoiUhFEvX7gWwVR0A48HXVNUBJQrRswGUiwvwmhaZI3nWmBqDokqQR8ZDWrkTkS1roLt/iMQwSx19JoMu46ZO3cQpSt1nghVQWlegxKuuBGNW84TPIIbkfzftuRzpV5hDN23buBfVwl+flz1N353B3Acw9vdJNHou7AD1dBSRLkEnfjY6DixEVDEklEQHHLwIhYIPwrnaAxDNhN3zZXf21N5oGqVREUEbxnFADE0waHxyKpumLzrhHLr69d1yvcxctr1/qJU1QgXvelZxsBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZwqVkrBuQCS55xfpNgiuUWno0u3hEV8tzX8K8TKcwYk=;
+ b=kBCEioWu1bAit7fKnD9gfnmWRcF/MkOKuLVy+AqKNpbtBcuj/wtiTjxrNi35PBVTDxneQhUAI9SGs5K0xCM/UUzNB4N6eUO8plySA/eZxlEnNYh5O3+qo6Lt2dFZPJCfcZgGFHhstJGduYE/Vd56THnutNslVDA/mmu7dDaTn8Q=
+Received: from PH0PR10MB5611.namprd10.prod.outlook.com (2603:10b6:510:f9::16)
+ by BL3PR10MB6090.namprd10.prod.outlook.com (2603:10b6:208:3b6::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18; Fri, 4 Oct
+ 2024 14:32:31 +0000
+Received: from PH0PR10MB5611.namprd10.prod.outlook.com
+ ([fe80::d513:a871:bbf9:fce2]) by PH0PR10MB5611.namprd10.prod.outlook.com
+ ([fe80::d513:a871:bbf9:fce2%7]) with mapi id 15.20.8026.019; Fri, 4 Oct 2024
+ 14:32:31 +0000
+Date: Fri, 4 Oct 2024 15:32:28 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in mmap_region()
+Message-ID: <76a7c74b-9240-40b5-a5ac-9b128c7007c5@lucifer.local>
+References: <20241004093546.3232-1-spasswolf@web.de>
+ <d07c85a3-d1b6-48e7-9e98-bb533bb73417@lucifer.local>
+ <a34fe509-f1d0-482e-9aa9-8dc3fa0743f3@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a34fe509-f1d0-482e-9aa9-8dc3fa0743f3@lucifer.local>
+X-ClientProxiedBy: LO0P265CA0013.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:355::8) To PH0PR10MB5611.namprd10.prod.outlook.com
+ (2603:10b6:510:f9::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5611:EE_|BL3PR10MB6090:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2072b28c-8d5a-421c-7850-08dce48160e1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fEDc+ssEPXfpeNWQ+rLJAbyv4Kt0LsNKrucR/L4DB3gSIjHkXtKjjI9PUqd4?=
+ =?us-ascii?Q?fucAj32CFb70bggKNaaIIohNeP3o/hHBl4bgEbETSVaKH9wnlDv6qfVFb7Sr?=
+ =?us-ascii?Q?7RRNgPW2QbSW1QkRIokGoUASmxVS7IJurNkYLuRkwVNCxjkt50jpyrjLv/JM?=
+ =?us-ascii?Q?Ppy2OdgUvOj9S/5+h3bbERSnUUMJ4tVp+Ra4hSgY/NIJ0JeppmIWm7/bLnkS?=
+ =?us-ascii?Q?st63Lil/y6uyJX6t5rSFhbqMUpY5UlM4Z7vDDqxmyNbabEdbX3+PMJT/b6Eh?=
+ =?us-ascii?Q?Hqk3LoQTtLoX0heD1q1H5UsM2ruS6fqFQ1ojECTF6bZrMsan5+UCpg+Tj8zq?=
+ =?us-ascii?Q?u9e5uWf2/QrnmjfMGPSvF7AE1/JfTjmppqmUmwDXl4xAlk3w6hYYcwhfEYWA?=
+ =?us-ascii?Q?moVf3AkY2O8ciK3nCak59o7Tcfm0DSbeoX307bOD+iTCS6VoEAWeuR2qKznj?=
+ =?us-ascii?Q?S9mh2xngZlWYB9mARDVKxQrN4+hAUyfr1tDQPMuVRCE43WkGcYxzKPPQK0FZ?=
+ =?us-ascii?Q?dB4sl5h0Kd2bCnpihl484UYw9q8YJnA6+fCAqg+WcGln1xTrLCFop+gaebB2?=
+ =?us-ascii?Q?DzKr4VUoUz2ilFF8+zDa5XY31iR/2U4XcJ6HARyniNO9TcY92jX6d8IXGbTV?=
+ =?us-ascii?Q?eUjjptsm3uaJuTQSytJ4TAUlQAOY1ipUWfbiMlYwlma9FHwzzJwG50xIkolP?=
+ =?us-ascii?Q?tsI2K1V9v86lWvJGia2vjgUUJBu0CkIJZM/lduq2tH9G8+s5UNwp981Nz+Rv?=
+ =?us-ascii?Q?Hz27sc3Hx7ETKfRDYWjAImc7hLNj5p4Rec9EkczKtLiEUjxr95EE58j4hzaM?=
+ =?us-ascii?Q?LX9l28KCs12Jc4LqdwqKOQhQN+V/Co456pVRWLpf0YyQFUBHcP9JYRZ7nAEV?=
+ =?us-ascii?Q?thZ3TDMEeAn/zHnCNWOMy+1EhEg9S4FIO0BqzpboO9zM8AuY/HmMB4n/XzDG?=
+ =?us-ascii?Q?ZqDuclCnJX76iatru5Z/Lu1oSD8dQRViC6Tovh7HjBBKrNYrSDEFFagZ0WGS?=
+ =?us-ascii?Q?ysAdeSEKJqhOBn9Wiv2tdC9WnR86sYwVoUznquDy0jqG2hN+MXMl9iimk1DA?=
+ =?us-ascii?Q?gUZ5oeMR53EGMFCfXJYi2VwdV3h4+N2Zyqgzk1Djd/8Ie/GLehGX3dhRLXOM?=
+ =?us-ascii?Q?HqbQuG9k+oxUjWmJnNXnlPhacJ+oqpn3gkifQrHPBHR+VcRevPuoa+djYKqt?=
+ =?us-ascii?Q?0dYwQBdt6m1KMhdIscorxjPQ84DLplZX0ntIJ3tJHQY6Qxofw5G7PVZmR4iV?=
+ =?us-ascii?Q?/sKr6bq+hm9uBrYPYyKiTB6Uh5XtEmar5iltRB4YiQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5611.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?cim1dPy+CPYAj+6KREUmWhFWVaKSWzi0/2RMjqZk7QJUUN2hiASLH2gUY86Z?=
+ =?us-ascii?Q?vOs/CwmiIYAC3gdRBrYsALGgOnBjkHJpYHoPahTPzbzsOi53yty8+HckBbAX?=
+ =?us-ascii?Q?ag8Y4bRRZ6WvdNkrvctJmxneoH4sRJ54h+yS1ZwXgVDPx3K8wxkFpme0tpD4?=
+ =?us-ascii?Q?0qIu4LHrLyeSgZehklQw2++MraayvD2IKCo43QT7OgD/cspzPivyWfOsVAlA?=
+ =?us-ascii?Q?3x0HPYbLxAdhoCnHw1spUfVWjCd47MRMEdKNGNxg0qID+RPqkRpJ4pN9cbqb?=
+ =?us-ascii?Q?dEpt5FRE7wm7MPCy7BAFkV2QiKhkG/a+5yIi05oxVRgTufHYvJ7J4NtWndw0?=
+ =?us-ascii?Q?9zPjrpRJBwv3ffNLtCWJODFDxM36xqaaYXIuAmAMB+vR10hxdgfpzQUFeMTp?=
+ =?us-ascii?Q?QcLhFt0eRJOpoGywJzy2G1OwEClc5eJ6/RUciRLmSKCTwFfBP/XpbTkOI1O8?=
+ =?us-ascii?Q?TZU6frgdWgD5+Zzu2CUBqeo8QEC7NHW0MMSCfq33wql0GZuJKfXBsupU2VCI?=
+ =?us-ascii?Q?w+W3iJJEyB8vOmPKsksHfc+P7VqsUVm9MB/OR+1Tgn2PoNDf/5AXvB0qBEsN?=
+ =?us-ascii?Q?DA3jicNEffoKs+83Nvgzm4TMVXbokylbyhjB6yozyWXVTsqeKl9yOArmjGV7?=
+ =?us-ascii?Q?b6MUZbeIGnMsM4RNohdf9kgqDqPIDaxSWaGFS+FFoQMfTtKGZ7nNNzOIivOm?=
+ =?us-ascii?Q?Cb4g9SfY+H4mTDnHYouW4p+04IiHeqnqlaaqjiSeIdSC5P1xIqT+wkaj+oT+?=
+ =?us-ascii?Q?iAXzqi2IhIzGACOluk4Q99qO7ViY7JepZBl5y8cAE/bmD8N2G65OWreWkrBy?=
+ =?us-ascii?Q?sTyECFJfogyXVihtBJdg2Hv3jsGYQ80vWAhzwTZ+x6MCUYiIjSRMhcow58qd?=
+ =?us-ascii?Q?S6WKC6AGFNtH0pHx6VAUi5vmCclgNYszfgcXApVRnRn59eamQGA1pYpLgrPu?=
+ =?us-ascii?Q?1NOR6KewHEx1bJnAIl2rTl/SVMDHVqWsQdoFZ5kmT60Mrz7A0a9G1ruxTWji?=
+ =?us-ascii?Q?fwupBj5iZLMxWML1NUKhhtBvDEF7OKeJjg2CjBoV1X0YdafTdHRMxMAvHxEm?=
+ =?us-ascii?Q?t04wlVL+KFUQ2z2h+Gl9otfMOzCB/u+DvLKbQb6v5LA7I7LhFrrUAGmtznNS?=
+ =?us-ascii?Q?nEPZrC6WE3oXgcjCLe3vx7I6BjrtD45cfJmCCwWO609EFdflSquzAjgVyNne?=
+ =?us-ascii?Q?qzjQOiCT7JYLX02CfHSh7hoLCHRWl2mUsQX67ZNMd3YLxK27QIbcbeNldnpR?=
+ =?us-ascii?Q?TCVBqZg/DGnXnX9x5Hy4QJh5gaUuwz3MRzd1pvt7Y9VZwbQSAxKmV9jwIRLD?=
+ =?us-ascii?Q?LZS0/ePze437qGE0qA4+DX7v6hrjJhqN6/FuGwsYUsHYRW7mlc9nQ/4JaUW0?=
+ =?us-ascii?Q?JNzQpXv2eNY81PtphaJvXvrMq/NWE2Qpsd+wPkVQgpx8Ej7qAhxpA7HK1HnN?=
+ =?us-ascii?Q?EMPfPGLRxXuwRQfynGDRtJH9JJGvb8zgVHSKRtAT1yAXjscwXBLvOkTe+3tG?=
+ =?us-ascii?Q?E6atQo/eNCvvq2S89kePe6qZXvUusn1thAXfsxNnxfBI6xinWHpwOAQEDfAM?=
+ =?us-ascii?Q?U1rtBXIvsWwFi+Fjd8qq0e6uE3KZsbaZcOb5+UV4V9f7Pjz6IOH7boVx+9aZ?=
+ =?us-ascii?Q?nQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	a2mtS7Zgk0qHsZLjvEtsM9BfcC3B0oCUK8Ij52JQpEGASeAv0NGVIElEH4DqUi6EUYIyt/zK2Btq96eRin4hfS12cDV8NBn2lDyd373pIwYMGd/m+iTsizcTPnW/EmbLjWiVSWsye4IkHmaTAFNOpob1qL9Qdfb5L2vyR3/1QBkraf738y51GcsxDaTSxZ5oDFe6W0cQfwRqoCesH6Bsxqo0/C3K3ZA3RVQLK00uYZQF1/VRAB3bqeWzxFROHF8/YbLsqKRwreg6WV7EzVqWzChDMwMuunqZunCQYBzX2VovLe5NuajVZNNOXY0MbuIx5PRGeZyhoCxazuTbhbkQWUZ7kj+5Fgb44f44/80y4dnTkhpahLmJcQxAJFFkvHF47xbH2bsYhcH4jwKJdbtod5xxq1JsCdm5FErbOhNxremDFGZoPAS1U8Coc+LlMQlJJArrsGBxzyb2ispbP41cXvZYvKML7f1sfyqAixD6FNeTQ6J4VuvcUp9Bq05TAvoVfPG+x5QkNYkgz49t3A0ghxhowOx6Bpx2Fi9rojcSYKnim6cJ5aaBGHNGhKV9+VzmhowionRONfBmFTIvy6jOTOR3Zeapw4xeNdz4J7qcs4A=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2072b28c-8d5a-421c-7850-08dce48160e1
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5611.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 14:32:30.9509
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gACdIero55lVYlUVRjeQcO7e2g2eCdYVDzFXSIeDmbvPSV8P7qx4/mvGI7sCGv6uNhx/NO0NjNLUI5EaQRAq+yJ39Wzgu8atDwyEQ6Hdu5M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR10MB6090
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-04_10,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 malwarescore=0 adultscore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410040100
+X-Proofpoint-GUID: uoBMBJtgayYXi8Gx1kE_Yq1T0Y7FvaMW
+X-Proofpoint-ORIG-GUID: uoBMBJtgayYXi8Gx1kE_Yq1T0Y7FvaMW
 
-On Thu, 3 Oct 2024 17:58:13 -0700
-Ian Rogers <irogers@google.com> wrote:
-
-> On Thu, Oct 3, 2024 at 3:48 PM Namhyung Kim <namhyung@kernel.org> wrote:
+On Fri, Oct 04, 2024 at 03:26:26PM +0100, Lorenzo Stoakes wrote:
+> On Fri, Oct 04, 2024 at 03:23:37PM +0100, Lorenzo Stoakes wrote:
+> > On Fri, Oct 04, 2024 at 11:35:44AM +0200, Bert Karwatzki wrote:
+> > > Here's the log procduced by this kernel:
+> > >
+> > > c9e7f76815d3 (HEAD -> maple_tree_debug_4) hack: set of info stuff v5
+> > > 7e3bb072761a mm: correct error handling in mmap_region()
+> > > 77df9e4bb222 (tag: next-20241001, origin/master, origin/HEAD, master) Add linux-next specific files for 20241001
+> > >
+> > > Again it took two attempts to trigger the bug.
+> > >
+> > > Bert Karwatzki
+> > >
 > >
-> > On Wed, Oct 02, 2024 at 07:27:16AM -0700, Ian Rogers wrote:
-> > > On Wed, Oct 2, 2024 at 6:56 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > > >
-> > > > On Tue, 1 Oct 2024 18:31:43 -0700
-> > > > Ian Rogers <irogers@google.com> wrote:
-> > > >
-> > > > > On Tue, Oct 1, 2024 at 4:29 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > > > > >
-> > > > > > On Tue, 1 Oct 2024 16:17:34 -0700
-> > > > > > Ian Rogers <irogers@google.com> wrote:
-> > > > > >
-> > > > > > > On Tue, Oct 1, 2024 at 4:10 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Sep 30, 2024 at 09:02:36PM -0700, Ian Rogers wrote:
-> > > > > > > > > On Sat, Sep 28, 2024 at 7:35 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Fri, 27 Sep 2024 11:15:21 -0700
-> > > > > > > > > > Ian Rogers <irogers@google.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > > On Fri, Sep 27, 2024 at 10:16 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > > > > > >
-> > > > > > > > > > > > On Thu, Sep 26, 2024 at 12:55:18PM -0700, Ian Rogers wrote:
-> > > > > > > > > > > > > On Thu, Sep 26, 2024 at 12:40 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > On Thu, Sep 26, 2024 at 05:47:16AM -0700, Ian Rogers wrote:
-> > > > > > > > > > > > > > > On Wed, Sep 25, 2024 at 8:27 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > > On Tue, Sep 24, 2024 at 09:04:18AM -0700, Ian Rogers wrote:
-> > > > > > > > > > > > > > > > > The name dwarf can imply libunwind support, whereas
-> > > > > > > > > > > > > > > > > PERF_HAVE_DWARF_REGS is only enabled with libdw support. Rename to
-> > > > > > > > > > > > > > > > > make it clearer there is a libdw connection.
-> > > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > > While it only covers libdw, I think the idea of this macro is whether
-> > > > > > > > > > > > > > > > the arch has register mappings defined in DWARF standard.  So I think
-> > > > > > > > > > > > > > > > it's better to keep the name for this case.
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > How can the dwarf standard exist for an arch but not define registers?
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > I meant it's about the arch code in the perf tools to have the mapping,
-> > > > > > > > > > > > > > not the DWARF standard itself.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > But we guard those definitions behind having libdw:
-> > > > > > > > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/arch/x86/Makefile?h=perf-tools-next#n3
-> > > > > > > > > > > > > So we only have the regs if libdw is present, not if dwarf is in use
-> > > > > > > > > > > > > for libunwind/libdw. Hence wanting to be specific that they are just a
-> > > > > > > > > > > > > libdw and not a dwarf thing. Trying to use the regs in libunwind code
-> > > > > > > > > > > > > would be broken. That could change but I wanted to make the code clear
-> > > > > > > > > > > > > for the way things are at the moment.
-> > > > > > > > > > > >
-> > > > > > > > > > > > I understand your point but calling it LIBDW_REGS looks unnatural to me.
-> > > > > > > > > > >
-> > > > > > > > > > > I don't follow. Wouldn't it be unnatural to see PERF_HAVE_DWARF_REGS
-> > > > > > > > > > > in libunwind code but you are to some how know that the code only had
-> > > > > > > > > > > meaning if libdw was present? I don't like the implication that DWARF
-> > > > > > > > > > > means LIBDW as throughout the code it doesn't. I think the name
-> > > > > > > > > > > PERF_HAVE_LIBDW_REGS better captures how the code is, makes the code
-> > > > > > > > > > > more intention revealing and so readable, etc.
-> > > > > > > > > >
-> > > > > > > > > > I agree with Namhyung this point. dwarf-regs is defined only by the
-> > > > > > > > > > DWARF standard, not libdw only. The standard encode registers by a digit
-> > > > > > > > > > number and the dwarf-regs decode the number to actual register name.
-> > > > > > > > >
-> > > > > > > > > The code is not making a statement about the DWARF standard, take arch/csky:
-> > > > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/arch/csky/Makefile?h=perf-tools-next
-> > > > > > > > > ```
-> > > > > > > > > # SPDX-License-Identifier: GPL-2.0-only
-> > > > > > > > > ifndef NO_DWARF
-> > > > > > > > > PERF_HAVE_DWARF_REGS := 1
-> > > > > > > > > endif
-> > > > > > > > > ```
-> > > > > > > > > in the patch series NO_DWARF becomes NO_LIBDW, so it is now:
-> > > > > > > > > ```
-> > > > > > > > > # SPDX-License-Identifier: GPL-2.0-only
-> > > > > > > > > ifndef NO_LIBDW
-> > > > > > > > > PERF_HAVE_DWARF_REGS := 1
-> > > > > > > > > endif
-> > > > > > > > > ```
-> > > > > > > > > So the Makefile says that PERF_HAVE_DWARF_REGS is dependent on having
-> > > > > > > > > NO_LIBDW, that is having libdw implies PERF_HAVE_DWARF_REGS is defined
-> > > > > > > > > for csky.
-> > > > > > > >
-> > > > > > > > I think this is totally fine and we can change the condition later if
-> > > > > > > > needed.
-> > > > > > > >
-> > > > > > > > After all, I don't think it's a big deal.  Let's just call DWARF
-> > > > > > > > registers DWARF_REGS. :)
-> > > > > > >
-> > > > > > > The define is called PERF_HAVE_DWARF_REGS, notice the HAVE, but we're
-> > > > > > > not setting it while supporting call-graph dwarf with libunwind. It is
-> > > > > > > actively confusing.
-> > > > > >
-> > > > > > Does libunwind requires the dwarf regs? I think the dwarf regs information
-> > > > > > is only needed for analyzing dwarf register assignment, not stack unwinding.
-> > > > >
-> > > > > So you are saying the #define is guarding a libdw feature?
-> > > > > perf record/report --call-graph=dwarf is supported with either libdw
-> > > > > or libunwind. The dwarf support in the tool may come from more sources
-> > > > > hence wanting in this patch set to be clear what variable is guarding
-> > > > > what. PERF_HAVE_DWARF_REGS is set to 1 for a specific set of
-> > > > > architectures and only when libdw is present. The variable is saying
-> > > > > that libdw supports the notion of registers needed for the #define
-> > > > > HAVE_DWARF_SUPPORT that patch 9 in the series renamed to
-> > > > > HAVE_LIBDW_SUPPORT. So I want the makefile variable
-> > > > > PERF_HAVE_LIBDW_REGS to guard the #define HAVE_LIBDW_SUPPORT, rather
-> > > > > than what is being argued by yourself and Namhyung that the #define
-> > > > > HAVE_LIBDW_SUPPORT be guarded by a variable called
-> > > > > PERF_HAVE_DWARF_REGS and that is only set when NO_LIBDW isn't set.
-> > > >
-> > > > It will be only used with the libdw, but I don't care.
-> > > > "HAVE_DWARF_REG" (internal config, just indicates the arch implemented
-> > > > feature) simply means there is `arch/XXX/util/dwarf-regs.c`.
-> > > > Also the APIs provided by the dwarf-regs.c are still based on DWARF
-> > > > standard, which defines registers by number like DW_OP_reg[0-31].
-> > > > So the mapping of these suffix number and actual register must be
-> > > > defined for each architecture.
-> > > >
-> > > > That is why I had introduced dwarf-regs.c and call it "dwarf"-regs.
-> > > > Even if the implementation depends on libdw, this dwarf-regs.c is
-> > > > still based on DWARF standard.
-> > >
-> > > You seem to be missing the point of the series which is to clean up
-> > > inconsistencies where dwarf is used to mean libdw. Here we have libdw
-> > > guarding a #define with DWARF in the name, it should have libdw in the
-> > > name as the patch cleans up. This is a coding thing and not a dwarf
-> > > specificatin thing.
-> > >
-> > > > > We've made a digression into the name dwarf for a reason I can't
-> > > > > fathom, at best it is inconsistent. Having dwarf registers is like
-> > > > > having a bright sun or numeric numbers, it is a truism (playing devils
-> > > > > advocate maybe if there were an ELF file format for postscript we
-> > > > > could have a dwarf specification without registers). Anyway, I'm
-> > > > > trying to connect the dots that libdw support controls the libdw type
-> > > > > variables and defines hence not wanting 10 out of 11 patches applied.
-> > > >
-> > > > Oh, wait, I think we can apply other patches. I just don't like this
-> > > > patch. I think the other patches are good. But this is
-> > >
-> > > Then we are intentionally aiming to be inconsistent, with libdw
-> > > meaning dwarf with a #define that just states a truism. Arguably the
-> > > code is better with none of the series applied.
-> >
-> > I agree renaming libdw-specific parts.  But the register is for DWARF,
-> > not libdw even if it's currently used by libdw only.   So I don't want
-> > to rename it.
-> 
-> So your objection is that we have files called:
-> tools/perf/arch/*/util/dwarf-regs.c
-> and PERF_HAVE_DRWARF_REGS is an indication that this file exists. This
-> file declares a single get_arch_regnum function. The building of the
-> file after this series is:
-> perf-util-$(CONFIG_LIBDW)     += dwarf-regs.o
-> 
-> My objection is that PERF_HAVE_DWARF_REGS is controlling the #define
-> HAVE_LIBDW_SUPPORT, so dwarf (that can mean libunwind, libdw, etc.) is
-> guarding having libdw which is backward and part of what this series
-> has been trying to clean up.
 
-OK.
+[snip]
 
-> 
-> If we rename tools/perf/arch/*/util/dwarf-regs.c to
-> tools/perf/arch/*/util/libdw-helpers.c the PERF_HAVE_DWARF_REGS can be
-> renamed to PERF_HAVE_LIBDW_HELPERS to align. Then
-> PERF_HAVE_LIBDW_HELPERS guarding the #define PERF_HAVE_LIBDW makes
-> sense to me and I think we achieve the filename alignment you are
-> looking for.
+OK please try the _actual_ fix, shown below.
 
-Yeah, I think that is OK to me.
+It may be a little unstable as I am still working on this but it'd be good
+to confirm it fixes the issue for you!
 
-> Yes get_arch_regnum could make sense out of libdw and needn't just be
-> a helper for it, but let's worry about that when there's a need.
-> What's confusing at the moment is does libdw provide dwarf support,
-> which I'd say is expected, or does dwarf provide libdw support?
+Thanks, Lorenzo
 
-You missed to cut the word, PERF_HAVE_DWARF_REGS means "perf have 
-'dwarf-regs.c'". If dwarf-regs.c is not there, we can not enable
-libdw support because it causes linker error.
+----8<----
+From b9a8b45e62ad2749dd4066a828bd2efc109e87e5 Mon Sep 17 00:00:00 2001
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Date: Fri, 4 Oct 2024 15:18:58 +0100
+Subject: [PATCH] fix v2
 
-So, if the file name simply changed to libdw-helper.c, I think we can
-change it.
+---
+ lib/maple_tree.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-Thank you,
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 37abf0fe380b..2ce24349f53a 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -3527,6 +3527,7 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
+ 	return true;
+ }
 
-> 
-> Thanks,
-> Ian
-> 
++// Return whether the node actually contains entries at or greater than wr_mas->mas->index.
+ static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
+ {
+ 	struct ma_state *mas = wr_mas->mas;
+@@ -3536,7 +3537,8 @@ static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
+ 		wr_mas->content = mas_slot_locked(mas, wr_mas->slots,
+ 						  mas->offset);
+ 		if (ma_is_leaf(wr_mas->type))
+-			return true;
++			return mas->index <= wr_mas->pivots[mas->offset];
++
+ 		mas_wr_walk_traverse(wr_mas);
 
+ 	}
+@@ -3696,6 +3698,7 @@ static noinline void mas_wr_spanning_store(struct ma_wr_state *wr_mas)
+ 	struct maple_big_node b_node;
+ 	struct ma_state *mas;
+ 	unsigned char height;
++	bool r_populated;
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+ 	/* Left and Right side of spanning store */
+ 	MA_STATE(l_mas, NULL, 0, 0);
+@@ -3737,7 +3740,7 @@ static noinline void mas_wr_spanning_store(struct ma_wr_state *wr_mas)
+ 		r_mas.last++;
+
+ 	r_mas.index = r_mas.last;
+-	mas_wr_walk_index(&r_wr_mas);
++	r_populated = mas_wr_walk_index(&r_wr_mas);
+ 	r_mas.last = r_mas.index = mas->last;
+
+ 	/* Set up left side. */
+@@ -3759,9 +3762,12 @@ static noinline void mas_wr_spanning_store(struct ma_wr_state *wr_mas)
+
+ 	memset(&b_node, 0, sizeof(struct maple_big_node));
+ 	/* Copy l_mas and store the value in b_node. */
++
+ 	mas_store_b_node(&l_wr_mas, &b_node, l_mas.end);
++
+ 	/* Copy r_mas into b_node. */
+-	if (r_mas.offset <= r_mas.end)
++
++	if (r_populated && r_mas.offset <= r_mas.end)
+ 		mas_mab_cp(&r_mas, r_mas.offset, r_mas.end,
+ 			   &b_node, b_node.b_end + 1);
+ 	else
+--
+2.46.2
 
