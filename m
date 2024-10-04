@@ -1,159 +1,243 @@
-Return-Path: <linux-kernel+bounces-350180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526C6990121
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:28:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8897C99012A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 723F51C2129C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:28:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E01F1C222EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 10:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA43B15748A;
-	Fri,  4 Oct 2024 10:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Gwkobuia"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36B8155CA5;
+	Fri,  4 Oct 2024 10:26:23 +0000 (UTC)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97364156F3A
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 10:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D7E155753;
+	Fri,  4 Oct 2024 10:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728037530; cv=none; b=HPqjOd/6EnBLOebV9lF/fIzcjGB14GIBp3wGRRB2K8fX7hsr+tJ4JW8f/nZYS/jLD65fz+VynptZuHz3/ieyi0gS+b8xx/bmFaTmlfBb4BWwd0Wdgv5HOKRn3ui8rwvZ8HfrRM8KiLz8J1gXojgL37DAZu+TqOHv2A14smyVNPY=
+	t=1728037583; cv=none; b=oaexK4ntRNdWq4LiQ++DOAn2eJ/Q7n8kb7dK3oJZLtBap5d3sYlC5OmJ8mSZCriTOTXkRM62TxdNPIlc3rhIEwBDW9SRj3sQF31rgCJu8JpVb7tCPplP82KzdckP4l7S0xpz6vuoMoTYTwnTuCpDTJENRFJEvXMCcHgYaIKshlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728037530; c=relaxed/simple;
-	bh=IgqML/A0RI8EV0Mka9xfk/zX4S8CY878POOjVe4o6IQ=;
+	s=arc-20240116; t=1728037583; c=relaxed/simple;
+	bh=e52eoWf7N3dvIOdGrBitFmcw0yUrL4qgU6pNsk4c95Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QoGeTnWtgYc8CYqszk+j8inGN0JZfEg/gCqw19nHRpA2QsZA5Bg0wIiURtrLL1YpRQ1LUSFjjJainyRkpa9J6FdCvD+uMM0zQsInRLt1JC7AMHVGNYacy0NtcmnFv4aBGTYb3EchIXp4OsOV070tcKBve0OZZbqo6JLE6rXtMxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Gwkobuia; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7e6cbf6cd1dso1279966a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 03:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1728037528; x=1728642328; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KtzZwDcCBRIJWjG1SeILMCRqnIAOjaXwt0dR2Z/fZRk=;
-        b=GwkobuiaHhhmofWljIeGUiMWNCZlFqZhtquwRcQHBHxoyPBZQtVagU9MIHLGX/euQA
-         sm+/3m2PSQ/DEaRi6F0OFuMsfsjtga9W1uHlsTqVcVJB15OYoBJClCBQCGs+Y5WFnOY6
-         Z2NsW3a7Nz1GJEr8QfZKGs0hRZtJn5I6VBfsXlSPdFMgIZw6AFvR2826y7L1SE/Enxx1
-         Hl36ZjZata69dXdg5diReAsZlWRV5m/a0XaSNPDtPDuK6w7SmGuB8ZVzo6r0QRkVGMJ8
-         8ykNkO0/9uvyJua2eV4uhjp2ISbAK59x/0LXhfNHIAY2SDcO0seXmbRBWJ7kF2A2Mxu9
-         D7og==
+	 To:Cc:Content-Type; b=l59PXeMFS+0HdAXssjEMr9gVcsRX80fbFRlKB9n+T3VgqNkVGBRw2fWUkNnDG4LZyZCxzO7aZKfqP8buwbgdc8ixia47nX+gKGhrE9H40efOkFLMT0h6TMhV3kvvvx1zKNL8oEW4UjuxI7q0KMK/hwB/04nAgFPtBoZAPdnMsaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e252d1c5b25so1621167276.3;
+        Fri, 04 Oct 2024 03:26:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728037528; x=1728642328;
+        d=1e100.net; s=20230601; t=1728037579; x=1728642379;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KtzZwDcCBRIJWjG1SeILMCRqnIAOjaXwt0dR2Z/fZRk=;
-        b=HRO9XD1HZqIZMh3wrqwXbKf5C4Iw9eONHkzwWoYNb5sc8znNJf8WToj13RCu5YyNg5
-         nGYSiSJcSuvOsSYOP9EIGfYoC2AIR6Sqyw+c476Cjg0q3HNtKIsIPMei2Nu+iaMM6/xm
-         0WaRxBcU/bKU24NSAmi74vxtK9P8P8VAw6jwfVMvMoXBwo55BfGqsDyRREZX2rHzANl6
-         MHXWIxVs5r3NxNYENWh0Fra0aIlPnvA829AscrcH98IGpIiYFq2DIJLtARRlNHcwkTA1
-         Wes3rYpbdt85Sm4q4nMC4yZ4PGg1n11GkY5ZdA+h5zpF9y3Ilq7SlWqOu8E7A0WmZNcp
-         OLBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRQpRVM/WIbilppwNRBRTfBRsjhTyvPgJ6Z5dfECW5eR0ir0FtBDW2tq9FisZuDm9t/jhrPgGgjTDiutI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywtb/OMv5xB90PLErwVWUK12W5CCxaayYwXevXgf8e/HMC66O5/
-	9Lk0v2FZ9ZT5Cr9T3S9vF38nXbHoVrNcIpujLz0NndLjgEzNPTNA6g1SfXZ8gpSYy1YT6jWYM4H
-	jWe4n6uKKfsL5NJBB2DS4j9zlh0Ke8nz3/6ACwQ==
-X-Google-Smtp-Source: AGHT+IFQmp/uoREOZGCDkiFRh/G647ifTQRZp8Ru0lVVF+cqOU1Q+I3rZsb+Yb41N45SjjCiX7atyhctfo6wH9YIlmw=
-X-Received: by 2002:a05:6a20:1e45:b0:1d6:e22e:1571 with SMTP id
- adf61e73a8af0-1d6e22e15d7mr1225656637.1.1728037527803; Fri, 04 Oct 2024
- 03:25:27 -0700 (PDT)
+        bh=KdfJS9HKwQvXD1Y4tgaSbkhrZsV+Ih0nT0QvGrBwjdM=;
+        b=fyMDPskYvR/ZxYYKTXlAgnXl6mowcC3C/bJP9zCwbOdlLelA1v5V1XV/B2k4nSmeyo
+         kCveyD95pK4uRZgKqDhG047zbXX9vjicEffCWizwju0EuaL7Zzt2r4i6gn2e64YUUG07
+         hoLTF9G6/vwBaiF7TXXzmh/JbjZwFajsX+9I2vvVaIt7UhBlEpkLcWIibbWulKnIkpsn
+         wvByjR/IahBXNlfwEap1Vhm8ZStHuHsNJ1eQzymvCJQfckq5ub9WuMERNlN1PhQKlBCj
+         EgjJym9nf/HetY937ZJtq7XqctNcm+ajA086S6hbGCSwT+0VwHs28UcoJifPKCyDziNw
+         wuUA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+VsWzdkyVSehH6Co/oBR+GW3IwytCA0MQSdrzR1SvNMZUKdAMqsyoYFbkrbDdulXn56OJSk00W9pJJ7PIlio3v2s=@vger.kernel.org, AJvYcCW6qLMWtUnuEwdDWU+QYn0Nq4+OhvTl/pENX09vwclqU9iHylMP041iHAbrIaB93VUXYZAqeh22GzAT@vger.kernel.org, AJvYcCWF3kK0etBKyAF41H6YbhXrwyCUSF9WvBlXJ/eR8g2RaXsTb6L6t+9DSCkJo5BJaunKAHDed8CEnLMvRdLZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQAB8uiAzPmNA7sWZ70/YVTJCIkI5PukOUBP0/KzzBv4kIpwbJ
+	NMkiNBR8dlFWAqEKJS11UclE1GLIKhgosx8twd+7FbtfV4kwPN7BlRn5HUHM
+X-Google-Smtp-Source: AGHT+IEmHt1bynH9g8h69vI7d0szltnb8oJ4PCW7rkmytpGsBdJTjA7/SO/nMHGFePZvWqigs/HVeA==
+X-Received: by 2002:a05:6902:2b8e:b0:e26:11ae:6de9 with SMTP id 3f1490d57ef6-e28939561eemr1301989276.52.1728037579432;
+        Fri, 04 Oct 2024 03:26:19 -0700 (PDT)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e2885d73203sm547930276.39.2024.10.04.03.26.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 03:26:18 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e20a8141c7so17998737b3.0;
+        Fri, 04 Oct 2024 03:26:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+DuTEllewD0pv3QiV+w/XYIjd9XpIpzLL6V+Nuo2aSG6FDXdKjSxFTO0Q0f9+pj6mRp5bJyralG8K@vger.kernel.org, AJvYcCVUEJutsA0BaRWqjQTPSTuBp4hvlo8oMMLTLNxATvt4KCrc/GCkyLLDhoKOhVRGfVxNmIJpyCNvewWNrh+mHEoXwLg=@vger.kernel.org, AJvYcCVuoiZ/JLcoxEoOTRbk7pD45HQtWTL+O4n/ByRQbpH9OcsQQEdgwTyLyzjHffMLCm5FMOOtx8uoFYarrDHy@vger.kernel.org
+X-Received: by 2002:a05:690c:4b08:b0:6e2:1c53:7918 with SMTP id
+ 00721157ae682-6e2c726e433mr20876817b3.14.1728037578509; Fri, 04 Oct 2024
+ 03:26:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003170151.69445-1-ignat@cloudflare.com> <20241003215038.11611-1-kuniyu@amazon.com>
- <CANn89iKtKOx47OW90f-uUWcuF-kcEZ-WBvuPszc5eoU-aC6Z0w@mail.gmail.com>
- <CALrw=nEV5KXwU6yyPgHBouF1pDxXBVZA0hMEGY3S6bOE_5U_dg@mail.gmail.com> <CANn89i+BNfpKY_qCRLFyGSgtzNeVGuPKudw2nWTF7=r0+P9jUg@mail.gmail.com>
-In-Reply-To: <CANn89i+BNfpKY_qCRLFyGSgtzNeVGuPKudw2nWTF7=r0+P9jUg@mail.gmail.com>
-From: Ignat Korchagin <ignat@cloudflare.com>
-Date: Fri, 4 Oct 2024 11:25:15 +0100
-Message-ID: <CALrw=nEZ=0bP7FPqmT9-cE_ZeT9Wz4-19xrFfE=6BK4nSHuUeg@mail.gmail.com>
-Subject: Re: [PATCH] net: explicitly clear the sk pointer, when pf->create fails
-To: Eric Dumazet <edumazet@google.com>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, alibuda@linux.alibaba.com, davem@davemloft.net, 
-	kernel-team@cloudflare.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org
+References: <20240930145244.356565-1-fabrizio.castro.jz@renesas.com> <20240930145244.356565-3-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20240930145244.356565-3-fabrizio.castro.jz@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 4 Oct 2024 12:26:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWp7MyqT4LtNna+kOCpMpXvMKxcFuqsm6vuPgUVuvBGAA@mail.gmail.com>
+Message-ID: <CAMuHMdWp7MyqT4LtNna+kOCpMpXvMKxcFuqsm6vuPgUVuvBGAA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] dt-bindings: interrupt-controller: Add Renesas
+ RZ/V2H(P) Interrupt Controller
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 4, 2024 at 11:19=E2=80=AFAM Eric Dumazet <edumazet@google.com> =
-wrote:
->
-> On Fri, Oct 4, 2024 at 12:05=E2=80=AFPM Ignat Korchagin <ignat@cloudflare=
-.com> wrote:
-> >
-> > On Fri, Oct 4, 2024 at 9:55=E2=80=AFAM Eric Dumazet <edumazet@google.co=
-m> wrote:
-> > >
-> > > On Thu, Oct 3, 2024 at 11:50=E2=80=AFPM Kuniyuki Iwashima <kuniyu@ama=
-zon.com> wrote:
-> > > >
-> > > > From: Ignat Korchagin <ignat@cloudflare.com>
-> > > > Date: Thu,  3 Oct 2024 18:01:51 +0100
-> > > > > We have recently noticed the exact same KASAN splat as in commit
-> > > > > 6cd4a78d962b ("net: do not leave a dangling sk pointer, when sock=
-et
-> > > > > creation fails"). The problem is that commit did not fully addres=
-s the
-> > > > > problem, as some pf->create implementations do not use sk_common_=
-release
-> > > > > in their error paths.
-> > > > >
-> > > > > For example, we can use the same reproducer as in the above commi=
-t, but
-> > > > > changing ping to arping. arping uses AF_PACKET socket and if pack=
-et_create
-> > > > > fails, it will just sk_free the allocated sk object.
-> > > > >
-> > > > > While we could chase all the pf->create implementations and make =
-sure they
-> > > > > NULL the freed sk object on error from the socket, we can't guara=
-ntee
-> > > > > future protocols will not make the same mistake.
-> > > > >
-> > > > > So it is easier to just explicitly NULL the sk pointer upon retur=
-n from
-> > > > > pf->create in __sock_create. We do know that pf->create always re=
-leases the
-> > > > > allocated sk object on error, so if the pointer is not NULL, it i=
-s
-> > > > > definitely dangling.
-> > > >
-> > > > Sounds good to me.
-> > > >
-> > > > Let's remove the change by 6cd4a78d962b that should be unnecessary
-> > > > with this patch.
-> > > >
-> > >
-> > > Reviewed-by: Eric Dumazet <edumazet@google.com>
-> > >
-> > > Even if not strictly needed we also could fix af_packet to avoid a
-> > > dangling pointer.
-> >
-> > af_packet was just one example - I reviewed every pf->create function
-> > and there are others. It would not be fair to fix this, but not the
-> > others, right?
->
-> I have not said your patch was not correct, I gave a +2 on it.
->
-> In general, leaving pointers to a freed piece of memory (and possibly reu=
-sed)
-> can confuse things like kmemleak.
+Hi Fabrizio,
 
-That's a good point actually.
+On Mon, Sep 30, 2024 at 4:53=E2=80=AFPM Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+> Add DT bindings for the Renesas RZ/V2H(P) Interrupt Controller.
+>
+> Also add macros for the NMI and IRQ0-15 interrupts which map the
+> SPI0-16 interrupts on the RZ/V2H(P) SoC so that they can be
+> used in the first cell of the interrupt specifiers.
+>
+> For the second cell of the interrupt specifier, since NMI, IRQn
+> and TINTn support different types of interrupts between themselves,
+> add helper macros to make it easier for the user to work out what's
+> available.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> ---
+> v1->v2:
+> * Removed '|' from main description
+> * Reworked main description
+> * Fixed indentation of #interrupt-cells
+> * Reworked description of #interrupt-cells
+> * Dropped file include/dt-bindings/interrupt-controller/icu-rzv2h.h
 
-> I have not said _you_ had to review all pf->create() functions.
+Thanks for the update!
 
-Ah, NP. I reviewed them before your comment, before submitting the
-patch - basically to decide whether I should go with the current
-approach or just go and fix them.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2=
+h-icu.yaml
+
+> +properties:
+> +  compatible:
+> +    const: renesas,r9a09g057-icu          # RZ/V2H(P)
+
+Too many spaces before "#"?
+
+> +
+> +  '#interrupt-cells':
+> +    description: The first cell is the SPI number of the NMI or the
+> +      PORT_IRQ[0-15] interrupt, as per user manual. The second cell is u=
+sed to
+> +      specify the flag.
+> +    const: 2
+> +
+> +  '#address-cells':
+> +    const: 0
+> +
+> +  interrupt-controller: true
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 58
+> +    items:
+> +      - description: NMI interrupt
+> +      - description: IRQ0 interrupt
+> +      - description: IRQ1 interrupt
+> +      - description: IRQ2 interrupt
+> +      - description: IRQ3 interrupt
+> +      - description: IRQ4 interrupt
+> +      - description: IRQ5 interrupt
+> +      - description: IRQ6 interrupt
+> +      - description: IRQ7 interrupt
+> +      - description: IRQ8 interrupt
+> +      - description: IRQ9 interrupt
+> +      - description: IRQ10 interrupt
+> +      - description: IRQ11 interrupt
+> +      - description: IRQ12 interrupt
+> +      - description: IRQ13 interrupt
+> +      - description: IRQ14 interrupt
+> +      - description: IRQ15 interrupt
+
+"PORT_IRQ<n>", to match Table 4.6-22 ("List of Input Events")
+and '#interrupt-cells' above.
+
+> +      - description: GPIO interrupt, TINT0
+> +      - description: GPIO interrupt, TINT1
+> +      - description: GPIO interrupt, TINT2
+> +      - description: GPIO interrupt, TINT3
+> +      - description: GPIO interrupt, TINT4
+> +      - description: GPIO interrupt, TINT5
+> +      - description: GPIO interrupt, TINT6
+> +      - description: GPIO interrupt, TINT7
+> +      - description: GPIO interrupt, TINT8
+> +      - description: GPIO interrupt, TINT9
+> +      - description: GPIO interrupt, TINT10
+> +      - description: GPIO interrupt, TINT11
+> +      - description: GPIO interrupt, TINT12
+> +      - description: GPIO interrupt, TINT13
+> +      - description: GPIO interrupt, TINT14
+> +      - description: GPIO interrupt, TINT15
+> +      - description: GPIO interrupt, TINT16
+> +      - description: GPIO interrupt, TINT17
+> +      - description: GPIO interrupt, TINT18
+> +      - description: GPIO interrupt, TINT19
+> +      - description: GPIO interrupt, TINT20
+> +      - description: GPIO interrupt, TINT21
+> +      - description: GPIO interrupt, TINT22
+> +      - description: GPIO interrupt, TINT23
+> +      - description: GPIO interrupt, TINT24
+> +      - description: GPIO interrupt, TINT25
+> +      - description: GPIO interrupt, TINT26
+> +      - description: GPIO interrupt, TINT27
+> +      - description: GPIO interrupt, TINT28
+> +      - description: GPIO interrupt, TINT29
+> +      - description: GPIO interrupt, TINT30
+> +      - description: GPIO interrupt, TINT31
+> +      - description: Software interrupt, INTA55_0
+> +      - description: Software interrupt, INTA55_1
+> +      - description: Software interrupt, INTA55_2
+> +      - description: Software interrupt, INTA55_3
+> +      - description: Error interrupt to CA55
+> +      - description: GTCCRA compare match/input capture (U0)
+> +      - description: GTCCRB compare match/input capture (U0)
+> +      - description: GTCCRA compare match/input capture (U1)
+> +      - description: GTCCRB compare match/input capture (U1)
+> +
+> +  interrupt-names:
+> +    minItems: 58
+> +    items:
+> +      - const: nmi
+> +      - const: irq0
+> +      - const: irq1
+> +      - const: irq2
+> +      - const: irq3
+> +      - const: irq4
+> +      - const: irq5
+> +      - const: irq6
+> +      - const: irq7
+> +      - const: irq8
+> +      - const: irq9
+> +      - const: irq10
+> +      - const: irq11
+> +      - const: irq12
+> +      - const: irq13
+> +      - const: irq14
+> +      - const: irq15
+
+port_irq<n>?
+
+The rest LGTM, although I think you may want to add more interrupts
+later, for various events? However, it's not really clear to me which
+interrupts go through the ICU, and which go directly to the GIC.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
