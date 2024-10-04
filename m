@@ -1,570 +1,493 @@
-Return-Path: <linux-kernel+bounces-350789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C379909B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:53:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBA09909B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 211031C21C57
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:53:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 018AAB2285C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935D44CDEC;
-	Fri,  4 Oct 2024 16:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8021CACE1;
+	Fri,  4 Oct 2024 16:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LlMYOvA7"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jdwxkKSP"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6634E1CACD9
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE1F1CACD6
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728060789; cv=none; b=GhDQTsqs8V/E+5ZewTplwgUx/u25CYfsOc6sm89HK7ObLRdHyvMmG2G2QToImYfGlUKqj/Q0OQa/eObYFtBHjGZ+2OfdR2IYSx74J2JA9ZwXlOC5DRSyQB2qeKR/G6KXR7fNLBSL4CiMTt+Tt36XjfA1c0ARvXtvMWwjJHRCJ5g=
+	t=1728060788; cv=none; b=H9+KkHfOXQ9cLZ9wCJsycQMUiWoT7Px17YmVT7qjI+2aPvWNOTU56sXdFPHQ/6VJdnpcHPgWkMjuyt4VcAwTio5X5yQ3jb8u/vtfmy8mBeMnfxJ8ZfyxiEuAcIuO3zkGmZDWzamqsfDb3NZS4GBZr8wYT4WkZTWj/79I9OpFEoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728060789; c=relaxed/simple;
-	bh=6CqRXePiiOK5vYdR8gfD7eFS16bqIsceX99R/OKs5aM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qx1+CxYeAy0+4SSjWBiQR8PdCacmhr5hngUVapAIOa5Zk3AUqfuDVfws6CTc+T2gorft2zSooNuzhD06PZAiHSuEVBE7eY+AH0nBVkWzFetDHWZUmEBftVzKqqS1h5FLk2KEH0LqA2fxE0iciyeiMAyJetgxaQpkMUdRuWiUg1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LlMYOvA7; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e03ffc29b5so172412b6e.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:53:07 -0700 (PDT)
+	s=arc-20240116; t=1728060788; c=relaxed/simple;
+	bh=ZmOuOwy+RtMJhCgjeWexgs5gFky/E9lSMSWcVYVJ+xQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=df5DxFoXxVFk8A8RbzBmJbkoY2eYXhprvcw20su8v1kragPIM4GVwS+62Q1snu8vjfetuUea9nml4ULkoktfvvCt/jJllMEeFgWHSIbn1jktjdHAPHhT9XmozWEGJ1dKehv3uffIHZ8R7DRop7UrbJr2D3NxyBzEw0vWA0T+YOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jdwxkKSP; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cae102702so19158785e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728060786; x=1728665586; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VG4tU22P9OLvnUa//YVQefh+PRlm4PGigQOyMuRRcW8=;
-        b=LlMYOvA7voTjmojV1Ph+wPrg6rJG5GISPJtaI5Ey9RS66urHDoiiuEfMsrqmrrrFmh
-         g93hsq44oF3WcXdtOn1FFXzT99lX2OrIUnJjKEfpjISNs04C70zWl9b+GktOc5mhShsk
-         O+d55ABJCOJ9bIOJVvf/lKToHzjJV5N/Zkebk=
+        d=linaro.org; s=google; t=1728060784; x=1728665584; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rt60eV3bPcymnWawAKOlNBP1EDv2gXjrC+zYiVoYAYc=;
+        b=jdwxkKSP7PP+5s1hC/GhA0hwt8nXP96sgDKxPqJD/5f9AUbOWnLCBPD0nvL3jLivAM
+         LX2b5hYsr/tY8DHIrpLIXCcjHtRaMibFTbrodov7qzPCL1GiChZU2PHQXqtqNGdr5xBi
+         ZuxOU13DWO9ljbRFPHGwNqlogC57III2/bQHweUYlfAZ8jPf1PPraQfkJQK8WWy7AKo/
+         DvxA8OY7kDgCWJMCwxH3sT5sYdf/xy00KttcmoxkIcAdJqFDarid3OtliAINywA0Qtg5
+         gjik5kojgU4vNgca/UN47j/V6BmCowWNrR1VVvH+TNeY/A9FoTr5+jaP+vEHloZ5Ij23
+         Hheg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728060786; x=1728665586;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VG4tU22P9OLvnUa//YVQefh+PRlm4PGigQOyMuRRcW8=;
-        b=hKBjhSgvp2C10xWCiN0KiNhaII9+X2wkCMlurzsUVRhJT6KpOD8MImDvJZRf09Qelz
-         NRjMNgoSePwq7lWzfLk9Mb8UEzNQqtM8OJG0XQFt+WMsTbULb2mfRglKGTKOrUUR7U7j
-         oWVw9lZlUIe4IPYJwwX0/aoycyBMDLan+VM5SxOCvSkCStb3vsvohWhFtWiWjxCW1f14
-         8506g+v2zKjXyvJjM7Fesd6WGyErbAvI6iKVfZa2GgdU0UZeKuEQ1RJNWHrCklVgUKR8
-         42/jyNft53W4oBivANz3KNcJttZ8j1Ub76+3YYChLgurX2nG4CZ34DeAJWcR/1A6GgZW
-         60NA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbdS5xsLaRKkUgHAz68SQDk7M4c8+TyxUR6ArVNGsrJEp1d/sUDeNH0jqqAckBA5nyZZe/8BClWRb9FqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwYJqh2D3hUU7z2BRj+twQQIypJaY3hnIVfY1WUf+VbLRaDQRJ
-	U+J78gM/V4rn78DX4qTlNRUPm1cwX9+Agmz0XHZU/b4Yh2obXVpfQHhNsW9lRW5P+ecBi8geod+
-	Z9L3QfE7gQ+5LpHgoLjsw8g01aXVx+JOLbqDx
-X-Google-Smtp-Source: AGHT+IFcex8dcjQ7+QuysKWskYPLd1xBJCHVZO/eUpId1xASgiifLi6AKo9e93eC7UHAybJIyYsxoyc1fCpGphEUlZY=
-X-Received: by 2002:a05:6870:b526:b0:27b:58d8:c8de with SMTP id
- 586e51a60fabf-287c1dadcfbmr728210fac.5.1728060786260; Fri, 04 Oct 2024
- 09:53:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728060784; x=1728665584;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rt60eV3bPcymnWawAKOlNBP1EDv2gXjrC+zYiVoYAYc=;
+        b=B/875xo9g+hmY/lO5qctj4hecRMU9v3GqX7sQiSb4w39swrUA5ZOvm27SLaysrLcj2
+         8vplTfQQfQXCAC6HOkEQUOxvqvfB8B7RKJyKb2Wx138dB4+nSEzH0FsLf44hm2ApaNXj
+         4kSSfIjRfeW3g3OOPkOdCZX/UfgwcAQHLlVH2qTrnWX60yFAACaWT/NrIuTP73xIlCaz
+         6IqZrASyXxW0hVrsj16rUzL+PCnFCiqSGGNXEtzE13so7jeGkB5fSN7EJDPQnMP5vV6d
+         eBNOgSEVyJSas4EpWklRaJkMAIjkphDcn0KjrkV1wIUte/saQWDioRG60PenROhQ+4Vj
+         A7tw==
+X-Gm-Message-State: AOJu0YwgpIoLPI+aWpkN43JHtVfoaxD1fxk0HsIZ12r0qTNV832zIMXW
+	+VxUBAC7KKPoEOiJXQJZFTFSft8eVvFCTMk2DeR0dLwn2wA2D0WLdJhtQb71Q2o=
+X-Google-Smtp-Source: AGHT+IGhS4gFVH+ODTBqItOmDxZnuhg6aZpvhWEKNHhYInOkNE7eqn0l9/6L9WaQkWU0EgSRcAQxeQ==
+X-Received: by 2002:a05:600c:3b2a:b0:42c:a7cc:cb64 with SMTP id 5b1f17b1804b1-42f85aa1992mr23625375e9.3.1728060784252;
+        Fri, 04 Oct 2024 09:53:04 -0700 (PDT)
+Received: from ta2.c.googlers.com.com (169.178.77.34.bc.googleusercontent.com. [34.77.178.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1695f108sm51907f8f.67.2024.10.04.09.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 09:53:03 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: jassisinghbrar@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	marcan@marcan.st,
+	neal@gompa.dev,
+	alyssa@rosenzweig.io,
+	broonie@kernel.org,
+	andre.draszik@linaro.org,
+	willmcvicker@google.com,
+	peter.griffin@linaro.org,
+	kernel-team@android.com,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH] mailbox: add async request mechanism to empower controllers w/ hw queues
+Date: Fri,  4 Oct 2024 16:53:01 +0000
+Message-ID: <20241004165301.1979527-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001002628.2239032-1-jeffxu@chromium.org> <20241001002628.2239032-2-jeffxu@chromium.org>
- <4544a4b3-d5b6-4f6b-b3d5-6c309eb8fa9d@infradead.org>
-In-Reply-To: <4544a4b3-d5b6-4f6b-b3d5-6c309eb8fa9d@infradead.org>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 4 Oct 2024 09:52:43 -0700
-Message-ID: <CABi2SkUhcEY7KxuRX3edOHJZbo2kZOZfa0sWrcG2_T0rnvHCWQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mseal: update mseal.rst
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, corbet@lwn.net, 
-	jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, jannh@google.com, 
-	sroettger@google.com, pedro.falcato@gmail.com, 
-	linux-hardening@vger.kernel.org, willy@infradead.org, 
-	gregkh@linuxfoundation.org, torvalds@linux-foundation.org, 
-	deraadt@openbsd.org, usama.anjum@collabora.com, surenb@google.com, 
-	merimus@google.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	enh@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Randy
+Current form of the mailbox framework doesn't allow controllers to benefit
+of their hardware queue capabilities as the framework handles a single
+active request at a time.
 
-On Thu, Oct 3, 2024 at 3:54=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org>=
- wrote:
->
-> Hi Jeff,
->
-> Sorry for the delay.
-> Thanks for your v2 updates.
->
-I appreciate you spending time proofreading the mseal.rst.
+The active request is considered completed when TX completes. But it seems
+that TX is not in direct relation with RX, so a client can't know to which
+TX data the RX data corresponds to. Let's consider a client sends
+TX1 data, mbox->ops->send_data() is called, timer is started immediately,
+last_tx_done() returns true and the client is notified that TX1 completed.
+Client sends TX2 and gets notified that TX2 completed. RX comes,
+mbox_chan_received_data(chan, mssg) is called after both TX1 and TX2
+completed. Client can't know if the received mssg belongs to TX1 or TX2.
 
->
-> On 9/30/24 5:26 PM, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@chromium.org>
-> >
-> > Update doc after in-loop change: mprotect/madvise can have
-> > partially updated and munmap is atomic.
-> >
-> > Fix indentation and clarify some sections to improve readability.
-> >
-> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> > Fixes: df2a7df9a9aa ("mm/munmap: replace can_modify_mm with can_modify_=
-vma")
-> > Fixes: 4a2dd02b0916 ("mm/mprotect: replace can_modify_mm with can_modif=
-y_vma")
-> > Fixes: 38075679b5f1 ("mm/mremap: replace can_modify_mm with can_modify_=
-vma")
-> > Fixes: 23c57d1fa2b9 ("mseal: replace can_modify_mm_madv with a vma vari=
-ant")
-> > ---
-> >  Documentation/userspace-api/mseal.rst | 304 ++++++++++++--------------
-> >  1 file changed, 144 insertions(+), 160 deletions(-)
-> >
-> > diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/user=
-space-api/mseal.rst
-> > index 4132eec995a3..04d34b5adb8f 100644
-> > --- a/Documentation/userspace-api/mseal.rst
-> > +++ b/Documentation/userspace-api/mseal.rst
-> > @@ -23,177 +23,161 @@ applications can additionally seal security criti=
-cal data at runtime.
-> >  A similar feature already exists in the XNU kernel with the
-> >  VM_FLAGS_PERMANENT flag [1] and on OpenBSD with the mimmutable syscall=
- [2].
-> >
-> > -User API
-> > -=3D=3D=3D=3D=3D=3D=3D=3D
-> > -mseal()
-> > ------------
-> > -The mseal() syscall has the following signature:
-> > -
-> > -``int mseal(void addr, size_t len, unsigned long flags)``
-> > -
-> > -**addr/len**: virtual memory address range.
-> > -
-> > -The address range set by ``addr``/``len`` must meet:
-> > -   - The start address must be in an allocated VMA.
-> > -   - The start address must be page aligned.
-> > -   - The end address (``addr`` + ``len``) must be in an allocated VMA.
-> > -   - no gap (unallocated memory) between start and end address.
-> > -
-> > -The ``len`` will be paged aligned implicitly by the kernel.
-> > -
-> > -**flags**: reserved for future use.
-> > -
-> > -**return values**:
-> > -
-> > -- ``0``: Success.
-> > -
-> > -- ``-EINVAL``:
-> > -    - Invalid input ``flags``.
-> > -    - The start address (``addr``) is not page aligned.
-> > -    - Address range (``addr`` + ``len``) overflow.
-> > -
-> > -- ``-ENOMEM``:
-> > -    - The start address (``addr``) is not allocated.
-> > -    - The end address (``addr`` + ``len``) is not allocated.
-> > -    - A gap (unallocated memory) between start and end address.
-> > -
-> > -- ``-EPERM``:
-> > -    - sealing is supported only on 64-bit CPUs, 32-bit is not supporte=
-d.
-> > -
-> > -- For above error cases, users can expect the given memory range is
-> > -  unmodified, i.e. no partial update.
-> > -
-> > -- There might be other internal errors/cases not listed here, e.g.
-> > -  error during merging/splitting VMAs, or the process reaching the max
-> > -  number of supported VMAs. In those cases, partial updates to the giv=
-en
-> > -  memory range could happen. However, those cases should be rare.
-> > -
-> > -**Blocked operations after sealing**:
-> > -    Unmapping, moving to another location, and shrinking the size,
-> > -    via munmap() and mremap(), can leave an empty space, therefore
-> > -    can be replaced with a VMA with a new set of attributes.
-> > -
-> > -    Moving or expanding a different VMA into the current location,
-> > -    via mremap().
-> > -
-> > -    Modifying a VMA via mmap(MAP_FIXED).
-> > -
-> > -    Size expansion, via mremap(), does not appear to pose any
-> > -    specific risks to sealed VMAs. It is included anyway because
-> > -    the use case is unclear. In any case, users can rely on
-> > -    merging to expand a sealed VMA.
-> > -
-> > -    mprotect() and pkey_mprotect().
-> > -
-> > -    Some destructive madvice() behaviors (e.g. MADV_DONTNEED)
-> > -    for anonymous memory, when users don't have write permission to th=
-e
-> > -    memory. Those behaviors can alter region contents by discarding pa=
-ges,
-> > -    effectively a memset(0) for anonymous memory.
-> > -
-> > -    Kernel will return -EPERM for blocked operations.
-> > -
-> > -    For blocked operations, one can expect the given address is unmodi=
-fied,
-> > -    i.e. no partial update. Note, this is different from existing mm
-> > -    system call behaviors, where partial updates are made till an erro=
-r is
-> > -    found and returned to userspace. To give an example:
-> > -
-> > -    Assume following code sequence:
-> > -
-> > -    - ptr =3D mmap(null, 8192, PROT_NONE);
-> > -    - munmap(ptr + 4096, 4096);
-> > -    - ret1 =3D mprotect(ptr, 8192, PROT_READ);
-> > -    - mseal(ptr, 4096);
-> > -    - ret2 =3D mprotect(ptr, 8192, PROT_NONE);
-> > -
-> > -    ret1 will be -ENOMEM, the page from ptr is updated to PROT_READ.
-> > -
-> > -    ret2 will be -EPERM, the page remains to be PROT_READ.
-> > -
-> > -**Note**:
-> > -
-> > -- mseal() only works on 64-bit CPUs, not 32-bit CPU.
-> > -
-> > -- users can call mseal() multiple times, mseal() on an already sealed =
-memory
-> > -  is a no-action (not error).
-> > -
-> > -- munseal() is not supported.
-> > -
-> > -Use cases:
-> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +SYSCALL
-> > +=3D=3D=3D=3D=3D=3D=3D
-> > +mseal syscall signature
-> > +-----------------------
-> > +   ``int mseal(void \* addr, size_t len, unsigned long flags)``
-> > +
-> > +   **addr**/**len**: virtual memory address range.
-> > +      The address range set by **addr**/**len** must meet:
-> > +         - The start address must be in an allocated VMA.
-> > +         - The start address must be page aligned.
-> > +         - The end address (**addr** + **len**) must be in an allocate=
-d VMA.
-> > +         - no gap (unallocated memory) between start and end address.
-> > +
-> > +      The ``len`` will be paged aligned implicitly by the kernel.
-> > +
-> > +   **flags**: reserved for future use.
-> > +
-> > +   **Return values**:
-> > +      - **0**: Success.
-> > +      - **-EINVAL**:
-> > +         * Invalid input ``flags``.
-> > +         * The start address (``addr``) is not page aligned.
-> > +         * Address range (``addr`` + ``len``) overflow.
-> > +      - **-ENOMEM**:
-> > +         * The start address (``addr``) is not allocated.
-> > +         * The end address (``addr`` + ``len``) is not allocated.
-> > +         * A gap (unallocated memory) between start and end address.
-> > +      - **-EPERM**:
-> > +         * sealing is supported only on 64-bit CPUs, 32-bit is not sup=
-ported.
-> > +
-> > +   **Note about error return**:
-> > +      - For above error cases, users can expect the given memory range=
- is
-> > +        unmodified, i.e. no partial update.
-> > +      - There might be other internal errors/cases not listed here, e.=
-g.
-> > +        error during merging/splitting VMAs, or the process reaching t=
-he max
->
->                                                                          =
-   maximum
-fixed.
+In order to address these shortcomes, add a simple async mechanism
+based on requests. A request will contain pointers to tx and rx (if any)
+data, along with a pointer to a completion struct. Is the responsibility
+of the client to allocate and fill the request:
 
->
-> > +        number of supported VMAs. In those cases, partial updates to t=
-he given
-> > +        memory range could happen. However, those cases should be rare=
-.
-> > +
-> > +   **Architecture support**:
-> > +      mseal only works on 64-bit CPUs, not 32-bit CPUs.
-> > +
-> > +   **Idempotent**:
-> > +      users can call mseal multiple times. mseal on an already sealed =
-memory
-> > +      is a no-action (not error).
-> > +
-> > +   **no munseal**
-> > +      Once mapping is sealed, it can't be unsealed. kernel should neve=
-r
->
->                                                        The kernel
-Fixed.
->
-> > +      have munseal, this is consistent with other sealing feature, e.g=
-.
-> > +      F_SEAL_SEAL for file.
-> > +
-> > +Blocked mm syscall for sealed mapping
-> > +-------------------------------------
-> > +   It might be important to note: **once the mapping is sealed, it wil=
-l
-> > +   stay in the process's memory until the process terminates**.
-> > +
-> > +   Example::
-> > +
-> > +         *ptr =3D mmap(0, 4096, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE=
-, 0, 0);
-> > +         rc =3D mseal(ptr, 4096, 0);
-> > +         /* munmap will fail */
-> > +         rc =3D munmap(ptr, 4096);
-> > +         assert(rc < 0);
-> > +
-> > +   Blocked mm syscall:
-> > +      - munmap
-> > +      - mmap
-> > +      - mremap
-> > +      - mprotect and pkey_mprotect
-> > +      - some destructive madvise behaviors: MADV_DONTNEED, MADV_FREE,
-> > +        MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEONFOR=
-K
-> > +
-> > +   The first set of syscall to block is munmap, mremap, mmap. They can
->
->                        syscalls
-fixed.
->
-> > +   either leave an empty space in the address space, therefore allow
->
->                                                                   allowin=
-g
-fixed.
->
-> > +   replacement with a new mapping with new set of attributes, or can
-> > +   overwrite the existing mapping with another mapping.
-> > +
-> > +   mprotect and pkey_mprotect are blocked because they changes the
-> > +   protection bits (RWX) of the mapping.
-> > +
-> > +   Some destructive madvise behaviors (MADV_DONTNEED, MADV_FREE,> +   =
-MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEONFORK)
-> > +   for anonymous memory, when users don't have write permission to the
-> > +   memory. Those behaviors can alter region contents by discarding pag=
-es,
->
-> above is not a sentence but I don't know how to fix it.
->
-Would below work ?
+static int client_send_request(struct demo_client *dc, void *data)
+{
+	DECLARE_MBOX_WAIT(wait);
+	struct mbox_request req;
+	int ret;
 
-Certain destructive madvise behaviors, specifically MADV_DONTNEED,
-MADV_FREE, MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK,
-MADV_WIPEONFORK, can pose risks when applied to anonymous memory by
-threads without write permissions. These behaviors have the potential
-to modify region contents by discarding pages, effectively performing
-a memset(0) operation on the anonymous memory.
+	req.tx = data;
+	/*
+	 * Set req.rx = NULL if no response is expected. Here we
+	 * use the same memory to get the response.
+	 */
+	req.rx = data;
 
-> > +   effectively a memset(0) for anonymous memory.
-> > +
-> > +   Kernel will return -EPERM for blocked syscalls.
-> > +
-> > +   When blocked syscall return -EPERM due to sealing, the memory regio=
-ns may or may not be changed, depends on the syscall being blocked:
->
->            a blocked syscall returns                                     =
-                              depending on
->
-> and split that line into 2 lines.
-fixed.
+	ret = mbox_send_request(dc->mbox_chan, &req);
+	ret = mbox_wait_request(ret, &wait);
+	if (ret)
+		dev_err(dc->dev, "%s failed %d\n", __func__, ret);
+	return ret;
+}
 
->
-> > +      - munmap: munmap is atomic. If one of VMAs in the given range is
-> > +        sealed, none of VMAs are updated.
-> > +      - mprotect, pkey_mprotect, madvise: partial update might happen,=
- e.g.
-> > +        when mprotect over multiple VMAs, mprotect might update the be=
-ginning
-> > +        VMAs before reaching the sealed VMA and return -EPERM.
-> > +      - mmap and mremap: undefined behavior.
-> > +
-> > +Use cases
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >  - glibc:
-> >    The dynamic linker, during loading ELF executables, can apply sealin=
-g to
-> > -  non-writable memory segments.
-> > -
-> > -- Chrome browser: protect some security sensitive data-structures.
-> > +  mapping segments.
-> >
-> > -Notes on which memory to seal:
-> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> > +- Chrome browser: protect some security sensitive data structures.
-> >
-> > -It might be important to note that sealing changes the lifetime of a m=
-apping,
-> > -i.e. the sealed mapping won=E2=80=99t be unmapped till the process ter=
-minates or the
-> > -exec system call is invoked. Applications can apply sealing to any vir=
-tual
-> > -memory region from userspace, but it is crucial to thoroughly analyze =
-the
-> > -mapping's lifetime prior to apply the sealing.
-> > +When not to use mseal
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +Applications can apply sealing to any virtual memory region from users=
-pace,
-> > +but it is *crucial to thoroughly analyze the mapping's lifetime* prior=
- to
-> > +apply the sealing. This is because the sealed mapping *won=E2=80=99t b=
-e unmapped*
-> > +until the process terminates or the exec system call is invoked.
-> >
-> >  For example:
-> > +   - aio/shm
-> > +     aio/shm can call mmap and  munmap on behalf of userspace, e.g.
-> > +     ksys_shmdt() in shm.c. The lifetimes of those mapping are not tie=
-d to
-> > +     the lifetime of the process. If those memories are sealed from us=
-erspace,
-> > +     then munmap will fail, causing leaks in VMA address space during =
-the
-> > +     lifetime of the process.
-> > +
-> > +   - ptr allocated by malloc (heap)
-> > +     Don't use mseal on the memory ptr return from malloc().
-> > +     malloc() is implemented by allocator, e.g. by glibc. Heap manager=
- might
-> > +     allocate a ptr from brk or mapping created by mmap.
-> > +     If an app calls mseal on a ptr returned from malloc(), this can a=
-ffect
-> > +     the heap manager's ability to manage the mappings; the outcome is
-> > +     non-deterministic.
-> > +
-> > +     Example::
-> > +
-> > +        ptr =3D malloc(size);
-> > +        /* don't call mseal on ptr return from malloc. */
-> > +        mseal(ptr, size);
-> > +        /* free will success, allocator can't shrink heap lower than p=
-tr */
-> > +        free(ptr);
-> > +
-> > +mseal doesn't block
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +In a nutshell, mseal blocks certain mm syscall from modifying some of =
-VMA's
-> > +attributes, such as protection bits (RWX). Sealed mappings doesn't mea=
-n the
-> > +memory is immutable.
-> >
-> > -- aio/shm
-> > -
-> > -  aio/shm can call mmap()/munmap() on behalf of userspace, e.g. ksys_s=
-hmdt() in
-> > -  shm.c. The lifetime of those mapping are not tied to the lifetime of=
- the
-> > -  process. If those memories are sealed from userspace, then munmap() =
-will fail,
-> > -  causing leaks in VMA address space during the lifetime of the proces=
-s.
-> > -
-> > -- Brk (heap)
-> > -
-> > -  Currently, userspace applications can seal parts of the heap by call=
-ing
-> > -  malloc() and mseal().
-> > -  let's assume following calls from user space:
-> > -
-> > -  - ptr =3D malloc(size);
-> > -  - mprotect(ptr, size, RO);
-> > -  - mseal(ptr, size);
-> > -  - free(ptr);
-> > -
-> > -  Technically, before mseal() is added, the user can change the protec=
-tion of
-> > -  the heap by calling mprotect(RO). As long as the user changes the pr=
-otection
-> > -  back to RW before free(), the memory range can be reused.
-> > -
-> > -  Adding mseal() into the picture, however, the heap is then sealed pa=
-rtially,
-> > -  the user can still free it, but the memory remains to be RO. If the =
-address
-> > -  is re-used by the heap manager for another malloc, the process might=
- crash
-> > -  soon after. Therefore, it is important not to apply sealing to any m=
-emory
-> > -  that might get recycled.
-> > -
-> > -  Furthermore, even if the application never calls the free() for the =
-ptr,
-> > -  the heap manager may invoke the brk system call to shrink the size o=
-f the
-> > -  heap. In the kernel, the brk-shrink will call munmap(). Consequently=
-,
-> > -  depending on the location of the ptr, the outcome of brk-shrink is
-> > -  nondeterministic.
-> > -
-> > -
-> > -Additional notes:
-> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >  As Jann Horn pointed out in [3], there are still a few ways to write
-> > -to RO memory, which is, in a way, by design. Those cases are not cover=
-ed
-> > -by mseal(). If applications want to block such cases, sandbox tools (s=
-uch as
-> > -seccomp, LSM, etc) might be considered.
-> > +to RO memory, which is, in a way, by design. And those could be blocke=
-d
-> > +by different security measures.
-> >
-> >  Those cases are:
-> > -
-> > -- Write to read-only memory through /proc/self/mem interface.
-> > -- Write to read-only memory through ptrace (such as PTRACE_POKETEXT).
-> > -- userfaultfd.
-> > +   - Write to read-only memory through /proc/self/mem interface (FOLL_=
-FORCE).
-> > +   - Write to read-only memory through ptrace (such as PTRACE_POKETEXT=
-).
-> > +   - userfaultfd.
-> >
-> >  The idea that inspired this patch comes from Stephen R=C3=B6ttger=E2=
-=80=99s work in V8
-> >  CFI [4]. Chrome browser in ChromeOS will be the first user of this API=
-.
-> >
-> > -Reference:
-> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > -[1] https://github.com/apple-oss-distributions/xnu/blob/1031c584a5e37a=
-ff177559b9f69dbd3c8c3fd30a/osfmk/mach/vm_statistics.h#L274
-> > -
-> > -[2] https://man.openbsd.org/mimmutable.2
-> > -
-> > -[3] https://lore.kernel.org/lkml/CAG48ez3ShUYey+ZAFsU2i1RpQn0a5eOs2hzQ=
-426FkcgnfUGLvA@mail.gmail.com
-> > -
-> > -[4] https://docs.google.com/document/d/1O2jwK4dxI3nRcOJuPYkonhTkNQfbmw=
-dvxQMyXgeaRHo/edit#heading=3Dh.bvaojj9fu6hc
-> > +Reference
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +- [1] https://github.com/apple-oss-distributions/xnu/blob/1031c584a5e3=
-7aff177559b9f69dbd3c8c3fd30a/osfmk/mach/vm_statistics.h#L274
-> > +- [2] https://man.openbsd.org/mimmutable.2
-> > +- [3] https://lore.kernel.org/lkml/CAG48ez3ShUYey+ZAFsU2i1RpQn0a5eOs2h=
-zQ426FkcgnfUGLvA@mail.gmail.com
-> > +- [4] https://docs.google.com/document/d/1O2jwK4dxI3nRcOJuPYkonhTkNQfb=
-mwdvxQMyXgeaRHo/edit#heading=3Dh.bvaojj9fu6hc
->
-> With those few changes:
->
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
->
-Thanks!
--Jeff
+mbox_send_request() sends a message on the bus. The call may be in atomic
+context. Returns -EINPROGRESS if data is fed into hardware, -ENOSPC when
+the hardware queue is full, or zero when the request completes.
+The message (queue) handling is thus deferred to the controller.
 
-> --
-> ~Randy
+Similar mechanism is used in the crypto subsystem.
+
+The async req mechanism is mutual exclusive with the current message
+software queue handling. In the future the software queue handling can
+be used as an opt-in backlog choice for users that need it. But we'll
+have to do the conversion from ``void *message`` to
+``struct mbox_request *req`` throughout the API.
+
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+Hi, Jassi, all,
+
+A controller driver will follow, but I wanted to first get some feedback
+on the overall idea. Written on top of v6.12-rc1.
+
+Thanks,
+ta
+
+ drivers/mailbox/mailbox.c          | 126 +++++++++++++++++++++++------
+ include/linux/mailbox_client.h     |   4 +
+ include/linux/mailbox_controller.h |   7 ++
+ include/linux/mailbox_request.h    |  24 ++++++
+ 4 files changed, 138 insertions(+), 23 deletions(-)
+ create mode 100644 include/linux/mailbox_request.h
+
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index d3d26a2c9895..b711d4cd4d64 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -158,6 +158,11 @@ static enum hrtimer_restart txdone_hrtimer(struct hrtimer *hrtimer)
+  */
+ void mbox_chan_received_data(struct mbox_chan *chan, void *mssg)
+ {
++	if (chan->mbox->ops->send_request) {
++		dev_dbg(chan->mbox->dev, "Operation not supported for mailbox requests\n");
++		return;
++	}
++
+ 	/* No buffering the received data */
+ 	if (chan->cl->rx_callback)
+ 		chan->cl->rx_callback(chan->cl, mssg);
+@@ -176,6 +181,11 @@ EXPORT_SYMBOL_GPL(mbox_chan_received_data);
+  */
+ void mbox_chan_txdone(struct mbox_chan *chan, int r)
+ {
++	if (chan->mbox->ops->send_request) {
++		dev_dbg(chan->mbox->dev, "Operation not supported for mailbox requests\n");
++		return;
++	}
++
+ 	if (unlikely(!(chan->txdone_method & TXDONE_BY_IRQ))) {
+ 		dev_err(chan->mbox->dev,
+ 		       "Controller can't run the TX ticker\n");
+@@ -197,6 +207,11 @@ EXPORT_SYMBOL_GPL(mbox_chan_txdone);
+  */
+ void mbox_client_txdone(struct mbox_chan *chan, int r)
+ {
++	if (chan->mbox->ops->send_request) {
++		dev_dbg(chan->mbox->dev, "Operation not supported for mailbox requests\n");
++		return;
++	}
++
+ 	if (unlikely(!(chan->txdone_method & TXDONE_BY_ACK))) {
+ 		dev_err(chan->mbox->dev, "Client can't run the TX ticker\n");
+ 		return;
+@@ -261,6 +276,11 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg)
+ 	if (!chan || !chan->cl)
+ 		return -EINVAL;
+ 
++	if (chan->mbox->ops->send_request) {
++		dev_dbg(chan->mbox->dev, "Operation not supported for mailbox requests\n");
++		return -EOPNOTSUPP;
++	}
++
+ 	t = add_to_rbuf(chan, mssg);
+ 	if (t < 0) {
+ 		dev_err(chan->mbox->dev, "Try increasing MBOX_TX_QUEUE_LEN\n");
+@@ -289,6 +309,39 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg)
+ }
+ EXPORT_SYMBOL_GPL(mbox_send_message);
+ 
++int mbox_send_request(struct mbox_chan *chan, struct mbox_request *req)
++{
++	return chan->mbox->ops->send_request(chan, req);
++}
++EXPORT_SYMBOL_GPL(mbox_send_request);
++
++int mbox_wait_request(int err, struct mbox_wait *wait)
++{
++	switch (err) {
++	case -EINPROGRESS:
++		wait_for_completion(&wait->completion);
++		reinit_completion(&wait->completion);
++		err = wait->err;
++		break;
++	}
++
++	return err;
++}
++EXPORT_SYMBOL_GPL(mbox_wait_request);
++
++void mbox_request_complete(struct mbox_request *req, int err)
++{
++	struct mbox_wait *wait;
++
++	if (err == -EINPROGRESS)
++		return;
++
++	wait = req->wait;
++	wait->err = err;
++	complete(&wait->completion);
++}
++EXPORT_SYMBOL_GPL(mbox_request_complete);
++
+ /**
+  * mbox_flush - flush a mailbox channel
+  * @chan: mailbox channel to flush
+@@ -311,24 +364,44 @@ int mbox_flush(struct mbox_chan *chan, unsigned long timeout)
+ 		return -ENOTSUPP;
+ 
+ 	ret = chan->mbox->ops->flush(chan, timeout);
+-	if (ret < 0)
++	if (ret < 0 && !chan->mbox->ops->send_request)
+ 		tx_tick(chan, ret);
+ 
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(mbox_flush);
+ 
++static int mbox_chan_startup(struct mbox_chan *chan, struct mbox_client *cl)
++{
++	struct mbox_controller *mbox = chan->mbox;
++	struct device *dev = cl->dev;
++	int ret;
++
++	if (!mbox->ops->startup)
++		return 0;
++
++	ret = mbox->ops->startup(chan);
++	if (ret) {
++		dev_err(dev, "Unable to startup the chan (%d)\n", ret);
++		mbox_free_channel(chan);
++	}
++
++	return ret;
++}
++
+ static int __mbox_bind_client(struct mbox_chan *chan, struct mbox_client *cl)
+ {
+ 	struct device *dev = cl->dev;
+ 	unsigned long flags;
+-	int ret;
+ 
+ 	if (chan->cl || !try_module_get(chan->mbox->dev->driver->owner)) {
+ 		dev_dbg(dev, "%s: mailbox not free\n", __func__);
+ 		return -EBUSY;
+ 	}
+ 
++	if (chan->mbox->ops->send_request)
++		return mbox_chan_startup(chan, cl);
++
+ 	spin_lock_irqsave(&chan->lock, flags);
+ 	chan->msg_free = 0;
+ 	chan->msg_count = 0;
+@@ -341,17 +414,7 @@ static int __mbox_bind_client(struct mbox_chan *chan, struct mbox_client *cl)
+ 
+ 	spin_unlock_irqrestore(&chan->lock, flags);
+ 
+-	if (chan->mbox->ops->startup) {
+-		ret = chan->mbox->ops->startup(chan);
+-
+-		if (ret) {
+-			dev_err(dev, "Unable to startup the chan (%d)\n", ret);
+-			mbox_free_channel(chan);
+-			return ret;
+-		}
+-	}
+-
+-	return 0;
++	return mbox_chan_startup(chan, cl);
+ }
+ 
+ /**
+@@ -474,13 +537,17 @@ EXPORT_SYMBOL_GPL(mbox_request_channel_byname);
+  */
+ void mbox_free_channel(struct mbox_chan *chan)
+ {
++	struct mbox_controller *mbox = chan->mbox;
+ 	unsigned long flags;
+ 
+ 	if (!chan || !chan->cl)
+ 		return;
+ 
+-	if (chan->mbox->ops->shutdown)
+-		chan->mbox->ops->shutdown(chan);
++	if (mbox->ops->shutdown)
++		mbox->ops->shutdown(chan);
++
++	if (mbox->ops->send_request)
++		return module_put(mbox->dev->driver->owner);
+ 
+ 	/* The queued TX requests are simply aborted, no callbacks are made */
+ 	spin_lock_irqsave(&chan->lock, flags);
+@@ -489,7 +556,7 @@ void mbox_free_channel(struct mbox_chan *chan)
+ 	if (chan->txdone_method == TXDONE_BY_ACK)
+ 		chan->txdone_method = TXDONE_BY_POLL;
+ 
+-	module_put(chan->mbox->dev->driver->owner);
++	module_put(mbox->dev->driver->owner);
+ 	spin_unlock_irqrestore(&chan->lock, flags);
+ }
+ EXPORT_SYMBOL_GPL(mbox_free_channel);
+@@ -506,6 +573,13 @@ of_mbox_index_xlate(struct mbox_controller *mbox,
+ 	return &mbox->chans[ind];
+ }
+ 
++static void mbox_controller_add_tail(struct mbox_controller *mbox)
++{
++	mutex_lock(&con_mutex);
++	list_add_tail(&mbox->node, &mbox_cons);
++	mutex_unlock(&con_mutex);
++}
++
+ /**
+  * mbox_controller_register - Register the mailbox controller
+  * @mbox:	Pointer to the mailbox controller.
+@@ -520,6 +594,17 @@ int mbox_controller_register(struct mbox_controller *mbox)
+ 	if (!mbox || !mbox->dev || !mbox->ops || !mbox->num_chans)
+ 		return -EINVAL;
+ 
++	if (mbox->ops->send_request && mbox->ops->send_data)
++		return -EINVAL;
++
++	if (!mbox->of_xlate)
++		mbox->of_xlate = of_mbox_index_xlate;
++
++	if (mbox->ops->send_request) {
++		mbox_controller_add_tail(mbox);
++		return 0;
++	}
++
+ 	if (mbox->txdone_irq)
+ 		txdone = TXDONE_BY_IRQ;
+ 	else if (mbox->txdone_poll)
+@@ -549,12 +634,7 @@ int mbox_controller_register(struct mbox_controller *mbox)
+ 		spin_lock_init(&chan->lock);
+ 	}
+ 
+-	if (!mbox->of_xlate)
+-		mbox->of_xlate = of_mbox_index_xlate;
+-
+-	mutex_lock(&con_mutex);
+-	list_add_tail(&mbox->node, &mbox_cons);
+-	mutex_unlock(&con_mutex);
++	mbox_controller_add_tail(mbox);
+ 
+ 	return 0;
+ }
+@@ -578,7 +658,7 @@ void mbox_controller_unregister(struct mbox_controller *mbox)
+ 	for (i = 0; i < mbox->num_chans; i++)
+ 		mbox_free_channel(&mbox->chans[i]);
+ 
+-	if (mbox->txdone_poll)
++	if (!mbox->ops->send_request && mbox->txdone_poll)
+ 		hrtimer_cancel(&mbox->poll_hrt);
+ 
+ 	mutex_unlock(&con_mutex);
+diff --git a/include/linux/mailbox_client.h b/include/linux/mailbox_client.h
+index 734694912ef7..2eb951fdee0b 100644
+--- a/include/linux/mailbox_client.h
++++ b/include/linux/mailbox_client.h
+@@ -9,6 +9,7 @@
+ 
+ #include <linux/of.h>
+ #include <linux/device.h>
++#include <linux/mailbox_request.h>
+ 
+ struct mbox_chan;
+ 
+@@ -47,4 +48,7 @@ void mbox_client_txdone(struct mbox_chan *chan, int r); /* atomic */
+ bool mbox_client_peek_data(struct mbox_chan *chan); /* atomic */
+ void mbox_free_channel(struct mbox_chan *chan); /* may sleep */
+ 
++int mbox_send_request(struct mbox_chan *chan, struct mbox_request *req);
++int mbox_wait_request(int err, struct mbox_wait *wait);
++
+ #endif /* __MAILBOX_CLIENT_H */
+diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_controller.h
+index 6fee33cb52f5..0582964b10a0 100644
+--- a/include/linux/mailbox_controller.h
++++ b/include/linux/mailbox_controller.h
+@@ -8,6 +8,7 @@
+ #include <linux/hrtimer.h>
+ #include <linux/device.h>
+ #include <linux/completion.h>
++#include <linux/mailbox_request.h>
+ 
+ struct mbox_chan;
+ 
+@@ -20,6 +21,10 @@ struct mbox_chan;
+  *		transmission of data is reported by the controller via
+  *		mbox_chan_txdone (if it has some TX ACK irq). It must not
+  *		sleep.
++ * @send_request: The API asks the MBOX controller driver to transmit a message
++ *                on the bus. The call may be in atomic context. Returns
++ *                -EINPROGRESS if data is fed into hardware, -ENOSPC when the
++ *                hardware queue is full, or zero when the request completes.
+  * @flush:	Called when a client requests transmissions to be blocking but
+  *		the context doesn't allow sleeping. Typically the controller
+  *		will implement a busy loop waiting for the data to flush out.
+@@ -45,6 +50,7 @@ struct mbox_chan;
+  */
+ struct mbox_chan_ops {
+ 	int (*send_data)(struct mbox_chan *chan, void *data);
++	int (*send_request)(struct mbox_chan *chan, struct mbox_request *req);
+ 	int (*flush)(struct mbox_chan *chan, unsigned long timeout);
+ 	int (*startup)(struct mbox_chan *chan);
+ 	void (*shutdown)(struct mbox_chan *chan);
+@@ -131,6 +137,7 @@ int mbox_controller_register(struct mbox_controller *mbox); /* can sleep */
+ void mbox_controller_unregister(struct mbox_controller *mbox); /* can sleep */
+ void mbox_chan_received_data(struct mbox_chan *chan, void *data); /* atomic */
+ void mbox_chan_txdone(struct mbox_chan *chan, int r); /* atomic */
++void mbox_request_complete(struct mbox_request *req, int err); /*can sleep */
+ 
+ int devm_mbox_controller_register(struct device *dev,
+ 				  struct mbox_controller *mbox);
+diff --git a/include/linux/mailbox_request.h b/include/linux/mailbox_request.h
+new file mode 100644
+index 000000000000..ea826adb31ac
+--- /dev/null
++++ b/include/linux/mailbox_request.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++
++#ifndef __MAILBOX_REQUEST_H
++#define __MAILBOX_REQUEST_H
++
++#include <linux/types.h>
++#include <linux/completion.h>
++
++struct mbox_wait {
++	struct completion completion;
++	int err;
++};
++
++#define DECLARE_MBOX_WAIT(_wait) \
++	struct mbox_wait _wait = { \
++		COMPLETION_INITIALIZER_ONSTACK((_wait).completion), 0 }
++
++struct mbox_request {
++	void *tx;
++	void *rx;
++	struct mbox_wait *wait;
++};
++
++#endif /* __MAILBOX_H */
+-- 
+2.47.0.rc0.187.ge670bccf7e-goog
+
 
