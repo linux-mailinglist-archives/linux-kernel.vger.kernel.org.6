@@ -1,117 +1,140 @@
-Return-Path: <linux-kernel+bounces-351345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0582F990FE7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:12:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A41F8991028
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D0D1C218AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:12:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F875B24B02
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 19:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DCC1E25E7;
-	Fri,  4 Oct 2024 19:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5681F7099;
+	Fri,  4 Oct 2024 19:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="vBL47Fg+"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="YGrzVP+8"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE501E04AF;
-	Fri,  4 Oct 2024 19:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12600136657;
+	Fri,  4 Oct 2024 19:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728070992; cv=none; b=SPIlPNLSar8U2B11/CliNl10yd1Bjl6gWqBlDdoC9UURbZkYaSCantj9YcW9K5M26rlhw8c+HQqlQRdbJpPF8+MDTer4A4jq57aSRl15HmVI+UQF/upCqJrE7mgd2ECgV53alD6WXoRLKcIUyKP1CSlbFvIEJXWrjot4ffzmty8=
+	t=1728068539; cv=none; b=k6ULdTLgZgKW27GZ9SduL98hz/pRq52QW0QI4Fe/WQqKuhIThTEIoEcMDry5NrVrhwcsGgt90uzimiw+MzFqskO7UNruTSjsbNcfhAffdFcvaWPtyjVk50SA9UeFYzUMQ+JBfHXNekcgjqqx7VB/3bl+f7Kbfcy0IQ07oE115ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728070992; c=relaxed/simple;
-	bh=cy+WwnoBRC6rdTFM1PR8NdUhf8lZXn2Da1cPNppT9P8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RMKmZRgBTRzY5tEK71kdF+xXom965oyoM8abV4/+2/3Nlh3sxbJJVFMBjxc2nWt3VbNlwo915C6Cm7INEnwn+ZnmVMHkMoOwsr0GPHjVfajUF3YCaXVQ8F2d0X+cYiFPgEpmKCu63vLC2v0ylqqKVKU0bkKrx5rqtPgn6k7EtRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=vBL47Fg+; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id cef8527249cd07f2; Fri, 4 Oct 2024 21:43:09 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id CC1DC6A9505;
-	Fri,  4 Oct 2024 21:43:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1728070988;
-	bh=cy+WwnoBRC6rdTFM1PR8NdUhf8lZXn2Da1cPNppT9P8=;
-	h=From:Subject:Date;
-	b=vBL47Fg+IAWLfp/gXX1j57XJRUlzqO5q2WuYNjwI1Ywzk/xLbQ7pOuR+Cw1JRpk/w
-	 qmEYEDR8cL30IPUa7X3PmtvDZrGhlLlP8RpvGGYmHz7PoF1kyU5AA8B/Bg4VnqbxeQ
-	 3TFeWRqHjyr2mNcsO6GcEaOWXfvzQzEijf0H0TnoUYN/xUARe2gtBe5lJl9eHBwlCp
-	 Ts/EVkrSsTMczHARfYmHSJ3lMBfDtzHIHhPxSSehC7Vda5ciRSLeM25xiJ4ZWeSYx4
-	 fvmXRmryXDvQGPv6fPNJ3UT7MJ6rNq+RPTRHvkaVZnhaLcFOrdIxOD5niSAAx7qcrh
-	 9QnUg/vCYqGfw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v2 00/12] thermal: core: Fixes and cleanups,
- mostly related to thermal zone init and exit
-Date: Fri, 04 Oct 2024 21:01:34 +0200
-Message-ID: <2215082.irdbgypaU6@rjwysocki.net>
+	s=arc-20240116; t=1728068539; c=relaxed/simple;
+	bh=7a31GCJJ4EI6f8qcjaAEHHqOYmESiFgilCyUnQHJGnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m5i6ke4E4u5zGuP3xPJNm8YNXp5PVXA4vN84pHdAhW/vxRxKvV/5QCoVUBUNL+3JwRCa8LwcAdHX5CcKh31+IJOf2tr9hfkQtNCz/iOBOuX15q6Fwm+WOj8qdSPnA8ErP5WAVqDw3I92lrX6XkizRCa6kw8mD1L0DWOPVQzsjDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=YGrzVP+8; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=LUJZilgqaYxyl2cKJ0toBOmC6GOF/ktiyVJOdIywIxo=; b=YGrzVP+85uGEvI8mFy8QFV94Ji
+	0eGsA8DcZXpk3IERbh52eXU7BuqbgoFkPBUVh0mYXcjlti/SMDaBMNl+L3i3HchBkcdxm85SZDHJy
+	qU185f9QfB+0+yP4denXtr0kQg17ElOgaP8X25DEc3VJcXRmjOEMDSPaMLAC6LSQhUVmwMmz8sgk9
+	MprXS/39x2796zTQruklCKo1/UFocwZIXGYeiGaJSAYE/yAU3DwajKSm+daz4ldg3+N5LkNZApCeq
+	87X6F08ARWjwNc2+Hzy9KEnDEWr9IDBK9UnYzenGPk78rkrAmvZTPRXuIwf0ynWJRzdUBXk66rCTJ
+	9Pl8Gb4w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38292)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1swnZ4-0002ar-2v;
+	Fri, 04 Oct 2024 20:02:10 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1swnYz-0001Ox-13;
+	Fri, 04 Oct 2024 20:02:05 +0100
+Date: Fri, 4 Oct 2024 20:02:05 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [PATCH net-next v2 7/9] net: phy: introduce ethtool_phy_ops to
+ get and set phy configuration
+Message-ID: <ZwA7rRCdJjU9BUUq@shell.armlinux.org.uk>
+References: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
+ <20241004161601.2932901-8-maxime.chevallier@bootlin.com>
+ <4d4c0c85-ec27-4707-9613-2146aa68bf8c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvfedgudegtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhg
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d4c0c85-ec27-4707-9613-2146aa68bf8c@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Everyone,
+On Fri, Oct 04, 2024 at 08:42:42PM +0200, Andrew Lunn wrote:
+> > +int phy_set_config(struct phy_device *phydev,
+> > +		   const struct phy_device_config *phy_cfg,
+> > +		   struct netlink_ext_ack *extack)
+> > +{
+> > +	bool isolate_change;
+> > +	int ret;
+> > +
+> > +	mutex_lock(&phydev->lock);
+> > +	isolate_change = (phy_cfg->isolate != phydev->isolated);
+> > +	mutex_unlock(&phydev->lock);
+> > +
+> > +	if (!isolate_change)
+> > +		return 0;
+> > +
+> > +	ret = phy_isolate(phydev, phy_cfg->isolate);
+> > +	if (ret)
+> > +		NL_SET_ERR_MSG(extack, "Error while configuring PHY isolation");
+> 
+> This seems overly simplistic to me. Don't you need to iterate over all
+> the other PHYs attached to this MAC and ensure they are isolated? Only
+> one can be unisolated at once.
+> 
+> It is also not clear to me how this is going to work from a MAC
+> perspective. Does the MAC call phy_connect() multiple times? How does
+> ndev->phydev work? Who is responsible for the initial configuration,
+> such that all but one PHY is isolated?
+> 
+> I assume you have a real board that needs this. So i think we need to
+> see a bit more of the complete solution, including the MAC changes and
+> the device tree for the board, so we can see the big picture.
 
-After posting the two series of thermal core patches for 6.13:
+Also what the ethernet driver looks like too!
 
-https://lore.kernel.org/linux-pm/4920970.GXAFRqVoOG@rjwysocki.net/
+One way around the ndev->phydev problem, assuming that we decide that
+isolate is a good idea, would be to isolate the current PHY, disconnect
+it from the net_device, connect the new PHY, and then clear the isolate
+on the new PHY. Essentially, ndev->phydev becomes the currently-active
+PHY.
 
-and
+However, I still want to hear whether multiple PHYs can be on the same
+MII bus from a functional electrical perspective.
 
-https://lore.kernel.org/linux-pm/6100907.lOV4Wx5bFT@rjwysocki.net/
+I know that on the Macchiatobin, where the 10G serdes signals go to the
+88X3310 on doubleshot boards and to the SFP cage on singleshot boards,
+this is controlled by the placement of zero ohm resistors to route the
+serdes signals to the appropriate device, thus minimising the unused
+stub lengths.
 
-before the 6.12 merge window, I have decided to reorder the changes included in
-these series, so that fixes and more significant cleanups (for example, changing
-they layout of data structures) go first, followed by the changes related to
-using guards for locking, and the optimization involving sorted lists becomes
-the last piece.
-
-This series is the first part and the majority of patches in it come from the
-second (RFC) series mentioned above.  Of course, they needed to be rebased to
-be applied in the new order.  It is on top of 6.12-rc1 with
-
-https://lore.kernel.org/linux-pm/12549318.O9o76ZdvQC@rjwysocki.net/
-
-applied and it will be added to my thermal-core-testing branch.  It is in v2
-to start with because all of the patches in it have already been posted in
-some form.
-
-The first 10 patches fix some potential issues related to thermal zone
-initialization and exit (for example, user space may start to interact with
-a thermal zone during its initialization before it's ready and system suspend
-taking place at a wrong time may skip a new thermal zone so it is not suspended)
-and do some cleanups related to that.  This concludes with the removal of the
-need_update field from struct thermal_zone_device.
-
-The last two patches move lists of thermal instances from thermal zones to
-trip point descriptors and clean up some code on top of that.
-
-Please refer to the individual patch changelogs for details.
-
-Thanks!
-
-
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
