@@ -1,126 +1,161 @@
-Return-Path: <linux-kernel+bounces-350739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E9469908DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:17:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0839908E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8912844BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E0CD284055
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC061C831A;
-	Fri,  4 Oct 2024 16:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80141C7288;
+	Fri,  4 Oct 2024 16:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KI9IOlr3"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="U2ByiIus"
+Received: from box.trvn.ru (box.trvn.ru [45.141.101.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EE61C7274;
-	Fri,  4 Oct 2024 16:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7571C3047;
+	Fri,  4 Oct 2024 16:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.141.101.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728058578; cv=none; b=FYccUhKQl/9grOdkD2suDMfz//r2HDmx0brcXAnYmFWr0p67fET63GL/Cc2oOM/DNoz4+2TuXyBZtMuNHwKCF1BBgTvwFkX6BKRKadY7o67k5vjoJW5PNLFUu7zmkC08aW88wJYKoC67y3IZCrthFXYQ7C0crHTyvknMBY+HjEc=
+	t=1728058678; cv=none; b=t8n1v9Df1+T44k5CPPe+w/UY4LLdlkhNM9mP2nIeeNxwYIGbS86edwamYALL8YAa0wpn920BN3m4LLeKegcjjAqzZpCDtzPEOU+JH9SU2BNUvGU/QWnpg4l21/9Ov34nxKdmRIvoC/bQQpXbaOQbviyr/6QK95lZGgVwOj9y5f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728058578; c=relaxed/simple;
-	bh=rAWpMtyvcBRdtxRlnUDXb/bpryEr0mMERltzyczUZ6A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UBS4+3eRQmyQG/VjQIp02tAN1DWq8Jps1PoSnRRfnfVnQoA7hWoWTKuI8YCwppsWDlDTGqZaLrXyc/qxCybHueNBdoam5G5++R9UX5fG7Id5HW+f0tos04Rhr35Z3x2B7wM95Ltt26viggwBjUKltPm0r/XsZQoaDOjCjN9CmMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KI9IOlr3; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8D2DD20012;
-	Fri,  4 Oct 2024 16:16:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728058574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DWhLd3vDKecLf43Ct4Q5pvEcdnHZ2BjA0Ud7Z6NbNnY=;
-	b=KI9IOlr3ZroGDVJwZBUxGDphPPHWXrZwULxfsezS+povC9iBvwUoZjmZ0Obgo0odGHbo/u
-	IhddPguuILaFebua7zyi0/sAs0Cj6R36MpBNFJOVXIwYZAPNgQiZSXr0BMyRiKuUhOpKRX
-	PBqX9r3vSdWeFMocvIZli5mQy4qgrMwt6I3DTlv+HOGUNd312KOIvh4iYXpq5uR7y4oWw/
-	/I5CykLaBMdhOorpUQYhcdrfNrZQkwkMqDEX5QO8n2w8Qu/UzJ8BOgho+vjQfEN2cdg1LC
-	CoohEvXumtsoqRrYn6mRXg22E/iGlT/vdq64DyZqBPdeLUD6jD5p4hD2A5PYIg==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH net-next v2 9/9] netlink: specs: introduce phy-set command along with configurable attributes
-Date: Fri,  4 Oct 2024 18:15:59 +0200
-Message-ID: <20241004161601.2932901-10-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
-References: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1728058678; c=relaxed/simple;
+	bh=H0MnowX7nwTqasbChirFtQh7Hmkp0r7mgb/om6B8so0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CLjDJ41a/WwpDYwvxuk0oUByELiJhRTBRdiVjuExNtPXUVw1nR5g9l9evBgo1lWxA/cjt8fJ++EZEw40duyTjqBRnsWKR6RCgsIHfdL8JlaWZlLWKxTEen8MxIRkrQ/4F0Ts3wTE+vd87nE5oUGRwE7n8ZwTk5MiofUNxuu3Q6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=U2ByiIus; arc=none smtp.client-ip=45.141.101.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1728058663; bh=H0MnowX7nwTqasbChirFtQh7Hmkp0r7mgb/om6B8so0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=U2ByiIuseHsVCeqmSivPZ/iRoHDlC8SjxPQvTmxBuTjPEBM6AIR8jlLPhzOkIjkUG
+	 wR+QbHtWbqY6406F6/vbgyPglV7oAW3+uG0dx54IlxIeu/Bp7RExgx0QlLpSHlMwSu
+	 6+eJeh/6EmmfSCn4av8Kd9r/wYCrcXDGOuP/fCjfJZGtn+bzDialpytMegSeD4/0o5
+	 wZtn7gBk9vUchFxMhoMJI0xphvDZXaSwmWgNd6dPAOgI2JEEP8q8+3jlxXCMmHncn8
+	 JWrOzN7iDyBuwDeagfjBCvrUjNpBdqz32VxCrNV0JFNdq5cimBUnpnmqmRKmVt0vIT
+	 CY9PY4i06w4SA==
+Received: from authenticated-user (box.trvn.ru [45.141.101.25])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id 78E202617;
+	Fri,  4 Oct 2024 21:17:41 +0500 (+05)
+From: Nikita Travkin <nikita@trvn.ru>
+Date: Fri, 04 Oct 2024 21:17:30 +0500
+Subject: [PATCH v2] Input: zinitix - Don't fail if linux,keycodes prop is
+ absent
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241004-zinitix-no-keycodes-v2-1-876dc9fea4b6@trvn.ru>
+X-B4-Tracking: v=1; b=H4sIABkVAGcC/32NQQrCMBBFr1Jm7UgmBLGuvId00aYTOwiJJGloL
+ b27sQdw+R789zdIHIUT3JoNIhdJEnwFfWrATr1/MspYGbTShpTS+BEvWRb0AV+82jByQqcc0zD
+ 21g4a6vId2clyVB9d5UlSDnE9Tgr97P9eISTkq1G6vSgyLd1zLP4cZ+j2ff8CNkJSrrQAAAA=
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jakob Hauser <jahau@rocketmail.com>, Nikita Travkin <nikita@trvn.ru>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2847; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=H0MnowX7nwTqasbChirFtQh7Hmkp0r7mgb/om6B8so0=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBnABUgY6l+kVbcWDny/A7E2Z7SNrVmdl6hGDFX7
+ FIhEi2aeF2JAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZwAVIAAKCRBDHOzuKBm/
+ dW0cEACSb5XIfxWFCULLbMl7PX1bkH1mR5KhJDmQviQyDOzLq6qYoAwpxY/9P8EfTjRSVgo4FHb
+ /DPO3YQ2PhUHbDiu67WRryEjfRfnjtmVaQegh9rXpEfWRSSw5D1pnU9VYX44YbfojcfjfUvw227
+ lXu6z+wCEJq3aIsiIo6+MCiSYMgnEQM4o3p2cV0gSNTmI6d3kJ8M0CAJ3ui5RbAoJjCh6ZRLUfF
+ zqzEmxpRn320XPptaz4Cv7R3OuRz2NHFg6MFFJiMCq8eZh4/TnTZDNf09MWCNBsQIenrrFlC3gq
+ 55JwdU3obQg7z86PujUuCMNF4mgF6Ho4FEzmJRoYt6UcB+YVpoCfvd9XHJ27/kMLR0YkhCxTDoD
+ WAjF9BiVAmeHct9dDiWzse3/PfLL3n0EA9BY/CVNBooaGHEX2NTw1VhZK55lLd45kveUKYLGwDy
+ gAAfHYIZ7dEtOhJy2QYRVIm9rHHU6nW7ouGChnS6da833Hh+7xXKxLSJ37kvg7gjTBx1CHfjRJu
+ /eVfD0qY/UomElDaZXMfweU5VtCTeDO4g6rE36et3E0pOwqYnnfmABluLEjB+ilVlYp1w1ITSn+
+ u8MI53SnLcK0jY1b8RRZOYFljxIpHepvQ9IYfbpDlMTv0ef3EPyT1dK+/B9IH8ybvFXinPJqm9T
+ /Qt1Rp+Kncq6h0A==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 
-Update the ethnl specification to include the newly introduced isolated
-attribute, and describe the newly introduced ETHTOOL_PHY_SET command.
+When initially adding the touchkey support, a mistake was made in the
+property parsing code. The possible negative errno from
+device_property_count_u32() was never checked, which was an oversight
+left from converting to it from the of_property as part of the review
+fixes.
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Re-add the correct handling of the absent property, in which case zero
+touchkeys should be assumed, which would disable the feature.
+
+Reported-by: Jakob Hauser <jahau@rocketmail.com>
+Tested-by: Jakob Hauser <jahau@rocketmail.com>
+Fixes: 075d9b22c8fe ("Input: zinitix - add touchkey support")
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
 ---
-V2 : Dropped loopback mode
+Changes in v2:
+- Refactored the change to simplify the code (Dmitry)
+- Link to v1: https://lore.kernel.org/r/20241002-zinitix-no-keycodes-v1-1-e84029601491@trvn.ru
+---
+ drivers/input/touchscreen/zinitix.c | 34 ++++++++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 12 deletions(-)
 
- Documentation/netlink/specs/ethtool.yaml | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
-index 6a050d755b9c..6f5cdb3af64d 100644
---- a/Documentation/netlink/specs/ethtool.yaml
-+++ b/Documentation/netlink/specs/ethtool.yaml
-@@ -1132,6 +1132,9 @@ attribute-sets:
-       -
-         name: downstream-sfp-name
-         type: string
-+      -
-+        name: isolate
-+        type: u8
+diff --git a/drivers/input/touchscreen/zinitix.c b/drivers/input/touchscreen/zinitix.c
+index 52b3950460e2..716d6fa60f86 100644
+--- a/drivers/input/touchscreen/zinitix.c
++++ b/drivers/input/touchscreen/zinitix.c
+@@ -645,19 +645,29 @@ static int zinitix_ts_probe(struct i2c_client *client)
+ 		return error;
+ 	}
  
- operations:
-   enum-model: directional
-@@ -1950,4 +1953,16 @@ operations:
-             - upstream-index
-             - upstream-sfp-name
-             - downstream-sfp-name
-+            - isolate
-       dump: *phy-get-op
-+    -
-+      name: phy-set
-+      doc: Set configuration attributes for attached PHY devices
-+
-+      attribute-set: phy
-+
-+      do:
-+        request:
-+          attributes:
-+            - header
-+            - isolate
+-	bt541->num_keycodes = device_property_count_u32(&client->dev, "linux,keycodes");
+-	if (bt541->num_keycodes > ARRAY_SIZE(bt541->keycodes)) {
+-		dev_err(&client->dev, "too many keys defined (%d)\n", bt541->num_keycodes);
+-		return -EINVAL;
+-	}
++	if (device_property_present(&client->dev, "linux,keycodes")) {
++		bt541->num_keycodes = device_property_count_u32(&client->dev,
++								"linux,keycodes");
++		if (bt541->num_keycodes < 0) {
++			dev_err(&client->dev, "Failed to count keys (%d)\n",
++				bt541->num_keycodes);
++			return bt541->num_keycodes;
++		} else if (bt541->num_keycodes > ARRAY_SIZE(bt541->keycodes)) {
++			dev_err(&client->dev, "Too many keys defined (%d)\n",
++				bt541->num_keycodes);
++			return -EINVAL;
++		}
+ 
+-	error = device_property_read_u32_array(&client->dev, "linux,keycodes",
+-					       bt541->keycodes,
+-					       bt541->num_keycodes);
+-	if (error) {
+-		dev_err(&client->dev,
+-			"Unable to parse \"linux,keycodes\" property: %d\n", error);
+-		return error;
++		error = device_property_read_u32_array(&client->dev,
++						       "linux,keycodes",
++						       bt541->keycodes,
++						       bt541->num_keycodes);
++		if (error) {
++			dev_err(&client->dev,
++				"Unable to parse \"linux,keycodes\" property: %d\n",
++				error);
++			return error;
++		}
+ 	}
+ 
+ 	error = zinitix_init_input_dev(bt541);
+
+---
+base-commit: fe21733536749bb1b31c9c84e0b8d2ab8d82ce13
+change-id: 20241002-zinitix-no-keycodes-f0fe1bdaccb2
+
+Best regards,
 -- 
-2.46.1
+Nikita Travkin <nikita@trvn.ru>
 
 
