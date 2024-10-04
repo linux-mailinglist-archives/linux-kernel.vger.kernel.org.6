@@ -1,116 +1,103 @@
-Return-Path: <linux-kernel+bounces-350135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C130990050
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:53:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33865990053
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34D131C2380B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:53:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92645B242D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5139014A605;
-	Fri,  4 Oct 2024 09:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E66148FF3;
+	Fri,  4 Oct 2024 09:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PEx5vMqQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlImvfew"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A2D1482E7;
-	Fri,  4 Oct 2024 09:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF91714659B;
+	Fri,  4 Oct 2024 09:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728035596; cv=none; b=ULtpfaMA+2okSHXwB5RVdPBX5w16wbnXdHaxg6Z//ZMCOFtgIoTeyhECLSiwF2Kt/HiXi5YHrO4zTgXyFxe7dYLuVtrgbUcx7Yw1U9h0TppAJeA7NW7qrBm2bRNqvjAMK9KAYvxQUnqECc0afPNGM+GSBflEZt9GQ2ntwiqBtlw=
+	t=1728035638; cv=none; b=oiyoIeWRi+gvqQFq5y++4O5zqWQ7wais/gywEi0HTPT5DTF+XA9+7aTzgDPLO92C+esE7AxPBCaxDUy3mE3CK56hNVzdPHg1jMWD8vGSB3vTjTvPsqeIZBYKSmk/brUybxyHEx7+n74jLv6HtMk+G/EzfTDMbcYXDRtOvOKHvnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728035596; c=relaxed/simple;
-	bh=GvA50aypOKeES5b88ZtKz66IY5eKMzeUwOBuz7Ro7XQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KUvN/vPugRieyzezeki/wnMvDjyNnXK2moN6MWo6lhuIAf4cHcpFtdyuyQ2NxuWP5cq4HUP/wCKlnHg+mZZs/7b3fZAFIuWGPAKkxuX9hlqVHyXHPsGw4Pud1aucc1gSHj0CxUThdstSZLtlBw3uZ2gzA+W9xTSlOodV7R1V7w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PEx5vMqQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493Hxpb5025555;
-	Fri, 4 Oct 2024 09:52:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vzdWHLICmCO4FTlS/c50c7Ra96E1mMn63rdysJ+zNO4=; b=PEx5vMqQds95zx8b
-	5zY7bB3O/ste4l59Cl3eRXAAEz6jdj+jUMVEDmwYrXaLkz5mafiHnlujARElisB/
-	jJeOLhBqM4eo6HNgxTivDF3sdmwrFsfuSY9rr1ou9Q1Y5fj8K8d8L6Li98OhuCK2
-	kj5xsAnbeEFjlVg5J/ia7R3yBVmx45fpXeiwGc3i8brCSXKdgjexVcFKCyjLfL6a
-	AqpIl8jXyPBxEDnsA/gEnSjqqmveQhhYBWWRzTV9n85RlMh9nIVO4EWZH1NdOJ9x
-	ZVhCDRu0ZRScNsHrzvgy+y8tRQ+l/kSU17wbH6nGOUCwf8+H9PBrMlOq8EeOuPIO
-	D/n1GQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205khpct-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 09:52:56 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4949qsHF032461
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 09:52:54 GMT
-Received: from [10.50.18.17] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 02:52:46 -0700
-Message-ID: <ab449231-29b1-4ced-8ab1-178b71b1b53b@quicinc.com>
-Date: Fri, 4 Oct 2024 15:22:43 +0530
+	s=arc-20240116; t=1728035638; c=relaxed/simple;
+	bh=+gpexw+GwzFZ1lHSAbDPE9XzLQf8wRp0a9tbaMAgoHY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aINnCqSN+SnxujzrQqvkXn5hZwuB7MujeC4YxNZ3ApEsge82YW9CeTZqDL+KZGoWjP7Pwx/gJsFOCRlVy0qrXLODZH7g+4XeyoNFV565V4/d+yelBJKFYmvNOw3NIARZqkUEvCAfFbAcxJJIVHMnBGYnq9Awvh8qLaveIrLus0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlImvfew; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A55C4C4CEC6;
+	Fri,  4 Oct 2024 09:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728035637;
+	bh=+gpexw+GwzFZ1lHSAbDPE9XzLQf8wRp0a9tbaMAgoHY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IlImvfewMB2ZAGEK2TtFwv+s6oPed/fZfd0vY+v7tn6rsY8dKyGaWZVUbxH8/FiaP
+	 TJbDmjgthJAyCsX394bPOyNilMqhBu3rw0ayhCGQ2sc/szq0bxxU19Py2QuvwJjtfB
+	 S4hduUL0Fgqx60GcBoiXUSZb9ZRHBtcN2aIekUzncWB5EvGrh6lUrqHqnJXHiVuE+8
+	 QuiK6JrVE+ZpdiDFvSSuIAKeDOdlnKfXd6/oS+bNCD/GmDw7fRyug1TwFJC0mTJNIz
+	 5e9obZNTkgni0SmOkfMQVh5IJl06s/ivk1q5JUWiv1B5E+6/D4uI+EfKncv9E/Zs8J
+	 CVVjnAte6oRSA==
+From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
+To: Mark Brown <broonie@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>
+Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: Do not skip BPF selftests by default
+Date: Fri,  4 Oct 2024 11:53:47 +0200
+Message-ID: <20241004095348.797020-1-bjorn@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/7] Add NSS clock controller support for IPQ9574
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
-        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
-        <nfraprado@collabora.com>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241004080332.853503-1-quic_mmanikan@quicinc.com>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <20241004080332.853503-1-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1zwEqbC4Q7-Q2kaqquI5G2IxwA3f8GFX
-X-Proofpoint-GUID: 1zwEqbC4Q7-Q2kaqquI5G2IxwA3f8GFX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- adultscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- bulkscore=0 impostorscore=0 malwarescore=0 suspectscore=0 mlxlogscore=884
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410040071
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+From: Björn Töpel <bjorn@rivosinc.com>
 
+This effectively is a revert of commit 7a6eb7c34a78 ("selftests: Skip
+BPF seftests by default"). At the time when this was added, BPF had
+"build time dependencies on cutting edge versions". Since then a
+number of BPF capable tests has been included in net, hid, sched_ext.
 
-On 10/4/2024 1:33 PM, Manikanta Mylavarapu wrote:
-> Add bindings, driver and devicetree node for networking sub system clock 
-> controller on IPQ9574. Also add support for NSS Huayra type alpha PLL
-> and add support for gpll0_out_aux clock which serves as the parent for 
-> some nss clocks.
-> 
-> Changes in V6:
-> 	- Detailed change logs are added to the respective patches.
-> 
+There is no reason not to include BPF by default in the build.
 
-I missed to update few things. I will post V7, please ignore V6.
+Remove BPF from the selftests skiplist.
 
-Thanks & Regards,
-Manikanta.
+Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+---
+ tools/testing/selftests/Makefile | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index b38199965f99..88f59a5fef96 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -129,10 +129,8 @@ ifeq ($(filter net/lib,$(TARGETS)),)
+ endif
+ endif
+ 
+-# User can optionally provide a TARGETS skiplist.  By default we skip
+-# BPF since it has cutting edge build time dependencies which require
+-# more effort to install.
+-SKIP_TARGETS ?= bpf
++# User can optionally provide a TARGETS skiplist.
++SKIP_TARGETS ?=
+ ifneq ($(SKIP_TARGETS),)
+ 	TMP := $(filter-out $(SKIP_TARGETS), $(TARGETS))
+ 	override TARGETS := $(TMP)
+
+base-commit: 0c559323bbaabee7346c12e74b497e283aaafef5
+-- 
+2.43.0
+
 
