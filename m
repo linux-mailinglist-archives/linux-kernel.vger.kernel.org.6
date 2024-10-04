@@ -1,68 +1,106 @@
-Return-Path: <linux-kernel+bounces-350293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158E59902FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:34:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 379FB990386
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D10C528340C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:34:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CE1C1C21A68
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 13:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B122217A90F;
-	Fri,  4 Oct 2024 12:34:17 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B3C2101AA;
+	Fri,  4 Oct 2024 13:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="uCePfTWo"
+Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9A316F265;
-	Fri,  4 Oct 2024 12:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E0F210193;
+	Fri,  4 Oct 2024 13:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728045257; cv=none; b=I0g3cBCL4xLY5IytbxDSTiE/FIE7kSd9ADByWik6G8FfesRRIsg+iJ+rEcP6RiRppCWaDe+sADAYhhY8aPMOFn5NxTTN4dDL/TUNFZyIuBDseTV+GmzHHUjqTqkW3NgtwIlkekfcjHwQK5HbFigADzt3/5YIs0TGjpfQ6V1KXtQ=
+	t=1728047250; cv=none; b=nhKzb9hTtBGvW1BxdPmA+PDOBtrmTk5gINCr6pzk/VlZvAUME+2XNq1Ivg2Pv6yRPUHVhnxwaSe4GFY8kF3HJ6J2Ut/kJcWi+iTuV/xrofIwTreWVgauu4B2w/khAuZPGSrvK03i5QyrOF/hI95vWVpToq0IgzbwgNr1Jn4crlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728045257; c=relaxed/simple;
-	bh=ugvzjZbElpG5CMRhdqYmHDkoC2mKBsIkmwx/10lZkvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TBHI8vb/mJblCCuTEOuTaX3S17GtN7QkzGpauYt4/yb4jORezJ8ofEkNHF+w4n1BlcN8T80L2+8zwtcndgp5e/uWPO0qn2Jr3P/K/cZ2jZ2UbZsud6ISSG/4RR2A3ABRjxmEudwkz7FqxIQM67dF7BuYOchD76MYKsuGGrhyv5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 27A65227A87; Fri,  4 Oct 2024 14:34:11 +0200 (CEST)
-Date: Fri, 4 Oct 2024 14:34:10 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com,
-	hch@lst.de, cem@kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, hare@suse.de,
-	martin.petersen@oracle.com, catherine.hoang@oracle.com,
-	mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
-Subject: Re: [PATCH v7 3/8] fs/block: Check for IOCB_DIRECT in
- generic_atomic_write_valid()
-Message-ID: <20241004123410.GA19295@lst.de>
-References: <20241004092254.3759210-1-john.g.garry@oracle.com> <20241004092254.3759210-4-john.g.garry@oracle.com>
+	s=arc-20240116; t=1728047250; c=relaxed/simple;
+	bh=rNHL+W7kjVJb2U5kueXwArOxidyQVoQKaDzsankDRT4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yj2mPs6IWEGUMbTQLpELnfDNh+4UrIoK62O4HipmKYbu5CRaFQsZXz4/XpE0Ybqz1VhZ92UFBXd3FFU9E62K9xjHboGuzFOIcw3fNGtdZ02Ip2rmfseuW5ye7uko2M6XisrXBCwcSWyvrXcLk3LFBa06gsTgrgT676bytXeZ/9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=uCePfTWo; arc=none smtp.client-ip=134.0.28.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox1.masterlogin.de (unknown [192.168.10.88])
+	by mxout2.routing.net (Postfix) with ESMTP id 7653B5FA81;
+	Fri,  4 Oct 2024 12:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1728046668;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RL33WIeDrw915imXEq28+yRaGpR5FaDj932LC2iNZQo=;
+	b=uCePfTWo7XuiOQYflwcBVkCvUbqeL4zY40tGga46qNGPVxqE9UAKJVD5egRZzu58iSHSoT
+	LNH+Pyxj0UUmqr0GPxX1PjmrtNAiLiVu5WDCerjPfDrtJTHaPc+tjA422MRuagJu92i5kp
+	RexANxqYU6NBWdFmIul8vakGzWS+yyw=
+Received: from frank-u24.. (fttx-pool-217.61.153.189.bambit.de [217.61.153.189])
+	by mxbox1.masterlogin.de (Postfix) with ESMTPSA id 807C040040;
+	Fri,  4 Oct 2024 12:57:47 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sean Wang <sean.wang@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	daniel@makrotopia.org,
+	john@phrozen.org,
+	ansuelsmth@gmail.com,
+	eladwf@gmail.com
+Subject: [PATCH v1 0/4] Add pinctrl support for mt7988
+Date: Fri,  4 Oct 2024 14:34:14 +0200
+Message-ID: <20241004123423.34519-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004092254.3759210-4-john.g.garry@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: 2cf4806d-0c22-42d3-b394-aa868bc5d0c9
 
-On Fri, Oct 04, 2024 at 09:22:49AM +0000, John Garry wrote:
-> Currently FMODE_CAN_ATOMIC_WRITE is set if the bdev can atomic write and
-> the file is open for direct IO. This does not work if the file is not
-> opened for direct IO, yet fcntl(O_DIRECT) is used on the fd later.
+From: Frank Wunderlich <frank-w@public-files.de>
 
-This sound like a bug fix for 6.12-rc?
+This series adds pinctrl driver, dt-bindings and dts node for pinctrl
+on mediatek mt7988 SoC.
 
-The fix looks good to me:
+Daniel Golle (2):
+  pinctrl: mediatek: add support for MTK_PULL_PD_TYPE
+  pinctrl: mediatek: add MT7988 pinctrl driver
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Frank Wunderlich (2):
+  dt-bindings: pinctrl: add binding for MT7988 SoC
+  arm64: dts: mediatek: mt7988: add pinctrl support
+
+ .../pinctrl/mediatek,mt7988-pinctrl.yaml      |  575 +++++++
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi     |  241 +++
+ drivers/pinctrl/mediatek/Kconfig              |    7 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt7988.c     | 1526 +++++++++++++++++
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  |   59 +
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |    1 +
+ 7 files changed, 2410 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7988.c
+
+-- 
+2.43.0
+
 
