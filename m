@@ -1,92 +1,107 @@
-Return-Path: <linux-kernel+bounces-350603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04735990765
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:26:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4EC990768
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 17:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A570A286239
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:26:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041F51C21050
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 15:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF121AA7B6;
-	Fri,  4 Oct 2024 15:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2876D1C304F;
+	Fri,  4 Oct 2024 15:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/OrqZHE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNHSkmsp"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32445481CE;
-	Fri,  4 Oct 2024 15:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A15D1AA798;
+	Fri,  4 Oct 2024 15:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728055493; cv=none; b=Q7IKuWsEza0dV4Gkw17LTcU3/9eLU8RZB7j0OQQ9R/lPymNrTojHSdJEqomwidFH4yDV6e5O3DVT6KN4MuXcWvYhkgBzsjE/TKQ95PSraG+EZw3t6phgFn828lPYynQibIEVC1ZHwdtEfYvZU8jc2IPAV5eEANAUek51vTC2AKs=
+	t=1728055516; cv=none; b=dp2YPM9Fliz5BJsaxQUCFEyc1p2k2aJxUtL6cn7Cb/69tKubUBLmW3Py9n7eD0qQPII7N+m2eP6AtQ2qHX1SpZuMD3QvXbkuoezNrGOxF7u88QONnzL+9ABsoa9EpQj4W+OF08v8rSJHuHNBNsjsyghlBtkdLfguvaIkefxSEhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728055493; c=relaxed/simple;
-	bh=SNsQXTK1hQBmBp0m1IgGUkJYgXLqNVqg4Qz9jYygkQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sXlKpe0CI0vE0jJRImCftp7iOBFhPDpfnHdHR6MSPdXskTR+xcCjO2nWu1ofYqud6UeP+FmwRmwHHfvsyRBNQxHUCjEZKPq0tklvW2+6OUx+E+Ka/klNWUH5dmR7+lKroOSZutbVkQwPhduiRZvkODczk+C6LS34Wxu/vSh7txk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/OrqZHE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0793AC4CEC6;
-	Fri,  4 Oct 2024 15:24:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728055492;
-	bh=SNsQXTK1hQBmBp0m1IgGUkJYgXLqNVqg4Qz9jYygkQQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C/OrqZHEDMFpctn1qkqSvyPzCQvfO4XSkzCvulE5hgFM/wB30envTH5zyizRS4/8t
-	 3JqOsZW7xH5yqAmB+7QlSE9W0E3QUCnzFFrVseAH8vVOyTcmzKHmhWYBs7FaHzRqgu
-	 SntHsEny4fYa4TqvI/IOdeTPJ2MlsBAsr92eVK+leKPK6dS+Beeax2ove5fEmccent
-	 rhYCxtB2bvEMRFI2AG+pi0NU9NcI1yb0/H1GtGCFhH7S+p0jomjFNvoiYhwBWKReec
-	 QiBHI7v/3zMnHQogMPxH9BSOHB7KAGezjOT77qK6F3ZDCvd7OJjSrIIsfbYEJj1xeH
-	 GZNxK8OgDhb5w==
-Date: Fri, 4 Oct 2024 16:24:47 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Cc: amitkumar.karwar@nxp.com, neeraj.sanjaykale@nxp.com,
-	marcel@holtmann.org, luiz.dentz@gmail.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
-	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, m.felsch@pengutronix.de,
-	bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
- supply and reset
-Message-ID: <20241004-coke-stimuli-4b8aa1be0782@spud>
-References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
+	s=arc-20240116; t=1728055516; c=relaxed/simple;
+	bh=e6TKmiRlr3jIBiPeSrDU/+JnyFrTJDdS/82UhHlZ2KU=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=uVu4b3zOu4GXPGCTf8YTfLSJa03PM8P8aaqt7EJh2ddPwnZctpO93ygHDrCFBsqeNXQRuEgE/Iofy423oj51V1FtBnk0Mn7Zs+6WtAkZ2Fw5d1a2q+iV6pptHT9pH8bpnfG1q2xF+E6sE6KuZX6QThcx9Dj3pE5oKFNnpHSsBG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNHSkmsp; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a9b3cd75e5so213234785a.0;
+        Fri, 04 Oct 2024 08:25:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728055514; x=1728660314; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NEXLkLzVw+ZwuISj1WyZNMLTYv32POESldDSS3USLSE=;
+        b=lNHSkmspexiAFq4wKXXbOefG4Vzis46RpNGg+tfjCCPzb2RXDG2097hDRFv1XOG4Qk
+         sPu9HyMm94tlKL9K6+MRL0fauqc/Ui7flJLILKA4Rej9dzZ5AFIVtcpBoKqSdtT/HCfg
+         +XjobqTwK63qDsVK4HBEfl7JY2S8bnb/y0OTYzS90Ntq+Kk8wPJIdzJg2BtxMq8MSLOj
+         Ge4b9R9nV6Ai1r/tvS2zYB9TY40Q//5rOzCvt2Pqe866wMgNdRTZFbpra5GcM/0kEFKQ
+         O3FZFYTxmwMVEJY5Mcj94bhORBre6yczoxzHODtecR+b1/R/tVUhMYgdQzq33DPOCY2b
+         wLjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728055514; x=1728660314;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NEXLkLzVw+ZwuISj1WyZNMLTYv32POESldDSS3USLSE=;
+        b=nM39XzjNs4cLXNJ5iMs0gFvKTG/FR4cyzbWi92HyWiCZpoq6PacMJhbLBSXu9+BaSh
+         eKYp8rvFCD0xvX4PlH7Fb+L1DF8NesENTNC7wji3DN1pTcD/+9L/UY8imTycoBiJlYzg
+         w6aTy55na9oPuJXbWZUjApyeQVEjIMhPWN22YKPwmeJdGpjEYcaC84CVybqRW2HUtkEd
+         /v3BmdmkJATfofxfuXViNo6gBK6YBKnjWhQiu1J4dT+gUWbUShVbCMf1CJr3I/c4gQta
+         7ny4bJckC6zYg/GcfVAa1K0kr+uJ+uUxEO711yAe0SKyvAD/0IUrk0Fj4l90YnbtNGaQ
+         Rw2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUSi4JsODJtvaKXwYyNCX+NGOxrTw37HpHk+GAJuzZHsBcWRrfFovPTRQOHycRnuQSow4ABhYJUlmOl1i7kBws=@vger.kernel.org, AJvYcCUos2UMywzeUAicZrLuJRavXVjvJlDSVulUwOax/PLDcb1XY7fUPEJ2H7BfVJFhAouGRLY4sl6pS57en1Y=@vger.kernel.org, AJvYcCVu63PEGj+rNJGi5QvHNlm6TeJVue728IcXqFHDWZbwArvB7qBM4gXXSEmTgOiWAAlf36c0V580@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyomgj2sEpkRl5zoJuihUbvTwN6QKSMYJD/ySiqmM7zhbZsBOIJ
+	MzA8Z98GmT29VOBGdPEAgsdsMy/Pa/+fJD2qc4HUz0bnHiT5NqVT
+X-Google-Smtp-Source: AGHT+IG5TVJVHAw+yR7Z8M+pCTpyek3EyxDN/H/sbF806T1p/9yGUnDuOfLTaeqcylW0tcl1YPhGMQ==
+X-Received: by 2002:a05:620a:199c:b0:7a9:b424:ffec with SMTP id af79cd13be357-7ae6f4535f0mr453290285a.30.1728055513926;
+        Fri, 04 Oct 2024 08:25:13 -0700 (PDT)
+Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae6cd04a32sm122172985a.57.2024.10.04.08.25.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 08:25:12 -0700 (PDT)
+Date: Fri, 04 Oct 2024 11:25:12 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Simon Horman <horms@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ linux-kernel@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, 
+ netdev@vger.kernel.org
+Message-ID: <670008d892bf9_c21242947e@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20241004-maint-net-hdrs-v1-2-41fd555aacc5@kernel.org>
+References: <20241004-maint-net-hdrs-v1-0-41fd555aacc5@kernel.org>
+ <20241004-maint-net-hdrs-v1-2-41fd555aacc5@kernel.org>
+Subject: Re: [PATCH RFC net 2/2] MAINTAINERS: Add headers and mailing list to
+ UDP section
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+hmX0S2hU71VqjfY"
-Content-Disposition: inline
-In-Reply-To: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
+Simon Horman wrote:
+> Add netdev mailing list and some more udp.h headers to the UDP section.
+> This is now more consistent with the TCP section.
+> 
+> Signed-off-by: Simon Horman <horms@kernel.org>
 
---+hmX0S2hU71VqjfY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Willem de Bruijn <willemb@google.com>
 
-On Fri, Oct 04, 2024 at 01:35:56PM +0200, Catalin Popescu wrote:
-> Add support for chip power supply and chip reset/powerdown.
->=20
-> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---+hmX0S2hU71VqjfY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwAIvwAKCRB4tDGHoIJi
-0sJhAP4gCQ2nSaAYtCDEei6OcSuCBWS4sDcYFkR6cUUNX11iBAEAiVncy3j6EGC1
-yDScHH0bKV1DODnMY2v6Zp7zvLwnswY=
-=871w
------END PGP SIGNATURE-----
-
---+hmX0S2hU71VqjfY--
+Also a reminder that maintainer and reviewer roles are not fixed,
+and open to regular contributors to this code.
 
