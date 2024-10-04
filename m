@@ -1,168 +1,174 @@
-Return-Path: <linux-kernel+bounces-351375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6145D99103A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:20:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF95F99103D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17094281249
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:20:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5350F1F23047
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F290B1AE018;
-	Fri,  4 Oct 2024 20:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D369D1D8A14;
+	Fri,  4 Oct 2024 20:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h+oAieAA"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sK6NBrWk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UNP0zAsK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sK6NBrWk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UNP0zAsK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FC81AE000;
-	Fri,  4 Oct 2024 20:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA511D8A0A;
+	Fri,  4 Oct 2024 20:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728072275; cv=none; b=Wrg23OtnMUiESk4QfyBlV4QV0w14Yr5byltQ9HnV/vy+1+ydmZag9Ix9jTtSqvUlnBEllR8oaWgMmvYF8W1L5FXfGPFnlOheTSJAo/+d/O80O7qjKmHMfqzKq6jc+WvhpGbdEV5eanER+NkfirlRPKNXyK9JRR7DVl352B81uOY=
+	t=1728072317; cv=none; b=Riis2DL0mxGJNWFJj8NiOczedlQ98nFfJCVMecDQZO6jvdyHKh732MCa2ovkz0uy44cJ6mdftSw8aeP7pdSHDZGWmKahbYUtU90sUoVVtHOh25cqYVGvfPSjvXBbOYl3dAtsXg6WYJA1GFJHtm33o2wgQr114P8oDFIPKJYKZSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728072275; c=relaxed/simple;
-	bh=cCdDTcUm4bFPThg2lM08rNCWleBMqiey7gEaVCUSrxI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=czl8jJ845fmz/kNqa/pbTka2HBKFNjtjQvoYkqrnQCD1rnBbVBM8sG2iExSUNH+91/xaoWaed526E7OYhy6Q1dvFhnR/zFfXirmkRgJRClEsLoxvpnbjXOxRjxNVz2Qfx5B/kFi18I42bxolJppiu7ZR9z6D+u8f8NQdiQww9G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h+oAieAA; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e078d28fe9so1851982a91.2;
-        Fri, 04 Oct 2024 13:04:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728072273; x=1728677073; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cCdDTcUm4bFPThg2lM08rNCWleBMqiey7gEaVCUSrxI=;
-        b=h+oAieAATR88aEyk8Fv2uGuwnkrkXOVAVFwBCVYLNuc0Qe2EnlZvDJvdMASRo3zwlH
-         Yml1aODVAK0IdeGaY14J2iywMRXoRFK5ACrWhnXYoU1RP9aMIRgcqc7uiV/cY6XJm0ZD
-         K8zqdml3YZp01u12xtSAo5ogPWwYjiQtmDydIwLfkB4Z+tDXRoET9/7pPy81PkBOS0XW
-         0OTgpO13WeJ4SyVU2aM93movsFbgo/RHf7J0oMckatSE4Q+1pADyM7/qDScPHfJWMDqT
-         dMpPZ9i7INa53dLDA8XZpKOgIaiLNW/jn1XecrwqbP5xtc7Kn5folBTHIYaKTK3fqm6N
-         qJKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728072273; x=1728677073;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cCdDTcUm4bFPThg2lM08rNCWleBMqiey7gEaVCUSrxI=;
-        b=jqxX9QzMim6wjLwmWxjzcx5kQ6iu7HKwcXH6ZB28bj3uPUAOKA3aAThpYhnrse8aRt
-         DsdOgJ6mRdI9T9wUAWU4CGF4MBVBITUbr1BT7Kpwy/9fYD9Vz3qAUwlIsuEC4fJyOHM0
-         HXerR8J5aQGeHyKjCzRpm46GwlfMQvXlXdvj5m4EU+sMw2e/o+yi+R7Z7yGiJ9PNeFoI
-         BCUedbm5E0nVILaVvX6eWgnyGbnlNOiSkjXmow5ww5x2FoGHKEsOsK3ZHliIXTS45pve
-         mqpMLHd8UCUUk+81LCV05SLYIvGIwNiFexm+yovDMLUdUkLo6PWlpgLJQwN8Xhyy4qQH
-         9lng==
-X-Forwarded-Encrypted: i=1; AJvYcCUapnnpWxdxaPc4euxLU/1jslYSpvWQPyoE1QyV25+WO29W6q0WPkaMeRUi8vV5Qs0bBkSoC4cCkdidSkHl@vger.kernel.org, AJvYcCUzQhWVII4C1maCgD195aI/zm+AYsfkX0IHR1cG+7Z/pv/BCCmRM2dpc6/f8KyDwnn+w7S4DtwJK7yE6oyOuTCEFJZf@vger.kernel.org, AJvYcCVD7/G6tTlR0V5YTuYF+lIeYiyrfZMSJKsPKy91u7mBRVIZwwwNxJDb+AWeSCLQqt5T39I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0CDJxYxf72HqZkXqRWIsr4GMiw+W7rLguGxZkgnyUg5be3C3U
-	S3Yi8xaU3SQ7HiAnanugtXb8FckuO+TbGVjTGGXKEfhSq40BM/PAoZ+A78oAEI17XRgz4ppR/oc
-	4ZCejahLeVQsPsZmOxZ/2LL3Hxuc=
-X-Google-Smtp-Source: AGHT+IFQaZ6vae6vffxFo9uyG8YGJ9VcxjSrqhSww64Y2yjTDJ/Nrff6qKFiOLgb8v51yyr+nVi0h1iA86TuS8otjmg=
-X-Received: by 2002:a17:90b:3889:b0:2cb:4c25:f941 with SMTP id
- 98e67ed59e1d1-2e1e6264456mr4150777a91.17.1728072273163; Fri, 04 Oct 2024
- 13:04:33 -0700 (PDT)
+	s=arc-20240116; t=1728072317; c=relaxed/simple;
+	bh=PU72RAjqYI5Qt3bzRwcs259VguCtEYYVGU+g9nP/LOo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fsEmpqc11rFbjT43QFKGG7plsr77iXZakSwHVvvI2GAfWMAKFy2fRrmIKkLASYvZRLY/DVsYiSEl5D1ws/vR0Vqvqdex7cyvf/QAgpIaoJgpR7nBTOcj6RbRtpu9vxR709dEPi9y9ZA0h9b5CQigMyB2TCYGzog/vIdfTmHNy28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sK6NBrWk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UNP0zAsK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sK6NBrWk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UNP0zAsK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7E5E11F7B3;
+	Fri,  4 Oct 2024 20:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728072313; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2XSl0wEtuFSDZIcfW3fpnirpGyVoc/LeciFvNQUWMLM=;
+	b=sK6NBrWkVSW+a/hc6yqJXz+9pZxbHSoj5BLI0ZlHa3yZBFck/jv1AAq73c701WXN7toYR3
+	QPBWbm3KD41jjJ2aM4KQTzYMPP1ze3cj85veh9FApwELhdhBVwuD6c2DesM5/44cdsMr16
+	DwvukMOCFxX/q5U4ge0Q4N0+wBaRrX4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728072313;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2XSl0wEtuFSDZIcfW3fpnirpGyVoc/LeciFvNQUWMLM=;
+	b=UNP0zAsKeiGEXmC/Qe/RZG/A9XLpyL5ynMqA8gG6SDALe1WGnJY4/syjX9/DwPcz5YUfnm
+	EXkoO23UNdvzT9Dg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728072313; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2XSl0wEtuFSDZIcfW3fpnirpGyVoc/LeciFvNQUWMLM=;
+	b=sK6NBrWkVSW+a/hc6yqJXz+9pZxbHSoj5BLI0ZlHa3yZBFck/jv1AAq73c701WXN7toYR3
+	QPBWbm3KD41jjJ2aM4KQTzYMPP1ze3cj85veh9FApwELhdhBVwuD6c2DesM5/44cdsMr16
+	DwvukMOCFxX/q5U4ge0Q4N0+wBaRrX4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728072313;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2XSl0wEtuFSDZIcfW3fpnirpGyVoc/LeciFvNQUWMLM=;
+	b=UNP0zAsKeiGEXmC/Qe/RZG/A9XLpyL5ynMqA8gG6SDALe1WGnJY4/syjX9/DwPcz5YUfnm
+	EXkoO23UNdvzT9Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3500A13883;
+	Fri,  4 Oct 2024 20:05:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id u5bDBHlKAGfcRQAAD6G6ig
+	(envelope-from <rgoldwyn@suse.de>); Fri, 04 Oct 2024 20:05:13 +0000
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+To: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: [PATCH 00/12] btrfs reads through iomap
+Date: Fri,  4 Oct 2024 16:04:27 -0400
+Message-ID: <cover.1728071257.git.rgoldwyn@suse.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
- <20241003151638.1608537-3-mathieu.desnoyers@efficios.com> <20241003182304.2b04b74a@gandalf.local.home>
- <6dc21f67-52e1-4ed5-af7f-f047c3c22c11@efficios.com> <20241003210403.71d4aa67@gandalf.local.home>
- <90ca2fee-cdfb-4d48-ab9e-57d8d2b8b8d8@efficios.com> <20241004092619.0be53f90@gandalf.local.home>
- <e547819a-7993-4c80-b358-6719ca420cf8@efficios.com> <20241004105211.13ea45da@gandalf.local.home>
- <4f1046e7-7b62-4db3-93d4-815dc8c27185@efficios.com>
-In-Reply-To: <4f1046e7-7b62-4db3-93d4-815dc8c27185@efficios.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 4 Oct 2024 13:04:21 -0700
-Message-ID: <CAEf4BzYHXz0UFOOnkAeKDK-yt59cwz-66_4wL-bjmv3zxryftg@mail.gmail.com>
-Subject: Re: [PATCH v1 2/8] tracing/ftrace: guard syscall probe with preempt_notrace
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>, 
-	linux-trace-kernel@vger.kernel.org, Michael Jeanson <mjeanson@efficios.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Fri, Oct 4, 2024 at 7:53=E2=80=AFAM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> On 2024-10-04 16:52, Steven Rostedt wrote:
-> > On Fri, 4 Oct 2024 10:19:36 -0400
-> > Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> >
-> >> The eBPF people want to leverage this. When I last discussed this with
-> >> eBPF maintainers, they were open to adapt eBPF after this infrastructu=
-re
-> >> series is merged. Based on this eBPF attempt from 2022:
-> >>
-> >> https://lore.kernel.org/lkml/c323bce9-a04e-b1c3-580a-783fde259d60@fb.c=
-om/
-> >
-> > Sorry, I wasn't part of that discussion.
-> >
-> >>
-> >> The sframe code is just getting in shape (2024), but is far from being=
- ready.
-> >>
-> >> Everyone appears to be waiting for this infrastructure work to go in
-> >> before they can build on top. Once this infrastructure is available,
-> >> multiple groups can start working on introducing use of this into thei=
-r
-> >> own code in parallel.
-> >>
-> >> Four years into this effort, and this is the first time we're told we =
-need
-> >> to adapt in-tree tracers to handle the page faults before this can go =
-in.
-> >>
-> >> Could you please stop moving the goal posts ?
-> >
-> > I don't think I'm moving the goal posts. I was mentioning to show an
-> > in-tree user. If BPF wants this, I'm all for it. The only thing I saw w=
-as a
-> > generalization in the cover letter about perf, bpf and ftrace using
-> > faultible tracepoints. I just wanted to see a path for that happening.
->
-> AFAIU eBPF folks are very eager to start making use of this, so we won't
-> have to wait long.
+From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-I already gave my ack on BPF parts of this patch set, but I'll
-elaborate a bit more here for the record. There seems to be two things
-that's been discussed.
+These patches incorporate btrfs buffered reads using iomap code.
+The final goal here is to give all folio handling to iomap. This is the
+first installment to be followed by writes, writebacks and eventually
+subpage support.
 
-First, preempt_disable() vs migrate_disable(). We only need the
-latter, but the former just preserves current behavior and I think
-it's fine, we can follow up with BPF-specific bits later to optimize
-and clean this up further. No big deal.
+The crux of the changes are:
+ * Since btrfs uses it's own bio handling structure, the btrfs bioset is
+passed to iomap code in order to create a bio with the folios.
+ * For compressed extents:
+   - IOMAP_ENCODED which behaves like IOMAP_MAPPED, except, we supply
+     the iomap back to submit_io() to identify if it is encoded.
+   - The iomap code needs to keep a track of the previous iomap struct
+     in order to pass it to submit_io with the corresponding iomap
+   - A change in iomap struct should create a new bio
 
-Second, whether BPF can utilize sleepable (faultable) tracepoints
-right now with these changes. No, we need a bit more work (again, in
-BPF specific parts) to allow faultable tracepoint attachment for BPF
-programs. But it's a bit nuanced piece of code to get everything
-right, and it's best done by someone more familiar with BPF internals.
-So I wouldn't expect Mathieu to do this either.
+I have tested this patchset against a full run of xfstests for btrfs.
 
-So, tl;dr, I think patches are fine as-is (from BPF perspective), and
-we'd like to see them applied and get to bpf-next for further
-development on top of that.
+The current code does not support subpage access of iomap. Subpage
+will be hopefully incorporated once the write and the writeback goes
+through.
 
->
-> Thanks,
->
-> Mathieu
->
-> --
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> https://www.efficios.com
->
+Code is available at https://github.com/goldwynr/linux/tree/buffered-iomap
+
+Goldwyn Rodrigues (12):
+  iomap: check if folio size is equal to FS block size
+  iomap: Introduce iomap_read_folio_ops
+  iomap: add bioset in iomap_read_folio_ops for filesystems to use own
+    bioset
+  iomap: include iomap_read_end_io() in header
+  iomap: Introduce IOMAP_ENCODED
+  iomap: Introduce read_inline() function hook
+  btrfs: btrfs_em_to_iomap() to convert em to iomap
+  btrfs: iomap_begin() for buffered reads
+  btrfs: define btrfs_iomap_read_folio_ops
+  btrfs: define btrfs_iomap_folio_ops
+  btrfs: add read_inline for folio operations for read() calls
+  btrfs: switch to iomap for buffered reads
+
+ block/fops.c           |   4 +-
+ fs/btrfs/bio.c         |   2 +-
+ fs/btrfs/bio.h         |   1 +
+ fs/btrfs/extent_io.c   | 131 +++++++++++++++++++++++++++++++++++++++++
+ fs/erofs/data.c        |   4 +-
+ fs/gfs2/aops.c         |   4 +-
+ fs/iomap/buffered-io.c | 117 +++++++++++++++++++++++++-----------
+ fs/xfs/xfs_aops.c      |   4 +-
+ fs/zonefs/file.c       |   4 +-
+ include/linux/iomap.h  |  37 +++++++++++-
+ 10 files changed, 260 insertions(+), 48 deletions(-)
+
+-- 
+2.46.1
+
 
