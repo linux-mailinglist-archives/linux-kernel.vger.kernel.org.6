@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-351472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188FA991198
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:49:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 238859911A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 23:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0FEA284D8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:49:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B231C221E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 21:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E8F1B4F1F;
-	Fri,  4 Oct 2024 21:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3F81D8A1D;
+	Fri,  4 Oct 2024 21:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WRCecLe6"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KHbKMBzO"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B0B1ADFF0
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F731B4F06
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 21:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728078531; cv=none; b=DMcZnPDHPQ6JECwpy5s+OzL521uYxTRFbFYrQB5CHRVpelleUIGkcNWRhqpZaq5mUhidnxUpDdmdTVJosJFzdpEoAD5ywgYagDuCnlU/72p7wfu8VuOpgtuJUO2Mj4NEl1+L/O3DcFihI5xbTpL7Qk9gW6P5VY8WKc+NpYEwLOw=
+	t=1728078534; cv=none; b=DtSDU3pEylxb3OcskXUoOC6e+edQUJCohFfuUyx7h8klYjxkmk1mM/q04Fa6vT8RP4hdA9azjDaT1M6SIGAKJoz4HqjHzhNNAdxSabWp31R7VqbKeYGclXzxCKw5kc5qvWKezxnHZqizmkaqNydMpWkTHOxRVNA4CZpTvuP9sds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728078531; c=relaxed/simple;
-	bh=baele4Nwv7MlPxYTi/fb1EW1xxMwhewdYdFuNsVeNAA=;
+	s=arc-20240116; t=1728078534; c=relaxed/simple;
+	bh=dW6NuJWAL0tnqJGgsGPu8j1VoVP4zCeNUzqvDunBNqs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YqUYed7f9Bl6jmKGzmpOuUZbQX8e3Gjl6lFJR5G8mf6LPxnNyW2bTKzI9j0gD6oKgYxwNL19XioQi25ucrQnL0c7dKKKdJLdoiEbbyXqjjtIIAvrsNhJ6OwzMdQ8m09XqKvmhxwT1gc1hPCSDrCEgBmcX0YYph6hI2uNyB0bBds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WRCecLe6; arc=none smtp.client-ip=209.85.221.49
+	 In-Reply-To:To:Cc; b=XhbHKPLzhXCX68pttPLH/JTgO9NzdxYyj1A+nEgRciZN0OU4DkzMvYT4pK5M+o3pHemHi+Z+Y3sRxzyEOLu9INw42y0GgFZuH5KMT7Vhyu6YWuLkP9IeQNS8jEkI75OEyGPX4/vf13fZAVgbOC+YAkNGpiQXuMCC0UwIJHi8XuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KHbKMBzO; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37cd0b5515fso1618138f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 14:48:48 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5398d171fa2so3190282e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 14:48:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728078527; x=1728683327; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728078529; x=1728683329; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0lZ3hRQxXjulLjy+7TWi5No6JHikVVEGfaXyEkMAv7U=;
-        b=WRCecLe6GHkRhYD/+idd+EvK5wEem2aHJSF5x1AYZpX2/WTq63HZuNQmRpxRAB55VV
-         +LeGoqzI1aQYpdUAtzXwMaJYPXIkDDPJtqw3jLyWMHUKZaWF8ojlDbzUYmIFiT1e0n8s
-         s8fyuyYMCbg8FyStQqPeg4Gn7csmm+0iFp8lUQ4Lbzt+DskBHQ6Ool0dAnhEPMakvG8F
-         LVvzzXvbCuD9D62bKH819SOulaHkewDJO2pL1YtwolyU8/laVQZpilPtUyjus5E/YB6r
-         zgKe6j75Nhrx3MfQsSsWOZcMtQ8ShDvkcRn+CwEh5KwuBTG/jtW+vn4IatYbDuQGjBTv
-         E0IA==
+        bh=Zi1jIhrpiRkiS4x4FePba+v93fkZAzTXFTnvV0Q7SJI=;
+        b=KHbKMBzOUkxinDQspNRqlLP9ZOOyfi6oFUC0tlAEzXGYDRRq9n2lJ3pAfBu6DymGB1
+         2fJmYNG21/XX3Whkxuf1dPcmVe925V4lEjK5oOht8EIc5v5HFqhhbSITVVR8co/cdPZB
+         nfeeSQhgaC4OZDQSgNVaZclcAwfZj/9U8Jh2TXw6zJKjOGI0yezjV2s1bdp9ZhqP3NXo
+         aGlc7KsarJFeJQBlFoB7LlsBjTcrekddx5p2Hh88YZrKlaKjIn1xg/rKCO1hI+8waQ5C
+         cpZWAY71bFDxtjCwCG42HEJ46s9wJW9l0xokQkG/q4shKIpFb2bMQosgnwtk+dYS20Sn
+         p49Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728078527; x=1728683327;
+        d=1e100.net; s=20230601; t=1728078529; x=1728683329;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0lZ3hRQxXjulLjy+7TWi5No6JHikVVEGfaXyEkMAv7U=;
-        b=LT9uEq/OHXCd/xgL1UdibZT7IuY4eOwczFMSfnxvpVDhYv5+sCIqDqVAs6pEG8i4+s
-         xmknNOgZFCIxNY3cY8jvq35vadNUEqgUnBElIdFt5JVVDRIVb/OYiqt9F6dEyzoQXVEO
-         iLkZOHFTb8OTE9Z0hfvxkCk+HwWsT5gzn/G2yCvZD9oewPJtLiiGhM13tMT6IgDqGw6w
-         X4B42fWmW2QkxQyydQR2LFxDFB3v7NmqsOTDytNCDUvfYcOKgUJ7cdY20MggeCv3/gC7
-         lF2vUk0JCk8J1D91S020zCZA+YpVR03W/zR4XpWMGEJb3Vu82dwUVGqzYRKqgAuA8JPa
-         w7hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPu4dNPeKL33KkusosAzL/KOWXMrrdJZXCb2HZRBQYxcvy1Njt5LiRqq2Vrhoc1wSwmoB03rx+/YoCjAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoBcBBNOqqD5ts9P0SnzWTqCZF6yUCDVZ05ZoIQz6ZXMZJ4GsX
-	lPTqIbqfuS4bIZQcusbucXKJK/S6CNx317xzvtqimtET+NkcDfCtZQnVbmmwSQs=
-X-Google-Smtp-Source: AGHT+IELGyW7DdfB3eUCcfWXm/kjhvHs7NEWdyhLztJSHzSu/vdLp8yJMstLPjxTwbTRgw2c5zU1IA==
-X-Received: by 2002:a5d:69ca:0:b0:37c:d02a:7e41 with SMTP id ffacd0b85a97d-37d0e738969mr2766006f8f.15.1728078527152;
-        Fri, 04 Oct 2024 14:48:47 -0700 (PDT)
+        bh=Zi1jIhrpiRkiS4x4FePba+v93fkZAzTXFTnvV0Q7SJI=;
+        b=w5dJ3tGR8vQ+ZlJa7cJfnXrVEtn9V/Xvv9FckZhzIhAGbH/T4VSzXjohpQlupEmYIv
+         AkO917c7W2dLv9vwKm917JnK8N5ZsRhscXM6rrpuaW7KfJAJk4fTEdS6MHxJUz7ewUpL
+         9QMkfDAz8z1WkUeFH50gNZKL6A2ulEA0NclevJO/2lgtPwvyv/7QnJMSiRg9gU7cVSXj
+         +heG2T9AMXAf941W1lA8dyyhA+2q0E6qTuDXHXqtXaKq3MP5yivsT5Tbsh9Ateem1Yz+
+         jrzZtxEFl/tUrM+Vqhi27SSzS4lxL2CgNSLc1DO3MERxg00ZChR9b4YoWQJrqnxEjVfm
+         l5qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/Ef9MMH/xOMU+Ur5Jh3rbLUlAZKv2g5ngqk3xwBvJP9tZBZIMuh+tmoPFGAljI+9ESqMnuiuXKSbEl3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp3gUVb2v+bNvEQV6z2G0EQRgKai20eenFmfza+zyDCyhkjef5
+	aBe6kBawz/VuWdP5JrYquU8TwGOPmY3TDLp9cL9EbO/275+qlBbVIdvJnuSwPBRD5VIXBCE/rBU
+	D
+X-Google-Smtp-Source: AGHT+IG9vKnlCyYpJNJyXVcqaNvjMhM227pXj314Ws0xBmbWWcURKzDXKJu6hWgq+z1B4KbbgtI7zg==
+X-Received: by 2002:a05:6512:3090:b0:52c:e1cd:39b7 with SMTP id 2adb3069b0e04-539ab85be3fmr2837875e87.5.1728078528670;
+        Fri, 04 Oct 2024 14:48:48 -0700 (PDT)
 Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b4ab63sm24680375e9.40.2024.10.04.14.48.45
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b4ab63sm24680375e9.40.2024.10.04.14.48.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 14:48:46 -0700 (PDT)
+        Fri, 04 Oct 2024 14:48:47 -0700 (PDT)
 From: Guillaume Stols <gstols@baylibre.com>
-Date: Fri, 04 Oct 2024 21:48:35 +0000
-Subject: [PATCH v3 01/10] iio: adc: ad7606: Fix typo in the driver name
+Date: Fri, 04 Oct 2024 21:48:36 +0000
+Subject: [PATCH v3 02/10] dt-bindings: iio: adc: ad7606: Remove spi-cpha
+ from required
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +79,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-ad7606_add_iio_backend_support-v3-1-38757012ce82@baylibre.com>
+Message-Id: <20241004-ad7606_add_iio_backend_support-v3-2-38757012ce82@baylibre.com>
 References: <20241004-ad7606_add_iio_backend_support-v3-0-38757012ce82@baylibre.com>
 In-Reply-To: <20241004-ad7606_add_iio_backend_support-v3-0-38757012ce82@baylibre.com>
 To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
@@ -96,35 +98,68 @@ Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
  Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
  Guillaume Stols <gstols@baylibre.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728078523; l=848;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728078523; l=2037;
  i=gstols@baylibre.com; s=20240417; h=from:subject:message-id;
- bh=baele4Nwv7MlPxYTi/fb1EW1xxMwhewdYdFuNsVeNAA=;
- b=p4U6UtXueMN9Cj0qTH1RuJoNMSQR8LMBsgB/om9nerwUq1HUinLYayaLPzYTikXWMbGwjna8Q
- i20NpAvqKb8Cvr1bvRZNsOpA9FWeiFSQClrkQ3yFkwWweQag76uRoqm
+ bh=dW6NuJWAL0tnqJGgsGPu8j1VoVP4zCeNUzqvDunBNqs=;
+ b=1JBVnXogi8Y6VmRN4ENJTNsSU2nRs5+Y+Xu9FQStSslUOMfRP19G/XBoT+HQFyDiYJCMz/qD8
+ NFHk3dWGBGUD1Y8O56KBx8G/wlK2ECH14DN83u6ihheoy5zIGdM+Ejb
 X-Developer-Key: i=gstols@baylibre.com; a=ed25519;
  pk=XvMm5WHuV67sGYOJZqIYzXndbaJOlNd8Q6li6vnb4Cs=
 
-The parallel driver's name is ad7606_par and not ad7606_parallel.
+The documentation is erroneously stating that spi-cpha is required, and
+the example is erroneously setting both spi-cpol and spi-cpha. According
+to the datasheet, only cpol should be set.
 
-Fixes: 0046a46a8f93 ("staging/ad7606: Actually build the interface modules")
+On zedboard for instance, setting the devicetree as in the example will
+simply not work.
+
+Fixes: 416f882c3b40 ("dt-bindings: iio: adc: Migrate AD7606 documentation to yaml")
+Fixes: 6e33a125df66 ("dt-bindings: iio: adc: Add docs for AD7606 ADC")
 Signed-off-by: Guillaume Stols <gstols@baylibre.com>
 ---
- drivers/iio/adc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 97ece1a4b7e3..4ab1a3092d88 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -229,7 +229,7 @@ config AD7606_IFACE_PARALLEL
- 	  ad7605-4, ad7606, ad7606-6, ad7606-4 analog to digital converters (ADC).
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+index bec7cfba52a7..47081c79a1cf 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+@@ -39,6 +39,11 @@ properties:
+   "#size-cells":
+     const: 0
  
- 	  To compile this driver as a module, choose M here: the
--	  module will be called ad7606_parallel.
-+	  module will be called ad7606_par.
++  # According to the datasheet, "Data is clocked in from SDI on the falling
++  # edge of SCLK, while data is clocked out on DOUTA on the rising edge of
++  # SCLK".  Also, even if not stated textually in the datasheet, it is made
++  # clear on the diagrams that sclk idles at high.  Subsequently, in case SPI
++  # interface is used, the correct way is to only set spi-cpol.
+   spi-cpha: true
  
- config AD7606_IFACE_SPI
- 	tristate "Analog Devices AD7606 ADC driver with spi interface support"
+   spi-cpol: true
+@@ -168,7 +173,6 @@ patternProperties:
+ required:
+   - compatible
+   - reg
+-  - spi-cpha
+   - avcc-supply
+   - vdrive-supply
+   - interrupts
+@@ -255,7 +259,6 @@ examples:
+             reg = <0>;
+             spi-max-frequency = <1000000>;
+             spi-cpol;
+-            spi-cpha;
+ 
+             avcc-supply = <&adc_vref>;
+             vdrive-supply = <&vdd_supply>;
+@@ -288,7 +291,6 @@ examples:
+ 
+             spi-max-frequency = <1000000>;
+             spi-cpol;
+-            spi-cpha;
+ 
+             avcc-supply = <&adc_vref>;
+             vdrive-supply = <&vdd_supply>;
 
 -- 
 2.34.1
