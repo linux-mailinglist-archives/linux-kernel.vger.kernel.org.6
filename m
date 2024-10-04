@@ -1,90 +1,159 @@
-Return-Path: <linux-kernel+bounces-350965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A01990BAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:33:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1309990C0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123E6283D63
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:33:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82891C2144F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D271E5736;
-	Fri,  4 Oct 2024 18:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53891F22D2;
+	Fri,  4 Oct 2024 18:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RF+GTfnv"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8OVMd6f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC7B1E47D6;
-	Fri,  4 Oct 2024 18:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197FA1F22BD;
+	Fri,  4 Oct 2024 18:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066015; cv=none; b=iQMoUYJhy78++yiuOaHH+r/fPXB7sP6DFFyJgQSOmFZqbtRuguKRS4/Tr65+G0KE5p7d/Vg/zjWbB442vFP1iATudJtIHWzYR3FZdgzi0vNOIODrmr+L1haJovzKqmrn4m71cUVM6QDUpeONPqPEqrpRzbp5FvJsAUkTmLK9/8I=
+	t=1728066144; cv=none; b=tLtEIg2guXkflGZuKcwe8JngGOWhDq0i6rSD+wBRSltn+URlBZLBLOJohzgTgf7p56NTInSoJbR9a+I0PHwk2NGMwR6d840dssyKebgepxfzpHoSivWScB8PAkI6ppLOcZNQ9Zin+7cAvWNKGnFF9VWby/WZEQouxOAd3G7yhgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066015; c=relaxed/simple;
-	bh=e7Pt9dk06k5wArD4fbGTpcQ2wpH0fZyNTg2rsIWFrvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XNbtklZfEMi4+8QyuvYsXWH4hkqn54gSSVaWJNYGFD4xHLE7qA2M1bKtdg4VEpDYjByvJNwgWaiA7bO3zuP31NeJPwNTc2fmCAG7IKkBX6TezI/jUdOBqYKk7D9uz65rSRoU7IWAcpEzZgZFqSaDoQR5eXLe5HPYWyveKXOz0cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RF+GTfnv; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=TbsE1H3TrmvZMXxn8umMjBNefx95zTIgFXP2rPdpWQQ=; b=RF+GTfnvGyb3Lbk4EfTd7E0qfO
-	j+KuhIH8i2/heOJfkBdmF5VoK57f3jQ+uSje6V/5izea5C1f+dGo7560L0AxfJZLEnOVDHsgyPuIW
-	FuQmrGsxxJ50yHbFFZ7TWbZNhqiXFs4+D2wUfVzVfJIllXABj5Wqe1w4ObuScoC8ABZ0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1swmuQ-00954O-6G; Fri, 04 Oct 2024 20:20:10 +0200
-Date: Fri, 4 Oct 2024 20:20:10 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [PATCH net-next v2 3/9] net: phy: Allow PHY drivers to report
- isolation support
-Message-ID: <cf015eee-0d09-4fc7-b214-f9b0db12016e@lunn.ch>
-References: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
- <20241004161601.2932901-4-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1728066144; c=relaxed/simple;
+	bh=0dY/Rn2LCkVFNFRPdOEhLz+OBcsB+K2jKeSvCLpQWm0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GVysmL9kWhyMuWggqitbgt36LSmMSjCtp88rN/t3lvOOiBSuq4bLRuc44LlUOxQDj3KxcSlRrc7azERmgji3QTDo0rpjIqmo3IOSSo9KOkoiOhBafLFmUPTRJwW83NGLeHN2sVsOrAfTWpPSwiVmW3gmQ1dBSmMMlkZwtRufymY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8OVMd6f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F060BC4CECC;
+	Fri,  4 Oct 2024 18:22:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728066144;
+	bh=0dY/Rn2LCkVFNFRPdOEhLz+OBcsB+K2jKeSvCLpQWm0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Q8OVMd6fvfyuAeadKnlXQXAP7ONwALoFh+ohqHU8dmhbDvP/FoNUrn7ZvG3W41prn
+	 92eSsY42M3v96VVKTlms7MsUPnczYE15wl/tD6D2sGEkseCNuNqofmDnxOXyEbsfQv
+	 hL8045NOMuGlf3RJ0xG8wMIEllWyzCiQFeTBqopLQQV+jJEdvsbOr6dUlX6QW9xkvV
+	 cmtgO+rNkCzC1hGKWjosdtc5mPE/bdn45BHgw0K2ZQwhEUHuQG74Rgm/K9wWsxQKxh
+	 IiIdfwuFoUmr1cd24DAYNlIMTW/bSqKSCpvnClX0jviFM8iQUyJWkrFS9Xsxds3CGQ
+	 a2kNfNewEGGqg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Baokun Li <libaokun1@huawei.com>,
+	Jan Kara <jack@suse.cz>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Sasha Levin <sashal@kernel.org>,
+	adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.10 12/70] ext4: avoid use-after-free in ext4_ext_show_leaf()
+Date: Fri,  4 Oct 2024 14:20:10 -0400
+Message-ID: <20241004182200.3670903-12-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241004182200.3670903-1-sashal@kernel.org>
+References: <20241004182200.3670903-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004161601.2932901-4-maxime.chevallier@bootlin.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.13
+Content-Transfer-Encoding: 8bit
 
-> +static bool phy_can_isolate(struct phy_device *phydev)
-> +{
-> +	if (phydev->drv && phydev->drv->can_isolate)
-> +		return phydev->drv->can_isolate(phydev);
-> +
-> +	return true;
+From: Baokun Li <libaokun1@huawei.com>
 
-Reading Russells comment, and the fact that this feature is nearly
-unused, so we have no idea how well PHYs actually support this, i
-would flip the logic. Default to false. A PHY driver needs to actively
-sign up to supporting isolation, with the understanding it has been
-tested on at least one board with two or more PHYs.
+[ Upstream commit 4e2524ba2ca5f54bdbb9e5153bea00421ef653f5 ]
 
-	Andrew
+In ext4_find_extent(), path may be freed by error or be reallocated, so
+using a previously saved *ppath may have been freed and thus may trigger
+use-after-free, as follows:
+
+ext4_split_extent
+  path = *ppath;
+  ext4_split_extent_at(ppath)
+  path = ext4_find_extent(ppath)
+  ext4_split_extent_at(ppath)
+    // ext4_find_extent fails to free path
+    // but zeroout succeeds
+  ext4_ext_show_leaf(inode, path)
+    eh = path[depth].p_hdr
+    // path use-after-free !!!
+
+Similar to ext4_split_extent_at(), we use *ppath directly as an input to
+ext4_ext_show_leaf(). Fix a spelling error by the way.
+
+Same problem in ext4_ext_handle_unwritten_extents(). Since 'path' is only
+used in ext4_ext_show_leaf(), remove 'path' and use *ppath directly.
+
+This issue is triggered only when EXT_DEBUG is defined and therefore does
+not affect functionality.
+
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Tested-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Link: https://patch.msgid.link/20240822023545.1994557-5-libaokun@huaweicloud.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/ext4/extents.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index e067f2dd0335c..7954430f886d8 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -3287,7 +3287,7 @@ static int ext4_split_extent_at(handle_t *handle,
+ }
+ 
+ /*
+- * ext4_split_extents() splits an extent and mark extent which is covered
++ * ext4_split_extent() splits an extent and mark extent which is covered
+  * by @map as split_flags indicates
+  *
+  * It may result in splitting the extent into multiple extents (up to three)
+@@ -3363,7 +3363,7 @@ static int ext4_split_extent(handle_t *handle,
+ 			goto out;
+ 	}
+ 
+-	ext4_ext_show_leaf(inode, path);
++	ext4_ext_show_leaf(inode, *ppath);
+ out:
+ 	return err ? err : allocated;
+ }
+@@ -3828,14 +3828,13 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
+ 			struct ext4_ext_path **ppath, int flags,
+ 			unsigned int allocated, ext4_fsblk_t newblock)
+ {
+-	struct ext4_ext_path __maybe_unused *path = *ppath;
+ 	int ret = 0;
+ 	int err = 0;
+ 
+ 	ext_debug(inode, "logical block %llu, max_blocks %u, flags 0x%x, allocated %u\n",
+ 		  (unsigned long long)map->m_lblk, map->m_len, flags,
+ 		  allocated);
+-	ext4_ext_show_leaf(inode, path);
++	ext4_ext_show_leaf(inode, *ppath);
+ 
+ 	/*
+ 	 * When writing into unwritten space, we should not fail to
+@@ -3932,7 +3931,7 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
+ 	if (allocated > map->m_len)
+ 		allocated = map->m_len;
+ 	map->m_len = allocated;
+-	ext4_ext_show_leaf(inode, path);
++	ext4_ext_show_leaf(inode, *ppath);
+ out2:
+ 	return err ? err : allocated;
+ }
+-- 
+2.43.0
+
 
