@@ -1,124 +1,371 @@
-Return-Path: <linux-kernel+bounces-349902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538B098FCF3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:19:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5FC398FCFE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05E9E1F22DCE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280FD1F22BD9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 05:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755BB80043;
-	Fri,  4 Oct 2024 05:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839298287D;
+	Fri,  4 Oct 2024 05:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFwrcEkw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rLS+BRYM"
+Received: from msa.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF5550A63;
-	Fri,  4 Oct 2024 05:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B236F5336B;
+	Fri,  4 Oct 2024 05:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728019146; cv=none; b=B0sEXVj1G66ycyOxS4Hs9R1jAI7xCM/kFoTCKcM0QVErcHg+IbsNZbFT1jyM1Lm6kVjO574KIf8VesddOGGNG9do9f66O79jgnLi60P3sNSwOENRUoYoOQJgMx7rFOB9JSQpEX/bIlKuZp4ef5evNfLv/J7uzjFWrhBh9rVhIIQ=
+	t=1728019599; cv=none; b=CJ29eUbwl5U1eaus4aedBUlAdGkn2m290xdr58jHoQ101E8QgQWTBEQKST8m3dwOpf0ishKYX4yC5eO1mnLVRpfCbzK9wJywymqRa5DLemI+gpGcM0J5rSEVM5NBmF2il39bLLSDHXVF7k7umEgT1NNQOh8JXvfxB1+rP7o0N0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728019146; c=relaxed/simple;
-	bh=Db1HjIH8D2fmPRkW2Gh5vDc82cuF0lN4dWb5pN02xDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/3YznPJ2BBxVbn+b4SsOPeN+cpi6XBEdmQxtR2dlenU9SHNEw1/l5VxxUIXt/pcOTlEyFz637gf+P5OJ9Afu6/kVW+8UoLvdoXV72CwoFKdKHGIcnphEuOO4JKKJaRIUXEqRVrrgO9ivq4JV32Qhz11Z0IA4ublDc1MNL84C7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GFwrcEkw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1AA0C4CEC6;
-	Fri,  4 Oct 2024 05:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728019146;
-	bh=Db1HjIH8D2fmPRkW2Gh5vDc82cuF0lN4dWb5pN02xDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GFwrcEkwKy9ydjMrtp7L9+0StTnvutEWjNh1v7GTOM8ViPad2nlync9sLKs510k0P
-	 aeZ/yhVJAkUqOC7kCs3poMKl3I2sccDy1iaQ7IDqo2JvrIiuWM4XclYsR8ue3dV9xy
-	 O/zgBW0IJ8cOpuGDJv7fNV9KFz+wNmnsm7bJPGANrGRawfVcUicteiuXFwIMqrXeSa
-	 UMJdECJQnKTIIJQ49AlJn95+udCFX2VEpEf6hry1AAdIJR8QwyP9jfZPOvkvgJlyXO
-	 JFJIH6BlYkqahaZIOorO657um727heonJfJfPFyPp3c2g4VIpXf2/OirSMvsbNzuNi
-	 DRyDxoXvLVt/w==
-Date: Thu, 3 Oct 2024 22:19:04 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
-Message-ID: <Zv96yMTdLa6tst26@google.com>
-References: <Zv3ek7aBkQo0Z9To@google.com>
- <CAP-5=fUjLhGw4SmMTH_H2=1OwRDrY04RL6+C=DdQ=VSgXk8JZg@mail.gmail.com>
- <b0695ef6-8a59-4550-8a33-9afb25c93f48@linux.intel.com>
- <CAP-5=fXutWptEKZKNvLXvXXpuDoMje6PiOxMuF872xoMjtumGQ@mail.gmail.com>
- <Zv7KHGQx0y3rAGWx@google.com>
- <690ddcd6-276a-4b7b-bd21-fb4ef2349990@linux.intel.com>
- <CAP-5=fU7_RqcG+YO4C=FP_cy__eSd=ieJ_pOe4J-s2zh=sybsw@mail.gmail.com>
- <Zv8XIZAwfoTtzOl4@google.com>
- <8df24fe8-4d90-4105-acf0-e4f2667c42c9@linux.intel.com>
- <CAP-5=fUVNa_JKz7WweWsQjobhFCoknbPuPGzPGFGcaDJ8wxLQw@mail.gmail.com>
+	s=arc-20240116; t=1728019599; c=relaxed/simple;
+	bh=n+V3rMC7m+XnhaXf9XPi2qEExuV2d29C28DKhjJjvis=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lERcY/yXDkCxNBA0zjpmZl7CJ/yHnkX4mTAszMgY4o0iRyjxOOoXfDdvEHvklQ9R8hqhI9qw48Tu7ZBY5kMll3zvIfevoHoRg28OmrhQptC5lsnMYkTo33WaZL1XWRS8+JJS5xzD6qxPkcjgbp3jlFL8/L2lQPQrii1N70m3SwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rLS+BRYM; arc=none smtp.client-ip=80.12.242.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id wapesDs5XMzKhwapesXznG; Fri, 04 Oct 2024 07:26:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728019587;
+	bh=iwK3wdlqzuSs1If2ulBuwe51uS3G6QXg75X+WhxeskY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=rLS+BRYMZUgIco1uE/GL00/a1xuVH6sURBPUgTo4c57PCA3wBV5nqTEuU/PfMe/lL
+	 PFOCyHEqeKPiqd5p7r1alEZPmNIzU3XIQrs6poet1FoM8FKETbgke89UW9tN7iLvBo
+	 dque7h5neGgg6oFIqEyMitJp7XJ6E5IZRgRW+L9JnDQso3jiK1Fs7bZsLPQizHrYkv
+	 EdXUhRt/aOX7mEONFiP5fWYWoQn9AldvNApYdykuZjFXYgNJOoeNVTqhsAoWdtjb35
+	 VC9u8ukwyknfSmpVI7e1kqAB4wgmd6MDDUe5cxzYqpKBfL9lsukN3dEWRJPT7DEebW
+	 cDV6BdAPTcIPA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 04 Oct 2024 07:26:27 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Ido Schimmel <idosch@nvidia.com>,
+	Petr Machata <petrm@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next] mlxsw: spectrum_acl_flex_keys: Constify struct mlxsw_afk_element_inst
+Date: Fri,  4 Oct 2024 07:26:05 +0200
+Message-ID: <8ccfc7bfb2365dcee5b03c81ebe061a927d6da2e.1727541677.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUVNa_JKz7WweWsQjobhFCoknbPuPGzPGFGcaDJ8wxLQw@mail.gmail.com>
 
-On Thu, Oct 03, 2024 at 04:36:25PM -0700, Ian Rogers wrote:
-> On Thu, Oct 3, 2024 at 4:29 PM Liang, Kan <kan.liang@linux.intel.com> wrote:
-> >
-> >
-> >
-> > On 2024-10-03 6:13 p.m., Namhyung Kim wrote:
-> > >> Dapeng's comment should cover replace the comment /* Followed by
-> > >> topdown events. */ but there are other things amiss. I'm thinking of
-> > >> something like: "slots,cycles,{instructions,topdown-be-bound}" the
-> > >> topdown-be-bound should get sorted and grouped with slots, but cycles
-> > >> and instructions have no reason to be reordered, so do we end up with
-> > >> slots, instructions and topdown-be-bound being grouped with cycles
-> > >> sitting ungrouped in the middle of the evlist? I believe there are
-> > >> assumptions that grouped evsels are adjacent in the evlist, not least
-> > >> in:
-> > >> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/parse-events.c?h=perf-tools-next#n2106
-> > >> Does cycles instructions end up being broken out of a group in this
-> > >> case? Which feels like the case the code was trying to avoid.
-> > > I got this:
-> > >
-> > >   $ sudo ./perf record -a -e "slots,cycles,{instructions,topdown-be-bound}" true
-> > >   Error:
-> > >   The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (topdown-be-bound).
-> > >   "dmesg | grep -i perf" may provide additional information.
-> >
-> > To be honest, I think the "slots,cycles,{instructions,topdown-be-bound}"
-> > is a meaningless case. Why a user wants to group instructions and
-> > topdown events, but leave the slots out of the group?
-> > There could be hundreds of different combinations caused by the perf
-> > metrics mess. I don't think the re-ordering code should/can fix all of them.
-> 
-> I'm happy with better code and things don't need to be perfect. Can we
-> fix the comments though? It'd be nice to also include that some things
-> are going to be broken. I can imagine groups with topdown events but
+'struct mlxsw_afk_element_inst' are not modified in these drivers.
 
-Can you please propose something?
+Constifying these structures moves some data to a read-only section, so
+increases overall security.
 
-Thanks,
-Namhyung
+Update a few functions and struct mlxsw_afk_block accordingly.
 
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   4278	   4032	      0	   8310	   2076	drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_flex_keys.o
 
-> without slots, for example we group events in metrics and in
-> tma_retiring we add "0 * tma_info_thread_slots" to the metric so that
-> we get a slots event. If the multiply were optimized away as redundant
-> then we'd have a topdown group without slots, we could pick up slots
-> and other events from other metrics.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   7934	    352	      0	   8286	   205e	drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_flex_keys.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ .../mellanox/mlxsw/core_acl_flex_keys.c       |  6 +-
+ .../mellanox/mlxsw/core_acl_flex_keys.h       |  2 +-
+ .../mellanox/mlxsw/spectrum_acl_flex_keys.c   | 66 +++++++++----------
+ 3 files changed, 37 insertions(+), 37 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.c b/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.c
+index 947500f8ed71..7aa1a462a103 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.c
+@@ -67,7 +67,7 @@ static bool mlxsw_afk_blocks_check(struct mlxsw_afk *mlxsw_afk)
+ 
+ 		for (j = 0; j < block->instances_count; j++) {
+ 			const struct mlxsw_afk_element_info *elinfo;
+-			struct mlxsw_afk_element_inst *elinst;
++			const struct mlxsw_afk_element_inst *elinst;
+ 
+ 			elinst = &block->instances[j];
+ 			elinfo = &mlxsw_afk_element_infos[elinst->element];
+@@ -154,7 +154,7 @@ static void mlxsw_afk_picker_count_hits(struct mlxsw_afk *mlxsw_afk,
+ 		const struct mlxsw_afk_block *block = &mlxsw_afk->blocks[i];
+ 
+ 		for (j = 0; j < block->instances_count; j++) {
+-			struct mlxsw_afk_element_inst *elinst;
++			const struct mlxsw_afk_element_inst *elinst;
+ 
+ 			elinst = &block->instances[j];
+ 			if (elinst->element == element) {
+@@ -386,7 +386,7 @@ mlxsw_afk_block_elinst_get(const struct mlxsw_afk_block *block,
+ 	int i;
+ 
+ 	for (i = 0; i < block->instances_count; i++) {
+-		struct mlxsw_afk_element_inst *elinst;
++		const struct mlxsw_afk_element_inst *elinst;
+ 
+ 		elinst = &block->instances[i];
+ 		if (elinst->element == element)
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.h b/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.h
+index 98a05598178b..5aa1afb3f2ca 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.h
++++ b/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.h
+@@ -117,7 +117,7 @@ struct mlxsw_afk_element_inst { /* element instance in actual block */
+ 
+ struct mlxsw_afk_block {
+ 	u16 encoding; /* block ID */
+-	struct mlxsw_afk_element_inst *instances;
++	const struct mlxsw_afk_element_inst *instances;
+ 	unsigned int instances_count;
+ 	bool high_entropy;
+ };
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_flex_keys.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_flex_keys.c
+index eaad78605602..6fe185ea6732 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_flex_keys.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_flex_keys.c
+@@ -7,7 +7,7 @@
+ #include "item.h"
+ #include "core_acl_flex_keys.h"
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l2_dmac[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l2_dmac[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DMAC_32_47, 0x00, 2),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DMAC_0_31, 0x02, 4),
+ 	MLXSW_AFK_ELEMENT_INST_U32(PCP, 0x08, 13, 3),
+@@ -15,7 +15,7 @@ static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l2_dmac[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(SRC_SYS_PORT, 0x0C, 0, 16),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l2_smac[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l2_smac[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SMAC_32_47, 0x00, 2),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SMAC_0_31, 0x02, 4),
+ 	MLXSW_AFK_ELEMENT_INST_U32(PCP, 0x08, 13, 3),
+@@ -23,27 +23,27 @@ static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l2_smac[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(SRC_SYS_PORT, 0x0C, 0, 16),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l2_smac_ex[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l2_smac_ex[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SMAC_32_47, 0x02, 2),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SMAC_0_31, 0x04, 4),
+ 	MLXSW_AFK_ELEMENT_INST_U32(ETHERTYPE, 0x0C, 0, 16),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_sip[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_sip[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SRC_IP_0_31, 0x00, 4),
+ 	MLXSW_AFK_ELEMENT_INST_U32(L4_PORT_RANGE, 0x04, 16, 16),
+ 	MLXSW_AFK_ELEMENT_INST_U32(IP_PROTO, 0x08, 0, 8),
+ 	MLXSW_AFK_ELEMENT_INST_U32(SRC_SYS_PORT, 0x0C, 0, 16),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_dip[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_dip[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DST_IP_0_31, 0x00, 4),
+ 	MLXSW_AFK_ELEMENT_INST_U32(L4_PORT_RANGE, 0x04, 16, 16),
+ 	MLXSW_AFK_ELEMENT_INST_U32(IP_PROTO, 0x08, 0, 8),
+ 	MLXSW_AFK_ELEMENT_INST_U32(SRC_SYS_PORT, 0x0C, 0, 16),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SRC_IP_0_31, 0x00, 4),
+ 	MLXSW_AFK_ELEMENT_INST_U32(IP_ECN, 0x04, 4, 2),
+ 	MLXSW_AFK_ELEMENT_INST_U32(IP_TTL_, 0x04, 24, 8),
+@@ -51,35 +51,35 @@ static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(TCP_FLAGS, 0x08, 8, 9), /* TCP_CONTROL+TCP_ECN */
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_ex[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_ex[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(VID, 0x00, 0, 12),
+ 	MLXSW_AFK_ELEMENT_INST_U32(PCP, 0x08, 29, 3),
+ 	MLXSW_AFK_ELEMENT_INST_U32(SRC_L4_PORT, 0x08, 0, 16),
+ 	MLXSW_AFK_ELEMENT_INST_U32(DST_L4_PORT, 0x0C, 0, 16),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_dip[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_dip[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DST_IP_32_63, 0x00, 4),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DST_IP_0_31, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_ex1[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_ex1[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DST_IP_96_127, 0x00, 4),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DST_IP_64_95, 0x04, 4),
+ 	MLXSW_AFK_ELEMENT_INST_U32(IP_PROTO, 0x08, 0, 8),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_sip[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_sip[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SRC_IP_32_63, 0x00, 4),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SRC_IP_0_31, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_sip_ex[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_sip_ex[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SRC_IP_96_127, 0x00, 4),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SRC_IP_64_95, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_packet_type[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_packet_type[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(ETHERTYPE, 0x00, 0, 16),
+ };
+ 
+@@ -124,90 +124,90 @@ const struct mlxsw_afk_ops mlxsw_sp1_afk_ops = {
+ 	.clear_block	= mlxsw_sp1_afk_clear_block,
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_0[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_0[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(FDB_MISS, 0x00, 3, 1),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DMAC_0_31, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_1[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_1[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(FDB_MISS, 0x00, 3, 1),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SMAC_0_31, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_2[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_2[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SMAC_32_47, 0x04, 2),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DMAC_32_47, 0x06, 2),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_3[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_3[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(PCP, 0x00, 0, 3),
+ 	MLXSW_AFK_ELEMENT_INST_U32(VID, 0x04, 16, 12),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DMAC_32_47, 0x06, 2),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_4[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_4[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(PCP, 0x00, 0, 3),
+ 	MLXSW_AFK_ELEMENT_INST_U32(VID, 0x04, 16, 12),
+ 	MLXSW_AFK_ELEMENT_INST_U32(ETHERTYPE, 0x04, 0, 16),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_5[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_5[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(VID, 0x04, 16, 12),
+ 	MLXSW_AFK_ELEMENT_INST_EXT_U32(SRC_SYS_PORT, 0x04, 0, 8, -1, true), /* RX_ACL_SYSTEM_PORT */
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_0[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_0[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DST_IP_0_31, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_1[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_1[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SRC_IP_0_31, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_2[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_2[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(IP_DSCP, 0x04, 0, 6),
+ 	MLXSW_AFK_ELEMENT_INST_U32(IP_ECN, 0x04, 6, 2),
+ 	MLXSW_AFK_ELEMENT_INST_U32(IP_TTL_, 0x04, 8, 8),
+ 	MLXSW_AFK_ELEMENT_INST_U32(IP_PROTO, 0x04, 16, 8),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_5[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_5[] = {
+ 	MLXSW_AFK_ELEMENT_INST_EXT_U32(VIRT_ROUTER, 0x04, 20, 11, 0, true),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_0[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_0[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(VIRT_ROUTER_0_3, 0x00, 0, 4),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DST_IP_32_63, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_1[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_1[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(VIRT_ROUTER_4_7, 0x00, 0, 4),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DST_IP_64_95, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_2[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_2[] = {
+ 	MLXSW_AFK_ELEMENT_INST_EXT_U32(VIRT_ROUTER_MSB, 0x00, 0, 3, 0, true),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DST_IP_96_127, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_3[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_3[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SRC_IP_32_63, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_4[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_4[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SRC_IP_64_95, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_5[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_5[] = {
+ 	MLXSW_AFK_ELEMENT_INST_BUF(SRC_IP_96_127, 0x04, 4),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l4_0[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l4_0[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(SRC_L4_PORT, 0x04, 16, 16),
+ 	MLXSW_AFK_ELEMENT_INST_U32(DST_L4_PORT, 0x04, 0, 16),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l4_2[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_l4_2[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(TCP_FLAGS, 0x04, 16, 9), /* TCP_CONTROL + TCP_ECN */
+ 	MLXSW_AFK_ELEMENT_INST_U32(L4_PORT_RANGE, 0x04, 0, 16),
+ };
+@@ -319,16 +319,16 @@ const struct mlxsw_afk_ops mlxsw_sp2_afk_ops = {
+ 	.clear_block	= mlxsw_sp2_afk_clear_block,
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_5b[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_mac_5b[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(VID, 0x04, 18, 12),
+ 	MLXSW_AFK_ELEMENT_INST_EXT_U32(SRC_SYS_PORT, 0x04, 0, 9, -1, true), /* RX_ACL_SYSTEM_PORT */
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_5b[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv4_5b[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(VIRT_ROUTER, 0x04, 20, 12),
+ };
+ 
+-static struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_2b[] = {
++static const struct mlxsw_afk_element_inst mlxsw_sp_afk_element_info_ipv6_2b[] = {
+ 	MLXSW_AFK_ELEMENT_INST_U32(VIRT_ROUTER_MSB, 0x00, 0, 4),
+ 	MLXSW_AFK_ELEMENT_INST_BUF(DST_IP_96_127, 0x04, 4),
+ };
+-- 
+2.46.2
+
 
