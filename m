@@ -1,274 +1,204 @@
-Return-Path: <linux-kernel+bounces-351304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8905990F81
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:01:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF57990F89
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:02:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E3731F2418F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:01:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70A5E1C20B95
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2061F942F;
-	Fri,  4 Oct 2024 19:04:27 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4162A1FAC4D;
+	Fri,  4 Oct 2024 19:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="xqDKFSO5"
+Received: from GBR01-LO4-obe.outbound.protection.outlook.com (mail-lo4gbr01on2120.outbound.protection.outlook.com [40.107.122.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C681F9427;
-	Fri,  4 Oct 2024 19:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728068667; cv=none; b=XIF0LngfPpw31Y3euVcYtdSoGa+u7drWUo5sSmuU7A6e5yDGoMnAkNDGuT1W+ysvdBYYns3+5rcBWe/og8WOiEVl/WFFdmAQu2NNeXdsveoRMTra0Cf3Ymg20G+WG7INn3F8Ei2cjeadULopnWcN2t+bzyJkqyqOKcIDEaIs+IY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728068667; c=relaxed/simple;
-	bh=2MpuodfLJmLx8CQl8yY7IALszfE+GszCrpWSPCvHPlY=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02911DD869;
+	Fri,  4 Oct 2024 19:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.122.120
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728068926; cv=fail; b=NxNlyN4ta6uMM27niOZRVw3T6JR5tjdyMRO3z9Hu2msKyQp8pQGNX8rIN1EihUjWd4a6HN1v2ired0zjujjNMNi9zfeRruwjmgFxq01ltF24HjzACddDvbK2TfDAbX6MuX46tA5whV5m3OKldxBEiFxqfC8r3m8xBdUk4NlK6AY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728068926; c=relaxed/simple;
+	bh=LyF7+koiSDxi+HBadWUAthh0ymCi1q5dI3UNF/QCAls=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qXYsMtOdk8C5NWzZ1YUrzQbsEH4+XjvhaxHyiVr3bg2B7+tgYly6XO4jM2Orklz5vC8xwA1mbEhU1+YDmKjT1TPOu3hka/H/qEcCNE55TwFPfYaayqqhnwjlQcD++vKGCsb1PF3M+xheYZm0eiVmTFcRvpQBZgvFVNWxe9Ra0AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C899CC4CEC6;
-	Fri,  4 Oct 2024 19:04:25 +0000 (UTC)
-Date: Fri, 4 Oct 2024 15:05:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Yun Zhou <yun.zhou@windriver.com>
-Cc: <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
- <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH] kernel: add pid_max to pid_namespace
-Message-ID: <20241004150521.361af760@gandalf.local.home>
-In-Reply-To: <20240902114920.1534699-1-yun.zhou@windriver.com>
-References: <20240902114920.1534699-1-yun.zhou@windriver.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 Content-Type:MIME-Version; b=NcdoUVU9LmpDZ++awDhjda9o3VqSydnorWMaVOxnlmletI9Y2Zbe28uJhy236+aPgChyuvmukBmtfuQgdIPPzHeFlB6wIHXGhR2chrDEzQGxCoCOE1OUXLx1hDBuGQv3uumGMTPZL0BPQJMTiMrK/TXH7Z3YufUFWSLVrnbmvkA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=xqDKFSO5; arc=fail smtp.client-ip=40.107.122.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Uze4YMxGX5b6k1EH7wKWSGzYAlCJA43MYtyet6ebZHtU3nCaYQefs3rDN5KBlj1yTU8CVSalkHyw/L9i+/cDXW09RoBy9SHH3WK8GlPX+PDXRVRepZdCeuck35xCZRVKlScDQPefJAXt1VyVMFJQRD/BG/U+vVU+G0gSBdRAkuHMlpZdfa1c6CYF+nCy3VGFzt0pULS1WCGQOgYk4CaF/DB4mVXjbl/Y5diHgHGts4wJG0+cOquJUfvg2muuV5V7DPcXYRqalsajjymshVSVZ60vCTnIdOP8jd/1E4WPcBP6bfJpk5U/KeGlMkpvWtsy46LBEK8apYdpiCWLxBqLfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B9TXnd+6n8rXzDan47aHjOrNXX13M1Z3Q3Wj2ACEEWk=;
+ b=XAZ8ah6hhuw93ncUDDxwqnf16ZYHXXrithcp5LOw9EF3O+T708zEtNTXDWGcsjdV8V4s68BpvQEL3z/YFRoPXFgxoZ6mENJu0RJbcg/9TttkylueS7rHA4RjdQFa9b1V6ZC8KlL1sgMhgyRe24wFiPlPIX5L4DTVl5h0JiVH6CUcTxVk4HNtZjyfK1P85wwlNVk3uXkms+vJNddOLu3EPrG1HolQsmU+6lu+4IhQ0slLTOXZlc8W5BrwamcsscoLZ2ruPGU6Up/Lo47AVh0kOJ8VNYlg5I58UkynQx542ewOgVTVmCLW7yhj6gZDZl/QJC0+YEGGsYaa7xV0zKSbVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B9TXnd+6n8rXzDan47aHjOrNXX13M1Z3Q3Wj2ACEEWk=;
+ b=xqDKFSO5eS98J0AyxTWQ+xx/Gxkh1YUPYF6OUgQ5YQXIzv6GHd417PKoKuFUHWYf0hORfAJ+ph1N10Yjko3DB+KAuZmxene66sxpaAQwHI885XOknFTSTqUXXw3hZTq9lIYNrlETQ+wA7jTMIjWcQkAL7ik6T4aOpzxJtmFs3Mg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by CWLP265MB5866.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1a3::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.19; Fri, 4 Oct
+ 2024 19:08:41 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8026.017; Fri, 4 Oct 2024
+ 19:08:41 +0000
+Date: Fri, 4 Oct 2024 20:08:36 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
+ Gross" <tmgross@umich.edu>, "Martin Rodriguez Reboredo"
+ <yakoyoku@gmail.com>, "Will Deacon" <will@kernel.org>, "Peter Zijlstra"
+ <peterz@infradead.org>, "Mark Rutland" <mark.rutland@arm.com>, "Dirk Behme"
+ <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH 1/3] rust: implement `kernel::sync::Refcount`
+Message-ID: <20241004200836.137ce41f.gary@garyguo.net>
+In-Reply-To: <87cykfpuqd.fsf@kernel.org>
+References: <20241004155247.2210469-1-gary@garyguo.net>
+	<pKZ-hxxNoouLWnfXzFGWvcgGgfjpEixPzJ--cZeEufWI9_MoG_mpToSPflheyUhYmZ4qTKLVypVLRuvX7rfyxg==@protonmail.internalid>
+	<20241004155247.2210469-2-gary@garyguo.net>
+	<87cykfpuqd.fsf@kernel.org>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0190.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a::34) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWLP265MB5866:EE_
+X-MS-Office365-Filtering-Correlation-Id: 013f2599-c78c-411a-f145-08dce4a7f5f4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5ZC2g5q0kExnVL1T790OvHgv2ouqzLcRGHEQPfbzCu3ibvYgDuZVMTB0DpdV?=
+ =?us-ascii?Q?TYEHEMay4eHn9H3A4wVWS7ql6yyEkHKSuw/6kvHbA1S31PnxIl4NrPUvWJaU?=
+ =?us-ascii?Q?ZELCOsuu5zc4778/97fSRik00lFRMSdryyk8EzGOYND9b5PBuosaI6jJsjzh?=
+ =?us-ascii?Q?URSrbymA8NOmBa1tYo18pCurevMrq7If+vNV8FOkTfRBFrcmGssioqlUkZ54?=
+ =?us-ascii?Q?7JdYvbbzc8FWofjd59FRc6XWnmi/47nGs47TMEJKFp+GsY7G761eLJgSeUS2?=
+ =?us-ascii?Q?vAhD1T6gU6RMBgaGewZ4tRIm4eFEZcN26xyz7zZyvcwn3qmEaLnK4FxEN7Fb?=
+ =?us-ascii?Q?u+7Whu9Cn/sqZA0z8AklDxs1Fg48vvQzGw+t7jyXf0gUutIIP5cvzw5iexw9?=
+ =?us-ascii?Q?4N36bdUHS/GccWhDm/kzaMs+MYQRabPSuSXXm6az1b2AWuwSpmitPssT2iL/?=
+ =?us-ascii?Q?HvnrYiyiix4Xu7NsQtvwmq78A2dMsm2DS+AK43HyvJsh8EHZGeiC0ylaJ7fS?=
+ =?us-ascii?Q?ogGxgRiYwemxkecSIrkQslvsrsbC9XuRKZEnhg55Et+I7nsg0vhqOU4arPvE?=
+ =?us-ascii?Q?sG7uEw/42zX6PGVpTH665oyBRnGG5g6AoUpM0WjqEKoMb8Q/3wOV1PQwcTD1?=
+ =?us-ascii?Q?IbD62joIB3jDnQmWrDvGdX+IfMrpCAEzhSclv/FIb20PnwAP43XvT4Hq5bGc?=
+ =?us-ascii?Q?yYuesO/9vypYoGWRiQ7KmfP8twieD8+SAYIt6UQ2gUdJwaIJ/UHuUIbNStaT?=
+ =?us-ascii?Q?F5NR6S9HPq4e2XEpxDCxupgVf1xqjktqx0rOQn5n/LEXVoXIm7YL1iJQ1REM?=
+ =?us-ascii?Q?3O2fsEK63dkawhhAsIgOlxJaVnZsPKXRFwli4vajWBOhNffaRxL0ogm4OfBi?=
+ =?us-ascii?Q?mDPXxz3YFD3T+V50MzxHR1mC3S0uEo6qWEnheNec6ZxEVTSPk44NE9Wo9fvK?=
+ =?us-ascii?Q?JN/St7ngxtfT2KyMiU09boMGmjDnvvym34nWFpGBNIP4HShzlz2LgibL2LO0?=
+ =?us-ascii?Q?oHkPLJl/LZyzTIPPR4Sd5b1uvDxuBo1Wl2yQMD19Xm6ukVSiiD3QRUy9CjXh?=
+ =?us-ascii?Q?Ffymjl3QormrMpnLRiLE88ie2avSe7V5LOiZFycz6FgIbg+Qn9vlLVyuSCRZ?=
+ =?us-ascii?Q?RdjyHtYsbs+WJNX+MeOorOLi+TzsfI2HywOX+fkcejSsW+4uz0R8B8XuXPbC?=
+ =?us-ascii?Q?iqDW57ma3JaqkR5pXp3SRzSIXOfZeOEP42XXj8oLpJVg+BTOBTkabVv4AsTb?=
+ =?us-ascii?Q?RiG82e8sShbP1hmEHl2X1XHkoVvE8w23n9hQd8wLWA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vxYSrYTVHTdmJxhWy8c9qkPlsL4kAFozjdjmTDwn8HWRFDpDvp6ETq4UUsxA?=
+ =?us-ascii?Q?/JoJqhMs6JqKmJYvveN2szHs3AS2Bz4LVMdCik13+TMkICwfV6MKzpWBzI7F?=
+ =?us-ascii?Q?XnI+eE+s6YurNRHgnEQy6WVL5Io6Q4+S2qJ1vHtp+8ixP7N8MDPhxvP6UJDx?=
+ =?us-ascii?Q?ZLLGA5uMqJKF68PiWcp6a5jsqf1/FPp4rQgVxE89lakh5Ot1zsJbnxUzTiJF?=
+ =?us-ascii?Q?a8OlpESSfJ8XDfEQJ8XQtkvYdbvV+gmxcwIWSxlscZejO7D6kYim/37bFXpH?=
+ =?us-ascii?Q?AOhfNq9pKdHBRPTbWGn3DpV/OTQAzZg9nPPR5K0bSv/OjcFrUwCipS9RDBDy?=
+ =?us-ascii?Q?2OTlphoQf9a2DbWt4ESBwKwi5dMJMrpw8Hg6a0zGVhIisiUmxNYP9xYV2kN3?=
+ =?us-ascii?Q?4pG03gbvDdShXE2wzzcNgTFSMyZXC5ZcQw4Bj2Oy4itKLoKeLYJkyzePRPB2?=
+ =?us-ascii?Q?nq8a1eTnCqjKmYfuHWcZ7oUzBejhoO17wU9CT3YGw2S7acrV7K+d+CvyFPK7?=
+ =?us-ascii?Q?eCZAw4etZmAbr5qUDbISfxsIjHyTfU6NdluG9HTIsnYTNU3yytNWQkzBYMJ2?=
+ =?us-ascii?Q?G/ZfgXnRCiQBcnUfnW1Wo1Sm6kdY/ZvYC2n7WH5j63wxkOfHMeraeXeJJHC4?=
+ =?us-ascii?Q?mEaQ+MvP0fpY2rWeu6M6b+y1dzd2Ogs7M26CfAUzY9X4QnPihgG+S0RWs0l0?=
+ =?us-ascii?Q?fRRBbi5JJYxB/UzxGjjqgGreiRa5EWuL48t6Z1HiMRi6OGl580/i2Wx6DawN?=
+ =?us-ascii?Q?ZvmK58NbZSc2yXEALLQdgWyQU/DFzPJlYr3NXzaCFbDP5TOxAqN9kGtdwrOY?=
+ =?us-ascii?Q?EOl8JN2q20v2Nn6lCil9As9tBwxCYMWBE52A1aVfG6nIiHeOrgaWjrNm3Ebt?=
+ =?us-ascii?Q?XtRWfO92L5v0z14fUn21Nw2if0QOWKKPMXhSZtPbvqmu36tzjzR3La6iCkKg?=
+ =?us-ascii?Q?L/sT7ibR6uDlBpAlzbXftnv8ACr6Ybf6Hjw1tTG8nAcbYEAybPlma1Q6N91+?=
+ =?us-ascii?Q?65WiNiprcYhkN68vjqCf1DtUIn0Ndj4/S+i5XBuSdsW/dubjhqANoCl5w81E?=
+ =?us-ascii?Q?8q0A4mtop5TN9k42J97tfEC2i/bCDkglaNihp6zd7IGP7SsikN2eqQogc4o8?=
+ =?us-ascii?Q?6F3PJpFqnbooh+kinCwDdg6i6za9JwrvClPNvf0GPa2o1LGnmrTcZJiossVj?=
+ =?us-ascii?Q?BSfnE9VsI+ZckxuRQ4WfcrQAOlMjqtt6SNWTBCoWvRCKj4Y4C6KgcSdV3hgp?=
+ =?us-ascii?Q?0VBFq8LUdoK4pxFBNLZbqrPXIXS8ig5hGtMZykc2zw6tGa72V6T2f+EP55oR?=
+ =?us-ascii?Q?6kW5OSVh0n4AwWscgwJWbLbYvkz7lpW/xCM51y2SbK4y2yCPlFYCP3KSerrt?=
+ =?us-ascii?Q?yMN9DETeIWXTNq6MeDwyIRxwLnjRjIV0tqeTCbOSBaH/KbX/W0BwUMpPcHAG?=
+ =?us-ascii?Q?TXtGztVjE36vA93b/NHQtjWNX6bQXfKKSFQiXk3iXju026eb4xRlPEth7b/w?=
+ =?us-ascii?Q?tW1+T0gZ89NGe/QbphaCjL/BgnJ1cqSutZ8nBImmgTHs0A8SQ/raVD77Q20n?=
+ =?us-ascii?Q?ra+dWWb8pRK6xyS+K89qTBN2MDviXlZbC0mWhbzsa2HGvPnhsaq2WKKFigcs?=
+ =?us-ascii?Q?8Q=3D=3D?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 013f2599-c78c-411a-f145-08dce4a7f5f4
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 19:08:41.8242
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zIPOxU95Yeli2mEpJZjAR/O71Idyr9pluEAfMorwj1CtPA66D+t8tVBUAEipXLOGylIvizwPOqGf/hmVdmXcHg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB5866
 
-On Mon, 2 Sep 2024 19:49:20 +0800
-Yun Zhou <yun.zhou@windriver.com> wrote:
+On Fri, 04 Oct 2024 20:51:22 +0200
+Andreas Hindborg <a.hindborg@kernel.org> wrote:
 
-
--ENOCHANGELOG
-
-What? Why? Why should I care about this?
-
-A change log *must* have all the information to say why this change is
-necessary. It's OK for the subject to state what it is doing, but there
-most definitely needs a "why?" in the change log.
-
--- Steve
-
-
-> Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
-> ---
->  include/linux/pid_namespace.h |  1 +
->  kernel/pid.c                  | 12 ++++++------
->  kernel/pid_namespace.c        | 33 ++++++++++++++++++++++++++++-----
->  kernel/sysctl.c               |  9 ---------
->  kernel/trace/pid_list.c       |  2 +-
->  kernel/trace/trace.c          |  2 +-
->  kernel/trace/trace.h          |  2 --
->  7 files changed, 37 insertions(+), 24 deletions(-)
+> Hi Gary,
 > 
-> diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
-> index f9f9931e02d6..0e3c18f3cac5 100644
-> --- a/include/linux/pid_namespace.h
-> +++ b/include/linux/pid_namespace.h
-> @@ -27,6 +27,7 @@ struct pid_namespace {
->  	struct idr idr;
->  	struct rcu_head rcu;
->  	unsigned int pid_allocated;
-> +	int pid_max;
->  	struct task_struct *child_reaper;
->  	struct kmem_cache *pid_cachep;
->  	unsigned int level;
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 6500ef956f2f..14da3f68ceed 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -59,8 +59,6 @@ struct pid init_struct_pid = {
->  	}, }
->  };
->  
-> -int pid_max = PID_MAX_DEFAULT;
-> -
->  #define RESERVED_PIDS		300
->  
->  int pid_max_min = RESERVED_PIDS + 1;
-> @@ -74,6 +72,7 @@ int pid_max_max = PID_MAX_LIMIT;
->   */
->  struct pid_namespace init_pid_ns = {
->  	.ns.count = REFCOUNT_INIT(2),
-> +	.pid_max = PID_MAX_DEFAULT,
->  	.idr = IDR_INIT(init_pid_ns.idr),
->  	.pid_allocated = PIDNS_ADDING,
->  	.level = 0,
-> @@ -194,7 +193,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
->  			tid = set_tid[ns->level - i];
->  
->  			retval = -EINVAL;
-> -			if (tid < 1 || tid >= pid_max)
-> +			if (tid < 1 || tid >= tmp->pid_max)
->  				goto out_free;
->  			/*
->  			 * Also fail if a PID != 1 is requested and
-> @@ -234,7 +233,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
->  			 * a partially initialized PID (see below).
->  			 */
->  			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
-> -					      pid_max, GFP_ATOMIC);
-> +					      tmp->pid_max, GFP_ATOMIC);
->  		}
->  		spin_unlock_irq(&pidmap_lock);
->  		idr_preload_end();
-> @@ -651,11 +650,12 @@ void __init pid_idr_init(void)
->  	BUILD_BUG_ON(PID_MAX_LIMIT >= PIDNS_ADDING);
->  
->  	/* bump default and minimum pid_max based on number of cpus */
-> -	pid_max = min(pid_max_max, max_t(int, pid_max,
-> +	init_pid_ns.pid_max = min(pid_max_max, max_t(int, init_pid_ns.pid_max,
->  				PIDS_PER_CPU_DEFAULT * num_possible_cpus()));
->  	pid_max_min = max_t(int, pid_max_min,
->  				PIDS_PER_CPU_MIN * num_possible_cpus());
-> -	pr_info("pid_max: default: %u minimum: %u\n", pid_max, pid_max_min);
-> +	pr_info("pid_max: default: %u minimum: %u\n", init_pid_ns.pid_max,
-> +			pid_max_min);
->  
->  	idr_init(&init_pid_ns.idr);
->  
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index 3028b2218aa4..d6b3f34ecb25 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -110,6 +110,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
->  	ns->user_ns = get_user_ns(user_ns);
->  	ns->ucounts = ucounts;
->  	ns->pid_allocated = PIDNS_ADDING;
-> +	ns->pid_max = parent_pid_ns->pid_max;
->  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
->  	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
->  #endif
-> @@ -295,20 +296,44 @@ static int pid_ns_ctl_handler(struct ctl_table *table, int write,
->  
->  	return ret;
->  }
-> +#endif	/* CONFIG_CHECKPOINT_RESTORE */
-> +
-> +static int pid_max_ns_ctl_handler(struct ctl_table *table, int write,
-> +		void *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	struct pid_namespace *pid_ns = task_active_pid_ns(current);
-> +
-> +	if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
-> +		return -EPERM;
-> +
-> +	table->data = &pid_ns->pid_max;
-> +	if (pid_ns->parent)
-> +		table->extra2 = &pid_ns->parent->pid_max;
-> +
-> +	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-> +}
->  
-> -extern int pid_max;
->  static struct ctl_table pid_ns_ctl_table[] = {
-> +#ifdef CONFIG_CHECKPOINT_RESTORE
->  	{
->  		.procname = "ns_last_pid",
->  		.maxlen = sizeof(int),
->  		.mode = 0666, /* permissions are checked in the handler */
->  		.proc_handler = pid_ns_ctl_handler,
->  		.extra1 = SYSCTL_ZERO,
-> -		.extra2 = &pid_max,
-> +		.extra2 = &init_pid_ns.pid_max,
-> +	},
-> +#endif	/* CONFIG_CHECKPOINT_RESTORE */
-> +	{
-> +		.procname	= "pid_max",
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0644,
-> +		.proc_handler	= pid_max_ns_ctl_handler,
-> +		.extra1		= &pid_max_min,
-> +		.extra2		= &pid_max_max,
->  	},
->  	{ }
->  };
-> -#endif	/* CONFIG_CHECKPOINT_RESTORE */
->  
->  int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
->  {
-> @@ -465,9 +490,7 @@ static __init int pid_namespaces_init(void)
->  {
->  	pid_ns_cachep = KMEM_CACHE(pid_namespace, SLAB_PANIC | SLAB_ACCOUNT);
->  
-> -#ifdef CONFIG_CHECKPOINT_RESTORE
->  	register_sysctl_init("kernel", pid_ns_ctl_table);
-> -#endif
->  
->  	register_pid_ns_sysctl_table_vm();
->  	return 0;
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 157f7ce2942d..857bfdb39b15 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -1809,15 +1809,6 @@ static struct ctl_table kern_table[] = {
->  		.proc_handler	= proc_dointvec,
->  	},
->  #endif
-> -	{
-> -		.procname	= "pid_max",
-> -		.data		= &pid_max,
-> -		.maxlen		= sizeof (int),
-> -		.mode		= 0644,
-> -		.proc_handler	= proc_dointvec_minmax,
-> -		.extra1		= &pid_max_min,
-> -		.extra2		= &pid_max_max,
-> -	},
->  	{
->  		.procname	= "panic_on_oops",
->  		.data		= &panic_on_oops,
-> diff --git a/kernel/trace/pid_list.c b/kernel/trace/pid_list.c
-> index 95106d02b32d..ef52820e6719 100644
-> --- a/kernel/trace/pid_list.c
-> +++ b/kernel/trace/pid_list.c
-> @@ -414,7 +414,7 @@ struct trace_pid_list *trace_pid_list_alloc(void)
->  	int i;
->  
->  	/* According to linux/thread.h, pids can be no bigger that 30 bits */
-> -	WARN_ON_ONCE(pid_max > (1 << 30));
-> +	WARN_ON_ONCE(init_pid_ns.pid_max > (1 << 30));
->  
->  	pid_list = kzalloc(sizeof(*pid_list), GFP_KERNEL);
->  	if (!pid_list)
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index fbcd3bafb93e..6295679ce16c 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -5415,7 +5415,7 @@ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
->  
->  	if (mask == TRACE_ITER_RECORD_TGID) {
->  		if (!tgid_map) {
-> -			tgid_map_max = pid_max;
-> +			tgid_map_max = init_pid_ns.pid_max;
->  			map = kvcalloc(tgid_map_max + 1, sizeof(*tgid_map),
->  				       GFP_KERNEL);
->  
-> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-> index b7f4ea25a194..df61b1db86a2 100644
-> --- a/kernel/trace/trace.h
-> +++ b/kernel/trace/trace.h
-> @@ -700,8 +700,6 @@ extern unsigned long tracing_thresh;
->  
->  /* PID filtering */
->  
-> -extern int pid_max;
-> -
->  bool trace_find_filtered_pid(struct trace_pid_list *filtered_pids,
->  			     pid_t search_pid);
->  bool trace_ignore_this_task(struct trace_pid_list *filtered_pids,
+> "Gary Guo" <gary@garyguo.net> writes:
+> 
+> [...]
+> 
+> > diff --git a/rust/helpers/refcount.c b/rust/helpers/refcount.c
+> > index f47afc148ec3..39649443426b 100644
+> > --- a/rust/helpers/refcount.c
+> > +++ b/rust/helpers/refcount.c
+> > @@ -8,11 +8,26 @@ refcount_t rust_helper_REFCOUNT_INIT(int n)
+> >  	return (refcount_t)REFCOUNT_INIT(n);
+> >  }
+> >
+> > +unsigned int rust_helper_refcount_read(refcount_t *r)
+> > +{
+> > +	return refcount_read(r);
+> > +}  
+> 
+> +EXPORT_SYMBOL_GPL(rust_helper_refcount_read);
+> 
+> > +
+> > +void rust_helper_refcount_set(refcount_t *r, int n)
+> > +{
+> > +	refcount_set(r, n);
+> > +}  
+> 
+> +EXPORT_SYMBOL_GPL(rust_helper_refcount_set);
+> 
+> BR Andreas
+> 
 
+Helper symbol export is automatic after
+e26fa546042a (rust: kbuild: auto generate helper exports)
+
+Best,
+Gary
 
