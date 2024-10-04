@@ -1,231 +1,148 @@
-Return-Path: <linux-kernel+bounces-350120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135CB990028
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:45:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8544E99002B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 11:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEF83281F64
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:45:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4ED1F245E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB2714C58C;
-	Fri,  4 Oct 2024 09:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A9F149DFA;
+	Fri,  4 Oct 2024 09:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6O24UIr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYwJdss8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEF2179BB;
-	Fri,  4 Oct 2024 09:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7C7140E50;
+	Fri,  4 Oct 2024 09:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728034979; cv=none; b=LN4f3nhEI2CHa1Ak2zks+YZixIrh3g+so46gtdn+kX4CbH2vwvtHDn0GB8EJ0gpMCRkDJZzUyMRFf7e3kq3TXXhApwEjcShFIeSmlJub++DCx1kVSUSI937vfDE8h8WcXtVKw0EMVk7yZL73WjUZBeUHtPtu/QUKgnszusi9ATQ=
+	t=1728035113; cv=none; b=erpf4K01UZy8xBcJ8SAzw+JbEwEdJ18qNOBycfFoNLkhH3cFub0y+MGgwQnJN6EHpsSKY05Gu/e/rl8NtDt67e41FCG4rpYdIPtXWvZubUljl0GuN1rNC+fSFoyrHMKu784bxu1bnymESlRcJrADscqsL2lxAD6y8geQmaECpVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728034979; c=relaxed/simple;
-	bh=SzhRbPk78jtGFOBCsX0ZbmHldM75YK5G46pTsUz7W2A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pQqvg6GDJTunOQLMsAnH40DpfADfx2EJLy4AiX5AfAIcK8dY0VKBZnT08xufqwntLLJeanRbo4gjxNgOdQ70wgPaQraiROa9XwH7oO+GDGZhD6rcYgLV9r6PAgjmZaUOOqHIzgtnAbk55PR2Ciiplf7QIj5bJQ/+G09p2Zb5Ueo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6O24UIr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76F50C4CEC6;
-	Fri,  4 Oct 2024 09:42:57 +0000 (UTC)
+	s=arc-20240116; t=1728035113; c=relaxed/simple;
+	bh=TaiYoGdpBfdpz0ME0klNH6KoD2sXjnt2vr017uHEmjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kuGFqJAqicbikffCzKKl6yD0hWY7lyflmcVXJY448EtohkVoo95XPfdaFvBbDR9EsuNDHp105GqgdHjLA0QZzRybWXDVroa0PgoUbZTRmkd/sUpk+eFLbB6ufkt+MfSfLcbbtLCFHnPJf5v+Z4CtcUM+qntQMdcLMtRugMXIJVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYwJdss8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3977C4CEC6;
+	Fri,  4 Oct 2024 09:45:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728034979;
-	bh=SzhRbPk78jtGFOBCsX0ZbmHldM75YK5G46pTsUz7W2A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=K6O24UIrnQLvTn2gf3tB4sV3i5xDEFVB8dYD+wUb7ntkgmHrol4txY5c1cCuaD/Fp
-	 gO5mQrMCLw/Lwjmhzuu5bj9lkgYwNXUNrYysI9LO+0OarhhTP0gD2/mwHU5jlanowY
-	 236S4FQ0Jw5Nx377/hmDZaIPvZ4beLHmqREhQ+vXmW/k52t/upg3CY8ouuTCL31+EB
-	 9uPvLAb9xAQBNliOtgTfhZWGuTmtGhDwpKGhZw6A2GLMiSrycHgnqdy4SB1ZrRa+nX
-	 JpsIfIEx6FDaDyNspvZkNAO70gb1i1JqmPrNmUv3lEw7NTrz918G2220FK/4I5cGGN
-	 1ZhZ+KWb9tbQw==
-From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
-	bpf@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] selftests: sched_ext: Add sched_ext as proper selftest target
-Date: Fri,  4 Oct 2024 11:42:46 +0200
-Message-ID: <20241004094247.795385-1-bjorn@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1728035113;
+	bh=TaiYoGdpBfdpz0ME0klNH6KoD2sXjnt2vr017uHEmjI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PYwJdss8/faK0K7G+0mkAciLFYvSoNJFW3xcLsN0xFcIFXbUZDVYUye8BHBaop8UI
+	 OKlyKiiBd4B+TCAelTd0LPde2Di3+fcyqEOqHRupkZWrEn0YTNPVPjHj7XjnAfissO
+	 rDVPsmKdZChwu6+VMCvYJ+j/Zb/9WPdK4IRqzMl6+sU9hmnmLCyyvnh3RT3og9YxIb
+	 T4jwlQjXjcmATwaPKu4kg4JDRVCBPMINb4Cq1Zzy5a6UkZQbG0h8fIt2MS7JWooefG
+	 V0I78qyU7QC6v+Zu8rLtvv1A95Mhtbq8vYy66h/QrM5UwrmZ9b07i7NzCzoc+C+ERT
+	 n3iNdozHat19w==
+Message-ID: <7f821dc9-299f-4e7e-b6dd-568573358300@kernel.org>
+Date: Fri, 4 Oct 2024 12:45:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] ARM: dts: omap: omap4-epson-embt2ws: wire up
+ regulators
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, khilman@baylibre.com,
+ devicetree@vger.kernel.org, tony@atomide.com, aaro.koskinen@iki.fi,
+ linux-omap@vger.kernel.org
+References: <20240930213008.159647-1-andreas@kemnade.info>
+ <20240930213008.159647-3-andreas@kemnade.info>
+ <79d9aeef-2b38-44c5-a371-f696f6ae1de3@kernel.org>
+ <20241004110110.163db244@akair>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20241004110110.163db244@akair>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-From: Björn Töpel <bjorn@rivosinc.com>
 
-The sched_ext selftests is missing proper cross-compilation support, a
-proper target entry, and out-of-tree build support.
 
-When building the kselftest suite, e.g.:
+On 04/10/2024 12:01, Andreas Kemnade wrote:
+> Am Fri, 4 Oct 2024 10:38:22 +0300
+> schrieb Roger Quadros <rogerq@kernel.org>:
+> 
+>> On 01/10/2024 00:30, Andreas Kemnade wrote:
+>>> Wire up the regulators where usage is plausible. Do not
+>>> wire them if purpose/usage is unclear like 5V for
+>>> many things requiring lower voltages.
+>>>
+>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+>>> ---
+>>>  arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts | 11 ++++-------
+>>>  1 file changed, 4 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
+>>> b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts index
+>>> d6b0abba19f6..cc1b6080bf95 100644 ---
+>>> a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts +++
+>>> b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts @@ -20,13
+>>> +20,13 @@ memory@80000000 { backlight-left {
+>>>  		compatible = "pwm-backlight";
+>>>  		pwms = <&twl_pwm 1 7812500>;
+>>> -		power-supply = <&unknown_supply>;
+>>> +		power-supply = <&lb_v50>;  
+>>
+>> This is probably wrong. I noticed this while reviewing patch 3.
+>>
+>> you probably want to wire this to blc_l?
+>>
+> No idea was blc_l is. I did not find any code handling blc_l.
+> looking at the vendor kernel:
+> 
+> $ grep -R BLC_L_GPIO *
+> arch/arm/mach-omap2/board-bt2ws.c:#define BLC_L_GPIO
+> 16	/* LB LED GPIO */ arch/arm/mach-omap2/board-bt2ws.c:
+> {BLC_L_GPIO,   GPIOF_OUT_INIT_LOW,  "gpio_blc_l"   },
+> arch/arm/mach-omap2/board-bt2ws.c:	gpio_export(BLC_L_GPIO, 0);
+> arch/arm/mach-omap2/board-bt2ts.c:#define BLC_L_GPIO
+> 16	/* LB LED GPIO */ arch/arm/mach-omap2/board-bt2ts.c:
+> {BLC_L_GPIO,   GPIOF_OUT_INIT_LOW,  "gpio_blc_l"   },
+> arch/arm/mach-omap2/board-bt2ts.c:	gpio_export(BLC_L_GPIO, 0);
+> 
+> These two gpios are exported. But they seem not to influence
+> backlight in any way. I just tested again to make sure. Maybe it is just
+> a leftover from earlier board revisions.
 
-  make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- \
-    SKIP_TARGETS="" O=/output/foo -C tools/testing/selftests install
+OK. you could then leave it as it is now.
 
-The expectation is that the sched_ext is included, cross-built, and
-placed into /output/foo.
+> 
+>>>  	};
+>>>  
+>>>  	backlight-right {
+>>>  		compatible = "pwm-backlight";
+>>>  		pwms = <&twl_pwm 0 7812500>;
+>>> -		power-supply = <&unknown_supply>;
+>>> +		power-supply = <&lb_v50>;  
+>>
+>> this one should be wired to blc_r?
+>>
+> Same as with blc_l.
+> $ grep -R BLC_R_GPIO *
+> arch/arm/mach-omap2/board-bt2ws.c:#define BLC_R_GPIO
+> 17	/* LB LED GPIO */ arch/arm/mach-omap2/board-bt2ws.c:
+> {BLC_R_GPIO,   GPIOF_OUT_INIT_LOW,  "gpio_blc_r"   },
+> arch/arm/mach-omap2/board-bt2ws.c:	gpio_export(BLC_R_GPIO, 0);
+> arch/arm/mach-omap2/board-bt2ts.c:#define BLC_R_GPIO
+> 17	/* LB LED GPIO */ arch/arm/mach-omap2/board-bt2ts.c:
+> {BLC_R_GPIO,   GPIOF_OUT_INIT_LOW,  "gpio_blc_r"   },
+> arch/arm/mach-omap2/board-bt2ts.c:	gpio_export(BLC_R_GPIO, 0);
+> 
+> Regards,
+> Andreas
 
-Add CROSS_COMPILE, OUTPUT, and TARGETS support to the sched_ext
-selftest.
-
-Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
----
- tools/testing/selftests/Makefile           |  1 +
- tools/testing/selftests/sched_ext/Makefile | 59 +++++++++++++++-------
- 2 files changed, 41 insertions(+), 19 deletions(-)
-
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index b38199965f99..20ee8a0b795c 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -88,6 +88,7 @@ TARGETS += rlimits
- TARGETS += rseq
- TARGETS += rtc
- TARGETS += rust
-+TARGETS += sched_ext
- TARGETS += seccomp
- TARGETS += sgx
- TARGETS += sigaltstack
-diff --git a/tools/testing/selftests/sched_ext/Makefile b/tools/testing/selftests/sched_ext/Makefile
-index 0754a2c110a1..66467a99184d 100644
---- a/tools/testing/selftests/sched_ext/Makefile
-+++ b/tools/testing/selftests/sched_ext/Makefile
-@@ -13,14 +13,8 @@ LLVM_SUFFIX := $(LLVM)
- endif
- 
- CC := $(LLVM_PREFIX)clang$(LLVM_SUFFIX) $(CLANG_FLAGS) -fintegrated-as
--else
--CC := gcc
- endif # LLVM
- 
--ifneq ($(CROSS_COMPILE),)
--$(error CROSS_COMPILE not supported for scx selftests)
--endif # CROSS_COMPILE
--
- CURDIR := $(abspath .)
- REPOROOT := $(abspath ../../../..)
- TOOLSDIR := $(REPOROOT)/tools
-@@ -34,18 +28,39 @@ GENHDR := $(GENDIR)/autoconf.h
- SCXTOOLSDIR := $(TOOLSDIR)/sched_ext
- SCXTOOLSINCDIR := $(TOOLSDIR)/sched_ext/include
- 
--OUTPUT_DIR := $(CURDIR)/build
-+ifeq (,$(OUTPUT))
-+OUTPUT := $(CURDIR)/build
-+RUNNER_DIR := $(CURDIR)
-+else
-+OUTPUT_DIR := $(OUTPUT)
-+RUNNER_DIR := $(OUTPUT)
-+endif
- OBJ_DIR := $(OUTPUT_DIR)/obj
- INCLUDE_DIR := $(OUTPUT_DIR)/include
- BPFOBJ_DIR := $(OBJ_DIR)/libbpf
- SCXOBJ_DIR := $(OBJ_DIR)/sched_ext
- BPFOBJ := $(BPFOBJ_DIR)/libbpf.a
- LIBBPF_OUTPUT := $(OBJ_DIR)/libbpf/libbpf.a
--DEFAULT_BPFTOOL := $(OUTPUT_DIR)/sbin/bpftool
- HOST_BUILD_DIR := $(OBJ_DIR)
- HOST_OUTPUT_DIR := $(OUTPUT_DIR)
- 
--VMLINUX_BTF_PATHS ?= ../../../../vmlinux					\
-+ifneq ($(CROSS_COMPILE),)
-+DEFAULT_BPFTOOL := $(OUTPUT_DIR)/host/sbin/bpftool
-+HOST_OBJ_DIR := $(OBJ_DIR)/host/bpftool
-+HOST_LIBBPF_OUTPUT := $(OBJ_DIR)/host/libbpf/
-+HOST_LIBBPF_DESTDIR := $(OUTPUT_DIR)/host/
-+HOST_DESTDIR := $(OUTPUT_DIR)/host/
-+else
-+DEFAULT_BPFTOOL := $(OUTPUT_DIR)/sbin/bpftool
-+HOST_OBJ_DIR := $(OBJ_DIR)/bpftool
-+HOST_LIBBPF_OUTPUT := $(OBJ_DIR)/libbpf/
-+HOST_LIBBPF_DESTDIR := $(OUTPUT_DIR)/
-+HOST_DESTDIR := $(OUTPUT_DIR)/
-+endif
-+
-+VMLINUX_BTF_PATHS ?= $(if $(O),$(O)/vmlinux)					\
-+		     $(if $(KBUILD_OUTPUT),$(KBUILD_OUTPUT)/vmlinux)		\
-+		     ../../../../vmlinux					\
- 		     /sys/kernel/btf/vmlinux					\
- 		     /boot/vmlinux-$(shell uname -r)
- VMLINUX_BTF ?= $(abspath $(firstword $(wildcard $(VMLINUX_BTF_PATHS))))
-@@ -80,17 +95,23 @@ IS_LITTLE_ENDIAN = $(shell $(CC) -dM -E - </dev/null |				\
- # Use '-idirafter': Don't interfere with include mechanics except where the
- # build would have failed anyways.
- define get_sys_includes
--$(shell $(1) -v -E - </dev/null 2>&1 \
-+$(shell $(1) $(2) -v -E - </dev/null 2>&1 \
- 	| sed -n '/<...> search starts here:/,/End of search list./{ s| \(/.*\)|-idirafter \1|p }') \
--$(shell $(1) -dM -E - </dev/null | grep '__riscv_xlen ' | awk '{printf("-D__riscv_xlen=%d -D__BITS_PER_LONG=%d", $$3, $$3)}')
-+$(shell $(1) $(2) -dM -E - </dev/null | grep '__riscv_xlen ' | awk '{printf("-D__riscv_xlen=%d -D__BITS_PER_LONG=%d", $$3, $$3)}')
- endef
- 
-+ifneq ($(CROSS_COMPILE),)
-+CLANG_TARGET_ARCH = --target=$(notdir $(CROSS_COMPILE:%-=%))
-+endif
-+
-+CLANG_SYS_INCLUDES = $(call get_sys_includes,$(CLANG),$(CLANG_TARGET_ARCH))
-+
- BPF_CFLAGS = -g -D__TARGET_ARCH_$(SRCARCH)					\
- 	     $(if $(IS_LITTLE_ENDIAN),-mlittle-endian,-mbig-endian)		\
- 	     -I$(CURDIR)/include -I$(CURDIR)/include/bpf-compat			\
- 	     -I$(INCLUDE_DIR) -I$(APIDIR) -I$(SCXTOOLSINCDIR)			\
- 	     -I$(REPOROOT)/include						\
--	     $(call get_sys_includes,$(CLANG))					\
-+	     $(CLANG_SYS_INCLUDES) 						\
- 	     -Wall -Wno-compare-distinct-pointer-types				\
- 	     -Wno-incompatible-function-pointer-types				\
- 	     -O2 -mcpu=v3
-@@ -98,7 +119,7 @@ BPF_CFLAGS = -g -D__TARGET_ARCH_$(SRCARCH)					\
- # sort removes libbpf duplicates when not cross-building
- MAKE_DIRS := $(sort $(OBJ_DIR)/libbpf $(OBJ_DIR)/libbpf				\
- 	       $(OBJ_DIR)/bpftool $(OBJ_DIR)/resolve_btfids			\
--	       $(INCLUDE_DIR) $(SCXOBJ_DIR))
-+	       $(HOST_OBJ_DIR) $(INCLUDE_DIR) $(SCXOBJ_DIR))
- 
- $(MAKE_DIRS):
- 	$(call msg,MKDIR,,$@)
-@@ -112,14 +133,14 @@ $(BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile)			\
- 		    DESTDIR=$(OUTPUT_DIR) prefix= all install_headers
- 
- $(DEFAULT_BPFTOOL): $(wildcard $(BPFTOOLDIR)/*.[ch] $(BPFTOOLDIR)/Makefile)	\
--		    $(LIBBPF_OUTPUT) | $(OBJ_DIR)/bpftool
-+		    $(LIBBPF_OUTPUT) | $(HOST_OBJ_DIR)
- 	$(Q)$(MAKE) $(submake_extras)  -C $(BPFTOOLDIR)				\
- 		    ARCH= CROSS_COMPILE= CC=$(HOSTCC) LD=$(HOSTLD)		\
- 		    EXTRA_CFLAGS='-g -O0'					\
--		    OUTPUT=$(OBJ_DIR)/bpftool/					\
--		    LIBBPF_OUTPUT=$(OBJ_DIR)/libbpf/				\
--		    LIBBPF_DESTDIR=$(OUTPUT_DIR)/				\
--		    prefix= DESTDIR=$(OUTPUT_DIR)/ install-bin
-+		    OUTPUT=$(HOST_OBJ_DIR)/					\
-+		    LIBBPF_OUTPUT=$(HOST_LIBBPF_OUTPUT)				\
-+		    LIBBPF_DESTDIR=$(HOST_LIBBPF_DESTDIR)			\
-+		    prefix= DESTDIR=$(HOST_DESTDIR) install-bin
- 
- $(INCLUDE_DIR)/vmlinux.h: $(VMLINUX_BTF) $(BPFTOOL) | $(INCLUDE_DIR)
- ifeq ($(VMLINUX_H),)
-@@ -203,7 +224,7 @@ $(SCXOBJ_DIR)/util.o: util.c | $(SCXOBJ_DIR)
- 
- runner: $(SCXOBJ_DIR)/runner.o $(SCXOBJ_DIR)/util.o $(BPFOBJ) $(testcase-targets)
- 	@echo "$(testcase-targets)"
--	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
-+	$(CC) $(CFLAGS) -o $(RUNNER_DIR)/$@ $^ $(LDFLAGS)
- 
- TEST_GEN_PROGS := runner
- 
-
-base-commit: 0c559323bbaabee7346c12e74b497e283aaafef5
 -- 
-2.43.0
-
+cheers,
+-roger
 
