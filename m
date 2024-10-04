@@ -1,223 +1,118 @@
-Return-Path: <linux-kernel+bounces-350730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDB09908C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:14:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 709819908FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 18:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D1AA284879
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:14:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E067B27D90
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDB71C303B;
-	Fri,  4 Oct 2024 16:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8526B1C3033;
+	Fri,  4 Oct 2024 16:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iU5DI7kd"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="nZJ5boJU"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82B9381AF;
-	Fri,  4 Oct 2024 16:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DA4381AF
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 16:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728058434; cv=none; b=k9lAU34mgPAK4R8jdS9SVwFaESdbHTSeo+k30HqraVQOeAyZ3hOCpAtQCzmzbQW+/FipiD+bZ757uMB1PmttjrSdaruZFCz2HKgxhC25dM3kDRBf0l/5/rUppGvmJ8ULfVDpKuqp5LOL0TP2lUV0MeAcCmn7DH9DviWyrM0p9Kg=
+	t=1728058452; cv=none; b=ngw081RAjfBrd41sEDc90FxjuQiOSp4GsHD0NNeM9d0IyNr6G6o8mAm+HGVQXTVgeLV3T1P9MhRgbplvUqeDs+7K3TjXYgHfPAoL1U/SGvii3VMS5k8YaLnKEGoxAdO8Ll8k2Z1z7IWvkzhQUWLg8aQ4SKpYXcQWJRJPzetmNKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728058434; c=relaxed/simple;
-	bh=dJAfntnZzQya7mN+gT3g+rTVith19gd7qVwVeRJ2oBE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jjSlf8iy59b5Jmt9wXMKz6cdAPldNTCH4aMbnGxLmqeuioePWnLafTzqR5aKY797kNkGcxRRSiVg093X6ACq70ejeQOAKx/0/U+P2XqFnArJ7+22pl9JZ287GkJ+GFo0z1P2Hui6acoIC3kRFE/f1x3qzYba0a25ePty/U3LHDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iU5DI7kd; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e0438e81aaso1487144b6e.3;
-        Fri, 04 Oct 2024 09:13:52 -0700 (PDT)
+	s=arc-20240116; t=1728058452; c=relaxed/simple;
+	bh=YcjYn7rRzX45bmS0dUJRi0VLoeflEEWYtLb+AkCEaIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cKBnlnUwjFxOKNqTOy1tyhpnf8C4wAhQ/4rfxmaHcjVRm2w7v42dQ+zl7louoBsnthYZlzK6r7GYzt0Beab9vpc/J0ow8mKlbKc+Kv2qT/wSxmB8vmWs5l9l5gQmRPZDN80vOzDxeafDvX0H7saTvjx+aRzBy3th20G21iUyRDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=nZJ5boJU; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-71116d8504bso1426100a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 09:14:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728058432; x=1728663232; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BPXkDiio5eXbULzjvO9np+NwvbpW7NE+9+S5kYGgGQY=;
-        b=iU5DI7kd0+H6eY4m6GnNsM8C7pEBrbRSEJFcUQ6CoSwhCqnGuG91QBXb4DjZ2JCPdv
-         BK0YsSV4WRK73VjHZMQITrEWoNbs/onFYwT+bRkLWz6Zyki5G31C6cuwnTYJ/NGFgPbj
-         E6HbyCxSk2bwlgq+U/kt6tMdreIy5taDifJLs1RivmvssC/VMuBtP+SJAgpyCcHNHJWZ
-         lA8CDNFuCJertOnnpaiA4ka3gaa2cSDDjTYW3V0YG78a+yn4PEMZ2CnpCDME2xqx69T0
-         0NXuTh7VNMEoP4oifPwKK8T2UNRu1F63E9v3MxwVLm/Rk2/JyNVDPE7crZ7bzqyrDuFR
-         9GaQ==
+        d=ziepe.ca; s=google; t=1728058449; x=1728663249; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t2Iit7fFgKBWP7MqjbwBizfG2cS9Hz2aUvfI/dAalIM=;
+        b=nZJ5boJU8LiTZNx+IaFFyirbaTHwEWp74D7fqV+jTep6ZoUWTgwm4bt68ZezVQpoRs
+         ftLRZktc/BuwGQacUqRDRY99J+Cr9uZbrde7dqK/4x0/us2PJ35H6RWsOgQinSl0RSob
+         IatC2PdJW5/U68SXDk2eOQAQEhSXe8cloPGIL7iBpuyUbo+q+5AKdxoG4+2OyBKZyiD7
+         /TFldafQ9sJDyY+eBdB84H1jdL6ZcCrbRO524z3UkgDZfo3/vP1fX89vEu3cEHJKcHYI
+         UsUd6vLz7vfFvgSbZSxepZ7l2PGqxCSPIjku4EJo6DqPybgGFRR/fxDlJWolw9zyAir9
+         X5TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728058432; x=1728663232;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BPXkDiio5eXbULzjvO9np+NwvbpW7NE+9+S5kYGgGQY=;
-        b=HWs6m4l6s6Twf3/+6/30L61UUPh4nqgHiEA0Cixc72santq3cY4s+5dCKPYh2jN740
-         +uT4nhtSilaaRaKe0bICLhkFza5upNNIofCwbbhSDunJ3XHzw/Izg794dlTrSJPAIwi+
-         OmDR9Kydl7OovTLYACR6Y+vYu+eREQcnHqtl1cq2PuuccHaBZlVlbK/qfyyZunsEGERu
-         lJchh4ty+v0eyQ8J4JyAZigIqK0HANJK3t5UIoRI7XuGxMRYhnv0lM6YLWIknEYetv1l
-         zSYxizlmh8c8lP1FSjxVBY7kwTc++Zc4FKrFVsISApf1C8j/zjTjD9T1N5N4zCTiDC7f
-         vJsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUp7+5Oc+r3L5xDGo1VAnVE4G7dADVWRu5I1KwjcPV06PLP/J98NHc605rgWNpbjsnq+vRS3XkgSm+agnUiUwJu@vger.kernel.org, AJvYcCWYv02h2nxiMMqa8uexUrsG3HGfOaCyWKzbSLvrAweiUyPDeMTIBHPDTNCFBuTl3Hy2bO+RGPzqv64X+rE=@vger.kernel.org, AJvYcCXZ1n6aK2EmQR43/IGS4lxn4Qrb5XNCik1ydsqynRkuxi0auw7Rr8H9oCZXKuLKcIbcc20TobqZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyznM96SUGzezF5XZLq90SAF8mzLd/jemjr7Q7TnNQruKXd4nIM
-	/f4LG322ZPKqEwlXobf23ehfepqVJ3w4RPxSrwOGMrjvCQHc55p01HCZHueknsh6ZCKUkZs1gez
-	+/aEG8jKcFO6mSulspz75hKYq6w9W6oKAfWU=
-X-Google-Smtp-Source: AGHT+IG2wG7zvp8lD22cxclwAlfI49tPJqndqP3wcYiVayug01oP69knhRI+zufZ7ETFh+vPoSdqohTHdIPOykVnly8=
-X-Received: by 2002:a05:6870:c1d5:b0:25e:24a0:4c96 with SMTP id
- 586e51a60fabf-287c1da0268mr2415162fac.11.1728058431958; Fri, 04 Oct 2024
- 09:13:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728058449; x=1728663249;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t2Iit7fFgKBWP7MqjbwBizfG2cS9Hz2aUvfI/dAalIM=;
+        b=msSDlGHNujNenCentgrMT7ud8vBB/IrX/DQXMdfr6hXop+3i1wS+McktORM4MKM0Os
+         4F7N4j8pYk5e5vIWuym8yKkkeBcEGgGVGDuF71jJrDkWChFRbgZ8K0U2YS5IbjQ1TsdO
+         pvFyDEctumcGQjQea8Qwhof4jiGXy/vEIYaC8lgzSRVywVdkuDj3ofzYDev9UuE9ktLU
+         HJd0jKWN/GdMHGR7nJslD91rHI1UTo+Yx6DQWh6KQCrUm8mruDcQ0KHiDQdvkUeSzOOQ
+         g8txS0qv3B5LnQ4yWMZJ8AqOvxiNXz0LxEbP0LMUaufkx6d+WMWdNeXdnZw/T/yJyfhM
+         D5vw==
+X-Forwarded-Encrypted: i=1; AJvYcCWS9ZREEgek5S0GAhtCNFVEAR7z7IuygtFHx1sa9fo3rDSbeHR2My6hTus9mzgThKD/Kku2gonmkTsi/NQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU4Q206VvVS7euxLdqNLELicyJyEo8njbWmEYpmOpNbMB+rEB/
+	/GGtEanIUkmrhWxgU4xphewlk36F/gN676jF4Hbd/toqvKt2OIaBaRNp+e7jHKE=
+X-Google-Smtp-Source: AGHT+IHNZtp0RdmKR9tPX6Tz5fe0BbWkd+TEdNBUAWZwajlgqxRX7pqiGzGGB5dusaMWe6dfhlFLAQ==
+X-Received: by 2002:a05:6358:9889:b0:1a5:b0f7:251 with SMTP id e5c5f4694b2df-1c2b83ad8a5mr126598055d.24.1728058449246;
+        Fri, 04 Oct 2024 09:14:09 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46d0fddsm534476d6.5.2024.10.04.09.14.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 09:14:08 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1swkwS-00DT5g-CE;
+	Fri, 04 Oct 2024 13:14:08 -0300
+Date: Fri, 4 Oct 2024 13:14:08 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, james.morse@arm.com,
+	will@kernel.org, robin.murphy@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH] iommu/arm-smmu-v3: Fix L1 stream table index
+ calculation for 32-bit sid size
+Message-ID: <20241004161408.GJ2456194@ziepe.ca>
+References: <20241002175514.1165299-1-yang@os.amperecomputing.com>
+ <Zv2ONA2b3+kMAizm@Asurada-Nvidia>
+ <1c9767e1-4d05-4650-bc14-65a18fc63cc2@os.amperecomputing.com>
+ <Zv2diJDU6v60hKtU@Asurada-Nvidia>
+ <20241002194004.GT1369530@ziepe.ca>
+ <f28cab76-8030-477a-84b1-461dc02451ff@os.amperecomputing.com>
+ <20241003111603.GU1369530@ziepe.ca>
+ <43c2227a-71c9-4cbf-bfec-5a2fbf698f27@os.amperecomputing.com>
+ <20241004124343.GE2456194@ziepe.ca>
+ <26ee77f2-720d-4e16-9f6c-fa15fd13d305@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002-b4-ovpn-v8-0-37ceffcffbde@openvpn.net> <20241002-b4-ovpn-v8-3-37ceffcffbde@openvpn.net>
-In-Reply-To: <20241002-b4-ovpn-v8-3-37ceffcffbde@openvpn.net>
-From: Donald Hunter <donald.hunter@gmail.com>
-Date: Fri, 4 Oct 2024 17:13:40 +0100
-Message-ID: <CAD4GDZyZruh+gbA+=Wu_2aSOnaF8R6eDRU0=EE0qnWe-bTi2-Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v8 03/24] ovpn: add basic netlink support
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	sd@queasysnail.net, ryazanov.s.a@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26ee77f2-720d-4e16-9f6c-fa15fd13d305@os.amperecomputing.com>
 
-On Wed, 2 Oct 2024 at 10:03, Antonio Quartulli <antonio@openvpn.net> wrote:
->
-> +definitions:
-> +  -
-> +    type: const
-> +    name: nonce-tail-size
-> +    value: 8
-> +  -
-> +    type: enum
-> +    name: cipher-alg
-> +    value-start: 0
+On Fri, Oct 04, 2024 at 09:05:46AM -0700, Yang Shi wrote:
+> 
+> 
+> On 10/4/24 5:43 AM, Jason Gunthorpe wrote:
+> > On Thu, Oct 03, 2024 at 08:31:23AM -0700, Yang Shi wrote:
+> > > If I understand correctly, the check is mainly used to avoid the u64 -> u32
+> > > overflow. This check guarantee no overflow. If some crazy hardware really
+> > > requests that large memory, the allocation will fail.
+> > Sure, the kalloc will print a warn on anyhow if it is too big
+> 
+> Thank you. Will spin a new revision.
 
-value-start defaults to 0 for enum so this is unnecessary. Same for
-the following enum definitions.
+Oh wait a sec, it is not so simple, the 31 is too big because the
+multiply will overflow or truncate to size_t too. This is why I picked
+something lower.
 
-> +    entries: [ none, aes-gcm, chacha20-poly1305 ]
-> +  -
-> +    type: enum
-> +    name: del-peer-reason
-> +    value-start: 0
-> +    entries: [ teardown, userspace, expired, transport-error, transport-=
-disconnect ]
-> +  -
-> +    type: enum
-> +    name: key-slot
-> +    value-start: 0
-> +    entries: [ primary, secondary ]
-> +  -
-> +    type: enum
-> +    name: mode
-> +    value-start: 0
-> +    entries: [ p2p, mp ]
-> +
-
-[...]
-
-> +operations:
-> +  list:
-> +    -
-> +      name: dev-new
-> +      attribute-set: ovpn
-> +      flags: [ admin-perm ]
-> +      doc: Create a new interface of type ovpn
-> +      do:
-> +        request:
-> +          attributes:
-> +            - ifname
-> +            - mode
-> +        reply:
-> +          attributes:
-> +            - ifname
-> +            - ifindex
-> +    -
-> +      name: dev-del
-> +      attribute-set: ovpn
-> +      flags: [ admin-perm ]
-> +      doc: Delete existing interface of type ovpn
-> +      do:
-> +        pre: ovpn-nl-pre-doit
-> +        post: ovpn-nl-post-doit
-> +        request:
-> +          attributes:
-> +            - ifindex
-
-There's no dev-get do/dump op. I think there should be one for
-diagnostics and metrics.
-
-> +    -
-> +      name: key-new
-> +      attribute-set: ovpn
-> +      flags: [ admin-perm ]
-> +      doc: Add a cipher key for a specific peer
-> +      do:
-> +        pre: ovpn-nl-pre-doit
-> +        post: ovpn-nl-post-doit
-> +        request:
-> +          attributes:
-> +            - ifindex
-> +            - keyconf
-> +    -
-> +      name: key-swap
-> +      attribute-set: ovpn
-> +      flags: [ admin-perm ]
-> +      doc: Swap primary and secondary session keys for a specific peer
-> +      do:
-> +        pre: ovpn-nl-pre-doit
-> +        post: ovpn-nl-post-doit
-> +        request:
-> +          attributes:
-> +            - ifindex
-> +            - keyconf
-> +    -
-> +      name: key-swap-ntf
-> +      notify: key-new
-
-This doesn't work because key-new doesn't have a reply. You should
-define it with an event: block instead. You can see the build errors
-here:
-
-make -C tools/net/ynl
-
-CC ovpn-user.o
-In file included from ovpn-user.c:8:
-ovpn-user.h:1194:33: error: field =E2=80=98obj=E2=80=99 has incomplete type
- 1194 |         struct ovpn_key_new_rsp obj __attribute__((aligned(8)));
-      |                                 ^~~
-ovpn-user.c:835:35: error: =E2=80=98ovpn_key_new_rsp_parse=E2=80=99 undecla=
-red here
-(not in a function); did you mean =E2=80=98ovpn_dev_new_rsp_parse=E2=80=99?
-  835 |                 .cb             =3D ovpn_key_new_rsp_parse,
-      |                                   ^~~~~~~~~~~~~~~~~~~~~~
-      |                                   ovpn_dev_new_rsp_parse
-make[1]: *** [Makefile:41: ovpn-user.o] Error 1
-
-> +      doc: |
-> +        Notification about key having exhausted its IV space and requiri=
-ng
-> +        renegotiation
-> +      mcgrp: peers
-> +    -
-> +      name: key-del
-> +      attribute-set: ovpn
-> +      flags: [ admin-perm ]
-> +      doc: Delete cipher key for a specific peer
-> +      do:
-> +        pre: ovpn-nl-pre-doit
-> +        post: ovpn-nl-post-doit
-> +        request:
-> +          attributes:
-> +            - ifindex
-> +            - keyconf
-> +
-> +mcast-groups:
-> +  list:
-> +    -
-> +      name: peers
+Jason
 
