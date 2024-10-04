@@ -1,127 +1,158 @@
-Return-Path: <linux-kernel+bounces-350485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E63E9905DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:21:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BE99905E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 16:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC19283351
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:21:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42BFB280E48
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADF6216A26;
-	Fri,  4 Oct 2024 14:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="r0IIr95F"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF884217326;
+	Fri,  4 Oct 2024 14:21:55 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAF420FA95
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2024 14:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DD6212EF7;
+	Fri,  4 Oct 2024 14:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728051666; cv=none; b=sPEb+aksm7Sq6RCTMcMfSlWA17CQbLY9J+PVvNxuE9mnN6gMTrmbXKbR6v8HQUR3izMR1Vi2taPtGwNO5K3Otc/n+eMhlUmhhFTGAJpg8S/dozJ4JEKEX/uniakhyDAarrLdVH7STnpgJlTVe8dtm9B/f1pnDbTvJKf9WqkdRXE=
+	t=1728051715; cv=none; b=jzsU/Ttga3zNkCkPYhNuJFzSf2I9hDfSzlb8i8amphHhR9wGqhN7tvZzlFrnuFXgpO7eCTEAUxofjOdg/gqlcmEi4uiNs/Ml5d0fx1d4B4v388KGMk9O2qNXFr6jaCp8Ele/Bx5PP0qc99YYN/cpvlHvRI+i6KmSYJNJQ1l/J+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728051666; c=relaxed/simple;
-	bh=dJcgLRow2aaQQBfKxTUsuhyTu7/BG3s5t9lTT/eMid8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PDqPAOdcrxCQ20yrLqvrnjBhhtswZuruP5z79slMyEBmZ4Bmz3c10aHro6NnAe4RmlIqggaI3pqshHx/AR6pHcJhmsWh7yEJ9+EZHXL0sAdWR3Rk/sOeldAqTNJYQ1V5CxTuJs+KUjVFNL1Zi1CLdw9Mgmwpz4q9T1xQ0CpNktY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=r0IIr95F; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42f56ad2afaso27744205e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 07:21:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728051663; x=1728656463; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vKSqvrpEqeBm32KxHqmFUKeU0x5YA9JFbesDhu6KpkQ=;
-        b=r0IIr95FQt0fQcuC5vL94FxKBU3HUE0PwniQx/3zMT+Wpa3VUpv+jMaiNK6rVW5vwr
-         aDCG1jrOqvNlqQlhroyFxzAE8IcgfzxwCquTWX8Kw/FvNo4ZzjeFhmyEWH2QKd1c1ugT
-         cpaRy2/LdPzzuEqOr4i4fTkltaJFebBBzXmOwlVrPpS7XhNhjA4+OmzyRbPNLbb+2I3U
-         pHy+4OCHur0rE2BWWgwcKrRsUm/i+f+EEjF0qcYhZsL/0V8ln3NPRg7g9kZ3dKrjO1T7
-         HKQdeg37ZCyGH4MW1n8xaNqW/fq65j1F+N4b5pwB6/cfXT5ePuwsUj94Z4SwmVx+Lqv0
-         2jKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728051663; x=1728656463;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vKSqvrpEqeBm32KxHqmFUKeU0x5YA9JFbesDhu6KpkQ=;
-        b=eh/ZM/pDPamG1vCA/q4ZtQNG8vLVftlCnHf9pnYmOTKaXJyRu/Zk3vUeK1UkpfFiq2
-         LI09HPn4DrLzmuvvY1Ioi1MFBoTdSZMleEzhF+kMzEgVQoWfia98C2WnGLc2POjLwgIZ
-         cu+AddZyCvAy5c0At6HO+nEIoTKwO1L2SuEHWSvGUEga1WpG4H5DjonZ6p7RQiU/3bxz
-         j0eYnIkKtZn1YvvFlXdMasS+Vhj5out7DrfAAAvebxpyaDmbBRNBs4fLiruZlPQvn8wC
-         hD+SiIb6EjF28fx431BshuvR0XHOGYeJrA31CeSO4v5XByUdyuvQn1u45MkH8ElmNUDc
-         T3Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWGTBpWk4q6EWU+g1KTi/51/BSHwkZtH48vyFVaDWteIs0+q1bCwDXDFxsuJ8fBm8+Rd3nKYUyVZV+05hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiXapwEN5yqKb4TtJPxxv9YoUNY24lCxBXIjtmVVX09nDb+goy
-	FcqV9d8uhrKWke/+LNrzpJ67kR7OeSa/p0aoTFrVWTNFPYnbOWSdMVcesC6Qe4T99thLIOoZtM6
-	7
-X-Google-Smtp-Source: AGHT+IHWgiHQFvysKVnpOzNkinC2CjZNNoOI4K/L06cIjvNqoUz6Mwnu+SLA25Rjpn5vC58pBeVYrQ==
-X-Received: by 2002:a05:600c:3ba9:b0:42c:ba83:3f00 with SMTP id 5b1f17b1804b1-42f85a6e0c0mr30150145e9.1.1728051662841;
-        Fri, 04 Oct 2024 07:21:02 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:80ea:d045:eb77:2d3b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b24003sm16771995e9.21.2024.10.04.07.21.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 07:21:02 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio fixes for v6.12-rc2
-Date: Fri,  4 Oct 2024 16:21:00 +0200
-Message-ID: <20241004142100.53097-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728051715; c=relaxed/simple;
+	bh=jI4xt+mIZpaYYl14SmtbwUlqP+Roo8PdiS+CZnfbfMM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ucvkRSMvwWp9XcOY2IgjQ6HQhBhtIV6ShwzBLAyY1hB7cAEoZ4fDLZ9Di4xOL6CLJLDA7XtPTLZLLZYjEbIjjAGQeDDdFxIiY8UshzccB2NjiGgjT8BSuCVi/a1eQ30kY1UZO/QwNNtEIQx4B6eubzmP6IUKcshRfpvSkRqaEVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XKrMZ3sX1z67QqC;
+	Fri,  4 Oct 2024 22:21:46 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3168E140A46;
+	Fri,  4 Oct 2024 22:21:50 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Oct
+ 2024 16:21:49 +0200
+Date: Fri, 4 Oct 2024 15:21:47 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Angelo Dureghello <adureghello@baylibre.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>, "Nuno Sa"
+	<nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+	<olivier.moysan@foss.st.com>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<dlechner@baylibre.com>
+Subject: Re: [PATCH v3 08/10] iio: dac: ad3552r: extract common code (no
+ changes in behavior intended)
+Message-ID: <20241004152147.00003a2a@Huawei.com>
+In-Reply-To: <zlfrwjnr6spzzmy75qifbdn3tuhsjsr3emxxrzoahejxf3ehem@ajymvtzgfuno>
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-8-a17b9b3d05d9@baylibre.com>
+	<20240929125753.789bda87@jic23-huawei>
+	<zlfrwjnr6spzzmy75qifbdn3tuhsjsr3emxxrzoahejxf3ehem@ajymvtzgfuno>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > +int ad3552r_get_custom_gain(struct device *dev, struct fwnode_handle *child,
+> > > +			    u8 *gs_p, u8 *gs_n, u16 *rfb, s16 *goffs)
+> > > +{
+> > > +	int err;
+> > > +	u32 val;
+> > > +	struct fwnode_handle *gain_child __free(fwnode_handle) =
+> > > +				fwnode_get_named_child_node(child,  
+> > One tab more than the line above is fine for cases like this and makes for
+> > more readable code.
+> >  
+> Aligning with c then line comes to long. 
+> I can offer, as in other drivers:
+> 
+> int ad3552r_get_custom_gain(struct device *dev, struct fwnode_handle *child,
+> 			    u8 *gs_p, u8 *gs_n, u16 *rfb, s16 *goffs)
+> {
+> 	int err;
+> 	u32 val;
+> 	struct fwnode_handle *gain_child __free(fwnode_handle) =
+> 		fwnode_get_named_child_node(child,
+> 					    "custom-output-range-config");
 
-Linus,
+That looks good to me
 
-Please pull the following set of fixes for the next RC. Details are in
-the signed tag.
+> 
+> Also, do you prefer 80 or 100 as eol limit ?
 
-Bartosz
+Prefer 80, but not at the cost of readability
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+> 
+>  
+> > > +				"custom-output-range-config");  
+> > 
+> > Align this final parameter with c of child.
+> >   
+>
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+> > > +static int ad3552r_find_range(u16 id, s32 *vals)
+> > > +{
+> > > +	int i, len;
+> > > +	const s32 (*ranges)[2];
+> > > +
+> > > +	if (id == AD3542R_ID) {  
+> > 
+> > This is already in your model_data. Use that not another lookup via
+> > an ID enum.  The ID enum approach doesn't scale as we add more parts
+> > as it scatters device specific code through the driver.
+> >  
+> 
+> This function is only used internally to this common part.
+>  
+> >   
+> > > +		len = ARRAY_SIZE(ad3542r_ch_ranges);
+> > > +		ranges = ad3542r_ch_ranges;
+> > > +	} else {
+> > > +		len = ARRAY_SIZE(ad3552r_ch_ranges);
+> > > +		ranges = ad3552r_ch_ranges;
+> > > +	}
+> > > +
+> > > +	for (i = 0; i < len; i++)
+> > > +		if (vals[0] == ranges[i][0] * 1000 &&
+> > > +		    vals[1] == ranges[i][1] * 1000)
+> > > +			return i;
+> > > +
+> > > +	return -EINVAL;
+> > > +}
+> > > +
+> > > +int ad3552r_get_output_range(struct device *dev, enum ad3552r_id chip_id,
+> > > +			     struct fwnode_handle *child, u32 *val)  
+> > As above, don't pass the enum. Either pass the model_data or pass the
+> > actual stuff you need which is the ranges array and size of that array.
+> >  
+> 
+> Cannot pass model data, structures of the 2 drviers are different.
+> If i pass arrays, the logic of deciding what array (checking the id)
+> must be done in the drivers, but in this way, there will be less
+> common code.
 
-are available in the Git repository at:
+I'd prefer that to having an ID register look up in here.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.12-rc2
+Roughly speaking looking up by ID is almost always the wrong
+way to go for long term scalability of a driver as more parts
+are added.
 
-for you to fetch changes up to 7b99b5ab885993bff010ebcd93be5e511c56e28a:
+Jonathan
 
-  gpiolib: Fix potential NULL pointer dereference in gpiod_get_label() (2024-10-03 20:51:47 +0200)
-
-----------------------------------------------------------------
-gpio fixes for v6.12-rc2
-
-- fix a potential NULL-pointer dereference in gpiolib core
-- fix a probe() regression from the v6.12 merge window and an older bug
-  leading to missed interrupts in gpio-davinci
-
-----------------------------------------------------------------
-Emanuele Ghidoli (1):
-      gpio: davinci: fix lazy disable
-
-Lad Prabhakar (1):
-      gpiolib: Fix potential NULL pointer dereference in gpiod_get_label()
-
-Vignesh Raghavendra (1):
-      gpio: davinci: Fix condition for irqchip registration
-
- drivers/gpio/gpio-davinci.c | 10 +++++-----
- drivers/gpio/gpiolib.c      |  4 ++--
- 2 files changed, 7 insertions(+), 7 deletions(-)
 
