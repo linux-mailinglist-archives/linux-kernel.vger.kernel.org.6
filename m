@@ -1,192 +1,189 @@
-Return-Path: <linux-kernel+bounces-351405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4783991075
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:28:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E321C991079
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 22:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D6ED280CD1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:28:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1292F1C22E92
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 20:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0A91B4F15;
-	Fri,  4 Oct 2024 20:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9C41ADFFA;
+	Fri,  4 Oct 2024 20:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8diY9L5"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QNjQSd9s"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011066.outbound.protection.outlook.com [52.101.70.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7124231C8E;
-	Fri,  4 Oct 2024 20:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728073141; cv=none; b=h+I0ru0Fp7iDOQvF2JOFy0/fd+D+3X6xpNfsy7DCTscGbvlAkU0oU8eREOW3VMzXob8Dxng7Qrk/TUOXbqsHyrc0sThtMYfchIP7yZgi7gzLmfQVe62YMics4K4wO4u/v5s3/5buVbtiYsKYnpbzacJi3b4qL9ytpg6fUWIT/e0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728073141; c=relaxed/simple;
-	bh=kO8h2yh/96qdBvgnAEctiSIaSRu5H1VvkCa+5VUd7og=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nfITi+mEWI8BzR5coKJ6sevBbxEtuGTsJvAJxCQoqPZ77V4v8wrHLTxjZ4ksyg754t6x1REUoAdz9tmBptw6t1arAj7GfF/5OqxmUuPFaibWFZydYrci1N8ooAywpN8H1OC56I/FPTlyiYtStOG1Ct5LN4GAhStTkhshfjdRxrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8diY9L5; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20b90ab6c19so27521245ad.0;
-        Fri, 04 Oct 2024 13:18:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728073139; x=1728677939; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2FLheXzq/15q2f96LLXhH5P16czCOjKPDgTOb73CTE8=;
-        b=G8diY9L55L5b6FrbSACK1iIu9gZTCHol9Z88vB5eKnn/ivwxa4er6d//MyU/Veg+4X
-         TExezbJFz8UuQ177LcIiVM76gXNp5E/QIOfszlRr7DVOt3qUbqBUmVXqo/YCb4LojN86
-         lLLCxqzejAOvq/4MS67bYloV5UbrRa1KSTkDcS9WVebZ4+InAIii/4H6y05MkQ19LEKX
-         95aW4grZ/cPivPD3tln58tFeDegsL4GzK5qxIgU++naSfOXnwcvns7dOAfUbKthzbIWG
-         jXn/YiPAMTBC4UKZ7ELZtL6VGK4NWfO6phip7bFTq4JKzDUBXnYS4fQ/5v+pDeOg9M3A
-         TmbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728073139; x=1728677939;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2FLheXzq/15q2f96LLXhH5P16czCOjKPDgTOb73CTE8=;
-        b=SXv+9qLxdti201G21nqTCybXWDkXeSasedgHJZEXRAuyIOIZwEUrMYJepqL9EQMg/A
-         Sp13R3z1MzLYrNTWaHt6X0JWiC3mesosSFzNJbS9Vp3D5hTPkd5WlmXoYyCZhuW/bohK
-         cArlWoLx27bCu5aE8aWHcl4z7XVXiCXpnASZFBeddYaTqP6TEUM6vUI+EYy6ZeKaaFa4
-         wk9QeSzAeWgsBQRFo+i8chpgwEbpI/CqbqFEkwQ20maTin+f+6sXbn/4tbY83LF+QOnZ
-         Fz7i/uG43ceIVrlAU26maK7WhqMw4yahDCKI5ZRIxaovYdYR3rtWuWrzE6SKzffw4sxH
-         xX1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVsDQ16n085wUoLT3pqQpmuiYciEdOxh96gBwrzBACeveM2xJ5eRaAYC9tPf+oEUD1BoFsWedLa3alELXYX@vger.kernel.org, AJvYcCW4UlaeGKTNRP4LxQOL0LmcVqh46iSGseYnew/64Aw0BtMTAFY1zu/fKp8v0DcFrIWpX3c=@vger.kernel.org, AJvYcCWNIZl4zFpl9eY0lYCO4iDChgmoomX+kW2Mcr5KahDZQ32j1/fVra4dOHpu+dN2iHnq5Xe39XMajDkVNDChPwzmOSCP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxvs1e8wCMgw3mUxguMPfO5qb36daPeE0s32UEKqOxOSPkQpbM
-	fNIBLZv0DJmVF7HzWIWSTHDuAhqZstiAdiXk9OlQTY84DGw1qQdpmxV3/387sO+QHxTbaG508EE
-	VVqE5iz9DKfEzO3HByW/n7j2MZtI=
-X-Google-Smtp-Source: AGHT+IFosWxYbZhnzaNUh9VcJNKxeVjZan6qDfHnjL8KTgP25O9RmU3CjTba4VmgHvpvWOfuS33JHNtRt6/gz3P+yVo=
-X-Received: by 2002:a17:902:ea11:b0:202:28b1:9f34 with SMTP id
- d9443c01a7336-20bff04acbemr40906135ad.56.1728073139155; Fri, 04 Oct 2024
- 13:18:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A6D1ADFEE;
+	Fri,  4 Oct 2024 20:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728073232; cv=fail; b=jcvQiJoy2mzgz7koV0rLLfpdEF9QlKlXwTUo16mZk+P5xsf4eP9qDfjW9QjnXL66h9xYF7MBCK1xuRjoRHa5GFk8XSx5b3Xc2NXOFAsarQrzjKdAlkJTGwHYt+dRHHtUYRrxkwjfu9lHvm5iQAQ0/I0aa4dsygbZVGQu9CdgkN0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728073232; c=relaxed/simple;
+	bh=TP6aYtmw0pFz+4JEqesQKyOvv6Ty/voH+QTepNENYRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eCzlysNuOtzT/H+YSTkype/fqZoiBeNGlBE7mmxtLYp0Q8OFviWZp2JH0cInBfKqkACLvcC/mPflTA90iE7hRGrNEz7HYXJ8FXeHOQ7BmCqztrvViwySp4IE/91TibU41T9UZAib7yEDD+CC4rbhi3VXP7tq2HnbfniiXh7UgZ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QNjQSd9s; arc=fail smtp.client-ip=52.101.70.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YVgOVzfhnTJyoGT4HUA3VXm3xAt2pE46jPGTEKsvTOqqvlFpc+EG27Oe+seA2SyTOpcc0+LnoMuIEs2QjwRrtljR1eESuES/1KRA7uqvW+6t7GmxHg9VFnnC813M2WsF7k10GvCNI5St2KZrEuWo6olv+nir2vMSb5TbltKDH0gz6NxPxmZk/EPgeRNwEryxHjwB6zuUIQMs6FBnwqMD84OYDnEbyEOdcjgcmbzJ5MK64ERN41croKDFAa0C+KqpdT2WZMcWcDue5MKDyEYK0w5l+//CpJWBPIQ/gTKYCwsYFbnlnhMMWaYwqVnstdoK26gxNvVGu9MDKwF0gNsdDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HIZwXCUwxN0JcNEIpW+bD/p2wF7FXXQYNi/yw0CvqR0=;
+ b=rMrjmNJL2ICmJsEGkpYbVQQjMAKjzwcvQYH1KohY6zFqTtfmeeH2cjrB10qOsIHxVX0WzpRVfM8/YaGL+wlxoCZt46oxUxg5RFkNJmOVRNuPfvsLtCk4w/Br9ZKRBysH3lpDEhmmjCdoQ6VHFeyXter+Nzqhk6ciJSfx5eTDU4cClVVICRxyQ/cCve7I4qKCtEoyM9F5ZqRnQBqSjV+O3pM8LLTZ2HJMNorHbwWrbheVoZ/GPhienQ0XYTkZeGfK6UShiyGV0z1mdsyXvE40qbLSvHZPUW4jqUO6s6INILu5/LYCnsSu0XzaHNNp/6jLgFUo8Ij5uZVMnkHin7E1ug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HIZwXCUwxN0JcNEIpW+bD/p2wF7FXXQYNi/yw0CvqR0=;
+ b=QNjQSd9sEILD7T6MW1zQThwL6tCUge1d4sDkAug3kSl/FNiJDBb3nC1Qlpdj76LEMjGgf7/yMiRZw2IhqEKmM0KHxsns+U7tWfX3UfyQuQiYbNtPcV/dGo6DXLt898bgfm8drqubXveXqI2FIR5sCVZ4elduf6gg0JH9tg0a6K1mMejhAV6FeJDrNow8nwwZ+QLhrlflR05atSGPoCvCVvQX7fAVeq/FDSYjy8CRF02gM/lFnO9ro54R4gh3xmT0lkZ8vSvKgvFjqyx3SwHdgH/cofu6oKmeWAIIdvDxKvqHGERKoYV6zhs0opk5Gq16nIghP4OApBK4E7fQ8+mLPQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DU2PR04MB8581.eurprd04.prod.outlook.com (2603:10a6:10:2d8::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Fri, 4 Oct
+ 2024 20:20:28 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8026.016; Fri, 4 Oct 2024
+ 20:20:28 +0000
+Date: Fri, 4 Oct 2024 16:20:23 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: robh@kernel.org
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev,
+	krzk+dt@kernel.org, laurentiu.tudor@nxp.com,
+	linux-kernel@vger.kernel.org, stuyoder@gmail.com
+Subject: Re: [PATCH 1/1] MAINTAINERS: misc: update fsl,qoriq-mc.txt to
+ fsl,qoriq-mc.yaml
+Message-ID: <ZwBOB8naX81JPoph@lizhi-Precision-Tower-5810>
+References: <20240820190015.499641-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820190015.499641-1-Frank.Li@nxp.com>
+X-ClientProxiedBy: SA0PR11CA0161.namprd11.prod.outlook.com
+ (2603:10b6:806:1bb::16) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909224903.3498207-1-andrii@kernel.org> <20240909224903.3498207-2-andrii@kernel.org>
- <20240915144910.GA27726@redhat.com> <CAEf4BzZ7=NFAUB_GzAt1SCO=LnCFSbqX_NThtjrs8EfkjBUr7A@mail.gmail.com>
-In-Reply-To: <CAEf4BzZ7=NFAUB_GzAt1SCO=LnCFSbqX_NThtjrs8EfkjBUr7A@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 4 Oct 2024 13:18:46 -0700
-Message-ID: <CAEf4BzYO0i0f_pui6PwAfEHCVwaP0yR9BDY8-+EfvgbPjFXxbg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] uprobes: allow put_uprobe() from non-sleepable
- softirq context
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
-	paulmck@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU2PR04MB8581:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e2ffa65-b1f4-452b-b5d7-08dce4b1fca7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ur/k2Zhc7C6AYeRtAFiabHWiZOXwfLSx87ioT/TM3wErBLURVaPurX4P7Nmc?=
+ =?us-ascii?Q?0CmvQV4QvXNkq8SVI9IkYnhOuxS7fCJB0q8ikh4wcYXZ6OW+N8MMSFaVLngK?=
+ =?us-ascii?Q?da/PftcqFxulT96dyZaQatzVtrJ67TkkdXFrsJAWw/xKW+Ofz8RCxL4YMvPx?=
+ =?us-ascii?Q?4SMLed1e+bB3r3up6XDQOe96TI6omypqmS3Ms0ztQZsfc1GdI4JGweCQEiBF?=
+ =?us-ascii?Q?LQJhv1accWZMrEkZLzVrqrbyJEPGKK4omJ4faTwwA3ANulRqZuIR3EvX67zr?=
+ =?us-ascii?Q?SywbP+LpEKV2F4ocTVtG0ugoIg84du99aE7bhAS6NHBh+RkEjQ8Cp7I9Ok9G?=
+ =?us-ascii?Q?8SDtSdgiKDY+TZLBvZL7S63neVA51+8tL3YiwXSZkM4CJnJgBkYld4vyVIs5?=
+ =?us-ascii?Q?B31qb5Yfv8ElvS8CD2wPL4NnlQkwoKJs6icgem36PB6zSjuZgqaDBhif+DMB?=
+ =?us-ascii?Q?guCldffuEnIQvFgHrzglIlr9h+gkC2/jrRa5IY9kT8rmss7bWBPNeuHy/zhb?=
+ =?us-ascii?Q?RWqKosM5VUTNmACQ4yX1fkbJv9OB+XinK4Rq2RVwfRxfXU5lc5sermsPxW/c?=
+ =?us-ascii?Q?LUZPSAIPF6+exHDLXPWjI/KAsbd5ajGRyf4MVHQ4EdBs3qaAmlzzk4miK/Pk?=
+ =?us-ascii?Q?49UP51H3rdJXLn5jSwhKHiUqhvL1kDfZBbv3KJHFToe629k3ItqnJGAyYBK2?=
+ =?us-ascii?Q?nHUR8lOP7nY6cCJIrPo2LH6aUSIuAHlcACh+rTmUeuhdTFCV/1TUCCyh3QQO?=
+ =?us-ascii?Q?DmRVRff6OP3/44pbFvlo3fhriob/UP/Gh6kN5crqpChZ5u103Qp3Z5m79L5i?=
+ =?us-ascii?Q?XBILm0rjkI+ct0WCk3+MckjXLR72CL6kRmrk8M8m+ZSJIwwX+0K9/cTFgsxH?=
+ =?us-ascii?Q?dlM9WmprL3u0SZZ0lsmwezFz2+b2o7dOTXiLI0CFeae/ve038it9i5dR+kp4?=
+ =?us-ascii?Q?ey9g1zxP/9rBqvV/lsyXBnypGPJNuu3UIjnRUqNb/jt3dWM1kEDHJzBabCmd?=
+ =?us-ascii?Q?FeMti1WIlitDArbJELWxZTcuiu27WLqTeeUCD7xgeEmAGjRtA/l8Bw9bF5lV?=
+ =?us-ascii?Q?P8M2dH0img+GdfgRMWPUZAs26wKS2mXCUx6yWobnUdVm56+wU88KLFJypWsX?=
+ =?us-ascii?Q?NgIH7ot+uERFYW4J87U1CJuXa71whQK7J5men48F0MqMkhzOxFf6xjSpiacT?=
+ =?us-ascii?Q?oBrw+Rpcs80sbPFbHkwnY0iDI6UZYwTv7HI/8qPaIt8h6aPDTbhzWfnMPgRW?=
+ =?us-ascii?Q?vOPIsNnC04Gdi+JcdulV8B5xiKHrV/NkrqC4bAOMyLetYm2JcC54EkKptU2d?=
+ =?us-ascii?Q?AIMd4j1SYT38g7NtwyoLpUrnWef1efeTvdR2xyHwjZXj2A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zAyoey0Cb58/8EMrKTaQ8sudKpFw2h2lBX1OKwC1whVnyBgQaygiQfiYYCpa?=
+ =?us-ascii?Q?wFLFwULAFMDYHL8lZUxpOzp7T25jOJ6sidwADKLwtwHHHvI6b9wJG1tRof7l?=
+ =?us-ascii?Q?ssZc4V4qgH/DGCmAQ6eZUza96ZM+6gm4yKk/TZObGTJUf4E2C230HDlbMhdH?=
+ =?us-ascii?Q?YLqB8YOZG8aSvHaWeXYLyFkxv78zXT2KmonIWA3U9Hu7LFzBLcLk2ya7vPUk?=
+ =?us-ascii?Q?OaU+MRsTzMiWEiIlTIr7bEbSTH41p5qZf0yj+6XP5LA+ULc7TNl6SA8hsJmN?=
+ =?us-ascii?Q?NTcDuaYMzjcroUHauRWNliWOgVm+zdWAdygPcT7eMH58FxJCZKd8qoavVkDp?=
+ =?us-ascii?Q?YNYsBpk2ByV5lTy6f0Ujy9fbohB4/yiEP1TcxEwARKfwf21dPErAtfQ3B2Nq?=
+ =?us-ascii?Q?InIz/JA4Tl6zDw/hVH76//pcjMQllrYtU6zi1Xg3AK5DOdxlhgHUYbwo0aTR?=
+ =?us-ascii?Q?PDh3j62K6j2xuvAxhybLgkOugDxsMUFyPtVNmgrHARzGmJPj/oHDA/WgOnnk?=
+ =?us-ascii?Q?zVf3xrLeE01ZEh2PWaDNbF+l98UQ9yy15VDFRORgLBf9PN16PpPyv/U0euhY?=
+ =?us-ascii?Q?yNw/v4Ib/7kskNYFu99wuicN8RdntYBScL2RTNAAo8hesyw9sTpRAcB6pWZA?=
+ =?us-ascii?Q?coaRqPwRZ6kwqmUuOBuZtG+6LwyMPGRHIu9/pfamYfqHkee0QXk6F9G+vsEb?=
+ =?us-ascii?Q?pyevyLqxOI2v+1AyB03N7H5rPH1bIs8mZulUE6uD0enqirl9ARQBGG5zH+CZ?=
+ =?us-ascii?Q?KTMwYvwPlSd2hn3wBYHGv4dofVHfn6pBlEPo0nNuz5sh0DQ2E+ZSPMiZH8vL?=
+ =?us-ascii?Q?YDmwSmrEwWUGFCKpgtHDLo35AV5iUyk1gd9wqbVCDIKHPkmOfiKm0lfWlLT6?=
+ =?us-ascii?Q?3ukMJEE9hv0faguwLfYb8ZpBTtC42PHdS/jc8czhvg2dzMbUov1u5osGxH7/?=
+ =?us-ascii?Q?psqMDJsmO/MJN80uxEgGfKdsOzH7Qj8luAeGRRJPmr2NDtPXxYGxRueOjqzF?=
+ =?us-ascii?Q?nCugxQHqBC/PkDiRqkxZ62fudClBhPU0GuZh28c9wGNRCFdRIf/yUqvKHz9P?=
+ =?us-ascii?Q?3f0gAmaG/J09tWRQgLA0pPMi5TlxZObPhdbpUUp6/GP12FWBy/+63CSxuTdj?=
+ =?us-ascii?Q?UDCEGXjpTt33V5Cn0dC9st0/N0/O/tU6RIA1hU9Ffqj7CQ7gOW+mbZ0MSpQa?=
+ =?us-ascii?Q?JDbpPuy8OmZnG2iC3Nk2BCp5dnBvm5R9ZvXQoA19J3Iyfb98WA4I5hDv6UD6?=
+ =?us-ascii?Q?UPrPrR0MvnrsW4sSxhg8ZXmUarXbxIs8DDXKU/T1ArZ6VBS3u7bA4SvV1R4B?=
+ =?us-ascii?Q?3csF3f6NkhJX0t/140d15IgLKm89w781ekhOrOSDjUx5STmbJtEi1EIwW1f6?=
+ =?us-ascii?Q?TBI7QiQrgmzFqle0ZJSoAO6PmLHoqaWc3iExNSlR2WL7+9B32qgSPgv64+sZ?=
+ =?us-ascii?Q?/UoHKPjm2qvhgoDlILX9YV/UT/TaWrk4N1FZ9J0hmT8LuvUSQ7yV1JRlRHjp?=
+ =?us-ascii?Q?c53aGyZVODlwljoJzsvHIx/efNnRntAysGx50vSNMWrLEWrJHTbYV+9uZj4U?=
+ =?us-ascii?Q?VyNas9PWPUFtcCkl69Y=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e2ffa65-b1f4-452b-b5d7-08dce4b1fca7
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2024 20:20:28.0185
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1ADAp3C/nhXYUSovoR/6F+WG+QOqx+pyePryQZSoiUqbb/kYIP+PpY2HijuwbnK+LVew+qG9FOhMMzsFQvG72w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8581
 
-On Tue, Sep 17, 2024 at 1:19=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
+On Tue, Aug 20, 2024 at 03:00:15PM -0400, Frank Li wrote:
+> Fix below refcheckdocs check error
+>   MAINTAINERS: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
 >
-> On Sun, Sep 15, 2024 at 4:49=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> w=
-rote:
-> >
-> > On 09/09, Andrii Nakryiko wrote:
-> > >
-> > > Currently put_uprobe() might trigger mutex_lock()/mutex_unlock(), whi=
-ch
-> > > makes it unsuitable to be called from more restricted context like so=
-ftirq.
-> > >
-> > > Let's make put_uprobe() agnostic to the context in which it is called=
-,
-> > > and use work queue to defer the mutex-protected clean up steps.
-> >
-> > ...
-> >
-> > > +static void uprobe_free_deferred(struct work_struct *work)
-> > > +{
-> > > +     struct uprobe *uprobe =3D container_of(work, struct uprobe, wor=
-k);
-> > > +
-> > > +     /*
-> > > +      * If application munmap(exec_vma) before uprobe_unregister()
-> > > +      * gets called, we don't get a chance to remove uprobe from
-> > > +      * delayed_uprobe_list from remove_breakpoint(). Do it here.
-> > > +      */
-> > > +     mutex_lock(&delayed_uprobe_lock);
-> > > +     delayed_uprobe_remove(uprobe, NULL);
-> > > +     mutex_unlock(&delayed_uprobe_lock);
-> > > +
-> > > +     kfree(uprobe);
-> > > +}
-> > > +
-> > >  static void uprobe_free_rcu(struct rcu_head *rcu)
-> > >  {
-> > >       struct uprobe *uprobe =3D container_of(rcu, struct uprobe, rcu)=
-;
-> > >
-> > > -     kfree(uprobe);
-> > > +     INIT_WORK(&uprobe->work, uprobe_free_deferred);
-> > > +     schedule_work(&uprobe->work);
-> > >  }
-> >
-> > This is still wrong afaics...
-> >
-> > If put_uprobe() can be called from softirq (after the next patch), then
-> > put_uprobe() and all other users of uprobes_treelock should use
-> > write_lock_bh/read_lock_bh to avoid the deadlock.
+> Add nxp mailist: imx@lists.linux.dev.
 >
-> Ok, I see the problem, that's unfortunate.
->
-> I see three ways to handle that:
->
-> 1) keep put_uprobe() as is, and instead do schedule_work() from the
-> timer thread to postpone put_uprobe(). (but I'm not a big fan of this)
-> 2) move uprobes_treelock part of put_uprobe() into rcu callback, I
-> think it has no bearing on correctness, uprobe_is_active() is there
-> already to handle races between putting uprobe and removing it from
-> uprobes_tree (I prefer this one over #1 )
-> 3) you might like this the most ;) I think I can simplify
-> hprobes_expire() from patch #2 to not need put_uprobe() at all, if I
-> protect uprobe lifetime with non-sleepable
-> rcu_read_lock()/rcu_read_unlock() and perform try_get_uprobe() as the
-> very last step after cmpxchg() succeeded.
->
-> I'm leaning towards #3, but #2 seems fine to me as well.
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
 
-Ok, so just a short update. I don't think #3 works, I do need
-try_get_uprobe() before I know for sure that cmpxchg() succeeds. Which
-means I'd need a compensating put_uprobe() if cmpxchg() fails. So for
-put_uprobe(), I just made it do all the locking in deferred work
-callback (which is #2 above), which I think resolved the issue you
-pointed out with potential deadlock and removes any limitations on
-put_uprobe().
+Any check this patch? just small fixes.
 
-Also, I rewrote the hprobe_consume() and hprobe_expire() in terms of
-an explicit state machine with 4 possible states (LEASED, STABLE,
-GONE, CONSUMED), which I think makes the logic a bit more
-straightforward to follow. Hopefully that will make the change more
-palatable for you. I'm probably going to post patches next week,
-though.
+Frank
 
+>  MAINTAINERS | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> >
-> > To be honest... I simply can't force myself to even try to read 2/3 ;) =
-I'll
-> > try to do this later, but I am sure I will never like it, sorry.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3fbee89eaecf6..d174cc3ae4347 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18765,9 +18765,10 @@ QORIQ DPAA2 FSL-MC BUS DRIVER
+>  M:	Stuart Yoder <stuyoder@gmail.com>
+>  M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
+>  L:	linux-kernel@vger.kernel.org
+> +L:	imx@lists.linux.dev
+>  S:	Maintained
+>  F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
+> -F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+> +F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.yaml
+>  F:	Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
+>  F:	drivers/bus/fsl-mc/
+>  F:	include/uapi/linux/fsl_mc.h
+> --
+> 2.34.1
 >
-> This might sound rude, but the goal here is not to make you like it :)
-> The goal is to improve performance with minimal complexity. And I'm
-> very open to any alternative proposals as to how to make uretprobes
-> RCU-protected to avoid refcounting in the hot path.
->
-> I think #3 proposal above will make it a bit more palatable (but there
-> is still locklessness, cmpxchg, etc, I see no way around that,
-> unfortunately).
->
-> >
-> > Oleg.
-> >
 
