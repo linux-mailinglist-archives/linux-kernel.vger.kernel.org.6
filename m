@@ -1,60 +1,57 @@
-Return-Path: <linux-kernel+bounces-350309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-350307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE3A99033E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:46:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D867990337
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 14:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55294283DF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:46:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 365841F245EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 12:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A961D7984;
-	Fri,  4 Oct 2024 12:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB751D5CD9;
+	Fri,  4 Oct 2024 12:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="g8m/PlFu"
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="tb3R/Xa1"
 Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7531D61AD;
-	Fri,  4 Oct 2024 12:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40B91D6197;
+	Fri,  4 Oct 2024 12:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728045940; cv=none; b=NmrLyqScF/0ymWMRzjwBWUQDrIPtzAOaScCkDnCvqRs6IRgpac1gzAgbxYmn6EQAhbK2kf8qGnJbFeAKvJSH2hQVTZSubyxxi5en86AYAGVwuWrneQEXOJDCymGwIn7deWbIQBbBmBvv1tOsgXzfXUd1MCj7cF/isd9/AMHsDpE=
+	t=1728045938; cv=none; b=s7tAPEK7CFqrfp502CcMi9LIc0OQEJGsO31zz12uYn3IP7Nqh5rjEBoGGqLs1lX82llrqCoE1tdmkMctuBrxMc2hda37MnPgGXqHaGP+4s+tweGu/MC8IQlweRUwzchV0y2wegnLewEhmu8GkZGxKgwg0r9KQYvirQoT6hwfLs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728045940; c=relaxed/simple;
-	bh=uWsZNGe3pqxzZr79023FPOo8NHWjPAJAYWxwLX8dIJE=;
+	s=arc-20240116; t=1728045938; c=relaxed/simple;
+	bh=42HoSz2AfmGoTyZq4d/ndu2ofmWwkQkQvP2LRD4siaE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TuGaPKyRetAEJWyvOeGAB/umk7PneijBT44sJJEyp1b/pNVcHvvuTv/gXuT6W7x6+JVeCzMdwOJhpE9ux5yY6hIX+bpM/9vp7O24lrLj4lQjV8fKz0UXe1s8g6toHAQVOYO0V8WUlQKKASuV+ZBsRKxeECFgUPXoC+0CtBXkmLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=g8m/PlFu; arc=none smtp.client-ip=217.194.8.81
+	 MIME-Version; b=mlkpv85ZgxnzNZpJ9wHFHeR8CdSXND8qAiQNVYGoAESiRCy9AMkDKc7nG2Ywbt/eUalwzK2UbhDSqQewPERSA6rZ2ojn/svg2Gzgxge8xISmDUB//HrONdAcLwNWfqR8z36zrdM4Jd7o/7QBPXPyt+gMB4tGOkysC0izYNa5iCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=tb3R/Xa1; arc=none smtp.client-ip=217.194.8.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 087E520B3E;
+	by mail11.truemail.it (Postfix) with ESMTPA id 83C7120B47;
 	Fri,  4 Oct 2024 14:45:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
 	s=default; t=1728045927;
-	bh=kYBsUjE2mHIzazcKSvxnMOQn0HZCyzCwd7IP56x1zOo=; h=From:To:Subject;
-	b=g8m/PlFuZIimr/+DitGPyh4kPiMpJnYZVG8WuI10t0C41SNx+n+NTLI84QZ9480YH
-	 q67ScRwBzzDDdYcn+zfBh9iIgUHDq+ptc3z+IT/tu9oIO1k6ULk8A+VrlWo8UezAxS
-	 aZZzKvDWgsLeP1kRpHQuUmJH/9z6t/FOU0YPjqOUSmxLgz0jrIKNLdG/tScSLa88ns
-	 2eNTEEoVi4PDqAUmdRBVa0EzR+KBPy8kvx9akhkE+RiM5SEO1BHOr9OueHTNkYg6A9
-	 DOH0mtQ+wGdKhcLDINFKXJIGZHrYHBDQRWRrMcAxXEUigBF4vknfkV47hwwfdCgYDh
-	 t0vug5Hyfyvuw==
+	bh=6gGuuLrXc63nCI0Xf49TprKeyCrdpkYefLbM+viavLs=; h=From:To:Subject;
+	b=tb3R/Xa1xFLH8U6Ly91Dj2hrGuuz0azFSVMQHqosx3cFandR5FUOsb3aHnB/Gq015
+	 dz0iY4D2ss3d8TCzHNvLONcm9N/7avZ6xYHdVNTr+ExwQVgtN9DlDncPcsj7xg9PK+
+	 b7tNi2La/yazFsjM7xCgH0BcV9GqEYiIibccnJoIrMkOXHuFVmRT5j2iJqOvFSb9kc
+	 emgE8xeG2uYq6hbpJgpJxaesX3zc0GgmLhBK6IElH1lXcE1l0EgRtVvKwAp2fonLCU
+	 sM+WvoIsQ/6kqGMv9wapB9WNhFff0feQ9ArkgOVKpJMtlokMyCbeY+CUFxfJf1RvjB
+	 kDwpqC2IMVW0w==
 From: Francesco Dolcini <francesco@dolcini.it>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
+To: Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Parth Pancholi <parth.pancholi@toradex.com>,
 	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] dt-bindings: usb: add TUSB73x0 PCIe
-Date: Fri,  4 Oct 2024 14:45:20 +0200
-Message-Id: <20241004124521.53442-2-francesco@dolcini.it>
+	linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: [PATCH v1 2/2] USB: xhci: add support for PWRON polarity invert
+Date: Fri,  4 Oct 2024 14:45:21 +0200
+Message-Id: <20241004124521.53442-3-francesco@dolcini.it>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241004124521.53442-1-francesco@dolcini.it>
 References: <20241004124521.53442-1-francesco@dolcini.it>
@@ -68,88 +65,35 @@ Content-Transfer-Encoding: 8bit
 
 From: Parth Pancholi <parth.pancholi@toradex.com>
 
-Add device tree bindings for TI's TUSB73x0 PCIe-to-USB 3.0 xHCI
-host controller. The controller supports software configuration
-through PCIe registers, such as controlling the PWRONx polarity
-via the USB control register (E0h).
+Some PCIe-to-USB controllers such as TI's TUSB73x0 3.0 xHCI host
+the controller supports controlling the PWRONx polarity via the USB
+control register (E0h). Add support for device tree property
+ti,tusb7320-pwron-polarity-invert which indicates PWRONx to be
+active high and configure the E0h register accordingly.
+This enables the software control for the TUSB73x0's PWRONx
+outputs with an inverted polarity which could be used as USB EN
+signals for the other hubs or devices.
 
-Similar generic PCIe-based bindings can be found as qcom,ath11k-pci.yaml
-as an example.
-
-Datasheet: https://www.ti.com/lit/ds/symlink/tusb7320.pdf
 Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
 Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 ---
- .../bindings/usb/ti,tusb73x0-pci.yaml         | 60 +++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
+ drivers/usb/host/xhci-pci.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml b/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
-new file mode 100644
-index 000000000000..bcb619b08ad3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
-@@ -0,0 +1,60 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/ti,tusb73x0-pci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index 91dccd25a551..440fbaeeaa3d 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -641,6 +641,9 @@ int xhci_pci_common_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 
+ 	dma_set_max_seg_size(&dev->dev, UINT_MAX);
+ 
++	if (device_property_read_bool(&dev->dev, "ti,tusb7320-pwron-polarity-invert"))
++		pci_clear_and_set_config_dword(dev, 0xE0, 0, 1 << 22);
 +
-+title: TUSB73x0 USB 3.0 xHCI Host Controller (PCIe)
-+
-+maintainers:
-+  - Francesco Dolcini <francesco.dolcini@toradex.com>
-+
-+description:
-+  TUSB73x0 USB 3.0 xHCI Host Controller via PCIe x1 Gen2 interface.
-+  The TUSB7320 supports up to two downstream ports, the TUSB7340 supports up
-+  to four downstream ports.
-+
-+properties:
-+  compatible:
-+    const: pci104C,8241
-+
-+  reg:
-+    maxItems: 1
-+
-+  ti,tusb7320-pwron-polarity-invert:
-+    type: boolean
-+    description:
-+      Configure the polarity of the PWRONx# signals. When this is false, the PWRONx#
-+      pins are active low and their internal pull-down resistors are enabled.
-+      When this is true, the PWRONx# pins are active high and their internal pull-down
-+      resistors are disabled.
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pcie {
-+        #address-cells = <3>;
-+        #size-cells = <2>;
-+
-+        pcie@0 {
-+            device_type = "pci";
-+            reg = <0x0 0x0 0x0 0x0 0x0>;
-+            bus-range = <0x01 0xff>;
-+
-+            #address-cells = <3>;
-+            #size-cells = <2>;
-+            ranges;
-+
-+            usb@0 {
-+                  compatible = "pci104C,8241";
-+                  reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+                  ti,tusb7320-pwron-polarity-invert;
-+            };
-+        };
-+    };
+ 	return 0;
+ 
+ put_usb3_hcd:
 -- 
 2.39.5
 
