@@ -1,136 +1,153 @@
-Return-Path: <linux-kernel+bounces-349983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D5398FE34
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:57:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC7BD98FE3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 09:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8281F238E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:57:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BACAA1C231BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 07:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA3113C9A2;
-	Fri,  4 Oct 2024 07:56:18 +0000 (UTC)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09AA13E03E;
+	Fri,  4 Oct 2024 07:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="flcGdCzW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1377C2209F;
-	Fri,  4 Oct 2024 07:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30602209F;
+	Fri,  4 Oct 2024 07:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728028577; cv=none; b=G2YSFGL2GlYvyzincJFnbA2VoM+KIR70Fhs1B4SF9q2RaVi37A2Bt/1Ha711CxdvefHGciUezG5jRXksR9oDjnn99XtEYiE207vbUslaMKqecKYhrJqODrPhIRvEYxfu1O3AChhuXBgF88UZWycVbk+s1LUoRJ6YJ5n7NOfTQlw=
+	t=1728028625; cv=none; b=PN/CnS3Q4HWYn910DRwTas84c87npzkluNdAKrOXinQKWOHyPrwCKeJ7HaFUvP+s5PrDPV06N7S6GGigKDUNDFG3BnRWUt5NgQH27krWlGZtNnf0hJ5Nftx1QRk3RC3dwnnj0wZ0DUBWMGvfMD392jPUAIpIvz5oc21CS6eEtzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728028577; c=relaxed/simple;
-	bh=TXa2IBei25ITtocRtX3mHCjtTw1WfsAY3jFNmx8sA+I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l95yP1PN1bRN9U04Q2/mqtR/8oJGFmF0R67OUJZM/OiefIVLMDfe7o5UmvnM8e1oReU1apxwf+R97eVhf6kOjGudKHm1sm/hU/eJiR0M2ogWE5y/WFchWI4uaDwy/aR7zgVvg5EZ1AWYBdBHBxWNrU76wmqlJeJI60Nsi4YHELo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e22f10cc11so14004997b3.1;
-        Fri, 04 Oct 2024 00:56:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728028574; x=1728633374;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vw3UDrgN0eDorp0S+FlFbzBDQPM+Tat1+5k3CwngP4Y=;
-        b=kPJxFSxhvHt1ihQnUVO16UvEX3usG/Oj9Tsb5s4r7tSha+LMhTVVdYqDYMg4D6YwLs
-         ZaSR7qFZHY7ilIII0hQfU7BJe+6mdCbQ7qdRgBZMKKCYyZdIgRc8s+YnFZILVmDzin+V
-         vtK2V6C4o/7f9Wy+sZZWN4SGOFqLk870ZOvTPsT4NKf4x8v/6yhdFcBpKMBsnYuMzdZY
-         Abriouu2v1+9nzJaV5q2Ka3KDJxrIWvXI4uQni9HMfWd57UvGIJw+hy98wrw9ghLt61O
-         Kengm0h/Vo05JKXQMWoFnZi/T0/taej4B/qSFm5Kc46DcGr/184o5A3tRiKNIo1r7ZFy
-         a9Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHuENUQaMIMoEU8W11cJ3hNaE2gyusjoq3bOsVwGfiVMsA5OrhO0C52RQoy53+7a8P14Ag45G0XNpdhRp0ACd9/Xw=@vger.kernel.org, AJvYcCUdpe7Cn7vbFtjmVThwBKL6cETvhyfucm0WQ+KcdTRmSPjczbvpDLRuuzHX41mBU6prYaZ+YUGGcKfgUQbI@vger.kernel.org, AJvYcCUnEwlmnCUVSyP5ThlxepKFqBSEt3Vr1HxGn9zUhAhzA/W6C44MrPnwXdjElNsvqZLdwo37ln8r6Xqo@vger.kernel.org, AJvYcCVC/hL8S4/3GtOprAxScVWssaOp75QQgSse9NaH4V/PuT9+pR7b6og0RpRKo15WlXQa8WeBQXhZzTsvJw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIUHeD6HZuuPglCLd5HgYrvvj1Z+1EqFLbQbl8caq5EaMmdqT5
-	1Dgw+AiCI+HPShiXGb8UQOpfM2y2Ja0psYGoEVdWfa9jGuovdce/1UOTP94HNBo=
-X-Google-Smtp-Source: AGHT+IGWFvudqknuySB+gKmyEmWX5j0mxyv4tKvbWeCtZjljDeiiEGN51IcZV2/hv72R3iFdF6wVnQ==
-X-Received: by 2002:a05:690c:dcc:b0:6e2:636:d9ee with SMTP id 00721157ae682-6e2c724118emr19478157b3.9.1728028574359;
-        Fri, 04 Oct 2024 00:56:14 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2bd1cf38asm5348107b3.140.2024.10.04.00.56.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 00:56:13 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e1f48e7c18so14513347b3.3;
-        Fri, 04 Oct 2024 00:56:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVZXjuvHEVVrOXlnvJJXO7FKjI7WrCJdGBA17jJF//yiE/jHOuBPbcrbNE6r737e7RJq2xtNSQ2zaYUJV58@vger.kernel.org, AJvYcCW90UaVdDfPPGqTneoN+uLHubCdI6XwrGHiQmHBJX0gxpRE/GZ7cL9FkUBDmCQjYJeGu9CeYZ9XIj1Rwg==@vger.kernel.org, AJvYcCWdjiXXtgHNP0fMRVox6As5elQiJ1d3c5KzGNcNTV1XtkaHFUZIk/fuD1AB4ZCSrfwclcqEEsCpUMN0@vger.kernel.org, AJvYcCWmyoa9rqEAVr7pRBi396Cnwf3L0cj45HxsaCube4fiZ8ylPuHSWmvnMjURyRiUTzN0Px71cwi/DW7fJ2sf9qvu5wk=@vger.kernel.org
-X-Received: by 2002:a05:690c:60c1:b0:6e2:b537:3085 with SMTP id
- 00721157ae682-6e2c72f6d27mr18822777b3.34.1728028572524; Fri, 04 Oct 2024
- 00:56:12 -0700 (PDT)
+	s=arc-20240116; t=1728028625; c=relaxed/simple;
+	bh=vKItct9zqyrlNmjqjGVmodbGPqw0IvHUm/p+teN9uOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KFnWhTCHDj+Fwia9Zw9J82FShoxPUOtvsfrtfieQbzJ9Dx/c0H3Hj8/wPivZRm514C1G124l9GeCq11sQ863mCCI+z2mxPkSjwhTHuEywYjWEhrLyhgFeKQmef+vNhhaFpc3qwM0R1+MBAJ56X3YVQxxQTVRwSdnFMwYL6H55yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=flcGdCzW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493I107p028279;
+	Fri, 4 Oct 2024 07:56:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JQ0IyKm1+hfb6F6atsLeB6XKRGBHzjMU8+yIDdOLrKM=; b=flcGdCzWHl6OQ54f
+	sEO5OY7ZPHJCgta3ZPUEBdMKdAn6PCfyXbQhjEmEj0xwQ8sB2n5pb04RFmWBnCsw
+	mVDHpoJm9q6wNDntVllwMd9KBTyBMwil1A6AKEMWpfkHv+zsyoRfJzUR2Jq76X3N
+	EQ72WOYxkbz8w03OPf1xTvM37WiOlk1lta6j4Kd5440y0G+eaawTfdD7JdaNjUVA
+	ieq+yceO/aI7jwWriMWecPLbgg1c9pP/dMaihYk3bw2wANe2ymGVmPKoq6KmLGTV
+	vU5ZMdRZ7kbMmENuXYADyEiIeuOs2bLTjLh4JTk9I5rxc1D0kh/+g9Y8Mc3DzqmV
+	9yEVkw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205jhdbt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 07:56:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4947ubbD012090
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 07:56:37 GMT
+Received: from [10.50.18.17] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
+ 00:56:30 -0700
+Message-ID: <134665ba-8516-4bca-9a56-9a5bbfa71705@quicinc.com>
+Date: Fri, 4 Oct 2024 13:26:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918120909.284930-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240918120909.284930-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240918120909.284930-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Oct 2024 09:56:01 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW6OqLEWSyRZg_EOWoFJgEBVSLfuDJNxs+c_ucZxXwebQ@mail.gmail.com>
-Message-ID: <CAMuHMdW6OqLEWSyRZg_EOWoFJgEBVSLfuDJNxs+c_ucZxXwebQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: renesas: rzg2l: Add support for configuring
- open-drain outputs
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 7/7] arm64: defconfig: Build NSS Clock Controller
+ driver for IPQ9574
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Devi Priya
+	<quic_devipriy@quicinc.com>
+CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konrad.dybcio@linaro.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <p.zabel@pengutronix.de>,
+        <richardcochran@gmail.com>, <geert+renesas@glider.be>,
+        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
+        <m.szyprowski@samsung.com>, <nfraprado@collabora.com>,
+        <u-kumar1@ti.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <netdev@vger.kernel.org>
+References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
+ <20240626143302.810632-8-quic_devipriy@quicinc.com>
+ <rlqrgopsormclb7indayxgv54cnb3ukitfoed62rep3r6dn6qh@cllnbscbcidx>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <rlqrgopsormclb7indayxgv54cnb3ukitfoed62rep3r6dn6qh@cllnbscbcidx>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: XRmzgI5jmiao7LS4RLpEr8vrY7ybQ_n8
+X-Proofpoint-ORIG-GUID: XRmzgI5jmiao7LS4RLpEr8vrY7ybQ_n8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=988
+ priorityscore=1501 malwarescore=0 clxscore=1015 phishscore=0 bulkscore=0
+ impostorscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410040056
 
-Hi Prabhakar,
 
-On Wed, Sep 18, 2024 at 2:09=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add support for configuring the multiplexed pins as open-drain outputs.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks for your patch!
+On 6/26/2024 11:44 PM, Dmitry Baryshkov wrote:
+> On Wed, Jun 26, 2024 at 08:03:02PM GMT, Devi Priya wrote:
+>> NSSCC driver is needed to enable the ethernet interfaces and not
+>> necessary for the bootup of the SoC, hence build it as a module.
+> 
+> It is used on this-and-that device.
+> 
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+Hi Dmitry,
 
-> @@ -1466,6 +1477,13 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctr=
-l_dev *pctldev,
->                         rzg2l_rmw_pin_config(pctrl, IOLH(off), bit, IOLH_=
-MASK, index);
->                         break;
->
-> +               case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-> +                       if (!(cfg & PIN_CFG_NOD))
-> +                               return -EINVAL;
-> +
-> +                       rzg2l_rmw_pin_config(pctrl, NOD(off), bit, NOD_MA=
-SK, 1);
-> +                       break;
-> +
+Sorry for the delayed response.
 
-I think you also need a case for PIN_CONFIG_DRIVE_PUSH_PULL,
-so you can disable the NOD bit again.
+NSSCC driver is needed to enable the ethernet interfaces present
+in RDP433 based on IPQ9574. Since this is not necessary for bootup
+enabling it as a module.
 
->                 case RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE:
->                         if (!(cfg & PIN_CFG_IOLH_RZV2H))
->                                 return -EINVAL;
+Thanks & Regards,
+Manikanta.
 
-Gr{oetje,eeting}s,
+>>
+>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>> ---
+>>  Changes in V5:
+>> 	- No change
+>>
+>>  arch/arm64/configs/defconfig | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>> index dfaec2d4052c..40a5ea212518 100644
+>> --- a/arch/arm64/configs/defconfig
+>> +++ b/arch/arm64/configs/defconfig
+>> @@ -1300,6 +1300,7 @@ CONFIG_IPQ_GCC_5332=y
+>>  CONFIG_IPQ_GCC_6018=y
+>>  CONFIG_IPQ_GCC_8074=y
+>>  CONFIG_IPQ_GCC_9574=y
+>> +CONFIG_IPQ_NSSCC_9574=m
+>>  CONFIG_MSM_GCC_8916=y
+>>  CONFIG_MSM_MMCC_8994=m
+>>  CONFIG_MSM_GCC_8994=y
+>> -- 
+>> 2.34.1
+>>
+> 
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
