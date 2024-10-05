@@ -1,127 +1,104 @@
-Return-Path: <linux-kernel+bounces-351874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62C1991720
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:03:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7AE991728
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA68A28349E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:03:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C25C1C214C5
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A06115687C;
-	Sat,  5 Oct 2024 14:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5678F154BEC;
+	Sat,  5 Oct 2024 14:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuIsvClV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0yVwwnj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49AA155C96;
-	Sat,  5 Oct 2024 14:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FB417BD3;
+	Sat,  5 Oct 2024 14:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728136932; cv=none; b=T32bsNW5V0zeZS4FJV/grAzBDhx9tVzbfqcqWbcQQIvlMr5JPSvZ2Ud9WMi0C8hhAIqFp1f1dYu93BAvHsILvapSgD5WcuMAXWwRsL2EXTfySyF+ATHRPI/PAk+XTp6Dbj1CW/VrgD0ZNvRdQhUbPZ7GyfO4aVR28tMLFT39eCs=
+	t=1728137029; cv=none; b=FuQQeaBr9BnEyC5pscvFB/rCI7p653iCQ1tYfji7OlcYfscSm2shg+fDQc8KVrfNbxpwnqqZOQC45cBW4MN/3lrB+i+EzgzyVqFvdhewzupOnnqaRfboO3zYlnO5ezVv5lX/CumLSLsk1gGSdX4jqphzD+QR1Jo6QQj0VSiXZBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728136932; c=relaxed/simple;
-	bh=5VikhLow5tX+OhRXx9cV5qsiUujBLh2clzakxZt/A0o=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UaoJORk3V4fdK1FbUjVpb8GWmTwY5v0ufwZqRbIcp5r2iT/YL1ILAirRDTzLiOD1dMs9dXlJ+RNmF5z/s+fOpVy72GM18A/nLrCVLlDgvT/vtoyb7hDIYsElUH0XVnrlQwYchiRr3ROYvlj2g5/Csw+sEK+T5OU4j7/H7/HVP5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuIsvClV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC43C4CEC2;
-	Sat,  5 Oct 2024 14:02:12 +0000 (UTC)
+	s=arc-20240116; t=1728137029; c=relaxed/simple;
+	bh=bNDQjtf3SaC9U3DetMKfO465iHp2XJiQrQYud2beBps=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JVEYdeliqc+BAhuC+9WUAv3QUimGYQwJrnCFlEvr0xmO+CAT1UBBlsZw4H6cD+qLZhIuX6HGNWFX/oUNbLlU3m9BLhsdCYq5kiwYVucee5mKy2vW4I9r8GFot7OwPLbq0C/+TAQaUWyC0AjzNuJ/RHckuAA/BVKUJTAirxTiocc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0yVwwnj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13714C4CEC2;
+	Sat,  5 Oct 2024 14:03:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728136932;
-	bh=5VikhLow5tX+OhRXx9cV5qsiUujBLh2clzakxZt/A0o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iuIsvClVQzM4cST6dTjTiJRfb8Hl1g4+F5BFB/67Uy2g1BlP3Xmu6PagQzIk29AGx
-	 d7/gK8UFENqBPF3/QeP5XgxKpLpZsOBrU8qpJtl98J4E+KiLPmw+Ufg9gWmezjgMVH
-	 sladHwwu/9Gey4yfEq9c1ZgSBX7BVz8A1P5kDwjVKe/QEAxb/kUNRXnwQ65ocbEm7J
-	 BS8eeZ0G2zAaXfY1MAEF8Lmglm+4GGbaXZbzCqBlqPVr/vtH9tBockTa1yts2YOn45
-	 0v/IKFLXug7Xuv8B4k5d0Rjfvj3rnfkqzyf4GzoZd+Iu5JRwkp/vwhiOWIf5V8YLj/
-	 TG6oL2wZASxMA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sx5MI-000c40-2c;
-	Sat, 05 Oct 2024 15:02:10 +0100
-Date: Sat, 05 Oct 2024 15:02:09 +0100
-Message-ID: <87ed4uveam.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
+	s=k20201202; t=1728137029;
+	bh=bNDQjtf3SaC9U3DetMKfO465iHp2XJiQrQYud2beBps=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=L0yVwwnjfXiiksRGhbUI3U4fhBk4yFJRhBx38i3eLcb6UbcXOOzrIJHx9zT6+rOTc
+	 wKPK4TlHm7hHSgLaqOcdzIIjNkU1uBWtCDSZmDSIqWGYpZ/trbdgv4H6G6KM7ozKVn
+	 5QOWHxi1vtzaUcgtS2i3MvpGiy6M2Bm4dJsBvvquJ2IVse3Vc10sscrAhhgl0c3q3h
+	 p03EPyMiJ+DJ11tXhUeyDmjRShmgjfCLgw+/H1mmZb+1t9pecuGyX/SHlDNCEV4XRU
+	 MKoGBanIrfETfhMRJgkyaMZxLNdhpmM3YO6Zq9DngkXa2y/PvOp8UFA+MWxXawyIV5
+	 Uc/dqX9HdWlpw==
+Received: by pali.im (Postfix)
+	id 7E87C648; Sat,  5 Oct 2024 16:03:42 +0200 (CEST)
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 3/5] KVM: arm64: Manage GCS access and registers for guests
-In-Reply-To: <ZwFDmaeIgPKfmJnj@finisterre.sirena.org.uk>
-References: <20241005-arm64-gcs-v14-0-59060cd6092b@kernel.org>
-	<20241005-arm64-gcs-v14-3-59060cd6092b@kernel.org>
-	<87iku6vl4z.wl-maz@kernel.org>
-	<ZwE6V9cqf7jD1rTc@finisterre.sirena.org.uk>
-	<87frpavgam.wl-maz@kernel.org>
-	<ZwFDmaeIgPKfmJnj@finisterre.sirena.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Subject: [PATCH v2 0/6] cifs: Improve support for native SMB symlinks
+Date: Sat,  5 Oct 2024 16:02:54 +0200
+Message-Id: <20241005140300.19416-1-pali@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20240929185053.10554-1-pali@kernel.org>
+References: <20240929185053.10554-1-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, 05 Oct 2024 14:48:09 +0100,
-Mark Brown <broonie@kernel.org> wrote:
->=20
-> [1  <text/plain; us-ascii (7bit)>]
-> On Sat, Oct 05, 2024 at 02:18:57PM +0100, Marc Zyngier wrote:
-> > Mark Brown <broonie@kernel.org> wrote:
-> > > On Sat, Oct 05, 2024 at 12:34:20PM +0100, Marc Zyngier wrote:
->=20
-> > > > Where is the handling of traps resulting of HFGITR_EL2.nGCSSTR_EL1?
->=20
-> > > These will trap with an EC of 0x2d which isn't known so I was expecti=
-ng
-> > > this to get handled in the same way as for example a return of false
-> > > from kvm_hyp_handle_fpsimd() for SVE when unsupported, or for the
-> > > simiarly unknown SME EC, currently.  I gather from your comment that
-> > > you're instead expecting to see an explicit exit handler for this EC
-> > > that just injects the UNDEF directly?
->=20
-> > Not just inject an UNDEF directly, but also track whether this needs
-> > to be forwarded when the guest's HFGITR_EL2.nGCSSTR_EL1 is 0 while not
-> > being not RES0. Basically following what the pseudocode describes.
->=20
-> Ah, I see.  I'd been under the impression that the generic machinery was
-> supposed to handle this already using the descriptions in
-> emulate-nested.c and we only needed handlers for more specific actions.
+This is second version of patch series which improves support for native
+SMB symlinks.
 
-=46rom that very file:
+Changes since v1:
+- Patch which renames function was dropped
+- Patch "Improve creating native symlinks pointing to directory" address
+  issues pointed by Paulo Alcantara
+- Patch "Fix parsing native symlinks directory/file type" was changed to
+  apply fixups only for non-POSIX servers (Windows SMB/NT)
+- Patch "Validate content of native symlink" was improved to check also
+  UTF-16 buffer length of symlink
 
-/*
- * Map encoding to trap bits for exception reported with EC=3D0x18.
- [...]
- */
+Pali Rohár (6):
+  cifs: Improve creating native symlinks pointing to directory
+  cifs: Fix creating native symlinks pointing to current or parent
+    directory
+  cifs: Fix parsing native symlinks relative to the export
+  cifs: Fix parsing native symlinks directory/file type
+  cifs: Validate content of native symlink
+  cifs: Fix creating and resolving absolute NT-style symlinks
 
-Everything else needs special handling.
+ fs/smb/client/cifs_unicode.c |  17 +-
+ fs/smb/client/cifsglob.h     |   1 +
+ fs/smb/client/cifsproto.h    |   1 +
+ fs/smb/client/fs_context.c   |  22 ++
+ fs/smb/client/fs_context.h   |   2 +
+ fs/smb/client/inode.c        |   6 +
+ fs/smb/client/reparse.c      | 538 ++++++++++++++++++++++++++++++++---
+ fs/smb/client/reparse.h      |   4 +-
+ fs/smb/client/smb1ops.c      |   3 +-
+ fs/smb/client/smb2file.c     |  76 ++++-
+ fs/smb/client/smb2inode.c    |  13 +-
+ fs/smb/client/smb2proto.h    |  11 +-
+ 12 files changed, 642 insertions(+), 52 deletions(-)
 
-	M.
+-- 
+2.20.1
 
---=20
-Without deviation from the norm, progress is not possible.
 
