@@ -1,173 +1,127 @@
-Return-Path: <linux-kernel+bounces-351873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A6A99171D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:02:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62C1991720
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A328D1C21422
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:02:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA68A28349E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A9F155741;
-	Sat,  5 Oct 2024 14:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A06115687C;
+	Sat,  5 Oct 2024 14:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LB1erZTJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuIsvClV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9361547FF;
-	Sat,  5 Oct 2024 14:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49AA155C96;
+	Sat,  5 Oct 2024 14:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728136931; cv=none; b=gcMETjxrTTfv2PkgSDg8jTI/b6jR9JRj8krzi/Sq8TVTZ8I67QV+0RykcRDKIbV5g+ZxAWlIEhNik/KPFVgsTFKr17/ctSRDjsyd37LLSrI16Q7fR0Cjk9CRbMT9HO9HNrYsbQFnsnWtY/BnhGmkVQgI26K5s9xEYVShayzxuXY=
+	t=1728136932; cv=none; b=T32bsNW5V0zeZS4FJV/grAzBDhx9tVzbfqcqWbcQQIvlMr5JPSvZ2Ud9WMi0C8hhAIqFp1f1dYu93BAvHsILvapSgD5WcuMAXWwRsL2EXTfySyF+ATHRPI/PAk+XTp6Dbj1CW/VrgD0ZNvRdQhUbPZ7GyfO4aVR28tMLFT39eCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728136931; c=relaxed/simple;
-	bh=lk+ISCNCmH1iF4/xPxjP28h0dTFhg/544zB2DcJTjBo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TkPv4/eUcyYYXf+Yt6sbpRM4vD7egPANQPczxLRlnyUTGQ5OWzkgAVUFmDwToKCkNOvy1Kfo9x589TaB/FZuB4BLSCnwW8wFRGrpyK6w++JwhjJjXSc5W0wnB8Qi3mwpAhC+1E8H/vS/tjfETUmYdO5YSKXMlQ4HwEkjEU/1Fzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LB1erZTJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 495DM1U3019670;
-	Sat, 5 Oct 2024 14:02:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AQGftwMcGvOmlPl/CIUlRZK1HjYdGHwKmgQbjwDqh6E=; b=LB1erZTJpXb7b7Gy
-	jjiVDGKUa/4waJ3oJU2xuRrny9dj3bPf24OQYKWP6TzggEaDTRUxotz4tgoKa7/5
-	+ZRvT/uSTLX1YZmxKd2a0VXOPe7ukXM4INVU+P/WYq+260GJ1T50ju7AzcI90GpQ
-	ah/jR+5e6R+JG/R3FPUmpb90hlG/7aTZw46jmI/CAYqPIrfa4+63UpOAPcBTrXhZ
-	FjR332ZrD/Dzh/QbBxsNoG3QMAqj4to9k+gPw6p0f6uA4PHs4f+34H87KY/AKUmd
-	KkF3dESCE0xndSZH6v5M55LYKS9TisBftK9zrEDVX2up36lfHfvucbRJGqUMnhJZ
-	Uy7NFQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xsngn6h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 05 Oct 2024 14:02:05 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 495E24Sp027058
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 5 Oct 2024 14:02:04 GMT
-Received: from hu-kuldsing-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sat, 5 Oct 2024 07:02:02 -0700
-From: Kuldeep Singh <quic_kuldsing@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] firmware: qcom: qcom_tzmem: Implement sanity checks
-Date: Sat, 5 Oct 2024 19:31:50 +0530
-Message-ID: <20241005140150.4109700-3-quic_kuldsing@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
-References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
+	s=arc-20240116; t=1728136932; c=relaxed/simple;
+	bh=5VikhLow5tX+OhRXx9cV5qsiUujBLh2clzakxZt/A0o=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UaoJORk3V4fdK1FbUjVpb8GWmTwY5v0ufwZqRbIcp5r2iT/YL1ILAirRDTzLiOD1dMs9dXlJ+RNmF5z/s+fOpVy72GM18A/nLrCVLlDgvT/vtoyb7hDIYsElUH0XVnrlQwYchiRr3ROYvlj2g5/Csw+sEK+T5OU4j7/H7/HVP5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuIsvClV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC43C4CEC2;
+	Sat,  5 Oct 2024 14:02:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728136932;
+	bh=5VikhLow5tX+OhRXx9cV5qsiUujBLh2clzakxZt/A0o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iuIsvClVQzM4cST6dTjTiJRfb8Hl1g4+F5BFB/67Uy2g1BlP3Xmu6PagQzIk29AGx
+	 d7/gK8UFENqBPF3/QeP5XgxKpLpZsOBrU8qpJtl98J4E+KiLPmw+Ufg9gWmezjgMVH
+	 sladHwwu/9Gey4yfEq9c1ZgSBX7BVz8A1P5kDwjVKe/QEAxb/kUNRXnwQ65ocbEm7J
+	 BS8eeZ0G2zAaXfY1MAEF8Lmglm+4GGbaXZbzCqBlqPVr/vtH9tBockTa1yts2YOn45
+	 0v/IKFLXug7Xuv8B4k5d0Rjfvj3rnfkqzyf4GzoZd+Iu5JRwkp/vwhiOWIf5V8YLj/
+	 TG6oL2wZASxMA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sx5MI-000c40-2c;
+	Sat, 05 Oct 2024 15:02:10 +0100
+Date: Sat, 05 Oct 2024 15:02:09 +0100
+Message-ID: <87ed4uveam.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 3/5] KVM: arm64: Manage GCS access and registers for guests
+In-Reply-To: <ZwFDmaeIgPKfmJnj@finisterre.sirena.org.uk>
+References: <20241005-arm64-gcs-v14-0-59060cd6092b@kernel.org>
+	<20241005-arm64-gcs-v14-3-59060cd6092b@kernel.org>
+	<87iku6vl4z.wl-maz@kernel.org>
+	<ZwE6V9cqf7jD1rTc@finisterre.sirena.org.uk>
+	<87frpavgam.wl-maz@kernel.org>
+	<ZwFDmaeIgPKfmJnj@finisterre.sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vog-XZC7Nudv1MND4PLtZr5F-Pg2ocLx
-X-Proofpoint-ORIG-GUID: vog-XZC7Nudv1MND4PLtZr5F-Pg2ocLx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- impostorscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410050103
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The qcom_tzmem driver currently has multiple exposed APIs that lack
-validations on input parameters. This oversight can lead to unexpected
-crashes due to null pointer dereference when incorrect inputs are
-provided.
+On Sat, 05 Oct 2024 14:48:09 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+>=20
+> [1  <text/plain; us-ascii (7bit)>]
+> On Sat, Oct 05, 2024 at 02:18:57PM +0100, Marc Zyngier wrote:
+> > Mark Brown <broonie@kernel.org> wrote:
+> > > On Sat, Oct 05, 2024 at 12:34:20PM +0100, Marc Zyngier wrote:
+>=20
+> > > > Where is the handling of traps resulting of HFGITR_EL2.nGCSSTR_EL1?
+>=20
+> > > These will trap with an EC of 0x2d which isn't known so I was expecti=
+ng
+> > > this to get handled in the same way as for example a return of false
+> > > from kvm_hyp_handle_fpsimd() for SVE when unsupported, or for the
+> > > simiarly unknown SME EC, currently.  I gather from your comment that
+> > > you're instead expecting to see an explicit exit handler for this EC
+> > > that just injects the UNDEF directly?
+>=20
+> > Not just inject an UNDEF directly, but also track whether this needs
+> > to be forwarded when the guest's HFGITR_EL2.nGCSSTR_EL1 is 0 while not
+> > being not RES0. Basically following what the pseudocode describes.
+>=20
+> Ah, I see.  I'd been under the impression that the generic machinery was
+> supposed to handle this already using the descriptions in
+> emulate-nested.c and we only needed handlers for more specific actions.
 
-To address this issue, add required sanity for all input parameters in
-the exposed APIs.
+=46rom that very file:
 
-Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
----
- drivers/firmware/qcom/qcom_tzmem.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+/*
+ * Map encoding to trap bits for exception reported with EC=3D0x18.
+ [...]
+ */
 
-diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
-index 92b365178235..2f2e1f2fa9fc 100644
---- a/drivers/firmware/qcom/qcom_tzmem.c
-+++ b/drivers/firmware/qcom/qcom_tzmem.c
-@@ -203,6 +203,9 @@ qcom_tzmem_pool_new(const struct qcom_tzmem_pool_config *config)
- 
- 	might_sleep();
- 
-+	if (!config || !config->policy)
-+		return ERR_PTR(-EINVAL);
-+
- 	switch (config->policy) {
- 	case QCOM_TZMEM_POLICY_STATIC:
- 		if (!config->initial_size)
-@@ -316,6 +319,9 @@ devm_qcom_tzmem_pool_new(struct device *dev,
- 	struct qcom_tzmem_pool *pool;
- 	int ret;
- 
-+	if (!dev || !config)
-+		return ERR_PTR(-EINVAL);
-+
- 	pool = qcom_tzmem_pool_new(config);
- 	if (IS_ERR(pool))
- 		return pool;
-@@ -366,7 +372,7 @@ void *qcom_tzmem_alloc(struct qcom_tzmem_pool *pool, size_t size, gfp_t gfp)
- 	unsigned long vaddr;
- 	int ret;
- 
--	if (!size)
-+	if (!pool || !size)
- 		return NULL;
- 
- 	size = PAGE_ALIGN(size);
-@@ -412,6 +418,9 @@ void qcom_tzmem_free(void *vaddr)
- {
- 	struct qcom_tzmem_chunk *chunk;
- 
-+	if (!vaddr)
-+		return;
-+
- 	scoped_guard(spinlock_irqsave, &qcom_tzmem_chunks_lock)
- 		chunk = radix_tree_delete_item(&qcom_tzmem_chunks,
- 					       (unsigned long)vaddr, NULL);
-@@ -446,6 +455,9 @@ phys_addr_t qcom_tzmem_to_phys(void *vaddr)
- 	void __rcu **slot;
- 	phys_addr_t ret;
- 
-+	if (!vaddr)
-+		return 0;
-+
- 	guard(spinlock_irqsave)(&qcom_tzmem_chunks_lock);
- 
- 	radix_tree_for_each_slot(slot, &qcom_tzmem_chunks, &iter, 0) {
-@@ -466,6 +478,9 @@ EXPORT_SYMBOL_GPL(qcom_tzmem_to_phys);
- 
- int qcom_tzmem_enable(struct device *dev)
- {
-+	if (!dev)
-+		return -EINVAL;
-+
- 	if (qcom_tzmem_dev)
- 		return -EBUSY;
- 
--- 
-2.34.1
+Everything else needs special handling.
 
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
