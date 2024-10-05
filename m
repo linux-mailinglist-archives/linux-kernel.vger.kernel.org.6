@@ -1,131 +1,169 @@
-Return-Path: <linux-kernel+bounces-351995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A739918D9
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:29:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B819918E1
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC331F222EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 694FE1C210A8
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA51158DCA;
-	Sat,  5 Oct 2024 17:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0173915539F;
+	Sat,  5 Oct 2024 17:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="phm8hgJF"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=adamthiede.com header.i=@adamthiede.com header.b="BsL/E+C4"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8021E489;
-	Sat,  5 Oct 2024 17:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98F825763
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 17:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728149384; cv=none; b=GFuVN7dPmOygHUvgzPRcFlPDM6b68arx6nz8ghZiQHZdjxPEtYfMIO96Vxt7jehkuLuMgMlzrXVdYcrJ2bOmhk8eq4/7Nr6byMe3V4dABgXkw2Zb+jECxAevbM8AMJvzxkdWC2AouQtuS04HYYMpXNLmlRt4yeePrESbAG50+W4=
+	t=1728149551; cv=none; b=XMJCz7BnGBZxdDLbRega8W0q1dSM+SQwXsuHr1Q5JWSQYjZWqYWYeQUb2RXHzJ0FinbFiCwga8z38l29xhf/CaKHemL7uiKjHs6lGwMBzsYcBvH/fpRWFtMrx043a82tuQ8fce5fHwxX2VE1bRLfPKHF6DMbDhGI/HiFKVVXkr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728149384; c=relaxed/simple;
-	bh=SG78JVSZrVVi0aRTYOUGA6YP6pYSYVqMrxGPes30xpQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Ad86sOAQopcIgh8jLyPca51wntgiiBWTD6jyCmtUkS03HscR/lZ425W2Iz8PTvzZwgTqpfPKHgqhNHqUojfOrmVxJMecvS+1eKTbMnuO05MKAu0Esb7CHQqYQaHiFi5MG0hQ+quKSJeV5VOicJalH5rIEC5QNNQ4VN0KuCeWHRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=phm8hgJF; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728149341; x=1728754141; i=markus.elfring@web.de;
-	bh=IzK6cJufE3pWKTKByaz9D2Qk/DgyH9a+hucudwqyqr8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=phm8hgJFMp8oP6lu2lyjqQGLlmQ9nnyCb/Cexh9aP8pCWWjfofS3avHJBtcpTErw
-	 0S5Ta5ZQAEc2rXPWqIqZHXpQHm4+JPd0ZTysb3EJRC4xP6r6wztO09DzlwvyYfBew
-	 u0qEAEcc1RVhWmrngO3XHL/8ibTu2u3bNtUf6h4hdCrpr2XzHxJawy7RwSzhZnq1e
-	 bFKwNwq8mmQZObxmAEzpKUmqG95IdRixzzVVqBFeoncTZkhrq1EWrYswlZEXcDaN6
-	 QZ6fnaWOU6E0xj1Sqz/q04/La7KHQFoPvI6a6wzbdz6G6fyE/oXDEzhZD1GFOLsPK
-	 I7CM77VH5B5JVehdKw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MODiX-1tKyxQ2RfF-00Juwp; Sat, 05
- Oct 2024 19:29:01 +0200
-Message-ID: <48c3da06-fe59-4902-a74f-a4f3e4488160@web.de>
-Date: Sat, 5 Oct 2024 19:28:47 +0200
+	s=arc-20240116; t=1728149551; c=relaxed/simple;
+	bh=SijfzWeB5yVZYkVyz2LIm/Agfvom1YuUe8LA4v8jOUU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AMzU1VenqCrwUnC/bwI8OjAiKKtfbVpYL9VFXxIsyec06gVvIXQHs+jBadZmRgSAbuR7I+fdz1w7tHEvrw/KGlUDAIACdxdO9UlaQxIM+1sVlHDq4lYI/Hgmz6roFBPNKfuXZ7Tqai4ZV6KJG1HpTo8dRSbUXHNUvOKpavfwLRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=adamthiede.com; spf=pass smtp.mailfrom=adamthiede.com; dkim=pass (2048-bit key) header.d=adamthiede.com header.i=@adamthiede.com header.b=BsL/E+C4; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=adamthiede.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=adamthiede.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XLXY45PjSz9tNS;
+	Sat,  5 Oct 2024 19:32:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=adamthiede.com;
+	s=MBO0001; t=1728149544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CG45aAOFfe8PHxOzrqT1C7cq33Z790UzjgBn6h+hl6A=;
+	b=BsL/E+C4lTSm8/p7F14XCn+dmX+UF/UI3FySuS9/YwaSQHkEuLljfa5S/29Br2cuq9BmO5
+	TDJ6ZpZU/ChKgnXFcvsNs+HGSjS/ml35AcSjd6YxTnQ0Mz7k7i5HSzrDM3jtd8z6i7MfBI
+	qQ9dA9PKZYlMF5Ep1rxKExLrZo7c6vI1BenSVITe268arVsXym7aP29CB78tipTsF4XoEH
+	1qPDrYZ9dM8LjTVdn4ev/zOXU4wJZN8vAQz6wa2iQiSTXtGvyc85/5M5wXeTxgVD7BnAFT
+	8vimVUazPlR94Qj+QbhBi9va3ZmwOECVGSFgUCrC5aB0LUzbut9B984cCfSADw==
+Message-ID: <fd6fc10e-d0f6-4c53-8561-bdfd047e45f2@adamthiede.com>
+Date: Sat, 5 Oct 2024 12:32:15 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zichen Xie <zichenxie0106@gmail.com>, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-wireless@vger.kernel.org,
- Aditya Kumar Singh <quic_adisi@quicinc.com>,
- =?UTF-8?B?QWxsZW4gWWUgKOiRieiKt+WLsyk=?= <Allen.Ye@mediatek.com>,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Benjamin Lin <benjamin-jw.lin@mediatek.com>, Bo Jiao <bo.jiao@mediatek.com>,
- Deren Wu <deren.wu@mediatek.com>,
- =?UTF-8?B?RXZlbHluIFRzYWkgKOiUoeePiumIuik=?= <Evelyn.Tsai@mediatek.com>,
- Felix Fietkau <nbd@nbd.name>, Howard Hsu <howard-yh.hsu@mediatek.com>,
- Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Lorenzo Bianconi
- <lorenzo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- MeiChia Chiu <MeiChia.Chiu@mediatek.com>,
- Ming Yen Hsieh <mingyen.hsieh@mediatek.com>,
- Peter Chiu <chui-hao.chiu@mediatek.com>, Ryder Lee <ryder.lee@mediatek.com>,
- Sean Wang <sean.wang@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
- StanleyYP Wang <StanleyYP.Wang@mediatek.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Chenyuan Yang <chenyuan0y@gmail.com>, Zijie Zhao <zzjas98@gmail.com>
-References: <20241003180959.12158-1-zichenxie0106@gmail.com>
-Subject: Re: [PATCH v5] wifi: mt76: Fix NULL Dereference caused by
- mt76_connac_get_he_phy_cap()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241003180959.12158-1-zichenxie0106@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:p37fQHMIknWRyQlsAViVRgAwfb9nMvPuyssNtSLNcobqn2Zs8aY
- zsl3Fz4df5zUsCxZ8E7pRZhVnLQ/9XBNZ7iV08HZqTYcNK+P5ytIm5ZOtjGR7X9exKWFg4U
- fbPOYUG19shEWPwBYBuC4z4+sBTXATXHH4hPhv6xCY1A+TJAt4eVtSMezAIy8IxKmAUV5w8
- u08SqUPgVhk4YKdr+5YcA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PWBQM9q2YP4=;rjKb2BvBM8gCnwUjNvR/xB7u0/x
- BInGkKWRWtNxDBYWfXFrI6R8tw89wMRa0BSXoUBLwNUrror86ZhKNiVx9qeKB5iDbpsU7wuT3
- srjnsh1WIRl5pdBA5RnaawqXpeXiD+IrGGWl4BiENd+s3fL9sRtulohuO9kSIK6dAGMQ6rFWW
- u+2VFDQ58bM0R+wpoB5XjXQ2cBGmHUilgSFg0Uzm+vVkGrwnwvgunPwet8DdnWDvqZFbqW5qy
- 1dbPPrYnNWvYjvK5X/XCfnQwjYKT3Dh2Va+cUb0QGE/TYazSwsXZuNRQR8jA9OqP//rBzv92K
- XJ9PyAFgTaqvA5/OipJDVYu5JOKd7qgGmQT14o34AwE5smKaht+N8e7QVSEnig3AGjvfKzLV8
- HH3ktd4Wt15TJ9n1ZeVVTUy2JCkSHVjQMUPz/FxVDIvRUb6MzZ4nvsWspGTen5EF30AWoxN60
- GwDkQ2ruH/Br3et7f8ESAFrVaByw5NIkOmTH54pjaErhaHghjVTs3GT7IexzP0b9KJc4F5uC4
- 8sjFKmQv34pLvNKS9iQ8bUDIwdZpGmf3Hdm1+HSOVWgFUvLnLSuFSMDhmELOzX5q0DSLU1hIM
- DVg6KlvmER95V6lL4MIKNdy88FOfVhUV8gZ2S3yuG/a2jE/hgi5HIXo47uz+xkcw2Ay+a0jRT
- 7WppKGSm52mnGrgIJXOwyyvIFuc9P+yn4NK89aBAdRDl3hPdNhCJaN5e2Ir+GmsRHtZGTszkq
- gHrUWkcd5TQ2VFi87oVp50jyFkOaVSeDqevEiAJVNdAnIp6xNOOd8RiuFiKuJgaqpLmj1dmjE
- HLcUm9OwIhnaTLq19yFtRUHTfQ0RADTXvwAcytynRFq5Y=
+Subject: Re: [PATCH v3 13/14] drm/mediatek: Support DRM plane alpha in OVL
+To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
+ =?UTF-8?B?QmliYnkgSHNpZWggKOisnea/n+mBoCk=?= <Bibby.Hsieh@mediatek.com>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+ "djkurtz@chromium.org" <djkurtz@chromium.org>,
+ =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
+ =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
+ "daniel@ffwll.ch" <daniel@ffwll.ch>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+ "yassine.oudjana@gmail.com" <yassine.oudjana@gmail.com>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "littlecvr@chromium.org" <littlecvr@chromium.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: =?UTF-8?B?WVQgU2hlbiAo5rKI5bKz6ZyGKQ==?= <Yt.Shen@mediatek.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240620-igt-v3-0-a9d62d2e2c7e@mediatek.com>
+ <20240620-igt-v3-13-a9d62d2e2c7e@mediatek.com>
+ <1a3af354-bd15-4219-960e-089b6a6e673c@adamthiede.com>
+ <49df03e8b982cc5ee97e09ef9545c1d138c32178.camel@mediatek.com>
+ <00ebe9ca262b6a95fd726e5be06334b1e923db02.camel@mediatek.com>
+ <5975b361-c1b4-4c57-89d4-0d247ae99d8c@adamthiede.com>
+ <272b47f0c9e27268d29b58c341e0b48bce7e8e25.camel@mediatek.com>
+ <06ed4527-3749-4fac-bd38-d837f1593311@adamthiede.com>
+ <f7b4c6601d648e0eba2dc66f0fe1f34ca3d29cfb.camel@mediatek.com>
+ <d820e8be-c525-4435-99a3-b0eb076b3282@gmail.com>
+ <b8fb4f241b2d248ca4c2c57b98588e1be0642b76.camel@mediatek.com>
+Content-Language: en-US
+From: Adam Thiede <me@adamthiede.com>
+Autocrypt: addr=me@adamthiede.com; keydata=
+ xsBNBF+n+90BCAC2ZRLVcvdXDgfY7EppN05eNor3U7/eeiNCCEIWZkYLhikUEP1ReLGBkXpK
+ Pc70hfnKAKkCoth3IwhDty9WXMNU+iLNei4ieb2luW+UqluR6xIUIA+txahMU9YcjVaQTKf/
+ yZWO4yl6pfBPCxC2UdPZKBAdGoi5NnE0ABFNbhBETQhhBic533lZn33ByupfI3acECnQdjgQ
+ llCUpDbw4I+S/N1iFiEHcbMXH7ZB00e3IYNorZ1E9v7p++5rDY1fQ9gXpieg1vFKwSq1NJWo
+ 9xx336YjaTUbX0EwrdKd9l8AktA3yRjckaK5TAcwSQaDtHvhpbl4ebvPhtwHh699MroXABEB
+ AAHNH0FkYW0gVGhpZWRlIDxtZUBhZGFtdGhpZWRlLmNvbT7CwI4EEwEIADgCGwMFCwkIBwIG
+ FQoJCAsCBBYCAwECHgECF4AWIQQtG9pGQ7sz3tf8M/kC7fV9o/vRzgUCZL1HxQAKCRAC7fV9
+ o/vRzgyRB/wLqRCvvWhQCMgvzeKvru9wcXquhb77K8H/ByLbfiT8YBuP3lZFVh0IQhgO9Ylk
+ fIoOJE4V+jjxyOnO2d9xjGbvAmmR6yT0gfLzSVWqrC4k+V9MWLv43nrNzxt41dvo5j824FAl
+ X+zaiRZCdO8Jtxg5Elpiop2SKLi1utX1Z8i6YZh+ccJZlchUBAGUTk+D4UjK7vUcjLWT96ya
+ CtdtTfXyw36CvGOPEWfc6++Kkl/5sgej1i7biPYzu/r0vssaQYTXKSrv6Cfa3Maa89ASiTtv
+ q4qmhLnJeCrPxWlRAf6LEizeBEkOasYni2u8sp4wBezEq45Ozu45sfPkqLpPolG7zsBNBF+n
+ +90BCADBRt+vrToRBEG580n77S99qSEkbKD+oJtCVyovnjMNkg0K9UG68LIeCX/ezngiV1M8
+ JISvw5iFOuUFqGX/1hLl9wgt/YpuIrgWOp8XxkotavTCloLDvQmufJPO1L8bnnA+WgP2YgVZ
+ 5MJTj/t4DI+yQgysEjsH8aurHO2uuqgJE+xK+2dy6Cl/wskuGxObksSPmmFH5PH0Joziwrtl
+ 61ouLE2XwKbkMgIGEKkbFgbfwz3/QuLZGBni+OOtLzXeZ9wNTW/AHUPy6S9U4F+5z6/09fVT
+ tTH0cvrgAGjbASlYx2VqGONXAsxCfjulq6ryJBFlPLp949c/JTTgOojukCSbABEBAAHCwHYE
+ GAEIACACGwwWIQQtG9pGQ7sz3tf8M/kC7fV9o/vRzgUCZL1H0gAKCRAC7fV9o/vRzlamCACs
+ vHw+0heTm+BfC3S8DUST6889gidIIwdqBep1ByzetCph7Bq8Y8BlT5YTX0u/bSKkxCzFgeTm
+ vC341Q09ST2XjLAl1ZTdzGhH9gcgYyOw34pr5fPQRJLB392mPzD8YReRzciNbhWzj+DLgeVe
+ ouyfGajd6jDjkf4FEq+trQLGZhpfsKn3JnDbzBUs945D50l/vz9q/QN3qZO+H4F6g8ZeMnqo
+ FOEFN26xVtdEDr+0DNFsbgKmEzs675kdAY78ZZdbEetX/FSknxJ+FK1ZW3J7Yswwulj34AXP
+ LB49Mk8Ot7fo6mdt0DkV11JS9LmKxKvpY+KTlrKG+i7pVCSZvVUx
+In-Reply-To: <b8fb4f241b2d248ca4c2c57b98588e1be0642b76.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> mt76_connac_get_he_phy_cap() may return a NULL pointer,
-> leading to NULL Pointer Dereference.
-=E2=80=A6
+On 10/5/24 05:02, Jason-JH Lin (林睿祥) wrote:
+>> > --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+>> > +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+>> > @@ -102,12 +102,9 @@ static inline bool is_10bit_rgb(u32 fmt)
+>> >   }
+>> > 
+>> >   static const u32 mt8173_formats[] = {
+>> > -       DRM_FORMAT_XRGB8888,
+>> >          DRM_FORMAT_ARGB8888,
+>> > -       DRM_FORMAT_BGRX8888,
+>> >          DRM_FORMAT_BGRA8888,
+>> >          DRM_FORMAT_ABGR8888,
+>> > -       DRM_FORMAT_XBGR8888,
+>> >          DRM_FORMAT_RGB888,
+>> >          DRM_FORMAT_BGR888,
+>> >          DRM_FORMAT_RGB565,
+>> 
+>> This is what I get on MT6735:
+>> 
+>> [    1.729467] mediatek-drm mediatek-drm.1.auto: [drm] bpp/depth
+>> value 
+>> of 32/24 not supported
+>> [    1.737777] mediatek-drm mediatek-drm.1.auto: [drm] No compatible 
+>> format found
+>> [    1.745943] mediatek-drm mediatek-drm.1.auto: [drm] *ERROR* 
+>> fbdev-dma: Failed to setup generic emulation (ret=-22)
+>> 
+> 
+> Hi Adam, Yassine,
+> 
+> Please try the patches below and check if they can fix the downgrade
+> issue:
+> [1] Fix degradation problem of alpha blending series
+> -
+> https://patchwork.kernel.org/project/linux-mediatek/list/?series=893634
+> [2] drm/mediatek: Fix XRGB format breakage for blend_modes unsupported
+> SoCs
+> -
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20241005095234.12925-1-jason-jh.lin@mediatek.com/
+> 
+> Regards,
+> Jason-JH.Lin
 
-             multiple questionable accesses?
-
-How do you think about to use the term =E2=80=9Cnull pointer dereference=
-=E2=80=9D
-for the final commit message (including the summary phrase)?
-
-
-Were any static source code analysis tools involved in the detection
-of presented change possibilities?
-
-
-=E2=80=A6
-> ---
->  drivers/net/wireless/mediatek/mt76/mt7915/mcu.c | 5 +++++
-=E2=80=A6
-
-Did you overlook to add patch version descriptions behind the marker line?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.12-rc1#n723
-
-Regards,
-Markus
+Jason,
+I've built 6.12-rc1 with those patch series applied. (I am also not 
+reverting the other commit.) This fixes the issue - I'm able to see the 
+console now. Thank you! Hopefully these can go into 6.12?
+- Adam Thiede
 
