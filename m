@@ -1,89 +1,134 @@
-Return-Path: <linux-kernel+bounces-351682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EAD89914AC
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:40:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EC539914B0
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04EF4B23BCD
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:40:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36FA71C21E83
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7C249620;
-	Sat,  5 Oct 2024 05:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="JZdyPUwO"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FE836B0D;
-	Sat,  5 Oct 2024 05:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBC14595B;
+	Sat,  5 Oct 2024 05:50:45 +0000 (UTC)
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75826380;
+	Sat,  5 Oct 2024 05:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728106834; cv=none; b=npAGZan1BRulUguZ/DPkt/ZMHsSykcPLRnIZx+kU48OSskucD83HQlXdt68GdZVpyuoQi0gMdOMrCQEqu95Ovjp/nN5jtXkAMTAq/t0v0U0qnHp2hgGEF1rQrIwfvN5zMH0Rnp5i+Tfn3ISDJuAFEeLaDH8cp1jKLgg/VtAhKbQ=
+	t=1728107445; cv=none; b=bAKTNkreNZc25dhy9jNHzY6N0s7yYc4pz73Q+LoEPmkC+qLCRpDOjx/FpF+Z2666Wdw4YslicIGwBGd+w299WTJQd406xi2jxpZzORFfG2qJHIFZM2S2iRHtTkrmcfEyuL/HxDh5mkSSbNoH6kKiz5pFkGwAbOw2d5aNKQS2tNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728106834; c=relaxed/simple;
-	bh=leDR1ASxlHLSN1MyjUM/7VkD3rHTOKjFcHOdwuQJi8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KPBk+9Lfclk7KvYcd147ISO0N797P982LaGh1M7QJrn26BMjxgu94cPTn1wY8JVsdU8Hy0TBYjdGg1rI4K1idnt2hDgHWVLpbhEtZVCdpCXnEQWozHoTzyRB0AyDkUJictcCiVkXt3h/vyqOIF9g0nTnGsoGJobHIV/iq5975z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=JZdyPUwO; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=zbv4rqZt8nPpZwKYqU1gXSuhasgl/AkFbu9ZivIGO4Q=; b=JZdyPUwOWBA8AOD28YCHOi3LhT
-	vt4KApw0xXlGSgyw0sKYVlx5JvANhfTlx5IsC43v81cxtx9EgdXQ6IXQx/tn4PHQULmMSY0QTROPG
-	9pcXLWBrcuJeQD3qZgKJfJh0tSienikHJrNQtM0tsnXLmHXVflLH+IlwFqjFzhBxCD00Yqp4J4iB/
-	5O9AXxHFvQmBlxQczYzS837S4bftUawcbWtQGsWGNcy+U61qdFtk/CioOT8MXv+6mPdzJ3AbK6oqC
-	gppGhgn9e2UESUvy3ioX7OtHr1G3BU174mIhWEKbxy4LY9joAoTNP6SnklCioyc01Lktjvc8HQuJj
-	feaLB35A==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1swxMp-0071eU-2N;
-	Sat, 05 Oct 2024 13:40:26 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2024 13:40:25 +0800
-Date: Sat, 5 Oct 2024 13:40:25 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Chenghai Huang <huangchenghai2@huawei.com>
-Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, liulongfang@huawei.com,
-	shenyang39@huawei.com, qianweili@huawei.com,
-	linwenkai6@hisilicon.com, wangzhou1@hisilicon.com
-Subject: Re: [PATCH] crypto: hisilicon/qm - fix the coding specifications
- issue
-Message-ID: <ZwDRSaT26p68x8gn@gondor.apana.org.au>
-References: <20240929112657.863594-1-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1728107445; c=relaxed/simple;
+	bh=R7cxEsN+UnbUmIliTAH/0H4gE9lFR/4ihLfCPer5wII=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=K+FSN4EQPqx+t5Wbt24Qsr+PGciqzoneFlVRCnzFDOoG4adsoj+v8M3u67nVJgyMOK3iDn3QSqhNBh2p7vLHh+yhWbkki8AhLan98G1QX6N2qQUkDG8MDM9DfTRx7k3FEAGw9Iq5SRSOhuSISsi5jrdSKZELbpwIJGddfDgPOGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id 232AD2055FA2;
+	Sat,  5 Oct 2024 14:50:41 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4955odwl012195
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sat, 5 Oct 2024 14:50:40 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4955odmH101869
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sat, 5 Oct 2024 14:50:39 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 4955odGi101868;
+	Sat, 5 Oct 2024 14:50:39 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: syzbot <syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com>,
+        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in vfat_rename2
+In-Reply-To: <20241004155332.b2a7603be540c692e56dc71c@linux-foundation.org>
+	(Andrew Morton's message of "Fri, 4 Oct 2024 15:53:32 -0700")
+References: <66ff2c95.050a0220.49194.03e9.GAE@google.com>
+	<87r08wjsnh.fsf@mail.parknet.co.jp>
+	<20241004155332.b2a7603be540c692e56dc71c@linux-foundation.org>
+Date: Sat, 05 Oct 2024 14:50:39 +0900
+Message-ID: <874j5rgksw.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240929112657.863594-1-huangchenghai2@huawei.com>
+Content-Type: text/plain
 
-On Sun, Sep 29, 2024 at 07:26:57PM +0800, Chenghai Huang wrote:
-> Ensure that the inline function contains no more than 10 lines.
-> move q_num_set() from hisi_acc_qm.h to qm.c.
-> 
-> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
-> ---
->  drivers/crypto/hisilicon/hpre/hpre_main.c |  2 +-
->  drivers/crypto/hisilicon/qm.c             | 31 +++++++++++++++++++++
->  drivers/crypto/hisilicon/sec2/sec_main.c  |  2 +-
->  drivers/crypto/hisilicon/zip/zip_main.c   |  2 +-
->  include/linux/hisi_acc_qm.h               | 33 ++---------------------
->  5 files changed, 36 insertions(+), 34 deletions(-)
+Andrew Morton <akpm@linux-foundation.org> writes:
 
-Patch applied.  Thanks.
+> On Fri, 04 Oct 2024 15:20:34 +0900 OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> wrote:
+>
+>> syzbot <syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com> writes:
+>> 
+>> > git tree:       upstream
+>> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=11b54ea9980000
+>> > kernel config:  https://syzkaller.appspot.com/x/.config?x=92da5062b0d65389
+>> > dashboard link: https://syzkaller.appspot.com/bug?extid=ef0d7bc412553291aa86
+>> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b7ed07980000
+>> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101dfd9f980000
+
+[...]
+
+>> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> > Reported-by: syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com
+>> 
+>> The patch fixes this bug. Please apply.
+>> Thanks.
+>> 
+>> 
+>> From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+>> Subject: [PATCH] fat: Fix uninitialized variable
+>> Date: Fri, 04 Oct 2024 15:03:49 +0900
+>> 
+>> Reported-by: syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com
+>> Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+>
+> Could we please have some description?  Seems that an IO error triggers this?
+
+OK, I added the description guessed from syzbot log.
+
+Thanks.
+
+
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: [PATCH v2] fat: Fix uninitialized variable
+Date: Fri, 04 Oct 2024 15:03:49 +0900
+
+This produced by corrupted fs image of syzbot, in theory, however IO
+error would trigger this too.
+
+This affects just a error report, so should not be serious error.
+
+Reported-by: syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+---
+ fs/fat/namei_vfat.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index 6423e1d..15bf32c 100644
+--- a/fs/fat/namei_vfat.c	2024-10-04 14:51:50.473038530 +0900
++++ b/fs/fat/namei_vfat.c	2024-10-04 14:56:53.108618655 +0900
+@@ -1037,7 +1037,7 @@ error_inode:
+ 	if (corrupt < 0) {
+ 		fat_fs_error(new_dir->i_sb,
+ 			     "%s: Filesystem corrupted (i_pos %lld)",
+-			     __func__, sinfo.i_pos);
++			     __func__, new_i_pos);
+ 	}
+ 	goto out;
+ }
+_
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
