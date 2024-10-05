@@ -1,122 +1,84 @@
-Return-Path: <linux-kernel+bounces-352170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0BF991B33
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 00:23:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5AB991B3C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 00:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8A22834CE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 22:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C97351F223FE
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 22:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1AB16E860;
-	Sat,  5 Oct 2024 22:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D3D170A01;
+	Sat,  5 Oct 2024 22:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="deIiRLU+"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JVs4xsl8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A479F38DFC;
-	Sat,  5 Oct 2024 22:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC74716C6B7;
+	Sat,  5 Oct 2024 22:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728167021; cv=none; b=Fa/NZPxrykM0Jd3Cr/grvArUdPh4xndvwNVYglklFkKA+n5BcK+rkEhfYsI3AitIJjz2w9FW+OzEqDhDUsbvW9bzoIAHHFiescsuNVjn65arEkzBj3paP9OOU2GkuNu4iS1M5CEcLD26fitv+yvr1KW5VuTQMO/HiIDCXfl6cxk=
+	t=1728167194; cv=none; b=QjFrekLkhcQ6YS+naOgplnlY6j+YdQpMH8RZwbdAnUKYFDNqDtCNPb0ArJDo1Odssh1ko9c0VR5aiv26cJb5KUCkUoL/20T3PmjjAacGyD98CODcuaDAIBM/1WMXj4t0WfJ/oykv1ab9a7DtdFk5v9HC5zA/AnoOJDmHWk9dwhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728167021; c=relaxed/simple;
-	bh=CDvMvKR5NsUghTucs0NBnB58VWXxSpQWiGJa60PhaJM=;
+	s=arc-20240116; t=1728167194; c=relaxed/simple;
+	bh=DHSscCfjou4BLoP5vE9J6eNZoUi4zFrPpOyrgBRmEuE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BX8WYIEyeXPdmQ+l29z5gDg5xijodwdyWDxpGPafwCeP21IKQ7SKmGnWBAJ9tioQVDksYiMcmvu1wEWfwEf3svg0b2lHbcnYKojsP7M+viUtwRpSbc22hzvarpUsB9HFYdyYaVn4rcnB+51Jnmyc60UZqCTHZmNwLj33Ptmnqwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=deIiRLU+; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6cb3cbc28deso32754476d6.3;
-        Sat, 05 Oct 2024 15:23:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728167018; x=1728771818; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NGEe+NY0fZ7idRHJ0JNrhCo327we1HY1LNfPxzR5fWM=;
-        b=deIiRLU+4b06M4BX3f3WlN/UmGUKW0XiTs3o+WAwmPRB0/DyUuxYcQBtXG0jDFptRi
-         HyE2qOnwtdjtqGvrnGQ8icc5ZleUprbetutQ9vIeheWLYTCDmPS8BZtyf+ixFT1Br0tv
-         ERY9Pa12aghj9JoBibOVIyXSVjCEsS2uCDrIbRZ6R7YG/ylVINS/jy+eY2WNCatEcKSE
-         DqX11R1qDTPC+as4ixm3vYnQCTCj9KCy/XiSaSJGF6rorZy4IqqUncXis0TgNoRjFoeS
-         fsxwdHOLY1XLnCZEV7SfLSCXebID3pfvsQEdOmVOcZSTlGup/1/wkA7WEYqyq1KRMELz
-         h5cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728167018; x=1728771818;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NGEe+NY0fZ7idRHJ0JNrhCo327we1HY1LNfPxzR5fWM=;
-        b=vqcWTNtu8yF56FeJCeVOkYG7+uyWRVR/EHAkjc6zxyyf11A+O/cVv64GKEw5tmX14S
-         CxPv7T28QgYrVjtw8YJBrPdqR6SoFY7sN3gkr3bUL6IWS3IzZydki2BE1esDkcF6ssnH
-         BNpdbhVYd2/D/ZbbkNm/ARh3/xBvwHKJfvVjetzFaVYE907VJW453AlCyorlT4VwVhra
-         EYQxQU7aIZedsLATMGwn2Of2bJXyLF7RaHgp5QacXNZhLT+nQ8KM5Mn4hLxc9chNWLuQ
-         F+S4q4BBVbmTkZMsbW8k5xIB0LMJYXhq25HXGXof2k95fehZ5hBM99WdCNiyls7mw0ax
-         JPAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHoqhWKvnR14t/secYNcNyehcXpSHO5Prx0Cow3/v5d7YKYgfBkb26VTVPJptJSXdrsSacvHCay+5OQ8A=@vger.kernel.org, AJvYcCVFvr8gsjdE8Cr2Z1KQjn9b3tnhBjgH/s0onBfBfiFBju0cNa1LvVYG7G77JYlFDb4+w9Cy2WjxtOiy1kFwvWQ=@vger.kernel.org, AJvYcCVrjPIprkHj12iRZbngiuhgjSvWgqXTQBJTaHKpwuoMOVaWDc6dbjXD82mv8f4Nt4veW9fdKuuw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtgfE8os/sx6b7Ei+wdds8m3yBI3hshotbeMv/1B0aH/deHuCg
-	j7u2Hy96YSxNrT/bDt3bpWswrrRh3FN2pKigIfhBV2hYhE707Igs
-X-Google-Smtp-Source: AGHT+IHXqzcftAv6HNxk9EWOvJ3PsD03Y3I8+jeVWm2EtHfv5hdgWZbBXlnwjHk2Wi/sSmvCLlV1Yw==
-X-Received: by 2002:a05:6214:3ca1:b0:6c7:c650:90dc with SMTP id 6a1803df08f44-6cb9a466299mr113243116d6.34.1728167018406;
-        Sat, 05 Oct 2024 15:23:38 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba47535a2sm11826496d6.77.2024.10.05.15.23.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 15:23:38 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 582721200068;
-	Sat,  5 Oct 2024 18:23:37 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Sat, 05 Oct 2024 18:23:37 -0400
-X-ME-Sender: <xms:abwBZxfhv0rF4XN7f_JUER2SMObmqaWp3-lYJXgC8bAHFcPTsnHAOA>
-    <xme:abwBZ_OcF_MNXhQuRNADZ1ChJioa6VbUeaSfovNu5fowFJuL9ZSKRqQoZ1A_jyyGc
-    4tpd2lEYgiCHaF8oA>
-X-ME-Received: <xmr:abwBZ6h9dBmA3fFMujYhekFHK10_UsIE4fsMuPiUtrznWPKmJ3ZER6P3mnqc1w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddviedguddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeejiefhtdeuvdegvddtudffgfegfeehgfdtiedv
-    veevleevhfekhefftdekieehvdenucffohhmrghinheprhhushhtqdhlrghnghdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhq
-    uhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqud
-    ejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgv
-    rdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehfuhhjihhtrgdrthho
-    mhhonhhorhhisehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrh
-    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhkrghllhifvghithdusehgmh
-    grihhlrdgtohhmpdhrtghpthhtohepthhmghhrohhsshesuhhmihgthhdrvgguuhdprhgt
-    phhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrgh
-    grhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhho
-    rdhnvght
-X-ME-Proxy: <xmx:abwBZ6_cQUvWNYW-3gWznvHBbHf44X9Qo35imeVmsxqUpjnM-S5ftQ>
-    <xmx:abwBZ9v056bWfnPXc861yaJUXMm2r5WCDeJfPb-nxOILqY3dqqhPUg>
-    <xmx:abwBZ5GfipvItzhcyTp3Ofyh8I3A5yIpFqYdD0uBfKr2jPTZzzVAhg>
-    <xmx:abwBZ0PIqw8nlV-g64PUpA3FMu9DjYd_ri52Wtmbr-chJZ0GK8xufA>
-    <xmx:abwBZ2NDhcIjzyiT9Xf2wUYR_Jsing4BiLuvboNmsqZfWnZzwODWLoua>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 5 Oct 2024 18:23:36 -0400 (EDT)
-Date: Sat, 5 Oct 2024 15:22:23 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
-	arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
-Message-ID: <ZwG8H7u3ddYH6gRx@boqun-archlinux>
-References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
- <20241005122531.20298-6-fujita.tomonori@gmail.com>
- <06cbea6a-d03e-4c89-9c05-4dc51b38738e@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LIRKeAzZh4nqzmYiqtJM2CTQEdoPfJxZwntlyV6iwUWWA+o6fb5f9OSlPF5Oy/tv/f/7S6lMsA1a5zelHd7ipm2bpboNqnsMMtTvZUy+ds4OT7oHKmfSHVsJCJ/8JwKq/RAir+GFLMKQUFdv34DTNnCRA7F0ty/LoESDXpT712U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JVs4xsl8; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728167193; x=1759703193;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DHSscCfjou4BLoP5vE9J6eNZoUi4zFrPpOyrgBRmEuE=;
+  b=JVs4xsl8gqLAvF6r0W68bCt0h3oTYpQEKnCj9g5NWvIrPchzbPYgolNy
+   CmEMRgtwzcNAmD8mGOib2lW0bL0hGaBdAHdumet5lKJcz8Bo6bF0bVr6Z
+   RMLjnHpcqf56/hAPaXPFYDNbiciF7nK2ZswuBYMxn3f3h0hmODH+v2lfg
+   cN+SATEs5N3kcRMQZD/4QUiXoWvN6VFtQcI2AbdRNUyxfD6+AwrxdjOkI
+   GfjU0XKqIde0/U8E9RVn13x0NrRfPqCDcstBapX0RSnBsHr6QJgHpfE7f
+   1q2EJSamB9k3zuC4kUZSR40k6+q8sBg2nDpTzs7Vxg5K5NKuQf1KFa8dj
+   w==;
+X-CSE-ConnectionGUID: B/Eup9CTRmeKBTAZj6W4Hw==
+X-CSE-MsgGUID: 3LXfyDz1TPCdojVKnCAijw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="27446866"
+X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
+   d="scan'208";a="27446866"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 15:26:32 -0700
+X-CSE-ConnectionGUID: TTLS3rceRyyIZ3qh+4ehwQ==
+X-CSE-MsgGUID: 0Pc0HiPvSg+vP+iFAGYCoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
+   d="scan'208";a="80025740"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 05 Oct 2024 15:26:29 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sxDEI-0003PU-30;
+	Sat, 05 Oct 2024 22:26:26 +0000
+Date: Sun, 6 Oct 2024 06:26:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mukesh Ojha <quic_mojha@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: Re: [PATCH 5/6] remoteproc: qcom: Add support of SHM bridge to
+ enable memory protection
+Message-ID: <202410060641.ZedzhoKd-lkp@intel.com>
+References: <20241004212359.2263502-6-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -125,56 +87,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <06cbea6a-d03e-4c89-9c05-4dc51b38738e@lunn.ch>
+In-Reply-To: <20241004212359.2263502-6-quic_mojha@quicinc.com>
 
-On Sat, Oct 05, 2024 at 08:32:01PM +0200, Andrew Lunn wrote:
-> > might_sleep() is called via a wrapper so the __FILE__ and __LINE__
-> > debug info with CONFIG_DEBUG_ATOMIC_SLEEP enabled isn't what we
-> > expect; the wrapper instead of the caller.
-> 
-> So not very useful. All we know is that somewhere in Rust something is
-> sleeping in atomic context. Is it possible to do better? Does __FILE__
-> and __LINE__ exist in Rust?
-> 
+Hi Mukesh,
 
-Sure, you can use: 
+kernel test robot noticed the following build errors:
 
-	https://doc.rust-lang.org/core/macro.line.html
+[auto build test ERROR on remoteproc/rproc-next]
+[also build test ERROR on robh/for-next linus/master v6.12-rc1 next-20241004]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> > +    if sleep {
-> > +        // SAFETY: FFI call.
-> > +        unsafe { bindings::might_sleep() }
-> > +    }
-> 
-> What is actually unsafe about might_sleep()? It is a void foo(void)
+url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Ojha/dt-bindings-remoteproc-qcom-pas-common-Introduce-iommus-and-qcom-devmem-property/20241005-052733
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/20241004212359.2263502-6-quic_mojha%40quicinc.com
+patch subject: [PATCH 5/6] remoteproc: qcom: Add support of SHM bridge to enable memory protection
+config: arc-randconfig-001-20241006 (https://download.01.org/0day-ci/archive/20241006/202410060641.ZedzhoKd-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410060641.ZedzhoKd-lkp@intel.com/reproduce)
 
-Every extern "C" function is by default unsafe, because C doesn't have
-the concept of safe/unsafe. If you want to avoid unsafe, you could
-introduce a Rust's might_sleep() which calls into
-`bindings::might_sleep()`:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410060641.ZedzhoKd-lkp@intel.com/
 
-	pub fn might_sleep() {
-	    // SAFETY: ??
-	    unsafe { bindings::might_sleep() }
-	}
+All errors (new ones prefixed by >>):
 
-however, if you call a might_sleep() in a preemption disabled context
-when CONFIG_DEBUG_ATOMIC_SLEEP=n and PREEMPT=VOLUNTERY, it could means
-an unexpected RCU quiescent state, which results an early RCU grace
-period, and that may mean a use-after-free. So it's not that safe as you
-may expected.
+>> drivers/firmware/qcom/qcom_tzmem.c:50:12: error: static declaration of 'qcom_tzmem_init_area' follows non-static declaration
+      50 | static int qcom_tzmem_init_area(struct qcom_tzmem_area *area)
+         |            ^~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/firmware/qcom/qcom_tzmem.c:12:
+   include/linux/firmware/qcom/qcom_tzmem.h:59:5: note: previous declaration of 'qcom_tzmem_init_area' with type 'int(struct qcom_tzmem_area *)'
+      59 | int qcom_tzmem_init_area(struct qcom_tzmem_area *area);
+         |     ^~~~~~~~~~~~~~~~~~~~
+>> drivers/firmware/qcom/qcom_tzmem.c:55:13: error: static declaration of 'qcom_tzmem_cleanup_area' follows non-static declaration
+      55 | static void qcom_tzmem_cleanup_area(struct qcom_tzmem_area *area)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/firmware/qcom/qcom_tzmem.h:60:6: note: previous declaration of 'qcom_tzmem_cleanup_area' with type 'void(struct qcom_tzmem_area *)'
+      60 | void qcom_tzmem_cleanup_area(struct qcom_tzmem_area *area);
+         |      ^~~~~~~~~~~~~~~~~~~~~~~
 
-Regards,
-Boqun
 
-> function, so takes no parameters, returns no results. It cannot affect
-> anything which Rust is managing.
-> 
-> > +        // SAFETY: FFI call.
-> > +        unsafe { bindings::cpu_relax() }
-> 
-> Same here.
-> 
-> 	Andrew
-> 
+vim +/qcom_tzmem_init_area +50 drivers/firmware/qcom/qcom_tzmem.c
+
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  49  
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27 @50  static int qcom_tzmem_init_area(struct qcom_tzmem_area *area)
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  51  {
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  52  	return 0;
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  53  }
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  54  
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27 @55  static void qcom_tzmem_cleanup_area(struct qcom_tzmem_area *area)
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  56  {
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  57  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
