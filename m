@@ -1,89 +1,73 @@
-Return-Path: <linux-kernel+bounces-351611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6A199139F
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:47:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 177AC9913A0
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21273284460
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:47:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E33E1C225CC
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023B07482;
-	Sat,  5 Oct 2024 00:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302337482;
+	Sat,  5 Oct 2024 00:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJpFxq4u"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DTJjSE55"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023F920EB;
-	Sat,  5 Oct 2024 00:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955D72F2A
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 00:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728089220; cv=none; b=jLQ5cCJ6m0BgfO/luDLVcHywrvk7s/dhEBAwcSpRgsDrdYMBhEWZGERJlvhxbiJkAV6pp4z2ps8Q6GGusqYxSduBk/uRRDAtBQQz9TKZ7GSJbvkL2Ktir8lVxVY7QisLZZ/TPfAApI4i4WYe5cNCZ7ocpKDSt9pYIo1vb21mCK8=
+	t=1728089571; cv=none; b=B9o0n9nj6PJ4uIOW8vjuEO9ITVROjl8GnfYP2c7fm2w4IyFdmGl/TtFt6GUoP+DXXSt9Iv5XJ5kRA3sKZnXi4Y4CQ6F9/cxpDSdkRJSJOwsp3y3DJpukS5GdXKqV3mpki+y6Fw5v8EQgfSi77MZTLAchpeZa7o/+6TQ/ub6ni7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728089220; c=relaxed/simple;
-	bh=2ix1mXZutmLSg6b4ccL3+EFljhC+zc+04RJRRgHeAJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vt4PzaFd24fj9llc+InmbFqJJ3roNZ8ldfxZcsrttxg2dGZm50OelrYlcAPixuJ49LbaBQCO0PwqznwGXcJiZcttARREh14gqjQozbTiu5IYlUwZwpjr9XhlAXYa7GUjXyLSxRBnkwwy1j7kZUprfI0BQknjhb5XqwJwy41AXSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJpFxq4u; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7db908c9c83so1657078a12.2;
-        Fri, 04 Oct 2024 17:46:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728089218; x=1728694018; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ud4hrcbGKn/h1c0XGtZ8JIky1UZlfWSJvz4r2INa6xI=;
-        b=PJpFxq4umY0+MDZW9Z7blfflLyviiwkVWx3K0cLaC1dpqYFmZHQPL6FyvNznEfx9mL
-         OKR4L6C5CbK33OE75FFvN0xgGwksM3pP/L6unfoUohHITBko1GA7U3MGd2QCYZ+6KD0O
-         ii6Jgu1fY7+0hWb/4zPLicWMV3k1UXbMKM6vFNK0ciZsrNcQ50EF7McwhEAFoqkkTgDL
-         eItNEcAiSgE3tdYkFkDxgAcWylAQylkH5bFAcfwtDjqFdwyHl/Bfgph38ZRwXCoXrrQ9
-         Xpi/PSua8N1sb7CppoNowT6dYC0Pb0rdWMy2hM+wcAtQ7ky8X36CJN0xuykXzBlUGcPJ
-         gtXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728089218; x=1728694018;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ud4hrcbGKn/h1c0XGtZ8JIky1UZlfWSJvz4r2INa6xI=;
-        b=v2eSKVJGPvEsNTBM/mGAPxo9esAOcHTgyRoPGQ0J4fNxUDGcAo/hKID2alQpFqpxTV
-         fZIKaIMrEM0ZHZmBccuC6Tg92S692luR7vFavjS/n182pBmVEua+Y2zerVRVjU5aB0rJ
-         XsrIwBBxW9XCNCPXhMFzl9vMe4phs8I3hPEL+F/I6dxmiGRC+ZTzIovI7g68O1TjoZEb
-         JKry9k6fZDEHNmj5V/Guk72kJAd8Md87lCjoyGzhAq5iUx8dPocwztWmKKtri5quXfy6
-         uV2YLf8L3YNbL92NtpiWSS+qrSBlQ3M1A9OTneR97fjtZNrA0bctRdnW+YGLi04mVxDQ
-         2uvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Om7C3loYs4tr8G9VHZQNh/3w+Wx5gmsOYsZLRJNN8GKdEWd2kOxdRXJZNCfTY8NFi/JG/scM0Ug9DXJB@vger.kernel.org, AJvYcCVD957mB2HEEds0JHZ22gQqRoPXJOwgV87KsvFHL0k6F3hv+VOZTZ0w17CPvI9NensLYrDf42u14hpg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+L31/9IVEuC/qJVVh4sLUbBB+aoWxjXgcbXBKMLeuIaE2iyk/
-	Nqfpk9U7bKSSlcEWjOTbbBqskybGmMlsA/UpIgpRcmdRXNfV/kId
-X-Google-Smtp-Source: AGHT+IHyITdZkA6wyOXK2hbRbUpdHaf3LcjLr9ZrEEdEgDHpLa//7ageDewJ0I3XP9i5ea9iQOaTVQ==
-X-Received: by 2002:a05:6a20:c6c1:b0:1cf:3ced:bba3 with SMTP id adf61e73a8af0-1d6dfacafa0mr6432778637.36.1728089218046;
-        Fri, 04 Oct 2024 17:46:58 -0700 (PDT)
-Received: from inochi.infowork ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f680c727sm623464a12.2.2024.10.04.17.46.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 17:46:57 -0700 (PDT)
-Date: Sat, 5 Oct 2024 08:46:37 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Peter Zijlstra <peterz@infradead.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, Guo Ren <guoren@kernel.org>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Hal Feng <hal.feng@starfivetech.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: interrupt-controller: Add Sophgo SG2044
- ACLINT SSWI
-Message-ID: <42ndts6wuoor3tbt3uv5kuco37kc6bnnoepqtauqosw2gg2xn7@7hfdc6wgvlsm>
-References: <20241004080557.2262872-1-inochiama@gmail.com>
- <20241004080557.2262872-2-inochiama@gmail.com>
- <20241004-patronize-doily-8406fa214347@spud>
+	s=arc-20240116; t=1728089571; c=relaxed/simple;
+	bh=PhPC8XopNox91epSPgf1AiWpjWGzbYIztveNMv5akNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mN3hw72Evnt3J1qPcth5wDYDGUGgItcYcwpCoeQGK+X8rhO925CeoprLnt/ZUTOB0aSxh910SVWWA5NYUGwPp95pXwNrzywGWtuVdIWJ7Dn3Zc10kVBKCQjN+iXkQ+xVRbv/qJqZGcCZETjKjDcGyqV4fiYrTQqN3wLvUfPUXUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DTJjSE55; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728089569; x=1759625569;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=PhPC8XopNox91epSPgf1AiWpjWGzbYIztveNMv5akNI=;
+  b=DTJjSE55wUxbahzF3TpRwvhubw1ur+90sEgZvCEZG4pEOPhNVyajz990
+   ibGQQ3OHcxVBnagUclv53s/vsME/bG+YcBpEY3Lgx+5RNKdMGYk/iLaLO
+   fnZOhJVmhlXsBWqpPMVi/2ZO6QA0Gm0+41SrdcLB6hb3D0sWAwWrjM+VG
+   TULsROuwc0relH+idOX5JtFWPeqGC/N5z8igSgorjNiNLtSt9p8w48tCO
+   qN9DR/ZZS9lO9Akcsgx7eU7boiZpZEuIjfIIvYRSnpTWwqzav08T3oxtu
+   xuLNupO1B7LfDTr9Q1dJwXX9ECPG9bn3/S3i4Z/RRLnd9dASKzXvZvcEz
+   w==;
+X-CSE-ConnectionGUID: p7/vNlQFTee1Lb+Foj7kzA==
+X-CSE-MsgGUID: y0mWJ24bRMSIZTKA70SHXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="26827859"
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="26827859"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 17:52:49 -0700
+X-CSE-ConnectionGUID: kTgB74QiSwa4Objpi0GQ+A==
+X-CSE-MsgGUID: qkmLuQ8RSjGgdL2u2rodRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
+   d="scan'208";a="75205821"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 04 Oct 2024 17:52:47 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swt2L-0002OK-0s;
+	Sat, 05 Oct 2024 00:52:45 +0000
+Date: Sat, 5 Oct 2024 08:51:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aurabindo Pillai <aurabindo.pillai@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:134
+ core_dcn4_initialize() warn: inconsistent indenting
+Message-ID: <202410050813.ukNdcvDS-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,58 +76,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241004-patronize-doily-8406fa214347@spud>
 
-On Fri, Oct 04, 2024 at 04:44:22PM +0100, Conor Dooley wrote:
-> On Fri, Oct 04, 2024 at 04:05:55PM +0800, Inochi Amaoto wrote:
-> > Sophgo SG2044 has a new version of T-HEAD C920, which implement
-> > a fully featured ACLINT device. This ACLINT has an extra SSWI
-> > field to support fast S-mode IPI.
-> > 
-> > Add necessary compatible string for the T-HEAD ACLINT sswi device.
-> > 
-> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > ---
-> >  .../thead,c900-aclint-sswi.yaml               | 58 +++++++++++++++++++
-> >  1 file changed, 58 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml b/Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml
-> > new file mode 100644
-> > index 000000000000..0106fbf3ea1f
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml
-> > @@ -0,0 +1,58 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/interrupt-controller/thead,c900-aclint-sswi.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Sophgo sg2044 ACLINT Supervisor-level Software Interrupt Device
-> > +
-> > +maintainers:
-> > +  - Inochi Amaoto <inochiama@outlook.com>
-> > +
-> > +description:
-> > +  The SSWI device is a part of the riscv ACLINT device. It provides
-> > +  supervisor-level IPI functionality for a set of HARTs on a RISC-V
-> > +  platform. It provides a register to set an IPI (SETSSIP) for each
-> > +  HART connected to the SSWI device.
-> 
-> If it is part of the aclint, why should it have a separate node, rather
-> than be part of the existing aclint node as a third reg property?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   ac308609567d31fe44be80ab757a5ddf062362ef
+commit: 00c391102abc13763e2bfc90e05503109b19f074 drm/amd/display: Add misc DC changes for DCN401
+date:   5 months ago
+config: loongarch-randconfig-r071-20241003 (https://download.01.org/0day-ci/archive/20241005/202410050813.ukNdcvDS-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
 
-For aclint, the current nodes that have documented are mswi and mtime.
-Since the mtime is a M-mode time source, it is not suitable to add the
-sswi reg into this device. For mswi, it is OK to add a sswi reg, but
-this will cause problem while checking "interrupt-extend". Do we just
-double the maxItem? Or just left it unchanged?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410050813.ukNdcvDS-lkp@intel.com/
 
-Another reason to add it as a separate node is that the draft says
-sswi can be multiple. If we add this device by adding reg. It will be
-hard if we have multiple sswi devices but one mswi device.
+New smatch warnings:
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:134 core_dcn4_initialize() warn: inconsistent indenting
 
-Regard,
-Inochi
+Old smatch warnings:
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:553 core_dcn4_mode_programming() warn: inconsistent indenting
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:568 core_dcn4_mode_programming() warn: curly braces intended?
+
+vim +134 drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c
+
+70839da6360500 Aurabindo Pillai 2024-04-19  112  
+70839da6360500 Aurabindo Pillai 2024-04-19  113  bool core_dcn4_initialize(struct dml2_core_initialize_in_out *in_out)
+70839da6360500 Aurabindo Pillai 2024-04-19  114  {
+70839da6360500 Aurabindo Pillai 2024-04-19  115  	struct dml2_core_instance *core = in_out->instance;
+70839da6360500 Aurabindo Pillai 2024-04-19  116  
+70839da6360500 Aurabindo Pillai 2024-04-19  117  	if (!in_out->minimum_clock_table)
+70839da6360500 Aurabindo Pillai 2024-04-19  118  		return false;
+70839da6360500 Aurabindo Pillai 2024-04-19  119  	else
+70839da6360500 Aurabindo Pillai 2024-04-19  120  		core->minimum_clock_table = in_out->minimum_clock_table;
+70839da6360500 Aurabindo Pillai 2024-04-19  121  
+70839da6360500 Aurabindo Pillai 2024-04-19  122  	if (in_out->explicit_ip_bb && in_out->explicit_ip_bb_size > 0) {
+70839da6360500 Aurabindo Pillai 2024-04-19  123  		memcpy(&core->clean_me_up.mode_lib.ip, in_out->explicit_ip_bb, in_out->explicit_ip_bb_size);
+70839da6360500 Aurabindo Pillai 2024-04-19  124  
+70839da6360500 Aurabindo Pillai 2024-04-19  125  		// FIXME_STAGE2:
+70839da6360500 Aurabindo Pillai 2024-04-19  126  		// DV still uses stage1 ip_param_st for each variant, need to patch the ip_caps with ip_param info
+70839da6360500 Aurabindo Pillai 2024-04-19  127  		// Should move DV to use ip_caps but need move more overrides to ip_caps
+70839da6360500 Aurabindo Pillai 2024-04-19  128  		patch_ip_caps_with_explicit_ip_params(in_out->ip_caps, in_out->explicit_ip_bb);
+70839da6360500 Aurabindo Pillai 2024-04-19  129  		core->clean_me_up.mode_lib.ip.subvp_pstate_allow_width_us = core_dcn4_ip_caps_base.subvp_pstate_allow_width_us;
+70839da6360500 Aurabindo Pillai 2024-04-19  130  		core->clean_me_up.mode_lib.ip.subvp_fw_processing_delay_us = core_dcn4_ip_caps_base.subvp_pstate_allow_width_us;
+70839da6360500 Aurabindo Pillai 2024-04-19  131  		core->clean_me_up.mode_lib.ip.subvp_swath_height_margin_lines = core_dcn4_ip_caps_base.subvp_swath_height_margin_lines;
+70839da6360500 Aurabindo Pillai 2024-04-19  132  	} else {
+70839da6360500 Aurabindo Pillai 2024-04-19  133  			memcpy(&core->clean_me_up.mode_lib.ip, &core_dcn4_ip_caps_base, sizeof(struct dml2_core_ip_params));
+70839da6360500 Aurabindo Pillai 2024-04-19 @134  		patch_ip_params_with_ip_caps(&core->clean_me_up.mode_lib.ip, in_out->ip_caps);
+70839da6360500 Aurabindo Pillai 2024-04-19  135  
+70839da6360500 Aurabindo Pillai 2024-04-19  136  		core->clean_me_up.mode_lib.ip.imall_supported = false;
+70839da6360500 Aurabindo Pillai 2024-04-19  137  	}
+70839da6360500 Aurabindo Pillai 2024-04-19  138  
+70839da6360500 Aurabindo Pillai 2024-04-19  139  	memcpy(&core->clean_me_up.mode_lib.soc, in_out->soc_bb, sizeof(struct dml2_soc_bb));
+70839da6360500 Aurabindo Pillai 2024-04-19  140  
+70839da6360500 Aurabindo Pillai 2024-04-19  141  	return true;
+70839da6360500 Aurabindo Pillai 2024-04-19  142  }
+70839da6360500 Aurabindo Pillai 2024-04-19  143  
+
+:::::: The code at line 134 was first introduced by commit
+:::::: 70839da6360500a82e4d5f78499284474cbed7c1 drm/amd/display: Add new DCN401 sources
+
+:::::: TO: Aurabindo Pillai <aurabindo.pillai@amd.com>
+:::::: CC: Alex Deucher <alexander.deucher@amd.com>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
