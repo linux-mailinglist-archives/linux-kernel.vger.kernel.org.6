@@ -1,179 +1,128 @@
-Return-Path: <linux-kernel+bounces-351909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0C09991784
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:51:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68360991788
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E9551F2355C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:51:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA843B20B19
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BCF15533B;
-	Sat,  5 Oct 2024 14:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9712C154C18;
+	Sat,  5 Oct 2024 14:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shEvVrEI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WW3P6qOn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7171B7F4;
-	Sat,  5 Oct 2024 14:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0445DD2FA;
+	Sat,  5 Oct 2024 14:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728139899; cv=none; b=G+wiXRsjC6pnWDdrKTBfPkVsT71XlQgt4gHbs2uKzdygIXqBRaHwVqKJQfMF7/PX3PznE6Ehc0XsHo7hky8dE1OCFEQ8qwBzfRh/ozrS9c42tyNL/ZsRBBbQXesLY6WLiCnqymgj9NxyPUmHuK6TTGaR2y3Oi1WKB3HRb2WRoc0=
+	t=1728140155; cv=none; b=JXqOS/GD2+nX8FYfwy/QRLAtaPHVefhgBWhRE74FxQwG2CqFog56dKXcm9mJ074RV0SNLwtxdY8snc6dEPfroq4nyB/r6vzauZMEFgu18VuogxZhs8JVtOYsc16vg4NTGiLwJeet9qwzLWeppNxJLHQDh/jx6xaSHgzuW3PY2ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728139899; c=relaxed/simple;
-	bh=cIDQZ3VFgVlF584wBg+yIQIma0fK4hTce/36W+uCn8c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hvdDbG15MV/mNsYRhAyaK59OFC4hhL35p/mF0bWn2BHWPgCBJ3+DFjmtrM4KRy6jmS7owRLSzp/yFKO+klkETvXocsONVqd3ZXEfncrB6xE/5KtqPcfjQN+9W5nK16G9FikEnMDLkFhbn7iqyOMD70Z1DOZ9iMFezRNKhRVXnUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shEvVrEI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3078AC4CEC2;
-	Sat,  5 Oct 2024 14:51:34 +0000 (UTC)
+	s=arc-20240116; t=1728140155; c=relaxed/simple;
+	bh=GKFhspQKG3F8+HOlrGsjdqSuU0BhOiTDmtfSBXtyd6M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jHaxa8F5W9xkkdIS1P/jV1/vOR9+iVDm4mdZ8Z1uNqMAXQhDSvTzFAVzuUXNCRxpm64Q0RHqG2Ubyrb1ZMstRp3e4cu5hGM5hgvTOaD6IymXoh+U1o49bIaK1j3EzybEyeCO0Os+hV/up7KaW03Uyj2ILTUVL0rIlRA8pEaZ6II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WW3P6qOn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AD0AC4CEC2;
+	Sat,  5 Oct 2024 14:55:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728139899;
-	bh=cIDQZ3VFgVlF584wBg+yIQIma0fK4hTce/36W+uCn8c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=shEvVrEIjtS4m/RLIHpsfbXPL0DUo2lDazMn29Ntpg/PIRkneYzn97Pt4OeBMBevT
-	 4uQ3nYNoFjbF50/QrGS28+bFGb9LcwcQS5t61rxzTXw0GEaHZJ9l7IP6Z6VqTBXpwq
-	 /EchaBAcVte02aphm1G4nfK+sWI073JsYUXreqPZz/eQ/c/dusd9/WikgR0OmBqUnZ
-	 Q+MP0ZqRmbg1ijMxhwyxpjPCU3iS7HFO1ACsLJWU1olPzNm4cP0lHwhrcucCFU1hbJ
-	 JL0V0gITqB3tOsCDh07lAW5rFonChQZn7ZiymEwTkziDSJ3saifTDTg1yVzgVQXHlk
-	 LeevGFGvnk62A==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Greg KH" <gregkh@linuxfoundation.org>,  "Gary Guo" <gary@garyguo.net>,
-  "Boqun Feng" <boqun.feng@gmail.com>,  "Miguel Ojeda" <ojeda@kernel.org>,
-  "Alex Gaynor" <alex.gaynor@gmail.com>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Jens Axboe" <axboe@kernel.dk>,
-  "Will Deacon" <will@kernel.org>,  "Peter Zijlstra"
- <peterz@infradead.org>,  "Mark Rutland" <mark.rutland@arm.com>,
-  <linux-block@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rust: block: convert `block::mq` to use `Refcount`
-In-Reply-To: <CAH5fLghK1dtkF5bRpcRcu2SXZ6vgPoHGLRqW2=r0J3-2T3ALwQ@mail.gmail.com>
- (Alice
-	Ryhl's message of "Sat, 05 Oct 2024 13:59:44 +0200")
-References: <20241004155247.2210469-1-gary@garyguo.net>
-	<20241004155247.2210469-4-gary@garyguo.net>
-	<OKHi9uP1uJD59N2oYRk1OfsxsrGlqiupMsgcvrva9_IPnEI9wpoxmabHQo1EYen96ClDBRQyrJWxb7WJxiMiAA==@protonmail.internalid>
-	<2024100507-percolate-kinship-fc9a@gregkh> <87zfniop6i.fsf@kernel.org>
-	<Iv1dzncMcKGj5zv3wxh_AG5fxfl-RhnuU_pwEQ8rWbhzVCZ13lzLBOgU5Jva9iPBDWaZmyZjVnnOzs_Qwi3uhQ==@protonmail.internalid>
-	<CAH5fLghK1dtkF5bRpcRcu2SXZ6vgPoHGLRqW2=r0J3-2T3ALwQ@mail.gmail.com>
-Date: Sat, 05 Oct 2024 16:51:26 +0200
-Message-ID: <87r08uob69.fsf@kernel.org>
+	s=k20201202; t=1728140154;
+	bh=GKFhspQKG3F8+HOlrGsjdqSuU0BhOiTDmtfSBXtyd6M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WW3P6qOnvRFaaqOIx75NmlbuM374VF6z+qtlGkDJrbUuTy5lQG5JFdm0ip18zPmgo
+	 F2aPOcLnRvzAIKfykkQRwRHjxpc41EngFgmKp8+5ldtSiYVcnOswLRM4+gEtBXBLbP
+	 0z9LQm177PHjvdcJKRW3AvHJQsCIves/LygU8K3i2bbVOFMQL2YSi25lotME+b8Ajs
+	 SL34DdgH/6dkYBPuPRTTOrtRvZOiBv3XGZoTxvfril2aoTIgMFkiOak+tlSuq34LYF
+	 sSRT+J/1VpWhK7wzJ3DkzQ2fS/hj7i8m9dTUUB81S/ajoolGrHZXNNErr61cVq3NX/
+	 xNMQfQUP4JxNQ==
+Received: by pali.im (Postfix)
+	id 0387E648; Sat,  5 Oct 2024 16:55:48 +0200 (CEST)
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] cifs: Recognize SFU char/block devices created by Windows NFS server on Windows Server <<2012
+Date: Sat,  5 Oct 2024 16:54:45 +0200
+Message-Id: <20241005145445.19850-1-pali@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+Windows NFS server versions on Windows Server older than 2012 release use
+for storing char and block devices modified SFU format, not compatible with
+the original SFU. Windows NFS server on Windows Server 2012 and new
+versions use different format (reparse points), not related to SFU-style.
 
-> On Sat, Oct 5, 2024 at 11:49=E2=80=AFAM Andreas Hindborg <a.hindborg@kern=
-el.org> wrote:
->>
->> Hi Greg,
->>
->> "Greg KH" <gregkh@linuxfoundation.org> writes:
->>
->> > On Fri, Oct 04, 2024 at 04:52:24PM +0100, Gary Guo wrote:
->> >> There is an operation needed by `block::mq`, atomically decreasing
->> >> refcount from 2 to 0, which is not available through refcount.h, so
->> >> I exposed `Refcount::as_atomic` which allows accessing the refcount
->> >> directly.
->> >
->> > That's scary, and of course feels wrong on many levels, but:
->> >
->> >
->> >> @@ -91,13 +95,17 @@ pub(crate) unsafe fn start_unchecked(this: &ARef<=
-Self>) {
->> >>      /// C `struct request`. If the operation fails, `this` is return=
-ed in the
->> >>      /// `Err` variant.
->> >>      fn try_set_end(this: ARef<Self>) -> Result<*mut bindings::reques=
-t, ARef<Self>> {
->> >> -        // We can race with `TagSet::tag_to_rq`
->> >> -        if let Err(_old) =3D this.wrapper_ref().refcount().compare_e=
-xchange(
->> >> -            2,
->> >> -            0,
->> >> -            Ordering::Relaxed,
->> >> -            Ordering::Relaxed,
->> >> -        ) {
->> >> +        // To hand back the ownership, we need the current refcount =
-to be 2.
->> >> +        // Since we can race with `TagSet::tag_to_rq`, this needs to=
- atomically reduce
->> >> +        // refcount to 0. `Refcount` does not provide a way to do th=
-is, so use the underlying
->> >> +        // atomics directly.
->> >> +        if this
->> >> +            .wrapper_ref()
->> >> +            .refcount()
->> >> +            .as_atomic()
->> >> +            .compare_exchange(2, 0, Ordering::Relaxed, Ordering::Rel=
-axed)
->> >> +            .is_err()
->> >
->> > Why not just call rust_helper_refcount_set()?  Or is the issue that you
->> > think you might not be 2 here?  And if you HAVE to be 2, why that magic
->> > value (i.e. why not just always be 1 and rely on normal
->> > increment/decrement?)
->> >
->> > I know some refcounts are odd in the kernel, but I don't see where the
->> > block layer is caring about 2 as a refcount anywhere, what am I missin=
-g?
->>
->> It is in the documentation, rendered version available here [1]. Let me
->> know if it is still unclear, then I guess we need to update the docs.
->>
->> Also, my session from Recipes has a little bit of discussion regarding
->> this refcount and it's use [2].
->>
->> Best regards,
->> Andreas
->>
->>
->> [1] https://rust.docs.kernel.org/kernel/block/mq/struct.Request.html#imp=
-lementation-details
->> [2] https://youtu.be/1LEvgkhU-t4?si=3DB1XnJhzCCNnUtRsI&t=3D1685
->
-> So it sounds like there is one refcount from the C side, and some
-> number of references from the Rust side.
+SFU / SUA / Interix subsystem stores the major and major numbers as pair of
+64-bit integer, but Windows NFS server stores as pair of 32-bit integers.
 
-C side uses a different refcount field. That refcount never read by
-Rust, but it is guaranteed to be greater or equal to one while the
-driver owns the request.
+Which makes char and block devices between Windows NFS server <<2012 and
+Windows SFU/SUA/Interix subsytem incompatible.
 
-Rust uses a different refcount field to keep track of how many Rust
-references there is to a request. There is an implicit count while the
-driver owns the request. This count is not materialized as an `ARef`
-instance.
+So improve Linux SMB client.
 
-> The function checks whether there's only one Rust reference left, and
-> if so, takes ownership of the value, correct?
+When SFU mode is enabled (mount option -o sfu is specified) then recognize
+also these kind of char and block devices and its major and minor numbers,
+which are used by Windows Server versions older than 2012.
 
-It checks if the `ARef` passed to the function is the last one in
-existence. If it is, it takes ownership of the `Request` object.
+Signed-off-by: Pali Rohár <pali@kernel.org>
+---
+ fs/smb/client/inode.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-> In that case, the CAS should have an acquire ordering to synchronize
-> with dropping the refcount 3->2 on another thread. Otherwise, you
-> might have a data race with the operations that happened just before
-> the 3->2 refcount drop.
-
-I am not sure. I don't think that the thread that does the CAS 2 -> 0
-has any data dependencies to any thread that does the atomic decrement 3
--> 2. Any data dependencies between operations on the underlying C
-`struct request` would be synchronized by operations on the `ref` field
-of `struct request`, which is entirely managed block layer C code and
-the C functions called by the Rust abstractions.
-
-
-BR Andreas
+diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
+index 71d454a6bdf3..4d1accfde154 100644
+--- a/fs/smb/client/inode.c
++++ b/fs/smb/client/inode.c
+@@ -598,6 +598,17 @@ cifs_sfu_type(struct cifs_fattr *fattr, const char *path,
+ 				mjr = le64_to_cpu(*(__le64 *)(pbuf+8));
+ 				mnr = le64_to_cpu(*(__le64 *)(pbuf+16));
+ 				fattr->cf_rdev = MKDEV(mjr, mnr);
++			} else if (bytes_read == 16) {
++				/*
++				 * Windows NFS server before Windows Server 2012
++				 * stores major and minor number in SFU-modified
++				 * style, just as 32-bit numbers. Recognize it.
++				 */
++				__u32 mjr; /* major */
++				__u32 mnr; /* minor */
++				mjr = le32_to_cpu(*(__le32 *)(pbuf+8));
++				mnr = le32_to_cpu(*(__le32 *)(pbuf+12));
++				fattr->cf_rdev = MKDEV(mjr, mnr);
+ 			}
+ 		} else if (memcmp("IntxCHR\0", pbuf, 8) == 0) {
+ 			cifs_dbg(FYI, "Char device\n");
+@@ -610,6 +621,17 @@ cifs_sfu_type(struct cifs_fattr *fattr, const char *path,
+ 				mjr = le64_to_cpu(*(__le64 *)(pbuf+8));
+ 				mnr = le64_to_cpu(*(__le64 *)(pbuf+16));
+ 				fattr->cf_rdev = MKDEV(mjr, mnr);
++			} else if (bytes_read == 16) {
++				/*
++				 * Windows NFS server before Windows Server 2012
++				 * stores major and minor number in SFU-modified
++				 * style, just as 32-bit numbers. Recognize it.
++				 */
++				__u32 mjr; /* major */
++				__u32 mnr; /* minor */
++				mjr = le32_to_cpu(*(__le32 *)(pbuf+8));
++				mnr = le32_to_cpu(*(__le32 *)(pbuf+12));
++				fattr->cf_rdev = MKDEV(mjr, mnr);
+ 			}
+ 		} else if (memcmp("IntxLNK\1", pbuf, 8) == 0) {
+ 			cifs_dbg(FYI, "Symlink\n");
+-- 
+2.20.1
 
 
