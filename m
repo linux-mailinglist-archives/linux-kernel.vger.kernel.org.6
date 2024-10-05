@@ -1,76 +1,81 @@
-Return-Path: <linux-kernel+bounces-351750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985FA99159E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:01:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C23F69915A2
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B20FD1C21404
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:01:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3F6C1C212AC
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7BE5C613;
-	Sat,  5 Oct 2024 10:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC211465BA;
+	Sat,  5 Oct 2024 10:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kcV2vbCC"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eTREWfp8"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F66A231CA7
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 10:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435A912E1CD;
+	Sat,  5 Oct 2024 10:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728122469; cv=none; b=REemNNfOq2EbvowCmbQDC8uas6dAVWPCkga0TCqEiN8bxU0CQJ+fDZVxWeKj+GQqkTap8jPFEdpwEKp7GQUBMjZGo+D6Qwd8IK8LBdoxRWrU5TiMgJKaiu0nmkejkushgUzki59m2SYcZutmyHgwwrqyxq8jRb/hNN5Ye6xMOcQ=
+	t=1728122470; cv=none; b=nr6/8yK13Rd6QByL8qWZmbpwCvAUXJK5q8mWzhKNuKWU7ojMX3ZoTHiSgc1173AGf490t76Df3Q4tTDJguUWCEcxuzbVAzNRELKkksBXVlq6b4fxjZepGGpWtX0Drts3MLR3ZyIEHxxm4QcIIuN3FSH1D2UPDhd7o1O9gOqQqqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728122469; c=relaxed/simple;
-	bh=nMf3pELHL1cs+msf2RX5vhmEapBTsV/nTOw2y1HKlzI=;
+	s=arc-20240116; t=1728122470; c=relaxed/simple;
+	bh=AS66JIPtXx2sZQ/smwiZJMTI3t0JMMag9/KeDzC1/38=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m9QtmsguUWhiaVvDTnwnSs0B3xsl4qKraIqsmSSQdo+pU/PX2eUuhk9lZfVfWghV9DtHck490QypdwEN2C8+sNvDisrvZAyBWtEcANGxLY9FFcPucm4xW8z8swcpVWkS1d3tryjO+wdeC+3+HId+Bru77SlA+ISSjqTJOqSHufc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kcV2vbCC; arc=none smtp.client-ip=198.175.65.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=cb4qEtH2IuV1pdqMe6itXOkeG5ulbMts/rqa+9DrVZc2oYAb9HXkCphStg5bDviIp/h2xV+ranAcJTr/bK3wvutd2b8+zUAGqzAzKs0iSq6lqwgSoo6tedv66MLXrDzvDH5CouR6LXI8HBHp+FcLwg4lc8O0fzWjb2NrWECeHdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eTREWfp8; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728122468; x=1759658468;
+  t=1728122470; x=1759658470;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=nMf3pELHL1cs+msf2RX5vhmEapBTsV/nTOw2y1HKlzI=;
-  b=kcV2vbCCY9lWhYwGzSNcO8J5FiUDjFXJ6Lcz20E4n4PcRwzo/r4AuyVE
-   zDPL98rgVY9POiB1kQJIaw92zfe4ErRBWws5pcpz9zo+hAdzmuSvoOnk1
-   iIQUmGDKzDZy30A3cxFVkTmY3HB8I4dMK7LaobKxo+f9z5CL3QbGoS2Yi
-   ZBE6BQil74TWZu6A5ue/SokarP2gprZcbfIrCITAhh2gSnv3wnFdazw7x
-   zQ3BcxrKYlsGJnApdV48kVKd5lsEb1+SCuFn5H56kq3KIw4KqTbw1XSEz
-   dTxnKBoxBKatEEvdEl1GZtGU4p0SvW1YgPTfTUAl1NnE5zZQD3NwJkLYT
-   g==;
-X-CSE-ConnectionGUID: sMCqFLKxSoK4VqjTeMp8Aw==
-X-CSE-MsgGUID: h0eTfywMRl+JZhi+WXYINw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="27426125"
+  bh=AS66JIPtXx2sZQ/smwiZJMTI3t0JMMag9/KeDzC1/38=;
+  b=eTREWfp8ffoJalNeTcPi7N+Vtc7naPckGIlksC8ce0GUaOu8VeDsEbS3
+   c7Dt3Zr3TdR+hvEKXzZK7L7FA5NGGLacqc1pvW+dCPrcvO//skOnOktil
+   7pe61WG/4o7qmjMkqptcdR0Y0RTYHZvs+uFqMdMPfMI0UfjwOPVM185dX
+   vbXDVFJ+x8gDzvNzGylNIdlAwP/U8vIvzkWG4jicGcqW4tmFmKjTgclhu
+   ugB5LxPwtYDT9Vmh2ng72J2tt/wpwOtxyk0fk/eC9uvrmTVgFS2akSIPv
+   n4uxqNf4XUAhG1H3q0tTuNpA29lwSOg88fJNjWbb21nWrfz1PK9NYftJT
+   Q==;
+X-CSE-ConnectionGUID: y8Ae4vbfTV2owCj1WHS8kg==
+X-CSE-MsgGUID: KA9Mv/Q2RHWi801Q0n5O0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="27426130"
 X-IronPort-AV: E=Sophos;i="6.11,180,1725346800"; 
-   d="scan'208";a="27426125"
+   d="scan'208";a="27426130"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 03:01:07 -0700
-X-CSE-ConnectionGUID: JmKzTfbbTi20XzLvp0CRkg==
-X-CSE-MsgGUID: D+b79H58QH+6L4SnXtAb/A==
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 03:01:10 -0700
+X-CSE-ConnectionGUID: qc9AevAoQe6hbVVwa7kNtw==
+X-CSE-MsgGUID: gqkgz86BSNeOu8NTBwAbZw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,180,1725346800"; 
-   d="scan'208";a="105707402"
+   d="scan'208";a="105707403"
 Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
   by fmviesa001.fm.intel.com with ESMTP; 05 Oct 2024 03:01:05 -0700
 Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sx1ax-0002pq-0C;
+	id 1sx1ax-0002ps-0H;
 	Sat, 05 Oct 2024 10:01:03 +0000
-Date: Sat, 5 Oct 2024 18:00:51 +0800
+Date: Sat, 5 Oct 2024 18:00:52 +0800
 From: kernel test robot <lkp@intel.com>
-To: Xiaofeng Lian <1198715581lxf@gmail.com>, stefani@seibold.net,
+To: Ryan Chen <ryan_chen@aspeedtech.com>, brendan.higgins@linux.dev,
+	benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
+	andriy.shevchenko@linux.intel.com, linux-i2c@vger.kernel.org,
+	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Xiaofeng Lian <1198715581lxf@gmail.com>
-Subject: Re: [PATCH v2] include/linux/kfifo.h: fix some IDEs Intelligence
- errors and the previous patch was misnamed
-Message-ID: <202410051712.VDmFpiVZ-lkp@intel.com>
-References: <20241002172427.412715-1-1198715581lxf@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v14 2/3] i2c: aspeed: support AST2600 i2c new register
+ mode driver
+Message-ID: <202410051759.bRIS387l-lkp@intel.com>
+References: <20241002070213.1165263-3-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,197 +84,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241002172427.412715-1-1198715581lxf@gmail.com>
+In-Reply-To: <20241002070213.1165263-3-ryan_chen@aspeedtech.com>
 
-Hi Xiaofeng,
+Hi Ryan,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.12-rc1 next-20241004]
+[auto build test ERROR on v6.11]
+[cannot apply to andi-shyti/i2c/i2c-host v6.12-rc1 linus/master next-20241004]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiaofeng-Lian/include-linux-kfifo-h-fix-some-IDEs-Intelligence-errors-and-the-previous-patch-was-misnamed/20241003-012640
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241002172427.412715-1-1198715581lxf%40gmail.com
-patch subject: [PATCH v2] include/linux/kfifo.h: fix some IDEs Intelligence errors and the previous patch was misnamed
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20241005/202410051712.VDmFpiVZ-lkp@intel.com/config)
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-i2c-aspeed-support-for-AST2600-i2cv2/20241002-150410
+base:   v6.11
+patch link:    https://lore.kernel.org/r/20241002070213.1165263-3-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v14 2/3] i2c: aspeed: support AST2600 i2c new register mode driver
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20241005/202410051759.bRIS387l-lkp@intel.com/config)
 compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410051712.VDmFpiVZ-lkp@intel.com/reproduce)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410051759.bRIS387l-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410051712.VDmFpiVZ-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410051759.bRIS387l-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
->> arch/x86/kvm/hyperv.c:984:3: error: member reference base type 'u64' (aka 'unsigned long long') is not a structure or union
-     984 |                 INIT_KFIFO(hv_vcpu->tlb_flush_fifo[i].entries);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:34: note: expanded from macro '__KFIFO_SIZE'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_kfifo, get_kfifo_data_type(fifo));\
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
-     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^ ~~~~
-   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
-   include/linux/kfifo.h:84:28: note: expanded from macro 'STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-   include/linux/kfifo.h:79:24: note: expanded from macro '__STRUCT_KFIFO_PTR'
-      79 |         __STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
-         |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:61:3: note: expanded from macro '__STRUCT_KFIFO_COMMON'
-      61 |                 datatype        *type; \
-         |                 ^~~~~~~~
->> arch/x86/kvm/hyperv.c:984:3: error: member reference base type 'u64' (aka 'unsigned long long') is not a structure or union
-     984 |                 INIT_KFIFO(hv_vcpu->tlb_flush_fifo[i].entries);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:34: note: expanded from macro '__KFIFO_SIZE'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_kfifo, get_kfifo_data_type(fifo));\
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
-     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^ ~~~~
-   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
-   include/linux/kfifo.h:84:28: note: expanded from macro 'STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-   include/linux/kfifo.h:79:24: note: expanded from macro '__STRUCT_KFIFO_PTR'
-      79 |         __STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
-         |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:62:9: note: expanded from macro '__STRUCT_KFIFO_COMMON'
-      62 |                 const datatype  *const_type; \
-         |                       ^~~~~~~~
->> arch/x86/kvm/hyperv.c:984:3: error: member reference base type 'u64' (aka 'unsigned long long') is not a structure or union
-     984 |                 INIT_KFIFO(hv_vcpu->tlb_flush_fifo[i].entries);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:34: note: expanded from macro '__KFIFO_SIZE'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_kfifo, get_kfifo_data_type(fifo));\
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
-     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^ ~~~~
-   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
-   include/linux/kfifo.h:84:37: note: expanded from macro 'STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
-   include/linux/kfifo.h:79:39: note: expanded from macro '__STRUCT_KFIFO_PTR'
-      79 |         __STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
-   include/linux/kfifo.h:64:3: note: expanded from macro '__STRUCT_KFIFO_COMMON'
-      64 |                 ptrtype         *ptr; \
-         |                 ^~~~~~~
->> arch/x86/kvm/hyperv.c:984:3: error: member reference base type 'u64' (aka 'unsigned long long') is not a structure or union
-     984 |                 INIT_KFIFO(hv_vcpu->tlb_flush_fifo[i].entries);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:34: note: expanded from macro '__KFIFO_SIZE'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_kfifo, get_kfifo_data_type(fifo));\
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
-     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^ ~~~~
-   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
-   include/linux/kfifo.h:84:37: note: expanded from macro 'STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
-   include/linux/kfifo.h:79:39: note: expanded from macro '__STRUCT_KFIFO_PTR'
-      79 |         __STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
-   include/linux/kfifo.h:65:3: note: expanded from macro '__STRUCT_KFIFO_COMMON'
-      65 |                 ptrtype const   *ptr_const; \
-         |                 ^~~~~~~
->> arch/x86/kvm/hyperv.c:984:3: error: member reference base type 'u64' (aka 'unsigned long long') is not a structure or union
-     984 |                 INIT_KFIFO(hv_vcpu->tlb_flush_fifo[i].entries);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:138:34: note: expanded from macro '__KFIFO_SIZE'
-     138 |                 DECLARE_KFIFO_PTR(__tmp_kfifo, get_kfifo_data_type(fifo));\
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
-     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
-         |                                                 ^ ~~~~
-   include/linux/kfifo.h:116:56: note: expanded from macro 'DECLARE_KFIFO_PTR'
-     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
-         |                                         ~~~~~~~~~~~~~~~~~^~~~~
-   include/linux/kfifo.h:84:28: note: expanded from macro 'STRUCT_KFIFO_PTR'
-      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
-         |                ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-   include/linux/kfifo.h:80:2: note: expanded from macro '__STRUCT_KFIFO_PTR'
-      80 |         type            buf[0]; \
-         |         ^~~~
->> arch/x86/kvm/hyperv.c:984:3: error: member reference base type 'u64' (aka 'unsigned long long') is not a structure or union
-     984 |                 INIT_KFIFO(hv_vcpu->tlb_flush_fifo[i].entries);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
-         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:139:52: note: expanded from macro '__KFIFO_SIZE'
-     139 |                 (sizeof(*(fifo)) - sizeof(__tmp_kfifo)) / sizeof(get_kfifo_data_type(fifo));\
-         |                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
-     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
-         |                                           ~~~~~~^ ~~~~
->> arch/x86/kvm/hyperv.c:984:3: error: invalid operands to binary expression ('void' and 'int')
-     984 |                 INIT_KFIFO(hv_vcpu->tlb_flush_fifo[i].entries);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:151:71: note: expanded from macro 'INIT_KFIFO'
-     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
-         |                                                     ~~~~~~~~~~~~~~~~~~~~~~~~ ^ ~
-   7 errors generated.
+>> drivers/i2c/busses/i2c-ast2600.c:437:6: error: call to undeclared function 'get_unaligned_le16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     437 |                                         get_unaligned_le16(&msg->buf[i2c_bus->master_xfer_cnt + i]);
+         |                                         ^
+>> drivers/i2c/busses/i2c-ast2600.c:441:6: error: call to undeclared function 'get_unaligned_le24'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     441 |                                         get_unaligned_le24(&msg->buf[i2c_bus->master_xfer_cnt + i]);
+         |                                         ^
+>> drivers/i2c/busses/i2c-ast2600.c:445:6: error: call to undeclared function 'get_unaligned_le32'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     445 |                                         get_unaligned_le32(&msg->buf[i2c_bus->master_xfer_cnt + i]);
+         |                                         ^
+   3 errors generated.
 
 
-vim +984 arch/x86/kvm/hyperv.c
+vim +/get_unaligned_le16 +437 drivers/i2c/busses/i2c-ast2600.c
 
-1f4b34f825e8ce Andrey Smetanin     2015-11-30  959  
-3be29eb7b5251a Sean Christopherson 2022-08-30  960  int kvm_hv_vcpu_init(struct kvm_vcpu *vcpu)
-5c919412fe61c3 Andrey Smetanin     2015-11-10  961  {
-1cac8d9f6bd25d Sean Christopherson 2022-08-30  962  	struct kvm_vcpu_hv *hv_vcpu = to_hv_vcpu(vcpu);
-1f4b34f825e8ce Andrey Smetanin     2015-11-30  963  	int i;
-1f4b34f825e8ce Andrey Smetanin     2015-11-30  964  
-1cac8d9f6bd25d Sean Christopherson 2022-08-30  965  	if (hv_vcpu)
-1cac8d9f6bd25d Sean Christopherson 2022-08-30  966  		return 0;
-1cac8d9f6bd25d Sean Christopherson 2022-08-30  967  
-4592b7eaa87d35 Vitaly Kuznetsov    2021-01-26  968  	hv_vcpu = kzalloc(sizeof(struct kvm_vcpu_hv), GFP_KERNEL_ACCOUNT);
-4592b7eaa87d35 Vitaly Kuznetsov    2021-01-26  969  	if (!hv_vcpu)
-4592b7eaa87d35 Vitaly Kuznetsov    2021-01-26  970  		return -ENOMEM;
-4592b7eaa87d35 Vitaly Kuznetsov    2021-01-26  971  
-4592b7eaa87d35 Vitaly Kuznetsov    2021-01-26  972  	vcpu->arch.hyperv = hv_vcpu;
-4592b7eaa87d35 Vitaly Kuznetsov    2021-01-26  973  	hv_vcpu->vcpu = vcpu;
-4592b7eaa87d35 Vitaly Kuznetsov    2021-01-26  974  
-1f4b34f825e8ce Andrey Smetanin     2015-11-30  975  	synic_init(&hv_vcpu->synic);
-1f4b34f825e8ce Andrey Smetanin     2015-11-30  976  
-1f4b34f825e8ce Andrey Smetanin     2015-11-30  977  	bitmap_zero(hv_vcpu->stimer_pending_bitmap, HV_SYNIC_STIMER_COUNT);
-1f4b34f825e8ce Andrey Smetanin     2015-11-30  978  	for (i = 0; i < ARRAY_SIZE(hv_vcpu->stimer); i++)
-1f4b34f825e8ce Andrey Smetanin     2015-11-30  979  		stimer_init(&hv_vcpu->stimer[i], i);
-4592b7eaa87d35 Vitaly Kuznetsov    2021-01-26  980  
-4eeef2424153e7 Sean Christopherson 2021-09-10  981  	hv_vcpu->vp_index = vcpu->vcpu_idx;
-fc08b628d7c96d Vitaly Kuznetsov    2021-01-26  982  
-53ca765a041d5a Vitaly Kuznetsov    2022-11-01  983  	for (i = 0; i < HV_NR_TLB_FLUSH_FIFOS; i++) {
-53ca765a041d5a Vitaly Kuznetsov    2022-11-01 @984  		INIT_KFIFO(hv_vcpu->tlb_flush_fifo[i].entries);
-53ca765a041d5a Vitaly Kuznetsov    2022-11-01  985  		spin_lock_init(&hv_vcpu->tlb_flush_fifo[i].write_lock);
-53ca765a041d5a Vitaly Kuznetsov    2022-11-01  986  	}
-0823570f01989d Vitaly Kuznetsov    2022-11-01  987  
-4592b7eaa87d35 Vitaly Kuznetsov    2021-01-26  988  	return 0;
-5c919412fe61c3 Andrey Smetanin     2015-11-10  989  }
-5c919412fe61c3 Andrey Smetanin     2015-11-10  990  
+   405	
+   406	static int ast2600_i2c_setup_buff_tx(u32 cmd, struct ast2600_i2c_bus *i2c_bus)
+   407	{
+   408		struct i2c_msg *msg = &i2c_bus->msgs[i2c_bus->msgs_index];
+   409		u32 wbuf_dword;
+   410		int xfer_len;
+   411		int i;
+   412	
+   413		cmd |= AST2600_I2CM_PKT_EN;
+   414		xfer_len = msg->len - i2c_bus->master_xfer_cnt;
+   415		if (xfer_len > i2c_bus->buf_size)
+   416			xfer_len = i2c_bus->buf_size;
+   417		else if (i2c_bus->msgs_index + 1 == i2c_bus->msgs_count)
+   418			cmd |= AST2600_I2CM_STOP_CMD;
+   419	
+   420		if (cmd & AST2600_I2CM_START_CMD)
+   421			cmd |= AST2600_I2CM_PKT_ADDR(msg->addr);
+   422	
+   423		if (xfer_len) {
+   424			cmd |= AST2600_I2CM_TX_BUFF_EN | AST2600_I2CM_TX_CMD;
+   425			/*
+   426			 * The controller's buffer register supports dword writes only.
+   427			 * Therefore, write dwords to the buffer register in a 4-byte aligned,
+   428			 * and write the remaining unaligned data at the end.
+   429			 */
+   430			for (i = 0; i < xfer_len; i += 4) {
+   431				switch (min(xfer_len - i, 4) % 4) {
+   432				case 1:
+   433					wbuf_dword = msg->buf[i2c_bus->master_xfer_cnt + i];
+   434					break;
+   435				case 2:
+   436					wbuf_dword =
+ > 437						get_unaligned_le16(&msg->buf[i2c_bus->master_xfer_cnt + i]);
+   438					break;
+   439				case 3:
+   440					wbuf_dword =
+ > 441						get_unaligned_le24(&msg->buf[i2c_bus->master_xfer_cnt + i]);
+   442					break;
+   443				default:
+   444					wbuf_dword =
+ > 445						get_unaligned_le32(&msg->buf[i2c_bus->master_xfer_cnt + i]);
+   446					break;
+   447				}
+   448				writel(wbuf_dword, i2c_bus->buf_base + i);
+   449			}
+   450			writel(AST2600_I2CC_SET_TX_BUF_LEN(xfer_len),
+   451			       i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+   452		}
+   453	
+   454		writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
+   455	
+   456		return 0;
+   457	}
+   458	
 
 -- 
 0-DAY CI Kernel Test Service
