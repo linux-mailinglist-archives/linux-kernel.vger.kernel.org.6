@@ -1,167 +1,131 @@
-Return-Path: <linux-kernel+bounces-351994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017179918D6
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:28:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A739918D9
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9E41F223DE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:28:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC331F222EE
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AFD158DA9;
-	Sat,  5 Oct 2024 17:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA51158DCA;
+	Sat,  5 Oct 2024 17:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxjvdikD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="phm8hgJF"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC1A158A13;
-	Sat,  5 Oct 2024 17:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8021E489;
+	Sat,  5 Oct 2024 17:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728149286; cv=none; b=ECTW1J2qWP/k1swTfGdS3oIO78glk0izXSI/wp4xxFFVSmVAlmFku7rjh/BOoekuF1RWm1RiAuSFW8Ht//E5U3tOeXdY6qBoJUlH8Rm2UtzpgQayIMzjCwELpde4ipzsmH1wisHV+fvCJ0Mr2M6IJB4WqqwGU71FwDiOHCOksDY=
+	t=1728149384; cv=none; b=GFuVN7dPmOygHUvgzPRcFlPDM6b68arx6nz8ghZiQHZdjxPEtYfMIO96Vxt7jehkuLuMgMlzrXVdYcrJ2bOmhk8eq4/7Nr6byMe3V4dABgXkw2Zb+jECxAevbM8AMJvzxkdWC2AouQtuS04HYYMpXNLmlRt4yeePrESbAG50+W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728149286; c=relaxed/simple;
-	bh=2Vswsad+KPTveGlS2+T0u1QhZ+Ub2DCQjZ9NKPLrF4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SVdatOcFx9vkLsZagl2WNooAtfSrSKpI+vlOQipbQOuWJAzSEaxNRnYvN9VBHCOeiq5QSoBRV4ZugegEpRdc4DOY1GN2tHSoIvANkWDHdSWoEpHcUty8PLdT4lIe3KWOxuwuHVV+up8dQHaM1pk3ABVrE1wMDsJsc6QXvaSGX0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxjvdikD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24661C4CEC2;
-	Sat,  5 Oct 2024 17:27:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728149285;
-	bh=2Vswsad+KPTveGlS2+T0u1QhZ+Ub2DCQjZ9NKPLrF4I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MxjvdikDXVZbgr24c/LQt4Q8/kUvpR+nvPx/EkG9xxnXFx+HAl2fQf4OVFOK87gRa
-	 fqxfmRK1M3t+H8YB8FDjh0n48Wst1T9ABretXEMeR57gMNqas+efolOL2IagpVwL4C
-	 L3yxT+fF0X9uHUGtQbFnoZ3ls81mBYMz7QjVXq+waFLWLOdrHngM9y0Uy7ONm8vXAo
-	 NQ/ZZqwHzcgB6cf0r5Hxr/qw+6DYCINlHFukunogqisukVGD1ihFY8RXORKouLC81h
-	 d3k8c6jRYVVrL75S5dSghETOH1xXObgpZMt/NGTQt27JFtYcKdZgcRO62HWI/J6uPO
-	 CrPNMjLA7oJDw==
-Date: Sat, 5 Oct 2024 18:27:29 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>
-Cc: David Lechner <dlechner@baylibre.com>, Andy Shevchenko
- <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "Hennerich,
- Michael" <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>, Olivier Moysan
- <olivier.moysan@foss.st.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <ukleinek@kernel.org>, "Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
- =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
- <joao.goncalves@toradex.com>, Mike Looijmans <mike.looijmans@topic.nl>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Alisa-Dariana Roman
- <alisadariana@gmail.com>, "Cuciurean, Sergiu"
- <Sergiu.Cuciurean@analog.com>, "Bogdan, Dragos" <Dragos.Bogdan@analog.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
-Message-ID: <20241005182729.014819df@jic23-huawei>
-In-Reply-To: <CY4PR03MB33996A380953651B290EC3839B722@CY4PR03MB3399.namprd03.prod.outlook.com>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
-	<20240923101206.3753-7-antoniu.miclaus@analog.com>
-	<20240928184722.314b329b@jic23-huawei>
-	<CY4PR03MB33991208029C4877760B528D9B772@CY4PR03MB3399.namprd03.prod.outlook.com>
-	<Zvvw7ah4wGsl2vjw@smile.fi.intel.com>
-	<CY4PR03MB3399D90F2A3C7AE3505B60A29B772@CY4PR03MB3399.namprd03.prod.outlook.com>
-	<4ee001d2-67d0-45ab-ae62-ce5b8dd7553e@baylibre.com>
-	<CY4PR03MB3399D9B9C5B4952E7A7F40F39B712@CY4PR03MB3399.namprd03.prod.outlook.com>
-	<42165d2b-1103-4316-841c-45514a626be7@baylibre.com>
-	<CY4PR03MB33996A380953651B290EC3839B722@CY4PR03MB3399.namprd03.prod.outlook.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728149384; c=relaxed/simple;
+	bh=SG78JVSZrVVi0aRTYOUGA6YP6pYSYVqMrxGPes30xpQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Ad86sOAQopcIgh8jLyPca51wntgiiBWTD6jyCmtUkS03HscR/lZ425W2Iz8PTvzZwgTqpfPKHgqhNHqUojfOrmVxJMecvS+1eKTbMnuO05MKAu0Esb7CHQqYQaHiFi5MG0hQ+quKSJeV5VOicJalH5rIEC5QNNQ4VN0KuCeWHRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=phm8hgJF; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728149341; x=1728754141; i=markus.elfring@web.de;
+	bh=IzK6cJufE3pWKTKByaz9D2Qk/DgyH9a+hucudwqyqr8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=phm8hgJFMp8oP6lu2lyjqQGLlmQ9nnyCb/Cexh9aP8pCWWjfofS3avHJBtcpTErw
+	 0S5Ta5ZQAEc2rXPWqIqZHXpQHm4+JPd0ZTysb3EJRC4xP6r6wztO09DzlwvyYfBew
+	 u0qEAEcc1RVhWmrngO3XHL/8ibTu2u3bNtUf6h4hdCrpr2XzHxJawy7RwSzhZnq1e
+	 bFKwNwq8mmQZObxmAEzpKUmqG95IdRixzzVVqBFeoncTZkhrq1EWrYswlZEXcDaN6
+	 QZ6fnaWOU6E0xj1Sqz/q04/La7KHQFoPvI6a6wzbdz6G6fyE/oXDEzhZD1GFOLsPK
+	 I7CM77VH5B5JVehdKw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MODiX-1tKyxQ2RfF-00Juwp; Sat, 05
+ Oct 2024 19:29:01 +0200
+Message-ID: <48c3da06-fe59-4902-a74f-a4f3e4488160@web.de>
+Date: Sat, 5 Oct 2024 19:28:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Zichen Xie <zichenxie0106@gmail.com>, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-wireless@vger.kernel.org,
+ Aditya Kumar Singh <quic_adisi@quicinc.com>,
+ =?UTF-8?B?QWxsZW4gWWUgKOiRieiKt+WLsyk=?= <Allen.Ye@mediatek.com>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Benjamin Lin <benjamin-jw.lin@mediatek.com>, Bo Jiao <bo.jiao@mediatek.com>,
+ Deren Wu <deren.wu@mediatek.com>,
+ =?UTF-8?B?RXZlbHluIFRzYWkgKOiUoeePiumIuik=?= <Evelyn.Tsai@mediatek.com>,
+ Felix Fietkau <nbd@nbd.name>, Howard Hsu <howard-yh.hsu@mediatek.com>,
+ Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Lorenzo Bianconi
+ <lorenzo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ MeiChia Chiu <MeiChia.Chiu@mediatek.com>,
+ Ming Yen Hsieh <mingyen.hsieh@mediatek.com>,
+ Peter Chiu <chui-hao.chiu@mediatek.com>, Ryder Lee <ryder.lee@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
+ StanleyYP Wang <StanleyYP.Wang@mediatek.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Chenyuan Yang <chenyuan0y@gmail.com>, Zijie Zhao <zzjas98@gmail.com>
+References: <20241003180959.12158-1-zichenxie0106@gmail.com>
+Subject: Re: [PATCH v5] wifi: mt76: Fix NULL Dereference caused by
+ mt76_connac_get_he_phy_cap()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241003180959.12158-1-zichenxie0106@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:p37fQHMIknWRyQlsAViVRgAwfb9nMvPuyssNtSLNcobqn2Zs8aY
+ zsl3Fz4df5zUsCxZ8E7pRZhVnLQ/9XBNZ7iV08HZqTYcNK+P5ytIm5ZOtjGR7X9exKWFg4U
+ fbPOYUG19shEWPwBYBuC4z4+sBTXATXHH4hPhv6xCY1A+TJAt4eVtSMezAIy8IxKmAUV5w8
+ u08SqUPgVhk4YKdr+5YcA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PWBQM9q2YP4=;rjKb2BvBM8gCnwUjNvR/xB7u0/x
+ BInGkKWRWtNxDBYWfXFrI6R8tw89wMRa0BSXoUBLwNUrror86ZhKNiVx9qeKB5iDbpsU7wuT3
+ srjnsh1WIRl5pdBA5RnaawqXpeXiD+IrGGWl4BiENd+s3fL9sRtulohuO9kSIK6dAGMQ6rFWW
+ u+2VFDQ58bM0R+wpoB5XjXQ2cBGmHUilgSFg0Uzm+vVkGrwnwvgunPwet8DdnWDvqZFbqW5qy
+ 1dbPPrYnNWvYjvK5X/XCfnQwjYKT3Dh2Va+cUb0QGE/TYazSwsXZuNRQR8jA9OqP//rBzv92K
+ XJ9PyAFgTaqvA5/OipJDVYu5JOKd7qgGmQT14o34AwE5smKaht+N8e7QVSEnig3AGjvfKzLV8
+ HH3ktd4Wt15TJ9n1ZeVVTUy2JCkSHVjQMUPz/FxVDIvRUb6MzZ4nvsWspGTen5EF30AWoxN60
+ GwDkQ2ruH/Br3et7f8ESAFrVaByw5NIkOmTH54pjaErhaHghjVTs3GT7IexzP0b9KJc4F5uC4
+ 8sjFKmQv34pLvNKS9iQ8bUDIwdZpGmf3Hdm1+HSOVWgFUvLnLSuFSMDhmELOzX5q0DSLU1hIM
+ DVg6KlvmER95V6lL4MIKNdy88FOfVhUV8gZ2S3yuG/a2jE/hgi5HIXo47uz+xkcw2Ay+a0jRT
+ 7WppKGSm52mnGrgIJXOwyyvIFuc9P+yn4NK89aBAdRDl3hPdNhCJaN5e2Ir+GmsRHtZGTszkq
+ gHrUWkcd5TQ2VFi87oVp50jyFkOaVSeDqevEiAJVNdAnIp6xNOOd8RiuFiKuJgaqpLmj1dmjE
+ HLcUm9OwIhnaTLq19yFtRUHTfQ0RADTXvwAcytynRFq5Y=
 
-On Fri, 4 Oct 2024 14:07:37 +0000
-"Miclaus, Antoniu" <Antoniu.Miclaus@analog.com> wrote:
+> mt76_connac_get_he_phy_cap() may return a NULL pointer,
+> leading to NULL Pointer Dereference.
+=E2=80=A6
 
-> > On 10/3/24 5:14 AM, Miclaus, Antoniu wrote: =20
-> > >> On 10/1/24 8:51 AM, Miclaus, Antoniu wrote: =20
-> > >>>>> Regarding the bulk writes/reads, the msb/mid/lsb registers need t=
-o be
-> > >>>>> read/write in a specific order and the addresses are not incremen=
-tal, =20
-> > >>>>
-> > >>>> We have _noinc() variants of regmap accessors. =20
-> > >>> [Miclaus, Antoniu]
-> > >>> I think _noinc() functions read from the same register address so i=
-t doesn't
-> > >>> apply.
-> > >>> I am reading values from multiple register addresses that are not r=
-eg_addr,
-> > >>> reg_addr+1, reg_addr+2. =20
-> > >>
-> > >> I'm confused by the statement that the registers are not incremental.
-> > >>
-> > >> For example, this patch defines...
-> > >>
-> > >> +#define AD485X_REG_CHX_OFFSET_LSB(ch)
-> > >> 	AD485X_REG_CHX_OFFSET(ch)
-> > >> +#define AD485X_REG_CHX_OFFSET_MID(ch)
-> > >> 	(AD485X_REG_CHX_OFFSET_LSB(ch) + 0x01)
-> > >> +#define AD485X_REG_CHX_OFFSET_MSB(ch)
-> > >> 	(AD485X_REG_CHX_OFFSET_MID(ch) + 0x01)
-> > >>
-> > >> This looks exactly like reg_addr, reg_addr+1, reg_addr+2 to me. =20
-> > > Yes you are right. Although I tested with hardware and it seems that =
-the =20
-> > registers =20
-> > > are not properly written when using bulk operations. My guess is that=
- =20
-> > holding CS low during =20
-> > > the entire transaction might be a possible issue. Any suggestions are=
- =20
-> > appreciated.
-> >=20
-> > Is ADDR_DIR in SPI_CONFIG_A set to the correct value to match how
-> > the regmap is configured for bulk writes?
-> >=20
-> > I had to set this bit for AD4695 which has a similar register map
-> > (although on that one I used two regmaps, an 8-bit one and a 16-bit
-> > one, instead of doing bulk operations on the 8-bit one).
-> >  =20
-> Thanks for the input! I tried your suggested approach: set the ADDR_DIR
-> to 1 during probe. Unfortunately, this did not fix the issue. I am still =
-not able
-> to perform bulk writes properly to the device.
->=20
-> For now I will keep the only working version in v2, since there will be
-> most probably  other iterations of the this patch series =F0=9F=98=8A.
-I'd definitely like to know what is going on here if you can dig into it.
-But if we really get stuck then the code at least needs a comment saying
-it is necessary and we aren't sure why.  If we know why and can't change
-it then the comment should give that reasoning.
+             multiple questionable accesses?
 
-Jonathan
+How do you think about to use the term =E2=80=9Cnull pointer dereference=
+=E2=80=9D
+for the final commit message (including the summary phrase)?
 
->=20
-> > > =20
-> > >>> =20
-> > >>>>> so I am not sure how the bulk functions fit. On this matter, we w=
-ill need
-> > >>>>> unsigned int (not u8) to store the values read via regmap_read, a=
-nd in =20
-> > this =20
-> > >>>>> case we will need extra casts and assignments to use get_unaligne=
-d. =20
-> > >>>>
-> > >>>> --
-> > >>>> With Best Regards,
-> > >>>> Andy Shevchenko
-> > >>>> =20
-> > >>> =20
-> > > =20
->=20
 
+Were any static source code analysis tools involved in the detection
+of presented change possibilities?
+
+
+=E2=80=A6
+> ---
+>  drivers/net/wireless/mediatek/mt76/mt7915/mcu.c | 5 +++++
+=E2=80=A6
+
+Did you overlook to add patch version descriptions behind the marker line?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.12-rc1#n723
+
+Regards,
+Markus
 
