@@ -1,128 +1,146 @@
-Return-Path: <linux-kernel+bounces-351742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E0799158B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:49:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64FD499158D
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 222CDB23266
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:49:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6861C21EEF
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC941420D8;
-	Sat,  5 Oct 2024 09:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3666146596;
+	Sat,  5 Oct 2024 09:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wf5rx/zC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MxV1Y3RU"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E33D231C85;
-	Sat,  5 Oct 2024 09:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A102D143722;
+	Sat,  5 Oct 2024 09:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728121748; cv=none; b=Hfav/ZauMH+Ewg5ODj4QYvnbNyoqHGdrye5+As7QaBxqclgEQzFeorwRu37ql0qLRiSXqudLMB+JHTgVYmdRc8dC7JGWDesmA1pg3ulb4Vu9zFc54S6xFl9AS954p4AoVK1eEmxxkKYs9AyzMqUCcIZH2IngF5o9eaIO7LCp6GY=
+	t=1728121751; cv=none; b=YK9M0RXA/FpusxTyWsvdMjaPr+c1mOgi8VYHf+dijGs9eAKuagyR1lxrRDqd3C4z1MjqhbqXdauySPYZDJ+ApjZxJs0D7RqXCn5U95GqLGgXSvuk1cgkfv21ZNWOt4O1u19fEAU6Ekb68M5vufQnFNtEGY5uxXyCrvUrdB6ChH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728121748; c=relaxed/simple;
-	bh=Uw4lYBg8nf69CBDka22a/vAHDjtylMXhtmTDsQyIUzY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pE0oqNMOzerKtTfptCqrMQ+MPEmnFvpOPD9Kq02T2ZTGnycueGixXZjU8zJ6Vmw4W1W/6WL4GZB60Gle2UXQJid9C9j0OOhOyY/W+19zjndajgA1aqUJulpxpSmubMK6YZGMcjrkdcRWoeTUC3Q/i7KKzMkw0vWjIdjN/+UvcNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wf5rx/zC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3238FC4CEC2;
-	Sat,  5 Oct 2024 09:49:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728121747;
-	bh=Uw4lYBg8nf69CBDka22a/vAHDjtylMXhtmTDsQyIUzY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Wf5rx/zCSbqR81gZC5oqEvpyK4nb8wijEjWO3ntJxFbVmKzV0ibOehnsKBAemeztb
-	 4FWnxogzOPMC47l3bUKxoqimi51r61NKJr3XO5mpmGkyLK+AIeXUp0Mtc/xReNcuUj
-	 MATV0ILxBVE81axLxci3QNLXIFdD2QoXd1QrPpqYzqYzZbcvhS7HPMWADlAyxOCumu
-	 d4r000O3N/00lbYNW+Q6FUm4iTB9YNvtz6nRe6qTBYzxu60sElNGMUl4wr0vZHl/7Y
-	 6pHMG3rvNnCLNmtP7RhYA/go/1RzpCc1eJ5BIjha+3V55MJoSbD5Eprni+yD1SFdI9
-	 gA9og30k2qeDw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Greg KH" <gregkh@linuxfoundation.org>
-Cc: "Gary Guo" <gary@garyguo.net>,  "Boqun Feng" <boqun.feng@gmail.com>,
-  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Benno Lossin" <benno.lossin@proton.me>,  "Alice Ryhl"
- <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,  "Jens Axboe"
- <axboe@kernel.dk>,  "Will Deacon" <will@kernel.org>,  "Peter Zijlstra"
- <peterz@infradead.org>,  "Mark Rutland" <mark.rutland@arm.com>,
-  <linux-block@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rust: block: convert `block::mq` to use `Refcount`
-In-Reply-To: <2024100507-percolate-kinship-fc9a@gregkh> (Greg KH's message of
-	"Sat, 05 Oct 2024 09:47:25 +0200")
-References: <20241004155247.2210469-1-gary@garyguo.net>
-	<20241004155247.2210469-4-gary@garyguo.net>
-	<OKHi9uP1uJD59N2oYRk1OfsxsrGlqiupMsgcvrva9_IPnEI9wpoxmabHQo1EYen96ClDBRQyrJWxb7WJxiMiAA==@protonmail.internalid>
-	<2024100507-percolate-kinship-fc9a@gregkh>
-Date: Sat, 05 Oct 2024 11:48:53 +0200
-Message-ID: <87zfniop6i.fsf@kernel.org>
+	s=arc-20240116; t=1728121751; c=relaxed/simple;
+	bh=8ONowbH8q0ENauwIlxunEnyQHJlyp0FFuaGM3eHZWs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZA8TshNonSE/eVS/aR4c1fuvosZwlMTeJxEErECl7DmXHBsjLrdt7QFZZ96dfw5AXcpL/wLmnEvFZYxQbpCs8Xn/KRwCkzDHsvjrMDifTQJppeFNnXI/OGKiuJ9L98EBqQSnSxQIHZhlXP8MYVky8fELm9+MueJTb+cF86/WVCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MxV1Y3RU; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71dae4fc4c9so2503188b3a.0;
+        Sat, 05 Oct 2024 02:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728121749; x=1728726549; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rQMG5vGBJauOrVt5ripN3qu/e2mvWfHeahfKsFEF0xk=;
+        b=MxV1Y3RUprRDXglf1E2YXJM+oSmOQTfhUj0i5vbsXawV6JtUdJE5sFguGUjPQANHON
+         PEivWCjNfMAkjL2fwV8YTwyEdT70bGo3HJ5sG4SOFhTH5cvPCO9wVc+FFphbwRufr5bQ
+         CoKRFRTDaDB+0sZkwEmAcfhtnVvyEu610xu9gbcG+sTUhRepNytZnYzUOveQDdnyBqcm
+         AI4Wf6uqPlTvqgAUzcvYefexVX+4oJeRGzDJz7+EWogMtqdHmn/ofWbDNpnUZ/cmaDP0
+         LQ0eiZggTWLgruhds4NiTkkf0aG3UXbE4br10ht8AYvnzDrx8NjTiXlpIWLlGd5qb2Vw
+         KZ8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728121749; x=1728726549;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rQMG5vGBJauOrVt5ripN3qu/e2mvWfHeahfKsFEF0xk=;
+        b=LzS2XNiGl2NSeRl0uRBpYiatiGprpBsSg7AnnraKXoTZ4jhCj2dpGrL79keFN/gN3b
+         JIQz/TRuF2yxeTwEYW80WnigEcNpGjGjzoPCdA2BtM9Dy2jWbLnXp0SgXJsdZzh7saBB
+         3Ck9a4DblmTLTXrB0Npq/XRlgB/KPJcf9LFqzfI6omUS+D/1pa56YYeCHgVc0BH2ZSjk
+         IBWhvgmNXbqsw6JUK58IOk7vGo17oKakIiv4sF8K66h4ua4L+Hqc3xUV/8wLHgu/FOuM
+         nmhQGYKpsj4DmLYYZoON2M5Sv6zpwq8eNNMjbkDZJ5NOpq6e9eymybVoAWSyfnBQauIr
+         OlVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3wrBlHkIyb8ss1K6CMX6AXgqvUvLePzXuuZTeUHPbvQA+Vcu47/OUhuC99KN2l2h6yaKxIx0nw4b1LvRO@vger.kernel.org, AJvYcCWLhh0N0kr8Ug3d3cKuTFqEx1/bbCNlYU3SDB3MShJSgFX5Tej90B82kiI3O4ykkdlvzjDWIkXfOZUT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz62ZjoJGAFxlRLDBiZigZETRFd0jPlkn+h2/d3O3pwKLBo0DPA
+	N2aj0PUCloqGNSqzgJjKIcVQKcq8SukIVfUgggRRUhPRXwt3qG0JUYVROsNY
+X-Google-Smtp-Source: AGHT+IEIYSG2Zzdg4/tbBDZL5luAg/oi1QJA9M5XXuoJzBhWA9cX+cZKuy+bAQRBzR2o7fP5UG9iIw==
+X-Received: by 2002:a05:6a00:22cc:b0:706:6962:4b65 with SMTP id d2e1a72fcca58-71de23e2d59mr8938898b3a.14.1728121748933;
+        Sat, 05 Oct 2024 02:49:08 -0700 (PDT)
+Received: from rigel (14-202-6-222.static.tpgi.com.au. [14.202.6.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d66324sm1205788b3a.172.2024.10.05.02.49.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 02:49:08 -0700 (PDT)
+Date: Sat, 5 Oct 2024 17:49:04 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 4/5] gpiolib: simplify notifying user-space about line
+ requests
+Message-ID: <20241005094904.GA238189@rigel>
+References: <20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org>
+ <20241004-gpio-notify-in-kernel-events-v1-4-8ac29e1df4fe@linaro.org>
+ <20241005034604.GA41715@rigel>
+ <CAMRc=MeL9B+oCLb4SFupmBzK5E+JoGfCvtUp-RvYNT=L9i5M1Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MeL9B+oCLb4SFupmBzK5E+JoGfCvtUp-RvYNT=L9i5M1Q@mail.gmail.com>
 
-Hi Greg,
-
-"Greg KH" <gregkh@linuxfoundation.org> writes:
-
-> On Fri, Oct 04, 2024 at 04:52:24PM +0100, Gary Guo wrote:
->> There is an operation needed by `block::mq`, atomically decreasing
->> refcount from 2 to 0, which is not available through refcount.h, so
->> I exposed `Refcount::as_atomic` which allows accessing the refcount
->> directly.
+On Sat, Oct 05, 2024 at 11:34:26AM +0200, Bartosz Golaszewski wrote:
+> On Sat, Oct 5, 2024 at 5:46 AM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> > On Fri, Oct 04, 2024 at 04:43:25PM +0200, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > Instead of emitting the line state change event on request in three
+> > > different places, just do it once, closer to the source: in
+> > > gpiod_request_commit().
+> > >
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > ---
+> > >  drivers/gpio/gpiolib-cdev.c | 6 ------
+> > >  drivers/gpio/gpiolib.c      | 4 ++--
+> > >  2 files changed, 2 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> > > index b0050250ac3a..f614a981253d 100644
+> > > --- a/drivers/gpio/gpiolib-cdev.c
+> > > +++ b/drivers/gpio/gpiolib-cdev.c
+> > > @@ -372,8 +372,6 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+> > >                               goto out_free_lh;
+> > >               }
+> > >
+> > > -             gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_REQUESTED);
+> > > -
+> > >               dev_dbg(&gdev->dev, "registered chardev handle for line %d\n",
+> > >                       offset);
+> >
+> > This moves the notify to before the desc->flags have been set.
+> > So the notified will now see the flags as previously set, not what they
+> > have been requested as.
+> >
 >
-> That's scary, and of course feels wrong on many levels, but:
+> Ah, I got fooled by the libgpiod tests passing. I guess we should
+> cover that first in tests-kernel-uapi.c.
 >
+> > That might be acceptible if you subsequently issue GPIO_V2_LINE_CHANGED_CONFIG
+> > when the flags are set, but that is not done here and you explicitly don't
+> > notify from here in patch 5 when you add notifying to gpiod_direction_output()
+> > etc.
+> >
 >
->> @@ -91,13 +95,17 @@ pub(crate) unsafe fn start_unchecked(this: &ARef<Self>) {
->>      /// C `struct request`. If the operation fails, `this` is returned in the
->>      /// `Err` variant.
->>      fn try_set_end(this: ARef<Self>) -> Result<*mut bindings::request, ARef<Self>> {
->> -        // We can race with `TagSet::tag_to_rq`
->> -        if let Err(_old) = this.wrapper_ref().refcount().compare_exchange(
->> -            2,
->> -            0,
->> -            Ordering::Relaxed,
->> -            Ordering::Relaxed,
->> -        ) {
->> +        // To hand back the ownership, we need the current refcount to be 2.
->> +        // Since we can race with `TagSet::tag_to_rq`, this needs to atomically reduce
->> +        // refcount to 0. `Refcount` does not provide a way to do this, so use the underlying
->> +        // atomics directly.
->> +        if this
->> +            .wrapper_ref()
->> +            .refcount()
->> +            .as_atomic()
->> +            .compare_exchange(2, 0, Ordering::Relaxed, Ordering::Relaxed)
->> +            .is_err()
+> IMO it doesn't make sense to always emit REQUESTED and CONFIG_CHANGED
+> events together. The initial config should be part of the request
+> event. I'll get back to the drawing board.
 >
-> Why not just call rust_helper_refcount_set()?  Or is the issue that you
-> think you might not be 2 here?  And if you HAVE to be 2, why that magic
-> value (i.e. why not just always be 1 and rely on normal
-> increment/decrement?)
->
-> I know some refcounts are odd in the kernel, but I don't see where the
-> block layer is caring about 2 as a refcount anywhere, what am I missing?
 
-It is in the documentation, rendered version available here [1]. Let me
-know if it is still unclear, then I guess we need to update the docs.
+Oh, I agree - that "might" is doing a lot of heavy lifting - there should
+only be the one event.
 
-Also, my session from Recipes has a little bit of discussion regarding
-this refcount and it's use [2].
-
-Best regards,
-Andreas
-
-
-[1] https://rust.docs.kernel.org/kernel/block/mq/struct.Request.html#implementation-details
-[2] https://youtu.be/1LEvgkhU-t4?si=B1XnJhzCCNnUtRsI&t=1685
-
+Cheers,
+Kent.
 
