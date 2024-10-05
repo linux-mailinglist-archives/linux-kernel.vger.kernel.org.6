@@ -1,119 +1,206 @@
-Return-Path: <linux-kernel+bounces-351854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D6AE9916EA
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:02:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C479916ED
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 804121F225A3
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:02:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A804128331E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AA214E2E3;
-	Sat,  5 Oct 2024 13:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67281514EE;
+	Sat,  5 Oct 2024 13:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMTySzre"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Je9OZOla"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057E514884C;
-	Sat,  5 Oct 2024 13:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81725149E09;
+	Sat,  5 Oct 2024 13:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728133363; cv=none; b=sLCD0zJKuzZ8NNez5iaI1wOgoEuNLp0hPjLeutnpUMPCvJtIvLoNdA3BaKqTqfSrzkvAj76A2KaOpurDMucESB0nyD0ETL+eDEjbwwdUxxTZ1XF+XtXV4PsEVgzfe450ofCoIinKcm6N9weg1WfAqINWjNFkKgQppmxTwMDl5rI=
+	t=1728133567; cv=none; b=tUokZsDCr2Bt5auXxGwyMGbXDh7fTcJlGORlv90PwcSuh0KzBfRpb/2EbKky3S4MZUVz2RHzgjoWOH3uHyWyElyfQVjziUqL0p0/h2p8OEQOH7vLwelkowkS18mzSfv9mTjDIc5Z8bLKoWjO761u7cyNEj0ae03vmpyD+NoVWwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728133363; c=relaxed/simple;
-	bh=ZY+d7MhAztwIvVEagBWrn2xOpFQ0PqgC9xBBdBe0kxw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NoGbn/ZaALIxtuBfP/n4kSyVWW39+mgLq9eqJcZwNM43AMPdogJ6PJ/vrsolPP/60G4yM/M1KuknP8i1ksqHqWid6VDX1MayIC/nJiOkTX6rv8axm1zFfkx1DX2SNhGvmvN1nnM4MhdcnuFUJa4u2qcv/BmqdiD/P6yprZeZjlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMTySzre; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1728133567; c=relaxed/simple;
+	bh=d6LQ3cZ8KJYD395CtECgYtkDk85ItCBdzmhn4DXB5NA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NGKX55Kpukrw7iC5VEZ+MPxzur+0vElIOAjbQXV48i5LpybjIbhLSTvEpc8vzlr1pvZtTGWDr5xsV1bmWEirLwv0cUXM38ADoFEqStIm+0ZZnzUjGKaOMQxr0msclfr/aH1wIcaMzwoekDbOz6bcKh5BkhQxUKAHdokUeek8sBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Je9OZOla; arc=none smtp.client-ip=209.85.215.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71df8585a42so163717b3a.3;
-        Sat, 05 Oct 2024 06:02:41 -0700 (PDT)
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-6bce380eb96so1869954a12.0;
+        Sat, 05 Oct 2024 06:06:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728133360; x=1728738160; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z1u+AXQc3KShsKJXgs5fNJnOH5KwvpIrHXiX2ZuvgOI=;
-        b=KMTySzreqo2/kVdK4NtVaWOC7itw2KqdbsUSrHAAEBkG00ug7aoNl2kWycJ83psbqh
-         +MTYknzXwOtEUmY2CVB9CKl8xyfXnpYx9wQq5txWeIEpjjQc6lLrvfFO4cXH7hDwc7Wg
-         gJZzTDpE7PJ1HoU3eaRGm3vU7A7f87CeHtZCte2KEZf0SoJz8zPf07NSKWhahvGSHrFy
-         dPV+jtH6KO6uRVdHpJBxw7LROK1hfb37KnmnOZZJdwWcSvj2GjK65B5Vw8N2RICD/JGF
-         2CtnOIWz2vFmHYoal7Si27FirZjeM1khZenF+RLEsSMfqRJk6m57TzJpfoX1CNgExbA5
-         8yuA==
+        d=gmail.com; s=20230601; t=1728133565; x=1728738365; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hg48AfVg4iIkxwZq81/OtuV4OVmfBvrxi0OXE0Y219k=;
+        b=Je9OZOlaCskKf8ZfYkHncNqSGVaiNNsjtpXeotQiWZlRl49WrXQExwzwpqpaHqXzW3
+         nExBOCueAP8+HSTx/IUw79SjDjGj9TxpZ0/5XAd5h15ZrwVbyCM4sLCGv0Pf2IIjqh2x
+         s6Ij2OfgZxkacNwk45LjWeAROh4RsE/WQ2XboGb59kg74p/pe8StYnkavHIFKZITv5iu
+         9s1AWFYoKNndj7MPBqFThiNZG2rv+Kj08h/psNOdOcVUUOPRgoXcw689f7bPVYJoTvHY
+         7sZo98Zbly5znDgYK8LZkO/9D+KdUixN8c09YXx+OpXKlXOkIaSELB2i7XbHlQ8m1XAm
+         niBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728133360; x=1728738160;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z1u+AXQc3KShsKJXgs5fNJnOH5KwvpIrHXiX2ZuvgOI=;
-        b=BBjPquqmC0bnKzeE3WuFZXBKcFyLouuZqfGXxanDZLqJAFb/0xiLV6ezPzYkvxkEv7
-         I9tewEiAhh87a5QebkzJqwq6wX/GDwDkacaEkknVDzPD1x+Ilvhz2PG9f3QFYAHVyOrE
-         itlhqpoVRGCXIESRHTQFSptBt3EYYaJh29kVDCN0TRQziJ6P6+I7kq6hQ2gIogo63Wb1
-         aWxoXNBrBkhLSByGWjJdSgFbEWkEC8TBix413oPsmD3/0aqaZ+kEMHlONPtUYFqAmj+k
-         mZOVDcmx9yhG0rQNeDzNRAd1j7UrwxTmvq2r5NSIjrN22U5Jz3S1kEtfrKgDabH4P6HC
-         rdlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYF9/JFHRq0oqsSAxUJ1XWvYkZfh2G/vdAiu6Ck35syCrOSdXBrS673/Zb2O86JZGJFbrmFuOTrpkQFAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya3d6choM90QFlF3lsy2/3NhKsv3auYrPT6KZOTfOVuiLOQWLA
-	pkgp1336WEPSYT2agpSkqOpTDBNk6hzKtJJqAWRHON4AeeZV5brzyBRg4hRo
-X-Google-Smtp-Source: AGHT+IE9BRwbL20vaX1wK+ntTJ+1n0jkM6UDK+1IYtndVsJYRETcsfqipm7h8akeMbSWanOaG0L2lA==
-X-Received: by 2002:a05:6a20:6d13:b0:1d6:e635:5c5e with SMTP id adf61e73a8af0-1d6e6355d6emr3848295637.9.1728133360187;
-        Sat, 05 Oct 2024 06:02:40 -0700 (PDT)
-Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71df0d46347sm1487896b3a.99.2024.10.05.06.02.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 06:02:39 -0700 (PDT)
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
-To: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Mohammed Anees <pvmohammedanees2003@gmail.com>,
-	syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
-Subject: [PATCH resend v3] bcachefs: Fix NULL pointer dereference in bch2_opt_to_text
-Date: Sat,  5 Oct 2024 18:32:29 +0530
-Message-ID: <20241005130229.9290-1-pvmohammedanees2003@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1728133565; x=1728738365;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hg48AfVg4iIkxwZq81/OtuV4OVmfBvrxi0OXE0Y219k=;
+        b=kYlJbBBY5wukNXChFVNWhiSTyLtRpaqfz/dMXME9oB33FN5kVGsqpfcN/RBxHd8zxS
+         +9J39Ft2VOf63po7PZn0uSUAp8kPGA6m4Y62NIlEeIeK3qWPIUBaTcZ9XeS9FFHnsEQj
+         hko+ehnQGB52r1l4e2bWWtYAsgA+kdzYrFH675xeuwc+LmXSGAUi/jA3klaKWpgK6URw
+         4Wqv93TiKaw1tuVS19+ja/PyRf80EniINYf29AErDrTxbBmUCsW9RAWULd/kvsXeAl2W
+         O/llnwU4acwYHMsCRYHclWS76jTZnzdCeWPZP2kE3rdrSeUibaGGlMdbLsxsj9RXvrZ/
+         n0Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWbu1jMQ7otAEb0500kBxzebm3H9cAGvHPh6g8SZo54P5YG2A4DAFvo/4Msplt6fmZu2WZLCNgeHXvGEw=@vger.kernel.org, AJvYcCXiJLdx2WBXJtEAMhFcVTedMgctuMUKHZI3GMLyuXjuGSYJCDD0Vu1jilOGx1WKdwH0yBXsT1Tc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW46qvm6SniPDjRxh5ASsBDsot9FO75VsRRkLn1R6NwIRGLfxU
+	Z01MXiuN4y7LOcmUqPBvK8L59zHqGKdj8sxAnFDfsOF+bsK7k68+
+X-Google-Smtp-Source: AGHT+IF3kshIjnF9QwxPbr5fL7fn1RcF2PSt6GXIBxLOyUN0t3o65Fq71G2SDRaKi1Uqhg2xzzsRaw==
+X-Received: by 2002:a17:90a:658c:b0:2d8:898c:3e9b with SMTP id 98e67ed59e1d1-2e1e631ec64mr7125545a91.25.1728133564672;
+        Sat, 05 Oct 2024 06:06:04 -0700 (PDT)
+Received: from ?IPV6:2409:8a55:301b:e120:3c3f:d401:ec20:dbc7? ([2409:8a55:301b:e120:3c3f:d401:ec20:dbc7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20ae7177esm1790175a91.3.2024.10.05.06.06.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 05 Oct 2024 06:06:04 -0700 (PDT)
+Message-ID: <a6091b22-29a8-4691-99c4-72cbd4318938@gmail.com>
+Date: Sat, 5 Oct 2024 21:05:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v19 06/14] mm: page_frag: reuse existing space
+ for 'size' and 'pfmemalloc'
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yunsheng Lin <linyunsheng@huawei.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+References: <20241001075858.48936-1-linyunsheng@huawei.com>
+ <20241001075858.48936-7-linyunsheng@huawei.com>
+ <CAKgT0UdMwDyf9u6sQVjsJuxpWmKNi3RYkB7UOSvH6QxXvG7_zQ@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <yunshenglin0825@gmail.com>
+In-Reply-To: <CAKgT0UdMwDyf9u6sQVjsJuxpWmKNi3RYkB7UOSvH6QxXvG7_zQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-This patch adds a bounds check to the bch2_opt_to_text function to prevent
-NULL pointer dereferences when accessing the opt->choices array. This
-ensures that the index used is within valid bounds before dereferencing.
-The new version enhances the readability.
+On 10/4/2024 6:40 AM, Alexander Duyck wrote:
+> On Tue, Oct 1, 2024 at 12:59 AM Yunsheng Lin <yunshenglin0825@gmail.com> wrote:
+>>
+>> Currently there is one 'struct page_frag' for every 'struct
+>> sock' and 'struct task_struct', we are about to replace the
+>> 'struct page_frag' with 'struct page_frag_cache' for them.
+>> Before begin the replacing, we need to ensure the size of
+>> 'struct page_frag_cache' is not bigger than the size of
+>> 'struct page_frag', as there may be tens of thousands of
+>> 'struct sock' and 'struct task_struct' instances in the
+>> system.
+>>
+>> By or'ing the page order & pfmemalloc with lower bits of
+>> 'va' instead of using 'u16' or 'u32' for page size and 'u8'
+>> for pfmemalloc, we are able to avoid 3 or 5 bytes space waste.
+>> And page address & pfmemalloc & order is unchanged for the
+>> same page in the same 'page_frag_cache' instance, it makes
+>> sense to fit them together.
+>>
+>> After this patch, the size of 'struct page_frag_cache' should be
+>> the same as the size of 'struct page_frag'.
+>>
+>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>> ---
+>>   include/linux/mm_types_task.h   | 19 +++++----
+>>   include/linux/page_frag_cache.h | 26 +++++++++++-
+>>   mm/page_frag_cache.c            | 75 +++++++++++++++++++++++----------
+>>   3 files changed, 88 insertions(+), 32 deletions(-)
+>>
+>> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
+>> index 0ac6daebdd5c..a82aa80c0ba4 100644
+>> --- a/include/linux/mm_types_task.h
+>> +++ b/include/linux/mm_types_task.h
+>> @@ -47,18 +47,21 @@ struct page_frag {
+>>   #define PAGE_FRAG_CACHE_MAX_SIZE       __ALIGN_MASK(32768, ~PAGE_MASK)
+>>   #define PAGE_FRAG_CACHE_MAX_ORDER      get_order(PAGE_FRAG_CACHE_MAX_SIZE)
+>>   struct page_frag_cache {
+>> -       void *va;
+>> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+>> +       /* encoded_page consists of the virtual address, pfmemalloc bit and
+>> +        * order of a page.
+>> +        */
+>> +       unsigned long encoded_page;
+>> +
+>> +       /* we maintain a pagecount bias, so that we dont dirty cache line
+>> +        * containing page->_refcount every time we allocate a fragment.
+>> +        */
+>> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <= 32)
+>>          __u16 offset;
+>> -       __u16 size;
+>> +       __u16 pagecnt_bias;
+>>   #else
+>>          __u32 offset;
+>> +       __u32 pagecnt_bias;
+>>   #endif
+>> -       /* we maintain a pagecount bias, so that we dont dirty cache line
+>> -        * containing page->_refcount every time we allocate a fragment.
+>> -        */
+>> -       unsigned int            pagecnt_bias;
+>> -       bool pfmemalloc;
+>>   };
+>>
+>>   /* Track pages that require TLB flushes */
+>> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_cache.h
+>> index 0a52f7a179c8..75aaad6eaea2 100644
+>> --- a/include/linux/page_frag_cache.h
+>> +++ b/include/linux/page_frag_cache.h
+>> @@ -3,18 +3,40 @@
+>>   #ifndef _LINUX_PAGE_FRAG_CACHE_H
+>>   #define _LINUX_PAGE_FRAG_CACHE_H
+>>
+>> +#include <linux/bits.h>
+>>   #include <linux/log2.h>
+>>   #include <linux/mm_types_task.h>
+>>   #include <linux/types.h>
+>>
+>> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+>> +/* Use a full byte here to enable assembler optimization as the shift
+>> + * operation is usually expecting a byte.
+>> + */
+>> +#define PAGE_FRAG_CACHE_ORDER_MASK             GENMASK(7, 0)
+>> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT       8
+>> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT         BIT(PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT)
+>> +#else
+>> +/* Compiler should be able to figure out we don't read things as any value
+>> + * ANDed with 0 is 0.
+>> + */
+>> +#define PAGE_FRAG_CACHE_ORDER_MASK             0
+>> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT       0
+>> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT         BIT(PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT)
+>> +#endif
+>> +
+> 
+> Minor nit on this. You probably only need to have
+> PAGE_FRAG_CACHE_ORDER_SHIFT defined in the ifdef. The PFMEMALLOC bit
 
-Reported-and-tested-by: syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=37186860aa7812b331d5
-Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
----
-v3:
-- Moved bounds check above as default case.
-- Removed the nesterd if clauses.
----
- fs/bcachefs/opts.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I guess you meant PAGE_FRAG_CACHE_ORDER_MASK here instead of
+PAGE_FRAG_CACHE_ORDER_SHIFT, as the ORDER_SHIFT is always
+zero?
 
-diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
-index 232be8a44051..84097235eea9 100644
---- a/fs/bcachefs/opts.c
-+++ b/fs/bcachefs/opts.c
-@@ -427,7 +427,9 @@ void bch2_opt_to_text(struct printbuf *out,
- 			prt_printf(out, "%lli", v);
- 		break;
- 	case BCH_OPT_STR:
--		if (flags & OPT_SHOW_FULL_LIST)
-+		if (v < opt->min || v >= opt->max - 1)
-+			prt_printf(out, "(invalid option %lli)", v);
-+		else if (flags & OPT_SHOW_FULL_LIST)
- 			prt_string_option(out, opt->choices, v);
- 		else
- 			prt_str(out, opt->choices[v]);
--- 
-2.46.0
+> code is the same in both so you could pull it out.
+> 
+> Also depending on how you defined it you could just define the
+> PFMEMALLOC_BIT as the ORDER_MASK + 1.
+
+But the PFMEMALLOC_SHIFT still need to be defined as it is used in
+page_frag_encode_page(), right? I am not sure if I understand what is
+the point of defining the PFMEMALLOC_BIT as the ORDER_MASK + 1 instead
+of defining the PFMEMALLOC_BIT as BIT(PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT) 
+here.
 
 
