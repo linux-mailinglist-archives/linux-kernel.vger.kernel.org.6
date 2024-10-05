@@ -1,108 +1,121 @@
-Return-Path: <linux-kernel+bounces-352017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85240991926
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:02:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E5C599192B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E762282B48
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:02:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4B4282FFE
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A33515A4B7;
-	Sat,  5 Oct 2024 18:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CFD158DB9;
+	Sat,  5 Oct 2024 18:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ki5UGWGz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Vkv6snKJ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B78231C92;
-	Sat,  5 Oct 2024 18:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702B140C15;
+	Sat,  5 Oct 2024 18:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728151347; cv=none; b=TaFixeGEfiYA+04WJg4VUGsI/xymS8/HAi5xcXmUwYaJdh2mnIy5QNzUTzhf38jh3z+8vBh4KkbinqC/tetOOu8vGrZMHDptf0mm8cw1DrVyxQkb5K9+6BNZjbtZzRA6LNyLAtBEml9NqRn1GL0Px28FGibIiuzs87MZNAE6yCU=
+	t=1728151400; cv=none; b=DVK8Mr+JT8/Gjx+DcvFeLT9WYFj3P1YNjtmUG1IkXqRlp0MJWPlFPkUsliOriwn9OnTpcj01EdNLQGLpCJe7yhFw3xydvFivEpTHMNPCSQyUaUcXAkLNuKbGr6z0U846t581TNvMGkjaQIcM5sPWSf6QpcOyfjvWx9aP0avYfuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728151347; c=relaxed/simple;
-	bh=gVazKmTuWtYDPNUar85iX+Mbmm49PN6HqWGbf/hbLvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ryBgHQEQbOt1Lw3+J22iiinpuydtUtUvvyGD1ibmTsFsMSFRocA7MxZRWBRutyxENs9C9g8fcyjqF+G0E3veOP3XaA7U/l0CR5dMvU7fw74Nu6qTKpFwqP1HTx5ZcILUm5yDvAa3p/I+uaIuFHiUNi4KW3uWsekqLCCyFnyQOgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ki5UGWGz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A21BC4CECD;
-	Sat,  5 Oct 2024 18:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728151347;
-	bh=gVazKmTuWtYDPNUar85iX+Mbmm49PN6HqWGbf/hbLvs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ki5UGWGzK2vwqG6wwo4rqM0gc09tzrifJB68WTTbjVLRgkbnqgEWcwlS25GLzDLzO
-	 qFwcv0WU9J7Sy5c3Ybi/aBGWW0pBvIkjXk//VX0OV6V2AmLiI+RIK4gyGk3SNJNxCq
-	 b+wYXuxMS+N+uPemHE6tkfGE9V/tRJ3/cXpy/gCMn7ZDZWMy/1Gkf4kO6S52SL9VYP
-	 p5WKlepVZ+ECMQhbb7UKy7HBEXHBMiHIWtoANxm5+ZGfQgRigm7aYGpM2eVKzv1Z4b
-	 tH3v+2RXmfPOuefJjkbwUxqXgZZO3I8weWG3+FWgawIpdaVtp47Rh4+20VokchY0XO
-	 ws2r/z6+cuN/w==
-Date: Sat, 5 Oct 2024 19:01:47 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, David Lechner <dlechner@baylibre.com>,
- Nuno Sa <nuno.sa@analog.com>, Dan Murphy <dmurphy@ti.com>, Sean Nyekjaer
- <sean@geanix.com>, Leonard =?UTF-8?B?R8O2aHJz?= <l.goehrs@pengutronix.de>,
- Mihail Chindris <mihail.chindris@analog.com>, Alexandru Ardelean
- <ardeleanalex@gmail.com>, Gustavo Silva <gustavograzs@gmail.com>, Shoji
- Keita <awaittrot@shjk.jp>, Andrey Skvortsov <andrej.skvortzov@gmail.com>,
- Dalton Durst <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>, Andreas
- Klinger <ak@it-klinger.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Jirman
- <megi@xff.cz>
-Subject: Re: [PATCH 12/13] iio: pressure: bu1390: add missing select
- IIO_(TRIGGERED_)BUFFER in Kconfig
-Message-ID: <20241005190147.084dd468@jic23-huawei>
-In-Reply-To: <20241003-iio-select-v1-12-67c0385197cd@gmail.com>
-References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
-	<20241003-iio-select-v1-12-67c0385197cd@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728151400; c=relaxed/simple;
+	bh=EuhI4PbtmA1CdWKcn5dQlDHomXi2n7CB6JciD1aQyhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9LrZLGtej7gDmR0qwkduZlZbrvph4wpyIEtSPBHhQqYZvYh3DvQus15qoln/bPIR1rAgu4ePNtczFQMEzuwvQyfnWJ21HwQaSXwAcYRxQtjdqB5UiFeLGXth1I7BXzKo2Uo11UlCq1Cs5WOytW9wrZin/bNQXC19b+ZlcrkC+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Vkv6snKJ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=8sSguXETkbnC8AcMv4h0F2S6mFERoM2NTtTrLgWtJvw=; b=Vkv6snKJTNeOP53+iuObo3XgKJ
+	/rWpWlKunyT9z3VcG7/ZgAhEmQuro41+5IGwSoRgzOG1jpGa7W1BQBBeA62RHUx0w9darE/z9KXU0
+	uuMqgW3Ff4BsK4TFwhm/dVhEuKf3J6ehs6pB2sMqi/EVk4McbiUyHuwnVlQx+mpXxp2Y=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sx97H-00994w-DG; Sat, 05 Oct 2024 20:02:55 +0200
+Date: Sat, 5 Oct 2024 20:02:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
+	tglx@linutronix.de, arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/6] rust: time: Introduce Delta type
+Message-ID: <3848736d-7cc8-44f4-9386-c30f0658ed9b@lunn.ch>
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
+ <20241005122531.20298-3-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241005122531.20298-3-fujita.tomonori@gmail.com>
 
-On Thu, 03 Oct 2024 23:04:58 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> +/// A span of time.
+> +#[derive(Copy, Clone)]
+> +pub struct Delta {
+> +    nanos: i64,
 
-> This driver makes use of triggered buffers, but does not select the
-> required modules.
-> 
-> Add the missing 'select IIO_BUFFER' and 'select IIO_TRIGGERED_BUFFER'.
-> 
-> Fixes: 81ca5979b6ed ("iio: pressure: Support ROHM BU1390")
-Seems unlikely in the bm1390 driver. Huh. It is accurate, but I'll fix the
-patch description to refer to the bm1390 which seems to be the right
-name and add a note on this as it looks suspect otherwise.
+Is there are use case for negative Deltas ? Should this be u64?
 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
->  drivers/iio/pressure/Kconfig | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/iio/pressure/Kconfig b/drivers/iio/pressure/Kconfig
-> index df65438c771e..d2cb8c871f6a 100644
-> --- a/drivers/iio/pressure/Kconfig
-> +++ b/drivers/iio/pressure/Kconfig
-> @@ -19,6 +19,9 @@ config ABP060MG
->  config ROHM_BM1390
->  	tristate "ROHM BM1390GLV-Z pressure sensor driver"
->  	depends on I2C
-> +	select REGMAP_I2C
-> +	select IIO_BUFFER
-> +	select IIO_TRIGGERED_BUFFER
->  	help
->  	  Support for the ROHM BM1390 pressure sensor. The BM1390GLV-Z
->  	  can measure pressures ranging from 300 hPa to 1300 hPa with
-> 
+A u64 would allow upto 500 years, if i did my back of an envelope
+maths correct. So i suppose 250 years allowing negative delta would
+also work.
 
+> +}
+> +
+> +impl Delta {
+> +    /// Create a new `Delta` from a number of nanoseconds.
+> +    #[inline]
+> +    pub fn from_nanos(nanos: u16) -> Self {
+
+So here you don't allow negative values.
+
+But why limit it to u16, when the base value is a 63 bits? 65535 nS is
+not very long.
+
+> +        Self {
+> +            nanos: nanos.into(),
+> +        }
+> +    }
+> +
+> +    /// Create a new `Delta` from a number of microseconds.
+> +    #[inline]
+> +    pub fn from_micros(micros: u16) -> Self {
+
+A u32 should not overflow when converted to nS in an i64.
+
+Dumb question. What does Rust in the kernel do if there is an
+overflow?
+
+> +    /// Return the number of nanoseconds in the `Delta`.
+> +    #[inline]
+> +    pub fn as_nanos(self) -> i64 {
+> +        self.nanos
+> +    }
+> +
+> +    /// Return the number of microseconds in the `Delta`.
+> +    #[inline]
+> +    pub fn as_micros(self) -> i64 {
+> +        self.nanos / NSEC_PER_USEC
+> +    }
+> +}
+
+So here we are back to signed values. And also you cannot create a
+Delta from a Delta because the types are not transitive.
+
+	Andrew
 
