@@ -1,108 +1,95 @@
-Return-Path: <linux-kernel+bounces-352011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBBE399190E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:53:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7083799190B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C81ADB208A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:53:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AC291F23595
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C97D158DCC;
-	Sat,  5 Oct 2024 17:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8051591EA;
+	Sat,  5 Oct 2024 17:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8o4P8Dt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ci6/48ZI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AFC158D8F;
-	Sat,  5 Oct 2024 17:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BA6158851;
+	Sat,  5 Oct 2024 17:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728150777; cv=none; b=Eu7H+WzjtmhFGjtsyjkPlCsfSAKOVg2qaY/U6m1avdZaS+SU01bjELsZ4E02dtoITiTFJwnv8ibAMJk54oDmJVQ+HhknZWQ499dfO5wMe7MtXD1dFx+YJ0V8thh0iNcZYzMsmaqBaJkT4QCseq3o4kDkgXJEF4Zax9QYXL0qB4w=
+	t=1728150760; cv=none; b=AFouZ76qxOkUZQGlJa2xCVKkTX318A5CykZC0CFBuIMftIEsbcME1lFcTjOf+7ATdOrxRlj6hsmA4604mpyyMnth0YJJtDqv8CTW2c1Ys9ODNBPT+szQqjr57Lnbem6BfaRPukuqG2hnqS0KdGGAnn8gOVDcyTDjIAnveAGwoOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728150777; c=relaxed/simple;
-	bh=pIwQAN4FdavGSGPv5+wTCfD5UEyGQIkHBKYeey2+oVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eFQ1SHnvZsNjMvw6qEIo6MtGQYHHRjnlBDmc4B85RsIF30J8dF4ul+8BVvQTomvCb30Rrv/0EUquIx/fRbyH2aPCJt7ktpCKnaE6KQFUXqPPyGJvQtj6f2HGxpQFBmA+iC+UgPpbUekcR+pd0+D2xh9b8hb8krbief/vMHXNKeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8o4P8Dt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86717C4CEC2;
-	Sat,  5 Oct 2024 17:52:30 +0000 (UTC)
+	s=arc-20240116; t=1728150760; c=relaxed/simple;
+	bh=NRH8Ou1I4pXNYd/XvsLjH7QogNBos/PfhsW1jQJokGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NPXeAR+24qVnIXewc60mQoddMQK+Wn9AaFZHzwv5wN0OeLk9UtuiGd30TvSIAuhhr7TflJPMoD8+dQpoyVC4kbOFx5+DQzMsEb8UgM9iEHQPVCDQ1sUlzBvQVitWCOkw5Ki78Ff+Ckz0OQo28nwCJsiWGIBOqQc4r2JoxJi0j28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ci6/48ZI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15879C4CEC7;
+	Sat,  5 Oct 2024 17:52:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728150776;
-	bh=pIwQAN4FdavGSGPv5+wTCfD5UEyGQIkHBKYeey2+oVo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e8o4P8DtgeiYx1z7cuYTsapKlbpPqvkp5VTgwmDYGIW025oFHVpdwa/xM1oXFDAqN
-	 LipHzqtEC//2b2n6Kc4NrYR1zkDa5qIjxVhxU2D0j+gtTQID08mEJDBmcQjFrK5bQX
-	 +AlSvH73VqFNCSs0JmGdDL9ci1eYDAVPAlxfMcR6R0VyDCMjfB7xneYydlS5iZ2KB4
-	 G5DO4UsMN2zZ9bx5nk505MnEw21CiK3M63I5K7bKCaUzT5Nwk7/SQNTZafDZBu/mbT
-	 AFaKmAtY8KArY50slfl9hLd6a17nxxJfrxv6z9nzrujay7FKQrgUTMwxohWubKjkHx
-	 uZ2PMyoe/01XQ==
-Date: Sat, 5 Oct 2024 18:52:23 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, David Lechner <dlechner@baylibre.com>,
- Nuno Sa <nuno.sa@analog.com>, Dan Murphy <dmurphy@ti.com>, Sean Nyekjaer
- <sean@geanix.com>, Leonard =?UTF-8?B?R8O2aHJz?= <l.goehrs@pengutronix.de>,
- Mihail Chindris <mihail.chindris@analog.com>, Alexandru Ardelean
- <ardeleanalex@gmail.com>, Gustavo Silva <gustavograzs@gmail.com>, Shoji
- Keita <awaittrot@shjk.jp>, Andrey Skvortsov <andrej.skvortzov@gmail.com>,
- Dalton Durst <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>, Andreas
- Klinger <ak@it-klinger.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Jirman
- <megi@xff.cz>
-Subject: Re: [PATCH 07/13] iio: dac: ad3552r: add missing select
- IIO_(TRIGGERED_)BUFFER in Kconfig
-Message-ID: <20241005185223.7c5e3d33@jic23-huawei>
-In-Reply-To: <20241003-iio-select-v1-7-67c0385197cd@gmail.com>
-References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
-	<20241003-iio-select-v1-7-67c0385197cd@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1728150760;
+	bh=NRH8Ou1I4pXNYd/XvsLjH7QogNBos/PfhsW1jQJokGM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ci6/48ZINkwNrzvXZUVpG2h6fl2XWyIAhjvOXzPy/gxDndcJa7xit9adjPpb/wdpe
+	 hOQKfXKOe21FcoPbMYUKMrtOEX9b82ES4QNB8/CeCGOziQwmlaraDLhcrudZHqDYoV
+	 ABuEBzMLZWCpeNkRhvhVSbtoJphhFfIbBKN6v+t/JAROhR0qqvBK4X7iTJ/KBUWbGn
+	 K8xKao6kcK8ch5M7DjfHN/ar6lFsVQtnh2mptSsCEcfppZeU5CvTfsxnilmN/LRspj
+	 JC9py23io0s6cCUIsM/0nhRkl5jj2/BOBBIaXRu0CzgY1eF9kgI5sASnveEJBBImyv
+	 Or4lTFgHYmaCQ==
+Date: Sat, 5 Oct 2024 12:52:39 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v3 resend 1/7] dt-bindings: fuse: Move
+ renesas,rcar-{efuse,otp} to nvmem
+Message-ID: <172815075836.447282.5004726072565136518.robh@kernel.org>
+References: <cover.1727963347.git.geert+renesas@glider.be>
+ <425648901d724b3db81329f98988d0532257eb89.1727963347.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <425648901d724b3db81329f98988d0532257eb89.1727963347.git.geert+renesas@glider.be>
 
-On Thu, 03 Oct 2024 23:04:53 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-> This driver makes use of triggered buffers, but does not select the
-> required modules.
+On Thu, 03 Oct 2024 16:04:25 +0200, Geert Uytterhoeven wrote:
+> The R-Car E-FUSE blocks can be modelled better using the nvmem
+> framework.
 > 
-> Add the missing 'select IIO_BUFFER' and 'select IIO_TRIGGERED_BUFFER'.
+> Replace the R-Car V3U example by an R-Car S4-8 ES1.2 example, to show
+> the definition of nvmem cells.  While at it, drop unneeded labels from
+> the examples, and fix indentation.
 > 
-> Fixes: 8f2b54824b28 ("drivers:iio:dac: Add AD3552R driver support")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Applied to the fixes-togreg branch of iio.git
-
-Thanks,
-
-J
+> Add an entry to the MAINTAINERS file.
+> 
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/iio/dac/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
+> v3:
+>   - New.
+> ---
+>  .../{fuse => nvmem}/renesas,rcar-efuse.yaml   | 35 +++++++++++++------
+>  .../{fuse => nvmem}/renesas,rcar-otp.yaml     | 17 +++++----
+>  MAINTAINERS                                   |  1 +
+>  3 files changed, 36 insertions(+), 17 deletions(-)
+>  rename Documentation/devicetree/bindings/{fuse => nvmem}/renesas,rcar-efuse.yaml (54%)
+>  rename Documentation/devicetree/bindings/{fuse => nvmem}/renesas,rcar-otp.yaml (60%)
 > 
-> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-> index 1cfd7e2a622f..9d4600ce0427 100644
-> --- a/drivers/iio/dac/Kconfig
-> +++ b/drivers/iio/dac/Kconfig
-> @@ -9,6 +9,8 @@ menu "Digital to analog converters"
->  config AD3552R
->  	tristate "Analog Devices AD3552R DAC driver"
->  	depends on SPI_MASTER
-> +	select IIO_BUFFER
-> +	select IIO_TRIGGERED_BUFFER
->  	help
->  	  Say yes here to build support for Analog Devices AD3552R
->  	  Digital to Analog Converter.
-> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
