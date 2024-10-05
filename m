@@ -1,144 +1,116 @@
-Return-Path: <linux-kernel+bounces-352165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A1D991B00
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 23:51:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5285991B03
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 23:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458401F2222D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4D631C21780
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F135A178367;
-	Sat,  5 Oct 2024 21:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864E816A959;
+	Sat,  5 Oct 2024 21:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGE/D3xP"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lfGD5exN"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E2B176FB8;
-	Sat,  5 Oct 2024 21:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6A5165F05
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 21:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728165016; cv=none; b=K3SoAFJ59HjddyPTRujUW//eFNtBaTk+u3eZkJuAAiOfrN3gx7nai3riuKOPSYH5bBpS33zrSC5dkNC86sgzpLffTBnZpXdNnO9eSka8gm2FE6lu3509hJSPa+YoyZnTqYU4dEuVUAStGMI/meuovQQMH3+PMAJ3vVW3plenbH8=
+	t=1728165366; cv=none; b=XSk+51RUZl0XvTW5CYpgQjUWi0EFQ5BcEEt9VylXh0+Us5VMW9Ts5hK61kbDP6hKsJ1VyoYOUeup76Y5WBwp5aOMTPwn/VUNkKMOOACn7F9U1goFUalMUFZJ0qHpV6ZCKg2Ykoud0SoVlPehYPboDUn0untDVefY2dMKnf8K+XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728165016; c=relaxed/simple;
-	bh=i/BhTFLd48HomWyz8xZC68ePjxoABU2y+lp5CSpHwuE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pZUykJ/FdD0RIgIZ5Sh0wODsoSuX/7sWr2o/6U5CQLwHmw3ob7iArel+s14n5eDPIA1oY0ZHtVRn85YW991rGY0nXdoQlxodY1UEMu1QHTrDjJWui+vR+/Wois7ItKxMsqkxYwa1cTUrUf64st4caenJEZ7Gf6KokHF22lnNinU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGE/D3xP; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b7259be6fso36227355ad.0;
-        Sat, 05 Oct 2024 14:50:14 -0700 (PDT)
+	s=arc-20240116; t=1728165366; c=relaxed/simple;
+	bh=Kv3tGeYVEvki+TLXFk7nQI92L8KqidN/GBFVcVcLd+s=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FncxuOdPUNFf5ChYR6f4aXtFP7ZuFJ5vegu1AglRzVK3Wzs//rSJKm+XxiUo816gqxGJZ9WoP9Ug2QVEICd14Sb1ukWl5lKeIKdmay9SA+dG+nJMedUG7Rd5S1u9q+hMc/Rhcm/HchU909ANJzeMZBypqOxrsedz0huQJhxf6oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gthelen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lfGD5exN; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gthelen.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e28694ff555so4969815276.2
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 14:56:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728165014; x=1728769814; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zeXtZC/fnaI3e4fw3nt3kTvuPSe90+rJIZz1Zw6u5CM=;
-        b=RGE/D3xPCa/5c0YdF4XgcpwPXqGJl3XAg+5V+GTGbKABwPs+vRYXO5SwncbUJn+Yec
-         dqhNjavRE/gRzabgOfuSD6FmrIw/naoKQPHm+d8exfHBlYi/X4ukH+lT8+6v65P4uClx
-         G8lyW2/7K1QfQi/2vLpRkEb29+xH1y35CMQcdPObgKG0KoWWbX7ltemparYyZ8W+595H
-         Dw6j7cEy8uZimLtsqZbSUPoQvM7g89DAvmp0K5zsLFXzFJATEyUHupD8+VsjDFby+8D9
-         7U/Xp25IJ9W6ESh2MBmk9IEgVeTXlGkRiDisxr49wWWSGYJiZNXOQlw+bjt0flwlzQXO
-         DCBw==
+        d=google.com; s=20230601; t=1728165363; x=1728770163; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UjrRZf+/scm4ik6V8Y3O+VVxMpeJ9ouK1fJjBIa+BxA=;
+        b=lfGD5exNlaJ3N8q909yLbyjvmTVwnLaWDJBWjyuYPD1H715L/ULegSOQs39jDrM5Pv
+         0bLUpIoxXoxiLHvcuK0IhzquL6/YPHckuqOvFf31sY+grAPx/ylHZ35qgTXWUNq0nS63
+         VAqTBRzoYyMKQTFyU4EO9NFUSHeiFlUktU5Oigr8uRgYK4Kyjn8bNhOdtyfi6RPCirye
+         iEj2RXOrXn+FY3u1QM6olAhlVA0UkdCxyAfUUKLG0LeaAfUuXP8WjOHwhcICskY7ufV4
+         ExDl8nZc99/OwRG3Hi4iLrXG5RQxjA0WE1LmMtsqPJ3sutyS9rHHjD/tMZheBPv4+FwR
+         NOvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728165014; x=1728769814;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zeXtZC/fnaI3e4fw3nt3kTvuPSe90+rJIZz1Zw6u5CM=;
-        b=BDQvXXgX/m/7QCXeivWeXtO8ZeAgPv9CX2i6G2Ptxkmqtpd1vFs3/bzpdzboibQQ9C
-         3aYuP0d2T0nwWBAIcWzctAa/Tsan1ltSBO+k5l/G4pfElS15ZXbqroruaEWGYPajQXg3
-         Ui5qsCjMOTBudD5SjN8hTj7tVzLd5gF4Cr0bj/7ZrIbz8pwxI6k/ot/07RlbBC5CkuRk
-         d6FS4T4dlrpcKtcjRfBr26GA/UCrvmTEMhdJMVMz8KIXjFsWp0ThJ/3fPNYV06zTq20N
-         9EGqGljJdtjseIjE9WARaHCHuAi6wEs0u6rWlAFishDAiQ/6+WNVJgWIeZGd3JpWjVIc
-         rvrA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6RDcJqoYrrnAg1LoeYTVSL9kApX6SSqq2+f3lQ1zWeg9EecJU49uCIj2II9vkY0QSuRouVpeFKo3TjC7F@vger.kernel.org, AJvYcCVTLe7g0Ou7zDWoMDsiowR97CHSSDM8KhB/cEwBaM/1wR39DwB+Rfw2TFNb0UoRrNwTh4exhSIN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHIBjZsBK4aA9Ps9nXlQZ+Oz+dFjSsT10GYygpd1x38uiz9CoF
-	x1nR99r33WkYfqhCR9FehVK/D8h4I75YcOsbo6FptmjKXa0L1omJ2uYD/w==
-X-Google-Smtp-Source: AGHT+IGJUD/oCRSpFBXNVaQbMpQpROalL480XnaY1oZ2gclVXGNcQnL7cRD4PLhtmkqn1wNPhgTXNg==
-X-Received: by 2002:a17:902:e74c:b0:206:9a3f:15e5 with SMTP id d9443c01a7336-20bfe043018mr105109485ad.32.1728165014380;
-        Sat, 05 Oct 2024 14:50:14 -0700 (PDT)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13931055sm17165135ad.139.2024.10.05.14.50.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 14:50:13 -0700 (PDT)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: xavier_qy@163.com,
-	longman@redhat.com,
-	lizefan.x@bytedance.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	akpm@linux-foundation.org
-Cc: jserv@ccns.ncku.edu.tw,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH 5/5] cgroup/cpuset: Optimize total domain count using updated uf_union()
-Date: Sun,  6 Oct 2024 05:49:38 +0800
-Message-Id: <20241005214938.2147393-6-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241005214938.2147393-1-visitorckw@gmail.com>
-References: <20241005214938.2147393-1-visitorckw@gmail.com>
+        d=1e100.net; s=20230601; t=1728165363; x=1728770163;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UjrRZf+/scm4ik6V8Y3O+VVxMpeJ9ouK1fJjBIa+BxA=;
+        b=YTjwPsagBpyFw2YFBzS3ad8Wv7zOk+OYq3h6PjQSK3N3jxv/XPL3ADVFVdMT8juJIg
+         yBfZQlQN2oQzrJmU6903vNJpT4ti7Yod7JtMXq65XrlvU+WhrIlEXxj2t6YBUpZvACpb
+         Ex2e60sUiLYwKhh35FmF+K6EzeBaya2urs1VFY8Oe8WLqIwzkVu46gOEXiabyw8u/Nxd
+         6TK/2AX9cLTOxi54XdvzENv/XBHC4UoYkUUK1KfnW1nZs4UOjc3kmTBJqJ2ZrVgc4H+N
+         oCc2ENu6dDZ8q3QPCROsl/wY5dBAHpHiLAjoWOlp6ib8OL7X91SvBG2RxoHItA2DlVGG
+         ZrgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCxvLY0JP7lj8fisniGLk2gOibaKfcxF4Ap3C0mJ5fZFFyFDx8EwvlG++dUKPc50fsYqZkq8MldF4sW5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFRJCAR0PAWsy9f3ZiVzPJNGVStZyRJG0gkMrau9TciU1JKq/Q
+	kGt1AEwdoNq6a/SuY66m7GUiL0m2Vwp3vrUEPIGyfrS7z5oKd/flgJG4emf68gy3+68RC2c7coG
+	AIqkM2Q==
+X-Google-Smtp-Source: AGHT+IHWpc6AdTIJHoH8hPk5oe2zVGLycQ2hBiOKJKUuhmS+kKN3bJkizgngYFJ0CrJraC8hT/t8k3PUgXO9
+X-Received: from gthelen-cloudtop.c.googlers.com ([fda3:e722:ac3:cc00:2c:2b44:ac13:f9ac])
+ (user=gthelen job=sendgmr) by 2002:a25:8b89:0:b0:e25:cea9:b0e with SMTP id
+ 3f1490d57ef6-e2893939abemr5252276.9.1728165363498; Sat, 05 Oct 2024 14:56:03
+ -0700 (PDT)
+Date: Sat,  5 Oct 2024 14:56:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
+Message-ID: <20241005215600.852260-1-gthelen@google.com>
+Subject: [PATCH] selftests: make kselftest-clean remove libynl outputs
+From: Greg Thelen <gthelen@google.com>
+To: Shuah Khan <shuah@kernel.org>, Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Greg Thelen <gthelen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Improve the efficiency of calculating the total number of scheduling
-domains by using the updated uf_union function, which now returns a
-boolean to indicate if a merge occurred. Previously, an additional loop
-was needed to count root nodes for distinct groups. With this change,
-each successful merge reduces the domain count (ndoms) directly,
-eliminating the need for the final loop and enhancing performance.
+Starting with 6.12 commit 85585b4bc8d8 ("selftests: add ncdevmem, netcat
+for devmem TCP") kselftest-all creates additional outputs that
+kselftest-clean does not cleanup:
+  $ make defconfig
+  $ make kselftest-all
+  $ make kselftest-clean
+  $ git clean -ndxf | grep tools/net
+  Would remove tools/net/ynl/lib/__pycache__/
+  Would remove tools/net/ynl/lib/ynl.a
+  Would remove tools/net/ynl/lib/ynl.d
+  Would remove tools/net/ynl/lib/ynl.o
 
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Make kselftest-clean remove the newly added net/ynl outputs.
+
+Fixes: 85585b4bc8d8 ("selftests: add ncdevmem, netcat for devmem TCP")
+Signed-off-by: Greg Thelen <gthelen@google.com>
 ---
-Note: Tested with test_cpuset_prs.sh
+ tools/testing/selftests/net/ynl.mk | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- kernel/cgroup/cpuset.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index a4dd285cdf39..5e9301550d43 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -817,6 +817,8 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	if (root_load_balance && (csn == 1))
- 		goto single_root_domain;
- 
-+	ndoms = csn;
+diff --git a/tools/testing/selftests/net/ynl.mk b/tools/testing/selftests/net/ynl.mk
+index 59cb26cf3f73..1ef24119def0 100644
+--- a/tools/testing/selftests/net/ynl.mk
++++ b/tools/testing/selftests/net/ynl.mk
+@@ -19,3 +19,7 @@ $(YNL_OUTPUTS): CFLAGS += \
+ $(OUTPUT)/libynl.a:
+ 	$(Q)$(MAKE) -C $(top_srcdir)/tools/net/ynl GENS="$(YNL_GENS)" libynl.a
+ 	$(Q)cp $(top_srcdir)/tools/net/ynl/libynl.a $(OUTPUT)/libynl.a
 +
- 	for (i = 0; i < csn; i++)
- 		uf_node_init(&csa[i]->node);
- 
-@@ -829,17 +831,11 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 				 * partition root cpusets.
- 				 */
- 				WARN_ON_ONCE(cgrpv2);
--				uf_union(&csa[i]->node, &csa[j]->node);
-+				ndoms -= uf_union(&csa[i]->node, &csa[j]->node);
- 			}
- 		}
- 	}
- 
--	/* Count the total number of domains */
--	for (i = 0; i < csn; i++) {
--		if (uf_find(&csa[i]->node) == &csa[i]->node)
--			ndoms++;
--	}
--
- 	/*
- 	 * Now we know how many domains to create.
- 	 * Convert <csn, csa> to <ndoms, doms> and populate cpu masks.
++EXTRA_CLEAN += \
++	$(top_srcdir)/tools/net/ynl/lib/__pycache__ \
++	$(top_srcdir)/tools/net/ynl/lib/*.[ado]
 -- 
-2.34.1
+2.47.0.rc0.187.ge670bccf7e-goog
 
 
