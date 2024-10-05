@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-351677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8F199149D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:36:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8148E9914A2
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6720285258
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A6C1C22531
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B763E49620;
-	Sat,  5 Oct 2024 05:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5770D482EB;
+	Sat,  5 Oct 2024 05:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="bT4fUEiE"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="dwSibZ2q"
 Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374114085D;
-	Sat,  5 Oct 2024 05:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBA9231CB1;
+	Sat,  5 Oct 2024 05:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728106556; cv=none; b=jr0+mb06LdPK91pvgISwSIY3l6Ei8iQBHI6t16LbOkHHh+y0nMnQmj2fxpwJmukYtRl7snn5f4UPMxJt0pV4lZbeP6xG0LSeBLQWjrRrT9ps8Wees1ei6srsnxcGPTwY/j6mwSTgJq4Jf9wt7wSDqR6JnHOD/RN9OMuBq3HKZsE=
+	t=1728106708; cv=none; b=WXkM+SQjC9irSJ370cgVnbxTl17xtTTrG1/vCfXNYTSZ+3W6iTeeWswAdazf9ZQ3RbNIc11XzNVQinEWcArPGZ1Pf2CMUBhUcGQctEgGqHuDB5wt8tq1lUOioiLnTjAD4LY2iuazOm4bIU4K6Btva7Tay1i5b+S0psAIhYuMJx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728106556; c=relaxed/simple;
-	bh=1tbKmxlxcXA+hS7zlWOrxgFssaRDFCNYRlpmn/RlnZs=;
+	s=arc-20240116; t=1728106708; c=relaxed/simple;
+	bh=GuNaRBdFMs8lMZr3MaJoINKTCUdS8t/qVVasobkQHxM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BSmGdmGathN0h9AS/ptM8bxRXLFgIo2DxC3gCffKY9AjrX+WgVDXCdqPlJZsKJsDcQsWRXnWYkFwdrvyWkKL0e/VEu8EjlB9ODvy26KhX6CmXM/SWoITB8pF47bvXCk2ItF/ixHmxWRGoL0dS5/ihBPJcwVwR8QB3uxDmCuHKpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=bT4fUEiE; arc=none smtp.client-ip=144.6.53.87
+	 Content-Type:Content-Disposition:In-Reply-To; b=gsrXRwc+1OEdAZlJak3bf9EX/lP+0NFr2B6U+MRHr69A7Hk4RK1UPyg8nH1fE1ZXuKddm3SRfUNNofDfoV+60GqNAK1P+hPbmj+OFerJ1mSdFrHGZB7GdCWRxWOkyX4prRJZuPseHLipbbMd5ZXmNOUzeNS3oxZtiHacujgc1pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=dwSibZ2q; arc=none smtp.client-ip=144.6.53.87
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
@@ -36,28 +36,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=Cm/+r/Iu7iT6qjqotRyzDFVjq3VicaFGGYKMIAH+pZQ=; b=bT4fUEiE0R4OQ3Jn19EjBbst3h
-	/GULhvNMTDaKPlxeuW4LZeQV4LUEce/O1ovahnW9CimmKIL2fVpNvMrOaNR/HAu2txg8yDYQ9yCvA
-	55EQWfbGNRyweHmFxiZB+AiLlVrnrhGEFG3eidD5AlC/aKaKlwozSczoy8jQQcbdxAo9mkvzdVGlw
-	JG19blDhjeRPK9hKJWZ3RGBTn0MaJK9BAIIAJqKZvvaZP/8/NaRLZRsyd+Rys6Nmhf/LzTaJ5nvMH
-	p2dlOvpMderqf9yYTDzBcgjWybS1BywLfac5/tgcuE2Nkt8ct/Ff8P3S19Qb/6kupjDb9cf715BGZ
-	t7FEKkeg==;
+	bh=3TkvKOMXMhj3hu2Uvd5oDasxBleh5BTiSZLRAR5JBlg=; b=dwSibZ2qrNCN4o7FfSG88tBZB/
+	p9qFANUGDUMzseOgtOGie2P8Yc5KBDneOU8QgDpqBIsTnI8ED9RhSMLRAx+wlvjpBWD2jc9inr8lU
+	CA1M5MUR0M8nVLQ0PUGz9HJXLoNzr/7dQ3c6q335E51B/Sk8ZCpOztAl9whrJatpSvugI99qhZZbR
+	009RD0kSoW0ErmiMdZOG0F158VqzzBo3isewpiN9RZ9XhF0Y98/hy8aFiUYs8ygjGHbO1C/OUxYg3
+	vmsNdrby55wnfrLDZkRTQ32213nQTXgCpapo1ud0i40QgMGUM8aIwp5Q3s2oYeR1p4IAk0WGPCDnT
+	xJSNdE7Q==;
 Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
 	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1swxIG-0071bZ-2j;
-	Sat, 05 Oct 2024 13:35:43 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2024 13:35:42 +0800
-Date: Sat, 5 Oct 2024 13:35:42 +0800
+	id 1swxKo-0071cm-11;
+	Sat, 05 Oct 2024 13:38:21 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2024 13:38:19 +0800
+Date: Sat, 5 Oct 2024 13:38:19 +0800
 From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Danny Tsen <dtsen@linux.ibm.com>
-Cc: linux-crypto@vger.kernel.org, stable@vger.kernel.org, leitao@debian.org,
-	nayna@linux.ibm.com, appro@cryptogams.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com
-Subject: Re: [PATCH 0/3] crypto: Fix data mismatch over ipsec tunnel
- encrypted/decrypted with ppc64le AES/GCM module.
-Message-ID: <ZwDQLmwA1LvWx5Dg@gondor.apana.org.au>
-References: <20240923133040.4630-1-dtsen@linux.ibm.com>
+To: "Zanussi, Tom" <tom.zanussi@linux.intel.com>
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	zanussi@kernel.org
+Subject: Re: [PATCH 0/2] iaa_crypto bugfix and maintainer change
+Message-ID: <ZwDQy-9lz9tzcnA8@gondor.apana.org.au>
+References: <733a19ce-16f2-4d06-bce9-85d7473c9a4d@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,40 +65,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240923133040.4630-1-dtsen@linux.ibm.com>
+In-Reply-To: <733a19ce-16f2-4d06-bce9-85d7473c9a4d@linux.intel.com>
 
-On Mon, Sep 23, 2024 at 09:30:37AM -0400, Danny Tsen wrote:
-> Fix data mismatch over ipsec tunnel encrypted/decrypted with ppc64le AES/GCM module.
+On Fri, Sep 27, 2024 at 01:45:42PM -0500, Zanussi, Tom wrote:
+> Hi Herbert,
 > 
-> This patch is to fix an issue when simd is not usable that data mismatch
-> may occur. The fix is to register algs as SIMD modules so that the
-> algorithm is excecuted when SIMD instructions is usable.
+> The first patch here fixes a bug seen on some systems with broken IAA
+> hardware; it doesn't fix the hardware issue itself but exposes an
+> issue with trusting the hardware to either send a completion or
+> trigger a timeout - if neither happens, it shouldn't spin endlessly.
 > 
-> A new module rfc4106(gcm(aes)) is also added. Re-write AES/GCM assembly
-> codes with smaller footprints and small performance gain.
+> The second patch hands over iaa_crypto maintainership, since I'll be
+> retiring from Intel and won't have access to IAA hardware myself.
 > 
-> This patch has been tested with the kernel crypto module tcrypt.ko and
-> has passed the selftest.  The patch is also tested with
-> CONFIG_CRYPTO_MANAGER_EXTRA_TESTS enabled.
+> Thanks,
 > 
-> Fixes: fd0e9b3e2ee6 ("crypto: p10-aes-gcm - An accelerated AES/GCM stitched implementation")
-> Fixes: cdcecfd9991f ("crypto: p10-aes-gcm - Glue code for AES/GCM stitched implementation")
-> Fixes: 45a4672b9a6e2 ("crypto: p10-aes-gcm - Update Kconfig and Makefile")
+> Tom
 > 
-> Signed-off-by: Danny Tsen <dtsen@linux.ibm.com>
+> Tom Zanussi (2):
+>   crypto: iaa - Remove potential infinite loop in check_completion()
+>   MAINTAINERS: Make Kristen Accardi the IAA crypto driver maintainer
 > 
-> Danny Tsen (3):
->   crypto: Re-write AES/GCM stitched implementation for ppcle64.
->   crypto: Register modules as SIMD modules for ppcle64 AES/GCM algs.
->   crypto: added CRYPTO_SIMD in Kconfig for CRYPTO_AES_GCM_P10.
-> 
->  arch/powerpc/crypto/Kconfig            |    2 +-
->  arch/powerpc/crypto/aes-gcm-p10-glue.c |  141 +-
->  arch/powerpc/crypto/aes-gcm-p10.S      | 2421 +++++++++++-------------
->  3 files changed, 1187 insertions(+), 1377 deletions(-)
+>  MAINTAINERS                                |  2 +-
+>  drivers/crypto/intel/iaa/iaa_crypto_main.c | 10 ++++++++++
+>  2 files changed, 11 insertions(+), 1 deletion(-)
 > 
 > -- 
-> 2.43.0
+> 2.38.1
 
 All applied.  Thanks.
 -- 
