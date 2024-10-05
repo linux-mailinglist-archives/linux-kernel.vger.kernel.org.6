@@ -1,161 +1,169 @@
-Return-Path: <linux-kernel+bounces-352177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17ED5991B49
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 00:54:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE015991B4E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 01:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E9C1F21143
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 22:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600D62816C2
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 23:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F2716DEB3;
-	Sat,  5 Oct 2024 22:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEBB16EC19;
+	Sat,  5 Oct 2024 23:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FhvwGWEt"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Cs63PiEz"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899851591F0
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 22:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C0C231C8F;
+	Sat,  5 Oct 2024 23:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728168868; cv=none; b=DMkeGFBGxt9wWBYBugVnVS/f7n22wDjHguL282/EvwR/LZiWPbbjhaJDDtjS1lT17YkS5LumbgC1m5rTbKo6/ZFYZchnYbdY1aE0MpoUfn2v3lR0aq6iEyzLmYfNB+JdDxk8WN7z6Y7AE2k5XS/sx47q/q9tk5c1C9daLBh0WkI=
+	t=1728170081; cv=none; b=EhOh9dg1dZ9UduaBScBnssh8RGvN7DwYm/RBC2vTtB52GskisxS6L/kOrvNSmb8vn73ULDwb93K1Gzv8nk3PnPfHyaNK0eUjtXJIjVZWCT0K/Hvd7oS7bHYiSd0WvATYrj5yjw38NSlrwy8kLjRQ03otQIaJps058xVoTvsR9P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728168868; c=relaxed/simple;
-	bh=FeV7YQD/aXL95iV4idM4e669wjt5NsYJxr4nuBrTGrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FLmwMWbDqjW+dRlq7m93/hZD0yyFiKjlxV1TED1xiZRPZKU+gx6kUbxG7g3u/nGURLfY1GjetXwnIb9unZL8MF/HcP7L6dEkNo9/WyCC2ISZPr9OpdFxQFJOe4J94hhHDpWFWsGp0tbwk1Z2gpAiw9aWLuFCOFl77SGvBBj4e2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FhvwGWEt; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 5 Oct 2024 18:54:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728168863;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y+M3sEo5jrIzIGfIg+yt1bfUXNU4+0FblBb6q+YIsb0=;
-	b=FhvwGWEt74rEGjEeBwrC+BHGDD7gyBBxB8UEEK7AHKb5kjOagABgW7SmrCye0y1Fw/VRE0
-	wEXg1jctoemlxucNOaR/vKl/Z0ghkE2f2wf1OykkzVsBddWW7dhADpr0qv9mA39rMdrJaj
-	4qonLZERRN/zyQTtKTQXNzCRdNvYtN8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
+	s=arc-20240116; t=1728170081; c=relaxed/simple;
+	bh=55JqzKe/ic7TX/w1MQyQqPCecWERm7eQO4l3DpCtnZs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NNTyav/lOr5ZxocAgHiMHWUTfzxFPA1Kdub/e3jxOT4/IDBz73gKFmdf/UkoCFlI9eLeeWviIKwoyhoyJeuD8Nn2vy7eVbN/BnQv+llKs/KdLVK+d6GGo9bSp/rDahomNBvThD/zxZGS5rfKsFSEV9VOmjnP+TvS9d6LYDqt5mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Cs63PiEz; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=ijtOb56oHzu1JziCMLT9W2TGCyKMmg0cuQIugWCib0Q=; b=Cs63PiEzB/o6ooui
+	6gMGtalJ5YAAS4xIjQu0QcGJrcli7+DROqE+XPog0Uf5nuPkrws00K7qlMZghw7mO0ujxBCEXTkIj
+	910bK6HLfqWwSV8I8GwN4mXX8LEKrINKW7ro6PMpgrAx1Kaz7hz2HWk8xHX5ebfC5rUINb4whmhUU
+	flykahUR1OMkYgZV2sSME9CBRi5sCPn9KjlJMLUD5Vgj4gwimF1yHqYcXblQiJaWm16T2m3m84IPS
+	Wyn7i/g6gJOwlJWeIzMZflJ19UFz7VCTG9QZZkFtsJbE/UbZojj29tow4DaN6fn4OI2KtfEct+CTx
+	vqKNOU2mWqwA3spmpw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sxDyK-009DWA-09;
+	Sat, 05 Oct 2024 23:14:00 +0000
+From: linux@treblig.org
+To: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] crypto: x86/cast5: Remove unused cast5_ctr_16way
+Date: Sun,  6 Oct 2024 00:13:58 +0100
+Message-ID: <20241005231358.304682-1-linux@treblig.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 05, 2024 at 03:34:56PM GMT, Linus Torvalds wrote:
-> On Sat, 5 Oct 2024 at 11:35, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> >
-> > Several more filesystems repaired, thank you to the users who have been
-> > providing testing. The snapshots + unlinked fixes on top of this are
-> > posted here:
-> 
-> I'm getting really fed up here Kent.
-> 
-> These have commit times from last night. Which makes me wonder how
-> much testing they got.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-The /commit/ dates are from last night, because I polish up commit
-messages and reorder until the last might (I always push smaller fixes
-up front and fixes that are likely to need rework to the back).
+commit e2d60e2f597a ("crypto: x86/cast5 - drop CTR mode implementation")
 
-The vast majority of those fixes are all ~2 weeks old.
+removed the calls to cast5_ctr_16way but left the avx implementation.
 
-> And before you start whining - again - about how you are fixing bugs,
-> let me remind you about the build failures you had on big-endian
-> machines because your patches had gotten ZERO testing outside your
-> tree.
+Remove it.
 
-No, there simply aren't that many people running big endian. I have
-users building and running my trees on a daily basis. If I push
-something broken before I go to bed I have bug reports waiting for me
-_the next morning_ when I wake up.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ arch/x86/crypto/cast5-avx-x86_64-asm_64.S | 76 -----------------------
+ 1 file changed, 76 deletions(-)
 
-> That was just last week, and I'm getting the strong feeling that
-> absolutely nothing was learnt from the experience.
-> 
-> I have pulled this, but I searched for a couple of the commit messages
-> on the lists, and found *nothing* (ok, I found your pull request,
-> which obviously mentioned the first line of the commit messages).
-> 
-> I'm seriously thinking about just stopping pulling from you, because I
-> simply don't see you improving on your model. If you want to have an
-> experimental tree, you can damn well have one outside the mainline
-> kernel. I've told you before, and nothing seems to really make you
-> understand.
+diff --git a/arch/x86/crypto/cast5-avx-x86_64-asm_64.S b/arch/x86/crypto/cast5-avx-x86_64-asm_64.S
+index b4e460a87f18..fb95a614249d 100644
+--- a/arch/x86/crypto/cast5-avx-x86_64-asm_64.S
++++ b/arch/x86/crypto/cast5-avx-x86_64-asm_64.S
+@@ -487,79 +487,3 @@ SYM_FUNC_START(cast5_cbc_dec_16way)
+ 	FRAME_END
+ 	RET;
+ SYM_FUNC_END(cast5_cbc_dec_16way)
+-
+-SYM_FUNC_START(cast5_ctr_16way)
+-	/* input:
+-	 *	%rdi: ctx
+-	 *	%rsi: dst
+-	 *	%rdx: src
+-	 *	%rcx: iv (big endian, 64bit)
+-	 */
+-	FRAME_BEGIN
+-	pushq %r12;
+-	pushq %r15;
+-
+-	movq %rdi, CTX;
+-	movq %rsi, %r11;
+-	movq %rdx, %r12;
+-
+-	vpcmpeqd RTMP, RTMP, RTMP;
+-	vpsrldq $8, RTMP, RTMP; /* low: -1, high: 0 */
+-
+-	vpcmpeqd RKR, RKR, RKR;
+-	vpaddq RKR, RKR, RKR; /* low: -2, high: -2 */
+-	vmovdqa .Lbswap_iv_mask(%rip), R1ST;
+-	vmovdqa .Lbswap128_mask(%rip), RKM;
+-
+-	/* load IV and byteswap */
+-	vmovq (%rcx), RX;
+-	vpshufb R1ST, RX, RX;
+-
+-	/* construct IVs */
+-	vpsubq RTMP, RX, RX;  /* le: IV1, IV0 */
+-	vpshufb RKM, RX, RL1; /* be: IV0, IV1 */
+-	vpsubq RKR, RX, RX;
+-	vpshufb RKM, RX, RR1; /* be: IV2, IV3 */
+-	vpsubq RKR, RX, RX;
+-	vpshufb RKM, RX, RL2; /* be: IV4, IV5 */
+-	vpsubq RKR, RX, RX;
+-	vpshufb RKM, RX, RR2; /* be: IV6, IV7 */
+-	vpsubq RKR, RX, RX;
+-	vpshufb RKM, RX, RL3; /* be: IV8, IV9 */
+-	vpsubq RKR, RX, RX;
+-	vpshufb RKM, RX, RR3; /* be: IV10, IV11 */
+-	vpsubq RKR, RX, RX;
+-	vpshufb RKM, RX, RL4; /* be: IV12, IV13 */
+-	vpsubq RKR, RX, RX;
+-	vpshufb RKM, RX, RR4; /* be: IV14, IV15 */
+-
+-	/* store last IV */
+-	vpsubq RTMP, RX, RX; /* le: IV16, IV14 */
+-	vpshufb R1ST, RX, RX; /* be: IV16, IV16 */
+-	vmovq RX, (%rcx);
+-
+-	call __cast5_enc_blk16;
+-
+-	/* dst = src ^ iv */
+-	vpxor (0*16)(%r12), RR1, RR1;
+-	vpxor (1*16)(%r12), RL1, RL1;
+-	vpxor (2*16)(%r12), RR2, RR2;
+-	vpxor (3*16)(%r12), RL2, RL2;
+-	vpxor (4*16)(%r12), RR3, RR3;
+-	vpxor (5*16)(%r12), RL3, RL3;
+-	vpxor (6*16)(%r12), RR4, RR4;
+-	vpxor (7*16)(%r12), RL4, RL4;
+-	vmovdqu RR1, (0*16)(%r11);
+-	vmovdqu RL1, (1*16)(%r11);
+-	vmovdqu RR2, (2*16)(%r11);
+-	vmovdqu RL2, (3*16)(%r11);
+-	vmovdqu RR3, (4*16)(%r11);
+-	vmovdqu RL3, (5*16)(%r11);
+-	vmovdqu RR4, (6*16)(%r11);
+-	vmovdqu RL4, (7*16)(%r11);
+-
+-	popq %r15;
+-	popq %r12;
+-	FRAME_END
+-	RET;
+-SYM_FUNC_END(cast5_ctr_16way)
+-- 
+2.46.2
 
-At this point, it's honestly debatable whether the experimental label
-should apply. I'm getting bug reports that talk about production use and
-working on metadata dumps where the superblock indicates the filesystem
-has been in continuous use for years.
-
-And many, many people talking about how even at this relatively early
-point it doesn't fall over like btrfs does.
-
-Let that sink in.
-
-Btrfs has been mainline for years, and it still craps out on people. I
-was just in a meeting two days ago, closing funding, and a big reason it
-was an easy sell was because they have to run btrfs in _read only_ mode
-because otherwise it craps out.
-
-So if the existing process, the existing way of doing things, hasn't
-been able to get btrfs to a point where people can rely on it after 10
-years - perhaps you and the community don't know quite as much as you
-think you do about the realities of what it takes to ship a working
-filesystem.
-
-And from where I sit, on the bcachefs side of things, things are going
-smoothly and quickly. Bug reports are diminishing in frequency and
-severity, even as userbase is going up; distros are picking it up (just
-not Debian and Fedora); the timeline I laid out at LSF is still looking
-reasonable.
-
-> I was hoping and expecting that bcachefs being mainlined would
-> actually help development.  It has not. You're still basically the
-> only developer, there's no real sign that that will change, and you
-> seem to feel like sending me untested stuff that nobody else has ever
-> seen the day before the next rc release is just fine.
-
-I've got a team lined up, just secured funding to start paying them and
-it looks like I'm about to secure more.
-
-And the community is growing, I'm reviewing and taking patches from more
-people, and regularly mentoring them on the codebase.
-
-And on top of all that, you shouting about "process" rings pretty hollow
-when I _remember_ the days when you guys were rewriting core mm code in
-rc kernels.
-
-Given where bcachefs is at in the lifecycle of a big codebase being
-stabilized, you should be expecting to see stuff like that here. Stuff
-is getting found and fixed, and then we ship those fixes so we can find
-the next stuff.
-
-> You're a smart person. I feel like I've given you enough hints. Why
-> don't you sit back and think about it, and let's make it clear: you
-> have exactly two choices here:
-> 
->  (a) play better with others
-> 
->  (b) take your toy and go home
-
-You've certainly yelled a lot...
 
