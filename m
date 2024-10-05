@@ -1,184 +1,124 @@
-Return-Path: <linux-kernel+bounces-351968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2275199186E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:48:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A7E99186A
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54F531C21173
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:48:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F1B2832D0
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E24915820C;
-	Sat,  5 Oct 2024 16:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D87158524;
+	Sat,  5 Oct 2024 16:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="la+0kgN+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iLL5uvST"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A825C14D430;
-	Sat,  5 Oct 2024 16:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895471CF96;
+	Sat,  5 Oct 2024 16:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728146905; cv=none; b=pTZzu/i7/paRkaD9XOksQK1kkt2H1uxYDER4qcrv6X0z/x/jyUYnToRf+/A70MbkY93E3OfenaQfgQnCLIlk/wpLnZs4eNvD5aSEtJq9yXPz2k8394QwNtN+u0NdSk+J+wQTvdZ0QqWfHNws81wxQOV7kLTi/QbZnp9pCsEkAgw=
+	t=1728146849; cv=none; b=gNSn5RyFeyrn6+xJgnScJmyNoOxHJURz8K2hwbEchJlik6heoSZmZ5Nx3jHucMrHsz7z/DxUcyu8o5q3AGkurcexRbXm3geGnOEB/Ql9Z39Wzw9QipqYl25MCo7eDmasqDj86HSF1rzg9HAQu/5AaH515HYJSlyMuVDL4cw/Aac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728146905; c=relaxed/simple;
-	bh=91HCMg0JjX99Rn04tXze6sRRPkgJg/UlDJEpIAcwTAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uedt0QoyAAeNOYNRprk3yHs5xl1FJ3aanK3aZre0fEbChF/gZ+h4tyvbZk8/udpMLeqtoxWV0iMYwEjqQsrkG5ME94TZGFHVxK/JFqtsLrL0tIIx5b4M5m2hNrBpMTENP4wztICCkeZ8s4njT81HvKd50Fti5Yo8PBoDzcXNyCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=la+0kgN+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84201C4CEC2;
-	Sat,  5 Oct 2024 16:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728146905;
-	bh=91HCMg0JjX99Rn04tXze6sRRPkgJg/UlDJEpIAcwTAY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=la+0kgN+h9xgZBdbZcTKRpgRBC+5kaLDIl6IA4xeKWgkl7hIWRAHWTqjVXNqYQ/O3
-	 o/zKtq5p0UbTarLBR02lQb9HC0px1+KEmh+UsDylsKZBPmkXy8A/hVwT71g7XfiYBf
-	 r/SZZPy9YvYrEs5FgySdzSREsUt8SAacttfIjSaF2XWvZmL8N3meH2O0ZM5rIPc/L8
-	 TVVmvu6/y/2nyqGKKNrp9OGNcAUBMxgLu4ziSphb9eRAn/8ss/ytKeDzvAqrLYY4kd
-	 3xaqEYF/S5pZGx19XshzPmKs1kUDx/NDP7VtOAut7EVjFJYxAkd1eGnI0Pu8pGTyb/
-	 2nK2+lahGlLpg==
-Date: Sat, 5 Oct 2024 17:47:55 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhash Jha <abhashkumarjha123@gmail.com>
-Cc: linux-iio@vger.kernel.org, lars@metafoo.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] iio: light: vl6180: Added Interrupt support for
- single shot access
-Message-ID: <20241005174755.6864d482@jic23-huawei>
-In-Reply-To: <20241004150148.14033-3-abhashkumarjha123@gmail.com>
-References: <20241004150148.14033-1-abhashkumarjha123@gmail.com>
-	<20241004150148.14033-3-abhashkumarjha123@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728146849; c=relaxed/simple;
+	bh=SbzdiwL0NXE10tYG/iUtD+nmVPKazjue8fBEaGKTXV4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cyARIrj3mTRLd03xkWWt+1uEUluHmQOuKwEXuImYP0QMsF2FJZvqt88aqcE2U4E/oOsck1AdTor7hjEmhCh5CHsDh8bFHHTHti/Y75+rhzBQO/YerIYki0sYuq0LORQa8y3Xq+d1DW8hdcjZjJO5lYqf1xMDubGu3nx/fgbtljg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iLL5uvST; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso29991135e9.2;
+        Sat, 05 Oct 2024 09:47:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728146846; x=1728751646; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hj1spl/h6f2LGGC+51xwjkCU2sNccvLDpAszxwH0jrg=;
+        b=iLL5uvSTkMUJEeR9xb+mCmC1WMLfv+wn9NC5zTRGjuGsr5eIH0atWsB5IkuM/0xa32
+         AHGzMHTGbKPeVgeqQSEDcTUQSf6Va6D8zwAsxUYGScpaAAZUzysmsxNUMBff60O0gJ4J
+         QjEID3WpluAl5oKthTWkvml5GrY+gv5bDAeeRpZVDPNexYoruE90p11gYuIRidWS/TDN
+         66Uthl0BxQ8GD5pvJrkoyuENv//fgjllFOIM3t4o7E9rk7pGNH3gz1q4ZH3kOK2EjoQr
+         6IszltaZ1K+qzFl+rRbq+uhDDZz/3uxwo59UyTreVUPgEuD2z/G/zq4eR5Sisu5jkWPc
+         Hf5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728146846; x=1728751646;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hj1spl/h6f2LGGC+51xwjkCU2sNccvLDpAszxwH0jrg=;
+        b=uN54t9jOZ9GxyEQVQ9GHXX4xW3svLPw2Ng/omw9rmOgNmGXacH+VbFyw3uFkvqm4mt
+         KLJDosmLAwhvWIuJSDrICB5KKzXVtsX6BWwzJQ/l21EoZYmjghvfatnbzTt2ZuX7q6eX
+         R5eOWUMRm3dZ99BmJ6lfNN1/ZQ332jbDx3gh95Oxb7Tf2DPHCjpj0nQWHL74Gz57MWX/
+         prbDFPcNKb4H8IPnfFC2jgLPFNAedp9cBkLnFLfCbefmmMexOSl6eHntrXJ95iULf6Um
+         4LZUNgBirnJ2M5WtYy6JsSf7tB5JzT5mQpJ5ujn+jp4uPqzkULMHkuw+53QELZPEwXIi
+         k3rw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuZYPWPoM0+SFtu7Itf/sdJjbOhSxBUtX7iKd90Xkct+2y/u6irvyXGcoYDhFzk9xPGz8=@vger.kernel.org, AJvYcCVobz9x3SIH8UOkBh6GX2g5diL59RrjwWxIwslz5gBAy4rhlqOkXLYRZqYrq1z5iOkiES0OB+iXqlu6ojz0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhuYUTaJmu04MBk+lOqMl87rrFny7Gx4dBz8CRaQr/nctxF4g2
+	IqeiKfQLY65WHALa8KaPSdfLNVZfRhV2WGqKjvzgJWCvvYkBJHqk
+X-Google-Smtp-Source: AGHT+IGxcHPGAqdaeGX/IKVLU9qDsvCJUH4HGqJju1lNE/OrMpBCi2/1enXsTVXUaN4RCxRoTRGzcw==
+X-Received: by 2002:a05:600c:3ba9:b0:42c:ba83:3f0e with SMTP id 5b1f17b1804b1-42f85a6d73amr45501295e9.7.1728146845616;
+        Sat, 05 Oct 2024 09:47:25 -0700 (PDT)
+Received: from work.. ([94.200.20.179])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ec71aesm26481515e9.33.2024.10.05.09.47.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 09:47:24 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: elver@google.com,
+	akpm@linux-foundation.org
+Cc: andreyknvl@gmail.com,
+	bpf@vger.kernel.org,
+	dvyukov@google.com,
+	glider@google.com,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	ryabinin.a.a@gmail.com,
+	snovitoll@gmail.com,
+	syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com,
+	vincenzo.frascino@arm.com
+Subject: [PATCH v2 0/1] mm, kasan, kmsan: copy_from/to_kernel_nofault
+Date: Sat,  5 Oct 2024 21:48:12 +0500
+Message-Id: <20241005164813.2475778-1-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CANpmjNOZ4N5mhqWGvEU9zGBxj+jqhG3Q_eM1AbHp0cbSF=HqFw@mail.gmail.com>
+References: <CANpmjNOZ4N5mhqWGvEU9zGBxj+jqhG3Q_eM1AbHp0cbSF=HqFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri,  4 Oct 2024 20:31:47 +0530
-Abhash Jha <abhashkumarjha123@gmail.com> wrote:
+This patch consolidates the changes from the two previously submitted patches:
+1. https://lore.kernel.org/mm-commits/20240927171751.D1BD9C4CEC4@smtp.kernel.org
+2. https://lore.kernel.org/mm-commits/20240930162435.9B6CBC4CED0@smtp.kernel.org
 
-> Configured the GPIO1 pin to provide output interrupts. And then the
-> interrupts are serviced in the `vl6180_measure` function when the
-> irq_handler signals that the reading is complete.
-> 
-> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+In the interest of clarity and easier backporting, this single patch
+includes all changes and replaces the two previous patches.
 
-A few comments inline.
+Andrew,
+Please drop the two previous patches from the -mm tree in favor of this one.
+Apologies for the confusion. Will try to minimize it in future.
 
-Thanks,
+The patch is based on the latest Linus tree, where I've squashed
+the latest 2 patches merged in -mm tree.
 
-Jonathan
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
 
-> ---
+Sabyrzhan Tasbolatov (1):
+  mm, kasan, kmsan: copy_from/to_kernel_nofault
 
-> @@ -211,6 +216,7 @@ static int vl6180_write_word(struct i2c_client *client, u16 cmd, u16 val)
->  static int vl6180_measure(struct vl6180_data *data, int addr)
->  {
->  	struct i2c_client *client = data->client;
-> +	unsigned long time_left;
->  	int tries = 20, ret;
->  	u16 value;
->  
-> @@ -221,19 +227,26 @@ static int vl6180_measure(struct vl6180_data *data, int addr)
->  	if (ret < 0)
->  		goto fail;
->  
-> -	while (tries--) {
-> -		ret = vl6180_read_byte(client, VL6180_INTR_STATUS);
-> -		if (ret < 0)
-> -			goto fail;
-> -
-> -		if (ret & vl6180_chan_regs_table[addr].drdy_mask)
-> -			break;
-> -		msleep(20);
-> -	}
-> +	if (client->irq) {
-> +		reinit_completion(&data->completion);
+ mm/kasan/kasan_test_c.c | 27 +++++++++++++++++++++++++++
+ mm/kmsan/kmsan_test.c   | 17 +++++++++++++++++
+ mm/maccess.c            |  7 +++++--
+ 3 files changed, 49 insertions(+), 2 deletions(-)
 
-That's late so there is a race condition. You might be delayed just before this
-and finish the measurement before the reint_completion() in which case you'll
-clear the complete() that happens in the interrupt handler before
-then waiting on it.  This reinit needs to be before whatever can potentially trigger
-that interrupt.
-
-> +		time_left = wait_for_completion_timeout(&data->completion, HZ/10);
-HZ / 10
-> +		if (time_left == 0)
-> +			return -ETIMEDOUT;
-> +	} else {
-> +		while (tries--) {
-> +			ret = vl6180_read_byte(client, VL6180_INTR_STATUS);
-> +			if (ret < 0)
-> +				goto fail;
-> +
-> +			if (ret & vl6180_chan_regs_table[addr].drdy_mask)
-> +				break;
-> +			msleep(20);
-> +		}
->  
-> -	if (tries < 0) {
-> -		ret = -EIO;
-> -		goto fail;
-> +		if (tries < 0) {
-> +			ret = -EIO;
-> +			goto fail;
-> +		}
->  	}
->  
->  	/* Read result value from appropriate registers */
-> @@ -479,6 +492,15 @@ static int vl6180_write_raw(struct iio_dev *indio_dev,
->  	}
->  }
-
-...
-
->  static const struct iio_info vl6180_info = {
->  	.read_raw = vl6180_read_raw,
->  	.write_raw = vl6180_write_raw,
-> @@ -514,6 +536,11 @@ static int vl6180_init(struct vl6180_data *data)
->  	if (ret != 0x01)
->  		dev_info(&client->dev, "device is not fresh out of reset\n");
->  
-> +	ret = vl6180_write_byte(client, VL6180_MODE_GPIO1,
-> +				VL6180_GPIO1_INTR_OUT);
-
-I would only do this if the interrupt is wired. It's probably harmless otherwise
-but seems a bit odd if that pin isn't connected to anything.
-
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	/* Enable ALS and Range ready interrupts */
->  	ret = vl6180_write_byte(client, VL6180_INTR_CONFIG,
->  				VL6180_ALS_READY | VL6180_RANGE_READY);
-> @@ -580,6 +607,19 @@ static int vl6180_probe(struct i2c_client *client)
->  	if (ret < 0)
->  		return ret;
->  
-> +	if (client->irq) {
-> +		ret = devm_request_threaded_irq(&client->dev, client->irq,
-> +						NULL, vl6180_threaded_irq,
-> +						IRQF_ONESHOT,
-> +						indio_dev->name, indio_dev);
-> +		if (ret) {
-> +			dev_err(&client->dev, "devm_request_irq error: %d\n", ret);
-> +			return ret;
-
-return dev_err_probe()
-
-> +		}
-> +
-> +		init_completion(&data->completion);
-> +	}
-> +
->  	return devm_iio_device_register(&client->dev, indio_dev);
->  }
->  
+-- 
+2.34.1
 
 
