@@ -1,137 +1,111 @@
-Return-Path: <linux-kernel+bounces-352053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EFD0991994
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:35:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05862991996
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88C89B21499
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:35:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 375791C2122F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2520E15E5BB;
-	Sat,  5 Oct 2024 18:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C481415E5C2;
+	Sat,  5 Oct 2024 18:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="P3NpJU6Z"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVI054uq"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799D415C14D
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 18:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E894515854F;
+	Sat,  5 Oct 2024 18:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728153327; cv=none; b=pG0NoGmhdU6xxmzZYI9Acp7YrKqJRysAVUe9ny40uGkziwzol/bTXdEssRzgEXu0RlodzGcqGZBJ0rGWD6k7OEFYIn1CL6xGSf+TJ5EPxfCzmQifAcub2Q+ITEMNXeA05gSkghUj9UYBLjvHgCTorXrPn+hIOWgpuVtHsJe8a5E=
+	t=1728153420; cv=none; b=JOI7jWQXo4h/5UNcz6dLVfSinVxym4zZWWcx3cV/KPrUgSpx6u+aNp5COtF5hMHNlcIDAsSdwAmNIJcXRFN2ZYA0oYMqN5qdyk6HcIW6TxSY6JyM7uO6HG5vzh57wbhxe1TLvRzixj73+DQeSmVEJoMGDIPpPQ1Q6/de1Qf6I7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728153327; c=relaxed/simple;
-	bh=lCw7vnpXDNzWRzBIGJZ41zjrjyexnOuB98d+jyGedFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NqPxfYpAqK6wo2/rFbPSebmGuQsyXFLETVO77r6yKBOSarpdA4ZE8h9f+U2lwH4JTvlxQ16t/Hu4or3NXinoSYhyPQHwdWKS4trPYvqu8hvpFYbaHtwHWfSfF8XI2AYeqFbki3phYzsv+kbTAXLZcPelw+RGEqqnV7VPdgfvCco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=P3NpJU6Z; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 5 Oct 2024 14:35:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728153322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=AM7Qw3VEFLcUwcLSiVIWVKX76u7BUc/+Zwgd/c7iThE=;
-	b=P3NpJU6ZrZKZbyYAeE5f7UeFsOkC94I+Ui/Gbm2VLC5AfWpwzzs62ek+PIbF0Hm9mPznkP
-	0odq9ONjU+BWa14vIkwUfbdZpoyikVaggyuHtLwZsBxwOXHKk3hbAGIrqKJYpITWd7smz3
-	6KSIhpm0MKCDO/o7AbuNHpz/reet6Yw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+	s=arc-20240116; t=1728153420; c=relaxed/simple;
+	bh=DjEkgMsE+q9McXLoeQL5ZBzLN/XUBH8NjpwqeAri/Pg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qrI7q8fwlkdKzgbVD6c9T9mD0RN7evQoIUHLEoTO4xcdqa28VMpjPYBS11S8ao8P0eWDhkAJ/Ry5JFh6s5C6YF5kUQKhxw9FWfUK4vf67Y+LwF4/JPdmOZCSMQLGscWEhFZMuA1xWerqXxrjrh9uG6ToigAkVUoP1N9LgxmiRQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZVI054uq; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7e9f98d3234so26805a12.2;
+        Sat, 05 Oct 2024 11:36:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728153418; x=1728758218; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XgGCb9pstbd7GewNm2jOl0ti9D6Uvz86zDJOdOtYfC4=;
+        b=ZVI054uqsc3HNP2dZu+yx2lRhs+kDKGCXlxzEdfRE6nzYFLSoJw2y3livCxUxpc/HE
+         jeucGjjnwaBBlZ7MhrAO8CWTMd3Qo+sWLukpHGrwjXWZJBoFwPzsMB0cOYqoSCNaqtul
+         gvURurRLybqcMSIb+zf9E/0n52qwU6Hkc02Hq1q+kgC7pc/oWmglQ/I0Xd/61MhJQ00r
+         ZPP5wM93by3TjXMcwNM1h3Ca4I7aw8kDg8sWZvoPsLuNPJ6MAFgykVIZlz8VRra9kR/v
+         8fbTj1/r+R/JzGDOfh+2vLJ+TpFk4LolbFNkkpw03JZV9hKRSXpkE16BPOWg8quCUdIF
+         B2cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728153418; x=1728758218;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XgGCb9pstbd7GewNm2jOl0ti9D6Uvz86zDJOdOtYfC4=;
+        b=FUy4pSplTF5lz7MsaigdHIfSF5AGDJh5T3GX3IVqx6ZASw3B8rU628+XShnC+2gEag
+         eTxmlp+d/Ao2Tx+Ks8BBhNosDpN6outK/YdtVbFkcrzzN3WNEyAbjYQ1jhdVkAvSbbBJ
+         +8SurMdUzMcm5gGK1AY0lpPPkay0ceXLoUyWOjJqQbVLm2rLLpO8h+MqaI3LOCioR4au
+         11MckjfprMN2kc4aGNk7FEZwakoOwo8SPbjGVLNxqdFvJ5v+nSn+JLUA2RoX/7rGucfW
+         c67NypBf49yO32vlXcc/en1Xxz+xokHw7ciK/t/q7XY6co4co6QPCXZr9lV8Ky0vnzwJ
+         QQIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQlvzkbto+Q/dlagwEQTGba9QfClWwUKahX3fMhba15O/dUKAilOp18oz3mdXf5rGqdRXH5wXXHFJdWRs=@vger.kernel.org, AJvYcCW49c/3wS0B92OdEnKXytcJwnYNa2kKKUQ6tbLPbNuISz0Mct4pDCH0+NMVD4Ani4Szo9N0Bi+/Alkv1osh7QA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyScY2MrUI1jZNg3XDvoA7IIVHI/DFWRD8Y2glGpdYm/AIG/gQW
+	aGP411WHXbb+0/x9NQieO30A+hS0royPJ4Xl28r1gHQLc4iu7J+XRGJeoncImtUAZiPv6fWb01P
+	Ikjmc0CYrBuHOhsDHJ8w+98n6pFc=
+X-Google-Smtp-Source: AGHT+IGn67vfCMqsciAWLmMbUIQzxAW5Sx2be3jHpfFc2Rgror/hqRCKtd5k7MCxQetcHaBWaWAEzJyhULbihU9D2fI=
+X-Received: by 2002:a05:6a20:72ac:b0:1cf:37d4:c50b with SMTP id
+ adf61e73a8af0-1d6dfa3a7c2mr5055200637.4.1728153418098; Sat, 05 Oct 2024
+ 11:36:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com> <20241005122531.20298-4-fujita.tomonori@gmail.com>
+In-Reply-To: <20241005122531.20298-4-fujita.tomonori@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 5 Oct 2024 20:36:44 +0200
+Message-ID: <CANiq72=YAumHrwE4fCSy2TqaSYBHgxFTJmvnp336iQBKmGGTMw@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 3/6] rust: time: Implement addition of Ktime
+ and Delta
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch, 
+	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
+	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, 
+	arnd@arndb.de, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Several more filesystems repaired, thank you to the users who have been
-providing testing. The snapshots + unlinked fixes on top of this are
-posted here:
+On Sat, Oct 5, 2024 at 2:26=E2=80=AFPM FUJITA Tomonori
+<fujita.tomonori@gmail.com> wrote:
+>
+> +    fn add(self, delta: Delta) -> Ktime {
+> +        // SAFETY: FFI call.
+> +        let t =3D unsafe { bindings::ktime_add_ns(self.inner, delta.as_n=
+anos() as u64) };
+> +        Ktime::from_raw(t)
+> +    }
 
-https://lore.kernel.org/linux-bcachefs/20241005182955.1588763-1-kent.overstreet@linux.dev/T/#t
+I wonder if we want to use the `ktime` macros/operations for this type
+or not (even if we still promise it is the same type underneath). It
+means having to define helpers, adding `unsafe` code and `SAFETY`
+comments, a call penalty in non-LTO, losing overflow checking (if we
+want it for these types), and so on.
 
-The following changes since commit 2007d28ec0095c6db0a24fd8bb8fe280c65446cd:
+(And at least C is `-fno-strict-overflow`, otherwise it would be even subtl=
+er).
 
-  bcachefs: rename version -> bversion for big endian builds (2024-09-29 23:55:52 -0400)
-
-are available in the Git repository at:
-
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-10-05
-
-for you to fetch changes up to 0f25eb4b60771f08fbcca878a8f7f88086d0c885:
-
-  bcachefs: Rework logged op error handling (2024-10-04 20:25:32 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.12-rc2
-
-A lot of little fixes, bigger ones include:
-
-- bcachefs's __wait_on_freeing_inode() was broken in rc1 due to vfs
-  changes, now fixed along with another lost wakeup
-- fragmentation LRU fixes; fsck now repairs successfully (this is the
-  data structure copygc uses); along with some nice simplification.
-- Rework logged op error handling, so that if logged op replay errors
-  (due to another filesystem error) we delete the logged op instead of
-  going into an infinite loop)
-- Various small filesystem connectivitity repair fixes
-
-The final part of this patch series, fixing snapshots + unlinked file
-handling, is now out on the list - I'm giving that part of the series
-more time for user testing.
-
-----------------------------------------------------------------
-Kent Overstreet (18):
-      bcachefs: Fix bad shift in bch2_read_flag_list()
-      bcachefs: Fix return type of dirent_points_to_inode_nowarn()
-      bcachefs: Fix bch2_inode_is_open() check
-      bcachefs: Fix trans_commit disk accounting revert
-      bcachefs: Add missing wakeup to bch2_inode_hash_remove()
-      bcachefs: Fix reattach_inode()
-      bcachefs: Create lost+found in correct snapshot
-      bcachefs: bkey errors are only AUTOFIX during read
-      bcachefs: Make sure we print error that causes fsck to bail out
-      bcachefs: Mark more errors AUTOFIX
-      bcachefs: minor lru fsck fixes
-      bcachefs: Kill alloc_v4.fragmentation_lru
-      bcachefs: Check for directories with no backpointers
-      bcachefs: Check for unlinked inodes with dirents
-      bcachefs: Check for unlinked, non-empty dirs in check_inode()
-      bcachefs: Kill snapshot arg to fsck_write_inode()
-      bcachefs: Add warn param to subvol_get_snapshot, peek_inode
-      bcachefs: Rework logged op error handling
-
- fs/bcachefs/alloc_background.c        |  30 ++++--
- fs/bcachefs/alloc_background_format.h |   2 +-
- fs/bcachefs/btree_gc.c                |   3 -
- fs/bcachefs/btree_trans_commit.c      |   3 +-
- fs/bcachefs/error.c                   |  23 +++-
- fs/bcachefs/error.h                   |   9 +-
- fs/bcachefs/fs.c                      |  33 +++---
- fs/bcachefs/fsck.c                    | 194 ++++++++++++++++++++++------------
- fs/bcachefs/inode.c                   |  44 +++-----
- fs/bcachefs/inode.h                   |  28 +++--
- fs/bcachefs/io_misc.c                 |  63 +++++++----
- fs/bcachefs/logged_ops.c              |  16 +--
- fs/bcachefs/logged_ops.h              |   2 +-
- fs/bcachefs/lru.c                     |  34 +++---
- fs/bcachefs/move.c                    |   2 +-
- fs/bcachefs/movinggc.c                |  12 ++-
- fs/bcachefs/sb-errors_format.h        |  33 +++---
- fs/bcachefs/subvolume.c               |  16 ++-
- fs/bcachefs/subvolume.h               |   2 +
- fs/bcachefs/util.c                    |   2 +-
- 20 files changed, 342 insertions(+), 209 deletions(-)
+Cheers,
+Miguel
 
