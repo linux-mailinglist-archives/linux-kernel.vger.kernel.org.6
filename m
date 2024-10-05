@@ -1,109 +1,247 @@
-Return-Path: <linux-kernel+bounces-351959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2EE99185B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:36:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9EC99185D
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10CC71F22785
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:36:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2851FB21CBF
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D4F1581E1;
-	Sat,  5 Oct 2024 16:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAC41581F9;
+	Sat,  5 Oct 2024 16:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VGRe4NKI"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7bwzi3c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EE1288B1;
-	Sat,  5 Oct 2024 16:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED279156C52;
+	Sat,  5 Oct 2024 16:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728146176; cv=none; b=q3M6yU3y6uN/oA5js/tb3qDAqs/zK12ZtbS69VtlEqtI1wOZPdpvaCGdw+dp78VcLkIP7r0m4vIzC0vp+zOB+kvDg7LR2DOa5FwwG0DiCSFdFgqxdiMJuXxb/2JxGPWs7Dp8UYc92O2MZ5gkPQdYYvaTYlF6rBEzaJh8mRnXyw8=
+	t=1728146501; cv=none; b=HaF/IBKEVvk7BnUBl3hYjZuu8HSH0e/j0xZlT0YNYw/v4Bf6mywGpIVdT0nO/ziBiSHkKaJzdOXuKhmjrt5PSfBaIDs25V3wfZjKZnpLSdUzXZqL/qlnhS+WOEJt62Jtpoc0sq/k0KjLxvPgYoVwF9tCacGWuNQfXKS5zpxs4iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728146176; c=relaxed/simple;
-	bh=ru7GLiJUmCCmoknrs+EwrenWy9SEzZ/qZ7neAppcpc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6nJAOE6KVgH9/dJV7+972515u+2s8qzhWCrg8yPaWIXvOtMeNQWCL0JDfyd/k7YbI0poo5x5US6UeGiGXafigw5gv4roef/oRb/2vKzarSFoVOfRYer5+kbKa0mtSHj1rNLXswWxWE8ZFQGZM+l2uB87qQf+mWnJYbEmSy0aEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VGRe4NKI; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Y9VgHJAaPKZQxnIFUQ21M2uzqO2mV5plof64xb/Nx5E=; b=VGRe4NKIL/hSbCg10s/BFL8DYC
-	mqxhxMlA3DF4dS4G5llfBMM/Uvx4BNF/tmSJA5T4ucP0btkgSK/LqzGboKPm4sATaXjuQtiRjx6fy
-	ePaCPWizCoYrtmTZWXnGx40H9Sut0A9DnzzdYt2/HOGymDLrQ6Nc67xsU5w1I57b4GbY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sx7l8-0098rS-4L; Sat, 05 Oct 2024 18:35:58 +0200
-Date: Sat, 5 Oct 2024 18:35:58 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Christian Marangi <ansuelsmth@gmail.com>, netdev@vger.kernel.org,
+	s=arc-20240116; t=1728146501; c=relaxed/simple;
+	bh=0GLbD2BI3h0+MjUsQCsdcXZMktjOxuGzHSyFE8XhhVE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CLpaPSqmu3fVNsffGJQXNyDjcjaHF3F3Q4Ukznxa1ZXJdwgDVG/J0DixbWD/KsX/MZl/GEq0wePjWTmQZ25a1V6n6uvZi8CiZV4lGRGgEqFJXvqyMJojs6PKwanoxPv0Ua4U8UT3ZxTpwnuyvy/ZMiIC8jdxzORtDl7hKK0JhEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W7bwzi3c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 203DFC4CEC2;
+	Sat,  5 Oct 2024 16:41:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728146500;
+	bh=0GLbD2BI3h0+MjUsQCsdcXZMktjOxuGzHSyFE8XhhVE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=W7bwzi3cACmzv/9+WRa+s7OHv3JJyfqmNhyEz0/I2qonB1prWFdZKH+qVI+1/3TgX
+	 G5/lNgxkeDH30d5oc024IpxbE/6gTBIljymJQ14nV+TJNItETbLAMcsp45C5Gt894X
+	 Iwjli9k+sxRa6WzQG0pfvTViZ7mepj6BYyT8mhIs0ci1GRnwihbVZ8tIyrLeHonsbd
+	 K0uRS7OPVk6VbesUETBbJXfiaChUHyVVag3VMWDTnz+zn4hfmIlJA2iJK0tcmcSfdz
+	 UhcX/i0kFdyxMRDDOW2G/yszftxXY592dlgKpg66vdtKAypSOHmxwTAdqUWQ/qPqeq
+	 n1R7pjFYh2iiw==
+Received: by pali.im (Postfix)
+	id 8CE53648; Sat,  5 Oct 2024 18:41:33 +0200 (CEST)
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC net-next] net: phy: always set polarity_modes if op
- is supported
-Message-ID: <2b6f2938-12de-4ebb-9750-084de5d2af0b@lunn.ch>
-References: <473d62f268f2a317fd81d0f38f15d2f2f98e2451.1728056697.git.daniel@makrotopia.org>
- <5c821b2d-17eb-4078-942f-3c1317b025ff@lunn.ch>
- <ZwBn-GJq3BovSJd4@makrotopia.org>
- <e288f85c-2e5e-457f-b0d7-665c6410ccb4@lunn.ch>
- <ZwFggnUO-vAXr2v_@makrotopia.org>
+Subject: [PATCH v2] nfsd: Fix NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT
+Date: Sat,  5 Oct 2024 18:40:39 +0200
+Message-Id: <20241005164039.21255-1-pali@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20240912221917.23802-1-pali@kernel.org>
+References: <20240912221917.23802-1-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwFggnUO-vAXr2v_@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 05, 2024 at 04:51:30PM +0100, Daniel Golle wrote:
-> On Sat, Oct 05, 2024 at 04:17:56PM +0200, Andrew Lunn wrote:
-> > > I'll add "active-high" as an additional property then, as I found out
-> > > that both, Aquantia and Intel/MaxLinear are technically speaking
-> > > active-low by default (ie. after reset) and what we need to set is a
-> > > property setting the LED to be driven active-high (ie. driving VDD
-> > > rather than GND) instead. I hope it's not too late to make this change
-> > > also for the Aquantia driver.
-> > 
-> > Adding a new property should not affect backwards compatibility, so it
-> > should be safe to merge at any time.
-> 
-> Ok, I will proceed in that direction then and post a patch shortly.
-> My intial assumption that absence of 'active-low' would always imply
-> the LED being driven active-high was due to the commit description of
-> the introduction of the active-low property:
-> 
-> commit c94d1783136eb66f2a464a6891a32eeb55eaeacc
-> Author: Christian Marangi <ansuelsmth@gmail.com>
-> Date:   Thu Jan 25 21:36:57 2024 +0100
-> 
->     dt-bindings: net: phy: Make LED active-low property common
-> 
->     Move LED active-low property to common.yaml. This property is currently
->     defined multiple times by bcm LEDs. This property will now be supported
->     in a generic way for PHY LEDs with the use of a generic function.
-> 
->     With active-low bool property not defined, active-high is always
->     assumed.
+Currently NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT do not bypass
+only GSS, but bypass any method. This is a problem specially for NFS3
+AUTH_NULL-only exports.
 
-So we have a difference between the commit message and what the
-binding actually says. I would go by what the binding says.
+The purpose of NFSD_MAY_BYPASS_GSS_ON_ROOT is described in RFC 2623,
+section 2.3.2, to allow mounting NFS2/3 GSS-only export without
+authentication. So few procedures which do not expose security risk used
+during mount time can be called also with AUTH_NONE or AUTH_SYS, to allow
+client mount operation to finish successfully.
 
-However, what about the actual implementations? Do any do what the
-commit message says?
+The problem with current implementation is that for AUTH_NULL-only exports,
+the NFSD_MAY_BYPASS_GSS_ON_ROOT is active also for NFS3 AUTH_UNIX mount
+attempts which confuse NFS3 clients, and make them think that AUTH_UNIX is
+enabled and is working. Linux NFS3 client never switches from AUTH_UNIX to
+AUTH_NONE on active mount, which makes the mount inaccessible.
 
-	Andrew
+Fix the NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT implementation
+and really allow to bypass only exports which have enabled some real
+authentication (GSS, TLS, or any other).
+
+The result would be: For AUTH_NULL-only export if client attempts to do
+mount with AUTH_UNIX flavor then it will receive access errors, which
+instruct client that AUTH_UNIX flavor is not usable and will either try
+other auth flavor (AUTH_NULL if enabled) or fails mount procedure.
+Similarly if client attempt to do mount with AUTH_NULL flavor and only
+AUTH_UNIX flavor is enabled then the client will receive access error.
+
+This should fix problems with AUTH_NULL-only or AUTH_UNIX-only exports if
+client attempts to mount it with other auth flavor (e.g. with AUTH_NULL for
+AUTH_UNIX-only export, or with AUTH_UNIX for AUTH_NULL-only export).
+
+Signed-off-by: Pali Rohár <pali@kernel.org>
+
+---
+Changes in v2:
+* Apply whole NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT logic not
+  only for GSS, but also for any method with the real authentication
+  (anything except RPC_AUTH_NULL, RPC_AUTH_UNIX and RPC_AUTH_SHORT).
+---
+ fs/nfsd/export.c   | 19 ++++++++++++++++++-
+ fs/nfsd/export.h   |  2 +-
+ fs/nfsd/nfs4proc.c |  2 +-
+ fs/nfsd/nfs4xdr.c  |  2 +-
+ fs/nfsd/nfsfh.c    | 12 +++++++++---
+ fs/nfsd/vfs.c      |  2 +-
+ 6 files changed, 31 insertions(+), 8 deletions(-)
+
+diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+index 50b3135d07ac..8a12876b9335 100644
+--- a/fs/nfsd/export.c
++++ b/fs/nfsd/export.c
+@@ -1074,7 +1074,7 @@ static struct svc_export *exp_find(struct cache_detail *cd,
+ 	return exp;
+ }
+ 
+-__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp)
++__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp, bool may_bypass_gss)
+ {
+ 	struct exp_flavor_info *f, *end = exp->ex_flavors + exp->ex_nflavors;
+ 	struct svc_xprt *xprt = rqstp->rq_xprt;
+@@ -1120,6 +1120,23 @@ __be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp)
+ 	if (nfsd4_spo_must_allow(rqstp))
+ 		return 0;
+ 
++	/* Some calls may be processed without authentication
++	 * on GSS exports. For example NFS2/3 calls on root
++	 * directory, see section 2.3.2 of rfc 2623.
++	 * For "may_bypass_gss" check that export has really
++	 * enabled some flavor with authentication (GSS or any
++	 * other) and also check that the used auth flavor is
++	 * without authentication (none or sys).
++	 */
++	if (may_bypass_gss && (
++	     rqstp->rq_cred.cr_flavor == RPC_AUTH_NULL ||
++	     rqstp->rq_cred.cr_flavor == RPC_AUTH_UNIX)) {
++		for (f = exp->ex_flavors; f < end; f++) {
++			if (f->pseudoflavor >= RPC_AUTH_DES)
++				return 0;
++		}
++	}
++
+ denied:
+ 	return rqstp->rq_vers < 4 ? nfserr_acces : nfserr_wrongsec;
+ }
+diff --git a/fs/nfsd/export.h b/fs/nfsd/export.h
+index ca9dc230ae3d..dc7cf4f6ac53 100644
+--- a/fs/nfsd/export.h
++++ b/fs/nfsd/export.h
+@@ -100,7 +100,7 @@ struct svc_expkey {
+ #define EX_WGATHER(exp)		((exp)->ex_flags & NFSEXP_GATHERED_WRITES)
+ 
+ int nfsexp_flags(struct svc_rqst *rqstp, struct svc_export *exp);
+-__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp);
++__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp, bool may_bypass_gss);
+ 
+ /*
+  * Function declarations
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index 2e39cf2e502a..0f67f4a7b8b2 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -2791,7 +2791,7 @@ nfsd4_proc_compound(struct svc_rqst *rqstp)
+ 
+ 			if (current_fh->fh_export &&
+ 					need_wrongsec_check(rqstp))
+-				op->status = check_nfsd_access(current_fh->fh_export, rqstp);
++				op->status = check_nfsd_access(current_fh->fh_export, rqstp, false);
+ 		}
+ encode_op:
+ 		if (op->status == nfserr_replay_me) {
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index 97f583777972..b45ea5757652 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -3775,7 +3775,7 @@ nfsd4_encode_entry4_fattr(struct nfsd4_readdir *cd, const char *name,
+ 			nfserr = nfserrno(err);
+ 			goto out_put;
+ 		}
+-		nfserr = check_nfsd_access(exp, cd->rd_rqstp);
++		nfserr = check_nfsd_access(exp, cd->rd_rqstp, false);
+ 		if (nfserr)
+ 			goto out_put;
+ 
+diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+index dd4e11a703aa..ed0eabfa3cb0 100644
+--- a/fs/nfsd/nfsfh.c
++++ b/fs/nfsd/nfsfh.c
+@@ -329,6 +329,7 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type, int access)
+ {
+ 	struct nfsd_net *nn = net_generic(SVC_NET(rqstp), nfsd_net_id);
+ 	struct svc_export *exp = NULL;
++	bool may_bypass_gss = false;
+ 	struct dentry	*dentry;
+ 	__be32		error;
+ 
+@@ -375,8 +376,13 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type, int access)
+ 	 * which clients virtually always use auth_sys for,
+ 	 * even while using RPCSEC_GSS for NFS.
+ 	 */
+-	if (access & NFSD_MAY_LOCK || access & NFSD_MAY_BYPASS_GSS)
++	if (access & NFSD_MAY_LOCK)
+ 		goto skip_pseudoflavor_check;
++	/*
++	 * NFS4 PUTFH may bypass GSS (see nfsd4_putfh() in nfs4proc.c).
++	 */
++	if (access & NFSD_MAY_BYPASS_GSS)
++		may_bypass_gss = true;
+ 	/*
+ 	 * Clients may expect to be able to use auth_sys during mount,
+ 	 * even if they use gss for everything else; see section 2.3.2
+@@ -384,9 +390,9 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type, int access)
+ 	 */
+ 	if (access & NFSD_MAY_BYPASS_GSS_ON_ROOT
+ 			&& exp->ex_path.dentry == dentry)
+-		goto skip_pseudoflavor_check;
++		may_bypass_gss = true;
+ 
+-	error = check_nfsd_access(exp, rqstp);
++	error = check_nfsd_access(exp, rqstp, may_bypass_gss);
+ 	if (error)
+ 		goto out;
+ 
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 29b1f3613800..b2f5ea7c2187 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -320,7 +320,7 @@ nfsd_lookup(struct svc_rqst *rqstp, struct svc_fh *fhp, const char *name,
+ 	err = nfsd_lookup_dentry(rqstp, fhp, name, len, &exp, &dentry);
+ 	if (err)
+ 		return err;
+-	err = check_nfsd_access(exp, rqstp);
++	err = check_nfsd_access(exp, rqstp, false);
+ 	if (err)
+ 		goto out;
+ 	/*
+-- 
+2.20.1
+
 
