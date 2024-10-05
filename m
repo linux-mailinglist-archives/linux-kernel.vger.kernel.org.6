@@ -1,118 +1,81 @@
-Return-Path: <linux-kernel+bounces-351888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D77991740
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:14:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90BA5991743
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AFB71F22F90
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:14:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2DD7283880
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2A915444E;
-	Sat,  5 Oct 2024 14:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59F515350B;
+	Sat,  5 Oct 2024 14:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7TcEjn8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="6CEPA5Nw"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C090813A24E;
-	Sat,  5 Oct 2024 14:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4104C91;
+	Sat,  5 Oct 2024 14:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728137664; cv=none; b=reYuA9FiW8nHhIQK5HbNcr8VKaPaIi2jGiuCcc7qUQa2N4dAPgHV80EzXq5nj5PRcUhpwl9UITJ46idTcP67WJSC1pEPuWWK0hBuBecKNf+3xblJXJhDkMHNStJ/5tb4jyp6Cg7Nxvj7j5Nfx3Afd07k0tqr4DxpjCkNEqGmcoA=
+	t=1728137902; cv=none; b=K4R1g0Bv4srchpL7RGqgwCV5vpG+bnBc3skg4dv7FlUxBCR7E7HQh2Hr7PZyIHOTjQD1BsKzEI6Tbz1P0/dqCgITtuF+gIL7M0BZAhXjVbbfLA70QcTKHvWA+YlNpaqvH4SizPjkBhgp5n+Tv9E5bUjV7WaxFXT15Tz/apYxTEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728137664; c=relaxed/simple;
-	bh=rqef6z37tTRS6xVZHzzMQ/a+6aNMrJcvG4GllSXvWS4=;
+	s=arc-20240116; t=1728137902; c=relaxed/simple;
+	bh=z58kpIA08q0lrTS6s+7kuYpJFc0TBY9+yvA2ox/CNnI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jHXriUiJgSYQBAATMSJjFyRbsmUsDp2PoGxIKB/hAtM/m41AQp1J+rqcPc/eLwVzKyZNM0cCwnlDTlUBeMckoZ6HV2G3etRbelroDRiWz5M8H0l9D23D0F4709VYwWJPbX7N41p7jc2GAY+ObLgrLDv21VeO0Yy44VluEMsa/Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7TcEjn8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08CA5C4CEC2;
-	Sat,  5 Oct 2024 14:14:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728137664;
-	bh=rqef6z37tTRS6xVZHzzMQ/a+6aNMrJcvG4GllSXvWS4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t7TcEjn8vFeumYvp6IIucFIxiiMAlL73sGyNIMejwA9XAkTnJQlGNW2etsK/nBnCR
-	 SZaLPqInXxdTnv8Mn9l7jbCdIVQqsgsWnmEPtBoWV+xyn3Z2RMt4SZ8Q//tuGtLgMv
-	 8mYJ/pRbiLFtd88PwQTmQL78rnmjGz4kvOXb9wL6GkoRqcdlHDKnVlCrWsRv+CUiTC
-	 1xfmBxVABQxxVLEX0W1w+R6goHfzu2E0Tym/TxE17bLtHotIRL9adSm88mjLqkbmC6
-	 qhZNgEC9yfa+WJJxbqom00vngtl/kaTbbgP2Oc7CO+KuVmSg7Qb+5rGjAEaSmvvGNb
-	 2QiQMCVta4G/g==
-Date: Sat, 5 Oct 2024 15:14:21 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 4/5] KVM: arm64: Set PSTATE.EXLOCK when entering an
- exception
-Message-ID: <ZwFJvV7lrFStWD-r@finisterre.sirena.org.uk>
-References: <20241005-arm64-gcs-v14-0-59060cd6092b@kernel.org>
- <20241005-arm64-gcs-v14-4-59060cd6092b@kernel.org>
- <87h69qvi9y.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/3SMt/6jzdufyzm0pz6HvNr6/xtGzVIvfa/y53FkI4fzCEMspe1gy/vvWNNUkxgy7ED8mHsyfzosMmev8q95by52i8tZ33rMzgsA9KVjGI1xdsJ0kSo7m738XLKUYYZmNTubhxAL+5CeEMRav3XNBdR2qatC2e5hkqEYPOOZok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=6CEPA5Nw; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vcbOwEVJYOqCfpF0JItusw+gpp8QZNqOFErMOMAbH7k=; b=6CEPA5NwwzioM78mp1GeRtObnL
+	G+7DA35ALE/dDgW3ty7jTEyuOBG9ERd22XKQDJ1AUIt3qiHcrVbJsArRIw/4sSnlw1/14C0ANLGfG
+	JxY/NqijiL1jnkHwSmK+fA8InXAfibe+bHj3z/7KJZVNub2P+Rt5BxShehNsYOP4dEXM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sx5bY-0098SB-Sx; Sat, 05 Oct 2024 16:17:56 +0200
+Date: Sat, 5 Oct 2024 16:17:56 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Christian Marangi <ansuelsmth@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next] net: phy: always set polarity_modes if op
+ is supported
+Message-ID: <e288f85c-2e5e-457f-b0d7-665c6410ccb4@lunn.ch>
+References: <473d62f268f2a317fd81d0f38f15d2f2f98e2451.1728056697.git.daniel@makrotopia.org>
+ <5c821b2d-17eb-4078-942f-3c1317b025ff@lunn.ch>
+ <ZwBn-GJq3BovSJd4@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7srDnRXLH2tW0fM5"
-Content-Disposition: inline
-In-Reply-To: <87h69qvi9y.wl-maz@kernel.org>
-X-Cookie: Editing is a rewording activity.
-
-
---7srDnRXLH2tW0fM5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <ZwBn-GJq3BovSJd4@makrotopia.org>
 
-On Sat, Oct 05, 2024 at 01:36:09PM +0100, Marc Zyngier wrote:
-> Mark Brown <broonie@kernel.org> wrote:
+> I'll add "active-high" as an additional property then, as I found out
+> that both, Aquantia and Intel/MaxLinear are technically speaking
+> active-low by default (ie. after reset) and what we need to set is a
+> property setting the LED to be driven active-high (ie. driving VDD
+> rather than GND) instead. I hope it's not too late to make this change
+> also for the Aquantia driver.
 
-> > +	// PSTATE.EXLOCK is set to 0 upon any exception to a higher
-> > +	// EL, or to GCSCR_ELx.EXLOCKEN for an exception to the same
-> > +	// exception level.  See ARM DDI 0487 RWTXBY, D.1.3.2 in K.a.
-> > +	if (kvm_has_gcs(vcpu->kvm) &&
-> > +	    (target_mode & PSR_EL_MASK) == (mode & PSR_EL_MASK)) {
-> > +		u64 gcscr = __vcpu_read_sys_reg(vcpu, GCSCR_EL1);
+Adding a new property should not affect backwards compatibility, so it
+should be safe to merge at any time.
 
-> No, please. This only works by luck when a guest has AArch32 EL0, and
-> creates more havoc on a NV guest. In general, this PSR_EL_MASK creates
-> more problem than anything else, and doesn't fit the rest of the code.
-
-You say luck, I say careful architecture definition but sure.
-
-> So this needs to:
-> - explicitly only apply to exceptions from AArch64
-> - handle exception from EL2, since this helper already deals with that
-
-> The latter point of course means introducing GCSCR_EL2 (and everything
-> that depends on it, such as the trap handling).
-
-For clarity, which trap handling specifically?
-
---7srDnRXLH2tW0fM5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcBSb0ACgkQJNaLcl1U
-h9CARwf/W/4NPsmf9qhqoOTzd0rZbHoSTiPcidtGSwoehyH7lZAHiN7aWC4VGzZ/
-NNnT/s8zL3SKw38Ow9EFIt0/kNVlc6yjdo8r9RVT5TYMAl/noRDS12MM8BgK/c8E
-LzXHbOcoxrsSdFAGS3ORw/cVCRRQffw5RTSdkUsArXU5RXxzRHdPHCBn8tu2FlWx
-kPnkUzm7jfeRldHf0SIMtwEo+Uki1Yk9wWPBbAkna0ToTU1dRsGr4E8VLUDYajYv
-iWmLuEhoQMji7UO8XB+PcjkydMU40e/SnjFztV+M+gsCKruAxMrI0jXOCwhmT7qB
-me4Ik1c9rgceNAXrkR7zawTtNDgr3Q==
-=S3+a
------END PGP SIGNATURE-----
-
---7srDnRXLH2tW0fM5--
+	Andrew
 
