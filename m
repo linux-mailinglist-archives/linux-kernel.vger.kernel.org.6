@@ -1,176 +1,171 @@
-Return-Path: <linux-kernel+bounces-351705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B6999150A
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:06:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C2699150F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7214C1C21B91
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ADA72844DE
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52866F305;
-	Sat,  5 Oct 2024 07:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0DB12F5B1;
+	Sat,  5 Oct 2024 07:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3kdLA8S"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DnmyLUAS"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A772F2A
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 07:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805B58825
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 07:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728111967; cv=none; b=Nvfe19zjsAaW3OhvhIAnvuAtC0RVeSHxV3TwW6iDAfRcgZlYySLalW1fMcbizwQ0vlB0EwkKUCe4brPfsvKC3kV1mEoiqSOQzlrQ64uXkKKW0kXo7IXpadAgsDbKg+eV032HrUGz/aXYpze5UJGAprNZr1nzcAyQ1T7Gg59PHq4=
+	t=1728113104; cv=none; b=QptSdp54XM4WgfwLp4CkD6hgPn4z4Q0+r5mLiA8o659RjJmBN6UnpJ7CWyDLkPib9x+++QvvM6dg9ApVNJmnwKLh1Dao0U2OiCOHGPyWAKM4Wy06kLuRfHc0nZmd24KRtc4orAFxPqGeWKmfz2k5HWM9KFYPR1AifShRgIoULTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728111967; c=relaxed/simple;
-	bh=TbBPJxNYC7c7r3/uFly3QFfMP4cPVP/OcDyvphfAfdM=;
+	s=arc-20240116; t=1728113104; c=relaxed/simple;
+	bh=LZP3cKWhrMtVWggYSaZ5lPkhhsFQoozJYP5JsxhK/ZY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GNxA2fcKg8pCQi0Ecz1tTmLrkHgZ1sbZFmd2N+74rUSfyghC4mjDZrbVcZPhGXPvWkw8SW+dIRoDpNdbojAug1FpvcWeSzMkNM6lMZczbkGOxhoD3kSXAseooiNKhuaCdcNAwYF46tciHPUFbpchW/6r/7CzjIJ2epMicr1YFMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N3kdLA8S; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539973829e7so2841743e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 00:06:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=H0Gl58XVerIus/YQaaBkwsThqthWZsAt7I5viRLnWMXcun7PQLT2EBTfWDu71PYHkwiht2kBCVbfblX18EFD1UaTBy8h6X+hsz57FsiLHZNRh4/ar8psmlVSzikhHHcsn1UAk3RbgNkyCsdAkLPp/k8P3764t8uI1UbOB+fXeK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DnmyLUAS; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c896b9b3e1so3805144a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 00:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728111963; x=1728716763; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728113101; x=1728717901; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bYVrMrQSJwfYKCjPdcCYgt+chvzT8Uf5ftZ8FQgUQlc=;
-        b=N3kdLA8SNoSq/D1bMxeWjsTBIVasurVYTwG5MuiVtoAIusooPJ6659xIVivWa9aprn
-         0E4mJVKfQJ+mIia7I1S/durzmlgXGQJlwJSoT4y6EZRU+wwbqXnUOoWZ/FdeMXVVtE0Z
-         YmEIlE1ccYvPqtrG2BR1HPngJJJXBM8+4iw0pXRng7V8ikBkZXxTeiqxYaoFhmlWfspb
-         CpRRdu8pFmUi8/MKAjylLVxNgeZTQg0tj0qg13mB9WanPh1MVYwlGDy6RzAcLUBPptrO
-         IyEqtMvR0AJwI0IFRbB71tIbD/hAuKTEKNoiSAW8G1I6K6+GkHTIHaWl6La8j76xem8Y
-         Zi7w==
+        bh=2ikQ40FBna1IlLDCWeyjwiV3mN+L8sM+RPl/YRXKiU4=;
+        b=DnmyLUASRzRM6rexYpA9uyCS0zu/1aPGh1ko27H+2ilt0HqKhxIjhUMqI2cim0vPY9
+         UoJjxcykt9BT6K9EzU+29pN4blumIpn3qyKFsBQk+4qx52bYPn8rVfos0k0I8qPBz5mR
+         uYRBAaDuLdUHVjin5djtoVpeLwfMyrnqCinJpXf5ACCigSb1/BQzCv8sopGwilUi25bN
+         SlqqyCiYFm3VLeewM9tKXPh7WLlv7FXPeqEEe3MlUXePGrYQ5zRniqwXsALPXimiB5JK
+         sRh/jeP2evnPMM1IxVuDhDa+c9C2JLCIZneLR5iUKGzOe/JbH3u01By/UDhUccBdzCqV
+         Eq/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728111963; x=1728716763;
+        d=1e100.net; s=20230601; t=1728113101; x=1728717901;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bYVrMrQSJwfYKCjPdcCYgt+chvzT8Uf5ftZ8FQgUQlc=;
-        b=lfsZlLmH7uGPcsPkSW0E+g6I1BGpgs+hqcjEBsgoHpOi5ebBMsm7LW8ZVVOTz+DTy2
-         RtnETdxcPuCBQnlBTpH6E0kCrW1BFJYcircBywvLYPucl61RAl4gK2xf093S8+oODr3Q
-         F/X2wYYSGR/Z9plACcYFkupunIdu31F4zwwtfTQ0JXuaqN0hTfoIu3NfLeofiJBisw6p
-         6SgsIx9ea8GzfNz3wJhQdV2cgkYo4bldjOSWdoOAJ/izUpJT6DwlPi7x1fWAGIn6Brjw
-         mdAt/kOBR6XMhbKmWjR5SzAAAtqVc2EBVGcYDGlrgdX6k/zZAHc9riZXzJhfzmILNRN2
-         MgMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhGouLTfnj2hGWcKECvxAVHee6DemI7o+tAw+68tKuKBv1X7NrZQuCrG3rwUiwk6nd/2zD5qdmCGBs0us=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzFI5RnCOsXzlBLbhd2PnAWtHpfanQq4m03/bZc707rMZ7GLdD
-	52dclKAItHSdd5ZCxJf+5UQVbGZqlxGR8p7ycoMc1gV+akRh3Aybuh+4u6sBCCUi+4kCeZzptqe
-	1k/U71/xcOBao02ceFWbcp8XaSSqPCDD2sko=
-X-Google-Smtp-Source: AGHT+IF/SPb5q9d7Mi42mGpfn9y/A5HUxHESegg0s2/uE/R/lfVJVIWc3Bz0N41WkD4BgjxASggZkzFCnV8S5bjvk8g=
-X-Received: by 2002:a05:6512:1090:b0:539:896e:46c9 with SMTP id
- 2adb3069b0e04-539ab9e4b44mr3143607e87.45.1728111963147; Sat, 05 Oct 2024
- 00:06:03 -0700 (PDT)
+        bh=2ikQ40FBna1IlLDCWeyjwiV3mN+L8sM+RPl/YRXKiU4=;
+        b=I/s+nvcziUhLgCS/MD833SpTtumU0jqst1uXhoyJO4WX30xYY+IwOc5YCc2sY0L/Ov
+         Qzi2H1QQQOJp+/DsWlleEk8NsAOTO1aHbl2e/ri0dLRZmWuvIFgjCm9OX3lFLPbpqhvY
+         jAKlb58qQ+KzvD1L6SXI+49XHcMjLyh2zIrHI7mDa0gynSjGTN184KGaZlct/7um3h3r
+         vvGlUATUAOtLFA7Zs4CJ87TaSqW/0vQmWo1lO++7mYZ/IdrnnQOLmJQbxltlgGVVbmdz
+         +oDHIyNBmEZBKCt+j0jw8c1djf4HsXK5+LNDQ8EyrsOXyOec9g9z46uos1huUJfTKdQs
+         Rw/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUqMFiMWExM4YgYfT6/C86XqVgtn8rZT7/4i2qe8tBEGhmPGkrHEpFF59hQOBxN5jDkNkPcFYqhwdBLjy8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yylol9ipLk5cFjX5ZXy+xeUqi6hGMKXW72a37VdK3MA81gPmvwS
+	LGG/vNJyYzWFkTrTBVlIKdytw05E7tW2VCeBmtIH3Rfws4glcMkugVMzRyOfuzRa4FVMs+kiwZl
+	/m2jYbtefLOew96kaNdLvZ1CqEseE/HtCUU6r
+X-Google-Smtp-Source: AGHT+IEQKa1JryxdMCVct2cTTMuXcaAPe8j51D5Dn7yAGDshcgihBva2hIqdYPSyOKDbek9Apj+LguKnUJFkN2NS0PE=
+X-Received: by 2002:a05:6402:4486:b0:5c8:79fa:2e4f with SMTP id
+ 4fb4d7f45d1cf-5c8d2e9e7bdmr4262712a12.32.1728113100579; Sat, 05 Oct 2024
+ 00:25:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004081618.27599-1-advaitdhamorikar@gmail.com>
- <00761132-75f3-41fd-b571-30b0cbe5565d@amd.com> <CADnq5_OKww1YZ1R_OytEMLcNVwdq=-ckc2gqQ+WMyOv6AZ9kqg@mail.gmail.com>
- <007679b9-b7b6-4385-9a2e-2be392cb5f58@amd.com>
-In-Reply-To: <007679b9-b7b6-4385-9a2e-2be392cb5f58@amd.com>
-From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-Date: Sat, 5 Oct 2024 12:35:51 +0530
-Message-ID: <CAJ7bepLv3Z9RwuxoBS3SfkMjeBkN1LRTjLEjT8Lv4Jdu-CXb6Q@mail.gmail.com>
-Subject: Re: [PATCH-next] Fix unintentional integer overflow
-To: "Sundararaju, Sathishkumar" <sasundar@amd.com>
-Cc: Alex Deucher <alexdeucher@gmail.com>, alexander.deucher@amd.com, 
-	christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com, 
-	simona@ffwll.ch, leo.liu@amd.com, sathishkumar.sundararaju@amd.com, 
-	saleemkhan.jamadar@amd.com, Veerabadhran.Gopalakrishnan@amd.com, 
-	sonny.jiang@amd.com, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, anupnewsmail@gmail.com, 
-	"Lazar, Lijo" <lijo.lazar@amd.com>
+References: <20241005045411.118720-1-danielyangkang@gmail.com>
+In-Reply-To: <20241005045411.118720-1-danielyangkang@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Sat, 5 Oct 2024 09:24:48 +0200
+Message-ID: <CANn89iKk8TOvzD4cAanACtD0-x2pciEoSJbk9mF97wxNzxmUCg@mail.gmail.com>
+Subject: Re: [PATCH v2] resolve gtp possible deadlock warning
+To: Daniel Yang <danielyangkang@gmail.com>
+Cc: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>, 
+	"D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>, 
+	Wen Gu <guwen@linux.alibaba.com>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-s390@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sathish,
+On Sat, Oct 5, 2024 at 6:54=E2=80=AFAM Daniel Yang <danielyangkang@gmail.co=
+m> wrote:
+>
+> Fixes deadlock described in this bug:
+> https://syzkaller.appspot.com/bug?extid=3De953a8f3071f5c0a28fd.
+> Specific crash report here:
+> https://syzkaller.appspot.com/text?tag=3DCrashReport&x=3D14670e07980000.
+>
+> This bug is a false positive lockdep warning since gtp and smc use
+> completely different socket protocols.
+>
+> Lockdep thinks that lock_sock() in smc will deadlock with gtp's
+> lock_sock() acquisition. Adding a function that initializes lockdep
+> labels for smc socks resolved the false positives in lockdep upon
+> testing. Since smc uses AF_SMC and SOCKSTREAM, two labels are created to
+> distinguish between proper smc socks and non smc socks incorrectly
+> input into the function.
+>
+> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+> Reported-by: syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com
+> ---
+> v1->v2: Add lockdep annotations instead of changing locking order
+>  net/smc/af_smc.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+> index 0316217b7..4de70bfd5 100644
+> --- a/net/smc/af_smc.c
+> +++ b/net/smc/af_smc.c
+> @@ -16,6 +16,8 @@
+>   *              based on prototype from Frank Blaschka
+>   */
+>
+> +#include "linux/lockdep_types.h"
+> +#include "linux/socket.h"
+>  #define KMSG_COMPONENT "smc"
+>  #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
+>
+> @@ -2755,6 +2757,24 @@ int smc_getname(struct socket *sock, struct sockad=
+dr *addr,
+>         return smc->clcsock->ops->getname(smc->clcsock, addr, peer);
+>  }
+>
+> +static struct lock_class_key smc_slock_key[2];
+> +static struct lock_class_key smc_key[2];
+> +
+> +static inline void smc_sock_lock_init(struct sock *sk)
+> +{
+> +       bool is_smc =3D (sk->sk_family =3D=3D AF_SMC) && sk_is_tcp(sk);
+> +
+> +       sock_lock_init_class_and_name(sk,
+> +                                     is_smc ?
+> +                                     "smc_lock-AF_SMC_SOCKSTREAM" :
+> +                                     "smc_lock-INVALID",
+> +                                     &smc_slock_key[is_smc],
+> +                                     is_smc ?
+> +                                     "smc_sk_lock-AF_SMC_SOCKSTREAM" :
+> +                                     "smc_sk_lock-INVALID",
+> +                                     &smc_key[is_smc]);
+> +}
+> +
+>  int smc_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
+>  {
+>         struct sock *sk =3D sock->sk;
+> @@ -2762,6 +2782,7 @@ int smc_sendmsg(struct socket *sock, struct msghdr =
+*msg, size_t len)
+>         int rc;
+>
+>         smc =3D smc_sk(sk);
+> +       smc_sock_lock_init(sk);
+>         lock_sock(sk);
+>
+>         /* SMC does not support connect with fastopen */
+> --
+> 2.39.2
+>
 
-> Please collate the changes together with Lijo's suggestion as well,
-> "1ULL <<" instead of typecast, there are 3 occurrences of the error in
-> f0b19b84d391.
+sock_lock_init_class_and_name() is not meant to be repeatedly called,
+from sendmsg()
 
-I could only observe two instances of this error in f0b19b84d391 at:
-'mask =3D (1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1=
-;`
-and `mask |=3D 1 << ((i * adev->jpeg.num_jpeg_rings) + j);`
-
-There are a few instances where we can use 1U instead of int as
-harvest_config uses unsigned int
-(adev->jpeg.harvest_config & (1 << i)
-However I think they should be fixed in a separate patch?
-
-Thanks and regards,
-Advait
-
-On Sat, 5 Oct 2024 at 09:05, Sundararaju, Sathishkumar <sasundar@amd.com> w=
-rote:
->
->
->
-> On 10/4/2024 11:30 PM, Alex Deucher wrote:
-> > On Fri, Oct 4, 2024 at 5:15=E2=80=AFAM Sundararaju, Sathishkumar
-> > <sasundar@amd.com> wrote:
-> >>
-> >> All occurrences of this error fix should have been together in a singl=
-e patch both in _get and _set callbacks corresponding to f0b19b84d391, plea=
-se avoid separate patch for each occurrence.
-> >>
-> >> Sorry Alex, I missed to note this yesterday.
-> > I've dropped the patch.  Please pick it up once it's fixed up appropria=
-tely.
-> Thanks Alex.
->
-> Hi Advait,
-> Please collate the changes together with Lijo's suggestion as well,
-> "1ULL <<" instead of typecast, there are 3 occurrences of the error in
-> f0b19b84d391.
->
-> Regards,
-> Sathish
-> >
-> > Thanks,
-> >
-> > Alex
-> >
-> >>
-> >> Regards,
-> >> Sathish
-> >>
-> >>
-> >> On 10/4/2024 1:46 PM, Advait Dhamorikar wrote:
-> >>
-> >> Fix shift-count-overflow when creating mask.
-> >> The expression's value may not be what the
-> >> programmer intended, because the expression is
-> >> evaluated using a narrower integer type.
-> >>
-> >> Fixes: f0b19b84d391 ("drm/amdgpu: add amdgpu_jpeg_sched_mask debugfs")
-> >> Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-> >> ---
-> >>   drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/dr=
-m/amd/amdgpu/amdgpu_jpeg.c
-> >> index 95e2796919fc..7df402c45f40 100644
-> >> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> >> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> >> @@ -388,7 +388,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_get(void=
- *data, u64 *val)
-> >>    for (j =3D 0; j < adev->jpeg.num_jpeg_rings; ++j) {
-> >>    ring =3D &adev->jpeg.inst[i].ring_dec[j];
-> >>    if (ring->sched.ready)
-> >> - mask |=3D 1 << ((i * adev->jpeg.num_jpeg_rings) + j);
-> >> + mask |=3D (u64)1 << ((i * adev->jpeg.num_jpeg_rings) + j);
-> >>    }
-> >>    }
-> >>    *val =3D mask;
->
+Find a way to do this once, perhaps in smc_create_clcsk(), but I will
+let SMC experts chime in.
 
