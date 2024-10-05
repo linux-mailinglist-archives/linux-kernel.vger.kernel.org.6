@@ -1,206 +1,186 @@
-Return-Path: <linux-kernel+bounces-351780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1E59915EA
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:12:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DED9915F7
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE86B1F24D93
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:12:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 683E6283CBE
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB8D14B955;
-	Sat,  5 Oct 2024 10:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8674214A0AE;
+	Sat,  5 Oct 2024 10:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNFVVpra"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="luA4lAtc"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F36136337;
-	Sat,  5 Oct 2024 10:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C45F13A250
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 10:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728123140; cv=none; b=UaxTSwtuGyczH9FvUS7sJkAYMtVet1IalXc8O1SypNo2F1R9u6n3hOWGgQWc7/X3OUuQquk8g0cmG1F2vZDUPok38+kehlZ4KxHZu9PbaLHufOSxM/sl+6vnQhmpdh86V7mxTvGqBWpAh8X6w0Q+zAE6ZaIroBCqUYpfX0JAdlk=
+	t=1728124272; cv=none; b=Hed+eg8MoebmFVHzwwnfthFEJHgqehYFQCujmjTIi+RDe+Nt1LsdX4+xTXZ5je8rwL3mrFxHCAQTntSWlvLD+15pPi+Xfu0DN4WnZe54G1tLFgijpUgbSeMF2isFZVt34gXbVaQsKil404O5An84bZoirNZRzzoA7M710KI6amU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728123140; c=relaxed/simple;
-	bh=O1Rd6Ec99XvXAU8/BcCM4skzhvN8U4dOrh4h5JVeG3I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kUmAXqx9yTD80H/B80wS9/FLPRP/PUZqAUF2b8l/613G9o2M2LrOBAFFrzecvcIZJSy3fJCu7pRDvSFwV+uH2o3Ly2r9O0YJjG+YudHWDU9L1BSKm/Azi82CeRwAkRLfgJwqB7q2pPKDPawa3rOVCRYQSS1VRNeEnmR1OMZx6+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNFVVpra; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86557C4CEC2;
-	Sat,  5 Oct 2024 10:12:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728123140;
-	bh=O1Rd6Ec99XvXAU8/BcCM4skzhvN8U4dOrh4h5JVeG3I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=oNFVVpraNrMc5M7fLuildm62mtrhiI/SJhaKh7K2z9yMypxvtaM9bPnI5idBtYbr2
-	 IpISqn342a4z5CfpXlIommAnMBUfmdoGWzJScz99rUBGDb7D6O7GJJmbK1h95pzGjj
-	 KJYN6+iaLOM+DKwbQzMEptki97xwFczbsCqkf/tIae4a7CFmrmNY4kLBBhtpxfgyxA
-	 4NFxA2I5C6WImLT7rhrApFESkE4M9zmoUAsS4JynTpmMVCGO54bTGN4vK40pru4pS+
-	 GFtC7e8X7PjWgGM1jJsdgjfWyD1u7IpxFNtESKP/ScqaXCjxjEkOjem2ASoHnJ7yWM
-	 DNvufOrQK4bfQ==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
- bpf@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, =?utf-8?B?QmrDtnJu?=
- =?utf-8?B?IFTDtnBlbA==?=
- <bjorn@rivosinc.com>, linux-kernel@vger.kernel.org, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Nick Desaulniers <ndesaulniers@google.com>, Nathan
- Chancellor <nathan@kernel.org>, Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH] selftests: Do not skip BPF selftests by default
-In-Reply-To: <bb579569-1451-414f-aac4-12757024d9a5@sirena.org.uk>
-References: <20241004095348.797020-1-bjorn@kernel.org>
- <96023ef4-fa0b-4fc2-a6a7-ac32bc777c44@sirena.org.uk>
- <875xq82dqe.fsf@all.your.base.are.belong.to.us>
- <bb579569-1451-414f-aac4-12757024d9a5@sirena.org.uk>
-Date: Sat, 05 Oct 2024 12:12:15 +0200
-Message-ID: <87bjzyeu4g.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1728124272; c=relaxed/simple;
+	bh=Pij+6FhctUgT45PYcO9Wc7sOysLVBbXPyPt2wqIlGhA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gN9IODmLebRU4bUFo8/1r/AcYw/fkCfSpvkGLe0uguSINIJAlMW6YrdGlYxXL36kp4IdmovKyPbHEJi2Z4HZrZD3z9EK7I1j1OcGYd6lpfy3ngqDPJwOrHbwjWKkpHk0tW19c8L7ET15uFOezlvmRfeWoVi8Ktxp78RS5LbZpYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=luA4lAtc; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a86e9db75b9so414962966b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 03:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728124268; x=1728729068; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p2Scx6qIga+XDSP8TrnSyjUo0WD/tL5TkvTo8bpNEJk=;
+        b=luA4lAtcOtLI/jjNZFqGE04eeuOF2zCotJwNkej6DVZg3e/p7RUTJ6xIVkr23kukDM
+         nmhS6tEpkdkAcJHSPyB46E1WppxcafBBO0DfkCxxvR9gVEwB4b5LKKIs5Yg8ddwFU9jM
+         7MAOzAEwl2XS2aEjmZbZ2r73D4BOXkCLJtjrAMvZ08q3wO55TR1NBjWMrJ5UBvzfSUVZ
+         A5NZJ2Y6IbhZeRUO8/4Cf2rxYT07Efi6gJnVzuhnLlWjglJYpiZRwFRW4yG5vEgQVlgO
+         +OhJv4fE/q7sYZ0AWbsIXqIcK+vsGLMv9W/1ZK/uOTLFXexhIsuUssSNJpU0YYCuxsC8
+         VzNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728124268; x=1728729068;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p2Scx6qIga+XDSP8TrnSyjUo0WD/tL5TkvTo8bpNEJk=;
+        b=ENUahxpTJBkkGORkkA4V7iXj0OM0xyTxcOuTVziSbViedBCqBAEUzkH0SSWv2YwSb2
+         TuNUnuqErtET45XyZW7r4uCNdrph/mZhpyLEirxFm59L6CDhIi8SdAXFIyxZ+B4PaLHm
+         PyNtzSdnV8Vq53LTJT2ex2ZXXKMHpl+ZhNy0XEhtA/6sx9xHNx9mLI/d+2KiGNcFPATK
+         Pd/Jn1Wnc/xUHecop6f6Sw/mug9n8e4UYXR6jz+Onr6SYmWEP1cvYZFvYJiTwwF08Cwx
+         jqGPDnnti401Wb+tU+7yYI14/eK1EbXyEcQ2csKRIG/63KrjyfkPoG9CrXCgKnX0gAzs
+         3zCg==
+X-Forwarded-Encrypted: i=1; AJvYcCX00Ibyw12NQchUvWwpVRhcVytnpRlFJPIs+05ilnYhV49akiv1tUaDkSX8lTscjm1fHxbtTo+KrQE809c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwMSQ+ubS1eoj9Fh3GrsDhfDdYmRp+SKO3wSlwYS8uigWHpeaR
+	RCQsFE2+LaYMB1LH4wjZG490KSBmB55S8OM4vfS3TvO93RHyaf3wzxozipxofbQ=
+X-Google-Smtp-Source: AGHT+IFbacpLSnc4rOMpY5+dmRRZziIlusw3JZmkgHzp0UUQlnip7OEkK3q13Utpc9eyONEmI4HwlQ==
+X-Received: by 2002:a17:907:5cd:b0:a99:409a:370 with SMTP id a640c23a62f3a-a99409a04f1mr81222166b.49.1728124267726;
+        Sat, 05 Oct 2024 03:31:07 -0700 (PDT)
+Received: from [127.0.0.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7856bfsm116315566b.138.2024.10.05.03.31.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 03:31:07 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v5 0/4] ov08x40: Enable use of ov08x40 on Qualcomm X1E80100
+ CRD
+Date: Sat, 05 Oct 2024 11:31:02 +0100
+Message-Id: <20241005-b4-master-24-11-25-ov08x40-v5-0-5f1eb2e11036@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGYVAWcC/43Nu2oDMRCF4VcxqjNBGo0uTpX3CC50W1uQrIJkh
+ I3Zd4+8RXAwLCn/U3znxlqqOTX2truxmnpuucwj1MuOhZObjwlyHM2QI/E9avAEX66dUwUkEAJ
+ QQencXohD0BMZ45zTjtgAvmua8mXFPw6jT7mdS72uX13c13+xXQCHRFFNPkqvrHv/zLOr5bXUI
+ 7u7HX8twbnYtHC1jN0b7ZEH8WTJRws3LTksstKHGCZrrX6y6NGSmxYNy6SEgdQUgw1/rGVZfgB
+ dZCArqQEAAA==
+X-Change-ID: 20240926-b4-master-24-11-25-ov08x40-c6f477aaa6a4
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Jason Chen <jason.z.chen@intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ stable@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2997;
+ i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
+ bh=Pij+6FhctUgT45PYcO9Wc7sOysLVBbXPyPt2wqIlGhA=;
+ b=owEBbQKS/ZANAwAIASJxO7Ohjcg6AcsmYgBnARVoLEjcjm9TuL9OFReqpJEqft90VdK51doUk
+ nmz3UXVx0iJAjMEAAEIAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCZwEVaAAKCRAicTuzoY3I
+ OvciD/4vEXfuM9u5+VapF5+ubkcJAfOstxrMLN1t4iIeawhT/7WfmWfO12wowCTkX1kVaUQcbXI
+ YUbCdzI+3cS/WLwxuJyOKssB9jmNgUk4GuhFBJ1KCnhWlsxk19C6KLBwJgekWFuB6a0Es2Xm6rf
+ ZbfGt3KNSpRukqdxIFT5QYr03i6PWX7MtT+PuQoKjIqFXH0jOMRDEc1aFdXGR7nPEcy7cZVcx6e
+ jMd33jKYUGa+CJBKPPUa8Lx0T8dr8cg0QkYXJZNEVnuvN7LOwcCkSgYdShZpPPlBWbwuyuVfKho
+ 3OMnMqz7peEOJ8jSN24PN2HRz2+lUZKuNKGC0yMT2rKdhzyK1SGp6mx3OQGDWeq0S6VsgAsUfKN
+ HWhfoWus2/Twc0f32iKwoLTabaT48N1IFmu3xFEIgj9QfhNp4mSo5NrNoxviDrejKo7yhNRCaCS
+ zQc4q5LJfWjNY7vgDhIt457L4amGm6zYyhGsTGROxUgNb2tAZant9y36UWQzQBtulPFgjyCqiky
+ 6K5I2EyxIwJglqDIGAttC5ERRAhk9SAXscg6m+psC/KhUQAmFUuYINGe02zxo5EFhfrnHco2DK6
+ xk0Q5vGv6Yj9eZy4NT+6dNZvsOQlkSF1P1I1/aQu8Gk2Xoo32uc6VnG5fLQT96YGkz5aMlhdcP7
+ 43FS1MTnX54y4Xg==
+X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
+ fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
 
-Mark Brown <broonie@kernel.org> writes:
+Changes in v5:
+- Fixes smatch CI splat
+- Link to v4: https://lore.kernel.org/r/20241003-b4-master-24-11-25-ov08x40-v4-0-7ee2c45fdc8c@linaro.org
 
-> On Fri, Oct 04, 2024 at 03:34:49PM +0200, Bj=C3=B6rn T=C3=B6pel wrote:
->> Mark Brown <broonie@kernel.org> writes:
->> > On Fri, Oct 04, 2024 at 11:53:47AM +0200, Bj=C3=B6rn T=C3=B6pel wrote:
->
->> >> This effectively is a revert of commit 7a6eb7c34a78 ("selftests: Skip
->> >> BPF seftests by default"). At the time when this was added, BPF had
->> >> "build time dependencies on cutting edge versions". Since then a
->> >> number of BPF capable tests has been included in net, hid, sched_ext.
->
->> > The issue was always requiring a bleeding edge version of clang, not
->> > sure if that's been relaxed yet, IIRC sometimes it required git
->> > versions.  I have clang 20 installed here so that's not an issue for me
->> > but given that that's not released yet it wouldn't be reasonable to
->> > expect CI systems to install it.
->
->> Yeah, but I'd say that is not the case anymore. LLVM 18 and 19 works.
->
-> Hrm, that's definitely a lot better then though still a little cutting
-> edge - the 24.10 Ubuntu release has clang 17, never mind any of the
-> stables or LTSs (Debian is very popular for build containers).  Not
-> quite at the "you can just install your distro package" level yet though
-> it's definitely substantial progress.  Is this requirement documented
-> somewhere someone could reasonably be expected to discover it?
+Changes in v4:
+- Drops link-frequencies from properties: as discussed here:
+  https://lore.kernel.org/r/Zv6STSKeNNlT83ux@kekkonen.localdomain
+- Link to v3: https://lore.kernel.org/r/20241002-b4-master-24-11-25-ov08x40-v3-0-483bcdcf8886@linaro.org
 
-I agree it would help having the minimal version stated somewhere. I'm
-not aware of it.
+Changes in v3:
+- Drops assigned-clock-* from description retains in example - Sakari,
+  Krzysztof
+- Updates example fake clock names to ov08x40_* instead of copy/paste
+  ov9282_clk -> ov08x40_clk, ov9282_clk_parent -> ov08x40_clk_parent - bod
+- Link to v2: https://lore.kernel.org/r/20241001-b4-master-24-11-25-ov08x40-v2-0-e478976b20c1@linaro.org
 
-> It's a bit unfortunate having to pull clang into GCC build containers,
-> and needing a newer version than the minimum clang for the kernel itself
-> too :/
+Changes in v2:
+- Drops "-" in ovti,ov08x40.yaml after description: - Rob
+- Adds ":" after first line of description text - Rob
+- dts -> DT in commit log - Rob
+- Removes dependency on 'xvclk' as a name in yaml
+  and driver - Sakari
+- Uses assigned-clock, assigned-clock-parents and assigned-clock-rates -
+  Sakari
+- Drops clock-frequency - Sakarai, Krzysztof
+- Drops dovdd-supply, avdd-supply, dvdd-supply and reset-gpios
+  as required, its perfectly possible not to have the reset GPIO or the
+  power rails under control of the SoC. - bod
 
-I guess this boils down to the expecatation on the build environment. I
-pull in Rust, various LLVM, and GCC versions into the build container.
+- Link to v1: https://lore.kernel.org/r/20240926-b4-master-24-11-25-ov08x40-v1-0-e4d5fbd3b58a@linaro.org
 
-Is the expectation the kernel and userland tooling must be the same?
+V1:
+This series brings fixes and updates to ov08x40 which allows for use of
+this sensor on the Qualcomm x1e80100 CRD but also on any other dts based
+system.
 
->> > We also get a bunch of:
->
->> > die__process_unit: DW_TAG_label (0xa) @ <0x58eb7> not handled!
->> > die__process_unit: tag not supported 0xa (label)!
->
->> > if we do turn enable CONFIG_DEBUG_INFO_BTF for arm64.
->
->> This is pahole version related.
->
-> Which version is needed?  I've got 1.24 (from Debian) here...
+Firstly there's a fix for the pseudo burst mode code that was added in
+8f667d202384 ("media: ov08x40: Reduce start streaming time"). Not every I2C
+controller can handle an arbitrary sized write, this is the case on
+Qualcomm CAMSS/CCI I2C sensor interfaces which limit the transaction size
+and communicate this limit via I2C quirks. A simple fix to optionally break
+up the large submitted burst into chunks not exceeding adapter->quirk size
+fixes.
 
-I bumped to 1.25!
+Secondly then is addition of a yaml description for the ov08x40 and
+extension of the driver to support OF probe and powering on of the power
+rails from the driver instead of from ACPI.
 
->> > The whole thing is also broken for cross compilation with clang since
->> > everything is assuming that CROSS_COMPILE will be set for cross builds
->> > but that's not the case for LLVM=3D1 builds - net gives:
->
->> A lot can be said about kselftest, and cross-building. It's a bit of a
->> mess. Maybe we should move to meson or something for kselftest (that
->> requires less work for lazy developers like me). ;-)
->
-> AFAICT it pretty much works fine?  It's certainly widely used.
+Once done the sensor works without further modification on the Qualcomm
+x1e80100 CRD.
 
-Ugh, I guess we have very different views here. For me kselftest
-cross-building is breaking all the time. The tests are a mix of using
-the kselftest framework, and "having tests stored somewhere". Targets
-have different semantics (e.g. missing things from "install"),
-developers (I definitely include me self here!) seem to have a hard time
-figuring out what should be included in the test Makefiles (copy and
-paste, etc.).
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (4):
+      media: ov08x40: Fix burst write sequence
+      media: dt-bindings: Add OmniVision OV08X40
+      media: ov08x40: Rename ext_clk to xvclk
+      media: ov08x40: Add OF probe support
 
-A lot of tests are not included in the top-level kselftest Makefile
-(maybe there's a rationale for that? I haven't found one).
+ .../bindings/media/i2c/ovti,ov08x40.yaml           | 114 +++++++++++++
+ drivers/media/i2c/ov08x40.c                        | 181 ++++++++++++++++++---
+ 2 files changed, 271 insertions(+), 24 deletions(-)
+---
+base-commit: 2b7275670032a98cba266bd1b8905f755b3e650f
+change-id: 20240926-b4-master-24-11-25-ov08x40-c6f477aaa6a4
 
-I love kbuild for the *kernel*, but IMO it really feels bolted on for
-kselftest (and much of tools/).
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-Tests don't get the same love as the kernel proper, and developers don't
-want to spend a lot of time figuring out how kselftests works -- and
-that shows in kselftest.
-
->> I'm simply arguing that the *default* should be: BPF (and
->> hid/net/sched_ext) turned on. Default on would surface these kind of
->> problems, rather than hiding them. (And let the CI exclude tests it
->> cannot handle).
->
-> The original motivation behind that patch was that there were a bunch of
-> CI systems all trying to run as many of the selftests as they can,
-> running into BPF and getting frustrated at the amount of time it was
-> consuming (or not managing to get it working at all).  Everyone was
-> assuming they were missing something or somehow doing the wrong thing to
-> satisfy the dependencies and it was burning a bunch of time and
-> discouraging people from using the selftests at all since it doesn't
-> create a good impression if stuff just doesn't build.  People did often
-> end up skipping BPF, but only after banging their heads against it for a
-> while, and then went and compared notes with other CI systems and found
-> everyone else had the same problem.
->
-> I think we before defaulting BPF stuff on we should at the very least
-> fix the builds for commonly covered architectures, it looks like as well
-> as arm64 we're also seeing BTF not generated on 32 bit arm:
->
->    https://storage.kernelci.org/next/master/next-20241004/arm/multi_v7_de=
-fconfig%2Bkselftest/gcc-12/config/kernel.config
->
-> but everything else I spot checked looks fine.  It'd be much better to
-> skip gracefully if the kernel doesn't have BPF too.
->
-> We should probably also have explicit clang presence and feature/version
-> checks in the builds since clang is now fairly widely available in
-> distros but many of them have older versions than are needed so I
-> imagine a common failure pattern might be that people see clang is
-> needed, install their distro clang package and then run into errors from
-> clang.  That'd mean people would get a graceful skip with a clear
-> description of what's needed rather than build errors.
-
-This is not only true for BPF/Clang. There are a number of kselftests
-that make assumptions about architecture, and tools. I do agree that a
-proper feature detection (what bpftool/perf is using, or move to that
-new shiny build system ;-P) for kselftest would be great!
-
-> This is all a particular issue for the net tests where the addition of BPF
-> is a regression, not only can't you run the BPF based tests without
-> getting BPF working we've now lost the entire net testsuite if BPF isn't
-> working since it breaks the build.  TBH I didn't notice this getting
-> broken because I forgot that I was expecting to see net tests on
-> kernelci.org and the build break means they just disappear entirely from
-> the runtime results.  That really does need a graceful skip.
-
-...and adding net/hid/sched_ext to the default skip as well? What the
-tests that only work on some platforms. I'm intentionally provoking
-here. I don't like hiding tests, because it is bit "tricky" to setup the
-tooling. BPF is very much in the core of the kernel, and leaving those
-tests out seems odd.
-
-Thanks for the discussion! I'll have a look into the feature detection.
-
-Bj=C3=B6rn
 
