@@ -1,99 +1,80 @@
-Return-Path: <linux-kernel+bounces-352078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A153B9919D3
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:13:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2092B9919D7
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42E21C21588
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:13:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C93AD1F21E7E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC13D158DA7;
-	Sat,  5 Oct 2024 19:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2ADC15748F;
+	Sat,  5 Oct 2024 19:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZSc/iYbp"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o47rv0+Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A724E1CA;
-	Sat,  5 Oct 2024 19:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416B8231C90;
+	Sat,  5 Oct 2024 19:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728155607; cv=none; b=rXo2kWhZ+Lab0+pyBL6Ct/GYXRtUlG1HbFTUlLa0Qsu2vQDyKIRRLKyKmD8mKm5/lZt4HsjYdIqxE0GKLhdqzhuS4vJzpAgykZk2AvDWoaxNbebUlcJq4dxkl0PRnrYRzzQLwpBa5RwNHuNCrTwtr3G+VJouJeKj4ATAihLZ9d4=
+	t=1728155758; cv=none; b=N4XLqnw1ww+Fr6FOJE34PnwhJjffhn5fiKnaOLUccEOY+wAotg06rZ6kN3DktPTtnTj5TxqEIbyRMqgs+kfOxg0g3KuWUSEBi1tXTY7LN799VRQ/OS4dNcY7qHOjnm22IGLxvSvCiegyVjAxDp+s+HMLgLGJtTVPuj/Fm7jh//I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728155607; c=relaxed/simple;
-	bh=QDermGfUkjA07EsFlsRp93KL+PqM4caFL78/JbiK3lk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F2XYXDK/5YLxlK6y69Rit9kUXJmh8LtYtguFWYOvwTnfPXz/i03bX0GQ+hjDUYvpmYaUtF3hZrZixmJZqQB6R8kbfD0xUHXl31nRthwq6KuNGr14R+Nq45RYBnPMCVItAe3VF2R2xs7QBKMl7LXRUapSjpmv8kK8n0wlFq7/PzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZSc/iYbp; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7e9cbd25337so515290a12.3;
-        Sat, 05 Oct 2024 12:13:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728155605; x=1728760405; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QDermGfUkjA07EsFlsRp93KL+PqM4caFL78/JbiK3lk=;
-        b=ZSc/iYbpOODH9ZA0Px0cOV8EV3J0JM6EKV377A7zgQD8wZotJaKDjaE4nPgk+N9vjM
-         8nw4F0w1DfEGSozoDlT1z3Jdm3kUByll7RaQhths6SIeSNXA36DnhUThkYS80lkYlUPD
-         XBRekAzy+zRftSVH0B5b5olZu0FLOz2Fc5XGL2m0pPbVV4aFhCsY7LTA2E4Zs6uT7/Xp
-         Zqmtk4TQibKsjMDQdzD+Uq2O7ONjzb5xdwdhM32bAj9YDjvjCQW1yCCC0PDW9n19ksyF
-         UVzeA8waW0hh/8Q4rxCR+aSkZa5BmklzwsqAG3GBMU4OGZFp3F4Guw+owBoBSlywWHo/
-         m7Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728155605; x=1728760405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QDermGfUkjA07EsFlsRp93KL+PqM4caFL78/JbiK3lk=;
-        b=ilzY5HAA/uAIGt9CvsK72Wo6xeqYQw+Ex/v5b5aFTk3ZBzTnZJzGk5GyVmViQpPzj3
-         1jcoVo9T70IOo+DNkkPbhki3ptf4cIQ58x8BhAPiDXjx3a1pChowIUIV6RT+IwhEQrTb
-         I/TtHYQqAQWohRoGgmA3EFU3bKhCHaS5OTfvqIfAj7e56tLXW68jS4vWbnVscJtun0NS
-         pmDQg3Q/whgA89Zugbr2GIipzNzx+q+WczbzuBNY8/PaRkJPyf0etHrbcjlkoCtYLwzT
-         o4UiebKLuFmvt+8RDYMcSpaiSfKbti2pgPt06Bhrq54ZA+4rKhf5paQiSgnLWKCPcfBA
-         WkxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXt4lFm68OBGbLBuQLGwyWODgFBiDxDAyE97V9ggNJQuXf/A9Na28pqXwiy/9JEBHiKV2/p+5U2cQ1q7uLHhg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTZXaSdFn3ezQVo2VmzmTdGsXsxDPihu5L2OJ0wklpm29eLjB4
-	kUmYyJZEWXnDp7O32bgr/PpNqUHfptfW8aIjQkOewwGYMjierzNZohMDAB3vOoVsMdPJ1947m1Q
-	ezh8yvn3e3ts+kOz+FqhUcC05wlz7AQP0
-X-Google-Smtp-Source: AGHT+IHeb+8/3KaBuJzykZJUXOnB/yIUq84ZEuicJ7pmbVK7a1cFywaPL4wZe8vJ5U5sb/S+myyDplEmeZUkBxn5UIw=
-X-Received: by 2002:a05:6a00:3999:b0:717:9443:9c70 with SMTP id
- d2e1a72fcca58-71de23a7e36mr4512709b3a.2.1728155605258; Sat, 05 Oct 2024
- 12:13:25 -0700 (PDT)
+	s=arc-20240116; t=1728155758; c=relaxed/simple;
+	bh=aLtWSLImy2bvmkbLelAmy8F1uAkKcXUzBjznT/XUhQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CntaQ4JB+b5Odj6hC2HLdQ+bkWcgEiriS7RixLHZkREzOpXqM8rfqmI+Q+B7gU910hlgfBjx+Plfl05MeokgNUquxlvlZjUYYwKVFGrqt4Opa7yntbFUmz/2qbRKaKhgs6qT43BHfzrqYMwUr6A8f8gjilAyW9YEqvrMKZXrIFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o47rv0+Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A944C4CEC2;
+	Sat,  5 Oct 2024 19:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728155757;
+	bh=aLtWSLImy2bvmkbLelAmy8F1uAkKcXUzBjznT/XUhQs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o47rv0+QKugV04q4LlL9Kq8m8OlDpfIK1+c+chLdb4DL6Or/RkPHm3ahs9dVE6WSI
+	 D1a23P0iLAUqpHYhR7x9lg9/xDc5aO+c/8qphBJXS4NSemym1NlfuycvM7yJlWd1q0
+	 W2cdFVuxChh9YCeA0telEh9Lx6aUXx9Ax3wwMqLfpdAnxW/VpAQ3lIHAomOhsxpSre
+	 EuES5Uw7uNzeZLt13GIwzER+xksi17TTC2xFdVgo00zEbVfVHHuozxAqHCTx7ZGxpT
+	 bregS5Pb2CQHdtI4L4AhKfT8X18l5DXNoxWU3U1n7VgK0dZNwWi+Feh5GHsqTzr8UT
+	 DFFUxfgm07Wew==
+Date: Sat, 5 Oct 2024 12:15:55 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+	konrad.dybcio@linaro.org, James.Bottomley@hansenpartnership.com,
+	martin.petersen@oracle.com, agross@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_narepall@quicinc.com, quic_nitirawa@quicinc.com
+Subject: Re: [PATCH V1 1/3] dt-bindings: ufs: qcom: Document ice
+ configuration table
+Message-ID: <20241005191555.GA10813@sol.localdomain>
+References: <20241005064307.18972-1-quic_rdwivedi@quicinc.com>
+ <20241005064307.18972-2-quic_rdwivedi@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANiq72kxOEt2Kb_rxY0+WD6uu=NXy+6PGMvGjTHfNFVXucgH7w@mail.gmail.com>
- <20241004085534.14407-1-timo.grautstueck@web.de>
-In-Reply-To: <20241004085534.14407-1-timo.grautstueck@web.de>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 5 Oct 2024 21:13:13 +0200
-Message-ID: <CANiq72na=RqV=vhKZr8iZMdvKZXxqX5r7bDgo84KnPWddc4Z1w@mail.gmail.com>
-Subject: Re: [PATCH v2] lib/Kconfig.debug: fix grammar in RUST_BUILD_ASSERT_ALLOW
-To: =?UTF-8?Q?Timo_Grautst=C3=BCck?= <timo.grautstueck@web.de>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?Q?Timo_Grautst=C3=BCck?= <timo.grautsautstueck@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241005064307.18972-2-quic_rdwivedi@quicinc.com>
 
-On Fri, Oct 4, 2024 at 10:56=E2=80=AFAM Timo Grautst=C3=BCck <timo.grautstu=
-eck@web.de> wrote:
->
-> Signed-off-by: Timo Grautst=C3=BCck <timo.grautsautstueck@web.de>
+On Sat, Oct 05, 2024 at 12:13:05PM +0530, Ram Kumar Dwivedi wrote:
+> There are three algorithms supported for inline crypto engine:
+> Floor based, Static and Instantaneous algorithm.
 
-This email is different than the `From:` one --
-`scripts/checkpatch.pl` reports it, please double-check with the
-script.
+No.  The algorithms supported by ICE are AES-XTS, AES-ECB, AES-CBC, etc.  So I'm
+afraid this terminology is already taken.
 
-Thanks!
+This new thing seems to be about how work is distributed among different
+hardware cores, so calling these "ICE schedulers" or something might make sense.
 
-Cheers,
-Miguel
+- Eric
 
