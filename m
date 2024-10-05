@@ -1,108 +1,166 @@
-Return-Path: <linux-kernel+bounces-351616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3ED19913A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 03:04:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28EA39913B1
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 03:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833571F221CE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 01:04:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92F55B22192
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 01:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D913DDAD;
-	Sat,  5 Oct 2024 01:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E55F510;
+	Sat,  5 Oct 2024 01:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openbsd.org header.i=@openbsd.org header.b="sHZb4/K1"
-Received: from cvs.openbsd.org (cvs.openbsd.org [199.185.137.3])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VEjnu/Dg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440C54C7E;
-	Sat,  5 Oct 2024 01:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.185.137.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E44E7482;
+	Sat,  5 Oct 2024 01:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728090274; cv=none; b=fZ0kaNVJcaaKNxK1P52jKXY3hl0uYS7FVkbOs5hZ0x2m5vLbNqU141yFUAM8VsTGYFQa5OldhTFdCLCaoNhkBpVaJDgnxKgI7QGlFalT/70s035njvdKmPCFwO7AzyxwzZzcR7oO3VoXEpAlMGshJ794JlO0tmQTalJUnN3+hqc=
+	t=1728090836; cv=none; b=TuyrO/OHawNyf5xdyGB6FUmHcjPc6ywEVsfjBVyxWbRVJbNs3sc23Ax9uS3dzxU4eeIILX1vhkpHsv3hlXG6BbxZckrcUq06JFZGQPfCcUF6e3SfoNbKGYqIVfRUsemA0SgowW7b7qckc4tFol5SMTn9Q6XyydBFxN1aLuX4qn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728090274; c=relaxed/simple;
-	bh=ceoFgBtwxSZTjATveYnv5yYpnEyiSYI8ibzvGyRpUcM=;
-	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
-	 Content-Type:Date:Message-ID; b=nOEzMAly1tLMuTYl452I5Puyjks8A4zduELGT1C1DgNK7rG/U9OhtNLUGQCyI2c1yg7OGV1XGtJYvi2Bod1QCiIdRwXkSsJqrmcoZI6xaatfo3w8EyBDj0qwBVpjn+Ms8WRO93egchMOx5oHWy+yTq8KXggAyDyvJGZdWAwLHTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openbsd.org; spf=pass smtp.mailfrom=openbsd.org; dkim=pass (2048-bit key) header.d=openbsd.org header.i=@openbsd.org header.b=sHZb4/K1; arc=none smtp.client-ip=199.185.137.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openbsd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openbsd.org
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=selector1; bh=ceoFgBtwxS
-	ZTjATveYnv5yYpnEyiSYI8ibzvGyRpUcM=; h=date:references:in-reply-to:
-	subject:cc:to:from; d=openbsd.org; b=sHZb4/K17HQLUj6Xf/aoweZ8SPSWlEkj+
-	iV16cjKudM8yAAyPqYXrNHvHu0kOTJ/nvVS2Wk3cb3IrycxbZu8vCPoru0j0Mly5TudqT2
-	OI26Yo+0YGCoxM2LQfAqDTKn3RqzEYhI4D3yRT/F3pgdRXHlaZDjFLQajYZX3+ho2cpsTa
-	HA5iZ+5T78uBxzIJepR5g1JZdE563fvq0OccznuEDbI2jykoruB+5CachkoWmmW5k4MH8B
-	96kd1Ack+hrPxlZSJtMihZOVRFJNyBBpSjsNsQfTr1xu4gIGhLikyhac2t9Td47ucORQon
-	7xrqkLBQAE2Fep/ijnW261s9gXt2Q==
-Received: from cvs.openbsd.org (localhost [127.0.0.1])
-	by cvs.openbsd.org (OpenSMTPD) with ESMTP id a9f35afe;
-	Fri, 4 Oct 2024 19:04:31 -0600 (MDT)
-From: "Theo de Raadt" <deraadt@openbsd.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-cc: Jeff Xu <jeffxu@chromium.org>, akpm@linux-foundation.org,
-    keescook@chromium.org, corbet@lwn.net, jorgelo@chromium.org,
-    groeck@chromium.org, linux-kernel@vger.kernel.org,
-    linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-    jannh@google.com, sroettger@google.com, pedro.falcato@gmail.com,
-    linux-hardening@vger.kernel.org, willy@infradead.org,
-    gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-    usama.anjum@collabora.com, surenb@google.com, merimus@google.com,
-    lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, enh@google.com
-Subject: Re: [PATCH v2 1/1] mseal: update mseal.rst
-In-reply-to: <78f05735-cca3-491e-b2d6-c673427efa07@infradead.org>
-References: <20241001002628.2239032-1-jeffxu@chromium.org> <20241001002628.2239032-2-jeffxu@chromium.org> <4544a4b3-d5b6-4f6b-b3d5-6c309eb8fa9d@infradead.org> <CABi2SkUhcEY7KxuRX3edOHJZbo2kZOZfa0sWrcG2_T0rnvHCWQ@mail.gmail.com> <78f05735-cca3-491e-b2d6-c673427efa07@infradead.org>
-Comments: In-reply-to Randy Dunlap <rdunlap@infradead.org>
-   message dated "Fri, 04 Oct 2024 16:52:06 -0700."
+	s=arc-20240116; t=1728090836; c=relaxed/simple;
+	bh=ROpFcwVfpBZVEEAbzD/niLbgvfn+U8TQfekfFIK1SB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bnf7trURSjIzdYlYhsFXWHF8FNKoIZmv5OSOBNMRjEsTl3UHKJXKtyWPLy0VwzI6LuDAe7RGkQkkPUsuZxK8G5dQ9szHDQfKHrrxmE2obQ6SJTxiFmE4kJcxmSpEZ8EdQRQ131Qq//0FfEeQ91KZoWkHiZrU44ur1gNPoDickdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VEjnu/Dg; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728090833; x=1759626833;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ROpFcwVfpBZVEEAbzD/niLbgvfn+U8TQfekfFIK1SB4=;
+  b=VEjnu/DgY0VPytyJ/m2IpkBk8bKs5uvUfo5Rhih4L6JXSOQSojueiQj/
+   D+rqJ9103hITVU1m7Q8VZW4MTLUBRToGeoxycXRwVwWzao1AEw4wRhdSh
+   ihz5oDy0/9WrxUagLeGFxQAzQKbs1uY0tJyRSJVm8Ry18vKB04SWbUPoe
+   Yr80jtCe+cvT2NKvfyw8A4ViUdtloyRUGtmxbaebuMG+pIfGoPPchgnph
+   /ysE6RIgmIdaONgTY+Plcv0At2Q6SKTc/1a1h8S2+wWPcatazRmodBNeX
+   dNqXpIGEmxHGive7OavKPK2SKlXKUnJtti/yQoElS2nMXpCUp2pSszjwT
+   A==;
+X-CSE-ConnectionGUID: zPFAYclsSTii9EFpgjD6FQ==
+X-CSE-MsgGUID: hJOuLSi1Sv2Jcwcw8DHO5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="37891404"
+X-IronPort-AV: E=Sophos;i="6.11,179,1725346800"; 
+   d="scan'208";a="37891404"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 18:13:53 -0700
+X-CSE-ConnectionGUID: Jq3hpcnDQ9SJ7qXh6xlIgQ==
+X-CSE-MsgGUID: YHkhactZQc2V34zPY3+UIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,179,1725346800"; 
+   d="scan'208";a="78857400"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 04 Oct 2024 18:13:48 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swtMf-0002P8-2G;
+	Sat, 05 Oct 2024 01:13:45 +0000
+Date: Sat, 5 Oct 2024 09:12:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org, oleg@redhat.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
+	linux-mm@kvack.org, mjguzik@gmail.com, brauner@kernel.org,
+	jannh@google.com, mhocko@kernel.org, vbabka@suse.cz,
+	mingo@kernel.org, Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH v2 tip/perf/core 5/5] uprobes: add speculative lockless
+ VMA-to-inode-to-uprobe resolution
+Message-ID: <202410050846.Zbsm9OI1-lkp@intel.com>
+References: <20241001225207.2215639-6-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <25904.1728090271.1@cvs.openbsd.org>
-Date: Fri, 04 Oct 2024 19:04:31 -0600
-Message-ID: <15868.1728090271@cvs.openbsd.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001225207.2215639-6-andrii@kernel.org>
 
-Randy Dunlap <rdunlap@infradead.org> wrote:
+Hi Andrii,
 
-> On 10/4/24 9:52 AM, Jeff Xu wrote:
-> >> above is not a sentence but I don't know how to fix it.
-> >>
-> > Would below work ?
-> > 
-> > Certain destructive madvise behaviors, specifically MADV_DONTNEED,
-> > MADV_FREE, MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK,
-> > MADV_WIPEONFORK, can pose risks when applied to anonymous memory by
-> > threads without write permissions. These behaviors have the potential
-> > to modify region contents by discarding pages, effectively performing
-> > a memset(0) operation on the anonymous memory.
-> 
-> Yes, that works.
-> Or at least it explains the problem, like Theo said.
+kernel test robot noticed the following build errors:
 
-In OpenBSD, mimmutable() solves this problem (in later code iterations).
+[auto build test ERROR on tip/perf/core]
 
-In Linux, does mseal() solve the problem or not?  The statement doesn't
-answer this question.  It only explains the problem.
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/mm-introduce-mmap_lock_speculation_-start-end/20241002-065354
+base:   tip/perf/core
+patch link:    https://lore.kernel.org/r/20241001225207.2215639-6-andrii%40kernel.org
+patch subject: [PATCH v2 tip/perf/core 5/5] uprobes: add speculative lockless VMA-to-inode-to-uprobe resolution
+config: i386-defconfig (https://download.01.org/0day-ci/archive/20241005/202410050846.Zbsm9OI1-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410050846.Zbsm9OI1-lkp@intel.com/reproduce)
 
-If it doesn't solve the problem, that's pretty surprising (weaker than
-mimmutable).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410050846.Zbsm9OI1-lkp@intel.com/
 
-During development I wrote a fake little program which placed an 'int =
-1' resided into a zone of readonly memory (.data), and then imagined "an
-attacker gets enough control to perform an madvise(), but only had
-enough control, and has to return to normal control flow immediately".
-The madvise() operations was able to trash the int, altering the
-program's later behaviour.  So I researched the matter more, and adapted
-mimmutable() to block ALL system-call variations similar to 'write to a
-not-permitted region'.
+All errors (new ones prefixed by >>):
 
-So the question remains:  Does mseal() block such a (rare) pattern or not.
-The sentence doesn't indicate that mseal() has a response to the stated
-problem.
+>> kernel/events/uprobes.c:2098:39: error: incompatible pointer types passing 'long *' to parameter of type 'int *' [-Werror,-Wincompatible-pointer-types]
+    2098 |         if (!mmap_lock_speculation_start(mm, &seq))
+         |                                              ^~~~
+   include/linux/mmap_lock.h:126:75: note: passing argument to parameter 'seq' here
+     126 | static inline bool mmap_lock_speculation_start(struct mm_struct *mm, int *seq) { return false; }
+         |                                                                           ^
+   1 error generated.
+
+
+vim +2098 kernel/events/uprobes.c
+
+  2086	
+  2087	static struct uprobe *find_active_uprobe_speculative(unsigned long bp_vaddr)
+  2088	{
+  2089		struct mm_struct *mm = current->mm;
+  2090		struct uprobe *uprobe = NULL;
+  2091		struct vm_area_struct *vma;
+  2092		struct file *vm_file;
+  2093		loff_t offset;
+  2094		long seq;
+  2095	
+  2096		guard(rcu)();
+  2097	
+> 2098		if (!mmap_lock_speculation_start(mm, &seq))
+  2099			return NULL;
+  2100	
+  2101		vma = vma_lookup(mm, bp_vaddr);
+  2102		if (!vma)
+  2103			return NULL;
+  2104	
+  2105		/* vm_file memory can be reused for another instance of struct file,
+  2106		 * but can't be freed from under us, so it's safe to read fields from
+  2107		 * it, even if the values are some garbage values; ultimately
+  2108		 * find_uprobe_rcu() + mmap_lock_speculation_end() check will ensure
+  2109		 * that whatever we speculatively found is correct
+  2110		 */
+  2111		vm_file = READ_ONCE(vma->vm_file);
+  2112		if (!vm_file)
+  2113			return NULL;
+  2114	
+  2115		offset = (loff_t)(vma->vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vma->vm_start);
+  2116		uprobe = find_uprobe_rcu(vm_file->f_inode, offset);
+  2117		if (!uprobe)
+  2118			return NULL;
+  2119	
+  2120		/* now double check that nothing about MM changed */
+  2121		if (!mmap_lock_speculation_end(mm, seq))
+  2122			return NULL;
+  2123	
+  2124		return uprobe;
+  2125	}
+  2126	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
