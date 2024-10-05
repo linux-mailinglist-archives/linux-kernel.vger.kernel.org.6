@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-351660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179DF991464
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:04:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D435991466
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1E6284F8C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:04:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13EDE1F2374A
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CF738DFC;
-	Sat,  5 Oct 2024 05:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6569C4503C;
+	Sat,  5 Oct 2024 05:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhTxN1+X"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z20VF7iT"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79747F6;
-	Sat,  5 Oct 2024 05:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8059F38DE9;
+	Sat,  5 Oct 2024 05:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728104679; cv=none; b=sHxBfBveDuOUZYXtW0HvFsrTfDcKRC7/xeCYyeCU39KLo+JmibI093VvCQ7QpFI7VGet7n3u/WWXzfIN8jKbVa3Qik/S81gyT0HVBBeHXaPRKfDmWWiDqgiFc/FdoDDHmswwqoy9K4tPBZC/xS0keSPDZtMsoWO02OGA88kx1s8=
+	t=1728104680; cv=none; b=Sv2HZxmpa/ewfZEAY3zc+d0bmtzBbNV4ojbEyYgaI6/4pO361K8QOx6qTzqUZk+CcU337fYcNr9111m8QweJlD5sPuT9z/1COO+i9UmeEPphJI8iO1S4GUj8c5xIF36MUrYEhWmRQlpIqrrfivEzcrFApNBSZOe9t8TpAvuPXQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728104679; c=relaxed/simple;
-	bh=4UnUIgsbD1n0W2b5XrUNaJ8Sw5WrhqGja7BSVT8mc2s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BWdofcS4mVhpoAIgbtjjWiWsc4w4PWSL+uAuGM/rcJV1iI3frlz1a22r0E1wlunk3ewElf12PtABuRxWAV7FYVspDWmxIcWBQVzLWieTF3icZkH6nml7qyQUZbIQjJvLHkVRE/KwZiyN3ROS4SRgchbC1/pLaXis/YbAYV0LHn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EhTxN1+X; arc=none smtp.client-ip=209.85.216.45
+	s=arc-20240116; t=1728104680; c=relaxed/simple;
+	bh=sY34/Zdu/wwZErBETyV6V7qB7jcUn1RwRuFNm6n7A+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UP/9p/H2n3faTVMJN4FMYKrH8ZoA5nMIaM0naBekIRT62jzpvm2uUK5J0webGw630YDXSO1w37e2O/FA7vr+9UtKqCRGDgBGbGscHm3IBl7hLL4hJu9UJcxDEuj1vgbBHp7r2eH9NRnDNE7AhP9Q19cGjHqQZY8ofSpFHP3npBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z20VF7iT; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e09d9f2021so2032939a91.0;
-        Fri, 04 Oct 2024 22:04:37 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e1c91fe739so1926534a91.2;
+        Fri, 04 Oct 2024 22:04:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728104677; x=1728709477; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=r8NHiKWRZuu6Ni0mDEJmlzarQeFmoce/A7Zp31QdSHY=;
-        b=EhTxN1+XlL/pp1SY581AlirnEI9oymsjiLvXj6ZLMvhtqXsf+H2Q/6gXpTERURbKYm
-         haluhEX+6IPedxh2lAkf0Su20+A3NmJsIt93rVs6At210BqCBiYEqTYMzaDkzUCQnC0L
-         pwoMj+GE+b6P+LrRpc8OdDMSznexQmRWTUfY+WTm8L9k4lAhP58I0pqDNphE5S7w4JKo
-         aZBopeHxM4rZuDK4sHdKnPmQRaYVCgOP6KLt3NCEB/2BpI9mL1YIuIYmhlkLcJlu0fVT
-         t0UTWne9mow4od7kBveVJ6baqVUseExsQrkeRWAnJ4SPcLWVyryJ2ZCyy9CaVkKxKDam
-         +bBw==
+        d=gmail.com; s=20230601; t=1728104679; x=1728709479; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z4vQ/wHK+j/kiLmDR1amyCdiI1kzw4/23edhXgv3i5M=;
+        b=Z20VF7iTq/Urmbwqs65EHy954TPAmnTMNbIHJXwX4I8gg+GtZ5SVjraqA8gi6Jqe9S
+         o5lX1Rk9lG6mM25OkRflCmf5VngS7MCB+hMCwro/l8cQrE2o5okd/Mgt/+OjURR0lr6B
+         CijHmC5ieM49PfeknlSZwXGyH/SsWw5tNYc0tGPizzYOnxDCrIT1xxMDJTHbis0fEZXF
+         0jhMGThVNsSU5hAgReMr+RSzzVNRxAvoxZnvs2Ftf6sechSgbjJ/WXBC2OXI+hqOmcNc
+         ttiMpqBnI/cPhRkvYANYTg+bpFWRZNQDyqIljTtudffUoSEJ2e3reWzXzDMHUMLIeZEN
+         1u+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728104677; x=1728709477;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r8NHiKWRZuu6Ni0mDEJmlzarQeFmoce/A7Zp31QdSHY=;
-        b=vZaKz2A9RjDcQX0kFHLYnptCA3LBUgXRNB2J5NA17P1DaPG4yqvLILpjLrjGR9QXZE
-         mZChGtbWrVvFbHEwF/gkibyR9RR/9JjAvgZkxJuiYXRGKawA380RHlh/9q9LG7tQbiHj
-         er7+jSjm2Ztk5ginDfoO1dzj2dhkMjUAYTlS8qph347rdbQmB+UKT0z0l/iDmNyvI7jy
-         SdC33Q/nXr8A7jzcbZlUwduK6wXdJKZqXNvet1EnOer7K7wH0nHQpMUPeFJuP9TXksC9
-         eBVHHoBkAJ4S9NzoYGWl3To7e8oxG9taj/EK50+q2pNyZ0UJ96UlOd2YCh8xfB3/CR6c
-         6UMA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5xYbP2Nu7/YbQRcUOq2Imhod6VqzFzPXlJVMvsMvrhq2hjyMsuhUtPTP5zkhk9fg8lmVWlJ0npQO5@vger.kernel.org, AJvYcCXTKNIo8Dckjt275c62Ak7jFIYvbZ7Le7LIM9ml1T91inauC2bTQnwqwFf4gtP08j5+1A9n83gLNYibaout@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVkcCXnvNatyvvF5oyNddSkLQT7k2mpLcfG9icCQvRBpxPvIbG
-	AEd0NE1r1Ezy7ats+3U6k6mfPj9IQcNFqJR4GvP3dq3YPlmcXtQn/K4z6xHXfkg=
-X-Google-Smtp-Source: AGHT+IHJH4xcREpvD0HDuNMTuUtxVUEaLiBlPUv8CIIcBjF+dsn53MPqiV3uxRBQCo5S+yuJsLIlRQ==
-X-Received: by 2002:a17:90b:1644:b0:2c9:a3ca:cc98 with SMTP id 98e67ed59e1d1-2e1e620ead0mr5773693a91.7.1728104676850;
-        Fri, 04 Oct 2024 22:04:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728104679; x=1728709479;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z4vQ/wHK+j/kiLmDR1amyCdiI1kzw4/23edhXgv3i5M=;
+        b=OWF5AJYCFnz/kINWteJvdLeWlRa0tyzIkmXGR5Bb2RU+BVw2kVOrTz59lAdz+sZaTa
+         1EkX7yyeeJIJtX6R63aeDIllOTYbY+Mz9wh5rNznxtVWrl7pRFyDO5iI2bZevYTSTvXR
+         2aHD8UleQ+nG0CEz+hA4fW3IJJedLx28N3g878jZDWzh7g3AkArOkjOzyOc7rZ4bGWSJ
+         orSGiB21dJC5hVeR4KPQSKf+/+vttjkmkd5LY7usbxc8tbsGH0eIPQChIeD+JzCEEQUi
+         +s0uWB3qCydIszi8XIOBOduHJX9aOXdMUCJR4yZK/kVdTirj95ePZYHdDd0hLvHIcIkA
+         hwvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkGFrtX4L1f4aR9xVa/J+u927RuJ1eeHNpdMWoCNrL+GX4oY3BucDn2CYQMOnnGUyRvMKbc9vY1p3rEADU@vger.kernel.org, AJvYcCXXEHz+jI2AYGvyAs1NP63C7cwyQjaYdUoN5TRTAF2W6cP/3lWJTXA+jQ4FDYFjR52ZGX/kD6KhMzyC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpoya4NtLE09lB+3lXko12Duw8mUm5QVUkZJdVInr54Zu/0R5A
+	4apBogAj5GlHpX57Cltk6utl6k88/tvS4yUYPCHzOjv1AYBWOe7N
+X-Google-Smtp-Source: AGHT+IE7UAQiHWty60M82Q5LlDvs1wEvJRo5PR3IumIPHipsvTER2MS5gD2zN0KTu2dnsqvsUQEUpg==
+X-Received: by 2002:a17:90b:4f87:b0:2db:df68:52ae with SMTP id 98e67ed59e1d1-2e1e621d0a6mr5411826a91.14.1728104678705;
+        Fri, 04 Oct 2024 22:04:38 -0700 (PDT)
 Received: from celestia.turtle.lan ([2601:1c2:c184:dc00:ed3:4cda:b368:ce98])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e85db34fsm2625744a91.33.2024.10.04.22.04.35
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e85db34fsm2625744a91.33.2024.10.04.22.04.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 22:04:36 -0700 (PDT)
+        Fri, 04 Oct 2024 22:04:37 -0700 (PDT)
 From: Sam Edwards <cfsworks@gmail.com>
 X-Google-Original-From: Sam Edwards <CFSworks@gmail.com>
 To: Florian Fainelli <florian.fainelli@broadcom.com>,
@@ -79,10 +81,12 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Sam Edwards <CFSworks@gmail.com>
-Subject: [PATCH v2 0/2] bcm4908: Fix secondary CPU initialization
-Date: Fri,  4 Oct 2024 22:01:53 -0700
-Message-ID: <20241005050155.61103-1-CFSworks@gmail.com>
+Subject: [PATCH v2 1/2] arm64: dts: broadcom: bcmbca: bcm4908: Reserve CFE stub area
+Date: Fri,  4 Oct 2024 22:01:54 -0700
+Message-ID: <20241005050155.61103-2-CFSworks@gmail.com>
 X-Mailer: git-send-email 2.44.2
+In-Reply-To: <20241005050155.61103-1-CFSworks@gmail.com>
+References: <20241005050155.61103-1-CFSworks@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,32 +95,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello list,
+The CFE bootloader places a stub program in the first page of physical
+memory to hold the secondary CPUs until the boot CPU writes the release
+address, but does not splice a /reserved-memory node into the FDT to
+protect it. If Linux overwrites this program before execution reaches
+smp_prepare_cpus(), the secondary CPUs may become inaccessible.
 
-This is v2 of my previous patch [1] for resolving a problem preventing
-secondary CPU(s) from coming up on bcm4908. After some discussion, I decided to
-try dropping the reserved memory region from 64K to only 4K. Looks like it
-works!
+This is only a problem with CFE, and then only until the secondary CPUs
+are brought online. Ideally, there would be some hypothetical mechanism
+we could use to indicate that this area of memory is sensitive only
+during boot. But as there is none, and since it is such a small amount
+of memory, it is easiest to reserve it unconditionally.
 
-Changes v1->v2:
-- Reduce 64K reserved region to 4K
-- Style change to the `reg` property to use hex instead of decimal
-- Slight rephrasing to the commit message
-- Add a new patch that also moves the `cpu-release-addr` into this reserved
-  memory region
+Therefore, add a /reserved-memory node to bcm4908.dtsi to protect the
+first 4KiB of physical memory.
 
-Cheers,
-Sam
+Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+---
+ arch/arm64/boot/dts/broadcom/bcmbca/bcm4908.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-[1]: https://lore.kernel.org/lkml/20241003213007.1339811-1-CFSworks@gmail.com/T/
-
-Sam Edwards (2):
-  arm64: dts: broadcom: bcmbca: bcm4908: Reserve CFE stub area
-  arm64: dts: broadcom: bcmbca: bcm4908: Protect cpu-release-addr
-
- .../boot/dts/broadcom/bcmbca/bcm4908.dtsi      | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908.dtsi b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908.dtsi
+index 8b924812322c..c51b92387fad 100644
+--- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908.dtsi
++++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908.dtsi
+@@ -68,6 +68,16 @@ l2: l2-cache0 {
+ 		};
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		cfe-stub@0 {
++			reg = <0x0 0x0 0x0 0x1000>;
++		};
++	};
++
+ 	axi@81000000 {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
 -- 
 2.44.2
 
