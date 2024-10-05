@@ -1,112 +1,124 @@
-Return-Path: <linux-kernel+bounces-351957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C5C991855
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:35:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30F8991859
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 758C91C2133D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D1272823D8
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294C91586F2;
-	Sat,  5 Oct 2024 16:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BDE156C52;
+	Sat,  5 Oct 2024 16:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="I7Zbp8XM"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DnXyVKgu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15BC156C72;
-	Sat,  5 Oct 2024 16:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201AC155742;
+	Sat,  5 Oct 2024 16:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728146124; cv=none; b=a54AFdR/bq9drTb+/ssdGwU+kEBgZpmGaV3R1nw2ZhEsJCUBxcK92yH6+ixPLK1tvnPiNEbarlJByGwVcYYibLaVi4uuVVcINhsaXKvcOODxQ1u4AZtIv+aeDkX5aus/YaHZP8DJ4+GkBE/ZYxKNlRmXoiOKpyQ8INjFUUryqqE=
+	t=1728146156; cv=none; b=FZwnAbPkpgIdYPLt+aeyP05mGYQpikWD0CfgTSV6ZkZPQdxMUivAXCELn4DRljdtf2RWY8dM9y49DZ9u1N8n/UniTk1xSkgPFOdJooMvzH9PQ9RgjYSKcBFwShICSvp6bgbfw42da92o0eHYwPl6aX0LzanDesSnNwQB7UFDY+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728146124; c=relaxed/simple;
-	bh=m7lRBVzNJcOP572KgbB/DII3CmT14dcc8PkIQnJY330=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=PkOiGgcUa1x/gsHIIIDgHl07+QdlOA71Ppy/KMJc7Y/acxunHjHCCVXql7PSlemCiRoQ1i5QU/d30/d2m/bch8cR29smzgPn6xTGn/NiZEBW6jiFPbsoinHhrdzjqBvytqvZJzYFgM/j5pgDlkEI6R1/q/+f4g3scTqyivTggCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=I7Zbp8XM; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728146111; x=1728750911; i=markus.elfring@web.de;
-	bh=m7lRBVzNJcOP572KgbB/DII3CmT14dcc8PkIQnJY330=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=I7Zbp8XMzF7viJQJ/8wOtHjAWWeiCy+vVQnhLT/p9+jpGV4fKov3U/Do5Jn4dAX+
-	 uVCodsUKP90SKqU6eCCgTccLfX8w+tDa54H7j1jQrj4H8gEIKkoRWq7QTPKZRHpR5
-	 Y1gP5N4xi9ZErw3OONVHCxFlRZ49UFU/fWUmswXxeB+CjxWRqae4qa/sAh89Eh+3V
-	 Usaw0SiUULGUmNW3M3DlMROQr8CwpMexYQ4F/0d/P/tJZQvx5vokTrV8Lp3//0Kb5
-	 QJ8iZ8zr8Vsf3VNtPuYTchLui8Ed/OL867x60LG0zT1jbmXFY0RSh3Rr1zuMe0k7M
-	 tD+SZeWfNUC5/quQiw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MeUbo-1tXYxX2peO-00fAr2; Sat, 05
- Oct 2024 18:35:11 +0200
-Message-ID: <5e798fd6-5662-48a3-8e3a-758f250828c8@web.de>
-Date: Sat, 5 Oct 2024 18:35:09 +0200
+	s=arc-20240116; t=1728146156; c=relaxed/simple;
+	bh=80nL05CVdGDExIrpaz/GZLy22HLnLEgT36r17S9CRx4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QcNMpxy9lj5uc4KBg1Yn8fcV49pUGiRM5ud1G2aZb4/Rxx2vG0Ry78e0U6qpYZHGCfxeWypn1VmeiU6d31LATY0qA4f5z9iL2bGEIPxdSgxQwcqA2y/jaMP7tYPJ6WY70EcOTlUCLajVQLSuKrhOvCJ0z/QRtgL8VOIgGoqsSEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DnXyVKgu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E44CC4CEC2;
+	Sat,  5 Oct 2024 16:35:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728146155;
+	bh=80nL05CVdGDExIrpaz/GZLy22HLnLEgT36r17S9CRx4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DnXyVKgu3+cYcLSUAd1Qooqz2SF7XlYECIssoKYlWO0bXg0vdJ+CrwwyL84wqCRJO
+	 VVhuzighv5ZwhsdTyJlfQaeCIU5GVwtAywuCmDJ0NHY3QbHB0/FlksxH14KuWRxj4G
+	 dwrsvGIVpHEpbPvvrvW9/FZM+L+1V7vHmR36EqmXrXfWm5RRDMfmtqIcpWUS9+G/Vj
+	 XCX+LEc0teLdVMCiuBpUiVH8AL9Uqp87XKPAq8eVFfvIf8WAEpygl80TpYLGiERqma
+	 YnuJG6nDIlb4Zww0VTrT8ZasZkjzGWcf9Bb6I1nOcvAHatENPWZKOGNiwBtYvQeYB4
+	 BCy85pHodRlrg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sx7l3-000dt3-BM;
+	Sat, 05 Oct 2024 17:35:53 +0100
+Date: Sat, 05 Oct 2024 17:35:52 +0100
+Message-ID: <87bjzyv76f.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 4/5] KVM: arm64: Set PSTATE.EXLOCK when entering an exception
+In-Reply-To: <ZwFJvV7lrFStWD-r@finisterre.sirena.org.uk>
+References: <20241005-arm64-gcs-v14-0-59060cd6092b@kernel.org>
+	<20241005-arm64-gcs-v14-4-59060cd6092b@kernel.org>
+	<87h69qvi9y.wl-maz@kernel.org>
+	<ZwFJvV7lrFStWD-r@finisterre.sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zichen Xie <zichenxie0106@gmail.com>, linux-tegra@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Chenyuan Yang <chenyuan0y@gmail.com>, Jonathan Hunter
- <jonathanh@nvidia.com>, Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>, Sumit Gupta <sumitg@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>, Zijie Zhao <zzjas98@gmail.com>
-References: <CANdh5G4nX_PoRsWmCo1=TzoFA6k--29iJFgL-N_B_0anziAskg@mail.gmail.com>
-Subject: Re: firmware: tegra: bpmp: Fix freeing uninitialized pointers
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CANdh5G4nX_PoRsWmCo1=TzoFA6k--29iJFgL-N_B_0anziAskg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ubD2lVzR8pnWzQe8WMzsSSrGvn4JLtgBl6Qx7E7CxeuYSwuikQq
- i94dGueTKOfCtaZCT3QI+4GWyldLO6lO9mwViAOpyUzs0Z2XzDLVl1Z4Exn8Q4cYx10jOQC
- bOZ8vM55jBU8KEUr+22n8++a4QM8tOcgnd2eyW3+cud3f9ThFb0giXsvFufcARJKgzfmEdP
- iny8jU9aY/W3ggsSQjy0Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:k2BZFXjEl/c=;0PnBbjpU5GjjXiuy8Ei6VE9oO1m
- nZDwRisBtTIKamkmslYsQnclJX3rTYyc8HC+X9eoDuy1hjdIty7G/l8ubwhwnzIsoV6DxCNOw
- 0zaYOQXWICwgAwP8qzGQNq3kRustod0xPIRDR2qzsIZGCKoPja1rNVA51zWkXate+pn003MAZ
- uBFeliqnROFzXuzDm3ZiOTKLHXyt2gVpDwmZOsTXHQDIFlpd1tso1Fb5TU+ytTHkHYN/3kuNF
- 8vYGFnDigkMRwKVXkKDGzthqYh8PuPhavbgfziC68zAwp2Ysv7OJdHz51Dvg39PV3iDOjrn7Y
- NChIZp4y8GHKqXc7wPEvTR+y/22hF43aDE+fDE11L6E3DA2ElWV1Xqmv6DLlYgNQP3xgQvcsA
- uQ/VClETFPvilr1ct0IW7tMKzTyn7AFCdv8QQLv38ovYM1YsWQVbtY7K02psoxSdbpMcIiVZH
- pgo/dXS1JbG/bS2VKPWMN5ZzcjJepxKHnnOTGID+PmbuHW7s8Cy0dtXKUPmSLk98Lcdrw1iip
- QOADyGvb+dX02dckqF0jMkPHLHYcszqOVs8aKshdpcQkV/k9lGl5f4poy/DGc3u9Do9Zpfls9
- ZT0txv6ZO0yxVVU+aPJaxelTMf1gIYIo8wvRIZ0s8hROB6sgwpWuQD+mizS6WOZJHgg9bX2og
- Y6kpp4upiYEZx7JSfmReFclQ8AdeTYW2Igm4XIinuHfGMQk5cS4BRblPLyh+G77kOGZZ2/JOm
- EPLcbWHKElLW8+TgHff3g9dzGhZFVEcCXymUH10flmL8PN7sVqkkRhd61Z4oRDa288CRSZQj8
- 9QRKyyiS6qYyYv3Xc2+y+/Wm5WJVVSaNTym3RModNX9Sk=
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-> Thank you for the explanation and sorry for not realizing the correct
-> deallocation function.
->
-> I found in another email thread that the NULL initialization following
-> the __free() was mainly for readability but not safety. Sorry for the
-> confusion.
->
-> We are working on a static analysis tool and wanted to report
-> potential bugs. We directly sent a patch trying to reduce developer=E2=
-=80=99s
-> burden but didn=E2=80=99t not realize the correct use of Reported-by tag=
-. We
-> will be more careful in the future.
+On Sat, 05 Oct 2024 15:14:21 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> On Sat, Oct 05, 2024 at 01:36:09PM +0100, Marc Zyngier wrote:
+> > Mark Brown <broonie@kernel.org> wrote:
+> 
+> > > +	// PSTATE.EXLOCK is set to 0 upon any exception to a higher
+> > > +	// EL, or to GCSCR_ELx.EXLOCKEN for an exception to the same
+> > > +	// exception level.  See ARM DDI 0487 RWTXBY, D.1.3.2 in K.a.
+> > > +	if (kvm_has_gcs(vcpu->kvm) &&
+> > > +	    (target_mode & PSR_EL_MASK) == (mode & PSR_EL_MASK)) {
+> > > +		u64 gcscr = __vcpu_read_sys_reg(vcpu, GCSCR_EL1);
+> 
+> > No, please. This only works by luck when a guest has AArch32 EL0, and
+> > creates more havoc on a NV guest. In general, this PSR_EL_MASK creates
+> > more problem than anything else, and doesn't fit the rest of the code.
+> 
+> You say luck, I say careful architecture definition but sure.
 
-Please take another look at another corresponding public information sourc=
-e.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/researcher-guidelines.rst?h=3Dv6.12-rc1#n5
+I wasn't talking about the architecture, but sure.
 
-Regards,
-Markus
+> 
+> > So this needs to:
+> > - explicitly only apply to exceptions from AArch64
+> > - handle exception from EL2, since this helper already deals with that
+> 
+> > The latter point of course means introducing GCSCR_EL2 (and everything
+> > that depends on it, such as the trap handling).
+> 
+> For clarity, which trap handling specifically?
+
+All the traps described in the GCSCR_EL2 documentation -- I see two
+control bits described in K.a, all of which needs to be propagated and
+their effects handled. Similarly, GCSPR_EL2 needs to be defined.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
