@@ -1,169 +1,391 @@
-Return-Path: <linux-kernel+bounces-351996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B819918E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:32:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375B99918E7
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 694FE1C210A8
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:32:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AD211C20F85
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0173915539F;
-	Sat,  5 Oct 2024 17:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D111158A30;
+	Sat,  5 Oct 2024 17:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=adamthiede.com header.i=@adamthiede.com header.b="BsL/E+C4"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ji9wNf+e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98F825763
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 17:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BA444C77;
+	Sat,  5 Oct 2024 17:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728149551; cv=none; b=XMJCz7BnGBZxdDLbRega8W0q1dSM+SQwXsuHr1Q5JWSQYjZWqYWYeQUb2RXHzJ0FinbFiCwga8z38l29xhf/CaKHemL7uiKjHs6lGwMBzsYcBvH/fpRWFtMrx043a82tuQ8fce5fHwxX2VE1bRLfPKHF6DMbDhGI/HiFKVVXkr4=
+	t=1728149702; cv=none; b=XWvasYHBhqMzDqPprh8JrdtgL/3YQ6HwPEZmBJv5OiEV6trdWUxgQhhCW90b9+oC1Z0Hc0qhZDNL+At67a2FkkwKoXGEuoRp0LyCZFvEDtoJpwnjS6697z77Pd6ogKLJP90QFxlvuRtyyac3Wi659XHYE8s35OzJSbLJcmr9RN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728149551; c=relaxed/simple;
-	bh=SijfzWeB5yVZYkVyz2LIm/Agfvom1YuUe8LA4v8jOUU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AMzU1VenqCrwUnC/bwI8OjAiKKtfbVpYL9VFXxIsyec06gVvIXQHs+jBadZmRgSAbuR7I+fdz1w7tHEvrw/KGlUDAIACdxdO9UlaQxIM+1sVlHDq4lYI/Hgmz6roFBPNKfuXZ7Tqai4ZV6KJG1HpTo8dRSbUXHNUvOKpavfwLRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=adamthiede.com; spf=pass smtp.mailfrom=adamthiede.com; dkim=pass (2048-bit key) header.d=adamthiede.com header.i=@adamthiede.com header.b=BsL/E+C4; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=adamthiede.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=adamthiede.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XLXY45PjSz9tNS;
-	Sat,  5 Oct 2024 19:32:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=adamthiede.com;
-	s=MBO0001; t=1728149544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CG45aAOFfe8PHxOzrqT1C7cq33Z790UzjgBn6h+hl6A=;
-	b=BsL/E+C4lTSm8/p7F14XCn+dmX+UF/UI3FySuS9/YwaSQHkEuLljfa5S/29Br2cuq9BmO5
-	TDJ6ZpZU/ChKgnXFcvsNs+HGSjS/ml35AcSjd6YxTnQ0Mz7k7i5HSzrDM3jtd8z6i7MfBI
-	qQ9dA9PKZYlMF5Ep1rxKExLrZo7c6vI1BenSVITe268arVsXym7aP29CB78tipTsF4XoEH
-	1qPDrYZ9dM8LjTVdn4ev/zOXU4wJZN8vAQz6wa2iQiSTXtGvyc85/5M5wXeTxgVD7BnAFT
-	8vimVUazPlR94Qj+QbhBi9va3ZmwOECVGSFgUCrC5aB0LUzbut9B984cCfSADw==
-Message-ID: <fd6fc10e-d0f6-4c53-8561-bdfd047e45f2@adamthiede.com>
-Date: Sat, 5 Oct 2024 12:32:15 -0500
+	s=arc-20240116; t=1728149702; c=relaxed/simple;
+	bh=maX21YXY2LWW1lCItcaSJo/EQqIPWZScegzNbWBjE2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r9tWOONM7Ut4z73A8sa+DBB3I5vnzQC2rm6AMnrNMiBdocW8/JHfsf+zBuWHjREif6GZ51E7mYwd98EDurt+t6jatzrGtqOrBNZ10NpG9VGb4NNsH50/1Xuevi8ARVxs7EYFkTTLNLIstr516gPot8BgAdoJ8hvKJVycXCkQjGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ji9wNf+e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D433C4CEC2;
+	Sat,  5 Oct 2024 17:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728149702;
+	bh=maX21YXY2LWW1lCItcaSJo/EQqIPWZScegzNbWBjE2c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ji9wNf+ewsb8mtdKzhzXU08nLBEcjomV9RqjI+G5AKuyXKZ6ptjmRb+wQ36ZB3Gpv
+	 e0bpCBDQmsn/d6OER3lSncF0LBbgkefEU3afhKTaQjJl6a7nL4IR6WJkPtJMN5gs7R
+	 3iSebLtBk24/4lRCx10PoaGQO1wNKZGg5oignzb5hj1ear4GOVxCamuH3UbEBTewjQ
+	 UsULQRhzXgR5HFu1ONE6+nkdJ+gIMsOkeDn3mqMKgZ2ojs1aJcF6gab9ZkCdK0TqVd
+	 p+CLQdM30ZIN+4l4TNsJJO7oIWi0PrfmAB0CgwazA0L6lDwtKioQjBPF3Bqr9bpVhh
+	 0oIKLTV+BGqhA==
+Date: Sat, 5 Oct 2024 18:34:27 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa
+ <nuno.sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Andy Shevchenko
+ <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, Marcelo Schmitt
+ <marcelo.schmitt@analog.com>, "Mike Looijmans" <mike.looijmans@topic.nl>,
+ Marius Cristea <marius.cristea@microchip.com>, Dumitru Ceclan
+ <mitrutzceclan@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Alisa-Dariana Roman
+ <alisadariana@gmail.com>, Ivan Mikhaylov <fr0st61te@gmail.com>, "Sergiu
+ Cuciurean" <sergiu.cuciurean@analog.com>, Dragos Bogdan
+ <dragos.bogdan@analog.com>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>
+Subject: Re: [PATCH v2 6/7] iio: adc: ad485x: add ad485x driver
+Message-ID: <20241005183427.61cae54f@jic23-huawei>
+In-Reply-To: <20241004140922.233939-6-antoniu.miclaus@analog.com>
+References: <20241004140922.233939-1-antoniu.miclaus@analog.com>
+	<20241004140922.233939-6-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 13/14] drm/mediatek: Support DRM plane alpha in OVL
-To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
- =?UTF-8?B?QmliYnkgSHNpZWggKOisnea/n+mBoCk=?= <Bibby.Hsieh@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
- "djkurtz@chromium.org" <djkurtz@chromium.org>,
- =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
- =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "yassine.oudjana@gmail.com" <yassine.oudjana@gmail.com>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "littlecvr@chromium.org" <littlecvr@chromium.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: =?UTF-8?B?WVQgU2hlbiAo5rKI5bKz6ZyGKQ==?= <Yt.Shen@mediatek.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240620-igt-v3-0-a9d62d2e2c7e@mediatek.com>
- <20240620-igt-v3-13-a9d62d2e2c7e@mediatek.com>
- <1a3af354-bd15-4219-960e-089b6a6e673c@adamthiede.com>
- <49df03e8b982cc5ee97e09ef9545c1d138c32178.camel@mediatek.com>
- <00ebe9ca262b6a95fd726e5be06334b1e923db02.camel@mediatek.com>
- <5975b361-c1b4-4c57-89d4-0d247ae99d8c@adamthiede.com>
- <272b47f0c9e27268d29b58c341e0b48bce7e8e25.camel@mediatek.com>
- <06ed4527-3749-4fac-bd38-d837f1593311@adamthiede.com>
- <f7b4c6601d648e0eba2dc66f0fe1f34ca3d29cfb.camel@mediatek.com>
- <d820e8be-c525-4435-99a3-b0eb076b3282@gmail.com>
- <b8fb4f241b2d248ca4c2c57b98588e1be0642b76.camel@mediatek.com>
-Content-Language: en-US
-From: Adam Thiede <me@adamthiede.com>
-Autocrypt: addr=me@adamthiede.com; keydata=
- xsBNBF+n+90BCAC2ZRLVcvdXDgfY7EppN05eNor3U7/eeiNCCEIWZkYLhikUEP1ReLGBkXpK
- Pc70hfnKAKkCoth3IwhDty9WXMNU+iLNei4ieb2luW+UqluR6xIUIA+txahMU9YcjVaQTKf/
- yZWO4yl6pfBPCxC2UdPZKBAdGoi5NnE0ABFNbhBETQhhBic533lZn33ByupfI3acECnQdjgQ
- llCUpDbw4I+S/N1iFiEHcbMXH7ZB00e3IYNorZ1E9v7p++5rDY1fQ9gXpieg1vFKwSq1NJWo
- 9xx336YjaTUbX0EwrdKd9l8AktA3yRjckaK5TAcwSQaDtHvhpbl4ebvPhtwHh699MroXABEB
- AAHNH0FkYW0gVGhpZWRlIDxtZUBhZGFtdGhpZWRlLmNvbT7CwI4EEwEIADgCGwMFCwkIBwIG
- FQoJCAsCBBYCAwECHgECF4AWIQQtG9pGQ7sz3tf8M/kC7fV9o/vRzgUCZL1HxQAKCRAC7fV9
- o/vRzgyRB/wLqRCvvWhQCMgvzeKvru9wcXquhb77K8H/ByLbfiT8YBuP3lZFVh0IQhgO9Ylk
- fIoOJE4V+jjxyOnO2d9xjGbvAmmR6yT0gfLzSVWqrC4k+V9MWLv43nrNzxt41dvo5j824FAl
- X+zaiRZCdO8Jtxg5Elpiop2SKLi1utX1Z8i6YZh+ccJZlchUBAGUTk+D4UjK7vUcjLWT96ya
- CtdtTfXyw36CvGOPEWfc6++Kkl/5sgej1i7biPYzu/r0vssaQYTXKSrv6Cfa3Maa89ASiTtv
- q4qmhLnJeCrPxWlRAf6LEizeBEkOasYni2u8sp4wBezEq45Ozu45sfPkqLpPolG7zsBNBF+n
- +90BCADBRt+vrToRBEG580n77S99qSEkbKD+oJtCVyovnjMNkg0K9UG68LIeCX/ezngiV1M8
- JISvw5iFOuUFqGX/1hLl9wgt/YpuIrgWOp8XxkotavTCloLDvQmufJPO1L8bnnA+WgP2YgVZ
- 5MJTj/t4DI+yQgysEjsH8aurHO2uuqgJE+xK+2dy6Cl/wskuGxObksSPmmFH5PH0Joziwrtl
- 61ouLE2XwKbkMgIGEKkbFgbfwz3/QuLZGBni+OOtLzXeZ9wNTW/AHUPy6S9U4F+5z6/09fVT
- tTH0cvrgAGjbASlYx2VqGONXAsxCfjulq6ryJBFlPLp949c/JTTgOojukCSbABEBAAHCwHYE
- GAEIACACGwwWIQQtG9pGQ7sz3tf8M/kC7fV9o/vRzgUCZL1H0gAKCRAC7fV9o/vRzlamCACs
- vHw+0heTm+BfC3S8DUST6889gidIIwdqBep1ByzetCph7Bq8Y8BlT5YTX0u/bSKkxCzFgeTm
- vC341Q09ST2XjLAl1ZTdzGhH9gcgYyOw34pr5fPQRJLB392mPzD8YReRzciNbhWzj+DLgeVe
- ouyfGajd6jDjkf4FEq+trQLGZhpfsKn3JnDbzBUs945D50l/vz9q/QN3qZO+H4F6g8ZeMnqo
- FOEFN26xVtdEDr+0DNFsbgKmEzs675kdAY78ZZdbEetX/FSknxJ+FK1ZW3J7Yswwulj34AXP
- LB49Mk8Ot7fo6mdt0DkV11JS9LmKxKvpY+KTlrKG+i7pVCSZvVUx
-In-Reply-To: <b8fb4f241b2d248ca4c2c57b98588e1be0642b76.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 10/5/24 05:02, Jason-JH Lin (林睿祥) wrote:
->> > --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
->> > +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
->> > @@ -102,12 +102,9 @@ static inline bool is_10bit_rgb(u32 fmt)
->> >   }
->> > 
->> >   static const u32 mt8173_formats[] = {
->> > -       DRM_FORMAT_XRGB8888,
->> >          DRM_FORMAT_ARGB8888,
->> > -       DRM_FORMAT_BGRX8888,
->> >          DRM_FORMAT_BGRA8888,
->> >          DRM_FORMAT_ABGR8888,
->> > -       DRM_FORMAT_XBGR8888,
->> >          DRM_FORMAT_RGB888,
->> >          DRM_FORMAT_BGR888,
->> >          DRM_FORMAT_RGB565,
->> 
->> This is what I get on MT6735:
->> 
->> [    1.729467] mediatek-drm mediatek-drm.1.auto: [drm] bpp/depth
->> value 
->> of 32/24 not supported
->> [    1.737777] mediatek-drm mediatek-drm.1.auto: [drm] No compatible 
->> format found
->> [    1.745943] mediatek-drm mediatek-drm.1.auto: [drm] *ERROR* 
->> fbdev-dma: Failed to setup generic emulation (ret=-22)
->> 
-> 
-> Hi Adam, Yassine,
-> 
-> Please try the patches below and check if they can fix the downgrade
-> issue:
-> [1] Fix degradation problem of alpha blending series
-> -
-> https://patchwork.kernel.org/project/linux-mediatek/list/?series=893634
-> [2] drm/mediatek: Fix XRGB format breakage for blend_modes unsupported
-> SoCs
-> -
-> https://patchwork.kernel.org/project/linux-mediatek/patch/20241005095234.12925-1-jason-jh.lin@mediatek.com/
-> 
-> Regards,
-> Jason-JH.Lin
+On Fri, 4 Oct 2024 17:07:55 +0300
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-Jason,
-I've built 6.12-rc1 with those patch series applied. (I am also not 
-reverting the other commit.) This fixes the issue - I'm able to see the 
-console now. Thank you! Hopefully these can go into 6.12?
-- Adam Thiede
+> Add support for the AD485X DAS familiy.
+As with the DT docs, it is good to have a little bit more info on the device
+in this patch description. Just lets casual readers have some idea what
+they are looking at!
+
+I've left the packet_format ABI question for the next patch, but
+I would like some info on the default.  The code doesn't set it currently=20
+but maybe for documentation purposes it should?
+
+=46rom the earlier discussion (ongoing) I think the oversampling control
+requires particular formats. I'd like to see that in the driver
+first with it overriding that format as necessary.
+
+Then we can see whether we need the additional control
+
+Various other minor comments inline.  With the exception of that
+question of packet_format this is in a pretty good state.
+
+
+Jonathan
+
+
+>=20
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v2:
+>  - update headers and include the missing ones, order them alphabetically.
+>  - use clamp()
+>  - use units macros where applies
+>  - convert int to unsigned variables where applies.
+>  - add trailing commas where applies.
+>  - return FIELD_GET directly.
+>  - shrink function header to one line where it fits.
+>  - update scale table values arrangement - pow-of-two per line
+>  - rename j to have a proper meaning.
+>  - invert if (st->offsets[chan->channel] !=3D val) and drop next lines in=
+dentation.
+>  - drop whitespace from * val =3D ... (altough checkpatch complains about=
+ it)
+>  - drop comma in the terminator lines for ext_info.
+>  - fix inconsistency between chip_info structures.
+>  - use devm_mutex_init
+>  - return -ENOENT on max_cnt check.
+>  - check both val and val2 for negative before converting to unsigned.
+>  - remove val2 where not used.
+>  - use dev_info() instead of dev_warn()
+>  - add spaces after { and before } in ad485x_scale_table
+>=20
+>  drivers/iio/adc/Kconfig  |   12 +
+>  drivers/iio/adc/Makefile |    1 +
+>  drivers/iio/adc/ad485x.c | 1094 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 1107 insertions(+)
+>  create mode 100644 drivers/iio/adc/ad485x.c
+>=20
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index f60fe85a30d5..83f55229d731 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -36,6 +36,18 @@ config AD4130
+>  	  To compile this driver as a module, choose M here: the module will be
+>  	  called ad4130.
+> =20
+> +config AD485X
+
+No wild cards in drivers.  It goes wrong far too often!  Just
+pick a part and name everything after that (files, functions etc).
+
+For text, use 'and similar' to cover the range.
+
+> +	tristate "Analog Device AD485x DAS Driver"
+> +	depends on SPI
+> +	select REGMAP_SPI
+> +	select IIO_BACKEND
+> +	help
+> +	  Say yes here to build support for Analog Devices AD485x high speed
+> +	  data acquisition system (DAS).
+
+List all supported parts in here. Makes for easier grepping.
+
+> +
+> +	  To compile this driver as a module, choose M here: the module will be
+> +	  called ad485x.
+> +
+>  config AD7091R
+>  	tristate
+> =20
+> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> index d370e066544e..26c1670c8913 100644
+> --- a/drivers/iio/adc/Makefile
+> +++ b/drivers/iio/adc/Makefile
+> @@ -7,6 +7,7 @@
+>  obj-$(CONFIG_AB8500_GPADC) +=3D ab8500-gpadc.o
+>  obj-$(CONFIG_AD_SIGMA_DELTA) +=3D ad_sigma_delta.o
+>  obj-$(CONFIG_AD4130) +=3D ad4130.o
+> +obj-$(CONFIG_AD485X) +=3D ad485x.o
+>  obj-$(CONFIG_AD7091R) +=3D ad7091r-base.o
+>  obj-$(CONFIG_AD7091R5) +=3D ad7091r5.o
+>  obj-$(CONFIG_AD7091R8) +=3D ad7091r8.o
+> diff --git a/drivers/iio/adc/ad485x.c b/drivers/iio/adc/ad485x.c
+> new file mode 100644
+> index 000000000000..faa10d56a791
+> --- /dev/null
+> +++ b/drivers/iio/adc/ad485x.c
+> @@ -0,0 +1,1094 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Analog Devices AD485x DAS driver
+> + *
+> + * Copyright 2024 Analog Devices Inc.
+> + */
+> +
+> +#include <linux/array_size.h>
+> +#include <linux/bits.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/minmax.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pwm.h>
+> +#include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/types.h>
+> +#include <linux/units.h>
+> +
+> +#include <linux/iio/backend.h>
+> +#include <linux/iio/iio.h>
+> +
+> +#include <asm/unaligned.h>
+
+> +
+> +#define AD4858_PROD_ID			0x60
+> +#define AD4857_PROD_ID			0x61
+> +#define AD4856_PROD_ID			0x62
+> +#define AD4855_PROD_ID			0x63
+> +#define AD4854_PROD_ID			0x64
+> +#define AD4853_PROD_ID			0x65
+> +#define AD4852_PROD_ID			0x66
+> +#define AD4851_PROD_ID			0x67
+> +#define AD4858I_PROD_ID			0x6F
+These don't add anything over just using the numeric value
+to fill the chip_info structure field.  That field clearly documents
+what these magic numbers are anyway.
+
+Note we used to have this code pattern of defines at the top
+for PROD_ID in a load more drivers but have gotten rid of them
+in favour of inline values.  May well be more to do!
+
+> +
+> +struct ad485x_chip_info {
+> +	const char *name;
+> +	unsigned int product_id;
+> +	const unsigned int (*scale_table)[2];
+> +	int num_scales;
+As below.  Currently we only seem to have one option for the
+scale parameters.  If that is so for now, drop these and encode
+that option directly.
+
+> +	const int *offset_table;
+> +	int num_offset;
+> +	const struct iio_chan_spec *channels;
+> +	unsigned int num_channels;
+> +	unsigned long throughput;
+> +	unsigned int resolution;
+> +};
+
+
+> +
+> +static const char *const ad4858_packet_fmts[] =3D {
+> +	"20-bit", "24-bit", "32-bit",
+> +};
+> +
+> +static const char *const ad4857_packet_fmts[] =3D {
+> +	"16-bit", "24-bit",
+I'll leave discussing these for the docs patch.
+
+> +};
+> +
+> +static int ad485x_set_packet_format(struct iio_dev *indio_dev,
+> +				    const struct iio_chan_spec *chan,
+> +				    unsigned int format)
+> +{
+> +	struct ad485x_state *st =3D iio_priv(indio_dev);
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	if (chan->scan_type.realbits =3D=3D 20)
+
+Perhaps a switch would be cleaner?
+
+> +		switch (format) {
+> +		case 0:
+> +			val =3D 20;
+> +			break;
+> +		case 1:
+> +			val =3D 24;
+> +			break;
+> +		case 2:
+> +			val =3D 32;
+> +			break;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	else if (chan->scan_type.realbits =3D=3D 16)
+> +		switch (format) {
+> +		case 0:
+> +			val =3D 16;
+> +			break;
+> +		case 1:
+> +			val =3D 24;
+> +			break;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	else
+> +		return -EINVAL;
+> +
+> +	ret =3D iio_backend_data_size_set(st->back, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_update_bits(st->regmap, AD485X_REG_PACKET,
+> +				  AD485X_PACKET_FORMAT_MASK, format);
+> +}
+
+
+> +static struct iio_chan_spec_ext_info ad4858_ext_info[] =3D {
+> +	IIO_ENUM("packet_format", IIO_SHARED_BY_ALL, &ad4858_packet_fmt),
+> +	IIO_ENUM_AVAILABLE("packet_format",
+> +			   IIO_SHARED_BY_ALL, &ad4858_packet_fmt),
+> +	{}
+	{ }
+> +};
+> +
+> +static struct iio_chan_spec_ext_info ad4857_ext_info[] =3D {
+> +	IIO_ENUM("packet_format", IIO_SHARED_BY_ALL, &ad4857_packet_fmt),
+> +	IIO_ENUM_AVAILABLE("packet_format",
+> +			   IIO_SHARED_BY_ALL, &ad4857_packet_fmt),
+> +	{}
+	{ }
+
+I'm slowly standardizing across IIO on this mostly so we have a 'right'
+answer rather than a messy mix of styles.  The choice was a random
+pick rather than there being anything better about having a space.
+
+> +};
+
+> +
+> +static const struct ad485x_chip_info ad4858_info =3D {
+> +	.name =3D "ad4858",
+> +	.product_id =3D AD4858_PROD_ID,
+> +	.scale_table =3D ad485x_scale_table,
+
+There only seems to be one scale table.
+Unless you plan to very soon add more devices, drop it from
+here for now and access it directly in the code.
+
+Reduces complexity a little + it is easy to bring back the
+entries in here when you need them.
+
+If you are planning to send out support for more parts shortly
+then it is fine to keep this as it is and reduce the churn.
+I'm just not keen on speculative flexibility in drivers
+where it may never use used!
+
+> +	.num_scales =3D ARRAY_SIZE(ad485x_scale_table),
+> +	.offset_table =3D ad4858_offset_table,
+> +	.num_offset =3D ARRAY_SIZE(ad4858_offset_table),
+> +	.channels =3D ad4858_channels,
+> +	.num_channels =3D ARRAY_SIZE(ad4858_channels),
+> +	.throughput =3D 1 * MEGA,
+> +	.resolution =3D 20,
+> +};
+...
+
+
+> +
+> +static const struct of_device_id ad485x_of_match[] =3D {
+> +	{ .compatible =3D "adi,ad4858", .data =3D &ad4858_info, },
+> +	{ .compatible =3D "adi,ad4857", .data =3D &ad4857_info, },
+> +	{ .compatible =3D "adi,ad4856", .data =3D &ad4856_info, },
+> +	{ .compatible =3D "adi,ad4855", .data =3D &ad4855_info, },
+> +	{ .compatible =3D "adi,ad4854", .data =3D &ad4854_info, },
+> +	{ .compatible =3D "adi,ad4853", .data =3D &ad4853_info, },
+> +	{ .compatible =3D "adi,ad4852", .data =3D &ad4852_info, },
+> +	{ .compatible =3D "adi,ad4851", .data =3D &ad4851_info, },
+> +	{ .compatible =3D "adi,ad4858i", .data =3D &ad4858i_info, },
+> +	{}
+	{ }
++ reorder as below.
+
+
+> +};
+> +
+> +static const struct spi_device_id ad485x_spi_id[] =3D {
+> +	{ "ad4858", (kernel_ulong_t)&ad4858_info },
+> +	{ "ad4857", (kernel_ulong_t)&ad4857_info },
+> +	{ "ad4856", (kernel_ulong_t)&ad4856_info },
+> +	{ "ad4855", (kernel_ulong_t)&ad4855_info },
+> +	{ "ad4854", (kernel_ulong_t)&ad4854_info },
+> +	{ "ad4853", (kernel_ulong_t)&ad4853_info },
+> +	{ "ad4852", (kernel_ulong_t)&ad4852_info },
+> +	{ "ad4851", (kernel_ulong_t)&ad4851_info },
+alphanumeric order.  So pretty much the reverse.
+
+
+> +	{ "ad4858i", (kernel_ulong_t)&ad4858i_info },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(spi, ad485x_spi_id);
 
