@@ -1,99 +1,93 @@
-Return-Path: <linux-kernel+bounces-352021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B33A991933
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:06:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6D699193E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D0261C21098
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61221F224D4
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9911F158DB9;
-	Sat,  5 Oct 2024 18:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E412315B97E;
+	Sat,  5 Oct 2024 18:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpC/wNG2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nM4PzeDZ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02C7A31;
-	Sat,  5 Oct 2024 18:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44C215B561;
+	Sat,  5 Oct 2024 18:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728151598; cv=none; b=PvHrmHGZmp6wuno6qSXr06I/Yg6EUOYgDmvJPgeS53Qg9p3H6MXIYlwPB4yw688/5+cDxMkxXH+tqf8Fha4+NVtfZaqiTXviCvIzHfMnwi9sjvTL7IhtHg4M+6HcdYEupsW0K5Z7jPdEamgmWzK2Wse3VlpOwhPKlNvjLcdHWVY=
+	t=1728151668; cv=none; b=P+BKG0PBY0og7XB0xhGa+pOE8gL6SLqlRtGnxIXnCAt2WoZItu6qWUV1hEkbeM6cue4x5aaS7BcZIukeaRbSY4Sha2EdoGMfFPBhxpt4YIWziAsTg5hvtZQETtXEdQkC1veekrUdZX5olkfa6HKDx7L5gOqZTUFAK4NyLC0eotU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728151598; c=relaxed/simple;
-	bh=6x6Pwu8q6e4S/hIMCuynP0QiDuN8x+ThpPL/EAlwWwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A0f1h1BSg8WV0ICEmWvIz3FDLJtaRo3Gl48VofpCB888dYpxItTDnHzlUVy6rcVfhS391e4h/mvcLPAh36VAWgQOn22F9NZe/pYMQgEVQywFZ5h8Y9tWMXKEyfaaRqkkZzggjBftc8LjiTNnG5hWDJdjK2AwUp9txXuMflZG4N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpC/wNG2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB8CC4CED2;
-	Sat,  5 Oct 2024 18:06:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728151597;
-	bh=6x6Pwu8q6e4S/hIMCuynP0QiDuN8x+ThpPL/EAlwWwc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lpC/wNG2RNc/Q0hzdDWTdKYQfCvy+0amdeNOMdK1dezAZ35cKMBmetj2SBMSlu7tT
-	 aUmsFm1zhSJdZ9MuSFxFNe8QEraXQfGNnQLdFrrtXxEOGBZ1cM5VV/FLJZmuyhvw5s
-	 RhvepMeTok80KRXKuNcb2BoTguCIoiGLYVRYJQmnfkYnUBIzHLIb4piQ/wXDnxkMOH
-	 nbi4g7vmW2hkBn//8Mqb5H+BUq2cH+XFgDlmqczayNmPKbg3OGWi22UaQcB4pw1sLx
-	 lJ+HwL4pLY/CIv5YKJHISlQivAGqqDTrXB2yTGb1bYI+UDugb9BEV5oisPG9iAHsZf
-	 ++3iSJoa2NEWQ==
-Date: Sat, 5 Oct 2024 19:06:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: hid-sensors: Fix an error handling path in
- _hid_sensor_set_report_latency()
-Message-ID: <20241005190620.5f8633a9@jic23-huawei>
-In-Reply-To: <c50640665f091a04086e5092cf50f73f2055107a.1727980825.git.christophe.jaillet@wanadoo.fr>
-References: <c50640665f091a04086e5092cf50f73f2055107a.1727980825.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728151668; c=relaxed/simple;
+	bh=Jury7jyG5GvB/OmkLxA5xdj59+oU45l2EnCjy0e21dA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g7ZGkay7k1zAL0rAXErvhtG2A/qX5uB8f8Xxc4eQuMX1pGP1lVBkswc35zmQtK1o3XS8O54l199cTLPiIUHLAExApUC0TOqq8KiYi3zAlec28WZfwS6bWSK7QtRgxdGXfzGgYXyw7A6DnHxhhz0GA5V6TjWehNzhM2nu6QcVmWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nM4PzeDZ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0aIY657icUSEdbHhHJhyqSFrO4ck2JZbAE0jcwzjCWI=; b=nM4PzeDZLL2J+acZrteptoFQYW
+	JqGCMUCbFRNTlof/6VAyULA3b/qxSlQtoSfo1ACsLWQq6M1+EsPaT9S1Xm466Fp6OK+El9wKRytZL
+	SpyT0KTgEjLOWuGmEAX8gMKH/tpaT8HjY9/zfnL2/W9e5Ko/kiqfimw7vwEdHLraDQf4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sx9Bj-00996D-E6; Sat, 05 Oct 2024 20:07:31 +0200
+Date: Sat, 5 Oct 2024 20:07:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
+	tglx@linutronix.de, arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 3/6] rust: time: Implement addition of Ktime
+ and Delta
+Message-ID: <e540d2cd-2c47-4057-9000-8d403247abf6@lunn.ch>
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
+ <20241005122531.20298-4-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241005122531.20298-4-fujita.tomonori@gmail.com>
 
-On Thu,  3 Oct 2024 20:41:12 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+On Sat, Oct 05, 2024 at 09:25:28PM +0900, FUJITA Tomonori wrote:
+> Implement Add<Delta> for Ktime to support the operation:
+> 
+> Ktime = Ktime + Delta
+> 
+> This is used to calculate the future time when the timeout will occur.
 
-> If hid_sensor_set_report_latency() fails, the error code should be returned
-> instead of a value likely to be interpreted as 'success'.
-> 
-> Fixes: 138bc7969c24 ("iio: hid-sensor-hub: Implement batch mode")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is speculative.
-> 
-> The code just *looks* wrong to me. No strong opinion, if it is done on
-> purpose or not.
-Agreed it smells :)  But I'd like more eyes on this before I take the fix
-as maybe there is something subtle going on.
+Since Delta can be negative, it could also be a passed time. For a
+timeout, that does not make much sense.
 
-J
-> ---
->  drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> index ad8910e6ad59..abb09fefc792 100644
-> --- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> +++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> @@ -32,7 +32,7 @@ static ssize_t _hid_sensor_set_report_latency(struct device *dev,
->  	latency = integer * 1000 + fract / 1000;
->  	ret = hid_sensor_set_report_latency(attrb, latency);
->  	if (ret < 0)
-> -		return len;
-> +		return ret;
->  
->  	attrb->latency_ms = hid_sensor_get_report_latency(attrb);
->  
+> +impl core::ops::Add<Delta> for Ktime {
+> +    type Output = Ktime;
+> +
+> +    #[inline]
+> +    fn add(self, delta: Delta) -> Ktime {
+> +        // SAFETY: FFI call.
+> +        let t = unsafe { bindings::ktime_add_ns(self.inner, delta.as_nanos() as u64) };
+
+So you are throwing away the sign bit. What does Rust in the kernel do
+if it was a negative delta?
+
+I think the types being used here need more consideration.
+
+	Andrew
 
 
