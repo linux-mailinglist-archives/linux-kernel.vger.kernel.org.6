@@ -1,542 +1,139 @@
-Return-Path: <linux-kernel+bounces-351881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39AD99172E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:04:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B6D3991734
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261781F21B6B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:04:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D57282BFE
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09095158558;
-	Sat,  5 Oct 2024 14:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5DA153838;
+	Sat,  5 Oct 2024 14:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLTGMNL6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="XMXsH7UB"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA601552E0;
-	Sat,  5 Oct 2024 14:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A64715AF6
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 14:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728137030; cv=none; b=jeww63jVFFCfmlpLCfC78RfceIxp6tlP33k5oCfsDJyn94DM+Dr+LKWfzM4d9EzaYHdvY4fQlI3jv3k0AHbq0ATYQItwT/UZ/nEIlX8TvFrNfb6SMaDOzfdloMy9rFwx2kbB9z+Nxu9/4dBxtrebaJKsKORa8nKSlxJUTXVu1Pc=
+	t=1728137222; cv=none; b=W1k7dc7RmmjV5doDBsCojJ02NixMwGDBlgtEYLgUV03AGNmXS/8kFA/6EJzPPgWAMyGqxDqEvh9Eh0+nZh260Lnwj3rvJYt+EPHuj6KTsGK3nj16678VwyEsdjr+Guz6Z9gqb51FFRmVV5avD+DmGIgXbgiCPOcbrwh/DybHEmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728137030; c=relaxed/simple;
-	bh=MyC0APpWdC5xOlJrzlhdluEMxW+Ky8LVCXVC93YNZyU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TOYXyBpUj1VKcwOMc4bhlnzb5ciRdJu5GflfKtBsZK5AnvLYyqDOsFD4zr7yB4rw+DuGpXxEzcFR9O3Sf4ruwB0/HSyDu2wpbWkdbPAJUDbye/hpbLPjKC/+Ivx9Hb6hptZWc8Mb3UHr2jiWmoEO97a+icj3CN4tiZP2k8QXfbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLTGMNL6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCA3FC4CEC2;
-	Sat,  5 Oct 2024 14:03:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728137030;
-	bh=MyC0APpWdC5xOlJrzlhdluEMxW+Ky8LVCXVC93YNZyU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TLTGMNL6JlN4vDoAiaLj9gBSelCreSWY3NCQeyp6LNmx69apJfi6OxMnv/yhtdVMv
-	 k7npRKmySiaQnu7yEXFeXo3AW9vTB1f8swApGhKlIwIvmJ6AiDkjYLJBsMrmkAb4t/
-	 e7VTyUK7lQajU5w0n9bswk4rZ3rYIEJ998iHKqkfgAkpThsvo9lb3LCjroYEz/O4um
-	 ocORkpoULPBo1rXD5/mf/GTrcxUAIwFFw6yZofPX4A+JZVwuDv6uuUHtkFK2JgcOl3
-	 oQbcsgwEcP9XY8sCXdxsMqUiLamdzRVzGVU9JwCN1fEnakEVykhjHmVPd9XBu5noLm
-	 k3YYFU7YMHsaA==
-Received: by pali.im (Postfix)
-	id B86B8C46; Sat,  5 Oct 2024 16:03:43 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] cifs: Fix creating and resolving absolute NT-style symlinks
-Date: Sat,  5 Oct 2024 16:03:00 +0200
-Message-Id: <20241005140300.19416-7-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241005140300.19416-1-pali@kernel.org>
-References: <20240929185053.10554-1-pali@kernel.org>
- <20241005140300.19416-1-pali@kernel.org>
+	s=arc-20240116; t=1728137222; c=relaxed/simple;
+	bh=w7hv67Bv4jGJL1OIuMDm5zDOxYIxf51jzM1/fXgu7r8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YWYeycgMfBbxGb2ODsEdZfmnXUB/JCWcsc4zKJhU+cxOUPIGeQJEqp9vplLo32UHhzUEYq1c9xFof2voQ3/4/rZASiVEyZTCA1RDfhB1EPWGQzJBpt3eOzEZJ2Vjx9g+Ev5DnwFfySSBTYK96Ml3i41UK6B493GYZiCCjiyfjfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=XMXsH7UB; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37cd831ab06so1755685f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 07:06:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728137218; x=1728742018; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=73RXbNvNBQEszJaut+1wcFfhljNaK/Kf2dgm13KEtRw=;
+        b=XMXsH7UByCws1GjGhVTsm4xVSbrtuARNZNX+4XQnnWbHxxcjXhgITx3qX6+FltINkU
+         jj8q1x2enmHTZXVkTEnjXQjAol43OjXUvWWU1zCb8urywlqWljA6JS1k4U50K5I4aVv5
+         DvbRNwvsZ5Kmyocb2iktmfGem6EhNYa93ARFmPSXQG6z56BxELrMTGBjgtpoxyUNzi6o
+         +P2Y0Hd/pxWM3L+3kVxYy8MozCnFXS4Z1KcZPTpu+XOY63IUWuF2WNRPi4WEJAXPAJE2
+         TNATzig3ocfvOGFVpsVfwZEKxcrq/Rdkz2djJmFQRtukaL2kz772z/EH898InaB5WA3J
+         ZlMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728137218; x=1728742018;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=73RXbNvNBQEszJaut+1wcFfhljNaK/Kf2dgm13KEtRw=;
+        b=N6/rdrz9i/+sQfZbUwwgUqbx9zi7oB1h73Nj8GAKc1wKBTrSqdK30q9oTznHFsutIg
+         ygHbX9CQLHQpWHCfEfQjxTw8da0Uw3haRvHm+jK78Ml7fchihXxWnSJtFf8vCYbbEAKg
+         xakpTuK9Oxd2TaHEYWpGAFU4oHyjoA6XlIt0yDZihVeLICSqt5wJ6ujyw3U5KRIYm0s5
+         QII74ab4C2hoog0lLvXTCJGFmr+yZgahsyScxBO9u+rifI9VZ6mx+ImoykZdq3h4czPZ
+         zAJoE24GQwSR64q2AvQ5A2LJE3Lkya3mbyOOppLglHNAkdp+vTfCqBWKeIFfkAXMq6KE
+         C3ew==
+X-Forwarded-Encrypted: i=1; AJvYcCVHv02jaWxID2LbKzQRMR+6eOOxIbajHUoI7+h4aiFJ59FcM1J9AMkG7tamF7n1mQApRFBnfYQK1YYrm0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXO5SdeGUbs7DzAYRHqgIIoymWAeE05XDRXWuE/40CLYELdDjk
+	tMjw2COuX067mkcjV6UGKwUH9aNlOiO17Uim6BiiNp4Y78TZGr0fYmUZkMWwvWo=
+X-Google-Smtp-Source: AGHT+IEop7QV/LQ0/ci7yuPRtnBcGOvevIn7tuDVlQ8/zdMwhtTaLfoE32mNc8E+fIIZYTUwqHvxHg==
+X-Received: by 2002:a5d:510e:0:b0:374:af19:7992 with SMTP id ffacd0b85a97d-37d0e6f361bmr3281936f8f.7.1728137217667;
+        Sat, 05 Oct 2024 07:06:57 -0700 (PDT)
+Received: from [192.168.0.245] ([62.73.69.208])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16920cc7sm1838947f8f.61.2024.10.05.07.06.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 05 Oct 2024 07:06:57 -0700 (PDT)
+Message-ID: <c06d9227-dcac-4131-9c2d-83dace086a5d@blackwall.org>
+Date: Sat, 5 Oct 2024 17:06:56 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bridge: use promisc arg instead of skb flags
+To: Amedeo Baragiola <ingamedeo@gmail.com>
+Cc: Roopa Prabhu <roopa@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, bridge@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Pablo Neira Ayuso <pablo@netfilter.org>
+References: <20241005014514.1541240-1-ingamedeo@gmail.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20241005014514.1541240-1-ingamedeo@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-If the SMB symlink is stored on NT server in absolute form then it points
-to the NT object hierarchy, which is different from POSIX one and needs
-some conversion / mapping.
+On 05/10/2024 04:44, Amedeo Baragiola wrote:
+> Since commit 751de2012eaf ("netfilter: br_netfilter: skip conntrack input hook for promisc packets")
+> a second argument (promisc) has been added to br_pass_frame_up which
+> represents whether the interface is in promiscuous mode. However,
+> internally - in one remaining case - br_pass_frame_up checks the device
+> flags derived from skb instead of the argument being passed in.
+> This one-line changes addresses this inconsistency.
+> 
+> Signed-off-by: Amedeo Baragiola <ingamedeo@gmail.com>
+> ---
+>  net/bridge/br_input.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
+> index ceaa5a89b947..156c18f42fa3 100644
+> --- a/net/bridge/br_input.c
+> +++ b/net/bridge/br_input.c
+> @@ -50,8 +50,7 @@ static int br_pass_frame_up(struct sk_buff *skb, bool promisc)
+>  	 * packet is allowed except in promisc mode when someone
+>  	 * may be running packet capture.
+>  	 */
+> -	if (!(brdev->flags & IFF_PROMISC) &&
+> -	    !br_allowed_egress(vg, skb)) {
+> +	if (!promisc && !br_allowed_egress(vg, skb)) {
+>  		kfree_skb(skb);
+>  		return NET_RX_DROP;
+>  	}
 
-To make interoperability with Windows SMB server and WSL subsystem, reuse
-its logic of mapping between NT paths and POSIX paths into Linux SMB
-client.
+This is subtle, but it does change behaviour when a BR_FDB_LOCAL dst
+is found it will always drop the traffic after this patch (w/ promisc) if it
+doesn't pass br_allowed_egress(). It would've been allowed before, but current
+situation does make the patch promisc bit inconsistent, i.e. we get
+there because of BR_FDB_LOCAL regardless of the promisc flag. 
 
-WSL subsystem on Windows uses for -t drvfs mount option -o symlinkroot=
-which specifies the POSIX path where are expected to be mounted lowercase
-Windows drive letters (without colon).
+Because we can have a BR_FDB_LOCAL dst and still pass up such skb because of
+the flag instead of local_rcv (see br_br_handle_frame_finish()).
 
-Do same for Linux SMB client and add a new mount option -o symlinkroot=
-which mimics the drvfs mount option of the same name. It specifies where in
-the Linux VFS hierarchy is the root of the DOS / Windows drive letters, and
-translates between absolute NT-style symlinks and absolute Linux VFS
-symlinks. Default value of symlinkroot is "/mnt", same what is using WSL.
+CCing also Pablo for a second pair of eyes and as the original patch
+author. :)
 
-Note that DOS / Windows drive letter symlinks are just subset of all
-possible NT-style symlinks. Drive letters live in NT subtree \??\ and
-important details about NT paths and object hierarchy are in the comments
-in this change.
+Pablo WDYT?
 
-When symlink target location from non-POSIX SMB server is in absolute form
-(indicated by absence of SYMLINK_FLAG_RELATIVE) then it is converted to
-Linux absolute symlink according to symlinkroot configuration.
+Just FYI we definitely want to see all traffic if promisc is set, so
+this patch is a no-go.
 
-And when creating a new symlink on non-POSIX SMB server in absolute form
-then Linux absolute target is converted to NT-style according to
-symlinkroot configuration.
-
-When SMB server is POSIX, then this change does not affect neither reading
-target location of symlink, nor creating a new symlink. It is expected that
-POSIX SMB server works with POSIX paths where the absolute root is /.
-
-This change improves interoperability of absolute SMB symlinks with Windows
-SMB servers.
-
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/fs_context.c |  22 +++
- fs/smb/client/fs_context.h |   2 +
- fs/smb/client/reparse.c    | 267 ++++++++++++++++++++++++++++++++++---
- 3 files changed, 273 insertions(+), 18 deletions(-)
-
-diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-index 2f0c3894b0f7..22b550860cc8 100644
---- a/fs/smb/client/fs_context.c
-+++ b/fs/smb/client/fs_context.c
-@@ -178,6 +178,7 @@ const struct fs_parameter_spec smb3_fs_parameters[] = {
- 	fsparam_string("sec", Opt_sec),
- 	fsparam_string("cache", Opt_cache),
- 	fsparam_string("reparse", Opt_reparse),
-+	fsparam_string("symlinkroot", Opt_symlinkroot),
- 
- 	/* Arguments that should be ignored */
- 	fsparam_flag("guest", Opt_ignore),
-@@ -355,6 +356,7 @@ smb3_fs_context_dup(struct smb3_fs_context *new_ctx, struct smb3_fs_context *ctx
- 	new_ctx->source = NULL;
- 	new_ctx->iocharset = NULL;
- 	new_ctx->leaf_fullpath = NULL;
-+	new_ctx->symlinkroot = NULL;
- 	/*
- 	 * Make sure to stay in sync with smb3_cleanup_fs_context_contents()
- 	 */
-@@ -369,6 +371,7 @@ smb3_fs_context_dup(struct smb3_fs_context *new_ctx, struct smb3_fs_context *ctx
- 	DUP_CTX_STR(nodename);
- 	DUP_CTX_STR(iocharset);
- 	DUP_CTX_STR(leaf_fullpath);
-+	DUP_CTX_STR(symlinkroot);
- 
- 	return 0;
- }
-@@ -1614,9 +1617,26 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
- 		if (parse_reparse_flavor(fc, param->string, ctx))
- 			goto cifs_parse_mount_err;
- 		break;
-+	case Opt_symlinkroot:
-+		if (param->string[0] != '/') {
-+			cifs_errorf(fc, "symlinkroot mount options must be absolute path\n");
-+			goto cifs_parse_mount_err;
-+		}
-+		kfree(ctx->symlinkroot);
-+		ctx->symlinkroot = kstrdup(param->string, GFP_KERNEL);
-+		if (!ctx->symlinkroot)
-+			goto cifs_parse_mount_err;
-+		break;
- 	}
- 	/* case Opt_ignore: - is ignored as expected ... */
- 
-+	/*
-+	 * By default resolve all native absolute symlinks relative to "/mnt/".
-+	 * Same default has drvfs driver running in WSL for resolving SMB shares.
-+	 */
-+	if (!ctx->symlinkroot)
-+		ctx->symlinkroot = kstrdup("/mnt/", GFP_KERNEL);
-+
- 	return 0;
- 
-  cifs_parse_mount_err:
-@@ -1747,6 +1767,8 @@ smb3_cleanup_fs_context_contents(struct smb3_fs_context *ctx)
- 	ctx->prepath = NULL;
- 	kfree(ctx->leaf_fullpath);
- 	ctx->leaf_fullpath = NULL;
-+	kfree(ctx->symlinkroot);
-+	ctx->symlinkroot = NULL;
- }
- 
- void
-diff --git a/fs/smb/client/fs_context.h b/fs/smb/client/fs_context.h
-index cf577ec0dd0a..8dd12498ffd8 100644
---- a/fs/smb/client/fs_context.h
-+++ b/fs/smb/client/fs_context.h
-@@ -157,6 +157,7 @@ enum cifs_param {
- 	Opt_sec,
- 	Opt_cache,
- 	Opt_reparse,
-+	Opt_symlinkroot,
- 
- 	/* Mount options to be ignored */
- 	Opt_ignore,
-@@ -284,6 +285,7 @@ struct smb3_fs_context {
- 	struct cifs_ses *dfs_root_ses;
- 	bool dfs_automount:1; /* set for dfs automount only */
- 	enum cifs_reparse_type reparse_type;
-+	char *symlinkroot; /* top level directory for native SMB symlinks in absolute format */
- };
- 
- extern const struct fs_parameter_spec smb3_fs_parameters[];
-diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-index fb1d16b17f38..a577b2d2a4fc 100644
---- a/fs/smb/client/reparse.c
-+++ b/fs/smb/client/reparse.c
-@@ -25,33 +25,128 @@ int smb2_create_reparse_symlink(const unsigned int xid, struct inode *inode,
- 				const char *full_path, const char *symname)
- {
- 	struct reparse_symlink_data_buffer *buf = NULL;
--	struct cifs_open_info_data data;
-+	struct cifs_open_info_data data = {};
- 	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
- 	struct inode *new;
- 	struct kvec iov;
--	__le16 *path;
-+	__le16 *path = NULL;
- 	bool directory;
--	char *sym, sep = CIFS_DIR_SEP(cifs_sb);
--	u16 len, plen;
-+	char *symlink_target = NULL;
-+	char *sym = NULL;
-+	char sep = CIFS_DIR_SEP(cifs_sb);
-+	u16 len, plen, poff, slen;
- 	int rc = 0;
- 
--	sym = kstrdup(symname, GFP_KERNEL);
--	if (!sym)
--		return -ENOMEM;
-+	symlink_target = kstrdup(symname, GFP_KERNEL);
-+	if (!symlink_target) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
- 
- 	data = (struct cifs_open_info_data) {
- 		.reparse_point = true,
- 		.reparse = { .tag = IO_REPARSE_TAG_SYMLINK, },
--		.symlink_target = sym,
-+		.symlink_target = symlink_target,
- 	};
- 
--	convert_delimiter(sym, sep);
-+	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) && symname[0] == '/') {
-+		/*
-+		 * This is a request to create an absolute symlink on the server
-+		 * which does not support POSIX paths, and expects symlink in
-+		 * NT-style path. So convert absolute Linux symlink target path
-+		 * to the absolute NT-style path. Root of the NT-style path for
-+		 * symlinks is specified in "symlinkroot" mount option. This will
-+		 * ensure compatibility of this symlink stored in absolute form
-+		 * on the SMB server.
-+		 */
-+		if (!strstarts(symname, cifs_sb->ctx->symlinkroot)) {
-+			/*
-+			 * If the absolute Linux symlink target path is not
-+			 * inside "symlinkroot" location then there is no way
-+			 * to convert such Linux symlink to NT-style path.
-+			 */
-+			cifs_dbg(VFS,
-+				 "absolute symlink '%s' cannot be converted to NT format "
-+				 "because it is outside of symlinkroot='%s'\n",
-+				 symname, cifs_sb->ctx->symlinkroot);
-+			rc = -EINVAL;
-+			goto out;
-+		}
-+		len = strlen(cifs_sb->ctx->symlinkroot);
-+		if (cifs_sb->ctx->symlinkroot[len-1] != '/')
-+			len++;
-+		if (symname[len] >= 'a' && symname[len] <= 'z' &&
-+		    (symname[len+1] == '/' || symname[len+1] == '\0')) {
-+			/*
-+			 * Symlink points to Linux target /symlinkroot/x/path/...
-+			 * where 'x' is the lowercase local Windows drive.
-+			 * NT-style path for 'x' has common form \??\X:\path\...
-+			 * with uppercase local Windows drive.
-+			 */
-+			int common_path_len = strlen(symname+len+1)+1;
-+			sym = kzalloc(6+common_path_len, GFP_KERNEL);
-+			if (!sym) {
-+				rc = -ENOMEM;
-+				goto out;
-+			}
-+			memcpy(sym, "\\??\\", 4);
-+			sym[4] = symname[len] - ('a'-'A');
-+			sym[5] = ':';
-+			memcpy(sym+6, symname+len+1, common_path_len);
-+		} else {
-+			/* Unhandled absolute symlink. Report an error. */
-+			cifs_dbg(
-+				 VFS,
-+				 "absolute symlink '%s' cannot be converted to NT format "
-+				 "because it points to unknown target\n",
-+				 symname);
-+			rc = -EINVAL;
-+			goto out;
-+		}
-+	} else {
-+		/*
-+		 * This is request to either create an absolute symlink on
-+		 * server which expects POSIX paths or it is an request to
-+		 * create a relative symlink from the current directory.
-+		 * These paths have same format as relative SMB symlinks,
-+		 * so no conversion is needed. So just take symname as-is.
-+		 */
-+		sym = kstrdup(symname, GFP_KERNEL);
-+		if (!sym) {
-+			rc = -ENOMEM;
-+			goto out;
-+		}
-+	}
-+
-+	if (sep == '\\')
-+		convert_delimiter(sym, sep);
-+
-+	/*
-+	 * For absolute NT symlinks it is required to pass also leading
-+	 * backslash and to not mangle NT object prefix "\\??\\" and not to
-+	 * mangle colon in drive letter. But cifs_convert_path_to_utf16()
-+	 * removes leading backslash and replaces '?' and ':'. So temporary
-+	 * mask these characters in NT object prefix by '_' and then change
-+	 * them back.
-+	 */
-+	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) && symname[0] == '/')
-+		sym[0] = sym[1] = sym[2] = sym[5] = '_';
-+
- 	path = cifs_convert_path_to_utf16(sym, cifs_sb);
- 	if (!path) {
- 		rc = -ENOMEM;
- 		goto out;
- 	}
- 
-+	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) && symname[0] == '/') {
-+		sym[0] = '\\';
-+		sym[1] = sym[2] = '?';
-+		sym[5] = ':';
-+		path[0] = '\\';
-+		path[1] = path[2] = '?';
-+		path[5] = ':';
-+	}
-+
- 	/*
- 	 * SMB distinguish between symlink to directory and symlink to file.
- 	 * They cannot be exchanged (symlink of file type which points to
-@@ -64,8 +159,18 @@ int smb2_create_reparse_symlink(const unsigned int xid, struct inode *inode,
- 	if (rc < 0)
- 		goto out;
- 
--	plen = 2 * UniStrnlen((wchar_t *)path, PATH_MAX);
--	len = sizeof(*buf) + plen * 2;
-+	slen = 2 * UniStrnlen((wchar_t *)path, PATH_MAX);
-+	poff = 0;
-+	plen = slen;
-+	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) && symname[0] == '/') {
-+		/*
-+		 * For absolute NT symlinks skip leading "\\??\\" in PrintName as
-+		 * PrintName is user visible location in DOS/Win32 format (not in NT format).
-+		 */
-+		poff = 4;
-+		plen -= 2 * poff;
-+	}
-+	len = sizeof(*buf) + plen + slen;
- 	buf = kzalloc(len, GFP_KERNEL);
- 	if (!buf) {
- 		rc = -ENOMEM;
-@@ -74,17 +179,17 @@ int smb2_create_reparse_symlink(const unsigned int xid, struct inode *inode,
- 
- 	buf->ReparseTag = cpu_to_le32(IO_REPARSE_TAG_SYMLINK);
- 	buf->ReparseDataLength = cpu_to_le16(len - sizeof(struct reparse_data_buffer));
-+
- 	buf->SubstituteNameOffset = cpu_to_le16(plen);
--	buf->SubstituteNameLength = cpu_to_le16(plen);
--	memcpy(&buf->PathBuffer[plen], path, plen);
-+	buf->SubstituteNameLength = cpu_to_le16(slen);
-+	memcpy(&buf->PathBuffer[plen], path, slen);
-+
- 	buf->PrintNameOffset = 0;
- 	buf->PrintNameLength = cpu_to_le16(plen);
--	memcpy(buf->PathBuffer, path, plen);
-+	memcpy(buf->PathBuffer, path+poff, plen);
-+
- 	buf->Flags = cpu_to_le32(*symname != '/' ? SYMLINK_FLAG_RELATIVE : 0);
--	if (*sym != sep)
--		buf->Flags = cpu_to_le32(SYMLINK_FLAG_RELATIVE);
- 
--	convert_delimiter(sym, '/');
- 	iov.iov_base = buf;
- 	iov.iov_len = len;
- 	new = smb2_get_reparse_inode(&data, inode->i_sb, xid,
-@@ -95,6 +200,7 @@ int smb2_create_reparse_symlink(const unsigned int xid, struct inode *inode,
- 	else
- 		rc = PTR_ERR(new);
- out:
-+	kfree(sym);
- 	kfree(path);
- 	cifs_free_open_info(&data);
- 	kfree(buf);
-@@ -540,6 +646,9 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
- 	char sep = CIFS_DIR_SEP(cifs_sb);
- 	char *linux_target = NULL;
- 	char *smb_target = NULL;
-+	int symlinkroot_len;
-+	int abs_path_len;
-+	char *abs_path;
- 	int levels;
- 	int rc;
- 	int i;
-@@ -569,7 +678,123 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
- 		goto out;
- 	}
- 
--	if (smb_target[0] == sep && relative) {
-+	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) && !relative) {
-+		/*
-+		 * This is an absolute symlink from the server which does not
-+		 * support POSIX paths, so the symlink is in NT-style path.
-+		 * So convert it to absolute Linux symlink target path. Root of
-+		 * the NT-style path for symlinks is specified in "symlinkroot"
-+		 * mount option.
-+		 *
-+		 * Root of the DOS and Win32 paths is at NT path \??\
-+		 * It means that DOS/Win32 path C:\folder\file.txt is
-+		 * NT path \??\C:\folder\file.txt
-+		 *
-+		 * NT systems have some well-known object symlinks in their NT
-+		 * hierarchy, which is needed to take into account when resolving
-+		 * other symlinks. Most commonly used symlink paths are:
-+		 * \?? -> \GLOBAL??
-+		 * \DosDevices -> \??
-+		 * \GLOBAL??\GLOBALROOT -> \
-+		 * \GLOBAL??\Global -> \GLOBAL??
-+		 * \GLOBAL??\NUL -> \Device\Null
-+		 * \GLOBAL??\UNC -> \Device\Mup
-+		 * \GLOBAL??\PhysicalDrive0 -> \Device\Harddisk0\DR0 (for each harddisk)
-+		 * \GLOBAL??\A: -> \Device\Floppy0 (if A: is the first floppy)
-+		 * \GLOBAL??\C: -> \Device\HarddiskVolume1 (if C: is the first harddisk)
-+		 * \GLOBAL??\D: -> \Device\CdRom0 (if D: is first cdrom)
-+		 * \SystemRoot -> \Device\Harddisk0\Partition1\WINDOWS (or where is NT system installed)
-+		 * \Volume{...} -> \Device\HarddiskVolume1 (where ... is system generated guid)
-+		 *
-+		 * In most common cases, absolute NT symlinks points to path on
-+		 * DOS/Win32 drive letter, system-specific Volume or on UNC share.
-+		 * Here are few examples of commonly used absolute NT symlinks
-+		 * created by mklink.exe tool:
-+		 * \??\C:\folder\file.txt
-+		 * \??\\C:\folder\file.txt
-+		 * \??\UNC\server\share\file.txt
-+		 * \??\\UNC\server\share\file.txt
-+		 * \??\Volume{b75e2c83-0000-0000-0000-602f00000000}\folder\file.txt
-+		 *
-+		 * It means that the most common path prefix \??\ is also NT path
-+		 * symlink (to \GLOBAL??). It is less common that second path
-+		 * separator is double backslash, but it is valid.
-+		 *
-+		 * Volume guid is randomly generated by the target system and so
-+		 * only the target system knows the mapping between guid and the
-+		 * hardisk number. Over SMB it is not possible to resolve this
-+		 * mapping, therefore symlinks pointing to target location of
-+		 * volume guids are totally unusable over SMB.
-+		 *
-+		 * For now parse only symlink paths available for DOS and Win32.
-+		 * Those are paths with \??\ prefix or paths which points to \??\
-+		 * via other NT symlink (\DosDevices\, \GLOBAL??\, ...).
-+		 */
-+		abs_path = smb_target;
-+globalroot:
-+		if (strstarts(abs_path, "\\??\\"))
-+			abs_path += sizeof("\\??\\")-1;
-+		else if (strstarts(abs_path, "\\DosDevices\\"))
-+			abs_path += sizeof("\\DosDevices\\")-1;
-+		else if (strstarts(abs_path, "\\GLOBAL??\\"))
-+			abs_path += sizeof("\\GLOBAL??\\")-1;
-+		else {
-+			/* Unhandled absolute symlink, points outside of DOS/Win32 */
-+			cifs_dbg(VFS,
-+				 "absolute symlink '%s' cannot be converted from NT format "
-+				 "because points to unknown target\n",
-+				 smb_target);
-+			rc = -EIO;
-+			goto out;
-+		}
-+
-+		/* Sometimes path separator after \?? is double backslash */
-+		if (abs_path[0] == '\\')
-+			abs_path++;
-+
-+		while (strstarts(abs_path, "Global\\"))
-+			abs_path += sizeof("Global\\")-1;
-+
-+		if (strstarts(abs_path, "GLOBALROOT\\")) {
-+			/* Label globalroot requires path with leading '\\', so do not trim '\\' */
-+			abs_path += sizeof("GLOBALROOT")-1;
-+			goto globalroot;
-+		}
-+
-+		/* For now parse only paths to drive letters */
-+		if (((abs_path[0] >= 'A' && abs_path[0] <= 'Z') ||
-+		     (abs_path[0] >= 'a' && abs_path[0] <= 'z')) &&
-+		    abs_path[1] == ':' &&
-+		    (abs_path[2] == '\\' || abs_path[2] == '\0')) {
-+			/* Convert drive letter to lowercase and drop colon */
-+			char drive_letter = abs_path[0];
-+			if (drive_letter >= 'A' && drive_letter <= 'Z')
-+				drive_letter += 'a'-'A';
-+			abs_path++;
-+			abs_path[0] = drive_letter;
-+		} else {
-+			/* Unhandled absolute symlink. Report an error. */
-+			cifs_dbg(VFS,
-+				 "absolute symlink '%s' cannot be converted from NT format "
-+				 "because points to unknown target\n",
-+				 smb_target);
-+			rc = -EIO;
-+			goto out;
-+		}
-+
-+		abs_path_len = strlen(abs_path)+1;
-+		symlinkroot_len = strlen(cifs_sb->ctx->symlinkroot);
-+		if (cifs_sb->ctx->symlinkroot[symlinkroot_len-1] == '/')
-+			symlinkroot_len--;
-+		linux_target = kmalloc(symlinkroot_len + 1 + abs_path_len, GFP_KERNEL);
-+		if (!linux_target) {
-+			rc = -ENOMEM;
-+			goto out;
-+		}
-+		memcpy(linux_target, cifs_sb->ctx->symlinkroot, symlinkroot_len);
-+		linux_target[symlinkroot_len] = '/';
-+		memcpy(linux_target + symlinkroot_len + 1, abs_path, abs_path_len);
-+	} else if (smb_target[0] == sep && relative) {
- 		/*
- 		 * This is a relative SMB symlink from the top of the share,
- 		 * which is the top level directory of the Linux mount point.
-@@ -598,6 +823,12 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
- 		}
- 		memcpy(linux_target + levels*3, smb_target+1, smb_target_len); /* +1 to skip leading sep */
- 	} else {
-+		/*
-+		 * This is either an absolute symlink in POSIX-style format
-+		 * or relative SMB symlink from the current directory.
-+		 * These paths have same format as Linux symlinks, so no
-+		 * conversion is needed.
-+		 */
- 		linux_target = smb_target;
- 		smb_target = NULL;
- 	}
--- 
-2.20.1
-
+Cheers,
+ Nik
 
