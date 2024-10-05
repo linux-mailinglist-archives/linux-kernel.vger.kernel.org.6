@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-351726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67840991567
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:54:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AF7991569
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E1562826EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 08:54:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10223283195
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 08:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89FE13BC18;
-	Sat,  5 Oct 2024 08:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAC413C908;
+	Sat,  5 Oct 2024 08:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOZoAAsB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sm1Ewox/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080CD3F9D5;
-	Sat,  5 Oct 2024 08:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4A83F9D5;
+	Sat,  5 Oct 2024 08:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728118444; cv=none; b=fsWP8cAHGe/mE3GOazPtPdV7LJLKVnS+rtKQc+R1D2YAK7qxWAytzg3AzBGsRAxJJGTU4Wjg7LduW/IddHPNJ9pNU9C6DhgLAnAjLer7qOb7KVKsuHdH98i9cvBRWIyTZEypXr+LXd5e5UlNjhfqfkdHvL8oTwbKUsi6C9DyLE0=
+	t=1728118520; cv=none; b=R45LZSlany3GzuXqZ1Uq7X5H+c+kSUnVB1PFrLQfHQ+78/sDlQQWsRfsOuNQ9WEh/TtQ3b+w5BI7dE/LD5i3u1e8D6Sa65MkAsWAseFRHps08X4ALp2h0axIsB4nsyjMOC8lTwcRx1+aIio/9px2EB/oy0eoqiAcJyDRx3Tirhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728118444; c=relaxed/simple;
-	bh=eBx4vbY7QxRu2L5YvQ0tTJWgaUAJhUNKVZYzfl/hPqM=;
+	s=arc-20240116; t=1728118520; c=relaxed/simple;
+	bh=b0NR+d5Noe8seh/sWqbJp1vYwfdywrPfRfDJHlpJDo4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JSWrG4/ILvLDlOga9up5nBBX2HriqjyFTScFf5seg3JmFx2CxjBv5cxEZqyNTIj6i/eSPkP4yJQe8ATPl8YOpGQl6EL/qo8FeMUWUj0PlRWTluYYBX5nblGx3o8Wq+VCr9O9eS3L/KLjtuKaQd4Wiurv4jfuM4JcFQDMDa0a/cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOZoAAsB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFB36C4CEC2;
-	Sat,  5 Oct 2024 08:53:57 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=EipOPMAwS4397Aiev3C2ZgII6WGpSlfrGz/7LmOjTurn48m3J3rjgZXQ3VBh1tH6HqoowNHl82UdaMDoTsjZlE4ejDck3TXzZTd/NtGs+JZcpCqBmC2Qxq81qL6Gl9fPdAXrqPkZ5m+cp7ILeNtfPQQsytjm6CSy7H2MkECeqfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sm1Ewox/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF9EDC4CEC2;
+	Sat,  5 Oct 2024 08:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728118443;
-	bh=eBx4vbY7QxRu2L5YvQ0tTJWgaUAJhUNKVZYzfl/hPqM=;
+	s=k20201202; t=1728118519;
+	bh=b0NR+d5Noe8seh/sWqbJp1vYwfdywrPfRfDJHlpJDo4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pOZoAAsBrSD+JtI+63+ztivU1s+y2u6ZSnrt5D+vewMrOmY2M1/pfUQz4yuXJjYqb
-	 hO6s//X5+k/39iaGdK246+qEqKGpX2zby4RR3KIpyzLmI5p4fq8/WKXcICXSMlptOX
-	 /InhYI5psWZSD98D/DuKowupu5HlL6OxFNs1MVTnpovP8fH/OxezRqx5ta1PvBG4FL
-	 kHGnsZu5Gv5fcvEA9i4dnCab/2VIWPIoCEETCeBfp0XkXQQWXrOYtwM8aIugKurzLK
-	 ID9qcAGeNBIEDrhleeCtbMlzZX2Mc/WFhOuU6AZb5jc+kdMD6PmaDPISk0l7fmsLNh
-	 az95B52VfnlLQ==
-Message-ID: <b273cddb-274c-4d88-935e-c94b8d94188e@kernel.org>
-Date: Sat, 5 Oct 2024 10:53:54 +0200
+	b=sm1Ewox/D1w3vTK0rA33QhpqNauh6lCfX021bgw9CJG6ZwY8IDZZxLGzZNBP/SW1b
+	 vUe9nob2ZgQQSC5lhn2rN9iZf/ikiAiQONvk1d+eVp4vHence4+iaITbvxq8BsrpPd
+	 LDi8DiC4e9sKWbgWOpwTVvXNpDbs7o9uV+ygZIXTdSfHpxm0Dayz59up2NaG4Thl9E
+	 D42JXAoKZiQWr0PMJMHTScEmlmA0L8lEh084TBxbMBb6fRzgJnv2UV9AlLKrgQK1JY
+	 syxO0wxsuTYdi1S0HQfgR7oxKgurQNPnhxAaDVGotVJI89KLcY1HqTHcUG3H/kJab4
+	 NhUtrE8uP+PRg==
+Message-ID: <7b3e9a35-34f3-4e23-8ef8-574380819eb3@kernel.org>
+Date: Sat, 5 Oct 2024 10:55:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm64: bcmbca: Add Zyxel EX3510-B based
- on BCM4906
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- William Zhang <william.zhang@broadcom.com>,
- Anand Gore <anand.gore@broadcom.com>, Kursad Oney
- <kursad.oney@broadcom.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241003220820.1345048-1-CFSworks@gmail.com>
- <20241003220820.1345048-2-CFSworks@gmail.com>
- <3okd7byomwmo5vjsyaaxsorhn6ldw3mp3k6whcklqnw2stx5tm@jpv2e5ydswzw>
- <80a9ec34-52eb-41fa-b068-3c9552065927@kernel.org>
- <CAH5Ym4g9hmX3mT5+Eqm=KHKYd+s_PM4qdho2a8FkAZmhMHOV4g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] dt-bindings: misc: fsl,qoriq-mc: remove ref for
+ msi-parent
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ imx@lists.linux.dev
+References: <20240828163417.1130252-1-Frank.Li@nxp.com>
+ <kasyt62uhb7cijyrmbs7zelwgjtted6p4ynsy2s47e2ycniicb@szosg55aejjh>
+ <ZwBNVb+9qIpEybyQ@lizhi-Precision-Tower-5810>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,51 +105,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CAH5Ym4g9hmX3mT5+Eqm=KHKYd+s_PM4qdho2a8FkAZmhMHOV4g@mail.gmail.com>
+In-Reply-To: <ZwBNVb+9qIpEybyQ@lizhi-Precision-Tower-5810>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 04/10/2024 19:21, Sam Edwards wrote:
-> On Thu, Oct 3, 2024 at 11:51 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 04/10/2024 08:49, Krzysztof Kozlowski wrote:
->>> On Thu, Oct 03, 2024 at 03:08:19PM -0700, Sam Edwards wrote:
->>>> This is a series (EX3510-B0 and EX3510-B1) of residential gateways based
->>>> on BCM4906, a stripped-down version of the BCM4908 SoC. Although Zyxel's
->>>> marketing materials call this a "series," the EX3510-B1 appears to be a
->>>> very minor revision of the EX3510-B0, with only changes that are
->>>> transparent to software. As far as Linux is concerned, this "series"
->>>> effectively represents a single model.
->>>>
->>>> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
-> 
-> Good day Krzysztof,
-> 
+On 04/10/2024 22:17, Frank Li wrote:
+> On Thu, Aug 29, 2024 at 08:24:26AM +0200, Krzysztof Kozlowski wrote:
+>> On Wed, Aug 28, 2024 at 12:34:13PM -0400, Frank Li wrote:
+>>> msi-parent is standard property. Needn't ref to phandle. Add maxItems: 1
+>>> for it.
 >>>
->>> Can you use the same email as for SoB?
+>>> Fix below warning:
+>>>   arch/arm64/boot/dts/freescale/fsl-ls1088a-ten64.dtb: fsl-mc@80c000000: msi-parent:0: [16, 0] is too long
+>>>
+>>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>>> ---
+>>> Change from v1 to v2
+>>> - add maxItems: 1 for msi-parent
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> I have sent patches to the LKML from a work email before, but I just
+> Anyone pick this patch?
 
-That's not what I asked. You can send them from whatever, I asked that
-commit identity should match SoB in exact way.
+Your maintainer, if you cared to Cc him?
 
-
-> double-checked that I am using my personal email for everything here:
-> 
-> $ git show ec8e6d96a05f04 | grep -E 'dt-bindings|Author|Signed'
-> Author: Sam Edwards <CFSworks@gmail.com>
->     dt-bindings: arm64: bcmbca: Add Zyxel EX3510-B based on BCM4906
->     Signed-off-by: Sam Edwards <CFSworks@gmail.com>
-> $ grep -E '^From|^Signed'
-> outgoing-ex3510b/0001-dt-bindings-arm64-bcmbca-Add-Zyxel-EX3510-B-based-on.patch
-> From ec8e6d96a05f04df00d05dec00df80172d233d8c Mon Sep 17 00:00:00 2001
-> From: Sam Edwards <CFSworks@gmail.com>
-> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
-
-So apply the patch from the mailing list and you will see:
-
-Author: Sam Edwards <cfsworks@gmail.com>
-Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+If you do not send patch to people, how they are supposed to pick it up?
 
 Best regards,
 Krzysztof
