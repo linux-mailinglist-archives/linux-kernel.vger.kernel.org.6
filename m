@@ -1,102 +1,85 @@
-Return-Path: <linux-kernel+bounces-351998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 705B79918E9
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:35:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 706659918EE
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 338F7282CFC
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:35:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33B87282A86
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071C91586F2;
-	Sat,  5 Oct 2024 17:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20762158DB9;
+	Sat,  5 Oct 2024 17:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uzj8Frlt"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTJ4AmFI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF80344C77;
-	Sat,  5 Oct 2024 17:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729EE15533B;
+	Sat,  5 Oct 2024 17:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728149740; cv=none; b=lbaJiLBtvm2/tB9bj5NiimTjZuWiL3Ycdmk0OP6U7niakHM9ctGjdNnj7uUf5t2NhwhC0tnRxsgrAy8NjhczL/if0BAp4b+bndOPwuskMJdL29X3TmIjVP7N2dTvJcSvdphT2APixof2K8ibaJIqWtVaQjUdv1RYclb7YgHPv0Y=
+	t=1728149809; cv=none; b=qrat6t4LAOKoQF8WHfAAJyR+WHNURLUj7GVg4ad5yQMBr0u2HNp+Lifo3InS8mZnIZgHowz6IXMYR3oVoWDTDM/Lx4EHrxdyab55AxBaSQpQLajX/ACjB9aCwIZKFGGKoL5TtJLL6nGgITpISaybSzkQgbMGbPRzZiMSv5dhKDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728149740; c=relaxed/simple;
-	bh=LX4OK9Ao6+30UuUeEaSdtHk1qdTEF6u3IOowQ+dQjK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FNYEwTu/pmdujibm7lOqF43bdNDXPC5JY7KtkS/GuWxRoUdV13DpFMcT10br6DprgQLtZNK/zgpFS+XgbbL4keM2GtUU/UGQ39xw5RsY8TQ8duyEJkn1XvlwINNO6s6cUi9GbT+TXsmATIiXAEGhQth82eEZ8RvquAapuprYGNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uzj8Frlt; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5399041167cso5037626e87.0;
-        Sat, 05 Oct 2024 10:35:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728149737; x=1728754537; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zaMevDsCDSQy3p0xdoGuwS2vy2OJkKbrzaRiSGEZSnc=;
-        b=Uzj8FrltkdCwMIVnMcFnr9bIN759rAM/taocgOY45QrOyoHIeo3quLNXGe+Ouw0TY7
-         +q1BnHpwdqS3ZdQ4apzW457CZ3aDQzuh00jZh3RDLTnvED5LAT+/78L7MB+8bhSEDHPn
-         wtsQbPHmfv6ByvRmFs9t70oY9it96dk1JkSJ768Kvw6lxLfjv/J4jDiwpzuWZfl5lnhv
-         fHxltI2FguK8jaFekNucxjl7HSymAL9FBuobXOvP+GoLP/l0GeQZdw1mau5GuisXySSZ
-         EYNzZ4L6JcLvx7h+bprCIL7oUEmpyysHb8kIlNJLjAKN1irMWrm9nN/PyG8NlAMHzreL
-         kE0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728149737; x=1728754537;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zaMevDsCDSQy3p0xdoGuwS2vy2OJkKbrzaRiSGEZSnc=;
-        b=hoO8JPQlLy+FemhlVWSw4pgwNTXmNMbeZdzQJCpZL3v+NFoitAFkqXs/OT+ZmJnEnw
-         fg7d3C6uf8erlrkXoCL4m5qeNOb2Qt0L5aU/Q8q+lo2I8BHe3GgpOvydLkiAsNzkdxmm
-         aZB0KF1bFkICwhdLgvKog+et7nwVICeuyI9XLzFZPf+yBTrDvKznfBHkFY1EP2cjF+1e
-         /R9Sf90HIEPqsMNQVeaCb+AsALiG56rk5aa9/AgjhXz4TNr8s3FQSUz7RoS0bKcI1ykt
-         gjmE7JSJSFYY7iGw/bH0PDIXG+nDY5VYCSTyMeduzofqLPqGX6VJjCDWyVvbek6MIxwR
-         MTcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Cupt29HQ9OTkqK2Qf9ifg3NodI/d8WZgmeHTrvMqJKT1UMf/RTmJkQVAmg7xJ5dZPJby0hzmnR3LPDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9D8sdMD86TP4VeJrliLOKac/WpslY217+9qfneAZSZz3m3PHD
-	RO7ThyIEfoVGr98I2cejv90YNAOoTFIDXDpeMAS1pF20uiYDKPpr9hhz6kYyyRv9IwkzY32DS6K
-	Blq7A6rNV0n09LIyLR32zqk5wQ5k=
-X-Google-Smtp-Source: AGHT+IHonTMEmxAoPIPMkG1DMaD8Zqkme4MoCJJdgz7W2vuerVm+etAiWKpkIbNieVGxxuTMdDjbVI0/z3Rfvfx/Hp0=
-X-Received: by 2002:a05:6512:6c5:b0:52c:d628:c77c with SMTP id
- 2adb3069b0e04-539ab9cf364mr4400695e87.43.1728149736676; Sat, 05 Oct 2024
- 10:35:36 -0700 (PDT)
+	s=arc-20240116; t=1728149809; c=relaxed/simple;
+	bh=yORtFNIGSnwAgf8bQuV+m3VvdFwTYQTdH1kGbfyu6mU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AsS/KrJhSEg0Wzb8gg7KYUeVU5PKytI1bkQSEC50Mh+E53/sy6TyEP4RLurAJ0DY3NA9VlBqV7jjC5asY1AXahZIy+hwiw399d5ll3mPvG/RfUfr4pBIi2HyLpETJuTE33wBQ6o78Tu0JyS96f2OI4+LmQAvMAiWDAM6+CuaXoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTJ4AmFI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE3EAC4CEC7;
+	Sat,  5 Oct 2024 17:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728149809;
+	bh=yORtFNIGSnwAgf8bQuV+m3VvdFwTYQTdH1kGbfyu6mU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mTJ4AmFIR0uZzinYkzxm5CrluWmoY0VIiQ5YzNP1l4yZEeM7S4osO6ACHkfZr12Kz
+	 ZTIOdioCzrAQ6lV2jqeTLIsNoRRLIbPTZvnmQFpvDD7cAChrxw9aycCXVChUS8ALvu
+	 LQGmAVki50mGcalaceVmkUVvxYBwmcwO3coGi7ylyCU5JEVWgl0fbAqQcU6NEMHYGV
+	 B1QpUcA+zWLNxt6kSe/fA+3ATOLG9qeOw6PiJUswCykDtRKBDoddWyGi65/PnULJxD
+	 GrTYJ/zqixWAFLb3v0rPtNCtS+BEZjnQzA6sya++/9g2PCtiP5URyUBWJgXVFHJIWt
+	 HvbuNYMo0qq8A==
+Date: Sat, 5 Oct 2024 12:36:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: usb: Add Parade PS8830 Type-C
+ retimer bindings
+Message-ID: <20241005173647.GA429341-robh@kernel.org>
+References: <20241004-x1e80100-ps8830-v2-0-5cd8008c8c40@linaro.org>
+ <20241004-x1e80100-ps8830-v2-1-5cd8008c8c40@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004150148.14033-1-abhashkumarjha123@gmail.com>
- <20241004150148.14033-3-abhashkumarjha123@gmail.com> <20241005174755.6864d482@jic23-huawei>
-In-Reply-To: <20241005174755.6864d482@jic23-huawei>
-From: Abhash jha <abhashkumarjha123@gmail.com>
-Date: Sat, 5 Oct 2024 23:05:25 +0530
-Message-ID: <CAG=0RqJntw8njb-tzbDU5oALCNd2EEb=QFP=Uqzcxsehy4mzbg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] iio: light: vl6180: Added Interrupt support for
- single shot access
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, lars@metafoo.de, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004-x1e80100-ps8830-v2-1-5cd8008c8c40@linaro.org>
 
-> > +     if (client->irq) {
-> > +             reinit_completion(&data->completion);
->
-> That's late so there is a race condition. You might be delayed just before this
-> and finish the measurement before the reint_completion() in which case you'll
-> clear the complete() that happens in the interrupt handler before
-> then waiting on it.
-Yes this makes sense.
+On Fri, Oct 04, 2024 at 04:57:37PM +0300, Abel Vesa wrote:
+> Document bindings for the Parade PS8830 Type-C retimer. This retimer is
+> currently found on all boards featuring Qualcomm Snapdragon X Elite SoCs
+> and it is needed to provide altmode muxing between DP and USB, but also
+> connector orientation handling between.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  .../devicetree/bindings/usb/parade,ps8830.yaml     | 129 +++++++++++++++++++++
+>  1 file changed, 129 insertions(+)
 
-> This reinit needs to be before whatever can potentially trigger
-> that interrupt.
-Can you explain this part, because where can i reinit it, The measurement
-starts when we write the START_STOP bit to SYSRANGE_START. So should
-it be before that.
-I'm kind of confused with this.
-
-Thank you,
-Abhash
+Missing R-by from Krzysztof?
 
