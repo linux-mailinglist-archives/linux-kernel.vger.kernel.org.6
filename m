@@ -1,143 +1,121 @@
-Return-Path: <linux-kernel+bounces-351773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75B09915DB
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:09:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F719915DF
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F980284AFB
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:09:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 458E41C22907
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872761514EE;
-	Sat,  5 Oct 2024 10:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5A81474A5;
+	Sat,  5 Oct 2024 10:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="hlwLF6jW"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XchjH2nO"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F12A136349;
-	Sat,  5 Oct 2024 10:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA677145348;
+	Sat,  5 Oct 2024 10:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728122794; cv=none; b=HmevpeV1wbwnNQpUM7iwmwUsEtWgjZbwFpwGCyZ2c0/4MGnSnn1/GsbYkxFHKukBxrEFLIpxNvpAJSzWhThz7p0FfPMcYlbyXIgzEO+naxOQrGVRVxjg6c2UGF0WAh4WkjlmzVn/IlDeel19nZEG/GIRMZ8wVWzal1eE8ZswLkc=
+	t=1728122840; cv=none; b=qnRZhFWg8VLDbiTCJeowFsSratQVYBAIgFdlBA15dlccfY2NuUSMMylhiYrQgUEEBGSID8mzaCLvyC+zq+5eQqxtwHfzM1shew693DUT+MMYLHzM1TfxCUEdXpNsnHlpCSclquZIbkJ9z3aJ+O2cFx31wOlIfjp+D1jdutC95WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728122794; c=relaxed/simple;
-	bh=bp8YF7paCLm/RvDn/3zn9PMgwl2X0VG26YtAWU1mujA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RABPJ3031J2X/4y5f5hglXdj6oR/xK309CsV3FYHGYzFcwB1qDLFzeD2PGo7bzYuc62G7U8Kx/RctrMr+5qO+1BWbVh4X7BT2rGpC8jCh9Y2CXdC+PdaD2nblgjjmAD1ETbEt7/+V9JPfXJWnNyRNvxhk5ME+aFp8Qdn+WAGK6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=hlwLF6jW; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1728122791;
-	bh=bp8YF7paCLm/RvDn/3zn9PMgwl2X0VG26YtAWU1mujA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=hlwLF6jWQlw4oV3ojO3Xn8/kjOpAucA3XhZ1dpgkV2Wu9c0EJ/QDyAcghHeliHVFo
-	 81zgu2JFqh11fKzAfDLozLQ6lKbWib5YHcYhNlAAIDmy6IVUnCEMwUaCB/vrMyY7pK
-	 fLOl6zjbI5FgOdKo16ccoJgvjD4md8JQZZ07qzgo=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sat, 05 Oct 2024 12:06:18 +0200
-Subject: [PATCH 4/4] power: supply: hwmon: move interface to private header
+	s=arc-20240116; t=1728122840; c=relaxed/simple;
+	bh=5Ib0kNVNvQg0c0d2ZUEETygeqfRQo7joOlN5mh/d8bs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fMaR0QrZ7/BWzffprEjbCCGNpY7CzOhJBPYRvYWmatouKd+CVA1fGYrJ9aNjfHyr4ACtPmZoTZkKkzGBEdYw3ssu/wnh1mK9IinTjmO1oj8/ExbSG8NqGvhKdqG5ULJY+ZF7bD0kAijunJswHOa+0vBPoTIQ5QVnkn1Pxo+prnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XchjH2nO; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5398e33155fso3754721e87.3;
+        Sat, 05 Oct 2024 03:07:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728122837; x=1728727637; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wgmZynwG71OocyO0thzm1PkveGyf/L6c+8DunhW8BTE=;
+        b=XchjH2nO4zUb2LwQxQifQJLE+KYsO0QB4DWG15grX6Oy3QIcUCzoUe8OzOT/QbHqOV
+         pFfn1gpmBQCl7GHC0VQU4gTVaF6r6ae38BJ5DPETk9yfnE7JK+P1JvavNEIsezllzE0x
+         g0g+M/vCrtx5Yo8B3xIFt1pGOIoHQ783tCarK6A7iRhBCayPyTPApbGs5zmhiBZ005Vp
+         LL3vtflJ/v9K31l/pSQ7sWUSE0m2iY90MMnNQXRRILRTRXF0Wrk67roKcYpAN4RLszId
+         kzHac9Zj8FTokn6BdTfISE1DdAkm5bJ9o1HjGFDLRhh3vkdTKwKi6vfC2a/AL/XpesJj
+         CzmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728122837; x=1728727637;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wgmZynwG71OocyO0thzm1PkveGyf/L6c+8DunhW8BTE=;
+        b=R5UyGoeSkSwvHylMigCEEMF5EtWG2fP2Ode2CBVRSzWnhxRF4mqb4QBXG0yK5EOE+v
+         GGwUfJHgPOUL+aMcDJs4kqNMxWE3WX7R0AEJ9AYfxmtTsi6IFygna4sosVdiOF6YgSHZ
+         OPcYW/0YJf4dE7HCoRIavxhaBQ1QPcHY/s6mnJbZStgvIVKzV4Lx74fMxczgC48/cc9o
+         u7pr0stOwrZUsnLSIBm003PXhQeNXgDVFuP4+ylNAyltAGglGWwD5csoRE6k/pJ+j3Zy
+         HVbVgjDkLoxkDOK+ZotRe/4aS0Lnfzmptc1HaeeDyDMsorMFIBaRgzVvI6ijtkaYEHXc
+         e8nA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8psvKrAnOB/NLlU56pp+q3FbNfIrJ+4Lk6+3axdDZcyWRhWTZTXi0Hy1l25uO0uUJJJRi1+DC@vger.kernel.org, AJvYcCWLL+AlePN3Xp1aKH0X5ATahN8+ZdceYHqW15TPpJ7+6r5+8bN1STGyALZwGMJTm3wjZ4Ri48pjZJoNEAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxY/OhVAg4sKvslO3i0VR3GWesiCyiDV8LsRikDYaVrUl+vPP6
+	11cOtFP6zjn832hRP+J0eCfmyOcoKgIaJHz6yEvFEwRtW4IteJse
+X-Google-Smtp-Source: AGHT+IGNYuQkErgECfD7RtrsNs0x0faBAPGYH1Yw0W5OTZRp9TC9znXQ0J+EMz4L/KmxiThpg7fNAw==
+X-Received: by 2002:a05:6512:baa:b0:536:53fc:e8fc with SMTP id 2adb3069b0e04-539ab877139mr3473922e87.16.1728122836676;
+        Sat, 05 Oct 2024 03:07:16 -0700 (PDT)
+Received: from localhost.localdomain ([178.69.224.101])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec1240sm186305e87.55.2024.10.05.03.07.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 03:07:16 -0700 (PDT)
+From: Artem Sadovnikov <ancowi69@gmail.com>
+To: Dave Kleikamp <shaggy@kernel.org>
+Cc: Artem Sadovnikov <ancowi69@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH] jfs: xattr: check invalid xattr size more strictly
+Date: Sat,  5 Oct 2024 10:06:57 +0000
+Message-ID: <20241005100658.2102-1-ancowi69@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241005-power-supply-cleanups-v1-4-45303b2d0a4d@weissschuh.net>
-References: <20241005-power-supply-cleanups-v1-0-45303b2d0a4d@weissschuh.net>
-In-Reply-To: <20241005-power-supply-cleanups-v1-0-45303b2d0a4d@weissschuh.net>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728122791; l=2714;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=bp8YF7paCLm/RvDn/3zn9PMgwl2X0VG26YtAWU1mujA=;
- b=48AkzMo+dKj7vs/k8ZubFmHBHA1FfhdCzmZr2McYD7vhswHU07iIm+E/rCjGtK3+hoz39uH/J
- PltiCQNeQB0DX0IPG6cljtsPNP5QaiN3uu8QVxZirsYJKBYNcTXEjOw
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The interface of power_supply_hwmon.c is only meant to be used by the
-psy core. Remove it from the public header file and use the private one
-instead.
+Commit 7c55b78818cf ("jfs: xattr: fix buffer overflow for invalid xattr")
+also addresses this issue but it only fixes it for positive values, while
+ea_size is an integer type and can take negative values, e.g. in case of
+a corrupted filesystem. This still breaks validation and would overflow
+because of implicit conversion from int to size_t in print_hex_dump().
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+Fix this issue by clamping the ea_size value instead.
+
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Artem Sadovnikov <ancowi69@gmail.com>
 ---
- drivers/power/supply/power_supply.h       | 17 +++++++++++++++++
- drivers/power/supply/power_supply_hwmon.c |  2 ++
- include/linux/power_supply.h              | 13 -------------
- 3 files changed, 19 insertions(+), 13 deletions(-)
+ fs/jfs/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/power/supply/power_supply.h b/drivers/power/supply/power_supply.h
-index 4c558fb3db7211a610134960292790ea3584b363..7434a6f2477504ee6c0a3c7420e1444387b41180 100644
---- a/drivers/power/supply/power_supply.h
-+++ b/drivers/power/supply/power_supply.h
-@@ -44,3 +44,20 @@ static inline int power_supply_create_triggers(struct power_supply *psy)
- static inline void power_supply_remove_triggers(struct power_supply *psy) {}
+diff --git a/fs/jfs/xattr.c b/fs/jfs/xattr.c
+index 8ef8dfc3c194..95bcbbf7359c 100644
+--- a/fs/jfs/xattr.c
++++ b/fs/jfs/xattr.c
+@@ -557,7 +557,7 @@ static int ea_get(struct inode *inode, struct ea_buffer *ea_buf, int min_size)
  
- #endif /* CONFIG_LEDS_TRIGGERS */
-+
-+#ifdef CONFIG_POWER_SUPPLY_HWMON
-+
-+int power_supply_add_hwmon_sysfs(struct power_supply *psy);
-+void power_supply_remove_hwmon_sysfs(struct power_supply *psy);
-+
-+#else
-+
-+static inline int power_supply_add_hwmon_sysfs(struct power_supply *psy)
-+{
-+	return 0;
-+}
-+
-+static inline
-+void power_supply_remove_hwmon_sysfs(struct power_supply *psy) {}
-+
-+#endif /* CONFIG_POWER_SUPPLY_HWMON */
-diff --git a/drivers/power/supply/power_supply_hwmon.c b/drivers/power/supply/power_supply_hwmon.c
-index 01be04903d7d2465ae2acb9eeb0b55a87868bb87..9b30175ba9aefb0ebc0fbe73fdd158fcefc3bdda 100644
---- a/drivers/power/supply/power_supply_hwmon.c
-+++ b/drivers/power/supply/power_supply_hwmon.c
-@@ -9,6 +9,8 @@
- #include <linux/slab.h>
- #include "power_supply.h"
+       size_check:
+ 	if (EALIST_SIZE(ea_buf->xattr) != ea_size) {
+-		int size = min_t(int, EALIST_SIZE(ea_buf->xattr), ea_size);
++		int size = clamp_t(int, ea_size, 0, EALIST_SIZE(ea_buf->xattr));
  
-+#include "power_supply.h"
-+
- struct power_supply_hwmon {
- 	struct power_supply *psy;
- 	unsigned long *props;
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index ea0ba149f296644bd18717d91f338172602eb6d6..58264343fb8a1590d02ec18a2d7fe9d874e3bc31 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -943,19 +943,6 @@ static inline bool power_supply_is_watt_property(enum power_supply_property psp)
- 	return false;
- }
- 
--#ifdef CONFIG_POWER_SUPPLY_HWMON
--int power_supply_add_hwmon_sysfs(struct power_supply *psy);
--void power_supply_remove_hwmon_sysfs(struct power_supply *psy);
--#else
--static inline int power_supply_add_hwmon_sysfs(struct power_supply *psy)
--{
--	return 0;
--}
--
--static inline
--void power_supply_remove_hwmon_sysfs(struct power_supply *psy) {}
--#endif
--
- #ifdef CONFIG_SYSFS
- ssize_t power_supply_charge_behaviour_show(struct device *dev,
- 					   unsigned int available_behaviours,
-
+ 		printk(KERN_ERR "ea_get: invalid extended attribute\n");
+ 		print_hex_dump(KERN_ERR, "", DUMP_PREFIX_ADDRESS, 16, 1,
 -- 
-2.46.2
+2.43.0
+
 
 
