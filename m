@@ -1,104 +1,74 @@
-Return-Path: <linux-kernel+bounces-351732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501A0991575
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:00:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1C5991578
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3E73B209D7
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:00:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB7DAB22A67
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD4F135A53;
-	Sat,  5 Oct 2024 09:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A4A13DBA0;
+	Sat,  5 Oct 2024 09:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="CU5xOHno"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RVT6dHFx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C885A2595
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 09:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB6A2595;
+	Sat,  5 Oct 2024 09:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728118848; cv=none; b=d+tbENkkqTbGKJx5DgNnlrUtwhjgwsMyEwWKRlRybLG83dfEz72rw/0gzkGApB2ciVogvbTNdM8mkYCqoNfvhHIb3HRkXClbmvzvn7Ff9qwN+tRRsxzBMxaQ70KemtUtlFCDHRVq15/rM8/Laq+hYa0VsuV+iuT1u8PJoiX0ilw=
+	t=1728119185; cv=none; b=gP+i7QKwXSlJTSuNjc0pbvdWWK+eJgKDFMoFEr+OxguKrRbj1pWQAQQykxTweDEK5m479mYtjdsnSpGiUY8yyKL8i6QJP8tOzsLAGZtdFVH3F56X3H/KS1iln/3eoOh0a4CMbEtMGY7VGAGGtAJKpchEEsoABBzVwehpOgSR4Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728118848; c=relaxed/simple;
-	bh=i+Hl2jkW0Y80sNTYZ+yeU/B1CMw0zF82pmSdZ8KEpgA=;
+	s=arc-20240116; t=1728119185; c=relaxed/simple;
+	bh=gFzbMBzOCvxbVhqmTHMWSG+b34vrxrIYmw/N7CwA7IA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g7NTS3u5IvQPhXse46EH2KieiagcGs0bsQX/Sqgr9/YZwAGXvY9y4Et5MtWjPczqjpyjNV+xv1vLFwPhUPsC1QIjJfqBs7PiNfdur6uRDwRPvenQi4qyJAsgO39lpQYbt+413ZYmkgF4qGpGNJ3eSMnpLHfdGevJYMRMbWaT2dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=CU5xOHno; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 2CDA01C0082; Sat,  5 Oct 2024 11:00:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1728118844;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SVW3O9XSyifx9yjtLAWEuzOWnRs2kMMJwhsGLsus/PI=;
-	b=CU5xOHno9A7mxa95u6GPpq1aZX/t93QGzYQy2ub/3r53f96yzeeTl6kXt4Qr7dyVT6P5dw
-	ljRluz90oGLXT+kj2mIbVMV2fAxwkLRmdQweu9UTzsxEBTZLaRkjnRa9dCa0GgvnR8R591
-	+pLZ178UFwWogdxOi+KdrMoPqV3tpog=
-Date: Sat, 5 Oct 2024 11:00:43 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] MAINTAINERS: Add an entry for PREEMPT_RT.
-Message-ID: <ZwEAO75epgLQ5YZg@duo.ucw.cz>
-References: <20241002154639.89wWS_OU@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OsZ//c+lE4t/M7KnmXC7++zVmxJydiUK8vVCzh43cy1vdg7zokAi8ErqAI25eyVHX3XGCIu+t1MnTbJwiN6WL+KFBlHygTJ9d1dvrMSrj+4t4/g7YowwZq+oW4SbO2iJfV5gfkZKL8nADBnZ3RHF0tykot5Msn4/wDP5TZstkBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RVT6dHFx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54046C4CEC2;
+	Sat,  5 Oct 2024 09:06:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728119184;
+	bh=gFzbMBzOCvxbVhqmTHMWSG+b34vrxrIYmw/N7CwA7IA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RVT6dHFx1mmdP9TfLJTLEY4ixcAiXN/qjadB44zoR2EKAx4X4ebv2tAXomlbYc9WR
+	 /CQeDZ2JnijuJyS0RmfHe7LaESCiTvabBg00mJJHLjLtsznWNMjfaN46qRhawg3zhI
+	 JwcT2FFSF/L+DNR9WM9eX9qebsqwqDYYxt7Vb+lo=
+Date: Sat, 5 Oct 2024 11:06:22 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Dmitry Kandybka <d.kandybka@gmail.com>,
+	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
+	Kalle Valo <quic_kvalo@quicinc.com>, kvalo@kernel.org,
+	linux-wireless@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.6 001/139] wifi: ath9k: fix possible integer
+ overflow in ath9k_get_et_stats()
+Message-ID: <2024100542-chewable-unbent-f099@gregkh>
+References: <20240925121137.1307574-1-sashal@kernel.org>
+ <ZwD/fw1i0jb4eKGz@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mhN1KJmQKV9ebzzT"
-Content-Disposition: inline
-In-Reply-To: <20241002154639.89wWS_OU@linutronix.de>
-
-
---mhN1KJmQKV9ebzzT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZwD/fw1i0jb4eKGz@duo.ucw.cz>
 
-Hi!
+On Sat, Oct 05, 2024 at 10:57:35AM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> It may be good to introuce cover letters for AUTOSEL series, because
+> otherwise it is hard to reply to series as a whole.
 
-> Add a maintainers entry now that the PREEMPT_RT bits are merged. Steven
-> volunteered and asked for the list.
-> There are no files associated with this entry since it is spread over
-> the kernel. It serves as entry for people knowing what they look for.
-> There is a keyword added so if PREEMPT_RT is mentioned somewhere, then
-> the entry will be picked up.
->=20
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Why would you want to respond to an AUTOSEL series as a whole?  They are
+individual patches, the only thing that links them together is the
+kernel version they are being reviewed for.
 
-Acked-by: Pavel Machek <pavel@denx.de>
-
-I wonder how this should be merged. Send it directly to Linus? Make it
-part of next rt patchset?
-
-Best regards,
-								Pavel
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
-
---mhN1KJmQKV9ebzzT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZwEAOwAKCRAw5/Bqldv6
-8swaAJ0aBekp7Vbvwciq7Sv8VxbJChB4RACghCP0GEieBsd+abOH76w/Y4Cshbw=
-=kz72
------END PGP SIGNATURE-----
-
---mhN1KJmQKV9ebzzT--
+greg k-h
 
