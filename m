@@ -1,242 +1,241 @@
-Return-Path: <linux-kernel+bounces-351806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BC6999164C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:06:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898E699164F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BF2BB22FA7
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04D2F1F235E3
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742B214A616;
-	Sat,  5 Oct 2024 11:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34BC149013;
+	Sat,  5 Oct 2024 11:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="hMIKoFSu"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ErqPK3sk";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="q8p8G9Z2"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4842713DBA0
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 11:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728126373; cv=none; b=uS2qFCPg1TP2GlzCrhrL8rQ+XPn4QCLu1njL9UHwlVz4nK7R6ma7inPgdFcPsf/KuOiPfAzDhIHvvSo9dp5zyXSlKhtf57VJmlq+8uJ9YFuovCnmg8NeQlo9cOx76SO6JPpkdqvnUsxY3gWYY76MHntl6kG8HWkUtI1eyaM9duc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728126373; c=relaxed/simple;
-	bh=uXiTfY3y+BJR8a90QLbfSdRdnPQTLfltrJeRGRuWPkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lq+5p1E+zGBqN9g4tEqUp7E7R2Ve+5JReIcrLO0B7ByKX51P06xqUtzF1dErKNtTgTt9trETq549IJ7Du2F95nxj27jDcHX/LdrTAOG+GKRvrGF7WV2bW4gi6Evqe5hyJGWh7Nt+X1Ze63HVtH1LIx5pA5yWcQKzYCvM//vfU+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=hMIKoFSu; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-82fa0ccb0cdso110359639f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 04:06:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC414085D
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 11:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728126710; cv=fail; b=X67Rd79OGe6/uA5+8kLAq2N98CZaXL9Mvyrs+rsSTLYRvaX3BBZKucaluv29jUx4Dtft7qBYYtIkljzAGXNo52lb4mPAQXHWglOmGqnDTmKufo4c1gUzm5dsVNNlkPHTCZ4E2dvWbPLe0n50bRqPT2UrbX2T3AEYHPKGXV/Dg34=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728126710; c=relaxed/simple;
+	bh=3kXvjkIRAkN3cmeX/lESG6mBTe4lPsSchAi6v3pmeVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=UTNRzi4WyWPVpTxxUgZ/OvCX7NjyuN9KXvEDxLIdj2FvRop7EBlqUtf3i18Wm+SYBTY15MS7Znvnk/eh9bMY2hp4jTSi1ASMGcemVmW7yuZjoDM6IRGoVf4CZqY7HitpaSoEU5fFu7YERt8fUItauYQGni9W3oZ9jxyqdu9VAPA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ErqPK3sk; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=q8p8G9Z2; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4956JhTY024979;
+	Sat, 5 Oct 2024 11:11:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=drR0hCzNsz1DBgYdn+
+	BOxRJHIbj2mgmxanOo5ci8T1o=; b=ErqPK3skzN8/vjZcPjXgq29r25w1+glA0j
+	1n2oDHodgoGjI6N8MstLAfSWIVEZy+L1ex35R6WyHNg3KLPNKi50RptwjyPO+EvI
+	X3MT/dQdKmrJzCvhkokZw/G/Zhv1pVHOZ1j4Pq8cz6LC6frZkjWtfNLkqcBG3N4l
+	3vu8R5F/gOsOTFacfdTiVwipK47HaPRSB39Q1nHQsdn2bf+ZuGyeIxiU5t56fGTV
+	s3mk+tbb2b04hbQfA1F9+Nd7gjWse9hWvGNc/pCN9B5++hu9ANI9+ocVLIUxO06r
+	10NLIIoQC8eDDWuPq9cG37yD3069wPAte0EACXKMfTWGXF225Evw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42302p875f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 05 Oct 2024 11:11:42 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 495AedDY012634;
+	Sat, 5 Oct 2024 11:11:41 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2042.outbound.protection.outlook.com [104.47.56.42])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uw48pn6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 05 Oct 2024 11:11:41 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F1ThRy9/+Q4/2o4A/WikROBJ1j53iSMOPoAfOcejH6wHRIsZ18smh5UQIaz4KjAemdZf/+FYJRsfDDqvthkI44zDZC765BVMehOodWbkTk7lfMlJDsnNWa808pG5Wt+reKxUplbsX4xshkB4wjfcqUwQG5tYSej7HEkRfUAL5/vl7CJXu2wJs1fCD9RScbFTF386nb18ySwBtKqXB4OraaOOfZk92x/kRFFPprUCTxDTq/a1cTDj8SKHA4L9cWA1ggor2LJk+K/cqu+gSpO/wVV5y/3nwz4eZMw+FfRG9ScPFx72vzii4QcS+WCnA4XDf/E8SFiMvnl7tRP8KyEkww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=drR0hCzNsz1DBgYdn+BOxRJHIbj2mgmxanOo5ci8T1o=;
+ b=ZCTadgPOnZjyEMrow7SMX6iOfOZypLIp69kue88KJLYUu/9YSlHhUlYBls1HS+jS3FtOoIMVmdwUsh2W2yZjTC0+HbkVgHUzMTLmnxhLpCCMFj8Ix8GbihVgnMTiOA/gB+GFxlJRK5Ylw1us5PJdtPwx6pwaknmi3JaBgcK6757NekNIGlbUC1eQzbe8Kh4XS/iyQ+IpkWjLvn6q+g8FfOZjOc23ZcSNuhpTQQYK4t0GZqhfrrVl9jhHhV1VuBGMaYEtal72Gdf9epIkXsazTrKZ+gugzKnN89sE4e1wmrdulxOQJm4qEG+1vUaNjptbQlggz1n5iu4eTSvzwN8gWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1728126371; x=1728731171; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y2sNCOQO6fYkDcP0biMmkbIV7L7GOfZWzCv2us5J0fI=;
-        b=hMIKoFSux4k9csTLNGajomIcU7Gy/fI5vgzlNEs2irgOjO9LdweyymF+EmwDTdUmIh
-         jW38ZcOz/q92CN4zSwsMrYeZkQgNL92rXhwxfz0q7/VK6GulI+4/UriIwKTi/R2d9+9Q
-         sU1iKOZL0iVdHy6CkaTWOwjlhZ9h1sJqqrJjt5qOPdHWtHDIt5vCrC3I8MsWrhejIe7d
-         kHA+PTtxII0oRJdPhprI/hDE5+vtnwUA3lJL9M4x0HqqvYFj2ApLjDLsYENPNc/GJSKp
-         Xg1Xemly77q/+dXNbSHg07E2cNg88unZySj7MWNYkYqjI2cJMNYvjoK6H3NnpgqSzSkx
-         dZkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728126371; x=1728731171;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y2sNCOQO6fYkDcP0biMmkbIV7L7GOfZWzCv2us5J0fI=;
-        b=nySWFAnqL03bRgZBRGUgOQ+zJXUsd2OR4Ji+ZOkJqBUewUB6ZNWVsbKH33UZiWRBhZ
-         FwEDlBQhyYZjMAkuSWSI147tR3XTyk5LV8XAa+Hh2saMOgLR6es7tWxGVjtaslmaYS13
-         kC2s6tWfo6aIim9N++bDyqb3aVHIpdJHujS4dZIWkIh0Pd8RU1zZlJ73B7mWdYsXtgVx
-         4cVvo+opid1vGQ55ItDzgYz+wuLch+ip1gvY7gwx+zh/Xx6gQCSLxeNnHDAscbKayS7T
-         ZeTi+oQcUmtglilPmgnR8tjtVtUwxIWjk+m7PjWPoq3I01CZI7Qo1zjj5boyevna3trl
-         cS2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUxYyG371VdFjLJC+HON79zMtvHaaaPHT8YcKRTMXGB/uNrJlQBijCz7YEAtvhQtpuIvtA4ejM4r0BUJYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0HjljHLhFesPNel4HAD+ilKRhvzjVGxrSHxmU4Ch69s2u4gbb
-	t2avWn+CJi2vErPqmrt7Hn+mb4Lw2hCpeqMc/J5ie2iv/kTtypj985u5rzPq4ASMenzCacLQVHI
-	g4NBrYc06mwdm3gSdXks0kHmss05b3E4JEAM0nw==
-X-Google-Smtp-Source: AGHT+IFIIioNr2vvhjdbCgrc3o7eBnHz0oNs3B1WaQBAfHIbbho0MDeqlCPz0d0DawzwWuXN/8QwenpSoNrh09r4Aac=
-X-Received: by 2002:a05:6e02:148c:b0:39f:5e18:239d with SMTP id
- e9e14a558f8ab-3a375a9ac5emr49651255ab.15.1728126370968; Sat, 05 Oct 2024
- 04:06:10 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=drR0hCzNsz1DBgYdn+BOxRJHIbj2mgmxanOo5ci8T1o=;
+ b=q8p8G9Z2DyU2tqMJNfsQ3VTV+gZCxDC2gYr+aEVpWK7YBS2/2O7G7M/vbhq053jIqzS0tFsPHqvElL8aj2Rb+mna4AYJpjbWIcDIzweEq1Q02Ei890g2mNMdrirxJSHk1TW5oDtpXvGtd3XLTqfd+IpRiyNHdvsNJF6vJuie1lU=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by PH0PR10MB4598.namprd10.prod.outlook.com (2603:10b6:510:34::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.19; Sat, 5 Oct
+ 2024 11:11:39 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8026.019; Sat, 5 Oct 2024
+ 11:11:39 +0000
+Date: Sat, 5 Oct 2024 12:11:35 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in mmap_region()
+Message-ID: <2394412b-3037-4867-b16e-f155740d062c@lucifer.local>
+References: <20241004093546.3232-1-spasswolf@web.de>
+ <3b83746d-b73e-4b89-9b74-5aba5a827f45@lucifer.local>
+ <088a3541b85b783ef68337bd4bb790d62f200dfa.camel@web.de>
+ <9e1f326d-7740-4f4c-baf5-45f9eae0048d@lucifer.local>
+ <4bf6139bed2b7ed04ed0b599391dbff9272d33ce.camel@web.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4bf6139bed2b7ed04ed0b599391dbff9272d33ce.camel@web.de>
+X-ClientProxiedBy: LO2P265CA0311.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a5::35) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1726126795.git.zhouquan@iscas.ac.cn>
-In-Reply-To: <cover.1726126795.git.zhouquan@iscas.ac.cn>
-From: Anup Patel <anup@brainfault.org>
-Date: Sat, 5 Oct 2024 16:36:00 +0530
-Message-ID: <CAAhSdy0tEpgmC1VgMn_Km5SxwanOii5LzL-5oTJWbN+1vLjWug@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] riscv: Add perf support to collect KVM guest
- statistics from host side
-To: zhouquan@iscas.ac.cn
-Cc: ajones@ventanamicro.com, atishp@atishpatra.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|PH0PR10MB4598:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d2f2f61-74eb-427e-c112-08dce52e7be3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|10070799003|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fzw6ezcGPt/UoBlx6INLIOLd9tk5DnxQHuC3vMuq6HjELNRPmlNB8pbnkBc5?=
+ =?us-ascii?Q?vMUBUmbb05pICwBJk1jRwP1PuxA6RZNCSnZDEHjGCuWv1xLODayrrVXswjH5?=
+ =?us-ascii?Q?Phlk/cvJVlXQBQKub0GYExCqF+2LRTAQqwknYJRM4XmAW16Wkj8w10ifQCn1?=
+ =?us-ascii?Q?bBuUa0wi25P58C2jBbkMvddMoPCS36Yv8MVG1B7dWH5oUPTPqh77ATrTLjni?=
+ =?us-ascii?Q?ulrPdOXHn/EztsngOdsngcIBmbHKW1iO426GSQS4cbdI8KuSvlaRQ/u+JH+H?=
+ =?us-ascii?Q?RlIZBJkeqvAY/itndOvK+BxqPkhhiBf2/he8oY1AFSplZZl+Q3Mdu8PoSnJg?=
+ =?us-ascii?Q?CzDe5kHudhF5PksVeokD+upHM2fuA8wvFk9cB1FqiktOquNDz7tRXgN2hUsM?=
+ =?us-ascii?Q?Mq/+FKJwzz18dunwsXCxUdizMCJUW4eo9HaOLUVoSqXSYubtqgAZJEFK7EeA?=
+ =?us-ascii?Q?Aa08P16LJjEOnVJKVTMFez8Q4f/0Tp9irYKP7WC6/PqKXOQ4YY24sl8xUkEn?=
+ =?us-ascii?Q?eurIzzxUsHwsSfUu8F6ojrlWtJTBfkrh2MD5qzPTTPVkyPy5QwtN7fZ3qnv/?=
+ =?us-ascii?Q?lBpFn5kT62Z+Xw1VzokzT/NGF8/qI3tsVaJHO01pn1F0tuEukOdB+uY2OLGL?=
+ =?us-ascii?Q?RYiWnR78ogJ3bN3l8apMcIt1Se3jSBvzZQ6x3gr/1WJOVSLc5vCYfXPmFiuI?=
+ =?us-ascii?Q?6tRKECgjnbdGtxuh9Q4xjQUPxKkXTQY+bk+lA7U5Rd0YpgwNSEitdDHJmYIC?=
+ =?us-ascii?Q?UtGVgrXxBWQ9x92+3WLOT7ni0lV8xKCwpOyNaBoKTLAVq+RxvSzK9drYXmzg?=
+ =?us-ascii?Q?VClYxGBIiGWLVrAgvxE/5Sb+btW1DYSTK9RIhOFbiZYdduCBXEp1SJce0C5J?=
+ =?us-ascii?Q?GpnCmEs9TTy6TjLzPz60gtJb1mrSXdvsaAsvBzOJ4sAaufZffaUtIE+iXpR7?=
+ =?us-ascii?Q?3Gp9g6WEmSTPaa6nTTtGB5DOjakbf1Pqcvsjzl/W0hxJC98TEAQbTNf1SFc/?=
+ =?us-ascii?Q?abwdN+jhlrdf2v9Ar1lwGVMRwkjtdBCs2E/Q0l5ig3ArNbvyo4IUMc2Cguf5?=
+ =?us-ascii?Q?c7c3W1QV5uEhC0k6DCHAzoOtu4rmiOtF9XThqL54ulz4LNb2A2mcqPL44VF3?=
+ =?us-ascii?Q?rsHtiEGJKuxN4gKSJQ0Yr73A8ZwEdILdVCq5W5AYTTb/8bbASCn2ftGaXhlp?=
+ =?us-ascii?Q?rbfHzvjP4+/0MYGbFxQn5gaxRN784W//Tn6SgMw5u0F1hEzTsGYlZo59oBXi?=
+ =?us-ascii?Q?24OsSOvgfQBPvCyUiIqYCSufEiP4TrxlIRXWC1zLrQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?u5epmbntwMzBFoBW91sYva29Onp3hTag6+UxBCtcUf0bNlBFP3ad7P9f6z/P?=
+ =?us-ascii?Q?0T8OrDgTSyJspRnZqtBVpq+aK67pJLlRQm21cIswGS8uKDobdQ6UTaZyTjqn?=
+ =?us-ascii?Q?iZXTDxpzNddB1edVrQu1iVsF10r1iMVykbugi1jbBIFjVk3HyzJpzBX1NGkY?=
+ =?us-ascii?Q?0U4UfqoCRguoFE1Lsx60ujbD6HdU+IL2f1ifMDowPhm5EZ1ec7ou+viD0z6g?=
+ =?us-ascii?Q?ZsIDGEMhE3FTI39ASkTS6/bHKT53mM6d1tZfZWtdMNUOM20YdONKP3DM5px2?=
+ =?us-ascii?Q?v//xudtLyuJlwjCJHmZ16YS7Y/XL+BDB3XA/yYfslkiQat+HGV65n15lKQab?=
+ =?us-ascii?Q?AuhTjOqUYWw05cCVkAWugrW90Eyr9EnI6WUge9KfddOKXmNFe2e5NbAlaIMr?=
+ =?us-ascii?Q?ZYJDzws7PqwfLBjSAKUyQMMlCqdevNDUSQ0hricDR4cFl09AHnEaPyraKHax?=
+ =?us-ascii?Q?OaaHLLBxKYffMwIGPQKb4EYdzrJh0eLbEOzZM6mApL6yM2PtFST+ztaVAo8d?=
+ =?us-ascii?Q?I976hp8cgBdT0r9wnJJxwiK7jKF2HYRVsQeU2P24RArJyPobPBckavyKGY3t?=
+ =?us-ascii?Q?SX+i8pv0jihZt8xy0alcoSBrWcXszOEDo0GnsAom3qx1A5V9+qvPq0sjXBiH?=
+ =?us-ascii?Q?UB/ta9iEPS0xbwcwikA98J1mmSGlutCDYWsOuA93RQVCJAChtE4xx51Adl5v?=
+ =?us-ascii?Q?UHbt2itHMaoeKo+P4UTzhVrMVerdlTa4pXpLHfOSp3SgcXhWaSpbXRD7hWGE?=
+ =?us-ascii?Q?yfr0wfRaoUqjnhOBL2EEryJUE3wU+dwOfpkw2Q1ZAfO/iUe+tWJAnzaTWs+Z?=
+ =?us-ascii?Q?sg3Di2eQndO2ffR5TqcuUKAGLmZ0AcqsG1NSrR7t95PQXAO4CsbNNXo1MbsX?=
+ =?us-ascii?Q?KXlBY3RNU+0hShOplRo/kc9ojYLR2KCgDFrioHTQ8RG8PCoi/3YxQr6F26l0?=
+ =?us-ascii?Q?uF4frH66BtBFcAiCTOk35XYJekbkBJfz0Q1PR6ZkBJFqyu1V5vXOphHKLa8v?=
+ =?us-ascii?Q?KngA+jIXPZN8JwENv/6jsDP1b5p7uvbipCXKQ7jx0zqW4kkvecpaCGtEROqe?=
+ =?us-ascii?Q?PNfSiKtADlixMhNX8qWqkUL75lEnprUodECuC/Glg/eTjzhfEo5F0ISpBvS5?=
+ =?us-ascii?Q?LIyvnnw7xi++5gyyUe+eyaORTljp/0Tdq2K/ZIw2ouBHWqhZ5PHheyKPjJjU?=
+ =?us-ascii?Q?6M60IhLaIiokZsLRRhQB7don55TKIwtaf2vdNRw078+t1ChIl1QyhhLLzYBG?=
+ =?us-ascii?Q?fKfkBU1/4rYvUhdljobS+mkIdpJZ02WPdg8uMzbm4CYsl5wwhiPmtaImuEoD?=
+ =?us-ascii?Q?W1AKoKCM5wdGwNnbXJcuq7iiteM8M2GvNPigcL0UWXz6GMUHyxtnOcLsH/Q1?=
+ =?us-ascii?Q?x8mcAqoA3sZABoOmIOe8Z5fkx7MMH80XMtzy5rC2txmwkmwC//RP0Gsfgf+2?=
+ =?us-ascii?Q?vLI+mrWIubvADxdQAsus7F07VhiE4W4bKr0vBVFKZj337lLp8U+XyGYXq3YX?=
+ =?us-ascii?Q?r5J0OG1t22cslSZe45injq1T/W79V6EfRwjWyJVC4hQs7YlKpSbZCFFd1XYQ?=
+ =?us-ascii?Q?FmcF0Hj7mS4eldiWEiASoAKXv/qoMOkEkTK1NWzGYqAXdx5EqP/k/Y/wLAfb?=
+ =?us-ascii?Q?zJSZbXi/QmCIO7K3xR3bduJ/eDBhIzbH2KEmu4pfPO+TDRFUOvgbdB8z2UaO?=
+ =?us-ascii?Q?MtFy9w=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	HyOqh9gRwPFxtMUu215q4z0vTeiYUkj02cixtMr3onD4z0K8kEBXrLSlR5iCSacK4rM9IGJHyQKFkdzcjbhga8kJZxHjsP+9hDxOuKTFL0gfgVivy1p3S6gzYj0ICSyMRM3a+BnMcvTdknlbyMQm8Pwnmo1xw9gp8FmrbQu63ya/co1tspl5jHMOSRj7KF/LOWDk2NY8auE566DPjLYC4nqaATZp7/dcZ6V63xwffszlMAGrerCrPg2V2wVWHhmKvKjEi3nIeQgga9FmPY7U40JsUDBYhioW30VnEdARGXAEsOo2HfXqOpaTo3yvo7fSdGAHyLmgzemLnU5nE/nmigWekdU2fLEFgRgi8clbcMYqpq4Ti/wzxbiGlzl25CcPzy0tKO7wgR3VaZ75Frc24DO9/kYGe5vfENcs7FBv2IvCl/RI8h/dt//05T1pxGhRkOoCIO1lE/3Ld6dpYD+wm5AUz/eK73c+9O8zuQoGNmRAL9STPwRZeuoLjZLpYMBVj33KEKAA6svFDeVlV32B4tBU1DTyLDveiJUsmd7k+4x8/vV2Le0+0rYFhTu2gUkzLJvuRaMBYh5QxrJ2Cpoy6bS7/Wqa1bXrk6iepkW3nhc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d2f2f61-74eb-427e-c112-08dce52e7be3
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2024 11:11:39.0596
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: D5B9+P4UcZu22OipnedQ7r00tCejtWxDAi0mpJlFRCf4XqQihqEDo3DKpfPe6+Sdt+PslPTn3fg78/IHkxo8/gXb5Iorou8AHYlXwB0xkUo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4598
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_09,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ phishscore=0 mlxscore=0 suspectscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410050078
+X-Proofpoint-ORIG-GUID: 7-CqWCZqAHB34lzz-pc3NzwI2DOPebuA
+X-Proofpoint-GUID: 7-CqWCZqAHB34lzz-pc3NzwI2DOPebuA
 
-On Thu, Sep 12, 2024 at 1:30=E2=80=AFPM <zhouquan@iscas.ac.cn> wrote:
+On Sat, Oct 05, 2024 at 10:57:59AM +0200, Bert Karwatzki wrote:
 >
-> From: Quan Zhou <zhouquan@iscas.ac.cn>
+> > >
+> > > I just tested this and it passed ten tests (i.e. upgrading the proton version i
+> > > steam) in a row.
+> > >
+> > > Bert Karwatzki
+> >
+> > Perfect :) will send the fix upstream then as a hotfix for 6.12! Thanks
+> > very much for helping out with this, your help has been absolutely
+> > invaluable and HUGELY appreciated.
+> >
+> > Cheers, Lorenzo
 >
-> Add basic guest support to RISC-V perf, enabling it to distinguish
-> whether PMU interrupts occur in the host or the guest, and then
-> collect some basic guest information from the host side
-> (guest os callchain is not supported for now).
+> I also tried another debugging patch:
 >
-> Based on the x86/arm implementation, tested with kvm-riscv.
-> test env:
-> - host: qemu-9.0.0
-> - guest: qemu-9.0.0 --enable-kvm (only start one guest and run top)
+> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> index e6f0da908ba7..35b0fe3e02f7 100644
+> --- a/lib/maple_tree.c
+> +++ b/lib/maple_tree.c
+> @@ -3773,6 +3773,8 @@ static noinline void mas_wr_spanning_store(struct
+> ma_wr_state *wr_mas)
+>         /* Copy l_mas and store the value in b_node. */
+>         mas_store_b_node(&l_wr_mas, &b_node, l_mas.end);
+>         /* Copy r_mas into b_node. */
+> +       if (!r_populated && r_mas.offset <= r_mas.end)
+> +               printk(KERN_INFO "%s: avoiding maple tree corrution\n",
+> __func__);
+>         if (r_populated && r_mas.offset <= r_mas.end)
+>                 mas_mab_cp(&r_mas, r_mas.offset, r_mas.end,
+>                            &b_node, b_node.b_end + 1);
 >
-> -----------------------------------------
-> 1) perf kvm top
-> ./perf kvm --host --guest \
->   --guestkallsyms=3D/root/repo/shared/kallsyms \
->   --guestmodules=3D/root/repo/shared/modules top
+> and when running the test this prints
 >
-> PerfTop:      41 irqs/sec  kernel:97.6% us: 0.0% guest kernel: 0.0% guest=
- us: 0.0% exact:  0.0% [250Hz cycles:P],  (all, 4 CPUs)
-> -------------------------------------------------------------------------=
-------
->
->     64.57%  [kernel]        [k] default_idle_call
->      3.12%  [kernel]        [k] _raw_spin_unlock_irqrestore
->      3.03%  [guest.kernel]  [g] mem_serial_out
->      2.61%  [kernel]        [k] handle_softirqs
->      2.32%  [kernel]        [k] do_trap_ecall_u
->      1.71%  [kernel]        [k] _raw_spin_unlock_irq
->      1.26%  [guest.kernel]  [g] do_raw_spin_lock
->      1.25%  [kernel]        [k] finish_task_switch.isra.0
->      1.16%  [kernel]        [k] do_idle
->      0.77%  libc.so.6       [.] ioctl
->      0.76%  [kernel]        [k] queue_work_on
->      0.69%  [kernel]        [k] __local_bh_enable_ip
->      0.67%  [guest.kernel]  [g] __noinstr_text_start
->      0.64%  [guest.kernel]  [g] mem_serial_in
->      0.41%  libc.so.6       [.] pthread_sigmask
->      0.39%  [kernel]        [k] mem_cgroup_uncharge_skmem
->      0.39%  [kernel]        [k] __might_resched
->      0.39%  [guest.kernel]  [g] _nohz_idle_balance.isra.0
->      0.37%  [kernel]        [k] sched_balance_update_blocked_averages
->      0.34%  [kernel]        [k] sched_balance_rq
->
-> 2) perf kvm record
-> ./perf kvm --host --guest \
->   --guestkallsyms=3D/root/repo/shared/kallsyms \
->   --guestmodules=3D/root/repo/shared/modules record -a sleep 60
->
-> [ perf record: Woken up 3 times to write data ]
-> [ perf record: Captured and wrote 1.292 MB perf.data.kvm (17990 samples) =
-]
->
-> 3) perf kvm report (the data shown here is not complete)
-> ./perf kvm --host --guest \
->   --guestkallsyms=3D/root/repo/shared/kallsyms \
->   --guestmodules=3D/root/repo/shared/modules report -i perf.data.kvm
->
-> # Total Lost Samples: 0
-> #
-> # Samples: 17K of event 'cycles:P'
-> # Event count (approx.): 269968947184
-> #
-> # Overhead  Command          Shared Object            Symbol
-> # ........  ...............  .......................  ...................=
-...........................
-> #
->     61.86%  swapper          [kernel.kallsyms]        [k] default_idle_ca=
-ll
->      2.93%  :6463            [guest.kernel.kallsyms]  [g] do_raw_spin_loc=
-k
->      2.82%  :6462            [guest.kernel.kallsyms]  [g] mem_serial_out
->      2.11%  sshd             [kernel.kallsyms]        [k] _raw_spin_unloc=
-k_irqrestore
->      1.78%  :6462            [guest.kernel.kallsyms]  [g] do_raw_spin_loc=
-k
->      1.37%  swapper          [kernel.kallsyms]        [k] handle_softirqs
->      1.36%  swapper          [kernel.kallsyms]        [k] do_idle
->      1.21%  sshd             [kernel.kallsyms]        [k] do_trap_ecall_u
->      1.21%  sshd             [kernel.kallsyms]        [k] _raw_spin_unloc=
-k_irq
->      1.11%  qemu-system-ris  [kernel.kallsyms]        [k] do_trap_ecall_u
->      0.93%  qemu-system-ris  libc.so.6                [.] ioctl
->      0.89%  sshd             [kernel.kallsyms]        [k] __local_bh_enab=
-le_ip
->      0.77%  qemu-system-ris  [kernel.kallsyms]        [k] _raw_spin_unloc=
-k_irqrestore
->      0.68%  qemu-system-ris  [kernel.kallsyms]        [k] queue_work_on
->      0.65%  sshd             [kernel.kallsyms]        [k] handle_softirqs
->      0.44%  :6462            [guest.kernel.kallsyms]  [g] mem_serial_in
->      0.42%  sshd             libc.so.6                [.] pthread_sigmask
->      0.34%  :6462            [guest.kernel.kallsyms]  [g] serial8250_tx_c=
-hars
->      0.30%  swapper          [kernel.kallsyms]        [k] finish_task_swi=
-tch.isra.0
->      0.29%  swapper          [kernel.kallsyms]        [k] sched_balance_r=
-q
->      0.29%  sshd             [kernel.kallsyms]        [k] __might_resched
->      0.26%  swapper          [kernel.kallsyms]        [k] tick_nohz_idle_=
-exit
->      0.26%  swapper          [kernel.kallsyms]        [k] sched_balance_u=
-pdate_blocked_averages
->      0.26%  swapper          [kernel.kallsyms]        [k] _nohz_idle_bala=
-nce.isra.0
->      0.24%  qemu-system-ris  [kernel.kallsyms]        [k] finish_task_swi=
-tch.isra.0
->      0.23%  :6462            [guest.kernel.kallsyms]  [g] __noinstr_text_=
-start
->
-> ---
-> Change since v2:
-> - Rebased on v6.11-rc7
-> - Keep the misc type consistent with other architectures
->   as `unsigned long` (Andrew)
-> - Add the same comment for `kvm_arch_pmi_in_guest`
->   as in arm64. (Andrew)
->
-> Change since v1:
-> - Rebased on v6.11-rc3
-> - Fix incorrect misc type (Andrew)
->
-> ---
-> v1 link:
-> https://lore.kernel.org/all/cover.1721271251.git.zhouquan@iscas.ac.cn/
-> v2 link:
-> https://lore.kernel.org/all/cover.1723518282.git.zhouquan@iscas.ac.cn/
->
-> Quan Zhou (2):
->   riscv: perf: add guest vs host distinction
->   riscv: KVM: add basic support for host vs guest profiling
+> [  293.477904] [   T5720] mas_wr_spanning_store: avoiding maple tree corrution
+> [  293.480202] [   T5720] mas_wr_spanning_store: avoiding maple tree corrution
+> [  293.482087] [   T5720] mas_wr_spanning_store: avoiding maple tree corrution
+> [  293.484786] [   T5720] mas_wr_spanning_store: avoiding maple tree corrution
+> [  293.486644] [   T5720] mas_wr_spanning_store: avoiding maple tree corrution
 
-Please rebase this series upon Linux-6.12-rcX and send another version.
+Thanks, interesting it occurred repeatedly...
 
-Regards,
-Anup
+I suspect there are situations in which this kind of corruption can occur and
+not be a problem too. Nasty one all round!
 
 >
->  arch/riscv/include/asm/kvm_host.h   | 10 ++++++++
->  arch/riscv/include/asm/perf_event.h |  7 ++++++
->  arch/riscv/kernel/perf_callchain.c  | 38 +++++++++++++++++++++++++++++
->  arch/riscv/kvm/Kconfig              |  1 +
->  arch/riscv/kvm/main.c               | 12 +++++++--
->  arch/riscv/kvm/vcpu.c               |  7 ++++++
->  6 files changed, 73 insertions(+), 2 deletions(-)
+> in dmesg.
 >
->
-> base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-> --
-> 2.34.1
->
+> Bert Karwatzki
 
