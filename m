@@ -1,100 +1,177 @@
-Return-Path: <linux-kernel+bounces-351829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB1709916A7
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:05:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F4B9916A9
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 963471F22F0D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:05:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A2DC1C21F42
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF0D14D2AC;
-	Sat,  5 Oct 2024 12:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB4685628;
+	Sat,  5 Oct 2024 12:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OXZu8WbO"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="BZMj2elV"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF8314C5AE;
-	Sat,  5 Oct 2024 12:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D387714C5AF;
+	Sat,  5 Oct 2024 12:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728129871; cv=none; b=PANDdUWuSCpXlgn4B5mLfqaGvWskCPapiETdVILOPa1YsezW+DIt3y5faABRFKVz9FZs+x87dinZS/6R7ePujJGROmjwhGpmmHqOrPqR0jgiwVREJUhSmcLnSmnCt9X75oNNf6nJFdwVKA4RWV9QDvK745Qm2fPdzhQHUkPTm5I=
+	t=1728130028; cv=none; b=uzUwN5uCei+SoLYu/v9OE0b/e5A5YCoIw/04WgauHDxq7UaCxZKPyCOGEcDmDJVUyWhFJiNY3hDIhHrpo70KiH5Leb5dGsUd9ikfetaSDjpMmFshcdEvtot9CdW9ceJISsl1FL2s11D3RdgWiSdzv8XsWNYePluOEuQK17tPG4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728129871; c=relaxed/simple;
-	bh=2TAaj1YLgz3mxmfQkMCYlqJkYPgfxM99Z1z+9Du73cA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HrchPEuWjSRqq+y0CZTFUrNnMmRab5t4d/PqnUmLsUKQmLauwjx9Ksg6jq5u55saEZkJ5l484erUrAkMTO1YMAfS2gIRycMCjjgAFoWZjrz961WsBSk8rDvuzeq8IR95QFeiF6JuF4vc75O975OF20I/EY4xYtE1+9pirIy6qBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OXZu8WbO; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42e5e758093so25033055e9.1;
-        Sat, 05 Oct 2024 05:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728129868; x=1728734668; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2TAaj1YLgz3mxmfQkMCYlqJkYPgfxM99Z1z+9Du73cA=;
-        b=OXZu8WbOrzQ51QEGBrp6nY3BG4O3KqBTnEui5w8pEL1GqtgZwyDQ9BDVETWz8DwXYF
-         j6tx3xOcV5DQu0YhmftOlZpHBBXtbgRIMj2AQ6DoSaavpk0ALh3Onhl17cFwmlIckfg3
-         egFdHnX++vgKe9Ta4aB+JHjH25LqvSIULRUVTIMiUXKEYbyG6QMpqCS7HDNEupj3bqpi
-         UKCzo7KPrWrx/jCmJNWgbVShzwZp16LjhHJpfjzBP6uRzOTIQOX8w07oPSdKJbzUeLnU
-         w0NdW5Tivf3ZqyH7LV/9VOaeuTRX7BdxmEj38EARIcgznOKlX9PPBQc6gsD62lTo4tHC
-         I6og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728129868; x=1728734668;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2TAaj1YLgz3mxmfQkMCYlqJkYPgfxM99Z1z+9Du73cA=;
-        b=GAKDObIVY/6cjJhPjYHn7flRreenEVq/XnrRYYwAP2ztoMGqK29or4/N3m1SZ+wqRj
-         csLTazW6q74dawayYEgaomR7lQEWPQFidbCi5DpmDgkWyW5lmgBG/b0lAHSSv86L24as
-         BZAZGI96Oqt0ogva2fttB1z5Q5QSvQZs00BzbWWHYHPETaoSOzHQbJGKEYJn9zTYqJtn
-         F6ifpNiF4o4YWgwoa685yxjFI8TAdhubD2jCP0ihKiFCCi9gnYb0wdEg2LuYBI90O100
-         tWJYQjsFVCSWbI/NP0qjGHeS3jKMbz7H3ZWAYlJpHbCXR+/VBn8z16sV5vkJ1rjMhThx
-         xtWA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+hmcb4nABkkyFTesdpZ8fDkjUTWdeqTFt/KDllppphRRWNxCmDS+/BLZ+XATQAS2mMAnLTy8pUH4gUb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4BzisDN3nFyASf8rxsvznygjb9L6mdNcT3S7Slvp+IusomdXt
-	HJGNI83CMfGRSz2MTjnygKFz9nNhsN4XAouD6tvQKFWVrQSnJ+vX
-X-Google-Smtp-Source: AGHT+IFlbyTm+8NckJvUfF1ruPrA4q2PYxQGobPnRDCKz0h74KHrV91HWZEjbKYMipL4r6CBjrH6Zw==
-X-Received: by 2002:a05:600c:1d2a:b0:42f:7ed4:4c25 with SMTP id 5b1f17b1804b1-42f85ab5db4mr43127545e9.14.1728129867892;
-        Sat, 05 Oct 2024 05:04:27 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ed9d4bsm20948325e9.42.2024.10.05.05.04.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 05:04:27 -0700 (PDT)
-Date: Sat, 5 Oct 2024 14:04:25 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Baolin Wang <baolin.wang7@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Yanxin Huang <yanxin.huang@unisoc.com>,
-	huang yanxin <yanxin.huang07@gmail.com>,
-	Wenming Wu <wenming.wu@unisoc.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: nvmem: sprd,sc2731-efuse: convert to
- YAML
-Message-ID: <ZwErSQIKWLdOjmcc@standask-GA-A55M-S2HP>
-References: <c487bff193db7a06b846976a80c02c37509943ac.1722841057.git.stano.jakubek@gmail.com>
+	s=arc-20240116; t=1728130028; c=relaxed/simple;
+	bh=hU5q9QUikjXmWkbzka9caDwMGlVJ8fnlLNqMoTuILEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KjI5rXn61dbQVgqNoMDZElVB3V3WLZuf6tM8OvWCvSFJzq3RXiwv88AN9/Aiip+k5mkttrn0IwMxuxC6vSTWJUceo6FMpqV/sVyLnk8X6eppV3ivjGqEwn0YMjI69R110HEcZs/pVmi1s0LdXtv/Rd+FqT15uafnlQsku2qd1mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=BZMj2elV; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1728130024;
+	bh=hU5q9QUikjXmWkbzka9caDwMGlVJ8fnlLNqMoTuILEk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BZMj2elVuboGHieaGO34F9soADypE9CImibr9QZpx07zJPFd7FOpQgnvZo1V+nGmb
+	 dgb7CwaMa1NNo94MOmpv9HtSbEy1BFxxrpD/vwLXFm34FQk78S9bLzLq4Y/QnrVHtR
+	 CV3fPxRY3vdtx5NIV88S7E6wRlMjKDWIb+xwpke1BBt6owZwAGYYjfUR7bpgK+VLXa
+	 9lbzJ1uUZDE0npSLEvBln7UfuFd4R3FHoqRYtVFt0dpTpvPtjGc36l0KQWWj+Bcrbc
+	 oqPFfjGHRtJ7m0B+EZfy20OMdoh2ajf+opXl+0PBbUmJFQqjwNISIIeD8WQ6sK3EOT
+	 daOVjRS1nRwHA==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XLPKh4hQwzXwk;
+	Sat,  5 Oct 2024 08:07:04 -0400 (EDT)
+Message-ID: <69c7e71a-2076-4fa7-90f3-534b52d74345@efficios.com>
+Date: Sat, 5 Oct 2024 08:05:05 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c487bff193db7a06b846976a80c02c37509943ac.1722841057.git.stano.jakubek@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 3/4] hp: Implement Hazard Pointers
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
+ Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>,
+ Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, rcu@vger.kernel.org,
+ linux-mm@kvack.org, lkmm@lists.linux.dev
+References: <20241004182734.1761555-1-mathieu.desnoyers@efficios.com>
+ <20241004182734.1761555-4-mathieu.desnoyers@efficios.com>
+ <CAEXW_YQfyPapBwSuqvFfs+XzSPaSCC3FDKsvb_Up+h-dnqgXeA@mail.gmail.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <CAEXW_YQfyPapBwSuqvFfs+XzSPaSCC3FDKsvb_Up+h-dnqgXeA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Gentle reminder about this series.
-It's been sitting on the mailing list for ~2 months.
+On 2024-10-04 23:25, Joel Fernandes wrote:
+> On Fri, Oct 4, 2024 at 2:29 PM Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>>
+>> This API provides existence guarantees of objects through Hazard
+>> Pointers (HP). This minimalist implementation is specific to use
+>> with preemption disabled, but can be extended further as needed.
+>>
+>> Each HP domain defines a fixed number of hazard pointer slots (nr_cpus)
+>> across the entire system.
+>>
+>> Its main benefit over RCU is that it allows fast reclaim of
+>> HP-protected pointers without needing to wait for a grace period.
+>>
+>> It also allows the hazard pointer scan to call a user-defined callback
+>> to retire a hazard pointer slot immediately if needed. This callback
+>> may, for instance, issue an IPI to the relevant CPU.
+>>
+>> There are a few possible use-cases for this in the Linux kernel:
+>>
+>>    - Improve performance of mm_count by replacing lazy active mm by HP.
+>>    - Guarantee object existence on pointer dereference to use refcount:
+>>      - replace locking used for that purpose in some drivers,
+>>      - replace RCU + inc_not_zero pattern,
+>>    - rtmutex: Improve situations where locks need to be taken in
+>>      reverse dependency chain order by guaranteeing existence of
+>>      first and second locks in traversal order, allowing them to be
+>>      locked in the correct order (which is reverse from traversal
+>>      order) rather than try-lock+retry on nested lock.
+>>
+>> References:
+>>
+>> [1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
+>>       lock-free objects," in IEEE Transactions on Parallel and
+>>       Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
+> [ ... ]
+>> ---
+>> Changes since v0:
+>> - Remove slot variable from hp_dereference_allocate().
+>> ---
+>>   include/linux/hp.h | 158 +++++++++++++++++++++++++++++++++++++++++++++
+>>   kernel/Makefile    |   2 +-
+>>   kernel/hp.c        |  46 +++++++++++++
+> 
+> Just a housekeeping comment, ISTR Linus looking down on adding bodies
+> of C code to header files (like hp_dereference_allocate). I understand
+> maybe the rationale is that the functions included are inlined. But do
+> all of them have to be inlined? Such headers also hurt code browsing
+> capabilities in code browsers like clangd. clangd doesn't understand
+> header files because it can't independently compile them -- it uses
+> the compiler to generate and extract the AST for superior code
+> browsing/completion.
+> 
+> Also have you looked at the benefits of inlining for hp.h?
+> hp_dereference_allocate() seems large enough that inlining may not
+> matter much, but I haven't compiled it and looked at the asm myself.
 
-Stanislav
+Here is a comparison in userspace:
+
+* With "hp dereference allocate" inlined:
+
+     test_hpref_benchmark (smp_mb)             nr_reads   1994298193 nr_writes     22293162 nr_ops   2016591355
+     test_hpref_benchmark (barrier/membarrier) nr_reads  15208690879 nr_writes      1893785 nr_ops  15210584664
+
+* With "hp dereference allocate" implemented as a function call:
+
+     test_hpref_benchmark (smp_mb)             nr_reads   1558924716 nr_writes     14261028 nr_ops   1573185744
+     test_hpref_benchmark (barrier/membarrier) nr_reads   5881131707 nr_writes      2005140 nr_ops   5883136847
+
+So the overhead of the function call when using symmetric memory barriers
+between hp allocate/hp scan is a 20% slowdown.
+
+It's worse in the asymmetric barrier/membarrier case, introducing a 61%
+slowdown.
+
+Given that the overhead is noticeable, I am tempted to leave the hazard
+pointer allocate/retire as inline functions.
+
+About code browsers like clangd, I would recommend improving the tooling
+rather than alter the design of the code based on current tooling
+limitations.
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
