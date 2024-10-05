@@ -1,106 +1,118 @@
-Return-Path: <linux-kernel+bounces-351901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273A999176A
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:40:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6539899177D
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F770B21A04
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:40:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9937CB209B2
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3DB14EC62;
-	Sat,  5 Oct 2024 14:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCB7154C15;
+	Sat,  5 Oct 2024 14:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mubsxt4/"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="hb1qbJrS"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FD381ACA
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 14:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FD714D2B9
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 14:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728139226; cv=none; b=lW5T4w4dr+oixBMmcWy6QTszRlBnkBLevbrZT+XAIAsqTyXFrqHkYb1tQuGzZXFm1u+cj/yYAfcf4GPf2HHQB9YiS+oIcFxnZpYzey05+C3jsoi1upx07BFvQKge/aWSZ/mvfB8xfPT/n4P3zE4mjxdoGBCNhF+SvyGzqRU6ZJs=
+	t=1728139484; cv=none; b=kxXOJQMk54xkg9FVdCoxeozqEXo81EmqZp6HYJvQaek0aytM/Fsd/3cno7oOkkRZIFnv0Fa2zvXSiNcUZ0yx0iJ7ea/5S4U2SjOXAJp2rDBGnk3NM3/A+V1FCMmArcD0YAAFdmKhypUMDSVOSAtDKPWC8mwm94YjvQsq5Q9mF9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728139226; c=relaxed/simple;
-	bh=uGh+4gdE5LQgYd7E5ZLXoUYBtb16V/gCEuRW1ySPGpA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BKrXTQmktr8AhpOTWNOwd3z4uV4+DCTA/EHjUlQ9ZG2papnye9kSWQe9aRC0xHG8jCV6q/DTZaoEIgpCAHJWDNr3rGLAzKTjerxi0zghJuCq0GrafdezRYHZ/rMRbmDDJetadZRNc6VLjFuuo+fFz2H88TNphpIRmkyOmWvE8Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mubsxt4/; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c8844f0ccaso3932660a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 07:40:24 -0700 (PDT)
+	s=arc-20240116; t=1728139484; c=relaxed/simple;
+	bh=iTP6cWkPIw0pnJ4b1Y/YFozqqx/AGnE1FtMJLFjEtCU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SqN1d88O+kS+LHpO7MUjClj9llfbdQ1QwZVoUJl0Ku1nzqZ+YzlV3cu8yi+Nq3eGMT0ClaVcs6NJSlmn8WMsHhEjd6OWsfUrkL0zQG1BT85Xerkloz/7wsm+sCHpxZeqc3BVDz8F4V9XtESU7Y10iy73ml5x9mr4vfZ0c9ITINE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=hb1qbJrS; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4581e0ed0f2so33698641cf.1
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 07:44:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728139223; x=1728744023; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cpxOAbIA3+Cz4oZzWTD+l8nY2+JRz6STcaujwjCsosA=;
-        b=mubsxt4/wN55l9BtaauZB1vdjdVIt1xttd8QtSOYJ3wRzKNe8vpp2fAYMcAT/1a8ln
-         H1Egdvcm5s5OCRczANSn3kvEuSvDaSjmLS5eY6rvGP+0C1KnvDZMReiYjfStK4BYETjL
-         qYl1RnabvciWhP4nvOhWw9Zc/hr7Ff+uwLLypxldxj/xItjhkjhQWYKcB97fZaTxx5cD
-         CyE677a9J2TyWktITWA+tbPkMcMmNCca4766hu0BKVrh8YQW32v99Iwzhj79EZDCoglQ
-         l3/ISTTTszr8KPf5HkBa9jnun0x78XFK+LdbGcyyKo/dYE9r0DOx+Gf9ulYHUPXPmjOs
-         Z++A==
+        d=marek.ca; s=google; t=1728139482; x=1728744282; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m2irbHzwF9Po9AacQzMPdPlNV6/mUQD92x4MGVS434I=;
+        b=hb1qbJrSr7NF+KQklYyF5TofhiqcFxcjTe7Z5C5JXpb/Rr4xAeDGT15nE4gm2ObZr3
+         BbRZWbe4R+rHYiMRdtkaG8a0xLl/cQ/WppElmI5xoSTDB0yDyX9s3ZXoMKDO10jBPP5f
+         DGtehv+hPiayuVoFkIf3TxwDDRDVbgH+UWFay+x1DNCGcNBzJFjd+nqPc0AjYQWp0QQ7
+         2ljlbf+g2IOKfeQdIUNivrz7RbPcGAsbIUvHLf3xy0JyjsGae1Z2qEMUsAxpLk4cV1W5
+         JnK6DMtP0UinyNMsUKKwRvKveQ8ZQYqgJxSW552yAbG/6/kgeT+JZHp+AxYTtkFNRmw2
+         RfOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728139223; x=1728744023;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1728139482; x=1728744282;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cpxOAbIA3+Cz4oZzWTD+l8nY2+JRz6STcaujwjCsosA=;
-        b=FidE/rw56xE9q9b/ktltbrUsxoOYlVNPxudUgwIO7bZzJ1fy9pI12jQCbT/IH/sxG7
-         8QRUmfXpZrEzouZbdfQ1quJE9U1QCmRVaC+D71Gv8fSYjHkt1sZ+LqYohgK0uATHdqFs
-         4So7RNA9rAsbG2VbSbkklsUnvNKdbvyLNIxHXbevyP0dOMm+++w/N0nBvd67V1+tMQgD
-         A2vUXKz8M282Z0Nbp3wKsbd3eXPmzDRBhDjK0Ovfte7Hb4MxbU6fYhNY861I+En+SeVt
-         XfgxiIDJHq15jr4R0Cu/SW0QuBtDzLCTDvsiYEGAA1gdObB7dcn1HQgIx43Iw8WDPB4H
-         RQ8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU9qy7QKWIEJF7Up5WdupCQ1DofSWVMG0c9mE2QDz33sfmmW0aWQPPhec0gdUrGTk2u2Dv2MPLb3q7eHEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW+2UfiWQRI4LOYyx7D2VKxuI/0zF13uUYN8Stwx1ZDpcOBIy8
-	WCh8Sps/K6EmYfqOnNBsgJZFh8pm6Op4UKVWLBoeJSVo8B2ibuwaTtUhbDW9UCEJ7ZEPA1Qy15u
-	YEazc83wazZCo6YbWdotShjXyzYw=
-X-Google-Smtp-Source: AGHT+IHBOZgHxUrXj8c7rIQ8iMoB1mEKyvpsiMNDHax/yeMVkAy6dvJygCVxZKOFGZ0ogtVgIyN02fJQYU2ElY3+i4E=
-X-Received: by 2002:a05:6402:2807:b0:5c8:8208:2929 with SMTP id
- 4fb4d7f45d1cf-5c8d2e3078cmr5243686a12.20.1728139223434; Sat, 05 Oct 2024
- 07:40:23 -0700 (PDT)
+        bh=m2irbHzwF9Po9AacQzMPdPlNV6/mUQD92x4MGVS434I=;
+        b=eEcIEl3tEzFnv3V7KNbZjSTQCZgjXcsfg+tYrV7FjqXJFyYVEMNwoODK3dqRvE7uZv
+         dZHYjz08i++4Q5m1u/wr4F6wjx3R1a6BoTHEDn7VnLvyYRNxh0C1cchmJntiBw32X7uF
+         8cNP+q+Pss+lZt2UVig4dTQo/MMqCQW1ZHVFO5cOaUsJTJ3SNzLhYI8hl9iubilj/t9q
+         YwR3YwjybT5v7be9dbOeFxUxru2Ci73fe3U7mFIG1V/+/w+AXTMJArM8kE4QY6QEUmP7
+         oZR8um7HKbCTTt4Sx17v8eN05lO95kRTl9A4dY21Blom1QO3rpbAT1+DNdVIKD29cWza
+         9AqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGDyR6HUpKcSswYQwpW5CpRWQOdOi/HTOUgZQw0WfyrrcteTn73Ir39/XFTdh09djvRSQA7PLL4Fya5wE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxC1pomqI1i4K9YEOfUg23PRPwYei+jpxUw0ojco83xcGy2TK5
+	U2iPAwKQnsq8TV0y/wSBgTmVnKGn8qaxI2A866b8hUP4LAgn2QoSoSCQGtWAeeI=
+X-Google-Smtp-Source: AGHT+IF3OeNdLbZZWgL3Lk8D2SFyQw+kmrlDKPxNWjaeBMLNdMGFxCRq8dzDOwoamcsj9IIQDvGLAg==
+X-Received: by 2002:a05:622a:1990:b0:456:80f9:debd with SMTP id d75a77b69052e-45d8d0994e9mr172726441cf.8.1728139482157;
+        Sat, 05 Oct 2024 07:44:42 -0700 (PDT)
+Received: from localhost.localdomain (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45da74ec328sm9104721cf.32.2024.10.05.07.44.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 07:44:41 -0700 (PDT)
+From: Jonathan Marek <jonathan@marek.ca>
+To: linux-arm-msm@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] clk: qcom: videocc-sm8550: depend on either gcc-sm8550 or gcc-sm8650
+Date: Sat,  5 Oct 2024 10:40:46 -0400
+Message-ID: <20241005144047.2226-1-jonathan@marek.ca>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005131643.7692-1-quic_pintu@quicinc.com> <a3f10804c9b793b90513301a08bdfb406959b6f8.camel@perches.com>
-In-Reply-To: <a3f10804c9b793b90513301a08bdfb406959b6f8.camel@perches.com>
-From: Pintu Agarwal <pintu.ping@gmail.com>
-Date: Sat, 5 Oct 2024 20:10:11 +0530
-Message-ID: <CAOuPNLi1mUKW_vv0E6Ynzvdw_rHvCye+nAf2bWv6Qj9A8ofX1g@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/psi: fix memory barrier without comment warnings
-To: Joe Perches <joe@perches.com>
-Cc: Pintu Kumar <quic_pintu@quicinc.com>, hannes@cmpxchg.org, surenb@google.com, 
-	peterz@infradead.org, mingo@redhat.com, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, 5 Oct 2024 at 18:59, Joe Perches <joe@perches.com> wrote:
->
-> On Sat, 2024-10-05 at 18:46 +0530, Pintu Kumar wrote:
-> > These warnings were reported by checkpatch.
-> > Fix them with minor changes.
-> > No functional changes.
-> >
-> > WARNING: memory barrier without comment
-> > +       t = smp_load_acquire(trigger_ptr);
-> >
-> > WARNING: memory barrier without comment
-> > +       smp_store_release(&seq->private, new);
-> >
-> > Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
-> > Reviewed-by: Joe Perches <joe@perches.com>
->
-> Please do not add signatures not given to you.
->
-Ohk sorry, will remove it and send again.
-Thank you.
+This driver is compatible with both sm8550 and sm8650, fix the Kconfig
+entry to reflect that.
+
+Fixes: da1f361c887c ("clk: qcom: videocc-sm8550: Add SM8650 video clock controller")
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+---
+ drivers/clk/qcom/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index a3e2a09e2105b..4444dafa4e3df 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -1230,11 +1230,11 @@ config SM_VIDEOCC_8350
+ config SM_VIDEOCC_8550
+ 	tristate "SM8550 Video Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+-	select SM_GCC_8550
++	depends on SM_GCC_8550 || SM_GCC_8650
+ 	select QCOM_GDSC
+ 	help
+ 	  Support for the video clock controller on Qualcomm Technologies, Inc.
+-	  SM8550 devices.
++	  SM8550 or SM8650 devices.
+ 	  Say Y if you want to support video devices and functionality such as
+ 	  video encode/decode.
+ 
+-- 
+2.45.1
+
 
