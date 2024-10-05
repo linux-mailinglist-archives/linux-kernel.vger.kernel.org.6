@@ -1,152 +1,136 @@
-Return-Path: <linux-kernel+bounces-352128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BDE4991A6B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 22:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CA5A991A92
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 22:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C59B21F228F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8073E1F2224B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D1315920B;
-	Sat,  5 Oct 2024 20:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EC915920B;
+	Sat,  5 Oct 2024 20:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8oktThA"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CVP7Pf0A"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DAE130AC8;
-	Sat,  5 Oct 2024 20:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEAB153838
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 20:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728158706; cv=none; b=EtWGlqD0PjhEmxVS/4OwNdzEb3a/4yYJv2iXk4wXpS3Wwf4LGqka9KlruKs3+iCjd5AANujg/86C8RTgcyK8vfSE0XVfrhFNzHHIzoyhnWSalH+XtpltM0kAirTfJP1niSJB2PW3NW5lTicDeJ3Uz36WuWAYNLvLL00a0BbJeHs=
+	t=1728158927; cv=none; b=ecfs1M801YlrsGFZSeFdoy9BC9eFQHYduKc/WxvgU2r8jXZyjAC1k3m3Hy8BRauDOaUBOJ6Rf4ck3HxV9TG1+4KbHYPuYw2Wuqr3RDCew7s18xEvR8PquiUc1iq/OLvLIuDzFHChOJpf7ge5UU17b4t13f6kkuEK/ncu01Jjxk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728158706; c=relaxed/simple;
-	bh=QELd5J7MAM+l4WHOYn7nPtknK5X7YZO/diJWWJSfgCg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DFJ4PlKOHUc2Hn/aFzZeTXlE58ZhhK3EBOC3+XW37izcuV6uMKRI0H4y6ERs+FBnjX4YhmJBCKWkNAJVv9AC7JKrzfnLgocZV2cW0JDsy+l7T0DVqdCLjHv+8kPzO1WhRcEmmzg1DLBkf4eJq24SlyAjB3qpaoY/Gxwsxy/EgwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8oktThA; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7e9f955cb97so318977a12.3;
-        Sat, 05 Oct 2024 13:05:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728158703; x=1728763503; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6FLiMUvaeW6ZuMgelWmXo4D9/EphSpnuON34hbmUdIU=;
-        b=O8oktThAj1pI7HJPpb4ZGkgH1UfHeIesf48nQJaYxbnqUxnUlY+zoSrzoRrH0H0UER
-         VgkdCoJuOGT7bn/AYzbk5zy90ganbt+1rfNsLm6AVfF5rlAZWJyq3j5qqP2cWJUshWZ7
-         SGheP7tdLPVOaJuQCY6zLzdLH8t4GFB4XaH5mcMg6QVkZyRxF9eLbOjnNV/o9idfVdmp
-         UC6peHHMeDYjC6r+ygfR6fekB+mhA9HGKU9GtOntMUEGKFQgA/UcE7ZRbRcAomUot/8S
-         G5V8PhyOxOxMFDN6jgolj6664D/JbjgEeAN9RIN5fHUOqyh7Zz9tHj/ZKwhq8eSoN0kg
-         SY4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728158703; x=1728763503;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6FLiMUvaeW6ZuMgelWmXo4D9/EphSpnuON34hbmUdIU=;
-        b=EV4EL1knBuJQsXKaqrhTOfD2yArXZOIAQmDuA6iLNkDiwBZBefD0Wh6kjUjihAcPI5
-         ofF3nnocw7s/KRJRBrHFbJ0PylDNIwGlM68KWsasaH3WRwru6+OXSh1TLSkRy2Vv0tv0
-         fP/gyCVtmcsrrKRchXWveXolW3ScgQMVIDzzq7JPBydL0lTZFiI6iONa+MOXI4yANQwU
-         WzVqJDl6TltKmYTSwek4a7A3Brinbf1gytaYF9Ct//KHww4bzrmAyaKR10BPpiq770Ws
-         RAtjgypF54FTqMAJ3G6aqEtjawkZC4Td/JIa/kEqI9/p+gKCcdxPkPpqENVhUUfZoGax
-         bxbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrPLbGrWLHgaEPJUqA3pnMZOM09jpW4S8XSIMcmsuerhQZwrf/vIsdSe01ZQr+DJGgFnFB/zjcWCo67P0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiCT/cUBy2LZKEnKBNt/obLWj077B4eLkmq6wL6ITMIiZUm6yO
-	HsAFe2XsRkJP81bFGo04Y5ged/on8C9U5v1Qa14DUOiTcP4azVbYfypF3ONa
-X-Google-Smtp-Source: AGHT+IGFuNFwEl74E8F4On4BC0XZcznAJ/4LYW7R7vN5tLcHMV/0TFu00dzZTHz6cCGAocZu3+gGjw==
-X-Received: by 2002:a17:903:244e:b0:20b:6be7:310f with SMTP id d9443c01a7336-20bfe00d188mr112908685ad.25.1728158703093;
-        Sat, 05 Oct 2024 13:05:03 -0700 (PDT)
-Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7e9f682decbsm2114825a12.45.2024.10.05.13.04.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 13:05:01 -0700 (PDT)
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
-To: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Mohammed Anees <pvmohammedanees2003@gmail.com>
-Subject: [PATCH v3] iioc: dac: ltc2664: Fix span variable usage in ltc2664_channel_config()
-Date: Sun,  6 Oct 2024 01:34:35 +0530
-Message-ID: <20241005200435.25061-1-pvmohammedanees2003@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1728158927; c=relaxed/simple;
+	bh=GKC1EfUZQmjyXGUyqT6jtO2jC/3S4Vunq2GX6DbgcIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kgJ6muE+wCFDO/7sDjddRHc/o8XmosC8CiQyQaL7abcYOxZF+nYstKtdZa44zfJii69wzgsYFfy43bn9+8zOefQ8HvF/2j5+lOUiqORZyew68teLoup+jiyMJP20cNf0T1vl9s9plbrArFaMS0Z8cbkT0ZwUsdG5fUAU2yMxVIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CVP7Pf0A; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728158924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7L6m21ApIWYig/q11IA1MKr17jgGleFK15eNAui5Awg=;
+	b=CVP7Pf0Axfy0EGdnriVbbwyZmSkUANrpTFkpKXoLwXrhT2EKHuDpfTzB9cbxwKID4QwkFx
+	8zteuUY9MLeHATqEIz1R3OBoKXz8WDpWpr4Wg7NYI+TlC3WNofmjuBuvWIUdnVfLHrORUd
+	mVlKu0iy02ksmS8JTwQMo+/j58rl1nk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-34-BJ0u1fDhNl-ZhALUG3veJg-1; Sat,
+ 05 Oct 2024 16:08:41 -0400
+X-MC-Unique: BJ0u1fDhNl-ZhALUG3veJg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A705E1955EE9;
+	Sat,  5 Oct 2024 20:08:34 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.51])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 295393000198;
+	Sat,  5 Oct 2024 20:08:19 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sat,  5 Oct 2024 22:08:20 +0200 (CEST)
+Date: Sat, 5 Oct 2024 22:08:05 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com,
+	torvalds@linux-foundation.org, adhemerval.zanella@linaro.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com,
+	ojeda@kernel.org, adobriyan@gmail.com, anna-maria@linutronix.de,
+	mark.rutland@arm.com, linus.walleij@linaro.org,
+	mike.kravetz@oracle.com, Jason@zx2c4.com, deller@gmx.de,
+	rdunlap@infradead.org, davem@davemloft.net, hch@lst.de,
+	peterx@redhat.com, hca@linux.ibm.com, f.fainelli@gmail.com,
+	gerg@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org,
+	ardb@kernel.org, nathan_lynch@mentor.com, dsafonov@virtuozzo.com,
+	Liam.Howlett@Oracle.com, mhocko@suse.com, 42.hyeyoo@gmail.com,
+	peterz@infradead.org, ardb@google.com, enh@google.com,
+	rientjes@google.com, groeck@chromium.org,
+	lorenzo.stoakes@oracle.com
+Subject: Re: [RFC PATCH v1 1/1] exec: seal system mappings
+Message-ID: <20241005200741.GA24353@redhat.com>
+References: <20241004163155.3493183-1-jeffxu@google.com>
+ <20241004163155.3493183-2-jeffxu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004163155.3493183-2-jeffxu@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-In the current implementation of the ltc2664_channel_config() function,
-a variable named span is declared and initialized to 0, intended to
-capture the return value of the ltc2664_set_span() function. However,
-the output of ltc2664_set_span() is directly assigned to chan->span,
-leaving span unchanged. As a result, when the function later checks
-if (span < 0), this condition will never trigger an error since
-span remains 0, this flaw leads to ineffective error handling. Resolve
-this issue by using the ret variable to get the return value and later
-assign it if successful and remove unused span variable.
+On 10/04, jeffxu@chromium.org wrote:
+>
+> It is important to note that the CHECKPOINT_RESTORE feature (CRIU) may
+> alter the mapping of vdso, vvar, and sigpage during restore
+> operations. Consequently, this feature cannot be universally enabled
+> across all systems.
 
-Fixes: 4cc2fc445d2e ("iio: dac: ltc2664: Add driver for LTC2664 and LTC2672")
-Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
----
-v3
-- Fixed Styling issues
----
- drivers/iio/dac/ltc2664.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+Can't review.
 
-diff --git a/drivers/iio/dac/ltc2664.c b/drivers/iio/dac/ltc2664.c
-index 5be5345ac5c8..67f14046cf77 100644
---- a/drivers/iio/dac/ltc2664.c
-+++ b/drivers/iio/dac/ltc2664.c
-@@ -516,7 +516,7 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
- 	const struct ltc2664_chip_info *chip_info = st->chip_info;
- 	struct device *dev = &st->spi->dev;
- 	u32 reg, tmp[2], mspan;
--	int ret, span = 0;
-+	int ret;
+But as for uprobes, I'd prefer a simpler patch which doesn't need the new
+CONFIG_ and/or kernel boot options, something like the patch below.
+
+And I don't really like the fact that this patch changes the behaviour
+of the "generic" _install_special_mapping() helper, but I won't argue.
+
+Oleg.
+
+
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -430,6 +430,8 @@ extern unsigned int kobjsize(const void *objp);
+ #ifdef CONFIG_64BIT
+ /* VM is sealed, in vm_flags */
+ #define VM_SEALED	_BITUL(63)
++#else
++#define VM_SEALED	0
+ #endif
  
- 	mspan = LTC2664_MSPAN_SOFTSPAN;
- 	ret = device_property_read_u32(dev, "adi,manual-span-operation-config",
-@@ -579,20 +579,21 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
- 		ret = fwnode_property_read_u32_array(child, "output-range-microvolt",
- 						     tmp, ARRAY_SIZE(tmp));
- 		if (!ret && mspan == LTC2664_MSPAN_SOFTSPAN) {
--			chan->span = ltc2664_set_span(st, tmp[0] / 1000,
--						      tmp[1] / 1000, reg);
--			if (span < 0)
--				return dev_err_probe(dev, span,
-+			ret = ltc2664_set_span(st, tmp[0] / 1000, tmp[1] / 1000, reg);
-+			if (ret < 0)
-+				return dev_err_probe(dev, ret,
- 						     "Failed to set span\n");
-+			chan->span = ret;
- 		}
- 
- 		ret = fwnode_property_read_u32_array(child, "output-range-microamp",
- 						     tmp, ARRAY_SIZE(tmp));
- 		if (!ret) {
--			chan->span = ltc2664_set_span(st, 0, tmp[1] / 1000, reg);
--			if (span < 0)
--				return dev_err_probe(dev, span,
-+			ret = ltc2664_set_span(st, 0, tmp[1] / 1000, reg);
-+			if (ret < 0)
-+				return dev_err_probe(dev, ret,
- 						     "Failed to set span\n");
-+			chan->span = ret;
- 		}
+ /* Bits set in the VMA until the stack is in its final location */
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 40ecab0971ff..388373c11593 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1510,7 +1510,7 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
  	}
  
--- 
-2.46.0
+ 	vma = _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
+-				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO,
++				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED,
+ 				&xol_mapping);
+ 	if (IS_ERR(vma)) {
+ 		ret = PTR_ERR(vma);
 
 
