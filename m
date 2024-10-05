@@ -1,172 +1,95 @@
-Return-Path: <linux-kernel+bounces-351849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8939916D9
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:39:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F179916E1
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 637AD28508F
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:39:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9E61C21286
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA901153BEE;
-	Sat,  5 Oct 2024 12:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B60153598;
+	Sat,  5 Oct 2024 12:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMs35McN"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="2AviVhhE"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982C814AD19;
-	Sat,  5 Oct 2024 12:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B2714AD20;
+	Sat,  5 Oct 2024 12:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728131952; cv=none; b=EGmyP0PvxhYREN5PCTFySf4mxnYslir6XbC/iO6SwJdYzy7/+VFWYmiknIBsxkbKtMVO4NrA/Lc09rkg9+UK+776fOHgN5TaVTB7XX4LCaHNu4CR1lfdtCU0ECeRZg3jSA7KltajMok1ml0ef9jshY8eLWtlQYApITWQk20MinQ=
+	t=1728132445; cv=none; b=tNGGiMzDqC3Wbaeqh6Z6gp+vEFSBCkrlwXvgA3NX+XmBfVJs6ukkJUo/LYa83V3ZhPJ6p1DNHy2ArnyuwdvSZRj6mx7B5OIXa3q5kuyuA1mYPa6B4gNMCWpOjApuq9x6umXPb9UCN3cg9yQ4atjVDjzT/D9mQM8j5XqGNX8joEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728131952; c=relaxed/simple;
-	bh=YNm3x+D/+uR/yV1OSOY9lGo7cThaljvjLDn81E+MKfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lPuvinjrVOwvi6lNfVsAKiUi4CZKoVFUQ2uiUwCsSgqHv7uxfEhCi4jd4iSA1TKuVdow4GJYC7YZQBJ1BaBmAreoScjrosYC+MF67QpEno1WGdvCluAYM+BI5HSWkA9UkAYcQgWLkIKHDLWbyUkubEnE3uUu4aA3knm6+7Y8nPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMs35McN; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-7179069d029so2310698b3a.2;
-        Sat, 05 Oct 2024 05:39:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728131950; x=1728736750; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YbmQWqwf8KLWBh53BpLjJjepp8M5DqLAMepSsUrr8/A=;
-        b=PMs35McNWB15k7nicCSjjbeVhDSdcypBjCHkHQHnx2UOwG+/xBcGjLgjuX/4+Ty4zL
-         h4zetdTGjh+NLa2Un6mS4lwD57nS7XOC2RNnmpTLax4y9jRcd3AjsUhHaiAeQNjWAvef
-         1iuolrKGxvfZRQVoDsk8bRgupkmHcsCY9Vq7EolgnaTkDoiRc9Hldh2k0UunJm377tkQ
-         GJny1GpMRBDO3/cafD5NEBc6Iy6MFSVTDfbqoAIm5YVroWM37ylLjwapMDCmD0xO/Luy
-         AUW/K+3K+XpH0peCFGJOvexBZnGb+0Tp7BEi2BUs74HoSUg0N1pU++oxD49vzHkVmwwB
-         v0VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728131950; x=1728736750;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YbmQWqwf8KLWBh53BpLjJjepp8M5DqLAMepSsUrr8/A=;
-        b=UbvxvuxZa0qsJ7Rxgkxriv65PQHnSSUkQXygfhvzHEoopJvgpWnOrv9QuqUTewCXId
-         sCUvIPpTwLLGmGU7iPtOthjor6U7aOx7l+R+TzvtHkQiym0qnTXpXtCHjBvoyNb0vgeD
-         Ob702YK+UBHVIPTKhcySaQrz7JpkApHjYVIg36X28SPaSK9scUUjzIQvrmO5wXzrTG2h
-         S+b/QDv0MGAqR308Iu6fvJS6SMd62XSUxlmWU3Ei2Jtb/IB+gSnxlCGB8t1A+Q5KgWCE
-         cb+FKp5GoxP48ox0CF/ZnkMpgWB7QScwyaUU5yE2kR8n4zinYxMlAZSaAOjwh/qWhxxy
-         OVQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIUht/2HdDXFoRe1cBfgjuUg4xD1tXRCQCLePozHDClZ9FR+C2/jXhurhhzZK9/TumSGChXSoR@vger.kernel.org, AJvYcCUppHcAPkCJ5LDL3dPO7SOTmoHrCQOO5Z7pWqbc6BJZpUUVyfGMSSF2ZvqesFShQXPwA88=@vger.kernel.org, AJvYcCVRM77xwL7GJ/2X39fLG9EwrwPU8ZPFAfnGUfzPrsjdZSp4ct+0HybxXBUTqf1uI5lJpHPFeSD2ceZjSg==@vger.kernel.org, AJvYcCWEMcljify8xelvcV36k/QbrQ/2vR8ZUCJ95sxJOg0K9yeHb9ZXAExO9/+nCoyQJH4uK/M28uAoGu17mmKYJBI=@vger.kernel.org, AJvYcCXKt/WP1EDjEsOIiGJPsb5IzwgUTdfAVDkD/TTZeignWw1wJPChsAw4PucIQkOBklqBPZx6tan8k5m10kx0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGLJauWuWbHekKar0Ear4vjKKbtcC4ZW5j1xrP/rVhFYKD2WNc
-	LGT+ajau8xji7+yNPAFrrCCxWoXe2vzz6JpjYKt8V2FHQbW5Owif
-X-Google-Smtp-Source: AGHT+IH7TZfPKkqMhF7jhMgZXtf7Pauw1fuqlg17S6ZMnwvz+3KYrvO5e1eqHcfYjc/CJowJUAwQhQ==
-X-Received: by 2002:a05:6a00:9a1:b0:70d:3337:7820 with SMTP id d2e1a72fcca58-71de23c72ecmr10006756b3a.8.1728131949813;
-        Sat, 05 Oct 2024 05:39:09 -0700 (PDT)
-Received: from ?IPV6:2409:8a55:301b:e120:3c3f:d401:ec20:dbc7? ([2409:8a55:301b:e120:3c3f:d401:ec20:dbc7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cd3983sm1408702b3a.87.2024.10.05.05.38.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Oct 2024 05:39:09 -0700 (PDT)
-Message-ID: <6cb0a740-f597-4a13-8fe5-43f94d222c70@gmail.com>
-Date: Sat, 5 Oct 2024 20:38:51 +0800
+	s=arc-20240116; t=1728132445; c=relaxed/simple;
+	bh=mFx+U4GcSDdopKlqlzwtHYpyI1W1kasBQAt42bd2ZM8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=sEpewdukSJXtLIdOo/VvRyM9UKDhHZYO2FWO7gBskagdeyXRzqH+pTwNCLHQX8No2Q5V8G8A7iZiEy/gvqPWdbEBZ4mezgBXz5Yv50kx72dnUDgP/EemSAWL7LroF5D0lfvn3FbCYZ3eGL3KY43pOBs/7Rgg6wVPAHoo2gKoY50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=2AviVhhE; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=tzKgvh+pT+/ApAb95UUjz/MFj8CO1vRHstRCj/wa6Eo=; b=2AviVhhEc9I43avvEvSd9FJFUO
+	mvL3BzJ+JvAsGEDvIMfXqnYgDMSWzSQY1Y28KKzOdtBhzH2t7Vgg762dlXA0rfxBscYOBLGvnshln
+	m9QsHiKiZV2pjb3a97ulNmNjALdEwgAJ8GmbAop52z7BrnBNdz4w6h75URUFMAYdRaknyw2HMh5JV
+	vrrtlul2pm+Ko6qjF9Nm1+aG1tjUPIncogUV/YrEb28nPVTOprnB/0jCwHOrahjsI6Y5KHqmUwDq4
+	NRCwyedP380M1ag50xOfXl06hqtF7H2ajH1BwxrAaL957cMDVX1HCdQ/Ix0Va/WP06fFBx6qK2Zjn
+	dKkF/0Yg==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Tony Lindgren <tony@atomide.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Lee Jones <lee@kernel.org>,
+	Roger Quadros <rogerq@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-omap@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v3 0/3] mfd: twl: Add clock for TWL6030
+Date: Sat,  5 Oct 2024 14:47:03 +0200
+Message-Id: <20241005124706.601393-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Paolo Abeni <pabeni@redhat.com>, Yunsheng Lin <linyunsheng@huawei.com>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com,
- Robin Murphy <robin.murphy@arm.com>,
- Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
- Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
- Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed
- <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
- Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Andrew Morton <akpm@linux-foundation.org>, imx@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, bpf@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-mm@kvack.org, davem@davemloft.net, kuba@kernel.org
-References: <20240925075707.3970187-1-linyunsheng@huawei.com>
- <20240925075707.3970187-3-linyunsheng@huawei.com>
- <4968c2ec-5584-4a98-9782-143605117315@redhat.com>
- <33f23809-abec-4d39-ab80-839dc525a2e6@gmail.com>
- <4316fa2d-8dd8-44f2-b211-4b2ef3200d75@redhat.com>
-Content-Language: en-US
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-In-Reply-To: <4316fa2d-8dd8-44f2-b211-4b2ef3200d75@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/2/2024 3:37 PM, Paolo Abeni wrote:
-> Hi,
-> 
-> On 10/2/24 04:34, Yunsheng Lin wrote:
->> On 10/1/2024 9:32 PM, Paolo Abeni wrote:
->>> Is the problem only tied to VFs drivers? It's a pity all the page_pool
->>> users will have to pay a bill for it...
->>
->> I am afraid it is not only tied to VFs drivers, as:
->> attempting DMA unmaps after the driver has already unbound may leak
->> resources or at worst corrupt memory.
->>
->> Unloading PFs driver might cause the above problems too, I guess the
->> probability of crashing is low for the PF as PF can not be disable
->> unless it can be hot-unplug'ed, but the probability of leaking resources
->> behind the dma mapping might be similar.
-> 
-> Out of sheer ignorance, why/how the refcount acquired by the page pool 
-> on the device does not prevent unloading?
+Previously the clock support for only implemented for TWL6032 so add
+it also for the TWL6030. There are devices out there where especially
+WLAN only works if these clocks are enabled by some patched U-Boot.
+This allows to explicitly specify the clock requirements.
 
-I am not sure if I understand the reasoning behind that, but it seems
-the driver unloading does not check on the refcount of the device from
-the implementation of __device_release_driver().
+Changes in V3:
+- use type enum in driver_data and twl_clock_info
+- revert back to store device instead of platform_device
 
-> 
-> I fear the performance impact could be very high: AFICS, if the item 
-> array become fragmented, insertion will take linar time, with the quite 
-> large item_count/pool size. If so, it looks like a no-go.
+Changes in V2:
+- cleanup some defines
+- no separate ops for 6030
+- remove is_prepared()
+- update Kconfig
 
-The last checked index is recorded in pool->item_idx, so the insertion
-mostly will not take linear, unless pool->items is almost full and the
-old item came back to page_pool is just checked. The thought is that if
-it comes to this point, the page_pool is likely not the bottleneck
-anymore, and adding infinite pool->items might not make any difference.
+Andreas Kemnade (3):
+  mfd: twl-core: Add a clock subdevice for the TWL6030
+  clk: twl: remove is_prepared
+  clk: twl: add TWL6030 support
 
-If the insertion does turn out to be a bottleneck, 'struct llist_head'
-can be used to records the old items lockless for the freeing side, and
-llist_del_all() can be used to refill the old items for the allocing
-side from freeing side, which is kind of like the pool->ring and
-pool->alloc used currently in page_pool. As this patchset is already
-complicated, doing this makes it more complicated, I am not sure it is
-worth the effort right now as benefit does not seem obvious yet.
+ drivers/clk/Kconfig    |  2 +-
+ drivers/clk/clk-twl.c  | 69 ++++++++++++++++++++++++++----------------
+ drivers/mfd/twl-core.c | 32 ++++++++++++++------
+ 3 files changed, 66 insertions(+), 37 deletions(-)
 
-> 
-> I fear we should consider blocking the device removal until all the 
-> pages are returned/unmapped ?!? (I hope that could be easier/faster)
-
-As Ilias pointed out, blocking the device removal until all the pages
-are returned/unmapped might cause infinite delay in our testing:
-
-https://lore.kernel.org/netdev/d50ac1a9-f1e2-49ee-b89b-05dac9bc6ee1@huawei.com/
-
-> 
-> /P
-> 
+-- 
+2.39.5
 
 
