@@ -1,159 +1,121 @@
-Return-Path: <linux-kernel+bounces-352159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1235991AEA
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 23:44:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FE7991AF1
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 23:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3213C1F21B04
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:44:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781E41F22497
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD7A166F16;
-	Sat,  5 Oct 2024 21:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99836166F1B;
+	Sat,  5 Oct 2024 21:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="TbwTYgjH"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRJ+/4Om"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8712145348;
-	Sat,  5 Oct 2024 21:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3511BC58;
+	Sat,  5 Oct 2024 21:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728164685; cv=none; b=l6zFCGI3gv905oAKQsWhbuziRQJQXyna4G3XTAtcVLnFuF7XKPc9wKklQnxI+ZXCT/zqpaEwp2xce41GetHFWlYOS5DlWn/tlSJE0pAPBEyC2pjvuzEUcaTMk/kWY1aaM6LxoFQ0wwGP+qWpQPKHqBudYCLak5U7eTcl6sFDAZ0=
+	t=1728164996; cv=none; b=HQ5MeGCs/l/bIijvyiTlydKzT7jMXPdd86QgHTm7DEFpLGBDM3buF9gTuQxdY6qs400cWiQMsR/BRwKUe3uyuHss1sBnXUvVP3OwRGZX4BA+GZCY5DqaRi9ZGnaNoAgXIliGb7jQJt1i5Yo+9YxOTHQ1p8K8cizXHUheyRycL78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728164685; c=relaxed/simple;
-	bh=zOzyH1gnagE1mvmm8lF9xfhuY2T7VeIHHouKrGdd8Ts=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Kkoy0pYqGS2NlsEIEdL7IKKLRz0reAsE01oZc/wzF1z+7EwJYYgTWe8mJtSrtyngs556ZnvPrqzx14F26+ZuZReUYR4DLy7tpMH/AWwSpiLPxECBJVsK9uZqr6NvxWYiTQdnrLycLXR9/DB0AUNp85aoF9p1boLG7lA0QpGFq+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=TbwTYgjH; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1728164671; x=1728769471; i=w_armin@gmx.de;
-	bh=zOzyH1gnagE1mvmm8lF9xfhuY2T7VeIHHouKrGdd8Ts=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=TbwTYgjHkGyjHIjUcUY6e2AcPcsRWF/Timm2Q+TNaFuI9E0x9HuQj+ADlhF9aITq
-	 /DmQUe3z5phZfVlV+uVe5oyC/itpXpUNmF4uqeVv8iN6Kq/d8QtK5sHKL4/XBlsRm
-	 r9fso9HcsSRu4NkCikSqDR+g6dlODxNvUhaaCdg7qjKQo1H0lA/tiPIsNZS1ivjgr
-	 ensBMvmg016UBXUMZAvpzqQBbhEpHr6gdka+nicQLTDX09toZdYgrFU9x2CuGP3rB
-	 oDPPSk+7gg68eSTCQe+5U2RHP384ODESNhqusDrSzL+HX692S6SRX20/z6kRLvqTM
-	 6YR2e6CsOw8it82oEw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MSKy8-1tPqKd1uhc-00YxUO; Sat, 05
- Oct 2024 23:44:31 +0200
-Message-ID: <3d5f6c88-f162-48bb-a3b0-89f9aa021d65@gmx.de>
-Date: Sat, 5 Oct 2024 23:44:30 +0200
+	s=arc-20240116; t=1728164996; c=relaxed/simple;
+	bh=4wjajMKCNGdDDCrc9L4MzfhX58BcF2pXpjqqWGnSF0k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C3QaOqUrBCgV/9tVllqCCehnZ76bq09axZ38E/qq3qpknCwwE3x/DpDqsS12a5LM29vS+mpd7QZFI3UOB22xehloY/pjcpboJLBbSR2stTQJtAwHsZzGKFpRpxGvhQmRu5xhiczLtzq+AU0tqWhK4qKw9EqIMwaQz0CK012Qjj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CRJ+/4Om; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7c1324be8easo3122461a12.1;
+        Sat, 05 Oct 2024 14:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728164994; x=1728769794; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OXsRPEi8UDWbny4OJt56VdnBUYcq9T18wduabgzpSGg=;
+        b=CRJ+/4OmWITmrjzhxp2FA9nojhLjimdlpPuYt1OteYkglhCxEs56C+r24zi55VSRfZ
+         0iyQUmQVPTPtzBuzTjRWA5PlOvyYUbEO9GjvIW64AH4C77OMi3wqiYw2mvG3a6XPbA+W
+         EMXQU4pqFGkLGAULiM7CMoxbKS+fXPvxKyZaG84bC+PrycDYZMNNufz9/hm5jqtBTuJ2
+         29pH/VwkLTCcypRd09Pz/27OMT7ZdQ5Z9AAW/j1GbDUcfFQFGBrB6pneax8QO0oJSY2C
+         WZyb3vgeqNN03wK+a2zYoedxCmu2Idc/eLsxWkxjAFNXXfpIci6Xd4Sz7dW9wpyXv0C7
+         4R2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728164994; x=1728769794;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OXsRPEi8UDWbny4OJt56VdnBUYcq9T18wduabgzpSGg=;
+        b=VrKRtjMihWYAoEXp+rj1wqP0bt45aEs5+G3oVqQCgkeYNqRv+abh0iQXFLqO3Y6YEO
+         FFlpxAigyu3vc1+x5asqkJbLTWoIrZjUDJ39RTb/c9AuG5BkPARR7BZFAZCnER5e2UrH
+         sdMf6xnK2Nqpa0s5AgvyttUpKKPsdoEhgcv7funWUp/WLtY/pMSCKnS/Loh9xiLqC2kg
+         niHXyVO6d1/Mv1UqKi7Ckyo9o9z5Rg+dj7ePFjQvCInJl8oXlOw4+tYKylWyyBIszeOI
+         xKw4b76APx05zsqmrZKH7ikuSnsq2y49AfgH4uwuArLvOAbpYvIBg77HJ8Gt99AvLhRR
+         zUOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXApTnoMsthik57/zrYDAOruGezFQZVBSn52iQhAeoFKCBmyKEuPwm8uN3mXNz6YUuBfKjAux3ghBQKLD3e@vger.kernel.org, AJvYcCXlHUXazTbgAtYVRK3MieSRlJHIH6u3Juv5WlMdnsDwngVEEAVSQkmTayTiXKnf4m76McdbXs6u@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYFrk/9ctkX0H5y4FNsQvkMOyyQ90OohMPjDNyhHqxzhh58oWs
+	ayWDMF5uGWkah4/cA/aGMDWENeCO9MzKL1QYUDpHySzyWB5Cb0V0
+X-Google-Smtp-Source: AGHT+IEMZJKwXQuD7nE2BwYc2v1gi+Qj1SxkukDWiWFSEeGPQZWQKYVvnEHK6LNDEAymJRDWYDpawQ==
+X-Received: by 2002:a17:902:d492:b0:20b:6208:b874 with SMTP id d9443c01a7336-20be1914506mr167354345ad.21.1728164993892;
+        Sat, 05 Oct 2024 14:49:53 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13931055sm17165135ad.139.2024.10.05.14.49.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 14:49:53 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: xavier_qy@163.com,
+	longman@redhat.com,
+	lizefan.x@bytedance.com,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	akpm@linux-foundation.org
+Cc: jserv@ccns.ncku.edu.tw,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH 0/5] Enhance Union-Find with KUnit tests and optimization improvements
+Date: Sun,  6 Oct 2024 05:49:33 +0800
+Message-Id: <20241005214938.2147393-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] platform/x86: dell-ddv: Fix typo in documentation
-From: Armin Wolf <W_Armin@gmx.de>
-To: Anaswara T Rajan <anaswaratrajan@gmail.com>
-Cc: corbet@lwn.net, platform-driver-x86@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20241005070056.16326-1-anaswaratrajan@gmail.com>
- <f0d2200d-536b-4572-b7ef-63be26dd03a5@gmx.de>
-Content-Language: en-US
-In-Reply-To: <f0d2200d-536b-4572-b7ef-63be26dd03a5@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:sChw0K5p3GdT1gd1m9FTj0lBx4UYJnzDkCIiXp9ifVdIPZVJJO6
- bON7ULoOBagH/ZakG86K5a+2WYk9JPvyRpJGxnLOiz+a+v5knk/eU4DJ4iPA2vowA5QC1FW
- 7x9xx3SYVpgT1ZmrM+/ChCOdnaM29RmYk6DLmhsokkksAObFjryZxwpbvl1Dcw1oDGUzizJ
- ber0UUied/x76NHT6Y1NQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:MfRacub0WdE=;TKV9rZ735UXnDg/3Q3VzOiu7tMq
- rSSR8PEicNomH5+LvR5KKSf2NizBz9CLxwPn5aUJVj3Jo1KxVYU6K1R8K/8E94QyjjZQk14nu
- bsZ6LGfNgu+AQSOJrgJQp5IvNK//SD62kjBtPRpaw7HJp/NC5nNI6RhgxP7GJfHun5OsHnDfj
- ufSH8gMT/H3r8J32WU5vCDhMi63DNf48yJfI3Ty1v8XEXN8qNPcsBpLJ4OgaDPoPGcnoMkhlQ
- 0PjoeAjTtbbWzwgy+y/LJ/Vc51qDAxU6A7mUDyaEmkps+C9//XPRh9rVW62Rt9C20OQu1TRlj
- JExITH+BabZOfxxawoMqAJDeW2TVQ9OXHWMR+mgCJlqux+Gr45iYBLAhcx9Csz9OMQFX16eAG
- PREm3oEKXjSqwKjb18InIL9PS67kfvuNkLGBYIslMQySDQTGCY8S9n1GK2Z1DhpBiKsmXY6j+
- uQgvV358qp7kjL+kee4JrERcl9eFHohkU3tSxKJUy0/lYzrB+eO4MZihSi6aL53zHOmmrYUSi
- wlYrNgHajakETTOCDv1MVtjd1Yws0yriPPRipXWtrS8wyi2bRqs1T/55fho+tkpf63VZIXfqR
- RoGCDZWw5wk4T87rdmOhI/B2RNYqq4ykamWR5TV9O757LEmPj+vaG76N6a+oZfBLtudiv84YA
- ns5Eu9slQbVQgBjcGWjarmjkwagzGI6DxDMVtxklCtg36zqJk7FeTPpZnm1dXO0usQO9o56nu
- xfNad5wE5VaPBi7/Iz1uVKq//zuJSMxZ9jFm516ORsDGIepN4XTCLXDiZr5rrMR1EZrWv3KrQ
- hM8CEWMdJoCSEsHRTn51/lXw==
+Content-Transfer-Encoding: 8bit
 
-Am 05.10.24 um 17:12 schrieb Armin Wolf:
+This patch series adds KUnit tests for the Union-Find implementation
+and optimizes the path compression in the uf_find() function to achieve
+a lower tree height and improved efficiency. Additionally, it modifies
+uf_union() to return a boolean value indicating whether a merge
+occurred, enhancing the process of calculating the number of groups in
+the cgroup cpuset.
 
-> Am 05.10.24 um 09:00 schrieb Anaswara T Rajan:
->
->> Fix typo in word 'diagnostics' in documentation.
->>
->> Signed-off-by: Anaswara T Rajan <anaswaratrajan@gmail.com>
->
-> Thanks, for the whole patch:
->
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
->
-I just noticed that the x86 platform driver maintainer where not CCed,
-please CC them next time so they get properly notified.
-For now, i CCed them myself.
+Regards,
+Kuan-Wei
 
-Thanks,
-Armin Wolf
+Kuan-Wei Chiu (5):
+  lib/union_find: Add EXPORT_SYMBOL() for uf_find() and uf_union()
+  lib/union_find: Change uf_union() return type to bool
+  lib: Add KUnit tests for Union-Find implementation
+  lib/union_find: Optimize uf_find() with enhanced path compression
+  cgroup/cpuset: Optimize total domain count using updated uf_union()
 
->> ---
->> Changes in v2:
->> =C2=A0=C2=A0 - Make the commit title and description more clearer.
->>
->> Changes in v3:
->> =C2=A0=C2=A0 - Add missing full stop to commit description.
->>
->> =C2=A0 Documentation/wmi/devices/dell-wmi-ddv.rst | 4 ++--
->> =C2=A0 1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/wmi/devices/dell-wmi-ddv.rst
->> b/Documentation/wmi/devices/dell-wmi-ddv.rst
->> index 2fcdfcf03327..e0c20af30948 100644
->> --- a/Documentation/wmi/devices/dell-wmi-ddv.rst
->> +++ b/Documentation/wmi/devices/dell-wmi-ddv.rst
->> @@ -8,7 +8,7 @@ Introduction
->> =C2=A0 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>
->> =C2=A0 Many Dell notebooks made after ~2020 support a WMI-based interfa=
-ce for
->> -retrieving various system data like battery temperature, ePPID,
->> diagostic data
->> +retrieving various system data like battery temperature, ePPID,
->> diagnostic data
->> =C2=A0 and fan/thermal sensor data.
->>
->> =C2=A0 This interface is likely used by the `Dell Data Vault` software =
-on
->> Windows,
->> @@ -277,7 +277,7 @@ Reverse-Engineering the DDV WMI interface
->> =C2=A0 4. Try to deduce the meaning of a certain WMI method by comparin=
-g
->> the control
->> =C2=A0=C2=A0=C2=A0=C2=A0 flow with other ACPI methods (_BIX or _BIF for=
- battery related
->> methods
->> =C2=A0=C2=A0=C2=A0=C2=A0 for example).
->> -5. Use the built-in UEFI diagostics to view sensor types/values for
->> fan/thermal
->> +5. Use the built-in UEFI diagnostics to view sensor types/values for
->> fan/thermal
->> =C2=A0=C2=A0=C2=A0=C2=A0 related methods (sometimes overwriting static =
-ACPI data fields
->> can be used
->> =C2=A0=C2=A0=C2=A0=C2=A0 to test different sensor type values, since on=
- some machines
->> this data is
->> =C2=A0=C2=A0=C2=A0=C2=A0 not reinitialized upon a warm reset).
->
+ MAINTAINERS                |  1 +
+ include/linux/union_find.h |  2 +-
+ kernel/cgroup/cpuset.c     | 10 ++----
+ lib/Kconfig.debug          | 12 +++++++
+ lib/Makefile               |  1 +
+ lib/union_find.c           | 20 ++++++++---
+ lib/union_find_kunit.c     | 74 ++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 108 insertions(+), 12 deletions(-)
+ create mode 100644 lib/union_find_kunit.c
+
+-- 
+2.34.1
+
 
