@@ -1,147 +1,178 @@
-Return-Path: <linux-kernel+bounces-352073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41899919CD
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:12:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5319919D2
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44E9A1F21F36
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:12:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F4411C2140C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8F11586F6;
-	Sat,  5 Oct 2024 19:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F24158DC1;
+	Sat,  5 Oct 2024 19:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxi5sV9I"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dZmWHD4K"
+Received: from msa.smtpout.orange.fr (smtp-83.smtpout.orange.fr [80.12.242.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864AD487A5;
-	Sat,  5 Oct 2024 19:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D547D136E3B;
+	Sat,  5 Oct 2024 19:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728155517; cv=none; b=FiOAJP+MbDrbzMek1kKjfE064ZZrGndiVDuM+OWJcEICYtP24Gt/JuflaTpGVrOMkQ3BtzZ2eYkGPXmcvdyQTRwDdTdws82smhJVp6avLIDTFfE9wrOBCU5eKsk4OnGJmZdxRKP1QswrNgpCA76foHwfjtRoKZjfGAsVa93FjRA=
+	t=1728155551; cv=none; b=GM98RiHu5XCelnF0d76LVOtMscYgjMPpQkbb56l1syxFSn+krX5t7FGEC4CRE98pj2oVmkUwhI0W7IXsJIc8wJi1HO30pJa7YO03+aVYGbFIB5aauMbWa59GoUXzclQ/+fmvbQ4A6eQvfniUg6vg+25SfDX2779eS3POh0tQDOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728155517; c=relaxed/simple;
-	bh=L7+LQAqNfJIxj3/haWkRVJlzJvdQPpjdqp0N5ciC5fI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=joW+lNrdgQIdFMnIr2gckVYa9+20ifB0h2UUJYwXPQ/7IKaEcFskCS3bvkT3QxxQ0U+yugBdZPHF3Mn95PmbYY2Jv9gXy63tbmJ40MohGSBbZHxZz08ZjnBaPtD3Nyypjzg6YndhHf0UyJWHMDjG5SLIOE2B0SgSLelbBpJZMzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxi5sV9I; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7db1f13b14aso2564347a12.1;
-        Sat, 05 Oct 2024 12:11:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728155515; x=1728760315; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qVU4kc0+lons09imsoFP1Tuxl4QApeUsx70KjHx/lY8=;
-        b=gxi5sV9I77ZQywW2unXSOty+JzyvE/CM1IFJe84rAH8vpmv2ZKOklsFVeSUNjTAtnW
-         1bu+q9xlLGWQdD9ZRCnpQhUXuAepDZ3Z84ahQ+kcYHD4QLMtMGgCAvcwjLB0pkAZz9Mv
-         bdBvyIZ+RBgs515ZPARiBLXfTNOksaHU1so+jjDvz5czieC8B68S2BosQcnIJjVQX19S
-         44mZbPFR0S/yQhFF2pzTY2Olqy2HAgpFJf52BnTESU/xV9u7Wau7Wn1GOWjmt9ZpTE32
-         5yTxfoJLJYJKyCtpeMtX7nwzqjyUaOAQI4O2GwdrN8p7Kbq0ppTM/rGQRQ33jM2CTV9q
-         aMpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728155515; x=1728760315;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qVU4kc0+lons09imsoFP1Tuxl4QApeUsx70KjHx/lY8=;
-        b=joE7Ht2w3XsErKEYRqFWIqEC6jsHuiNe/hvDNXwtUL52R4Lvj8qo+GZxrP41t48W66
-         dheEqm5Zp8FOeaMAu4LL7UlFPJaRHW/hIC0lKe2VZbizS9pV6ba2Ah35Bx9jpgFjz8RE
-         lyuLzTConqL/Od5MF7v3h9zRaMNWEX/2PlGPwYdUbnc4hsnaBn4fXgJedSch5F7vcest
-         7rDdCqq2SGJmsE3kzMazmXkqOZtpJLZOdlHP58I+SEjcHKCn6okAS0fPiP//ABvsj3f1
-         p5d0b9KG0EbCOxyP97XoIIcxE0ZdrT+3+j1ZyaXcCxWhz32bpR3k2GY8hT6upPA/h+l6
-         4imw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgyvGCpv8yQvxHNXutEuAqVAuTwyAM5RrbfbZhcYvs72nTHo/Lp8ZeuW9VnsG7dUsFADfhyYnASqxRPsSf@vger.kernel.org, AJvYcCXmjw5lu0DBjClhp6FC2/DncYoD+o78VYaUG9/U+P1PTtYhuTsDXzTAsraEIKAfJjG4bEIZZfPO/+JY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCpOI/KCfNbtS8dbblL8Z9DF//VT4liMvdvtjoRHlJBUK4KAVL
-	XVO0x8+C4QgWLFa0o6iszehjxBnOvJKfXbFMiOTIQYvbxcfkzf/j
-X-Google-Smtp-Source: AGHT+IEmnBwaeuMPiTpMxnqOdZzcWy+If31AO23LmXQ8PIGaDso9GLNnp8TvLQ7Cw0lM7K04PDwzKg==
-X-Received: by 2002:a05:6a20:c793:b0:1d2:e9e8:5e78 with SMTP id adf61e73a8af0-1d6dfa4270dmr12518333637.23.1728155514659;
-        Sat, 05 Oct 2024 12:11:54 -0700 (PDT)
-Received: from rigel (14-202-6-222.static.tpgi.com.au. [14.202.6.222])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d7b993sm1786019b3a.189.2024.10.05.12.11.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 12:11:54 -0700 (PDT)
-Date: Sun, 6 Oct 2024 03:11:49 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 5/5] gpiolib: notify user-space about in-kernel line
- state changes
-Message-ID: <20241005191149.GA387059@rigel>
-References: <20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org>
- <20241004-gpio-notify-in-kernel-events-v1-5-8ac29e1df4fe@linaro.org>
- <20241005074635.GA174602@rigel>
- <CAMRc=MdU5+AC4PyPjuXuG_S7R59OJ-DaaCdX2fZfoCcs5BveJg@mail.gmail.com>
- <20241005095436.GB238189@rigel>
- <CAMRc=MesxXkwQtDHX4vuE+W3KAboM0PNWy6ezScrc_i10=x2=g@mail.gmail.com>
+	s=arc-20240116; t=1728155551; c=relaxed/simple;
+	bh=dUW5FPkc6TiqyYbCkpJFU0+sWOPoy25nEgUuilRHOLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IyPnmCGk6rIDZMfIH60KcTKr1t+jewbNDdNcP378vstBKCgPb/j4TE/aWwsam9SvQ6b9x1h6k4e/PDr44bDJt4YEJkRvOEbEBciQnLceOWslHe91rJ9SXT5AFfPgGjDCobKALyfIGOlGIQwIE2EQc0CW+JS2Gkx9FurEWMwV55I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dZmWHD4K; arc=none smtp.client-ip=80.12.242.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id xACXsHetYzmbmxACXsOuhf; Sat, 05 Oct 2024 21:12:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728155546;
+	bh=OhA3E58mj+rLNcMtdMfNrJ61JKFosbd/9IOaIzgO8Rk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=dZmWHD4KENhS1l87rUrChXQ7DoiqmXSem5ckUd1Q/xXVgttHCRNz3Y1SGLoqNLxlh
+	 JPYWIHLKiRlFvGkEfe6Gno8Mx65cOxVB7Rnf5mtTeIt6UhbfK38LyHzCECHxmRpta7
+	 x7b3spvj5ZEIKOG0sSLItXCPbFylC/LRvw9nqUD/uqOcb1y1Y/oZsyrmH6xcr+2kj2
+	 zetxWAAxTPsEgjYyMqXN/aKHfGv67YczY6iq1cuizz5Uw/4Js7PyuwqnY6SiGjwxFi
+	 K2sYfML4kMOjHTJm4LN9qJ//PbRVDzkZWYQS/1TL5YUY3RXF8Dpi4tMbCvkC5tZMtn
+	 m/78jWP0C/5Iw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 05 Oct 2024 21:12:26 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <5e4f121f-85a4-489f-8949-a5b02be99d09@wanadoo.fr>
+Date: Sat, 5 Oct 2024 21:12:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iioc: dac: ltc2664: Fix span variable usage in
+ ltc2664_channel_config function
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>
+Cc: Michael Hennerich <michael.hennerich@analog.com>,
+ Kim Seer Paller <kimseer.paller@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Mohammed Anees <pvmohammedanees2003@gmail.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241005170722.19542-1-pvmohammedanees2003@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241005170722.19542-1-pvmohammedanees2003@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MesxXkwQtDHX4vuE+W3KAboM0PNWy6ezScrc_i10=x2=g@mail.gmail.com>
 
-On Sat, Oct 05, 2024 at 08:45:17PM +0200, Bartosz Golaszewski wrote:
-> On Sat, Oct 5, 2024 at 11:54 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > On Sat, Oct 05, 2024 at 11:42:34AM +0200, Bartosz Golaszewski wrote:
-> > > On Sat, Oct 5, 2024 at 9:46 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > > >
-> > > > On Fri, Oct 04, 2024 at 04:43:26PM +0200, Bartosz Golaszewski wrote:
-> > > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > > >
-> > > > > There is a problem with gpiod_direction_output/input(), namely the fact
-> > > > > that they can be called both from sleeping as well as atomic context. We
-> > > > > cannot call the blocking notifier from atomic and we cannot switch to
-> > > > > atomic notifier because the pinctrl functions we call higher up the stack
-> > > > > take a mutex. Let's instead use a workqueue and schedule a task to emit
-> > > > > the event from process context on the unbound system queue for minimal
-> > > > > latencies.
-> > > > >
-> > > >
-> > > > So now there is a race between the state of the desc changing and the
-> > > > notified reading it?
-> > > >
-> > >
-> > > Theoretically? Well, yes... In practice I don't think this would
-> > > matter. But I understand the concern and won't insist if it's a
-> > > deal-breaker for you.
-> > >
-> >
-> > I don't like that correctness depends on timing, so this is a deal
-> > breaker for me as it stands.  I would like to see the relevant state passed
-> > via the notifier chain, rather than assuming it can be pulled from the desc
-> > when the notifier is eventually called.
-> >
->
-> We could potentially still use the workqueue but atomically allocate
-> the work_struct in any context, store the descriptor data, timestamp
-> etc. (except the info from pinctrl which is rarely modified and would
-> be retrieved just before emitting the event in process context) in it
-> and pass it to the workqueue which would then put the data into the
-> kfifo and free the work_struct. We can enforce ordering of work
-> execution so we wouldn't mangle them, userspace would still see the
-> events with correct timestamps and in the right order. Does this sound
-> like something viable?
->
+Le 05/10/2024 à 19:07, Mohammed Anees a écrit :
+> In the current implementation of the ltc2664_channel_config function,
 
-That is what I had in mind.  The passed/queued state only has to be the
-fields subject to change, which isn't all that much.  You have to keep any
-queues finite and deal with potential overflows, though that should be
-unlikely if they are reasonably sized - and as you noted earlier this is not
-a hot path so even "reasonably sized" is probably going to be small.
+Hi,
 
-Cheers,
-Kent.
+Usually () are added after function name.
+
+	In the current implementation of ltc2664_channel_config()
+
+Same for other function in the text below.
+
+> a variable named span is declared and initialized to 0, intended to
+> capture the return value of the ltc2664_set_span function. However,
+> the output of ltc2664_set_span is directly assigned to chan->span,
+> leaving span unchanged. As a result, when the function later checks
+> if (span < 0), this condition will never trigger an error since
+> span remains 0, this flaw leads to ineffective error handling. The
+> current patch resolves this issue by using the ret variable for
+
+Usually imperative is preferred in patch description. This could be:
+
+	Resolve this issue by using the ret variable for...
+(without "The current patch")
+
+> getting the return value, later assigning if successful and also
+> effectively removing span variable.
+> 
+> Signed-off-by: Mohammed Anees <pvmohammedanees2003-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Fixes: 4cc2fc445d2e4e63ed6bd5d310752d88d365f8e4
+
+Fixes should be before S-o-b.
+
+Fixes should be Fixes: <12 chars of sha1> ("<title line>")
+So here: Fixes: 4cc2fc445d2e ("iio: dac: ltc2664: Add driver for LTC2664 
+and LTC2672")
+
+I think that running "./scripts/checkpatch.pl" on your patch should warn 
+about it.
+
+> ---
+> v2:
+> - Using the ret variable to store the result from ltc2664_set_span
+> ---
+>   drivers/iio/dac/ltc2664.c | 18 +++++++++++-------
+>   1 file changed, 11 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iio/dac/ltc2664.c b/drivers/iio/dac/ltc2664.c
+> index 5be5345ac5c8..7dafcba7ece7 100644
+> --- a/drivers/iio/dac/ltc2664.c
+> +++ b/drivers/iio/dac/ltc2664.c
+> @@ -516,7 +516,7 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
+>   	const struct ltc2664_chip_info *chip_info = st->chip_info;
+>   	struct device *dev = &st->spi->dev;
+>   	u32 reg, tmp[2], mspan;
+> -	int ret, span = 0;
+> +	int ret;
+>   
+>   	mspan = LTC2664_MSPAN_SOFTSPAN;
+>   	ret = device_property_read_u32(dev, "adi,manual-span-operation-config",
+> @@ -579,20 +579,24 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
+>   		ret = fwnode_property_read_u32_array(child, "output-range-microvolt",
+>   						     tmp, ARRAY_SIZE(tmp));
+>   		if (!ret && mspan == LTC2664_MSPAN_SOFTSPAN) {
+> -			chan->span = ltc2664_set_span(st, tmp[0] / 1000,
+> +			ret = ltc2664_set_span(st, tmp[0] / 1000,
+>   						      tmp[1] / 1000, reg);
+
+Parameters are not aligned anymore with the opening ( of the previous line.
+
+"./scripts/checkpatch.pl --strict" would also warn about it.
+
+> -			if (span < 0)
+> -				return dev_err_probe(dev, span,
+> +			if (ret < 0)
+> +				return dev_err_probe(dev, ret,
+>   						     "Failed to set span\n");
+> +			else
+
+No need for 'else'.
+
+> +				chan->span = ret;
+>   		}
+>   
+>   		ret = fwnode_property_read_u32_array(child, "output-range-microamp",
+>   						     tmp, ARRAY_SIZE(tmp));
+>   		if (!ret) {
+> -			chan->span = ltc2664_set_span(st, 0, tmp[1] / 1000, reg);
+> -			if (span < 0)
+> -				return dev_err_probe(dev, span,
+> +			ret = ltc2664_set_span(st, 0, tmp[1] / 1000, reg);
+> +			if (ret < 0)
+> +				return dev_err_probe(dev, ret,
+>   						     "Failed to set span\n");
+> +			else
+
+No need for 'else'.
+
+CJ
+
+> +				chan->span = ret;
+>   		}
+>   	}
+>   
+
 
