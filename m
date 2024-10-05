@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-352106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA60E991A3E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:58:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DB5991A40
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DF11283DAF
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:58:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F145B23113
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DD517C9FC;
-	Sat,  5 Oct 2024 19:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880AE1684A3;
+	Sat,  5 Oct 2024 19:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IeTqjCZb"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h2DPOUdT"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AC517BECD
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 19:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A97217C9B0
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 19:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728158185; cv=none; b=TJeMpyx1wI8ysl/ZHjl9hpVDdLGN8P4KUlKxrRYbtrMk0hFVUoDzUS8wDvkXdwQAixm69lBOj1O8T5Efp6LjuVU+x63YsMUudg40YY96vKFGuLlGSQ+9OPtPzy86MIc8KDH3l4c4d0PUJmUHdj7gMmuw8RDDD8gMEqQWAaVN/m4=
+	t=1728158187; cv=none; b=A3/HNgaH25A55kJsvqAK7aoWZqNPihsFQU4QQnHhiJseQS43m9jlyL80JkF/ce51Vgwf53y7IRxsaMzbFLV7xFZpfkNHAmrcjU3KGeErVYJ5olYqB2H6U3Y+vTqmbWJW/+LTjx0/phMYEIrJ+BNhThCv1tQf1I0kI5shZzb02A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728158185; c=relaxed/simple;
-	bh=5+jgPOxz0eF8PvRGjL0yqPb9KHea2YGzhwp7FWjocGo=;
+	s=arc-20240116; t=1728158187; c=relaxed/simple;
+	bh=5PAi6ooydC2034Tlqdv0mieuQRt/MPe6ihmi35Ubwc4=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=mfZXY5yohun5vlsJLiTb0ZwLlfQ/rbmlaczs72tXxzlShk+etFIJ9ec2MPx3hzc3Jo/1plzdyAh2I30+ZdUgiwS+uKeNs6Iu5n+clDr4Lk6mEtCH0I4Vr8BUqr6qK8oxNq3wXEd3lcosnK0OBaG5bfNqws/P9YfiEeNYzDMiKaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IeTqjCZb; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=c6rdbs5lTQYMThYjRMSxEYhXjJv5t97lwDrovQbkri3A9MKBhzWKCDMU6+PG0q0JjmjSMsanMXspPg1dB/oRtQFGhZt6/uUtaR8bDPGI+KRAsfjNnMq962l525v70cGuxr1RtyvinNDo1sVM8PrQvv+e9nfqluCo5TG9Ut9SeDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h2DPOUdT; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e284982a31so55682847b3.3
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 12:56:23 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e0082c1dd0so71675537b3.3
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 12:56:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728158183; x=1728762983; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728158185; x=1728762985; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=eN4YqIaHUMZV32L2QJLPoP9jsFkxRa+mNTAtqb8Hsas=;
-        b=IeTqjCZbinrtJX64Gf58/kvo9EmWeecJ+rFvtEA/nLHS+mSu2anKSpHK/zA5kVlA9W
-         ceNj9wm9P4Gq1Sv/pVQWokxgLfgXYwxE9NpABhKhfIRpMgiUTBjZvWMTRzXAd88PBy17
-         bthKN5VVtRzlfFBagMMWOzAkzeCC2NEpoZIOYE9Oqj2/jiQqigpryjCyVPGPMwWqDyPp
-         RhXWn+hV/ZlBrLb9T/mYmA+apmf01XSHfdilqzAfx/6nlSY3qJnGvOEg+9AsFpZf2jUi
-         uuPg/6/95fsK+N0UzABJlV04U5p1A5Pb6j9Rn5vR9lsZAFGU7GUZsJQtIBEmNICtz7Oq
-         V8NA==
+        bh=h/3DcHqmbVdZp4yWyNeZgt8hRC6twmBuki9IOXFR1Fk=;
+        b=h2DPOUdTj9+Nh4C5e8DMq4W7/0lJtuevRupKExllqSegkN5xFqBnmoiGkJxWVy75AS
+         r67cIoD2ZoZAo6lVXw7qK81GfiAE48Z1YqHnJUcEtOFklbwOFNjswvLVXcZobR9wE/S/
+         vWJcZKd6/qNEl0jxoQiHwBTIPj5ftw1mV1Upt2y8wHLN4ZvGo8Kvzd75g/q87e6RGUF6
+         0qIk/QZUqBMbWGt0B+43Q2AbMJHeP0PBBzsEYAuE/3UbdPmtHs4MCHYYMxxdKOolTc/x
+         0fPrM8yCKD89w+eNhja2ih9lInGu7ny0rS/uwlH4qd7gtaabvei6XSuIfFNOuJAc2Yji
+         qSeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728158183; x=1728762983;
+        d=1e100.net; s=20230601; t=1728158185; x=1728762985;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eN4YqIaHUMZV32L2QJLPoP9jsFkxRa+mNTAtqb8Hsas=;
-        b=qR52Q5pNMabH52UOUvAUjZjaooVtX+wndLhWHGMuLehQiEsbnzHUbe7+2r9khpX0um
-         RBiPgGfeIga8VG+2rHr34Gsn/Wz6HmgR6EvYi7BhQgGXqTpuhVGaBToKFmC8WUuYqIn1
-         lghE5pGYr/BqtiZDInx5HZ7HblfiHAG0nQfuiXARJ5DA/pcarf5jDECQ9Y46MrP0CSWs
-         FmeR6O3xTLDFpHSDsNVYG2fV9uFqVlDwTBEsG/73eegpyTrNMdL1HFwu6xf64E85Eers
-         HeY4OAoKO/cSFezo4HrGtho62YcJDUONv4o0lrmLUh98J5C3qQAGLAatHnJlYx6Nmf1Z
-         ya9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVtQvPZyWQAWUzDx/Eu/D/cfJYyp+zWTIA7btWREtCYer+/BKRBgVHfHmK+KCj6bf6qeU8WO/zxcCHc7nI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsrsUnCfibwkPNZmUBZkdEQ6U1sgnKeWcZadhfS+0iuYmleqim
-	eySgvkPS5h5M5ZaWcoFOgxVG9Xo7DMYO5PqmCo+9H0O35/DKC6ggJlGQoLBqPA7gT7o3JbyT3SD
-	pZrk7Hw==
-X-Google-Smtp-Source: AGHT+IE37lPO5ROCWh/CimkZxetVnVk7klOqRJ1yUjeH0eyV1XGJ+pwkxL/0BElgh1N3dpXWOd2oLe3lR4T2
+        bh=h/3DcHqmbVdZp4yWyNeZgt8hRC6twmBuki9IOXFR1Fk=;
+        b=f8gKkiaNKoDXZ2/Y7p5I8ivP+Y/L1wMtwyz0VjayxNZ4K9B++45f4sOzmbHnf3Mb2a
+         mGVZrNwCIT1zXO1tTtmvCKaS1yRWAe68tZkJmHIGOV5zEo76faMCjvQKIIdcbSdE15pi
+         bKaJTx6LLCtQJ19kp9HAjJ1jqqc/taEVMCE/1HJkEL0hMvabd0H7XAp4AiuIXU7IYsJo
+         KnALT9PAokbMwtoRbqYjSQ65mQ3eYww2F9nKnWh0Ha5Uj7ASoSUdMYOSIcWpG/u00wVe
+         L59wiQh1vdyuKbY8yIUUX6wGGf5plCPxcA/g6cnuqVSNLl6i9HcSyVnbNCEgXtbkDtQL
+         u4Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGzgzA+OTbIrKMW5kdg1Qyjd2SLHc6i4Y67F5FRZF7R347F/TYwmE7r102oliGP63bYDTZuBwNW8V7QZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYY1kMkpUAqPMEJIL4mZtAFJmtzHfjhAwNLfef02aQ40ZOWS5n
+	DYdNHDjsOGt4sZJtbk6SlzkSHGrKIWlXLlaXF5vExJowMKgFPEsurjC9KF147oCGyZrHDLxvqZo
+	Qm1cEIA==
+X-Google-Smtp-Source: AGHT+IFisEJrumnwhsHUHkUR8QAhAmeXxmT2VH1277V55Dcfln2xbxOQ1sJmjrLj9pgNFaHmZqxuL/PfQjiy
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:4c2:5b4d:8797:7249])
- (user=irogers job=sendgmr) by 2002:a05:690c:4502:b0:68d:52a1:bf4 with SMTP id
- 00721157ae682-6e2c6fdd0afmr975947b3.2.1728158183073; Sat, 05 Oct 2024
- 12:56:23 -0700 (PDT)
-Date: Sat,  5 Oct 2024 12:55:21 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:f8b:b0:6e2:ef1:2551 with SMTP id
+ 00721157ae682-6e2c72af775mr523117b3.8.1728158185409; Sat, 05 Oct 2024
+ 12:56:25 -0700 (PDT)
+Date: Sat,  5 Oct 2024 12:55:22 -0700
 In-Reply-To: <20241005195541.380070-1-irogers@google.com>
-Message-Id: <20241005195541.380070-12-irogers@google.com>
+Message-Id: <20241005195541.380070-13-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241005195541.380070-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-Subject: [PATCH v2 11/31] perf build: Rename CONFIG_DWARF to CONFIG_LIBDW
+Subject: [PATCH v2 12/31] perf bpf-prologue: Remove unused file
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -102,201 +102,61 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 
-In Makefile.config for unwinding the name dwarf implies either
-libunwind or libdw. Make it clearer that CONFIG_DWARF is really just
-defined when libdw is present by renaming to CONFIG_LIBDW.
+Commit 4a73fca22692 ("perf bpf-prologue: Remove unused file") missed
+cleaning up the header file. The code was unnecessary as Commit
+3d6dfae88917 ("perf parse-events: Remove BPF event support") removed
+building bpf-prologue.c.
 
+Fixes: 4a73fca22692 ("perf bpf-prologue: Remove unused file")
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/Makefile.config           |  2 +-
- tools/perf/arch/arm/util/Build       |  2 +-
- tools/perf/arch/arm64/util/Build     |  2 +-
- tools/perf/arch/csky/util/Build      |  2 +-
- tools/perf/arch/loongarch/util/Build |  2 +-
- tools/perf/arch/mips/util/Build      |  2 +-
- tools/perf/arch/powerpc/util/Build   |  4 ++--
- tools/perf/arch/riscv/util/Build     |  2 +-
- tools/perf/arch/s390/util/Build      |  2 +-
- tools/perf/arch/sh/util/Build        |  2 +-
- tools/perf/arch/sparc/util/Build     |  2 +-
- tools/perf/arch/x86/util/Build       |  2 +-
- tools/perf/arch/xtensa/util/Build    |  2 +-
- tools/perf/util/Build                | 12 ++++++------
- 14 files changed, 20 insertions(+), 20 deletions(-)
+ tools/perf/util/bpf-prologue.h | 37 ----------------------------------
+ 1 file changed, 37 deletions(-)
+ delete mode 100644 tools/perf/util/bpf-prologue.h
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 9ed0909db170..b14430ab2898 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -559,7 +559,7 @@ ifndef NO_LIBELF
-       CFLAGS += -DHAVE_LIBDW_SUPPORT $(LIBDW_CFLAGS)
-       LDFLAGS += $(LIBDW_LDFLAGS)
-       EXTLIBS += ${DWARFLIBS}
--      $(call detected,CONFIG_DWARF)
-+      $(call detected,CONFIG_LIBDW)
-     endif # PERF_HAVE_DWARF_REGS
-   endif # NO_LIBDW
- 
-diff --git a/tools/perf/arch/arm/util/Build b/tools/perf/arch/arm/util/Build
-index e6dd7cd79ebd..e06fea1ea8ff 100644
---- a/tools/perf/arch/arm/util/Build
-+++ b/tools/perf/arch/arm/util/Build
-@@ -1,6 +1,6 @@
- perf-util-y += perf_regs.o
- 
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- 
- perf-util-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-diff --git a/tools/perf/arch/arm64/util/Build b/tools/perf/arch/arm64/util/Build
-index 343ef7589a77..4387a6d6a6c3 100644
---- a/tools/perf/arch/arm64/util/Build
-+++ b/tools/perf/arch/arm64/util/Build
-@@ -4,7 +4,7 @@ perf-util-y += perf_regs.o
- perf-util-y += tsc.o
- perf-util-y += pmu.o
- perf-util-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
--perf-util-$(CONFIG_DWARF)     += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW)     += dwarf-regs.o
- perf-util-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- 
-diff --git a/tools/perf/arch/csky/util/Build b/tools/perf/arch/csky/util/Build
-index 99d83f41bf43..1325310cab6a 100644
---- a/tools/perf/arch/csky/util/Build
-+++ b/tools/perf/arch/csky/util/Build
-@@ -1,4 +1,4 @@
- perf-util-y += perf_regs.o
- 
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-diff --git a/tools/perf/arch/loongarch/util/Build b/tools/perf/arch/loongarch/util/Build
-index b6b97de48233..06ff95394921 100644
---- a/tools/perf/arch/loongarch/util/Build
-+++ b/tools/perf/arch/loongarch/util/Build
-@@ -1,7 +1,7 @@
- perf-util-y += header.o
- perf-util-y += perf_regs.o
- 
--perf-util-$(CONFIG_DWARF)     += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW)     += dwarf-regs.o
- perf-util-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- perf-util-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
-diff --git a/tools/perf/arch/mips/util/Build b/tools/perf/arch/mips/util/Build
-index e4644f1e68a0..b328109fc16c 100644
---- a/tools/perf/arch/mips/util/Build
-+++ b/tools/perf/arch/mips/util/Build
-@@ -1,3 +1,3 @@
- perf-util-y += perf_regs.o
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- perf-util-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
-diff --git a/tools/perf/arch/powerpc/util/Build b/tools/perf/arch/powerpc/util/Build
-index 6c588ecdf3bd..3d979480a188 100644
---- a/tools/perf/arch/powerpc/util/Build
-+++ b/tools/perf/arch/powerpc/util/Build
-@@ -7,8 +7,8 @@ perf-util-y += sym-handling.o
- perf-util-y += evsel.o
- perf-util-y += event.o
- 
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
--perf-util-$(CONFIG_DWARF) += skip-callchain-idx.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += skip-callchain-idx.o
- 
- perf-util-$(CONFIG_LIBUNWIND) += unwind-libunwind.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-diff --git a/tools/perf/arch/riscv/util/Build b/tools/perf/arch/riscv/util/Build
-index f865cb0489ec..8f93091b8345 100644
---- a/tools/perf/arch/riscv/util/Build
-+++ b/tools/perf/arch/riscv/util/Build
-@@ -2,5 +2,5 @@ perf-util-y += perf_regs.o
- perf-util-y += header.o
- 
- perf-util-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-diff --git a/tools/perf/arch/s390/util/Build b/tools/perf/arch/s390/util/Build
-index 1ac830030ff3..787410f99bb3 100644
---- a/tools/perf/arch/s390/util/Build
-+++ b/tools/perf/arch/s390/util/Build
-@@ -2,7 +2,7 @@ perf-util-y += header.o
- perf-util-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
- perf-util-y += perf_regs.o
- 
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- 
- perf-util-y += machine.o
-diff --git a/tools/perf/arch/sh/util/Build b/tools/perf/arch/sh/util/Build
-index 32f44fc4ab98..2337a0b710a2 100644
---- a/tools/perf/arch/sh/util/Build
-+++ b/tools/perf/arch/sh/util/Build
-@@ -1 +1 @@
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
-diff --git a/tools/perf/arch/sparc/util/Build b/tools/perf/arch/sparc/util/Build
-index 32f44fc4ab98..2337a0b710a2 100644
---- a/tools/perf/arch/sparc/util/Build
-+++ b/tools/perf/arch/sparc/util/Build
-@@ -1 +1 @@
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
-diff --git a/tools/perf/arch/x86/util/Build b/tools/perf/arch/x86/util/Build
-index 2607ed5c4296..9705cda4f240 100644
---- a/tools/perf/arch/x86/util/Build
-+++ b/tools/perf/arch/x86/util/Build
-@@ -12,7 +12,7 @@ perf-util-y += evsel.o
- perf-util-y += iostat.o
- perf-util-y += env.o
- 
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- perf-util-$(CONFIG_BPF_PROLOGUE) += dwarf-regs.o
- 
- perf-util-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind.o
-diff --git a/tools/perf/arch/xtensa/util/Build b/tools/perf/arch/xtensa/util/Build
-index e813e618954b..2d1a48696ad9 100644
---- a/tools/perf/arch/xtensa/util/Build
-+++ b/tools/perf/arch/xtensa/util/Build
-@@ -1 +1 @@
--perf-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-$(CONFIG_LIBDW) += dwarf-regs.o
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index dc616292b2dd..1d08608b7e1b 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -199,11 +199,11 @@ ifndef CONFIG_SETNS
- perf-util-y += setns.o
- endif
- 
--perf-util-$(CONFIG_DWARF) += probe-finder.o
--perf-util-$(CONFIG_DWARF) += dwarf-aux.o
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
--perf-util-$(CONFIG_DWARF) += debuginfo.o
--perf-util-$(CONFIG_DWARF) += annotate-data.o
-+perf-util-$(CONFIG_LIBDW) += probe-finder.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-aux.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += debuginfo.o
-+perf-util-$(CONFIG_LIBDW) += annotate-data.o
- 
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- perf-util-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind-local.o
-@@ -234,7 +234,7 @@ perf-util-$(CONFIG_LIBLLVM) += llvm-c-helpers.o
- ifdef CONFIG_JITDUMP
- perf-util-$(CONFIG_LIBELF) += jitdump.o
- perf-util-$(CONFIG_LIBELF) += genelf.o
--perf-util-$(CONFIG_DWARF) += genelf_debug.o
-+perf-util-$(CONFIG_LIBDW) += genelf_debug.o
- endif
- 
- perf-util-y += perf-hooks.o
+diff --git a/tools/perf/util/bpf-prologue.h b/tools/perf/util/bpf-prologue.h
+deleted file mode 100644
+index 66dcf751ef65..000000000000
+--- a/tools/perf/util/bpf-prologue.h
++++ /dev/null
+@@ -1,37 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-/*
+- * Copyright (C) 2015, He Kuang <hekuang@huawei.com>
+- * Copyright (C) 2015, Huawei Inc.
+- */
+-#ifndef __BPF_PROLOGUE_H
+-#define __BPF_PROLOGUE_H
+-
+-struct probe_trace_arg;
+-struct bpf_insn;
+-
+-#define BPF_PROLOGUE_MAX_ARGS 3
+-#define BPF_PROLOGUE_START_ARG_REG BPF_REG_3
+-#define BPF_PROLOGUE_FETCH_RESULT_REG BPF_REG_2
+-
+-#ifdef HAVE_BPF_PROLOGUE
+-int bpf__gen_prologue(struct probe_trace_arg *args, int nargs,
+-		      struct bpf_insn *new_prog, size_t *new_cnt,
+-		      size_t cnt_space);
+-#else
+-#include <linux/compiler.h>
+-#include <errno.h>
+-
+-static inline int
+-bpf__gen_prologue(struct probe_trace_arg *args __maybe_unused,
+-		  int nargs __maybe_unused,
+-		  struct bpf_insn *new_prog __maybe_unused,
+-		  size_t *new_cnt,
+-		  size_t cnt_space __maybe_unused)
+-{
+-	if (!new_cnt)
+-		return -EINVAL;
+-	*new_cnt = 0;
+-	return -ENOTSUP;
+-}
+-#endif
+-#endif /* __BPF_PROLOGUE_H */
 -- 
 2.47.0.rc0.187.ge670bccf7e-goog
 
