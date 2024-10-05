@@ -1,255 +1,209 @@
-Return-Path: <linux-kernel+bounces-351967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB2799186C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3710A991872
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DBEF1C212EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AD6C1C21255
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEF2158A30;
-	Sat,  5 Oct 2024 16:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE7B1586F2;
+	Sat,  5 Oct 2024 16:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YT+j8cz7"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jmbNPija"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA131CF96;
-	Sat,  5 Oct 2024 16:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A6514D430
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 16:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728146854; cv=none; b=KHV9StBw7imvj0na6EKXh0UKF64jBwHu6tQjUyZwNbLwzVmrKhjaSRyH8wEIBs8agg0xeegRUfFWqg/j/nMShmSY8ul2BV7HwEpUXuJo49BiDHgiX1+9a7v3HZaIDZ6gB6Rbnp0PuxRDrBF/2CBlmRERKoR7UPynV6nsItXD52E=
+	t=1728146978; cv=none; b=Vtox+g+Xq3Dw2OoyTAtEF7WXpdl7FjK0XXZnOP4siStnTow2SoEHEPTMpyPer5NUd6chk4oy+Y9CuTddv6xG3Uk3WpYaLfVCFsZASl5y6F4D/B+kNjOVc30AeS0DrV9AWKtQWjBNJB0J2cUWM6mZlPgBbMJh96lHVwE/H1B0cNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728146854; c=relaxed/simple;
-	bh=V7UMIoZwYQLXrsyOW/y0872ptmIBcpXxOWMRbWdm/1c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pd+X2qsKksBcAb43KNVTmJFZtdO7NC+AUp0MBn23LBztxzZFnsCnxu5wQMZNtaHlykWu9ILg3Xp88dAHSs4X1oeucEuKDagK98OFpL2NMbAClmnpJFV5vWpp/bhikiOa5AtbVJJfMwoGDilw98F+EWPacFxM1kKdKNUrdx42V7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YT+j8cz7; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so27113395e9.3;
-        Sat, 05 Oct 2024 09:47:32 -0700 (PDT)
+	s=arc-20240116; t=1728146978; c=relaxed/simple;
+	bh=yisxnb0egFsAafRFBnx9JVviGQTOX61NyzBW5Hznt0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=J14T9/Npn//UkQ/NXYBG6i2XL+AsR8CP3s/9CyyevkLB/FTb+ntwXG1CmIgkiAsZfJ2zztqkPEBlOG/mdn+/Bg/rU8auBVCbaaMGremJRsYNEXCEhPaP6sSVFetQDVzMU2VCPyfoW8Sj8hhE3dYporRMW1ruIX3CwPvo3KbWreM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jmbNPija; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-286f304f504so1431069fac.1
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 09:49:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728146851; x=1728751651; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q6F6OyhiHlCOdmPRfgY5RV4ZY7u4wQoO0FaQWpwh0ps=;
-        b=YT+j8cz7oQi4e+LnOMu0wwx/09my6L5+Upxiz9GXUB5VCC/oTEVUrfyH9xuV9Nl8i6
-         xDMXQ0DZkkJueMz/vYVAgSl/X4fUYgVPv+r7WKH03s/ugUjmNmxtMWfoJsCrJgJSPwDx
-         rmOlKFL7MavBX41idakjGQSOrQOdn1MXRA2xMfvnUMi6dK/4xDbcnubQJAo2ceWSnmyN
-         EvNgEWAzq1Zhay1keN/WsaDrbGcvhSyviO1n8XY8m8LVc9OCEmV/fAjVHGkU5HW19Vo7
-         lofBWxAwaHCAKHP8W6rawm5GfEs1VBt07ba4ar2g6vln7mC7CBeujeB31gI06GsPt3sB
-         NjWQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728146975; x=1728751775; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Fz5iqWZzkRkSIanhxZ9d0XaTHnZxedcupQv2iL5fXio=;
+        b=jmbNPijagwkqX9RW4DGdYHnTvy1X924o+v+jTZ3y8F99PNpID0/fvnXKuIUy+ScEF+
+         /CMpXbdTxRYZ4eJfQ6IB+EDunV73yid0tnarUxV1OjUaQZcjKLKoGP/HfK2yY6MwuvXy
+         yVStoZlQPTl2OWnFxY1tTjfUbp6c3eo1MGbC3BHlZIKN4ZXaQlqoXEd1biU2pNcn1D0G
+         5sQv0pLiDsgy/+Kxf49rH28AY3CIOpYBWt5ce/w0xauO1iZ7ADn+4g4bKjEzM9VU+bQb
+         QZhZsD2UOlIDRgCjqR3vz67umKrE7KkNzkxjD6dsJ2ZdAnCRccu5uak8PCS6HN8HRM+9
+         4bwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728146851; x=1728751651;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q6F6OyhiHlCOdmPRfgY5RV4ZY7u4wQoO0FaQWpwh0ps=;
-        b=QuG+vj/mnGTDldVpggp+iOwMd/1LHkiK8pflXWY5FV9Jwrm3/pyQY5SgUEHfd3tpfc
-         6a4rg3UzrT1ZWw8v80V8YEzXB3iTDVw939MS9EmdeUFSxGFxVIciHkvBtNmbJaBJsT0R
-         5ZVgOvqsBeE8vLwc7n9SOVEEvpNJ8XfK4JlO9NOEC+APlaQ60w60V5BF/YIymvaOrbsp
-         buPyAOD5Nzpi8nU+pyjTeH+BmIl5/3QWCm9rtapy+uD7+HutLq9dMyO1jTSPOcDxf2Ln
-         AlA+EJJX3qaJ5z1wXyTMtd6ZZeo8Z85/7BUiW+papM3HOAyd6eApei/u8t/Z9X2aJsX+
-         HUbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyRzk/RRgVRUguckI+mf7QVMSzuOEqMdyRPXV1P+sSiHpaXdtiqOxdui28hchmxCRQG49sGMn10RVPPeOY@vger.kernel.org, AJvYcCWvD5oQxhh0LVsu/q+I1w57wCByMXELbMqe96OBTwiW5KflcUTR+YF7v7m6Xmt/OLZuso8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiA8ESoUIV2bicAsqdyrBdCrUvib4Mm1o7u7a1vxksmZLIlJdo
-	lWHIuPlyPvEb5C3HcM1vWup+Sp/ZUA84WZnFEnkqUKXTTikZ1Tzv
-X-Google-Smtp-Source: AGHT+IGRMhdyR88SHH/XDkMpaLLrsydDkJXOsVYXtgoQI2RKA50PHZ8fgkrTQjY0KvtWK5o2wiVCdA==
-X-Received: by 2002:a05:600c:1f82:b0:42c:b750:19f3 with SMTP id 5b1f17b1804b1-42f859be4cdmr52608925e9.0.1728146850889;
-        Sat, 05 Oct 2024 09:47:30 -0700 (PDT)
-Received: from work.. ([94.200.20.179])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ec71aesm26481515e9.33.2024.10.05.09.47.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 09:47:30 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: elver@google.com,
-	akpm@linux-foundation.org
-Cc: andreyknvl@gmail.com,
-	bpf@vger.kernel.org,
-	dvyukov@google.com,
-	glider@google.com,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	ryabinin.a.a@gmail.com,
-	snovitoll@gmail.com,
-	syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com,
-	vincenzo.frascino@arm.com
-Subject: [PATCH v2 1/1] mm, kasan, kmsan: copy_from/to_kernel_nofault
-Date: Sat,  5 Oct 2024 21:48:13 +0500
-Message-Id: <20241005164813.2475778-2-snovitoll@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241005164813.2475778-1-snovitoll@gmail.com>
-References: <CANpmjNOZ4N5mhqWGvEU9zGBxj+jqhG3Q_eM1AbHp0cbSF=HqFw@mail.gmail.com>
- <20241005164813.2475778-1-snovitoll@gmail.com>
+        d=1e100.net; s=20230601; t=1728146975; x=1728751775;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fz5iqWZzkRkSIanhxZ9d0XaTHnZxedcupQv2iL5fXio=;
+        b=NhmEAnoW8aIJM4uB/QarGxHCUp8uK0K0w5an9EBO4tyrhtmYZTt31LOUjmKgbY8LRs
+         wkwfulKPvyyuoe5+QsBXvS/fPvGLbeXOJFZ4+3uSXqbcrSBbbE++PWmuaAeCv8L596CR
+         kO7jkHPJl4hs5UWYcdhJZUWcP3VrdZdZMKJO409/eqOGCdGdnzVJPG1cAk/aJx464Rvj
+         5c8KB1i8grdQn2Rtdz3pI9WGJVn/wWvqTeJ6QA9IU+mst+jvqvHFW27JUjCS9u9Kg57E
+         odmKAc4rF0uGXAPDGkuasbJhMoAx91e4re+gwW5mK0edO8RMI94X17qNHSQWDwTzfyAP
+         ouhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTiJ1uWvtuMWaxaNcQZ39j6sx1aXzO1jl2dSND0dTpnhxB6YzyEgEfRqPtAnO3M9/k6X74uzOZecrYPDE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC5QPVQv2ci8eT/Ii/L/EnYDJiasOYw4tanxgBp2eRGAnZYkXW
+	PKviUHQgaSTDKvLxzN4wtS1PR00ZYqOB3s3CqI3OnamuZryHdzF4qp4dxKjoWlQ=
+X-Google-Smtp-Source: AGHT+IF4ui6OX90k7R7d+bTlwjhjgphmk3o8teENkVkRxgIOY8p/7k54A97SKVFD2tkFMtx6LJlYKw==
+X-Received: by 2002:a05:6870:548d:b0:278:15b:8ee0 with SMTP id 586e51a60fabf-287c3aaefb8mr3688679fac.7.1728146974760;
+        Sat, 05 Oct 2024 09:49:34 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-287d7067354sm893141fac.6.2024.10.05.09.49.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 05 Oct 2024 09:49:34 -0700 (PDT)
+Message-ID: <2053a2ca-5f76-403c-9add-ed55b478a549@baylibre.com>
+Date: Sat, 5 Oct 2024 11:49:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] iio: backend: add API for interface get
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Mike Looijmans <mike.looijmans@topic.nl>,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+References: <20241004140922.233939-1-antoniu.miclaus@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241004140922.233939-1-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Instrument copy_from_kernel_nofault() with KMSAN for uninitialized kernel
-memory check and copy_to_kernel_nofault() with KASAN, KCSAN to detect
-the memory corruption.
+On 10/4/24 9:07 AM, Antoniu Miclaus wrote:
+> Add backend support for obtaining the interface type used.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v2:
+>  - add IIO_BACKEND_INTERFACE_COUNT in enum.
+>  - add trailing commas where applies.
+>  drivers/iio/industrialio-backend.c | 24 ++++++++++++++++++++++++
+>  include/linux/iio/backend.h        | 11 +++++++++++
+>  2 files changed, 35 insertions(+)
+> 
+> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+> index efe05be284b6..a322b0be7b2c 100644
+> --- a/drivers/iio/industrialio-backend.c
+> +++ b/drivers/iio/industrialio-backend.c
+> @@ -449,6 +449,30 @@ ssize_t iio_backend_ext_info_set(struct iio_dev *indio_dev, uintptr_t private,
+>  }
+>  EXPORT_SYMBOL_NS_GPL(iio_backend_ext_info_set, IIO_BACKEND);
+>  
+> +/**
+> + * iio_backend_interface_type_get - get the interace type used.
 
-syzbot reported that bpf_probe_read_kernel() kernel helper triggered
-KASAN report via kasan_check_range() which is not the expected behaviour
-as copy_from_kernel_nofault() is meant to be a non-faulting helper.
+spelling: s/interace/interface
 
-Solution is, suggested by Marco Elver, to replace KASAN, KCSAN check in
-copy_from_kernel_nofault() with KMSAN detection of copying uninitilaized
-kernel memory. In copy_to_kernel_nofault() we can retain
-instrument_write() for the memory corruption instrumentation but before
-pagefault_disable().
+> + * @back: Backend device
+> + * @type: Interface type
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_interface_type_get(struct iio_backend *back,
+> +				   enum iio_backend_interface_type *type)
+> +{
+> +	int ret;
+> +
+> +	ret = iio_backend_op_call(back, interface_type_get, type);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (*type >= IIO_BACKEND_INTERFACE_COUNT)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_interface_type_get, IIO_BACKEND);
+> +
+>  /**
+>   * iio_backend_extend_chan_spec - Extend an IIO channel
+>   * @indio_dev: IIO device
+> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+> index 8099759d7242..34fc76c99d8a 100644
+> --- a/include/linux/iio/backend.h
+> +++ b/include/linux/iio/backend.h
+> @@ -63,6 +63,12 @@ enum iio_backend_sample_trigger {
+>  	IIO_BACKEND_SAMPLE_TRIGGER_MAX
+>  };
+>  
+> +enum iio_backend_interface_type {
+> +	IIO_BACKEND_INTERFACE_LVDS,
+> +	IIO_BACKEND_INTERFACE_CMOS,
 
-copy_to_kernel_nofault() is tested on x86_64 and arm64 with
-CONFIG_KASAN_SW_TAGS. On arm64 with CONFIG_KASAN_HW_TAGS,
-kunit test currently fails. Need more clarification on it
-- currently, disabled in kunit test.
+There are some chips that can do both serial and parallel, so I
+think these qualifiers should be included in the enum as well.
 
-Link: https://lore.kernel.org/linux-mm/CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7qeeeAp_6yKjwKo8iw@mail.gmail.com/
-Suggested-by: Marco Elver <elver@google.com>
-Reported-by: syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=61123a5daeb9f7454599
-Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=210505
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
----
-v2:
-	- squashed previous submitted in -mm tree 2 patches based on Linus tree
----
- mm/kasan/kasan_test_c.c | 27 +++++++++++++++++++++++++++
- mm/kmsan/kmsan_test.c   | 17 +++++++++++++++++
- mm/maccess.c            |  7 +++++--
- 3 files changed, 49 insertions(+), 2 deletions(-)
+	IIO_BACKEND_INTERFACE_SERIAL_LVDS,
+	IIO_BACKEND_INTERFACE_SERIAL_CMOS,
 
-diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-index a181e4780d9d..5cff90f831db 100644
---- a/mm/kasan/kasan_test_c.c
-+++ b/mm/kasan/kasan_test_c.c
-@@ -1954,6 +1954,32 @@ static void rust_uaf(struct kunit *test)
- 	KUNIT_EXPECT_KASAN_FAIL(test, kasan_test_rust_uaf());
- }
- 
-+static void copy_to_kernel_nofault_oob(struct kunit *test)
-+{
-+	char *ptr;
-+	char buf[128];
-+	size_t size = sizeof(buf);
-+
-+	/* Not detecting fails currently with HW_TAGS */
-+	KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_KASAN_HW_TAGS);
-+
-+	ptr = kmalloc(size - KASAN_GRANULE_SIZE, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-+	OPTIMIZER_HIDE_VAR(ptr);
-+
-+	if (IS_ENABLED(CONFIG_KASAN_SW_TAGS)) {
-+		/* Check that the returned pointer is tagged. */
-+		KUNIT_EXPECT_GE(test, (u8)get_tag(ptr), (u8)KASAN_TAG_MIN);
-+		KUNIT_EXPECT_LT(test, (u8)get_tag(ptr), (u8)KASAN_TAG_KERNEL);
-+	}
-+
-+	KUNIT_EXPECT_KASAN_FAIL(test,
-+		copy_to_kernel_nofault(&buf[0], ptr, size));
-+	KUNIT_EXPECT_KASAN_FAIL(test,
-+		copy_to_kernel_nofault(ptr, &buf[0], size));
-+	kfree(ptr);
-+}
-+
- static struct kunit_case kasan_kunit_test_cases[] = {
- 	KUNIT_CASE(kmalloc_oob_right),
- 	KUNIT_CASE(kmalloc_oob_left),
-@@ -2027,6 +2053,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
- 	KUNIT_CASE(match_all_not_assigned),
- 	KUNIT_CASE(match_all_ptr_tag),
- 	KUNIT_CASE(match_all_mem_tag),
-+	KUNIT_CASE(copy_to_kernel_nofault_oob),
- 	KUNIT_CASE(rust_uaf),
- 	{}
- };
-diff --git a/mm/kmsan/kmsan_test.c b/mm/kmsan/kmsan_test.c
-index 13236d579eba..9733a22c46c1 100644
---- a/mm/kmsan/kmsan_test.c
-+++ b/mm/kmsan/kmsan_test.c
-@@ -640,6 +640,22 @@ static void test_unpoison_memory(struct kunit *test)
- 	KUNIT_EXPECT_TRUE(test, report_matches(&expect));
- }
- 
-+static void test_copy_from_kernel_nofault(struct kunit *test)
-+{
-+	long ret;
-+	char buf[4], src[4];
-+	size_t size = sizeof(buf);
-+
-+	EXPECTATION_UNINIT_VALUE_FN(expect, "copy_from_kernel_nofault");
-+	kunit_info(
-+		test,
-+		"testing copy_from_kernel_nofault with uninitialized memory\n");
-+
-+	ret = copy_from_kernel_nofault((char *)&buf[0], (char *)&src[0], size);
-+	USE(ret);
-+	KUNIT_EXPECT_TRUE(test, report_matches(&expect));
-+}
-+
- static struct kunit_case kmsan_test_cases[] = {
- 	KUNIT_CASE(test_uninit_kmalloc),
- 	KUNIT_CASE(test_init_kmalloc),
-@@ -664,6 +680,7 @@ static struct kunit_case kmsan_test_cases[] = {
- 	KUNIT_CASE(test_long_origin_chain),
- 	KUNIT_CASE(test_stackdepot_roundtrip),
- 	KUNIT_CASE(test_unpoison_memory),
-+	KUNIT_CASE(test_copy_from_kernel_nofault),
- 	{},
- };
- 
-diff --git a/mm/maccess.c b/mm/maccess.c
-index 518a25667323..a91a39a56cfd 100644
---- a/mm/maccess.c
-+++ b/mm/maccess.c
-@@ -15,7 +15,7 @@ bool __weak copy_from_kernel_nofault_allowed(const void *unsafe_src,
- 
- #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label)	\
- 	while (len >= sizeof(type)) {					\
--		__get_kernel_nofault(dst, src, type, err_label);		\
-+		__get_kernel_nofault(dst, src, type, err_label);	\
- 		dst += sizeof(type);					\
- 		src += sizeof(type);					\
- 		len -= sizeof(type);					\
-@@ -31,6 +31,8 @@ long copy_from_kernel_nofault(void *dst, const void *src, size_t size)
- 	if (!copy_from_kernel_nofault_allowed(src, size))
- 		return -ERANGE;
- 
-+	/* Make sure uninitialized kernel memory isn't copied. */
-+	kmsan_check_memory(src, size);
- 	pagefault_disable();
- 	if (!(align & 7))
- 		copy_from_kernel_nofault_loop(dst, src, size, u64, Efault);
-@@ -49,7 +51,7 @@ EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
- 
- #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)	\
- 	while (len >= sizeof(type)) {					\
--		__put_kernel_nofault(dst, src, type, err_label);		\
-+		__put_kernel_nofault(dst, src, type, err_label);	\
- 		dst += sizeof(type);					\
- 		src += sizeof(type);					\
- 		len -= sizeof(type);					\
-@@ -62,6 +64,7 @@ long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
- 	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
- 		align = (unsigned long)dst | (unsigned long)src;
- 
-+	instrument_write(dst, size);
- 	pagefault_disable();
- 	if (!(align & 7))
- 		copy_to_kernel_nofault_loop(dst, src, size, u64, Efault);
--- 
-2.34.1
+> +	IIO_BACKEND_INTERFACE_COUNT,
+
+No comma here, and add a comment that this should always be last
+since it is a count and not an interface type descriptor.
+
+> +};
+> +
+>  /**
+>   * struct iio_backend_ops - operations structure for an iio_backend
+>   * @enable: Enable backend.
+> @@ -81,6 +87,7 @@ enum iio_backend_sample_trigger {
+>   * @extend_chan_spec: Extend an IIO channel.
+>   * @ext_info_set: Extended info setter.
+>   * @ext_info_get: Extended info getter.
+> + * @interface_type_get: Interface type.
+>   **/
+>  struct iio_backend_ops {
+>  	int (*enable)(struct iio_backend *back);
+> @@ -113,6 +120,8 @@ struct iio_backend_ops {
+>  			    const char *buf, size_t len);
+>  	int (*ext_info_get)(struct iio_backend *back, uintptr_t private,
+>  			    const struct iio_chan_spec *chan, char *buf);
+> +	int (*interface_type_get)(struct iio_backend *back,
+> +				  enum iio_backend_interface_type *type);
+>  };
+>  
+>  int iio_backend_chan_enable(struct iio_backend *back, unsigned int chan);
+> @@ -142,6 +151,8 @@ ssize_t iio_backend_ext_info_set(struct iio_dev *indio_dev, uintptr_t private,
+>  ssize_t iio_backend_ext_info_get(struct iio_dev *indio_dev, uintptr_t private,
+>  				 const struct iio_chan_spec *chan, char *buf);
+>  
+> +int iio_backend_interface_type_get(struct iio_backend *back,
+> +				   enum iio_backend_interface_type *type);
+>  int iio_backend_extend_chan_spec(struct iio_dev *indio_dev,
+>  				 struct iio_backend *back,
+>  				 struct iio_chan_spec *chan);
 
 
