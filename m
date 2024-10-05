@@ -1,76 +1,103 @@
-Return-Path: <linux-kernel+bounces-351628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8DB69913F5
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 04:40:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370259913F9
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 04:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A105284A66
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9069284E41
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8571BF24;
-	Sat,  5 Oct 2024 02:40:00 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66001C6B4;
+	Sat,  5 Oct 2024 02:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="UQ9pC6hQ"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322BC179A7
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 02:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F261B960
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 02:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728096000; cv=none; b=sDp7X0WpQ0dV5LD29G08cYTH88aggGnEnUEolE2Ba8xUapX19TAzYpNmpQgh56kXIFemN8sij9wunvO2KKsbTcqX70+YvYIDFTRPQLIH8pG1jKlATKsnBocCceJjw/mwD9PgQQuG96t7I7iHML9W0apIj8Zc27lsvT0Fm/AdBTY=
+	t=1728096091; cv=none; b=hHkTgmEVixPiJ04pyGb6DWm6t6GPegtopTgByJLa0qBYDFL+5XbdVFOWQdOtAYy7CEK+mt7MEWmSroHGVhM4AUtiDMEwqFlR8EG/zTj9A3ZntXEQ+z7Q8hBZUO0O+tTHgaVY4RZ2GZjDEgbrRhuzNRXMdq5/6RYY1DaAh6wYWvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728096000; c=relaxed/simple;
-	bh=ulo+H2irp/LvqFbyFIWF1ttVmOvrFiww65BVi2l3zGs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iiv7L5hIS6/Urz1nezlm6Vpu2CuxWkLG9xRX1rbJCbHnEIhhMDdeVgQXPItz+iBhuBZ2kRFPtUBhy9dBybwUmYaw8L0X+jBB8sHEmxAQM1Em2a9bF6j/oyU4go72GevW2IOTPAU/M4Q0n+UGCYSwmK4dTkZrsVVY16GF9t9KYis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a2762bfcbbso38738985ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 19:39:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728095998; x=1728700798;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ulo+H2irp/LvqFbyFIWF1ttVmOvrFiww65BVi2l3zGs=;
-        b=Ny4pIeM6f6bfZRnbQMRzYzYhuFOtCSJyPQZTHWvtzsv7EtkcQI1B9L7sCiAFWrNmki
-         BrnynfyAheX8x6j9c0CjRE9dWItJjNTMKpvuuF/QmH3BXKldfO7Z130GFlPf3evBtBPz
-         MH2N4b9zmDmjbno3XAAGmMM3WHd0lTIGyyentl39tUttkjrgKAEg/IOYsb0F0Il3RO6Z
-         SRT7DgO05a8ATwXg4UrESPhMkM+f95OrxHTfNdPmkot/yAQ0JguywjpNrkfGr0cYl/ig
-         fkRAgPS8M3rYr947vRr0s7D1dAC/qSQNG+IKhID1SEzwmqmvI5g9E0fagz3Dg1PUt4RI
-         L7ww==
-X-Gm-Message-State: AOJu0Yx0E2w02z4c0Om/aeNPmwTTJPyAfZbQ4oDW48HHEs3XIErtjCUQ
-	eLm+qE+XgoYKgA2U2kMSUtr/sIiOaxrjzAbRJcqLQ7a9FJsyRpnSGgti6kcWzB1sxp8Z7lKCbNC
-	n5KDxddddpo5x6LfB/tzFGM5HV+3fMls0zI5Aox2A3bRjO72VOYJ3ylQ=
-X-Google-Smtp-Source: AGHT+IECjpsA8zqytVkLx+vIdtX1Qy0hWOhmagqcvIVEHTFTc9ZWeqOz+NJ4mBG4uJU55pob6RcBnZnZ3qoH6cz8CO4RqZRiwkUo
+	s=arc-20240116; t=1728096091; c=relaxed/simple;
+	bh=sEc1Mud9OIn2GrJ98M9tAdApwsApW0Xub5TYGwZiI2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FG94bexvdA7H6NMG7RpJSAGiC71I2ik60UObbZ8CB1Q1B9+K4Yi8iNlxSn8PdyCwLVCWrqeTnG/S04pfFyGCv8Euw1kCtYdC2XOddPZrQJpy80uYnh9mPbUKP2Sn/CDpqacpF/G1JbyJKXsdS0vB+nfqH/qmaJPu1jE+eRw2RY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=UQ9pC6hQ; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-111-178.bstnma.fios.verizon.net [173.48.111.178])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4952ekl8023934
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 22:40:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1728096051; bh=D7qNvMDnML2OmVh2lSkLCFOR0s3St60SrRd9iM1JlZM=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=UQ9pC6hQWWkQ2EIUhyPwiZqYAAfsTM/9GmVILak9oWlq9u39InM16xAymTCQ37Rnv
+	 ITvHC6bhTZlgcjYT2Jy5/3cFoavgNR9oE89qJsXuiQSB5E8ajE6bCVqI4DPLb8ePyl
+	 z8IG820zhA+DpN9OT+nGBZZFjOzLjYUBHXP3kyfudYxrSQcHleGbaQBJceX7FhEQ6Z
+	 ++AxvrqErVXgqG9vk/W8LVpd4xJaBNSdiDqfn7cVqVjb7hoS2m9eMTXzUaqpRLo8rL
+	 Fx5qvhXVXpjhLusJuHEoSF9BRSR4b6NzyxWIMSHvTwSZGQiU58yam+da0VcJSlvzag
+	 As61vcjI12MZA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id E697E15C6668; Fri, 04 Oct 2024 22:40:45 -0400 (EDT)
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: linux-ext4@vger.kernel.org, libaokun@huaweicloud.com
+Cc: "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca, jack@suse.cz,
+        linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+        yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
+        Wesley Hershberger <wesley.hershberger@canonical.com>,
+        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@stgraber.org>,
+        Eric Sandeen <sandeen@redhat.com>, stable@vger.kernel.org,
+        Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Subject: Re: [PATCH v2] ext4: fix off by one issue in alloc_flex_gd()
+Date: Fri,  4 Oct 2024 22:40:36 -0400
+Message-ID: <172809600230.505638.16626414897244702690.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240927133329.1015041-1-libaokun@huaweicloud.com>
+References: <20240927133329.1015041-1-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b2a:b0:3a0:b471:9651 with SMTP id
- e9e14a558f8ab-3a375bd2623mr42269635ab.24.1728095998286; Fri, 04 Oct 2024
- 19:39:58 -0700 (PDT)
-Date: Fri, 04 Oct 2024 19:39:58 -0700
-In-Reply-To: <66f18d50.050a0220.c23dd.0012.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6700a6fe.050a0220.49194.04ad.GAE@google.com>
-Subject: Re: [syzbot] patch test
-From: syzbot <syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
+On Fri, 27 Sep 2024 21:33:29 +0800, libaokun@huaweicloud.com wrote:
+> Wesley reported an issue:
+> 
+> ==================================================================
+> EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 blocks
+> ------------[ cut here ]------------
+> kernel BUG at fs/ext4/resize.c:324!
+> CPU: 9 UID: 0 PID: 3576 Comm: resize2fs Not tainted 6.11.0+ #27
+> RIP: 0010:ext4_resize_fs+0x1212/0x12d0
+> Call Trace:
+>  __ext4_ioctl+0x4e0/0x1800
+>  ext4_ioctl+0x12/0x20
+>  __x64_sys_ioctl+0x99/0xd0
+>  x64_sys_call+0x1206/0x20d0
+>  do_syscall_64+0x72/0x110
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> ==================================================================
+> 
+> [...]
 
-Subject: patch test
-Author: danielyangkang@gmail.com
+Applied, thanks!
 
-#syz test
+[1/1] ext4: fix off by one issue in alloc_flex_gd()
+      commit: 6121258c2b33ceac3d21f6a221452692c465df88
+
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
 
