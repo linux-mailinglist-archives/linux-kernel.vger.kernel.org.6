@@ -1,321 +1,206 @@
-Return-Path: <linux-kernel+bounces-351779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482BF9915E7
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:12:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1E59915EA
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A15C5B25502
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE86B1F24D93
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F1B1494DE;
-	Sat,  5 Oct 2024 10:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB8D14B955;
+	Sat,  5 Oct 2024 10:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HUllVojR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNFVVpra"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81106136337;
-	Sat,  5 Oct 2024 10:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F36136337;
+	Sat,  5 Oct 2024 10:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728123133; cv=none; b=urxa0I4dqINCMAzNfmMU904sdFWROmA3zd5w12GmPfvI4QFYsqrfxK1/pLyDM4q0JAjGZTGdr61n2bjayP/4umwncHdj43lMd0xIyKbfwBEjj72HRsoxd+a0W5RAgDbtbB2KLYoMBKBDieSIA/V1dVjcyOgxnFfpkigGeORTzbI=
+	t=1728123140; cv=none; b=UaxTSwtuGyczH9FvUS7sJkAYMtVet1IalXc8O1SypNo2F1R9u6n3hOWGgQWc7/X3OUuQquk8g0cmG1F2vZDUPok38+kehlZ4KxHZu9PbaLHufOSxM/sl+6vnQhmpdh86V7mxTvGqBWpAh8X6w0Q+zAE6ZaIroBCqUYpfX0JAdlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728123133; c=relaxed/simple;
-	bh=CI77kQewLme6kjpyKd7vY6uErzaYvE1Weu1JnMCLcaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JttpZKtrFLqnLrUOA9hYnjrEYpC7sln0uQMMSXm9APO4stpK5lxyLLgN+vqLCw2Gd0cvgtLTle3fUj/zUDWjAFWqxS8x2XkxyLlrTVMU3DMPQ1tnSCaNJ6+ULHpAKZNTotD0XlyQvzE8qqCjwGTE4GJzkFIimPhJmyZARqEg2ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HUllVojR; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728123132; x=1759659132;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CI77kQewLme6kjpyKd7vY6uErzaYvE1Weu1JnMCLcaA=;
-  b=HUllVojRhi+Aq9U5hD0oq2ZsLgCdpdk1T2gg8O7FXoqyQVWl0JoU+KPX
-   B0gEOVvWqYOfQgBL6zVdaF/aoraFF6JTTKyn20RSH6REBX33BoJiNktXJ
-   BRWiOvQH7eoclH8HmH6bnRYBLPIwMziagx1UCWjorkzmzAfzyzTcERaj0
-   93K+vGx9CxoaQgdZEpQpwS7syBYp9+q7ssNhk1gx8SlsOoss2CkZicPOJ
-   uHC3MEw/U3qsW5dOsiydo3YgB6radR6CS74QABvWJMzqaHZuRJXwO+sD4
-   qqbMDDwFSV40+1au+8dCu0KzCqTcx7Qh5/slWUrqx3f1EVA4jjIz/SVLt
-   w==;
-X-CSE-ConnectionGUID: 6+UT7GU6TS6bB+d7DLlYmQ==
-X-CSE-MsgGUID: vj5ZVkYBTOi5BtiapUW2Fg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="26839746"
-X-IronPort-AV: E=Sophos;i="6.11,180,1725346800"; 
-   d="scan'208";a="26839746"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 03:12:08 -0700
-X-CSE-ConnectionGUID: upDFbmVVSIGjMBpB0M290w==
-X-CSE-MsgGUID: tgCoEkRuRhSz7ooS5kCXfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,180,1725346800"; 
-   d="scan'208";a="105801602"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 05 Oct 2024 03:12:05 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sx1lb-0002qO-13;
-	Sat, 05 Oct 2024 10:12:03 +0000
-Date: Sat, 5 Oct 2024 18:11:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Manuel Quintero F <sakunix@yahoo.com>, duncan.sands@free.fr
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Manuel Quintero F <sakunix@yahoo.com>
-Subject: Re: [PATCH] USB: atm: speedtch: do not use assignment in if condition
-Message-ID: <202410051833.7M7dq3rD-lkp@intel.com>
-References: <20241004030512.2036-1-sakunix@yahoo.com>
+	s=arc-20240116; t=1728123140; c=relaxed/simple;
+	bh=O1Rd6Ec99XvXAU8/BcCM4skzhvN8U4dOrh4h5JVeG3I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kUmAXqx9yTD80H/B80wS9/FLPRP/PUZqAUF2b8l/613G9o2M2LrOBAFFrzecvcIZJSy3fJCu7pRDvSFwV+uH2o3Ly2r9O0YJjG+YudHWDU9L1BSKm/Azi82CeRwAkRLfgJwqB7q2pPKDPawa3rOVCRYQSS1VRNeEnmR1OMZx6+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNFVVpra; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86557C4CEC2;
+	Sat,  5 Oct 2024 10:12:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728123140;
+	bh=O1Rd6Ec99XvXAU8/BcCM4skzhvN8U4dOrh4h5JVeG3I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=oNFVVpraNrMc5M7fLuildm62mtrhiI/SJhaKh7K2z9yMypxvtaM9bPnI5idBtYbr2
+	 IpISqn342a4z5CfpXlIommAnMBUfmdoGWzJScz99rUBGDb7D6O7GJJmbK1h95pzGjj
+	 KJYN6+iaLOM+DKwbQzMEptki97xwFczbsCqkf/tIae4a7CFmrmNY4kLBBhtpxfgyxA
+	 4NFxA2I5C6WImLT7rhrApFESkE4M9zmoUAsS4JynTpmMVCGO54bTGN4vK40pru4pS+
+	 GFtC7e8X7PjWgGM1jJsdgjfWyD1u7IpxFNtESKP/ScqaXCjxjEkOjem2ASoHnJ7yWM
+	 DNvufOrQK4bfQ==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+ bpf@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, =?utf-8?B?QmrDtnJu?=
+ =?utf-8?B?IFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, linux-kernel@vger.kernel.org, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Nick Desaulniers <ndesaulniers@google.com>, Nathan
+ Chancellor <nathan@kernel.org>, Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH] selftests: Do not skip BPF selftests by default
+In-Reply-To: <bb579569-1451-414f-aac4-12757024d9a5@sirena.org.uk>
+References: <20241004095348.797020-1-bjorn@kernel.org>
+ <96023ef4-fa0b-4fc2-a6a7-ac32bc777c44@sirena.org.uk>
+ <875xq82dqe.fsf@all.your.base.are.belong.to.us>
+ <bb579569-1451-414f-aac4-12757024d9a5@sirena.org.uk>
+Date: Sat, 05 Oct 2024 12:12:15 +0200
+Message-ID: <87bjzyeu4g.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004030512.2036-1-sakunix@yahoo.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Manuel,
+Mark Brown <broonie@kernel.org> writes:
 
-kernel test robot noticed the following build errors:
+> On Fri, Oct 04, 2024 at 03:34:49PM +0200, Bj=C3=B6rn T=C3=B6pel wrote:
+>> Mark Brown <broonie@kernel.org> writes:
+>> > On Fri, Oct 04, 2024 at 11:53:47AM +0200, Bj=C3=B6rn T=C3=B6pel wrote:
+>
+>> >> This effectively is a revert of commit 7a6eb7c34a78 ("selftests: Skip
+>> >> BPF seftests by default"). At the time when this was added, BPF had
+>> >> "build time dependencies on cutting edge versions". Since then a
+>> >> number of BPF capable tests has been included in net, hid, sched_ext.
+>
+>> > The issue was always requiring a bleeding edge version of clang, not
+>> > sure if that's been relaxed yet, IIRC sometimes it required git
+>> > versions.  I have clang 20 installed here so that's not an issue for me
+>> > but given that that's not released yet it wouldn't be reasonable to
+>> > expect CI systems to install it.
+>
+>> Yeah, but I'd say that is not the case anymore. LLVM 18 and 19 works.
+>
+> Hrm, that's definitely a lot better then though still a little cutting
+> edge - the 24.10 Ubuntu release has clang 17, never mind any of the
+> stables or LTSs (Debian is very popular for build containers).  Not
+> quite at the "you can just install your distro package" level yet though
+> it's definitely substantial progress.  Is this requirement documented
+> somewhere someone could reasonably be expected to discover it?
 
-[auto build test ERROR on usb/usb-testing]
-[also build test ERROR on usb/usb-next usb/usb-linus linus/master v6.12-rc1 next-20241004]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I agree it would help having the minimal version stated somewhere. I'm
+not aware of it.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Manuel-Quintero-F/USB-atm-speedtch-do-not-use-assignment-in-if-condition/20241004-113643
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-patch link:    https://lore.kernel.org/r/20241004030512.2036-1-sakunix%40yahoo.com
-patch subject: [PATCH] USB: atm: speedtch: do not use assignment in if condition
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241005/202410051833.7M7dq3rD-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project fef3566a25ff0e34fb87339ba5e13eca17cec00f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410051833.7M7dq3rD-lkp@intel.com/reproduce)
+> It's a bit unfortunate having to pull clang into GCC build containers,
+> and needing a newer version than the minimum clang for the kernel itself
+> too :/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410051833.7M7dq3rD-lkp@intel.com/
+I guess this boils down to the expecatation on the build environment. I
+pull in Rust, various LLVM, and GCC versions into the build container.
 
-All errors (new ones prefixed by >>):
+Is the expectation the kernel and userland tooling must be the same?
 
-   In file included from drivers/usb/atm/speedtch.c:26:
-   In file included from drivers/usb/atm/usbatm.h:14:
-   In file included from include/linux/atmdev.h:9:
-   In file included from include/linux/net.h:24:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/usb/atm/speedtch.c:26:
-   In file included from drivers/usb/atm/usbatm.h:14:
-   In file included from include/linux/atmdev.h:11:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/usb/atm/speedtch.c:26:
-   In file included from drivers/usb/atm/usbatm.h:14:
-   In file included from include/linux/atmdev.h:11:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/usb/atm/speedtch.c:26:
-   In file included from drivers/usb/atm/usbatm.h:14:
-   In file included from include/linux/atmdev.h:11:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
->> drivers/usb/atm/speedtch.c:329:2: error: expected ')'
-     329 |         if (ret < 0) {
-         |         ^
-   drivers/usb/atm/speedtch.c:327:25: note: to match this '('
-     327 |         ret = usb_set_interface(usb_dev, INTERFACE_DATA, instance->params.altsetting
-         |                                ^
-   7 warnings and 1 error generated.
+>> > We also get a bunch of:
+>
+>> > die__process_unit: DW_TAG_label (0xa) @ <0x58eb7> not handled!
+>> > die__process_unit: tag not supported 0xa (label)!
+>
+>> > if we do turn enable CONFIG_DEBUG_INFO_BTF for arm64.
+>
+>> This is pahole version related.
+>
+> Which version is needed?  I've got 1.24 (from Debian) here...
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for MODVERSIONS
-   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
-   Selected by [y]:
-   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+I bumped to 1.25!
 
+>> > The whole thing is also broken for cross compilation with clang since
+>> > everything is assuming that CROSS_COMPILE will be set for cross builds
+>> > but that's not the case for LLVM=3D1 builds - net gives:
+>
+>> A lot can be said about kselftest, and cross-building. It's a bit of a
+>> mess. Maybe we should move to meson or something for kselftest (that
+>> requires less work for lazy developers like me). ;-)
+>
+> AFAICT it pretty much works fine?  It's certainly widely used.
 
-vim +329 drivers/usb/atm/speedtch.c
+Ugh, I guess we have very different views here. For me kselftest
+cross-building is breaking all the time. The tests are a mix of using
+the kselftest framework, and "having tests stored somewhere". Targets
+have different semantics (e.g. missing things from "install"),
+developers (I definitely include me self here!) seem to have a hard time
+figuring out what should be included in the test Makefiles (copy and
+paste, etc.).
 
-   229	
-   230	static int speedtch_upload_firmware(struct speedtch_instance_data *instance,
-   231					     const struct firmware *fw1,
-   232					     const struct firmware *fw2)
-   233	{
-   234		unsigned char *buffer;
-   235		struct usbatm_data *usbatm = instance->usbatm;
-   236		struct usb_device *usb_dev = usbatm->usb_dev;
-   237		int actual_length;
-   238		int ret = 0;
-   239		int offset;
-   240	
-   241		usb_dbg(usbatm, "%s entered\n", __func__);
-   242	
-   243		buffer = (unsigned char *)__get_free_page(GFP_KERNEL);
-   244		if (!buffer) {
-   245			ret = -ENOMEM;
-   246			usb_dbg(usbatm, "%s: no memory for buffer!\n", __func__);
-   247			goto out;
-   248		}
-   249	
-   250		if (!usb_ifnum_to_if(usb_dev, 2)) {
-   251			ret = -ENODEV;
-   252			usb_dbg(usbatm, "%s: interface not found!\n", __func__);
-   253			goto out_free;
-   254		}
-   255	
-   256		/* URB 7 */
-   257		if (dl_512_first) {	/* some modems need a read before writing the firmware */
-   258			ret = usb_bulk_msg(usb_dev, usb_rcvbulkpipe(usb_dev, ENDPOINT_FIRMWARE),
-   259					   buffer, 0x200, &actual_length, 2000);
-   260	
-   261			if (ret < 0 && ret != -ETIMEDOUT)
-   262				usb_warn(usbatm, "%s: read BLOCK0 from modem failed (%d)!\n", __func__, ret);
-   263			else
-   264				usb_dbg(usbatm, "%s: BLOCK0 downloaded (%d bytes)\n", __func__, ret);
-   265		}
-   266	
-   267		/* URB 8 : both leds are static green */
-   268		for (offset = 0; offset < fw1->size; offset += PAGE_SIZE) {
-   269			int thislen = min_t(int, PAGE_SIZE, fw1->size - offset);
-   270			memcpy(buffer, fw1->data + offset, thislen);
-   271	
-   272			ret = usb_bulk_msg(usb_dev, usb_sndbulkpipe(usb_dev, ENDPOINT_FIRMWARE),
-   273					   buffer, thislen, &actual_length, DATA_TIMEOUT);
-   274	
-   275			if (ret < 0) {
-   276				usb_err(usbatm, "%s: write BLOCK1 to modem failed (%d)!\n", __func__, ret);
-   277				goto out_free;
-   278			}
-   279			usb_dbg(usbatm, "%s: BLOCK1 uploaded (%zu bytes)\n", __func__, fw1->size);
-   280		}
-   281	
-   282		/* USB led blinking green, ADSL led off */
-   283	
-   284		/* URB 11 */
-   285		ret = usb_bulk_msg(usb_dev, usb_rcvbulkpipe(usb_dev, ENDPOINT_FIRMWARE),
-   286				   buffer, 0x200, &actual_length, DATA_TIMEOUT);
-   287	
-   288		if (ret < 0) {
-   289			usb_err(usbatm, "%s: read BLOCK2 from modem failed (%d)!\n", __func__, ret);
-   290			goto out_free;
-   291		}
-   292		usb_dbg(usbatm, "%s: BLOCK2 downloaded (%d bytes)\n", __func__, actual_length);
-   293	
-   294		/* URBs 12 to 139 - USB led blinking green, ADSL led off */
-   295		for (offset = 0; offset < fw2->size; offset += PAGE_SIZE) {
-   296			int thislen = min_t(int, PAGE_SIZE, fw2->size - offset);
-   297			memcpy(buffer, fw2->data + offset, thislen);
-   298	
-   299			ret = usb_bulk_msg(usb_dev, usb_sndbulkpipe(usb_dev, ENDPOINT_FIRMWARE),
-   300					   buffer, thislen, &actual_length, DATA_TIMEOUT);
-   301	
-   302			if (ret < 0) {
-   303				usb_err(usbatm, "%s: write BLOCK3 to modem failed (%d)!\n", __func__, ret);
-   304				goto out_free;
-   305			}
-   306		}
-   307		usb_dbg(usbatm, "%s: BLOCK3 uploaded (%zu bytes)\n", __func__, fw2->size);
-   308	
-   309		/* USB led static green, ADSL led static red */
-   310	
-   311		/* URB 142 */
-   312		ret = usb_bulk_msg(usb_dev, usb_rcvbulkpipe(usb_dev, ENDPOINT_FIRMWARE),
-   313				   buffer, 0x200, &actual_length, DATA_TIMEOUT);
-   314	
-   315		if (ret < 0) {
-   316			usb_err(usbatm, "%s: read BLOCK4 from modem failed (%d)!\n", __func__, ret);
-   317			goto out_free;
-   318		}
-   319	
-   320		/* success */
-   321		usb_dbg(usbatm, "%s: BLOCK4 downloaded (%d bytes)\n", __func__, actual_length);
-   322	
-   323		/* Delay to allow firmware to start up. We can do this here
-   324		   because we're in our own kernel thread anyway. */
-   325		msleep_interruptible(1000);
-   326	
-   327		ret = usb_set_interface(usb_dev, INTERFACE_DATA, instance->params.altsetting
-   328	
- > 329		if (ret < 0) {
-   330			usb_err(usbatm, "%s: setting interface to %d failed (%d)!\n", __func__, instance->params.altsetting, ret);
-   331			goto out_free;
-   332		}
-   333	
-   334		/* Enable software buffering, if requested */
-   335		if (sw_buffering)
-   336			speedtch_set_swbuff(instance, 1);
-   337	
-   338		/* Magic spell; don't ask us what this does */
-   339		speedtch_test_sequence(instance);
-   340	
-   341		ret = 0;
-   342	
-   343	out_free:
-   344		free_page((unsigned long)buffer);
-   345	out:
-   346		return ret;
-   347	}
-   348	
+A lot of tests are not included in the top-level kselftest Makefile
+(maybe there's a rationale for that? I haven't found one).
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I love kbuild for the *kernel*, but IMO it really feels bolted on for
+kselftest (and much of tools/).
+
+Tests don't get the same love as the kernel proper, and developers don't
+want to spend a lot of time figuring out how kselftests works -- and
+that shows in kselftest.
+
+>> I'm simply arguing that the *default* should be: BPF (and
+>> hid/net/sched_ext) turned on. Default on would surface these kind of
+>> problems, rather than hiding them. (And let the CI exclude tests it
+>> cannot handle).
+>
+> The original motivation behind that patch was that there were a bunch of
+> CI systems all trying to run as many of the selftests as they can,
+> running into BPF and getting frustrated at the amount of time it was
+> consuming (or not managing to get it working at all).  Everyone was
+> assuming they were missing something or somehow doing the wrong thing to
+> satisfy the dependencies and it was burning a bunch of time and
+> discouraging people from using the selftests at all since it doesn't
+> create a good impression if stuff just doesn't build.  People did often
+> end up skipping BPF, but only after banging their heads against it for a
+> while, and then went and compared notes with other CI systems and found
+> everyone else had the same problem.
+>
+> I think we before defaulting BPF stuff on we should at the very least
+> fix the builds for commonly covered architectures, it looks like as well
+> as arm64 we're also seeing BTF not generated on 32 bit arm:
+>
+>    https://storage.kernelci.org/next/master/next-20241004/arm/multi_v7_de=
+fconfig%2Bkselftest/gcc-12/config/kernel.config
+>
+> but everything else I spot checked looks fine.  It'd be much better to
+> skip gracefully if the kernel doesn't have BPF too.
+>
+> We should probably also have explicit clang presence and feature/version
+> checks in the builds since clang is now fairly widely available in
+> distros but many of them have older versions than are needed so I
+> imagine a common failure pattern might be that people see clang is
+> needed, install their distro clang package and then run into errors from
+> clang.  That'd mean people would get a graceful skip with a clear
+> description of what's needed rather than build errors.
+
+This is not only true for BPF/Clang. There are a number of kselftests
+that make assumptions about architecture, and tools. I do agree that a
+proper feature detection (what bpftool/perf is using, or move to that
+new shiny build system ;-P) for kselftest would be great!
+
+> This is all a particular issue for the net tests where the addition of BPF
+> is a regression, not only can't you run the BPF based tests without
+> getting BPF working we've now lost the entire net testsuite if BPF isn't
+> working since it breaks the build.  TBH I didn't notice this getting
+> broken because I forgot that I was expecting to see net tests on
+> kernelci.org and the build break means they just disappear entirely from
+> the runtime results.  That really does need a graceful skip.
+
+...and adding net/hid/sched_ext to the default skip as well? What the
+tests that only work on some platforms. I'm intentionally provoking
+here. I don't like hiding tests, because it is bit "tricky" to setup the
+tooling. BPF is very much in the core of the kernel, and leaving those
+tests out seems odd.
+
+Thanks for the discussion! I'll have a look into the feature detection.
+
+Bj=C3=B6rn
 
