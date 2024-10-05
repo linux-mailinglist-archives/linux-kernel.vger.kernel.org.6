@@ -1,136 +1,94 @@
-Return-Path: <linux-kernel+bounces-352004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECFC19918FD
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:46:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6A79918FF
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A3371C20FCB
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7D001F22389
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AF2156C6F;
-	Sat,  5 Oct 2024 17:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF16158208;
+	Sat,  5 Oct 2024 17:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k+hvgnwE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X2WDNQmB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2A8288B1
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 17:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81CD288B1;
+	Sat,  5 Oct 2024 17:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728150384; cv=none; b=TNwwutURtXxjUH58WRKLQQSzS4bjbGmxp8PVsWfjSlDBNe+KzldKioXxignwFXn8IeyyCNJZsJkG3a812NJg7EZXCwKsqiUQEhcpRi6+Tv8Fi0PvxTkESCIacYmAj3LeYUUWeTRiEHJpv2sKQ28sbO24NSTlMha3kmVL3WyjaCM=
+	t=1728150499; cv=none; b=WaTgx5kwKdCJpRncNFSzKJ9G3BaIqRp1eLIPedjAOWe51PsBEhYjLNFa5rTLRJxNX1fwC3d4VoH7O85Culp1k3WG7jvt7KzDyyz+yzD65724j3ZN9ojaLlHQOAFpg+FN/w369wf5jIIxXQ31kqG0spaxMEfmx5uBoOB90wy52a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728150384; c=relaxed/simple;
-	bh=hBUjgvVyKrb9mQU/LgiPWMwb9E5Zif91ceR1irwt+nI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NqLRYsj8bpt6gtu8Q6xA4Q7fpeYbDgMvbnKS8zUCzBGthlBYSz3noc9SIkZlnZkLinjxV7X4bXOSa+OQSzP75hzPm/3E2foD//aPuHC2c4xqs1WIJesDE08cq7B2PZd/43nyH86fQXCv9hejNVg8snrJ1kX+BFeRGX+0kr4V72Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k+hvgnwE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 495FcNW0032295;
-	Sat, 5 Oct 2024 17:46:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=95YU4wxcQIoMSg5FakoXPVGRDGPoRu8SyHcMhirja3o=; b=k+
-	hvgnwEc+6Mi94EaX8aIiCAg+SEw3yyljI9Y8p6ImfIOaRsUTLb+Hfmrj7p1R17+O
-	0e5HBuT/fdfJkRG72DSLSUCvfQ/5zpWIqVEa7chSvUSQcFoAMsXHScuuP/fWC5Vh
-	fetn1kzJ47EUNPwIRfdhVtY+JVYV9oJvISOXvgS221OgEkK8G3xkP1N4Rfzw2CGW
-	m31Mg7VZWr83pKLvx/XedBSNnoSI1zl8t12k0q+E/pW0NjMTZWjcUxbS3cgM0uJy
-	/6S+mu27PWALYwwGKTZCh07kd4e9PkWEfQVi0aDQjFZrhYZcFlMNas+p5saksc+G
-	lhEl+6q0cfVKYsa0fJZw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xtb0w5t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 05 Oct 2024 17:46:02 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 495Hk1gE015474
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 5 Oct 2024 17:46:01 GMT
-Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sat, 5 Oct 2024 10:45:56 -0700
-From: Pintu Kumar <quic_pintu@quicinc.com>
-To: <hannes@cmpxchg.org>, <surenb@google.com>, <peterz@infradead.org>,
-        <mingo@redhat.com>, <juri.lelli@redhat.com>,
-        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-        <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>
-CC: <joe@perches.com>, <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
-        Pintu Kumar <quic_pintu@quicinc.com>
-Subject: [PATCH v3] sched/psi: fix memory barrier without comment warnings
-Date: Sat, 5 Oct 2024 23:15:35 +0530
-Message-ID: <20241005174535.2152-1-quic_pintu@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728150499; c=relaxed/simple;
+	bh=BIsAptceuiA71qMnD+Mb8RJmlRWJ5OhCjMDV0YBrZFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n7WlQJBtihSX8DEPnOEwDsT7eBNjWpRKGPVfDTPuLI2NaRYGdq0qBiO5GQpJSdLBiGD0mLVXYLWEvKeX8H7w91etN4H1Itcorn/JWR7ymJ3L5NWo/tTniIWuTwaqGM7HwRXd9+TF0oa0L2b7zXVjOQN48/yhpql/QiSIVMoboLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X2WDNQmB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90377C4CEC2;
+	Sat,  5 Oct 2024 17:47:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728150499;
+	bh=BIsAptceuiA71qMnD+Mb8RJmlRWJ5OhCjMDV0YBrZFs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=X2WDNQmByXJnUO0Qvi0fVSEqlnVzs9WcsIPAkdelUWum2ny+hrKBtxH/sXu/Gpwuf
+	 OgEbzsDcPN2r+dBTq0uvjxK2lTa1OrgDsn4twBHl/PZBhuMhldh/IIW/Sp1r9+yx7q
+	 xTbS/cW1VX4+N/0pBVToPL/ydv72cxMQfPmTcG0QyCuwpG3RdQeJXqe4a0moln9ZCx
+	 snw2bX9UHAuW8VUZvYRn2w7A0LdwP101MsuCThFfTlePSgf6FKYUWtyCvFBMN1oVg0
+	 50GnYeg2g/CQeixHgTjQ7ruOoHn7QWvEsCQne+I3S4Z9bY2ST2Ykc6Ez86OXVxSBIb
+	 H1RPywOW0tWtw==
+Date: Sat, 5 Oct 2024 18:47:35 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ David Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>, Dan
+ Murphy <dmurphy@ti.com>, Sean Nyekjaer <sean@geanix.com>, Leonard
+ =?UTF-8?B?R8O2aHJz?= <l.goehrs@pengutronix.de>, Mihail Chindris
+ <mihail.chindris@analog.com>, Alexandru Ardelean <ardeleanalex@gmail.com>,
+ Gustavo Silva <gustavograzs@gmail.com>, Shoji Keita <awaittrot@shjk.jp>,
+ Andrey Skvortsov <andrej.skvortzov@gmail.com>, Dalton Durst
+ <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>, Andreas Klinger
+ <ak@it-klinger.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Jirman
+ <megi@xff.cz>
+Subject: Re: [PATCH 01/13] iio: accel: kx022a: add missing select
+ IIO_(TRIGGERED_)BUFFER in Kconfig
+Message-ID: <20241005184735.7ce57499@jic23-huawei>
+In-Reply-To: <15e6b791-379d-42c0-afb4-b08790d1b4da@gmail.com>
+References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
+	<20241003-iio-select-v1-1-67c0385197cd@gmail.com>
+	<15e6b791-379d-42c0-afb4-b08790d1b4da@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4BPjfeo3y42Iem9Q_93XalAqy5goWgJv
-X-Proofpoint-GUID: 4BPjfeo3y42Iem9Q_93XalAqy5goWgJv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015 phishscore=0
- mlxscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410050130
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-These warnings were reported by checkpatch.
-Fix them with minor changes.
-No functional changes.
+On Fri, 4 Oct 2024 11:17:34 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-WARNING: memory barrier without comment
-+       t = smp_load_acquire(trigger_ptr);
+> On 04/10/2024 00:04, Javier Carrasco wrote:
+> > This driver makes use of triggered buffers, but does not select the
+> > required modules.
+> > 
+> > Add the missing 'select IIO_BUFFER' and 'select IIO_TRIGGERED_BUFFER'.
+> > 
+> > Fixes: 7c1d1677b322 ("iio: accel: Support Kionix/ROHM KX022A accelerometer")
+> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
+> 
+> Acked-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> 
 
-WARNING: memory barrier without comment
-+       smp_store_release(&seq->private, new);
+Applied to the fixes-togreg branch of iio.git.
 
-Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
-
----
-Changes in V3:
-Removed signature of Joe as requested. No other change.
-V2: https://lore.kernel.org/all/CAOuPNLi1mUKW_vv0E6Ynzvdw_rHvCye+nAf2bWv6Qj9A8ofX1g@mail.gmail.com/
-Changes in V2:
-Retain printk_deferred warnings as suggested by Joe Perches.
-V1: https://lore.kernel.org/all/a848671f803ba2b4ab14b0f7b09f0f53a8dd1c4b.camel@perches.com/
----
- kernel/sched/psi.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 020d58967d4e..4e4ff12fdeae 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -1474,6 +1474,7 @@ __poll_t psi_trigger_poll(void **trigger_ptr,
- 	if (static_branch_likely(&psi_disabled))
- 		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
- 
-+	/* Pairs with the smp_store_release in psi_write */
- 	t = smp_load_acquire(trigger_ptr);
- 	if (!t)
- 		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
-@@ -1557,6 +1558,7 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
- 		return PTR_ERR(new);
- 	}
- 
-+	/* Pairs with the smp_store_acquire in psi_trigger_poll */
- 	smp_store_release(&seq->private, new);
- 	mutex_unlock(&seq->lock);
- 
--- 
-2.17.1
-
+J
 
