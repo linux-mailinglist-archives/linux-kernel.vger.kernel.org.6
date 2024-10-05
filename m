@@ -1,124 +1,128 @@
-Return-Path: <linux-kernel+bounces-351741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA57991589
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:42:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E0799158B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 309C61C21BA9
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:42:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 222CDB23266
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59CC13DBBC;
-	Sat,  5 Oct 2024 09:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC941420D8;
+	Sat,  5 Oct 2024 09:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Kri4+aiu"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wf5rx/zC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86181535D8
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 09:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E33D231C85;
+	Sat,  5 Oct 2024 09:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728121369; cv=none; b=uoneRlBhYZuQSy3kgsHXIXB5QQUM5d26TU5RtUzsI8zbh0u1/Ziop9wHDzt6Yuam9ZXDos/m03RNdTLknRwDTtk8qWNj4bw5x9Hp/ylhWnimKrJRX8+mw7nYLVBDUEQDGg9jrzsi5XnI5ai1Xch7PZIv8BBnJHkolvBc5Xzx6iw=
+	t=1728121748; cv=none; b=Hfav/ZauMH+Ewg5ODj4QYvnbNyoqHGdrye5+As7QaBxqclgEQzFeorwRu37ql0qLRiSXqudLMB+JHTgVYmdRc8dC7JGWDesmA1pg3ulb4Vu9zFc54S6xFl9AS954p4AoVK1eEmxxkKYs9AyzMqUCcIZH2IngF5o9eaIO7LCp6GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728121369; c=relaxed/simple;
-	bh=NxrvFyuntEQwVjBBRVYeWExPk+obOMBT7dJskXKuJkA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LQb/kPRMpgBjcOz+Zm9jr1x4Yhqr6wiAw1bv90gJng148zS5NL257P1lRPAC9enaaJDpI51EYVSSCunkPSfEzfQMxAMvd89ZPk2NSfVp3qK3YzRZjSWmWwYFnHnX7fba49E53VTU73eDmk7FNiTCEk3BO4BdH36UocUciXl7RZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Kri4+aiu; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fad6de2590so45422361fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 02:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728121366; x=1728726166; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NxrvFyuntEQwVjBBRVYeWExPk+obOMBT7dJskXKuJkA=;
-        b=Kri4+aiuFy+AqdMtZ6QAvn4oftOXv7adg27pw6UfpstRaYCFw7u7jDQIC9encoxScZ
-         V6b702pVHT5RDDA04htarWyKwLpiq8lQHfqLIXBp8fZDLGTcuhZVAhIPNc0Z7Mqefa38
-         ByanMSyjR9MoXRaT/vz4TafsALX6ZFHULGWBV0nd7+FvII+3JhVW1JWr+Y7mkF9Td1nH
-         e2fLas5jnWjk4WuX5yDWYIqJmY3w3RZ6Hn6YthiD2df9jfqFmz4dwDqZXNfoFWgxT+OV
-         0cj6NynDI4S4j31J6omiQP+ko3w1EO8fUqVseBvjp28EeiyWwShp/MyGph1jfSVOCXeP
-         XeRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728121366; x=1728726166;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NxrvFyuntEQwVjBBRVYeWExPk+obOMBT7dJskXKuJkA=;
-        b=QPgvyeO+u1ToQNiRU108bnTi3WwiXp4e23avtPu/Q85DXMRqkthg+ozwQSS9CdxI7C
-         sTh276xIWQyv4wWxvV/bmIsOAFpBEUL0wxLJaBFWATComtkQY/I0NHWxJxveLwRQ5PKA
-         520yAAOtcn2YM52p55aIm7dUjBTDkhfa92GDs0tTqSoHL56JFZ8Gt7tsLy5B9BK1bale
-         txSOReHs+I1Cju9kraNQk2RV1I2KURTfMiaAV4Y52KI18VsalFQ11UYKKhkL7eESVgmz
-         t+zF6PpNSYt+oHbD6GkmWiKi5y4IHlOF5j/NLwyzUGBjq3irHpGKRsHHX46U6BNtvW7b
-         7TcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUB4sJiuqjz5zVMa4GcBgVU9j4hVEG0Xxa0VrNmxkfjQ+0PHmJtRYNgNCSacquqn8w04Ff/LQeagO5K/4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSmekEz+22gObEhnGCKk5n3bYNocsN9SaGnV3I84BRqZrKlbXZ
-	6v4zX3P45+9AvTasmmO0BAgxoddgz8Uk0wipZ1Q1hQNxULJKV2fE7sPpMcRASWqCd99/gSt3pmj
-	OlWxL/O1oy2Yfn/+tkgT94oT7MIbJJrbBc1VC7w==
-X-Google-Smtp-Source: AGHT+IHqOkRT1D3WHmPBicr1AJ+KDadiuZ8Lj75qlKYE2wf7re1jzBwT55ej67fmWxKCNSwSrbv53GLaYPmkgUnpRkg=
-X-Received: by 2002:a2e:878a:0:b0:2f7:5a41:b0b with SMTP id
- 38308e7fff4ca-2faf3c44dc5mr36096921fa.26.1728121365551; Sat, 05 Oct 2024
- 02:42:45 -0700 (PDT)
+	s=arc-20240116; t=1728121748; c=relaxed/simple;
+	bh=Uw4lYBg8nf69CBDka22a/vAHDjtylMXhtmTDsQyIUzY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pE0oqNMOzerKtTfptCqrMQ+MPEmnFvpOPD9Kq02T2ZTGnycueGixXZjU8zJ6Vmw4W1W/6WL4GZB60Gle2UXQJid9C9j0OOhOyY/W+19zjndajgA1aqUJulpxpSmubMK6YZGMcjrkdcRWoeTUC3Q/i7KKzMkw0vWjIdjN/+UvcNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wf5rx/zC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3238FC4CEC2;
+	Sat,  5 Oct 2024 09:49:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728121747;
+	bh=Uw4lYBg8nf69CBDka22a/vAHDjtylMXhtmTDsQyIUzY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Wf5rx/zCSbqR81gZC5oqEvpyK4nb8wijEjWO3ntJxFbVmKzV0ibOehnsKBAemeztb
+	 4FWnxogzOPMC47l3bUKxoqimi51r61NKJr3XO5mpmGkyLK+AIeXUp0Mtc/xReNcuUj
+	 MATV0ILxBVE81axLxci3QNLXIFdD2QoXd1QrPpqYzqYzZbcvhS7HPMWADlAyxOCumu
+	 d4r000O3N/00lbYNW+Q6FUm4iTB9YNvtz6nRe6qTBYzxu60sElNGMUl4wr0vZHl/7Y
+	 6pHMG3rvNnCLNmtP7RhYA/go/1RzpCc1eJ5BIjha+3V55MJoSbD5Eprni+yD1SFdI9
+	 gA9og30k2qeDw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Greg KH" <gregkh@linuxfoundation.org>
+Cc: "Gary Guo" <gary@garyguo.net>,  "Boqun Feng" <boqun.feng@gmail.com>,
+  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+  "Benno Lossin" <benno.lossin@proton.me>,  "Alice Ryhl"
+ <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,  "Jens Axboe"
+ <axboe@kernel.dk>,  "Will Deacon" <will@kernel.org>,  "Peter Zijlstra"
+ <peterz@infradead.org>,  "Mark Rutland" <mark.rutland@arm.com>,
+  <linux-block@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] rust: block: convert `block::mq` to use `Refcount`
+In-Reply-To: <2024100507-percolate-kinship-fc9a@gregkh> (Greg KH's message of
+	"Sat, 05 Oct 2024 09:47:25 +0200")
+References: <20241004155247.2210469-1-gary@garyguo.net>
+	<20241004155247.2210469-4-gary@garyguo.net>
+	<OKHi9uP1uJD59N2oYRk1OfsxsrGlqiupMsgcvrva9_IPnEI9wpoxmabHQo1EYen96ClDBRQyrJWxb7WJxiMiAA==@protonmail.internalid>
+	<2024100507-percolate-kinship-fc9a@gregkh>
+Date: Sat, 05 Oct 2024 11:48:53 +0200
+Message-ID: <87zfniop6i.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org>
- <20241004-gpio-notify-in-kernel-events-v1-5-8ac29e1df4fe@linaro.org> <20241005074635.GA174602@rigel>
-In-Reply-To: <20241005074635.GA174602@rigel>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Sat, 5 Oct 2024 11:42:34 +0200
-Message-ID: <CAMRc=MdU5+AC4PyPjuXuG_S7R59OJ-DaaCdX2fZfoCcs5BveJg@mail.gmail.com>
-Subject: Re: [PATCH 5/5] gpiolib: notify user-space about in-kernel line state changes
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Sat, Oct 5, 2024 at 9:46=E2=80=AFAM Kent Gibson <warthog618@gmail.com> w=
-rote:
+Hi Greg,
+
+"Greg KH" <gregkh@linuxfoundation.org> writes:
+
+> On Fri, Oct 04, 2024 at 04:52:24PM +0100, Gary Guo wrote:
+>> There is an operation needed by `block::mq`, atomically decreasing
+>> refcount from 2 to 0, which is not available through refcount.h, so
+>> I exposed `Refcount::as_atomic` which allows accessing the refcount
+>> directly.
 >
-> On Fri, Oct 04, 2024 at 04:43:26PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > There is a problem with gpiod_direction_output/input(), namely the fact
-> > that they can be called both from sleeping as well as atomic context. W=
-e
-> > cannot call the blocking notifier from atomic and we cannot switch to
-> > atomic notifier because the pinctrl functions we call higher up the sta=
-ck
-> > take a mutex. Let's instead use a workqueue and schedule a task to emit
-> > the event from process context on the unbound system queue for minimal
-> > latencies.
-> >
+> That's scary, and of course feels wrong on many levels, but:
 >
-> So now there is a race between the state of the desc changing and the
-> notified reading it?
 >
+>> @@ -91,13 +95,17 @@ pub(crate) unsafe fn start_unchecked(this: &ARef<Self>) {
+>>      /// C `struct request`. If the operation fails, `this` is returned in the
+>>      /// `Err` variant.
+>>      fn try_set_end(this: ARef<Self>) -> Result<*mut bindings::request, ARef<Self>> {
+>> -        // We can race with `TagSet::tag_to_rq`
+>> -        if let Err(_old) = this.wrapper_ref().refcount().compare_exchange(
+>> -            2,
+>> -            0,
+>> -            Ordering::Relaxed,
+>> -            Ordering::Relaxed,
+>> -        ) {
+>> +        // To hand back the ownership, we need the current refcount to be 2.
+>> +        // Since we can race with `TagSet::tag_to_rq`, this needs to atomically reduce
+>> +        // refcount to 0. `Refcount` does not provide a way to do this, so use the underlying
+>> +        // atomics directly.
+>> +        if this
+>> +            .wrapper_ref()
+>> +            .refcount()
+>> +            .as_atomic()
+>> +            .compare_exchange(2, 0, Ordering::Relaxed, Ordering::Relaxed)
+>> +            .is_err()
+>
+> Why not just call rust_helper_refcount_set()?  Or is the issue that you
+> think you might not be 2 here?  And if you HAVE to be 2, why that magic
+> value (i.e. why not just always be 1 and rely on normal
+> increment/decrement?)
+>
+> I know some refcounts are odd in the kernel, but I don't see where the
+> block layer is caring about 2 as a refcount anywhere, what am I missing?
 
-Theoretically? Well, yes... In practice I don't think this would
-matter. But I understand the concern and won't insist if it's a
-deal-breaker for you.
+It is in the documentation, rendered version available here [1]. Let me
+know if it is still unclear, then I guess we need to update the docs.
 
-Ideally we'd switch to an atomic notifier but I don't have a good idea
-on how to handle pinctrl_gpio_can_use_line(). It digs deep into the
-pinctrl code and it's all synchronized with a mutex. Unlike GPIO, it
-doesn't make any sense to spend days converting pinctrl to SRCU for a
-single corner-case.
+Also, my session from Recipes has a little bit of discussion regarding
+this refcount and it's use [2].
 
-I wanted to use in_atomic() to determine whether we can emit the event
-immediately or (if we're in interrupt or with a spinlock taken) we
-should use a workqueue as a fallback but checkpatch.pl is very adamant
-about it being an error (in capital reds).
+Best regards,
+Andreas
 
-Bart
+
+[1] https://rust.docs.kernel.org/kernel/block/mq/struct.Request.html#implementation-details
+[2] https://youtu.be/1LEvgkhU-t4?si=B1XnJhzCCNnUtRsI&t=1685
+
 
