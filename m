@@ -1,227 +1,137 @@
-Return-Path: <linux-kernel+bounces-352052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DFD991992
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:35:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EFD0991994
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E941F2161A
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:35:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88C89B21499
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48ECB15D5B8;
-	Sat,  5 Oct 2024 18:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2520E15E5BB;
+	Sat,  5 Oct 2024 18:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pn9wJcQk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="P3NpJU6Z"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EA015854F;
-	Sat,  5 Oct 2024 18:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799D415C14D
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 18:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728153313; cv=none; b=EGlhSyKad7LVGQkVxc+IoHW0W5Uo5FiCirP50LBLIfe6hnGGGOEodsewYsARLusev2g8FG/HkT19I9/ditYMLLuWGJ+G8UgQGIQYsgQjJ6PdXeIqwL4+2rP/MUcEqJFL9kAOyOMxNYDGQrXi39Pgo0EZV6VvUwT8yTYS4bq3SmU=
+	t=1728153327; cv=none; b=pG0NoGmhdU6xxmzZYI9Acp7YrKqJRysAVUe9ny40uGkziwzol/bTXdEssRzgEXu0RlodzGcqGZBJ0rGWD6k7OEFYIn1CL6xGSf+TJ5EPxfCzmQifAcub2Q+ITEMNXeA05gSkghUj9UYBLjvHgCTorXrPn+hIOWgpuVtHsJe8a5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728153313; c=relaxed/simple;
-	bh=8O7ex0Lx5cQ1FtgoodxpG5yAqOP3CyE5XErkA+IwvoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CrLMS2EdFZZnj+AvfGgq4BdAvDugxxgXPnI8hZpzKZ88m7N0S6smL29doizmsMdRI4tBtO/iouJiGAgp3j5F9JzBg1GBpJdWOxax/VGpAYOeBx2eBur5ztZJ0PfdZljA4mxNp/slMtNaOwMKMCSU81IbkogpJz+lRaWR1o2gU2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pn9wJcQk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF4A7C4CEC2;
-	Sat,  5 Oct 2024 18:35:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728153313;
-	bh=8O7ex0Lx5cQ1FtgoodxpG5yAqOP3CyE5XErkA+IwvoM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pn9wJcQk3kvVA9WTNtt9R6zVucDLpvvFCUiwb4f7dSDLoq3TXJRER3FFYJLZb7RiX
-	 b4ehtNDNRabfO4RtfqhN/hVeUOMX3cB1GbY/9Ghwn7lP3ixtWxqsJfqjzrlY4HkX8w
-	 Vs/K7PZwVL0MxD2NGmPb9W8PQ/VTlBz1GarvYCVj2oob4avuLm9N2Kz34IFU8L99/2
-	 K0NMy0a9Z1i5wOMFh62E0O6l9fieLy/1xhjevPh6s4SwKaXvonpP4ZPJgjQqt72bKJ
-	 FHzV3KQrIZVSvpoRjrTJbHe2UFpR2WlM2qTsqc7+lu1GjriKhSYgSXmytOF2N1+6UA
-	 VpaAAckOZm6fA==
-Received: by pali.im (Postfix)
-	id B626E648; Sat,  5 Oct 2024 20:35:07 +0200 (CEST)
-Date: Sat, 5 Oct 2024 20:35:07 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Fill NFSv4.1 server implementation fields in
- OP_EXCHANGE_ID response
-Message-ID: <20241005183507.vbcwz4aju3sjrbwh@pali>
-References: <20240912220919.23449-1-pali@kernel.org>
- <ZuRX/QfG+OLm9fTR@tissot.1015granger.net>
- <20240913153631.2lqq5nybuitjiwmo@pali>
- <ZuRjSIyHguz3ult4@tissot.1015granger.net>
- <20240913161000.33ogsvxbe3njghhw@pali>
+	s=arc-20240116; t=1728153327; c=relaxed/simple;
+	bh=lCw7vnpXDNzWRzBIGJZ41zjrjyexnOuB98d+jyGedFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NqPxfYpAqK6wo2/rFbPSebmGuQsyXFLETVO77r6yKBOSarpdA4ZE8h9f+U2lwH4JTvlxQ16t/Hu4or3NXinoSYhyPQHwdWKS4trPYvqu8hvpFYbaHtwHWfSfF8XI2AYeqFbki3phYzsv+kbTAXLZcPelw+RGEqqnV7VPdgfvCco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=P3NpJU6Z; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 5 Oct 2024 14:35:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728153322;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=AM7Qw3VEFLcUwcLSiVIWVKX76u7BUc/+Zwgd/c7iThE=;
+	b=P3NpJU6ZrZKZbyYAeE5f7UeFsOkC94I+Ui/Gbm2VLC5AfWpwzzs62ek+PIbF0Hm9mPznkP
+	0odq9ONjU+BWa14vIkwUfbdZpoyikVaggyuHtLwZsBxwOXHKk3hbAGIrqKJYpITWd7smz3
+	6KSIhpm0MKCDO/o7AbuNHpz/reet6Yw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.12-rc2
+Message-ID: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240913161000.33ogsvxbe3njghhw@pali>
-User-Agent: NeoMutt/20180716
+X-Migadu-Flow: FLOW_OUT
 
-On Friday 13 September 2024 18:10:00 Pali Rohár wrote:
-> On Friday 13 September 2024 12:07:36 Chuck Lever wrote:
-> > On Fri, Sep 13, 2024 at 05:36:31PM +0200, Pali Rohár wrote:
-> > > On Friday 13 September 2024 11:19:25 Chuck Lever wrote:
-> > > > On Fri, Sep 13, 2024 at 12:09:19AM +0200, Pali Rohár wrote:
-> > > > > NFSv4.1 OP_EXCHANGE_ID response from server may contain server
-> > > > > implementation details (domain, name and build time) in optional
-> > > > > nfs_impl_id4 field. Currently nfsd does not fill this field.
-> > > > > 
-> > > > > NFSv4.1 OP_EXCHANGE_ID call request from client may contain client
-> > > > > implementation details and Linux NFSv4.1 client is already filling these
-> > > > > information based on runtime module param "nfs.send_implementation_id" and
-> > > > > build time Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN". Module param
-> > > > > send_implementation_id specify whether to fill implementation fields and
-> > > > > Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN" specify the domain
-> > > > > string.
-> > > > > 
-> > > > > Do same in nfsd, introduce new runtime param "nfsd.send_implementation_id"
-> > > > > and build time Kconfig option "NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN" and
-> > > > > based on them fill NFSv4.1 server implementation details in OP_EXCHANGE_ID
-> > > > > response. Logic in nfsd is exactly same as in nfs.
-> > > > > 
-> > > > > This aligns Linux NFSv4.1 server logic with Linux NFSv4.1 client logic.
-> > > > > 
-> > > > > NFSv4.1 client and server implementation fields are useful for statistic
-> > > > > purposes or for identifying type of clients and servers.
-> > > > 
-> > > > NFSD has gotten along for more than a decade without returning this
-> > > > information. The patch description should explain the use case in a
-> > > > little more detail, IMO.
-> > > > 
-> > > > As a general comment, I recognize that you copied the client code
-> > > > for EXCHANGE_ID to construct this patch. The client and server code
-> > > > bases are somewhat different and have different coding conventions.
-> > > > Most of the comments below have to do with those differences.
-> > > 
-> > > Ok, this can be adjusted/aligned.
-> > > 
-> > > > 
-> > > > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > > > > ---
-> > > > >  fs/nfsd/Kconfig   | 12 +++++++++++
-> > > > >  fs/nfsd/nfs4xdr.c | 55 +++++++++++++++++++++++++++++++++++++++++++++--
-> > > > >  2 files changed, 65 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
-> > > > > index ec2ab6429e00..70067c29316e 100644
-> > > > > --- a/fs/nfsd/Kconfig
-> > > > > +++ b/fs/nfsd/Kconfig
-> > > > > @@ -136,6 +136,18 @@ config NFSD_FLEXFILELAYOUT
-> > > > >  
-> > > > >  	  If unsure, say N.
-> > > > >  
-> > > > > +config NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN
-> > > > > +	string "NFSv4.1 Implementation ID Domain"
-> > > > > +	depends on NFSD_V4
-> > > > > +	default "kernel.org"
-> > > > > +	help
-> > > > > +	  This option defines the domain portion of the implementation ID that
-> > > > > +	  may be sent in the NFS exchange_id operation.  The value must be in
-> > > > 
-> > > > Nit: "that the server returns in its NFSv4 EXCHANGE_ID response."
-> > > > 
-> > > > 
-> > > > > +	  the format of a DNS domain name and should be set to the DNS domain
-> > > > > +	  name of the distribution.
-> > > > 
-> > > > Perhaps add: "See the description of the nii_domain field in Section
-> > > > 3.3.21 of RFC 8881 for details."
-> > > 
-> > > Ok.
-> > > 
-> > > > But honestly, I'm not sure why nii_domain is parametrized at all, on
-> > > > the client. Why not /always/ return "kernel.org" ?
-> > > 
-> > > I do not know. I just followed logic of client. In my opinion, it does
-> > > not make sense to have different logic in client and server. If it is
-> > > not needed, maybe remove it from client too?
-> > 
-> > > > What checking should be done to ensure that the value of this
-> > > > setting is a valid DNS label?
-> > > 
-> > > Checking for valid DNS label is not easy. Client does not do it, so is
-> > > it needed?
-> > 
-> > Input checking is always a good thing to do. But I haven't found a
-> > compliance mandate in RFC 8881 for the content of nii_domain, so
-> > maybe it doesn't matter.
-> > 
-> > One possibility would be to not add the parametrization of this
-> > string on the server unless it is found to be needed. So, this
-> > patch could simply always set "kernel.org", and then a Kconfig
-> > option can be added by a subsequent patch if/when a use case ever
-> > turns up.
-> 
-> No problem, I can drop it.
-> 
-> > Or... NFSD could simply re-use the client's setting. I can't think
-> > of a reason why the NFS client and NFS server in the same kernel
-> > should report different nii_domain strings.
-> > 
-> > 
-> > > > > +	  If the NFS server is unchanged from the upstream kernel, this
-> > > > > +	  option should be set to the default "kernel.org".
-> > > > > +
-> > > > >  config NFSD_V4_2_INTER_SSC
-> > > > >  	bool "NFSv4.2 inter server to server COPY"
-> > > > >  	depends on NFSD_V4 && NFS_V4_2
-> > > > > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> > > > > index b45ea5757652..5e89f999d4c7 100644
-> > > > > --- a/fs/nfsd/nfs4xdr.c
-> > > > > +++ b/fs/nfsd/nfs4xdr.c
-> > > > > @@ -62,6 +62,9 @@
-> > > > >  #include <linux/security.h>
-> > > > >  #endif
-> > > > >  
-> > > > > +static bool send_implementation_id = true;
-> > > > > +module_param(send_implementation_id, bool, 0644);
-> > > > > +MODULE_PARM_DESC(send_implementation_id, "Send implementation ID with NFSv4.1 exchange_id");
-> > > > 
-> > > > I'd rather not add a module parameter if we don't have to. Can you
-> > > > explain why this new parameter is necessary? For instance, is there
-> > > > a reason why an administrator who runs NFSD on a stock distro kernel
-> > > > would want to change this setting to "false" ?
-> > > 
-> > > I really do not know. Client has this parameter, so I though it is a
-> > > good idea to have it.
-> > > 
-> > > > If it turns out that the parameter is valuable, is there admin
-> > > > documentation to go with it?
-> > > 
-> > > I'm not sure if client have documentation for it.
-> > 
-> > Again, if we don't have a clear use case in front of us, it is
-> > sensible to postpone the addition of this parameter.
-> > 
-> > 
-> > [ ... snip ... ]
-> > 
-> > > > Regarding the content of these fields: I don't mind filling in
-> > > > nii_date, duplicating what might appear in the nii_name field, if
-> > > > that is not a bother.
-> > > 
-> > > I looked at this, and getting timestamp in numeric form is not possible.
-> > > Kernel utsname() and UTS functions provides date only in `date` format
-> > > which is unsuitable for parsing in kernel and converting into seconds
-> > > since epoch. Moreover uts structures are exported to userspace, so
-> > > changing and providing numeric value would be harder.
-> > 
-> > Not a big deal. And, it's something that can be changed later if
-> > someone finds a clean way to extract a numeric build time.
-> 
-> Ok.
+Several more filesystems repaired, thank you to the users who have been
+providing testing. The snapshots + unlinked fixes on top of this are
+posted here:
 
-I sent V2 version. I hope that I addressed all points from this discussion.
+https://lore.kernel.org/linux-bcachefs/20241005182955.1588763-1-kent.overstreet@linux.dev/T/#t
+
+The following changes since commit 2007d28ec0095c6db0a24fd8bb8fe280c65446cd:
+
+  bcachefs: rename version -> bversion for big endian builds (2024-09-29 23:55:52 -0400)
+
+are available in the Git repository at:
+
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-10-05
+
+for you to fetch changes up to 0f25eb4b60771f08fbcca878a8f7f88086d0c885:
+
+  bcachefs: Rework logged op error handling (2024-10-04 20:25:32 -0400)
+
+----------------------------------------------------------------
+bcachefs fixes for 6.12-rc2
+
+A lot of little fixes, bigger ones include:
+
+- bcachefs's __wait_on_freeing_inode() was broken in rc1 due to vfs
+  changes, now fixed along with another lost wakeup
+- fragmentation LRU fixes; fsck now repairs successfully (this is the
+  data structure copygc uses); along with some nice simplification.
+- Rework logged op error handling, so that if logged op replay errors
+  (due to another filesystem error) we delete the logged op instead of
+  going into an infinite loop)
+- Various small filesystem connectivitity repair fixes
+
+The final part of this patch series, fixing snapshots + unlinked file
+handling, is now out on the list - I'm giving that part of the series
+more time for user testing.
+
+----------------------------------------------------------------
+Kent Overstreet (18):
+      bcachefs: Fix bad shift in bch2_read_flag_list()
+      bcachefs: Fix return type of dirent_points_to_inode_nowarn()
+      bcachefs: Fix bch2_inode_is_open() check
+      bcachefs: Fix trans_commit disk accounting revert
+      bcachefs: Add missing wakeup to bch2_inode_hash_remove()
+      bcachefs: Fix reattach_inode()
+      bcachefs: Create lost+found in correct snapshot
+      bcachefs: bkey errors are only AUTOFIX during read
+      bcachefs: Make sure we print error that causes fsck to bail out
+      bcachefs: Mark more errors AUTOFIX
+      bcachefs: minor lru fsck fixes
+      bcachefs: Kill alloc_v4.fragmentation_lru
+      bcachefs: Check for directories with no backpointers
+      bcachefs: Check for unlinked inodes with dirents
+      bcachefs: Check for unlinked, non-empty dirs in check_inode()
+      bcachefs: Kill snapshot arg to fsck_write_inode()
+      bcachefs: Add warn param to subvol_get_snapshot, peek_inode
+      bcachefs: Rework logged op error handling
+
+ fs/bcachefs/alloc_background.c        |  30 ++++--
+ fs/bcachefs/alloc_background_format.h |   2 +-
+ fs/bcachefs/btree_gc.c                |   3 -
+ fs/bcachefs/btree_trans_commit.c      |   3 +-
+ fs/bcachefs/error.c                   |  23 +++-
+ fs/bcachefs/error.h                   |   9 +-
+ fs/bcachefs/fs.c                      |  33 +++---
+ fs/bcachefs/fsck.c                    | 194 ++++++++++++++++++++++------------
+ fs/bcachefs/inode.c                   |  44 +++-----
+ fs/bcachefs/inode.h                   |  28 +++--
+ fs/bcachefs/io_misc.c                 |  63 +++++++----
+ fs/bcachefs/logged_ops.c              |  16 +--
+ fs/bcachefs/logged_ops.h              |   2 +-
+ fs/bcachefs/lru.c                     |  34 +++---
+ fs/bcachefs/move.c                    |   2 +-
+ fs/bcachefs/movinggc.c                |  12 ++-
+ fs/bcachefs/sb-errors_format.h        |  33 +++---
+ fs/bcachefs/subvolume.c               |  16 ++-
+ fs/bcachefs/subvolume.h               |   2 +
+ fs/bcachefs/util.c                    |   2 +-
+ 20 files changed, 342 insertions(+), 209 deletions(-)
 
