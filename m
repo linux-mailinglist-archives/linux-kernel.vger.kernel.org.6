@@ -1,93 +1,113 @@
-Return-Path: <linux-kernel+bounces-351891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD98991749
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:20:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B0699174F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB9BB1F223AB
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:20:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68B5E28149E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C9C1553AB;
-	Sat,  5 Oct 2024 14:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2E1154C08;
+	Sat,  5 Oct 2024 14:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zTDGIfcQ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSmpFEqv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C0215530C;
-	Sat,  5 Oct 2024 14:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8481B960;
+	Sat,  5 Oct 2024 14:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728138020; cv=none; b=fbGPWjtljwmeGJtRU/JGsdkWSv0agBVLy+SyMbBpDQwsBPljLVCoN+kYB5zYDKZbJFLIdb6dcUsHNKr5kULgFvQFyDHuZhL6z1AOexMvMmmKmxC7r1aSrK0O11EbWFzORoCN1NU5XmER/9YxADZZeDs4YGBFmiQxxyeeUM7G1gA=
+	t=1728138244; cv=none; b=pw2GaPjHEOb00P/KkuvcNFp567Dq1nAlP5mOgXUbaj18dUvLaWqbef//YXMBnWwwFRs3Ivj8F//qsOcvatq5wDxYJSHraRg0nw78/mcUsESrTmun8hBSxN/Ig3wqnNTuxUG1JXwSMOotDjbPMeCb3A6GjJrck0tbwE+BcmAj5R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728138020; c=relaxed/simple;
-	bh=wtRp8FAmaK/EorQIVlbahu7UK5Unh1c2NFD5CFB2Hmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cX0keIkUy2o2RBEie6lzH3wRIDnX0ScxjlCNvc9A3fna/HGsOyU88Ysp+wjUZudjok+wMFwDen966jbvTMYRe/f6g/shbHyyPH3eEiEbqJs899IXReeVu/j3B3vrz+eJ2MDj3j9dUxhtR6F2dSqVC+lbmjURgJOcrHAU4DVa1h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zTDGIfcQ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Fw1wJBjPYy1YfB/jCXAr3PQ7u4GuIXzZMqKoHSbpCL4=; b=zTDGIfcQ9828u6S5SFDjkcv5mw
-	QETPdkL1fcxUGvGPhAtiSyckVF61O59wECOQlpDcHgqEBSEqmf1wpcAiuC8p7hAHWFrr65HNHr78m
-	HSD0sLf26dUnm5JPHZfAd9S2Q+ypw/nCsT73bgFH6I1yUe1BBqJOOm23tteMxuGN6O70=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sx5df-0098T1-On; Sat, 05 Oct 2024 16:20:07 +0200
-Date: Sat, 5 Oct 2024 16:20:07 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: realtek: make sure paged read is
- protected by mutex
-Message-ID: <32c342ef-62e8-4d85-8451-cfbb6024d869@lunn.ch>
-References: <792b8c0d1fc194e2b53cb09d45a234bc668e34c6.1728057091.git.daniel@makrotopia.org>
- <398aed77-2c9c-4a43-b73a-459b415d439b@lunn.ch>
- <ZwBl5XBPGRS_eL9Y@makrotopia.org>
+	s=arc-20240116; t=1728138244; c=relaxed/simple;
+	bh=eFLS1U5nNbqypwc6eUk4aCyaxNgxHUNnFm0FihZc+mQ=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=kwilAO+36kHyBbzH4g1xGVyZkmajvtnoxlgdRqy/xoNZnYyAoWu9Xsdg42MKAMv79pRW+ahNN9ofImQ52MVstzDUrKQO5H94Zm4Q+lDg8pNaQeQuHhQl82XESs4B0C5yhbpfpZAzn48Ziu5t6zEZ5S86QrhHEr64mPoAB34XljE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSmpFEqv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 100A7C4CEC2;
+	Sat,  5 Oct 2024 14:24:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728138244;
+	bh=eFLS1U5nNbqypwc6eUk4aCyaxNgxHUNnFm0FihZc+mQ=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=mSmpFEqvcbjWpAr8nPXhP8lZCZADaY8RqUnW2qAec5FSYtFNjhsEwpT9QJlbZYzkA
+	 HqTWpyYGVWLzaDML09Wslhk43Maq0tSyC4pAub4Di3OO1BFANM0O706YZHQkpRbGgi
+	 onyl9Slm85f07QQKjSzCM1ODK+Qj3sUf6DThjaMM0VqbV1VHgGgyVeOBuJP3CLOton
+	 71Ydm9/AluXfoxfe+thWFiDmkWcfMethqR0lXICUCQtMXTOAwTs8h0NNpFA4NfBW7v
+	 eDS//87JWPL2nOdh5tNqBu+1Lwf48Kk2YCETX8kUC8jQ5mEHbwjjK8tDr3JDHrFvnq
+	 IVPJkVVYsxvjQ==
+Date: Sat, 05 Oct 2024 09:24:03 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwBl5XBPGRS_eL9Y@makrotopia.org>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+Cc: martin.petersen@oracle.com, avri.altman@wdc.com, krzk+dt@kernel.org, 
+ andersson@kernel.org, devicetree@vger.kernel.org, quic_nitirawa@quicinc.com, 
+ quic_narepall@quicinc.com, James.Bottomley@HansenPartnership.com, 
+ bvanassche@acm.org, linux-kernel@vger.kernel.org, agross@kernel.org, 
+ konrad.dybcio@linaro.org, alim.akhtar@samsung.com, conor+dt@kernel.org, 
+ manivannan.sadhasivam@linaro.org, linux-scsi@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org
+In-Reply-To: <20241005064307.18972-2-quic_rdwivedi@quicinc.com>
+References: <20241005064307.18972-1-quic_rdwivedi@quicinc.com>
+ <20241005064307.18972-2-quic_rdwivedi@quicinc.com>
+Message-Id: <172813824187.140695.2656302375333082019.robh@kernel.org>
+Subject: Re: [PATCH V1 1/3] dt-bindings: ufs: qcom: Document ice
+ configuration table
 
-On Fri, Oct 04, 2024 at 11:02:13PM +0100, Daniel Golle wrote:
-> On Fri, Oct 04, 2024 at 11:25:29PM +0200, Andrew Lunn wrote:
-> > On Fri, Oct 04, 2024 at 04:52:04PM +0100, Daniel Golle wrote:
-> > > As we cannot rely on phy_read_paged function before the PHY is
-> > > identified, the paged read in rtlgen_supports_2_5gbps needs to be open
-> > > coded as it is being called by the match_phy_device function, ie. before
-> > > .read_page and .write_page have been populated.
-> > > 
-> > > Make sure it is also protected by the MDIO bus mutex and use
-> > > rtl821x_write_page instead of 3 individually locked MDIO bus operations.
-> > 
-> > match_phy_device() as far as i know, is only used during bus probe,
-> > when trying to match a driver to a device. What are you trying to lock
-> > against during probe?
+
+On Sat, 05 Oct 2024 12:13:05 +0530, Ram Kumar Dwivedi wrote:
+> There are three algorithms supported for inline crypto engine:
+> Floor based, Static and Instantaneous algorithm.
 > 
-> The idea is to reduce the amount of unnecessary lock/unlock cycles (1 vs
-> 3). Of course, we could just omit locking entirely here, but that seemed
-> a bit wild to me, and even if it would work in that specific case, it
-> just serve as a bad example.
+> Document the compatible used for the algorithm configurations
+> for inline crypto engine found.
+> 
+> Co-developed-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
+> Signed-off-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
+> Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> ---
+>  .../devicetree/bindings/ufs/qcom,ufs.yaml     | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
 
-I would just comment the requirement that it can only be used during
-probe, and remove all the locks.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-	Andrew
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/ufs/qcom,ufs.example.dtb: alg3: status: 'oneOf' conditional failed, one must be fixed:
+	['ok'] is not of type 'object'
+	'ok' is not one of ['okay', 'disabled', 'reserved', 'fail', 'fail-needs-probe']
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241005064307.18972-2-quic_rdwivedi@quicinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
