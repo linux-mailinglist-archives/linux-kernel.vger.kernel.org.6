@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-351844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9569916CF
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:38:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E859916D1
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FCA728464C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:38:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69A81C20E60
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549071531C5;
-	Sat,  5 Oct 2024 12:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B8414C5AF;
+	Sat,  5 Oct 2024 12:38:45 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD2314AD19
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 12:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E341547FF
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 12:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728131921; cv=none; b=TN3PFtIfum/nyP/TYKGX61WNCRXITgTyVUeK+TfelGLm256ZgEf89EbhxUvhE+7R/zYyn3KgXYgWrVlcMmsDQhdDnIblIcguDd2Q4mBTzLnb3p+tgIVyNQRRFhZLl/Gko7w/sokCo++4L4GAiWilIuU/aFuBZtGk5OddNZ0OSJ8=
+	t=1728131925; cv=none; b=G798jhrbM5IGRaY4oPGxToSH18CfTRo/2ftSFD+N9RZa7EebBCisxfP0MQ+s9vuDOHYG8bLxNVSB+dUQqIxp734kNYjD+mXw3l65a1AS3OgBb/7d2j9CJ6OEdrUIpTQNSbiW26hrbwEYROW5ZVsxLiq2hXk4jUNQD4TDL50Rlps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728131921; c=relaxed/simple;
-	bh=7zrasJNwnYsyr+LOvEEOwy/SzZXk+OU/QkFhgFojQsQ=;
+	s=arc-20240116; t=1728131925; c=relaxed/simple;
+	bh=feAzXXC1edxnHlLjdNG5JUQhZRVL7SQv8APzcDLiaAc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dxuwYBGaBM/XtxqTbao1lSvFeWdr1tDgjnkTHefWJyDN/Pq21ngAR91QRdQQmm1bOg8PWfrclCuGOBMbg6t6iV90cIw+uMftC+iXUbV7mtP0AqZallz42kGZz7zPO2LCYhOCYM60s5FBV+aOE+a2gVJKMsR4NoxzGSr+BzJXNTI=
+	 MIME-Version; b=BxiEwcjSC/T1t1sOqmT1q7gCJ661+YraZwZNnliKUsVgEqMTYp9OJeRcCoyeYPcxeCqnh78kzfVs/CT+3Bx/Te92YEMOCSPnF7O4vBJqG66E8bzPpq7VRaC+UekHaHhLadZW997mn3IP5edgsUadRrNT0PEj0+h9PB0X/olNJHk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F37C106F;
-	Sat,  5 Oct 2024 05:39:08 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B5071007;
+	Sat,  5 Oct 2024 05:39:12 -0700 (PDT)
 Received: from a077893.arm.com (unknown [10.163.39.26])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DE9D83F64C;
-	Sat,  5 Oct 2024 05:38:34 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 444DB3F64C;
+	Sat,  5 Oct 2024 05:38:39 -0700 (PDT)
 From: Anshuman Khandual <anshuman.khandual@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
@@ -45,9 +45,9 @@ Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
 	Mark Rutland <mark.rutland@arm.com>,
 	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] arm64/mm: Replace PXD_TABLE_BIT with PXD_TYPE_[MASK|SECT]
-Date: Sat,  5 Oct 2024 18:08:21 +0530
-Message-Id: <20241005123824.1366397-3-anshuman.khandual@arm.com>
+Subject: [PATCH 3/5] arm64/ptdump: Test PMD_TYPE_MASK for block mapping
+Date: Sat,  5 Oct 2024 18:08:22 +0530
+Message-Id: <20241005123824.1366397-4-anshuman.khandual@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241005123824.1366397-1-anshuman.khandual@arm.com>
 References: <20241005123824.1366397-1-anshuman.khandual@arm.com>
@@ -59,13 +59,10 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This modifies existing block mapping related helpers e.g [pmd|pud]_mkhuge()
-, mk_[pmd|pud]_sect_prot() and pmd_trans_huge() to use PXD_TYPE_[MASK|SECT]
-instead of corresponding PXD_TABLE_BIT. This also moves pmd_sect() earlier
-for the symbol's availability preventing a build warning.
-
-While here this also drops pmd_val() check from pmd_trans_huge() helper, as
-pmd_present() returning true already ensures that pmd_val() cannot be false
+arm64 block mapping requires given page table entry's bits[1:0] to be "01".
+But now only bit[1] is checked to be clear, while also implicitly assuming
+bit[0] to be set. This modifies ptdump to check both the relevant bits via
+the mask PMD_TYPE_MASK and check the resultant value against PMD_TYPE_MASK.
 
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
@@ -76,70 +73,28 @@ Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
- arch/arm64/include/asm/pgtable.h | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ arch/arm64/mm/ptdump.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index fa4c32a9f572..45c49c5ace80 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -484,12 +484,12 @@ static inline pmd_t pte_pmd(pte_t pte)
- 
- static inline pgprot_t mk_pud_sect_prot(pgprot_t prot)
- {
--	return __pgprot((pgprot_val(prot) & ~PUD_TABLE_BIT) | PUD_TYPE_SECT);
-+	return __pgprot((pgprot_val(prot) & ~PUD_TYPE_MASK) | PUD_TYPE_SECT);
- }
- 
- static inline pgprot_t mk_pmd_sect_prot(pgprot_t prot)
- {
--	return __pgprot((pgprot_val(prot) & ~PMD_TABLE_BIT) | PMD_TYPE_SECT);
-+	return __pgprot((pgprot_val(prot) & ~PMD_TYPE_MASK) | PMD_TYPE_SECT);
- }
- 
- static inline pte_t pte_swp_mkexclusive(pte_t pte)
-@@ -554,10 +554,13 @@ static inline int pmd_protnone(pmd_t pmd)
-  * THP definitions.
-  */
- 
-+#define pmd_sect(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
-+				 PMD_TYPE_SECT)
-+
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- static inline int pmd_trans_huge(pmd_t pmd)
- {
--	return pmd_val(pmd) && pmd_present(pmd) && !(pmd_val(pmd) & PMD_TABLE_BIT);
-+	return pmd_present(pmd) && pmd_sect(pmd);
- }
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
-@@ -586,7 +589,7 @@ static inline int pmd_trans_huge(pmd_t pmd)
- 
- #define pmd_write(pmd)		pte_write(pmd_pte(pmd))
- 
--#define pmd_mkhuge(pmd)		(__pmd(pmd_val(pmd) & ~PMD_TABLE_BIT))
-+#define pmd_mkhuge(pmd)		(__pmd((pmd_val(pmd) & ~PMD_TYPE_MASK) | PMD_TYPE_SECT))
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- #define pmd_devmap(pmd)		pte_devmap(pmd_pte(pmd))
-@@ -614,7 +617,7 @@ static inline pmd_t pmd_mkspecial(pmd_t pmd)
- #define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
- #define pud_write(pud)		pte_write(pud_pte(pud))
- 
--#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
-+#define pud_mkhuge(pud)		(__pud((pud_val(pud) & ~PUD_TYPE_MASK) | PUD_TYPE_SECT))
- 
- #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
- #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
-@@ -712,8 +715,6 @@ extern pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
- 
- #define pmd_table(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
- 				 PMD_TYPE_TABLE)
--#define pmd_sect(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
--				 PMD_TYPE_SECT)
- #define pmd_leaf(pmd)		(pmd_present(pmd) && !pmd_table(pmd))
- #define pmd_bad(pmd)		(!pmd_table(pmd))
- 
+diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+index 264c5f9b97d8..8cec0da4cff2 100644
+--- a/arch/arm64/mm/ptdump.c
++++ b/arch/arm64/mm/ptdump.c
+@@ -80,10 +80,10 @@ static const struct ptdump_prot_bits pte_bits[] = {
+ 		.set	= "CON",
+ 		.clear	= "   ",
+ 	}, {
+-		.mask	= PTE_TABLE_BIT,
+-		.val	= PTE_TABLE_BIT,
+-		.set	= "   ",
+-		.clear	= "BLK",
++		.mask	= PMD_TYPE_MASK,
++		.val	= PMD_TYPE_SECT,
++		.set	= "BLK",
++		.clear	= "   ",
+ 	}, {
+ 		.mask	= PTE_UXN,
+ 		.val	= PTE_UXN,
 -- 
 2.25.1
 
