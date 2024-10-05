@@ -1,155 +1,117 @@
-Return-Path: <linux-kernel+bounces-352132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E66991AA0
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 22:26:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8215991AA2
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 22:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 062FCB21A4C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:26:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CB0DB21CED
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB36216130C;
-	Sat,  5 Oct 2024 20:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C00015ECD5;
+	Sat,  5 Oct 2024 20:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="PxAVFCL+";
-	dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b="Er3IpQBT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GL02L8lH"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g2RUdT99"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD112132122;
-	Sat,  5 Oct 2024 20:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057E518E1F
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 20:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728159997; cv=none; b=un5rdnjOf3k+OHXPCgwNI3UVsT5oTeZttYuGI81b9nI7WICeg1PdKLOiv63NVvFFVoxlvvWSndnl1R2nAfqFHdciELhdIx3jrcAG6H5wyUOtGjp3poUR/SNRMBjV3HKJpEl+z2JjjMNm01vwqdIYbpx1+sU0CTBcN2NeAw9Iciw=
+	t=1728160490; cv=none; b=kuPckup+Sv6AGegZcP+9wqpF0tJpsgmXns+soQdXCxscSWj1M9mxYsGsiPedFln7wr2BD8YEBhb9/8nxWhbTSo51KlpVtl11kU061ro4NILp2y6ZVZz6dSmK79mrxEdThQeln8V5hztdoCF7zLFNYzHEK46EZI3oTzF53bVxjKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728159997; c=relaxed/simple;
-	bh=tSEwjcwVLGLRfCY1ex/2k4KFLkjnzDkgnIbzz2hBvwQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=dJkmU3xsg/rc+MvoCU+BbEDof5TQmj3QWaa2JvNFFbYqse0Bw2TZUJWIpGS6HPQRepHRPUs83IHdS3x/qZCO8proxhnsZ7GOWk8Cv+UrIXWNBvBBXT3rTAJc9elXOW/d4H1ClOR1k7wm8Ob1qgZDPHv6/lFLVabBoh+r0uwi/MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=PxAVFCL+; dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b=Er3IpQBT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GL02L8lH; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id E667C13801AE;
-	Sat,  5 Oct 2024 16:26:33 -0400 (EDT)
-Received: from phl-frontend-01 ([10.202.2.160])
-  by phl-compute-11.internal (MEProxy); Sat, 05 Oct 2024 16:26:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=2016-12.pbsmtp; t=1728159993; x=1728246393;
-	 bh=/UZxPW8Kqb/WScJ0FkGUZbyQA/dvB0fXrs/OgWTOcuA=; b=PxAVFCL+WjZQ
-	cToHxEu9QA9lGVJnexuSqrdurcscq9Et8B5+nNIn8Ui32fO3QHD09WFsW1Yv/YWU
-	aKdZIW3L+K3571qtdwNQ5V4eDlVPW9DdCWDjWVSwvr5LoD3LLfZ9uT9Y+3AiQeWu
-	LpXqb7d9t1FZBqrvkWW6S3HI91t78fo=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pobox.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1728159993; x=1728246393; bh=/UZxPW8Kqb
-	/WScJ0FkGUZbyQA/dvB0fXrs/OgWTOcuA=; b=Er3IpQBTGScG3QGqm+ywC/m/Q5
-	gQqWbEn5n4cueUcTkByT+NNgg//RXC2gb8aoX37THU4IDnvQ8A18V6gORINUKmob
-	gfy5JjQg93mcn9jnV3/B23OaGr7jPvzjIyTceUR9an/zJiUcxYlAwsx6oqB+HZGz
-	Mj0g1qZ+Gt7Ff6SgTlc4aySDoIbY0JlAHiqxvUnn2Bv7e28ySpwxoLFDnQht4oTY
-	cfg4ewIbn+1qRDLXHh/BAd7T5AKscWIUSLehcVjkeaqQIRAGJJHGka17unb0WIyo
-	My8p4gXW505wYhYDVx6WRbKAayNCHnTqx4+YdWBgNEuYB/bHNLUiVXlmtqcA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1728159993; x=1728246393; bh=/UZxPW8Kqb/WScJ0FkGUZbyQA/dv
-	B0fXrs/OgWTOcuA=; b=GL02L8lHqUIQbVzDWN9uv8IBYOjGufbSy+WOy49lua9T
-	N250UW9zHRFZ4sktJSyeepDIS15joo7eu4++PVAypr/O7YcJmbgXb5UrxMLwG0Oh
-	GS2OEfsBTBp8PBdVdRZa2S2yKgcJeOkAHaPtZH/7uNnrj8D7Gj6l5WRcdbOKhQQi
-	WI4rLQVIvV7fZyEICMv34v+qzpIBrN0ftTGXV+kzTNNCpowyUhb8Qa2y2LbW9gf2
-	Vx6vD0bG9D7P1oHA/gDYB9QYFTtSIR25JOoh/l5SkBGC7mM9irMs2Dc9VaKy6m9N
-	nSPbw0bXTE2+L+XiNFLW1HCbIWRj2R05HI/whWWHHQ==
-X-ME-Sender: <xms:-aABZ9SpOpwLsye0F2RtsV827l5GbMJ3Xlv7XLlh7Qtsubdkt6sCFw>
-    <xme:-aABZ2zj9Ogn6Yn9GUZBodlH34CCM4UQSHmFodAszX8dVK6r-B83VtNqTK_DzWDAm
-    ChYQFDObdL6AI8oYv4>
-X-ME-Received: <xmr:-aABZy01iHs1SfFuGKzoCBwD7Uiw64oZBl2dygJT0TXnGfwYzVVwIeeZH3n9MzXKJ1bB6lckYUTqmHzmA1sq1SZzHGcuj4vchXHAZU-JgQqhGjuwIA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvhedgudehtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefujgfkfhggtgesthdtredttddtvden
-    ucfhrhhomheppfhitgholhgrshcurfhithhrvgcuoehnihgtohesfhhluhignhhitgdrnh
-    gvtheqnecuggftrfgrthhtvghrnhepkeevleegteevkeelgeekleffveelfeelvdeljedu
-    gfekgfehffffieefleffgfdtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihgtohesfhhl
-    uhignhhitgdrnhgvthdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpd
-    hrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegv
-    ughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehrohhgvghrqheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehgrhihghhorh
-    hiihdrshhtrhgrshhhkhhosehtihdrtghomhdprhgtphhtthhopehvihhgnhgvshhhrhes
-    thhirdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhg
-X-ME-Proxy: <xmx:-aABZ1B-JElfXgkTkq1HmMoSvLl-ByeX8TZl7Up_qHzbqgT8wKin3w>
-    <xmx:-aABZ2hsCfwjL4kSOpKrUf05yx8Qdaq0mUMk5xuXqcTQBuuKQVz2mw>
-    <xmx:-aABZ5o0L2gCsnP3-SYc7ZH592Z6xaXiwXfWnrKJuoxxOa-HoWAONA>
-    <xmx:-aABZxhT8UGtSrqIVykzk0-1za6XGsyfKaAjUz1pPDJgexrqtllKAA>
-    <xmx:-aABZ7bow8DzlozBVSa0DCsVe28hL1Zob2sk7cJEdRqFLxAlaD37vEGJ>
-Feedback-ID: i58514971:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 5 Oct 2024 16:26:33 -0400 (EDT)
-Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 60CB1E4F517;
-	Sat,  5 Oct 2024 16:26:32 -0400 (EDT)
-Date: Sat, 5 Oct 2024 16:26:32 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Roger Quadros <rogerq@kernel.org>
-cc: "David S. Miller" <davem@davemloft.net>, 
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-    Paolo Abeni <pabeni@redhat.com>, 
-    Grygorii Strashko <grygorii.strashko@ti.com>, 
-    Vignesh Raghavendra <vigneshr@ti.com>, netdev@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v3 2/2] net: ethernet: ti: am65-cpsw: avoid
- devm_alloc_etherdev, fix module removal
-In-Reply-To: <f41f65bd-104c-44de-82a2-73be59802d96@kernel.org>
-Message-ID: <500r48s9-6s4o-ppnr-4p2q-05731rnn9qs6@syhkavp.arg>
-References: <20241004041218.2809774-1-nico@fluxnic.net> <20241004041218.2809774-3-nico@fluxnic.net> <b055cea5-6f03-4c73-aae4-09b5d2290c29@kernel.org> <s5000qsr-8nps-87os-np52-oqq6643o35o2@syhkavp.arg> <f41f65bd-104c-44de-82a2-73be59802d96@kernel.org>
+	s=arc-20240116; t=1728160490; c=relaxed/simple;
+	bh=WPSFRzpQmXyTM3z6ZSuzbrHr4kiT7ZJ23YAnn18iKN8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NRW9oEo9kIYvW151jF5wDLooBvxBUCOJ532MdwDr8TuyrUV9g0ZigDpnVZ9NCvo/n+3POI6aYicEh59mhwOVV45WUxIVmGeQa+VBCYjob/U2EL7GtTND7R+zrJadgfzS2MfjtP52Ef3/w3237gQ5RdC1xJqSQ34iLabZ3nrBLbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g2RUdT99; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42f56ad2afaso41483425e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 13:34:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728160487; x=1728765287; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wFt5tBfdZec46McMVPfu4D/j5Q/aM8HZT4ZihSPJdl4=;
+        b=g2RUdT99EGryZvUW+Gekl6J1CDTddJNmoqVlKRwDsC5rTdcUw2Yw/U2VFJpSZwtLfd
+         QB8YXFIiSSUS3HFasoVPAfWLm4fXrRIXmiJmWGQU8W1y0M27ZE3V3SIkoDWb3Vp8jXUd
+         oUMxWmgMh1VQcPQAvrcb58oDjfCu1vmWE+1b9eeuYugDxP/CR22sDE84qfIbJ4wPbJA3
+         nr6n0lgji3m8KBp5MF2PF1G4/hah18JGEjgn7iJLLYBlm410oNsZe7knlcahnAtIrZVm
+         XFUx90TsO38AAYZIoROk3KBApjBZEJi2d8fjZOkMhfb2qdQRco1UK6qwJXAe2FbKsy9M
+         lTAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728160487; x=1728765287;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wFt5tBfdZec46McMVPfu4D/j5Q/aM8HZT4ZihSPJdl4=;
+        b=Wu5FZxflsSIKjOtBvsNFrXTgoWNxRLz9G+D4Q90t+1i6woCF2Zm9fJ8kCNsV2fAuY1
+         hwCnxXBDm+wZTtrCEEo4z+gXH9RnZStf46GrIcoK3KxIK7Yk4GtBKx2GURkFE29w8GgG
+         9oomr2uQJHMtYQFnyYh/zsWc5tsU13DDXRl2MPn9wf4/y/KFSYFdUdreKS7RpBZGHgDc
+         L+wQiLnVVobaRbZb2beL1Ke/q5k1wr0AxnA8WLXe/+qP+OMgVrehoIM5svfR/ysxiPLN
+         ilpfNqNjNIfsGhVKl7sW/iX4mgIhPAu82Lj1vyQnWJX94Okm6bWMSVdQ8OxvPl3PWmWP
+         g51w==
+X-Forwarded-Encrypted: i=1; AJvYcCVikvzRMNP6ngSyfSf+cWjHBSkE4FAZ0JIkA0Ju9lwVZR0Tfxu/3CTtRcTal/HTX19mtf4VC5GFxgx/6sE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPBQsG0sgQmKyOu/ymlGrZQZaYpkwVpzqStdkzIeIOjy9Lwd0F
+	pmrYuycTa5l3RxU/FjbSVJcsAA1gfGbinUKvJj/nM81C0OQyEpP9
+X-Google-Smtp-Source: AGHT+IHJocbNMS5V788ycKbIuwDiIww8RvJ5MqZhv9rYA70SB31uX71x8JPNo9xRwpDYAwArbr21Ug==
+X-Received: by 2002:a05:600c:3c9c:b0:42c:bae0:f05f with SMTP id 5b1f17b1804b1-42f85aa98ddmr68081755e9.13.1728160487165;
+        Sat, 05 Oct 2024 13:34:47 -0700 (PDT)
+Received: from kernel-710.speedport.ip (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f85995932sm41824805e9.0.2024.10.05.13.34.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 13:34:46 -0700 (PDT)
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Subject: [PATCH 00/15] staging: rtl8723bs: Remove function pointers starting with hal_init
+Date: Sat,  5 Oct 2024 22:33:43 +0200
+Message-ID: <cover.1727966761.git.philipp.g.hortmann@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Fri, 4 Oct 2024, Roger Quadros wrote:
+Remove function pointers and replace them with function names to increase
+readability.
 
-> > If you know of a way to do this differently I'm all ears.
-> 
-> I sent another approach already. please check.
-> https://lore.kernel.org/all/67c9ede4-9751-4255-b752-27dd60495ff3@kernel.org/
+Tested with rtl8723bs in ODYS Trendbook Next 14
 
-Seems to work correctly.
+Philipp Hortmann (15):
+  staging: rtl8723bs: Remove function pointer hal_init
+  staging: rtl8723bs: Remove function pointer hal_deinit
+  staging: rtl8723bs: Remove function pointer free_hal_data
+  staging: rtl8723bs: Remove function pointer init_xmit_priv
+  staging: rtl8723bs: Remove function pointer free_xmit_priv
+  staging: rtl8723bs: Remove function pointer init_recv_priv
+  staging: rtl8723bs: Remove function pointer free_recv_priv
+  staging: rtl8723bs: Remove function pointer dm_init
+  staging: rtl8723bs: Remove function pointer dm_deinit
+  staging: rtl8723bs: Remove function pointer read_chip_version
+  staging: rtl8723bs: Remove function pointer init_default_value
+  staging: rtl8723bs: Remove function pointer intf_chip_configure
+  staging: rtl8723bs: Remove function pointer read_adapter_info
+  staging: rtl8723bs: Remove function pointer enable_interrupt
+  staging: rtl8723bs: Remove function pointer disable_interrupt
 
-Still... given this paragraph found in Documentation/process/maintainer-netdev.rst:
+ drivers/staging/rtl8723bs/hal/hal_intf.c      | 46 ++++++-------------
+ .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 12 +----
+ drivers/staging/rtl8723bs/hal/sdio_halinit.c  | 25 ++--------
+ drivers/staging/rtl8723bs/include/hal_intf.h  | 23 ----------
+ .../staging/rtl8723bs/include/rtl8723b_recv.h |  5 ++
+ .../staging/rtl8723bs/include/rtl8723b_xmit.h |  2 +
+ 6 files changed, 26 insertions(+), 87 deletions(-)
 
-|Netdev remains skeptical about promises of all "auto-cleanup" APIs,
-|including even ``devm_`` helpers, historically. They are not the preferred
-|style of implementation, merely an acceptable one.
+-- 
+2.43.0
 
-and given my solution is way simpler, I tend to also prefer it over yours.
-
-But I'm not the maintainer nor even a significant contributor here so as 
-long as the issue is fixed I won't mind.
-
-> > About the many error cases needing the freeing of net devices, as far as 
-> > I know they're all covered with this patch.
-> 
-> No they are not.
-
-As I said yesterday, I do still stand by my affirmation that they are.
-Please look at the entire return path and you'll see that everything is 
-covered.
-
-
-Nicolas
 
