@@ -1,63 +1,79 @@
-Return-Path: <linux-kernel+bounces-351852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06FC69916E3
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:47:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6AE9916EA
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FD36B22A91
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 804121F225A3
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC581537DB;
-	Sat,  5 Oct 2024 12:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AA214E2E3;
+	Sat,  5 Oct 2024 13:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="OoYBSfwQ"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMTySzre"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AE814A4DF;
-	Sat,  5 Oct 2024 12:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057E514884C;
+	Sat,  5 Oct 2024 13:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728132445; cv=none; b=GnUwGZzjfNQZHApjsekXWHGtUfRMEsCWlWCVCT69Hjjd9E209PxAg4rdLh4l/ltHGoVBTKq2X8Epbb14AskObKZY1YAWDKmTHVZEMCpdRwxYVCp+aeGkWbCENrpGNThjKqjvOaEqfrc7XDro2NrA8FWQzNeWgtaApQVXNt9PQJk=
+	t=1728133363; cv=none; b=sLCD0zJKuzZ8NNez5iaI1wOgoEuNLp0hPjLeutnpUMPCvJtIvLoNdA3BaKqTqfSrzkvAj76A2KaOpurDMucESB0nyD0ETL+eDEjbwwdUxxTZ1XF+XtXV4PsEVgzfe450ofCoIinKcm6N9weg1WfAqINWjNFkKgQppmxTwMDl5rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728132445; c=relaxed/simple;
-	bh=x5FhYGi0PCWOfztI/IQyaGgm3sDuZ7lLD3ZhEv6wc7M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=s3deEenhXI3VsBctsR2usHNYg1qusy3qEns88s7ZtTvIGwlem47lsffK4Y6Njvge9hnovdXhBIWu16/WqMfPkVTq3pudZTQPzP6MaoEYxw06W54N6iatTc5zpPea12RElcGtkyzr6VT4vJ9fVEg7pEVo7aYgxMQt6l79UhM1Rqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=OoYBSfwQ; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=7tN5cZxpEROorCLkrxgCiTuqn2sXTFFrUxuWOjArPwI=; b=OoYBSfwQCkH6Mxa+mpmzeNl/Dn
-	tUWNNK1JVZqQ3IDQsgcVenN+YPts5Irw4sbwJfgtyRS9/fnJgykbjqaMGhfoybOflNEqcvnxNI2Xz
-	4Pk3qxRPG9MsBuqjTgjnmr3xSoMpXoxkkNHur7ozjzPQAW/PRQpRvWE7Q0kkz2Z9zDOuom/MxchDb
-	Bb6/SyYEr2xXkj1GwDmCejfY9ZrB5H7Ld+5PPhpOv+Y/r1XOgNWsEvb2FFIawffc2ho0x6L1qanWG
-	RqhOR0HmYVpysGcit0soUK8uwSM2bepuGH+wcx5ZHnTWa0+9a5SvPcPSvq3Ux6PDCxLPYoi9S9CLt
-	veSJKS0A==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Tony Lindgren <tony@atomide.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Lee Jones <lee@kernel.org>,
-	Roger Quadros <rogerq@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-omap@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v3 3/3] clk: twl: add TWL6030 support
-Date: Sat,  5 Oct 2024 14:47:06 +0200
-Message-Id: <20241005124706.601393-4-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241005124706.601393-1-andreas@kemnade.info>
-References: <20241005124706.601393-1-andreas@kemnade.info>
+	s=arc-20240116; t=1728133363; c=relaxed/simple;
+	bh=ZY+d7MhAztwIvVEagBWrn2xOpFQ0PqgC9xBBdBe0kxw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NoGbn/ZaALIxtuBfP/n4kSyVWW39+mgLq9eqJcZwNM43AMPdogJ6PJ/vrsolPP/60G4yM/M1KuknP8i1ksqHqWid6VDX1MayIC/nJiOkTX6rv8axm1zFfkx1DX2SNhGvmvN1nnM4MhdcnuFUJa4u2qcv/BmqdiD/P6yprZeZjlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMTySzre; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71df8585a42so163717b3a.3;
+        Sat, 05 Oct 2024 06:02:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728133360; x=1728738160; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z1u+AXQc3KShsKJXgs5fNJnOH5KwvpIrHXiX2ZuvgOI=;
+        b=KMTySzreqo2/kVdK4NtVaWOC7itw2KqdbsUSrHAAEBkG00ug7aoNl2kWycJ83psbqh
+         +MTYknzXwOtEUmY2CVB9CKl8xyfXnpYx9wQq5txWeIEpjjQc6lLrvfFO4cXH7hDwc7Wg
+         gJZzTDpE7PJ1HoU3eaRGm3vU7A7f87CeHtZCte2KEZf0SoJz8zPf07NSKWhahvGSHrFy
+         dPV+jtH6KO6uRVdHpJBxw7LROK1hfb37KnmnOZZJdwWcSvj2GjK65B5Vw8N2RICD/JGF
+         2CtnOIWz2vFmHYoal7Si27FirZjeM1khZenF+RLEsSMfqRJk6m57TzJpfoX1CNgExbA5
+         8yuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728133360; x=1728738160;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z1u+AXQc3KShsKJXgs5fNJnOH5KwvpIrHXiX2ZuvgOI=;
+        b=BBjPquqmC0bnKzeE3WuFZXBKcFyLouuZqfGXxanDZLqJAFb/0xiLV6ezPzYkvxkEv7
+         I9tewEiAhh87a5QebkzJqwq6wX/GDwDkacaEkknVDzPD1x+Ilvhz2PG9f3QFYAHVyOrE
+         itlhqpoVRGCXIESRHTQFSptBt3EYYaJh29kVDCN0TRQziJ6P6+I7kq6hQ2gIogo63Wb1
+         aWxoXNBrBkhLSByGWjJdSgFbEWkEC8TBix413oPsmD3/0aqaZ+kEMHlONPtUYFqAmj+k
+         mZOVDcmx9yhG0rQNeDzNRAd1j7UrwxTmvq2r5NSIjrN22U5Jz3S1kEtfrKgDabH4P6HC
+         rdlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYF9/JFHRq0oqsSAxUJ1XWvYkZfh2G/vdAiu6Ck35syCrOSdXBrS673/Zb2O86JZGJFbrmFuOTrpkQFAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya3d6choM90QFlF3lsy2/3NhKsv3auYrPT6KZOTfOVuiLOQWLA
+	pkgp1336WEPSYT2agpSkqOpTDBNk6hzKtJJqAWRHON4AeeZV5brzyBRg4hRo
+X-Google-Smtp-Source: AGHT+IE9BRwbL20vaX1wK+ntTJ+1n0jkM6UDK+1IYtndVsJYRETcsfqipm7h8akeMbSWanOaG0L2lA==
+X-Received: by 2002:a05:6a20:6d13:b0:1d6:e635:5c5e with SMTP id adf61e73a8af0-1d6e6355d6emr3848295637.9.1728133360187;
+        Sat, 05 Oct 2024 06:02:40 -0700 (PDT)
+Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71df0d46347sm1487896b3a.99.2024.10.05.06.02.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 06:02:39 -0700 (PDT)
+From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+To: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Mohammed Anees <pvmohammedanees2003@gmail.com>,
+	syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
+Subject: [PATCH resend v3] bcachefs: Fix NULL pointer dereference in bch2_opt_to_text
+Date: Sat,  5 Oct 2024 18:32:29 +0530
+Message-ID: <20241005130229.9290-1-pvmohammedanees2003@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,129 +82,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The TWL6030 has similar clocks, so add support for it. Take care of the
-resource grouping handling needed.
+This patch adds a bounds check to the bch2_opt_to_text function to prevent
+NULL pointer dereferences when accessing the opt->choices array. This
+ensures that the index used is within valid bounds before dereferencing.
+The new version enhances the readability.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Reported-and-tested-by: syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=37186860aa7812b331d5
+Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
 ---
- drivers/clk/Kconfig   |  2 +-
- drivers/clk/clk-twl.c | 52 +++++++++++++++++++++++++++++++++++--------
- 2 files changed, 44 insertions(+), 10 deletions(-)
+v3:
+- Moved bounds check above as default case.
+- Removed the nesterd if clauses.
+---
+ fs/bcachefs/opts.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 299bc678ed1b..82ec12f9b82c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -291,7 +291,7 @@ config CLK_TWL
- 	help
- 	  Enable support for controlling the clock resources on TWL family
- 	  PMICs. These devices have some 32K clock outputs which can be
--	  controlled by software. For now, only the TWL6032 clocks are
-+	  controlled by software. For now, the TWL6032 and TWL6030 clocks are
- 	  supported.
- 
- config CLK_TWL6040
-diff --git a/drivers/clk/clk-twl.c b/drivers/clk/clk-twl.c
-index 1d684b358401..c04bcb61e260 100644
---- a/drivers/clk/clk-twl.c
-+++ b/drivers/clk/clk-twl.c
-@@ -11,13 +11,29 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
--#define VREG_STATE              2
-+#define VREG_STATE		2
-+#define VREG_GRP		0
- #define TWL6030_CFG_STATE_OFF   0x00
- #define TWL6030_CFG_STATE_ON    0x01
- #define TWL6030_CFG_STATE_MASK  0x03
-+#define TWL6030_CFG_STATE_GRP_SHIFT	5
-+#define TWL6030_CFG_STATE_APP_SHIFT	2
-+#define TWL6030_CFG_STATE_APP_MASK	(0x03 << TWL6030_CFG_STATE_APP_SHIFT)
-+#define TWL6030_CFG_STATE_APP(v)	(((v) & TWL6030_CFG_STATE_APP_MASK) >>\
-+						TWL6030_CFG_STATE_APP_SHIFT)
-+#define P1_GRP BIT(0) /* processor power group */
-+#define P2_GRP BIT(1)
-+#define P3_GRP BIT(2)
-+#define ALL_GRP (P1_GRP | P2_GRP | P3_GRP)
-+
-+enum twl_type {
-+	TWL_TYPE_6030,
-+	TWL_TYPE_6032,
-+};
- 
- struct twl_clock_info {
- 	struct device *dev;
-+	enum twl_type type;
- 	u8 base;
- 	struct clk_hw hw;
- };
-@@ -56,14 +72,21 @@ static unsigned long twl_clks_recalc_rate(struct clk_hw *hw,
- static int twl6032_clks_prepare(struct clk_hw *hw)
- {
- 	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
--	int ret;
- 
--	ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
--			   TWL6030_CFG_STATE_ON);
--	if (ret < 0)
--		dev_err(cinfo->dev, "clk prepare failed\n");
-+	if (cinfo->type == TWL_TYPE_6030) {
-+		int grp;
-+
-+		grp = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER, VREG_GRP);
-+		if (grp < 0)
-+			return grp;
- 
--	return ret;
-+		return twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+				    grp << TWL6030_CFG_STATE_GRP_SHIFT |
-+				    TWL6030_CFG_STATE_ON);
-+	}
-+
-+	return twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+			    TWL6030_CFG_STATE_ON);
- }
- 
- static void twl6032_clks_unprepare(struct clk_hw *hw)
-@@ -71,8 +94,14 @@ static void twl6032_clks_unprepare(struct clk_hw *hw)
- 	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
- 	int ret;
- 
--	ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
--			   TWL6030_CFG_STATE_OFF);
-+	if (cinfo->type == TWL_TYPE_6032)
-+		ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+				   ALL_GRP << TWL6030_CFG_STATE_GRP_SHIFT |
-+				   TWL6030_CFG_STATE_OFF);
-+	else
-+		ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+				   TWL6030_CFG_STATE_OFF);
-+
- 	if (ret < 0)
- 		dev_err(cinfo->dev, "clk unprepare failed\n");
- }
-@@ -138,6 +167,7 @@ static int twl_clks_probe(struct platform_device *pdev)
- 	for (i = 0; i < count; i++) {
- 		cinfo[i].base = hw_data[i].base;
- 		cinfo[i].dev = &pdev->dev;
-+		cinfo[i].type = platform_get_device_id(pdev)->driver_data;
- 		cinfo[i].hw.init = &hw_data[i].init;
- 		ret = devm_clk_hw_register(&pdev->dev, &cinfo[i].hw);
- 		if (ret) {
-@@ -159,7 +189,11 @@ static int twl_clks_probe(struct platform_device *pdev)
- 
- static const struct platform_device_id twl_clks_id[] = {
- 	{
-+		.name = "twl6030-clk",
-+		.driver_data = TWL_TYPE_6030,
-+	}, {
- 		.name = "twl6032-clk",
-+		.driver_data = TWL_TYPE_6032,
- 	}, {
- 		/* sentinel */
- 	}
+diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
+index 232be8a44051..84097235eea9 100644
+--- a/fs/bcachefs/opts.c
++++ b/fs/bcachefs/opts.c
+@@ -427,7 +427,9 @@ void bch2_opt_to_text(struct printbuf *out,
+ 			prt_printf(out, "%lli", v);
+ 		break;
+ 	case BCH_OPT_STR:
+-		if (flags & OPT_SHOW_FULL_LIST)
++		if (v < opt->min || v >= opt->max - 1)
++			prt_printf(out, "(invalid option %lli)", v);
++		else if (flags & OPT_SHOW_FULL_LIST)
+ 			prt_string_option(out, opt->choices, v);
+ 		else
+ 			prt_str(out, opt->choices[v]);
 -- 
-2.39.5
+2.46.0
 
 
