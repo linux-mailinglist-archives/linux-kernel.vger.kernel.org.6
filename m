@@ -1,52 +1,108 @@
-Return-Path: <linux-kernel+bounces-351605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7798D991388
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:33:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 088F099138D
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9873C1C22114
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:33:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD33D2843D6
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3CDEAD5;
-	Sat,  5 Oct 2024 00:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CA5A93D;
+	Sat,  5 Oct 2024 00:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RzEY7LBt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b="FLcE3F+I";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g2n7d9H5"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B58AD2FA
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 00:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450C529CA;
+	Sat,  5 Oct 2024 00:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728088427; cv=none; b=gB95f3zcTfmseZAFAFVN0nCRX7i+jyoWSHfoHejsN6ESNHPHFLvH54pYsw5iHLGAs3bEZ1G8RuqhBa6s8cXkHRmJMeC0YH85KrEBE+zPlA1cKflW1bxBSBGYRtVyxeVvOaq8Nbh35F93JRtPzzLUM7g+M9/9flQS5gk00VH5j/Y=
+	t=1728088753; cv=none; b=c71/mPDmgeD5ZBue3k9Hs2yWoQSQMAgW+h553UdtfUM0O4/C/GLcyOm80buEu9++GODyPOtvl4+p0EDiChpMQaB/tBqWt1giV3mdbgILRpAJxfaOFt7tPN4sq/petq8IifNw/OM9sdFgCrrMhzLXyN8R4DK2Iy4hbDfv6QJox4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728088427; c=relaxed/simple;
-	bh=UMCgpa71WZtIX4QdzigfLTepIgPEgD6UpMuLQsbmrsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EDkdMQqMLO20uZqkfMLFAKfl2XHOfg2YGBTX6z/fGc8WQLCqsE4N8gMPZmAw9MsjTVu43bFmNzQpo+th0VQ0trGH3OlEDpstDhvGWMKZ1UafAnDvGNKGG6YTfIKRK5CLO/8RMiaOrkhPn2Sj0lckQnejvX+pZ8MWqIM+a7BKI1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RzEY7LBt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 977DBC4CEC6;
-	Sat,  5 Oct 2024 00:33:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728088426;
-	bh=UMCgpa71WZtIX4QdzigfLTepIgPEgD6UpMuLQsbmrsE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RzEY7LBtvK1CwHV+J35quq2m9Xjowa1NYCcZZ0bUZGGDt3JC/zqaJCLRnZ50xGs95
-	 GedYHV2MXN4cNVPStn4ZwkprTQ1QEBvA6FpJZNf1kX/RXD512qbVgXKIOJMm5SbikV
-	 DKQzo32tkhvAj++0+H2q9Ye33gDLuAu70K/AJCxdak1GFUCofBEybYFcikAprafWk0
-	 R35zRBrFoA6CKzutokdsVchRuCbTKWP+H5HvaGTErWqXWbw8KiMqntKEjc3XYmVedb
-	 Ietmlq60vbc2Zm/UH7WtVK2GBk5L/fWx+7GPXj8jt2cMD9FCkzIctaFag8f4GMtPD0
-	 24wefPALBNeqw==
-Date: Fri, 4 Oct 2024 17:33:43 -0700
-From: Kees Cook <kees@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: [GIT PULL] hardening fixes for v6.12-rc2
-Message-ID: <202410041733.20AD92E@keescook>
+	s=arc-20240116; t=1728088753; c=relaxed/simple;
+	bh=t4ox1moCdNVjEYfw/SHgaraLE+A3E0RXcZOmdLZSsiw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qK2q22u1M0KM4LuAXdTFUrStw+dc2mTqsPsa+qWVK3CsEaopvLMkJRU4flTY29qIPCBDcBex4B6AEv8/KC+ev5fDXDUrAddKg77XAzDhPJn2C0vAwdTITxba0vZHImgW2MkjPozsWv7kg5xTbiP0PLTV/kjeu0c2PizVM2YOVo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de; spf=pass smtp.mailfrom=anarazel.de; dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b=FLcE3F+I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g2n7d9H5; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anarazel.de
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 24A5C13805E2;
+	Fri,  4 Oct 2024 20:39:10 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Fri, 04 Oct 2024 20:39:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1728088750; x=1728175150; bh=lL/jeDhQ0T
+	2sVRGSKsBanrFa3Wo3OgPVAPdrzYDOaZU=; b=FLcE3F+I3TrTMVjYyDkHVlZ1n5
+	vEYCC2QDkMDZBebW5oFYwMAtAmdxjAmVqLtqznvEI/8GNJOmak+0ZVMGWrOwLxlM
+	ffJADAQQwmGH0tgBhirF0Ksvh+q0WWflOO7BJF6cnG3ggxzTUC2Ejo62LwuX4Ik4
+	WhI+wpukN2w/MbDJANbSnopVgn/UDBsSQkfRKGiib+BCKJ4w0QWgBlWhaDZE1UVf
+	/ATcabESghztfA8cGEs8tfCeFC6E3p2NwGluTm6rl8tbIPRKn0Hslb7CoLTllViM
+	HApgSgN60haygR/zKM0BWUdSCGRq5KcCsZG0Cjrf1wyQNEvr7PoSaSHTcbpA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1728088750; x=1728175150; bh=lL/jeDhQ0T2sVRGSKsBanrFa3Wo3
+	OgPVAPdrzYDOaZU=; b=g2n7d9H5qF2VLDZmYmKun1q1hn/Iu9i8re2x4x0PKc2R
+	wvD3XeYKzspl/qLzJNWZ7aKQSqqIINW05/ukUfG//Qh6fG9sPTsHKHzos0T9+A+z
+	v3ZXjMWq93ywpOvqs8IS62Np/dw2o0ZbxgdE7CHiHbhenXjRQ2OPgNF1GMlYFTW0
+	3ELaPnT6J5l0cAWDHp0Gr1Hgm5QiKY0egi3VQSUf7ykoyQnSmUPF/YKAYmkHsBuq
+	cUCExSWZ3BF4XrSjnWkXFS7y2K/YITFzTXtK8uchNmIF21P8Gahv1eiqvY0e7SZJ
+	r/kxjh7N01iHSeV2ar/wMqX9TS5YgNGz6PFQZzdwXA==
+X-ME-Sender: <xms:rYoAZ_3FW5MbKjgL9PdOD64TaYWoBmrlMrm4YFuySfkOn1GogX8nOg>
+    <xme:rYoAZ-G2JmWxFA0ua5DzEbmEyBJcUXETtyL2Jm2bf8iY7il5o1440cCQ81zqj3cUC
+    _8NA9HBUVcBLnTFYg>
+X-ME-Received: <xmr:rYoAZ_5blobP6qtwk42B_OtikgmWS8lMc-jJ3xg8IWRMvWReOCbKikyIfXfVxUBTghnGE_VQ7zXNDVRla45iHAgnjZz2x2d2Qzzvz_1TSA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvgedgfeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomheptehnughrvghsucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivg
+    hlrdguvgeqnecuggftrfgrthhtvghrnhepfeffgfelvdffgedtveelgfdtgefghfdvkefg
+    geetieevjeekteduleevjefhueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdruggvpdhnsggprhgt
+    phhtthhopedvuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghvrghnrghssh
+    gthhgvsegrtghmrdhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnhdrlhhovghhlhgv
+    segrrhhmrdgtohhmpdhrtghpthhtohepughivghtmhgrrhdrvghgghgvmhgrnhhnsegrrh
+    hmrdgtohhmpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepqhhpvghrrhgvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepph
+    gvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprggurhhirghnrdhh
+    uhhnthgvrhesihhnthgvlhdrtghomhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlh
+    drughkpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:rYoAZ03Ltrv3p59gBHhTY4FxT2sSl3xMzXIVBbfA1nRXa7W5Hfdvsg>
+    <xmx:rYoAZyGCu5QE_Ho3nDlpzGWyENASseovlZ7ERK4hpLfr14tBGW66gQ>
+    <xmx:rYoAZ1-qEuCjBO4ER8GUjAGBb9sRHoG8Wp4HaUK_qr3aqLh6gI-HZg>
+    <xmx:rYoAZ_l1NRE4Y4W15VPejdSx8vmeCVzmapLq_40PO5TOaYfZjilf1A>
+    <xmx:rooAZ2MgYa13qAD6m7jbaRPID47t20DOaN6SylC6RlOOm9xFY3AcQ58x>
+Feedback-ID: id4a34324:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 4 Oct 2024 20:39:09 -0400 (EDT)
+Date: Fri, 4 Oct 2024 20:39:09 -0400
+From: Andres Freund <andres@anarazel.de>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Quentin Perret <qperret@google.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com, 
+	dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org, 
+	Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org, 
+	bvanassche@acm.org, asml.silence@gmail.com, linux-block@vger.kernel.org, 
+	io-uring@vger.kernel.org, qyousef@layalina.io, dsmythies@telus.net, axboe@kernel.dk
+Subject: Re: [RFC PATCH 5/8] cpufreq/schedutil: Remove iowait boost
+Message-ID: <io3xcj5vpqbkojoktbp3fuuj77gqqkf2v3gg62i4aep4ps36dc@we2zwwp5hsyt>
+References: <20240905092645.2885200-1-christian.loehle@arm.com>
+ <20240905092645.2885200-6-christian.loehle@arm.com>
+ <CAJZ5v0hJWwsErT193i394bHOczvCQwU_5AVVTJ1oKDe7kTW82g@mail.gmail.com>
+ <Zv5oTvxPsiTWCJIo@google.com>
+ <6e21e8f1-e3b4-4915-87cc-6ce77f54cc8a@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,49 +111,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <6e21e8f1-e3b4-4915-87cc-6ce77f54cc8a@arm.com>
 
-Hi Linus,
+Hi,
 
-Please pull these hardening fixes for v6.12-rc2.
 
-Thanks!
+A caveat: I'm a userspace developer that occasionally strays into kernel land
+(see e.g. the io_uring iowait thing). So I'm likely to get some kernel side
+things wrong.
 
--Kees
 
-The following changes since commit c121d5cc3a993cdbfab46a152bdd50227a4d5e8c:
+On 2024-10-03 11:30:52 +0100, Christian Loehle wrote:
+> These are the main issues with transforming the existing mechanism into
+> a per-task attribute.
+> Almost unsolvable is: Does reducing "iowait pressure" (be it per-task or per-rq)
+> actually improve throughput even (assuming for now that this throughput is
+> something we care about, I'm sure you know that isn't always the case, e.g.
+> background tasks). With MCQ devices and some reasonable IO workload that is
+> IO-bound our iowait boosting is often just boosting CPU frequency (which uses
+> power obviously) to queue in yet another request for a device which has essentially
+> endless pending requests. If pending request N+1 arrives x usecs earlier or
+> later at the device then makes no difference in IO throughput.
 
-  lib/string_choices: Add some comments to make more clear for string choices helpers. (2024-09-05 09:50:16 -0700)
+That's sometimes true, but definitely not all the time? There are plenty
+workloads with low-queue-depth style IO. Which often are also rather latency
+sensitive.
 
-are available in the Git repository at:
+E.g. the device a database journal resides on will typically have a low queue
+depth. It's extremely common in OLTPish workloads to be bound by the latency
+of journal flushes. If, after the journal flush completes, the CPU is clocked
+low and takes a while to wake up, you'll see substantially worse performance.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-v6.12-rc2
 
-for you to fetch changes up to 045244dd5d75c61ae37b7b96fe0a95805bd1842d:
 
-  MAINTAINERS: Add security/Kconfig.hardening to hardening section (2024-09-28 13:56:12 -0700)
 
-----------------------------------------------------------------
-hardening fixes for v6.12-rc2
+> If boosting would improve e.g. IOPS (of that device) is something the block layer
+> (with a lot of added infrastructure, but at least in theory it would know what
+> device we're iowaiting on, unlike the scheduler) could tell us about. If that is
+> actually useful for user experience (i.e. worth the power) only userspace can decide
+> (and then we're back at uclamp_min anyway).
 
-- gcc plugins: Avoid Kconfig warnings with randstruct (Nathan Chancellor)
+I think there are many cases where userspace won't realistically be able to do
+anything about that.
 
-- MAINTAINERS: Add security/Kconfig.hardening to hardening section
-  (Nathan Chancellor)
+For one, just because, for some workload, a too deep idle state is bad during
+IO, doesn't mean userspace won't ever want to clock down. And it's probably
+going to be too expensive to change any attributes around idle states for
+individual IOs.
 
-- MAINTAINERS: Add unsafe_memcpy() to the FORTIFY review list
+Are there actually any non-privileged APIs around this that userspace *could*
+even change? I'd not consider moving to busy-polling based APIs a realistic
+alternative.
 
-----------------------------------------------------------------
-Kees Cook (1):
-      MAINTAINERS: Add unsafe_memcpy() to the FORTIFY review list
 
-Nathan Chancellor (2):
-      hardening: Adjust dependencies in selection of MODVERSIONS
-      MAINTAINERS: Add security/Kconfig.hardening to hardening section
+For many workloads cpuidle is way too aggressive dropping into lower states
+*despite* iowait. But just disabling all lower idle states obviously has
+undesirable energy usage implications. It surely is the answer for some
+workloads, but I don't think it'd be good to promote it as the sole solution.
 
- MAINTAINERS                | 2 ++
- security/Kconfig.hardening | 4 ++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
 
--- 
-Kees Cook
+It's easy to under-estimate the real-world impact of a change like this. When
+benchmarking we tend to see what kind of throughput we can get, by having N
+clients hammering the server as fast as they can. But in the real world that's
+pretty rare for anything latency sensitive to go full blast - rather there's a
+rate of requests incoming and that the clients are sensitive to requests being
+processed more slowly.
+
+
+That's not to say that the current situation can't be improved - I've seen way
+too many workloads where the only ways to get decent performance were one of:
+
+- disable most idle states (via sysfs or /dev/cpu_dma_latency)
+- just have busy loops when idling - doesn't work when doing synchronous
+  syscalls that block though
+- have some lower priority tasks scheduled that just burns CPU
+
+I'm just worried that removing iowait will make this worse.
+
+Greetings,
+
+Andres Freund
 
