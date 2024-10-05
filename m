@@ -1,128 +1,242 @@
-Return-Path: <linux-kernel+bounces-351822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15132991697
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:00:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CCF5991695
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18892838AD
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0C6C1C21A18
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC8A14C5AF;
-	Sat,  5 Oct 2024 12:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB3D14D283;
+	Sat,  5 Oct 2024 12:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b="EgnoNtMA"
-Received: from mail.rosalinux.ru (mail.rosalinux.ru [195.19.76.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZQoRkPvG"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D0314F9D5;
-	Sat,  5 Oct 2024 12:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.19.76.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB1E2B9AA
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 11:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728129612; cv=none; b=VdqKhW624RENGWASf+IV8377EA4hmArFzWiRPdD9HcuvbqlXZ7udfKX+2kdnoIk2lcgpHKAXHuZAXIfrbFIVS5IDrEfTfv5ZPPBqNSxcZmU/u47ggUXtefk2cQq1h0emg5eqg6ncDWb62LTqenx/PuU0Tjhqup6O35ULtobJWak=
+	t=1728129600; cv=none; b=NSSzeDjYMAlHp70/WVxnP+Pohd2d7O38lavEm/HOM5K6yf3yHZfNzkiBDSDKM/bjxNt6d6ig6d3Hydc8UF3tt5fV0BxZ6/yVcVTb88sTS7mY+mzXRTA0jSEO56VVRskbdM7OyWHEIcxhPIUy6Cr8AZr3sImajfxHFEoqlv5AiLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728129612; c=relaxed/simple;
-	bh=lgjjzW8JhomFfhqNJl60GVevaG2TRoCJ1RUSqhu+/PI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VGUTu1Cr14Zp747Z3fCAVGiQf/rxkFNxdRzF8SbiQWO5rhvg2khUJGmV3E5GTbqZA6LH2GKVBxnCRCfNk0wFgQYgzTKf3t0xlCsTlSM0HcxGMTZjvSqnFbwl/fHMIupTNQwtIxekneJw2VhRGt0lOABAHSRNwnY59GONGIabZpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru; spf=pass smtp.mailfrom=rosalinux.ru; dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b=EgnoNtMA; arc=none smtp.client-ip=195.19.76.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosalinux.ru
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rosalinux.ru (Postfix) with ESMTP id 20E6BDB761279;
-	Sat,  5 Oct 2024 15:00:05 +0300 (MSK)
-Received: from mail.rosalinux.ru ([127.0.0.1])
-	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id eoG0vcNe2Ldw; Sat,  5 Oct 2024 15:00:05 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rosalinux.ru (Postfix) with ESMTP id DA1A3E2D87380;
-	Sat,  5 Oct 2024 15:00:04 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rosalinux.ru DA1A3E2D87380
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosalinux.ru;
-	s=1D4BB666-A0F1-11EB-A1A2-F53579C7F503; t=1728129604;
-	bh=r1ZRAdOPsZ6V3qrG7zP/y2ZKnPDaC4zWXBpyCVEL9mo=;
-	h=From:To:Date:Message-ID:MIME-Version;
-	b=EgnoNtMANl7XTY6tSlxGbZN1cnfhlgvS1f2uqP5enUOSoAybdLk9BGw59EN/UAXRu
-	 ClV9zWaSjT7zlC3ohOYPBg81EJG/1afnY8ZNyOZOQoV7fHfA0cPDx5Z3uP/BOLookF
-	 1GKRa6V8CIPl61pHhuLdvhd1DyAIv9HtGBzpbj1aE2Op4jB0vRHxOl/SUkgWrV5flO
-	 E+hsaXFDT67M/10U5TqjoQj5gqm1WfMqVk8MXaisWKu8eCHeuFSHt8TLtFMij1d+Rl
-	 jCsuasG1R7ZlaUThKuNS5DNiLRaQLHku3FdG0tWY5pzdXzBZxmkBnCVGjiLaaqi66s
-	 cqlHH88kQkajg==
-X-Virus-Scanned: amavisd-new at rosalinux.ru
-Received: from mail.rosalinux.ru ([127.0.0.1])
-	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id jvuZZ7dH1Y9h; Sat,  5 Oct 2024 15:00:04 +0300 (MSK)
-Received: from localhost.localdomain (unknown [213.87.162.215])
-	by mail.rosalinux.ru (Postfix) with ESMTPSA id CE044DB761279;
-	Sat,  5 Oct 2024 15:00:03 +0300 (MSK)
-From: Mikhail Lobanov <m.lobanov@rosalinux.ru>
-To: Jacopo Mondi <jacopo@jmondi.org>
-Cc: Mikhail Lobanov <m.lobanov@rosalinux.ru>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Aleksandr Burakov <a.burakov@rosalinux.ru>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH v3] media: rj54n1cb0c: possible integer overflow fix
-Date: Sat,  5 Oct 2024 07:58:57 -0400
-Message-ID: <20241005115859.13273-1-m.lobanov@rosalinux.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728129600; c=relaxed/simple;
+	bh=B9ie2ibbvUeA8qv7/cm4Mu4ucpj9+ZbfFtIGNqzy5lk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NUyML+xULs3jRzNvbrs6nmMuOhCdBre95QYSIguAcukf0+d+6pqNpuoPrCEWfMx/R8GKRdc4XSRB1mSu+UczeDunjghx0IsDvO7H26QC5nPyXupSexo+8g7gx1PlSzbBlL1OjyPUCQmzIMtiboMeygufHVTOIPMnVN052SfyEoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZQoRkPvG; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37ccfada422so1794163f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 04:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728129597; x=1728734397; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VT4JN1wYGFSh5zRwCmPA1K5txyLYW2kiaQGQVe7qZpc=;
+        b=ZQoRkPvG8JYddDJBRt1qZ38fVwhdKC5m//WrmJu5ZOWPtAtLyjs4sxFS5kXawJ97q/
+         nzz/AWRjq5M0z39UXuMmMoRg7wAbxjkZJtsrcw5/TKhObIT2rRWrBAhBQCfhC6HpsqFb
+         id0afgsOdwJUt7IoUVYPRLy5DdvfZzpOVVWRQQqnKD9Hyzcixe5iOl/bQ42nWCSV8qA/
+         g4Z6RgF/M5XVuI+blhveRscLNBWMY7pcviPsZkKJqfmGofxQeq2tG39NeiFHnKjwtw9f
+         Fk8C7GnHKt+bp5haZo0+sRirrhzi4WgQzTOZu/Hz5MS+dLhdxC3ksz4LE0nRiYNzjY14
+         VzYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728129597; x=1728734397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VT4JN1wYGFSh5zRwCmPA1K5txyLYW2kiaQGQVe7qZpc=;
+        b=K587Cvy1IRORmDGIp2dgu6KSwolmeNW95zALAIrImkDrTnIRf55SKTNH5spI4bPFhU
+         fjQByFRYQ+CO4l6Qtfp9EvLd0ieyOwHW3cfKSUWC+YeFS9C00A1TAHJDPoMUjm1KSMEs
+         S3sOtNfGlvDuTat1BfTVCZMv9KnRzMIMgKu7ebjRlY1tGxYi9XMHCYxhuQJWbOdJpzxK
+         /2sko5h/p9f+WokztYPwFvsY+FMAiOEXr4eEH3ck5JTEVnYZ1vc3YkdzCbDxJ/L99ylN
+         xcu0DEbsDgVPLrJHvyNBQHYLLqOilKOV0PJlzhdo1bsr8W+3eqS7peyyLwvUBoO16jEj
+         5hYw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6XZzSyupyJpLUWlaHzbY45a4xeiFIKSrYNHSzXwVxuNOtpI4w6umvpgQKyPtaKShoOoIP+vpAL2+2hc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPQMPXWAzDoyEWe0Hj766U2Ffgcpg/niYenhKSnlH60BAGoYEG
+	Do+Sl/SWwHcAuvKZsJamZXfTP9HKQhSxKrHm9fsV3PlJlSzn7LTp8TXBbMJoqrDavKAQiBdYVh+
+	dbrFWK/E5bgQSdTp/49qpU3VuMdHRZV/ck3G3
+X-Google-Smtp-Source: AGHT+IG31cBDoRhFPWScbaQzOpQcmmZdOGEaWuSuXkGk1VAZd2FBlgLkb0o49Dh412K3nfiMQSovCDPdJDa1N7PAv9c=
+X-Received: by 2002:adf:fdd2:0:b0:37c:c5da:eaf7 with SMTP id
+ ffacd0b85a97d-37d0e7a18dcmr4568091f8f.31.1728129597120; Sat, 05 Oct 2024
+ 04:59:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241004155247.2210469-1-gary@garyguo.net> <20241004155247.2210469-4-gary@garyguo.net>
+ <OKHi9uP1uJD59N2oYRk1OfsxsrGlqiupMsgcvrva9_IPnEI9wpoxmabHQo1EYen96ClDBRQyrJWxb7WJxiMiAA==@protonmail.internalid>
+ <2024100507-percolate-kinship-fc9a@gregkh> <87zfniop6i.fsf@kernel.org>
+In-Reply-To: <87zfniop6i.fsf@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Sat, 5 Oct 2024 13:59:44 +0200
+Message-ID: <CAH5fLghK1dtkF5bRpcRcu2SXZ6vgPoHGLRqW2=r0J3-2T3ALwQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rust: block: convert `block::mq` to use `Refcount`
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Gary Guo <gary@garyguo.net>, 
+	Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, 
+	Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-An integer overflow may occur due to arithmetic operation
-(multiplication) between value '314572800' and variable 'resize',
-where the value comes from '12 * RJ54N1_MAX_WIDTH * (1 << 14)'
-and when 'resize' is equal to 16319.
+On Sat, Oct 5, 2024 at 11:49=E2=80=AFAM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> Hi Greg,
+>
+> "Greg KH" <gregkh@linuxfoundation.org> writes:
+>
+> > On Fri, Oct 04, 2024 at 04:52:24PM +0100, Gary Guo wrote:
+> >> There is an operation needed by `block::mq`, atomically decreasing
+> >> refcount from 2 to 0, which is not available through refcount.h, so
+> >> I exposed `Refcount::as_atomic` which allows accessing the refcount
+> >> directly.
+> >
+> > That's scary, and of course feels wrong on many levels, but:
+> >
+> >
+> >> @@ -91,13 +95,17 @@ pub(crate) unsafe fn start_unchecked(this: &ARef<S=
+elf>) {
+> >>      /// C `struct request`. If the operation fails, `this` is returne=
+d in the
+> >>      /// `Err` variant.
+> >>      fn try_set_end(this: ARef<Self>) -> Result<*mut bindings::request=
+, ARef<Self>> {
+> >> -        // We can race with `TagSet::tag_to_rq`
+> >> -        if let Err(_old) =3D this.wrapper_ref().refcount().compare_ex=
+change(
+> >> -            2,
+> >> -            0,
+> >> -            Ordering::Relaxed,
+> >> -            Ordering::Relaxed,
+> >> -        ) {
+> >> +        // To hand back the ownership, we need the current refcount t=
+o be 2.
+> >> +        // Since we can race with `TagSet::tag_to_rq`, this needs to =
+atomically reduce
+> >> +        // refcount to 0. `Refcount` does not provide a way to do thi=
+s, so use the underlying
+> >> +        // atomics directly.
+> >> +        if this
+> >> +            .wrapper_ref()
+> >> +            .refcount()
+> >> +            .as_atomic()
+> >> +            .compare_exchange(2, 0, Ordering::Relaxed, Ordering::Rela=
+xed)
+> >> +            .is_err()
+> >
+> > Why not just call rust_helper_refcount_set()?  Or is the issue that you
+> > think you might not be 2 here?  And if you HAVE to be 2, why that magic
+> > value (i.e. why not just always be 1 and rely on normal
+> > increment/decrement?)
+> >
+> > I know some refcounts are odd in the kernel, but I don't see where the
+> > block layer is caring about 2 as a refcount anywhere, what am I missing=
+?
+>
+> It is in the documentation, rendered version available here [1]. Let me
+> know if it is still unclear, then I guess we need to update the docs.
+>
+> Also, my session from Recipes has a little bit of discussion regarding
+> this refcount and it's use [2].
+>
+> Best regards,
+> Andreas
+>
+>
+> [1] https://rust.docs.kernel.org/kernel/block/mq/struct.Request.html#impl=
+ementation-details
+> [2] https://youtu.be/1LEvgkhU-t4?si=3DB1XnJhzCCNnUtRsI&t=3D1685
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+So it sounds like there is one refcount from the C side, and some
+number of references from the Rust side. The function checks whether
+there's only one Rust reference left, and if so, takes ownership of
+the value, correct?
 
-Fixes: a6b5f2008a3d ("V4L/DVB (13661): rj54n1cb0c: Add cropping, auto whi=
-te balance, restrict sizes, add platform data")
-Signed-off-by: Aleksandr Burakov <a.burakov@rosalinux.ru>
-Signed-off-by: Mikhail Lobanov <m.lobanov@rosalinux.ru>
-Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
----
-v1->v2: updated multiplication operation to use shorthand assignment for =
-improved code readability
-link to v1: https://lore.kernel.org/lkml/20240917140454.7880-1-a.burakov@=
-rosalinux.ru/
-v2->v3: the subsystem prefix has been updated to 'media: rj54n1cb0c:'.
-link to v2: https://lore.kernel.org/lkml/20241004121924.27174-1-m.lobanov=
-@rosalinux.ru/
- drivers/media/i2c/rj54n1cb0c.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+In that case, the CAS should have an acquire ordering to synchronize
+with dropping the refcount 3->2 on another thread. Otherwise, you
+might have a data race with the operations that happened just before
+the 3->2 refcount drop.
 
-diff --git a/drivers/media/i2c/rj54n1cb0c.c b/drivers/media/i2c/rj54n1cb0=
-c.c
-index a59db10153cd..a612ec1e7157 100644
---- a/drivers/media/i2c/rj54n1cb0c.c
-+++ b/drivers/media/i2c/rj54n1cb0c.c
-@@ -776,8 +776,8 @@ static int rj54n1_sensor_scale(struct v4l2_subdev *sd=
-, s32 *in_w, s32 *in_h,
- 	}
-=20
- 	/* Antiflicker */
--	peak =3D 12 * RJ54N1_MAX_WIDTH * (1 << 14) * resize / rj54n1->tgclk_mhz=
- /
--		10000;
-+	peak =3D 12 * RJ54N1_MAX_WIDTH * resize / rj54n1->tgclk_mhz / 10000;
-+	peak *=3D 1 << 14;
- 	peak_50 =3D peak / 6;
- 	peak_60 =3D peak / 5;
-=20
---=20
-2.25.1
+Alice
 
+On Sat, Oct 5, 2024 at 11:49=E2=80=AFAM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> Hi Greg,
+>
+> "Greg KH" <gregkh@linuxfoundation.org> writes:
+>
+> > On Fri, Oct 04, 2024 at 04:52:24PM +0100, Gary Guo wrote:
+> >> There is an operation needed by `block::mq`, atomically decreasing
+> >> refcount from 2 to 0, which is not available through refcount.h, so
+> >> I exposed `Refcount::as_atomic` which allows accessing the refcount
+> >> directly.
+> >
+> > That's scary, and of course feels wrong on many levels, but:
+> >
+> >
+> >> @@ -91,13 +95,17 @@ pub(crate) unsafe fn start_unchecked(this: &ARef<S=
+elf>) {
+> >>      /// C `struct request`. If the operation fails, `this` is returne=
+d in the
+> >>      /// `Err` variant.
+> >>      fn try_set_end(this: ARef<Self>) -> Result<*mut bindings::request=
+, ARef<Self>> {
+> >> -        // We can race with `TagSet::tag_to_rq`
+> >> -        if let Err(_old) =3D this.wrapper_ref().refcount().compare_ex=
+change(
+> >> -            2,
+> >> -            0,
+> >> -            Ordering::Relaxed,
+> >> -            Ordering::Relaxed,
+> >> -        ) {
+> >> +        // To hand back the ownership, we need the current refcount t=
+o be 2.
+> >> +        // Since we can race with `TagSet::tag_to_rq`, this needs to =
+atomically reduce
+> >> +        // refcount to 0. `Refcount` does not provide a way to do thi=
+s, so use the underlying
+> >> +        // atomics directly.
+> >> +        if this
+> >> +            .wrapper_ref()
+> >> +            .refcount()
+> >> +            .as_atomic()
+> >> +            .compare_exchange(2, 0, Ordering::Relaxed, Ordering::Rela=
+xed)
+> >> +            .is_err()
+> >
+> > Why not just call rust_helper_refcount_set()?  Or is the issue that you
+> > think you might not be 2 here?  And if you HAVE to be 2, why that magic
+> > value (i.e. why not just always be 1 and rely on normal
+> > increment/decrement?)
+> >
+> > I know some refcounts are odd in the kernel, but I don't see where the
+> > block layer is caring about 2 as a refcount anywhere, what am I missing=
+?
+>
+> It is in the documentation, rendered version available here [1]. Let me
+> know if it is still unclear, then I guess we need to update the docs.
+>
+> Also, my session from Recipes has a little bit of discussion regarding
+> this refcount and it's use [2].
+>
+> Best regards,
+> Andreas
+>
+>
+> [1] https://rust.docs.kernel.org/kernel/block/mq/struct.Request.html#impl=
+ementation-details
+> [2] https://youtu.be/1LEvgkhU-t4?si=3DB1XnJhzCCNnUtRsI&t=3D1685
+>
 
