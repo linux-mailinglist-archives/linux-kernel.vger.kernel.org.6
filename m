@@ -1,157 +1,122 @@
-Return-Path: <linux-kernel+bounces-352041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 927BC991961
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:21:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D17199196F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F5A71C2147C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:21:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28781B211D2
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1C21591FC;
-	Sat,  5 Oct 2024 18:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FB015958D;
+	Sat,  5 Oct 2024 18:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MfClBQLs"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U8i8vOwx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547D81798C;
-	Sat,  5 Oct 2024 18:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AC8481B1;
+	Sat,  5 Oct 2024 18:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728152473; cv=none; b=gTD29Rk9yrPu9kyBKHMkmyLLc5UIUqMn5L/7TWihKphiNxOR9ulZS+r8r61UZgccILOAtQ3Ks48z819retUzLLH49OcsCm1O7/sjKT4SDtiRu5Ed6sQQ7xwWwv3G60Mg3Z3KoRfdt93qTSo8yx5z2Notcz5bnNXqUJZ7ge1Hkts=
+	t=1728152614; cv=none; b=ZPqeQccNBZyynkEyYMYPxxI/Ku3PPnSiZqyA0nas71S1pJl9dlZbrJsnXuTTfCV7IbXCs589efVn0PqlVfwHkMCB9Q62yHb2xZEnc1s+Wq5b1vLlSzv61OwOhHnwYIC6lTbLW3/3ZmCpYiImMaZiEutGxyOoEexdcaAiQrGT5x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728152473; c=relaxed/simple;
-	bh=DvcMf5/HeKRUSZojHkHZF68QLnGuWSrrXLDKhFRy110=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HVfImkjb+tthFR7ygABYNRqdnjOH+WzWzKn/MUHDjlY9oI4FhSL/2QDK+H7X9IlxHeI/Sb74dEmaICShC89nXniR2G1BbKdkB3dcDBhxMMpqLK5QolK31WmSqpmhGhowXnN+t0MXJvPZ0BkalPTdEkVMRWfURQPhito1k2odm/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MfClBQLs; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37cdbcb139cso2437543f8f.1;
-        Sat, 05 Oct 2024 11:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728152470; x=1728757270; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w0N+f0QrNk/7IBy9s5iZg9Yt6FI+f3/ZQhjUgn06TS0=;
-        b=MfClBQLsZPl/0nSRjfVjsAh44NJ6zD1dlgMrPaAYGoNTy0ZiVLcdRBKYBbKyrOew1z
-         SgEsKi98PMIacpUmeN03WJ/Ns1Pyle/6wmV3FSjbXQQHArxaAIR6pq3/1RP4BmnFY8D+
-         A0H6aX6j3iHxS86hkbr1HpQNT7EFHU/kpo3tUlj0DlKPkz0w1hrqQSSRqK4PtqDh44gL
-         L7VZoVbMQu/rzFW3gvQ4Uxz511iBjoHsgVE8p1a2DM/Ug1djTUJCm6YbqQOyiMzztSXd
-         q9emvS5UMIh+uDmbHRXoHUK80g96s3QamCpLEL/2QS/S807Z1bHfemYgjIb9YTmWPMOy
-         g6WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728152470; x=1728757270;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w0N+f0QrNk/7IBy9s5iZg9Yt6FI+f3/ZQhjUgn06TS0=;
-        b=IHPmMQqG8bucaEUq5+GD293hxkAwLnFy32q/IEps0hZAU+YHztsAo2HTEMBTGRZ9kO
-         LDg17kdi7+OwzZpXcHScX5Gz66soRCo9OrsL0F37WcYkvtkvpnQm4Er/e0wrbFoyHV5n
-         ViWmWoavHENz6QC/6wVkmv1oPdSxNu6gI+FeteRc/7tpLE7QnMDg/9e/XXW8rMHkSZ3D
-         oDUk0oZO3inXclc3c3WeX1PG7dcYJz767aa2TDkstY21QE5bqLKZWEXR3tdgO9buV6ZS
-         4boUqG/PHDHRPce95K0jCAV0OEcQvGQDoSsySNKco+oh2k5Lrq5dLGvsvkqbs4afSkcW
-         4fmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7yx+hSmgAfTFdRrEw6IBqVNFMbKhKLQgL7lqW0gFUD8GXkp6ReFMmhPehfODUf0K6dFIlFPWKZAQ=@vger.kernel.org, AJvYcCVxG9H5AIjVA/YhSjvBJ/6+H36sCE39ap8YYiMvv+0haWOcY+bLlNMMVHoyX1bISYirX2kjI13TQmO+Xjlj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6YBs8gTu9E7Ex8k05VRA/HbRKWMA/TpWd23intbnhhDx1QdVt
-	78q1YLIoztWCRCD7g1aU7nC6KdXzWRoRZTVdWgupWgexD/W6oI8r
-X-Google-Smtp-Source: AGHT+IGaSqJpvFxoa+QVTMvgK1Lr6stXy6J1TFOfJXvk4Bslf+lUM+5T5LfW3yFGaNiXOH738zav5w==
-X-Received: by 2002:a5d:6504:0:b0:37c:d558:a931 with SMTP id ffacd0b85a97d-37d0e789e3cmr3576556f8f.31.1728152469345;
-        Sat, 05 Oct 2024 11:21:09 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:6d78:36fc:b417:bb45? (2a02-8389-41cf-e200-6d78-36fc-b417-bb45.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:6d78:36fc:b417:bb45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ec63c3sm28153005e9.38.2024.10.05.11.21.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Oct 2024 11:21:08 -0700 (PDT)
-Message-ID: <34f22420-ec6b-438e-9edb-1aa7a837eb98@gmail.com>
-Date: Sat, 5 Oct 2024 20:21:06 +0200
+	s=arc-20240116; t=1728152614; c=relaxed/simple;
+	bh=zzYFTmccwOLWalc8eyjCjhP6oHz59Ch+abEQn3yiFiI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JhdUfmTLixpaSbozdkttHNluNYqQsK5vPsHIN+iRPdsFQ7YQ8OS+TRh3zniiLPB4krGJ5i4j0jdlKcGiAW+mJLsULZJRiVmc/XZh5lTWQodZX5eplig3x332AnKV2awMliKRBUa6eUUEXS0+4RUcGSKMIBzkxnoZotGFKsrtyJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U8i8vOwx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 495HRWiq018553;
+	Sat, 5 Oct 2024 18:23:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=pOxlFrbcMprITz+AULgT6i
+	i9Qd8mc0m+1Zji+JrRV4k=; b=U8i8vOwx5IJ2oAqH+xvwyptrXXLv6iVtgQDFdg
+	Dw0v4/zBBofeH0UPaJq3nyev2gYHlyhgsdRJbf+VSo0P0slMgWJsVNi2j07QDSdc
+	tE4Pvs4D4mwdJMeqWX29aZusJvwVqCxH3zzuPGHmJOi+dQA8t2k5DlY0N70ciYCT
+	WAsThqppMPv70N4mtb+8vPFGcB1/M+4FeEoxPKBaSmFP6wGURft74HIK5NKMXBeE
+	atI+UFa4uNBhrzr1rrGh9ep3wL0RlEyO9b3aMnylmcR/2pMFvb61S27dWLRRMeNm
+	cRmlU9P8kXzhfLWQOXe48TUpkX2g4t+C0xn40nvNOTT6Bemw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv88wsu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 05 Oct 2024 18:23:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 495INHW2031862
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 5 Oct 2024 18:23:17 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sat, 5 Oct 2024 11:23:13 -0700
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
+        <robh+dt@kernel.org>, <dmitry.baryshkov@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <quic_sibis@quicinc.com>,
+        <conor+dt@kernel.org>, <abel.vesa@linaro.org>,
+        <srinivas.kandagatla@linaro.org>, <quic_jjohnson@quicinc.com>
+Subject: [PATCH V2 0/2] X1E001DE Snapdragon Devkit for Windows
+Date: Sat, 5 Oct 2024 23:52:48 +0530
+Message-ID: <20241005182250.788272-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/13] iio: adc: ti-ads8688: add missing select
- IIO_(TRIGGERED_)BUFFER in Kconfig
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Matti Vaittinen <mazziesaccount@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- David Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>,
- Dan Murphy <dmurphy@ti.com>, Sean Nyekjaer <sean@geanix.com>,
- =?UTF-8?Q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>,
- Mihail Chindris <mihail.chindris@analog.com>,
- Alexandru Ardelean <ardeleanalex@gmail.com>,
- Gustavo Silva <gustavograzs@gmail.com>, Shoji Keita <awaittrot@shjk.jp>,
- Andrey Skvortsov <andrej.skvortzov@gmail.com>,
- Dalton Durst <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>,
- Andreas Klinger <ak@it-klinger.de>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ondrej Jirman <megi@xff.cz>
-References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
- <20241003-iio-select-v1-4-67c0385197cd@gmail.com>
- <20241005184018.6b06e850@jic23-huawei>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20241005184018.6b06e850@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: pr0GoMLr7tn0-gjhuysxT0RqNlUgQK2a
+X-Proofpoint-GUID: pr0GoMLr7tn0-gjhuysxT0RqNlUgQK2a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1015 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410050135
 
-On 05/10/2024 19:40, Jonathan Cameron wrote:
-> On Thu, 03 Oct 2024 23:04:50 +0200
-> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-> 
->> This driver makes use of triggered buffers, but does not select the
->> required modules.
->>
->> Fixes: 2a86487786b5 ("iio: adc: ti-ads8688: add trigger and buffer support")
->> Add the missing 'select IIO_BUFFER' and 'select IIO_TRIGGERED_BUFFER'.
-> Fixes tag must be part of the tag block.
-> 
-> Also this one looks to be a false positive. The driver includes
-> buffer.h but doesn't actually have buffered support.
-> 
+Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E001DE
+is the speed binned variant of X1E80100 that supports turbo boost up to
+4.3 Ghz. The initial support includes the following:
 
-Are you sure? These are the errors I get when I compile the ti-ads8688.c:
+-DSPs
+-Ethernet (RTL8125BG) over the pcie 5 instance.
+-NVme
+-Wifi
+-USB-C ports
 
-ld: drivers/iio/adc/ti-ads8688.o: in function `ads8688_probe':
-ti-ads8688.c:(.text+0x1cf): undefined reference to
-`devm_iio_triggered_buffer_setup_ext'
-ld: drivers/iio/adc/ti-ads8688.o: in function `ads8688_trigger_handler':
-ti-ads8688.c:(.text+0x3be): undefined reference to `iio_push_to_buffers'
-ld: ti-ads8688.c:(.text+0x3c9): undefined reference to
-`iio_trigger_notify_done'
-make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
-make[1]: *** [/home/jc/pw/linux/linux-next/Makefile:1173: vmlinux] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
+V2:
+* Fix Ghz -> GHz  [Jeff]
+* Pick up Ab tag from Rob.
+* Use Vendor in ADSP/CDSP firmware path [Dmitry]
+* Fix reserved gpios [Dmitry]
+* Only port0 supports DRD update the dt accordingly [Dmitry]
 
-And I see the offending functions in its code. Am I missing something
-here or are we talking about different drivers?
+Link: https://www.qualcomm.com/news/releases/2024/05/qualcomm-accelerates-development-for-copilot--pcs-with-snapdrago
 
->>
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
->>  drivers/iio/adc/Kconfig | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
->> index 45872a4e2acf..e6be1f1ec79f 100644
->> --- a/drivers/iio/adc/Kconfig
->> +++ b/drivers/iio/adc/Kconfig
->> @@ -1483,6 +1483,8 @@ config TI_ADS8344
->>  config TI_ADS8688
->>  	tristate "Texas Instruments ADS8688"
->>  	depends on SPI
->> +	select IIO_BUFFER
->> +	select IIO_TRIGGERED_BUFFER
->>  	help
->>  	  If you say yes here you get support for Texas Instruments ADS8684 and
->>  	  and ADS8688 ADC chips
->>
-> 
+Sibi Sankar (2):
+  dt-bindings: arm: qcom: Add Snapdragon Devkit for Windows
+  arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for Windows
+
+ .../devicetree/bindings/arm/qcom.yaml         |   6 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts  | 811 ++++++++++++++++++
+ 3 files changed, 818 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+
+-- 
+2.34.1
 
 
