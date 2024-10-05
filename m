@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-351964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D44991864
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 842B2991865
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEB031F229D3
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:46:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 462C91F22AF9
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF1F156968;
-	Sat,  5 Oct 2024 16:46:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E988158524;
+	Sat,  5 Oct 2024 16:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eAf/XK4J"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103D88F70
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 16:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46379145348;
+	Sat,  5 Oct 2024 16:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728146765; cv=none; b=AvdS1WpxnFcRZUqZiaCC74PeFjBgZ0CYziIxkr+WnbJ3GVC1XYKxifO+BaAuc5CrEcQlhzPkkw1HomeRbr/ef4XYWEo7RFD2z8sQSo46RMmQiYAxXY07T/TNVFmJZGBBinyQQNDmZN30x9LBjrM5Rcr/087P/hyVvHCuYlva39g=
+	t=1728146776; cv=none; b=Vmyz21o5xwQpKOUxE5oUIKfc2KiHEcsGlD/Dn8YXm7i/7H81QhtZ13AfQgk+RcrRC1WKEBaEbE0WcyItW565lTRQzbioRCbox+ta78LXcE2g/fI95RtsBEwFADRKtsWlD3+AHdi1jUQjdLDaU65yLN9XT2MMR+Hs4XFdsKLnhb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728146765; c=relaxed/simple;
-	bh=N4+9eDhAiNy2e5iD9XNdnPLXGDPzbKIYlzPHPZvnZqI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sW1VW1yJgPKYDmLFvIi6tE4vrtmKXZDMBoBY7Km3xoyFrbMLMkkocVnW6az8g2YrQuNQZvUUGej0w0o1Hscd7MEbOUA7cl99W5KYWosshjtPJvNKFpFMmjT04iA28NNDX2k/7rQ5oWwlkCM94Tf4bdQm5HFlUnA0oOaj1ANY1VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a348ebb940so33456405ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 09:46:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728146763; x=1728751563;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=68ZwIv7g30+vGS9vxVKNzk46cmBH3f5PDAU+ZhypUrc=;
-        b=SvegRRG0lHK2PoKqsh/fbAZbXyS3tRF75YcHz7C1JQYScTnoWKpZ0HT6wjJjdXaNZ8
-         77W3MVS0sMdS61eEndINka3bcgpPVLZIjZdd1Eck1N8Zz75r35Q5O9xNbXcNTDY+HGUL
-         EmaQ/fkGDjoICRkFtqkmbDpRQcaoRaCBSyTuDGu0I4kpBjosmYuObaj6oXE4gKPPprn+
-         DAnm3kmt3h3I5jMeulM4SnO3B3SmnnwlYGb4eZy3AuuEk4XmI+74/lwwfVu+ETjmtgp6
-         oZuVEhTPB8x3t8pRsU5vU2uDY24JSTMF6bUTiTs01kwKv+z21fjxNkIu5QeLw4PA15m/
-         Sdsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXu5omS0DPdK2m9izQx2xtsZ0FdRLTGmcoDOp3yq8KK0aZk8qUTcG70cqqNBUvD83d1WzhMavbO6DFIpHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytYAYL9XflmaPsYUDeFLJMPAuB/rPaJWdw5DluP6mu6ePfEAfD
-	KpqjtfoRUc1S1/UW2Ptk164S+bZy0qsygU0DEYte5IUFb3PxZsVYDGZ7xfCf00QGSrDAntdJ51M
-	N4O03dfJHtyK1GoGd0JlbAWTowi0Ei0TQgSzBWL3VaTM/Fwn57Zv2z60=
-X-Google-Smtp-Source: AGHT+IENKnJpo75wS3EtRYAKZr3l1ybivi7xEmOdy+pzZ1onge5giIFWnIRqyKkGXzVCDZXVpuSaCFf6fS3LtxHNYNnqMNp7w0j8
+	s=arc-20240116; t=1728146776; c=relaxed/simple;
+	bh=J5bIcUXk5Tx9FMibX3+isSwplXbQ9A3yNh28Nt7J04A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cJgqVJ1YB7X/Pbif4vW2UC0PMmyymKmBJ+fgZTZ14cRv4JmfEFamLQpbpDwM8OcLq2ToIKirgj4c7vYNPGbHeodicNC+29E64kiyI65JHai42kQjIuCdg1yU7dqLACRDP2BkqAn1aqS9rSc8Snf0H9uSR4okJtBaEfvOEDxmcnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eAf/XK4J; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=G2PtA0ODQfYz3zk5h9vXa5+yFYD1rsD760vf/5W7V+I=; b=eAf/XK4JD8KFHIkiMvQ0AWVfMt
+	cvcAEn6V4u1JrCiYhNS5z85MbDnjiPxKamP74aVXs3IxrjDgLUdYiN9CgTTGbrw7BJ2iCQpXGcThP
+	RCzlLGY6Iz/pSOP3NMSbXbz0QXKbuVqdLpM6IAQea9pjNMafyy6EJ2xM9srBYyqJA3d8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sx7uu-0098ut-VY; Sat, 05 Oct 2024 18:46:04 +0200
+Date: Sat, 5 Oct 2024 18:46:04 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: disable eee due to errata on various KSZ
+ switches
+Message-ID: <a9467e93-3b35-4136-a756-2c0de2550500@lunn.ch>
+References: <20241004213235.3353398-1-tharvey@gateworks.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:b752:0:b0:3a3:778e:45cd with SMTP id
- e9e14a558f8ab-3a3778e472bmr38289125ab.21.1728146763281; Sat, 05 Oct 2024
- 09:46:03 -0700 (PDT)
-Date: Sat, 05 Oct 2024 09:46:03 -0700
-In-Reply-To: <ZwFmiv0lqP02xPtq@fedora>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67016d4b.050a0220.49194.04c3.GAE@google.com>
-Subject: Re: [syzbot] [gfs2?] KMSAN: uninit-value in inode_go_dump (5)
-From: syzbot <syzbot+aa0730b0a42646eb1359@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	qianqiang.liu@163.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004213235.3353398-1-tharvey@gateworks.com>
 
-Hello,
+On Fri, Oct 04, 2024 at 02:32:35PM -0700, Tim Harvey wrote:
+> The well-known errata regarding EEE not being functional on various KSZ
+> switches has been refactored a few times. Recently the refactoring has
+> excluded several switches that the errata should also apply to.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Does the commit message say why?
 
-Reported-by: syzbot+aa0730b0a42646eb1359@syzkaller.appspotmail.com
-Tested-by: syzbot+aa0730b0a42646eb1359@syzkaller.appspotmail.com
+Does this need a Fixes: tag?
 
-Tested on:
-
-commit:         27cc6fdf Merge tag 'linux_kselftest-fixes-6.12-rc2' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11923307980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2cf7bb3f15c72e66
-dashboard link: https://syzkaller.appspot.com/bug?extid=aa0730b0a42646eb1359
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16bc7bd0580000
-
-Note: testing is done by a robot and is best-effort only.
+	Andrew
 
