@@ -1,223 +1,237 @@
-Return-Path: <linux-kernel+bounces-351992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9469918CE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:23:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF5469918D1
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21E861F223BD
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:23:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2751F223DE
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A7F158D81;
-	Sat,  5 Oct 2024 17:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D29C158DA3;
+	Sat,  5 Oct 2024 17:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nxX72lwX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ltaew/mo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4C81B813;
-	Sat,  5 Oct 2024 17:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728149013; cv=fail; b=AXE6VzWB/AmVlQl+cGIGUyrtpqXetjigez1AgJjDdm+JX1qNmG0YWGmjmY37nwBBOGut+7xR9756/yXaOQN9w1c/Za6JQ1jxV8vXrXmxd1721loCNx2KeI0kZHHPiaWvtgceIFpe0NgLwEApsj42MDR/bYT0JCQv5C6UB1Vc9KY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728149013; c=relaxed/simple;
-	bh=PVBKuUvoBz3I/VSSaXTm3LLc8iEhrpGDo1wegxMtgqc=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=rShw185pX9KVj+JtQJZbE8Wr1zM44UJ9e+jue2vpgBn3v8OfuETeF7aDDZL4k3gYKtuqGtxDA13k/28hL10LdDdujvRs06k6pkGaWLpd7iA4gl3E3eANtRUQxj3pTOS7xuNpWZRmpI2tkxq2rUnu6rzRhMt13dh96PX1r0UA/18=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nxX72lwX; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728149012; x=1759685012;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=PVBKuUvoBz3I/VSSaXTm3LLc8iEhrpGDo1wegxMtgqc=;
-  b=nxX72lwX9OLtVRjPdZU8ldA7VsTqdMIAJvKx2tjRMolrYv9Qe05uc+eg
-   vJ9c1BHnxlCRuEzEItogNBsO7mrBZSqdy4v3+wnFaa11RE3oIkeIhOrhD
-   rSrqcn8yMOklMOR5Vt35I5pakG49pARmT71L+a1CZYMAOk/BWzV84L1lv
-   xzVJKrWD9OqLH0kfUGRwmpx6SmiPGFN/iIyMncUK5nY8m3Cxr4vzZWi47
-   mF3VEs0+Pe8AUwYuLIv0ylnggDp52/bBoPvrgFgmf3X0YdwbswDl4Q3Zm
-   G1DmMx651nCsQ/X1STk0pUd5VPISKSreLOw2MveHTbNyyMdqEdD6uEpMn
-   Q==;
-X-CSE-ConnectionGUID: HKK+xaYaTSKKLTSirAZpww==
-X-CSE-MsgGUID: /HHvTPcbQ22JG4qLoEDLiw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="26851762"
-X-IronPort-AV: E=Sophos;i="6.11,180,1725346800"; 
-   d="scan'208";a="26851762"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 10:23:31 -0700
-X-CSE-ConnectionGUID: oXOCt5SqRtuNIRW34K3B+g==
-X-CSE-MsgGUID: AVok5OUlTz2CybSsmnSrfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,180,1725346800"; 
-   d="scan'208";a="105775131"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Oct 2024 10:23:31 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 5 Oct 2024 10:23:30 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 5 Oct 2024 10:23:30 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sat, 5 Oct 2024 10:23:30 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.171)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 5 Oct 2024 10:23:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wvUEEYbzSWSm5WcTeJw2iLkDPtv6f+wHWh0ejxul3b3xFAYWQAjKoCpk5h8aalVYKZzc4zQhgt/NAP8lzALmrtwgJChjtI+hEa5lAt2jnOb5KFAT5Eea59hqpliunoWwvCfEyjxQGTODZjeo2Eqk9HRHa09vpimhNKaU/NENWvfVo6s3zFgG3zejwXPRTGQDiZcIirB9at9Aq90e8+6dRXwUJpmevDjZhOQvF35f6kgF6CRS7SRu0UocgeJ9xxSR0rQoBBmImAKaX49flkVy+FLsztmnxJcodPwkxE6XrY8dnGBi5/2fheoiPv4UdM0gu5kXyCnVXqcRVALgevoC/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EPD+AJYSo1JsiPkUwVaDdbxB6yl2eYIvt/GyovCdxVM=;
- b=ZR0239S0MS13TkvyK/PrJ8GVThlttCnT2BbS6pdB26s9INSNj4uULQTCW9szg5OGGS6KuhCU+ZTX9krRhDelbUZphXmFjM0QR/pCMO06l1rpQJ7RgmhlAC83JCoWD8Anx+GQsesu9h7hCerAis89x2WufhS66xdJ2RgpZX849N56GufNcqnMqWHvC4+fstGQoJ30RtpCMmOL4CAVmw8KWv0lYLU+g/fNS8qZ06k9/rpvOaGQX3JNDSbLZyE7n/uabSF7h47o9J67C/2xHYt8ufZAVZsX6gBpMplTXe47q1RB+LjZmzTpJP17SLRuD2Oyv1aEpB7fYuf08Xtq/f//Ag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by PH7PR11MB7075.namprd11.prod.outlook.com (2603:10b6:510:20e::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.19; Sat, 5 Oct
- 2024 17:23:28 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%3]) with mapi id 15.20.8026.017; Sat, 5 Oct 2024
- 17:23:27 +0000
-Date: Sat, 5 Oct 2024 12:23:23 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Ben Cheatham <Benjamin.Cheatham@amd.com>, Dan Williams
-	<dan.j.williams@intel.com>, Srinivasulu Thanneeru
-	<sthanneeru.opensrc@micron.com>, Ira Weiny <ira.weiny@intel.com>, "Jiang,
- Dave" <dave.jiang@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] Compute Express Link (CXL) Fixes for 6.12-rc2
-Message-ID: <6701760b2e390_16041829420@iweiny-mobl.notmuch>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: MW2PR16CA0015.namprd16.prod.outlook.com (2603:10b6:907::28)
- To SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F971E489;
+	Sat,  5 Oct 2024 17:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728149196; cv=none; b=ppk4PmRhBL066eEnMXOPwn4lycxkqDuGM8lDohfJFYQMfhFy2zifAG6/vsRb6OQXlDPLX8sdSofC7HOfigqDrFSDCibPeRZGVicSmNnQXGWurdUQ8xwMS67KxfwzImu45yHy3MGrSNiLFUhb9ZzpE/XfdD9QAv+T6eK9NjosUN8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728149196; c=relaxed/simple;
+	bh=2/dHtnHTj+SFCgQFOL82HRwYwubtz/lmbyuwAYLv5Rk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XiPV8Hkz9gKGPdX6btNa+vxt80kozmTzNKuuCMmuigQUA1jRhpdJcbZi4beN4POEg14RMOKkzeYtFnfobYA+nSw8Ae7+Zo+OfHL1gFf5GeqnnTRlNAuB4REBxIwZtoqILHjs/USz/ryp1folmUsA3ijIAa5fFZFFk6goISkqVz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ltaew/mo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89CE9C4CEC2;
+	Sat,  5 Oct 2024 17:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728149196;
+	bh=2/dHtnHTj+SFCgQFOL82HRwYwubtz/lmbyuwAYLv5Rk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ltaew/mopk2fDLDPtsI2MgAj0AcbDvH8mLV/RDKS4pAsJ8JZsvwSmoXldXOUUherL
+	 KHrVp5cfP3Kuoy52ElFMpKM0pIerpkAThLFt3/j9OhYTcmONHJ24rVjIXj48P+Qti9
+	 xxfR72KwdOGFDmI2qtBRVjYYrOXaSZd708X4FgsmdhyvD8eGGzhuMrR/CnjLly7tnN
+	 JOFuIhywvpG60IsLENOnF4vOjDgNIom8fA3k6LxsIyHfeOQ2xSg+ZJyCXI5+ZVJTYB
+	 d2dhS89MkuYcup1pWP2T4DZrkhQ2U1taltmGm6Wyj/XxCkNnxU5g+EWFE98Qh8nbzP
+	 Zpwpgbk+2DOJQ==
+Date: Sat, 5 Oct 2024 18:26:08 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Lars-Peter Clausen	 <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, Olivier Moysan 
+ <olivier.moysan@foss.st.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=	
+ <ukleinek@kernel.org>, Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt	
+ <marcelo.schmitt@analog.com>, =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29u?=
+ =?UTF-8?B?w6dhbHZlcw==?=	 <joao.goncalves@toradex.com>, Mike Looijmans
+ <mike.looijmans@topic.nl>, Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>, Sergiu Cuciurean
+ <sergiu.cuciurean@analog.com>, Dragos Bogdan	 <dragos.bogdan@analog.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
+Message-ID: <20241005182608.2be20d3a@jic23-huawei>
+In-Reply-To: <35944d57af0ed62124e1e7cea544ef357fad1659.camel@gmail.com>
+References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
+	<20240923101206.3753-7-antoniu.miclaus@analog.com>
+	<CAMknhBHRfj7d8Uea8vX=t+y+9dqoPABQSzsgNhBMTK-8-f6L7w@mail.gmail.com>
+	<20240928183044.0b5ea2e0@jic23-huawei>
+	<35944d57af0ed62124e1e7cea544ef357fad1659.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|PH7PR11MB7075:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0bdb1d99-089b-4542-7d78-08dce5626cef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?LihVaC46gPpdevVPlUO9E+jQaq/DBYhAILxnnKAPN3ldgBA+IzwcnhN1FtKT?=
- =?us-ascii?Q?sBYhweeS1c7Fc17syO8Sk6eCMhot4qF2TelZME26p2MEkawpvFh9mnUeQi2h?=
- =?us-ascii?Q?xhpQqGYFMyW7bPf8AzxV5bxjaM8XmFbI0Fdn+4K2H1yLDh+yU17E/4+tnFji?=
- =?us-ascii?Q?FltQnzj5Yp92n1Rubl8NklgtFjuPZV6HjxpupscjosPP7A4wrFCkjNFxTV33?=
- =?us-ascii?Q?FusyU9m8bOrUr4bCgyDVCIDDCs1E6uqDgoAba83gCCDy2JmUxS+L4h/cbeXT?=
- =?us-ascii?Q?aPpdclI+4AfzRJJszLkdPT0OdpzhnGJpm/haji74JiHrBfFKeRiwyfM3qL3v?=
- =?us-ascii?Q?IZhjKZR+Ig47zlUFQvBQ0bAcbgP4oqSxfO4u97WY6KWPsJSAT3rbJDvHb3EV?=
- =?us-ascii?Q?V2zJiSmj0Ahbr/gOeRk0UTD5XM6HF7Mr1a9CJcdRBjcB4NVlDuqNR6qHLOt/?=
- =?us-ascii?Q?OOh0F5OnAfx0P0UlFdkpuxh3niQi1VtdcV7QUFi2A2B6BMh1tKMx9M3bMwqv?=
- =?us-ascii?Q?PxW2FVx4waLFrNd4icVL6dWGaYxb81NQy0V2LbVifrAq2Cofiu1hGMqk58Kj?=
- =?us-ascii?Q?vTzewqrRCHUJJCEsTMUpvQuGsu3Iai1BSYyWJK4GT/eSsS4ElLFnkWIa/SA8?=
- =?us-ascii?Q?dM1dcsztH6CmaIRGXDT75cv4kEU9vhclpHkykGJ39tpELc4eyaNO+uTJHefb?=
- =?us-ascii?Q?fTIh/lfAckLCfHYGfXWPrJRS3VS4ZPhTa3QoO70ne6tL5Sklw2+PfysZIHp9?=
- =?us-ascii?Q?NW4wbt/lzCZVQQMmZqeHVCCtTlr1g4b9A24NhTYr6bsbB8l5e/54WpABWhQ6?=
- =?us-ascii?Q?qbrGjSgIdEuwNrUwO9ORybfAnU/JJUS6Z7BD+dOmM59h6DgTqn7kZRFAHUxX?=
- =?us-ascii?Q?PDsBXxZxAm4fxJ080JnlDGsSewQ86ufIL7IpFKA9MTvHJreLP/QFS57Wu9vI?=
- =?us-ascii?Q?2ZhTu9OH1VA3sGtrKttO3cv6gpALv6SY2Lcpoq/1CbbKimaZMi0Rq70WzlvJ?=
- =?us-ascii?Q?IhlrWQUFyiTDimAWemcqjf40uCerjZA0mtdVvK3nFmGukPBDfQMzggt3htK5?=
- =?us-ascii?Q?vkKVGJvIOLbe/v8aBgP54Dz7bqcsk53f2TJ4rLBRA5+5zXw/CW1WpJd6wIuD?=
- =?us-ascii?Q?1ZiobrC9ebzWhxoGurIWTF9Je5Jo19X4RHbtagCy2eDZ/kh420BkcyICjOV2?=
- =?us-ascii?Q?KkQWkllMGhlumF8CXVaQvZYRw4Xw+PRa5nQF50K3HhO7IBovMTFWVsTLIVAo?=
- =?us-ascii?Q?zZEhmPscN9YVw3ITUL/ppavPxTMOmyhNjFiUEoT/VA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9xx1Mn0sINm2TTHg9n4+g/iBCbjwzHT2Rc66wQWS9W16Wd+hLaosD7itgs+c?=
- =?us-ascii?Q?H9I8moFGOlvGBmnE6NFuExaS/GnacTzIdyLitkU9nIL0ygh7R2zsHhBHzECh?=
- =?us-ascii?Q?ctmZoRETaW8Hg7N7+CzEnaOhmgYpooO+3foKkBlDGsgJvrrmpdG6SMzYdz7N?=
- =?us-ascii?Q?SZ0g1jOKF6gyN4o3rhHX2rkADFzftTD6TpjnoO/enXSpTo7iz3uETUxgh0ZB?=
- =?us-ascii?Q?oBbkmb/m8EfP0Sn6xarQWUdcbcdgrYJneYUhdsLtsuhTFNucjCPhbMWBG14I?=
- =?us-ascii?Q?LSwE8Eh29yM1KupK/gfWywN3OWk4bMDgR5ZBfgqcGHIG/czqzMFK1gXhY6rP?=
- =?us-ascii?Q?5dNJxmazo5k0PPWYu3/QWVnmWztgdPM5CpzTx9MI+xQxmcmDn6idSY6Ifugq?=
- =?us-ascii?Q?7sXxmWAwxc7Uh1AAebp7Q5/mIeZNk80ImiuwZRprFjBEPCEKI0yuj4RxlQ67?=
- =?us-ascii?Q?GOXE5meUQQbaW0/zZZlL962WpxcYGxRDF5Qa7TpLDrGrOhySLFg+zAqDNHv1?=
- =?us-ascii?Q?DZMtYNLz+w8xixxUOc0J7uAUBdkZ4ZPY+VQrvjN5tofYJBYpXii5huGUsST+?=
- =?us-ascii?Q?VN3hONbo2aAhpADS0d2v8tRMbCeUybwTw1PW1vu3Sz+zROBR7eXSWeZYmmKg?=
- =?us-ascii?Q?JEpzy1nr05yyEcrghCCKb0ef/jeSKZUu/CAk8cUI12M8IIrMzQ8DLQvmLTQb?=
- =?us-ascii?Q?ImuNCY4LKYXJ/PuAHdMDioVHgX7l7w4YsjcW5vLVI+GIRRV2iiwXtInCmiA/?=
- =?us-ascii?Q?14HKFLg2pQo3VoG44b4A+fAsM+gUYTVBBnH1bGbprnrrmJTcguWS/NFcUBHp?=
- =?us-ascii?Q?q0UUZDWi8mAHjh3YFEXVS7du+48jdkF/p8/7CLctub6NCuH2fbTHoT/8nvEh?=
- =?us-ascii?Q?wJjVWe9MaCUpZY8pdC/4Eesxs21D6KJHZcVMTuQ6lvHXbJGB6TXLCFcbdp1v?=
- =?us-ascii?Q?9ts0fLJ519JVzBGulKnaQ/K0xS5gPyuSsRSXBCks1FSNhrG5FbID1NjYZ6YC?=
- =?us-ascii?Q?awNYEi6fqBQrbq50QbXlrs7vsp3aX/XoG8BO39pWSWH3qJkCRaF3aP19GR+2?=
- =?us-ascii?Q?xAC39MAn0huvaVSS6cnWA9vbo28JSinION8aLYyGioq7KwrBgZ6SPeQOZiV5?=
- =?us-ascii?Q?nJGoN3E83+yUQCGaWMzkGDHpGcFY5p48GJal1PH/gLDvJ2wHXftbqNpaQGt2?=
- =?us-ascii?Q?ObYzdvEWg+FmzLMV2/AFJc6GpOyPjhC80/pqv7XCtaY0RZtYSs1J647rRQ8i?=
- =?us-ascii?Q?GeJeXuwaszFHKOK6wgIWNK+BO830UvCQjosiOEmyqMja+Y4uy/nCMHhTfda7?=
- =?us-ascii?Q?KlBEfKYP+XwI8byvCszRzr+aEBKf8DDoIngo/n9XckliAU6DiYtnxFWCy2kH?=
- =?us-ascii?Q?NFxuG0nst+Lw+XHWuy/xZjLURpags4FvzaIE/gHLRyBbhHG3drvwHdRuSxx/?=
- =?us-ascii?Q?VcJ+JzfVjItun774y4L0wYWooep/3gSnKOgc1KDCFKKjlcladqdf34enRevl?=
- =?us-ascii?Q?FlzAAbP9IAfbf3kSAXFsuNi4MUwBRB6AXj9DgPkazCCFasc/NeeamlPVhKqi?=
- =?us-ascii?Q?em/98nd7vg4hk4R3WX1Os6TcZyegUGe5qEiMYw3E?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bdb1d99-089b-4542-7d78-08dce5626cef
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2024 17:23:27.8968
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Zajdu7yQIVnc3MxhciBfvVBnt3kmv65tdXX1pTChbmD4fTqnjiJfCPBcemPTDH/fTp/KcCuNACbez8M3nT1jvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7075
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus, please pull from 
+On Mon, 30 Sep 2024 09:05:04 +0200
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-fixes-6.12-rc2
+> On Sat, 2024-09-28 at 18:30 +0100, Jonathan Cameron wrote:
+> >  =20
+> > >  =20
+> > > > +static struct iio_chan_spec_ext_info ad4858_ext_info[] =3D {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM("packet_format", IIO=
+_SHARED_BY_ALL, &ad4858_packet_fmt),
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM_AVAILABLE("packet_fo=
+rmat",
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 IIO_SHARED_BY_ALL, &ad4858_packet_fmt),
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {},
+> > > > +};
+> > > > +
+> > > > +static struct iio_chan_spec_ext_info ad4857_ext_info[] =3D {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM("packet_format", IIO=
+_SHARED_BY_ALL, &ad4857_packet_fmt),
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM_AVAILABLE("packet_fo=
+rmat",
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 IIO_SHARED_BY_ALL, &ad4857_packet_fmt),
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {},
+> > > > +};=C2=A0  =20
+> > >=20
+> > > Usually, something like this packet format would be automatically
+> > > selected when buffered reads are enabled based on what other features
+> > > it provides are needed, i.e only enable the status bits when events
+> > > are enabled.
+> > >=20
+> > > (For those that didn't read the datasheet, the different packet
+> > > formats basically enable extra status bits per sample. And in the case
+> > > of oversampling, one of the formats also selects a reduced number of
+> > > sample bits.)
+> > >=20
+> > > We have quite a few parts in the pipline right like this one that have
+> > > per-sample status bits. In the past, these were generally handled with
+> > > IIO events, but this doesn't really work for these high-speed backends
+> > > since the data is being piped directly to DMA and we don't look at
+> > > each sample in the ADC driver. So it would be worthwhile to try to
+> > > find some general solution here for handling this sort of thing. =20
+>=20
+> I did not read the datasheet that extensively but here it goes my 2 cents
+> (basically my internal feedback on this one):
+>=20
+> So this packet format thingy may be a very "funny" discussion if we reall=
+y need
+> to support it. I'm not sure how useful it is the 32 bits format rather th=
+an
+> being used in test pattern. I'm not seeing too much benefit on the channe=
+l id or
+> span id information (we can already get that info with other attributes).=
+ The
+> OR/UR is the one that could be more useful but is there someone using it?=
+ Do we
+> really need to have it close to the sample? If not, there's the status re=
+gister
+> and... Also, I think this can be implemented using IIO events (likely wha=
+t we
+> will be asked). So what comes to mind could be:
 
-This is a small patch which fixes an older bug but was missed in the merge
-window PR.
+Definite preference for using events, but for a device doing DMA I'm not su=
+re
+how we can do that without requiring parsing all the data.
 
-It has been in next for a couple of days.
+So we would need some metadata description to know it is there.
 
-Thank you,
-Ira Weiny
-(Subbing for Dave Jiang while on vacation)
+>=20
+> For test_pattern (could be implemented as ext_info or an additional chann=
+el I
+> think - not for now I guess) we can easily look at our word side and dyna=
+mically
+> set the proper packet size. So, to me, this is effectively the only place=
+ where
+> 32bits would make sense (assuming we don't implement OR/UR for now).
+> For oversampling we can have both 20/24 bit averaged data. But from the
+> datasheet:
+>=20
+> "Oversampling is useful in applications requiring lower noise and higher =
+dynamic
+> range per output data-word, which the AD4858 supports with 24-bit output
+> resolution and reduced average output data rates"
+>=20
+> So from the above it looks like it could make sense to default to 24bit p=
+ackets
+> if oversampling is enabled.
 
----
+That sounds like what we do for the DMA oversampling cases that change
+the resolutions.
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+>=20
+> Now the question is OR/UR. If that is something we can support with event=
+s, we
+> could see when one of OR/UR is being requested to either enable 24 packet=
+s (no
+> oversampling) or 32 bit packets (oversampling on).
+>=20
+>=20
+>=20
+> >=20
+> > We have previously talked about schemes to describe metadata
+> > alongside channels. I guess maybe it's time to actually look at how
+> > that works.=C2=A0 I'm not sure dynamic control of that metadata
+> > is going to be easy to do though or if we even want to
+> > (as opposed to always on or off for a particular device).
+> >  =20
+>=20
+> Indeed this is something we have been discussing and the ability to have =
+status
+> alongside a buffered samples is starting to be requested more and more. S=
+ome
+> parts do have the status bit alongside the sample (meaning in the same re=
+gister
+> read) which means it basically goes with the sample as part of it's
+> storage_bits. While not ideal, an application caring about those bits sti=
+ll has
+> access to the complete raw sample and can access them.=20
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+This has the advantage that if we come along later and define a metadata
+in storage bits description it is backwards compatible.  We've been doing
+this for years with some devices.
 
-are available in the Git repository at:
+> It gets more complicated
+> where the status (sometimes a per device status register) is located in a=
+nother
+> register. I guess we can have two case:
+>=20
+> 1) A device status which applies for all channels being sampled;
+> 2) A per channel status (where the .metada approach could make sense).
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-fixes-6.12-rc2
+If it's a separate register per channel and optional, we'd have to treat it=
+ as a metadata
+channel as no guarantee it would be packed next to the main channel.
 
-for you to fetch changes up to ee1e3c46ed19c096be22472c728fa7f68b1352c4:
+If we have a description of metadata additions in main channel storage, I'm=
+ not
+against having a IIO_METADATA channel type.=20
 
-  EINJ, CXL: Fix CXL device SBDF calculation (2024-09-30 08:10:39 -0500)
+If it's a single channel I'm not sure how we'd make as channel description
+general enough easily as we end up with every field possibly needed an asso=
+ciation
+with a different channel.
 
-----------------------------------------------------------------
-cxl fixes for 6.12-rc2
+>=20
+> But I'm not sure how we could define something like this other than assum=
+ing
+> that raw status data is being sent to userspace (given that every device =
+has
+> it's own custom status bits and quirks).
+That is always fine.
 
-- Fix calculation for SBDF in error injection
+Jonathan
+>=20
+> - Nuno S=C3=A1 =20
 
-----------------------------------------------------------------
-Ben Cheatham (1):
-      EINJ, CXL: Fix CXL device SBDF calculation
-
- drivers/acpi/apei/einj-cxl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
