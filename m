@@ -1,143 +1,118 @@
-Return-Path: <linux-kernel+bounces-351612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177AC9913A0
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:52:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D5C9913A1
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E33E1C225CC
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEFBD2844E9
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302337482;
-	Sat,  5 Oct 2024 00:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF577482;
+	Sat,  5 Oct 2024 00:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DTJjSE55"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfEZDphN"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955D72F2A
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 00:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E0A12B73
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 00:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728089571; cv=none; b=B9o0n9nj6PJ4uIOW8vjuEO9ITVROjl8GnfYP2c7fm2w4IyFdmGl/TtFt6GUoP+DXXSt9Iv5XJ5kRA3sKZnXi4Y4CQ6F9/cxpDSdkRJSJOwsp3y3DJpukS5GdXKqV3mpki+y6Fw5v8EQgfSi77MZTLAchpeZa7o/+6TQ/ub6ni7o=
+	t=1728089586; cv=none; b=f11qpt6Q/61Ei2o+PYTflbUA6lec0yz64n5ank62ZhH1plNYkadMa08Al+uBRUc14r0YnJciJtdDY3XxFozmZvfwJpQmc7yGzQ7Q7aKz5ZDOt/XmfaQsgiFJeDJisS0nAl1htplQrH+uAwDE35UniEgvUPm6TVYxnazjv4tT8mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728089571; c=relaxed/simple;
-	bh=PhPC8XopNox91epSPgf1AiWpjWGzbYIztveNMv5akNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mN3hw72Evnt3J1qPcth5wDYDGUGgItcYcwpCoeQGK+X8rhO925CeoprLnt/ZUTOB0aSxh910SVWWA5NYUGwPp95pXwNrzywGWtuVdIWJ7Dn3Zc10kVBKCQjN+iXkQ+xVRbv/qJqZGcCZETjKjDcGyqV4fiYrTQqN3wLvUfPUXUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DTJjSE55; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728089569; x=1759625569;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=PhPC8XopNox91epSPgf1AiWpjWGzbYIztveNMv5akNI=;
-  b=DTJjSE55wUxbahzF3TpRwvhubw1ur+90sEgZvCEZG4pEOPhNVyajz990
-   ibGQQ3OHcxVBnagUclv53s/vsME/bG+YcBpEY3Lgx+5RNKdMGYk/iLaLO
-   fnZOhJVmhlXsBWqpPMVi/2ZO6QA0Gm0+41SrdcLB6hb3D0sWAwWrjM+VG
-   TULsROuwc0relH+idOX5JtFWPeqGC/N5z8igSgorjNiNLtSt9p8w48tCO
-   qN9DR/ZZS9lO9Akcsgx7eU7boiZpZEuIjfIIvYRSnpTWwqzav08T3oxtu
-   xuLNupO1B7LfDTr9Q1dJwXX9ECPG9bn3/S3i4Z/RRLnd9dASKzXvZvcEz
-   w==;
-X-CSE-ConnectionGUID: p7/vNlQFTee1Lb+Foj7kzA==
-X-CSE-MsgGUID: y0mWJ24bRMSIZTKA70SHXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="26827859"
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="26827859"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 17:52:49 -0700
-X-CSE-ConnectionGUID: kTgB74QiSwa4Objpi0GQ+A==
-X-CSE-MsgGUID: qkmLuQ8RSjGgdL2u2rodRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="75205821"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 04 Oct 2024 17:52:47 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swt2L-0002OK-0s;
-	Sat, 05 Oct 2024 00:52:45 +0000
-Date: Sat, 5 Oct 2024 08:51:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Aurabindo Pillai <aurabindo.pillai@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:134
- core_dcn4_initialize() warn: inconsistent indenting
-Message-ID: <202410050813.ukNdcvDS-lkp@intel.com>
+	s=arc-20240116; t=1728089586; c=relaxed/simple;
+	bh=xkOW6XsTzTN4ONbDbWeX/1R0hi1V6+d3T7AwHHnk0Zg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bItascSHU78RWr6CxYt8RWqjGeVtkyi2tcCA6XAyCaqh0uKLNtw9ofXEtraZBVytr2hnYu2su9JeJhLNG83WfVpHfyu5XBCEGIV0otAf/toeueSUTt+LLhrGoefHf2p2eRXS3s8Itcrh+r+DkSLpXLr5Sf4o2XpyIzdIijRkdss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NfEZDphN; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7e9b3693513so1117576a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 17:53:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728089584; x=1728694384; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n59NEsbW/I5l6Bb8OXPiSeC2re5on9GOeJk8rKxyTUM=;
+        b=NfEZDphNqQcdkPpv9Sv50+E1j3KuI9bUoZ/uMuQ04OWs3EP+xyhKoC4+Xr7yDhlHvf
+         bZMnLQtcok1pA18oV9tKRSYS77qEn8bKbcTQ3i7K1zCyS4mvFFbBiDB0y7wb8FPdgudK
+         XWISlJx91vrafyIFPHUHHM9r7ab4ouEZinthQ8hipOtAGgTX4cpGt3JvobJGQCuaobge
+         QETSy+5iyMEB1t5SfMULrGs/t5LOGRuK1V2ESdeOvKDo0Z/YGWtpEQY5W+sZVHaesjcc
+         4mw75aZv7MueaV5gzwVx+DDP2Y7vgXiqPajfio1x5Qnz18+L/BkFOzKRa1BQnrAL4Tok
+         G5yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728089584; x=1728694384;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n59NEsbW/I5l6Bb8OXPiSeC2re5on9GOeJk8rKxyTUM=;
+        b=eE14KFhr7Oeh3CBkRUjizEC4UYf28r+xj2rJs84pJt9XfYeXWKjA0VjEb1+5hLZxgB
+         Fcq14cYbXjC0JCC6BWwftcsWv5wyah3kOzEmBHQfQMVHr42m2lU4LO5UgqDNvebFrd3T
+         YU2iaYwL3Hey6lChx/BvlHf9vOfSo0XniTQAdO0N5ThTXnAsh/Pog0suL/s4aweJ7jP8
+         8T1GOzw6s0DUjGZrYw1OJBijfIquH2lEf/lVN18ISz2kw9WdkdM35JYqEca0Hlct1PzB
+         1TuB+YhFy015P3C5jcfH3swrPxfZWgpVrhdVxu8Cua1H6CuOTGXY1NULFx7sMChIuQrz
+         KTQA==
+X-Gm-Message-State: AOJu0YzZbB5i3OroeUlgx83ggl6FMpVFxMBiYc3sp43CwRdcBFeKWIuK
+	Sh/xjj86vU7p/JoQ55sV8qpGcy1o7t6Ma17KzlrhYnxM5zKwbVPAEugRqfZO598=
+X-Google-Smtp-Source: AGHT+IE2vl22qL2um/BNj+mcLS3m75QDtrlJtbM0r09/7rWN03xzc+Stu5VZBMptMAgdn+wb+p/+yw==
+X-Received: by 2002:a05:6a21:1584:b0:1d6:97f2:5f72 with SMTP id adf61e73a8af0-1d6dfa279c8mr8064359637.3.1728089584442;
+        Fri, 04 Oct 2024 17:53:04 -0700 (PDT)
+Received: from localhost.localdomain (140-211-169-189-openstack.osuosl.org. [140.211.169.189])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c4ce83sm605009a12.91.2024.10.04.17.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 17:53:03 -0700 (PDT)
+From: Zhouyi Zhou <zhouzhouyi@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	bristot@redhat.com,
+	vschneid@redhat.com
+Cc: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Subject: [PATCH] sched: Fix typo of head comment of ___update_load_avg
+Date: Sat,  5 Oct 2024 00:52:45 +0000
+Message-Id: <20241005005245.829133-1-zhouzhouyi@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   ac308609567d31fe44be80ab757a5ddf062362ef
-commit: 00c391102abc13763e2bfc90e05503109b19f074 drm/amd/display: Add misc DC changes for DCN401
-date:   5 months ago
-config: loongarch-randconfig-r071-20241003 (https://download.01.org/0day-ci/archive/20241005/202410050813.ukNdcvDS-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
+The head comment of ___update_load_avg illustrates the principle of
+PELT divider. "unwanted oscillation in the range [1002..1024[" should
+be "unwanted oscillation in the range [1002..1024]".
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410050813.ukNdcvDS-lkp@intel.com/
+Fix above typo.
 
-New smatch warnings:
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:134 core_dcn4_initialize() warn: inconsistent indenting
+Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+---
+ kernel/sched/pelt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Old smatch warnings:
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:553 core_dcn4_mode_programming() warn: inconsistent indenting
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:568 core_dcn4_mode_programming() warn: curly braces intended?
-
-vim +134 drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c
-
-70839da6360500 Aurabindo Pillai 2024-04-19  112  
-70839da6360500 Aurabindo Pillai 2024-04-19  113  bool core_dcn4_initialize(struct dml2_core_initialize_in_out *in_out)
-70839da6360500 Aurabindo Pillai 2024-04-19  114  {
-70839da6360500 Aurabindo Pillai 2024-04-19  115  	struct dml2_core_instance *core = in_out->instance;
-70839da6360500 Aurabindo Pillai 2024-04-19  116  
-70839da6360500 Aurabindo Pillai 2024-04-19  117  	if (!in_out->minimum_clock_table)
-70839da6360500 Aurabindo Pillai 2024-04-19  118  		return false;
-70839da6360500 Aurabindo Pillai 2024-04-19  119  	else
-70839da6360500 Aurabindo Pillai 2024-04-19  120  		core->minimum_clock_table = in_out->minimum_clock_table;
-70839da6360500 Aurabindo Pillai 2024-04-19  121  
-70839da6360500 Aurabindo Pillai 2024-04-19  122  	if (in_out->explicit_ip_bb && in_out->explicit_ip_bb_size > 0) {
-70839da6360500 Aurabindo Pillai 2024-04-19  123  		memcpy(&core->clean_me_up.mode_lib.ip, in_out->explicit_ip_bb, in_out->explicit_ip_bb_size);
-70839da6360500 Aurabindo Pillai 2024-04-19  124  
-70839da6360500 Aurabindo Pillai 2024-04-19  125  		// FIXME_STAGE2:
-70839da6360500 Aurabindo Pillai 2024-04-19  126  		// DV still uses stage1 ip_param_st for each variant, need to patch the ip_caps with ip_param info
-70839da6360500 Aurabindo Pillai 2024-04-19  127  		// Should move DV to use ip_caps but need move more overrides to ip_caps
-70839da6360500 Aurabindo Pillai 2024-04-19  128  		patch_ip_caps_with_explicit_ip_params(in_out->ip_caps, in_out->explicit_ip_bb);
-70839da6360500 Aurabindo Pillai 2024-04-19  129  		core->clean_me_up.mode_lib.ip.subvp_pstate_allow_width_us = core_dcn4_ip_caps_base.subvp_pstate_allow_width_us;
-70839da6360500 Aurabindo Pillai 2024-04-19  130  		core->clean_me_up.mode_lib.ip.subvp_fw_processing_delay_us = core_dcn4_ip_caps_base.subvp_pstate_allow_width_us;
-70839da6360500 Aurabindo Pillai 2024-04-19  131  		core->clean_me_up.mode_lib.ip.subvp_swath_height_margin_lines = core_dcn4_ip_caps_base.subvp_swath_height_margin_lines;
-70839da6360500 Aurabindo Pillai 2024-04-19  132  	} else {
-70839da6360500 Aurabindo Pillai 2024-04-19  133  			memcpy(&core->clean_me_up.mode_lib.ip, &core_dcn4_ip_caps_base, sizeof(struct dml2_core_ip_params));
-70839da6360500 Aurabindo Pillai 2024-04-19 @134  		patch_ip_params_with_ip_caps(&core->clean_me_up.mode_lib.ip, in_out->ip_caps);
-70839da6360500 Aurabindo Pillai 2024-04-19  135  
-70839da6360500 Aurabindo Pillai 2024-04-19  136  		core->clean_me_up.mode_lib.ip.imall_supported = false;
-70839da6360500 Aurabindo Pillai 2024-04-19  137  	}
-70839da6360500 Aurabindo Pillai 2024-04-19  138  
-70839da6360500 Aurabindo Pillai 2024-04-19  139  	memcpy(&core->clean_me_up.mode_lib.soc, in_out->soc_bb, sizeof(struct dml2_soc_bb));
-70839da6360500 Aurabindo Pillai 2024-04-19  140  
-70839da6360500 Aurabindo Pillai 2024-04-19  141  	return true;
-70839da6360500 Aurabindo Pillai 2024-04-19  142  }
-70839da6360500 Aurabindo Pillai 2024-04-19  143  
-
-:::::: The code at line 134 was first introduced by commit
-:::::: 70839da6360500a82e4d5f78499284474cbed7c1 drm/amd/display: Add new DCN401 sources
-
-:::::: TO: Aurabindo Pillai <aurabindo.pillai@amd.com>
-:::::: CC: Alex Deucher <alexander.deucher@amd.com>
-
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index a9c65d97b3ca..565171fb2138 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -233,7 +233,7 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
+  * When syncing *_avg with *_sum, we must take into account the current
+  * position in the PELT segment otherwise the remaining part of the segment
+  * will be considered as idle time whereas it's not yet elapsed and this will
+- * generate unwanted oscillation in the range [1002..1024[.
++ * generate unwanted oscillation in the range [1002..1024].
+  *
+  * The max value of *_sum varies with the position in the time segment and is
+  * equals to :
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
