@@ -1,167 +1,146 @@
-Return-Path: <linux-kernel+bounces-352036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880C4991952
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:10:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DBD991954
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 442E42810EB
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:10:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178DD1F22C20
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91525159217;
-	Sat,  5 Oct 2024 18:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7161591FC;
+	Sat,  5 Oct 2024 18:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Zv/Z+UDM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I+8iAKpl"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EF6157A59;
-	Sat,  5 Oct 2024 18:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398331552E0;
+	Sat,  5 Oct 2024 18:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728151851; cv=none; b=ixMyiv07iL2PH5xcBJojn2vXdGnOem6ZIVOfaWF+jbup8cVf8+1WAFRnKgAzWfiCYjUBoAcRMHyFhk6yf1ugPtOXls0faDaTT+By0hJkzqHPvDberjX9ZDHzpabA94jwsM7+soavv5Qms6X3pjJL2Gys98EFyz0pIQJ6YDIqcX0=
+	t=1728151985; cv=none; b=r4NSyIWJWv4c8qesNHSXL9U3B08EkRO50KKNGYOcCIXWo7xIJ/3gOBKCQuED3FISZm8h9LCmWGv8DNKL6J4v6mAGgd1ic6lwykLKdnyB8ffX/xVxwz3Kwp53IMaUmjcsocYkA04JPH9cgTIKHh2gOoW7lDqBSbhZo1IEY4RuW8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728151851; c=relaxed/simple;
-	bh=vYhHSu8a2wL6m1DT57/LS6UyaEW1S+3V57c0sxgaZBQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sHCYo5WLvDP8hjtU7zqs8OfY9zwY6H0xQsPKI2ggOXTk8cV3CN97iEKwj1srXPmYttD6n8P1v1ZXg268Dcb+dDdzfiUBTLsg920t8mpfY0cVQbxwD/B0+XOeDpUjKp1+VXDvNZXATHKZbivr0/bT7UaBwinbIeBjPT6QLoKFZq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Zv/Z+UDM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 495FP1HJ015331;
-	Sat, 5 Oct 2024 18:10:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=y1AI6Ybprvocd2qzWabOJfmmPMvHCkyW5WFymyIkuK0=; b=Zv
-	/Z+UDMuJs+fwXY3Cy7ZsPKz6B/QQWOh6ZWb9uXCKxop92djJz3oCZ43m07EmYl9v
-	aST7w6RGU0Aw5/FS6j8p1i4orvEguRCDtwE1e4E+jKROem6tdtQcZuvpAwlpKiRJ
-	2j45RQeYqeJZ5SdJBERBqEEdlT9WofL+19VUS9rAF09uY3En+UOJG6Wzbnc0E7wO
-	va+NFf/4jzzMLrTcM4io5e8SxC69LW8s7CBUlAcGhfDYE8qys7cTojdJRKhawC19
-	WdbSf0DYj8XpMHFhfuCkrI5b+Xpg1FC7hRFy5wUQc3DQ7OuSa0R8zzJ5TBeMTAET
-	ecH9a/tE45PAuKgLgVAw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv88w9p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 05 Oct 2024 18:10:23 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 495IAMYe012621
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 5 Oct 2024 18:10:22 GMT
-Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sat, 5 Oct 2024 11:10:18 -0700
-From: Pintu Kumar <quic_pintu@quicinc.com>
-To: <sumit.semwal@linaro.org>, <benjamin.gaignard@collabora.com>,
-        <Brian.Starkey@arm.com>, <jstultz@google.com>, <tjmercier@google.com>,
-        <christian.koenig@amd.com>, <linux-media@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <joe@perches.com>, <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
-        Pintu Kumar <quic_pintu@quicinc.com>
-Subject: [PATCH v2] dma-buf: fix S_IRUGO to 0444, block comments, func declaration
-Date: Sat, 5 Oct 2024 23:39:55 +0530
-Message-ID: <20241005180955.6523-1-quic_pintu@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728151985; c=relaxed/simple;
+	bh=TUAHoAWqH9cEsjlXUbgTXg56hGWN1KLx8hlC8oi9MSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GFlMgQPLo761lSgkWd83bKD1L0TcI7DB554gqLZyrT3xYrkZrJD39Ozi5CXMbinhTtJwMKxr1Tpu314Bksj7XexkleylOh43EUcoIN2GzFYbNkvZaGNQUPWZ0gaCPd4Z1PVOnC74IZPn7ny/UNqX9Ob0KDTTvuKU9fmmYF3PDvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I+8iAKpl; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cbc38a997so18782475e9.1;
+        Sat, 05 Oct 2024 11:13:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728151982; x=1728756782; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y00+S3Ow4bi2G3EUw0WQWl7NTok6pXq+sd2/WK9umKU=;
+        b=I+8iAKplNEKXls1OWxdAV0ETAP/gC0GXBtAs2uWYVaZRw1yTZ9/w/goQMI575CKw4E
+         nz6qs062dSYvuRM88LWCXaFs9uTOTOM/2gYismwXPPElo1NVewMLpAKvYFmJYQkFBcdH
+         K1V6UzBq5khgVrm90/a+oujAfWODv4oPrCxyTAZXkc5lsOTh550EYFOK+SX0LS73X9T2
+         2pRkJ4lCftSt3jx1WlKSgrPSwEEpO/qSp7L8glCCtcu/OEU+H4aN14nGEPZ+OJpWiJYL
+         8PCbFPDgbj7T59nGUK2af7wPEGhVKwtnzjJvK3iLQV036rJNj0wlIKFll0ViPU0GxTQ4
+         nLqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728151982; x=1728756782;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y00+S3Ow4bi2G3EUw0WQWl7NTok6pXq+sd2/WK9umKU=;
+        b=tdxkeCV0/Vlz0rT0+8Mo7NFnbMa6yjkjZruA9nxYFdXBu+uFHIw2nBgf4N6qAxIabe
+         sht6ISmziRubnYzKUqa5RD9I9XiEjHtuGNu4VY/mo3BT4nOl8xDs1wuaW1jYHNrM9b9K
+         nOKLZszbwl1dutQbbrXke6gmQciFdAXg6SKprRPfHu5YebLEnrRnYqbvLFMi5ykkAVG3
+         RLoTSClOaa/qMURFLjSFqbPgawL4DOMQmGndlKdO+Rpx1kI696RjBRVCJjiEPiPnkGt6
+         tCizp11tuK1wtOCCpfs0BgrReu70ELaCsdrBo/sjWPPc84Hkem0euft+P69FuqDjX8Wb
+         k5eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXe6JxgmR24TTUeK1cRVditYBI6xl5lmbebXpa79ls1o6gyGQ67r+dBVWAvNLYIvlvM3Y130bGWBSbahjG@vger.kernel.org, AJvYcCWN4CbYhAUg5nnONUva1KyxGQG9XFHHQdGi46v06BDGz3IhJVSXeuG0rqyo1zoBPMYltEA8uumKe4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwJ8gZosPNg6AyHz43xN/qcORLPXb0KpVzBY8lZy6UApImJrgb
+	4sSXhzCkq2pu8+Q3JVXScMrpfuwQzQw6WQNk9I+J5HloiRA0vNJ/
+X-Google-Smtp-Source: AGHT+IFJOmGyu/wJXf5iE1+pczO0aqB5bMBOR0ro/AI5bInEJdtCOn7Djtcr0MM7X+i/UKoEdERJeg==
+X-Received: by 2002:a05:600c:3b91:b0:42f:8515:e4ad with SMTP id 5b1f17b1804b1-42f856d271dmr38318925e9.14.1728151982298;
+        Sat, 05 Oct 2024 11:13:02 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:6d78:36fc:b417:bb45? (2a02-8389-41cf-e200-6d78-36fc-b417-bb45.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:6d78:36fc:b417:bb45])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89bfb494sm29338025e9.21.2024.10.05.11.12.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 05 Oct 2024 11:13:01 -0700 (PDT)
+Message-ID: <2199263c-13e5-49b7-bc5f-1fe367c460bd@gmail.com>
+Date: Sat, 5 Oct 2024 20:12:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YRla0X3yiQaJF3lejNKaRIlBtVmAQ3CI
-X-Proofpoint-GUID: YRla0X3yiQaJF3lejNKaRIlBtVmAQ3CI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1015 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410050133
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/13] iio: pressure: bu1390: add missing select
+ IIO_(TRIGGERED_)BUFFER in Kconfig
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Matti Vaittinen <mazziesaccount@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ David Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>,
+ Dan Murphy <dmurphy@ti.com>, Sean Nyekjaer <sean@geanix.com>,
+ =?UTF-8?Q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>,
+ Mihail Chindris <mihail.chindris@analog.com>,
+ Alexandru Ardelean <ardeleanalex@gmail.com>,
+ Gustavo Silva <gustavograzs@gmail.com>, Shoji Keita <awaittrot@shjk.jp>,
+ Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+ Dalton Durst <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>,
+ Andreas Klinger <ak@it-klinger.de>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ondrej Jirman <megi@xff.cz>
+References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
+ <20241003-iio-select-v1-12-67c0385197cd@gmail.com>
+ <20241005190147.084dd468@jic23-huawei>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20241005190147.084dd468@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-These warnings/errors are reported by checkpatch.
-Fix them with minor changes to make it clean.
-No other functional changes.
+On 05/10/2024 20:01, Jonathan Cameron wrote:
+> On Thu, 03 Oct 2024 23:04:58 +0200
+> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> 
+>> This driver makes use of triggered buffers, but does not select the
+>> required modules.
+>>
+>> Add the missing 'select IIO_BUFFER' and 'select IIO_TRIGGERED_BUFFER'.
+>>
+>> Fixes: 81ca5979b6ed ("iio: pressure: Support ROHM BU1390")
+> Seems unlikely in the bm1390 driver. Huh. It is accurate, but I'll fix the
+> patch description to refer to the bm1390 which seems to be the right
+> name and add a note on this as it looks suspect otherwise.
+> 
 
-WARNING: Block comments use * on subsequent lines
-+       /* only support discovering the end of the buffer,
-+          but also allow SEEK_SET to maintain the idiomatic
+Yes, it seems that there was a typo in the title of the patch that added
+the driver (The "Fixes:" is therefore right as it is), and I propagated
+it in the title of this patch as well. But you are right, the driver's
+name is indeed bm1390.
 
-WARNING: Block comments use a trailing */ on a separate line
-+          SEEK_END(0), SEEK_CUR(0) pattern */
-
-WARNING: Block comments use a trailing */ on a separate line
-+        * before passing the sgt back to the exporter. */
-
-ERROR: "foo * bar" should be "foo *bar"
-+static struct sg_table * __map_dma_buf(struct dma_buf_attachment *attach,
-
-WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
-+       d = debugfs_create_file("bufinfo", S_IRUGO, dma_buf_debugfs_dir,
-
-total: 1 errors, 4 warnings, 1746 lines checked
-
-Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
-
----
-Changes in V1 suggested by Sumit Semwal:
-Change commit title, and mention exact reason of fix in commit log.
-V1: https://lore.kernel.org/all/CAOuPNLg1=YCUFXW-76A_gZm_PE1MFSugNvg3dEdkfujXV_5Zfw@mail.gmail.com/
----
- drivers/dma-buf/dma-buf.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index 8892bc701a66..2e63d50e46d3 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -176,8 +176,9 @@ static loff_t dma_buf_llseek(struct file *file, loff_t offset, int whence)
- 	dmabuf = file->private_data;
- 
- 	/* only support discovering the end of the buffer,
--	   but also allow SEEK_SET to maintain the idiomatic
--	   SEEK_END(0), SEEK_CUR(0) pattern */
-+	 * but also allow SEEK_SET to maintain the idiomatic
-+	 * SEEK_END(0), SEEK_CUR(0) pattern.
-+	 */
- 	if (whence == SEEK_END)
- 		base = dmabuf->size;
- 	else if (whence == SEEK_SET)
-@@ -782,13 +783,14 @@ static void mangle_sg_table(struct sg_table *sg_table)
- 	/* To catch abuse of the underlying struct page by importers mix
- 	 * up the bits, but take care to preserve the low SG_ bits to
- 	 * not corrupt the sgt. The mixing is undone in __unmap_dma_buf
--	 * before passing the sgt back to the exporter. */
-+	 * before passing the sgt back to the exporter.
-+	 */
- 	for_each_sgtable_sg(sg_table, sg, i)
- 		sg->page_link ^= ~0xffUL;
- #endif
- 
- }
--static struct sg_table * __map_dma_buf(struct dma_buf_attachment *attach,
-+static struct sg_table *__map_dma_buf(struct dma_buf_attachment *attach,
- 				       enum dma_data_direction direction)
- {
- 	struct sg_table *sg_table;
-@@ -1694,7 +1696,7 @@ static int dma_buf_init_debugfs(void)
- 
- 	dma_buf_debugfs_dir = d;
- 
--	d = debugfs_create_file("bufinfo", S_IRUGO, dma_buf_debugfs_dir,
-+	d = debugfs_create_file("bufinfo", 0444, dma_buf_debugfs_dir,
- 				NULL, &dma_buf_debug_fops);
- 	if (IS_ERR(d)) {
- 		pr_debug("dma_buf: debugfs: failed to create node bufinfo\n");
--- 
-2.17.1
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>>  drivers/iio/pressure/Kconfig | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/iio/pressure/Kconfig b/drivers/iio/pressure/Kconfig
+>> index df65438c771e..d2cb8c871f6a 100644
+>> --- a/drivers/iio/pressure/Kconfig
+>> +++ b/drivers/iio/pressure/Kconfig
+>> @@ -19,6 +19,9 @@ config ABP060MG
+>>  config ROHM_BM1390
+>>  	tristate "ROHM BM1390GLV-Z pressure sensor driver"
+>>  	depends on I2C
+>> +	select REGMAP_I2C
+>> +	select IIO_BUFFER
+>> +	select IIO_TRIGGERED_BUFFER
+>>  	help
+>>  	  Support for the ROHM BM1390 pressure sensor. The BM1390GLV-Z
+>>  	  can measure pressures ranging from 300 hPa to 1300 hPa with
+>>
+> 
 
 
