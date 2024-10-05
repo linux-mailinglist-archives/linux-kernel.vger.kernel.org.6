@@ -1,92 +1,87 @@
-Return-Path: <linux-kernel+bounces-351963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B46991863
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:44:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D44991864
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35DE2830FB
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:43:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEB031F229D3
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00BE158527;
-	Sat,  5 Oct 2024 16:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VERdIoIa"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF1F156968;
+	Sat,  5 Oct 2024 16:46:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D596E14F125;
-	Sat,  5 Oct 2024 16:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103D88F70
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 16:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728146633; cv=none; b=jcjG6NCU7bGLzhv6KTZ0LPZb0n9v+VOtTcSmqnRMR/7YsQJx5lccw3G8fszmORpaapD4liPDVpiDDjfksvTxvpmcUQHjzZptFJU0wfPQigYQ8BKGRiCdFgZCD0irAbzY1vEKItBHbGk2Zj2MhBy/b1M52ZAjx47U+FcTrTXcuxU=
+	t=1728146765; cv=none; b=AvdS1WpxnFcRZUqZiaCC74PeFjBgZ0CYziIxkr+WnbJ3GVC1XYKxifO+BaAuc5CrEcQlhzPkkw1HomeRbr/ef4XYWEo7RFD2z8sQSo46RMmQiYAxXY07T/TNVFmJZGBBinyQQNDmZN30x9LBjrM5Rcr/087P/hyVvHCuYlva39g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728146633; c=relaxed/simple;
-	bh=bK8KRtp69Xe5XP3uPaSL/BuejAl7Es8uHX4gIKtomGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H9pqrWi8TP+8qzwrZ+nw0jFZn/xCPXssAswYnpA9ATIWCR2W/NHL5aCgoOEZhlePspZ+g1NDXXgTUwaxetXBoDMm/TFrE2o1MIl1JyAFqqGYvfXwad+dhtSAYenaMLRAQEh5PZLS6FbRpjriGVQK+h8d7jgnHUm3LFCjJOgzmQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VERdIoIa; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=dPtkJXBGaDHkzM7BXi1yJh4k9iNNBXd7xeF+C8idGS0=; b=VERdIoIalkb7JNzlDa9AHFV71P
-	qVwOce1M/VOkS0AfrxZ82dzYNnfO6llsW991BUmd54ypnaca3rJ30/gw+R9WKF3IuGOLDkUyDtWzD
-	T1qOJZZpHvycX/BraqFBG87C7ZdlAtuiz7aTl0MKEfvcebqeFCcOCAnBYm04ffliQab4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sx7sb-0098tk-6e; Sat, 05 Oct 2024 18:43:41 +0200
-Date: Sat, 5 Oct 2024 18:43:41 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Qingtao Cao <qingtao.cao.au@gmail.com>,
-	Qingtao Cao <qingtao.cao@digi.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4 1/1] net: phy: marvell: make use of fiber
- autoneg bypass mode
-Message-ID: <e68c2806-8058-4669-8f47-726ddb60c90a@lunn.ch>
-References: <20241004212711.422811-1-qingtao.cao@digi.com>
- <ZwBj-3t6S3SL9Fyu@shell.armlinux.org.uk>
+	s=arc-20240116; t=1728146765; c=relaxed/simple;
+	bh=N4+9eDhAiNy2e5iD9XNdnPLXGDPzbKIYlzPHPZvnZqI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sW1VW1yJgPKYDmLFvIi6tE4vrtmKXZDMBoBY7Km3xoyFrbMLMkkocVnW6az8g2YrQuNQZvUUGej0w0o1Hscd7MEbOUA7cl99W5KYWosshjtPJvNKFpFMmjT04iA28NNDX2k/7rQ5oWwlkCM94Tf4bdQm5HFlUnA0oOaj1ANY1VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a348ebb940so33456405ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 09:46:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728146763; x=1728751563;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=68ZwIv7g30+vGS9vxVKNzk46cmBH3f5PDAU+ZhypUrc=;
+        b=SvegRRG0lHK2PoKqsh/fbAZbXyS3tRF75YcHz7C1JQYScTnoWKpZ0HT6wjJjdXaNZ8
+         77W3MVS0sMdS61eEndINka3bcgpPVLZIjZdd1Eck1N8Zz75r35Q5O9xNbXcNTDY+HGUL
+         EmaQ/fkGDjoICRkFtqkmbDpRQcaoRaCBSyTuDGu0I4kpBjosmYuObaj6oXE4gKPPprn+
+         DAnm3kmt3h3I5jMeulM4SnO3B3SmnnwlYGb4eZy3AuuEk4XmI+74/lwwfVu+ETjmtgp6
+         oZuVEhTPB8x3t8pRsU5vU2uDY24JSTMF6bUTiTs01kwKv+z21fjxNkIu5QeLw4PA15m/
+         Sdsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXu5omS0DPdK2m9izQx2xtsZ0FdRLTGmcoDOp3yq8KK0aZk8qUTcG70cqqNBUvD83d1WzhMavbO6DFIpHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytYAYL9XflmaPsYUDeFLJMPAuB/rPaJWdw5DluP6mu6ePfEAfD
+	KpqjtfoRUc1S1/UW2Ptk164S+bZy0qsygU0DEYte5IUFb3PxZsVYDGZ7xfCf00QGSrDAntdJ51M
+	N4O03dfJHtyK1GoGd0JlbAWTowi0Ei0TQgSzBWL3VaTM/Fwn57Zv2z60=
+X-Google-Smtp-Source: AGHT+IENKnJpo75wS3EtRYAKZr3l1ybivi7xEmOdy+pzZ1onge5giIFWnIRqyKkGXzVCDZXVpuSaCFf6fS3LtxHNYNnqMNp7w0j8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwBj-3t6S3SL9Fyu@shell.armlinux.org.uk>
+X-Received: by 2002:a92:b752:0:b0:3a3:778e:45cd with SMTP id
+ e9e14a558f8ab-3a3778e472bmr38289125ab.21.1728146763281; Sat, 05 Oct 2024
+ 09:46:03 -0700 (PDT)
+Date: Sat, 05 Oct 2024 09:46:03 -0700
+In-Reply-To: <ZwFmiv0lqP02xPtq@fedora>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67016d4b.050a0220.49194.04c3.GAE@google.com>
+Subject: Re: [syzbot] [gfs2?] KMSAN: uninit-value in inode_go_dump (5)
+From: syzbot <syzbot+aa0730b0a42646eb1359@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	qianqiang.liu@163.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 04, 2024 at 10:54:03PM +0100, Russell King (Oracle) wrote:
-> On Sat, Oct 05, 2024 at 07:27:11AM +1000, Qingtao Cao wrote:
-> > 88E151x supports the SGMII autoneg bypass mode and it defaults to be
-> > enabled. When it is activated, the device assumes a link-up status so
-> > avoid bringing down fibre link in this case
-> 
-> Please can you stop posting new patches while there is still discussion
-> going on.
-> 
-> I'm simply going to NAK this patch, because you haven't given any time
-> for discussion to conclude on your previous offering, and I see no
-> point in even bothering to read this while the whole subject of
-> whether AN bypass should be used is still unsettled.
-> 
-> Please wait for discussion to conclude before posting new patches.
+Hello,
 
-+1
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-by: syzbot+aa0730b0a42646eb1359@syzkaller.appspotmail.com
+Tested-by: syzbot+aa0730b0a42646eb1359@syzkaller.appspotmail.com
 
-    Andrew
+Tested on:
 
----
-pw-bot: cr
+commit:         27cc6fdf Merge tag 'linux_kselftest-fixes-6.12-rc2' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11923307980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2cf7bb3f15c72e66
+dashboard link: https://syzkaller.appspot.com/bug?extid=aa0730b0a42646eb1359
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16bc7bd0580000
+
+Note: testing is done by a robot and is best-effort only.
 
