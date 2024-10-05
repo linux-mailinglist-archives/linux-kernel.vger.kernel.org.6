@@ -1,159 +1,185 @@
-Return-Path: <linux-kernel+bounces-352082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF239919EC
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:31:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646879919F9
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B76561F2289B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:31:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B16E281AE7
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B346816A930;
-	Sat,  5 Oct 2024 19:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF3E1607AC;
+	Sat,  5 Oct 2024 19:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mPtQuIvd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IB3zN+rw"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC6215F33A;
-	Sat,  5 Oct 2024 19:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C376F1552E0;
+	Sat,  5 Oct 2024 19:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728156640; cv=none; b=huBM0E+bcpplVrqMTMs4bOdqHXv7aH/ce4VcU9i9HWeo69h3IcnoOAdEh/YEEXLrN0+gSQSTIZIMyTZDgpCc99SjKld5bu7AfflNzeRypOT0yjpHzS8xZIYOh/VfvzzgMYkvUeocuif/VRHtFyNZ8/lkDTevbEMWOfvYow/L0GQ=
+	t=1728156923; cv=none; b=o16a3uGU9RM1iUXnppcKfSDGBR6uU7hJu4Tj2XQvnD3n4J5Rp2RdA/8DynfSSWb80AaZFHcEZdFxH8Kr1JVZ+GJXicmg5wRtWtOdbtofPboD/figMI7s4eE5PjohSeq0QjZfbMOmO8f1caICzcMi9GnxyDCyV+tMKVGHndWDzHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728156640; c=relaxed/simple;
-	bh=j5C+wV8o7xDlVdCIwvLduo0gXkkzc8nwnFr1kOxnNR8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b1GUzHxC/C0w946t4q4bMP0fcuoNwV6O14C9rIsCou9phxIdfpZNGxRhPti+WLmlusqFyPUV9AfwZXCXPfWc4ImsjbVAq6xsFRK/W9ZHT3X6mDq3LRArrqN9vUO4GO3EPbXYJmrFIrnO+/wF9zRbazquvOJdqfQXwDNnS/rHvcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mPtQuIvd; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728156639; x=1759692639;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=j5C+wV8o7xDlVdCIwvLduo0gXkkzc8nwnFr1kOxnNR8=;
-  b=mPtQuIvdKuhPUuIqvdWvV17CchzJ4rUdNP+8i9fyJyilFw8lwPmEqocU
-   kiu4P0i7QDKgLVqmRHWRgCMvbsoCAmM0+E+jhDGJuVMcWHj+pTmVZciuF
-   C5Fj6ZfpDXFS8djgWkYn6zdQAU1efymv10XWy8g6clUqCJ+hkbkkoBTVB
-   8udl0kMLFZicGQUGfAjn72nQWJOJEDsCyxG0wyiK6Vaj9ykqpjzGiSOd4
-   RyDN2GgAWmTbG9hCE0KOoPAacRX98TBtAfvaCall+k9+hvXiKn+ct+VZ7
-   Xs/5EkV1HorZtzXRFqj84LAXTtiRR7GAV7YLIPBzceRb687tJuLHh4m4N
-   Q==;
-X-CSE-ConnectionGUID: 7boLnBFFRUCwifED0EP0gQ==
-X-CSE-MsgGUID: UO9nwQzXSoWkbBLTLPk8KQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="44879468"
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="44879468"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 12:30:36 -0700
-X-CSE-ConnectionGUID: 8zc6f3OQSq+ab6bjEWa+zQ==
-X-CSE-MsgGUID: +PdO7DZwS/SeS/2WtotuVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="74861629"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 05 Oct 2024 12:30:33 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 107AC197; Sat, 05 Oct 2024 22:30:32 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v2 4/4] mfd: intel_soc_pmic_bxtwc: Fix IRQ domain names duplication
-Date: Sat,  5 Oct 2024 22:27:07 +0300
-Message-ID: <20241005193029.1929139-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241005193029.1929139-1-andriy.shevchenko@linux.intel.com>
-References: <20241005193029.1929139-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1728156923; c=relaxed/simple;
+	bh=xaOaZUUNu/2cKzFhHEZuppymP75/S+vDU5oM68JbR/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hkwPTASYSALGiDnNwjtuBoqkTEyyym04Tt7aGc7OTK2NGAv+mD70n8LjXj7KD0axAdlCSYdvPAT+YdQP6nceB/EYja23Qwq/tWx5gWaBXFpJICTUsqz65d8HcAjgnVCDovdPSub88/TgrYWBzjvrxStl5z2l7IEDRLGiKEF0VuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IB3zN+rw; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id xAXMsi9iVQxq2xAXNs5Dfa; Sat, 05 Oct 2024 21:34:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728156840;
+	bh=URfpVlk/V/gzKqgL5fzn/g7tj/hCt6Ng6C1qW+DS+mo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=IB3zN+rw+HLZS2ou1MAi+HKi6PGppbtVR/lXcFQ65WVihhOO92pqBbk4PCrdaDELC
+	 1SgzXam7DZAt+bkr1u3Q0ZmBUc/pJ9kCvflGgInhmiP2VWfCPFGXz8vUd/BIZCdROD
+	 Jt99s4ETXV2UUNMHE1Mxga9dw6jEKMnBtX6qnwo8lf3fHBLx+0+SZTKPpyNuqAxR5G
+	 sPSZZPyqTMInA/T/PhdINsZQsVBC6jUIXoxQdv9TBOG+U/aryTzf4WLrQduuNXdWl9
+	 lUUCHHBHG3kwNBbEl+L6BcjsiiOmYn6MND2uOEO+0aKO/O5ZJDtHhli6WmJjkA+zwM
+	 v1KavJOWELHUg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 05 Oct 2024 21:34:00 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <517d5373-592a-4a79-8c79-14226ceacbce@wanadoo.fr>
+Date: Sat, 5 Oct 2024 21:33:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 3/3] scsi: ufs: qcom: Add support for multiple ICE
+ algorithms
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>,
+ manivannan.sadhasivam@linaro.org, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konrad.dybcio@linaro.org, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, agross@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_narepall@quicinc.com, quic_nitirawa@quicinc.com,
+ Can Guo <quic_cang@quicinc.com>
+References: <20241005064307.18972-1-quic_rdwivedi@quicinc.com>
+ <20241005064307.18972-4-quic_rdwivedi@quicinc.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241005064307.18972-4-quic_rdwivedi@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-For all of the devices regmap IRQ may try to created the folder
-with the same name which is impossible and fails with:
+Le 05/10/2024 à 08:43, Ram Kumar Dwivedi a écrit :
+> Add support for ICE algorithms for Qualcomm UFS V5.0 and above which
+> uses a pool of crypto cores for TX stream (UFS Write – Encryption)
+> and RX stream (UFS Read – Decryption).
+> 
+> Using these algorithms, crypto cores can be dynamically allocated
+> to either RX stream or TX stream based on algorithm selected.
+> Qualcomm UFS controller supports three ICE algorithms:
+> Floor based algorithm, Static Algorithm and Instantaneous algorithm
+> to share crypto cores between TX and RX stream.
+> 
+> Floor Based allocation is selected by default after power On or Reset.
+> 
+> Co-developed-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
+> Signed-off-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
+> Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> Co-developed-by: Can Guo <quic_cang@quicinc.com>
+> Signed-off-by: Can Guo <quic_cang@quicinc.com>
+> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> ---
+>   drivers/ufs/host/ufs-qcom.c | 232 ++++++++++++++++++++++++++++++++++++
+>   drivers/ufs/host/ufs-qcom.h |  38 +++++-
+>   2 files changed, 269 insertions(+), 1 deletion(-)
 
-  debugfs: File '\_SB.IPC1.PMIC' in directory 'domains' already present!
+Hi,
 
-Add domain_suffix to all of the IRQ chips driver registers to solve
-the issue.
+a few nitpicks below.
 
-Fixes: 39d047c0b1c8 ("mfd: add Intel Broxton Whiskey Cove PMIC driver")
-Fixes: 957ae5098185 ("platform/x86: Add Whiskey Cove PMIC TMU support")
-Fixes: 57129044f504 ("mfd: intel_soc_pmic_bxtwc: Use chained IRQs for second level IRQ chips")
-Depends-on: dde286ee5770 ("regmap: Allow setting IRQ domain name suffix")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/mfd/intel_soc_pmic_bxtwc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 810e637047d0..c0ca835f13f3 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -105,6 +105,217 @@ static struct ufs_qcom_host *rcdev_to_ufs_host(struct reset_controller_dev *rcd)
+>   }
+>   
+>   #ifdef CONFIG_SCSI_UFS_CRYPTO
+> +/*
+> + * Default overrides:
+> + * There're 10 sets of settings for floor-based algorithm
+> + */
+> +static struct ice_alg2_config alg2_config[] = {
 
-diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
-index fefbeb4164fd..b7204072e93e 100644
---- a/drivers/mfd/intel_soc_pmic_bxtwc.c
-+++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
-@@ -148,6 +148,7 @@ static const struct regmap_irq_chip bxtwc_regmap_irq_chip = {
- 
- static const struct regmap_irq_chip bxtwc_regmap_irq_chip_pwrbtn = {
- 	.name = "bxtwc_irq_chip_pwrbtn",
-+	.domain_suffix = "PWRBTN",
- 	.status_base = BXTWC_PWRBTNIRQ,
- 	.mask_base = BXTWC_MPWRBTNIRQ,
- 	.irqs = bxtwc_regmap_irqs_pwrbtn,
-@@ -157,6 +158,7 @@ static const struct regmap_irq_chip bxtwc_regmap_irq_chip_pwrbtn = {
- 
- static const struct regmap_irq_chip bxtwc_regmap_irq_chip_tmu = {
- 	.name = "bxtwc_irq_chip_tmu",
-+	.domain_suffix = "TMU",
- 	.status_base = BXTWC_TMUIRQ,
- 	.mask_base = BXTWC_MTMUIRQ,
- 	.irqs = bxtwc_regmap_irqs_tmu,
-@@ -166,6 +168,7 @@ static const struct regmap_irq_chip bxtwc_regmap_irq_chip_tmu = {
- 
- static const struct regmap_irq_chip bxtwc_regmap_irq_chip_bcu = {
- 	.name = "bxtwc_irq_chip_bcu",
-+	.domain_suffix = "BCU",
- 	.status_base = BXTWC_BCUIRQ,
- 	.mask_base = BXTWC_MBCUIRQ,
- 	.irqs = bxtwc_regmap_irqs_bcu,
-@@ -175,6 +178,7 @@ static const struct regmap_irq_chip bxtwc_regmap_irq_chip_bcu = {
- 
- static const struct regmap_irq_chip bxtwc_regmap_irq_chip_adc = {
- 	.name = "bxtwc_irq_chip_adc",
-+	.domain_suffix = "ADC",
- 	.status_base = BXTWC_ADCIRQ,
- 	.mask_base = BXTWC_MADCIRQ,
- 	.irqs = bxtwc_regmap_irqs_adc,
-@@ -184,6 +188,7 @@ static const struct regmap_irq_chip bxtwc_regmap_irq_chip_adc = {
- 
- static const struct regmap_irq_chip bxtwc_regmap_irq_chip_chgr = {
- 	.name = "bxtwc_irq_chip_chgr",
-+	.domain_suffix = "CHGR",
- 	.status_base = BXTWC_CHGR0IRQ,
- 	.mask_base = BXTWC_MCHGR0IRQ,
- 	.irqs = bxtwc_regmap_irqs_chgr,
-@@ -193,6 +198,7 @@ static const struct regmap_irq_chip bxtwc_regmap_irq_chip_chgr = {
- 
- static const struct regmap_irq_chip bxtwc_regmap_irq_chip_crit = {
- 	.name = "bxtwc_irq_chip_crit",
-+	.domain_suffix = "CRIT",
- 	.status_base = BXTWC_CRITIRQ,
- 	.mask_base = BXTWC_MCRITIRQ,
- 	.irqs = bxtwc_regmap_irqs_crit,
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+I think that this could easily be a const struct.
+
+> +	{"G0", {5, 12, 0, 0, 32, 0}},
+> +	{"G1", {12, 5, 32, 0, 0, 0}},
+> +	{"G2", {6, 11, 4, 1, 32, 1}},
+> +	{"G3", {6, 11, 7, 1, 32, 1}},
+> +	{"G4", {7, 10, 11, 1, 32, 1}},
+> +	{"G5", {7, 10, 14, 1, 32, 1}},
+> +	{"G6", {8, 9, 18, 1, 32, 1}},
+> +	{"G7", {9, 8, 21, 1, 32, 1}},
+> +	{"G8", {10, 7, 24, 1, 32, 1}},
+> +	{"G9", {10, 7, 32, 1, 32, 1}},
+> +};
+> +
+> +/**
+
+This does nor look like a kernel-doc. Just /* ?
+
+> + * Refer struct ice_alg2_config
+> + */
+> +static inline void __get_alg2_grp_params(unsigned int *val, int *c, int *t)
+> +{
+> +	*c = ((val[0] << 8) | val[1] | (1 << 31));
+> +	*t = ((val[2] << 24) | (val[3] << 16) | (val[4] << 8) | val[5]);
+> +}
+
+...
+
+> +/**
+> + * ufs_qcom_ice_config_alg2 - Floor based ICE algorithm
+> + *
+> + * @hba: host controller instance
+> + * Return: zero for success and non-zero in case of a failure.
+> + */
+> +static int ufs_qcom_ice_config_alg2(struct ufs_hba *hba)
+> +{
+> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+> +	unsigned int reg = REG_UFS_MEM_ICE_ALG2_NUM_CORE_0;
+> +	/* 6 values for each group, refer struct ice_alg2_config */
+> +	unsigned int override_val[ICE_ALG2_NUM_PARAMS];
+> +	char name[8] = {0};
+> +	int i, ret;
+> +
+> +	ufshcd_writel(hba, FLOOR_BASED_ALG2, REG_UFS_MEM_ICE_CONFIG);
+> +	for (i = 0; i < ARRAY_SIZE(alg2_config); i++) {
+> +		int core = 0, task = 0;
+> +
+> +		if (host->ice_conf) {
+> +			snprintf(name, sizeof(name), "%s%d", "g", i);
+
+Why not just "g%d"?
+
+> +			ret = of_property_read_variable_u32_array(host->ice_conf,
+> +								  name,
+> +								  override_val,
+> +								  ICE_ALG2_NUM_PARAMS,
+> +								  ICE_ALG2_NUM_PARAMS);
+
+...
+
+CJ
 
 
