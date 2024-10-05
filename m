@@ -1,145 +1,128 @@
-Return-Path: <linux-kernel+bounces-351827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BDD99916A3
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:04:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15132991697
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D35FEB2205D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:04:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18892838AD
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC8115383F;
-	Sat,  5 Oct 2024 12:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC8A14C5AF;
+	Sat,  5 Oct 2024 12:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lodewillems.com header.i=@lodewillems.com header.b="nmGMpM6l"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b="EgnoNtMA"
+Received: from mail.rosalinux.ru (mail.rosalinux.ru [195.19.76.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F5214C5B0;
-	Sat,  5 Oct 2024 12:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D0314F9D5;
+	Sat,  5 Oct 2024 12:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.19.76.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728129829; cv=none; b=QccfC9uP6pcGYBtKFrlrAZtnqaW1Dl+JL34Gsht1SNJui9+3bfDK9Z2gao4x7KgTG0plix5zy2n45GJ4hHgx3t24EMCLRNuFg3DbEt/dJbiHZ//IiDLuPMGJyZhuZkM08xOB+dEEE8n5+GwviMQqnZ1xLOp986TdkkRszQk1uJ0=
+	t=1728129612; cv=none; b=VdqKhW624RENGWASf+IV8377EA4hmArFzWiRPdD9HcuvbqlXZ7udfKX+2kdnoIk2lcgpHKAXHuZAXIfrbFIVS5IDrEfTfv5ZPPBqNSxcZmU/u47ggUXtefk2cQq1h0emg5eqg6ncDWb62LTqenx/PuU0Tjhqup6O35ULtobJWak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728129829; c=relaxed/simple;
-	bh=soBxRlhZVFPtz2pp25QZslJmcMPycIduAafeKmQthB0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tuBIGa0x/UF8Tvbqh4hT6KXvYB5mhe1BDlL0uoM6XMyLmovb2wWvw/Ol6depXPAmKj8ExUDcfR4noV1QUqPit5+7Wej3B/TbyEI1wn0VzYhEeVrEqsUJVGorwqpfDenhJxm0RPdJCM3INE2P9iEq/P+2gz184nF//eQSny9k+EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lodewillems.com; spf=pass smtp.mailfrom=lodewillems.com; dkim=pass (2048-bit key) header.d=lodewillems.com header.i=@lodewillems.com header.b=nmGMpM6l; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lodewillems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lodewillems.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XLPFr3hh2z9tdC;
-	Sat,  5 Oct 2024 14:03:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lodewillems.com;
-	s=MBO0001; t=1728129824;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=evj8B3A64fh6mBbSeZ/neCXQL4H1yrwJBIr1g7QFat4=;
-	b=nmGMpM6lBZYp7U75cTd3ZdBJxWVchSKBLdDzvau8MxB5WHCnOgOfuHV7uDgigDmbfBSrvT
-	bFuKFWxeSm8lIt/JgWM8MDr8WI7Mkm6Xnvcv8/0mMK+9+b5Kr102W8zoQkR8wpITrNeHfK
-	v+Dj+bC3lexKqO8b4I6FLm0zZG3oBZu1TOabCQ/DBtUIxQaEhSsRXKLTYsQQUlycYyFad5
-	jcLXjqpVZL04D8BRNZBFy3GXWCIvamn2LpNV13YnHdydEGhNXSDPoFnT5gsSH0h43PMd02
-	5YXk+0daufy59S7A8PjitvXJoiBkeGP1h74O7emuTdF455BHXeIPrAw554AgTg==
-From: Lode Willems <me@lodewillems.com>
-To: linux-input@vger.kernel.org
-Cc: jikos@kernel.org,
-	bentiss@kernel.org,
+	s=arc-20240116; t=1728129612; c=relaxed/simple;
+	bh=lgjjzW8JhomFfhqNJl60GVevaG2TRoCJ1RUSqhu+/PI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VGUTu1Cr14Zp747Z3fCAVGiQf/rxkFNxdRzF8SbiQWO5rhvg2khUJGmV3E5GTbqZA6LH2GKVBxnCRCfNk0wFgQYgzTKf3t0xlCsTlSM0HcxGMTZjvSqnFbwl/fHMIupTNQwtIxekneJw2VhRGt0lOABAHSRNwnY59GONGIabZpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru; spf=pass smtp.mailfrom=rosalinux.ru; dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b=EgnoNtMA; arc=none smtp.client-ip=195.19.76.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosalinux.ru
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rosalinux.ru (Postfix) with ESMTP id 20E6BDB761279;
+	Sat,  5 Oct 2024 15:00:05 +0300 (MSK)
+Received: from mail.rosalinux.ru ([127.0.0.1])
+	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id eoG0vcNe2Ldw; Sat,  5 Oct 2024 15:00:05 +0300 (MSK)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rosalinux.ru (Postfix) with ESMTP id DA1A3E2D87380;
+	Sat,  5 Oct 2024 15:00:04 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rosalinux.ru DA1A3E2D87380
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosalinux.ru;
+	s=1D4BB666-A0F1-11EB-A1A2-F53579C7F503; t=1728129604;
+	bh=r1ZRAdOPsZ6V3qrG7zP/y2ZKnPDaC4zWXBpyCVEL9mo=;
+	h=From:To:Date:Message-ID:MIME-Version;
+	b=EgnoNtMANl7XTY6tSlxGbZN1cnfhlgvS1f2uqP5enUOSoAybdLk9BGw59EN/UAXRu
+	 ClV9zWaSjT7zlC3ohOYPBg81EJG/1afnY8ZNyOZOQoV7fHfA0cPDx5Z3uP/BOLookF
+	 1GKRa6V8CIPl61pHhuLdvhd1DyAIv9HtGBzpbj1aE2Op4jB0vRHxOl/SUkgWrV5flO
+	 E+hsaXFDT67M/10U5TqjoQj5gqm1WfMqVk8MXaisWKu8eCHeuFSHt8TLtFMij1d+Rl
+	 jCsuasG1R7ZlaUThKuNS5DNiLRaQLHku3FdG0tWY5pzdXzBZxmkBnCVGjiLaaqi66s
+	 cqlHH88kQkajg==
+X-Virus-Scanned: amavisd-new at rosalinux.ru
+Received: from mail.rosalinux.ru ([127.0.0.1])
+	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id jvuZZ7dH1Y9h; Sat,  5 Oct 2024 15:00:04 +0300 (MSK)
+Received: from localhost.localdomain (unknown [213.87.162.215])
+	by mail.rosalinux.ru (Postfix) with ESMTPSA id CE044DB761279;
+	Sat,  5 Oct 2024 15:00:03 +0300 (MSK)
+From: Mikhail Lobanov <m.lobanov@rosalinux.ru>
+To: Jacopo Mondi <jacopo@jmondi.org>
+Cc: Mikhail Lobanov <m.lobanov@rosalinux.ru>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Lode Willems <me@lodewillems.com>
-Subject: [PATCH 4/4] HID: Kysona: add basic online status
-Date: Sat,  5 Oct 2024 13:57:06 +0200
-Message-ID: <20241005120256.13847-5-me@lodewillems.com>
-In-Reply-To: <20241005120256.13847-1-me@lodewillems.com>
-References: <20241005120256.13847-1-me@lodewillems.com>
+	lvc-project@linuxtesting.org,
+	Aleksandr Burakov <a.burakov@rosalinux.ru>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH v3] media: rj54n1cb0c: possible integer overflow fix
+Date: Sat,  5 Oct 2024 07:58:57 -0400
+Message-ID: <20241005115859.13273-1-m.lobanov@rosalinux.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4XLPFr3hh2z9tdC
+Content-Transfer-Encoding: quoted-printable
 
-Wait for a response to the battery status request to set the device as
-online. This prevent wrong power info when the dongle is connected but
-the mouse is turned off.
+An integer overflow may occur due to arithmetic operation
+(multiplication) between value '314572800' and variable 'resize',
+where the value comes from '12 * RJ54N1_MAX_WIDTH * (1 << 14)'
+and when 'resize' is equal to 16319.
 
-Signed-off-by: Lode Willems <me@lodewillems.com>
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: a6b5f2008a3d ("V4L/DVB (13661): rj54n1cb0c: Add cropping, auto whi=
+te balance, restrict sizes, add platform data")
+Signed-off-by: Aleksandr Burakov <a.burakov@rosalinux.ru>
+Signed-off-by: Mikhail Lobanov <m.lobanov@rosalinux.ru>
+Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 ---
- drivers/hid/hid-kysona.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+v1->v2: updated multiplication operation to use shorthand assignment for =
+improved code readability
+link to v1: https://lore.kernel.org/lkml/20240917140454.7880-1-a.burakov@=
+rosalinux.ru/
+v2->v3: the subsystem prefix has been updated to 'media: rj54n1cb0c:'.
+link to v2: https://lore.kernel.org/lkml/20241004121924.27174-1-m.lobanov=
+@rosalinux.ru/
+ drivers/media/i2c/rj54n1cb0c.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-kysona.c b/drivers/hid/hid-kysona.c
-index 403bdc4a5e12..d4c0406b3323 100644
---- a/drivers/hid/hid-kysona.c
-+++ b/drivers/hid/hid-kysona.c
-@@ -18,6 +18,8 @@
- 
- struct kysona_drvdata {
- 	struct hid_device *hdev;
-+	bool online;
-+
- 	struct power_supply_desc battery_desc;
- 	struct power_supply *battery;
- 	u8 battery_capacity;
-@@ -32,7 +34,8 @@ static enum power_supply_property kysona_battery_props[] = {
- 	POWER_SUPPLY_PROP_CAPACITY,
- 	POWER_SUPPLY_PROP_SCOPE,
- 	POWER_SUPPLY_PROP_MODEL_NAME,
--	POWER_SUPPLY_PROP_VOLTAGE_NOW
-+	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-+	POWER_SUPPLY_PROP_ONLINE
- };
- 
- static int kysona_battery_get_property(struct power_supply *psy,
-@@ -46,11 +49,16 @@ static int kysona_battery_get_property(struct power_supply *psy,
- 	case POWER_SUPPLY_PROP_PRESENT:
- 		val->intval = 1;
- 		break;
-+	case POWER_SUPPLY_PROP_ONLINE:
-+		val->intval = drv_data->online;
-+		break;
- 	case POWER_SUPPLY_PROP_STATUS:
--		// TODO: check if device is online
--		val->intval = drv_data->battery_charging ?
--			POWER_SUPPLY_STATUS_CHARGING :
--			POWER_SUPPLY_STATUS_DISCHARGING;
-+		if (drv_data->online)
-+			val->intval = drv_data->battery_charging ?
-+					POWER_SUPPLY_STATUS_CHARGING :
-+					POWER_SUPPLY_STATUS_DISCHARGING;
-+		else
-+			val->intval = POWER_SUPPLY_STATUS_UNKNOWN;
- 		break;
- 	case POWER_SUPPLY_PROP_SCOPE:
- 		val->intval = POWER_SUPPLY_SCOPE_DEVICE;
-@@ -124,7 +132,9 @@ static int kysona_battery_probe(struct hid_device *hdev)
- 	struct power_supply_config pscfg = { .drv_data = drv_data };
- 	int ret = 0;
- 
-+	drv_data->online = false;
- 	drv_data->battery_capacity = 100;
-+	drv_data->battery_voltage = 4200;
- 
- 	drv_data->battery_desc.properties = kysona_battery_props;
- 	drv_data->battery_desc.num_properties = ARRAY_SIZE(kysona_battery_props);
-@@ -201,6 +211,7 @@ static int kysona_raw_event(struct hid_device *hdev,
- 		drv_data->battery_capacity = data[6];
- 		drv_data->battery_charging = data[7];
- 		drv_data->battery_voltage = (data[8] << 8) | data[9];
-+		drv_data->online = true;
+diff --git a/drivers/media/i2c/rj54n1cb0c.c b/drivers/media/i2c/rj54n1cb0=
+c.c
+index a59db10153cd..a612ec1e7157 100644
+--- a/drivers/media/i2c/rj54n1cb0c.c
++++ b/drivers/media/i2c/rj54n1cb0c.c
+@@ -776,8 +776,8 @@ static int rj54n1_sensor_scale(struct v4l2_subdev *sd=
+, s32 *in_w, s32 *in_h,
  	}
- 
- 	return 0;
--- 
-2.46.1
+=20
+ 	/* Antiflicker */
+-	peak =3D 12 * RJ54N1_MAX_WIDTH * (1 << 14) * resize / rj54n1->tgclk_mhz=
+ /
+-		10000;
++	peak =3D 12 * RJ54N1_MAX_WIDTH * resize / rj54n1->tgclk_mhz / 10000;
++	peak *=3D 1 << 14;
+ 	peak_50 =3D peak / 6;
+ 	peak_60 =3D peak / 5;
+=20
+--=20
+2.25.1
 
 
