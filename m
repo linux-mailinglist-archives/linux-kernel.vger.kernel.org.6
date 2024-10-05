@@ -1,181 +1,167 @@
-Return-Path: <linux-kernel+bounces-352035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C0B991950
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:10:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880C4991952
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 359161C21532
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:10:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 442E42810EB
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630441591FC;
-	Sat,  5 Oct 2024 18:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91525159217;
+	Sat,  5 Oct 2024 18:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+YZSBMS"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Zv/Z+UDM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA75D15854F;
-	Sat,  5 Oct 2024 18:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EF6157A59;
+	Sat,  5 Oct 2024 18:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728151799; cv=none; b=LAl1UjfmJZPaSUcqdPGphnlddxB/SuoSGwVrU0Y/L1nApYvk2JgnFFp0QJJFxI7AvpHLWec0cWIEsQaYrTX6hSzC/zHnQ0teLyYi798z1sDP28O7G6g4wBdWdGZ+iZw1XanSy9yhy21a1bGXBgJJtFTqQrq3OzbZcrK0HUR2fd0=
+	t=1728151851; cv=none; b=ixMyiv07iL2PH5xcBJojn2vXdGnOem6ZIVOfaWF+jbup8cVf8+1WAFRnKgAzWfiCYjUBoAcRMHyFhk6yf1ugPtOXls0faDaTT+By0hJkzqHPvDberjX9ZDHzpabA94jwsM7+soavv5Qms6X3pjJL2Gys98EFyz0pIQJ6YDIqcX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728151799; c=relaxed/simple;
-	bh=63E7H5TJXuvZI1D/xsmlknc4aHrwSdjyMiEgkTiy9Ao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ecBk7IKOkwx2Du6EhtFhLWtshH32/OSgQWnHSijgU2QoG915op1OE/HVECGc0DSDJ/j3C24IZB2ptU6uFiN/M2UPuYWKR4pqIGV1CL7fPIYb0EtEnsKO50PnJovHz7mAN92tt44e8tEw4SH+o8OQLXDfFd3WuvQODqAzihzhE0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l+YZSBMS; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c8952f7f95so3640895a12.0;
-        Sat, 05 Oct 2024 11:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728151796; x=1728756596; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pJPPifLxXCwNQWv1ui6NS3//62j4ABwOZN+5UiBq7t8=;
-        b=l+YZSBMSJ5Sye70Obw5Wi1JPISz1r7ragSxzlUn7R2FV0GU8xG4hbKgELMZtA55sK7
-         u0yYb66j2CBG/K5oDZBlYbe+zf00chOTnD/YPLXyzENRCkzDHtoiwoPuiUMHAv6X9Hpg
-         mX+sRrHLpBcgyrcmY5DRbexD0g6NWorelUbsaqZ6N34bJjd3KVblTZGsYTkIOQcIqSoV
-         64FnU5T7e/n/Bvt4A2hUuZ3OFCkrYmfpoWAKvkCvYighUO1SM8WWluS2xlAbZpKQS5BP
-         ipBrGoeNobNmRCT0swU/iwdezXUB6k2VBk5X/e+k2nm8D8+hFACG8ixVm+RPOGcvFcHj
-         JL8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728151796; x=1728756596;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pJPPifLxXCwNQWv1ui6NS3//62j4ABwOZN+5UiBq7t8=;
-        b=gnbpRpOhoDNXKekeA7gxpgAkgDXhjpRNq6ApMlnuBQwatAFdB/bzrCHPqSi8wSpFjV
-         PhTXQNhcDWKjOuLOS8X5bwg83NDqO71S0gvpANqUfaGfcSMc0jkLH2/LSjWbxaKjPYSQ
-         xSoMSiQcAhb6R5VNoUdl7UqFM+/Uj9NVzaUjaBgPw+RLUdmEQ2OYeLhdmoPEPCDJ83O7
-         r85RaI6cgZakvvExiMtnn5ctBfeq64xvVFAVoXo3m7uJhU8bQj7BP1s6bUMPNAB9oTRc
-         3Vy2PMzhJ4WBrej99SN3w9ojMViO9nUlxlZH05rx8ZpMnfJzdSnk06kej0L+yd83XlRT
-         DkMg==
-X-Forwarded-Encrypted: i=1; AJvYcCV07gvKt7Bzctr1IB2HbIGastVRJGpWVCKDYevZN1ExBb5Dj4VTYc41QadJUeMyfhOiur2bSQnlqRrXwSOA@vger.kernel.org, AJvYcCVBxOEPs/IUOgGMOGr5Hc+81UQgJYNWLfBsf960+dASgwcuzMUbL2tva40xcBu/X/NdwbaEuZ+TcJ61@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfVHvwIDJQuiMX1eUSEq+r9xURtwWu/YmM3mUjSTO0ORRRn+wu
-	vOtVLXa52Ju5aB99Y1tBOajK5loWAIukhQqsE8oyW0/r3ZSZfUbve5KAtvx0jeppE9WsvTonqRN
-	QWPTXF1pfK+dwde6QD/Qt8JvE57mX78BbRlpYcQ==
-X-Google-Smtp-Source: AGHT+IH6l7O0Pf48yT862/nBbRwe8hgXk+iNi6Y9z8M5APyWdmFfTPmvJsJLWa4qMjjDA2gXD6q4IBQLadXUF/fIP0Y=
-X-Received: by 2002:a05:6402:51d4:b0:5c8:ba24:462c with SMTP id
- 4fb4d7f45d1cf-5c8d2e74d8fmr4915897a12.22.1728151795805; Sat, 05 Oct 2024
- 11:09:55 -0700 (PDT)
+	s=arc-20240116; t=1728151851; c=relaxed/simple;
+	bh=vYhHSu8a2wL6m1DT57/LS6UyaEW1S+3V57c0sxgaZBQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sHCYo5WLvDP8hjtU7zqs8OfY9zwY6H0xQsPKI2ggOXTk8cV3CN97iEKwj1srXPmYttD6n8P1v1ZXg268Dcb+dDdzfiUBTLsg920t8mpfY0cVQbxwD/B0+XOeDpUjKp1+VXDvNZXATHKZbivr0/bT7UaBwinbIeBjPT6QLoKFZq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Zv/Z+UDM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 495FP1HJ015331;
+	Sat, 5 Oct 2024 18:10:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=y1AI6Ybprvocd2qzWabOJfmmPMvHCkyW5WFymyIkuK0=; b=Zv
+	/Z+UDMuJs+fwXY3Cy7ZsPKz6B/QQWOh6ZWb9uXCKxop92djJz3oCZ43m07EmYl9v
+	aST7w6RGU0Aw5/FS6j8p1i4orvEguRCDtwE1e4E+jKROem6tdtQcZuvpAwlpKiRJ
+	2j45RQeYqeJZ5SdJBERBqEEdlT9WofL+19VUS9rAF09uY3En+UOJG6Wzbnc0E7wO
+	va+NFf/4jzzMLrTcM4io5e8SxC69LW8s7CBUlAcGhfDYE8qys7cTojdJRKhawC19
+	WdbSf0DYj8XpMHFhfuCkrI5b+Xpg1FC7hRFy5wUQc3DQ7OuSa0R8zzJ5TBeMTAET
+	ecH9a/tE45PAuKgLgVAw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv88w9p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 05 Oct 2024 18:10:23 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 495IAMYe012621
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 5 Oct 2024 18:10:22 GMT
+Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sat, 5 Oct 2024 11:10:18 -0700
+From: Pintu Kumar <quic_pintu@quicinc.com>
+To: <sumit.semwal@linaro.org>, <benjamin.gaignard@collabora.com>,
+        <Brian.Starkey@arm.com>, <jstultz@google.com>, <tjmercier@google.com>,
+        <christian.koenig@amd.com>, <linux-media@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <joe@perches.com>, <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
+        Pintu Kumar <quic_pintu@quicinc.com>
+Subject: [PATCH v2] dma-buf: fix S_IRUGO to 0444, block comments, func declaration
+Date: Sat, 5 Oct 2024 23:39:55 +0530
+Message-ID: <20241005180955.6523-1-quic_pintu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003220820.1345048-1-CFSworks@gmail.com> <20241003220820.1345048-2-CFSworks@gmail.com>
- <3okd7byomwmo5vjsyaaxsorhn6ldw3mp3k6whcklqnw2stx5tm@jpv2e5ydswzw>
- <80a9ec34-52eb-41fa-b068-3c9552065927@kernel.org> <CAH5Ym4g9hmX3mT5+Eqm=KHKYd+s_PM4qdho2a8FkAZmhMHOV4g@mail.gmail.com>
- <b273cddb-274c-4d88-935e-c94b8d94188e@kernel.org>
-In-Reply-To: <b273cddb-274c-4d88-935e-c94b8d94188e@kernel.org>
-From: Sam Edwards <cfsworks@gmail.com>
-Date: Sat, 5 Oct 2024 11:09:44 -0700
-Message-ID: <CAH5Ym4iY5Rihce7tDrpV3dRE88yvWjPHK7AANpqOXvcPNy95_g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: arm64: bcmbca: Add Zyxel EX3510-B based
- on BCM4906
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	William Zhang <william.zhang@broadcom.com>, Anand Gore <anand.gore@broadcom.com>, 
-	Kursad Oney <kursad.oney@broadcom.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YRla0X3yiQaJF3lejNKaRIlBtVmAQ3CI
+X-Proofpoint-GUID: YRla0X3yiQaJF3lejNKaRIlBtVmAQ3CI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1015 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410050133
 
-On Sat, Oct 5, 2024 at 1:54=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 04/10/2024 19:21, Sam Edwards wrote:
-> > On Thu, Oct 3, 2024 at 11:51=E2=80=AFPM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> >>
-> >> On 04/10/2024 08:49, Krzysztof Kozlowski wrote:
-> >>> On Thu, Oct 03, 2024 at 03:08:19PM -0700, Sam Edwards wrote:
-> >>>> This is a series (EX3510-B0 and EX3510-B1) of residential gateways b=
-ased
-> >>>> on BCM4906, a stripped-down version of the BCM4908 SoC. Although Zyx=
-el's
-> >>>> marketing materials call this a "series," the EX3510-B1 appears to b=
-e a
-> >>>> very minor revision of the EX3510-B0, with only changes that are
-> >>>> transparent to software. As far as Linux is concerned, this "series"
-> >>>> effectively represents a single model.
-> >>>>
-> >>>> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
-> >
-> > Good day Krzysztof,
-> >
-> >>>
-> >>> Can you use the same email as for SoB?
-> >
-> > I have sent patches to the LKML from a work email before, but I just
->
-> That's not what I asked. You can send them from whatever, I asked that
-> commit identity should match SoB in exact way.
->
->
-> > double-checked that I am using my personal email for everything here:
-> >
-> > $ git show ec8e6d96a05f04 | grep -E 'dt-bindings|Author|Signed'
-> > Author: Sam Edwards <CFSworks@gmail.com>
-> >     dt-bindings: arm64: bcmbca: Add Zyxel EX3510-B based on BCM4906
-> >     Signed-off-by: Sam Edwards <CFSworks@gmail.com>
-> > $ grep -E '^From|^Signed'
-> > outgoing-ex3510b/0001-dt-bindings-arm64-bcmbca-Add-Zyxel-EX3510-B-based=
--on.patch
-> > From ec8e6d96a05f04df00d05dec00df80172d233d8c Mon Sep 17 00:00:00 2001
-> > From: Sam Edwards <CFSworks@gmail.com>
-> > Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+These warnings/errors are reported by checkpatch.
+Fix them with minor changes to make it clean.
+No other functional changes.
 
-Greetings Krzysztof,
+WARNING: Block comments use * on subsequent lines
++       /* only support discovering the end of the buffer,
++          but also allow SEEK_SET to maintain the idiomatic
 
-> So apply the patch from the mailing list and you will see:
->
-> Author: Sam Edwards <cfsworks@gmail.com>
-> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+WARNING: Block comments use a trailing */ on a separate line
++          SEEK_END(0), SEEK_CUR(0) pattern */
 
-Looks fine to me, those are both set to my personal (non-work)
-account. The only difference I'm seeing is that the capitalization in
-my email address is being discarded in the author field, but in light
-of the case-insensitive nature of email addresses: these are an exact
-match.
+WARNING: Block comments use a trailing */ on a separate line
++        * before passing the sgt back to the exporter. */
 
-Still, I was interested to see what was affecting the capitalization
-in one field but not the other, so I did some digging. To answer your
-previous question: they can differ because they are transported in
-different ways. Evidently git-am considers a few headers in the email
-envelope significant (e.g. Subject/From/Date) by default. The
-envelope's "From:" is what specifies the patch author, while the
-Signed-off-by tag is just part of the message body. The envelope is
-unfortunately fair game for modification by various MTAs, which would
-explain why my patches aren't arriving with my 'From:' email address
-capitalization intact. When I have time, I'd like to look into what
-specific hop in the mail path is doing that. Hopefully it's something
-I can reconfigure, but it might also be out of my hands.
+ERROR: "foo * bar" should be "foo *bar"
++static struct sg_table * __map_dma_buf(struct dma_buf_attachment *attach,
 
-Is there some other difference you're noticing that's too subtle for
-me to spot? Or is it indeed the capitalization that's the key issue
-here? If the latter, I want to understand why it's important so I can
-see if there=E2=80=99s a way to work around it, or if we need to consider
-other options for getting patches delivered in the preferred format in
-the future.
+WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
++       d = debugfs_create_file("bufinfo", S_IRUGO, dma_buf_debugfs_dir,
 
-COMMITTER: In light of the above, could you kindly add this flag to
-git-am to fix the capitalization issue: --author=3D"Sam Edwards
-<CFSworks@gmail.com>"
+total: 1 errors, 4 warnings, 1746 lines checked
 
->
-> Best regards,
-> Krzysztof
+Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
 
-Have a relaxing weekend,
-Sam
+---
+Changes in V1 suggested by Sumit Semwal:
+Change commit title, and mention exact reason of fix in commit log.
+V1: https://lore.kernel.org/all/CAOuPNLg1=YCUFXW-76A_gZm_PE1MFSugNvg3dEdkfujXV_5Zfw@mail.gmail.com/
+---
+ drivers/dma-buf/dma-buf.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index 8892bc701a66..2e63d50e46d3 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -176,8 +176,9 @@ static loff_t dma_buf_llseek(struct file *file, loff_t offset, int whence)
+ 	dmabuf = file->private_data;
+ 
+ 	/* only support discovering the end of the buffer,
+-	   but also allow SEEK_SET to maintain the idiomatic
+-	   SEEK_END(0), SEEK_CUR(0) pattern */
++	 * but also allow SEEK_SET to maintain the idiomatic
++	 * SEEK_END(0), SEEK_CUR(0) pattern.
++	 */
+ 	if (whence == SEEK_END)
+ 		base = dmabuf->size;
+ 	else if (whence == SEEK_SET)
+@@ -782,13 +783,14 @@ static void mangle_sg_table(struct sg_table *sg_table)
+ 	/* To catch abuse of the underlying struct page by importers mix
+ 	 * up the bits, but take care to preserve the low SG_ bits to
+ 	 * not corrupt the sgt. The mixing is undone in __unmap_dma_buf
+-	 * before passing the sgt back to the exporter. */
++	 * before passing the sgt back to the exporter.
++	 */
+ 	for_each_sgtable_sg(sg_table, sg, i)
+ 		sg->page_link ^= ~0xffUL;
+ #endif
+ 
+ }
+-static struct sg_table * __map_dma_buf(struct dma_buf_attachment *attach,
++static struct sg_table *__map_dma_buf(struct dma_buf_attachment *attach,
+ 				       enum dma_data_direction direction)
+ {
+ 	struct sg_table *sg_table;
+@@ -1694,7 +1696,7 @@ static int dma_buf_init_debugfs(void)
+ 
+ 	dma_buf_debugfs_dir = d;
+ 
+-	d = debugfs_create_file("bufinfo", S_IRUGO, dma_buf_debugfs_dir,
++	d = debugfs_create_file("bufinfo", 0444, dma_buf_debugfs_dir,
+ 				NULL, &dma_buf_debug_fops);
+ 	if (IS_ERR(d)) {
+ 		pr_debug("dma_buf: debugfs: failed to create node bufinfo\n");
+-- 
+2.17.1
+
 
