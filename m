@@ -1,161 +1,149 @@
-Return-Path: <linux-kernel+bounces-351866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7585A99170E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:44:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E20991711
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207E21F22A2B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:44:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E52EB20E52
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98D2153BEE;
-	Sat,  5 Oct 2024 13:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F87154423;
+	Sat,  5 Oct 2024 13:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ady644DQ"
-Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HBtNq19g"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D24231C95;
-	Sat,  5 Oct 2024 13:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C1213C8F6;
+	Sat,  5 Oct 2024 13:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728135882; cv=none; b=Xd+1AXBDKuDbJl6zcd6PhR79cwNmzKXPJM/vl9F//J8daSzi8YGHF9zFUvwD86aLO2AGJhTzP8FGu9suwSlGN3dAbdzXgbXlyewytRnoby+nuzpUc4pWOec6IWcXwMqMkHUtZ/hH2YVS/aqYL5wuCrHuBn7vdqN2T3xEQyDCS9Y=
+	t=1728135930; cv=none; b=GpZMoxxR7QNv/l4duxbmMXRBbtIEWCOYSGOPC6NCWhey1nBuZFUlJFYHK+7b1KVCp7KE0msPXIFSGGHbk803dPuengibzuObKtoNYMXQH/qgV5nt2oS5/Zf7E4n7EO2Pi5Zfss9swLGsnz+0mA3iQxktP+ykMr5VpwUyEZAEDlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728135882; c=relaxed/simple;
-	bh=OCqLnu3FOYh2BYZ/k3XElebh9F3QXzEQhB43B85DKkM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BlVBYXHRk52u0NB7ZM335A8DCBaFzMRRfekZEeeoJT8zTw/caucmXDUBn0FMIfKCxuIjEGjRgMabH8KKAjpfl+BATUOFdm65PnCfNKX1YdJVWGboHMSb6+ZSzmTC10hhnCOwUeQZNdxGGdgHSxZmmPXcNpOW6ejoGNcbUMp9uw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ady644DQ; arc=none smtp.client-ip=209.85.215.195
+	s=arc-20240116; t=1728135930; c=relaxed/simple;
+	bh=6WMCleyRf9rkTC7gpicSmXoOJzsha0XAiXyxm4lH0Vg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S8pylDCRjECzr0c8DdXjtOdn98g24R0TJu15F7Jsc/Rov+gytBjYXUxHUnlFjIKld1zSFnZRfWCKhUa3FT0IsHxOOiLUq56i9wqYHjiqFlNMhpxPMJpe9HDwj0fOAtAtCHAC1yVm6/i77gkfRYJ8d1/qLftKoGCQXeU0DOZ1n4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HBtNq19g; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso2557714a12.1;
-        Sat, 05 Oct 2024 06:44:40 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so502529266b.1;
+        Sat, 05 Oct 2024 06:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728135880; x=1728740680; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vk0lcaHAU8ayzUn9Owq/N1n4bRzRycGQWXSMMukOCCY=;
-        b=Ady644DQaVb7xEBkLJJ1GcXmWH6qSEKnqgrUGovZc7kXmGItpOY4YxdnrqZmiBdD0j
-         be1XgA4QUpYX3mzK7LMZgZvl1gAuH8Amc5YO6+cDgFN5AoCdfqdNpJn01sm4pvaxQxBE
-         ew1n8fVS2t0pbSJN9yzlC9+M5KbQO5P/JT4q1pnqMiPlx3gYwV0bEImtGW3OMRPVP0/w
-         q3UIKFQH9FL3jKKc5RQQBn3T7VzuYPGNqxUM3hP/4VjEgPK5DETXRl6t0h/JS8tNnPlf
-         IgFUm8DF3CxGhiMJi/xAbrVmtv3hNmqcPfoT16+fAASKwT6ej/xoWRe9HpTimTMe+giq
-         WFTw==
+        d=gmail.com; s=20230601; t=1728135926; x=1728740726; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Kx4yHJPGBMBusL2+jeuSBsTQGYeHDWUiK8Vz71jCsnA=;
+        b=HBtNq19gn9CIlORP6VpK8JD2xwk8i5KScTrqJYcWmC9irdn0gxFTD5luei+IM7/Bqq
+         x5iX3q3GjcQ1MfqHDbsi52ByUepz+hoyIRerhoHL5GmsgHde1JG2WOWREfMJLXIu99oi
+         9x7mibhnfSLODAIAUJ1uA9vD0awp1VrghCa4alZgYumESe08Kci/r4hk+4bqVP/xxi9I
+         NtyKTYqa5+UDnQ4LNoCWR4a7v516HTYv8HrNE+UiZrIk1jZaL+IAzdp+ZGzDA5tVBUyo
+         SL2TREJO3DnRuDaYE3//M8rvkuGUadDUXlVY3UUHfvzi8SM+cTcOvvBdFf5+8zjMUe4o
+         GbmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728135880; x=1728740680;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1728135926; x=1728740726;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vk0lcaHAU8ayzUn9Owq/N1n4bRzRycGQWXSMMukOCCY=;
-        b=lSAQLyypE1Ky615BZ2+w83uPi3KxXgJZH03VTgB5KXWLaqij8jiMUcOEkWbwCG+799
-         iEisiyV/9qiMjJpu8p5azJmFsivYdTsIQq+Jh8m4oacGVJ9OgZHm7k+tL4WAD9CIYG14
-         Pt89fXD4/joysnqyqR4BDc2CqHFEqWZIosw7JnQa6C77XxnX9y0F816GPpzN6I4gPLz1
-         xURE5IA1IW2Yz5nqZegYvtvPmwF7bxsGhVukBfuvZC+3BWZ1qtwPiPmblnrRoBTL+WJn
-         +RfS0RiLoAYhQdJNYAG5kZqFKj4MOlT4Vht0mRl+sMbGYfrfQToSQ+VtfYiSLn/qyb0j
-         COIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLMeWV1U5kYjhLf3Z4zCqeBpYBvh1D3gW52XNsDVZk0obDkRnEu06+KGkfVwIKv69KJUjnBdfsuNtOWq4=@vger.kernel.org, AJvYcCXeMmvFRbfVqObsPw679yiBPAnxA9fRKpLiLHjinpto1F3S9+JRX65eGSx3nOgIolYyXyb44bcd@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVwf65LxZM8cXOuU5w+omKWiqMFdTaYqnBW8tr8L+YaEm7iko1
-	zxPN1bIyC67PuyqinV7wF1FC0ocIKV6PCNVqeXDESkJiT1zjV0a1
-X-Google-Smtp-Source: AGHT+IE38rSN5FwwRg9a5f0P9ymdYfCJ4Qh1cT/tuSWC/KxzzN+IZeGm4rseorbhwbVgoU1XAV7epA==
-X-Received: by 2002:a17:90b:109:b0:2e0:89f2:f60c with SMTP id 98e67ed59e1d1-2e1e5d63376mr8974088a91.11.1728135879828;
-        Sat, 05 Oct 2024 06:44:39 -0700 (PDT)
-Received: from ?IPV6:2409:8a55:301b:e120:3c3f:d401:ec20:dbc7? ([2409:8a55:301b:e120:3c3f:d401:ec20:dbc7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20b0f9053sm1824890a91.41.2024.10.05.06.44.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Oct 2024 06:44:39 -0700 (PDT)
-Message-ID: <c9860411-fa9c-4e1b-bca2-a10e6737f9b0@gmail.com>
-Date: Sat, 5 Oct 2024 21:44:31 +0800
+        bh=Kx4yHJPGBMBusL2+jeuSBsTQGYeHDWUiK8Vz71jCsnA=;
+        b=WWbrgPH/hB8YnB+Bn9ggwVt61HFLfqNm479HNXeVk4euDOUJN0nphowEQ4Kw4DaoB0
+         4e6q/vsX42f+4VlIXN26eQ58RvUmJ7vJBXt/4DdlmTvfG3lt7y9z4bC2sDWxwTaLRmGw
+         VgczDmHXB3DTwEw2h7SkiRk+R1XEGhctFsekQFFH+dTcI/qCu9nByNcbRdpBS+0KXy+9
+         GXhy9+czn3MskcATo2a0ASvOMXmhEkyLT0Kr3jJCyk/XmW+S19zQjGmHiyx5zOwpwNhO
+         VcLxTPsHzJsEoevTv96wraNpJtfmCOP4G4z3Yn0QCuAqBuxXJVUhBEX6CFaEBm7yNKVn
+         9vdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLz7aEofRh/5Lc4xaxFcLvyhhvc2eGpBOE40uR4+0hGsrgQrCyDQ2XdSw5w4LQfGhu1O6lbdEHpxXGWFFI@vger.kernel.org, AJvYcCVf/TKstbbu6YOJJ3kRZKp+1rVPmSJ+aD1JLen0jaCXzFfTybOKuuF8sLA6vFDOK63A8a0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg7t2wxaSgAyrsL0d06ZyrTwwskmAjh4F6n/LGgtTtdNXlAI2t
+	/jRedpWpuGycPW2kqFwWi/cZGK9JOBfiCgOFr8Gj/a7Xdk2DPv60
+X-Google-Smtp-Source: AGHT+IGEpWpCDACNRAEu30MNVIKtG/hJJxxoBLsghEuDe35isIBnrPXgxEeDiOjY/mAC0CF5YpPX0Q==
+X-Received: by 2002:a17:907:e668:b0:a99:32f8:781a with SMTP id a640c23a62f3a-a9932f878bdmr236709666b.61.1728135926199;
+        Sat, 05 Oct 2024 06:45:26 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e784ee4sm134046666b.105.2024.10.05.06.45.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 06:45:25 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Sat, 5 Oct 2024 15:45:23 +0200
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Paul Moore <paul@paul-moore.com>,
+	John Johansen <john.johansen@canonical.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bpf, lsm: Remove bpf_lsm_key_free hook
+Message-ID: <ZwE_veRD7f2ir6mS@krava>
+References: <20241005-lsm-key_free-v1-1-42ea801dbd63@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v19 09/14] net: rename skb_copy_to_page_nocache()
- helper
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yunsheng Lin <linyunsheng@huawei.com>, Eric Dumazet <edumazet@google.com>,
- David Ahern <dsahern@kernel.org>
-References: <20241001075858.48936-1-linyunsheng@huawei.com>
- <20241001075858.48936-10-linyunsheng@huawei.com>
- <CAKgT0UeSbXTXoOuTZS918pZQcCVZBXiTseN-NUBTGt71ctQ2Vw@mail.gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-In-Reply-To: <CAKgT0UeSbXTXoOuTZS918pZQcCVZBXiTseN-NUBTGt71ctQ2Vw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241005-lsm-key_free-v1-1-42ea801dbd63@weissschuh.net>
 
-On 10/4/2024 11:00 AM, Alexander Duyck wrote:
-> On Tue, Oct 1, 2024 at 12:59‚ÄØAM Yunsheng Lin <yunshenglin0825@gmail.com> wrote:
->>
->> Rename skb_copy_to_page_nocache() to skb_copy_to_va_nocache()
->> to avoid calling virt_to_page() as we are about to pass virtual
->> address directly.
->>
->> CC: Alexander Duyck <alexander.duyck@gmail.com>
->> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->> ---
->>   include/net/sock.h | 10 ++++------
->>   net/ipv4/tcp.c     |  7 +++----
->>   net/kcm/kcmsock.c  |  7 +++----
->>   3 files changed, 10 insertions(+), 14 deletions(-)
->>
->> diff --git a/include/net/sock.h b/include/net/sock.h
->> index c58ca8dd561b..7d0b606d6251 100644
->> --- a/include/net/sock.h
->> +++ b/include/net/sock.h
->> @@ -2185,15 +2185,13 @@ static inline int skb_add_data_nocache(struct sock *sk, struct sk_buff *skb,
->>          return err;
->>   }
->>
->> -static inline int skb_copy_to_page_nocache(struct sock *sk, struct iov_iter *from,
->> -                                          struct sk_buff *skb,
->> -                                          struct page *page,
->> -                                          int off, int copy)
->> +static inline int skb_copy_to_va_nocache(struct sock *sk, struct iov_iter *from,
->> +                                        struct sk_buff *skb, char *va,
->> +                                        int copy)
->>   {
+On Sat, Oct 05, 2024 at 02:06:28AM +0200, Thomas Weiﬂschuh wrote:
+> The key_free LSM hook has been removed.
+> Remove the corresponding BPF hook.
 > 
-> This new naming is kind of confusing. Currently the only other
-> "skb_copy_to" functions are skb_copy_to_linear_data and
-> skb_copy_to_linear_data_offset. The naming before basically indicated
+> Avoid warnings during the build:
+>   BTFIDS  vmlinux
+> WARN: resolve_btfids: unresolved symbol bpf_lsm_key_free
 
-I am not sure if the above "skb_copy_to" functions are really related
-here, as they are in include/linux/skbuff.h and don't take '*sk' as
-first input param.
+nice, I was wondering about that, lgtm
 
-As "skb_copy_to" function in include/net/sock.h does take '*sk' as first
-input param, perhaps the "skb_copy_to" functions in include/net/sock.h
-can be renamed to "sk_skb_copy_to" in the future as most of functions
-do in include/net/sock.h
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-> which part of the skb the data was being copied into. So before we
-> were copying into the "page" frags. With the new naming this function
-> is much less clear as technically the linear data can also be a
-> virtual address.
-
-I guess it is ok to use it for linear data if there is a need, why
-invent another function for the linear data when both linear data and
-non-linear data can be used as a virtual address?
+thanks,
+jirka
 
 > 
-> I would recommend maybe replacing "va" with "frag", "page_frag" or
-> maybe "pfrag" as what we are doing is copying the data to one of the
-> pages in the paged frags section of the skb before they are added to
-> the skb itself.
-
-Don't "frag", "page_frag" or "pfrag" also seem confusing enough that
-it does not take any 'frag' as the input param?
-
-Does skb_copy_data() make more sense here as it can work on both
-linear and non-linear data, as skb_do_copy_data_nocache() and
-skb_copy_to_page_nocache() in the same header file seem to have a
-similar style?
+> Fixes: 5f8d28f6d7d5 ("lsm: infrastructure management of the key security blob")
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> ---
+> I don't know much about LSMs, so please disregard if this is wrong.
+> ---
+>  kernel/bpf/bpf_lsm.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> index 6292ac5f9bd139dafb39ecd8bb180be46cd7c7fd..3bc61628ab251e05d7837eb27dabc3b62bcc4783 100644
+> --- a/kernel/bpf/bpf_lsm.c
+> +++ b/kernel/bpf/bpf_lsm.c
+> @@ -339,10 +339,6 @@ BTF_ID(func, bpf_lsm_path_chmod)
+>  BTF_ID(func, bpf_lsm_path_chown)
+>  #endif /* CONFIG_SECURITY_PATH */
+>  
+> -#ifdef CONFIG_KEYS
+> -BTF_ID(func, bpf_lsm_key_free)
+> -#endif /* CONFIG_KEYS */
+> -
+>  BTF_ID(func, bpf_lsm_mmap_file)
+>  BTF_ID(func, bpf_lsm_netlink_send)
+>  BTF_ID(func, bpf_lsm_path_notify)
+> 
+> ---
+> base-commit: 0c559323bbaabee7346c12e74b497e283aaafef5
+> change-id: 20241005-lsm-key_free-b47445ee523d
+> 
+> Best regards,
+> -- 
+> Thomas Weiﬂschuh <linux@weissschuh.net>
+> 
 
