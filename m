@@ -1,137 +1,105 @@
-Return-Path: <linux-kernel+bounces-351727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40AF7991569
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:55:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFC299156C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10223283195
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 08:55:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 940091C2165F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 08:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAC413C908;
-	Sat,  5 Oct 2024 08:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB8E145341;
+	Sat,  5 Oct 2024 08:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sm1Ewox/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="keeIyN6L"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4A83F9D5;
-	Sat,  5 Oct 2024 08:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD16813DBBC;
+	Sat,  5 Oct 2024 08:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728118520; cv=none; b=R45LZSlany3GzuXqZ1Uq7X5H+c+kSUnVB1PFrLQfHQ+78/sDlQQWsRfsOuNQ9WEh/TtQ3b+w5BI7dE/LD5i3u1e8D6Sa65MkAsWAseFRHps08X4ALp2h0axIsB4nsyjMOC8lTwcRx1+aIio/9px2EB/oy0eoqiAcJyDRx3Tirhk=
+	t=1728118527; cv=none; b=Ek2Q7ACjXDMiATRI/IDd4Wo6UGfupGqiWmywwOLtGP3B3AN3zvcqvjXr3cFYz8BNCUEeoOE+zeKUXl2w2M+AuTBkcgYxL5rTK0+XybNQ1iCnSGMNTQsGr55/0BZegWmQ8YowOVeZmcMSL9QriLXrKiBejKtKO8mMBXfjb3Lnkjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728118520; c=relaxed/simple;
-	bh=b0NR+d5Noe8seh/sWqbJp1vYwfdywrPfRfDJHlpJDo4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EipOPMAwS4397Aiev3C2ZgII6WGpSlfrGz/7LmOjTurn48m3J3rjgZXQ3VBh1tH6HqoowNHl82UdaMDoTsjZlE4ejDck3TXzZTd/NtGs+JZcpCqBmC2Qxq81qL6Gl9fPdAXrqPkZ5m+cp7ILeNtfPQQsytjm6CSy7H2MkECeqfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sm1Ewox/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF9EDC4CEC2;
-	Sat,  5 Oct 2024 08:55:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728118519;
-	bh=b0NR+d5Noe8seh/sWqbJp1vYwfdywrPfRfDJHlpJDo4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sm1Ewox/D1w3vTK0rA33QhpqNauh6lCfX021bgw9CJG6ZwY8IDZZxLGzZNBP/SW1b
-	 vUe9nob2ZgQQSC5lhn2rN9iZf/ikiAiQONvk1d+eVp4vHence4+iaITbvxq8BsrpPd
-	 LDi8DiC4e9sKWbgWOpwTVvXNpDbs7o9uV+ygZIXTdSfHpxm0Dayz59up2NaG4Thl9E
-	 D42JXAoKZiQWr0PMJMHTScEmlmA0L8lEh084TBxbMBb6fRzgJnv2UV9AlLKrgQK1JY
-	 syxO0wxsuTYdi1S0HQfgR7oxKgurQNPnhxAaDVGotVJI89KLcY1HqTHcUG3H/kJab4
-	 NhUtrE8uP+PRg==
-Message-ID: <7b3e9a35-34f3-4e23-8ef8-574380819eb3@kernel.org>
-Date: Sat, 5 Oct 2024 10:55:14 +0200
+	s=arc-20240116; t=1728118527; c=relaxed/simple;
+	bh=Q9fN4mIljgWDFimuOMbRoPT+LKzZXB/LgeqSeq5NyoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mZVeDmf4Buusm3cDnnVLlZSMRjYvpwLOm++OVgddznFNJppTD9Ba2cBtea5Y6h1w4TpUsACHR6FguMYex+6iXaM8mGyfHZ/EQZ/+kBQaUdu4vsI2ofwluZi3zfFnr9GbCAMzU6gIxSVYVKykF83VfXlmSSpcnlYnV/37fvvJyrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=keeIyN6L; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 004411F921;
+	Sat,  5 Oct 2024 10:55:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1728118519;
+	bh=CDFLEKcKHVxpFqH0nXKpZpV/aXgTu4xt6u1XvUqG51s=;
+	h=Received:From:To:Subject;
+	b=keeIyN6LSR25JuIY2SIcSA+mnr/DCGLQzTsrn/acIHK2dkEUN3tAxBFH6t27LHW3K
+	 wDGljIO2kHOF3ued7Lf0GJvPCF9Ex0Y/KZwaccJ/f60eacB9EauMTDDWmG5V7Jr7q9
+	 NZNi5M3wqnKOeSK++fiD+ojYcamoqXKYUKun6+URKuDjJDsIuZBmEgi7N+ln879T5s
+	 swISV2oNbpfsrgxlwzvRfHx+LxwDtLNIZ2dR++sQtMppy3OD4eiaFrLcGbtk3NFXwn
+	 l7ssm7ZJTBpgP00w7pS09JvetBeKisWeMXCesB3eWYG4E84+2FiOTTb72NKH97IsQf
+	 yFVdJDkCO2d0w==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id A99417F96B; Sat,  5 Oct 2024 10:55:18 +0200 (CEST)
+Date: Sat, 5 Oct 2024 10:55:18 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Brian Norris <briannorris@chromium.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Lin <yu-hao.lin@nxp.com>, kernel@pengutronix.de,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 02/12] wifi: mwifiex: fix MAC address handling
+Message-ID: <ZwD-9nV3o2fOpEYb@gaggiata.pivistrello.it>
+References: <20240918-mwifiex-cleanup-1-v2-0-2d0597187d3c@pengutronix.de>
+ <20240918-mwifiex-cleanup-1-v2-2-2d0597187d3c@pengutronix.de>
+ <ZwB3FCdpL85yA2Si@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] dt-bindings: misc: fsl,qoriq-mc: remove ref for
- msi-parent
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- imx@lists.linux.dev
-References: <20240828163417.1130252-1-Frank.Li@nxp.com>
- <kasyt62uhb7cijyrmbs7zelwgjtted6p4ynsy2s47e2ycniicb@szosg55aejjh>
- <ZwBNVb+9qIpEybyQ@lizhi-Precision-Tower-5810>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZwBNVb+9qIpEybyQ@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwB3FCdpL85yA2Si@google.com>
 
-On 04/10/2024 22:17, Frank Li wrote:
-> On Thu, Aug 29, 2024 at 08:24:26AM +0200, Krzysztof Kozlowski wrote:
->> On Wed, Aug 28, 2024 at 12:34:13PM -0400, Frank Li wrote:
->>> msi-parent is standard property. Needn't ref to phandle. Add maxItems: 1
->>> for it.
->>>
->>> Fix below warning:
->>>   arch/arm64/boot/dts/freescale/fsl-ls1088a-ten64.dtb: fsl-mc@80c000000: msi-parent:0: [16, 0] is too long
->>>
->>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->>> ---
->>> Change from v1 to v2
->>> - add maxItems: 1 for msi-parent
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Fri, Oct 04, 2024 at 04:15:32PM -0700, Brian Norris wrote:
+> On Wed, Sep 18, 2024 at 01:10:27PM +0200, Sascha Hauer wrote:
+> > Furthermore the driver doesn't use the permanent address to add the
+> > bss_num to, but instead the current MAC address increases each time
+> > we do a change_virtual_intf.
+> > 
+> > Fix this by initializing the MAC address once from the permanent MAC
+> > address during creation of the virtual interface and never touch it
+> > again. This also means that userspace can set a different MAC address
+> > which then stays like this forever and is not unexpectedly changed
+> > by the driver.
+> > 
+> > It is not clear how many (if any) MAC addresses after the permanent MAC
+> > address are reserved for a device, so set the locally admistered
+> > bit for all MAC addresses derived from the permanent address.
 > 
-> Anyone pick this patch?
+> I think I'm generally supportive of the direction this changes things,
+> but I'm a bit hesitant about two things:
 
-Your maintainer, if you cared to Cc him?
+FTR, I am hesitant for similar reasons. In addition there is my comment
+from the previous version on a specific use case potentially broken.
 
-If you do not send patch to people, how they are supposed to pick it up?
+> And I see that you rightly don't know how many addresses are actually
+> reserved, but I have an educated guess that it's not just 1. For one,
+> this driver used to default-create 3 interfaces:
 
-Best regards,
-Krzysztof
+The MAC addresses on the module are not allocated by the Wi-Fi chip vendor (NXP,
+and before Marvell), but by whom is integrating the chip. I can try to ask
+a couple of vendors what they are doing on this regard, and if this is somehow
+suggested by NXP or they are just doing whatever they believe is right. Just to
+add a couple of more data points to this discussion.
+
+Francesco
 
 
