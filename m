@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-352002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C0A9918F8
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:41:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D789918F5
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC3FCB21EBC
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:41:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C571C20F52
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE83515957E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7E7158DC2;
 	Sat,  5 Oct 2024 17:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNK3sXfb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="ma98UlFw"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390DD158DCA;
-	Sat,  5 Oct 2024 17:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C8814D29B;
+	Sat,  5 Oct 2024 17:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728150059; cv=none; b=GkegITe2jjpBFl9ADt6h/Bm8dHnuSiJsVthMwHWSLAWf44Tb/ijG0jRByKNJKe4vDVg4baymgsiwaPok8VnrtN7c2hPf2E/NPtJnZ9NqJNYNW9v4gX/KeMgFJXjDUARNWhSoKpNTHGgutHXV9XZdkiR/6x067HvrDnunEIENEnk=
+	t=1728150058; cv=none; b=AK8TVhwYJGXjB1ap56VS5/SjOYZgXOTAkQjj9SjFvQ5mUcx5hcxvUICDuRQpP5gSL/a7WWq6nG4u9dStzJc4bVf9v52Xvb+kkVvjNKECe+o1UJbMfeyZIzuZvc1PHi/q2f6LCAIMWb+xwuAcOZTAIJqnmq8D/EF8mqyXXkwbOmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728150059; c=relaxed/simple;
-	bh=cBdbuPTUpxfP6eMgC/lhcKtPx49h+a7Y8BWA0yItIA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iAcr0dEb64ZyO61l41T+Nj7zwOdmshJFFTrYE6wnOm503R7IsfSwfzioCaU1vs/Alinm4BXgO671tCFsK/wwODhYMY1xvVpTyi0VfF7YT6tLPnLiQy/PuHsI3ScayDcwphJictE3OAWNC8edAAp5Q6eqoPwcPbqMSP7awUp/Dk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNK3sXfb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E0CFC4CEC2;
-	Sat,  5 Oct 2024 17:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728150058;
-	bh=cBdbuPTUpxfP6eMgC/lhcKtPx49h+a7Y8BWA0yItIA8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UNK3sXfbC+99Mklm71r+M3DFqwg4LIjMBwFjJorMyZ9k3DNzO49znYtugIA/Fk1ez
-	 +gnbXv6mCZp5kRs6vcijWSE1cwivb/xPfYh/iuO8Nx5CLQGpOSsn72dg9CuREsqO9p
-	 2HvLY8D3trHBuKcDp2EBtGFM/ejLjGdEY1wY0/irfzr/abjQ4wx1rRANAP9qM8Q31M
-	 6Umt/iUVshCq6/h5oqGA5lsBQJy8fnYuM/DZgEeTAyS4jz+REvp+DMPYVuLVWGjFZ9
-	 Mwuz1R4LnYb5lOlLD4VDOQEBzV6StV+bFE29E8AJQJ8JqDW6ym65xTLmGwnabI0QyD
-	 kA+Gb7Rq7LXGw==
-Date: Sat, 5 Oct 2024 18:40:18 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, David Lechner <dlechner@baylibre.com>,
- Nuno Sa <nuno.sa@analog.com>, Dan Murphy <dmurphy@ti.com>, Sean Nyekjaer
- <sean@geanix.com>, Leonard =?UTF-8?B?R8O2aHJz?= <l.goehrs@pengutronix.de>,
- Mihail Chindris <mihail.chindris@analog.com>, Alexandru Ardelean
- <ardeleanalex@gmail.com>, Gustavo Silva <gustavograzs@gmail.com>, Shoji
- Keita <awaittrot@shjk.jp>, Andrey Skvortsov <andrej.skvortzov@gmail.com>,
- Dalton Durst <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>, Andreas
- Klinger <ak@it-klinger.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Jirman
- <megi@xff.cz>
-Subject: Re: [PATCH 04/13] iio: adc: ti-ads8688: add missing select
- IIO_(TRIGGERED_)BUFFER in Kconfig
-Message-ID: <20241005184018.6b06e850@jic23-huawei>
-In-Reply-To: <20241003-iio-select-v1-4-67c0385197cd@gmail.com>
-References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
-	<20241003-iio-select-v1-4-67c0385197cd@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728150058; c=relaxed/simple;
+	bh=VAd/yLm3XIw5HQaf5ZKgozvfO8p4FW4SgJ4KYjCCJTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ifEuwtabuU3AHAdWSAjCKCBOBPqUkbVMAKX6L+8KoXrStUteYgiuRJPznE95Rj5kldRFDq3kH4haPKYKOBYURxr5EP4bHMDHWbPUTw9ONJjwvWZvmqaa1ONFX2M8VRwKpoQ0ouEEbEPD8dZthL49azf1+MBbGrJ3nqDPj5yaz0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=ma98UlFw; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 05B701C0082; Sat,  5 Oct 2024 19:40:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1728150053;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n9vZfUZ8s2oPLQ0d9T0cl/XttnMZ/kA6jZ27FANk90U=;
+	b=ma98UlFwwgyHwQW/JPb1qMmH7qbwgN2At3u69m7SUyv1X7fETQPtnotSpchORkcgIxU0eV
+	OBmukeo7C2JeVSkrimRGOtM5+ngF8c8fX16msEB6TqA3VAIzrgg7qFJNVxHRjqzMcGVSQC
+	GpPONkwfOgrzTbJOQeBmPj1muReAc2Q=
+Date: Sat, 5 Oct 2024 19:40:52 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <len.brown@intel.com>,
+	linux-pm <linux-pm@vger.kernel.org>, linux-kernel@vger.kernel.org,
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Subject: Re: Root filesystem read access for firmware load during hibernation
+ image writing
+Message-ID: <ZwF6JEHIQda92sIL@duo.ucw.cz>
+References: <3c95fb54-9cac-4b4f-8e1b-84ca041b57cb@maciej.szmigiero.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AzanCVSKuR7/7bLf"
+Content-Disposition: inline
+In-Reply-To: <3c95fb54-9cac-4b4f-8e1b-84ca041b57cb@maciej.szmigiero.name>
 
-On Thu, 03 Oct 2024 23:04:50 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-> This driver makes use of triggered buffers, but does not select the
-> required modules.
-> 
-> Fixes: 2a86487786b5 ("iio: adc: ti-ads8688: add trigger and buffer support")
-> Add the missing 'select IIO_BUFFER' and 'select IIO_TRIGGERED_BUFFER'.
-Fixes tag must be part of the tag block.
+--AzanCVSKuR7/7bLf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also this one looks to be a false positive. The driver includes
-buffer.h but doesn't actually have buffered support.
+Hi!
 
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
->  drivers/iio/adc/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 45872a4e2acf..e6be1f1ec79f 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -1483,6 +1483,8 @@ config TI_ADS8344
->  config TI_ADS8688
->  	tristate "Texas Instruments ADS8688"
->  	depends on SPI
-> +	select IIO_BUFFER
-> +	select IIO_TRIGGERED_BUFFER
->  	help
->  	  If you say yes here you get support for Texas Instruments ADS8684 and
->  	  and ADS8688 ADC chips
-> 
+> In my case, a USB device (RTL8821CU) gets reset at that stage due to
+> commit 04b8c8143d46 ("btusb: fix Realtek suspend/resume") and so it tries
+> to request_firmware() from the root filesystem after that thaw/reset,
+> when the hibernation image is being written.
+>=20
+> It usually succeeds, however often it deadlocks somewhere in Btrfs code
+> resulting in the system failing to power off after writing the hibernate
+> image:
+> power_off() calls dpm_suspend_start(), which calls dpm_prepare(), which
+> waits for device probe to finish.
+>=20
+> And device probe is stuck forever trying to load that USB stick firmware
+> from the filesystem - so in the end the system never powers off during
+> (after) hibernation.
+>=20
+> That's why I wonder whether this firmware load is supposed to work correc=
+tly
+> during that hibernation state and so the system may be hitting some kind =
+of
+> a swsusp/btrfs/block layer race condition.
+>=20
+> Or, alternatively, maybe  reading files is not supported at this point and
+> so this is really a btrtl/rtw88 bug?
 
+I'd say not supported at this point. Reading file may still read to
+atime update, etc, and we can't really can't support that easily.
+
+Suggestion is to keep firmware cached in memory, or at least cache it
+in memory when hibernation begins.
+
+BR,
+										Pavel
+									=09
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--AzanCVSKuR7/7bLf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZwF6JAAKCRAw5/Bqldv6
+8iNhAJ9rXSgZSqHjgeaD4NEroan26onCyACdG2iw2e9t1Xw164dPfjFJlAMuVa0=
+=QhxX
+-----END PGP SIGNATURE-----
+
+--AzanCVSKuR7/7bLf--
 
