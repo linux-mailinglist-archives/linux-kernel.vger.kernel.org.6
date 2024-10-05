@@ -1,177 +1,165 @@
-Return-Path: <linux-kernel+bounces-351831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F4B9916A9
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:07:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFEDE9916A8
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A2DC1C21F42
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:07:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EDFE283ECA
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB4685628;
-	Sat,  5 Oct 2024 12:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="BZMj2elV"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D387714C5AF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B915314C5AA;
 	Sat,  5 Oct 2024 12:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wTNBG1Xo"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D0C85628
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 12:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728130028; cv=none; b=uzUwN5uCei+SoLYu/v9OE0b/e5A5YCoIw/04WgauHDxq7UaCxZKPyCOGEcDmDJVUyWhFJiNY3hDIhHrpo70KiH5Leb5dGsUd9ikfetaSDjpMmFshcdEvtot9CdW9ceJISsl1FL2s11D3RdgWiSdzv8XsWNYePluOEuQK17tPG4M=
+	t=1728130025; cv=none; b=b/anqWCbmigm2PXKZlC+RIaVcKw94VrvNlWLLkrsmez5fM5QzqcWMjNVoyCEt3GRndcj4V61jrH13l7JVTzl/lHnEOv0xtZ5dDyYpMS+uLTII8UQJ26ePufhgiZtbDJbOcPbF2rDkk0lf2Wbz+tXH2vDJRQTLH2FQJNoN7IU80Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728130028; c=relaxed/simple;
-	bh=hU5q9QUikjXmWkbzka9caDwMGlVJ8fnlLNqMoTuILEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KjI5rXn61dbQVgqNoMDZElVB3V3WLZuf6tM8OvWCvSFJzq3RXiwv88AN9/Aiip+k5mkttrn0IwMxuxC6vSTWJUceo6FMpqV/sVyLnk8X6eppV3ivjGqEwn0YMjI69R110HEcZs/pVmi1s0LdXtv/Rd+FqT15uafnlQsku2qd1mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=BZMj2elV; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728130024;
-	bh=hU5q9QUikjXmWkbzka9caDwMGlVJ8fnlLNqMoTuILEk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BZMj2elVuboGHieaGO34F9soADypE9CImibr9QZpx07zJPFd7FOpQgnvZo1V+nGmb
-	 dgb7CwaMa1NNo94MOmpv9HtSbEy1BFxxrpD/vwLXFm34FQk78S9bLzLq4Y/QnrVHtR
-	 CV3fPxRY3vdtx5NIV88S7E6wRlMjKDWIb+xwpke1BBt6owZwAGYYjfUR7bpgK+VLXa
-	 9lbzJ1uUZDE0npSLEvBln7UfuFd4R3FHoqRYtVFt0dpTpvPtjGc36l0KQWWj+Bcrbc
-	 oqPFfjGHRtJ7m0B+EZfy20OMdoh2ajf+opXl+0PBbUmJFQqjwNISIIeD8WQ6sK3EOT
-	 daOVjRS1nRwHA==
-Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XLPKh4hQwzXwk;
-	Sat,  5 Oct 2024 08:07:04 -0400 (EDT)
-Message-ID: <69c7e71a-2076-4fa7-90f3-534b52d74345@efficios.com>
-Date: Sat, 5 Oct 2024 08:05:05 -0400
+	s=arc-20240116; t=1728130025; c=relaxed/simple;
+	bh=7Wv79x5E9AcwAGG/zQcK660mw1zBEwy03YrLbK9EGno=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tqpQzVbFA/AJsVVSTg812Hs87zbPU7ECmf3scWSmpBrj3rmeroxykDmShZBHMShOrlnZtwpQJdpskb7HFomiQ/xHEZQCKVRxpscwi9pjnT+AqNsjJRzrfIURgfpHO96+AXOvT3pZyyBPwlmwxKwAAflKUObJEEG0MBzgJqaUtS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wTNBG1Xo; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37cc9aeb01dso2082486f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 05:07:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728130020; x=1728734820; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r98QtsF1/DiiG9GkQhRBoJ7Pv1Ng6Yq06tif7n6/E6c=;
+        b=wTNBG1Xo87ornraNFjtYgRvbmOqxtttc8T0nfmYoL5+Mqr03KOwzs3fxozdtMuv3wl
+         QxQrAXgKYr4Pw+B679wYglzgLnByO8kzqwsQt59f03BpK/SlahE2wT2MMGHFPFbeyoDE
+         +BER1SgGzmELUPMkWxabEliAR4/lNxj8TGMIB+lfnwRgIO9WUaJ0+VyMR3JsnH6UYj+w
+         0pGOI49FTeIl7pQ+MPJupRa2ViDEjHQn0ObLK1vc6vxQEZ3uFV+n23N+n+IlEUuzeo8n
+         3ksRsj5p+Gx8CQ4N01pSma6gWcOOiTDmfmr6tw+6qHbkCaQe/qpfv1YlfoxDyb1nyl1z
+         rjNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728130020; x=1728734820;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r98QtsF1/DiiG9GkQhRBoJ7Pv1Ng6Yq06tif7n6/E6c=;
+        b=rN5f9UcDyWzJjza/S8DEXEUBpgCQ2AkCKMSZUaMnUvTOmm42aqolFpXBBVQRLRtDWi
+         KdsPhQIR9Xya3RHsMD5ZQ3M6Rg5UklwHt30VmaHisoSmqAPe5nC0+5Uu6XJ1IOHfpK3K
+         nf5A4RjGqZRPEPlCeDS/BWBdbcwFFjZg5Oeh804yRF5xx9duaR0zhv/LZxtiORq7L6D8
+         RLo9qRSpNvg1YzqU498WoUFcYOpBLqBEJxk/h/uHuKKyWj1pUpSdcHLMYAfX/Ynf6rlv
+         uXrxypwGxzRpdNvBiDKvnyjgPSFpMiv5BwBasepchBSjBXLjGKrvR+ILZZdKno2TOc40
+         cp6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUFbBCpUNbtZW2lcWuv84RWzY42cSSdYhNU8nx0H6Z2fcwEMYR8pMDB3AcQaV+giBWPrzVMHBiVcZDuRT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw1Mo/47aegcmHJCA+wjsupPbQGrCw9jpCzXgnZlrgX5IMiY4Z
+	ouuSEk02CPuy3uDPs6FFGMpqJN+B+YE3S2XdG/icX948ofKs9r1kwbT4gYfMaXnLx+JVcUyfz+U
+	uO7pGN10YFF0CkKZEtgmUvwuorycWEApYEQV3
+X-Google-Smtp-Source: AGHT+IFNEzOq1xF5WTsUzl1TKhhGpdlElRJhAaNe630/4pPwivHiEWJodDzT7cxT+SOXtwKnOzb/GYiiaI5QG0UIuzI=
+X-Received: by 2002:a5d:5245:0:b0:37c:d4e8:2c6a with SMTP id
+ ffacd0b85a97d-37d0e8de992mr3782657f8f.51.1728130020147; Sat, 05 Oct 2024
+ 05:07:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 3/4] hp: Implement Hazard Pointers
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>,
- Michael Ellerman <mpe@ellerman.id.au>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
- Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>,
- Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, rcu@vger.kernel.org,
- linux-mm@kvack.org, lkmm@lists.linux.dev
-References: <20241004182734.1761555-1-mathieu.desnoyers@efficios.com>
- <20241004182734.1761555-4-mathieu.desnoyers@efficios.com>
- <CAEXW_YQfyPapBwSuqvFfs+XzSPaSCC3FDKsvb_Up+h-dnqgXeA@mail.gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <CAEXW_YQfyPapBwSuqvFfs+XzSPaSCC3FDKsvb_Up+h-dnqgXeA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241004155247.2210469-1-gary@garyguo.net> <20241004155247.2210469-3-gary@garyguo.net>
+In-Reply-To: <20241004155247.2210469-3-gary@garyguo.net>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Sat, 5 Oct 2024 14:06:48 +0200
+Message-ID: <CAH5fLggOEVxNQLfLxMg+0B2zEciaJ9Y7wkmrMoYXEcEQOg5HNQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] rust: convert `Arc` to use `Refcount`
+To: Gary Guo <gary@garyguo.net>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Wedson Almeida Filho <walmeida@microsoft.com>, 
+	Valentin Obst <kernel@valentinobst.de>, Alex Mantel <alexmantel93@mailbox.org>, 
+	Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-10-04 23:25, Joel Fernandes wrote:
-> On Fri, Oct 4, 2024 at 2:29 PM Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
->>
->> This API provides existence guarantees of objects through Hazard
->> Pointers (HP). This minimalist implementation is specific to use
->> with preemption disabled, but can be extended further as needed.
->>
->> Each HP domain defines a fixed number of hazard pointer slots (nr_cpus)
->> across the entire system.
->>
->> Its main benefit over RCU is that it allows fast reclaim of
->> HP-protected pointers without needing to wait for a grace period.
->>
->> It also allows the hazard pointer scan to call a user-defined callback
->> to retire a hazard pointer slot immediately if needed. This callback
->> may, for instance, issue an IPI to the relevant CPU.
->>
->> There are a few possible use-cases for this in the Linux kernel:
->>
->>    - Improve performance of mm_count by replacing lazy active mm by HP.
->>    - Guarantee object existence on pointer dereference to use refcount:
->>      - replace locking used for that purpose in some drivers,
->>      - replace RCU + inc_not_zero pattern,
->>    - rtmutex: Improve situations where locks need to be taken in
->>      reverse dependency chain order by guaranteeing existence of
->>      first and second locks in traversal order, allowing them to be
->>      locked in the correct order (which is reverse from traversal
->>      order) rather than try-lock+retry on nested lock.
->>
->> References:
->>
->> [1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
->>       lock-free objects," in IEEE Transactions on Parallel and
->>       Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
-> [ ... ]
->> ---
->> Changes since v0:
->> - Remove slot variable from hp_dereference_allocate().
->> ---
->>   include/linux/hp.h | 158 +++++++++++++++++++++++++++++++++++++++++++++
->>   kernel/Makefile    |   2 +-
->>   kernel/hp.c        |  46 +++++++++++++
-> 
-> Just a housekeeping comment, ISTR Linus looking down on adding bodies
-> of C code to header files (like hp_dereference_allocate). I understand
-> maybe the rationale is that the functions included are inlined. But do
-> all of them have to be inlined? Such headers also hurt code browsing
-> capabilities in code browsers like clangd. clangd doesn't understand
-> header files because it can't independently compile them -- it uses
-> the compiler to generate and extract the AST for superior code
-> browsing/completion.
-> 
-> Also have you looked at the benefits of inlining for hp.h?
-> hp_dereference_allocate() seems large enough that inlining may not
-> matter much, but I haven't compiled it and looked at the asm myself.
+On Fri, Oct 4, 2024 at 5:53=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+>
+> With `Refcount` type created, `Arc` can use `Refcount` instead of
+> calling into FFI directly.
+>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Gary Guo <gary@garyguo.net>
 
-Here is a comparison in userspace:
+[...]
 
-* With "hp dereference allocate" inlined:
+> -            // SAFETY: We have exclusive access to the arc, so we can pe=
+rform unsynchronized
+> -            // accesses to the refcount.
+> -            unsafe { core::ptr::write(refcount, bindings::REFCOUNT_INIT(=
+1)) };
+> +            // We have exclusive access to the arc, so we can modify the=
+ refcount at will.
+> +            refcount.set(1);
 
-     test_hpref_benchmark (smp_mb)             nr_reads   1994298193 nr_writes     22293162 nr_ops   2016591355
-     test_hpref_benchmark (barrier/membarrier) nr_reads  15208690879 nr_writes      1893785 nr_ops  15210584664
+Why are you changing this to an atomic write? We just took ownership,
+so we have exclusive access and can perform an unsynchronized write.
 
-* With "hp dereference allocate" implemented as a function call:
+>  impl<T: ?Sized> Drop for Arc<T> {
+>      fn drop(&mut self) {
+> -        // SAFETY: By the type invariant, there is necessarily a referen=
+ce to the object. We cannot
+> -        // touch `refcount` after it's decremented to a non-zero value b=
+ecause another thread/CPU
+> -        // may concurrently decrement it to zero and free it. It is ok t=
+o have a raw pointer to
+> -        // freed/invalid memory as long as it is never dereferenced.
+> -        let refcount =3D unsafe { self.ptr.as_ref() }.refcount.get();
+> -
+>          // INVARIANT: If the refcount reaches zero, there are no other i=
+nstances of `Arc`, and
+>          // this instance is being dropped, so the broken invariant is no=
+t observable.
+> -        // SAFETY: Also by the type invariant, we are allowed to decreme=
+nt the refcount.
+> -        let is_zero =3D unsafe { bindings::refcount_dec_and_test(refcoun=
+t) };
+> +        // SAFETY: By the type invariant, there is necessarily a referen=
+ce to the object.
+> +        // NOTE: we cannot touch `refcount` after it's decremented to a =
+non-zero value because
+> +        // another thread/CPU may concurrently decrement it to zero and =
+free it. However it is okay
+> +        // to have a transient reference to decrement the refcount, see
+> +        // https://github.com/rust-lang/rust/issues/55005.
+> +        let is_zero =3D unsafe { self.ptr.as_ref().refcount.dec_and_test=
+() };
 
-     test_hpref_benchmark (smp_mb)             nr_reads   1558924716 nr_writes     14261028 nr_ops   1573185744
-     test_hpref_benchmark (barrier/membarrier) nr_reads   5881131707 nr_writes      2005140 nr_ops   5883136847
+This code needs to make use of this guarantee for correctness:
 
-So the overhead of the function call when using symmetric memory barriers
-between hp allocate/hp scan is a 20% slowdown.
+For both `&T` without `UnsafeCell<_>` and `&mut T`, you must also not
+deallocate the data until the reference expires. As a special
+exception, given an `&T`, any part of it that is inside an
+`UnsafeCell<_>` may be deallocated during the lifetime of the
+reference, after the last time the reference is used (dereferenced or
+reborrowed). Since you cannot deallocate a part of what a reference
+points to, this means the memory an `&T` points to can be deallocated
+only if *every part of it* (including padding) is inside an
+`UnsafeCell`.
 
-It's worse in the asymmetric barrier/membarrier case, introducing a 61%
-slowdown.
+from https://doc.rust-lang.org/stable/std/cell/struct.UnsafeCell.html
 
-Given that the overhead is noticeable, I am tempted to leave the hazard
-pointer allocate/retire as inline functions.
+so when invoking `dec_and_test()` you can have a reference to the
+`Refcount`, but not necessarily to other parts of `ArcInner` like you
+do here.
 
-About code browsers like clangd, I would recommend improving the tooling
-rather than alter the design of the code based on current tooling
-limitations.
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+Alice
 
