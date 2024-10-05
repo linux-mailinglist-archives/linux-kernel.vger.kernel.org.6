@@ -1,137 +1,78 @@
-Return-Path: <linux-kernel+bounces-352173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 831DE991B40
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 00:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 963C1991B42
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 00:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 112C61F2235E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 22:35:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AD731F22443
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 22:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDE516DEDF;
-	Sat,  5 Oct 2024 22:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F40216D4E6;
+	Sat,  5 Oct 2024 22:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IakF279I"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCVCzyJ5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902D5148838
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 22:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE235223;
+	Sat,  5 Oct 2024 22:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728167719; cv=none; b=Njwb38N6pt840ZBIvtHYThx8VTAaCKmF/6hHrjdZ0xH6DTsDiIz2/fIw5MZhHYMqK5QzGyqgW3zyUp0U70xmz0haXmSRlpQJXUQ5r/+s/w57G2mOooQ7HzhiSE63MaEXZgCVRcmxwXr+PxGS9CbH1DjKeNGq5iVfDNwlJ5udQnw=
+	t=1728167802; cv=none; b=AKRY25C+ByN9ruCfjO7AKgd0mii43PHdyl+3aiGBn0kgMSZVkbZ6vVTCEvj6viLUtE4GDRJ+GoGJyd3FcmG5egBqlqSVSfK/ir9YsOB5PGAmRVCUPogDRNvYWN1dzOHYAg3Y9d1FseW1GZlPBY9vx3x8gK4lBjtl+SYtVjO4qaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728167719; c=relaxed/simple;
-	bh=b+AWARzu8Thd5FUOfHILFpuGGWUetHMUNgu/HGN6+q0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OezEX01p/duo8cAm9AcDgZ1cYL7Mn4puSNJBlipX2/yP2DHNbb3EKMPEUFNI94o5UVveFn6S321NzwKx7EiqqK8FookvAZLdjjJebrPqi4CLv3WozxLxy4GIpxMGe65mT8BoizGlPbZlOQTVYHvGAX30abAwk+3ne0GLjjFoCxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IakF279I; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a991fedbd04so186208466b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 15:35:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1728167716; x=1728772516; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQI/L/s5ZU/jfp6TpSnEQe99W437IW863hAyq7v8534=;
-        b=IakF279IiZTEE5t5GpvmzxSncwKBajeEv+S8fkPQnEbdi0iAWNwWn3rwi6CwrR/i1E
-         CkAbfmgtF/1Nht2Gwe6AYrFnPCg0+J8UXcSSDOiebpciceM3CPs0wHF3nLzo3bmo4g+b
-         N6lLFesJRqB5iwzBoqYBC/nNpcSYgRLz+6WQA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728167716; x=1728772516;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HQI/L/s5ZU/jfp6TpSnEQe99W437IW863hAyq7v8534=;
-        b=LfwA93wPeWv/iu8In+sGqo9xrvv1h5o3T6YShNODm1+I7nJP8k2XNg5+qCmeqVm4fk
-         6q8AD9L6WA2fAcm0tlsGMnapHi2iPh3vU1DROVvmserlCSYT3xW1XtMHs7uF2AXNU3Xj
-         ATM6f399DvJoMPEH4HhU78nyj5xnzcZb6D49ZeL5FILGZH/9uRyM99sSvSNZppyiCu2m
-         tHMLc2EATFYAbbyZ29cubjBUP9JBTTIPBpq33EPf3+1+0btb9dwDhcedu6VbayTbRQvB
-         N6qhRm/9svazGFzttZDVglAkKRvzuRDXnbixR0VRmZIpMFq5YAA+lGBNcgp8eZH1xaGb
-         H32w==
-X-Forwarded-Encrypted: i=1; AJvYcCVOldqldahRIE+kVcg8Y1/kmD+MXpi2OjRwtMLXa96Hj8bJwgV2RvXsLewdiuUbWnB55+OQYl4Vro4c73c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyldkN98cN/YfGo6XhnCC9uMTkCkCyyK7o4ZHR27BtOlXPO/kz4
-	vZBEKuOsTXZ3XtGaucat2GR+yW1OZw8f2QKTCgmEJ/8rB19yFWAk/v77gYaUCaJe4rxwMpq0gIU
-	8X/Hu8w==
-X-Google-Smtp-Source: AGHT+IFHBGxWsEF9ZX1NYFnwE0q0BuBtxaA3mejlU0IqMUB9Me3JFlOJWIjV5DvUbnkWASmKioNRAA==
-X-Received: by 2002:a05:6402:1e96:b0:5c5:b7fd:170a with SMTP id 4fb4d7f45d1cf-5c8d2e9fb61mr11450869a12.28.1728167715713;
-        Sat, 05 Oct 2024 15:35:15 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05bd209sm1435212a12.48.2024.10.05.15.35.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Oct 2024 15:35:14 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a991fedbd04so186205566b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 15:35:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUvaa/Wu/Z5red1FC/0rFjqRKAORUPdnJ3gFszfWhL99UytdaXT+k/pdnaKAWKi6ShXXhquCyyxeAYrnSY=@vger.kernel.org
-X-Received: by 2002:a05:6402:27c9:b0:5c8:9529:1b59 with SMTP id
- 4fb4d7f45d1cf-5c8d2e48716mr7992911a12.20.1728167713376; Sat, 05 Oct 2024
- 15:35:13 -0700 (PDT)
+	s=arc-20240116; t=1728167802; c=relaxed/simple;
+	bh=1WnY5GqmOwjJc/0X/Ij7LvIdokIzvRcFMtH/uFu8SWQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=CvNhArAkkY87DzxBV1HE06qu1qxElFUhSFooOxuXceMnTzkZNGv2sdUUJN7ABMSuhm1xTQJAdsJXzpzQv1bCGMsST3ILNSV7Bf0WNMb4OB6BeJNdO5uScUF8t/ENv/UaMkmF1v3omCnpiA/ucE6qQ4XJhDVfX/az/ff73luGSOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCVCzyJ5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C30DC4CEC2;
+	Sat,  5 Oct 2024 22:36:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728167802;
+	bh=1WnY5GqmOwjJc/0X/Ij7LvIdokIzvRcFMtH/uFu8SWQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=UCVCzyJ5Ty2IpwDdgMSyOOcArWMPPoKlfjOx7YJEKTQY5DStuopx9ElKJnpKUIgoJ
+	 UIF4NHM2Ar9ie05CewMJqdyiUkMSlZlWUx+liU1It5HlpVLoofK0tNAjNYHRqSqmQu
+	 koAwvaZ+XUO36x6XnexV+VnmVkoxOfm384AW76y4U/Ku9sJ7K2b2A8iaBVz6QaAFqf
+	 xlLMU+euYDCZB/JpSlvY3SGp1Rn1WD5ERGsXq+057+a7TIcEmkWHnxiWoDOi7daLzD
+	 PnNxsGHAPi23Y9q9LTu3W+DHdI+ukZcYNklyQktzR29Km6cprGmUkAXChMx1zAhVhd
+	 uJO4PSo5yNndw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E383806656;
+	Sat,  5 Oct 2024 22:36:47 +0000 (UTC)
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-10-05
+X-PR-Tracked-Commit-Id: 0f25eb4b60771f08fbcca878a8f7f88086d0c885
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8f602276d3902642fdc3429b548d73c745446601
+Message-Id: <172816780614.3194359.10913571563159868953.pr-tracker-bot@kernel.org>
+Date: Sat, 05 Oct 2024 22:36:46 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
-In-Reply-To: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 5 Oct 2024 15:34:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
-Message-ID: <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 5 Oct 2024 at 11:35, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> Several more filesystems repaired, thank you to the users who have been
-> providing testing. The snapshots + unlinked fixes on top of this are
-> posted here:
+The pull request you sent on Sat, 5 Oct 2024 14:35:18 -0400:
 
-I'm getting really fed up here Kent.
+> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-10-05
 
-These have commit times from last night. Which makes me wonder how
-much testing they got.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8f602276d3902642fdc3429b548d73c745446601
 
-And before you start whining - again - about how you are fixing bugs,
-let me remind you about the build failures you had on big-endian
-machines because your patches had gotten ZERO testing outside your
-tree.
+Thank you!
 
-That was just last week, and I'm getting the strong feeling that
-absolutely nothing was learnt from the experience.
-
-I have pulled this, but I searched for a couple of the commit messages
-on the lists, and found *nothing* (ok, I found your pull request,
-which obviously mentioned the first line of the commit messages).
-
-I'm seriously thinking about just stopping pulling from you, because I
-simply don't see you improving on your model. If you want to have an
-experimental tree, you can damn well have one outside the mainline
-kernel. I've told you before, and nothing seems to really make you
-understand.
-
-I was hoping and expecting that bcachefs being mainlined would
-actually help development.  It has not. You're still basically the
-only developer, there's no real sign that that will change, and you
-seem to feel like sending me untested stuff that nobody else has ever
-seen the day before the next rc release is just fine.
-
-You're a smart person. I feel like I've given you enough hints. Why
-don't you sit back and think about it, and let's make it clear: you
-have exactly two choices here:
-
- (a) play better with others
-
- (b) take your toy and go home
-
-Those are the choices.
-
-                Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
