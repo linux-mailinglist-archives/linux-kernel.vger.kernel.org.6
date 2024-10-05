@@ -1,177 +1,181 @@
-Return-Path: <linux-kernel+bounces-351691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0369914CD
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 08:07:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 333F29914D0
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 08:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0557282F76
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 06:07:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECB5D28421E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 06:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9F653368;
-	Sat,  5 Oct 2024 06:07:24 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C355D8F0;
+	Sat,  5 Oct 2024 06:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHdIRyUX"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD7D25761
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 06:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EAD13049E;
+	Sat,  5 Oct 2024 06:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728108443; cv=none; b=GJdaur6c8WoG3q0fWPOANsYIemIeX/hIY+rWCin+8dl6o5VYfvH8XUMAHKxz415qX9lOX6bV8h+Q5vzVXaHYPZcZbbPZfsKVEy86W0egVOBh5r8rCtfSSAiO8tSw+LTla0GDaNmT4UaeHSljdO0uLjN0eyBXm6okXUgAVEaFzGs=
+	t=1728108626; cv=none; b=cRd+lsjFBMbK4zdWzjz/PvEUuE7HlCkF39lCPVq9pWqENYDQANbTWPIyCz876t6XCSrGKodmVt94SI6O8bGL/sLKIPNMxje+v7sNaUICBci9Ny1hbWK+k4FWWH8EcFL0CWXqmU18OFPxXo6kGKAoWHLWnI+FQ5Ekydf02VjYZVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728108443; c=relaxed/simple;
-	bh=gONovUP7gKAFRYGOqQseh1xM+X2PLsk0KbDjNHYRmZU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PgSeFbrfmUS60bpFQLjEvcSozrvy6BVXDxJOxLX5xquhvenut8mPjYMkQntFcsA2QUNZboNiR5gWziz8Mnye2cvhxcRfI7eNotb5x0wX1ZCphVdpwr1tDw+ZtArPheSI6SL8vbkczyqCFs0KqG2+A319ilp6oaJ7I649//nBCxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a344da7987so35492335ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 23:07:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728108441; x=1728713241;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1728108626; c=relaxed/simple;
+	bh=635Bn6hYjmr2sxs/uq7ckrdJIQP1sayE7ylcDwObo6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O4bGAMJbWQ0rFBz2goIHJla6DgBL8j/Ju/Kkw6pB1y7S5XA51gSKOcHVn031UDvBer5HI4TbYqfxiCmWxIqR9CSYEKMunvsFvQrhUplElaKT6T0F/NVeS2NFpFRPaBftUEBMc+ygAz1iejxwrR7KHB+TVU+FqYIDh5BkNNxjFOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NHdIRyUX; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8a7b1c2f2bso408880066b.0;
+        Fri, 04 Oct 2024 23:10:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728108623; x=1728713423; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EFodhiVlq4+O7me1WVkauzyh9TXZODm22YdIvxpWN4Y=;
-        b=B2QEtuOdJE3mQer4dNEUhflJk1/LYXr/BZvEzn+NskTbjaQsUMCUTBeiZIfhm74UMN
-         YssgzoSlOQ0zYpGZst2VkCtv5f0hF8dsN679+NKiVVVz1NJQ5N6Ze5ZOu/6qYHfDv6Ot
-         jJnWJfD+7le5s0E+QYfsPBRV5skLFuKCsRrZv5SeF++YxebICbUMrsBpt1x7cvib3Brc
-         Vh1XCxX6U+wxYD3P4S3qo9D9jZEFoVSj6N+qdq3ptaB995WoAWpaIyGxIWuuHXoZxho3
-         P5RzRI0Rz5RpkDxd8shogt/n5KuJEDS1UnAybUWdDyOI2WyMG1PMO/Jt5E3M4+XsMf9O
-         Xcjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVKA7Hzk3K7oMHBJRALPLBr7KxdCIQMTsSreOYUZpi7A1XBN5o6oCUtzQWr8a7Kx8NH271e5LwafyKgKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuFK36p54UQoKtw8i4OsHO26BWBXUF0nqlGxtUFFmDsM7XH+zD
-	6JTkH/Wsn7nK97d5wGLjYnzY61N4+jWAksCLAMvMGI7gwhkz70ZsIkmncpxOS/48QFo6nfnAH9f
-	c6zTP8kBao4zTmNYxQGtXj3GUQPf8TotMZVJ1oAMDMQQ+VA2BA+Yzmo4=
-X-Google-Smtp-Source: AGHT+IEWto7aa75v+J7jTZq/XV6o9wg1kCf5LxVcNd+r9xMQwnMzb9j2ssR4vqklZiXYA3cNrQwssHDGsBz4IuImngo4c3kwJ9y+
+        bh=SAISPOWXGD8rHHheajjOUDZkVIJJBFpsvr2LQ0rtE7s=;
+        b=NHdIRyUXT2MKyMWKm38cny0WxsD5kWjIU6ddw8bicbnlGByyF0Jx2x29Yzj+mA1npE
+         6V9xfTlR37zuL8mbjPr+1WfUgp65EVLwSuHntGjdPNpCSoP01oWjFCd8Xxmt2+5p+mX7
+         XIkN5JrOCoY33UGJTRyzieaBrTE+cN3es9mKYtcz3CD1BLoLEYlGyiTZjpbfU5ohAOE2
+         sFUMGsfaV9FKmjDaPlWjOyvmsLJBq7DYs/6Sq7VE8iiMGqN7ybrtinn18nHBRHE8mHtD
+         pGo3UGZ0QtDJ2WP91mAMGZMdOpfHBv9YlTpYd9DHZlT+8GA43q7ZDGRdkE9O/gWGUnr2
+         G2SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728108623; x=1728713423;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SAISPOWXGD8rHHheajjOUDZkVIJJBFpsvr2LQ0rtE7s=;
+        b=lgnXVaBGiTvwHCf3bIAM9J4va4iVZmvW/OPmcSwxcP2QMQLzUb0bkcsb15Zq/hi8oT
+         SeKE74V7r2WMDG7TiICWg+VMQwXwx9whzfADripOVj3ddBfd9DFW1dD3r95GpwjciiWa
+         WpcGQJTxOAIpQJUS5Z/xE+b+hhuk/AfzA4iuzRlemSRpKMDwglHfJJs62MHpTtdRQizz
+         SAKt4BH3QgRoZZsJffjtyH2lmTOf/lbmDFFsHkz307MLIUIK7z56gXmX4e4s+lqYmmUd
+         m+YxJELxDXH1EMdOWktyLpr14FfPuUqZxoUCpamWguP6qJ3FksDjBXtCzA+S5XbhnEsC
+         hRCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsqydw10j5/AqB9bzOzVy5Dcm3whDDJ3HHfZq+l6eMxe33LwlnQrHoXouCBZJIVMi3T4jCORoOMs7BtJ4=@vger.kernel.org, AJvYcCWdvhp5fZt5hFLbt8MeAjap3UXJiPgOSUQavlFu8GrcTrCRUa3hPZCUi2rrEXFUjXZEY3NNHFaQ@vger.kernel.org, AJvYcCXI2fPCpvAuNXdsY8fj4SFWZ6VqoN09dqcBYPfRl4psabEeEOvjtM2U2z3B7lQy1WaU75IQuWs7gj5uoeexW9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+f08SSLIF1zACV9ztNwcrufQDsnmhgiJqNAOGCI32ORif1kBZ
+	w9aZdVSPAPL0GlMWxInerVsan6GLZiLsOttdfVQE6N/0HDUU0f2T
+X-Google-Smtp-Source: AGHT+IGqNUMAwPWClwPCdsq8h1fl8+wh1idmUH3kZ8Jaoe0npsvFj6GqQHbFe2PfbXsNj9t89Ru+nQ==
+X-Received: by 2002:a17:906:6a20:b0:a86:80b7:4743 with SMTP id a640c23a62f3a-a991bd0a96cmr534148666b.24.1728108622737;
+        Fri, 04 Oct 2024 23:10:22 -0700 (PDT)
+Received: from ?IPV6:2003:df:bf2f:2200:42f9:1ced:dc84:a82d? (p200300dfbf2f220042f91ceddc84a82d.dip0.t-ipconnect.de. [2003:df:bf2f:2200:42f9:1ced:dc84:a82d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a993ab8e75esm36451866b.222.2024.10.04.23.10.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 23:10:22 -0700 (PDT)
+Message-ID: <14724ee5-9f8b-4370-a68d-2797fa9b4c53@gmail.com>
+Date: Sat, 5 Oct 2024 08:10:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24f:0:b0:3a2:74f8:675d with SMTP id
- e9e14a558f8ab-3a375bd1be9mr58741775ab.20.1728108441388; Fri, 04 Oct 2024
- 23:07:21 -0700 (PDT)
-Date: Fri, 04 Oct 2024 23:07:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6700d799.050a0220.49194.04b3.GAE@google.com>
-Subject: [syzbot] [hfs?] general protection fault in hfs_mdb_commit
-From: syzbot <syzbot+5cfa9ffce7cc5744fe24@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] rust: lockdep: Remove support for dynamically
+ allocated LockClassKeys
+To: levymitchell0@gmail.com, Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Andreas Hindborg <a.hindborg@kernel.org>
+Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241004-rust-lockdep-v1-0-e9a5c45721fc@gmail.com>
+ <20241004-rust-lockdep-v1-1-e9a5c45721fc@gmail.com>
+Content-Language: de-AT-frami
+From: Dirk Behme <dirk.behme@gmail.com>
+In-Reply-To: <20241004-rust-lockdep-v1-1-e9a5c45721fc@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    c02d24a5af66 Add linux-next specific files for 20241003
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=111f2b9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
-dashboard link: https://syzkaller.appspot.com/bug?extid=5cfa9ffce7cc5744fe24
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114be307980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16bef527980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/641e642c9432/disk-c02d24a5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/98aaf20c29e0/vmlinux-c02d24a5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c23099f2d86b/bzImage-c02d24a5.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d12a33e3e104/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5cfa9ffce7cc5744fe24@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc00000000c7: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000638-0x000000000000063f]
-CPU: 1 UID: 0 PID: 116 Comm: kworker/1:2 Not tainted 6.12.0-rc1-next-20241003-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events_long flush_mdb
-RIP: 0010:hfs_mdb_commit+0x37/0xfd0 fs/hfs/mdb.c:266
-Code: 53 48 83 ec 48 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 dc 45 0a ff 48 89 5c 24 08 4c 8d a3 38 06 00 00 4c 89 e3 48 c1 eb 03 <42> 80 3c 2b 00 74 08 4c 89 e7 e8 0a 2b 74 ff 4d 8b 34 24 49 8d 6e
-RSP: 0018:ffffc90002d0fb40 EFLAGS: 00010202
-RAX: ffffffff828a89e4 RBX: 00000000000000c7 RCX: ffff88801ef68000
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: ffffc90002d0fdc0 R08: ffff88802e32d1eb R09: 1ffff11005c65a3d
-R10: dffffc0000000000 R11: ffffed1005c65a3e R12: 0000000000000638
-R13: dffffc0000000000 R14: 0000000000000001 R15: 0000000001800000
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055fc5eb2fb50 CR3: 00000000786e8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:hfs_mdb_commit+0x37/0xfd0 fs/hfs/mdb.c:266
-Code: 53 48 83 ec 48 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 dc 45 0a ff 48 89 5c 24 08 4c 8d a3 38 06 00 00 4c 89 e3 48 c1 eb 03 <42> 80 3c 2b 00 74 08 4c 89 e7 e8 0a 2b 74 ff 4d 8b 34 24 49 8d 6e
-RSP: 0018:ffffc90002d0fb40 EFLAGS: 00010202
-RAX: ffffffff828a89e4 RBX: 00000000000000c7 RCX: ffff88801ef68000
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: ffffc90002d0fdc0 R08: ffff88802e32d1eb R09: 1ffff11005c65a3d
-R10: dffffc0000000000 R11: ffffed1005c65a3e R12: 0000000000000638
-R13: dffffc0000000000 R14: 0000000000000001 R15: 0000000001800000
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055fc5eb2fb50 CR3: 00000000786e8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	53                   	push   %rbx
-   1:	48 83 ec 48          	sub    $0x48,%rsp
-   5:	48 89 fb             	mov    %rdi,%rbx
-   8:	49 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%r13
-   f:	fc ff df
-  12:	e8 dc 45 0a ff       	call   0xff0a45f3
-  17:	48 89 5c 24 08       	mov    %rbx,0x8(%rsp)
-  1c:	4c 8d a3 38 06 00 00 	lea    0x638(%rbx),%r12
-  23:	4c 89 e3             	mov    %r12,%rbx
-  26:	48 c1 eb 03          	shr    $0x3,%rbx
-* 2a:	42 80 3c 2b 00       	cmpb   $0x0,(%rbx,%r13,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	4c 89 e7             	mov    %r12,%rdi
-  34:	e8 0a 2b 74 ff       	call   0xff742b43
-  39:	4d 8b 34 24          	mov    (%r12),%r14
-  3d:	49                   	rex.WB
-  3e:	8d                   	.byte 0x8d
-  3f:	6e                   	outsb  %ds:(%rsi),(%dx)
+Am 05.10.24 um 00:01 schrieb Mitchell Levy via B4 Relay:
+> From: Mitchell Levy <levymitchell0@gmail.com>
+> 
+> Currently, dynamically allocated LockCLassKeys can be used from the Rust
+> side without having them registered. This is a soundness issue, so
+> remove them.
+> 
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Link: https://lore.kernel.org/rust-for-linux/20240815074519.2684107-3-nmi@metaspace.dk/
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
+> ---
+>   rust/kernel/lib.rs  |  2 +-
+>   rust/kernel/sync.rs | 14 ++------------
+>   2 files changed, 3 insertions(+), 13 deletions(-)
+> 
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 22a3bfa5a9e9..b5f4b3ce6b48 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -44,8 +44,8 @@
+>   pub mod page;
+>   pub mod prelude;
+>   pub mod print;
+> -pub mod sizes;
+>   pub mod rbtree;
+> +pub mod sizes;
+>   mod static_assert;
+>   #[doc(hidden)]
+>   pub mod std_vendor;
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+This is fixed already
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/rust/kernel/lib.rs?id=ece207a83e464af710d641f29e32b7a144c48e79
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+and can be dropped here.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+> index 0ab20975a3b5..d270db9b9894 100644
+> --- a/rust/kernel/sync.rs
+> +++ b/rust/kernel/sync.rs
+> @@ -27,28 +27,18 @@
+>   unsafe impl Sync for LockClassKey {}
+>   
+>   impl LockClassKey {
+> -    /// Creates a new lock class key.
+> -    pub const fn new() -> Self {
+> -        Self(Opaque::uninit())
+> -    }
+> -
+>       pub(crate) fn as_ptr(&self) -> *mut bindings::lock_class_key {
+>           self.0.get()
+>       }
+>   }
+>   
+> -impl Default for LockClassKey {
+> -    fn default() -> Self {
+> -        Self::new()
+> -    }
+> -}
+> -
+>   /// Defines a new static lock class and returns a pointer to it.
+>   #[doc(hidden)]
+>   #[macro_export]
+>   macro_rules! static_lock_class {
+>       () => {{
+> -        static CLASS: $crate::sync::LockClassKey = $crate::sync::LockClassKey::new();
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
 
-If you want to undo deduplication, reply with:
-#syz undup
+Should the SAFETY comment added in the 2nd patch go to here?
+
++        // SAFETY: lockdep expects uninitialized memory when it's 
+handed a statically allocated
++        // lock_class_key
+
+
+> +        static CLASS: $crate::sync::LockClassKey =
+> +            unsafe { ::core::mem::MaybeUninit::uninit().assume_init() };
+>           &CLASS
+>       }};
+>   }
+> 
+
 
