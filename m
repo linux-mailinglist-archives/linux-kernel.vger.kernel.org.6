@@ -1,140 +1,142 @@
-Return-Path: <linux-kernel+bounces-352059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF479919A4
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:45:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 287B99919A5
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2247728149C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AB1A1C20EDB
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9BD167DAC;
-	Sat,  5 Oct 2024 18:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16972158D8B;
+	Sat,  5 Oct 2024 18:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0NJt6n9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="TadXrn3J"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5E815E5BB;
-	Sat,  5 Oct 2024 18:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274D452F88
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 18:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728153899; cv=none; b=nZIvqmwonT2lx7oltxMO18QNhdoBDLj+xlacsqTzoDjjzhmSNULTBc9gDr8LfmXBua6EBNHXyXFitaS88vtBsN6+MUP0h3Poz5Nu6KC5Y8NK9s7UPgsNjhip5uAxOeK1oAN/xL8Yy2qe/E+o0nOMztlsTBBlMzp/dS27RB+A5mg=
+	t=1728153934; cv=none; b=o2VWrcZkVKx97KvjTs94lVD/pOEPD9GY19uyRPEghDUM2I5yGXlwm/oeQv3AQNLLqUADdiJSzRWUjk3WyQBFRKIdd25NhM8YOEamJCkcVRBKe6s/ARYcLeTZEh8ldZjhYu5Xlh+51l8Ky7vlxkTbPJdscbwmEh4VoPzlz7sd48w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728153899; c=relaxed/simple;
-	bh=O08h0MQkQkfaEZE7snAM38xE8jLrilzjQ8oxK/yHxsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5U83D93hlY5pWFbDBvKL8WFYIwuCRVL5DXAutL9eUtrQNlNbW7iKnZ1dQlbu0KgF331Y1BEJZ8G6cCDqlhbjGmetKAmbXaBRdbsslWLUtL/neRMehCdslcf9mZMQ0k2RT1aX9rjPeUZq8NO83GD8BXISgUX/fqBRq3FPvFVq6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0NJt6n9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B401C4CEC2;
-	Sat,  5 Oct 2024 18:44:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728153899;
-	bh=O08h0MQkQkfaEZE7snAM38xE8jLrilzjQ8oxK/yHxsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a0NJt6n93NUVGykU6lMKRzqSFKFD+aQIJK95/CSP3P8blFqO6GzY5zTG76iRwf29Z
-	 naJ6hs6I6UKATwDYHFseji21QTDMI3y68sY0LWQloYf3u2m94eGj02mfnEbLmGScox
-	 y5Qcov1BwazV1arMbDtL/c/yxqWvXzqwESxAUMI/JCaOid+Z5QW8Hu3WqlEnQfCGOK
-	 Fsf/hV98sfHI1JROJMz+0vobX9oIy2T5qLdtyz4GBJfmjc/3DQr/qy+M0a/OmdR5tP
-	 +iVBgHNT+waWoy+D9dnI3kSqmE1WqpSG8Z5c6M/H/8dcANlA901XCwJ3MEVGxqGXjw
-	 4c5X9VHzY3Gag==
-Received: by pali.im (Postfix)
-	id 2AE5D648; Sat,  5 Oct 2024 20:44:53 +0200 (CEST)
-Date: Sat, 5 Oct 2024 20:44:53 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] cifs: Improve access without FILE_READ_ATTRIBUTES
- permission
-Message-ID: <20241005184453.rdxetlsoszxzfqnt@pali>
-References: <20241005160826.20825-1-pali@kernel.org>
- <CAH2r5mtvp74nnU7ueqiyVrNLurM3ubQmBSTP=HcFqti=ZsWaNQ@mail.gmail.com>
+	s=arc-20240116; t=1728153934; c=relaxed/simple;
+	bh=HOdDjGKqcbcvwIsTYH23uTTuSmjIqRUfDGehMvTmMcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CBr+l9zmtHTkpPyImzZ5WCLFjdG6mK9YFpwuMOnzfPi3YNSfCAVyBd4F5qvdCxu8CEkVMZ/ZopB5/vKuyWoaa1Br1OUR0nzl4pvKB06lvmqBNBeREIrXkmcn/mKN2iRDBmOqr3IXQcFgd7ST0Ufmu4P3fKRxQ5MBPsSM5Cyc8XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=TadXrn3J; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fac6b3c220so42388631fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 11:45:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728153929; x=1728758729; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LoQzVzuaL63fPFP4K0DBbZPOqq3uWtuZvKxrZ3goDWE=;
+        b=TadXrn3JJFgWZ3zNXF6DaGzQjXzL1F1Dw+JnsxtRYI2vomQ8mhj4zzs4V4rRqDMPra
+         uGUoJcSrrgJaPPFxYAFUFPgo+HVoxlKOywRTUNa4bLGg1r3rmE0AbS4k9K3jAWVkCAi1
+         8f16sn5BLJ0/TXO85OGxNd4p8uzvdG13gbeAmy9l+GeivrORtwHqOhxP0H15Ql3376UL
+         zcOYUrN9yYFFZvP6yEQy5pOEmN0QERkjg6I4l9kLdePKCu8rvljome+od+qsxpV/hwr8
+         XfD7bL14py4BD48HvXEn85nQ+nVTy56vwk6YgWjncNHJLUh5DHIlU4GUeBXNp9gSXiCo
+         sJBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728153929; x=1728758729;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LoQzVzuaL63fPFP4K0DBbZPOqq3uWtuZvKxrZ3goDWE=;
+        b=M+fl2rAfByQUlyvBX66Od4uRnC5N2YR4By+wcF6FJc6uZxb9iqvS/GGinu1TI+KqWE
+         icvPXr+7oKjaL1oN4S9+T/Do1fIJJOc4iR5Nr78u7PBEbIm16F2aHk1nylNMLPd1kLVk
+         olnogwAbMmIDHsOUI582H7RDHWER7FuZ0xmTxtz/QG3AIw8Uevgbfj4vYdOwrWv8k2do
+         k/Ie05zuOVCwRWqBo1ajicocDtC3RLaA171jxVKPrOX42d/0niS039t7u9Igj4cQ575a
+         +fbBmlEugYFi6RhLqu/EcxwyhCBJLtRx0+JIRa84eU6trAVw+q3eKi3HAzgh0qOevnAR
+         N+TA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvViLATG6kZVlkytfwLYP9DKaO/Aukb1I1GZIyaofJr4UOnbIGmlC3Uup3sADJX1SKF0jPtNn0t5YM3Ag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZxPw2Sh7tB8Bc0fDH7rrY4jeHVUUhodTIWk6nQ25SqO7RO8bn
+	ZWMDpVTGeMHSFOhprmhB8otpIRjPTnOuwjJsozzkXEw9Q6fP/Ca2yKgD9En/6UUg2kdr+xUmFPL
+	V+prqytCFREUOraU0H66usLOs+8K9K9640VBsXL4+6pzBLEWc
+X-Google-Smtp-Source: AGHT+IGglef8byL7QK3ivt4MgoILkf6jP5/2cVElgA0WSr3IjY2Klszw3U5bFgkEDpcLNHmdS/sVuJxBFnfd2zWjJ8k=
+X-Received: by 2002:a05:651c:2110:b0:2fa:d75b:2ef5 with SMTP id
+ 38308e7fff4ca-2faf3d70252mr44045391fa.32.1728153928963; Sat, 05 Oct 2024
+ 11:45:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2r5mtvp74nnU7ueqiyVrNLurM3ubQmBSTP=HcFqti=ZsWaNQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org>
+ <20241004-gpio-notify-in-kernel-events-v1-5-8ac29e1df4fe@linaro.org>
+ <20241005074635.GA174602@rigel> <CAMRc=MdU5+AC4PyPjuXuG_S7R59OJ-DaaCdX2fZfoCcs5BveJg@mail.gmail.com>
+ <20241005095436.GB238189@rigel>
+In-Reply-To: <20241005095436.GB238189@rigel>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Sat, 5 Oct 2024 20:45:17 +0200
+Message-ID: <CAMRc=MesxXkwQtDHX4vuE+W3KAboM0PNWy6ezScrc_i10=x2=g@mail.gmail.com>
+Subject: Re: [PATCH 5/5] gpiolib: notify user-space about in-kernel line state changes
+To: Kent Gibson <warthog618@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Saturday 05 October 2024 13:32:12 Steve French wrote:
-> The obvious question to check is whether this would lead to any issues
-> if desired_access is not passed in in oparms in any cases (ie if it
-> ends up 0),
+On Sat, Oct 5, 2024 at 11:54=E2=80=AFAM Kent Gibson <warthog618@gmail.com> =
+wrote:
+>
+> On Sat, Oct 05, 2024 at 11:42:34AM +0200, Bartosz Golaszewski wrote:
+> > On Sat, Oct 5, 2024 at 9:46=E2=80=AFAM Kent Gibson <warthog618@gmail.co=
+m> wrote:
+> > >
+> > > On Fri, Oct 04, 2024 at 04:43:26PM +0200, Bartosz Golaszewski wrote:
+> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > >
+> > > > There is a problem with gpiod_direction_output/input(), namely the =
+fact
+> > > > that they can be called both from sleeping as well as atomic contex=
+t. We
+> > > > cannot call the blocking notifier from atomic and we cannot switch =
+to
+> > > > atomic notifier because the pinctrl functions we call higher up the=
+ stack
+> > > > take a mutex. Let's instead use a workqueue and schedule a task to =
+emit
+> > > > the event from process context on the unbound system queue for mini=
+mal
+> > > > latencies.
+> > > >
+> > >
+> > > So now there is a race between the state of the desc changing and the
+> > > notified reading it?
+> > >
+> >
+> > Theoretically? Well, yes... In practice I don't think this would
+> > matter. But I understand the concern and won't insist if it's a
+> > deal-breaker for you.
+> >
+>
+> I don't like that correctness depends on timing, so this is a deal
+> breaker for me as it stands.  I would like to see the relevant state pass=
+ed
+> via the notifier chain, rather than assuming it can be pulled from the de=
+sc
+> when the notifier is eventually called.
+>
 
-This is good point. IIRC if zero value is in OPEN/CREATE desired_access
-request then SMB server returns STATUS_ACCESS_DENIED.
+We could potentially still use the workqueue but atomically allocate
+the work_struct in any context, store the descriptor data, timestamp
+etc. (except the info from pinctrl which is rarely modified and would
+be retrieved just before emitting the event in process context) in it
+and pass it to the workqueue which would then put the data into the
+kfifo and free the work_struct. We can enforce ordering of work
+execution so we wouldn't mangle them, userspace would still see the
+events with correct timestamps and in the right order. Does this sound
+like something viable?
 
-So it needs to be checked that desired_access is filled in all usage
-correctly.
-
-> and also that this would not hurt any cases where we want
-> to keep the handle cached (deferred close) but don't have sufficient
-> permission for it to be usable by the subsequent operation (e.g.
-> revalidate or stat)
-
-I see, so the code needs to be properly checked or tested that all these
-conditions are handled.
-
-> On Sat, Oct 5, 2024 at 11:10 AM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > Linux SMB client currently is not able to access files for which do not
-> > have FILE_READ_ATTRIBUTES permission.
-> >
-> > For example it is not able to write data into file on SMB server to
-> > which has only write access (no read or read attributes access). And
-> > applications are not able to get result of stat() syscall on such file.
-> >
-> > Test case against Windows SMB server:
-> >
-> > 1) On SMB server prepare file with only GENERIC_WRITE access for Everyone:
-> >    ACL:S-1-1-0:ALLOWED/0x0/0x40000000
-> >
-> > 2) On SMB server remove all access for file's parent directory
-> >
-> > 3) Mount share by Linux SMB client and try to append data to that file:
-> >    echo test >> /mnt/share/dir/file
-> >
-> > 4) Try to call: stat /mnt/share/dir/file
-> >
-> > Without this change the write test fails because Linux SMB client is trying
-> > to open SMB path "\dir\file" with GENERIC_WRITE|FILE_READ_ATTRIBUTES. With
-> > this change the test pass as Linux SMB client is not opening file with
-> > FILE_READ_ATTRIBUTES access anymore.
-> >
-> > Similarly without this change the stat test always fails as Linux SMB
-> > client is trying to read attributes via SMB2_OP_QUERY_INFO. With this
-> > change, if SMB2_OP_QUERY_INFO fails then Linux SMB client fallbacks for
-> > reading stat attributes via OPEN with MAXIMUM_ALLOWED access (which will
-> > pass if there is some permission) and OPEN reply will contain attributes
-> > required for stat().
-> >
-> > Pali Rohár (2):
-> >   cifs: Do not issue SMB2 CREATE always with FILE_READ_ATTRIBUTES
-> >   cifs: Improve stat() to work also without FILE_READ_ATTRIBUTES
-> >
-> >  fs/smb/client/cifspdu.h   |  1 +
-> >  fs/smb/client/smb2file.c  |  1 -
-> >  fs/smb/client/smb2glob.h  |  1 +
-> >  fs/smb/client/smb2inode.c | 71 ++++++++++++++++++++++++++++++++++++++-
-> >  4 files changed, 72 insertions(+), 2 deletions(-)
-> >
-> > --
-> > 2.20.1
-> >
-> >
-> 
-> 
-> -- 
-> Thanks,
-> 
-> Steve
+Bart
 
