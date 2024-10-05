@@ -1,79 +1,41 @@
-Return-Path: <linux-kernel+bounces-351858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB2F9916F5
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DBD1991730
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C13052835DE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:16:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A684282DC9
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F358B1534EC;
-	Sat,  5 Oct 2024 13:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dYLI82jO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4384F14C59B;
+	Sat,  5 Oct 2024 14:05:33 +0000 (UTC)
+Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BBE149DE8
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 13:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09C715AF6;
+	Sat,  5 Oct 2024 14:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728134170; cv=none; b=kRWeOJihMAqehDGFyjALxMhbfOv9KKiSUVjI3it+kMl3uWFt2lczI7TeTpr7fZiuZU6yaJOyoXsP+dEwVsAnacZB9aXHVRsbNMHQIuSQkaep7YXAAzvdcJdtFxmy0JGxmkcPuNIo2x6urg2W5QqpLpWkLPKSGnga1VzqV52J5BU=
+	t=1728137132; cv=none; b=qL5K+61qYG94qJ3SEra4H89amX1PVdNHlnEyovXne5ccUZzsIs6xagaT4PG5tdZsLE0irmqr8JZW8wjYNxNKCbE50LpXJhTYFOl3+aneXO3nUE9PGXOQ3G9KhqfckmOddSWpWxOVlCw8aftJ+ypRD0g1rLOtkMvvOB4oLCx6+y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728134170; c=relaxed/simple;
-	bh=SnCouw/0CAfr+j4atpTs6tFU262mQXs1o9AF4aVWNIo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=stzfSwLGf7OojWkjWZOC8vZlGSMVNsmuZEUzSyG7AC/6iRMWN8voiEwneZcqVvXJ5d5NC9gY/U1YvO1g/2aPxxrRGPuNRIAocSMpd28ct+UgYS6NnrVmqc7eLNJxJgBp7YfYuTbfdgoXhpS1yOhXUaz1NnGtex9btLRaAsBLP2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dYLI82jO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728134167;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NtXWlJU5HafQ0O79u3ZV8qo7ew1Goc3SkHZ1tqX1xb0=;
-	b=dYLI82jOQcziQ/YISSuliT2GbcFo1AgKOYlb/yJhS02vlJs6pcfvRt80FOcYZOFO+12UN+
-	9REQECMmFnOrz6ccWoG32sAGNDK1/78nxOT9EDetoCVoLny1Ti4my07ylRWSdjKjjiO+h1
-	2jrhapT7zE/yMe1oxkhE4UnA/HxEEcY=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-577-ak3AJldpNdmbOsYwI-XhuA-1; Sat, 05 Oct 2024 09:16:05 -0400
-X-MC-Unique: ak3AJldpNdmbOsYwI-XhuA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb940cd67so30892125e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 06:16:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728134165; x=1728738965;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NtXWlJU5HafQ0O79u3ZV8qo7ew1Goc3SkHZ1tqX1xb0=;
-        b=PHgv0tKK1clBY5PLAdjDXi7Du0AGKvSaQLop17K22BqSK6idYqDGSZ9fuECk2UHELk
-         IkIEZNz2IBQooVOvUQKTS9cgyYtGCjw4FNZeVpVX/5qlHBBk3u1Q+kVc+HUdUwNDJXpR
-         uOAeZ0fpe6o08ww+82KD1Vo9PM1faMNH9kfrh4dvggQStpG64C86EU7QXNmHgJrgi+Gx
-         z470cfZB4rgqVFsMsvrR/kwIRnQcodmMdxGglbBlI9benf6uJCSPzjHkSonR5bj/FcW4
-         +0DLcA8CcVvyz/f0kNhE1Odc2494yMH1LRCo8MvbwMdTg3qjY42A/dN7pe83o+JkVYAD
-         LTmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXm5X5Phi3Jiesl80MKMKiSm/KhmTpHMYrNzEvLMFZBNAAU9rOZmsDaYeWduNpvbaGlL5eBSDn7FywHTZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvOmEiMVH2cleipQHfbv8B0xFzUnZOMWwVnl18a0UYChjh5MCf
-	nS5r12BfUs/fwT1GN/+0Dgcoru5yKPAyZInbu36OrJ76GRkAsAmv+M+3RXUHyBjWnOgp7u1F1KE
-	ihn62AnlMs60+XwrADG5MpyVh2f2PmxMtRGJhApp/QMgIbMGfiA+gmF+CYunpXw==
-X-Received: by 2002:a05:6000:400d:b0:37c:cea2:826f with SMTP id ffacd0b85a97d-37d0e6ea949mr6837618f8f.2.1728134164627;
-        Sat, 05 Oct 2024 06:16:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHIVFOTI5XI6jlg/ZTrlk/dkgYkJ/jdRmq2oxhmffIjVYZZkCgnpltydn6NVaGkYR5Aejtig==
-X-Received: by 2002:a05:6000:400d:b0:37c:cea2:826f with SMTP id ffacd0b85a97d-37d0e6ea949mr6837593f8f.2.1728134164290;
-        Sat, 05 Oct 2024 06:16:04 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e784666sm131559566b.100.2024.10.05.06.16.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Oct 2024 06:16:03 -0700 (PDT)
-Message-ID: <a2170a4a-d994-4729-9ade-aa20de4fefa1@redhat.com>
-Date: Sat, 5 Oct 2024 15:16:02 +0200
+	s=arc-20240116; t=1728137132; c=relaxed/simple;
+	bh=fUcwfSgvkcE7Ic79KuksBiU7kEwLsGaeMLge1N+Ssx4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=CqvqSfXeNwn1UNuTbo3x60HDyDwfcx6nJ0hTaLI2HUb7qil2XilXvmX0vOSf2PEnRL5UJuCqlF9LToZh3fkepyDYGrVXvbYCEC+HDdlF9TbBtmq5+EdGtJhyiD/6Jub0KIp/WcS4imONjlzVhypzQmmdofw5F0krpkP6NMqeifU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=none smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=vps-ovh.mhejs.net
+Received: from MUA
+	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98)
+	(envelope-from <mhej@vps-ovh.mhejs.net>)
+	id 1sx4e9-00000000I5R-2Aq0;
+	Sat, 05 Oct 2024 15:16:33 +0200
+Message-ID: <413b1e99-8cfe-4018-9ef3-2f3e21806bad@maciej.szmigiero.name>
+Date: Sat, 5 Oct 2024 15:16:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,96 +43,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86:intel/pmc: fix IS_ENABLED() check
-To: Lukas Bulwahn <lbulwahn@redhat.com>,
- Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
- David E Box <david.e.box@intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Arnd Bergmann <arnd@arndb.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20240924084056.48447-1-lukas.bulwahn@redhat.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240924084056.48447-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: Root filesystem read access for firmware load during hibernation
+ image writing
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@ucw.cz>
+Cc: linux-pm <linux-pm@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+ Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>,
+ Danilo Krummrich <dakr@redhat.com>
+References: <3c95fb54-9cac-4b4f-8e1b-84ca041b57cb@maciej.szmigiero.name>
+Content-Language: en-US, pl-PL
+Autocrypt: addr=mail@maciej.szmigiero.name; keydata=
+ xsFNBFpGusUBEADXUMM2t7y9sHhI79+2QUnDdpauIBjZDukPZArwD+sDlx5P+jxaZ13XjUQc
+ 6oJdk+jpvKiyzlbKqlDtw/Y2Ob24tg1g/zvkHn8AVUwX+ZWWewSZ0vcwp7u/LvA+w2nJbIL1
+ N0/QUUdmxfkWTHhNqgkNX5hEmYqhwUPozFR0zblfD/6+XFR7VM9yT0fZPLqYLNOmGfqAXlxY
+ m8nWmi+lxkd/PYqQQwOq6GQwxjRFEvSc09m/YPYo9hxh7a6s8hAP88YOf2PD8oBB1r5E7KGb
+ Fv10Qss4CU/3zaiyRTExWwOJnTQdzSbtnM3S8/ZO/sL0FY/b4VLtlZzERAraxHdnPn8GgxYk
+ oPtAqoyf52RkCabL9dsXPWYQjkwG8WEUPScHDy8Uoo6imQujshG23A99iPuXcWc/5ld9mIo/
+ Ee7kN50MOXwS4vCJSv0cMkVhh77CmGUv5++E/rPcbXPLTPeRVy6SHgdDhIj7elmx2Lgo0cyh
+ uyxyBKSuzPvb61nh5EKAGL7kPqflNw7LJkInzHqKHDNu57rVuCHEx4yxcKNB4pdE2SgyPxs9
+ 9W7Cz0q2Hd7Yu8GOXvMfQfrBiEV4q4PzidUtV6sLqVq0RMK7LEi0RiZpthwxz0IUFwRw2KS/
+ 9Kgs9LmOXYimodrV0pMxpVqcyTepmDSoWzyXNP2NL1+GuQtaTQARAQABzTBNYWNpZWogUy4g
+ U3ptaWdpZXJvIDxtYWlsQG1hY2llai5zem1pZ2llcm8ubmFtZT7CwZQEEwEIAD4CGwMFCwkI
+ BwIGFQoJCAsCBBYCAwECHgECF4AWIQRyeg1N257Z9gOb7O+Ef143kM4JdwUCZdEV4gUJDWuO
+ nQAKCRCEf143kM4JdyzED/0Qwk2KVsyNwEukYK2zbJPHp7CRbXcpCApgocVwtmdabAubtHej
+ 7owLq89ibmkKT0gJxc6OfJJeo/PWTJ/Qo/+db48Y7y03Xl+rTbFyzsoTyZgdR21FQGdgNRG9
+ 3ACPDpZ0UlEwA4VdGT+HKfu0X8pVb0G0D44DjIeHC7lBRzzE5JXJUGUVUd2FiyUqMFqZ8xP3
+ wp53ekB5p5OstceqyZIq+O/r1pTgGErZ1No80JrnVC/psJpmMpw1Q56t88JMaHIe+Gcnm8fB
+ k3LyWNr7gUwVOus8TbkP3TOx/BdS/DqkjN3GvXauhVXfGsasmHHWEFBE0ijNZi/tD63ZILRY
+ wUpRVRU2F0UqI+cJvbeG3c+RZ7jqMAAZj8NB8w6iviX1XG3amlbJgiyElxap6Za1SQ3hfTWf
+ c6gYzgaNOFRh77PQbzP9BcAVDeinOqXg2IkjWQ89o0YVFKXiaDHKw7VVld3kz2FQMI8PGfyn
+ zg5vyd9id1ykISCQQUQ4Nw49tqYoSomLdmIgPSfXDDMOvoDoENWDXPiMGOgDS2KbqRNYCNy5
+ KGQngJZNuDicDBs4r/FGt9/xg2uf8M5lU5b8vC78075c4DWiKgdqaIhqhSC+n+qcHX0bAl1L
+ me9DMNm0NtsVw+mk65d7cwxHmYXKEGgzBcbVMa5C+Yevv+0GPkkwccIvps7AzQRaRrwiAQwA
+ xnVmJqeP9VUTISps+WbyYFYlMFfIurl7tzK74bc67KUBp+PHuDP9p4ZcJUGC3UZJP85/GlUV
+ dE1NairYWEJQUB7bpogTuzMI825QXIB9z842HwWfP2RW5eDtJMeujzJeFaUpmeTG9snzaYxY
+ N3r0TDKj5dZwSIThIMQpsmhH2zylkT0jH7kBPxb8IkCQ1c6wgKITwoHFjTIO0B75U7bBNSDp
+ XUaUDvd6T3xd1Fz57ujAvKHrZfWtaNSGwLmUYQAcFvrKDGPB5Z3ggkiTtkmW3OCQbnIxGJJw
+ /+HefYhB5/kCcpKUQ2RYcYgCZ0/WcES1xU5dnNe4i0a5gsOFSOYCpNCfTHttVxKxZZTQ/rxj
+ XwTuToXmTI4Nehn96t25DHZ0t9L9UEJ0yxH2y8Av4rtf75K2yAXFZa8dHnQgCkyjA/gs0ujG
+ wD+Gs7dYQxP4i+rLhwBWD3mawJxLxY0vGwkG7k7npqanlsWlATHpOdqBMUiAR22hs02FikAo
+ iXNgWTy7ABEBAAHCwXwEGAEIACYCGwwWIQRyeg1N257Z9gOb7O+Ef143kM4JdwUCZdEWBwUJ
+ DWuNXAAKCRCEf143kM4Jd5OdD/0UXMpMd4eDWvtBBQkoOcz2SqsWwMj+vKPJS0BZ33MV/wXT
+ PaTbzAFy23/JXbyBPcb0qgILCmoimBNiXDzYBfcwIoc9ycNwCMBBN47Jxwb8ES5ukFutjS4q
+ +tPcjbPYu+hc9qzodl1vjAhaWjgqY6IzDGe4BAmM+L6UUID4Vr46PPN02bpm4UsL31J6X+lA
+ Vj5WbY501vKMvTAiF1dg7RkHPX7ZVa0u7BPLjBLqu6NixNkpSRts8L9G4QDpIGVO7sOC9oOU
+ 2h99VYY1qKml0qJ9SdTwtDj+Yxz+BqW7O4nHLsc4FEIjILjwF71ZKY/dlTWDEwDl5AJR7bhy
+ HXomkWae2nBTzmWgIf9fJ2ghuCIjdKKwOFkDbFUkSs8HjrWymvMM22PHLTTGFx+0QbjOstEh
+ 9i56FZj3DoOEfVKvoyurU86/4sxjIbyhqL6ZiTzuZAmB0RICOIGilm5x03ESkDztiuCtQL2u
+ xNT833IQSNqyuEnxG9/M82yYa+9ClBiRKM2JyvgnBEbiWA15rAQkOqZGJfFJ3bmTFePx4R/I
+ ZVehUxCRY5IS1FLe16tymf9lCASrPXnkO2+hkHpBCwt75wnccS3DwtIGqwagVVmciCxAFg9E
+ WZ4dI5B0IUziKtBxgwJG4xY5rp7WbzywjCeaaKubtcLQ9bSBkkK4U8Fu58g6Hg==
+Disposition-Notification-To: "Maciej S. Szmigiero"
+ <mail@maciej.szmigiero.name>
+In-Reply-To: <3c95fb54-9cac-4b4f-8e1b-84ca041b57cb@maciej.szmigiero.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Sender: mhej@vps-ovh.mhejs.net
 
-Hi,
+The issue below still happens on kernel version 6.11.1.
 
-Lukas, thank you for your patch.
+Created a kernel bugzilla entry for it:
+https://bugzilla.kernel.org/show_bug.cgi?id=219353
 
-On 24-Sep-24 10:40 AM, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+It would be nice to at least know whether the filesystem read access supposed is
+to be working normally at PMSG_THAW hibernation stage to assign the issue accordingly.
+
+CC: request_firmware() maintainers
+
+Thanks,
+Maciej
+
+On 28.08.2024 21:08, Maciej S. Szmigiero wrote:
+> Hi,
 > 
-> Commit d7a87891e2f5 ("platform/x86:intel/pmc: fix build regression with
-> pmtimer turned off") accidentally slips in some CONFIG_CONFIG_X86_PM_TIMER
-> (note the duplicated CONFIG prefix) in the IS_ENABLED() check.
+> I have a quick question about hibernation "image writing" state - is
+> (root) filesystem *read* access supposed to be working normally at that point?
 > 
-> Fortunately, ./scripts/checkkconfigsymbols.py notices this accident. Fix up
-> the IS_ENABLED() check with the intended config name.
+> Specifically, I know that devices are resumed (PMSG_THAW) after preparing
+> the hibernation image.
 > 
-> Fixes: d7a87891e2f5 ("platform/x86:intel/pmc: fix build regression with pmtimer turned off")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-
-I see that d7a87891e2f5 ("platform/x86:intel/pmc: fix build
-regression with pmtimer turned off") does not exist in
-Torvald's tree yet.
-
-This comes from http://git.linaro.org/people/daniel.lezcano/linux.git/log/?h=timers/drivers/next
-
-Daniel, I appreciate you picking this up, but now that everything
-has been merged together again in v6.12-rc1 I would prefer to
-handle any further changes limited to drivers/platform/x86/intel/
-through the pdx86 tree.
-
-Also since this is a build fix it really should be send as a fix
-fro the 6.12 cycle.
-
-Daniel judging by the timers/drivers/next branch name I guess these
-are not fixes targeting 6.12, right ?
-
-In that case can you please drop d7a87891e2f5 ("platform/x86:intel/pmc:
-fix build regression with pmtimer turned off") ?  Then I'll pick that
-up and squash in this typo fix.
-
-Or if you do plan to send things out as fixes to Linus, then please
-add this patch too.
-
-Regards,
-
-Hans
-
-
-
-
-
-> ---
->  drivers/platform/x86/intel/pmc/core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> In my case, a USB device (RTL8821CU) gets reset at that stage due to
+> commit 04b8c8143d46 ("btusb: fix Realtek suspend/resume") and so it tries
+> to request_firmware() from the root filesystem after that thaw/reset,
+> when the hibernation image is being written.
 > 
-> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-> index 0431a599ba26..4387b5103701 100644
-> --- a/drivers/platform/x86/intel/pmc/core.c
-> +++ b/drivers/platform/x86/intel/pmc/core.c
-> @@ -1546,7 +1546,7 @@ static int pmc_core_probe(struct platform_device *pdev)
->  			       pmc_core_adjust_slp_s0_step(primary_pmc, 1));
->  
->  	map = primary_pmc->map;
-> -	if (IS_ENABLED(CONFIG_CONFIG_X86_PM_TIMER) &&
-> +	if (IS_ENABLED(CONFIG_X86_PM_TIMER) &&
->  	    map->acpi_pm_tmr_ctl_offset)
->  		acpi_pmtmr_register_suspend_resume_callback(pmc_core_acpi_pm_timer_suspend_resume,
->  							 pmcdev);
-> @@ -1563,7 +1563,7 @@ static void pmc_core_remove(struct platform_device *pdev)
->  	const struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
->  	const struct pmc_reg_map *map = pmc->map;
->  
-> -	if (IS_ENABLED(CONFIG_CONFIG_X86_PM_TIMER) &&
-> +	if (IS_ENABLED(CONFIG_X86_PM_TIMER) &&
->  	    map->acpi_pm_tmr_ctl_offset)
->  		acpi_pmtmr_unregister_suspend_resume_callback();
->  
+> It usually succeeds, however often it deadlocks somewhere in Btrfs code
+> resulting in the system failing to power off after writing the hibernate
+> image:
+> power_off() calls dpm_suspend_start(), which calls dpm_prepare(), which
+> waits for device probe to finish.
+> 
+> And device probe is stuck forever trying to load that USB stick firmware
+> from the filesystem - so in the end the system never powers off during
+> (after) hibernation.
+> 
+> That's why I wonder whether this firmware load is supposed to work correctly
+> during that hibernation state and so the system may be hitting some kind of
+> a swsusp/btrfs/block layer race condition.
+> 
+> Or, alternatively, maybe  reading files is not supported at this point and
+> so this is really a btrtl/rtw88 bug?
+> 
+> CCing Btrfs people in case it is some known Btrfs issue.
+> 
+> Btw, this is on upstream kernel 6.10.6 and the "Show Blocked State" trace
+> during that failed power off is attached below.
 
 
