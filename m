@@ -1,143 +1,110 @@
-Return-Path: <linux-kernel+bounces-352091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A55991A05
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:43:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F971991A0C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB3371C20CEB
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:43:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29785B20DA5
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7092015ECD5;
-	Sat,  5 Oct 2024 19:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B99715D5C5;
+	Sat,  5 Oct 2024 19:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SbdM5s44"
-Received: from msa.smtpout.orange.fr (msa-216.smtpout.orange.fr [193.252.23.216])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XihFytbt"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725C9487A5;
-	Sat,  5 Oct 2024 19:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333A2130AC8;
+	Sat,  5 Oct 2024 19:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728157400; cv=none; b=h+lnQKH+QEP6f8259nj3hKsZuopHOXEC63kO8ThRZ8N3hi+rBIFbs8Na+7hX+HVuPT05H3I+UFaHCeCY17QXJBQ+JjSzvp24nyEZT3oR7XsyjNMIoppj0L1OzI5B4Jp7NTvGDvSHTJCRPbSTyPD36xZGGXq2Aaja6NAAHoTXMbw=
+	t=1728157722; cv=none; b=HpmH8PBeXJKOpWuqQpg3tmhPiHccChUKdPWKujbR3HviYbV24S8IaERYqT7DtCqJ90o+x/RtrryVt43Y9jV4NdcYayH4YJySPvWyqt7bmkq8h+Q2DOuawLwrpTAJQESsUj/hSMIvfmZZpT41jas8FP2xzbHB7ejFL722BJ2GZFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728157400; c=relaxed/simple;
-	bh=8MAvA9ubbsg1fxcVpJU+uwV5MjQY1ejVRrtVaHdouwU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jpF1foR8orb+0KWhNqGdopHwBfZkVkl+z3h3/7IQbapqqhEnS7+8PMjDs3UNzWIAsnzH0BQsNVAhZ938RDBHKiWQBWUPrbwnTiavlRcOufIECYDe3Esfj5iG67yDY12JsfeIcmvcMN3N97ouzh3yStD3vjskVGtfioccl1+J78c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=SbdM5s44; arc=none smtp.client-ip=193.252.23.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id xAgGsMYyMHPunxAgGsZaMT; Sat, 05 Oct 2024 21:43:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1728157390;
-	bh=uVTxSZ1QCpD+AHyNGxez/F+Qz/tYFhVlU8T4Mvuja4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=SbdM5s44g1/SP9yUNyzsQAX/07lA+C513byvOzb46p4ls0i/2quldk7bF1wkMnqnB
-	 rJFBhM8O+qEG7Txwp1MmetMiL1wXQBvDf5geLsOUQcHbwx7tRdugZk/pH9bOZbwk/C
-	 mFkHioOqoc2IjaR/hd+Pb+nmXdmequ0QEGVSMVeSxDwOb6pROK5zRKZ/NVfitv5Czs
-	 UVerpYtDVyjSjJ/3cdzfYx+giUSy6MRUCzklxdM+zpg/VxjvhPjUvNM81DWp6b8Zex
-	 H3/UyVtgryFvzfJusVVxnZUVn1rLjhCJ7vSJNDPO2hodqSWob5mzEdjdu3eyOlka3b
-	 oobPrkuSHNFug==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 05 Oct 2024 21:43:10 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <a42a738a-b52d-4ff9-ac21-cffd808bc055@wanadoo.fr>
-Date: Sat, 5 Oct 2024 21:43:06 +0200
+	s=arc-20240116; t=1728157722; c=relaxed/simple;
+	bh=o9lwndcEObWOD4eMKX68Jnqn1u4SUdmNaScLpckTfnc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H7pBxMbus16gOitzns5QVjcW9/SjqN67/4s/Lg3dN72hzn4JDSawSIjcRM0Y6NvDaDU0vwXRn4kOoH3WHLSoQ2ZYidpfd/yzzGniQpM0rCAIGHQQrSjsGtfdmaBnshV6ZcfBpk+li4AwCMR/vel5r1mMM9KAonN7QP6G1Ir4rbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XihFytbt; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71df23e0ffaso214268b3a.3;
+        Sat, 05 Oct 2024 12:48:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728157720; x=1728762520; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kbHEGftmqqHevUuD1RbLqYiuIlmLINxCZjZlUo4G2Uc=;
+        b=XihFytbtVgTqzQgSj7wru5XrMvaaEV5ezt9JaSN1f0HD4/lyYAfePMXrs32GWNzjix
+         0BfGJNvWtDj4NaQp4U4ibzV6TGuvhTV03WWKW+sORcZW1K+a9EzlpgyvsE079lPAXOqu
+         ueRHQaMhpZdRyXA3IXTriXVg2kMV2ob/dMBx9YUGuDiAEzQu7+dH8lwilRIjxr+XdRtP
+         51rRYvq6KFPPKMigrz3Fq2tqNqxPL7vk3/3hofxnz+Xu0R4dRk78D4SZsZc7HnUXx34Q
+         ThjJpCXd3n5BHj88bH94Hs/SCN/wyfavJ0XN+GIG3/UPHsZDLNDcC+GHPZKM8AtGJ+ad
+         tsJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728157720; x=1728762520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kbHEGftmqqHevUuD1RbLqYiuIlmLINxCZjZlUo4G2Uc=;
+        b=SJc9UkJ6NnBM8xdlch8Q1U16NiXcoS4bwVh1zeJteDc817QTmtIRdealUl3OmnfuXw
+         EsAnHAvW4auoGSeZZ9ZAa4PpDAMAESk7mpEQ7nO95tgw7JQvjgcOn7D+zrI9MBUuFcBk
+         fum/9MU2ONuBDN80lUV4Fdt1m+/zbiVpMCqacHDDt1vRFiHo36q/01wqGajUadrtVrih
+         Men2vPc0AFQDzN7Sl51b9GwYcxfohC/PCjbvIaNWAzbKx75/w903Gc6ZEwyeMactfvJb
+         oPFrgLn2x++F48B/5dh/Tem+5MV24IL1hJ09TypE/x31a+GlwB2RsZuPHEhLvWveGrJe
+         bOug==
+X-Forwarded-Encrypted: i=1; AJvYcCUfHrvvSTzo6IlgO0XDpqkr/CIhn+DlX0/e0OrIJQg3O3EGJi+D/2m4UBFdql1blDh/5oBsV4xGxQaZVLM=@vger.kernel.org, AJvYcCV0I7qnRJAsJpPsgAg4AHkUcLAX3Jf9lWeCFdrLe1MYjVk5XcemaAq2PTaDWjfXVayl37YAPUiLa0e2QA8fbVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaM4EJ2oVhGVOonxu0jvv8mIVBWh4h12r5f/isBp0VP0Bn2yZt
+	3/P4uExxDql8cjGc/ucHFyB7rpK4rVsem/rw8AAtsy/2L9FkVNcYgXuMSRoiVfXlGVq1kbXsQky
+	WvAjdvg2P9lcBn2ILu5AZY5h2ZYY=
+X-Google-Smtp-Source: AGHT+IHYK4PAA8pIEJDKe/fEysdmD+nNiOosNdKJA9dAXcrT3N8VawCHzkXeKCJR8ccTqjCfrwCE4JQNwnYkwp4ohXA=
+X-Received: by 2002:a05:6a20:2453:b0:1cf:2be2:6526 with SMTP id
+ adf61e73a8af0-1d6dfaea5f0mr4424544637.12.1728157720451; Sat, 05 Oct 2024
+ 12:48:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] pinctrl: th1520: Convert to thp->mutex to guarded
- mutex
-To: Drew Fustini <dfustini@tenstorrent.com>, Drew Fustini <drew@pdp7.com>,
- Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241005-th1520-pinctrl-fixes-v1-0-5c65dffa0d00@tenstorrent.com>
- <20241005-th1520-pinctrl-fixes-v1-1-5c65dffa0d00@tenstorrent.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241005-th1520-pinctrl-fixes-v1-1-5c65dffa0d00@tenstorrent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241004125616.49886-1-iapain@gmail.com>
+In-Reply-To: <20241004125616.49886-1-iapain@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 5 Oct 2024 21:48:28 +0200
+Message-ID: <CANiq72k9u3aJhGjm7t3giCh=35OwrToXDCYqaHJ67_Ujs2=AVA@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: std_vendor: update dbg macro from rust upstream
+To: Deepak Thukral <iapain@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Filipe Xavier <felipe_life@live.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le 05/10/2024 à 21:35, Drew Fustini a écrit :
-> Convert th1520_pinctrl_dt_node_to_map() to use guarded mutex for
-> thp->mutex.
-> 
-> Suggested-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
-> ---
->   drivers/pinctrl/pinctrl-th1520.c | 8 +++-----
->   1 file changed, 3 insertions(+), 5 deletions(-)
-> 
+On Fri, Oct 4, 2024 at 3:09=E2=80=AFPM Deepak Thukral <iapain@gmail.com> wr=
+ote:
+>
+> `dbg!` contain adapted code from rust upstream.
+> Compare code with rust upstream and update missing column
+> numbers in `dbg!` outputs. Column numbers are not copied
+> but adjusted for examples in docstring.
+>
+> Thus update the docstring only.
+>
+> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1124
+> Signed-off-by: Deepak Thukral <iapain@gmail.com>
 
-Hi,
+Applied to `rust-next` (tags still welcome) -- thanks!
 
-> diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
-> index 9331f4462480..d03a0a34220a 100644
-> --- a/drivers/pinctrl/pinctrl-th1520.c
-> +++ b/drivers/pinctrl/pinctrl-th1520.c
-> @@ -425,7 +425,7 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
->   	int ret;
->   
->   	nmaps = 0;
-> -	for_each_available_child_of_node(np, child) {
-> +	for_each_available_child_of_node_scoped(np, child) {
+    [ Fixed typo and slightly reworded. - Miguel ]
 
-Using _scoped iterator is not described in the commit message.
-Is it expected to be part of this patch?
-
-If yes, the "of_node_put(child);" just a few lines below should be removed.
-
->   		int npins = of_property_count_strings(child, "pins");
->   
->   		if (npins <= 0) {
-> @@ -444,8 +444,8 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
->   		return -ENOMEM;
->   
->   	nmaps = 0;
-> -	mutex_lock(&thp->mutex);
-> -	for_each_available_child_of_node(np, child) {
-> +	guard(mutex)(&thp->mutex);
-> +	for_each_available_child_of_node_scoped(np, child) {
-
-Same here...
-
->   		unsigned int rollback = nmaps;
->   		enum th1520_muxtype muxtype;
->   		struct property *prop;
-> @@ -530,7 +530,6 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
->   
->   	*maps = map;
->   	*num_maps = nmaps;
-> -	mutex_unlock(&thp->mutex);
->   	return 0;
->   
->   free_configs:
-> @@ -538,7 +537,6 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
->   put_child:
->   	of_node_put(child);
-
-... this should be removed, and maybe the label renamed.
-
-CJ
-
->   	th1520_pinctrl_dt_free_map(pctldev, map, nmaps);
-> -	mutex_unlock(&thp->mutex);
->   	return ret;
->   }
->   
-> 
-
+Cheers,
+Miguel
 
