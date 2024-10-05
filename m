@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-352081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67199919E8
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:30:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0899E9919E6
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 840612831B2
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:30:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 900EB1F2210E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DE5161902;
-	Sat,  5 Oct 2024 19:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B43160883;
+	Sat,  5 Oct 2024 19:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f3LIoXx4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FZ3pRf/H"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD3914C5B5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9C014B08E;
 	Sat,  5 Oct 2024 19:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728156638; cv=none; b=BAIEfZp5GO6L+Eq7XvXQ0QWDBxTjTRab/NRZFoxpZuZBdQoJ7hUAyvuLPjH3c/R3fNxT3CF/DasWC4vwD2B/xh4HkNVFr9wHVVkKXFX0D3Oz+wDlHZZ3AbGrORuIl+YEb8lsmLVvSpIlMribysOSu2zW8yjEueF5tZwt6Ketw3E=
+	t=1728156638; cv=none; b=OBJ0LQbMmHs2R+CuXyPEk/d9HW5y0rgHb0b3mg9t/cD+nFp7iZ3padhj8tLlx/+SOuGlafBLfuFEIeAOCx+vkvtvocYZqJQTxHxCXqrzU3atVGlkr1+FWKuGrhaT3y2vuEKh4MIDCVD+15beNH5cYsUaueTvP7rlmS2y03lqyd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728156638; c=relaxed/simple;
-	bh=M25uoz5sLviUJS2fboSk7SWcSJ5iHwoHzOPn2l87Bew=;
+	bh=Y9sjx62Q4cXe4/rdkl6Pdu0lSNdvUu2WsoQ0DWbxgp0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bp2j6cJWjDZWKniRTlQX1vTIylhSWgrDtWttgy2NfR9KD/b5O8YMG6kpLwGJ+0i/hmE/kYjDa14piwgHzVusQRnASNCJrKwwRZfLO5f2N246A/ro7yyqAbZEhk1wzFCoOGBXbL1Dpt7bN6oIt3plNwKi/8CQN+6bV7Ymyd5x5nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f3LIoXx4; arc=none smtp.client-ip=192.198.163.8
+	 MIME-Version; b=Ovf5udxraHoTComBj2iU0B+OpOhpettXOSPOHq1Eb8jFfhQab48Q6ls+CwOE/Ofc5C/+ebb1znTSAmWg6mCLNZPbtHayal5OBBABJe5W7K5BYDgUhjFb7SdW72SdBnTtzgIO7uGb26Y+ZPuJgp7YX+TE2JBZdD2ui1hjvyF3aI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FZ3pRf/H; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,30 +35,30 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1728156637; x=1759692637;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=M25uoz5sLviUJS2fboSk7SWcSJ5iHwoHzOPn2l87Bew=;
-  b=f3LIoXx4VpBerF1cDdqXttb4TrZThoe8acWXe7jDdjSTOE65Ndn+wm2n
-   XJ9rz2u++WJmd1RcWX3rtcCHt+AZS1OjCcvoROz1P7yANipWXyX7uZNDe
-   TdbKNyiFLtE7QXesFR9YgEdgifkowuHmgXNWG7iNFRa0mCc3p9QYXh2A/
-   zP4LCc/b5E4pVzI6p0vggAtbAnyBPA3m06kByr/6rhGfNJlDh5WYb6vtF
-   o2tfSqr7iesFHF9s/ok22dl2yJ4zS8qM7lONBJY1V1qaUx7iunWCDDwJU
-   6tUNHpOz3Wl77e+3hZmVFoPMVPZC0/FEcNIaVQNdB6+Yqu75PXBm7zoUH
-   Q==;
-X-CSE-ConnectionGUID: htmjuVqvS0umSPS7Kj7mSA==
-X-CSE-MsgGUID: amll4F3YQmCFMpCpSoVUvg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="44879461"
+  bh=Y9sjx62Q4cXe4/rdkl6Pdu0lSNdvUu2WsoQ0DWbxgp0=;
+  b=FZ3pRf/HEFz7Y+Qvlsbfjyrc+brdHMYhCUMEa5PddDZmv0g0BRfYAk5E
+   yk6tf1m071NKxmi/R/cA9I30EOq+jnOewJ1kUjcubnZqpkgzKdI5NgwjL
+   uPUVhjNhJmdCCSUeX1vFAhCSq1NodzCYY3sZF/0pd7EdfVCE5FrTCwCk9
+   rDxIxWi5Z4Ai+qVvJastH0dg+pPLXI04510ErkCtSMwuVpIzb4+5VRtqt
+   QBEFa7gCAVd7I5jk3pfXn7S28D7SE5R8dDHZZkO076hNxB35gvHwCR0Pk
+   KTWmn56qg904pmFdb9LLpuTqpg5IggGFLfwR1LEvR15y0PwvSfZkrHUHr
+   w==;
+X-CSE-ConnectionGUID: nSmq2tX8QyO+XIC3PgXuyA==
+X-CSE-MsgGUID: s/S3CdN/Txue+Ry0w9mMOw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="38484394"
 X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="44879461"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 12:30:36 -0700
-X-CSE-ConnectionGUID: u4CJzxZVRtuRvKodeHx9dg==
-X-CSE-MsgGUID: rQi09u3ZQAS6dz570h+unA==
+   d="scan'208";a="38484394"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 12:30:36 -0700
+X-CSE-ConnectionGUID: H7P4rn/PQgaMR+BLoRBuNA==
+X-CSE-MsgGUID: UhJc8n8fQL+d8Ha0gbnqCw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="74861625"
+   d="scan'208";a="74618668"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 05 Oct 2024 12:30:33 -0700
+  by fmviesa006.fm.intel.com with ESMTP; 05 Oct 2024 12:30:33 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id DDB05177; Sat, 05 Oct 2024 22:30:31 +0300 (EEST)
+	id EEDAC3A6; Sat, 05 Oct 2024 22:30:31 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-kernel@vger.kernel.org,
@@ -71,9 +71,9 @@ Cc: Andy Shevchenko <andy@kernel.org>,
 	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Zhang Ning <zhangn1985@outlook.com>
-Subject: [PATCH v2 1/4] mfd: intel_soc_pmic_bxtwc: Use IRQ domain for USB Type-C device
-Date: Sat,  5 Oct 2024 22:27:04 +0300
-Message-ID: <20241005193029.1929139-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 2/4] mfd: intel_soc_pmic_bxtwc: Use IRQ domain for TMU device
+Date: Sat,  5 Oct 2024 22:27:05 +0300
+Message-ID: <20241005193029.1929139-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20241005193029.1929139-1-andriy.shevchenko@linux.intel.com>
 References: <20241005193029.1929139-1-andriy.shevchenko@linux.intel.com>
@@ -94,123 +94,129 @@ IRQ number (also known as vIRQ).
 Rework the driver to respect IRQ domain when creating each MFD
 device separately, as the domain is not the same for all of them.
 
-Fixes: 9c6235c86332 ("mfd: intel_soc_pmic_bxtwc: Add bxt_wcove_usbc device")
-Fixes: d2061f9cc32d ("usb: typec: add driver for Intel Whiskey Cove PMIC USB Type-C PHY")
+Fixes: 957ae5098185 ("platform/x86: Add Whiskey Cove PMIC TMU support")
 Fixes: 57129044f504 ("mfd: intel_soc_pmic_bxtwc: Use chained IRQs for second level IRQ chips")
 Reported-by: Zhang Ning <zhangn1985@outlook.com>
 Closes: https://lore.kernel.org/r/TY2PR01MB3322FEDCDC048B7D3794F922CDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com
 Tested-by: Zhang Ning <zhangn1985@outlook.com>
+Acked-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/mfd/intel_soc_pmic_bxtwc.c | 57 +++++++++++++++++++++---------
- drivers/usb/typec/tcpm/wcove.c     |  4 ---
- 2 files changed, 40 insertions(+), 21 deletions(-)
+ drivers/mfd/intel_soc_pmic_bxtwc.c     | 31 ++++++++++++++------------
+ drivers/platform/x86/intel/bxtwc_tmu.c | 22 +++++-------------
+ 2 files changed, 23 insertions(+), 30 deletions(-)
 
 diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
-index ccd76800d8e4..d72995a9e820 100644
+index d72995a9e820..628108dcf545 100644
 --- a/drivers/mfd/intel_soc_pmic_bxtwc.c
 +++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
-@@ -240,16 +240,6 @@ static struct mfd_cell bxt_wc_dev[] = {
- 		.num_resources = ARRAY_SIZE(thermal_resources),
- 		.resources = thermal_resources,
+@@ -245,12 +245,6 @@ static struct mfd_cell bxt_wc_dev[] = {
+ 		.num_resources = ARRAY_SIZE(bcu_resources),
+ 		.resources = bcu_resources,
  	},
 -	{
--		.name = "bxt_wcove_usbc",
--		.num_resources = ARRAY_SIZE(usbc_resources),
--		.resources = usbc_resources,
+-		.name = "bxt_wcove_tmu",
+-		.num_resources = ARRAY_SIZE(tmu_resources),
+-		.resources = tmu_resources,
 -	},
--	{
--		.name = "bxt_wcove_ext_charger",
--		.num_resources = ARRAY_SIZE(charger_resources),
--		.resources = charger_resources,
--	},
+-
  	{
- 		.name = "bxt_wcove_bcu",
- 		.num_resources = ARRAY_SIZE(bcu_resources),
-@@ -271,6 +261,19 @@ static struct mfd_cell bxt_wc_dev[] = {
+ 		.name = "bxt_wcove_gpio",
+ 		.num_resources = ARRAY_SIZE(gpio_resources),
+@@ -261,6 +255,14 @@ static struct mfd_cell bxt_wc_dev[] = {
  	},
  };
  
-+static struct mfd_cell bxt_wc_chgr_dev[] = {
++static const struct mfd_cell bxt_wc_tmu_dev[] = {
 +	{
-+		.name = "bxt_wcove_usbc",
-+		.num_resources = ARRAY_SIZE(usbc_resources),
-+		.resources = usbc_resources,
-+	},
-+	{
-+		.name = "bxt_wcove_ext_charger",
-+		.num_resources = ARRAY_SIZE(charger_resources),
-+		.resources = charger_resources,
++		.name = "bxt_wcove_tmu",
++		.num_resources = ARRAY_SIZE(tmu_resources),
++		.resources = tmu_resources,
 +	},
 +};
 +
- static int regmap_ipc_byte_reg_read(void *context, unsigned int reg,
- 				    unsigned int *val)
- {
-@@ -425,6 +428,26 @@ static int bxtwc_add_chained_irq_chip(struct intel_soc_pmic *pmic,
- 					0, chip, data);
- }
- 
-+static int bxtwc_add_chained_devices(struct intel_soc_pmic *pmic,
-+				     const struct mfd_cell *cells, int n_devs,
-+				     struct regmap_irq_chip_data *pdata,
-+				     int pirq, int irq_flags,
-+				     const struct regmap_irq_chip *chip,
-+				     struct regmap_irq_chip_data **data)
-+{
-+	struct device *dev = pmic->dev;
-+	struct irq_domain *domain;
-+	int ret;
-+
-+	ret = bxtwc_add_chained_irq_chip(pmic, pdata, pirq, irq_flags, chip, data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to add %s IRQ chip\n", chip->name);
-+
-+	domain = regmap_irq_get_domain(*data);
-+
-+	return devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE, cells, n_devs, NULL, 0, domain);
-+}
-+
- static int bxtwc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -500,14 +523,14 @@ static int bxtwc_probe(struct platform_device *pdev)
+ static struct mfd_cell bxt_wc_chgr_dev[] = {
+ 	{
+ 		.name = "bxt_wcove_usbc",
+@@ -489,6 +491,15 @@ static int bxtwc_probe(struct platform_device *pdev)
  	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to add ADC IRQ chip\n");
+ 		return dev_err_probe(dev, ret, "Failed to add IRQ chip\n");
  
--	/* Add chained IRQ handler for CHGR IRQs */
--	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
--					 BXTWC_CHGR_LVL1_IRQ,
--					 IRQF_ONESHOT,
--					 &bxtwc_regmap_irq_chip_chgr,
--					 &pmic->irq_chip_data_chgr);
-+	ret = bxtwc_add_chained_devices(pmic, bxt_wc_chgr_dev, ARRAY_SIZE(bxt_wc_chgr_dev),
++	ret = bxtwc_add_chained_devices(pmic, bxt_wc_tmu_dev, ARRAY_SIZE(bxt_wc_tmu_dev),
 +					pmic->irq_chip_data,
-+					BXTWC_CHGR_LVL1_IRQ,
++					BXTWC_TMU_LVL1_IRQ,
 +					IRQF_ONESHOT,
-+					&bxtwc_regmap_irq_chip_chgr,
-+					&pmic->irq_chip_data_chgr);
- 	if (ret)
--		return dev_err_probe(dev, ret, "Failed to add CHGR IRQ chip\n");
++					&bxtwc_regmap_irq_chip_tmu,
++					&pmic->irq_chip_data_tmu);
++	if (ret)
 +		return ret;
- 
- 	/* Add chained IRQ handler for CRIT IRQs */
++
  	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
-diff --git a/drivers/usb/typec/tcpm/wcove.c b/drivers/usb/typec/tcpm/wcove.c
-index cf719307b3f6..60b2766a69bf 100644
---- a/drivers/usb/typec/tcpm/wcove.c
-+++ b/drivers/usb/typec/tcpm/wcove.c
-@@ -621,10 +621,6 @@ static int wcove_typec_probe(struct platform_device *pdev)
- 	if (irq < 0)
- 		return irq;
+ 					 BXTWC_PWRBTN_LVL1_IRQ,
+ 					 IRQF_ONESHOT,
+@@ -497,14 +508,6 @@ static int bxtwc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to add PWRBTN IRQ chip\n");
  
--	irq = regmap_irq_get_virq(pmic->irq_chip_data_chgr, irq);
+-	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
+-					 BXTWC_TMU_LVL1_IRQ,
+-					 IRQF_ONESHOT,
+-					 &bxtwc_regmap_irq_chip_tmu,
+-					 &pmic->irq_chip_data_tmu);
+-	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to add TMU IRQ chip\n");
+-
+ 	/* Add chained IRQ handler for BCU IRQs */
+ 	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
+ 					 BXTWC_BCU_LVL1_IRQ,
+diff --git a/drivers/platform/x86/intel/bxtwc_tmu.c b/drivers/platform/x86/intel/bxtwc_tmu.c
+index d0e2a3c293b0..9ac801b929b9 100644
+--- a/drivers/platform/x86/intel/bxtwc_tmu.c
++++ b/drivers/platform/x86/intel/bxtwc_tmu.c
+@@ -48,9 +48,8 @@ static irqreturn_t bxt_wcove_tmu_irq_handler(int irq, void *data)
+ static int bxt_wcove_tmu_probe(struct platform_device *pdev)
+ {
+ 	struct intel_soc_pmic *pmic = dev_get_drvdata(pdev->dev.parent);
+-	struct regmap_irq_chip_data *regmap_irq_chip;
+ 	struct wcove_tmu *wctmu;
+-	int ret, virq, irq;
++	int ret;
+ 
+ 	wctmu = devm_kzalloc(&pdev->dev, sizeof(*wctmu), GFP_KERNEL);
+ 	if (!wctmu)
+@@ -59,27 +58,18 @@ static int bxt_wcove_tmu_probe(struct platform_device *pdev)
+ 	wctmu->dev = &pdev->dev;
+ 	wctmu->regmap = pmic->regmap;
+ 
+-	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0)
 -		return irq;
++	wctmu->irq = platform_get_irq(pdev, 0);
++	if (wctmu->irq < 0)
++		return wctmu->irq;
+ 
+-	regmap_irq_chip = pmic->irq_chip_data_tmu;
+-	virq = regmap_irq_get_virq(regmap_irq_chip, irq);
+-	if (virq < 0) {
+-		dev_err(&pdev->dev,
+-			"failed to get virtual interrupt=%d\n", irq);
+-		return virq;
+-	}
 -
- 	ret = guid_parse(WCOVE_DSM_UUID, &wcove->guid);
- 	if (ret)
+-	ret = devm_request_threaded_irq(&pdev->dev, virq,
++	ret = devm_request_threaded_irq(&pdev->dev, wctmu->irq,
+ 					NULL, bxt_wcove_tmu_irq_handler,
+ 					IRQF_ONESHOT, "bxt_wcove_tmu", wctmu);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "request irq failed: %d,virq: %d\n",
+-							ret, virq);
++			ret, wctmu->irq);
  		return ret;
+ 	}
+-	wctmu->irq = virq;
+ 
+ 	/* Unmask TMU second level Wake & System alarm */
+ 	regmap_update_bits(wctmu->regmap, BXTWC_MTMUIRQ_REG,
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
