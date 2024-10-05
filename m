@@ -1,135 +1,88 @@
-Return-Path: <linux-kernel+bounces-351722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1279E991556
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:32:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A17599155B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE2B284159
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 08:32:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD1D1F234AF
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 08:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E67142E6F;
-	Sat,  5 Oct 2024 08:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B473712F375;
+	Sat,  5 Oct 2024 08:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQu1KS/F"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="A8vT7ygj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58932231C8F;
-	Sat,  5 Oct 2024 08:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D8C2E400
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 08:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728117110; cv=none; b=AHUKk98nqHkDqcniESqKC000HHEppf3SXLdE34Lhyt/LZU38h2UHaBQ4paoHZRt8Cbxet5zH7MRwQ+/6WhKvlX87LAco5/0uDfA8R0/JF1yIMJiuJD7/t3TeLjKUHJ49/r0Q42xmJvrp9qPYhrOvvAwdfSaDskCwjpBkcjQY+P8=
+	t=1728117789; cv=none; b=cPNcAFoEdcZN/E5ElGb0nMOgkmMMOMOnhh78fqD//wla/GKpdnoWNK0J7bei0TTf0EL6lYBjIGOofS3ZjIC91TIcwfwOxQbHCxDYtEn842Lj/JGmdGVYMexhUn2es/IokY5+tcPQJqxFmlc0+ygCqnYpp9FFjecjmu/Jms/HJXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728117110; c=relaxed/simple;
-	bh=70cU5jNP52zmkSWZHO+lBdHOcE1V/JTH2eNm2kkh0zg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PzZ4FuRn+JzFUNpYK4eeftCryJu7St05ef86z20wxvzoTydIzblrRlWu7UBIg/MBZ4/r1RCanAsOsQc4hqP0GWn+ZbUDIJ8XqsFysviuYPFNmI55Ve9Ui4f/LwkwTFaOJslTCTOKur8wg2ukeGfdEBgmC64kZ1buMOUmFjAgIdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQu1KS/F; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fac63abf63so29110871fa.1;
-        Sat, 05 Oct 2024 01:31:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728117106; x=1728721906; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=70cU5jNP52zmkSWZHO+lBdHOcE1V/JTH2eNm2kkh0zg=;
-        b=OQu1KS/FWp+vzB8M90wWzv2DwL28c54821ES4HbZa+/kKuP7aC4tPzCuACELJth2qQ
-         pc9TZ2ISdUc6Q3VGwRml0HF61sHqy00yXzh/B7M2IYtDQuGOx1FTY9tXqGMCjG+Uh1YI
-         CH3l6iMAReMliUXAh/KUG1C9XYkm5rF9WqkNCAPtjOQVYHZNAGUauycZEaAo4d/sUvs9
-         8Ja3w2AraLXHPkaWD0taM65FMiEx++s1FLs/fIjQAloxQA4Xc/uWuxjbem80Duk1xzYe
-         jg4nn9ac/6E4uKdgBLnCooPggnnO0dcKcg03qHT9C/RWGNVAI7CsSpDC6hVc+Emg3af5
-         ZAkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728117106; x=1728721906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=70cU5jNP52zmkSWZHO+lBdHOcE1V/JTH2eNm2kkh0zg=;
-        b=BU8HxWJkL0J0MvXjRkBZlUS+kEYYoccrQm/bQBdvqHzhlYDa0a6bJjifAVO1zSrMB0
-         0tP2oTQp2sr0GN9oCneHl2sQOx+0hANGRBQWMOvZk9ZIQHsUjeIFsInPLFFvAWZzTMBc
-         VYPKcH71a7DlwQeN2hJ5QM/r9SClkvXEN0tBGBotKXEQ1701RVKxfekgea2rBRuny09F
-         z92N0WGYw56iYGtYmPmWcYNbLmpI3IAMWwPqioZ+CsOdNV2NeIdVKswvcFiu7ldu3C6J
-         CN41cP9yNOhnGMiMeGoLYPJQ+Ew4LIvaTXTCyAV8cidBszwsE3Wo1m2w1FmCSVhyAz0E
-         D7VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPitWEeOD/aD62yn7DZZSU7JaVuaUVQq63I5CtmFD+j1DMntN2JyOFJ5aRDQN2PpB31dHqzLqeRozpf1bN@vger.kernel.org, AJvYcCUUu5XYKZkbzD5ywYHVCuo/Oew/4JpdnctTarrOSg34Op3ZjuHbg04SmfqDfGoSTXFh1p09IU3GLx4HRCC3PCnNaw==@vger.kernel.org, AJvYcCUgZvCOfGNX4TJSytk7wDmxGhD+1RQxiPpvhElemmASV3+V1qIVuinUiQjMHnZAavfVd8G5r1NLSbRX@vger.kernel.org, AJvYcCV5wmWz2VgZgJEQcX3F+wkZMCnZF+RHkLhJgNuAOgIGb5mbzChbkA9hyJvvI+8uubsEYlmFYMx5GC+nyNJq@vger.kernel.org, AJvYcCVD6Sla1wkCBvjYeoYBeokskNlnZai5vX4pjC8PLoFq+8JVkKxUhtPhkBdOiAauXSYQ9fxTqCEz7Gds@vger.kernel.org, AJvYcCVVksKusLXvQcncn6esUy7zSDSKvfSj4K6GQcSEkitc+S20k+5xLeyxtgMvzku/+zQVqLHwmAOWpqo=@vger.kernel.org, AJvYcCW3iH3oRT9iEo7Ws8ml7G4upB5KNWRBt0lXaRAmtbM4vq4z/bSGdvjh+/xJijE+qTU1LRs=@vger.kernel.org, AJvYcCW7AaJe08TpCmIEfn4tXdnQQYzQcDSiKnZ6lZaG/LJuQCLREvQEnMf12WWLT1TGZ6qUCx1pDwNO8NueKO5yopk=@vger.kernel.org, AJvYcCWWelSF+HpJ8dD8RyCnk7ab1i9zhoCd5FuYnEKeZnQFdZkrZFIgBfN+XmSVRY72IXbJCPnxqB9ndzfSng==@vger.kernel.org, AJvYcCXssYm+wkam8a1z6IjlfmkP
- d85FzcygzwPgGkLqzEOE0CU1XAd/Knko2Fdzd/aGj2WDSSGFqGyR9T4g3BB0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEN7mgZAeB2itvJi8KUsdLt48HLvHeVuRj1Vy3oZYcJlb8QqXO
-	J53RBjYQ1FbS5u9EWG26BNQ81bxsl1FjR4yrVfTRzIxm3gjWS/TzE76MOzV85kl+nDZrJtiW6i7
-	ysifs0ldfc9CJwDHmo6KecaiQ5II=
-X-Google-Smtp-Source: AGHT+IGi0j/icjLt8RhHlOdJvbjdouTPFKKMu/CT/oe6l0e9sNaP3mHWfqnG22Q9j4GVb6Cdm+e2KfCpXo/Kl8KNmek=
-X-Received: by 2002:a05:651c:1547:b0:2fa:d978:a6c4 with SMTP id
- 38308e7fff4ca-2faf3d73888mr22769461fa.30.1728117106123; Sat, 05 Oct 2024
- 01:31:46 -0700 (PDT)
+	s=arc-20240116; t=1728117789; c=relaxed/simple;
+	bh=FNY93F6fuGp0df+0BZXhKJaZOKTSiSWtKmVrPs+/u+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CV+lCWWk5MPntD+o59Hh0qTXyvFi7yLcNenfWbnBb8910pSOFMlk70ZCEip2jkZW71Mo/RWShrxWe6aQDV5LWbhtHxmEOKwiyhAlVqdzKGg+svUE0CZNsY0F2cfVxPcK+a6js6gbeWer5a7cOdkCLWMR4TnJgMgXPrWMpIuJ/5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=A8vT7ygj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA643C4CEC2;
+	Sat,  5 Oct 2024 08:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728117788;
+	bh=FNY93F6fuGp0df+0BZXhKJaZOKTSiSWtKmVrPs+/u+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A8vT7ygjvDArA91dgUfl5eUTlcruZQmdY8at/R8J8EOIG0oq/viWwmJQ97U+Mep6o
+	 7OM2creMzoeaEi7RcYj7+woz6hVafZYLKVXxiSOISZefSZ7GcQNQSaf9mgO7kn70Gh
+	 ayeAkJ1kXjp1NB8l/DO+CevSdTawXRVW64kdLIBc=
+Date: Sat, 5 Oct 2024 10:43:04 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, paulmck <paulmck@kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Hazard pointer enabled refcount prototype
+Message-ID: <2024100538-acquire-imprecise-ecee@gregkh>
+References: <3b749585-1286-4a4e-acd0-1534b60172da@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925150059.3955569-30-ardb+git@google.com>
- <20240925150059.3955569-55-ardb+git@google.com> <99446363-152f-43a8-8b74-26f0d883a364@zytor.com>
- <CAMj1kXG7ZELM8D7Ft3H+dD5BHqENjY9eQ9kzsq2FzTgP5+2W3A@mail.gmail.com>
- <CAHk-=wj0HG2M1JgoN-zdCwFSW=N7j5iMB0RR90aftTS3oqwKTg@mail.gmail.com>
- <CAMj1kXEU5RU0i11zqD0433_LMMyNQH2gCoSkU7GeXmaRXGF1Yw@mail.gmail.com> <5c7490bb-aa74-427b-849e-c28c343b7409@zytor.com>
-In-Reply-To: <5c7490bb-aa74-427b-849e-c28c343b7409@zytor.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Sat, 5 Oct 2024 10:31:37 +0200
-Message-ID: <CAFULd4Yj9LfTnWFu=c1M7Eh44+XFk0ibwL57r5H7wZjvKZ8yaA@mail.gmail.com>
-Subject: Re: [RFC PATCH 25/28] x86: Use PIE codegen for the core kernel
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Dennis Zhou <dennis@kernel.org>, 
-	Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Juergen Gross <jgross@suse.com>, 
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
-	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org, 
-	linux-pm@vger.kernel.org, kvm@vger.kernel.org, xen-devel@lists.xenproject.org, 
-	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b749585-1286-4a4e-acd0-1534b60172da@efficios.com>
 
-On Fri, Oct 4, 2024 at 11:06=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wrot=
-e:
->
-> On 10/3/24 04:13, Ard Biesheuvel wrote:
-> >
-> >> That said, doing changes like changing "mov $sym" to "lea sym(%rip)" I
-> >> feel are a complete no-brainer and should be done regardless of any
-> >> other code generation issues.
-> >
-> > Yes, this is the primary reason I ended up looking into this in the
-> > first place. Earlier this year, we ended up having to introduce
-> > RIP_REL_REF() to emit those RIP-relative references explicitly, in
-> > order to prevent the C code that is called via the early 1:1 mapping
-> > from exploding. The amount of C code called in that manner has been
-> > growing steadily over time with the introduction of 5-level paging and
-> > SEV-SNP and TDX support, which need to play all kinds of tricks before
-> > the normal kernel mappings are created.
-> >
->
-> movq $sym to leaq sym(%rip) which you said ought to be smaller (and in
-> reality appears to be the same size, 7 bytes) seems like a no-brainer
-> and can be treated as a code quality issue -- in other words, file bug
-> reports against gcc and clang.
+On Fri, Oct 04, 2024 at 03:52:01PM -0400, Mathieu Desnoyers wrote:
+> Hi Greg,
+> 
+> After our discussion at KR2024, I've created a prototype adding hazard pointer
+> dereference support to refcount.h:
+> 
+> https://github.com/compudj/linux-dev/commit/234523dc9be90f1bc9221bf2d430c9187ac61528
+> 
+> Branch: https://github.com/compudj/linux-dev/tree/hp-6.11-refcount
+> 
+> It allows dereferencing a pointer to a refcount and incrementing the refcount,
+> without relying on RCU.
+> 
+> A good candidate for this would be the "usblp" driver which is using a static mutex
+> for existence guarantees. Introducing a refcount as first field of struct usblp
+> should do the trick.
+> 
+> I am not entirely sure if this kind of use-case justifies introducing hazard pointers
+> though, as this can be done just as well with RCU. I'll let you be the judge on this.
 
-It is the kernel assembly source that should be converted to
-rip-relative form, gcc (and probably clang) have nothing with it.
+How could it be used with RCU?  I'll have to look into that, but thanks
+for the links and I'll dig into this on Monday to see if I could use
+these to get rid of the "static mutex" pattern that almost all drivers
+need to have these days (which in turn will mean we will not need to use
+that in new rust drivers either, which will make them simpler as well
+because the static mutex pattern in rust is rough to make work.)
 
-Uros.
+thanks,
+
+greg k-h
 
