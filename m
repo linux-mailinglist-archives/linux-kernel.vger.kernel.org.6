@@ -1,85 +1,133 @@
-Return-Path: <linux-kernel+bounces-351665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC57991476
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:29:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA77799147A
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549511F239A4
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:29:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DE17B20EC8
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC4D4085D;
-	Sat,  5 Oct 2024 05:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8323F9CC;
+	Sat,  5 Oct 2024 05:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="f+BallSl"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ed/n7f1B"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F7E322B;
-	Sat,  5 Oct 2024 05:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F42538F83;
+	Sat,  5 Oct 2024 05:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728106184; cv=none; b=OCO24ejchXaX8fb6j6x2SpWynP9r+4S7rewC8EnYxhplbVyMuinn7P5Jt6z1v8jbvFSDmutcpgkx9Sc7ugKSLUZ3kfRp3RmHTRJEUzzJTyGq7eGWnWb5wmDOkYVicN1DinaJ6ygHEQV6O7YImZvIjEB1hXhg+IsUBb9HlT7WQGI=
+	t=1728106190; cv=none; b=KgdC/nm6MrbQDwYUi758xIWwLXLULX+ezY6jHxiugF3s080kqiccxumKoPchJmNv2l1sHQAKI9/AGVVOdPygjuTSnLax8QBwefefpgQ+b1zik31QYOHAjSH/BQMMUu5qtX0hFbbR/x1wZ7a66pymi0TaxJNhNR6kwPO1PnoboXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728106184; c=relaxed/simple;
-	bh=mIluBhSVaAAZ85GoTd9dKYLsIfMXB8BikfEvmvGa6zc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=SpKQjFmDlaNda4cK1G7CD8WEIgbSY2RblGoqr2YMIIjN/2miBuOUSP5Mz2zQZk4Mt1YtoudJXHPefQ1/X3Ru7IkQ786QReS0rTOVA+oldvZVgyku9eCLDAa4fxSevdvtBUmUvJ57bf7pdvPy0mQR7fMfXMGi8gd7MVsSD5B2IYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=f+BallSl; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
-	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=bgduNDVUW7IvjOOcmNkqrjQO4EKeMg7qKlVmi8rGSvY=; b=f+BallSlkzMTTgal6Cr+VOLySp
-	nhwyNsi6o9+VaxF3sUOA2ymt649gi5QTyQhhycL8RLD7d7z7xWXn5g1n7xB7J9cw8fjJumEnxgBEX
-	aeRQsf3zTIBHKYmG0MpfmABmjPV46c6QSF4twBiOl1U84ZRfWW+7oyuG9seetZHq9Da/+obbqD/Mx
-	qBVw8D0t/Ni992msyDcC2W4IA9Huz3re843hB2un15Fa1IvDw02Ol7TRgVu785v3EoAohch/G7UWu
-	UsW2zju5w2VXyhiQZ87yrBZCobAK8d4wlsu0lPI7zEVJ/OwV7FqKh1xU3Y0zZET3HyUwol1Ut7Anm
-	HV9ANv5w==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1swxCH-0071T0-35;
-	Sat, 05 Oct 2024 13:29:32 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2024 13:29:31 +0800
-Date: Sat, 5 Oct 2024 13:29:31 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Tang Bin <tangbin@cmss.chinamobile.com>
-Cc: clabbe@baylibre.com, davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-	tangbin@cmss.chinamobile.com
-Subject: Re: [PATCH] crypto: amlogic - Remove redundant assignment and error
- messages
-Message-ID: <ZwDOu3C70Q1MwG-l@gondor.apana.org.au>
+	s=arc-20240116; t=1728106190; c=relaxed/simple;
+	bh=lM12Y+PVWbIVjbEYFSGMppBuQG4xpTvfxfd2/7jNf4s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QCjCOHPKlOi180y09wT5mgv7udK1Fxv4tnHXx0BHHgUl1TammCGpEnHIEUlbSQqiYT0G0tBYaY+/1FfS5jL6KprkyaBMZzZw8UKfpJDiWHU8/eUmWUM83h+TS6LZXreXXNstcDMpKNCGOu5L2IckzmQTkAeYCdvl48uL47f6jZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ed/n7f1B; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso26850805e9.0;
+        Fri, 04 Oct 2024 22:29:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728106187; x=1728710987; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cezS5WqQoRrzltU/78vgyz+Za+pNv3jbvKTQSP+KMnU=;
+        b=ed/n7f1BNa9gBbYw5gtIjg5OCBqZrYDoechrFh39l/vAJMK3S09oWzi9FitFbzAeGl
+         Os38iJolAUnmYfmlvfhmPWfO6qZFVCmhfRZdeq+UTUXEX3ohoXkqkPzFOZXUdwAkqByU
+         1R/hzNL6wITwtwViNKISok7OAcoZpvX6uw0DhlyXRXnMi2H2+1iPVLGhgFoOS09D3ZEb
+         l2TAu07sCdcj8hFo9c2J/A+WO6O4B3ctQvY3LCDI56kEyoDFUIIX9Y/QxG1GA7JrzXGt
+         dqR2rCGwiSHeMwTLCmoIz3eW6uLnfz16h2Wr8vf6zpQHnxvOuzUYat9vgiVqmNEu1QxL
+         Av5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728106187; x=1728710987;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cezS5WqQoRrzltU/78vgyz+Za+pNv3jbvKTQSP+KMnU=;
+        b=u25tsNoEazcxvqBJcmQDodHqAWa+W1pf+S9l+dmUluWXKiq2rwA3Qm+EQMjkPKCJnl
+         +PVGRkpTGpr3xektr/tGDjz4vIIUJNumaqJLHFj6qEae+q1KJxOFdmyvIGX3IiS/9+NI
+         sl1gxi2iRr0QFbQw3kA+eGv6ImhpwXV+EJi8MLWnpTvzHbXSKRcx1DWbUWJDpua5jYWU
+         vMceSFVtEQr2sAHNnit/3By1VjaRFF5ggGdshqbjoPTpC3A5KsDOf4BuQ+bfNq+MyRam
+         pJoq3i3fvRcevKpPNfdU3VUTLblwHM3ZtVAOKVwmqeLd4vSBetwXSheLbPkTcanr3h1+
+         R7Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxlBZ7Pk1ajPPXqcJDTCQTTP/DB3FkUylapgNjuDXQ9OyGrbudsbDXXDhwVRFbUH3A6sw36JbgShEBiQ==@vger.kernel.org, AJvYcCWHQgxORJYZG2LSN5IQzWK6x2X2ae9quFY09b83uqjfzB8jVM2DuaJoPHRGd7Kh8IzpDh+yyXDqXcXXy3Y=@vger.kernel.org, AJvYcCWSwX2bKGSLOeK+/GRilWV3s/UtsnA2uDns+vh7c5c9Hhm4DRlbw2UBB7IfiCgSTWABpueFoi7Ns2EopOnmmaHD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBdEXszEyeZQlGyHSc55w224EB38nwZBmo1a5YtvBaPjlPqV+s
+	Arr3/CADATgcTSfPe+ZpfXbv9hhD93WDbrQ855kxIpWeMcNWDXHd
+X-Google-Smtp-Source: AGHT+IFyg01Usy09oOmEfGGEspmAOO/Bl2UKeqMaKZgpKsxwJKNXeA4Kkty9DRhG0y5aZYXJxKQp2g==
+X-Received: by 2002:a05:600c:5804:b0:42c:b1ee:4b04 with SMTP id 5b1f17b1804b1-42f85ae918amr34911575e9.28.1728106186329;
+        Fri, 04 Oct 2024 22:29:46 -0700 (PDT)
+Received: from [127.0.1.1] (ip5f5ac341.dynamic.kabel-deutschland.de. [95.90.195.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ed952asm13103105e9.45.2024.10.04.22.29.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 22:29:45 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH net v2 0/3] selftests: net: add missing gitignore and
+ EXTRA_CLEAN entries.
+Date: Sat, 05 Oct 2024 07:29:39 +0200
+Message-Id: <20241005-net-selftests-gitignore-v2-0-3a0b2876394a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911121751.1900-1-tangbin@cmss.chinamobile.com>
-X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMPOAGcC/4WNQQ6DIBBFr2JmXRpAMNJV79G4sHbESRQahpg2h
+ ruXeIEu//957x/AmAgZbs0BCXdiiqEGfWlgWsbgUdCrZtBSG+laKQJmwbjOGTmz8JTJh5hQqP7
+ ZGzNr1zoFlX4nnOlzmh9QIRhquRDnmL7n267O6a94V0KKzmptx95aZ7q730Zar1PcYCil/AAZ5
+ NVYwwAAAA==
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+ Allison Henderson <allison.henderson@oracle.com>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+ rds-devel@oss.oracle.com, Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728106184; l=1165;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=lM12Y+PVWbIVjbEYFSGMppBuQG4xpTvfxfd2/7jNf4s=;
+ b=Q0cK5x2ObhU8Y+UlH9imRYK+xSig0v1Ockl9buoou10l30xzbqeLhmAEyfoDqrw5SVIdRD24q
+ yEzwaXRw6VpCxZdl3TyT+ecKHxwadY29zHfg6lbhahYt5Pqjm4IR3zd
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Tang Bin <tangbin@cmss.chinamobile.com> wrote:
-> In the function meson_crypto_probe, devm_platform_ioremap_resource()
-> have already contains error message, so remove the
-> redundant assignment and error messages.
-> 
-> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
-> ---
-> drivers/crypto/amlogic/amlogic-gxl-core.c | 8 +++-----
-> 1 file changed, 3 insertions(+), 5 deletions(-)
+This series is a cherry-pick on top of v6.12-rc1 from the one I sent
+for selftests with other patches that were not net-related:
 
-Patch applied.  Thanks.
+https://lore.kernel.org/all/20240925-selftests-gitignore-v3-0-9db896474170@gmail.com/
+
+The patches have not been modified, and the Reviewed-by tags have
+been kept.
+
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v2:
+- rebase to net/main and solve conflicts in rds/Makefile
+- Tag series for net.
+- Link to v1: https://lore.kernel.org/r/20240930-net-selftests-gitignore-v1-0-65225a855946@gmail.com
+
+---
+Javier Carrasco (3):
+      selftests: net: add msg_oob to gitignore
+      selftests: net: rds: add include.sh to EXTRA_CLEAN
+      selftests: net: rds: add gitignore file for include.sh
+
+ tools/testing/selftests/net/.gitignore     | 1 +
+ tools/testing/selftests/net/rds/.gitignore | 1 +
+ tools/testing/selftests/net/rds/Makefile   | 2 +-
+ 3 files changed, 3 insertions(+), 1 deletion(-)
+---
+base-commit: 9234a2549cb6ac038bec36cc7c084218e9575513
+change-id: 20240930-net-selftests-gitignore-18b844f29391
+
+Best regards,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
