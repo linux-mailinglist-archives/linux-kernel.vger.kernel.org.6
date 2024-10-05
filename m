@@ -1,96 +1,112 @@
-Return-Path: <linux-kernel+bounces-351724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0157D991561
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:50:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B575991564
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F9D31F23216
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 08:50:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5A5EB21A67
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 08:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EC913A24D;
-	Sat,  5 Oct 2024 08:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE51C85260;
+	Sat,  5 Oct 2024 08:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oAI18l22"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6Z/u0+L"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3330E211C
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 08:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5771211C
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 08:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728118215; cv=none; b=gXFJMkp3fbSwXuMdCFjfVjeVS2CVczuJPjavMvycoLj5czEGikWeIagQIWzTjj3naj1ievRsQ/AjOOT3VMvhJmHxV7mxuIO3DEvSXvdCmjZ9or4y6LBB94APdLCOTRbyxtpIr6zG6ujHdLjbazOqJSPoor6NUDdQcI98N5ittFw=
+	t=1728118289; cv=none; b=MxyMZZVmaGJqCqdlD3ZrnoCyrI+u6fv2O7Ni49tFqu20Y7eqIdWIYr2dxc4j3gCyWjEvkUgC46uTLvlfZP+tR7QWG0MYGP1eOVKJbpOt2jEmJRNmoGR0xt6/Aqvjiwjrde5+RGlMFJzbhcwSbcWH0QQ8opI7e5W5bNpzB71DoxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728118215; c=relaxed/simple;
-	bh=QuzmmglPoJFxAmQ+97yNnV9PvID5WbYqF959tpT2wIo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=scaV200yXiplwDAYGyMhjWSDv2GO1xkveYNBPU/znyRbvmWE0dBCuNlcz/Xz16dxazkwDo4G5m/IShBhujGBmxvu9QnedKQN0ZhFbqcHse4FFFVKgXm+pih8w8k3SoIJH3gkUnKdwISB2gXw7OV9bDpuBD2XCGdajaKiNwsw9oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oAI18l22; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <68116566-c075-4f29-9809-8d93b69a933e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728118210;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4lcqzMzX/PIGejsyaLTXVDuOyqI6D2Vso1SQoiZcnFQ=;
-	b=oAI18l22uUL391A/krkgFsDv76PQ2l1rYyC11icTmzvZ1cW4QDlHkpBw6v3R/wz7zu/8ao
-	Kl+G8voQCbijmuVJzrzwECI4B8RN4X9JSZg4PaGn6wZSDc6/JjsO8MtDyaWeAv+HkPOlmt
-	3l94JxdjqGAoMyPer2vBJjqOoYYBA50=
-Date: Sat, 5 Oct 2024 16:49:56 +0800
+	s=arc-20240116; t=1728118289; c=relaxed/simple;
+	bh=d4mKYVbUq1hHMJyzM7xfukOBhhm8zWos2hXlisST0XQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UgMlsG8mHbkmtqx4VxzLCRI3vm3rtCXPps+gryUDB+KkfwKGD8ushxn9xHnBtdzb/k3gaubUYXrTAekBhwX46bYvxzT6f6NT+Z4h/DZB14fyV9MtuHoIYmpDnjN4i3bxEfqg/+9vVZrOkppeA61yHLAbpDHgyVQZSjgtX1Agsg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6Z/u0+L; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b9b35c7c3so30552845ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 01:51:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728118287; x=1728723087; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1uwbZR6dedOxY2OXlJ4sLBFtE4VsmtFeSgA1LhChHmg=;
+        b=G6Z/u0+L+wMZSBZszAJNIfdDXx1y2Xii1tD8l9xNVja6OiTR/ezyupCYhiyYF5jHYy
+         mmKt0YOdQQamWaYOr8y+EudnAgf4EicM2WUsCvt6wGSr+rbqLYblNs6SsZzm3nvs2I5s
+         pTu8Mmj2I5PCCGgSE7xFtJuK1u0zNeijcvMNM1kAgMnib4Mxl3G7tVDUUcw4OxLJdXQv
+         VhkmQEJxCsFowla6bcAMosd0DN51+a/eYdMo/XpQgDZo+7s/SH2Mn9QKkEX6Lwp550sq
+         R6OKM8O9q4pUj4/txdCt/jBY/QYzzlsOgiUQ3/5XQ40ZrELc7e4Pl3do3LDow9iYk5BL
+         i1Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728118287; x=1728723087;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1uwbZR6dedOxY2OXlJ4sLBFtE4VsmtFeSgA1LhChHmg=;
+        b=FZOT6yl8FSuymJ/hZ71OmjkGaRyHHTvZDBjyv7AwjB+5ABfyiXI/GLLBpzOrNS1KsK
+         kgH3QqgBbdhCahG1nSMbCSiOwiu6hNRfNC01i5u0kIIowmO1zYKmE5ok3+ckgGIcKRFU
+         2XR1yTYbc5QDlkG5qWAD6jfhY8AbZiDd1fin8cG6aBFDfJh9qX4J7xGLlZ5sGRdmJo+0
+         oWrFafSQdTPN0rMiQNRiYfhurHnTm2ePYbmplBEa717zDtQna+jo+UsHf1xpjWwmR3kv
+         UVRvzb1AvNbdvpeI6XqTHZlz/GlFW7V2RU3ev3fEaPFkNTaCQFGRtBMJI4w7fpIzXBXl
+         8wSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUCW1H/u3ow9Nlf7NUAWeXWR1eetm//Wi3aZwhQveFzLnIsuGtxdgVWx/3/xacbz3KJi+JkqajuBaMUm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL4ro6X3ONok/aWW2AQKNPKXjv9AE16Xm6EDIGBU2fP+RgCrxS
+	31lrCMcIsQY2EKF/R0hi6TclmgvdaewravPPPt6x3ns7aWK6heLP
+X-Google-Smtp-Source: AGHT+IHTfwXYAULeUrH7diqjwK8fFsq4toX7YGwE89RuQnVQtBU+hwPYb8/K+OAVK3Hb3/xC2oC2Bg==
+X-Received: by 2002:a17:902:d483:b0:20b:6208:b869 with SMTP id d9443c01a7336-20bfe01dbedmr76069995ad.24.1728118287107;
+        Sat, 05 Oct 2024 01:51:27 -0700 (PDT)
+Received: from Kuchus.. ([115.96.37.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13990d12sm9582735ad.277.2024.10.05.01.51.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 01:51:26 -0700 (PDT)
+From: Shivam Chaudhary <cvam0000@gmail.com>
+To: liviu.dudau@arm.com,
+	sudeep.holla@arm.com,
+	lpieralisi@kernel.org,
+	linus.walleij@linaro.org,
+	linux@armlinux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Shivam Chaudhary <cvam0000@gmail.com>
+Subject: [PATCH] Fix typo in versatile.c
+Date: Sat,  5 Oct 2024 14:21:17 +0530
+Message-Id: <20241005085117.438715-1-cvam0000@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3] Docs/zh_CN: Translate page_tables.rst to Simplified
- Chinese
-To: Pengyu Zhang <zpenya1314@gmail.com>
-Cc: alexs@kernel.org, siyanteng@loongson.cn, corbet@lwn.net,
- seakeel@gmail.com, si.yanteng@linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, yaxin_wang_uestc@163.com
-References: <20240919133825.15606-1-zpenya1314@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zenghui Yu <zenghui.yu@linux.dev>
-In-Reply-To: <20240919133825.15606-1-zpenya1314@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On 2024/9/19 21:38, Pengyu Zhang wrote:
-> This patch provides a Simplified Chinese translation of the
-> "page_tables.rst" document, aimed at improving accessibility
-> for Chinese-speaking developers and users.
-> 
-> The translation prioritizes technical accuracy and readability,
-> ensuring that the content remains clear and informative for
-> its intended audience.
-> 
-> Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
+Corrected minor typo in versatile.c
+- Fixed "documentaton" to "documentation"
 
-Overall the translation looks good, thanks for your effort! Only two
-nits inline...
+Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
+---
+ arch/arm/mach-versatile/versatile.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +在页粒度为 4KB 且地址范围为32位的情况下，pfn 0 对应地址0x00000000，pfn 1 对应
-> +地址0x00001000，pfn 2 对应地址 0x00002000，以此类推，直到 pfn 0xfffff 对应
-> +0xfffff000。如果页粒度为 16KB，则 pfn 分别对应地址 0x00004000、0x00008000
-> +... 0xffffc000，pfn 的范围从 0 到 0x3fffff。
+diff --git a/arch/arm/mach-versatile/versatile.c b/arch/arm/mach-versatile/versatile.c
+index 7ef03d0c224d..f0c80d4663ca 100644
+--- a/arch/arm/mach-versatile/versatile.c
++++ b/arch/arm/mach-versatile/versatile.c
+@@ -134,7 +134,7 @@ static void __init versatile_dt_pci_init(void)
+ 	val = readl(versatile_sys_base + VERSATILE_SYS_PCICTL_OFFSET);
+ 	if (val & 1) {
+ 		/*
+-		 * Enable PCI accesses. Note that the documentaton is
++		 * Enable PCI accesses. Note that the documentation is
+ 		 * inconsistent whether or not this is needed, but the old
+ 		 * driver had it so we will keep it.
+ 		 */
+-- 
+2.34.1
 
-s/0x3fffff/0x3ffff/
-
-Mind fixing it in the original doc?
-
-> +本文将简化并概述 Linux 内核如何处理这些页面错误、创建表和表项、检查内存是否存在，
-> +以及当内存不存在时，如何请求从持久存储或其他设备加载数据，并更新 MMU 及其缓存。
-> +
-> +前几步取决于设备依赖。大多是架构跳转到 `do_page_fault()`，而 x86 中断处理程序由
-             ^^^^^^^^
-I'm afraid this is not a correct translation for "architecture
-dependent".
 
