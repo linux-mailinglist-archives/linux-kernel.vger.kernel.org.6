@@ -1,124 +1,176 @@
-Return-Path: <linux-kernel+bounces-351704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87390991508
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:01:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B6999150A
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 315F21F22F6B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7214C1C21B91
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BE48615A;
-	Sat,  5 Oct 2024 07:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52866F305;
+	Sat,  5 Oct 2024 07:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZyDurwxI"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3kdLA8S"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC6E25634;
-	Sat,  5 Oct 2024 07:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A772F2A
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 07:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728111671; cv=none; b=A6sSskv2dnf3oTMSA0FPrLv7LZQWZt1BKJltPbwOtaAzpOzRwKdfiZ3dBS5zIvfYtK22pck0bqWdCgXOK3kVti3X/dtHcR/T/Qp7QQ8PiYLMx1rr2dVQwScU3Ir7/AHnn0FDYFLc+l8zTeAnsHyYC+LIMRV3iMsiP20r6QgoyGA=
+	t=1728111967; cv=none; b=Nvfe19zjsAaW3OhvhIAnvuAtC0RVeSHxV3TwW6iDAfRcgZlYySLalW1fMcbizwQ0vlB0EwkKUCe4brPfsvKC3kV1mEoiqSOQzlrQ64uXkKKW0kXo7IXpadAgsDbKg+eV032HrUGz/aXYpze5UJGAprNZr1nzcAyQ1T7Gg59PHq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728111671; c=relaxed/simple;
-	bh=dxm3C4Om4s/OmaZ81xra3vKu4d1cwnsd0fgChYAMcCA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bP6PHEJxpCcWdrHzzjOKa1cj60nhKXpqZ9EI28/fxe/UsJZ2LoDS8rOc8zfzUmV2Smd4agjW31t6gteMu4/rqxZeRHI266xRx1HIDSjNfwc7+m4xXeHSSZEisRsVt1gY/x+wEcaGeFKJsrNVqna3iFe4xsR8FI+oMMX/arCoQqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZyDurwxI; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1728111967; c=relaxed/simple;
+	bh=TbBPJxNYC7c7r3/uFly3QFfMP4cPVP/OcDyvphfAfdM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GNxA2fcKg8pCQi0Ecz1tTmLrkHgZ1sbZFmd2N+74rUSfyghC4mjDZrbVcZPhGXPvWkw8SW+dIRoDpNdbojAug1FpvcWeSzMkNM6lMZczbkGOxhoD3kSXAseooiNKhuaCdcNAwYF46tciHPUFbpchW/6r/7CzjIJ2epMicr1YFMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N3kdLA8S; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71df67c67fcso81352b3a.2;
-        Sat, 05 Oct 2024 00:01:09 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539973829e7so2841743e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 00:06:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728111669; x=1728716469; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QtLSqplC9FV8nH8TMNgp/DH6Vy3umkDQiR0WE8bXh5k=;
-        b=ZyDurwxIieLrjweJCMCKU4W56/Z5g5x5AbkrfYQG/0Nh0XYLLQGfL0YDqNdKA7eNnS
-         CpoiVzne5XmuQaPOMjxZaNXdC6r6iy0ktREmZ/g5wmj2mzMa7c0e3UCPF6e4Tm6taJRw
-         wX+tRBmkxahShtPCtj9kmlbL+iYUzB4AqcRLgWX6ygR9+FcBui8n5Ce5+o8V+GiHLDbe
-         Kns5aZhsg6AmyLNE9H5UawShrpJEVU9O9pskj6dXczQPbc+yuhhvKLMH8W5KxKffxXUU
-         eXIEL1bknHMfufm34Q1NiROlS9nA8rqh2wGTRxTXNJgBmo8H3g7ISWESTShHQgoFv4Df
-         Va7g==
+        d=gmail.com; s=20230601; t=1728111963; x=1728716763; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bYVrMrQSJwfYKCjPdcCYgt+chvzT8Uf5ftZ8FQgUQlc=;
+        b=N3kdLA8SNoSq/D1bMxeWjsTBIVasurVYTwG5MuiVtoAIusooPJ6659xIVivWa9aprn
+         0E4mJVKfQJ+mIia7I1S/durzmlgXGQJlwJSoT4y6EZRU+wwbqXnUOoWZ/FdeMXVVtE0Z
+         YmEIlE1ccYvPqtrG2BR1HPngJJJXBM8+4iw0pXRng7V8ikBkZXxTeiqxYaoFhmlWfspb
+         CpRRdu8pFmUi8/MKAjylLVxNgeZTQg0tj0qg13mB9WanPh1MVYwlGDy6RzAcLUBPptrO
+         IyEqtMvR0AJwI0IFRbB71tIbD/hAuKTEKNoiSAW8G1I6K6+GkHTIHaWl6La8j76xem8Y
+         Zi7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728111669; x=1728716469;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QtLSqplC9FV8nH8TMNgp/DH6Vy3umkDQiR0WE8bXh5k=;
-        b=ihXmA57mQmU8IH/mDROd3HwX3zd/6AeR8zV4hGkrRl6dEIzi8TOjnmyzu7y/RBn0Pu
-         5yugYe7rEvjbEkXjfihq/gzJSQBSykQOEhsDq24fERdKtVpaPeYA0FGmo9cyw95fVfwY
-         +9p9AOMDR85lXM32tV+5CpG4FjCSOl49w3sXb9TqbvwYLrZWLF8lQp9q4qs3XQfHFfLR
-         lE3WzLoNdhYOduYiqL0lBm8Km0FiiuWgVoxxs0VWhlemUjfU5JJKzALsFVALPYI+2A4l
-         EFGasOsfuWNs1LaSV+zgItCiTsF0DMKS5DoHtdb9sshmG4F28GbdAufqOAfOrVb6Op/N
-         px3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXLVqe6qKpXRHbxOVZdd5CBTjcxhV4qsetAzWewudUfvBJ75kgSgtfcbWi/CGpykosH8fwq63/Ag6I=@vger.kernel.org, AJvYcCXU1O/KUdc/bhYY12jatPrdb08jkVsQnKNx/9RH5jsxHkAb4Nb7jMkhaReXcMnEaP8tNwV9DQknvMvqn2SEQYvZBx3N3g==@vger.kernel.org, AJvYcCXxPcHCGdIYK4viRm97tu9I233twHO82Xg44XRGHiQ0tYkrx8B2CwIQFVhE+/x48KQW6ymTmmiUNFFQTbyM@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ6bNMhyhFstTDLj9D8Ggx5L0bg8Ypp/fKXmDPuuoNWGBTJVQ7
-	7Vf5Fd+pd09CMdS4ThEuEP3v8zUTZ/aeYv9yYZIjvi/86+B77ETq
-X-Google-Smtp-Source: AGHT+IHDyw2CRlAmxK5hljDVThBX/Yp4zp+oRVi3CQGx6HqrSkrV4rDaTnwVGgArVsf5dcWx7rCLmw==
-X-Received: by 2002:a05:6a00:cc2:b0:70a:fb91:66d7 with SMTP id d2e1a72fcca58-71de2445487mr8375596b3a.20.1728111668933;
-        Sat, 05 Oct 2024 00:01:08 -0700 (PDT)
-Received: from Tua.. ([103.161.55.163])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c4a66bsm1062870a12.92.2024.10.05.00.01.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 00:01:08 -0700 (PDT)
-From: Anaswara T Rajan <anaswaratrajan@gmail.com>
-To: W_Armin@gmx.de
-Cc: corbet@lwn.net,
-	platform-driver-x86@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Anaswara T Rajan <anaswaratrajan@gmail.com>
-Subject: [PATCH v3] platform/x86: dell-ddv: Fix typo in documentation
-Date: Sat,  5 Oct 2024 12:30:56 +0530
-Message-Id: <20241005070056.16326-1-anaswaratrajan@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1728111963; x=1728716763;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bYVrMrQSJwfYKCjPdcCYgt+chvzT8Uf5ftZ8FQgUQlc=;
+        b=lfsZlLmH7uGPcsPkSW0E+g6I1BGpgs+hqcjEBsgoHpOi5ebBMsm7LW8ZVVOTz+DTy2
+         RtnETdxcPuCBQnlBTpH6E0kCrW1BFJYcircBywvLYPucl61RAl4gK2xf093S8+oODr3Q
+         F/X2wYYSGR/Z9plACcYFkupunIdu31F4zwwtfTQ0JXuaqN0hTfoIu3NfLeofiJBisw6p
+         6SgsIx9ea8GzfNz3wJhQdV2cgkYo4bldjOSWdoOAJ/izUpJT6DwlPi7x1fWAGIn6Brjw
+         mdAt/kOBR6XMhbKmWjR5SzAAAtqVc2EBVGcYDGlrgdX6k/zZAHc9riZXzJhfzmILNRN2
+         MgMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhGouLTfnj2hGWcKECvxAVHee6DemI7o+tAw+68tKuKBv1X7NrZQuCrG3rwUiwk6nd/2zD5qdmCGBs0us=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzFI5RnCOsXzlBLbhd2PnAWtHpfanQq4m03/bZc707rMZ7GLdD
+	52dclKAItHSdd5ZCxJf+5UQVbGZqlxGR8p7ycoMc1gV+akRh3Aybuh+4u6sBCCUi+4kCeZzptqe
+	1k/U71/xcOBao02ceFWbcp8XaSSqPCDD2sko=
+X-Google-Smtp-Source: AGHT+IF/SPb5q9d7Mi42mGpfn9y/A5HUxHESegg0s2/uE/R/lfVJVIWc3Bz0N41WkD4BgjxASggZkzFCnV8S5bjvk8g=
+X-Received: by 2002:a05:6512:1090:b0:539:896e:46c9 with SMTP id
+ 2adb3069b0e04-539ab9e4b44mr3143607e87.45.1728111963147; Sat, 05 Oct 2024
+ 00:06:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241004081618.27599-1-advaitdhamorikar@gmail.com>
+ <00761132-75f3-41fd-b571-30b0cbe5565d@amd.com> <CADnq5_OKww1YZ1R_OytEMLcNVwdq=-ckc2gqQ+WMyOv6AZ9kqg@mail.gmail.com>
+ <007679b9-b7b6-4385-9a2e-2be392cb5f58@amd.com>
+In-Reply-To: <007679b9-b7b6-4385-9a2e-2be392cb5f58@amd.com>
+From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+Date: Sat, 5 Oct 2024 12:35:51 +0530
+Message-ID: <CAJ7bepLv3Z9RwuxoBS3SfkMjeBkN1LRTjLEjT8Lv4Jdu-CXb6Q@mail.gmail.com>
+Subject: Re: [PATCH-next] Fix unintentional integer overflow
+To: "Sundararaju, Sathishkumar" <sasundar@amd.com>
+Cc: Alex Deucher <alexdeucher@gmail.com>, alexander.deucher@amd.com, 
+	christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com, 
+	simona@ffwll.ch, leo.liu@amd.com, sathishkumar.sundararaju@amd.com, 
+	saleemkhan.jamadar@amd.com, Veerabadhran.Gopalakrishnan@amd.com, 
+	sonny.jiang@amd.com, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, anupnewsmail@gmail.com, 
+	"Lazar, Lijo" <lijo.lazar@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix typo in word 'diagnostics' in documentation.
+Hi Sathish,
 
-Signed-off-by: Anaswara T Rajan <anaswaratrajan@gmail.com>
----
-Changes in v2:
-  - Make the commit title and description more clearer.
+> Please collate the changes together with Lijo's suggestion as well,
+> "1ULL <<" instead of typecast, there are 3 occurrences of the error in
+> f0b19b84d391.
 
-Changes in v3:
-  - Add missing full stop to commit description.
+I could only observe two instances of this error in f0b19b84d391 at:
+'mask =3D (1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1=
+;`
+and `mask |=3D 1 << ((i * adev->jpeg.num_jpeg_rings) + j);`
 
- Documentation/wmi/devices/dell-wmi-ddv.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+There are a few instances where we can use 1U instead of int as
+harvest_config uses unsigned int
+(adev->jpeg.harvest_config & (1 << i)
+However I think they should be fixed in a separate patch?
 
-diff --git a/Documentation/wmi/devices/dell-wmi-ddv.rst b/Documentation/wmi/devices/dell-wmi-ddv.rst
-index 2fcdfcf03327..e0c20af30948 100644
---- a/Documentation/wmi/devices/dell-wmi-ddv.rst
-+++ b/Documentation/wmi/devices/dell-wmi-ddv.rst
-@@ -8,7 +8,7 @@ Introduction
- ============
- 
- Many Dell notebooks made after ~2020 support a WMI-based interface for
--retrieving various system data like battery temperature, ePPID, diagostic data
-+retrieving various system data like battery temperature, ePPID, diagnostic data
- and fan/thermal sensor data.
- 
- This interface is likely used by the `Dell Data Vault` software on Windows,
-@@ -277,7 +277,7 @@ Reverse-Engineering the DDV WMI interface
- 4. Try to deduce the meaning of a certain WMI method by comparing the control
-    flow with other ACPI methods (_BIX or _BIF for battery related methods
-    for example).
--5. Use the built-in UEFI diagostics to view sensor types/values for fan/thermal
-+5. Use the built-in UEFI diagnostics to view sensor types/values for fan/thermal
-    related methods (sometimes overwriting static ACPI data fields can be used
-    to test different sensor type values, since on some machines this data is
-    not reinitialized upon a warm reset).
--- 
-2.34.1
+Thanks and regards,
+Advait
 
+On Sat, 5 Oct 2024 at 09:05, Sundararaju, Sathishkumar <sasundar@amd.com> w=
+rote:
+>
+>
+>
+> On 10/4/2024 11:30 PM, Alex Deucher wrote:
+> > On Fri, Oct 4, 2024 at 5:15=E2=80=AFAM Sundararaju, Sathishkumar
+> > <sasundar@amd.com> wrote:
+> >>
+> >> All occurrences of this error fix should have been together in a singl=
+e patch both in _get and _set callbacks corresponding to f0b19b84d391, plea=
+se avoid separate patch for each occurrence.
+> >>
+> >> Sorry Alex, I missed to note this yesterday.
+> > I've dropped the patch.  Please pick it up once it's fixed up appropria=
+tely.
+> Thanks Alex.
+>
+> Hi Advait,
+> Please collate the changes together with Lijo's suggestion as well,
+> "1ULL <<" instead of typecast, there are 3 occurrences of the error in
+> f0b19b84d391.
+>
+> Regards,
+> Sathish
+> >
+> > Thanks,
+> >
+> > Alex
+> >
+> >>
+> >> Regards,
+> >> Sathish
+> >>
+> >>
+> >> On 10/4/2024 1:46 PM, Advait Dhamorikar wrote:
+> >>
+> >> Fix shift-count-overflow when creating mask.
+> >> The expression's value may not be what the
+> >> programmer intended, because the expression is
+> >> evaluated using a narrower integer type.
+> >>
+> >> Fixes: f0b19b84d391 ("drm/amdgpu: add amdgpu_jpeg_sched_mask debugfs")
+> >> Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+> >> ---
+> >>   drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 2 +-
+> >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/dr=
+m/amd/amdgpu/amdgpu_jpeg.c
+> >> index 95e2796919fc..7df402c45f40 100644
+> >> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
+> >> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
+> >> @@ -388,7 +388,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_get(void=
+ *data, u64 *val)
+> >>    for (j =3D 0; j < adev->jpeg.num_jpeg_rings; ++j) {
+> >>    ring =3D &adev->jpeg.inst[i].ring_dec[j];
+> >>    if (ring->sched.ready)
+> >> - mask |=3D 1 << ((i * adev->jpeg.num_jpeg_rings) + j);
+> >> + mask |=3D (u64)1 << ((i * adev->jpeg.num_jpeg_rings) + j);
+> >>    }
+> >>    }
+> >>    *val =3D mask;
+>
 
