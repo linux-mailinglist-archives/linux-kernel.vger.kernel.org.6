@@ -1,220 +1,122 @@
-Return-Path: <linux-kernel+bounces-351804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59AB991641
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:01:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45EB3991648
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481561F23135
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:01:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E49E91F230C8
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA0413DBA0;
-	Sat,  5 Oct 2024 11:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41F514A0BC;
+	Sat,  5 Oct 2024 11:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="YocYNISv"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JsLYGzZY"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B78BE4F
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 11:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2D036B0D;
+	Sat,  5 Oct 2024 11:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728126082; cv=none; b=n0+ZG73PmmNnI8DSVrsGApj3x1H4GjIqCAl2p378QopcxraVuCcmS3cqVjNMzPcFf77wZKxlW5+9sp2FHXjkGlIkn6YPOoYY26VVPgyC4sTYY9Ruzj+o1+sbK8X6Ta50I0FDbfXwga6i/VPxIc2YL4hPuwmBFNDGKYzfYsmH4Ag=
+	t=1728126320; cv=none; b=pCRIqOYMEDazmRwag3FH0D+oakoO6nlGXB/edXStNJ4JUHiQlmFMdz6Lz0ADybz7ip2DjPQHKpzv8uSV91iBc4eRyZfrIN63/jaRMW7LjfYbxUf/q4LTf2N45WxAYWilbsZ/PT3eMGuCn1sQHCRiwPVCUQV4TgyHS/9Oq8CdsQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728126082; c=relaxed/simple;
-	bh=rheZfz4AdS3k30pqW8IEpEZG1dsWY6agajpSmXU2uIU=;
+	s=arc-20240116; t=1728126320; c=relaxed/simple;
+	bh=N2wG5xTsEGW6tckm4+g8420EIFSgiKjK8p7h/dH6u6E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NKnrGqesrN3f4LxQnszu0vlUv0lV69wh6dyaS6/cLOetBT8n3rzbAjVNwHKiK7Qr+1o3S4R85D9qNDm2CgQffLJARMCdspaX8wX+cHyKbBBlrt82ttbVl2XRjjYsZcfgbvadkuYzO2wX5JZaeU0SntQiv1AgsDjuKRT4vCWGvYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=YocYNISv; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-82ceab75c27so179082039f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 04:01:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=cn0ziOuxDIPotq+XVsZyHOS+obyKVPjezHhRzfTv4CN0SdqDUUEXfYaMF06VES2ecXvGgywS/wViyRdX+AqYAI2tC5gPJzOJp2o/Q0LIUjuG/sKbeKCxSB6IMmTdjl00yXKKSG/GO6LL6szDBTRMX41IRdosvQcTunHci919jRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JsLYGzZY; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7cd85502a34so462355a12.2;
+        Sat, 05 Oct 2024 04:05:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1728126080; x=1728730880; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728126318; x=1728731118; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bREgugSagESVp9ALwvpjSU06NzrhpdO98bPNU3cl6FM=;
-        b=YocYNISv1SCK+5jhgm6vaNuUKSBmS1ieXQW+dkTwzDUBII22RRs9UTLKeg+07gZKoU
-         oBXYokMtiyu0dh+7rP1H+aWuJ9BOvw8AvBV8XotoP1rCR/2B46RSslrOUUNv3ayvune+
-         47mQ4XHX3bK3x3rwXfYlV1EOoSopdX9gro9FJHHk6zXOrkJWucsYVuMMMsIJVzViB55N
-         J4hDC/juCelj/lE032tnEf5tL4xVSLJ85+xiSaWeq9HFUIuKa+P2qBFn6NgybTzMG3MS
-         NtPF/xeYSz5NmS0UAHKfmr20sMV3owtbYbOReAvHMNaHL4Z+9g78x3/RfQtWHi9lHV3T
-         iJsA==
+        bh=xfqw5r1czL4EVfquTUOiF9Q1Mwkb+cRBvrS24YvH9JM=;
+        b=JsLYGzZYZ866gVtttPxZGp2jEXlLdgf7S8aA5Tsu2gKhgPgtEOJsT6LM9y/rUX2A9n
+         QIpub/F3BepHI2HaGt5nGlt+AZIlvPbYT9AtiGJHlslzxl1q926eY7OMFF73il/yXh7S
+         P+MTGTjg0LgzLOYtM6nC3YJcCH23vtp/kQ/jSnONFbyjxngnGE0ekpDuEMpfLadD0DUR
+         5zcifgqZCdahtMebFDSugCLBUUewvVk4s+l/aGg/2olL9/lNXwfzBUCdLE7r6efm5zCl
+         7ueiM3qUjSeGpTzA7llaidvPrI1+S0hCMZXKajfb8qverROjQmNKQzgTCt93QLsKnGBm
+         770A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728126080; x=1728730880;
+        d=1e100.net; s=20230601; t=1728126318; x=1728731118;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bREgugSagESVp9ALwvpjSU06NzrhpdO98bPNU3cl6FM=;
-        b=g0FooVpNgrePUn30E8ED+jIkqD638xttNqFUyTqe1n+p91ZH9gFUoWf4fqNAD9SIHU
-         WZbtlVrmCnD+rzWK88cT0SisY7/Hlzt5uWBp9+E8oGQMR76cvC5nq7sH6IXThBW36U8D
-         J0QeMyk0ZwxOl/QdREIHkXhyqdXLLhoCpXFdt0yOg5baksGV8fEfc09sAoj2Vsrq6V7/
-         X1pLnzixnSgZ0gxMhQ8xHfIPXVe2KgX0AzCQkPJttLmntxPGktsi9KuS5R5b0IuZGqqN
-         Xgn5jKDjVBM6ss7sGMQt7v6iAqFtGaYNtpidLEtYaahD5Uu2zVfm8/w2cyzeiTMAt5rD
-         1k9Q==
-X-Gm-Message-State: AOJu0YxWqD5s5AFj/iQ1qCULdLlKCxMvCa/F5MV7hoBNUKMMMaRhE9n1
-	wrrkNQXGJOhvX88CBTyVgizMSV7iFyFqtppp9d+90GYmDubhfjOMVAL3WWuPMUb/3lzwmAJyX5G
-	QEw0OQgnA0aYqeU6dZoj2J+XEgaGI+IIE1+IKYw==
-X-Google-Smtp-Source: AGHT+IEHaB88aGwn9Zv7UXlV41DcjW2zCnzlTE+Pa5BQQ2v5u3y5Ca4EvtdkpG4NwHwh0bWWM7OzuV8hzj+pENEIUfI=
-X-Received: by 2002:a92:c564:0:b0:3a0:92b1:ec4c with SMTP id
- e9e14a558f8ab-3a375bb7860mr47293525ab.23.1728126079657; Sat, 05 Oct 2024
- 04:01:19 -0700 (PDT)
+        bh=xfqw5r1czL4EVfquTUOiF9Q1Mwkb+cRBvrS24YvH9JM=;
+        b=f1J03QaKm+qez+4b2ZAFLUlaripBKzzMxhZ3YAX+jL1r7DIv4hpxHQfLhSSPjy2lNM
+         RjlRxF21jFdtAyjZ2izqjFhMwKE3t/zV5M3KSrMR1w9zX0Gz1md7B1yF6B2PFvBWS02K
+         XO4Fgfx3ZuQbwouqH4WeRHKK4styRX7egbDVmfkw8KOSHGX2cozJtEp63dNlLOGV4nAO
+         /a37Ax/cB88sxHd2EXspm+dAo8KH12P8BqBbi6QzgwrqSeYkP3tAkF3P7kjNK/J8FLx1
+         5843N1I2e5jSe1cXssT/DIkpkdxwEU4lZjKhCqhP9kWCfuni4BFbW0hsL7B3kSuycbQp
+         M9CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUs5fi2E2MOEZBSFIVYdHfVHaiNEzgcTI2q7nH+IeDdyb+AbxFa7fQ7NKsYCSLHVOBbs5R+C2mCrNx6AeRo@vger.kernel.org, AJvYcCUxKp4rdhj767a5zv2J06xL4Fk1wCt4s3BnUQUzJaVlxKLKa115hVtfVdCiMz9U/hvKEHi9oPhLMFBLYA==@vger.kernel.org, AJvYcCWX4rgXbbdSuMjHAWOvrTuYD3xqoRH/zN7sLVfTWsoU25zvOCuNcpEOb0zb6Q1oMmN+Fc1+6rZCYr65KtNbCDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWLdBMHvGrZdHPhHVzO9qlaY/UH8h+6hXz+Bgn+hO76IJinCpR
+	ycht2ULqtdYLYJ0PDS2vQxTJwFLzkKAgyTrFKIBrBTDIr2uOHixL5vaQNvx98VVu6YbpcDevd91
+	8WhQAtJYua/EpLgdn5MIh/5Dk3eU=
+X-Google-Smtp-Source: AGHT+IFbKeP5SGhdaf0Oz6Qew6k7OcfWrmiRG3qMT6fK6lKT1FG4DTdWLJ88Xq6uA25mxsX5Cz12A8etCLIeQr3U1Ak=
+X-Received: by 2002:a05:6a00:2401:b0:710:5243:4161 with SMTP id
+ d2e1a72fcca58-71de2472ac2mr3759730b3a.5.1728126318131; Sat, 05 Oct 2024
+ 04:05:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAhSdy05BXUZu6BNUoDWoEVd_YiM0Dpqg=t5WYUX7+cacnO2Hg@mail.gmail.com>
- <mhng-1e3d83bb-a7f4-4fa7-8cfa-2550835026de@palmer-ri-x1c9>
-In-Reply-To: <mhng-1e3d83bb-a7f4-4fa7-8cfa-2550835026de@palmer-ri-x1c9>
-From: Anup Patel <anup@brainfault.org>
-Date: Sat, 5 Oct 2024 16:31:07 +0530
-Message-ID: <CAAhSdy32s91ijfachfynzmQ1+weeBjLKaDLiCBT2gq-oTYSgDw@mail.gmail.com>
-Subject: Re: [PATCH v8 0/5] Add Svade and Svadu Extensions Support
-To: Palmer Dabbelt <palmer@rivosinc.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, greentime.hu@sifive.com, 
-	vincent.chen@sifive.com, yongxuan.wang@sifive.com, 
-	Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu
+References: <20241004155247.2210469-1-gary@garyguo.net> <20241004155247.2210469-4-gary@garyguo.net>
+ <OKHi9uP1uJD59N2oYRk1OfsxsrGlqiupMsgcvrva9_IPnEI9wpoxmabHQo1EYen96ClDBRQyrJWxb7WJxiMiAA==@protonmail.internalid>
+ <2024100507-percolate-kinship-fc9a@gregkh> <87zfniop6i.fsf@kernel.org> <20241005101039.GZ18071@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241005101039.GZ18071@noisy.programming.kicks-ass.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 5 Oct 2024 13:05:05 +0200
+Message-ID: <CANiq72m=V0tYvwYpA3ciPa_tsf3kkaxL97gc8qL8rBj6hF5c_g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rust: block: convert `block::mq` to use `Refcount`
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, 
+	Gary Guo <gary@garyguo.net>, Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Palmer,
+On Sat, Oct 5, 2024 at 12:10=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> So I clicked on the link for shits and giggles, and OMG that's
+> unreadable garbage :/ Is there a plain text form that a normal person
+> can read?
+>
+> There's just too much 'layout' and fonts and colours and URGH.
 
-On Fri, Sep 20, 2024 at 1:53=E2=80=AFPM Palmer Dabbelt <palmer@rivosinc.com=
-> wrote:
->
-> On Wed, 21 Aug 2024 07:43:20 PDT (-0700), anup@brainfault.org wrote:
-> > Hi Palmer,
-> >
-> > On Fri, Jul 26, 2024 at 2:19=E2=80=AFPM Yong-Xuan Wang <yongxuan.wang@s=
-ifive.com> wrote:
-> >>
-> >> Svade and Svadu extensions represent two schemes for managing the PTE =
-A/D
-> >> bit. When the PTE A/D bits need to be set, Svade extension intdicates =
-that
-> >> a related page fault will be raised. In contrast, the Svadu extension
-> >> supports hardware updating of PTE A/D bits. This series enables Svade =
-and
-> >> Svadu extensions for both host and guest OS.
-> >>
-> >> Regrading the mailing thread[1], we have 4 possible combinations of
-> >> these extensions in the device tree, the default hardware behavior for
-> >> these possibilities are:
-> >> 1) Neither Svade nor Svadu present in DT =3D> It is technically
-> >>    unknown whether the platform uses Svade or Svadu. Supervisor
-> >>    software should be prepared to handle either hardware updating
-> >>    of the PTE A/D bits or page faults when they need updated.
-> >> 2) Only Svade present in DT =3D> Supervisor must assume Svade to be
-> >>    always enabled.
-> >> 3) Only Svadu present in DT =3D> Supervisor must assume Svadu to be
-> >>    always enabled.
-> >> 4) Both Svade and Svadu present in DT =3D> Supervisor must assume
-> >>    Svadu turned-off at boot time. To use Svadu, supervisor must
-> >>    explicitly enable it using the SBI FWFT extension.
-> >>
-> >> The Svade extension is mandatory and the Svadu extension is optional i=
-n
-> >> RVA23 profile. Platforms want to take the advantage of Svadu can choos=
-e
-> >> 3. Those are aware of the profile can choose 4, and Linux won't get th=
-e
-> >> benefit of svadu until the SBI FWFT extension is available.
-> >>
-> >> [1] https://lore.kernel.org/linux-kernel/20240527-e9845c06619bca5cd285=
-098c@orel/T/#m29644eb88e241ec282df4ccd5199514e913b06ee
-> >>
-> >> ---
-> >> v8:
-> >> - fix typo in PATCH1 (Samuel)
-> >> - use the new extension validating API in PATCH1 (Cl=C3=A9ment)
-> >> - update the dtbinding in PATCH2 (Samuel, Conor)
-> >> - add PATCH4 to fix compile error in get-reg-list test.
-> >>
-> >> v7:
-> >> - fix alignment in PATCH1
-> >> - update the dtbinding in PATCH2 (Conor, Jessica)
-> >>
-> >> v6:
-> >> - reflect the platform's behavior by riscv_isa_extension_available() a=
-nd
-> >>   update the the arch_has_hw_pte_young() in PATCH1 (Conor, Andrew)
-> >> - update the dtbinding in PATCH2 (Alexandre, Andrew, Anup, Conor)
-> >> - update the henvcfg condition in PATCH3 (Andrew)
-> >> - check if Svade is allowed to disabled based on arch_has_hw_pte_young=
-()
-> >>   in PATCH3
-> >>
-> >> v5:
-> >> - remove all Acked-by and Reviewed-by (Conor, Andrew)
-> >> - add Svade support
-> >> - update the arch_has_hw_pte_young() in PATCH1
-> >> - update the dtbinding in PATCH2 (Alexandre, Andrew)
-> >> - check the availibility of Svadu for Guest/VM based on
-> >>   arch_has_hw_pte_young() in PATCH3
-> >>
-> >> v4:
-> >> - fix 32bit kernel build error in PATCH1 (Conor)
-> >> - update the status of Svadu extension to ratified in PATCH2
-> >> - add the PATCH4 to suporrt SBI_FWFT_PTE_AD_HW_UPDATING for guest OS
-> >> - update the PATCH1 and PATCH3 to integrate with FWFT extension
-> >> - rebase PATCH5 on the lastest get-reg-list test (Andrew)
-> >>
-> >> v3:
-> >> - fix the control bit name to ADUE in PATCH1 and PATCH3
-> >> - update get-reg-list in PATCH4
-> >>
-> >> v2:
-> >> - add Co-developed-by: in PATCH1
-> >> - use riscv_has_extension_unlikely() to runtime patch the branch in PA=
-TCH1
-> >> - update dt-binding
-> >>
-> >> Yong-Xuan Wang (5):
-> >>   RISC-V: Add Svade and Svadu Extensions Support
-> >>   dt-bindings: riscv: Add Svade and Svadu Entries
-> >>   RISC-V: KVM: Add Svade and Svadu Extensions Support for Guest/VM
-> >>   KVM: riscv: selftests: Fix compile error
-> >>   KVM: riscv: selftests: Add Svade and Svadu Extension to get-reg-list
-> >>     test
-> >>
-> >>  .../devicetree/bindings/riscv/extensions.yaml | 28 ++++++++++++++++++=
-+
-> >>  arch/riscv/Kconfig                            |  1 +
-> >>  arch/riscv/include/asm/csr.h                  |  1 +
-> >>  arch/riscv/include/asm/hwcap.h                |  2 ++
-> >>  arch/riscv/include/asm/pgtable.h              | 13 ++++++++-
-> >>  arch/riscv/include/uapi/asm/kvm.h             |  2 ++
-> >>  arch/riscv/kernel/cpufeature.c                | 12 ++++++++
-> >>  arch/riscv/kvm/vcpu.c                         |  4 +++
-> >>  arch/riscv/kvm/vcpu_onereg.c                  | 15 ++++++++++
-> >>  .../selftests/kvm/riscv/get-reg-list.c        | 16 ++++++++---
-> >>  10 files changed, 89 insertions(+), 5 deletions(-)
-> >>
-> >> --
-> >> 2.17.1
-> >>
-> >>
-> >
-> > Let me know if this series can be taken through the KVM RISC-V tree.
-> > I can provide you with a shared tag as well.
->
-> I think the patchwork bot got confused by patch 4 going to fixes?  It
-> says this was merged.
->
-> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
->
-> if you still want to take it, otherwise just LMK and I'll pick it up.
->
+If fonts and colors are the only issue, then it can easily be fixed
+with a bit of CSS client-side or we can perhaps add it to a new theme.
 
-I have queued this series for Linux-6.13
+Otherwise, people have implemented other renderers and viewers in the
+past, including text / terminal-based ones. Nowadays there is unstable
+JSON output support that can be used for that without dealing with
+HTML:
 
-Thanks,
-Anup
+    https://rust-lang.github.io/rfcs/2963-rustdoc-json.html
+
+If you want to use rust.docs.kernel.org, you can also use the "source"
+view at the top-right. It is still syntax highlighted a bit -- not
+sure if you like that, but you may find it "less busy".
+
+Having said that, there is some logic in the layout (in the non-source
+view, I mean) being the way it is in the HTML view -- it may take time
+to get used to, but it is quite useful when you know where to look /
+click.
+
+Cheers,
+Miguel
 
