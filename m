@@ -1,59 +1,72 @@
-Return-Path: <linux-kernel+bounces-351945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7423A991828
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:10:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01786991822
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A79A9B226A9
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:10:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A281C21580
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653DE156C72;
-	Sat,  5 Oct 2024 16:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D1615699D;
+	Sat,  5 Oct 2024 16:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8UV5E0S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="GcfZ6KZt"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47C5156F3B;
-	Sat,  5 Oct 2024 16:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728144582; cv=none; b=uhEEl24QAUUyIy/M1h0wFhJSmV3kbsz5DlmNZdRrEh4Nbse2Xf+59DdxVg1DK23Cv0QZo5KhFJQx0ifOLsHIS1yuNlA0UNBPXQVB9/dvVyJm0IknBhDG0A9BPlBaZvPhQPF3cCYyY2ZcwVYxiNmpWBX3h3h0/DxGaAdKWImSHqI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728144582; c=relaxed/simple;
-	bh=5IEvUoOqIMl0rwzsavXE/IiShDg86FdqlL87+zGeY+I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FcMawz4JdGumaLZmzdoh5quKxoL1uQqo1hTpSngmaL/3HFZH8D5td2Q7EfdnsBIot4Y+Va6tWhk4O6m239oNPSLagoOzeM3uCT3R3bY3kUWrS3mej7uziN46I4Fl/Gn9GIbLq1JKagBsn72CJPM/J1mB1PeQHvSSD5lQJ52goOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8UV5E0S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2310C4CEC7;
-	Sat,  5 Oct 2024 16:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728144582;
-	bh=5IEvUoOqIMl0rwzsavXE/IiShDg86FdqlL87+zGeY+I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=K8UV5E0ShbVAyuSM3YtJVDEH7p7quruxJCt8jOs+YvvqTt9grtzrXKJte5DADJ65u
-	 xsvBE+RhLDXvo9FLa0yUc7Slw3Rdkwa/Yr17PkheRs563cr2IRlZiMb6h4m2ID9Ocp
-	 v0YxdGE11mp1dG0Z5fGVsg8UJwK44a6tN7logLYgL8UlrPnPZ6OQD2Sa5Q8oaIEioM
-	 Pmyl/bjrkEvh2rAkB+lBHVwYE28hLCmYIzkNQG+dHwZ1rJ612ciw8XVhZzsbnKC6/Z
-	 AQohF1iXDo659Rd5T52AmewpGQ6hJTuUOLEStZX+MJB3iHHyPq8MjQaJVz1ifp4/8u
-	 QljPsONR2U9nQ==
-Received: by pali.im (Postfix)
-	id 5075C9F7; Sat,  5 Oct 2024 18:09:36 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6A4374EA
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 16:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728144564; cv=pass; b=Epp0MrfpO6zDwXWE4ipZxBHS8fuL1YDnJXXeHiyukQvT2EVoWPJ0pN0NkSRSKn6JZb/0KlvB2pleD4GxzcLhNAWnc7Ja6BrfhSg+I+GzJYVzn9b9X15brIomYihZ09yZdPvHORhrf3b3Gbc/jBpW9OyFovge5U+FSOB5dQXkgaE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728144564; c=relaxed/simple;
+	bh=heMnnBLkZ14zM6lVG6M0rsNKFTQBFq+Kn1gmFTVTMLY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=feNNlh4wpP7y/3+ynuMG+HiETToSK7SMlpvfrBnDTL45XpNBwL1sNj8E/ksYbVPQF9T5f/qryitTlywiLauZP6EWCDxd699UidmoyI2YniV5M4h6u8e4+Enz2qQBbbLo8roy4+HP/FkZkeNL88735PAMr5fUUwihd/vo/7oRlo4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=GcfZ6KZt; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1728144548; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cGd8u8H830/Y9MO90QueAMSjyO+lDU3OLKxWbV6b1rCR0e588kYZ64v/J2C70fSG5pO5kxyeIDBczyV3nH3SnX/2dW5FOBB6Klcw7dRfStavpdUmmpNg2dxkQXnFZvUhhZD1Tm4P1ZXA14HH5ziwcce4qLzMZt1FF9+1KaQnMZE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1728144548; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=B/KSYYR1T3gUzqZowAe2+SBTCH+9OFZAP3JPy6LVLtQ=; 
+	b=l42G5dDJj4SEepunCXhDsrONYyJw+v/u1dhOc2VWhI4YOysyXNTBFr+KdEX5CVPNhEBa7DfSwJJOtC8gQGYVx7ptsGEGbiQXFa84cE/dAqs18TuJQiDsfdu2z26XM0+83vSX7MiI+bSuqdkQBWIieG/51PQpO3s8ykurWsfBdDE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728144548;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=B/KSYYR1T3gUzqZowAe2+SBTCH+9OFZAP3JPy6LVLtQ=;
+	b=GcfZ6KZtDAkZM7DuszAaU5JXvF07NOzzq+M3jAjklI2J37A6kO4PoFw/AsRfyui8
+	8QWdDAW0Zf/pHLfmruTHTTqDoLIPoog4CgL3LMvJZQaL8EhQzkdWagPH9Nh6lFN5avj
+	C/N3eXCJu/ovNgC1ZgkwQUAtUbZX/3BrKQclYM3A=
+Received: by mx.zohomail.com with SMTPS id 172814454763354.29541276121313;
+	Sat, 5 Oct 2024 09:09:07 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] cifs: Improve stat() to work also without FILE_READ_ATTRIBUTES
-Date: Sat,  5 Oct 2024 18:08:26 +0200
-Message-Id: <20241005160826.20825-3-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241005160826.20825-1-pali@kernel.org>
-References: <20241005160826.20825-1-pali@kernel.org>
+Subject: [PATCH v3 1/2] drm/panfrost: Add missing OPP table refcnt decremental
+Date: Sat,  5 Oct 2024 17:08:52 +0100
+Message-ID: <20241005160857.347796-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,163 +76,44 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-If SMB2_OP_QUERY_INFO (called when POSIX extensions are not used) failed
-with STATUS_ACCESS_DENIED then it means that caller does not have
-permission to open the path with FILE_READ_ATTRIBUTES access and therefore
-cannot issue SMB2_OP_QUERY_INFO command.
+Commit f11b0417eec2 ("drm/panfrost: Add fdinfo support GPU load metrics")
+retrieves the OPP for the maximum device clock frequency, but forgets to
+keep the reference count balanced by putting the returned OPP object. This
+eventually leads to an OPP core warning when removing the device.
 
-This will result in the -EACCES error from stat() sycall.
+Fix it by putting OPP objects as many times as they're retrieved.
 
-There is an alternative way how to query limited information about path but
-still suitable for stat() syscall. SMB2 OPEN/CREATE operation returns in
-its successful response subset of query information.
+Also remove an unnecessary whitespace.
 
-So try to open the path without FILE_READ_ATTRIBUTES but with
-MAXIMUM_ALLOWED access which will grant the maximum possible access to the
-file and the response will contain required query information for stat()
-syscall.
-
-This will improve smb2_query_path_info() to query also files which do not
-grant FILE_READ_ATTRIBUTES access to caller.
-
-Note that this change depends on the previous change:
-"cifs: Do not issue SMB2 CREATE always with FILE_READ_ATTRIBUTES"
-
-Signed-off-by: Pali Rohár <pali@kernel.org>
+Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+Fixes: f11b0417eec2 ("drm/panfrost: Add fdinfo support GPU load metrics")
+Reviewed-by: Steven Price <steven.price@arm.com>
 ---
- fs/smb/client/cifspdu.h   |  1 +
- fs/smb/client/smb2glob.h  |  1 +
- fs/smb/client/smb2inode.c | 71 ++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 72 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/panfrost/panfrost_devfreq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
-index c3b6263060b0..451465678d01 100644
---- a/fs/smb/client/cifspdu.h
-+++ b/fs/smb/client/cifspdu.h
-@@ -217,6 +217,7 @@
- 					  /* of an input/output request       */
- #define SYSTEM_SECURITY       0x01000000  /* The system access control list   */
- 					  /* can be read and changed          */
-+#define MAXIMUM_ALLOWED       0x02000000
- #define GENERIC_ALL           0x10000000
- #define GENERIC_EXECUTE       0x20000000
- #define GENERIC_WRITE         0x40000000
-diff --git a/fs/smb/client/smb2glob.h b/fs/smb/client/smb2glob.h
-index 2466e6155136..224495322a05 100644
---- a/fs/smb/client/smb2glob.h
-+++ b/fs/smb/client/smb2glob.h
-@@ -38,6 +38,7 @@ enum smb2_compound_ops {
- 	SMB2_OP_SET_REPARSE,
- 	SMB2_OP_GET_REPARSE,
- 	SMB2_OP_QUERY_WSL_EA,
-+	SMB2_OP_OPEN_QUERY,
- };
+diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
+index 2d30da38c2c3..3385fd3ef41a 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
++++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
+@@ -38,7 +38,7 @@ static int panfrost_devfreq_target(struct device *dev, unsigned long *freq,
+ 		return PTR_ERR(opp);
+ 	dev_pm_opp_put(opp);
  
- /* Used when constructing chained read requests. */
-diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-index 06bb6f7fbf0f..a5759facf7eb 100644
---- a/fs/smb/client/smb2inode.c
-+++ b/fs/smb/client/smb2inode.c
-@@ -188,6 +188,7 @@ static int smb2_compound_op(const unsigned int xid, struct cifs_tcon *tcon,
- 	struct TCP_Server_Info *server;
- 	int num_rqst = 0, i;
- 	int resp_buftype[MAX_COMPOUND];
-+	struct smb2_create_rsp *create_rsp = NULL;
- 	struct smb2_query_info_rsp *qi_rsp = NULL;
- 	struct cifs_open_info_data *idata;
- 	struct inode *inode = NULL;
-@@ -265,7 +266,13 @@ static int smb2_compound_op(const unsigned int xid, struct cifs_tcon *tcon,
- 	num_rqst++;
- 	rc = 0;
+-	err =  dev_pm_opp_set_rate(dev, *freq);
++	err = dev_pm_opp_set_rate(dev, *freq);
+ 	if (!err)
+ 		ptdev->pfdevfreq.current_frequency = *freq;
  
--	for (i = 0; i < num_cmds; i++) {
-+	i = 0;
-+
-+	/* Skip the leading explicit OPEN operation */
-+	if (num_cmds > 0 && cmds[0] == SMB2_OP_OPEN_QUERY)
-+		i++;
-+
-+	for (; i < num_cmds; i++) {
- 		/* Operation */
- 		switch (cmds[i]) {
- 		case SMB2_OP_QUERY_INFO:
-@@ -637,6 +644,26 @@ static int smb2_compound_op(const unsigned int xid, struct cifs_tcon *tcon,
- 		tcon->need_reconnect = true;
- 	}
- 
-+	if (rc == 0 && num_cmds > 0 && cmds[0] == SMB2_OP_OPEN_QUERY) {
-+		create_rsp = rsp_iov[0].iov_base;
-+		idata = in_iov[0].iov_base;
-+		idata->fi.CreationTime = create_rsp->CreationTime;
-+		idata->fi.LastAccessTime = create_rsp->LastAccessTime;
-+		idata->fi.LastWriteTime = create_rsp->LastWriteTime;
-+		idata->fi.ChangeTime = create_rsp->ChangeTime;
-+		idata->fi.Attributes = create_rsp->FileAttributes;
-+		idata->fi.AllocationSize = create_rsp->AllocationSize;
-+		idata->fi.EndOfFile = create_rsp->EndofFile;
-+		if (le32_to_cpu(idata->fi.NumberOfLinks) == 0)
-+			idata->fi.NumberOfLinks = cpu_to_le32(1); /* dummy value */
-+		idata->fi.DeletePending = 0;
-+		idata->fi.Directory = !!(le32_to_cpu(create_rsp->FileAttributes) & ATTR_DIRECTORY);
-+
-+		/* smb2_parse_contexts() fills idata->fi.IndexNumber */
-+		rc = smb2_parse_contexts(server, &rsp_iov[0], &oparms->fid->epoch,
-+					 oparms->fid->lease_key, &oplock, &idata->fi, NULL);
-+	}
-+
- 	for (i = 0; i < num_cmds; i++) {
- 		switch (cmds[i]) {
- 		case SMB2_OP_QUERY_INFO:
-@@ -934,6 +961,48 @@ int smb2_query_path_info(const unsigned int xid,
- 	case 0:
- 		rc = parse_create_response(data, cifs_sb, full_path, &out_iov[0]);
- 		break;
-+	case -EACCES:
-+		/*
-+		 * If SMB2_OP_QUERY_INFO (called when POSIX extensions are not used) failed with
-+		 * STATUS_ACCESS_DENIED then it means that caller does not have permission to
-+		 * open the path with FILE_READ_ATTRIBUTES access and therefore cannot issue
-+		 * SMB2_OP_QUERY_INFO command.
-+		 *
-+		 * There is an alternative way how to query limited information about path but still
-+		 * suitable for stat() syscall. SMB2 OPEN/CREATE operation returns in its successful
-+		 * response subset of query information.
-+		 *
-+		 * So try to open the path without FILE_READ_ATTRIBUTES but with MAXIMUM_ALLOWED
-+		 * access which will grant the maximum possible access to the file and the response
-+		 * will contain required query information for stat() syscall.
-+		 */
-+
-+		if (tcon->posix_extensions)
-+			break;
-+
-+		for (i = 0; i < ARRAY_SIZE(out_buftype); i++) {
-+			free_rsp_buf(out_buftype[i], out_iov[i].iov_base);
-+			out_buftype[i] = 0;
-+			out_iov[i].iov_base = NULL;
-+		}
-+
-+		num_cmds = 1;
-+		cmds[0] = SMB2_OP_OPEN_QUERY;
-+		in_iov[0].iov_base = data;
-+		in_iov[0].iov_len = sizeof(*data);
-+		oparms = CIFS_OPARMS(cifs_sb, tcon, full_path, MAXIMUM_ALLOWED,
-+				     FILE_OPEN, create_options, ACL_NO_MODE);
-+		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path,
-+				      &oparms, in_iov, cmds, num_cmds,
-+				      cfile, out_iov, out_buftype, NULL);
-+
-+		hdr = out_iov[0].iov_base;
-+		if (!hdr || out_buftype[0] == CIFS_NO_BUFFER)
-+			goto out;
-+
-+		if (!rc)
-+			rc = parse_create_response(data, cifs_sb, full_path, &out_iov[0]);
-+		break;
- 	case -EOPNOTSUPP:
- 		/*
- 		 * BB TODO: When support for special files added to Samba
+@@ -182,6 +182,7 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
+ 	 * if any and will avoid a switch off by regulator_late_cleanup()
+ 	 */
+ 	ret = dev_pm_opp_set_opp(dev, opp);
++	dev_pm_opp_put(opp);
+ 	if (ret) {
+ 		DRM_DEV_ERROR(dev, "Couldn't set recommended OPP\n");
+ 		return ret;
 -- 
-2.20.1
+2.46.2
 
 
