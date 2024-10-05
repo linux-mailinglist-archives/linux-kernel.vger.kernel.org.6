@@ -1,228 +1,256 @@
-Return-Path: <linux-kernel+bounces-351795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CC9991621
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:37:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2971991624
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677C31F22D71
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:37:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFDF4283D21
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D25149C7A;
-	Sat,  5 Oct 2024 10:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF39149C7A;
+	Sat,  5 Oct 2024 10:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wXvc339g"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6rqnvRg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC2B211C
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 10:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C6B13A250;
+	Sat,  5 Oct 2024 10:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728124645; cv=none; b=WFmoAsGijN20yda5DSeHP/+mN4FpRueeL5jCqkKuZ7UKuCvY1H1oM+o/+HWIBWou25gLDuqCkn+pCgsYZf80ufiN8Q+E0TcY3vZhwy2zwYqoul/fePljGQ8mV1KJwsGkbDxFZNYHzgwUgUBNQT8hG2PumgSeUSkUJj5sn8Vg4ls=
+	t=1728124668; cv=none; b=BDyhEwxW/ti6Ea8tH3UWZ93Sc3yKoLPZAcDykP9zsGqIkOsv5kp0T7wSW/mfWLXZb1J26XWnSKuDKXjOdVZYP9St7nITNlNdvr1sPWGJAAABmeNh/Ua0UGLVVsxmyVD2PjRTHh/4tslOcqIjdKIkcgXCmKJLfCHYituUdayykds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728124645; c=relaxed/simple;
-	bh=xXuYtNAETQ1g5JcjlzOE5MFvfpkQQOj1E6OhX/1lXZE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aihfDydCE0Ivyx230KHFDyksI0/qCoKJVYFaKot5G1enmfDBnQsBt/9B6Qi/ktujCRcM93HTyvlHqDvPmzBQHLXD6eUZolCiV6C1OB+aiMuhSUL3QTNQoFjxrksYvOF8cTSCG3ETzfwAS7zyml2DiZX6uKL7SOriZCraSrfdNfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wXvc339g; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e091682cfbso2256005a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 03:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728124643; x=1728729443; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=B4ms11ZQkraDYH9Xo26ocEAmXpjpDosjseyHDy0gtFw=;
-        b=wXvc339gD3yax5pXG8Oz24licvzXm3QJyLsxLFvtE69FsgpBYStAz8o5EyW+ba4BGy
-         jM2oRVmPEuLFhMbW3XXTehTomowxtqcT1gCUYM/AcR9aK3b5pBaKYXHQ6marbSpmgKXw
-         USdT5DpumO+RhRHEoA/jqrd8JnlBOdZJIIUSAMmDSGTudeypSm+FovDJ0BnDUn0AQGvW
-         ZepE6tHXni+tzjMDFRlnsjHsVbVZqCPK/X6pBB/xuXpHRPFA5GhhDhSsjKNMdTjhuYJK
-         WZaiWgr9ATN5aPUjum9LwPbOrLXaLtJ9TibwsuWbEM7P8ox28c8IvwUrcIZjXaOt4MKa
-         Ngmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728124643; x=1728729443;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B4ms11ZQkraDYH9Xo26ocEAmXpjpDosjseyHDy0gtFw=;
-        b=SiGEWTV/ocJmt1yjuyvEvmBpiYRqw9SMXwq5sPwtNgpQgt/lnzfvdYNMEVwZ8t2K4u
-         qTemzE/yNov10brpJDBYPhRajWWUMfLuhxVXi8UjkDwYSxRVBpwn+oamrAC2Cgr1RXU/
-         6Ax5yN7/djAN/DflRjE7q/EYuxWRQNbjuDCGybJ5YOXJf/bfIpx9izLeAwEAMrCuKkVD
-         M6dvnLd7QefNbw08muK6qYBuK6ce/qwhSdB/NiuGVNt7r5jFXZiG7I9jHwS+xW9zQf8V
-         nrQJxHXCQjyoTft+JsZXwpp2fLysnSDmznJc+EUyHXUpmSkt5XlZt3OE8Ei8/6+o2yP2
-         Q7Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUXYFyXk4VDlBJP8/+HPAJY57fvfEjyrhgvam/h4LMcpvviZtluPoGRm6+jqOKbzhkBzISekXK2lQLaKaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxr4vXNTcLBRyTZvQFI/QDK2sfHDtMq1a7o0pxsLOpSQB0B5em
-	goe2WscAXGeNe1l/xtka2dqlfDJtyJ8hkNGEuwQeXk/Sz465iRckob/2+BI72U5xDfFvciIxIlL
-	uRyK6lD0+FoMkxrnB6QDXbIp4LUr7bkJ1YmPZ
-X-Google-Smtp-Source: AGHT+IFpelqnAaOBUIxS1I4oQr1q2aEbZ56jlxqBJluUueazlQUie6wZxLwd0KZecIyBO72JszXXXVvhtpu6+8xR5xo=
-X-Received: by 2002:a17:90b:494:b0:2c9:b72:7a1f with SMTP id
- 98e67ed59e1d1-2e1e632369fmr7417174a91.28.1728124642435; Sat, 05 Oct 2024
- 03:37:22 -0700 (PDT)
+	s=arc-20240116; t=1728124668; c=relaxed/simple;
+	bh=fONywxbxTzN0IAzlUbZO96WkETbfa3z2THUpoJ3dZ48=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ozXStCNSxjvGw2WUUXU38FuZ7NlqIzvZClmFe2FNrT01WnV31Ecj7dvLBewvsaPtkDO+WvmUU7CyY1owYo13g4D92tXcrbk+mpVBPlFviX/w/lHuu65dNNXpx8ib6EoxH6KSy6a3pNtWHo45P4eSSjIr8487r3/cq9vn42GbVTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6rqnvRg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39033C4CEC2;
+	Sat,  5 Oct 2024 10:37:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728124667;
+	bh=fONywxbxTzN0IAzlUbZO96WkETbfa3z2THUpoJ3dZ48=;
+	h=From:Subject:Date:To:Cc:From;
+	b=l6rqnvRg1C7qfeh+Z/lYECZ7svobSKrPdxgvqYkRtkaYkI3KC7WG2O4n+KhGR8QK+
+	 Kd/Zeg4M4XJalsU3OR1yy03MyWeJoLbsVMdRBmjBGXAbrnRbEKB8ddGVfqSoIw4vSl
+	 8YYPC6MR1a6cjuh2QOP3munQgsVZJ/ucMC/mk/CuqtStktemDU+57e5ovoM9dSVPcw
+	 gY2Caq3/1WyNStKgp+Zgb6mkJELDyA2YvsF+rWpkgTYWPen29Fl7jHWxvmetuQspsU
+	 B2kWLpJ+diO70WZ+lfT60fXXF4RlY/S0s90QMn+wup2DAG8x9ELclhKQGTVWukCYev
+	 qVqC+IKYdwr+Q==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v14 0/5] KVM: arm64: Provide guest support for GCS
+Date: Sat, 05 Oct 2024 11:37:27 +0100
+Message-Id: <20241005-arm64-gcs-v14-0-59060cd6092b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005092316.2471810-1-snovitoll@gmail.com>
-In-Reply-To: <20241005092316.2471810-1-snovitoll@gmail.com>
-From: Marco Elver <elver@google.com>
-Date: Sat, 5 Oct 2024 12:36:44 +0200
-Message-ID: <CANpmjNOZ4N5mhqWGvEU9zGBxj+jqhG3Q_eM1AbHp0cbSF=HqFw@mail.gmail.com>
-Subject: Re: [PATCH] mm, kmsan: instrument copy_from_kernel_nofault
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com, 
-	dvyukov@google.com, akpm@linux-foundation.org, vincenzo.frascino@arm.com, 
-	kasan-dev@googlegroups.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOcWAWcC/2XTyU7EMAwA0F9BPVNkO24WTvwH4pDFmamAGdSiC
+ oTm30lAMKminmLlJfHSr2GVZZZ1uL/5GhbZ5nU+n8oC+fZmiEd/Osg4pxIYCEhB+Ua/vGoeD3E
+ dRSH6AMkackPZH/wqY1j8KR6reH99q9G3RfL88XPF41NZH+f1/bx8/ty4YY3+nm1QN2dvOMIY8
+ qRNdioErx+eZTnJy915OQz1mI0aStxSKjRFipiYI0noqGqowpaqQmNK2WVnITnbUb5SC6alXKi
+ 2MXtVngzadXRqKFFLp0KdZLSYklbEHdX/FAFcS3Whxso0JfGeU+qouVLc32oKJcDIVoVkzNRR+
+ 0cZaNf4zdYyuSzRGG2U5I66K9U0tdQVClkrZu2CzdBRhKu1sOsOQq2xc0IhETroO4vY4H26WCe
+ KMVh0bCSGPl+kFu/KjHWmmErGBbPSvsf/Q8WlR/tn16kiomBs+VdEZIcvl8s3ebAeCYYDAAA=
+X-Change-ID: 20230303-arm64-gcs-e311ab0d8729
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+ Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+ Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7916; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=fONywxbxTzN0IAzlUbZO96WkETbfa3z2THUpoJ3dZ48=;
+ b=owEBbAGT/pANAwAKASTWi3JdVIfQAcsmYgBnARb0HLWryNQwMSzWp1/3Yb7JzqLL0j6pW5NgsEsm
+ K3icbeeJATIEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZwEW9AAKCRAk1otyXVSH0C6wB/
+ jK+pdXsHLRsiuyv04yctaA/EZlq0vbe/mPQzYwKZsxyrI8IvtwBCUOOmlOPkyDeR/3AA9JDqfN7Rvn
+ aKD3CZ7fe1w2j2lpzXq6e3pSpknJH+BNjYkKg24MOtb9/MxA4hXJOgz6j392dQDB+hdTK1hk++xPr6
+ Q8iFTBdnK47k7n9ReCM8+tSRLkSJQuXHJKmfZZkxmOgnIMq2K7dYyNHK1n726h9AvEIvpQYbXTXE8Y
+ UVFAd+fKDrtPVYSVOMq6Mz35erMIAuaOhk7t26GV4fh4eSGgBFZP4472Os0qOd+k+zW/FvSyDkoSxW
+ afKkwp9CKjnbx0IIU66i4eM2Hxz3E=
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Sat, 5 Oct 2024 at 11:22, Sabyrzhan Tasbolatov <snovitoll@gmail.com> wrote:
->
-> syzbot reported that bpf_probe_read_kernel() kernel helper triggered
-> KASAN report via kasan_check_range() which is not the expected behaviour
-> as copy_from_kernel_nofault() is meant to be a non-faulting helper.
->
-> Solution is, suggested by Marco Elver, to replace KASAN, KCSAN check in
-> copy_from_kernel_nofault() with KMSAN detection of copying uninitilaized
-> kernel memory. In copy_to_kernel_nofault() we can retain
-> instrument_write() for the memory corruption instrumentation but before
-> pagefault_disable().
->
-> Added KMSAN and modified KASAN kunit tests and tested on x86_64.
->
-> This is the part of PATCH series attempting to properly address bugzilla
-> issue.
->
-> Link: https://lore.kernel.org/linux-mm/CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7qeeeAp_6yKjwKo8iw@mail.gmail.com/
-> Suggested-by: Marco Elver <elver@google.com>
-> Reported-by: syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=61123a5daeb9f7454599
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=210505
-> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+The arm64 Guarded Control Stack (GCS) feature provides support for
+hardware protected stacks of return addresses, intended to provide
+hardening against return oriented programming (ROP) attacks and to make
+it easier to gather call stacks for applications such as profiling.
 
-I'm getting confused which parts are already picked up by Andrew into
--mm, and which aren't.
+When GCS is active a secondary stack called the Guarded Control Stack is
+maintained, protected with a memory attribute which means that it can
+only be written with specific GCS operations.  The current GCS pointer
+can not be directly written to by userspace.  When a BL is executed the
+value stored in LR is also pushed onto the GCS, and when a RET is
+executed the top of the GCS is popped and compared to LR with a fault
+being raised if the values do not match.  GCS operations may only be
+performed on GCS pages, a data abort is generated if they are not.
 
-To clarify we have:
- 1. https://lore.kernel.org/mm-commits/20240927171751.D1BD9C4CEC4@smtp.kernel.org/
- 2. https://lore.kernel.org/mm-commits/20240930162435.9B6CBC4CED0@smtp.kernel.org/
+The combination of hardware enforcement and lack of extra instructions
+in the function entry and exit paths should result in something which
+has less overhead and is more difficult to attack than a purely software
+implementation like clang's shadow stacks.
 
-And this is the 3rd patch, which applies on top of the other 2.
+This series implements support for managing GCS for KVM guests, it also
+includes a fix for S1PIE which has also been sent separately as this
+feature is a dependency for GCS.  It is based on:
 
-If my understanding is correct, rather than just adding fix on top of
-fix, in the interest of having one clean patch which can also be
-backported more easily, would it make sense to drop the first 2
-patches from -mm, and you send out one clean patch series?
+   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/gcs
 
-Thanks,
--- Marco
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v14:
+- Rebase onto arm64/for-next/gcs which includes all the non-KVM support.
+- Manage the fine grained traps for GCS instructions.
+- Manage PSTATE.EXLOCK when delivering exceptions to KVM guests.
+- Link to v13: https://lore.kernel.org/r/20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org
 
-> ---
->  mm/kasan/kasan_test_c.c |  8 ++------
->  mm/kmsan/kmsan_test.c   | 17 +++++++++++++++++
->  mm/maccess.c            |  5 +++--
->  3 files changed, 22 insertions(+), 8 deletions(-)
->
-> diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-> index 0a226ab032d..5cff90f831d 100644
-> --- a/mm/kasan/kasan_test_c.c
-> +++ b/mm/kasan/kasan_test_c.c
-> @@ -1954,7 +1954,7 @@ static void rust_uaf(struct kunit *test)
->         KUNIT_EXPECT_KASAN_FAIL(test, kasan_test_rust_uaf());
->  }
->
-> -static void copy_from_to_kernel_nofault_oob(struct kunit *test)
-> +static void copy_to_kernel_nofault_oob(struct kunit *test)
->  {
->         char *ptr;
->         char buf[128];
-> @@ -1973,10 +1973,6 @@ static void copy_from_to_kernel_nofault_oob(struct kunit *test)
->                 KUNIT_EXPECT_LT(test, (u8)get_tag(ptr), (u8)KASAN_TAG_KERNEL);
->         }
->
-> -       KUNIT_EXPECT_KASAN_FAIL(test,
-> -               copy_from_kernel_nofault(&buf[0], ptr, size));
-> -       KUNIT_EXPECT_KASAN_FAIL(test,
-> -               copy_from_kernel_nofault(ptr, &buf[0], size));
->         KUNIT_EXPECT_KASAN_FAIL(test,
->                 copy_to_kernel_nofault(&buf[0], ptr, size));
->         KUNIT_EXPECT_KASAN_FAIL(test,
-> @@ -2057,7 +2053,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
->         KUNIT_CASE(match_all_not_assigned),
->         KUNIT_CASE(match_all_ptr_tag),
->         KUNIT_CASE(match_all_mem_tag),
-> -       KUNIT_CASE(copy_from_to_kernel_nofault_oob),
-> +       KUNIT_CASE(copy_to_kernel_nofault_oob),
->         KUNIT_CASE(rust_uaf),
->         {}
->  };
-> diff --git a/mm/kmsan/kmsan_test.c b/mm/kmsan/kmsan_test.c
-> index 13236d579eb..9733a22c46c 100644
-> --- a/mm/kmsan/kmsan_test.c
-> +++ b/mm/kmsan/kmsan_test.c
-> @@ -640,6 +640,22 @@ static void test_unpoison_memory(struct kunit *test)
->         KUNIT_EXPECT_TRUE(test, report_matches(&expect));
->  }
->
-> +static void test_copy_from_kernel_nofault(struct kunit *test)
-> +{
-> +       long ret;
-> +       char buf[4], src[4];
-> +       size_t size = sizeof(buf);
-> +
-> +       EXPECTATION_UNINIT_VALUE_FN(expect, "copy_from_kernel_nofault");
-> +       kunit_info(
-> +               test,
-> +               "testing copy_from_kernel_nofault with uninitialized memory\n");
-> +
-> +       ret = copy_from_kernel_nofault((char *)&buf[0], (char *)&src[0], size);
-> +       USE(ret);
-> +       KUNIT_EXPECT_TRUE(test, report_matches(&expect));
-> +}
-> +
->  static struct kunit_case kmsan_test_cases[] = {
->         KUNIT_CASE(test_uninit_kmalloc),
->         KUNIT_CASE(test_init_kmalloc),
-> @@ -664,6 +680,7 @@ static struct kunit_case kmsan_test_cases[] = {
->         KUNIT_CASE(test_long_origin_chain),
->         KUNIT_CASE(test_stackdepot_roundtrip),
->         KUNIT_CASE(test_unpoison_memory),
-> +       KUNIT_CASE(test_copy_from_kernel_nofault),
->         {},
->  };
->
-> diff --git a/mm/maccess.c b/mm/maccess.c
-> index f752f0c0fa3..a91a39a56cf 100644
-> --- a/mm/maccess.c
-> +++ b/mm/maccess.c
-> @@ -31,8 +31,9 @@ long copy_from_kernel_nofault(void *dst, const void *src, size_t size)
->         if (!copy_from_kernel_nofault_allowed(src, size))
->                 return -ERANGE;
->
-> +       /* Make sure uninitialized kernel memory isn't copied. */
-> +       kmsan_check_memory(src, size);
->         pagefault_disable();
-> -       instrument_read(src, size);
->         if (!(align & 7))
->                 copy_from_kernel_nofault_loop(dst, src, size, u64, Efault);
->         if (!(align & 3))
-> @@ -63,8 +64,8 @@ long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
->         if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
->                 align = (unsigned long)dst | (unsigned long)src;
->
-> -       pagefault_disable();
->         instrument_write(dst, size);
-> +       pagefault_disable();
->         if (!(align & 7))
->                 copy_to_kernel_nofault_loop(dst, src, size, u64, Efault);
->         if (!(align & 3))
-> --
-> 2.34.1
->
+Changes in v13:
+- Rebase onto v6.12-rc1.
+- Allocate VM_HIGH_ARCH_6 since protection keys used all the existing
+  bits.
+- Implement mm_release() and free transparently allocated GCSs there.
+- Use bit 32 of AT_HWCAP for GCS due to AT_HWCAP2 being filled.
+- Since we now only set GCSCRE0_EL1 on change ensure that it is
+  initialised with GCSPR_EL0 accessible to EL0.
+- Fix OOM handling on thread copy.
+- Link to v12: https://lore.kernel.org/r/20240829-arm64-gcs-v12-0-42fec947436a@kernel.org
+
+Changes in v12:
+- Clarify and simplify the signal handling code so we work with the
+  register state.
+- When checking for write aborts to shadow stack pages ensure the fault
+  is a data abort.
+- Depend on !UPROBES.
+- Comment cleanups.
+- Link to v11: https://lore.kernel.org/r/20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org
+
+Changes in v11:
+- Remove the dependency on the addition of clone3() support for shadow
+  stacks, rebasing onto v6.11-rc3.
+- Make ID_AA64PFR1_EL1.GCS writeable in KVM.
+- Hide GCS registers when GCS is not enabled for KVM guests.
+- Require HCRX_EL2.GCSEn if booting at EL1.
+- Require that GCSCR_EL1 and GCSCRE0_EL1 be initialised regardless of
+  if we boot at EL2 or EL1.
+- Remove some stray use of bit 63 in signal cap tokens.
+- Warn if we see a GCS with VM_SHARED.
+- Remove rdundant check for VM_WRITE in fault handling.
+- Cleanups and clarifications in the ABI document.
+- Clean up and improve documentation of some sync placement.
+- Only set the EL0 GCS mode if it's actually changed.
+- Various minor fixes and tweaks.
+- Link to v10: https://lore.kernel.org/r/20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org
+
+Changes in v10:
+- Fix issues with THP.
+- Tighten up requirements for initialising GCSCR*.
+- Only generate GCS signal frames for threads using GCS.
+- Only context switch EL1 GCS registers if S1PIE is enabled.
+- Move context switch of GCSCRE0_EL1 to EL0 context switch.
+- Make GCS registers unconditionally visible to userspace.
+- Use FHU infrastructure.
+- Don't change writability of ID_AA64PFR1_EL1 for KVM.
+- Remove unused arguments from alloc_gcs().
+- Typo fixes.
+- Link to v9: https://lore.kernel.org/r/20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org
+
+Changes in v9:
+- Rebase onto v6.10-rc3.
+- Restructure and clarify memory management fault handling.
+- Fix up basic-gcs for the latest clone3() changes.
+- Convert to newly merged KVM ID register based feature configuration.
+- Fixes for NV traps.
+- Link to v8: https://lore.kernel.org/r/20240203-arm64-gcs-v8-0-c9fec77673ef@kernel.org
+
+Changes in v8:
+- Invalidate signal cap token on stack when consuming.
+- Typo and other trivial fixes.
+- Don't try to use process_vm_write() on GCS, it intentionally does not
+  work.
+- Fix leak of thread GCSs.
+- Rebase onto latest clone3() series.
+- Link to v7: https://lore.kernel.org/r/20231122-arm64-gcs-v7-0-201c483bd775@kernel.org
+
+Changes in v7:
+- Rebase onto v6.7-rc2 via the clone3() patch series.
+- Change the token used to cap the stack during signal handling to be
+  compatible with GCSPOPM.
+- Fix flags for new page types.
+- Fold in support for clone3().
+- Replace copy_to_user_gcs() with put_user_gcs().
+- Link to v6: https://lore.kernel.org/r/20231009-arm64-gcs-v6-0-78e55deaa4dd@kernel.org
+
+Changes in v6:
+- Rebase onto v6.6-rc3.
+- Add some more gcsb_dsync() barriers following spec clarifications.
+- Due to ongoing discussion around clone()/clone3() I've not updated
+  anything there, the behaviour is the same as on previous versions.
+- Link to v5: https://lore.kernel.org/r/20230822-arm64-gcs-v5-0-9ef181dd6324@kernel.org
+
+Changes in v5:
+- Don't map any permissions for user GCSs, we always use EL0 accessors
+  or use a separate mapping of the page.
+- Reduce the standard size of the GCS to RLIMIT_STACK/2.
+- Enforce a PAGE_SIZE alignment requirement on map_shadow_stack().
+- Clarifications and fixes to documentation.
+- More tests.
+- Link to v4: https://lore.kernel.org/r/20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org
+
+Changes in v4:
+- Implement flags for map_shadow_stack() allowing the cap and end of
+  stack marker to be enabled independently or not at all.
+- Relax size and alignment requirements for map_shadow_stack().
+- Add more blurb explaining the advantages of hardware enforcement.
+- Link to v3: https://lore.kernel.org/r/20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org
+
+Changes in v3:
+- Rebase onto v6.5-rc4.
+- Add a GCS barrier on context switch.
+- Add a GCS stress test.
+- Link to v2: https://lore.kernel.org/r/20230724-arm64-gcs-v2-0-dc2c1d44c2eb@kernel.org
+
+Changes in v2:
+- Rebase onto v6.5-rc3.
+- Rework prctl() interface to allow each bit to be locked independently.
+- map_shadow_stack() now places the cap token based on the size
+  requested by the caller not the actual space allocated.
+- Mode changes other than enable via ptrace are now supported.
+- Expand test coverage.
+- Various smaller fixes and adjustments.
+- Link to v1: https://lore.kernel.org/r/20230716-arm64-gcs-v1-0-bf567f93bba6@kernel.org
+
+---
+Mark Brown (5):
+      KVM: arm64: Expose S1PIE to guests
+      arm64/gcs: Ensure FGTs for EL1 GCS instructions are disabled
+      KVM: arm64: Manage GCS access and registers for guests
+      KVM: arm64: Set PSTATE.EXLOCK when entering an exception
+      KVM: selftests: arm64: Add GCS registers to get-reg-list
+
+ arch/arm64/include/asm/el2_setup.h                 |  7 ++++-
+ arch/arm64/include/asm/kvm_host.h                  | 12 ++++++++
+ arch/arm64/include/asm/vncr_mapping.h              |  2 ++
+ arch/arm64/include/uapi/asm/ptrace.h               |  2 ++
+ arch/arm64/kvm/hyp/exception.c                     | 10 +++++++
+ arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h         | 31 +++++++++++++++++++
+ arch/arm64/kvm/sys_regs.c                          | 35 ++++++++++++++++++++--
+ tools/testing/selftests/kvm/aarch64/get-reg-list.c | 28 +++++++++++++++++
+ 8 files changed, 124 insertions(+), 3 deletions(-)
+---
+base-commit: ed4983d2da8c3b66ac6d048beb242916bec83522
+change-id: 20230303-arm64-gcs-e311ab0d8729
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
