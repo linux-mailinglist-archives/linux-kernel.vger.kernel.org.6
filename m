@@ -1,171 +1,87 @@
-Return-Path: <linux-kernel+bounces-351706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C2699150F
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:25:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6543991513
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 09:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ADA72844DE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:25:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524001F235C8
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0DB12F5B1;
-	Sat,  5 Oct 2024 07:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26C51369AE;
+	Sat,  5 Oct 2024 07:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DnmyLUAS"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="cUJLzkw7"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805B58825
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 07:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EC938FA3;
+	Sat,  5 Oct 2024 07:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728113104; cv=none; b=QptSdp54XM4WgfwLp4CkD6hgPn4z4Q0+r5mLiA8o659RjJmBN6UnpJ7CWyDLkPib9x+++QvvM6dg9ApVNJmnwKLh1Dao0U2OiCOHGPyWAKM4Wy06kLuRfHc0nZmd24KRtc4orAFxPqGeWKmfz2k5HWM9KFYPR1AifShRgIoULTw=
+	t=1728113267; cv=none; b=Xf6wqd9Z2COYhBKv0y2g75NC2QJ3QWkgYSJ799X7EYBY2TdMEmV6OGOU24jxTdnE9Ll2baRa86IWY9UUOF9k0NMEBVBLJvRSc/Y0+APVx6pPSt3PRDRsaaiLJsxnCPa8PHJf4o5ZqjHkhObGZNbhAU5TFgtSPPWNag9E0eOpsLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728113104; c=relaxed/simple;
-	bh=LZP3cKWhrMtVWggYSaZ5lPkhhsFQoozJYP5JsxhK/ZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H0Gl58XVerIus/YQaaBkwsThqthWZsAt7I5viRLnWMXcun7PQLT2EBTfWDu71PYHkwiht2kBCVbfblX18EFD1UaTBy8h6X+hsz57FsiLHZNRh4/ar8psmlVSzikhHHcsn1UAk3RbgNkyCsdAkLPp/k8P3764t8uI1UbOB+fXeK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DnmyLUAS; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c896b9b3e1so3805144a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 00:25:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728113101; x=1728717901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ikQ40FBna1IlLDCWeyjwiV3mN+L8sM+RPl/YRXKiU4=;
-        b=DnmyLUASRzRM6rexYpA9uyCS0zu/1aPGh1ko27H+2ilt0HqKhxIjhUMqI2cim0vPY9
-         UoJjxcykt9BT6K9EzU+29pN4blumIpn3qyKFsBQk+4qx52bYPn8rVfos0k0I8qPBz5mR
-         uYRBAaDuLdUHVjin5djtoVpeLwfMyrnqCinJpXf5ACCigSb1/BQzCv8sopGwilUi25bN
-         SlqqyCiYFm3VLeewM9tKXPh7WLlv7FXPeqEEe3MlUXePGrYQ5zRniqwXsALPXimiB5JK
-         sRh/jeP2evnPMM1IxVuDhDa+c9C2JLCIZneLR5iUKGzOe/JbH3u01By/UDhUccBdzCqV
-         Eq/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728113101; x=1728717901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2ikQ40FBna1IlLDCWeyjwiV3mN+L8sM+RPl/YRXKiU4=;
-        b=I/s+nvcziUhLgCS/MD833SpTtumU0jqst1uXhoyJO4WX30xYY+IwOc5YCc2sY0L/Ov
-         Qzi2H1QQQOJp+/DsWlleEk8NsAOTO1aHbl2e/ri0dLRZmWuvIFgjCm9OX3lFLPbpqhvY
-         jAKlb58qQ+KzvD1L6SXI+49XHcMjLyh2zIrHI7mDa0gynSjGTN184KGaZlct/7um3h3r
-         vvGlUATUAOtLFA7Zs4CJ87TaSqW/0vQmWo1lO++7mYZ/IdrnnQOLmJQbxltlgGVVbmdz
-         +oDHIyNBmEZBKCt+j0jw8c1djf4HsXK5+LNDQ8EyrsOXyOec9g9z46uos1huUJfTKdQs
-         Rw/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUqMFiMWExM4YgYfT6/C86XqVgtn8rZT7/4i2qe8tBEGhmPGkrHEpFF59hQOBxN5jDkNkPcFYqhwdBLjy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylol9ipLk5cFjX5ZXy+xeUqi6hGMKXW72a37VdK3MA81gPmvwS
-	LGG/vNJyYzWFkTrTBVlIKdytw05E7tW2VCeBmtIH3Rfws4glcMkugVMzRyOfuzRa4FVMs+kiwZl
-	/m2jYbtefLOew96kaNdLvZ1CqEseE/HtCUU6r
-X-Google-Smtp-Source: AGHT+IEQKa1JryxdMCVct2cTTMuXcaAPe8j51D5Dn7yAGDshcgihBva2hIqdYPSyOKDbek9Apj+LguKnUJFkN2NS0PE=
-X-Received: by 2002:a05:6402:4486:b0:5c8:79fa:2e4f with SMTP id
- 4fb4d7f45d1cf-5c8d2e9e7bdmr4262712a12.32.1728113100579; Sat, 05 Oct 2024
- 00:25:00 -0700 (PDT)
+	s=arc-20240116; t=1728113267; c=relaxed/simple;
+	bh=u6y4rqMNtM7ovI8kHlo2HcxRrkKbSyB6NS2RSkw3T0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L0tZcLgmo5pXq9QrZ/PsuP7mwrhFBddC6+L/83J5Qsi7S9lXDM1QNsF/1Em8tJVIXoqR80i96ycfWILA9b1OAt8Hu3Qyct2FtNaOBCXmwwFccf+FQHiMQltuDL7PyZoFJ7ks17wJ7DgsAJpi0fxoHYrcHfdtUO53bxCT5r2r8ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=cUJLzkw7; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1728113256;
+	bh=u6y4rqMNtM7ovI8kHlo2HcxRrkKbSyB6NS2RSkw3T0g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cUJLzkw7M6adu+mXRkAHxxctWVXQmn6vQnqKnoDhcXuhe/gStlgoGzyDFDJsPuPY4
+	 tPp/0jrJ+AoUm06agogpvvR+NqyKv6EyAdikHCWD/FQgdtcmLppXUHe1HJcqNi5Ofs
+	 ZBCCjVWcqNGQR/MEXDD0buHpOakea2k7MYN2dM44=
+Date: Sat, 5 Oct 2024 09:27:35 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] ACPI: battery: various cleanups
+Message-ID: <8291a067-cd9c-4fcf-b32d-0064f3225836@t-8ch.de>
+References: <20240904-acpi-battery-cleanups-v1-0-a3bf74f22d40@weissschuh.net>
+ <CAJZ5v0gAaMLrSyva_cZBxJpzAFM3Lb_SiuTxESjAmHJLxnThGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005045411.118720-1-danielyangkang@gmail.com>
-In-Reply-To: <20241005045411.118720-1-danielyangkang@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Sat, 5 Oct 2024 09:24:48 +0200
-Message-ID: <CANn89iKk8TOvzD4cAanACtD0-x2pciEoSJbk9mF97wxNzxmUCg@mail.gmail.com>
-Subject: Re: [PATCH v2] resolve gtp possible deadlock warning
-To: Daniel Yang <danielyangkang@gmail.com>
-Cc: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>, 
-	"D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>, 
-	Wen Gu <guwen@linux.alibaba.com>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-s390@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0gAaMLrSyva_cZBxJpzAFM3Lb_SiuTxESjAmHJLxnThGA@mail.gmail.com>
 
-On Sat, Oct 5, 2024 at 6:54=E2=80=AFAM Daniel Yang <danielyangkang@gmail.co=
-m> wrote:
->
-> Fixes deadlock described in this bug:
-> https://syzkaller.appspot.com/bug?extid=3De953a8f3071f5c0a28fd.
-> Specific crash report here:
-> https://syzkaller.appspot.com/text?tag=3DCrashReport&x=3D14670e07980000.
->
-> This bug is a false positive lockdep warning since gtp and smc use
-> completely different socket protocols.
->
-> Lockdep thinks that lock_sock() in smc will deadlock with gtp's
-> lock_sock() acquisition. Adding a function that initializes lockdep
-> labels for smc socks resolved the false positives in lockdep upon
-> testing. Since smc uses AF_SMC and SOCKSTREAM, two labels are created to
-> distinguish between proper smc socks and non smc socks incorrectly
-> input into the function.
->
-> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> Reported-by: syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com
-> ---
-> v1->v2: Add lockdep annotations instead of changing locking order
->  net/smc/af_smc.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->
-> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-> index 0316217b7..4de70bfd5 100644
-> --- a/net/smc/af_smc.c
-> +++ b/net/smc/af_smc.c
-> @@ -16,6 +16,8 @@
->   *              based on prototype from Frank Blaschka
->   */
->
-> +#include "linux/lockdep_types.h"
-> +#include "linux/socket.h"
->  #define KMSG_COMPONENT "smc"
->  #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
->
-> @@ -2755,6 +2757,24 @@ int smc_getname(struct socket *sock, struct sockad=
-dr *addr,
->         return smc->clcsock->ops->getname(smc->clcsock, addr, peer);
->  }
->
-> +static struct lock_class_key smc_slock_key[2];
-> +static struct lock_class_key smc_key[2];
-> +
-> +static inline void smc_sock_lock_init(struct sock *sk)
-> +{
-> +       bool is_smc =3D (sk->sk_family =3D=3D AF_SMC) && sk_is_tcp(sk);
-> +
-> +       sock_lock_init_class_and_name(sk,
-> +                                     is_smc ?
-> +                                     "smc_lock-AF_SMC_SOCKSTREAM" :
-> +                                     "smc_lock-INVALID",
-> +                                     &smc_slock_key[is_smc],
-> +                                     is_smc ?
-> +                                     "smc_sk_lock-AF_SMC_SOCKSTREAM" :
-> +                                     "smc_sk_lock-INVALID",
-> +                                     &smc_key[is_smc]);
-> +}
-> +
->  int smc_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
->  {
->         struct sock *sk =3D sock->sk;
-> @@ -2762,6 +2782,7 @@ int smc_sendmsg(struct socket *sock, struct msghdr =
-*msg, size_t len)
->         int rc;
->
->         smc =3D smc_sk(sk);
-> +       smc_sock_lock_init(sk);
->         lock_sock(sk);
->
->         /* SMC does not support connect with fastopen */
-> --
-> 2.39.2
->
+Hi Rafael,
 
-sock_lock_init_class_and_name() is not meant to be repeatedly called,
-from sendmsg()
+On 2024-09-04 14:44:33+0200, Rafael J. Wysocki wrote:
+> On Wed, Sep 4, 2024 at 9:13 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
+> >
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> > Thomas Weißschuh (5):
+> >       ACPI: battery: check result of register_pm_notifier()
+> >       ACPI: battery: allocate driver data through devm_ APIs
+> >       ACPI: battery: initialize mutexes through devm_ APIs
+> >       ACPI: battery: use DEFINE_SIMPLE_DEV_PM_OPS
+> >       ACPI: battery: install notify handler through ACPI core
+> >
+> >  drivers/acpi/battery.c | 41 +++++++++++------------------------------
+> >  1 file changed, 11 insertions(+), 30 deletions(-)
+> > ---
+> 
+> Since it is a bit late in the cycle and this material does not appear
+> to be urgent, I'd prefer to defer it until 6.12-rc1 is out.
 
-Find a way to do this once, perhaps in smc_create_clcsk(), but I will
-let SMC experts chime in.
+6.12-rc1 is out and other patches have been queued.
+Did this one fall through the cracks?
+
+
+Thanks,
+Thomas
 
