@@ -1,161 +1,133 @@
-Return-Path: <linux-kernel+bounces-351917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56BB0991797
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:03:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFE2991798
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88A7D1C21087
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:03:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB47F1F225AA
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AAF1531F9;
-	Sat,  5 Oct 2024 15:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE8F14EC47;
+	Sat,  5 Oct 2024 15:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Akmed4yz"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="co/G/QbG";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="co/G/QbG"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38FF14C59B
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 15:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712D1149E16
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 15:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728140627; cv=none; b=LroAqhbu1oIpsRwBl9++NmcSG4UV+klfJshAbAJkJy1VIqDfT9wXzbvo8cc8xHd5oq1F5XAYQY/z5s2Ts/dk3LwWak3mSa2dezuTew37NIVy8WOp3A6mfAlCBlRc8fH313llXugzkXrb3h7XU9BtEa88gqQ/p7bHYBSOV/9pFHU=
+	t=1728140681; cv=none; b=BBCbfdbLhH00OwNS8RnVVeYT0LiO8etwgTAU9vPoURDdslqXcSlc+Jmtj5ZYP7YATYbr+W7Il9acQGdXaRWSvmdQmxEOladzg2sYvbTsZb3vKHrgfBVTVOl2+Bqm/wEODh+v5eD+nwBd2uGNvkuu6Q8pLbnvqxBuGGsDElSYG14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728140627; c=relaxed/simple;
-	bh=yIYJNIjtAl6iXueJ36njn30NBnOohb+/nQThn9Cqruk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LoqOKfFIy6fxZJEsIxFMl+04ZSeclyvRAzEWIWUPeaTA4zxyQg6SY+mLLWgcI4QlsU6ufy4KF8kL4xn+beK417drE+yN7haOiGlgd0JtFNviuiKYGTDBtM0jMYjvStdFm/nHAdtoeOdnrejT0xNymAHxK39NkMEgLjq2WjXpJs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Akmed4yz; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728140617;
-	bh=yIYJNIjtAl6iXueJ36njn30NBnOohb+/nQThn9Cqruk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Akmed4yzVmdmaLxCuRfjm11/UD3c/2FcADW1Nyppp6o5TFmsSgSH8AqC7hMDvNfT9
-	 iF+wxWcRyJwhkjKnjVl6SRO39+4v187ydmwvXrIXirb9zsXWU6o1tXKyOaGt/mRETs
-	 Reh6xzScwAMuG0srgPflIEtd818hGcDfIUcXUz34FkYTCZtyWu9LG85MO8c6b5Y+kA
-	 5ZWsgM5sgW2gMmWUymDEWiAgu5MmbHtyaCGbNxyqkQIlvIxWR6eH/nnzlQ6T5W84wo
-	 hZu2K0J/MK3/W/QK8aw3JdYhBuh04foUwUx5d/ZV9TDHfCtXdUwyo5Sj/AXAwFz3bq
-	 3ISQNOWb21yrw==
-Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XLTFP3BXKzZRp;
-	Sat,  5 Oct 2024 11:03:37 -0400 (EDT)
-Message-ID: <cdb54cc8-4cbf-4a52-94cf-cab37b0851d8@efficios.com>
-Date: Sat, 5 Oct 2024 11:01:37 -0400
+	s=arc-20240116; t=1728140681; c=relaxed/simple;
+	bh=kYqtYpOlUQ/OJ5KPs59CzPd4KMmzSHSSJjC7ZBScvwE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TX889KIRJZ+jV0gp7rZRo1C3ZTKz3FHAfrUgNdXzmie62korRAHuzCKSyrl7uRgMggZg8aByI+PibhHr1/IGmjWlZ0eSKhMGYL1GXaKzD4pqvbBbX4vH03F4vwJMY+xxa4mp03d12hgVxd85DnL1xzwUJ7kaiUMgPcSMOeG7oF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=co/G/QbG; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=co/G/QbG; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1AB1D1FBA3;
+	Sat,  5 Oct 2024 15:04:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1728140672; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=/3KKG7LZPfw9Sx7QYfWQpHcT7Tnop1iS0tF91rj7sKo=;
+	b=co/G/QbGA0caLJktBKxTo6aVIQW6kS2F3Aq9n6Q7SIdZW8IB4s/IZjcj92evlsqTA4tsQc
+	vEgjFL1JgpQO3iBSBd2BiozMbQB9vt5GuZoyNj0iN1iTstUA0rGo9JT0mHjfEJzxVwnHvO
+	RUCdsa/pVBX0klwFUAhvQee4+1v/pSM=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b="co/G/QbG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1728140672; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=/3KKG7LZPfw9Sx7QYfWQpHcT7Tnop1iS0tF91rj7sKo=;
+	b=co/G/QbGA0caLJktBKxTo6aVIQW6kS2F3Aq9n6Q7SIdZW8IB4s/IZjcj92evlsqTA4tsQc
+	vEgjFL1JgpQO3iBSBd2BiozMbQB9vt5GuZoyNj0iN1iTstUA0rGo9JT0mHjfEJzxVwnHvO
+	RUCdsa/pVBX0klwFUAhvQee4+1v/pSM=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D803113736;
+	Sat,  5 Oct 2024 15:04:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iDu9Mn9VAWcQBgAAD6G6ig
+	(envelope-from <jgross@suse.com>); Sat, 05 Oct 2024 15:04:31 +0000
+From: Juergen Gross <jgross@suse.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	sstabellini@kernel.org
+Subject: [GIT PULL] xen: branch for v6.12-rc2
+Date: Sat,  5 Oct 2024 17:04:31 +0200
+Message-ID: <20241005150431.12546-1-jgross@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Hazard pointer enabled refcount prototype
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, paulmck <paulmck@kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>
-References: <3b749585-1286-4a4e-acd0-1534b60172da@efficios.com>
- <2024100538-acquire-imprecise-ecee@gregkh>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <2024100538-acquire-imprecise-ecee@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 1AB1D1FBA3
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_NONE(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 2024-10-05 10:43, Greg Kroah-Hartman wrote:
-> On Fri, Oct 04, 2024 at 03:52:01PM -0400, Mathieu Desnoyers wrote:
->> Hi Greg,
->>
->> After our discussion at KR2024, I've created a prototype adding hazard pointer
->> dereference support to refcount.h:
->>
->> https://github.com/compudj/linux-dev/commit/234523dc9be90f1bc9221bf2d430c9187ac61528
->>
->> Branch: https://github.com/compudj/linux-dev/tree/hp-6.11-refcount
->>
->> It allows dereferencing a pointer to a refcount and incrementing the refcount,
->> without relying on RCU.
->>
->> A good candidate for this would be the "usblp" driver which is using a static mutex
->> for existence guarantees. Introducing a refcount as first field of struct usblp
->> should do the trick.
->>
->> I am not entirely sure if this kind of use-case justifies introducing hazard pointers
->> though, as this can be done just as well with RCU. I'll let you be the judge on this.
-> 
-> How could it be used with RCU?
+Linus,
 
-This is a trick I've used a lot with liburcu: Using RCU guarantees for
-object lookup (pointer dereference) chained with reference counting
-(obtained with refcount_inc_not_zero() to keep using the object for
-longer than a RCU read-side critical section.
+Please git pull the following tag:
 
-Object reclaim then goes as follow:
+ git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-6.12a-rc2-tag
 
-- unpublish pointer to object (e.g. list_del or set pointer to NULL).
-- refcount_dec_and_test
-   -> in release callback, use call_rcu to reclaim object, thus
-      chaining reference count decrement to 0 with an RCU grace period.
+xen: branch for v6.12-rc2
 
-Object lookup/refcount inc goes as follow:
+It contains just a single patch fixing an issue introduced in the
+6.12 merge window.
 
-- rcu read lock
-- rcu_deference() to get pointer to object
-- try to grab reference with refcount_inc_not_zero
-   - if it fails, rcu read unlock and return NULL.
-   - on success, we have a reference to the object.
-- rcu read unlock
+Thanks.
 
-return pointer to an object guaranteed to exist due to refcount,
-or NULL if it was not found.
+Juergen
 
-The same kind of trick can be done with hazard pointers rather than
-RCU, e.g.:
+ drivers/xen/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Object reclaim then goes as follow:
-
-- unpublish pointer to object (e.g. set pointer to NULL).
-- refcount_dec_and_test
-   -> in release callback, use hp_scan before reclaiming object, thus
-      chaining reference count decrement to 0 with a HP scan.
-
-Object lookup/refcount inc goes as follow:
-
-- hp_dereference_acquire to get pointer to the object
-- if NULL, return NULL
-- try to grab reference with refcount_inc_not_zero
-   - if it fails, hp_retire and return NULL
-   - on success, we have a reference to the object.
-- hp_retire
-
-return pointer to an object guaranteed to exist due to refcount,
-or NULL if it was not found.
-
-> I'll have to look into that, but thanks
-> for the links and I'll dig into this on Monday to see if I could use
-> these to get rid of the "static mutex" pattern that almost all drivers
-> need to have these days (which in turn will mean we will not need to use
-> that in new rust drivers either, which will make them simpler as well
-> because the static mutex pattern in rust is rough to make work.)
-
-If your target is Rust, I have ideas on how we could turn this kind
-of Hazard Pointer + Reference Counter combined scheme into smart pointers.
-Let me know if this is indeed your goal, and we can discuss this further.
-
-Thanks,
-
-Mathieu
-
-> 
-> thanks,
-> 
-> greg k-h
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+Lukas Bulwahn (1):
+      xen: Fix config option reference in XEN_PRIVCMD definition
 
