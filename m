@@ -1,178 +1,92 @@
-Return-Path: <linux-kernel+bounces-351961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8360799185F
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A70991861
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B53301C210B1
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:42:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C94BB1C20A42
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75EA81581F9;
-	Sat,  5 Oct 2024 16:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8E5158527;
+	Sat,  5 Oct 2024 16:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3UHgaNc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="SjAn1BZN"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C995A1CF96;
-	Sat,  5 Oct 2024 16:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A711CF96;
+	Sat,  5 Oct 2024 16:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728146538; cv=none; b=gHdFbNatMaASXgt5Fue7ea0mKGdyX7jNj5PHTR0lUEIkU78CNesXXNyLXHx4yKkzZd3kvetMumVvyDHkZcgZkIVA01lgGG4KWM22dfSHt8qXCP5xvl3QtQbjfZtBlMJzPTfR7PwcuAUlmiHeIM3nJsW6qh4a9sS2KumzEXAfKpo=
+	t=1728146586; cv=none; b=Mt/O+s3Zy+JdvO7GiyvMfhlxf4qchm2/KAKvB6sd4CXzsSAZnCZ1cBnN3MbT3/c9y5NJAho+OMx88TsIL9odvFjaVINHfti9lZ7VDsTJWDM12er/qkNTscH6SGi4hofp8xE85LmDFBLr5Jw3xva+zZ60mEREjcKkghMZEydQabQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728146538; c=relaxed/simple;
-	bh=0Na0lFgZP18CB/jmqpHLoKSLvsmnXq9BLBngfsBByL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SAyEMX3ngKHidnpxvHR2zhJHU6/u0EPp3uNjKby4wYLw595NGYh8Dl9vAZW6uW/36eYAKRkIrPwZDVWqIwEArUvnAvqjY+dU1WwEtEJPxZGlo828SAHCtBQWWjKJfkP1Kv/kJ9P+8uLZ58tu+lIqLbTHaAGBsErj5UxfqAhb+58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3UHgaNc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A44C2C4CEC2;
-	Sat,  5 Oct 2024 16:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728146538;
-	bh=0Na0lFgZP18CB/jmqpHLoKSLvsmnXq9BLBngfsBByL0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=W3UHgaNcJMDm4+dM4wX+9QheXfKrycgze74VhmlZ1qhfbiqLgfaA5o3OvqUMsJ48b
-	 akCSKXR/WNk39B8tAVzdGFKM6hfAUsvnQ2G3fSHjtbGrwh2ruq0B5hBGDGE481HJFw
-	 xhLwXikz/U2T3j7nzPdv77qGn+phRGALzEMUEfJuJKsLjbiHL+8MbKyIqeoJnPNmf1
-	 G4PMoaPQ8wZ2uk7dyhTwQSb539a1QvYtd5+UFl953XbKwDICAOT8WPauuVWqm2lvj9
-	 ECq3eERedx3bJLyTxSDsKTUkWPxu6a7FJZhpfMYMgciXsMG+HeQ8y5Dqn1WYFxIZCM
-	 JLvER/GQSf9eg==
-Date: Sat, 5 Oct 2024 17:41:51 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhash Jha <abhashkumarjha123@gmail.com>
-Cc: linux-iio@vger.kernel.org, lars@metafoo.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] iio: light: vl6180: Add configurable
- inter-measurement period support
-Message-ID: <20241005174151.4bcd55f6@jic23-huawei>
-In-Reply-To: <20241004150148.14033-2-abhashkumarjha123@gmail.com>
-References: <20241004150148.14033-1-abhashkumarjha123@gmail.com>
-	<20241004150148.14033-2-abhashkumarjha123@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728146586; c=relaxed/simple;
+	bh=MCHt7lwhoCFNgpsQuXwxxziBnZWGL6rZ6iXZ7iFmbKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5eI590dFvF3Ih1qME+FPxtdQCbRIncU2XTvkXGox1V03CRJn3QuE2VZaBFJ3QgAu//L6mb0r6THLNaW5A3KSNT7ubfOtAz6RxEMzPzEMaQOYxZoXR8lAWOdK4Wf5b0NxNMAUCc3DpGdVg8KRX5a2dMMaxdb6yjKjdXpzh9Zc4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=SjAn1BZN; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=uki+OVHraU1cgdBkx9wbcgC49RgVsYIYvWO0+W8oLkY=; b=Sj
+	An1BZNsOpPEZ9DdRIKMOu8JTtdLFREdsbBqbb+mDMl13cHpW5ZlRVf/wdjcDRpAtFSKOkPCKqBiUh
+	ZrBOzs8OtVRME1JIhrt/xqYd6f7BjRPNi7/KuEgx4OymU6y0R/WbuV6K4+1QGa6RP3WyMKnfKomDV
+	jxuupoD55iuyUkI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sx7rs-0098t6-Eh; Sat, 05 Oct 2024 18:42:56 +0200
+Date: Sat, 5 Oct 2024 18:42:56 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Qingtao Cao <qingtao.cao.au@gmail.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] net: phy: marvell: avoid bringing down fibre link
+ when autoneg is bypassed
+Message-ID: <7f39b47c-30f3-4cab-a9eb-8396598aa9c3@lunn.ch>
+References: <20241003022512.370600-1-qingtao.cao@digi.com>
+ <30f9c0d0-499c-47d6-bdf2-a86b6d300dbf@lunn.ch>
+ <CAPcThSHa82QDT6sSrqcGMf7Zx4J15P7KpgfnD-LjJQi0DFh7FA@mail.gmail.com>
+ <927d5266-503c-499f-877c-5350108334dc@lunn.ch>
+ <Zv_wv67TGIUz5IZy@shell.armlinux.org.uk>
+ <CAPcThSHA3bfvwbHWtL2HrDtv=d9z9vGape94J7Pucq65csHN3A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcThSHA3bfvwbHWtL2HrDtv=d9z9vGape94J7Pucq65csHN3A@mail.gmail.com>
 
-On Fri,  4 Oct 2024 20:31:46 +0530
-Abhash Jha <abhashkumarjha123@gmail.com> wrote:
-
-> Expose the IIO_CHAN_INFO_SAMP_FREQ attribute as a way to configure the
-> inter-measurement period for both the IIO_DISTANCE and IIO_LIGHT
-> channels. The inter-measurement period must be given in miliseconds.
-
-Hi Abhash,
-
-Sampling frequency must be in Hz and reflect how often the channel
-is sampled (not just the inter measurement period.  So this sounds wrong.
-It is sometimes complex to compute but we have to stick to the documented
-ABI.
-
-Other comments inline.
-
-Thanks
-
-Jonathan
-
+On Sat, Oct 05, 2024 at 07:25:05AM +1000, Qingtao Cao wrote:
+> Right, the section about it further states that "... To solve this problem,
+> the device implements the autoneg bypass mode for serial interface"
+> and about several hundreds of ms if the device receives idles then it
+> goes to a new state similar to link up.
 > 
-> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+> In my v4 change no BMCR is used, but the partner's advertised
+> configs (1000BASE-X) is read from the phy status register, using
+> existing code in that function and testing still finds its working,
+> which makes me believe that the autoneg end once it is bypassed,
+> it simply adopts its partner's configuration.
 
+Well, for 1000Base-X, autoneg is not about speed, since that is hard
+coded to 1G. Autoneg is about pause and priority for duplex mode.
 
-> @@ -412,11 +430,22 @@ static int vl6180_set_it(struct vl6180_data *data, int val, int val2)
->  	return ret;
->  }
->  
-> +static int vl6180_meas_reg_val_from_ms(unsigned int period)
-> +{
-> +	unsigned int reg_val = 0;
-> +
-> +	if (period > 10)
-> +		reg_val = period < 2550 ? (DIV_ROUND_CLOSEST(period, 10) - 1) : 254;
-> +
-> +	return reg_val;
-> +}
-> +
->  static int vl6180_write_raw(struct iio_dev *indio_dev,
->  			     struct iio_chan_spec const *chan,
->  			     int val, int val2, long mask)
->  {
->  	struct vl6180_data *data = iio_priv(indio_dev);
-> +	unsigned int reg_val;
->  
->  	switch (mask) {
->  	case IIO_CHAN_INFO_INT_TIME:
-> @@ -427,6 +456,24 @@ static int vl6180_write_raw(struct iio_dev *indio_dev,
->  			return -EINVAL;
->  
->  		return vl6180_set_als_gain(data, val, val2);
-> +
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-	{
+So play with those settings and see what happens.
 
-needed to define scope for that guard as you probably intend.
-
-> +		guard(mutex)(&data->lock);
-> +		switch (chan->type) {
-> +		case IIO_DISTANCE:
-> +			data->range_meas_rate = val;
-> +			reg_val = vl6180_meas_reg_val_from_ms(val);
-> +			return vl6180_write_byte(data->client, VL6180_RANGE_INTER_MEAS_TIME, reg_val);
-
-long lines. I don't mind going over 80 chars when readability is badly hurt, but
-in this case it isn't so wrap the parameters.
-
-> +
-> +		case IIO_LIGHT:
-> +			data->als_meas_rate = val;
-> +			reg_val = vl6180_meas_reg_val_from_ms(val);
-> +			return vl6180_write_byte(data->client, VL6180_ALS_INTER_MEAS_TIME, reg_val);
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -473,6 +520,22 @@ static int vl6180_init(struct vl6180_data *data)
->  	if (ret < 0)
->  		return ret;
->  
-> +	/* Default Range inter-measurement time: 50ms
-
-As below.
-
-Even though you now it in advance, I'd rather you used the vl6180_meas_reg_val_from_ms()
-subject to the whole thing about it needing to be in Hz
-
-> +	 * reg_val = (50 / 10 - 1) = 4
-> +	 */
-> +	ret = vl6180_write_byte(client, VL6180_RANGE_INTER_MEAS_TIME, 4);
-> +	if (ret < 0)
-> +		return ret;
-> +	data->range_meas_rate = 50;
-> +
-> +	/* Default ALS inter-measurement time: 10ms
-Multiline comment syntax in IIO (and most of the rest of the kernel)
-is 
-	/*
-	 * Default ...
-
-> +	 * reg_val = (10 / 10 - 1) = 0
-> +	 */
-> +	ret = vl6180_write_byte(client, VL6180_ALS_INTER_MEAS_TIME, 0);
-> +	if (ret < 0)
-> +		return ret;
-> +	data->als_meas_rate = 10;
-> +
->  	/* ALS integration time: 100ms */
->  	data->als_it_ms = 100;
->  	ret = vl6180_write_word(client, VL6180_ALS_IT, VL6180_ALS_IT_100);
-
+	Andrew
 
