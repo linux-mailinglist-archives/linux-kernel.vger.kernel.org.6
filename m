@@ -1,80 +1,123 @@
-Return-Path: <linux-kernel+bounces-352079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2092B9919D7
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:16:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421DA9919F4
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C93AD1F21E7E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:16:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70CF71C216FB
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2ADC15748F;
-	Sat,  5 Oct 2024 19:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570C1171E7C;
+	Sat,  5 Oct 2024 19:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o47rv0+Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SbZnZTL4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416B8231C90;
-	Sat,  5 Oct 2024 19:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC92166F11;
+	Sat,  5 Oct 2024 19:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728155758; cv=none; b=N4XLqnw1ww+Fr6FOJE34PnwhJjffhn5fiKnaOLUccEOY+wAotg06rZ6kN3DktPTtnTj5TxqEIbyRMqgs+kfOxg0g3KuWUSEBi1tXTY7LN799VRQ/OS4dNcY7qHOjnm22IGLxvSvCiegyVjAxDp+s+HMLgLGJtTVPuj/Fm7jh//I=
+	t=1728156641; cv=none; b=l2bSfLhWPve/uRo9eRQr5cZ8KHWD5iU5MGepEl6m3TXTK1M4UZ0UlxdI2FOy6BU7XWehsZW6bCuyMdLDzxr+MqqBKVYZyjyY9bCjnmGv+lLxfiKBYg1TdzRxBG4E9mk50ioKVN50CSOiPnqDA7PQ2+i6uWB52E2CUg+LWpIBA9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728155758; c=relaxed/simple;
-	bh=aLtWSLImy2bvmkbLelAmy8F1uAkKcXUzBjznT/XUhQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CntaQ4JB+b5Odj6hC2HLdQ+bkWcgEiriS7RixLHZkREzOpXqM8rfqmI+Q+B7gU910hlgfBjx+Plfl05MeokgNUquxlvlZjUYYwKVFGrqt4Opa7yntbFUmz/2qbRKaKhgs6qT43BHfzrqYMwUr6A8f8gjilAyW9YEqvrMKZXrIFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o47rv0+Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A944C4CEC2;
-	Sat,  5 Oct 2024 19:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728155757;
-	bh=aLtWSLImy2bvmkbLelAmy8F1uAkKcXUzBjznT/XUhQs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o47rv0+QKugV04q4LlL9Kq8m8OlDpfIK1+c+chLdb4DL6Or/RkPHm3ahs9dVE6WSI
-	 D1a23P0iLAUqpHYhR7x9lg9/xDc5aO+c/8qphBJXS4NSemym1NlfuycvM7yJlWd1q0
-	 W2cdFVuxChh9YCeA0telEh9Lx6aUXx9Ax3wwMqLfpdAnxW/VpAQ3lIHAomOhsxpSre
-	 EuES5Uw7uNzeZLt13GIwzER+xksi17TTC2xFdVgo00zEbVfVHHuozxAqHCTx7ZGxpT
-	 bregS5Pb2CQHdtI4L4AhKfT8X18l5DXNoxWU3U1n7VgK0dZNwWi+Feh5GHsqTzr8UT
-	 DFFUxfgm07Wew==
-Date: Sat, 5 Oct 2024 12:15:55 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, alim.akhtar@samsung.com,
-	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-	konrad.dybcio@linaro.org, James.Bottomley@hansenpartnership.com,
-	martin.petersen@oracle.com, agross@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	quic_narepall@quicinc.com, quic_nitirawa@quicinc.com
-Subject: Re: [PATCH V1 1/3] dt-bindings: ufs: qcom: Document ice
- configuration table
-Message-ID: <20241005191555.GA10813@sol.localdomain>
-References: <20241005064307.18972-1-quic_rdwivedi@quicinc.com>
- <20241005064307.18972-2-quic_rdwivedi@quicinc.com>
+	s=arc-20240116; t=1728156641; c=relaxed/simple;
+	bh=DAZkK2w6uiaoPIH0NFXtrjeE8rlq8Uh2RD5oK2bm1jY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fGQMg3Ev3JQXVTbJSvMVuZPfbEbbeOv0/yUw7ZYmj4nxFtzLH/vHU1bk4o8HE8MyErW8Oke2byie1sgTkYZNykFfU+KAFbUms1x1/EV/NGgOw5Qyv3TVUbWkp3KeVIGFxVrIK39JbkWhXXpaXEwVb0a7eXbW2Upk/DThbJrsQSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SbZnZTL4; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728156640; x=1759692640;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DAZkK2w6uiaoPIH0NFXtrjeE8rlq8Uh2RD5oK2bm1jY=;
+  b=SbZnZTL4jDcIGAMQkxBgHgWF4hphX+kj6L9yBGDtAKp1K02UnW22jyBG
+   4Cp4BU5DkeKZYE2FNs38Amnx8OXNz7G1MYhbdIQvWQF/cFkHZ52DGT80j
+   swUfqCMaNGqbj+mSdH4/PTKqfnDO3xS2bOPISm5u3Tn6+1uKgNLRDdUGL
+   cOzFML/q6Paiv+ZHA3Yg3MQev89bGYjXFIpbByWgxF6I8WOr8yU4wW8Wk
+   1ZP88WYUDvyVsMGKwajE2KTi+8+py374jPFsEFqYS+QA2MczPmjcw3aoM
+   kYistd724bNZjWOb6ptguCGgEb4dZVCByuzFBX8rpKvv3dJgdy1OKUlGj
+   g==;
+X-CSE-ConnectionGUID: 8DsdHRAwRna2cSZzXZiVVg==
+X-CSE-MsgGUID: Pk7vqWHPQzS0dsPVyV/TJQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="44879472"
+X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
+   d="scan'208";a="44879472"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 12:30:36 -0700
+X-CSE-ConnectionGUID: yXVhGMvfT0S0VdwxUXSYTQ==
+X-CSE-MsgGUID: qnOSeE/ZQ4yPUxGj/vYNuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
+   d="scan'208";a="74861628"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 05 Oct 2024 12:30:33 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id D0B86178; Sat, 05 Oct 2024 22:30:31 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v2 0/4] mfd: intel_soc_pmic_bxtwc: Fix IRQ domain usage
+Date: Sat,  5 Oct 2024 22:27:03 +0300
+Message-ID: <20241005193029.1929139-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241005064307.18972-2-quic_rdwivedi@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 05, 2024 at 12:13:05PM +0530, Ram Kumar Dwivedi wrote:
-> There are three algorithms supported for inline crypto engine:
-> Floor based, Static and Instantaneous algorithm.
+It appears that the driver has been developed without proper thinking
+of what the difference between HW IRQ and Linux IRQ (also known as vIRQ).
+This misunderstanding led to the 0 being used as vIRQ which is no-no and
+platform APIs unveil this after the commit a85a6c86c25b ("driver core:
+platform: Clarify that IRQ 0 is invalid"). With this the Intel Broxton
+Whiskey Cove PMIC driver has to be fixed all over the places.
 
-No.  The algorithms supported by ICE are AES-XTS, AES-ECB, AES-CBC, etc.  So I'm
-afraid this terminology is already taken.
+In this series two immediate fixes as reported recently and we have
+drivers for (patches 1 & 2) followed by the patch that prepares the
+same fix for the devices that have no in-tree drivers yet. At the end
+it is a fix for IRQ domain debugging (when enabled), but it requires
+quite recent patches in IRQ domain and regmap IRQ subsystems, which is
+reflected in the Depends-on tag (I can't use Fixes, as this doesn't
+fix anything related to that).
 
-This new thing seems to be about how work is distributed among different
-hardware cores, so calling these "ICE schedulers" or something might make sense.
+The series touches a couple of subsystems as the respective drivers
+has to be fixed simultaneously. The idea is to proceed the series via
+MFD tree to where the main driver belongs.
 
-- Eric
+I have tested this on Intel Joule SoM (Apollo Lake SoC).
+
+In v2:
+- added tags (Hans, Zhang)
+- fixed typo in the commit messages
+
+Andy Shevchenko (4):
+  mfd: intel_soc_pmic_bxtwc: Use IRQ domain for USB Type-C device
+  mfd: intel_soc_pmic_bxtwc: Use IRQ domain for TMU device
+  mfd: intel_soc_pmic_bxtwc: Use IRQ domain for PMIC devices
+  mfd: intel_soc_pmic_bxtwc: Fix IRQ domain names duplication
+
+ drivers/mfd/intel_soc_pmic_bxtwc.c     | 144 ++++++++++++++++---------
+ drivers/platform/x86/intel/bxtwc_tmu.c |  22 ++--
+ drivers/usb/typec/tcpm/wcove.c         |   4 -
+ 3 files changed, 97 insertions(+), 73 deletions(-)
+
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
