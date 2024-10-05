@@ -1,75 +1,102 @@
-Return-Path: <linux-kernel+bounces-351625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF2A9913E9
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 04:31:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAC79913EC
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 04:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF3971C22594
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:31:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CE8D284EA0
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB57A1C687;
-	Sat,  5 Oct 2024 02:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vCA79v/s"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEC2211C;
-	Sat,  5 Oct 2024 02:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17331BF24;
+	Sat,  5 Oct 2024 02:34:36 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B486A175B1;
+	Sat,  5 Oct 2024 02:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728095459; cv=none; b=r44Ch398iVK1H34V7Wm8yQH0nWNQ+P0zxK+x70PXP/5Sux5nZrkZrmsl/6QsFaAq9asG357r7EvRdW3km30neE5F2x8KhT+neY6D/T4MsqP40ob0wTIZ8+K66ks9uWUm+VHF1QcqkYeq/5jhfs7uPEwJNaBiRJiDHjwstqH4pR0=
+	t=1728095676; cv=none; b=S3OdSHIo9WNq7ILDFwP7kbFuDOyOv5dVOUKV0Mm5E7EF57ipYSBEX+5dECAhVWDihrAsAcKhlzZ4Ifz4Ip+iu8ecTPU6X5Y5hpEiAcNxJ+WXcKmYB6QySFs5LOI4wyipbGoQtBs94zGH2YycXqUez/I1RYhpQjqSvg3u5hMNmfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728095459; c=relaxed/simple;
-	bh=csqTLQaxf4ZlCsS3YHzbWIYnBSpqEvG0c3+B/4vCe/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o8EdoBqcMh+RLX2MEGlZuntIEdbnV343LerYmdtSUqelwz48Jm8nU7rbl4UyBQ3kwSz3nQyfGE0Phj3HKRV5RAvLIOjIvCnuT0guS2Ija7zDDENlMfqqa8RelW8SaBRz2jm3+1UxjO0USMKBlEWzq2gjrIecWV3h+zdjjxpr1Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vCA79v/s; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=csqTLQaxf4ZlCsS3YHzbWIYnBSpqEvG0c3+B/4vCe/0=; b=vCA79v/sQ77e3a329C9tabA+R0
-	HMM9Vli8zLXdVJCApU9QKQ1uI7vBfEz6kdhT1bocIW7K1XVGxES7wS82k2eLeCz851KKpTO+CQo7j
-	xf948hqZ0+0Y/nJX6DBG17AWCDXxSicN4itHylA+Kjox7dx8yeFcWMygXcfU+2dd6DSH9+cgUy8pm
-	7tm6yynoh5z+dQY2kRBSfr7sGroHwynOqlhsgQJCHZU1UyBdEfZ84pkSDGNvjqpm9JITMJnpuaZi3
-	dvtRSTAO90iUZKN7iASNW4yqBXRoGJ++PCSEPneJmcd3MDtqnsDLe9BquFUfXxASOUgjXSo/43QY+
-	KHBOTs2g==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1swuZJ-0000000Bs24-2ZPa;
-	Sat, 05 Oct 2024 02:30:53 +0000
-Date: Sat, 5 Oct 2024 03:30:53 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 06/12] iomap: Introduce read_inline() function hook
-Message-ID: <ZwCk3eROTMDsZql1@casper.infradead.org>
-References: <cover.1728071257.git.rgoldwyn@suse.com>
- <8147ae0a45b9851eacad4e8f5a71b7997c23bdd0.1728071257.git.rgoldwyn@suse.com>
+	s=arc-20240116; t=1728095676; c=relaxed/simple;
+	bh=/plCDqktHJLu26c1/0KD6JVouNJ24M8l54tl9DOPvU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IhGwsKN0bmT37hA+qdclGx8dLM1ft3Srzif+MG0CBIzmiwKpklyf22JRXmR8f2q7AtYpxR7FfHZEVnsMIfz3tzjbnpaiJJRM9Fo41wbRkmBrcDAvOTJfN8ymGlhDsOF0aPDx45V1HyjgnmAKK9uGlTKgB33xIviFK9AgVo+5XCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4952Y0Sr020590;
+	Fri, 4 Oct 2024 21:34:00 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4952Xvf4020589;
+	Fri, 4 Oct 2024 21:33:57 -0500
+Date: Fri, 4 Oct 2024 21:33:57 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: John Johansen <john.johansen@canonical.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+Message-ID: <20241005023357.GA20577@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp> <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com> <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com> <20241002103830.GA22253@wind.enjellic.com> <033eb4d9-482b-4b70-a251-dc8bcc738f40@canonical.com> <20241004184019.GA16388@wind.enjellic.com> <CAHC9VhS0aeDB2GzxJPHN8_LDk59gT_RuRKwb26K+3SzX7SQ=3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8147ae0a45b9851eacad4e8f5a71b7997c23bdd0.1728071257.git.rgoldwyn@suse.com>
+In-Reply-To: <CAHC9VhS0aeDB2GzxJPHN8_LDk59gT_RuRKwb26K+3SzX7SQ=3g@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 04 Oct 2024 21:34:00 -0500 (CDT)
 
-On Fri, Oct 04, 2024 at 04:04:33PM -0400, Goldwyn Rodrigues wrote:
-> Introduce read_inline() function hook for reading inline extents. This
-> is performed for filesystems such as btrfs which may compress the data
-> in the inline extents.
+On Fri, Oct 04, 2024 at 02:58:57PM -0400, Paul Moore wrote:
 
-This feels like an attempt to work around "iomap doesn't support
-compressed extents" by keeping the decompression in the filesystem,
-instead of extending iomap to support compressed extents itself.
-I'd certainly prefer iomap to support compressed extents, but maybe I'm
-in a minority here.
+Good evening, I hope the week has gone well for everyone.
+
+> On Fri, Oct 4, 2024 at 2:40???PM Dr. Greg <greg@enjellic.com> wrote:
+> > On Wed, Oct 02, 2024 at 07:27:47PM -0700, John Johansen wrote:
+> > > On 10/2/24 03:38, Dr. Greg wrote:
+> > > >On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
+> > > >>On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
+> 
+> ...
+> 
+> > The third problem to be addressed, and you acknowledge it above, is
+> > that there needs to be a flexible pathway for security innovation on
+> > Linux that doesn't require broad based consensus and yet doesn't
+> > imperil the kernel.
+
+> The new LSM guidelines are documented at the URL below (and
+> available in the README.md file of any cloned LSM tree), the
+> document is also linked from the MAINTAINERS file:
+>
+> https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-guidelines
+>
+> The guidelines were developed last summer on the LSM mailing list
+> with input and edits from a number of LSM developers.
+>
+> https://lore.kernel.org/linux-security-module/CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com
+
+We are intimately familiar with those documents.
+
+Our reference was to the need for a technical solution, not political
+medicaments.
+
+> paul-moore.com
+
+Have a good weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
