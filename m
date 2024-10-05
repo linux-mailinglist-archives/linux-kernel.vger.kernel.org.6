@@ -1,119 +1,123 @@
-Return-Path: <linux-kernel+bounces-351659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363C5991462
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:02:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179DF991464
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D45A41F23B0A
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:02:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1E6284F8C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDC72E3F7;
-	Sat,  5 Oct 2024 05:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CF738DFC;
+	Sat,  5 Oct 2024 05:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="VtxLH9Bq"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhTxN1+X"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2637F6;
-	Sat,  5 Oct 2024 05:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79747F6;
+	Sat,  5 Oct 2024 05:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728104516; cv=none; b=u9+i4Y/pkQxNhIqT+WkKn7rDyf+3Z18l10SFg99Zcplagzbi/LYZhuajC3bYcRHB8jzvDyhGRBysIChiX/hqkyRhMujG0aY+rOxqXHZNpGZhsE5wMk56txW5bXpstZUH1MspJeTxOlEj47d3DGPxGMWE83A7oiarjY+yP92/tu0=
+	t=1728104679; cv=none; b=sHxBfBveDuOUZYXtW0HvFsrTfDcKRC7/xeCYyeCU39KLo+JmibI093VvCQ7QpFI7VGet7n3u/WWXzfIN8jKbVa3Qik/S81gyT0HVBBeHXaPRKfDmWWiDqgiFc/FdoDDHmswwqoy9K4tPBZC/xS0keSPDZtMsoWO02OGA88kx1s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728104516; c=relaxed/simple;
-	bh=PtAHF6nmFBjakNUMqDaVTY/lZAmyoAg3r19rlIXoY6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DGDpfCXuXEuIYBl2ekE1lOMbRr8uKXtH1c8aDeU0XjvQSDkVPfNTnaPrF44m2Znxh3L37n1umcZ2qjhOQrETK55ayu3yCnLNdUQZuyymOfP0R0L94VqhaCs6MP3o7VFlAsJifdohArx+3eEpW14Xv4fTgIS7YeCqhGQGbp5B9ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=VtxLH9Bq; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=3z6NNEarCXYn5FFImGq5AZYT+4SCo1bYJnN8MKuxYiY=; b=VtxLH9Bq9hm3hLFtWZaKX5OqqM
-	bgp23Z7GkoSafWfDhhF55fktJuSXoK093IdAul4qul6QqNNfZjAke5dHOejJJqJKJQv7yubCOlQRJ
-	V0ePqA/BRMxuJoJO2gBSPKJdebZwDhSmQXM6xN5TP6Fx4YtA16UX+xDkLZ54bWUCzarCHD9bdVEc6
-	FwWahTlh2mtT/MD102UJWtKeQ863W5IJZAXZ5taqn9D1vSXEpjKVoH74iE8/geuFHWozZUUuhBTIl
-	XUiTCAbktj/uvju3wd8/TiVo9kBqZyqNPlEpVAdlfUNUo0rAf+w0n8tna3p7Wna4dHVocqO6Sp3LT
-	iwLYxOWQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1swwlS-0071IJ-1w;
-	Sat, 05 Oct 2024 13:01:49 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2024 13:01:48 +0800
-Date: Sat, 5 Oct 2024 13:01:48 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Chenghai Huang <huangchenghai2@huawei.com>
-Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, liulongfang@huawei.com,
-	shenyang39@huawei.com, qianweili@huawei.com,
-	linwenkai6@hisilicon.com, wangzhou1@hisilicon.com
-Subject: Re: [PATCH 1/2] crypto: hisilicon/sec2 - fix for aead icv error
-Message-ID: <ZwDIPF58yX8r7bQO@gondor.apana.org.au>
-References: <20240929112630.863282-1-huangchenghai2@huawei.com>
- <20240929112630.863282-2-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1728104679; c=relaxed/simple;
+	bh=4UnUIgsbD1n0W2b5XrUNaJ8Sw5WrhqGja7BSVT8mc2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BWdofcS4mVhpoAIgbtjjWiWsc4w4PWSL+uAuGM/rcJV1iI3frlz1a22r0E1wlunk3ewElf12PtABuRxWAV7FYVspDWmxIcWBQVzLWieTF3icZkH6nml7qyQUZbIQjJvLHkVRE/KwZiyN3ROS4SRgchbC1/pLaXis/YbAYV0LHn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EhTxN1+X; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e09d9f2021so2032939a91.0;
+        Fri, 04 Oct 2024 22:04:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728104677; x=1728709477; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r8NHiKWRZuu6Ni0mDEJmlzarQeFmoce/A7Zp31QdSHY=;
+        b=EhTxN1+XlL/pp1SY581AlirnEI9oymsjiLvXj6ZLMvhtqXsf+H2Q/6gXpTERURbKYm
+         haluhEX+6IPedxh2lAkf0Su20+A3NmJsIt93rVs6At210BqCBiYEqTYMzaDkzUCQnC0L
+         pwoMj+GE+b6P+LrRpc8OdDMSznexQmRWTUfY+WTm8L9k4lAhP58I0pqDNphE5S7w4JKo
+         aZBopeHxM4rZuDK4sHdKnPmQRaYVCgOP6KLt3NCEB/2BpI9mL1YIuIYmhlkLcJlu0fVT
+         t0UTWne9mow4od7kBveVJ6baqVUseExsQrkeRWAnJ4SPcLWVyryJ2ZCyy9CaVkKxKDam
+         +bBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728104677; x=1728709477;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r8NHiKWRZuu6Ni0mDEJmlzarQeFmoce/A7Zp31QdSHY=;
+        b=vZaKz2A9RjDcQX0kFHLYnptCA3LBUgXRNB2J5NA17P1DaPG4yqvLILpjLrjGR9QXZE
+         mZChGtbWrVvFbHEwF/gkibyR9RR/9JjAvgZkxJuiYXRGKawA380RHlh/9q9LG7tQbiHj
+         er7+jSjm2Ztk5ginDfoO1dzj2dhkMjUAYTlS8qph347rdbQmB+UKT0z0l/iDmNyvI7jy
+         SdC33Q/nXr8A7jzcbZlUwduK6wXdJKZqXNvet1EnOer7K7wH0nHQpMUPeFJuP9TXksC9
+         eBVHHoBkAJ4S9NzoYGWl3To7e8oxG9taj/EK50+q2pNyZ0UJ96UlOd2YCh8xfB3/CR6c
+         6UMA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5xYbP2Nu7/YbQRcUOq2Imhod6VqzFzPXlJVMvsMvrhq2hjyMsuhUtPTP5zkhk9fg8lmVWlJ0npQO5@vger.kernel.org, AJvYcCXTKNIo8Dckjt275c62Ak7jFIYvbZ7Le7LIM9ml1T91inauC2bTQnwqwFf4gtP08j5+1A9n83gLNYibaout@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVkcCXnvNatyvvF5oyNddSkLQT7k2mpLcfG9icCQvRBpxPvIbG
+	AEd0NE1r1Ezy7ats+3U6k6mfPj9IQcNFqJR4GvP3dq3YPlmcXtQn/K4z6xHXfkg=
+X-Google-Smtp-Source: AGHT+IHJH4xcREpvD0HDuNMTuUtxVUEaLiBlPUv8CIIcBjF+dsn53MPqiV3uxRBQCo5S+yuJsLIlRQ==
+X-Received: by 2002:a17:90b:1644:b0:2c9:a3ca:cc98 with SMTP id 98e67ed59e1d1-2e1e620ead0mr5773693a91.7.1728104676850;
+        Fri, 04 Oct 2024 22:04:36 -0700 (PDT)
+Received: from celestia.turtle.lan ([2601:1c2:c184:dc00:ed3:4cda:b368:ce98])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e85db34fsm2625744a91.33.2024.10.04.22.04.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 22:04:36 -0700 (PDT)
+From: Sam Edwards <cfsworks@gmail.com>
+X-Google-Original-From: Sam Edwards <CFSworks@gmail.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	William Zhang <william.zhang@broadcom.com>,
+	Anand Gore <anand.gore@broadcom.com>,
+	Kursad Oney <kursad.oney@broadcom.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sam Edwards <CFSworks@gmail.com>
+Subject: [PATCH v2 0/2] bcm4908: Fix secondary CPU initialization
+Date: Fri,  4 Oct 2024 22:01:53 -0700
+Message-ID: <20241005050155.61103-1-CFSworks@gmail.com>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240929112630.863282-2-huangchenghai2@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 29, 2024 at 07:26:29PM +0800, Chenghai Huang wrote:
-> When the AEAD algorithm is used for encryption or decryption,
-> the input authentication length varies, the hardware needs to
-> obtain the input length to pass the integrity check verification.
-> Currently, the driver uses a fixed authentication length,which
-> causes decryption failure, so the length configuration is modified.
-> In addition, the step of setting the auth length is unnecessary,
-> so it was deleted from the setkey function.
-> 
-> Fixes: 2f072d75d1ab ("crypto: hisilicon - Add aead support on SEC2")
-> Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
-> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
-> ---
->  drivers/crypto/hisilicon/sec2/sec.h        |   2 +-
->  drivers/crypto/hisilicon/sec2/sec_crypto.c | 114 ++++++++-------------
->  drivers/crypto/hisilicon/sec2/sec_crypto.h |  11 --
->  3 files changed, 42 insertions(+), 85 deletions(-)
-> 
-> diff --git a/drivers/crypto/hisilicon/sec2/sec.h b/drivers/crypto/hisilicon/sec2/sec.h
-> index 410c83712e28..bd75e5b4c777 100644
-> --- a/drivers/crypto/hisilicon/sec2/sec.h
-> +++ b/drivers/crypto/hisilicon/sec2/sec.h
-> @@ -36,6 +36,7 @@ struct sec_aead_req {
->  	dma_addr_t out_mac_dma;
->  	u8 *a_ivin;
->  	dma_addr_t a_ivin_dma;
-> +	size_t authsize;
->  	struct aead_request *aead_req;
->  };
->  
-> @@ -90,7 +91,6 @@ struct sec_auth_ctx {
->  	dma_addr_t a_key_dma;
->  	u8 *a_key;
->  	u8 a_key_len;
-> -	u8 mac_len;
->  	u8 a_alg;
->  	bool fallback;
->  	struct crypto_shash *hash_tfm;
+Hello list,
 
-This makes no sense.  The authsize is an attribute of the tfm,
-not the request.  Why are you moving it from the tfm context into
-the request?
+This is v2 of my previous patch [1] for resolving a problem preventing
+secondary CPU(s) from coming up on bcm4908. After some discussion, I decided to
+try dropping the reserved memory region from 64K to only 4K. Looks like it
+works!
+
+Changes v1->v2:
+- Reduce 64K reserved region to 4K
+- Style change to the `reg` property to use hex instead of decimal
+- Slight rephrasing to the commit message
+- Add a new patch that also moves the `cpu-release-addr` into this reserved
+  memory region
 
 Cheers,
+Sam
+
+[1]: https://lore.kernel.org/lkml/20241003213007.1339811-1-CFSworks@gmail.com/T/
+
+Sam Edwards (2):
+  arm64: dts: broadcom: bcmbca: bcm4908: Reserve CFE stub area
+  arm64: dts: broadcom: bcmbca: bcm4908: Protect cpu-release-addr
+
+ .../boot/dts/broadcom/bcmbca/bcm4908.dtsi      | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.44.2
+
 
