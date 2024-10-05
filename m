@@ -1,222 +1,161 @@
-Return-Path: <linux-kernel+bounces-351865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9DD991702
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:31:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7585A99170E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D6A1C2145C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:31:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207E21F22A2B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8041534EC;
-	Sat,  5 Oct 2024 13:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98D2153BEE;
+	Sat,  5 Oct 2024 13:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="Sqk2JXeF"
-Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01on2132.outbound.protection.outlook.com [40.107.121.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ady644DQ"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB9038FA6;
-	Sat,  5 Oct 2024 13:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.121.132
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728135075; cv=fail; b=elrbZrloClGkKAxYsg7jcnQD/dGsMe6/EkhWvyAaiJMX5tBQLx1TwgwbJMeaegoK5RbuaVCiL9frfls19jjT9oeyxgCFOcWxJ+5XkJN1xpH9Dhz/OMUh1caOTBcy2l6+pGGx9w6As4/eds7VwW/y7kbOOq1gAWI4yrqBTzPwqnE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728135075; c=relaxed/simple;
-	bh=YhC1/7cePzQYVXtjfPdB4gw3i/I7mhJ/EWssAE1HX+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g7jMdnJqw7y7OKZlSOUqhNoJsh1HKhEREdzpMxqR2RZ6ygU/xPfZJ+vCbQMJVZZE4mbdT7pnMLyYIuRAwjSIbNDt7ux/NzgV/AqwAFufFyd6FzhcnbC8MriIS2yw8W9BaubWKz0ko5xJRV6h2jpAGOXCCC/48/BIU6YIt0/A33g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=Sqk2JXeF; arc=fail smtp.client-ip=40.107.121.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t/PSV23GeBLHDwmwgdXUid0Ff2RbRuOlN9zIBxB4ml2i4boYND73diAy47cFVAVaRr0ArpnPHw8mZtgAvrFaF/vJzZQOyelf39/GMaGCptosr3lTgpXi1WsCuXf4RGupCdRrZP8QGAkc8qqugCTuWsA9cJU0wHhgiUiyZhz5ueE3FXV6x82c1QpW80prNW95HOmeyk7lTYtYHvmea1hWTAhXY3KzMAXB7XVJtFfttN/9qqq01lc+R4zCkXieQo26uMOqzpDv/Dx1QIjZK3WTmghFzgdgR6ewbWywkCyoV6fQkDXow98NHKnJ1x6RlwXL9x4DZvNruWJZ2zv6ZjXYDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/wY4yUqHwq6Yg5CAsdUPJ3PeNe9/ffVzeSjaExYz6jQ=;
- b=XNl9NdZvik1+8cvY9/GHMIm8BsohZ1OadRoquSt1S22uRUCSGjdByDubY+hVXiCjaprQopKA9eYVzYw7CZDPWHxFLOXDJCF0OuYkyiKjuZa/pzXLRIhRCRu/L9XBFWlL/af636TQcPfdijoQJ194Ly2eCuzF0g1tefCyksJIvoPRKEJ0mwyflb2MFHKeBo6eY86Ao2LbUd6eFlne4ariV2JzCtK6kESke5KSFsCpyP+I8nkFaDF0raJ8OgxQgScWTTJRs4NXT9WuLqej5xMhSK0Ey0C7B+y6qo98ivvDpXcT/aNe5Eql9sgv62tw6ZDPlIgNQmeso8CjUbXKgZ+Omg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/wY4yUqHwq6Yg5CAsdUPJ3PeNe9/ffVzeSjaExYz6jQ=;
- b=Sqk2JXeFvQHocr2Lvc017Gw7raIyLJJwCs2QpLVuf7qrOzkiR5RbMDc9VVodqSA1ExQhmu5h4qkrLT52q2cOJ1GgxC/MiNA3TAtBbmu+7UAwmXzq/pRGlf6SNcJ4E0GeXy/4KGQJe4g8h5bvyF/EhzoMvaMScZTjkWfTRyQ3sUo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by LOYP265MB1872.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:f2::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.20; Sat, 5 Oct
- 2024 13:31:10 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8026.019; Sat, 5 Oct 2024
- 13:31:10 +0000
-Date: Sat, 5 Oct 2024 14:31:06 +0100
-From: Gary Guo <gary@garyguo.net>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
- Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
- Gross <tmgross@umich.edu>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
- Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Mark
- Rutland <mark.rutland@arm.com>, Dirk Behme <dirk.behme@de.bosch.com>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 1/3] rust: implement `kernel::sync::Refcount`
-Message-ID: <20241005143106.1196fd3a.gary@garyguo.net>
-In-Reply-To: <2024100505-aftermath-glue-7e61@gregkh>
-References: <20241004155247.2210469-1-gary@garyguo.net>
-	<20241004155247.2210469-2-gary@garyguo.net>
-	<2024100505-aftermath-glue-7e61@gregkh>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0601.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:295::21) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D24231C95;
+	Sat,  5 Oct 2024 13:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728135882; cv=none; b=Xd+1AXBDKuDbJl6zcd6PhR79cwNmzKXPJM/vl9F//J8daSzi8YGHF9zFUvwD86aLO2AGJhTzP8FGu9suwSlGN3dAbdzXgbXlyewytRnoby+nuzpUc4pWOec6IWcXwMqMkHUtZ/hH2YVS/aqYL5wuCrHuBn7vdqN2T3xEQyDCS9Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728135882; c=relaxed/simple;
+	bh=OCqLnu3FOYh2BYZ/k3XElebh9F3QXzEQhB43B85DKkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BlVBYXHRk52u0NB7ZM335A8DCBaFzMRRfekZEeeoJT8zTw/caucmXDUBn0FMIfKCxuIjEGjRgMabH8KKAjpfl+BATUOFdm65PnCfNKX1YdJVWGboHMSb6+ZSzmTC10hhnCOwUeQZNdxGGdgHSxZmmPXcNpOW6ejoGNcbUMp9uw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ady644DQ; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso2557714a12.1;
+        Sat, 05 Oct 2024 06:44:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728135880; x=1728740680; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vk0lcaHAU8ayzUn9Owq/N1n4bRzRycGQWXSMMukOCCY=;
+        b=Ady644DQaVb7xEBkLJJ1GcXmWH6qSEKnqgrUGovZc7kXmGItpOY4YxdnrqZmiBdD0j
+         be1XgA4QUpYX3mzK7LMZgZvl1gAuH8Amc5YO6+cDgFN5AoCdfqdNpJn01sm4pvaxQxBE
+         ew1n8fVS2t0pbSJN9yzlC9+M5KbQO5P/JT4q1pnqMiPlx3gYwV0bEImtGW3OMRPVP0/w
+         q3UIKFQH9FL3jKKc5RQQBn3T7VzuYPGNqxUM3hP/4VjEgPK5DETXRl6t0h/JS8tNnPlf
+         IgFUm8DF3CxGhiMJi/xAbrVmtv3hNmqcPfoT16+fAASKwT6ej/xoWRe9HpTimTMe+giq
+         WFTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728135880; x=1728740680;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vk0lcaHAU8ayzUn9Owq/N1n4bRzRycGQWXSMMukOCCY=;
+        b=lSAQLyypE1Ky615BZ2+w83uPi3KxXgJZH03VTgB5KXWLaqij8jiMUcOEkWbwCG+799
+         iEisiyV/9qiMjJpu8p5azJmFsivYdTsIQq+Jh8m4oacGVJ9OgZHm7k+tL4WAD9CIYG14
+         Pt89fXD4/joysnqyqR4BDc2CqHFEqWZIosw7JnQa6C77XxnX9y0F816GPpzN6I4gPLz1
+         xURE5IA1IW2Yz5nqZegYvtvPmwF7bxsGhVukBfuvZC+3BWZ1qtwPiPmblnrRoBTL+WJn
+         +RfS0RiLoAYhQdJNYAG5kZqFKj4MOlT4Vht0mRl+sMbGYfrfQToSQ+VtfYiSLn/qyb0j
+         COIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLMeWV1U5kYjhLf3Z4zCqeBpYBvh1D3gW52XNsDVZk0obDkRnEu06+KGkfVwIKv69KJUjnBdfsuNtOWq4=@vger.kernel.org, AJvYcCXeMmvFRbfVqObsPw679yiBPAnxA9fRKpLiLHjinpto1F3S9+JRX65eGSx3nOgIolYyXyb44bcd@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVwf65LxZM8cXOuU5w+omKWiqMFdTaYqnBW8tr8L+YaEm7iko1
+	zxPN1bIyC67PuyqinV7wF1FC0ocIKV6PCNVqeXDESkJiT1zjV0a1
+X-Google-Smtp-Source: AGHT+IE38rSN5FwwRg9a5f0P9ymdYfCJ4Qh1cT/tuSWC/KxzzN+IZeGm4rseorbhwbVgoU1XAV7epA==
+X-Received: by 2002:a17:90b:109:b0:2e0:89f2:f60c with SMTP id 98e67ed59e1d1-2e1e5d63376mr8974088a91.11.1728135879828;
+        Sat, 05 Oct 2024 06:44:39 -0700 (PDT)
+Received: from ?IPV6:2409:8a55:301b:e120:3c3f:d401:ec20:dbc7? ([2409:8a55:301b:e120:3c3f:d401:ec20:dbc7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20b0f9053sm1824890a91.41.2024.10.05.06.44.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 05 Oct 2024 06:44:39 -0700 (PDT)
+Message-ID: <c9860411-fa9c-4e1b-bca2-a10e6737f9b0@gmail.com>
+Date: Sat, 5 Oct 2024 21:44:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LOYP265MB1872:EE_
-X-MS-Office365-Filtering-Correlation-Id: 719c86a7-8508-483b-11d1-08dce541f96e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|10070799003|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?imC2Qq3fk1avB+OIpe2OuzC5EBFQpG7H5luNPhe7rkwQg/Ku7NYCXEgeB595?=
- =?us-ascii?Q?BmUqJjcdRZm6IcvE/UOFUsMySWttitV+ceEH4SS9PF/X6q7AMegmH/aQD0/m?=
- =?us-ascii?Q?R9EFbMlyaPw2s3QcxGPwtfiqUQpF3Ax+rI+6le00P9o1AiGh+IxSx0URLwku?=
- =?us-ascii?Q?6LGMiUlEHQoJTxLtPKsqJCoGE7uqTJ7lFXUXK/rH+CW8KIimnG/ogFCp68Gk?=
- =?us-ascii?Q?J59hfcohu6TSaBz89RolRoy3p6MD5sAzswq6rNRH+fwQzWAhwyF8rKgd77aY?=
- =?us-ascii?Q?ZVdrZVi0k18vNL3Z7oKbh5tGejAbQU3eEMDbjw2HpVJ7kYVLM1Iud1aVR09v?=
- =?us-ascii?Q?RkvLuh7/7litDcDCn51TobsohA82ZzOyJvJiujOQtzR/GELl1tWDjNWfNzT5?=
- =?us-ascii?Q?NB715rG59750rHIMyPH5zsyfw5gntBVhw1ef3T4eivMSCqNYkPmfxBeKc8+M?=
- =?us-ascii?Q?QNy4UlJts3+3QiTGzGgFSCEgphzIudyUC8xi3QyetHcToJCOodxmpBOjMw6u?=
- =?us-ascii?Q?IBQsiavZKsX5uMnpRTQzoZv03K0wCHe4+/I0wfrNlebbPh81uUrc54f/l836?=
- =?us-ascii?Q?SQ/R74pnYyy6aAjj5oVviX5mDgkfzgjIxE5uhLoWSFAP2NlqNUQgENQuBeb1?=
- =?us-ascii?Q?i+dj3fqAWhMrFjTUwy7zu0ysbxs4sKCGCmx+FTyRAt/jQmelSW6zQXq18s3m?=
- =?us-ascii?Q?0gyMQweAas8hbU6GHlsLvhiln/4aHXrrcD6SLNEP15//thFARYmSFG/FF+H4?=
- =?us-ascii?Q?sv7LtY15BoprlIV0UnO+9Z2LTLjZlem5H+3I8ZkVDzytGQosgut9t+MCAcSf?=
- =?us-ascii?Q?1CLkAzuUWosDiyGXgeaQoh/TXKDsOom7pPr5wp/uhlgI06CR0PVz559VsfRY?=
- =?us-ascii?Q?sP/eeW3lRQa1x97MwgBf2djA3G1JtOIbVXwUEvQ8PdGf+/bnE0FFpq4wfzyX?=
- =?us-ascii?Q?Tc4ceT9n9aOqmJP8beN060/NAKMfu/rHM7mLsBIuHuOGdG5XXryuYi30XwHH?=
- =?us-ascii?Q?roRGMn4RrDBx2DmYK7v9zK9z9AZtGVDs95GPPpEG7LBiEUopORnGGgF1Em+m?=
- =?us-ascii?Q?qYwf0xwSuFWCp+Md30iNcK98apLfWUex6Z8qWReUxM0LWxxg78Y4sPgsIhjo?=
- =?us-ascii?Q?3ppojDPte2kgKI6z/BWD4eokIhZ91zpFgX7MQ34hcn46jFVBhr7guiGBB5GV?=
- =?us-ascii?Q?YHgaVNAGNnU3Rl9mix0iAbD0mR5o0mRTLwCHCnSa1WZkbhYAXfHlMtTXRRB6?=
- =?us-ascii?Q?6S59d+kPk2+I4Eo4EkJwHxo1SM5EzhE+C+6+5AY7Mg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(10070799003)(366016)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?outX0RdLPlW5sMImrQB3oFmPJqxF7P0SYmIgcju1ySO1smvPv91xCsK43aQi?=
- =?us-ascii?Q?I+KbS+2yOlhFPsUVNgFX5dpnQZagpF3jg1x+ybgWBvmbaEeh6rs8mtALa+0r?=
- =?us-ascii?Q?IOvEweZN+dBjIPXJ2hbvfnztMfq4M4SNzJGPmDBV5mCh53yjzJVEUCj6KD0S?=
- =?us-ascii?Q?+MsRmxHlFsMtK9gh+03NxPx00VB+SR5x5sWMa/omKHptDcKIh/KpmVgZTgs2?=
- =?us-ascii?Q?a84tN5VGMcO4M8+/IhcmK03H1o0iEPPvhPwMe2PsqC33PKZU3Y1bczgBDsFF?=
- =?us-ascii?Q?IQrqoqo2iALx5SWvKw4SDVrLiiz9o0STYdQtG00zFZFVSo2kPmksgCbCqPvJ?=
- =?us-ascii?Q?rd6frrZP79Xb5pncfDnNG0Wwe7aioSYW6UETMZ6l1rZcMUajjKucRMYQBsKS?=
- =?us-ascii?Q?eKkK6KN9n8t5PBn/Ccj1DkprfzpNkZz9k4nmQyNKK3WfrQ4K7X3CBVT0MyIf?=
- =?us-ascii?Q?7gkF4D2GEYdAyZJvHebBndfeq/43OWawmAFQzFb2wQGE5xjPUYyzFpUdLxMt?=
- =?us-ascii?Q?7gwN2dySP6Nk0dn24v1azjJD/wE5Tb3btLEatXxu5u2LCjRdVUmnMNH1ZDVq?=
- =?us-ascii?Q?a1veP/2Rsv+25ja2bnRhbZS7FLFVcj/povDvWoVcg3Qk0reYoKJd6j9GNacC?=
- =?us-ascii?Q?6EvpJtMdVZqb+01HvJh1iESwrLZdpN9l0X1RMyEcg6J+ECZqJOcFPrTgYyVT?=
- =?us-ascii?Q?b78+TgTX/7Vm9yOTW/XC4tTcdb0/ctg9fKfEQ3u2xHBXYUzNBI3ZMixdc7gK?=
- =?us-ascii?Q?wPd1Dq5OdLPUSJtzkXsmY40H7fNmGHSxoedRCvrVyQZWWUBWyKvR36kJhXWm?=
- =?us-ascii?Q?zqldlxXHfOpP1bvbYtKDTbkqz1gmJDI/ovp7IZVBR8lXMqVR9m6LhNbOuADg?=
- =?us-ascii?Q?s0+LA/5qubRzYupiXEv5vbTlJ2iA3pdnV6rsSFh7BXtRluasilLLgFDJm0Xx?=
- =?us-ascii?Q?CYveCPW1LfZd2zf0fLpeZoRUb/f/hE/p88JRvsCjA3Hu8WKwVdYg5Lcggla4?=
- =?us-ascii?Q?vUB5TAt+8M+FcXfrgByeLqjZ1qQZUWHashZWlu127Z1y9neq+fLpZhcjNW0k?=
- =?us-ascii?Q?CkF4v7PmbHC8X/LojYeahH7TlyBisP+e6n06txcqiNAuiee7ySUTBcVggjKw?=
- =?us-ascii?Q?Nv7aQcQ/iRoSRjZFg/DvIRNk6he7pseaTdZSze6ej1WQbShH70SzmCj10TuI?=
- =?us-ascii?Q?0HoYEJ6bnAjNTDmeLT3HLkgZ8ZKK4XylZsMenusSiweSU4yJOV0Kr/O4BDCs?=
- =?us-ascii?Q?CIlp42sh5nuEPRe0Hu60KSP19w/RLmX8vWAT3j29DzItPiPUeyKEBG1TUmVb?=
- =?us-ascii?Q?RKva1UsZ66doZCK7JrSb3+pEOPjJdjl1lOJzgvHruvx54VCTW7UKy98/+4Fy?=
- =?us-ascii?Q?6mwSL+G8FvVuXmSmQXPvKI4IWoKDDimDyIfaAZdK25rdLfZQUNTQgAgkq6tj?=
- =?us-ascii?Q?1e0aW7WvHYJ4j1TsD4florcMDRbYFkUWfmqqoRpY5r5rjzTiDJAGdRc1xqQq?=
- =?us-ascii?Q?itOgL3nU/RtTAmoWPDiYq6GPdIbFl7Hje+feA1Yo9Z1KEgtptOxhaH0NhfBw?=
- =?us-ascii?Q?IEYgjuc5nzFX0Z1cxAdhgfDajLmtns3yJ4nhuuF60YA4NtMsf46b6AdbUAQ3?=
- =?us-ascii?Q?Bw=3D=3D?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 719c86a7-8508-483b-11d1-08dce541f96e
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2024 13:31:10.1758
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BabODKhXAHVlEYLxUYD2KajD/9jFS1pJArYRFZm4QAtXbQGUgNM7W1y5dWshSngxUZ6xEJIYSs5W9x8SoonvuQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LOYP265MB1872
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v19 09/14] net: rename skb_copy_to_page_nocache()
+ helper
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yunsheng Lin <linyunsheng@huawei.com>, Eric Dumazet <edumazet@google.com>,
+ David Ahern <dsahern@kernel.org>
+References: <20241001075858.48936-1-linyunsheng@huawei.com>
+ <20241001075858.48936-10-linyunsheng@huawei.com>
+ <CAKgT0UeSbXTXoOuTZS918pZQcCVZBXiTseN-NUBTGt71ctQ2Vw@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <yunshenglin0825@gmail.com>
+In-Reply-To: <CAKgT0UeSbXTXoOuTZS918pZQcCVZBXiTseN-NUBTGt71ctQ2Vw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, 5 Oct 2024 09:40:53 +0200
-Greg KH <gregkh@linuxfoundation.org> wrote:
-
-> On Fri, Oct 04, 2024 at 04:52:22PM +0100, Gary Guo wrote:
-> > This is a wrapping layer of `include/linux/refcount.h`. Currently only
-> > the most basic operations (read/set/inc/dec/dec_and_test) are implemented,
-> > additional methods can be implemented when they are needed.
-> > 
-> > Currently the kernel refcount has already been used in `Arc`, however it
-> > calls into FFI directly.
-> > 
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Signed-off-by: Gary Guo <gary@garyguo.net>
-> > ---
-> >  rust/helpers/refcount.c      | 15 ++++++
-> >  rust/kernel/sync.rs          |  2 +
-> >  rust/kernel/sync/refcount.rs | 94 ++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 111 insertions(+)
-> >  create mode 100644 rust/kernel/sync/refcount.rs
-> > 
-> > diff --git a/rust/helpers/refcount.c b/rust/helpers/refcount.c
-> > index f47afc148ec3..39649443426b 100644
-> > --- a/rust/helpers/refcount.c
-> > +++ b/rust/helpers/refcount.c
-> > @@ -8,11 +8,26 @@ refcount_t rust_helper_REFCOUNT_INIT(int n)
-> >  	return (refcount_t)REFCOUNT_INIT(n);
-> >  }
-> >  
-> > +unsigned int rust_helper_refcount_read(refcount_t *r)
-> > +{
-> > +	return refcount_read(r);
-> > +}  
+On 10/4/2024 11:00 AM, Alexander Duyck wrote:
+> On Tue, Oct 1, 2024 at 12:59 AM Yunsheng Lin <yunshenglin0825@gmail.com> wrote:
+>>
+>> Rename skb_copy_to_page_nocache() to skb_copy_to_va_nocache()
+>> to avoid calling virt_to_page() as we are about to pass virtual
+>> address directly.
+>>
+>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>> ---
+>>   include/net/sock.h | 10 ++++------
+>>   net/ipv4/tcp.c     |  7 +++----
+>>   net/kcm/kcmsock.c  |  7 +++----
+>>   3 files changed, 10 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/include/net/sock.h b/include/net/sock.h
+>> index c58ca8dd561b..7d0b606d6251 100644
+>> --- a/include/net/sock.h
+>> +++ b/include/net/sock.h
+>> @@ -2185,15 +2185,13 @@ static inline int skb_add_data_nocache(struct sock *sk, struct sk_buff *skb,
+>>          return err;
+>>   }
+>>
+>> -static inline int skb_copy_to_page_nocache(struct sock *sk, struct iov_iter *from,
+>> -                                          struct sk_buff *skb,
+>> -                                          struct page *page,
+>> -                                          int off, int copy)
+>> +static inline int skb_copy_to_va_nocache(struct sock *sk, struct iov_iter *from,
+>> +                                        struct sk_buff *skb, char *va,
+>> +                                        int copy)
+>>   {
 > 
-> Reading a refcount is almost always a wrong thing to do (it can change
-> right after you read it), and I don't see any of the later patches in
-> this series use this call, so can you just drop this?
+> This new naming is kind of confusing. Currently the only other
+> "skb_copy_to" functions are skb_copy_to_linear_data and
+> skb_copy_to_linear_data_offset. The naming before basically indicated
+
+I am not sure if the above "skb_copy_to" functions are really related
+here, as they are in include/linux/skbuff.h and don't take '*sk' as
+first input param.
+
+As "skb_copy_to" function in include/net/sock.h does take '*sk' as first
+input param, perhaps the "skb_copy_to" functions in include/net/sock.h
+can be renamed to "sk_skb_copy_to" in the future as most of functions
+do in include/net/sock.h
+
+> which part of the skb the data was being copied into. So before we
+> were copying into the "page" frags. With the new naming this function
+> is much less clear as technically the linear data can also be a
+> virtual address.
+
+I guess it is ok to use it for linear data if there is a need, why
+invent another function for the linear data when both linear data and
+non-linear data can be used as a virtual address?
+
 > 
-> thanks,
-> 
-> greg k-h
+> I would recommend maybe replacing "va" with "frag", "page_frag" or
+> maybe "pfrag" as what we are doing is copying the data to one of the
+> pages in the paged frags section of the skb before they are added to
+> the skb itself.
 
-I originally introduced this thinking I can replace Andreas's atomic
-2->0 operation with a read + set, but ended up couldn't do it.
+Don't "frag", "page_frag" or "pfrag" also seem confusing enough that
+it does not take any 'frag' as the input param?
 
-The refcount read is still useful to determine if the current value is
-1 -- in fact, `Arc::into_unique_or_drop` could use this rather than
-decrementing the refcount and then incrementing it again (just doing a
-refcount read would be much better codegen-wise than the current
-behaviour). I'll probably make this change in the next version of the
-series.
-
-It might also be useful for debugging, so we can have a `Debug` impl
-for `Refcount` which prints out the current value. But I didn't
-introduce it due to no user.
-
-Best,
-Gary
+Does skb_copy_data() make more sense here as it can work on both
+linear and non-linear data, as skb_do_copy_data_nocache() and
+skb_copy_to_page_nocache() in the same header file seem to have a
+similar style?
 
