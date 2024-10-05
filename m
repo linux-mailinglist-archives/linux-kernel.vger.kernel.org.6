@@ -1,139 +1,110 @@
-Return-Path: <linux-kernel+bounces-352019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617ED99192D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:03:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FAA99192E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 292AC28279D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:03:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 798CF28272B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861FF156C62;
-	Sat,  5 Oct 2024 18:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DBA158851;
+	Sat,  5 Oct 2024 18:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o11AYQI8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRB4z9Kw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED2540C15;
-	Sat,  5 Oct 2024 18:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60944A31;
+	Sat,  5 Oct 2024 18:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728151408; cv=none; b=mI0JNE4rBYZWQecRTz9T+/u/mJDitDu45GRSFdJVlgKXi4oWeMVdEF3cEjYVZxIVptsy7EFShR/sIJSbIZRCAyRUSISt2q2VXJ84H6/oazgLSMFhwXQ3A0ia8gYIMO5oIv8c+sqzMKRA6tQdMg049McpT6LQ+SjJ2sSuL+XUrtQ=
+	t=1728151452; cv=none; b=k3SaBDFMpEKZt6AKUJUiY3hiYyb2w+OHXx5Bf0pX7XcAtIUBOQVE0qDkCTmqJnhiQXM6ydV0G1yAHvG7ws+nza55t90Pg0u2CsjM4x2nLpKKsTK84UFT+nafNQVKHCeMPFwVvZCarvptHCcuU/cxSYUbVqy3zWgnQlbRbHPb8Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728151408; c=relaxed/simple;
-	bh=z4gaMaqg3Qk6lcaCoRlk18X/H4t7OlOiQT6qkqTE8To=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jKQIN2Z0CYmEVYHYkO+nynOBuVWxuqOhe9rpDQSebVR+tdAvBoiHCVqeOnnBJDUrCUkVxz4vcrd3Pm4LAIaAhThhPropxDxatyaIHt1MFugDaBYOV8JZIfNsiPDF1MwsNWo6OYzi7k+c7cIYTyNAYFVAM+RPYBxLrQh1/PFlOfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o11AYQI8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 572FEC4CEC2;
-	Sat,  5 Oct 2024 18:03:27 +0000 (UTC)
+	s=arc-20240116; t=1728151452; c=relaxed/simple;
+	bh=yMBbvkOj/igKnf2TGeIut9usz81piSbaIP7f4W/+mT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DLwWxVHqcXkuYStmjbIHzZC+jg3q8YUKR5J7LxSmsRxKQARXaDQ+ihesuzIWbFvp0g/FAkEIWw2x62XO17BLzPkSSR3AWYKJTPZEJ0037jlvFVKNRRilTVndd7ty7bPTSOu4YU5SEzNLHPNCmSKCbWBDy8C8UDWtRIcahyK8PPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRB4z9Kw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FA7C4CEC2;
+	Sat,  5 Oct 2024 18:03:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728151407;
-	bh=z4gaMaqg3Qk6lcaCoRlk18X/H4t7OlOiQT6qkqTE8To=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o11AYQI81PbeHF+tykM9NCsWEN/xq+FfVe+4/J+yoknqfuKkRPzrJZDlRsHq83tw2
-	 1nFJ1m/SKVpFspq2rwVltKLBG3G9rccSHkvnS/0ffcNeqpPFEuRuqMl8JhBZTMlLfi
-	 0VzAr/aOJcZbc0LtFiwXqytYl6C3IlasUH6sbDqXWNgFfyEfLuVNHzXiRseRpxVWa9
-	 JC0sRPmCHwygz4q11fOtnSW/lqpttlsQOa66OOX66PfJLWoCTnNHSnUzvQZgM8vNUT
-	 rU640UyZ/DhYOqe9/guSz1r6yl6SjmZBchrPD3ZhkBTQ11uSZoVaFcjTXMCqSuWC5k
-	 yNYqPugzkINQA==
-Date: Sat, 5 Oct 2024 13:03:26 -0500
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	"open list:IRQCHIP DRIVERS" <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: interrupt-controller: fsl,ls-extirq:
- workaround wrong interrupt-map number
-Message-ID: <20241005180326.GA447512-robh@kernel.org>
-References: <20241003214315.638668-1-Frank.Li@nxp.com>
+	s=k20201202; t=1728151452;
+	bh=yMBbvkOj/igKnf2TGeIut9usz81piSbaIP7f4W/+mT0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qRB4z9KwAljsWM7Fq/A9zqUKuJxsZjiQViO04edpAj+OJ4dIGguvF+6OoY6lVdsMe
+	 oNLisUxtB6IrjA+yo7MoMBiEsbrk1NuhhY0qabn4akfhCWggKpMoDUUGz0wSg9Drja
+	 XJDt16ffy1+9dAAUhYGfslgJ+yXH9XKMf3rdHsBvuCeeWH/FQAP03PvNiFHFKKYV4n
+	 ZhZpfNwl5OPuFa7jnhIO4tAbiU1/LR4a5sUkLHlkuPUlIXKSllGjI4kxMPeHdSGHK0
+	 y0u0nHbEHwbvyerXG6QOxPRd2CFv75jcPmtuP7cYjhuUzsIzTi4cvh1QGCm0fwOIIl
+	 G54rDW41gHMtw==
+Date: Sat, 5 Oct 2024 19:03:41 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, David Lechner <dlechner@baylibre.com>,
+ Nuno Sa <nuno.sa@analog.com>, Dan Murphy <dmurphy@ti.com>, Sean Nyekjaer
+ <sean@geanix.com>, Leonard =?UTF-8?B?R8O2aHJz?= <l.goehrs@pengutronix.de>,
+ Mihail Chindris <mihail.chindris@analog.com>, Alexandru Ardelean
+ <ardeleanalex@gmail.com>, Gustavo Silva <gustavograzs@gmail.com>, Shoji
+ Keita <awaittrot@shjk.jp>, Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+ Dalton Durst <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>, Andreas
+ Klinger <ak@it-klinger.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Jirman
+ <megi@xff.cz>
+Subject: Re: [PATCH 13/13] iio: proximity: mb1232: add missing select
+ IIO_(TRIGGERED_)BUFFER in Kconfig
+Message-ID: <20241005190341.389e466b@jic23-huawei>
+In-Reply-To: <20241003-iio-select-v1-13-67c0385197cd@gmail.com>
+References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
+	<20241003-iio-select-v1-13-67c0385197cd@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241003214315.638668-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 03, 2024 at 05:43:15PM -0400, Frank Li wrote:
-> The driver(drivers/irqchip/irq-ls-extirq.c) have not use standard DT
-> function to parser interrupt-map. So it doesn't consider '#address-size'
-> in parent interrupt controller, such as GIC.
+On Thu, 03 Oct 2024 23:04:59 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+
+> This driver makes use of triggered buffers, but does not select the
+> required modules.
 > 
-> When dt-binding verify interrupt-map, item data matrix is spitted at
-> incorrect position. So cause below warning:
+> Add the missing 'select IIO_BUFFER' and 'select IIO_TRIGGERED_BUFFER'.
 > 
-> arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dtb: interrupt-controller@14:
-> interrupt-map: [[0, 0, 1, 0, 0, 4, 1, 0], [1, 0, 1, 4, 2, 0, 1, 0], ...
-> is too short
-> 
-> Reduce minItems and maxItems to workaround this warning for
-> 'fsl,ls1088a-extirq', 'fsl,ls2080a-extirq' and fsl,lx2160a-extirq.
-> Other keep the same restriction.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Fixes: 16b05261537e ("mb1232.c: add distance iio sensor with i2c")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Applied.
+
+Thanks for going through looking for these.  Hopefully this will reduce
+chance of us getting a rand config hitting this in the future!
+
+Jonathan
+
 > ---
-> Change from v1 to v2
-> - remove duplicate function in commit message
-> - only reduce miniItems for after 1088a chips
-> - maxItems change to 9. Otherwise report too long.
-> ---
->  .../interrupt-controller/fsl,ls-extirq.yaml   | 27 +++++++++++++++++--
->  1 file changed, 25 insertions(+), 2 deletions(-)
+>  drivers/iio/proximity/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
-> index 199b34fdbefc4..1bfced6ed620c 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
-> @@ -82,14 +82,37 @@ allOf:
->              enum:
->                - fsl,ls1043a-extirq
->                - fsl,ls1046a-extirq
-> +    then:
-> +      properties:
-> +        interrupt-map:
-> +          minItems: 12
-> +          maxItems: 12
-> +        interrupt-map-mask:
-> +          items:
-> +            - const: 0xf
-> +            - const: 0
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
->                - fsl,ls1088a-extirq
->                - fsl,ls2080a-extirq
->                - fsl,lx2160a-extirq
-> +# The driver(drivers/irqchip/irq-ls-extirq.c) have not use standard DT
-> +# function function to parser interrupt-map. So it doesn't consider
-> +# '#address-size' in parent interrupt controller, such as GIC.
-> +#
-> +# When dt-binding verify interrupt-map, item data matrix is spitted at
-> +# incorrect position. Reduce minItems and maxItems to workaround this
-> +# problem.
-> +
->      then:
->        properties:
->          interrupt-map:
-> -          minItems: 12
-> -          maxItems: 12
-> +          minItems: 8
-> +          maxItems: 9
-
-I think it is probably better to just not put in any constraints. It's 
-never going to be parsed correctly.
-
-Rob
+> diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
+> index 31c679074b25..a562a78b7d0d 100644
+> --- a/drivers/iio/proximity/Kconfig
+> +++ b/drivers/iio/proximity/Kconfig
+> @@ -86,6 +86,8 @@ config LIDAR_LITE_V2
+>  config MB1232
+>  	tristate "MaxSonar I2CXL family ultrasonic sensors"
+>  	depends on I2C
+> +	select IIO_BUFFER
+> +	select IIO_TRIGGERED_BUFFER
+>  	help
+>  	  Say Y to build a driver for the ultrasonic sensors I2CXL of
+>  	  MaxBotix which have an i2c interface. It can be used to measure
+> 
 
 
