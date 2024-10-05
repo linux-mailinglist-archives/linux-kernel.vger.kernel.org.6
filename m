@@ -1,183 +1,112 @@
-Return-Path: <linux-kernel+bounces-352014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE6F991917
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:57:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1333E99191F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D15D5B215DB
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:56:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456021C2095C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7559D158D96;
-	Sat,  5 Oct 2024 17:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CB3158DB9;
+	Sat,  5 Oct 2024 17:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6TT0kWF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwHg71Jt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E4B1581E1;
-	Sat,  5 Oct 2024 17:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A25A288B1;
+	Sat,  5 Oct 2024 17:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728151010; cv=none; b=dtCocVkx8iqhdx1TZoKtjtI7oQkyxPaZmF0h/jwjSpUDV3CXILeHtvKguaRMpDmLnj851XHvfZTMIoXyJq8iuEqAXh/89zuE3g8I2Z7T03/zVacNQdXfNcT7E4bihGOAKMae7Y9l6Zq6NOAaizUWKsyhY5CY6gctBGDrCrCxl0g=
+	t=1728151098; cv=none; b=CLdzCrKtvIWBchsrt+gPcwrZ1GKU1rUtrdLeV6iXhFVgDa3FObT7A9Ldx8n6BXWlQz6K6Z8RKaCdoJ81NJxESEnvMv/DfC4MZlwWS7/USw328YA+0Ndl2BIeJ2tH9mUOqQ8DFm/WwMzMoC5hbVT9LShlVSfunE24g14+bg1gmW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728151010; c=relaxed/simple;
-	bh=dgNgJ+V3/jchFcCB/v1xzNk9zxKx9tULsyoiFHQLeSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WEVBbBpmAl7ODJwHPbnGpeGmbHV/KTBY4+r5PMWyPbJtRyfnEAl/UXwiEPMptbXjdihghRrCVlQ8IyfIfmx2XLmCrqhreARuAkXmFoA/omQQGG4pjBMIJKeOurQ4aW5oGzFQAIloXbM0BTAWpqUkfYwShRPVLfk1iOYfgqM4Ckg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6TT0kWF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 049EEC4CEC7;
-	Sat,  5 Oct 2024 17:56:49 +0000 (UTC)
+	s=arc-20240116; t=1728151098; c=relaxed/simple;
+	bh=jH2JcfiybZu7C5elFDABy8CKS07E7/dwAMgQkjKvDoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=miYcfi52TBtNDVB4BMViexgw1KrE19BBsV0LIlISXn5Z4n+KkrTmWA2o2WXxSX792LNm94r1FNON3m7LZzjyMpcMkrEiXRWTpV5ntsDMXuKa6iEI4BEk1xs4c2icCDOaW64bwO+QpCg5YfN4DlNG/bXlJOtt17q/s32zf0rskSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwHg71Jt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B872C4CECD;
+	Sat,  5 Oct 2024 17:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728151010;
-	bh=dgNgJ+V3/jchFcCB/v1xzNk9zxKx9tULsyoiFHQLeSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j6TT0kWFy0daybnaAnXcM9fLpOH+gzK8cikxi7D7ZDIrX1V6aTKDheB00TZ7K7Abo
-	 HN5z4Zy//BjDAn7b60QvDXl4FAevnBzaJRB6BbJf7RoNIylhNweoYAOZVPQstgJeCZ
-	 LfsCQrkgT2SufCHVWBQ8WmhulSJdo31ZpmXYzQvH/bAsDaC1lEl/9XU7ZiDtjHvLjM
-	 W2IAUt/eXYAusR+0d4R9xrC4/2ooWYm7/cyPi9TDx/xoyNJO4QrzIgp2owVwlFu1EA
-	 uc+qG+YVU+/FAZEH5KYROnYjMQGNtzSr1wohAMCIGOU1IhtSf08YOjmsyx8Y1Py216
-	 IdCqipBGkv1TQ==
-Received: by pali.im (Postfix)
-	id 4644A648; Sat,  5 Oct 2024 19:56:44 +0200 (CEST)
-Date: Sat, 5 Oct 2024 19:56:44 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Chuck Lever III <chuck.lever@oracle.com>
-Cc: Neil Brown <neilb@suse.de>, Jeff Layton <jlayton@kernel.org>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <dai.ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] lockd: Fix comment about NLMv3 backwards compatibility
-Message-ID: <20241005175644.usygr3set3txtu76@pali>
-References: <20240912225320.24178-1-pali@kernel.org>
- <172618264559.17050.3120241812160491786@noble.neil.brown.name>
- <20240912232207.p3gzw744bwtdmghp@pali>
- <20240912232820.245scfexopvxylee@pali>
- <ZuN6ah3nI0giafGl@tissot.1015granger.net>
- <20241005165125.rbtgxzz4olvv4sqn@pali>
- <01C90EC0-1C3E-4880-9D33-ADCDA5B35483@oracle.com>
+	s=k20201202; t=1728151096;
+	bh=jH2JcfiybZu7C5elFDABy8CKS07E7/dwAMgQkjKvDoY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CwHg71Jt3/x/D638hZ/Vc8ZrDMzNUsQa9OzpAe4szdFSLfNUoES1e3VAhJnwTt6Ma
+	 u1yxNnhCk+ymiNI4uzXafqF/Bc/tD+IavNdW+vAZkzB3wBovyvozGg6ofYJEtZdm6A
+	 37uol65u6VoqtiHiL8OnlObmZzOM2Hbz5eMLFnjUahxzz1p7QLozJTVyCcigjtVjGT
+	 83khuA7A/GAX4j9HurFLmSQA3ZSquyGCN3FKWP5y71ZcaRqAzq60HXw/rDie+kyl1Q
+	 yH3vjEivPA/2MXAOEUYy4/X7CfhH2yqrQO2NQAX3UUz5RRPD68BIvHsO5ZRQ+3wIcD
+	 zn+Drq99p/ZcA==
+Date: Sat, 5 Oct 2024 18:57:43 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Matti Vaittinen <mazziesaccount@gmail.com>, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>, Dan Murphy
+ <dmurphy@ti.com>, Sean Nyekjaer <sean@geanix.com>, Leonard =?UTF-8?B?R8O2?=
+ =?UTF-8?B?aHJz?= <l.goehrs@pengutronix.de>, Mihail Chindris
+ <mihail.chindris@analog.com>, Alexandru Ardelean <ardeleanalex@gmail.com>,
+ Gustavo Silva <gustavograzs@gmail.com>, Shoji Keita <awaittrot@shjk.jp>,
+ Dalton Durst <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>, Andreas
+ Klinger <ak@it-klinger.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Jirman
+ <megi@xff.cz>
+Subject: Re: [PATCH 11/13] iio: magnetometer: af8133j: add missing select
+ IIO_(TRIGGERED_)BUFFER in Kconfig
+Message-ID: <20241005185743.76b5c650@jic23-huawei>
+In-Reply-To: <Zv-uJaMH4JFK_nvA@skv.local>
+References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
+	<20241003-iio-select-v1-11-67c0385197cd@gmail.com>
+	<Zv-uJaMH4JFK_nvA@skv.local>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <01C90EC0-1C3E-4880-9D33-ADCDA5B35483@oracle.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Saturday 05 October 2024 17:52:13 Chuck Lever III wrote:
-> > On Oct 5, 2024, at 12:51 PM, Pali Rohár <pali@kernel.org> wrote:
-> > 
-> > On Thursday 12 September 2024 19:34:02 Chuck Lever wrote:
-> >> On Fri, Sep 13, 2024 at 01:28:20AM +0200, Pali Rohár wrote:
-> >>> On Friday 13 September 2024 01:22:07 Pali Rohár wrote:
-> >>>> On Friday 13 September 2024 09:10:45 NeilBrown wrote:
-> >>>>> On Fri, 13 Sep 2024, Pali Rohár wrote:
-> >>>>>> NLMv2 is completely different protocol than NLMv1 and NLMv3, and in
-> >>>>>> original Sun implementation is used for RPC loopback callbacks from statd
-> >>>>>> to lockd services. Linux does not use nor does not implement NLMv2.
-> >>>>>> 
-> >>>>>> Hence, NLMv3 is not backward compatible with NLMv2. But NLMv3 is backward
-> >>>>>> compatible with NLMv1. Fix comment.
-> >>>>>> 
-> >>>>>> Signed-off-by: Pali Rohár <pali@kernel.org>
-> >>>>>> ---
-> >>>>>> fs/lockd/clntxdr.c | 4 +++-
-> >>>>>> 1 file changed, 3 insertions(+), 1 deletion(-)
-> >>>>>> 
-> >>>>>> diff --git a/fs/lockd/clntxdr.c b/fs/lockd/clntxdr.c
-> >>>>>> index a3e97278b997..81ffa521f945 100644
-> >>>>>> --- a/fs/lockd/clntxdr.c
-> >>>>>> +++ b/fs/lockd/clntxdr.c
-> >>>>>> @@ -3,7 +3,9 @@
-> >>>>>>  * linux/fs/lockd/clntxdr.c
-> >>>>>>  *
-> >>>>>>  * XDR functions to encode/decode NLM version 3 RPC arguments and results.
-> >>>>>> - * NLM version 3 is backwards compatible with NLM versions 1 and 2.
-> >>>>>> + * NLM version 3 is backwards compatible with NLM version 1.
-> >>>>>> + * NLM version 2 is different protocol used only for RPC loopback callbacks
-> >>>>>> + * from statd to lockd and is not implemented on Linux.
-> >>>>>>  *
-> >>>>>>  * NLM client-side only.
-> >>>>>>  *
-> >>>>> 
-> >>>>> Reviewed-by: NeilBrown <neilb@suse.de>
-> >>>>> 
-> >>>>> Do you have a reference for that info about v2?  I hadn't heard of it
-> >>>>> before.
-> >>>>> 
-> >>>>> NeilBrown
-> >>>> 
-> >>>> I have just this information in my notes. I guess it should be possible
-> >>>> to gather more information about v2 from released Sun/Solaris source
-> >>>> code via OpenSolaris / Illumos projects.
-> >>> 
-> >>> Just very quickly I found this Illumos XDR file for NLM:
-> >>> https://github.com/illumos/illumos-gate/blob/master/usr/src/uts/common/rpcsvc/nlm_prot.x
-> >>> 
-> >>> And it defines NLMv2 with two procedures numbered 17 and 18, plus there
-> >>> is a comment in file header about v2.
-> >>> 
-> >>> So probably the best reference would be the Illumos source code.
-> >> 
-> >> What you see in the Illumos code is not something that is part
-> >> of the standard NLM protocol, but rather a private upcall protocol
-> >> between the kernel and user space that is special sauce added
-> >> by each implementation of NLM/NSM.
-> > 
-> > Ok. But this applies for v2, no?
-> 
-> On Linux, those operations are part of the NLMv1/3/4
-> protocol implementation, so essentially the NLM v2
-> functionality is a part of all NLM versions on Linux.
-> 
-> 
-> >> Also note the way NLMv3 is defined in this file: it defines only
-> >> a handful of new operations. The other operations are inherited
-> >> from NLMv1.
-> > 
-> > Yes, v3 is there and is inherited from v1. This is also what I pointed
-> > in the comment. That v3 inherits from v1, not v2.
-> 
-> Generally this is an abuse of the purpose of the RPC
-> program versioning mechanism. Linux has a very similar
-> upcall mechanism, but uses NLM procedure numbers that
-> are set aside for this purpose instead of abusing a
-> moribund protocol version.
+On Fri, 4 Oct 2024 11:58:13 +0300
+Andrey Skvortsov <andrej.skvortzov@gmail.com> wrote:
 
-I agree that this abuse of the versioning scheme. But it is there and
-used in this way for a very long time.
+> On 24-10-03 23:04, Javier Carrasco wrote:
+> > This driver makes use of triggered buffers, but does not select the
+> > required modules.
+> > 
+> > Add the missing 'select IIO_BUFFER' and 'select IIO_TRIGGERED_BUFFER'.
+> > 
+> > Fixes: 1d8f4b04621f ("iio: magnetometer: add a driver for Voltafield AF8133J magnetometer")
+> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> > ---
+> >  drivers/iio/magnetometer/Kconfig | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/iio/magnetometer/Kconfig b/drivers/iio/magnetometer/Kconfig
+> > index 8eb718f5e50f..f69ac75500f9 100644
+> > --- a/drivers/iio/magnetometer/Kconfig
+> > +++ b/drivers/iio/magnetometer/Kconfig
+> > @@ -11,6 +11,8 @@ config AF8133J
+> >  	depends on I2C
+> >  	depends on OF
+> >  	select REGMAP_I2C
+> > +	select IIO_BUFFER
+> > +	select IIO_TRIGGERED_BUFFER
+> >  	help
+> >  	  Say yes here to build support for Voltafield AF8133J I2C-based
+> >  	  3-axis magnetometer chip.
+> > 
+> > -- 
+> > 2.43.0
+> >   
+> 
+> Reviewed-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+> 
 
-> 
-> > In header file of that nlm_prot.x is written:
-> > 
-> > * There are currently 3 versions of the protocol in use.  Versions 1
-> > * and 3 are used with NFS version 2.  Version 4 is used with NFS
-> > * version 3.
-> > *
-> > * (Note: there is also a version 2, but it defines an orthogonal set of
-> > * procedures that the status monitor uses to notify the lock manager of
-> > * changes in monitored systems.)
-> > 
-> > Which sounds like version 3 has nothing with version 2.
-> > 
-> > My understanding of that comment is that version 2 contains only those
-> > private upcall protocol between kernel and userspace about which you
-> > wrote, and therefore version 3 is not backward compatible with version 2.
-> > 
-> >> IMO the comment is accurate and does not warrant a change.
-> 
-> How about this replacement:
-> 
->  * XDR functions to encode/decode NLM version 1 and 3 RPC
->  * arguments and results. NLM version 2 is not specified
->  * by a standard, thus it is not implemented.
-
-That is perfect! Covers everything.
+Applied to the fixes-togreg branch of iio.git
 
