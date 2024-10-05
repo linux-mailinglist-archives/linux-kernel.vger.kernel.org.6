@@ -1,123 +1,138 @@
-Return-Path: <linux-kernel+bounces-351922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A9589917A4
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:15:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1589917C4
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B7451C2195F
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07B611F22DCF
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD532156875;
-	Sat,  5 Oct 2024 15:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A237155CB0;
+	Sat,  5 Oct 2024 15:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQHy39fD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kiDLLgQd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCF4156230;
-	Sat,  5 Oct 2024 15:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A25154BE0;
+	Sat,  5 Oct 2024 15:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728141309; cv=none; b=RQbGB8qK5Xd9tt1XEn+I8IlokRdaD9AKXlzY57D8MpKuplmwMATykoj/DlEupIx4EHdp1/5ZFXF+Q+jp60ImAASwlABwo8somBFs997L1uzzVLbvl4HyIkL5QamCHkBvGZJ6uUsUBnw4Wnfh37BbmVaVWBCJdP88tK9sM9tZ+KU=
+	t=1728141971; cv=none; b=e2qEz06lhpnbf9QKNPoJhC7a/pNd14gS29Q+USSAAjLZBXEECn6Tad3BZpSzQgSSnCbDtjGg0jUvIPuJDCFfQjogOi1eb5jj+XflGJdQ/JE5z+BinkhQiq24pl3h2frMge58dojms68O5zWOvWtpznAGtX76CCFWw+7jeBfY7ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728141309; c=relaxed/simple;
-	bh=zAX1tBTPbKZuceMnCR5NDHHWYehnmwWoEK3dYsgje/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KMWui5JWNgYbQYakxv0w/fZtMXnUAi4FRAQNuUQr6d8ZOsJ2mk6REj+53/6vBJEkX0b5MubSuL/u5Zl2D4BpNCqOGZ0F5Zx2GuCl7B7B5u5t0ZjH9Eh0Zz3yeCxRirgo521khNAoxA5JgPRKsnDu4p2BqKeW0WlzuGEH1l3hFJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQHy39fD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C12C4CEC2;
-	Sat,  5 Oct 2024 15:15:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728141308;
-	bh=zAX1tBTPbKZuceMnCR5NDHHWYehnmwWoEK3dYsgje/M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XQHy39fDvWyBTZYO16JtDpkE8o6Uqh7jRiFO2wSSbRuhtEzvbJS7hl1M1COsF0Ae7
-	 AKHCeNbPE5tqTKJRSACYObVNAf6ZlfVbPzraQ/oaVmzLZ7BoZL1Pi2zcum30pJ5SqV
-	 DOKhE3evTIv6KlrmaioAkpvLqHq22rt9iyWPqtzFKYtlMj7og7FA97DSAy99NtvVLB
-	 Kk74Y3jW/+6ealdBsf+EoP2l3ZxXhJgzqj9FZAzB+lPNibkt1doorbzTEdv12Ob3es
-	 L8ShZzB7ZTEDkSCs4hUyGWYTZykINM09wGVxkSOFNI8zGIwqubly6q0LfVI3uRa79v
-	 0jyLgf/K4I8Sg==
-Received: by pali.im (Postfix)
-	id 6C708648; Sat,  5 Oct 2024 17:15:02 +0200 (CEST)
-Date: Sat, 5 Oct 2024 17:15:02 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] nfs: Fix mounting NFS3 AUTH_NULL exports
-Message-ID: <20241005151502.faykeqi2yqprvufo@pali>
-References: <20240912130220.17032-1-pali@kernel.org>
+	s=arc-20240116; t=1728141971; c=relaxed/simple;
+	bh=rTovK59roYa4Df258P/59M0Z2NqDIMAJC86yU/KWqXU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QqK9mEREDn9lJFQhLSl91zgwBlUDBI3Chnxxq40sGOxHbzWGpoLcXDmyhJevndL353W6qbnx1tOM5pRtwXceigW23jzP/wtI1KkJQdXk+yqM/snKeXzmBaSu8YjQAMs0NuVt1XjrCYI5w63J1ojDkyYJhLqcieu3CLUu9IAK07U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kiDLLgQd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 495COXDl014328;
+	Sat, 5 Oct 2024 15:26:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/0ZK09A8+iNllHsQ5RUQhUKR+sdGbVMTPWawpop5zmk=; b=kiDLLgQdbWGVfFSJ
+	FfiCBaIFO0gfMmCvbAhOJbqWJeX+b4d6J7qp/rXgEiVD363BZ65fRiJjRZShWHGK
+	1IBvXlVw/if1wXG0zJqgH/I15XR9rAqGsAhKLQy9gGHIGLHJ9Q+MK30RC80liCAd
+	sJ7RZWxxSpx1DWBc25t61Jvn8DrnGc19YY1nSTJAyBaPeDTxM/2vYaJiifGdAt+F
+	ArjUPgqr2opiek+BceoccU/bBXGLtL68JfsfdBofRzCB/82Mc+MSVpAF+8keyrLG
+	LmLai9w/oSdsH4ng+IbWauiB36PtSm9Ap1xUULd0f1NOz+x80fMr0nCdnuPqU0Ku
+	XiAL3Q==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv88qgu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 05 Oct 2024 15:26:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 495FPxig031590
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 5 Oct 2024 15:25:59 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 5 Oct 2024
+ 08:25:55 -0700
+Message-ID: <d07c709e-9040-6b14-634b-f2b62c47e786@quicinc.com>
+Date: Sat, 5 Oct 2024 20:55:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240912130220.17032-1-pali@kernel.org>
-User-Agent: NeoMutt/20180716
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 1/2] dt-bindings: arm: qcom: Add Snapdragon Devkit for
+ Windows
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <robh+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <conor+dt@kernel.org>,
+        <abel.vesa@linaro.org>, <srinivas.kandagatla@linaro.org>
+References: <20240911073337.90577-1-quic_sibis@quicinc.com>
+ <20240911073337.90577-2-quic_sibis@quicinc.com>
+ <6a7b60c4-379c-4251-a158-5d9986f37797@quicinc.com>
+Content-Language: en-US
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <6a7b60c4-379c-4251-a158-5d9986f37797@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: oE_kpwqEhaTaNpYcWRujBhYlNmTDaAa8
+X-Proofpoint-GUID: oE_kpwqEhaTaNpYcWRujBhYlNmTDaAa8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1011 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410050113
 
-On Thursday 12 September 2024 15:02:15 Pali Rohár wrote:
-> Linux NFS3 kernel client currently has broken support for NFS3
-> AUTH_NULL-only exports and also broken mount option -o sec=none
-> (which explicitly specifies that mount should use AUTH_NULL).
-> 
-> For AUTH_NULL-only server exports, Linux NFS3 kernel client mounts such
-> export with AUTH_UNIX authentication which results in unusable mount
-> point (any operation on it fails with error because server rejects
-> AUTH_UNIX authentication).
-> 
-> Half of the problem is with MNTv3 servers, as some of them (e.g. Linux
-> one) never announce AUTH_NULL authentication for any export. Linux MNTv3
-> server does not announce it even when the export has the only AUTH_NULL
-> auth method allowed, instead it announce AUTH_UNIX (even when AUTH_UNIX
-> is disabled for that export in Linux NFS3 knfsd server). So MNTv3 server
-> for AUTH_NONE-only exports instruct Linux NFS3 kernel client to use
-> AUTH_UNIX and then NFS3 server refuse access to files with AUTH_UNIX.
-> 
-> Main problem on the client side is that mount option -o sec=none for
-> NFS3 client is not processed and Linux NFS kernel client always skips
-> AUTH_NULL (even when server announce it, and also even when user
-> specifies -o sec=none on mount command line).
-> 
-> This patch series address these issues in NFS3 client code.
-> 
-> Add a workaround for buggy MNTv3 servers which do not announce AUTH_NULL,
-> by trying AUTH_NULL authentication as an absolutely last chance when
-> everything else fails. And honors user choice of AUTH_NULL if user
-> explicitly specified -o sec=none as mount option.
-> 
-> AUTH_NULL authentication is useful for read-only exports, including
-> public exports. As authentication for these types of exports do not have
-> to be required.
-> 
-> Patch series was tested with AUTH_NULL-only, AUTH_UNIX-only and combined
-> AUTH_NULL+AUTH_UNIX exports from Linux knfsd NFS3 server + default Linux
-> MNTv3 userspace server. And also tested with exports from modified MNTv3
-> server to properly return AUTH_NULL support in response list.
-> 
-> Patch series is based on the latest upstream tag v6.11-rc7.
-> 
-> Pali Rohár (5):
->   nfs: Fix support for NFS3 mount with -o sec=none from Linux MNTv3
->     server
->   nfs: Propagate AUTH_NULL/AUTH_UNIX PATHCONF NFS3ERR_ACCESS failures
->   nfs: Try to use AUTH_NULL for NFS3 mount when no -o sec was given
->   nfs: Fix -o sec=none output in /proc/mounts
->   nfs: Remove duplicate debug message 'using auth flavor'
-> 
->  fs/nfs/client.c | 14 ++++++++++-
->  fs/nfs/super.c  | 64 +++++++++++++++++++++++++++++++++++++++----------
->  2 files changed, 65 insertions(+), 13 deletions(-)
-> 
-> -- 
-> 2.20.1
-> 
 
-Hello, month ago I have sent these fixes for NFS3 client AUTH_NULL
-support. Are there any issues with them?
+
+On 9/11/24 21:14, Jeff Johnson wrote:
+> On 9/11/2024 12:33 AM, Sibi Sankar wrote:
+>> X1E001DE is the speed binned variant of X1E80100 that supports turbo
+>> boost up to 4.3 Ghz.
+> 
+> if you respin, s/Ghz/GHz/
+
+Thanks for taking time to review the series.
+
+Will fix it in the next re-spin.
+
+-Sibi
+
+> 
+>>
+>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+>> ---
+>>   Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> index 5cb54d69af0b..6a8fc031e51f 100644
+>> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> @@ -1049,6 +1049,12 @@ properties:
+>>                 - qcom,sm8650-qrd
+>>             - const: qcom,sm8650
+>>   
+>> +      - items:
+>> +          - enum:
+>> +              - qcom,x1e001de-devkit
+>> +          - const: qcom,x1e001de
+>> +          - const: qcom,x1e80100
+>> +
+>>         - items:
+>>             - enum:
+>>                 - lenovo,thinkpad-t14s
+> 
 
