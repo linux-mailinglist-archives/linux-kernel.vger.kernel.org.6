@@ -1,120 +1,103 @@
-Return-Path: <linux-kernel+bounces-351669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBD6991486
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:30:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C6C991489
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 07:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E74D282724
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:30:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 743251C21DEE
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FEA13BC18;
-	Sat,  5 Oct 2024 05:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48D44085D;
+	Sat,  5 Oct 2024 05:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YF5RZ/35"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="pbCmpuAJ"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EB782D91;
-	Sat,  5 Oct 2024 05:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D1C28FC;
+	Sat,  5 Oct 2024 05:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728106194; cv=none; b=KqI9FMjpSO3RBaTmpDMlHT7pZeaM9bFGmQZYy63UCRRmpQc14nKt6Mr9Dgjn0QFufCGPaibhoVn8D7LJM+nZ87icauSY9aDABpacu5vB2nNgYIXJouS4xCYclcmzcQ41n5fM5V5Mc8ZgFMbm5doK0EHJfr93du1HoupwCbHGDzY=
+	t=1728106296; cv=none; b=dVZtNeJDEBj3JbZ+zW6l8c6XGLVouo8q79l3y39y+FBVLRDFd8/c14UKinEyg6nL8c1PzhN8Sue1kyZn4cRjGC7B1otgw9eQvJgd3Gg+EFwRpuM16AcYTOFvbhDlN2YV9ql9iiCqUkK6lZLMuwqjjLOSEXLWGgtPEpEmtoRpPmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728106194; c=relaxed/simple;
-	bh=hI2BPsKn6Fb7xDapPbHxt54KAin5kF1lKUkbh087EgQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=n9bk0c8DdKgVjCM1qc2k1dNFZ8N7vHNu3wlmyZKz04ctUijiBdbzzPIa5COKZvDZ1H9vBfUUUkY7ZKALImakaMPUCMWFEwtG+vnvZCOEGNoWqTA9S3ZXBioYy2IQrXY/0i+FQfDLMhes3To8V4SWq5XeNcJQMwN7Xqlf9a+RjBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YF5RZ/35; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb7a2e4d6so28326345e9.0;
-        Fri, 04 Oct 2024 22:29:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728106191; x=1728710991; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0kNhACyHju1qZ/sENCdrWjPN9bm5n5NCjJOZx++DT6c=;
-        b=YF5RZ/35aZ2BtHafx70/DXl7Lx9IfseXr29AHE4X/OUnEzJM2RNgxz2OCkWHIq1m6A
-         v4ofAONRmvViWiNep0tHlJspDmygY4zZcYgi5iovTQWguCe90dsgPVj1nPHe9QuPMHoQ
-         HatpvIVRw8KVbJ+4NnXlJRc62Wu38a8x4TJtkHCXsmUdIJGGbE6nNsJ/OeKg0csx4vAp
-         ND0abJrS+oj5XFZ5GM6G22BXlF3FO+JMcAkIYZenp8X5ZuxsHFzTOnQmFP2TvrA23loF
-         Bf7fvXrMbjJ+gXybK9yTcTWAyrAkY/MwXuAVspNqcvcOYyDuVchpGZ+rh9jpfVWQKOSX
-         oZkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728106191; x=1728710991;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0kNhACyHju1qZ/sENCdrWjPN9bm5n5NCjJOZx++DT6c=;
-        b=HL5VztSq/BErtmACn1TuaVKd/G6MROddVy/ELZ2UyT3WteMASh4Tmj666YBw6X3ku7
-         +EOlynNKdBl4cLLwnOlSy0b+jdGvC1/AVo4yPlCSY8HHY0FKspx7NdGTVwiHzbGElSLp
-         8W6FDvn1P7aniqjCjC6Qjnd/glpHebbYfIQuJIs8AV7q+qSwqUZ6gwWIRHASCcDvqmEu
-         LaRuxOz1Bnjpvfpi++tH9Q3zDSmy4NHH0iJEaSevStXNlZ4BPTC4ECO+FWL+xHFZqGXS
-         8Vvc7W3jtMi08HW7iEFO37KDXkTXeovWIVdabQ9POORQ0y/6WBPVKLq0WkIFPtrGt+8c
-         TT8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVGSCyc5QlUyOu+XxLnRYqip3dXTVpyexEM5k/RStYwy8u9g8b0wB54H7HVtE7nZCsO8UT/CN21JnEURqU4oiFt@vger.kernel.org, AJvYcCWJyyHEednwb6no2ecObbgBRsGba60yMe78OCH8bzuSv10sxegYXQk1lVE2blOugpU3MRBi+9Zd7rvpkuU=@vger.kernel.org, AJvYcCWz8SmyxAGydtJGT6GbdcqL1/ONnDcjnQbvVQIShHx0yWwaJdPEOfTnFC9ovu3Tz3T9hiJSJCI9XFH9Dg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxLpzrsCsMA0rgdHsHrvA2gPKVKjA0TLrwLyIdVp26Q2zofhag
-	3DJPcLbNZMv3MtDPGhc9W5XqVtcf8yC/iWKC+sopVrk/ipKrN+WF
-X-Google-Smtp-Source: AGHT+IFbHEahtJM/4oQLiQWsE0/yXl9jJTCY/tUAnYEbQXtKGctZkwnf9pKoj9zbsCmehWVFi23MXw==
-X-Received: by 2002:a05:600c:350c:b0:42c:ac9f:b505 with SMTP id 5b1f17b1804b1-42f85af0486mr40560545e9.31.1728106190858;
-        Fri, 04 Oct 2024 22:29:50 -0700 (PDT)
-Received: from [127.0.1.1] (ip5f5ac341.dynamic.kabel-deutschland.de. [95.90.195.65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ed952asm13103105e9.45.2024.10.04.22.29.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 22:29:50 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Sat, 05 Oct 2024 07:29:42 +0200
-Subject: [PATCH net v2 3/3] selftests: net: rds: add gitignore file for
- include.sh
+	s=arc-20240116; t=1728106296; c=relaxed/simple;
+	bh=KsAFsSTSMV42EfR9nMQo8boCPaEMPU2fH1ZBipC20tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L7grwkUg0/GgLJlpB1mVHKi3UtwEoogvgUGj8ju+/F1XqT1khnmr/CwQbzMHUM9ABikMrA6qjThNTkcal/V8h4upWwoo4nV0OszbIoM/Gzd8v8k4ZW77uuQEQGF2Szwwk0zzpFUHd2X5VvbNwY/X9/DjiDoY2Rwn6egQBx0hrc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=pbCmpuAJ; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=vpmdv8NIiwnxO0d809lST7yc6i8sKw7fBZZnL0/TIQY=; b=pbCmpuAJ1eYWQYBpMH6JHvQVZO
+	WUxXDfMnu+P5NSsoMoqBIO1+X8sYmCx1KzXzDIVlTw1MAwXHP48Mt932C1IytJXOAj5MSWvfBxSOp
+	Cp8kqfwuiEdJCSV+dtdWduMwis5tayRicfyg0Jd99Uk582I5bp7WOZu83QTS+2NRqZILU+zaC4J+f
+	6SwV+CbevOzm7AF4MPtJuXV3mbwDVhCIvenJweMOYVqgL6ho1pjG/VTxnE6K4CrB2Z5oIK0Z+X2R/
+	UEJA6IsXHX6Ym+4of4Dnh9WnoJMOR1Z/Tq4aSuxrUKwxs+2tB7xtVd8KkUpENZF6IlSxc3wcglsZB
+	HbFMP8fg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1swxE9-0071Vu-1c;
+	Sat, 05 Oct 2024 13:31:28 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2024 13:31:27 +0800
+Date: Sat, 5 Oct 2024 13:31:27 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Qianqiang Liu <qianqiang.liu@163.com>
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: lib/mpi - Fix an "Uninitialized scalar variable"
+ issue
+Message-ID: <ZwDPLzchPuopuAZK@gondor.apana.org.au>
+References: <20240913140741.5944-1-qianqiang.liu@163.com>
+ <ZuTeivSjXN_uP-dZ@iZbp1asjb3cy8ks0srf007Z>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241005-net-selftests-gitignore-v2-3-3a0b2876394a@gmail.com>
-References: <20241005-net-selftests-gitignore-v2-0-3a0b2876394a@gmail.com>
-In-Reply-To: <20241005-net-selftests-gitignore-v2-0-3a0b2876394a@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
- Allison Henderson <allison.henderson@oracle.com>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
- rds-devel@oss.oracle.com, Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728106184; l=593;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=hI2BPsKn6Fb7xDapPbHxt54KAin5kF1lKUkbh087EgQ=;
- b=pT+6E328HKIjUdbdkDAosTr3J+V7wFYwJi5z2eGK/67vVTaV605PDzzxzT1dA/BPxh5lFR3JA
- 8dQJ+dvVQLIDeoOJ7OKMijmF70kazaCgZzSYvmf3K020dp4Ho7G7EKn
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuTeivSjXN_uP-dZ@iZbp1asjb3cy8ks0srf007Z>
 
-The generated include.sh should be ignored by git. Create a new
-gitignore and add the file to the list.
+On Sat, Sep 14, 2024 at 08:53:30AM +0800, Qianqiang Liu wrote:
+> On Fri, Sep 13, 2024 at 10:07:42PM +0800, Qianqiang Liu wrote:
+> > The "err" variable may be returned without an initialized value.
+> > 
+> > Fixes: 8e3a67f2de87 ("crypto: lib/mpi - Add error checks to extension")
+> > Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+> > ---
+> >  lib/crypto/mpi/mpi-mul.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/lib/crypto/mpi/mpi-mul.c b/lib/crypto/mpi/mpi-mul.c
+> > index 892a246216b9..7e6ff1ce3e9b 100644
+> > --- a/lib/crypto/mpi/mpi-mul.c
+> > +++ b/lib/crypto/mpi/mpi-mul.c
+> > @@ -21,7 +21,7 @@ int mpi_mul(MPI w, MPI u, MPI v)
+> >  	int usign, vsign, sign_product;
+> >  	int assign_wp = 0;
+> >  	mpi_ptr_t tmp_limb = NULL;
+> > -	int err;
+> > +	int err = 0;
+> >  
+> >  	if (u->nlimbs < v->nlimbs) {
+> >  		/* Swap U and V. */
+> > -- 
+> > 2.34.1
+> 
+> Could you please review this patch?
 
-Reviewed-by: Allison Henderson <allison.henderson@oracle.com>
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- tools/testing/selftests/net/rds/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/testing/selftests/net/rds/.gitignore b/tools/testing/selftests/net/rds/.gitignore
-new file mode 100644
-index 000000000000..1c6f04e2aa11
---- /dev/null
-+++ b/tools/testing/selftests/net/rds/.gitignore
-@@ -0,0 +1 @@
-+include.sh
-
+Patch applied.  Thanks.
 -- 
-2.43.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
