@@ -1,123 +1,134 @@
-Return-Path: <linux-kernel+bounces-351816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60912991680
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:34:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B74991683
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 997421C2220F
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:34:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356A91F22465
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F9014A62E;
-	Sat,  5 Oct 2024 11:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFB0132103;
+	Sat,  5 Oct 2024 11:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7GvsiMV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcA50m7u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3962C231CA6;
-	Sat,  5 Oct 2024 11:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1B8231CA6;
+	Sat,  5 Oct 2024 11:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728128052; cv=none; b=thIlAxo64ZACEtDV7ayASUoRKg9TSai06+qeBrp6Hz7PBOyt5XU0S2tfU3XNyit1UdiRMCyeMXw7uGTBTMJvFkmbKuzJW8+LWi4pTJVfjns/h9Jb39TkUWECLq//3qWKtP7fsxZaHIUGS7Vwg9GPGiayynDSyG+FE1F1TFp33kA=
+	t=1728128064; cv=none; b=R1yxRIsDB/mhT5KWqg8wWXun7KawJyzufgAg/B3ZgtIhZM++VlR+oL3EC/vJ3i334moMg2Qbt35tOrsKW9J3NrSF7lr1Aoj2IENzhf9d+jFt/4P5AbFVxqBf184/yyfe1GP/bDvnh+H/z4L8BGwhv0SL76JvkRiSzqbfbQlSw+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728128052; c=relaxed/simple;
-	bh=acmCayqR3svjUNR7zkQF5et/wWsmvhGVMoOBMhcSfG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gRvBCyCDF+xagSDtboK1D3hSJLUT2uBC9bzsqHGAi89TDQaDK6lmWQ03Pr1RGvWQ12/JRgb3oS54keyDia3Vf5WfWBYtCvmZLhM6XYGuywtUTi6jHFAFvevkQ28h/qSDGg3SyPCesRu+djyl1NZn09T/QqgB6fTjIu/WVRDY4gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7GvsiMV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF3EC4CEC2;
-	Sat,  5 Oct 2024 11:34:08 +0000 (UTC)
+	s=arc-20240116; t=1728128064; c=relaxed/simple;
+	bh=ZqPT3O8DR2o81kxgRM0GY2ztpRihfLRXWZdGTGL6I5o=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lLaUirHXsaDVkZg19nNOzukjjIoeTkax9eeoNnaMFCeqbbvGqRh6a8dwXtc+5xOTHjzgW+sVcIbs/yjZ06bOMmfYFXKyV+Vw8Dl3uAlVjYbGi84Gsz5+SEdstcd2lNYoa2QDdqZTHUr8IEk6XgLSePonwtZEUfHLz3Fxim0tXKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcA50m7u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84CB1C4CEC2;
+	Sat,  5 Oct 2024 11:34:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728128051;
-	bh=acmCayqR3svjUNR7zkQF5et/wWsmvhGVMoOBMhcSfG4=;
+	s=k20201202; t=1728128063;
+	bh=ZqPT3O8DR2o81kxgRM0GY2ztpRihfLRXWZdGTGL6I5o=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l7GvsiMV0tyuUDYJOTRdB7gxbz1CEUv+pcrT0KPQ62YwOpBpoPTPbxvuoHxKDPCtg
-	 fJUIlpIn21kEYONI8jbcQJ25ir3H+nrJZCSu484Ao8z8VvHPSF7QsxsjBM5OCUgBC+
-	 aErTXrVHpRCkTIarp69KPF6XQIfU3gm9VSwQ2oAxOWIMuevy4cqRLKxh9L95aP7XGn
-	 OU9Y/YO71WmaZfMlbGM+jscYJbkrVo1jnYDgJZ9ixHTUcB+n548OPpAf8y8xB4iHr2
-	 bofp4PP9ccfkRtZidQAGLLrly336BjJGY+furI4M6KDD1/j+yyNfwpBiJKibwLdDLP
-	 gbFAkm9JDhSfg==
-Date: Sat, 5 Oct 2024 12:34:03 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-arm-msm@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: qcom-spmi-adc5: Tidy up adc5_get_fw_data()
- error messages
-Message-ID: <20241005123403.616697f3@jic23-huawei>
-In-Reply-To: <20241004-spmi-adc5-no-channel-error-v1-1-1a43d13ae967@oss.qualcomm.com>
-References: <20241004-spmi-adc5-no-channel-error-v1-1-1a43d13ae967@oss.qualcomm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	b=TcA50m7u0/+IF0HetlMSGIg8779G52V7vcCAy1kMwNgEqGSaXQ2p9LuoCmnyTU7jD
+	 fOilEXvtOIIbeNN9azf1tcj52Jp7WzEUC+6KSTllbwV1qQkUjDO0tPt5c673ePC4jH
+	 mFq9784yTMQLY8g88BhvZBr1wKNdz8+ICdmbZvMdhIyw2k2DBexjPVCn5XdE7DmmET
+	 JU+1dF0XvdAlI+V2MAY+aZKg/YgxxVTxyWI1vCMAe6mvMQ8KVSuwGLV8zWUecX84E0
+	 NatBQamNgPvzWmhKWlDmK+JNexI91UE8tQRhtYjoBtiO4jpnaSuHisN+1FaeyveLMI
+	 e8wZ4LzjYWIDw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sx33F-000aBn-ET;
+	Sat, 05 Oct 2024 12:34:21 +0100
+Date: Sat, 05 Oct 2024 12:34:20 +0100
+Message-ID: <87iku6vl4z.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 3/5] KVM: arm64: Manage GCS access and registers for guests
+In-Reply-To: <20241005-arm64-gcs-v14-3-59060cd6092b@kernel.org>
+References: <20241005-arm64-gcs-v14-0-59060cd6092b@kernel.org>
+	<20241005-arm64-gcs-v14-3-59060cd6092b@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, 04 Oct 2024 16:11:01 -0700
-Bjorn Andersson <bjorn.andersson@oss.qualcomm.com> wrote:
-
-> In the event that no channels (child nodes) are defined, the adc5 driver
-> will provide a generic error message indicating that adc5_get_fw_data()
-> returned -EINVAL. In all other error cases we get two error messages,
-> one helpful and the generic one.
+On Sat, 05 Oct 2024 11:37:30 +0100,
+Mark Brown <broonie@kernel.org> wrote:
 > 
-> Add a specific error message for the no channels case, and drop the
-> generic one, in order to improve the generates log prints in both cases.
+> GCS introduces a number of system registers for EL1 and EL0, on systems
+> with GCS we need to context switch them and expose them to VMMs to allow
+> guests to use GCS.
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> In order to allow guests to use GCS we also need to configure
+> HCRX_EL2.GCSEn, if this is not set GCS instructions will be noops and
+> CHKFEAT will report GCS as disabled.  Also enable fine grained traps for
+> access to the GCS registers by guests which do not have the feature
+> enabled.
+> 
+> In order to allow userspace to control availability of the feature to
+> guests we enable writability for only ID_AA64PFR1_EL1.GCS, this is a
+> deliberately conservative choice to avoid errors due to oversights.
+> Further fields should be made writable in future.
 
-In general this seems sensible.  There seem to be prints in all other paths that
-aren't -ENOMEM which is fine.
-For consistency it might be nice to have a follow up that uses
-dev_err_probe() in adc5_get_fw_channel_data() but that can be handled separately.
-
-Applied to the togreg branch of iio.git and initially pushed out as
-testing for 0-day to take a look.
-
-Thanks,
-
-Jonathan
+It appears I have accidentally dropped the branch fixing
+ID_AA64PFR1_EL1.  I'll make sure this goes in as quickly as possible.
 
 
-
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
->  drivers/iio/adc/qcom-spmi-adc5.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/qcom-spmi-adc5.c b/drivers/iio/adc/qcom-spmi-adc5.c
-> index 9b69f40beed8..af3c2f659f5e 100644
-> --- a/drivers/iio/adc/qcom-spmi-adc5.c
-> +++ b/drivers/iio/adc/qcom-spmi-adc5.c
-> @@ -830,7 +830,7 @@ static int adc5_get_fw_data(struct adc5_chip *adc)
->  
->  	adc->nchannels = device_get_child_node_count(adc->dev);
->  	if (!adc->nchannels)
-> -		return -EINVAL;
-> +		return dev_err_probe(adc->dev, -EINVAL, "no channels defined\n");
->  
->  	adc->iio_chans = devm_kcalloc(adc->dev, adc->nchannels,
->  				       sizeof(*adc->iio_chans), GFP_KERNEL);
-> @@ -903,7 +903,7 @@ static int adc5_probe(struct platform_device *pdev)
->  
->  	ret = adc5_get_fw_data(adc);
->  	if (ret)
-> -		return dev_err_probe(dev, ret, "adc get dt data failed\n");
-> +		return ret;
->  
->  	irq_eoc = platform_get_irq(pdev, 0);
->  	if (irq_eoc < 0) {
-> 
-> ---
-> base-commit: 58ca61c1a866bfdaa5e19fb19a2416764f847d75
-> change-id: 20241004-spmi-adc5-no-channel-error-8c3203391103
-> 
-> Best regards,
+>  arch/arm64/include/asm/kvm_host.h          | 12 ++++++++++++
+>  arch/arm64/include/asm/vncr_mapping.h      |  2 ++
+>  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 31 ++++++++++++++++++++++++++++++
+>  arch/arm64/kvm/sys_regs.c                  | 31 +++++++++++++++++++++++++++++-
+>  4 files changed, 75 insertions(+), 1 deletion(-)
+>
 
+[...]
+
+> @@ -4716,6 +4737,14 @@ void kvm_calculate_traps(struct kvm_vcpu *vcpu)
+>  		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nPOR_EL1 |
+>  						HFGxTR_EL2_nPOR_EL0);
+>  
+> +	if (!kvm_has_gcs(kvm)) {
+> +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
+> +						HFGxTR_EL2_nGCS_EL1);
+> +		kvm->arch.fgu[HFGITR_GROUP] |= (HFGITR_EL2_nGCSEPP |
+> +						HFGITR_EL2_nGCSSTR_EL1 |
+> +						HFGITR_EL2_nGCSPUSHM_EL1);
+
+Where is the handling of traps resulting of HFGITR_EL2.nGCSSTR_EL1?
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
