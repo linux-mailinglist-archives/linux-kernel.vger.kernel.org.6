@@ -1,128 +1,149 @@
-Return-Path: <linux-kernel+bounces-351593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE32B99136A
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:10:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3413999136F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67C6BB212BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:10:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 667101C22970
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49B22914;
-	Sat,  5 Oct 2024 00:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352EA2595;
+	Sat,  5 Oct 2024 00:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KgAndE0s"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jqgsak8Q"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5DD182;
-	Sat,  5 Oct 2024 00:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03ACDAD23
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 00:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728087016; cv=none; b=Ucn7rOBZQRPDRoGPCKDadARpaO0YYD41rF4hlImoCYgXdoxF3N8VWTQoAiXqqaJ0CWPzeFNz09IeJJBikb7Kcc5MnlJY/VZX+aKpziNvMnpvPj9iVT6ZM2IYcGfCloxOsQ2o/uSkpLqLmQZXs6TOpoWkgjvNmKOUiXxHzPFozyo=
+	t=1728087251; cv=none; b=lH8KcZVC6cijD4LJ/eweNPA/bwarBNS6c6k38zSBWiCCgVftnBq4gsQl3nO0CTzJPV25aNzQfHi9JYb99tyfxzx4zXdwfJPM2vMfP0SG+PgkWi3y2iSACtLvNkw7VcxtrIrv8umMpnHI1Hw47TJ6PKc3XNP5dMyG/AIrOWwpcAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728087016; c=relaxed/simple;
-	bh=Oysw3GmSjkXliwqin77coeu5Qk3hCFPcA5qwfGC571s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SXe4oqBoN7ZM2IwYqhyKlj+gP0vlsXBkj/EmAZGG2iOLBiT7fafVd6nVSogpAjWYeU6tTjOSQZmUFYRuX/ptJRxaM0vVeSc/e7ClJFPl3mg43b0PXK417gM/G/f/lRI+nNgLZm1J62uFWS8QWkqrC5ghjfcdw8AJyzlZZHFHX/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KgAndE0s; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e29c50ccbaso24794637b3.2;
-        Fri, 04 Oct 2024 17:10:14 -0700 (PDT)
+	s=arc-20240116; t=1728087251; c=relaxed/simple;
+	bh=T0W0KBZI5DkiCjtxQ7TpePJYH2d/3/oGKPm/Q6dRQDk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RnTAJdb2Inx+cTP+xv/uR4tWXFfGFfVpxtnAY11oq79i3R/g7W+0GZzYJ8rMiACzRPy2sVCVQHMe7nQ4rhtSEkNp2d/8q00DJOSG9a9m43khw2Kdyyr3BRD9xBgnXD3pbYXsvlniwESxlzw5FXllljRL07Uf8AinpliA21fxRRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jqgsak8Q; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b6c311f62so24128045ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 17:14:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728087014; x=1728691814; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wm/s3gxkoXKwNy8dfoUH0qEU6KVqpLJ4tNBszctqB7c=;
-        b=KgAndE0sS9L2qqG2js7lSzMROt9TaO0tNouJWJQ4c02VXaasQ6tmPpaqZ8VYoTqfbW
-         R+t9Jgorf4Hi3idDfy0cdozq+wAUvIXAKRc7ckWXXJ2c3lHGaaxVCrh+E9JIFKZ3zLfb
-         px9E/Exkz24XhToUFKOqZVVhgOPGBtIVELqvtjjqcRiLhPqKSbZO+0y1unCERJA3TwuK
-         6NXIRLf8+VLpzeVgq6ZVjU0cMNE0hlbf7hpat0BfOWCe1eRNjAzKYGfuFvJek5dXgmrY
-         hYKWS79obTrPVwpV5UBSm/aaSQIaUPCAyO2aamQszZeYMlV1205LebOgCLSXDoHBanEW
-         gz0w==
+        d=chromium.org; s=google; t=1728087249; x=1728692049; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sdvgpKhmD14lH5DEz2GjjZadZ28c69PHIkDv34BVtjY=;
+        b=jqgsak8QsIQ0alVyGBI3WHFcIA11Y0wF8K1uNNlhSzk9Ab3pinrLVBqoaNx8Xac70V
+         f8WQeLptSwLq7RsNFBgNffUXXrHepegJVD0vGcGgLTgV2HjBfU1S003tw/fA8bK7PNxc
+         CCg/bAVp4NhVDhrCI7vE4VU4KFUF2iVtH5d18=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728087014; x=1728691814;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wm/s3gxkoXKwNy8dfoUH0qEU6KVqpLJ4tNBszctqB7c=;
-        b=mn+XKdlH0bCrBmpEUYhDr+TrfUFUs2CBukbHXCOq6rF6dK+rY4tMPzukrHdtvO7RJW
-         n+8jysYi0giXezyAeGjK3dCN2RsD7RVb6RzKcuLCKYBnWjexiTDEXQdhUbVOgTqnEZu2
-         aGv/A9vo9IpNu4rr1wHG/owEYmoPdWy16rKljet4LjnnASQDRolYtNw0mC4RpeaeZDRo
-         /opPjvVvUS1rcY0fk33boYFBz4w7wsZlUzjlleZuFytl3ouZCSf8ENJlhBMi7PK8dTDN
-         FQg9XOmD/hB0LjUMNxvAxYWClTLm93843KB2gaDe2fsx8mTQoh56NyTPIz+w7bRGI8yQ
-         yeWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcp4BJhuDv8LYkyNu4l19qw/e0Euuu0u8PWqdLv8IocarecfPOL26rhe5st8yZevrDgSU6TrwZi9Mda+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHiPYneC+aPOY/Rt7P7TdRCDTfWe5J2SDOKjsvEbyqcWWV/2UD
-	ifhKeF9nyNEJolOVqwSgQFSyBHa1QVsD0vaXC4z1ibF4auW/KlDSHG3mgtiKwFEdl3Ud1KP5V30
-	TwBkqfvf4jHYz1/bLiXPS+bpyP/I=
-X-Google-Smtp-Source: AGHT+IH2GjzGfx+GBi1ipTVYrpLH6UYzc9FzIVcbPgsCTJwGem434ZRPPptXsE4vsyyWByosX8s6hi9WVuuoztdp1qE=
-X-Received: by 2002:a05:690c:dcc:b0:6e2:636:d9ee with SMTP id
- 00721157ae682-6e2c724118emr49131117b3.9.1728087014016; Fri, 04 Oct 2024
- 17:10:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728087249; x=1728692049;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sdvgpKhmD14lH5DEz2GjjZadZ28c69PHIkDv34BVtjY=;
+        b=IbecXfAFl9qASt/z5oGj+T8/IRO9R3V3MpnNpKlmuzfshd6qS37W88H+EUY6fZv1c4
+         WSIQNBVwBn0IhUo6hEzvUnMF7cT5BNf8X/WbXDfoh71dQRgVK6oR0ytgp8aQObq+eRVd
+         z6rOAeCwm8BMzEP6jsGu46cox9xroLmnvvd7darzgf3BH2tfkH3SFDV7z1C76PY7TIaP
+         FrPxyoVOpSPU6+3cxw6U9MD5XFxm/xgqur437qvQ6kPDZ1yTXIvQ6aGoQ5Gzy5cu6VyT
+         a9ZrTHwS/yMrUAEtW8QjYUYLNbzTpwXNrvKcm3vmIJIBPuLLtKrrolkFtg1r0npkuydg
+         eQ0g==
+X-Forwarded-Encrypted: i=1; AJvYcCW8vsvlhy445RbkUHYKdLJCQ/uwk17/b/wH/GICEZdDXnNKs5Nj9xKbk++V5IgwZQeaihNkfFK0brYkgfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2LYuVvIeZTi+oTZB0zwZt7zNCUzKRHAMUCzvV6zXlaDG7uCab
+	YPKjXtFs+fpgPTXrby4/CpJDNUoU/5MmgJmC8VLke59X3szMNWqnENmBpW9AEg==
+X-Google-Smtp-Source: AGHT+IHv9C2jX/9/LO7J+EAweNR0wJaRJh/hpB23twcLNfojV9w8IEn9Gf8JDOL0bDIVCXkQV6JdPQ==
+X-Received: by 2002:a17:902:d485:b0:20b:b238:9d15 with SMTP id d9443c01a7336-20bff1a8709mr49363695ad.41.1728087249288;
+        Fri, 04 Oct 2024 17:14:09 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:8252:ce4b:5690:56b3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13939c30sm3950575ad.142.2024.10.04.17.14.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 17:14:08 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: Jens Axboe <axboe@kernel.dk>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+	Kyle Fortin <kyle.fortin@oracle.com>,
+	Douglas Anderson <dianders@google.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Christian Heusel <christian@heusel.eu>,
+	Jan Kara <jack@suse.cz>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Riyan Dhiman <riyandhiman14@gmail.com>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] block: add partition uuid into uevent as "PARTUUID"
+Date: Fri,  4 Oct 2024 17:13:43 -0700
+Message-ID: <20241004171340.v2.1.I938c91d10e454e841fdf5d64499a8ae8514dc004@changeid>
+X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003021135.1952928-1-rosenp@gmail.com> <20241003021135.1952928-4-rosenp@gmail.com>
- <20241004163213.2d275995@kernel.org>
-In-Reply-To: <20241004163213.2d275995@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Fri, 4 Oct 2024 17:10:03 -0700
-Message-ID: <CAKxU2N9sFq-4fBVkePERTjKGCNOK3KsfziwShzHqtbszXH8omg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 03/17] net: ibm: emac: use module_platform_driver
- for modules
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
-	jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net, 
-	chunkeey@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 4, 2024 at 4:32=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
-te:
->
-> On Wed,  2 Oct 2024 19:11:21 -0700 Rosen Penev wrote:
-> > These init and exit functions don't do anything special. Just macro it
-> > away.
-> >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  drivers/net/ethernet/ibm/emac/mal.c   | 10 +---------
-> >  drivers/net/ethernet/ibm/emac/rgmii.c | 10 +---------
-> >  drivers/net/ethernet/ibm/emac/tah.c   | 10 +---------
-> >  drivers/net/ethernet/ibm/emac/zmii.c  | 10 +---------
-> >  4 files changed, 4 insertions(+), 36 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/ibm/emac/mal.c b/drivers/net/ethernet=
-/ibm/emac/mal.c
-> > index d92dd9c83031..a632d3a207d3 100644
-> > --- a/drivers/net/ethernet/ibm/emac/mal.c
-> > +++ b/drivers/net/ethernet/ibm/emac/mal.c
-> > @@ -779,12 +779,4 @@ static struct platform_driver mal_of_driver =3D {
-> >       .remove_new =3D mal_remove,
-> >  };
-> >
-> > -int __init mal_init(void)
-> > -{
-> > -     return platform_driver_register(&mal_of_driver);
-> > -}
-> > -
-> > -void mal_exit(void)
-> > -{
-> > -     platform_driver_unregister(&mal_of_driver);
-> > -}
-> > +module_platform_driver(mal_of_driver);
->
-> This is not 1:1, right? We're now implicitly adding module_init()
-> module_exit() annotations which weren't there before. Needs to be
-> at least mentioned in the commit msg.
-Sure. The prior commit removes direct usage by core.c of these functions.
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+
+Both most common formats have uuid in addition to partition name:
+GPT: standard uuid xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+DOS: 4 byte disk signature and 1 byte partition xxxxxxxx-xx
+
+Tools from util-linux use the same notation for them.
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Reviewed-by: Kyle Fortin <kyle.fortin@oracle.com>
+[dianders: rebased to modern kernels]
+Signed-off-by: Douglas Anderson <dianders@google.com>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+I found myself needing the PARTUUID from userspace recently and it
+seems like pretty much all of the solutions involve a lot of code or
+including some userspace libraries to solve this for you. This is less
+than ideal when you're running from an initrd and want to keep things
+simple.
+
+Given that the kernel has PARTUUID handling already and needs to keep
+track of it for using it in "root=" matching, it seems silly not to
+expose it, so I wrote a patch for it.
+
+After I wrote the 2 line patch to expose the UUID, I thought to search
+the internet and found an old patch where someone had written what
+amounts to the same two lines [1], so I'm grabbing the old patch and
+resending as a v2. I'm keeping the Reviewed-by even though I rebased
+the patch (adjusted for file moves / name changes) since it's a tiny
+patch and the concept is identical to the old patch.
+
+Crossing my fingers that this looks OK to land.
+
+[1] https://lore.kernel.org/r/150729013610.744480.1644359289262914898.stgit@buzz
+
+Changes in v2:
+- Rebased
+
+ block/partitions/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/block/partitions/core.c b/block/partitions/core.c
+index 5bd7a603092e..aa54c1f4eaa5 100644
+--- a/block/partitions/core.c
++++ b/block/partitions/core.c
+@@ -253,6 +253,8 @@ static int part_uevent(const struct device *dev, struct kobj_uevent_env *env)
+ 	add_uevent_var(env, "PARTN=%u", bdev_partno(part));
+ 	if (part->bd_meta_info && part->bd_meta_info->volname[0])
+ 		add_uevent_var(env, "PARTNAME=%s", part->bd_meta_info->volname);
++	if (part->bd_meta_info && part->bd_meta_info->uuid[0])
++		add_uevent_var(env, "PARTUUID=%s", part->bd_meta_info->uuid);
+ 	return 0;
+ }
+ 
+-- 
+2.47.0.rc0.187.ge670bccf7e-goog
+
 
