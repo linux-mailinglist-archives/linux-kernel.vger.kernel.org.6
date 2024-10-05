@@ -1,173 +1,117 @@
-Return-Path: <linux-kernel+bounces-351589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F09099135B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:00:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B4599135F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC7321F24431
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:00:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E21791F245E2
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B979155CB0;
-	Fri,  4 Oct 2024 23:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCEC20E6;
+	Sat,  5 Oct 2024 00:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Afz5uC/k"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="rq7iYsK8"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A723A1552EB;
-	Fri,  4 Oct 2024 23:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500E529A0;
+	Sat,  5 Oct 2024 00:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728086393; cv=none; b=Rs+vGNkum9UaAwhdjWag5FT5pDGAWlgkwS6RYcEV6p0VtzRMQrgWI7gNDsfHUFlmIZFI3HqB/lFRvS2P8HnhDGmO0XGzSFKPnAY9RBpjgwk2ohHWBy6ySm3umzwCJ30GC9xN2o5A8a66wnXfUQT2PrC/ZR0+kxP/MULDm3nT+4U=
+	t=1728086872; cv=none; b=cWpc3/bihLJHI1duu4x9Ya+4pmswNw2W7vYVdtUwdlJ1OAtjF3nZYUyAsBXVG26r8Kb62OtT6ROYf9aczJBRqi0j8NaI0WvEwHrDeIu0T/iwoXsphoJaInVA0Hk8pNp4R5XsS5Nnx3PFcY2n4NfizMgrMGT4ujfeMwMuO82cjmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728086393; c=relaxed/simple;
-	bh=nr4GUGUStXtqD14t7ZevxhYCeurvOELE6qLbAsqBJvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ew8dr885twm1LZ7kCK9cERlGZ6z5fptTfUhJroQ+UaCC0oPF1BZEG5yPPDnzFFtgWGhLA7nREO04zHHyFRPlIQ/zt/q0N37DNyOqsbgUBIgn5Gprjo6AoCsV4RtM2JXuQ2E23atiWSohGLIY0RpqjycPjESMffDatTRtCElC758=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Afz5uC/k; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728086392; x=1759622392;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nr4GUGUStXtqD14t7ZevxhYCeurvOELE6qLbAsqBJvQ=;
-  b=Afz5uC/k0yMcUR55/0vQ5sXFENv3AXtnLEu/riReXx2dfRglJzARMeOD
-   B8xNjpvmMWHuQDtuXpE8RVr9gVd03ZJXaVNfG2Xyx3O1XeNUUVwu14gtP
-   09qY8zdN2Z9Mt7pmF4ADQ9bQ+j0EdNkWiP+IulkdG2e7Oa5XvHIMUsURJ
-   Z6V0U6Jm/88S5PV5hcpcEL+o1Wy7zZd/q6h4S2rGgs/GEO/EQmJGEEQwQ
-   aHGbZ81Gn0HXhRP9Wdt8msfFIMA1UiPsYhaHBhAcoPgJzegZ1OXlPbexg
-   Lt1Zlh66uO4AfRCPN3xmLeshkrFFiDd1UDYKtXcChqLk9JsSB40jaOABv
-   w==;
-X-CSE-ConnectionGUID: rcMEP+WmS6G8Lapqx6jBgQ==
-X-CSE-MsgGUID: Ccn8La+cRsqGhsZ8UVJhkQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11215"; a="27456451"
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="27456451"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 16:59:52 -0700
-X-CSE-ConnectionGUID: r4hSBamkQvqDiGw8qBDzCg==
-X-CSE-MsgGUID: kSuRW7wQSN++WA4YrXARVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,178,1725346800"; 
-   d="scan'208";a="75290556"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 04 Oct 2024 16:59:46 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swsD2-0002M1-0Q;
-	Fri, 04 Oct 2024 23:59:44 +0000
-Date: Sat, 5 Oct 2024 07:59:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org, oleg@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, rostedt@goodmis.org, mhiramat@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-	paulmck@kernel.org, willy@infradead.org, surenb@google.com,
-	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com,
-	brauner@kernel.org, jannh@google.com, mhocko@kernel.org,
-	vbabka@suse.cz, mingo@kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: [PATCH v2 tip/perf/core 5/5] uprobes: add speculative lockless
- VMA-to-inode-to-uprobe resolution
-Message-ID: <202410050745.2Nuvusy4-lkp@intel.com>
-References: <20241001225207.2215639-6-andrii@kernel.org>
+	s=arc-20240116; t=1728086872; c=relaxed/simple;
+	bh=xz79fy6tqxxlcBtITgoH5nzOLA7aGHwgD+bM+S/Eew0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rJ78n/lUJ5scz8DjRJ7V71CIeC1HWGZ40OfrE22wYOjTiI/RyVdNt3w4UkmBFRT0T6P1YgU1CoorjPQM8aEH0yM3Ao2SLPrY4hnGLKUoLC8MjFI2Lbk+Hm5awzjmK2jV7pnsNX4vBK1FRR1jNHxiS7AUSolgBSI99pzjQRqbdjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=rq7iYsK8; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1728086854;
+	bh=xz79fy6tqxxlcBtITgoH5nzOLA7aGHwgD+bM+S/Eew0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=rq7iYsK8o9LHXtBQg3aGv2OqPFfyT/O0hRyEbSv9n4/z1LSU/CJCDSZQQggr0C9c8
+	 PtRgw/n6K07FPKYUJUkrGYKcAvBDAoi/265wNS3h3nQwuPD5op868p736BsqgTeRbB
+	 bIVG1tTSDJFgxYw267uhmfWDNYDxiyQt+lOlhGJc=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sat, 05 Oct 2024 02:06:28 +0200
+Subject: [PATCH] bpf, lsm: Remove bpf_lsm_key_free hook
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001225207.2215639-6-andrii@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241005-lsm-key_free-v1-1-42ea801dbd63@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAAODAGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwNT3ZziXN3s1Mr4tKLUVN0kE3MTE9PUVFMj4xQloJaCotS0zAqwcdG
+ xtbUAzodRll4AAAA=
+X-Change-ID: 20241005-lsm-key_free-b47445ee523d
+To: KP Singh <kpsingh@kernel.org>, 
+ Matt Bobrowski <mattbobrowski@google.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+ Paul Moore <paul@paul-moore.com>, 
+ John Johansen <john.johansen@canonical.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728086854; l=1180;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=xz79fy6tqxxlcBtITgoH5nzOLA7aGHwgD+bM+S/Eew0=;
+ b=BmDydbqRz1LdW3RSqSSbU/fCChwX+HiQP0CYDZdd607qI0fezWApQqqHjhEs9Up2ySJH5IVYh
+ zvPDO5CcKNKARvfeGRXJlCfMZkFEPd4JHE5fe9JLfAkIFtkE/QIxMBD
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Hi Andrii,
+The key_free LSM hook has been removed.
+Remove the corresponding BPF hook.
 
-kernel test robot noticed the following build errors:
+Avoid warnings during the build:
+  BTFIDS  vmlinux
+WARN: resolve_btfids: unresolved symbol bpf_lsm_key_free
 
-[auto build test ERROR on tip/perf/core]
+Fixes: 5f8d28f6d7d5 ("lsm: infrastructure management of the key security blob")
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+I don't know much about LSMs, so please disregard if this is wrong.
+---
+ kernel/bpf/bpf_lsm.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/mm-introduce-mmap_lock_speculation_-start-end/20241002-065354
-base:   tip/perf/core
-patch link:    https://lore.kernel.org/r/20241001225207.2215639-6-andrii%40kernel.org
-patch subject: [PATCH v2 tip/perf/core 5/5] uprobes: add speculative lockless VMA-to-inode-to-uprobe resolution
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20241005/202410050745.2Nuvusy4-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241005/202410050745.2Nuvusy4-lkp@intel.com/reproduce)
+diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+index 6292ac5f9bd139dafb39ecd8bb180be46cd7c7fd..3bc61628ab251e05d7837eb27dabc3b62bcc4783 100644
+--- a/kernel/bpf/bpf_lsm.c
++++ b/kernel/bpf/bpf_lsm.c
+@@ -339,10 +339,6 @@ BTF_ID(func, bpf_lsm_path_chmod)
+ BTF_ID(func, bpf_lsm_path_chown)
+ #endif /* CONFIG_SECURITY_PATH */
+ 
+-#ifdef CONFIG_KEYS
+-BTF_ID(func, bpf_lsm_key_free)
+-#endif /* CONFIG_KEYS */
+-
+ BTF_ID(func, bpf_lsm_mmap_file)
+ BTF_ID(func, bpf_lsm_netlink_send)
+ BTF_ID(func, bpf_lsm_path_notify)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410050745.2Nuvusy4-lkp@intel.com/
+---
+base-commit: 0c559323bbaabee7346c12e74b497e283aaafef5
+change-id: 20241005-lsm-key_free-b47445ee523d
 
-All errors (new ones prefixed by >>):
-
-   kernel/events/uprobes.c: In function 'find_active_uprobe_speculative':
->> kernel/events/uprobes.c:2098:46: error: passing argument 2 of 'mmap_lock_speculation_start' from incompatible pointer type [-Wincompatible-pointer-types]
-    2098 |         if (!mmap_lock_speculation_start(mm, &seq))
-         |                                              ^~~~
-         |                                              |
-         |                                              long int *
-   In file included from include/linux/mm.h:16,
-                    from arch/loongarch/include/asm/cacheflush.h:8,
-                    from include/linux/cacheflush.h:5,
-                    from include/linux/highmem.h:8,
-                    from kernel/events/uprobes.c:13:
-   include/linux/mmap_lock.h:126:75: note: expected 'int *' but argument is of type 'long int *'
-     126 | static inline bool mmap_lock_speculation_start(struct mm_struct *mm, int *seq) { return false; }
-         |                                                                      ~~~~~^~~
-
-
-vim +/mmap_lock_speculation_start +2098 kernel/events/uprobes.c
-
-  2086	
-  2087	static struct uprobe *find_active_uprobe_speculative(unsigned long bp_vaddr)
-  2088	{
-  2089		struct mm_struct *mm = current->mm;
-  2090		struct uprobe *uprobe = NULL;
-  2091		struct vm_area_struct *vma;
-  2092		struct file *vm_file;
-  2093		loff_t offset;
-  2094		long seq;
-  2095	
-  2096		guard(rcu)();
-  2097	
-> 2098		if (!mmap_lock_speculation_start(mm, &seq))
-  2099			return NULL;
-  2100	
-  2101		vma = vma_lookup(mm, bp_vaddr);
-  2102		if (!vma)
-  2103			return NULL;
-  2104	
-  2105		/* vm_file memory can be reused for another instance of struct file,
-  2106		 * but can't be freed from under us, so it's safe to read fields from
-  2107		 * it, even if the values are some garbage values; ultimately
-  2108		 * find_uprobe_rcu() + mmap_lock_speculation_end() check will ensure
-  2109		 * that whatever we speculatively found is correct
-  2110		 */
-  2111		vm_file = READ_ONCE(vma->vm_file);
-  2112		if (!vm_file)
-  2113			return NULL;
-  2114	
-  2115		offset = (loff_t)(vma->vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vma->vm_start);
-  2116		uprobe = find_uprobe_rcu(vm_file->f_inode, offset);
-  2117		if (!uprobe)
-  2118			return NULL;
-  2119	
-  2120		/* now double check that nothing about MM changed */
-  2121		if (!mmap_lock_speculation_end(mm, seq))
-  2122			return NULL;
-  2123	
-  2124		return uprobe;
-  2125	}
-  2126	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thomas Weißschuh <linux@weissschuh.net>
+
 
