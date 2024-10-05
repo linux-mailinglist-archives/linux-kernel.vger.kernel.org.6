@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-351859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8259916F7
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:17:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFBB9916FA
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934081F22985
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:17:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41E971C2133E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338F514F9FD;
-	Sat,  5 Oct 2024 13:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8931531ED;
+	Sat,  5 Oct 2024 13:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aIhTopr0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dm90r9I5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D817F6
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 13:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE173139578;
+	Sat,  5 Oct 2024 13:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728134254; cv=none; b=FM++eHkE7MxxOaGa+sUgZrOvcLOeEtQktCAsLr7Dgg0uR+KIf7YUpTrF1chKv+uIz71UBYSSEvHtxvunYx1JSd6hENJOOC2CwZoh6p3bjZos+Wzk3xe1eiijDkmCBjYg/0FpZsoDctfVGcU6EqLE9Ap5bBDPYXcrhENkMGMB2uU=
+	t=1728134341; cv=none; b=S4E75WwYGN03HwCSobWjmq865yA+14mVRU/XG3LUi/cluNGHM5ZN+3uzmh+f09IIoYiXAor9noXaykOyJcxJaJpKQPcGxmIwAoc2rPKl/jyxLugbp7cPT593DxUFtDxTAPJsqwD+ngmwTZbN+kqc7quGZt/sTL25+DDOAfMwWgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728134254; c=relaxed/simple;
-	bh=xJb8Yx87MzW/8eUrGjNeU3WL88o7HsMKZzmSciJGEh8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZXcc/Q/qMMN1yz557iWzrb/3Cts2WMr/DccfdF8AZpoFppWzcDLK2iwY80wSioz9Tj3QPN9qubIOKGImKszsyMABzhU+wDQw8OzzlZHm7uKYmazjHTE2F8sJZ6M5zeCGJf0YhQqQNmWcFXes+2/IOJ2mAMCficQVsh2upKqOhEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aIhTopr0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 495AgP5O004926;
-	Sat, 5 Oct 2024 13:17:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=NKxSmhMVcUv/pOhvIsOxXx0/MK98fh7XPdGu/a/9/Qk=; b=aI
-	hTopr0CYRG0JpsSHPu5yOgCGuieJPFt1acV3xakyz4HlQOfU3PkjeYzjlwMPS14R
-	7u6aWhI79xFnWfs/j/LeBpdFUNHOx4haO8fp73XbDuZgpttWzCSmcTzAecUItrB5
-	8XL1byKA8N93ADW56wv/36So0TcUzhUsbVj1HcoF4tILryNJyUlhdMx5GOZcqnD7
-	YNr3kwPF+fIlknpHDQMBf6Ixa1m+UtZFgPRt/fpJLhJjGqxTDWtWACjLe9CWPDzk
-	PDPya0LghETyc+yYXR9jRkqX+5YlwpbDqDt6PqVaZuMmhxm38RZWwYcbpuC6eYBN
-	PgwvR0ct22idRGJggfEw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xqnrkfx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 05 Oct 2024 13:17:09 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 495DH8Cc003060
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 5 Oct 2024 13:17:08 GMT
-Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sat, 5 Oct 2024 06:17:03 -0700
-From: Pintu Kumar <quic_pintu@quicinc.com>
-To: <hannes@cmpxchg.org>, <surenb@google.com>, <peterz@infradead.org>,
-        <mingo@redhat.com>, <juri.lelli@redhat.com>,
-        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-        <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>
-CC: <joe@perches.com>, <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
-        Pintu Kumar <quic_pintu@quicinc.com>
-Subject: [PATCH v2] sched/psi: fix memory barrier without comment warnings
-Date: Sat, 5 Oct 2024 18:46:43 +0530
-Message-ID: <20241005131643.7692-1-quic_pintu@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728134341; c=relaxed/simple;
+	bh=LUOE69YR/KfFB2xjqDNC6Kcee5QGBsgi01+huJ+n4Gw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dKfJHd0i/YWgEz2pK6nQF8FZuS4vGZVQpHidXQClFteR3AlkHFeiku791GlgGOeblSpZE8JXHHzPBFcKGV1FfGIl5QNyETs0qjswe/2C4p+kXeLQ3LkyQsJwvIi0DpuYQQZBPxMI4IwwAc0UHK4KY6zyG+lZuZoO6ci6xHxGRq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dm90r9I5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F349C4CEC2;
+	Sat,  5 Oct 2024 13:19:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728134340;
+	bh=LUOE69YR/KfFB2xjqDNC6Kcee5QGBsgi01+huJ+n4Gw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Dm90r9I54UDByy0pHmuhgwbeNeM7YF14ZpeCTGboS/m+6kRJPmaDVVdEKDBsjVauD
+	 aMOg3To1mbfHDxKAxxBectmIgIzQ008qMxtKoVe8UChbg94DbJuHFuBYddF33YpLxM
+	 vOVK49r901W1pn+n9WY+aZ/WfPR2ecnc+99K5B3ljmMWZ/LgRnBXXsuSNiSc+oiF0G
+	 1+NKH73aJketkgHaN1Z+rdjdQy7SGtKfVCeLxvtLs9zPYWc+O3ivS2oZ9+/MLd7b7X
+	 QrsKPMzsv82uiS5H5MrHJZ1w+HAoVsyfyr0Nhs+34yFxV0YUGzR+N15RKz9/Wm5tXz
+	 lu1iuDPnlHtyQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sx4gU-000bkS-AH;
+	Sat, 05 Oct 2024 14:18:58 +0100
+Date: Sat, 05 Oct 2024 14:18:57 +0100
+Message-ID: <87frpavgam.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 3/5] KVM: arm64: Manage GCS access and registers for guests
+In-Reply-To: <ZwE6V9cqf7jD1rTc@finisterre.sirena.org.uk>
+References: <20241005-arm64-gcs-v14-0-59060cd6092b@kernel.org>
+	<20241005-arm64-gcs-v14-3-59060cd6092b@kernel.org>
+	<87iku6vl4z.wl-maz@kernel.org>
+	<ZwE6V9cqf7jD1rTc@finisterre.sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: TJbbBw0h6YgRbk0K5o-3cvge3GQQa1Go
-X-Proofpoint-GUID: TJbbBw0h6YgRbk0K5o-3cvge3GQQa1Go
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- malwarescore=0 mlxscore=0 phishscore=0 spamscore=0 suspectscore=0
- adultscore=0 mlxlogscore=999 priorityscore=1501 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410050097
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-These warnings were reported by checkpatch.
-Fix them with minor changes.
-No functional changes.
+On Sat, 05 Oct 2024 14:08:39 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> On Sat, Oct 05, 2024 at 12:34:20PM +0100, Marc Zyngier wrote:
+> > Mark Brown <broonie@kernel.org> wrote:
+> 
+> > > +	if (!kvm_has_gcs(kvm)) {
+> > > +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
+> > > +						HFGxTR_EL2_nGCS_EL1);
+> > > +		kvm->arch.fgu[HFGITR_GROUP] |= (HFGITR_EL2_nGCSEPP |
+> > > +						HFGITR_EL2_nGCSSTR_EL1 |
+> > > +						HFGITR_EL2_nGCSPUSHM_EL1);
+> 
+> > Where is the handling of traps resulting of HFGITR_EL2.nGCSSTR_EL1?
+> 
+> These will trap with an EC of 0x2d which isn't known so I was expecting
+> this to get handled in the same way as for example a return of false
+> from kvm_hyp_handle_fpsimd() for SVE when unsupported, or for the
+> simiarly unknown SME EC, currently.  I gather from your comment that
+> you're instead expecting to see an explicit exit handler for this EC
+> that just injects the UNDEF directly?
 
-WARNING: memory barrier without comment
-+       t = smp_load_acquire(trigger_ptr);
+Not just inject an UNDEF directly, but also track whether this needs
+to be forwarded when the guest's HFGITR_EL2.nGCSSTR_EL1 is 0 while not
+being not RES0. Basically following what the pseudocode describes.
 
-WARNING: memory barrier without comment
-+       smp_store_release(&seq->private, new);
+	M.
 
-Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
-Reviewed-by: Joe Perches <joe@perches.com>
-
----
-Changes in V2:
-Retain printk_deferred warnings as suggested by Joe Perches.
-V1: https://lore.kernel.org/all/a848671f803ba2b4ab14b0f7b09f0f53a8dd1c4b.camel@perches.com/
----
- kernel/sched/psi.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 020d58967d4e..4e4ff12fdeae 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -1474,6 +1474,7 @@ __poll_t psi_trigger_poll(void **trigger_ptr,
- 	if (static_branch_likely(&psi_disabled))
- 		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
- 
-+	/* Pairs with the smp_store_release in psi_write */
- 	t = smp_load_acquire(trigger_ptr);
- 	if (!t)
- 		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
-@@ -1557,6 +1558,7 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
- 		return PTR_ERR(new);
- 	}
- 
-+	/* Pairs with the smp_store_acquire in psi_trigger_poll */
- 	smp_store_release(&seq->private, new);
- 	mutex_unlock(&seq->lock);
- 
 -- 
-2.17.1
-
+Without deviation from the norm, progress is not possible.
 
