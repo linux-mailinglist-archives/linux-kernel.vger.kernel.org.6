@@ -1,142 +1,134 @@
-Return-Path: <linux-kernel+bounces-351955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1837A991850
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:31:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2389991853
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 301BA1C20E55
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:31:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C44D5B21DE4
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499D7157495;
-	Sat,  5 Oct 2024 16:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1502157476;
+	Sat,  5 Oct 2024 16:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VPXOk3ZP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="njuestIz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A81B211C
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 16:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1905A211C;
+	Sat,  5 Oct 2024 16:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728145878; cv=none; b=Ucd91Mozsq9Fx1o2b0+bhqbbEDsAdIiAWY2BT+qfPrUoSFnVO6iyA4s/fb6RP3x00g7/KfQ5jySe4WB18QCXCJJQHeB6ipV6XD1p++AmwY/SU564y6AwWBxXTkHM+WGsn1N64rrib+BQ4FUPcvi++61yOEQQqFNyvI8q5jmpYXM=
+	t=1728146117; cv=none; b=bQT7l62u1utp/fK6kXiw5AqPCxKY9fT0iO4+g0BsOclOKYB5GPr+kf+ZwRI+EUK2EL1F+Yn+DgUq6nCd0O3oAVdi3ss2iD3WeXxH2brJt4QldgLnnFeUhEDmqyxiwj/UxuhIkUQ7f0p5BYa0WevySJWVVCZXBWkMSAYRKxiAmDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728145878; c=relaxed/simple;
-	bh=SPLDvAIKA2wal1cbyk5bpbu0Yow0nPLmaGDY1ntAsVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ihovEO3wA6Ef6DyZWR2Z3G0h03ltfa9J3+8+7vqnaFQcSAV9eRe4qL5Rdk22APpVdBPcKVaEj63i1o9WQ3IJNOy5JvPDlywgf9jZ9Mrgnxg7a5mQi/eJMzmdYSkWk3TA7bzodjxuNbwT9GcDGwGwIJldl2semSCmuTwCCYpQVko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VPXOk3ZP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 495GVGmE027805;
-	Sat, 5 Oct 2024 16:31:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	g1DrUfZua4F6fDsbCUaZ1sAuO6WCHxhZhRBSszMS84c=; b=VPXOk3ZPzZzKL5Xu
-	x2ArITegt7t/KEzJ7o53fqvESvVYd8hD6WfPZCknFiwD3Uj9hcOKn6Qxmffj2CxG
-	Rsax4DHC0DkXUlamSz20UXv1tr/nOoZ6PchIw1WU9uHlXl/4427UHagxFvsnh6yt
-	9m38xrE73TW7PmAY12roZ20kM93bZdTIN1HCAZmd6tTWTJtjv/c09R9w/4VLwZNh
-	Oc8n1mHE4S28hs1JvoxPh3IzxQBeli0x8yXfng3eg00sHcnjKduZrvAKQHR7KO5Q
-	a9i5Bwzl4laVZt+Tvfy9N2QkY8TLuORF8azL3RDpXEllNZ+qfeen80IdEIKpsURX
-	ILm7eg==
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv6rtan-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 16:31:16 +0000 (GMT)
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5c885ef98a9so616431a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 09:31:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728145874; x=1728750674;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g1DrUfZua4F6fDsbCUaZ1sAuO6WCHxhZhRBSszMS84c=;
-        b=jhx/Jt4C8MjfTtIEIt5xLR9vo0fweE7TqdV5tB1CN9e5Rq5eE6hK+VXc7HOD/ORflU
-         mIs04NZqNk7hDicKOlur0NauqfuMGL+RT87Ecx4JlXB3ZHMjADjnh3p8Icqu5EfRHA37
-         cNI1jJ4cw7MEw21MNr45L4E7P59kReTdD1KbOcfv5buZwtnlUikwMA3lHodWGoAfnVOt
-         WFYE+n5bucLhAT/v+aHD8tslQNTSK9Vb8QvPvDQ+VrfPT1IKbYaJ7pbNhT4izJS+Ew0i
-         GMsnZJHeM3LSLd9VJmbbSYp6gT0cY7cJigEbs7H76zdlj6jN0hbfqfPl432jyHt9RFZF
-         lKIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgscOAsEOwh5SSW87qPPMlIL+kOZSFUYKmhRLnBT5ILxcw6kcW53VasMdrmedjJvyNxhQg1U9qwPR2f+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIzWMU8jDH6+F4jQENuhTlT2Ls8OcxjF7AWxIWvCFAOpluLvZG
-	jyTO9tjXuoKcRhyjaTkrQsP09aWzvDk2Ronx0gCFZODE3jFBn5qQ06Z4Eq2XG4cqAD/8SXOz7tU
-	kadq2lXihys0t70KfVWMZShlWsoxnw9eC6Cp0N3YYnhfpcnxqOlJ6BUI2xiNH57w=
-X-Received: by 2002:a05:6402:34d0:b0:5c8:8381:c17b with SMTP id 4fb4d7f45d1cf-5c8d2d02685mr2360053a12.2.1728145874129;
-        Sat, 05 Oct 2024 09:31:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFDDW6XxiZgpQtH+HswqMKcQG1qf3+CFB/WbtT35s7v9ACQdUKD14uAlsycQAjBffPIhQy/3g==
-X-Received: by 2002:a05:6402:34d0:b0:5c8:8381:c17b with SMTP id 4fb4d7f45d1cf-5c8d2d02685mr2360018a12.2.1728145873125;
-        Sat, 05 Oct 2024 09:31:13 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05eb4b9sm1157579a12.75.2024.10.05.09.31.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Oct 2024 09:31:11 -0700 (PDT)
-Message-ID: <ba56c822-cf3d-4d62-86d4-e04551e443c6@oss.qualcomm.com>
-Date: Sat, 5 Oct 2024 18:31:09 +0200
+	s=arc-20240116; t=1728146117; c=relaxed/simple;
+	bh=9LbJuX2MUDJUOPN5HPaDxB1YJ4by/eJMpqQkvy6egqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d4NGD5v48UGoAYiAleiAqKb0evXtjM1TUN0wO6QDBEfAMElc6HHW8aW3DT1MG9xJpZYaiWPRRaQIzWJqvLUUjNqnQ4rGCoDX0bUA3D52h3deazUGypPhd+2BdrudIqiRRKAhwlSdeWSHI+0vuKqlIL932051ptDe6Y6RTb1DzJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=njuestIz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 907B5C4CEC2;
+	Sat,  5 Oct 2024 16:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728146116;
+	bh=9LbJuX2MUDJUOPN5HPaDxB1YJ4by/eJMpqQkvy6egqg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=njuestIzaCf7jvdOUIEEp9AEJbqcn7faerj7fuq5FT/DBZXCQ+EgPZzOWfg3xYYGX
+	 fYDt9iDLOA5WYObtK0DN/2LJ5szpvtLADwI8eUTPBVFMVL7ChSWZMKoDhpADAC9C6u
+	 RoFNyCPe8fCTN0K0db1uOWhxque4kVUF0pa2ZJKCuSPODREckDZ30VI20wMglC+4CY
+	 JmU8dpcOUIU/Fws/akN9TyHIPj1c0sRucrO9t667PRki5CoDYQLYR13eyeoSDBl+oF
+	 PctrNkkQ/TdeknvdHXkjKDCA1XuFmGx5GsPhjo7yjDIu8O+T0bLgYXvNpMfpGnDP0H
+	 o5xV+LBL3eTvA==
+Date: Sat, 5 Oct 2024 17:34:43 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Michael
+ Hennerich <michael.hennerich@analog.com>, Kim Seer Paller
+ <kimseer.paller@analog.com>, Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH] iioc: dac: ltc2664: Fix span variable usage in
+ ltc2664_channel_config function
+Message-ID: <20241005173443.4a34fb73@jic23-huawei>
+In-Reply-To: <20241004135454.5784-1-pvmohammedanees2003@gmail.com>
+References: <20241004135454.5784-1-pvmohammedanees2003@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drm/msm/dsi: improve/fix dsc pclk calculation
-To: Jonathan Marek <jonathan@marek.ca>, freedreno@lists.freedesktop.org
-Cc: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
- <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "open list:DRM DRIVER for Qualcomm display hardware"
- <linux-arm-msm@vger.kernel.org>,
-        "open list:DRM DRIVER for Qualcomm display hardware"
- <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20241005143818.2036-1-jonathan@marek.ca>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241005143818.2036-1-jonathan@marek.ca>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: H58XSpVtflMRW31y9Hsva_Ksru0I4on4
-X-Proofpoint-GUID: H58XSpVtflMRW31y9Hsva_Ksru0I4on4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 impostorscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=948 mlxscore=0 bulkscore=0 phishscore=0 malwarescore=0
- spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410050122
 
-On 5.10.2024 4:38 PM, Jonathan Marek wrote:
-> drm_mode_vrefresh() can introduce a large rounding error, avoid it.
+On Fri,  4 Oct 2024 19:24:54 +0530
+Mohammed Anees <pvmohammedanees2003@gmail.com> wrote:
+
+> In the current implementation of the ltc2664_channel_config function,
+> a variable named span is declared and initialized to 0, intended to
+> capture the return value of the ltc2664_set_span function. However,
+> the output of ltc2664_set_span is directly assigned to chan->span,
+> leaving span unchanged. As a result, when the function later checks
+> if (span < 0), this condition will never trigger an error since
+> span remains 0, this flaw leads to ineffective error handling. The
+> current patch resolves this issue by checking chan->span rather than
+> span and also effectively removing span variable.
 > 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+Good catch, but needs a Fixes tag.
+
+Also, slight preference for using ret and assigning on success.
+Ideal is not to have side effects when an error occurs,
+though I'd imagine in this case we fail the probe so it doesn't
+matter and in such cases it's not a hard requirement.
+
 > ---
->  drivers/gpu/drm/msm/dsi/dsi_host.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/iio/dac/ltc2664.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> index 185d7de0bf376..1205aa398e445 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> @@ -542,7 +542,7 @@ static unsigned long dsi_adjust_pclk_for_compression(const struct drm_display_mo
+> diff --git a/drivers/iio/dac/ltc2664.c b/drivers/iio/dac/ltc2664.c
+> index 5be5345ac5c8..64c8a51aad81 100644
+> --- a/drivers/iio/dac/ltc2664.c
+> +++ b/drivers/iio/dac/ltc2664.c
+> @@ -516,7 +516,7 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
+>  	const struct ltc2664_chip_info *chip_info = st->chip_info;
+>  	struct device *dev = &st->spi->dev;
+>  	u32 reg, tmp[2], mspan;
+> -	int ret, span = 0;
+> +	int ret;
 >  
->  	int new_htotal = mode->htotal - mode->hdisplay + new_hdisplay;
+>  	mspan = LTC2664_MSPAN_SOFTSPAN;
+>  	ret = device_property_read_u32(dev, "adi,manual-span-operation-config",
+> @@ -581,8 +581,8 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
+>  		if (!ret && mspan == LTC2664_MSPAN_SOFTSPAN) {
+>  			chan->span = ltc2664_set_span(st, tmp[0] / 1000,
+>  						      tmp[1] / 1000, reg);
+I'd slightly prefer
+			ret =....
+			if (ret < 0)
+				...
+			chan->span = ret;
+
+etc
+
+> -			if (span < 0)
+> -				return dev_err_probe(dev, span,
+> +			if (chan->span < 0)
+> +				return dev_err_probe(dev, chan->span,
+>  						     "Failed to set span\n");
+>  		}
 >  
-> -	return new_htotal * mode->vtotal * drm_mode_vrefresh(mode);
-> +	return mult_frac(mode->clock * 1000u, new_htotal, mode->htotal);
+> @@ -590,8 +590,8 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
+>  						     tmp, ARRAY_SIZE(tmp));
+>  		if (!ret) {
+>  			chan->span = ltc2664_set_span(st, 0, tmp[1] / 1000, reg);
+> -			if (span < 0)
+> -				return dev_err_probe(dev, span,
+similar down here.
+> +			if (chan->span < 0)
+> +				return dev_err_probe(dev, chan->span,
+>  						     "Failed to set span\n");
+>  		}
+>  	}
 
-This seems to ignore mult/div by two on certain mode flags.. is that
-intended?
-
-Konrad
 
