@@ -1,122 +1,87 @@
-Return-Path: <linux-kernel+bounces-352001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D789918F5
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:41:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6569918FB
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 19:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C571C20F52
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:41:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04525B216B3
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7E7158DC2;
-	Sat,  5 Oct 2024 17:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635C7158DA7;
+	Sat,  5 Oct 2024 17:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="ma98UlFw"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHfLjNLC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C8814D29B;
-	Sat,  5 Oct 2024 17:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAED1F61C;
+	Sat,  5 Oct 2024 17:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728150058; cv=none; b=AK8TVhwYJGXjB1ap56VS5/SjOYZgXOTAkQjj9SjFvQ5mUcx5hcxvUICDuRQpP5gSL/a7WWq6nG4u9dStzJc4bVf9v52Xvb+kkVvjNKECe+o1UJbMfeyZIzuZvc1PHi/q2f6LCAIMWb+xwuAcOZTAIJqnmq8D/EF8mqyXXkwbOmU=
+	t=1728150242; cv=none; b=I4Gpt4vTwSgDlc7rGo5PP42dRj/kjDAffZ934yi/B94knegB65P4hmVqZ/dqN7CITTyFH8q89tchugB9HXFmZOWjxckLLClWlJS547CBH3YmC0oe1O5H2OpXl7+r8/PbQzMQhRfZJCXq4K0qQGLtVj4d3cdwMtEDtfqrs1WWhnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728150058; c=relaxed/simple;
-	bh=VAd/yLm3XIw5HQaf5ZKgozvfO8p4FW4SgJ4KYjCCJTg=;
+	s=arc-20240116; t=1728150242; c=relaxed/simple;
+	bh=djk9MX/9q9abJv7cF3LUfPXfJX9TOYq3vBr1RWrzieM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifEuwtabuU3AHAdWSAjCKCBOBPqUkbVMAKX6L+8KoXrStUteYgiuRJPznE95Rj5kldRFDq3kH4haPKYKOBYURxr5EP4bHMDHWbPUTw9ONJjwvWZvmqaa1ONFX2M8VRwKpoQ0ouEEbEPD8dZthL49azf1+MBbGrJ3nqDPj5yaz0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=ma98UlFw; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 05B701C0082; Sat,  5 Oct 2024 19:40:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1728150053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n9vZfUZ8s2oPLQ0d9T0cl/XttnMZ/kA6jZ27FANk90U=;
-	b=ma98UlFwwgyHwQW/JPb1qMmH7qbwgN2At3u69m7SUyv1X7fETQPtnotSpchORkcgIxU0eV
-	OBmukeo7C2JeVSkrimRGOtM5+ngF8c8fX16msEB6TqA3VAIzrgg7qFJNVxHRjqzMcGVSQC
-	GpPONkwfOgrzTbJOQeBmPj1muReAc2Q=
-Date: Sat, 5 Oct 2024 19:40:52 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <len.brown@intel.com>,
-	linux-pm <linux-pm@vger.kernel.org>, linux-kernel@vger.kernel.org,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Subject: Re: Root filesystem read access for firmware load during hibernation
- image writing
-Message-ID: <ZwF6JEHIQda92sIL@duo.ucw.cz>
-References: <3c95fb54-9cac-4b4f-8e1b-84ca041b57cb@maciej.szmigiero.name>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ToEUltSKkJYsJJCwE8XgUN1/ThDgCD9lNCKRTxFCRKnTu/XMKKuQSPIUUwi6hQZiplH2MnAIZ0TBXFQVeyce2wz71L+ysPZEUG3V5gYgfaPe9boj7W51Wipij4tq682j6m/25mO9o4QpDM5P3phZE/Fz00hHJxa3oPZWI+0/Xhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHfLjNLC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2207CC4CEC2;
+	Sat,  5 Oct 2024 17:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728150242;
+	bh=djk9MX/9q9abJv7cF3LUfPXfJX9TOYq3vBr1RWrzieM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RHfLjNLCRptfy6ZcsFJ37LpVph/5PRErKNbnaWD/OQHHRV75W1s2mKnS9V7pe5Oph
+	 z2UtCjqDF/Q8ngjubuDlJrmph7kxxuBt0Z+S+vwuK0t33RuDUOoDjEomPGUN1IS70O
+	 fit2wOwkQg5RYg5L8Ig6S1v8NXz3y+EYzQrX6Cqm+tXxRnEiNmZMj+Oy2BPtxaq0Vb
+	 gu6N0gdFX7vPsago9jgvKP29iKlpc7+sfzJ/s3qwTKlFPicqW/r87leOAMZfDEqbON
+	 Winx8lUaLU+Pyok0JSSZbyJV3i3DIIvpaXG/pls09hAZkzeOqhoq7mRgMWoN5oguL8
+	 qrNukWMvDRmKQ==
+Date: Sat, 5 Oct 2024 12:44:01 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Robert Foss <rfoss@kernel.org>, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Maxime Ripard <mripard@kernel.org>,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	David Airlie <airlied@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+	Andrzej Hajda <andrzej.hajda@intel.com>, devicetree@vger.kernel.org,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: Re: [PATCH 1/2] dt-bindings: display: bridge: tc358768: switch to
+ bus-width
+Message-ID: <172815024006.438324.4885049988134352168.robh@kernel.org>
+References: <20241003133904.69244-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AzanCVSKuR7/7bLf"
-Content-Disposition: inline
-In-Reply-To: <3c95fb54-9cac-4b4f-8e1b-84ca041b57cb@maciej.szmigiero.name>
-
-
---AzanCVSKuR7/7bLf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241003133904.69244-1-krzysztof.kozlowski@linaro.org>
 
-Hi!
 
-> In my case, a USB device (RTL8821CU) gets reset at that stage due to
-> commit 04b8c8143d46 ("btusb: fix Realtek suspend/resume") and so it tries
-> to request_firmware() from the root filesystem after that thaw/reset,
-> when the hibernation image is being written.
->=20
-> It usually succeeds, however often it deadlocks somewhere in Btrfs code
-> resulting in the system failing to power off after writing the hibernate
-> image:
-> power_off() calls dpm_suspend_start(), which calls dpm_prepare(), which
-> waits for device probe to finish.
->=20
-> And device probe is stuck forever trying to load that USB stick firmware
-> from the filesystem - so in the end the system never powers off during
-> (after) hibernation.
->=20
-> That's why I wonder whether this firmware load is supposed to work correc=
-tly
-> during that hibernation state and so the system may be hitting some kind =
-of
-> a swsusp/btrfs/block layer race condition.
->=20
-> Or, alternatively, maybe  reading files is not supported at this point and
-> so this is really a btrtl/rtw88 bug?
+On Thu, 03 Oct 2024 15:39:03 +0200, Krzysztof Kozlowski wrote:
+> "data-lines" property is way too similar to "data-lanes".  It is also
+> duplicating "bus-width" from video-interfaces.yaml schema.  Deprecate
+> "data-lines" and use the common property.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/display/bridge/toshiba,tc358768.yaml  | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
 
-I'd say not supported at this point. Reading file may still read to
-atime update, etc, and we can't really can't support that easily.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Suggestion is to keep firmware cached in memory, or at least cache it
-in memory when hibernation begins.
-
-BR,
-										Pavel
-									=09
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
-
---AzanCVSKuR7/7bLf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZwF6JAAKCRAw5/Bqldv6
-8iNhAJ9rXSgZSqHjgeaD4NEroan26onCyACdG2iw2e9t1Xw164dPfjFJlAMuVa0=
-=QhxX
------END PGP SIGNATURE-----
-
---AzanCVSKuR7/7bLf--
 
