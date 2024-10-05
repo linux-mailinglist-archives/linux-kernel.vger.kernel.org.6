@@ -1,84 +1,50 @@
-Return-Path: <linux-kernel+bounces-351947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C42899182D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:16:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061FC991830
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5781C219DE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:16:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE4CE1F23013
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAED1156F21;
-	Sat,  5 Oct 2024 16:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE86F156C5E;
+	Sat,  5 Oct 2024 16:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h/ow6/P1"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAB93A8F0;
-	Sat,  5 Oct 2024 16:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UrTA+Hn2"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BAD3A8F0
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 16:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728144965; cv=none; b=Wm9nqOIEylGuEkn6MR/HW/ns0YdETYRUqvXk0DBF5atCirzIXnplPTjav/Bq5Bo8xnAY2RJ91Rqsuz71ef+5CE7CUxLMq6bobPJXCkLZ9vdD84RWQCY58PQBQXVQeYZf8CIA5i9g8e3sweUlCb6Q8bGn3Fx+vjFsqB5jsHvFeb8=
+	t=1728145067; cv=none; b=ocFSoOT8Euztgd2+Hlr3YRj2xfWPzX/ondJT4X2u9QjjZ0V6Im0PdjDKAbbPaOwzhMRG96Fs3tBATUCtR++e4BCU2ZHIDPtPodpiqVRkiMnk/8Vz7zi4TJVE7l2bQo5JBvssmMlGpPa2bYTiy93ByLuYSlYGZCvcygY57CrAvGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728144965; c=relaxed/simple;
-	bh=NDOuv9c6OoMTnsPeMlM7UrlGCaiI2uB2ZCHeP9G8S88=;
+	s=arc-20240116; t=1728145067; c=relaxed/simple;
+	bh=sHKoS3BN9fpfLGjHRiJ8ZrcURaLtFw0T+ToIiKx8rFU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kpnfuox3mbWgdKqIyBYjRpvMofl0qpR7nZXsE7Kl0TT6QhhAY+cVEWiTRHg28isM9ZGJcV24MN6Ny78XAe2b2nIb0GSEipBX+vujPorA3x41AAOERIxGSZqRJdzN3M83nykOwav1s0QSKsS2+zDxw68x21rnywbZAj5wobpLuFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h/ow6/P1; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hyCIjsZcXoZycF6/wP9qAmK3t+lawcUgpYpbgndQbwM=; b=h/ow6/P1k95fYePhOrvkJEEQx/
-	mV9pltad/g2CgR0mQjRGwGTnKupuNGrL7xJ9Ru5A9K8ZkxK9X9fveURcW++3LhIjLF9yuiVPDDGNI
-	gFfpoSE0hk0WVPAwqnTDi2K+4ikDicV1ZRGBN61O9tlbzCiOnWhnP+/sDAuBfY7aImp4Bwyq/JG5X
-	0Rg3nbn7yc7ZRji3YizvDy59mfFG7xhuNjCg6R5RA+GTZDzQblaJtzzmlROLC+GTprqPeYedPk5CA
-	eRAn9xXRnwg9tVuyJNTXGrvpTxRFF3LHUkWrudRIhIBVXOqLDHmSu6VtCCyIb9WEpDD9zx5f4CoE3
-	uETOQxjA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sx7RS-000000044LA-0K5U;
-	Sat, 05 Oct 2024 16:15:38 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B2EA6300777; Sat,  5 Oct 2024 18:15:37 +0200 (CEST)
-Date: Sat, 5 Oct 2024 18:15:37 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
-Subject: Re: [RFC PATCH 0/4] sched+mm: Track lazy active mm existence with
- hazard pointers
-Message-ID: <20241005161537.GB18071@noisy.programming.kicks-ass.net>
-References: <20241002010205.1341915-1-mathieu.desnoyers@efficios.com>
- <CAHk-=wgztWbA4z85xKob4eS9P=Nt5h4j=HnN+Pc90expskiCRA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=skVUbnjNiWNG59JrWIDF/y73Gr2NphHzWaG2KZ2oSmPQCbWvOKgnqOmTEqQJSVRTbSykaohGwgzh+GKJ5nx91wQ1DzwaxoiaJl5IaHbGwoIesug6tbl8o1t3M+TXTHzarwFL9yJ/MaTyF/YTSzXMzLKzXGM36QHheXPpydA5uaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=UrTA+Hn2; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=sPRYKTUuN9x9SJKdTcc6P4AJdIR5+O0ksRXcbg9ijpY=;
+	b=UrTA+Hn2G0STLuNCz+V3K5dTG3yWuORr/sn6atCT1EHVsaWOilOGGD1S7wnjsE
+	+bba64MYg8F0wfCPb3QaUdm0YchsYNH/V1DJycrRGV8RpCuCDcQxEvBWX+iJDFdu
+	VyUHz+/DtHR0to07PfjEqUB08l1QaLNKIpiDJ1dWEP454=
+Received: from localhost (unknown [36.5.132.7])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3PyaKZgFn6Ll+BA--.29823S2;
+	Sun, 06 Oct 2024 00:17:15 +0800 (CST)
+Date: Sun, 6 Oct 2024 00:17:14 +0800
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: syzbot <syzbot+aa0730b0a42646eb1359@syzkaller.appspotmail.com>
+Cc: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [gfs2?] KMSAN: uninit-value in inode_go_dump (5)
+Message-ID: <ZwFmiv0lqP02xPtq@fedora>
+References: <66fca31e.050a0220.f28ec.04e4.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,15 +53,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgztWbA4z85xKob4eS9P=Nt5h4j=HnN+Pc90expskiCRA@mail.gmail.com>
+In-Reply-To: <66fca31e.050a0220.f28ec.04e4.GAE@google.com>
+X-CM-TRANSID:_____wD3PyaKZgFn6Ll+BA--.29823S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4REwZcDUUUU
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiRRdvamcBWa5-AQAAs4
 
-On Wed, Oct 02, 2024 at 10:39:15AM -0700, Linus Torvalds wrote:
-> So I think the real issue is that "active_mm" is an old hack from a
-> bygone era when we didn't have the (much more involved) full TLB
-> tracking.
+#syz test
 
-I still seem to have these patches that neither Andy nor I ever managed
-to find time to finish:
+diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
+index 6678060ed4d2..d60d53810bc1 100644
+--- a/fs/gfs2/super.c
++++ b/fs/gfs2/super.c
+@@ -1537,11 +1537,13 @@ static struct inode *gfs2_alloc_inode(struct super_block *sb)
+ 	if (!ip)
+ 		return NULL;
+ 	ip->i_no_addr = 0;
++	ip->i_no_formal_ino = 0;
+ 	ip->i_flags = 0;
+ 	ip->i_gl = NULL;
+ 	gfs2_holder_mark_uninitialized(&ip->i_iopen_gh);
+ 	memset(&ip->i_res, 0, sizeof(ip->i_res));
+ 	RB_CLEAR_NODE(&ip->i_res.rs_node);
++	ip->i_diskflags = 0;
+ 	ip->i_rahead = 0;
+ 	return &ip->i_inode;
+ }
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=x86/lazy
+-- 
+Best,
+Qianqiang Liu
+
 
