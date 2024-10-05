@@ -1,190 +1,208 @@
-Return-Path: <linux-kernel+bounces-352167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE2A991B06
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 23:59:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E32C991B2B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 00:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7803C2822AE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 21:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41CDC1C2187F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 22:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F00816A397;
-	Sat,  5 Oct 2024 21:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DDE165F16;
+	Sat,  5 Oct 2024 22:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Nfk1dpWn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="S4oq/kkd"
+Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazon11020087.outbound.protection.outlook.com [52.101.196.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A9315B992
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 21:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728165567; cv=none; b=gf2jIAPh5jwcdrONwrbhmigje+xcz4PkcMmAmMWsCPHh1nsgYow9HZQGqf9kHn1yoa3bZjKRiBm9p/k3QOqYibFQ/AgpFDvE8pKqVHOY1EMocqKlWgO/CeWwaRPMw0LnvAMMHQpePPw8I0GG08aZqrvP/hQkJo/tN1rOcYk2UDM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728165567; c=relaxed/simple;
-	bh=sWQi9H5xY09crbHKGVuXJ9U7RvLAiaYRnNzeBWnyDfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u1UnfMkfOfdSH8G/i8cmFf0SFZA/7Z2MKCrVpUGIS83AUnPIwAxuZRUVFpgs/Fmg467hRWz4Mvyhko6uNmFpSgo7rKx2GJNrlOyzXNUXwVHUHRDWcT5wQIIgvpotelqzz2u6ejNJ64YRIStzSEvVwrvk5QdO2fqLNz5WCtrKMVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Nfk1dpWn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728165563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X+2qFgJpzwc7r4fjjgneGNErmd7l+84a50BAtN5oZcc=;
-	b=Nfk1dpWnLcfEs6eNfbSB5cbBzQBeafdUbe3i6QyATOVn1vPvjFpD4puELjp+09IVaD/CqW
-	BZjKGIvIKI5KMljL+fE7kLREiP6K+jmUsOVrTr89z2nszzoRbExgmwwxGnoTQCUZD/9vTM
-	5v6JqDHDU3o6nWpkNflarNOUheMUX64=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-106-RobdCYX6PDOF82wD9VPq2A-1; Sat, 05 Oct 2024 17:59:22 -0400
-X-MC-Unique: RobdCYX6PDOF82wD9VPq2A-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a93bac20fccso370576866b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 14:59:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728165561; x=1728770361;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X+2qFgJpzwc7r4fjjgneGNErmd7l+84a50BAtN5oZcc=;
-        b=ZnrQr5jgXGWFL9H9cDI4kBoO4PV7ibpsUYgUEsL0n5hdWdvG2tucxi1m1hBv51PmDD
-         QnLV7k6Cxo1nZqfCUviKKlD7LqCzH9DVH/RD+Y4V9tehPJQK8sN8I+6eMtD4xH1sRlWd
-         uE3Mqa9ux8gbvHN4+CzlX4JLifaji55Sa6rVhSr1fAuw+QVoPw0LY/S20xeF7rthcGBf
-         gZIS/+3qyPv9s5KEy9XpT5dmgABSaJsXykEq1c0DDqHwcf5L/VKeZco08vP7rFehOW3y
-         QZi5szJttWLF/KUt9sO6sSPrMvXZjI/q+TSKt9ItDJgstt30da1SVp3uBKLIHhYdTNod
-         W73A==
-X-Forwarded-Encrypted: i=1; AJvYcCUc/JTEnBvntzr3YHkWX/Ujka9lqG6iScAWnj1MHio1oydgCrFwskZthi0jnEPHcUh8mMKoeaN62UEJEqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX1WePP1fPvdugiaYLK6zj+8K/4/ZC0XX241MiRS1Htm9MhGTP
-	JvggR3OKVKdPRptlV6Gfhyp0aqWYtApKY2xLzgLvT6eEHbhgNlWpWR2VKcYxGNVE8QaalzMAC54
-	PLRmoMzDGW68KhPp4HPq5QtxdonfkDimTR9u14S0hcW2oAWXpXjyXsVzDUGZxxA==
-X-Received: by 2002:a17:907:841:b0:a99:4d0c:821e with SMTP id a640c23a62f3a-a994d0c8677mr12489966b.24.1728165560961;
-        Sat, 05 Oct 2024 14:59:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHdZaLgeTMW0Q9ovqdUtwF3Ao5qKKQfYYu9MiQGv2vWO7r/n3G3C7Bdy1d6+hgQ9ndvMexvgw==
-X-Received: by 2002:a17:907:841:b0:a99:4d0c:821e with SMTP id a640c23a62f3a-a994d0c8677mr12488566b.24.1728165560521;
-        Sat, 05 Oct 2024 14:59:20 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7b24e9sm178389566b.156.2024.10.05.14.59.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Oct 2024 14:59:20 -0700 (PDT)
-Message-ID: <0ce10896-6246-411c-b01e-54d02ec7a76b@redhat.com>
-Date: Sat, 5 Oct 2024 23:59:18 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6991165EEF;
+	Sat,  5 Oct 2024 22:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.196.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728166255; cv=fail; b=A1O97Zu++zt38zbmk8h/0jQzsKuMGK9doXXetFYvBPuwymZr27X38T4OWy5xc/P2EyDYuT38plQ0a3khKWyiWM5rZ2OcMuZ6hMDgnmZUBTAHm3sFbulk05YMVMuWR2FTAWDaYJewifr2bjfYIL07oaZPp6FSMClK/ttF2djbPYI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728166255; c=relaxed/simple;
+	bh=3IQr/IJDAqqavfLUwhu4WzleiOhuvwPVxFVKDFMMGvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dmz3aPbeDdvjnPLfdPGm4UneKjsDXYwuaZ5imlwPixDSjbyFmRPKoHqliGg2Mae3M08RN8X9en+wDmluF+OhvbuJI3DQXp5XcIhh3SIvEgFtD5zV2mJ17VA+MUAKH3EvCNDKrt/ttbc4Q5FuqLyRtkWi94WyW6gCMzylJBBZUUI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=S4oq/kkd; arc=fail smtp.client-ip=52.101.196.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JfVdPtRHj9MQ+10NM+ie+uMWYrQXSs9bDMsENWRUtDrZCBW9Z1Gvwya7W5xfWcjio+J2WnCyLsHuw4Dxq9FCyj0pXTJ665zMJGN0/iH7migTDAlfFGwhqT57ZAH3l9idm0p833nMrRQ8XraW2D+JAlQ4fXKhuR17WnHXtvh3O774T6uBT8AiwVilDUj5ocILVipNYm3r5E+Y+jko02R7opm91cJN7xpfh5eTd6prS+i7LKSCfV05g9zmuGZkA4LjDj6WBCeUXpQZcXf4obDrdmTYOTIZuCrAIpm53g5hCJU5jSWhgJ/oHyspZuea/8IXv/ql90dkS0iMxw4rdehJOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3IQr/IJDAqqavfLUwhu4WzleiOhuvwPVxFVKDFMMGvQ=;
+ b=geH9lHbdFLUXFWCAeAaAE0H0FPdgyk5AloU5qpJ4SBEK6avPjo80AJkxixAf25HFej7A9UJm0921DzGRdTlw4FCoFcJhQ8e8yAuLTrSFQid49NE2tJQlvC2v1JRPjKb2RPZH/2Oc0oKYw4bnkRiAtv1sJEKKMgytF8SmG+pVelI3eU4ftX4FxK6c4gc1PHa7goEC7G4wIBYEEM0Gqi6n7B6tFDoxtOpGHPZVASIIy2O3MA0ZAId2ml+xHg80JF80Y29jvrQUHyVhZIFHfR+0UIz53uRIg8NVHJYpwdu+hrumqBwFpnQXkgZEI3r1HLZoobboZ5yNbE5TMGQHlq6HDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3IQr/IJDAqqavfLUwhu4WzleiOhuvwPVxFVKDFMMGvQ=;
+ b=S4oq/kkdp7szFfPoIw+1I8T18qm9j9l9JaPTR9ljckJSPMSfNMMuZHv7C4S+6TGBGNr2bD3IRqUU3PROZsVffta3oxGxxHh+LTADj0SvMtMu5VSMv6IzuNsChjBbx7Om0dnsRrdmmNauX54e5oaElDEBnezANp9HtK5xEEDXYJI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO3P265MB2204.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:107::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.20; Sat, 5 Oct
+ 2024 22:10:50 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8026.019; Sat, 5 Oct 2024
+ 22:10:50 +0000
+Date: Sat, 5 Oct 2024 23:10:46 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Trevor Gross <tmgross@umich.edu>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
+ Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+ <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+ <justinstitt@google.com>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 1/5] rust: fix size_t in bindgen prototypes of C
+ builtins
+Message-ID: <20241005231046.5f575779.gary@garyguo.net>
+In-Reply-To: <CALNs47sgdi4PU8YXxozMm4=7aQ9RspJsKkKrYuT++9KiC8E-KQ@mail.gmail.com>
+References: <20240913213041.395655-1-gary@garyguo.net>
+	<20240913213041.395655-2-gary@garyguo.net>
+	<CALNs47sgdi4PU8YXxozMm4=7aQ9RspJsKkKrYuT++9KiC8E-KQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: LO4P265CA0156.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c7::18) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] platfom/x86: asus-wmi: revert ROG Ally quirks
-To: Luke Jones <luke@ljones.dev>, linux-kernel@vger.kernel.org
-Cc: platform-driver-x86@vger.kernel.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- corentin.chary@gmail.com, Mario Limonciello <superm1@kernel.org>
-References: <20240926095344.1291013-1-luke@ljones.dev>
- <5c21455c-c688-4287-a4ad-d047efa180eb@redhat.com>
- <e8107624-cb9c-4eaf-9760-073424b38b3c@app.fastmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <e8107624-cb9c-4eaf-9760-073424b38b3c@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO3P265MB2204:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e542967-ab7e-4eff-c268-08dce58a924e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SkluZ1lzcE9PRjgyRlV2YUFQRHJ5N3l6TTVYVVRoZDJGMHJ5OTl0TS9MSUNv?=
+ =?utf-8?B?c3c5QjNaWDFRS3BFdzBueGJQa1dGM0hqVU81M2R1V3VmMnQ1N0tkaCs5NlVi?=
+ =?utf-8?B?aWJ0SG5lSHYyZVE5R2FhUjMvOFFCV2NZZjR5UlRxSlU3RFVMM3pIWkNZZmQ3?=
+ =?utf-8?B?YlMwYWJhZU5pVEV3RlpNcGd4L1drY2tBNmY3YWZnZmFac0NaVlRhaDJUTCtW?=
+ =?utf-8?B?dFVPYngzUXNZQlplb3l2U2FEYmo4Mi9MUGE3OUhvTUtQU0I3cjgrQXZDQVZx?=
+ =?utf-8?B?YVV6cGdZTnRBL1Y0MnNkazJpYzBmaWVQM2UwVUFacTFWVnhxTy9BK00rYmJC?=
+ =?utf-8?B?a3l2TXk0ZjVOSDlFeUljdzc1UHBaVFJOajhpNTc0WWpWRlZiZ1dYSWxOYm82?=
+ =?utf-8?B?NndMK2JhOWFBc3pUYWtSdnpBaUU4V0o0b2VXZVFiblZVV285MmwvVFFHWE0z?=
+ =?utf-8?B?MXlhbVQvdFlPbzYvMFpXVUxCSXdVQ25DamJVRERpRU5QYmFZY1NUcHE0Q3Rt?=
+ =?utf-8?B?OFp6VUJ3L3lZaUdobHpQUTZWOGlKNXZBb0RkZWV3aTdZNU5LVkUwR0hjengv?=
+ =?utf-8?B?TW1tbGdyYlczVTBhckg3RlRzdnNMd25MOVV4dkVBMnVPSWpsa0crcCthWC95?=
+ =?utf-8?B?WXhXZ0wxR2w1ZDNmVlZ3dDltNEVZaWJHWUpOSWV0elFic0FEOFRndnBLbFMr?=
+ =?utf-8?B?ZVF1SitPSmU2YUtwL1ZHVUJHL3lRUlJuZ2lRT0xld1JuTGFIak1tZjJGUnVV?=
+ =?utf-8?B?RGlNbk12N1kwa0RvMUxNdWhwYkFQNFVjaG1VNWs0Tm9iVWxEb3ZKZUlMLzdk?=
+ =?utf-8?B?N1BJMXczQnlBRkhIR3NnTUtVVDVCWUNVQ2hUUTd2YVdpVHpybkwwVGpkRmZQ?=
+ =?utf-8?B?N2hpaVJnOU1zVWYwY0ZGQkpHSU54QStmcS9LdEUyaUZvSTY2TmlqNUdzeDZj?=
+ =?utf-8?B?QU95RnV4aCtsZWl4YVZXdGRpRFV6RnphaXM4WGFVTmt6d3ErUkFGK2xRTDBn?=
+ =?utf-8?B?K01FRnNLR0xzMXE5ZVJ6bGN3V3dlYTlLbEh5V3ZsekNsS3VkMDNqV280SkhJ?=
+ =?utf-8?B?U2FmZ05CNXl4YTM5TXhhTCtMKzFubC9wVkYvdkNqVXdUcmRTZnJJU3k3c2ZF?=
+ =?utf-8?B?eGd3K2U1N2VVN3h4bkVBd0ZyV09YMmVTVnVlcFAvcDQxa1NTS1k5OG1IWG4x?=
+ =?utf-8?B?MzlHTHVrbzYzUkxaS2lUWG1VSGJWSlNwOTFjNm9jdUQ2Z092MDNYK2I5cU93?=
+ =?utf-8?B?LzRZMVFjNTQ0RTJ3VU9WS25zNW1lcWZaQnozbUFLblNQcHRqRy9XU2xlRnhJ?=
+ =?utf-8?B?aFJoRHZoMlFGU2gxTTQ2RGNYdy9nMEwvUTF0VVo3R1VTOUZqdGVPOEhERUhk?=
+ =?utf-8?B?bzIxdGNJeGhiRkEzaUNMaWNabll6amw3NTdHT2xVSWNWQUFPUFBVREhHdktr?=
+ =?utf-8?B?dGwyNmRZOEg3SWVBK24zTi80SGNwSzlrUWlqMTJhSDc0TzZ6aC9ETCtkVzlH?=
+ =?utf-8?B?d1BZV2ZiWWdmOWowVks0OStsd0pELzlSN09ETnh3d3NpVDh5aHdPME1NLzFt?=
+ =?utf-8?B?UnFDR2NtV1F6UllTRnEzdkpLc3Zvbmk2RTRNcWdyYkR5YnluV0ZQOFl6QmF5?=
+ =?utf-8?B?c1FGNkI3Rk04SjVnakc1dkYvZExIaUt5cVJpZWZKeVZERHB1bHRaSVA4dmU4?=
+ =?utf-8?B?SDZYOW5LVjZidjdBQlJPdzhzUHBlZXZkc3J2Q3MxTGhGeVAvMzZrMkRRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(10070799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WGpsWDRsdzNoUTFhNE9RdkNNb1EyTGk0Q3JhSXB5TTRZa0owNVZ1WXJVRHpG?=
+ =?utf-8?B?OWdsQmJYSHR0akpFejRDRCt6TnVvMGl1TUFxbkoyMGhXUCsvUENmbkZFSHJw?=
+ =?utf-8?B?bXZoaVZQQStaMkwwYld6NVFYOGhDRHR3cGlwZmdCYW5WdmpPaSs1azZFTklh?=
+ =?utf-8?B?NS9pd2dFdXpFWXBkeHRjSWs3YjZNaHlOUTd4OVVlSkVEeXFRaGdzck1vWEYx?=
+ =?utf-8?B?RDdEaFExMW1wbzR1eks2a2RCc3hpb0pqT0t6ZzFFQzQwekpVeERHZG1ITWFz?=
+ =?utf-8?B?SDB1WVZ3R1NPVlZmaGNBeEJkSVRVYmR1L3NZQlNEWmtrR1pEVUlFdndyYlJi?=
+ =?utf-8?B?Q09iUWNsc2M3eHhqUFBmUk1yNDVmQTZMbmVwd0ZSZytzNHp1UzVURzlzZXU3?=
+ =?utf-8?B?amNpcEJDYWsvTVNweFl4enNyVWRlMjgybENnVTZCdVQ5RkVHSERwUHp1Q3FC?=
+ =?utf-8?B?MlRvT3FGS3JRYWxqQWJTZUczZnIrMk5PVHNrdk4xaW85Kzl6OG5Fd2xFV0hF?=
+ =?utf-8?B?bHgrY1hlQU5nTWIrOVRwR2tWaHljZ0dsdEE0NThVcWUwTmpHZWRPY3F0TVgy?=
+ =?utf-8?B?eHJVN1MrSDJTTXRvcVJKOGRlQXV1YjBTdFhHN3JmSnpOWGRtQmFCaGp3azBV?=
+ =?utf-8?B?cG9HMXYrOWt2b1NjZTJsbTljaU5ZVW93Z0NGUTU3QlpxTkJWa1V5WnEzUWlT?=
+ =?utf-8?B?TmU3QXd1a2JLQzV1Qm9WQnA0Y2I5QzRyUC8xRkRCSk5HV1hUcCtJZ0RIeEJu?=
+ =?utf-8?B?S3JCWVZPQUdGc2s5b2tvKytyWnM0ZVlkamtMZnVKOW9BQ3F2V21QTzcrOXJz?=
+ =?utf-8?B?cVJ2ZHhQQS9SaVgwaFZJUDArY3JSdXoyT25BMFlVMzJQc2QrQUU4eEQvMzRM?=
+ =?utf-8?B?bHUxcVkxVExLeGRkaU5CaHNYMlFqb2NERGEybG01ZHVaMXF1amM0K21sT0NE?=
+ =?utf-8?B?QkFiWC9KZEc4bk8yUUJkS0hHbE1oVTFmOUtiZ1FQQkt5YU5RemcvRGZIM0h5?=
+ =?utf-8?B?dFhvQ1AzamZHdTNJVFg1TmFoRHpSenJWbHMveXNDZ0dHaFlrdER5MVdnWGx1?=
+ =?utf-8?B?dXFxMjdvdm81RkJyZnpKSGUzR1h4V3Zucit5WFZpbS9nTmFyNm40N2J6aGE3?=
+ =?utf-8?B?RGFrRHE2bUhTMTE5TEJDbkxtc28veWpITGFSRlBhQ2ZUZXJ6VVJmbFl3K3Yx?=
+ =?utf-8?B?ZjRoK3I1MnZzWWlvVjJHWk40eGVLVGlXMXJ3NWlnc0NoTlhlYzFLV3hRdnlI?=
+ =?utf-8?B?Uy8yT0hWdEZRclVZZElPQTEwaG9xNEI3amk0dStuWVp1WTUyRGZNTTI3cHZ6?=
+ =?utf-8?B?N0JCMm9vd2NZajRsYnBNdDlBSk1iaXV4anNQQ1IxbWZNNUZMU2xtd1VUQ3BO?=
+ =?utf-8?B?R0FkVVU0SEdaM0pkWVNVRlRyY3pUeGVsMi9NWWNabFhES0sxNW43U3pjcGVZ?=
+ =?utf-8?B?WFJWTURnazZNaE1Md2tlNDVaWnhNOXlGSXFTUzZFc2Q1RUhXTzBzWXZmaWtD?=
+ =?utf-8?B?NXlOUHFYMkRxa29RVmN2bnhDZ2NpMUNQMFcxQW9QcTBqcHhnQ0F4ZmFqeWFv?=
+ =?utf-8?B?cVBPVDZYQUU4c2ZmWTByTDdkeGZUSG5qRVB4VWVmTVJUeFZZK254OEtQSlBh?=
+ =?utf-8?B?S0FmNWE1RENWN0N5V09nRUZYYStLSjB3VDh0dHNscDkwUFdkYmZsRW0vb0tz?=
+ =?utf-8?B?NG5YNXpmY3BscFgxYXltNDhvcVVIYk9ibjh3ZTNmYVdWRFM5UThyOGxTUVJD?=
+ =?utf-8?B?Z0h6WnZra0VXdmgxVUg1UUQrd05mNWNkS2RxeGF6TEN4WG1iZTlDQkNrMkpK?=
+ =?utf-8?B?VWNTUE5FMy9EOHVUU3hweGdpOHhHRXFFRU00SW9ldFA0ZkxnYURJWHhBUVN1?=
+ =?utf-8?B?VGpSOUZ5YVhQWUZ2ajBGNXBsZ08zMU9MQ0tOQjhnMEQ4cWwxRWE4ZnVvb1JY?=
+ =?utf-8?B?cjVlaWE2SjFGSHl6Ritya0dSUzRVQVp3Z2t0SE1aTHBQVXQ5STIyS1FmTVZU?=
+ =?utf-8?B?aTZUUndHd2lEQXFLRmJ2UUtOUmZ5Y1UyaG51UlkzWXF0VkFCVjVrM1RyUTVR?=
+ =?utf-8?B?OHZWa0NQUkNaWUk4eWhtakc1UWZWSVJjMFlRZVQwZndDMTF6b3V5OGMrSzdB?=
+ =?utf-8?B?YWFzU1AyaWpwSUlpZ09sTEZOb3lhMWlRMkFyRFBqWDkvaWpKQnhURHllWVpO?=
+ =?utf-8?B?ckE9PQ==?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e542967-ab7e-4eff-c268-08dce58a924e
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2024 22:10:50.3676
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dfzgvIGrRsuocCLGujfLoXBXJ4hIEjjBdRcX+QuR2vJJQOeCv/cBuYnzVMyPngKqHVOfHNic11jOmIhXcQ5Q+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO3P265MB2204
 
-Hi Luke,
+On Sun, 29 Sep 2024 17:00:29 -0400
+Trevor Gross <tmgross@umich.edu> wrote:
 
-On 5-Oct-24 9:48 PM, Luke Jones wrote:
-> Hi Hans,
-> 
-> On Sun, 6 Oct 2024, at 3:37 AM, Hans de Goede wrote:
->> Hi Luke,
->>
->> On 26-Sep-24 11:53 AM, Luke D. Jones wrote:
->>> The ASUS ROG Ally (and Ally X) quirks that I added over the last year
->>> are not required. I worked with ASUS to pinpoint the exact cause of
->>> the original issue (MCU USB dev missing every second resume) and the
->>> result is a new MCU firmware which will be released on approx 16/10/24.
->>
->> First of all let me say that it is great that you have gotten Asus
->> to come up with a fixed firmware, thank you.
->>
->> With that said I believe that it is way too early to revert these quirks,
->> users are usually not great at installing BIOS updates and that assumes
->> this will be handled as part of a BIOS update, if it requires running
->> a separate tool then the chances of users not installing the update
->> will likely be even worse.
->>
->> So IMHO for now we should keep these quirks around to avoid regressions
->> for users who don't have the MCU update.
-> 
-> I wasn't sure how best to handle it, mostly the intention was to publicise things. In any case the quirks don't affect the new FW update at all and most folks won't ever notice.
+> On Fri, Sep 13, 2024 at 5:32=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote=
+:
+>=20
+> > -bindgen_c_flags_final =3D $(bindgen_c_flags_lto) -D__BINDGEN__
+> > +# `-fno-builtin` is passed to avoid bindgen from using clang builtin p=
+rototypes
+> > +# for functions like `memcpy` -- if this flag is not passed, bindgen-g=
+enerated
+> > +# prototypes use `c_ulong` or `c_uint` depending on architecture inste=
+ad of
+> > +# generating `usize`.
+> > +bindgen_c_flags_final =3D $(bindgen_c_flags_lto) -fno-builtin -D__BIND=
+GEN__ =20
+>=20
+> I wonder how reliable this behavior is. Maybe bindgen could do a
+> better job controlling this, is there an open issue?
+>=20
+> - Trevor
 
-I think we can look at dropping the quirks in maybe a year from now
-or some such. Doing it right now feels like a bit to quick after
-the fw fix.
+I didn't search for bindgen issues when made this change, but
+apparently this is indeed the suggested approach in
+https://github.com/rust-lang/rust-bindgen/issues/1770
 
-And as mentioned elsewhere in the thread, if possible it would be
-good if some other driver. e.g. hid-asus could check the FW version
-and log a warning if the old version is still found.
-
->> Related, have you seen this series:
->>
->> https://lore.kernel.org/platform-driver-x86/20240922172258.48435-1-lkml@antheas.dev/
->>
->> that seems to fix the same issue ?
-> 
-> The history of that is here https://lore.kernel.org/linux-pm/20240919171952.403745-1-lkml@antheas.dev/#t
-> 
->> And it does so in another, arguably better way.
-> 
-> It is a variation of the many many things I've tried while building a comprehensive set of data for ASUS to work with. You can achieve a similar thing with only s2idle_pm callbacks and Mario's patches to export the DSM screen-off as an external symbol. Better is subjective since it still fails to fix the initial reason this work ever started - fixing the Ally - unless delays are added.
-> 
->> Although unfortunately as patch 3/5 shows just calling the global
->> "display off" callback before suspending devices is not enough
->> fixing things still requires inserting a sleep using a DMI quirk :|
-> 
-> This is because the issue can only be fully fixed in FW. What is happening here is just another variation of the quirk and the things I mentioned above. It gets worse with different compiler such as clang, or different kernel config, or even distro. The cause of issues is that a particular signal the MCU is waiting on may not occur and that becomes wildly unpredictable depending on kernel config, compiler etc.
-> 
-> Even Windows can have the issue we have here.
-> 
->> Still that series including the DMI quirk might be a cleaner way
->> to deal with this and if that is merged then dropping the quirks
->> from asus-wmi makes sense.
-> 
-> All of this is fully negated by the coming firmware. Having said that, *if* there are any issues with these patches then those issues will never come to light with the new MCU FW either as it fixes the root cause of the issues seen.
-
-That sounds great, once more thank you for working with Asus to
-properly fix this.
-
-> The mentioned patches achieve a similar result to using Mario's s2idle callback patches and using those in s2idle_pm_ops. But as seen above, the timing issue becomes apparent - and this is fixed only by using fixed FW.
-
-Right. As I mentioned already in the other thread I am having second
-doubts about moving the LPS0 display power off call to before devices
-are suspended, doing so would mean that the display might still be on
-when that call is made and that call could disable power-resources which
-are necessary for the display causing issues when the display driver's
-suspend method runs.
-
-So I think that we need something closer to Mario's original POC from:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git/log/?h=superm1/dsm-screen-on-off
-
-if we want to make the suspend order more like Windows and make
-the LPS0 display off call when the last display is turned off.
-
-And as you have explained making the suspend order more like Windows
-is unrelated to the real cause for the ROG Ally MCU suspend issue,
-so lets continue any discussion about suspend ordering in the other
-thread.
-
-Regards,
-
-Hans
-
-
-
+Best,
+Gary
 
