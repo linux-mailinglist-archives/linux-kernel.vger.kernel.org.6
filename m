@@ -1,150 +1,85 @@
-Return-Path: <linux-kernel+bounces-352049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4991199198A
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C4799198C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFDC11F2251B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E30571F2248E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FF715B12A;
-	Sat,  5 Oct 2024 18:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1865D15C15B;
+	Sat,  5 Oct 2024 18:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="inQ9jLc4"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ce8SFvxp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A75615DBD5;
-	Sat,  5 Oct 2024 18:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743E714830D;
+	Sat,  5 Oct 2024 18:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728153148; cv=none; b=TBGEJ9n9E/K4oiSpMEf75b3SmSN2geiZE2yF6WSlhgzKwCfkeFLx/6Kc8y74btpWpwxSRb3UCaCOlSkNv8I3al8ISGu3A32bhLnjz8QJJwLyiJIiwlE1kjaFBqTue4estl8ok5+v0lyIILbKs6lWfdPwIVsCKlJhGDa+uCfdd44=
+	t=1728153179; cv=none; b=cOxhqYeNJSFuFXBZRhWDFUiinWHWIL3RdFyPV/gK8PzC2vdyA4nDCmlnKAd+FN6FvvPGXtwnJ/6eFwxtmKYtUbe059i4zZIcbtbEIVRmIMtHCDk0MXY0UBWzxnmPROgeR9JJRr7/A0PC1cUC0B+EUPfRRIlu3J/UX5N6Uwfe+J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728153148; c=relaxed/simple;
-	bh=ZkRTmO13misSKYHLA8WqddFnVMCMFoQiKD0dAnP8Bqs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EVh8eINyy7AczDKkfbrDopKQNSdQ7aq9GpL+1VFk2KVyVePAOyauW/tLCceUtfhi7fjuwcuOtUGP4oSIJBmuCN4zmYuhTdsXih6p7gX+cXx2ZcynliJeaW0YBN+DhDNHqdYSk4E8wPpH5+WCrrB0mF5gww4lGLyGnz8IqRhoKTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=inQ9jLc4; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5398939d29eso3919557e87.0;
-        Sat, 05 Oct 2024 11:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728153144; x=1728757944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=95HHUC7EFXuBzOd0zVd+AhrmvfhhpjfboAFysRBt1zg=;
-        b=inQ9jLc4nPW9SeBWRw7Yqz8ij2BPWo9Vgso3Hc10zsz+eJZ3Hp6nWqOUMali2Flvy+
-         NmIKY02Gqr7D6Aqz855sbxE+o/ax18W3m2F2bexLFeEJAemcfVrzZumvJusByuUVeUok
-         9ChEP4RTHMR4H4neRZ2zK7TL8Vc5lTA9Aiy0/V8e8Df9alf2EB8+/iO9H+TeE71ej1HT
-         YH1OqlJmwnSLqesolL9KhXt1Mr3JkakdDDUD50jnopghBxkDAcLyVTQHQ4cHgxCRXSEv
-         YYNHOXYchTnmqT2WINCuETIPjtTTccl2bDVk+da2viUYlx0uKsDFAel+JaCY5XRqjYZ2
-         ClXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728153144; x=1728757944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=95HHUC7EFXuBzOd0zVd+AhrmvfhhpjfboAFysRBt1zg=;
-        b=oP6S10vrBs0RdzTibIi9EcQWYxv7/1gHsoiIrK9vV0ij7nzM9n5CZZrRnlbGrPq7xB
-         N7Xcn206mquT1Xr5rMExlEgLCsYDOSZzytwFzdpAx2vvaNX0/LmwohEfemeNRWDLig5d
-         gVkxHG2e7pvTZa2tpsWNsFfk06BFG8vBl/j4VtOWLlyA+dz3kMPvKRNx9Jneln3sVhDK
-         u/3VlNEsj2vb/oX8tMncpSoKaMW6ScZutCYN27uHIPErZkxD70rt/3wUIEnnekiIF4bv
-         8WnJRaYB6DsrniUAhww+/FgA8kIyZZReItW0G0TTkaa4lvhYoCkfzt8yXLu+PTjpQUnU
-         qYEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVam/sDQQQpKfjm9JbxrRZJQg2VoZ4l5ZoeEumu1O2kBAlP+bVE7SZeC2FIzz1sXej8V5mybgwVame7T8Kx@vger.kernel.org, AJvYcCWmrwWuMJx3EWsLFic3NICIv0+p2U16Nt/7zw4r6N0fBx+QW2kWRsBq+tR/6ducJRZutrH88of3vH1R@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8SUb/dXOoAtLLF7BOdTjKr2e3aCvNBHRRtcsbIy8y6IUiwhWU
-	zXSdWkZCe5nf4t7BnW5UT+TKRj+scGuRQJjs32xjP2m1gALAjREFQLlf/JsS4lNn7oDBN6BJSOZ
-	f7NvEg9ckyk3Rxxri+eaR5E2C668=
-X-Google-Smtp-Source: AGHT+IFHbb0fsXFJqB7tlNHdJBbwMrZDFLVYhd+su7G7RrwWVXckBepKb5wdK+T44aUIkcoN/ghhklLBhlaPtnCL+D4=
-X-Received: by 2002:a05:6512:12d3:b0:535:69ee:9717 with SMTP id
- 2adb3069b0e04-539ab84a7cfmr3611151e87.3.1728153144007; Sat, 05 Oct 2024
- 11:32:24 -0700 (PDT)
+	s=arc-20240116; t=1728153179; c=relaxed/simple;
+	bh=wBVEqLRClwP+JuVd3fIDjmM3hNLkhr0pR4QELq5zwnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PKcB5jwSXyygMCuUtIoUDg0q0xQKNhb7n7vK/CIhjouLoXw1a2NQdLXimEMrmmnefU3EqFaFvhal/S6bkAao7O1Y158XKqUVkDLNGB6OBukkVUzgVT59na0A48x7jRv5OLi1lk3T67FTGE1TZUXUnlgsYOBJaM9dWLJSUEjMpPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ce8SFvxp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F781C4CEC2;
+	Sat,  5 Oct 2024 18:32:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728153179;
+	bh=wBVEqLRClwP+JuVd3fIDjmM3hNLkhr0pR4QELq5zwnE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ce8SFvxpJJ9CiwYpE+C46vnIwiEe7ZGHYi4JuygjhX3MRgcox0ocCgwD4rzRhE9Tl
+	 5ydJSwqahmPbDkVmLBw85+YtceYdc2+10xZZzVYId627SeXMf/aGjhAKfZRd7iCkwn
+	 HVgKbMKE2HhcFRv/X0czjcT3XlkGFgasDJt0Arz9QeSOGJ2V6yh+k4kRVbFfyBRedP
+	 41tDDdRc1gKgqHEk/cdR/wYGp1KrUNIePgtZT+YnqCjSpACqspaxmmkY5vG4gtnQde
+	 T8hEIRy9v+Oll88Y8QdR6G5nuIK7fdiS6ufk0qm5o2DYDGZBf5+kmDEgdAIGJPgNmt
+	 lO4wZway6jRoQ==
+Date: Sat, 5 Oct 2024 13:32:58 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Cc: sherry.sun@nxp.com, linux-kernel@vger.kernel.org, marcel@holtmann.org,
+	haibo.chen@nxp.com, linux-bluetooth@vger.kernel.org,
+	LnxRevLi@nxp.com, devicetree@vger.kernel.org, ziniu.wang_1@nxp.com,
+	rohit.fule@nxp.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	amitkumar.karwar@nxp.com, luiz.dentz@gmail.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: net: bluetooth: nxp: Add support for
+ power save feature using GPIO
+Message-ID: <172815317734.505678.8487892144174399506.robh@kernel.org>
+References: <20241004121941.572539-1-neeraj.sanjaykale@nxp.com>
+ <20241004121941.572539-2-neeraj.sanjaykale@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005160826.20825-1-pali@kernel.org>
-In-Reply-To: <20241005160826.20825-1-pali@kernel.org>
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 5 Oct 2024 13:32:12 -0500
-Message-ID: <CAH2r5mtvp74nnU7ueqiyVrNLurM3ubQmBSTP=HcFqti=ZsWaNQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] cifs: Improve access without FILE_READ_ATTRIBUTES permission
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-The obvious question to check is whether this would lead to any issues
-if desired_access is not passed in in oparms in any cases (ie if it
-ends up 0), and also that this would not hurt any cases where we want
-to keep the handle cached (deferred close) but don't have sufficient
-permission for it to be usable by the subsequent operation (e.g.
-revalidate or stat)
-
-On Sat, Oct 5, 2024 at 11:10=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> Linux SMB client currently is not able to access files for which do not
-> have FILE_READ_ATTRIBUTES permission.
->
-> For example it is not able to write data into file on SMB server to
-> which has only write access (no read or read attributes access). And
-> applications are not able to get result of stat() syscall on such file.
->
-> Test case against Windows SMB server:
->
-> 1) On SMB server prepare file with only GENERIC_WRITE access for Everyone=
-:
->    ACL:S-1-1-0:ALLOWED/0x0/0x40000000
->
-> 2) On SMB server remove all access for file's parent directory
->
-> 3) Mount share by Linux SMB client and try to append data to that file:
->    echo test >> /mnt/share/dir/file
->
-> 4) Try to call: stat /mnt/share/dir/file
->
-> Without this change the write test fails because Linux SMB client is tryi=
-ng
-> to open SMB path "\dir\file" with GENERIC_WRITE|FILE_READ_ATTRIBUTES. Wit=
-h
-> this change the test pass as Linux SMB client is not opening file with
-> FILE_READ_ATTRIBUTES access anymore.
->
-> Similarly without this change the stat test always fails as Linux SMB
-> client is trying to read attributes via SMB2_OP_QUERY_INFO. With this
-> change, if SMB2_OP_QUERY_INFO fails then Linux SMB client fallbacks for
-> reading stat attributes via OPEN with MAXIMUM_ALLOWED access (which will
-> pass if there is some permission) and OPEN reply will contain attributes
-> required for stat().
->
-> Pali Roh=C3=A1r (2):
->   cifs: Do not issue SMB2 CREATE always with FILE_READ_ATTRIBUTES
->   cifs: Improve stat() to work also without FILE_READ_ATTRIBUTES
->
->  fs/smb/client/cifspdu.h   |  1 +
->  fs/smb/client/smb2file.c  |  1 -
->  fs/smb/client/smb2glob.h  |  1 +
->  fs/smb/client/smb2inode.c | 71 ++++++++++++++++++++++++++++++++++++++-
->  4 files changed, 72 insertions(+), 2 deletions(-)
->
-> --
-> 2.20.1
->
->
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004121941.572539-2-neeraj.sanjaykale@nxp.com>
 
 
---=20
-Thanks,
+On Fri, 04 Oct 2024 17:49:40 +0530, Neeraj Sanjay Kale wrote:
+> This adds a new optional device tree property device-wakeup-gpios, which specifies
+> the GPIO connected to BT_WAKE_IN pin of the NXP chipset.
+> 
+> If this property is defined, the driver will use this GPIO for driving chip
+> into sleep/wakeup state, else use the UART break signal by default.
+> 
+> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> ---
+> v2: Rephrase description and use "-gpios". (Krzysztof, Rob)
+> v3: Use device-wakeup-gpios instead of h2c-ps-gpios. (Krzysztof)
+> ---
+>  .../devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
 
-Steve
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
