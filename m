@@ -1,74 +1,48 @@
-Return-Path: <linux-kernel+bounces-351785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4B8991602
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:32:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD31991606
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 12:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C2D2843D3
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:32:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C01AF1F22D99
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 10:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FDF153838;
-	Sat,  5 Oct 2024 10:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA2917C8D;
+	Sat,  5 Oct 2024 10:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ensFfRQa"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYLadirp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFFC14B94F
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 10:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2A3145A09;
+	Sat,  5 Oct 2024 10:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728124276; cv=none; b=gCmQsMZtFPdUoy0l0eEJ9oD6iIWxDFJc5VNET0CHZ9sflbxXU0QDC3zZDSast/euALcgFk1yCbFpRguBF6TRHMG7MFVW8rx8eKLNgiBpwM7qSTQPCFbqz2sgUcb10gMFhxLMqdoTdL0+CQD391vCT30reVvQpn27K16qduxVtcQ=
+	t=1728124360; cv=none; b=qumBu0x40MxAbwAWtK28NYxApujTeHl+bVmldlDCZ2d7ow8mjp8domEIV/eBhMaxXqeOtSIBK/9oitkILdrM6H6j2sR+IKibI+HrAlqYgcEaIlb1HyXfF6i74g5FqJm/bFpYqAskKV94NKiuyngH9RgdVfw5D3gynYlKn1fe3/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728124276; c=relaxed/simple;
-	bh=MZdA/sRLAsmvUPZP3TphhP3dJzkLom00eAxDcabblxk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dMH+6Jb0dMemfRROmM5k8isNpYI/0CKXMsMxGCXL2IMGKdIxTGnNPUcpoFwtRgjOPeQ9E7kJXkUo+XSdItWjuuz0+Iflsqyyqq+ArheqmH7Ne4brDd7baqjxKNjELvcB7AsV/3Ws+pGcnFVdxIDiCSMwaSyvE0R8qyIJa8J7oFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ensFfRQa; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d446adf6eso467307466b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 03:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728124273; x=1728729073; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pseR3SnwJF/ltwSCthgN9v3QXyD9/cz3sKkOTqoReDs=;
-        b=ensFfRQa3eqA32dNxca6TT/6FIAnSIpIS9vBe7YwVSFb9Po2PUZ1kYIvkrwCsy3gDu
-         ZSBIv2ky6rSV/fobclDah8S1f82MbND5I8VPxlJpVGt1OqDkx6UWNlgnmAua7OQLJam7
-         6yDiIreYhL57xtE06sOhpplXISQD0OIQg7l/sfGtBCj6ctS5fy3PNYVXzSCaEH9C2of6
-         NSgIqlF9yBXfCum2tvT+YyynVF3J7iRRWAx/wPi1WvaUvohMlodvKsAB4u24UI94pF6F
-         tmbgeUmeRbrLZs8moZHxLQ90SpTpU7XRQeYRFN5Vpg8rFz/DgCeQ4NTCnExbBYeurSFY
-         YE5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728124273; x=1728729073;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pseR3SnwJF/ltwSCthgN9v3QXyD9/cz3sKkOTqoReDs=;
-        b=a2L2dSqZ8+ALea8pp4bb3a8BiPrQ8DWbjuV4vASKDVxLt4j5gebdTJLGgu/1VDHr/f
-         maCxPaeswoIKacDbAkPZjgZ0hrmJGZzMPTZit1awKiko/LjefkwQEdGomdooHXRFp1Tq
-         k6ffe20MmsDXRCAGwKnB/9EGErhuNv+9mBhiF2v0c8dmkyUl6E8HAKvHAC/lRlk3gLUN
-         GFbPiTsf8qYlyeyFRUpKQl+oJW/RSYHx3N2iQs1eEjYUYbHwez5KR6qQ8hHLp+I6DJtU
-         AR8mVDHCNaq+ff3k8lKgOoCB6ZJwia/aNBfkUM7kPcl6P0g3cuRJigWW8zxQYjaMnnbt
-         X1Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxJX24w8eG4HvjcTS3FCYEi09YxSGDS0NhUVVxuEYTbtyvNmDmgDc+M8Qlf9giuBM1Uw1ky+Yu3UfL14A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAoHUcykcQFMtd//vmPME11Db0STNVOWDyyb4MrgweveTH8V0R
-	GKJvlr9DtC+P1/CDi4CkaESlAwcnOCRZqKhqKzlrl0P/4diW2aDfgNZUofGD8Kg=
-X-Google-Smtp-Source: AGHT+IGnpJbRkaeEp++fKU34EvopNpr/tyBn+AeOlnfao3/er+hs2WZEx+AXO2rdZ+yVQjSYpLNcaA==
-X-Received: by 2002:a17:907:36c4:b0:a8d:1303:2283 with SMTP id a640c23a62f3a-a991bd7a123mr567894066b.30.1728124273102;
-        Sat, 05 Oct 2024 03:31:13 -0700 (PDT)
-Received: from [127.0.0.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7856bfsm116315566b.138.2024.10.05.03.31.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 03:31:12 -0700 (PDT)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Sat, 05 Oct 2024 11:31:06 +0100
-Subject: [PATCH v5 4/4] media: ov08x40: Add OF probe support
+	s=arc-20240116; t=1728124360; c=relaxed/simple;
+	bh=XsBBt9+t8yXn9dg+YujCNxrelnkKQB+3nk37zwPXgio=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qu49kIbvur9f3EJeVMZ+6+/ji5aowNzqe13fzirTQ0F0Qiiq36YMXrcY0nouflnkAfDo/joAhcxgeTbJYhE+Poi38eQGcw9exvctQiOB9PNdIqEO4LSbqEMlK8GJg5QFuqDiow9zybxQic2YWdSrzSBYhHKWcramJkE+2W1bZzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYLadirp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 023B2C4CEC2;
+	Sat,  5 Oct 2024 10:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728124359;
+	bh=XsBBt9+t8yXn9dg+YujCNxrelnkKQB+3nk37zwPXgio=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ZYLadirpm9Yhmgb/rMfoHjHmReYjsu1IAwVmoBBpqKXxKFWyQYgMIs0ll0KZahKoK
+	 Vy++BE6Efl8VkQetwFJrE4Mu/CFXCAHSb+mUMMkpxSUDNFPu/zb6IWoc4QK1csqXhQ
+	 ucZqOldttU+fFezqweKis/ciHaVpzZ6y0cydojcJJ5KIS7DTpKXaaDGm3wjKBpi8rP
+	 5m0NywfVghCS+uZNugp5q5XGl1g+JCUUoaVGOpAOqv8DW2gPi/GV1Cuhy1IAFDeoUp
+	 FDVvwzCCxxdia213BhYww7FsNv6gajvDzj8OBi2/I+WJaNVi2Pef4sxWaYrJg35H48
+	 DAZhyCJXaI9+w==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH RFT v11 0/8] fork: Support shadow stacks in clone3()
+Date: Sat, 05 Oct 2024 11:31:27 +0100
+Message-Id: <20241005-clone3-shadow-stack-v11-0-2a6a2bd6d651@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,301 +51,191 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241005-b4-master-24-11-25-ov08x40-v5-4-5f1eb2e11036@linaro.org>
-References: <20241005-b4-master-24-11-25-ov08x40-v5-0-5f1eb2e11036@linaro.org>
-In-Reply-To: <20241005-b4-master-24-11-25-ov08x40-v5-0-5f1eb2e11036@linaro.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Jason Chen <jason.z.chen@intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7427;
- i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
- bh=MZdA/sRLAsmvUPZP3TphhP3dJzkLom00eAxDcabblxk=;
- b=owEBbQKS/ZANAwAIASJxO7Ohjcg6AcsmYgBnARVqi35DN6gUi+5keNREXE36RVNzvmSK5VLjs
- 2TziUE2nCOJAjMEAAEIAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCZwEVagAKCRAicTuzoY3I
- OkdrD/4jdS4d6RhXojZ416uinCFqyvFUj5cpzuo4DlDXoY/1Nz6azwXPh95o1T1PkVuFGgoSCOs
- YSQWGGnw9G9o48NdyDr/xzI0h1d4EoSL6LjhxMGtlF6IJv/rabmp/F1xNR3yK1grurvlwLQbmtK
- /jwkYznAN2F7XDmvcPbnsPXxojP5loPJI/mNl9tpJujm+OEimW15qfikNXZD/9JFBJPNBEaHbTG
- goBm7fgleoveZZjkV1Y/3csyg6+rergqZ3Vm96mxnaXMR/Eo/qtalOOm/L/WGtjXqyZNW+FL2q8
- akyJqfada7b0VrAuZjhjVzUQg+4+ENcoLdinozxfTdU1J7CPTPYCaWbRDVNE3Qby/fbD7kYM/j1
- kfDNAS4fRG9WiV/bNFR+y341m2i/pO3M6Dfq1aUo1yYdAdhLESTrERrTQhI4IDa6Usxk5qEvnD/
- eHrDxJHlFeTaNi8sjyDJb3moKNZPMM8P1X/vEUMEYv18q2Rp8L3UnH6MWpQnJHsl+YO/NP7KDta
- phphJ2FP5Hg2xSe0R+hqUhdq2/1KjwvF4UmrflSqa4NW8Fdpodv4pm07lvnI2UkIoELDIi+h3Jk
- YlR+EbZEYxMRrTKqNofm600ZrpyaazuWo6wfaCcgyYxNU8IhUcM6B6LNrKdxg4bypOAHIQAM6oh
- N2899CZzi1+AL/w==
-X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
- fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
+X-B4-Tracking: v=1; b=H4sIAH8VAWcC/3XSzU7DMAwH8FeZcqYodr534sQDIG6IQ5M4W7WpR
+ e1UQNPenawItSjtMY78S/yXr2ygvqGB7XdX1tPYDE3X5gPAw46FY90eqGpiLjDkKICDq8K5a0l
+ Uw7GO3Wc1XOpwqkBFySP6pIRmufOjp9R8Tewbe3l+Ze+5eGyGS9d/T0+NMF39oihW0REqXkWrT
+ eQ++5E/nahv6fzY9YcJHHFGAOQ6ghnxGkSy2gIoVSBigSBfR0RGauMtRUFYh1AgconYdURmxHq
+ 0KZFM2ugCUX+I5Mg3MlEZEYhBO+UsSV8gekb0VrA6I47IGCs8JO8KxMyIEbCOmHsmTgkk8slDL
+ BA7I5ZvZGIzwuuQhAl1AlkG6xbIxvKN7j6Oxmhkck5qWSDAFwpuzAP8/hdN1jjjnZT/N+V2u/0
+ AyBW+PCwDAAA=
+X-Change-ID: 20231019-clone3-shadow-stack-15d40d2bf536
+To: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
+ Deepak Gupta <debug@rivosinc.com>, Szabolcs Nagy <Szabolcs.Nagy@arm.com>, 
+ "H.J. Lu" <hjl.tools@gmail.com>, Florian Weimer <fweimer@redhat.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+ Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, jannh@google.com, bsegall@google.com, 
+ Yury Khrustalev <yury.khrustalev@arm.com>, 
+ Wilco Dijkstra <wilco.dijkstra@arm.com>, linux-kselftest@vger.kernel.org, 
+ linux-api@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+ Kees Cook <kees@kernel.org>, Kees Cook <kees@kernel.org>, 
+ Shuah Khan <skhan@linuxfoundation.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7132; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=XsBBt9+t8yXn9dg+YujCNxrelnkKQB+3nk37zwPXgio=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnARW6SaMiqGrNXX3HwfhzMLwyAq+Qowfw1M4Z1mrC
+ EgUwlomJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZwEVugAKCRAk1otyXVSH0EuDB/
+ 9I8leHuMuB7CaAF5elsrJPlgNbaSqa+Ud2vWsMgRwB+HfZtGXThJBQPRqKq+N2a8MNm+Itbc+3GplJ
+ xXJmnDYfg8rwflE8P3mUDqxdB4106lYbJDbSXBVS9R6dkVRrwrjlrVtP+cy4mQbLjigGbqFDvBzHXy
+ Kgt92DCAYILn4jy35I2MNNJCiCt7dI39zDd5A5fbbpujRbMpkqIfnyFZh902pzeWPbNpoJXalPvWZl
+ dePy7RaZFlo7P3kcT8o1nTAp79YiiR+sCd64/ehd07ki2O+fpIVEBJ8mwfPUFziQATdGmsGFv7tq0W
+ xsYRO4FPwEOEctFAVYwvfOPAVhOAdM
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-The ACPI version of this driver "just works" on dts based systems with a
-few extensions to facilitate.
+The kernel has recently added support for shadow stacks, currently
+x86 only using their CET feature but both arm64 and RISC-V have
+equivalent features (GCS and Zicfiss respectively), I am actively
+working on GCS[1].  With shadow stacks the hardware maintains an
+additional stack containing only the return addresses for branch
+instructions which is not generally writeable by userspace and ensures
+that any returns are to the recorded addresses.  This provides some
+protection against ROP attacks and making it easier to collect call
+stacks.  These shadow stacks are allocated in the address space of the
+userspace process.
 
-- Add support for DT based probing
-- Add support for taking the part out of reset via a GPIO reset pin
-- Add in regulator bulk on/off logic for the power rails.
+Our API for shadow stacks does not currently offer userspace any
+flexiblity for managing the allocation of shadow stacks for newly
+created threads, instead the kernel allocates a new shadow stack with
+the same size as the normal stack whenever a thread is created with the
+feature enabled.  The stacks allocated in this way are freed by the
+kernel when the thread exits or shadow stacks are disabled for the
+thread.  This lack of flexibility and control isn't ideal, in the vast
+majority of cases the shadow stack will be over allocated and the
+implicit allocation and deallocation is not consistent with other
+interfaces.  As far as I can tell the interface is done in this manner
+mainly because the shadow stack patches were in development since before
+clone3() was implemented.
 
-Once done this sensor works nicely on a Qualcomm X1E80100 CRD.
+Since clone3() is readily extensible let's add support for specifying a
+shadow stack when creating a new thread or process, keeping the current
+implicit allocation behaviour if one is not specified either with
+clone3() or through the use of clone().  The user must provide a shadow
+stack pointer, this must point to memory mapped for use as a shadow
+stackby map_shadow_stack() with an architecture specified shadow stack
+token at the top of the stack.
 
-Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # x1e80100-crd
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Please note that the x86 portions of this code are build tested only, I
+don't appear to have a system that can run CET available to me.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org/T/#mc58f97f27461749ccf400ebabf6f9f937116a86b
+
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/i2c/ov08x40.c | 140 +++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 125 insertions(+), 15 deletions(-)
+Changes in v11:
+- Rebase onto arm64 for-next/gcs, which is based on v6.12-rc1, and
+  integrate arm64 support.
+- Rework the interface to specify a shadow stack pointer rather than a
+  base and size like we do for the regular stack.
+- Link to v10: https://lore.kernel.org/r/20240821-clone3-shadow-stack-v10-0-06e8797b9445@kernel.org
 
-diff --git a/drivers/media/i2c/ov08x40.c b/drivers/media/i2c/ov08x40.c
-index 3ab8b51df157af78fcccc1aaef73aedb2ae759c9..ff17e09a1f96175d598c395bcae0cdf01d68a79f 100644
---- a/drivers/media/i2c/ov08x40.c
-+++ b/drivers/media/i2c/ov08x40.c
-@@ -3,10 +3,13 @@
- 
- #include <asm-generic/unaligned.h>
- #include <linux/acpi.h>
-+#include <linux/clk.h>
- #include <linux/i2c.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/pm_runtime.h>
-+#include <linux/regulator/consumer.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-fwnode.h>
-@@ -1279,6 +1282,12 @@ static const struct ov08x40_mode supported_modes[] = {
- 	},
- };
- 
-+static const char * const ov08x40_supply_names[] = {
-+	"dovdd",	/* Digital I/O power */
-+	"avdd",		/* Analog power */
-+	"dvdd",		/* Digital core power */
-+};
-+
- struct ov08x40 {
- 	struct v4l2_subdev sd;
- 	struct media_pad pad;
-@@ -1291,6 +1300,10 @@ struct ov08x40 {
- 	struct v4l2_ctrl *hblank;
- 	struct v4l2_ctrl *exposure;
- 
-+	struct clk		*xvclk;
-+	struct gpio_desc	*reset_gpio;
-+	struct regulator_bulk_data supplies[ARRAY_SIZE(ov08x40_supply_names)];
-+
- 	/* Current mode */
- 	const struct ov08x40_mode *cur_mode;
- 
-@@ -1303,6 +1316,61 @@ struct ov08x40 {
- 
- #define to_ov08x40(_sd)	container_of(_sd, struct ov08x40, sd)
- 
-+static int ov08x40_power_on(struct device *dev)
-+{
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct ov08x40 *ov08x = to_ov08x40(sd);
-+	int ret;
-+
-+	if (is_acpi_node(dev_fwnode(dev)))
-+		return 0;
-+
-+	ret = clk_prepare_enable(ov08x->xvclk);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable xvclk\n");
-+		return ret;
-+	}
-+
-+	if (ov08x->reset_gpio) {
-+		gpiod_set_value_cansleep(ov08x->reset_gpio, 1);
-+		usleep_range(1000, 2000);
-+	}
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(ov08x40_supply_names),
-+				    ov08x->supplies);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable regulators\n");
-+		goto disable_clk;
-+	}
-+
-+	gpiod_set_value_cansleep(ov08x->reset_gpio, 0);
-+	usleep_range(1500, 1800);
-+
-+	return 0;
-+
-+disable_clk:
-+	gpiod_set_value_cansleep(ov08x->reset_gpio, 1);
-+	clk_disable_unprepare(ov08x->xvclk);
-+
-+	return ret;
-+}
-+
-+static int ov08x40_power_off(struct device *dev)
-+{
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct ov08x40 *ov08x = to_ov08x40(sd);
-+
-+	if (is_acpi_node(dev_fwnode(dev)))
-+		return 0;
-+
-+	gpiod_set_value_cansleep(ov08x->reset_gpio, 1);
-+	regulator_bulk_disable(ARRAY_SIZE(ov08x40_supply_names),
-+			       ov08x->supplies);
-+	clk_disable_unprepare(ov08x->xvclk);
-+
-+	return 0;
-+}
-+
- /* Read registers up to 4 at a time */
- static int ov08x40_read_reg(struct ov08x40 *ov08x,
- 			    u16 reg, u32 len, u32 *val)
-@@ -2072,7 +2140,7 @@ static void ov08x40_free_controls(struct ov08x40 *ov08x)
- 	mutex_destroy(&ov08x->mutex);
- }
- 
--static int ov08x40_check_hwcfg(struct device *dev)
-+static int ov08x40_check_hwcfg(struct ov08x40 *ov08x, struct device *dev)
- {
- 	struct v4l2_fwnode_endpoint bus_cfg = {
- 		.bus_type = V4L2_MBUS_CSI2_DPHY
-@@ -2086,11 +2154,36 @@ static int ov08x40_check_hwcfg(struct device *dev)
- 	if (!fwnode)
- 		return -ENXIO;
- 
--	ret = fwnode_property_read_u32(dev_fwnode(dev), "clock-frequency",
--				       &xvclk_rate);
--	if (ret) {
--		dev_err(dev, "can't get clock frequency");
--		return ret;
-+	if (!is_acpi_node(fwnode)) {
-+		ov08x->xvclk = devm_clk_get(dev, NULL);
-+		if (IS_ERR(ov08x->xvclk)) {
-+			dev_err(dev, "could not get xvclk clock (%pe)\n",
-+				ov08x->xvclk);
-+			return PTR_ERR(ov08x->xvclk);
-+		}
-+
-+		xvclk_rate = clk_get_rate(ov08x->xvclk);
-+
-+		ov08x->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-+							    GPIOD_OUT_LOW);
-+		if (IS_ERR(ov08x->reset_gpio))
-+			return PTR_ERR(ov08x->reset_gpio);
-+
-+		for (i = 0; i < ARRAY_SIZE(ov08x40_supply_names); i++)
-+			ov08x->supplies[i].supply = ov08x40_supply_names[i];
-+
-+		ret = devm_regulator_bulk_get(dev,
-+					      ARRAY_SIZE(ov08x40_supply_names),
-+					      ov08x->supplies);
-+		if (ret)
-+			return ret;
-+	} else {
-+		ret = fwnode_property_read_u32(dev_fwnode(dev), "clock-frequency",
-+					       &xvclk_rate);
-+		if (ret) {
-+			dev_err(dev, "can't get clock frequency");
-+			return ret;
-+		}
- 	}
- 
- 	if (xvclk_rate != OV08X40_XVCLK) {
-@@ -2143,32 +2236,37 @@ static int ov08x40_check_hwcfg(struct device *dev)
- }
- 
- static int ov08x40_probe(struct i2c_client *client)
--{
--	struct ov08x40 *ov08x;
-+{	struct ov08x40 *ov08x;
- 	int ret;
- 	bool full_power;
- 
-+	ov08x = devm_kzalloc(&client->dev, sizeof(*ov08x), GFP_KERNEL);
-+	if (!ov08x)
-+		return -ENOMEM;
-+
- 	/* Check HW config */
--	ret = ov08x40_check_hwcfg(&client->dev);
-+	ret = ov08x40_check_hwcfg(ov08x, &client->dev);
- 	if (ret) {
- 		dev_err(&client->dev, "failed to check hwcfg: %d", ret);
- 		return ret;
- 	}
- 
--	ov08x = devm_kzalloc(&client->dev, sizeof(*ov08x), GFP_KERNEL);
--	if (!ov08x)
--		return -ENOMEM;
--
- 	/* Initialize subdev */
- 	v4l2_i2c_subdev_init(&ov08x->sd, client, &ov08x40_subdev_ops);
- 
- 	full_power = acpi_dev_state_d0(&client->dev);
- 	if (full_power) {
-+		ret = ov08x40_power_on(&client->dev);
-+		if (ret) {
-+			dev_err(&client->dev, "failed to power on\n");
-+			return ret;
-+		}
-+
- 		/* Check module identity */
- 		ret = ov08x40_identify_module(ov08x);
- 		if (ret) {
- 			dev_err(&client->dev, "failed to find sensor: %d\n", ret);
--			return ret;
-+			goto probe_power_off;
- 		}
- 	}
- 
-@@ -2177,7 +2275,7 @@ static int ov08x40_probe(struct i2c_client *client)
- 
- 	ret = ov08x40_init_controls(ov08x);
- 	if (ret)
--		return ret;
-+		goto probe_power_off;
- 
- 	/* Initialize subdev */
- 	ov08x->sd.internal_ops = &ov08x40_internal_ops;
-@@ -2210,6 +2308,9 @@ static int ov08x40_probe(struct i2c_client *client)
- error_handler_free:
- 	ov08x40_free_controls(ov08x);
- 
-+probe_power_off:
-+	ov08x40_power_off(&client->dev);
-+
- 	return ret;
- }
- 
-@@ -2224,6 +2325,8 @@ static void ov08x40_remove(struct i2c_client *client)
- 
- 	pm_runtime_disable(&client->dev);
- 	pm_runtime_set_suspended(&client->dev);
-+
-+	ov08x40_power_off(&client->dev);
- }
- 
- #ifdef CONFIG_ACPI
-@@ -2235,10 +2338,17 @@ static const struct acpi_device_id ov08x40_acpi_ids[] = {
- MODULE_DEVICE_TABLE(acpi, ov08x40_acpi_ids);
- #endif
- 
-+static const struct of_device_id ov08x40_of_match[] = {
-+	{ .compatible = "ovti,ov08x40" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, ov08x40_of_match);
-+
- static struct i2c_driver ov08x40_i2c_driver = {
- 	.driver = {
- 		.name = "ov08x40",
- 		.acpi_match_table = ACPI_PTR(ov08x40_acpi_ids),
-+		.of_match_table = ov08x40_of_match,
- 	},
- 	.probe = ov08x40_probe,
- 	.remove = ov08x40_remove,
+Changes in v10:
+- Integrate fixes & improvements for the x86 implementation from Rick
+  Edgecombe.
+- Require that the shadow stack be VM_WRITE.
+- Require that the shadow stack base and size be sizeof(void *) aligned.
+- Clean up trailing newline.
+- Link to v9: https://lore.kernel.org/r/20240819-clone3-shadow-stack-v9-0-962d74f99464@kernel.org
 
+Changes in v9:
+- Pull token validation earlier and report problems with an error return
+  to parent rather than signal delivery to the child.
+- Verify that the top of the supplied shadow stack is VM_SHADOW_STACK.
+- Rework token validation to only do the page mapping once.
+- Drop no longer needed support for testing for signals in selftest.
+- Fix typo in comments.
+- Link to v8: https://lore.kernel.org/r/20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org
+
+Changes in v8:
+- Fix token verification with user specified shadow stack.
+- Don't track user managed shadow stacks for child processes.
+- Link to v7: https://lore.kernel.org/r/20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org
+
+Changes in v7:
+- Rebase onto v6.11-rc1.
+- Typo fixes.
+- Link to v6: https://lore.kernel.org/r/20240623-clone3-shadow-stack-v6-0-9ee7783b1fb9@kernel.org
+
+Changes in v6:
+- Rebase onto v6.10-rc3.
+- Ensure we don't try to free the parent shadow stack in error paths of
+  x86 arch code.
+- Spelling fixes in userspace API document.
+- Additional cleanups and improvements to the clone3() tests to support
+  the shadow stack tests.
+- Link to v5: https://lore.kernel.org/r/20240203-clone3-shadow-stack-v5-0-322c69598e4b@kernel.org
+
+Changes in v5:
+- Rebase onto v6.8-rc2.
+- Rework ABI to have the user allocate the shadow stack memory with
+  map_shadow_stack() and a token.
+- Force inlining of the x86 shadow stack enablement.
+- Move shadow stack enablement out into a shared header for reuse by
+  other tests.
+- Link to v4: https://lore.kernel.org/r/20231128-clone3-shadow-stack-v4-0-8b28ffe4f676@kernel.org
+
+Changes in v4:
+- Formatting changes.
+- Use a define for minimum shadow stack size and move some basic
+  validation to fork.c.
+- Link to v3: https://lore.kernel.org/r/20231120-clone3-shadow-stack-v3-0-a7b8ed3e2acc@kernel.org
+
+Changes in v3:
+- Rebase onto v6.7-rc2.
+- Remove stale shadow_stack in internal kargs.
+- If a shadow stack is specified unconditionally use it regardless of
+  CLONE_ parameters.
+- Force enable shadow stacks in the selftest.
+- Update changelogs for RISC-V feature rename.
+- Link to v2: https://lore.kernel.org/r/20231114-clone3-shadow-stack-v2-0-b613f8681155@kernel.org
+
+Changes in v2:
+- Rebase onto v6.7-rc1.
+- Remove ability to provide preallocated shadow stack, just specify the
+  desired size.
+- Link to v1: https://lore.kernel.org/r/20231023-clone3-shadow-stack-v1-0-d867d0b5d4d0@kernel.org
+
+---
+Mark Brown (8):
+      arm64/gcs: Return a success value from gcs_alloc_thread_stack()
+      Documentation: userspace-api: Add shadow stack API documentation
+      selftests: Provide helper header for shadow stack testing
+      fork: Add shadow stack support to clone3()
+      selftests/clone3: Remove redundant flushes of output streams
+      selftests/clone3: Factor more of main loop into test_clone3()
+      selftests/clone3: Allow tests to flag if -E2BIG is a valid error code
+      selftests/clone3: Test shadow stack support
+
+ Documentation/userspace-api/index.rst             |   1 +
+ Documentation/userspace-api/shadow_stack.rst      |  41 ++++
+ arch/arm64/include/asm/gcs.h                      |   8 +-
+ arch/arm64/kernel/process.c                       |   8 +-
+ arch/arm64/mm/gcs.c                               |  62 +++++-
+ arch/x86/include/asm/shstk.h                      |  11 +-
+ arch/x86/kernel/process.c                         |   2 +-
+ arch/x86/kernel/shstk.c                           |  57 +++++-
+ include/asm-generic/cacheflush.h                  |  11 ++
+ include/linux/sched/task.h                        |  17 ++
+ include/uapi/linux/sched.h                        |  10 +-
+ kernel/fork.c                                     |  96 +++++++--
+ tools/testing/selftests/clone3/clone3.c           | 226 ++++++++++++++++++----
+ tools/testing/selftests/clone3/clone3_selftests.h |  65 ++++++-
+ tools/testing/selftests/ksft_shstk.h              |  98 ++++++++++
+ 15 files changed, 632 insertions(+), 81 deletions(-)
+---
+base-commit: d17cd7b7cc92d37ee8b2df8f975fc859a261f4dc
+change-id: 20231019-clone3-shadow-stack-15d40d2bf536
+
+Best regards,
 -- 
-2.46.2
+Mark Brown <broonie@kernel.org>
 
 
