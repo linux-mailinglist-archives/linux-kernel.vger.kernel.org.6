@@ -1,237 +1,163 @@
-Return-Path: <linux-kernel+bounces-351607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D330991392
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:42:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77CEE991396
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19531F22B99
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:42:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 414012843E7
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AD2847B;
-	Sat,  5 Oct 2024 00:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3E379C4;
+	Sat,  5 Oct 2024 00:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Yl4sbFGH"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ecIY4E+j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04797182;
-	Sat,  5 Oct 2024 00:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCD4139B;
+	Sat,  5 Oct 2024 00:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728088964; cv=none; b=kwiQsr4XfnDGXDFEpLtfTIyuxypq+xRvphNhNtR7+Hl+KtN7n4q6rBvKyxEHLH0cBIGaMY2k+Hni/HJIQ+rOPefhYI2hgXz+1abevXu0Lt6djcGzZN9UVSeJnKDxx66xf9s8iWqbPa/f3eh7gqGwjwJ6RaSEJRsWfuvlzQcBEHk=
+	t=1728089147; cv=none; b=lgvkxgRYHH9ZWO8I8M+w4wdALfxVifwOwXsKdo5CnYeEflXd8rL1YM9YrJ1TlX4+Pb+D/UJRX+8EHPN0XB3fTf5P2hGLatYX2WIW7a5fmR9FHD1O5dZu3GPhQGPW92e3swMRby8KopCZt/zOiw2ilLXrU/mMtY1N5TL4wN9F92o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728088964; c=relaxed/simple;
-	bh=Ie/XQKbbsSR4D1iycCkYUWZ0G1cgjLVrrylLn+TcNoA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tT5rPKDfJKBG7ysAlbUl054onvBOwf4aJT+tFTYQnf7MXyjbATlv6zU5fH30KfD1d8rF94LnZcsaoDZDig7UYB/+I51kT7kplOsKN0+9hsjSs1fSThIQhYRWLH1UAxC49P2KP0BoCWYilXVGIQ+8gxj1oNftzsH2mIDoMxT4r/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Yl4sbFGH; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id E99AB886DF;
-	Sat,  5 Oct 2024 02:42:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1728088960;
-	bh=WAlganDHVley7ZzJIIV/eYDB7QCfZKEuedzG4few7pU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Yl4sbFGHy7P6Uvuq8TsiS5SQZx4pBiuGMXIy/ORX5r1NG6KFbr6cMfUJPvV0DpViX
-	 k8SGyAZkhLRKIhg5DcalNvj2PvTQt+X0dwcTbMJdYpjK9U8Px3V8UuYtFzoJ2Lm8Kl
-	 YlQw7mWKdAKFaLqovVZD/yEG4BntIR92Bh3WzZhuKBze6Hvwcw0jKPDCXkNInHmX56
-	 Rdc0EpmMnTt30ZcHbKyzVMNZsIFmfZzbR/IjEUy748cUakqgAhwhc1PyaziWq8aQ3l
-	 BRQODyEfukPWa/fHotGUdMRO69N5jSbSZsOF5wtspYc4yxkI5aHyc3NU3EE90q31sg
-	 wY1Iqo6sVDJ4w==
-Message-ID: <4166d68c-5eca-406a-936f-412dd2ae72fc@denx.de>
-Date: Sat, 5 Oct 2024 02:41:29 +0200
+	s=arc-20240116; t=1728089147; c=relaxed/simple;
+	bh=3aDSjqczUa2eG9JCIiEsFfROkl//7/vTr2RrvH3ccDM=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=mhizrznAX4kPrNnzUHbsu1+Xbj1TPc8jc/g/ljbv+Dmjp5aZyCTaReHHhF8amnXglYOSAgEbfpnJPaCh1TDky0R3P50Gum2KBkl6/XXJL/yBJ5FiKgThMbZTrEYZt41ksQr8iiHh6YI8Cy1q6Tzv/clVuJ1aWjF/hapLytFNWuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ecIY4E+j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CD99C4CEC6;
+	Sat,  5 Oct 2024 00:45:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728089146;
+	bh=3aDSjqczUa2eG9JCIiEsFfROkl//7/vTr2RrvH3ccDM=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=ecIY4E+jHb6ugfa4jKhhpurg/lE1SlDhCK6Ccv8O+EUFzn689FYcoR98dcJoWTJ/a
+	 NRb1uXT8p1+t9IuXFR+lN5k+oUmabkuuY29KPT7YbC4ypDHg7fS+0SS5DIt7Oopp3I
+	 Awf92Xl3NDM4mjbLS0CPmSq5OxtS7CIL6rVB9G+kCpmmaoa2OpZcD+uCO7gPONQ+FT
+	 uPWglMa12LFyrZ1HISQvnc8s+lwmaPihmcgP+rySQm0qNANLfkoSjst5giSRCmuZR4
+	 0ubGsTAjlEbx13Bv/vafE6jkGPZFsvb36q4ASV9biBlVRy4N7Gng7NMIjISg+qCLjL
+	 NRTpjLqFChWEQ==
+Date: Fri, 04 Oct 2024 19:45:45 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/1] pwm: imx27: workaround of the pwm output bug when
- decrease the duty cycle
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Frank Li <Frank.Li@nxp.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, festevam@gmail.com,
- francesco@dolcini.it, imx@lists.linux.dev, jun.li@nxp.com,
- kernel@pengutronix.de, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org, p.zabel@pengutronix.de, pratikmanvar09@gmail.com,
- robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org,
- xiaoning.wang@nxp.com
-References: <20241004193531.673488-1-Frank.Li@nxp.com>
- <5cvzarqkldstuziokdbxxne75i35odexkcykzikyq2gm6ytdyd@5wkm7mhotgej>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <5cvzarqkldstuziokdbxxne75i35odexkcykzikyq2gm6ytdyd@5wkm7mhotgej>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: devicetree@vger.kernel.org, peterdekraker@umito.nl, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Bryan.Kemp@dell.com, 
+ tudor.laurentiu.oss@gmail.com, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, robdclark@gmail.com, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>
+In-Reply-To: <20241003211139.9296-1-alex.vinarskis@gmail.com>
+References: <20241003211139.9296-1-alex.vinarskis@gmail.com>
+Message-Id: <172808887733.121424.1299151912846511014.robh@kernel.org>
+Subject: Re: [PATCH v4 0/3] X1E Dell XPS 9345 support
 
-On 10/4/24 10:58 PM, Uwe Kleine-König wrote:
 
-[...]
-
->> @@ -263,7 +266,77 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->>   		pwm_imx27_sw_reset(chip);
->>   	}
->>   
->> -	writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
->> +	/*
->> +	 * This is a limited workaround. When the SAR FIFO is empty, the new
->> +	 * write value will be directly applied to SAR even the current period
->> +	 * is not over.
->> +	 *
->> +	 *           ─────────────────────┐
->> +	 * PWM OUTPUT                     │
->> +	 *                                └─────────────────────────
->> +	 *
->> +	 *           ┌──────────────────────────────────────────────┐
->> +	 * Counter   │       XXXXXXXXXXXXXX                         │
->> +	 *           └──────────────────────────────────────────────┘
->> +	 *                   ▲            ▲
->> +	 *                   │            │
->> +	 *                 New SAR      Old SAR
->> +	 *
->> +	 *           XXXX  Errata happen window
+On Thu, 03 Oct 2024 23:10:06 +0200, Aleksandrs Vinarskis wrote:
+> Introduce support for the mentioned laptop.
 > 
-> Hmm, ok, so SAR is the register value that implements the duty cycle
-> setting. And if a new SAR is written, it is directly applied to the
-> hardware and this way it can happen (if SAR_new < counter < SAR_old)
-> that no falling edge happens in the current period. Right?
-
-Yes
-
-> If so, I think the depicted PWM output is misleading. I'd describe and
-> picture it as follows:
-
-Why not simply duplicate the ERRATA description for iMX8M Nano 
-MX8MN_0N14Y errata sheet ?
-
-"
-ERR051198:
-PWM: PWM output may not function correctly if the FIFO is empty when a 
-new SAR value is programmed
-
-Description:
-When the PWM FIFO is empty, a new value programmed to the PWM Sample 
-register (PWM_PWMSAR) will be directly applied even if the current timer 
-period has not expired.
-
-If the new SAMPLE value programmed in the PWM_PWMSAR register is less 
-than the previous value, and the PWM counter register (PWM_PWMCNR) that 
-contains the current COUNT value is greater than the new programmed 
-SAMPLE value, the current period will not flip the level. This may 
-result in an output pulse with a duty cycle of 100%.
-"
-
-That is very clear to me.
-
-> 	/*
-> 	 * At each clock tick the hardware compares the SAR value with
-> 	 * the current counter. If they are equal the output is changed
-> 	 * to the inactive level.
-
-I would skip this ^ part unless you can surely say the IP works exactly 
-that way because you checked the RTL.
-
-> As a new SAR value is applied
-> 	 * immediately to the currently running period, it can happen
-> 	 * that no falling edge happens in a period and so the output is
-> 	 * active for a whole period. Consider a change from
->           *     ________
-> 	 *    /        \______/
->           *    ^      *        ^
-> 	 * to
->           *     ____
-> 	 *    /    \__________/
->           *    ^               ^
-> 	 *
-> 	 * where SAR is written at the time marked by *. The counter
-> 	 * didn't reach the old (bigger) value because it was changed
-> 	 * before the counter reached that value and when the new value
-> 	 * becomes active it is already lower than the current counter
-> 	 * and so doesn't trigger either while the counter continues to
-> 	 * grow. So the resulting waveform looks as follows:
-> 	 *
->           *     ________        ____________________
-> 	 *    /        \______/                    \__________/
->           *    ^               ^      *        ^               ^
-> 	 *    |<-- old SAR -->|               |<-- new SAR -->|
-> 	 *
-> 	 * that is the output is active for a whole period.
-
-The ascii/infographics is nice and would be good to keep, but regarding 
-the description, frankly, the NXP errata description says the same thing 
-in fewer words :)
-
-> 	 */
+> Very similar to other X1E laptops, device tree was derived by analyzing dtsi of
+> existing models and ACPI tables of this laptop [1]. Most notable difference were
+> * TZ protected SPI19.
+> * Keyboard only working after suspend/resume sequence, will do a follow up patch
+> to i2c-hid.
+> * Lots of small deviations in LDOs voltages.
 > 
->> +	 *
->> +	 * If the new SAR value is less than the old one, and the counter is
->> +	 * greater than the new SAR value (see above diagram XXXX), the current
->> +	 * period will not flip the level. This will result in a pulse with a
->> +	 * duty cycle of 100%.
->> +	 *
->> +	 * Check new SAR less than old SAR and current counter is in errata
->> +	 * windows, write extra old SAR into FIFO and new SAR will effect at
->> +	 * next period.
->> +	 *
->> +	 * Sometime period is quite long, such as over 1 second. If add old SAR
->> +	 * into FIFO unconditional, new SAR have to wait for next period. It
->> +	 * may be too long.
->> +	 *
->> +	 * Turn off the interrupt to ensure that not IRQ and schedule happen
->> +	 * during above operations. If any irq and schedule happen, counter
->> +	 * in PWM will be out of data and take wrong action.
->> +	 *
->> +	 * Add a safety margin 1.5us because it needs some time to complete
->> +	 * IO write.
->> +	 *
->> +	 * Use __raw_writel() to minimize the interval between two writes to
->> +	 * the SAR register to increase the fastest PWM frequency supported.
->> +	 *
->> +	 * When the PWM period is longer than 2us(or <500kHz), this workaround
->> +	 * can solve this problem. No software workaround is available if PWM
->> +	 * period is shorter than IO write.
->> +	 */
->> +	c = clkrate * 1500;
->> +	do_div(c, NSEC_PER_SEC);
->> +
->> +	local_irq_save(flags);
->> +	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
->> +
->> +	if (duty_cycles < imx->duty_cycle) {
->> +		if (state->period < 2000) { /* 2000ns = 500 kHz */
->> +			/* Best effort attempt to fix up >500 kHz case */
->> +			udelay(6); /* 2us per FIFO entry, 3 FIFO entries written => 6 us */
+> Successfully tested with Debian 12 and Gnome. Firmware for GPU/aDSP/cDSP was
+> extracted from Windows, WiFi firmware from upstream linux-firmware.
 > 
-> I don't understand the motivation to wait here. Wouldn't it be better to
-> write the old value 3 - val times and not sleep?
+> Quite a few things alraedy work, details in patches, quite a few still in WIP or
+> TODOs. Since fixing these may take me a while due to lack of documentation,
+> sending current progress as its very much usable.
+> 
+> [1] https://github.com/aarch64-laptops/build/blob/master/misc/dell-xps-9345/acpi/DSDT.dsl
+> 
+> --------
+> 
+> Changes to V3:
+> * Rename device from `tributo-13` to `xps13-9345`
+> * Update commit description - identify EC over i2c, likely camera model
+> * Update cover letter - no hacks needed when build on top of linux-next
+> * v3 link: https://lore.kernel.org/all/20240927094544.6966-1-alex.vinarskis@gmail.com/
+> 
+> --------
+> 
+> Changes to V2:
+> * Fix uart21 missing alias
+> * Fix redundant mdss_dp3 defines
+> * Fix touchscreen i2c address
+> * Update commit description - OLED panel reported working
+> * Update commit description - touchscreen reported working
+> * Update commit description - battery info reported working
+> * Update commit description - add keyboard patches link
+> * v2 link: https://lore.kernel.org/all/20240921163455.12577-1-alex.vinarskis@gmail.com/
+> 
+> --------
+> 
+> Changes to V1:
+> * Fix misalignments due to wrong tab/space conversion
+> * Fix regulator namings
+> * Fix reasonable warnings from `scripts/checkpatch.pl`
+> * Restructure all (sub)nodes alphabetically
+> * v1 link: https://lore.kernel.org/all/20240919170018.13672-1-alex.vinarskis@gmail.com/
+> 
+> Aleksandrs Vinarskis (3):
+>   dt-bindings: arm: qcom: Add Dell XPS 13 9345
+>   firmware: qcom: scm: Allow QSEECOM on Dell XPS 13 9345
+>   arm64: dts: qcom: Add support for X1-based Dell XPS 13 9345
+> 
+>  .../devicetree/bindings/arm/qcom.yaml         |   1 +
+>  arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>  .../dts/qcom/x1e80100-dell-xps13-9345.dts     | 863 ++++++++++++++++++
+>  drivers/firmware/qcom/qcom_scm.c              |   1 +
+>  4 files changed, 866 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+> 
+> --
+> 2.43.0
+> 
+> 
+> 
 
-No, because you would overflow the FIFO, see:
 
-137fd45ffec1 ("pwm: imx: Avoid sample FIFO overflow for i.MX PWM version2")
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-> Or busy loop until
-> MX3_PWMSR_FIFOAV becomes 0?
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Do we really want a busy wait here if we can avoid it ?
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-We can do udelay(3 * state->period / 1000); so faster PWMs would wait 
-shorter.
+  pip3 install dtschema --upgrade
 
-The delay is here to basically wait until the FIFO is surely empty and 
-has space for 3 consecutive writes (see the commit above wrt. FIFO 
-overflow).
 
-[...]
+New warnings running 'make CHECK_DTBS=y qcom/x1e80100-dell-xps13-9345.dtb' for 20241003211139.9296-1-alex.vinarskis@gmail.com:
+
+arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
+arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: domain-idle-states: cluster-sleep-1: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
+arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+
+
+
+
+
 
