@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-351608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77CEE991396
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:45:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F535991398
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 414012843E7
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:45:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6180FB20EA7
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3E379C4;
-	Sat,  5 Oct 2024 00:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE00F9DA;
+	Sat,  5 Oct 2024 00:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ecIY4E+j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sFWQXzAJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCD4139B;
-	Sat,  5 Oct 2024 00:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39329AD23;
+	Sat,  5 Oct 2024 00:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728089147; cv=none; b=lgvkxgRYHH9ZWO8I8M+w4wdALfxVifwOwXsKdo5CnYeEflXd8rL1YM9YrJ1TlX4+Pb+D/UJRX+8EHPN0XB3fTf5P2hGLatYX2WIW7a5fmR9FHD1O5dZu3GPhQGPW92e3swMRby8KopCZt/zOiw2ilLXrU/mMtY1N5TL4wN9F92o=
+	t=1728089148; cv=none; b=BtN9tUQX92HjUbJjFz8WCUbgmc8hf+3F0xcKecm5AQo7i99pwcCn/4sGHskiuq3u/1obScLohvXgP99MSG1kL+iGE0gGC+jY0ZSHQJ2ESz9RXYIl5YckbeLPZGDjWHuP+3bS2U7IN/SuiAysL4fgOAONvTzFVsNpImm1g44j0PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728089147; c=relaxed/simple;
-	bh=3aDSjqczUa2eG9JCIiEsFfROkl//7/vTr2RrvH3ccDM=;
+	s=arc-20240116; t=1728089148; c=relaxed/simple;
+	bh=ePOfYLaXDNecQRHLOzd0PbOll1bLcK9K9CPGfInU1uk=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=mhizrznAX4kPrNnzUHbsu1+Xbj1TPc8jc/g/ljbv+Dmjp5aZyCTaReHHhF8amnXglYOSAgEbfpnJPaCh1TDky0R3P50Gum2KBkl6/XXJL/yBJ5FiKgThMbZTrEYZt41ksQr8iiHh6YI8Cy1q6Tzv/clVuJ1aWjF/hapLytFNWuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ecIY4E+j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CD99C4CEC6;
-	Sat,  5 Oct 2024 00:45:46 +0000 (UTC)
+	 Message-Id:Subject; b=jnpDWPQc+oFobtbbh4cU1aiuI9Z47pbSWCAN/B6Hy8Q/hzvhbMmply9MPt/HYl/PG1eCV7eVAcEsVrkmbzD5JiijVoE/E0tGQtgpex1O+a0ls+yul7L6D3DWLWYKLmKF0WIO/fbqZML3hX65z8PQCc2cRmEmcxsmrNVKACEJU6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sFWQXzAJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 845A7C4CEC7;
+	Sat,  5 Oct 2024 00:45:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728089146;
-	bh=3aDSjqczUa2eG9JCIiEsFfROkl//7/vTr2RrvH3ccDM=;
+	s=k20201202; t=1728089147;
+	bh=ePOfYLaXDNecQRHLOzd0PbOll1bLcK9K9CPGfInU1uk=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=ecIY4E+jHb6ugfa4jKhhpurg/lE1SlDhCK6Ccv8O+EUFzn689FYcoR98dcJoWTJ/a
-	 NRb1uXT8p1+t9IuXFR+lN5k+oUmabkuuY29KPT7YbC4ypDHg7fS+0SS5DIt7Oopp3I
-	 Awf92Xl3NDM4mjbLS0CPmSq5OxtS7CIL6rVB9G+kCpmmaoa2OpZcD+uCO7gPONQ+FT
-	 uPWglMa12LFyrZ1HISQvnc8s+lwmaPihmcgP+rySQm0qNANLfkoSjst5giSRCmuZR4
-	 0ubGsTAjlEbx13Bv/vafE6jkGPZFsvb36q4ASV9biBlVRy4N7Gng7NMIjISg+qCLjL
-	 NRTpjLqFChWEQ==
-Date: Fri, 04 Oct 2024 19:45:45 -0500
+	b=sFWQXzAJ9B3KEprWAbmv5C1lHh9zarQmEUDKHM2UJj+jQS/0pVg//aBK5VdqoIUaz
+	 Jql14KePe5tKtHxUwu+9UK4L+lG3vg7Owe3Qf4mtzLT1qXu7t5a/Bf6j4ryH3lzVep
+	 nUrC+A3u1J4mTkwewPOtIMeMV8JSN5whO30lJ+ebZV4ZKX2Q1qb6lHDmVs/AsiYr4Q
+	 tNKjtdUoHtm3JXC4dq/W8xqjbIIL6iiFWz2b+57bv9pNVwWDAmv1gP7bsJXJixD0SW
+	 LZKkVyxUa9szYgrM8iSzqck+tv8z83wKIECaHVfmefduyB0lobqfLhOQVMlpqYHQHC
+	 p0SYjuv9Gg/Hw==
+Date: Fri, 04 Oct 2024 19:45:46 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,84 +50,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Cc: devicetree@vger.kernel.org, peterdekraker@umito.nl, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Bryan.Kemp@dell.com, 
- tudor.laurentiu.oss@gmail.com, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, robdclark@gmail.com, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>
-In-Reply-To: <20241003211139.9296-1-alex.vinarskis@gmail.com>
-References: <20241003211139.9296-1-alex.vinarskis@gmail.com>
-Message-Id: <172808887733.121424.1299151912846511014.robh@kernel.org>
-Subject: Re: [PATCH v4 0/3] X1E Dell XPS 9345 support
+To: Sam Edwards <cfsworks@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ William Zhang <william.zhang@broadcom.com>, devicetree@vger.kernel.org, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Sam Edwards <CFSworks@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ linux-kernel@vger.kernel.org, Kursad Oney <kursad.oney@broadcom.com>, 
+ Anand Gore <anand.gore@broadcom.com>
+In-Reply-To: <20241003220820.1345048-1-CFSworks@gmail.com>
+References: <20241003220820.1345048-1-CFSworks@gmail.com>
+Message-Id: <172808887840.121596.11205114990341820307.robh@kernel.org>
+Subject: Re: [PATCH 0/2] Add support for Zyxel EX3510-B
 
 
-On Thu, 03 Oct 2024 23:10:06 +0200, Aleksandrs Vinarskis wrote:
-> Introduce support for the mentioned laptop.
+On Thu, 03 Oct 2024 15:08:18 -0700, Sam Edwards wrote:
+> Hello BCMBCA maintainers,
 > 
-> Very similar to other X1E laptops, device tree was derived by analyzing dtsi of
-> existing models and ACPI tables of this laptop [1]. Most notable difference were
-> * TZ protected SPI19.
-> * Keyboard only working after suspend/resume sequence, will do a follow up patch
-> to i2c-hid.
-> * Lots of small deviations in LDOs voltages.
+> This pair of patches adds an initial DT for the Zyxel EX3510-B "series" based
+> on BCM4906, encompassing the EX3510-B0 and EX3510-B1. As I am not aware of any
+> software-affecting difference between these two, I am calling the "series" one
+> model.
 > 
-> Successfully tested with Debian 12 and Gnome. Firmware for GPU/aDSP/cDSP was
-> extracted from Windows, WiFi firmware from upstream linux-firmware.
+> I found the BCM4906/8 support in Linux to be in need of a lot of TLC, and have
+> just sent a few patches necessary to get Linux to boot without crashing on this
+> platform. At a minimum, you will want to apply [1] to resolve a panic related
+> to xHCI not initializing. If you are booting through CFE and want to use the
+> secondary CPU, you will have to apply [2] as well.
 > 
-> Quite a few things alraedy work, details in patches, quite a few still in WIP or
-> TODOs. Since fixing these may take me a while due to lack of documentation,
-> sending current progress as its very much usable.
+> There are more patches to come. An issue with the switch driver is preventing
+> the WAN port from operating, for example. I have worked around this locally so
+> I can confirm that the DT I am submitting here is correct, but I will need to
+> clean up my remaining local fixes before they can be sent.
 > 
-> [1] https://github.com/aarch64-laptops/build/blob/master/misc/dell-xps-9345/acpi/DSDT.dsl
+> As always, thank you very much for your continued efforts and for your time
+> reviewing these patches.
 > 
-> --------
+> Best regards,
+> Sam
 > 
-> Changes to V3:
-> * Rename device from `tributo-13` to `xps13-9345`
-> * Update commit description - identify EC over i2c, likely camera model
-> * Update cover letter - no hacks needed when build on top of linux-next
-> * v3 link: https://lore.kernel.org/all/20240927094544.6966-1-alex.vinarskis@gmail.com/
+> [1]: https://lore.kernel.org/lkml/20241003211720.1339468-1-CFSworks@gmail.com/T/
+> [2]: https://lore.kernel.org/lkml/20241003213007.1339811-1-CFSworks@gmail.com/T/
 > 
-> --------
+> Sam Edwards (2):
+>   dt-bindings: arm64: bcmbca: Add Zyxel EX3510-B based on BCM4906
+>   arm64: dts: broadcom: bcmbca: bcm4908: Add DT for Zyxel EX3510-B
 > 
-> Changes to V2:
-> * Fix uart21 missing alias
-> * Fix redundant mdss_dp3 defines
-> * Fix touchscreen i2c address
-> * Update commit description - OLED panel reported working
-> * Update commit description - touchscreen reported working
-> * Update commit description - battery info reported working
-> * Update commit description - add keyboard patches link
-> * v2 link: https://lore.kernel.org/all/20240921163455.12577-1-alex.vinarskis@gmail.com/
-> 
-> --------
-> 
-> Changes to V1:
-> * Fix misalignments due to wrong tab/space conversion
-> * Fix regulator namings
-> * Fix reasonable warnings from `scripts/checkpatch.pl`
-> * Restructure all (sub)nodes alphabetically
-> * v1 link: https://lore.kernel.org/all/20240919170018.13672-1-alex.vinarskis@gmail.com/
-> 
-> Aleksandrs Vinarskis (3):
->   dt-bindings: arm: qcom: Add Dell XPS 13 9345
->   firmware: qcom: scm: Allow QSEECOM on Dell XPS 13 9345
->   arm64: dts: qcom: Add support for X1-based Dell XPS 13 9345
-> 
->  .../devicetree/bindings/arm/qcom.yaml         |   1 +
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  .../dts/qcom/x1e80100-dell-xps13-9345.dts     | 863 ++++++++++++++++++
->  drivers/firmware/qcom/qcom_scm.c              |   1 +
->  4 files changed, 866 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+>  .../bindings/arm/bcm/brcm,bcmbca.yaml         |   1 +
+>  arch/arm64/boot/dts/broadcom/bcmbca/Makefile  |   1 +
+>  .../broadcom/bcmbca/bcm4906-zyxel-ex3510b.dts | 197 ++++++++++++++++++
+>  3 files changed, 199 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dts
 > 
 > --
-> 2.43.0
+> 2.44.2
 > 
 > 
 > 
@@ -147,14 +125,110 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y qcom/x1e80100-dell-xps13-9345.dtb' for 20241003211139.9296-1-alex.vinarskis@gmail.com:
+New warnings running 'make CHECK_DTBS=y broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb' for 20241003220820.1345048-1-CFSworks@gmail.com:
 
-arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: domain-idle-states: cluster-sleep-1: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb: nand-controller@1800: nand@0:partitions: 'oneOf' conditional failed, one must be fixed:
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: 'pinctrl-[0-9]+'
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: '^partition-[0-9a-z]+$', 'pinctrl-[0-9]+'
+	'fis-index-block' is a required property
+	'partitions-table-offset' is a required property
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: '^partition-.*$', 'pinctrl-[0-9]+'
+	False schema does not allow 1
+arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb: nand-controller@1800: nand@0:partitions:compatible: 'oneOf' conditional failed, one must be fixed:
+		['brcm,bcm4908-partitions'] is too short
+		'fixed-partitions' was expected
+		'sercomm,sc-partitions' was expected
+	'arm,arm-firmware-suite' was expected
+	'brcm,bcm947xx-cfe-partitions' was expected
+	'linksys,ns-partitions' was expected
+	'qcom,smem-part' was expected
+	'redboot-fis' was expected
+	'tplink,safeloader-partitions' was expected
+	Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'compatible', 'mac@106a0', 'ranges' were unexpected)
+	['nvmem-cells'] is too short
+	'brcm,bcm4908-firmware' was expected
+	'linksys,ns-firmware' was expected
+	Unevaluated properties are not allowed ('compatible' was unexpected)
+	['brcm,bcm4908-firmware'] is too short
+	from schema $id: http://devicetree.org/schemas/mtd/brcm,brcmnand.yaml#
+arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb: nand-controller@1800: nand@0: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'nand-ecc-strength', 'partitions' were unexpected)
+	from schema $id: http://devicetree.org/schemas/mtd/brcm,brcmnand.yaml#
+arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb: nand-controller@1800: nand@0:partitions: 'oneOf' conditional failed, one must be fixed:
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: 'pinctrl-[0-9]+'
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: '^partition-[0-9a-z]+$', 'pinctrl-[0-9]+'
+	'fis-index-block' is a required property
+	'partitions-table-offset' is a required property
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: '^partition-.*$', 'pinctrl-[0-9]+'
+	False schema does not allow 1
+arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb: nand-controller@1800: nand@0:partitions:compatible: 'oneOf' conditional failed, one must be fixed:
+		['brcm,bcm4908-partitions'] is too short
+		'fixed-partitions' was expected
+		'sercomm,sc-partitions' was expected
+	'arm,arm-firmware-suite' was expected
+	'brcm,bcm947xx-cfe-partitions' was expected
+	'linksys,ns-partitions' was expected
+	'qcom,smem-part' was expected
+	'redboot-fis' was expected
+	'tplink,safeloader-partitions' was expected
+	Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'compatible', 'mac@106a0', 'ranges' were unexpected)
+	['nvmem-cells'] is too short
+	'brcm,bcm4908-firmware' was expected
+	'linksys,ns-firmware' was expected
+	Unevaluated properties are not allowed ('compatible' was unexpected)
+	['brcm,bcm4908-firmware'] is too short
+	from schema $id: http://devicetree.org/schemas/mtd/brcm,brcmnand.yaml#
+arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb: nand-controller@1800: Unevaluated properties are not allowed ('#address-cells', '#size-cells' were unexpected)
+	from schema $id: http://devicetree.org/schemas/mtd/brcm,brcmnand.yaml#
+arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb: nand-controller@1800: nand@0:partitions: 'oneOf' conditional failed, one must be fixed:
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: 'pinctrl-[0-9]+'
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: '^partition-[0-9a-z]+$', 'pinctrl-[0-9]+'
+	'fis-index-block' is a required property
+	'partitions-table-offset' is a required property
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: '^partition-.*$', 'pinctrl-[0-9]+'
+	False schema does not allow 1
+arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb: nand-controller@1800: nand@0:partitions:compatible: 'oneOf' conditional failed, one must be fixed:
+		['brcm,bcm4908-partitions'] is too short
+		'fixed-partitions' was expected
+		'sercomm,sc-partitions' was expected
+	'arm,arm-firmware-suite' was expected
+	'brcm,bcm947xx-cfe-partitions' was expected
+	'linksys,ns-partitions' was expected
+	'qcom,smem-part' was expected
+	'redboot-fis' was expected
+	'tplink,safeloader-partitions' was expected
+	Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'compatible', 'mac@106a0', 'ranges' were unexpected)
+	['nvmem-cells'] is too short
+	'brcm,bcm4908-firmware' was expected
+	'linksys,ns-firmware' was expected
+	Unevaluated properties are not allowed ('compatible' was unexpected)
+	['brcm,bcm4908-firmware'] is too short
+	from schema $id: http://devicetree.org/schemas/mtd/nand-controller.yaml#
+arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb: nand@0: partitions: 'oneOf' conditional failed, one must be fixed:
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: 'pinctrl-[0-9]+'
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: '^partition-[0-9a-z]+$', 'pinctrl-[0-9]+'
+	'fis-index-block' is a required property
+	'partitions-table-offset' is a required property
+	'#address-cells', '#size-cells', 'partition@0', 'partition@100000', 'partition@6080000' do not match any of the regexes: '^partition-.*$', 'pinctrl-[0-9]+'
+	False schema does not allow 1
+arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb: nand@0: partitions:compatible: 'oneOf' conditional failed, one must be fixed:
+		['brcm,bcm4908-partitions'] is too short
+		'fixed-partitions' was expected
+		'sercomm,sc-partitions' was expected
+	'arm,arm-firmware-suite' was expected
+	'brcm,bcm947xx-cfe-partitions' was expected
+	'linksys,ns-partitions' was expected
+	'qcom,smem-part' was expected
+	'redboot-fis' was expected
+	'tplink,safeloader-partitions' was expected
+	Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'compatible', 'mac@106a0', 'ranges' were unexpected)
+	['nvmem-cells'] is too short
+	'brcm,bcm4908-firmware' was expected
+	'linksys,ns-firmware' was expected
+	Unevaluated properties are not allowed ('compatible' was unexpected)
+	['brcm,bcm4908-firmware'] is too short
+	from schema $id: http://devicetree.org/schemas/mtd/raw-nand-chip.yaml#
+arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dtb: partition@0: Unevaluated properties are not allowed ('ranges' was unexpected)
+	from schema $id: http://devicetree.org/schemas/mtd/partitions/nvmem-cells.yaml#
 
 
 
