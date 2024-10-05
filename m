@@ -1,194 +1,237 @@
-Return-Path: <linux-kernel+bounces-351606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 088F099138D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:39:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D330991392
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD33D2843D6
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:39:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19531F22B99
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CA5A93D;
-	Sat,  5 Oct 2024 00:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AD2847B;
+	Sat,  5 Oct 2024 00:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b="FLcE3F+I";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g2n7d9H5"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Yl4sbFGH"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450C529CA;
-	Sat,  5 Oct 2024 00:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04797182;
+	Sat,  5 Oct 2024 00:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728088753; cv=none; b=c71/mPDmgeD5ZBue3k9Hs2yWoQSQMAgW+h553UdtfUM0O4/C/GLcyOm80buEu9++GODyPOtvl4+p0EDiChpMQaB/tBqWt1giV3mdbgILRpAJxfaOFt7tPN4sq/petq8IifNw/OM9sdFgCrrMhzLXyN8R4DK2Iy4hbDfv6QJox4M=
+	t=1728088964; cv=none; b=kwiQsr4XfnDGXDFEpLtfTIyuxypq+xRvphNhNtR7+Hl+KtN7n4q6rBvKyxEHLH0cBIGaMY2k+Hni/HJIQ+rOPefhYI2hgXz+1abevXu0Lt6djcGzZN9UVSeJnKDxx66xf9s8iWqbPa/f3eh7gqGwjwJ6RaSEJRsWfuvlzQcBEHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728088753; c=relaxed/simple;
-	bh=t4ox1moCdNVjEYfw/SHgaraLE+A3E0RXcZOmdLZSsiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qK2q22u1M0KM4LuAXdTFUrStw+dc2mTqsPsa+qWVK3CsEaopvLMkJRU4flTY29qIPCBDcBex4B6AEv8/KC+ev5fDXDUrAddKg77XAzDhPJn2C0vAwdTITxba0vZHImgW2MkjPozsWv7kg5xTbiP0PLTV/kjeu0c2PizVM2YOVo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de; spf=pass smtp.mailfrom=anarazel.de; dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b=FLcE3F+I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g2n7d9H5; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anarazel.de
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 24A5C13805E2;
-	Fri,  4 Oct 2024 20:39:10 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Fri, 04 Oct 2024 20:39:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1728088750; x=1728175150; bh=lL/jeDhQ0T
-	2sVRGSKsBanrFa3Wo3OgPVAPdrzYDOaZU=; b=FLcE3F+I3TrTMVjYyDkHVlZ1n5
-	vEYCC2QDkMDZBebW5oFYwMAtAmdxjAmVqLtqznvEI/8GNJOmak+0ZVMGWrOwLxlM
-	ffJADAQQwmGH0tgBhirF0Ksvh+q0WWflOO7BJF6cnG3ggxzTUC2Ejo62LwuX4Ik4
-	WhI+wpukN2w/MbDJANbSnopVgn/UDBsSQkfRKGiib+BCKJ4w0QWgBlWhaDZE1UVf
-	/ATcabESghztfA8cGEs8tfCeFC6E3p2NwGluTm6rl8tbIPRKn0Hslb7CoLTllViM
-	HApgSgN60haygR/zKM0BWUdSCGRq5KcCsZG0Cjrf1wyQNEvr7PoSaSHTcbpA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1728088750; x=1728175150; bh=lL/jeDhQ0T2sVRGSKsBanrFa3Wo3
-	OgPVAPdrzYDOaZU=; b=g2n7d9H5qF2VLDZmYmKun1q1hn/Iu9i8re2x4x0PKc2R
-	wvD3XeYKzspl/qLzJNWZ7aKQSqqIINW05/ukUfG//Qh6fG9sPTsHKHzos0T9+A+z
-	v3ZXjMWq93ywpOvqs8IS62Np/dw2o0ZbxgdE7CHiHbhenXjRQ2OPgNF1GMlYFTW0
-	3ELaPnT6J5l0cAWDHp0Gr1Hgm5QiKY0egi3VQSUf7ykoyQnSmUPF/YKAYmkHsBuq
-	cUCExSWZ3BF4XrSjnWkXFS7y2K/YITFzTXtK8uchNmIF21P8Gahv1eiqvY0e7SZJ
-	r/kxjh7N01iHSeV2ar/wMqX9TS5YgNGz6PFQZzdwXA==
-X-ME-Sender: <xms:rYoAZ_3FW5MbKjgL9PdOD64TaYWoBmrlMrm4YFuySfkOn1GogX8nOg>
-    <xme:rYoAZ-G2JmWxFA0ua5DzEbmEyBJcUXETtyL2Jm2bf8iY7il5o1440cCQ81zqj3cUC
-    _8NA9HBUVcBLnTFYg>
-X-ME-Received: <xmr:rYoAZ_5blobP6qtwk42B_OtikgmWS8lMc-jJ3xg8IWRMvWReOCbKikyIfXfVxUBTghnGE_VQ7zXNDVRla45iHAgnjZz2x2d2Qzzvz_1TSA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvgedgfeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomheptehnughrvghsucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivg
-    hlrdguvgeqnecuggftrfgrthhtvghrnhepfeffgfelvdffgedtveelgfdtgefghfdvkefg
-    geetieevjeekteduleevjefhueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdruggvpdhnsggprhgt
-    phhtthhopedvuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghvrghnrghssh
-    gthhgvsegrtghmrdhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnhdrlhhovghhlhgv
-    segrrhhmrdgtohhmpdhrtghpthhtohepughivghtmhgrrhdrvghgghgvmhgrnhhnsegrrh
-    hmrdgtohhmpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepqhhpvghrrhgvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepph
-    gvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprggurhhirghnrdhh
-    uhhnthgvrhesihhnthgvlhdrtghomhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlh
-    drughkpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:rYoAZ03Ltrv3p59gBHhTY4FxT2sSl3xMzXIVBbfA1nRXa7W5Hfdvsg>
-    <xmx:rYoAZyGCu5QE_Ho3nDlpzGWyENASseovlZ7ERK4hpLfr14tBGW66gQ>
-    <xmx:rYoAZ1-qEuCjBO4ER8GUjAGBb9sRHoG8Wp4HaUK_qr3aqLh6gI-HZg>
-    <xmx:rYoAZ_l1NRE4Y4W15VPejdSx8vmeCVzmapLq_40PO5TOaYfZjilf1A>
-    <xmx:rooAZ2MgYa13qAD6m7jbaRPID47t20DOaN6SylC6RlOOm9xFY3AcQ58x>
-Feedback-ID: id4a34324:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 4 Oct 2024 20:39:09 -0400 (EDT)
-Date: Fri, 4 Oct 2024 20:39:09 -0400
-From: Andres Freund <andres@anarazel.de>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: Quentin Perret <qperret@google.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com, 
-	dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org, 
-	Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org, 
-	bvanassche@acm.org, asml.silence@gmail.com, linux-block@vger.kernel.org, 
-	io-uring@vger.kernel.org, qyousef@layalina.io, dsmythies@telus.net, axboe@kernel.dk
-Subject: Re: [RFC PATCH 5/8] cpufreq/schedutil: Remove iowait boost
-Message-ID: <io3xcj5vpqbkojoktbp3fuuj77gqqkf2v3gg62i4aep4ps36dc@we2zwwp5hsyt>
-References: <20240905092645.2885200-1-christian.loehle@arm.com>
- <20240905092645.2885200-6-christian.loehle@arm.com>
- <CAJZ5v0hJWwsErT193i394bHOczvCQwU_5AVVTJ1oKDe7kTW82g@mail.gmail.com>
- <Zv5oTvxPsiTWCJIo@google.com>
- <6e21e8f1-e3b4-4915-87cc-6ce77f54cc8a@arm.com>
+	s=arc-20240116; t=1728088964; c=relaxed/simple;
+	bh=Ie/XQKbbsSR4D1iycCkYUWZ0G1cgjLVrrylLn+TcNoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tT5rPKDfJKBG7ysAlbUl054onvBOwf4aJT+tFTYQnf7MXyjbATlv6zU5fH30KfD1d8rF94LnZcsaoDZDig7UYB/+I51kT7kplOsKN0+9hsjSs1fSThIQhYRWLH1UAxC49P2KP0BoCWYilXVGIQ+8gxj1oNftzsH2mIDoMxT4r/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Yl4sbFGH; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id E99AB886DF;
+	Sat,  5 Oct 2024 02:42:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1728088960;
+	bh=WAlganDHVley7ZzJIIV/eYDB7QCfZKEuedzG4few7pU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Yl4sbFGHy7P6Uvuq8TsiS5SQZx4pBiuGMXIy/ORX5r1NG6KFbr6cMfUJPvV0DpViX
+	 k8SGyAZkhLRKIhg5DcalNvj2PvTQt+X0dwcTbMJdYpjK9U8Px3V8UuYtFzoJ2Lm8Kl
+	 YlQw7mWKdAKFaLqovVZD/yEG4BntIR92Bh3WzZhuKBze6Hvwcw0jKPDCXkNInHmX56
+	 Rdc0EpmMnTt30ZcHbKyzVMNZsIFmfZzbR/IjEUy748cUakqgAhwhc1PyaziWq8aQ3l
+	 BRQODyEfukPWa/fHotGUdMRO69N5jSbSZsOF5wtspYc4yxkI5aHyc3NU3EE90q31sg
+	 wY1Iqo6sVDJ4w==
+Message-ID: <4166d68c-5eca-406a-936f-412dd2ae72fc@denx.de>
+Date: Sat, 5 Oct 2024 02:41:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e21e8f1-e3b4-4915-87cc-6ce77f54cc8a@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/1] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Frank Li <Frank.Li@nxp.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, festevam@gmail.com,
+ francesco@dolcini.it, imx@lists.linux.dev, jun.li@nxp.com,
+ kernel@pengutronix.de, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org, p.zabel@pengutronix.de, pratikmanvar09@gmail.com,
+ robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org,
+ xiaoning.wang@nxp.com
+References: <20241004193531.673488-1-Frank.Li@nxp.com>
+ <5cvzarqkldstuziokdbxxne75i35odexkcykzikyq2gm6ytdyd@5wkm7mhotgej>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <5cvzarqkldstuziokdbxxne75i35odexkcykzikyq2gm6ytdyd@5wkm7mhotgej>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Hi,
+On 10/4/24 10:58 PM, Uwe Kleine-König wrote:
 
+[...]
 
-A caveat: I'm a userspace developer that occasionally strays into kernel land
-(see e.g. the io_uring iowait thing). So I'm likely to get some kernel side
-things wrong.
+>> @@ -263,7 +266,77 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>>   		pwm_imx27_sw_reset(chip);
+>>   	}
+>>   
+>> -	writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
+>> +	/*
+>> +	 * This is a limited workaround. When the SAR FIFO is empty, the new
+>> +	 * write value will be directly applied to SAR even the current period
+>> +	 * is not over.
+>> +	 *
+>> +	 *           ─────────────────────┐
+>> +	 * PWM OUTPUT                     │
+>> +	 *                                └─────────────────────────
+>> +	 *
+>> +	 *           ┌──────────────────────────────────────────────┐
+>> +	 * Counter   │       XXXXXXXXXXXXXX                         │
+>> +	 *           └──────────────────────────────────────────────┘
+>> +	 *                   ▲            ▲
+>> +	 *                   │            │
+>> +	 *                 New SAR      Old SAR
+>> +	 *
+>> +	 *           XXXX  Errata happen window
+> 
+> Hmm, ok, so SAR is the register value that implements the duty cycle
+> setting. And if a new SAR is written, it is directly applied to the
+> hardware and this way it can happen (if SAR_new < counter < SAR_old)
+> that no falling edge happens in the current period. Right?
 
+Yes
 
-On 2024-10-03 11:30:52 +0100, Christian Loehle wrote:
-> These are the main issues with transforming the existing mechanism into
-> a per-task attribute.
-> Almost unsolvable is: Does reducing "iowait pressure" (be it per-task or per-rq)
-> actually improve throughput even (assuming for now that this throughput is
-> something we care about, I'm sure you know that isn't always the case, e.g.
-> background tasks). With MCQ devices and some reasonable IO workload that is
-> IO-bound our iowait boosting is often just boosting CPU frequency (which uses
-> power obviously) to queue in yet another request for a device which has essentially
-> endless pending requests. If pending request N+1 arrives x usecs earlier or
-> later at the device then makes no difference in IO throughput.
+> If so, I think the depicted PWM output is misleading. I'd describe and
+> picture it as follows:
 
-That's sometimes true, but definitely not all the time? There are plenty
-workloads with low-queue-depth style IO. Which often are also rather latency
-sensitive.
+Why not simply duplicate the ERRATA description for iMX8M Nano 
+MX8MN_0N14Y errata sheet ?
 
-E.g. the device a database journal resides on will typically have a low queue
-depth. It's extremely common in OLTPish workloads to be bound by the latency
-of journal flushes. If, after the journal flush completes, the CPU is clocked
-low and takes a while to wake up, you'll see substantially worse performance.
+"
+ERR051198:
+PWM: PWM output may not function correctly if the FIFO is empty when a 
+new SAR value is programmed
 
+Description:
+When the PWM FIFO is empty, a new value programmed to the PWM Sample 
+register (PWM_PWMSAR) will be directly applied even if the current timer 
+period has not expired.
 
+If the new SAMPLE value programmed in the PWM_PWMSAR register is less 
+than the previous value, and the PWM counter register (PWM_PWMCNR) that 
+contains the current COUNT value is greater than the new programmed 
+SAMPLE value, the current period will not flip the level. This may 
+result in an output pulse with a duty cycle of 100%.
+"
 
+That is very clear to me.
 
-> If boosting would improve e.g. IOPS (of that device) is something the block layer
-> (with a lot of added infrastructure, but at least in theory it would know what
-> device we're iowaiting on, unlike the scheduler) could tell us about. If that is
-> actually useful for user experience (i.e. worth the power) only userspace can decide
-> (and then we're back at uclamp_min anyway).
+> 	/*
+> 	 * At each clock tick the hardware compares the SAR value with
+> 	 * the current counter. If they are equal the output is changed
+> 	 * to the inactive level.
 
-I think there are many cases where userspace won't realistically be able to do
-anything about that.
+I would skip this ^ part unless you can surely say the IP works exactly 
+that way because you checked the RTL.
 
-For one, just because, for some workload, a too deep idle state is bad during
-IO, doesn't mean userspace won't ever want to clock down. And it's probably
-going to be too expensive to change any attributes around idle states for
-individual IOs.
+> As a new SAR value is applied
+> 	 * immediately to the currently running period, it can happen
+> 	 * that no falling edge happens in a period and so the output is
+> 	 * active for a whole period. Consider a change from
+>           *     ________
+> 	 *    /        \______/
+>           *    ^      *        ^
+> 	 * to
+>           *     ____
+> 	 *    /    \__________/
+>           *    ^               ^
+> 	 *
+> 	 * where SAR is written at the time marked by *. The counter
+> 	 * didn't reach the old (bigger) value because it was changed
+> 	 * before the counter reached that value and when the new value
+> 	 * becomes active it is already lower than the current counter
+> 	 * and so doesn't trigger either while the counter continues to
+> 	 * grow. So the resulting waveform looks as follows:
+> 	 *
+>           *     ________        ____________________
+> 	 *    /        \______/                    \__________/
+>           *    ^               ^      *        ^               ^
+> 	 *    |<-- old SAR -->|               |<-- new SAR -->|
+> 	 *
+> 	 * that is the output is active for a whole period.
 
-Are there actually any non-privileged APIs around this that userspace *could*
-even change? I'd not consider moving to busy-polling based APIs a realistic
-alternative.
+The ascii/infographics is nice and would be good to keep, but regarding 
+the description, frankly, the NXP errata description says the same thing 
+in fewer words :)
 
+> 	 */
+> 
+>> +	 *
+>> +	 * If the new SAR value is less than the old one, and the counter is
+>> +	 * greater than the new SAR value (see above diagram XXXX), the current
+>> +	 * period will not flip the level. This will result in a pulse with a
+>> +	 * duty cycle of 100%.
+>> +	 *
+>> +	 * Check new SAR less than old SAR and current counter is in errata
+>> +	 * windows, write extra old SAR into FIFO and new SAR will effect at
+>> +	 * next period.
+>> +	 *
+>> +	 * Sometime period is quite long, such as over 1 second. If add old SAR
+>> +	 * into FIFO unconditional, new SAR have to wait for next period. It
+>> +	 * may be too long.
+>> +	 *
+>> +	 * Turn off the interrupt to ensure that not IRQ and schedule happen
+>> +	 * during above operations. If any irq and schedule happen, counter
+>> +	 * in PWM will be out of data and take wrong action.
+>> +	 *
+>> +	 * Add a safety margin 1.5us because it needs some time to complete
+>> +	 * IO write.
+>> +	 *
+>> +	 * Use __raw_writel() to minimize the interval between two writes to
+>> +	 * the SAR register to increase the fastest PWM frequency supported.
+>> +	 *
+>> +	 * When the PWM period is longer than 2us(or <500kHz), this workaround
+>> +	 * can solve this problem. No software workaround is available if PWM
+>> +	 * period is shorter than IO write.
+>> +	 */
+>> +	c = clkrate * 1500;
+>> +	do_div(c, NSEC_PER_SEC);
+>> +
+>> +	local_irq_save(flags);
+>> +	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
+>> +
+>> +	if (duty_cycles < imx->duty_cycle) {
+>> +		if (state->period < 2000) { /* 2000ns = 500 kHz */
+>> +			/* Best effort attempt to fix up >500 kHz case */
+>> +			udelay(6); /* 2us per FIFO entry, 3 FIFO entries written => 6 us */
+> 
+> I don't understand the motivation to wait here. Wouldn't it be better to
+> write the old value 3 - val times and not sleep?
 
-For many workloads cpuidle is way too aggressive dropping into lower states
-*despite* iowait. But just disabling all lower idle states obviously has
-undesirable energy usage implications. It surely is the answer for some
-workloads, but I don't think it'd be good to promote it as the sole solution.
+No, because you would overflow the FIFO, see:
 
+137fd45ffec1 ("pwm: imx: Avoid sample FIFO overflow for i.MX PWM version2")
 
-It's easy to under-estimate the real-world impact of a change like this. When
-benchmarking we tend to see what kind of throughput we can get, by having N
-clients hammering the server as fast as they can. But in the real world that's
-pretty rare for anything latency sensitive to go full blast - rather there's a
-rate of requests incoming and that the clients are sensitive to requests being
-processed more slowly.
+> Or busy loop until
+> MX3_PWMSR_FIFOAV becomes 0?
 
+Do we really want a busy wait here if we can avoid it ?
 
-That's not to say that the current situation can't be improved - I've seen way
-too many workloads where the only ways to get decent performance were one of:
+We can do udelay(3 * state->period / 1000); so faster PWMs would wait 
+shorter.
 
-- disable most idle states (via sysfs or /dev/cpu_dma_latency)
-- just have busy loops when idling - doesn't work when doing synchronous
-  syscalls that block though
-- have some lower priority tasks scheduled that just burns CPU
+The delay is here to basically wait until the FIFO is surely empty and 
+has space for 3 consecutive writes (see the commit above wrt. FIFO 
+overflow).
 
-I'm just worried that removing iowait will make this worse.
-
-Greetings,
-
-Andres Freund
+[...]
 
