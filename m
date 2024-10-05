@@ -1,134 +1,212 @@
-Return-Path: <linux-kernel+bounces-351817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B74991683
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:34:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D9699168B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356A91F22465
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:34:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8275B219EC
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 11:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFB0132103;
-	Sat,  5 Oct 2024 11:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EAE14C5B0;
+	Sat,  5 Oct 2024 11:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcA50m7u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+/MGrsN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1B8231CA6;
-	Sat,  5 Oct 2024 11:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21EC3F9C5;
+	Sat,  5 Oct 2024 11:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728128064; cv=none; b=R1yxRIsDB/mhT5KWqg8wWXun7KawJyzufgAg/B3ZgtIhZM++VlR+oL3EC/vJ3i334moMg2Qbt35tOrsKW9J3NrSF7lr1Aoj2IENzhf9d+jFt/4P5AbFVxqBf184/yyfe1GP/bDvnh+H/z4L8BGwhv0SL76JvkRiSzqbfbQlSw+4=
+	t=1728128449; cv=none; b=WCvORY0yuzuxpvfGSHkoORGnIwJ63vobNMIB3Je3vdkUKZuy2BMMpgcbDAga8rZqCjy6PA0ovd1n1Kplhdy1aeMUng6M/jRZXj2wYNr/2WNteB2aFfvPzPASpb0hcn9+GAuSPQuQ8GOwTrsZz/iRFEo1o9/+7MoBLs4m16/PpIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728128064; c=relaxed/simple;
-	bh=ZqPT3O8DR2o81kxgRM0GY2ztpRihfLRXWZdGTGL6I5o=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lLaUirHXsaDVkZg19nNOzukjjIoeTkax9eeoNnaMFCeqbbvGqRh6a8dwXtc+5xOTHjzgW+sVcIbs/yjZ06bOMmfYFXKyV+Vw8Dl3uAlVjYbGi84Gsz5+SEdstcd2lNYoa2QDdqZTHUr8IEk6XgLSePonwtZEUfHLz3Fxim0tXKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcA50m7u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84CB1C4CEC2;
-	Sat,  5 Oct 2024 11:34:23 +0000 (UTC)
+	s=arc-20240116; t=1728128449; c=relaxed/simple;
+	bh=KoXZp5Z1MRtJTgzX5BAlyJxAJSikVi2jOrXgPjYZtoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q24DOLsKudZo328DB9+vipf9T3HHIPJxRyCgwKIRLP6G9t4c7s6b6JJPVLC8Pk0ylC9SYgj+Loc64GmB5Cai8ea7fFid7gSl7vehVbJV/9yFlTEZjq5geEh1yPcFXRZOKzzwTLORNl7GkPwNzYhRffW+gLi9hqLDoEXr6R4LGdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+/MGrsN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43348C4CEC2;
+	Sat,  5 Oct 2024 11:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728128063;
-	bh=ZqPT3O8DR2o81kxgRM0GY2ztpRihfLRXWZdGTGL6I5o=;
+	s=k20201202; t=1728128448;
+	bh=KoXZp5Z1MRtJTgzX5BAlyJxAJSikVi2jOrXgPjYZtoY=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TcA50m7u0/+IF0HetlMSGIg8779G52V7vcCAy1kMwNgEqGSaXQ2p9LuoCmnyTU7jD
-	 fOilEXvtOIIbeNN9azf1tcj52Jp7WzEUC+6KSTllbwV1qQkUjDO0tPt5c673ePC4jH
-	 mFq9784yTMQLY8g88BhvZBr1wKNdz8+ICdmbZvMdhIyw2k2DBexjPVCn5XdE7DmmET
-	 JU+1dF0XvdAlI+V2MAY+aZKg/YgxxVTxyWI1vCMAe6mvMQ8KVSuwGLV8zWUecX84E0
-	 NatBQamNgPvzWmhKWlDmK+JNexI91UE8tQRhtYjoBtiO4jpnaSuHisN+1FaeyveLMI
-	 e8wZ4LzjYWIDw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sx33F-000aBn-ET;
-	Sat, 05 Oct 2024 12:34:21 +0100
-Date: Sat, 05 Oct 2024 12:34:20 +0100
-Message-ID: <87iku6vl4z.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 3/5] KVM: arm64: Manage GCS access and registers for guests
-In-Reply-To: <20241005-arm64-gcs-v14-3-59060cd6092b@kernel.org>
-References: <20241005-arm64-gcs-v14-0-59060cd6092b@kernel.org>
-	<20241005-arm64-gcs-v14-3-59060cd6092b@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	b=f+/MGrsNUSZYpUA0ju9htUARS4HjVUipXjKMsuwo3B+PL4QGGFBJZexNeFLyN8Ph3
+	 j6F6TxeJ/ANaDOba9gG6rAt3C5pv8SZSSXOrioPRNmUFh94H8feVJGuq1ZvtSNLrbu
+	 BMjxTm+Pw2QODbDSyXg8kbI/VLNIzaC5stPcZsrd+GhQOHswu36CKHfabbyAfb2+4i
+	 bhP40EsGWkZiUisnTJdpie+Hm+TBXZ1hC0fTNpopNQA3ADKn2bg9047BXNR6JN5OFy
+	 22Go26r1dMWX10PGS6wwqGgoyR8DH/oThAQRHFRisPTs7y1xnf9pVGW/6lBFIYvvSY
+	 Y+5rT8x3626yw==
+Date: Sat, 5 Oct 2024 12:40:36 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Lars-Peter
+ Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ aardelean@baylibre.com, dlechner@baylibre.com, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v3 06/10] iio: adc: ad7606: Add PWM support for
+ conversion trigger
+Message-ID: <20241005124036.5a09367a@jic23-huawei>
+In-Reply-To: <20241004-ad7606_add_iio_backend_support-v3-6-38757012ce82@baylibre.com>
+References: <20241004-ad7606_add_iio_backend_support-v3-0-38757012ce82@baylibre.com>
+	<20241004-ad7606_add_iio_backend_support-v3-6-38757012ce82@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 
-On Sat, 05 Oct 2024 11:37:30 +0100,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> GCS introduces a number of system registers for EL1 and EL0, on systems
-> with GCS we need to context switch them and expose them to VMMs to allow
-> guests to use GCS.
-> 
-> In order to allow guests to use GCS we also need to configure
-> HCRX_EL2.GCSEn, if this is not set GCS instructions will be noops and
-> CHKFEAT will report GCS as disabled.  Also enable fine grained traps for
-> access to the GCS registers by guests which do not have the feature
-> enabled.
-> 
-> In order to allow userspace to control availability of the feature to
-> guests we enable writability for only ID_AA64PFR1_EL1.GCS, this is a
-> deliberately conservative choice to avoid errors due to oversights.
-> Further fields should be made writable in future.
+On Fri, 04 Oct 2024 21:48:40 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
 
-It appears I have accidentally dropped the branch fixing
-ID_AA64PFR1_EL1.  I'll make sure this goes in as quickly as possible.
-
-
+> Until now, the conversion were triggered by setting high the GPIO
+> connected to the convst pin. This commit gives the possibility to
+> connect the convst pin to a PWM.
+> Connecting a PWM allows to have a better control on the samplerate,
+> but it must be handled with care, as it is completely decorrelated of
+> the driver's busy pin handling.
+> Hence it is not recommended to be used "as is" but must be exploited
+> in conjunction with IIO backend, and for now only a mock functionality
+> is enabled, i.e PWM never swings, but is used as a GPIO, i.e duty_cycle
+> == period equals high state, duty_cycle == 0 equals low state.
 > 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> This mock functionality will be disabled after the IIO backend usecase
+> is introduced.
+> 
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+If you reroll for other reasons a few trivial comments inline
+
+J
 > ---
->  arch/arm64/include/asm/kvm_host.h          | 12 ++++++++++++
->  arch/arm64/include/asm/vncr_mapping.h      |  2 ++
->  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 31 ++++++++++++++++++++++++++++++
->  arch/arm64/kvm/sys_regs.c                  | 31 +++++++++++++++++++++++++++++-
->  4 files changed, 75 insertions(+), 1 deletion(-)
->
-
-[...]
-
-> @@ -4716,6 +4737,14 @@ void kvm_calculate_traps(struct kvm_vcpu *vcpu)
->  		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nPOR_EL1 |
->  						HFGxTR_EL2_nPOR_EL0);
+>  drivers/iio/adc/ad7606.c | 164 ++++++++++++++++++++++++++++++++++++++++-------
+>  drivers/iio/adc/ad7606.h |   2 +
+>  2 files changed, 144 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+> index d1aec53e0bcf..224ffaf3dbff 100644
+> --- a/drivers/iio/adc/ad7606.c
+> +++ b/drivers/iio/adc/ad7606.c
+> @@ -13,10 +13,12 @@
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/property.h>
+> +#include <linux/pwm.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/sched.h>
+>  #include <linux/slab.h>
+>  #include <linux/sysfs.h>
+> +#include <linux/units.h>
+>  #include <linux/util_macros.h>
 >  
-> +	if (!kvm_has_gcs(kvm)) {
-> +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
-> +						HFGxTR_EL2_nGCS_EL1);
-> +		kvm->arch.fgu[HFGITR_GROUP] |= (HFGITR_EL2_nGCSEPP |
-> +						HFGITR_EL2_nGCSSTR_EL1 |
-> +						HFGITR_EL2_nGCSPUSHM_EL1);
+>  #include <linux/iio/buffer.h>
+> @@ -299,6 +301,82 @@ static int ad7606_reg_access(struct iio_dev *indio_dev,
+>  	}
+>  }
+>  
 
-Where is the handling of traps resulting of HFGITR_EL2.nGCSSTR_EL1?
 
-	M.
+>  int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+>  		 const char *name, unsigned int id,
+>  		 const struct ad7606_bus_ops *bops)
+> @@ -951,20 +1050,48 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+>  	if (ret)
+>  		return ret;
+>  
+> -	st->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
+> -					  indio_dev->name,
+> -					  iio_device_id(indio_dev));
+> -	if (!st->trig)
+> -		return -ENOMEM;
+> -
+> -	st->trig->ops = &ad7606_trigger_ops;
+> -	iio_trigger_set_drvdata(st->trig, indio_dev);
+> -	ret = devm_iio_trigger_register(dev, st->trig);
+> -	if (ret)
+> -		return ret;
+> +	/* If convst pin is not defined, setup PWM. */
+> +	if (!st->gpio_convst) {
+> +		st->cnvst_pwm = devm_pwm_get(dev, NULL);
+> +		if (IS_ERR(st->cnvst_pwm))
+> +			return PTR_ERR(st->cnvst_pwm);
 
--- 
-Without deviation from the norm, progress is not possible.
+As below. Blank line preferred here.
+
+> +		/* The PWM is initialized at 1MHz to have a fast enough GPIO emulation. */
+> +		ret = ad7606_set_sampling_freq(st, 1 * MEGA);
+> +		if (ret)
+> +			return ret;
+>  
+> -	indio_dev->trig = iio_trigger_get(st->trig);
+> +		ret = ad7606_pwm_set_low(st);
+> +		if (ret)
+> +			return ret;
+>  
+> +		/*
+> +		 * PWM is not disabled when sampling stops, but instead its duty cycle is set
+> +		 * to 0% to be sure we have a "low" state. After we unload the driver, let's
+> +		 * disable the PWM.
+> +		 */
+> +		ret = devm_add_action_or_reset(dev, ad7606_pwm_disable,
+> +					       st->cnvst_pwm);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		st->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
+> +						  indio_dev->name,
+> +						  iio_device_id(indio_dev));
+> +		if (!st->trig)
+> +			return -ENOMEM;
+
+Blank line preferred here.  Generally it helps readability a little to
+have one after any 'do something and check for errors block'.
+
+
+> +		st->trig->ops = &ad7606_trigger_ops;
+> +		iio_trigger_set_drvdata(st->trig, indio_dev);
+> +		ret = devm_iio_trigger_register(dev, st->trig);
+> +		if (ret)
+> +			return ret;
+
+It we are rerolling for any other reason add a blank line here too.
+If not I might tweak whilst applying or might not bother..
+
+> +		indio_dev->trig = iio_trigger_get(st->trig);
+> +		ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> +						      &iio_pollfunc_store_time,
+> +						      &ad7606_trigger_handler,
+> +						      &ad7606_buffer_ops);
+> +		if (ret)
+> +			return ret;
+> +	}
+>  	ret = devm_request_threaded_irq(dev, irq,
+>  					NULL,
+>  					&ad7606_interrupt,
+> @@ -973,13 +1100,6 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> -					      &iio_pollfunc_store_time,
+> -					      &ad7606_trigger_handler,
+> -					      &ad7606_buffer_ops);
+> -	if (ret)
+> -		return ret;
+> -
+>  	return devm_iio_device_register(dev, indio_dev);
+>  }
+
 
