@@ -1,129 +1,103 @@
-Return-Path: <linux-kernel+bounces-351979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A5E99189B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:58:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18FD991887
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4299E282A2F
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0192B1C2135E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F787158853;
-	Sat,  5 Oct 2024 16:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD4D1586F2;
+	Sat,  5 Oct 2024 16:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="fo9g685j"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dh3A3nBj"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0624A15531A
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 16:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BC52F5B;
+	Sat,  5 Oct 2024 16:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728147515; cv=none; b=ErS2OPARTQk5XK541dJ8bB+Y09aJLoiEtCpFPYCkjRpJZ/Dir+yzRCbQTAXaUBkqIRTyOsGwTXJuQTefBmQVk8ewdClclS8jv+YpB3UvkPEPX//5BsThBpGxXtF2SEmlYuxcYFK0lb71WU/uZkoB1YIMGG2w/ao/buzEnMzf4js=
+	t=1728147384; cv=none; b=KPyDuewNDPCVE3kb0KIPhB9nxMR5JNcq29V+izaOY69udgpKkbomXZqCQqPrrYLZX12EhgLT8bntneR1L6ly3UZm+23OB/dGe02LHuTeX3Pn39I2iUB8aXRunR0PWutqoGo7C3kb6t7VywXFO9AEf5RZeYcO30ENjuWf981zwnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728147515; c=relaxed/simple;
-	bh=5T4U1UHrigNQBk+mJQwGMPE/eTCGy/9RZiUgKQnFmlQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=JjGHBmbXl8agh1K0p/n9YUQpTeyTnJh3LjfKhzycutS8X9zcfT/7YbZgo2Eiw8HgkN9ltIW0Gq2KEYGAr55KiVUwlBfYeEJ3c7PhzbZvC+4tDgzJDAb19I+QZ7a/5rOtS5T0KXBLzTKEa437oiKrkCgSMDg/YaFC1iQNA6vWaiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=fo9g685j; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cb27e974ceso21152786d6.1
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 09:58:33 -0700 (PDT)
+	s=arc-20240116; t=1728147384; c=relaxed/simple;
+	bh=fWd6p0uW3RY2ko3T7S5XirHw5QwEXfeDYE0Z4Sd0P/U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RXujYPdASQ9fvZZlTgEnUeXX2nz1q1dxEebwNe4mddOGh36+zhSBdZ3jQY3xLa2IznEZgEhUQNDomnviHeZfdDC5IiAWCKZGqLU/buy/GToEUFp1md3WvmMWn2334CtZ3vxk95c+K5I7xpGOQwnuXdHD7ygv5qYjojNVRX/7bJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dh3A3nBj; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso33069331fa.3;
+        Sat, 05 Oct 2024 09:56:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek.ca; s=google; t=1728147513; x=1728752313; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=534BF0P5lE7Sw6EXBB2MdGwppSsVFm73Tau4PbJd3Pc=;
-        b=fo9g685jiYKwVwKPeGyQPpTLyL/6Ndbzovf7A4GMg0SnJA0Qrzr4V6h4SrpWDF5v5S
-         T0+9M616riiO3Pwr0RRdH3V/4bbAs61naERXXRaRNgP1tkGjT6TswbpEBtLaqDaJ5CZN
-         mdYHIDbukQe9RU11/cnB+StAuktNA6znDUU/LrtTpslF8knQAvCqw1mgGWsTyox+R/iT
-         Z1azhSgGScz/sQ8LFouJlyzGQfrF7qTOHbGFrYHhoR37zERqz/f//NzKplYCqAag2lgK
-         ah3SBMlq4MmGxe9iHMnRznsm/FkN86V1omcIcnrMnAnm0nam5O2znF8B3Jb6Zu98lvkV
-         v57w==
+        d=gmail.com; s=20230601; t=1728147381; x=1728752181; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8ylKNLAvNwsO2ttA4i+GZf2R8FUA0B3NBTmfOn2Rroo=;
+        b=Dh3A3nBjy4iwKFrJL4WcYf45tGLPd2Ep8BK5L6C6by+Vbgjry605ZYGYNoIJ3v1mJG
+         OXZlsX0VzRRO4jhRuVISvP4HSSxtQ/ksjSZIZU2tbXnpM5SSiqvdTmGpbpjBJlnwmCYE
+         GuT2tSaYDG1lwDuwjBJfL9cRN9PX0GDiCaQFzep0Jp4o6rrfs5rwHoMhgvgr4vdTbWC+
+         eXDMYhf4uzPNGR70CiE2oD51hzdE2xltymGw5C9in9t0CgUfe7btrt7Ylx+YbNHwUSEr
+         EwFwzJ26PvsfNZb0w9w4aPu1bT/O23GokfBMgODOw2qzMtsoX6Bms6nEBFk9d2lpT3+x
+         Q+VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728147513; x=1728752313;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=534BF0P5lE7Sw6EXBB2MdGwppSsVFm73Tau4PbJd3Pc=;
-        b=R/gSTDRK48ihYmXEJrJ8tikj6C9W3wT6XUXbAXmz3h+C93h+Y+TzUIFGV+cNWZ79CW
-         9lfiSj+cNPLnJYNYORPnqozxcqLIlgq/G45HorpJsrPZZzOZqMINPQdekA6VQXuIGp83
-         YqU5AG2JcjWrs1fKKTuCVQS5PFsEH9lJA6buNrifZY1/pWeG5owX04yCnOqH8DFY5+/u
-         SSYRvR+uYyRJxtZuJeVhRTFjOP4BQYAWxcPt7+70LqOAuJqhlzQzMGpKF3tR7mZCO/Jg
-         ueM5uKZe8vB8egcNEaSJZ7wx/RONPBgGWOV5UJW3aFQocTFZiubFnhDg44YD7WRpptPp
-         whZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVq3MhHTYbIsjkS+jFpsp2fHZtIFYQf45JXQQb8EjHZkqhlqOyKuWT0Iq3bcuJOcu2GOf2/b2f6JuEfyV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwmz4ykFifCN3habJ8MKIOe3n3JVK6lErbY9tBwJnUsCqOIUYd
-	eG+lv8qbK9ozx+8/9J6XBdez8xsEqcs6p6PgdNKaL8xbE/ZR7SH6TmGa5OrKpGPgK2G/GnxV40l
-	Zivk=
-X-Google-Smtp-Source: AGHT+IHNX/nlmxQbI/WqWLEEy+/8YLvtUS/jHRIC7aZ58AdVpv3bsRE62Z/GKH7EQ1/OcMHcCRnZww==
-X-Received: by 2002:a05:6214:5709:b0:6cb:46ce:744a with SMTP id 6a1803df08f44-6cb9a4fa3b0mr78469376d6.48.1728147512903;
-        Sat, 05 Oct 2024 09:58:32 -0700 (PDT)
-Received: from [192.168.0.189] (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46efed1sm9795796d6.68.2024.10.05.09.58.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Oct 2024 09:58:32 -0700 (PDT)
-Subject: Re: [PATCH 1/2] drm/msm/dsi: improve/fix dsc pclk calculation
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- freedreno@lists.freedesktop.org
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>,
- "open list:DRM DRIVER for Qualcomm display hardware"
- <linux-arm-msm@vger.kernel.org>,
- "open list:DRM DRIVER for Qualcomm display hardware"
- <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
-References: <20241005143818.2036-1-jonathan@marek.ca>
- <ba56c822-cf3d-4d62-86d4-e04551e443c6@oss.qualcomm.com>
-From: Jonathan Marek <jonathan@marek.ca>
-Message-ID: <e60361b2-29bc-aeee-2ab9-bb19e5c0afa6@marek.ca>
-Date: Sat, 5 Oct 2024 12:55:10 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        d=1e100.net; s=20230601; t=1728147381; x=1728752181;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8ylKNLAvNwsO2ttA4i+GZf2R8FUA0B3NBTmfOn2Rroo=;
+        b=uYUjwpl7z5bcOI18muGu4ZyCE3773O5ntArTbnZovIpXI2M3TpUFfBCz2JIU8Es6MW
+         eaXCGmqxDqRRgVFVZaNh6UCjoAhe7B4Gajt2N0sgeVGEi56eYiFyVnJHZXZxjmU09YUz
+         i3BwEgKezmc96IJp5sH5aReH4yzU7+1Cxv940HD5rLbpMdCRkQlT1NxqtMuF6wwGyMyA
+         /Iyjqt8YITdYCng5mkjWAs9is2YwbcbIkrRAnFHWCSGUyvCCdNfWHfCG6OASS1fvfQFu
+         mS3aiGupY07A2pRZ2Oi49sv5WmqFS5nnyfURp70D1n1EM8EaeuHW4yomBSLRS33fHx0q
+         nQ9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUkw/zWfDZ7+ExI13lGjTWx01E5Zi/ldfCJ/2fqbMj2CaBSL6kVk7vGl62sU3wygt8VHXXsyKqH+FUg9oY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdsg5uPgpSdNl3oRZOZg3/8a7F3Jy3KG73q2hgItO8PM65CwM1
+	m/99AVwcBUH4GqbQ4Xss7rE/JY/FaFMA7k1+xnA4WQro4jdrgyXycIN0wqBIma3au4B1JEuUGt5
+	/W9J+o5ADojZKRTAqKMhOSTrK3ew=
+X-Google-Smtp-Source: AGHT+IH8ovGo/GOdNZNOetAgADQ2UZFmgZ2um3Y/SyWfXkrsdDvkuWhIqOJGC6x8oHNk5PD36xpMLHJzaudZYKvaIW0=
+X-Received: by 2002:a05:6512:1307:b0:52f:413:7e8c with SMTP id
+ 2adb3069b0e04-539ab876decmr3185141e87.14.1728147381044; Sat, 05 Oct 2024
+ 09:56:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ba56c822-cf3d-4d62-86d4-e04551e443c6@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20241004150148.14033-1-abhashkumarjha123@gmail.com>
+ <20241004150148.14033-2-abhashkumarjha123@gmail.com> <20241005174151.4bcd55f6@jic23-huawei>
+In-Reply-To: <20241005174151.4bcd55f6@jic23-huawei>
+From: Abhash jha <abhashkumarjha123@gmail.com>
+Date: Sat, 5 Oct 2024 22:26:09 +0530
+Message-ID: <CAG=0RqKM8HJ-rV54mCjo1-J6FOsed8zoHSWaVJ1YErSNNZDX1w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] iio: light: vl6180: Add configurable
+ inter-measurement period support
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, lars@metafoo.de, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/5/24 12:31 PM, Konrad Dybcio wrote:
-> On 5.10.2024 4:38 PM, Jonathan Marek wrote:
->> drm_mode_vrefresh() can introduce a large rounding error, avoid it.
->>
->> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
->> ---
->>   drivers/gpu/drm/msm/dsi/dsi_host.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
->> index 185d7de0bf376..1205aa398e445 100644
->> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
->> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
->> @@ -542,7 +542,7 @@ static unsigned long dsi_adjust_pclk_for_compression(const struct drm_display_mo
->>   
->>   	int new_htotal = mode->htotal - mode->hdisplay + new_hdisplay;
->>   
->> -	return new_htotal * mode->vtotal * drm_mode_vrefresh(mode);
->> +	return mult_frac(mode->clock * 1000u, new_htotal, mode->htotal);
-> 
-> This seems to ignore mult/div by two on certain mode flags.. is that
-> intended?
-> 
-> Konrad
-> 
+> Hi Abhash,
+>
+> Sampling frequency must be in Hz and reflect how often the channel
+> is sampled (not just the inter measurement period.  So this sounds wrong.
+> It is sometimes complex to compute but we have to stick to the documented
+> ABI.
+Got it. I thought of skipping out the complex computation in the
+driver and assumed
+the user would give me pre-computed ms values.
 
-It is intended - those flags are not relevant to DSI panels, and DSC 
-pclk adjustment is only about how DSC affects htotal.
+Just one thing, Is it better to just use IIO_CHAN_INFO_SAMP_FREQ for
+"inter-measurement period"
+and get the input in HZ (converting HZ to ms in driver)
+Or
+Define a custom sysfs attribute like `inter_measurement_period` to get
+ms values? for this driver.
+
+Thanks,
+Abhash
 
