@@ -1,111 +1,213 @@
-Return-Path: <linux-kernel+bounces-351647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07B399142F
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:51:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B52EA991434
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 05:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93D962853FE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 03:51:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B758CB23777
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 03:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D4D39FC1;
-	Sat,  5 Oct 2024 03:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3FA24B34;
+	Sat,  5 Oct 2024 03:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+vn+RW4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="B+pqqyCt"
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14813FF1;
-	Sat,  5 Oct 2024 03:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E73F1C6B2;
+	Sat,  5 Oct 2024 03:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728100284; cv=none; b=qau5LGNCuvsVp7PZlid6ELYXo45i8ioyYhovWoaTV7xuyS/l6QJi9/W3Tb0PLa7U7FLBjDTGcqHnzKCu1YmIh+Q7dhsdzo1T9ij4D1IJvVtCnnWvJTpGWSwRIx2sphjQVeHpzNH/Nrz+d4LldvpDO1aDG2ftgxjZtuHkVdSWTpg=
+	t=1728100758; cv=none; b=ECHfwn43NROc/wblSxJazSfCIZUStDnTQLURJeWvo2HiKXlP6supYSAZAzasp8bHaHVF4tuGpfvUb3g8Ee1sGGCTWCTnqYSLWR4m7qHoFNPlzwIDdcJ1TXEF6jYPq6Uj8PRjbOguE9ooHpJcFnpo89DjFjvz630qO8b7E323W7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728100284; c=relaxed/simple;
-	bh=xnB03o5wj5wkk+9w0FLxKpxojhy1VFJSSIfAcXclIOc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iLpjI4PBNRdUDPcH2dca41MAu7yAwtKTyvanAhsuQxtlgUmZKOI/kuD1qWQwAihexrz/NWnN+42SWp/g5FHsfkcfVpU38YP6ehFkyhl/vdXrBX4tWjlW9r1IbzdIOjZqqHqt3X1ljs5pvwN3NNZBs+/HOH7SPJovbNDZ+p7z670=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+vn+RW4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76559C4CECF;
-	Sat,  5 Oct 2024 03:51:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728100284;
-	bh=xnB03o5wj5wkk+9w0FLxKpxojhy1VFJSSIfAcXclIOc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=L+vn+RW4m7vTnlDWpM6dhmh6kl6uSlhKXTvZTL8kgKxSlVTmM7K+LUmnAqPoyhSrE
-	 mxiZRDPOR4kWv13mNhxmqTHa7dEGj8ZP5KeYMKBJ75K78L+aA/gW/KWonHWK+hbhK1
-	 AfVwQ18grQRL6bVsZvFTlNjkp/QQ6yQT0ObsOt9Z4J83PfByfe/ls3AZXwugObDyQI
-	 Ea9YIQCTgQ5W9pHTHxDxmN8LnLyCAzv1X6Lzch4zAykHeOepSz1VBh0vt6IAiXAIb+
-	 Xc6E1I0I52o6TKwj41lk7p0CapnYRz5hBhX5bT9xVzoX9t76BFL+S0Z52kc15rRnBr
-	 Rhg075je05X7A==
-From: Mark Brown <broonie@kernel.org>
-To: perex@perex.cz, tiwai@suse.com, hayashi.kunihiko@socionext.com, 
- mhiramat@kernel.org, 
- =?utf-8?q?=28=ED=95=99=EC=83=9D=29_=EC=9E=A5=EC=9D=B8=EA=B7=9C_=28=EC=BB=B4=ED=93=A8=ED=84=B0=EA=B3=B5=ED=95=99=EA=B3=BC=29?= <ingyujang25@unist.ac.kr>
-Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <SE1P216MB2287F4D575CFBDC9755E896BFD6A2@SE1P216MB2287.KORP216.PROD.OUTLOOK.COM>
-References: <SE1P216MB2287F4D575CFBDC9755E896BFD6A2@SE1P216MB2287.KORP216.PROD.OUTLOOK.COM>
-Subject: Re: [PATCH] sound: soc: uniphier: Handle regmap_write errors in
- aio_src_set_param()
-Message-Id: <172810028220.832098.12998489877950324784.b4-ty@kernel.org>
-Date: Sat, 05 Oct 2024 04:51:22 +0100
+	s=arc-20240116; t=1728100758; c=relaxed/simple;
+	bh=3O1st7a2JUYhkREVq6zPbi+4RL7lqMmqLzPpnZ0q5k0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bmu0i6hzvaUFbf6lRX6LggEdJE0TVnD1LDDkCm5t25p9St3p7tyynU1If5/8NqoHfavfCnmhWtr36Kr5tPzvIEvCZ7McH+OlWl75p2Svu6rxQXfQy9kG2c2rRMDr000ju6i74eQzDTAbX8dNdbRvtSM+w8xRrEsWQ22O1+wOof0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=B+pqqyCt; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.84] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 399633F1E6;
+	Sat,  5 Oct 2024 03:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1728100753;
+	bh=Vk3HsdhF+YB2WK8ojIePESCSq0zj2fOyJodL9lVyaxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=B+pqqyCtaCDN4f4UOgsoz2zt+e3bwRT826DNPsPSSlWQzPJTVcO4GpKmNNImo4NAz
+	 sRl3W9xwh4ml0SNb5tqQ3LMyiqaKjxGyprKbAT4R159dxfzz8O/1XwIcI8MIhLzyjt
+	 Oazd5DeIrfbscLKCn2S2Dnh4LMqkRx2hh0s46q8tfqG2KevupNVQmRam7Fw3S179gH
+	 kfPz+fPrfsNT6xRWonXDt4XGtMV9LM92sDvEKzyJs8Lp/8LgOKuPnWbi49v9DkOj7K
+	 MRtpowKrJWrDTAHridk06sySMXMKh37nflgtgbNcPop17KS1EyEwKkh/moVV34JZJg
+	 FFqV6QWfAD1JA==
+Message-ID: <a0de84de-8c20-46b9-ba61-44d35e7cdc58@canonical.com>
+Date: Fri, 4 Oct 2024 20:59:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-9b746
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+ linux-security-module@vger.kernel.org
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net>
+ <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+ <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+ <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
+ <19e29693-718c-4667-ab40-948718bcc6f5@I-love.SAKURA.ne.jp>
+ <CAHC9VhT3yfahvwSVqGHyQq5SDpf8QRjDoEttoyD0zSau41Sb4Q@mail.gmail.com>
+ <9387e6bb-484a-443d-ad87-24cf6e976e61@I-love.SAKURA.ne.jp>
+ <2e182814-9317-4de1-ab96-b3b1eeb89733@canonical.com>
+ <8114a37e-1306-47ee-b27e-a61c1c7bca94@I-love.SAKURA.ne.jp>
+ <393a1cd5-a212-4b04-9ff2-744772c21106@canonical.com>
+ <cd548445-777c-46d7-abe3-de8e06e509ee@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <cd548445-777c-46d7-abe3-de8e06e509ee@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 26 Sep 2024 21:15:18 +0000, (학생) 장인규 (컴퓨터공학과) wrote:
-> The aio_src_set_param() function did not previously check the return
-> values of regmap_write() and regmap_update_bits().
-> If these functions fail, it could lead to silent failures when
-> configuring the sample rate converter (SRC), causing improper behavior
-> in audio processing without any indication of an error.
+On 10/2/24 23:16, Tetsuo Handa wrote:
+> On 2024/10/03 14:35, John Johansen wrote:
+>> I do understand that. The problem is that out of tree doesn't do that.
+>>  From a distro perspective out of tree is more work, and is very problematic
+>> from a code signing perspective.
+>>
+>> Code signing isn't going away, if anything its become a requirement to
+>> support the majority of users. Loading unsigned modules, code, even
+>> bpf is a problem.
 > 
-> This patch modifies aio_src_set_param to check the return values of
-> regmap_write() and regmap_update_bits().
-> If either function returns an error, the error code is propagated back
-> to the caller to ensure proper error handling.
-> This change aligns with the existing error-handling behavior in
-> functions like uniphier_aio_prepare(), where a failure in a sub-function
-> should result in an immediate return of the error.
+> Confused. If use of BPF is a problem, use of BPF-LSM is also a problem?
+
+yes it is. Pressures being what they are, it is enabled for some of our
+kernels. Signed BPF would be required to get it available every where.
+
+> If one were able to implement security modules using BPF-LSM, such modules
+> are headache for distributors? If so, BPF based LSM modules can't be a
+> candidate for replacing C based LSM modules...
 > 
-> [...]
 
-Applied to
+I have never argued they were. But they are currently the only solution for
+out of tree LSM modules if you don't want to rebuild the kernel.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+>>
+>> Sure individual users can disable secure boot etc but at the distro
+>> level we need to support secure boot out of the box. Out of tree code
+>> really just isn't compatible with this.
+> 
+> More we want to enforce protecting with module signing, more we need to make
+> whatever code built-in and run in the kernel space. Upstream-first pressure
+> will push whatever code for inclusion into the upstream kernel.
+> 
+> 
+> 
+>>> TOMOYO is one of in-tree modules that can be signed together when building
+>>> distribution kernels. Fedora can provide tomoyo.ko as a signed-but-unsupported
+>>> module (i.e. excluded from main kernel package that is supported by
+>>> distributors but provided as a separate package that is not supported by
+>>> distributors).
+>>>
+>> yes it can, it has chosen not to. As I have said before that is
+>> a choice/political reason, not technical. I wish I had a solution to this
+>> problem for you but I don't.
+> 
+> What does "it" referring to? Fedora has chosen not to build TOMOYO into Fedora's
+> vmlinux. But I haven't heard from Fedora that Fedora won't ship tomoyo.ko as a
+> separate package.
+> 
+yeah fedora/RHEL, they don't build apparmor either. And I do not believe that
+building tomoyo.ko will get them to ship it in a separate package. That separate
+package is more work than a builtin tomoyo and the kernel memory savings are
+minimal.
 
-Thanks!
+With KP's performance patch the performance overhead of a builtin tomoyo is
+negligible.
 
-[1/1] sound: soc: uniphier: Handle regmap_write errors in aio_src_set_param()
-      commit: 23fa0b04d3fd4b8277083e9a8abb1a975a05c837
+>>                               What I can say is Tomoyo adding the ability to
+>> load out of tree code that isn't signed is going to force Ubuntu to do
+>> the same and disable it. I really don't want to do that, I would rather
+>> leave the choice available to our users.
+> 
+> How is tomoyo.ko connected to loading of out-of-tree code? If the module signing
+> can prevent unsigned modules from loading, where is the possibility of loading
+> unsigned LSM modules even if LSM hooks are exported to loadable modules?
+> 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+sorry was tired and in rush, and dumping in the other worries I have here. Exporting
+symbols itself has nothing to do with module signing. However as Kees pointed
+out in another email it does become an attack target.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+The other one is I don't believe tomoyo,ko is going to get built as part of
+the fedora/RH infrastructure. Which means module signing will block it. You went
+for a "technical" solution on the symbols export, by-passing the community.
+What is the next technical solution to get around module signing. Over the top,
+paranoid, maybe. Do I think its highly unlikely, yes, but it became a worry as
+soon as you pushed this patchset.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+>   From module signing perspective, there will be no difference between the LSM
+> framework exports LSM hooks and TOMOYO exports LSM hooks. And
+> https://lkml.kernel.org/r/caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp
+> leaves the choice available to distro users. Why not acceptable?
+> 
+> By some chance..., can't module signing prevent any code (both in-tree and
+> out-of-tree) that is not signed from loading !?
+> 
+as long as it goes through the module infrastructure sure.
 
 
