@@ -1,161 +1,273 @@
-Return-Path: <linux-kernel+bounces-351650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F64299143C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 06:06:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3FA5991445
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 06:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED7DA1C21DD4
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 04:06:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D4441F2304F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 04:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D4F28DD0;
-	Sat,  5 Oct 2024 04:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D25F2AD20;
+	Sat,  5 Oct 2024 04:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gtFC646R"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Wn9PiuAn"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C7E12B73
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 04:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CBE22067;
+	Sat,  5 Oct 2024 04:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728101163; cv=none; b=DGCdCYsobFqCd8CD6x3f1iI+BNCbzqiRshaV4BZfuq02tL9sgN2vsQJPI9hsYyFwkxn2848tdkuJpugY8wKs4J3gMJg/ws+jA0DbYFE6wkbLynqcIXLmy447SAOrc5S4a6+EhYWehg3UG0RNnVeNU0ZbnVLh/KgJCtlDvmVMbZw=
+	t=1728102208; cv=none; b=u2QLrrYMBnAqovO00u6mXPWygghVk3XWct87srGBAQtF63LudSJGTPWD9NfX7g2sgSlZI74ET3n37y/fN5QhanvxHDHblwHLgFIttT6CJD7DxxwFlJFh70ggDv5EEODEcRf5iNPfQyL4DsMQDSHDp88ShNPqwlq1qccOrMgDBMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728101163; c=relaxed/simple;
-	bh=yeW+ixq3PNStNZwXjz2ygWlTa7p8zncF/b9m6U5cQZI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Sx4kaC2Z7gKaV6Ui+XKHMZBIc/PFrlzQD3N0CkhTDxx4CWud+IVwYxN1USOzB0DcZ1ZSzsGWx6LxdPuOVmPPkep+g1pu3vgv7zpDT75p6DmmFfNmN7n997elMjo4c40SilpFQFDtu1v9BdA88jXI+GLjWiTYsAo0t/RIOnDbUY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gtFC646R; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4953ndfZ030272
-	for <linux-kernel@vger.kernel.org>; Sat, 5 Oct 2024 04:06:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=nt8ByGFRJzx+/MAP5/mSPK
-	mnjPolpJ2VP3zTLsA41es=; b=gtFC646R7AFmNUWj63ulTXivRP+L9NRcatdArj
-	p65Eu+p9L51bozFV8ccEEKi2hjCZrMgVSii2EZY4m43beQdmqdn0VqT5d9ePCm54
-	l1I1M4Uwnw9g9qRrCYNYVToJpdjQXwOwo5qa37rK+5HDn36Hz30Qn77XhcAcs6ck
-	W6Ms49ZOnlAvoyXnGXDnH+cdntsj7fGgQRe9DaKizM+XCakQmvikL5IEzs61t9oL
-	wOdB/NEvqxNE/THPLjUwiT0YGhVCf3bIeKyQNFss0dw+bAWJrmwFre1K9UEkNLi1
-	JmW/3ebSrm8m3buSSlhTC/24gDqksUnMXj2Mc66WpvS2JQNQ==
-Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com [209.85.160.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422vsgr326-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 04:06:00 +0000 (GMT)
-Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-286f532c9d5so2250865fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2024 21:06:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728101160; x=1728705960;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nt8ByGFRJzx+/MAP5/mSPKmnjPolpJ2VP3zTLsA41es=;
-        b=id9XupOGZDbgUxL83TjCsY6KuHEX2sO2AiyWprTZ/xnj5mvKtePY2LIvJQJIFhKMei
-         Ud4GFy+tYVRWy+BAYwktcqvp4217vch8qMlXulrLR93Ae4HfFXio3UaNdM89in6Ht5Qh
-         G2Kf5REvcpzKCZtLwuI4KYHrdMh/WVXzmkwtgI7yGABGHTTwtSAgLfHAYOVi1GlykHPF
-         8SeC5XKaQ5uvouR4zcPzxj7o6t7TplNoPq5Q4aD2HbXB0qb40Mzrx5iRmz9Vl6VtxevX
-         x5umPhe381jkW1yd+bxbuT5yaco3KzHOrUfA7fBvSR/w5zcTGrcecMLgr2iPjomUh+gi
-         Bfeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVe8uk3wXaFE+H0LpGFlOQea3ZvpV1hFl6hM0kkSrnCNkA6UeaIaYlHDQ7/wlRahB6sNLis/w/X+Ydt0ak=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY6UERXtkgy0OjCHvH0k97p3JJMhpDWi8YrKiuOrxtPZSR3jT9
-	LQ7gRoCV5IjHQR/j/2xtB753gyanD+64A5NU12ichR0/47cW6Mirwy7+B9x7BOVy7FfBJ7sS07d
-	eSarzsXSafgUBvMAaFSw+2Q4JA6kT/p+7rl43ps0tuGv1ES4rWoEq/Kgm0sY9grw=
-X-Received: by 2002:a05:6871:51e0:b0:287:bfad:b17f with SMTP id 586e51a60fabf-287c1daf9a5mr2869084fac.20.1728101160217;
-        Fri, 04 Oct 2024 21:06:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IED35/McyuIslOGRBzvGHo7SOxcoqplNJK/DgeWpr9rg8+BEq+8ZGipyzHZvjS2TBwlUQMQ1g==
-X-Received: by 2002:a05:6871:51e0:b0:287:bfad:b17f with SMTP id 586e51a60fabf-287c1daf9a5mr2869078fac.20.1728101159914;
-        Fri, 04 Oct 2024 21:05:59 -0700 (PDT)
-Received: from [192.168.86.60] (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5e7d712081csm384872eaf.2.2024.10.04.21.05.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 21:05:58 -0700 (PDT)
-From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Date: Fri, 04 Oct 2024 21:09:05 -0700
-Subject: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Specify i2c1 clock
- frequency
+	s=arc-20240116; t=1728102208; c=relaxed/simple;
+	bh=VAfiyok4ugjEw6q/iwc9bfeTDqFqka9uuOrMe40BkaA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ot2uRer8bXI5A220spYbmeO93YMNwIGCMATPjitZDj12IYEcrX4P/jVrcYFAzAztthnJ86C2ELHK/KtdGopCqpEeG+ZvY/BOFZZqQK4OGrz4mdEjreWn95EvCM0J6ZtStnY+aeUWCVTW+6Rprd5QZs7BoKIba9LWV9lya9GxG8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Wn9PiuAn; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id E3C5A1140301;
+	Sat,  5 Oct 2024 00:23:24 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-08.internal (MEProxy); Sat, 05 Oct 2024 00:23:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1728102204; x=1728188604; bh=MQ2TI9weLpwwO0u3vLYut9X87Z79
+	bgN+EXOdenFrMyY=; b=Wn9PiuAnHaaB8CT77L5YyhFrW4ZHwJrBM4BwnFZspAkI
+	/v/cASqPNhlxep4hrUJmo8o842nmeZkw+UfYbW9QhP5jSXo0yk0RsDMcBSNsNkX/
+	AxsWOqIfQDKXpdilBE/9fBU7J2Y0IaRAPU8NBcIof5253ok65vqE/GvgOAUaOQyh
+	fHJICRBWYtGoAEVUOsBYR8BnoL30aOV14TSmLytiNb1x0IQOgg26EHwhJJ8tEJE8
+	SaSbClIjbK808DKA4z125mouu59OqNcIXTnBtnsjb2siB6YZWgCVXedqZC0/EqV8
+	LkJQNhqVNgBXbRVIvekc4Z/gL+zTf5m7uM711bQe9A==
+X-ME-Sender: <xms:O78AZ_awfMEVu-yh76vBTqQ60o9mN7VhJBtvy0jUbUN-e0Q7wxqSRg>
+    <xme:O78AZ-Z40icowB7U3TbxMs7sC399Tq8Dj3XvyJEecXQnsMy30t_43Y4WtdvTyoJaz
+    810hlTeba6li7LzjV8>
+X-ME-Received: <xmr:O78AZx92pOwax0FBMaN-ZVp0r_w-i0_tA1E0rkzGNS1wFeFBQr6prvhdGcCXPDoKkVkukdzKJCkAYugtoXZ--cflDU-o1BGlxO0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvgedgkeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecu
+    hfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrd
+    horhhgqeenucggtffrrghtthgvrhhnpeelueehleehkefgueevtdevteejkefhffekfeff
+    ffdtgfejveekgeefvdeuheeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggp
+    rhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhgvgigrnh
+    gurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghgvvghr
+    theslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepuggrnhhivghlsedtgidtfh
+    drtghomhdprhgtphhtthhopehprghvohhnvgesrhgvthhrohguvghvrdgtohhmpdhrtghp
+    thhtoheplhhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrgh
+    dprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:O78AZ1qRnY9yDfsBoMBEGJBcqXYc2Inz8jY-yRMhqZqX01JXUTp_7w>
+    <xmx:O78AZ6qD6f0WVqRwIv5cvNwt1Gfzn7prknyL2l79Hb52gz1RFxaIMg>
+    <xmx:O78AZ7RnVjbOqLa2FRlVNXCShB9FmzvUlGkllmqdiG678yzeuz6xbg>
+    <xmx:O78AZypxg-ih3-mLPd-qw9ApCD7VmiRhvI_MuzqMdAZGHovNDEoyPw>
+    <xmx:PL8AZ7c_8DSccgMzH2tp1ED5hVn4KSXg-6Hu0y_4TjV4wx8CfMSzC2fJ>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 5 Oct 2024 00:23:20 -0400 (EDT)
+Date: Sat, 5 Oct 2024 14:23:28 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>, Daniel Palmer <daniel@0x0f.com>, 
+    Michael Pavone <pavone@retrodev.com>, linux-m68k@lists.linux-m68k.org, 
+    linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] rtc: m48t59: Accommodate chips that lack a century
+ bit
+In-Reply-To: <20241003081015363ed024@mail.local>
+Message-ID: <10bb949d-07f5-5cea-b658-8969b5bda6ae@linux-m68k.org>
+References: <cover.1727925802.git.fthain@linux-m68k.org> <f9eedf61f64906006f57ac88bdc160e55bc40c8a.1727925802.git.fthain@linux-m68k.org> <20241003081015363ed024@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241004-i2c1-frequency-v1-1-77a359015d54@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAOG7AGcC/x3MQQqAIBRF0a3IHyeoKEZbiQZlr/oTK6Uoor0nD
- c/g3ocyEiNTIx5KODnzGgt0JSgsfZwheSwmo4zVSlnJJmg5JewHYrilHpyHdzWcNVSiLWHi6x+
- 23ft+tXzzZWAAAAA=
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1054;
- i=bjorn.andersson@oss.qualcomm.com; h=from:subject:message-id;
- bh=yeW+ixq3PNStNZwXjz2ygWlTa7p8zncF/b9m6U5cQZI=;
- b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBnALvi02Eqr2WX30kek41XNwJGxKKDEcFTim1so
- LYj89LCsPaJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZwC74hUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcWbcBAAn6uJm93YPyByPkuEz5RZvuQwTdm6YCDytOUtiYW
- esY/tNf5lLxmA+crZNyUOFAGZfAdjmw4WKH1WYiCU2xMbc/p7YzNJRPIXFzZD36Bq5uEOuERUKb
- HOBOSdCvLMcoDo/uKQbjG0mbXPJVZKwbm3xSa8RScEfM7pt1BNNzOSNnVVlVLn91Ax7bzCpKVMV
- aCobqobYR5jtxCOqTsY8H+PCe70rWJ58SmdAShe22JgaLgl7HykW/m5hR8XmihvfgLzS5wT8KEJ
- bJT81UYlQV2f53rJ/J8OgVXOrDF9P4+qA04Jlx97TdJ04DXov41hxzmf5pfisv1wDhdEFhZppUF
- lqIMzArNbPAlo0NlkyuNcMOzCUGz0rLSCrtdSreJ28kS+W43iRBxmH/pkpn/Kdv/Bw3QEtuwfCo
- 101JHr+nB5+8gk3id1ATUeFp4SStDMJNXvEbNF7jrz7FXdahGdIvTyPE7Yt7hnoDPbxXa4Hgyj/
- wB0u0igdDX/ImFnrbeNgmulZyW8DBOGYvmBc92fjP53ynFACLq9vSOMWeX9i9Yr3w4T6AS7IVJb
- 06l8q5mKokaMeWmu/ffAbpYoRfzgd4wVbDSr0DDbpkhUlVicFTp48tI2DfQGA8a7e1rmVQk0eSh
- H7jQhT8NNi0b4UzemlIsML9pXNDoXbtwfrMNmqH+JOZk=
-X-Developer-Key: i=bjorn.andersson@oss.qualcomm.com; a=openpgp;
- fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
-X-Proofpoint-GUID: Lc4ZNivCrFZsz6SquX4mBD4rUaAImA9-
-X-Proofpoint-ORIG-GUID: Lc4ZNivCrFZsz6SquX4mBD4rUaAImA9-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 mlxlogscore=736 suspectscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 phishscore=0 adultscore=0
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410050027
+Content-Type: text/plain; charset=US-ASCII
 
-Per the binding, omitting the clock frequency from a Geni I2C controller
-node defaults the bus to 100Khz. But at least in Linux, a friendly info
-print highlights the lack of explicitly defined frequency in the
-DeviceTree.
 
-Specify the frequency, to give it an explicit value, and to silence the
-log print in Linux.
+On Thu, 3 Oct 2024, Alexandre Belloni wrote:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 1 +
- 1 file changed, 1 insertion(+)
+> 
+> ... while you are it, can you use m48t59->rtc->start_secs and 
+> m48t59->rtc->set_start_time in probe instead of offsetting tm_year in 
+> read_time/set_time so we can later use device tree or any other 
+> mechanism to extend the range?
+> 
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-index 0d45662b8028..469a30f138de 100644
---- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-@@ -598,6 +598,7 @@ lt9611_out: endpoint {
+That didn't work out as I'd hoped. I booted a patched kernel (diff below) 
+under qemu-system-sparc64:
+
+~ # for yyyy in 1970 1971 1999 2000 2024 2025 2068 2069 ; do 
+date 01010101$yyyy ; hwclock --systohc --utc && hwclock --utc ; echo ; done
+Thu Jan  1 01:01:00 UTC 1970
+Thu Jan  1 01:01:00 1970  0.000000 seconds
+
+Fri Jan  1 01:01:00 UTC 1971
+Tue Nov 24 18:32:44 1998  0.000000 seconds
+
+Fri Jan  1 01:01:00 UTC 1999
+Tue Nov 24 18:32:44 2026  0.000000 seconds
+
+Sat Jan  1 01:01:00 UTC 2000
+Sun Jan  2 23:29:16 2000  0.000000 seconds
+
+Mon Jan  1 01:01:00 UTC 2024
+Tue Jan  2 23:29:16 2024  0.000000 seconds
+
+Wed Jan  1 01:01:00 UTC 2025
+Thu Jan  2 23:29:16 2025  0.000000 seconds
+
+Sun Jan  1 01:01:00 UTC 2068
+hwclock: RTC_SET_TIME: Numerical result out of range
+
+Tue Jan  1 01:01:00 UTC 2069
+hwclock: RTC_SET_TIME: Numerical result out of range
+
+~ # 
+
+Here's the result from an unpatched kernel (v6.11):
+
+~ # for yyyy in 1970 1971 1999 2000 2024 2025 2068 2069 ; do 
+date 01010101$yyyy ; hwclock --systohc --utc && hwclock --utc ; echo ; done
+Thu Jan  1 01:01:00 UTC 1970
+Thu Jan  1 01:01:00 1970  0.000000 seconds
+
+Fri Jan  1 01:01:00 UTC 1971
+Fri Jan  1 01:01:00 1971  0.000000 seconds
+
+Fri Jan  1 01:01:00 UTC 1999
+Fri Jan  1 01:01:01 1999  0.000000 seconds
+
+Sat Jan  1 01:01:00 UTC 2000
+Sat Jan  1 01:01:00 2000  0.000000 seconds
+
+Mon Jan  1 01:01:00 UTC 2024
+Mon Jan  1 01:01:00 2024  0.000000 seconds
+
+Wed Jan  1 01:01:00 UTC 2025
+Wed Jan  1 01:01:00 2025  0.000000 seconds
+
+Sun Jan  1 01:01:00 UTC 2068
+hwclock: RTC_RD_TIME: Invalid argument
+
+Tue Jan  1 01:01:00 UTC 2069
+hwclock: RTC_RD_TIME: Invalid argument
+
+~ # 
+
+
+I'm afraid I don't see how we might avoid adding/subtracting in 
+read_time/set_time given that we must avoid messing up the present date 
+when users boot into an upgraded kernel.
+
+
+diff --git a/arch/sparc/kernel/time_32.c b/arch/sparc/kernel/time_32.c
+index 08bbdc458596..41ae3d1aa12e 100644
+--- a/arch/sparc/kernel/time_32.c
++++ b/arch/sparc/kernel/time_32.c
+@@ -255,6 +255,7 @@ static void mostek_write_byte(struct device *dev, u32 ofs, u8 val)
+ static struct m48t59_plat_data m48t59_data = {
+ 	.read_byte = mostek_read_byte,
+ 	.write_byte = mostek_write_byte,
++	.start_year = 1968,
  };
  
- &i2c1 {
-+	clock-frequency = <100000>;
- 	status = "okay";
+ /* resource is set at runtime */
+diff --git a/arch/sparc/kernel/time_64.c b/arch/sparc/kernel/time_64.c
+index 60f1c8cc5363..eceb3fadb71a 100644
+--- a/arch/sparc/kernel/time_64.c
++++ b/arch/sparc/kernel/time_64.c
+@@ -544,6 +544,7 @@ static void mostek_write_byte(struct device *dev, u32 ofs, u8 val)
+ static struct m48t59_plat_data m48t59_data = {
+ 	.read_byte	= mostek_read_byte,
+ 	.write_byte	= mostek_write_byte,
++	.start_year	= 1968,
+ };
  
- 	typec-mux@1c {
-
----
-base-commit: 58ca61c1a866bfdaa5e19fb19a2416764f847d75
-change-id: 20241004-i2c1-frequency-1b57e758e542
-
-Best regards,
--- 
-Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-
+ static struct platform_device m48t59_rtc = {
+diff --git a/drivers/rtc/rtc-m48t59.c b/drivers/rtc/rtc-m48t59.c
+index f0f6b9b6daec..d7e1f79cd52b 100644
+--- a/drivers/rtc/rtc-m48t59.c
++++ b/drivers/rtc/rtc-m48t59.c
+@@ -82,10 +82,6 @@ static int m48t59_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 		dev_dbg(dev, "Century bit is enabled\n");
+ 		tm->tm_year += 100;	/* one century */
+ 	}
+-#ifdef CONFIG_SPARC
+-	/* Sun SPARC machines count years since 1968 */
+-	tm->tm_year += 68;
+-#endif
+ 
+ 	tm->tm_wday	= bcd2bin(val & 0x07);
+ 	tm->tm_hour	= bcd2bin(M48T59_READ(M48T59_HOUR) & 0x3F);
+@@ -108,11 +104,6 @@ static int m48t59_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	u8 val = 0;
+ 	int year = tm->tm_year;
+ 
+-#ifdef CONFIG_SPARC
+-	/* Sun SPARC machines count years since 1968 */
+-	year -= 68;
+-#endif
+-
+ 	dev_dbg(dev, "RTC set time %04d-%02d-%02d %02d/%02d/%02d\n",
+ 		year + 1900, tm->tm_mon, tm->tm_mday,
+ 		tm->tm_hour, tm->tm_min, tm->tm_sec);
+@@ -163,10 +154,7 @@ static int m48t59_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	M48T59_SET_BITS(M48T59_CNTL_READ, M48T59_CNTL);
+ 
+ 	tm->tm_year = bcd2bin(M48T59_READ(M48T59_YEAR));
+-#ifdef CONFIG_SPARC
+-	/* Sun SPARC machines count years since 1968 */
+-	tm->tm_year += 68;
+-#endif
++
+ 	/* tm_mon is 0-11 */
+ 	tm->tm_mon = bcd2bin(M48T59_READ(M48T59_MONTH)) - 1;
+ 
+@@ -199,11 +187,6 @@ static int m48t59_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	unsigned long flags;
+ 	int year = tm->tm_year;
+ 
+-#ifdef CONFIG_SPARC
+-	/* Sun SPARC machines count years since 1968 */
+-	year -= 68;
+-#endif
+-
+ 	/* If no irq, we don't support ALARM */
+ 	if (m48t59->irq == NO_IRQ)
+ 		return -EIO;
+@@ -458,6 +441,10 @@ static int m48t59_rtc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, m48t59);
+ 
+ 	m48t59->rtc->ops = &m48t59_rtc_ops;
++	m48t59->rtc->range_min = mktime64(1900, 1, 1, 0, 0, 0);
++	m48t59->rtc->range_max = mktime64(1999, 12, 31, 23, 59, 59);
++	m48t59->rtc->start_secs = mktime64(pdata->start_year, 1, 1, 0, 0, 0);
++	m48t59->rtc->set_start_time = true;
+ 
+ 	nvmem_cfg.size = pdata->offset;
+ 	ret = devm_rtc_nvmem_register(m48t59->rtc, &nvmem_cfg);
+diff --git a/include/linux/rtc/m48t59.h b/include/linux/rtc/m48t59.h
+index 9465d5405fe2..b01c514d7079 100644
+--- a/include/linux/rtc/m48t59.h
++++ b/include/linux/rtc/m48t59.h
+@@ -56,6 +56,9 @@ struct m48t59_plat_data {
+ 	void __iomem *ioaddr;
+ 	/* offset to RTC registers, automatically set according to the type */
+ 	unsigned int offset;
++
++	/* value to be used to initialize rtc->start_secs */
++	time64_t start_year;
+ };
+ 
+ #endif /* _LINUX_RTC_M48T59_H_ */
 
