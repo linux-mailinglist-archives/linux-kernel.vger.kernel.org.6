@@ -1,84 +1,69 @@
-Return-Path: <linux-kernel+bounces-351870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8243F991716
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:53:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB36991719
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34DB41F22F42
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 13:53:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0F74B210E3
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 14:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8086615530C;
-	Sat,  5 Oct 2024 13:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D23B1E86E;
+	Sat,  5 Oct 2024 14:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QML3LKYz"
-Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xkq0DNT4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E65F13C8F6
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 13:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D351F18E1F;
+	Sat,  5 Oct 2024 14:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728136387; cv=none; b=imOIAk+Oz7YopF8xgId1WUCFJlZrFGOWzzW9f6VE9Dl9aKWo2LcaPypo/xZRT2XYHoZPiwGdmb+c5YPdbJ8LbtB46mqFVtuv/M02rfqKDdfR50zayv2+MWytO+m/f4D6UILoPnnucvN9jm583Uy4oYScKSlVv3KbgZ+jX6qtYS4=
+	t=1728136927; cv=none; b=OoSOOG0yXfvd1+e1WZ0ETfzue+zSkMTw0cGXE8WZNXO89AjdEi7Q99nzjRKwpC0xJShZwPmEEYQEpWyH89oS0Vi2OztVjF1oGaFExuh9XdeOCajk33oyOCfssVlZYd3md2ys/KTlqfddR4C86bWCpIkcQly0aqGuSlGO3V2n9Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728136387; c=relaxed/simple;
-	bh=rVTfpkUt2C6ikOnYg6ariyltWsIP1HzH79tfa+TwsXw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TJ0i5HIDBm+0BmjZ7CcxLFraKDz2ooPQzr1exa/ar9Z1huOXf/AsFXudJmS9NyB19onRI/abVIhtNkSJ+RpTaR/ONIOZ1lMGQVb8njNeU7aZ9nD9SUuzUaf4hJKExQUMpfoTXyPMV1VIkvRqX2Zdv2tJxoJHMYUOeqCEBVYiTkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QML3LKYz; arc=none smtp.client-ip=209.85.216.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-2e0c7eaf159so2432166a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 06:53:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728136385; x=1728741185; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=juguD7Z4L8Oxo1MbfxKEFZl+Z9cwMrDoIprZ8VE739E=;
-        b=QML3LKYz44lbdrkp87uJYCXKhl4R3RTACRJ+Vc9YnzBE64zhY4pZ9ujSu1iL/uoheJ
-         Wk6iq5e63aDi+qKC2p1DjxCW7Ksc7638c/vqEX0eRkGCv0pX1jzX7LZ2FnKbBtoybQaE
-         02Xn0Q+tqGm/rjbgg9hsFs1jj8Xv3w9+50nR3JlyFTQAvsaF1CwB8bxLU0mSKa4xkrjD
-         CGMD0YfsPLK+HE4aXdf8h+mproGkqTNCqyQAhkttHB1Z+vlmjzUUJcrb5CqSE7xRmI52
-         9SpWCGQuybEUWj0yLA2Nt2S7SlQvYO8rhpQLUb9VWnadOQkcBpycRtmjuM2sXccyDFoo
-         1PlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728136385; x=1728741185;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=juguD7Z4L8Oxo1MbfxKEFZl+Z9cwMrDoIprZ8VE739E=;
-        b=vmh6iuJxVAkqMXVXaZABnFMBCZaaCa6ueDWkaqiu9ivetJ9zsrMJnbkyxd/hgpNFQK
-         JElsKt5NqjmY2ZjJS0SLPchNOaBfpTFrfwK4a9+ETetcx/oGLgWs5VdYyeNprZnySKRy
-         SDc7HG5ttpaiOLzqEfPB/PDuGuz8OR5QOTofsajMIAAtMXh3OZECVrqqkLocqTAqKWdq
-         jepdfP1kedwkMNDKWbTv4bHf08/aTr9C0XZFOg0TwotSoxmVTByJtyPf0h7C2HPNBi2Y
-         hQMkyp3TFI7mJB4ByyHsVT8gSqfGKiDeyJRvRHd8n3H2fqVXDAiAVye/QTJJQZPipaea
-         E8qQ==
-X-Gm-Message-State: AOJu0YyXZSV67gahe4Q9JKUsq3V9JtENklf7p2wnPjnqNPle3PUL8ofh
-	Ukh9+0ZfWA5yAKA+SWQ02M6rE5CEPria6upH62cvO4jehyi7/Lp9
-X-Google-Smtp-Source: AGHT+IGKP3FaVPKvS7b/LTqBGjTMHfY676RNAFxhZynxmhsXo6blpWwOYS7eHXelFyjCiQZ5conXMA==
-X-Received: by 2002:a17:90a:fd87:b0:2da:6812:c1bd with SMTP id 98e67ed59e1d1-2e1e621f1e7mr6674143a91.15.1728136384824;
-        Sat, 05 Oct 2024 06:53:04 -0700 (PDT)
-Received: from localhost.localdomain ([2409:8a74:2681:86c0:b921:7e4f:199e:c149])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e85d959dsm3576169a91.26.2024.10.05.06.53.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 06:53:04 -0700 (PDT)
-From: Xiaofeng Lian <1198715581lxf@gmail.com>
-To: lkp@intel.com
-Cc: linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	stefani@seibold.net,
-	Xiaofeng Lian <1198715581lxf@gmail.com>
-Subject: [PATCH v3 2/2] include/linux/kfifo.h:fix errors
-Date: Sat,  5 Oct 2024 21:52:50 +0800
-Message-ID: <20241005135250.121964-2-1198715581lxf@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241005135250.121964-1-1198715581lxf@gmail.com>
-References: <202410051712.VDmFpiVZ-lkp@intel.com>
- <20241005135250.121964-1-1198715581lxf@gmail.com>
+	s=arc-20240116; t=1728136927; c=relaxed/simple;
+	bh=ZwEdWvwmmeUZlkYANQvSbV1RLphsFgz7ADp+O36WhSE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oUv4ngsfPQ74pBbf5ZmR2YY/mP2EAzQJ0VVhHL6WBHE+BdLD4J2qnTXp7c3BIWOc+kEMAjpnpMLe1L/ILGr7IaFpZhpSw1IZHG7pfeC3izM8/YGnsjKv23b3/CF1vLwpnr9D0HFWW6mboY79Eq0Bs+GlB0iOu57WXZjk6cLyH7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xkq0DNT4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 495DfUJK005696;
+	Sat, 5 Oct 2024 14:02:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=PFObZ7MzmBXjzrSE4Sk88i
+	yNjUSTSZ+Hc7QFFDmiLks=; b=Xkq0DNT4+C8RS57QmchPUunFcwkzLNLIH7n/Kk
+	Z/saF5eLFk4IQUuKI3W7yAsGbwHAlxIuhMrELGrn5FezVxZvSD8dAnTsfa5UZ9IF
+	QTR3u9l5giKxYIGXLHENhLA6V6rW/YMwLKAPesdfhjoI/KW5W6Co7MCG8geMUwrP
+	Vf2wluWU2Iad1WDtIxRtjdPLkDwY/Hq+5hRN/o8etHHShjt+3BkmrBffbsgKSszw
+	kifi3oSXQ1tJo4clm4XwlTU7Tc1BTUfJPatgkI5lpaqiVC5SUYqvGFBV5W3xO2qz
+	AN9KNl/UYLhZKv7uwBo5hPURbhXNvelF2YoJAJ0kLP6aGXmw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xqnrn0w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 05 Oct 2024 14:02:01 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 495E20ej026859
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 5 Oct 2024 14:02:00 GMT
+Received: from hu-kuldsing-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sat, 5 Oct 2024 07:01:58 -0700
+From: Kuldeep Singh <quic_kuldsing@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] qcom_tzmem: Enhance Error Handling for shmbridge
+Date: Sat, 5 Oct 2024 19:31:48 +0530
+Message-ID: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,32 +71,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: MVaGRcVORSPhO2GE-IiF9E8LwtqI5q_L
+X-Proofpoint-GUID: MVaGRcVORSPhO2GE-IiF9E8LwtqI5q_L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 spamscore=0 suspectscore=0
+ adultscore=0 mlxlogscore=778 priorityscore=1501 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410050103
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202410051712.VDmFpiVZ-lkp@intel.com/
+This patchset addresses the tzmem driver probe failure caused by
+incorrect error handling. The qcom_scm_shm_bridge_enable() SCM call
+captures SCM success/failure in a0 and E_NOT_SUPPORTED in a1.
 
-    - Fixed an error detected by the kernel test robot caused by an
-      incorrectly passed parameter in the INIT_KFIFO macro.
+Previously, qcom_scm returned values based solely on a0, without
+capturing not_supported scenario. This patchset corrects that behavior.
 
-Signed-off-by: Xiaofeng Lian <1198715581lxf@gmail.com>
----
- include/linux/kfifo.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Along with this, add sanity checks on input parameters passed to exposed
+APIs as it is missing currently.
 
-diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
-index 66eb1b8971f7..316b6c019550 100644
---- a/include/linux/kfifo.h
-+++ b/include/linux/kfifo.h
-@@ -148,7 +148,7 @@ struct kfifo_rec_ptr_2 __STRUCT_KFIFO_PTR(unsigned char, 2, void);
- 	struct __kfifo *__kfifo = &__tmp->kfifo; \
- 	__kfifo->in = 0; \
- 	__kfifo->out = 0; \
--	__kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
-+	__kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp) - 1;\
- 	__kfifo->esize = sizeof(*__tmp->buf); \
- 	__kfifo->data = __is_kfifo_ptr(__tmp) ?  NULL : __tmp->buf; \
- })
+Kuldeep Singh (1):
+  firmware: qcom: qcom_tzmem: Implement sanity checks
+
+Qingqing Zhou (1):
+  firmware: qcom: scm: Return -EOPNOTSUPP for unsupported SHM bridge
+    enabling
+
+ drivers/firmware/qcom/qcom_scm.c   | 12 +++++++++++-
+ drivers/firmware/qcom/qcom_tzmem.c | 17 ++++++++++++++++-
+ 2 files changed, 27 insertions(+), 2 deletions(-)
+
 -- 
-2.45.2
+2.34.1
 
 
