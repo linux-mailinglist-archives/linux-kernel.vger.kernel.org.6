@@ -1,133 +1,107 @@
-Return-Path: <linux-kernel+bounces-351941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94A299181C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:07:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A8A99182A
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 613DA1F2272E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A6D1F22EA3
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 16:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53878156C6F;
-	Sat,  5 Oct 2024 16:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22559158A19;
+	Sat,  5 Oct 2024 16:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rzb/hdPm"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1sPOCZk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6F1374EA;
-	Sat,  5 Oct 2024 16:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B3A158845;
+	Sat,  5 Oct 2024 16:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728144457; cv=none; b=muDOn0lme30dKnDiH0mpDA5xmWkD/SYbdF1Uc24a9kuYJnCzahlcthKFF8BEs7gGTY8hmjk/VuiXENz1bw9GkuhfXi2biXaCRF+aEyk9A7gb6fS33anb8KKYlfSl3PeszxF8UKka8abE3YJlzjKqAECtvM0QCwby5d684ZBPoHs=
+	t=1728144584; cv=none; b=W01uCVfUPOaoC0e2H0sRsmAx5CEr9A6Lf9Bii6ruECWYlhiloXOLzvWyRFB7OO6zjGWztH68qWaFXqImLP5iPUc7R4YCFTj3dkRWEruZkpEcIUdKnZVQep9PeFmQBgoIg2L9leh82TWY/hs+/99O7cpepjFXeJIfk9H8ylSHME8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728144457; c=relaxed/simple;
-	bh=URkrEKoUDYSusnSv7gsPXAoThBMvrUg73nKyjQ3qrD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bKBFQAPRPX7ER4HZUXFp2wlNkCqev+inasJwlGUQaMYs7fHfmIjNkOMRy60QlE7eYr4v3DA3ohD7nlWUF/D3EkxySVYo40Qg+nbL9n7N740b5JL5fxvBlQkKIJnAKdwE0rxL2HjccutkXU59P6OEowsQo/edG+DB7IfraV1JtrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Rzb/hdPm; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tVz9zpYWjrEx98t10FsnvqgqUywp3znOijDg2YUcJ5Y=; b=Rzb/hdPmp9B6sNyqAMCukzE6dN
-	vQxnklM6BMIwgGyip3D5FrAXTkPvKRF4ntsj/MnTb/PZuQVBLH0GI1z6w8TXm+atdf85R4VT1Qbrw
-	g0K9oF0EgCVfsj5sqAJ34ngzulehQukovGBvYIBvx5SkplLehEIh0EFUT9iNMms/iX3/PyXku8SJR
-	7gqmrSm8rj2kfroXQABmnrk8ddQ4VzBZSd6IKbkd4QsS8QusXdSdZ6LPyITNR4zp3tQgOhyPiDRyD
-	2i+3FdxM+NvlE98eqsmYXJTJk2n2VLhITgVFK/vWLJaCeoA+tfMwp6QfcjFgq+QgDIdIBsLKnRd/Z
-	pzesIxYA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sx7JT-0000000DAoP-2nvF;
-	Sat, 05 Oct 2024 16:07:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D9B55300777; Sat,  5 Oct 2024 18:07:23 +0200 (CEST)
-Date: Sat, 5 Oct 2024 18:07:23 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
-Subject: Re: [RFC PATCH v2 3/4] hp: Implement Hazard Pointers
-Message-ID: <20241005160723.GI33184@noisy.programming.kicks-ass.net>
-References: <20241004182734.1761555-1-mathieu.desnoyers@efficios.com>
- <20241004182734.1761555-4-mathieu.desnoyers@efficios.com>
- <20241005160444.GA18071@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1728144584; c=relaxed/simple;
+	bh=TDVfE4mXn/mryDEBhTmglxNTqweeeEO1OY1SU0BoSeQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=WA5yJEjnD2LVX81S62GUYxGo8afQ8vk25kfRcNwnD1HJRswURgQDHOg2HAZ3vyecnUWcpUGe4/z+FETMI9/gKD40N0aV2Zb8MAhoLLu7CVEpPLQC4QsEBWy0hIdktxlmhj4TLIJGFTPD9Paa7aogfNEyR7n0pHRG3GD507FTa9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1sPOCZk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFAE7C4CEC2;
+	Sat,  5 Oct 2024 16:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728144583;
+	bh=TDVfE4mXn/mryDEBhTmglxNTqweeeEO1OY1SU0BoSeQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=B1sPOCZkFU3piAQ0LzKPplEdU+d08z0WbVKwTJtfcWaPG+PfA0eyl4BnOaMTrfata
+	 RG9rHRg7208hxTR6VuEP+DMor1viv9ZkIN4LlmV6ekq3d2iYNpkTEUhnamDMDrBYZb
+	 INZ/XsgxbSb0svabH+TZLmpb6Qle7pn8Oo0GtHSRMTcMLPCRR183jyykox0uDjxgvD
+	 JwIKsut3fvjCHrgPg/KtCYDa3Bxt7eFAqrkXV+sp9SsrAspC3Tp1PGt6gWJ7EDWvfp
+	 qgBcCX31Frwk0zFRjyYrAek56cIagyhz9kyHTuOTXd4hpb5W34k65iWIIgcHiTMwN+
+	 lb0d4RHx4zxwg==
+Received: by pali.im (Postfix)
+	id F1B02648; Sat,  5 Oct 2024 18:09:35 +0200 (CEST)
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] cifs: Improve access without FILE_READ_ATTRIBUTES permission
+Date: Sat,  5 Oct 2024 18:08:24 +0200
+Message-Id: <20241005160826.20825-1-pali@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241005160444.GA18071@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 05, 2024 at 06:04:44PM +0200, Peter Zijlstra wrote:
-> On Fri, Oct 04, 2024 at 02:27:33PM -0400, Mathieu Desnoyers wrote:
+Linux SMB client currently is not able to access files for which do not
+have FILE_READ_ATTRIBUTES permission.
 
-> > +void hp_scan(struct hp_slot __percpu *percpu_slots, void *addr,
-> > +	     void (*retire_cb)(int cpu, struct hp_slot *slot, void *addr))
-> > +{
-> > +	int cpu;
-> > +
-> > +	/*
-> > +	 * Store A precedes hp_scan(): it unpublishes addr (sets it to
-> > +	 * NULL or to a different value), and thus hides it from hazard
-> > +	 * pointer readers.
-> > +	 */
+For example it is not able to write data into file on SMB server to
+which has only write access (no read or read attributes access). And
+applications are not able to get result of stat() syscall on such file.
 
-This should probably assert we're in a preemptible context. Otherwise
-people will start using this in non-preemptible context and then we get
-to unfuck things later.
+Test case against Windows SMB server:
 
-> > +
-> > +	if (!addr)
-> > +		return;
-> > +	/* Memory ordering: Store A before Load B. */
-> > +	smp_mb();
-> > +	/* Scan all CPUs slots. */
-> > +	for_each_possible_cpu(cpu) {
-> > +		struct hp_slot *slot = per_cpu_ptr(percpu_slots, cpu);
-> > +
-> > +		if (retire_cb && smp_load_acquire(&slot->addr) == addr)	/* Load B */
-> > +			retire_cb(cpu, slot, addr);
-> 
-> Is retirce_cb allowed to cmpxchg the thing?
-> 
-> > +		/* Busy-wait if node is found. */
-> > +		while ((smp_load_acquire(&slot->addr)) == addr)	/* Load B */
-> > +			cpu_relax();
-> 
-> This really should be using smp_cond_load_acquire()
-> 
-> > +	}
-> > +}
+1) On SMB server prepare file with only GENERIC_WRITE access for Everyone:
+   ACL:S-1-1-0:ALLOWED/0x0/0x40000000
+
+2) On SMB server remove all access for file's parent directory
+
+3) Mount share by Linux SMB client and try to append data to that file:
+   echo test >> /mnt/share/dir/file
+
+4) Try to call: stat /mnt/share/dir/file
+
+Without this change the write test fails because Linux SMB client is trying
+to open SMB path "\dir\file" with GENERIC_WRITE|FILE_READ_ATTRIBUTES. With
+this change the test pass as Linux SMB client is not opening file with
+FILE_READ_ATTRIBUTES access anymore.
+
+Similarly without this change the stat test always fails as Linux SMB
+client is trying to read attributes via SMB2_OP_QUERY_INFO. With this
+change, if SMB2_OP_QUERY_INFO fails then Linux SMB client fallbacks for
+reading stat attributes via OPEN with MAXIMUM_ALLOWED access (which will
+pass if there is some permission) and OPEN reply will contain attributes
+required for stat().
+
+Pali Rohár (2):
+  cifs: Do not issue SMB2 CREATE always with FILE_READ_ATTRIBUTES
+  cifs: Improve stat() to work also without FILE_READ_ATTRIBUTES
+
+ fs/smb/client/cifspdu.h   |  1 +
+ fs/smb/client/smb2file.c  |  1 -
+ fs/smb/client/smb2glob.h  |  1 +
+ fs/smb/client/smb2inode.c | 71 ++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 72 insertions(+), 2 deletions(-)
+
+-- 
+2.20.1
+
 
