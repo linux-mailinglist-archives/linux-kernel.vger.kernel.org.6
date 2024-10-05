@@ -1,296 +1,356 @@
-Return-Path: <linux-kernel+bounces-351600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB45B99137D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:24:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E0E99137F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 02:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893B12829CE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:24:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25E231F23458
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 00:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2591A28C;
-	Sat,  5 Oct 2024 00:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648634C79;
+	Sat,  5 Oct 2024 00:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0PRXzXp+"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2075.outbound.protection.outlook.com [40.107.101.75])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mKIy6jCk"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2060.outbound.protection.outlook.com [40.107.94.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074E817C69;
-	Sat,  5 Oct 2024 00:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E1C4683
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Oct 2024 00:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.60
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728087844; cv=fail; b=E79z3aqzKlpjka+xKmzBz6lxm56DbFSMyIsNWM89w8Tpq0DDwMO3/KQP0UqqzxCUEKavTRQaecob0l/tk8TJp34QvitMslHS45HZw0Wmwp4ARyz4iYnvRHyYveXFdU9DfqE8fiy3yEDbkanncJKyBvoUsuHD5j1Us1GHwfDrKm8=
+	t=1728088033; cv=fail; b=a8BjwN+1LBOblnkqitSoHhymS2RFCxizWbFHE0nIA8qPPZ2SMunAFtCjQtmUzT0HCpFSF1koFdCFB1Iov+f5zE+Nhved8ZVf1YL0KqMRW9WvzqzhQS+3bR0cYc0xuIQ4/QTmSZeImD7yGSbybnI3V2eLrFCgV+d+m+BH7c8q1Zw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728087844; c=relaxed/simple;
-	bh=Q0p79Ni2pkv3+XsPrMjJ9d/sZCuouVZ9g4r74D953Tc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IqQ1IMWqZNq+xCRV5DxhWNaekh2EjCEvPs9zPfa1YRmEYnHNG6YCnL9NsVlV2WZyHqn/3Y0V1wihT+ZEWtavYENZuQuPw7RO5aelVnVPRohZigOTCo9uvTlL99aXWDgxU6HcP34YyZECb0I+yzlNweTuNGZU+e2KLosTRWqkSug=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0PRXzXp+; arc=fail smtp.client-ip=40.107.101.75
+	s=arc-20240116; t=1728088033; c=relaxed/simple;
+	bh=xMs1EyvS1B8DOMYZSKpj1cTvKrsPAvREqJFHYWdgy34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bzRicdz63sGlwKfON2JJjtDCzviDd5g5haPXUsj172qce2hRQ7Z9QSN/VAv+T2Gmz1B9Z2xYZr8wxk3qxIph7uBTo76yRYDjXFLwQ1T8LwqjUcJ8DTXeysdekLUC9Dli7Fi5p5lWvD7G0DtSWSrrM5j0mzN48+hqY+Z+IfA28lk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mKIy6jCk; arc=fail smtp.client-ip=40.107.94.60
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LFTiqlgt7dfwwe3G7y6gQUQUK2BuO6lRb5PiwRb25qwy8l9Ts9ZSdgzw19Q8xY6WMLwwMNFmdmSgXqr5ZXtWlvUwstIZMFcMjyg+y7dm1i2kbt3MCS+HhTuTQh7I7WCIYyXQq3Jx5g8klLOsd4fSEIYNkEzXtnV/5wN1hQl6QQ/gl62Armj1iNkRFOf8SdtSfknDENhFFQURBqpvYtCzcZSoYvVMvzIrdzvqrWiqVRt+2y9v/U8gkD9BpYckdxAYrJ4awl41spclSAz2Ju+h4tfgE6tmsXsG1kVJi1nJVcKgnDDAWxQfctFmJFx9a71MUdvMdB8bgB8qHkAJd9OWIw==
+ b=dgpXXsGMZ1A2nbG0go/7SHr7dOG6L/FU6OZN6PwlY/MyIaqToV6W3EXLTnv6Km6U2YdCMEKuAjIKyzcrJsxT5LHugZV/QwJW1a0k1aSDxd1RTKq03t99R9XD+KRsZo8E3YGTsSDqJQQDi7z6xBoEuXgfGThZTv6c2SLPrg9K+12pRQ28Iyl7Iten7pe5GC0TkPY/GiJo8HJsivHNJ3y2i/y2NcngWJzgX6TkYSOrqaTU8+2U1Ik750wIrWjmZNPG2PUXKesYWfSH3Kl0C4nsocvgcP3Z7xkEICj21K+39VCGRcAxkXnvrNG4TNd1CeSMLeezkxFA1L31Uzf+xkleHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QD/my/F38SIeCa1uPx+A9c9tXp5CVb0QKr+CPH1PXy0=;
- b=CdgRI/9HLfgoPni/zFouIBT2pC7WHkLLQDqLmINRatrK112KpPquG4tKHpfrx1nuk7fJTiXs9sHUy8r97LACOM/U+uLqt1ZyM8Yei8rRPd4idWWNcM86YbpyBCwoP8pW7hBYOB3hx3zd8nRIjEEERomAHnCjSfJivKW7dLhIGjHn0Hg4vLHyGNGvUwyUxElKb4ZJ1N7GSR+2GhsJN+Nt5cX5pQ/mKBOGkqzitRdZaFPbVgNcJdkxFVrea6tujV4tziC7tEwcTmAF8I71HgSE/TPLC+RszfYXoGLWhAUJuwK9VahMOJZAmZ2LLsOTz0vL4v6rfpB8o5A6HPl5wWry6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+ bh=n69YFxVLhS4sd7kGq6Z5bOGmR/ija8mAe2OdNBTqnA0=;
+ b=BxHkWUDnhuOs+OCiXMaRIK/Uk1oV4RRU32XwyVusAld8JozTCgnFEujSs3z0rKIuwNQ7iec6V1XtXyS19jW57veR5o1SUEiOrLw/pYy6r4zURc/1aF4cT96W5zdqLFVH2DGjEW+tqoQNmvB5WVH3W50OdsWWHjKuf99/L+AAMunUbemfCMdEVus7ELCytLfvvUv/G8rjxz2xhXcP+0elyyOHK/HpYsjKLIjkrJeDNlcjBdT7aOTlzpMFgwbIl2TjO9bQnSK/aja+0ugneu8u5UFIe4ypLQ5299CETGNQnuxrAPp8RdnUzelsDd/UqSCHtgu4QoFqQ1QHyeoLgCd29w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QD/my/F38SIeCa1uPx+A9c9tXp5CVb0QKr+CPH1PXy0=;
- b=0PRXzXp+5JqcU6DS0CRvIiF19wE6bL7537N82wF9BTEIB7yA4RqGpWHa0EclyfKeixrb48OLp9Y09jdxFkZAeygI9qySn91KM+QITYzYw4vtbhSzIif3ypK3bHzvH2ARs0iCTTzSuoRYRP8yBYw4RZ1ojvsQJSkZkuOfKORSRSA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by PH8PR12MB6844.namprd12.prod.outlook.com (2603:10b6:510:1cb::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.19; Sat, 5 Oct
- 2024 00:23:59 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.8026.017; Sat, 5 Oct 2024
- 00:23:59 +0000
-Message-ID: <65ad7f42-c3a0-c587-c1c0-d76dda3bc455@amd.com>
-Date: Fri, 4 Oct 2024 19:23:54 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v7 24/24] x86/resctrl: Introduce interface to modify
- assignment states of the groups
-Content-Language: en-US
-To: Reinette Chatre <reinette.chatre@intel.com>, babu.moger@amd.com,
- corbet@lwn.net, fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-References: <cover.1725488488.git.babu.moger@amd.com>
- <68c8ef0592c653c5b99cd26d982966cd4a41cb31.1725488488.git.babu.moger@amd.com>
- <faf50d1f-d3c1-4a9b-a87f-4598e88dc9a1@intel.com>
- <c43171f4-48c6-b6c3-d71e-1f23367932d7@amd.com>
- <1d987ed1-0065-4e4b-a719-65af93907974@intel.com>
- <ca7b1d14-e37d-5f0d-9371-32d8506e51eb@amd.com>
- <cd2d835b-cc63-4416-b0ee-20334b9b43dd@intel.com>
- <3b6a8ec9-5e4f-e4ff-cd01-96ecc366565a@amd.com>
- <4c212746-6d61-44aa-abc6-2d2155ee538f@intel.com>
- <1f7addbf-51e3-7f24-ad64-b8a6d9c5e0ba@amd.com>
- <fd138377-3a69-4749-b32c-f7bc3783a611@intel.com>
-From: "Moger, Babu" <bmoger@amd.com>
-In-Reply-To: <fd138377-3a69-4749-b32c-f7bc3783a611@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA9P221CA0002.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:806:25::7) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+ bh=n69YFxVLhS4sd7kGq6Z5bOGmR/ija8mAe2OdNBTqnA0=;
+ b=mKIy6jCkmTR4wvVavZD8ujMwVo8kalLsbSzSKGVk2HeHX3nnaKB4NYFsvLYol61iUkQMu1AlfIt5RVzAvGuBMOrv/oIF90FF/FAJ3Enin2B3I6XRPVNYEdF+J3Wm0hOK89pi0V+7Lt66ACXiKgIqLnxibMtKAGUDKtnDFVBtAe8=
+Received: from CY5PR15CA0233.namprd15.prod.outlook.com (2603:10b6:930:88::29)
+ by DM4PR12MB6135.namprd12.prod.outlook.com (2603:10b6:8:ac::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8026.19; Sat, 5 Oct 2024 00:27:07 +0000
+Received: from CY4PEPF0000EE35.namprd05.prod.outlook.com (2603:10b6:930:88::4)
+ by CY5PR15CA0233.outlook.office365.com (2603:10b6:930:88::29) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8026.19 via Frontend Transport; Sat, 5 Oct 2024 00:27:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000EE35.mail.protection.outlook.com (10.167.242.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8026.11 via Frontend Transport; Sat, 5 Oct 2024 00:27:06 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Oct
+ 2024 19:27:04 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Oct
+ 2024 19:27:03 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 4 Oct 2024 19:27:03 -0500
+Message-ID: <1a36698c-a0dc-49d0-39fa-8c6823b4a9ed@amd.com>
+Date: Fri, 4 Oct 2024 17:27:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V3 01/11] accel/amdxdna: Add documentation for AMD NPU
+ accelerator driver
+Content-Language: en-US
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+	<sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240911180604.1834434-1-lizhi.hou@amd.com>
+ <20240911180604.1834434-2-lizhi.hou@amd.com>
+ <71e97cd0-f224-7c0e-f1f3-87ca7c3889ce@quicinc.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <71e97cd0-f224-7c0e-f1f3-87ca7c3889ce@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|PH8PR12MB6844:EE_
-X-MS-Office365-Filtering-Correlation-Id: 919e36d5-1af1-4706-0f29-08dce4d40141
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE35:EE_|DM4PR12MB6135:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2c0d5787-d844-423f-dbc6-08dce4d471a0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|366016|7416014|376014;
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SElFRUc5SjNIN1lic1VTdExuODVCTUNsTGhoVkRHYkNld2FaOFdSU1F4TStn?=
- =?utf-8?B?MGdXT3NLYk1Cem5qQXp3WU9sOXpSZC94cnlEc2E1M1ZxTkhyZzdCSG1ZYVJK?=
- =?utf-8?B?Wk02N3BLblZIdmwxRi9MWFJQMWxsai9nVnRCUEc4eTd6M1dPRHJ1OFpWRWli?=
- =?utf-8?B?TFQ0WWs5M3ovQzlweEdzUW5lbUYyYTRrM2VHREhIclJWQlF5MjZrUThXUWwx?=
- =?utf-8?B?ZHNNZ09CT29PRXhuUjBac3gvK1QwTDI0U1kzQXZMRnB2eEdobFdXOHQzOStU?=
- =?utf-8?B?MitTZWl6bXo5dll2NHd2cTNuSlZTZGlnWUF2ZHZwMGRCZjQ4M0ZSelc0Y2dY?=
- =?utf-8?B?dDU0aWZBb0VxQTM1TnpKYjVwYkZHM3gwTUFSRHhtaG5RMXJlU2NoTUFMc0Q4?=
- =?utf-8?B?dnFWUWprcWZCUmZTdWhXSEt1ZFU3UXhsQ05BOVplUVFTSHp2YTVhUFdkVTBE?=
- =?utf-8?B?WkdJUVB4bG5NMjJEaXE5U08yTG91ak45b1IyNWx3VFZIdm95bkcrc01oS1JP?=
- =?utf-8?B?SzBBcXRNNEhNbVJYb3pJVW1PZkFMbXFOQWlNclpBSlZXTEp1djVFblNyYUY5?=
- =?utf-8?B?QjFmbjJVdU5WWGk5M2NyemtCaDBZdE1uNExtMjBrTU0rVklHWDhtb0hwTFBJ?=
- =?utf-8?B?dXcrSGkweFcxZlZxNXB0N211ZktWSUg3aVBQR0E4Ym1sUG03Q2tzTVNyZ05a?=
- =?utf-8?B?QllMaEVmZkY1NjJ2QnRPajRyUTQ3UEdqbjNVOXFCcG90OW9MbzBGeWVaaTg0?=
- =?utf-8?B?Rjh5RnJmZ0ZnaHpSdmtaWk9sQk5UMi9PRnJGR3VQRldoMnhObVBFd29oVFZL?=
- =?utf-8?B?M0gzRVZtRmlkWWlybEs0ZUN1RG8xQW16SEcwLzhJMmJuRkZYTW1kM0wxVE1U?=
- =?utf-8?B?a3NHcUQ4NDV6WS8rTnczWXlNREtnd1FaWUd6MlhubEVnUjY2dzRScFVMd3RL?=
- =?utf-8?B?RzN6RGNKY0JRSkVvMFZjdzZMWGdhMGRFODFxSTluV1dZS1gwNkppZTN3Vk91?=
- =?utf-8?B?bXY5bXVzWnI0RUlDZmVNQTZGajd4RlZiZXRUZFNRalVnWHNOU2V0L2xTcnlw?=
- =?utf-8?B?emF3SmtCR1ZVM1MwZEsreHExeXVtbHQ3czA2OGloQy8xTmtSTytWNUpGMHBJ?=
- =?utf-8?B?Q2g5WkhwUHRHL3ppRG5Iak0rY3NCOFliL3pJZmp6ZHdXOFZqejNYR1NCOGFK?=
- =?utf-8?B?VXlGdkFhUW9BUk1OdzRwaWVERWlxKzQ2N2wxN1lyUHRDQzR6b1crVFdIUm9v?=
- =?utf-8?B?VmdxMUpVbFI5akR0ODNZMHdJeXdqZ3FTYXBJMGtBeXVGME1TNDFFVFA2UzlJ?=
- =?utf-8?B?VFczeE1lYlNMRVg0MGdmaEcrMHhqalR0cDkwSzJ4RHRRMjd2bzhjaGRzOGlU?=
- =?utf-8?B?WXJoWmdoVGVwbXRJNklweW95dXVJQ1VHaFZQZS9mYmh3T0phNDBYeHA0V0hL?=
- =?utf-8?B?UldYcG1IaGtqT01yQkJyU3IyakVNSkRnWUszcFdxVXBSL1RFam14K3pqbjhS?=
- =?utf-8?B?MkpNOU5mYVFwanBFaHJmdkFRYkdBSjVpcGpWb1NoRVdneVR4dzJrVG9NeVVr?=
- =?utf-8?B?OExVT3ZQdCtuMGphYmczVXJ3SElZcWJ1amNQZHRWSWo4bGpQWTNUYVR6d0d4?=
- =?utf-8?B?SFFZUVRUT1lVdE9jMk55STBsY2R5N24xYnh1VnlsSDJSdGFTby9kQWJYV3ZL?=
- =?utf-8?B?U2sxdEw5ZXowZVRFNWRsbkZYR2ZmWEt4Vnoxdjc3b3BBcHFZYjU5Q1J3PT0=?=
+	=?utf-8?B?MGRjUGFpam5Kc0lVNmNYRDZmQldYejlkM3lQL0FxTHN0dGZCMk8xc2pLVFlv?=
+ =?utf-8?B?aHRVdndnNE9JOUV0ZFdCVVB0Z1N5Vzg1aWRnampwaXVOUzI4azFTWGJHWGVn?=
+ =?utf-8?B?UFJPY1BXdk1kUTRsOWlCS3poaFppMDlmNG5xMFh0bktHZG8wYlRoT0pwSyts?=
+ =?utf-8?B?V2RNazJXZVpBOUpKMHErbmVlUWJ3dHludkVSWTBFQ2dGaUt4Z1BSbFZjeFZI?=
+ =?utf-8?B?akFWSzRLbkptaUtpN0RWR3RKVWEvajVodXpNSWZJcndjYnpIQzFQRUNKZmxt?=
+ =?utf-8?B?a2RlbEZ3dXpJQ2dleGw0SjIybmQyREowVVdjZFdyTWphN29tSFVRRWg2Q3pk?=
+ =?utf-8?B?TGZxOWN0aHBlZ3RneXkzcGlNWUNPVDhleEVLQWIvNDdUNmZiWktvbFo2R1Ni?=
+ =?utf-8?B?elpZOW5ERG9KNGR1alhhcGRKZ0JoUVdWMFJ4aHlRWlVndjRua3ZoZmUrWkpv?=
+ =?utf-8?B?WE9zTUNqTjljVkF4UUhVQWwySDBBY1RyMUFHU3UzNUJtM2NEUHVaMktlV1Fn?=
+ =?utf-8?B?cDlQZXFHUVV4UFVRZytBRnM4Smxsd3FqMzRtei80S04zVGVxbk5URVgrUnQv?=
+ =?utf-8?B?c1VvU3BZanQrVzRiakR3U2lzeUxlOEd1UmhHSFoyN3NLMnNjUFZjbFFhNTdp?=
+ =?utf-8?B?SVUxNUZEemhWU2c1YmEwd3RpQXV1KzZFLzdtM0dlZVFTaEpLamtzWUxwTXZL?=
+ =?utf-8?B?K1J6MCtzZWZUdVlPTUZzK094UjZjaTJEbE84UXlSZEJwUG9MRUpuNXY1dnhX?=
+ =?utf-8?B?TnM4dkZHcHNvaTdKZ1oyUW9YQTBhazBRSjl6N3VXVzJWVmpzelBPM1ZpNmxP?=
+ =?utf-8?B?d1Mvc0xUdWl4UXBDUVUxcWdIc1BCeFFpdXpBY3lDUmR6S2l2R3RGcUJJV3du?=
+ =?utf-8?B?VUVmbk13U1RnTVM4Q0dmcXdNbHRDMVhOZVNiTWYvYzBjMElEQ1l2ckFMdXhD?=
+ =?utf-8?B?TWhzZmd5aEFKSzUzR3FjZ1RnYzVqV3RPOGRTUVlzTVBVdytsQU8zVVBSWWti?=
+ =?utf-8?B?M2ZTeVZoSGN3SUpNMktJZVp0blEwUksrYzdocjN3MU9VYmFhZVRVL0l0NzRI?=
+ =?utf-8?B?MGZGSzJxam5JUDZnMDdmVkxuSk1DN3NMclJQN1NvcWk5Y1lEMHpsYmo1VklL?=
+ =?utf-8?B?UkswN1VVTG1UZWtkMmswdEhyOEthQWhVQm52VVN5ZmZiM2JLY3cxWXZkVmhG?=
+ =?utf-8?B?dWRkMm40aXo2U3ZrYy8vSFNoTk5odGNEZDZPRXRYYW1qR1BsSUloUVFMTXow?=
+ =?utf-8?B?TzVqLzhIV2FmWklObXZDMWsrQVhvRDF0cndPVVpaMDVLVUdQYUk2NERlc291?=
+ =?utf-8?B?aUdDdXFSank2WDZVK0w4ejErdkk0UnpuaXUrOE9vMUsrbldhY3FSaStqZkho?=
+ =?utf-8?B?K2V3enBFeVF0OHlpUVRNdjBEeEhNZmVtWklhSjJUTThRYm5PZVV2aHdMQ21U?=
+ =?utf-8?B?dXBtZnNKK1pPSGdDeTB1QkwxcU9aK1hxWGpDc0s5RmxIYWY1c1NGczArWFd0?=
+ =?utf-8?B?NUJmZ2M3d3k3Nm9TODdSTlh1K3EyV1B4UkhIMk1iWDFJU0xZb1RwbjE3YUVy?=
+ =?utf-8?B?WGZKcXhKUm5YSkUyVkkyNmtSVGR0cFR3NGRnM1pyNldpMkVWVVJXbjREZmpS?=
+ =?utf-8?B?WE5ybmNHeGZWUUQwOFNOckxvSUVhc2NtVmhhUXBaeWw1NWZyZHNTZGtKRGwy?=
+ =?utf-8?B?TnB6VVpkS3BqV1lmYzcyNmZPcTQyZW9kR2NUeHllQmt3ekhKQmNiS0k1WGpi?=
+ =?utf-8?B?eUlPV0NlREJyd0pITEVsT0FGMXpUcmRwZ1p5TFoxOWJLZlowWnR0QnNSamdL?=
+ =?utf-8?B?Y2E0aHhnaE5vT1V6RmRJRy9GaEI2N2NGQ2NtWEE3YVRXbmgycnl3T2drS3dV?=
+ =?utf-8?Q?XXcjkgoTY8xcj?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?T055alFmQzZhOXZZY3RYekR4ZDR5Rjh4OXhBT2w4SjB1eXh5ZHVzQ1luczJq?=
- =?utf-8?B?dU9YekZubHM0eUZlTVR4bklCMkUzZEhUWUNvRy9JOUhncHRCR083OFlzYmQx?=
- =?utf-8?B?RWwySTV5MFVGU1FuOHo1SDlCaFZaMW9YNFcxWGUxM3FPd3d3TmVGY3ZmNE5H?=
- =?utf-8?B?aGtYOTJJOVZWQkVpOFB4Nk1DNzVqUDRQbHo2WVFLSFkvSjdLbTVjaC84c2kz?=
- =?utf-8?B?dnNpOHJxSUY3V0hRdHhEL1lrbWcrb2JHQUN4VFVyUDUrYmJudHg0S2VHRWkx?=
- =?utf-8?B?WEY2N3dkQWZ2T203Wmt0dlJ4MXJXSThlZVl3UGFuNkQwTkRjQ1ByQ2w5YmZB?=
- =?utf-8?B?bWFOMElHbkNTYjRvUUFkK09leHROZ09ONmlDQVhGWXhvRkdRTkNZZllJN25o?=
- =?utf-8?B?NFFxakVnVU1sR0kxRjF0MXpsRjR4Q2JoV25uNTRRbkRDMm45dllFbmFuZkVG?=
- =?utf-8?B?RG45Qy94S1BUd2U1dzBCMHAzT3dxTHFSQ3R0cVJHTHI5amVDa1VabXhYZ1B1?=
- =?utf-8?B?TmU5NTdmcUJGRHk4aXZGbWdjUUsvTmZxeEtvbStpQTFIbGcyR0ZPbUh6dlRZ?=
- =?utf-8?B?TFY1L0V3dHNLaVIreUJZZS9hTFJ4TExCeDI3OTdPMlJ1OERMRkVBS3RyakZM?=
- =?utf-8?B?NFZnUlNkUWpCT1pCYXdLcGtGcUVKVW51bzFYS3VxejcyY1NkRjgvejR2Mlly?=
- =?utf-8?B?UFMxMm8rNjl5SFEydjRhMDFneWJMTnc0UkQ0U1hJYXJCQmhyR2t3anBXUWdy?=
- =?utf-8?B?YzV5MnhhbXBlSkJoV3RZZUQ2MnVoZlU0NzRQY1RrZDRaZ0tWQUZVWnQrTm1W?=
- =?utf-8?B?NTM1YUc3OGFvTXhXc1d4ZldHaXo3dkJiTXpmSWpIZkRZZVQyMmpCNytaZUVN?=
- =?utf-8?B?WVJHMXJLeEs5ZWZhajQ3ekVpYnRZZ3c3SkVobzNHOU1VVDRhQi9ETFBTZ21i?=
- =?utf-8?B?Z1ZtWStEUFdaZlBkOUtkcEJndlpuc3RCZ0xVUWhsQTZqMG9IOWRhalh4L0Vo?=
- =?utf-8?B?cFVncVF0YXZPc0tHV085VlZldEJlZTFJa2dITy9lNGdVM2pubVZrRFN0ekxz?=
- =?utf-8?B?NmpNdGtVSG1BcE5hd1pXNXNVZ3dnb2hvSFQxRmNJQ3VDQ3F3WEpEK0laZndD?=
- =?utf-8?B?SDFsMm5iL0x3NkVyeXNvYXpEOEpkZi9mRGd4TElLaTFWbFJpOHFWTWQ0Sy9n?=
- =?utf-8?B?YnN6djQxOWZwdWJBRHROQWgvY2NPZm9LdlB1L0N3NXhXNFhwR0xnaFR5aW9D?=
- =?utf-8?B?cVI1SjloSXBtZWg4UjZiWnhEdmZxUTdpbjdML3d3MjF6MElLV1lwRW91QW5Y?=
- =?utf-8?B?VVU0U0dvaDNLUjVaemw2R2hhNlh5akVQSHVjdzZxdFZJeXJrM1RpNWp5Y3F3?=
- =?utf-8?B?Q2FrOEFqMTlCVFZGY2hTTE9TbG0zdTFhc0k4QWMxZVEvNFZYclA4djVoM3A2?=
- =?utf-8?B?MWFzZTl3MTJiL1gyeGFFR3lJVmVKaFNGUC9abzBVd2tRODZqSVRvU3Nwd2Rk?=
- =?utf-8?B?TFJPVUdadDVoTmd0KzQyR3p0K1pOZEErekg4ejZnWnBZUjhxSDBZaWtrbFk1?=
- =?utf-8?B?aS9sd3lDWFNQbUgzWjFzTy9qK1dJL2YwbHhkaGtpenVRR1JxNWdoRTA4QXhU?=
- =?utf-8?B?MzNUc0ljZzllVC9qWVpoT25VcjNkTlFua0s5eE9YU1VsTm9oVUt4RVREMzRX?=
- =?utf-8?B?eElTZEUwcWcxeEdqRk0zc2puNUYvT3d2azkyc2haeExmalp3UUFqV2Q2c1pz?=
- =?utf-8?B?azBicWJtMnZTYUE3Z2FOdkRFZ3M4WTRncDZvcUVjUTRHRmY0MVNuOGdCeUZk?=
- =?utf-8?B?OWdxNDRTS0NpRklwa00vUkdZY3lZWmRtYXNtK1k0cG0vTUJwcng1VUZsUkF4?=
- =?utf-8?B?ZjhtdWszeHpZRFdlUlQrWkkxdlEyZjFoZkZxUllmVVQ5WUxtU3lVa2ZjaEh3?=
- =?utf-8?B?NjVseTJ4a2JERDlkWnhHVjFsNnZYbmIxSDBoZk1KWE9ka2Zadlo5UERMSndE?=
- =?utf-8?B?L0FiMDl1enlrZ1RrTVFEMXROM3o1UzFWcFIwNmY1NFQvOE41TzZUcmdhRmN2?=
- =?utf-8?B?U3BXMmlDOGVOVVBGbTB0T3VqUStJaEtuTDhvVHZ2bWFncTNaUzRJOUcwZngr?=
- =?utf-8?B?VTBvQWFEK3lFM1Z0OW8xQmRZa1MveVNqNmNsS21wRGdoOFMwNlRjUzAwK0gx?=
- =?utf-8?Q?WveoVFZyv2Qvs3L8A4zIew/amRaAu1v6ZwmyMjwwnjz6?=
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 919e36d5-1af1-4706-0f29-08dce4d40141
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2024 00:23:58.8735
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2024 00:27:06.8459
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c0d5787-d844-423f-dbc6-08dce4d471a0
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DyPSuMc5vg+61wi85gF3a0975IERzYjNR/H9ET6zbtbNwWe6CSZhdW/Rz+MR98kj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6844
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE35.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6135
 
-Hi Reinette,
 
-On 10/4/2024 4:09 PM, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 10/4/24 12:36 PM, Moger, Babu wrote:
->> On 10/4/2024 11:52 AM, Reinette Chatre wrote:
->>> On 10/4/24 9:38 AM, Moger, Babu wrote:
->>>> On 10/3/2024 9:17 PM, Reinette Chatre wrote:
->>>>> On 10/3/24 6:11 PM, Moger, Babu wrote:
->>>>>> On 10/2/2024 1:19 PM, Reinette Chatre wrote:
->>>>>>> On 9/27/24 10:47 AM, Moger, Babu wrote:
->>>>>>>> On 9/19/2024 12:59 PM, Reinette Chatre wrote:
->>>>>>>>> On 9/4/24 3:21 PM, Babu Moger wrote:
->>>>>>>
->>>>>>>>>> v7: Simplified the parsing (strsep(&token, "//") in rdtgroup_mbm_assign_control_write().
->>>>>>>>>>          Added mutex lock in rdtgroup_mbm_assign_control_write() while processing.
->>>>>>>>>>          Renamed rdtgroup_find_grp to rdtgroup_find_grp_by_name.
->>>>>>>>>>          Fixed rdtgroup_str_to_mon_state to return error for invalid flags.
->>>>>>>>>>          Simplified the calls rdtgroup_assign_cntr by merging few functions earlier.
->>>>>>>>>>          Removed ABMC reference in FS code.
->>>>>>>>>>          Reinette commented about handling the combination of flags like 'lt_' and '_lt'.
->>>>>>>>>>          Not sure if we need to change the behaviour here. Processed them sequencially right now.
->>>>>>>>>>          Users have the liberty to pass the flags. Restricting it might be a problem later.
->>>>>>>>>
->>>>>>>>> Could you please give an example of what problem may be encountered later? An assignment
->>>>>>>>> like "domain=_lt" seems like a contradiction to me since user space essentially asks
->>>>>>>>> for "None of the MBM events" as well as "MBM total event" and "MBM local event".
->>>>>>>>
->>>>>>>> I agree it is contradiction. But user is the one who decides to do that. I think we should allow it. Also, there is some value to it as well.
->>>>>>>>
->>>>>>>> "domain=_lt" This will also reset the counters if the total and local events are assigned earlier this action.
->>>>>>>
->>>>>>> The last sentence is not clear to me. Could you please elaborate what
->>>>>>> you mean with "are assigned earlier this action"?
->>>>>>>
->>>>>>
->>>>>> I think I confused you here. "domain=_lt" is equivalent to "domain=lt".  My reasoning is handling all the combination in the code adds code complexity and leave it the user what he wants to do.
->>>>>
->>>>> hmmm ... and how about "domain=lt_"? Do you think this should also be equivalent to
->>>>> "domain=lt" or perhaps an expectation that counters should be assigned to the two events
->>>>> and then immediately unassigned?
->>>>
->>>> Yes. "domain=lt_" should be "domain=lt".
->>>>
->>>>>
->>>>> Giving user such flexibility may be interpreted as the assignment seen as acting
->>>>> sequentially through the flags provided. Ideally the interface should behave in
->>>>> a predictable way if the goal is to provide flexibility to the user.
->>>>>
->>>>
->>>> My only concern is adding the check now and reverting it back later.
->>>> Basically process the flags sequentially and don't differentiate between the flags. I feel it fits the predictable behavior. No?
->>>
->>> This is the point I was trying to make. If flags are processed sequentially then it would be
->>> predictable behavior and if that is documented expectation then that should be ok. The problem
->>> that I want to highlight is that if predictable sequential processing is the goal then
->>> "domain=_lt" cannot be interpreted the same as "domain="lt_". When flags in "domain=lt_"
->>> are processed sequentially then final state should be "domain=_", no?
+On 10/4/24 10:06, Jeffrey Hugo wrote:
+> On 9/11/2024 12:05 PM, Lizhi Hou wrote:
+>> AMD NPU (Neural Processing Unit) is a multi-user AI inference 
+>> accelerator
+>> integrated into AMD client APU. NPU enables efficient execution of 
+>> Machine
+>> Learning applications like CNN, LLM, etc. NPU is based on AMD XDNA
+>> Architecture. NPU is managed by amdxdna driver.
 >>
->> Yes. that is correct.
->>>
->>> If sequential processing is done then "domain=_lt" means "unassign all counters followed
->>> by assign of counter to local MBM monitoring, followed by assign of counter to total MBM
->>> monitoring". Similarly, "domain=lt_" means "assign a counter to local MBM monitoring, then
->>> assign a counter to total MBM monitoring, then unassign all counters".
+>> Co-developed-by: Sonal Santan <sonal.santan@amd.com>
+>> Signed-off-by: Sonal Santan <sonal.santan@amd.com>
+>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>> ---
+>>   Documentation/accel/amdxdna/amdnpu.rst | 283 +++++++++++++++++++++++++
+>>   Documentation/accel/amdxdna/index.rst  |  11 +
+>>   Documentation/accel/index.rst          |   1 +
+>>   3 files changed, 295 insertions(+)
+>>   create mode 100644 Documentation/accel/amdxdna/amdnpu.rst
+>>   create mode 100644 Documentation/accel/amdxdna/index.rst
 >>
->> Yes. That is correct.
->>>
->>> If this sequential processing is the goal then the implementation would still need to be
->>> adapted. Consider, for example, "domain=lt" ... with sequential processing the user
->>> indicates/expects that "local MBM monitoring" has priority if there is only one counter
->>> available, but the current implementation does not process it sequentially and would end up
->>> assigning counter to "total MBM monitoring" first.
->>
->> Sure. Lets accommodate the sequential processing. Process the  flags
->> in the order it is provided. I need to make few changes to
->> rdtgroup_process_flags() to address it. Hopefully, it can be done
->> without much complexity. Thanks
-> 
-> I doubt that the implementation would be complex but it may take some effort for it
-> to be efficient ... taking actions that involve changing kernel and HW state for each
-> flag as it is encountered vs. parsing all flags and changing kernel and HW state once.
-> 
-> The risk is that a simple request like "domain=lt" may take twice as long when
-> doing sequential processing. When users provide flags like "domain=_lt" to take advantage
-> of sequential processing then there may be an argument like "user gets what is being asked
-> for" when things are slower, but I am not sure the same can be true for a user
-> that just wants to run "domain=lt".
-> 
-> To me it seems simpler to require that "_" always appears by itself and that
+>> diff --git a/Documentation/accel/amdxdna/amdnpu.rst 
+>> b/Documentation/accel/amdxdna/amdnpu.rst
+>> new file mode 100644
+>> index 000000000000..2af3bc5b2a9e
+>> --- /dev/null
+>> +++ b/Documentation/accel/amdxdna/amdnpu.rst
+>> @@ -0,0 +1,283 @@
+>> +.. SPDX-License-Identifier: GPL-2.0-only
+>> +
+>> +.. include:: <isonum.txt>
+>> +
+>> +.. SPDX-License-Identifier: GPL-2.0-only
+>
+> SPDX twice?
+I will remove one.
+>
+>> +
+>> +=========
+>> + AMD NPU
+>> +=========
+>> +
+>> +:Copyright: |copy| 2024 Advanced Micro Devices, Inc.
+>> +:Author: Sonal Santan <sonal.santan@amd.com>
+>> +
+>> +Overview
+>> +========
+>> +
+>> +AMD NPU (Neural Processing Unit) is a multi-user AI inference 
+>> accelerator
+>> +integrated into AMD client APU. NPU enables efficient execution of 
+>> Machine
+>> +Learning applications like CNN, LLM, etc. NPU is based on
+>> +`AMD XDNA Architecture`_. NPU is managed by **amdxdna** driver.
+>> +
+>> +
+>> +Hardware Description
+>> +====================
+>> +
+>> +AMD NPU consists of the following hardware components:
+>> +
+>> +AMD XDNA Array
+>> +--------------
+>> +
+>> +AMD XDNA Array comprises of 2D array of compute and memory tiles 
+>> built with
+>> +`AMD AI Engine Technology`_. Each column has 4 rows of compute tiles 
+>> and 1
+>> +row of memory tile. Each compute tile contains a VLIW processor with 
+>> its own
+>> +dedicated program and data memory. The memory tile acts as L2 
+>> memory. The 2D
+>> +array can be partitioned at a column boundary creating a spatially 
+>> isolated
+>> +partition which can be bound to a workload context.
+>> +
+>> +Each column also has dedicated DMA engines to move data between host 
+>> DDR and
+>> +memory tile.
+>> +
+>> +AMD Phoenix and AMD Hawk Point client NPU have a 4x5 topology, i.e., 
+>> 4 rows of
+>> +compute tiles arranged into 5 columns. AMD Strix Point client APU 
+>> have 4x8
+>> +topology, i.e., 4 rows of compute tiles arranged into 8 columns.
+>> +
+>> +Shared L2 Memory
+>> +................
+>
+> Why a line of "." instead of "-" likse elsewhere?
+I will fix it.
+>
+>> +
+>> +The single row of memory tiles create a pool of software managed on 
+>> chip L2
+>> +memory. DMA engines are used to move data between host DDR and 
+>> memory tiles.
+>> +AMD Phoenix and AMD Hawk Point NPUs have a total of 2560 KB of L2 
+>> memory.
+>> +AMD Strix Point NPU has a total of 4096 KB of L2 memory.
+>> +
+>> +Microcontroller
+>> +---------------
+>> +
+>> +A microcontroller runs NPU Firmware which is responsible for command 
+>> processing,
+>> +XDNA Array partition setup, XDNA Array configuration, workload context
+>> +management and workload orchestration.
+>> +
+>> +NPU Firmware uses a dedicated instance of an isolated non-privileged 
+>> context
+>> +called ERT to service each workload context. ERT is also used to 
+>> execute user
+>> +provided ``ctrlcode`` associated with the workload context.
+>> +
+>> +NPU Firmware uses a single isolated privileged context called MERT 
+>> to service
+>> +management commands from the amdxdna driver.
+>> +
+>> +Mailboxes
+>> +.........
+>
+> Again, odd delimiter
+>
+>> +
+>> +The microcontroller and amdxdna driver use a privileged channel for 
+>> management
+>> +tasks like setting up of contexts, telemetry, query, error handling, 
+>> setting up
+>> +user channel, etc. As mentioned before, privileged channel requests are
+>> +serviced by MERT. The privileged channel is bound to a single mailbox.
+>> +
+>> +The microcontroller and amdxdna driver use a dedicated user channel per
+>> +workload context. The user channel is primarily used for submitting 
+>> work to
+>> +the NPU. As mentioned before, a user channel requests are serviced 
+>> by an
+>> +instance of ERT. Each user channel is bound to its own dedicated 
+>> mailbox.
+>> +
+>> +PCIe EP
+>> +-------
+>> +
+>> +NPU is visible to the x86 as a PCIe device with multiple BARs and 
+>> some MSI-X
+>
+> "to the x86" - feels like something is missing here.  Maybe "x86 host 
+> CPU"?
+Yes. I will change to "to the x86 host CPU".
+>
+>> +interrupt vectors. NPU uses a dedicated high bandwidth SoC level 
+>> fabric for
+>> +reading or writing into host memory. Each instance of ERT gets its 
+>> own dedicated
+>> +MSI-X interrupt. MERT gets a single instance of MSI-X interrupt.
+>
+> <snip>
+>
+>> diff --git a/Documentation/accel/amdxdna/index.rst 
+>> b/Documentation/accel/amdxdna/index.rst
+>> new file mode 100644
+>> index 000000000000..38c16939f1fc
+>> --- /dev/null
+>> +++ b/Documentation/accel/amdxdna/index.rst
+>> @@ -0,0 +1,11 @@
+>> +.. SPDX-License-Identifier: GPL-2.0-only
+>> +
+>> +=====================================
+>> + accel/amdxdna NPU driver
+>> +=====================================
+>> +
+>> +The accel/amdxdna driver supports the AMD NPU (Neural Processing Unit).
+>> +
+>> +.. toctree::
+>> +
+>> +   amdnpu
+>> diff --git a/Documentation/accel/index.rst 
+>> b/Documentation/accel/index.rst
+>> index e94a0160b6a0..0a94b6766263 100644
+>> --- a/Documentation/accel/index.rst
+>> +++ b/Documentation/accel/index.rst
+>> @@ -9,6 +9,7 @@ Compute Accelerators
+>>        introduction
+>>      qaic/index
+>> +   amdxdna/index
+>
+> I think alphabetical order makes sense to me, considering there 
+> probably should be more entries added over time. This would suggest 
+> that your addition should occur one line up. What do you think?
 
-Ok. Lets go with this approach treating "_" as a special and cannot be 
-combined with other flags. Seems simple to implement.
+I will fix it.
 
-> any flags set by the user using "=" are combined during parsing so that they can be
-> acted on in a single flow. If indeed users want to do something sequentially
-> like "unassign all flags and then assign local MBM" then instead of "domain=_l"
-> I think "domain=_;domain=l" could be used?
 
-Yes. It can be done.
-thanks
-Babu Moger
+Thanks,
+
+Lizhi
+
+>
+>>     .. only::  subproject and html
+>
 
