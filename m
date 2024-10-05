@@ -1,100 +1,164 @@
-Return-Path: <linux-kernel+bounces-351929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-351928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C13F59917EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:49:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5B4A9917EC
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 17:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A664B215D6
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:49:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0B591C210BD
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 15:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E245515533F;
-	Sat,  5 Oct 2024 15:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B188155756;
+	Sat,  5 Oct 2024 15:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RDoHfbj3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKFbqlaB"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499BDC2C9;
-	Sat,  5 Oct 2024 15:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B91C2C9;
+	Sat,  5 Oct 2024 15:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728143332; cv=none; b=dPpA5Nwy6E4QSnBnTw7DyBJqdL6GhNqb/PbrroSOLPu+vUrt9OA09Ws/+p11LjFzMDbr+F0vljydWLklP3l7vcxbEEZjSJBMv6MCXRIccCObtCE+SICyRr7wWe4NlXTUV2608c2XxMlQ8GI9W2zpy3X0uP4fSGKKIkXdXs6Kb1M=
+	t=1728143325; cv=none; b=eS8obqXb3FHk9GdzLxrPxDV05OCCS6ayecSiklDWm7KLeO93YMw0xBCPwyVeeiRG+1i1ahwkiAEh3GDhr0Y6/lZZ+ozWz3z/GAotzygaH21dE1sufJFGKVsF2FXNYBtU3Bm5G2XihEG0+lsqO5a0LLCDOyAS5Kgt40JyOuiFqhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728143332; c=relaxed/simple;
-	bh=9xoeKcKVDweNsARiellNe0LCftKTiaLL9unlkqHRO/U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FJtFNfXIgPxGXn/Wu1DbQVr01knDKiRqdFQBkJ8kLkjMzjlxr6I/MnJQdCAuLdobnY5QA5zxzsYwOPWRgd8v0aN8KWvvnl1Ma+aAKrxo0ljYzqPCS5t0J8uDQkZdVj8F+Pg3lNx/nC26BpF9fdvkH4vWgrinuS0YVsR6V77PFjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RDoHfbj3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9323AC4CEC2;
-	Sat,  5 Oct 2024 15:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728143331;
-	bh=9xoeKcKVDweNsARiellNe0LCftKTiaLL9unlkqHRO/U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RDoHfbj3df4lD22szVfwft1MVcPhWylhIU69zgINno0VGXIdaXGNMK2QrwbOhqZRH
-	 +Z1myn29aNl1Z+P2n/p5vmdvW9C2muDsaGtZ+CCI2hBiTthW34PnfHCObmX6mwnyeo
-	 JILipIQamkAZZSzl3x5AXJ67IWI1o13H2abPAnGn++TIcag7jtZQBDwS0uBwVxu+yS
-	 hCxIUcRCSV1Aw7/bfinWWhsSxlKd9+GcYpSGl5+QnyqMekWBSkdvvnsGNXo9msmp8V
-	 pVoEAWU5tf1z1xNlFPOhe4ePySJ1reT1vOFjK0d31GZ0qMEMTMIz+mRUeqFvtQGJQw
-	 0ULUSTWILCTpg==
-Received: by pali.im (Postfix)
-	id 773E2648; Sat,  5 Oct 2024 17:48:45 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Change translation of STATUS_DELETE_PENDING to -EBUSY
-Date: Sat,  5 Oct 2024 17:48:17 +0200
-Message-Id: <20241005154817.20676-1-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1728143325; c=relaxed/simple;
+	bh=CAwZZ/cbkZfNcTx3fD33ENauVSXB4fGFVU4Z9VQV5ng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hZ/ldRArIcJLsiPqB0K3N7q+moapEM3n9JomwZPkm8uEyogCXYwK4Llt0HlHTlFatHeANu8WksvNsVA17D2DfwOC8UHPa/Yv56f96zKyGpZmqcRneeYysTtHuDgqOnlqto17+Nfov/IP3SSQKwCjitBQD88QLm8hALpr4Bgebck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jKFbqlaB; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fad8337aa4so35567851fa.0;
+        Sat, 05 Oct 2024 08:48:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728143322; x=1728748122; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dtxqmhjvfS2LHPA1jTETD3JSTrJ84jElXfjubNHHF9c=;
+        b=jKFbqlaBTJa52QmBbsJlcZAvczNuxgwoRyIjfhD5i3ZbvltGoSsYa+GvV55RSSB7Bw
+         M00fN/cx9Gmz+lDgpwFt9XBedx4hgwsLJond7HSqArH1tGMzslcJ7ANJXsF8tf2pEKW8
+         6j+SCXnOBmwWvLgr1j2nlOhJ4GtiUGUf+pE2gtZGuUXgxfXaZELqa9swpib3YQtEY+bp
+         Up2tAkSnrCnQisLGq+oHil83eWWncXo7eFZsm9cVWCEAfGVYNOcZYLjHwfRFxmM6Wu4H
+         fz8UKcvFu1/XoRsUs2iJJF2qBNHhOFWymCCSCURtVAIdjDK2ZlnMAXpJ8bg4nbjEtGE9
+         lCkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728143322; x=1728748122;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dtxqmhjvfS2LHPA1jTETD3JSTrJ84jElXfjubNHHF9c=;
+        b=RxIvCN2p9vzmJoFmoIjTYBuUuBguz7A/yw5y3iYFYiM35VYkh0s5Pnn4u2hfsFwQYn
+         RhbXXApgz6avY/CHq+82DPZyFnq+t+SA7PQUxojB1Ee+MNam0gxJJJ6c8XgIoGGSj3+9
+         vXXtCNrGGDyVT5heNNMdy+L/FfmJi5TFDSxeGkSsmWUU/Pt8hxPz/Ny6g0mn6I5WJbWh
+         FoFASoXbdcg0cfz/j0nFsGqeFNdJDax661KLu3blBMvXNf3CTWMz0fL8zFlc9MSE14Z6
+         duBG2Kc7/2J/FQnbnwZiWtP6sa/JgeNlyvj0mMn+3PXjB2wcZTXm7g/CzxJMX3PYUbNq
+         QrJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUM/spSq9veJHXQppgIxrn9DGpzIZeDHMGnfg1sx86m9tBuCU3I72XMQQ+S0TvOx3G4HXvC8AuFe5tX9GA=@vger.kernel.org, AJvYcCXgaxTQid2filfQcIi1pGaaGZNtqxYDC/SWx78xE0ulXJ0vvim1E1vzz5pShsYU8aVZ1HvEXTwa@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdmP+gNAJMltchgH4OJzyOTb3PIkBQ6EnIl8fPLOp98IauFkrV
+	RVaDQEKT8JBo7pEZLE9gs6RdbJLii//Regt5B95k57Ux+OreH3kXb7rfvNejJRcgzAu/ohL5B1Q
+	NvyWdESZBd7XEGILIAw7XMS1VOQ==
+X-Google-Smtp-Source: AGHT+IFQhJujfFuTsYWjO3cyatW0jMKx8lC6zgFbyjgoqUx/Eap6iQT+vvVetq98t3rLbrv3vwXyYl9HWoEEK7CMN2w=
+X-Received: by 2002:a05:6512:baa:b0:534:3cdc:dbef with SMTP id
+ 2adb3069b0e04-539ab8add1fmr3167920e87.43.1728143321606; Sat, 05 Oct 2024
+ 08:48:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241002092534.3163838-2-ardb+git@google.com> <CAMj1kXGDmkuwSROhnFkX_jYbWyAL738KmHbk5qYnThL6JWHapg@mail.gmail.com>
+In-Reply-To: <CAMj1kXGDmkuwSROhnFkX_jYbWyAL738KmHbk5qYnThL6JWHapg@mail.gmail.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Sat, 5 Oct 2024 11:48:30 -0400
+Message-ID: <CAMzpN2i-EyGjkb9S6fWBXmZoj6GUEQNjSZ0-MviPJy-GiRxnPw@mail.gmail.com>
+Subject: Re: [PATCH] x86/stackprotector: Work around strict Clang TLS symbol requirements
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, x86@kernel.org, llvm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Fangrui Song <i@maskray.me>, Uros Bizjak <ubizjak@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-STATUS_DELETE_PENDING error is returned when trying to open a file which is
-in delete pending state. Linux SMB client currently translates this error
-to -ENOENT. So Linux application trying to open a file which still exists
-will receive -ENOENT error. This is confusing as -ENONET means that
-directory entry does not exist.
+On Wed, Oct 2, 2024 at 7:04=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wro=
+te:
+>
+> On Wed, 2 Oct 2024 at 11:25, Ard Biesheuvel <ardb+git@google.com> wrote:
+> >
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > GCC and Clang both implement stack protector support based on Thread
+> > Local Storage (TLS) variables, and this is used in the kernel to
+> > implement per-task stack cookies, by copying a task's stack cookie into
+> > a per-CPU variable every time it is scheduled in.
+> >
+> > Both now also implement -mstack-protector-guard-symbol=3D, which permit=
+s
+> > the TLS variable to be specified directly. This is useful because it
+> > will allow us to move away from using a fixed offset of 40 bytes into
+> > the per-CPU area on x86_64, which requires a lot of special handling in
+> > the per-CPU code and the runtime relocation code.
+> >
+> > However, while GCC is rather lax in its implementation of this command
+> > line option, Clang actually requires that the provided symbol name
+> > refers to a TLS variable (i.e., one declared with __thread), although i=
+t
+> > also permits the variable to be undeclared entirely, in which case it
+> > will use an implicit declaration of the right type.
+> >
+> > The upshot of this is that Clang will emit the correct references to th=
+e
+> > stack cookie variable in most cases, e.g.,
+> >
+> >    10d:       64 a1 00 00 00 00       mov    %fs:0x0,%eax
+> >                       10f: R_386_32   __stack_chk_guard
+> >
+> > However, if a non-TLS definition of the symbol in question is visible i=
+n
+> > the same compilation unit (which amounts to the whole of vmlinux if LTO
+> > is enabled), it will drop the per-CPU prefix and emit a load from a
+> > bogus address.
+> >
+> > Work around this by using a symbol name that never occurs in C code, an=
+d
+> > emit it as an alias in the linker script.
+> >
+> > Fixes: 3fb0fdb3bbe7 ("x86/stackprotector/32: Make the canary into a reg=
+ular percpu variable")
+> > Cc: <stable@vger.kernel.org>
+> > Cc: Fangrui Song <i@maskray.me>
+> > Cc: Brian Gerst <brgerst@gmail.com>
+> > Cc: Uros Bizjak <ubizjak@gmail.com>
+> > Cc: Nathan Chancellor <nathan@kernel.org>
+> > Cc: Andy Lutomirski <luto@kernel.org>
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/1854
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >  arch/x86/Makefile             |  5 +++--
+> >  arch/x86/entry/entry.S        | 16 ++++++++++++++++
+> >  arch/x86/kernel/cpu/common.c  |  2 ++
+> >  arch/x86/kernel/vmlinux.lds.S |  3 +++
+> >  4 files changed, 24 insertions(+), 2 deletions(-)
+> >
+>
+> This needs the hunk below applied on top for CONFIG_MODVERSIONS:
+>
+> --- a/arch/x86/include/asm/asm-prototypes.h
+> +++ b/arch/x86/include/asm/asm-prototypes.h
+> @@ -20,3 +20,6 @@
+>  extern void cmpxchg8b_emu(void);
+>  #endif
+>
+> +#ifdef CONFIG_STACKPROTECTOR
+> +extern unsigned long __ref_stack_chk_guard;
+> +#endif
 
-File on SMB server can be in delete pending state for an indefinite long
-period. Moreover it does not have to final state before the real deleting,
-as any SMB client who still have opened handle to such file can return file
-from delete pending state back to normal state. And therefore it can cancel
-any scheduled file removal.
+Shouldn't this also be guarded by __GENKSYMS__, since the whole point
+of this is to hide the declaration from the compiler?
 
-So change translation of STATUS_DELETE_PENDING error to -EBUSY. -EBUSY is
-used also for STATUS_SHARING_VIOLATION error which is similar case, when
-opening a file was disallowed by server due to concurrent usage.
-
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/smb2maperror.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/smb/client/smb2maperror.c b/fs/smb/client/smb2maperror.c
-index ac1895358908..fbc4ed038ff5 100644
---- a/fs/smb/client/smb2maperror.c
-+++ b/fs/smb/client/smb2maperror.c
-@@ -368,7 +368,7 @@ static const struct status_to_posix_error smb2_error_map_table[] = {
- 	{STATUS_EA_CORRUPT_ERROR, -EIO, "STATUS_EA_CORRUPT_ERROR"},
- 	{STATUS_FILE_LOCK_CONFLICT, -EACCES, "STATUS_FILE_LOCK_CONFLICT"},
- 	{STATUS_LOCK_NOT_GRANTED, -EACCES, "STATUS_LOCK_NOT_GRANTED"},
--	{STATUS_DELETE_PENDING, -ENOENT, "STATUS_DELETE_PENDING"},
-+	{STATUS_DELETE_PENDING, -EBUSY, "STATUS_DELETE_PENDING"},
- 	{STATUS_CTL_FILE_NOT_SUPPORTED, -ENOSYS,
- 	"STATUS_CTL_FILE_NOT_SUPPORTED"},
- 	{STATUS_UNKNOWN_REVISION, -EIO, "STATUS_UNKNOWN_REVISION"},
--- 
-2.20.1
-
+Brian Gerst
 
