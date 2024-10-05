@@ -1,56 +1,69 @@
-Return-Path: <linux-kernel+bounces-352046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6634099197E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:26:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59237991982
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 20:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF99AB20F7B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:26:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13EEB282ADC
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2024 18:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0080159571;
-	Sat,  5 Oct 2024 18:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D78F231C81;
+	Sat,  5 Oct 2024 18:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUq769gQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="seYOJHbq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FBF2595;
-	Sat,  5 Oct 2024 18:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE24115A851;
+	Sat,  5 Oct 2024 18:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728152794; cv=none; b=OyiZ3RBmzf+Vrig8gH91iXx6KZvRkpwSaPWRho+P73fVx8JfDewO7qI2nJ65m5lq4Y0C1Z0UXF2HDJJNXw0UPlEoLdRg5hnTNYxZONuBhl/mwKchaxXroM2QXWXmnsT1RIrwCU0Vtkd9Uerv/T+Uys3QtwsyoXZkCEJIer25ObQ=
+	t=1728153025; cv=none; b=WtAJYQyzJqR3oNevVH0cUk/ArT05sYRbqp07xZHdSmpV4HHE9WIbJXwIzEGJG2q5GRsT9wExN3TH16QlL9zsI1pYCSQcol4UUr4GXeRRoqE6jxGH+Trr4/Cub3b6rSMIAEzc8XpT97p8JTgvNjUoV11ko0q7kW1DSX061JsRiY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728152794; c=relaxed/simple;
-	bh=av6UZp2/ZvFPvUVNM6xEWHxjiAb15tD5s5oKhupkDdE=;
+	s=arc-20240116; t=1728153025; c=relaxed/simple;
+	bh=C/3NzZqOTorLtRkgrjsjoBs+OeubveVBpbXcNsYIa/k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D5uf76JYvUCpHwp59bnlt8Ok5QqhAHClqqDRdbRxxOym/ig6SW2pb+tyMHUC7WU/lJ7/51ma1qM+oqBMxNOORKLilPCCIhNrAPVfN0BtIajHzZk5utTW9CONUp1UdmiAptbdcagqkTfhNm8rpoA1FdSbFlXGVcS72jRr4FZ16oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QUq769gQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87122C4CEC2;
-	Sat,  5 Oct 2024 18:26:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4AyyERF1ybCLsILkxHj849UrfEpeTp8KQl06vATHOj7eCp/gYSFJsuTwsxQfdYZP6LkfitmHr/spWsc7YJ8/7M2zZcL4ql4schxd+i5QZRmEUQxigekKLXYGqrpMLT5uBfE6WJ3ywNnO/9dN86OCHQIG7mVSTDfd7qH6+7zBXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=seYOJHbq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5788EC4CECC;
+	Sat,  5 Oct 2024 18:30:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728152793;
-	bh=av6UZp2/ZvFPvUVNM6xEWHxjiAb15tD5s5oKhupkDdE=;
+	s=k20201202; t=1728153025;
+	bh=C/3NzZqOTorLtRkgrjsjoBs+OeubveVBpbXcNsYIa/k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QUq769gQ99bkbpPxu/Lp0qgzLf6IDH8mzxypYavNrNHN7/EGq2BG+l8vEMBM64628
-	 /wUxdxCV1bm/2hoKQycUg86hBDOgFzQJoWeJJ4nGHf3lxwHNquxt8wdfSyJKSX6Swt
-	 JLdilEk6SQhjQ1AiW3CxkknwuVOvL0NwT039rlRFy7kVAokQOvlCCFN8/eWlOfij/l
-	 ROhSdMCR8C27P4gOjF388oLJel3jmkVqwnAC2a8MO+BxGh1Qiqfv5La/V+4MZxVw8v
-	 5nmkMFmrJTt2p3F3m0Q2+RwDAcCw9ZQ4kmQAytc6TR5sLpHV+RmUn7PfkZ8iu/Fs0h
-	 +jJHnndDBWNsg==
-Date: Sat, 5 Oct 2024 13:26:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Cc: ulf.hansson@linaro.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	m.felsch@pengutronix.de, bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH 1/2] dt-bindings: mmc: mmc-pwrseq-simple: add support for
- reset control
-Message-ID: <20241005182632.GA496820-robh@kernel.org>
-References: <20241004120740.2887776-1-catalin.popescu@leica-geosystems.com>
+	b=seYOJHbqiQO2n9QALzYbR2pYgc/1Z0XG4+JXADF8U5CPNjhy+ZCZClLfRADlrqH5i
+	 kygu0PIV31eDkvF/LwpXZ6s1eI6jHZketkDowriQPQcCBiVArQ4Di60xCJcv6fBjSp
+	 L69qdh7mw1wgnyPnT0emLsiV6ToEMFSwqQ0cZWVXHI7wENNw2JBFkvc23ZiwATHUHf
+	 e82Yu4iKmx2CcFlnBr1zOOYYZT8/Xye/pSrEFBt2gqcXAuZvcaIt97n4NBSAo3XtmS
+	 07XJXiEIem5HGp4lMSAP8GBti4CjcewZcJ1lYKt8cv88ZRUaYN+bTZgUsmFFgNaE64
+	 gGh90994kAmvQ==
+Date: Sat, 5 Oct 2024 13:30:21 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: "Kiran Kumar C.S.K" <quic_kkumarcs@quicinc.com>
+Cc: Bjorn Andersson <quic_bjorande@quicinc.com>, 
+	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org, Andy Gross <agross@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@armlinux.org.uk>, 
+	Jacob Keller <jacob.e.keller@intel.com>, Bhupesh Sharma <bhupesh.sharma@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	vsmuthu@qti.qualcomm.com, arastogi@qti.qualcomm.com, linchen@qti.qualcomm.com, 
+	john@phrozen.org, Luo Jie <quic_luoj@quicinc.com>, 
+	Pavithra R <quic_pavir@quicinc.com>, "Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>, 
+	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
+Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
+Message-ID: <zz7m5v5bqx76fk5pfjppnkl6toui6cz6vxavctqztcyyjb645l@67joksb6rfcz>
+References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
+ <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
+ <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
+ <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
+ <Zv7ubCFWz2ykztcR@hu-bjorande-lv.qualcomm.com>
+ <7f413748-905d-4250-ad57-fc83969aad28@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,20 +72,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241004120740.2887776-1-catalin.popescu@leica-geosystems.com>
+In-Reply-To: <7f413748-905d-4250-ad57-fc83969aad28@quicinc.com>
 
-On Fri, Oct 04, 2024 at 02:07:39PM +0200, Catalin Popescu wrote:
-> Add compatible value "mmc-pwrseq-simple-reset" to support reset control
-> instead of gpios. Reset controls being refcounted, they allow to use
-> shared resets or gpios across drivers. Support of reset control is
-> limited to one single reset control.
-
-Can't you do this without a binding change? Just use reset controls when 
-there is only 1 GPIO.
-
+On Fri, Oct 04, 2024 at 07:47:15PM GMT, Kiran Kumar C.S.K wrote:
 > 
-> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-> ---
->  .../bindings/mmc/mmc-pwrseq-simple.yaml       | 21 +++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> On 10/4/2024 12:50 AM, Bjorn Andersson wrote:
+> > On Thu, Oct 03, 2024 at 11:20:03PM +0530, Kiran Kumar C.S.K wrote:
+> >> On 10/3/2024 2:58 AM, Andrew Lunn wrote:
+> >>> On Thu, Oct 03, 2024 at 02:07:10AM +0530, Kiran Kumar C.S.K wrote:
+[..]
+> > The only remaining dependency I was expecting is the qcom tree depending
+> > on the clock and netdev trees to have picked up the bindings, and for
+> > new bindings I do accept dts changes in the same cycle (I validate dts
+> > against bindings in linux-next).
+> > 
+> 
+> The only compile-time dependency from PCS driver to NSS CC driver is
+> with the example section in PCS driver's dtbindings file. The PCS DTS
+> node example definitions include a header file exported by the NSS CC
+> driver, to access certain macros for referring to the MII Rx/Tx clocks.
+> So, although there is no dependency in the driver code, a successful
+> dtbindings check will require the NSS CC driver to be available. Could
+> you suggest how such dependencies can be worked around? Would it be
+> acceptable to defer enabling the example node for dtbindings compilation
+> using its 'status' property, until the NSS CC driver is merged?
+> 
+
+You can avoid this dependency by making the example...an example.
+
+By using just descriptive phandles you can present an example of the
+client device without creating a dependency on the specific provider.
+
+Regards,
+Bjorn
 
