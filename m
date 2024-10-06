@@ -1,152 +1,192 @@
-Return-Path: <linux-kernel+bounces-352509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6794992022
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:53:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00B0992024
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0242E1C20CAB
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B4A11F21A0D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8637018991B;
-	Sun,  6 Oct 2024 17:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B99189F5A;
+	Sun,  6 Oct 2024 17:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3GHxGEZ"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="XmNK0Pm8"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8ED28377
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728237179; cv=none; b=qm6LeOm2Kmm89RdIarU+aCQulRROWmFhz2sMcMwtMtyVOuhkQWEJdzSDTn+xgIyDCvNXVTADrKjALvvBZLEAJhm5Pbp+nJhfTKhtzv5ekwjW92UtsZs548KfQu5vYMRU4Sh7kZTbaz/6era7htSD/X+vn2ykbJFYmLHaY+Uqj8s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728237179; c=relaxed/simple;
-	bh=uCTNLqGYGJBN8F9X0TsRm6AjMi7eTfuDTAZs2gcxcyE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lEw1sQi5gy305XwYjHEhpUERqe3pSNX2ikzs2Y0hwRgs/G5XfvGkyfqPi7Rv9rnKFDmuJ5YVGeGweQTIsoXKB8G2+e8hnmBnXOcNUpC9NB49mwceXsmMmjeoPWF2el+3L+winQXPMCjtY0etP5k4bH6v7ivm5n8faneOy/F6/08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3GHxGEZ; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6dbc5db8a31so27793527b3.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728237176; x=1728841976; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fRmbHG3KTWcHELv1H5/kg1uMVewLUgezzMCppUgp7qk=;
-        b=W3GHxGEZNDMwRGlzKbubL1Xfok/NRDjizkQp2Sg/BCFB7If+jyb6ghYZ+YvNxzX7uR
-         jxJATWd9zM1c5uoxJVYb+VMdRABZsd2F28i4af/84sht2z519jLvbZC1fdEBW+RA055s
-         jmMuMmOFTdInYFKxCT5NuEM215/T53f1qwGWHvgo+N1km7RuG7n+RoE4JUde55WKCbfc
-         h6Xbf+qwLv4g2dS2qccKeee8MX8a3XycQVRT6AOlzFviHTRpFj1877bDHoPo0Yn+rEzp
-         92i5FT+/PSNA1aD+5DpxtWdbdk8JKXsNYAvo6YPRioza+d+iaZ0NhGnQSl23ZyOY2Pdh
-         kGGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728237176; x=1728841976;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fRmbHG3KTWcHELv1H5/kg1uMVewLUgezzMCppUgp7qk=;
-        b=kNKjyXSNBZZYO1L4SxkONks4+1x04apBEPhFquvgnlQfZHOm7KBYCJqNlZ95iCqta4
-         CGCBGx36jA2rUpX2YexWn/yU1cHnOvPcV8YhxeQ+cW9JoOppLOY2d8+WVXtMlKVAxysh
-         /Om9Dte19xLPXmqTMEc9bmi9iqCp9mdVNTnpsz/2WCS3dQyFySyTV/0hDzB5Yr4rMaQW
-         nX7p4TajqUFtoC10LsMatC5DqqoZa9TTqJ/mmiNtarRPeiy8tgP2PhwcSgPRioYB1EcC
-         B5BLrx63cLuTqp8ssy1SQ64uwRNXprZ1APVL4+fqoWb/oaRLMRhTZDKuKT0lMSfw6FBa
-         y3ZQ==
-X-Gm-Message-State: AOJu0Yx4ryiUry/UjYtkyzDCfKGiZ3W1tqAc9Y8UV1cq/xys95S5oE12
-	SNvELAXc2OBJyRe3JeSBsJFziG2Co3dOszCETRVWSSvb/eumjv7QwHZGeAdS5FWTxVCyoe3OoZN
-	As1dN+AgCHISEinLBIHp9baSfLUU=
-X-Google-Smtp-Source: AGHT+IE8YaA8HEQyMZgsUgRyeL+AwEhcNAm6/PndcUFQtq1TcbLlsm381l72S3hbT+eqRrt8JwXbU7EhwVC87UWN+rI=
-X-Received: by 2002:a05:690c:4907:b0:6db:d221:b739 with SMTP id
- 00721157ae682-6e2b5350533mr93012167b3.10.1728237176328; Sun, 06 Oct 2024
- 10:52:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2211228377;
+	Sun,  6 Oct 2024 17:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728237247; cv=pass; b=qOgl4H+yGo/sQQZT14BHcYg4CB6edawKoOQOqbULwB2JGeh+ffL2+j419/TT+45j6btTzXBN2RsWplhtG8dcWQJIYL89Quvwd4SG+CQelHnZgh+6k62xeKw7AQKPLnReiu4gOoDG4QaM3iq5lm9Clqx3BMMfTfRy+CwWVR2TYjg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728237247; c=relaxed/simple;
+	bh=BjiXsL+KzJMtLRg2VOkzfZQ/KCtQf5NUzaW2sSbaEfE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ScTTSN0+M+cxhZrJmdjqXRpJCh5n0BTu7CyP5MxRzl0wnMYu9gv0rFSakXvFiQoA27FdNeg9vDiB8WXUvEYsm5MggPohh0Y2itFYAfPGMLlBvSlpbx8moV0ZPefUcGB6ZOkDHFaZexGNMrpRlBPfH5th4yKlU1wguJ+HuWRQK+Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=XmNK0Pm8; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1728237226; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JrecHpJJjq+le7Cch8iMQ00Jl10IxUEg8AdklhwPaHe6jLfNGQej5eeMqLPD11s6wVfuTCa97FqcB/u7TFu8pribJbt8BTdfMyMR0yJVtYcbXb7We+sZbU5ku3YIuSScDypM94JnsA47cpQHduHSkssABLrb425xpkfFryZbMIA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1728237226; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=XTnVDAmnVGyJDi/jgM2YrR/nJtg9MBkwlu2KSem8Wh8=; 
+	b=BGm0xk5L8zLrUsy/0LV1PVbAmRioiYqSRTlw/Wi6YPZNLWkkShyWTgiKCUvGHGy7Pqdsnl+CC2B7Tr7g6V4QR8HTEsKwD9W0LapL/JTYYCzRVGjDlY4dxc0wf5XY1aLLThIvHsHPtFt9bgvRCYYS+inS7EMEW/pCYVaeE6N3gUg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728237226;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=XTnVDAmnVGyJDi/jgM2YrR/nJtg9MBkwlu2KSem8Wh8=;
+	b=XmNK0Pm8739o8mTtjI9Y4zO2oEnhKe5Q9DSyaV1eO+QUJiwQ5KNJZ2a3NdDeGJx8
+	133V1k99tF0WW/CeJ0ZCAQm5PI6r1D/xi+g3iIPDSdZlLKXM8sW2skQc6P1MjHOfyWl
+	QHrnHx2oIoxQ2jectMOycWXUkpVGn1W/A+DhZKwQ=
+Received: by mx.zohomail.com with SMTPS id 1728237224277627.9130859707182;
+	Sun, 6 Oct 2024 10:53:44 -0700 (PDT)
+Message-ID: <d1015505-132b-4a94-b7b2-7ba9105b95e6@collabora.com>
+Date: Sun, 6 Oct 2024 22:53:37 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006145727.291401-1-luca.boccassi@gmail.com> <20241006172158.GA10213@redhat.com>
-In-Reply-To: <20241006172158.GA10213@redhat.com>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Sun, 6 Oct 2024 18:52:44 +0100
-Message-ID: <CAMw=ZnS1GTC9RGQCeTqB8g2b78mFXi4zLfg6bumrp+zmgx0VXg@mail.gmail.com>
-Subject: Re: [PATCH v5] pidfd: add ioctl to retrieve pid info
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org, christian@brauner.io
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, linux-kernel@vger.kernel.org,
+ kernel-team@android.com, linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] selftests/mm: replace atomic_bool with
+ pthread_barrier_t
+To: Edward Liaw <edliaw@google.com>, linux-kselftest@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ Lokesh Gidra <lokeshgidra@google.com>, Peter Xu <peterx@redhat.com>
+References: <20241003211716.371786-1-edliaw@google.com>
+ <20241003211716.371786-2-edliaw@google.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241003211716.371786-2-edliaw@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Sun, 6 Oct 2024 at 18:22, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> On 10/06, luca.boccassi@gmail.com wrote:
-> >
-> > +static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
-> > +{
-> > +     struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
-> > +     size_t usize = _IOC_SIZE(cmd);
-> > +     struct pidfd_info kinfo = {};
-> > +     struct user_namespace *user_ns;
-> > +     const struct cred *c;
-> > +     __u64 request_mask;
-> > +
-> > +     if (!uinfo)
-> > +             return -EINVAL;
-> > +     if (usize < sizeof(struct pidfd_info))
-> > +             return -EINVAL; /* First version, no smaller struct possible */
-> > +
-> > +     if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
-> > +             return -EFAULT;
-> > +
-> > +     c = get_task_cred(task);
-> > +     if (!c)
-> > +             return -ESRCH;
-> > +
-> > +     /* Unconditionally return identifiers and credentials, the rest only on request */
-> > +
-> > +     kinfo.pid = task_pid_vnr(task);
-> > +     kinfo.tgid = task_tgid_vnr(task);
-> > +     kinfo.ppid = task_ppid_nr_ns(task, task_active_pid_ns(task));
->                                            ^^^^^^^^^^^^^^^^^^^^^^^^
-> The same problem as with "info.pid = pid_nr_ns(pid, task_active_pid_ns(task));"
-> you used before. You should use the caller's namespace, not the task's namespace.
->
->         kinfo.ppid = task_ppid_nr_ns(task, NULL);
->
-> should work, see __task_pid_nr_ns() which uses task_active_pid_ns(current) if
-> ns == NULL.
->
-> > +     /*
-> > +      * One last check before returning: the task might have exited while we
-> > +      * were fetching all the data, so check again to be safe. */
-> > +     if (task_pid_vnr(task) == 0)
-> > +             return -ESRCH;
->
-> Well, this looks strange. It would be better to kill "kinfo.pid = task_pid_vnr()"
-> above and do
->
->         kinfo.pid = task_pid_vnr(task);
->         if (!kinfo.pid)
->                 return -ESRCH;
->
-> at the end, but this is minor.
->
-> I don't think we can rely on this check.
->
-> Suppose that pidfd_info() runs on CPU_0 and it races with __unhash_process(task)
-> on CPU_1 which does
->
->         detach_pid(p, PIDTYPE_PID);
->         detach_pid(p, PIDTYPE_TGID);
->
-> Without the barries/locking CPU_0 can see the changes above out of order,
-> so it is possible that pidfd_info() will see task_pid_vnr(task) != 0, but
-> report kinfo.tgid == 0.
->
-> Oleg.
+On 10/4/24 2:17 AM, Edward Liaw wrote:
+> Swaps synchronization primitive with pthread_barrier, so that
+> stdatomic.h does not need to be included.
+> 
+> The synchronization is needed on Android ARM64; we see a deadlock with
+> pthread_create when the parent thread races forward before the child has
+> a chance to start doing work.
+> 
+> Fixes: 8c864371b2a1 ("selftests/mm: fix ARM related issue with fork after
+> pthread_create")
+> Signed-off-by: Edward Liaw <edliaw@google.com>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-I see, so what should I do here then? Check both? Or none? The caller
-needs to verify that the data is still valid at the point they use it
-anyway, so this helps but provides no guarantees anyway
+> ---
+>  tools/testing/selftests/mm/uffd-common.c     |  5 +++--
+>  tools/testing/selftests/mm/uffd-common.h     |  3 +--
+>  tools/testing/selftests/mm/uffd-unit-tests.c | 14 ++++++++------
+>  3 files changed, 12 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
+> index 717539eddf98..852e7281026e 100644
+> --- a/tools/testing/selftests/mm/uffd-common.c
+> +++ b/tools/testing/selftests/mm/uffd-common.c
+> @@ -18,7 +18,7 @@ bool test_uffdio_wp = true;
+>  unsigned long long *count_verify;
+>  uffd_test_ops_t *uffd_test_ops;
+>  uffd_test_case_ops_t *uffd_test_case_ops;
+> -atomic_bool ready_for_fork;
+> +pthread_barrier_t ready_for_fork;
+>  
+>  static int uffd_mem_fd_create(off_t mem_size, bool hugetlb)
+>  {
+> @@ -519,7 +519,8 @@ void *uffd_poll_thread(void *arg)
+>  	pollfd[1].fd = pipefd[cpu*2];
+>  	pollfd[1].events = POLLIN;
+>  
+> -	ready_for_fork = true;
+> +	/* Ready for parent thread to fork */
+> +	pthread_barrier_wait(&ready_for_fork);
+>  
+>  	for (;;) {
+>  		ret = poll(pollfd, 2, -1);
+> diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
+> index a70ae10b5f62..3e6228d8e0dc 100644
+> --- a/tools/testing/selftests/mm/uffd-common.h
+> +++ b/tools/testing/selftests/mm/uffd-common.h
+> @@ -33,7 +33,6 @@
+>  #include <inttypes.h>
+>  #include <stdint.h>
+>  #include <sys/random.h>
+> -#include <stdatomic.h>
+>  
+>  #include "../kselftest.h"
+>  #include "vm_util.h"
+> @@ -105,7 +104,7 @@ extern bool map_shared;
+>  extern bool test_uffdio_wp;
+>  extern unsigned long long *count_verify;
+>  extern volatile bool test_uffdio_copy_eexist;
+> -extern atomic_bool ready_for_fork;
+> +extern pthread_barrier_t ready_for_fork;
+>  
+>  extern uffd_test_ops_t anon_uffd_test_ops;
+>  extern uffd_test_ops_t shmem_uffd_test_ops;
+> diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
+> index b3d21eed203d..3db2296ac631 100644
+> --- a/tools/testing/selftests/mm/uffd-unit-tests.c
+> +++ b/tools/testing/selftests/mm/uffd-unit-tests.c
+> @@ -774,7 +774,7 @@ static void uffd_sigbus_test_common(bool wp)
+>  	char c;
+>  	struct uffd_args args = { 0 };
+>  
+> -	ready_for_fork = false;
+> +	pthread_barrier_init(&ready_for_fork, NULL, 2);
+>  
+>  	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
+>  
+> @@ -791,8 +791,9 @@ static void uffd_sigbus_test_common(bool wp)
+>  	if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
+>  		err("uffd_poll_thread create");
+>  
+> -	while (!ready_for_fork)
+> -		; /* Wait for the poll_thread to start executing before forking */
+> +	/* Wait for child thread to start before forking */
+> +	pthread_barrier_wait(&ready_for_fork);
+> +	pthread_barrier_destroy(&ready_for_fork);
+>  
+>  	pid = fork();
+>  	if (pid < 0)
+> @@ -833,7 +834,7 @@ static void uffd_events_test_common(bool wp)
+>  	char c;
+>  	struct uffd_args args = { 0 };
+>  
+> -	ready_for_fork = false;
+> +	pthread_barrier_init(&ready_for_fork, NULL, 2);
+>  
+>  	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
+>  	if (uffd_register(uffd, area_dst, nr_pages * page_size,
+> @@ -844,8 +845,9 @@ static void uffd_events_test_common(bool wp)
+>  	if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
+>  		err("uffd_poll_thread create");
+>  
+> -	while (!ready_for_fork)
+> -		; /* Wait for the poll_thread to start executing before forking */
+> +	/* Wait for child thread to start before forking */
+> +	pthread_barrier_wait(&ready_for_fork);
+> +	pthread_barrier_destroy(&ready_for_fork);
+>  
+>  	pid = fork();
+>  	if (pid < 0)
+
+-- 
+BR,
+Muhammad Usama Anjum
+
 
