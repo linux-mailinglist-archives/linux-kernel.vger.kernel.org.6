@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-352433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E639991F09
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:53:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC078991F0C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEF6028232D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:53:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7D61C20FEA
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB411465A4;
-	Sun,  6 Oct 2024 14:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12C71552E0;
+	Sun,  6 Oct 2024 14:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="P4kxfRrn"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="dz0oBZh3"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE4A1482E2
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 14:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781D514F9D0
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 14:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728226386; cv=none; b=J2lhiwW3+iKXvVRnAFIBeQ6icTiLGpzfJupWoF7WU24TsMPAuEg53SwiIgj0UnfNW6nRC5DGC9XWMdG4m43iqFgtPD1skUVKHLf6ztfFlN21yY862DAHhFeJKs5mw/b+vi5CkXNh86ErDjpZj0ieGuHj2LTyPmmETT2LAidMIvc=
+	t=1728226389; cv=none; b=mWLwJu0vIQWsZNFeFK2t1UqFpsLrqN0ZeeEYV9RZu02EnH3KloPqx1UrzaHe3YFHzaFXl884tWOxbmicaCAhkb7aYGxqF/yU/oVEVxDs1dCChQetKrrl65GhubbavgoS2yv8BdQgH0QgnQja881+8l6rizy0pUFop20qo04YNVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728226386; c=relaxed/simple;
-	bh=rhJ9GRZNgwHY1raVKmWuJN9qtyI0iNeH7MHZzGrpBag=;
+	s=arc-20240116; t=1728226389; c=relaxed/simple;
+	bh=f7R704RsWlDrxzSooYYoOU0A7FIBYe24AoPYxQ5cGvw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TpWlO492x/0NpjKyfWgkj2kVZ93NcIKd2Rmx1QDGs23coT5JKYCu/elh08AMTvhW8E8hK0fKIUYlGrOYvsB9WdEGKPPQY63o1spsK15igePd/10aaImxWw8Anm1/gUfXmm7R7mhdGQW77YSgYYBNV985ZO73ZaOFKTn13J81S/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=P4kxfRrn; arc=none smtp.client-ip=209.85.216.50
+	 MIME-Version; b=dJ1JTbL72oaDvPAo1IdNpxKzztSXivG6pde0TVHvoQlGm/kSyJ13pTkYbbs434QkRM3ON+EJUy6jnlmP/QNrGD1O1QK6mHmPxY0Z/qHMWLMK4C94j2pk2bCvVylIZtCUdWxd4WhLIPASF06lwv3X2YdaeuxCxrk5ry2UfcMe7FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=dz0oBZh3; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e091682cfbso2717315a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 07:53:03 -0700 (PDT)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7db908c9c83so2190935a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 07:53:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1728226383; x=1728831183; darn=vger.kernel.org;
+        d=shopee.com; s=shopee.com; t=1728226387; x=1728831187; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8AqnyP+Byv1dd6vDoQ+Ar0AhPFXyUFcqkrKiBNXDFDI=;
-        b=P4kxfRrnfOTUhLfMRH36lD5Mqw+3Xxj3VHD7XPNLOPXVjsu6G29ugkz5H4tpAugc+n
-         Xtx/suJum5v5aCre6gIJADij2Yco+SwdNJUSDrDwmRUV7VAn3hhY+UhG9cqAPYwQ1M+w
-         6z/JLlfkQ62Eb/TA16NpzPexB7SXb9xSWx8+NpwKY3uOPKzhFpIlzh0oTj1cjAumRKLQ
-         c8T05yj3l0d0e+OQjqhfG71sWqpWMCaQgj2qD4aFTQ1cVkoiPhOwJSyHszsFj0xaZLvJ
-         BZJ8+WXbk7UPP3YKlcIwYcQZuXl67tGeN8LLZVSRS4EtQMsoiwT7cj8KBD4TCAL/ffVF
-         Rw8A==
+        bh=9eAPrPoMERAiWqG8615Bek5ETZFlvIxFExngJIu2ukc=;
+        b=dz0oBZh3VOLaKZ12KfCkGrlZggkZ3vcII6FAEBsXBIYSEEITBfr76HZYxbB+HfT5P9
+         51GoHOG77vMrJrzvBgUqSXKjc7xWKjj9EVoqvvg06lRH1yZPe6ZQ3PTl6+f4HN6hw4mY
+         jM8YQfwChEk0g+ijVHHKRzyVO+euzqUZEEDf1rOe72oy+coMebybmlGOJNGNMaX0sfzZ
+         dqd/3PcYu1Nds1WTHfCz3h9dO1pYJnkslCslRafLw63mNie/kzcjPAJkSsswwSxCHdYH
+         8m2Rfgj81j5xSo95DNldOZ491AAJyFkdroJvt9o4fIitNbYuvIBjM3Eyp0k3Cs9gC5hp
+         pvuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728226383; x=1728831183;
+        d=1e100.net; s=20230601; t=1728226387; x=1728831187;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8AqnyP+Byv1dd6vDoQ+Ar0AhPFXyUFcqkrKiBNXDFDI=;
-        b=lznDwKKBZ67MFDVaXUaO+Fh1j/lKrZ5XnPQa7zdnvm+z4PIyeLQ8qGAiUsrL46VkuS
-         U5lqYvgQPQqknX6UHs6i2I8JRqQbT8JH+dcPeMlLZgIzjlswzAIErVfiecGFedlAcbY+
-         nD+Xd//xC0v7Yc7fKLkoyEEIhOAhTqcti1EPLmt7Ph6UbBz9a9EY85k2SjnFHOuc/tgi
-         KZP1qI9lTihPgP+e9V11wUbtV/5SEPEz0uko6hqzV6jN3Xj1CtbxcGQb8TVggdlNU9nh
-         NKSehEwvSE+GgMQXECZGfi2F9i/kXIR7/hRGnlCydAsmCwCC1yHB7U1B06C71xdnpSHN
-         /8Qw==
-X-Gm-Message-State: AOJu0Yxo8zadGi4A37x9MhdJ5wdTvAFk5/MkCte4jiG4bkMAbvHtYHQi
-	sJD68YH8Z9NxV/hhKuAIdymXE++tRCMwsCcoot0HQDMNWXSgggp822ySEaE71so=
-X-Google-Smtp-Source: AGHT+IGPeVAO5tVDuO+R32h3LCBclCg7gEXpFP9t2p1QktdHAai9ZNmvTFB36rtLf2nnkg375yrefw==
-X-Received: by 2002:a17:90b:4f87:b0:2d8:8430:8a91 with SMTP id 98e67ed59e1d1-2e1e6221b1dmr11933090a91.10.1728226383035;
-        Sun, 06 Oct 2024 07:53:03 -0700 (PDT)
+        bh=9eAPrPoMERAiWqG8615Bek5ETZFlvIxFExngJIu2ukc=;
+        b=nYSfZYovNn8e5JbkX9A6xlCzZ4vvdtyiEA2OsvbIp1nJXxVCmhqnWWTktTty65ssxU
+         h4cZmyoEWFmkTEVTjC3SFpVRHNtYZ9mMlNP4Ngi5JzpIyUkunsM21rQaYEj3y/dfAbWY
+         zQVArTLAZRYGx7AzrWXevSWaGgs23loObFkK3GKs8Uz7V8nPaUh4YntMqkajB3T/9l8b
+         j6AefMTQGd5rAly+gBk3jGDcthqL4S77m0+cyYm0/BQrv3br5gLTnEJthMVVGELFp3h9
+         37jteAIg3h8GliVrRc34Nsqnq0M/qynzeVr9anH5l8zsgw9FGLWoKlyWmaMuZ/lX7D2B
+         MURw==
+X-Gm-Message-State: AOJu0YyQ8bFH8r2PdrR5R2aVvM8q2LTB8ZN6vr82qKL2X3qGCXULvkWG
+	Kmkl8xT2lDNEciZsgNa08Ut5MlDEgOweASX7t63BIPolqGBD0ddVDqMQDDP5xx0=
+X-Google-Smtp-Source: AGHT+IGZxFAwhuS3OVDNQNCnjWK72kn4p7aawm+WgQnlBR5xxHp0OCCw7G+Tdm2ecDi8+9pF4eZ5cg==
+X-Received: by 2002:a17:90b:11c9:b0:2e0:ad69:1e08 with SMTP id 98e67ed59e1d1-2e1e6229186mr10941867a91.16.1728226386789;
+        Sun, 06 Oct 2024 07:53:06 -0700 (PDT)
 Received: from localhost.localdomain ([143.92.64.17])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e8664bfasm5213680a91.44.2024.10.06.07.53.00
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e8664bfasm5213680a91.44.2024.10.06.07.53.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 07:53:02 -0700 (PDT)
+        Sun, 06 Oct 2024 07:53:06 -0700 (PDT)
 From: Tang Yizhou <yizhou.tang@shopee.com>
 X-Google-Original-From: Tang Yizhou
 To: jack@suse.cz,
@@ -76,9 +76,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	Tang Yizhou <yizhou.tang@shopee.com>
-Subject: [PATCH v2 2/3] mm/page-writeback.c: Fix comment of wb_domain_writeout_add()
-Date: Sun,  6 Oct 2024 23:28:48 +0800
-Message-Id: <20241006152849.247152-3-yizhou.tang@shopee.com>
+Subject: [PATCH v2 3/3] xfs: Let the max iomap length be consistent with the writeback code
+Date: Sun,  6 Oct 2024 23:28:49 +0800
+Message-Id: <20241006152849.247152-4-yizhou.tang@shopee.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241006152849.247152-1-yizhou.tang@shopee.com>
 References: <20241006152849.247152-1-yizhou.tang@shopee.com>
@@ -92,29 +92,141 @@ Content-Transfer-Encoding: 8bit
 
 From: Tang Yizhou <yizhou.tang@shopee.com>
 
-__bdi_writeout_inc() has undergone multiple renamings, but the comment
-within the function body have not been updated accordingly. Update it
-to reflect the latest wb_domain_writeout_add().
+Since commit 1a12d8bd7b29 ("writeback: scale IO chunk size up to half
+device bandwidth"), macro MAX_WRITEBACK_PAGES has been removed from the
+writeback path. Therefore, the MAX_WRITEBACK_PAGES comments in
+xfs_direct_write_iomap_begin() and xfs_buffered_write_iomap_begin() appear
+outdated.
+
+In addition, Christoph mentioned that the xfs iomap process should be
+similar to writeback, so xfs_max_map_length() was written following the
+logic of writeback_chunk_size().
+
+v2: Thanks for Christoph's advice. Resync with the writeback code.
 
 Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- mm/page-writeback.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fs-writeback.c         |  5 ----
+ fs/xfs/xfs_iomap.c        | 52 ++++++++++++++++++++++++---------------
+ include/linux/writeback.h |  5 ++++
+ 3 files changed, 37 insertions(+), 25 deletions(-)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 3af7bc078dc0..68e48749c947 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -586,7 +586,7 @@ static void wb_domain_writeout_add(struct wb_domain *dom,
- 	/* First event after period switching was turned off? */
- 	if (unlikely(!dom->period_time)) {
- 		/*
--		 * We can race with other __bdi_writeout_inc calls here but
-+		 * We can race with other wb_domain_writeout_add calls here but
- 		 * it does not cause any harm since the resulting time when
- 		 * timer will fire and what is in writeout_period_time will be
- 		 * roughly the same.
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index d8bec3c1bb1f..31c72e207e1b 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -31,11 +31,6 @@
+ #include <linux/memcontrol.h>
+ #include "internal.h"
+ 
+-/*
+- * 4MB minimal write chunk size
+- */
+-#define MIN_WRITEBACK_PAGES	(4096UL >> (PAGE_SHIFT - 10))
+-
+ /*
+  * Passed into wb_writeback(), essentially a subset of writeback_control
+  */
+diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+index 1e11f48814c0..80f759fa9534 100644
+--- a/fs/xfs/xfs_iomap.c
++++ b/fs/xfs/xfs_iomap.c
+@@ -4,6 +4,8 @@
+  * Copyright (c) 2016-2018 Christoph Hellwig.
+  * All Rights Reserved.
+  */
++#include <linux/writeback.h>
++
+ #include "xfs.h"
+ #include "xfs_fs.h"
+ #include "xfs_shared.h"
+@@ -744,6 +746,34 @@ xfs_ilock_for_iomap(
+ 	return 0;
+ }
+ 
++/*
++ * We cap the maximum length we map to a sane size to keep the chunks
++ * of work done where somewhat symmetric with the work writeback does.
++ * This is a completely arbitrary number pulled out of thin air as a
++ * best guess for initial testing.
++ *
++ * Following the logic of writeback_chunk_size(), the length will be
++ * rounded to the nearest 4MB boundary.
++ *
++ * Note that the values needs to be less than 32-bits wide until the
++ * lower level functions are updated.
++ */
++static loff_t
++xfs_max_map_length(struct inode *inode, loff_t length)
++{
++	struct bdi_writeback *wb;
++	long pages;
++
++	spin_lock(&inode->i_lock);
++	wb = inode_to_wb(wb);
++	pages = min(wb->avg_write_bandwidth / 2,
++		    global_wb_domain.dirty_limit / DIRTY_SCOPE);
++	spin_unlock(&inode->i_lock);
++	pages = round_down(pages + MIN_WRITEBACK_PAGES, MIN_WRITEBACK_PAGES);
++
++	return min_t(loff_t, length, pages * PAGE_SIZE);
++}
++
+ /*
+  * Check that the imap we are going to return to the caller spans the entire
+  * range that the caller requested for the IO.
+@@ -878,16 +908,7 @@ xfs_direct_write_iomap_begin(
+ 	if (flags & (IOMAP_NOWAIT | IOMAP_OVERWRITE_ONLY))
+ 		goto out_unlock;
+ 
+-	/*
+-	 * We cap the maximum length we map to a sane size  to keep the chunks
+-	 * of work done where somewhat symmetric with the work writeback does.
+-	 * This is a completely arbitrary number pulled out of thin air as a
+-	 * best guess for initial testing.
+-	 *
+-	 * Note that the values needs to be less than 32-bits wide until the
+-	 * lower level functions are updated.
+-	 */
+-	length = min_t(loff_t, length, 1024 * PAGE_SIZE);
++	length = xfs_max_map_length(inode, length);
+ 	end_fsb = xfs_iomap_end_fsb(mp, offset, length);
+ 
+ 	if (offset + length > XFS_ISIZE(ip))
+@@ -1096,16 +1117,7 @@ xfs_buffered_write_iomap_begin(
+ 		allocfork = XFS_COW_FORK;
+ 		end_fsb = imap.br_startoff + imap.br_blockcount;
+ 	} else {
+-		/*
+-		 * We cap the maximum length we map here to MAX_WRITEBACK_PAGES
+-		 * pages to keep the chunks of work done where somewhat
+-		 * symmetric with the work writeback does.  This is a completely
+-		 * arbitrary number pulled out of thin air.
+-		 *
+-		 * Note that the values needs to be less than 32-bits wide until
+-		 * the lower level functions are updated.
+-		 */
+-		count = min_t(loff_t, count, 1024 * PAGE_SIZE);
++		count = xfs_max_map_length(inode, count);
+ 		end_fsb = xfs_iomap_end_fsb(mp, offset, count);
+ 
+ 		if (xfs_is_always_cow_inode(ip))
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index d6db822e4bb3..657bc4dd22d0 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -17,6 +17,11 @@ struct bio;
+ 
+ DECLARE_PER_CPU(int, dirty_throttle_leaks);
+ 
++/*
++ * 4MB minimal write chunk size
++ */
++#define MIN_WRITEBACK_PAGES	(4096UL >> (PAGE_SHIFT - 10))
++
+ /*
+  * The global dirty threshold is normally equal to the global dirty limit,
+  * except when the system suddenly allocates a lot of anonymous memory and
 -- 
 2.25.1
 
