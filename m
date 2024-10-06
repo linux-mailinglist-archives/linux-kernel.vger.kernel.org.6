@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-352596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C9B99213B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C978099213D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18CBD281755
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 900D3281AE7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A249016DC3C;
-	Sun,  6 Oct 2024 20:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B88E1482E2;
+	Sun,  6 Oct 2024 20:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=me.com header.i=@me.com header.b="uGv1jT1g"
-Received: from st43p00im-zteg10072001.me.com (st43p00im-zteg10072001.me.com [17.58.63.167])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UvJSS9nk"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADA116EB56
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.63.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC8CEAD8
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728247200; cv=none; b=jSxxXk5zy+HJDTernK+kaJiMMa7C8+ldyDhigMk9Ynx97S2hE/FSDuiGaqa94jf33U6SFpVfwMktRADZ4whlNk0+LKsHE1VUZIlLDxHwi1gfv45kDufXsa1sOLklJrrip5YY7W78eN3MFV7zf9S2MQxF698AVLlTx1Ui9T/ihK8=
+	t=1728247237; cv=none; b=bCc5M+YFUEd4xVC5kPsr1J9xVluKEhSDA4eM5YoHeTHnFp3YbqStgQ94pWxC+PeZju14jFtJnDwSjPNA2IY9WmGPCZjgrpGMUyY5mU81k1oYvEAlAPoyjWjVZzaGdBeUvqSPEWH5+cILNcZjM2FNqffZz1VLrwvxGHoJUXHnZ0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728247200; c=relaxed/simple;
-	bh=j8yPXLwN/wbiGB2fcWjnBLjyxnejjvCdy1hHzqSqqKM=;
+	s=arc-20240116; t=1728247237; c=relaxed/simple;
+	bh=cxOlSWd/pMPWbXwReS/2MiMfoBkulsEZnMbKBU/u82Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvqTbszWpPYMQSWYrmiHLe+KZ0TGSpV2pZ7u9pwbTwaqQuJHm72u0OwgqdHithrYEyPAmZkATRQ31WWyZJl2PkNLI7k7611gJKUNPG7ppKwjIaUpQKMSYCuK6DB6zwCKAfLwXjP0WH4cJLgNGllUj6me722RAobtPQ5kg1gdtgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=me.com; spf=pass smtp.mailfrom=me.com; dkim=pass (2048-bit key) header.d=me.com header.i=@me.com header.b=uGv1jT1g; arc=none smtp.client-ip=17.58.63.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=me.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=me.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-	t=1728247197; bh=dYh5mzcFJXRf3wk6w3WtIRm8iKhJuRkBoV9itkg3l7w=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	b=uGv1jT1gswOdoroGU/sHPuHjcSE39zOViJ3eHssRWl/825aY86TsX57lA3x6yG7Zw
-	 8vOZAb2wQ1g4kQqsoOm/GVC1NuVYNyQSK7HRAiDNwmOiRYdagowrmC4ahQrxL3GeG0
-	 CcwGWonBwyIoNljksHOec9Y4sEP8UizcEycOfEDgj0od/9lSsdK2j37ByF7t7mK8nj
-	 ycXypb3q63cFtjZGbwO5lbWSHUSbvbk/FKnGVlhX28V6oOisU02lsse2Yo+Ynl8NB3
-	 cARwVtgsHEHY1WEugROT2FsXroy7AD1N/+qQAVQscneqefX67qgDpYmPMPVg4QJVBO
-	 RG+dutfwu4yIw==
-Received: from macminiubuntu (st43p00im-dlb-asmtp-mailmevip.me.com [17.42.251.41])
-	by st43p00im-zteg10072001.me.com (Postfix) with ESMTPSA id ABA31120D85;
-	Sun,  6 Oct 2024 20:39:55 +0000 (UTC)
-Date: Sun, 6 Oct 2024 20:39:53 +0000
-From: Alain Volmat <avolmat@me.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: gpu: mali-utgard: Add ST sti compatible
-Message-ID: <ZwL1meNjsfVnvaSd@macminiubuntu>
-Mail-Followup-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20241005-sti-gpu-v1-0-9bc11100b54b@me.com>
- <20241005-sti-gpu-v1-1-9bc11100b54b@me.com>
- <t6ueaovdm5gfqmdsedm4aaz7zabsf5lcx3jpintfwyx26uokup@2qhaqycrj2sl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1HOl3bN52IZUYVXwG2Q74d+J8TiDg9l3m//7ZYdPK3Wpq/KgTZXks3O9IK7qAEfWGxEQh+fD0TSnGOgLqvDPq1HZVJWlc70OSiMhj2v2oHaxXIBqdMww1BFJ59rDXfHHP19rtLAfv7Us3Q7qr6CqXDKffnmdlKpOBMAAaMweYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UvJSS9nk; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fabfc06c26so32671201fa.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 13:40:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728247234; x=1728852034; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NCcSKpIJUe3fTkwhqSrgq/Evqsh66fYibnGWceFXfJg=;
+        b=UvJSS9nkHnNmO6hqrnxTTAJtrK3Kl0KDRONDVVTgOscf9xXqk0jakxjX1S/ioTvuOM
+         aqbM0Cot42zJQKEQx42380J2eun5CHhqdWeZnKSKCocPl4APtizhyj+U+JvVvowyV+GD
+         h+Kc1SdLO02WqGYmL+CCN9BAP8Mp3RUwewDL6jLWN7YR8/phfaV4FjwPlc8mN0ugyv8W
+         d0LpcplyLTvldQ/Lmc/QqNMnk6P7aM+h3weV9tcmzBmMMYVKKQJ0CDu2pWWhN3U2Z24x
+         S4GgyXVN5Takh4n05m1igFZOrQ1jBylFIuZrRtRVgvMcPc0cEW0bP6ga0MVywV2MtYIZ
+         3vUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728247234; x=1728852034;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NCcSKpIJUe3fTkwhqSrgq/Evqsh66fYibnGWceFXfJg=;
+        b=laryrPy+hX5WahR9f14kU38uMmBlmkKPIjlF54G36SQijo/MCy7souZ58nJ6kbQ34O
+         zotIodG+OH9j8XG0b2VTc5OBWWYPxPJWKuGFDiUFJSAroOJfGkykW3f6IJpd+VWh92oW
+         GcvslFgfwPNush1en9xL2ZpzwoApNxSWFOCywLsItmFoz1JnmMmexEzYTDyR6IN4mKf/
+         kDLu3LmPY0ioTnyon1O5qqKzfvw7R1y//iKIhRlZLg6BUl36ItBZGQuZ3hW4MAMr8T29
+         6+IPrdfL8ZRzrqyxH53ofEdIEYn0vKT5pA2znsLM26qjnY2finbBxAtEtC488PeOtPb8
+         Idbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRht1lagpLMbm2qC43gCpIRBE5yZihGX4YISd/uAmeilflDKT2vOq69RY7gfzTh0ikd4TQL9BE00RZTuk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrxgfJLwFkI7T9+pr+XlwpyLtLNDQmUhiu06rzboC98dLDgIby
+	9kLZ04vh+60S9qZDtPOyPvh0LMTsICN8oIxs+YlQ5QVFykDu4QLShMkE/em/fzg=
+X-Google-Smtp-Source: AGHT+IG8+kDD0E+S6aGBtT3ny/KHoHxXGLgb2vxwOg52Amd380qwmfcHnszuMs5rLO7D/6TrycwfpQ==
+X-Received: by 2002:a05:6512:6c6:b0:535:6aa9:9855 with SMTP id 2adb3069b0e04-539ab6d9bdfmr4233900e87.0.1728247234296;
+        Sun, 06 Oct 2024 13:40:34 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff23e0bsm621231e87.243.2024.10.06.13.40.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 13:40:33 -0700 (PDT)
+Date: Sun, 6 Oct 2024 23:40:31 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Vivek Pernamitta <quic_vpernami@quicinc.com>
+Cc: mhi@lists.linux.dev, quic_qianyu@quicinc.com, 
+	manivannan.sadhasivam@linaro.org, quic_vbadigan@quicinc.com, quic_krichai@quicinc.com, 
+	quic_skananth@quicinc.com, mrana@quicinc.com, Slark Xiao <slark_xiao@163.com>, 
+	Fabio Porcedda <fabio.porcedda@gmail.com>, Mank Wang <mank.wang@netprisma.us>, 
+	"open list:MHI BUS" <linux-arm-msm@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bus: mhi: host: pci_generic: Add support for QDU100
+ device
+Message-ID: <ya22me5qxy4vhqcfwu6hfctxthog3vpj5dxee45vmdctat7hrv@swoquk2audro>
+References: <20241001113738.152467-1-quic_vpernami@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,47 +85,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <t6ueaovdm5gfqmdsedm4aaz7zabsf5lcx3jpintfwyx26uokup@2qhaqycrj2sl>
-X-Proofpoint-GUID: E97Q7bmpmpGeWLKav0lTflDrrstAp0p6
-X-Proofpoint-ORIG-GUID: E97Q7bmpmpGeWLKav0lTflDrrstAp0p6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-06_19,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=740
- adultscore=0 phishscore=0 bulkscore=0 clxscore=1011 mlxscore=0
- malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2410060148
+In-Reply-To: <20241001113738.152467-1-quic_vpernami@quicinc.com>
 
-Hi Krzysztof,
-
-On Sun, Oct 06, 2024 at 02:45:43PM +0200, Krzysztof Kozlowski wrote:
-> On Sat, Oct 05, 2024 at 06:07:59PM +0000, Alain Volmat wrote:
-> > ST STi SoC family (stih410, stih418) has a Mali400.
-> > Add a compatible for it.
-> > 
-> > Signed-off-by: Alain Volmat <avolmat@me.com>
-> > ---
-> >  Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
-> > index abd4aa335fbcebafc9164bd4963f9db60f0450c4..97a7ef0fea1a10df0ff485b9eb4468f44c92da39 100644
-> > --- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
-> > +++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
-> > @@ -33,6 +33,7 @@ properties:
-> >                - rockchip,rk3188-mali
-> >                - rockchip,rk3228-mali
-> >                - samsung,exynos4210-mali
-> > +              - st,sti-mali
+On Tue, Oct 01, 2024 at 05:07:35PM GMT, Vivek Pernamitta wrote:
+> Add MHI controller configuration for QDU100 device.
 > 
-> That's quite generic compatible. I would expect here per-soc.
+> This Qualcomm QDU100 device is inline accelerator card
+> which is an extension to QRU100 5G RAN platform.
+> which is designed to simplify 5G deployments by offering
+> a turnkey solution for ease of deployment with O-RAN
+> fronthaul and 5G NR layer 1 High (L1 High) processing,
+> and to accelerate operator and infrastructure vendor
+> adoption of virtualized RAN platforms.
 
-Ok, right, I change this into st,stih410-mali in a v2.
+Please replace marketing text with a sensible description.
 
-Thanks,
-Alain
 > 
-> Best regards,
-> Krzysztof
+> https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
+
+There is a tag for this, it's even called 'Link:'
+
+> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 49 ++++++++++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
 > 
+
+-- 
+With best wishes
+Dmitry
 
