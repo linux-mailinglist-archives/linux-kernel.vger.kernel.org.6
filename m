@@ -1,122 +1,101 @@
-Return-Path: <linux-kernel+bounces-352488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DDEB991FF0
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:32:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74AB991FF1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262501F216AC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:32:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0517F1F21531
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0275E189BA4;
-	Sun,  6 Oct 2024 17:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aAhRWZGe"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A446189B8C;
+	Sun,  6 Oct 2024 17:32:39 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F26188721
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DC516133C
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728235941; cv=none; b=l1Ih7yZw3j3w7exW4RKv9odaz36PwIMOaFzjK4xlW3ii8KKkSykphCiLoujt6PS+RoknVP4E0BKrtA3nJqwmvr3D1zuiM1L/DNgr37DIqoDxX/A/Bpd2g5xvwzvkk1oiTxmXfZ88hOZNsMR7LT21mKz6jg4NGGTLnh4LnaZ5qwg=
+	t=1728235958; cv=none; b=DtTozjAvpvS4E1ujYZjO6FhstMFtluqL6gwfvavU5ZA+KI5Sf/n+DYpQVl+mu+DxyuOFpZ7xpIbAYAFrtUdD79Hl9tLPyzHiuWUN/cXMmyOAig3QdEDeDeUTK1ugQ9zg2L8GpMM/c7ZAxwrEew/1LPenphCe/11z12/e0ew3pHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728235941; c=relaxed/simple;
-	bh=eH2s1nSiTj3aux4IRTk8hs3hHnOMWonaaoHf+Jgu2FY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gSe7y0jTxJjKxiEAXYLvYUMrn2jSrImCs1CJ2R5h8Dpwp3OchNawkSy6KknxrOSZZiGiMkWEhUzZT1NxJ0+OMctR1me32W09mBvOWN+bd1l6YyjNFSl9/no2eJGkvvzZWPb86pqaPra+4J7CJa3ilQMfxFVrbtk0YT4QlV6p56k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aAhRWZGe; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53995380bb3so4224080e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:32:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728235937; x=1728840737; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JkkTShwqvEkU2pXAQY0BAtAP+96Mr0a+LcjE8tjGdL0=;
-        b=aAhRWZGeENSTvvbPfcy2sI6IVJeZOmrfqs69xqQjeanpzjCaA8A39v6hprFu95SXvR
-         K6DLzkeewbHmo2d3XjELwgoZhvIisJ4c25quh8mak2YMErQKrcAQSRz+vRA8Oln91G/5
-         mguxX7mRhx1k8rxfX3VKkVleJJ57+2IiOTvVlhjKhOv50Fgb0UWstHsvA+oHr/d+2zp7
-         SZa9MTcZVMOKEoSYqxn2wd34k4BUcHMA9BvN8RbKyjpiNcpbOB+/pNnt1yxhSeY1QKfg
-         GjOl0fP5EyMxb3enHp2EQecZ9ftLKk5dR18WnLN0NPZ43aIY9zI5XGvgbEo/frUgTvWm
-         RSQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728235937; x=1728840737;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JkkTShwqvEkU2pXAQY0BAtAP+96Mr0a+LcjE8tjGdL0=;
-        b=GvEyDIXd1fbHEZmenZj2toC9W4Akrapiu3GFj/6+hhOOb901kjOPT/bh9pMG3pioRf
-         MYimi6O8LW6eAvd7Eu6a+sjfZEYS7yx2HLgiz6dfbpXsyb1aPu5aaHXNSomCEUZbx3wg
-         FuHWZTy41OBnSNnIndfcLBTPa4g9OTh0kb04hVh0cej0ncmc4ydkjNDqma8EL3RBTrJe
-         DesnTBH+XwgQtIVcXgxIEfxUE2QeV89S3Z6Yvn/GfGJG78YhigcBFpsg5rRqxl2SlPF0
-         /PmLe8BmYQ4sNop6DrDMQ1zuj4EsaNC1bARUPQoBF+OutbTX6bq8HkMlasOFB8h2BRd4
-         YHAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZH4gczqdpHCf6KHejD7YUcMnOE38+zoO9H5fm7BRwEqrSwwuT3EKjOv3mhCjgevD4tJ5srMX3yuRLLvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF45GI82jtXrtQTnxu+e1725X/dekl6kjWREfxk8KUOKH5aYe3
-	6zRmZ0TIBxz2LUouBK/r4yNjQB2zctZBrF6Kt6tu35T/vjy4jZxOa5kr67PEhFA=
-X-Google-Smtp-Source: AGHT+IGK8Akt1ah5HhrTyw13URk23TpEFUe03bKEw6dqgLZPPsHuJ6XyU8+xsn5SsbthvxzekZGOIA==
-X-Received: by 2002:a05:6512:3c9f:b0:539:8f2d:a3bc with SMTP id 2adb3069b0e04-539ab9ec4c3mr4196367e87.49.1728235936960;
-        Sun, 06 Oct 2024 10:32:16 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff2336fsm572403e87.203.2024.10.06.10.32.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 10:32:16 -0700 (PDT)
-Date: Sun, 6 Oct 2024 20:32:15 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jonathan Marek <jonathan@marek.ca>
-Cc: freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, 
-	"open list:DRM DRIVER for Qualcomm display hardware" <linux-arm-msm@vger.kernel.org>, 
-	"open list:DRM DRIVER for Qualcomm display hardware" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] drm/msm/dsi: improve/fix dsc pclk calculation
-Message-ID: <hibhrxq42xoffxa57fckiwbvzjvyzxi4rrtokdpzu533ul3wnb@kas6rhji52mz>
-References: <20241005143818.2036-1-jonathan@marek.ca>
+	s=arc-20240116; t=1728235958; c=relaxed/simple;
+	bh=l+T+RgKCtvct4AX5zT8qKmc1Xo9wTrcLtr/E44+FIeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NhB36JzW+pOQLbMTaUQwMod1pXjj60cyDpMQ+FMl1uT6GA9UbCwWHSB2Vjn1dq7Npr7gF0MIMvfpf4PTDKjVCv4W96qCsK97gmfftrm9rC7gTJxX1a0AizNOUpoOzgUGp8q4wiFfpLus9BArx+WjmfNlZsGFDS1aNnqatTx9Q6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D65C4CECD;
+	Sun,  6 Oct 2024 17:32:36 +0000 (UTC)
+Date: Sun, 6 Oct 2024 13:32:33 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Mike Rapoport <mike.rapoport@gmail.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra
+ <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ard
+ Biesheuvel <ardb@kernel.org>
+Subject: reserve_mem command line option causing a reboot but not by the
+ kernel
+Message-ID: <20241006133233.32c8708c@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241005143818.2036-1-jonathan@marek.ca>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 05, 2024 at 10:38:09AM GMT, Jonathan Marek wrote:
-> drm_mode_vrefresh() can introduce a large rounding error, avoid it.
-> 
+This is mostly just an FYI,
 
-Fixes?
+I upgraded both my server and my workstation to 6.12-rc1 to try out the
+new reserve_mem and my persistent trace instance. My server which is a
+Dell PowerEdge T430 (bought here: https://www.newegg.com/dell-poweredge-t430-tower/p/2NS-0008-70EW5)
+worked flawlessly. I enabled tracing, did a reboot and it contained the
+trace on the following bootup. This used the following command line:
 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  drivers/gpu/drm/msm/dsi/dsi_host.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> index 185d7de0bf376..1205aa398e445 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> @@ -542,7 +542,7 @@ static unsigned long dsi_adjust_pclk_for_compression(const struct drm_display_mo
->  
->  	int new_htotal = mode->htotal - mode->hdisplay + new_hdisplay;
->  
-> -	return new_htotal * mode->vtotal * drm_mode_vrefresh(mode);
-> +	return mult_frac(mode->clock * 1000u, new_htotal, mode->htotal);
->  }
->  
->  static unsigned long dsi_get_pclk_rate(const struct drm_display_mode *mode,
-> -- 
-> 2.45.1
-> 
+  reserve_mem=112M:2097152:trace trace_instance=boot_mapped@trace,console
 
--- 
-With best wishes
-Dmitry
+Then I tried it out on my workstation. This is a machine I built years
+ago. It has an American Megatrends Inc. BIOS (no UEFI). Since it only
+has 8 CPUs, I had the command line of:
+
+  reserve_mem=20M:2097152:trace trace_instance=boot_mapped@trace,console
+
+Rebooted, and right after grub (legacy grub) loaded the kernel, the
+machine rebooted again. I removed the "reserve_mem" option, and the
+kernel booted fine with the rest of the options.
+
+I started debugging this, but something else happened. When the system
+rebooted, I picked an older kernel. But it rebooted too! That is,
+booting a kernel without the "reserve_mem" code but the "reserve_mem"
+option also had this issue! When installing, I did an "update_grub"
+that added the command line to every kernel. It rebooted on any kernel
+that had "reserve_mem" as one of the kernel command line options. I
+tried kernels down to 6.6.
+
+I then renamed the option in the 6.12-rc1 kernel as "reserve_mm" and
+tried again. It booted fine! Although I found that my BIOS on this
+machine does not keep memory consistent across reboots so the option is
+useless.
+
+The strange thing here is why "reserve_mem" on the kernel command line
+causes the machine to reboot? It reboots very early. I even hooked up a
+serial and enabled earlyprintk, and it doesn't ever print anything when
+the reboot happens.
+
+I'm wondering if this has something to do with legacy grub? Perhaps it
+is parsing the kernel command line parameter too and does something
+special with "reserve_mem"? My server is using grub2, and so are most
+of the other machines I tested on. The ones without grub2 had extlinux,
+which worked fine too.
+
+I don't have time to debug further. Maybe I need to look at the legacy
+grub code. I just found this interesting and decided to share. Perhaps
+someone else might hit this too?
+
+-- Steve
+
 
