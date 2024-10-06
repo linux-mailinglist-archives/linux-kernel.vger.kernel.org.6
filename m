@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-352377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBB8991E4D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:45:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0504C991E51
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79187B2124C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:45:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B8BC1C20D0F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357F6175D29;
-	Sun,  6 Oct 2024 12:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCF8176AA3;
+	Sun,  6 Oct 2024 12:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CkgqQVVL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3fe97gF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907602572;
-	Sun,  6 Oct 2024 12:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D183216D4E8;
+	Sun,  6 Oct 2024 12:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728218747; cv=none; b=Pviv8pjFIwelIxToDH4a68q5g5d/DL+ZMKInVJeGF8kxyqs8e7PVEaBn7ID9Gq7UxvftYTKxobm0zoGy06tKD8umJJNvmTuflmx3c+/OG2ytiI9UG51Oag6/R7dqnagwcX56N4iNg+RX4l2ufUlXtpxOpgL1bBaJZdBsiaYW3pM=
+	t=1728218856; cv=none; b=ueSjC3ImGZP1bI2ASFV3zRnGhruEYDF8BG7TdCh8PpSfo3Z+eAIvIt3f0ajKXSb4OJRSN4EjyO38GixeltTy3gBNDybYiIEyiXUT4FQDkXmOJwpeExco1eBFCx0CFt9Li/b/2B87AZ1tjJ2qeQyIN1yTMJnPksXEwslmdnEdmEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728218747; c=relaxed/simple;
-	bh=vGSkzTDuOud0fNf4yd92jwXPUpTOLMYireKSsyt1WRU=;
+	s=arc-20240116; t=1728218856; c=relaxed/simple;
+	bh=AvaqHiW6YBwhtBJJbJKHvvdReZ767Nx9pY7bI7eLXLY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GYgOSrGRtQVX3r0p/ETIOFW7gvC9Zi2VQ/aRHHolRfbTRaAHlpg4ZA3iHzmBZlRtNjXKi0U4GFZhmEepP3Tj99WGnGjiOwK+xM5P7mTv4maGXzinFbe6sYMJRpD+mY4gpYE2bELQJWu0JY2O7XVBlZ8A7eJrOuuyGld+Sv4mHNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CkgqQVVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83023C4CEC5;
-	Sun,  6 Oct 2024 12:45:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ICZh3T8ynC29fNf8GhFhc94IXiL+8dqZeQ/ul6W0x6pLBwGna2J4koZVMWtZTNiTr3gkVQz+oCEMkXLw773XKrpGoeq9dXoyaE62xGtILoyupyxESGY4r4cDBFUW6zqACvgOGCfIvkXOvmMi+MC3BEsBktd4A8g8nVUoQ82Gun8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3fe97gF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF33AC4CEC5;
+	Sun,  6 Oct 2024 12:47:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728218747;
-	bh=vGSkzTDuOud0fNf4yd92jwXPUpTOLMYireKSsyt1WRU=;
+	s=k20201202; t=1728218856;
+	bh=AvaqHiW6YBwhtBJJbJKHvvdReZ767Nx9pY7bI7eLXLY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CkgqQVVLrGoCOcxAHxDSl71HaE8QNmkuiDbjn3jLENdbw8g0lbBD31CSqJAeMso5e
-	 qN5Ip0vc13CFdOIYBBX0hza3gHFm7d5Lwuy42HUN+VWL05vWYT4slT9+/pFgve6Mzu
-	 2zvnrWvFjIrpIKd5z/KOjD4sVRcvhsubKKKzqEj1AVVX9C5JGr/QS/xMss1fx/gPB9
-	 Rl7tju1+NiNxzDi6wxZD3N+h7t+Oy31fNkobYNjA8SuPptgGPyXomuoPOcHkw3X+pD
-	 QrjJLJulx7jESlbLld4wzVtfDJ9cIE/ak6zBcgrIO0mbPW071AZq/dSR4gKzESYaVN
-	 YXLt8+mCU1Vhg==
-Date: Sun, 6 Oct 2024 14:45:43 +0200
+	b=g3fe97gFneWXirJqu9oC4yIjBak7BMOaI2EGU0tGl5B00h9IcuR4TUUwGmyhL9CQL
+	 eCHAQVT+AtdTOnOw8zCDpWTG4SD/T0HtGYO3qROCo1rdPnWlEfZTqh0I9Yr2MszMxh
+	 6EEeDETov8pr9JhkXfZRkMZWwBUDTEIzarRWW35pEhLC5CAerYhjwDGgNQM8y93I2B
+	 2zUtAlxy9a8SgkPm7wAO9bF6vnrIvWqpseH/LVR1HCobkBMSag/+MntlVrQkSXWq9l
+	 IKMx4JD54Jqvco0dYT6X3gVDW7TfhqT3T6QIEQOVlxDYPtC2l9MS+5QZRoZwWYObNX
+	 RiWu/3upU2a0w==
+Date: Sun, 6 Oct 2024 14:47:33 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alain Volmat <avolmat@me.com>
-Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+To: Frank Wunderlich <linux@fw-web.de>
+Cc: Chaotian Jing <chaotian.jing@mediatek.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: gpu: mali-utgard: Add ST sti compatible
-Message-ID: <t6ueaovdm5gfqmdsedm4aaz7zabsf5lcx3jpintfwyx26uokup@2qhaqycrj2sl>
-References: <20241005-sti-gpu-v1-0-9bc11100b54b@me.com>
- <20241005-sti-gpu-v1-1-9bc11100b54b@me.com>
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wenbin Mei <wenbin.mei@mediatek.com>, 
+	Frank Wunderlich <frank-w@public-files.de>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, daniel@makrotopia.org, linux-gpio@vger.kernel.org, 
+	john@phrozen.org, eladwf@gmail.com, ansuelsmth@gmail.com
+Subject: Re: [PATCH v1 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
+Message-ID: <4pmhzc5sf2c7dww3tihyqq5coco6u5nx7xvtqami7u55442gij@mqvyvqrpa6ft>
+References: <20241006102154.17087-1-linux@fw-web.de>
+ <20241006102154.17087-2-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,28 +64,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241005-sti-gpu-v1-1-9bc11100b54b@me.com>
+In-Reply-To: <20241006102154.17087-2-linux@fw-web.de>
 
-On Sat, Oct 05, 2024 at 06:07:59PM +0000, Alain Volmat wrote:
-> ST STi SoC family (stih410, stih418) has a Mali400.
-> Add a compatible for it.
+On Sun, Oct 06, 2024 at 12:21:48PM +0200, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
 > 
-> Signed-off-by: Alain Volmat <avolmat@me.com>
+> Add binding definitions for mmc on MT7988 SoC.
+> 
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 > ---
->  Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  .../devicetree/bindings/mmc/mtk-sd.yaml       | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
-> index abd4aa335fbcebafc9164bd4963f9db60f0450c4..97a7ef0fea1a10df0ff485b9eb4468f44c92da39 100644
-> --- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
-> @@ -33,6 +33,7 @@ properties:
->                - rockchip,rk3188-mali
->                - rockchip,rk3228-mali
->                - samsung,exynos4210-mali
-> +              - st,sti-mali
+> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> index c532ec92d2d9..db7d1c570aea 100644
+> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> @@ -21,6 +21,7 @@ properties:
+>            - mediatek,mt7620-mmc
+>            - mediatek,mt7622-mmc
+>            - mediatek,mt7986-mmc
+> +          - mediatek,mt7988-mmc
+>            - mediatek,mt8135-mmc
+>            - mediatek,mt8173-mmc
+>            - mediatek,mt8183-mmc
+> @@ -263,6 +264,29 @@ allOf:
+>              - const: bus_clk
+>              - const: sys_cg
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - mediatek,mt7988-mmc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 3
+> +          items:
+> +            - description: source clock
+> +            - description: HCLK which used for host
+> +            - description: Advanced eXtensible Interface
+> +            - description: Advanced High-performance Bus clock
 
-That's quite generic compatible. I would expect here per-soc.
+Why ahb is optional?
 
 Best regards,
 Krzysztof
