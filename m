@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-352243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEECA991C2B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 04:35:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EBDD991C34
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 04:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD3C1C21403
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 02:35:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7D11C2124B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 02:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D229A165F16;
-	Sun,  6 Oct 2024 02:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D07165EE3;
+	Sun,  6 Oct 2024 02:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szS9NnB2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7Gp1ezb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C6923CB;
-	Sun,  6 Oct 2024 02:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A8628EC;
+	Sun,  6 Oct 2024 02:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728182132; cv=none; b=EQYvc7WCiwztA6aQZb+STNRQK3rsITQxrQ1vLr3Eip+D4OHfeW4hvsuKhM3B7ZrIZwwRPQhjDmqAGBAld8qM6anf7VHTVK/ECL+G3176xMzOimlzglkdUp4Szs/FWnDEUZ2D7e/RlS58pOJiEfgN7gyO028CsBqQknp3SR8yPww=
+	t=1728182789; cv=none; b=uBIOqQCk2dzLY0RDqVdx3/wSPplBuWsp17LD7UY39qI+UuiiQxN1V0fu2YaMnF0aCvOw2q0MVjiWV8I3BjzCEwnQ45YUC4n+NAPQ09iUzDEBNfeXB3N7D/skVdb5NH4Suhy9Fllm8wC3Heaie6eHlkzbtew2R/ee1LFMJzTXlOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728182132; c=relaxed/simple;
-	bh=tCS9cWvxiAM2hGh0Y6rSeOlkDzX54y+fKh+xilcC8rw=;
+	s=arc-20240116; t=1728182789; c=relaxed/simple;
+	bh=Z2/gnog6ibCVaeY477MA2OTBXT9XH3hqgsYCopAGr28=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sa87GqzfDm2lxVVNRW0BvKVjTXYJnYGJXTnwZ98xU1VL0iztscej0yf671aC6qv4ITQYyIK1maXJnHejC0ME0hpM+O1FwYhE3z5CUALuI8J7NtyJWSqHVzo53/kFMPTujh8kx7rWbJUL9mnsuuwbRUZZQeJcS448O1xdVi3zn7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szS9NnB2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF13AC4CEC7;
-	Sun,  6 Oct 2024 02:35:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PY0M/ksLTfR4o7DKusweiQWu2R6VANBnJRTEbOh0t0SPzsj9RPWssRef6MymNExUPw+BxNmkQJ05NGsLoGxUdEHxtgf2iL9zVTPHT1ZFKy6bd5sk9tluHZGNrxyQQ8NpYkyrnVN+OZrrF4Dx5k4O4ycwV/hTMhOK+QttOyJdSMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7Gp1ezb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65780C4CEC2;
+	Sun,  6 Oct 2024 02:46:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728182131;
-	bh=tCS9cWvxiAM2hGh0Y6rSeOlkDzX54y+fKh+xilcC8rw=;
+	s=k20201202; t=1728182788;
+	bh=Z2/gnog6ibCVaeY477MA2OTBXT9XH3hqgsYCopAGr28=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=szS9NnB2OxfvaY094lsyyn7Kd7h7IIRtIBRujqj4Wr+8IpBAVUcftsCd0PshvZc1T
-	 40vqYs13MwAXN19mzLuId5y8SPjkD4Ci81qxANczYr70vwWt7NvssLhY1ZIuRqbKRB
-	 Mi+8WfYXPPhn1OzwcGBB+lzHzaXn+GfR4pcoSGg8RqmLlFE48VKFuNmhR8tcPbd/J/
-	 1miZuM5PQIwqs6mQk2C9JEcpp1I/+cGIP7K896PmivCGJVeT3mrJHKOcags5BA8Ydy
-	 U1fzoSXdTreGEfHFDU7OAZBIwYFWq7ZAN3jpOJbsmLIMl+gVrmGLrfn4r1gHCbABLA
-	 7+5lahYlQwEJA==
-Date: Sat, 5 Oct 2024 21:35:29 -0500
+	b=N7Gp1ezb12tDoxtjHz23w9GfTenf2phj004JFoh7FhA/qzcx3n5rQ5ciH4iPZmpqe
+	 IEGYA3dK7r1t2K6vgCD7rPqKdzBxBw1lz8iUSUp/DAZJoftrUMv972y4xS2yrG1W2h
+	 Lb4wkk7NNIlteOrvdZ2F/qLE4NBqiFnexnxeipot3Kuthnb511Kga01TQVeV+gi0ok
+	 EQ1A6yLm8V24imySFurx9M7crXcM7qTHkNrrsAL/J0GAbUjvgIBgyZA07FkvIIz1rk
+	 I/DCwXLW1DenwOXKxq+CltuTorfZRkAd1fvqh7xFaWOOS00cqN2LHGC3bE+RX+INzx
+	 /a1FXNY1wz/Mw==
+Date: Sat, 5 Oct 2024 21:46:26 -0500
 From: Bjorn Andersson <andersson@kernel.org>
-To: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Cc: Sibi Sankar <quic_sibis@quicinc.com>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sc7280: Add cpucp mbox node
-Message-ID: <grvdxaiakv62nfom5r5m7zv43xpxfwhxnp7x5byfubbvecfers@pqydhpu7a2vm>
-References: <20240924050941.1251485-1-quic_kshivnan@quicinc.com>
- <20240924050941.1251485-4-quic_kshivnan@quicinc.com>
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] firmware: qcom: scm: Add check for NULL-pointer
+ dereference
+Message-ID: <zxzjrnmoun6fm2tzrx6eaxbvy5kddvld7hezknt7k7mvfcqw5a@u3fgfo5yqw4q>
+References: <20240920181317.391918-1-quic_wasimn@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,44 +57,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240924050941.1251485-4-quic_kshivnan@quicinc.com>
+In-Reply-To: <20240920181317.391918-1-quic_wasimn@quicinc.com>
 
-On Tue, Sep 24, 2024 at 10:39:41AM GMT, Shivnandan Kumar wrote:
-> Add the CPUCP mailbox node required for communication with CPUCP.
+On Fri, Sep 20, 2024 at 11:43:17PM GMT, Wasim Nazir wrote:
+> Avoid NULL pointer dereference while using any qcom SCM calls.
+> Add macro to easy the check at each SCM calls.
+> 
 
-I'd like to see a description of why that's useful...
+We already have a way to deal with this in the general case. Client
+drivers should call qcom_scm_is_available() before calling the scm
+interface.
 
-But perhaps more importantly, why are there no user(s) of this?
+Unfortunately your commit message makes it impossible to know if you're
+referring to a case where this wasn't done, or isn't possible, or if
+you've hit a bug.
+
+> Changes in v2:
+> - Cleanup in commit-message
+
+This goes below the '---', by the diffstat. I don't know why you don't
+have a diffstat, please figure out how to make your patches looks like
+everyone else's.
+
+> 
+> Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm-legacy.c b/drivers/firmware/qcom/qcom_scm-legacy.c
+> index 029e6d117cb8..3247145a6583 100644
+> --- a/drivers/firmware/qcom/qcom_scm-legacy.c
+> +++ b/drivers/firmware/qcom/qcom_scm-legacy.c
+> @@ -148,6 +148,9 @@ int scm_legacy_call(struct device *dev, const struct qcom_scm_desc *desc,
+>  	__le32 *arg_buf;
+>  	const __le32 *res_buf;
+> 
+> +	if (!dev)
+> +		return -EPROBE_DEFER;
+
+-EPROBE_DEFER only makes sense to the caller during probe. In all other
+cases this is an invalid error value.
+
+> +
+>  	cmd = kzalloc(PAGE_ALIGN(alloc_len), GFP_KERNEL);
+>  	if (!cmd)
+>  		return -ENOMEM;
+[..]
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+[..]
+> @@ -387,7 +397,7 @@ static int qcom_scm_set_boot_addr(void *entry, const u8 *cpu_bits)
+>  	desc.args[0] = flags;
+>  	desc.args[1] = virt_to_phys(entry);
+> 
+> -	return qcom_scm_call_atomic(__scm ? __scm->dev : NULL, &desc, NULL);
+> +	return qcom_scm_call_atomic(__scm->dev, &desc, NULL);
+
+I don't think you understand why this is written the way it is.
+
+>  }
+> 
+[..]
+> @@ -1986,6 +2113,13 @@ static int qcom_scm_probe(struct platform_device *pdev)
+>  	/* Let all above stores be available after this */
+>  	smp_store_release(&__scm, scm);
+> 
+> +	__scm->reset.ops = &qcom_scm_pas_reset_ops;
+> +	__scm->reset.nr_resets = 1;
+> +	__scm->reset.of_node = pdev->dev.of_node;
+> +	ret = devm_reset_controller_register(&pdev->dev, &__scm->reset);
+> +	if (ret)
+> +		return ret;
+> +
+
+Why did this move?
 
 Regards,
 Bjorn
 
-> 
-> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sc7280.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> index 3d8410683402..4b9b26a75c62 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> @@ -4009,6 +4009,14 @@ gem_noc: interconnect@9100000 {
->  			qcom,bcm-voters = <&apps_bcm_voter>;
->  		};
-> 
-> +		cpucp_mbox: mailbox@17430000 {
-> +			compatible = "qcom,sc7280-cpucp-mbox";
-> +			reg = <0 0x18590000 0 0x2000>,
-> +			      <0 0x17C00000 0 0x10>;
-> +			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-> +			#mbox-cells = <1>;
-> +		};
-> +
->  		system-cache-controller@9200000 {
->  			compatible = "qcom,sc7280-llcc";
->  			reg = <0 0x09200000 0 0x58000>, <0 0x09280000 0 0x58000>,
+>  	irq = platform_get_irq_optional(pdev, 0);
+>  	if (irq < 0) {
+>  		if (irq != -ENXIO)
 > --
-> 2.25.1
+> 2.46.1
 > 
 
