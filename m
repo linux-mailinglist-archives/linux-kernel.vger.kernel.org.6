@@ -1,167 +1,173 @@
-Return-Path: <linux-kernel+bounces-352493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81205991FFD
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2FE992001
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 348461F212FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2AC1F21209
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC5D184F;
-	Sun,  6 Oct 2024 17:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C72189F47;
+	Sun,  6 Oct 2024 17:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kWLS+PfG"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPVRYAuV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD034D8CB
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D3A13A3ED;
+	Sun,  6 Oct 2024 17:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728236164; cv=none; b=Y2oOFSApHLandGWO49EPv6VLGAR295Te9Jyq2sBtLmRDYAJoW7ukz/6YRxC20bMpQPszj2a2ojVQk1uLERzdIHS2CCZu/DGLYly4h5xX/OauWeIcygWOvDUXIPMWs9cw4fR82b9UJasbAa+mMlge3EL+OG+G+Ow8aaU/Rk9sy+o=
+	t=1728236217; cv=none; b=ct9X/oAexOppEDpxRuRzpo1r+e6FyAk1Qo+uSyrL1f3th9KmJh7WUSajG11coE7JPQO5f5YpLiWZ5ZoviXQVB2mbQnwPRPP7V5LV/90buLZ7+ZvVkBEIozRfrBQpHPAtmX7LRbqKBwTcqaDSDXQ74H/r+Y6aGJ5ClNmuMXnpkWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728236164; c=relaxed/simple;
-	bh=Hm4a5C5S8cU8SRZ6MrRN6r38b8e4yHNIwRLzRHIYPg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OuJk6WGfzKrINmJSHtuxVlUNrjSJ8Ohfnfn5FdNjVkf3co33SKRTUMDltGa1Bsux3mp+R9Vsi0RpT48hhCS9NLHlQAfOPIo9aw0g1luhmrO/jQg9vOsn+pHiTGZjr208gh7l62cGR5X6QvDA2ktChg141Er9zE6XqoYFS7SaI4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kWLS+PfG; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53959a88668so4441431e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:36:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728236160; x=1728840960; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2jqjA3t+uJH5C3u6T2WtPr91xISIEaMidxKBcqx9++M=;
-        b=kWLS+PfGwuMsM1o6t8nIcquDNveUAqRVLVyH/pAn8/W+aK1U3FKOaMLFYr3+9NmkZb
-         SMzuK6X0C19l+6n7/vR4PE4JePA9X/82jKq2GZmKvO/J/d0ULX2G8B573zDS3wavo0aS
-         98XqNgg9E4fMkskpPGIIwu+VE5uoCW+qr4JqYMhM/sOWSeOpcCTSPZ0/Z0B5xQmUh20U
-         swFXLAX3q6pW24nbC1RXaxK2Lq8nDAfiCtNHEU7Ku0Ak8APq3cm3Kd4NYOyfW2qOrLeE
-         9rkhjyXgDRX+p5sH/58V3DWLesi6hALGdasje4r71KzwXFxEn4WRCzVd+3oVwpJNvwHf
-         8PvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728236160; x=1728840960;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2jqjA3t+uJH5C3u6T2WtPr91xISIEaMidxKBcqx9++M=;
-        b=HaGcu01qTzd2GmLEP4zyvv1HV+rJOVsad00/yeRatEg35hfY7XAOrukFgNtVc6KQoo
-         4GgsBczdMFnvGeSBlnOeevOUHyB1a1tZCaTuZ4I+p64SdtST1nvDB+MNWHn2Bjd8+/4p
-         kFsJtizEA07DgNFXsfP1yJSnNNdglMIvqhTGFLOpV0MZJvz4DS4Yv7pieeW8rxkoVIkY
-         xzAWMHrfn8c+gzkDgxh8d4Jo2b78Vw7eO1A55hwitClR1yI17uV2wI7EhnkQBaBkT039
-         z2ZdzRr+dUL01lgFvybZJmcViaBNlNa6Bvbl2pAVdX8ZHWOFCo3AoLKNeMboGNz3De/A
-         uyMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhUmrFslVS32puw1EXNdNFW9siOTPF4RCmz3PH23kaudAOfXK8+sAutgnA3noVBcoXw3fiVi9Mxp7YBro=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7ei49asdBbmX4WL0qcTP5bwhPWNCPpHNHk18u9SI6t8HAchJs
-	ICFvry3rrKrecAztHT9xCVw6xqMcVqSba1vj/wMNybczpg3hVclGM/c1E/9zYpw=
-X-Google-Smtp-Source: AGHT+IHWh4w88xN+QzKpi0f2iKqrojofn8hslRswLVLKHnZEdTKJTweHLoAMSSAGDcgRdxs/9LEn2g==
-X-Received: by 2002:a05:6512:1387:b0:530:daeb:c1d4 with SMTP id 2adb3069b0e04-539ab85c0fcmr4556394e87.12.1728236160467;
-        Sun, 06 Oct 2024 10:36:00 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff233a0sm564542e87.199.2024.10.06.10.35.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 10:35:59 -0700 (PDT)
-Date: Sun, 6 Oct 2024 20:35:57 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Kuldeep Singh <quic_kuldsing@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Qingqing Zhou <quic_qqzhou@quicinc.com>
-Subject: Re: [PATCH 1/2] firmware: qcom: scm: Return -EOPNOTSUPP for
- unsupported SHM bridge enabling
-Message-ID: <2fi7pyhpetqyhipjiihuafddggwdrh7abuvfkks5hu5qid2rfm@ibuiecrhijey>
-References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
- <20241005140150.4109700-2-quic_kuldsing@quicinc.com>
+	s=arc-20240116; t=1728236217; c=relaxed/simple;
+	bh=Q1TMwAKeOIm2wcbXlht5uOX41hF/WJsY7Vcesi+KWKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MZnhtNipzV5lYbslL3GuxFjehvDKCN66l/dMVV4DMQONj7Gx6Zdt0rlnjn9DL9D4TvAaMzqal7VBkPD/ZozBQNUJlBUSIexsR/WX15cwvDmdh5FcYijEEbbSCUg2CFxoWE3lb1lVo+16J5D4I1n6Cg0+Zk+DQM4KaJJoiz46INw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPVRYAuV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC92AC4CECD;
+	Sun,  6 Oct 2024 17:36:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728236216;
+	bh=Q1TMwAKeOIm2wcbXlht5uOX41hF/WJsY7Vcesi+KWKA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LPVRYAuVY66osVWJT6a3gRoh3ZuF3VFdIAzL+JyKcxtNG38NoazFwZlutZivsF8eB
+	 f+R41ge+fUavVQVVu9pD+n5yXiCHNSNGX3EeWqk+evOvqcIOFEW5rEV72M0gBsRxRe
+	 XNSTzw3OyIqaZ8E/fQLbFDEpg8yAygNlQPTdX70Q/YTV/BulC0PzoisFyCDHYeh7Xq
+	 b4b5Qxa6f/yFqGfV+UXpIq8H1u6mPwOaSeTBPsEqgC0LjbXdhZJwI+1dQBqW5giGAa
+	 wm0MuHVNPTdZ2MsMz9iZ5i/+bc5FXWpyiQmv1bL2s//U5dzZQUsuiGOPRdY4yUMRJA
+	 qbb5Q0pTZbUhw==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fada911953so44876891fa.0;
+        Sun, 06 Oct 2024 10:36:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWDDh0VNUT1gpZPd3QgOnLRl1QHxZclkOPEj1zfenW0PGdSxw/Kt4PqKsdWc/zS3ujWTZLUJTHMx/tyu04=@vger.kernel.org, AJvYcCWysX2hcmItTjqrlp0KPQqfn5V1PtE3Fl0Xo2JNuX5QdDiYfW5VhW7d4zzdrYgb/iocAV2QwpSAij209SNpsQ==@vger.kernel.org, AJvYcCXB7c9E9t4kpaMMUKlXctQQhQtEndTt5Csu11iIA8kUManpvWNMvej0+3zUD4xX6T2hMx0dSBEEhw0j+DYD@vger.kernel.org, AJvYcCXNl4C0zJqZBPd7+nMJ5kZM9nG3S17Kl84Ekv/wRKwBB43/IueslKdXKdmTiEPDkEx6sCtWRzhVtRQctDaMYOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwogZh8TBahsN851wN2g3XuYMDtm/mr8nXIDOkjX2I6n4X+9rbo
+	XmYNzP3bOmu5zWyBI9OIUgVlg/VxixAQSx2go1CPmVGJiTiQdW7TW63O4lXNqFS69CMyl6IGwfq
+	WCzTIGjLX7hHfB5M+vpyE8zBUYK4=
+X-Google-Smtp-Source: AGHT+IF7a5fnhO6HmzbvVN4wOBrDrBYZiDSOrKcFK0hTzDaUwPKEYM+adhmLfqDLPcU8Xu7YLExlWDIVyVXNXuekEHA=
+X-Received: by 2002:a05:6512:3c8a:b0:539:896e:46ce with SMTP id
+ 2adb3069b0e04-539ac17ebdcmr2881071e87.28.1728236215356; Sun, 06 Oct 2024
+ 10:36:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241005140150.4109700-2-quic_kuldsing@quicinc.com>
+References: <20240923181846.549877-22-samitolvanen@google.com> <20240923181846.549877-23-samitolvanen@google.com>
+In-Reply-To: <20240923181846.549877-23-samitolvanen@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 7 Oct 2024 02:36:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQzoJNQ21o3pmozo5c0rLq-ETaAqxSgbiU_gJu7U_mu8g@mail.gmail.com>
+Message-ID: <CAK7LNAQzoJNQ21o3pmozo5c0rLq-ETaAqxSgbiU_gJu7U_mu8g@mail.gmail.com>
+Subject: Re: [PATCH v3 01/20] scripts: import more list macros
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 05, 2024 at 07:31:49PM GMT, Kuldeep Singh wrote:
-> From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-> 
-> Currently for enabling shm bridge, QTEE will return 0 and put error 4 into
-> result[0] to qcom_scm for unsupported platform, tzmem will consider this
-> as an unknown error not the unsupported case on the platform.
-> 
-> Error log:
-> [    0.177224] qcom_scm firmware:scm: error (____ptrval____): Failed to enable the TrustZone memory allocator
-> [    0.177244] qcom_scm firmware:scm: probe with driver qcom_scm failed with error 4
-> 
-> Change the function call qcom_scm_shm_bridge_enable() to remap this
-> result[0] into the unsupported error and then tzmem can consider this as
-> unsupported case instead of reporting an error.
-> 
-> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
-> Co-developed-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
-> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
+On Tue, Sep 24, 2024 at 3:19=E2=80=AFAM Sami Tolvanen <samitolvanen@google.=
+com> wrote:
+>
+> Import list_is_first, list_is_last, list_replace, and list_replace_init.
+>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+
+
+This one was applied to linux-kbuild.
+Thanks.
+
+
 > ---
->  drivers/firmware/qcom/qcom_scm.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 10986cb11ec0..620313359042 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -111,6 +111,10 @@ enum qcom_scm_qseecom_tz_cmd_info {
->  	QSEECOM_TZ_CMD_INFO_VERSION		= 3,
->  };
->  
-> +enum qcom_scm_shm_bridge_result {
-> +	SHMBRIDGE_RESULT_NOTSUPP	= 4,
-> +};
-> +
->  #define QSEECOM_MAX_APP_NAME_SIZE		64
->  
->  /* Each bit configures cold/warm boot address for one of the 4 CPUs */
-> @@ -1361,6 +1365,8 @@ EXPORT_SYMBOL_GPL(qcom_scm_lmh_dcvsh_available);
->  
->  int qcom_scm_shm_bridge_enable(void)
->  {
-> +	int ret;
-> +
->  	struct qcom_scm_desc desc = {
->  		.svc = QCOM_SCM_SVC_MP,
->  		.cmd = QCOM_SCM_MP_SHM_BRIDGE_ENABLE,
-> @@ -1373,7 +1379,11 @@ int qcom_scm_shm_bridge_enable(void)
->  					  QCOM_SCM_MP_SHM_BRIDGE_ENABLE))
->  		return -EOPNOTSUPP;
->  
-> -	return qcom_scm_call(__scm->dev, &desc, &res) ?: res.result[0];
-> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
-> +	if (!ret && res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
-> +		return -EOPNOTSUPP;
-> +
-> +	return ret ?: res.result[0];
-
-Could you please make it less cryptic?
-
-if (ret)
-	return ret;
-
-if (res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
-	return -EOPNOTSUPP;
-
-return res.result[0];
-
+>  scripts/include/list.h | 50 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>
+> diff --git a/scripts/include/list.h b/scripts/include/list.h
+> index fea1e2b79063..8bdcaadca709 100644
+> --- a/scripts/include/list.h
+> +++ b/scripts/include/list.h
+> @@ -127,6 +127,36 @@ static inline void list_del(struct list_head *entry)
+>         entry->prev =3D LIST_POISON2;
 >  }
->  EXPORT_SYMBOL_GPL(qcom_scm_shm_bridge_enable);
->  
-> -- 
-> 2.34.1
-> 
+>
+> +/**
+> + * list_replace - replace old entry by new one
+> + * @old : the element to be replaced
+> + * @new : the new element to insert
+> + *
+> + * If @old was empty, it will be overwritten.
+> + */
+> +static inline void list_replace(struct list_head *old,
+> +                               struct list_head *new)
+> +{
+> +       new->next =3D old->next;
+> +       new->next->prev =3D new;
+> +       new->prev =3D old->prev;
+> +       new->prev->next =3D new;
+> +}
+> +
+> +/**
+> + * list_replace_init - replace old entry by new one and initialize the o=
+ld one
+> + * @old : the element to be replaced
+> + * @new : the new element to insert
+> + *
+> + * If @old was empty, it will be overwritten.
+> + */
+> +static inline void list_replace_init(struct list_head *old,
+> +                                    struct list_head *new)
+> +{
+> +       list_replace(old, new);
+> +       INIT_LIST_HEAD(old);
+> +}
+> +
+>  /**
+>   * list_move - delete from one list and add as another's head
+>   * @list: the entry to move
+> @@ -150,6 +180,26 @@ static inline void list_move_tail(struct list_head *=
+list,
+>         list_add_tail(list, head);
+>  }
+>
+> +/**
+> + * list_is_first -- tests whether @list is the first entry in list @head
+> + * @list: the entry to test
+> + * @head: the head of the list
+> + */
+> +static inline int list_is_first(const struct list_head *list, const stru=
+ct list_head *head)
+> +{
+> +       return list->prev =3D=3D head;
+> +}
+> +
+> +/**
+> + * list_is_last - tests whether @list is the last entry in list @head
+> + * @list: the entry to test
+> + * @head: the head of the list
+> + */
+> +static inline int list_is_last(const struct list_head *list, const struc=
+t list_head *head)
+> +{
+> +       return list->next =3D=3D head;
+> +}
+> +
+>  /**
+>   * list_is_head - tests whether @list is the list @head
+>   * @list: the entry to test
+> --
+> 2.46.0.792.g87dc391469-goog
+>
 
--- 
-With best wishes
-Dmitry
+
+--=20
+Best Regards
+Masahiro Yamada
 
