@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-352439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD3E0991F32
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:00:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46FD5991F3C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8547B1F21D1A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:00:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E310DB219B1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9697313CA97;
-	Sun,  6 Oct 2024 14:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B391465A9;
+	Sun,  6 Oct 2024 15:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQ8/++vp"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BG7p6yPP"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C16139D04;
-	Sun,  6 Oct 2024 14:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F85143C41
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 15:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728226796; cv=none; b=qSQVboMKBGZkBmUITRYiIua/wwoaRGvyP45oKk3ydJLReDiFJZNYfwiZrLcNJKqCHa/EsI6ooFe58otJTmW1MBdb+a2fqXpm0qhmKYbapRLSMNCnUp8userSKsQ6qk4UDrUVWnVwzPC57EZSbG0fOR9JKT7idnWb4guYi6RnVcg=
+	t=1728226868; cv=none; b=HeB41NQ1TzgciPutTcRb2jK7eXFVKkPHddjSV6k6QpinRh6iFQ+JcJHe1KXHnvy+EgP4vuyziyxsaRGgqfFGl8Kb4iruyrWEIUOxo3McCN4OtPN/9ImNlvKmBu50e5t9rAK5tsdJwba2Ly096nhFHhcu1be65ElGmozEYloHHHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728226796; c=relaxed/simple;
-	bh=lXsOWchDeB0DKztDhSEu4SLBTSpDiAINtpmIIYN2ECU=;
+	s=arc-20240116; t=1728226868; c=relaxed/simple;
+	bh=3Jox7XDbaksL3rWHMjU19bnxw0/FsWSY+Vx94uMawHk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JU1lqv845N4mcFa+sXwRjLti9blJQUSNA7uSnC7ldREHdlWZddQku9Gj2ZRDvG1bP0fzuGffqCq+wC1+KDeWF7TOhg+kwBvRKauDAA5JyTGe0gLKzRcnpu1+26Cb4mimOcV9R5ZPl8Y3a0AMk8w/nnn/FeeEKLpgZ6RXqoEnsrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQ8/++vp; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e25f3748e0so35201597b3.0;
-        Sun, 06 Oct 2024 07:59:54 -0700 (PDT)
+	 To:Cc:Content-Type; b=uXkpwYEiiMOFeTYhpmyBPPTGwdU/ajyB/ed9xHGF7Hc1vjGVvY6l0I0RqJFnS2GN/yv9jzqN45ALcSoslvdxyN9yxIcSjiHqdiPeXPltaMQ18azBCl1OQ6tQ2fCH3Hus7a7j8fe+YbvCr5i8EMJ9ZU6F2aiox9awXZWhEqmu5gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BG7p6yPP; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6e214c3d045so27067227b3.0
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 08:01:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728226794; x=1728831594; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728226866; x=1728831666; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N6+Wg2986G03us2gYz8rYilG8qAjZ8Fp5YpwGKJLHPE=;
-        b=aQ8/++vpVwQDBNWtzC9OMvVgnBijr/Fvwr94qVQnhdJn781jK5p182gA8oKu6zKL6G
-         bdvJUTr9MjdyiKXGjFX4zwMyLel/wVQDRTh75Q2MFyv/D5cDL8nOoD1oKhiqFZAncWjz
-         MYDumEoX8OS4bqSasDEqYL1NetIzxtMaA6ZkfBchZkRlQtHdl4D3/JZNZR5d19zh8FpE
-         eVcfmc615aBwx6rklCS/SVToE5VhmIFeGOSlNQCr5NbmVaTVyHq5u7nafEfwzX6Z7Dkh
-         fEF1nmhAFalf9v90jrOZ5ErES5Kj6d8PomiXxKfAs4+9+7+GKSrPQKVHzZPdJg7XMQzK
-         cyiQ==
+        bh=sr7kBmgWEcI5rnWGX+RCamDzTizwOpc6au1fxKMuuS4=;
+        b=BG7p6yPPrCaRuC+CVEmOsKToR3szaMm/J0UDvq0hMCM3X9xGFCNwQF4sK7w/uhyWbD
+         g/62NLP8hMIAEJ+4CIxgv2tEOE0UhzaBFqx4pcKKZrHv20imtZK+jQhqvpmFvaZ0bgXD
+         4jvEzDnIgRy2wjlNpJogsmCO2DNHB3p0v9+c8Sw6UhFOLULbhxpUJzrrV1JsVh9AxyfQ
+         V+w+SiAEKiX27EORDnXZ3lpy11qzheBiiGYS5/mTXyt4KIfvlBwlb9QkZAMAv+EbDhW2
+         jXt9Rja0NuE0QQZVb8mdBOlv35O6mr40oOs7IpUDG32PpO90QwWVLrqT1Nf/I+7wLJHR
+         TSVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728226794; x=1728831594;
+        d=1e100.net; s=20230601; t=1728226866; x=1728831666;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=N6+Wg2986G03us2gYz8rYilG8qAjZ8Fp5YpwGKJLHPE=;
-        b=rgSJ+2xPouQTihy7cB5F3XCZ44E2GDki2MXzMmzwSDqThVxOkCHZl9qopr9bzgJmf7
-         yq6OOGvU1ZVfWesD0cn82mgpFXF0VgZOQ91/4jY8Q5HDFBEX+3kmoOn/r4F/Zw54sP+v
-         OSJbo5rpjXVECbdZWwOPk8sO0SvxAPmOusAvoSV5IvT2XFyQ5XfxMfWi1VWutrpsvk20
-         AHZA++5an+7pvmqV14Ucd9fJcUE4Nz7xp2RxvDaKB0rp2cuyzR0m6BvfqbjZuvWXcUy/
-         H4MUHB8yPy4aw7R4yEtAOC2d0R1eGf8xfOy0ExpLI6S0mg72BtjV+9AodH+QPCZJe4Km
-         f56A==
-X-Forwarded-Encrypted: i=1; AJvYcCWPypSVwmL2EMa2HWmdzUHLeQxWZjRWeEm8tZtdWHfZJJtXho/l0WIaX/fkleZ0Zg5lfyMsrj5M+WDzv5Qt@vger.kernel.org, AJvYcCXCEjZJYrhSom3z0FRdFMXWQjf2TlgCNsgvNrk61lT0kUXPIIWdzJcb6rgywljV4n/3BG7v+fv9uY8bE0k1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbKFtbugEgaU7Kj9YLtmjhjMsz0KCSGdzuS/pXNMp8jpKE31cV
-	z3YMe7wAql8+30H+uMgRa1h0P3XlQnmI14kbt+Clq0LxXSWXj0W3xUdcgytWTSIc3+rF+BNGz0c
-	3mIZBoli/HZhdfXJMDFY3XO9Lrd4=
-X-Google-Smtp-Source: AGHT+IFm7maYo6rzOtAGgDPgWzCxAuhLdf6EWEcyPkvdTVjmROdt9OcZpx4l8tdmq9Db4QIulLYNvvxSXoTFoa+2G+Q=
-X-Received: by 2002:a05:690c:700a:b0:6b1:2825:a3cd with SMTP id
- 00721157ae682-6e2c728aa03mr67808637b3.35.1728226793746; Sun, 06 Oct 2024
- 07:59:53 -0700 (PDT)
+        bh=sr7kBmgWEcI5rnWGX+RCamDzTizwOpc6au1fxKMuuS4=;
+        b=mlg8yCrnyrk15ojtUQTnLLyAHsuyfkNwlVAPLgYdoSkueTBuKeg+QWqUD/ai8XRK1k
+         sCuIspZlTEilJXq9at76KhtmSQ+XpPPEtRac3Njhe2mXsEx5kla/uB2+sViFslaBG+MN
+         EnQ7PKCMSsFpLEolr2ABXha1/3kqVHccpDkY/mVSiPWxyZhs5bKuWnqcnGj5mdtvmcCU
+         gtb7hCGPMh5qwRjdH7I2r61vqUECn7AyZJ3+dB+4ULHyeCDOS7AC4JRuCFeZs8xxBUEj
+         DFlSJLiID/x4UZc5bMLlxMWZH3mgPVGqyIqkta6syeYgVC3si/d1VzM5giXjoUxNifBS
+         LFpA==
+X-Forwarded-Encrypted: i=1; AJvYcCULu3moMfxGTUlNmvXNtGQsYmsBn3QgowKW5VyLAKr4agFwU4KC0+4ZjOaqcFFmVR90F0Q7YNWEs0bbGpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBOR2D3tkd8rYhU4kstuRD64F7vFW8/004H3Lv7ouXbRMlnLpW
+	hAp4HkzR75KZg1CEjl2goLWFIFufOARxx/PhQp9ahEz006q92GW+6enRK1AaUf8Mm8zaZHS5xFo
+	q3JID/nLWAThNpNwbLyU2A+DV7xPBj0bIu1e0og==
+X-Google-Smtp-Source: AGHT+IEJycb4R4aw3ReSCNgChwzrEXysCheiplWAjzc1sd3W64fhBUYqqbDLQsAk4nGd84s5GZgRtnV6rDxt3bUR/NM=
+X-Received: by 2002:a05:690c:101:b0:6b1:735c:a2fc with SMTP id
+ 00721157ae682-6e2c72466ccmr69109727b3.27.1728226866169; Sun, 06 Oct 2024
+ 08:01:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002142516.110567-1-luca.boccassi@gmail.com>
- <20241004-signal-erfolg-c76d6fdeee1c@brauner> <CAMw=ZnRt3Zvmf9Nt0sDHGPUn06HP3NE3at=x+infO=Ms4gYDGA@mail.gmail.com>
- <20241004192958.GA28441@redhat.com> <CAMw=ZnRp5N6tU=4T5VTbk-jx58fFUM=1YdkWc2MsmrDqkO2BZA@mail.gmail.com>
- <20241005112929.GA24386@redhat.com>
-In-Reply-To: <20241005112929.GA24386@redhat.com>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Sun, 6 Oct 2024 15:59:42 +0100
-Message-ID: <CAMw=ZnQB-xsvPX6TrmaXed3KGBR1YO1qYP-iNsUAv8XAOvB=YQ@mail.gmail.com>
-Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org, paul@paul-moore.com, 
-	linux-fsdevel@vger.kernel.org
+References: <20241004103046.22209-1-quic_mukhopad@quicinc.com>
+In-Reply-To: <20241004103046.22209-1-quic_mukhopad@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sun, 6 Oct 2024 17:00:55 +0200
+Message-ID: <CAA8EJprNz-Byy6T3qkkUyZnTkyb_7osyuevP8E-xYzzPSmQjUw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] Add support for DisplayPort on SA8775P platform
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org, 
+	andersson@kernel.org, simona@ffwll.ch, abel.vesa@linaro.org, 
+	robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
+	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	quic_khsieh@quicinc.com, konrad.dybcio@linaro.org, quic_parellan@quicinc.com, 
+	quic_bjorande@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, quic_riteshk@quicinc.com, 
+	quic_vproddut@quicinc.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 5 Oct 2024 at 12:29, Oleg Nesterov <oleg@redhat.com> wrote:
+On Fri, 4 Oct 2024 at 12:30, Soutrik Mukhopadhyay
+<quic_mukhopad@quicinc.com> wrote:
 >
-> On 10/04, Luca Boccassi wrote:
-> >
-> > On Fri, 4 Oct 2024 at 20:30, Oleg Nesterov <oleg@redhat.com> wrote:
-> > >
-> > > I guess Christian meant you should simply use
-> > >
-> > >                 info.pid = task_pid_vnr(task);
-> > >
-> > > task_pid_vnr(task) returns the task's pid in the caller's namespace.
-> >
-> > Ah I see, I didn't realize there was a difference, sent v3 with the
-> > suggested change just now, thanks.
+> This series adds support for the DisplayPort controller
+> and eDP PHY v5 found on the Qualcomm SA8775P platform.
 >
-> I didn't get v3, I guess I wasn't cc'ed again.
+> ---
+> v2: Fixed review comments from Dmitry and Bjorn
+>         - Made aux_cfg array as const.
+>         - Reused edp_swing_hbr_rbr and edp_swing_hbr2_hbr3 for v5.
 >
-> So, just in case, let me add that task_pid_vnr(task) can return 0 if
-> this task exits after get_pid_task().
+> v3: Fixed review comments from Dmitry, Konrad and Bjorn
+>         - Used a for loop to write the dp_phy_aux_cfg registers.
+>         - Pre-defined the aux_cfg size to prevent any magic numbers.
+>         - Added all the necessary DPTX controllers for this platform.
 >
-> Perhaps this is fine, I do not know. But perhaps you should actually
-> use pid_vnr(pid).
->
-> Oleg.
+> v4: Fixed review comments from Dmitry and Krzysztof
+>         - Updated commit message.
 
-I have just sent v5 CC'ing you and adding a final check before the
-copy to userspace, that returns ESRCH if the task has exited. This
-should solve that issue, and also be future-proof against potential
-additions that might slow down processing due to gathering more data
-or so.
+For which patches? How?
+
+>
+> ---
+>
+> Soutrik Mukhopadhyay (5):
+>   dt-bindings: phy: Add eDP PHY compatible for sa8775p
+>   phy: qcom: edp: Introduce aux_cfg array for version specific aux
+>     settings
+>   phy: qcom: edp: Add support for eDP PHY on SA8775P
+>   dt-bindings: display: msm: dp-controller: document SA8775P compatible
+>   drm/msm/dp: Add DisplayPort controller for SA8775P
+>
+>  .../bindings/display/msm/dp-controller.yaml   |  1 +
+>  .../devicetree/bindings/phy/qcom,edp-phy.yaml |  1 +
+>  drivers/gpu/drm/msm/dp/dp_display.c           |  9 +++
+>  drivers/phy/qualcomm/phy-qcom-edp.c           | 74 +++++++++++++------
+>  4 files changed, 61 insertions(+), 24 deletions(-)
+>
+> --
+> 2.17.1
+>
+
+
+-- 
+With best wishes
+Dmitry
 
