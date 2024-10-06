@@ -1,116 +1,116 @@
-Return-Path: <linux-kernel+bounces-352289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623E3991CFA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:24:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49838991CFC
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8E18B21ECE
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDB2E2834D4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18737166F34;
-	Sun,  6 Oct 2024 07:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C6816DEDF;
+	Sun,  6 Oct 2024 07:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9cOTVPC"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hMCOXAZn"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C92554F95
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 07:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2122572;
+	Sun,  6 Oct 2024 07:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728199473; cv=none; b=o4cW3qOjLIJ9A/r1EAT7C8qyRT7kzzbsKDi4jXZEZ6zgiqHoTYBcBfkp7rllV2znHPKeXdzRQQniO7t00ZWeZhrljbhcZ3j8hNwNOUWOLnb/mz6D852L6o8oQMTpLuoHIxj5+3GxA6yCW0wyZqkUlxX8bvwA606XyBsCcTJ4fRc=
+	t=1728200433; cv=none; b=kYMUGXad1/9vhH+xBfTexIipVakLx3jYyCisgjD2WIil/rkjNbLQQ1J/vwSWdgsXDNQfixDuEp2WxK6bnjKpXTCj4Tikgsg16ZlZJvKSJ89Zw+5BmpWF5ZiqA6/yf+FrhpEwq8kFqi88HqFkQvI1dkmCEqcklvZQhDcJSp5xZ60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728199473; c=relaxed/simple;
-	bh=zIvAoAIzHGlsXnSv/kdkXrgwDSyL4iJ0xQOzUAdLztg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QLe9rfiV+upGQYA6e2bdM5tjraCCkLsbguB/AE7B8ouK2HKNHUj5FZRpYej5swEUEoHVZpuvztSKF7ZHHjbAfOjSJhyvQbafsuDML7N7tIp4KvpQMCsXGhQsxmq/RqEpax+Cng1c4mhCoiJini3Kh2kEG0/aumHOc6hQO+g25Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9cOTVPC; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7e9fd82f1a5so353893a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 00:24:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728199471; x=1728804271; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e6xlP6dNCtgWEzSxYrVuRfCWcrNWwEhg70Yoit08Scw=;
-        b=N9cOTVPCCDj7UbXsHMB71fgN/MMftJYKs/jIED0B+oALFDjEcoN0OVoMTH7g710e7Z
-         iYy2OKoWbxN3AMWInJw2f5sCNYBUhfDG38mZRDR4iATWCR5Bb0XNP2vEX9pJjT+8QwCi
-         lIjwnYMu64PRbUnxhYmL1RAq5XhH15dyfgp3EQrknsBMdS2akxFFeFiLLrcIqROvf0yS
-         hGe3VFY1Bo/emVzh3H5ayktadnEFQpY6mrVDeBUCeUNirtTfjYwdXVq1DUZ/2y94ggc6
-         dya3Pno33fpeFtRq5a3BmwbBCmSCUH4tuA3LnRXO6ckOZOPl5YfBHSA7gynJ+hftijeS
-         KLIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728199471; x=1728804271;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e6xlP6dNCtgWEzSxYrVuRfCWcrNWwEhg70Yoit08Scw=;
-        b=YupLZ0kKRIzhknQQit5F1VtfQU5ZX+Mn2P6Y0sPPdb1wnSQxe+Dt1lnYkd4PZYh5UV
-         f/4m1qqtE9e36/CM7YmY9mIfE/wdXSKY/gfxyrwYveQyhzX3eKCdNPdY11+XNVBM24m8
-         qjvX9fbbA7o/gGZWCWY5pogcp2ZLYPxUe/rE9JEF4mT2b/r13sK4sOgx/PEw89vmPr7S
-         4okfDJF3Cefg7kibuuX1Fr7WWTuDyvnUsjdmOZnQjhYjufLkydWMLcFAE1r34DBW8IS+
-         cptGcDUAvSXLg9ye+aJrWLrN6gXFj2es7n44NTVupcKPJqkDASjG2zWh+nYHcm+E4cvY
-         vJVA==
-X-Gm-Message-State: AOJu0YxFYEzFQ+gjAXYVj57lBBPtsv98zcW9bOvHDj7u74YxajvADT/m
-	S97cm2raejrcJe79ng89R63DLH4IkVHj2NhCGXMC9H2gKjOWZOZ0SpQNj4Yz
-X-Google-Smtp-Source: AGHT+IG78BXRTTg08bmnilGOaApFPJ0kMg9wUOtiEadsNMqvCh8osRnbCq+RKDT3Wmc68k1G8D25FA==
-X-Received: by 2002:a17:903:41c9:b0:20b:ad74:c84a with SMTP id d9443c01a7336-20bff194f20mr86986115ad.61.1728199471403;
-        Sun, 06 Oct 2024 00:24:31 -0700 (PDT)
-Received: from vishnu-pc ([120.61.77.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13939c3bsm21845905ad.151.2024.10.06.00.24.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 00:24:31 -0700 (PDT)
-From: Vishnu Sanal T <t.v.s10123@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org,
-	lasse.collin@tukaani.org,
-	Vishnu Sanal T <t.v.s10123@gmail.com>
-Subject: [PATCH] fix: possible memory leak in unxz()
-Date: Sun,  6 Oct 2024 12:55:43 +0530
-Message-ID: <20241006072542.66442-2-t.v.s10123@gmail.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728200433; c=relaxed/simple;
+	bh=7ZExBx80upkW38+A/QbU+fsXFVRR42HeioQR1cxjbXo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=hsO9YwHu2EaboRrK2X2atMUWhSNDS2KkIo/mtTlyaNWkNUc2sbiEhJ8gaS+NNWNI7TraKpdkBaWaKjNdq8JgOqudrOG0CX1KAkE78CmxnOiw58NYgU1cQ7/Kk+OJkoYX3qSHss0x+GQxHhD8Y1aqasV0sj4QdE4JTNAMliXJiyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hMCOXAZn; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728200367; x=1728805167; i=markus.elfring@web.de;
+	bh=lW2NTtgSXR6HN9BJzUyHvkd+FTWE/RFYjn0L0MqlDJ8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=hMCOXAZn0Mc2FptfnJ69avOE9ggRZroODv7EErk5yqVZf8QJmhNkqQbcOtM1OOnZ
+	 iFVkX33DlOUH6PfBwVFi9ynZSE1DkRmfZ6pTmC/RtXCvEwYSokAK1c86a0g4QN+eN
+	 JGk5TTfIxVj4hT1//4v24B8LyGmD2p5u0csDpYloBUNMa9b4Pbb6NFH/E3ecnta2e
+	 ZiESI4sTBcPKph0mk1T92Ia62jAf8MgEaUZWyfTSqXtuCoa1cyAjMX+8wK8HqkHft
+	 8iVEHGmxUbICPbrWvrmqSwM7E1EeTR1cRC832ty8scRTUWHBUqjBDtmtlejbD8FkE
+	 eSMOrHs+v5W6fu/v2A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M4bUq-1sxtYf2PVm-002EF8; Sun, 06
+ Oct 2024 09:39:27 +0200
+Message-ID: <821a7417-4f2a-42ed-9616-88a0c145fa5d@web.de>
+Date: Sun, 6 Oct 2024 09:39:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Chen Ni <nichen@iscas.ac.cn>, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ Bjorn Helgaas <bhelgaas@google.com>, Damien Le Moal <dlemoal@kernel.org>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20240918074401.2221146-1-nichen@iscas.ac.cn>
+Subject: Re: [PATCH] PCI: dw-rockchip: Remove redundant dev_err()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240918074401.2221146-1-nichen@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Dn8EbyryMmfD0vIqg7CFb0Wxfi+mHdb2k6EuNRXBVwNOdnB349N
+ 2g/hgfR+OFAa1LzJFlZjyjT7KhWdQoRnpzGBbOZtxvolIOfALpnj6cKp/GAv0xf0bFPoSdv
+ 98N5JmSV8KLVv2+FM2buSbvYzBMV3LQw1B8KsqvAZwtSKrDnNUnSeSXL1YzRHci4R8mDcB/
+ poHEUR0cQNJucwNhVmdPQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MqY4sJMuk/s=;+zeb/3QHhcrQ5aN2iJwONFikDQW
+ 0f/GQBICASExoEQer8hJzfZMEEckAM7eMl/7WzQDnWC2qF2/eb+8GqsnT6Js3FCbcfShzmRJy
+ R/P1hMVDHmh9DbOxgpgpOwVGZQRfiK6+H+xNl+N1ZPoL8VyqGIgNFJYHyYSIq6PchiEOQW4tZ
+ f/e26lgMHJoY5NexKVW/FNrGDmp1o3CHbHO9vu4vwOQdLBKUfEbEMg3SIThEuh96zU5/ok/mV
+ YIsUzF3xSJsA1d3NksiY3E9PwTUz3dsro1kZxrPIes0bk0VofrA7tGfYRmAqVTanjlLHjFmzG
+ VSzXPZPG+Lx3nVQgO+yW3hQVkjbcfZUAV8nOxq13PfDB1spp5eJZbDYkZJcMuciosC5pB26XH
+ yDUM494ihHpMWhibJwv6yJyLuBkwObsoKNWpL4+uKQt0wGllHPgeKSXRSiWmUG46NyGZ4mTNn
+ VptyrZiKEhGE9uH8fkprEh6Nz0EV/OwgmMuqm6j3KRAB5m1zqVYeqICUuKTDKIsoo4DDaEOQl
+ dOnhILsv4Dm3p25QGVHxE0z9FFYZy+wifAwIat6I+FFctn3YKVnbc9nt0n7tH7U5qb9GimQi+
+ CwyR20NrQWEPT/NAljaJBJUPbJpZjOUPDSdZ41rnKktQiEUvEE5YedbHy9S20+0zanQiCxvcV
+ 9IvRIhj3lF2TCXJSLFQpgikIYYiBnYwKcsjj6GQkXGek8VADF3j/GWQRHZ9ZwQm0dbUUe4lj4
+ flcoMggTdGM7WBaJFgdkt6nanBMi9BhC9KJTn0xFM+IdBGuv7Cm+V1R8EsI0h9V0/6TinsGaE
+ BKlDFigzOdRtFnXIw+0i7v8A==
 
-Fixes possible memory leak in the function unxz() in
-lib/decompress_unxz.c forgets to free the pointer 'in', when
-the statement if (fill == NULL && flush == NULL) is true.
+> There is no need to call the dev_err() function directly to print a
+> custom message when handling an error from platform_get_irq_byname()
+> function as it is going to display an appropriate error message in case
 
-Signed-off-by: Vishnu Sanal T <t.v.s10123@gmail.com>
----
- lib/decompress_unxz.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+           call?
 
-diff --git a/lib/decompress_unxz.c b/lib/decompress_unxz.c
-index 32138bb8ef77..8d58207ca1db 100644
---- a/lib/decompress_unxz.c
-+++ b/lib/decompress_unxz.c
-@@ -343,13 +343,13 @@ STATIC int INIT unxz(unsigned char *in, long in_size,
- 			}
- 		} while (ret == XZ_OK);
- 
--		if (must_free_in)
--			free(in);
--
- 		if (flush != NULL)
- 			free(b.out);
- 	}
- 
-+	if (must_free_in)
-+		free(in);
-+
- 	if (in_used != NULL)
- 		*in_used += b.in_pos;
- 
--- 
-2.46.2
 
+> of a failure.
+
+
+Were any static source code analysis tools involved in the detection
+of the presented change possibility?
+
+
+By the way:
+Such a patch can be generated also by the means of the semantic patch
+language (Coccinelle software) for example.
+
+Regards,
+Markus
 
