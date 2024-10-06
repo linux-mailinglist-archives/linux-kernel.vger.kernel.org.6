@@ -1,135 +1,127 @@
-Return-Path: <linux-kernel+bounces-352521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48DF2992048
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:13:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AA6992050
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BF81F21A6A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:13:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA708281698
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22809189917;
-	Sun,  6 Oct 2024 18:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D9E18A6B0;
+	Sun,  6 Oct 2024 18:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lHSVlzyw"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FNFLGWBv"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E93189B9B
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 18:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D85514AD17;
+	Sun,  6 Oct 2024 18:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728238428; cv=none; b=hTGOGh4BCau9BwbVEEnN2mZRzH7WlRWdcb4SVvayWNpiyAwZbA+irTXoGORVI5DNDMM563k5fywajJ5Wi1i2M6h0zevxONS5BHetEin5LW0576mgjNqpnurV4l0tniaLUUKwbH6YmK/uwjHcpNrGYPKWXiQiYhvMPbPyrVy5spw=
+	t=1728238493; cv=none; b=smYhgoGKPvfuVWsdNUwSPPwUJiIk2ExdnECqtc1YJKHXwWWNGkeEZAMURlfa4+iFybxnSyj6szIvOAAL07smaV8Qvq2BlTLwgoTINDqv+/a0DxdbWDamM95lB09jYjSsnuUW/wdcWBEs+iVWadp0+hoOhP47idYeDVDyaWto4FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728238428; c=relaxed/simple;
-	bh=Ua9EPz2F0ax/VTNXjs0OZ+SzQLhTYERlSHK26OI8qU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQJXupDO99KI7tDbgRm1Dp8KXc0d57OoD2T5fqM/uo/pTbME9cx7aHyvbz/j2vbJQTLlQ8YpAcOuQF5oLMbPLpfSSeGfItgJKywIA8M9SO9UPq/eXR5cgVfRD2BMNzhdpmgj9zUqxHrN171UhjkZUsdZmf63Xbr1JvlNAdI0DYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lHSVlzyw; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7db90a28cf6so3113159a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 11:13:46 -0700 (PDT)
+	s=arc-20240116; t=1728238493; c=relaxed/simple;
+	bh=wuN0CAdpo9z6pUfyGlarVdLD8QRA7SSxW71W7N83XeU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W1P9/4vMEyIOgcbsbFy3zHJFhcx/5/Wucuvb9Ar/K5Ao/daHYX9AIkP2OBJFEe71QzC+9Ygl0hcd8+Rm2xlRuaUaZU4W+J3LxyV4jZttislqxPI0Hmehhe6IuupEEmqW+/sbhPlY9B+xjO2QcvWK4GBZQoPY6yvD8F30QZD1Dik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FNFLGWBv; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e0a950e2f2so3102987a91.2;
+        Sun, 06 Oct 2024 11:14:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728238426; x=1728843226; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2/0dUjW4cyzgF6yaoe7/JlUubqxNdOah7f3VO0ZqngU=;
-        b=lHSVlzywUJpd+ykKrwbEuPgwrZKxjFm3jGZvjJb8oE9ehjEd/BM3BA47aR6RALPYMi
-         vH/4jgnKLb/HE8Jg3EoOX13o+hfpeOpjgybJCXbCBiVWXbBsNgkianVdM6ktK3IKlX6I
-         Ez7VBIFgzJydqIHDZbxAHfKXE/+eJv4vbzJPD6BlH4uDYcAdU8iBt2MnxPQvUBvpxDT3
-         1m406a6gQ1pCOVlEWlIL/ss1BUtv31ix0fmL9nHGG3kXSve8nLHYCZtrBP7aeyT9gUjJ
-         2h7W41AXAh6pKTUlbRpj0Hb2Sb+4GGjnHS3clRuoRiyBZ1I4k+4ufnW/LtAvt6lubW6X
-         HhuA==
+        d=gmail.com; s=20230601; t=1728238491; x=1728843291; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1zDtd4VsB1QKwvGTFFxUQVnzIMbAkBrYOLGaEaZYNSI=;
+        b=FNFLGWBvvV4cvtaYYm+tuHUBOG7G96goX+YcNIg7NOj+MzXeQUhr8RHFbYI2pvF938
+         voaCA/bm5eNWDvpm/vx0Wie+XySfFdQNfGeYm0XkdSOLeGpRNboMWFzVLo3GiGUwDVmT
+         al0o2qv8BCpYN+ghhLGxkWzq8Rk6PkQWa+53hmvmcUeLx95d2yOnpKWzUbv5tsqDJdQI
+         5XQBx2/XpT6BG7fFLTyb4uHh8pnGQJ5SZ6CJ7cl2yMUffTfuzO1tlFYW7orqYhwAt9ho
+         +VWGp9wxgqrVBKqIWbYEGi5YZfhqGZBGMaBVG8Rl2F6VenV+H14UhkZjSny2XM2W+JjH
+         SE7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728238426; x=1728843226;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2/0dUjW4cyzgF6yaoe7/JlUubqxNdOah7f3VO0ZqngU=;
-        b=UJBJclw4PTBZrsKCb1QsOeeIZlvjAVPYpwYncE+42YdyRqkEMu1+YBCjzOEpadwBXx
-         V6RQJ3tjquj4S18Wdffz+Yybw/6Eu+5RmpbH77lfcQ+6pLbQcFmLGPEn02iMjflYBgy3
-         m0bXYV/ZxRimSarlj1/jzRR40soFbQ+VDta9KzsFa/qmAFsysbYNfS1rN3sE6AGYrTNW
-         NTS50UtQJp9vAjjhR/O3wFhT8YapOD0hMBv5pn9e9LhdKCt9DhGx0vapy8qY32wzPTdx
-         dAZ4tV6nle7yFTMx7S0Gi/pCgULOBbt89BGdCtKWsyfY4kVAM+fL6n67tlJobxecZauh
-         +2vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOgrxxs7bfh/mDpRYuDB+MGSZZzneYqpVxzrbUNkP+rsMBr7gDXvQOqAFO3Q8m6KKXK59/0/dxu82Gcik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhNyr1YFZj4Ga1WzGQdxfh7OvTCXQs/wdJb2eI1y/EQmazxFS2
-	bzNbEUAlAmj/6v8j8BcQlmCsjSmj1MQ+1KLa0ikMn/jswzdicUlMAThNyuePoRz6VjbOfyrsCQo
-	=
-X-Google-Smtp-Source: AGHT+IGR+azJ48oun8zo9Wf54stSUamrDzyOck3wVNecSl83OrIq+R2fL++Y4u9uqPUWdAaT8lZzWQ==
-X-Received: by 2002:a17:90b:4a46:b0:2da:8edf:ddc with SMTP id 98e67ed59e1d1-2e1e5dbc080mr13800947a91.19.1728238426412;
-        Sun, 06 Oct 2024 11:13:46 -0700 (PDT)
-Received: from thinkpad ([220.158.156.57])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20b0fb8c1sm3673804a91.43.2024.10.06.11.13.44
+        d=1e100.net; s=20230601; t=1728238491; x=1728843291;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1zDtd4VsB1QKwvGTFFxUQVnzIMbAkBrYOLGaEaZYNSI=;
+        b=xIcO6SHoF6KYBaajljK2hSQdBlSy5Y/N+F+ErFwoH1ELfhJ/FyRwCt3DTnBizuX3gY
+         QM/5dvUytOWt+gwDkN8yrSTb47KdjJ2TKJZbaPe44ZlHOkkQoBV9Cumc0GRsaDaYHmNU
+         RPHUDwJ6VDO6iftm8Q37hBkJigehiYPZ2vSFX8LjoRpSGAu3p3X40GpAhJkfuBFaKgCx
+         u/gGOr1Z3yL87LXBHOKSc6SQ3I4xyl3aPn4d/bGyD9FShtm74AHhz7tH9FShQqtZKWde
+         GVTkrTblXqYuFRgXDjqSKPqxJNATJ/SGgGLNIU3HROwIF1mZ57yjkZUgcy65DWQ+q1IG
+         WAiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUI6IVvxLuVufYQOnoIooMdA/1Hkc18kQfWcZTk3hd5Z/TKb1S8tALA2DLmbzsDVi0akDwxaguaJ/nAgXI=@vger.kernel.org, AJvYcCVApkCxHHza4/s5u6vM16BefnCw+qyfrL07xPZKSRFF2KBE2izbEsgALt60qiCj1DQI4YExA1qqnPcn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDolSecc7MW8AtQiIWIh/Y6aobH+KL1bPYlvgxbpZk4In/Xs3E
+	9XaWQHYpzRL7OsZtb+xZCISs+ff4xUbe/cyVQIHlpYc7AiAPK7Db
+X-Google-Smtp-Source: AGHT+IF2TMNWOK57NJYqFhiohYWDjeEwtqyjREKr7ARGPPU865LgGVMGCkUWKlmrHBilzXg0Gsbelw==
+X-Received: by 2002:a17:90b:3803:b0:2d3:cd57:bd3 with SMTP id 98e67ed59e1d1-2e1e636f4admr10702335a91.29.1728238491439;
+        Sun, 06 Oct 2024 11:14:51 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.221])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e85d9ab8sm5403095a91.29.2024.10.06.11.14.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 11:13:45 -0700 (PDT)
-Date: Sun, 6 Oct 2024 23:43:43 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mhi@lists.linux.dev
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Loic Poulain <loic.poulain@linaro.org>
-Subject: Re: [PATCH] bus: mhi: host: pci_generic: Use pcim_iomap_region() to
- request and map MHI BAR
-Message-ID: <20241006181343.bng5gkwvmofefomv@thinkpad>
-References: <20241004023351.6946-1-manivannan.sadhasivam@linaro.org>
+        Sun, 06 Oct 2024 11:14:51 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-pci@vger.kernel.org (open list:PCIE DRIVER FOR ROCKCHIP),
+	linux-rockchip@lists.infradead.org (open list:PCIE DRIVER FOR ROCKCHIP),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC support),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v6 0/3] PCIe RK3399 clock and reset using new helper functions
+Date: Sun,  6 Oct 2024 23:44:27 +0530
+Message-ID: <20241006181436.3439-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241004023351.6946-1-manivannan.sadhasivam@linaro.org>
 
-On Fri, Oct 04, 2024 at 08:03:51AM +0530, Manivannan Sadhasivam wrote:
-> Use of both pcim_iomap_regions() and pcim_iomap_table() APIs are
-> deprecated. Hence, switch to pcim_iomap_region() API which handles both the
-> request and map of the MHI BAR region.
-> 
-> Cc: Loic Poulain <loic.poulain@linaro.org>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Following changes are used to reduce the code and used new
+clk_bulk and reset_control_bulk helper functions.
 
-Applied to mhi-next!
+Additional to the PCie core controller changes
+added some new PHY changes to help improve and clean up
+the code.
 
-- Mani
+Previous changes.
+v5:
+https://lore.kernel.org/all/20240901183221.240361-2-linux.amoon@gmail.com/
+V4:
+ https://lore.kernel.org/all/20240625104039.48311-1-linux.amoon@gmail.com/
+V3:
+ https://lore.kernel.org/all/20240622061845.3678-1-linux.amoon@gmail.com/
+V2:
+ https://lore.kernel.org/all/20240621064426.282048-1-linux.amoon@gmail.com/
+V1:
+ https://lore.kernel.org/all/20240618164133.223194-2-linux.amoon@gmail.com/
+Anand Moon (3):
+  PCI: rockchip: Simplify clock handling by using clk_bulk*() function
+  PCI: rockchip: Simplify reset control handling by using
+    reset_control_bulk*() function
+  PCI: rockchip: Refactor rockchip_pcie_disable_clocks() function
+    signature
 
-> ---
-> 
-> Compile tested only.
-> 
->  drivers/bus/mhi/host/pci_generic.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 9938bb034c1c..07645ce2119a 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -917,12 +917,12 @@ static int mhi_pci_claim(struct mhi_controller *mhi_cntrl,
->  		return err;
->  	}
->  
-> -	err = pcim_iomap_regions(pdev, 1 << bar_num, pci_name(pdev));
-> -	if (err) {
-> +	mhi_cntrl->regs = pcim_iomap_region(pdev, 1 << bar_num, pci_name(pdev));
-> +	if (IS_ERR(mhi_cntrl->regs)) {
-> +		err = PTR_ERR(mhi_cntrl->regs);
->  		dev_err(&pdev->dev, "failed to map pci region: %d\n", err);
->  		return err;
->  	}
-> -	mhi_cntrl->regs = pcim_iomap_table(pdev)[bar_num];
->  	mhi_cntrl->reg_len = pci_resource_len(pdev, bar_num);
->  
->  	err = dma_set_mask_and_coherent(&pdev->dev, dma_mask);
-> -- 
-> 2.25.1
-> 
+ drivers/pci/controller/pcie-rockchip.c | 219 +++++--------------------
+ drivers/pci/controller/pcie-rockchip.h |  35 ++--
+ 2 files changed, 61 insertions(+), 193 deletions(-)
 
+
+base-commit: 8f602276d3902642fdc3429b548d73c745446601
 -- 
-மணிவண்ணன் சதாசிவம்
+2.44.0
+
 
