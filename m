@@ -1,135 +1,169 @@
-Return-Path: <linux-kernel+bounces-352408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D335F991EAB
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:56:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E83991EB0
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F8B2B21848
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:55:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 366931C20D3A
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E292E40E;
-	Sun,  6 Oct 2024 13:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAEE1799D;
+	Sun,  6 Oct 2024 13:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iLgR1s2e"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFPaHzTE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ABFB67F;
-	Sun,  6 Oct 2024 13:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65041C125;
+	Sun,  6 Oct 2024 13:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728222941; cv=none; b=F5loLYkEw+VJF8LUIoKUiUnKi6+oF0+wHjbBjy13QUVWXO0GWCzzbK3kTazXlIZjDsQcjP1F2Q2Z1R5Ko+9vkGNacWDA7XI8LcAddCyHyU93qSiEyiM/SeAX6S0DISFsuY0DKeGFEuYsQVDV2cwBIdtTSiszDHHnFMChu2a2MsU=
+	t=1728223105; cv=none; b=pvGmo2PG8YY6L9njeDbr7Ug41fzRG6appbnwKrmhEft7NrsxRL9nRIeP+org+87wmIDPt7L26H+7EKgqzLobaaOaM2Lb6O83kJEPJg3C4tt5UPAe+4onikku5eHQ+ltNDeBdAdvhHytieCEMEX7RVFn/D6OW6hHqdSE4WgaM5vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728222941; c=relaxed/simple;
-	bh=MYHJf4lj3n+HDqcWGj7t3rIwqbbwt9t4VigKu2pCda0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=PNwpUfb1O1JXGE2/zYha4/COyRe1qwtpulelSQMj1MlJCv2bdcaoStaVmUqZ3RFZ0fYc/a2XrM94Ms7uxz1xvO/RVoO65eswYffRV2WOsH38wi2aiYpve15IlrPAWIRuVTQtZyQSbyHqCKRWy8/jmRklupmChZ6iJ+dFkZl70t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iLgR1s2e; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 496DLi0E007514;
-	Sun, 6 Oct 2024 13:55:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=GM0WgxExW4LzLiSDR7xysZkDOr6U+InUUJOFL+PRPO8=; b=iL
-	gR1s2emduvV0hZEsSPr0+9A9OSHnEcmsLtYv8XNzxBU7vB/D2/cg1q9fE3HMONzm
-	bQg33UmNFgkCLYBlNFfIDh4jsDg3iw4LxzHJBuxR+GYDyl/vvVfQmkqV9g9o5V0D
-	IusIFud/m82o8r0j896g5RSmNgczHxXbUJPDYMzGlXqDZx3o9GW5X7FjVr0LfjXD
-	DjgEmdzf3YIMYjCb/IoniBDIGBZERSlCzqkGuiyyTspI687gpfISggA1tijxXXrw
-	YPNsCmtO4l1ko2C/fyHa+g/vOBvz9ZLrSqffm1hfnhrt4uB77LL2t3GZnYD9DlS7
-	gWvWRQ0XofTXKW8IgQSg==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv8a1h6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 06 Oct 2024 13:55:35 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 496DtV2k015204;
-	Sun, 6 Oct 2024 13:55:31 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 422xhkgnnt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 06 Oct 2024 13:55:31 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 496DtVrP015189;
-	Sun, 6 Oct 2024 13:55:31 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-spuppala-hyd.qualcomm.com [10.213.108.54])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 496DtVL2015185;
-	Sun, 06 Oct 2024 13:55:31 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 4137148)
-	id 9E59B6017A3; Sun,  6 Oct 2024 19:25:30 +0530 (+0530)
-From: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, quic_rampraka@quicinc.com,
-        quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com,
-        quic_bhaskarv@quicinc.com, quic_neersoni@quicinc.com,
-        quic_gaurkash@quicinc.com, quic_spuppala@quicinc.com
-Subject: [PATCH RFC v3 2/2] mmc: host: sdhci-msm: Avoid reprogram keys for QCOM socs
-Date: Sun,  6 Oct 2024 19:25:30 +0530
-Message-Id: <20241006135530.17363-3-quic_spuppala@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241006135530.17363-1-quic_spuppala@quicinc.com>
-References: <20241006135530.17363-1-quic_spuppala@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3O8pDHRBymviQolMkFDSabsMaYmMo8b7
-X-Proofpoint-GUID: 3O8pDHRBymviQolMkFDSabsMaYmMo8b7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1015 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410060101
+	s=arc-20240116; t=1728223105; c=relaxed/simple;
+	bh=aLSHWAw8MZCLXxMnSk8j648kIMobJGQACMVLvQVqzOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N/1eVxUvpniqgGHara3TBJ3pZdKThrbTS/Ian8tRxOPCCbLuSw3+YGYHwBNjtgfjpHjhsUGkTJpjd5bt2BLmTb5cSistHPLamOWh1L7DSZNAFd8BaJjbaY9hpS96OS0qNaRPlhOx6PuT2xGHohfQxaGyci+/gxQCH916RM5dlh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFPaHzTE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1530EC4CEC5;
+	Sun,  6 Oct 2024 13:58:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728223105;
+	bh=aLSHWAw8MZCLXxMnSk8j648kIMobJGQACMVLvQVqzOA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UFPaHzTEa+Ef6TOGYasLnLQFd9A6do4p3qwQwckr4fmw8hUDP+vu27gVzZ6E9hOLh
+	 b69FlkpEYbT0cNkPbySy9G8EVO2/en292xL/dCOIICPLajSwgaddGq7f1ZCH+tSMH0
+	 kXrhpaSP3ruomq4YPP5I8IXOCSwjhqoVUdZG08gB1hJ2sSvrH3MLoWU9mZ5Gy5lsEn
+	 Eqscc8B239jVSm44swBGFFYlMDW3cf3jy4tXKFYUPPUXfMmbFr4m/iyqCMt9ZEyR/G
+	 avdWX07MTQAHDWiNXqyW8cK3CI6yN6zBvM+Pv9lR1I/+N7hco09LfvpKxV4nc6JwwF
+	 ABOOTib3CxqSg==
+Date: Sun, 6 Oct 2024 14:58:12 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mihail Chindris <mihail.chindris@analog.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org,
+ dlechner@baylibre.com, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v4 10/11] iio: dac: ad3552r: add high-speed platform
+ driver
+Message-ID: <20241006145812.3d6679fa@jic23-huawei>
+In-Reply-To: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-10-ceb157487329@baylibre.com>
+References: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
+	<20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-10-ceb157487329@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Implement Qualcomm hook to avoid reprogram of all
-keys to Inline Crypto Engine on runtime suspend resume
-of MMC since keys are not lost for QCOM socs.
+On Thu, 03 Oct 2024 19:29:07 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
-Signed-off-by: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
-Co-developed-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
----
- drivers/mmc/host/sdhci-msm.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Add High Speed ad3552r platform driver.
+> 
+> The ad3552r DAC is controlled by a custom (fpga-based) DAC IP
+> through the current AXI backend, or similar alternative IIO backend.
+> 
+> Compared to the existing driver (ad3552r.c), that is a simple SPI
+> driver, this driver is coupled with a DAC IIO backend that finally
+> controls the ad3552r by a fpga-based "QSPI+DDR" interface, to reach
+> maximum transfer rate of 33MUPS using dma stream capabilities.
+> 
+> All commands involving QSPI bus read/write are delegated to the backend
+> through the provided APIs for bus read/write.
+> 
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+Hi Angelo
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index e113b99a3eab..427e0126459a 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -1183,6 +1183,11 @@ static void sdhci_msm_set_cdr(struct sdhci_host *host, bool enable)
- 	}
- }
- 
-+static bool sdhci_msm_avoid_reprogram_allkeys(void)
-+{
-+	return true;
-+}
-+
- static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
- {
- 	struct sdhci_host *host = mmc_priv(mmc);
-@@ -2641,6 +2646,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 	host->mmc_host_ops.start_signal_voltage_switch =
- 		sdhci_msm_start_signal_voltage_switch;
- 	host->mmc_host_ops.execute_tuning = sdhci_msm_execute_tuning;
-+	host->mmc_host_ops.avoid_reprogram_allkeys = sdhci_msm_avoid_reprogram_allkeys;
- 	if (of_property_read_bool(node, "supports-cqe"))
- 		ret = sdhci_msm_cqe_add_host(host, pdev);
- 	else
--- 
-2.17.1
+A few trivial things inline.
+
+Jonathan
+
+>  obj-$(CONFIG_AD5380) += ad5380.o
+> diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad3552r-hs.c
+> new file mode 100644
+> index 000000000000..1e141d573d76
+> --- /dev/null
+> +++ b/drivers/iio/dac/ad3552r-hs.c
+
+> +static int ad3552r_hs_setup(struct ad3552r_hs_state *st)
+> +{
+> +	u8 gs_p, gs_n;
+> +	s16 goffs;
+> +	u16 id, rfb;
+> +	u16 gain = 0, offset = 0;
+> +	u32 val, range;
+> +	int err;
+...
+
+> +	err = ad3552r_get_custom_gain(st->dev, child, &gs_p, &gs_n, &rfb,
+> +				      &goffs);
+> +	if (err)
+> +		return err;
+> +
+> +	gain = ad3552r_calc_custom_gain(gs_p, gs_n, goffs);
+> +	offset = abs((s32)goffs);
+
+Why the cast?  abs is special cased for short which should work with s16 I think.
+
+> +
+> +	return ad3552r_hs_setup_custom_gain(st, gain, offset);
+> +}
+
+
+> +static int ad3552r_hs_probe(struct platform_device *pdev)
+> +{
+> +	struct ad3552r_hs_state *st;
+> +	struct iio_dev *indio_dev;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*st));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	st = iio_priv(indio_dev);
+> +	st->dev = &pdev->dev;
+> +
+> +	st->data = pdev->dev.platform_data;
+> +	if (!st->data) {
+> +		dev_err(&pdev->dev, "no platform data!\n");
+> +		return -ENODEV;
+
+Trivial preference for return dev_err_probe() mostly because
+we can then drop the brackets.
+
+> +	}
+
+> diff --git a/drivers/iio/dac/ad3552r.h b/drivers/iio/dac/ad3552r.h
+> index 088eb8ecfac6..d9da4794fcb3 100644
+> --- a/drivers/iio/dac/ad3552r.h
+> +++ b/drivers/iio/dac/ad3552r.h
+
+>  #define AD3552R_GAIN_SCALE				1000
+>  #define AD3552R_LDAC_PULSE_US				100
+>  
+> +#define AD3552R_CH0_ACTIVE				BIT(0)
+> +#define AD3552R_CH1_ACTIVE				BIT(1)
+> +#define AD3552R_CH0_CH1_ACTIVE				(AD3552R_CH0_ACTIVE | \
+> +							AD3552R_CH1_ACTIVE)
+Add a space before the above. I think it's aligned with the (
+but should be just after that.
+
+> +
+>  #define AD3552R_MAX_RANGES	5
+>  #define AD3542R_MAX_RANGES	6
 
 
