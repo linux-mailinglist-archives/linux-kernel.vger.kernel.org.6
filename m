@@ -1,121 +1,159 @@
-Return-Path: <linux-kernel+bounces-352442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3103991F42
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:12:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D26DD991F4A
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2DF28189C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:12:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 779B41F21C48
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DD1145341;
-	Sun,  6 Oct 2024 15:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D621714D435;
+	Sun,  6 Oct 2024 15:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="IT55S9/z"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="IXatiKC9"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F12146586;
-	Sun,  6 Oct 2024 15:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0252374C;
+	Sun,  6 Oct 2024 15:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728227527; cv=none; b=NAEUsqZLraAYioQkGLzm/p0wW8KoJRyI5TgzLPWTWW1YeD/jtfrmoTISJxuQIOT2oJOyVyFD7S3L9xTZwktZHi2xdKdx5r9E2kcluMxyYFw9GENncNb3Rq0iingKzrCNrIoFZapxSoAodZG4rbrfhIvpUq56+04kWWAA+mzyMqw=
+	t=1728227609; cv=none; b=AiSzlREHP+r7Pttvijq4gkEGd6TawqGDecFClkrXOlxyZuffaiADrMmqA7IGBe2nLBoO6haAIKSPGbu00+NyFTruQ/eGX/66woeCmxRAc0uLMxYzrvRipbr+Mi+Ho887QvclsDLfrioowJEmcwkD57/pf9WOZxF8W7huMx8mz8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728227527; c=relaxed/simple;
-	bh=AiUhZYra/S3TwkrQaWv+4k/n6y9o56HzZ1mWTaA3EEo=;
+	s=arc-20240116; t=1728227609; c=relaxed/simple;
+	bh=11Hk/2LhEq2qh8DTcSNETkAlcbZwrrfWbu0XCuGnJDo=;
 	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=Kc0b23mbGkm6N7rURViKd1RmzuTKFUZDfECuvVxU0exIfVy1Kwhah5B/UB1PjJy1ZaDuFqCuFD/nV63Fw4n1uS5XvclViE7kIwZz2Mt6u//3gDPyB8Ek3DOUsM3kjICN/gjI808rxY+r4QNB9N4BzKK8Th0Y+Q4DFREm8Y8C7xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=IT55S9/z; arc=none smtp.client-ip=212.227.15.19
+	 In-Reply-To:References; b=mSG1WVBtOuIMhDEan2R9Lt5UxhnTJFZFrD9QAf+XCOwuA2xvfv37KRVCzX5q23odOA9BK6ZmPFR6y6rWNm2SA9JEKvJGbqxTIdPmFwpr+4okZqx7dMkyqbyT3NTczVMXgsUPMVHjhLBcpe3JpNqEemDWVs5KFhA9IF/YdoIUd3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=IXatiKC9; arc=none smtp.client-ip=212.227.15.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1728227502; x=1728832302; i=frank-w@public-files.de;
-	bh=AiUhZYra/S3TwkrQaWv+4k/n6y9o56HzZ1mWTaA3EEo=;
+	s=s31663417; t=1728227587; x=1728832387; i=frank-w@public-files.de;
+	bh=hvp+E/UAnu6woBEMc62+rv/GUAvXO/LstybZIGTGROE=;
 	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
 	 Content-Type:Date:In-Reply-To:References:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=IT55S9/zb6+UVYGRv5GNvFhzx8sz4iXDSJdInl2Xq0yCDvJVE0fa55tM7QYRgF0G
-	 sQ38OEVBi7iJedov/PJS+7UvZ7g0q3S368wHAq/Z6EcZsiryLR36r4QMjM9OZkqQd
-	 qqvOM9Oo1mQvAX7yruCmQF/V8eB5+ov5Y3UncVbleJ4jNL7LyF7hMfAFJHXPrPxNP
-	 AHS7OqcrE9vgDYOfeCvLARf7QcDhNn9ErkM+/IGF8GGFZuZOxWPOPaQ3tciPPZQ45
-	 RAB/IVZuqsYvytmXOPulnrBhCsETnhjLPk4Kpc8ogcyIA4den8L75JNse4uUMzUZm
-	 B8L2it+tx7tI2aKobA==
+	b=IXatiKC91XmdlgblPrnw5PNRV193547gYqACus0BQvCuzfExHNG+XUY/Fw9IjG9w
+	 g1z3djflsnEJRST9chWPFfjFCkQ6DKDJdx5k/BuNQww2LDQy0EI3E5gPcL71ZgHqV
+	 Wy/fJUs4idyUmlKXlq2J7PCzaq/gstZBYi2eTy9pgqbv7K/mWEStIGlDq/JeAGYph
+	 KqJVMl6rkRbkgmOHHWi8mWKsZv0adi/LnDwpLGODORQ/Cs4rGZabkKfvRKrlNDG8r
+	 IcIGgICV+w44oHthLKb1OGghpfN5liZqgzW9MWGdIreuke2y3kQURmIQ61X8Uq2JL
+	 DP6WvMu4KRft43n5XA==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from [217.61.153.101] ([217.61.153.101]) by web-mail.gmx.net
  (3c-app-gmx-bs41.server.lan [172.19.170.93]) (via HTTP); Sun, 6 Oct 2024
- 17:11:42 +0200
+ 17:13:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-5ceed296-8a65-4892-b449-6f832a978d69-1728227502700@3c-app-gmx-bs41>
+Message-ID: <trinity-7314f935-72cc-4f2f-9184-0c19c147b2a0-1728227587807@3c-app-gmx-bs41>
 From: Frank Wunderlich <frank-w@public-files.de>
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Frank Wunderlich <linux@fw-web.de>, Mark Brown <broonie@kernel.org>, Rob
+Cc: Frank Wunderlich <linux@fw-web.de>, Chaotian Jing
+ <chaotian.jing@mediatek.com>, Ulf Hansson <ulf.hansson@linaro.org>, Rob
  Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
  Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Leilk
- Liu <leilk.liu@mediatek.com>, linux-spi@vger.kernel.org,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Wenbin Mei <wenbin.mei@mediatek.com>, linux-mmc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- daniel@makrotopia.org, john@phrozen.org, eladwf@gmail.com,
- ansuelsmth@gmail.com
-Subject: Aw: Re: [PATCH v1] dt-bindings: spi: add compatibles for mt7988
+ daniel@makrotopia.org, linux-gpio@vger.kernel.org, john@phrozen.org,
+ eladwf@gmail.com, ansuelsmth@gmail.com
+Subject: Aw: Re: [PATCH v1 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
 Content-Type: text/plain; charset=UTF-8
-Date: Sun, 6 Oct 2024 17:11:42 +0200
+Date: Sun, 6 Oct 2024 17:13:07 +0200
 Importance: normal
 Sensitivity: Normal
-In-Reply-To: <kmzl5zmqqudoq2jcdacfsbwq3axdvcml4m5kw5oqqo2hj6iiuq@xzeg6penuic3>
-References: <20241006102740.17948-1-linux@fw-web.de>
- <kmzl5zmqqudoq2jcdacfsbwq3axdvcml4m5kw5oqqo2hj6iiuq@xzeg6penuic3>
+In-Reply-To: <4pmhzc5sf2c7dww3tihyqq5coco6u5nx7xvtqami7u55442gij@mqvyvqrpa6ft>
+References: <20241006102154.17087-1-linux@fw-web.de>
+ <20241006102154.17087-2-linux@fw-web.de>
+ <4pmhzc5sf2c7dww3tihyqq5coco6u5nx7xvtqami7u55442gij@mqvyvqrpa6ft>
 X-UI-Message-Type: mail
 X-Priority: 3
-X-Provags-ID: V03:K1:Btf22OQQiWHbAxP7CwpcejS6hY9mQkc8eIiKzvNtfMmCAlN3qqALUu45gnV+SHw4ffNOm
- vSi1wjtYZBy1hSY9rNpHbU6+Ye7QfBx3k4TmOufADwfaZwZhI/yO6oVjngQPo2YzptkWh/MZupkp
- QPiWcKXAMoQnStXeX8m/Dh41uvECwPHspqdn6TE66cCAm7Lly6UMyiosIpVTqF90TLsz00ojI9qm
- BeaNtuPimSMpdLQiQ/aY+85k3qrfJg/kOZzaPq5dCJydhL6seQoBsSL8cYNbl4bNbTIKmshZ69t0
- rw=
+X-Provags-ID: V03:K1:CTdBPjZOMMsYISKc7AhsidebqUXN8P2MyreSQ7CvV+Q2mDrZs+E4pwsypQTkLg6ohgj2G
+ lNXnUMp5BvYpuHMf3wwYFFMSVFy40DjbYl55PGX6ibEecNe/w5Bfi/lTvhVbLKgNKfT4cycoTcUF
+ INoYB/BWUokQ+W6hh6Nc7Vt2X/W7ICeGCaYEkoKhTVDT+StfWGLWKMC4+zJ+JbPECDy2JgWc15H+
+ dH5wEra4xsfm5Xq5UjDRMsCD+TdQGlmryvZE5746HRzC0r9SAMbNEtJH+QQ00/rkOAasGJ/yAr0S
+ qU=
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:O7onKpdDbCQ=;P1dfCcTaf7pXMv38K6Mviv5Zqig
- vo0g/fwJLt9POd1LtSUXZAaYt7sg/LAtgKdTCcgOMwo3X5W8PipUr/JMqJjn8fiOlTbynrUv0
- PYcKwCn3BtdkKoMnVuTz9GKb3belALvCc5uTVVCSv+jSOOXt/+GNWXinC8XmZtjqq1YQaUmrx
- DrdgcHKPLRGkMxDtxwI+AUNjVekHXY5ANDIU6fn3D3NzSGdaSDHxHnY6Fsq0PCDOOCJxCc6B6
- dhX3jBTaDuTNG6huH1BD6ayqRd3nUdFrRMfaashBy3L8zBuzQhWNogQ3jUNZl8GwsGR/++kW0
- TeyBU73mi/H2lYu6pYYWDtnQkhwEppf1UzfQ4u9n8kf/fx7a2U9RoO71uy1nhwAAcjjkRBiaX
- o5sVnWgLyADrobn+L20WmvF2IJ9p03535zf9cYDYdbbHjYq4hFO/NlmbECFz9dr0F2TOQGG2n
- EpxVxHW+P7q2THuQIRyWiUedArJL/ZhSAmvFzKr5Mo70AfJv+olAkwHH15mLTVTmvwCl2cKKX
- 8eWC4t0XVkSuCE1wCaD/AxyxIRFqvvTp8DW08oydRpdyaaYumKTd1sHco6cevpnqovsmmZyyl
- 96hMmUQywTNZU13hFlLttrzX1xYYWajzDfJAs5wLNDWRHzzgq8vu0KxHVevcaH/M7XDAiEcXK
- TBrzmhTwOIYRxLTX89yaXoHk78MEiY4VfudKOmkG/g==
+UI-OutboundReport: notjunk:1;M01:P0:13PIiWXd4Mk=;1bOKWLxSe6Uw4YXhgtLlNVXLORD
+ WxQ97gsEEjcJDu4G52scILcjXnBB5ithJ8no5uLU9S59R020pfdv7NZGAw64FJSfBwrPJBkBb
+ JYazdnTQgrhbcRD75JoUavzWRJt+YaFW2lqwiN1jXU2Icj+SrjSDtkNTMwDZ0NdX9GI68kYKZ
+ apOjMkF2+eDfq7GzmQPbgTcq8oLKwYXYJFsj03MwNktin0XU7891pU+1Zfa9m/PNLvyowIz7w
+ ubLvTzr+aSP4d7WiLgpgdMUrU/ceMWg1DZAWpL03UwkxuZHUw/4yVAHv3THyN8kptg2i8a2+P
+ XN47xue2eV5+u7W6nDe0g1OxxmgsiQFIEMA0L5hGYk87Qn6rJ6Y1HjEYXYr8vtyRQuYjWEQ1q
+ D4XnD8zRkRn2XmiNX71+P1EvV8HeeWNTNPzYIXyDH2x/tycVyVh3xU99f4wKrMQ/f+KrkVPs2
+ 5fnGRqTOgQ9ZYXiL+cxVYDfplw8QdHHB9WpZiLM/xruCiOtswKk3mtEi4WgZtnbIK48egB0uV
+ pkvQoWKvAfaNxo8QZRT/rjf01S2mksUFzca4CaMZdTBXsMkSH1szGC9/DpP2AqlmDRujz3UeW
+ ntwBlnBFT2fyENLfKjjCtgThWkO2ENOS9cetKRmKgpfgEOm9q1CSfM8pY61stVu6ZeGEOGd5p
+ nb0FNXWOor6vpK/+oc+eyQ4GHf43xyGJ02x7TcRp0A==
 Content-Transfer-Encoding: quoted-printable
 
 Hi
 
-> Gesendet: Sonntag, 06. Oktober 2024 um 14:48 Uhr
+> Gesendet: Sonntag, 06. Oktober 2024 um 14:47 Uhr
 > Von: "Krzysztof Kozlowski" <krzk@kernel.org>
-> Betreff: Re: [PATCH v1] dt-bindings: spi: add compatibles for mt7988
+> An: "Frank Wunderlich" <linux@fw-web.de>
+> Betreff: Re: [PATCH v1 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
 >
-> On Sun, Oct 06, 2024 at 12:27:39PM +0200, Frank Wunderlich wrote:
+> On Sun, Oct 06, 2024 at 12:21:48PM +0200, Frank Wunderlich wrote:
 > > From: Frank Wunderlich <frank-w@public-files.de>
 > >
-> > MT7988 has 2 different spi controllers. Add mediatek,ipm-spi-single
-> > and mediatek,ipm-spi-quad compatibles.
+> > Add binding definitions for mmc on MT7988 SoC.
+> >
+> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> > ---
+> >  .../devicetree/bindings/mmc/mtk-sd.yaml       | 24 ++++++++++++++++++=
++
+> >  1 file changed, 24 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Docum=
+entation/devicetree/bindings/mmc/mtk-sd.yaml
+> > index c532ec92d2d9..db7d1c570aea 100644
+> > --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> > +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> > @@ -21,6 +21,7 @@ properties:
+> >            - mediatek,mt7620-mmc
+> >            - mediatek,mt7622-mmc
+> >            - mediatek,mt7986-mmc
+> > +          - mediatek,mt7988-mmc
+> >            - mediatek,mt8135-mmc
+> >            - mediatek,mt8173-mmc
+> >            - mediatek,mt8183-mmc
+> > @@ -263,6 +264,29 @@ allOf:
+> >              - const: bus_clk
+> >              - const: sys_cg
+> >
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - mediatek,mt7988-mmc
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          minItems: 3
+> > +          items:
+> > +            - description: source clock
+> > +            - description: HCLK which used for host
+> > +            - description: Advanced eXtensible Interface
+> > +            - description: Advanced High-performance Bus clock
 >
-> Why generic compatibles?
->
-> These are supposed to be SoC-specific.
+> Why ahb is optional?
 
-currently i used the compatibles used in SDK, but got info now, that there=
- is some more discussion needed with mtk.
+sorry, my fault, forgot to change the minitems property after copy the blo=
+ck
 
 > Best regards,
 > Krzysztof
->
->
+
 
