@@ -1,112 +1,150 @@
-Return-Path: <linux-kernel+bounces-352496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983E8992006
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:38:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B10991FCC
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A53571C20E21
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:38:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3F881F214F4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA69189F45;
-	Sun,  6 Oct 2024 17:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAC3155C8C;
+	Sun,  6 Oct 2024 17:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQtcqkIb"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+oUvJFg"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106DB4D8CB;
-	Sun,  6 Oct 2024 17:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E234E167D80
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728236283; cv=none; b=d5ggZebG2Prb6K4riTyimrGTJfaiu7XMD1xgQjtghSONhTBak/w0Fsm9gb6b++TSOmcM/o4FaO47hPodH6vbNvwpt3DUjzz1XX8qasybrLr9zJr0H+YRGJUHiANjdOjFlG1xshX82jMuA16Uahsfcozv9XPzftoAKoNRoHUIPhw=
+	t=1728234420; cv=none; b=Ef/4efuzY9/SnG+j8samJEk0zrwL/xcdO7AL33PMHtdDl5XZOwzlkc/qzugmUhvwsv4XRCne6Cc3FiqDUQYJ6uH+rSpz7RrDtRTwL3XzoFykYHDTRXlTJhfOhyt7NkmlM375u4r48i8wsr8QN0y0+1lalniDmUlvZpSotGZ2q+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728236283; c=relaxed/simple;
-	bh=Ax8ED+XHDEDOee3jomxINuEh+tXeRTqsFET2gm9rSkY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XVfrxDYQh8iBEggoh3FCWHIov7+I9l3UtQC3PGB++RNBtPLzbZhj/zXrb015RiykRBpxn5lHsAgClTgkf/sRWjlO4OBvBtrmVq9AzECqF98/VYrr96vOL2qqP+DESmci7SnRmcCkGgbvTsHPwHnDd1E3LhQu/jM/cCttvkRuhbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eQtcqkIb; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fad0f66d49so54386341fa.3;
-        Sun, 06 Oct 2024 10:38:01 -0700 (PDT)
+	s=arc-20240116; t=1728234420; c=relaxed/simple;
+	bh=QLZOPV2KCdW4/rWDe98NOGrenAixRMGh/7THynPfEIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GNEqlq3kQgbzJhBIak7tYIgOXXpm4fx/xqhDV6DmyBxTmk3tJYTpK18PzNGTvkbG+ML5oiZdr4JptjFfiONG9WwF5P43fDcI0+8kJcuiYSL/527ahqvnnbIKwTZXf0NQjXgS/tFs6Va7oxEs43fQmSp+plXC/K7ReRwmYwzIz94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A+oUvJFg; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5389e24a4d1so4400651e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:06:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728236280; x=1728841080; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8knR1jAqmQQMStE72cw1MCQF26YQ9iTIWSOF8H62+ng=;
-        b=eQtcqkIb/DCsHk/PQHGK+/nASyRVTiDD/tqw7t44zsF/YQJe+XtwKtKXuRSuQO4rQf
-         ITg+pB9P28EAZ0joHZl3mHzBvrUup5UViugJFHa7v0tNaHOmLv+ILCGTpponDSiCbVx7
-         P1MvKTwwmf6XjowytjAP8pPmhtOrrCLDCy1nb8horNxN9Uo+olSgFAIbUfuDJUMKdnmR
-         VahBOcfk2NVaoqM3tvnLQoDT4kaLIdsIsaWIGLGTAVm+ORKbvl5WtT0EM4x31Y/HYFD0
-         ZjKwsmop4spqhCro8B3zfET/+uPUYYZqUmv0iRiPFGLIaWKVR/iPnUdEkcdIE0rC+Zo5
-         cblA==
+        d=linaro.org; s=google; t=1728234417; x=1728839217; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mgiOfmVMYDxKqStonmB8yqlxiThjQt2okmdO+ALgRlI=;
+        b=A+oUvJFgA5lkI1MqjlHMWHvUrr2Q3NZNBNkEif+GUNciuSuMALcCgyGH0ICBLZy5QX
+         gg2H9GtMcq3zP7GXd3BPZBJEVqmZHqW1EMk8Yicb8jY5ihPg1ytxzxxpeaqNGixz19fC
+         1Ox/CVZfI7GU8q7ooE1oLvAkJkjmq/0k5u9LJrjCiIOfhuI4J9JSjv1XA2wRxIypbZpx
+         zatwDcI3SYOVU8tYTvwt/V0vguRzZkFTJav2P6NoUFSdRj78FnUY4ztpiNSJ+I+s3Z1P
+         4MrcIvw+Jqe1kHqlWOZ/rHlsUJZ/oR84AQWOq9da+LCzn7xGWxEDDhYUie42XPra5Phj
+         i6bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728236280; x=1728841080;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8knR1jAqmQQMStE72cw1MCQF26YQ9iTIWSOF8H62+ng=;
-        b=Q8j38sPcYg6d28/W4v5Dy38Cf8X2uaHG0ET10rT3JUhxBQC7RCE2EDAnoxxrBdLCTI
-         If/YY+keuzfbWelQZXpSxbZvcJODrjr2jyMj1yzJgp6tyoARO/WBDU56aG/N+NPrBq+M
-         zKuyVtKw8z3A99VPZRXpljb6Z7PY2GCvrr9PV2Qk4oDOmXBsxN7/O/wON2ZkhzTsVFH8
-         H6ZJelSrZfJbu/N8BpbAAVHweDmz++WHcSm8vwJlFuGg4TALc9armGe4GI0DR4fdrQ2K
-         WCt+PiwPPIKljEuNG0OfgcK+JxLEX5remShEcVJcYDkbUtkcy2M8f5gOgZ9laMoOxIgS
-         KIzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+8QYfVa64E4W5DBj1Ojvc2M9YSyNfNdmf2307Dk0bHUnZZKdJHuD7uMoEZ403lhzGqxy+mVtd@vger.kernel.org, AJvYcCXW6W1yEkn/R/QARpDJp7m9F4W5F3P11V7991FFBse+MTMamlAtsykAnUqXcIvaEHRl1M8KXYhRWFDzKZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG7rpVm7x1xJVJyCOu/CRtvTdl16fR2pXomsgo0/vgcrmXr86B
-	xIcmIlq64hXKHDUY7gjAk5xjUSxpwEvpc3w98ypmJbe5DClcmCAiXhIYUw==
-X-Google-Smtp-Source: AGHT+IGs3KcUMTSVIly5xm81fei8U8gVXQsFazAwjGqo5YFnsMg/tXEppj1wyjRdXzU58g2BgDwibw==
-X-Received: by 2002:a05:6512:3b85:b0:536:54df:bffc with SMTP id 2adb3069b0e04-539ab9dc722mr3626806e87.42.1728236279947;
-        Sun, 06 Oct 2024 10:37:59 -0700 (PDT)
-Received: from alpha ([31.134.187.205])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec157asm581202e87.58.2024.10.06.10.37.59
+        d=1e100.net; s=20230601; t=1728234417; x=1728839217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mgiOfmVMYDxKqStonmB8yqlxiThjQt2okmdO+ALgRlI=;
+        b=p4Uym4XfKdhzmSdWNWDTtA/ew/rils9qp04X/TGN4xdnLTNoZb6wmgkJ6n1Fe0fXnK
+         Yl1J6UbvjecqzJPVZ8fPxjuF+JZHE83tDcugyCn6o6vua6SVjqrU4+FCC9JdYKMwDfcs
+         qN8pG1ZPdrC0hhETSyPxiK7wRbjItA6gVPHU7o9P82Cg99tEeKgKCX9i8HYz/iVKlcAH
+         nvn7rwKqFAZKE22VL695/oXfYWzLlTrjWjFkHTCb8ogt9p4BjDyW1BUeFZYZiYVIEpVT
+         YjlQCfLMTYLRQHKM4AHbBsE17xIJr8sNq/SS1BV+oyofgdqLzK6iCjhUtMW0lljyBIVU
+         Zwcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxYHaRpW9RV8HjchwMhNrJuDnsVU6W9a8hMC7UPcAqmZvfULGqm40QQTW36EV8MNsTQUF09QruMuwv5rw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2K0C+9+rzHgl6sigjGJeg0Z4PzWAPfusCL3J5agVL8TZ23xKy
+	93m0FKeN327ga0AEBVVHbIO6IfCrnh3w6OZJK1bOBEiDGawRZVgxjPnRv0q5S2U=
+X-Google-Smtp-Source: AGHT+IHffHfShn8xyefRkGtbG356/CbIEk2NFW/1Jb4Xs0sYFx6K0VNQHn+Ngf0TWbBmbX9M7T1xmQ==
+X-Received: by 2002:a05:6512:398d:b0:539:8847:d7e9 with SMTP id 2adb3069b0e04-539ab8843c9mr4905244e87.35.1728234416966;
+        Sun, 06 Oct 2024 10:06:56 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec8297sm559913e87.78.2024.10.06.10.06.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 10:37:59 -0700 (PDT)
-Received: (nullmailer pid 15632 invoked by uid 1000);
-	Sun, 06 Oct 2024 16:57:49 -0000
-From: Ivan Safonov <insafonov@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Ivan Safonov <insafonov@gmail.com>
-Subject: [PATCH] net: fix register_netdev description
-Date: Sun,  6 Oct 2024 19:57:12 +0300
-Message-ID: <20241006165712.15619-1-insafonov@gmail.com>
-X-Mailer: git-send-email 2.44.2
+        Sun, 06 Oct 2024 10:06:56 -0700 (PDT)
+Date: Sun, 6 Oct 2024 20:06:53 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	conor+dt@kernel.org, abel.vesa@linaro.org, srinivas.kandagatla@linaro.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for
+ Windows
+Message-ID: <7ilh7yjdesoo3hwwjjlsnwe7dftegtv32mnwvsiczn33diwihy@mi2ukoowdq47>
+References: <eqy4yicgeqlgaytgzybnitvbrdr7jmjjk5k2swmadad6scwk77@ubaf7a2kgmdm>
+ <1BBC34CC-92D9-4F6E-8DFA-1F2DA36D545A@linaro.org>
+ <20241001085105.iglzp3art5ysli2d@thinkpad>
+ <b1d982c1-f800-97eb-1be3-e77e04a8e81d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b1d982c1-f800-97eb-1be3-e77e04a8e81d@quicinc.com>
 
-register_netdev() does not expands the device name.
+On Sun, Oct 06, 2024 at 12:33:21AM GMT, Sibi Sankar wrote:
+> 
+> 
+> On 10/1/24 14:21, Manivannan Sadhasivam wrote:
+> > On Tue, Oct 01, 2024 at 09:56:30AM +0300, Dmitry Baryshkov wrote:
+> > > On October 1, 2024 5:42:35 AM GMT+03:00, Bjorn Andersson <andersson@kernel.org> wrote:
+> > > > On Wed, Sep 11, 2024 at 10:55:05AM GMT, Dmitry Baryshkov wrote:
+> > > > > On Wed, Sep 11, 2024 at 01:03:37PM GMT, Sibi Sankar wrote:
+> > > > [..]
+> > > > > > diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+> > > > [..]
+> > > > > > +
+> > > > > > +&pcie5 {
+> > > > > > +	perst-gpios = <&tlmm 149 GPIO_ACTIVE_LOW>;
+> > > > > > +	wake-gpios = <&tlmm 151 GPIO_ACTIVE_LOW>;
+> > > > > > +
+> > > > > > +	vddpe-3v3-supply = <&vreg_wwan>;
+> > > > > 
+> > > > > Please use pwrseq instead.
+> > > > > 
+> > > > 
+> > > > What benefit is there to wrap a single 3.3V regulator in pwrseq driver?
+> > > 
+> > > First of all, is it really just a 3.3V? Second, is it actually powering up the host controller (as expressed in the device tree? Is it a power supply to the slot (in this case, I think, it should be expressed differently)? Or is it a power supply to the card itself?
+> > > 
+> > 
+> > Yeah, we should get into the details here. We were not paying attention till
+> > now, but with the advent of pwrseq, we should describe the power supply properly
+> > in DT.
+> > 
+> > Here I believe the supply is to the PCIe Mini Card connector where a modem is
+> > connected. In that case, 3.3v supply should be connected to 3.3Vaux of the
+> > connector and we should have a generic pwrseq driver for the mini cards.
+> > 
+> 
+> Hey Mani, Dmitry,
+> 
+> The schematics are identical to that of the X1E CRD with
+> the exception of the pcie daughter card having the rtl8125g
+> on it. Yes, the 3.3V supply is connected to the card as well.
+> 
+> Doesn't this mean all other x1e boards out there needs to be
+> updated with pwrseq as well? Anway will get that addressed in
+> v3.
 
-Signed-off-by: Ivan Safonov <insafonov@gmail.com>
----
- net/core/dev.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Yes please. Check with Bartosz and Johan if they are working on pwrseq
+for this platform by chance.
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index cd479f5f22f6..06b13eef3628 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -10611,10 +10611,10 @@ EXPORT_SYMBOL_GPL(init_dummy_netdev);
-  *	chain. 0 is returned on success. A negative errno code is returned
-  *	on a failure to set up the device, or if the name is a duplicate.
-  *
-- *	This is a wrapper around register_netdevice that takes the rtnl semaphore
-- *	and expands the device name if you passed a format string to
-- *	alloc_netdev.
-+ *	This is a wrapper around register_netdevice that takes
-+ *	the rtnl semaphore.
-  */
-+
- int register_netdev(struct net_device *dev)
- {
- 	int err;
+> 
+> -Sibi
+> 
+> > Sibi, please verify the above in schematics.
+> > 
+> > - Mani
+
 -- 
-2.44.2
-
+With best wishes
+Dmitry
 
