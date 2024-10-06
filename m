@@ -1,111 +1,118 @@
-Return-Path: <linux-kernel+bounces-352619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09B3992196
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 23:13:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC74B992185
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 23:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24966B211F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:13:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE2911C209E7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47D018BB93;
-	Sun,  6 Oct 2024 21:13:20 +0000 (UTC)
-Received: from gw.red-soft.ru (red-soft.ru [188.246.186.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F3D74C08;
-	Sun,  6 Oct 2024 21:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.246.186.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EDB18BB82;
+	Sun,  6 Oct 2024 21:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oijagKcS"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504A312FF69
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 21:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728249200; cv=none; b=kgAxg6Ayzt4OaazdXQ2bICJ+SksoHRIjJ6DHPqVQordjcRRLCUuVYlEYXeDK0r9pbitIj1Q199hI4WO8y0ULwlRtsktzcYOMnE5tnY/o7KxgSF2tcDggJPN2TksbExcvidNWbKF8j+WP0iTzzaaKDt0dh7gnx0I1q0DDhNFoK1I=
+	t=1728248627; cv=none; b=IHdcTwFVXf+dD8qq/Gx8cEKugOceioF5cP05p1JI/+iIBr94wln64rZhOZTMMWqVK4MYUQqKu6cF45s73Ud7GgUc8NidNyyVNVUN8c9O18ZvdjXC0JWiAA8Ef3Wz7EOzdk93F0XGz41CLQbpDiWJYOuMZgOoxupFdpfRiw9gu3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728249200; c=relaxed/simple;
-	bh=PNd5cfZ7xDAfJce/2j1HH3jL8umWvU/IXHHPvR5WoIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dYgq2bfrkHZHY9notQ0jDo3KGUd7Wt6x5s5qhMjyl6iQG3PDxJ5Y5072770LX1t0JsC+kuz1v2v5Eq28zu1HhagPCOebBUlqFJ+PjmG0DWzefYeOshNggVtGp5ya54XbaASdpBvRHHuPpwO5HPQOioAxTvI2xAT9/FXoyAXIl3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=red-soft.ru; spf=pass smtp.mailfrom=red-soft.ru; arc=none smtp.client-ip=188.246.186.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=red-soft.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=red-soft.ru
-Received: from localhost.biz (unknown [10.81.100.48])
-	by gw.red-soft.ru (Postfix) with ESMTPA id 052823E1AB8;
-	Mon,  7 Oct 2024 00:03:46 +0300 (MSK)
-From: Artem Chernyshev <artem.chernyshev@red-soft.ru>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: Artem Chernyshev <artem.chernyshev@red-soft.ru>,
-	linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] net: pktgen: Avoid out-of-range in get_imix_entries
-Date: Mon,  7 Oct 2024 00:03:38 +0300
-Message-ID: <20241006210340.3627827-1-artem.chernyshev@red-soft.ru>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1728248627; c=relaxed/simple;
+	bh=3H49pcBVPVHGqfhIW8jHEw+XYpXGnm889OB9D0Eo1Z8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XV+XD35ym60hgrtrVw/4G4q+zNL0ztSIDN9xGlZDL64ZtdifxbiKpDOea5vp3yogYq2ZzCT01+yy6jqsha23XiHUg5yOfedT5tPw0Hg5X4XcKPmPCDW9/yCwwq+Br1i+AeoJ7HqHXImgb1sL5C6D7BEak/msMnsuF6nOOucQI2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oijagKcS; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5389fbb28f3so3816618e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 14:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728248623; x=1728853423; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2PmXTB9KbHRH15SWXd6BBgKFdgftbTaL4ejOb5/3Tps=;
+        b=oijagKcSosOLvUdmlVO4fczXSTl1LZaYT2lKzWqrH3ZdKiyHpIQj4D4rPHVtXY9f8K
+         ZME673oGaebxr4H30uwd0UwjMJNPFO2bSbYC3x6sBKO3eVFAzZW+Oq8Jkac534S/bdcY
+         6jTZqBX/vlzjaRWJP0DIu456dvXn6fIe3xYw+7g5D7dz7KvX6M201uO9BENpEuXRWDRW
+         6eN8BX6+TwcRasreHbIBkg4qkKTMu3LRHQtTtcB1qQMpr77sU1emQHIROWb8bX6PPiCW
+         c0kp+OoOVLFCEZQcEXDG4MZ/MM11TW2ShM+WqFK/ZSumnCdFXKtVPtNRHx39qBvjrbH6
+         fJQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728248623; x=1728853423;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2PmXTB9KbHRH15SWXd6BBgKFdgftbTaL4ejOb5/3Tps=;
+        b=B/0EB/8XFXPvu7V0uSdGKTukQzPAK6KtsxnH+N40F+TxzP304v15I7k6BuhDzClD5w
+         6DjUPhLVT91bS1q238sIhKPt8gnmivkAtYM89FT3uAFqehiEGeEO/oMqiCrFQ5hhn4SP
+         RvvVx39/dSCpiLL0IyPBhuImTH5Cc6P7wt8QRMch9yifiqwd06YHs/zDnv1skFEO78aV
+         yoSl9+ufvZm41HkFjBV+vbwEr6ZtBrJeaF+KmEhFbQJjrPaKm7dpaJMhqtRYIWzr9CHT
+         hO5pbq5dD7BODTKCom7sX6vnKzKmQQWtuURPla6UJvnCKzq7n96joE431mcNf1+DeY0B
+         8brg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIw+DdCyxj/7jz+akpSGSAs5mkWumt/PtNvPWgj4NH8YHWW1hxnWzSLtoTL4R8imXmo9mMVIZClH+VIxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySWtmSKuThEfREtZMU3uftDduFnSVGPzEmDYX1QUS7CCBSgylv
+	iZ06xQv26ncxE4UVwyqh0p5JmZ6jI7a604fnbsEOixKi3ldw8nr8C73npfVXqRU=
+X-Google-Smtp-Source: AGHT+IE/TGvBqc3pWkxdu5goo+/KwS8+0cYK6C3rp4J81+RSj/7IrypUYpmkiCoDSLCQt/xpNC6sSQ==
+X-Received: by 2002:a05:6512:31d1:b0:52e:fef4:2cab with SMTP id 2adb3069b0e04-539ac12cbf0mr2606684e87.2.1728248623406;
+        Sun, 06 Oct 2024 14:03:43 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec80b8sm599524e87.73.2024.10.06.14.03.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 14:03:43 -0700 (PDT)
+Date: Mon, 7 Oct 2024 00:03:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Abhishek Sahu <absahu@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v3] clk: qcom: clk-alpha-pll: Fix pll post div mask when
+ width is not set
+Message-ID: <vkfy47q3glm2gehs3rmunerslvzrfyz4wa4egdb6k26ucim7iu@ad24jwkdybeg>
+References: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-KLMS-Rule-ID: 1
-X-KLMS-Message-Action: clean
-X-KLMS-AntiSpam-Lua-Profiles: 188241 [Oct 06 2024]
-X-KLMS-AntiSpam-Version: 6.1.0.4
-X-KLMS-AntiSpam-Envelope-From: artem.chernyshev@red-soft.ru
-X-KLMS-AntiSpam-Rate: 0
-X-KLMS-AntiSpam-Status: not_detected
-X-KLMS-AntiSpam-Method: none
-X-KLMS-AntiSpam-Auth: dkim=none
-X-KLMS-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_from_domain_doesnt_match_to}, localhost.biz:7.1.1;red-soft.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KLMS-AntiSpam-Interceptor-Info: scan successful
-X-KLMS-AntiPhishing: Clean, bases: 2024/10/06 20:37:00
-X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2024/10/06 20:00:00 #26711832
-X-KLMS-AntiVirus-Status: Clean, skipped
+In-Reply-To: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
 
-In get_imit_enries() pkt_dev->n_imix_entries = MAX_IMIX_ENTRIES 
-leads to oob for pkt_dev->imix_entries array.
-```
-UBSAN: array-index-out-of-bounds in net/core/pktgen.c:874:24
-index 20 is out of range for type 'imix_pkt [20]'
-CPU: 2 PID: 1210 Comm: bash Not tainted 6.10.0-rc1 #121
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996)
-Call Trace:
-<TASK>
-dump_stack_lvl lib/dump_stack.c:117
-__ubsan_handle_out_of_bounds lib/ubsan.c:429
-get_imix_entries net/core/pktgen.c:874
-pktgen_if_write net/core/pktgen.c:1063
-pde_write fs/proc/inode.c:334
-proc_reg_write fs/proc/inode.c:346
-vfs_write fs/read_write.c:593
-ksys_write fs/read_write.c:644
-do_syscall_64 arch/x86/entry/common.c:83
-entry_SYSCALL_64_after_hwframe arch/x86/entry/entry_64.S:130
-RIP: 0033:0x7f148408b240
-```
+On Sun, Oct 06, 2024 at 10:51:58PM GMT, Barnabás Czémán wrote:
+> Many qcom clock drivers do not have .width set. In that case value of
+> (p)->width - 1 will be negative which breaks clock tree. Fix this
+> by checking if width is zero, and pass 3 to GENMASK if that's the case.
+> 
+> Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
+> Changes in v3:
+> - Remove one of the fixes tag.
+> - Link to v2: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v2-1-b825048b828b@mainlining.org
+> 
+> Changes in v2:
+> - Pass 3 to GENMASK instead of 0.
+> - Add more Fixes tag for reference root cause.
+> - Link to v1: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v1-1-f70ba55f415e@mainlining.org
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Fixes: 52a62f8603f9 ("pktgen: Parse internet mix (imix) input")
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-Signed-off-by: Artem Chernyshev <artem.chernyshev@red-soft.ru>
----
- net/core/pktgen.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-index 34f68ef74b8f..97cf5c797a22 100644
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -881,7 +881,7 @@ static ssize_t get_imix_entries(const char __user *buffer,
- 		i++;
- 		pkt_dev->n_imix_entries++;
- 
--		if (pkt_dev->n_imix_entries > MAX_IMIX_ENTRIES)
-+		if (pkt_dev->n_imix_entries >= MAX_IMIX_ENTRIES)
- 			return -E2BIG;
- 	} while (c == ' ');
- 
 -- 
-2.44.0
-
+With best wishes
+Dmitry
 
