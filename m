@@ -1,132 +1,117 @@
-Return-Path: <linux-kernel+bounces-352445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4668F991F53
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:25:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873F6991F58
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D542628291E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:25:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D5201F21DD6
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9118F17AE05;
-	Sun,  6 Oct 2024 15:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADAB17B514;
+	Sun,  6 Oct 2024 15:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUQJU+ik"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GCrgXx51"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC25817A5B6;
-	Sun,  6 Oct 2024 15:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFEF17B51C
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 15:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728228295; cv=none; b=u1nZ3huYd+SMsB4wekAtcUFIvtplahH/9x/0yAkZolKw6jsJz//GuyVAi8JM+qTu5mBjN3cY9yBoMbxpwjfR6oxfpqaAlV2kBhZVAeBmNKPpoLF2fCuOe5cbSgM7Vx0xulkrZty4w0vV8H3n6ZyRC0k23Ytrj+KlvSPmgZBegwI=
+	t=1728228352; cv=none; b=M8ibirMcxwDGR2fzj/4refntmgmTEPnOm2DHtddjV25RtABjT5tbbyy1AAB6s2KpNn7xScdJsaa2ulqFdLDMcsQppYhFo+p4ZyjX5ptI6a1XHgBWZ4Ibbva1Ps16P1me/R6RLGrxDlq7VIeCLK+gd0M+v1hsABu86Ag2slcrm7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728228295; c=relaxed/simple;
-	bh=v7RyxtP+3zTGkoDvgx5RNwbjNMv9S875mKBktDCLqtc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EupyetrGYGYJqcnT7lo/KvEYM/yLcbz0dB5Z014HOtL6nfSxfonPRqi9bRpS7eRgNryOkooJmbrXKGyWdXdVCKodww0BVaOS1V4gHPW0KgL/nMHX9NKraE7P9q0GDsrKAgLbXrfdKe2k/hEjbFq/UWSrxL0MYaE11Gg7HCA08Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QUQJU+ik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F30C0C4CECE;
-	Sun,  6 Oct 2024 15:24:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728228294;
-	bh=v7RyxtP+3zTGkoDvgx5RNwbjNMv9S875mKBktDCLqtc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QUQJU+ikbznK/6eKBNBZ7GYmLKXYnSkeyH4WDq/tlFFLpC9/AK1MA0KbJmg9KbIib
-	 bPjlPyBe31UqWmRKFwBWZfA61DU9YtzMSA90MYdM2wylgLG54Xe2ZcWm9GccxnqE+C
-	 hMIaCBcmEG0qGJBE1xzZJO/4UngXI5snHGK9/LIIpCau2q68g5gDfGOUR54KcQ3vUZ
-	 QprFwRNL7Zo2KaXinWIUfE/yAR9EnWIGn1u7dofrxUNSkQjmVrIaDp/p3pMw8Hrbxt
-	 VcJ6+f2tWSHTRkOnt6WJEzcTmfy6yivQHVYm+KiZcFlwnZdPHMrNnWgtgQf28NZPJz
-	 fouUZtj3hPHzg==
-Date: Sun, 6 Oct 2024 16:24:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Per-Daniel Olsson <perdaniel.olsson@axis.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <rickard.andersson@axis.com>, <kernel@axis.com>
-Subject: Re: [PATCH v2 0/2] Support for Texas Instruments OPT4060 RGBW Color
- sensor.
-Message-ID: <20241006162446.51a93744@jic23-huawei>
-In-Reply-To: <20241005165119.3549472-1-perdaniel.olsson@axis.com>
-References: <20241005165119.3549472-1-perdaniel.olsson@axis.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728228352; c=relaxed/simple;
+	bh=r3/3Q+KPDWKzqkcmOcj+LaYbC9Z/u1HiilUN8TEN3Os=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sgiRBEodQZE2Sz2hIbAce1MA7EXL9EKUgvDw06k9F24bFrbKsD+YMu5XzEIeDeQqOPa9whD9dHgdnffndkh2PaTFMj6Jh+NzN4L/8fsvhoSSEIzvNY7rAkyGcOM5Sj1FE+maU5gJWkjQPsG6U8XPx2KTAG7oOEQr+gTXHe6o2hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GCrgXx51; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fad784e304so43058441fa.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 08:25:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728228348; x=1728833148; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZzLI2qsMavyzh3cAqBP4z+YvAku625MAo0+XLbe9zaQ=;
+        b=GCrgXx51Vo4YYCCGFHXdlKqXRIbp/oSS05qOIXw+ILAR6WBq8WbG/OyiGZOT0X7Okg
+         VkyUDRsLq3r8GATMiT32SWWOKWyu9iPXcZv6mf/tMKnFqvffZFFXQX1zDHqwmiKHKVER
+         sRboJOcSezOd8mJ8/T5DEqQ6v+dtfn43sUPmujU9aQwlVlB99Dxtft4vYssVSWbiyYT6
+         pw3fDKRmbgO+o82qBI5We9oZNJcuBzJvSRy8K8CeNVaYUO1WXnwL3vnXzBX2d64W9wT4
+         GsZmQKJe4h6o00O0Z3AZw2iIdoKBb+6/MdolBIiIEOVHrLsOtTXReKa2e+hSd0hF7IhY
+         XTSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728228348; x=1728833148;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZzLI2qsMavyzh3cAqBP4z+YvAku625MAo0+XLbe9zaQ=;
+        b=I17pprOwQVgRrl3tiDMVM1lxyxKheM4rIy/Wwk2Sc6SmSHi1pwuk3cO4ZrxWF3Pp2Y
+         FoIFp76lJG9aOiam197USB+Tuh+kYvxd2h6KkuJMKPbC2MrT7YNaQd0bRHbTnil2lObd
+         RgUuOaWKWLuUvLzGkAWL1s/NixVi86O8JtzhvmUCE/OKr2bbwoaj1Cj1i7fY6El08kPN
+         ZzjbhuKqJJEwyCvje//yC/9PU8SFoX7kVwB5YakDMV6ITTU1b/HFcdTjcD1kwd3gYH8N
+         TQaYHmQERYHbK6w1VXGm3+mswRiBK+lFmmnxz2J6kFAxIj+hVsUvT172//GM+kBWodes
+         I0qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAmcK3pIBIwNNMBlHIxHrGyIvJcOIiDLsSgkEm85Rd1i8PD0jaEDiZL8MJbPAonrfpu5Su68TTpL/Grfs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhysBbniMrFDMFBhlQs3bl9FXnUqmmdr6BwYaf3d2VNR+3IX5K
+	D0ADnxCzZmhoCN+etJ1CGRUn2GjmizY/x6eJRRJ4mqOhSJJs9wytVA5XzqRjJRs=
+X-Google-Smtp-Source: AGHT+IECldVZJLRbyUEw77R1QJexgzcuQYlKntI6amyprskw3YHEivis+8i/CE2tRuSfiTaei9K84Q==
+X-Received: by 2002:a05:6512:3d0c:b0:533:d3e:16f5 with SMTP id 2adb3069b0e04-539ab9cf3cemr4241785e87.38.1728228348478;
+        Sun, 06 Oct 2024 08:25:48 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec15d7sm547115e87.26.2024.10.06.08.25.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 08:25:48 -0700 (PDT)
+Date: Sun, 6 Oct 2024 18:25:46 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Abel Vesa <abel.vesa@linaro.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
+	Sibi Sankar <quic_sibis@quicinc.com>, Johan Hovold <johan@kernel.org>, 
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: usb: Add Parade PS8830 Type-C
+ retimer bindings
+Message-ID: <trfcqmexznp7igf7t345q2eb7qwjwwgg2qgke77urlwrf2wh3r@4e5bsfv3nuar>
+References: <20241004-x1e80100-ps8830-v2-0-5cd8008c8c40@linaro.org>
+ <20241004-x1e80100-ps8830-v2-1-5cd8008c8c40@linaro.org>
+ <20241005173647.GA429341-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241005173647.GA429341-robh@kernel.org>
 
-On Sat, 5 Oct 2024 18:51:17 +0200
-Per-Daniel Olsson <perdaniel.olsson@axis.com> wrote:
-
-> This patch series adds support for Texas Instruments OPT4060 RGBW Color sensor
-> using the i2c interface.
+On Sat, Oct 05, 2024 at 12:36:47PM GMT, Rob Herring wrote:
+> On Fri, Oct 04, 2024 at 04:57:37PM +0300, Abel Vesa wrote:
+> > Document bindings for the Parade PS8830 Type-C retimer. This retimer is
+> > currently found on all boards featuring Qualcomm Snapdragon X Elite SoCs
+> > and it is needed to provide altmode muxing between DP and USB, but also
+> > connector orientation handling between.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> >  .../devicetree/bindings/usb/parade,ps8830.yaml     | 129 +++++++++++++++++++++
+> >  1 file changed, 129 insertions(+)
 > 
-> The driver exposes both raw adc values and calculated lux values though sysfs.
-> Integration time can be configured though sysfs as well.
+> Missing R-by from Krzysztof?
 
-Lux is a unit with a particular light curve.  It has no defined meaning for
-color channels.  As a result we usually only have colors as intensity channels
-(unit free).  If it is possible to compute an estimate of the illuminance then
-that can be a separate IIO_LIGHT channel.
+Quoting the changelog:
 
-> The OPT4060 sensor
-> supports both rising and falling threshold interrupts. These interrupts are
-> exposed as IIO events. The driver also implements an IIO triggered buffer with
-> two triggers, one trigger for conversion ready interrupts and one trigger for
-> threshold interrupts. The typical use case for this is to define a threshold and
-> listen for the events, and at the same time enable the triggered buffer with the
-> threshold trigger. Once the application gets the threshold event, the values
-> from the time of the event will be available in the triggered buffer. This
-> limits the number of interrupts between sensor and host and also the the usage
-> of sysfs for reading values after events.
+Didn't pick Krzysztof's R-b tag because the bindings changed w.r.t
+supplies
 
-We have had various discussions of threshold triggers in the past, but I don't
-think we ever merged any (maybe there is one somewhere?) The reasons for that are:
-1) They are hard for generic userspace to understand.
-2) For light sensors the input tends to be slow moving - grabbing one reading
-   on a threshold interrupt is rarely that informative (or are you grabbing them
-   on dataready once the threshold is breached?)
-3) If we want to do threshold triggers we should really add generic infrastructure
-   for them based on adding an in kernel events consumer path and a way to
-   instantiate a trigger based on any event.  Doing it in a single driver creates
-   an ABI we won't want to retain long term.
-
-So how important is this feature to you and why?  Maybe it is time to finally
-take a close look at option 3.
-
-Jonathan
-
-> 
-> Changes in v2:
-> - dt-bindings: Removed incorrect allOf.
-> - dt-bindings: Changed to generic node name.
-> - Correction in opt4060_trigger_one_shot(...) for continuous mode.
-> - Correction in opt4060_power_down(...), wrong register was read.
-> - Corrected usage of active_scan_mask in opt4060_trigger_handler(...).
-> - Clean-up of various comments.
-> - Link to V1: https://lore.kernel.org/lkml/20241003164932.1162049-1-perdaniel.olsson@axis.com/
-> 
-> Per-Daniel Olsson (2):
->   dt-bindings: iio: light: Document TI OPT4060 RGBW sensor
->   iio: light: Add support for TI OPT4060 color sensor
-> 
->  .../bindings/iio/light/ti,opt4060.yaml        |   51 +
->  drivers/iio/light/Kconfig                     |   13 +
->  drivers/iio/light/Makefile                    |    1 +
->  drivers/iio/light/opt4060.c                   | 1216 +++++++++++++++++
->  4 files changed, 1281 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/light/ti,opt4060.yaml
->  create mode 100644 drivers/iio/light/opt4060.c
-> 
-> 
-> base-commit: 0c559323bbaabee7346c12e74b497e283aaafef5
-
+-- 
+With best wishes
+Dmitry
 
