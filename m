@@ -1,172 +1,83 @@
-Return-Path: <linux-kernel+bounces-352316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E08991D6C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:07:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E27A991D74
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51B39B2127E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:07:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 332831C203DF
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93911714C6;
-	Sun,  6 Oct 2024 09:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A111714D9;
+	Sun,  6 Oct 2024 09:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XyFHfzLF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="bDCb6nn5"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5D028EC;
-	Sun,  6 Oct 2024 09:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EAA15444E;
+	Sun,  6 Oct 2024 09:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728205621; cv=none; b=qqj2UI64cB9BCfcI6HK6P/1BTobPaY6T50XHP02QlrJo4pOxhiGHSvNCiAajR+c0ikAoXX5rKt6hraUsykBT3mjPDurr9BpH+oD35JdKVcLNazhO+xg9Z5eot7y8i3ty4uuiN1F/KkI4rMQeWvoCYC+gISf8gXuz4EfqT4u1ld8=
+	t=1728205897; cv=none; b=Mr94HX7M5M97eDYQXumkqbun9Wg43dLi2Un8fVf+eATpA27Me7bW/yHQJhDg+P/LjrWcpgTokrtq4UDMGGmuW/ng34p4wwiJl+fItQi3Pdhqm3W1R/iNq8dfnpQraI/sLUe3H9HoiyTkyvqftCzt921g5fdqRi3y0kvxNcHrmxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728205621; c=relaxed/simple;
-	bh=JDcqnQNF8JJFhiKpQYt3uez/euJmc6ELDxIoi1C3h3E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=k97f8Jft/0fGrCwyu0hyguyEFQRXD2TVvVbDY7KQ0Q746YdCV14Eoke8uKK9UDcqbQyrmZvQ0RK3nYIyZPyWizlVFtXLy9cMQjkiOFp6JcuHo2EAfd2YBiHxmE+r3XHgaV5NHAwiIwIAJr0xub23001ETyf0jXR/uLjvtKKpNPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XyFHfzLF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F5EDC4CEC5;
-	Sun,  6 Oct 2024 09:07:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728205620;
-	bh=JDcqnQNF8JJFhiKpQYt3uez/euJmc6ELDxIoi1C3h3E=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XyFHfzLFLpq4bSmUt+b7c8yelZfw63WP++muuxzTCWall+wqU9VqjK4ilzH+/s+i+
-	 wEKB6Lb2m6bp522z9LayGMBtIjAwo+EF8WVsLLZGZuf3ZL1/y/QKnX3EeXvs+tNCyy
-	 ZFZco2qoBRfrACfLO1kz4NSL7MVTdnsh1vOiSbfG3McuCs+obDqVhKjMdPfY0Ylvhq
-	 IlwVDKtG5rNUYuu83o1wRdNMhWg7+4X95Lc6fMnmJZCgk6JGX+5aGbjo88WddKFnWf
-	 eN+XDlc8IQ+3bdiRJgRHzgNvteQ8ghPN+iX3dPTuRK2utN6ue4AEkt2YSLiLIgjh4N
-	 BUQFGCwaYy1jg==
-Received: by pali.im (Postfix)
-	id 03D7581A; Sun,  6 Oct 2024 11:06:53 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Add support for parsing WSL-style symlinks
-Date: Sun,  6 Oct 2024 11:05:48 +0200
-Message-Id: <20241006090548.30053-1-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1728205897; c=relaxed/simple;
+	bh=xlKlKgRuc8qjN4G3/Tzxa0cyrZ3RlG9lR8hrI9QjqKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Wrh8QVmNczSZ9ojoamgqOZokeVQgcNLSLVTdbnGaWkNZHz4GryLW5S6MJuw+9BUZ7CqGGQrXSZDKAMowDjVa8/Egs1T15RT9TrRYu3TP+tiZMrfGiy+oBwKhMftd7uEyKEg62WBkqG6f8o8tgiiMsg/iuJPikzQP24F8CEk/+bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=bDCb6nn5; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WlRrQ+D7JLm1BG4Mvs34iW8Ec+6c18hoPBAnK0niUA4=; b=bDCb6nn5MNs28YJUHuNsYgkxEN
+	87XxNAP7hFsdBW7nA1JjPuXQymL8tmHTV3oUJyojyqZTQKMrWUg4myeF4Z261+j1DwPsCUdXD68Wl
+	PHSor409Wkqp8wAZiH+yrNVnf9ydjPLhU4m3yAXQetCfajCVSqF6RleExaROcfkLY1bFW7yaHk7dP
+	O9bANMGAIsD111KnpPv9jXCi+mvI4f0sXbymrVS/FD065WKPzBhjF9PxkosBEOfyKAdmm+vZ3omYr
+	TtWl9VSOeZ+UE2Ckbykbl0H9Qk3JLb+gUsOiJQ0OD9lkxDdxWV1vDeYhCZPKvoDsqSc+qZy1HtTzN
+	CPePNMKQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sxN8X-007Dj5-1k;
+	Sun, 06 Oct 2024 17:11:24 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 06 Oct 2024 17:11:23 +0800
+Date: Sun, 6 Oct 2024 17:11:23 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Klaus Kudielka <klaus.kudielka@gmail.com>
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: [REGRESSION] alg: ahash: Several tests fail during boot on
+ Turris Omnia
+Message-ID: <ZwJUO5Nz3S7EeqO6@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef7c7a96a73161e0f5061503242a8d3eddef121f.camel@gmail.com>
+X-Newsgroups: apana.lists.os.linux.kernel
 
-Linux CIFS client currently does not implement readlink() for WSL-style
-symlinks. It is only able to detect that file is of WSL-style symlink, but
-is not able to read target symlink location.
+Klaus Kudielka <klaus.kudielka@gmail.com> wrote:
+>
+> [    0.330736] alg: ahash: mv-hmac-sha256 test failed (wrong result) on test vector 1, cfg="init+update+final aligned buffer"
+> [    0.332541] alg: ahash: mv-hmac-md5 test failed (wrong result) on test vector 1, cfg="init+update+final aligned buffer"
+> [    0.341851] alg: self-tests for hmac(sha256) using mv-hmac-sha256 failed (rc=-22)
+> [    0.352648] alg: self-tests for hmac(md5) using mv-hmac-md5 failed (rc=-22)
 
-Add this missing functionality and implement support for parsing content of
-WSL-style symlink.
+Please post your kernel config file.
 
-The important note is that symlink target location stored for WSL symlink
-reparse point (IO_REPARSE_TAG_LX_SYMLINK) is in UTF-8 encoding instead of
-UTF-16 (which is used in whole SMB protocol and also in all other symlink
-styles). So for proper locale/cp support it is needed to do conversion from
-UTF-8 to local_nls.
-
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/reparse.c | 49 +++++++++++++++++++++++++++++++++++++++++
- fs/smb/common/smb2pdu.h |  9 ++++++++
- 2 files changed, 58 insertions(+)
-
-diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-index a577b2d2a4fc..6e9d914bac41 100644
---- a/fs/smb/client/reparse.c
-+++ b/fs/smb/client/reparse.c
-@@ -875,6 +875,52 @@ static int parse_reparse_symlink(struct reparse_symlink_data_buffer *sym,
- 					 cifs_sb);
- }
- 
-+static int parse_reparse_wsl_symlink(struct reparse_wsl_symlink_data_buffer *buf,
-+				     struct cifs_sb_info *cifs_sb,
-+				     struct cifs_open_info_data *data)
-+{
-+	int len = le16_to_cpu(buf->ReparseDataLength);
-+	int symname_utf8_len;
-+	__le16 *symname_utf16;
-+	int symname_utf16_len;
-+
-+	if (len <= sizeof(buf->Flags)) {
-+		cifs_dbg(VFS, "srv returned malformed wsl symlink buffer\n");
-+		return -EIO;
-+	}
-+
-+	/* PathBuffer is in UTF-8 but without trailing null-term byte */
-+	symname_utf8_len = len - sizeof(buf->Flags);
-+	/*
-+	 * Check that buffer does not contain null byte
-+	 * because Linux cannot process symlink with null byte.
-+	 */
-+	if (strnlen(buf->PathBuffer, symname_utf8_len) != symname_utf8_len) {
-+		cifs_dbg(VFS, "srv returned null byte in wsl symlink target location\n");
-+		return -EIO;
-+	}
-+	symname_utf16 = kzalloc(symname_utf8_len * 2, GFP_KERNEL);
-+	if (!symname_utf16)
-+		return -ENOMEM;
-+	symname_utf16_len = utf8s_to_utf16s(buf->PathBuffer, symname_utf8_len,
-+					    UTF16_LITTLE_ENDIAN,
-+					    symname_utf16, symname_utf8_len * 2);
-+	if (symname_utf16_len < 0) {
-+		kfree(symname_utf16);
-+		return symname_utf16_len;
-+	}
-+	symname_utf16_len *= 2; /* utf8s_to_utf16s() returns number of u16 items, not byte length */
-+
-+	data->symlink_target = cifs_strndup_from_utf16((u8 *)symname_utf16,
-+						       symname_utf16_len, true,
-+						       cifs_sb->local_nls);
-+	kfree(symname_utf16);
-+	if (!data->symlink_target)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
- int parse_reparse_point(struct reparse_data_buffer *buf,
- 			u32 plen, struct cifs_sb_info *cifs_sb,
- 			const char *full_path,
-@@ -894,6 +940,9 @@ int parse_reparse_point(struct reparse_data_buffer *buf,
- 			(struct reparse_symlink_data_buffer *)buf,
- 			plen, unicode, cifs_sb, full_path, data);
- 	case IO_REPARSE_TAG_LX_SYMLINK:
-+		return parse_reparse_wsl_symlink(
-+			(struct reparse_wsl_symlink_data_buffer *)buf,
-+			cifs_sb, data);
- 	case IO_REPARSE_TAG_AF_UNIX:
- 	case IO_REPARSE_TAG_LX_FIFO:
- 	case IO_REPARSE_TAG_LX_CHR:
-diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-index c769f9dbc0b4..275184c31a89 100644
---- a/fs/smb/common/smb2pdu.h
-+++ b/fs/smb/common/smb2pdu.h
-@@ -1552,6 +1552,15 @@ struct reparse_symlink_data_buffer {
- 
- /* See MS-FSCC 2.1.2.6 and cifspdu.h for struct reparse_posix_data */
- 
-+/* For IO_REPARSE_TAG_LX_SYMLINK */
-+struct reparse_wsl_symlink_data_buffer {
-+	__le32	ReparseTag;
-+	__le16	ReparseDataLength;
-+	__u16	Reserved;
-+	__le32	Flags;
-+	__u8	PathBuffer[]; /* Variable Length UTF-8 string without nul-term */
-+} __packed;
-+
- struct validate_negotiate_info_req {
- 	__le32 Capabilities;
- 	__u8   Guid[SMB2_CLIENT_GUID_SIZE];
+Thanks,
 -- 
-2.20.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
