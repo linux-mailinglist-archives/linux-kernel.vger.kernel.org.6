@@ -1,152 +1,122 @@
-Return-Path: <linux-kernel+bounces-352428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B1B991EF4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:43:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 515AB991EF9
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 303861C20A9B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:43:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03E251F21A8A
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A692D130E27;
-	Sun,  6 Oct 2024 14:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C56D13A276;
+	Sun,  6 Oct 2024 14:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzXH+HzN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="lATDtZJp"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02568273DC;
-	Sun,  6 Oct 2024 14:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC7B4C74;
+	Sun,  6 Oct 2024 14:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728225796; cv=none; b=NvMSduS7X+sczHjvMgAE5AAAcVdcjnPqJuHx6rHBGmcovz62Wc3pEKVMPMoG40004oJb5jWqoABiLVWrfHiW2dtjvdiXcMFRlgmLIEFU8SiRrHUaPBMPGp4sAs7CTYzPiVnMzDVNf+Qr8i8XwuncpaUKcc8SM+xB6J9HRLu4FX4=
+	t=1728225952; cv=none; b=cEtbmIIoEYyQ0JBpNVligunJkxDcb8ndXtu+O/paC58dWqhZCw2sKIS+YQKl1whkHMiaBdDifuFPcpGFK/m+NPqMC4LGqcf120pQ9RjjEQ8BfQs6dMLSqz/k/wugsEx6JjUGP+AZzchYbrZJ7SBd+4dBx1GcJxsK7/RfysBqPYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728225796; c=relaxed/simple;
-	bh=yw0YpB9rK2tU6C+etLif3D2HyoGw03c7kDYJQ4i20mg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XO9jfKgeJe3Wt1+UZlCF+BYmzPuAMbO7sY+ZQ9s6ctcL8tQdWdf0RylaIZQbbjUElsOe0gNTNR+YPklPyyFS25NJnan4pUFJl112IId7ylATp3wyPBlpKkN6OE0rhty44fCxjf5tvYf7IFkYIZwtCFvMPhs0r0ZKQ3H0V9nl67o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzXH+HzN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 872C3C4CEC5;
-	Sun,  6 Oct 2024 14:43:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728225795;
-	bh=yw0YpB9rK2tU6C+etLif3D2HyoGw03c7kDYJQ4i20mg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JzXH+HzNGHIicfYULq0cOtSL4AjoS19fgIbn2TuXIk8xRltRYx7niCMtbBAFXG+oi
-	 rBkuLyg6Bx2iL1ZXrBe5WIK6YECjF8ptHtLHLz0ORM8+2e0zSmI+5PpBVKmcmV+xIf
-	 iJKMZ3uTj2AkaM2pCeT9asp6pdvIjBXVvxxCIRJffyYth2GU5e8//xlqKJHi/DgGnz
-	 BUUmLxVj9SU71LztphN68wCuCt48AlRRF8l1SRXSl6UTZvuDVSBkd+a1GC45qNStPW
-	 Q0crj1nfCu8tkmU+u8pOZQVIPi2+TigTVTMVI8So1c2a1g8C4sP4rSx6RZe17Jockt
-	 aUhQduKV0suAw==
-Date: Sun, 6 Oct 2024 15:42:53 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Michael
- Hennerich <michael.hennerich@analog.com>, Kim Seer Paller
- <kimseer.paller@analog.com>, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v2] iioc: dac: ltc2664: Fix span variable usage in
- ltc2664_channel_config function
-Message-ID: <20241006154253.1a7824bf@jic23-huawei>
-In-Reply-To: <20241006152533.329d9b59@jic23-huawei>
-References: <20241005170722.19542-1-pvmohammedanees2003@gmail.com>
-	<20241006152533.329d9b59@jic23-huawei>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728225952; c=relaxed/simple;
+	bh=2ojKdSiJX3m0RwIsErwzLLaYE7C1YwdcVnXb9B2l6zk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DehH6ot+oPz2zLwxpL22KtsUAwvdoaeBtAf5BX1H/GxJ1J1amjqy4Zv0EqUDde5cVXbJlacyrPqkPr+rISUV2wtSo3SrX8c97LHxbzFA+Mu576u0YO/imshps9EBKVHosmW6LU3GoFhmPNf4yErOixfHUXsai85YcfGpIvN5WMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=lATDtZJp; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=FkIgVPdoA8VZ2rGYtdVu+cQAsveXdhu7De0J+IqMDOc=; b=lATDtZJpRC1kMy5qcpOIDKjvHt
+	YVgNiYnXKH6HURvj/Jpo6YhW/OAuD/kNPsH6MROZRIpumQEFZruvu+mqm6Oc6bkb+plDN/qm6rW8K
+	0IwcOqNiyHfAXBYNYboPW7Hb2Fo79TNLnXiFG0ZRQZyovDTKpYOBcNhsLXxJQUqb5JmQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sxSVd-009Bhe-1Z; Sun, 06 Oct 2024 16:45:21 +0200
+Date: Sun, 6 Oct 2024 16:45:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
+	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+	arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
+Message-ID: <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
+ <20241005122531.20298-6-fujita.tomonori@gmail.com>
+ <06cbea6a-d03e-4c89-9c05-4dc51b38738e@lunn.ch>
+ <ZwG8H7u3ddYH6gRx@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwG8H7u3ddYH6gRx@boqun-archlinux>
 
-On Sun, 6 Oct 2024 15:25:33 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
-
-> On Sat,  5 Oct 2024 22:37:22 +0530
-> Mohammed Anees <pvmohammedanees2003@gmail.com> wrote:
-> 
-> > In the current implementation of the ltc2664_channel_config function,
-> > a variable named span is declared and initialized to 0, intended to
-> > capture the return value of the ltc2664_set_span function. However,
-> > the output of ltc2664_set_span is directly assigned to chan->span,
-> > leaving span unchanged. As a result, when the function later checks
-> > if (span < 0), this condition will never trigger an error since
-> > span remains 0, this flaw leads to ineffective error handling. The
-> > current patch resolves this issue by using the ret variable for 
-> > getting the return value, later assigning if successful and also 
-> > effectively removing span variable.
+On Sat, Oct 05, 2024 at 03:22:23PM -0700, Boqun Feng wrote:
+> On Sat, Oct 05, 2024 at 08:32:01PM +0200, Andrew Lunn wrote:
+> > > might_sleep() is called via a wrapper so the __FILE__ and __LINE__
+> > > debug info with CONFIG_DEBUG_ATOMIC_SLEEP enabled isn't what we
+> > > expect; the wrapper instead of the caller.
 > > 
-> > Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
-> > Fixes: 4cc2fc445d2e4e63ed6bd5d310752d88d365f8e4
-Hmm. I see you had a v3. For some reason that hasn't reached my inbox.
-Also note the fixes tag was wrong and you've fixed that.
-
-I've picked up v3 and applied it to the fixes-togreg branch of iio.git
-and marked it for stable inclusion.
-
-Thanks,
-
-J
-> > ---
-> > v2:
-> > - Using the ret variable to store the result from ltc2664_set_span
-> > ---
-> >  drivers/iio/dac/ltc2664.c | 18 +++++++++++-------
-> >  1 file changed, 11 insertions(+), 7 deletions(-)
+> > So not very useful. All we know is that somewhere in Rust something is
+> > sleeping in atomic context. Is it possible to do better? Does __FILE__
+> > and __LINE__ exist in Rust?
 > > 
-> > diff --git a/drivers/iio/dac/ltc2664.c b/drivers/iio/dac/ltc2664.c
-> > index 5be5345ac5c8..7dafcba7ece7 100644
-> > --- a/drivers/iio/dac/ltc2664.c
-> > +++ b/drivers/iio/dac/ltc2664.c
-> > @@ -516,7 +516,7 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
-> >  	const struct ltc2664_chip_info *chip_info = st->chip_info;
-> >  	struct device *dev = &st->spi->dev;
-> >  	u32 reg, tmp[2], mspan;
-> > -	int ret, span = 0;
-> > +	int ret;
-> >  
-> >  	mspan = LTC2664_MSPAN_SOFTSPAN;
-> >  	ret = device_property_read_u32(dev, "adi,manual-span-operation-config",
-> > @@ -579,20 +579,24 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
-> >  		ret = fwnode_property_read_u32_array(child, "output-range-microvolt",
-> >  						     tmp, ARRAY_SIZE(tmp));
-> >  		if (!ret && mspan == LTC2664_MSPAN_SOFTSPAN) {
-> > -			chan->span = ltc2664_set_span(st, tmp[0] / 1000,
-> > +			ret = ltc2664_set_span(st, tmp[0] / 1000,
-> >  						      tmp[1] / 1000, reg);
-> > -			if (span < 0)
-> > -				return dev_err_probe(dev, span,
-> > +			if (ret < 0)
-> > +				return dev_err_probe(dev, ret,
-> >  						     "Failed to set span\n");
-> > +			else  
-> else is unnecessary here as we have the standard check and error and return
-> if set pattern.
 > 
+> Sure, you can use: 
 > 
-> > +				chan->span = ret;
-> >  		}
-> >  
-> >  		ret = fwnode_property_read_u32_array(child, "output-range-microamp",
-> >  						     tmp, ARRAY_SIZE(tmp));
-> >  		if (!ret) {
-> > -			chan->span = ltc2664_set_span(st, 0, tmp[1] / 1000, reg);
-> > -			if (span < 0)
-> > -				return dev_err_probe(dev, span,
-> > +			ret = ltc2664_set_span(st, 0, tmp[1] / 1000, reg);
-> > +			if (ret < 0)
-> > +				return dev_err_probe(dev, ret,
-> >  						     "Failed to set span\n");
-> > +			else  
-> and here.
-> > +				chan->span = ret;
-> >  		}
-> >  	}
-> >    
+> 	https://doc.rust-lang.org/core/macro.line.html
+
+So i guess might_sleep() needs turning into some sort of macro, calling
+__might_sleep(__FILE__, __LINE__); might_resched();
+
+> > > +    if sleep {
+> > > +        // SAFETY: FFI call.
+> > > +        unsafe { bindings::might_sleep() }
+> > > +    }
+> > 
+> > What is actually unsafe about might_sleep()? It is a void foo(void)
 > 
+> Every extern "C" function is by default unsafe, because C doesn't have
+> the concept of safe/unsafe. If you want to avoid unsafe, you could
+> introduce a Rust's might_sleep() which calls into
+> `bindings::might_sleep()`:
 > 
+> 	pub fn might_sleep() {
+> 	    // SAFETY: ??
+> 	    unsafe { bindings::might_sleep() }
+> 	}
+> 
+> however, if you call a might_sleep() in a preemption disabled context
+> when CONFIG_DEBUG_ATOMIC_SLEEP=n and PREEMPT=VOLUNTERY, it could means
+> an unexpected RCU quiescent state, which results an early RCU grace
+> period, and that may mean a use-after-free. So it's not that safe as you
+> may expected.
+
+If you call might_sleep() in a preemption disabled context you code is
+already unsafe, since that is the whole point of it, to find bugs
+where you use a sleeping function in atomic context. Depending on why
+you are in atomic context, it might appear to work, until it does not
+actually work, and bad things happen. So it is not might_sleep() which
+is unsafe, it is the Rust code calling it.
+
+	Andrew
+
+
 
 
