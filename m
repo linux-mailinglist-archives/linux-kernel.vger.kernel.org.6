@@ -1,77 +1,81 @@
-Return-Path: <linux-kernel+bounces-352583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6B3992106
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:04:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE88992109
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94A51281C91
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:04:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04DD71C20A1B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5861118A936;
-	Sun,  6 Oct 2024 20:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12C218B483;
+	Sun,  6 Oct 2024 20:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fCGIZgTu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FVAB5WRP"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585BD18A6D3;
-	Sun,  6 Oct 2024 20:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B57729405
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728245083; cv=none; b=AKAJQMr9q8G/JnL/vCtny7VMb42mjtmSwONm+ztuT6AXYDnPWmy6CdpQRgbFrMNY8j7iyON681YT3msu+qH4gt2+PEtfe5AGBdhiQubjgsQWhh+N1tExTUmtJzJDAuI4dbFBaHULSPOK2ZQ+gk0yBTeDAvJ4iXLUljszOhWKKEc=
+	t=1728245233; cv=none; b=WdkAN4T59u5HygDF2tXLAXynq7vJ9IDPdJFKJdAEdfS208SyL29mXTCQmDqDoTOn51D1zWYOmHMFV1YwyGU9O2ky9a1Q47TDt6PHcohIj5P3gQyJK4rnb3+pur4s2REt5xm72jKcCGxAQR3KXZayaN1RlG1Ef3/18IAZqg7t0iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728245083; c=relaxed/simple;
-	bh=jFJ2pP4x6dDzHcclHbsHUHuXjjQpry7txxpsVKHJTkg=;
+	s=arc-20240116; t=1728245233; c=relaxed/simple;
+	bh=hWlVn6wqYOiZf/D380nxzst1Ny3r+QrTd4JE5sBLCm0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e3B4bPpbWnfaTD0pOLjvvJ7VKLh/smVb6fs2VfJO888uSKzIpotz3GfQjYaMC/yuNnQIGcZIKDF73TQRhEN90d5ZsdLEx04IMfJ9/sFWJ6yB7JyDwapPpM4zpxaBPgWf3V0kL3MorH54ik4H3XvW6E4RvYco0RLfGE4xcNeWoWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fCGIZgTu; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728245082; x=1759781082;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jFJ2pP4x6dDzHcclHbsHUHuXjjQpry7txxpsVKHJTkg=;
-  b=fCGIZgTuNW5+1fxz4U0rKta+COythdfa3tpvrdt9xvx1xjfVNdRF+Vak
-   96OOCNm5gaZl9E1iTSNKkrYhRahH8XTEMQJx0OxjIYwncRuOmN0NuhyDs
-   likDEC3L5Pl0wN8YeArg23rlrZ0uRHcw7XPlet8wFG4cJQrnw7dcdwQzG
-   eM1yGe4vdO/BYqLdZvciJ2rWnIBQAVsHrkoRPiJHqn9/AbTD8BWQ/UmUn
-   Y+OT5ZCIp9ZqyEN0WDx8ID/5eZnC/4xX5OkQ1h2+aOmcbK2CkVBuQjsKZ
-   j7ZzWNWb/4f8khIkHmMXxnotBbkSpLApo2DWg9gcSzY7S9je8xrpWj7bd
-   A==;
-X-CSE-ConnectionGUID: KDaQOe49SKalNGeeFZdZCg==
-X-CSE-MsgGUID: vZ1zimAaTJa/CcyjP6zp6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11217"; a="27521639"
-X-IronPort-AV: E=Sophos;i="6.11,182,1725346800"; 
-   d="scan'208";a="27521639"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2024 13:04:41 -0700
-X-CSE-ConnectionGUID: ITkbClHETpOB+p9t9n1VtQ==
-X-CSE-MsgGUID: Qxq3R5HVR1imPt1IwNd6Vg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,182,1725346800"; 
-   d="scan'208";a="75705157"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 06 Oct 2024 13:04:38 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sxXUa-0004J0-0c;
-	Sun, 06 Oct 2024 20:04:36 +0000
-Date: Mon, 7 Oct 2024 04:04:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Drew Fustini <dfustini@tenstorrent.com>, Drew Fustini <drew@pdp7.com>,
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] pinctrl: th1520: Convert to thp->mutex to guarded
- mutex
-Message-ID: <202410070352.6BZrRWQU-lkp@intel.com>
-References: <20241005-th1520-pinctrl-fixes-v1-1-5c65dffa0d00@tenstorrent.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CW/PhMiKIAL83KAVM/ReGvjxL5gKTcectYumuQHiDPRTIAnqXSqNhKbMv6Gets9zGTlpCVXXZ0OjFOZT18oRJkj3DXMoPjyVFmnU7GmZFQX5QM1ZDbes33gnE4ghH/CQQS2LkD4XhkNTLHdaS10f4u1l2ix2O5fR741LVbpYYyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FVAB5WRP; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398df2c871so3891996e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 13:07:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728245229; x=1728850029; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S1aKTq90Vhx5SEGbGXZgfVnFGr2p8A90AYr+7ozDiYY=;
+        b=FVAB5WRP5WKmhHJlnq4Rvj8inClkLG1ReUyfc09COMcSSL/ELs+ju4YyiSrvu3ktIb
+         cXQszaDwIrmZhHrOcGYghofr4ngQYSYRtcZPnR7UsHdRVCwmsXJwbvbkX+xiW9W+DZu/
+         JVZCLgW/7YQlgV55tCcxfl+sUBfDguQFAJGtNSUdHG04DvzLQlWycFLIt8z8F9kvF/21
+         N5yMPAEOOMo0PLVHgi8PkqquOEapbnecYBQon7LEMxwLZxbeWzJ3VixJkXu9uT/PT5UU
+         Sh1vXCPTzVHyCSOnCd9lvmf1EF3rUqu1F+XIkc0ao/SmAsYhNSITYhUpL0oTRqNoNdAt
+         yqVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728245229; x=1728850029;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S1aKTq90Vhx5SEGbGXZgfVnFGr2p8A90AYr+7ozDiYY=;
+        b=KchOBPTbjswroP41BGUSnfGDDCoePKXqjoGpvahlnUOSVNv8m3W1EH4IT0JXGSF/AJ
+         0e6/KeaSjw3pOs2p/7uOQ5l8hFHTP4z1t9DmKeYCriElS2CRA0+7Xq74rdaFz1UablP2
+         kd9xcuL7/2jWl93NjFSPkWf6vkMRdJK82EtMRJAZCsKoAYqlC2HZf449/WoUE2gBBt8z
+         OTy+KsbJoFBWpgPCDFqOmE4iG5/4vrgdAbP4g98dhflbDtQ/Js2kGCJmWgK4KPVZu2T4
+         ibGTi8VmOpZfdunDkjngIcz3qRrLwAgyVFvD8g4izbNXkpaO78ryObg105rAg7OAgc8H
+         DHdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTJzwnBjuZbEFz4D5LxPOrNqtNxcM9BwhmQbdfln2ZSLQTW7z8XzzpBAtRP9fmkJeOrOPfT6VBt4cHGLI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgQ/Fk2hgoXWGVXNtZL19egmAW1VU47bRO2VNVbK8shLg5i7o8
+	uFAf+zSN40b+m0jFD55m/JX85J/8qIyvyouitBiqPiL9uNYX1kxwN0IW5dajL/I=
+X-Google-Smtp-Source: AGHT+IFKknDCxNnpYRFa+g3cPJbjZFRd+fx1yS92WOXtOwvo4hAI4DPBzjNxMcxwiu6wMUNEhhPAqQ==
+X-Received: by 2002:a05:6512:3d0c:b0:533:455c:8a49 with SMTP id 2adb3069b0e04-539ab8adbccmr4075594e87.38.1728245228683;
+        Sun, 06 Oct 2024 13:07:08 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff1d1f3sm599873e87.153.2024.10.06.13.07.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 13:07:07 -0700 (PDT)
+Date: Sun, 6 Oct 2024 23:07:05 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Rakesh Kota <quic_kotarake@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_kamalw@quicinc.com, 
+	quic_jprakash@quicinc.com
+Subject: Re: [PATCH] arm64: dts: qcom: qcm6490: Allow UFS regulators
+ load/mode setting
+Message-ID: <jid5coqe4tpsafbi2haem6ye4vrpwyymkepduxkporfxzdi6cx@bfbodoxoq67l>
+References: <20241004080110.4150476-1-quic_kotarake@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,179 +84,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241005-th1520-pinctrl-fixes-v1-1-5c65dffa0d00@tenstorrent.com>
+In-Reply-To: <20241004080110.4150476-1-quic_kotarake@quicinc.com>
 
-Hi Drew,
+On Fri, Oct 04, 2024 at 01:31:10PM GMT, Rakesh Kota wrote:
+> The UFS driver expects to be able to set load (and by extension, mode)
+> on its supply regulators. Add the necessary properties to make that
+> possible.
+> 
+> While at it, UFS rails have different voltage requirement for UFS2.x
+> v/s UFS3.x. Bootloader sets the proper voltage based on UFS type.
+> There can be case where the voltage set by bootloader is overridden
+> by HLOS client.
+> 
+> To prevent above issue, add change to remove voltage voting support
+> for dedicated UFS rails.
 
-kernel test robot noticed the following build warnings:
+add change to remove smth doesn't sound correct to me.
+Please don't depend on the bootloader and describe hardware
+configuration. If there can be two types of IDP boards and you can not
+identify the voltage via other means, please create something like
+qcm6490-idp-ufs3.dts. Please add proper Fixes tags.
+Last, but not least, as Bjorn wrote, please split into two patches.
 
-[auto build test WARNING on 2694868880705e8f6bb61b24b1b25adc42a4a217]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Drew-Fustini/pinctrl-th1520-Convert-to-thp-mutex-to-guarded-mutex/20241006-033647
-base:   2694868880705e8f6bb61b24b1b25adc42a4a217
-patch link:    https://lore.kernel.org/r/20241005-th1520-pinctrl-fixes-v1-1-5c65dffa0d00%40tenstorrent.com
-patch subject: [PATCH 1/2] pinctrl: th1520: Convert to thp->mutex to guarded mutex
-config: powerpc64-randconfig-r073-20241007 (https://download.01.org/0day-ci/archive/20241007/202410070352.6BZrRWQU-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241007/202410070352.6BZrRWQU-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410070352.6BZrRWQU-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/pinctrl/pinctrl-th1520.c:538:14: warning: variable 'child' is uninitialized when used here [-Wuninitialized]
-           of_node_put(child);
-                       ^~~~~
-   drivers/pinctrl/pinctrl-th1520.c:420:27: note: initialize the variable 'child' to silence this warning
-           struct device_node *child;
-                                    ^
-                                     = NULL
-   1 warning generated.
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for MODVERSIONS
-   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
-   Selected by [y]:
-   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
-
-
-vim +/child +538 drivers/pinctrl/pinctrl-th1520.c
-
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  413  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  414  static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  415  					 struct device_node *np,
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  416  					 struct pinctrl_map **maps,
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  417  					 unsigned int *num_maps)
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  418  {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  419  	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  420  	struct device_node *child;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  421  	struct pinctrl_map *map;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  422  	unsigned long *configs;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  423  	unsigned int nconfigs;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  424  	unsigned int nmaps;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  425  	int ret;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  426  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  427  	nmaps = 0;
-fb310b5cb13ad2 Drew Fustini         2024-10-05  428  	for_each_available_child_of_node_scoped(np, child) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  429  		int npins = of_property_count_strings(child, "pins");
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  430  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  431  		if (npins <= 0) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  432  			of_node_put(child);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  433  			dev_err(thp->pctl->dev, "no pins selected for %pOFn.%pOFn\n",
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  434  				np, child);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  435  			return -EINVAL;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  436  		}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  437  		nmaps += npins;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  438  		if (of_property_present(child, "function"))
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  439  			nmaps += npins;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  440  	}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  441  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  442  	map = kcalloc(nmaps, sizeof(*map), GFP_KERNEL);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  443  	if (!map)
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  444  		return -ENOMEM;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  445  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  446  	nmaps = 0;
-fb310b5cb13ad2 Drew Fustini         2024-10-05  447  	guard(mutex)(&thp->mutex);
-fb310b5cb13ad2 Drew Fustini         2024-10-05  448  	for_each_available_child_of_node_scoped(np, child) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  449  		unsigned int rollback = nmaps;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  450  		enum th1520_muxtype muxtype;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  451  		struct property *prop;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  452  		const char *funcname;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  453  		const char **pgnames;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  454  		const char *pinname;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  455  		int npins;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  456  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  457  		ret = pinconf_generic_parse_dt_config(child, pctldev, &configs, &nconfigs);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  458  		if (ret) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  459  			dev_err(thp->pctl->dev, "%pOFn.%pOFn: error parsing pin config\n",
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  460  				np, child);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  461  			goto put_child;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  462  		}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  463  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  464  		if (!of_property_read_string(child, "function", &funcname)) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  465  			muxtype = th1520_muxtype_get(funcname);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  466  			if (!muxtype) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  467  				dev_err(thp->pctl->dev, "%pOFn.%pOFn: unknown function '%s'\n",
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  468  					np, child, funcname);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  469  				ret = -EINVAL;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  470  				goto free_configs;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  471  			}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  472  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  473  			funcname = devm_kasprintf(thp->pctl->dev, GFP_KERNEL, "%pOFn.%pOFn",
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  474  						  np, child);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  475  			if (!funcname) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  476  				ret = -ENOMEM;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  477  				goto free_configs;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  478  			}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  479  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  480  			npins = of_property_count_strings(child, "pins");
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  481  			pgnames = devm_kcalloc(thp->pctl->dev, npins, sizeof(*pgnames), GFP_KERNEL);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  482  			if (!pgnames) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  483  				ret = -ENOMEM;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  484  				goto free_configs;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  485  			}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  486  		} else {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  487  			funcname = NULL;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  488  		}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  489  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  490  		npins = 0;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  491  		of_property_for_each_string(child, "pins", prop, pinname) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  492  			unsigned int i;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  493  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  494  			for (i = 0; i < thp->desc.npins; i++) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  495  				if (!strcmp(pinname, thp->desc.pins[i].name))
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  496  					break;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  497  			}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  498  			if (i == thp->desc.npins) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  499  				nmaps = rollback;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  500  				dev_err(thp->pctl->dev, "%pOFn.%pOFn: unknown pin '%s'\n",
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  501  					np, child, pinname);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  502  				goto free_configs;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  503  			}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  504  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  505  			if (nconfigs) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  506  				map[nmaps].type = PIN_MAP_TYPE_CONFIGS_PIN;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  507  				map[nmaps].data.configs.group_or_pin = thp->desc.pins[i].name;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  508  				map[nmaps].data.configs.configs = configs;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  509  				map[nmaps].data.configs.num_configs = nconfigs;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  510  				nmaps += 1;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  511  			}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  512  			if (funcname) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  513  				pgnames[npins++] = thp->desc.pins[i].name;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  514  				map[nmaps].type = PIN_MAP_TYPE_MUX_GROUP;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  515  				map[nmaps].data.mux.function = funcname;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  516  				map[nmaps].data.mux.group = thp->desc.pins[i].name;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  517  				nmaps += 1;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  518  			}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  519  		}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  520  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  521  		if (funcname) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  522  			ret = pinmux_generic_add_function(pctldev, funcname, pgnames,
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  523  							  npins, (void *)muxtype);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  524  			if (ret < 0) {
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  525  				dev_err(thp->pctl->dev, "error adding function %s\n", funcname);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  526  				goto put_child;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  527  			}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  528  		}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  529  	}
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  530  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  531  	*maps = map;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  532  	*num_maps = nmaps;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  533  	return 0;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  534  
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  535  free_configs:
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  536  	kfree(configs);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  537  put_child:
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30 @538  	of_node_put(child);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  539  	th1520_pinctrl_dt_free_map(pctldev, map, nmaps);
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  540  	return ret;
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  541  }
-bed5cd6f8a9883 Emil Renner Berthing 2024-09-30  542  
+> 
+> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> index 84c45419cb8d..8a4df9c2a946 100644
+> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> @@ -258,13 +258,15 @@ vreg_l6b_1p2: ldo6 {
+>  			regulator-name = "vreg_l6b_1p2";
+>  			regulator-min-microvolt = <1140000>;
+>  			regulator-max-microvolt = <1260000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+>  		vreg_l7b_2p952: ldo7 {
+>  			regulator-name = "vreg_l7b_2p952";
+> -			regulator-min-microvolt = <2400000>;
+> -			regulator-max-microvolt = <3544000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+> @@ -277,8 +279,8 @@ vreg_l8b_0p904: ldo8 {
+>  
+>  		vreg_l9b_1p2: ldo9 {
+>  			regulator-name = "vreg_l9b_1p2";
+> -			regulator-min-microvolt = <1200000>;
+> -			regulator-max-microvolt = <1304000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+> @@ -467,6 +469,8 @@ vreg_l10c_0p88: ldo10 {
+>  			regulator-name = "vreg_l10c_0p88";
+>  			regulator-min-microvolt = <720000>;
+>  			regulator-max-microvolt = <1050000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+> -- 
+> 2.34.1
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With best wishes
+Dmitry
 
