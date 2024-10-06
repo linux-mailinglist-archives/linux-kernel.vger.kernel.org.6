@@ -1,88 +1,95 @@
-Return-Path: <linux-kernel+bounces-352580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0A39920FD
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:59:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB6F39920FF
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20A8AB21110
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:58:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906851C20A12
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE6018A933;
-	Sun,  6 Oct 2024 19:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4FB189BB9;
+	Sun,  6 Oct 2024 20:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UXCB50le";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c+RnTSjL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TamOtnB0"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F1F1A716
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 19:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B16EAD8
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728244732; cv=none; b=l2+G1i0USfU6VXAvkfzqJXw8UxwM5NWQjfoPh20eA4xb1iI/ZwcqDwd/13KKSjek+WIUTfKb/2Xg2crd1w4U6ohA7XVFWwJ3hZq8BpqYiH08sBz97GxkoPLTF0J+uYL3qh9Ujq0MeexvkawXI4UVmSbDU6KTyNVAmy8gJdY7gCw=
+	t=1728244850; cv=none; b=PZ19jaD6ZJPfWnAWafOLSUAlSlwfI5EZVpJSCrPqpvpjQgq+HqcPh29Gcqo9aMkg/FCjFPE2wVuUdivW8oqOme4NBY20VX+3Sw/AbXPTF94YI5NfEDu+3KLuOCCxmAjl/C/EESjMMODmu6C3Afz4iQ6OIlY/8iQxjFehYGi+fyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728244732; c=relaxed/simple;
-	bh=yzhsqsF9oOGQ+EJh5j7sPiN85yqR28UG00mdZ23jRpE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YTslsq8DBBmgRcTLzUFytOKD25VJU2zBQnXcSw/xbsV82n7CFcC/knJ5dpQJbBPDR3V+3z73aSGWZLGshUAJDXzGNtsdPi9iPCEYhRGYjSm8PSr/5FxDaQFgKezXA4geiKqrf+OrT80lmLeJqRfu0uEt/oSAYKdzvhhkPooHVzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UXCB50le; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c+RnTSjL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728244729;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K2Rf09BGvVRGoGF7ggkhPU2Hi1s03+6FHwCcsr+Zr+M=;
-	b=UXCB50le/uhAYr5DNdVFy3JoG2oA7PSTQ+nwKFxgsOabNZ4QcWYlB9e/l3aAClKhR75snN
-	9NSExreDD9yTHSOabeQz5BOAPc8mbd0ST0lthXbRcShJc+NAN4Yopy5USuzrdczHMQ3gnj
-	mK964bPqsY97hpyPefcRTfo/XiS/XXsv3hL7kKv6PVhpMpJwjrjiHNKZSRe1mXIZCPy8U+
-	J0BZIf+FwLxOw/kIG8ukRn+izs0HNnTKctIx0b9FDUGCvGMJY2G65BFl8Gi2pZdwigkdKV
-	11yeccJqOzsqpwF2ufqNrB/XrDThNmL/mafSEDTM9e2LfGyUQvEUl9ez74P4iw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728244729;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K2Rf09BGvVRGoGF7ggkhPU2Hi1s03+6FHwCcsr+Zr+M=;
-	b=c+RnTSjL4xmuUq0c1ZM94DCYLVNDXwtVUj6H7N7KgeXkdA6QhcB6szrnHT/U9wZDPtlgyW
-	x6HLAcwnsGcHuZCA==
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King
- <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/21] genirq: Introduce number_of_interrupts() and
- set_number_of_interrupts()
-In-Reply-To: <b4eabf2f-5c88-4d36-89e3-d27cda0eef36@acm.org>
-References: <20240930181600.1684198-1-bvanassche@acm.org>
- <20240930181600.1684198-2-bvanassche@acm.org> <875xqcypds.ffs@tglx>
- <bd377620-7781-4b93-98c1-93f778b74724@acm.org> <87ikuawlm1.ffs@tglx>
- <b4eabf2f-5c88-4d36-89e3-d27cda0eef36@acm.org>
-Date: Sun, 06 Oct 2024 21:58:49 +0200
-Message-ID: <87ed4tuhom.ffs@tglx>
+	s=arc-20240116; t=1728244850; c=relaxed/simple;
+	bh=EFJ5znbEWq49VrtfItiZRXPo6AnegBFQLcUYA79CHKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=azBhARLEv3NizgINqaiKaEQLlQJMVKru5UKmejdXKXEdVuipaLXKvBtpuLh4apRJUXnPPD3++a3hU/bALvtQkF9G5knPyht0WA2Say+FNeHUmpSKR/AeR27tqDHGogWVtWDIldFrkFv8jYP1FF0INIJe0KqI+3UCK4D5N5twvME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TamOtnB0; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5tuM+Y9p6eMLb4eUfE0M90vJXu80keX4OfG+gMrJJys=; b=TamOtnB01UzaU6nemCdO8RUCSF
+	dXPAq+zqlxxvRwBLQMHVTIbajN/o7RbMWCfB/M2gScQSkyjiijxKc2SxZZugvCsyzoh3gGwXWyru4
+	jIr2cqaMNDDfBganpywKqtskvXB0UqhLmmNUHAsgYvfv1ppkQzYSRSpaNCPnmnIpgilaBSbUrpK3i
+	NQ+sEw5Sqs+YdA8fK/ik7ItM5y7fmGLPD5BRABASh1MsRonop24vKyvjm5N8suUpk9kiw+ZEc8y00
+	uM2sLf4AFeGRdzS69Z/qJ8kUMyp2OfYqUSqpS7iTEcH3UWC6ifHd1oTmEgnrsASgC94U30VkBVB3D
+	pCqXzifg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sxXQs-00000001P9B-2s7r;
+	Sun, 06 Oct 2024 20:00:46 +0000
+Date: Sun, 6 Oct 2024 21:00:46 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: David Laight <David.Laight@aculab.com>
+Cc: Brahmajit Das <brahmajit.xyz@gmail.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] fs/qnx6: Fix building with GCC 15
+Message-ID: <20241006200046.GF4017910@ZenIV>
+References: <vch6gmzqaeo22c7473qyabrfwxlkdhx5vgvosjyp5l2nwgqnxl@5x3ny35qyfgx>
+ <20241004094921.615688-1-brahmajit.xyz@gmail.com>
+ <20241004184440.GQ4017910@ZenIV>
+ <665bcd89cf5f4679a38e9a84fa0ba42a@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <665bcd89cf5f4679a38e9a84fa0ba42a@AcuMS.aculab.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Oct 03 2024 at 14:01, Bart Van Assche wrote:
-> On 10/2/24 8:49 AM, Thomas Gleixner wrote:
->>> How about irq_count() and irq_set_count()?
->> 
->> Sure.
->
-> I just noticed that a macro with the name irq_count() already exists.
-> How about the names irq_get_nr_irqs() and irq_set_nr_irqs() instead?
+On Sun, Oct 06, 2024 at 07:38:07PM +0000, David Laight wrote:
+> ...
+> > would explain what was really going on - the point is not to make gcc STFU, it's
+> > to make the code more straightforward.  The warning is basically "it smells
+> > somewhat fishy around >here<, might be worth taking a look".  And yes, it turned
+> > out to be fishy; minimal "make it STFU" would be to strip those NULs from
+> > the initializers (i.e. just go for static char match_root[2][3] = {".", ".."}; -
+> > an array initializer is zero-padded if it's shorter than the array), but that
+> > wasn't the only, er, oddity in that code.
+> 
+> Indeed - looks like it is checking that the first two directory entries
+> are "." and ".." in about the most complex way possible.
+> 
+> I have vague recollections on some code that ignored the first two entries
+> because they 'must be "." and ".."' - and then failed because some filesystem
+> (and I can't even remember the O/S) didn't meet its expectations!
+> 
+> A simple:
+> 	if (strcmp(dir_entry[0].de_fname, ".") || strcmp(dir_entry[1].de_fname, ".."))
+> 		error = 1;
+> would suffice.
 
-Sounds good to me.
-
-Thanks,
-
-        tglx
+memcmp(), please.  strcmp() is _not_ guaranteed to be safe without both being
+NUL-terminated; yes, compiler will almost simplify that in case when one of
+the arguments is a string literal, but it's better to do straight memcmp() in
+this case.  It's not worth trying to be fancy there...
 
