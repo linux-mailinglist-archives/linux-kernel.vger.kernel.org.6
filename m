@@ -1,116 +1,155 @@
-Return-Path: <linux-kernel+bounces-352290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49838991CFC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:40:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20ABB991CFF
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDB2E2834D4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:40:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 381D11C2140E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C6816DEDF;
-	Sun,  6 Oct 2024 07:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF1F16DEDF;
+	Sun,  6 Oct 2024 07:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hMCOXAZn"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="kJjt34A7";
+	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="OeYnL5VH"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2122572;
-	Sun,  6 Oct 2024 07:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728200433; cv=none; b=kYMUGXad1/9vhH+xBfTexIipVakLx3jYyCisgjD2WIil/rkjNbLQQ1J/vwSWdgsXDNQfixDuEp2WxK6bnjKpXTCj4Tikgsg16ZlZJvKSJ89Zw+5BmpWF5ZiqA6/yf+FrhpEwq8kFqi88HqFkQvI1dkmCEqcklvZQhDcJSp5xZ60=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728200433; c=relaxed/simple;
-	bh=7ZExBx80upkW38+A/QbU+fsXFVRR42HeioQR1cxjbXo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=hsO9YwHu2EaboRrK2X2atMUWhSNDS2KkIo/mtTlyaNWkNUc2sbiEhJ8gaS+NNWNI7TraKpdkBaWaKjNdq8JgOqudrOG0CX1KAkE78CmxnOiw58NYgU1cQ7/Kk+OJkoYX3qSHss0x+GQxHhD8Y1aqasV0sj4QdE4JTNAMliXJiyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hMCOXAZn; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728200367; x=1728805167; i=markus.elfring@web.de;
-	bh=lW2NTtgSXR6HN9BJzUyHvkd+FTWE/RFYjn0L0MqlDJ8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=hMCOXAZn0Mc2FptfnJ69avOE9ggRZroODv7EErk5yqVZf8QJmhNkqQbcOtM1OOnZ
-	 iFVkX33DlOUH6PfBwVFi9ynZSE1DkRmfZ6pTmC/RtXCvEwYSokAK1c86a0g4QN+eN
-	 JGk5TTfIxVj4hT1//4v24B8LyGmD2p5u0csDpYloBUNMa9b4Pbb6NFH/E3ecnta2e
-	 ZiESI4sTBcPKph0mk1T92Ia62jAf8MgEaUZWyfTSqXtuCoa1cyAjMX+8wK8HqkHft
-	 8iVEHGmxUbICPbrWvrmqSwM7E1EeTR1cRC832ty8scRTUWHBUqjBDtmtlejbD8FkE
-	 eSMOrHs+v5W6fu/v2A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M4bUq-1sxtYf2PVm-002EF8; Sun, 06
- Oct 2024 09:39:27 +0200
-Message-ID: <821a7417-4f2a-42ed-9616-88a0c145fa5d@web.de>
-Date: Sun, 6 Oct 2024 09:39:21 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9A12572;
+	Sun,  6 Oct 2024 07:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728200606; cv=pass; b=ZpVNAjzX13cUoCp+f1/O426Q3UU94PUyhev1FUs8jNLoHRMA8jv9ZU5YdvjETu2FY8bjHhU5ss2feSrFJDOPb/mh67yU9ra+muqtuIfcXkORWai87ws5y8qZF0IbSeW6dA4TiWG3bNkL99NswrnwxgM3hwm6R87IkRSk15oEj04=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728200606; c=relaxed/simple;
+	bh=gaiah3wHzx659RQfayFyZWrfmxMrXgN/iNTsjt9vbRE=;
+	h=From:Content-Type:Mime-Version:Date:Subject:Cc:To:Message-Id; b=MRHd3orgf47KQ58nx4YMfKPtPDnrp9OqRErNR/lluwdz8vrrLE0WxxWtI0UvWE5EYErPFmuWpXGvrPbbJ2h9fpwDfQ35wzXI0cCfpmfReCAtc8OdaGAbftZjsSGc863L3FrEZ5gv24nMH8pz2o1yq37pGpuwOw0WpFtbLjLGuek=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=kJjt34A7; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=OeYnL5VH; arc=pass smtp.client-ip=85.215.255.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+ARC-Seal: i=1; a=rsa-sha256; t=1728200412; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=SjlNVSoLAeE7gSOTM+sDx5Y71HaJhoNQd0ifztJvUNzaIvw7d+LqGzjhjHZ8CPloQb
+    Czw+I7ZTNwEw/2w6gx5/+ahfJaJesulntbPGGM9Z/fl89DTUCANMgnuS5RHoyHF3Us9E
+    s1ggZOWqKZXEETny+WpNMW4qzBZ0aE2hLXnAJI9Wh2tFAPFnMRBJJFzxufKcwP9WMPUE
+    oF5bAykS2ZPUY9WUtS1/+7waOSBu4F5n1IT6ULbBSvdT9y+6Pur8TVa8Whf5t6iObfua
+    H0QtFkobbnvaph5n7wOmp0h6d4WOQkXo98DsfWg+cXYB5AZwgas/DBd4C7VlMfonHvKG
+    pg6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1728200412;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:To:Cc:Subject:Date:From:Cc:Date:From:Subject:Sender;
+    bh=h4hR1fIkCCa2MfP47vD3dHYOoTz5dZpkEs/J7KjGdxw=;
+    b=O9/xN36ftqQd3SR3mr83GrARRAMINb1mAdWrLgH5u82oblXwskxjt0K++i/CxsNfxS
+    oDCNXclNYWKozi2pG2MvmLM9vQSf8zfpGmBXckO3PEvxhWT6/53HCiE+mbZY0HurIqXV
+    i/6P/7G79tVQ0C93TRHnXa4wmjOba7GvNt40j2IjHy6C3aXWJT1w32bl6ENr1ngSWOMO
+    2G+ozoNsJ72i5La+pn8lzQMjR2p0PuU7LQ5Aneqk3OAsSaZB4PdVkwIONiBnvQIToHXA
+    IO7RknV/7GLvBXWptzkRhs7mTD17WllD7P6K397f9xu7FqsxgczStOPYyUCK4KhkMaij
+    2+qw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1728200412;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=Message-Id:To:Cc:Subject:Date:From:Cc:Date:From:Subject:Sender;
+    bh=h4hR1fIkCCa2MfP47vD3dHYOoTz5dZpkEs/J7KjGdxw=;
+    b=kJjt34A7SzFX7R2iaFfF2rJ+qVxAShPArX5vEqoKGu6wFfb5jDpL+pi8BYHd/aa+uS
+    4DGF3oyNIoCUvU8NyUfrrfQx3eH/9KjEEVNh6VmQmcYmQaHAFZkdHe9eOHLx/pJm0N5A
+    BOserep+bAIjzcmQJARQeDv6tHlREj1/m0YKgzdwFBBxw4CkdvvHhlAu1cPfmvYNgj8X
+    wsBl2dKzlSyYuNsqEYSWtjPksQMTyq0FxDCbRB+LsnCh/V8pgePz33D8IG3aXHsspxgA
+    UxtE32+5hcGrPCKX2RHw+cK260bxrtfIHjlm2wHqxv6sr0vub044yZjBpVnOYuKR8L+t
+    Sg+w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1728200412;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=Message-Id:To:Cc:Subject:Date:From:Cc:Date:From:Subject:Sender;
+    bh=h4hR1fIkCCa2MfP47vD3dHYOoTz5dZpkEs/J7KjGdxw=;
+    b=OeYnL5VHrVGFHh6E74V9oGRh8GAu1EYqe9KtleWl2gn92IvkmL0xkwCboFeOn7jbRq
+    1EHno3hQHHwFH5TiRVCA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeDkZ"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 51.2.7 DYNA|AUTH)
+    with ESMTPSA id Qd0dc20967eBMys
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Sun, 6 Oct 2024 09:40:11 +0200 (CEST)
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Chen Ni <nichen@iscas.ac.cn>, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>, Damien Le Moal <dlemoal@kernel.org>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <20240918074401.2221146-1-nichen@iscas.ac.cn>
-Subject: Re: [PATCH] PCI: dw-rockchip: Remove redundant dev_err()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240918074401.2221146-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Dn8EbyryMmfD0vIqg7CFb0Wxfi+mHdb2k6EuNRXBVwNOdnB349N
- 2g/hgfR+OFAa1LzJFlZjyjT7KhWdQoRnpzGBbOZtxvolIOfALpnj6cKp/GAv0xf0bFPoSdv
- 98N5JmSV8KLVv2+FM2buSbvYzBMV3LQw1B8KsqvAZwtSKrDnNUnSeSXL1YzRHci4R8mDcB/
- poHEUR0cQNJucwNhVmdPQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:MqY4sJMuk/s=;+zeb/3QHhcrQ5aN2iJwONFikDQW
- 0f/GQBICASExoEQer8hJzfZMEEckAM7eMl/7WzQDnWC2qF2/eb+8GqsnT6Js3FCbcfShzmRJy
- R/P1hMVDHmh9DbOxgpgpOwVGZQRfiK6+H+xNl+N1ZPoL8VyqGIgNFJYHyYSIq6PchiEOQW4tZ
- f/e26lgMHJoY5NexKVW/FNrGDmp1o3CHbHO9vu4vwOQdLBKUfEbEMg3SIThEuh96zU5/ok/mV
- YIsUzF3xSJsA1d3NksiY3E9PwTUz3dsro1kZxrPIes0bk0VofrA7tGfYRmAqVTanjlLHjFmzG
- VSzXPZPG+Lx3nVQgO+yW3hQVkjbcfZUAV8nOxq13PfDB1spp5eJZbDYkZJcMuciosC5pB26XH
- yDUM494ihHpMWhibJwv6yJyLuBkwObsoKNWpL4+uKQt0wGllHPgeKSXRSiWmUG46NyGZ4mTNn
- VptyrZiKEhGE9uH8fkprEh6Nz0EV/OwgmMuqm6j3KRAB5m1zqVYeqICUuKTDKIsoo4DDaEOQl
- dOnhILsv4Dm3p25QGVHxE0z9FFYZy+wifAwIat6I+FFctn3YKVnbc9nt0n7tH7U5qb9GimQi+
- CwyR20NrQWEPT/NAljaJBJUPbJpZjOUPDSdZ41rnKktQiEUvEE5YedbHy9S20+0zanQiCxvcV
- 9IvRIhj3lF2TCXJSLFQpgikIYYiBnYwKcsjj6GQkXGek8VADF3j/GWQRHZ9ZwQm0dbUUe4lj4
- flcoMggTdGM7WBaJFgdkt6nanBMi9BhC9KJTn0xFM+IdBGuv7Cm+V1R8EsI0h9V0/6TinsGaE
- BKlDFigzOdRtFnXIw+0i7v8A==
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Date: Sun, 6 Oct 2024 09:40:00 +0200
+Subject: BUG: "iommu: Retire bus ops" breaks omap-iommu and omap3isp
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Christoph Hellwig <hch@lst.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Lu Baolu <baolu.lu@linux.intel.com>,
+ Jason Gunthorpe <jgg@nvidia.com>,
+ Jerry Snitselaar <jsnitsel@redhat.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Joerg Roedel <jroedel@suse.de>,
+ tony Lindgren <tony@atomide.com>,
+ Andreas Kemnade <andreas@kemnade.info>,
+ Linux-OMAP <linux-omap@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-media@vger.kernel.org
+To: Robin Murphy <robin.murphy@arm.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Message-Id: <A7C284A9-33A5-4E21-9B57-9C4C213CC13F@goldelico.com>
+X-Mailer: Apple Mail (2.3776.700.51.11.1)
 
-> There is no need to call the dev_err() function directly to print a
-> custom message when handling an error from platform_get_irq_byname()
-> function as it is going to display an appropriate error message in case
+Hi,
 
-           call?
+I found that the camera on our OMAP3 based system (GTA04) stopped =
+working with v6.8-rc1.
+There was no bug in the camera driver but the OMAP3 ISP (image signal =
+processor) emits
+
+[   14.963684] omap3isp 480bc000.isp: failed to create ARM IOMMU mapping
+[   15.010192] omap3isp 480bc000.isp: unable to attach to IOMMU
+[   15.023376] omap3isp 480bc000.isp: isp_xclk_set_rate: cam_xclka set =
+to 24685714 Hz (div 7)
+[   15.065399] omap3isp: probe of 480bc000.isp failed with error -12
+
+Deeper analyses lead to this patch breaking operation. It is not fixed =
+up to v6.12-rc1.
+
+What seems to happen (in 6.8-rc1 code):
+
+- omap_iommu_probe() passes &omap_iommu_ops to iommu_device_register()
+- iommu_device_register() stores the ops in iommu->ops (only)
+- __iommu_probe_device tries to read the ops from some fw_spec but not =
+iommu->ops
+- this calls iommu_ops_from_fwnode(NULL) which looks strange to me
+- since it doesn't find any fw_spec or node matching a NULL fwspec it =
+returns -ENODEV
+
+So I wonder how the magic between setting the ops in omap_iommu_probe()
+and finding them in __iommu_probe_device() is intended to work. Or how
+the omap3isp driver should register some fw_node or fw_spec to make this
+work.
+
+What is a fix for this?
+
+BR and thanks,
+Nikolaus
+
+Bug: 17de3f5fdd3567 ("iommu: Retire bus ops")
 
 
-> of a failure.
+Note: Why did this bug not surface earlier? It appears that on OMAP3 the =
+only driver
+that uses iommu is omap3isp and connected cameras are not that =
+widespread.
+OMAP4 and 5 also use it for the DSP&IVA susbsystems which are also =
+rarely used.
+Hence it wasn't tested by anyone.
 
-
-Were any static source code analysis tools involved in the detection
-of the presented change possibility?
-
-
-By the way:
-Such a patch can be generated also by the means of the semantic patch
-language (Coccinelle software) for example.
-
-Regards,
-Markus
 
