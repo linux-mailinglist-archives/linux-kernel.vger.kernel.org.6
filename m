@@ -1,104 +1,145 @@
-Return-Path: <linux-kernel+bounces-352337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A54B991DCB
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:27:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC70E991DD9
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E33391F219A8
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:27:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B32151C219C1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328A8173346;
-	Sun,  6 Oct 2024 10:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39213175D30;
+	Sun,  6 Oct 2024 10:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="RJalEN65"
-Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="RK6j4W02"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02765172BA8;
-	Sun,  6 Oct 2024 10:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007BB16A382;
+	Sun,  6 Oct 2024 10:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728210468; cv=none; b=hfbpj46+SBk11Q7mqtLUwmTEGR7VPfn/PxC0BX24HPUjXVIkDvSwBEljrMreSxkO5u2/qGHPm6wyPkxahL/J48ka8CCpcg4pwIINuJEHfQT7p3FazHLWLjp3wPRsPCNV8qSZ/v/0cxEMrLeQqXSW78jvJRc9Rzezc4Ehdu+XYro=
+	t=1728210546; cv=none; b=oAWKwqH93MVBVLJjw699xzFhDEKF59PHnNpwc0utYZ+a7vaquqo26BSFQHbHjEQTpK4r2wd7y8zXDnGZdskTUB7qL/UtkrKmsu0YbHO/KJQ6qyMG2r996+e7//4Jg8jQWMlTovD7dPS0JZmB8wOlqLmIJlW+a6Juih7V50bsZmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728210468; c=relaxed/simple;
-	bh=eQFpN46gknokSvXJCeeAKjHyK2HGsUQ4DriLMaIawxg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WxDVhtM5y8TBpgsSXqk/Id41IaycuxduDLsBVpllA/JEJ0Je+EK/BeAMcOBO9zc+mhCi8H7zOzqd8HPAdi50ovpH2mRq7Dfjxys638kBbu5bjY4fmEE08L4KdzEz04Hna3CFEGOqGOc1ZnmhkOBrCaOt0Rw8w+NG7yT1+0hP6mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=RJalEN65; arc=none smtp.client-ip=134.0.28.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
-	by mxout2.routing.net (Postfix) with ESMTP id 0C2F65FAA5;
-	Sun,  6 Oct 2024 10:27:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1728210465;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0ZFTz9Uswka8q9Gcum+i2AIGps8wlGwvgIKYo93JZBg=;
-	b=RJalEN65+aEx8kvgpCDLrjaQWtGIQz4xyAlqf2XJ2JO0J3tBZWF2HQMIovPJKyG7gEQ+Yc
-	R2aaqnCKCv+10VpXUgfrF5nA9kSNLNUL0ECHe9cwfjvmKJdr9MyGH2wELA+3uKiYp8iqIL
-	TIdxc7yaHCXe6TrCGjnLf029t/Fdbgw=
-Received: from frank-u24.. (fttx-pool-217.61.153.101.bambit.de [217.61.153.101])
-	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id 084E5804DD;
-	Sun,  6 Oct 2024 10:27:43 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	Leilk Liu <leilk.liu@mediatek.com>,
-	linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	daniel@makrotopia.org,
-	john@phrozen.org,
-	eladwf@gmail.com,
-	ansuelsmth@gmail.com
-Subject: [PATCH v1] dt-bindings: spi: add compatibles for mt7988
-Date: Sun,  6 Oct 2024 12:27:39 +0200
-Message-ID: <20241006102740.17948-1-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728210546; c=relaxed/simple;
+	bh=clcboj/GbGUloJWwp8O582U00IpGJyOBX41Ha9a7szU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aZDzTVuBg2cb4+5jlDTSTYngk5PPEeYnVLZ1p7qIgKcC+xhKXFyzgHD8HPVKPGBCFihxCOanDSWg8H+n85VgvXcbuY3ILn7YPhOWGVePoRmCM2duPIyD9nf4Qglu5Lipq2wcWl9iDFaB/EGisHV2yStRGx9PHIyDSK3BWKrth7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=RK6j4W02; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <finn@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1728210540; bh=ziC4zCQbxWnUPd91VeFNp/X/tZGtA6ExmUPFunWTlS0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=RK6j4W02GfgtVMJtKUzSssjbiyEZavENeJXX6xSg+mZktrCaSLnnu85niyaVUZrVA
+	 sXSTMrLe6t3PxBO8CEpvpQDezsmb6SGCW9GuMX1nMI6D4oLsME87AGaWVjCMCYeHrs
+	 aWGKcGZBv+85uXrpHgHD9QY4oPR/PgnXKyM3Q29U=
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch,
+ hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
+ alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
+ anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+ arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/6] rust: time: Implement PartialEq and
+ PartialOrd for Ktime
+Date: Sun, 06 Oct 2024 12:28:59 +0200
+Message-ID: <3D24A2BA-E6CC-4B82-95EF-DE341C7C665B@kloenk.dev>
+In-Reply-To: <20241005122531.20298-2-fujita.tomonori@gmail.com>
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
+ <20241005122531.20298-2-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: facdb081-b535-49ee-8242-ea660d354237
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-From: Frank Wunderlich <frank-w@public-files.de>
 
-MT7988 has 2 different spi controllers. Add mediatek,ipm-spi-single
-and mediatek,ipm-spi-quad compatibles.
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+On 5 Oct 2024, at 14:25, FUJITA Tomonori wrote:
 
-diff --git a/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-index e1f5bfa4433c..3c707e5de5fb 100644
---- a/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-+++ b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-@@ -33,6 +33,8 @@ properties:
-           - const: mediatek,mt6765-spi
-       - items:
-           - enum:
-+              - mediatek,ipm-spi-quad
-+              - mediatek,ipm-spi-single
-               - mediatek,mt7981-spi-ipm
-               - mediatek,mt7986-spi-ipm
-               - mediatek,mt8188-spi-ipm
--- 
-2.43.0
+> Implement PartialEq and PartialOrd trait for Ktime by using C's
+> ktime_compare function so two Ktime instances can be compared to
+> determine whether a timeout is met or not.
 
+Why is this only PartialEq/PartialOrd? Could we either document why or im=
+plement Eq/Ord as well?
+
+>
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> ---
+>  rust/helpers/helpers.c |  1 +
+>  rust/helpers/time.c    |  8 ++++++++
+>  rust/kernel/time.rs    | 22 ++++++++++++++++++++++
+>  3 files changed, 31 insertions(+)
+>  create mode 100644 rust/helpers/time.c
+>
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 30f40149f3a9..c274546bcf78 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -21,6 +21,7 @@
+>  #include "slab.c"
+>  #include "spinlock.c"
+>  #include "task.c"
+> +#include "time.c"
+>  #include "uaccess.c"
+>  #include "wait.c"
+>  #include "workqueue.c"
+> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
+> new file mode 100644
+> index 000000000000..d6f61affb2c3
+> --- /dev/null
+> +++ b/rust/helpers/time.c
+> @@ -0,0 +1,8 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/ktime.h>
+> +
+> +int rust_helper_ktime_compare(const ktime_t cmp1, const ktime_t cmp2)
+> +{
+> +	return ktime_compare(cmp1, cmp2);
+> +}
+> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+> index e3bb5e89f88d..c40105941a2c 100644
+> --- a/rust/kernel/time.rs
+> +++ b/rust/kernel/time.rs
+> @@ -81,3 +81,25 @@ fn sub(self, other: Ktime) -> Ktime {
+>          }
+>      }
+>  }
+> +
+> +impl PartialEq for Ktime {
+> +    #[inline]
+> +    fn eq(&self, other: &Self) -> bool {
+> +        // SAFETY: FFI call.
+> +        let ret =3D unsafe { bindings::ktime_compare(self.inner, other=
+=2Einner) };
+> +        ret =3D=3D 0
+> +    }
+> +}
+> +
+> +impl PartialOrd for Ktime {
+> +    #[inline]
+> +    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering>=
+ {
+> +        // SAFETY: FFI call.
+> +        let ret =3D unsafe { bindings::ktime_compare(self.inner, other=
+=2Einner) };
+> +        match ret {
+> +            0 =3D> Some(core::cmp::Ordering::Equal),
+> +            x if x < 0 =3D> Some(core::cmp::Ordering::Less),
+> +            _ =3D> Some(core::cmp::Ordering::Greater),
+> +        }
+> +    }
+> +}
+> -- =
+
+> 2.34.1
 
