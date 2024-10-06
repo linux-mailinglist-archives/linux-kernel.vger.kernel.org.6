@@ -1,83 +1,87 @@
-Return-Path: <linux-kernel+bounces-352618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591CA992190
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 23:08:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24D1992197
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 23:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3D11F21343
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:08:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE3B1F21017
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C71D18BB95;
-	Sun,  6 Oct 2024 21:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7012F18BB95;
+	Sun,  6 Oct 2024 21:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t5nMTpAB"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="t7/yjBiu"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C361422DD
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 21:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF1D189B86
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 21:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728248876; cv=none; b=CEo4Oo/dkfY2lhbsykPnR76fGtI4MM6M2ae6j6Keo+DdgR8jGrxky0F/pOHx3VMsuAubfO7wZxfu61eINIPJELrxBVXLbbKXZM0pv+/VhoGRANZ9u5BipX/PmnA6ijBvUpVktZLS3l5s95lHXeR3lBjBmS00y4Yf1oxGmNeLkIo=
+	t=1728249309; cv=none; b=enqRcXXbcZYLrieivqlbfnO+XvQc1sqYdlwPDehjSodcYmUrKgl5wRvIzaRWcraz19TtvUKVem+lOFu0iBSq+D+/EhdubA4eyl1knz9V734M3/hW49Ovf6CQNEVwJvdluRAWPkGG5JgqcjGx1CjVP+uY3U0GJn9TBP2IX5Tr4EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728248876; c=relaxed/simple;
-	bh=ZmEHLsPsF/N6ibvDSVVq/66rE5RN7QBCRfoTpzPD//E=;
+	s=arc-20240116; t=1728249309; c=relaxed/simple;
+	bh=olXVaDRc9sKDu1AHJMByKbhJ+ny2cgvTV8X/DLIB2Do=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mflww7d4O7nTkz1n/cR/wUYlSGheMdgqpS8sPJANHxVUf9OICsmwwgGUOyU7hTIQyOh5QVUaR1GPSShPjQPsddqhMg48zkvAFCS48VsD2UE+YndCYBSxu1eMCgXLGrsCRfmrkLxiSu7cgQogq5cs1OWgT3HYQcD73X0IwrJ7z5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t5nMTpAB; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53959a88668so4519298e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 14:07:54 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XNWvk/7C/wdERkdg9KRdfFfMLmvOGd+by2glOfkjeXz5LzkJdewKucJQvDNwXg5Tr5VH8qRauR5yf1JTaWYIWfPlwVZDzhhKM0zTuELLL/WR+niTWYAvPK53RS7cQU8VCUh0UBDHjTntRHVRjDp87qdrnn+H1y2CHyReGkyF0iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=t7/yjBiu; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e25d380b464so3049541276.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 14:15:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728248873; x=1728853673; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Szw/D0bhQP/xtWqJOCA8PUzQroqabxhhElDsr640PI=;
-        b=t5nMTpABdnd0ANto0f+s4DYsYy55O1o+LZitz9gcKKxOYmZpHdF0WLfbXBsO8XDDgo
-         5pdttAbOtj7FS49WX8loWsfuYZzN7f15Y1SXfJrcLFPJOf9d2+whu+6Bn0rFkzaLy6ja
-         Uo+2bMLk3KFHbcm63sS3mhMzuu5Ao8DYUWxutaiVKWv81y+q8aoEnflZkKuwSg6F+3Tx
-         DxhLJRlpFgVFX/5oXeqyRDreZBquZSqlSG7AWvKOaGrpx+djtsassLLpdtYkY1B5iQt6
-         Tpl2adGgYQG1s4JQiML/B1AM7o35qd2pWofERyQ+nC9z8GG/bl/8Qb5yOiNOw3dKDkHs
-         116g==
+        d=fastly.com; s=google; t=1728249307; x=1728854107; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q6BpBixglTcARBO7wAvcoT3IQ3RW81geceCKSOyrBJE=;
+        b=t7/yjBiubx4fcTrKVMeie+wsrrtAH/O9XrEkmHDr+l2T2YWPUJ2t4CV6/yo65o40ps
+         Tpi5ecUD5/nkrehfQvu5IymMa7E/xkamV4JV7GG4ScDopJyTBBq7FJuM8lr1oD5uyMBi
+         ++mt23nZpjUc0y/SsGviyM01im3XiLiJ16Yfg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728248873; x=1728853673;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Szw/D0bhQP/xtWqJOCA8PUzQroqabxhhElDsr640PI=;
-        b=BilWbTk8hxsGufx8v8YuQNjlg3rrAQHhfK/KmTVrKJUsYyGGvtNRUlWtCrUITfwshm
-         /PPAkUMV21vkPiHeECEZH3sIimekyaH4Iff3Y4O1yGgg3np6RuaWQFfx7smjwS2UT0ku
-         anT9eOq551r7mcJiWNEfVGVQnZt9r2MJC4t3SW9ZwvP/2BCgCbqoYbAhqcHkLH1Gh8Na
-         Gv8usiD37H8tV0kKaXrFJKEe1q8OrAi1HpeVmC4cyPfqHGy6aoi6P0Wo7LcTg07fDuyu
-         BwIaVp8J29pN974E5pU+sAzpKDQUTEmQ27Np7VUDC4kGh/86agEapPq/J8mYxSjbwr9Q
-         RfVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5kh7XKbUfnPQG2jtkHT8QrcuVvmLupp1VorFueNZ1h2I+2V5TH9XNXR8+BMRKsXHbtKkzos2pweF3bkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMyz8K8AdIECvWCCY13jtWDeWJwCF1Htc98GQwqz6J/XjC+VLZ
-	PE4STpwY6mNHD9mhUiiuxcykl9t1we50727sM/xp/mzIgTLv1J3y143vzhqlPi4=
-X-Google-Smtp-Source: AGHT+IGNLcBHRM2Z/UXd6g9I6VwOvjvFpOD+yzP2cMKHxtpf6x5Xa2qcpwJRnTWlA6Rteu81F+BJow==
-X-Received: by 2002:a05:6512:234d:b0:536:14a1:d660 with SMTP id 2adb3069b0e04-539ab85c035mr5226217e87.6.1728248873103;
-        Sun, 06 Oct 2024 14:07:53 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff286f6sm617883e87.293.2024.10.06.14.07.52
+        d=1e100.net; s=20230601; t=1728249307; x=1728854107;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q6BpBixglTcARBO7wAvcoT3IQ3RW81geceCKSOyrBJE=;
+        b=TEF0E1ykFKP0O7c+ijrEzt1iNjK9rp/N8FepsLsz5wjjIQ/tEeR5MUkhwfN4HTg2nM
+         zpMAvRXw8yoHHEaPRzrVIuPZz8CiNDlnxesYo7vO0fZl1REvcLTGWmXX3vOeCGGvjNrP
+         Sm8IuZuxYyPZezRkdzLTFDGcFQAYzI4q7dzIKPa8GGLMfJFXjQzVVIErud9bqwcyRGfF
+         GBbI8eYzH6Eqt/+GaZ8GsFnfSOH715htHZPXOPdYyvugI5zWgIw50R1tNvp7EY8k1SLH
+         gc4VzYmbjEBSRW8YfCsNTi+gyyUMeZMO8Yclk9KXcSbK+9V9RAvaxUIJOnJNNVU6zw7r
+         QLSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXp4gGp60M89s3ofn/u5uDBnWT4pBhl1l42MXjoPZWT2GIR145uOMkr2IIxv0eqStVescnzxdLRJ+V/X4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyffUnThzeiIDwEDlWeZ8Z4YdZQ1BpV2IJB4V6CA8m16eOuXTyT
+	i4mQyFGopbHxM3SV+bl3jyUaIIgjWD+HtKV5fYG5h9bsXg/CB0VhM1j/qrZ3c6Y=
+X-Google-Smtp-Source: AGHT+IHSNEBMZ8pwaFq0A8lXnAil71lx6mGkLqiLShB/xAcWY2MPUF5Fh34gf3bdCBLWBtDfnXNHDw==
+X-Received: by 2002:a05:6902:2382:b0:e25:ce5f:42cc with SMTP id 3f1490d57ef6-e28937eebfdmr7612253276.32.1728249307153;
+        Sun, 06 Oct 2024 14:15:07 -0700 (PDT)
+Received: from LQ3V64L9R2 ([50.222.228.166])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e28a593b3acsm692395276.2.2024.10.06.14.15.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 14:07:52 -0700 (PDT)
-Date: Mon, 7 Oct 2024 00:07:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, kernel@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, quic_fenglinw@quicinc.com, quic_tingweiz@quicinc.com, 
-	Shazad Hussain <quic_shazhuss@quicinc.com>
-Subject: Re: [PATCH v2 2/4] pmdomain: qcom: rpmhpd: Add qcs8300 power domains
-Message-ID: <dy2kuyx23oraslo5cqc3a2udkxaafwyuugdkzcadwyel2mjyen@xrlus5lq4ygi>
-References: <20240927-add_qcs615_qcs8300_powerdomains_driver_support-v2-0-18c030ad7b68@quicinc.com>
- <20240927-add_qcs615_qcs8300_powerdomains_driver_support-v2-2-18c030ad7b68@quicinc.com>
+        Sun, 06 Oct 2024 14:15:06 -0700 (PDT)
+Date: Sun, 6 Oct 2024 17:15:04 -0400
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Michael Chan <mchan@broadcom.com>, Paolo Abeni <pabeni@redhat.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>
+Subject: Re: [RFC net-next v2 0/2] tg3: Link IRQs, NAPIs, and queues
+Message-ID: <ZwL92CHG9YlNKto9@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Michael Chan <mchan@broadcom.com>, Paolo Abeni <pabeni@redhat.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>
+References: <20241005145717.302575-1-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,24 +90,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240927-add_qcs615_qcs8300_powerdomains_driver_support-v2-2-18c030ad7b68@quicinc.com>
+In-Reply-To: <20241005145717.302575-1-jdamato@fastly.com>
 
-On Fri, Sep 27, 2024 at 07:59:14PM GMT, Tingguo Cheng wrote:
-> Add support for the power domains exposed by RPMh on the qcs8300
-> platform. MMCX depends on CX, so mark CX as the parent of MMCX.
+On Sat, Oct 05, 2024 at 02:57:15PM +0000, Joe Damato wrote:
+> Greetings:
 > 
-> Co-developed-by: Shazad Hussain <quic_shazhuss@quicinc.com>
-> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
-> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
-> ---
->  drivers/pmdomain/qcom/rpmhpd.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
+> This RFC v3 follows from a previous RFC [1] submission which I noticed
+> had an issue in patch 2.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
+Apologies; looks like I botched the subject lines on this series
+somehow.
 
--- 
-With best wishes
-Dmitry
+This should be RFC v3.
 
