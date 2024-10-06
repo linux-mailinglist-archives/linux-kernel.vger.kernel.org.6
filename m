@@ -1,203 +1,196 @@
-Return-Path: <linux-kernel+bounces-352542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A44992085
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D82D992089
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DAD1F2173E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:04:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214C71F212F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9323C189F2D;
-	Sun,  6 Oct 2024 19:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54FA18A6B0;
+	Sun,  6 Oct 2024 19:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ys7S/UoM"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="stcf2TQf";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XSvGEEc4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6E417DFE4
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 19:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B3517DFE4;
+	Sun,  6 Oct 2024 19:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728241459; cv=none; b=sJo2UkEBOFvRMnxdsqi1gWxZRQLqCY6uW+ZDaHym1xlnwIMp3L3BWTRCptWMzCWqaH6a24W5ESmMBuNm0Rq712inNXS/CNaM3ijREyJ90G4Rl9cMzqHUI2BGshI53GAmRAG9TntxXPEqMFAykAYrvP6xJZFxMhdLyzcAzI6yPjs=
+	t=1728241482; cv=none; b=DezgSyAlgGjyMjJeiD/E5IJJRUky8URDq7v+WveoZFH+RK6+Z2Uw/dE4+8CQSVGh7h0A96wuYjfgVklj214EdSnwbFdmZ7xk+yelpZt4oFYaM5pUmfpi8FEHWPDhMS1CNoUZnTY2v1/a50v8NOpnwU9oYafYUupV9ofVVV9Tg+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728241459; c=relaxed/simple;
-	bh=HNrFd/PGUU8WcSrRQfH4Vzosl/k3lpvVnsKnl7wZPAY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DnRHU7v9RbyhcnXPFVsbFM0Z77hmRcALGueoqRhGEGO60tbzmaw/RQmvtbZmjcxwmmrzXsyuZ9iahNTqWeqv5ll5HIGj2kWvcbU2LYy+vTwzrcgbLwD6aJ78tAmII2ZckY75K6Bl3LlRNurO/c9Op6YeJ6LMEgR8VY8OyimTv1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ys7S/UoM; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c721803a89so4966012a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 12:04:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728241456; x=1728846256; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Fw0XseSH+Ve6ONa8vMAg4AER4YN4R6MDRkWml4yhFY=;
-        b=Ys7S/UoMx8JnvgOEZTvvdKqhw7eVbxRc2E7uts2B1UAerBRo0hlhXWXTgkARu987+l
-         ORYBzdi1jr3//xj1TAG3uM5rJUg9UAju7ko7stFR6Y5czjsfshLP1gSmPw3FxysUNl7V
-         dMojuOmAoQB4m8zjyJadAtjl6lvt8HPwKDpFKoxtrMn0iGTrgidR994SMD1EXITtrP2U
-         54Ee+Wqwci4kjiM11gclyL1cOYxiqRlFowlpdL4y9HGRh7dTwW8hGmsZer8WVfK3RTiG
-         K379UoWHjbYWHz9yPYhMNkONAAYC6Fz1pjSsMG53b0ZCJbsj1wQ69ewk6lZcIsdB9Wwk
-         FgEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728241456; x=1728846256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0Fw0XseSH+Ve6ONa8vMAg4AER4YN4R6MDRkWml4yhFY=;
-        b=lP9sHdsvwUUdIbH0rWAqfGbHpBNwNyQvs22fEMjtZzMdyo6FNngX54D6jlHOYNAJXR
-         dZdysNHqDb3+7qDBlDe7BRXo48p8ru2D1zClaWjwPduOkxmK0WSFw9DByTzvp7wwESKZ
-         0HPbtcwDl9s5dM0/My/j32m2lMcdtjl3ikgL5Vj4UhGG7kMoNeBNC4UR+Wt3PPCrf9RS
-         Ze53cb5/aI8uR+FZb2gMDvxzevURSd38+UkFKM2AjjnzcrKqn1/c1cOjrn5jevEnNhaV
-         JM9lfxD2TqDHuiz5+bcfRgopbSLWUljGbfMAJbx2w+ao0Wjp/CPCgUaBEJaXpjklp9QM
-         aDtg==
-X-Forwarded-Encrypted: i=1; AJvYcCVl7hnWgbxv7YF0PRcPY29zFmxGA3cx8KTSNbr0zFXMHzxwCNaVVz0Yx8pHvrm7avkZv9SKD9qU4tvVFoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmdoPxmCPILa/tkmxlKiZFm8HotAqRQoUJ0+3Q+TtcXNo/xzMz
-	Sp3C6mCN2NEinqvuaGM1oLGLcIjKUvLiVwH6/nhAZo6C0R4lUTxABLROCrDTEhLJdSKgg6JwxhG
-	dh6p2DH1zGH/kQMv5LhvECCRgmiSSpG8HV+fI
-X-Google-Smtp-Source: AGHT+IHLi6qgIbcAhmZ5d9BCterOP5EmT7+vJQipve8Oi/uMqinOIKtDjFyL2Zu250Y+Zrqg2kN+S6ARzBNQzVax93o=
-X-Received: by 2002:a17:907:3f87:b0:a99:4e2e:6f58 with SMTP id
- a640c23a62f3a-a994e2e76dfmr296639666b.35.1728241456228; Sun, 06 Oct 2024
- 12:04:16 -0700 (PDT)
+	s=arc-20240116; t=1728241482; c=relaxed/simple;
+	bh=nP5tRJwLAZp5uiryvPK5vL1/lxHMWOI/0iH6oAWEFJk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=FMj53+GHnKrDm+8oExLK21BO9BE29w5hVMTycF86R/Pa9fhxTgwhf3Tie7RElYxn3g/mNthk8vhbExu0QQx6/eK1rXV/8imc5owz6ePs8kDCy7V9fWn33WtpFYXqSc3SifaLWC872Mt1bNllbukheev/d8ziH5rz3jZGZeQUTi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=stcf2TQf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XSvGEEc4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 06 Oct 2024 19:04:31 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728241472;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q6OjeNjJOp7w69Ins+HcIMamTp/DgSEVMq1TAbhU2Co=;
+	b=stcf2TQfl2m27Jy4JPpkwoluEDhgD+JecJ4GhELdjlMtf+9/aozSh7BifXsnaU+QNQ07im
+	NAtVQUgU7GcdBMe1V19oG0E6egQ+52gps9U8ZgfTsk1A/qcVUqMbTlzyXwAeQedn3i/nEa
+	+AxMTjY1Fc9vliHSYEulBvJmaZX75AquHC4Zico5+7VE9uWl/19qktat7A4C9HHSz7sJRz
+	SiwmLekStC9WFqU6R89DBVynFH+SmOAbf7E7KPmOtt57EY9gL98jN1o7NO9KROxUh2aebH
+	dw2oNJ5kqCW5KXI060yUsxUbIflz4WOdcZmwq3UgjGUOWlyU3NHqhSRizdiI8g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728241472;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q6OjeNjJOp7w69Ins+HcIMamTp/DgSEVMq1TAbhU2Co=;
+	b=XSvGEEc47/mNvO7oh0HFq0zAgke+ho/v3PvzwVVy772fWjgDTDszeKwgUHP+C5jBEY/0oF
+	f7rsJkeTwadLcqCg==
+From: "tip-bot2 for Jeff Layton" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] timekeeping: Add percpu counter for tracking floor
+ swap events
+Cc: Jeff Layton <jlayton@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241002-mgtime-v10-2-d1c4717f5284@kernel.org>
+References: <20241002-mgtime-v10-2-d1c4717f5284@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230830112600.4483-1-hdanton@sina.com> <f607a7d5-8075-f321-e3c0-963993433b14@I-love.SAKURA.ne.jp>
- <20230831114108.4744-1-hdanton@sina.com> <CANn89iLCCGsP7SFn9HKpvnKu96Td4KD08xf7aGtiYgZnkjaL=w@mail.gmail.com>
- <20230903005334.5356-1-hdanton@sina.com> <CANn89iJj_VR0L7g3-0=aZpKbXfVo7=BG0tsb8rhiTBc4zi_EtQ@mail.gmail.com>
- <20230905111059.5618-1-hdanton@sina.com> <CANn89iKvoLUy=TMxW124tiixhOBL+SsV2jcmYhH8MFh3O75mow@mail.gmail.com>
- <CA+G9fYvskJfx3=h4oCTAyxDWO1-aG7S0hAxSk4Jm+xSx=P1dhA@mail.gmail.com>
- <CADvbK_fxXdNiyJ3j0H+KHgMF11iOGhnjtYFy6R18NyBX9wB4Kw@mail.gmail.com> <CANn89iKrLE69O+qOuhGG0ts2zmxJzw5jAAFLfzspi8uOQe8pQw@mail.gmail.com>
-In-Reply-To: <CANn89iKrLE69O+qOuhGG0ts2zmxJzw5jAAFLfzspi8uOQe8pQw@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Sun, 6 Oct 2024 21:04:05 +0200
-Message-ID: <CANn89i+WVuDascBvduzCK=-WYSdkcc6hy+_XmH+kxHwSf_6bSQ@mail.gmail.com>
-Subject: Re: selftests: net: pmtu.sh: Unable to handle kernel paging request
- at virtual address
-To: Xin Long <lucien.xin@gmail.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, Hillf Danton <hdanton@sina.com>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Netdev <netdev@vger.kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <172824147176.1442.3680169489221943386.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 6, 2024 at 8:58=E2=80=AFPM Eric Dumazet <edumazet@google.com> w=
-rote:
->
-> On Sun, Oct 6, 2024 at 8:08=E2=80=AFPM Xin Long <lucien.xin@gmail.com> wr=
-ote:
-> >
-> > Sorry for bringing up this issue, it recently occurred on my aarch64 ke=
-rnel
-> > with blackhole_netdev backported. I tracked it down, and when deleting
-> > the netns, the path is:
-> >
-> > In cleanup_net():
-> >
-> >   default_device_exit_batch()
-> >     unregister_netdevice_many()
-> >       addrconf_ifdown() -> call_rcu(rcu, fib6_info_destroy_rcu) <--- [1=
-]
-> >     netdev_run_todo()
-> >       rcu_barrier() <- [2]
-> >   ip6_route_net_exit() -> dst_entries_destroy(net->ip6_dst_ops) <--- [3=
-]
-> >
-> > In fib6_info_destroy_rcu():
-> >
-> >   dst_dev_put()
-> >   dst_release() -> call_rcu(rcu, dst_destroy_rcu) <--- [5]
-> >
-> > In dst_destroy_rcu():
-> >   dst_destroy() -> dst_entries_add(dst->ops, -1); <--- [6]
-> >
-> > fib6_info_destroy_rcu() is scheduled at [1], rcu_barrier() will wait
-> > for fib6_info_destroy_rcu() to be done at [2]. However, another callbac=
-k
-> > dst_destroy_rcu() is scheduled() in fib6_info_destroy_rcu() at [5], and
-> > there's no place calling rcu_barrier() to wait for dst_destroy_rcu() to
-> > be done. It means dst_entries_add() at [6] might be run later than
-> > dst_entries_destroy() at [3], then this UAF will trigger the panic.
-> >
-> > On Tue, Oct 17, 2023 at 1:02=E2=80=AFPM Naresh Kamboju
-> > <naresh.kamboju@linaro.org> wrote:
-> > >
-> > > On Tue, 5 Sept 2023 at 17:55, Eric Dumazet <edumazet@google.com> wrot=
-e:
-> > > >
-> > > > On Tue, Sep 5, 2023 at 1:52=E2=80=AFPM Hillf Danton <hdanton@sina.c=
-om> wrote:
-> > > > >
-> > > > > On Mon, 4 Sep 2023 13:29:57 +0200 Eric Dumazet <edumazet@google.c=
-om>
-> > > > > > On Sun, Sep 3, 2023 at 5:57=3DE2=3D80=3DAFAM Hillf Danton <hdan=
-ton@sina.com>
-> > > > > > > On Thu, 31 Aug 2023 15:12:30 +0200 Eric Dumazet <edumazet@goo=
-gle.com>
-> > > > > > > > --- a/net/core/dst.c
-> > > > > > > > +++ b/net/core/dst.c
-> > > > > > > > @@ -163,8 +163,13 @@ EXPORT_SYMBOL(dst_dev_put);
-> > > > > > > >
-> > > > > > > >  void dst_release(struct dst_entry *dst)
-> > > > > > > >  {
-> > > > > > > > -       if (dst && rcuref_put(&dst->__rcuref))
-> > > > > > > > +       if (dst && rcuref_put(&dst->__rcuref)) {
-> > > > > > > > +               if (!(dst->flags & DST_NOCOUNT)) {
-> > > > > > > > +                       dst->flags |=3D DST_NOCOUNT;
-> > > > > > > > +                       dst_entries_add(dst->ops, -1);
-> > > > > > >
-> > So I think it makes sense to NOT call dst_entries_add() in the path
-> > dst_destroy_rcu() -> dst_destroy(), as it does on the patch above,
-> > but I don't see it get posted.
-> >
-> > Hi, Eric, would you like to move forward with your patch above ?
-> >
-> > Or we can also move the dst_entries_add(dst->ops, -1) from dst_destroy(=
-)
-> > to dst_release():
-> >
-> > Note, dst_destroy() is not used outside net/core/dst.c, we may delete
-> > EXPORT_SYMBOL(dst_destroy) in the future.
-> >
-> >
->
-> Current kernel has known issue with dst_cache, triggering quite often
-> with  selftests: net: pmtu.sh
->
-> (Although for some reason it does no longer trigger 'often' any more
-> in my vng tests)
+The following commit has been merged into the timers/core branch of tip:
 
-Simple hack/patch to 'disable' dst_cache, if you want to confirm the
-issue is there.
+Commit-ID:     96f9a366ec8abe027326d7aab84d64370019f0f1
+Gitweb:        https://git.kernel.org/tip/96f9a366ec8abe027326d7aab84d64370019f0f1
+Author:        Jeff Layton <jlayton@kernel.org>
+AuthorDate:    Wed, 02 Oct 2024 17:27:17 -04:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 06 Oct 2024 20:56:07 +02:00
 
+timekeeping: Add percpu counter for tracking floor swap events
 
-diff --git a/net/core/dst_cache.c b/net/core/dst_cache.c
-index 70c634b9e7b02300188582a1634d5977838db132..53351ff58b35dbee37ff587f7ef=
-8f72580d9e116
-100644
---- a/net/core/dst_cache.c
-+++ b/net/core/dst_cache.c
-@@ -142,12 +142,7 @@ EXPORT_SYMBOL_GPL(dst_cache_get_ip6);
+The mgtime_floor value is a global variable for tracking the latest
+fine-grained timestamp handed out. Because it's a global, track the
+number of times that a new floor value is assigned.
 
- int dst_cache_init(struct dst_cache *dst_cache, gfp_t gfp)
- {
--       dst_cache->cache =3D alloc_percpu_gfp(struct dst_cache_pcpu,
--                                           gfp | __GFP_ZERO);
--       if (!dst_cache->cache)
--               return -ENOMEM;
--
--       dst_cache_reset(dst_cache);
-+       dst_cache->cache =3D NULL;
-        return 0;
+Add a new percpu counter to the timekeeping code to track the number of
+floor swap events that have occurred. A later patch will add a debugfs
+file to display this counter alongside other stats involving multigrain
+timestamps.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
+Link: https://lore.kernel.org/all/20241002-mgtime-v10-2-d1c4717f5284@kernel.org
+
+---
+ include/linux/timekeeping.h        |  1 +
+ kernel/time/timekeeping.c          |  1 +
+ kernel/time/timekeeping_debug.c    | 13 +++++++++++++
+ kernel/time/timekeeping_internal.h | 15 +++++++++++++++
+ 4 files changed, 30 insertions(+)
+
+diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
+index 7aa8524..84a035e 100644
+--- a/include/linux/timekeeping.h
++++ b/include/linux/timekeeping.h
+@@ -48,6 +48,7 @@ extern void ktime_get_coarse_real_ts64(struct timespec64 *ts);
+ /* Multigrain timestamp interfaces */
+ extern void ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
+ extern void ktime_get_real_ts64_mg(struct timespec64 *ts);
++extern unsigned long timekeeping_get_mg_floor_swaps(void);
+ 
+ void getboottime64(struct timespec64 *ts);
+ 
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 441792c..962b2a3 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -2487,6 +2487,7 @@ void ktime_get_real_ts64_mg(struct timespec64 *ts)
+ 	if (atomic64_try_cmpxchg(&mg_floor, &old, mono)) {
+ 		ts->tv_nsec = 0;
+ 		timespec64_add_ns(ts, nsecs);
++		timekeeping_inc_mg_floor_swaps();
+ 	} else {
+ 		/*
+ 		 * Another task changed mg_floor since "old" was fetched.
+diff --git a/kernel/time/timekeeping_debug.c b/kernel/time/timekeeping_debug.c
+index b73e885..badeb22 100644
+--- a/kernel/time/timekeeping_debug.c
++++ b/kernel/time/timekeeping_debug.c
+@@ -17,6 +17,9 @@
+ 
+ #define NUM_BINS 32
+ 
++/* Incremented every time mg_floor is updated */
++DEFINE_PER_CPU(unsigned long, timekeeping_mg_floor_swaps);
++
+ static unsigned int sleep_time_bin[NUM_BINS] = {0};
+ 
+ static int tk_debug_sleep_time_show(struct seq_file *s, void *data)
+@@ -53,3 +56,13 @@ void tk_debug_account_sleep_time(const struct timespec64 *t)
+ 			   (s64)t->tv_sec, t->tv_nsec / NSEC_PER_MSEC);
  }
- EXPORT_SYMBOL_GPL(dst_cache_init);
+ 
++unsigned long timekeeping_get_mg_floor_swaps(void)
++{
++	unsigned long sum = 0;
++	int cpu;
++
++	for_each_possible_cpu(cpu)
++		sum += data_race(per_cpu(timekeeping_mg_floor_swaps, cpu));
++
++	return sum;
++}
+diff --git a/kernel/time/timekeeping_internal.h b/kernel/time/timekeeping_internal.h
+index 4ca2787..0bbae82 100644
+--- a/kernel/time/timekeeping_internal.h
++++ b/kernel/time/timekeeping_internal.h
+@@ -10,9 +10,24 @@
+  * timekeeping debug functions
+  */
+ #ifdef CONFIG_DEBUG_FS
++
++DECLARE_PER_CPU(unsigned long, timekeeping_mg_floor_swaps);
++
++static inline void timekeeping_inc_mg_floor_swaps(void)
++{
++	this_cpu_inc(timekeeping_mg_floor_swaps);
++}
++
+ extern void tk_debug_account_sleep_time(const struct timespec64 *t);
++
+ #else
++
+ #define tk_debug_account_sleep_time(x)
++
++static inline void timekeeping_inc_mg_floor_swaps(void)
++{
++}
++
+ #endif
+ 
+ #ifdef CONFIG_CLOCKSOURCE_VALIDATE_LAST_CYCLE
 
