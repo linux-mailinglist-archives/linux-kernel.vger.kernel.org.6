@@ -1,143 +1,97 @@
-Return-Path: <linux-kernel+bounces-352645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D07992219
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:29:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AAF499221D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66AEE1C20A8A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:29:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 665C5B20DA3
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D29B18BC05;
-	Sun,  6 Oct 2024 22:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA22E18BC17;
+	Sun,  6 Oct 2024 22:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfUXcX8V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XvPrl+Kl"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68393611B;
-	Sun,  6 Oct 2024 22:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0CF1C6B2;
+	Sun,  6 Oct 2024 22:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728253766; cv=none; b=RO8VSLeVDoaFtFM/6eTH1wtOXPwwSwjbCROU6D3HLI4LXAn9AlzLbZJSH/H6Wr0NKN/c9Bylh749S3Rg6OYPbCsjGv2JgdwA1+RdIXi+ZbaBBQ7+heKKHyAR2Pla/xgxQ4pZY9q9BSYmsF/kobUj0NoowPIbrmGQSi543fwzePE=
+	t=1728254485; cv=none; b=EgafaEs/Dt98PenJf7Cw6w8vU9wYD6VBpZAZvJkm5Ab0xO9AqWlNBU2eGMpd1kvbphGRt3A7eyXmW6A/gqhV12QMWPinLC0UCk3FtlsQkdje/njosI4ztnjkjH5mKChZUa71XFJg3BxQYpmnzHOgxuCCOzM4ANB5ZieqLA2G3aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728253766; c=relaxed/simple;
-	bh=xhNZwKjxVVqjrgRf1qSRKkSvaDWrHNe0hyTZV4FEKdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=USxUBg4Tn1oqecK8K14pyH7hl0hFne3lfYb2p83y0JjlIUDkiVTglYNc97Cj8Zycb+gWWuNhJg+BJ3B5QoRonFvH1GxduCuQBxk7yhJGqy22Bc4YgkEYBB5i5by1fL+6V50JjZe2o35GJnK+A7F06/zhnegedseRZYHfFsc5a3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfUXcX8V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E8D7C4CEC5;
-	Sun,  6 Oct 2024 22:29:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728253765;
-	bh=xhNZwKjxVVqjrgRf1qSRKkSvaDWrHNe0hyTZV4FEKdY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dfUXcX8VHHMuxs16zdHdZ6MmhEr+zcjmgTLvo4udh/wUXtvWwNuRf3c2kqJRZxBr7
-	 5Oqxhlrsi4Uef1JsGJyYI/u6bzBqHIKVkVRYwNff+n3sLYMYzR2gY0uhxvFirfJNdC
-	 FX48wVS9aESuHtwL2qOrIbWX5UIVpUCV+iKUoCTin8sBdFlt5XeJ2eR/ndksIXz2o0
-	 ihQdo9fc+RzzEe7fnBAZ7fnBh19SgoVaWs/27R/hybbNo04wuzEwmtswEfRpDFc0VV
-	 6j3zB0/cNFhTabUcpnCPiFwfO7I0FZe/xekskRAfMUZbrbxaBEbWLcgZzQx64VvUW5
-	 y9ZGOJtcZwtfw==
-Received: by pali.im (Postfix)
-	id C373881A; Mon,  7 Oct 2024 00:29:18 +0200 (CEST)
-Date: Mon, 7 Oct 2024 00:29:18 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Fix NFSD_MAY_BYPASS_GSS and
- NFSD_MAY_BYPASS_GSS_ON_ROOT
-Message-ID: <20241006222918.jnf4odeoyq6u7l5m@pali>
-References: <>
- <ZwLN6RtYwVIkUfaL@tissot.1015granger.net>
- <172825279728.1692160.16291277027217742776@noble.neil.brown.name>
+	s=arc-20240116; t=1728254485; c=relaxed/simple;
+	bh=8fN6dHkL3m6k0pWOYMgr5qyQhdl6pyBbfGsGla+fxX8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NH8lCXWyymxFCDm355st+wotymZdmUGP6cqFxIEhV3JYPvgDLZy2CzeTTv3tKgnrWVpwWolCQtKrceoFBhJL+WwY9OZFFCBTBRBZ7hKgpXDGsMp5YLXTdfUUZAogAwrljdPPmU8G1XSTWgB9W6RAf7GqvMe+V4lx0tFq3kbF0N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XvPrl+Kl; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-656d8b346d2so2352126a12.2;
+        Sun, 06 Oct 2024 15:41:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728254479; x=1728859279; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8fN6dHkL3m6k0pWOYMgr5qyQhdl6pyBbfGsGla+fxX8=;
+        b=XvPrl+KldU1xhhI+iLUR0v7GGpiPZsOaCsa0g1GVyfvZANgjWKC85MKsGmPQ2fXwkF
+         j1EvV6pTyy9eZwEXcLJaRT6fwdBiXD9RV3Rm0GbJakaA11yscmH5rnkiMqTnp+eMTlKX
+         eizz+tXWqlqnlMr5VHaUSKVo7Eqx3IAfbi3c10DYvPg1na29UXZpdkMiYdNRq23gPrGK
+         vtssBQEwQeWic7t13NldkWrhbHDCDs2teMzWbsG99GfCbrQVQKpxuEAscsyyKwIfVYj5
+         lGZf9gilTQZ5VlCtyWB7qde6ATsoqC0/469L2UdjIMtb1h8hPS+Zpo1FbsdcbKrhtVX6
+         G1Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728254479; x=1728859279;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8fN6dHkL3m6k0pWOYMgr5qyQhdl6pyBbfGsGla+fxX8=;
+        b=Cy0VAGYdD33lp6a3ANyn+2WnbdhQbWCeWsfB3lUTGj5qpqPlVjQWsLk1kB+5vwiFQ+
+         uHz3USdeOdELAJnxnWGj+9a8YFwmDxXfP3xM8+bVw0p819Vrqb3QPQZYMvsYBrFhPVpD
+         BpPJbW7T++O89ZotTDUbHMpWyguZ/x+EvwJi7vkxpUaXzAtNjRgw1jHJtfRQl+4U7v+C
+         EimYVkdeKxIc8omAPksnXzMNDqq0xEIfvk0tYELVis6ZnB3E6QZeYsc2jPcTneb6dZCs
+         kYSpqyYNnaPpEy2KOkNkSCeOLiKboakBD2UEy9HPIdD0qE/yP5bN4/tkEDBUtJ7zSWgD
+         fjww==
+X-Forwarded-Encrypted: i=1; AJvYcCVo7tKwwAqZAOhZ342uzAH9JhdKJFQjoY1OXXiiLs5KVAwtatDDIsU83Bp9fElXE3o0B81/aPGO@vger.kernel.org, AJvYcCXATn923GKXp8agKH5nBJP2IsU1nFvd5sa4jR/XsL03e3p7XGWMEnScUOYqia+7MJ+LFoHHsDmyvdk5z6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxup8fuAE27HrZapT200p3JYhJeSisQ6qaUF9e8KEwl2KGtl6Kd
+	9oWaiU1zAEhQ0gb7mXIr2ExxFqLIPdOVXTl9RJALgWc1xsKHT7Mv
+X-Google-Smtp-Source: AGHT+IF0NeX/oWIC70KxaZWdaz7pfDMjInUKQm+ZZFHke41fOW+mwThTMAp7SqARXofvlZ5Ty56ypg==
+X-Received: by 2002:a05:6a20:cd8f:b0:1cf:7123:86a6 with SMTP id adf61e73a8af0-1d6dfaef19emr14828042637.49.1728254479372;
+        Sun, 06 Oct 2024 15:41:19 -0700 (PDT)
+Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71df0d452b7sm3221655b3a.108.2024.10.06.15.41.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 15:41:18 -0700 (PDT)
+From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+To: andrew@lunn.ch
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	f.fainelli@gmail.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@armlinux.org.uk,
+	netdev@vger.kernel.org,
+	olteanv@gmail.com,
+	pabeni@redhat.com,
+	pvmohammedanees2003@gmail.com
+Subject: Re: [PATCH] net: dsa: Fix conditional handling of Wake-on-Lan configuration in dsa_user_set_wol
+Date: Mon,  7 Oct 2024 04:11:09 +0530
+Message-ID: <20241006224109.2416-1-pvmohammedanees2003@gmail.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <32b408a4-8b2d-4425-9757-0f8cbfddf21c@lunn.ch>
+References: <32b408a4-8b2d-4425-9757-0f8cbfddf21c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <172825279728.1692160.16291277027217742776@noble.neil.brown.name>
-User-Agent: NeoMutt/20180716
 
-On Monday 07 October 2024 09:13:17 NeilBrown wrote:
-> On Mon, 07 Oct 2024, Chuck Lever wrote:
-> > On Fri, Sep 13, 2024 at 08:52:20AM +1000, NeilBrown wrote:
-> > > On Fri, 13 Sep 2024, Pali Rohár wrote:
-> > > > Currently NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT do not bypass
-> > > > only GSS, but bypass any authentication method. This is problem specially
-> > > > for NFS3 AUTH_NULL-only exports.
-> > > > 
-> > > > The purpose of NFSD_MAY_BYPASS_GSS_ON_ROOT is described in RFC 2623,
-> > > > section 2.3.2, to allow mounting NFS2/3 GSS-only export without
-> > > > authentication. So few procedures which do not expose security risk used
-> > > > during mount time can be called also with AUTH_NONE or AUTH_SYS, to allow
-> > > > client mount operation to finish successfully.
-> > > > 
-> > > > The problem with current implementation is that for AUTH_NULL-only exports,
-> > > > the NFSD_MAY_BYPASS_GSS_ON_ROOT is active also for NFS3 AUTH_UNIX mount
-> > > > attempts which confuse NFS3 clients, and make them think that AUTH_UNIX is
-> > > > enabled and is working. Linux NFS3 client never switches from AUTH_UNIX to
-> > > > AUTH_NONE on active mount, which makes the mount inaccessible.
-> > > > 
-> > > > Fix the NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT implementation
-> > > > and really allow to bypass only exports which have some GSS auth flavor
-> > > > enabled.
-> > > > 
-> > > > The result would be: For AUTH_NULL-only export if client attempts to do
-> > > > mount with AUTH_UNIX flavor then it will receive access errors, which
-> > > > instruct client that AUTH_UNIX flavor is not usable and will either try
-> > > > other auth flavor (AUTH_NULL if enabled) or fails mount procedure.
-> > > > 
-> > > > This should fix problems with AUTH_NULL-only or AUTH_UNIX-only exports if
-> > > > client attempts to mount it with other auth flavor (e.g. with AUTH_NULL for
-> > > > AUTH_UNIX-only export, or with AUTH_UNIX for AUTH_NULL-only export).
-> > > 
-> > > The MAY_BYPASS_GSS flag currently also bypasses TLS restrictions.  With
-> > > your change it doesn't.  I don't think we want to make that change.
-> > 
-> > Neil, I'm not seeing this, I must be missing something.
-> > 
-> > RPC_AUTH_TLS is used only on NULL procedures.
-> > 
-> > The export's xprtsec= setting determines whether a TLS session must
-> > be present to access the files on the export. If the TLS session
-> > meets the xprtsec= policy, then the normal user authentication
-> > settings apply. In other words, I don't think execution gets close
-> > to check_nfsd_access() unless the xprtsec policy setting is met.
-> 
-> check_nfsd_access() is literally the ONLY place that ->ex_xprtsec_modes
-> is tested and that seems to be where xprtsec= export settings are stored.
-> 
-> > 
-> > I'm not convinced check_nfsd_access() needs to care about
-> > RPC_AUTH_TLS. Can you expand a little on your concern?
-> 
-> Probably it doesn't care about RPC_AUTH_TLS which as you say is only
-> used on NULL procedures when setting up the TLS connection.
-> 
-> But it *does* care about NFS_XPRTSEC_MTLS etc.
-> 
-> But I now see that RPC_AUTH_TLS is never reported by OP_SECINFO as an
-> acceptable flavour, so the client cannot dynamically determine that TLS
-> is required.
-
-Why is not RPC_AUTH_TLS announced in NFS4 OP_SECINFO? Should not NFS4
-OP_SECINFO report all possible auth methods for particular filehandle?
-
-> So there is no value in giving non-tls clients access to
-> xprtsec=mtls exports so they can discover that for themselves.  The
-> client needs to explicitly mount with tls, or possibly the client can
-> opportunistically try TLS in every case, and call back.
-> 
-> So the original patch is OK.
-> 
-> NeilBrown
+I shall apply these changes and send a new v2 patch,
+thanks!
 
