@@ -1,232 +1,120 @@
-Return-Path: <linux-kernel+bounces-352406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302BC991EA4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:49:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 592F6991EA7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 545BC1C20C5A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:49:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AC6C1C20CBC
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C477101F2;
-	Sun,  6 Oct 2024 13:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6FEE545;
+	Sun,  6 Oct 2024 13:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfSfICUa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cj9Hztmy"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53948101C4;
-	Sun,  6 Oct 2024 13:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ADFC125;
+	Sun,  6 Oct 2024 13:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728222539; cv=none; b=Wf0zX0kNymO5R1hFHqwt9HSh0y64g3FPcp0KuZK/LsefYUuBXs36uY8IaM4Gh12ZvdUJI9FrEGqKxQb5WOhlVMYSvDMMNqLxbdkWBNwWANI3YDBN0YabVgBRp/hewnEuB0HWZkF8byMv/BuempAz42XzYljp71zmB7eQk2MMySM=
+	t=1728222940; cv=none; b=rUjA/llaogscud9AD+P580Lih3GZE4DGx4NXHVG6ZVrEtcwk58Aqv65giuBcB0lIjRnny9UYGIZgLguWWoVe+zAZhyy+lM+uzB7KKNdVIfrLbaXF4D2rh3tSi2EX6u8gEKl3JMs8DkAF2u9rNBQ0NzxWVbyyWxzmqrWoai45mLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728222539; c=relaxed/simple;
-	bh=jPvFiYmTuPHm4yfpt7Nb8jNqmAdmYsNgW4P7C8U0omo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d37/pXDIGOqz94tkYgrMIgUpvEcO5yMHBFKauJOt+qJlgKAlOUMk4yz/2PVsF3rjEmhgmz1b8tl7N5pEOEqaIkYMqkRbA74efUYp+Ag8mOIzFNbpsPsqREjMPtivHbffAtooVskRq4UlyfsS5X4l8qrfb47jxxS6FOnCwDk8Txw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfSfICUa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924FEC4CEC5;
-	Sun,  6 Oct 2024 13:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728222537;
-	bh=jPvFiYmTuPHm4yfpt7Nb8jNqmAdmYsNgW4P7C8U0omo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nfSfICUasncD35QRb7Y9QSXPgl4DomSTwtERRpY5kIOUNqcJYiJKVPVomQVtUBKlf
-	 KDDjtx/XhQBbCP0wkIOxj8IWw0B+lHb5vqZuJqqeBZYKUK3fcMe4jh0zwjGeXylluv
-	 HmmqoZYc8R8VKsx9HcztQf6Fmzz91nq//EFMl1Ra9T7Y/aOQnerROML8+cG7KhmJ20
-	 TQEHfTTn93ATLpGLSqy6TAId0ZENGIKubWMI09l/khEQMLnEEF53kmGDCClwYBki6O
-	 JbsNLZ9aibxdMG0Ynds/KCuETJLsCXc36/Io5TkA/8unV4JWRFfUiFjbsk5gGsvNdb
-	 cVzBrmS4qzSlA==
-Date: Sun, 6 Oct 2024 14:48:41 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Mihail Chindris
- <mihail.chindris@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org,
- dlechner@baylibre.com, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 06/11] iio: backend: extend features
-Message-ID: <20241006144841.08fb2102@jic23-huawei>
-In-Reply-To: <ihkd45xlg3hejchdw6ksmuzoxu3cazmx5rd4d4zca7xl4rfcrd@krururfftdlx>
-References: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
-	<20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-6-ceb157487329@baylibre.com>
-	<451aaf360690cf60704e8a2880e98501156bda73.camel@gmail.com>
-	<ihkd45xlg3hejchdw6ksmuzoxu3cazmx5rd4d4zca7xl4rfcrd@krururfftdlx>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728222940; c=relaxed/simple;
+	bh=HAdrsEY6YlkWBS7ysRiXV9/WdgVSWOyATYuYjcqzqU0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=gJXAvU2hM71S+SFRv/lsn7RXQt+APagXKx9vop7h+MTMPFgP+Tgme+02qae52E3olTHp4de0NQWD3ck1OvF880xP6Qf6YFhSaMDSQ8GK5oJdb4oE+5SU4MEq+x57bj3rqXPDDpAP7g+77NPAnr79poXrLSI+yKq8MZGGw8TuwvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cj9Hztmy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 496BGx6r019907;
+	Sun, 6 Oct 2024 13:55:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=jfCNoTHOpxQs
+	dhAMW7Ej4NZ+kmH7a26ExQ8nsR4Za8g=; b=cj9Hztmy4nvLQXXNULVfjSrtDR2m
+	oSu7LAddoqDDus8omAQCpqHUI4fXN/OdIuezs6qTqJgymOasQeqe8izU4e6mxNDz
+	55UpPywbJSUNXvdnGOic9ALRbKDTyZd1EzbfG9U9VHcuBBlDk0xioyIX/GNj+oQm
+	BUKXvJVvyYt6gI6w6P+CghaF78vnlmaQKNDLPllOZNvihdP5UZV3MM1kp63dq3aL
+	lwpTMBYCeuOeA+CBB4oM1V8Gmw4pchZblVime0E7CPNncbrlyng96vgezuSOF/am
+	bniUgjcuCavoANGOWzcwKBPdOkT5s3IaCqNs+36MG/A7w964kYBMpfcQ0g==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xr5j2cu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 06 Oct 2024 13:55:35 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 496DtV9t015203;
+	Sun, 6 Oct 2024 13:55:31 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 422xhkgnns-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 06 Oct 2024 13:55:31 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 496DtV6F015188;
+	Sun, 6 Oct 2024 13:55:31 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-spuppala-hyd.qualcomm.com [10.213.108.54])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 496DtVJM015184;
+	Sun, 06 Oct 2024 13:55:31 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 4137148)
+	id 9AB4E600B71; Sun,  6 Oct 2024 19:25:30 +0530 (+0530)
+From: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, quic_rampraka@quicinc.com,
+        quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com,
+        quic_bhaskarv@quicinc.com, quic_neersoni@quicinc.com,
+        quic_gaurkash@quicinc.com, quic_spuppala@quicinc.com
+Subject: [PATCH RFC 0/2] Avoid reprogram all keys to Inline Crypto Engine for MMC runtime suspend resume
+Date: Sun,  6 Oct 2024 19:25:28 +0530
+Message-Id: <20241006135530.17363-1-quic_spuppala@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6ANqrEGjwaNJuvmo9WyiiqY5Y8M8mgeA
+X-Proofpoint-ORIG-GUID: 6ANqrEGjwaNJuvmo9WyiiqY5Y8M8mgeA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ clxscore=1011 mlxlogscore=531 priorityscore=1501 impostorscore=0
+ adultscore=0 mlxscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410060101
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, 4 Oct 2024 15:45:21 +0200
-Angelo Dureghello <adureghello@baylibre.com> wrote:
+Crypto reprogram all keys is called for each MMC runtime
+suspend/resume in current upstream design. If this is implemented
+as a non-interruptible call to TEE for security, the cpu core is
+blocked for execution while this call executes although the crypto
+engine already has the keys. For example, glitches in audio/video
+streaming applications have been observed due to this. Add mmc_host_ops
+hook to control reprogramming keys to crypto engine for socs which dont
+require this feature.
 
-> Hi Nuno,
->=20
-> On 04.10.2024 14:54, Nuno S=C3=A1 wrote:
-> > On Thu, 2024-10-03 at 19:29 +0200, Angelo Dureghello wrote: =20
-> > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > >=20
-> > > Extend backend features with new calls needed later on this
-> > > patchset from axi version of ad3552r.
-> > >=20
-> > > The follwoing calls are added:
-> > >=20
-> > > iio_backend_ddr_enable
-> > > 	enable ddr bus transfer
-> > > iio_backend_ddr_disable
-> > > 	disable ddr bus transfer
-> > > iio_backend_buffer_enable
-> > > 	enable buffer
-> > > iio_backend_buffer_disable
-> > > 	disable buffer
-> > > iio_backend_data_transfer_addr
-> > > 	define the target register address where the DAC sample
-> > > 	will be written.
-> > >=20
-> > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > ---
-> > > =C2=A0drivers/iio/industrialio-backend.c | 79 +++++++++++++++++++++++=
-+++++++++++++++
-> > > =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 17 ++++++++
-> > > =C2=A02 files changed, 96 insertions(+)
-> > >=20
-> > > diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industr=
-ialio-
-> > > backend.c
-> > > index 20b3b5212da7..d5e0a4da761e 100644
-> > > --- a/drivers/iio/industrialio-backend.c
-> > > +++ b/drivers/iio/industrialio-backend.c
-> > > @@ -718,6 +718,85 @@ static int __devm_iio_backend_get(struct device =
-*dev, struct
-> > > iio_backend *back)
-> > > =C2=A0	return 0;
-> > > =C2=A0}
-> > > =C2=A0
-> > > +/**
-> > > + * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) =
-mode
-> > > + * @back: Backend device
-> > > + *
-> > > + * Enable DDR, data is generated by the IP at each front (raising an=
-d falling)
-> > > + * of the bus clock signal.
-> > > + *
-> > > + * RETURNS:
-> > > + * 0 on success, negative error number on failure.
-> > > + */
-> > > +int iio_backend_ddr_enable(struct iio_backend *back)
-> > > +{
-> > > +	return iio_backend_op_call(back, ddr_enable);
-> > > +}
-> > > +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_enable, IIO_BACKEND);
-> > > +
-> > > +/**
-> > > + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate=
-) mode
-> > > + * @back: Backend device
-> > > + *
-> > > + * Disable DDR, setting into SDR mode (Single Data Rate).
-> > > + *
-> > > + * RETURNS:
-> > > + * 0 on success, negative error number on failure.
-> > > + */
-> > > +int iio_backend_ddr_disable(struct iio_backend *back)
-> > > +{
-> > > +	return iio_backend_op_call(back, ddr_disable);
-> > > +}
-> > > +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
-> > > +
-> > > +/**
-> > > + * iio_backend_dma_stream_enable - Enable iio buffering
-> > > + * @back: Backend device
-> > > + *
-> > > + * Enabling sending the dma data stream over the bus.
-> > > + * bus interface.
-> > > + *
-> > > + * RETURNS:
-> > > + * 0 on success, negative error number on failure.
-> > > + */
-> > > +int iio_backend_dma_stream_enable(struct iio_backend *back)
-> > > +{
-> > > +	return iio_backend_op_call(back, dma_stream_enable);
-> > > +}
-> > > +EXPORT_SYMBOL_NS_GPL(iio_backend_dma_stream_enable, IIO_BACKEND);
-> > > +
-> > > +/**
-> > > + * iio_backend_dma_stream_disable - Disable iio buffering
-> > > + * @back: Backend device
-> > > + *
-> > > + * Disable sending the dma data stream over the bus.
-> > > + *
-> > > + * RETURNS:
-> > > + * 0 on success, negative error number on failure.
-> > > + */
-> > > +int iio_backend_dma_stream_disable(struct iio_backend *back)
-> > > +{
-> > > +	return iio_backend_op_call(back, dma_stream_disable);
-> > > +}
-> > > +EXPORT_SYMBOL_NS_GPL(iio_backend_dma_stream_disable, IIO_BACKEND);
-> > > + =20
-> >=20
-> > I'm not sure if this is what Jonathan was suggesting... Ate least I don=
-'t really
-> > agree with it. I mean, yes, this is about buffering and to start receiv=
-ing (or
-> > sending) a stream of data. But AFAICT, it might have nothing to do with=
- DMA. Same as
-> > .request_buffer() - It's pretty much always a DMA one but we should not=
- take that for
-> > granted.
+This patch addresses the following:
+- Adds vendor hook to control reprogram all keys.
+- Avoids reprogram of keys for Qualcomm SOCs only.
 
-Agreed. The stream bit works, the DMA is more tenuous.  Maybe *data_stream_=
-enable()
-is generic enough.
+Seshu Madhavi Puppala (2):
+  mmc: core: Add vendor hook to control reprogram keys to Crypto Engine
+  mmc: host: sdhci-msm: Avoid reprogram keys for QCOM socs
 
-> >=20
-> > So going back to the RFC [1], you can see I was suggesting something li=
-ke struct
-> > iio_buffer_setup_ops. Maybe just add the ones we use for now? So that w=
-ould
-> > be.buffer_postenable() and .buffer_predisable(). Like this, it should b=
-e obvious the
-> > intent of the ops.
-> >  =20
-> ok, thanks,
->=20
-> so something as :
->=20
-> struct iio_backend_setup_ops {
-> 	int (*buffer_postenable)(struct iio_backend *back);
-> 	int (*buffer_predisable)(struct iio_backend *back);
+ drivers/mmc/core/crypto.c    | 8 +++++---
+ drivers/mmc/host/sdhci-msm.c | 6 ++++++
+ drivers/mmc/host/sdhci.c     | 6 ++++++
+ include/linux/mmc/host.h     | 7 +++++++
+ 4 files changed, 24 insertions(+), 3 deletions(-)
 
-Hmm. Maybe.  My issue with the original naming was the lack of clarify of
-what it actually meant.  I'm not sure this helps though in some cases we
-do put similar calls in the postenable callback (ones that start the
-data flow) so at least it's consistent with that.
-
-Jonathan
-> };
->=20
-> struct iio_backend_ops {
-> 	struct iio_backend_setup_ops setup_ops;
->=20
-> ?
->=20
-> > - Nuno S=C3=A1
-> >=20
-> >  =20
->=20
+-- 
+2.17.1
 
 
