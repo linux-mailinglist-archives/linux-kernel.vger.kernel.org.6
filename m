@@ -1,164 +1,202 @@
-Return-Path: <linux-kernel+bounces-352584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE88992109
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:07:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED8A992132
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04DD71C20A1B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:07:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F357F1F210B6
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12C218B483;
-	Sun,  6 Oct 2024 20:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D285D18BB95;
+	Sun,  6 Oct 2024 20:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FVAB5WRP"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=benjarobin.fr header.i=@benjarobin.fr header.b="JUCT/g7q"
+Received: from 8.mo574.mail-out.ovh.net (8.mo574.mail-out.ovh.net [46.105.72.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B57729405
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70417EAD8
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.72.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728245233; cv=none; b=WdkAN4T59u5HygDF2tXLAXynq7vJ9IDPdJFKJdAEdfS208SyL29mXTCQmDqDoTOn51D1zWYOmHMFV1YwyGU9O2ky9a1Q47TDt6PHcohIj5P3gQyJK4rnb3+pur4s2REt5xm72jKcCGxAQR3KXZayaN1RlG1Ef3/18IAZqg7t0iQ=
+	t=1728246902; cv=none; b=CbUZTJbkpaNHL4BxXvXGixRdjYV1njcb59QhlTdKUBAa85QYHUXuN7DMY0K8dFFoqoqyJZ/B9XnvskMP8+YBTZeaCs8d19IKN18UyCvtgqfqiYjgiXcXRWOaS6o7sAK8aPdudA5ikV5CtHy8wP6YcPhPUKN7fbHXqvSZmTNUy84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728245233; c=relaxed/simple;
-	bh=hWlVn6wqYOiZf/D380nxzst1Ny3r+QrTd4JE5sBLCm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CW/PhMiKIAL83KAVM/ReGvjxL5gKTcectYumuQHiDPRTIAnqXSqNhKbMv6Gets9zGTlpCVXXZ0OjFOZT18oRJkj3DXMoPjyVFmnU7GmZFQX5QM1ZDbes33gnE4ghH/CQQS2LkD4XhkNTLHdaS10f4u1l2ix2O5fR741LVbpYYyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FVAB5WRP; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398df2c871so3891996e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 13:07:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728245229; x=1728850029; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S1aKTq90Vhx5SEGbGXZgfVnFGr2p8A90AYr+7ozDiYY=;
-        b=FVAB5WRP5WKmhHJlnq4Rvj8inClkLG1ReUyfc09COMcSSL/ELs+ju4YyiSrvu3ktIb
-         cXQszaDwIrmZhHrOcGYghofr4ngQYSYRtcZPnR7UsHdRVCwmsXJwbvbkX+xiW9W+DZu/
-         JVZCLgW/7YQlgV55tCcxfl+sUBfDguQFAJGtNSUdHG04DvzLQlWycFLIt8z8F9kvF/21
-         N5yMPAEOOMo0PLVHgi8PkqquOEapbnecYBQon7LEMxwLZxbeWzJ3VixJkXu9uT/PT5UU
-         Sh1vXCPTzVHyCSOnCd9lvmf1EF3rUqu1F+XIkc0ao/SmAsYhNSITYhUpL0oTRqNoNdAt
-         yqVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728245229; x=1728850029;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S1aKTq90Vhx5SEGbGXZgfVnFGr2p8A90AYr+7ozDiYY=;
-        b=KchOBPTbjswroP41BGUSnfGDDCoePKXqjoGpvahlnUOSVNv8m3W1EH4IT0JXGSF/AJ
-         0e6/KeaSjw3pOs2p/7uOQ5l8hFHTP4z1t9DmKeYCriElS2CRA0+7Xq74rdaFz1UablP2
-         kd9xcuL7/2jWl93NjFSPkWf6vkMRdJK82EtMRJAZCsKoAYqlC2HZf449/WoUE2gBBt8z
-         OTy+KsbJoFBWpgPCDFqOmE4iG5/4vrgdAbP4g98dhflbDtQ/Js2kGCJmWgK4KPVZu2T4
-         ibGTi8VmOpZfdunDkjngIcz3qRrLwAgyVFvD8g4izbNXkpaO78ryObg105rAg7OAgc8H
-         DHdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTJzwnBjuZbEFz4D5LxPOrNqtNxcM9BwhmQbdfln2ZSLQTW7z8XzzpBAtRP9fmkJeOrOPfT6VBt4cHGLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgQ/Fk2hgoXWGVXNtZL19egmAW1VU47bRO2VNVbK8shLg5i7o8
-	uFAf+zSN40b+m0jFD55m/JX85J/8qIyvyouitBiqPiL9uNYX1kxwN0IW5dajL/I=
-X-Google-Smtp-Source: AGHT+IFKknDCxNnpYRFa+g3cPJbjZFRd+fx1yS92WOXtOwvo4hAI4DPBzjNxMcxwiu6wMUNEhhPAqQ==
-X-Received: by 2002:a05:6512:3d0c:b0:533:455c:8a49 with SMTP id 2adb3069b0e04-539ab8adbccmr4075594e87.38.1728245228683;
-        Sun, 06 Oct 2024 13:07:08 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff1d1f3sm599873e87.153.2024.10.06.13.07.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 13:07:07 -0700 (PDT)
-Date: Sun, 6 Oct 2024 23:07:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Rakesh Kota <quic_kotarake@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_kamalw@quicinc.com, 
-	quic_jprakash@quicinc.com
-Subject: Re: [PATCH] arm64: dts: qcom: qcm6490: Allow UFS regulators
- load/mode setting
-Message-ID: <jid5coqe4tpsafbi2haem6ye4vrpwyymkepduxkporfxzdi6cx@bfbodoxoq67l>
-References: <20241004080110.4150476-1-quic_kotarake@quicinc.com>
+	s=arc-20240116; t=1728246902; c=relaxed/simple;
+	bh=TBKBxrgD5lGDxv+NJgXEB2b86P2iPNP408fWBGwlRDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UCksEFaoD/cEGWjP9gXKhbFJUn0d1jr6b1ns9MJ1OJWXpmHNtBtZGmuKdZGlE2YTKgBOMxMjR/DJcW7dF5yLnyf/aVJbiVpXZfb5oCkhsiiDoUZD+PMqazPfHXZrYbZEo53hAURE9xBqMCrOkuBuj3PxqFLVwZMm9iMdBhnQ3rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benjarobin.fr; spf=pass smtp.mailfrom=benjarobin.fr; dkim=pass (2048-bit key) header.d=benjarobin.fr header.i=@benjarobin.fr header.b=JUCT/g7q; arc=none smtp.client-ip=46.105.72.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benjarobin.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=benjarobin.fr
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
+	by mo574.mail-out.ovh.net (Postfix) with ESMTPS id 4XM7m22n8kz158m;
+	Sun,  6 Oct 2024 16:58:58 +0000 (UTC)
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
+        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <dev@benjarobin.fr>; Sun,  6 Oct 2024 16:58:58 +0000 (UTC)
+Received: from mta3.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.108.2.127])
+	by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4XM7m20brszHq2H;
+	Sun,  6 Oct 2024 16:58:58 +0000 (UTC)
+Received: from benjarobin.fr (unknown [10.1.6.2])
+	by mta3.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 5E3A13A2EC2;
+	Sun,  6 Oct 2024 16:58:57 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-106R0068c83a0ac-9c49-403b-8fa1-bc00b4c5bf9e,
+                    562C85B86D3D78A264AE363F9EED7FE1148DE02A) smtp.auth=dev@benjarobin.fr
+X-OVh-ClientIp:92.161.126.4
+From: Benjamin ROBIN <dev@benjarobin.fr>
+To: jstultz@google.com,
+	tglx@linutronix.de
+Cc: sboyd@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Benjamin ROBIN <dev@benjarobin.fr>
+Subject: [PATCH] ntp: Make sure RTC is synchronized for any time jump
+Date: Sun,  6 Oct 2024 18:58:05 +0200
+Message-ID: <20241006165805.47330-1-dev@benjarobin.fr>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004080110.4150476-1-quic_kotarake@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 13966225395420838875
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvjedguddtjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepuegvnhhjrghmihhnucftqfeukffpuceouggvvhessggvnhhjrghrohgsihhnrdhfrheqnecuggftrfgrthhtvghrnhephefhgfejkefhleejteeukedtteduhfehfeeuhfekjefgiefhjeefueevieegtedunecukfhppeduvdejrddtrddtrddupdelvddrudeiuddruddviedrgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepuggvvhessggvnhhjrghrohgsihhnrdhfrhdpnhgspghrtghpthhtohephedprhgtphhtthhopeguvghvsegsvghnjhgrrhhosghinhdrfhhrpdhrtghpthhtohepjhhsthhulhhtiiesghhoohhglhgvrdgtohhmpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehjeegpdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=1zgBYfyiHe5o6Vy8vwBY0BNmexFQjCrl+f6tUeYY04w=;
+ c=relaxed/relaxed; d=benjarobin.fr; h=From; s=ovhmo1728415-selector1;
+ t=1728233938; v=1;
+ b=JUCT/g7qwMkXNgEIxgUyyXFFKtcJJIIhD+aOErNApY8ffHZSfvqGI7bMbgzNQ9ZtK2IdJ40n
+ sV9HsbGRZxPQyiwE1+3K5zvnhM3bIapNH4Sni4pU/JXklDOtcZC9/4WK0X/Mm6C7eSZ048E6Rjl
+ LaV738MEifY7cYYD3OOnfDTanFcTAdx7a12RV2+CNi/erm3KPYHxwiq7T0ZqH3smszV9p0LuyNu
+ /sI6lNtQNQ2bbU4QOZyyy/88UJg8L/Jfd+87KF52YHaLyFSR7cRrV2ydYpD2lE/JFD6nNjCmtY0
+ B4Z709N6353NauzgHXqh3nDX/GahaTaXaw1pmDL3IDIQg==
 
-On Fri, Oct 04, 2024 at 01:31:10PM GMT, Rakesh Kota wrote:
-> The UFS driver expects to be able to set load (and by extension, mode)
-> on its supply regulators. Add the necessary properties to make that
-> possible.
-> 
-> While at it, UFS rails have different voltage requirement for UFS2.x
-> v/s UFS3.x. Bootloader sets the proper voltage based on UFS type.
-> There can be case where the voltage set by bootloader is overridden
-> by HLOS client.
-> 
-> To prevent above issue, add change to remove voltage voting support
-> for dedicated UFS rails.
+Follow-up of commit 35b603f8a78b ("ntp: Make sure RTC is synchronized
+when time goes backwards").
 
-add change to remove smth doesn't sound correct to me.
-Please don't depend on the bootloader and describe hardware
-configuration. If there can be two types of IDP boards and you can not
-identify the voltage via other means, please create something like
-qcm6490-idp-ufs3.dts. Please add proper Fixes tags.
-Last, but not least, as Bjorn wrote, please split into two patches.
+sync_hw_clock() is normally called every 11 minutes when time is
+synchronized. This issue is that this periodic timer uses the REALTIME
+clock, so when time moves backwards, the timer expires late.
 
-> 
-> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> index 84c45419cb8d..8a4df9c2a946 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> @@ -258,13 +258,15 @@ vreg_l6b_1p2: ldo6 {
->  			regulator-name = "vreg_l6b_1p2";
->  			regulator-min-microvolt = <1140000>;
->  			regulator-max-microvolt = <1260000>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->  		};
->  
->  		vreg_l7b_2p952: ldo7 {
->  			regulator-name = "vreg_l7b_2p952";
-> -			regulator-min-microvolt = <2400000>;
-> -			regulator-max-microvolt = <3544000>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->  		};
->  
-> @@ -277,8 +279,8 @@ vreg_l8b_0p904: ldo8 {
->  
->  		vreg_l9b_1p2: ldo9 {
->  			regulator-name = "vreg_l9b_1p2";
-> -			regulator-min-microvolt = <1200000>;
-> -			regulator-max-microvolt = <1304000>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->  		};
->  
-> @@ -467,6 +469,8 @@ vreg_l10c_0p88: ldo10 {
->  			regulator-name = "vreg_l10c_0p88";
->  			regulator-min-microvolt = <720000>;
->  			regulator-max-microvolt = <1050000>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->  		};
->  
-> -- 
-> 2.34.1
-> 
+If the timer expires late, which can be days later, the RTC will no longer
+be updated, which is an issue if the device is abruptly powered OFF during
+this period. When the device will restart (when powered ON), it will have
+the date prior to the time jump.
 
+This follow-up handles all kernel API (syscall) that can trigger a time
+jump. Cancel periodic timer on any time jump, if and only if STA_UNSYNC
+flag was previously set (net_clear() was called).
+
+The timer will be relaunched at the end of ntp_notify_cmos_timer() if
+NTP is synced again somehow: This is possible since stopping the timer is
+done outside of a locked section. Otherwise the timer will be relaunched
+later when NTP is synced. This way, when the time is synchronized again,
+the RTC is updated after less than 2 seconds.
+
+Signed-off-by: Benjamin ROBIN <dev@benjarobin.fr>
+---
+ kernel/time/ntp.c          | 10 +++++-----
+ kernel/time/ntp_internal.h |  4 ++--
+ kernel/time/timekeeping.c  |  7 ++++---
+ 3 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
+index 802b336f4b8c..b296c71af09b 100644
+--- a/kernel/time/ntp.c
++++ b/kernel/time/ntp.c
+@@ -660,14 +660,14 @@ static void sync_hw_clock(struct work_struct *work)
+ 	sched_sync_hw_clock(offset_nsec, res != 0);
+ }
+ 
+-void ntp_notify_cmos_timer(bool offset_set)
++void ntp_notify_cmos_timer(bool ntp_was_cleared)
+ {
+ 	/*
+-	 * If the time jumped (using ADJ_SETOFFSET) cancels sync timer,
+-	 * which may have been running if the time was synchronized
+-	 * prior to the ADJ_SETOFFSET call.
++	 * If time jumped (clock set), and if ntp_clear() was called,
++	 * cancels sync timer, which may have been running if time was
++	 * previously synchronized.
+ 	 */
+-	if (offset_set)
++	if (ntp_was_cleared)
+ 		hrtimer_cancel(&sync_hrtimer);
+ 
+ 	/*
+diff --git a/kernel/time/ntp_internal.h b/kernel/time/ntp_internal.h
+index 5a633dce9057..0615ed904119 100644
+--- a/kernel/time/ntp_internal.h
++++ b/kernel/time/ntp_internal.h
+@@ -14,9 +14,9 @@ extern int __do_adjtimex(struct __kernel_timex *txc,
+ extern void __hardpps(const struct timespec64 *phase_ts, const struct timespec64 *raw_ts);
+ 
+ #if defined(CONFIG_GENERIC_CMOS_UPDATE) || defined(CONFIG_RTC_SYSTOHC)
+-extern void ntp_notify_cmos_timer(bool offset_set);
++extern void ntp_notify_cmos_timer(bool ntp_was_cleared);
+ #else
+-static inline void ntp_notify_cmos_timer(bool offset_set) { }
++static inline void ntp_notify_cmos_timer(bool ntp_was_cleared) { }
+ #endif
+ 
+ #endif /* _LINUX_NTP_INTERNAL_H */
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 7e6f409bf311..602775aa24c7 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1472,6 +1472,7 @@ int do_settimeofday64(const struct timespec64 *ts)
+ 
+ 	/* Signal hrtimers about time change */
+ 	clock_was_set(CLOCK_SET_WALL);
++	ntp_notify_cmos_timer(true);
+ 
+ 	if (!ret) {
+ 		audit_tk_injoffset(ts_delta);
+@@ -1522,6 +1523,7 @@ static int timekeeping_inject_offset(const struct timespec64 *ts)
+ 
+ 	/* Signal hrtimers about time change */
+ 	clock_was_set(CLOCK_SET_WALL);
++	ntp_notify_cmos_timer(true);
+ 
+ 	return ret;
+ }
+@@ -1897,6 +1899,7 @@ void timekeeping_inject_sleeptime64(const struct timespec64 *delta)
+ 
+ 	/* Signal hrtimers about time change */
+ 	clock_was_set(CLOCK_SET_WALL | CLOCK_SET_BOOT);
++	ntp_notify_cmos_timer(true);
+ }
+ #endif
+ 
+@@ -2553,7 +2556,6 @@ int do_adjtimex(struct __kernel_timex *txc)
+ {
+ 	struct timekeeper *tk = &tk_core.timekeeper;
+ 	struct audit_ntp_data ad;
+-	bool offset_set = false;
+ 	bool clock_set = false;
+ 	struct timespec64 ts;
+ 	unsigned long flags;
+@@ -2576,7 +2578,6 @@ int do_adjtimex(struct __kernel_timex *txc)
+ 		if (ret)
+ 			return ret;
+ 
+-		offset_set = delta.tv_sec != 0;
+ 		audit_tk_injoffset(delta);
+ 	}
+ 
+@@ -2610,7 +2611,7 @@ int do_adjtimex(struct __kernel_timex *txc)
+ 	if (clock_set)
+ 		clock_was_set(CLOCK_SET_WALL);
+ 
+-	ntp_notify_cmos_timer(offset_set);
++	ntp_notify_cmos_timer(false);
+ 
+ 	return ret;
+ }
 -- 
-With best wishes
-Dmitry
+2.46.1
+
 
