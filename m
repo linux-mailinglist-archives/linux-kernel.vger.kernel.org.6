@@ -1,146 +1,147 @@
-Return-Path: <linux-kernel+bounces-352381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25EDF991E5D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:05:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3736F991E60
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E29232826E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:05:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0EF21F21BC4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B5F176AD7;
-	Sun,  6 Oct 2024 13:05:00 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B2F17335E;
+	Sun,  6 Oct 2024 13:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0uu4XCo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4110C154423;
-	Sun,  6 Oct 2024 13:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FD413C908;
+	Sun,  6 Oct 2024 13:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728219900; cv=none; b=DJCVjCi7ruo/z2dE/F33o0sBBVUeaRMYOq/fwsxOiKrwAAi/62fZZ0IjcAwoEkz9IICo3IjnimUtylyziT2YnJPQ8+7j6LWbdg17Lb0+RzF/DyVFJh0AFRcfgiTzi2JXlJcVUWZPwhxcIKWGQBukFvi+Dbzqge9xPajXTBswDtA=
+	t=1728219936; cv=none; b=MjJGA1JjrPMTehQNMq02s4zq305wXeyvA8AZ+DKK91pTmCNiXuxpRUDSwVjvNihlnvO84ZLdinlenuiM1elL6qslR0GUye9Co8pbFyycXx9cDYdy3ARUH3iPz+bECj80Iuw0/Jsq2+Q0IzYhW7xr98/UzzhVYkAUI+UqKAPHt+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728219900; c=relaxed/simple;
-	bh=o4D/+AyghCOcmPiWqvZL2HSHmixZXOAzBaXp651p2vk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSyzey0Q5uPraxE06u2S3/w0x6qlCeaa11+xuR803ej2ryS9leeM5kRiNXcxpflI2HHtyKPKsJAiKWszqQsKIIgScdg73iiTjRLC9c/VrPCV42zICP4nbmhwB06CWR5otvqjOi7YQdI3JapXAKS31uCObmkCHBJ6kboCsszlbWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sxQwF-0000000071c-35gd;
-	Sun, 06 Oct 2024 13:04:43 +0000
-Date: Sun, 6 Oct 2024 14:04:35 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Xu Liang <lxu@maxlinear.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Abhishek Chauhan <quic_abchauha@quicinc.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 1/4] dt-bindings: leds: add 'active-high'
- property
-Message-ID: <ZwKK4xMlqq3TyDyt@makrotopia.org>
-References: <e91ca84ac836fc40c94c52733f8fc607bcbed64c.1728145095.git.daniel@makrotopia.org>
- <4qk3lpdx47b27ru47avpiygijtu5kkax44t3o4wb2wv5m5djoz@uziseiklyq3d>
+	s=arc-20240116; t=1728219936; c=relaxed/simple;
+	bh=snuEqpkwiIlr2gA5eRHM9nmVH5FfF38QLtajK7OLh8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M3Vs2r5GU078FZfoCvOps7WejKGckm+XuPCaHehB7pSCMxJ78oiHxm9f1P3LFAyLUB8cgx/Ou0SrC5J3wINJpxg+feIncJ0NnA026m7WbGhoZEgnUVfmdWhmChBW7p846PTqAw4L6SRGsB6LwDZIlS49jC42o5742sAEcfJhStE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0uu4XCo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D04AC4CEC5;
+	Sun,  6 Oct 2024 13:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728219935;
+	bh=snuEqpkwiIlr2gA5eRHM9nmVH5FfF38QLtajK7OLh8g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=V0uu4XCo7+eZGIWwPBey0epupClafF6GrZs33XB7xJ5X+9N+g0V9wzEd15qGRGoPb
+	 KUquAVVo7ZiGNRC4g7of8z/ZU79DIXrLL7/7GWSMN+bA3YHlEIFNGI2CMc01giqBv1
+	 SFUBfYmu4GABQ7bHY5PAyKwFds6N5iQUZtJEE67CVKfZdrupeTsDYiqDtqPbYyQpPH
+	 UPYUJQVdd6QoK7N88uZH0uBuJor1lLW+CStg1nz1/f8AtPfwUXWj+kzFv+xtB+Q4Ib
+	 hwSh0tJlkXnjSutfG7f+9hyDuIKrz1q2JWFrqsipMsYIsAxcsu3yx4HvOclaGZTCND
+	 LoWraX42i4Knw==
+Date: Sun, 6 Oct 2024 14:05:20 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Herve Codina <herve.codina@bootlin.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Ian Ray <ian.ray@gehealthcare.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 3/4] iio: adc: Add support for the GE HealthCare PMC
+ ADC
+Message-ID: <20241006140520.5b955b76@jic23-huawei>
+In-Reply-To: <cdc27a53-281d-41d7-a9b5-196f2650c468@baylibre.com>
+References: <20241003114641.672086-1-herve.codina@bootlin.com>
+	<20241003114641.672086-4-herve.codina@bootlin.com>
+	<cdc27a53-281d-41d7-a9b5-196f2650c468@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4qk3lpdx47b27ru47avpiygijtu5kkax44t3o4wb2wv5m5djoz@uziseiklyq3d>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 06, 2024 at 02:44:44PM +0200, Krzysztof Kozlowski wrote:
-> On Sat, Oct 05, 2024 at 05:24:20PM +0100, Daniel Golle wrote:
-> > Other than described in commit c94d1783136 ("dt-bindings: net: phy: Make
-> 
-> Please run scripts/checkpatch.pl and fix reported warnings. Then please
-> run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
-> Some warnings can be ignored, especially from --strict run, but the code
-> here looks like it needs a fix. Feel free to get in touch if the warning
-> is not clear.
+On Thu, 3 Oct 2024 08:39:54 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Sorry about that, I was expecting '--fix-inplace' to take care of that
-but it didn't and I didn't notice. I will address that in a follow-up
-patch.
-
-> 
-> > LED active-low property common") the absence of the 'active-low'
-> > property means not to touch the polarity settings which are inherited
-> > from reset defaults, the bootloader or bootstrap configuration.
-> > Hence, in order to override a LED pin being active-high in case of the
-> > default, bootloader or bootstrap setting being active-low an additional
-> > property 'active-high' is required.
-> > Document that property and make it mutually exclusive to the existing
-> > 'active-low' property.
+> On 10/3/24 6:46 AM, Herve Codina wrote:
+> > The GE HealthCare PMC Analog to Digital Converter (ADC) is a 16-Channel
+> > (voltage and current), 16-Bit ADC with an I2C Interface.
 > > 
-> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> > ---
-> >  Documentation/devicetree/bindings/leds/common.yaml | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
-> > index bf9a101e4d42..7c3cd7b7412e 100644
-> > --- a/Documentation/devicetree/bindings/leds/common.yaml
-> > +++ b/Documentation/devicetree/bindings/leds/common.yaml
-> > @@ -202,6 +202,12 @@ properties:
-> >        #trigger-source-cells property in the source node.
-> >      $ref: /schemas/types.yaml#/definitions/phandle-array
-> >  
-> > +  active-high:
-> > +    type: boolean
-> > +    description:
-> > +      Makes LED active high. To turn the LED ON, line needs to be
-> > +      set to high voltage instead of low.
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > ---  
 > 
-> And then we are going to get 2 more bools for other variants...
+> ...
+> 
+> 
+> > +
+> > +static int pmc_adc_probe(struct i2c_client *client)
+> > +{
+> > +	struct iio_dev *indio_dev;
+> > +	struct pmc_adc *pmc_adc;
+> > +	struct clk *clk;
+> > +	s32 val;
+> > +	int ret;
+> > +
+> > +	ret = devm_regulator_bulk_get_enable(&client->dev, ARRAY_SIZE(pmc_adc_regulator_names),
+> > +					     pmc_adc_regulator_names);
+> > +	if (ret)
+> > +		return dev_err_probe(&client->dev, ret, "Failed to get regulators\n");
+> > +
+> > +	clk = devm_clk_get_optional_enabled(&client->dev, "osc");
+> > +	if (IS_ERR(clk))
+> > +		return dev_err_probe(&client->dev, PTR_ERR(clk), "Failed to get osc clock\n");
+> > +
+> > +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*pmc_adc));
+> > +	if (!indio_dev)
+> > +		return -ENOMEM;
+> > +
+> > +	pmc_adc = iio_priv(indio_dev);
+> > +	pmc_adc->client = client;
+> > +
+> > +	val = i2c_smbus_read_byte_data(pmc_adc->client, PMC_ADC_CMD_REQUEST_PROTOCOL_VERSION);
+> > +	if (val < 0)
+> > +		return dev_err_probe(&client->dev, val, "Failed to get protocol version\n");
+> > +
+> > +	if (val != 0x01)
+> > +		return dev_err_probe(&client->dev, -EINVAL,
+> > +				     "Unsupported protocol version 0x%02x\n", val);
+> > +
+> > +	indio_dev->name = "pmc_adc";
+> > +	indio_dev->info = &pmc_adc_info;
+> > +	indio_dev->channels = pmc_adc_channels;
+> > +	indio_dev->num_channels = ARRAY_SIZE(pmc_adc_channels);  
+> 
+> I don't think the core code actually checks this, but for
+> correctness we should add:
+> 
+> 	indio_dev->modes = INDIO_DIRECT_MODE;
+True.  This is a bit of an oddity of history :(
+Maybe at somepoint we'll just drop this but for now it should be there.
 
-I don't see a problem combining 'active-high' or 'active-low' with
-'inactive-high-impedance' which would be the equivalent of
-'active-low-tristate' and 'active-high-tristate'.
+Given everything else looks good I've added that whilst
+applying the series.  Applied to the togreg branch of iio.git and
+pushed out as testing for 0-day to poke at it.
+
+Thanks,
+
+Jonathan
+
 
 > 
-> I think this should be just string enum, see marvell,marvell10g.yaml
-
-I found the vendor-specific 'marvell,polarity' property in
-https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20231214201442.660447-5-tobias@waldekranz.com/
-
-However, I can't find that file in any Linux tree.
-
-Looking at the suggested patch on patchwork, I got a few questions on
-how to deal with the situation as of today:
-
-So should the existing support for the 'active-low' and
-'inactive-high-impedance' properties be replaced by that string enum?
-Or should the string property be interpreted in addition to the
-bools defined in leds/common.yaml?
-
-Should the string property be defined for each PHY or should we move
-it into a common file?
-
-If so, should that common file also be leds/common.yaml or should we
-create a new file only for PHY LEDs instead?
-
-Sorry for being confused, I don't mind going down what ever path to have
-LED polarity configurable properly in DT.
+> > +
+> > +	return devm_iio_device_register(&client->dev, indio_dev);
+> > +}
+> > +  
+> 
+> With that...
+> 
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> 
 
