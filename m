@@ -1,107 +1,103 @@
-Return-Path: <linux-kernel+bounces-352537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65AC992071
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:34:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4E399207C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8C1D1F2194F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:34:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225F9281F88
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDF02C853;
-	Sun,  6 Oct 2024 18:34:45 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D18417DFE4;
+	Sun,  6 Oct 2024 18:51:47 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5767BEACD;
-	Sun,  6 Oct 2024 18:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD65189F50
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 18:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728239685; cv=none; b=bxjzO8IMj8Hv8Ir/zdjMhD9VFz5zUFCl4or+BKsThc4FBSpxWhgBbML9+eGuhFytIIsatNXuOT0nr0GmfNbS/yPc+bEXl2TqqzkHV9UALnNfn++cl+xJh7TuDvoI4ukCVi0Y4hqJxp+0ftGCBjRJ8VWa3Y/uPmDqBxjBJVgdeE4=
+	t=1728240707; cv=none; b=ZcqOL+4Gh7r8irZo84Znqtg5IFHscJRTNMocwNavVHqEHTipb52uhTWyXKzlTzv7BcOUKN9rpdXNtX1Wp6tSSqKU3RKkpRWxo+vUz6iXqk3KMkzujpvNpo1LKsrdclkL7uMMZqp1YCcgtFvybV5qjARkh/zNUURJMVr9P73vqug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728239685; c=relaxed/simple;
-	bh=bz/6mdQZ9+I7pNFGDTyp0XME/c6fIV3UFvKZbTD37j4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvEr2AFiN9pcHCcW0zURK2qdF9l36lDsK+dRfkiDHFxYiD5yfi91e5ydVlwed3rbagOhu3WcuioO6QUOdNj2bGl7tlqP4aZZ/2XY1Cd+u6Es3oZmEyOImHBebS2MMifTtPHzRhdTOFn6lSwUynC35qH5dSdpL5tKy10YO1OPu5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A745C20077D;
-	Sun,  6 Oct 2024 20:24:47 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 932F6200076;
-	Sun,  6 Oct 2024 20:24:47 +0200 (CEST)
-Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
-	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 61DBA203BD;
-	Sun,  6 Oct 2024 20:24:48 +0200 (CEST)
-Date: Sun, 6 Oct 2024 20:24:47 +0200
-From: Jan Petrous <jan.petrous@oss.nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	dl-S32 <S32@nxp.com>
-Subject: Re: [PATCH v2 0/7] Add support for Synopsis DWMAC IP on NXP
- Automotive SoCs S32G2xx/S32G3xx/S32R45
-Message-ID: <ZwLV7zpfQht0errK@lsv051416.swis.nl-cdc01.nxp.com>
-References: <AM9PR04MB85066576AD6848E2402DA354E2832@AM9PR04MB8506.eurprd04.prod.outlook.com>
- <ff9b3d88-9fe7-47fa-a425-4661181f9321@kernel.org>
+	s=arc-20240116; t=1728240707; c=relaxed/simple;
+	bh=aZwIzvlOJcv/ji8nAJdTx51gC2Ws1xeuOlP3sOSFvS0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=l99pVtihWMp6DAxF30mQFwAHYsQ+oqmVPl59EkcvY2dPxCni9A4YGgW/Q+GOyAOwJyaw9qf0UFa7ojlYkZqUU5cbqV24KTgD2S7EjsFgKZZl1/cKQZKEopq+KvVahFrdTJgrplgXSMWPjt1wb59+5Iqa5whmWF04Ri8agccfFxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-136-9bgpC3x0OgWrMeD0Qb2vqQ-1; Sun, 06 Oct 2024 19:51:42 +0100
+X-MC-Unique: 9bgpC3x0OgWrMeD0Qb2vqQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 6 Oct
+ 2024 19:50:48 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 6 Oct 2024 19:50:48 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Richard Henderson' <richard.henderson@linaro.org>, Julian Vetter
+	<jvetter@kalrayinc.com>, Arnd Bergmann <arnd@arndb.de>, Russell King
+	<linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Guo Ren <guoren@kernel.org>, Huacai Chen
+	<chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Andrew Morton
+	<akpm@linux-foundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "Ivan
+ Kokshaysky" <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, "Helge
+ Deller" <deller@gmx.de>, Yoshinori Sato <ysato@users.sourceforge.jp>, "Rich
+ Felker" <dalias@libc.org>, John Paul Adrian Glaubitz
+	<glaubitz@physik.fu-berlin.de>, Richard Weinberger <richard@nod.at>, "Anton
+ Ivanov" <anton.ivanov@cambridgegreys.com>, Johannes Berg
+	<johannes@sipsolutions.net>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-csky@vger.kernel.org"
+	<linux-csky@vger.kernel.org>, "loongarch@lists.linux.dev"
+	<loongarch@lists.linux.dev>, "linux-m68k@lists.linux-m68k.org"
+	<linux-m68k@lists.linux-m68k.org>, "linux-alpha@vger.kernel.org"
+	<linux-alpha@vger.kernel.org>, "linux-parisc@vger.kernel.org"
+	<linux-parisc@vger.kernel.org>, "linux-sh@vger.kernel.org"
+	<linux-sh@vger.kernel.org>, "linux-um@lists.infradead.org"
+	<linux-um@lists.infradead.org>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>, Yann Sionneau <ysionneau@kalrayinc.com>
+Subject: RE: [PATCH v7 01/10] Consolidate IO memcpy/memset into iomap_copy.c
+Thread-Topic: [PATCH v7 01/10] Consolidate IO memcpy/memset into iomap_copy.c
+Thread-Index: AQHbFbPJWS6K2t1cH0OJGabOTiBjIbJ6FaUQ
+Date: Sun, 6 Oct 2024 18:50:48 +0000
+Message-ID: <5bbdbf01d4584a14ae1e16281eb95837@AcuMS.aculab.com>
+References: <20240930132321.2785718-1-jvetter@kalrayinc.com>
+ <20240930132321.2785718-2-jvetter@kalrayinc.com>
+ <a4f85184-73d4-44e4-bddd-0c1775ed9f50@linaro.org>
+In-Reply-To: <a4f85184-73d4-44e4-bddd-0c1775ed9f50@linaro.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff9b3d88-9fe7-47fa-a425-4661181f9321@kernel.org>
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Mon, Aug 19, 2024 at 08:03:30AM +0200, Krzysztof Kozlowski wrote:
-> On 18/08/2024 23:50, Jan Petrous (OSS) wrote:
-> > The SoC series S32G2xx and S32G3xx feature one DWMAC instance,
-> > the SoC S32R45 has two instances. The devices can use RGMII/RMII/MII
-> > interface over Pinctrl device or the output can be routed
-> > to the embedded SerDes for SGMII connectivity.
-> > 
-> > The provided stmmac glue code implements only basic functionality,
-> > interface support is restricted to RGMII only.
-> > 
-> > This patchset adds stmmac glue driver based on downstream NXP git [0].
-> > 
-> > [0] https://github.com/nxp-auto-linux/linux
-> 
-> All your threading is completely broken which makes it difficult to
-> apply and compare patchsets. Just try - use b4 diff on this...
-> 
-
-Sorry for that. I had some difficulties with enabling SMTP traffic,
-so I used Outlook what I see is totally unusable solution.
-
-Now I have all b4/lei/msmtp/mutt tools installed and will use
-it for v3.
-
-BR.
-/Jan
+RnJvbTogUmljaGFyZCBIZW5kZXJzb24NCj4gU2VudDogMDMgT2N0b2JlciAyMDI0IDE3OjQ3DQo+
+IA0KPiBPbiA5LzMwLzI0IDA2OjIzLCBKdWxpYW4gVmV0dGVyIHdyb3RlOg0KPiA+ICt2b2lkIG1l
+bXNldF9pbyh2b2xhdGlsZSB2b2lkIF9faW9tZW0gKmRzdCwgaW50IGMsIHNpemVfdCBjb3VudCkN
+Cj4gPiArew0KPiA+ICsJdWludHB0cl90IHFjID0gKHU4KWM7DQo+IA0KPiBNaXNzZWQgb25lIGNo
+YW5nZSB0byAnbG9uZycNCj4gDQo+ID4gKw0KPiA+ICsJcWMgfD0gcWMgPDwgODsNCj4gPiArCXFj
+IHw9IHFjIDw8IDE2Ow0KPiA+ICsNCj4gPiArI2lmZGVmIENPTkZJR182NEJJVA0KPiA+ICsJcWMg
+fD0gcWMgPDwgMzI7DQo+ID4gKyNlbmRpZg0KPiANCj4gQ291bGQgYmUgJ3FjICo9IC0xdWwgLyAw
+eGZmOycNCg0KCXFjICo9IH4wdWwgLyAweGZmOw0KDQp3b3VsZCBiZSBzbGlnaHRseSBiZXR0ZXIu
+DQoNCglEYXZpZA0KDQo+IA0KPiANCj4gcn4NCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2Vz
+aWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVL
+DQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
 
