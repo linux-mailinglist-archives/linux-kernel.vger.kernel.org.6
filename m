@@ -1,106 +1,111 @@
-Return-Path: <linux-kernel+bounces-352601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA46992149
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:44:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1234799214E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E978281BBE
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:44:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 442511C20A03
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725CF18BB8C;
-	Sun,  6 Oct 2024 20:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E0A18A936;
+	Sun,  6 Oct 2024 20:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=me.com header.i=@me.com header.b="RxIU+WQj"
-Received: from st43p00im-ztdg10063201.me.com (st43p00im-ztdg10063201.me.com [17.58.63.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YSbYV45l"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA67B16E863
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.63.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CE116DC3C
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728247422; cv=none; b=A5GwZQONCDm58iJB8765kQ164XPdNJguELwQfNlFDdvq2YLwxzz1U3rb8TV/AhyEoi7nglHIpwUMdNwsD5bAoen+Woc/dIldEUlo+3cOb4yHA30fy63Q6MUplni25Qp2Z2WZVH3PTW3L2zNNnlU5WIK3PRs0C+F32LQTG2eXhiQ=
+	t=1728247484; cv=none; b=tit7rHdnpVIDBsfmnoQzAPLbTQI7sPWf/LtxM+L4/DAkzFroNHk8Wba314BIGbSDTFAbQyqEmkneyOV655elPGgzM1txixDIOZ2Nffniwhht/iV2xLJ937bh9rYBbFdyF/i+4rZe3Oqd5zfQN8CYlM5KT0++qWyBo802dXyvk7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728247422; c=relaxed/simple;
-	bh=50LarcWmAb+JKDLihirqMHb9zi+4z+9gIWtZYON+/1s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z2wBuLr89LTRN/hlVTM+76NBl3ivQM5NfnUCnCRR87ly2lFrjOO30SlVOTFnGsEKcaXG6twY9sYwbgPNbgsTvIPOC08Kmzt6harpdyGhFyKpSzv2G4YIRWvuYrIgKvDP+zENcfZ/XswlIH1ogYpRpI1QG6EZ/ybuzmpqTOifcBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=me.com; spf=pass smtp.mailfrom=me.com; dkim=pass (2048-bit key) header.d=me.com header.i=@me.com header.b=RxIU+WQj; arc=none smtp.client-ip=17.58.63.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=me.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=me.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-	t=1728247419; bh=Rb4uSMd3WuIyW+3aNpC7juKYGvVxUYO7LHjTErftlXk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=RxIU+WQj+kb7PoLYFhpjaoiWCFXY+FgvYHfJYwjKbThv4SzKNvqax31uAvxulFl7L
-	 G3E+cA0M5rRIB97Vww+84GE2hnJm5BUqVfBhb/+OOnAbNTsUJPKuaBxuIqcMyNEZpR
-	 frtl5wC7hO0WpEaffXf6J94l0Z3saVHgTxsPjSHvMMSmB8jwCJtOy9X1HDxYYThyTM
-	 G8zjrLqY1qPwHr1VsW5vBWD6BiM/i8kS3QT2csrx5SukifC3E+0ZCVUPR59GIlhe0j
-	 iRIFODcKbfgKo0VAQakbI+3qxmTHFsqqHATjrhIHG78WR16Y13MOs2LdsAbAnzPet9
-	 qGXTyHX61BCeQ==
-Received: from localhost (st43p00im-dlb-asmtp-mailmevip.me.com [17.42.251.41])
-	by st43p00im-ztdg10063201.me.com (Postfix) with ESMTPSA id DFCD29803C1;
-	Sun,  6 Oct 2024 20:43:36 +0000 (UTC)
-From: Alain Volmat <avolmat@me.com>
-Date: Sun, 06 Oct 2024 20:42:51 +0000
-Subject: [PATCH v2 3/3] ARM: dts: st: enable the MALI gpu on the
- stih410-b2260
+	s=arc-20240116; t=1728247484; c=relaxed/simple;
+	bh=MSMm4GU14bTXwk/jnHsTnUk5BETz1PWVtSoClOusTNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O6uwgp5gxc9Ei04eYRCDrq38a7ssqMnHRK6ERUGZaMDbZOLE5FBNlm3+IxK8W7oTwi2jBdM5P2PWkWHSFWfHK/SH4ehpLG8sr5DesalGIwKoWmGu9O+SgcVgMvsWdvXt3yYoxu7lhpmLhsCGAmlu/43fhuLz7C+IlQAw9fv8Spc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YSbYV45l; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso48674741fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 13:44:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728247481; x=1728852281; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1dzk3WntIySvLJWusveHPZhNWnaINtIPBE/POIj9sa4=;
+        b=YSbYV45lE9i97FPdyJhPp92lPBv65hEsZw1BF8cEbTfTol/bmwI1vL2n2J+ls7owMB
+         0UQtRYGARBOtwtT4ZKAXUdBPeenxXUjDbAYmFeb0OPD5S8hoJZuzcmE3WblEyN6yyktw
+         xc/kQ9JvxayahtIAqTGmWP1NYJfEzRwxYQxsaVSxG+KkpFHAc73gC26ZYbAVK028/DjX
+         Ro6fwyrHkqCn7686KoBtbyi3aTev78NUPHFxH3dJ3Zv6i2FkA8o9q5P8pM1EnKQnE1RJ
+         UqicclXjjEQmIemiHBycUVVLYhRWDbKB41naZAvF16SG9jlGxmOZSXwRUNd0HjJrYLtb
+         uZOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728247481; x=1728852281;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1dzk3WntIySvLJWusveHPZhNWnaINtIPBE/POIj9sa4=;
+        b=ikOrHsuc6hKIr3oEis97op4A3BMWfvk7LCHgSA7J/389BBq/32bcjgW9rJ1YPrXgPp
+         4LhK3LJgPVR+AnHNsq3/geD2bCfVnKBvWREhEcmUyn3N3d7wnAhPaKnAtF7dupz6wE8m
+         Calj4EHXIi6l6MT9H60u7HGcPpEklKvDK2JVL23j0bS27HeytLcPzNGtq6i8piO1aiMl
+         DQ7Yly3DzTM7Riw16Uzl3tkQuCDdG8QXWUwOU4IA5Hk8Jn7JOzK6FOQIoz9kjScUbePU
+         S2rts7X54hWS+2+J/es31Z6z04eZr+/Y1li2XCHWFQtRBsaHAuelQshgI4OOBU93hOBP
+         fZMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVP2HxpLJ7klBuC5A3dV461j8evGTo3Cs/LjxgykaoObof6VBK5Am2vnksjupecr+oYkY6s0ViG7ajIqN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwXXyAyYpRD6G4DT2O2n6EnE6tj5VlOqZX0ffk1u3ekDOGrD27
+	cpyYxwJ+YLgkyb91YIlHlsf1rRBeFJ/W8++3+IFNAc5iVcAGKJa7pgsUUFdoiLA=
+X-Google-Smtp-Source: AGHT+IGSACiI3kw3knol095Cbq7pCc2Lxyw8CUsV9n35GwTxUyFJ2etK1ySJVEoir2VRZFMDNMgfeA==
+X-Received: by 2002:a05:6512:b98:b0:536:55cc:963e with SMTP id 2adb3069b0e04-539ab9cf28bmr6424748e87.44.1728247480760;
+        Sun, 06 Oct 2024 13:44:40 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec852esm615479e87.93.2024.10.06.13.44.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 13:44:39 -0700 (PDT)
+Date: Sun, 6 Oct 2024 23:44:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: quic_mahap@quicinc.com
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Kalyan Thota <quic_kalyant@quicinc.com>, Jayaprakash Madisetty <quic_jmadiset@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] drm/msm: mdss: Add SA8775P support
+Message-ID: <dg73wfucbacsalh6eaxuk5u2lhoavvlp3euh3zhb7tlkvnhcvq@2x55r35znc3w>
+References: <20241001-patchv3_1-v3-0-d23284f45977@quicinc.com>
+ <20241001-patchv3_1-v3-3-d23284f45977@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241006-sti-gpu-v2-3-c6bb408d6903@me.com>
-References: <20241006-sti-gpu-v2-0-c6bb408d6903@me.com>
-In-Reply-To: <20241006-sti-gpu-v2-0-c6bb408d6903@me.com>
-To: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Patrice Chotard <patrice.chotard@foss.st.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Alain Volmat <avolmat@me.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: i_TaJ1qM4CeIyoTXli7CsWKMXexD7nFQ
-X-Proofpoint-GUID: i_TaJ1qM4CeIyoTXli7CsWKMXexD7nFQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-06_19,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 malwarescore=0
- adultscore=0 clxscore=1015 phishscore=0 suspectscore=0 mlxlogscore=438
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2410060148
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001-patchv3_1-v3-3-d23284f45977@quicinc.com>
 
-Enable the GPU on the stih410-b2260 board.
+On Tue, Oct 01, 2024 at 12:11:38PM GMT, Mahadevan via B4 Relay wrote:
+> From: Mahadevan <quic_mahap@quicinc.com>
+> 
+> Add Mobile Display Subsystem (MDSS) support for the SA8775P platform.
+> 
+> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/msm_mdss.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
 
-Signed-off-by: Alain Volmat <avolmat@me.com>
----
- arch/arm/boot/dts/st/stih410-b2260.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/st/stih410-b2260.dts b/arch/arm/boot/dts/st/stih410-b2260.dts
-index 240b62040000b8c0357d39504d3475186958bf31..736b1e059b0a8f122d1b824e1f4e5db0a668ec2c 100644
---- a/arch/arm/boot/dts/st/stih410-b2260.dts
-+++ b/arch/arm/boot/dts/st/stih410-b2260.dts
-@@ -206,5 +206,9 @@ hdmiddc: i2c@9541000 {
- 		sata1: sata@9b28000 {
- 			status = "okay";
- 		};
-+
-+		gpu: gpu@9f00000 {
-+			status = "okay";
-+		};
- 	};
- };
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
