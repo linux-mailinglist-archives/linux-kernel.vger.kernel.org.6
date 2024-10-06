@@ -1,136 +1,136 @@
-Return-Path: <linux-kernel+bounces-352285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC71991CEC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:11:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADBC991CF0
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D46FB1F21DBE
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:11:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405791F21DBC
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1061684A8;
-	Sun,  6 Oct 2024 07:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2517416DC15;
+	Sun,  6 Oct 2024 07:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jit+XWwf"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WRifEotl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A6556B8C;
-	Sun,  6 Oct 2024 07:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16C8166F1B;
+	Sun,  6 Oct 2024 07:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728198702; cv=none; b=XntGVOogruWO0s4aX6jrsV5joTA5hM9BCdbm82zJoml3oS1FGInbp4RrJa4XkkJUwQIrlXu4ql15GdCPXppUCFvi6wVFEXXqhPZQa3a3R8hbg4UPaoRGq1p/CE8gyeLI2SJxlGs/MsCu2Eq7MFpckvlbyfjP9N/QH7Kw8GhQMxc=
+	t=1728198895; cv=none; b=aEpHjIkXHSKrj6j8LI9oaYFsGs21Z2otx/D5bp2Y/vsF1zaTEd6UhhWqRcdijXnKkyUCs7+ODT0K0piA7sgK0PX+8cPGysPPqG+wDMmbWmhWL+WupWM0gRe16AOLMxQ1V5nPJdyy/RgaqJSEIZzIljrEt2wkgKmvDoxHV4QQdmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728198702; c=relaxed/simple;
-	bh=Q8X2cXpOFDXgqj8xEO3D9HK9yIZb5U215hVozMFfn0E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=r1McU6nphmjK33ce+TmRUt/sYr9IsnrUuXiueu/bmNVfw0PSu7VHW7A40Cq7ZG8L4ahbyQ6P2DUWC8OBDp2zQCeL22IQpwb8+H2nDR9fEhM15hy1p0VxeB0tSJS9Zun8wUXAtZpTrPdcuh04K3aq63BBsL/Bwf3/IEa0kiMZcoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jit+XWwf; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e075ceebdaso2500674a91.2;
-        Sun, 06 Oct 2024 00:11:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728198701; x=1728803501; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7CHcfx5NNAf+4HE7foxG0QIWac6K3h+hjnp0dKiKJs8=;
-        b=jit+XWwf5MYg3pe4JvxV9ypR5gfFycMEMBh3XMUkrFJ5p4+VR42pbgopHTsRcXa6FQ
-         QZI1bLBiOm3sJATvBYVd7g7u7w3rkusdI8+1HEieEg1sYnsDWmOUiBB05wS5phyVbMQ0
-         RcNcyN8O83tPW42cmd7oJseQfJ56j0T7ONBjV/otSvV8l7ICbV6PBdwPhElYk3sqoQqg
-         QynFzXJ+0jYmyRzIP/8AN8w2ClyPXSo++bVSQ3rhAWur3BCxFzw/3AzWNXzFXTg18YIn
-         msFLo0/QJAcDa+GwJ6Txd7vypSwcjJOXJmsQ52V6la/D6qO+9uC8yUmkbW3TRpgGasIo
-         m6wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728198701; x=1728803501;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7CHcfx5NNAf+4HE7foxG0QIWac6K3h+hjnp0dKiKJs8=;
-        b=vJ5PzNgQXFpyr3/BeQxUBoDrwQrVfgCH9EEoO1ATbAcCtfVeE/hQdklbE/aPCaFYo4
-         FjABqH8zSeH2T75IICq7vt6hd16QX5jNX0vMKCTDTHhB7ku7mtPb1LaReaB3zwvKQReM
-         soJ+adKuKLkeqbc6VW8579tw2O9PogxXmOw0YzEHZtgcOp9mHCJgsi7T6kfVHEGbXwrg
-         P+HiTIaQlGbG4IXZGmFhBX0m8gGpqOQjnXG7ErwbHkVt5Vj2yz++38/KL3fptyklw191
-         FjPkptrmaL93+RvPiGv5Cz2N6CwtqxgtShop34XYFQtX4AhXsF79/j6VhC2M+ye/zZEj
-         avVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSvlD1Rp6yi0zLquqWTWPCgyTXdnMiLNWGIA8xhaRW7p6Q5m5QrRNLuPXQRwxGLiUMGxWEgEM76A2RoPqV@vger.kernel.org, AJvYcCX9ZcmQUugCrOhJuuiacjHzo0eKRz7wDPT2cNmRCBuDZxbF1vZSuSeYgih/RCNJhuk1zQkSoj8yZ/Fxng==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTswUWTh+PsK93zRWSqKLj7SM0g/7eFxENSvDmWD+fNrC3eCe1
-	e2y0R2Cc2Qam2XTE1mR4iPWarwIzwLSftMmfmER0UPlHinugBo9w
-X-Google-Smtp-Source: AGHT+IHtSJuC2dsxoZ9umAPcDZFLdzy6yiDtDR+Fxn2rvYGjnMDS1yUYrgu0T0vWfScIb50XMB0LTg==
-X-Received: by 2002:a17:90a:4805:b0:2e0:853a:af47 with SMTP id 98e67ed59e1d1-2e1e636f93dmr9416777a91.33.1728198700798;
-        Sun, 06 Oct 2024 00:11:40 -0700 (PDT)
-Received: from ?IPV6:2409:40c0:230:2966:8a2:4c2e:bb52:a9af? ([2409:40c0:230:2966:8a2:4c2e:bb52:a9af])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e83ca284sm4634058a91.11.2024.10.06.00.11.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Oct 2024 00:11:40 -0700 (PDT)
-Message-ID: <759193c0-c831-46bc-8194-9b3525eeeae5@gmail.com>
-Date: Sun, 6 Oct 2024 12:41:34 +0530
+	s=arc-20240116; t=1728198895; c=relaxed/simple;
+	bh=rvBFnAwLGKxozKlGoPYKyeuWTXKglv6GHMyqYvXmTAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rBY32ich/FonX40M9dXXqRKuvAbvSybrWza+TngTDa11MNBTLf6DtKHU7hG38dFdARRdOcKdr9lJVrtnhoZlU7f8nDoMToHRtfoSFmx3Fea80WRkJx14AOVOIMx+dRVOHzf4F0Yjnr0+ScdNwCRTmJIZWAv8Ac42rU0nb0N3Jmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WRifEotl; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728198894; x=1759734894;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rvBFnAwLGKxozKlGoPYKyeuWTXKglv6GHMyqYvXmTAg=;
+  b=WRifEotlUYaaHdv234qPtPFO/sH57Fdj97BfXm0h5/OYu1zS6QEw4ZDu
+   4gaw/joIAAr9Nzhrjx0/G70nuOhG+cA3ZaTvIbATJ2bVtMgQmybWAk+7K
+   ynxqBvXRyeSzdpTu8HNRgnRUvWTUTqURCdbuzv8gVjZ68BOLjmehNspmr
+   QupnCDy+zNC8GpRov4wbsmXCsVRD9Xn0+5xUcBhpIf1Ma/NB9CPJ9zRJs
+   s501NDdB0GnxH/PYVNxxjTOmkl0Fr8mNLqgTKVJg0QXDuc2TGp0owu8U2
+   TpLUE0+JrOMDgVcZ/g3ueRRcPO0xFcZrKrZiuUpEeq1S4jk7250xoHE+n
+   w==;
+X-CSE-ConnectionGUID: yh7FBRAxRjuuAS5ZglAlhQ==
+X-CSE-MsgGUID: rT9dlfyRRrOPzw6BXc4dew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="49900363"
+X-IronPort-AV: E=Sophos;i="6.11,182,1725346800"; 
+   d="scan'208";a="49900363"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2024 00:14:54 -0700
+X-CSE-ConnectionGUID: 4jEnGfSCRBi8baZ2Vcujzg==
+X-CSE-MsgGUID: YBfKsRVZSwyGvh2jqoitbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,182,1725346800"; 
+   d="scan'208";a="75484927"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 06 Oct 2024 00:14:48 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sxLTa-0003g4-1Q;
+	Sun, 06 Oct 2024 07:14:46 +0000
+Date: Sun, 6 Oct 2024 15:14:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>,
+	manivannan.sadhasivam@linaro.org, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+	konrad.dybcio@linaro.org, James.Bottomley@hansenpartnership.com,
+	martin.petersen@oracle.com, agross@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_narepall@quicinc.com,
+	quic_nitirawa@quicinc.com, quic_rdwivedi@quicinc.com,
+	Can Guo <quic_cang@quicinc.com>
+Subject: Re: [PATCH V1 3/3] scsi: ufs: qcom: Add support for multiple ICE
+ algorithms
+Message-ID: <202410061425.FamovVLB-lkp@intel.com>
+References: <20241005064307.18972-4-quic_rdwivedi@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Explanation on Uninitialized Variable bio in blk_rq_prep_clone
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, hch@infradead.org
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Zv_eFIjstVns-ebG@infradead.org>
- <20241004141037.43277-1-surajsonawane0215@gmail.com>
- <6a0ec577-fba1-44b3-87d8-3a202df19d8c@oracle.com>
- <b22f1750-c53d-481f-8233-12adac30a807@gmail.com>
-Content-Language: en-US
-In-Reply-To: <b22f1750-c53d-481f-8233-12adac30a807@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241005064307.18972-4-quic_rdwivedi@quicinc.com>
 
-On 06/10/24 12:28, Suraj Sonawane wrote:
-> On 04/10/24 20:03, John Garry wrote:
->> On 04/10/2024 15:10, SurajSonawane2415 wrote:
->>> Explaination of how bio could be used uninitialized in this function:
->>>
->>> In the function blk_rq_prep_clone, the variable bio is declared but 
->>> can remain uninitialized
->>> if the allocation with bio_alloc_clone fails. This can lead to 
->>> undefined behavior when the
->>> function attempts to free bio in the error handling section using 
->>> bio_put(bio).
->>> By initializing bio to NULL at declaration, we ensure that the 
->>> cleanup code will only
->>> interact with bio if it has been successfully allocated.
->>>
->>>
->>
->> What about if rq_src->bio is NULL for blk_rq_prep_clone() -> 
->> __rq_for_each_bio(,rq_src):
->>
->> #define __rq_for_each_bio(_bio, rq)    \
->>      if ((rq->bio))            \
->>          for (_bio = (rq)->bio; _bio; _bio = _bio->bi_next)
->>
->> Then I don't think bio it get init'ed. Whether this is possible 
->> (rq_src->bio is NULL) is another question.
-> 
-> Hi Keith,
+Hi Ram,
 
-I realized I mistakenly addressed my reply to you as "Keith" in this 
-message. Apologies for the confusion. Thank you again for your input!
+kernel test robot noticed the following build warnings:
 
-> 
-> You're right to bring this up. If rq_src->bio is NULL, the 
-> __rq_for_each_bio macro will skip the loop, meaning the bio variable 
-> won't be used at all. So, even if bio isn’t initialized, it won't cause 
-> any issues in that case.
-> 
-> Thanks for pointing that out.
-> 
-> Best regards,
-> Suraj
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on mkp-scsi/for-next jejb-scsi/for-next linus/master v6.12-rc1 next-20241004]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Best regards,
-Suraj
+url:    https://github.com/intel-lab-lkp/linux/commits/Ram-Kumar-Dwivedi/dt-bindings-ufs-qcom-Document-ice-configuration-table/20241005-144559
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241005064307.18972-4-quic_rdwivedi%40quicinc.com
+patch subject: [PATCH V1 3/3] scsi: ufs: qcom: Add support for multiple ICE algorithms
+config: arm-randconfig-001-20241006 (https://download.01.org/0day-ci/archive/20241006/202410061425.FamovVLB-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410061425.FamovVLB-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410061425.FamovVLB-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/ufs/host/ufs-qcom.c:126: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * Refer struct ice_alg2_config
+
+
+vim +126 drivers/ufs/host/ufs-qcom.c
+
+   124	
+   125	/**
+ > 126	 * Refer struct ice_alg2_config
+   127	 */
+   128	static inline void __get_alg2_grp_params(unsigned int *val, int *c, int *t)
+   129	{
+   130		*c = ((val[0] << 8) | val[1] | (1 << 31));
+   131		*t = ((val[2] << 24) | (val[3] << 16) | (val[4] << 8) | val[5]);
+   132	}
+   133	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
