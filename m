@@ -1,85 +1,81 @@
-Return-Path: <linux-kernel+bounces-352490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5636C991FF4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:32:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DDC991FF8
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFF4D1F216F2
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:32:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 483B71F20FFE
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C772189BB5;
-	Sun,  6 Oct 2024 17:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F3D189F47;
+	Sun,  6 Oct 2024 17:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="haap6yJs"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ifDeqqwp"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3082B18991B
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECDF189B8C
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728235966; cv=none; b=VLKUn7/tn0CJekISfwQZTVlBqUgNgdHnQMlsjugNwaTObi/pG6bnuj0DMisoxXJIyBWA8fuC6Av3/7G4lESPxsazmdf4ClVX108ER8a+8MKxV/BYA1LfpTOQ8H4jKtUthb7PIW9t61qzyOtf8Ls5VyOiBMCsMZXRwEpc3rfwxfU=
+	t=1728235987; cv=none; b=LaMgZbfPtlnfwx4SG8gXj9ux8BqI3pvHPLMng5b+pg0X4qoH4bYKeqDORa/Zwu8y4j6BRixflrKl125ujUXE60XJ35SowfDLQ67UPQmj1g4ViFKVWkFGvpgBbCKV6kHKaSp1/Bh+hfCvg79DrXCE1pnXOlGkz0KRky7wsLI5Yu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728235966; c=relaxed/simple;
-	bh=T+OrIT0ckx+4DsjdviywOmAPZD7YtHtfPLpn0Xt2Na4=;
+	s=arc-20240116; t=1728235987; c=relaxed/simple;
+	bh=QhCyGOkQgiBpgvjvqjxBH9vOLjNZpa8j8B//L6DyBoA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rHYAHm9d7hs6yVekx4BlUOVHbD4fGHE5qKCexfFsCsj57SziQBao/pWEWVYhVB7j66/Y65QzWaxbXtcydIvQsqfXMFYAu67rP9mbc3Jo1tSPNXWk//l1bT+sOf4TusPZMKETFAHpb9lYPWPJR3TiDOnKYHd1iLXk83P4lrNeSQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=haap6yJs; arc=none smtp.client-ip=209.85.208.175
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZXvtOUMkj/YqwHR+8UCX7HykCrHDmgAUx+Ojas+MJb3AFMu+vb4cOzhto8/Yb+OdI3RiiRNfONF2w6SAdtnggvgtftV3TARR3wR1MaU0SRV0hJWwmnztk4tr2kF89Luy1T9A57mDHzpKDctnTe/kRJd38TKM4jhqlXWOiuK1U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ifDeqqwp; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fac787f39fso38155071fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:32:43 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2facaa16826so32087451fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:33:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728235962; x=1728840762; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728235984; x=1728840784; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r1NxQI5QV4DE8+i0IvHuqmyv/ESZiy42eqq5jBNAK5E=;
-        b=haap6yJs8TclABnAKqNmMXSKnbz3mQaP+h/1Ibw+khZ//8D9Ilw6R6PlNbl0USamS7
-         GYPkbLGCPMDt6YV1LVBAtAir8mQ1KlXljVM5ZKblfBuihry+eXg8VBf/+WlLLDJHgIeA
-         AokhB/G/mE+huaD38lvkMIWWn4L+V/pEYU5AGyTHR7juO08MXngJu5lBo2vFdLCC7dOa
-         7+9vqfp01ysaKVXYOJAYTbu4uRw5OfwgnCiCoBFGVWONUCoZc+KSz6OhxLskyGYIcjB0
-         pYX4hCdNmj+QXCXpOc/Of7xHZy87RKBN4aI+9BJqH2/PRkc49SVdFdjdlPRkifQJBTiR
-         uNng==
+        bh=WIFhis9nbzOYzg4QwZr7uypPsNR98pceYiIiC4Gv7+c=;
+        b=ifDeqqwpeKFCj0KXxkmJnX9bZNi5iT/ntmaGhATi/PUwJg1Qv450psSoO5SZ+hrpru
+         oPw5iMfZcBTUUDg3kPTCI2hMKcVSlg56tBNJvuMvxODmrbcYaf8Ft/ot4QnxWcsbxpER
+         jVXg39Wn0xpDk1qCeLD84p9901ibNlZRGmt52Hc4qz2kNNJ6hMAwHotPvv0TwEdZJsVd
+         o87gbalHS8jmo9mlAt7wvPqP4Bek05hw2T8renKY5wTWq05OV759aDGn2tmw2IJrZgFD
+         S3yp+JAnpNUiWzzqR0b3dU3BP/KSKmdGpyY7j9syEgE/L0FmYXPHX1NvKWFVYARGm8eP
+         64IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728235962; x=1728840762;
+        d=1e100.net; s=20230601; t=1728235984; x=1728840784;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r1NxQI5QV4DE8+i0IvHuqmyv/ESZiy42eqq5jBNAK5E=;
-        b=NyuHriHnAqvlqBAD/qSNb8vlL22GYzBx0AhHHGuRXsNs3AN9lJua2wvjYdllQJMAwU
-         BQ1ThY1z4zCdzrcUONpyIGwP7PnxhuyBvGXa8dVCDzl7idc86iqgV28bT4bgp/VOHYeF
-         2H0P7m/WvmNnzoBd7xAxxbL/1HFFl13hurS8in0sIMZSZjOFZM8KcjzmoBi8aPxn8Gf/
-         X8DKuA+ZAYSWQAJIW5rVNEKDfjeCrwvOT0OGscURv003765BNcOQP7M/niKw4o8o87S/
-         JaIAf2jsVGGnnI73DSVyzC9mt8uLcdwON7C6zujZYjti9pGVFdCxi3LUSQObZasv6LOT
-         D8Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+5Bsxs2q5WleUWRuszn8WoKHCP9Jo6+6IZQjHJcLR7gma34L/6XdwkbEYn1MbDuLBpsyc3IWuL2pQKVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3RVxQNKVc+wWBkuWSHiEFruuF+SwEGXojkdTz8Z6o5cWZJfT/
-	g/A+YIFS6Mk0eNBQE/AGno6LtqiohbTC41/8MG+tV/S1ywtAvwuZ+PU9vJqlIRM=
-X-Google-Smtp-Source: AGHT+IG+QwZQ4OCtQHyqoK1+CJ+GHxPI8u5RieuMZEEdbaGmBdONOTKZQW0bvOywQEuMFL4+NafBXw==
-X-Received: by 2002:a05:651c:544:b0:2fa:e658:27a1 with SMTP id 38308e7fff4ca-2faf3c141aamr41730371fa.5.1728235962235;
-        Sun, 06 Oct 2024 10:32:42 -0700 (PDT)
+        bh=WIFhis9nbzOYzg4QwZr7uypPsNR98pceYiIiC4Gv7+c=;
+        b=mWQrJ3FoUF1G8QXthsyj8ioT7EAmZg2Go/GHd4STmSye5S7CT9EemidrUZZcYMsH4P
+         rtsnfcQnhjA3d17pur8E3laEPWiQCcdPRfnn3hg03WKPMKNjFUFuF8xlZFxGMLWKgqBm
+         IMNtpb37sEDM3tWYZwhbAXmY/qWbzhUBjAYuso3mlEkL6XXR9hdgIEChSRP+Hd00zjG4
+         b5Gfiy9VpeRYCHACu38gbus5L88CrWqCJfYFIhXo2Q2w+vgcNQxP7ZI5XglKqum84wJ6
+         TvCYrOug+iaa4cqeJ8LCvDUvlQORAlp2Kg1usTcc0oCqGx1KjBrECSpgcAAk19WKQJVl
+         5YAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2QuP9tx/a8gLRGbKpTaJ8UGnvUBSgkyVXboZhgkD7e6CgDx3hMj7IhsL0ToMLGoxc5/WGmL1+t0p+YrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDOYF9ClinNe4WGGRhB4VHn1UW9knDfbP5PwyhTUfMWLD03nBt
+	3WptZ0EjyX1b85WnQAl6xlgWTKE4Wuasda+PBfuFliwBM0r+IrCAKu9QFaNPyIc=
+X-Google-Smtp-Source: AGHT+IEsWkHJHdD9uuGdPDeF23ZAzVVLlr+LsqBI8Z+Fbqrl+fN88PTSQcf204i5YPdtXnCiwFww3g==
+X-Received: by 2002:a2e:1309:0:b0:2f6:484d:cd61 with SMTP id 38308e7fff4ca-2faf3d91a05mr30834981fa.43.1728235983593;
+        Sun, 06 Oct 2024 10:33:03 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9b339b0sm5524611fa.124.2024.10.06.10.32.39
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9b3374bsm5704401fa.117.2024.10.06.10.33.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 10:32:40 -0700 (PDT)
-Date: Sun, 6 Oct 2024 20:32:38 +0300
+        Sun, 06 Oct 2024 10:33:02 -0700 (PDT)
+Date: Sun, 6 Oct 2024 20:32:59 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Jonathan Marek <jonathan@marek.ca>
-Cc: freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, 
-	"open list:DRM DRIVER for Qualcomm display hardware" <linux-arm-msm@vger.kernel.org>, 
-	"open list:DRM DRIVER for Qualcomm display hardware" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] drm/msm/dsi: fix 32-bit signed integer extension in
- pclk_rate calculation
-Message-ID: <mk5mrypbeeuzhcmqimck42gnykjwj3yz6ua4npkxymrvho6z7i@dvvrxsafqcxj>
-References: <20241005143818.2036-1-jonathan@marek.ca>
- <20241005143818.2036-2-jonathan@marek.ca>
+Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: qcom: videocc-sm8550: depend on either gcc-sm8550
+ or gcc-sm8650
+Message-ID: <vaovefjpxyzrcobv5vinepfdbgfsmng2cdhuzkph44ojrpvui5@7ckz43wyddsk>
+References: <20241005144047.2226-1-jonathan@marek.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,42 +84,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241005143818.2036-2-jonathan@marek.ca>
+In-Reply-To: <20241005144047.2226-1-jonathan@marek.ca>
 
-On Sat, Oct 05, 2024 at 10:38:10AM GMT, Jonathan Marek wrote:
-> When (mode->clock * 1000) is larger than (1<<31), int to unsigned long
-> conversion will sign extend the int to 64 bits and the pclk_rate value
-> will be incorrect.
+On Sat, Oct 05, 2024 at 10:40:46AM GMT, Jonathan Marek wrote:
+> This driver is compatible with both sm8550 and sm8650, fix the Kconfig
+> entry to reflect that.
 > 
-> Fix this by making the result of the multiplication unsigned.
-> 
-> Note that above (1<<32) would still be broken and require more changes, but
-> its unlikely anyone will need that anytime soon.
-> 
-
-Fixes?
-
+> Fixes: da1f361c887c ("clk: qcom: videocc-sm8550: Add SM8650 video clock controller")
 > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 > ---
->  drivers/gpu/drm/msm/dsi/dsi_host.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/clk/qcom/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> index 1205aa398e445..a98d24b7cb00b 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> @@ -550,7 +550,7 @@ static unsigned long dsi_get_pclk_rate(const struct drm_display_mode *mode,
->  {
->  	unsigned long pclk_rate;
->  
-> -	pclk_rate = mode->clock * 1000;
-> +	pclk_rate = mode->clock * 1000u;
->  
->  	if (dsc)
->  		pclk_rate = dsi_adjust_pclk_for_compression(mode, dsc);
-> -- 
-> 2.45.1
-> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
 With best wishes
