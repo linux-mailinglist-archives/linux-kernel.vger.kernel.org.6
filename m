@@ -1,142 +1,116 @@
-Return-Path: <linux-kernel+bounces-352479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549EF991FD2
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:11:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F05991FD6
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1862628214B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:11:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 739AA1C20977
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AE018A6A8;
-	Sun,  6 Oct 2024 17:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XJC1H1Yf"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D981189BBA;
+	Sun,  6 Oct 2024 17:14:24 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9C8187856
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED3B155C8C
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728234694; cv=none; b=mGiZGv081Z5wf9ZiODSA5y/g94NtJbrWKDL27aGn4yBUivDqy6e+4Lg46yNDveWkB4DHIAH8nxbN77VyIedCRB580wf7WvuQwJO4zskVNuUsO0vJxRa8cUE2cZiJrSXDraPEr9i1HTg66dmn30XplTKu35OkvvVDaRYQOApZ5rE=
+	t=1728234864; cv=none; b=dLlAPYqD2O4onZW1IE9KrXeedz6/M9I3p+I10yC6gJ8oZyFdFSGAo3x4pZupMG6xsPgv05hAp7akOrofNv6DGs3h2BfjT3Cv9vthdV0vbod2ogG1tz5asJdca8QY85UPp4wCzwejimgXUc3rRZru5i+CEgiJMGNOQJEb96JmqhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728234694; c=relaxed/simple;
-	bh=3id98dWfPMqGRosAsonLO3shESXmQU5V73Lu5hbyTVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PcrHUWB4wugnqTntNgJRuZKVhr1A6Iu0OTtJwdy5t8aQU3NFv5qVdhNZg9Qr+m7O2sbnCxwghadPQH6mDMN7jsMChGXoLCAWUYcGwwUk+pV2T+eJBh6vO8S6t+2LOG8269TbSCD/vZp8eetOStd/VYrKZ1FR4Dvf3tARH+lnCGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XJC1H1Yf; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5398c1bd0b8so4466017e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:11:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728234691; x=1728839491; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HORmwBmgfdl05E9vDg1kc4I3kqXYteqYbjrn/dZeplM=;
-        b=XJC1H1YfSa4X6VM5x+JBWxey1xRnJ+EUbz28qX5WD6krYtuhNu4lX2Tyn3xWcCH67j
-         hv68oZQTaJZPvHjUe9eP/DqrJt4dRaOKUkHToj9n0yVJiUdX96s8wrnGvdrbWFxaMV+c
-         dLtAzywG3KBnTSpCZnm7dflvGy+hUJpV3X0xNQFs7an5y5ZQMoAjJT+IYnqGaXTBkgFC
-         RhrtH4du+nj8XNSeoJWtLIxM0cMC8Qanprp2oAJgeBeR9pCGFCo8sWI/DEzfVImCs8IG
-         gMbHA+rHBZSzegKABjmt+qXpFm3sEysxaVZf9wuPTdh98pzeLxvmhXGyabzSxMmHZqPL
-         WI4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728234691; x=1728839491;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HORmwBmgfdl05E9vDg1kc4I3kqXYteqYbjrn/dZeplM=;
-        b=UTRhzGEdGTcd6rTILKs3ZcPbf870KX+qPLtxCPVeh9WNGa8IOXibh381XbJDUSG4io
-         WPumneGKZliKcaajfiEc7t0bGNLoCGZyZWH8zNloDIhH7sojua08iyw4K+sjRkOpdthF
-         PVi1b29dPVtMcbJRLf5li7ezBhD30k82ZYWZeJmB9E9xflJop64irQTeMduig5HacyFh
-         sD1BQAsfMwICwGABIbpyS2MGy+pSrJnsfJ0Ff8Fr2Foa4kOt327vtZNMlIde4jeLeopU
-         KTFezNKsHEsvkz66XXXTNzOoRwdumxZ33qUm1IW5p0voRnJIIVNSMNOX4+WCg2vuqqKd
-         UFYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOg8qxNZxJaCWqDp7oOTEi1juha40LXBzc9VKWsNaiA76cJnx2wPecNxNYMxHxbVao50Z1a3V9GhjMmrs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwigRDXkX2dSQYWrVFpCM1vX4+zSXCto1KIWPkdmFvcKjE4YLMa
-	PjCb3ZZND8MavsIMhJ1SuENCuCkv0CHev8NkU5j7G8Rwz9oVumGBJ97K5kWOAXA=
-X-Google-Smtp-Source: AGHT+IGAcVGzz3f7BDb/2j93VyI4nWnEvGMl+6HSIyG3vXGDdmlsXZ0thd5pVAWVdkXAUKAbGwnmHQ==
-X-Received: by 2002:a05:6512:b90:b0:539:93e8:7ed8 with SMTP id 2adb3069b0e04-539a626a412mr4126081e87.15.1728234690926;
-        Sun, 06 Oct 2024 10:11:30 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff282casm565156e87.273.2024.10.06.10.11.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 10:11:30 -0700 (PDT)
-Date: Sun, 6 Oct 2024 20:11:28 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Cc: Rob Herring <robh@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
-Subject: Re: [PATCH 1/3] dt-bindings: mailbox: qcom,cpucp-mbox: Add sc7280
- cpucp mailbox instance
-Message-ID: <kzlhhovfffvg227oxbpl3nv6q2lyn53pz2fyqis22brkd4bkkz@vqprudcdfunb>
-References: <20240924050941.1251485-1-quic_kshivnan@quicinc.com>
- <20240924050941.1251485-2-quic_kshivnan@quicinc.com>
- <20240924232526.GA563039-robh@kernel.org>
- <2d4e47fd-0aaf-4533-a96f-95ada853d9a0@quicinc.com>
+	s=arc-20240116; t=1728234864; c=relaxed/simple;
+	bh=VN4Rdd/NF6+1iNc6FWwZ+aTR7FXGvpT46iwVY2pFc50=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=aqLLI9Vp267QSWsrvvze3zH8SF/6ld0f9Ov1hGTS3ThfUTvqh/P8z/s7vfu+JIICuNUK7nYeZ9S7Jv3Otu69t9Ls/lr/3oPl/nNbRJNY4cLMKKcE0o3LvyfomPxsKkM3UAVwLX+74Ns+Cgxq8EHWQ1Kz3yGZDc4GoTYIuDE5IFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-160-32qjf7DEPKSBYCRcDkNq4w-1; Sun, 06 Oct 2024 18:14:10 +0100
+X-MC-Unique: 32qjf7DEPKSBYCRcDkNq4w-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 6 Oct
+ 2024 18:13:16 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 6 Oct 2024 18:13:16 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Bart Van Assche' <bvanassche@acm.org>, Thomas Gleixner
+	<tglx@linutronix.de>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King
+	<linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Clemens Ladisch <clemens@ladisch.de>
+Subject: RE: [PATCH 07/21] hpet: Switch to number_of_interrupts()
+Thread-Topic: [PATCH 07/21] hpet: Switch to number_of_interrupts()
+Thread-Index: AQHbE2TzBkWyNMbR9ESEodEWAH4CWbJ5/e4w
+Date: Sun, 6 Oct 2024 17:13:16 +0000
+Message-ID: <b315cbe2e1264d98b57ce57fe5f66a23@AcuMS.aculab.com>
+References: <20240930181600.1684198-1-bvanassche@acm.org>
+ <20240930181600.1684198-8-bvanassche@acm.org>
+In-Reply-To: <20240930181600.1684198-8-bvanassche@acm.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d4e47fd-0aaf-4533-a96f-95ada853d9a0@quicinc.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 03, 2024 at 11:13:02AM GMT, Shivnandan Kumar wrote:
-> thanks Rob for reviewing this patch.
-> 
-> 
-> On 9/25/2024 4:55 AM, Rob Herring wrote:
-> > On Tue, Sep 24, 2024 at 10:39:39AM +0530, Shivnandan Kumar wrote:
-> > > sc7280 has a cpucp mailbox. Document them.
-> > 
-> > And is different from the existing device how?
-> 
-> It is different with respect to the register placement.
+From: Bart Van Assche
+> Sent: 30 September 2024 19:16
+>=20
+> Use the number_of_interrupts() function instead of the global variable
+> 'nr_irqs'. This patch prepares for changing 'nr_irqs' from an exported
+> global variable into a variable with file scope.
+>=20
+> Cc: Clemens Ladisch <clemens@ladisch.de>
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+> ---
+>  drivers/char/hpet.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
+> index e904e476e49a..e618ae66587d 100644
+> --- a/drivers/char/hpet.c
+> +++ b/drivers/char/hpet.c
+> @@ -195,7 +195,7 @@ static void hpet_timer_set_irq(struct hpet_dev *devp)
+>  =09=09v &=3D ~0xffff;
+>=20
+>  =09for_each_set_bit(irq, &v, HPET_MAX_IRQ) {
+> -=09=09if (irq >=3D nr_irqs) {
+> +=09=09if (irq >=3D number_of_interrupts()) {
+>  =09=09=09irq =3D HPET_MAX_IRQ;
+>  =09=09=09break;
+>  =09=09}
 
-Register placement in the global map or the internal register structure?
+This is horrid.
+You've replaced the read of a global variable (which, in some cases the
+compiler might be able to pull outside the loop) with a real function
+call in every loop iteration.
 
-> 
-> Thanks,
-> Shivnandan
-> 
-> > 
-> > > 
-> > > Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-> > > ---
-> > >   .../devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml         | 5 +++--
-> > >   1 file changed, 3 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-> > > index f7342d04beec..4a7ea072a3c1 100644
-> > > --- a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-> > > +++ b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-> > > @@ -15,8 +15,9 @@ description:
-> > > 
-> > >   properties:
-> > >     compatible:
-> > > -    items:
-> > > -      - const: qcom,x1e80100-cpucp-mbox
-> > > +    enum:
-> > > +      - qcom,x1e80100-cpucp-mbox
-> > > +      - qcom,sc7280-cpucp-mbox
-> > > 
-> > >     reg:
-> > >       items:
-> > > --
-> > > 2.25.1
-> > > 
+With all the mitigations for cpu speculative execution 'issues' you
+pretty much don't want trivial function calls.
 
--- 
-With best wishes
-Dmitry
+If you are worried about locals shadowing globals just change one of the na=
+mes.
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
