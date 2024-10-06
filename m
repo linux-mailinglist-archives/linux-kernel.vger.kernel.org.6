@@ -1,151 +1,189 @@
-Return-Path: <linux-kernel+bounces-352462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94A0991F93
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:12:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C494991F98
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63ECC1F21660
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:12:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0521B2827C5
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D627189B9B;
-	Sun,  6 Oct 2024 16:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C403189BB2;
+	Sun,  6 Oct 2024 16:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R584vS9y"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wj7L9grI"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADD3187554;
-	Sun,  6 Oct 2024 16:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111281A716;
+	Sun,  6 Oct 2024 16:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728231114; cv=none; b=IWl3AF+NUJKoUtgDZM0QLfAWao4nblKQsyQO11tFxTb+K9TcjToG4o1vHRTQYyvv6Mzb9tXc2YV97Cye2mqP+1A8DJsD01HLmNgFoZQJKCnfZheq6qQ3N7Dn5IGDKclLxvgQEK+UxaQj93j3/HKWewfRpFtLAhVgs76hy835bMg=
+	t=1728231531; cv=none; b=ORkk7hG5jcwu5DxvefXYddwMsksOk2TpnLHKKRbqNt/N87OFZ/El1qFObF2oD+TbvJLBJfliKPJ7r6jbHOAL8tQZ82CMsxBTboigjqdjZAFDoiMIuf28REg7l2IyOcizQ/D4/X9OOt8dl58jQRaDfAPeCb/a48HynPKGslAj9pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728231114; c=relaxed/simple;
-	bh=tDJ5s5zYFjkOd0VeumbJCL2tSq/9mRwCV6dnYOXYKzI=;
+	s=arc-20240116; t=1728231531; c=relaxed/simple;
+	bh=+qFjgY7ZDjTKO8NSejOLDLGXwd8G0b3932ovhS9QYqM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TRkZdaoli+hNwYOIHB39fyRUua6nFRW5ZaJhmp0dkTcqnFw67BDZnF4/goo/jM+lELZxIjdtDZKZDJpLf+TDH5GQBKLwhc55WtWNriEs4dH6Aj604p8Bn2VK16FrDRyA2q06pL5W4bBEWU0S4VdgZLcP2EbejDQY8Gr2A22u6vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R584vS9y; arc=none smtp.client-ip=209.85.219.169
+	 To:Cc:Content-Type; b=fM1jQyFYv1bi8HAG3cA2xbJ7enDGhWFcl612YcVUlg+FaTw4tTq2cl8nr6MmAnOxhUI/1Ca1BWfljHNt4LaO3Cx/wr7hnyLpHWjnenFKlqgMocYhxFjtC/YmeXPUCC7q5HaYCo9iBuw+YoK7rR1a1QuGip+QWePBFl28Jvig6ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wj7L9grI; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e28ad6b7f1fso713444276.1;
-        Sun, 06 Oct 2024 09:11:51 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cbface8d6so47870135e9.3;
+        Sun, 06 Oct 2024 09:18:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728231111; x=1728835911; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728231528; x=1728836328; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MAYqCIiSv61sSYgvtWT29++OHzmZnVI7JlxP4WixgGE=;
-        b=R584vS9yiMsA2yooXYgto+mQ05K6NsPXv59ALMRi4AIDvt5yQ4eshKg04yTpOK3ofg
-         m9RLM/0+YBV/oI20f/lCgA7xM09DKtFbCwfPQUHFt+619vOfzoRStEuBrsyRIhufFnL9
-         mKzmrLcp2lX/LVZuuM2L6mGkm7TakhM1e50HlJrGygIw+QX7V+I921K095B0kIwxyUQ9
-         z0j6V2B4Cu5zsr+dxDlz+4EXc4bjSyRbzf3UmENjKY+HVLHoHDoUa1z2Cpwz6Htx50M/
-         qyXn8JnSST71ecBKOebv3hFWPssZ29qgmhcGmkIUprQl2yWoWsSeNcLFaIZ9Anjm7xc2
-         LKpg==
+        bh=VRVG+gyWmN8+ifPSsxxwB0Eoyw+2tgUBVTIx9jYehCY=;
+        b=Wj7L9grI6fznnprjg1AaTbvaM2f2wNuOE9yZymI6TBifpmnicPR45q2HnuZAouu8S3
+         4V6lPxGGzFC+0wL/eroOF5f02AUtO2pgRFJgcTTYscY0hlfzk4oVjdbL+P1nen5KzfDM
+         xejCwP9wpqVluUNJqTCE/hP/Xay2oyJsC0tRalnps63DgyZSm5KrePyHeJKTw3dBkF2F
+         nnI6rVqQmluEHOAHY0iQdVF2g68ZXnVXXaZ+RSMSzYQa7PFIZp1FVFVfjgtngWNr5/Mq
+         xb6z19LAVLzqDWLCuigE4x4WeGLu282koLMtAJAM6cpCPBo442Dwp+MlGE0wANUcuPH3
+         qt4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728231111; x=1728835911;
+        d=1e100.net; s=20230601; t=1728231528; x=1728836328;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MAYqCIiSv61sSYgvtWT29++OHzmZnVI7JlxP4WixgGE=;
-        b=WRBpRcrZj2YFUUvEo/xprdRa7HVv2acSljPzsRp9KCV8u6w8OUUp/XMomKlqeB2nn6
-         hsO4v9jt5MSXcUjnv5918v4HYV08BQIMOuzKNGmRrLdCmKvGzkwACtHvsS8cu0Dkoob4
-         wUKqtBTNgAT0DRO5Uz97l9exWfJCr39tFs+jnxoU9eVHivDbH610eQgLy6q5BcZ6saS5
-         dv9mZQLR1e+Zp8LopF1eSKNYaEzUsUAjDQaw9XAN3qQtoEOqycZJ18kbjWmNH+zYsati
-         4xXloBfLOpXPv7VqWPa8+VasfCoDKB68/SjN1Oec/HNjo6igq0JYbloZUxsni3YuDBlR
-         v/9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUOnIC3x2QJDraxPfV9UpawZJWwg63Ltfyc/tAOTkSIZzrlf+uMzcvsBZP7K5znw/abxuvo1m+CT37assCOTdP+@vger.kernel.org, AJvYcCVtvxdcni7Xt/PN7ZY6UvD1gF/TIeDvKgr4DKMk0VmtQsVn1G07It50pYmYK5D8KAES5Kk2jpusZ+JRZwjC@vger.kernel.org, AJvYcCWhL7eMA+i02m9KPxVYXWL7jnIqPgRejOISBfEUXxGdsqtcWPh261CIwnH4dkq3eIaGHez/nSO7SQu1@vger.kernel.org, AJvYcCXuxsiYp2Qvib1J5P7jePwMqNgRNmta/PQEESSU78/6ulf8Bybhk8SfIqubMulP+NqHqKoICEWiFqRK@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFLrOhHrlUHGqPupe31kl/3LCWbTQwgxuc4kyDv8Ol3L2evYKv
-	OZGpgrdwlSEdRG6soATkn2Jfgv2iIV3nOiAG+C92fSTiXG3CI0QHw/5NEGq+p3goAL7QtrjIGCk
-	ryDvntaTlClDHhwUEVeHyW0ff5uY=
-X-Google-Smtp-Source: AGHT+IFqMHlb0b8SgKw7RwjBG7Z/IYs0/8p3F6LoeYW5kR2rfijp2j/qGjYCoWovPSzlMmk0//HTDX0lUYq3PNC/rQA=
-X-Received: by 2002:a05:6902:2b8f:b0:e20:16b9:ad68 with SMTP id
- 3f1490d57ef6-e2893951b87mr6248949276.45.1728231110621; Sun, 06 Oct 2024
- 09:11:50 -0700 (PDT)
+        bh=VRVG+gyWmN8+ifPSsxxwB0Eoyw+2tgUBVTIx9jYehCY=;
+        b=f0siQMC9eho1zxIz0R06Xnx9sATDg/6F4rgXg5WvLmIqQnXUP5XHnLZliggKxllYCB
+         PFSH62L1G0r+z/SB0RBcxLUo8vitDmDQd3CbkHeP42KQ4cHMoyZ45X+ulfZT5lceHgzI
+         9krRNwsPZTCSDMWVUPtQlq+g5U0kTIx/cvOPmSjJhJYIcvRHcvt+t9Kv7MMRy5c5ZG/Z
+         AhZRAWuhroTsonaOyXZ8iwfyBdG8HD+/21io99CmBRQKjY3kYOfYso0nsfLIYJ87bmCv
+         1CLFBLIOhhJHK24CPfkrpWxm0ijB+TCtYHd1oE1k8Yr03OKlXV/p8FYPG0V5/rPyMVMD
+         1xag==
+X-Forwarded-Encrypted: i=1; AJvYcCU8JlGfUYNgj7u9DlGal7pJxvG4/lW+Hx1L+MomUBcYQsP/iuioDL7lqyOm4yNjCctr0cQsBhFf@vger.kernel.org, AJvYcCVA+hpwkYUygHjq9u6RswaItZdvevMqoKvJUVJAIe9T3QJI2g6fakh41a227fIfpzbJdloX+/vWxD5LJpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzPTVi62c0h1OEV1+1f9mhKV0gsDU2SBeaux41FriwdLBviYhO
+	3aIQ099RO4rCprSq7S5qUZdkKLM8Yd9dCYTUi3qfKsiDR3sOxjqCYC1b5rIqGMBvJBj+Y1EHgY2
+	MxWiT9Ptr9xacgiZOG/qrvlmWXTShZQ==
+X-Google-Smtp-Source: AGHT+IFmPiSjCYXvhQ01Q3DZ4dwhdOGOHllc3+uTO1QtqaB6cWFrFE0gffa/KHUs4xaUTO6LmuDJ2Gpu6H+bvPAVek4=
+X-Received: by 2002:a5d:66c9:0:b0:37c:cc05:7a56 with SMTP id
+ ffacd0b85a97d-37d0e6ead0emr7716968f8f.10.1728231528118; Sun, 06 Oct 2024
+ 09:18:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com> <20240911-xtheadvector-v10-7-8d3930091246@rivosinc.com>
-In-Reply-To: <20240911-xtheadvector-v10-7-8d3930091246@rivosinc.com>
-From: Andy Chiu <andybnac@gmail.com>
-Date: Mon, 7 Oct 2024 00:11:39 +0800
-Message-ID: <CAFTtA3O-sD-cJsHL2LgwryXwEnuEKvnP6QrTn7GMFYZmP=A3iA@mail.gmail.com>
-Subject: Re: [PATCH v10 07/14] riscv: csr: Add CSR encodings for CSR_VXRM/CSR_VXSAT
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Samuel Holland <samuel.holland@sifive.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
-	Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
+References: <20241001075858.48936-1-linyunsheng@huawei.com>
+ <20241001075858.48936-10-linyunsheng@huawei.com> <CAKgT0UeSbXTXoOuTZS918pZQcCVZBXiTseN-NUBTGt71ctQ2Vw@mail.gmail.com>
+ <c9860411-fa9c-4e1b-bca2-a10e6737f9b0@gmail.com>
+In-Reply-To: <c9860411-fa9c-4e1b-bca2-a10e6737f9b0@gmail.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Sun, 6 Oct 2024 09:18:11 -0700
+Message-ID: <CAKgT0UfY5JtfqsFUG-Cj6ZkOOiWFWJ3w9=35c6c0QWbktKbvLg@mail.gmail.com>
+Subject: Re: [PATCH net-next v19 09/14] net: rename skb_copy_to_page_nocache() helper
+To: Yunsheng Lin <yunshenglin0825@gmail.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Eric Dumazet <edumazet@google.com>, 
+	David Ahern <dsahern@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Charlie,
+On Sat, Oct 5, 2024 at 6:44=E2=80=AFAM Yunsheng Lin <yunshenglin0825@gmail.=
+com> wrote:
+>
+> On 10/4/2024 11:00 AM, Alexander Duyck wrote:
+> > On Tue, Oct 1, 2024 at 12:59=E2=80=AFAM Yunsheng Lin <yunshenglin0825@g=
+mail.com> wrote:
+> >>
+> >> Rename skb_copy_to_page_nocache() to skb_copy_to_va_nocache()
+> >> to avoid calling virt_to_page() as we are about to pass virtual
+> >> address directly.
+> >>
+> >> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> >> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> >> ---
+> >>   include/net/sock.h | 10 ++++------
+> >>   net/ipv4/tcp.c     |  7 +++----
+> >>   net/kcm/kcmsock.c  |  7 +++----
+> >>   3 files changed, 10 insertions(+), 14 deletions(-)
+> >>
+> >> diff --git a/include/net/sock.h b/include/net/sock.h
+> >> index c58ca8dd561b..7d0b606d6251 100644
+> >> --- a/include/net/sock.h
+> >> +++ b/include/net/sock.h
+> >> @@ -2185,15 +2185,13 @@ static inline int skb_add_data_nocache(struct =
+sock *sk, struct sk_buff *skb,
+> >>          return err;
+> >>   }
+> >>
+> >> -static inline int skb_copy_to_page_nocache(struct sock *sk, struct io=
+v_iter *from,
+> >> -                                          struct sk_buff *skb,
+> >> -                                          struct page *page,
+> >> -                                          int off, int copy)
+> >> +static inline int skb_copy_to_va_nocache(struct sock *sk, struct iov_=
+iter *from,
+> >> +                                        struct sk_buff *skb, char *va=
+,
+> >> +                                        int copy)
+> >>   {
+> >
+> > This new naming is kind of confusing. Currently the only other
+> > "skb_copy_to" functions are skb_copy_to_linear_data and
+> > skb_copy_to_linear_data_offset. The naming before basically indicated
+>
+> I am not sure if the above "skb_copy_to" functions are really related
+> here, as they are in include/linux/skbuff.h and don't take '*sk' as
+> first input param.
+>
+> As "skb_copy_to" function in include/net/sock.h does take '*sk' as first
+> input param, perhaps the "skb_copy_to" functions in include/net/sock.h
+> can be renamed to "sk_skb_copy_to" in the future as most of functions
+> do in include/net/sock.h
 
-Charlie Jenkins <charlie@rivosinc.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=8812=
-=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=881:57=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> The VXRM vector csr for xtheadvector has an encoding of 0xa and VXSAT
-> has an encoding of 0x9.
->
-> Co-developed-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  arch/riscv/include/asm/csr.h | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> index 3eeb07d73065..c0a60c4ed911 100644
-> --- a/arch/riscv/include/asm/csr.h
-> +++ b/arch/riscv/include/asm/csr.h
-> @@ -300,9 +300,14 @@
->  #define CSR_STIMECMP           0x14D
->  #define CSR_STIMECMPH          0x15D
->
-> -#define VCSR_VXRM_MASK                 3
-> -#define VCSR_VXRM_SHIFT                        1
-> -#define VCSR_VXSAT_MASK                        1
-> +/* xtheadvector symbolic CSR names */
-> +#define CSR_VXSAT              0x9
-> +#define CSR_VXRM               0xa
-> +
-> +/* xtheadvector CSR masks */
-> +#define CSR_VXRM_MASK          3
-> +#define CSR_VXRM_SHIFT         1
-> +#define CSR_VXSAT_MASK         1
+Maybe "sk_copy_to_skb_frag_nocache" or something along those lines
+would be an even better naming for it. Basically I just want to avoid
+having the two very different types of functions sound like they might
+be related.
 
-nit: use VCSR_VX* instead of CSR_VX*, if you need to send the next
-revision. I believe these masks are for CSR_VCSR but not CSR_VX*. If
-you think CSR_VX* is a better naming then the previous patch should
-introduce it as CSR_VX* but not VCSR_VX*.
+As it stands it and the other 2 functions related to it are an outlier
+in the header file as most everything else in the header file starts
+with sk_ anyway as it isn't skbuff.h so it doesn't make sense to have
+skb_ functions living in it.
 
+> > which part of the skb the data was being copied into. So before we
+> > were copying into the "page" frags. With the new naming this function
+> > is much less clear as technically the linear data can also be a
+> > virtual address.
 >
->  /* Supervisor-Level Window to Indirectly Accessed Registers (AIA) */
->  #define CSR_SISELECT           0x150
->
-> --
-> 2.45.0
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> I guess it is ok to use it for linear data if there is a need, why
+> invent another function for the linear data when both linear data and
+> non-linear data can be used as a virtual address?
 
-Thanks,
-Andy
+It isn't. If we were messing with linear data we shouldn't be updating
+data_len. This is the kind of thing that worries me about this as it
+can easily lead to misuse.
+
+The two functions are different in several important ways.
+Specifically one is meant to copy to the headers, and the other is
+meant to copy to detached frags. In addition the
+skb_copy_to_linear_data doesn't do the skb->len manipulation nor the
+socket manipulation.
+
+> >
+> > I would recommend maybe replacing "va" with "frag", "page_frag" or
+> > maybe "pfrag" as what we are doing is copying the data to one of the
+> > pages in the paged frags section of the skb before they are added to
+> > the skb itself.
+>
+> Don't "frag", "page_frag" or "pfrag" also seem confusing enough that
+> it does not take any 'frag' as the input param?
+>
+> Does skb_copy_data() make more sense here as it can work on both
+> linear and non-linear data, as skb_do_copy_data_nocache() and
+> skb_copy_to_page_nocache() in the same header file seem to have a
+> similar style?
+
+I could probably live with sk_copy_to_skb_data_nocache since we also
+refer to the section after the page section with data_len. The basic
+idea is we are wanting to define what the function does with the
+function name rather than just report the arguments it is accepting.
 
