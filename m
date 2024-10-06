@@ -1,250 +1,247 @@
-Return-Path: <linux-kernel+bounces-352573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3EA9920EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:50:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2890C9920EE
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07E0B1F21303
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:50:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8D361F21587
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5635918B464;
-	Sun,  6 Oct 2024 19:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69B718B46A;
+	Sun,  6 Oct 2024 19:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U5JbwyWP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8Pp7Br4c"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hiXB8905"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C3218A6A9;
-	Sun,  6 Oct 2024 19:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A17155336;
+	Sun,  6 Oct 2024 19:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728244244; cv=none; b=hTGbM2Th02TQnADmORdVS5h/ZXewoOkvP33U8hbTbfjIk5AwM4IvC/xg9gW0e4tdN0v9yexpoafbgMuxZRsCN+uk/Cb60dJQY6lVdOs1cwNdGaMsnJwQX1EHKoglvs/y3FfsaHPwwR0ah+5s9zwpM5yrqDH8aq8QGCPt0KJUT6I=
+	t=1728244302; cv=none; b=QFQlxR1RP6IJM6GyQSu4JNN7Hez9o3bLN86fKaO1eybFo2qwEqxSBZ64PRplEfzXzVQlC29CpsJTx/jzOL68SC0wX1+e2p+cYS0kKVVTJwx6ppUczkaSdwxWgG5VePTVjNiYgHgas1HjnK27PWrXG6GcWpUfN2DCqF675FuN4Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728244244; c=relaxed/simple;
-	bh=uy7X34Ztrc+dmUdMVDxVXnaBQo3HkOdL4XMvahW+JcI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eQsvvHau+gHn+e09ERRHUHefjiC7tJ1GebOFbCGxnHMvwUXhWdvII0IAgnrNM0Qph4N6VYpLqRAJ9/qn9Dl5WzHlbLmjTjnI/Wk5jDk2uePcBGPqo4y964YpLlWrNnl/qIOTDXX2gZmimo5jB8U97Wl3R5CDkLGOC65LuTC5Ldc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U5JbwyWP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8Pp7Br4c; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728244239;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nc/JbJH2I7A6byNnWnWc+/cvpnXUco5JrWvK2DyOxAM=;
-	b=U5JbwyWPpHNhe0OrPl+S8xv3KngZeKkol+Rjb46t2GP6SNe1lhfVv9iEEoSsLfBCpMktP3
-	iPXyIgtklCji08tXYWqSOr2tvpP8rZkCLjZ1yw3hjhKnk09X2LwnLqpt81Na1H4xwX3COb
-	JJEfHTfOcYye6b39irxgjwCkfVMH0KKS2WhkW8cOeAy29OMCE9Pz7gljemKOhK+yQY1trt
-	mMuoTpdlIhe9jIYyjQcEOMyT8aFQ6UjrRl7wHp8zlrBgmPR56pg9hjBmN+4yumbt2b4M1x
-	z/OBysomx69XjtNf+slmHBTbRcydjBQOdPdHtr/S8T9XJFOiXh3d3ErpN2yccw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728244239;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nc/JbJH2I7A6byNnWnWc+/cvpnXUco5JrWvK2DyOxAM=;
-	b=8Pp7Br4c+zF6PO/aPXwo1ag1XXNlz+hY8H5FUiFi8ej6AB1gFrnOCxrga7xdjCAm7jyWts
-	LGbDbycVRcYdj8Dg==
-To: Inochi Amaoto <inochiama@gmail.com>, Chen Wang
- <unicorn_wang@outlook.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Peter Zijlstra <peterz@infradead.org>,
- Inochi Amaoto <inochiama@outlook.com>, Guo Ren <guoren@kernel.org>, Lad
- Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Hal Feng
- <hal.feng@starfivetech.com>, Heikki Krogerus
- <heikki.krogerus@linux.intel.com>, Geert Uytterhoeven
- <geert+renesas@glider.be>
-Cc: Yixun Lan <dlan@gentoo.org>, Inochi Amaoto <inochiama@gmail.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 2/3] irqchip: add T-HEAD C900 ACLINT SSWI driver
-In-Reply-To: <20241004080557.2262872-3-inochiama@gmail.com>
-References: <20241004080557.2262872-1-inochiama@gmail.com>
- <20241004080557.2262872-3-inochiama@gmail.com>
-Date: Sun, 06 Oct 2024 21:50:39 +0200
-Message-ID: <87jzelui28.ffs@tglx>
+	s=arc-20240116; t=1728244302; c=relaxed/simple;
+	bh=JD0ZaFsBGdGyGRUvz7UgbjrYOncXvvoMXQUeqJXz9Y8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=A7BMfJ4cXezCnYPaSbCarnOXA3MSw/GJXjJ2HogobxMKPXfa/i1nG+FzN8K8HxCbJ3cMECbxLzxCZ1eLTjNLhwHHJR4XKxyp09DoSfXc4zY/8+BahUGgZ4RBuT0OSfJxQWE8xfinmgR7KxVwfy94DDIfAsPm568QwKojyqD9w1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hiXB8905; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e2e3e4f65dso6495067b3.3;
+        Sun, 06 Oct 2024 12:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728244299; x=1728849099; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xfOLbWrnxSwVRrFjZQozO1EugIQbxg//4Wl+zKG3SI4=;
+        b=hiXB8905UABJXWv8g84+0Dt67UBIREwb/4ekFYiLioB9n/vp1Z4IVaJ44kirIYkO3b
+         WQrik2oz/CQlnw7HpoQlC1rKJmNBXvrbDUB8715xY+4EEujqmUokUQduDBNzMnT1bLmg
+         oQBCxyAt+nyF3ue/lBQ6EAvt6JRgXWjqoodTTqjOIVYFU0oRBTpz1/AEAZ9JiC684wRM
+         eF7AliK9o/KX8H6LzY3JqJ/bBmedjzUtCQLmXhQ7/c5B9iG6onaR97ND2PpoxHs9Xozj
+         AcXWqRPIhTEowbdj/5bisxfU+exVJuxrU2WPtJhX2Ubxjw8IGJda2eKJecF4mSFWlVz/
+         qK/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728244299; x=1728849099;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xfOLbWrnxSwVRrFjZQozO1EugIQbxg//4Wl+zKG3SI4=;
+        b=v9Hmlu7kMY7K4iAoxiEjvbHwDWMDX/rzASOam4iLLr6QVxHWdkoQp3et9+oSIb62FC
+         Xfof7k7MUTo9a4Wj+hBYN5rD+qsDxNVCICveCFjsJmcjEBv32lduSwvw4BjbWsKVUZDV
+         LPTmcDlQsN2onLS+oHumIw3/7gDUtzfjmnKea7AHQYYlWZl4EHk4uzOhQaskGIIV/WK9
+         uJSt+D7AxR9wSSagAiXtybZd1kkNdCnoGi40smdtr/H5qBmVOhKCPXn0MwjGnrP7xh0A
+         amsAml3XZHqk/w7MTywimsy4a0yLZH6auJJzO5VP/t4nj4345/x50n0O8UFAwXWISane
+         Yo9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUuDYGJvg0+C5zbnh4hBw+1FS0mhe8r0o8XOoatyt20xYl42p/DSV+sd8M76DfuXYXc9JdP+XI51mAW2Hsd@vger.kernel.org, AJvYcCVgUnSKi9iBPGRkOWIWiGY2FHOJeoMX/E1mFFj2mohE+ffr0/OAYPiSY69BWBoJbNUGVDQ=@vger.kernel.org, AJvYcCXjbpnFcZSDQonaQE2K3eN5Yzp455k5d9r7oDJNExlX+UPGfYcHgC7sn5Po3v+gjK1pwair4n8yRaootmsND1AR@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdtmFzG+cmaW+zSTiTAesKq/mSOWhXTuisUgXrcjjOT90HNOY1
+	BjFcuZWxS5dMUnfUcjOmCjpQiiN+PPjaO5Do3B9P6/dFWTIIxTOH
+X-Google-Smtp-Source: AGHT+IFrlrPAmnJaewbsl4jWg3CKdwAPd7mRW4VdFIv+dgKES0+ZGQ3FK27qHG2FYeJOiomZqtXK/w==
+X-Received: by 2002:a05:690c:18:b0:6dd:bf29:cece with SMTP id 00721157ae682-6e2c7295b9cmr57113017b3.36.1728244299274;
+        Sun, 06 Oct 2024 12:51:39 -0700 (PDT)
+Received: from dev-ubuntu-0.. (104-15-236-76.lightspeed.rlghnc.sbcglobal.net. [104.15.236.76])
+        by smtp.googlemail.com with ESMTPSA id 00721157ae682-6e2d93d6effsm7811297b3.100.2024.10.06.12.51.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 12:51:38 -0700 (PDT)
+From: tyrone-wu <wudevelops@gmail.com>
+To: laoar.shao@gmail.com,
+	wudevelops@gmail.com
+Cc: andrii.nakryiko@gmail.com,
+	andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kernel-patches-bot@fb.com,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	martin.lau@linux.dev,
+	mykolal@fb.com,
+	olsajiri@gmail.com,
+	sdf@fomichev.me,
+	shuah@kernel.org,
+	song@kernel.org,
+	yonghong.song@linux.dev
+Subject: [PATCH bpf v5 1/2] bpf: fix unpopulated name_len field in perf_event link info
+Date: Sun,  6 Oct 2024 19:51:30 +0000
+Message-ID: <20241006195131.563006-1-wudevelops@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CALOAHbC5xm7Cbfhau3z5X2PqUhiHECNWAPtJCWiOVqTKmdZp-Q@mail.gmail.com>
+References: <CALOAHbC5xm7Cbfhau3z5X2PqUhiHECNWAPtJCWiOVqTKmdZp-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 04 2024 at 16:05, Inochi Amaoto wrote:
+Previously when retrieving `bpf_link_info.perf_event` for
+kprobe/uprobe/tracepoint, the `name_len` field was not populated by the
+kernel, leaving it to reflect the value initially set by the user. This
+behavior was inconsistent with how other input/output string buffer
+fields function (e.g. `raw_tracepoint.tp_name_len`).
 
-> +#define pr_fmt(fmt) "thead-c900-aclint-sswi: " fmt
-> +#include <linux/acpi.h>
+This patch fills `name_len` with the actual size of the string name.
 
-What is this header used for?
+Link: https://lore.kernel.org/bpf/CABVU1kXwQXhqQGe0RTrr7eegtM6SVW_KayZBy16-yb0Snztmtg@mail.gmail.com/
+Fixes: 1b715e1b0ec5 ("bpf: Support ->fill_link_info for perf_event")
+Signed-off-by: tyrone-wu <wudevelops@gmail.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+---
+V4 -> V5:
+Link: https://lore.kernel.org/bpf/CALOAHbC5xm7Cbfhau3z5X2PqUhiHECNWAPtJCWiOVqTKmdZp-Q@mail.gmail.com/
+- Check that buf is not NULL before retrieving/using its length
 
-> +static void thead_aclint_sswi_ipi_clear(void)
-> +{
-> +	unsigned int cpu = smp_processor_id();
-> +	struct aclint_sswi_cpu_config *config = per_cpu_ptr(&sswi_cpus, cpu);
+V3 -> V4:
+Link: https://lore.kernel.org/bpf/Zv_PP6Gs5cq3W2Ey@krava/
+- Split patch into separate kernel and selftest change
 
-That's an unnecessary indirection.
+V2 -> V3:
+Link: https://lore.kernel.org/bpf/Zv7sISV0yEyGlEM3@krava/
+- Use clearer variable name for user set/inputted name len (name_len -> input_len)
+- Change (name_len -> input_len) type from size_t to u32 since it's only received and used as u32
 
-       *config = __this_cpu_ptr(&sswi_cpus);
+V1 -> V2:
+Link: https://lore.kernel.org/bpf/Zv0wl-S13WJnIkb_@krava/
+- Use user set *ulen in bpf_copy_to_user before overwriting *ulen
 
-is what you want here.
+ kernel/bpf/syscall.c | 38 ++++++++++++++++++++++++--------------
+ 1 file changed, 24 insertions(+), 14 deletions(-)
 
-> +	writel_relaxed(0x0, config->reg + config->offset);
-> +}
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index a8f1808a1ca5..3df192a6bdcc 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -3565,32 +3565,35 @@ static void bpf_perf_link_dealloc(struct bpf_link *link)
+ }
+ 
+ static int bpf_perf_link_fill_common(const struct perf_event *event,
+-				     char __user *uname, u32 ulen,
++				     char __user *uname, u32 *ulen,
+ 				     u64 *probe_offset, u64 *probe_addr,
+ 				     u32 *fd_type, unsigned long *missed)
+ {
+ 	const char *buf;
+-	u32 prog_id;
++	u32 prog_id, input_len;
+ 	size_t len;
+ 	int err;
+ 
+-	if (!ulen ^ !uname)
++	if (!(*ulen) ^ !uname)
+ 		return -EINVAL;
+ 
+ 	err = bpf_get_perf_event_info(event, &prog_id, fd_type, &buf,
+ 				      probe_offset, probe_addr, missed);
+ 	if (err)
+ 		return err;
+-	if (!uname)
+-		return 0;
++
+ 	if (buf) {
++		input_len = *ulen;
+ 		len = strlen(buf);
+-		err = bpf_copy_to_user(uname, buf, ulen, len);
+-		if (err)
+-			return err;
+-	} else {
+-		char zero = '\0';
++		*ulen = len + 1;
+ 
++		if (uname) {
++			err = bpf_copy_to_user(uname, buf, input_len, len);
++			if (err)
++				return err;
++		}
++	} else if (uname) {
++		char zero = '\0';
+ 		if (put_user(zero, uname))
+ 			return -EFAULT;
+ 	}
+@@ -3609,7 +3612,7 @@ static int bpf_perf_link_fill_kprobe(const struct perf_event *event,
+ 
+ 	uname = u64_to_user_ptr(info->perf_event.kprobe.func_name);
+ 	ulen = info->perf_event.kprobe.name_len;
+-	err = bpf_perf_link_fill_common(event, uname, ulen, &offset, &addr,
++	err = bpf_perf_link_fill_common(event, uname, &ulen, &offset, &addr,
+ 					&type, &missed);
+ 	if (err)
+ 		return err;
+@@ -3617,7 +3620,7 @@ static int bpf_perf_link_fill_kprobe(const struct perf_event *event,
+ 		info->perf_event.type = BPF_PERF_EVENT_KRETPROBE;
+ 	else
+ 		info->perf_event.type = BPF_PERF_EVENT_KPROBE;
+-
++	info->perf_event.kprobe.name_len = ulen;
+ 	info->perf_event.kprobe.offset = offset;
+ 	info->perf_event.kprobe.missed = missed;
+ 	if (!kallsyms_show_value(current_cred()))
+@@ -3639,7 +3642,7 @@ static int bpf_perf_link_fill_uprobe(const struct perf_event *event,
+ 
+ 	uname = u64_to_user_ptr(info->perf_event.uprobe.file_name);
+ 	ulen = info->perf_event.uprobe.name_len;
+-	err = bpf_perf_link_fill_common(event, uname, ulen, &offset, &addr,
++	err = bpf_perf_link_fill_common(event, uname, &ulen, &offset, &addr,
+ 					&type, NULL);
+ 	if (err)
+ 		return err;
+@@ -3648,6 +3651,7 @@ static int bpf_perf_link_fill_uprobe(const struct perf_event *event,
+ 		info->perf_event.type = BPF_PERF_EVENT_URETPROBE;
+ 	else
+ 		info->perf_event.type = BPF_PERF_EVENT_UPROBE;
++	info->perf_event.uprobe.name_len = ulen;
+ 	info->perf_event.uprobe.offset = offset;
+ 	info->perf_event.uprobe.cookie = event->bpf_cookie;
+ 	return 0;
+@@ -3673,12 +3677,18 @@ static int bpf_perf_link_fill_tracepoint(const struct perf_event *event,
+ {
+ 	char __user *uname;
+ 	u32 ulen;
++	int err;
+ 
+ 	uname = u64_to_user_ptr(info->perf_event.tracepoint.tp_name);
+ 	ulen = info->perf_event.tracepoint.name_len;
++	err = bpf_perf_link_fill_common(event, uname, &ulen, NULL, NULL, NULL, NULL);
++	if (err)
++		return err;
++
+ 	info->perf_event.type = BPF_PERF_EVENT_TRACEPOINT;
++	info->perf_event.tracepoint.name_len = ulen;
+ 	info->perf_event.tracepoint.cookie = event->bpf_cookie;
+-	return bpf_perf_link_fill_common(event, uname, ulen, NULL, NULL, NULL, NULL);
++	return 0;
+ }
+ 
+ static int bpf_perf_link_fill_perf_event(const struct perf_event *event,
+-- 
+2.43.0
 
-...
-
-> +static int aclint_sswi_parse_irq(struct fwnode_handle *fwnode,
-> +				 void __iomem *reg)
-
-Please avoid line breaks and use up to 100 characters per line.
-
-> +{
-> +	struct of_phandle_args parent;
-> +	unsigned long hartid;
-> +	u32 contexts, i;
-> +	int rc, cpu;
-> +	struct aclint_sswi_cpu_config *config;
-
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#variable-declarations
-
-> +
-> +	contexts = of_irq_count(to_of_node(fwnode));
-> +	if (WARN_ON(!(contexts))) {
-
-That WARN_ON() is pointless. The call chain is known and the pr_err() is
-sufficient.
-
-> +		pr_err("%pfwP: no ACLINT SSWI context available\n", fwnode);
-> +		return -EINVAL;
-> +	}
-> +
-> +	for (i = 0; i < contexts; i++) {
-> +		rc = of_irq_parse_one(to_of_node(fwnode), i, &parent);
-> +		if (rc)
-> +			return rc;
-> +
-> +		rc = riscv_of_parent_hartid(parent.np, &hartid);
-> +		if (rc)
-> +			return rc;
-> +
-> +		if (parent.args[0] != RV_IRQ_SOFT)
-> +			return -ENOTSUPP;
-> +
-> +		cpu = riscv_hartid_to_cpuid(hartid);
-> +		config = per_cpu_ptr(&sswi_cpus, cpu);
-> +
-> +		config->offset = i * ACLINT_xSWI_REGISTER_SIZE;
-> +		config->reg = reg;
-
-Why do you need config->reg and config->offset? All call sites access
-the register via:
-
-    config->reg + config->offset
-
-So you can spare the exercise of adding the offset in the hotpath by
-adding it at setup time, no?
-
-
-> +	}
-> +
-> +	pr_info("%pfwP: register %u CPU\n", fwnode, contexts);
-
-  ...CPU%s\n", fwnode, contexts, str_plural(contexts));
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init aclint_sswi_probe(struct fwnode_handle *fwnode)
-> +{
-> +	void __iomem *reg;
-> +	struct irq_domain *domain;
-> +	int virq, rc;
-
-See above.
-
-> +	if (!is_of_node(fwnode))
-> +		return -EINVAL;
-> +
-> +	reg = of_iomap(to_of_node(fwnode), 0);
-> +	if (!reg)
-> +		return -ENOMEM;
-> +
-> +	/* Parse SSWI setting */
-> +	rc = aclint_sswi_parse_irq(fwnode, reg);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	/* If mulitple SSWI devices are present, do not register irq again */
-> +	if (sswi_ipi_virq)
-> +		return 0;
-> +
-> +	/* Find and create irq domain */
-
-Which domain is created here?
-
-> +	domain = irq_find_matching_fwnode(riscv_get_intc_hwnode(), DOMAIN_BUS_ANY);
-> +	if (!domain) {
-> +		pr_err("%pfwP: Failed to find INTC domain\n", fwnode);
-> +		return -ENOENT;
-> +	}
-> +
-> +	sswi_ipi_virq = irq_create_mapping(domain, RV_IRQ_SOFT);
-> +	if (!sswi_ipi_virq) {
-> +		pr_err("unable to create ACLINT SSWI IRQ mapping\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* Register SSWI irq and handler */
-> +	virq = ipi_mux_create(BITS_PER_BYTE, thead_aclint_sswi_ipi_send);
-> +	if (virq <= 0) {
-> +		pr_err("unable to create muxed IPIs\n");
-> +		irq_dispose_mapping(sswi_ipi_virq);
-> +		return virq < 0 ? virq : -ENOMEM;
-> +	}
-> +
-> +	irq_set_chained_handler(sswi_ipi_virq, thead_aclint_sswi_ipi_handle);
-> +
-> +	cpuhp_setup_state(CPUHP_AP_IRQ_THEAD_ACLINT_SSWI_STARTING,
-> +			  "irqchip/thead-aclint-sswi:starting",
-> +			  aclint_sswi_ipi_starting_cpu, NULL);
-
-The startup callback enables the per CPU interrupt. When a CPU is
-offlined then the per CPU interrupt stays enabled because the teardown
-callback is NULL. I'm not convinced that this is a good idea.
-
-> +
-> +	riscv_ipi_set_virq_range(virq, BITS_PER_BYTE);
-> +
-> +	/* Announce that SSWI is providing IPIs */
-> +	pr_info("providing IPIs using THEAD ACLINT SSWI\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init aclint_sswi_early_probe(struct device_node *node,
-> +					  struct device_node *parent)
-> +{
-> +	return aclint_sswi_probe(&node->fwnode);
-> +}
-
-What's the point of this indirection?
-
-> +
-
-Pointless newline.
-
-> +IRQCHIP_DECLARE(thead_aclint_sswi, "thead,c900-aclint-sswi", aclint_sswi_early_probe);
-
-Thanks,
-
-        tglx
 
