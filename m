@@ -1,59 +1,56 @@
-Return-Path: <linux-kernel+bounces-352214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D645E991BE6
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 03:57:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B5C991BEB
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 04:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13E261C203E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 01:57:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E86A1F21F40
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 02:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2F02AE94;
-	Sun,  6 Oct 2024 01:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F169E165F16;
+	Sun,  6 Oct 2024 02:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DHvG1uzh"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYDwnYxx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A9013B791
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 01:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FACC4409;
+	Sun,  6 Oct 2024 02:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728179804; cv=none; b=quxkmzvnO1YQu2RQvflP+RCuZn4gBm/hH9BiPFwBICaF2/2ke03BWhkozzC5y2xLkYOA5bVHHbuOvHX2Z5qUbmN+D0Hnq7/Mw2/Vw2o56mjmb4k3BQdMSEtHOBSR6Y3uPbknoraHC8KkjiusGPAMW2Dm2OpJc2tqymLdI1h/k4U=
+	t=1728180188; cv=none; b=pLlyewfaWflreGnkZp0Go06er8kKz4FonSQKjHgUUX10SrOLtY+sYvD/e3v51U8/ffr7qtZmuPkjjv9TJp8detQU85Tgohvv1MmsA7XdU+u54/2HHNKzJVCDDRWKE0L5C/mVl1TY7yp3HCKogn0XiGXj4nHvDXqSwfQipOjJPV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728179804; c=relaxed/simple;
-	bh=W5n2YU4QYClAkBUY46U5PjuC1TvuyQDbXqJIUIDs8QM=;
+	s=arc-20240116; t=1728180188; c=relaxed/simple;
+	bh=dM/GJwrUwetQVTARNYA5YMUecBhQis5UkShFb+bVDLg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LMqTNtqFtziQ7SB7tJuteoYeO4K16FwkpJUNjfexgp5sQvVvjrE+9S3a6MlP/zmVFncmEBB5bKvfJfZ2/lkZ9GoQ6GKcvvDqexTM3MxVSo8/Ztb7Zpe4X+CQ74Nq80xcLd+nJuu1xWmE6OVNasx2UEaLj0vhfltMwFsV6yAGAfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DHvG1uzh; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 5 Oct 2024 21:56:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728179799;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BnnHTDOn4QrAu1ULVkfdeQk3x6v9dEhgIZ7d2QgOsVc=;
-	b=DHvG1uzha+RVUdKvfClOmkw4ftOPlaP1pEp2dR6pDiSim1fKwT8xMuk1a9LuumSwqCCol4
-	mDQlaFwaIY29deO50w0wxl16dAIsFJd8tT1Z+rHTU7bqs+VdD7OmnpmPs1ujzM6LGNocSF
-	o6epLVNwqmMnNP53/g8Srag7xu0JVWs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: "Carl E. Thompson" <cet@carlthompson.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <coczqmiqvuy4h74j462mjyro3skeybyt2y3kcqdcuwy4bwibjy@pquinazt4h22>
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
- <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
- <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
- <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
- <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
- <345264611.558.1728177653590@mail.carlthompson.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggEtTCQhXiHiNDOeEAX9INNFKYIR3GO12VmydfDO54JWWH24Kdks33WFojS+a/mvecFgMGUrrV/g6P9GabbkXL+Pm9JcM1EVOUTILqx2i8UIQ2JcfM9jBTWnZEWNfNHDVj5Wnl6vIY4j6x+635sxu/RSJiHaOxtPZapvDNt3vNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYDwnYxx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AD09C4CEC2;
+	Sun,  6 Oct 2024 02:03:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728180187;
+	bh=dM/GJwrUwetQVTARNYA5YMUecBhQis5UkShFb+bVDLg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fYDwnYxxKojqN6BNJ1YHuhHWAtGa1pHgLBtEEZ/oohiTnTHi3cJ5FCG+zq1tPvJOl
+	 rJbppdQEw9T6aNp7yMujW5ggrjpXVMYwkGMDwBod93iwNuHrjvSXfeRaK/7G8+tJAT
+	 GuAAYm8g1qHEi5Lg9nMAGG2hlR7+AetnIkq0XQUlfhio5eY5ShbsKKNeeUDSuGjl4x
+	 tUDXpfO5ASCxLbMJSdEoLrdhIYrMiqtbypNahKWdL4QzK+JETkLtsKGt7wDvq/RnzI
+	 vwFiV0amloU3Md8j2WNqikExDNAe/aVWjo3PJHh8N9clDLHNmIEUjIU/gnhIAbBxuX
+	 WYhBHeX/BbrLQ==
+Date: Sat, 5 Oct 2024 21:03:05 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Song Xue <quic_songxue@quicinc.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] soc: qcom: llcc: Add configuration data for QCS615
+Message-ID: <p72feqwqhs3gjzzq53gfaz4ljk2qjdgeanhzomyzvk5ymjdbg2@7jxdlknz2onv>
+References: <20240924-add_llcc_support_for_qcs615-v1-0-a9f3289760d3@quicinc.com>
+ <20240924-add_llcc_support_for_qcs615-v1-2-a9f3289760d3@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,35 +59,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <345264611.558.1728177653590@mail.carlthompson.net>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240924-add_llcc_support_for_qcs615-v1-2-a9f3289760d3@quicinc.com>
 
-On Sat, Oct 05, 2024 at 06:20:53PM GMT, Carl E. Thompson wrote:
-> Here is a user's perspective from someone who's built a career from Linux (thanks to all of you)...
+On Tue, Sep 24, 2024 at 06:07:12PM GMT, Song Xue wrote:
+> Add LLCC configuration support for the QCS615 platform.
 > 
-> The big hardship with testing bcachefs before it was merged into the kernel was that it couldn't be built as an out-of-tree module and instead a whole other kernel tree needed to be built. That was a pain.
+> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
+> ---
+>  drivers/soc/qcom/llcc-qcom.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 > 
-> Now, the core kernel infrastructure changes that bcachefs relies on are in the kernel and bcachefs can very easily and quickly be built as an out-of-tree module in just a few seconds. I submit to all involved that maybe that's the best way to go **for now**. 
-> 
-> Switching to out of tree for now would make it much easier for Kent to have the fast-paced development model he desires for this stage in bcachefs' development. It would also make using and testing bcachefs much easier for power users like me because when an issue is detected we could get a fix or new feature much faster than having to wait for a distribution to ship the next kernel version and with less ancillary risk than building and using a less-tested kernel tree. Distributions themselves also are very familiar with packaging up out-of-tree modules and distribution tools like dkms make using them dead simple even for casual users.
-> 
-> The way things are now isn't great for me as a Linux power user. I
-> often want to use the latest or even RC kernels on my systems to get
-> some new hardware support or other feature and I'm used to being able
-> to do that without too many problems. But recently I've had to skip
-> cutting-edge kernel versions that I otherwise wanted to try because
-> there have been issues in bcachefs that I didn't want to have to face
-> or work around. Switching to an out of tree module for now would be
-> the best of all worlds for me because I could pick and choose which
-> combination of kernel / bcachefs to use for each system and situation.
+> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+> index 8fa4ffd3a9b5921d95c20648048dcdfa20dde5db..11507eb3efff101e4f330e7f4282a31aa172369d 100644
+> --- a/drivers/soc/qcom/llcc-qcom.c
+> +++ b/drivers/soc/qcom/llcc-qcom.c
+> @@ -151,6 +151,13 @@ enum llcc_reg_offset {
+>  	LLCC_COMMON_STATUS0,
+>  };
+>  
+> +static const struct llcc_slice_config qcs615_data[] =  {
+> +	{ LLCC_CPUSS,    1,  128, 1, 0, 0xF, 0x0, 0, 0, 0, 0, 1, 1 },
 
-Carl - thanks, I wasn't aware of this.
+I accepted Konrad's reformatting of these tables, so please check
+linux-next in a couple of days (or the qcom for-next today), update and
+resubmit this.
 
-Can you give me details? 6.11 had the disk accounting rewrite, which was
-huge and (necessarily) had some fallout, if you're seeing regressions
-otherwise that are slipping through then - yes it's time to slow down
-and reevaluate.
+While doing so, please use lowercase hex digits.
 
-Details would be extremely helpful, so we can improve our regression
-testing.
+No other concerns.
+
+Thanks,
+Bjorn
+
+> +	{ LLCC_MDM,      8,  256, 0, 1, 0xF, 0x0, 0, 0, 0, 0, 1, 0 },
+> +	{ LLCC_GPUHTW,   11, 128, 1, 1, 0xF, 0x0, 0, 0, 0, 0, 1, 0 },
+> +	{ LLCC_GPU,      12, 128, 1, 0, 0xF, 0x0, 0, 0, 0, 0, 1, 0 },
+> +};
+> +
+>  static const struct llcc_slice_config sa8775p_data[] =  {
+>  	{LLCC_CPUSS,    1, 2048, 1, 0, 0x00FF, 0x0, 0, 0, 0, 1, 1, 0, 0},
+>  	{LLCC_VIDSC0,   2, 512, 3, 1, 0x00FF, 0x0, 0, 0, 0, 1, 0, 0, 0},
+> @@ -539,6 +546,16 @@ static const u32 llcc_v2_1_reg_offset[] = {
+>  	[LLCC_COMMON_STATUS0]	= 0x0003400c,
+>  };
+>  
+> +static const struct qcom_llcc_config qcs615_cfg[] = {
+> +	{
+> +		.sct_data	= qcs615_data,
+> +		.size		= ARRAY_SIZE(qcs615_data),
+> +		.need_llcc_cfg	= true,
+> +		.reg_offset	= llcc_v1_reg_offset,
+> +		.edac_reg_offset = &llcc_v1_edac_reg_offset,
+> +	},
+> +};
+> +
+>  static const struct qcom_llcc_config qdu1000_cfg[] = {
+>  	{
+>  		.sct_data       = qdu1000_data_8ch,
+> @@ -721,6 +738,11 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
+>  	},
+>  };
+>  
+> +static const struct qcom_sct_config qcs615_cfgs = {
+> +	.llcc_config	= qcs615_cfg,
+> +	.num_config	= ARRAY_SIZE(qcs615_cfg),
+> +};
+> +
+>  static const struct qcom_sct_config qdu1000_cfgs = {
+>  	.llcc_config	= qdu1000_cfg,
+>  	.num_config	= ARRAY_SIZE(qdu1000_cfg),
+> @@ -1375,6 +1397,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>  }
+>  
+>  static const struct of_device_id qcom_llcc_of_match[] = {
+> +	{ .compatible = "qcom,qcs615-llcc", .data = &qcs615_cfgs },
+>  	{ .compatible = "qcom,qdu1000-llcc", .data = &qdu1000_cfgs},
+>  	{ .compatible = "qcom,sa8775p-llcc", .data = &sa8775p_cfgs },
+>  	{ .compatible = "qcom,sc7180-llcc", .data = &sc7180_cfgs },
+> 
+> -- 
+> 2.25.1
+> 
 
