@@ -1,156 +1,164 @@
-Return-Path: <linux-kernel+bounces-352206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91222991BBE
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 03:21:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E57991BC3
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 03:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03110B2205F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 01:21:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E10E41C20E7E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 01:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216351420D8;
-	Sun,  6 Oct 2024 01:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ONLdQOm0"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7262EACD;
+	Sun,  6 Oct 2024 01:27:30 +0000 (UTC)
+Received: from smtp.carlthompson.net (charon.carlthompson.net [45.77.7.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7578F5A;
-	Sun,  6 Oct 2024 01:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7274C74;
+	Sun,  6 Oct 2024 01:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.77.7.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728177608; cv=none; b=A/dBRUBf3tMMpX+XPEdDLrlJ0HMWAu0L0QMmqI2zDNINmotD4sfMBORhYL919DZ1O4CKxCW4qlLIO0xX4LowjAxkpiGwCK0eEoLpNuw6cheMVezfZ1vfY4OIinZvNbMp9xMMw/T/9sZFPJlEcxJBpiGd5jTPo2UxhmrHF0Fo3XA=
+	t=1728178050; cv=none; b=f4vLZ9n3P+T7dRkpcrRqIF1GkP3GnXLRBdl2xnFvdElh6/hFFyPFkt65l2MUyEx/iCJQT6aCpSZD33aJhFR+vSZkuQnGCWEM+VWP4wPm50b2Dgaguj2BPNZv6ELNRP2lruo5tltgcLL9kVs0t3yR0RDSU428Gkgv0p7tA8SlDQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728177608; c=relaxed/simple;
-	bh=AMhJWtDJ3DmzilqLovKPEDl9iPQ/8NhBRi8PAwhpUvI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ufo2gzjjk9+pz7V+S+2Er1rwzPn7JjWuJ0dWZPvqeOHqc+AqRqTVteSOIHwGIDyOD31wp8hrBAvgG/wrOA0QRh0msEYFsxYn3oynQIDNMDj61that4oh3OU2UCcMAJscApbqRwA3IZMP9/rCEAKkABzzvVRGNN8G7Qmbea++KEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ONLdQOm0; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=MBiF799tS1XTKKBb+cgx7wzKHjzYh+/tYFwc8HgQmQg=; b=ONLdQOm0N/tzF3tx
-	s1Ij7raGrn0g92/9J3eznWbCx2R+1+t21GzH5abDBTTMN+LoSsDoErcBQpU/UfRM/FMSg9SKLBdrw
-	AL33d77AhekdXjL+Z7QG5TqTVAvSpKSKWU6GLyQDkDTblCbGJACnbsXglYDflIOzeomOGOVSEN+c+
-	rqrbsmxELV4IjT9E8b5znraK44qnyduck3rdD1C+3/BbqNbZ/VxTjhDyNA+0P/5LLEo8X8y457ka4
-	pjZ6FqQWxMg/bEXjc2JpaNuovoAbg4iSekleoljWo2sOtlXs1VYVHLhRGq/fdVzqHj7DV+y4d7fT6
-	5CLXQrNnvaQgl19rzA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sxFwG-009DsK-1v;
-	Sun, 06 Oct 2024 01:20:00 +0000
-From: linux@treblig.org
-To: xiubli@redhat.com,
-	idryomov@gmail.com,
-	ceph-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 5/5] ceph: Remove fs/ceph deadcode
-Date: Sun,  6 Oct 2024 02:19:56 +0100
-Message-ID: <20241006011956.373622-6-linux@treblig.org>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241006011956.373622-1-linux@treblig.org>
-References: <20241006011956.373622-1-linux@treblig.org>
+	s=arc-20240116; t=1728178050; c=relaxed/simple;
+	bh=AjcyHu2H/NRbcIb6sXYJSlea2CQS0l+v/PIIAVpCZj8=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=VplkTr1EXuLHo39J+fLylGt16Pqz/QJgDBhTY7tkSEYe6G98OtsS4fX4vzCZ4hqWS6J5qsUXn9J3LnB4O40jtCjcXMcC1514QSHVNAzW80UJXYsl7+udOd4m3R8CVazzSSJhqowOjyky2s5Rl2VA4JOCF0I3wz30a8dWa7tOxJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net; spf=pass smtp.mailfrom=carlthompson.net; arc=none smtp.client-ip=45.77.7.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=carlthompson.net
+Received: from mail.carlthompson.net (mail.home [10.35.20.252])
+	(Authenticated sender: cet@carlthompson.net)
+	by smtp.carlthompson.net (Postfix) with ESMTPSA id E9AA41014EFB1;
+	Sat,  5 Oct 2024 18:20:53 -0700 (PDT)
+Date: Sat, 5 Oct 2024 18:20:53 -0700 (PDT)
+From: "Carl E. Thompson" <cet@carlthompson.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Message-ID: <345264611.558.1728177653590@mail.carlthompson.net>
+In-Reply-To: <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
+References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+ <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
+ <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
+ <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
+ <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
+ <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.6-Rev53
+X-Originating-Client: open-xchange-appsuite
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Here is a user's perspective from someone who's built a career from Linux (=
+thanks to all of you)...
 
-ceph_caps_revoking() has been unused since 2017's commit
-3fb99d483e61 ("ceph: nuke startsync op")
+The big hardship with testing bcachefs before it was merged into the kernel=
+ was that it couldn't be built as an out-of-tree module and instead a whole=
+ other kernel tree needed to be built. That was a pain.
 
-ceph_mdsc_open_export_target_sessions() has been unused since 2013's
-commit 11df2dfb610d ("ceph: add imported caps when handling cap export message")
+Now, the core kernel infrastructure changes that bcachefs relies on are in =
+the kernel and bcachefs can very easily and quickly be built as an out-of-t=
+ree module in just a few seconds. I submit to all involved that maybe that'=
+s the best way to go **for now**.=20
 
-Remove them.
+Switching to out of tree for now would make it much easier for Kent to have=
+ the fast-paced development model he desires for this stage in bcachefs' de=
+velopment. It would also make using and testing bcachefs much easier for po=
+wer users like me because when an issue is detected we could get a fix or n=
+ew feature much faster than having to wait for a distribution to ship the n=
+ext kernel version and with less ancillary risk than building and using a l=
+ess-tested kernel tree. Distributions themselves also are very familiar wit=
+h packaging up out-of-tree modules and distribution tools like dkms make us=
+ing them dead simple even for casual users.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- fs/ceph/caps.c       | 14 --------------
- fs/ceph/mds_client.c |  8 --------
- fs/ceph/mds_client.h |  2 --
- fs/ceph/super.h      |  1 -
- 4 files changed, 25 deletions(-)
+The way things are now isn't great for me as a Linux power user. I often wa=
+nt to use the latest or even RC kernels on my systems to get some new hardw=
+are support or other feature and I'm used to being able to do that without =
+too many problems. But recently I've had to skip cutting-edge kernel versio=
+ns that I otherwise wanted to try because there have been issues in bcachef=
+s that I didn't want to have to face or work around. Switching to an out of=
+ tree module for now would be the best of all worlds for me because I could=
+ pick and choose which combination of kernel / bcachefs to use for each sys=
+tem and situation.
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index bed34fc11c91..0d6b2c0269bf 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -978,20 +978,6 @@ int __ceph_caps_revoking_other(struct ceph_inode_info *ci,
- 	return 0;
- }
- 
--int ceph_caps_revoking(struct ceph_inode_info *ci, int mask)
--{
--	struct inode *inode = &ci->netfs.inode;
--	struct ceph_client *cl = ceph_inode_to_client(inode);
--	int ret;
--
--	spin_lock(&ci->i_ceph_lock);
--	ret = __ceph_caps_revoking_other(ci, NULL, mask);
--	spin_unlock(&ci->i_ceph_lock);
--	doutc(cl, "%p %llx.%llx %s = %d\n", inode, ceph_vinop(inode),
--	      ceph_cap_string(mask), ret);
--	return ret;
--}
--
- int __ceph_caps_used(struct ceph_inode_info *ci)
- {
- 	int used = 0;
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index c4a5fd94bbbb..923635532f03 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1747,14 +1747,6 @@ static void __open_export_target_sessions(struct ceph_mds_client *mdsc,
- 	}
- }
- 
--void ceph_mdsc_open_export_target_sessions(struct ceph_mds_client *mdsc,
--					   struct ceph_mds_session *session)
--{
--	mutex_lock(&mdsc->mutex);
--	__open_export_target_sessions(mdsc, session);
--	mutex_unlock(&mdsc->mutex);
--}
--
- /*
-  * session caps
-  */
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 3dd54587944a..38bb7e0d2d79 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -634,8 +634,6 @@ extern void ceph_mdsc_handle_fsmap(struct ceph_mds_client *mdsc,
- 
- extern struct ceph_mds_session *
- ceph_mdsc_open_export_target_session(struct ceph_mds_client *mdsc, int target);
--extern void ceph_mdsc_open_export_target_sessions(struct ceph_mds_client *mdsc,
--					  struct ceph_mds_session *session);
- 
- extern int ceph_trim_caps(struct ceph_mds_client *mdsc,
- 			  struct ceph_mds_session *session,
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 037eac35a9e0..b0b15e87251d 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -796,7 +796,6 @@ extern int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask,
- 
- extern int __ceph_caps_revoking_other(struct ceph_inode_info *ci,
- 				      struct ceph_cap *ocap, int mask);
--extern int ceph_caps_revoking(struct ceph_inode_info *ci, int mask);
- extern int __ceph_caps_used(struct ceph_inode_info *ci);
- 
- static inline bool __ceph_is_file_opened(struct ceph_inode_info *ci)
--- 
-2.46.2
+Just my 2=C2=A2.
 
+Carl
+
+
+
+> On 2024-10-05 5:14 PM PDT Linus Torvalds <torvalds@linux-foundation.org> =
+wrote:
+>=20
+> =20
+> On Sat, 5 Oct 2024 at 16:41, Kent Overstreet <kent.overstreet@linux.dev> =
+wrote:
+> >
+> > If what you want is patches appearing on the list, I'm not unwilling to
+> > make that change.
+>=20
+> I want you to WORK WITH OTHERS. Including me - which means working
+> with the rules and processes we have in place.
+>=20
+> Making the argument that we didn't have those rules twenty years ago
+> is just stupid.  We have them NOW, because we learnt better. You don't
+> get to say "look, you didn't have rules 20 years ago, so why should I
+> have them now?"
+>=20
+> Patches appearing on the list is not some kind of sufficient thing.
+> It's the absolute minimal requirement. The fact that absolutely *NONE*
+> of the patches in your pull request showed up when I searched just
+> means that you clearly didn't even attempt to have others involved
+> (ok, I probably only searched for half of them and then I gave up in
+> disgust).
+>=20
+> We literally had a bcachefs build failure last week. It showed up
+> pretty much immediately after I pulled your tree. And because you sent
+> in the bcachefs "fixes" with the bug the day before I cut rc1, we
+> ended up with a broken rc1.
+>=20
+> And hey, mistakes happen. But when the *SAME* absolute disregard for
+> testing happens the very next weekend, do you really expect me to be
+> happy about it?
+>=20
+> It's this complete disregard for anybody else that I find problematic.
+> You don't even try to get other developers involved, or follow
+> upstream rules.
+>=20
+> And then you don't seem to even understand why I then complain.
+>=20
+> In fact, you in the next email say:
+>=20
+> > If you're so convinced you know best, I invite you to start writing you=
+r
+> > own filesystem. Go for it.
+>=20
+> Not at all. I'm not interested in creating another bcachefs.
+>=20
+> I'm contemplating just removing bcachefs entirely from the mainline
+> tree. Because you show again and again that you have no interest in
+> trying to make mainline work.
+>=20
+> You can do it out of mainline. You did it for a decade, and that
+> didn't cause problems. I thought it would be better if it finally got
+> mainlined, but by all your actions you seem to really want to just
+> play in your own sandbox and not involve anybody else.
+>=20
+> So if this is just your project and nobody else is expected to
+> participate, and you don't care about the fact that you break the
+> mainline build, why the hell did you want to be in the mainline tree
+> in the first place?
+>=20
+>                    Linus
 
