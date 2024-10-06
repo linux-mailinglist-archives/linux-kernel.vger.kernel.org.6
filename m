@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-352400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2080991E8D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:31:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 382AB991E91
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9BB61C20B68
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:31:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF2012825F3
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F70176AA0;
-	Sun,  6 Oct 2024 13:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D8C176AB6;
+	Sun,  6 Oct 2024 13:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n3EmiM/C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XK/dJ30Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612F36026A;
-	Sun,  6 Oct 2024 13:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9928EC5;
+	Sun,  6 Oct 2024 13:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728221456; cv=none; b=gxLXOJ9QZuqVEExZayT4AjMefzlprn5pGl1oAm/VyNMBoyZPMXxPugYfUo2hSuZYjUVtgwcln/LV3L+337ho0jArnpDnYE3ywqYX2Zsyjk4tniKo/yxEDpcZHWUbIYlkprLk2mwKPh+PoujzICnJqfx9+jAEp+lcGYW053f1SrE=
+	t=1728221615; cv=none; b=BTqtyZebhjZQq0TmsnMllrsYn0iiStPfYVMrcTkmh5MDyK6yeiQh0EqOCHSHC5SxzfDNiV/qU5clRBA3eVKkQYbjaRDK+d+ulyzkZBJbdhXJAFdEaAvWABfVASTmjUVoZ33ONC21xHXpM5aYNZnrNSfvNsKJdlsg6NimZ74UfZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728221456; c=relaxed/simple;
-	bh=Vj/GYRpv/5KupB5oNORmD7Q2QKaFc9xDLyKjAxdr1Ds=;
+	s=arc-20240116; t=1728221615; c=relaxed/simple;
+	bh=YEZgj5iZnDYIyyfiC55UZms/hQczum4aRUIe28E8JUQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZEfT4X4li/GBMRnV9BJns1m2ILYBYjpc6p5IsASprjhjH6LhNRvafofFJrvxONLOjsy63uChHoXaj/dpTWArOtV5AI0OSkZD6ktVaRjO07Jo5dMNSRCD9h3M9GBqVqS/6E+6Hq5HFWldOBR+Aw8jCjOdI6wbUguynV0BqLkzdYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n3EmiM/C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ED4AC4CEC5;
-	Sun,  6 Oct 2024 13:30:51 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=cHu81rI/NY6pMEHum7mttjIj9KwJKfdAGiI3F64j8lPWmRtRzjfQ/W/wxKbZrUDvu/cuffJH0NweSC1ROk0JgVWhJDN3iW9XXOhjnIDyD0/PAVSfNaAdylgzUf+7Wwm99Oaeywp+8XgcjdRkqMo6h4OYYaSq1195iGESTv6Snfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XK/dJ30Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D620C4CEC5;
+	Sun,  6 Oct 2024 13:33:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728221456;
-	bh=Vj/GYRpv/5KupB5oNORmD7Q2QKaFc9xDLyKjAxdr1Ds=;
+	s=k20201202; t=1728221615;
+	bh=YEZgj5iZnDYIyyfiC55UZms/hQczum4aRUIe28E8JUQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n3EmiM/CIKL218ovod/PjRvKJcOG487xHlOVhl+IMgBBAA0oaFZif9pkc/AGst36s
-	 vraPvR6B2OdASSLDyHKM7UkP9z+pZVY9Ofo7OUj5UwwJBqAk2KR2OIavnpOjHJ09U8
-	 e+TPHqQ37Mk0AKxjfQDLBETAdfzrrMY0Qfg86/9UvND3FA2R+cB9dVDmakAXv5vWH5
-	 V7cvBfy4GaMl7CwxWu7HFtvft/R3xML2uEU+hksfRIPsh0IL7Bei7awqmKWHFdyOB6
-	 TU/luvyfUC/avDTLczt5EiqsSbLIZ2MHYp/0+bbfUgtNy3QTbZUEBGuoVDgQLqio9I
-	 W4gCj4tFLw8yQ==
-Message-ID: <97efe08f-ec17-4754-8ff7-afb4db4b04e8@kernel.org>
-Date: Sun, 6 Oct 2024 15:30:48 +0200
+	b=XK/dJ30ZM6dW/6dfh2uu1ePA4j4qEtAkEGAnjRBcDJij2gcnCPWPIaNgG64mE0yr3
+	 CzT1KiMhk6/ILksahRTlJ709+kgs8Y7in7V1Jnx3+kUFLbKGQ2nfprBeTnjcE0F1fh
+	 ufHTg1reKlTF5U1FsvY8TC5HF0w3zUtJ5ZDodD+ngDSTsPG3GiLoDJAqPV2hRYYBtT
+	 2Oc2759J4S+TGR16du8YqClR/KGObzXfKC3z5asFdKMTII1NEGH1FvxMJyV7RlDA+l
+	 eI0vsOv8av9l0gMFyeFBEaIzd3T29K0RYjG7T5awUDCjKjf/JND/38EirCKPID4H1m
+	 xS3ypKX0hN3zg==
+Message-ID: <a387837d-e1d1-4101-9e2a-a51d254a428c@kernel.org>
+Date: Sun, 6 Oct 2024 15:33:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] dt-bindings: interrupt-controller: fsl,ls-extirq:
- workaround wrong interrupt-map number
-To: Frank Li <Frank.li@nxp.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v4 2/4] dt-bindings: gpio: add support for NXP S32G2/S32G3
+ SoCs
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
+ Conor Dooley <conor@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- "open list:IRQCHIP DRIVERS" <linux-kernel@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, imx@lists.linux.dev
-References: <20241003214315.638668-1-Frank.Li@nxp.com>
- <gre52gkd325yfnjwoqyfot4yrb3rim4pi2ye3hjcp4bd7yimba@tq2drzuwlc6f>
- <ZwALfcJYTOuXqPuP@lizhi-Precision-Tower-5810>
+ <conor+dt@kernel.org>, Chester Lin <chester62515@gmail.com>,
+ Matthias Brugger <mbrugger@suse.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, NXP S32 Linux Team <s32@nxp.com>,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>
+References: <20240926143122.1385658-1-andrei.stefanescu@oss.nxp.com>
+ <20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com>
+ <20240926-apricot-unfasten-5577c54a3e2f@spud>
+ <c2d8f121-903d-4722-825f-c00604ef3991@oss.nxp.com>
+ <20240930-shortness-unedited-650f7996e912@spud>
+ <20240930-bamboo-curliness-eb4787b81ea3@spud>
+ <20d46ef0-8c58-407d-9130-3c961dd1656f@oss.nxp.com>
+ <230e575e-b8b6-4671-a37a-085fef761240@oss.nxp.com>
+ <20241003-overall-unblended-7139b17eae23@spud>
+ <36215390-77ec-4959-9bbc-65af32734d31@oss.nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,122 +119,39 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ZwALfcJYTOuXqPuP@lizhi-Precision-Tower-5810>
+In-Reply-To: <36215390-77ec-4959-9bbc-65af32734d31@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/10/2024 17:36, Frank Li wrote:
-> On Fri, Oct 04, 2024 at 08:43:23AM +0200, Krzysztof Kozlowski wrote:
->> On Thu, Oct 03, 2024 at 05:43:15PM -0400, Frank Li wrote:
->>> The driver(drivers/irqchip/irq-ls-extirq.c) have not use standard DT
->>> function to parser interrupt-map. So it doesn't consider '#address-size'
->>> in parent interrupt controller, such as GIC.
->>>
->>> When dt-binding verify interrupt-map, item data matrix is spitted at
->>> incorrect position. So cause below warning:
->>>
->>> arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dtb: interrupt-controller@14:
->>> interrupt-map: [[0, 0, 1, 0, 0, 4, 1, 0], [1, 0, 1, 4, 2, 0, 1, 0], ...
->>> is too short
->>>
->>> Reduce minItems and maxItems to workaround this warning for
->>> 'fsl,ls1088a-extirq', 'fsl,ls2080a-extirq' and fsl,lx2160a-extirq.
->>> Other keep the same restriction.
->>>
->>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->>> ---
->>> Change from v1 to v2
->>> - remove duplicate function in commit message
->>> - only reduce miniItems for after 1088a chips
->>> - maxItems change to 9. Otherwise report too long.
->>> ---
->>>  .../interrupt-controller/fsl,ls-extirq.yaml   | 27 +++++++++++++++++--
->>>  1 file changed, 25 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
->>> index 199b34fdbefc4..1bfced6ed620c 100644
->>> --- a/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
->>> +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.yaml
->>> @@ -82,14 +82,37 @@ allOf:
->>>              enum:
->>>                - fsl,ls1043a-extirq
->>>                - fsl,ls1046a-extirq
->>> +    then:
->>> +      properties:
->>> +        interrupt-map:
->>> +          minItems: 12
->>> +          maxItems: 12
->>> +        interrupt-map-mask:
->>> +          items:
->>> +            - const: 0xf
->>> +            - const: 0
->>> +
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>>                - fsl,ls1088a-extirq
->>>                - fsl,ls2080a-extirq
->>>                - fsl,lx2160a-extirq
->>> +# The driver(drivers/irqchip/irq-ls-extirq.c) have not use standard DT
->>> +# function function to parser interrupt-map. So it doesn't consider
->>
->> Same issue as last time, double function.
->>
->> Please run scripts/checkpatch.pl and fix reported warnings. Then please
->> run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
->> Some warnings can be ignored, especially from --strict run, but the code
->> here looks like it needs a fix. Feel free to get in touch if the warning
->> is not clear.
+On 04/10/2024 13:10, Andrei Stefanescu wrote:
 > 
-> Thanks, I forget add --strict this time.
+> Just to confirm that I got it right, SIUL2 would end up being a single node,
+> looking something like:
 > 
->>
->>
->>> +# '#address-size' in parent interrupt controller, such as GIC.
->>> +#
->>> +# When dt-binding verify interrupt-map, item data matrix is spitted at
->>> +# incorrect position. Reduce minItems and maxItems to workaround this
->>> +# problem.
->>> +
->>>      then:
->>>        properties:
->>>          interrupt-map:
->>> -          minItems: 12
->>> -          maxItems: 12
->>> +          minItems: 8
->>> +          maxItems: 9
->>
->> Are you sure it works? I see 12 items in fsl-ls1088a.dtsi.
 > 
-> interrupt-map =
->    <0 0 &gic GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
->    <1 0 &gic GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
->    ...
->    <11 0 &gic GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+> siul2: siul2@4009c000 {
+> 	compatible = "nxp,s32g2-siul2";
+> 	reg = <0x4009C000 SIUL2_0_SIZE>,
+> 	      <0x44010000 SIUL2_1_SIZE>;
+> 	gpio-controller;
+> 	#gpio-cells = <2>;
+> 	gpio-ranges = <&siul2 0 0 102>, <&siul2 112 112 79>;
+> 	gpio-reserved-ranges = <102 10>, <123 21>;
+> 	interrupt-controller;
+> 	#interrupt-cells = <2>;
+> 	interrupts = <GIC_SPI ..>;
 > 
-> Total 12*6 = 72 data.
+> 	/* for nvmem */
+> 	#address-cells = <1>;
+> 	#size-cells = <1>;
 > 
-> Normal each row should be 6 data.
-> 
-> but when GIC have #address-size, <2>,  dt-schemal split at at (6+2=8).
-> 
-> "interrupt-map: [[0, 0, 1, 0, 0, 4, 1, 0], [1, 0, 1, 4, 2, 0, 1, 0]"
-> 
-> So 72/8 = 9, I just realize it can divide to whole number.  so minItems
-> can be set 9 also.
+> 	*-nvmem-*@index {
+> 		reg = <index 0x4>;
+> 		[..]	
 
-I read it three times but I cannot parse it.
+This looks like using deprecated binding. Switch to the non-deprecated
+cells.
 
-I cannot translate above interrupt-map to anything meaningful, so it
-looks to me that not only address-cells is ignored but entire format is
-different from what the spec asks.
-
-This is not some ancient 15 year old code, but was added in 2019.
-
-You should not add fake constraints to a valid property, because what if
-other system implements this correctly?
 
 Best regards,
 Krzysztof
