@@ -1,93 +1,116 @@
-Return-Path: <linux-kernel+bounces-352325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15DB0991D9E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:02:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EE6991DA5
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B580F1F21ED4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:02:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 199EF1C20F56
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A13017837D;
-	Sun,  6 Oct 2024 10:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937C9172BCE;
+	Sun,  6 Oct 2024 10:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RI0WFRem"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H7SDFpix"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0798B176252;
-	Sun,  6 Oct 2024 10:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7144F4F1;
+	Sun,  6 Oct 2024 10:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728208872; cv=none; b=LMrOBPR8muCTmqWx/wRyckIzSAOtOMJ6uIk0jgsQxTW6h6PSv6wofA1gIv+ECwTP+2xs0C6X4Y9M+LJvd70GzQbGNzOomWlgEj3hPSxWsmvb98/1gdY/hf3WowfUNTmRLYZQhCClyjXQSvR2JNGi32h92Hhj3DN2Nh10ahGVBxo=
+	t=1728209301; cv=none; b=XbdvQlnO+/Mml0zaQ5khC4XQo1Kn5iOEJamagxGBm+9vKpW46ukC6ngk0FMPr23T017IYSuwxbgaLWZ1Wv/rOFKJEHmKi6cl481NyDd/+55YA7KR4HAsVgmCOMxbRb5cYkO8OGp6R/AsTlkkIOPsa44XYI3hEcxa0kW7bQs1IWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728208872; c=relaxed/simple;
-	bh=PIF7Qur/PKKm4DYKUr+wEds9pKd7tP/IVUfLASXkER8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LPWw8g/N4VH9M+wH5XKdzTwfZChpXPqEhByeyaQU34LSIoGLgJ2vNpDd1WJx0NyeD/M9jxWmo+FYXoT2zT5el8bHRFCBr/jtaO07+swZ02kNuQHCamKMDQYujVRZJ/WySYWahPRfF1AP6Cqrm9PVtOxRZ62ikqzE6iJLPtpzHT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RI0WFRem; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9E04C4CEC5;
-	Sun,  6 Oct 2024 10:01:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728208871;
-	bh=PIF7Qur/PKKm4DYKUr+wEds9pKd7tP/IVUfLASXkER8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RI0WFRem1EE08HV/1Ez5hRPtdS6SoTzM3ACcespjztSYwh+BJop/JgwZ4ntF7RJ5u
-	 hA5qV7i2dP4vysQ3JMOojrB35G6JDTJWSF5EqdAVh6g3Y9KtrqY3nvfAwRz/YXCUp2
-	 ML5TatWk2pJQi5V6ZZKG1+ZscXhkdwjYlqYRt1duXz3gS9ll0WW9yhGYvmcKerqsnf
-	 o8BThlokuw5OG3aaStENxHL1VhWavwItFd9t3n2RXRanx5ABoWX0FWxUxG7CEVUDVP
-	 C3aLgUAYT0O9wCpRSqqTXkpFgGzAUKbyj/INMNPsaNjiJa6m/BaPxXCYCLJeGp/ZHA
-	 T57MntVfRVJiQ==
-Received: by pali.im (Postfix)
-	id 9FBA5DE8; Sun,  6 Oct 2024 12:01:03 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] cifs: Validate content of WSL reparse point buffers
-Date: Sun,  6 Oct 2024 12:00:46 +0200
-Message-Id: <20241006100046.30772-8-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241006100046.30772-1-pali@kernel.org>
-References: <20241006100046.30772-1-pali@kernel.org>
+	s=arc-20240116; t=1728209301; c=relaxed/simple;
+	bh=SRdoJ/oFK8ch6KkyAW3YApgRnZkaX3MlPZjHqx/wc9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YSZd3J3WP3cmIpz2XQJALYVnb8kELwoOt/NFrBcF/BMQkY7S92J3r1CCqO5ilzuo+G/YO8TnFQEPh+xSHupU/eZqsMVDA8heuAlzQj+BnpL7jiUexfJ303legouNOHHDK2IDpod5Et3wXh/EssmWLFUfGKOYLnCj+XLOXb1ORvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H7SDFpix; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD40AC4CEC5;
+	Sun,  6 Oct 2024 10:08:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728209300;
+	bh=SRdoJ/oFK8ch6KkyAW3YApgRnZkaX3MlPZjHqx/wc9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H7SDFpixabJQXU5lZJLkiEFqpQS9BlhXRpx0oDUoocdqZytKIzB0HGu19gve3R0qt
+	 R7rD6b9WQCwTgG146lqLOaNbGvnBX0V2um69KNlPQt4BR7eCeXStX/dr3wwFpdA1ob
+	 ndR4YlsSteOd34NZwSW5zHuGMn5i6srQzCFDWbCE=
+Date: Sun, 6 Oct 2024 12:08:16 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Zichen Xie <zichenxie0106@gmail.com>, alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Jaroslav Kysela <perex@perex.cz>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rohit kumar <quic_rohkumar@quicinc.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Takashi Iwai <tiwai@suse.com>, stable@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Chenyuan Yang <chenyuan0y@gmail.com>,
+	Zijie Zhao <zzjas98@gmail.com>
+Subject: Re: [PATCH] ASoC: qcom: Fix NULL Dereference in
+ asoc_qcom_lpass_cpu_platform_probe()
+Message-ID: <2024100608-chomp-undiluted-c3e2@gregkh>
+References: <20241003152739.9650-1-zichenxie0106@gmail.com>
+ <ee94b16a-baa7-471c-997e-f1bf17b074b8@web.de>
+ <2024100620-decency-discuss-df6e@gregkh>
+ <6d17006d-ee97-4c7c-a355-245f32fe1fc3@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <6d17006d-ee97-4c7c-a355-245f32fe1fc3@web.de>
 
-WSL socket, fifo, char and block devices have empty reparse buffer.
-Validate the length of the reparse buffer.
+On Sun, Oct 06, 2024 at 10:56:51AM +0200, Markus Elfring wrote:
+> >>> A devm_kzalloc() in asoc_qcom_lpass_cpu_platform_probe() could
+> >>
+> >>                    call?
+> >>
+> >>
+> >>> possibly return NULL pointer. NULL Pointer Dereference may be
+> >>> triggerred without addtional check.
+> >> …
+> >>
+> >> * How do you think about to use the term “null pointer dereference”
+> >>   for the final commit message (including the summary phrase)?
+> >>
+> >> * Would you like to avoid any typos here?
+> >>
+> >>
+> >> …
+> >>> ---
+> >>>  sound/soc/qcom/lpass-cpu.c | 2 ++
+> >>
+> >> Did you overlook to add a version description behind the marker line?
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.12-rc1#n723
+> …
+> > This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+> >
+> > Markus, you seem to have sent a nonsensical or otherwise pointless
+> > review comment to a patch submission on a Linux kernel developer mailing
+> > list.  I strongly suggest that you not do this anymore.  Please do not
+> > bother developers who are actively working to produce patches and
+> > features with comments that, in the end, are a waste of time.
+> >
+> > Patch submitter, please ignore Markus's suggestion; you do not need to
+> > follow it at all.  The person/bot/AI that sent it is being ignored by
+> > almost all Linux kernel maintainers for having a persistent pattern of
+> > behavior of producing distracting and pointless commentary, and
+> > inability to adapt to feedback.  Please feel free to also ignore emails
+> > from them.
+> * Do you care for any spell checking?
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/reparse.c | 5 +++++
- 1 file changed, 5 insertions(+)
+No.
 
-diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-index 6606c40487ae..c0d9ba14a60d 100644
---- a/fs/smb/client/reparse.c
-+++ b/fs/smb/client/reparse.c
-@@ -1093,6 +1093,11 @@ int parse_reparse_point(struct reparse_data_buffer *buf,
- 	case IO_REPARSE_TAG_LX_FIFO:
- 	case IO_REPARSE_TAG_LX_CHR:
- 	case IO_REPARSE_TAG_LX_BLK:
-+		if (le16_to_cpu(buf->ReparseDataLength) != 0) {
-+			cifs_dbg(VFS, "srv returned malformed buffer for reparse point: 0x%08x\n",
-+				 le32_to_cpu(buf->ReparseTag));
-+			return -EIO;
-+		}
- 		break;
- 	default:
- 		cifs_tcon_dbg(VFS | ONCE, "unhandled reparse tag: 0x%08x\n",
--- 
-2.20.1
+> * Do you find any related advice (from other automated responses) helpful?
 
+No.
 
