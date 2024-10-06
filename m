@@ -1,145 +1,176 @@
-Return-Path: <linux-kernel+bounces-352359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D6D2991E07
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:13:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0618B991E0C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 173761F21ACC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:13:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA56E281805
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965BE175D2A;
-	Sun,  6 Oct 2024 11:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF4C175D48;
+	Sun,  6 Oct 2024 11:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="S50nD9Rp"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMCcJwR+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B546F4C91;
-	Sun,  6 Oct 2024 11:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D314170A08;
+	Sun,  6 Oct 2024 11:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728213178; cv=none; b=O7mEGLZd9GwIaKry5wajme93yDVzTrgXHb24mGCfXk8TtveIWgE1Cdp7z6SYu+OfX8lpBp+W6uJ3DAMzUNM6annW87+bdyTZyZ3unHTt+5RrRX50mbmcszI7myY1X7AaRkMuF/NwKDt0DWQ+QsAX3gWcMBII3kBgajR9zGxDuDc=
+	t=1728213316; cv=none; b=Ar5XPEtqHST9SXV75kKF/ba7vdtYsTatTwRuZhIRADxXPla+SZ7NrsrZEbPNQAm4YkkbAZLY+ukYACJyolQh7IGRYVqgbc73XF/SmEhYKqbq01sYc0a7ZwPrS4jkTZNrXK0/cS4Zs5WQqYHP7gFw1yWjAHlVor2yN6h+KzF/7lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728213178; c=relaxed/simple;
-	bh=2M+3ugLDADABIISUhE1rjXIToJMZ9lQU9ApRZODMpQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OH1J5DS4q2QaCDzgT89nfSN+wG+90jB2nami4+qNkwg0+lJHrzUtwGZ42Js+ZPv0j0J+CdecCbr/L7g9udssHbck/CaqsdW1ceqyncmdqEzf0/mwhgvtYlc4qPBopj0BoCYumfgpRrJcMkKSrIoQ5r4A52iUPeRHyAr/tTV0hos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=S50nD9Rp; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728213154; x=1728817954; i=markus.elfring@web.de;
-	bh=Tb+T09tvkffYYzsIjM2Eq9r0VO5GwmF24AJDTdB3JCQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=S50nD9Rpr63Z+S/pAis+bydyXCrJxgPX9WKKQ7w5UFIR8V7bzYjXpVGgAiZJldni
-	 LBtOJgLd7jGwcNKLazvpI3Ox23XnbPFbmY9ynSFXIILxaJQM+QdJarP/DRLx5IwWM
-	 VUavB/EJTFBPK9fRbaEkLvdI6AsaNfzlbPVgAr9avMRQg7EiAu7XATNwR49P0GYBi
-	 Sg53L2EaCfcyEN4/Ro2T2OR7p66BHbwS5jNLZYshL/pEADpVaUcjsg16DMIGpc50j
-	 dPdWGlut0zZBDQT/cimxR+7mCmdPtTXkbPbgtGDkkjgxoqfG7zcK5kieYfujHfWcC
-	 15Pkl57VEEhfYrnMqg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N14tM-1tyhD60k94-01029J; Sun, 06
- Oct 2024 13:12:34 +0200
-Message-ID: <8e4fe108-cfde-40c0-83f5-c1ce60b0940f@web.de>
-Date: Sun, 6 Oct 2024 13:12:26 +0200
+	s=arc-20240116; t=1728213316; c=relaxed/simple;
+	bh=ivgSAXjwN2I4F19wez+Mlswpnth2wP0cv0UXGtKwzMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rlUQrheU24MswgNd3N+3GEqwkp6/gjvrzOQA7mCmS0KMV/G7LlqdZgwONNoJo8571vp551N5tHKZst+GspXCO/bbPIzYUOBCzg7FMRl9z7PZmFJwemgX4KKoIMhzMFUmFUpEZW38cXf0b4/tLGLtv94fEjqxdyWAGoNW8uY3X1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMCcJwR+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 749DFC4CEC5;
+	Sun,  6 Oct 2024 11:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728213315;
+	bh=ivgSAXjwN2I4F19wez+Mlswpnth2wP0cv0UXGtKwzMw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IMCcJwR+HtKbh8TuxXrntITaFC1A9qn1oRMYWlGHzvV/SQ16DNKClj810cSFQxq3y
+	 xCkOtnGNBesEmQg+4MWJEIV1BKXApmXIXm1yY76hDqq2rYpQ7iSTbanLDokU6RdQci
+	 9fbTs2drEcSBE/CwLjcZ/s4eWIv4Rb6fQOD+Y81LTlPxxCb3ea66N3MQVkA385RbQp
+	 1/fJQpguSm3eDvKgtLIe1BZ1P06UbMlsPAyi2kMWdcf/k4n+E4Pd1BM/0bI1V5Exud
+	 LabZPitCAnc0MIkXOgI2Z6BSDuFhLbaAAo5ErdZsUQ0Nxgx2a/rY906UB3B8yZ4dic
+	 DJt7H23P0WvOQ==
+Date: Sun, 6 Oct 2024 12:15:06 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Ian Ray <ian.ray@gehealthcare.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 3/4] iio: adc: Add support for the GE HealthCare PMC ADC
+Message-ID: <20241006121506.3fcfda93@jic23-huawei>
+In-Reply-To: <20241002102324.2e3600ca@bootlin.com>
+References: <20241001074618.350785-1-herve.codina@bootlin.com>
+	<20241001074618.350785-4-herve.codina@bootlin.com>
+	<20241001202430.19bfc666@jic23-huawei>
+	<20241002102324.2e3600ca@bootlin.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ASoC: qcom: Fix NULL Dereference in
- asoc_qcom_lpass_cpu_platform_probe()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Zichen Xie <zichenxie0106@gmail.com>, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rohit kumar <quic_rohkumar@quicinc.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Takashi Iwai <tiwai@suse.com>, stable@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Chenyuan Yang <chenyuan0y@gmail.com>,
- Zijie Zhao <zzjas98@gmail.com>
-References: <20241003152739.9650-1-zichenxie0106@gmail.com>
- <ee94b16a-baa7-471c-997e-f1bf17b074b8@web.de>
- <2024100620-decency-discuss-df6e@gregkh>
- <6d17006d-ee97-4c7c-a355-245f32fe1fc3@web.de>
- <2024100608-chomp-undiluted-c3e2@gregkh>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <2024100608-chomp-undiluted-c3e2@gregkh>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:yRTbD6sd3+21UNILTwyen9xGDcqeDXPJVM2pwF9pSM2QeHcmLjP
- 1yVdgSeocfPe/3sQBJC6vnkeAelYEq3Tw4q3vbHmFDEC1XMAUn3QPw6kssQVq8RQhuMMNux
- zpTVqPDM2AS1Z06J0FrFoQAMvEBlICCMrhaNJq3je+qlH/B4U8zG85LUUfaxmaB1bJlMMC2
- 26xXZJD3MigttCtcRL9RA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RSBHA8Qa5SQ=;/s/d7cD8oOtzcIkiGSlmatb5uuU
- cKJixBxA/JdU6u04XbR9kF24yaTTgv62j2NuR+lGXYAtDYP3QL1jvY+N3TJZGuFpXKE3U2Gxn
- ESDcbRqyxeO9ZfDEigmrhiz1KhLM3+5BzjuK73nytqYZnyN+4A/1BAmJylgq8GqRDJaCSjlRq
- Uf52NPZSzEFVCLqYvOYPsfIxoQhlV70O6EXtcQSXoABBj0TTR/gHze1XudE5mMaDDqDhrffls
- EcDn9Lp04gBN+kEq+0Ema75iBhXiRRfDf7jFAbIUjxo9+EbA4iYTQjOp2uvDDRsIyUF/dx0ii
- sJsaP99NxOthe715M6I0Hp5OZdPLrXcb+WT71Vv0WXyHOJSFvmbJe+9/5YE7HHobavlc1NU0r
- Q3tFi54IWrKp2fwmMZ+uhsQPJH5oJsT97GrwZ1HutnMcwIdprCyWG+xkA/KRzvYPzO1sSdL0U
- Y//Ihhfi2w531qQNSby9ZAauyCEnNXC3ynAG4Ar6VQwoWC5poasYwu+96PsNu6Wwd90mhZKn5
- ICA8kZ0gT2J+/mpkP2Ei9if1L55VWq+IRaFBeXCBG1Fm8Ssx8qtHQQQYNFuCHvFyQpOXQaN86
- L4pf69gh3F12sEZov8rzQN1vfw1nQpGW4KdYRLgtBPGcgnf5+rwLfKTj8H3CX5eBfFdtVrNhC
- LTYBeqt2ZaXEUaDZiT5FRBmzzI+vSYRIjVBD74Lo0KDqRNJZAXHV/hyeNPyZWTXcL3gdViPX+
- 5wB2XiUua3FCv67f7BZTi/uZWLbU760sSJExHWnfIr3MkA/TXLEKKym94g37Up6/vmDyVEdu/
- IPRseMHC2ZngLkfHfgxnEgkw==
 
->>>>> A devm_kzalloc() in asoc_qcom_lpass_cpu_platform_probe() could
->>>>
->>>>                    call?
->>>>
->>>>
->>>>> possibly return NULL pointer. NULL Pointer Dereference may be
->>>>> triggerred without addtional check.
->>>> =E2=80=A6
->>>>
->>>> * How do you think about to use the term =E2=80=9Cnull pointer derefe=
-rence=E2=80=9D
->>>>   for the final commit message (including the summary phrase)?
->>>>
->>>> * Would you like to avoid any typos here?
->>>>
->>>>
->>>> =E2=80=A6
->>>>> ---
->>>>>  sound/soc/qcom/lpass-cpu.c | 2 ++
->>>>
->>>> Did you overlook to add a version description behind the marker line?
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
-ee/Documentation/process/submitting-patches.rst?h=3Dv6.12-rc1#n723
->> =E2=80=A6
->>> This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-=E2=80=A6
->> * Do you care for any spell checking?
->
-> No.
+On Wed, 2 Oct 2024 10:23:24 +0200
+Herve Codina <herve.codina@bootlin.com> wrote:
 
-I find such a feedback surprising.
-Does it indicate any recurring communication difficulties?
+> Hi Jonathan,
+>=20
+> On Tue, 1 Oct 2024 20:24:30 +0100
+> Jonathan Cameron <jic23@kernel.org> wrote:
+>=20
+> > On Tue,  1 Oct 2024 09:46:17 +0200
+> > Herve Codina <herve.codina@bootlin.com> wrote:
+> >  =20
+> > > The GE HealthCare PMC Analog to Digital Converter (ADC) is a 16-Chann=
+el
+> > > (voltage and current), 16-Bit ADC with an I2C Interface.
+> > >=20
+> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>   =20
+> >=20
+> > Just one thing to add to David's review.
+> >=20
+> > I'm going to guess this isn't a general purpose ADC? Can you share any =
+info
+> > on what sort of device it is used in?
+> >=20
+> > No problem if not - I'm just curious as I've not seen GE HealthCare I2C=
+ parts
+> > before! =20
+>=20
+> I cannot tell about the product it is used in :(
+> One sure thing I can say is that the component itself is not available off
+> the shelf, and is fully designed to be used in a specific product.
+>=20
+> >  =20
+> > > diff --git a/drivers/iio/adc/gehc-pmc-adc.c b/drivers/iio/adc/gehc-pm=
+c-adc.c
+> > > new file mode 100644
+> > > index 000000000000..c46c2fb84d35
+> > > --- /dev/null
+> > > +++ b/drivers/iio/adc/gehc-pmc-adc.c
+> > > @@ -0,0 +1,233 @@   =20
+> >=20
+> >  =20
+> > > +
+> > > +static int pmc_adc_read_raw(struct iio_dev *indio_dev, struct iio_ch=
+an_spec const *chan,
+> > > +			    int *val, int *val2, long mask)
+> > > +{
+> > > +	struct pmc_adc *pmc_adc =3D iio_priv(indio_dev);
+> > > +	int ret;
+> > > +
+> > > +	switch (mask) {
+> > > +	case IIO_CHAN_INFO_RAW:
+> > > +		ret =3D pmc_adc_read_raw_ch(pmc_adc, chan->address, val);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +		return IIO_VAL_INT;
+> > > +
+> > > +	case IIO_CHAN_INFO_SCALE:
+> > > +		*val =3D 1; /* Raw values are directly read in mV or mA */   =20
+> >=20
+> > Drop this scale and make the channels processed. That saves userspace e=
+ven applying =20
+>=20
+> I thought that scale was mandatory.
+>=20
+> From the userspace, offset is clearly optional
+>   https://elixir.bootlin.com/linux/v6.11/source/Documentation/ABI/testing=
+/sysfs-bus-iio#L458
+> But nothing about a default value is mentioned in the scale description
+>   https://elixir.bootlin.com/linux/v6.11/source/Documentation/ABI/testing=
+/sysfs-bus-iio#L515
+It doesn't get applied to _PROCESSED attributes (see ABI for _input attribu=
+tes which
+simply doesn't say to apply anything.
+
+There is a corner case where _OFFSET is provided but not _SCALE and hence t=
+he channel
+is _RAW.  In that case I'd say _SCALE is optional, but I'm not sure we've e=
+ver seen
+it in reality!  The more common case (though still rare) is like this one w=
+here=20
+the reading is in the base units of the ABI so _input is the away to go.
+This is fairly ancient ABI lifted from hwmon.
 
 
->> * Do you find any related advice (from other automated responses) helpf=
-ul?
->
-> No.
+>=20
+> > the *1 this indicates.  Rare to find a device that outputs in our base =
+units
+> > but might as well take advantage of one that does :) =20
+>=20
+> Yes, the device is a custom designed device and it has a fully knowledge =
+(by
+> design) of the board it is soldered on. As I was involved in the communic=
+ation
+> protocol definition, units were chosen to fit well with IIO.
 
-I wonder how this answer fits to reminders for the Linux patch review proc=
-ess
-(which were also automatically sent) according to your inbox filter rules.
+Nice :)
+>=20
+> >  =20
+> > > +		return IIO_VAL_INT;
+> > > +	}
+> > > +
+> > > +	return -EINVAL;
+> > > +}   =20
+>=20
+> Best regards,
+> Herv=C3=A9
 
-Regards,
-Markus
 
