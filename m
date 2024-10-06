@@ -1,115 +1,118 @@
-Return-Path: <linux-kernel+bounces-352265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0C7991CB9
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:10:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EC4991CBC
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8B31F21E96
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 06:10:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 713511C20F9B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 06:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7B61662F4;
-	Sun,  6 Oct 2024 06:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB585166F32;
+	Sun,  6 Oct 2024 06:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pDXP1gSt"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gSNwCGAL"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D092C18C;
-	Sun,  6 Oct 2024 06:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6BD4C9D;
+	Sun,  6 Oct 2024 06:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728195027; cv=none; b=nDClBsVDscRfWE87QJ8Biy9EaXFtDlLLeD3uV01fgYqFMjVDJu6CLvWCDB+drNzyJxz1BjfdPPS16rBxNZWetkdh3gX9Z0c8cLVmzShyqPNHSg4qXHrYKM6ZSJjujQXd2TWVbkDSRHlYHF9xvU/6dwUrTEgI80FhTrnsNZQnjok=
+	t=1728195607; cv=none; b=TtUDZZ/Z/oKVmDvpQoFhPyqfq2TiHabEjyz3q8bfR3OcoLSWuz4mX9SiLB/FGrOK1MIo8fV/GQkXOsgV83gYTrF9W9+bDIwKVNDgDphdrbWeYg117uK+p0ZRVMONq97cjE5ttRMQG0EsCsbDulqz0YrAOo3TXDF1p8pR4gN2q3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728195027; c=relaxed/simple;
-	bh=2c7SLZYu8IRHUh2dBV1PwcXRUlVdLZ8BkW9qgWUwd+s=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=DSU4aIUnNrJhYjpL4D8ambaccI0qIj+I5DPUUUI8YIxALE2tqsUMAZj9KnfWQJR4jAgR7eLZnAJO53zt2dCChjd12JUpbcnUflFYXnqwbCjkskpNmSOIeajUmOsL3FqqHIq4JNmvuz9ZJU6LAM5MFu2JxL33MuX3kDpt//JaOJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pDXP1gSt; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728194993; x=1728799793; i=markus.elfring@web.de;
-	bh=nfHT270wEl9AxgDA67VCKhwp85VuN4fZDK+Q6206vzk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pDXP1gStZ9wjaIg8ZRDtUv9ESbxYdagMR89X+XbGTvUQso/xiWwhN3xtP/bMvyEv
-	 b8mv3fX1HFeCqd2rxTDuqCWXzHgP0hrb8VVVd7t01QI7w1WBlCOvAsGePGUtFWswt
-	 5xis7C3/F7pYyGCm5PCuEGWCyApywr5vFqkAtjwIrLYqlcivKy8viAwO4wUu3baG4
-	 wbGMLyU4ffB/UvpGd8I3OYg5VcndSQX4J2HIaPJvcUwTAFara2jImgoqmagGZu66V
-	 +lle6biJ7zEGve76JeiQFL/+piskEHj28DYoUNQI1Ye4CZxM2WtjiAY0ACaA7RAzF
-	 V+cD+tZRNZpI6s29aw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M2Phc-1t04p51ZR0-001VdC; Sun, 06
- Oct 2024 08:09:53 +0200
-Message-ID: <2be4c920-b4c7-4b7a-ae63-258f2d86df92@web.de>
-Date: Sun, 6 Oct 2024 08:09:34 +0200
+	s=arc-20240116; t=1728195607; c=relaxed/simple;
+	bh=ISn3j8Mn+nA+MuUG1L4BUJycEOBAsSmC5oQgT7HThaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XOWHWg7Y+gd+pDz7/7redw9ZCiSRW8VaojJyioYR93+NxGWWpZ6n+/up/6xW1CsymuPjVIdFR3PHkiy24I5jDx30aIn0WFqakRmz5IUNv4DTC8YfCYG03Vh5MUGIbmR8AHPOdPMK2+TdN5SonLZmxLAzDjGf6GcCX4uaD6iks+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gSNwCGAL; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c88c9e45c2so7791927a12.0;
+        Sat, 05 Oct 2024 23:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728195604; x=1728800404; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ISn3j8Mn+nA+MuUG1L4BUJycEOBAsSmC5oQgT7HThaI=;
+        b=gSNwCGAL7zt+SBlT2333cIrWhAqhHdUa4TXnKl7aI5powAZwtVMtB2jrhPWdssE7pV
+         eZN6nDPhJ/PUL5paBl65FXHp2ZFFQr54Mkj4Gy4MBKeF+32s6EdTkUIyzLZLEftLrJzM
+         dIMfHS/P6g4sHCrJ3iQFWqX8wLpOg+JaQPXR6j2uiUOwuqWCo+XhwkL8wmKQgmn2ZOuF
+         BrBdSPhHeKcKkTMRrwRM323yEEWG/mvuLspTnDh9XqP0H5Rf7kZO9eVOjswC6Q2ucNW5
+         DEgNNyvICwSDd8BI1oPww45Gh7meiAM/fFzUPOPaNVB0hAuo4ism0iEw3J33NkdO+7vX
+         XeXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728195604; x=1728800404;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ISn3j8Mn+nA+MuUG1L4BUJycEOBAsSmC5oQgT7HThaI=;
+        b=W4fZBQSLkn3xQbmzw+VWV8U2y42vT2lDHi4oYiiqvgq19ShDxEJNINthP2cQ3t6Asx
+         0C1vW9kS7UG/m+hOnnJr/dBDtzZvvZOWAHvuogFc0PLSRBQDs3CjK6sbHMu8uJDPkXz9
+         sfKFCSKJPcpmZfxgER3bJt5EaUYkPtoYnvpvxMtUscDGbPjouzlotlLxx0vqJqO8vFFa
+         fZ86nsGCnHOMxGoipGTzOkrvKzF31SZNkKuaq+o2Jb9vDdNSEk3OUpYHYKWSE0qlrci1
+         9179LVhDQjqppXla2Q2H7rhvXUlDm2OHYbetuMcPDwYjDMqVyosue6cFe1c8rDc5ZA3u
+         533A==
+X-Forwarded-Encrypted: i=1; AJvYcCUCOt61GB+b7FlJ8hKU0H5o6xjzGJm+3/6BeZXtJcjzQILUyUvjU14odJj6UvqkJQkqa3ypfQuNod69tGk=@vger.kernel.org, AJvYcCXPa9XMh+kr9B82N/kayum5op+OHYSzN07CKQq5UeAz7tfPMY7IBamVpYCYh+286MPyliLT0+PmsEys@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWN6DCpQsjOTsK3XyLu8itB+lmiqVqtEvvcW93M0e/ZEBmXH2+
+	AbuzZmsjC8rvtfOqDowktZAvAp8qKwbMMoZLkPt/MOucaMgu2pIFXOJof7kPvJcBRvPwx5Rksek
+	OZVM8RRKJ7wK+AkLoAYQwDXEEGHo=
+X-Google-Smtp-Source: AGHT+IHLmKYhibWbPE6q9uesx6oy/T3sgRy11XIngKNXE26QEwKp8tXA3tuKRc34A3dfiFkKIl0QPri/UgJGBzKc6sc=
+X-Received: by 2002:a05:6402:2682:b0:5c5:b90a:5803 with SMTP id
+ 4fb4d7f45d1cf-5c8d2f2dfe4mr8909053a12.7.1728195603921; Sat, 05 Oct 2024
+ 23:20:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Drew Fustini <dfustini@tenstorrent.com>, linux-gpio@vger.kernel.org,
- linux-riscv@lists.infradead.org, Fu Wei <wefu@redhat.com>,
- Guo Ren <guoren@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Drew Fustini <drew@pdp7.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <20241005-th1520-pinctrl-fixes-v1-2-5c65dffa0d00@tenstorrent.com>
-Subject: Re: [PATCH 2/2] pinctrl: th1520: Fix return value for unknown pin
- error
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241005-th1520-pinctrl-fixes-v1-2-5c65dffa0d00@tenstorrent.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240912221523.23648-1-pali@kernel.org> <Zumizr3WnA+XY9ge@tissot.1015granger.net>
+ <20240917161050.6g2zpzjqkroddi22@pali> <Zu3K34MHFUYNaRfu@tissot.1015granger.net>
+ <20240920192941.l2fomgmdfpwq7x6p@pali> <20241005150843.4ac6nugo7yusz2m6@pali>
+In-Reply-To: <20241005150843.4ac6nugo7yusz2m6@pali>
+From: Cedric Blancher <cedric.blancher@gmail.com>
+Date: Sun, 6 Oct 2024 08:19:00 +0200
+Message-ID: <CALXu0Uf0fnVgJq5ehMHnn-My9OvVjCVBR3v3MdEEJ8WxKAZYTQ@mail.gmail.com>
+Subject: Re: [PATCH] nfsd: Add support for mapping sticky bit into NFS4 ACL
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Neil Brown <neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:80QukG/njMlE+c8X6vqS9JBjUh36l0QZ3c40I4xW7dixPPcFjlC
- N7FvOqkAIh3Jd0tAJPY5bAhed2vBDi9PpRPY97kqh7k3vkMhO0us//5xhCBu8tv+06ytJWo
- 172EnNSA12qrnpSTNILKGTSTnx2XDGIqTxP2WAbcF1pAjLi6qanbUu70qrl0svCS3mA+XPB
- ZX7VkiiX6/4DOhuN9wHYA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xTZ+ktdvsFE=;sJd8/aZu3cz3tBsX6sTGATwInWu
- 8sf4wiClEXP9QVmAL33Q85yUMmRulYEzs2gZTXtFHNxCbUTfzz4ew9bG2K+x5+Uz/7kUnXDDw
- pTsUgYJuHrP4SVjB97nlOxaunlRistTgGIExhoKXkCZDJg1hTRGVkjOVL+MGBv9l5orXOfj+J
- oHsP+xEoVLgeXeU/L3DMB7aV033+1bVRsKtuKCj8Lwrd3LUzZIB4z18Ciz3CHMdbPjbM1F9r0
- uCydirtGaHw5cTEgadHY2aSaBAfFd3+cvcKLqbBXASo4O7wxT7y/XeRJBwqYdmMGCIwtPmPR5
- KKZxGZvidyllF22NGivnVCOtIBWgLivdR6PD4hKPKNuP8bJvuYVLctP8h4tEGF+aWUUx5T5S5
- IbPib6HZFbOkJufmoTUEML66VCd5zNO1HmIMJ96rnC8uoo8bVZ5kgU5t8FkFFhNjnQvvjlXgH
- slcEuAOQ1cChwvx6B6zsgqv0eWzwgVSU+9llHJkxtglIQgLnuWh/SC0GK1IyF4tPTFqRt8H64
- N5riqPE2+WOoC+B6KMtYZv9n6gJT++gHe3YUkXwnGHpV8a+8EWTv/OdDpQvO2cgEbDqzqvWH4
- yi7pkmPa0aHHVvY6pUxXTYGOjJw8kIcVrbx+OOcb/W3e+tfq4HiKxlcZ1wcvuITSaUjuAhM1H
- 8Ti4k3wL5ZfJx5/lni1SEu07veJGXT+qOk/au4Jk+7eF5ROWMH/IwiNXBU7N28R5I/VZ8tTlk
- wmVlU467PSLbCSUxetb/GgPvwaROf13UulYHE+s6TbZOZgyJu+FtPq1cnJEt8U464DzOVKApl
- veuW1YmaqxkvUdxBf7Zqa7xg==
 
-> Fix th1520_pinctrl_dt_node_to_map() to a return value upon an unknown
+On Sat, 5 Oct 2024 at 17:08, Pali Roh=C3=A1r <pali@kernel.org> wrote:
+>
+> Hello Chuck, have you done more research on this as mentioned?
+>
+> I think that this is really useful for non-POSIX clients as NFS4 ACLs
+> are not-POSIX; knfsd is already translating POSIX ACLs to non-POSIX
+> NFS4 ACLs, and this is just an improvement to covert also the
+> POSIX-sticky-bit in non-POSIX NFS4 ACL.
+>
+> Also another improvement is that this change allows to modify all parts
+> of POSIX access mode (sticky bit, base mode permissions r/w/x and POSIX
+> ACL) via NFS4 ACL structure. So non-POSIX NFS4 client would be able to
+> add or remove directory sticky bit via NFS4 ACL editor.
+>
+> Of course, nothing from this is required by RFC8881 specification, but
+> specification also does not disallow this for NFS4 servers. It is
+> improvement for non-POSIX clients. POSIX clients would of course not use
+> it.
 
-                                      to return an error code?
+Have you tested this change against the Windows ms-nfs41-client
+(https://cygwin.com/pipermail/cygwin/2024-September/256473.html) and
+OpenText NFSv4 clients? They do use NFSv4 ACLs extensively, and might
+break if you abuse NFSv4 ACLs
 
+Ced
 
-> pin error before jumping to free_configs.
-
-=E2=80=A6
-> +++ b/drivers/pinctrl/pinctrl-th1520.c
-> @@ -499,6 +499,7 @@ static int th1520_pinctrl_dt_node_to_map(struct pinc=
-trl_dev *pctldev,
->  				nmaps =3D rollback;
->  				dev_err(thp->pctl->dev, "%pOFn.%pOFn: unknown pin '%s'\n",
->  					np, child, pinname);
-> +				ret =3D -EINVAL;
->  				goto free_configs;
->  			}
-=E2=80=A6
-
-Would you dare to support another jump target for this assignment statemen=
-t?
-
-Regards,
-Markus
+--
+Cedric Blancher <cedric.blancher@gmail.com>
+[https://plus.google.com/u/0/+CedricBlancher/]
+Institute Pasteur
 
