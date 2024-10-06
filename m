@@ -1,120 +1,128 @@
-Return-Path: <linux-kernel+bounces-352499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68EAF99200E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:42:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 578EE99200F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69F4A1C20C5B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:42:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173D3282437
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA07189F57;
-	Sun,  6 Oct 2024 17:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2CF189F57;
+	Sun,  6 Oct 2024 17:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="qOI+hYx2"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="dI1KmE5g"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABF318991B
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE50189B84
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728236542; cv=none; b=dTCZVvBGzpupMMvceypGjgHnBhVF4wSp6/aITX+dQbmzT0qNMDwzi78ID2SdR0HWklLD87sX5QRSorT3WaV9XVe8P6xhw2RfWYVnkJregKshzYOHkCg8MDY57NwfIuRA8oycbdvUymIyBWdKs/FTpyS8Uyvs4C3Qy3oOBkfKwec=
+	t=1728236605; cv=none; b=LHVYRJqOady6oYziNaMa9HGI7cWFaQkuZNJVqNJxLlBYAkYUwxWNlp3Wor35X9DoDPgMwJG11fX5J6jDiKm31Jr1AzWKh3xd+xAQ8BB2pFMB+OTdLGgl1Ou8j7A6K+AHLaydD3WBhNMdK3gJU8rIku5EBVX2FYq9bv5fKNN33Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728236542; c=relaxed/simple;
-	bh=bOvz4pYabcDoZLoEs0sff0Pn88xmVja7LCwJGlH+9Y4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qjqOQDLvxVGNgAXEPJZn/arQgIbhQ92aXRsBzr1JMuTPdlemGQo0L3dl3JtLHteGLOUh2Jdt0ug1f/2yAIgaaqaRfANSPOA+dL8xscDlnohCPzDi/n/zLTAZ+sYoEI+jG+Uw06fbjSuzzh1xs7MwpDQFfS5oKkA4Oy82P95SmrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=qOI+hYx2; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so27715235e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:42:20 -0700 (PDT)
+	s=arc-20240116; t=1728236605; c=relaxed/simple;
+	bh=iF5IaUjbFHWZvRREAbEepoAFURE11s/pMqmogjiDuvM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TkzKRH94MwMLRKz1+/Z6o52N0jrPuUmukHG1XgJsPfUfbwCL1bHwLQ8pei31mJ8M/gdy/MLHLvNaHUjqhy2Rs19GfhTHppi7P8zJPfN1tNO+KgO5dGOmSBd0+UsIj+Lw0quTfCW4FkpxHkoDuBH2767deXzjGR8YetnqMFSJEdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=dI1KmE5g; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e029efecdso267363b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:43:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728236539; x=1728841339; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X0ZI6ioZn3DighbuW3Kr9aBRm249nRfxXwsbXRgrMZs=;
-        b=qOI+hYx2QQsBlGGLUVVFR3hF7nq8GTAtr4p87OkG2zyqvaeJJ+jhY7XEogaWZ+spbe
-         hmhPD9cGUcr5kHmtMfTLCTMPRf8y1tbDF79xMuAFgh0EarYyGmN5r9Hf6afc6ZGU1Q8d
-         /HCfecavwP+Ddf/6cu0FxLZJoGrvzEq68tGLri32Hs/kfp5dmBtkstE+2/p6LJzSlnQo
-         abXHdc2u+bllu6XkhC362VUemxf5L5mu1MaAXWHFK/084N2IWD7uOsQv4uH0r7oRMREq
-         27fj/rCPBQKaxy/2StSQHMKpj5RLPpMIkwlx617zz372bmnlaM/6mxrBuHcwxiFq5uJp
-         ItcA==
+        d=tenstorrent.com; s=google; t=1728236603; x=1728841403; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=spALRDUsYOwVLjrj+itG5SK1W6mJ4BemNUJT/dXw+2w=;
+        b=dI1KmE5guor3Dabk6JaNuXA0zx+FQaoplEbg2OMK6bMbxvPU+f59KMCUkUmyYHNNJ8
+         pzYOxIXr5zj/g7paCV17g+0bWGrRf4AZBqcQVUAhdByD+UQkhp+KsfKk7I1NjUGrUkVY
+         tb1IVEdl5nxx+V/hhr1aMAULWXR0s0fk9jbLmWvHsIW9J3khvba0jvtRmJTPVwxkccrQ
+         WWOp+PqGx+wft07pjHfUtLC4T3ff4lwwHFekn0bmopoY9fBywR0Nlrlz23BFcxj/icG5
+         h7z6FmRcmalp2oCdgmLrjey/bPDZ5VYeMH47hnArLEWxsTvxjd5jfbo3r0ucADBnqK3V
+         Qk+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728236539; x=1728841339;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X0ZI6ioZn3DighbuW3Kr9aBRm249nRfxXwsbXRgrMZs=;
-        b=JP8oUeeseuFrGnS46PMw77iKVFulVtphbw6g8RCqpHA1g2Y94j9dBQvrW7Q4GfwSkv
-         rTcw2PD6snaFV9eVnVvbOeOmtUpNJMq96Ps/dOI2JqS0BHjqtA+aO4bleHOWZH8GAHbR
-         W9Xq+Pu6yRqtvynu42izB4Yv/JiYni5inZ8K4UzwXAF6/4ImXr8yCx4AR8jrVdnJ7Yuc
-         igkqkTaKT0ukfDdLseavX90+RJW2GBEWIqUoESG5QHwkVQCRSfOheRUFvdz9oVZ2DFrz
-         QADD3Dbv4s67iza0Pcv/ccLunp4ETncc4ayePcDr6z8G4pHpi0o/fWRiEuWdc0mSFAhA
-         TUmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaNt1af30KKy/PAJlaep/Ctve7pMAY25uXFJbJ60LYo6fJHMkIEVQkWWRqpC4X6+BKqA+GnD+y1Xe/oVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycNerMA04IoJ4Krn1aAjmH+lm3N0yTH/lmbPW5WNLL2ZWP3Dqp
-	R8NpnvjaZsqSx/kqfCfTojn2h5gVJvIc9VWhexYzPxPQ1dh5fygi0b2/eRSn0lA=
-X-Google-Smtp-Source: AGHT+IGoaSO8mXybmttjE0PjfTON2+lvsPgF+pKcE8RcfrFzGQ87t9Lb+0HugsiuUxPHtdIqWev3Uw==
-X-Received: by 2002:a05:600c:4514:b0:42c:a802:a8b4 with SMTP id 5b1f17b1804b1-42f859b0f48mr64493895e9.0.1728236539304;
-        Sun, 06 Oct 2024 10:42:19 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f8d133b73sm38697715e9.9.2024.10.06.10.42.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Oct 2024 10:42:18 -0700 (PDT)
-Message-ID: <8f815f67-b0e7-4425-8c0e-6a6449ee35ca@blackwall.org>
-Date: Sun, 6 Oct 2024 20:42:17 +0300
+        d=1e100.net; s=20230601; t=1728236603; x=1728841403;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=spALRDUsYOwVLjrj+itG5SK1W6mJ4BemNUJT/dXw+2w=;
+        b=UgNJXxNV/QRBPN1FySBevOB5JB3msfaOsN7DsXgnzSITGEPefDPKNadem13gS9zLlH
+         qfGeP4avxHbngXSCUTQlQQjxGSfFUDznE8FugEMmei9IBjkUZw/yYbZW3jnZHXM8PO5B
+         X0xU7y+s7npDPmJ1ofMA5mmWBgC3tDlmAo4zUgYIkDRy5J4kgY7e697I1HHu8UqCmyLw
+         zRObgto8cNAQaQ9eYxJGNdN9/00uaZpuw1wAc2KN/C8tMYMweybEBPDPdeE5dhnjaZhy
+         fKrAHW4BuyxnhXbCmfYnpjOWQwPiSeNlMEKePUdU74krS0cRQ6XRgHls0cXnTgkLipN/
+         +A1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU4l4LhjfhcZjILXHIDPDVoOR5q+d8F3w3O13ZLF27TkWayBx0e3/oLTgAxCB2IXmwj+99CjK5UD1TXkB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt6+kH28mgC5cjNwPwLHMfB0mQJ44GWzNyXGgKqf6OzCV1C52s
+	Fb9c3adb39627gQWgNahMTAK/TOC2cSKPS/cO8HNfQhCEJx7mGnDARj0b3RCYYH+agFGjoBW2CY
+	2
+X-Google-Smtp-Source: AGHT+IGMq3wabIJdCjVaKWXN4FS9fMNNTljNtGBedaNmcPo1nYMUBIfKrJpWTH3HdQf2za7dBdMOLQ==
+X-Received: by 2002:a05:6a20:6f91:b0:1d2:f00e:47bb with SMTP id adf61e73a8af0-1d6dfa417a1mr13006921637.21.1728236602914;
+        Sun, 06 Oct 2024 10:43:22 -0700 (PDT)
+Received: from [127.0.1.1] (71-34-69-82.ptld.qwest.net. [71.34.69.82])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d6526bsm2999591b3a.159.2024.10.06.10.43.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 10:43:22 -0700 (PDT)
+From: Drew Fustini <dfustini@tenstorrent.com>
+Subject: [PATCH v2 0/3] pinctrl: th1520: Improve code quality
+Date: Sun, 06 Oct 2024 10:43:20 -0700
+Message-Id: <20241006-th1520-pinctrl-fixes-v2-0-b1822ae3a6d7@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bridge: use promisc arg instead of skb flags
-To: Amedeo Baragiola <ingamedeo@gmail.com>
-Cc: Roopa Prabhu <roopa@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, bridge@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Pablo Neira Ayuso <pablo@netfilter.org>
-References: <20241005014514.1541240-1-ingamedeo@gmail.com>
- <c06d9227-dcac-4131-9c2d-83dace086a5d@blackwall.org>
- <CAK_HC7bOe2KhVnDiG4Z3tpkodiCkewEct7r2gXanjGBC8WwFsQ@mail.gmail.com>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <CAK_HC7bOe2KhVnDiG4Z3tpkodiCkewEct7r2gXanjGBC8WwFsQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADjMAmcC/4WNQQrCMBBFr1Jm7cgkmlhceQ/poiYTO6BpSUJRS
+ u9u2gu4fP/z/l8gcxLOcG0WSDxLljFW0IcG3NDHJ6P4yqBJnxWRwTIoowknia6kFwb5cEavyT9
+ se2ovbKGqU+K9qOa9qzxILmP67i+z2tI/g7NCQuOs8SH05IluheO2kTiWoxvf0K3r+gPvOrexv
+ gAAAA==
+To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
+ Fu Wei <wefu@redhat.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Drew Fustini <dfustini@tenstorrent.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+X-Mailer: b4 0.14.1
 
-On 06/10/2024 20:24, Amedeo Baragiola wrote:
-> I agree, just patch actually changes the behaviour when a BR_FDB_LOCAL
-> dst is found and drops the traffic because promisc is *always* set to
-> false when a BR_FDB_LOCAL dst is found in br_handle_frame_finish().
-> I guess the problem I was trying to solve was that since the
-> introduction of the promisc flag we still use brdev->flags &
-> IFF_PROMISC in br_pass_frame_up() which is essentially the value of
-> promisc (except in the BR_FDB_LOCAL case above) instead of promisc
-> itself.
-> 
-> Amedeo
-> 
-> 
-[snip]
+This series contains code quality improvements for the new TH1520
+pinctrl driver [1]:
 
-Please don't top post on netdev@. 
-The current code works correctly, my question to Pablo was more about if the warn
-can still be triggered by adding a BR_FDB_LOCAL fdb and setting bridge
-promisc on, then we'll hit that codepath with promisc == false and it's
-kind of correct because traffic would've been passed up anyway, but the
-promisc flag can be actually set on the device..
+ - Fix smatch warning that the return value is not correctly set when an
+   unknown pin error occurs
+ - Linus suggested using guarded mutexs so I've converted the thp->mutex
+   lock to that usage.
+ - Linus also suggested using a scoped iterator for the DT for-each
+   child node loop: for_each_available_child_of_node_scoped.
 
-Cheers,
- Nik
+The series is based on the linusw devel branch [2].
 
+[1] https://lore.kernel.org/lkml/CACRpkdavPAv2sPRREQhx_A7EtOj6Ld_n+NcO+vH0QCnfVedXKw@mail.gmail.com/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=devel
+
+Changes since v1:
+- Move the scoped iterator conversion to a separate patch and remove the
+  child put operations as they are no longer needed
+- Link: https://lore.kernel.org/lkml/20241005-th1520-pinctrl-fixes-v1-0-5c65dffa0d00@tenstorrent.com/
+
+Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+---
+Drew Fustini (3):
+      pinctrl: th1520: Fix return value for unknown pin error
+      pinctrl: th1520: Convert thp->mutex to guarded mutex
+      pinctrl: th1520: Convert dt child node loop to scoped iterator
+
+ drivers/pinctrl/pinctrl-th1520.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
+---
+base-commit: 2694868880705e8f6bb61b24b1b25adc42a4a217
+change-id: 20241005-th1520-pinctrl-fixes-d20db68387e6
+
+Best regards,
+-- 
+Drew Fustini <dfustini@tenstorrent.com>
 
 
