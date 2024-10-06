@@ -1,146 +1,107 @@
-Return-Path: <linux-kernel+bounces-352536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A568399206C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A65AC992071
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C36A1F21A0D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:25:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8C1D1F2194F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8046A18B47B;
-	Sun,  6 Oct 2024 18:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JkO257Y7"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDF02C853;
+	Sun,  6 Oct 2024 18:34:45 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8372D18A6BB;
-	Sun,  6 Oct 2024 18:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5767BEACD;
+	Sun,  6 Oct 2024 18:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728239122; cv=none; b=BIddDBwqWXGTMEDWZVA5UhLObfTvMBlbFh4HKhKkt4a3ifXQBbh0SlOban0RKThcfvwtNW0bdAbaJyVYqrQ/EWhWxmfy2MEHfzXYNQZhUk2F5SS/xzVY5SWgIrzkIVzj9+M4BjxID0aG91kRv9pdahqMAQHaQt+k3JHeYhJEkZs=
+	t=1728239685; cv=none; b=bxjzO8IMj8Hv8Ir/zdjMhD9VFz5zUFCl4or+BKsThc4FBSpxWhgBbML9+eGuhFytIIsatNXuOT0nr0GmfNbS/yPc+bEXl2TqqzkHV9UALnNfn++cl+xJh7TuDvoI4ukCVi0Y4hqJxp+0ftGCBjRJ8VWa3Y/uPmDqBxjBJVgdeE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728239122; c=relaxed/simple;
-	bh=pYbxQaLMcZtpftUxh//oaazmdIZ5kBKpUWHBsDASlR8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AYxchh7RKTFXI1LBFWzIvIbGC4QVMRnYugyNrG/jEQep2w/H6CyNGdZ3Nsd/kTu5/28hvnejN8HiGhtAJJL1OKT0L2Bws4TfR3I7mGhFsUwuUo7lkBTmBP//1UtAKwk5N/xAjEpaB1VZmmYq8OnlqpUm0VMmPJsJ6a4kEKNnX9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JkO257Y7; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e082f2a427so2690012a91.3;
-        Sun, 06 Oct 2024 11:25:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728239120; x=1728843920; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0r5PI5Fsr/AroJKeUAO8bkOP6c9YME9rlzxUNbudK/0=;
-        b=JkO257Y7PkLz4+VwY+peN1c03f3EjbhxGvqMH5Pc3GaY5CoGdtbqE6IoWThCdEymt5
-         lo+CSrog4ByhRZfAEkBELFotT8lh9bKmVtsCxj3ztujItHHlP6ke1khx6URfEn+Bt9J9
-         MwB3TSFd7XNzBnTqEccVq/0cov5LmMoHXQcky3sfWqLgqmewNOjuqehfbU9sVUK2dzvf
-         ANMqZ8O5HKWitndLjSV+bwH21zkrSb3T9xE8R7TRxs6QcsuFCs8MzyocDod6vYl4GghW
-         2IGvfA8Qc9JSKKRlQz4CGCHqeGm23uz+72sxeWAJxm1ToDJK0c3DV7x+5W9A38B9UbIV
-         /bEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728239120; x=1728843920;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0r5PI5Fsr/AroJKeUAO8bkOP6c9YME9rlzxUNbudK/0=;
-        b=MyfoOFsfvCrv30Ae+YwMY2jeMjzAef9gylSQB8bFMTTsAMt5bqpSsCGIFuvaZoBbRf
-         gM+XQDmuOwZ4RMHmTEE2O0Cujz6++VuhPUpVvXdr4uSSBN6f7j924hCof4KqxKwVAGHJ
-         rd25V/2ky9aAgnEc7PfDtaSUpQ+4BQAaq8mKpppiiffeTwZgWC1YQqrDrSIy7v8H1QAt
-         36Pzo39jrv8c5diLcIojHBGU48oQCU8ljM9VUSnbOY6gKkGn491Ce98OfkQdDOb9ruW0
-         kJe2cCK76HwajnEzrAUkGZQFNzwZYWcK9wesWEgYSx8YzusKB9Obf5FtEgQ6SK5sIiFR
-         Z/fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvDwjurpuKnd8cfnbSg402jWWBR7hzPPeLyMU4VxjyU/En1K2UPANpvUxqzydC5dpnueV2c5lxLgZD@vger.kernel.org, AJvYcCX/w2u6h2KLwqCvYXBBXFiyh12Dj9BglmgbOE4/BynXRZ5h0tYzAulwGtlWJqCZuVS2VaDn812Fk95IQbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpyN0phSh6CNcsGBASs8z0OvLS7O9oPHgryybyTclHtC3Z3IIJ
-	FQJyo/0AUU2kSamvPKBQUeAdwKnUOYbA9M5AdjJs3nKNy3igOHWr
-X-Google-Smtp-Source: AGHT+IFtOoTTIfseZL/AtxCGULgp8rsMErzM23/LafWsSPdU3aoQM3dDxgKn7TbBiyBWhpWUoSB38Q==
-X-Received: by 2002:a17:90b:4ac7:b0:2e1:cda1:12c6 with SMTP id 98e67ed59e1d1-2e1e63c58c8mr9370758a91.40.1728239119736;
-        Sun, 06 Oct 2024 11:25:19 -0700 (PDT)
-Received: from localhost.localdomain ([113.30.217.221])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e85c905esm5458471a91.17.2024.10.06.11.25.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 11:25:19 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	s=arc-20240116; t=1728239685; c=relaxed/simple;
+	bh=bz/6mdQZ9+I7pNFGDTyp0XME/c6fIV3UFvKZbTD37j4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WvEr2AFiN9pcHCcW0zURK2qdF9l36lDsK+dRfkiDHFxYiD5yfi91e5ydVlwed3rbagOhu3WcuioO6QUOdNj2bGl7tlqP4aZZ/2XY1Cd+u6Es3oZmEyOImHBebS2MMifTtPHzRhdTOFn6lSwUynC35qH5dSdpL5tKy10YO1OPu5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A745C20077D;
+	Sun,  6 Oct 2024 20:24:47 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 932F6200076;
+	Sun,  6 Oct 2024 20:24:47 +0200 (CEST)
+Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 61DBA203BD;
+	Sun,  6 Oct 2024 20:24:48 +0200 (CEST)
+Date: Sun, 6 Oct 2024 20:24:47 +0200
+From: Jan Petrous <jan.petrous@oss.nxp.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-pci@vger.kernel.org (open list:PCIE DRIVER FOR ROCKCHIP),
-	linux-rockchip@lists.infradead.org (open list:PCIE DRIVER FOR ROCKCHIP),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC support),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v6 RESET 3/3] PCI: rockchip: Refactor rockchip_pcie_disable_clocks() function signature
-Date: Sun,  6 Oct 2024 23:54:38 +0530
-Message-ID: <20241006182445.3713-4-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20241006182445.3713-1-linux.amoon@gmail.com>
-References: <20241006182445.3713-1-linux.amoon@gmail.com>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	dl-S32 <S32@nxp.com>
+Subject: Re: [PATCH v2 0/7] Add support for Synopsis DWMAC IP on NXP
+ Automotive SoCs S32G2xx/S32G3xx/S32R45
+Message-ID: <ZwLV7zpfQht0errK@lsv051416.swis.nl-cdc01.nxp.com>
+References: <AM9PR04MB85066576AD6848E2402DA354E2832@AM9PR04MB8506.eurprd04.prod.outlook.com>
+ <ff9b3d88-9fe7-47fa-a425-4661181f9321@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ff9b3d88-9fe7-47fa-a425-4661181f9321@kernel.org>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-Refactor the rockchip_pcie_disable_clocks function to accept a
-struct rockchip_pcie pointer instead of a void pointer. This change
-improves type safety and code readability by explicitly specifying
-the expected data type.
+On Mon, Aug 19, 2024 at 08:03:30AM +0200, Krzysztof Kozlowski wrote:
+> On 18/08/2024 23:50, Jan Petrous (OSS) wrote:
+> > The SoC series S32G2xx and S32G3xx feature one DWMAC instance,
+> > the SoC S32R45 has two instances. The devices can use RGMII/RMII/MII
+> > interface over Pinctrl device or the output can be routed
+> > to the embedded SerDes for SGMII connectivity.
+> > 
+> > The provided stmmac glue code implements only basic functionality,
+> > interface support is restricted to RGMII only.
+> > 
+> > This patchset adds stmmac glue driver based on downstream NXP git [0].
+> > 
+> > [0] https://github.com/nxp-auto-linux/linux
+> 
+> All your threading is completely broken which makes it difficult to
+> apply and compare patchsets. Just try - use b4 diff on this...
+> 
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-v6: Fix the subject, add the missing () in the function name.
-v5: Fix the commit message and add r-b Manivannan.
-v4: None
-v3: None
-v2: None
----
- drivers/pci/controller/pcie-rockchip.c | 3 +--
- drivers/pci/controller/pcie-rockchip.h | 2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
+Sorry for that. I had some difficulties with enabling SMTP traffic,
+so I used Outlook what I see is totally unusable solution.
 
-diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
-index 87daa3288a01..b528d561b2de 100644
---- a/drivers/pci/controller/pcie-rockchip.c
-+++ b/drivers/pci/controller/pcie-rockchip.c
-@@ -269,9 +269,8 @@ int rockchip_pcie_enable_clocks(struct rockchip_pcie *rockchip)
- }
- EXPORT_SYMBOL_GPL(rockchip_pcie_enable_clocks);
- 
--void rockchip_pcie_disable_clocks(void *data)
-+void rockchip_pcie_disable_clocks(struct rockchip_pcie *rockchip)
- {
--	struct rockchip_pcie *rockchip = data;
- 
- 	clk_bulk_disable_unprepare(rockchip->num_clks, rockchip->clks);
- }
-diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
-index 2761699f670b..7f0f938e9195 100644
---- a/drivers/pci/controller/pcie-rockchip.h
-+++ b/drivers/pci/controller/pcie-rockchip.h
-@@ -347,7 +347,7 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip);
- int rockchip_pcie_get_phys(struct rockchip_pcie *rockchip);
- void rockchip_pcie_deinit_phys(struct rockchip_pcie *rockchip);
- int rockchip_pcie_enable_clocks(struct rockchip_pcie *rockchip);
--void rockchip_pcie_disable_clocks(void *data);
-+void rockchip_pcie_disable_clocks(struct rockchip_pcie *rockchip);
- void rockchip_pcie_cfg_configuration_accesses(
- 		struct rockchip_pcie *rockchip, u32 type);
- 
--- 
-2.44.0
+Now I have all b4/lei/msmtp/mutt tools installed and will use
+it for v3.
+
+BR.
+/Jan
 
 
