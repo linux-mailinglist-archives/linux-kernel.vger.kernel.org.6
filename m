@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-352421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D6D991EDE
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:25:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7B3991EE1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60D36B211B4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6EF71C2133C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CA174068;
-	Sun,  6 Oct 2024 14:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB3F7A15B;
+	Sun,  6 Oct 2024 14:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYE/baFK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="pKW0ASxz"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09361BC5C;
-	Sun,  6 Oct 2024 14:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB951BC5C;
+	Sun,  6 Oct 2024 14:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728224743; cv=none; b=qRlwwLX+AAo7JKx/opEKgMzo4anq15X0Cew8uTKpKgS+cKhQcC40UkQ9rUpXINnqsBzXFklIKPRpWiPTGTvZbftW7PNbxx8MiXftX2CDatPn8RHvhPBw6iHG9ZxjYhLodUFoQtznkBB+Acb2UhnChn+g92eNtFxhKOaMCQVCryw=
+	t=1728224909; cv=none; b=oke30uvCPoxYRqtVHG4ExrWJW5n2p/tx1ylYeY4JGkoozyCNgEk6odKmZxiuowOc3AlOMF5t5VOEgIODDhlWGYGrk+nXdDli3uNHZGitvmtcsEfRaqXEM27Z1+tWfbE18V0u9G3FFx17FlN5JQWuUFz8ow7jNSIZCrA7LqVuiPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728224743; c=relaxed/simple;
-	bh=VkvN3Ikd1Kd8c5idpilxjQqs75DVPd/LG7krmaFwONU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BcpgJR5/SjC4FRD/UARp2G9vTWZUmLzJTMtYDUrBtVQpcD5EHFhFkirXC8clgENmYb7uhm30gW2Iwj5J18GAEPF+kKwO/DwY1fiudR7YxzsQnNWBo4+Da0w8dOhR9gNgm624ODS0AO6iv3r02WO86c0zcLbOY/90aeAhHPz+c5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OYE/baFK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E94E8C4CEC5;
-	Sun,  6 Oct 2024 14:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728224742;
-	bh=VkvN3Ikd1Kd8c5idpilxjQqs75DVPd/LG7krmaFwONU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OYE/baFK1amumWqel3sL8cMrJ8BB4n0ctqFm30il2gTUlWfbP1utk2b+XSdLbQjG4
-	 i6jezwXJNyoccxd76beQTaw4RmybG23uouRxlEeWey4MpPK4QF6Zg/Mmtb7OTsn6KF
-	 xu8KyAgxvKN79tzldYlmyckCWOVNADFSmdvyHc0okMwJRb7263Ha439IVH98JDLw3g
-	 nJI3WKKKu6vjV1snRY2D0TVe9hoib6PAGIjv0/cprnIRSjseXu5QHq8K0kQuXDrv+e
-	 tE4Rn6wTA7D+xZdbmI+tPHPVGUtA/kZzpTd3T8FTtAOUG5jImh2IdSF07fLjKJ0ks/
-	 521GNOiyw4Lxg==
-Date: Sun, 6 Oct 2024 15:25:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Michael
- Hennerich <michael.hennerich@analog.com>, Kim Seer Paller
- <kimseer.paller@analog.com>, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v2] iioc: dac: ltc2664: Fix span variable usage in
- ltc2664_channel_config function
-Message-ID: <20241006152533.329d9b59@jic23-huawei>
-In-Reply-To: <20241005170722.19542-1-pvmohammedanees2003@gmail.com>
-References: <20241005170722.19542-1-pvmohammedanees2003@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728224909; c=relaxed/simple;
+	bh=2J+HJerAn9SyRTw7kgkXQgQ6VHGpkYCkKcpdJu5CLaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MoD19LnIDCyU/xOD5XPoNglsul6O4PjkHMlPMVtM7JFBDQJmtEVZkPuWlYKlgaqPltkhYnvAf8wTD3mURFMmYNYHs7ycy8qczshRgjOE9UdxOhByFwUNPUHEVx+Rg4HREuKXygf72uW7lnkq3aIVadUUiXSC8uEsQi6cd0cdLz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=pKW0ASxz; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=BYh/uadcx7hpMbZYA5L2kaBD9nu6GyrJfQav8HzP/z4=; b=pKW0ASxzWvHn9+AQ
+	Tfonil8qru3keyWNFfQql17VFACzSoq1Bc+Nzfwulmu8EiomaU5ipO7gbTzO/Xb4XPJtIyQz9FmNv
+	qxr9qovQ0TfxKDfUPMbYZVn4TVVH+IyXUiuEZfZs2BMN6pVBdHRUmhUzqz5uhw1BNWP5YRCZudehg
+	fQtV1GFsg8C0gG2awWrLghDI/9q4cFG8EQbOuhdEMFSHtGLmqTbm8Jifo8nO1WTt4V+HbJVu/wAWx
+	Iut8CjkIA5+bD+gUo2DG3o9TDsIY3xeYABJxmaJupH/1yq0cAZ800kE7uJKh67fkA3Bive80NeUsN
+	3vOuJ/ozQBs0q0f2hg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sxSFB-009GmO-03;
+	Sun, 06 Oct 2024 14:28:21 +0000
+Date: Sun, 6 Oct 2024 14:28:20 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: maorg@nvidia.com, bharat@chelsio.com, jgg@ziepe.ca,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: of c4iw_fill_res_qp_entry
+Message-ID: <ZwKehJ34PzNN6FQx@gallifrey>
+References: <Zv_4qAxuC0dLmgXP@gallifrey>
+ <20241006140558.GF4116@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20241006140558.GF4116@unreal>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 14:27:10 up 151 days,  1:41,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Sat,  5 Oct 2024 22:37:22 +0530
-Mohammed Anees <pvmohammedanees2003@gmail.com> wrote:
+* Leon Romanovsky (leon@kernel.org) wrote:
+> On Fri, Oct 04, 2024 at 02:16:08PM +0000, Dr. David Alan Gilbert wrote:
+> > Hi,
+> >   One of my scripts noticed that c4iw_fill_res_qp_entry is not called
+> > anywhere; It came from:
+> > 
+> > commit 5cc34116ccec60032dbaa92768f41e95ce2d8ec7
+> > Author: Maor Gottlieb <maorg@mellanox.com>
+> > Date:   Tue Jun 23 14:30:38 2020 +0300
+> > 
+> >     RDMA: Add dedicated QP resource tracker function
+> >     
+> > I was going to send a patch to deadcode it, but is it really a bug and
+> > it should be assigned in c4iw_dev_ops in cxgb4/provider.c ?
+> > 
+> > (Note I know nothing about the innards of your driver, I'm just spotting
+> > the unused function).
 
-> In the current implementation of the ltc2664_channel_config function,
-> a variable named span is declared and initialized to 0, intended to
-> capture the return value of the ltc2664_set_span function. However,
-> the output of ltc2664_set_span is directly assigned to chan->span,
-> leaving span unchanged. As a result, when the function later checks
-> if (span < 0), this condition will never trigger an error since
-> span remains 0, this flaw leads to ineffective error handling. The
-> current patch resolves this issue by using the ret variable for 
-> getting the return value, later assigning if successful and also 
-> effectively removing span variable.
+Thanks for the reply,
+
+> It is a bug, something like that should be done.
+
+Ah good I spotted; out of curiosity, what would be the symptom?
+
+I don't have the hardware to test this, can I suggest that you send that patch?
+
+Dave
+
+> diff --git a/drivers/infiniband/hw/cxgb4/provider.c b/drivers/infiniband/hw/cxgb4/provider.c
+> index 10a4c738b59f..e059f92d90fd 100644
+> --- a/drivers/infiniband/hw/cxgb4/provider.c
+> +++ b/drivers/infiniband/hw/cxgb4/provider.c
+> @@ -473,6 +473,7 @@ static const struct ib_device_ops c4iw_dev_ops = {
+>         .fill_res_cq_entry = c4iw_fill_res_cq_entry,
+>         .fill_res_cm_id_entry = c4iw_fill_res_cm_id_entry,
+>         .fill_res_mr_entry = c4iw_fill_res_mr_entry,
+> +       .fill_res_qp_entry = c4iw_fill_res_qp_entry,
+>         .get_dev_fw_str = get_dev_fw_str,
+>         .get_dma_mr = c4iw_get_dma_mr,
+>         .get_hw_stats = c4iw_get_mib,
+> (END)
 > 
-> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
-> Fixes: 4cc2fc445d2e4e63ed6bd5d310752d88d365f8e4
-> ---
-> v2:
-> - Using the ret variable to store the result from ltc2664_set_span
-> ---
->  drivers/iio/dac/ltc2664.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/iio/dac/ltc2664.c b/drivers/iio/dac/ltc2664.c
-> index 5be5345ac5c8..7dafcba7ece7 100644
-> --- a/drivers/iio/dac/ltc2664.c
-> +++ b/drivers/iio/dac/ltc2664.c
-> @@ -516,7 +516,7 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
->  	const struct ltc2664_chip_info *chip_info = st->chip_info;
->  	struct device *dev = &st->spi->dev;
->  	u32 reg, tmp[2], mspan;
-> -	int ret, span = 0;
-> +	int ret;
->  
->  	mspan = LTC2664_MSPAN_SOFTSPAN;
->  	ret = device_property_read_u32(dev, "adi,manual-span-operation-config",
-> @@ -579,20 +579,24 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
->  		ret = fwnode_property_read_u32_array(child, "output-range-microvolt",
->  						     tmp, ARRAY_SIZE(tmp));
->  		if (!ret && mspan == LTC2664_MSPAN_SOFTSPAN) {
-> -			chan->span = ltc2664_set_span(st, tmp[0] / 1000,
-> +			ret = ltc2664_set_span(st, tmp[0] / 1000,
->  						      tmp[1] / 1000, reg);
-> -			if (span < 0)
-> -				return dev_err_probe(dev, span,
-> +			if (ret < 0)
-> +				return dev_err_probe(dev, ret,
->  						     "Failed to set span\n");
-> +			else
-else is unnecessary here as we have the standard check and error and return
-if set pattern.
-
-
-> +				chan->span = ret;
->  		}
->  
->  		ret = fwnode_property_read_u32_array(child, "output-range-microamp",
->  						     tmp, ARRAY_SIZE(tmp));
->  		if (!ret) {
-> -			chan->span = ltc2664_set_span(st, 0, tmp[1] / 1000, reg);
-> -			if (span < 0)
-> -				return dev_err_probe(dev, span,
-> +			ret = ltc2664_set_span(st, 0, tmp[1] / 1000, reg);
-> +			if (ret < 0)
-> +				return dev_err_probe(dev, ret,
->  						     "Failed to set span\n");
-> +			else
-and here.
-> +				chan->span = ret;
->  		}
->  	}
->  
-
+> > 
+> > Thoughts?
+> > 
+> > Dave
+> > -- 
+> >  -----Open up your eyes, open up your mind, open up your code -------   
+> > / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+> > \        dave @ treblig.org |                               | In Hex /
+> >  \ _________________________|_____ http://www.treblig.org   |_______/
+> > 
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
