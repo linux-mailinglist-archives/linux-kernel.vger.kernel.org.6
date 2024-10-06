@@ -1,149 +1,407 @@
-Return-Path: <linux-kernel+bounces-352240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B884991C24
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 04:33:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EE7991C28
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 04:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33310B20D04
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 02:32:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 128781F223F4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 02:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAB717F4F5;
-	Sun,  6 Oct 2024 02:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6895A166F07;
+	Sun,  6 Oct 2024 02:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAEACb6p"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBWkivxV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BECD17C9BA;
-	Sun,  6 Oct 2024 02:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785B9150990;
+	Sun,  6 Oct 2024 02:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728181750; cv=none; b=iE/u4nFW1bqL4eYIgU1tt/WmmpS6ZAAPXzpazg02M4nD3O5FNNK0ruMLMIXyISdrbRtMCD930lmGcwo6MycvOiD8L/VmieszlJSmXK1GY/OxIzs/d4BSXwQFcx7Pwn0lVqFk04vmdSUPo+T5khe2xUHmAGMLM83R1A7PA/MmSno=
+	t=1728181988; cv=none; b=caCFPBXIyg1dX99YPgUT3n/nHM+uiYECVBjxdNDwCFKFTGeAjGdYKmLK6zYmdFYY25sfrqTm6tCAV+Cb+wxT0Z4aeyYlDp1C1SyhLFqTXbkNnoU4k/MBNmmtOyKfpFq2Z+bijXjl0MkRSP6xNUYVx1aZpxgJOiOzNDM7lUU2nm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728181750; c=relaxed/simple;
-	bh=xkMQUJ+a/seJ+Y5YjIAKxVPqeaNfl7Neu2vo2r4t7VA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rWu0pZtl2yZb6ePrlndxIeREhFtuljFJIg8/jJmHSvD25eAPmioZyacE9KGtPJfWXzKJ5XpRranJ0caY8NTZtg+sDIoZiSfcmeu2TRMMT0ucgsD7RY9BTOczTHrM3va/A3G9+uu6xnZ49xJPg2p6jUQI0wWPDv21i9+gAoNGiUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAEACb6p; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71dea49e808so1536445b3a.1;
-        Sat, 05 Oct 2024 19:29:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728181748; x=1728786548; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6KWs0i5ENfOJtknzBiWTETb7i51VBhlSos8aop6cLiw=;
-        b=hAEACb6p3wbx6N9CcunzPDsaM2x5TTzT7hEe4j3IqH++IYZlSPcV6eP+Iq5683/0pJ
-         Q7ccZ+heggQru4QAyByOJ0KS6nGCAlOKDC/Tpr9uMsOnPnMlPjgyZslbPT+wMGRrhv2i
-         IUIypQhLI5db++Q/odzd6Wp2XuunMYCfvnerBTck79mvsE1gsOLRP/5YetUnaULe3XfV
-         gySor7oNKAqZ1FTNNARTIOSRDFk8UmRgs/Q5T7rPSPiR092OYINmWwO4pCJl5j4zQ/Wr
-         CPGe+kfcTipccQ/6wcrr0glcPI75EgUf8alGaHQmXdeS0Rh1b9v965OFqImkev8h4D0I
-         dOQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728181748; x=1728786548;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6KWs0i5ENfOJtknzBiWTETb7i51VBhlSos8aop6cLiw=;
-        b=hkBGbGvZeaYcNaCO8qQTNrQpdLMjucYbcxPxh/PLkKgi1ZphimIWcUU1oaMXIVZYbX
-         UXLy9yOEJOPoEd1OIYMDiFvJ3X72gylGVpCLIy3mDyd7ZDGfgmifEQGGnw6mN7OKmxVx
-         7VQj5ZeSV5BKSkJ1gFk/T5ovqyzjKCaUQgfD1nfjXmXjyMFBg7YlDV6umzvMTFTZ3qjA
-         vCNnrbeZIsHkBFFs7MGW17sNS3cUxf8RQ9jfgYyWpFsT91BjF+EA6VmKV0P/HDY65Swr
-         7VIWyTCeNs+eS4rktwL6Vw5nz1besWj7h1yusrRcd5mV5KAkfTCT1sKhjDE6SjuXWMYC
-         ihMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHNdzsL5v/fO11wBB5n5Kvk1ZnQDPfUYr7pNq5tW/UUqlLIpwN/8yuzQyZpRmGlYR2Y1D2SBpOqmRz084=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnvHOyQn/hnozv4HxS1xudv4O3P1U4QpKRd9bNrsevGumM9PN3
-	cPm+OLdgqzEYRcYfzfUeim1bucK+t8ulnAsgK5DHpQY4CjUOCyn6cZDNMw==
-X-Google-Smtp-Source: AGHT+IEvmSdDdZF870VA1Mm/Ta9tCFiOKOs1rkOxDioNknv6DcvQtKxwQ+yoE3VfC9AU1hqVk/n3vw==
-X-Received: by 2002:a05:6a00:190a:b0:706:74be:686e with SMTP id d2e1a72fcca58-71de2474d77mr12085555b3a.26.1728181747820;
-        Sat, 05 Oct 2024 19:29:07 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cbb9bcsm2103550b3a.6.2024.10.05.19.29.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 19:29:07 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: andrew@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	jacob.e.keller@intel.com,
-	horms@kernel.org,
-	sd@queasysnail.net,
-	chunkeey@gmail.com
-Subject: [PATCH net-next 14/14] net: ibm: emac: mal: move dcr map down
-Date: Sat,  5 Oct 2024 19:28:44 -0700
-Message-ID: <20241006022844.1041039-15-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241006022844.1041039-1-rosenp@gmail.com>
-References: <20241006022844.1041039-1-rosenp@gmail.com>
+	s=arc-20240116; t=1728181988; c=relaxed/simple;
+	bh=T3atJqm7ZOV2yisi8eKQe00NIrA6eNu39ES72TrLnIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DsFZ2sTtQo1iLVxJAU32cwVzbi9RdQXh33TgBjz8ZRtMpC6EfQHX8q3wzXnB+4ntlykjyXAoh9IRy6h3uCfi1VACd4ZHuLjzsDiBr9CPKYWFhB4n1DEp0kwHaVlMukxYnLAaC1BWF1ULqUpr/kO02Ky+HjDspbHfhzsJXG9kCcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBWkivxV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ADE6C4CEC2;
+	Sun,  6 Oct 2024 02:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728181988;
+	bh=T3atJqm7ZOV2yisi8eKQe00NIrA6eNu39ES72TrLnIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lBWkivxVl/Vw+803plgtXqVzv399SjHbM5mx6u7TDv8Yudn5dYlDuHflQBjYB6ryE
+	 3nXhOkHmlJgP5CGjUJlZvpUCWxEXj8DewNNP8/r21E8Y9vQEaWZgP6WI4iYWb1FNpU
+	 eGrWnHkOcYDza/7fcWSh75p6XwKeS+Qy9u4Uon+0uobt5R+jVhdwHGgxIh0cqHjL0V
+	 bm7YzWlKpbm+8+5EA1v71sLMHoDVKjmG1JeJEsIMoHjFMbSkqrlf3U/WQcJQU9vqg1
+	 Jr19ETrGGM08JQ+ixHTJohPZcCrvNVbkTOdNo3LR70T47cg56v6slOoQ/hB4cjaVXY
+	 Hep39BgoULFww==
+Date: Sat, 5 Oct 2024 21:33:05 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
+Subject: Re: [PATCH 2/3] mailbox: qcom-cpucp-mbox: Add support for SC7280
+ CPUCP mailbox controller
+Message-ID: <daorjvhony2y2ye2b3tus37bzux4hqqmhftyjsem7fz5cp2z42@a7ftfpnuvbja>
+References: <20240924050941.1251485-1-quic_kshivnan@quicinc.com>
+ <20240924050941.1251485-3-quic_kshivnan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240924050941.1251485-3-quic_kshivnan@quicinc.com>
 
-There's actually a bug above where it returns instead of calling goto.
-Instead of calling goto, move dcr_map and friends down as they're used
-right after the spinlock in mal_reset.
+On Tue, Sep 24, 2024 at 10:39:40AM GMT, Shivnandan Kumar wrote:
+> The SC7280 CPUCP mailbox controller is compatible with legacy mailbox
+> hardware.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/ibm/emac/mal.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+"mailbox hardware" is a very vague description of something.
 
-diff --git a/drivers/net/ethernet/ibm/emac/mal.c b/drivers/net/ethernet/ibm/emac/mal.c
-index 4f58a38f4b32..e6354843d856 100644
---- a/drivers/net/ethernet/ibm/emac/mal.c
-+++ b/drivers/net/ethernet/ibm/emac/mal.c
-@@ -553,6 +553,18 @@ static int mal_probe(struct platform_device *ofdev)
- 	}
- 	mal->num_rx_chans = prop[0];
- 
-+	if (of_device_is_compatible(ofdev->dev.of_node, "ibm,mcmal-405ez")) {
-+#if defined(CONFIG_IBM_EMAC_MAL_CLR_ICINTSTAT) && \
-+		defined(CONFIG_IBM_EMAC_MAL_COMMON_ERR)
-+		mal->features |= (MAL_FTR_CLEAR_ICINTSTAT |
-+				MAL_FTR_COMMON_ERR_INT);
-+#else
-+		printk(KERN_ERR "%pOF: Support for 405EZ not enabled!\n",
-+				ofdev->dev.of_node);
-+		return -ENODEV;
-+#endif
-+	}
-+
- 	dcr_base = dcr_resource_start(ofdev->dev.of_node, 0);
- 	if (dcr_base == 0) {
- 		printk(KERN_ERR
-@@ -566,18 +578,6 @@ static int mal_probe(struct platform_device *ofdev)
- 		return -ENODEV;
- 	}
- 
--	if (of_device_is_compatible(ofdev->dev.of_node, "ibm,mcmal-405ez")) {
--#if defined(CONFIG_IBM_EMAC_MAL_CLR_ICINTSTAT) && \
--		defined(CONFIG_IBM_EMAC_MAL_COMMON_ERR)
--		mal->features |= (MAL_FTR_CLEAR_ICINTSTAT |
--				MAL_FTR_COMMON_ERR_INT);
--#else
--		printk(KERN_ERR "%pOF: Support for 405EZ not enabled!\n",
--				ofdev->dev.of_node);
--		return -ENODEV;
--#endif
--	}
--
- 	INIT_LIST_HEAD(&mal->poll_list);
- 	INIT_LIST_HEAD(&mal->list);
- 	spin_lock_init(&mal->lock);
--- 
-2.46.2
+> Implement support for this functionality which enable HLOS to
+> CPUCP communication.
+> 
 
+Please describe the problem that this solves. What "legacy mailbox
+hardware"? Why do you want to talk to the CPUCP?  What is a HLOS? What
+is the CPUCP?
+
+It seems from the patch that the current implementation supports
+something we call "version 2" of the cpucp mailbox interface and you're
+adding support for v1. Please make sure that the commit message describe
+such things.
+
+> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+> ---
+>  drivers/mailbox/qcom-cpucp-mbox.c | 156 +++++++++++++++++++++++-------
+>  1 file changed, 122 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/mailbox/qcom-cpucp-mbox.c b/drivers/mailbox/qcom-cpucp-mbox.c
+> index e5437c294803..faae6e069ea1 100644
+> --- a/drivers/mailbox/qcom-cpucp-mbox.c
+> +++ b/drivers/mailbox/qcom-cpucp-mbox.c
+> @@ -13,18 +13,24 @@
+>  #include <linux/platform_device.h>
+> 
+>  #define APSS_CPUCP_IPC_CHAN_SUPPORTED		3
+> -#define APSS_CPUCP_MBOX_CMD_OFF			0x4
+> -
+> -/* Tx Registers */
+> -#define APSS_CPUCP_TX_MBOX_CMD(i)		(0x100 + ((i) * 8))
+> 
+>  /* Rx Registers */
+> -#define APSS_CPUCP_RX_MBOX_CMD(i)		(0x100 + ((i) * 8))
+> -#define APSS_CPUCP_RX_MBOX_MAP			0x4000
+> -#define APSS_CPUCP_RX_MBOX_STAT			0x4400
+> -#define APSS_CPUCP_RX_MBOX_CLEAR		0x4800
+> -#define APSS_CPUCP_RX_MBOX_EN			0x4c00
+> -#define APSS_CPUCP_RX_MBOX_CMD_MASK		GENMASK_ULL(63, 0)
+> +#define APSS_CPUCP_V2_RX_MBOX_CMD_MASK		GENMASK_ULL(63, 0)
+> +#define APSS_CPUCP_V1_SEND_IRQ_VAL		BIT(28)
+> +#define APSS_CPUCP_V1_CLEAR_IRQ_VAL		BIT(3)
+> +#define APSS_CPUCP_V1_STATUS_IRQ_VAL		BIT(3)
+> +
+> +struct qcom_cpucp_mbox_desc {
+> +	u32 enable_reg;
+
+Do you really need these parameters to be dynamic? E.g. you only touch
+enable_reg from the v2 code paths...
+
+> +	u32 map_reg;
+> +	u32 rx_reg;
+> +	u32 tx_reg;
+> +	u32 status_reg;
+> +	u32 clear_reg;
+> +	u32 chan_stride;
+
+"u32" tells me that this has to be 32 bits, e.g. because the value is
+going into a register... But these are just offsets...
+
+Please use "unsigned int" to denote "a natural number".
+
+> +	bool v2_mbox;
+
+How about "version" and give it a value 1 or 2?
+
+> +	u32 num_chans;
+> +};
+> 
+>  /**
+>   * struct qcom_cpucp_mbox - Holder for the mailbox driver
+> @@ -35,6 +41,7 @@
+>   */
+>  struct qcom_cpucp_mbox {
+>  	struct mbox_chan chans[APSS_CPUCP_IPC_CHAN_SUPPORTED];
+> +	const struct qcom_cpucp_mbox_desc *desc;
+>  	struct mbox_controller mbox;
+>  	void __iomem *tx_base;
+>  	void __iomem *rx_base;
+> @@ -48,13 +55,40 @@ static inline int channel_number(struct mbox_chan *chan)
+>  static irqreturn_t qcom_cpucp_mbox_irq_fn(int irq, void *data)
+
+Why is the existing function renamed "v2" and this newly introduced
+function not given a version?
+
+>  {
+>  	struct qcom_cpucp_mbox *cpucp = data;
+> +	const struct qcom_cpucp_mbox_desc *desc = cpucp->desc;
+> +	int i;
+> +
+> +	for (i = 0; i < desc->num_chans; i++) {
+> +		u32 val = readl(cpucp->rx_base + desc->status_reg + (i * desc->chan_stride));
+> +		struct mbox_chan *chan = &cpucp->chans[i];
+> +		unsigned long flags;
+> +
+> +		if (val & APSS_CPUCP_V1_STATUS_IRQ_VAL) {
+> +			writel(APSS_CPUCP_V1_CLEAR_IRQ_VAL,
+> +			       cpucp->rx_base + desc->clear_reg + (i * desc->chan_stride));
+> +			/* Make sure reg write is complete before proceeding */
+> +			mb();
+> +			spin_lock_irqsave(&chan->lock, flags);
+> +			if (chan->cl)
+> +				mbox_chan_received_data(chan, NULL);
+> +			spin_unlock_irqrestore(&chan->lock, flags);
+> +		}
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static irqreturn_t qcom_cpucp_v2_mbox_irq_fn(int irq, void *data)
+> +{
+> +	struct qcom_cpucp_mbox *cpucp = data;
+> +	const struct qcom_cpucp_mbox_desc *desc = cpucp->desc;
+>  	u64 status;
+>  	int i;
+> 
+> -	status = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_STAT);
+> +	status = readq(cpucp->rx_base + desc->status_reg);
+> 
+> -	for_each_set_bit(i, (unsigned long *)&status, APSS_CPUCP_IPC_CHAN_SUPPORTED) {
+> -		u32 val = readl(cpucp->rx_base + APSS_CPUCP_RX_MBOX_CMD(i) + APSS_CPUCP_MBOX_CMD_OFF);
+> +	for_each_set_bit(i, (unsigned long *)&status, desc->num_chans) {
+> +		u32 val = readl(cpucp->rx_base + desc->rx_reg + (i * desc->chan_stride));
+>  		struct mbox_chan *chan = &cpucp->chans[i];
+>  		unsigned long flags;
+> 
+> @@ -62,7 +96,7 @@ static irqreturn_t qcom_cpucp_mbox_irq_fn(int irq, void *data)
+>  		spin_lock_irqsave(&chan->lock, flags);
+>  		if (chan->cl)
+>  			mbox_chan_received_data(chan, &val);
+> -		writeq(BIT(i), cpucp->rx_base + APSS_CPUCP_RX_MBOX_CLEAR);
+> +		writeq(BIT(i), cpucp->rx_base + desc->clear_reg);
+>  		spin_unlock_irqrestore(&chan->lock, flags);
+>  	}
+> 
+> @@ -72,12 +106,15 @@ static irqreturn_t qcom_cpucp_mbox_irq_fn(int irq, void *data)
+>  static int qcom_cpucp_mbox_startup(struct mbox_chan *chan)
+>  {
+>  	struct qcom_cpucp_mbox *cpucp = container_of(chan->mbox, struct qcom_cpucp_mbox, mbox);
+> +	const struct qcom_cpucp_mbox_desc *desc = cpucp->desc;
+>  	unsigned long chan_id = channel_number(chan);
+>  	u64 val;
+> 
+> -	val = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
+> -	val |= BIT(chan_id);
+> -	writeq(val, cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
+> +	if (desc->v2_mbox) {
+> +		val = readq(cpucp->rx_base + desc->enable_reg);
+> +		val |= BIT(chan_id);
+> +		writeq(val, cpucp->rx_base + desc->enable_reg);
+> +	}
+
+No equivalent in "legacy"?
+> 
+>  	return 0;
+>  }
+> @@ -85,22 +122,26 @@ static int qcom_cpucp_mbox_startup(struct mbox_chan *chan)
+>  static void qcom_cpucp_mbox_shutdown(struct mbox_chan *chan)
+>  {
+>  	struct qcom_cpucp_mbox *cpucp = container_of(chan->mbox, struct qcom_cpucp_mbox, mbox);
+> +	const struct qcom_cpucp_mbox_desc *desc = cpucp->desc;
+>  	unsigned long chan_id = channel_number(chan);
+>  	u64 val;
+> 
+> -	val = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
+> -	val &= ~BIT(chan_id);
+> -	writeq(val, cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
+> +	if (desc->v2_mbox) {
+> +		val = readq(cpucp->rx_base + desc->enable_reg);
+> +		val &= ~BIT(chan_id);
+> +		writeq(val, cpucp->rx_base + desc->enable_reg);
+> +	}
+
+Ditto
+
+>  }
+> 
+>  static int qcom_cpucp_mbox_send_data(struct mbox_chan *chan, void *data)
+>  {
+>  	struct qcom_cpucp_mbox *cpucp = container_of(chan->mbox, struct qcom_cpucp_mbox, mbox);
+> +	const struct qcom_cpucp_mbox_desc *desc = cpucp->desc;
+> +	u32 val = desc->v2_mbox ? *(u32 *)data : APSS_CPUCP_V1_SEND_IRQ_VAL;
+
+Please rewrite this without ternary operators.
+
+>  	unsigned long chan_id = channel_number(chan);
+> -	u32 *val = data;
+> -
+> -	writel(*val, cpucp->tx_base + APSS_CPUCP_TX_MBOX_CMD(chan_id) + APSS_CPUCP_MBOX_CMD_OFF);
+> +	u32 offset = desc->v2_mbox ? (chan_id * desc->chan_stride) : 0;
+> 
+> +	writel(val, cpucp->tx_base + desc->tx_reg + offset);
+>  	return 0;
+>  }
+> 
+> @@ -112,41 +153,66 @@ static const struct mbox_chan_ops qcom_cpucp_mbox_chan_ops = {
+> 
+>  static int qcom_cpucp_mbox_probe(struct platform_device *pdev)
+>  {
+> +	const struct qcom_cpucp_mbox_desc *desc;
+>  	struct device *dev = &pdev->dev;
+>  	struct qcom_cpucp_mbox *cpucp;
+>  	struct mbox_controller *mbox;
+> +	struct resource *res;
+>  	int irq, ret;
+> 
+> +	desc = device_get_match_data(&pdev->dev);
+> +	if (!desc)
+> +		return -EINVAL;
+> +
+>  	cpucp = devm_kzalloc(dev, sizeof(*cpucp), GFP_KERNEL);
+>  	if (!cpucp)
+>  		return -ENOMEM;
+> 
+> -	cpucp->rx_base = devm_of_iomap(dev, dev->of_node, 0, NULL);
+> -	if (IS_ERR(cpucp->rx_base))
+> -		return PTR_ERR(cpucp->rx_base);
+> +	cpucp->desc = desc;
+> +
+> +	if (desc->v2_mbox) {
+> +		cpucp->rx_base = devm_of_iomap(dev, dev->of_node, 0, NULL);
+> +		if (IS_ERR(cpucp->rx_base))
+> +			return PTR_ERR(cpucp->rx_base);
+> +	/* Legacy mailbox quirks due to shared region with EPSS register space */
+
+Why can't we have the same code in both cases?
+
+> +	} else {
+> +		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +		if (!res) {
+> +			dev_err(&pdev->dev, "Failed to get the device base address\n");
+
+It's not only base address.
+
+> +			return -ENODEV;
+> +		}
+> +		cpucp->rx_base = devm_ioremap(dev, res->start, resource_size(res));
+> +		if (!cpucp->rx_base) {
+> +			dev_err(dev, "Failed to ioremap the cpucp rx irq addr\n");
+> +			return -ENOMEM;
+> +		}
+> +	}
+> 
+>  	cpucp->tx_base = devm_of_iomap(dev, dev->of_node, 1, NULL);
+>  	if (IS_ERR(cpucp->tx_base))
+>  		return PTR_ERR(cpucp->tx_base);
+> 
+> -	writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
+> -	writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_CLEAR);
+> -	writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_MAP);
+> +	if (desc->v2_mbox) {
+> +		writeq(0, cpucp->rx_base + desc->enable_reg);
+> +		writeq(0, cpucp->rx_base + desc->clear_reg);
+> +		writeq(0, cpucp->rx_base + desc->map_reg);
+
+
+Is there a reason why the legacy system does not need or want to clear
+these?
+
+> +	}
+> 
+>  	irq = platform_get_irq(pdev, 0);
+>  	if (irq < 0)
+>  		return irq;
+> 
+> -	ret = devm_request_irq(dev, irq, qcom_cpucp_mbox_irq_fn,
+> -			       IRQF_TRIGGER_HIGH, "apss_cpucp_mbox", cpucp);
+> +	ret = devm_request_irq(dev, irq, desc->v2_mbox ? qcom_cpucp_v2_mbox_irq_fn :
+> +		qcom_cpucp_mbox_irq_fn, IRQF_TRIGGER_HIGH, "apss_cpucp_mbox", cpucp);
+
+The use of a ternary operator, in combination with odd line wrapping
+makes this completely unreadable. Please fix.
+
+>  	if (ret < 0)
+>  		return dev_err_probe(dev, ret, "Failed to register irq: %d\n", irq);
+> 
+> -	writeq(APSS_CPUCP_RX_MBOX_CMD_MASK, cpucp->rx_base + APSS_CPUCP_RX_MBOX_MAP);
+> +	if (desc->v2_mbox)
+> +		writeq(APSS_CPUCP_V2_RX_MBOX_CMD_MASK, cpucp->rx_base + desc->map_reg);
+> 
+>  	mbox = &cpucp->mbox;
+>  	mbox->dev = dev;
+> -	mbox->num_chans = APSS_CPUCP_IPC_CHAN_SUPPORTED;
+> +	mbox->num_chans = desc->num_chans;
+>  	mbox->chans = cpucp->chans;
+>  	mbox->ops = &qcom_cpucp_mbox_chan_ops;
+> 
+> @@ -157,8 +223,30 @@ static int qcom_cpucp_mbox_probe(struct platform_device *pdev)
+>  	return 0;
+>  }
+> 
+> +static const struct qcom_cpucp_mbox_desc sc7280_cpucp_mbox = {
+> +	.tx_reg = 0xC,
+> +	.chan_stride = 0x1000,
+> +	.status_reg = 0x30C,
+
+Lowercase hex digits please (although the question above whether these
+needs to be defined remains).
+
+> +	.clear_reg = 0x308,
+> +	.v2_mbox = false,
+> +	.num_chans = 2,
+> +};
+> +
+> +static const struct qcom_cpucp_mbox_desc x1e80100_cpucp_mbox = {
+> +	.rx_reg = 0x104,
+> +	.tx_reg = 0x104,
+> +	.chan_stride = 0x8,
+> +	.map_reg = 0x4000,
+> +	.status_reg = 0x4400,
+> +	.clear_reg = 0x4800,
+> +	.enable_reg = 0x4C00,
+> +	.v2_mbox = true,
+> +	.num_chans = 3,
+> +};
+> +
+>  static const struct of_device_id qcom_cpucp_mbox_of_match[] = {
+> -	{ .compatible = "qcom,x1e80100-cpucp-mbox" },
+> +	{ .compatible = "qcom,x1e80100-cpucp-mbox", .data = &x1e80100_cpucp_mbox},
+> +	{ .compatible = "qcom,sc7280-cpucp-mbox", .data = &sc7280_cpucp_mbox},
+
+Perhaps I'm missing something, but seems like the only information you
+actually need to pass here is 1 or 2, to denote which version/code paths
+you should take through the driver.
+
+Regards,
+Bjorn
+
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, qcom_cpucp_mbox_of_match);
+> --
+> 2.25.1
+> 
 
