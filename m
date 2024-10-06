@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-352378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0504C991E51
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:47:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E6F991E54
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B8BC1C20D0F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:47:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25129B20ED6
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCF8176AA3;
-	Sun,  6 Oct 2024 12:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87FD176259;
+	Sun,  6 Oct 2024 12:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3fe97gF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YK5NfoEl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D183216D4E8;
-	Sun,  6 Oct 2024 12:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4C1171E70;
+	Sun,  6 Oct 2024 12:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728218856; cv=none; b=ueSjC3ImGZP1bI2ASFV3zRnGhruEYDF8BG7TdCh8PpSfo3Z+eAIvIt3f0ajKXSb4OJRSN4EjyO38GixeltTy3gBNDybYiIEyiXUT4FQDkXmOJwpeExco1eBFCx0CFt9Li/b/2B87AZ1tjJ2qeQyIN1yTMJnPksXEwslmdnEdmEU=
+	t=1728218891; cv=none; b=G3JQiOpMRx9fvPb2b6mhOyeO+N2HJFpTdyiy40ihK6DZ9BPwmQ1NcYl/eKoCAj6jScuPwtBneGppcTsQnXRdoTIG4oFeD7AiTYyCjc5el0Vcha5IAlBlU3pxeuby2p+DjN7O6Yaiafn0FdfrzZHEj2HLi5CZmjv+qMGA/WyJVuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728218856; c=relaxed/simple;
-	bh=AvaqHiW6YBwhtBJJbJKHvvdReZ767Nx9pY7bI7eLXLY=;
+	s=arc-20240116; t=1728218891; c=relaxed/simple;
+	bh=EC+uOqpK9Zdf6/1C0U/deKBs4TGD19dRrEPioHxLh0I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ICZh3T8ynC29fNf8GhFhc94IXiL+8dqZeQ/ul6W0x6pLBwGna2J4koZVMWtZTNiTr3gkVQz+oCEMkXLw773XKrpGoeq9dXoyaE62xGtILoyupyxESGY4r4cDBFUW6zqACvgOGCfIvkXOvmMi+MC3BEsBktd4A8g8nVUoQ82Gun8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3fe97gF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF33AC4CEC5;
-	Sun,  6 Oct 2024 12:47:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2CwFu4XvMvdMIteDdaNwoyNhvtyc6qMc4kH1oqoGTkNNeWnQ24bwuONn8sdqtvCLMp18rzgXs7SZXQSHBeRTLE04Qfga6eziWXcS1Zk7OvzAqy4DRC4q8Yfui+xcVR5s6G8ex0ZY3aMI+u8ou9xKIsi1xyeXdVYS1gZWP81Hj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YK5NfoEl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DCBEC4CEC5;
+	Sun,  6 Oct 2024 12:48:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728218856;
-	bh=AvaqHiW6YBwhtBJJbJKHvvdReZ767Nx9pY7bI7eLXLY=;
+	s=k20201202; t=1728218890;
+	bh=EC+uOqpK9Zdf6/1C0U/deKBs4TGD19dRrEPioHxLh0I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g3fe97gFneWXirJqu9oC4yIjBak7BMOaI2EGU0tGl5B00h9IcuR4TUUwGmyhL9CQL
-	 eCHAQVT+AtdTOnOw8zCDpWTG4SD/T0HtGYO3qROCo1rdPnWlEfZTqh0I9Yr2MszMxh
-	 6EEeDETov8pr9JhkXfZRkMZWwBUDTEIzarRWW35pEhLC5CAerYhjwDGgNQM8y93I2B
-	 2zUtAlxy9a8SgkPm7wAO9bF6vnrIvWqpseH/LVR1HCobkBMSag/+MntlVrQkSXWq9l
-	 IKMx4JD54Jqvco0dYT6X3gVDW7TfhqT3T6QIEQOVlxDYPtC2l9MS+5QZRoZwWYObNX
-	 RiWu/3upU2a0w==
-Date: Sun, 6 Oct 2024 14:47:33 +0200
+	b=YK5NfoElqmkBgts0p0Byk1UTMJEpi9y5sEN/VSX2SszHkVyyoorXtZrOybWepWi8q
+	 q+2LCO1UIgQjJ/SKnmqGNcNIna/R4eGskHIWcADQprP3GCVQfjWrBD3gmtq1aWyBEQ
+	 oV9ItvEAIpc55+dzMTyDpZnTucGk0lbfyzXdWG9Lhce4gjyjIiN26LucMdYsP9Zg1s
+	 mgYFx9I7KuXi/go1oy8ZSBobya2+Q6LSsGY8hnwUJavq0Ek6SRLYxV7z1UDc7FQK3Q
+	 6t5WsTSGyU+3xrrJabNHps2ZVqIcJbGWl/DIa5LroL5hN1tfVuWpCah14HKt79A8Fb
+	 KRAoaeD74GYOQ==
+Date: Sun, 6 Oct 2024 14:48:06 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Frank Wunderlich <linux@fw-web.de>
-Cc: Chaotian Jing <chaotian.jing@mediatek.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wenbin Mei <wenbin.mei@mediatek.com>, 
-	Frank Wunderlich <frank-w@public-files.de>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Frank Wunderlich <frank-w@public-files.de>, 
+	Leilk Liu <leilk.liu@mediatek.com>, linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, daniel@makrotopia.org, linux-gpio@vger.kernel.org, 
-	john@phrozen.org, eladwf@gmail.com, ansuelsmth@gmail.com
-Subject: Re: [PATCH v1 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
-Message-ID: <4pmhzc5sf2c7dww3tihyqq5coco6u5nx7xvtqami7u55442gij@mqvyvqrpa6ft>
-References: <20241006102154.17087-1-linux@fw-web.de>
- <20241006102154.17087-2-linux@fw-web.de>
+	linux-mediatek@lists.infradead.org, daniel@makrotopia.org, john@phrozen.org, eladwf@gmail.com, 
+	ansuelsmth@gmail.com
+Subject: Re: [PATCH v1] dt-bindings: spi: add compatibles for mt7988
+Message-ID: <kmzl5zmqqudoq2jcdacfsbwq3axdvcml4m5kw5oqqo2hj6iiuq@xzeg6penuic3>
+References: <20241006102740.17948-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,51 +62,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241006102154.17087-2-linux@fw-web.de>
+In-Reply-To: <20241006102740.17948-1-linux@fw-web.de>
 
-On Sun, Oct 06, 2024 at 12:21:48PM +0200, Frank Wunderlich wrote:
+On Sun, Oct 06, 2024 at 12:27:39PM +0200, Frank Wunderlich wrote:
 > From: Frank Wunderlich <frank-w@public-files.de>
 > 
-> Add binding definitions for mmc on MT7988 SoC.
-> 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
->  .../devicetree/bindings/mmc/mtk-sd.yaml       | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> index c532ec92d2d9..db7d1c570aea 100644
-> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> @@ -21,6 +21,7 @@ properties:
->            - mediatek,mt7620-mmc
->            - mediatek,mt7622-mmc
->            - mediatek,mt7986-mmc
-> +          - mediatek,mt7988-mmc
->            - mediatek,mt8135-mmc
->            - mediatek,mt8173-mmc
->            - mediatek,mt8183-mmc
-> @@ -263,6 +264,29 @@ allOf:
->              - const: bus_clk
->              - const: sys_cg
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - mediatek,mt7988-mmc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
-> +          items:
-> +            - description: source clock
-> +            - description: HCLK which used for host
-> +            - description: Advanced eXtensible Interface
-> +            - description: Advanced High-performance Bus clock
+> MT7988 has 2 different spi controllers. Add mediatek,ipm-spi-single
+> and mediatek,ipm-spi-quad compatibles.
 
-Why ahb is optional?
+Why generic compatibles?
+
+These are supposed to be SoC-specific.
 
 Best regards,
 Krzysztof
