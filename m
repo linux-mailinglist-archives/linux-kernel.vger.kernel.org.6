@@ -1,356 +1,87 @@
-Return-Path: <linux-kernel+bounces-352331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDB1991DAE
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:09:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9D8991DA7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 809F31F21D80
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:09:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F481F21D7D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AA6176233;
-	Sun,  6 Oct 2024 10:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B165171E68;
+	Sun,  6 Oct 2024 10:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="t7OO4vOD"
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EedZDLcC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9153B171E43;
-	Sun,  6 Oct 2024 10:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A231EB36;
+	Sun,  6 Oct 2024 10:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728209342; cv=none; b=JanZRjnuUn/1d1/JCIg7Y+docAGDFQrb+2AzNVKAA7IspZayMD+mp5TGbhUzcvMWRlPECjWwBR6zu6DrLhT9NROptyDNCy7DhOAsXUAGbNHow8fZIN6Cyw+ilqDGcichLVc/+9c9bHXsLi2lOq3Kvz5wX8DRi8yjJ2P7a2MU26Y=
+	t=1728209332; cv=none; b=d6r70cW4ShkoxXn4kEsrxW4U8jEbjxP8RfjiLxaPW4dm9zO1EhmWOhu6y9pL45OnjVWUKfP1igmt3F8hyb5QGFr37/z7aIdQ0umqApAr1q7iXtAGU+zWPD31WEo6L3CeLXqN39TZwyqMvkmSHXqEi1Z31P2tId1z5rbI8OgjFlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728209342; c=relaxed/simple;
-	bh=X2AYz492IGwzeV/lL9o4hdoM82zMb6McD+iCKqSflNY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oV2lvBBNR/lGdPR4/KYznzcvtr2iATnOJHXK2lNgWf2Ma2ktaU8XA8UW0xeyajfeA+JQjV/WnHpRX+pwqhEJiPbMrIjM/v7pY1p6d2DX5BaNQF7D/DdW/YBauErIY3uAEvSzff5hU5J5rzHP20So8rucClwgsAE+Diy8LhFP7JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=t7OO4vOD; arc=none smtp.client-ip=134.0.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout1.routing.net (Postfix) with ESMTP id DFD3140027;
+	s=arc-20240116; t=1728209332; c=relaxed/simple;
+	bh=kYVOQ+DJUn8ovZlLq1ujKxMx5WjvYg4tFtTaJNTPe4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D3phqYm2sWSzvAu1sxI9xmD3dWJOQZ7HjJIhVv+vin20SmESAe3ISPBw0lTUXDguJNxjoOr7lQ4Re7zIejWMRQRPIXizokBZPGjlHexqMb77F5BTyY24uNW8Pk8YswucBMZU1nCJkqHpoOMBQREICMgY+ZaRV5kIzuP1ffa8DeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EedZDLcC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35976C4CEC5;
 	Sun,  6 Oct 2024 10:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1728209332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vNCopJmZccHmcVKLfF7eeviRLCI1O70ul3xqsxNplgQ=;
-	b=t7OO4vODXLrsb3F1RD58364u6L1eKEEMSfKVYEcPxnDLFERakiTan7mMpFmPoVxTVCxDg0
-	CBrar6/jz8pJ+27uI/lBHSWHXlR32dnLPb+Yssbph2dpvm7/ILDRoxWwWReHaXXD/cWfEr
-	wtSRmafE10a2uA5hdGeJEQ7ZtgE6qnI=
-Received: from frank-u24.. (fttx-pool-217.61.153.101.bambit.de [217.61.153.101])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 3CBD0360250;
-	Sun,  6 Oct 2024 10:08:52 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sean Wang <sean.wang@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	daniel@makrotopia.org,
-	john@phrozen.org,
-	ansuelsmth@gmail.com,
-	eladwf@gmail.com
-Subject: [PATCH v2 4/4] arm64: dts: mediatek: mt7988: add pinctrl support
-Date: Sun,  6 Oct 2024 12:08:40 +0200
-Message-ID: <20241006100843.13280-5-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241006100843.13280-1-linux@fw-web.de>
-References: <20241006100843.13280-1-linux@fw-web.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728209332;
+	bh=kYVOQ+DJUn8ovZlLq1ujKxMx5WjvYg4tFtTaJNTPe4w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EedZDLcCMA0OmSXOvD0iX6xnuDzWiDC64ic9hSY2nPlwt8NLc6oFqx/46MhVfKL4C
+	 6V5iROppm7fLC5j6xsXAZAqrT62HNiZiyJ6qkO06HoePWpQ4mpCChp1FZpBh29KuMH
+	 u3FsXdr2CF/2Ilndhck2BrKx/oyX+q4WHqbqpH/jV99KbV/5eDUmKaj+OPC1OSKr3f
+	 pXDFhBVk7sZbUjRSDz2+uUJGOnVmFkoAp7mVgU2Yp/MoNgkOwtcpx4YHgEAT+WsM7/
+	 tESPg3qTRrQd39s8sVXIGWAC/a238wvmIS1w14EoY5FDXn3zm19XDVK+c8iMg/OGnP
+	 Lh2i3sfYKV83Q==
+Received: by pali.im (Postfix)
+	id 1C61C81A; Sun,  6 Oct 2024 12:08:46 +0200 (CEST)
+Date: Sun, 6 Oct 2024 12:08:46 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Paulo Alcantara <pc@manguebit.com>
+Cc: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Fix getting reparse points from server without WSL
+ support
+Message-ID: <20241006100846.ya5rxpu4z75yaqas@pali>
+References: <20240913200204.10660-1-pali@kernel.org>
+ <20240913201041.cwueaflcxhewnvwj@pali>
+ <73552a5120ff0a49a5e046a08c6c57f4@manguebit.com>
+ <20240917210707.4lt4obty7wlmm42j@pali>
+ <7f29cbf81602313df348fe6d36bdb0e2@manguebit.com>
+ <20240923181000.4x5uzjbllvz5kjhw@pali>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: 9fc0ef96-f68e-47a4-aa4b-763482a8fe5b
+In-Reply-To: <20240923181000.4x5uzjbllvz5kjhw@pali>
+User-Agent: NeoMutt/20180716
 
-From: Frank Wunderlich <frank-w@public-files.de>
+On Monday 23 September 2024 20:10:00 Pali Rohár wrote:
+> On Tuesday 17 September 2024 18:17:08 Paulo Alcantara wrote:
+> > Pali Rohár <pali@kernel.org> writes:
+> > 
+> > > Would you be able to fix the client code to do this?
+> > 
+> > Yep.  Will send it to ML soon.
+> 
+> Perfect, let me know when you have a working version, so I can test it.
 
-Add mt7988a pinctrl node.
-
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
-v2:
-- fix wrong alignment of reg values
----
- arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 241 ++++++++++++++++++++++
- 1 file changed, 241 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-index c9649b815276..7e15934efe0b 100644
---- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/clock/mediatek,mt7988-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/phy/phy.h>
-+#include <dt-bindings/pinctrl/mt65xx.h>
- 
- / {
- 	compatible = "mediatek,mt7988a";
-@@ -105,6 +106,246 @@ clock-controller@1001e000 {
- 			#clock-cells = <1>;
- 		};
- 
-+		pio: pinctrl@1001f000 {
-+			compatible = "mediatek,mt7988-pinctrl";
-+			reg = <0 0x1001f000 0 0x1000>,
-+			      <0 0x11c10000 0 0x1000>,
-+			      <0 0x11d00000 0 0x1000>,
-+			      <0 0x11d20000 0 0x1000>,
-+			      <0 0x11e00000 0 0x1000>,
-+			      <0 0x11f00000 0 0x1000>,
-+			      <0 0x1000b000 0 0x1000>;
-+			reg-names = "gpio", "iocfg_tr",
-+				    "iocfg_br", "iocfg_rb",
-+				    "iocfg_lb", "iocfg_tl", "eint";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pio 0 0 84>;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-parent = <&gic>;
-+			#interrupt-cells = <2>;
-+
-+			mdio0_pins: mdio0-pins {
-+				mux {
-+					function = "eth";
-+					groups = "mdc_mdio0";
-+				};
-+
-+				conf {
-+					pins = "SMI_0_MDC", "SMI_0_MDIO";
-+					drive-strength = <MTK_DRIVE_8mA>;
-+				};
-+			};
-+
-+			i2c0_pins: i2c0-g0-pins {
-+				mux {
-+					function = "i2c";
-+					groups = "i2c0_1";
-+				};
-+			};
-+
-+			i2c1_pins: i2c1-g0-pins {
-+				mux {
-+					function = "i2c";
-+					groups = "i2c1_0";
-+				};
-+			};
-+
-+			i2c1_sfp_pins: i2c1-sfp-g0-pins {
-+				mux {
-+					function = "i2c";
-+					groups = "i2c1_sfp";
-+				};
-+			};
-+
-+			i2c2_0_pins: i2c2-g0-pins {
-+				mux {
-+					function = "i2c";
-+					groups = "i2c2_0";
-+				};
-+			};
-+
-+			i2c2_1_pins: i2c2-g1-pins {
-+				mux {
-+					function = "i2c";
-+					groups = "i2c2_1";
-+				};
-+			};
-+
-+			gbe0_led0_pins: gbe0-led0-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe0_led0";
-+				};
-+			};
-+
-+			gbe1_led0_pins: gbe1-led0-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe1_led0";
-+				};
-+			};
-+
-+			gbe2_led0_pins: gbe2-led0-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe2_led0";
-+				};
-+			};
-+
-+			gbe3_led0_pins: gbe3-led0-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe3_led0";
-+				};
-+			};
-+
-+			gbe0_led1_pins: gbe0-led1-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe0_led1";
-+				};
-+			};
-+
-+			gbe1_led1_pins: gbe1-led1-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe1_led1";
-+				};
-+			};
-+
-+			gbe2_led1_pins: gbe2-led1-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe2_led1";
-+				};
-+			};
-+
-+			gbe3_led1_pins: gbe3-led1-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe3_led1";
-+				};
-+			};
-+
-+			i2p5gbe_led0_pins: 2p5gbe-led0-pins {
-+				mux {
-+					function = "led";
-+					groups = "2p5gbe_led0";
-+				};
-+			};
-+
-+			i2p5gbe_led1_pins: 2p5gbe-led1-pins {
-+				mux {
-+					function = "led";
-+					groups = "2p5gbe_led1";
-+				};
-+			};
-+
-+			mmc0_pins_emmc_45: mmc0-emmc-45-pins {
-+				mux {
-+					function = "flash";
-+					groups = "emmc_45";
-+				};
-+			};
-+
-+			mmc0_pins_emmc_51: mmc0-emmc-51-pins {
-+				mux {
-+					function = "flash";
-+					groups = "emmc_51";
-+				};
-+			};
-+
-+			mmc0_pins_sdcard: mmc0-sdcard-pins {
-+				mux {
-+					function = "flash";
-+					groups = "sdcard";
-+				};
-+			};
-+
-+			uart0_pins: uart0-pins {
-+				mux {
-+					function = "uart";
-+					groups =  "uart0";
-+				};
-+			};
-+
-+			snfi_pins: snfi-pins {
-+				mux {
-+					function = "flash";
-+					groups = "snfi";
-+				};
-+			};
-+
-+			spi0_pins: spi0-pins {
-+				mux {
-+					function = "spi";
-+					groups = "spi0";
-+				};
-+			};
-+
-+			spi0_flash_pins: spi0-flash-pins {
-+				mux {
-+					function = "spi";
-+					groups = "spi0", "spi0_wp_hold";
-+				};
-+			};
-+
-+			spi1_pins: spi1-pins {
-+				mux {
-+					function = "spi";
-+					groups = "spi1";
-+				};
-+			};
-+
-+			spi2_pins: spi2-pins {
-+				mux {
-+					function = "spi";
-+					groups = "spi2";
-+				};
-+			};
-+
-+			spi2_flash_pins: spi2-flash-pins {
-+				mux {
-+					function = "spi";
-+					groups = "spi2", "spi2_wp_hold";
-+				};
-+			};
-+
-+			pcie0_pins: pcie0-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_2l_0_pereset", "pcie_clk_req_n0_0",
-+						 "pcie_wake_n0_0";
-+				};
-+			};
-+
-+			pcie1_pins: pcie1-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_2l_1_pereset", "pcie_clk_req_n1",
-+						 "pcie_wake_n1_0";
-+				};
-+			};
-+
-+			pcie2_pins: pcie2-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_1l_0_pereset", "pcie_clk_req_n2_0",
-+						 "pcie_wake_n2_0";
-+				};
-+			};
-+
-+			pcie3_pins: pcie3-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_1l_1_pereset", "pcie_clk_req_n3",
-+						 "pcie_wake_n3_0";
-+				};
-+			};
-+		};
-+
- 		pwm@10048000 {
- 			compatible = "mediatek,mt7988-pwm";
- 			reg = <0 0x10048000 0 0x1000>;
--- 
-2.43.0
-
+Steve, Paulo, I think that fixing this part of he code has higher
+priority than any other my patches as since commit ea41367b2a60 ("smb:
+client: introduce SMB2_OP_QUERY_WSL_EA") Linux CIFS client is not able
+to fetch & recognize any reparse points from servers without EAs support
+and also from servers which do not support reparse points and EAs
+together, which are all non-recent Windows SMB servers.
 
