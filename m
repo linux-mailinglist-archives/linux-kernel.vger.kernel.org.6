@@ -1,175 +1,143 @@
-Return-Path: <linux-kernel+bounces-352302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983B8991D3B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:29:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3A8991D40
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3887283193
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:29:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C9681C21340
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26A2170A29;
-	Sun,  6 Oct 2024 08:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC15A170A3F;
+	Sun,  6 Oct 2024 08:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fn7aLROt"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jTgAtEXR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F133153814;
-	Sun,  6 Oct 2024 08:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7838F1BF58
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 08:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728203339; cv=none; b=aVjukLqOHRGJa0WOhJqTHsyTLrkzqzPK5qvhTggFl4B4snVJWhhTlFaLH06uHIFZQaUG6fAc3+8m7jF1AJhK9hvifAU6kM1a6njYGrmrCo+twVZk6gRXQlS/ZYVmv1TVptWwkooD8fCGzcK4FV+CAKo2SPyJQi3xWgnprJXqfrY=
+	t=1728203413; cv=none; b=MsYbAefRBSALoiDJQwrJ4OE2zJVW+OtUzVjAXuYf1ZIlY3y50ZbFfKL1Cx7UqXUTKkXHax27ke2IQgVNBtgLxwoLH9AFZkUrQW/OipJPsAcNDkbZVxW5ShyOV1ppDysEUzv/qhN9qAlF5pcxLTi9BrYmyiyBMMQZJKxiVJn8dpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728203339; c=relaxed/simple;
-	bh=bRszkLFQ6+eC/BQ20gGJlgy57D/VgufvdZJVgc18ibw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ghFlFcLZMdy9J41oHPYOzuY+kRjEN1l30El0i9VePpMKW+i85Uv9uZx35zTV5/2GTKkjU6yMYLlumeP1FG41xo4FAP7N7/QilwIO/Z1/5zIhJTFvfVK4ecinNmv6DvPb1bmVoSq8PLlOQouoUz25ivH/dm+el2xWefExsD8L0zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fn7aLROt; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so595779366b.1;
-        Sun, 06 Oct 2024 01:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728203336; x=1728808136; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=luc6tGLvhHVsfASvYGPZIDDNooQTCshdprtz+dgEevY=;
-        b=Fn7aLROtPFPuDwVyIvTKLjHrQhphIbjBAPbAS+r+TGPSTmtVZxa9VDCysNxXHhSHf3
-         whV6pP8pm7PCWfeTsWDzmOTscRRDIJBQ/XEqsU4Vx2MvL1nwrmB5Z1E9lunyOK+4pjs2
-         pb0bIH/grp+S/oJciLYufGduRL8c/AYX3xf/FS8h93ijwt+Io7U8V5a32xI9Rmf/5pWn
-         OxuqJf3eM/An7AIp4W4DdWjhusrMsxsmt7ESquw6yvXHhrazDZFwd4XVkBltpLj6nA+U
-         LqUzWdJayKsWaOpWBDdAjc8lSzahxanWJgEC+XyGrdxIH4TYIQdU+T80NUSfygxLReJM
-         y2Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728203336; x=1728808136;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=luc6tGLvhHVsfASvYGPZIDDNooQTCshdprtz+dgEevY=;
-        b=ee88k0aHNYSVkibsp7WaxYdwLR4+XtoZWqK5GrDs+nsmABgOxguv6wxYUmrYDCePa0
-         YCvy8Gm/4eq75iUjcycBLhMSn7dzH2BSY+6NIy6CarhVre9q21m556rG2t8s2wYY5mQe
-         27KUFGYBp6KDqD2u0yQ3QcdNtgs/L8kHhhvS729Y6AGzJB6sPlhK4Myp46x7uZvRjKUh
-         /WQPb38ux5GMpcoxeZtVqdRMqJ2Dw9HhcibpWSnKswIjPB10+R+sKzh5YTULdkGC0lKI
-         LzzyupE+KTgxGJwY07Yo5Piv+3CZ02F5xW5LxbQI+05fVSrSuntI2q8bBKzhb0yGBADL
-         B4XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaUDTKZzxEpMNMilzXU6JKMyi7gYHY/VRJ5UgD+6EqD7pYBPNMFNA1Zoe9rADMuYbayGbbB0X8jXGakWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO512zjxpnUtKJ/x3sZunAtOwUMspHnxEnrwjtgjGwHbwIAJo8
-	Ar/8i6EI15JSp7xjTGWit6bMyZa+QYNgp8wz7eCrXq0c7GmOlecm
-X-Google-Smtp-Source: AGHT+IGAL1Ndr1M6KLVYgsEmuO35omalB/CeUKr7JW/b9jdvSywdIEZ2JcAVYmLJq2EKBxjW8T+HvA==
-X-Received: by 2002:a17:907:2d90:b0:a86:6fb3:fda5 with SMTP id a640c23a62f3a-a99514f06aamr51349866b.32.1728203335686;
-        Sun, 06 Oct 2024 01:28:55 -0700 (PDT)
-Received: from [10.32.3.23] ([95.183.227.32])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05ecafbsm1844381a12.70.2024.10.06.01.28.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Oct 2024 01:28:53 -0700 (PDT)
-Message-ID: <26eaccf4-f1c3-4d98-a123-4577c5b7530b@gmail.com>
-Date: Sun, 6 Oct 2024 11:28:50 +0300
+	s=arc-20240116; t=1728203413; c=relaxed/simple;
+	bh=O9zKFN97pePSfMsAuC5u8/6R7f9gIX/xDUrjV300V50=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OR4LKJ3KK/6G+V8wojuk3XZwk/qyVPbENjt2biPB1Xd6NECTIP51qiaeqdrWWvpx60QljnHjCIKTDPOkdvprs2F6eDf5U/zyNqneg6OvxJVr/UvcVb93klazMSMoWoBjUNZUYX8RI1rL9bjEmtwumfljeriblCGvl6WhlvOwNZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jTgAtEXR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4966ZqLR011471;
+	Sun, 6 Oct 2024 08:29:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=PZY+DlQqwatgP5nSoW/Qeyztli5qyNU6htpXvSP/Zms=; b=jT
+	gAtEXRUknmpy9Tn+HyIPpVNEN8WWOUGWl1qUbt9Y7lVEOm+ZMKJ8o4og1zV4uSE3
+	/fxNh1uiGaaxNO3wc9nQOPueZwAq3ucAZkHWKliaRh7rYmpd9cvymbqk6OHz80L6
+	MiR+wb5Sd6/eOzBmp18dtAoaanwFQMA/JHCo2rPwTDHhlN1dfpkjXeBvSC9chbsZ
+	kbSs3Qd7v+8e0rJqyhAby2GXtPdHX4f76doMAWP4juEANn/PjFM9XPKpw5749xIG
+	d14Ozr7L9zGiyEvAnW0zgu2W9Emi91XoSohG7uL4kS8pM5ZSE03ceWHGCgHqCsEP
+	NHA8aMO7Ce5+/IzgSCOg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xsnhqj5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 06 Oct 2024 08:29:51 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4968TolN032321
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 6 Oct 2024 08:29:50 GMT
+Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 6 Oct 2024 01:29:45 -0700
+From: Pintu Kumar <quic_pintu@quicinc.com>
+To: <hannes@cmpxchg.org>, <surenb@google.com>, <peterz@infradead.org>,
+        <mingo@redhat.com>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>, <christophe.jaillet@wanadoo.fr>,
+        <linux-kernel@vger.kernel.org>
+CC: <joe@perches.com>, <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
+        Pintu Kumar <quic_pintu@quicinc.com>
+Subject: [PATCH v5] sched/psi: fix memory barrier without comment warnings
+Date: Sun, 6 Oct 2024 13:59:26 +0530
+Message-ID: <20241006082926.20647-1-quic_pintu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Input: zinitix - Don't fail if linux,keycodes prop is
- absent
-To: Nikita Travkin <nikita@trvn.ru>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jakob Hauser <jahau@rocketmail.com>,
- Yassine Oudjana <y.oudjana@protonmail.com>
-References: <20241004-zinitix-no-keycodes-v2-1-876dc9fea4b6@trvn.ru>
-Content-Language: en-US
-From: Yassine Oudjana <yassine.oudjana@gmail.com>
-In-Reply-To: <20241004-zinitix-no-keycodes-v2-1-876dc9fea4b6@trvn.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: KiUBnkzbTBsJ1AGcWs0_shQf8M2Jz5XI
+X-Proofpoint-ORIG-GUID: KiUBnkzbTBsJ1AGcWs0_shQf8M2Jz5XI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ impostorscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=999 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410060059
 
-From: Yassine Oudjana <y.oudjana@protonmail.com>
+These warnings were reported by checkpatch.
+Fix them with minor changes.
+No functional changes.
 
-On 04/10/2024 7:17 pm, Nikita Travkin wrote:
-> When initially adding the touchkey support, a mistake was made in the
-> property parsing code. The possible negative errno from
-> device_property_count_u32() was never checked, which was an oversight
-> left from converting to it from the of_property as part of the review
-> fixes.
-> 
-> Re-add the correct handling of the absent property, in which case zero
-> touchkeys should be assumed, which would disable the feature.
-> 
-> Reported-by: Jakob Hauser <jahau@rocketmail.com>
-> Tested-by: Jakob Hauser <jahau@rocketmail.com>
-> Fixes: 075d9b22c8fe ("Input: zinitix - add touchkey support")
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+WARNING: memory barrier without comment
++       t = smp_load_acquire(trigger_ptr);
 
-Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
+WARNING: memory barrier without comment
++       smp_store_release(&seq->private, new);
 
-> ---
-> Changes in v2:
-> - Refactored the change to simplify the code (Dmitry)
-> - Link to v1: https://lore.kernel.org/r/20241002-zinitix-no-keycodes-v1-1-e84029601491@trvn.ru
-> ---
->   drivers/input/touchscreen/zinitix.c | 34 ++++++++++++++++++++++------------
->   1 file changed, 22 insertions(+), 12 deletions(-)
-> 
-> 
-> ---
-> base-commit: fe21733536749bb1b31c9c84e0b8d2ab8d82ce13
-> change-id: 20241002-zinitix-no-keycodes-f0fe1bdaccb2
-> 
-> Best regards,
-> 
-> diff --git a/drivers/input/touchscreen/zinitix.c b/drivers/input/touchscreen/zinitix.c
-> index 52b3950460e2..716d6fa60f86 100644
-> --- a/drivers/input/touchscreen/zinitix.c
-> +++ b/drivers/input/touchscreen/zinitix.c
-> @@ -645,19 +645,29 @@ static int zinitix_ts_probe(struct i2c_client *client)
->   		return error;
->   	}
->   
-> -	bt541->num_keycodes = device_property_count_u32(&client->dev, "linux,keycodes");
-> -	if (bt541->num_keycodes > ARRAY_SIZE(bt541->keycodes)) {
-> -		dev_err(&client->dev, "too many keys defined (%d)\n", bt541->num_keycodes);
-> -		return -EINVAL;
-> -	}
-> +	if (device_property_present(&client->dev, "linux,keycodes")) {
-> +		bt541->num_keycodes = device_property_count_u32(&client->dev,
-> +								"linux,keycodes");
-> +		if (bt541->num_keycodes < 0) {
-> +			dev_err(&client->dev, "Failed to count keys (%d)\n",
-> +				bt541->num_keycodes);
-> +			return bt541->num_keycodes;
-> +		} else if (bt541->num_keycodes > ARRAY_SIZE(bt541->keycodes)) {
-> +			dev_err(&client->dev, "Too many keys defined (%d)\n",
-> +				bt541->num_keycodes);
-> +			return -EINVAL;
-> +		}
->   
-> -	error = device_property_read_u32_array(&client->dev, "linux,keycodes",
-> -					       bt541->keycodes,
-> -					       bt541->num_keycodes);
-> -	if (error) {
-> -		dev_err(&client->dev,
-> -			"Unable to parse \"linux,keycodes\" property: %d\n", error);
-> -		return error;
-> +		error = device_property_read_u32_array(&client->dev,
-> +						       "linux,keycodes",
-> +						       bt541->keycodes,
-> +						       bt541->num_keycodes);
-> +		if (error) {
-> +			dev_err(&client->dev,
-> +				"Unable to parse \"linux,keycodes\" property: %d\n",
-> +				error);
-> +			return error;
-> +		}
->   	}
->   
->   	error = zinitix_init_input_dev(bt541);
+Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
+
+---
+Changes in V5:
+Corrected api name and missing () in comments as suggested by Christophe JAILLET.
+V4: https://lore.kernel.org/all/a8393bc0-6f56-4e40-b971-4a837cf28323@wanadoo.fr/
+Changes in V4:
+Added () in comment as well suggested by Christophe JAILLET.
+V3: https://lore.kernel.org/all/00aeb243-3d47-42be-b52c-08b39c5fef07@wanadoo.fr/
+Changes in V3:
+Removed signature of Joe as requested. No other change.
+V2: https://lore.kernel.org/all/CAOuPNLi1mUKW_vv0E6Ynzvdw_rHvCye+nAf2bWv6Qj9A8ofX1g@mail.gmail.com/
+Changes in V2:
+Retain printk_deferred warnings as suggested by Joe Perches.
+V1: https://lore.kernel.org/all/a848671f803ba2b4ab14b0f7b09f0f53a8dd1c4b.camel@perches.com/
+---
+ kernel/sched/psi.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 020d58967d4e..907fa3830c8e 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -1474,6 +1474,7 @@ __poll_t psi_trigger_poll(void **trigger_ptr,
+ 	if (static_branch_likely(&psi_disabled))
+ 		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+ 
++	/* Pairs with the smp_store_release() in psi_write() */
+ 	t = smp_load_acquire(trigger_ptr);
+ 	if (!t)
+ 		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+@@ -1557,6 +1558,7 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
+ 		return PTR_ERR(new);
+ 	}
+ 
++	/* Pairs with the smp_load_acquire() in psi_trigger_poll() */
+ 	smp_store_release(&seq->private, new);
+ 	mutex_unlock(&seq->lock);
+ 
+-- 
+2.17.1
 
 
