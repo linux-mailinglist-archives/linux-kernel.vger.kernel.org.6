@@ -1,116 +1,130 @@
-Return-Path: <linux-kernel+bounces-352481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90CDF991FD8
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD66D991FDB
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CFE71C20B1A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:18:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B27C81C20B85
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B0A189F25;
-	Sun,  6 Oct 2024 17:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF87A189BA4;
+	Sun,  6 Oct 2024 17:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KeKLmlMA"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nEzAPBHA"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA34156677
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E96C189F25
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728235092; cv=none; b=BFFdirD4TBOODNG6ljQkg1YuhDvJBi5Ve/J1OXSQuZ453TMCLCjS4lP6blEQtzx4Uzhgt4pFbl6esD+5wbX84BnulX1+fzjeUyc3kP2NKmhmdkgRmmmo2b4AjbGAqCCx48MRKKVkmPs6fFCQg92NQIVj2shFNDGuiC4BIWbuPyE=
+	t=1728235134; cv=none; b=gaEBaS7u+m9gSYqKCSwp6p3SPcTc/5m/Ydm1hr2k295QZwM5hcOGgtiz/4e/8AkOovOHGHPI+y6oKVb5bg7Qmv/2Ry0LrEQKwoY6aUSmL6nqxcU/uvl+31l/o48K0CMXSMD1OT/y9AXaKefPzTFzEXDgFK0y1nW4JQjRKrVCW8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728235092; c=relaxed/simple;
-	bh=Bin7YDXJqMmKBCp7+ofvc9JlUl2S3ibvz2aG8nFJgRc=;
+	s=arc-20240116; t=1728235134; c=relaxed/simple;
+	bh=OLvWw2NBMBUNxK2VPZYC8Qku8L2s556/hM6PEU5EucQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CfPT/5+bmrPEBk0oEsF7C6nGHCQtigUG2XcAtGT2jfVi3Rw4yBsg/VmIfuVhacne/XyYMkZMEQH3BIT/wRdadpD6AIUz2SeZaYZTlnaRxnoq5x8U97qyiJIOfQWBDTyj1RHFdV6NTmKFRTardeOyE5NUFarUhniZuAgru1kBEV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KeKLmlMA; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 6 Oct 2024 13:18:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728235087;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WyJREKlwieF6Ph0K2iiGmYhDA7GHXV0d5WPVEJ0thT8=;
-	b=KeKLmlMATUQZlJ/4YL7dZav4fb7DVW3vFte/EQd0qBCEJ3AQ9CrGKtu9QuIbf9tp6g3bYw
-	mrtiMHdEP3d74Sy2Q7LPU45LQVIGk0AtpUhAXyj2gz4NE92SHg3jAEHk6MBhUAcdyvCcVe
-	B/xCwWYNmDTTTQk5OVxFSWDOY+1kfO0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Martin Steigerwald <martin@lichtvoll.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <v2k6atl7hlaxw4ktu4e2j7mj67sbz63vzrqk6pnxmntrkuzwut@3k4knhrlnqeb>
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
- <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
- <5987583.MhkbZ0Pkbq@lichtvoll.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKTgeBNjeUrB7r+CD6M1W8/iQr4Yt+y+q8Ys+UvhcPs19snhULqxKcolEHDsmmp7c3V+Sv9hTH/MCh1Hae8cNonJR6y61jxW/TJk0YPv+7zo6O5ZnDZZllVokhw9tWuJRYqo01Zzh8q2GG00Xefxa++WxhGzWLkGW5R1H+RaCYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nEzAPBHA; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2facf48166bso41867071fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:18:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728235131; x=1728839931; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3D4iiAvu48BbbMJdyIPgDeJKKpenMDlcp5ms+/X+BQY=;
+        b=nEzAPBHA3bQudSen6PGucrIr6uCbt26Ry+m0kTMekUhtMPrZilffVHnAewL4Mv4oqx
+         3kyvyp08LjfT9bwo6+BU79tZ9wNwj5SMp926q0UMe7kHuXBUIr6KPWvktFCDSxikBczK
+         m9HqWaJ7EIi7WKx6JNC7quGwpZGoOBJS8xE9uovvVDpJR4TiCFTM9A64JCRRiUxopPyg
+         CVq0vDzX7QBwzHValzs2d9zGsMOXTNNmoAmiIeKSO5SgWYIYiMNVhRKB4Q3HO82vgPTI
+         hGmHXcqW6SzXMIpObqOMQp5Cu9+haCWxONFTB27EbxAWqmJOQs9CUhM0htc8S5yt/YjY
+         CbdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728235131; x=1728839931;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3D4iiAvu48BbbMJdyIPgDeJKKpenMDlcp5ms+/X+BQY=;
+        b=rmW0Lyv0NC5lqBKuoP7hDzM+ayfpUlvkxNroLCCL8OamdzXt9vyw6E2oDfJkp42EVj
+         k8RwwNNfAcTAuUO0m2mGy5TYI9Ok7efemhGA20jesvNdvFccRt+6L9kZ0ZgqMNDteuiV
+         3PHYqMgTEKrFUJS4/ShfbRX/tHAnk0Rnr7QaaaJBjPwdqUgQg15Ike256o5TU2znWOMj
+         XV3DvFv6Q6mpSn0kIa07Vo+bkoKjzbiq9//7ZmhS176RkwGgcuesB8eoPkRNi2hIQC+Z
+         y5GPAiZ3NOpSkLQOs0ZUeH+hJUZpRwgQzYOvknVrDlBkfb43Vfr7X2Gm5+OGNuwSexk2
+         0T7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVpNc0W7Iu3xgtQTxRILWZ5JJy7gfXKhyzY9HMX2wJpkzglVS2Xt3u3WEYMIGvV7y0a8SAH0U9biKQ9EUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK5OYtz7kPGlEuU2IcDlu6zpfNF8j2E1VTD4XBrOXhodqInIvr
+	P13uNY/y1F7Kl0npQPBPlZd8l5Csy7eXd5I2IFqG6JXCXkqSbgC2hxRbl9aLvEU=
+X-Google-Smtp-Source: AGHT+IEcmM0dSr9ebBwphR8mlW0qEQpHUsVSoMUQHyu/rhEpukjAdBni/8mDJ7X4A9Q8Ckw0W1+ZMw==
+X-Received: by 2002:a2e:4c11:0:b0:2f6:5f0a:9cf8 with SMTP id 38308e7fff4ca-2faf3d78c74mr31208611fa.39.1728235130705;
+        Sun, 06 Oct 2024 10:18:50 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9b3b4aasm5470651fa.140.2024.10.06.10.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 10:18:49 -0700 (PDT)
+Date: Sun, 6 Oct 2024 20:18:46 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: barnabas.czeman@mainlining.org
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Abhishek Sahu <absahu@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2] clk: qcom: clk-alpha-pll: Fix pll post div mask when
+ width is not set
+Message-ID: <r3tbqs2uma4m7e2bjuknck3xg2t6fs4zaw5xuslw4f7h6mi3tj@qf6lwseklb7b>
+References: <20240925-fix-postdiv-mask-v2-1-b825048b828b@mainlining.org>
+ <jlmnxzkferigmhh5akcr5uumrdychjxyy2flftx5u2sg2w62aa@566u2lqj5od2>
+ <b9369ebfeae8bc1aad3f9da4a6453c3d@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <5987583.MhkbZ0Pkbq@lichtvoll.de>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b9369ebfeae8bc1aad3f9da4a6453c3d@mainlining.org>
 
-On Sun, Oct 06, 2024 at 01:49:23PM GMT, Martin Steigerwald wrote:
-> Hi Kent, hi Linus.
-> 
-> Kent Overstreet - 06.10.24, 02:54:32 CEST:
-> > On Sat, Oct 05, 2024 at 05:14:31PM GMT, Linus Torvalds wrote:
-> > > On Sat, 5 Oct 2024 at 16:41, Kent Overstreet 
-> <kent.overstreet@linux.dev> wrote:
-> > > > If what you want is patches appearing on the list, I'm not unwilling
-> > > > to
-> > > > make that change.
+On Sat, Sep 28, 2024 at 07:05:39PM GMT, barnabas.czeman@mainlining.org wrote:
+> On 2024-09-25 23:28, Dmitry Baryshkov wrote:
+> > On Wed, Sep 25, 2024 at 08:33:20PM GMT, Barnabás Czémán wrote:
+> > > Many qcom clock drivers do not have .width set. In that case value of
+> > > (p)->width - 1 will be negative which breaks clock tree. Fix this
+> > > by checking if width is zero, and pass 3 to GENMASK if that's the
+> > > case.
 > > > 
-> > > I want you to WORK WITH OTHERS. Including me - which means working
-> > > with the rules and processes we have in place.
+> > > Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
+> > > Fixes: 2c4553e6c485 ("clk: qcom: clk-alpha-pll: Fix the pll post div
+> > > mask")
 > > 
-> > That has to work both ways.
-> 
-> Exactly, Kent.
-> 
-> And it is my impression from reading the whole thread up to now and from 
-> reading previous threads it is actually about: Having your way and your 
-> way only.
-> 
-> That is not exactly "work both ways".
-> 
-> Quite similarly regarding your stand towards distributions like Debian.
+> > I think one Fixes tag should be enough.
+> Should I send a v3 remove one of them or not needed?
 
-My issue wasn't with Debian as a whole; it was with one particular
-packaging rule which was causing issues, and a maintainer who - despite
-warnings that it would cause issues - broke the build and sat on it,
-leaving a broken version up, which resulted in users unable to access
-their filesystems when they couldn't mount in degraded mode.
+Judging by the lack of the response, please resend, dropping the extra
+tag.
 
-> I still do have a BCacheFS on my laptop for testing, but meanwhile I 
-> wonder whether some of the crazy kernel regressions I have seen with the 
-> last few kernels where exactly related to having mounted that BCacheFS 
-> test filesystem. I am tempted to replace the BCacheFS with a BTRFS just to 
-> find out.
+> > 
+> > Nevertheless,
+> > 
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > 
+> > > Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> > > ---
+> > > Changes in v2:
+> > > - Pass 3 to GENMASK instead of 0.
+> > > - Add more Fixes tag for reference root cause.
+> > > - Link to v1: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v1-1-f70ba55f415e@mainlining.org
+> > > ---
+> > >  drivers/clk/qcom/clk-alpha-pll.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think you should be looking elsewhere - there have been zero reports
-of random crashes or anything like what you're describing. Even in
-syzbot testing we've been pretty free from the kind of memory safety
-issues that would cause random crashes
-
-The closest bugs to what you're describing would be the
-__wait_on_freeing_inode() deadlock in 6.12-rc1, and the LZ4HC crash that
-I've yet to triage - but you specifically have to be using lz4:15
-compression to hit that path.
-
-The worst syzbot has come up with is something strange at the boundary
-with the crypto code, and I haven't seen any user reports that line up
-with that one.
+-- 
+With best wishes
+Dmitry
 
