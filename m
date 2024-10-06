@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-352440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FD5991F3C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:01:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C347991F3F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E310DB219B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:01:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95171F21A24
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B391465A9;
-	Sun,  6 Oct 2024 15:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4238513EFFB;
+	Sun,  6 Oct 2024 15:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BG7p6yPP"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="mTnkwpsW"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F85143C41
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 15:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FB774040
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 15:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728226868; cv=none; b=HeB41NQ1TzgciPutTcRb2jK7eXFVKkPHddjSV6k6QpinRh6iFQ+JcJHe1KXHnvy+EgP4vuyziyxsaRGgqfFGl8Kb4iruyrWEIUOxo3McCN4OtPN/9ImNlvKmBu50e5t9rAK5tsdJwba2Ly096nhFHhcu1be65ElGmozEYloHHHU=
+	t=1728227463; cv=none; b=YHfbytaKE52IETqsVztmMgehkzpXC8q+FtQT3VHq+w5Hdu1YuN/G0TpUCumnYocC1Xd/ssMFR+Iq5hkpZ8C5BZpGOfBaPwDV7ZEXloc3J6Ibd9DONfUVTvCc9/zpfj5Pbp7rOP6h95b5XLh+XDAInjo6fSRdjmU40vUCVONBc24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728226868; c=relaxed/simple;
-	bh=3Jox7XDbaksL3rWHMjU19bnxw0/FsWSY+Vx94uMawHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uXkpwYEiiMOFeTYhpmyBPPTGwdU/ajyB/ed9xHGF7Hc1vjGVvY6l0I0RqJFnS2GN/yv9jzqN45ALcSoslvdxyN9yxIcSjiHqdiPeXPltaMQ18azBCl1OQ6tQ2fCH3Hus7a7j8fe+YbvCr5i8EMJ9ZU6F2aiox9awXZWhEqmu5gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BG7p6yPP; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6e214c3d045so27067227b3.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 08:01:06 -0700 (PDT)
+	s=arc-20240116; t=1728227463; c=relaxed/simple;
+	bh=TAGDYQL4Ag5hgRhNjRSsMyhD8Ir2jE46LH4oZIIiYyw=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=AMvcPN8SJmIXNPSUV1q603nNeGWRyurxrY1jonKjBcgWiMW8LrybMk4MtuWdpSeWVfvPxJ5FLIF7njHTTXWa0l/dwMEakQUS3yGY0ofpdtjkJWQLBls5PJU6sIoanLQ6E9BPF/usI91hqlDH6bDye8FTPLKo9DNUHGxkjGP47ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=mTnkwpsW; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728226866; x=1728831666; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sr7kBmgWEcI5rnWGX+RCamDzTizwOpc6au1fxKMuuS4=;
-        b=BG7p6yPPrCaRuC+CVEmOsKToR3szaMm/J0UDvq0hMCM3X9xGFCNwQF4sK7w/uhyWbD
-         g/62NLP8hMIAEJ+4CIxgv2tEOE0UhzaBFqx4pcKKZrHv20imtZK+jQhqvpmFvaZ0bgXD
-         4jvEzDnIgRy2wjlNpJogsmCO2DNHB3p0v9+c8Sw6UhFOLULbhxpUJzrrV1JsVh9AxyfQ
-         V+w+SiAEKiX27EORDnXZ3lpy11qzheBiiGYS5/mTXyt4KIfvlBwlb9QkZAMAv+EbDhW2
-         jXt9Rja0NuE0QQZVb8mdBOlv35O6mr40oOs7IpUDG32PpO90QwWVLrqT1Nf/I+7wLJHR
-         TSVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728226866; x=1728831666;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sr7kBmgWEcI5rnWGX+RCamDzTizwOpc6au1fxKMuuS4=;
-        b=mlg8yCrnyrk15ojtUQTnLLyAHsuyfkNwlVAPLgYdoSkueTBuKeg+QWqUD/ai8XRK1k
-         sCuIspZlTEilJXq9at76KhtmSQ+XpPPEtRac3Njhe2mXsEx5kla/uB2+sViFslaBG+MN
-         EnQ7PKCMSsFpLEolr2ABXha1/3kqVHccpDkY/mVSiPWxyZhs5bKuWnqcnGj5mdtvmcCU
-         gtb7hCGPMh5qwRjdH7I2r61vqUECn7AyZJ3+dB+4ULHyeCDOS7AC4JRuCFeZs8xxBUEj
-         DFlSJLiID/x4UZc5bMLlxMWZH3mgPVGqyIqkta6syeYgVC3si/d1VzM5giXjoUxNifBS
-         LFpA==
-X-Forwarded-Encrypted: i=1; AJvYcCULu3moMfxGTUlNmvXNtGQsYmsBn3QgowKW5VyLAKr4agFwU4KC0+4ZjOaqcFFmVR90F0Q7YNWEs0bbGpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBOR2D3tkd8rYhU4kstuRD64F7vFW8/004H3Lv7ouXbRMlnLpW
-	hAp4HkzR75KZg1CEjl2goLWFIFufOARxx/PhQp9ahEz006q92GW+6enRK1AaUf8Mm8zaZHS5xFo
-	q3JID/nLWAThNpNwbLyU2A+DV7xPBj0bIu1e0og==
-X-Google-Smtp-Source: AGHT+IEJycb4R4aw3ReSCNgChwzrEXysCheiplWAjzc1sd3W64fhBUYqqbDLQsAk4nGd84s5GZgRtnV6rDxt3bUR/NM=
-X-Received: by 2002:a05:690c:101:b0:6b1:735c:a2fc with SMTP id
- 00721157ae682-6e2c72466ccmr69109727b3.27.1728226866169; Sun, 06 Oct 2024
- 08:01:06 -0700 (PDT)
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=s3/Q/w/5CU1XhKZEoTDmyoMSHhC3Gmxb9sd48sHYRhk=;
+  b=mTnkwpsWUm7qBEMYOZHeM57muNBh8IvXOiNKuHkAumfQf8Ua7V8fh9cs
+   vUZHZgCoWiteRKHskP6el1C2xxH7Tl5zlNxK0AFXfYmlzUoV/RiSk8/Zs
+   CyFcX35IkiwXy2I03lLa9dFDemkscNryjQGc9SIdBcZRCFNRoZSzoOFyv
+   A=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,182,1725314400"; 
+   d="scan'208";a="98329763"
+Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2024 17:10:58 +0200
+Date: Sun, 6 Oct 2024 17:10:57 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To: Ritesh Harjani <riteshh@linux.ibm.com>
+cc: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org, 
+    oe-kbuild-all@lists.linux.dev
+Subject: fs/ext4/mballoc.c:4597:47-50: opportunity for str_yes_no(ret)
+ (fwd)
+Message-ID: <alpine.DEB.2.22.394.2410061710220.12182@hadrien>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004103046.22209-1-quic_mukhopad@quicinc.com>
-In-Reply-To: <20241004103046.22209-1-quic_mukhopad@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 6 Oct 2024 17:00:55 +0200
-Message-ID: <CAA8EJprNz-Byy6T3qkkUyZnTkyb_7osyuevP8E-xYzzPSmQjUw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] Add support for DisplayPort on SA8775P platform
-To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org, 
-	andersson@kernel.org, simona@ffwll.ch, abel.vesa@linaro.org, 
-	robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
-	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	quic_khsieh@quicinc.com, konrad.dybcio@linaro.org, quic_parellan@quicinc.com, 
-	quic_bjorande@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, quic_riteshk@quicinc.com, 
-	quic_vproddut@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, 4 Oct 2024 at 12:30, Soutrik Mukhopadhyay
-<quic_mukhopad@quicinc.com> wrote:
->
-> This series adds support for the DisplayPort controller
-> and eDP PHY v5 found on the Qualcomm SA8775P platform.
->
-> ---
-> v2: Fixed review comments from Dmitry and Bjorn
->         - Made aux_cfg array as const.
->         - Reused edp_swing_hbr_rbr and edp_swing_hbr2_hbr3 for v5.
->
-> v3: Fixed review comments from Dmitry, Konrad and Bjorn
->         - Used a for loop to write the dp_phy_aux_cfg registers.
->         - Pre-defined the aux_cfg size to prevent any magic numbers.
->         - Added all the necessary DPTX controllers for this platform.
->
-> v4: Fixed review comments from Dmitry and Krzysztof
->         - Updated commit message.
 
-For which patches? How?
 
->
-> ---
->
-> Soutrik Mukhopadhyay (5):
->   dt-bindings: phy: Add eDP PHY compatible for sa8775p
->   phy: qcom: edp: Introduce aux_cfg array for version specific aux
->     settings
->   phy: qcom: edp: Add support for eDP PHY on SA8775P
->   dt-bindings: display: msm: dp-controller: document SA8775P compatible
->   drm/msm/dp: Add DisplayPort controller for SA8775P
->
->  .../bindings/display/msm/dp-controller.yaml   |  1 +
->  .../devicetree/bindings/phy/qcom,edp-phy.yaml |  1 +
->  drivers/gpu/drm/msm/dp/dp_display.c           |  9 +++
->  drivers/phy/qualcomm/phy-qcom-edp.c           | 74 +++++++++++++------
->  4 files changed, 61 insertions(+), 24 deletions(-)
->
-> --
-> 2.17.1
->
+---------- Forwarded message ----------
+Date: Sun, 6 Oct 2024 22:59:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: oe-kbuild@lists.linux.dev
+Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
+Subject: fs/ext4/mballoc.c:4597:47-50: opportunity for str_yes_no(ret)
 
+BCC: lkp@intel.com
+CC: oe-kbuild-all@lists.linux.dev
+CC: linux-kernel@vger.kernel.org
+TO: Ritesh Harjani <riteshh@linux.ibm.com>
+CC: "Theodore Ts'o" <tytso@mit.edu>
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   8f602276d3902642fdc3429b548d73c745446601
+commit: 07b5b8e1ac4004b7db1065a301df65cd434c31c9 ext4: mballoc: introduce pcpu seqcnt for freeing PA to improve ENOSPC handling
+date:   4 years, 4 months ago
+:::::: branch date: 17 hours ago
+:::::: commit date: 4 years, 4 months ago
+config: x86_64-randconfig-102-20241006 (https://download.01.org/0day-ci/archive/20241006/202410062256.BoynX3c2-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Julia Lawall <julia.lawall@inria.fr>
+| Closes: https://lore.kernel.org/r/202410062256.BoynX3c2-lkp@intel.com/
+
+cocci warnings: (new ones prefixed by >>)
+>> fs/ext4/mballoc.c:4597:47-50: opportunity for str_yes_no(ret)
+
+vim +4597 fs/ext4/mballoc.c
+
+c9de560ded61fa Alex Tomas     2008-01-29  4577
+cf5e2ca6c99077 Ritesh Harjani 2020-05-20  4578  static bool ext4_mb_discard_preallocations_should_retry(struct super_block *sb,
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4579  			struct ext4_allocation_context *ac, u64 *seq)
+cf5e2ca6c99077 Ritesh Harjani 2020-05-20  4580  {
+cf5e2ca6c99077 Ritesh Harjani 2020-05-20  4581  	int freed;
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4582  	u64 seq_retry = 0;
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4583  	bool ret = false;
+cf5e2ca6c99077 Ritesh Harjani 2020-05-20  4584
+cf5e2ca6c99077 Ritesh Harjani 2020-05-20  4585  	freed = ext4_mb_discard_preallocations(sb, ac->ac_o_ex.fe_len);
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4586  	if (freed) {
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4587  		ret = true;
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4588  		goto out_dbg;
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4589  	}
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4590  	seq_retry = ext4_get_discard_pa_seq_sum();
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4591  	if (seq_retry != *seq) {
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4592  		*seq = seq_retry;
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4593  		ret = true;
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4594  	}
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4595
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4596  out_dbg:
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20 @4597  	mb_debug(sb, "freed %d, retry ? %s\n", freed, ret ? "yes" : "no");
+07b5b8e1ac4004 Ritesh Harjani 2020-05-20  4598  	return ret;
+cf5e2ca6c99077 Ritesh Harjani 2020-05-20  4599  }
+cf5e2ca6c99077 Ritesh Harjani 2020-05-20  4600
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
