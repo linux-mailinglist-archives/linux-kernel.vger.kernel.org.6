@@ -1,180 +1,126 @@
-Return-Path: <linux-kernel+bounces-352216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3EB991BEF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 04:04:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A698991BF1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 04:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FD4E283412
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 02:04:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F22C1F2212A
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 02:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B65166F07;
-	Sun,  6 Oct 2024 02:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093601667F1;
+	Sun,  6 Oct 2024 02:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZpUiZ9cQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfrgKt6/"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993EC2AF09;
-	Sun,  6 Oct 2024 02:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CC81EB3D;
+	Sun,  6 Oct 2024 02:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728180282; cv=none; b=ZOhp9EKfbcY2PD74IBepIaXSHoS2uIfaXSs34ebi7sTxYv8rZXTKHxaNAHsMiXcJarleC4Y2kW4WAdKbFVC9qAkEMMebN+RAbO6UU2GKFLVIVYWVz+brxPOF5P3P6BSkSEQ35FP/kgn/jtBLjaBbcf+N8D6KX/pyDNy9CbO3qyg=
+	t=1728180381; cv=none; b=Y3VGifI3FrJ2wu6KDX57aml76FFce0VE2ZlwPzgl6gPb59+KIX2scgO4u3qWyTVH0zSqdBbIRzc5WaYiIi/obvRiOefNEXbUmMcgX7aAn8/OTHEf2t7zq6ajvHdEM04P58Lg+Tl8W7alThGAfaTix4aDqD5VYE5ncUkUIC4lsvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728180282; c=relaxed/simple;
-	bh=udHHGK224Zz/IGn4pIopOCA108KwETBr3JGeTysyrN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Al8EerZTvan3erfrZb2kQZt1rOAaWgaVCU09M9iMBdxRA+SVhvtvwmdkeHLl2Rm/t1KIPo+2EN6I+D1MmifWpnERqXg/GuLMVwC6mwiDbcT5kzkSBHsVzHgRvngYIQZkYZz1xvxnOz45kaZEOxRsY+42OrhV37j0cl11GUFcF80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZpUiZ9cQ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728180281; x=1759716281;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=udHHGK224Zz/IGn4pIopOCA108KwETBr3JGeTysyrN4=;
-  b=ZpUiZ9cQeKY2l4C4HPpceTMBVgxGxddfkzqOk+BpnYvkESbqwTec8LGZ
-   n0QLePZ0ghtKvh+PC66LMd/v70UbT9dWG84aZg6ZG+z+aPEIOYNrkOuJl
-   Gke2l8uY31ArJJPGDhroZ95XF6jdeKXIm+X99BmERrt/xHIQLHRzlcaxW
-   P2pgRA+1xu+MNViDMHWGmKNAhCBD/mSO8G0raMo15aceBImIQvqQXmwAk
-   UUMSzXLqq3c4flZL9SuPEfXfitYU6Bk2FEUc6Kf+QRIrhkMOclMeUedFu
-   l9OonMtOuNaGdL3zpo5EYqti8h5s6nfqAMSt2A1eRDgZfqQKMHgqNrrAU
-   w==;
-X-CSE-ConnectionGUID: qmLc6jzYRD643p0RPdPpTQ==
-X-CSE-MsgGUID: M/LFmm5PT6WsgqX8Ei42iw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="26827145"
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="26827145"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 19:04:40 -0700
-X-CSE-ConnectionGUID: hvljGW/nQBiRqWhuU6xDcg==
-X-CSE-MsgGUID: doHVVU14REmLltlmE52zRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="80056193"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 05 Oct 2024 19:04:36 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sxGdN-0003XI-1t;
-	Sun, 06 Oct 2024 02:04:33 +0000
-Date: Sun, 6 Oct 2024 10:04:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mukesh Ojha <quic_mojha@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Komal Bajaj <quic_kbajaj@quicinc.com>,
-	Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: Re: [PATCH 2/6] remoteproc: qcom: Add iommu map_unmap helper function
-Message-ID: <202410060943.UAdM2uKn-lkp@intel.com>
-References: <20241004212359.2263502-3-quic_mojha@quicinc.com>
+	s=arc-20240116; t=1728180381; c=relaxed/simple;
+	bh=jRRdndmoUKYjBD9WMzLfMCSoghPj+XCZoiO035+iekM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nR0OKFXpN6tQGv38op+e+AGdRLzqud7rVAtrk1HjKPmsGrej1mix68gHEQ9kjMiYgtTEzwTMPxplUfyqC+/Ag2sRjt3ENXjGRV5D+9WVGiunw35BC7WzG+rudB9fHXztmoFoqBpkUYR20tDDrdDIez54QrYNzzzE7JyCEM+7rTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GfrgKt6/; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71df2de4ed4so504630b3a.0;
+        Sat, 05 Oct 2024 19:06:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728180379; x=1728785179; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XAibBfhUKhCccYl2NiBTUdEjgCWCGtQ5sFxnGr8oMlw=;
+        b=GfrgKt6/ma3xPSMteGJKUkKpHHnSUG9edRrv+8sNQzuUdGmR1O6CSjJWcjvQpat5AP
+         O8i3G48K0x/h5CDQCt5tmpZKrJU5/LEJkPsX6uI5hO0uevKyEYm3/mf2dLsF4+GQgJx9
+         ftGgMBQfVScHHVkFv5zw7CxQbjAjHxo+/52ulfyIgkZwquGJJM34kNGieQpiHOhWpYVg
+         Pd8rSjH5sKvW9DUwaHHyshu4FpMpVLz+h4vIwJWrv6gpeWhYo3mGmN/Lv9zw00bQyOVd
+         33aw41OQAMRU2ES/kFABOp0sJkDnZqXZmGzcKQvnLnqTW5o9jt73ljjNcKaQMR46SCVd
+         /fDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728180379; x=1728785179;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XAibBfhUKhCccYl2NiBTUdEjgCWCGtQ5sFxnGr8oMlw=;
+        b=AQ4It4u7J0s8abJJLX7oTRIWInAGn5b5nMZpt5OifNQKTGFSidyRi4Mu2AR0SCjjZl
+         r1fmHV88w8SopsAsIGzfzB3ZEiWbHHxXcdPtlL4mwiP0v3hin6nLzq0fH6V7Yp+OjNnF
+         l5IZvI0+ZnJNaY+LtmhIVWpLiu4YnkiAWQp5MtcpZsPxYYkTBhmQfZLquO+2opLAtj7y
+         plm7Xh2+6LVjrqlbkwcpUtf5s10UJHdNlm1uFh9GBhI+Ellbktc1dLtDjSkMPTMULNXB
+         yz20lzpxDKkTXlvlyCL9ykvusBL2l8hTow1C6/2filjUy/VZfEnhnJMBcF67IrBhQLtv
+         r2WA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhswIDdihsv8PKtyw09Oc7w5WYV3hUh3bevaMNjH5kV3HUibeBfF8/UNrfTN2KV+K65cAWfZbWvgA06o4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyajj72pfvuuXhKTWNyHqbdImrGcTiHI1mIdb5BFiCyvlkEWep5
+	t4RkE0hAf+69xwAGbUGznqCCw7f63DzlRX7AzvGGWr8VIFXxMeAdIJWTlA==
+X-Google-Smtp-Source: AGHT+IH5gVgQThNKSMO5b1amVkcTE1ZAvicMEmeoAzs6j1coxAz2zlBCBFfp2035efOhwNQymUjfKA==
+X-Received: by 2002:a05:6a00:3a14:b0:717:8b4e:a17f with SMTP id d2e1a72fcca58-71de22b52demr11013411b3a.4.1728180379125;
+        Sat, 05 Oct 2024 19:06:19 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f683153asm2034212a12.50.2024.10.05.19.06.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 19:06:18 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	jacob.e.keller@intel.com,
+	horms@kernel.org,
+	sd@queasysnail.net,
+	chunkeey@gmail.com
+Subject: [PATCHv4 net-next 0/8] ibm: emac: more cleanups
+Date: Sat,  5 Oct 2024 19:06:08 -0700
+Message-ID: <20241006020616.951543-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004212359.2263502-3-quic_mojha@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Mukesh,
+Tested on Cisco MX60W.
 
-kernel test robot noticed the following build warnings:
+Added devm for the submodules and removed custom init/exit functions as
+EPROBE_DEFER is handled now.
 
-[auto build test WARNING on remoteproc/rproc-next]
-[also build test WARNING on robh/for-next linus/master v6.12-rc1 next-20241004]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+v2: fixed build errors. Also added extra commits to clean the driver up
+further.
+v3: Added tested message. Removed bad alloc_netdev_dummy commit.
+v4: removed modules changes from patchset. Added fix for if MAC not
+found.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Ojha/dt-bindings-remoteproc-qcom-pas-common-Introduce-iommus-and-qcom-devmem-property/20241005-052733
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-patch link:    https://lore.kernel.org/r/20241004212359.2263502-3-quic_mojha%40quicinc.com
-patch subject: [PATCH 2/6] remoteproc: qcom: Add iommu map_unmap helper function
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20241006/202410060943.UAdM2uKn-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410060943.UAdM2uKn-lkp@intel.com/reproduce)
+Rosen Penev (8):
+  net: ibm: emac: use netif_receive_skb_list
+  net: ibm: emac: remove custom init/exit functions
+  net: ibm: emac: use module_platform_driver for modules
+  net: ibm: emac: use devm_platform_ioremap_resource
+  net: ibm: emac: use platform_get_irq
+  net: ibm: emac: use devm for mutex_init
+  net: ibm: emac: generate random MAC if not found
+  net: ibm: emac: use of_find_matching_node
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410060943.UAdM2uKn-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/remoteproc/qcom_common.c:645:24: warning: shift count >= width of type [-Wshift-count-overflow]
-                   iova |= (sid_def_val << 32);
-                                        ^  ~~
-   1 warning generated.
-
-
-vim +645 drivers/remoteproc/qcom_common.c
-
-   611	
-   612	/**
-   613	 * qcom_map_unmap_carveout() - iommu map and unmap carveout region
-   614	 *
-   615	 * @rproc:	rproc handle
-   616	 * @mem_phys:	starting physical address of carveout region
-   617	 * @mem_size:	size of carveout region
-   618	 * @map:	if true, map otherwise, unmap
-   619	 * @use_sid:	decision to append sid to iova
-   620	 * @sid:	SID value
-   621	 */
-   622	int qcom_map_unmap_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t mem_size,
-   623				    bool map, bool use_sid, unsigned long sid)
-   624	{
-   625		unsigned long iova = mem_phys;
-   626		unsigned long sid_def_val;
-   627		int ret;
-   628	
-   629		if (!rproc->has_iommu)
-   630			return 0;
-   631	
-   632		if (!rproc->domain)
-   633			return -EINVAL;
-   634	
-   635		/*
-   636		 * Remote processor like ADSP supports upto 36 bit device
-   637		 * address space and some of its clients like fastrpc uses
-   638		 * upper 32-35 bits to keep lower 4 bits of its SID to use
-   639		 * larger address space. To keep this consistent across other
-   640		 * use cases add remoteproc SID configuration for firmware
-   641		 * to IOMMU for carveouts.
-   642		 */
-   643		if (use_sid && sid) {
-   644			sid_def_val = sid & SID_MASK_DEFAULT;
- > 645			iova |= (sid_def_val << 32);
-   646		}
-   647	
-   648		if (map)
-   649			ret = iommu_map(rproc->domain, iova, mem_phys, mem_size, IOMMU_READ | IOMMU_WRITE, GFP_KERNEL);
-   650		else
-   651			ret = iommu_unmap(rproc->domain, iova, mem_size);
-   652	
-   653		if (ret)
-   654			dev_err(&rproc->dev, "Unable to %s IOVA Memory, ret: %d\n",
-   655				map ? "map" : "unmap", ret);
-   656	
-   657		return ret;
-   658	}
-   659	EXPORT_SYMBOL_GPL(qcom_map_unmap_carveout);
-   660	
+ drivers/net/ethernet/ibm/emac/core.c  | 91 ++++++++-------------------
+ drivers/net/ethernet/ibm/emac/mal.c   | 10 +--
+ drivers/net/ethernet/ibm/emac/mal.h   |  4 --
+ drivers/net/ethernet/ibm/emac/rgmii.c | 10 +--
+ drivers/net/ethernet/ibm/emac/rgmii.h |  4 --
+ drivers/net/ethernet/ibm/emac/tah.c   | 10 +--
+ drivers/net/ethernet/ibm/emac/tah.h   |  4 --
+ drivers/net/ethernet/ibm/emac/zmii.c  | 10 +--
+ drivers/net/ethernet/ibm/emac/zmii.h  |  4 --
+ 9 files changed, 30 insertions(+), 117 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.2
+
 
