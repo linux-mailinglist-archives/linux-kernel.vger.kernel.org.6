@@ -1,280 +1,197 @@
-Return-Path: <linux-kernel+bounces-352544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F2D99208A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD7A99208C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 075591C20C4C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:04:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1C61C20DB5
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A0C18A92E;
-	Sun,  6 Oct 2024 19:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7173117DFE4;
+	Sun,  6 Oct 2024 19:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tr2ZDtkW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="adhZdE3N"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hgOjOdmk"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B78189B99;
-	Sun,  6 Oct 2024 19:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5648A189917
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 19:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728241482; cv=none; b=lER9TGhEfHhgSu/SBsuByc5Ct1nG3cAnKUsqrqktYX/c6ka57Ny9ei3HmHGex6XbSuDEp8HrcdFA8wDZiYGhJ59BFJhzDb96taM9UrIeAX1k+S1xi8mUqHcvcRH920e+1LY4h/lSmyk7GA5GY7DjYJ8p3E9JwP6D6Kzkjfqu7bs=
+	t=1728241507; cv=none; b=W1uU0a4Tz3lBaT4xWu+YKKCLhubedVHK5H+Kne5M8ZMWOW6VvcwnM8vnjK20Y3p+8ChgYJfEFRtxWizKFBQIVtdLqo/LfEo3ijRMlLRS4hjaOmr6nmgaV3ti5Ff6k2/1OFB3swv/VWCOm9cf4hpgzC5i+KD4w7UqSGtHkxnmh/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728241482; c=relaxed/simple;
-	bh=y2evRvgTcLm4jdBKhMEuyS/dFGD5Tkty43wfen90liw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=FuiMghZ7tp/CnNdgxkUHZlEGE+d85bgfSN2VNgeezHSNMJ54IpQ+wafDxtuFD4DAfL+eUZUVQA9FXDSH/gEsUqCDn4Gwcnkp0v8pCyFV/NxPcpPqTr5zvt3ldsApr128wXLsU8wXWif1bTsWk8H/JpEu/rzZWAR4wWUmsX+hZZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tr2ZDtkW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=adhZdE3N; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 06 Oct 2024 19:04:32 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728241473;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wtvzSsWwpA0ujRD19XNtOzPMwZwqRcxWEU8kXOFREcg=;
-	b=tr2ZDtkW6knGowUve8K4CtWQ5Zen6YjlIXhn+3RNgfVx56m7ZoHHBz7qdUVTEZn4qkgql1
-	bbmtrT8D/e/UAnP/o7GpnUMxO8cbc54LfKZGJ25Ixuyy6EfBkNVJm7rqDieN4tCuvie3S1
-	uJ9eBPHe845NqcX/1x7XILZHb4+9Bfbtk/Va2ZsTbbY1UTXuQOSNMgu+0LlE6H0/mMwptv
-	LjlPscpILBgV6AjXxwIVSMkSkASSdvU8/5sKy82Wg2tYEIRYoszWRcp6f6iziaMnC6C5Co
-	Fn7I2sdDw9i2oJGgmeV5p2F/YOfsx+eA913gT5DAcy0QIoh3HUHmcsHgPJT0wA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728241473;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wtvzSsWwpA0ujRD19XNtOzPMwZwqRcxWEU8kXOFREcg=;
-	b=adhZdE3NY3vhq394A3+XJpK02MCJSnlka+UvP5UDvHpc9uYmvFRKisA7AgHgt7XJgBoStY
-	NASrXe9qdx+OLeAw==
-From: "tip-bot2 for Jeff Layton" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] timekeeping: Add interfaces for handling
- timestamps with a floor value
-Cc: Jeff Layton <jlayton@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Randy Dunlap <rdunlap@infradead.org>, John Stultz <jstultz@google.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241002-mgtime-v10-1-d1c4717f5284@kernel.org>
-References: <20241002-mgtime-v10-1-d1c4717f5284@kernel.org>
+	s=arc-20240116; t=1728241507; c=relaxed/simple;
+	bh=lBUg1G5w0xbiORJkJOiJgn1ZBETpknqPHoI9s+ukgpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eBxS39sEq/vtvb+GsAoWcMpm+RUCTCMZiseoti0gJEQX3hFd9QOJS7zwUILuXRmXZN7KRwRVGvyS2T5bb+TvLGGASnJJEIspXXVVKCpvU4LW4DI7eH0JMAIJnUr/TJOCFb9Cnr9tE9dnOBqv5i5eoEQt9Cj9euN+2IXPxastn7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hgOjOdmk; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9952ea05c5so54544166b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 12:05:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1728241503; x=1728846303; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g/pTi4WP+DUWGLMsn6tW08xKN8735zsCNYj+R00ve1A=;
+        b=hgOjOdmkFEjOVgHzodJwAA5JNAHhOWI/hb0rDb2/JEYFdh2NPCtiJR5m9TSNJPcSBQ
+         QCS3nSnbfdnrxLWFoxKKNQ+72jrNa46cV6vKuUTzBuVYwzq2QedQvSqHa4tZKPy7hFoW
+         dUk25dcpAxIBexkoXXZTXZyKU5ZuQBEYAp59c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728241503; x=1728846303;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g/pTi4WP+DUWGLMsn6tW08xKN8735zsCNYj+R00ve1A=;
+        b=GRSLWSNT+brAnMB0w0+d8AiECHUBhx++d7QdDoM3rHjtloI4UTO9X8rh/erKPI8tvD
+         LqIyIRViCOjYirCkYT8IiLcDgcpJEImjubuwXopOoOPGLN3s5C212HFMzLDM5zKvOSOu
+         D4LDTE8OPnV8ywvzdY6OVoChsT70Bd/rjaRwlg+EUh04ac/NrFQJQTG63XVTdBXw46sh
+         17Jvxd57vlArL+hGI5jXBVCVe1hrLFA++Y3n7PrVxGK+5nBF2uzRMhuWvZqUB8OwCxN1
+         pjSK0ekI98a/yG9sfgb0ZPiIEF3+fT7320y1LHlq1qC3ZqugZgXMM0+mgTckZsijYmNz
+         O7XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUB63ulAXBJQsaOBhstN5tfjOuCC724vRsBFMjUA3G5EwUhy/qsDD65Oq0JhtWaKNfrp83oFnSxW0XUV3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu5jLr0pdZ+frWjmhh0dHgCCwbuUXBDVIwwHQKJJDfnxPQw5CH
+	+vZVo8q7OJoxjvA81aT/YHBG2DlVy6t10d5xPcMp+oqmxuhYs2JUpor4DBh0fAJViNa8T1NGuCy
+	b2f4=
+X-Google-Smtp-Source: AGHT+IGMG+6CPFZFIwVo6t4dwoaY2Wa7UtuS1hb10zOdNOhYFp3IM2oIh4ds6VH1KNpGulOpDoaGDg==
+X-Received: by 2002:a17:906:6a1f:b0:a99:4ecc:f535 with SMTP id a640c23a62f3a-a994eccf7b5mr265206766b.11.1728241503259;
+        Sun, 06 Oct 2024 12:05:03 -0700 (PDT)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994db478bcsm112449466b.140.2024.10.06.12.05.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2024 12:05:02 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9952ea05c5so54540566b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 12:05:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUmlZq+by/J0YSR6QW6w8rMJ8/VcnfycpiNYDardajy7fm5aZP20OSNFtpoQv1PYtOkJzVcFLOTQgIFJIA=@vger.kernel.org
+X-Received: by 2002:a17:907:2681:b0:a8a:91d1:5262 with SMTP id
+ a640c23a62f3a-a991bd71ddcmr1143956566b.28.1728241502270; Sun, 06 Oct 2024
+ 12:05:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172824147241.1442.11329305614933060441.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+ <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
+ <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
+ <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
+ <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
+ <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
+ <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
+ <20241006043002.GE158527@mit.edu> <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
+In-Reply-To: <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 6 Oct 2024 12:04:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh_oAnEY3if4fRC6sJsZxZm=OhULV_9hUDVFm5n7UZ3eA@mail.gmail.com>
+Message-ID: <CAHk-=wh_oAnEY3if4fRC6sJsZxZm=OhULV_9hUDVFm5n7UZ3eA@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the timers/core branch of tip:
+On Sat, 5 Oct 2024 at 21:33, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>
+> On Sun, Oct 06, 2024 at 12:30:02AM GMT, Theodore Ts'o wrote:
+> >
+> > You may believe that yours is better than anyone else's, but with
+> > respect, I disagree, at least for my own workflow and use case.  And
+> > if you look at the number of contributors in both Luis and my xfstests
+> > runners[2][3], I suspect you'll find that we have far more
+> > contributors in our git repo than your solo effort....
+>
+> Correct me if I'm wrong, but your system isn't available to the
+> community, and I haven't seen a CI or dashboard for kdevops?
+>
+> Believe me, I would love to not be sinking time into this as well, but
+> we need to standardize on something everyone can use.
 
-Commit-ID:     70c8fd00a9bd0509bbf7bccd9baea8bbd5ddc756
-Gitweb:        https://git.kernel.org/tip/70c8fd00a9bd0509bbf7bccd9baea8bbd5ddc756
-Author:        Jeff Layton <jlayton@kernel.org>
-AuthorDate:    Wed, 02 Oct 2024 17:27:16 -04:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sun, 06 Oct 2024 20:56:07 +02:00
+I really don't think we necessarily need to standardize. Certainly not
+across completely different subsystems.
 
-timekeeping: Add interfaces for handling timestamps with a floor value
+Maybe filesystem people have something in common, but honestly, even
+that is rather questionable. Different filesystems have enough
+different features that you will have different testing needs.
 
-Multigrain timestamps allow the kernel to use fine-grained timestamps when
-an inode's attributes is being actively observed via ->getattr().  With
-this support, it's possible for a file to get a fine-grained timestamp, and
-another modified after it to get a coarse-grained stamp that is earlier
-than the fine-grained time.  If this happens then the files can appear to
-have been modified in reverse order, which breaks VFS ordering guarantees
-[1].
+And a filesystem tree and an architecture tree (or the networking
+tree, or whatever) have basically almost _zero_ overlap in testing -
+apart from the obvious side of just basic build and boot testing.
 
-To prevent this, maintain a floor value for multigrain timestamps.
-Whenever a fine-grained timestamp is handed out, record it, and when later
-coarse-grained stamps are handed out, ensure they are not earlier than that
-value. If the coarse-grained timestamp is earlier than the fine-grained
-floor, return the floor value instead.
+And don't even get me started on drivers, which have a whole different
+thing and can generally not be tested in some random VM at all.
 
-Add a static singleton atomic64_t into timekeeper.c that is used to keep
-track of the latest fine-grained time ever handed out. This is tracked as a
-monotonic ktime_t value to ensure that it isn't affected by clock
-jumps. Because it is updated at different times than the rest of the
-timekeeper object, the floor value is managed independently of the
-timekeeper via a cmpxchg() operation, and sits on its own cacheline.
+So no. People should *not* try to standardize on something everyone can use.
 
-Add two new public interfaces:
+But _everybody_ should participate in the basic build testing (and the
+basic boot testing we have, even if it probably doesn't exercise much
+of most subsystems).  That covers a *lot* of stuff that various
+domain-specific testing does not (and generally should not).
 
-- ktime_get_coarse_real_ts64_mg() fills a timespec64 with the later of the
-  coarse-grained clock and the floor time
+For example, when you do filesystem-specific testing, you very seldom
+have much issues with different compilers or architectures. Sure,
+there can be compiler version issues that affect behavior, but let's
+be honest: it's very very rare. And yes, there are big-endian machines
+and the whole 32-bit vs 64-bit thing, and that can certainly affect
+your filesystem testing, but I would expect it to be a fairly rare and
+secondary thing for you to worry about when you try to stress your
+filesystem for correctness.
 
-- ktime_get_real_ts64_mg() gets the fine-grained clock value, and tries
-  to swap it into the floor. A timespec64 is filled with the result.
+But build and boot testing? All those random configs, all those odd
+architectures, and all those odd compilers *do* affect build testing.
+So you as a filesystem maintainer should *not* generally strive to do
+your own basic build test, but very much participate in the generic
+build test that is being done by various bots (not just on linux-next,
+but things like the 0day bot on various patch series posted to the
+list etc).
 
-The floor value is global and updated via a single try_cmpxchg(). If
-that fails then the operation raced with a concurrent update. Any
-concurrent update must be later than the existing floor value, so any
-racing tasks can accept any resulting floor value without retrying.
+End result: one size does not fit all. But I get unhappy when I see
+some subsystem that doesn't seem to participate in what I consider the
+absolute bare minimum.
 
-[1]: POSIX requires that files be stamped with realtime clock values, and
-     makes no provision for dealing with backward clock jumps. If a backward
-     realtime clock jump occurs, then files can appear to have been modified
-     in reverse order.
+Btw, there are other ways to make me less unhappy. For example, a
+couple of years ago, we had a string of issues with the networking
+tree. Not because there was any particular maintenance issue, but
+because the networking tree is basically one of the biggest subsystems
+there are, and so bugs just happen more for that simple reason. Random
+driver issues that got found resolved quickly, but that kept happening
+in rc releases (or even final releases).
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
-Acked-by: John Stultz <jstultz@google.com>
-Link: https://lore.kernel.org/all/20241002-mgtime-v10-1-d1c4717f5284@kernel.org
----
- include/linux/timekeeping.h |   4 +-
- kernel/time/timekeeping.c   | 104 +++++++++++++++++++++++++++++++++++-
- 2 files changed, 108 insertions(+)
+And that was *despite* the networking fixes generally having been in linux-next.
 
-diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
-index fc12a9b..7aa8524 100644
---- a/include/linux/timekeeping.h
-+++ b/include/linux/timekeeping.h
-@@ -45,6 +45,10 @@ extern void ktime_get_real_ts64(struct timespec64 *tv);
- extern void ktime_get_coarse_ts64(struct timespec64 *ts);
- extern void ktime_get_coarse_real_ts64(struct timespec64 *ts);
- 
-+/* Multigrain timestamp interfaces */
-+extern void ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
-+extern void ktime_get_real_ts64_mg(struct timespec64 *ts);
-+
- void getboottime64(struct timespec64 *ts);
- 
- /*
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 7e6f409..441792c 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -114,6 +114,23 @@ static struct tk_fast tk_fast_raw  ____cacheline_aligned = {
- 	.base[1] = FAST_TK_INIT,
- };
- 
-+/*
-+ * Multigrain timestamps require tracking the latest fine-grained timestamp
-+ * that has been issued, and never returning a coarse-grained timestamp that is
-+ * earlier than that value.
-+ *
-+ * mg_floor represents the latest fine-grained time that has been handed out as
-+ * a file timestamp on the system. This is tracked as a monotonic ktime_t, and
-+ * converted to a realtime clock value on an as-needed basis.
-+ *
-+ * Maintaining mg_floor ensures the multigrain interfaces never issue a
-+ * timestamp earlier than one that has been previously issued.
-+ *
-+ * The exception to this rule is when there is a backward realtime clock jump. If
-+ * such an event occurs, a timestamp can appear to be earlier than a previous one.
-+ */
-+static __cacheline_aligned_in_smp atomic64_t mg_floor;
-+
- static inline void tk_normalize_xtime(struct timekeeper *tk)
- {
- 	while (tk->tkr_mono.xtime_nsec >= ((u64)NSEC_PER_SEC << tk->tkr_mono.shift)) {
-@@ -2394,6 +2411,93 @@ void ktime_get_coarse_real_ts64(struct timespec64 *ts)
- }
- EXPORT_SYMBOL(ktime_get_coarse_real_ts64);
- 
-+/**
-+ * ktime_get_coarse_real_ts64_mg - return latter of coarse grained time or floor
-+ * @ts:		timespec64 to be filled
-+ *
-+ * Fetch the global mg_floor value, convert it to realtime and compare it
-+ * to the current coarse-grained time. Fill @ts with whichever is
-+ * latest. Note that this is a filesystem-specific interface and should be
-+ * avoided outside of that context.
-+ */
-+void ktime_get_coarse_real_ts64_mg(struct timespec64 *ts)
-+{
-+	struct timekeeper *tk = &tk_core.timekeeper;
-+	u64 floor = atomic64_read(&mg_floor);
-+	ktime_t f_real, offset, coarse;
-+	unsigned int seq;
-+
-+	do {
-+		seq = read_seqcount_begin(&tk_core.seq);
-+		*ts = tk_xtime(tk);
-+		offset = tk_core.timekeeper.offs_real;
-+	} while (read_seqcount_retry(&tk_core.seq, seq));
-+
-+	coarse = timespec64_to_ktime(*ts);
-+	f_real = ktime_add(floor, offset);
-+	if (ktime_after(f_real, coarse))
-+		*ts = ktime_to_timespec64(f_real);
-+}
-+
-+/**
-+ * ktime_get_real_ts64_mg - attempt to update floor value and return result
-+ * @ts:		pointer to the timespec to be set
-+ *
-+ * Get a monotonic fine-grained time value and attempt to swap it into
-+ * mg_floor. If that succeeds then accept the new floor value. If it fails
-+ * then another task raced in during the interim time and updated the
-+ * floor.  Since any update to the floor must be later than the previous
-+ * floor, either outcome is acceptable.
-+ *
-+ * Typically this will be called after calling ktime_get_coarse_real_ts64_mg(),
-+ * and determining that the resulting coarse-grained timestamp did not effect
-+ * a change in ctime. Any more recent floor value would effect a change to
-+ * ctime, so there is no need to retry the atomic64_try_cmpxchg() on failure.
-+ *
-+ * @ts will be filled with the latest floor value, regardless of the outcome of
-+ * the cmpxchg. Note that this is a filesystem specific interface and should be
-+ * avoided outside of that context.
-+ */
-+void ktime_get_real_ts64_mg(struct timespec64 *ts)
-+{
-+	struct timekeeper *tk = &tk_core.timekeeper;
-+	ktime_t old = atomic64_read(&mg_floor);
-+	ktime_t offset, mono;
-+	unsigned int seq;
-+	u64 nsecs;
-+
-+	do {
-+		seq = read_seqcount_begin(&tk_core.seq);
-+
-+		ts->tv_sec = tk->xtime_sec;
-+		mono = tk->tkr_mono.base;
-+		nsecs = timekeeping_get_ns(&tk->tkr_mono);
-+		offset = tk_core.timekeeper.offs_real;
-+	} while (read_seqcount_retry(&tk_core.seq, seq));
-+
-+	mono = ktime_add_ns(mono, nsecs);
-+
-+	/*
-+	 * Attempt to update the floor with the new time value. As any
-+	 * update must be later then the existing floor, and would effect
-+	 * a change to ctime from the perspective of the current task,
-+	 * accept the resulting floor value regardless of the outcome of
-+	 * the swap.
-+	 */
-+	if (atomic64_try_cmpxchg(&mg_floor, &old, mono)) {
-+		ts->tv_nsec = 0;
-+		timespec64_add_ns(ts, nsecs);
-+	} else {
-+		/*
-+		 * Another task changed mg_floor since "old" was fetched.
-+		 * "old" has been updated with the latest value of "mg_floor".
-+		 * That value is newer than the previous floor value, which
-+		 * is enough to effect a change to ctime. Accept it.
-+		 */
-+		*ts = ktime_to_timespec64(ktime_add(old, offset));
-+	}
-+}
-+
- void ktime_get_coarse_ts64(struct timespec64 *ts)
- {
- 	struct timekeeper *tk = &tk_core.timekeeper;
+Now, the reason I mention the networking tree is that the one simple
+thing that made it a lot less stressful was that I asked whether the
+networking fixes pulls could just come in on Thursday instead of late
+on Friday or Saturday. That meant that any silly things that the bots
+picked up on (or good testers picked up on quickly) now had an extra
+day or two to get resolved.
+
+Now, it may be that the string of unfortunate networking issues that
+caused this policy were entirely just bad luck, and we just haven't
+had that. But the networking pull still comes in on Thursdays, and
+we've been doing it that way for four years, and it seems to have
+worked out well for both sides. I certainly feel a lot better about
+being able to do the (sometimes fairly sizeable) pull on a Thursday,
+knowing that if there is some last-minute issue, we can still fix just
+*that* before the rc or final release.
+
+And hey, that's literally just a "this was how we dealt with one
+particular situation". Not everybody needs to have the same rules,
+because the exact details will be different. I like doing releases on
+Sundays, because that way the people who do a fairly normal Mon-Fri
+week come in to a fresh release (whether rc or not). And people tend
+to like sending in their "work of the week" to me on Fridays, so I get
+a lot of pull requests on Friday, and most of the time that works just
+fine.
+
+So the networking tree timing policy ended up working quite well for
+that, but there's no reason it should be "The Rule" and that everybody
+should do it. But maybe it would lessen the stress on both sides for
+bcachefs too if we aimed for that kind of thing?
+
+             Linus
 
