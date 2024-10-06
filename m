@@ -1,121 +1,151 @@
-Return-Path: <linux-kernel+bounces-352461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53946991F8C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:10:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94A0991F93
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:12:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B89628245A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:10:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63ECC1F21660
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED58189B8A;
-	Sun,  6 Oct 2024 16:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D627189B9B;
+	Sun,  6 Oct 2024 16:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dx/Y+rz2"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R584vS9y"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0962AE6A;
-	Sun,  6 Oct 2024 16:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADD3187554;
+	Sun,  6 Oct 2024 16:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728231050; cv=none; b=uta2jXldFh09Vth3vZs65ZM+UrOZk50MaxMkhOcLvD56KgVDQctYDhG63p8rgxcnLvjLwU/tWugxZm+lUqn9N7n/ZnUaiCoyljSWIfu6Fygi6NIIJHAON1eN9n5SLSRmRsLAk+q/gDXp7sdi+Qii3WrDBC30fkSZWfYeRNzBJ7g=
+	t=1728231114; cv=none; b=IWl3AF+NUJKoUtgDZM0QLfAWao4nblKQsyQO11tFxTb+K9TcjToG4o1vHRTQYyvv6Mzb9tXc2YV97Cye2mqP+1A8DJsD01HLmNgFoZQJKCnfZheq6qQ3N7Dn5IGDKclLxvgQEK+UxaQj93j3/HKWewfRpFtLAhVgs76hy835bMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728231050; c=relaxed/simple;
-	bh=0Lua2qnPMgdcpPUR92uaBimqJ+3W98KBi+ZAZWBMLVY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nVJc8xkWZtKrKR8ARtGcm0gzsyxXIOz3HehYxCEqyJRkCeH1neeWKPy6bdx1DzbSgIq60nvrXjzalyGkieTFTnJw99Ao15sUepGj5ekqzbg7WFXIdf7U9srKcrXdEhg1KI8/TKrXRyos/3dG5JRZVx8JSOR90kEe1B2yw54dbxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dx/Y+rz2; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1728231114; c=relaxed/simple;
+	bh=tDJ5s5zYFjkOd0VeumbJCL2tSq/9mRwCV6dnYOXYKzI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TRkZdaoli+hNwYOIHB39fyRUua6nFRW5ZaJhmp0dkTcqnFw67BDZnF4/goo/jM+lELZxIjdtDZKZDJpLf+TDH5GQBKLwhc55WtWNriEs4dH6Aj604p8Bn2VK16FrDRyA2q06pL5W4bBEWU0S4VdgZLcP2EbejDQY8Gr2A22u6vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R584vS9y; arc=none smtp.client-ip=209.85.219.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b90ab6c19so39653065ad.0;
-        Sun, 06 Oct 2024 09:10:48 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e28ad6b7f1fso713444276.1;
+        Sun, 06 Oct 2024 09:11:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728231048; x=1728835848; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728231111; x=1728835911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tathN0BJtfsZc027P+vHY4yGiJz9Pk6Zz2tijUSDzbI=;
-        b=Dx/Y+rz2+xvGdK3uhXR1+CdBbGPoioW8KQekptLsKTdOKpkXH3BtcmXdEwqHeTh7nb
-         KOMrKYVgKzi/YXgYB0pIqu+De2tBDrWMr8aTYRMHQlFgVrOLPfvcRUxY64CEuUXNqd10
-         i5zeVWip5dL6x94brb+cDIPooeHobq7rravLmep18Iu5zYUClSB1cQ1RLeveI7DN0aGo
-         wmZnsYsUIoDRTgHJ2J8Bg7nq1otxvamgTr7frjV7UKcw9Myf1R4q0aTX3A4D7TLDDTf3
-         3h6nOSxq9x3i14L3SN/krgRK+IHpmjdwsQs1IFpbHpmkUN5ePD36oeJJUyRvOxgQ3RjA
-         oZqQ==
+        bh=MAYqCIiSv61sSYgvtWT29++OHzmZnVI7JlxP4WixgGE=;
+        b=R584vS9yiMsA2yooXYgto+mQ05K6NsPXv59ALMRi4AIDvt5yQ4eshKg04yTpOK3ofg
+         m9RLM/0+YBV/oI20f/lCgA7xM09DKtFbCwfPQUHFt+619vOfzoRStEuBrsyRIhufFnL9
+         mKzmrLcp2lX/LVZuuM2L6mGkm7TakhM1e50HlJrGygIw+QX7V+I921K095B0kIwxyUQ9
+         z0j6V2B4Cu5zsr+dxDlz+4EXc4bjSyRbzf3UmENjKY+HVLHoHDoUa1z2Cpwz6Htx50M/
+         qyXn8JnSST71ecBKOebv3hFWPssZ29qgmhcGmkIUprQl2yWoWsSeNcLFaIZ9Anjm7xc2
+         LKpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728231048; x=1728835848;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728231111; x=1728835911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tathN0BJtfsZc027P+vHY4yGiJz9Pk6Zz2tijUSDzbI=;
-        b=dU6tnPGpg19ldFJddyB7S8fk3C077gB6Wz3J3/kR/lN2sdlTfGmlXYtE6ejyv3X7p9
-         0HPTpQ04Q0x47muTYqnR2e0zi/BGZcmeJvdwHmZ/f0BZ07pOI77Iok+qyvktxUopBlCD
-         lweTURC0zLoupNs4Lod5rMl7dwTe4Tpr77l4AKrbrCNPClkb72oeWEG7CXzrT+lz/aId
-         OY50oao3LW+u3YtAZBRwiBSNdQ/G0DvW6hsHfgwtTXR+7gldOAqddIifhqjHabZorJbc
-         kpuYZIsJLhC7ciH/QrYKOHosV6Ujf1/uTKsLEozJ3jzGnjs5U0PpE274luM//YerljHE
-         swTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGeZqMzCIl46MP9lkW1Er8qxU2yjCi85OCdB6ZzjsXrpoaWt0TGGA86AfNZnf1znUCn2NrMyAk@vger.kernel.org, AJvYcCXYzs76jfdZk7qqYUS26GfMMSAGCf1I1oIVQlOBajFcaapKePC9LFw1DRkN2nbksO90j0OzTJa2u4MkadA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeCw2w+xEsM99O5xnffoeMs94gC6LDIzJaFZimd9XjGLJLaGbE
-	G+H+UUu4pnJgnuaGfNuCZ8xUtDVzyP8gqK4ix/GYkAw8HDAE236DSyOhy9BP
-X-Google-Smtp-Source: AGHT+IFS/b0y3EXdLGDgKb9RA1l3mm5swfaRndRWIuPaUok01FlHDXONE33b+lgzzdvP3CO0yK762Q==
-X-Received: by 2002:a17:903:22cd:b0:20b:aed1:bf8f with SMTP id d9443c01a7336-20bfe298189mr140087545ad.42.1728231048096;
-        Sun, 06 Oct 2024 09:10:48 -0700 (PDT)
-Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20c138cec10sm26689155ad.65.2024.10.06.09.10.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 09:10:47 -0700 (PDT)
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
-To: andrew@lunn.ch
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	f.fainelli@gmail.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@armlinux.org.uk,
-	netdev@vger.kernel.org,
-	olteanv@gmail.com,
-	pabeni@redhat.com,
-	pvmohammedanees2003@gmail.com
-Subject: Re: [PATCH] net: dsa: Fix conditional handling of Wake-on-Lan configuration in dsa_user_set_wol
-Date: Sun,  6 Oct 2024 21:40:32 +0530
-Message-ID: <20241006161032.14393-1-pvmohammedanees2003@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <0d151801-f27c-4f53-9fb1-ce459a861b82@lunn.ch>
-References: <0d151801-f27c-4f53-9fb1-ce459a861b82@lunn.ch>
+        bh=MAYqCIiSv61sSYgvtWT29++OHzmZnVI7JlxP4WixgGE=;
+        b=WRBpRcrZj2YFUUvEo/xprdRa7HVv2acSljPzsRp9KCV8u6w8OUUp/XMomKlqeB2nn6
+         hsO4v9jt5MSXcUjnv5918v4HYV08BQIMOuzKNGmRrLdCmKvGzkwACtHvsS8cu0Dkoob4
+         wUKqtBTNgAT0DRO5Uz97l9exWfJCr39tFs+jnxoU9eVHivDbH610eQgLy6q5BcZ6saS5
+         dv9mZQLR1e+Zp8LopF1eSKNYaEzUsUAjDQaw9XAN3qQtoEOqycZJ18kbjWmNH+zYsati
+         4xXloBfLOpXPv7VqWPa8+VasfCoDKB68/SjN1Oec/HNjo6igq0JYbloZUxsni3YuDBlR
+         v/9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUOnIC3x2QJDraxPfV9UpawZJWwg63Ltfyc/tAOTkSIZzrlf+uMzcvsBZP7K5znw/abxuvo1m+CT37assCOTdP+@vger.kernel.org, AJvYcCVtvxdcni7Xt/PN7ZY6UvD1gF/TIeDvKgr4DKMk0VmtQsVn1G07It50pYmYK5D8KAES5Kk2jpusZ+JRZwjC@vger.kernel.org, AJvYcCWhL7eMA+i02m9KPxVYXWL7jnIqPgRejOISBfEUXxGdsqtcWPh261CIwnH4dkq3eIaGHez/nSO7SQu1@vger.kernel.org, AJvYcCXuxsiYp2Qvib1J5P7jePwMqNgRNmta/PQEESSU78/6ulf8Bybhk8SfIqubMulP+NqHqKoICEWiFqRK@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFLrOhHrlUHGqPupe31kl/3LCWbTQwgxuc4kyDv8Ol3L2evYKv
+	OZGpgrdwlSEdRG6soATkn2Jfgv2iIV3nOiAG+C92fSTiXG3CI0QHw/5NEGq+p3goAL7QtrjIGCk
+	ryDvntaTlClDHhwUEVeHyW0ff5uY=
+X-Google-Smtp-Source: AGHT+IFqMHlb0b8SgKw7RwjBG7Z/IYs0/8p3F6LoeYW5kR2rfijp2j/qGjYCoWovPSzlMmk0//HTDX0lUYq3PNC/rQA=
+X-Received: by 2002:a05:6902:2b8f:b0:e20:16b9:ad68 with SMTP id
+ 3f1490d57ef6-e2893951b87mr6248949276.45.1728231110621; Sun, 06 Oct 2024
+ 09:11:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com> <20240911-xtheadvector-v10-7-8d3930091246@rivosinc.com>
+In-Reply-To: <20240911-xtheadvector-v10-7-8d3930091246@rivosinc.com>
+From: Andy Chiu <andybnac@gmail.com>
+Date: Mon, 7 Oct 2024 00:11:39 +0800
+Message-ID: <CAFTtA3O-sD-cJsHL2LgwryXwEnuEKvnP6QrTn7GMFYZmP=A3iA@mail.gmail.com>
+Subject: Re: [PATCH v10 07/14] riscv: csr: Add CSR encodings for CSR_VXRM/CSR_VXSAT
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Samuel Holland <samuel.holland@sifive.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
+	Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Considering the insight you've provided, I've written the code below
+Hi Charlie,
 
-static int dsa_user_set_wol(struct net_device *dev, struct ethtool_wolinfo *w)
-{
-	struct dsa_port *dp = dsa_user_to_port(dev);
-	struct dsa_switch *ds = dp->ds;
-	int ret;
+Charlie Jenkins <charlie@rivosinc.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=8812=
+=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=881:57=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> The VXRM vector csr for xtheadvector has an encoding of 0xa and VXSAT
+> has an encoding of 0x9.
+>
+> Co-developed-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/csr.h | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+> index 3eeb07d73065..c0a60c4ed911 100644
+> --- a/arch/riscv/include/asm/csr.h
+> +++ b/arch/riscv/include/asm/csr.h
+> @@ -300,9 +300,14 @@
+>  #define CSR_STIMECMP           0x14D
+>  #define CSR_STIMECMPH          0x15D
+>
+> -#define VCSR_VXRM_MASK                 3
+> -#define VCSR_VXRM_SHIFT                        1
+> -#define VCSR_VXSAT_MASK                        1
+> +/* xtheadvector symbolic CSR names */
+> +#define CSR_VXSAT              0x9
+> +#define CSR_VXRM               0xa
+> +
+> +/* xtheadvector CSR masks */
+> +#define CSR_VXRM_MASK          3
+> +#define CSR_VXRM_SHIFT         1
+> +#define CSR_VXSAT_MASK         1
 
-	ret = phylink_ethtool_set_wol(dp->pl, w);
+nit: use VCSR_VX* instead of CSR_VX*, if you need to send the next
+revision. I believe these masks are for CSR_VCSR but not CSR_VX*. If
+you think CSR_VX* is a better naming then the previous patch should
+introduce it as CSR_VX* but not VCSR_VX*.
 
-	if (ret != -EOPNOTSUPP)
-		return ret;
+>
+>  /* Supervisor-Level Window to Indirectly Accessed Registers (AIA) */
+>  #define CSR_SISELECT           0x150
+>
+> --
+> 2.45.0
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-	if (ds->ops->set_wol)
-		ret = ds->ops->set_wol(ds, dp->index, w);
-		if (ret != -EOPNOTSUPP)
-			return ret;
-
-	return -EOPNOTSUPP;
-}
-
-Does this approach address the issue, or do you think it would
-be better to pass a struct that explicitly contains only the
-options supported by each function (phylink_ethtool_set_wol()
-and ds->ops->set_wol())? That way we don't have to check for
--EOPNOTSUPP as we are giving valid options to each function.
+Thanks,
+Andy
 
