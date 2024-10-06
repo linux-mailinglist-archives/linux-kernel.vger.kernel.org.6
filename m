@@ -1,176 +1,253 @@
-Return-Path: <linux-kernel+bounces-352360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0618B991E0C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:15:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8C8991E13
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA56E281805
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:15:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9C69B21AD9
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF4C175D48;
-	Sun,  6 Oct 2024 11:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B2C175D5D;
+	Sun,  6 Oct 2024 11:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMCcJwR+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KMPf2RQ2"
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D314170A08;
-	Sun,  6 Oct 2024 11:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EDF158A30
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 11:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728213316; cv=none; b=Ar5XPEtqHST9SXV75kKF/ba7vdtYsTatTwRuZhIRADxXPla+SZ7NrsrZEbPNQAm4YkkbAZLY+ukYACJyolQh7IGRYVqgbc73XF/SmEhYKqbq01sYc0a7ZwPrS4jkTZNrXK0/cS4Zs5WQqYHP7gFw1yWjAHlVor2yN6h+KzF/7lc=
+	t=1728213639; cv=none; b=HHsmzSEB3cU1OzpTn6/ScvoHHKOwwlS3MbEnFk79aI6xGB8pEtQmbNNd22ZmKk0+FO/clN93X93jCB2Ofen6dwgYsMq1eZa2bTsSOAUc/QBKjnPgy9on7co+I38QvSqqD4EIBbhVU/tsYE8u+hx2MMIZ7fjJRrdprDOMhCJoNdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728213316; c=relaxed/simple;
-	bh=ivgSAXjwN2I4F19wez+Mlswpnth2wP0cv0UXGtKwzMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rlUQrheU24MswgNd3N+3GEqwkp6/gjvrzOQA7mCmS0KMV/G7LlqdZgwONNoJo8571vp551N5tHKZst+GspXCO/bbPIzYUOBCzg7FMRl9z7PZmFJwemgX4KKoIMhzMFUmFUpEZW38cXf0b4/tLGLtv94fEjqxdyWAGoNW8uY3X1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMCcJwR+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 749DFC4CEC5;
-	Sun,  6 Oct 2024 11:15:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728213315;
-	bh=ivgSAXjwN2I4F19wez+Mlswpnth2wP0cv0UXGtKwzMw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IMCcJwR+HtKbh8TuxXrntITaFC1A9qn1oRMYWlGHzvV/SQ16DNKClj810cSFQxq3y
-	 xCkOtnGNBesEmQg+4MWJEIV1BKXApmXIXm1yY76hDqq2rYpQ7iSTbanLDokU6RdQci
-	 9fbTs2drEcSBE/CwLjcZ/s4eWIv4Rb6fQOD+Y81LTlPxxCb3ea66N3MQVkA385RbQp
-	 1/fJQpguSm3eDvKgtLIe1BZ1P06UbMlsPAyi2kMWdcf/k4n+E4Pd1BM/0bI1V5Exud
-	 LabZPitCAnc0MIkXOgI2Z6BSDuFhLbaAAo5ErdZsUQ0Nxgx2a/rY906UB3B8yZ4dic
-	 DJt7H23P0WvOQ==
-Date: Sun, 6 Oct 2024 12:15:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, Ian Ray <ian.ray@gehealthcare.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 3/4] iio: adc: Add support for the GE HealthCare PMC ADC
-Message-ID: <20241006121506.3fcfda93@jic23-huawei>
-In-Reply-To: <20241002102324.2e3600ca@bootlin.com>
-References: <20241001074618.350785-1-herve.codina@bootlin.com>
-	<20241001074618.350785-4-herve.codina@bootlin.com>
-	<20241001202430.19bfc666@jic23-huawei>
-	<20241002102324.2e3600ca@bootlin.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728213639; c=relaxed/simple;
+	bh=xwtqRkymQbWLyrHFQs3l8k1xM6HJQbYROF9P9jVE/4Q=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dOqsvua/I9K4kPMtiufduxj2pny5jJJYBmX0d+gp3vvDaKi4+lz0hoWP7qsxcxtjMqWDUCOIrJozlWm2xbBG76aV+AcZT/zlyXcljTiQMU0DXEQyhB8zz5EDajgmyqWjz6a3NMMLmJFwFy+yBQTq/LxDLZuZ1K7YMlyv54lhGqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KMPf2RQ2; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so611719066b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 04:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1728213636; x=1728818436; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rPsiLERRYU7D4j4sUXncuZrtdOCgoc8Hb9DOFm6I+ts=;
+        b=KMPf2RQ2S80PWikuJAszy5ChAGaZ3wfgUaxRHVPphN2a4+mzYYDhJyskVxY63NEli+
+         fKc+45p+rrDk3Uj2IVirwYWG3HB0VYaB5ez10VsEfKW0CH/D9FqenB63qpYmHPC9p7X8
+         q7S+Ok+nPWKcklc+PRAmch99W4iIskS/24qg4OIDxK9+7A0zH8lnTLH/mDf62amT/5bm
+         nxQnC3xStf3uZwvd2urCAGgWZGNSSOfu1RzOOaZ1jNVCRvhhsFIOKfzdQNEq4K2syw7R
+         zKQ8WuSpdgSRSwdwkgtDDp37upC4bsrdSNh9m4niu/+3j6Yyc3oqRP8ZgEOcDTrDiWd7
+         WExw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728213636; x=1728818436;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rPsiLERRYU7D4j4sUXncuZrtdOCgoc8Hb9DOFm6I+ts=;
+        b=YUWxtnH/GZMsbQKT1oA2pcPcAM47Sf7bQc2e74qrveuM+D1QLg++EA7q0Dhj7Els6b
+         5VTaobB9h5T5xBQff0+dx3+Q/dw7uNQ4nScwUPZtlS5YuGBo0xuZKfkxZiWAaGE+o6HZ
+         EpgZHfy8y/ZZ9ycLSeaez44ZPT0ahnU2Kx/DGJi+4OCY88uTGLLuzs7TP+XbGq6KGXpZ
+         qvhidSe5ruczLcIZ2gq8Mu96D5ZeVNK/fL/uQuKM47cCOl4DLn0pxy2pEM7IY+sBPCoG
+         vh2uWXhKCnoNoq4gvq+PON2dipNGnqmWexDTk4BralF9++YLKMz1hm8JGeEE/1YbXiwB
+         w7jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFoyotQDdup3FsUV4rQuwxPkSUYq6l4gxNUVckAz+PdOtRPBaESDfYOk8opk9+Nb9tCyzAMNyIVi2a+WQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz737KvKeHv/tXr/QPw3Cn96kjO0AKMgzBauRkcRDtuN2FnDnZt
+	ylLF+QReKX8qWNmGJXweWCcdHY5F2jGAXgs89OWhPIamHIFCC1SlIJamJx2eW+E=
+X-Google-Smtp-Source: AGHT+IG48id+lRY4xtL1ujqx4VpcR8QxySGV9q44wlS56hapCTBDQPNEacp1RsUNT7MPHUN2ohWifQ==
+X-Received: by 2002:a17:907:7f89:b0:a99:435c:89f2 with SMTP id a640c23a62f3a-a99435c8ce0mr357354766b.63.1728213635990;
+        Sun, 06 Oct 2024 04:20:35 -0700 (PDT)
+Received: from localhost (host-79-32-222-228.retail.telecomitalia.it. [79.32.222.228])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a993d92ed5dsm185689766b.63.2024.10.06.04.20.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 04:20:35 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Sun, 6 Oct 2024 13:20:51 +0200
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>, Lizhi Hou <lizhi.hou@amd.com>
+Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
+ parsed from DT
+Message-ID: <ZwJyk9XouLfd24VG@apocalypse>
+References: <ZvZVPA6ov5XgScpz@apocalypse>
+ <20240928201717.GA99402@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240928201717.GA99402@bhelgaas>
 
-On Wed, 2 Oct 2024 10:23:24 +0200
-Herve Codina <herve.codina@bootlin.com> wrote:
+Hi Bjorn,
 
-> Hi Jonathan,
->=20
-> On Tue, 1 Oct 2024 20:24:30 +0100
-> Jonathan Cameron <jic23@kernel.org> wrote:
->=20
-> > On Tue,  1 Oct 2024 09:46:17 +0200
-> > Herve Codina <herve.codina@bootlin.com> wrote:
-> >  =20
-> > > The GE HealthCare PMC Analog to Digital Converter (ADC) is a 16-Chann=
-el
-> > > (voltage and current), 16-Bit ADC with an I2C Interface.
-> > >=20
-> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>   =20
-> >=20
-> > Just one thing to add to David's review.
-> >=20
-> > I'm going to guess this isn't a general purpose ADC? Can you share any =
-info
-> > on what sort of device it is used in?
-> >=20
-> > No problem if not - I'm just curious as I've not seen GE HealthCare I2C=
- parts
-> > before! =20
->=20
-> I cannot tell about the product it is used in :(
-> One sure thing I can say is that the component itself is not available off
-> the shelf, and is fully designed to be used in a specific product.
->=20
-> >  =20
-> > > diff --git a/drivers/iio/adc/gehc-pmc-adc.c b/drivers/iio/adc/gehc-pm=
-c-adc.c
-> > > new file mode 100644
-> > > index 000000000000..c46c2fb84d35
-> > > --- /dev/null
-> > > +++ b/drivers/iio/adc/gehc-pmc-adc.c
-> > > @@ -0,0 +1,233 @@   =20
-> >=20
-> >  =20
-> > > +
-> > > +static int pmc_adc_read_raw(struct iio_dev *indio_dev, struct iio_ch=
-an_spec const *chan,
-> > > +			    int *val, int *val2, long mask)
-> > > +{
-> > > +	struct pmc_adc *pmc_adc =3D iio_priv(indio_dev);
-> > > +	int ret;
-> > > +
-> > > +	switch (mask) {
-> > > +	case IIO_CHAN_INFO_RAW:
-> > > +		ret =3D pmc_adc_read_raw_ch(pmc_adc, chan->address, val);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +		return IIO_VAL_INT;
-> > > +
-> > > +	case IIO_CHAN_INFO_SCALE:
-> > > +		*val =3D 1; /* Raw values are directly read in mV or mA */   =20
-> >=20
-> > Drop this scale and make the channels processed. That saves userspace e=
-ven applying =20
->=20
-> I thought that scale was mandatory.
->=20
-> From the userspace, offset is clearly optional
->   https://elixir.bootlin.com/linux/v6.11/source/Documentation/ABI/testing=
-/sysfs-bus-iio#L458
-> But nothing about a default value is mentioned in the scale description
->   https://elixir.bootlin.com/linux/v6.11/source/Documentation/ABI/testing=
-/sysfs-bus-iio#L515
-It doesn't get applied to _PROCESSED attributes (see ABI for _input attribu=
-tes which
-simply doesn't say to apply anything.
+On 15:17 Sat 28 Sep     , Bjorn Helgaas wrote:
+...
+> From your earlier email
+> (https://lore.kernel.org/r/Zszcps6bnCcdFa54@apocalypse):
+> 
+> > Without this patch the range translation chain is broken, like this:
+> 
+> > pcie@120000: <0x2000000 0x00 0x00    0x1f 0x00                0x00 0xfffffffc>;
+> > ~~~ chain breaks here ~~~
+> > pci@0      : <0x82000000 0x1f 0x00   0x82000000 0x1f 0x00     0x00 0x600000>;
+> > dev@0,0    : <0x01 0x00 0x00         0x82010000 0x1f 0x00     0x00 0x400000>;
+> > rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
+> 
+> The cover letter said "RP1 is an MFD chipset that acts as a
+> south-bridge PCIe endpoint .. the RP1 as an endpoint itself is
+> discoverable via usual PCI enumeration".
+> 
+> I assume pcie@120000 is the PCI host bridge and is already in the
+> original DT describing the platform.  I assume pci@0 is a Root Port
+> and dev@0,0 is the RP1 Endpoint, and the existing code already adds
+> them as they are enumerated when pci_bus_add_device() calls
+> of_pci_make_dev_node(), and I think this series adds the rp1@0
+> description.
 
-There is a corner case where _OFFSET is provided but not _SCALE and hence t=
-he channel
-is _RAW.  In that case I'd say _SCALE is optional, but I'm not sure we've e=
-ver seen
-it in reality!  The more common case (though still rare) is like this one w=
-here=20
-the reading is in the base units of the ABI so _input is the away to go.
-This is fairly ancient ABI lifted from hwmon.
+Correct.
 
+> 
+> And the "ranges" properties are built when of_pci_make_dev_node()
+> eventually calls of_pci_prop_ranges().  With reference to sec 2.2.1.1
+> of https://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
+> and
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#ranges,
+> I *think* your example says:
+> 
+> pcie@120000 has:
+>   child phys.hi	      0x02000000    n=0 p=0 t=0 ss=10b
+>   child phys.mid,lo   0x00000000_00000000
+>   parent phys.hi,lo   0x0000001f_00000000
+>   length hi,lo        0x00000000_fffffffc
+> 
+> which would make it a bridge where the child (PCI) address space is
+> relocatable non-prefetchable 32-bit memory space at
+> 0x00000000-0xfffffffc, and the corresponding parent address space is
+> 0x1f_00000000-0x1f_fffffffc.  That means the host bridge applies an
+> address translation of "child_addr = parent_addr - 0x1f_00000000".
+> 
+> pci@0 has:
+>   child phys.hi	      0x82000000    n=1 p=0 t=0 ss=10b
+>   child phys.mid,lo   0x0000001f_00000000
+>   parent phys.hi      0x82000000    n=1 p=0 t=0 ss=10b
+>   parent phys.mid,lo  0x0000001f_00000000
+>   length hi,lo        0x00000000_00600000
+> 
+> which would make it a PCI-to-PCI bridge (I assume a PCIe Root Port),
+> where the child (secondary bus) address space is the non-relocatable
+> non-prefetchable 32-bit memory space 0x1f_00000000-0x1f_005fffff and
+> the parent (primary bus) address space is also non-relocatable
+> non-prefetchable 32-bit memory space at 0x1f_00000000-0x1f_005fffff.
+> 
+> This looks wrong to me because the pci@0 parent address space
+> (0x1f_00000000-0x1f_005fffff) should be inside the pcie@120000 child
+> address space (0x00000000-0xfffffffc), but it's not.
 
->=20
-> > the *1 this indicates.  Rare to find a device that outputs in our base =
-units
-> > but might as well take advantage of one that does :) =20
->=20
-> Yes, the device is a custom designed device and it has a fully knowledge =
-(by
-> design) of the board it is soldered on. As I was involved in the communic=
-ation
-> protocol definition, units were chosen to fit well with IIO.
+Exactly, that example refers to the 'uncorrected' case, i.e. without the
+patch applied.
 
-Nice :)
->=20
-> >  =20
-> > > +		return IIO_VAL_INT;
-> > > +	}
-> > > +
-> > > +	return -EINVAL;
-> > > +}   =20
->=20
-> Best regards,
-> Herv=C3=A9
+> 
+> IIUC, this patch clears the upper 32 bits in the pci@0 parent address
+> space.  That would make things work correctly in this case because
+> that happens to be the exact translation of pcie@120000, so it results
+> in pci@0 parent address space of 0x00000000-0x005fffff.
 
+Right. I think we sould split it into two issues:
+
+[1] RP1 acknowledges a 32 bit BAR address from its config space while the
+device must be accessed using a 64 bit address (that is cpu address
+0x1f_00000000), which sounds strange to me but I guess that is how
+the hw interconnect has been designed, so we need to cope with it.
+
+[2] I still think that the of_pci_set_address() function should be amended
+to avoid generating invalid 64 address when 32 bit flag is set.
+
+As you noted, fixing [2] will incidentally also let [1] work: I think
+we can try to solve [1] the proper way and maybe defer [2] for a separate
+patch.
+To solve [1] I've dropped this patch and tried to solve it from devicetree,
+modifying the following mapping:
+
+pcie@120000: <0x3000000 0x1f 0x00    0x1f 0x00                0x00 0xfffffffc>;
+
+so we now have a 1:1 64 bit mapping from 0x1f_00000000 to 0x1f_00000000.
+I thought it would result in something like this:
+
+pcie@120000: <0x3000000 0x1f 0x00    0x1f 0x00                0x00 0xfffffffc>;
+pci@0      : <0x82000000 0x1f 0x00   0x82000000 0x1f 0x00     0x00 0x600000>;
+dev@0,0    : <0x01 0x00 0x00         0x82010000 0x1f 0x00     0x00 0x400000>;
+rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
+
+but it fails instead (err: "can't assign; no space") in pci_assign_resource()
+function trying to match the size using pci_clip_resource_to_region(). It turned
+out that the clipping is done against 32 bit memory region 'pci_32_bit',and
+this is failing because the original region addresses to be clipped wxxiereas 64
+bit wide. The 'culprit' seems to be the function devm_of_pci_get_host_bridge_resources()
+dropping IORESOURCE_MEM_64 on any memory resource, which seems to be a change
+somewhat specific to a RK3399 case (see commit 3bd6b8271ee66), but I'm not sure
+whether it can be considered generic.
+
+So, I'm actually at an empasse here.
+
+Also, while taking a look at the resulting devicetree, I'm a bit confused by the
+fact that the parent address generated by of_pci_prop_ranges() for the pci@0,0
+bridge seems to be taken from the parent address of the pcie@120000 node. Shouldn't
+it be taken from the child address of pcie@120000, instead?
+
+> 
+> But I don't think it works in general because there's no requirement
+> that the host bridge address translation be that simple.  For example,
+> if we have two host bridges, and we want each to have 2GB of 32-bit
+> PCI address space starting at 0x0, it might look like this:
+> 
+>   0x00000002_00000000 -> PCI 0x00000000 (subtract 0x00000002_00000000)
+>   0x00000002_80000000 -> PCI 0x00000000 (subtract 0x00000002_80000000)
+> 
+> In this case simply ignoring the high 32 bits of the CPU address isn't
+> the correct translation for the second host bridge.  I think we should
+> look at each host bridge's "ranges", find the difference between its
+> parent and child addresses, and apply the same difference to
+> everything below that bridge.
+
+Not sure I've got this scenario straight: can you please provide the topology
+and the bit setting (32/64 bit) for those ranges? Also, is this scenario coming
+from a real use case or is it hypothetical?
+
+Many thanks,
+Andrea
+
+...
 
