@@ -1,136 +1,118 @@
-Return-Path: <linux-kernel+bounces-352286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ADBC991CF0
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:15:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB80991CF1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405791F21DBC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:15:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A245D1F21DB9
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2517416DC15;
-	Sun,  6 Oct 2024 07:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA57C1684A8;
+	Sun,  6 Oct 2024 07:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WRifEotl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kva4xTFU"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16C8166F1B;
-	Sun,  6 Oct 2024 07:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB07B41C79;
+	Sun,  6 Oct 2024 07:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728198895; cv=none; b=aEpHjIkXHSKrj6j8LI9oaYFsGs21Z2otx/D5bp2Y/vsF1zaTEd6UhhWqRcdijXnKkyUCs7+ODT0K0piA7sgK0PX+8cPGysPPqG+wDMmbWmhWL+WupWM0gRe16AOLMxQ1V5nPJdyy/RgaqJSEIZzIljrEt2wkgKmvDoxHV4QQdmM=
+	t=1728198959; cv=none; b=e1pSsI0Ft5D6fuLd6ol0GxOlAKrX9iULpD+cVtIoEXTRb707CaA/K54oExrr1OL17SwZz8u3QD8XDbb04+ZWLSyDz5H+fDbei3LL3zLzyD/PkZIPsMcm69nk+GsBwpbVuQUPD3tcMgS2stpOL4WENsezDGr2pS7H8/Wbpr122Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728198895; c=relaxed/simple;
-	bh=rvBFnAwLGKxozKlGoPYKyeuWTXKglv6GHMyqYvXmTAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBY32ich/FonX40M9dXXqRKuvAbvSybrWza+TngTDa11MNBTLf6DtKHU7hG38dFdARRdOcKdr9lJVrtnhoZlU7f8nDoMToHRtfoSFmx3Fea80WRkJx14AOVOIMx+dRVOHzf4F0Yjnr0+ScdNwCRTmJIZWAv8Ac42rU0nb0N3Jmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WRifEotl; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728198894; x=1759734894;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rvBFnAwLGKxozKlGoPYKyeuWTXKglv6GHMyqYvXmTAg=;
-  b=WRifEotlUYaaHdv234qPtPFO/sH57Fdj97BfXm0h5/OYu1zS6QEw4ZDu
-   4gaw/joIAAr9Nzhrjx0/G70nuOhG+cA3ZaTvIbATJ2bVtMgQmybWAk+7K
-   ynxqBvXRyeSzdpTu8HNRgnRUvWTUTqURCdbuzv8gVjZ68BOLjmehNspmr
-   QupnCDy+zNC8GpRov4wbsmXCsVRD9Xn0+5xUcBhpIf1Ma/NB9CPJ9zRJs
-   s501NDdB0GnxH/PYVNxxjTOmkl0Fr8mNLqgTKVJg0QXDuc2TGp0owu8U2
-   TpLUE0+JrOMDgVcZ/g3ueRRcPO0xFcZrKrZiuUpEeq1S4jk7250xoHE+n
-   w==;
-X-CSE-ConnectionGUID: yh7FBRAxRjuuAS5ZglAlhQ==
-X-CSE-MsgGUID: rT9dlfyRRrOPzw6BXc4dew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="49900363"
-X-IronPort-AV: E=Sophos;i="6.11,182,1725346800"; 
-   d="scan'208";a="49900363"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2024 00:14:54 -0700
-X-CSE-ConnectionGUID: 4jEnGfSCRBi8baZ2Vcujzg==
-X-CSE-MsgGUID: YBfKsRVZSwyGvh2jqoitbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,182,1725346800"; 
-   d="scan'208";a="75484927"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 06 Oct 2024 00:14:48 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sxLTa-0003g4-1Q;
-	Sun, 06 Oct 2024 07:14:46 +0000
-Date: Sun, 6 Oct 2024 15:14:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>,
-	manivannan.sadhasivam@linaro.org, alim.akhtar@samsung.com,
-	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-	konrad.dybcio@linaro.org, James.Bottomley@hansenpartnership.com,
-	martin.petersen@oracle.com, agross@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_narepall@quicinc.com,
-	quic_nitirawa@quicinc.com, quic_rdwivedi@quicinc.com,
-	Can Guo <quic_cang@quicinc.com>
-Subject: Re: [PATCH V1 3/3] scsi: ufs: qcom: Add support for multiple ICE
- algorithms
-Message-ID: <202410061425.FamovVLB-lkp@intel.com>
-References: <20241005064307.18972-4-quic_rdwivedi@quicinc.com>
+	s=arc-20240116; t=1728198959; c=relaxed/simple;
+	bh=GNKMruB10LYBdDUAQMPVmLyssNcYBL25YfXgpnNVVQQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ljwPh32rw/BBJijCTJfRYaawLIi5iVa60Fyj2FSAt1EiHW6SEUqRTGPKtI1mNF2I/KQPEanU3zfM3vXgNLf0uSfr1oGOP34x1evE3MfDo0QbITN8yM9iIvwaZGVh4TFsImOgykDVlGieuDovu6kZ3oTe/SQ15/MYEYXQJlNZwsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kva4xTFU; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e109539aedso2913329a91.0;
+        Sun, 06 Oct 2024 00:15:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728198957; x=1728803757; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EY5p4xlsAqQOcxvqm9u7nE7mDZrPMRJXe9re+U3pcIg=;
+        b=Kva4xTFUTEfeGyKgvDq81Ob5HgyGMAvv6HG1eu6ZThDDu4PMbiXTM5wrt+NqlDAHCP
+         +wOicWiMTYPUExA+4LolFxGQOp88XpU2LzH4kpa5Y+RoYRbY2kG3+ryEMbEjMhrZmPNK
+         M95+MHIOLfusQ/yhg2+9P5Y3BARKBWWww7+n6gj/JX2ZiL4vWxFsHcRxBN3NuSDKVhnH
+         GaH2ml34G/0DvmbXhyolLfMhcJw9DErv2dggi4WWr20l+6nLsnLGFWaEkm3804XwTY50
+         RC3bthBqx44Q+KSpld2BclnACjZugCxCxgtZCWxc4kQFpWZPTow3QOrnv0GKIBCd72iu
+         A6Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728198957; x=1728803757;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EY5p4xlsAqQOcxvqm9u7nE7mDZrPMRJXe9re+U3pcIg=;
+        b=Ak3Qs7A+DVBrxCgFfczXqjmpgRRIWJJbrdt6BkihYi3ty+Ko1ozFhxEvffG+Z5lUFE
+         YPvAsOfmMbD+UEjRSD2pYDBc4O8hzxMSoaLUYJQrjEccezLAfdFn/AtbvIvSEA+yapHe
+         RfPNbZgsmnKkaoyO2yAEi6xO4vmJFz/0SeQBWE1eV0cpAWU++xCc2SPedLt+uyqYXm+r
+         /3va2pc0HbquM9yee043h2mCnOb1/DqSwmppD13/hlR06SVMBdlT2noGsANxHrO7kFJL
+         WCJ6md9nPL1kcsSUTChKidhFKc5Zn6SYcrWqHQv+4N4WUqxPrW09wGwB9my3G9qhwVUE
+         MUZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuS+76Mxa/pSALU+kcdRRg9Iwcbq8DZ9TwPBc+9aYLduuOpmmyReR88iSqDJC1f6KnrQ8EqlIGJ+dTLOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaX7zgNkzFpftoXQlaCk7e4HH9pZw9z4SFX3CMxQXhoOQUaWIM
+	GfEnhuSHf3Y+N7ztFJPibqKihbMPf5cPPX5vRmkoF7QgoX6pAZpt
+X-Google-Smtp-Source: AGHT+IHfxiCQnGgXw6gWSyy7mb50GfJveRtEjxaOuoIhvi/t6X26Ke+95wPLjiBS3eg+nZBeW/KzDA==
+X-Received: by 2002:a17:90b:b0c:b0:2e0:99bc:6907 with SMTP id 98e67ed59e1d1-2e1e6229e93mr9356389a91.15.1728198956928;
+        Sun, 06 Oct 2024 00:15:56 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:230:2966:8a2:4c2e:bb52:a9af])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20aeb7db0sm2943600a91.15.2024.10.06.00.15.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 00:15:55 -0700 (PDT)
+From: SurajSonawane2415 <surajsonawane0215@gmail.com>
+To: adaplas@gmail.com,
+	deller@gmx.de
+Cc: linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	SurajSonawane2415 <surajsonawane0215@gmail.com>
+Subject: [PATCH] video: fix inconsistent indentation warning
+Date: Sun,  6 Oct 2024 12:45:14 +0530
+Message-Id: <20241006071514.5577-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241005064307.18972-4-quic_rdwivedi@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Ram,
+Fix the indentation to ensure consistent code style and improve
+readability, and to fix this warning:
+drivers/video/fbdev/nvidia/nv_hw.c:1512 NVLoadStateExt() warn:
+inconsistent indenting
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
+---
+ drivers/video/fbdev/nvidia/nv_hw.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on mkp-scsi/for-next jejb-scsi/for-next linus/master v6.12-rc1 next-20241004]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ram-Kumar-Dwivedi/dt-bindings-ufs-qcom-Document-ice-configuration-table/20241005-144559
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241005064307.18972-4-quic_rdwivedi%40quicinc.com
-patch subject: [PATCH V1 3/3] scsi: ufs: qcom: Add support for multiple ICE algorithms
-config: arm-randconfig-001-20241006 (https://download.01.org/0day-ci/archive/20241006/202410061425.FamovVLB-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410061425.FamovVLB-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410061425.FamovVLB-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/ufs/host/ufs-qcom.c:126: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * Refer struct ice_alg2_config
-
-
-vim +126 drivers/ufs/host/ufs-qcom.c
-
-   124	
-   125	/**
- > 126	 * Refer struct ice_alg2_config
-   127	 */
-   128	static inline void __get_alg2_grp_params(unsigned int *val, int *c, int *t)
-   129	{
-   130		*c = ((val[0] << 8) | val[1] | (1 << 31));
-   131		*t = ((val[2] << 24) | (val[3] << 16) | (val[4] << 8) | val[5]);
-   132	}
-   133	
-
+diff --git a/drivers/video/fbdev/nvidia/nv_hw.c b/drivers/video/fbdev/nvidia/nv_hw.c
+index 9b0a324bb..75afaa07e 100644
+--- a/drivers/video/fbdev/nvidia/nv_hw.c
++++ b/drivers/video/fbdev/nvidia/nv_hw.c
+@@ -1509,10 +1509,10 @@ void NVLoadStateExt(struct nvidia_par *par, RIVA_HW_STATE * state)
+ 	NV_WR32(par->PFIFO, 0x0495 * 4, 0x00000001);
+ 	NV_WR32(par->PFIFO, 0x0140 * 4, 0x00000001);
+ 
+-    if (!state) {
+-	    par->CurrentState = NULL;
+-	    return;
+-    }
++	if (!state) {
++		par->CurrentState = NULL;
++		return;
++	}
+ 
+ 	if (par->Architecture >= NV_ARCH_10) {
+ 		if (par->twoHeads) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
