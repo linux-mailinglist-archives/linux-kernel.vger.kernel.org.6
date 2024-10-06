@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-352283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F80991CE8
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:03:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1180F991CEA
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C201F2452F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 234201C21712
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E23166F34;
-	Sun,  6 Oct 2024 07:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101EB166F1B;
+	Sun,  6 Oct 2024 07:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="M6FnWs92"
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vrs7hDhF"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9559D158DB9
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 07:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3343856B8C;
+	Sun,  6 Oct 2024 07:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728198207; cv=none; b=hTdHCNZILBxKTSvyiOeovmebHR7owy2mXzx0M/EMLSaioNMqQv4zmke6TMJ4P9dsFc6GOOPm5+WBO1IEJRVPtpHjX7zlUIQeylEwBjBaYswVIIj8mKncTgHt1/Sm19kTg6u/xMydqoiMGcNsYkzZhCJ/B6LoC2jFDG14HGcFxXk=
+	t=1728198245; cv=none; b=SFnIFHLUf0hEPv8lfpHK2l5rrz+2wwqePMk+ItaxU6ekgwJdt4wPnRdPy+80NiQYkgjtoNAYzOF+VwtwI9VZq5Bn8WQYufZYO0yMPeJQky8bFczwIuYogJe9JkCMBb3L4RSEglOcJqTZAUQMxHZtFAvN5kG1/oJB1Ky6jGPTLuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728198207; c=relaxed/simple;
-	bh=A3jv2+JkMoCpLWPPu4FFiwqbcd/QNqiJhAqXPzOONsc=;
+	s=arc-20240116; t=1728198245; c=relaxed/simple;
+	bh=QE/gYYmH1NYWAnAdCGa55/OCwoLrR7JBzqdkfa33QRk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j7CzZ2ksGzOENdoWN7FNbnkO6tlFjT6fZHcT7BbQFywGuufXkMeRm8QmPLfkbazn4DlKiV5d2ou+bVaX2axDZWOF4DQ8j7dMBjOEUHnNz70ppIHslYzWVjAfatI0NBXXbzkaot4eQtNaHYA11DU6HKxlPko5xpqKq+zJGAEUsTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=M6FnWs92; arc=none smtp.client-ip=80.12.242.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id xLIKskLtwtQe6xLIKsnJwW; Sun, 06 Oct 2024 09:03:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1728198195;
-	bh=EKs8elQaZOtggBnymL5w5OvfAy7AfNP6UeXaPvTC6yk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=M6FnWs92bno1SYWLoFU+38rGCmldkKAWXfBJFGd3Gj9/NM03KnZbY14m5VH0M9c1e
-	 mEG79JqLezogtUzTAsl4u+1//biJNovSdMwVn1pSXGvNNIn4U6eX/gzx7YCEI48X0H
-	 V4yHsu0LRFvA95Ky2XUsRH1brRhOm9y5hbWO+wvUPI2M7jdF4cPbDm9XlvERIUDkuV
-	 3F373y2WhPnBBuJu31VukUN0R+tCS5f09oIpzD4V0cdjwduVsxEzj4G6Ef36yd88N2
-	 jMg9FOGtnQJaBU0Sj+R8DJheon8HK4WdPNoJI7xZ/qXF2L6XVbr3usMNIdzq0y+MPB
-	 DX/B6Mjr7IOxg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 06 Oct 2024 09:03:15 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <a8393bc0-6f56-4e40-b971-4a837cf28323@wanadoo.fr>
-Date: Sun, 6 Oct 2024 09:03:08 +0200
+	 In-Reply-To:Content-Type; b=RPnyDG07WgghPXKNppENZHX+NeCk8/WlKDD4CInRUrTFWfRb2TPhPNL6i0p7gnvHP6eGmbXhJ3iS6gy+pZqBStDkZ8xvu/cMJO6yn94bqOdjNKDRGIcbjAJuCvzWkuh9k3TSxHPpudfyTrblAkmBI+p/vTfshWN/U/8rycopoG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vrs7hDhF; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71dff3b3c66so109698b3a.0;
+        Sun, 06 Oct 2024 00:04:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728198243; x=1728803043; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tckbyZE/ry4Oad1LzSUnqMT9bRU9veKDtELrYVoCd/0=;
+        b=Vrs7hDhF2ihObCCGVYZ9SdYlgrFlCucyEuOKEatBZTGGxdkQekHQ0N01WgDZsYwi5r
+         s/uiKtThM7fa0m8H5MIgu6G/7dxyCzYgMHCnZgSvUcHbnaCkZAJDUqXgwLoxONOdKMKS
+         aR0oh0CMLwG1+fI9AD0u8iLV2GWNzJfjXsYE5HfoHB8+/RdL45jS4MxtAx2/jDpJzXcx
+         0w2sVga7Hk/YEXrkVd2IlXnMGyxx5T6XRY6ogEmNBFUfbEw1jEkNsG2hqlJQ3DjN+U9J
+         BEtnxVoZTcfEuMnwDQKElTgKCKgZ+Bff5hj+hK7XqgvoTCtP+cIF4jVe8MqVZF4KZQgo
+         r4JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728198243; x=1728803043;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tckbyZE/ry4Oad1LzSUnqMT9bRU9veKDtELrYVoCd/0=;
+        b=mt2uDcJVs79MtMhmFlXUv11uoLq6KLbZQZF7pDxLzAy4LxBfIQetHqKzkaS8cPUyfb
+         loh2Ep2JY4ygD/4BWT7pJI3x9qpbG8ddX8wIczH7zlM1Bky1dRJOyuKAyseyD1lcsw8g
+         n/Knuznh9yxBTTyPiL2wkCsA6LdcKPf8ZGqatwaCvqkjvHSkIpX/bd5bOAKdx0lymcpd
+         sHwOZUI8e4HVk+T7GBOFF3d+jJQpEo4fuy8V6053VtNsZFBmiGmvPlxZAnovjh0Stpu7
+         q9NnHiiUow6MgJZ3N85zbwK5VLplr2MsmIIeuo9UZVYdI0W1tlgCCEvdzPovPDaENgiC
+         wKcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFryFpC7Gwn7OLeXJBXjA30WWORIp4hSuuE0XU6OmGO8+HTrHPaeQx+PHb7tdY8/pveT9Dls0IUZOieABa@vger.kernel.org, AJvYcCWzJ53E2kbM7p6m3WGwPy2mzIgKFVjwqc+FWyC5lnCrkBqILqFYcK2ukKyVXCvHZFPk4rQNAybln+TdaQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgQIdQ5IWxvnHsnJPgxXeTDh92QPqtF0PukVLzv5RUyXwc4PF/
+	pXxByBXWmSsr4DO0HG7y6iq/Bap90hax7ytzzXu/NWl6VF3ymgza
+X-Google-Smtp-Source: AGHT+IGW6364qkiD/cHu9+Vws4u5HGye8AxVjb25Ef9DEDTEnray4ndXZoXmnJuY3gK8qIHwMsl/ww==
+X-Received: by 2002:aa7:88cb:0:b0:70b:a46:7db7 with SMTP id d2e1a72fcca58-71de23e8eaemr11940318b3a.16.1728198243461;
+        Sun, 06 Oct 2024 00:04:03 -0700 (PDT)
+Received: from ?IPV6:2409:40c0:230:2966:8a2:4c2e:bb52:a9af? ([2409:40c0:230:2966:8a2:4c2e:bb52:a9af])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cbb976sm2377055b3a.23.2024.10.06.00.04.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2024 00:04:03 -0700 (PDT)
+Message-ID: <d4463564-7593-4956-a598-c7ec8fa8f851@gmail.com>
+Date: Sun, 6 Oct 2024 12:33:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,75 +75,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] sched/psi: fix memory barrier without comment warnings
-To: Pintu Kumar <quic_pintu@quicinc.com>, hannes@cmpxchg.org,
- surenb@google.com, peterz@infradead.org, mingo@redhat.com,
- juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, linux-kernel@vger.kernel.org
-Cc: joe@perches.com, skhan@linuxfoundation.org, pintu.ping@gmail.com
-References: <20241006060042.17613-1-quic_pintu@quicinc.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241006060042.17613-1-quic_pintu@quicinc.com>
+Subject: Re: Explanation on Uninitialized Variable bio in blk_rq_prep_clone
+To: Keith Busch <kbusch@kernel.org>
+Cc: hch@infradead.org, axboe@kernel.dk, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <Zv_eFIjstVns-ebG@infradead.org>
+ <20241004141037.43277-1-surajsonawane0215@gmail.com>
+ <Zv_-DSM2NhuiX3o2@kbusch-mbp>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <Zv_-DSM2NhuiX3o2@kbusch-mbp>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 06/10/2024 à 08:00, Pintu Kumar a écrit :
-> These warnings were reported by checkpatch.
-> Fix them with minor changes.
-> No functional changes.
+On 04/10/24 20:09, Keith Busch wrote:
+> On Fri, Oct 04, 2024 at 07:40:37PM +0530, SurajSonawane2415 wrote:
+>> In the function blk_rq_prep_clone, the variable bio is declared but can remain uninitialized
+>> if the allocation with bio_alloc_clone fails. This can lead to undefined behavior when the
+>> function attempts to free bio in the error handling section using bio_put(bio).
+>> By initializing bio to NULL at declaration, we ensure that the cleanup code will only
+>> interact with bio if it has been successfully allocated.
 > 
-> WARNING: memory barrier without comment
-> +       t = smp_load_acquire(trigger_ptr);
+> I don't think your explanation makes sense. The line where
+> bio_alloc_clone happens:
 > 
-> WARNING: memory barrier without comment
-> +       smp_store_release(&seq->private, new);
+> 	bio = bio_alloc_clone(rq->q->disk->part0, bio_src, gfp_mask, bs);
 > 
-> Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
-> 
-> ---
-> Changes in V4:
-> Added () in comment as well suggested by Christophe JAILLET.
-> V3: https://lore.kernel.org/all/00aeb243-3d47-42be-b52c-08b39c5fef07@wanadoo.fr/
-> Changes in V3:
-> Removed signature of Joe as requested. No other change.
-> V2: https://lore.kernel.org/all/CAOuPNLi1mUKW_vv0E6Ynzvdw_rHvCye+nAf2bWv6Qj9A8ofX1g@mail.gmail.com/
-> Changes in V2:
-> Retain printk_deferred warnings as suggested by Joe Perches.
-> V1: https://lore.kernel.org/all/a848671f803ba2b4ab14b0f7b09f0f53a8dd1c4b.camel@perches.com/
-> ---
->   kernel/sched/psi.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-> index 020d58967d4e..175423716e4c 100644
-> --- a/kernel/sched/psi.c
-> +++ b/kernel/sched/psi.c
-> @@ -1474,6 +1474,7 @@ __poll_t psi_trigger_poll(void **trigger_ptr,
->   	if (static_branch_likely(&psi_disabled))
->   		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
->   
-> +	/* Pairs with the smp_store_release() in psi_write */
->   	t = smp_load_acquire(trigger_ptr);
->   	if (!t)
->   		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
-> @@ -1557,6 +1558,7 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
->   		return PTR_ERR(new);
->   	}
->   
-> +	/* Pairs with the smp_store_acquire() in psi_trigger_poll */
+> If it fails, then bio is initialized to NULL.
+You're correct, bio_alloc_clone returns NULL if it fails, so there’s no 
+uninitialized bio after that. My initial explanation wasn’t fully 
+accurate, but initializing bio to NULL is just a safety measure for any 
+unexpected issues later on. Or i am just trying to solve this issue by 
+smatch tool: block/blk-mq.c:3199 blk_rq_prep_clone() error: 
+uninitialized symbol 'bio'.
 
-Sorry if I was unclear in my previous comment, but my main point is that 
-I think that it should be smp_load_acquire() and not smp_store_acquire().
+Thanks for the clarification.
 
-(Also, if you add some (), you could also add them for psi_trigger_poll 
-and psi_write)
-
-CJ
-
->   	smp_store_release(&seq->private, new);
->   	mutex_unlock(&seq->lock);
->   
-
+Best regards,
+Suraj
 
