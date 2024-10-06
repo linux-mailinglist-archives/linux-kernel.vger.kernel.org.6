@@ -1,161 +1,153 @@
-Return-Path: <linux-kernel+bounces-352575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C6F9920F3
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:52:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CAAA9920F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8454280F37
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:52:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBD0E1F21242
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A2518BB8B;
-	Sun,  6 Oct 2024 19:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D5D18A936;
+	Sun,  6 Oct 2024 19:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhaMyNpp"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jGQlmBjy"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6510A18B477;
-	Sun,  6 Oct 2024 19:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4E318A928
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 19:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728244304; cv=none; b=kip0Ewh+RgXksqxuoysVk8LYG61UleovLF+/Q6SClUFdlGEtERSoauyOgks3og41m+t2YBEssokv1q2jH3eypW9+8FzycxVujbEYoQAPg9DyaOPvLXsYjdY0jpSj03fDxb53FVbWYvI/fVw3pWVVW9BmzyqgdMVBVyBVARytquc=
+	t=1728244312; cv=none; b=cUGUyFhoTWcvlPVle4bJvx3i4EtNt+XRT4SfQTU2slup3uuFCcsHugRyIbsFolHIPn0tGNhlwIl4iEezWZADklKsw62VK3kJ2o2lV3QjX+u9na6DTCoVBpnEEOyJMULxHBJ894xQWTPPJuddtrIBcHP0l34cuJWzl30Dfwa7pm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728244304; c=relaxed/simple;
-	bh=F6qNZ4jlOg2hxLaEoE0zteqiQizJ32UnDSEHdaKR2+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BbL8CHQawZ0j7AJyq4cyuYxrju4I+eMyacJOtM5QS2sb7SjvHW2HCn9p/ucEibDDyXvSk5K+/IR4msfmxMKZrVxwXfza71ikuzsLwgFLV+9ExRf1RtTE7xFbaKRnWbD2Q0bbkPGcbH74GFJf1oESsGX7AxTGRhQrpwDl/9KZHbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhaMyNpp; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e232e260c2so30174547b3.0;
-        Sun, 06 Oct 2024 12:51:43 -0700 (PDT)
+	s=arc-20240116; t=1728244312; c=relaxed/simple;
+	bh=9lt1no/KUIGnHTDCEfU0YumPhaO03NFlOojFAlgorYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rv6H2KGv5j9+ftQ7X/Va9LANxUv3i1rfyw+80nKJ8kK95tveIrIo8P0uxLYKJGmfhX+zrkerQNyUdkGQett+JXnUwD+28HIlFHEBR53pDWdE6/8aIunF3UJDDIFBvOyAalTsoahW8fsIdxZXkkvInbAa/vfFN07dhaK8BCHE/sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jGQlmBjy; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fac5eb10ceso34125931fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 12:51:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728244302; x=1728849102; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jgmNOd8EkUBDOGblASHH/LKqu14LjdmFfgpTO4kLaMs=;
-        b=KhaMyNpp0mZ6Ksyy52MqrD3D4FBKMeRK5QbfO/Qeu8uux4nyFJP6DTHe3wHCw4Okqr
-         /A5jf3Sy5gvENWT/J1MAc4jrFPdJFta1/hm4KFYyS+a8+s9SQjtrsYiHQit0axumk3Qd
-         eDjbg4/4wVymW5HXbeiCAfSWLWgTJeCzlSZpu3BjwzD9ZpHqe8lia3IyjXq3pyI6Q9Ob
-         n9f8X9ivtXtFMeuksPQLnmtfPQeJTbNhVITCfENVRAMgpJgGtBNwh3C1eHcSN2REU+xQ
-         qBydBJ+zF1YNbtR0qc8A1Hbz/Qbkidm9s05Q0e6al4IJOon883ixZUstHUH80TK51dEt
-         u/Cg==
+        d=linaro.org; s=google; t=1728244309; x=1728849109; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HLQ0qGbobuBRSeV4tlw8iWIHrFfzRjusLkYkkaznzmM=;
+        b=jGQlmBjyO5RKptN4wC0u3UlLJoZJjv6qEHiAI3X/2cjtfmlfHwlMX8OehMolMT2Ugr
+         u5Ni3zqWbRxguR5oNb+DcJhlMikRNGKu7rnx5cyG3O6kAlHqwLbM+M1ivLYIQoZDO08N
+         NJW53HxBbbT2AJxaVf1+AtOnYWUecgmGW/OR4Zi4d6bSMOPtE7aiU6wIsepk4L6JZDxX
+         lib3sGxjRqR1CRXMnp8TCEw08p1xsXHCO8upmtzfJLeIOvGhaEIrQqNkjcyUB6CMifaE
+         d2qqhxS7gYu+OkN5UNCRpkFS0HavP228pqdfv5VfoIGB3SbMyLJwj9HVlc/KTQhQaCZV
+         gs8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728244302; x=1728849102;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jgmNOd8EkUBDOGblASHH/LKqu14LjdmFfgpTO4kLaMs=;
-        b=q5oouMGeaMInUAFbIOsSLxyhilvjwqzboOfI4ZPKfZHpefhpsb3AdpVgkt4RMo7lsd
-         K9VOJxHBInZGLiXVpw1YaLlfW/I5+S3CsqYNKpEtK+EhNYZ9abFc0Y7lHC0k+RUKgLFb
-         b/GV+2zCb+iwghdwEDb3w1zS1SlW7oCIE64NLRVfClvkab9YzOL6xapxy5+OuD4y4m4h
-         oCQWaK0jvkolWJUSC7mCGAUepTiJxsgIh1VxNXot4X5za6v0mVLfKCBcHcVxt627c3Vx
-         5c4UNwg3/fX9IXuP/JFoaMFy7j6G9lj3Rx9GCbC4h/bbJEIPu0iykvSOoV/qae/6sxer
-         JMhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Y2x07NYrjqmI4p0QHuLvYvETABDExl4CjLXXSwWXubk/zEqmMk74KXPVWMAFfs7o3yuyay0wXd+HIT48@vger.kernel.org, AJvYcCWWlEbu6NWLL4IDIRovlzNDCQfEu/6PXTVGEDde44d3D64GnH3zHkxuUoLI5IWzi59SJJU=@vger.kernel.org, AJvYcCXFb3lCHVpj2Sn+37dGeY6xLn5/U8u+80akIYgrqZARnmCILa722mbZiVZ05C60j3MwFPFViHjwy2RNueksC+ec@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTJ2gvEJdRFpQPFTAwx91PIgME/UPPNUWbXk9yUrwoTFKc6t9r
-	31hSGaYI/WMYHADOzU2Ko0Jz/ej7taTfWM918kSWK3sDAp+KEBPw
-X-Google-Smtp-Source: AGHT+IHJ4Y+l0uGKYZTgkpq8oWf7hB6gKjf/FcldLHpxWSCpLotRWX+Op5SKYWGCGwO6pYnlcfvGCg==
-X-Received: by 2002:a05:690c:d91:b0:6e2:ad08:48fc with SMTP id 00721157ae682-6e2c6fc6ad4mr79656147b3.4.1728244302288;
-        Sun, 06 Oct 2024 12:51:42 -0700 (PDT)
-Received: from dev-ubuntu-0.. (104-15-236-76.lightspeed.rlghnc.sbcglobal.net. [104.15.236.76])
-        by smtp.googlemail.com with ESMTPSA id 00721157ae682-6e2d93d6effsm7811297b3.100.2024.10.06.12.51.41
+        d=1e100.net; s=20230601; t=1728244309; x=1728849109;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HLQ0qGbobuBRSeV4tlw8iWIHrFfzRjusLkYkkaznzmM=;
+        b=emdYhJpqYnpkzka0NvwLMwdTL6tG2rD+4OjD+pRQGMxm8E7UDgAP96HHBrfe98mq4m
+         Abd7fMCunAAVpfT6QvcqJTAgP8h0gz6db+WclxN1T0P8sDYONUk1n1oEIqBJfPnLTBmM
+         vBys456Rak11PowSP46j4muQth52uaHPRckS55lBTkoxlTJo/gf4g+OXM7Kvf1ByeiSo
+         50hajrH1umXqIk+aS0kRz7ECKSSImnmbQgNI7GDODOIHPP7l/NMmgnbuadOqLJu0r9bQ
+         qsC3RDsISIzs3mxm7mF071cCm1v5KNdTE0kZ6sO2ugeU4v13GkOdVQkVbPcQrbLcO30m
+         wf6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVVOTeX7vHMhADPtpDQHygI269cpMJBioqwlx3F+eOgtM7Jb+53WD0lrY6VljaXpPN4l0e6TUff0AZ1ZSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNSjRQHZNuGFKXgcqcziqtI/fI+FySiLJlPmv0mfX3hrrgJsmH
+	7GsbUBjKk0eDQnkl0mkvzW6zjVnLdJfTOkQ+O7sXq1H1HD6eWcSAlyPK2+4RWzM=
+X-Google-Smtp-Source: AGHT+IGRatu8NXdtFSTYD4sGTrAK8KQ3y0hxb5hgGzJcApZ29zymfe86p3XYxT0wL94dtWg73UlkWQ==
+X-Received: by 2002:a05:651c:b2c:b0:2ef:2c40:dd67 with SMTP id 38308e7fff4ca-2faf3914675mr32011581fa.3.1728244308751;
+        Sun, 06 Oct 2024 12:51:48 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9b329dbsm5920091fa.105.2024.10.06.12.51.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 12:51:41 -0700 (PDT)
-From: tyrone-wu <wudevelops@gmail.com>
-To: laoar.shao@gmail.com,
-	wudevelops@gmail.com
-Cc: andrii.nakryiko@gmail.com,
-	andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kernel-patches-bot@fb.com,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	martin.lau@linux.dev,
-	mykolal@fb.com,
-	olsajiri@gmail.com,
-	sdf@fomichev.me,
-	shuah@kernel.org,
-	song@kernel.org,
-	yonghong.song@linux.dev
-Subject: [PATCH bpf v5 2/2] selftests/bpf: fix perf_event link info name_len assertion
-Date: Sun,  6 Oct 2024 19:51:31 +0000
-Message-ID: <20241006195131.563006-2-wudevelops@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241006195131.563006-1-wudevelops@gmail.com>
-References: <CALOAHbC5xm7Cbfhau3z5X2PqUhiHECNWAPtJCWiOVqTKmdZp-Q@mail.gmail.com>
- <20241006195131.563006-1-wudevelops@gmail.com>
+        Sun, 06 Oct 2024 12:51:47 -0700 (PDT)
+Date: Sun, 6 Oct 2024 22:51:44 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org, 
+	andersson@kernel.org, simona@ffwll.ch, abel.vesa@linaro.org, robdclark@gmail.com, 
+	quic_abhinavk@quicinc.com, sean@poorly.run, marijn.suijten@somainline.org, 
+	airlied@gmail.com, daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, quic_khsieh@quicinc.com, konrad.dybcio@linaro.org, 
+	quic_parellan@quicinc.com, quic_bjorande@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, quic_riteshk@quicinc.com, 
+	quic_vproddut@quicinc.com
+Subject: Re: [PATCH v4 5/5] drm/msm/dp: Add DisplayPort controller for SA8775P
+Message-ID: <wdslr77zwyyyesf47qmem3wmextrjfh5do4ckrk6vvzeqwi5gu@x3sxgiusspqp>
+References: <20241004103046.22209-1-quic_mukhopad@quicinc.com>
+ <20241004103046.22209-6-quic_mukhopad@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004103046.22209-6-quic_mukhopad@quicinc.com>
 
-Fix `name_len` field assertions in `bpf_link_info.perf_event` for
-kprobe/uprobe/tracepoint to validate correct name size instead of 0.
+On Fri, Oct 04, 2024 at 04:00:46PM GMT, Soutrik Mukhopadhyay wrote:
+> The Qualcomm SA8775P platform comes with 2 DisplayPort controllers
+> for each mdss, having different base offsets than the previous
+> SoCs. The support for all 4 DPTX have been added here, and
+> validation of only MDSS0 DPTX0 and DPTX1 have been conducted.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+> ---
+> v2: No change
+> 
+> v3: Fixed review comments from Konrad and Bjorn
+> 	-Added all the necessary DPTX controllers for this platform.
+> 
+> v4: Updated commit message
+> 
+> ---
+>  drivers/gpu/drm/msm/dp/dp_display.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+> index e1228fb093ee..2195779584dc 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+> @@ -118,6 +118,14 @@ struct msm_dp_desc {
+>  	bool wide_bus_supported;
+>  };
+>  
+> +static const struct msm_dp_desc sa8775p_dp_descs[] = {
+> +	{ .io_start = 0xaf54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
+> +	{ .io_start = 0xaf5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true },
+> +	{ .io_start = 0x22154000, .id = MSM_DP_CONTROLLER_2, .wide_bus_supported = true },
+> +	{ .io_start = 0x2215c000, .id = MSM_DP_CONTROLLER_3, .wide_bus_supported = true },
 
-Link: https://lore.kernel.org/bpf/CABVU1kXwQXhqQGe0RTrr7eegtM6SVW_KayZBy16-yb0Snztmtg@mail.gmail.com/
-Fixes: 23cf7aa539dc ("selftests/bpf: Add selftest for fill_link_info")
-Signed-off-by: tyrone-wu <wudevelops@gmail.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
----
-V4 -> V5: no change
+Please take a look at other device descriptions in the file, note the
+difference and fix your DP description accordingly.
 
-V3 -> V4:
-Link: https://lore.kernel.org/bpf/Zv_PP6Gs5cq3W2Ey@krava/
-- Split patch into separate kernel and selftest change
+> +	{}
+> +};
+> +
+>  static const struct msm_dp_desc sc7180_dp_descs[] = {
+>  	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
+>  	{}
+> @@ -162,6 +170,7 @@ static const struct msm_dp_desc x1e80100_dp_descs[] = {
+>  };
+>  
+>  static const struct of_device_id dp_dt_match[] = {
+> +	{ .compatible = "qcom,sa8775p-dp", .data = &sa8775p_dp_descs },
+>  	{ .compatible = "qcom,sc7180-dp", .data = &sc7180_dp_descs },
+>  	{ .compatible = "qcom,sc7280-dp", .data = &sc7280_dp_descs },
+>  	{ .compatible = "qcom,sc7280-edp", .data = &sc7280_dp_descs },
+> -- 
+> 2.17.1
+> 
 
- tools/testing/selftests/bpf/prog_tests/fill_link_info.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-index f3932941bbaa..59077f260404 100644
---- a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-@@ -67,8 +67,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
- 
- 		ASSERT_EQ(info.perf_event.kprobe.cookie, PERF_EVENT_COOKIE, "kprobe_cookie");
- 
-+		ASSERT_EQ(info.perf_event.kprobe.name_len, strlen(KPROBE_FUNC) + 1, "name_len");
- 		if (!info.perf_event.kprobe.func_name) {
--			ASSERT_EQ(info.perf_event.kprobe.name_len, 0, "name_len");
- 			info.perf_event.kprobe.func_name = ptr_to_u64(&buf);
- 			info.perf_event.kprobe.name_len = sizeof(buf);
- 			goto again;
-@@ -79,8 +79,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
- 		ASSERT_EQ(err, 0, "cmp_kprobe_func_name");
- 		break;
- 	case BPF_PERF_EVENT_TRACEPOINT:
-+		ASSERT_EQ(info.perf_event.tracepoint.name_len, strlen(TP_NAME) + 1, "name_len");
- 		if (!info.perf_event.tracepoint.tp_name) {
--			ASSERT_EQ(info.perf_event.tracepoint.name_len, 0, "name_len");
- 			info.perf_event.tracepoint.tp_name = ptr_to_u64(&buf);
- 			info.perf_event.tracepoint.name_len = sizeof(buf);
- 			goto again;
-@@ -96,8 +96,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
- 	case BPF_PERF_EVENT_URETPROBE:
- 		ASSERT_EQ(info.perf_event.uprobe.offset, offset, "uprobe_offset");
- 
-+		ASSERT_EQ(info.perf_event.uprobe.name_len, strlen(UPROBE_FILE) + 1, "name_len");
- 		if (!info.perf_event.uprobe.file_name) {
--			ASSERT_EQ(info.perf_event.uprobe.name_len, 0, "name_len");
- 			info.perf_event.uprobe.file_name = ptr_to_u64(&buf);
- 			info.perf_event.uprobe.name_len = sizeof(buf);
- 			goto again;
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
