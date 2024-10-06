@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-352549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA545992095
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:14:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF9AE992096
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549A51F210AD
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:14:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16FDC1C20C90
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81F518BBA4;
-	Sun,  6 Oct 2024 19:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A40A18B47A;
+	Sun,  6 Oct 2024 19:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aGVy2ieq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qjpl90jO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B4C18991C;
-	Sun,  6 Oct 2024 19:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD5C18A95B
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 19:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728242032; cv=none; b=uYG6WvsjixjTZBtNgGVe03oKvGOjBzOV8xkljZ2orYV6DAY0XD2F6eVnojvehBMco2mRaWJI/SxeyGTh6JaF6qpVK0Od77WF6s+n+hWr1xXztdoDmvGGjIKYyHWTsH9X9CZaxPFYStxW5jSsLdYq84Pl5vyy1EkMZUBEruuK+6Q=
+	t=1728242039; cv=none; b=pGXHFHxLwSFhMVo5BfoeWN50maeylZP7D9gI/gNJgPfTje5aPpDY1cdn7snAQTQuhDeYD2t1Svcc3TskQ/FY6IFOGcdy3YlxEz7bteeDhzHRNJKVZNs+ticPTXSyc2poGuxwd0uot0nxsOXYFiLGq7L1eKXI0KggA4s8OcvSfPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728242032; c=relaxed/simple;
-	bh=lLuddPwHrdfKRBge2NAHOlrXBZxWjhbrKXwNE8/eL6s=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JoUjgPlNjLZRFEs7EKotX/4EXlrqNeigvaPcAvuKFAm6WpUpIOxF6tXTEqDX74Et4umo9BNO69Z07B7S0jfQvk03bRhhLctKaeq+MPNHII2yckvX/JB3I9xTupF6NpmQaF+9RWbuOouS9jzZalZZ2eLYFCti6ec6XFJimWLVLcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aGVy2ieq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04BC4C4CECD;
-	Sun,  6 Oct 2024 19:13:52 +0000 (UTC)
+	s=arc-20240116; t=1728242039; c=relaxed/simple;
+	bh=QqHODBGAmDsDiewZwnqtkjjxYYRrjU2tBqPeDbGJGMY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=lwFHfTNgxoXBSmLKUB3boCPgnbV4JkcWl5urHu7lx0s8raOPDLCnx6ZNzmUWX+mYDBYZIJCNjE1IQUX0JQ3e6gAZN0oHxn6Hr1IdIXuAFJXDOz/nva8BksDUiFK+uq0a/6ou87sBPVX1qnUgRwWGh9LHEHiwxr5vLyzGnnmKB0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qjpl90jO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB99C4CEC5;
+	Sun,  6 Oct 2024 19:13:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728242032;
-	bh=lLuddPwHrdfKRBge2NAHOlrXBZxWjhbrKXwNE8/eL6s=;
+	s=k20201202; t=1728242038;
+	bh=QqHODBGAmDsDiewZwnqtkjjxYYRrjU2tBqPeDbGJGMY=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=aGVy2ieqrU3bgv6WdXs4LmmDLzzowcVbHEDzvF16QUBIW2YAzPxEXef4tdqrkEZAh
-	 4yDnmysL08doYIalKIQphRxEqsuV1jihs5JpySLmpckYT+hWWZPbe+u3rsyu4hdXED
-	 839cWEbmRAjKHlXLBPvybb8WOSk38HP555EMkzUlGyMs/qKyQT4aH+VENffeEVDUYS
-	 jxew5N6tvwyII2Y3EuPIbpG1nF9Pt2DjcUc46kuAkI0wtlT+W7wBeUpYbLUyyiTv10
-	 tgOqd9sTen0lKnxZjqizGEy+Xj0G1T/UpfRdZ84u3sGLeUz+lcpdMUi+iYAGrZ/rHN
-	 MpNxXVkK7PsOw==
+	b=Qjpl90jOtr69yJY9D7pwkizOhbAy3szzY6rVd9P+bS0p1uokZB15c6i6JAAf2FT87
+	 VOsAhinf4FHarbSRLKQSn/86UW4+1T4CbaL9YLrkJlbQqRRO5BdRUvEfmPOBoSUsd6
+	 uqhnnQ8gBqx0hDE2lTxyLI7Wb4z12plsRgYih8R43/85rZbcs/gU82uygfA94Gw7jI
+	 uQWCo8kIT9tXOeS6LKcrCSETjZMyNDGy6qPZFDFdRp2MNDHYd6/YAy0BvnYffR+kly
+	 cudkFw5yob8ljgmUs/FhyjHNdB2A7FLGu3dBnkdHLRTONOJNuv/jzk/Tb5rAi6snV5
+	 AqmPSokC1XePA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E6F3806656;
-	Sun,  6 Oct 2024 19:13:57 +0000 (UTC)
-Subject: Re: [GIT PULL] Kbuild fixes for v6.12-rc2
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CB63806656;
+	Sun,  6 Oct 2024 19:14:03 +0000 (UTC)
+Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-6.12-3 tag
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAK7LNATWKzHUxHofwZx9NvcR5hTvxyBSxJLW8GMsZNQgXUQcwA@mail.gmail.com>
-References: <CAK7LNATWKzHUxHofwZx9NvcR5hTvxyBSxJLW8GMsZNQgXUQcwA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kbuild.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAK7LNATWKzHUxHofwZx9NvcR5hTvxyBSxJLW8GMsZNQgXUQcwA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v6.12
-X-PR-Tracked-Commit-Id: 82cb44308951ad4ce7a8500b9e025d27d7fb3526
+In-Reply-To: <87bjzxlnmx.fsf@mail.lhotse>
+References: <87bjzxlnmx.fsf@mail.lhotse>
+X-PR-Tracked-List-Id: <linuxppc-dev.lists.ozlabs.org>
+X-PR-Tracked-Message-Id: <87bjzxlnmx.fsf@mail.lhotse>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.12-3
+X-PR-Tracked-Commit-Id: 4b058c9f281f5b100efbf665dd5a1a05e1654d6d
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2a130b7e1fcdd83633c4aa70998c314d7c38b476
-Message-Id: <172824203581.3486601.4148870681854408704.pr-tracker-bot@kernel.org>
-Date: Sun, 06 Oct 2024 19:13:55 +0000
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+X-PR-Merge-Commit-Id: b3ce5c30a0e05ee3600c82925bebaa4dc1b29cfd
+Message-Id: <172824204192.3486601.14939940245333023042.pr-tracker-bot@kernel.org>
+Date: Sun, 06 Oct 2024 19:14:01 +0000
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jason@zx2c4.com, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 7 Oct 2024 02:47:12 +0900:
+The pull request you sent on Sun, 06 Oct 2024 18:02:46 +1100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v6.12
+> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.12-3
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2a130b7e1fcdd83633c4aa70998c314d7c38b476
+https://git.kernel.org/torvalds/c/b3ce5c30a0e05ee3600c82925bebaa4dc1b29cfd
 
 Thank you!
 
