@@ -1,210 +1,179 @@
-Return-Path: <linux-kernel+bounces-352364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832B0991E1D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:28:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E62991E23
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05BB31F21A3E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:28:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BDCE28259D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10AD176233;
-	Sun,  6 Oct 2024 11:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D30E1741C9;
+	Sun,  6 Oct 2024 11:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNuAwvYS"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1HDQKCE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8F5172BD5;
-	Sun,  6 Oct 2024 11:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFD1749A;
+	Sun,  6 Oct 2024 11:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728214083; cv=none; b=fWx/bgViAtiGXp93Xjbg21FujWyhARP8t2sMGR+ddN+m0JbJE/Nbn+NKDaE00i9c/Q5StekXYBvDaYCrlUBZ381ADooS0AM+Bgn4Vr2ENJoJn/+jtquuFtIn2UycV/FcnrLKOKXStrjRM07hyITnKNB84RjooybHgLPOhsqO62g=
+	t=1728214389; cv=none; b=BpU4BLjYFesQZb39agYM6TBxwpR4PIUXTtsvAe4QAu4EXiCS6OGm6SXwVDyVntjR2igbLBvRgfiyilg2jMzbYNxANSh5CzxL7ta7H8sasuqnfVE1rgNqqV07M6eGsiyqh9Jm5iEurB0qGpA4DsFKnrFlNuU55qjc+qyDnzu8HlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728214083; c=relaxed/simple;
-	bh=PPUB5Vs68tLf34u5a6Sit62Xx4CeOmFIO5+QyXcVQ6I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QOR4se9ozoCwHWct6EV5HIdhrCTxsnwc6lguJqV3Y2V5xnj/UCDQuPmlUn//BtXq7I6tMsMEpFPeFbv9122CndrgSs9+ZTWtOXnkSmzfVo8QjuG4bYO1qFrJhNqmxqy8I8Yr+VbVD2wl/cO/QHValiXnrxBgciO4V1qorUWUmng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dNuAwvYS; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37cc60c9838so1931055f8f.1;
-        Sun, 06 Oct 2024 04:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728214080; x=1728818880; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6CAoqvvD4YI816IpY4nefTarN9VTzwy3A335UX1ixTk=;
-        b=dNuAwvYSCy+lEl7KsEcoEfYYz/8IC0y/ncrxLiWP+br95eycNTbTuW6+cMWw5mOPwr
-         XWwp+x+o48/VuSEgldI1Na4QCmQuopYlHdtzXb94fkuAYryJbNr8WpYA2zrA5c71t/1U
-         CNPeQMzV+e1ZkTfEzJcMsm9XvdpzlBO5m3LHAfSZTHxGk7ayulPiEsbsvjsCjmpxkS7X
-         nuE4FiLa/7ZP3EzoKzfRlqz4yE9sY734cTpI6ASRu5oDiOIxMG5luOiDEZasQcKDQj7G
-         5zqH/8vr3I3CKC+ycOwk8+R+h+a0NMRrtZk1tBgoTFzaho/3FmGZMiV22khSxio4Qrk5
-         9uZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728214080; x=1728818880;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6CAoqvvD4YI816IpY4nefTarN9VTzwy3A335UX1ixTk=;
-        b=ccC64aN68LFs1jYHKjUO2ZacW1QNetJgi7NqW54EUMjiizOpqsOdcb7CxdfjOxreMR
-         BLp0J37HANOKcXi5WMKF8/HBffukP5rWFbwmOJQ9hiNfqI3TxkIhIc4AgK9GB/hA4HqU
-         TfcO/5swk7CA7Z2FG1JP+PsAhiB52z8mgZp04diXgsgDdq1MSAN2u9SJysl31Y3nLCrz
-         dvRuhvqbRUaSApc+eTjN31RPhhTK17eNH9dOUl2MvGRGpxqNZv1SMbpb6Z4yfH3d4Vsn
-         DsCzRKuAoUNXgZVsJwqLR1W+lvq2FwVI60RdbLs9Pk8I6svBIpKErEM95a27x/UNQm++
-         oEMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvyOR+tyU81bY1OtwiEe4yrTjDn9FqoiJHNBpwdMDpMC2SbofyYg3Brhdjr9NIRE9SQjP8xziVroEtrRJL6Rc=@vger.kernel.org, AJvYcCWhlTgQIgvaplxd+x4Yw3Tq8C8SJbl99HlojRClGt24wdwLvcNXog2Hq8V9ExPLN3dKeTqx/42Bs0cnZt3u@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbELSY3Gm1d94wM1nDSmUzx+vlF5lr9iUWw+qbjHgr5AhXMabi
-	B7BAwXZlPFhrjkJTwmHnoL0Mow79IvFSsjoC3d4Mn+ugvE+Jyn4j08CaCJ+c
-X-Google-Smtp-Source: AGHT+IHfGrwFLywFiuwm/772cVOvBnRAK9phO1/F0qEaYxADEqaxNjoKOHyenCeSyujUCwHaFQP2Pw==
-X-Received: by 2002:a05:6000:402a:b0:374:ba78:9013 with SMTP id ffacd0b85a97d-37d0f6a1ae7mr5087591f8f.9.1728214079487;
-        Sun, 06 Oct 2024 04:27:59 -0700 (PDT)
-Received: from void.void ([141.226.12.238])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16972b2esm3464989f8f.105.2024.10.06.04.27.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 04:27:59 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] drm/amdgpu: fix typos
-Date: Sun,  6 Oct 2024 14:27:52 +0300
-Message-Id: <20241006112752.6594-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1728214389; c=relaxed/simple;
+	bh=ZICSkUBYeMZu29N/modjDAZ4GFu4V0bbMg9/g8AetzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lk8ZrXHT25wGKC0em66RoIJXe+Q0tHuy1u9uR2Av6cC6j6hbkQe/fntgJQKATGuP/9ndzfoUN3DrBLyYBQJfOnHeVJdCB26IXkWlPa7id70rV42/+nrOPHv8kjxPU0tunrD9B9qAkPWALawA/yTSoyY5DTWeE3vqf/CzlBeWHgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1HDQKCE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61DFDC4CEC5;
+	Sun,  6 Oct 2024 11:33:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728214389;
+	bh=ZICSkUBYeMZu29N/modjDAZ4GFu4V0bbMg9/g8AetzM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=B1HDQKCEYBdm1jb77/l6hRmJwxRrVwpL0njdi9h07MiW02Utrlqf0lwtBM4iEZ8cA
+	 tikEeoE03+PUxo6l/QqNxLqhrvQelaPo9G2YqQSqwJCFjAQNDLus6RiGHdFUB3dByL
+	 F+LOwKyidNxzAZjo8v3gmGRekYp9FSat7gK5zb0uLXgiEpwLYhvV+ozHg7CM6MoJOw
+	 DL0Ib4GCSX1x+3mKHp/3pjra3s1zUdB0ziLUDSUu/UkTIbMPuZTE2LGGCwtHD5ELMW
+	 3QLRvyVr9q5aoYLvG3HB+b8SAeeYYqYf/WLzy9hdA1eGiMnefeLWxHde//Ik81hWvo
+	 IEZyNxYeNq9DA==
+Message-ID: <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
+Date: Sun, 6 Oct 2024 13:33:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+To: Sherry Sun <sherry.sun@nxp.com>,
+ Catalin Popescu <catalin.popescu@leica-geosystems.com>,
+ Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+ Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
+ "marcel@holtmann.org" <marcel@holtmann.org>,
+ "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
+ "bsp-development.geo@leica-geosystems.com"
+ <bsp-development.geo@leica-geosystems.com>
+References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
+ <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fix typos in comments: "wether -> whether".
+On 06/10/2024 10:49, Sherry Sun wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+>> Sent: Friday, October 4, 2024 7:36 PM
+>> To: Amitkumar Karwar <amitkumar.karwar@nxp.com>; Neeraj Sanjay Kale
+>> <neeraj.sanjaykale@nxp.com>; marcel@holtmann.org;
+>> luiz.dentz@gmail.com; robh@kernel.org; krzk+dt@kernel.org;
+>> conor+dt@kernel.org; p.zabel@pengutronix.de
+>> Cc: linux-bluetooth@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; m.felsch@pengutronix.de; bsp-
+>> development.geo@leica-geosystems.com; Catalin Popescu
+>> <catalin.popescu@leica-geosystems.com>
+>> Subject: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for supply
+>> and reset
+>>
+>> Add support for chip power supply and chip reset/powerdown.
+>>
+>> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+>> ---
+>>  .../bindings/net/bluetooth/nxp,88w8987-bt.yaml        | 11 +++++++++++
+>>  1 file changed, 11 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
+>> bt.yaml b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
+>> bt.yaml
+>> index 37a65badb448..8520b3812bd2 100644
+>> --- a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
+>> bt.yaml
+>> +++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
+>> bt.yaml
+>> @@ -34,6 +34,14 @@ properties:
+>>    firmware-name:
+>>      maxItems: 1
+>>
+>> +  vcc-supply:
+>> +    description:
+>> +      phandle of the regulator that provides the supply voltage.
+>> +
+>> +  reset-gpios:
+>> +    description:
+>> +      Chip powerdown/reset signal (PDn).
+>> +
+> 
+> Hi Catalin,
+> 
+> For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means that both wifi and BT controller will be powered on and off at the same time.
+> Taking the M.2 NXP WIFI/BT module as an example, pin56(W_DISABLE1) is connected to the WIFI/BT chip PDn pin, we has already controlled this pin in the corresponding PCIe/SDIO controller dts nodes.
+> It is not clear to me what exactly pins for vcc-supply and reset-gpios you describing here. Can you help understand the corresponding pins on M.2 interface as an example? Thanks.
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c | 4 ++--
- drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c | 4 ++--
- drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c | 2 +-
- drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c  | 4 ++--
- drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c  | 2 +-
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c  | 2 +-
- 6 files changed, 9 insertions(+), 9 deletions(-)
+Please wrap your replies.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
-index c544ea2aea6e..87247055a666 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
-@@ -6374,7 +6374,7 @@ static int gfx_v10_0_cp_gfx_resume(struct amdgpu_device *adev)
- 	WREG32_SOC15(GC, 0, mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
- 	WREG32_SOC15(GC, 0, mmCP_RB0_WPTR_HI, upper_32_bits(ring->wptr));
- 
--	/* set the wb address wether it's enabled or not */
-+	/* set the wb address whether it's enabled or not */
- 	rptr_addr = ring->rptr_gpu_addr;
- 	WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr));
- 	WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_addr) &
-@@ -6412,7 +6412,7 @@ static int gfx_v10_0_cp_gfx_resume(struct amdgpu_device *adev)
- 		ring->wptr = 0;
- 		WREG32_SOC15(GC, 0, mmCP_RB1_WPTR, lower_32_bits(ring->wptr));
- 		WREG32_SOC15(GC, 0, mmCP_RB1_WPTR_HI, upper_32_bits(ring->wptr));
--		/* Set the wb address wether it's enabled or not */
-+		/* Set the wb address whether it's enabled or not */
- 		rptr_addr = ring->rptr_gpu_addr;
- 		WREG32_SOC15(GC, 0, mmCP_RB1_RPTR_ADDR, lower_32_bits(rptr_addr));
- 		WREG32_SOC15(GC, 0, mmCP_RB1_RPTR_ADDR_HI, upper_32_bits(rptr_addr) &
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-index a0f80cc993cf..cf741fc61300 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-@@ -3557,7 +3557,7 @@ static int gfx_v11_0_cp_gfx_resume(struct amdgpu_device *adev)
- 	WREG32_SOC15(GC, 0, regCP_RB0_WPTR, lower_32_bits(ring->wptr));
- 	WREG32_SOC15(GC, 0, regCP_RB0_WPTR_HI, upper_32_bits(ring->wptr));
- 
--	/* set the wb address wether it's enabled or not */
-+	/* set the wb address whether it's enabled or not */
- 	rptr_addr = ring->rptr_gpu_addr;
- 	WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr));
- 	WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_addr) &
-@@ -3595,7 +3595,7 @@ static int gfx_v11_0_cp_gfx_resume(struct amdgpu_device *adev)
- 		ring->wptr = 0;
- 		WREG32_SOC15(GC, 0, regCP_RB1_WPTR, lower_32_bits(ring->wptr));
- 		WREG32_SOC15(GC, 0, regCP_RB1_WPTR_HI, upper_32_bits(ring->wptr));
--		/* Set the wb address wether it's enabled or not */
-+		/* Set the wb address whether it's enabled or not */
- 		rptr_addr = ring->rptr_gpu_addr;
- 		WREG32_SOC15(GC, 0, regCP_RB1_RPTR_ADDR, lower_32_bits(rptr_addr));
- 		WREG32_SOC15(GC, 0, regCP_RB1_RPTR_ADDR_HI, upper_32_bits(rptr_addr) &
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-index 63e1a2803503..b5281f45e1ea 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-@@ -2601,7 +2601,7 @@ static int gfx_v12_0_cp_gfx_resume(struct amdgpu_device *adev)
- 	WREG32_SOC15(GC, 0, regCP_RB0_WPTR, lower_32_bits(ring->wptr));
- 	WREG32_SOC15(GC, 0, regCP_RB0_WPTR_HI, upper_32_bits(ring->wptr));
- 
--	/* set the wb address wether it's enabled or not */
-+	/* set the wb address whether it's enabled or not */
- 	rptr_addr = ring->rptr_gpu_addr;
- 	WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr));
- 	WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_addr) &
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-index 990e7de8da25..ee9ad38e12cd 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-@@ -2559,7 +2559,7 @@ static int gfx_v7_0_cp_gfx_resume(struct amdgpu_device *adev)
- 	ring->wptr = 0;
- 	WREG32(mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
- 
--	/* set the wb address wether it's enabled or not */
-+	/* set the wb address whether it's enabled or not */
- 	rptr_addr = ring->rptr_gpu_addr;
- 	WREG32(mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr));
- 	WREG32(mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_addr) & 0xFF);
-@@ -2876,7 +2876,7 @@ static void gfx_v7_0_mqd_init(struct amdgpu_device *adev,
- 	mqd->cp_hqd_pq_wptr_poll_addr_lo = wb_gpu_addr & 0xfffffffc;
- 	mqd->cp_hqd_pq_wptr_poll_addr_hi = upper_32_bits(wb_gpu_addr) & 0xffff;
- 
--	/* set the wb address wether it's enabled or not */
-+	/* set the wb address whether it's enabled or not */
- 	wb_gpu_addr = ring->rptr_gpu_addr;
- 	mqd->cp_hqd_pq_rptr_report_addr_lo = wb_gpu_addr & 0xfffffffc;
- 	mqd->cp_hqd_pq_rptr_report_addr_hi =
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-index 6864219987e9..9d1672664c7d 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-@@ -4260,7 +4260,7 @@ static int gfx_v8_0_cp_gfx_resume(struct amdgpu_device *adev)
- 	ring->wptr = 0;
- 	WREG32(mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
- 
--	/* set the wb address wether it's enabled or not */
-+	/* set the wb address whether it's enabled or not */
- 	rptr_addr = ring->rptr_gpu_addr;
- 	WREG32(mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr));
- 	WREG32(mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_addr) & 0xFF);
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index 99334afb7aae..979774cd2585 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -3357,7 +3357,7 @@ static int gfx_v9_0_cp_gfx_resume(struct amdgpu_device *adev)
- 	WREG32_SOC15(GC, 0, mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
- 	WREG32_SOC15(GC, 0, mmCP_RB0_WPTR_HI, upper_32_bits(ring->wptr));
- 
--	/* set the wb address wether it's enabled or not */
-+	/* set the wb address whether it's enabled or not */
- 	rptr_addr = ring->rptr_gpu_addr;
- 	WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr));
- 	WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_addr) & CP_RB_RPTR_ADDR_HI__RB_RPTR_ADDR_HI_MASK);
--- 
-2.39.5
+It seems you need power sequencing just like Bartosz did for Qualcomm WCN.
+
+
+Best regards,
+Krzysztof
 
 
