@@ -1,262 +1,123 @@
-Return-Path: <linux-kernel+bounces-352638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF6C9921C3
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 23:50:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D1299220A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FE6C1C20B47
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A90841C20B3C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1095E18BBB8;
-	Sun,  6 Oct 2024 21:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC1418BC0E;
+	Sun,  6 Oct 2024 22:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hzu0ANxj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2AR6tc2"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DF6D520;
-	Sun,  6 Oct 2024 21:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C3B152165;
+	Sun,  6 Oct 2024 22:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728251395; cv=none; b=RNFRDLTDRI2vZBjsP6aY1fJ1yaD/VYysVNGXYJ2seJHkk6qIibXtEyHoBE57lp+aW6/iWjtsQTTK74aR4ka6gcp1PbZgVxLZDFK24Ph/y7zQkAcpzLVdLrFZvR4FP73d7yKGf0TUnbZY4SMK37hvwQf1uVl84AHnP5azUn9aoQI=
+	t=1728252024; cv=none; b=fUQ8NDowGphCC6fX7AV2JH6RVaJ3sEQuSg3Yd6jWlRKS3ZM99jo31L2VP690yLoh1eHABpdYv/h9i6/0yf4jGc1YL7f0Ltb+XJx5xUPfbJjrJBPDYky2ciwTUDP/4NrNkELuWVsynUlyCpPE4nb7+X64nkfNpoGuv+2Rw3fQ8i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728251395; c=relaxed/simple;
-	bh=8jp7Ne+0hZvfThEFXdytXZSN0GP34oer6XoG1C4BwuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qAZCjLtCam6emy+3qlRwYKFcsI8eW5T7r7ubg0bVRGnRD8Vm1UOdMGMA+GKpnSGTD7xE+sn8nXSk4rTAP34f9uip8gZzJ7794wNS3bs1mNud7MWkO4vSi6q+QVzhxsdWwifz8tMjUs+yn2ckzLfX6Nw/yfHhyu4m3z2iYgXXkqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hzu0ANxj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54A11C4CEC5;
-	Sun,  6 Oct 2024 21:49:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728251394;
-	bh=8jp7Ne+0hZvfThEFXdytXZSN0GP34oer6XoG1C4BwuY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hzu0ANxjEcyo4R9USphwNx/THRK3QIqUIImkROQaYMX0LiliKzGZNNpaHjrGyBdFZ
-	 kwc1ShZ6+m964XhB52ioTlIv0Err90gWst8Gg5U9HcA5dp10nqZA8rgMrYSisI4dNB
-	 feCzw6x4avmCuvg+Y8yjQL9wEPiRvEKgAh7828N9yfJEtVYMU8bosC5tJ2cQIyWrpO
-	 7cm83PYtPsDnWAfMUqRWPqizIBoJUcLdfKBuodjIk4jVm6raAOjusoLS6ZWrcv6EXO
-	 n8TnQaI7Eq6gaaYZDZe9/UHXI6iHiHrlFnX/yrRAMMDfsYS3ruxlMjRevp5zlbnbI7
-	 RpATL3oyYdzbw==
-Date: Sun, 6 Oct 2024 23:49:51 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 05/15] timers: Update function descriptions of
- sleep/delay related functions
-Message-ID: <ZwMF_y62yJ-bmNL9@pavilion.home>
-References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
- <20240911-devel-anna-maria-b4-timers-flseep-v2-5-b0d3f33ccfe0@linutronix.de>
+	s=arc-20240116; t=1728252024; c=relaxed/simple;
+	bh=SDWqSnVC1X/WWwMZyagUXcxwjhzgxnAdnjCDCZY6vZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ITS2MngvMpqN38ZJG+1CPRlGYrBLMo1tWwhjwJmlH43lB+RBLO8xzIPFkl5BZUYFx1QJT2JfvZDf8qOiPPQXjWhqvpFdSV8dJNusYW2zuN43tALvqLtP3JCgbnYPVpkXIafdgLjX/vAL3xkzRduOmDVi1d9eFFbDc70WomAymjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2AR6tc2; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53988c54ec8so4192859e87.0;
+        Sun, 06 Oct 2024 15:00:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728252020; x=1728856820; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0GDRC7VyvrSRUCSE+aiTV6hzlc3o4Msg6D2Hu233WkQ=;
+        b=T2AR6tc2oLIfTBM7eU8Qq13qjicUOoXg1mhdp2YFVsmER9F/8pc8pGQSbjlj8ZClTo
+         MbQ3g/YW+x0uSi3j8FD+eR2pHNO2TA8neDsQcld6ZFuJ4MvlSy4F3L3e4Ur/tSDvZr+P
+         3G9RVlwPFt0/8RPGuvFwJM5l50xhdwAiuJ7nrWuwCYVeMkzvPxL55Xr1Qke2VY6ozxTS
+         L1Bvbb5FZaI1MFVIO5o60rahF9iB2POORG4q5FofYROoAYpFzTtqHy7qsBqk9lPUvjpG
+         c/w40CB5l1+xM+AkQRTwW30vHd/cSACY3labriCJNOTfl/La97kPZrMj3Ie4jrHfkNol
+         4nPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728252020; x=1728856820;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0GDRC7VyvrSRUCSE+aiTV6hzlc3o4Msg6D2Hu233WkQ=;
+        b=eV8X4Gum3h+QyyEqXJl2PiJ/16VMp8qAwlC2rSTCLJBLbRNM1C2ypRtFo5LcfBNXHg
+         1NWvjTpoaNxqXL/pLMBkr0ArMPBA8TyfyGoehugWvE4+1t30wsqqyZKl89d/sbhPNeia
+         2D+i6pzwyq6P9yQ/5FGai7SICTYtjXXDPEoZhfDf/Q+mV71irz9OpopAS/+wsY922XZZ
+         6r77AKXzt0MK+9HHSmrq15fm9SYPQsn8uFFpB2L1AuvR4rkuwH+5uqnMKXWsZfbRWa8p
+         L8o/XINithhxkGtlkjzF1ehoFJjY0UOPNM0WcojwIfQPrpOqP92oBCODdlUN/O25tDw+
+         xoLg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+5TrBXQFYIkQ8dC2KSoFr0MV8UzoWelQZJKHiwOGgQ3Pu6gVCMZ1avDYftWTnt9IdI0ZXgMdc@vger.kernel.org, AJvYcCXHp4VPbt/YIniRil0kKCQxP0QK4/FhqM3p+g+ij8RHetvHQguSO2MLnca5Qm3LSA9fM6Vi1zzqVuAtSzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyktr9b0jSVE/IXXEY98AimSGb9D0qhM66B1oS5TNOVY8sPjbUi
+	aafLTZD7H00oS5ZWI3garbCJjFp4qz3NqRg7JUEfs6GhWWAdZSlO8Ppl7Q==
+X-Google-Smtp-Source: AGHT+IFv4rpLNlUqpXISRj5sLUzk+rr088HIomRzQj6u+Bfu2XakaNs/hxVHEYCCk1fdux68psLEgg==
+X-Received: by 2002:a05:6512:239b:b0:539:8b02:8f1d with SMTP id 2adb3069b0e04-539ab88d2abmr4162254e87.30.1728252020265;
+        Sun, 06 Oct 2024 15:00:20 -0700 (PDT)
+Received: from [192.168.0.138] ([31.134.187.205])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec8546sm625304e87.108.2024.10.06.15.00.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2024 15:00:20 -0700 (PDT)
+Message-ID: <1ebce461-e4eb-4f10-9de8-19240193b262@gmail.com>
+Date: Mon, 7 Oct 2024 01:00:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-5-b0d3f33ccfe0@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net: fix register_netdev description
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241006175718.17889-3-insafonov@gmail.com>
+ <844f8c95-634c-4153-bfab-d6a032677854@lunn.ch>
+Content-Language: en-US
+From: Ivan Safonov <insafonov@gmail.com>
+In-Reply-To: <844f8c95-634c-4153-bfab-d6a032677854@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Le Wed, Sep 11, 2024 at 07:13:31AM +0200, Anna-Maria Behnsen a écrit :
-> A lot of commonly used functions for inserting a sleep or delay lack a
-> proper function description. Add function descriptions to all of them to
-> have important information in a central place close to the code.
+
+
+On 10/7/24 00:16, Andrew Lunn wrote:
+> On Sun, Oct 06, 2024 at 08:57:20PM +0300, Ivan Safonov wrote:
+>> register_netdev() does not expands the device name.
 > 
-> No functional change.
+> Please could you explain what makes you think it will not expand the
+> device name.
 > 
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-arch@vger.kernel.org
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-> ---
-> v2:
->  - Fix typos
->  - Fix proper usage of kernel-doc return formatting
-> ---
->  include/asm-generic/delay.h | 41 +++++++++++++++++++++++++++++++----
->  include/linux/delay.h       | 48 ++++++++++++++++++++++++++++++----------
->  kernel/time/sleep_timeout.c | 53 ++++++++++++++++++++++++++++++++++++++++-----
->  3 files changed, 120 insertions(+), 22 deletions(-)
+> 	Andrew
+
+It is the register_netdev implementation:
+
+> int register_netdev(struct net_device *dev)
+> {
+> 	int err;
 > 
-> diff --git a/include/asm-generic/delay.h b/include/asm-generic/delay.h
-> index e448ac61430c..70a1b20f3e1a 100644
-> --- a/include/asm-generic/delay.h
-> +++ b/include/asm-generic/delay.h
-> @@ -12,11 +12,39 @@ extern void __const_udelay(unsigned long xloops);
->  extern void __delay(unsigned long loops);
->  
->  /*
-> - * The weird n/20000 thing suppresses a "comparison is always false due to
-> - * limited range of data type" warning with non-const 8-bit arguments.
-> + * Implementation details:
-> + *
-> + * * The weird n/20000 thing suppresses a "comparison is always false due to
-> + *   limited range of data type" warning with non-const 8-bit arguments.
-> + * * 0x10c7 is 2**32 / 1000000 (rounded up) -> udelay
-> + * * 0x5 is 2**32 / 1000000000 (rounded up) -> ndelay
+> 	if (rtnl_lock_killable())
+> 		return -EINTR;
+> 	err = register_netdevice(dev);
+> 	rtnl_unlock();
+> 	return err;
+> }
 
-I can't say I'm less confused about these values but at least it
-brings a bit of light in the horizon...
+There is no device name expansion, rtnl lock and register_netdevice call 
+only. The register_netdevice expands device name using dev_get_valid_name().
 
->   */
->  
-> -/* 0x10c7 is 2**32 / 1000000 (rounded up) */
-> +/**
-> + * udelay - Inserting a delay based on microseconds with busy waiting
-> + * @usec:	requested delay in microseconds
-> + *
-> + * When delaying in an atomic context ndelay(), udelay() and mdelay() are the
-> + * only valid variants of delaying/sleeping to go with.
-> + *
-> + * When inserting delays in non atomic context which are shorter than the time
-> + * which is required to queue e.g. an hrtimer and to enter then the scheduler,
-> + * it is also valuable to use udelay(). But is not simple to specify a generic
 
-But it is*
 
-> + * threshold for this which will fit for all systems, but an approximation would
-
-But but?
-
-> + * be a threshold for all delays up to 10 microseconds.
-> + *
-> + * When having a delay which is larger than the architecture specific
-> + * %MAX_UDELAY_MS value, please make sure mdelay() is used. Otherwise a overflow
-> + * risk is given.
-> + *
-> + * Please note that ndelay(), udelay() and mdelay() may return early for several
-> + * reasons (https://lists.openwall.net/linux-kernel/2011/01/09/56):
-> + *
-> + * #. computed loops_per_jiffy too low (due to the time taken to execute the
-> + *    timer interrupt.)
-> + * #. cache behaviour affecting the time it takes to execute the loop function.
-> + * #. CPU clock rate changes.
-> + */
->  #define udelay(n)							\
->  	({								\
->  		if (__builtin_constant_p(n)) {				\
-> @@ -35,12 +25,21 @@ extern unsigned long loops_per_jiffy;
->   * The 2nd mdelay() definition ensures GCC will optimize away the 
->   * while loop for the common cases where n <= MAX_UDELAY_MS  --  Paul G.
->   */
-> -
->  #ifndef MAX_UDELAY_MS
->  #define MAX_UDELAY_MS	5
->  #endif
->  
->  #ifndef mdelay
-> +/**
-> + * mdelay - Inserting a delay based on microseconds with busy waiting
-
-Milliseconds?
-
-> + * @n:	requested delay in microseconds
-
-Ditto
-
-> + *
-> + * See udelay() for basic information about mdelay() and it's variants.
-> + *
-> + * Please double check, whether mdelay() is the right way to go or whether a
-> + * refactoring of the code is the better variant to be able to use msleep()
-> + * instead.
-> + */
->  #define mdelay(n) (\
->  	(__builtin_constant_p(n) && (n)<=MAX_UDELAY_MS) ? udelay((n)*1000) : \
->  	({unsigned long __ms=(n); while (__ms--) udelay(1000);}))
-> @@ -63,16 +62,41 @@ unsigned long msleep_interruptible(unsigned int msecs);
->  void usleep_range_state(unsigned long min, unsigned long max,
->  			unsigned int state);
->  
-> +/**
-> + * usleep_range - Sleep for an approximate time
-> + * @min:	Minimum time in microseconds to sleep
-> + * @max:	Maximum time in microseconds to sleep
-> + *
-> + * For basic information please refere to usleep_range_state().
-> + *
-> + * The task will be in the state TASK_UNINTERRUPTIBLE during the sleep.
-> + */
->  static inline void usleep_range(unsigned long min, unsigned long max)
->  {
->  	usleep_range_state(min, max, TASK_UNINTERRUPTIBLE);
->  }
->  
-> +/**
-> + * usleep_range_idle - Sleep for an approximate time with idle time accounting
-> + * @min:	Minimum time in microseconds to sleep
-> + * @max:	Maximum time in microseconds to sleep
-> + *
-> + * For basic information please refere to usleep_range_state().
-> + *
-> + * The sleeping task has the state TASK_IDLE during the sleep to prevent
-> + * contribution to the load avarage.
-> + */
->  static inline void usleep_range_idle(unsigned long min, unsigned long max)
->  {
->  	usleep_range_state(min, max, TASK_IDLE);
->  }
->  
-> +/**
-> + * ssleep - wrapper for seconds arount msleep
-
-around
-
-> + * @seconds:	Requested sleep duration in seconds
-> + *
-> + * Please refere to msleep() for detailed information.
-> + */
->  static inline void ssleep(unsigned int seconds)
->  {
->  	msleep(seconds * 1000);
-> diff --git a/kernel/time/sleep_timeout.c b/kernel/time/sleep_timeout.c
-> index 560d17c30aa5..21f412350b15 100644
-> --- a/kernel/time/sleep_timeout.c
-> +++ b/kernel/time/sleep_timeout.c
-> @@ -281,7 +281,34 @@ EXPORT_SYMBOL_GPL(schedule_hrtimeout);
->  
->  /**
->   * msleep - sleep safely even with waitqueue interruptions
-> - * @msecs: Time in milliseconds to sleep for
-> + * @msecs:	Requested sleep duration in milliseconds
-> + *
-> + * msleep() uses jiffy based timeouts for the sleep duration. The accuracy of
-> + * the resulting sleep duration depends on:
-> + *
-> + * * HZ configuration
-> + * * sleep duration (as granularity of a bucket which collects timers increases
-> + *   with the timer wheel levels)
-> + *
-> + * When the timer is queued into the second level of the timer wheel the maximum
-> + * additional delay will be 12.5%. For explanation please check the detailed
-> + * description about the basics of the timer wheel. In case this is accurate
-> + * enough check which sleep length is selected to make sure required accuracy is
-> + * given. Please use therefore the following simple steps:
-> + *
-> + * #. Decide which slack is fine for the requested sleep duration - but do not
-> + *    use values shorter than 1/8
-
-I'm confused, what means 1/x for a slack value? 1/8 means 125 msecs? I'm not
-even I understand what you mean by slack. Is it the bucket_expiry - expiry?
-
-> + * #. Check whether your sleep duration is equal or greater than the following
-> + *    result: ``TICK_NSEC / slack / NSEC_PER_MSEC``
-> + *
-> + * Examples:
-> + *
-> + * * ``HZ=1000`` with `slack=1/4``: all sleep durations greater or equal 4ms will meet
-> + *   the constrains.
-> + * * ``HZ=250`` with ``slack=1/4``: all sleep durations greater or equal 16ms will meet
-> + *   the constrains.
-
-constraints.
-
-But I'm still lost...
-
-Thanks.
 
