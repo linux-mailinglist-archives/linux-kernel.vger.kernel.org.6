@@ -1,255 +1,258 @@
-Return-Path: <linux-kernel+bounces-352508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1CA992021
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:51:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26415992019
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D7801C212BC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:51:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 906D01F21781
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76DD18A6A9;
-	Sun,  6 Oct 2024 17:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C448D189F2D;
+	Sun,  6 Oct 2024 17:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aLv8i7Hz"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hoiy7ZDo"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914D3189F56
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DC6A2D;
+	Sun,  6 Oct 2024 17:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728237058; cv=none; b=RFqK2w8b21KvOKx4C9Q0MQEWJHIiXFtdBUsvRRGShl+tf06/ssPxUj9Z4M4+xQPUq0IXh3paN/NuZG/aPk/o3YjwYe0rLLC5yABe6ln9GuVAHmx8RAzk0zg3jndptP5W3LZ8coGdab3apqZVgPIHImhQJ+xDLw+LKMy54+E8LNE=
+	t=1728236759; cv=none; b=M9dHGWDouYnicsddPNxUxMxGi9+O1vp2L4sc3C8bIZi2KRXJUqmI2r2pjRoF2LBYBXUPByKfp4PH//klPu1mLbkH3oNXnWNJJRFD/9c3h4trS+tHR0/9IfbNDL2IDNRBVSwp1+L12IxHHPV4B7mjyK388hB0l6EXAoQOWCT4FIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728237058; c=relaxed/simple;
-	bh=QX5bVPMoC5X/ATRCLwmjQ5j4TdyRP1gHWz1UGgRYGGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HPyiaQDHtvFbbAQIAfEc4xXgfuX6TjMn5Q40Fpr5AbrYlSGj9jrD5vB96/bS5XqupUIIF9qw8lGRe/SfJV8qO4Lsf6Z9z+yLmFNhK36FLJOarxlykx4G+iGd+5ythCRgCiY570UOaSU4zOh8VEexZxwHVMHzPgUYm6KgqaZwoHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aLv8i7Hz; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20ba9f3824fso27145785ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:50:56 -0700 (PDT)
+	s=arc-20240116; t=1728236759; c=relaxed/simple;
+	bh=vLA7OwEgRexwtwQqY4A+Kcl2cwPaR5Yhb0YID61kPzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G8kmJedxrhRJVTVs5TTtw+/PGqGXqUv1g1y8IcaAxu7Yyn4RwtevCRtSz68hCyGWPfbAbjJVH8YrSfh4vGXuWxWMC9i9ZD2qavTlX/ITiFbo/CRoZhUvAryLPzXfYXGW34rRFcUV/SGreWPOS8lIVy0Xe0nITUFAmrH/2fqzo9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hoiy7ZDo; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fac187eef2so43073221fa.3;
+        Sun, 06 Oct 2024 10:45:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728237056; x=1728841856; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9/jpL3YcDbT5s9GUNC8ARxSJoU3MJ9r3elvS/k1XvaU=;
-        b=aLv8i7HzZSa0vR0bO2X5FeLzK14QXcj9tjcYn8OBCjSn8ou6w+LKXFI94noBkpRwHs
-         BHPqbAJu8fr4ie+V/1pCDkMSN+ZoZ0LzStIEAO674fuugmCgT2TOzPx9ZSUUziHlMU3g
-         tKMIS81LsiTUniydVaa9UV3ucb95eeqDj3L0hn4vchortrwKorwzYGsiVGYFyPlvhlG4
-         t7JRBNZNBegrem1xWBYxBUNnhis4r4V+SCf8hU761ZKA+6j7YJ/hdvy0GCih2WObFa+A
-         j48ve7fBDfOTaQrbr/ZwLvK8nSqh1/Iiqm13cRklPrFCJygXukPvwgBGkbyc/alfMu9r
-         G8IQ==
+        d=gmail.com; s=20230601; t=1728236755; x=1728841555; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QtkVAhWObzYD17h0yeTdaPTBSYXwKABgGKk7AeS9LIw=;
+        b=Hoiy7ZDoJZXobpEQtiycS64qpAKBAnuj6Xqo1H3SdFrVHA4P5MGHc3zAgbNXzm9Aqy
+         sQOfGE5Nkx9XxBKb1U1RxxbS35Xhvknq1YNNJbKSOHYVyfOuBScYK/vqkHitCZ3ynBHe
+         UxMjjE/TG+RV+RqX764LgUsf6u2MUN5Gh+H92g1p99wuN0SmITPpDHLLX8RZG7KkJNRZ
+         8YRJwD0t8xE9T8sgfHa/P2bvDmPToMW5mq6T8DCUgisM9tfz4abuSq5SZv0RyvwDSTiQ
+         uZ8sijivpsrH0JUOIWtAvemv/YBikQTQv29z1nOrLRlLjSmAbkkNVC79VjoQB9JOpb2i
+         +4jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728237056; x=1728841856;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1728236755; x=1728841555;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/jpL3YcDbT5s9GUNC8ARxSJoU3MJ9r3elvS/k1XvaU=;
-        b=r7cdAJAkIBmOgMFC1MQ8Sh5LwgJexwwUSQY/sAXimQ5uXs0TO0Wig+5CP/RpqoKpB3
-         433iVgiuRciREnreGrA61NjVIAnvdRR6Wtb6SYf/XvjXyRX4WjlVzesijUn5MqUg6YUV
-         iLQMy5kTyDfsiuDl1EdMpJDyBy7slvmsY034MeZEXi1+tttYSYkXEk56LJCN0MnSUd5d
-         GayxaXx5iuc13hI7E7pPrmh8h/xaU9CZqjcu2p0FUt1y2x93HxEKEEyEUecCdAkRoJ3m
-         KJ9o49p5fjlzW4l4v4T9kHRS2gm7XR2W3OrmKi0yWCZ6L0PTTM4CBpr97vAtwR9cKohc
-         YnIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlJEwZk099ePTklAR37PfcnHs0u0a5ryKE41XvfSOo+QUMd5AHdX8Y7Z6GeWxaQwgJCB9BRnLScAeKRNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA7d1eb2LkDO5xhVGTOq8VyH1+lSPdo7kefjx1LCuJ1OLeBcPi
-	RE1AcRqm1ZnxOAlsmm5EaIT7YMIzolPUvoP9m+TlrSKgxq8e/I00r05EWMs2zg==
-X-Google-Smtp-Source: AGHT+IGZMh0K9p8XUknILzUzT5SqwVvVg47E7lfixteAimw7+8QYQTtqQ9t9Zn+e4BhqYnC9cpugcw==
-X-Received: by 2002:a17:902:f551:b0:20b:9680:d5c4 with SMTP id d9443c01a7336-20bfde57d03mr139672265ad.4.1728237055829;
-        Sun, 06 Oct 2024 10:50:55 -0700 (PDT)
-Received: from thinkpad ([220.158.156.57])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138b104csm27352325ad.45.2024.10.06.10.50.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 10:50:55 -0700 (PDT)
-Date: Sun, 6 Oct 2024 23:20:47 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, alyssa@rosenzweig.io, bpf@vger.kernel.org,
-	broonie@kernel.org, jgg@ziepe.ca, joro@8bytes.org,
-	lgirdwood@gmail.com, maz@kernel.org, p.zabel@pengutronix.de,
-	robin.murphy@arm.com, will@kernel.org
-Subject: Re: [PATCH v2 0/2] PCI: add enabe(disable)_device() hook for bridge
-Message-ID: <20241006175047.xgy2zyaiebvyxfsi@thinkpad>
-References: <20240930-imx95_lut-v2-0-3b6467ba539a@nxp.com>
- <20241003051528.qrp2z7kvzgvymgjb@thinkpad>
- <Zv7t9HnRsfTxb2Xs@lizhi-Precision-Tower-5810>
+        bh=QtkVAhWObzYD17h0yeTdaPTBSYXwKABgGKk7AeS9LIw=;
+        b=pTLHvWru9bXDXEZw5xbWvgZuRF9RJkb7JZ+P+ajtYIlg+w8KhTZmc0iDkTxe5vQ0pM
+         gGNQabbaHfak3fXi+5+CKb6jfsgfgcL7KvFl5pLf5tG6LFZDQI1Inv0UQ/60phUCGX8t
+         tlSZmhPbskh2l8GMCvoTmltZNvzcSfegH3N8d3KXx4Mq3yUrHQ96DCD6D2q8MDGfqYO4
+         dyRddvIq05eGsqr7el/sfbwCbYLJdgopk5+UWCFmSimdD+DnvxQBfTjepE17yGrSP5DL
+         OWAjtYc1RrRcGU3a/IpQOMGrdDigtCuvPUNw2P+MSf7ba1UUiNiRpLlk3VaCLLzSmKLM
+         riQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+BKB+1gTe+iCWa/jmJ3QR/uyshuJ7KxwH3xK3Q+MTm1FZPcy/vOVdheq+WOr/FjxrY5L9DXIrHgvp0LQj@vger.kernel.org, AJvYcCWkzxoSFqvOvjtuXNm7Ky2YnjfJL3TTCkB9WyvnFA1lQsh/ygxEHGQKSQieZiBrQNTaOcdp71e4T9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhTqonAfbmih6eq0j3VpgK5+CvaBxb0vJxss1H7Yd60CyxlcRI
+	VOGquYL9rGvYSXmhzoCAXkEx+EZj/XUX6k0o8MzhkkJmpADHUOaLmeErlYit
+X-Google-Smtp-Source: AGHT+IF5UYWhsz4kgh+37Q2uxTmaI/tA8w4Fl+hYOV3yTX6I2fnrlFE9I8Q66f8ZBBa1mylLwY9mCw==
+X-Received: by 2002:a05:651c:2129:b0:2fa:c9ad:3d36 with SMTP id 38308e7fff4ca-2faf3c2fff0mr42793601fa.7.1728236755029;
+        Sun, 06 Oct 2024 10:45:55 -0700 (PDT)
+Received: from [10.0.0.42] (host-85-29-124-88.kaisa-laajakaista.fi. [85.29.124.88])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9ac43efsm5666251fa.45.2024.10.06.10.45.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2024 10:45:54 -0700 (PDT)
+Message-ID: <7bc5091b-fb60-454d-8fd1-805d63b6d818@gmail.com>
+Date: Sun, 6 Oct 2024 20:50:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dmaengine: ti: k3-udma: Set EOP for all TRs in cyclic
+ BCDMA transfer
+To: Jai Luthra <jai.luthra@linux.dev>, Vinod Koul <vkoul@kernel.org>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>,
+ Francesco Dolcini <francesco.dolcini@toradex.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Rishikesh Donadkar <r-donadkar@ti.com>,
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240930-z_cnt-v2-1-9d38aba149a2@linux.dev>
+Content-Language: en-US
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
+In-Reply-To: <20240930-z_cnt-v2-1-9d38aba149a2@linux.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zv7t9HnRsfTxb2Xs@lizhi-Precision-Tower-5810>
 
-On Thu, Oct 03, 2024 at 03:18:12PM -0400, Frank Li wrote:
-> On Thu, Oct 03, 2024 at 10:45:28AM +0530, Manivannan Sadhasivam wrote:
-> > On Mon, Sep 30, 2024 at 03:42:20PM -0400, Frank Li wrote:
-> > > Some system's IOMMU stream(master) ID bits(such as 6bits) less than
-> > > pci_device_id (16bit). It needs add hardware configuration to enable
-> > > pci_device_id to stream ID convert.
-> > >
-> > > https://lore.kernel.org/imx/20240622173849.GA1432357@bhelgaas/
-> > > This ways use pcie bus notifier (like apple pci controller), when new PCIe
-> > > device added, bus notifier will call register specific callback to handle
-> > > look up table (LUT) configuration.
-> > >
-> > > https://lore.kernel.org/imx/20240429150842.GC1709920-robh@kernel.org/
-> > > which parse dt's 'msi-map' and 'iommu-map' property to static config LUT
-> > > table (qcom use this way). This way is rejected by DT maintainer Rob.
-> > >
-> >
-> > What is the issue in doing this during the probe() stage? It looks like you are
-> > working with the static info in the devicetree, which is already available
-> > during the controller probe().
-> 
-> There are problems.
-> One: It is not good to manually parser this property in pci host bridge
-> drivers.
-> 
 
-Why? I see the comment from Rob saying that the host bridge driver should not
-parse iommu* properties, but this series is essentially doing the same just in a
-different place.
 
-> Two: of_map default is bypass map. For example: if in dts only 2 sid, 0xA
-> and 0xB. If try to enable 3rd function RID(103), there are no error report.
-> of_map will return RID 103 as stream ID.  DMA will write to wrong
-> possition possibly.
+On 9/30/24 8:02 PM, Jai Luthra wrote:
+> From: Jai Luthra <j-luthra@ti.com>
 > 
+> When receiving data in cyclic mode from PDMA peripherals, where reload
+> count is set to infinite, any TR in the set can potentially be the last
+> one of the overall transfer. In such cases, the EOP flag needs to be set
+> in each TR and PDMA's Static TR "Z" parameter should be set, matching
+> the size of the TR.
+> 
+> This is required for the teardown to function properly and cleanup the
+> internal state memory. This only affects platforms using BCDMA and not
+> those using UDMA-P, which could set EOP flag in the teardown TR
+> automatically.
+> 
+> Similarly when transmitting data in cyclic mode to PDMA peripherals, the
+> EOP flag needs to be set to get the teardown completion signal
+> correctly.
 
-Well, you can use iommu-map-mask to allow all devices under a bus to share the
-same SID. It will allow you to work with the LUT limitation. But the downside is
-that, there would be no isolation between devices under the same bus.
+Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
 
-> https://elixir.bootlin.com/linux/v6.12-rc1/source/drivers/of/base.c#L2070
+> Fixes: 017794739702 ("dmaengine: ti: k3-udma: Initial support for K3 BCDMA")
+> Tested-by: Francesco Dolcini <francesco.dolcini@toradex.com> # Toradex Verdin AM62
+> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> Signed-off-by: Jai Luthra <jai.luthra@linux.dev>
+> ---
+> Changes in v2:
+> - Fix commit message and comments to make it clear that this change is
+>   only needed for BCDMA
+> - Drop the redundant pkt_mode check
+> - Link to v1: https://lore.kernel.org/r/20240918-z_cnt-v1-1-2c58fbfb07d6@linux.dev
+> ---
+>  drivers/dma/ti/k3-udma.c | 62 ++++++++++++++++++++++++++++++++++++------------
+>  1 file changed, 47 insertions(+), 15 deletions(-)
 > 
-> Three: LUT resource is limited, if DT provide 16 entry, but LUT have only 8
-> items, if more device enable, not LUT avaible and can't return error. of
-> course, it may fix dts, but It'd better that driver can handle error
-> properly when meet wrong dtb file.
+> diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
+> index 406ee199c2ac1cffc29edb475df574cf9f0cf222..b3f27b3f92098a65afe9656ca31f9b8027294c16 100644
+> --- a/drivers/dma/ti/k3-udma.c
+> +++ b/drivers/dma/ti/k3-udma.c
+> @@ -3185,27 +3185,40 @@ static int udma_configure_statictr(struct udma_chan *uc, struct udma_desc *d,
+>  
+>  	d->static_tr.elcnt = elcnt;
+>  
+> -	/*
+> -	 * PDMA must to close the packet when the channel is in packet mode.
+> -	 * For TR mode when the channel is not cyclic we also need PDMA to close
+> -	 * the packet otherwise the transfer will stall because PDMA holds on
+> -	 * the data it has received from the peripheral.
+> -	 */
+>  	if (uc->config.pkt_mode || !uc->cyclic) {
+> +		/*
+> +		 * PDMA must close the packet when the channel is in packet mode.
+> +		 * For TR mode when the channel is not cyclic we also need PDMA
+> +		 * to close the packet otherwise the transfer will stall because
+> +		 * PDMA holds on the data it has received from the peripheral.
+> +		 */
+>  		unsigned int div = dev_width * elcnt;
+>  
+>  		if (uc->cyclic)
+>  			d->static_tr.bstcnt = d->residue / d->sglen / div;
+>  		else
+>  			d->static_tr.bstcnt = d->residue / div;
+> +	} else if (uc->ud->match_data->type == DMA_TYPE_BCDMA &&
+> +		   uc->config.dir == DMA_DEV_TO_MEM &&
+> +		   uc->cyclic) {
+> +		/*
+> +		 * For cyclic mode with BCDMA we have to set EOP in each TR to
+> +		 * prevent short packet errors seen on channel teardown. So the
+> +		 * PDMA must close the packet after every TR transfer by setting
+> +		 * burst count equal to the number of bytes transferred.
+> +		 */
+> +		struct cppi5_tr_type1_t *tr_req = d->hwdesc[0].tr_req_base;
+>  
+> -		if (uc->config.dir == DMA_DEV_TO_MEM &&
+> -		    d->static_tr.bstcnt > uc->ud->match_data->statictr_z_mask)
+> -			return -EINVAL;
+> +		d->static_tr.bstcnt =
+> +			(tr_req->icnt0 * tr_req->icnt1) / dev_width;
+>  	} else {
+>  		d->static_tr.bstcnt = 0;
+>  	}
+>  
+> +	if (uc->config.dir == DMA_DEV_TO_MEM &&
+> +	    d->static_tr.bstcnt > uc->ud->match_data->statictr_z_mask)
+> +		return -EINVAL;
+> +
+>  	return 0;
+>  }
+>  
+> @@ -3450,8 +3463,9 @@ udma_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+>  	/* static TR for remote PDMA */
+>  	if (udma_configure_statictr(uc, d, dev_width, burst)) {
+>  		dev_err(uc->ud->dev,
+> -			"%s: StaticTR Z is limited to maximum 4095 (%u)\n",
+> -			__func__, d->static_tr.bstcnt);
+> +			"%s: StaticTR Z is limited to maximum %u (%u)\n",
+> +			__func__, uc->ud->match_data->statictr_z_mask,
+> +			d->static_tr.bstcnt);
+>  
+>  		udma_free_hwdesc(uc, d);
+>  		kfree(d);
+> @@ -3476,6 +3490,7 @@ udma_prep_dma_cyclic_tr(struct udma_chan *uc, dma_addr_t buf_addr,
+>  	u16 tr0_cnt0, tr0_cnt1, tr1_cnt0;
+>  	unsigned int i;
+>  	int num_tr;
+> +	u32 period_csf = 0;
+>  
+>  	num_tr = udma_get_tr_counters(period_len, __ffs(buf_addr), &tr0_cnt0,
+>  				      &tr0_cnt1, &tr1_cnt0);
+> @@ -3498,6 +3513,20 @@ udma_prep_dma_cyclic_tr(struct udma_chan *uc, dma_addr_t buf_addr,
+>  		period_addr = buf_addr |
+>  			((u64)uc->config.asel << K3_ADDRESS_ASEL_SHIFT);
+>  
+> +	/*
+> +	 * For BCDMA <-> PDMA transfers, the EOP flag needs to be set on the
+> +	 * last TR of a descriptor, to mark the packet as complete.
+> +	 * This is required for getting the teardown completion message in case
+> +	 * of TX, and to avoid short-packet error in case of RX.
+> +	 *
+> +	 * As we are in cyclic mode, we do not know which period might be the
+> +	 * last one, so set the flag for each period.
+> +	 */
+> +	if (uc->config.ep_type == PSIL_EP_PDMA_XY &&
+> +	    uc->ud->match_data->type == DMA_TYPE_BCDMA) {
+> +		period_csf = CPPI5_TR_CSF_EOP;
+> +	}
+> +
+>  	for (i = 0; i < periods; i++) {
+>  		int tr_idx = i * num_tr;
+>  
+> @@ -3525,8 +3554,10 @@ udma_prep_dma_cyclic_tr(struct udma_chan *uc, dma_addr_t buf_addr,
+>  		}
+>  
+>  		if (!(flags & DMA_PREP_INTERRUPT))
+> -			cppi5_tr_csf_set(&tr_req[tr_idx].flags,
+> -					 CPPI5_TR_CSF_SUPR_EVT);
+> +			period_csf |= CPPI5_TR_CSF_SUPR_EVT;
+> +
+> +		if (period_csf)
+> +			cppi5_tr_csf_set(&tr_req[tr_idx].flags, period_csf);
+>  
+>  		period_addr += period_len;
+>  	}
+> @@ -3655,8 +3686,9 @@ udma_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
+>  	/* static TR for remote PDMA */
+>  	if (udma_configure_statictr(uc, d, dev_width, burst)) {
+>  		dev_err(uc->ud->dev,
+> -			"%s: StaticTR Z is limited to maximum 4095 (%u)\n",
+> -			__func__, d->static_tr.bstcnt);
+> +			"%s: StaticTR Z is limited to maximum %u (%u)\n",
+> +			__func__, uc->ud->match_data->statictr_z_mask,
+> +			d->static_tr.bstcnt);
+>  
+>  		udma_free_hwdesc(uc, d);
+>  		kfree(d);
 > 
-
-Drivers can trust the DT, unless there are evidence of broken DT available in
-upstream or got fixed.
-
-If you really want to validate DT, use dt-bindings.
-
-- Mani
-
-> >
-> > > Above ways can resolve LUT take or stream id out of usage the problem. If
-> > > there are not enough stream id resource, not error return, EP hardware
-> > > still issue DMA to do transfer, which may transfer to wrong possition.
-> > >
-> > > Add enable(disable)_device() hook for bridge can return error when not
-> > > enough resource, and PCI device can't enabled.
-> > >
-> >
-> > {enable/disable}_device() doesn't convey the fact you are mapping BDF to SID in
-> > the hardware. Maybe something like, {map/unmap}_bdf2sid() or similar would make
-> > sense.
+> ---
+> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+> change-id: 20240918-z_cnt-3ca5daec76bf
 > 
-> It is called in PCI common code do_pci_enable_device(), hook functin name
-> should be similar with caller. {map/unmap}_bdf2sid() is just implementation
-> in dwc.
-> 
-> stream id is only ARM platform concept.
-> 
-> May other host bridge do difference thing at enable/disable_device().
-> 
-> So I am still perfer use {enable/disable}_device().
-> 
-> 
-> Frank
-> 
-> >
-> > - Mani
-> >
-> > > Basicallly this version can match Bjorn's requirement:
-> > > 1: simple, because it is rare that there are no LUT resource.
-> > > 2: EP driver probe failure when no LUT, but lspci can see such device.
-> > >
-> > > [    2.164415] nvme nvme0: pci function 0000:01:00.0
-> > > [    2.169142] pci 0000:00:00.0: Error enabling bridge (-1), continuing
-> > > [    2.175654] nvme 0000:01:00.0: probe with driver nvme failed with error -12
-> > >
-> > > > lspci
-> > > 0000:00:00.0 PCI bridge: Philips Semiconductors Device 0000
-> > > 0000:01:00.0 Non-Volatile memory controller: Micron Technology Inc 2100AI NVMe SSD [Nitro] (rev 03)
-> > >
-> > > To: Bjorn Helgaas <bhelgaas@google.com>
-> > > To: Richard Zhu <hongxing.zhu@nxp.com>
-> > > To: Lucas Stach <l.stach@pengutronix.de>
-> > > To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > > To: Krzysztof Wilczyński <kw@linux.com>
-> > > To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > To: Rob Herring <robh@kernel.org>
-> > > To: Shawn Guo <shawnguo@kernel.org>
-> > > To: Sascha Hauer <s.hauer@pengutronix.de>
-> > > To: Pengutronix Kernel Team <kernel@pengutronix.de>
-> > > To: Fabio Estevam <festevam@gmail.com>
-> > > Cc: linux-pci@vger.kernel.org
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Cc: linux-arm-kernel@lists.infradead.org
-> > > Cc: imx@lists.linux.dev
-> > > Cc: Frank.li@nxp.com \
-> > > Cc: alyssa@rosenzweig.io \
-> > > Cc: bpf@vger.kernel.org \
-> > > Cc: broonie@kernel.org \
-> > > Cc: jgg@ziepe.ca \
-> > > Cc: joro@8bytes.org \
-> > > Cc: l.stach@pengutronix.de \
-> > > Cc: lgirdwood@gmail.com \
-> > > Cc: maz@kernel.org \
-> > > Cc: p.zabel@pengutronix.de \
-> > > Cc: robin.murphy@arm.com \
-> > > Cc: will@kernel.org \
-> > >
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > > Changes in v2:
-> > > - see each patch
-> > > - Link to v1: https://lore.kernel.org/r/20240926-imx95_lut-v1-0-d0c62087dbab@nxp.com
-> > >
-> > > ---
-> > > Frank Li (2):
-> > >       PCI: Add enable_device() and disable_device() callbacks for bridges
-> > >       PCI: imx6: Add IOMMU and ITS MSI support for i.MX95
-> > >
-> > >  drivers/pci/controller/dwc/pci-imx6.c | 133 +++++++++++++++++++++++++++++++++-
-> > >  drivers/pci/pci.c                     |  14 ++++
-> > >  include/linux/pci.h                   |   2 +
-> > >  3 files changed, 148 insertions(+), 1 deletion(-)
-> > > ---
-> > > base-commit: 2849622e7b01d5aea1b060ba3955054798c1e0bb
-> > > change-id: 20240926-imx95_lut-1c68222e0944
-> > >
-> > > Best regards,
-> > > ---
-> > > Frank Li <Frank.Li@nxp.com>
-> > >
-> > >
-> >
-> > --
-> > மணிவண்ணன் சதாசிவம்
+> Best regards,
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Péter
+
 
