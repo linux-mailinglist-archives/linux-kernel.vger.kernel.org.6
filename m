@@ -1,170 +1,126 @@
-Return-Path: <linux-kernel+bounces-352372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AC1991E37
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:56:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81363991E36
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B74C91C20FDD
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A30F1F22053
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDCC17623A;
-	Sun,  6 Oct 2024 11:56:35 +0000 (UTC)
-Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0990175D5D;
+	Sun,  6 Oct 2024 11:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eWxFksvX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91165364A0;
-	Sun,  6 Oct 2024 11:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B174B16132F;
+	Sun,  6 Oct 2024 11:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728215795; cv=none; b=WqEY92OOBt59zseCJGCa5RyQdWGYAOvX71bK3BqEZA9lcFQDZwzEjCzXh+OQ7S6reCG2oTPIZMjFzvmFv6PJ4/WvEif7r7vlhvsb/Y4QRgNMM/dUiwVK5A7cwqEGbmQ+a065QFYjmZdOUurYTbRhwtQOIG3c4/3AKtaNS3Dwers=
+	t=1728215658; cv=none; b=k6m9BAYT1KAPxE2ttfLE5gw/U9jXFSGv6MprBukgjEQdQBsZQpyMgUqLxf0s/e55+yDDaAWl6kJk5EJ2DvPecnpj8ELuIAiCoVCI1dKs2iHimf0qRLYiQdAF6l5tkESFMinWZnthAEc9Lu4xPKVqm5KPZiioTukrElh0Ce8ZN7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728215795; c=relaxed/simple;
-	bh=fYm8XZM7szcIecmiSvIW0b+adLjsjNfHN8DO3gDpkPA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qxPbkzXW39NXLHCwk1fAMO9fUqihA36OW/dVNHThwb9RGqAgJ2qIxr+bq0L8MeobRSlNmM2EY6eb+R3RxdxPGu030e4yIF5134rvvsxSpjkzf6Q0vLdmHxkFb8GrZjV0GureG2SKYY0JCQx7f3sDlm9ZCnV5XMRDhv74MeqicLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by mail.lichtvoll.de (Postfix) with ESMTPSA id 9E79A73FD6;
-	Sun, 06 Oct 2024 11:49:23 +0000 (UTC)
-Authentication-Results: mail.lichtvoll.de;
-	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Date: Sun, 06 Oct 2024 13:49:23 +0200
-Message-ID: <5987583.MhkbZ0Pkbq@lichtvoll.de>
-In-Reply-To: <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
-References:
- <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
- <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
+	s=arc-20240116; t=1728215658; c=relaxed/simple;
+	bh=z/BfKCqqFKKUKx3H9sa4pqq0VP9FwN33xQEVHakeldQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dTA5ZH0OhIP/U/ml0hY5L4/LLlOmp4mXKoFLI/QNbyhVavdVzpFzA+lu+3XPtNNWDXaIelFeFwj2mvST1QN+ftyG9P1ERKvmXxMJczKZDQbHDyiFNVSy/s5yjIaFiXAkcRgSycEe7Q1VSCIVo5kQfhdKokWPAZAyE+VE1xiTK8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eWxFksvX; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728215657; x=1759751657;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=z/BfKCqqFKKUKx3H9sa4pqq0VP9FwN33xQEVHakeldQ=;
+  b=eWxFksvX7Q7kt+LqFsKI7Tc2ropYTza/WiLPZYVsKoDzN/aSzwLc4Fj5
+   8KCl4TCXvF/ebHJiZ/c9YQvZR2+xakzva4AToAyRHVl2LKcOi9UFgenLO
+   qmWZI8Suek20/T2rJtHbCR3ZbQOcqUgmA0oH2t5aAnn9Cas0a2kLyCXTt
+   iNgaUH3+lpb5CBZ3iclDzz9tE005pAT4dC4awZjQAHSUUPlbUGMI3mlb1
+   shOgTBtTinL1Dr3/wZWZsSX608aY3H65Hg6/hHKR+3QBxq9HEhd5ugO1w
+   WHZgWtbmXcc3V4MAuGS6lgvhXvCR9DaGEGKpWP0ghSb0xVrYEt8ClHK0E
+   A==;
+X-CSE-ConnectionGUID: uWHQ+l3wSQCgfFU5+P9YGg==
+X-CSE-MsgGUID: O2AIOXtWRNai+1kHhI7/KA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="27519579"
+X-IronPort-AV: E=Sophos;i="6.11,182,1725346800"; 
+   d="scan'208";a="27519579"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2024 04:54:16 -0700
+X-CSE-ConnectionGUID: 1oMIA2WEQg+j4BuVVUufXQ==
+X-CSE-MsgGUID: +1pr7u79RwmzMlG+Wx9AIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,182,1725346800"; 
+   d="scan'208";a="79167660"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 06 Oct 2024 04:54:13 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sxPpz-0003oy-0F;
+	Sun, 06 Oct 2024 11:54:11 +0000
+Date: Sun, 6 Oct 2024 19:53:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, andrew@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, jacob.e.keller@intel.com,
+	horms@kernel.org, sd@queasysnail.net, chunkeey@gmail.com
+Subject: Re: [PATCH net-next v3 03/17] net: ibm: emac: use
+ module_platform_driver for modules
+Message-ID: <202410061910.his99w1N-lkp@intel.com>
+References: <20241003021135.1952928-4-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003021135.1952928-4-rosenp@gmail.com>
 
-Hi Kent, hi Linus.
+Hi Rosen,
 
-Kent Overstreet - 06.10.24, 02:54:32 CEST:
-> On Sat, Oct 05, 2024 at 05:14:31PM GMT, Linus Torvalds wrote:
-> > On Sat, 5 Oct 2024 at 16:41, Kent Overstreet=20
-<kent.overstreet@linux.dev> wrote:
-> > > If what you want is patches appearing on the list, I'm not unwilling
-> > > to
-> > > make that change.
-> >=20
-> > I want you to WORK WITH OTHERS. Including me - which means working
-> > with the rules and processes we have in place.
->=20
-> That has to work both ways.
+kernel test robot noticed the following build errors:
 
-Exactly, Kent.
+[auto build test ERROR on net-next/main]
 
-And it is my impression from reading the whole thread up to now and from=20
-reading previous threads it is actually about: Having your way and your=20
-way only.
+url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/net-ibm-emac-use-netif_receive_skb_list/20241003-101754
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241003021135.1952928-4-rosenp%40gmail.com
+patch subject: [PATCH net-next v3 03/17] net: ibm: emac: use module_platform_driver for modules
+config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20241006/202410061910.his99w1N-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410061910.his99w1N-lkp@intel.com/reproduce)
 
-That is not exactly "work both ways".
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410061910.his99w1N-lkp@intel.com/
 
-Quite similarly regarding your stand towards distributions like Debian.
+All errors (new ones prefixed by >>):
 
-Sure you can question well established rules all the way you want and=20
-maybe you are even right about it. I do not feel qualified enough to judge=
-=20
-on that. I am all for challenging well established rules on justified=20
-grounds=E2=80=A6
+   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/core.o: in function `emac_init':
+>> core.c:(.init.text+0x8): multiple definition of `init_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.init.text+0x8): first defined here
+   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/core.o: in function `emac_exit':
+>> core.c:(.exit.text+0x8): multiple definition of `cleanup_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.exit.text+0x8): first defined here
+   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/zmii.o: in function `zmii_driver_init':
+   zmii.c:(.init.text+0x8): multiple definition of `init_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.init.text+0x8): first defined here
+   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/zmii.o: in function `zmii_driver_exit':
+   zmii.c:(.exit.text+0x8): multiple definition of `cleanup_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.exit.text+0x8): first defined here
+   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/rgmii.o: in function `rgmii_driver_init':
+   rgmii.c:(.init.text+0x8): multiple definition of `init_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.init.text+0x8): first defined here
+   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/rgmii.o: in function `rgmii_driver_exit':
+   rgmii.c:(.exit.text+0x8): multiple definition of `cleanup_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.exit.text+0x8): first defined here
+   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/tah.o: in function `tah_driver_init':
+   tah.c:(.init.text+0x8): multiple definition of `init_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.init.text+0x8): first defined here
+   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/tah.o: in function `tah_driver_exit':
+   tah.c:(.exit.text+0x8): multiple definition of `cleanup_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.exit.text+0x8): first defined here
 
-But=E2=80=A6 even if that is the case it is still a negotiation process. Ex=
-pecting=20
-that communities change well established rules on the spot just cause you=20
-are asking for it=E2=80=A6 quite bold if you ask me. It would be a negotiat=
-ion=20
-process and work both ways would mean to agree on some kind of middle=20
-ground. But it appears to me you do not seem to have the patience for such=
-=20
-a process. So it is arguing on both sides which costs a lot of energy of=20
-everyone involved.
-
-=46rom what I perceive you are actually actively working against well=20
-established rules. And you are surprised on the reaction? That is kind of=20
-naive if you ask me.
-
-At least you wrote you are willing to post patches to the mailing list: So=
-=20
-why not start with at least that *minimal* requirement according to Linus=20
-as a step you do? Maybe even just as a sign of good will towards the=20
-kernel community? That has been asked of you concretely, so why not just=20
-do it?
-
-Maybe this can work out by negotiating a middle ground going one little=20
-step at a time?
-
-
-I still do have a BCacheFS on my laptop for testing, but meanwhile I=20
-wonder whether some of the crazy kernel regressions I have seen with the=20
-last few kernels where exactly related to having mounted that BCacheFS=20
-test filesystem. I am tempted to replace the BCacheFS with a BTRFS just to=
-=20
-find out.
-
-Lastly 6.10.12-1 Debian kernel crashes on a pool-spawner thread when I=20
-enter the command =E2=80=9Ereboot=E2=80=9C. That is right a reboot crashes =
-the system =E2=80=93 I=20
-never have seen anything this crazy with any Linux kernel so far! I have=20
-made a photo of it but after that long series of regressions I am even too=
-=20
-tired to post a bug report about it just to be told again to bisect the=20
-issue. And it is not the first work queue related issue I found between 6.8=
-=20
-and 6.11 kernels.
-
-Actually I think I just replace that BCacheFS with another BTRFS in order=20
-to see whether it reduces the amount of crazy regressions I got so fed up=20
-with recently. Especially its not fair to report all of this to the Lenovo=
-=20
-Linux community guy Mark Pearson in case its not even related to the new=20
-ThinkPad T14 AMD Gen 5 I am using. Mind you that series of regressions=20
-started with a T14 AMD Gen 1 roughly at the time I started testing=20
-BCacheFS and I had hoped they go away with the new laptop. Additionally I=20
-have not seen a single failure with BTRFS on any on my systems =E2=80=93 in=
-cluding=20
-quite some laptops and several servers, even using LXC containers =E2=80=93=
- for=E2=80=A6 I=20
-don't remember when. Since kernel 4.6 BTRFS at least for me is rock=20
-stable. And I agree, it took a huge lot of time until it was stable. But=20
-whether that is due to the processes you criticize or other reasons or a=20
-combination thereof=E2=80=A6 do you know for sure?
-
-I am wondering: did the mainline kernel just get so much more unstable in=20
-the last 3-6 months or may there be a relationship to the test BCacheFS=20
-filesystem I was using that eluded me so far. Of course, I do not know for=
-=20
-now, but reading Carl's mails really made me wonder.
-
-Maybe there is none, so don't get me wrong=E2=80=A6 but reading this thread=
- got me=20
-suspicious now. I am happily proven wrong on that suspicion and I commit=20
-to report back on it. Especially when the amount of regressions does not=20
-decline and I got suspicious of BCacheFS unjustly.
-
-Best,
-=2D-=20
-Martin
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
