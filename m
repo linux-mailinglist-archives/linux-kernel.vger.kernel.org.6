@@ -1,90 +1,144 @@
-Return-Path: <linux-kernel+bounces-352553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66479920A7
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:19:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB41D9920AE
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A60DB20D85
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:19:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B451F215FB
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DDE18A6DE;
-	Sun,  6 Oct 2024 19:19:41 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AEF18A93F;
+	Sun,  6 Oct 2024 19:29:09 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2E7189B9C
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 19:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580C8189B9C;
+	Sun,  6 Oct 2024 19:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728242381; cv=none; b=Qo06LwZyEtmpIG66gEzCrE+LOu0IouBPTBTk0vgUsPYH8egC/RktUJ8qGTfodvtgW1S+Fh2gAwR8Fm5op4Faw0a+RJkxUiPejmOZEKesiEf6mIxLttbhvfk1JW76qQnVdi0g/QzXW8SLUot+5tA8kYcgwqHcb8m8Dh2QG+jLT2s=
+	t=1728242949; cv=none; b=e8Ooa0z8zBB6Ced2rgPU7aNeuqx+Ikix0eMa878wm2q3vOGUMCriEuFcaiQ+h5JE3U0V4wALvkzUrLDf5XkaiY91i/IOnQdR34vUK0c2CjnToAasAZtUI6jEs3tEmkvZIcpb5+vHc27MSMNAqUEMACKfNmYIE9OzM8ekbdm8zf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728242381; c=relaxed/simple;
-	bh=P0pxgW7SJKSz3W9fO2eMyfpSJHxQoXy43rEN9S/zPBs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=Sc9Vj2bEVUV//LXyh6iIOWDNC7WuJF3gper84j24DSMZLfLa/7nYQb8drf94X2qx/LRZ7ZFXjVgxTk3qGbVNo8se4cLKOtqlXKRC7EA25HxG7W/MUlSY8szHZ884iZcB9bW5zNOlZFqfIIFV7DhOQuRY/UPT/mbCpqYfwzyckqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-234-N-eIZQ3GPKmV6aYR93tjng-1; Sun, 06 Oct 2024 20:19:36 +0100
-X-MC-Unique: N-eIZQ3GPKmV6aYR93tjng-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 6 Oct
- 2024 20:18:43 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 6 Oct 2024 20:18:43 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Christian Brauner' <brauner@kernel.org>, "luca.boccassi@gmail.com"
-	<luca.boccassi@gmail.com>
-CC: Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-	"Oleg Nesterov" <oleg@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "paul@paul-moore.com" <paul@paul-moore.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH] pidfd: add ioctl to retrieve pid info
-Thread-Topic: [PATCH] pidfd: add ioctl to retrieve pid info
-Thread-Index: AQHbFj/jg8R7YZIU5k+eh/HDOlpP2LJ6Gr4g
-Date: Sun, 6 Oct 2024 19:18:43 +0000
-Message-ID: <02b8bcbc23b94b249855a24059fc965f@AcuMS.aculab.com>
-References: <20241002142516.110567-1-luca.boccassi@gmail.com>
- <20241004-signal-erfolg-c76d6fdeee1c@brauner>
-In-Reply-To: <20241004-signal-erfolg-c76d6fdeee1c@brauner>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1728242949; c=relaxed/simple;
+	bh=Y2SVB55UuTYItPUxG4rnpm2LnmXr+jJTVx0vnYc/i68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ICoJNY8iH9ehEImDOmJxPMA2UEjmjfgUBS3CT2N9zQSHize7Makck75QpH2nYy/PsT3qB26/T2q5r1vnk+lh9xjwsMRPPRsJrkH8yFnntOFT/vNfxnwYPwuJg/5UYSCa4JMH64j6kAtcgab9R33TUCyi5S6poJ5eV4XP+xMt5Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 11A741A1065;
+	Sun,  6 Oct 2024 21:29:00 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EE45A1A0E06;
+	Sun,  6 Oct 2024 21:28:59 +0200 (CEST)
+Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id C0CC9202E3;
+	Sun,  6 Oct 2024 21:29:00 +0200 (CEST)
+Date: Sun, 6 Oct 2024 21:28:59 +0200
+From: Jan Petrous <jan.petrous@oss.nxp.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	dl-S32 <S32@nxp.com>
+Subject: Re: [PATCH v2 4/7] net: phy: add helper for mapping RGMII link speed
+ to clock rate
+Message-ID: <ZwLk+/GgMeUB7303@lsv051416.swis.nl-cdc01.nxp.com>
+References: <AM9PR04MB85062E3A66BA92EF8D996513E2832@AM9PR04MB8506.eurprd04.prod.outlook.com>
+ <d2e32a56-3020-47ac-beef-3449053c5d4c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2e32a56-3020-47ac-beef-3449053c5d4c@lunn.ch>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-Li4uDQo+IEl0IHdvdWxkIG1ha2Ugc2Vuc2UgZm9yIHNlY3VyaXR5IGluZm9ybWF0aW9uIHRvIGdl
-dCBhIHNlcGFyYXRlIGlvY3RsIHNvDQo+IHRoYXQgc3RydWN0IHBpZGZkX2luZm8ganVzdCByZXR1
-cm4gc2ltcGxlIGFuZCBmYXN0IGluZm9ybWF0aW9uIGFuZCB0aGUNCj4gc2VjdXJpdHkgc3R1ZmYg
-Y2FuIGluY2x1ZGUgdGhpbmdzIHN1Y2ggYXMgc2VjY29tcCwgY2FwcyBldGMgcHAuDQoNCldoaWNo
-IGFsc28gbWVhbnMgaXQgaXMgcG9pbnRsZXNzIGhhdmluZyB0aGUgdHdvIGJpdG1hc2tzLg0KVGhl
-eSBqdXN0IGNvbXBsaWNhdGUgdGhpbmdzIHVubmVjZXNzYXJpbHkuDQoNCldoYXQgeW91IG1pZ2h0
-IHdhbnQgdG8gZG8gaXMgaGF2ZSB0aGUga2VybmVsIHJldHVybiB0aGUgc2l6ZQ0Kb2YgdGhlIHN0
-cnVjdHVyZSBpdCB3b3VsZCBmaWxsIGluIChwcm9iYWJseSBhcyB0aGUgZmlyc3QgZmllbGQpLg0K
-QWxzbyBoYXZlIHRoZSBrZXJuZWwgZmlsbCAocHJvYmFibHkgd2l0aCB6ZXJvcykgdGhlIGVuZCBv
-ZiB0aGUNCnVzZXIgYnVmZmVyIGl0IGRpZG4ndCB3cml0ZSB0by4NClRoZSBpb2N0bCBpcyB0aGVu
-IGFuIElPUigpIG9uZS4NCg0KTWluZCB5b3UsIGlmIHlvdSBkaWcgaW50byB0aGUgaGlzdG9yeSAo
-cG9zc2libHkgb2YgU1lTViBhbmQvb3IgQlNEKQ0KeW91J2xsIGZpbmQgYSBzdHJ1Y3R1cmUgdGhl
-IGtlcm5lbCBmaWxsZWQgd2l0aCB0aGUgaW5mbyAncHMnIG5lZWRzLg0KVGhlIHRleHQgYmFzZWQg
-Y29kZSB0aGF0IExpbnV4IHVzZXMgaXMgcHJvYmFibHkgbW9yZSBleHRlbnNpYmxlLg0KDQoJRGF2
-aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50
-IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTcz
-ODYgKFdhbGVzKQ0K
+On Mon, Aug 19, 2024 at 05:49:58PM +0200, Andrew Lunn wrote:
+> On Sun, Aug 18, 2024 at 09:50:46PM +0000, Jan Petrous (OSS) wrote:
+> > The helper rgmii_clock() implemented Russel's hint during stmmac
+> > glue driver review:
+> > 
+> > ---
+> > We seem to have multiple cases of very similar logic in lots of stmmac
+> > platform drivers, and I think it's about time we said no more to this.
+> > So, what I think we should do is as follows:
+> > 
+> > add the following helper - either in stmmac, or more generically
+> > (phylib? - in which case its name will need changing.)
+> > 
+> > static long stmmac_get_rgmii_clock(int speed)
+> > {
+> > 	switch (speed) {
+> > 	case SPEED_10:
+> > 		return 2500000;
+> > 
+> > 	case SPEED_100:
+> > 		return 25000000;
+> > 
+> > 	case SPEED_1000:
+> > 		return 125000000;
+> > 
+> > 	default:
+> > 		return -ENVAL;
+> > 	}
+> > }
+> > 
+> > Then, this can become:
+> > 
+> > 	long tx_clk_rate;
+> > 
+> > 	...
+> > 
+> > 	tx_clk_rate = stmmac_get_rgmii_clock(speed);
+> > 	if (tx_clk_rate < 0) {
+> > 		dev_err(gmac->dev, "Unsupported/Invalid speed: %d\n", speed);
+> > 		return;
+> > 	}
+> > 
+> > 	ret = clk_set_rate(gmac->tx_clk, tx_clk_rate);
+> > ---
+> > 
+> > Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> 
+> This Signed-off-by: needs to be above the first ---, otherwise it gets
+> discard.
+> 
+
+I see, it is used as delimiter, my fault.
+I will change formating for v3.
+
+> When you repost, please do try to get threading correct.
+> 
+
+Yeh, I already got the same feedback from Krzysztof.
+I'm switching to b4/lei/mutt for v3 what I hope fixed
+the threading issue.
+
+BR.
+/Jan
 
 
