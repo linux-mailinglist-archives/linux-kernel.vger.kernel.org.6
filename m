@@ -1,140 +1,144 @@
-Return-Path: <linux-kernel+bounces-352263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE22991CB6
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:02:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDB5991CB7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFF491F21FB0
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 06:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0412428307E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 06:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8C915B115;
-	Sun,  6 Oct 2024 06:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9801581E1;
+	Sun,  6 Oct 2024 06:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UVVLNd0o"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N6sm+/dE"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECA62C18C
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 06:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDEE4A23
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 06:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728194517; cv=none; b=Ivepyj4bsAyExRYlQMkWypLMysqxjafF+EAkpxbAZsz1hjw2Ugj0bKK7EHja+kqjHbUFbd6HyNhgNttaDEONJomhZwCVgTA5P2AC+2EyvAbPWyZd1m4oDCV982f7BDeUuufKPNvP1usWuw4ZP53SxhpgmiI0KpQk+NlLGpnlKZU=
+	t=1728194654; cv=none; b=CAjuSQbW3tRSYEPlPIrH5B0wPGcw/1KyfCyOOZXtM4/NuZFhpPpqbbXNPISO0okrqnzeot7JHQ/EJR795mVlfKBZR5Esfk8ddtwZX06DPBsSS7zUSpc1CnUbPx+bfNT1JIGR+ev5yfjer3+Rd177DjRvwgjhGXrGAJ6y9yD+vEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728194517; c=relaxed/simple;
-	bh=5DKOTNxx1eO/gWqiA8EJ3eIg5sG+gx9iq1aacsDREbE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L69ZYigJcDjSx6SQPbsZTMuZkUpHMzHLTAR+zouFP/CwHJHXEtXCq1J5r1NLv4q6rtqiQ7QYxLqzfcd4yEkSmNVzk98iGn8pn9i5VufDoeo4s8BB6i9FncXx3klVZpw7/0T35R1YShfSuUVYaeYlKDxeS99GTLJCQkNt5r41gIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UVVLNd0o; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4965mApx017081;
-	Sun, 6 Oct 2024 06:01:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=CfC+d0WgYAA781ermU98d98AqgXJFcxOl7q8JcUahv8=; b=UV
-	VLNd0oYMT/JCWEL6XZlqHl6V+lhpQ2xq03xlYo90y1sKCxgYCRLLF34iGrJl1GbM
-	rNP34DZB4XN5WNjpBm9huVqd/xaWM0wf9eQ7f3yXRdiAS5Xwxgd6GH/ijjlhrEOq
-	pDHrPID1vhWHR/Frz3JnRGilUmASLp/oRIW0HjXG8spUilu2Mbx1l9Vq1sILxBsN
-	TeIxK+R47JHxxtgAOuxvUgjwgAfudx/kqzVvDY6tOgqoDb8sLxzWPN9GNNOR2VWL
-	pn6Vgsz2xYUNeW+EeJlfyWsmrjaDonyyI+3m8cI0CV9KujmBhGwmkKBZJP7n4j+c
-	RKx1NDZCZEAXYZPI0TCg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv89j5t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 06 Oct 2024 06:01:27 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49661RnO029808
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 6 Oct 2024 06:01:27 GMT
-Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sat, 5 Oct 2024 23:01:21 -0700
-From: Pintu Kumar <quic_pintu@quicinc.com>
-To: <hannes@cmpxchg.org>, <surenb@google.com>, <peterz@infradead.org>,
-        <mingo@redhat.com>, <juri.lelli@redhat.com>,
-        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-        <vschneid@redhat.com>, <christophe.jaillet@wanadoo.fr>,
-        <linux-kernel@vger.kernel.org>
-CC: <joe@perches.com>, <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
-        Pintu Kumar <quic_pintu@quicinc.com>
-Subject: [PATCH v4] sched/psi: fix memory barrier without comment warnings
-Date: Sun, 6 Oct 2024 11:30:42 +0530
-Message-ID: <20241006060042.17613-1-quic_pintu@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728194654; c=relaxed/simple;
+	bh=cJAbKa1HlxdU5tp1+t53Cgq6/hbRAP2LguedRJOhMGA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KusqyVNIdM2Nfub8Bk6JGrLrIok5P6EcphQCYqQ3/ov0ZZqrXuHfOme364b9z1EPjQPct+qAn1kZrgE1nYqqTfcXVSpNlmsNL7NaaseAJ7RNk7b1CupGZP8xIUV5by+LP/XWTd0a0JxJGhtDhDu8fkYa1I0OViFQcbanc+WtZv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N6sm+/dE; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so4438288a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2024 23:04:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728194647; x=1728799447; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CdKgvqgyhdRbNukhn7GAUAA3F2ZCVtcmSJVHAQGbL6g=;
+        b=N6sm+/dEiJPvMwcueYG1Xo5W2S/5C/e1A8mAeJ0zQ9c549pdU8QNPXDC8GXm063gab
+         LXHxVqEyE9bjdbqeccn+2U06sOYBH8bfWrn9KJfaHk52esRw3YLJTuUuyuQ0ehllD+Yp
+         Y25r9H1PrX8K/9+OOS6/VyNW3fr6PpCKrVL6ifN4aTyGTgHRNwxzj3u6Ap0VcyXMC7kJ
+         mjVReIkDM5hEeXk8pVZzX4viSeMIgwzRkoNCC2P38PeouSvNG0AAz8PZWXvUeXx1Kmlb
+         lURrnsq6RzGAwh8pIr/bwX6lJ+UOjh5qTIzseg/jBxX+vAXODyA8uzizHgW2zb5x7Dyb
+         wD9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728194647; x=1728799447;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CdKgvqgyhdRbNukhn7GAUAA3F2ZCVtcmSJVHAQGbL6g=;
+        b=vSY48giRD5Q9FTZeFzXNM7sMsqYak1mMwEd+jt5K2gk9uRSHfpX+1Gs6FY2SVhG1d4
+         4A69eg3Dx61Bs9cbnZpTsYby8rWF/ghiCJbRjb9+USHSm3ZCCnTbbL8r+sRur3M3wW7X
+         e2VAiXwVooh7JviRZuPGEfb4YZNmsvYPO7mT0jjlVahs5+u2jyYR3B9yKTscJV1TPY5o
+         P/KX3p5rilOKJlAoNM2fJRXE+35BgtNHCQEUNVNdzwJwdL9KvDSrhKyjEU413YidY6Dk
+         rwKoWCU12/XSNGKYSOSigVhpR+iBgJq8+HuFIMI/DMbC6CoXRsvpXPQ/JYuJ9185PTzR
+         0N/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWEZZ6rJM8w8O9XhjrODYiPcl0zoqr81xZr1u+LrrrPPkmyKTrZTytP0kzJyO73zHMfRdbS3zt1V4N9css=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN9j2cqCKpdnsoOooO9uAzOgbSk/CR4lFpZCxfk/QuBbXAsKp0
+	6aO2qihPPzF+TIrLSs6gFih8SIdmKPwTZLKnI3DSagftH7Rfg06gSZj/YllxieA58uYKkPSXywf
+	Ust+8kViTO97bPjCI9U/2ubcTAGc=
+X-Google-Smtp-Source: AGHT+IHa7Icp+oWQHVt/WZpsUAZhmpntZHmGpOId46sMq7kXlt8qVPEUG0IYmgGQBRUzpAjKumLj3tWGAH+v2J1Ev00=
+X-Received: by 2002:a05:6402:2685:b0:5c8:839c:81ad with SMTP id
+ 4fb4d7f45d1cf-5c8d2e41e73mr6249540a12.15.1728194646970; Sat, 05 Oct 2024
+ 23:04:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1hRtkXkcvPZBskzxQXt8WUWPlcQAYeGl
-X-Proofpoint-GUID: 1hRtkXkcvPZBskzxQXt8WUWPlcQAYeGl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1011 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410060042
+References: <20241005174535.2152-1-quic_pintu@quicinc.com> <00aeb243-3d47-42be-b52c-08b39c5fef07@wanadoo.fr>
+In-Reply-To: <00aeb243-3d47-42be-b52c-08b39c5fef07@wanadoo.fr>
+From: Pintu Agarwal <pintu.ping@gmail.com>
+Date: Sun, 6 Oct 2024 11:33:54 +0530
+Message-ID: <CAOuPNLjCXpSrnR2AWkeaEaqMCG2noqUDgHTshSy4W-JbrMT6Sg@mail.gmail.com>
+Subject: Re: [PATCH v3] sched/psi: fix memory barrier without comment warnings
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Pintu Kumar <quic_pintu@quicinc.com>, hannes@cmpxchg.org, surenb@google.com, 
+	peterz@infradead.org, mingo@redhat.com, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org, joe@perches.com, skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-These warnings were reported by checkpatch.
-Fix them with minor changes.
-No functional changes.
+On Sun, 6 Oct 2024 at 00:22, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Le 05/10/2024 =C3=A0 19:45, Pintu Kumar a =C3=A9crit :
+> > These warnings were reported by checkpatch.
+> > Fix them with minor changes.
+> > No functional changes.
+> >
+> > WARNING: memory barrier without comment
+> > +       t =3D smp_load_acquire(trigger_ptr);
+> >
+> > WARNING: memory barrier without comment
+> > +       smp_store_release(&seq->private, new);
+> >
+> > Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
+> >
+> > ---
+> > Changes in V3:
+> > Removed signature of Joe as requested. No other change.
+> > V2: https://lore.kernel.org/all/CAOuPNLi1mUKW_vv0E6Ynzvdw_rHvCye+nAf2bW=
+v6Qj9A8ofX1g@mail.gmail.com/
+> > Changes in V2:
+> > Retain printk_deferred warnings as suggested by Joe Perches.
+> > V1: https://lore.kernel.org/all/a848671f803ba2b4ab14b0f7b09f0f53a8dd1c4=
+b.camel@perches.com/
+> > ---
+> >   kernel/sched/psi.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> >
+> > diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+> > index 020d58967d4e..4e4ff12fdeae 100644
+> > --- a/kernel/sched/psi.c
+> > +++ b/kernel/sched/psi.c
+> > @@ -1474,6 +1474,7 @@ __poll_t psi_trigger_poll(void **trigger_ptr,
+> >       if (static_branch_likely(&psi_disabled))
+> >               return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+> >
+> > +     /* Pairs with the smp_store_release in psi_write */
+> >       t =3D smp_load_acquire(trigger_ptr);
+> >       if (!t)
+> >               return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+> > @@ -1557,6 +1558,7 @@ static ssize_t psi_write(struct file *file, const=
+ char __user *user_buf,
+> >               return PTR_ERR(new);
+> >       }
+> >
+> > +     /* Pairs with the smp_store_acquire in psi_trigger_poll */
+>
+> smp_load_acquire()?
+> I would also add some () after the functions name, here and above.
+>
+Okay added () in comment for function name and sent v4.
+Thank you so much for your review.
 
-WARNING: memory barrier without comment
-+       t = smp_load_acquire(trigger_ptr);
-
-WARNING: memory barrier without comment
-+       smp_store_release(&seq->private, new);
-
-Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
-
----
-Changes in V4:
-Added () in comment as well suggested by Christophe JAILLET.
-V3: https://lore.kernel.org/all/00aeb243-3d47-42be-b52c-08b39c5fef07@wanadoo.fr/
-Changes in V3:
-Removed signature of Joe as requested. No other change.
-V2: https://lore.kernel.org/all/CAOuPNLi1mUKW_vv0E6Ynzvdw_rHvCye+nAf2bWv6Qj9A8ofX1g@mail.gmail.com/
-Changes in V2:
-Retain printk_deferred warnings as suggested by Joe Perches.
-V1: https://lore.kernel.org/all/a848671f803ba2b4ab14b0f7b09f0f53a8dd1c4b.camel@perches.com/
----
- kernel/sched/psi.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 020d58967d4e..175423716e4c 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -1474,6 +1474,7 @@ __poll_t psi_trigger_poll(void **trigger_ptr,
- 	if (static_branch_likely(&psi_disabled))
- 		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
- 
-+	/* Pairs with the smp_store_release() in psi_write */
- 	t = smp_load_acquire(trigger_ptr);
- 	if (!t)
- 		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
-@@ -1557,6 +1558,7 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
- 		return PTR_ERR(new);
- 	}
- 
-+	/* Pairs with the smp_store_acquire() in psi_trigger_poll */
- 	smp_store_release(&seq->private, new);
- 	mutex_unlock(&seq->lock);
- 
--- 
-2.17.1
-
+Thanks,
+Pintu
 
