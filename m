@@ -1,127 +1,103 @@
-Return-Path: <linux-kernel+bounces-352281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 715D6991CE5
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:00:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CAAC991CE7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273CD1F24393
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:00:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0001C216C9
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C389216F908;
-	Sun,  6 Oct 2024 06:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E73D15C128;
+	Sun,  6 Oct 2024 07:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PipkX5Ft"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="NDyjSmwy"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC88216D4E8;
-	Sun,  6 Oct 2024 06:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A10249F9
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 07:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728197944; cv=none; b=m7E5VeFOhOcoAOsbIYiVLiHounRxaO2Yw4fd8YJkNqPfrp5XIuHK48E2ZrsD5bdQJNw5oCunaYGUOuc1BQP6xGPiVXAu8X5sWhISUBEBgQnwnoEhomZSrYHCqUhfMoyLsmk5C8/WxcGCD4s1NbLDrB8zCFG4IKJ6qqjF/sybueM=
+	t=1728198182; cv=none; b=KQ7+3LYdyKInOpd6lWnTOXosqyGtEeeWlEXp8EUeX5OI80arSdbECrG581xnlirE8KKQkXD9o27Ci3X5zeeoga4pSR+lKL2sru0l8lOOqtJrC05n6+mi4N76JXhWcCsFREuT39jsQE28JJz1IXdtYqlVqbZURYckp6f64cxNrV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728197944; c=relaxed/simple;
-	bh=/ZJ7KmFOl0EpI21Y0KEtqt/Oqi3/GZoai/I0cVMf/YE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bLDEXV1Ufb9+9nCvz7rPBGIj1EmgKJ1Si8DRRdK6fY8QII4qCSSHkFpI+MKy0kHS04h/xpMyuTKRxbPtF+5MovioASHJcHEPgwckeWtleakcBkRcF37LE6VUYw8LdrAtwSg+/rUTkiZUcw4d97jOpfWbHOvvClrs11Msa8XCraw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PipkX5Ft; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71b00a97734so3183553b3a.1;
-        Sat, 05 Oct 2024 23:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728197942; x=1728802742; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6i+cth8VkyIuhVRMhBqiNkopkDZ/SGnIu+dJ7Vv/9ds=;
-        b=PipkX5FtxhgMs8ue/n96FPR5CZAJz77gOrAt5VJblPd8gGTVFcR7XL+0JjIAMnlfpS
-         pbKeLgsl/PDNIa/iaglODn/vHCSJCGBIUgPlTtpNNzv7Kg1D9Ldw9QkxSlv63sfLS1PN
-         vKRYI75VmTdhjiunoi+NZEHIr8fULPENCVc4N+/b5YxVnUe3i9y1MTTFSDXb2Fc3sSCD
-         e04l4ae9LwrMAm6zFdOGaru3MwWMpqrUvVnRpU4gAlg9hEEeTmPrRtoSbfkWENxj1eW1
-         ha5CsE8X7wMa6mbZw7/goFJuFRFvfaQ1xXppIH91fee8djvFbgwVq4XXHPYF6OMGXmTT
-         xf+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728197942; x=1728802742;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6i+cth8VkyIuhVRMhBqiNkopkDZ/SGnIu+dJ7Vv/9ds=;
-        b=IY6Utg2aCwnSGlFYHSUiJw1jjzdXytQH4H86THh6A9EMuJ7wk172wbz649k9+HLjMX
-         jXskcEXZdOHbEQeNL+ULZZix1BxWI3yUlD7XMctYNO8nniV/e0S0edeVn2Cen4QAvhJL
-         63OhAOXWxQ34w2RfhJJzDGGh/K5WkcEvjPyaNxcva8qAYZXKptIxzDh7/bFsAE35BfG0
-         JNv4gVVdJd/iXTA0MO1QtGB7WurBFk+GajiTE3Je6UlBUO13D+wgH0/PWQ7kzXdHbrqd
-         QnbScE/Oh3GPwrMsgBOvVYHvHHN6eUeRnILTr10VLXDycX0PsZIZnRB1/X+jc4gvG1M0
-         14ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVn89FB4+c3efqIFPpEyCD1PEYyAGN4kIygLSFhMPmrBb532ZijY+RsO7V9y1OwfMIb2VYuk2k57vtb3BRX@vger.kernel.org, AJvYcCWqu3aniGYztJT5h4W+JEA4NzperWMmxUC0H16Ql9fK5ZD1/e0z1FmYxUyOlVrfwaTdoWGrsS0jePIA5Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8k3Ebw6r6joyvXZ28Oz/Ym3FFJxnR73vNCtSJwhwjXkVevDZk
-	UEeq8J0oQp0ytK1MmVkNy+nGW7HfdFpeFTWDT6b4HTnWu9DlgK+6Fw1FYw==
-X-Google-Smtp-Source: AGHT+IG9vz8p5FUmnO6dAYjAuUD+uETY9KO4Rrxcroy4S/nYfi9f0mZ4v5TkdZzJoYa6FVs+Y961ZA==
-X-Received: by 2002:aa7:88c2:0:b0:718:d7de:3be2 with SMTP id d2e1a72fcca58-71de23df1c8mr11603943b3a.14.1728197942007;
-        Sat, 05 Oct 2024 23:59:02 -0700 (PDT)
-Received: from ?IPV6:2409:40c0:230:2966:8a2:4c2e:bb52:a9af? ([2409:40c0:230:2966:8a2:4c2e:bb52:a9af])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d4a278sm2438134b3a.140.2024.10.05.23.58.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Oct 2024 23:59:01 -0700 (PDT)
-Message-ID: <b22f1750-c53d-481f-8233-12adac30a807@gmail.com>
-Date: Sun, 6 Oct 2024 12:28:56 +0530
+	s=arc-20240116; t=1728198182; c=relaxed/simple;
+	bh=LwqthR418ERMyg7GU3ftN84xU6eVCN5PGkoaY1oIgBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fac6r7DOeSkP49zl5CkaHgxpobWohfPb6KbBFmNXrG1CT3q1jNP5GzEZ7LWOnNLw/W9gH2Pzsh7GWxT1txuo2HnBtVe0Nz9BmHM6+TcbEUxFee9kYoJXw1AoD7RGWDdaTaYfwCp65K3W7lEz7aUqTMaCCr+Nd6H1GAqiu8v/ioY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=NDyjSmwy; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1728198170;
+	bh=U/EQGoaL7JZxS1pYk6j6uqf8Pcy74sEy3785WNTe6kg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NDyjSmwygkBHYeM0t5dP7EbGHj7aulY8BHUVRL4ZvqCxaK1jhSjsmBtqcbOvR9tpg
+	 oeguSOCC6QB03S2bQOVJB2QUwFkq6OIP/5Tc3/yB5OWdoqdApDxxm/sV3f7WDH8g7Z
+	 OdpLNlH/a4FmR05cF+4dLq8xT0DL9SdawmAlAHNv2jFBAh4nteMQ58g7R1/KIrBntK
+	 Psn2gkR5WvZqXOOZVt47dPUh5Fy5Inu2f9Rid2fri0F+3lTaiHjjMdbkdcSNvFTAKV
+	 YoIxXiXzg5XKSjV2taATHU0h9t06nJYA/oRj8pBmBsEW4K5z7I0Zv78TBcZMedYA1+
+	 jC0Fb3TSaYh3g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XLtX92kbRz4wxx;
+	Sun,  6 Oct 2024 18:02:49 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jason@zx2c4.com, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-6.12-3 tag
+Date: Sun, 06 Oct 2024 18:02:46 +1100
+Message-ID: <87bjzxlnmx.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Explanation on Uninitialized Variable bio in blk_rq_prep_clone
-To: John Garry <john.g.garry@oracle.com>, hch@infradead.org
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Zv_eFIjstVns-ebG@infradead.org>
- <20241004141037.43277-1-surajsonawane0215@gmail.com>
- <6a0ec577-fba1-44b3-87d8-3a202df19d8c@oracle.com>
-Content-Language: en-US
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-In-Reply-To: <6a0ec577-fba1-44b3-87d8-3a202df19d8c@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 04/10/24 20:03, John Garry wrote:
-> On 04/10/2024 15:10, SurajSonawane2415 wrote:
->> Explaination of how bio could be used uninitialized in this function:
->>
->> In the function blk_rq_prep_clone, the variable bio is declared but 
->> can remain uninitialized
->> if the allocation with bio_alloc_clone fails. This can lead to 
->> undefined behavior when the
->> function attempts to free bio in the error handling section using 
->> bio_put(bio).
->> By initializing bio to NULL at declaration, we ensure that the cleanup 
->> code will only
->> interact with bio if it has been successfully allocated.
->>
->>
-> 
-> What about if rq_src->bio is NULL for blk_rq_prep_clone() -> 
-> __rq_for_each_bio(,rq_src):
-> 
-> #define __rq_for_each_bio(_bio, rq)    \
->      if ((rq->bio))            \
->          for (_bio = (rq)->bio; _bio; _bio = _bio->bi_next)
-> 
-> Then I don't think bio it get init'ed. Whether this is possible 
-> (rq_src->bio is NULL) is another question.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
 
-Hi Keith,
+Hi Linus,
 
-You're right to bring this up. If rq_src->bio is NULL, the 
-__rq_for_each_bio macro will skip the loop, meaning the bio variable 
-won't be used at all. So, even if bio isn’t initialized, it won't cause 
-any issues in that case.
+Please pull some more powerpc fixes for 6.12:
 
-Thanks for pointing that out.
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-Best regards,
-Suraj
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.12-3
+
+for you to fetch changes up to 4b058c9f281f5b100efbf665dd5a1a05e1654d6d:
+
+  powerpc/vdso: allow r30 in vDSO code generation of getrandom (2024-09-30 19:19:43 +1000)
+
+- ------------------------------------------------------------------
+powerpc fixes for 6.12 #3
+
+ - Allow r30 to be used in vDSO code generation of getrandom.
+
+Thanks to: Jason A. Donenfeld.
+
+- ------------------------------------------------------------------
+Jason A. Donenfeld (1):
+      powerpc/vdso: allow r30 in vDSO code generation of getrandom
+
+
+ arch/powerpc/kernel/vdso/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRjvi15rv0TSTaE+SIF0oADX8seIQUCZwI15wAKCRAF0oADX8se
+Ia03AP9Wmr2WQ9B2Ei8oQMJBIZkPxkdnqG+K98O3ggFZv8Qz3QD+NgQXIYs+Gvay
+5Ql5F5hp1D+KepgXmJJsGVhql2vrMgI=
+=vwqi
+-----END PGP SIGNATURE-----
 
