@@ -1,119 +1,189 @@
-Return-Path: <linux-kernel+bounces-352362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1530991E16
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:21:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4925E991E19
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7B1282495
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07C4E2824A9
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C291741C9;
-	Sun,  6 Oct 2024 11:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F50A175D44;
+	Sun,  6 Oct 2024 11:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZRFLoBjT"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j+/Uf6eC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4876313E898
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 11:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8BCA29;
+	Sun,  6 Oct 2024 11:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728213682; cv=none; b=d9A33BOboWzJfVE0c3IBSWtgLIS+digTcGhkyW8iLqrbL5X4i75se5tf1bw7VQ83E5pKpSaEyqAzS3gkkqjHqeKspFKvPRSQQPYeimBvr8TJzD56nuAr1Kgqd8enXpdB9xn2UnHYdMm1N3t3uEhXJUe8b3cajnM6eBHqB1FCr2I=
+	t=1728214040; cv=none; b=Yl9aQPW8J7+59ZWbvw/Lq696AQeq861osQu2G6Q6lSI9yL15XYGmOvETw6RJaUi66PElQ4fFDN92REVNcWCQv9so1gu6FrWqAmageBEKgg8WcYvd6PWWhz+1rC5N4MypsgrLMW/CD2vhfgUE/SEwnQnTWo5faXj+SRHDSS8M8Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728213682; c=relaxed/simple;
-	bh=kAkf6NIhOlen6xkgkrgYREOsdkIOiEOGqa3LkxwXAz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rANccJXMBsM08FXX4Z1nSUjYJdsO3Wkq6mXSqGXBHNllVif0jReVoh/CEES3k2KeaRTKJxhQZHhUyJw+JBt5nnMZMox19cfGMTJbbH5nOMuJzY4Ds5Tp1jUZCyMWy9PaNrq0Ae6AqwWv0z3eweN+9YY/D1ANV/Pqlnz4yUIQfDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZRFLoBjT; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c87ab540b3so8121701a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 04:21:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728213678; x=1728818478; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IaSdlUzNDNfxslBW/OGrSNOxQF3vX0DH7/KKjL0CWFE=;
-        b=ZRFLoBjTG8F3mnbaxzhEVD5mJKaLx5/2TTk+hrgvD3rdpHcyXkH0aj+uPy1cA8D4wx
-         Af23dzdoNOYTNwpzbbqx46oCw8/n8HpYvCKG1Qd+xvl8BSGIOil2iyAT7QvsXKizpBWK
-         PUXOoo12LpxhY6HIQIaMCZEtPE64TkBWJVK0J7zpihvQSrhbh8HcbSzL/aR1ETUhORfS
-         2A0I9OMJxJSQTiRQF+1Z2nVOqA5BgPNRE8IO3JZUOLi3TXRC8vcy1KPbR4lAwlXjrpWc
-         Av9hGEa16S8jbnKt+ZESVTlwP8Ygdj36R8Ao5EERaSF78gTr0fKlAQ2mnoeFD0K+6tI1
-         8fqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728213678; x=1728818478;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IaSdlUzNDNfxslBW/OGrSNOxQF3vX0DH7/KKjL0CWFE=;
-        b=DpE4T8SFHN8CQ8/hHEYRDvr4yG/HJw/25W3GjAsvCQrxRiNnNNXxbQBr/5guKhSSpQ
-         jeSjKcmPLzzZl63DatXz+w+rjzg/w/41KqsxpJLYGNNjexiWVQPFOLRI73qF1dbbWNjz
-         gBHwFgts+8t+tEGi6Z0OyNhWxChs7D/7YUmiODrwO1Bp5hSYsTqboEvX0sTO5jwp3HVp
-         OKXrQ9RisxA21VVEvdP8hXKUCwE4ujNE4s5niiF+InOGkdhSFpgtkSEDdX4UFxD6wuXU
-         u5lg3khldsNqGkILh2K5PZpFVOjiv4B6VqWL563buuaC19ExUl6TXgoE46EMReFR2uE9
-         dSow==
-X-Forwarded-Encrypted: i=1; AJvYcCVWXgz5/kDlBFZXjKyULaxvm1M5nsz2lEX6LuIF79kFnqVPv4URur6v6AUBjyhbg1P8MFvsQngAB43ixXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLNIEIg+3xr4XhUOux12gVZPGAxSeL7W/QQqvrKdFGKlB+PeHk
-	4aB9X/tkLt4BhF13BEKI+FfdDCz92AW95mFL8qQ5N2iqWM0EUbmqfM0/hUWjPaA=
-X-Google-Smtp-Source: AGHT+IGhNzL6F7Y3Basq1U7UYWMAXnxAome0GeoM6oq+0r0hVBAogjvQax1Al72V/SfzYXj8LXhFpw==
-X-Received: by 2002:a17:907:360e:b0:a8d:4e69:4030 with SMTP id a640c23a62f3a-a990a0606a4mr1387180166b.19.1728213678283;
-        Sun, 06 Oct 2024 04:21:18 -0700 (PDT)
-Received: from [192.168.0.15] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7860cbsm242410866b.120.2024.10.06.04.21.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Oct 2024 04:21:17 -0700 (PDT)
-Message-ID: <b9e1c0ae-5651-418a-9b71-897cd739ed0c@linaro.org>
-Date: Sun, 6 Oct 2024 12:21:17 +0100
+	s=arc-20240116; t=1728214040; c=relaxed/simple;
+	bh=GJyroqFA3A1Djt9tw1U4cgp9/G/Phrqepsh/OddSNF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i04kN0R2Ho60wp5y8lJuNl/ZsoFGJHz7UmYPfcqssx6slx3v0b4VyH+Cr6VdPyhhEXeUjAbxnxu9kbr2vIEJsmipwFrJnmDJ4ZKJUzc++bGriQbHuM06cD9fZ9WkWnnlapyVB0UpTrZnBPt0FjpLzYFMxIxuA7Sl0G/yfcvraOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j+/Uf6eC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26D67C4CEC5;
+	Sun,  6 Oct 2024 11:27:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728214038;
+	bh=GJyroqFA3A1Djt9tw1U4cgp9/G/Phrqepsh/OddSNF8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=j+/Uf6eC1j4k0olEBp5ohafGlUD9K+PfrKmOC9vWVTPYm3Hv92TQEdm07RXz/4Inu
+	 tOMIU7tbQlwrGONfZ69NWTLh3XKJjvn0x0iSht60Crf5RGL1p31PhmNmiYKUdcv86h
+	 6oy2hyTO+x0WlCB2nwPIWy2QpqgpbC6n/SMy6iOsqYMNMuFNrcijfOADHGRzIrUEkV
+	 2Vr5/dvM++8IRnUTJUK92TDCF9KDLaxa3ktRitRS516uKIqMLqczyzeAQGQlDHOYUz
+	 MFHU3Iuxvd8w5RhEq9ID8UTePhAUHPp8p19OXo5VfElRSw4nZEa2nUtGdD4EzAv9EY
+	 X3d+uTVSSRNoA==
+Date: Sun, 6 Oct 2024 12:27:12 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Tudor Gheorghiu <tudor.reda@gmail.com>
+Cc: Nam Cao <namcao@linutronix.de>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>
+Subject: Re: [PATCH] staging: iio: frequency: rename macros
+Message-ID: <20241006122712.2cff065c@jic23-huawei>
+In-Reply-To: <Zvy0qyQJP1S17SFv@redaops>
+References: <20241001202430.15874-2-tudor.reda@gmail.com>
+	<20241001225426.wUBOFdMi@linutronix.de>
+	<Zvy0qyQJP1S17SFv@redaops>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: typec: qcom-pmic-typec: fix sink status being
- overwritten with RP_DEF
-To: Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Caleb Connolly <caleb.connolly@linaro.org>,
- Guenter Roeck <linux@roeck-us.net>,
- "open list:QUALCOMM TYPEC PORT MANAGER DRIVER" <linux-usb@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241005144146.2345-1-jonathan@marek.ca>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241005144146.2345-1-jonathan@marek.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 05/10/2024 15:41, Jonathan Marek wrote:
-> This line is overwriting the result of the above switch-case.
-> 
-> This fixes the tcpm driver getting stuck in a "Sink TX No Go" loop.
-> 
-> Fixes: a4422ff22142 ("usb: typec: qcom: Add Qualcomm PMIC Type-C driver")
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->   drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c
-> index a747baa297849..c37dede62e12c 100644
-> --- a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c
-> +++ b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c
-> @@ -432,7 +432,6 @@ static int qcom_pmic_typec_port_get_cc(struct tcpc_dev *tcpc,
->   			val = TYPEC_CC_RP_DEF;
->   			break;
->   		}
-> -		val = TYPEC_CC_RP_DEF;
->   	}
->   
->   	if (misc & CC_ORIENTATION)
+On Wed, 2 Oct 2024 05:49:15 +0300
+Tudor Gheorghiu <tudor.reda@gmail.com> wrote:
 
-Acked-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> On Wed, Oct 02, 2024 at 12:54:26AM +0200, Nam Cao wrote:
+> > 
+> > You probably want to elaborate what you mean by "their naming choice" (i.e.
+> > how does the naming choice causes this false warning?)
+> > 
+> > I got curious and digged into checkpatch.pl. This script expects macros
+> > whose names match "IIO_DEV_ATTR_[A-Z_]+" to have the first integer argument
+> > to be octal. And this driver defines macros which "luckily" match that
+> > pattern.
+> > 
+> > There is only IIO_DEV_ATTR_SAMP_FREQ which matches the pattern, and accepts
+> > umode_t as its first argument.
+> > 
+> > Instead of changing code just to make checkpatch.pl happy, perhaps it's
+> > better to fix the checkpatch script? Maybe something like the untested
+> > patch below?
+> > 
+> > Or since checkpatch is wrong, maybe just ignore it.
+> > 
+> > Best regards,
+> > Nam
+> > 
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > index 4427572b2477..2fb4549fede2 100755
+> > --- a/scripts/checkpatch.pl
+> > +++ b/scripts/checkpatch.pl
+> > @@ -817,7 +817,7 @@ our @mode_permission_funcs = (
+> >  	["debugfs_create_(?:file|u8|u16|u32|u64|x8|x16|x32|x64|size_t|atomic_t|bool|blob|regset32|u32_array)", 2],
+> >  	["proc_create(?:_data|)", 2],
+> >  	["(?:CLASS|DEVICE|SENSOR|SENSOR_DEVICE|IIO_DEVICE)_ATTR", 2],
+> > -	["IIO_DEV_ATTR_[A-Z_]+", 1],
+> > +	["IIO_DEV_ATTR_SAMP_FREQ", 1],
+> >  	["SENSOR_(?:DEVICE_|)ATTR_2", 2],
+> >  	["SENSOR_TEMPLATE(?:_2|)", 3],
+> >  	["__ATTR", 2],  
+> 
+> Hi!
+> 
+> Yes, this is exactly what I discovered while inspecting checkpatch
+> myself, however it did not occur to me this could be a problem with
+> checkpatch. But looking deeper, it seems like it is:
+> 
+> IIO_DEV_ATTR_SAMP_FREQ is defined in include/linux/iio/sysfs.h, along
+> with other helper macros:
+> 
+> > /**
+> >  * IIO_DEV_ATTR_SAMP_FREQ - sets any internal clock frequency
+> >  * @_mode: sysfs file mode/permissions
+> >  * @_show: output method for the attribute
+> >  * @_store: input method for the attribute
+> >  **/
+> > #define IIO_DEV_ATTR_SAMP_FREQ(_mode, _show, _store)			\
+> > 	IIO_DEVICE_ATTR(sampling_frequency, _mode, _show, _store, 0)
+> > 
+> > /**
+> >  * IIO_DEV_ATTR_SAMP_FREQ_AVAIL - list available sampling frequencies
+> >  * @_show: output method for the attribute
+> >  *
+> >  * May be mode dependent on some devices
+> >  **/
+> > #define IIO_DEV_ATTR_SAMP_FREQ_AVAIL(_show)				\
+> > 	IIO_DEVICE_ATTR(sampling_frequency_available, S_IRUGO, _show, NULL, 0)
+> > /**
+> >  * IIO_DEV_ATTR_INT_TIME_AVAIL - list available integration times
+> >  * @_show: output method for the attribute
+> >  **/
+> > #define IIO_DEV_ATTR_INT_TIME_AVAIL(_show)		\
+> > 	IIO_DEVICE_ATTR(integration_time_available, S_IRUGO, _show, NULL, 0)
+> > 
+> > #define IIO_DEV_ATTR_TEMP_RAW(_show)			\
+> > 	IIO_DEVICE_ATTR(in_temp_raw, S_IRUGO, _show, NULL, 0)  
+> 
+> The checkpatch script will match all these macros, even if
+> IIO_DEV_ATTR_SAMP_FREQ is the only one where we need to check for octal
+> literal arguments. I grep'd through the entire sourcecode, and the only
+> false positives with literal decimal arguments which match "IIO_DEV_ATTR_[A-Z_]+"
+> are inside this driver.
+> 
+> I accidentally discovered this issue by running
+> checkpatch on the said driver files.
+> 
+> I will submit a patch to the checkpatch maintainers with this thread
+> linked, and if they agree this is a bug and accept the patch,
+> this driver patch will no longer be needed, since checkpatch will no longer flag
+> these macros as false positives.
+> 
+> Do I have your permission to add your name and email to Suggested-by?
+
+Hmm. If you really want to clean this up, then these macros shouldn't
+exist at all.  They are legacy of ancient IIO code style and some slightly
+ropey code even then (which is why it's in staging!)
+
+Right option is to use the read_raw callbacks in conjunction with the
+info_mask_* bitmaps that indicate which attributes the IIO core should create.
+There are some corners in here such as PHASESYMBOL for which we've
+never fixed on an ABI and that might need custom attributes, but even
+then these macros probably wouldn't be involved.
+
+So I'd don't mind 'fixing' checkpatch or the code, but I'd
+rather we fixed the drivers up properly.
+
+However I would also like someone from ADI to input on whether they plan
+to clean these up in future?  Or is this something you'd support someone
+else doing? I quickly checked one of them and the ad9832 is still a production
+part so they may be interest in a clean upstream driver.
+
++CC Nuno to chase that question down.  This is the ad9832 and ad9834 DDS
+chips.  ADI are doing a good job at bringing out of tree code in at the
+moment, but it would also be good to finally tidy up the remaining stuff
+in staging (or dump it once and for all!)
+
+Jonathan
+
+
+
+> 
+> Thanks!
+> Tudor
+
 
