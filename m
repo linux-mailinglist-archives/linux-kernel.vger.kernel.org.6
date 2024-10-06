@@ -1,197 +1,163 @@
-Return-Path: <linux-kernel+bounces-352545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD7A99208C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:05:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE179920AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1C61C20DB5
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1760283117
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7173117DFE4;
-	Sun,  6 Oct 2024 19:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719A918A920;
+	Sun,  6 Oct 2024 19:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hgOjOdmk"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="cvFDF1C/"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5648A189917
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 19:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF447189B9C;
+	Sun,  6 Oct 2024 19:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728241507; cv=none; b=W1uU0a4Tz3lBaT4xWu+YKKCLhubedVHK5H+Kne5M8ZMWOW6VvcwnM8vnjK20Y3p+8ChgYJfEFRtxWizKFBQIVtdLqo/LfEo3ijRMlLRS4hjaOmr6nmgaV3ti5Ff6k2/1OFB3swv/VWCOm9cf4hpgzC5i+KD4w7UqSGtHkxnmh/s=
+	t=1728242531; cv=none; b=VHB+IUdEKhMRM/HoKJ3vvPhOWEdgcplezQRYjdd1a06orMaiLtD1UyVt0zO0YdVbv8WdcSsPpsBjvXlBZ1tRkPw9OdSdiKnmT3MmyQcQuy4nmyAxcWrTyXh8YsRGjpEi1N1CQHyzimEp4UzSRs5SkIh/YoaEojCXp1CUILjrrIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728241507; c=relaxed/simple;
-	bh=lBUg1G5w0xbiORJkJOiJgn1ZBETpknqPHoI9s+ukgpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eBxS39sEq/vtvb+GsAoWcMpm+RUCTCMZiseoti0gJEQX3hFd9QOJS7zwUILuXRmXZN7KRwRVGvyS2T5bb+TvLGGASnJJEIspXXVVKCpvU4LW4DI7eH0JMAIJnUr/TJOCFb9Cnr9tE9dnOBqv5i5eoEQt9Cj9euN+2IXPxastn7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hgOjOdmk; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9952ea05c5so54544166b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 12:05:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1728241503; x=1728846303; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g/pTi4WP+DUWGLMsn6tW08xKN8735zsCNYj+R00ve1A=;
-        b=hgOjOdmkFEjOVgHzodJwAA5JNAHhOWI/hb0rDb2/JEYFdh2NPCtiJR5m9TSNJPcSBQ
-         QCS3nSnbfdnrxLWFoxKKNQ+72jrNa46cV6vKuUTzBuVYwzq2QedQvSqHa4tZKPy7hFoW
-         dUk25dcpAxIBexkoXXZTXZyKU5ZuQBEYAp59c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728241503; x=1728846303;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g/pTi4WP+DUWGLMsn6tW08xKN8735zsCNYj+R00ve1A=;
-        b=GRSLWSNT+brAnMB0w0+d8AiECHUBhx++d7QdDoM3rHjtloI4UTO9X8rh/erKPI8tvD
-         LqIyIRViCOjYirCkYT8IiLcDgcpJEImjubuwXopOoOPGLN3s5C212HFMzLDM5zKvOSOu
-         D4LDTE8OPnV8ywvzdY6OVoChsT70Bd/rjaRwlg+EUh04ac/NrFQJQTG63XVTdBXw46sh
-         17Jvxd57vlArL+hGI5jXBVCVe1hrLFA++Y3n7PrVxGK+5nBF2uzRMhuWvZqUB8OwCxN1
-         pjSK0ekI98a/yG9sfgb0ZPiIEF3+fT7320y1LHlq1qC3ZqugZgXMM0+mgTckZsijYmNz
-         O7XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUB63ulAXBJQsaOBhstN5tfjOuCC724vRsBFMjUA3G5EwUhy/qsDD65Oq0JhtWaKNfrp83oFnSxW0XUV3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu5jLr0pdZ+frWjmhh0dHgCCwbuUXBDVIwwHQKJJDfnxPQw5CH
-	+vZVo8q7OJoxjvA81aT/YHBG2DlVy6t10d5xPcMp+oqmxuhYs2JUpor4DBh0fAJViNa8T1NGuCy
-	b2f4=
-X-Google-Smtp-Source: AGHT+IGMG+6CPFZFIwVo6t4dwoaY2Wa7UtuS1hb10zOdNOhYFp3IM2oIh4ds6VH1KNpGulOpDoaGDg==
-X-Received: by 2002:a17:906:6a1f:b0:a99:4ecc:f535 with SMTP id a640c23a62f3a-a994eccf7b5mr265206766b.11.1728241503259;
-        Sun, 06 Oct 2024 12:05:03 -0700 (PDT)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994db478bcsm112449466b.140.2024.10.06.12.05.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Oct 2024 12:05:02 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9952ea05c5so54540566b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 12:05:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUmlZq+by/J0YSR6QW6w8rMJ8/VcnfycpiNYDardajy7fm5aZP20OSNFtpoQv1PYtOkJzVcFLOTQgIFJIA=@vger.kernel.org
-X-Received: by 2002:a17:907:2681:b0:a8a:91d1:5262 with SMTP id
- a640c23a62f3a-a991bd71ddcmr1143956566b.28.1728241502270; Sun, 06 Oct 2024
- 12:05:02 -0700 (PDT)
+	s=arc-20240116; t=1728242531; c=relaxed/simple;
+	bh=5Ej/roX0hBsFAsuY5HOV6xxMHJnnvuBYZnHZd7USqw8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pRDnBKDYKcedOtcZciv09nMb5Pv1gPAw80wS5oz/IKyRVjToEFPmkevKW3sbdXPE3hrB5T0GwFgclUAT0qk3QxeSt7ETlcaXaN2Eg6ulO4xCZ8ln+okwZO2WeP5VOFjVRfAEjbdp/Ebd7fVybIKnuelBig6FcnnaDWne0Q78WjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=cvFDF1C/; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 7D66188896;
+	Sun,  6 Oct 2024 21:13:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1728241983;
+	bh=k1vovXXkKC3Gh/6LzZZyo6822HUQ4nfaTQ3gBfRXD2Y=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=cvFDF1C/K/pRBgSKo3l20U3tN3baBrziLPXPbhNgvzGJQn91kg6xdJ8w3mUVg+EAd
+	 BohABlcLOjzu9ZByMIc++xw4of1YNo7gC9k9adAEldbb4MeVqSJsvqoBgdIIbpXwAk
+	 z3C07mq+LQPJ4SFhE+ack7nU/df25t9UXKoQkq3JyzKrPxJq14fHhuFboTpyYrXbvg
+	 r4vDgB9zl3C9dfWXtL9mSwGyNv28359ao1tCtEb2dEVtFTBIMT2PMl7aH0ayKlXofn
+	 mXGuECDKQosJgn9nu8MYwrefXg8T+cTxr+FGcOdnt3z3jB8H3GFzd5T82FawKXj7h3
+	 GFsJPZiSrDhSA==
+Message-ID: <1e6600a8-0b1a-472b-9f84-9b3c646a931a@denx.de>
+Date: Sun, 6 Oct 2024 21:12:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
- <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
- <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
- <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
- <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
- <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
- <20241006043002.GE158527@mit.edu> <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
-In-Reply-To: <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 6 Oct 2024 12:04:45 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh_oAnEY3if4fRC6sJsZxZm=OhULV_9hUDVFm5n7UZ3eA@mail.gmail.com>
-Message-ID: <CAHk-=wh_oAnEY3if4fRC6sJsZxZm=OhULV_9hUDVFm5n7UZ3eA@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH v7 1/1] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Frank Li <Frank.Li@nxp.com>, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, festevam@gmail.com, francesco@dolcini.it,
+ imx@lists.linux.dev, jun.li@nxp.com, kernel@pengutronix.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ p.zabel@pengutronix.de, pratikmanvar09@gmail.com, robh@kernel.org,
+ s.hauer@pengutronix.de, shawnguo@kernel.org, xiaoning.wang@nxp.com
+References: <20241004193531.673488-1-Frank.Li@nxp.com>
+ <5cvzarqkldstuziokdbxxne75i35odexkcykzikyq2gm6ytdyd@5wkm7mhotgej>
+ <4166d68c-5eca-406a-936f-412dd2ae72fc@denx.de>
+ <gnlm4u7dc2aktycxzn4nqw3anzeit6tbtgcq7kv3pzbrorwg6o@h35yxit5y2a3>
+Content-Language: en-US
+In-Reply-To: <gnlm4u7dc2aktycxzn4nqw3anzeit6tbtgcq7kv3pzbrorwg6o@h35yxit5y2a3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Sat, 5 Oct 2024 at 21:33, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> On Sun, Oct 06, 2024 at 12:30:02AM GMT, Theodore Ts'o wrote:
-> >
-> > You may believe that yours is better than anyone else's, but with
-> > respect, I disagree, at least for my own workflow and use case.  And
-> > if you look at the number of contributors in both Luis and my xfstests
-> > runners[2][3], I suspect you'll find that we have far more
-> > contributors in our git repo than your solo effort....
->
-> Correct me if I'm wrong, but your system isn't available to the
-> community, and I haven't seen a CI or dashboard for kdevops?
->
-> Believe me, I would love to not be sinking time into this as well, but
-> we need to standardize on something everyone can use.
+On 10/5/24 5:57 PM, Uwe Kleine-König wrote:
+> On Sat, Oct 05, 2024 at 02:41:29AM +0200, Marek Vasut wrote:
+>> On 10/4/24 10:58 PM, Uwe Kleine-König wrote:
+>>
+>> [...]
+>>
+>> Why not simply duplicate the ERRATA description for iMX8M Nano MX8MN_0N14Y
+>> errata sheet ?
+>>
+>> "
+>> [...]
+>> "
+>>
+>> That is very clear to me.
+> 
+> Fine for me. Frank, do you want to try creating the right mix of the NXP
+> text, your and my description?
+> 
+>>> 	/*
+>>> 	 * At each clock tick the hardware compares the SAR value with
+>>> 	 * the current counter. If they are equal the output is changed
+>>> 	 * to the inactive level.
+>>
+>> I would skip this ^ part unless you can surely say the IP works exactly that
+>> way because you checked the RTL.
+> 
+> That it works that way is clear from the errata text IMHO.
 
-I really don't think we necessarily need to standardize. Certainly not
-across completely different subsystems.
+The errata description does not say anything about comparing SAR value 
+on each clock tick. Better stick to exactly what the errata does say.
 
-Maybe filesystem people have something in common, but honestly, even
-that is rather questionable. Different filesystems have enough
-different features that you will have different testing needs.
+[...]
 
-And a filesystem tree and an architecture tree (or the networking
-tree, or whatever) have basically almost _zero_ overlap in testing -
-apart from the obvious side of just basic build and boot testing.
+>>>> +	c = clkrate * 1500;
+>>>> +	do_div(c, NSEC_PER_SEC);
+>>>> +
+>>>> +	local_irq_save(flags);
+>>>> +	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
+>>>> +
+>>>> +	if (duty_cycles < imx->duty_cycle) {
+>>>> +		if (state->period < 2000) { /* 2000ns = 500 kHz */
+>>>> +			/* Best effort attempt to fix up >500 kHz case */
+>>>> +			udelay(6); /* 2us per FIFO entry, 3 FIFO entries written => 6 us */
+>>>
+>>> I don't understand the motivation to wait here. Wouldn't it be better to
+>>> write the old value 3 - val times and not sleep?
+>>
+>> No, because you would overflow the FIFO, see:
+>>
+>> 137fd45ffec1 ("pwm: imx: Avoid sample FIFO overflow for i.MX PWM version2")
+> 
+> val holds the number of uses FIFO entries, so writing (3 - val) new
+> items should be fine?!
 
-And don't even get me started on drivers, which have a whole different
-thing and can generally not be tested in some random VM at all.
+Not necessarily, consider the case where:
+- The PWM is very fast
+- There are currently 3 entries in the FIFO according to driver state
+- The driver determines 3-val is 1 and performs 1 single write to FIFO
+=> If the PWM consumed the FIFO (FIFO is empty) before the 1 single
+    write arrives, then the aforementioned errata still occurs
 
-So no. People should *not* try to standardize on something everyone can use.
+I believe the better option is to wait until the FIFO is surely depleted 
+and then write three entries in short sequence -- OLD-OLD-NEW -- this 
+way the FIFO would get updated with old value first and then switched to 
+new value, hopefully mitigating the issue as best as possible even for 
+fast PWM settings.
 
-But _everybody_ should participate in the basic build testing (and the
-basic boot testing we have, even if it probably doesn't exercise much
-of most subsystems).  That covers a *lot* of stuff that various
-domain-specific testing does not (and generally should not).
+btw. the two writes here should be writing the old value twice, now 
+there are three new value writes in this patch version.
 
-For example, when you do filesystem-specific testing, you very seldom
-have much issues with different compilers or architectures. Sure,
-there can be compiler version issues that affect behavior, but let's
-be honest: it's very very rare. And yes, there are big-endian machines
-and the whole 32-bit vs 64-bit thing, and that can certainly affect
-your filesystem testing, but I would expect it to be a fairly rare and
-secondary thing for you to worry about when you try to stress your
-filesystem for correctness.
-
-But build and boot testing? All those random configs, all those odd
-architectures, and all those odd compilers *do* affect build testing.
-So you as a filesystem maintainer should *not* generally strive to do
-your own basic build test, but very much participate in the generic
-build test that is being done by various bots (not just on linux-next,
-but things like the 0day bot on various patch series posted to the
-list etc).
-
-End result: one size does not fit all. But I get unhappy when I see
-some subsystem that doesn't seem to participate in what I consider the
-absolute bare minimum.
-
-Btw, there are other ways to make me less unhappy. For example, a
-couple of years ago, we had a string of issues with the networking
-tree. Not because there was any particular maintenance issue, but
-because the networking tree is basically one of the biggest subsystems
-there are, and so bugs just happen more for that simple reason. Random
-driver issues that got found resolved quickly, but that kept happening
-in rc releases (or even final releases).
-
-And that was *despite* the networking fixes generally having been in linux-next.
-
-Now, the reason I mention the networking tree is that the one simple
-thing that made it a lot less stressful was that I asked whether the
-networking fixes pulls could just come in on Thursday instead of late
-on Friday or Saturday. That meant that any silly things that the bots
-picked up on (or good testers picked up on quickly) now had an extra
-day or two to get resolved.
-
-Now, it may be that the string of unfortunate networking issues that
-caused this policy were entirely just bad luck, and we just haven't
-had that. But the networking pull still comes in on Thursdays, and
-we've been doing it that way for four years, and it seems to have
-worked out well for both sides. I certainly feel a lot better about
-being able to do the (sometimes fairly sizeable) pull on a Thursday,
-knowing that if there is some last-minute issue, we can still fix just
-*that* before the rc or final release.
-
-And hey, that's literally just a "this was how we dealt with one
-particular situation". Not everybody needs to have the same rules,
-because the exact details will be different. I like doing releases on
-Sundays, because that way the people who do a fairly normal Mon-Fri
-week come in to a fresh release (whether rc or not). And people tend
-to like sending in their "work of the week" to me on Fridays, so I get
-a lot of pull requests on Friday, and most of the time that works just
-fine.
-
-So the networking tree timing policy ended up working quite well for
-that, but there's no reason it should be "The Rule" and that everybody
-should do it. But maybe it would lessen the stress on both sides for
-bcachefs too if we aimed for that kind of thing?
-
-             Linus
+>>> Or busy loop until
+>>> MX3_PWMSR_FIFOAV becomes 0?
+>>
+>> Do we really want a busy wait here if we can avoid it ?
+> 
+> udelay(6) is a busy loop, so we're already there.
+> 
+>> We can do udelay(3 * state->period / 1000); so faster PWMs would wait
+>> shorter.
+> 
+> state->period is the new value (and you want the old, right?), but
+> otherwise I agree
+Right
 
