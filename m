@@ -1,253 +1,119 @@
-Return-Path: <linux-kernel+bounces-352361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A8C8991E13
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:20:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1530991E16
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9C69B21AD9
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:20:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7B1282495
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B2C175D5D;
-	Sun,  6 Oct 2024 11:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C291741C9;
+	Sun,  6 Oct 2024 11:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KMPf2RQ2"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZRFLoBjT"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EDF158A30
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 11:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4876313E898
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 11:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728213639; cv=none; b=HHsmzSEB3cU1OzpTn6/ScvoHHKOwwlS3MbEnFk79aI6xGB8pEtQmbNNd22ZmKk0+FO/clN93X93jCB2Ofen6dwgYsMq1eZa2bTsSOAUc/QBKjnPgy9on7co+I38QvSqqD4EIBbhVU/tsYE8u+hx2MMIZ7fjJRrdprDOMhCJoNdo=
+	t=1728213682; cv=none; b=d9A33BOboWzJfVE0c3IBSWtgLIS+digTcGhkyW8iLqrbL5X4i75se5tf1bw7VQ83E5pKpSaEyqAzS3gkkqjHqeKspFKvPRSQQPYeimBvr8TJzD56nuAr1Kgqd8enXpdB9xn2UnHYdMm1N3t3uEhXJUe8b3cajnM6eBHqB1FCr2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728213639; c=relaxed/simple;
-	bh=xwtqRkymQbWLyrHFQs3l8k1xM6HJQbYROF9P9jVE/4Q=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dOqsvua/I9K4kPMtiufduxj2pny5jJJYBmX0d+gp3vvDaKi4+lz0hoWP7qsxcxtjMqWDUCOIrJozlWm2xbBG76aV+AcZT/zlyXcljTiQMU0DXEQyhB8zz5EDajgmyqWjz6a3NMMLmJFwFy+yBQTq/LxDLZuZ1K7YMlyv54lhGqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KMPf2RQ2; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so611719066b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 04:20:37 -0700 (PDT)
+	s=arc-20240116; t=1728213682; c=relaxed/simple;
+	bh=kAkf6NIhOlen6xkgkrgYREOsdkIOiEOGqa3LkxwXAz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rANccJXMBsM08FXX4Z1nSUjYJdsO3Wkq6mXSqGXBHNllVif0jReVoh/CEES3k2KeaRTKJxhQZHhUyJw+JBt5nnMZMox19cfGMTJbbH5nOMuJzY4Ds5Tp1jUZCyMWy9PaNrq0Ae6AqwWv0z3eweN+9YY/D1ANV/Pqlnz4yUIQfDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZRFLoBjT; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c87ab540b3so8121701a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 04:21:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728213636; x=1728818436; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rPsiLERRYU7D4j4sUXncuZrtdOCgoc8Hb9DOFm6I+ts=;
-        b=KMPf2RQ2S80PWikuJAszy5ChAGaZ3wfgUaxRHVPphN2a4+mzYYDhJyskVxY63NEli+
-         fKc+45p+rrDk3Uj2IVirwYWG3HB0VYaB5ez10VsEfKW0CH/D9FqenB63qpYmHPC9p7X8
-         q7S+Ok+nPWKcklc+PRAmch99W4iIskS/24qg4OIDxK9+7A0zH8lnTLH/mDf62amT/5bm
-         nxQnC3xStf3uZwvd2urCAGgWZGNSSOfu1RzOOaZ1jNVCRvhhsFIOKfzdQNEq4K2syw7R
-         zKQ8WuSpdgSRSwdwkgtDDp37upC4bsrdSNh9m4niu/+3j6Yyc3oqRP8ZgEOcDTrDiWd7
-         WExw==
+        d=linaro.org; s=google; t=1728213678; x=1728818478; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IaSdlUzNDNfxslBW/OGrSNOxQF3vX0DH7/KKjL0CWFE=;
+        b=ZRFLoBjTG8F3mnbaxzhEVD5mJKaLx5/2TTk+hrgvD3rdpHcyXkH0aj+uPy1cA8D4wx
+         Af23dzdoNOYTNwpzbbqx46oCw8/n8HpYvCKG1Qd+xvl8BSGIOil2iyAT7QvsXKizpBWK
+         PUXOoo12LpxhY6HIQIaMCZEtPE64TkBWJVK0J7zpihvQSrhbh8HcbSzL/aR1ETUhORfS
+         2A0I9OMJxJSQTiRQF+1Z2nVOqA5BgPNRE8IO3JZUOLi3TXRC8vcy1KPbR4lAwlXjrpWc
+         Av9hGEa16S8jbnKt+ZESVTlwP8Ygdj36R8Ao5EERaSF78gTr0fKlAQ2mnoeFD0K+6tI1
+         8fqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728213636; x=1728818436;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rPsiLERRYU7D4j4sUXncuZrtdOCgoc8Hb9DOFm6I+ts=;
-        b=YUWxtnH/GZMsbQKT1oA2pcPcAM47Sf7bQc2e74qrveuM+D1QLg++EA7q0Dhj7Els6b
-         5VTaobB9h5T5xBQff0+dx3+Q/dw7uNQ4nScwUPZtlS5YuGBo0xuZKfkxZiWAaGE+o6HZ
-         EpgZHfy8y/ZZ9ycLSeaez44ZPT0ahnU2Kx/DGJi+4OCY88uTGLLuzs7TP+XbGq6KGXpZ
-         qvhidSe5ruczLcIZ2gq8Mu96D5ZeVNK/fL/uQuKM47cCOl4DLn0pxy2pEM7IY+sBPCoG
-         vh2uWXhKCnoNoq4gvq+PON2dipNGnqmWexDTk4BralF9++YLKMz1hm8JGeEE/1YbXiwB
-         w7jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFoyotQDdup3FsUV4rQuwxPkSUYq6l4gxNUVckAz+PdOtRPBaESDfYOk8opk9+Nb9tCyzAMNyIVi2a+WQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz737KvKeHv/tXr/QPw3Cn96kjO0AKMgzBauRkcRDtuN2FnDnZt
-	ylLF+QReKX8qWNmGJXweWCcdHY5F2jGAXgs89OWhPIamHIFCC1SlIJamJx2eW+E=
-X-Google-Smtp-Source: AGHT+IG48id+lRY4xtL1ujqx4VpcR8QxySGV9q44wlS56hapCTBDQPNEacp1RsUNT7MPHUN2ohWifQ==
-X-Received: by 2002:a17:907:7f89:b0:a99:435c:89f2 with SMTP id a640c23a62f3a-a99435c8ce0mr357354766b.63.1728213635990;
-        Sun, 06 Oct 2024 04:20:35 -0700 (PDT)
-Received: from localhost (host-79-32-222-228.retail.telecomitalia.it. [79.32.222.228])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a993d92ed5dsm185689766b.63.2024.10.06.04.20.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 04:20:35 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Sun, 6 Oct 2024 13:20:51 +0200
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>, Lizhi Hou <lizhi.hou@amd.com>
-Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
- parsed from DT
-Message-ID: <ZwJyk9XouLfd24VG@apocalypse>
-References: <ZvZVPA6ov5XgScpz@apocalypse>
- <20240928201717.GA99402@bhelgaas>
+        d=1e100.net; s=20230601; t=1728213678; x=1728818478;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IaSdlUzNDNfxslBW/OGrSNOxQF3vX0DH7/KKjL0CWFE=;
+        b=DpE4T8SFHN8CQ8/hHEYRDvr4yG/HJw/25W3GjAsvCQrxRiNnNNXxbQBr/5guKhSSpQ
+         jeSjKcmPLzzZl63DatXz+w+rjzg/w/41KqsxpJLYGNNjexiWVQPFOLRI73qF1dbbWNjz
+         gBHwFgts+8t+tEGi6Z0OyNhWxChs7D/7YUmiODrwO1Bp5hSYsTqboEvX0sTO5jwp3HVp
+         OKXrQ9RisxA21VVEvdP8hXKUCwE4ujNE4s5niiF+InOGkdhSFpgtkSEDdX4UFxD6wuXU
+         u5lg3khldsNqGkILh2K5PZpFVOjiv4B6VqWL563buuaC19ExUl6TXgoE46EMReFR2uE9
+         dSow==
+X-Forwarded-Encrypted: i=1; AJvYcCVWXgz5/kDlBFZXjKyULaxvm1M5nsz2lEX6LuIF79kFnqVPv4URur6v6AUBjyhbg1P8MFvsQngAB43ixXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLNIEIg+3xr4XhUOux12gVZPGAxSeL7W/QQqvrKdFGKlB+PeHk
+	4aB9X/tkLt4BhF13BEKI+FfdDCz92AW95mFL8qQ5N2iqWM0EUbmqfM0/hUWjPaA=
+X-Google-Smtp-Source: AGHT+IGhNzL6F7Y3Basq1U7UYWMAXnxAome0GeoM6oq+0r0hVBAogjvQax1Al72V/SfzYXj8LXhFpw==
+X-Received: by 2002:a17:907:360e:b0:a8d:4e69:4030 with SMTP id a640c23a62f3a-a990a0606a4mr1387180166b.19.1728213678283;
+        Sun, 06 Oct 2024 04:21:18 -0700 (PDT)
+Received: from [192.168.0.15] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7860cbsm242410866b.120.2024.10.06.04.21.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2024 04:21:17 -0700 (PDT)
+Message-ID: <b9e1c0ae-5651-418a-9b71-897cd739ed0c@linaro.org>
+Date: Sun, 6 Oct 2024 12:21:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240928201717.GA99402@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: typec: qcom-pmic-typec: fix sink status being
+ overwritten with RP_DEF
+To: Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Caleb Connolly <caleb.connolly@linaro.org>,
+ Guenter Roeck <linux@roeck-us.net>,
+ "open list:QUALCOMM TYPEC PORT MANAGER DRIVER" <linux-usb@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20241005144146.2345-1-jonathan@marek.ca>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241005144146.2345-1-jonathan@marek.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Bjorn,
-
-On 15:17 Sat 28 Sep     , Bjorn Helgaas wrote:
-...
-> From your earlier email
-> (https://lore.kernel.org/r/Zszcps6bnCcdFa54@apocalypse):
+On 05/10/2024 15:41, Jonathan Marek wrote:
+> This line is overwriting the result of the above switch-case.
 > 
-> > Without this patch the range translation chain is broken, like this:
+> This fixes the tcpm driver getting stuck in a "Sink TX No Go" loop.
 > 
-> > pcie@120000: <0x2000000 0x00 0x00    0x1f 0x00                0x00 0xfffffffc>;
-> > ~~~ chain breaks here ~~~
-> > pci@0      : <0x82000000 0x1f 0x00   0x82000000 0x1f 0x00     0x00 0x600000>;
-> > dev@0,0    : <0x01 0x00 0x00         0x82010000 0x1f 0x00     0x00 0x400000>;
-> > rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
+> Fixes: a4422ff22142 ("usb: typec: qcom: Add Qualcomm PMIC Type-C driver")
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> ---
+>   drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c | 1 -
+>   1 file changed, 1 deletion(-)
 > 
-> The cover letter said "RP1 is an MFD chipset that acts as a
-> south-bridge PCIe endpoint .. the RP1 as an endpoint itself is
-> discoverable via usual PCI enumeration".
-> 
-> I assume pcie@120000 is the PCI host bridge and is already in the
-> original DT describing the platform.  I assume pci@0 is a Root Port
-> and dev@0,0 is the RP1 Endpoint, and the existing code already adds
-> them as they are enumerated when pci_bus_add_device() calls
-> of_pci_make_dev_node(), and I think this series adds the rp1@0
-> description.
+> diff --git a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c
+> index a747baa297849..c37dede62e12c 100644
+> --- a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c
+> +++ b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c
+> @@ -432,7 +432,6 @@ static int qcom_pmic_typec_port_get_cc(struct tcpc_dev *tcpc,
+>   			val = TYPEC_CC_RP_DEF;
+>   			break;
+>   		}
+> -		val = TYPEC_CC_RP_DEF;
+>   	}
+>   
+>   	if (misc & CC_ORIENTATION)
 
-Correct.
-
-> 
-> And the "ranges" properties are built when of_pci_make_dev_node()
-> eventually calls of_pci_prop_ranges().  With reference to sec 2.2.1.1
-> of https://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
-> and
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#ranges,
-> I *think* your example says:
-> 
-> pcie@120000 has:
->   child phys.hi	      0x02000000    n=0 p=0 t=0 ss=10b
->   child phys.mid,lo   0x00000000_00000000
->   parent phys.hi,lo   0x0000001f_00000000
->   length hi,lo        0x00000000_fffffffc
-> 
-> which would make it a bridge where the child (PCI) address space is
-> relocatable non-prefetchable 32-bit memory space at
-> 0x00000000-0xfffffffc, and the corresponding parent address space is
-> 0x1f_00000000-0x1f_fffffffc.  That means the host bridge applies an
-> address translation of "child_addr = parent_addr - 0x1f_00000000".
-> 
-> pci@0 has:
->   child phys.hi	      0x82000000    n=1 p=0 t=0 ss=10b
->   child phys.mid,lo   0x0000001f_00000000
->   parent phys.hi      0x82000000    n=1 p=0 t=0 ss=10b
->   parent phys.mid,lo  0x0000001f_00000000
->   length hi,lo        0x00000000_00600000
-> 
-> which would make it a PCI-to-PCI bridge (I assume a PCIe Root Port),
-> where the child (secondary bus) address space is the non-relocatable
-> non-prefetchable 32-bit memory space 0x1f_00000000-0x1f_005fffff and
-> the parent (primary bus) address space is also non-relocatable
-> non-prefetchable 32-bit memory space at 0x1f_00000000-0x1f_005fffff.
-> 
-> This looks wrong to me because the pci@0 parent address space
-> (0x1f_00000000-0x1f_005fffff) should be inside the pcie@120000 child
-> address space (0x00000000-0xfffffffc), but it's not.
-
-Exactly, that example refers to the 'uncorrected' case, i.e. without the
-patch applied.
-
-> 
-> IIUC, this patch clears the upper 32 bits in the pci@0 parent address
-> space.  That would make things work correctly in this case because
-> that happens to be the exact translation of pcie@120000, so it results
-> in pci@0 parent address space of 0x00000000-0x005fffff.
-
-Right. I think we sould split it into two issues:
-
-[1] RP1 acknowledges a 32 bit BAR address from its config space while the
-device must be accessed using a 64 bit address (that is cpu address
-0x1f_00000000), which sounds strange to me but I guess that is how
-the hw interconnect has been designed, so we need to cope with it.
-
-[2] I still think that the of_pci_set_address() function should be amended
-to avoid generating invalid 64 address when 32 bit flag is set.
-
-As you noted, fixing [2] will incidentally also let [1] work: I think
-we can try to solve [1] the proper way and maybe defer [2] for a separate
-patch.
-To solve [1] I've dropped this patch and tried to solve it from devicetree,
-modifying the following mapping:
-
-pcie@120000: <0x3000000 0x1f 0x00    0x1f 0x00                0x00 0xfffffffc>;
-
-so we now have a 1:1 64 bit mapping from 0x1f_00000000 to 0x1f_00000000.
-I thought it would result in something like this:
-
-pcie@120000: <0x3000000 0x1f 0x00    0x1f 0x00                0x00 0xfffffffc>;
-pci@0      : <0x82000000 0x1f 0x00   0x82000000 0x1f 0x00     0x00 0x600000>;
-dev@0,0    : <0x01 0x00 0x00         0x82010000 0x1f 0x00     0x00 0x400000>;
-rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
-
-but it fails instead (err: "can't assign; no space") in pci_assign_resource()
-function trying to match the size using pci_clip_resource_to_region(). It turned
-out that the clipping is done against 32 bit memory region 'pci_32_bit',and
-this is failing because the original region addresses to be clipped wxxiereas 64
-bit wide. The 'culprit' seems to be the function devm_of_pci_get_host_bridge_resources()
-dropping IORESOURCE_MEM_64 on any memory resource, which seems to be a change
-somewhat specific to a RK3399 case (see commit 3bd6b8271ee66), but I'm not sure
-whether it can be considered generic.
-
-So, I'm actually at an empasse here.
-
-Also, while taking a look at the resulting devicetree, I'm a bit confused by the
-fact that the parent address generated by of_pci_prop_ranges() for the pci@0,0
-bridge seems to be taken from the parent address of the pcie@120000 node. Shouldn't
-it be taken from the child address of pcie@120000, instead?
-
-> 
-> But I don't think it works in general because there's no requirement
-> that the host bridge address translation be that simple.  For example,
-> if we have two host bridges, and we want each to have 2GB of 32-bit
-> PCI address space starting at 0x0, it might look like this:
-> 
->   0x00000002_00000000 -> PCI 0x00000000 (subtract 0x00000002_00000000)
->   0x00000002_80000000 -> PCI 0x00000000 (subtract 0x00000002_80000000)
-> 
-> In this case simply ignoring the high 32 bits of the CPU address isn't
-> the correct translation for the second host bridge.  I think we should
-> look at each host bridge's "ranges", find the difference between its
-> parent and child addresses, and apply the same difference to
-> everything below that bridge.
-
-Not sure I've got this scenario straight: can you please provide the topology
-and the bit setting (32/64 bit) for those ranges? Also, is this scenario coming
-from a real use case or is it hypothetical?
-
-Many thanks,
-Andrea
-
-...
+Acked-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
