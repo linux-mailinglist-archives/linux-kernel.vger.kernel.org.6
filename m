@@ -1,149 +1,185 @@
-Return-Path: <linux-kernel+bounces-352255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D99E991C81
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 06:23:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89726991C8C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 06:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 939C9B21A30
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 04:23:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFFB3B21B01
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 04:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F329150990;
-	Sun,  6 Oct 2024 04:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8974915B543;
+	Sun,  6 Oct 2024 04:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPdpYbdm"
-Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mu7lKPiA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60351231C85;
-	Sun,  6 Oct 2024 04:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9EF250F8;
+	Sun,  6 Oct 2024 04:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728188593; cv=none; b=HUOZZMPzUUlLTBCY9YnHojrAFYs8ns9USA4vnX/6zLiYSIUDCtPuqtgg+cPiCx62/S6zE4Rvs2sF7v/jFNWrFmcNE2D9lDpR+rQ/xG4IT2rYwUpOyi8QoHYhgD2f47v0D3Lg2PZgLjVCIe+10aY9MArEghXwUfgzA1Oodi7Iyzk=
+	t=1728188991; cv=none; b=UQLD/uRNZHA3c6bENsWy7RbdLL/I5SHII7wODMNwP3Thd9KU92OKaR6aFx+eLsQ3c+7GgmyeyTd8dWyUxtXl0KVtDYu4ynTy1Wmqn0ZTRGpXEcql/rVGMK/7sw4XoPR1s2Morz0/gV+bvmJRcTNZYvLq3dfTZAD3GwdJeAvWvN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728188593; c=relaxed/simple;
-	bh=FTcS6jJUUGP2xfO1WQ4jrgdubKd1+esFyHCSTX7twJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aaZQA6kG0ReWv4SY/4j5IHQzBbVU90DM430U86DnIjkMup/DkRKZjmHGcT6IHycGm0dmMto3ur2b1gEeLZcSm6SW/3G0k4gnb0VHxhd2OEGW0cJ+/pueak9uFRd1rgom3iOdvWmuYxL9AEVwcY4PqDxwHEab46EVP0+PvwmLVgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YPdpYbdm; arc=none smtp.client-ip=209.85.128.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-6e20a8141c7so29305657b3.0;
-        Sat, 05 Oct 2024 21:23:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728188591; x=1728793391; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RRoaR+J22+s3bQTSbb5ozPji+bkw6rSBB6arrWs1Exg=;
-        b=YPdpYbdmNZKFwDXMLn+uMQhtj7645MwM0oONrdceLFVuqZur1GcEwFZPaSTtcpnfkx
-         FWz7P07NI23Mqqc7Uv+gkCI6A7uTlE7U/vhNhUxGJot6kiRbXChdLh9PJ14D8nuBncdF
-         waPIbwm5vcClWmvGiajjMLJouWNWrv5lTQDGeM98T6BYYPlSmE9/ZDGGw8mYWJlhUQG2
-         aEdguFPSbL2Nc5V7BU7IpKQDeDVTqfDMu41gZjIgtE8sve8XtVVPwaOp/2YvOD5N2vyX
-         6mssWErNUr54L146nUmJ+xSApEtZKy6VqvS0HQrCFowMjEVp+cbkMJLjLDzDg99UBaAF
-         IwCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728188591; x=1728793391;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RRoaR+J22+s3bQTSbb5ozPji+bkw6rSBB6arrWs1Exg=;
-        b=SHNR/gcQIW+mGeMtZikNQdz0wooaTuuuFdyLl5m+3fTZnfXk4VWJ7lhU0IwASepiPU
-         oAxfCdHkzX5FtT51xLjM9hNzBG47J090AUwNI9unYo5uitSG6e2Mr1ZEGpyOr0lz5Kab
-         YOqvFxRbJg/PVfnwblYkWll6Cj/kOkPCKEkRUEATbUPu6aqsDh5tYL8VqOauNcQSijj1
-         qUB9Q6WNMOp0IyXLBxinNhIPBcLzaAwsUOMIrRpUxAkBs04y2f7ZykCmDbiuvqHTblQg
-         VSYkLIRWueVQuo45FYzsl6BI3dsldyzNIuWvllYpk4z8r6I4uRFAATKISXIGTxtB1uhh
-         +opg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7qVeb6DYKxn8IYPCE5GgyEdP31yRsSt6igiKKlArkLjxHEpz0zpxB1bOYtWI6KiIYgUO0jmBnRLDZtcI=@vger.kernel.org, AJvYcCWkdzKQ1MrApELM5d2biMQjZwsZxdNCPGfcy+NZ5LvsUeq/554k6DPGaKJadF9o75iBS/59DasN@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwlprd2sfrCUoDLvncERXyO533+IWqiwQE93OdUfwCfyvj7Y9i
-	1iXkw+p+SBOldZ17I6uONDrrTa4H2IOsMvyU0mfcpYeXuRMl0bS6WJC9GLUrTkGvCWDFyEF/Aik
-	urJPxY4ndU79bGGzrM5+ctfUNKtY=
-X-Google-Smtp-Source: AGHT+IHZkQoBoq65+yltbbNFl6fuvhp+vj8ZcTlMgCUOGwqvApGvDXr+0rhpw7VxlcjckIeqQ+XyydIXXE6K+94hP7E=
-X-Received: by 2002:a05:6902:250a:b0:e25:e3d1:149c with SMTP id
- 3f1490d57ef6-e289393ee5bmr5549749276.44.1728188591385; Sat, 05 Oct 2024
- 21:23:11 -0700 (PDT)
+	s=arc-20240116; t=1728188991; c=relaxed/simple;
+	bh=RPqJD/C7y0gBMClUK33fxbnxtlFlwArlCPQ7Hdm4OyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DfiJeBuhOGaJEwaURXw9HdTHtAWRZi4hnCulTEW/cAudJ1MZ79grl90DSKwqxhVToNb2M8RMwBSwmupZ1e+Fdkpdo2mNw/X1uZ9KlmjEhP6TlG8W8kkMm/Zg73jmI5tUoKgh6RKPMc0nJSXYKZMjdKlK8D8gv+y8zFpP5RPJ/FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mu7lKPiA; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728188990; x=1759724990;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RPqJD/C7y0gBMClUK33fxbnxtlFlwArlCPQ7Hdm4OyY=;
+  b=Mu7lKPiA7FkX3nHz6Ood5nztJ7Le9vkVwhYYEGon+EkwGVbpYT9G0Ac8
+   JV84oxpDeLy54oqc8H0KcsWyVFv7SLyjHBi7mcHjLN42IMuZh367UcrE5
+   zd6s+GMrCFPxfLeNo2imYpa5hNazFqQ8msKrAImKSkZEvRd3LGgbnJWW7
+   fTUCtjt4xc9e01i+gJa31FSwj+/qakGze537PcEBOZ8JZpnGTZ2xFHhCg
+   btEsx1XeuuR+7hUS0VuUoUpRj3edzb8/0UWO45kJzCAogU+1KglREyusV
+   vZhCYMOcnbCEf/XzoafJqYZB/eRvxy7kNzG3DIfVssbNVEvYA/OoIY9+I
+   A==;
+X-CSE-ConnectionGUID: cT2WKGpcRCCeoLya1BvUMA==
+X-CSE-MsgGUID: NKMHiEqlRBKtUA1kMePKQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="27539417"
+X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
+   d="scan'208";a="27539417"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 21:29:49 -0700
+X-CSE-ConnectionGUID: kPUeUwsyT8iIGdo58i9b1w==
+X-CSE-MsgGUID: VgY47a4iQBaGQv9wsSYbzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
+   d="scan'208";a="75549317"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 05 Oct 2024 21:29:46 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sxItr-0003b6-1R;
+	Sun, 06 Oct 2024 04:29:43 +0000
+Date: Sun, 6 Oct 2024 12:29:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mukesh Ojha <quic_mojha@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Komal Bajaj <quic_kbajaj@quicinc.com>,
+	Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: Re: [PATCH 2/6] remoteproc: qcom: Add iommu map_unmap helper function
+Message-ID: <202410061256.KV3EbD7H-lkp@intel.com>
+References: <20241004212359.2263502-3-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003082231.759759-1-dongml2@chinatelecom.cn> <CANn89iKfvO1Z8_ntCre-nG+6jrq-Lf0Hym_D=+w68beZps4Atg@mail.gmail.com>
-In-Reply-To: <CANn89iKfvO1Z8_ntCre-nG+6jrq-Lf0Hym_D=+w68beZps4Atg@mail.gmail.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Sun, 6 Oct 2024 12:23:05 +0800
-Message-ID: <CADxym3bHD4CiD4EQa6gU2z-RVWtWGH+xD=ZtkLkWDGu7RBwobw@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: tcp: refresh tcp_mstamp for compressed ack
- in timer
-To: Eric Dumazet <edumazet@google.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Menglong Dong <dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004212359.2263502-3-quic_mojha@quicinc.com>
 
-On Thu, Oct 3, 2024 at 4:47=E2=80=AFPM Eric Dumazet <edumazet@google.com> w=
-rote:
->
-> On Thu, Oct 3, 2024 at 10:23=E2=80=AFAM Menglong Dong <menglong8.dong@gma=
-il.com> wrote:
-> >
-> > For now, we refresh the tcp_mstamp for delayed acks and keepalives, but
-> > not for the compressed ack in tcp_compressed_ack_kick().
-> >
-> > I have not found out the effact of the tcp_mstamp when sending ack, but
-> > we can still refresh it for the compressed ack to keep consistent.
->
-> This was a choice I made for the following reason :
->
-> delayed ack timer can happen sometime 40ms later. Thus the
-> tcp_mstamp_refresh(tp) was probably welcome.
->
-> Compressed ack timer is scheduled for min( 5% of RTT, 1ms). It is
-> usually in the 200 usec range.
->
+Hi Mukesh,
 
-Thanks for the explanation! I'm writing a tool, which tries to capture
-the latency from __tcp_transmit_skb() to dev_hard_start_xmit() according
-to the skb->tstamp, and the compressed ack case confuses my
-application.
+kernel test robot noticed the following build warnings:
 
-Maybe someone else can do similar things, and they can benefit from
-this patch too.
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on robh/for-next linus/master v6.12-rc1 next-20241004]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks!
-Menglong Dong
+url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Ojha/dt-bindings-remoteproc-qcom-pas-common-Introduce-iommus-and-qcom-devmem-property/20241005-052733
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/20241004212359.2263502-3-quic_mojha%40quicinc.com
+patch subject: [PATCH 2/6] remoteproc: qcom: Add iommu map_unmap helper function
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20241006/202410061256.KV3EbD7H-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410061256.KV3EbD7H-lkp@intel.com/reproduce)
 
-> So sending the prior tsval (for flow using TCP TS) was ok (and right
-> most of the time), and not changing PAWS or EDT logic.
->
-> Although I do not object to your patch, there is no strong argument
-> for it or against it.
->
-> Reviewed-by: Eric Dumazet <edumazet@google.com>
->
-> >
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > ---
-> >  net/ipv4/tcp_timer.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-> > index 79064580c8c0..1f37a37f9c82 100644
-> > --- a/net/ipv4/tcp_timer.c
-> > +++ b/net/ipv4/tcp_timer.c
-> > @@ -851,6 +851,7 @@ static enum hrtimer_restart tcp_compressed_ack_kick=
-(struct hrtimer *timer)
-> >                          * LINUX_MIB_TCPACKCOMPRESSED accurate.
-> >                          */
-> >                         tp->compressed_ack--;
-> > +                       tcp_mstamp_refresh(tp);
-> >                         tcp_send_ack(sk);
-> >                 }
-> >         } else {
-> > --
-> > 2.39.5
-> >
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410061256.KV3EbD7H-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/remoteproc/qcom_common.c: In function 'qcom_map_unmap_carveout':
+>> drivers/remoteproc/qcom_common.c:645:38: warning: left shift count >= width of type [-Wshift-count-overflow]
+     645 |                 iova |= (sid_def_val << 32);
+         |                                      ^~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +645 drivers/remoteproc/qcom_common.c
+
+   611	
+   612	/**
+   613	 * qcom_map_unmap_carveout() - iommu map and unmap carveout region
+   614	 *
+   615	 * @rproc:	rproc handle
+   616	 * @mem_phys:	starting physical address of carveout region
+   617	 * @mem_size:	size of carveout region
+   618	 * @map:	if true, map otherwise, unmap
+   619	 * @use_sid:	decision to append sid to iova
+   620	 * @sid:	SID value
+   621	 */
+   622	int qcom_map_unmap_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t mem_size,
+   623				    bool map, bool use_sid, unsigned long sid)
+   624	{
+   625		unsigned long iova = mem_phys;
+   626		unsigned long sid_def_val;
+   627		int ret;
+   628	
+   629		if (!rproc->has_iommu)
+   630			return 0;
+   631	
+   632		if (!rproc->domain)
+   633			return -EINVAL;
+   634	
+   635		/*
+   636		 * Remote processor like ADSP supports upto 36 bit device
+   637		 * address space and some of its clients like fastrpc uses
+   638		 * upper 32-35 bits to keep lower 4 bits of its SID to use
+   639		 * larger address space. To keep this consistent across other
+   640		 * use cases add remoteproc SID configuration for firmware
+   641		 * to IOMMU for carveouts.
+   642		 */
+   643		if (use_sid && sid) {
+   644			sid_def_val = sid & SID_MASK_DEFAULT;
+ > 645			iova |= (sid_def_val << 32);
+   646		}
+   647	
+   648		if (map)
+   649			ret = iommu_map(rproc->domain, iova, mem_phys, mem_size, IOMMU_READ | IOMMU_WRITE, GFP_KERNEL);
+   650		else
+   651			ret = iommu_unmap(rproc->domain, iova, mem_size);
+   652	
+   653		if (ret)
+   654			dev_err(&rproc->dev, "Unable to %s IOVA Memory, ret: %d\n",
+   655				map ? "map" : "unmap", ret);
+   656	
+   657		return ret;
+   658	}
+   659	EXPORT_SYMBOL_GPL(qcom_map_unmap_carveout);
+   660	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
