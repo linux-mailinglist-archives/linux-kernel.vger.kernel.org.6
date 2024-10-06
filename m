@@ -1,153 +1,159 @@
-Return-Path: <linux-kernel+bounces-352353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF4C991DF4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:50:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF9EE991DF7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E15D01C20E06
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:50:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5AB01C2101E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DADF1741EF;
-	Sun,  6 Oct 2024 10:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B848A174ED0;
+	Sun,  6 Oct 2024 10:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T+RNSkc5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfVOqNfu"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE30215956C
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 10:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998E94C91;
+	Sun,  6 Oct 2024 10:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728211799; cv=none; b=Yr+9ndxIctY3VSeK/melwrr/nkM7lzSkcfFUrjHUC2+HG2Y+cibuHDl0dyMHme4XBUvgBUItMXsKvw5nzO86c8e+HZD2cPN+LAa9/Q3f6aaCBXNd2rBPLfo/6MU2Qe3tp3YTX7NMCy6XK/SyFjuWaco5Xd5gHFpFzVw2x5QvnMM=
+	t=1728211843; cv=none; b=t7hUcA1UvtryIFkiY+OGuQvMcLts1yEfXgwKyNcR5tfdvf2Mossw7x9JSjrpIo4xipQW9WlGnhvz9L0PvNNXn21+XAfmufi/ffT5lj7b2vGJZ9vJ/RDsZTypUrNEu/mSM8F5KyfOfbQVerxsHmeuXixBOIC8TtXjq+L/XrvNul4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728211799; c=relaxed/simple;
-	bh=E8L96tVfgGVZ7VX9L5r18iqyQhEy1HOc44YA4bAOI/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FyHy4fpGfpMKxRLN0dPbDDy0Ma0XlXFFUWr6izHf8390tjO6Q3PRnJ9Qxll5sbK8AmSdxGK9RsgHdvGw/bjAfVkYADViPIiDfEHQO+zDGx2O+mAN4K+6F2vKCaxDHkt/pWDPTlVKx7J0Q4ZzADQTdBuops3kql2WkY5nXRsjOLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T+RNSkc5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728211796;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N0I5g/3hrB2raC35TGDOkVo1grl5AIkAJOloeD3JxtA=;
-	b=T+RNSkc5108ItuG1WhDxDESnhfUyOZ+6wznraFYfZUpfqyN/Prg0xU1veI8nPL6ufKnXm7
-	N6w9wLv1QKuFVp7jZRClrrJzur0dSNWhnu0L5GUCTea59W0ggFA2D7JdGoIVwynvi7QlFZ
-	nA9YlHxJ6AWPBWObLDdLIb23aDoADbM=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-616-0s1CK7tRP0u2ltyNtr7p3g-1; Sun, 06 Oct 2024 06:49:55 -0400
-X-MC-Unique: 0s1CK7tRP0u2ltyNtr7p3g-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a994cd8089aso58860066b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 03:49:55 -0700 (PDT)
+	s=arc-20240116; t=1728211843; c=relaxed/simple;
+	bh=XG8y5FNGAgW+kSkrfVcvbuP7OLkRpyxIDekKAKJNXGQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=MnTvSftCoz8CLDdJYtBcQqbxIi28et7Uw7BpUHiO3xmZtj1KBzMggcz0ib4j2L2QC1x0PZRqBOGQx2jP/nwXo0Oq3Za4SHV64IqNhcRoFc/OVx03RwNnFqu9TKjW/htGe6aEpfh9F1pSj1prkNM0eSyyGuMgVboPG3YiV2jkO8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfVOqNfu; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42e82f7f36aso29241005e9.0;
+        Sun, 06 Oct 2024 03:50:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728211840; x=1728816640; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gIyOrN2gQ72dK3NGr3DACHMSZ2HkmBOjHKgddsw4tbo=;
+        b=XfVOqNfutVnN1IixuBdi8wZZwI+7plzx7D/V7SpdVw0+C6bwClDeWD1+i8ctflwZh2
+         NwwABeh9TFK6yvNHwLPnRcQ/u3UsEucJwMpaLOPk80tnx1q18HzOMC1Jy3dq6b4PX8Ik
+         3LR7MlfE5NbGMjIAUfmuI2fjFoI952h0HwuxZD8yytz3KBwnk4MsgwsRpvcMhf61MmTA
+         27nuhWDX2u0I2hk8qfTNz8iguriQARJnSWGh6Y2yTpBhZg0FlEV95j2RoIQBgSwx/be8
+         07k+uH9GOmHcu+YhAL0lDoGGJlYOzB854WkQCkOS8pduiGZQqPvjQGlGL3e5tGmhiyuy
+         mbOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728211794; x=1728816594;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N0I5g/3hrB2raC35TGDOkVo1grl5AIkAJOloeD3JxtA=;
-        b=SyjWS1v3ILk5Q2AaxxkBE3i7YMrZ+IGG4O0WaXUFEZ6cqljsZzpqzbs7fxqumwlpFb
-         C0+yGlmblEW/XyghGU63BJGi3MzOa6zxrFja1sbkV+EVnEpt4YIFQG1X0bahuqnZzNep
-         RNpg1/PyPbIsSd8fx45SZ6Ax0XBHEY4s0AVqqQzsnyitxKRG9JJ+KP0/6YPOc70gefzg
-         QWoRhqXA1XY9rnrRe8FpbDrbamTqMSnhlX9KlmOs8ERU4mBJAuXgREMezIWcDF/GwFMb
-         8+dAonCbG8xIjVYoReox6s6HQiIAysbSUC1iWNgTmHCLtfL3po6gehvwKPKU8prdWIFx
-         3v5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUkfOMTELCX34XH1WBYR+l8NxsE7mjzLqeoB1W6XtVBTANJE0AmMVhAA6r9cpbEbKeHc5TcxkcRzTg7KLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZWoTHGhEsPFn79peyAEHQWJiu8bc1xrYMkfN1PSvU2X7mekUw
-	68O2ZKqsrd0pkfs84NrWqJmZ2sYMmGiYCa7EugGPdSgE0wJJKtaUnzXRXnysDg6Gzch7xVwXQjI
-	6MH4oUjAZNwwFzw0VxCLglLuAv9aQP7jWr3gwFcqY2nM2zHH5S+L6uZzX2HQTuA==
-X-Received: by 2002:a17:906:6a20:b0:a89:f1b9:d391 with SMTP id a640c23a62f3a-a991bd08219mr1036198966b.14.1728211794317;
-        Sun, 06 Oct 2024 03:49:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFaA+xxSBuABBBNfUx7MGmssKZawRSVqf5LpTu2EeC7zHnSUgXDHUcLau3WnsT1s4Fv2dILVw==
-X-Received: by 2002:a17:906:6a20:b0:a89:f1b9:d391 with SMTP id a640c23a62f3a-a991bd08219mr1036197266b.14.1728211793924;
-        Sun, 06 Oct 2024 03:49:53 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7e5544sm238105566b.202.2024.10.06.03.49.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Oct 2024 03:49:53 -0700 (PDT)
-Message-ID: <263ec855-d19d-4b81-b3cd-1a7f575c9c27@redhat.com>
-Date: Sun, 6 Oct 2024 12:49:53 +0200
+        d=1e100.net; s=20230601; t=1728211840; x=1728816640;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gIyOrN2gQ72dK3NGr3DACHMSZ2HkmBOjHKgddsw4tbo=;
+        b=YsmY8oulNV+1+aXeqehXqyPHvyo74yfM/VSrT8VLZPh7kigeQJ//HWRhWBsgXKreU/
+         2tOk3cq76CfHHlb5rkkz6mq3X+i1vBOoboX90fGVlxrj+zviFq0ruzpClmIWpy5HMg8l
+         ijwS9YiAsWMClHLq5FvBj+m1CXRfyU/0sXaDo6XEijKYG/IGjj0NfOljH7pEgveRY+M8
+         F8b1m4n/K+OI+pjdRYZXbO+UFCt4PwqYkesGgxYYS0K1KgvYIHC6IXBARFaQYl2FpZwQ
+         FxB47US4HnnlffQPnrLhVhoEuQNxNTaMkxS5Rk7Y7Ronte3Hg1UlgGS1CqolRf8WQ60Y
+         jDUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/S2je/HtpSOi4bF6mGxmx6Ab2JTy8fdMMsQYQpn7hyfo5rpLCAHG9TsWGpUB5vgTJecKHjaBXE1xMMKY=@vger.kernel.org, AJvYcCVDOdRsm+IL4ucQd31EifwKz4EYMsNdgagE8sJjpB4CX70B1C8zsKxzkVrhvIGZ6cg4YEhIihXh7LhkQAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDPoDKWCpTLLs+Kh7XUogv0FXqn/oSevKFuv997W76KduZKZ58
+	inT4r7IaWF1cCJc/1iekKUSHb1H+MXgOlleCZIEnJXPB5xW2a9RKw6AsFH3dll/Eu00EQdwtRl3
+	448I93tLckwhwdcEraHc33eRezJo=
+X-Google-Smtp-Source: AGHT+IGQTc4XX8OGd7V9Sg4UasH0H0mpXnZ6exmpCi9FwjtNQPh35SoCNtlyI5IqDIQDnmK42xYfi7ao2i+v4rTH+KM=
+X-Received: by 2002:adf:8b14:0:b0:37c:ca21:bc5d with SMTP id
+ ffacd0b85a97d-37d0e7388b4mr4692965f8f.17.1728211839711; Sun, 06 Oct 2024
+ 03:50:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] platform/x86: wmi: Update WMI driver API
- documentation
-To: Armin Wolf <W_Armin@gmx.de>, ilpo.jarvinen@linux.intel.com, corbet@lwn.net
-Cc: platform-driver-x86@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241005213825.701887-1-W_Armin@gmx.de>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241005213825.701887-1-W_Armin@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Ulrich Drepper <drepper@gmail.com>
+Date: Sun, 6 Oct 2024 12:50:28 +0200
+Message-ID: <CAOPLpQdP_=UZbOfAdzH9Nn_ZJADxJGLOT2nowTtRATwNYSGkFw@mail.gmail.com>
+Subject: PROBLEM: WARN_ON triggers in v4l_querycap with BlackMagic atem
+ console connected via USB
+To: mchehab@kernel.org, hverkuil-cisco@xs4all.nl, sakari.ailus@linux.intel.com, 
+	laurent.pinchart@ideasonboard.com, jacopo.mondi@ideasonboard.com, 
+	naush@raspberrypi.com, benjamin.gaignard@collabora.com, 
+	jeanmichel.hautbois@ideasonboard.com, linux-media@vger.kernel.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Armin,
+I cannot really say when this problem started but I know that perhaps
+six months back (or a bit more) I used the console successfully as a
+video source device (webcam).  This is a ATEM Mini Pro which has a
+large number of USB interfaces.  What trips up is videodev.  Various
+userlevel programs (uvcdynctrl, chromium) notice the device being
+added and use ioctl(), triggering the problem.
 
-On 5-Oct-24 11:38 PM, Armin Wolf wrote:
-> The WMI driver core now passes the WMI event data to legacy notify
-> handlers, so WMI devices sharing notification IDs are now being
-> handled properly.
-> 
-> Fixes: e04e2b760ddb ("platform/x86: wmi: Pass event data directly to legacy notify handlers")
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+This is with the current Fedora x86_64 kernel (6.10.12) but a) it
+happens for a while now and b) as far as I can see this is just the
+upstream code, no local changes.
 
-Thank you for your patch/series, I've applied this patch
-(series) to my review-hans branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+The call trace is:
 
-I will include this patch in my next fixes pull-req to Linus
-for the current kernel development cycle.
+Call Trace:
+ <TASK>
+ ? v4l_querycap+0x119/0x140 [videodev]
+ ? __warn.cold+0x8e/0xe8
+ ? v4l_querycap+0x119/0x140 [videodev]
+ ? report_bug+0xff/0x140
+ ? handle_bug+0x3c/0x80
+ ? exc_invalid_op+0x17/0x70
+ ? asm_exc_invalid_op+0x1a/0x20
+ ? v4l_querycap+0x119/0x140 [videodev]
+ __video_do_ioctl+0x518/0x630 [videodev]
+ video_usercopy+0x1f1/0x7a0 [videodev]
 
-Since patch 2/2 makes non pure bugfix functional changes
-I expect Ilpo to pick that one up for pdx86/for-next.
+I traced the offending code to an 'ud2' instruction (makes sense,
+undefined) which is reached from this code in
+drivers/media/v4l2-core/v4l2-ioctl.c (v4l_querycap):
 
-Regards,
+WARN_ON((cap->capabilities &
+      (vfd->device_caps | V4L2_CAP_DEVICE_CAPS)) !=
+      (vfd->device_caps | V4L2_CAP_DEVICE_CAPS));
 
-Hans
+The asm code is:
+
+    747e:       8b 73 54                mov    0x54(%rbx),%esi
+    7481:       81 ca 00 00 00 80       or     $0x80000000,%edx
+    7487:       48 b9 00 00 20 00 00    movabs $0x20000000200000,%rcx
+    748e:       00 20 00
+    7491:       48 0b 4b 54             or     0x54(%rbx),%rcx
+    7495:       21 d6                   and    %edx,%esi
+    7497:       39 f2                   cmp    %esi,%edx
+    7499:       75 6e                   jne    7509 <v4l_querycap+0x119>
+
+where 7509 is the address of the ud2 instruction.
+
+The register dump shows
+
+RDX: 0000000085008003 RSI: 0000000085008002
+
+which, if I'm right, means that cap->capabilities has the extra bit
+
+#define V4L2_CAP_VIDEO_CAPTURE          0x00000001  /* Is a video
+capture device */
+
+set.
+
+I don't know what 'ops' points to in the code.  It seems to me that
+the bit is set in the
+
+ops->vidioc_querycap(file, fh, cap);
+
+call just preceding the test.
+
+Just going by the name of the capability, it seems that the bit should
+be set as this device is used as a camera as well so maybe the
+information which comes from the call the
+
+struct video_device *vfd = video_devdata(file);
+
+is incomplete?  Or the test WARN_ON condition is actually incorrect?
 
 
+Any idea?  I can try to run more tests if someone can tell me how to proceed.
 
-
-> ---
->  Documentation/driver-api/wmi.rst | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/driver-api/wmi.rst b/Documentation/driver-api/wmi.rst
-> index 6ca58c8249e5..4e8dbdb1fc67 100644
-> --- a/Documentation/driver-api/wmi.rst
-> +++ b/Documentation/driver-api/wmi.rst
-> @@ -7,12 +7,11 @@ WMI Driver API
->  The WMI driver core supports a more modern bus-based interface for interacting
->  with WMI devices, and an older GUID-based interface. The latter interface is
->  considered to be deprecated, so new WMI drivers should generally avoid it since
-> -it has some issues with multiple WMI devices and events sharing the same GUIDs
-> -and/or notification IDs. The modern bus-based interface instead maps each
-> -WMI device to a :c:type:`struct wmi_device <wmi_device>`, so it supports
-> -WMI devices sharing GUIDs and/or notification IDs. Drivers can then register
-> -a :c:type:`struct wmi_driver <wmi_driver>`, which will be bound to compatible
-> -WMI devices by the driver core.
-> +it has some issues with multiple WMI devices sharing the same GUID.
-> +The modern bus-based interface instead maps each WMI device to a
-> +:c:type:`struct wmi_device <wmi_device>`, so it supports WMI devices sharing the
-> +same GUID. Drivers can then register a :c:type:`struct wmi_driver <wmi_driver>`
-> +which will be bound to compatible WMI devices by the driver core.
-> 
->  .. kernel-doc:: include/linux/wmi.h
->     :internal:
-> --
-> 2.39.5
-> 
-
+Thanks.
 
