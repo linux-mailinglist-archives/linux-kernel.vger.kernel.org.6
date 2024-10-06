@@ -1,98 +1,175 @@
-Return-Path: <linux-kernel+bounces-352301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22696991D38
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:28:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 983B8991D3B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9121F21D0C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:28:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3887283193
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7BA170A19;
-	Sun,  6 Oct 2024 08:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26A2170A29;
+	Sun,  6 Oct 2024 08:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ipP/kjX3"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fn7aLROt"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2062616F0CA;
-	Sun,  6 Oct 2024 08:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F133153814;
+	Sun,  6 Oct 2024 08:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728203297; cv=none; b=kOv/xXoiTrm8Rctqwaq2DTn2KZkmDldurYkJCtJ8hHJ4zH3Zm217KYbm/i8IdXf9rNVsFIrPme3A+vROv22nr2aLGzgKYXNJrY92y6Z9uKg3eeQ+YjHkiLGhvzcJxI8+mMTNYO0ilJ/hpIPX/HId3hPO2d7I2bzUFHtL0AqzZ3o=
+	t=1728203339; cv=none; b=aVjukLqOHRGJa0WOhJqTHsyTLrkzqzPK5qvhTggFl4B4snVJWhhTlFaLH06uHIFZQaUG6fAc3+8m7jF1AJhK9hvifAU6kM1a6njYGrmrCo+twVZk6gRXQlS/ZYVmv1TVptWwkooD8fCGzcK4FV+CAKo2SPyJQi3xWgnprJXqfrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728203297; c=relaxed/simple;
-	bh=lpZs4vhLXbcbVhOdexr3qYP7xkj7h5DccHqwriq8dy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RlTZRXLV/e7l2B5VzqEGoek5dWv1CbDIxs8uXTJs35akjPqsSDocAn2J5J/KlJ//U7+rGKas7kMhqklxqu/2tcmBMn3pmVjLPwgQ/efn0lDf5SqGySO5ZkZOwa3c9alk5F4x5Ubly+iG5zzf/IvwHTu1w7QA5TpqqaOrjGvMRO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ipP/kjX3; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 095A840E01A5;
-	Sun,  6 Oct 2024 08:28:14 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Jf7AsJawZqxF; Sun,  6 Oct 2024 08:28:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728203289; bh=XPe/p8+A/ICybqUJWGk+fxH/CznGQ9Jdh3wGEPUOivA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ipP/kjX3jk1GN9HmHu2j4CynLKSl5uKNC5FUnFoa58yVuYYU6ep9nZxS5Xb4XNIAp
-	 VAoao2tIAZSpnKaL8wAkNYJO54WohQdkup+oogMAAcG7acQf25x8jmQd3f4ekjaVqn
-	 XXfRMXbmCLWEfKDwoNgiNiXRh3YQLxL2mSNQ+McPYVLBcVnpvXRdD7XJ5VLsZZdPmz
-	 CsSFmfwQojeXg4QRVnXbKs00VMGymqOUsv70BxWQz1GzKkHNtZLpXZWeSk0wzcUS0r
-	 KO2D8pJotnCbB2KMmNS+XnoRRP5LHjIVF2zajqHtNj4BUSBMgiZD/NRVqWs5nTcDxN
-	 wJbr3vqcM73ApRiSFxdAV4vb/7Rt7lHgUyWFE0oT4fQElx7NFafifR4xDsVRAR4Tbv
-	 Km0TYAsEDqFKVFxC/0CPWwGo5KfIMl1E6KTIVwSQ0NB+o6bELfaTLqJN9pMR4ZxQ58
-	 3djsJ6HyKj4Pmy4iV10HTlIeE3Ff3H1z1OD5ydHa4FAWiDX7ElyYKXmEq7UAZAv6jV
-	 s5X3umr6t1TFIh99TolIHxctvKeRR64A8d/Ajg1Y+/G/xEfFPW4dvvArhK4E+j3Pfq
-	 MjvmelCmpJ44GHgDbMdDpFxxjIaaHAxz/GMeIQAGrEIOiZ5W0wZaZpV8AOntJlzIWj
-	 JrgVjVSYvLL26Jw+GRWcpEek=
-Received: from nazgul.tnic (dynamic-176-003-032-216.176.3.pool.telefonica.de [176.3.32.216])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 93B9040E0184;
-	Sun,  6 Oct 2024 08:27:59 +0000 (UTC)
-Date: Sun, 6 Oct 2024 10:28:00 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
-	imx@lists.linux.dev, York Sun <york.sun@nxp.com>
-Subject: Re: [PATCH v2] EDAC: MAINTAINERS: change FSL DDR EDAC maintainer to
- Frank Li
-Message-ID: <20241006082800.GBZwJKENEExy1RKXwc@fat_crate.local>
-References: <20241003193348.102234-1-krzysztof.kozlowski@linaro.org>
- <20241006080810.GAZwJFauv4TWAICuQg@fat_crate.local>
- <127856ca-fb79-45f5-ad0a-8aa219bae85b@linaro.org>
+	s=arc-20240116; t=1728203339; c=relaxed/simple;
+	bh=bRszkLFQ6+eC/BQ20gGJlgy57D/VgufvdZJVgc18ibw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ghFlFcLZMdy9J41oHPYOzuY+kRjEN1l30El0i9VePpMKW+i85Uv9uZx35zTV5/2GTKkjU6yMYLlumeP1FG41xo4FAP7N7/QilwIO/Z1/5zIhJTFvfVK4ecinNmv6DvPb1bmVoSq8PLlOQouoUz25ivH/dm+el2xWefExsD8L0zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fn7aLROt; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so595779366b.1;
+        Sun, 06 Oct 2024 01:28:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728203336; x=1728808136; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=luc6tGLvhHVsfASvYGPZIDDNooQTCshdprtz+dgEevY=;
+        b=Fn7aLROtPFPuDwVyIvTKLjHrQhphIbjBAPbAS+r+TGPSTmtVZxa9VDCysNxXHhSHf3
+         whV6pP8pm7PCWfeTsWDzmOTscRRDIJBQ/XEqsU4Vx2MvL1nwrmB5Z1E9lunyOK+4pjs2
+         pb0bIH/grp+S/oJciLYufGduRL8c/AYX3xf/FS8h93ijwt+Io7U8V5a32xI9Rmf/5pWn
+         OxuqJf3eM/An7AIp4W4DdWjhusrMsxsmt7ESquw6yvXHhrazDZFwd4XVkBltpLj6nA+U
+         LqUzWdJayKsWaOpWBDdAjc8lSzahxanWJgEC+XyGrdxIH4TYIQdU+T80NUSfygxLReJM
+         y2Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728203336; x=1728808136;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=luc6tGLvhHVsfASvYGPZIDDNooQTCshdprtz+dgEevY=;
+        b=ee88k0aHNYSVkibsp7WaxYdwLR4+XtoZWqK5GrDs+nsmABgOxguv6wxYUmrYDCePa0
+         YCvy8Gm/4eq75iUjcycBLhMSn7dzH2BSY+6NIy6CarhVre9q21m556rG2t8s2wYY5mQe
+         27KUFGYBp6KDqD2u0yQ3QcdNtgs/L8kHhhvS729Y6AGzJB6sPlhK4Myp46x7uZvRjKUh
+         /WQPb38ux5GMpcoxeZtVqdRMqJ2Dw9HhcibpWSnKswIjPB10+R+sKzh5YTULdkGC0lKI
+         LzzyupE+KTgxGJwY07Yo5Piv+3CZ02F5xW5LxbQI+05fVSrSuntI2q8bBKzhb0yGBADL
+         B4XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaUDTKZzxEpMNMilzXU6JKMyi7gYHY/VRJ5UgD+6EqD7pYBPNMFNA1Zoe9rADMuYbayGbbB0X8jXGakWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO512zjxpnUtKJ/x3sZunAtOwUMspHnxEnrwjtgjGwHbwIAJo8
+	Ar/8i6EI15JSp7xjTGWit6bMyZa+QYNgp8wz7eCrXq0c7GmOlecm
+X-Google-Smtp-Source: AGHT+IGAL1Ndr1M6KLVYgsEmuO35omalB/CeUKr7JW/b9jdvSywdIEZ2JcAVYmLJq2EKBxjW8T+HvA==
+X-Received: by 2002:a17:907:2d90:b0:a86:6fb3:fda5 with SMTP id a640c23a62f3a-a99514f06aamr51349866b.32.1728203335686;
+        Sun, 06 Oct 2024 01:28:55 -0700 (PDT)
+Received: from [10.32.3.23] ([95.183.227.32])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05ecafbsm1844381a12.70.2024.10.06.01.28.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2024 01:28:53 -0700 (PDT)
+Message-ID: <26eaccf4-f1c3-4d98-a123-4577c5b7530b@gmail.com>
+Date: Sun, 6 Oct 2024 11:28:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <127856ca-fb79-45f5-ad0a-8aa219bae85b@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Input: zinitix - Don't fail if linux,keycodes prop is
+ absent
+To: Nikita Travkin <nikita@trvn.ru>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jakob Hauser <jahau@rocketmail.com>,
+ Yassine Oudjana <y.oudjana@protonmail.com>
+References: <20241004-zinitix-no-keycodes-v2-1-876dc9fea4b6@trvn.ru>
+Content-Language: en-US
+From: Yassine Oudjana <yassine.oudjana@gmail.com>
+In-Reply-To: <20241004-zinitix-no-keycodes-v2-1-876dc9fea4b6@trvn.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 06, 2024 at 10:20:02AM +0200, Krzysztof Kozlowski wrote:
-> Can you change it to R: when applying or you want v3?
+From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Sure, will do.
+On 04/10/2024 7:17 pm, Nikita Travkin wrote:
+> When initially adding the touchkey support, a mistake was made in the
+> property parsing code. The possible negative errno from
+> device_property_count_u32() was never checked, which was an oversight
+> left from converting to it from the of_property as part of the review
+> fixes.
+> 
+> Re-add the correct handling of the absent property, in which case zero
+> touchkeys should be assumed, which would disable the feature.
+> 
+> Reported-by: Jakob Hauser <jahau@rocketmail.com>
+> Tested-by: Jakob Hauser <jahau@rocketmail.com>
+> Fixes: 075d9b22c8fe ("Input: zinitix - add touchkey support")
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
 
-Thx.
+Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
 
--- 
-Regards/Gruss,
-    Boris.
+> ---
+> Changes in v2:
+> - Refactored the change to simplify the code (Dmitry)
+> - Link to v1: https://lore.kernel.org/r/20241002-zinitix-no-keycodes-v1-1-e84029601491@trvn.ru
+> ---
+>   drivers/input/touchscreen/zinitix.c | 34 ++++++++++++++++++++++------------
+>   1 file changed, 22 insertions(+), 12 deletions(-)
+> 
+> 
+> ---
+> base-commit: fe21733536749bb1b31c9c84e0b8d2ab8d82ce13
+> change-id: 20241002-zinitix-no-keycodes-f0fe1bdaccb2
+> 
+> Best regards,
+> 
+> diff --git a/drivers/input/touchscreen/zinitix.c b/drivers/input/touchscreen/zinitix.c
+> index 52b3950460e2..716d6fa60f86 100644
+> --- a/drivers/input/touchscreen/zinitix.c
+> +++ b/drivers/input/touchscreen/zinitix.c
+> @@ -645,19 +645,29 @@ static int zinitix_ts_probe(struct i2c_client *client)
+>   		return error;
+>   	}
+>   
+> -	bt541->num_keycodes = device_property_count_u32(&client->dev, "linux,keycodes");
+> -	if (bt541->num_keycodes > ARRAY_SIZE(bt541->keycodes)) {
+> -		dev_err(&client->dev, "too many keys defined (%d)\n", bt541->num_keycodes);
+> -		return -EINVAL;
+> -	}
+> +	if (device_property_present(&client->dev, "linux,keycodes")) {
+> +		bt541->num_keycodes = device_property_count_u32(&client->dev,
+> +								"linux,keycodes");
+> +		if (bt541->num_keycodes < 0) {
+> +			dev_err(&client->dev, "Failed to count keys (%d)\n",
+> +				bt541->num_keycodes);
+> +			return bt541->num_keycodes;
+> +		} else if (bt541->num_keycodes > ARRAY_SIZE(bt541->keycodes)) {
+> +			dev_err(&client->dev, "Too many keys defined (%d)\n",
+> +				bt541->num_keycodes);
+> +			return -EINVAL;
+> +		}
+>   
+> -	error = device_property_read_u32_array(&client->dev, "linux,keycodes",
+> -					       bt541->keycodes,
+> -					       bt541->num_keycodes);
+> -	if (error) {
+> -		dev_err(&client->dev,
+> -			"Unable to parse \"linux,keycodes\" property: %d\n", error);
+> -		return error;
+> +		error = device_property_read_u32_array(&client->dev,
+> +						       "linux,keycodes",
+> +						       bt541->keycodes,
+> +						       bt541->num_keycodes);
+> +		if (error) {
+> +			dev_err(&client->dev,
+> +				"Unable to parse \"linux,keycodes\" property: %d\n",
+> +				error);
+> +			return error;
+> +		}
+>   	}
+>   
+>   	error = zinitix_init_input_dev(bt541);
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
