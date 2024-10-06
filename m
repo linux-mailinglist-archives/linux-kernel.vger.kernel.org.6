@@ -1,135 +1,101 @@
-Return-Path: <linux-kernel+bounces-352640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446A299220C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:01:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4CE99220E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 490591C20B52
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB3E7281947
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCE118BBB7;
-	Sun,  6 Oct 2024 22:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7192618BC0A;
+	Sun,  6 Oct 2024 22:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T4fu389D"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1U/fJkiQ"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF94E152165;
-	Sun,  6 Oct 2024 22:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA9E1552E0
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 22:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728252110; cv=none; b=kJrwcXZyNozxns4nbHB5uct3Dei2r96hb0HEn67B24xTKVXGCg3vg3u0ncOHc5Tj53wcgrLw/+zmDyeLC3Hx8J2zvK3HznReMaHQ0tapXEjL4CY53ART25n5zTGbtxt08tfT/SoI0/w7gafrpBFXYxH+LYfL01UqvTE6Tkr/A6c=
+	t=1728252252; cv=none; b=JyML8ZHaG99VZVqjqPfiuCxJf7tVqm5i1l/XeMKuIyTIduEWnbpOUdxn/6tzZk6eLDULXF5DpnS9xbliYQkGkrsUL4JTMq8xG2TQDJuWIWs37yfoXLrtHaNpin5REmJ7U2HyNauEgR/uU2AHmWIf64axMvZ7ti6Z9qKCGLU7VqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728252110; c=relaxed/simple;
-	bh=Gy67jPuTIKdx+LMTo6vm6+onZ+nJSx1uLoldMnvmPvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=m8Ugg1Baf14c4L20iXDuOV79Dm/2ffJ+lqiGNCDU2VJz6P0fEZNvhoFGjWxhpOHYPrtgfN1GZr6EH/ZAmVtx1KIEsY0tC2vodO1KOeatE+3+FV93JE2cTN5dCJ4j1jltbPSErssH1gEH4galiKPNeKAh8Y6tJnYTIY4gUl+0+DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T4fu389D; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 496M0mTb026839;
-	Sun, 6 Oct 2024 22:01:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	J39T85wvcA9vqhR4XPwXvsan9PQikhcxXtHsdQc70DE=; b=T4fu389DH97+TKYh
-	sQnEabgHDXCp8rARDVBsEtoWOcvCRvZznG+BK1c26xkypVdXXrOtUkDmUEPtzH6t
-	Fe4DiG+5Ah67dWn38QqSS9IsJ8VthKBgJRS+IEw4sQMjLSQuKIAWXrD2h99u98FT
-	0FW85B6MFst6DcT+wHWN1EBXdHJgllEJX0BqVrmV2J4c1WXP0DsOYanfzeR0LMK6
-	ZVkJ+AR8YO0BpZYb1dOGtWhlxpY6KOnNSv8BvkStYD7iI2T2YCrJEAhQbNixVrYJ
-	Ye03pOYnhuBOyDex7rO0OeqU/DL0VeQ5ldsA2BzGqup/mjot9+vIrSSK3Ve1hre+
-	5WwMdw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xr5jj6e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 06 Oct 2024 22:01:32 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 496M1WY0026764
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 6 Oct 2024 22:01:32 GMT
-Received: from [10.216.56.130] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 6 Oct 2024
- 15:01:29 -0700
-Message-ID: <9c8ae6ef-dd71-4a2f-91c7-49eddd36e4f7@quicinc.com>
-Date: Mon, 7 Oct 2024 03:31:15 +0530
+	s=arc-20240116; t=1728252252; c=relaxed/simple;
+	bh=AVMT2ksBxbHoyLr2X5OlhSzaVPcgiqa8Ios/l6Z3o9s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cSH6zGfaMSlJM6KjcWP8phbAgTfdQN2HRVNypeGUISt2HPT1dsxtC5e2P3yyHcwOL52odNA61FdM836plbyKVapV8kVDowM8zpInW6LjChrK06fjh2mRndAcMLzmClnMh18vFx6qIj51avy6qMqLIpVAv93aqsPUejZYOZ645q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1U/fJkiQ; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4a3be8c420cso1115223137.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 15:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728252250; x=1728857050; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AVMT2ksBxbHoyLr2X5OlhSzaVPcgiqa8Ios/l6Z3o9s=;
+        b=1U/fJkiQtyYQpl1JHMV9qgmtZKiv22IgBQ4zxwXm7/a6bAXLMBhFd5P2A61maPFXAk
+         JcZVpJiOsRRxTfwMmqxlbkNZ3GBo6BPmcSOcKbtWQ/yLG9WzvJlok643IhYzMaQ2mpPP
+         P5qqLf6tZCIW5owzY9GPCY3AW4qZMr8sH806jqMfkg8tWUzihhREK5URqt4j3I3ymz70
+         yc7gOKaCXEK5Di+MTORjH4/0Xi79oPykhNx4Jwt357HBiugU9DRKVF5DvS50lKZIG5Eg
+         QTcPq4WPpHix13XBPfXQJr5hj0INFaVNdDolHzt6MjBgcSAhcazlHkQ469qhseJEmAzg
+         DckQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728252250; x=1728857050;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AVMT2ksBxbHoyLr2X5OlhSzaVPcgiqa8Ios/l6Z3o9s=;
+        b=gVaTHOIiEOqjBjcG+SSNXg8tDYptvSSVbOtq2aGd86Y93iftZO/FHXDOZ1Lueedyia
+         fOdfVGO2bs5YEhy+NxZdV42fMn7jiEOwRTWBBFh4PLRBznT3X1N0Ok8JkKfA1vs1Xjfm
+         4g9iu8eMxQ6V4mb8SelduI9fNToHPHOKLzo7do9URTuEdnd1CIjlJ5HfOyBhV8zNbz3O
+         xgcfLFM3JcxC/H4c9aDOvy5d4uZXLQWmZzZGL1SE2eCTdJR2oRUoaqzeaJem0wlHXchv
+         mmM3/ZYSgzhwud1pRphQIntqLgqRN1/2MTasCeMZfBbFntzsGsGAFc6gyve2m1FZ0RMU
+         SCmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUumaQI3GKPxvPVi/0AqI7LDRbeHBcPR/PSvbiQEW4AmQd+x+X2KRmWLnyTBGdx3wMXAXSa+UEXwE7vsAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUSOTqv39MU6T7vIb+uMBYIQ9PL+g5U8li3hCUbwpZ3kTIOd+x
+	WuBE75ygXlyIRaotsLBylkUwjor5dgERU09ytpSBIJy9FLS+llprpWrBMj1TGzDFvzSHgQ9WHJP
+	Qpbld073eznpzsvPt0ZqvFBLX6buDWdXViaS1
+X-Google-Smtp-Source: AGHT+IEhMp2OSt7XqbP4MYcacFLWXYXdwh/F2Py4xZcA4lLz/qCIm0hnmkgR5mRLKSopgCYsEWGoXbueD1YCbwt71o0=
+X-Received: by 2002:a05:6102:290e:b0:4a3:cb2b:9748 with SMTP id
+ ada2fe7eead31-4a4058ee453mr5315729137.24.1728252250091; Sun, 06 Oct 2024
+ 15:04:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] firmware: qcom: scm: Return -EOPNOTSUPP for
- unsupported SHM bridge enabling
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Qingqing Zhou <quic_qqzhou@quicinc.com>
-References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
- <20241005140150.4109700-2-quic_kuldsing@quicinc.com>
- <2fi7pyhpetqyhipjiihuafddggwdrh7abuvfkks5hu5qid2rfm@ibuiecrhijey>
-Content-Language: en-US
-From: Kuldeep Singh <quic_kuldsing@quicinc.com>
-In-Reply-To: <2fi7pyhpetqyhipjiihuafddggwdrh7abuvfkks5hu5qid2rfm@ibuiecrhijey>
+References: <20241002225150.2334504-1-shakeel.butt@linux.dev>
+In-Reply-To: <20241002225150.2334504-1-shakeel.butt@linux.dev>
+From: Yu Zhao <yuzhao@google.com>
+Date: Sun, 6 Oct 2024 16:03:31 -0600
+Message-ID: <CAOUHufbsHKDWidQwEUViPRw-snCUnn6JVvd1DnNefK6xhmPD5Q@mail.gmail.com>
+Subject: Re: [PATCH] mm/truncate: reset xa_has_values flag on each iteration
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: innUSPBNFarW1hbGYU9UfRKsaKlhZS1d
-X-Proofpoint-ORIG-GUID: innUSPBNFarW1hbGYU9UfRKsaKlhZS1d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- clxscore=1015 mlxlogscore=865 priorityscore=1501 impostorscore=0
- adultscore=0 mlxscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410060158
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 2, 2024 at 4:52=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.dev=
+> wrote:
+>
+> Currently mapping_try_invalidate() and invalidate_inode_pages2_range()
+> traverses the xarray in batches and then for each batch, maintains and
+> set the flag named xa_has_values if the batch has a shadow entry to
+> clear the entries at the end of the iteration. However they forgot to
+> reset the flag at the end of the iteration which cause them to always
+> try to clear the shadow entries in the subsequent iterations where
+> there might not be any shadow entries. Fixing it.
+>
+> Fixes: 61c663e020d2 ("mm/truncate: batch-clear shadow entries")
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
->>  int qcom_scm_shm_bridge_enable(void)
->>  {
->> +	int ret;
->> +
->>  	struct qcom_scm_desc desc = {
->>  		.svc = QCOM_SCM_SVC_MP,
->>  		.cmd = QCOM_SCM_MP_SHM_BRIDGE_ENABLE,
->> @@ -1373,7 +1379,11 @@ int qcom_scm_shm_bridge_enable(void)
->>  					  QCOM_SCM_MP_SHM_BRIDGE_ENABLE))
->>  		return -EOPNOTSUPP;
->>  
->> -	return qcom_scm_call(__scm->dev, &desc, &res) ?: res.result[0];
->> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
->> +	if (!ret && res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
->> +		return -EOPNOTSUPP;
->> +
->> +	return ret ?: res.result[0];
-> 
-> Could you please make it less cryptic?
-> 
-> if (ret)
-> 	return ret;
-> 
-> if (res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
-> 	return -EOPNOTSUPP;
-> 
-> return res.result[0];
-
-Sure Dmitry, this looks more cleaner.
-Will update in next rev.
-
--- 
-Regards
-Kuldeep
+Acked-by: Yu Zhao <yuzhao@google.com>
 
