@@ -1,216 +1,142 @@
-Return-Path: <linux-kernel+bounces-352478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC74F991FCF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:11:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549EF991FD2
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 511B31F217C1
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:11:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1862628214B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4AD155C8C;
-	Sun,  6 Oct 2024 17:11:26 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AE018A6A8;
+	Sun,  6 Oct 2024 17:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XJC1H1Yf"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACFA17CA1D
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9C8187856
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728234685; cv=none; b=CISJ+O40AM8AT8drNPXhq55cKbS1rvqmG/I6XRzpOiquw4hJGlGwpx+ox6RxlSGP7P0VkPsCgvhf9Lmn7PY8JMYWGrKsHpsiFxXBxmtmVbNL/nZorS7WRotmLDPT/jCc9jm9st2DRD0P4sqIVrIlBLgnlBDB8t3cmg1oqbM8m7E=
+	t=1728234694; cv=none; b=mGiZGv081Z5wf9ZiODSA5y/g94NtJbrWKDL27aGn4yBUivDqy6e+4Lg46yNDveWkB4DHIAH8nxbN77VyIedCRB580wf7WvuQwJO4zskVNuUsO0vJxRa8cUE2cZiJrSXDraPEr9i1HTg66dmn30XplTKu35OkvvVDaRYQOApZ5rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728234685; c=relaxed/simple;
-	bh=A5KqEtuNzrXw9v/9eOVC6RUnGgwZZ0UeSRnjRqS3CS8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=P3MgBhc9UYOAAVDz/DAvQ7dOELbWjhwA3LrZiuiE7ehK8nCcrveyhpWdr38W/2PQvUwsnOfzxQ6LjDXBJQ2quaaNOgbzUkrzPfPuOHlRhrDSJaOl9p8hdpRf2Gjq+/ao+r8tj+J0zTRIOEccFLvn2T3yOcAhdCkEJ2BL8iNbKuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3453139c0so53411665ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:11:23 -0700 (PDT)
+	s=arc-20240116; t=1728234694; c=relaxed/simple;
+	bh=3id98dWfPMqGRosAsonLO3shESXmQU5V73Lu5hbyTVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PcrHUWB4wugnqTntNgJRuZKVhr1A6Iu0OTtJwdy5t8aQU3NFv5qVdhNZg9Qr+m7O2sbnCxwghadPQH6mDMN7jsMChGXoLCAWUYcGwwUk+pV2T+eJBh6vO8S6t+2LOG8269TbSCD/vZp8eetOStd/VYrKZ1FR4Dvf3tARH+lnCGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XJC1H1Yf; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5398c1bd0b8so4466017e87.0
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:11:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728234691; x=1728839491; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HORmwBmgfdl05E9vDg1kc4I3kqXYteqYbjrn/dZeplM=;
+        b=XJC1H1YfSa4X6VM5x+JBWxey1xRnJ+EUbz28qX5WD6krYtuhNu4lX2Tyn3xWcCH67j
+         hv68oZQTaJZPvHjUe9eP/DqrJt4dRaOKUkHToj9n0yVJiUdX96s8wrnGvdrbWFxaMV+c
+         dLtAzywG3KBnTSpCZnm7dflvGy+hUJpV3X0xNQFs7an5y5ZQMoAjJT+IYnqGaXTBkgFC
+         RhrtH4du+nj8XNSeoJWtLIxM0cMC8Qanprp2oAJgeBeR9pCGFCo8sWI/DEzfVImCs8IG
+         gMbHA+rHBZSzegKABjmt+qXpFm3sEysxaVZf9wuPTdh98pzeLxvmhXGyabzSxMmHZqPL
+         WI4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728234683; x=1728839483;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BFCCDqD1CFdCuqQJcT5Vt9gD1U6eFGNHDs2x1j7aCp0=;
-        b=XBELo4hivnFsbLHZlZVY8/Ok1pc8+rMBwf39cJoEslkDNfSc8KowzEJZs0Ao0qPBpD
-         9tHpx6N6ZH8lsI5/Z5WwWZia4nTBMUTF25P04+SUphzTWq27Y2sX2JwrTk7oHG2ItbYP
-         qeMU0kqSk9e20gza9FgSxOzR5wXNI5vTf67eIxWnutqUDHuXjfZycH+5x99Dll9J26zH
-         LfcjBGmoASwFa/atF0jj7HXPJfxXmh+jPEvsPAwEvQN+m1cemGnDNvj7K4svxMkh8lCq
-         mWTos9Ve7RJdpUEHJqoJfbce+ZjycbHUy7Rt/3N4FjWeBy/YgUZ6dKXQu1UZJBODy5Rc
-         25IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKdiszcJ9M067cXXzg7UewtzgHN2MeY4Ap0/q4ippG+EBpLLB5g2gpfLajKqdeoml4HF5t/aFsvluvx+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5hOb/5ab+egInoE8gX3AAsgJZ3ibCDo5OauOipj9OoO/KRZJ/
-	2bKHKjktHlHd+xwiZNydo+cf6Y9Y7sll4c55DE7obHWD2pyvi/N9W+kV3Z2wxxrGXrWqTe0O6wy
-	C60u5FwXHK5geto4gYfIcM5kLC9uiyACzita+2ueUqpieuFCVlwRFH7o=
-X-Google-Smtp-Source: AGHT+IEPtAQ2Iry8Tq66DVOE0tnpd3k0kfQy8tnf9I13q2skAxX0hGtsIMh8Dc5TIgco8gJ1O2srG519/FuhYfiXdSvQUsZsmnpb
+        d=1e100.net; s=20230601; t=1728234691; x=1728839491;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HORmwBmgfdl05E9vDg1kc4I3kqXYteqYbjrn/dZeplM=;
+        b=UTRhzGEdGTcd6rTILKs3ZcPbf870KX+qPLtxCPVeh9WNGa8IOXibh381XbJDUSG4io
+         WPumneGKZliKcaajfiEc7t0bGNLoCGZyZWH8zNloDIhH7sojua08iyw4K+sjRkOpdthF
+         PVi1b29dPVtMcbJRLf5li7ezBhD30k82ZYWZeJmB9E9xflJop64irQTeMduig5HacyFh
+         sD1BQAsfMwICwGABIbpyS2MGy+pSrJnsfJ0Ff8Fr2Foa4kOt327vtZNMlIde4jeLeopU
+         KTFezNKsHEsvkz66XXXTNzOoRwdumxZ33qUm1IW5p0voRnJIIVNSMNOX4+WCg2vuqqKd
+         UFYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOg8qxNZxJaCWqDp7oOTEi1juha40LXBzc9VKWsNaiA76cJnx2wPecNxNYMxHxbVao50Z1a3V9GhjMmrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwigRDXkX2dSQYWrVFpCM1vX4+zSXCto1KIWPkdmFvcKjE4YLMa
+	PjCb3ZZND8MavsIMhJ1SuENCuCkv0CHev8NkU5j7G8Rwz9oVumGBJ97K5kWOAXA=
+X-Google-Smtp-Source: AGHT+IGAcVGzz3f7BDb/2j93VyI4nWnEvGMl+6HSIyG3vXGDdmlsXZ0thd5pVAWVdkXAUKAbGwnmHQ==
+X-Received: by 2002:a05:6512:b90:b0:539:93e8:7ed8 with SMTP id 2adb3069b0e04-539a626a412mr4126081e87.15.1728234690926;
+        Sun, 06 Oct 2024 10:11:30 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff282casm565156e87.273.2024.10.06.10.11.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 10:11:30 -0700 (PDT)
+Date: Sun, 6 Oct 2024 20:11:28 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Cc: Rob Herring <robh@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
+Subject: Re: [PATCH 1/3] dt-bindings: mailbox: qcom,cpucp-mbox: Add sc7280
+ cpucp mailbox instance
+Message-ID: <kzlhhovfffvg227oxbpl3nv6q2lyn53pz2fyqis22brkd4bkkz@vqprudcdfunb>
+References: <20240924050941.1251485-1-quic_kshivnan@quicinc.com>
+ <20240924050941.1251485-2-quic_kshivnan@quicinc.com>
+ <20240924232526.GA563039-robh@kernel.org>
+ <2d4e47fd-0aaf-4533-a96f-95ada853d9a0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148d:b0:3a0:8c5f:90c0 with SMTP id
- e9e14a558f8ab-3a375a9aabdmr89329645ab.10.1728234683155; Sun, 06 Oct 2024
- 10:11:23 -0700 (PDT)
-Date: Sun, 06 Oct 2024 10:11:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6702c4bb.050a0220.49194.04d9.GAE@google.com>
-Subject: [syzbot] [ext4?] KASAN: use-after-free Read in __ext4_check_dir_entry (3)
-From: syzbot <syzbot+09921540dd04aba82a35@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2d4e47fd-0aaf-4533-a96f-95ada853d9a0@quicinc.com>
 
-Hello,
+On Thu, Oct 03, 2024 at 11:13:02AM GMT, Shivnandan Kumar wrote:
+> thanks Rob for reviewing this patch.
+> 
+> 
+> On 9/25/2024 4:55 AM, Rob Herring wrote:
+> > On Tue, Sep 24, 2024 at 10:39:39AM +0530, Shivnandan Kumar wrote:
+> > > sc7280 has a cpucp mailbox. Document them.
+> > 
+> > And is different from the existing device how?
+> 
+> It is different with respect to the register placement.
 
-syzbot found the following issue on:
+Register placement in the global map or the internal register structure?
 
-HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17219927980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1f009dd80b3799c2
-dashboard link: https://syzkaller.appspot.com/bug?extid=09921540dd04aba82a35
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102f23d0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1082e580580000
+> 
+> Thanks,
+> Shivnandan
+> 
+> > 
+> > > 
+> > > Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+> > > ---
+> > >   .../devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml         | 5 +++--
+> > >   1 file changed, 3 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+> > > index f7342d04beec..4a7ea072a3c1 100644
+> > > --- a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+> > > +++ b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+> > > @@ -15,8 +15,9 @@ description:
+> > > 
+> > >   properties:
+> > >     compatible:
+> > > -    items:
+> > > -      - const: qcom,x1e80100-cpucp-mbox
+> > > +    enum:
+> > > +      - qcom,x1e80100-cpucp-mbox
+> > > +      - qcom,sc7280-cpucp-mbox
+> > > 
+> > >     reg:
+> > >       items:
+> > > --
+> > > 2.25.1
+> > > 
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/08f3ba449e03/disk-e32cde8d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/17bcace1ab90/vmlinux-e32cde8d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/da9183ac0145/bzImage-e32cde8d.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/45cde0725f07/mount_0.gz
-
-Bisection is inconclusive: the issue happens on the oldest tested release.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14ba5927980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16ba5927980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12ba5927980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+09921540dd04aba82a35@syzkaller.appspotmail.com
-
-EXT4-fs error (device loop0): ext4_orphan_get:1393: comm syz-executor400: couldn't read orphan inode 15 (err -117)
-EXT4-fs (loop0): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: none.
-EXT4-fs warning (device loop0): dx_probe:833: inode #2: comm syz-executor400: Unrecognised inode hash code 4
-EXT4-fs warning (device loop0): dx_probe:966: inode #2: comm syz-executor400: Corrupt directory, running e2fsck is recommended
-==================================================================
-BUG: KASAN: use-after-free in __ext4_check_dir_entry+0x6fd/0x880 fs/ext4/dir.c:85
-Read of size 2 at addr ffff88807fc17003 by task syz-executor400/5217
-
-CPU: 0 UID: 0 PID: 5217 Comm: syz-executor400 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- __ext4_check_dir_entry+0x6fd/0x880 fs/ext4/dir.c:85
- ext4_readdir+0x1436/0x3a60 fs/ext4/dir.c:259
- iterate_dir+0x571/0x800 fs/readdir.c:108
- __do_sys_getdents64 fs/readdir.c:407 [inline]
- __se_sys_getdents64+0x1d3/0x4a0 fs/readdir.c:392
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fcfd760b6d9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe192a0be8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
-RAX: ffffffffffffffda RBX: 00007ffe192a0bf0 RCX: 00007fcfd760b6d9
-RDX: 0000000000000010 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 00007ffe192a0bf8 R08: 6c616b7a79732f2e R09: 6c616b7a79732f2e
-R10: 6c616b7a79732f2e R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffe192a0e58 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x56388aa96 pfn:0x7fc17
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 ffffea0001ffe808 ffff8880b8644af0 0000000000000000
-raw: 000000056388aa96 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as freed
-page last allocated via order 0, migratetype Movable, gfp_mask 0x140dca(GFP_HIGHUSER_MOVABLE|__GFP_COMP|__GFP_ZERO), pid 5214, tgid 5214 (sftp-server), ts 74824128125, free_ts 74900105933
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3039/0x3180 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- folio_alloc_mpol_noprof mm/mempolicy.c:2283 [inline]
- vma_alloc_folio_noprof+0x12e/0x230 mm/mempolicy.c:2314
- folio_prealloc+0x31/0x170
- alloc_anon_folio mm/memory.c:4721 [inline]
- do_anonymous_page mm/memory.c:4778 [inline]
- do_pte_missing mm/memory.c:3963 [inline]
- handle_pte_fault+0x24dd/0x6800 mm/memory.c:5751
- __handle_mm_fault mm/memory.c:5894 [inline]
- handle_mm_fault+0x1053/0x1ad0 mm/memory.c:6062
- do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-page last free pid 5214 tgid 5214 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_folios+0xee2/0x18a0 mm/page_alloc.c:2686
- folios_put_refs+0x76c/0x860 mm/swap.c:1007
- free_pages_and_swap_cache+0x2ea/0x690 mm/swap_state.c:332
- __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
- tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
- tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
- tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
- exit_mmap+0x496/0xc40 mm/mmap.c:1877
- __mmput+0x115/0x380 kernel/fork.c:1347
- exit_mm+0x220/0x310 kernel/exit.c:571
- do_exit+0x9b2/0x28e0 kernel/exit.c:926
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff88807fc16f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88807fc16f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff88807fc17000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                   ^
- ffff88807fc17080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff88807fc17100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+With best wishes
+Dmitry
 
