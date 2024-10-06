@@ -1,104 +1,127 @@
-Return-Path: <linux-kernel+bounces-352415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E03EF991EBD
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:06:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E723991EC1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03B0282281
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:06:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078BE1F21AC7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644FE446A1;
-	Sun,  6 Oct 2024 14:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3164D8CB;
+	Sun,  6 Oct 2024 14:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0X+p0nj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jF58SFNt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32901CD3F;
-	Sun,  6 Oct 2024 14:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D192B2A8D7;
+	Sun,  6 Oct 2024 14:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728223562; cv=none; b=aG14nOQOQOCne8sQMff6KJU3tfGn625z5xS89FYF9QyVl5SHr6CFtlDKzZykDe0YpsDe/ryPAFVkieLc006HisK5VogGjVL1KryOMHTrbpGzQv2tUerh042P/KdHDvX4W6mkn8eVZAVLt+3b16lB2b9Lb7TKyHISYbbruhoyooY=
+	t=1728223831; cv=none; b=prIetotdPL3VLZSAy2IDlYCLmyy5uOsAdoQzocOLvgvTgPanUErE5m9WM6btGHhYVu+un1J60wwCLBCND2EJTuBdTxgOjhIRLbuExN15AV58JBIt2e1KlDKUkFh2CjJbEg8IYfiknphWOmjznPDdTyY0d3F8WCcMNKc3NgXUd+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728223562; c=relaxed/simple;
-	bh=OHUKHBAipME0avZ0HeO9bSFTlMU6wbsNCU3M5ClcbkA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gngvyaAKj9Hrx5249a+mi5aR/G5DMLWPCVByMMY6ND0WFB0/j9pnWppffOR4GMQuIFe3rchpcCBDN0SBhuUJv0BvmFRJ1pKQlaYr20ZAdcCbNPv5wYeCe6FHBW/hIpm77JJU/0HRzcVc8S70SDVVEZ31Ec3BWqy3gvutBbbqt8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0X+p0nj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05EAEC4CEC5;
-	Sun,  6 Oct 2024 14:06:01 +0000 (UTC)
+	s=arc-20240116; t=1728223831; c=relaxed/simple;
+	bh=6+KK/Rig/MKqLrBWeEuIvA5abM0tMADgpM0DP+ClW0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UlDaOPmleaPiAAQ8mtRIUjrRJzyU0YdmfPI1UPfszbkCGzNymdW+7w6cTedIrlqf2X0flsAkr88GyNZXWX2D9GFRSUi2rcrB9W8NZTNjrYtFxWfTiz4tbbLI0/cERMCMP8EzEqltXKtxKvDcUws3+fDHnsFJsrY/t1Xp03dToJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jF58SFNt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E695FC4CEC5;
+	Sun,  6 Oct 2024 14:10:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728223562;
-	bh=OHUKHBAipME0avZ0HeO9bSFTlMU6wbsNCU3M5ClcbkA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L0X+p0nj1uusxy5vnsAbLUo1uHXyiRV0O+ht784Z3ohGwRb/iqfb55hbHHO5iwVId
-	 57qt8zhENOcOwtCdyAB4yUv8g6Hhgq+eNJfAjUy8qKHnHxeDDqtT3g3jTJlN+t7fs4
-	 B28lyzOMOOXLsRguWB7zjX8kq9GqYWyNKWBHcDOJoCDY1zRiXOviQkCHM72WwTnDR1
-	 oUw866GygU3IV1FfI0szUsi3SfWkCJsErf0OhB5Tz7H4XKqbs1zye0s5pGUJafTY8u
-	 FOTQIZEbglt59k/ENeX2dqvPRuwkvHkh9O4QiQMuBXXZR8eaIgZEuaT4r0nKxpimOL
-	 +DFkhd0DDIjQA==
-Date: Sun, 6 Oct 2024 17:05:58 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: maorg@nvidia.com, bharat@chelsio.com, jgg@ziepe.ca,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: of c4iw_fill_res_qp_entry
-Message-ID: <20241006140558.GF4116@unreal>
-References: <Zv_4qAxuC0dLmgXP@gallifrey>
+	s=k20201202; t=1728223831;
+	bh=6+KK/Rig/MKqLrBWeEuIvA5abM0tMADgpM0DP+ClW0c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jF58SFNt9cnnDUZYh1rVX+XCporbFAwd6FE5gMloR/xXtHYG5lfWbzvNeVyoK15oz
+	 lY/Ku0SxkfdGpT5DwdhNrmvQ6wi3beNCOaOp7aPkPFuoTr6Bo21jjfTHV8xeVHjSIV
+	 qlRQBMrgOCYKCLyz/v5idxRrhXBnm7rhR3QznHKm7k9205N8RNhD0pYwOCudeT3NV2
+	 QI5qOs8VZ+6qbgOHk6wc9vrg5bRqrcAf5E2MxrBOFF5RLMKjTK5/6itXctuVvHKtQ2
+	 vnmV5wfXp2Gpv1BpTOglw47HPRFsAU9YC4De9dQdLc+qne3F/pXD0ScRvHahS8KKsM
+	 C73mem0PBAu3g==
+Date: Sun, 6 Oct 2024 15:10:21 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Krzysztof Kozlowski <krzk@kernel.org>, Conor
+ Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v3 0/9] iio: light: veml6030: fix issues and add support
+ for veml6035
+Message-ID: <20241006151021.17540fb7@jic23-huawei>
+In-Reply-To: <20241001-veml6035-v3-0-d789f6ff147c@gmail.com>
+References: <20241001-veml6035-v3-0-d789f6ff147c@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zv_4qAxuC0dLmgXP@gallifrey>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 04, 2024 at 02:16:08PM +0000, Dr. David Alan Gilbert wrote:
-> Hi,
->   One of my scripts noticed that c4iw_fill_res_qp_entry is not called
-> anywhere; It came from:
-> 
-> commit 5cc34116ccec60032dbaa92768f41e95ce2d8ec7
-> Author: Maor Gottlieb <maorg@mellanox.com>
-> Date:   Tue Jun 23 14:30:38 2020 +0300
-> 
->     RDMA: Add dedicated QP resource tracker function
->     
-> I was going to send a patch to deadcode it, but is it really a bug and
-> it should be assigned in c4iw_dev_ops in cxgb4/provider.c ?
-> 
-> (Note I know nothing about the innards of your driver, I'm just spotting
-> the unused function).
+On Tue, 01 Oct 2024 22:21:13 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-It is a bug, something like that should be done.
-diff --git a/drivers/infiniband/hw/cxgb4/provider.c b/drivers/infiniband/hw/cxgb4/provider.c
-index 10a4c738b59f..e059f92d90fd 100644
---- a/drivers/infiniband/hw/cxgb4/provider.c
-+++ b/drivers/infiniband/hw/cxgb4/provider.c
-@@ -473,6 +473,7 @@ static const struct ib_device_ops c4iw_dev_ops = {
-        .fill_res_cq_entry = c4iw_fill_res_cq_entry,
-        .fill_res_cm_id_entry = c4iw_fill_res_cm_id_entry,
-        .fill_res_mr_entry = c4iw_fill_res_mr_entry,
-+       .fill_res_qp_entry = c4iw_fill_res_qp_entry,
-        .get_dev_fw_str = get_dev_fw_str,
-        .get_dma_mr = c4iw_get_dma_mr,
-        .get_hw_stats = c4iw_get_mib,
-(END)
+> This series updates the driver for the veml6030 ALS and adds support for
+> the veml6035, which shares most of its functionality with the former.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Nice series.
 
+Applied to the togreg branch of iio.git and pushed out initially as
+testing for 0-day to take a look at it.
 
+thanks
+
+Jonathan
+
+> ---
+> Changes in v3:
+> - drop applied patch [1/10] (fixes-togreg).
+> - Fix indentation of the vdd-supply property and make it required.
+> - Fix formatting (double space).
+> - Fix array formatting (space after {, space before }).
+> - Move action to hw_init function and add dev as an argument.
+> - Link to v2: https://lore.kernel.org/r/20240923-veml6035-v2-0-58c72a0df31c@gmail.com
 > 
-> Thoughts?
+> Changes in v2:
+> - Rebase to iio/testing, dropping applied patches [1/7], [4/7].
+> - Drop [3/7] (applied to iio/fixes-togreg).
+> - Add patch to use dev_err_probe() in probe error paths.
+> - Add patch to use read_avail() for available attributes.
+> - Add patches to use to support a regulator.
+> - Add patch to ensure that the device is powered off in error paths
+>   after powering it on.
+> - Add patch to drop processed values from the WHITE channel.
+> - Use fsleep() instead of usleep_range() in veml6030_als_pwr_on()
+> - Link to v1: https://lore.kernel.org/r/20240913-veml6035-v1-0-0b09c0c90418@gmail.com
 > 
-> Dave
-> -- 
->  -----Open up your eyes, open up your mind, open up your code -------   
-> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-> \        dave @ treblig.org |                               | In Hex /
->  \ _________________________|_____ http://www.treblig.org   |_______/
+> ---
+> Javier Carrasco (9):
+>       iio: light: veml6030: add set up delay after any power on sequence
+>       iio: light: veml6030: use dev_err_probe()
+>       dt-bindings: iio: light: veml6030: add vdd-supply property
+>       iio: light: veml6030: add support for a regulator
+>       iio: light: veml6030: use read_avail() for available attributes
+>       iio: light: veml6030: drop processed info for white channel
+>       iio: light: veml6030: power off device in probe error paths
+>       dt-bindings: iio: light: veml6030: add veml6035
+>       iio: light: veml6030: add support for veml6035
 > 
+>  .../bindings/iio/light/vishay,veml6030.yaml        |  44 +-
+>  drivers/iio/light/Kconfig                          |   4 +-
+>  drivers/iio/light/veml6030.c                       | 464 ++++++++++++++++-----
+>  3 files changed, 387 insertions(+), 125 deletions(-)
+> ---
+> base-commit: 19332fe4bd4659b2e3988f17b4d5dc59a86c266d
+> change-id: 20240903-veml6035-7a91bc088c6f
+> 
+> Best regards,
+
 
