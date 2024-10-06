@@ -1,305 +1,216 @@
-Return-Path: <linux-kernel+bounces-352424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55B9991EE9
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:31:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0455D991EEF
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68FAD28253B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:31:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217991C21023
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582FA130E27;
-	Sun,  6 Oct 2024 14:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988AB763F8;
+	Sun,  6 Oct 2024 14:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fmLUYvAj";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="iVJ6OCAP"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRaSx2br"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDA2AD55
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 14:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728225108; cv=fail; b=KOSkYH4Cemx6CO+K8UpNRXThjm1U7vIl1x9LoSrE++f583V1lgcyYrhu3g+HNXPqLEO4LSwygD2Li77sEdr8F6WycayX7lNqfAWczgba8Wf8z/pL4VWLxmPQwriw+WweA2RQPf4iYjeyZ+MbohZLvUK2+FMMcOnFiLhbdHXFfTs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728225108; c=relaxed/simple;
-	bh=s3vdWToQLynOhjrZS6JTUlFGNZPIyrvMirD/R+1macI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Mqdjwt12FPoEV/FmkWsM+v+xsG6qBO8mDuJ3imRjHTAzCMhyOs9QNpp5WqEl9gy+OW3hfSEqRrMyw0+2Lz45kc42uEfdu9wQLszwCFJm/BzbTOm52j+jgbKIfNyoB0X64f2oNb0rnstf46fVVCpcRyeKXDTN9sH07Z0Mfe1bc4Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fmLUYvAj; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=iVJ6OCAP; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4966XX8B004608;
-	Sun, 6 Oct 2024 14:31:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=sk/AdneOvcPd+6OW0+cMIAMxl2oHVeqmx8xLwcLve40=; b=
-	fmLUYvAjxOxLBKzW7tbBiOMQhmcT4UcRbJht2ocYRmewREAAYL0iiianOcohYqhj
-	LcSqSVQU7UtgYb4PW6EhTl6fMsx8U1A9AHNZevPdJHM5q2nmbBx8M0+4JoOGd9+S
-	/lYVYJsPohOC0XV0i4JNGrV2wxnvi2cBTrYeT4JKCZXTWeV0SxCHbzKt1fVdY28h
-	Wp4MmhGDmEkSZ2oL+BSJsYp8dwT17IyWKrbj2a/VrOL3uu/ntKPENHbF3hxlLDT5
-	mw2L2mcmvHOBiKrClBbvW0CzzJqAHHLeP/AFeXyOBaakVJRPX7YgW5JIQb9Sifml
-	Rkrl7reyEF/xzZhVnWK0EA==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42302p9968-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 06 Oct 2024 14:31:26 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4969Z03Y012028;
-	Sun, 6 Oct 2024 14:31:25 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2173.outbound.protection.outlook.com [104.47.56.173])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uw4x515-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 06 Oct 2024 14:31:25 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fJoe0pQR2HZ9+DNUi1/cqekY6yDicIGXWXGazfKuT+HiBw2TEqpd7OjYyFo2BkebaCJ09LlQirBHCp4QpwqBAExJz8WQSETJsKCzC+o61Qis9Q4guifTF9qkRKsfC4/IA4pL9fCyGOflmH4qlHMVALZ4QjGQD54vXtaV6Uz8J0r3Ubhi83oXN8JD14hQhMDTLV+C54SiWYHuUhIZ3WIsLyzvN3nIft9yGEF30trWwcwh8OXR7rZ+gf5loACYkfm2mD9rFGZWnaRJu6y9BQuCIU5ZBYWTSArm0lfS6v8dH1O27piNht5y7XlP4EvLIpcspbiE3l1ZDZzdX4EU0TVAxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sk/AdneOvcPd+6OW0+cMIAMxl2oHVeqmx8xLwcLve40=;
- b=N1O7OwbsZ0y0Byf7lERSJrB9QKxMaPqF2zKQe6RkrgFJaK9lo8dDjUsvlyAGQtI+B22rzk2fxLfCG8knoGYH4Sd5YPDfsbIAO41sNMmaHlkXasGD19nlY/5cRiUvFNQpQHq7SHlyPbfIXeVydKLJXGSyU/bCEXgXLhV85MpCOk9A8+wuoUPXhgv5QN1mUbfpovp/yPChYkIPRd08SdwY4kmJNhamUo4KVshTMoV/2a6PqSy+Dcys6fl7IbkDIwEGZPmUZpV/uG2uaScrBcOZovxnn7D2/IEKClALiN4fITCC+ks9tKG2LmjlMaRmHwUETPRNKFRxEp/7k60o8m2EZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4C75733A
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 14:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728225458; cv=none; b=i5gFWz9ijy88uISxauI7YsjbuzcC/V7EVLylHoi9OjKNwz1VYfOgwTqhHbb1oFL5G+zAHzYIjQr3JeZMCTW2pbJWjptSmaApSDAjwmAOCznGLaDyUOYe7Utwfyq3Mrcups+NuKcaFuVWWhoSqXB6Uo2/vM960gyXC5O8dF/ZCHQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728225458; c=relaxed/simple;
+	bh=BdPxsKQxTnwSTG2BoMp54yXKZgPysJ0Ur7LR3xWZRiI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o5gQ4FHQoK24iSVunBOeF/TvEdyq2s8IoCiE7jhKKuBL5ig/Duvi2z7uF2lyL4ZpaRqW0CpGGo1COm4E4WzYbI7VczWiNyd+pVzjZyNot2wLkZbc5lA4OAKMrDtlSxsmYFnrP/VIT/Ws76bsd9IGjQrtxJEZiJIFGKVltVz7fKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YRaSx2br; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539908f238fso3906932e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 07:37:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sk/AdneOvcPd+6OW0+cMIAMxl2oHVeqmx8xLwcLve40=;
- b=iVJ6OCAPsG1vlP4mIv96XDwBo15tCQNFqv+AVp8OF0L2kmCcz3Z9/lDKT87h16sa5eVOO/F80E9voro2h3Vf3fjuHs7NXcSFfazhFa59ddt49+93GCNkO4ulKTfoB/UA3OAzbWmxcowBeprZcCl1B92y0iZjx+jWFuoCdkg785Q=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by PH8PR10MB6503.namprd10.prod.outlook.com (2603:10b6:510:229::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.21; Sun, 6 Oct
- 2024 14:31:23 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8026.019; Sun, 6 Oct 2024
- 14:31:23 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Sidhartha Kumar <sidhartha.kumar@oracle.com>,
-        Bert Karwatzki <spasswolf@web.de>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        maple-tree@lists.infradead.org
-Subject: [PATCH v2  hotfix 6.12 2/2] maple_tree: add regression test for spanning store bug
-Date: Sun,  6 Oct 2024 15:31:08 +0100
-Message-ID: <12af588c6b3338bf6a73cd2d95943a83a44c3b42.1728223996.git.lorenzo.stoakes@oracle.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <cover.1728223996.git.lorenzo.stoakes@oracle.com>
-References: <cover.1728223996.git.lorenzo.stoakes@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO2P265CA0147.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:9::15) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+        d=gmail.com; s=20230601; t=1728225455; x=1728830255; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ND5Svx26eAZVcwpez7MW0bsvA1vYACvoD5M7KxqAkR0=;
+        b=YRaSx2brckIJjIDMtK6XkGW4MrMO1wbEzXzoLkTUjNivvOdoWdYg71nwj1jB2fDRPn
+         I3Zy+vooFkHyQBldc5m9/tsp3najMAF+FY/dlsSxnBNjN1qjxFjXDsff9SvdnO+3dIls
+         cswDFpcFKpBTXTCeZXn7drzn0VKP5D/XGIJHtydJuroDvU3kl3UIfTY3t+pR2yJl/5tC
+         RL4TwWOTokI6UoLVrMJ2w1+1aSS88ZrVHILCzp9v1rK8IkQTOXEcyGYIUijjzRCcoaej
+         i9ogg0/iy96FB+QfNDYZ6SaTfJFo3zoS3CVR0Ek7pM11qFFojQ3gkP4NLtK3lTnqNaRT
+         eNsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728225455; x=1728830255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ND5Svx26eAZVcwpez7MW0bsvA1vYACvoD5M7KxqAkR0=;
+        b=Irr3Oaej7MAo8e0yLmQfNTh812kb65h2FUU7oemfKX/4M6CBBJV1gqApfvdduAPW0s
+         003loPHlGORVyUMEO9EZlxhP4Vb3tmsd7Hbu9ZIofxARY22ynAhWWemQIPsCseajFIUG
+         op72uAfmnUXIzY2tnQJqjYMn1G09CbpHj6zBoAXr7CLvImlKYFNfo5DAqGVJoJBGdqM2
+         WRqoQBZne487EaQQ/R/PN41bVT0Gw65LQehWaJz+Lg7PPU8o3xjKfdQuRZXruRv8gknr
+         H3+HrP3Gkvnw89shTkLAIwQFs9KM75nV7D3rTh9+8kz7rwK4AvGsK70wlM3Qkhnbh3X7
+         xsSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWX6ie90clHlI9w7oMBtR21dykR86Eawy71On1RO2uIrYEy46/QQAsuGoDZ88I9xVp1frupt8bdgqsZfDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2LRkb/dXYXdevjU5jJSsxX38rVnivl8xYHkvMZI5JMDdgyN9Q
+	kMIGkEP7gBmbu4BKAQ5N0ASRNTquVOhYmqrcNf+DgAj1XA+1EOSF2iVge94Ey7Jpf77aFmGhovu
+	qfOvt/CbzFOnm1NbK+FlMhOOEVyM=
+X-Google-Smtp-Source: AGHT+IHpGKIOejf5iRK2qFu64BjRL/QI8CawWgIdyDY+8/fGVSi35n4BU6U1tnTTr0Qo/rjJiqLbZzf9VgtOLcmclhs=
+X-Received: by 2002:a05:6512:3b8e:b0:537:a855:7d6f with SMTP id
+ 2adb3069b0e04-539ab891f52mr4358542e87.34.1728225454894; Sun, 06 Oct 2024
+ 07:37:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|PH8PR10MB6503:EE_
-X-MS-Office365-Filtering-Correlation-Id: 802234f9-2ebd-4e3b-86f9-08dce6138d6a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+9e4TBeP+wIfZbn40pWa5YTy3YHHZjnbo1BbpiuRIlMciG22kLrPcEXpxhMQ?=
- =?us-ascii?Q?Y4gaucfwCoy+J1rKi1z2N7D74LaF+kHk9dhdyF3EuhHz4PFKzGtmFidw/S/1?=
- =?us-ascii?Q?zDnFgg6qHSeUZ1iSF4I71FRW9EHU1+IQwZ/QH++As2gQ3EDf2degy81U5RhG?=
- =?us-ascii?Q?ZM4fOn0TCLHnJIPNvR35Lqb1C64XmR1GBjawDUCQGBvwsLd59jkvJTHwgiER?=
- =?us-ascii?Q?LEeJOmar+Klj1lN70HUEwNlUtymfOwHghkqP7EifW+oqlna80CDCwnldc21x?=
- =?us-ascii?Q?P1ui4w+wwNO7G74mrM/Ghk0P3bScenIW+UgmAAJEIMcXZXpKwpfvY/tvrhgz?=
- =?us-ascii?Q?EJBCyqRrRPq+GPbriG4QGd7MEbwNTWg6Fsvv6Qtph/ZRbGACx42hLlib3lGL?=
- =?us-ascii?Q?nJv+0Kutrc+SsyPAo42gAIRk/tIo/rH6wtdFGOqeO5xhKxCYvaL8AxcByoNz?=
- =?us-ascii?Q?of6qbv92nprZEn0msFZ3U7wJJnk8hTwhr10pxBB76UczBUupA4yhE06/Khj2?=
- =?us-ascii?Q?0qRLRrZVBZdlKyGkmWvM4ork22Q/8K5u1vfFBq2wPBwuhEPkbhNWCG1U6ov3?=
- =?us-ascii?Q?1AhtN0PkpnL8Ec3CzOeT+C43y0Mari5IkGKjtiRZf2DsTSr1zo3Bqq4nvoyG?=
- =?us-ascii?Q?N2f7q/eed8DV1wDjZEFicuZEXpEN0y/Ouda0b+neGkbkKW5K2F9ghWZesybS?=
- =?us-ascii?Q?jfsMeIqOLBsXlM+CF4ipmZEh1fKPwgZnOX6Fl7BwOK0rg5NFIj0XI89iWMzt?=
- =?us-ascii?Q?mnuMeYOxRDSn3/lU+4colSPHL3nneqdATiyAr5qkGwwjH5wnB5RmJRk70PyU?=
- =?us-ascii?Q?rk5ucjYTcwSB8r7W1qm0SSpIMXg5VDMXuLuu6NRF2cLf1dqgV1rp9q+X+amU?=
- =?us-ascii?Q?Q+2yOnXLJzRTQkWf3LFD1BpSro/roiBHsqNJfJe88nAh51Zurl01vlZPvj7l?=
- =?us-ascii?Q?zJZiP2XNHczcamL8PBqe52MyqCn47ICclAwUcaHi+tyXOIlq8On1ugo2520b?=
- =?us-ascii?Q?4LlGMklzOJDt+41UwGkgLCWjsHBAxw5x6aIJWRk5/XiKhHeBjIrAE8mj44w2?=
- =?us-ascii?Q?glSoXFTbgM+GG2pC0JVLxOLaSAA2fIgWgrqDg27kA/Ie01AEVY2X/8q4KVDn?=
- =?us-ascii?Q?6eN3+8ngl6n3n3s+ugDqlJt9K/S9xyyEpv9JChv8FvyxLanuTbg5OX7q0gHh?=
- =?us-ascii?Q?N53Zxe0JV5waSeDuB/byKzi3eQhIpawz9PFsmRwB+2hhVIm2xk9rmR+8U0Iz?=
- =?us-ascii?Q?COu+kJ8b3X1FhXEkUPj7iRa/I/swJY+Q2m8nncf8ug=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zB2PlB7VQdNvflBf3Osty2ladEZQEgR+sW5xV6gIAf/wc1w5i+p5qz/TSjPo?=
- =?us-ascii?Q?ZlZUcYBZ+N6+9i5bWVv8xtnBoVIshZtlLu0NlSfKBOwK4wIvjcg5M1LZ7Sb8?=
- =?us-ascii?Q?7Mqpi9jGhVEWAHlXlxslVmGUui+SBUz1xBxuODhco0l3Dps10QLhaM2CG2HW?=
- =?us-ascii?Q?+e1Ev0eVyVOuJ7jXo7/t8fjMixh+7NF89ZyQUaGNCrJE8c9IHfn5mr8k/ncn?=
- =?us-ascii?Q?983uWDPk+1ybfbE3H9ZJbLUjFwvLEt+qz1xNPBkugrRLqnkP+vjq83b3JDs3?=
- =?us-ascii?Q?L+fEZNupRTuLWrBB0bbHoC+Tk3KSQUYIml8NQBpW9TFvRvaZAEllNVtyQv9e?=
- =?us-ascii?Q?R2t9r72Ze39V/yUthb4aQtvOCPTtwftP0W8kJRcwMhf+ll7kSim9LxIAnkc+?=
- =?us-ascii?Q?R8j2TGnMBE2CYxCuasZix2zoT8NP6XunNM4Mxo+Mwg4JTBhdIWDxPeG3FEwF?=
- =?us-ascii?Q?OtEBTNWkJ9K5OayU6+WBnQK7/Cks4NDHSlFkGD58GzRUJ64KnNMvuW/hInLU?=
- =?us-ascii?Q?DaXksv6s3iopiVzQtpBohQzRq2BwbH0cOEAQnWCAlL3jXSiPiK02AWHMEoNj?=
- =?us-ascii?Q?G9F4KAZMVIlEwPetP+z37YMHlj5crwC7JjuOAzgYA1anbgfxGOaaZitFMRfp?=
- =?us-ascii?Q?iZYM1ZR5OMDr1J7fwmDG3DvgIBoEjihY7Ejf+qMnJOql+yl2NbfrYqxLcZ0c?=
- =?us-ascii?Q?FsCWJcLEDs44ArRf4ZkRwYc6vKarekgO9iUsyxEAA7UFRxqgLCMckr30swbn?=
- =?us-ascii?Q?YHgpV0nbFW9Jfuwhvgi/G4lZxJujlCMldAkWzyYkvKx8RZibgN0wn8n9EM1i?=
- =?us-ascii?Q?bgclacvXURkMyhc76vPHgx11spAWj3jrl0legb7QUI2rSxC0uVlS4uXSm5qw?=
- =?us-ascii?Q?dBg9orAk+Zz6QMSY8et+IqWWWqmMssklYgVJEro1yLKqPyHG6U6yxH8sj+ra?=
- =?us-ascii?Q?6qa/1BraLDiUjpm1pXrDWhp0opj6M1Qcdvmm+iRk+hsARL8q5EuI533FWK4r?=
- =?us-ascii?Q?3yrnH0SX40mZedQkAkfd1/RHoK967ZrQETgT7Z1rRDbb4Ah7WPZaJYhiBjA+?=
- =?us-ascii?Q?AuLXMlb2JZQEitFDF5h3JFbQAtSodAofCH89f7pttOW8eJHsI0tzjp40Z7OB?=
- =?us-ascii?Q?vfT3X2zwWg+rEtwZqyt+7b2EhBOK25brkzKpg+xajYCa4nxDBDAONUBnUTkS?=
- =?us-ascii?Q?JHRL5uJu1K2lDzTYWbWMiwcMtcQ2cprVH12HQNvWITIh9gaaTBgRycTnomWe?=
- =?us-ascii?Q?IB1vjYNGH+NSget1ltk4GSMEkV+6vxwuB8QDHhzQzM5rX/r43gsZ5dKssGU9?=
- =?us-ascii?Q?VZEaGaHY/b6Y+DOhK/umUKtW5ir5khnOrDL5yHvUcm9Yiygreq2BHRyISzF3?=
- =?us-ascii?Q?mi5Rf202y0BDIZ/wIJQhyivJUVtT7rSFGQiH8XkiIQN0eHRKtCN1aXwMzfxn?=
- =?us-ascii?Q?jdcd+BPy6cp6nYZH/Jj6ijcSadfosrQjBSy1JIPjPAAWJE2IgScEY8NoaksR?=
- =?us-ascii?Q?tziIGVNPU1acBBDDqTIq+/S+YYnwQFk2hA6i45a+uOG/kAgQM4yRBrJtepRj?=
- =?us-ascii?Q?5msnfDHQ0gijR+2JRQvGzxXKq3JADVQPV10L+VhlwIzy4Qu8/HCxvXAVcroi?=
- =?us-ascii?Q?JQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	zEXyT5uOn1aA/R5Zh/+8pshUGaOoKZ+ljbPGd4GAuamlp0EckttCXM31apXi+z1dPMgF1x7fiyE+bAjKSg2LXIo/qR/LQVnVitbc3d3V08rd/s8N6RMaRhECpxTyA3OrWN5vZSV5htdU00YVzdoD36RDHyTLfjH03JJk4MN0uymJhPAE7P04U5/JgVHAKI7UKDF52437KFE6SPIh9atbge7j/ixUTTlaSs5fa/WCcL9iZ/3Rdw1UT8qv6tPabYkBpMl/3TmGHB202YJRwzSvrNUnlprpmaq27U4aeZK35yDy+kKmamG8spzxIV7Zpd/HbDarcQG1FZQEHDP6EkKnZCH/TQX65jtbi4R5aUQYpsbRbA2yskMOXEVjdwLUNNMc7TUNrkZOnkbya0hjXY5nwtpnjRa1mXIyePKel3G5ZVbw9ZRNxuZy7jM7h2I1nQBO08+2vhGmYzIsWaAAnXQqhg7UMihw7LJ3EIOJ0ryy6eG+u4hwpfveT/2YlmBapYClNl/Yzeaa+liw/Hfc2o6rooGsh9kwvnIm5n1Q5ggDdNt/s04niVexc01+yHBa/Ign5Mwco/rtSBWvDNqkkMkWyBdZVYWQFfkYrljk1Dw842k=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 802234f9-2ebd-4e3b-86f9-08dce6138d6a
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2024 14:31:23.1874
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lCLYufe0L4EGC3CkQ99Nsnq7CPgXul/LY9X+4nC1iLcXaoQmC9CUvgQdPBnntPrT9MNG96xvjr0QBMEwpo9074Sz+5b0rUl9XudoMfsbqcs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR10MB6503
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-06_11,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- phishscore=0 mlxscore=0 suspectscore=0 bulkscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410060105
-X-Proofpoint-ORIG-GUID: 7fgNrj8yXV3IuNJGH-JI5wt2RG6ECY1n
-X-Proofpoint-GUID: 7fgNrj8yXV3IuNJGH-JI5wt2RG6ECY1n
+References: <20241001-strict_numa-v3-1-ee31405056ee@gentwo.org>
+In-Reply-To: <20241001-strict_numa-v3-1-ee31405056ee@gentwo.org>
+From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Date: Sun, 6 Oct 2024 23:37:22 +0900
+Message-ID: <CAB=+i9T8cOLQt4YprvUghwWZx1nOaiQ-0vV1N1zOOHWAFXza0Q@mail.gmail.com>
+Subject: Re: [PATCH v3] SLUB: Add support for per object memory policies
+To: cl@gentwo.org
+Cc: Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>, 
+	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Yang Shi <shy828301@gmail.com>, Christoph Lameter <cl@linux.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Huang Shijie <shijie@os.amperecomputing.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a regression test to assert that, when performing a spanning store
-which consumes the entirety of the rightmost right leaf node does not
-result in maple tree corruption when doing so.
+On Wed, Oct 2, 2024 at 4:08=E2=80=AFAM Christoph Lameter via B4 Relay
+<devnull+cl.gentwo.org@kernel.org> wrote:
+>
+> From: Christoph Lameter <cl@gentwo.org>
+>
+>     The old SLAB allocator used to support memory policies on a per
+>     allocation bases. In SLUB the memory policies are applied on a
+>     per page frame / folio bases. Doing so avoids having to check memory
+>     policies in critical code paths for kmalloc and friends.
+>
+>     This worked on general well on Intel/AMD/PowerPC because the
+>     interconnect technology is mature and can minimize the latencies
+>     through intelligent caching even if a small object is not
+>     placed optimally.
+>
+>     However, on ARM we have an emergence of new NUMA interconnect
+>     technology based more on embedded devices. Caching of remote content
+>     can currently be ineffective using the standard building blocks / mes=
+h
+>     available on that platform. Such architectures benefit if each slab
+>     object is individually placed according to memory policies
+>     and other restrictions.
+>
+>     This patch adds another kernel parameter
+>
+>             slab_strict_numa
+>
+>     If that is set then a static branch is activated that will cause
+>     the hotpaths of the allocator to evaluate the current memory
+>     allocation policy. Each object will be properly placed by
+>     paying the price of extra processing and SLUB will no longer
+>     defer to the page allocator to apply memory policies at the
+>     folio level.
+>
+>     This patch improves performance of memcached running
+>     on Ampere Altra 2P system (ARM Neoverse N1 processor)
+>     by 3.6% due to accurate placement of small kernel objects.
+>
+> Tested-by: Huang Shijie <shijie@os.amperecomputing.com>
+> Signed-off-by: Christoph Lameter (Ampere) <cl@gentwo.org>
+> ---
+> Changes in v3:
+> - Make the static key a static in slub.c
+> - Use pr_warn / pr_info instead of printk
+> - Link to v2: https://lore.kernel.org/r/20240906-strict_numa-v2-1-f104e6d=
+e6d1e@gentwo.org
+>
+> Changes in v2:
+> - Fix various issues
+> - Testing
+> ---
+>  mm/slub.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 21f71cb6cc06..7ae94f79740d 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -218,6 +218,10 @@ DEFINE_STATIC_KEY_FALSE(slub_debug_enabled);
+>  #endif
+>  #endif         /* CONFIG_SLUB_DEBUG */
+>
+> +#ifdef CONFIG_NUMA
+> +static DEFINE_STATIC_KEY_FALSE(strict_numa);
+> +#endif
+> +
+>  /* Structure holding parameters for get_partial() call chain */
+>  struct partial_context {
+>         gfp_t flags;
+> @@ -3957,6 +3961,28 @@ static __always_inline void *__slab_alloc_node(str=
+uct kmem_cache *s,
+>         object =3D c->freelist;
+>         slab =3D c->slab;
+>
+> +#ifdef CONFIG_NUMA
+> +       if (static_branch_unlikely(&strict_numa) &&
+> +                       node =3D=3D NUMA_NO_NODE) {
+> +
+> +               struct mempolicy *mpol =3D current->mempolicy;
+> +
+> +               if (mpol) {
+> +                       /*
+> +                        * Special BIND rule support. If existing slab
+> +                        * is in permitted set then do not redirect
+> +                        * to a particular node.
+> +                        * Otherwise we apply the memory policy to get
+> +                        * the node we need to allocate on.
+> +                        */
+> +                       if (mpol->mode !=3D MPOL_BIND || !slab ||
+> +                                       !node_isset(slab_nid(slab), mpol-=
+>nodes))
+> +
+> +                               node =3D mempolicy_slab_node();
+> +               }
 
-This achieves this by building a test tree of 3 levels and establishing a
-store which ultimately results in a spanned store of this nature.
+Is it intentional to allow the local node only (via
+mempolicy_slab_node()) in interrupt contexts?
 
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- tools/testing/radix-tree/maple.c | 84 ++++++++++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+> +       }
+> +#endif
+> +
+>         if (!USE_LOCKLESS_FAST_PATH() ||
+>             unlikely(!object || !slab || !node_match(slab, node))) {
+>                 object =3D __slab_alloc(s, gfpflags, node, addr, c, orig_=
+size);
+> @@ -5601,6 +5627,22 @@ static int __init setup_slub_min_objects(char *str=
+)
+>  __setup("slab_min_objects=3D", setup_slub_min_objects);
+>  __setup_param("slub_min_objects=3D", slub_min_objects, setup_slub_min_ob=
+jects, 0);
+>
+> +#ifdef CONFIG_NUMA
+> +static int __init setup_slab_strict_numa(char *str)
+> +{
+> +       if (nr_node_ids > 1) {
+> +               static_branch_enable(&strict_numa);
+> +               pr_info("SLUB: Strict NUMA enabled.\n");
+> +       } else
+> +               pr_warn("slab_strict_numa parameter set on non NUMA syste=
+m.\n");
 
-diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
-index 1873ddbe16cc..5fde09999be4 100644
---- a/tools/testing/radix-tree/maple.c
-+++ b/tools/testing/radix-tree/maple.c
-@@ -36406,9 +36406,93 @@ void farmer_tests(void)
- 	check_nomem(&tree);
- }
+nit: this statement should be enclosed within braces per coding style guide=
+line.
+Otherwise everything looks good to me (including the document amended).
 
-+static unsigned long get_last_index(struct ma_state *mas)
-+{
-+	struct maple_node *node = mas_mn(mas);
-+	enum maple_type mt = mte_node_type(mas->node);
-+	unsigned long *pivots = ma_pivots(node, mt);
-+	unsigned long last_index = mas_data_end(mas);
-+
-+	BUG_ON(last_index == 0);
-+
-+	return pivots[last_index - 1] + 1;
-+}
-+
-+/*
-+ * Assert that we handle spanning stores that consume the entirety of the right
-+ * leaf node correctly.
-+ */
-+static void test_spanning_store_regression(void)
-+{
-+	unsigned long from = 0, to = 0;
-+	DEFINE_MTREE(tree);
-+	MA_STATE(mas, &tree, 0, 0);
-+
-+	/*
-+	 * Build a 3-level tree. We require a parent node below the root node
-+	 * and 2 leaf nodes under it, so we can span the entirety of the right
-+	 * hand node.
-+	 */
-+	build_full_tree(&tree, 0, 3);
-+
-+	/* Descend into position at depth 2. */
-+	mas_reset(&mas);
-+	mas_start(&mas);
-+	mas_descend(&mas);
-+	mas_descend(&mas);
-+
-+	/*
-+	 * We need to establish a tree like the below.
-+	 *
-+	 * Then we can try a store in [from, to] which results in a spanned
-+	 * store across nodes B and C, with the maple state at the time of the
-+	 * write being such that only the subtree at A and below is considered.
-+	 *
-+	 * Height
-+	 *  0                              Root Node
-+	 *                                  /      \
-+	 *                    pivot = to   /        \ pivot = ULONG_MAX
-+	 *                                /          \
-+	 *   1                       A [-----]       ...
-+	 *                              /   \
-+	 *                pivot = from /     \ pivot = to
-+	 *                            /       \
-+	 *   2 (LEAVES)          B [-----]  [-----] C
-+	 *                                       ^--- Last pivot to.
-+	 */
-+	while (true) {
-+		unsigned long tmp = get_last_index(&mas);
-+
-+		if (mas_next_sibling(&mas)) {
-+			from = tmp;
-+			to = mas.max;
-+		} else {
-+			break;
-+		}
-+	}
-+
-+	BUG_ON(from == 0 && to == 0);
-+
-+	/* Perform the store. */
-+	mas_set_range(&mas, from, to);
-+	mas_store_gfp(&mas, xa_mk_value(0xdead), GFP_KERNEL);
-+
-+	/* If the regression occurs, the validation will fail. */
-+	mt_validate(&tree);
-+
-+	/* Cleanup. */
-+	__mt_destroy(&tree);
-+}
-+
-+static void regression_tests(void)
-+{
-+	test_spanning_store_regression();
-+}
-+
- void maple_tree_tests(void)
- {
- #if !defined(BENCH)
-+	regression_tests();
- 	farmer_tests();
- #endif
- 	maple_tree_seed();
---
-2.46.2
+Best,
+Hyeonggon
 
