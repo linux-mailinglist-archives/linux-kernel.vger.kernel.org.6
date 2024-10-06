@@ -1,60 +1,86 @@
-Return-Path: <linux-kernel+bounces-352581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6F39920FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:00:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8F4992102
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906851C20A12
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:00:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9EC281C7B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4FB189BB9;
-	Sun,  6 Oct 2024 20:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF3E18A94E;
+	Sun,  6 Oct 2024 20:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TamOtnB0"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zDVFWK7z"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B16EAD8
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDC1189B8B
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728244850; cv=none; b=PZ19jaD6ZJPfWnAWafOLSUAlSlwfI5EZVpJSCrPqpvpjQgq+HqcPh29Gcqo9aMkg/FCjFPE2wVuUdivW8oqOme4NBY20VX+3Sw/AbXPTF94YI5NfEDu+3KLuOCCxmAjl/C/EESjMMODmu6C3Afz4iQ6OIlY/8iQxjFehYGi+fyw=
+	t=1728244974; cv=none; b=B3xWWY6bVSO5zRdCSiBvYPIynuOAt8nBtYvKu42aAAalxm0Q+HzVGCYS9IpMwZIsAtZsgMoiSwxLtBBCzyXHW3WyuFRsi/mlO0YWLPfmWv3/r5s7f8YnEtAUVzWrvYuFs9R3PBADkPCQgwvyHNIRdCSQtQ5N6LFvKCF3XZ8E1jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728244850; c=relaxed/simple;
-	bh=EFJ5znbEWq49VrtfItiZRXPo6AnegBFQLcUYA79CHKg=;
+	s=arc-20240116; t=1728244974; c=relaxed/simple;
+	bh=BKrbQwQkowt1+bzR0D5HzgQAruCM+95JJXJ8j/sE8WI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=azBhARLEv3NizgINqaiKaEQLlQJMVKru5UKmejdXKXEdVuipaLXKvBtpuLh4apRJUXnPPD3++a3hU/bALvtQkF9G5knPyht0WA2Say+FNeHUmpSKR/AeR27tqDHGogWVtWDIldFrkFv8jYP1FF0INIJe0KqI+3UCK4D5N5twvME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TamOtnB0; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5tuM+Y9p6eMLb4eUfE0M90vJXu80keX4OfG+gMrJJys=; b=TamOtnB01UzaU6nemCdO8RUCSF
-	dXPAq+zqlxxvRwBLQMHVTIbajN/o7RbMWCfB/M2gScQSkyjiijxKc2SxZZugvCsyzoh3gGwXWyru4
-	jIr2cqaMNDDfBganpywKqtskvXB0UqhLmmNUHAsgYvfv1ppkQzYSRSpaNCPnmnIpgilaBSbUrpK3i
-	NQ+sEw5Sqs+YdA8fK/ik7ItM5y7fmGLPD5BRABASh1MsRonop24vKyvjm5N8suUpk9kiw+ZEc8y00
-	uM2sLf4AFeGRdzS69Z/qJ8kUMyp2OfYqUSqpS7iTEcH3UWC6ifHd1oTmEgnrsASgC94U30VkBVB3D
-	pCqXzifg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sxXQs-00000001P9B-2s7r;
-	Sun, 06 Oct 2024 20:00:46 +0000
-Date: Sun, 6 Oct 2024 21:00:46 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: David Laight <David.Laight@aculab.com>
-Cc: Brahmajit Das <brahmajit.xyz@gmail.com>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] fs/qnx6: Fix building with GCC 15
-Message-ID: <20241006200046.GF4017910@ZenIV>
-References: <vch6gmzqaeo22c7473qyabrfwxlkdhx5vgvosjyp5l2nwgqnxl@5x3ny35qyfgx>
- <20241004094921.615688-1-brahmajit.xyz@gmail.com>
- <20241004184440.GQ4017910@ZenIV>
- <665bcd89cf5f4679a38e9a84fa0ba42a@AcuMS.aculab.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OsrTuegXoxEw4neOrSuG+O8V4NjrL5MsMckcGLxYNXycj8dflRBzXZsrwnOTFu6A0FZs4H5i3CRtAy4F+eTsMcEAcGtvVd+KpV+PsMX4qA1fip+6u/V1Ta4N61+GwPWudQgZrLF3QebgxdlUej2hJDWOUPKdU7BkBYSAEuii74E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zDVFWK7z; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fac47f0b1aso41930261fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 13:02:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728244971; x=1728849771; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nwbn0gIl1C5EuYZ4Ax1bS6s5OiSrO+rE1+nDa6TAgks=;
+        b=zDVFWK7zgREIbabQ4Z4+8w8yxJAjWLT1T6wXymNnLvGwCM9MN6IHKGmNy/PbqogXv3
+         ZqA8xAIVGoDFoub2XDLpfXbBSZlR5eBymwomRt5dldzd1RVwJ4Lom9CvVCS+zPQfepZg
+         UhjI4AUgzXOs0syMM7BFim0HRD6QMHtbMT/4Ia62mTBG4jGgf4WRWOXXA4FJQwdTLG35
+         pDrMOG5fmmhImKAq+lHmC513axUBCThSHRzeKIpk5P6I51fb9VBAZlFuEhpK+5qmvBIk
+         mDGhrxJpCyxGr+m0JA4WMRjmbZTHKSuU0TgVR100zQCyM/BzLeBByFyHZId11pOB8OSk
+         V40A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728244971; x=1728849771;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nwbn0gIl1C5EuYZ4Ax1bS6s5OiSrO+rE1+nDa6TAgks=;
+        b=UjpNn/QJH9z5gU0IkYliYcAl7U2x3pDNexKJS1F+NiYfTqhS2eCpve9lXqobclkY5q
+         y0hxTnpAoVYou0gwgEjfGZAGgzWmfhSqKAVGHuqQmURKk4mE4TXiEWXRu6KxQwUiVFct
+         5cR6FnzoOg1UkNreEuReuyGNWgs30zcYPHRyhdboXLnzfxTntDoKKVteQuR11W5a5riU
+         JbznSz49TiYLixj695vn6LxxQ5+32FWFOrfePPqsCS0JlgRGCr3rf0mEssYPQotUlNbB
+         NK4MUWyzOmuLM2syhurhce4NukEwq3zUDd0+NzOCWzCq0uhXMPPCOtjsEkyZH1KIsHjt
+         N6cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgZCo72P0061fvR/M7q93zPAlkVCB5eYlP4QAEzRCElGs5XiPsMRA+UwU+LEbXeD/ZALOqP7Fxf3NACdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkxgMF8TsSvXXCVEQxhRQk00wd4zx7wDVoc6yPPM8FOO9fKpP1
+	9lwwZznFD0Nzn0o/NDSXK+RlFMD5veMQKNHIkpI7IeF/LE5otqxRNENmOa5mt4g=
+X-Google-Smtp-Source: AGHT+IGLvn10+PJmGDxTkP6j1/Ue4KcnwP4Pgs7uruaP4zPw2m0MCR9GIhyL+Zb9EOWDtZn84oPPsw==
+X-Received: by 2002:a2e:4e12:0:b0:2fa:d296:6fc6 with SMTP id 38308e7fff4ca-2faf3c146f6mr33027981fa.13.1728244970705;
+        Sun, 06 Oct 2024 13:02:50 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9ab14f7sm6139741fa.17.2024.10.06.13.02.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 13:02:50 -0700 (PDT)
+Date: Sun, 6 Oct 2024 23:02:47 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, geert+renesas@glider.be, neil.armstrong@linaro.org, 
+	arnd@arndb.de, nfraprado@collabora.com, quic_anusha@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
+	quic_srichara@quicinc.com, quic_varada@quicinc.com
+Subject: Re: [PATCH v6 5/7] clk: qcom: Add NSS clock Controller driver for
+ IPQ9574
+Message-ID: <72r4uowjwoxkeqq6bxhdv72wq4rqogirb3yyp2ku66rr2cnzbs@i2lk6sgfvenh>
+References: <20241004080332.853503-1-quic_mmanikan@quicinc.com>
+ <20241004080332.853503-6-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,33 +89,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <665bcd89cf5f4679a38e9a84fa0ba42a@AcuMS.aculab.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20241004080332.853503-6-quic_mmanikan@quicinc.com>
 
-On Sun, Oct 06, 2024 at 07:38:07PM +0000, David Laight wrote:
-> ...
-> > would explain what was really going on - the point is not to make gcc STFU, it's
-> > to make the code more straightforward.  The warning is basically "it smells
-> > somewhat fishy around >here<, might be worth taking a look".  And yes, it turned
-> > out to be fishy; minimal "make it STFU" would be to strip those NULs from
-> > the initializers (i.e. just go for static char match_root[2][3] = {".", ".."}; -
-> > an array initializer is zero-padded if it's shorter than the array), but that
-> > wasn't the only, er, oddity in that code.
+On Fri, Oct 04, 2024 at 01:33:30PM GMT, Manikanta Mylavarapu wrote:
+> From: Devi Priya <quic_devipriy@quicinc.com>
 > 
-> Indeed - looks like it is checking that the first two directory entries
-> are "." and ".." in about the most complex way possible.
+> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
+> devices.
 > 
-> I have vague recollections on some code that ignored the first two entries
-> because they 'must be "." and ".."' - and then failed because some filesystem
-> (and I can't even remember the O/S) didn't meet its expectations!
-> 
-> A simple:
-> 	if (strcmp(dir_entry[0].de_fname, ".") || strcmp(dir_entry[1].de_fname, ".."))
-> 		error = 1;
-> would suffice.
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> ---
+> Changes in V6:
+> 	- Remove 'nsscc_ipq9574_desc' and use 'nss_cc_ipq9574_desc' in
+> 	  probe()
+> 	- Drop of_clk_get() and clk_prepare_enable() in probe() because
+> 	  ethernet node will subscribe to GCC_NSSCC_CLK and enable it.
 
-memcmp(), please.  strcmp() is _not_ guaranteed to be safe without both being
-NUL-terminated; yes, compiler will almost simplify that in case when one of
-the arguments is a string literal, but it's better to do straight memcmp() in
-this case.  It's not worth trying to be fancy there...
+Does the cllock supply the clock controller? If not, it should be
+dropped from bindings too.
+
+> 	- Drop Tested-by tag
+> 
+>  drivers/clk/qcom/Kconfig         |    7 +
+>  drivers/clk/qcom/Makefile        |    1 +
+>  drivers/clk/qcom/nsscc-ipq9574.c | 3084 ++++++++++++++++++++++++++++++
+>  3 files changed, 3092 insertions(+)
+>  create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index a3e2a09e2105..b9a5cc9fd8c8 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -255,6 +255,13 @@ config IPQ_GCC_9574
+>  	  i2c, USB, SD/eMMC, etc. Select this for the root clock
+>  	  of ipq9574.
+>  
+> +config IPQ_NSSCC_9574
+> +        tristate "IPQ9574 NSS Clock Controller"
+> +        depends on ARM64 || COMPILE_TEST
+> +        depends on IPQ_GCC_9574
+> +        help
+> +          Support for NSS clock controller on ipq9574 devices.
+> +
+>  config IPQ_NSSCC_QCA8K
+>  	tristate "QCA8K(QCA8386 or QCA8084) NSS Clock Controller"
+>  	depends on MDIO_BUS
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 2b378667a63f..65b825a54c45 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -36,6 +36,7 @@ obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
+>  obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
+>  obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
+>  obj-$(CONFIG_IPQ_GCC_9574) += gcc-ipq9574.o
+> +obj-$(CONFIG_IPQ_NSSCC_9574)	+= nsscc-ipq9574.o
+>  obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
+>  obj-$(CONFIG_IPQ_NSSCC_QCA8K) += nsscc-qca8k.o
+>  obj-$(CONFIG_MDM_GCC_9607) += gcc-mdm9607.o
+> diff --git a/drivers/clk/qcom/nsscc-ipq9574.c b/drivers/clk/qcom/nsscc-ipq9574.c
+> new file mode 100644
+> index 000000000000..acbd1c3855d2
+> --- /dev/null
+> +++ b/drivers/clk/qcom/nsscc-ipq9574.c
+> @@ -0,0 +1,3084 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/interconnect-provider.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <dt-bindings/clock/qcom,ipq9574-nsscc.h>
+> +#include <dt-bindings/interconnect/qcom,ipq9574.h>
+> +#include <dt-bindings/reset/qcom,ipq9574-nsscc.h>
+> +
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "clk-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-regmap.h"
+> +#include "clk-regmap-divider.h"
+> +#include "clk-regmap-mux.h"
+> +#include "common.h"
+> +#include "reset.h"
+> +
+> +/* Need to match the order of clocks in DT binding */
+> +enum {
+> +	DT_XO,
+> +	DT_BIAS_PLL_CC_CLK,
+> +	DT_BIAS_PLL_NSS_NOC_CLK,
+> +	DT_BIAS_PLL_UBI_NC_CLK,
+> +	DT_GCC_GPLL0_OUT_AUX,
+> +	DT_UNIPHY0_NSS_RX_CLK,
+> +	DT_UNIPHY0_NSS_TX_CLK,
+> +	DT_UNIPHY1_NSS_RX_CLK,
+> +	DT_UNIPHY1_NSS_TX_CLK,
+> +	DT_UNIPHY2_NSS_RX_CLK,
+> +	DT_UNIPHY2_NSS_TX_CLK,
+> +};
+> +
+
+I didn't check the driver, but LGTM.
+
+-- 
+With best wishes
+Dmitry
 
