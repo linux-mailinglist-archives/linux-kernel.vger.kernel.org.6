@@ -1,164 +1,141 @@
-Return-Path: <linux-kernel+bounces-352458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41310991F82
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61EA2991F89
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD981C217AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:53:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 854201C2179C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8AD1898E0;
-	Sun,  6 Oct 2024 15:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D55189B88;
+	Sun,  6 Oct 2024 16:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJ3bmzvT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMNSDbke"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DFE166F39;
-	Sun,  6 Oct 2024 15:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E93813792B;
+	Sun,  6 Oct 2024 16:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728230025; cv=none; b=Kr5xsxVyxwsrmWxROtJV7aQtLkKpPc799YM2xQGxfGRF9Z9wEfFtqH67RLjD9qkO9dI7Xd6pI8Kprdp7ndRmTsdJwtnx0MvAbrNZz2t+dAtwhBqSwfP869H0FPo5YbqeQrHvMlAXpPlU8k0jkIMEKJIF3W0omCQEhqnamKEeNho=
+	t=1728230673; cv=none; b=TVZGKXbn7ctyTuUMALkRFqzp+UIOjpdNO+KeYIDhxPx2lJMCR1fxVCyqk6A8pgEORRbZAgBHMOw/khR0zCGSkuczxQ86ZguBvo00in1Z+QazSR2O5ivQxYgVHTyhwSxfOKSneuZxp3xV1HtQPYUaFMMgPFYy9BnXVReZH7KsXmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728230025; c=relaxed/simple;
-	bh=vo0ma4ptxCvY6yxU5DR1FiiRD2juX28g/eluGxAZNuI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qfbL4KYTNaNwx7dQ4FMSGmXiPSMg3IH/RnsEK7+u0PDXQhnBMdoGCKnL+Mey7eTNXPhSUmD5jt5QY0yD4/IwTS9XUFzZE3L9ixR07lNDi0M1Z98czcdfYBp9E8+U50czSZxRM2amkshdkNGYLnWrMq31XMI9n58vPu5szovH6A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJ3bmzvT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBBBC4CEC5;
-	Sun,  6 Oct 2024 15:53:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728230025;
-	bh=vo0ma4ptxCvY6yxU5DR1FiiRD2juX28g/eluGxAZNuI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rJ3bmzvTOe1HGdSymAaItg/QpNOEcr2N7XzMMErjodQWo4/k8bKx8SGEeoUAIhKKU
-	 xFjCNOUJ43/CH4lDnja1Q0Rw5DOe7M7ZRBhzmZEpfc4ng6nlPPRvIS74JFDxiQBGZK
-	 1M/m5SHZDYPhnGeUVn8xbZCBwcPhQMYq+hOLvAnorombFqjub2Zidt3ue0dSlrJIE6
-	 Az5QzdI7bH+qgf7Y2AjlWfo9tHALGZoygXqZvrHThgJBxpeKy+xqDPCRWsFCvtotaV
-	 Fx2HACQq/GnXuFKcayr+eOrEZryc0Nc7Agjr2hiWvjC1lRUkVXI8EbkeOqMLWS9NdS
-	 tEAZSHeFa8PRA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sxTZm-000o7I-PJ;
-	Sun, 06 Oct 2024 16:53:42 +0100
-Date: Sun, 06 Oct 2024 16:53:42 +0100
-Message-ID: <861q0t6xdl.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
-In-Reply-To: <TYCPR01MB120935A52A777BF62344B05C3C2772@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-References: <20240930145539.357573-1-fabrizio.castro.jz@renesas.com>
-	<87ldz9uomz.wl-maz@kernel.org>
-	<TYCPR01MB12093A2984117267AC18D679CC2762@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-	<86frph6jir.wl-maz@kernel.org>
-	<TYCPR01MB120935A52A777BF62344B05C3C2772@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1728230673; c=relaxed/simple;
+	bh=34Fedq5x8l/T9bE90W84WAGeoMX0EdQtZtaZfYn9+js=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ny6zkm/VV3Gukq3vvmnZ6oJ5bOGRFKcHl5ySWqBo8hWQKRodwEiZsWPgILx2ukUYFKuCZkhhy5xAnkgY6JdtmnZyXg66X/kxeNffFfrhB7r3DY6xWbQgkw02vb57Juim6MHplWe/KSEd0q88FJWBmGSRvexST3P7syaK7/C0VBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMNSDbke; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e28ad6b7f1fso711140276.1;
+        Sun, 06 Oct 2024 09:04:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728230671; x=1728835471; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uch5zWkAziPgJRQdKvEezF5yVQHunIRJ5aY+mbi1jxQ=;
+        b=HMNSDbkehz2EdKzm1+9jrQgZ4qWuVoTXvsP7sG7IWFM2EIj86sZs7+zoGGayOyDqfp
+         5zfP2dNVi26ZOaBb943JPSh/xDBOUr0lezlUAaTWHmPU/fYeph/Tnjze33DEqyIQjtqF
+         K6mFjwPinl3iyngOnbkm6kMgkOzVNAG/MGssZ1ovp1JNHFinE/iRcF4svb+yKoNWuLT+
+         blg+W88beWa5tJZsiHTVlyCoRxlbpWJMRfHSPvpnAsl9lkLiKXY7OCTa5sRiX3inTtDz
+         PJo0bl0LAnJpFoZ42Bem6T/jlIAF4UxbsZFa+F+42o7z8bIllv9yYLS4a4UhPOEwwz4b
+         MCOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728230671; x=1728835471;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uch5zWkAziPgJRQdKvEezF5yVQHunIRJ5aY+mbi1jxQ=;
+        b=I3KP5EzYI5dF3w/a7thdk9v4m/ZgXJqrDZRVB5EvORYWGdF1H67+gcNTbTH475U3Fj
+         BhdjQ6BSL4AsEk1DXz9ebzvdDMEZH9xMyaWNK/wRxPAIyhdPOSR9qFHfpOY49jAxhgCE
+         RKyPJ3URLx5nYeEla1aDKXE+Y35I1U/Up7yUTmNyI7IZWQUOVbqKxGgYKeMdLXuepHoG
+         UhdCWvaAc+UDMnb3r2rIoTlCRQB6+PtkWS3m+Kb5g2g9FM0aVw6/bYhX3/1VJ/EFNzQZ
+         zLIDEL+B309yvdQCdn1E86IKE4l/2MneYALeWrarohSu5d4eDz/NLEBRQk16C+D1bmEW
+         i1pw==
+X-Forwarded-Encrypted: i=1; AJvYcCViIRKwcHJ3s5GkG85TUx4wykDrABenr0CLGOkSd0FkpqZ73om/QdR2SPXAwTxf/+10ZwhhCYvQRcFI@vger.kernel.org, AJvYcCXefFM087Gmoa11+fbumjBqdFCI5df0smPB1UAtEmErk0PifVWnqDq/71u2jGA8uMVJk1lPmqYQlz4dEw2SvEQc@vger.kernel.org, AJvYcCXoeFjM4VbqGD1IT+8DCf9erOorDYrYq+CaJ2BQqEKqPRGJ0uVmxbnDxtqvrsKtIetx984PNnCHyFyEfZh0@vger.kernel.org, AJvYcCXqZZGUoRwC21WNfYz8PspVR18J++iwwGgpfcyO4HAzAmhaG6mQa7cxGFt8PNFZ8kLUpd2naStL8bjA@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwQDuhDHUyhsRnwla3KzzOfKE5AIVY05K+dB0wnA4Ko/OZnWoo
+	tuQyigzMUC+UDC6uyIJsKpWWnbVn772GiawpE58xdeetg8TpOu2oFaK8f41l++tehycKnVFhYxN
+	Cig3bp2gDzxw3WKiSoMa0ZMF1wCU=
+X-Google-Smtp-Source: AGHT+IHghEmYGvQOkKyyuJZaMY/eRKpityYTGhDKnMiJovkVuEa93BGTo1Fa/3AOIwWu8CpUXNrp8IgagfvkZZpUw1g=
+X-Received: by 2002:a05:6902:1142:b0:e26:1041:4986 with SMTP id
+ 3f1490d57ef6-e28937e2eadmr7591066276.26.1728230669839; Sun, 06 Oct 2024
+ 09:04:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: fabrizio.castro.jz@renesas.com, tglx@linutronix.de, geert+renesas@glider.be, prabhakar.mahadev-lad.rj@bp.renesas.com, linux-kernel@vger.kernel.org, Chris.Paterson2@renesas.com, biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com> <20240911-xtheadvector-v10-6-8d3930091246@rivosinc.com>
+In-Reply-To: <20240911-xtheadvector-v10-6-8d3930091246@rivosinc.com>
+From: Andy Chiu <andybnac@gmail.com>
+Date: Mon, 7 Oct 2024 00:04:18 +0800
+Message-ID: <CAFTtA3M3NhooM5u7woDO3juAgQK=EpF-aSf69VJm30aj7iNfZA@mail.gmail.com>
+Subject: Re: [PATCH v10 06/14] RISC-V: define the elements of the VCSR vector CSR
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Samuel Holland <samuel.holland@sifive.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
+	Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 01 Oct 2024 12:54:30 +0100,
-Fabrizio Castro <fabrizio.castro.jz@renesas.com> wrote:
-> 
-> Hi Marc,
-> 
-> thank you for your reply.
-> 
-> > From: Marc Zyngier <maz@kernel.org>
-> > Sent: Monday, September 30, 2024 8:15 PM
-> > To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Subject: Re: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
-> > 
-> > On Mon, 30 Sep 2024 17:36:20 +0100,
-> > Fabrizio Castro <fabrizio.castro.jz@renesas.com> wrote:
-> > >
-> > > Hi Marc,
-> > >
-> > > Thanks for your feedback.
-> > >
-> > > > From: Marc Zyngier <maz@kernel.org>
-> > > > Sent: Monday, September 30, 2024 4:50 PM
-> > > > To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > > > Subject: Re: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
-> > > >
-> > > > On Mon, 30 Sep 2024 15:55:39 +0100,
-> > > > Fabrizio Castro <fabrizio.castro.jz@renesas.com> wrote:
-> > > > >
-> > > > > rzg2l_irqc_common_init calls of_find_device_by_node, but the
-> > > > > corresponding put_device call is missing.
-> > > > >
-> > > > > Make sure we call put_device both when failing and when succeeding.
-> > > >
-> > > > What sort of lifetime are you trying to enforce?
-> > >
-> > > Function rzg2l_irqc_common_init uses pdev->dev until its very end.
-> > > My understanding is that we should decrement the reference counter
-> > > once we are fully done with it. Is my understanding correct?
-> > 
-> > "done with it" is what scares me. Specially when I see code like this:
-> > 
-> > 	rzg2l_irqc_data = devm_kzalloc(&pdev->dev, sizeof(*rzg2l_irqc_data), GFP_KERNEL);
-> > 	if (!rzg2l_irqc_data)
-> > 		return -ENOMEM;
-> > 
-> > 	rzg2l_irqc_data->irqchip = irq_chip;
-> > 
-> > 	rzg2l_irqc_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
-> > 	if (IS_ERR(rzg2l_irqc_data->base))
-> > 		return PTR_ERR(rzg2l_irqc_data->base);
-> > 
-> > If you drop the reference on the device, you are allowing it to be
-> > removed, and everything the driver cares about to disappear behind
-> > its back.
-> 
-> Thanks for the explanation. I think this means that we don't need to
-> put the device on the successful path, but we still need to put the
-> device on the error path.
+Charlie Jenkins <charlie@rivosinc.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=8812=
+=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=881:57=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> From: Heiko Stuebner <heiko@sntech.de>
+>
+> The VCSR CSR contains two elements VXRM[2:1] and VXSAT[0].
+>
+> Define constants for those to access the elements in a readable way.
+>
+> Acked-by: Guo Ren <guoren@kernel.org>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@vrull.eu>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 
-That I would agree.
+Reviewed-by: Andy Chiu <andybnac@gmail.com>
 
-> If I take out the put_device for the successful path, and I run make
-> coccicheck, I get the below:
-> drivers/irqchip/irq-renesas-rzg2l.c:601:1-7: ERROR: missing
-> put_device; call of_find_device_by_node on line 538, but without a
-> corresponding object release within this function.
-> 
-> Can I just ignore it?
-
-My general approach is that these scripts are not a substitute for
-reasoning, and in this instance, the advise seems pretty misplaced.
-
-I would suggest you add a comment to keep the next script kiddie at
-bay.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+> ---
+>  arch/riscv/include/asm/csr.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+> index 25966995da04..3eeb07d73065 100644
+> --- a/arch/riscv/include/asm/csr.h
+> +++ b/arch/riscv/include/asm/csr.h
+> @@ -300,6 +300,10 @@
+>  #define CSR_STIMECMP           0x14D
+>  #define CSR_STIMECMPH          0x15D
+>
+> +#define VCSR_VXRM_MASK                 3
+> +#define VCSR_VXRM_SHIFT                        1
+> +#define VCSR_VXSAT_MASK                        1
+> +
+>  /* Supervisor-Level Window to Indirectly Accessed Registers (AIA) */
+>  #define CSR_SISELECT           0x150
+>  #define CSR_SIREG              0x151
+>
+> --
+> 2.45.0
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
