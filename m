@@ -1,141 +1,224 @@
-Return-Path: <linux-kernel+bounces-352459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61EA2991F89
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:04:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CFD991F8B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 854201C2179C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:04:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F653282409
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D55189B88;
-	Sun,  6 Oct 2024 16:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFF0189B88;
+	Sun,  6 Oct 2024 16:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMNSDbke"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGprtw1B"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E93813792B;
-	Sun,  6 Oct 2024 16:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491851F94A;
+	Sun,  6 Oct 2024 16:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728230673; cv=none; b=TVZGKXbn7ctyTuUMALkRFqzp+UIOjpdNO+KeYIDhxPx2lJMCR1fxVCyqk6A8pgEORRbZAgBHMOw/khR0zCGSkuczxQ86ZguBvo00in1Z+QazSR2O5ivQxYgVHTyhwSxfOKSneuZxp3xV1HtQPYUaFMMgPFYy9BnXVReZH7KsXmQ=
+	t=1728230890; cv=none; b=ZRwRdk5uM8RfdnJg3UVRadu3vew867KN/zWQY7WAVGtH8ukQeDEZn/67LIAS1YD7R/JDve/3E5iwvGyJTuhnn+SniR5QnLny2tJyLQ4MyN3k680/XmSXtGyrH+c51B8lTXzHgl4Ep5vRtlu/2yvF8VJxR1xhYjWfjW00MafpJoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728230673; c=relaxed/simple;
-	bh=34Fedq5x8l/T9bE90W84WAGeoMX0EdQtZtaZfYn9+js=;
+	s=arc-20240116; t=1728230890; c=relaxed/simple;
+	bh=Lreic1iRPX++5eE3HdN/f59iIdJMOcSa52+YiZtKLb8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ny6zkm/VV3Gukq3vvmnZ6oJ5bOGRFKcHl5ySWqBo8hWQKRodwEiZsWPgILx2ukUYFKuCZkhhy5xAnkgY6JdtmnZyXg66X/kxeNffFfrhB7r3DY6xWbQgkw02vb57Juim6MHplWe/KSEd0q88FJWBmGSRvexST3P7syaK7/C0VBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMNSDbke; arc=none smtp.client-ip=209.85.219.172
+	 To:Cc:Content-Type; b=QeQietrSwHP4Q1ffe6Xo+PPHe7r62iUvtmt/HrkNwbiSKLJxFsk5jDKfQvsxYrw4jHBbcxhccNyX4FcxJZjukjOW32kF4ln/REIhqC/DL3S3W1IGuoaFJy+yZCaYguy2RADoTYFhdSX9fxj76rujd576BEld6c+qT4lp2m7cx7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGprtw1B; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e28ad6b7f1fso711140276.1;
-        Sun, 06 Oct 2024 09:04:32 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cbbb1727eso35870765e9.2;
+        Sun, 06 Oct 2024 09:08:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728230671; x=1728835471; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728230886; x=1728835686; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Uch5zWkAziPgJRQdKvEezF5yVQHunIRJ5aY+mbi1jxQ=;
-        b=HMNSDbkehz2EdKzm1+9jrQgZ4qWuVoTXvsP7sG7IWFM2EIj86sZs7+zoGGayOyDqfp
-         5zfP2dNVi26ZOaBb943JPSh/xDBOUr0lezlUAaTWHmPU/fYeph/Tnjze33DEqyIQjtqF
-         K6mFjwPinl3iyngOnbkm6kMgkOzVNAG/MGssZ1ovp1JNHFinE/iRcF4svb+yKoNWuLT+
-         blg+W88beWa5tJZsiHTVlyCoRxlbpWJMRfHSPvpnAsl9lkLiKXY7OCTa5sRiX3inTtDz
-         PJo0bl0LAnJpFoZ42Bem6T/jlIAF4UxbsZFa+F+42o7z8bIllv9yYLS4a4UhPOEwwz4b
-         MCOw==
+        bh=jsNcMiZIDNLMekYvfzBCcKUfltxAAz74Dl2YC6o5gfY=;
+        b=TGprtw1BJBrCaNlIkGPFk+uxnENmdtJAm2eZUeYuknegNIBiMtIVZZeVjZIPbtF/Jr
+         DMuS+Ugn/TD0VTCQpH00VFe4EU2Jv/fxMEhDwUZ7JBrnRuxnoWZo5/62k0Tk+whdxhSa
+         vFXFLcay8sMOo19JhvXUMo0mzAsed/+TDeC3naFe8Xq8TiHnb0PxZO0RGtj7zX3NBdmW
+         1pmGD/f6iAgGNb+Q4A2gKIo7TBPeeVJjOyEI/OraPDfnmIhSLUnfQ6+AXrfbl5XVQ2A/
+         kjjs1qgzOkK2lb+klI+3JwQeL4kWAJ9mSeZiXXj1ct8tj4FNmm83N09RGPdEAKwYChIS
+         gTSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728230671; x=1728835471;
+        d=1e100.net; s=20230601; t=1728230886; x=1728835686;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Uch5zWkAziPgJRQdKvEezF5yVQHunIRJ5aY+mbi1jxQ=;
-        b=I3KP5EzYI5dF3w/a7thdk9v4m/ZgXJqrDZRVB5EvORYWGdF1H67+gcNTbTH475U3Fj
-         BhdjQ6BSL4AsEk1DXz9ebzvdDMEZH9xMyaWNK/wRxPAIyhdPOSR9qFHfpOY49jAxhgCE
-         RKyPJ3URLx5nYeEla1aDKXE+Y35I1U/Up7yUTmNyI7IZWQUOVbqKxGgYKeMdLXuepHoG
-         UhdCWvaAc+UDMnb3r2rIoTlCRQB6+PtkWS3m+Kb5g2g9FM0aVw6/bYhX3/1VJ/EFNzQZ
-         zLIDEL+B309yvdQCdn1E86IKE4l/2MneYALeWrarohSu5d4eDz/NLEBRQk16C+D1bmEW
-         i1pw==
-X-Forwarded-Encrypted: i=1; AJvYcCViIRKwcHJ3s5GkG85TUx4wykDrABenr0CLGOkSd0FkpqZ73om/QdR2SPXAwTxf/+10ZwhhCYvQRcFI@vger.kernel.org, AJvYcCXefFM087Gmoa11+fbumjBqdFCI5df0smPB1UAtEmErk0PifVWnqDq/71u2jGA8uMVJk1lPmqYQlz4dEw2SvEQc@vger.kernel.org, AJvYcCXoeFjM4VbqGD1IT+8DCf9erOorDYrYq+CaJ2BQqEKqPRGJ0uVmxbnDxtqvrsKtIetx984PNnCHyFyEfZh0@vger.kernel.org, AJvYcCXqZZGUoRwC21WNfYz8PspVR18J++iwwGgpfcyO4HAzAmhaG6mQa7cxGFt8PNFZ8kLUpd2naStL8bjA@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwQDuhDHUyhsRnwla3KzzOfKE5AIVY05K+dB0wnA4Ko/OZnWoo
-	tuQyigzMUC+UDC6uyIJsKpWWnbVn772GiawpE58xdeetg8TpOu2oFaK8f41l++tehycKnVFhYxN
-	Cig3bp2gDzxw3WKiSoMa0ZMF1wCU=
-X-Google-Smtp-Source: AGHT+IHghEmYGvQOkKyyuJZaMY/eRKpityYTGhDKnMiJovkVuEa93BGTo1Fa/3AOIwWu8CpUXNrp8IgagfvkZZpUw1g=
-X-Received: by 2002:a05:6902:1142:b0:e26:1041:4986 with SMTP id
- 3f1490d57ef6-e28937e2eadmr7591066276.26.1728230669839; Sun, 06 Oct 2024
- 09:04:29 -0700 (PDT)
+        bh=jsNcMiZIDNLMekYvfzBCcKUfltxAAz74Dl2YC6o5gfY=;
+        b=wIUZy1xc0yKkuponHbetAFA0ToHnjT3qzda0to/4z7joD+aY3gfrJA8PhCWonaAuoA
+         EaSIz1q4FP6dFdnxBbVJf+vDp4US60nLeRTBaQEnav2HsKsZkkfZPmn6R99aW7N9iawp
+         g0cNZmg7cZWhTxAfXetjXmDd5dFlYIcLW4Z8Vecs/Nmc+SZSZskOxbBf0Q5k4M2zSB2I
+         yucbasWkdfRktcNsSlhARcEhUtU4e5z1UXf7oSZvO+KR9nQAhTZyZBBcmV+jVvTHABEO
+         +oo75OFc9zKNrbit05H70FtgeZs/x9HjXa/7aRMwZXqwcIhkyvwFQaozD/fx1C01ZLWp
+         Vp0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWeZynFDB1T0zZ9hhtgiSoYL8gji78s5MrnHWSz7VBW6JnVNVb65tuiXmI/fu/kPsIvXa+sGgvnw3VcYM0=@vger.kernel.org, AJvYcCXhNMELyMatSBMoCqeCiEhGJZvIduIKEXXN/bE6O6GY4vEUWML65x1D9vFcRgeRshJDR1oEv5/n@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIyIbWXPUIT6p37EbIagLMMys9yf82TZ3uAlLph7U5vhECmbXU
+	16wT1itnsk1PbhyTKEy3EiccatUqu/TLGR8/61uFpV241f6zAFszglFy6stxSLMuKKK8ejh6ocp
+	6b/CsHi+o/vxs2OPhEbruesvMlK7m3A==
+X-Google-Smtp-Source: AGHT+IGOQ41gh4KuGUucHi4/IGlmrEKzSxSXLKsTklVro8WF8T4vcbtIwVd0LSIMqfiDV2eDxJ2FnO9Uy0WyBPbNGn0=
+X-Received: by 2002:a05:600c:35c9:b0:42c:bb41:a079 with SMTP id
+ 5b1f17b1804b1-42f85a70035mr75631645e9.1.1728230886201; Sun, 06 Oct 2024
+ 09:08:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com> <20240911-xtheadvector-v10-6-8d3930091246@rivosinc.com>
-In-Reply-To: <20240911-xtheadvector-v10-6-8d3930091246@rivosinc.com>
-From: Andy Chiu <andybnac@gmail.com>
-Date: Mon, 7 Oct 2024 00:04:18 +0800
-Message-ID: <CAFTtA3M3NhooM5u7woDO3juAgQK=EpF-aSf69VJm30aj7iNfZA@mail.gmail.com>
-Subject: Re: [PATCH v10 06/14] RISC-V: define the elements of the VCSR vector CSR
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Samuel Holland <samuel.holland@sifive.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
-	Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, 
-	Conor Dooley <conor.dooley@microchip.com>
+References: <20241001075858.48936-1-linyunsheng@huawei.com>
+ <20241001075858.48936-7-linyunsheng@huawei.com> <CAKgT0UdMwDyf9u6sQVjsJuxpWmKNi3RYkB7UOSvH6QxXvG7_zQ@mail.gmail.com>
+ <a6091b22-29a8-4691-99c4-72cbd4318938@gmail.com>
+In-Reply-To: <a6091b22-29a8-4691-99c4-72cbd4318938@gmail.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Sun, 6 Oct 2024 09:07:29 -0700
+Message-ID: <CAKgT0UeC8m8LATjJtZS7pcgsqKj3WUygtcrzMNoBh-VkS11q8A@mail.gmail.com>
+Subject: Re: [PATCH net-next v19 06/14] mm: page_frag: reuse existing space
+ for 'size' and 'pfmemalloc'
+To: Yunsheng Lin <yunshenglin0825@gmail.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Charlie Jenkins <charlie@rivosinc.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=8812=
-=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=881:57=E5=AF=AB=E9=81=93=EF=BC=
-=9A
+On Sat, Oct 5, 2024 at 6:06=E2=80=AFAM Yunsheng Lin <yunshenglin0825@gmail.=
+com> wrote:
 >
-> From: Heiko Stuebner <heiko@sntech.de>
+> On 10/4/2024 6:40 AM, Alexander Duyck wrote:
+> > On Tue, Oct 1, 2024 at 12:59=E2=80=AFAM Yunsheng Lin <yunshenglin0825@g=
+mail.com> wrote:
+> >>
+> >> Currently there is one 'struct page_frag' for every 'struct
+> >> sock' and 'struct task_struct', we are about to replace the
+> >> 'struct page_frag' with 'struct page_frag_cache' for them.
+> >> Before begin the replacing, we need to ensure the size of
+> >> 'struct page_frag_cache' is not bigger than the size of
+> >> 'struct page_frag', as there may be tens of thousands of
+> >> 'struct sock' and 'struct task_struct' instances in the
+> >> system.
+> >>
+> >> By or'ing the page order & pfmemalloc with lower bits of
+> >> 'va' instead of using 'u16' or 'u32' for page size and 'u8'
+> >> for pfmemalloc, we are able to avoid 3 or 5 bytes space waste.
+> >> And page address & pfmemalloc & order is unchanged for the
+> >> same page in the same 'page_frag_cache' instance, it makes
+> >> sense to fit them together.
+> >>
+> >> After this patch, the size of 'struct page_frag_cache' should be
+> >> the same as the size of 'struct page_frag'.
+> >>
+> >> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> >> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> >> ---
+> >>   include/linux/mm_types_task.h   | 19 +++++----
+> >>   include/linux/page_frag_cache.h | 26 +++++++++++-
+> >>   mm/page_frag_cache.c            | 75 +++++++++++++++++++++++--------=
+--
+> >>   3 files changed, 88 insertions(+), 32 deletions(-)
+> >>
+> >> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_ta=
+sk.h
+> >> index 0ac6daebdd5c..a82aa80c0ba4 100644
+> >> --- a/include/linux/mm_types_task.h
+> >> +++ b/include/linux/mm_types_task.h
+> >> @@ -47,18 +47,21 @@ struct page_frag {
+> >>   #define PAGE_FRAG_CACHE_MAX_SIZE       __ALIGN_MASK(32768, ~PAGE_MAS=
+K)
+> >>   #define PAGE_FRAG_CACHE_MAX_ORDER      get_order(PAGE_FRAG_CACHE_MAX=
+_SIZE)
+> >>   struct page_frag_cache {
+> >> -       void *va;
+> >> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+> >> +       /* encoded_page consists of the virtual address, pfmemalloc bi=
+t and
+> >> +        * order of a page.
+> >> +        */
+> >> +       unsigned long encoded_page;
+> >> +
+> >> +       /* we maintain a pagecount bias, so that we dont dirty cache l=
+ine
+> >> +        * containing page->_refcount every time we allocate a fragmen=
+t.
+> >> +        */
+> >> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <=3D 32)
+> >>          __u16 offset;
+> >> -       __u16 size;
+> >> +       __u16 pagecnt_bias;
+> >>   #else
+> >>          __u32 offset;
+> >> +       __u32 pagecnt_bias;
+> >>   #endif
+> >> -       /* we maintain a pagecount bias, so that we dont dirty cache l=
+ine
+> >> -        * containing page->_refcount every time we allocate a fragmen=
+t.
+> >> -        */
+> >> -       unsigned int            pagecnt_bias;
+> >> -       bool pfmemalloc;
+> >>   };
+> >>
+> >>   /* Track pages that require TLB flushes */
+> >> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag=
+_cache.h
+> >> index 0a52f7a179c8..75aaad6eaea2 100644
+> >> --- a/include/linux/page_frag_cache.h
+> >> +++ b/include/linux/page_frag_cache.h
+> >> @@ -3,18 +3,40 @@
+> >>   #ifndef _LINUX_PAGE_FRAG_CACHE_H
+> >>   #define _LINUX_PAGE_FRAG_CACHE_H
+> >>
+> >> +#include <linux/bits.h>
+> >>   #include <linux/log2.h>
+> >>   #include <linux/mm_types_task.h>
+> >>   #include <linux/types.h>
+> >>
+> >> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+> >> +/* Use a full byte here to enable assembler optimization as the shift
+> >> + * operation is usually expecting a byte.
+> >> + */
+> >> +#define PAGE_FRAG_CACHE_ORDER_MASK             GENMASK(7, 0)
+> >> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT       8
+> >> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT         BIT(PAGE_FRAG_CACHE_PF=
+MEMALLOC_SHIFT)
+> >> +#else
+> >> +/* Compiler should be able to figure out we don't read things as any =
+value
+> >> + * ANDed with 0 is 0.
+> >> + */
+> >> +#define PAGE_FRAG_CACHE_ORDER_MASK             0
+> >> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT       0
+> >> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT         BIT(PAGE_FRAG_CACHE_PF=
+MEMALLOC_SHIFT)
+> >> +#endif
+> >> +
+> >
+> > Minor nit on this. You probably only need to have
+> > PAGE_FRAG_CACHE_ORDER_SHIFT defined in the ifdef. The PFMEMALLOC bit
 >
-> The VCSR CSR contains two elements VXRM[2:1] and VXSAT[0].
->
-> Define constants for those to access the elements in a readable way.
->
-> Acked-by: Guo Ren <guoren@kernel.org>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@vrull.eu>
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> I guess you meant PAGE_FRAG_CACHE_ORDER_MASK here instead of
+> PAGE_FRAG_CACHE_ORDER_SHIFT, as the ORDER_SHIFT is always
+> zero?
 
-Reviewed-by: Andy Chiu <andybnac@gmail.com>
+Yes.
 
-> ---
->  arch/riscv/include/asm/csr.h | 4 ++++
->  1 file changed, 4 insertions(+)
+> > code is the same in both so you could pull it out.
+> >
+> > Also depending on how you defined it you could just define the
+> > PFMEMALLOC_BIT as the ORDER_MASK + 1.
 >
-> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> index 25966995da04..3eeb07d73065 100644
-> --- a/arch/riscv/include/asm/csr.h
-> +++ b/arch/riscv/include/asm/csr.h
-> @@ -300,6 +300,10 @@
->  #define CSR_STIMECMP           0x14D
->  #define CSR_STIMECMPH          0x15D
->
-> +#define VCSR_VXRM_MASK                 3
-> +#define VCSR_VXRM_SHIFT                        1
-> +#define VCSR_VXSAT_MASK                        1
-> +
->  /* Supervisor-Level Window to Indirectly Accessed Registers (AIA) */
->  #define CSR_SISELECT           0x150
->  #define CSR_SIREG              0x151
->
-> --
-> 2.45.0
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> But the PFMEMALLOC_SHIFT still need to be defined as it is used in
+> page_frag_encode_page(), right? I am not sure if I understand what is
+> the point of defining the PFMEMALLOC_BIT as the ORDER_MASK + 1 instead
+> of defining the PFMEMALLOC_BIT as BIT(PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT)
+> here.
+
+Actually the shift probably isn't needed. Since it is a single bit
+value you could just use a multiply by the bit and it would accomplish
+the same thing as the shift and would likely be converted to the same
+assembler code.
 
