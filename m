@@ -1,393 +1,502 @@
-Return-Path: <linux-kernel+bounces-352643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B0D992212
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:13:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD52C992217
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2CF01C20A83
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:13:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 317A31F215C1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD2D18BC0C;
-	Sun,  6 Oct 2024 22:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86A118BC10;
+	Sun,  6 Oct 2024 22:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ljzj2x5y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gyD5qZqU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mlrdEZ0x";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JNuVtOKk"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=brun.one header.i=@brun.one header.b="KdXgyT2+"
+Received: from mx.dolansoft.org (s2.dolansoft.org [212.51.146.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1460170A00;
-	Sun,  6 Oct 2024 22:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0345918A936;
+	Sun,  6 Oct 2024 22:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.51.146.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728252812; cv=none; b=dKq1nbQ+6MN+n/Q1C2tPXN5VlWXm210ocnx3Ibw+nM8rXg0F0l1cpH7ylfoGJHqvFQFA385HoF673Klh+kihUCKhOor0ruGPz7GcAUsy97e8U22O3XE6ozjKpwO4cYDwwX6gln4L3QGRYNM6Ez935ZW4GfbN+lqCcGSosWDep4M=
+	t=1728253311; cv=none; b=PKCYKuCIjh3KdLaL0WlKyu7DsnQgJaer8zD6ZYyyLozezjnz9rAuzudoTU2xoiTEnV+H0TIcDbaFfMkNgdZmzrOoG5n7hCagGv7blS3TJNutUxSV0a/lfUPJWufK+XSZrl/4DdK9dpep+FqQrzDxCiDobyzxHasvkfySRXjznuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728252812; c=relaxed/simple;
-	bh=xXoGDMC8xpyHOBYT6KwiEODFv+A8vKOJBl+cBMEQV30=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=DvbhWWxjL7IK7TTwjfay9o1x71SU5bbw+ExPsoHt+zUs3K4H55d0E6bT9AnQNYRuGucXvKQwq4s9QzgEDj4+SBXgeb7qjLDBvSeMp1oApOzOjOynQWNRLZ1pG95ZpY60mpf19EEAl0F/D2d5BDx84XB/wNllczA0kUoXC0os0dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ljzj2x5y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gyD5qZqU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mlrdEZ0x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JNuVtOKk; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E6F7221F07;
-	Sun,  6 Oct 2024 22:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728252803; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ORk1XbnK/D7uyZvPAd+4P1vqgjgkIcTkKLnSR0816gc=;
-	b=Ljzj2x5ynvc46HK3CUj1myghYf1+tDFHyOKVlQjjUfSgy0kAUyNG9OzaUp/SjSufz5JGSN
-	lgXj8uyW1xSe0WYpJ0mO3ch1035xjQEtw7c24kfd/rLCASXCLiKGfab8lSVptPAH2D0vIz
-	IMdsmX5l3gnQVkkPg5X1OueikAxeZXs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728252803;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ORk1XbnK/D7uyZvPAd+4P1vqgjgkIcTkKLnSR0816gc=;
-	b=gyD5qZqUBUGOeUcCVfefhxTYcViPib3tFLb6MMM3R4qR9Q57EYzmZf9iZ+zKdTqrzNCUi/
-	/dOAcGykDabMs6CQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=mlrdEZ0x;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=JNuVtOKk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728252802; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ORk1XbnK/D7uyZvPAd+4P1vqgjgkIcTkKLnSR0816gc=;
-	b=mlrdEZ0xlMR2rCTSdtk7eAS4KI+hdCEKBXyHlplmtH40HawQXjyAlRwcpfySu35C6lJybv
-	2rUJ+fceTeFBqsTeLrM7y+WhcZTxKZXFTCFJnKfXQqsIvGW2VFw148Rcz34+3dH8LcyF7H
-	2TNe+BfyTRtJ4fG9w5ODua1M3eJd53M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728252802;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ORk1XbnK/D7uyZvPAd+4P1vqgjgkIcTkKLnSR0816gc=;
-	b=JNuVtOKk4L+v9KU2lJFu19TY+J8u+xaFvzOtduC6ukuHP4X19hfuil8+fKvDpYSFb2T+8Q
-	/T4K0rKNIlVlcEBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 38D4B13793;
-	Sun,  6 Oct 2024 22:13:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Zs2MN38LA2eFUwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Sun, 06 Oct 2024 22:13:19 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1728253311; c=relaxed/simple;
+	bh=hDTKvGcyAk3tfM8RWDQSWZKAu+7XxghhIfbuwt5TmtU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m2pb+wX2urWgCm2VlRN9QAGIUZtj3TW3kCNbT+dxhhiRlvgOgjcg/SywzefYBPXLdmm6qk1vZJHv2WtiA+EdSjUPEoHKmwBE1XbSDjfl+hHsoljaO619FWE27Su9c+5MntIKIBJ3gIfLv7iCsNxIZngaXyRMa0VkYa6AMG0nS3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brun.one; spf=pass smtp.mailfrom=brun.one; dkim=pass (2048-bit key) header.d=brun.one header.i=@brun.one header.b=KdXgyT2+; arc=none smtp.client-ip=212.51.146.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brun.one
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brun.one
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=brun.one;
+	s=s1; h=MIME-Version:Message-ID:Date:Subject:Cc:To:From:In-Reply-To:
+	References:From:To:Subject:Date:Message-ID:Reply-To;
+	bh=3NJZ45IQkCs7FVbGfcTw7E8iDXbxUVNfilwapFzhP5M=; b=KdXgyT2+Q8E/nSa3AgikH+thne
+	q+moJRBbB8OORET9TR4k75jFyPOwM9MtJ/ZRoR4mRbX8Ntdy1Mp/0JGfkJStnclxL+tDUJxPr1ZsU
+	WmWx+jjdBDswKCbZm5Xpvr/c0s4nzDsAkTlzLT/9Yk038BwaGiGW47t2U4ANpeBOZ7N1ZhADVfI8D
+	8cA+rOzMHQuFVvmB1W4VK+VrLwH1iZUZ/SFYLxKGdOrTUTkHeeYA8OtYXx2JA5q6mFzYgUNKUalzG
+	sc2TjQcjb9V4n+bHJ1UcDuuHMfeO8lekeryaaimCuTygTK8Gj80XYveOyHkfszZXl87QpW7JqvuB+
+	9xJnABwA==;
+Received: from [212.51.153.89] (helo=localhost.localdomain)
+	by mx.dolansoft.org with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98)
+	(envelope-from <lorenz@dolansoft.org>)
+	id 1sxZ9C-0000000076m-00kW;
+	Sun, 06 Oct 2024 21:50:38 +0000
+From: Lorenz Brun <lorenz@brun.one>
+To: Igor Russkikh <irusskikh@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: atlantic: support reading SFP module info
+Date: Sun,  6 Oct 2024 23:50:25 +0200
+Message-ID: <20241006215028.79486-1-lorenz@brun.one>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Chuck Lever" <chuck.lever@oracle.com>
-Cc: Pali =?utf-8?q?Roh=C3=A1r?= <pali@kernel.org>,
- "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH] nfsd: Fix NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT
-In-reply-to: <ZwLN6RtYwVIkUfaL@tissot.1015granger.net>
-References: <>, <ZwLN6RtYwVIkUfaL@tissot.1015granger.net>
-Date: Mon, 07 Oct 2024 09:13:17 +1100
-Message-id: <172825279728.1692160.16291277027217742776@noble.neil.brown.name>
-X-Rspamd-Queue-Id: E6F7221F07
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+Sender: lorenz@dolansoft.org
 
-On Mon, 07 Oct 2024, Chuck Lever wrote:
-> On Fri, Sep 13, 2024 at 08:52:20AM +1000, NeilBrown wrote:
-> > On Fri, 13 Sep 2024, Pali Roh=C3=A1r wrote:
-> > > Currently NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT do not by=
-pass
-> > > only GSS, but bypass any authentication method. This is problem special=
-ly
-> > > for NFS3 AUTH_NULL-only exports.
-> > >=20
-> > > The purpose of NFSD_MAY_BYPASS_GSS_ON_ROOT is described in RFC 2623,
-> > > section 2.3.2, to allow mounting NFS2/3 GSS-only export without
-> > > authentication. So few procedures which do not expose security risk used
-> > > during mount time can be called also with AUTH_NONE or AUTH_SYS, to all=
-ow
-> > > client mount operation to finish successfully.
-> > >=20
-> > > The problem with current implementation is that for AUTH_NULL-only expo=
-rts,
-> > > the NFSD_MAY_BYPASS_GSS_ON_ROOT is active also for NFS3 AUTH_UNIX mount
-> > > attempts which confuse NFS3 clients, and make them think that AUTH_UNIX=
- is
-> > > enabled and is working. Linux NFS3 client never switches from AUTH_UNIX=
- to
-> > > AUTH_NONE on active mount, which makes the mount inaccessible.
-> > >=20
-> > > Fix the NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT implementat=
-ion
-> > > and really allow to bypass only exports which have some GSS auth flavor
-> > > enabled.
-> > >=20
-> > > The result would be: For AUTH_NULL-only export if client attempts to do
-> > > mount with AUTH_UNIX flavor then it will receive access errors, which
-> > > instruct client that AUTH_UNIX flavor is not usable and will either try
-> > > other auth flavor (AUTH_NULL if enabled) or fails mount procedure.
-> > >=20
-> > > This should fix problems with AUTH_NULL-only or AUTH_UNIX-only exports =
-if
-> > > client attempts to mount it with other auth flavor (e.g. with AUTH_NULL=
- for
-> > > AUTH_UNIX-only export, or with AUTH_UNIX for AUTH_NULL-only export).
-> >=20
-> > The MAY_BYPASS_GSS flag currently also bypasses TLS restrictions.  With
-> > your change it doesn't.  I don't think we want to make that change.
->=20
-> Neil, I'm not seeing this, I must be missing something.
->=20
-> RPC_AUTH_TLS is used only on NULL procedures.
->=20
-> The export's xprtsec=3D setting determines whether a TLS session must
-> be present to access the files on the export. If the TLS session
-> meets the xprtsec=3D policy, then the normal user authentication
-> settings apply. In other words, I don't think execution gets close
-> to check_nfsd_access() unless the xprtsec policy setting is met.
+Add support for reading SFP module info and digital diagnostic
+monitoring data if supported by the module. The only Aquantia
+controller without an integrated PHY is the AQC100 which belongs to
+the B0 revision, that's why it's only implemented there.
 
-check_nfsd_access() is literally the ONLY place that ->ex_xprtsec_modes
-is tested and that seems to be where xprtsec=3D export settings are stored.
+The register information was extracted from a diagnostic tool made
+publicly available by Dell, but all code was written from scratch by me.
 
->=20
-> I'm not convinced check_nfsd_access() needs to care about
-> RPC_AUTH_TLS. Can you expand a little on your concern?
+This has been tested to work with a variety of both optical and direct
+attach modules I had lying around and seems to work fine with all of
+them, including the diagnostics if supported by an optical module.
+All tests have been done with an AQC100 on an TL-NT521F card on firmware
+version 3.1.121 (current at the time of this patch).
 
-Probably it doesn't care about RPC_AUTH_TLS which as you say is only
-used on NULL procedures when setting up the TLS connection.
+Signed-off-by: Lorenz Brun <lorenz@brun.one>
+---
+ .../ethernet/aquantia/atlantic/aq_ethtool.c   |  78 +++++++++++
+ .../ethernet/aquantia/atlantic/aq_ethtool.h   |   8 ++
+ .../net/ethernet/aquantia/atlantic/aq_hw.h    |   3 +
+ .../aquantia/atlantic/hw_atl/hw_atl_b0.c      | 130 ++++++++++++++++++
+ .../aquantia/atlantic/hw_atl/hw_atl_llh.c     |  43 ++++++
+ .../aquantia/atlantic/hw_atl/hw_atl_llh.h     |  21 +++
+ .../atlantic/hw_atl/hw_atl_llh_internal.h     |  32 +++++
+ 7 files changed, 315 insertions(+)
 
-But it *does* care about NFS_XPRTSEC_MTLS etc.
-
-But I now see that RPC_AUTH_TLS is never reported by OP_SECINFO as an
-acceptable flavour, so the client cannot dynamically determine that TLS
-is required.  So there is no value in giving non-tls clients access to
-xprtsec=3Dmtls exports so they can discover that for themselves.  The
-client needs to explicitly mount with tls, or possibly the client can
-opportunistically try TLS in every case, and call back.
-
-So the original patch is OK.
-
-NeilBrown
-
-
->=20
->=20
-> > I think that what you want to do makes sense.  Higher security can be
-> > downgraded to AUTH_UNIX, but AUTH_NULL mustn't be upgraded to to
-> > AUTH_UNIX.
-> >=20
-> > Maybe that needs to be explicit in the code.  The bypass is ONLY allowed
-> > for AUTH_UNIX and only if something other than AUTH_NULL is allowed.
-> >=20
-> > Thanks,
-> > NeilBrown
-> >=20
-> >=20
-> >=20
-> > >=20
-> > > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> > > ---
-> > >  fs/nfsd/export.c   | 19 ++++++++++++++++++-
-> > >  fs/nfsd/export.h   |  2 +-
-> > >  fs/nfsd/nfs4proc.c |  2 +-
-> > >  fs/nfsd/nfs4xdr.c  |  2 +-
-> > >  fs/nfsd/nfsfh.c    | 12 +++++++++---
-> > >  fs/nfsd/vfs.c      |  2 +-
-> > >  6 files changed, 31 insertions(+), 8 deletions(-)
-> > >=20
-> > > diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-> > > index 50b3135d07ac..eb11d3fdffe1 100644
-> > > --- a/fs/nfsd/export.c
-> > > +++ b/fs/nfsd/export.c
-> > > @@ -1074,7 +1074,7 @@ static struct svc_export *exp_find(struct cache_d=
-etail *cd,
-> > >  	return exp;
-> > >  }
-> > > =20
-> > > -__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqst=
-p)
-> > > +__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqst=
-p, bool may_bypass_gss)
-> > >  {
-> > >  	struct exp_flavor_info *f, *end =3D exp->ex_flavors + exp->ex_nflavor=
-s;
-> > >  	struct svc_xprt *xprt =3D rqstp->rq_xprt;
-> > > @@ -1120,6 +1120,23 @@ __be32 check_nfsd_access(struct svc_export *exp,=
- struct svc_rqst *rqstp)
-> > >  	if (nfsd4_spo_must_allow(rqstp))
-> > >  		return 0;
-> > > =20
-> > > +	/* Some calls may be processed without authentication
-> > > +	 * on GSS exports. For example NFS2/3 calls on root
-> > > +	 * directory, see section 2.3.2 of rfc 2623.
-> > > +	 * For "may_bypass_gss" check that export has really
-> > > +	 * enabled some GSS flavor and also check that the
-> > > +	 * used auth flavor is without auth (none or sys).
-> > > +	 */
-> > > +	if (may_bypass_gss && (
-> > > +	     rqstp->rq_cred.cr_flavor =3D=3D RPC_AUTH_NULL ||
-> > > +	     rqstp->rq_cred.cr_flavor =3D=3D RPC_AUTH_UNIX)) {
-> > > +		for (f =3D exp->ex_flavors; f < end; f++) {
-> > > +			if (f->pseudoflavor =3D=3D RPC_AUTH_GSS ||
-> > > +			    f->pseudoflavor >=3D RPC_AUTH_GSS_KRB5)
-> > > +				return 0;
-> > > +		}
-> > > +	}
-> > > +
-> > >  denied:
-> > >  	return rqstp->rq_vers < 4 ? nfserr_acces : nfserr_wrongsec;
-> > >  }
-> > > diff --git a/fs/nfsd/export.h b/fs/nfsd/export.h
-> > > index ca9dc230ae3d..dc7cf4f6ac53 100644
-> > > --- a/fs/nfsd/export.h
-> > > +++ b/fs/nfsd/export.h
-> > > @@ -100,7 +100,7 @@ struct svc_expkey {
-> > >  #define EX_WGATHER(exp)		((exp)->ex_flags & NFSEXP_GATHERED_WRITES)
-> > > =20
-> > >  int nfsexp_flags(struct svc_rqst *rqstp, struct svc_export *exp);
-> > > -__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqst=
-p);
-> > > +__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqst=
-p, bool may_bypass_gss);
-> > > =20
-> > >  /*
-> > >   * Function declarations
-> > > diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-> > > index 2e39cf2e502a..0f67f4a7b8b2 100644
-> > > --- a/fs/nfsd/nfs4proc.c
-> > > +++ b/fs/nfsd/nfs4proc.c
-> > > @@ -2791,7 +2791,7 @@ nfsd4_proc_compound(struct svc_rqst *rqstp)
-> > > =20
-> > >  			if (current_fh->fh_export &&
-> > >  					need_wrongsec_check(rqstp))
-> > > -				op->status =3D check_nfsd_access(current_fh->fh_export, rqstp);
-> > > +				op->status =3D check_nfsd_access(current_fh->fh_export, rqstp, fal=
-se);
-> > >  		}
-> > >  encode_op:
-> > >  		if (op->status =3D=3D nfserr_replay_me) {
-> > > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> > > index 97f583777972..b45ea5757652 100644
-> > > --- a/fs/nfsd/nfs4xdr.c
-> > > +++ b/fs/nfsd/nfs4xdr.c
-> > > @@ -3775,7 +3775,7 @@ nfsd4_encode_entry4_fattr(struct nfsd4_readdir *c=
-d, const char *name,
-> > >  			nfserr =3D nfserrno(err);
-> > >  			goto out_put;
-> > >  		}
-> > > -		nfserr =3D check_nfsd_access(exp, cd->rd_rqstp);
-> > > +		nfserr =3D check_nfsd_access(exp, cd->rd_rqstp, false);
-> > >  		if (nfserr)
-> > >  			goto out_put;
-> > > =20
-> > > diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-> > > index dd4e11a703aa..ed0eabfa3cb0 100644
-> > > --- a/fs/nfsd/nfsfh.c
-> > > +++ b/fs/nfsd/nfsfh.c
-> > > @@ -329,6 +329,7 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fh=
-p, umode_t type, int access)
-> > >  {
-> > >  	struct nfsd_net *nn =3D net_generic(SVC_NET(rqstp), nfsd_net_id);
-> > >  	struct svc_export *exp =3D NULL;
-> > > +	bool may_bypass_gss =3D false;
-> > >  	struct dentry	*dentry;
-> > >  	__be32		error;
-> > > =20
-> > > @@ -375,8 +376,13 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *f=
-hp, umode_t type, int access)
-> > >  	 * which clients virtually always use auth_sys for,
-> > >  	 * even while using RPCSEC_GSS for NFS.
-> > >  	 */
-> > > -	if (access & NFSD_MAY_LOCK || access & NFSD_MAY_BYPASS_GSS)
-> > > +	if (access & NFSD_MAY_LOCK)
-> > >  		goto skip_pseudoflavor_check;
-> > > +	/*
-> > > +	 * NFS4 PUTFH may bypass GSS (see nfsd4_putfh() in nfs4proc.c).
-> > > +	 */
-> > > +	if (access & NFSD_MAY_BYPASS_GSS)
-> > > +		may_bypass_gss =3D true;
-> > >  	/*
-> > >  	 * Clients may expect to be able to use auth_sys during mount,
-> > >  	 * even if they use gss for everything else; see section 2.3.2
-> > > @@ -384,9 +390,9 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fh=
-p, umode_t type, int access)
-> > >  	 */
-> > >  	if (access & NFSD_MAY_BYPASS_GSS_ON_ROOT
-> > >  			&& exp->ex_path.dentry =3D=3D dentry)
-> > > -		goto skip_pseudoflavor_check;
-> > > +		may_bypass_gss =3D true;
-> > > =20
-> > > -	error =3D check_nfsd_access(exp, rqstp);
-> > > +	error =3D check_nfsd_access(exp, rqstp, may_bypass_gss);
-> > >  	if (error)
-> > >  		goto out;
-> > > =20
-> > > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> > > index 29b1f3613800..b2f5ea7c2187 100644
-> > > --- a/fs/nfsd/vfs.c
-> > > +++ b/fs/nfsd/vfs.c
-> > > @@ -320,7 +320,7 @@ nfsd_lookup(struct svc_rqst *rqstp, struct svc_fh *=
-fhp, const char *name,
-> > >  	err =3D nfsd_lookup_dentry(rqstp, fhp, name, len, &exp, &dentry);
-> > >  	if (err)
-> > >  		return err;
-> > > -	err =3D check_nfsd_access(exp, rqstp);
-> > > +	err =3D check_nfsd_access(exp, rqstp, false);
-> > >  	if (err)
-> > >  		goto out;
-> > >  	/*
-> > > --=20
-> > > 2.20.1
-> > >=20
-> > >=20
-> >=20
->=20
-> --=20
-> Chuck Lever
->=20
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c b/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c
+index 440ff4616fec..7228d716edeb 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c
+@@ -15,6 +15,7 @@
+ #include "aq_macsec.h"
+ #include "aq_main.h"
+ 
++#include <linux/ethtool.h>
+ #include <linux/linkmode.h>
+ #include <linux/ptp_clock_kernel.h>
+ 
+@@ -977,6 +978,81 @@ static int aq_ethtool_set_phy_tunable(struct net_device *ndev,
+ 	return err;
+ }
+ 
++static int aq_ethtool_get_module_info(struct net_device *ndev,
++				      struct ethtool_modinfo *modinfo)
++{
++	int err;
++	u8 compliance_val, dom_type;
++	struct aq_nic_s *aq_nic = netdev_priv(ndev);
++
++	/* Module EEPROM is only supported for controllers with external PHY */
++	if (aq_nic->aq_nic_cfg.aq_hw_caps->media_type != AQ_HW_MEDIA_TYPE_FIBRE)
++		return -EOPNOTSUPP;
++
++	if (!aq_nic->aq_hw_ops->hw_read_module_eeprom)
++		return -EOPNOTSUPP;
++
++	err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
++		SFF_8472_ID_ADDR, SFF_8472_COMP_ADDR, 1, &compliance_val);
++	if (err)
++		return err;
++
++	err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
++		SFF_8472_ID_ADDR, SFF_8472_DOM_TYPE_ADDR, 1, &dom_type);
++	if (err)
++		return err;
++
++	if (dom_type & SFF_8472_ADDRESS_CHANGE_REQ_MASK || compliance_val == 0x00) {
++		modinfo->type = ETH_MODULE_SFF_8079;
++		modinfo->eeprom_len = ETH_MODULE_SFF_8079_LEN;
++	} else {
++		modinfo->type = ETH_MODULE_SFF_8472;
++		modinfo->eeprom_len = ETH_MODULE_SFF_8472_LEN;
++	}
++	return 0;
++}
++
++static int aq_ethtool_get_module_eeprom(struct net_device *ndev,
++					struct ethtool_eeprom *ee, unsigned char *data)
++{
++	int err;
++	unsigned int first, last, len;
++		struct aq_nic_s *aq_nic = netdev_priv(ndev);
++
++	if (!aq_nic->aq_hw_ops->hw_read_module_eeprom)
++		return -EOPNOTSUPP;
++
++	if (ee->len == 0)
++		return -EINVAL;
++
++	first = ee->offset;
++	last = ee->offset + ee->len;
++
++	if (first < ETH_MODULE_SFF_8079_LEN) {
++		len = min_t(unsigned int, last, ETH_MODULE_SFF_8079_LEN);
++		len -= first;
++
++		err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
++			SFF_8472_ID_ADDR, first, len, data);
++		if (err)
++			return err;
++
++		first += len;
++		data += len;
++	}
++	if (first < ETH_MODULE_SFF_8472_LEN && last > ETH_MODULE_SFF_8079_LEN) {
++		len = min_t(unsigned int, last, ETH_MODULE_SFF_8472_LEN);
++		len -= first;
++		first -= ETH_MODULE_SFF_8079_LEN;
++
++		err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
++			SFF_8472_DIAGNOSTICS_ADDR, first, len, data);
++		if (err)
++			return err;
++	}
++	return 0;
++}
++
+ const struct ethtool_ops aq_ethtool_ops = {
+ 	.supported_coalesce_params = ETHTOOL_COALESCE_USECS |
+ 				     ETHTOOL_COALESCE_MAX_FRAMES,
+@@ -1014,4 +1090,6 @@ const struct ethtool_ops aq_ethtool_ops = {
+ 	.get_ts_info         = aq_ethtool_get_ts_info,
+ 	.get_phy_tunable     = aq_ethtool_get_phy_tunable,
+ 	.set_phy_tunable     = aq_ethtool_set_phy_tunable,
++	.get_module_info     = aq_ethtool_get_module_info,
++	.get_module_eeprom   = aq_ethtool_get_module_eeprom,
+ };
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.h b/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.h
+index 6d5be5ebeb13..f26fe1a75539 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.h
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.h
+@@ -14,4 +14,12 @@
+ extern const struct ethtool_ops aq_ethtool_ops;
+ #define AQ_PRIV_FLAGS_MASK   (AQ_HW_LOOPBACK_MASK)
+ 
++#define SFF_8472_ID_ADDR 0x50
++#define SFF_8472_DIAGNOSTICS_ADDR 0x51
++
++#define SFF_8472_COMP_ADDR	0x5e
++#define SFF_8472_DOM_TYPE_ADDR	0x5c
++
++#define SFF_8472_ADDRESS_CHANGE_REQ_MASK 0x4
++
+ #endif /* AQ_ETHTOOL_H */
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_hw.h b/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
+index f010bda61c96..42c0efc1b455 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
+@@ -340,6 +340,9 @@ struct aq_hw_ops {
+ 	int (*hw_set_loopback)(struct aq_hw_s *self, u32 mode, bool enable);
+ 
+ 	int (*hw_get_mac_temp)(struct aq_hw_s *self, u32 *temp);
++
++	int (*hw_read_module_eeprom)(struct aq_hw_s *self, u8 dev_addr,
++				     u8 reg_start_addr, int len, u8 *data);
+ };
+ 
+ struct aq_fw_ops {
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+index 56c46266bb0a..3448ab7950ca 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+@@ -1654,6 +1654,135 @@ static int hw_atl_b0_get_mac_temp(struct aq_hw_s *self, u32 *temp)
+ 	return 0;
+ }
+ 
++#define START_TRANSMIT 0x5001
++#define START_READ_TRANSMIT 0x5101
++#define STOP_TRANSMIT 0x3001
++#define REPEAT_TRANSMIT 0x1001
++#define REPEAT_NACK_TRANSMIT 0x1011
++
++static int hw_atl_b0_smb0_wait_result(struct aq_hw_s *self, bool expect_ack)
++{
++	int err;
++	u32 val;
++
++	err = readx_poll_timeout_atomic(hw_atl_smb0_byte_transfer_complete_get,
++					self, val, val == 1, 100U, 10000U);
++	if (err)
++		return err;
++	if (hw_atl_smb0_receive_acknowledged_get(self) != expect_ack)
++		return -EIO;
++	return 0;
++}
++
++// Starts an I2C/SMBUS write to a given address. addr is in 7-bit format,
++// the read/write bit is not part of it.
++static int hw_atl_b0_smb0_start_write(struct aq_hw_s *self, u32 addr)
++{
++	hw_atl_smb0_tx_data_set(self, (addr << 1) | 0);
++	hw_atl_smb0_provisioning2_set(self, START_TRANSMIT);
++	return hw_atl_b0_smb0_wait_result(self, 0);
++}
++
++// Writes a single byte as part of an ongoing write started by start_write.
++static int hw_atl_b0_smb0_write_byte(struct aq_hw_s *self, u32 data)
++{
++	hw_atl_smb0_tx_data_set(self, data);
++	hw_atl_smb0_provisioning2_set(self, REPEAT_TRANSMIT);
++	return hw_atl_b0_smb0_wait_result(self, 0);
++}
++
++// Starts an I2C/SMBUS read to a given address. addr is in 7-bit format,
++// the read/write bit is not part of it.
++static int hw_atl_b0_smb0_start_read(struct aq_hw_s *self, u32 addr)
++{
++	int err;
++
++	hw_atl_smb0_tx_data_set(self, (addr << 1) | 1);
++	hw_atl_smb0_provisioning2_set(self, START_READ_TRANSMIT);
++	err = hw_atl_b0_smb0_wait_result(self, 0);
++	if (err)
++		return err;
++	if (hw_atl_smb0_repeated_start_detect_get(self) == 0)
++		return -EIO;
++	return 0;
++}
++
++// Reads a single byte as part of an ongoing read started by start_read.
++static int hw_atl_b0_smb0_read_byte(struct aq_hw_s *self)
++{
++	int err;
++
++	hw_atl_smb0_provisioning2_set(self, REPEAT_TRANSMIT);
++	err = hw_atl_b0_smb0_wait_result(self, 0);
++	if (err)
++		return err;
++	return hw_atl_smb0_rx_data_get(self);
++}
++
++// Reads the last byte of an ongoing read.
++static int hw_atl_b0_smb0_read_byte_nack(struct aq_hw_s *self)
++{
++	int err;
++
++	hw_atl_smb0_provisioning2_set(self, REPEAT_NACK_TRANSMIT);
++	err = hw_atl_b0_smb0_wait_result(self, 1);
++	if (err)
++		return err;
++	return hw_atl_smb0_rx_data_get(self);
++}
++
++// Sends a stop condition and ends a transfer.
++static void hw_atl_b0_smb0_stop(struct aq_hw_s *self)
++{
++	hw_atl_smb0_provisioning2_set(self, STOP_TRANSMIT);
++}
++
++static int hw_atl_b0_read_module_eeprom(struct aq_hw_s *self, u8 dev_addr,
++					u8 reg_start_addr, int len, u8 *data)
++{
++	int err;
++	int i, b;
++	u32 val;
++
++	/* Wait for SMBUS0 to be idle */
++	err = readx_poll_timeout_atomic(hw_atl_smb0_bus_busy_get, self,
++					val, val == 0, 100U, 10000U);
++	if (err)
++		return err;
++
++	err = hw_atl_b0_smb0_start_write(self, dev_addr);
++	if (err)
++		goto out;
++
++	err = hw_atl_b0_smb0_write_byte(self, reg_start_addr);
++	if (err)
++		goto out;
++
++	err = hw_atl_b0_smb0_start_read(self, dev_addr);
++	if (err)
++		goto out;
++
++	for (i = 0; i < len - 1; i++) {
++		b = hw_atl_b0_smb0_read_byte(self);
++		if (b < 0) {
++			err = b;
++			goto out;
++		}
++		data[i] = (u8)b;
++	}
++
++	b = hw_atl_b0_smb0_read_byte_nack(self);
++	if (b < 0) {
++		err = b;
++		goto out;
++	}
++	data[i] = (u8)b;
++
++out:
++	hw_atl_b0_smb0_stop(self);
++	return err;
++}
++
+ const struct aq_hw_ops hw_atl_ops_b0 = {
+ 	.hw_soft_reset        = hw_atl_utils_soft_reset,
+ 	.hw_prepare           = hw_atl_utils_initfw,
+@@ -1712,4 +1841,5 @@ const struct aq_hw_ops hw_atl_ops_b0 = {
+ 	.hw_set_fc               = hw_atl_b0_set_fc,
+ 
+ 	.hw_get_mac_temp         = hw_atl_b0_get_mac_temp,
++	.hw_read_module_eeprom   = hw_atl_b0_read_module_eeprom,
+ };
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
+index 7b67bdd8a258..d07af1271d59 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
+@@ -57,6 +57,49 @@ u32 hw_atl_ts_data_get(struct aq_hw_s *aq_hw)
+ 				  HW_ATL_TS_DATA_OUT_SHIFT);
+ }
+ 
++u32 hw_atl_smb0_bus_busy_get(struct aq_hw_s *aq_hw)
++{
++	return aq_hw_read_reg_bit(aq_hw, HW_ATL_SMB0_BUS_BUSY_ADR,
++				HW_ATL_SMB0_BUS_BUSY_MSK,
++				HW_ATL_SMB0_BUS_BUSY_SHIFT);
++}
++
++u32 hw_atl_smb0_byte_transfer_complete_get(struct aq_hw_s *aq_hw)
++{
++	return aq_hw_read_reg_bit(aq_hw, HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_ADR,
++				HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_MSK,
++				HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_SHIFT);
++}
++
++u32 hw_atl_smb0_receive_acknowledged_get(struct aq_hw_s *aq_hw)
++{
++	return aq_hw_read_reg_bit(aq_hw, HW_ATL_SMB0_RX_ACKNOWLEDGED_ADR,
++				HW_ATL_SMB0_RX_ACKNOWLEDGED_MSK,
++				HW_ATL_SMB0_RX_ACKNOWLEDGED_SHIFT);
++}
++
++u32 hw_atl_smb0_repeated_start_detect_get(struct aq_hw_s *aq_hw)
++{
++	return aq_hw_read_reg_bit(aq_hw, HW_ATL_SMB0_REPEATED_START_DETECT_ADR,
++				HW_ATL_SMB0_REPEATED_START_DETECT_MSK,
++				HW_ATL_SMB0_REPEATED_START_DETECT_SHIFT);
++}
++
++u32 hw_atl_smb0_rx_data_get(struct aq_hw_s *aq_hw)
++{
++	return aq_hw_read_reg(aq_hw, HW_ATL_SMB0_RECEIVED_DATA_ADR);
++}
++
++void hw_atl_smb0_tx_data_set(struct aq_hw_s *aq_hw, u32 data)
++{
++	return aq_hw_write_reg(aq_hw, HW_ATL_SMB0_TRANSMITTED_DATA_ADR, data);
++}
++
++void hw_atl_smb0_provisioning2_set(struct aq_hw_s *aq_hw, u32 data)
++{
++	return aq_hw_write_reg(aq_hw, HW_ATL_SMB0_PROVISIONING2_ADR, data);
++}
++
+ /* global */
+ void hw_atl_reg_glb_cpu_sem_set(struct aq_hw_s *aq_hw, u32 glb_cpu_sem,
+ 				u32 semaphore)
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
+index 58f5ee0a6214..5fd506acacb5 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
+@@ -34,6 +34,27 @@ u32 hw_atl_ts_ready_latch_high_get(struct aq_hw_s *aq_hw);
+ /* get temperature sense data */
+ u32 hw_atl_ts_data_get(struct aq_hw_s *aq_hw);
+ 
++/* SMBUS0 bus busy */
++u32 hw_atl_smb0_bus_busy_get(struct aq_hw_s *aq_hw);
++
++/* SMBUS0 byte transfer complete */
++u32 hw_atl_smb0_byte_transfer_complete_get(struct aq_hw_s *aq_hw);
++
++/* SMBUS0 receive acknowledged */
++u32 hw_atl_smb0_receive_acknowledged_get(struct aq_hw_s *aq_hw);
++
++/* SMBUS0 set transmitted data (only leftmost byte of data valid) */
++void hw_atl_smb0_tx_data_set(struct aq_hw_s *aq_hw, u32 data);
++
++/* SMBUS0 provisioning2 command register */
++void hw_atl_smb0_provisioning2_set(struct aq_hw_s *aq_hw, u32 data);
++
++/* SMBUS0 repeated start detect */
++u32 hw_atl_smb0_repeated_start_detect_get(struct aq_hw_s *aq_hw);
++
++/* SMBUS0 received data register */
++u32 hw_atl_smb0_rx_data_get(struct aq_hw_s *aq_hw);
++
+ /* global */
+ 
+ /* set global microprocessor semaphore */
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
+index 4a6467031b9e..fce30d90b6cb 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
+@@ -42,6 +42,38 @@
+ #define HW_ATL_TS_DATA_OUT_SHIFT 0
+ #define HW_ATL_TS_DATA_OUT_WIDTH 12
+ 
++/* SMBUS0 Received Data register */
++#define HW_ATL_SMB0_RECEIVED_DATA_ADR 0x00000748
++/* SMBUS0 Transmitted Data register */
++#define HW_ATL_SMB0_TRANSMITTED_DATA_ADR 0x00000608
++
++/* SMBUS0 Global Provisioning 2 register */
++#define HW_ATL_SMB0_PROVISIONING2_ADR 0x00000604
++
++/* SMBUS0 Bus Busy Bitfield Definitions */
++#define HW_ATL_SMB0_BUS_BUSY_ADR 0x00000744
++#define HW_ATL_SMB0_BUS_BUSY_MSK 0x00000080
++#define HW_ATL_SMB0_BUS_BUSY_SHIFT 7
++#define HW_ATL_SMB0_BUS_BUSY_WIDTH 1
++
++/* SMBUS0 Byte Transfer Complete Bitfield Definitions */
++#define HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_ADR 0x00000744
++#define HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_MSK 0x00000002
++#define HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_SHIFT 1
++#define HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_WIDTH 1
++
++/* SMBUS0 Receive Acknowledge Bitfield Definitions */
++#define HW_ATL_SMB0_RX_ACKNOWLEDGED_ADR 0x00000744
++#define HW_ATL_SMB0_RX_ACKNOWLEDGED_MSK 0x00000100
++#define HW_ATL_SMB0_RX_ACKNOWLEDGED_SHIFT 8
++#define HW_ATL_SMB0_RX_ACKNOWLEDGED_WIDTH 1
++
++/* SMBUS0 Repeated Start Detect Bitfield Definitions */
++#define HW_ATL_SMB0_REPEATED_START_DETECT_ADR 0x00000744
++#define HW_ATL_SMB0_REPEATED_START_DETECT_MSK 0x00000004
++#define HW_ATL_SMB0_REPEATED_START_DETECT_SHIFT 2
++#define HW_ATL_SMB0_REPEATED_START_DETECT_WIDTH 1
++
+ /* global microprocessor semaphore  definitions
+  * base address: 0x000003a0
+  * parameter: semaphore {s} | stride size 0x4 | range [0, 15]
+-- 
+2.44.1
 
 
