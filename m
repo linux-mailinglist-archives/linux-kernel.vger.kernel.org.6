@@ -1,132 +1,166 @@
-Return-Path: <linux-kernel+bounces-352471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C33991FB3
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 533FA991FB6
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B423E1F219FB
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5B961F21A5E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F48189BA8;
-	Sun,  6 Oct 2024 16:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E948B189F2D;
+	Sun,  6 Oct 2024 16:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fdDtNwJw"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bWfdxAIu"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3837013BAF1;
-	Sun,  6 Oct 2024 16:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6921818991B
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 16:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728233186; cv=none; b=gfQ+QOpUodgcGsbuHCkFIZKi2QBZ6cR+Oq+2+Mym6qGcwGRjK2zdq1yNa9U2xjmZhkMo2yKHNB8fjqobONKfEPNo9i9hy7NEPpBjHseNPUYoKVTIJOPLKAMX30fa36thAZ04wVsKuvdLbupc3MmDtN/xTLcUgsH0P9DNzT70T2o=
+	t=1728233211; cv=none; b=OxPmg+YCsFbeu1BPwY31qdCaDQE4kW6WQLAZ5GQ/gcv0QU4qBv1rLLpYPYUWwiJlk8iVeyjaceytjupIoNNAX+0iKKyiXJgBHdYQeYugig35hiZ97iXXZJz66JNSnF2BQVHfBHLGtVyIJMNUXkJ3mCTGs/FgH7dlE7KFPjdBemg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728233186; c=relaxed/simple;
-	bh=idDuaJFxhvKUm/JPk8hcN5sN3CIqA0/zNhff5+G+Dbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IFiN6dBwhIU2IUh6K1ZHxh2KSP3FeTZtFWukuA2hJWUdQ4l7e4HDVpF0ilvDooNVkybXvt9bfMAlfuVEIWafAqBedBImdNHNpDQaE2oXdIPYP/Ejw3963RcinxSq8jEkiuI10iTFSSCLdWnjTYCMS746vdE+NThsGO8fm6WFiHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fdDtNwJw; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71dfc1124cdso471721b3a.1;
-        Sun, 06 Oct 2024 09:46:25 -0700 (PDT)
+	s=arc-20240116; t=1728233211; c=relaxed/simple;
+	bh=uY7HvmO31wS8btb8XYVjlRLPqrYljxar4akr/+JgmGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BkCMSRt2XUaBT/VLOVE+uw9dn29kqp/i+muKoz6aEju0ASQ7tOpSKFFsllYmOf82H/PG86X9o5KCs7nxEGNaPZza6G6Y+vh3lM1Ua4DLVWyNpkmn8ZUiAKj4/wcognzNQDK4+R3DVo4d7HXm0ftcgIN0MSLQGQh2Gvo17VOmKYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bWfdxAIu; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5399651d21aso3261511e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 09:46:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728233184; x=1728837984; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tFQsXFlFPeoxFKDhANXjQZ1y6bTyuC9Jy0Iq/wXyfKE=;
-        b=fdDtNwJwY5HRRHJZQWYzfuqumUP+YzTyyBxAK+9og9QMtje6Lsnp/utmZcuhxVc2Ad
-         kTkkEmMtqvNfEy3tEYfaiAyOEuGUByUlSbWH/1OpSogL0lPE/Zbo9lCD4rtcf/AeNBI9
-         4bVAczYMVLvNJcoB0cTlBgEVwQP+crZhk4WBQgKDIu6thsGUooy5BruiQvSryi/j+kgA
-         ENlOyW0mFQY3JK6Izc/E6qDUFVC007u5wX/sRGGDeSFL4YjWo9e3+/as7L2jKq92J3xz
-         dozqwNndrQDJtAimXNnQtYTazBWOkcJi6b+HBmR4ACTIL64LwW3njJUGcJjK+Adf8vv7
-         SRkA==
+        d=linaro.org; s=google; t=1728233207; x=1728838007; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=akAXIFAX2hq/JQ/5/aAwojcmLWEHNHqXoq1KohLf+CA=;
+        b=bWfdxAIu+MCaXP/n7T4hhFVPVtGgElvdbMB3WCjKWCY2DAgTzwo/uyyqHucPg6bzjv
+         Xaluqq73J67/2MxuVIdXa2Vcp2UwFEfqZcgsLftd+EhPL9/Rh+lSzx9z6bsaHtwtWf6B
+         I42A6/HnoBOTwlejgLJrMiJ+01PEHMSB+JT7+G3SeF28CvcdXLQINzlX6DUC64Jm2mzD
+         lGH4UG0lZFnZQAVa/sa1XnVp0OkCyQ+vKHLqy1JC5XVzFPmT2F8+7pH6pvcjIieZgdYP
+         rnW2piZpJW9gVORlHpFhf/D9LWvFCx0LWpFsw7YU1QI3s/Jr65x5Zsvby9YOEt3yIvpC
+         qfmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728233184; x=1728837984;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tFQsXFlFPeoxFKDhANXjQZ1y6bTyuC9Jy0Iq/wXyfKE=;
-        b=WiL9Ec637HKTTfiIUy4IoY1NsOuKuaFBZV3Ges+M08RLHKh7sxG4zIgV4NEI6kbpJH
-         yKTDkTgmzFKs403r8dOkMoNQHJFymBDpCa6Bm+w/yRepee4kVrHg+Z4FDhcZiJ97Plef
-         5xRPuIC2TprRDPXr1n/ZAj51cs6MkVs7Eop0X+NIbVFz7AgWFDU+heR/pRSMDa9PY9vd
-         hpvL17BEur1qDgTqOpCXB2PPBgasla9YZSw9a0aaP9FtAnvuMZ5M68zg+x4oKppqTKTo
-         T5gt0KE1KIrPs45yP6OI8RcgjAKJhwJu1639lO5Tj0F+eNcxYIoXNT4jaeF+fRUHFTGs
-         CGug==
-X-Forwarded-Encrypted: i=1; AJvYcCUcwOp0EuWI49PiDv95I2YFc9NgTaIDz0iMYv73vujUItUdSJWyX1QmxFz0dG8UC1hluR7L6xIsOR5A+L4=@vger.kernel.org, AJvYcCVCDTGymeZiuf2Qn67i8Gl8bn2vup2Gm9WNCo0TePGtpcBlO8cw+l8SkIhLXuaFfRKI2+KU+dBr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb+uC1XPaJypCoNeVvvo+oyiaYErXKvybgYnJQp8DbpPHFVUdD
-	3q1R62C4uxtKTPbhj+gZgvfcrcSP2VJ3p1kLFk5whCJDOe/DTwgu
-X-Google-Smtp-Source: AGHT+IG/JHVArR6hcR5pQL33OYj5ExdQPlXvf9LyKYVmdjMnbc+lcGV3uJl4fqDpWek8zWYvs+qygw==
-X-Received: by 2002:a05:6a00:17a7:b0:708:41c4:8849 with SMTP id d2e1a72fcca58-71de234fd22mr13942535b3a.9.1728233184543;
-        Sun, 06 Oct 2024 09:46:24 -0700 (PDT)
-Received: from ubuntu.. ([27.34.65.246])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d7cf37sm2957497b3a.198.2024.10.06.09.46.20
+        d=1e100.net; s=20230601; t=1728233207; x=1728838007;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=akAXIFAX2hq/JQ/5/aAwojcmLWEHNHqXoq1KohLf+CA=;
+        b=mVY7Nh0Hym3U8etBxhN+9QUUsiMFLhnSzM7H9l0XFBYaxRqn8g55OdwiKlT7Y2Pmi/
+         nS+EsAHxSO/KfC/8EEF5dvSei0B72P/InfbFtvwqsFbwBYEXJfpqp3W4b888q21QiWut
+         Zv8Xb6XTf74sxfp9VDsv2UCatkULJC3HjCn7DaJtxMtH5eWMr2fZtp55DuOr02GTZJqT
+         Qzl2a7yMDlzEb2nTz6YTveVMm+Nkal8PhWMo8c69H3fJLRV3I1e8mvb2jpn/cwIEzMCS
+         R6BA+3oiv0fRt3C12bg1WdiwP6rvO6yo7PKysuplSM0Z2uR2VoMm0GVDvkW57LjOMzSJ
+         h2uw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8B/4c9Hl7pL7WaO/8EN0aAtBwVrZ2pIdztohvbSXejrXHaknBqvkVMYXKfleirawkaCc5SfBxXKdtSyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvCmKiX4wLTd8SG6ub3gaLO237dS5uaqt3i+QerDOCW7nHZ3FL
+	rLvro0a03s6UzQp0bPIaRupmaA7wbUaZSFi8AeN3NUOAIODQv9Hxsk1D+GCuJCU=
+X-Google-Smtp-Source: AGHT+IFPBkuzzGcWuEx0VbwpLEzF0XozY9XwwEwQyKHqc3jL8Hkus+AG7GZGZ6DPG2BFb8+QYH9saA==
+X-Received: by 2002:a05:6512:10d3:b0:52e:e3c3:643f with SMTP id 2adb3069b0e04-539ab859ee0mr3506576e87.2.1728233207434;
+        Sun, 06 Oct 2024 09:46:47 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff28034sm567156e87.250.2024.10.06.09.46.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 09:46:24 -0700 (PDT)
-From: Dipendra Khadka <kdipendra88@gmail.com>
-To: sgoutham@marvell.com,
-	gakula@marvell.com,
-	sbhatta@marvell.com,
-	hkelam@marvell.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: Dipendra Khadka <kdipendra88@gmail.com>,
-	maxime.chevallier@bootlin.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
+        Sun, 06 Oct 2024 09:46:45 -0700 (PDT)
+Date: Sun, 6 Oct 2024 19:46:44 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Vedang Nagar <quic_vnagar@quicinc.com>
+Cc: quic_dikshita@quicinc.com, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net v3 5/6] octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_dmac_flt.c
-Date: Sun,  6 Oct 2024 16:46:16 +0000
-Message-ID: <20241006164617.2134-1-kdipendra88@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: [PATCH v3 16/29] media: iris: implement iris v4l2_ctrl_ops and
+ prepare capabilities
+Message-ID: <jk4n5upp5vw4s5yl5vw7iyri3wfxpsl35isxxggysd52eqecpk@tlmf5w2ncagz>
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <20240827-iris_v3-v3-16-c5fdbbe65e70@quicinc.com>
+ <gehwgofhviqcnopaughxfcpsqmbbiaayid2scgat4xnd5ngwmo@ylawfiup2tqc>
+ <15703542-1b70-4042-86b9-7b3f3a675e3e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <15703542-1b70-4042-86b9-7b3f3a675e3e@quicinc.com>
 
-Add error pointer checks after calling otx2_mbox_get_rsp().
+On Tue, Oct 01, 2024 at 06:31:16PM GMT, Vedang Nagar wrote:
+> Hi Dmitry,
+> 
+> On 8/29/2024 3:03 PM, Dmitry Baryshkov wrote:
+> > On Tue, Aug 27, 2024 at 03:35:41PM GMT, Dikshita Agarwal via B4 Relay wrote:
+> >> From: Vedang Nagar <quic_vnagar@quicinc.com>
+> >>
+> >> Implement s_ctrl and g_volatile_ctrl ctrl ops.
+> >> Introduce platform specific driver and firmware capabilities.
+> >> Capabilities are set of video specifications
+> >> and features supported by a specific platform (SOC).
+> >> Each capability is defined with min, max, range, default
+> >> value and corresponding HFI.
+> >>
+> >> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+> >> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> >> ---
+> >>  drivers/media/platform/qcom/iris/Makefile          |   1 +
+> >>  drivers/media/platform/qcom/iris/iris_buffer.c     |   3 +-
+> >>  drivers/media/platform/qcom/iris/iris_core.h       |   2 +
+> >>  drivers/media/platform/qcom/iris/iris_ctrls.c      | 194 +++++++++++++++++++++
+> >>  drivers/media/platform/qcom/iris/iris_ctrls.h      |  15 ++
+> >>  .../platform/qcom/iris/iris_hfi_gen1_defines.h     |   4 +
+> >>  .../platform/qcom/iris/iris_hfi_gen2_command.c     |   1 +
+> >>  .../platform/qcom/iris/iris_hfi_gen2_defines.h     |   9 +
+> >>  drivers/media/platform/qcom/iris/iris_instance.h   |   6 +
+> >>  .../platform/qcom/iris/iris_platform_common.h      |  71 ++++++++
+> >>  .../platform/qcom/iris/iris_platform_sm8250.c      |  56 ++++++
+> >>  .../platform/qcom/iris/iris_platform_sm8550.c      | 138 +++++++++++++++
+> >>  drivers/media/platform/qcom/iris/iris_probe.c      |   7 +
+> >>  drivers/media/platform/qcom/iris/iris_vdec.c       |  24 ++-
+> >>  drivers/media/platform/qcom/iris/iris_vdec.h       |   2 +-
+> >>  drivers/media/platform/qcom/iris/iris_vidc.c       |  16 +-
+> >>  16 files changed, 536 insertions(+), 13 deletions(-)
+> 
+> [Skipped]
+> 
+> >> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> >> index a74114b0761a..6ad2ca7be0f0 100644
+> >> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> >> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> >> @@ -108,6 +108,7 @@ static int iris_hfi_gen2_session_set_default_header(struct iris_inst *inst)
+> >>  	struct iris_inst_hfi_gen2 *inst_hfi_gen2 = to_iris_inst_hfi_gen2(inst);
+> >>  	u32 default_header = false;
+> >>  
+> >> +	default_header = inst->fw_cap[DEFAULT_HEADER].value;
+> > 
+> > This isn't related to the s_ctrl and g_volatile_ctrl. Please split this
+> > commit into the chunk that is actually related to that API and the rest
+> > of the changes.
+> Could you please help to provide more details on how are you expecting the
+> split of the patches?
+> 
+> Do you expect to split V4L2 ctrls_init/s_ctrl/g_ctrl in one patch and the
+> introduction of all the capabilities into another patch? We are not finding
+> it feasible to split the patch that way as in ctrl_init we read the
+> capability from platform data to initialize the respective control.
 
-Fixes: 79d2be385e9e ("octeontx2-pf: offload DMAC filters to CGX/RPM block")
-Fixes: fa5e0ccb8f3a ("octeontx2-pf: Add support for exact match table.")
-Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
----
- .../net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c   | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Please split all caps and all the structs that are not related to the
+V4L2 ctrls implementation. In this patch please keep only those defines,
+structs and fields that are required to implement V4L2 ctrl API.
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c
-index 80d853b343f9..2046dd0da00d 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c
-@@ -28,6 +28,11 @@ static int otx2_dmacflt_do_add(struct otx2_nic *pf, const u8 *mac,
- 	if (!err) {
- 		rsp = (struct cgx_mac_addr_add_rsp *)
- 			 otx2_mbox_get_rsp(&pf->mbox.mbox, 0, &req->hdr);
-+		if (IS_ERR(rsp)) {
-+			mutex_unlock(&pf->mbox.lock);
-+			return PTR_ERR(rsp);
-+		}
-+
- 		*dmac_index = rsp->index;
- 	}
+> > 
+> >>  	iris_hfi_gen2_packet_session_property(inst,
+> >>  					      HFI_PROP_DEC_DEFAULT_HEADER,
+> >>  					      HFI_HOST_FLAGS_NONE,
+> > 
+> > 
 
-@@ -200,6 +205,10 @@ int otx2_dmacflt_update(struct otx2_nic *pf, u8 *mac, u32 bit_pos)
-
- 	rsp = (struct cgx_mac_addr_update_rsp *)
- 		otx2_mbox_get_rsp(&pf->mbox.mbox, 0, &req->hdr);
-+	if (IS_ERR(rsp)) {
-+		rc = PTR_ERR(rsp);
-+		goto out;
-+	}
-
- 	pf->flow_cfg->bmap_to_dmacindex[bit_pos] = rsp->index;
-
---
-2.43.0
-
+-- 
+With best wishes
+Dmitry
 
