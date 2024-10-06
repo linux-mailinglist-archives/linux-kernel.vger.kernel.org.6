@@ -1,150 +1,216 @@
-Return-Path: <linux-kernel+bounces-352477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B10991FCC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC74F991FCF
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3F881F214F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:07:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 511B31F217C1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAC3155C8C;
-	Sun,  6 Oct 2024 17:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+oUvJFg"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4AD155C8C;
+	Sun,  6 Oct 2024 17:11:26 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E234E167D80
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACFA17CA1D
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728234420; cv=none; b=Ef/4efuzY9/SnG+j8samJEk0zrwL/xcdO7AL33PMHtdDl5XZOwzlkc/qzugmUhvwsv4XRCne6Cc3FiqDUQYJ6uH+rSpz7RrDtRTwL3XzoFykYHDTRXlTJhfOhyt7NkmlM375u4r48i8wsr8QN0y0+1lalniDmUlvZpSotGZ2q+w=
+	t=1728234685; cv=none; b=CISJ+O40AM8AT8drNPXhq55cKbS1rvqmG/I6XRzpOiquw4hJGlGwpx+ox6RxlSGP7P0VkPsCgvhf9Lmn7PY8JMYWGrKsHpsiFxXBxmtmVbNL/nZorS7WRotmLDPT/jCc9jm9st2DRD0P4sqIVrIlBLgnlBDB8t3cmg1oqbM8m7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728234420; c=relaxed/simple;
-	bh=QLZOPV2KCdW4/rWDe98NOGrenAixRMGh/7THynPfEIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNEqlq3kQgbzJhBIak7tYIgOXXpm4fx/xqhDV6DmyBxTmk3tJYTpK18PzNGTvkbG+ML5oiZdr4JptjFfiONG9WwF5P43fDcI0+8kJcuiYSL/527ahqvnnbIKwTZXf0NQjXgS/tFs6Va7oxEs43fQmSp+plXC/K7ReRwmYwzIz94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A+oUvJFg; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5389e24a4d1so4400651e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:06:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728234417; x=1728839217; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mgiOfmVMYDxKqStonmB8yqlxiThjQt2okmdO+ALgRlI=;
-        b=A+oUvJFgA5lkI1MqjlHMWHvUrr2Q3NZNBNkEif+GUNciuSuMALcCgyGH0ICBLZy5QX
-         gg2H9GtMcq3zP7GXd3BPZBJEVqmZHqW1EMk8Yicb8jY5ihPg1ytxzxxpeaqNGixz19fC
-         1Ox/CVZfI7GU8q7ooE1oLvAkJkjmq/0k5u9LJrjCiIOfhuI4J9JSjv1XA2wRxIypbZpx
-         zatwDcI3SYOVU8tYTvwt/V0vguRzZkFTJav2P6NoUFSdRj78FnUY4ztpiNSJ+I+s3Z1P
-         4MrcIvw+Jqe1kHqlWOZ/rHlsUJZ/oR84AQWOq9da+LCzn7xGWxEDDhYUie42XPra5Phj
-         i6bQ==
+	s=arc-20240116; t=1728234685; c=relaxed/simple;
+	bh=A5KqEtuNzrXw9v/9eOVC6RUnGgwZZ0UeSRnjRqS3CS8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=P3MgBhc9UYOAAVDz/DAvQ7dOELbWjhwA3LrZiuiE7ehK8nCcrveyhpWdr38W/2PQvUwsnOfzxQ6LjDXBJQ2quaaNOgbzUkrzPfPuOHlRhrDSJaOl9p8hdpRf2Gjq+/ao+r8tj+J0zTRIOEccFLvn2T3yOcAhdCkEJ2BL8iNbKuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3453139c0so53411665ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:11:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728234417; x=1728839217;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mgiOfmVMYDxKqStonmB8yqlxiThjQt2okmdO+ALgRlI=;
-        b=p4Uym4XfKdhzmSdWNWDTtA/ew/rils9qp04X/TGN4xdnLTNoZb6wmgkJ6n1Fe0fXnK
-         Yl1J6UbvjecqzJPVZ8fPxjuF+JZHE83tDcugyCn6o6vua6SVjqrU4+FCC9JdYKMwDfcs
-         qN8pG1ZPdrC0hhETSyPxiK7wRbjItA6gVPHU7o9P82Cg99tEeKgKCX9i8HYz/iVKlcAH
-         nvn7rwKqFAZKE22VL695/oXfYWzLlTrjWjFkHTCb8ogt9p4BjDyW1BUeFZYZiYVIEpVT
-         YjlQCfLMTYLRQHKM4AHbBsE17xIJr8sNq/SS1BV+oyofgdqLzK6iCjhUtMW0lljyBIVU
-         Zwcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxYHaRpW9RV8HjchwMhNrJuDnsVU6W9a8hMC7UPcAqmZvfULGqm40QQTW36EV8MNsTQUF09QruMuwv5rw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2K0C+9+rzHgl6sigjGJeg0Z4PzWAPfusCL3J5agVL8TZ23xKy
-	93m0FKeN327ga0AEBVVHbIO6IfCrnh3w6OZJK1bOBEiDGawRZVgxjPnRv0q5S2U=
-X-Google-Smtp-Source: AGHT+IHffHfShn8xyefRkGtbG356/CbIEk2NFW/1Jb4Xs0sYFx6K0VNQHn+Ngf0TWbBmbX9M7T1xmQ==
-X-Received: by 2002:a05:6512:398d:b0:539:8847:d7e9 with SMTP id 2adb3069b0e04-539ab8843c9mr4905244e87.35.1728234416966;
-        Sun, 06 Oct 2024 10:06:56 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec8297sm559913e87.78.2024.10.06.10.06.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 10:06:56 -0700 (PDT)
-Date: Sun, 6 Oct 2024 20:06:53 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	conor+dt@kernel.org, abel.vesa@linaro.org, srinivas.kandagatla@linaro.org
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for
- Windows
-Message-ID: <7ilh7yjdesoo3hwwjjlsnwe7dftegtv32mnwvsiczn33diwihy@mi2ukoowdq47>
-References: <eqy4yicgeqlgaytgzybnitvbrdr7jmjjk5k2swmadad6scwk77@ubaf7a2kgmdm>
- <1BBC34CC-92D9-4F6E-8DFA-1F2DA36D545A@linaro.org>
- <20241001085105.iglzp3art5ysli2d@thinkpad>
- <b1d982c1-f800-97eb-1be3-e77e04a8e81d@quicinc.com>
+        d=1e100.net; s=20230601; t=1728234683; x=1728839483;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BFCCDqD1CFdCuqQJcT5Vt9gD1U6eFGNHDs2x1j7aCp0=;
+        b=XBELo4hivnFsbLHZlZVY8/Ok1pc8+rMBwf39cJoEslkDNfSc8KowzEJZs0Ao0qPBpD
+         9tHpx6N6ZH8lsI5/Z5WwWZia4nTBMUTF25P04+SUphzTWq27Y2sX2JwrTk7oHG2ItbYP
+         qeMU0kqSk9e20gza9FgSxOzR5wXNI5vTf67eIxWnutqUDHuXjfZycH+5x99Dll9J26zH
+         LfcjBGmoASwFa/atF0jj7HXPJfxXmh+jPEvsPAwEvQN+m1cemGnDNvj7K4svxMkh8lCq
+         mWTos9Ve7RJdpUEHJqoJfbce+ZjycbHUy7Rt/3N4FjWeBy/YgUZ6dKXQu1UZJBODy5Rc
+         25IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKdiszcJ9M067cXXzg7UewtzgHN2MeY4Ap0/q4ippG+EBpLLB5g2gpfLajKqdeoml4HF5t/aFsvluvx+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5hOb/5ab+egInoE8gX3AAsgJZ3ibCDo5OauOipj9OoO/KRZJ/
+	2bKHKjktHlHd+xwiZNydo+cf6Y9Y7sll4c55DE7obHWD2pyvi/N9W+kV3Z2wxxrGXrWqTe0O6wy
+	C60u5FwXHK5geto4gYfIcM5kLC9uiyACzita+2ueUqpieuFCVlwRFH7o=
+X-Google-Smtp-Source: AGHT+IEPtAQ2Iry8Tq66DVOE0tnpd3k0kfQy8tnf9I13q2skAxX0hGtsIMh8Dc5TIgco8gJ1O2srG519/FuhYfiXdSvQUsZsmnpb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b1d982c1-f800-97eb-1be3-e77e04a8e81d@quicinc.com>
+X-Received: by 2002:a05:6e02:148d:b0:3a0:8c5f:90c0 with SMTP id
+ e9e14a558f8ab-3a375a9aabdmr89329645ab.10.1728234683155; Sun, 06 Oct 2024
+ 10:11:23 -0700 (PDT)
+Date: Sun, 06 Oct 2024 10:11:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6702c4bb.050a0220.49194.04d9.GAE@google.com>
+Subject: [syzbot] [ext4?] KASAN: use-after-free Read in __ext4_check_dir_entry (3)
+From: syzbot <syzbot+09921540dd04aba82a35@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Oct 06, 2024 at 12:33:21AM GMT, Sibi Sankar wrote:
-> 
-> 
-> On 10/1/24 14:21, Manivannan Sadhasivam wrote:
-> > On Tue, Oct 01, 2024 at 09:56:30AM +0300, Dmitry Baryshkov wrote:
-> > > On October 1, 2024 5:42:35 AM GMT+03:00, Bjorn Andersson <andersson@kernel.org> wrote:
-> > > > On Wed, Sep 11, 2024 at 10:55:05AM GMT, Dmitry Baryshkov wrote:
-> > > > > On Wed, Sep 11, 2024 at 01:03:37PM GMT, Sibi Sankar wrote:
-> > > > [..]
-> > > > > > diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-> > > > [..]
-> > > > > > +
-> > > > > > +&pcie5 {
-> > > > > > +	perst-gpios = <&tlmm 149 GPIO_ACTIVE_LOW>;
-> > > > > > +	wake-gpios = <&tlmm 151 GPIO_ACTIVE_LOW>;
-> > > > > > +
-> > > > > > +	vddpe-3v3-supply = <&vreg_wwan>;
-> > > > > 
-> > > > > Please use pwrseq instead.
-> > > > > 
-> > > > 
-> > > > What benefit is there to wrap a single 3.3V regulator in pwrseq driver?
-> > > 
-> > > First of all, is it really just a 3.3V? Second, is it actually powering up the host controller (as expressed in the device tree? Is it a power supply to the slot (in this case, I think, it should be expressed differently)? Or is it a power supply to the card itself?
-> > > 
-> > 
-> > Yeah, we should get into the details here. We were not paying attention till
-> > now, but with the advent of pwrseq, we should describe the power supply properly
-> > in DT.
-> > 
-> > Here I believe the supply is to the PCIe Mini Card connector where a modem is
-> > connected. In that case, 3.3v supply should be connected to 3.3Vaux of the
-> > connector and we should have a generic pwrseq driver for the mini cards.
-> > 
-> 
-> Hey Mani, Dmitry,
-> 
-> The schematics are identical to that of the X1E CRD with
-> the exception of the pcie daughter card having the rtl8125g
-> on it. Yes, the 3.3V supply is connected to the card as well.
-> 
-> Doesn't this mean all other x1e boards out there needs to be
-> updated with pwrseq as well? Anway will get that addressed in
-> v3.
+Hello,
 
-Yes please. Check with Bartosz and Johan if they are working on pwrseq
-for this platform by chance.
+syzbot found the following issue on:
 
-> 
-> -Sibi
-> 
-> > Sibi, please verify the above in schematics.
-> > 
-> > - Mani
+HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17219927980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1f009dd80b3799c2
+dashboard link: https://syzkaller.appspot.com/bug?extid=09921540dd04aba82a35
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102f23d0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1082e580580000
 
--- 
-With best wishes
-Dmitry
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/08f3ba449e03/disk-e32cde8d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/17bcace1ab90/vmlinux-e32cde8d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/da9183ac0145/bzImage-e32cde8d.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/45cde0725f07/mount_0.gz
+
+Bisection is inconclusive: the issue happens on the oldest tested release.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14ba5927980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16ba5927980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12ba5927980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+09921540dd04aba82a35@syzkaller.appspotmail.com
+
+EXT4-fs error (device loop0): ext4_orphan_get:1393: comm syz-executor400: couldn't read orphan inode 15 (err -117)
+EXT4-fs (loop0): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: none.
+EXT4-fs warning (device loop0): dx_probe:833: inode #2: comm syz-executor400: Unrecognised inode hash code 4
+EXT4-fs warning (device loop0): dx_probe:966: inode #2: comm syz-executor400: Corrupt directory, running e2fsck is recommended
+==================================================================
+BUG: KASAN: use-after-free in __ext4_check_dir_entry+0x6fd/0x880 fs/ext4/dir.c:85
+Read of size 2 at addr ffff88807fc17003 by task syz-executor400/5217
+
+CPU: 0 UID: 0 PID: 5217 Comm: syz-executor400 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ __ext4_check_dir_entry+0x6fd/0x880 fs/ext4/dir.c:85
+ ext4_readdir+0x1436/0x3a60 fs/ext4/dir.c:259
+ iterate_dir+0x571/0x800 fs/readdir.c:108
+ __do_sys_getdents64 fs/readdir.c:407 [inline]
+ __se_sys_getdents64+0x1d3/0x4a0 fs/readdir.c:392
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fcfd760b6d9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe192a0be8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 00007ffe192a0bf0 RCX: 00007fcfd760b6d9
+RDX: 0000000000000010 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: 00007ffe192a0bf8 R08: 6c616b7a79732f2e R09: 6c616b7a79732f2e
+R10: 6c616b7a79732f2e R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe192a0e58 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x56388aa96 pfn:0x7fc17
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 ffffea0001ffe808 ffff8880b8644af0 0000000000000000
+raw: 000000056388aa96 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
+page last allocated via order 0, migratetype Movable, gfp_mask 0x140dca(GFP_HIGHUSER_MOVABLE|__GFP_COMP|__GFP_ZERO), pid 5214, tgid 5214 (sftp-server), ts 74824128125, free_ts 74900105933
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3039/0x3180 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ folio_alloc_mpol_noprof mm/mempolicy.c:2283 [inline]
+ vma_alloc_folio_noprof+0x12e/0x230 mm/mempolicy.c:2314
+ folio_prealloc+0x31/0x170
+ alloc_anon_folio mm/memory.c:4721 [inline]
+ do_anonymous_page mm/memory.c:4778 [inline]
+ do_pte_missing mm/memory.c:3963 [inline]
+ handle_pte_fault+0x24dd/0x6800 mm/memory.c:5751
+ __handle_mm_fault mm/memory.c:5894 [inline]
+ handle_mm_fault+0x1053/0x1ad0 mm/memory.c:6062
+ do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+page last free pid 5214 tgid 5214 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_folios+0xee2/0x18a0 mm/page_alloc.c:2686
+ folios_put_refs+0x76c/0x860 mm/swap.c:1007
+ free_pages_and_swap_cache+0x2ea/0x690 mm/swap_state.c:332
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ exit_mmap+0x496/0xc40 mm/mmap.c:1877
+ __mmput+0x115/0x380 kernel/fork.c:1347
+ exit_mm+0x220/0x310 kernel/exit.c:571
+ do_exit+0x9b2/0x28e0 kernel/exit.c:926
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
+ x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88807fc16f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88807fc16f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff88807fc17000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                   ^
+ ffff88807fc17080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88807fc17100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
