@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-352639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D1299220A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:00:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446A299220C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A90841C20B3C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:00:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 490591C20B52
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC1418BC0E;
-	Sun,  6 Oct 2024 22:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCE118BBB7;
+	Sun,  6 Oct 2024 22:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2AR6tc2"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T4fu389D"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C3B152165;
-	Sun,  6 Oct 2024 22:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF94E152165;
+	Sun,  6 Oct 2024 22:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728252024; cv=none; b=fUQ8NDowGphCC6fX7AV2JH6RVaJ3sEQuSg3Yd6jWlRKS3ZM99jo31L2VP690yLoh1eHABpdYv/h9i6/0yf4jGc1YL7f0Ltb+XJx5xUPfbJjrJBPDYky2ciwTUDP/4NrNkELuWVsynUlyCpPE4nb7+X64nkfNpoGuv+2Rw3fQ8i8=
+	t=1728252110; cv=none; b=kJrwcXZyNozxns4nbHB5uct3Dei2r96hb0HEn67B24xTKVXGCg3vg3u0ncOHc5Tj53wcgrLw/+zmDyeLC3Hx8J2zvK3HznReMaHQ0tapXEjL4CY53ART25n5zTGbtxt08tfT/SoI0/w7gafrpBFXYxH+LYfL01UqvTE6Tkr/A6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728252024; c=relaxed/simple;
-	bh=SDWqSnVC1X/WWwMZyagUXcxwjhzgxnAdnjCDCZY6vZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ITS2MngvMpqN38ZJG+1CPRlGYrBLMo1tWwhjwJmlH43lB+RBLO8xzIPFkl5BZUYFx1QJT2JfvZDf8qOiPPQXjWhqvpFdSV8dJNusYW2zuN43tALvqLtP3JCgbnYPVpkXIafdgLjX/vAL3xkzRduOmDVi1d9eFFbDc70WomAymjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2AR6tc2; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53988c54ec8so4192859e87.0;
-        Sun, 06 Oct 2024 15:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728252020; x=1728856820; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0GDRC7VyvrSRUCSE+aiTV6hzlc3o4Msg6D2Hu233WkQ=;
-        b=T2AR6tc2oLIfTBM7eU8Qq13qjicUOoXg1mhdp2YFVsmER9F/8pc8pGQSbjlj8ZClTo
-         MbQ3g/YW+x0uSi3j8FD+eR2pHNO2TA8neDsQcld6ZFuJ4MvlSy4F3L3e4Ur/tSDvZr+P
-         3G9RVlwPFt0/8RPGuvFwJM5l50xhdwAiuJ7nrWuwCYVeMkzvPxL55Xr1Qke2VY6ozxTS
-         L1Bvbb5FZaI1MFVIO5o60rahF9iB2POORG4q5FofYROoAYpFzTtqHy7qsBqk9lPUvjpG
-         c/w40CB5l1+xM+AkQRTwW30vHd/cSACY3labriCJNOTfl/La97kPZrMj3Ie4jrHfkNol
-         4nPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728252020; x=1728856820;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0GDRC7VyvrSRUCSE+aiTV6hzlc3o4Msg6D2Hu233WkQ=;
-        b=eV8X4Gum3h+QyyEqXJl2PiJ/16VMp8qAwlC2rSTCLJBLbRNM1C2ypRtFo5LcfBNXHg
-         1NWvjTpoaNxqXL/pLMBkr0ArMPBA8TyfyGoehugWvE4+1t30wsqqyZKl89d/sbhPNeia
-         2D+i6pzwyq6P9yQ/5FGai7SICTYtjXXDPEoZhfDf/Q+mV71irz9OpopAS/+wsY922XZZ
-         6r77AKXzt0MK+9HHSmrq15fm9SYPQsn8uFFpB2L1AuvR4rkuwH+5uqnMKXWsZfbRWa8p
-         L8o/XINithhxkGtlkjzF1ehoFJjY0UOPNM0WcojwIfQPrpOqP92oBCODdlUN/O25tDw+
-         xoLg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+5TrBXQFYIkQ8dC2KSoFr0MV8UzoWelQZJKHiwOGgQ3Pu6gVCMZ1avDYftWTnt9IdI0ZXgMdc@vger.kernel.org, AJvYcCXHp4VPbt/YIniRil0kKCQxP0QK4/FhqM3p+g+ij8RHetvHQguSO2MLnca5Qm3LSA9fM6Vi1zzqVuAtSzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyktr9b0jSVE/IXXEY98AimSGb9D0qhM66B1oS5TNOVY8sPjbUi
-	aafLTZD7H00oS5ZWI3garbCJjFp4qz3NqRg7JUEfs6GhWWAdZSlO8Ppl7Q==
-X-Google-Smtp-Source: AGHT+IFv4rpLNlUqpXISRj5sLUzk+rr088HIomRzQj6u+Bfu2XakaNs/hxVHEYCCk1fdux68psLEgg==
-X-Received: by 2002:a05:6512:239b:b0:539:8b02:8f1d with SMTP id 2adb3069b0e04-539ab88d2abmr4162254e87.30.1728252020265;
-        Sun, 06 Oct 2024 15:00:20 -0700 (PDT)
-Received: from [192.168.0.138] ([31.134.187.205])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec8546sm625304e87.108.2024.10.06.15.00.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Oct 2024 15:00:20 -0700 (PDT)
-Message-ID: <1ebce461-e4eb-4f10-9de8-19240193b262@gmail.com>
-Date: Mon, 7 Oct 2024 01:00:19 +0300
+	s=arc-20240116; t=1728252110; c=relaxed/simple;
+	bh=Gy67jPuTIKdx+LMTo6vm6+onZ+nJSx1uLoldMnvmPvY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=m8Ugg1Baf14c4L20iXDuOV79Dm/2ffJ+lqiGNCDU2VJz6P0fEZNvhoFGjWxhpOHYPrtgfN1GZr6EH/ZAmVtx1KIEsY0tC2vodO1KOeatE+3+FV93JE2cTN5dCJ4j1jltbPSErssH1gEH4galiKPNeKAh8Y6tJnYTIY4gUl+0+DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T4fu389D; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 496M0mTb026839;
+	Sun, 6 Oct 2024 22:01:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	J39T85wvcA9vqhR4XPwXvsan9PQikhcxXtHsdQc70DE=; b=T4fu389DH97+TKYh
+	sQnEabgHDXCp8rARDVBsEtoWOcvCRvZznG+BK1c26xkypVdXXrOtUkDmUEPtzH6t
+	Fe4DiG+5Ah67dWn38QqSS9IsJ8VthKBgJRS+IEw4sQMjLSQuKIAWXrD2h99u98FT
+	0FW85B6MFst6DcT+wHWN1EBXdHJgllEJX0BqVrmV2J4c1WXP0DsOYanfzeR0LMK6
+	ZVkJ+AR8YO0BpZYb1dOGtWhlxpY6KOnNSv8BvkStYD7iI2T2YCrJEAhQbNixVrYJ
+	Ye03pOYnhuBOyDex7rO0OeqU/DL0VeQ5ldsA2BzGqup/mjot9+vIrSSK3Ve1hre+
+	5WwMdw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xr5jj6e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 06 Oct 2024 22:01:32 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 496M1WY0026764
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 6 Oct 2024 22:01:32 GMT
+Received: from [10.216.56.130] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 6 Oct 2024
+ 15:01:29 -0700
+Message-ID: <9c8ae6ef-dd71-4a2f-91c7-49eddd36e4f7@quicinc.com>
+Date: Mon, 7 Oct 2024 03:31:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,49 +64,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net: fix register_netdev description
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241006175718.17889-3-insafonov@gmail.com>
- <844f8c95-634c-4153-bfab-d6a032677854@lunn.ch>
+Subject: Re: [PATCH 1/2] firmware: qcom: scm: Return -EOPNOTSUPP for
+ unsupported SHM bridge enabling
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Qingqing Zhou <quic_qqzhou@quicinc.com>
+References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
+ <20241005140150.4109700-2-quic_kuldsing@quicinc.com>
+ <2fi7pyhpetqyhipjiihuafddggwdrh7abuvfkks5hu5qid2rfm@ibuiecrhijey>
 Content-Language: en-US
-From: Ivan Safonov <insafonov@gmail.com>
-In-Reply-To: <844f8c95-634c-4153-bfab-d6a032677854@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Kuldeep Singh <quic_kuldsing@quicinc.com>
+In-Reply-To: <2fi7pyhpetqyhipjiihuafddggwdrh7abuvfkks5hu5qid2rfm@ibuiecrhijey>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: innUSPBNFarW1hbGYU9UfRKsaKlhZS1d
+X-Proofpoint-ORIG-GUID: innUSPBNFarW1hbGYU9UfRKsaKlhZS1d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ clxscore=1015 mlxlogscore=865 priorityscore=1501 impostorscore=0
+ adultscore=0 mlxscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410060158
 
 
-
-On 10/7/24 00:16, Andrew Lunn wrote:
-> On Sun, Oct 06, 2024 at 08:57:20PM +0300, Ivan Safonov wrote:
->> register_netdev() does not expands the device name.
+>>  int qcom_scm_shm_bridge_enable(void)
+>>  {
+>> +	int ret;
+>> +
+>>  	struct qcom_scm_desc desc = {
+>>  		.svc = QCOM_SCM_SVC_MP,
+>>  		.cmd = QCOM_SCM_MP_SHM_BRIDGE_ENABLE,
+>> @@ -1373,7 +1379,11 @@ int qcom_scm_shm_bridge_enable(void)
+>>  					  QCOM_SCM_MP_SHM_BRIDGE_ENABLE))
+>>  		return -EOPNOTSUPP;
+>>  
+>> -	return qcom_scm_call(__scm->dev, &desc, &res) ?: res.result[0];
+>> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
+>> +	if (!ret && res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	return ret ?: res.result[0];
 > 
-> Please could you explain what makes you think it will not expand the
-> device name.
+> Could you please make it less cryptic?
 > 
-> 	Andrew
-
-It is the register_netdev implementation:
-
-> int register_netdev(struct net_device *dev)
-> {
-> 	int err;
+> if (ret)
+> 	return ret;
 > 
-> 	if (rtnl_lock_killable())
-> 		return -EINTR;
-> 	err = register_netdevice(dev);
-> 	rtnl_unlock();
-> 	return err;
-> }
+> if (res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
+> 	return -EOPNOTSUPP;
+> 
+> return res.result[0];
 
-There is no device name expansion, rtnl lock and register_netdevice call 
-only. The register_netdevice expands device name using dev_get_valid_name().
+Sure Dmitry, this looks more cleaner.
+Will update in next rev.
 
-
-
+-- 
+Regards
+Kuldeep
 
