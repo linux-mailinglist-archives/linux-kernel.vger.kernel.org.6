@@ -1,202 +1,176 @@
-Return-Path: <linux-kernel+bounces-352267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F02AC991CC2
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:24:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F095D991CCA
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17409B21D46
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 06:24:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A1E7282860
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 06:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E8E15A868;
-	Sun,  6 Oct 2024 06:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C6816BE39;
+	Sun,  6 Oct 2024 06:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n8qBoDWu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFin6XYc"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E63D4C9D;
-	Sun,  6 Oct 2024 06:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B60F249F9;
+	Sun,  6 Oct 2024 06:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728195834; cv=none; b=nZ4eRCRjNriMRB3GKDST2g798Qo9uQilKZB5aMCmVBAS8A+sc/24wXF7x4CAhGAe5GS26ifu2F99G3F09QOn12NjRFA6q0k6uSBhGZmkhExv3NB4kD/0qhqb8mYqWChfvat0K5ABGAo5MCIG3OkcuyAxrGatep6yz4P/KnfvTmw=
+	t=1728197808; cv=none; b=OAlCHeHk1EJxcz19lVupP8JNQ1LWmCNYzWV7sHYMjVSX2R9HDKi5wbc/cB0Qb6NhVh3+LRPHE1031Tz6cfFOBQhrZZmNsjaQtio0lteYqKA47mqgtrOtWjF31PKfCrrJ340nHGMiq4rxeqlX0tTvw+BcqUEfQIOLF2Ft10i6JXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728195834; c=relaxed/simple;
-	bh=H/emNg2aVZv4n2YTV6WagRn5Age0z2hVFcUSuk6iDKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tvi4FSTSLK2+4wcpQu+9BWLdBGhX/IR/AMg9XzWdYQsETPkGZ0xktOCKtHA0Yyz6CqgntHVGIgES9fb8FY0F35eUYD0blG9jIBpOK1G5wMJNQapyyWKDFiqCfnN5LU34aitqGdMXUSEjXlED2q5Uge23EYcSbSCGUrAk14XRQGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n8qBoDWu; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728195833; x=1759731833;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=H/emNg2aVZv4n2YTV6WagRn5Age0z2hVFcUSuk6iDKk=;
-  b=n8qBoDWubJK+tzTZjyr9TnvUzF3b14EKjJCnhMURusXYgDnby8ETYN1t
-   UjmxnNPqhjhQ41WMG8teopxFo6kCuCZSZ0msfO3X7H1ADBkMK+Yqcqm5s
-   Bdog/7FRcPUwSYbzspkGZi6XzhtJVGWHyyh91nRyS+s8og9N6f0QiYZXV
-   1mkOoH8gquy0ZkhzWuzhYiLy7SdNJdps4iU/eX5mnWdMtdKW2rBnjqFIC
-   oYTAlPw3lVfj8eqJMOe8aWC9T3S1wpuKbHUIVG91/xo645ALF0xD4KzK8
-   KkRAcVumsDUQs9Non+UJQgWPneZJRu7DtJnoJjzXo/ePKQB6NaIxhhx8k
-   Q==;
-X-CSE-ConnectionGUID: bl4LoanqQealht3LruVIqA==
-X-CSE-MsgGUID: aqd3TEuzTgSyiNzfMKBxBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="27254801"
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="27254801"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 23:23:52 -0700
-X-CSE-ConnectionGUID: gkqTNOEbSYqLP/6WzoJMHA==
-X-CSE-MsgGUID: 2L3DpjURSSmUkBiqjKKkbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="79703327"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 05 Oct 2024 23:23:48 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sxKgD-0003em-1y;
-	Sun, 06 Oct 2024 06:23:45 +0000
-Date: Sun, 6 Oct 2024 14:23:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Guillaume Stols <gstols@baylibre.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: oe-kbuild-all@lists.linux.dev, linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, aardelean@baylibre.com,
-	dlechner@baylibre.com, Guillaume Stols <gstols@baylibre.com>
-Subject: Re: [PATCH v3 07/10] iio: adc: ad7606: Add compatibility to fw_nodes
-Message-ID: <202410061420.L3sUSK8b-lkp@intel.com>
-References: <20241004-ad7606_add_iio_backend_support-v3-7-38757012ce82@baylibre.com>
+	s=arc-20240116; t=1728197808; c=relaxed/simple;
+	bh=9xmSt//ckqUc9GEsM7EVOlOajr53kyWz802i/xD4PHY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nzndu/AZCWqHnlq1Wai5vLXxNb19f4N9AG3yECjEHlPmCZN0QD6EOedOzNrGgKOn6d+rIZTY1LU9+HmF12jD45Hl9+hDNpNnurRIu3M3EGbNE6473d/CTIymBWn52y9/Q4MQx1BsIs/vtOnzN//bSCTao07kXVFLG7eQEHWWO1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFin6XYc; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-208cf673b8dso36763925ad.3;
+        Sat, 05 Oct 2024 23:56:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728197806; x=1728802606; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pVlvbtJ0HauPUdOyVZHG6EW5XbBgja5OxFe9LJEXSIw=;
+        b=LFin6XYccT1gLaPmoi20d9xv8s1vNB2vNraFWinlTOloLI4c542DrUP0UJGegYfMwS
+         EmPNAeC5W+GpuNDJQ96fchBOMGCjwgqyJFLjf9+2cvcuqqMgjcZnXgPnLH80mElcEMq/
+         BVSQA2jPFj7bQoNKpsNJziSEAcATcvlfu6tx8SxgZgVmn4gikOxBNFejZ9YrtIczf+tG
+         hbo8D8L5I6cmsr+AD3KhyLgZK9HBrbxTny065pCOhYCbGHnETKd3t4JR514BhtbLTJB3
+         Z27VsjStalNwppyPKgLTX7kjytL9WByc8enLdlo44+mw8N2GfPiORL9+Rk5eWLwB9YFX
+         cgQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728197806; x=1728802606;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pVlvbtJ0HauPUdOyVZHG6EW5XbBgja5OxFe9LJEXSIw=;
+        b=Zzwn0K7ZbwZVCEUK4uyzupCuo3ZoWrWeRQA9fQRLiXPB6rJAm+UJRbJjdHgkKomEol
+         f6DNdwE+ABu1LAvwEaGmJzGApAAZmU9/j7LFvYVgmHzKtK2HGjX0YpriaLwhczwuKl/5
+         X/TCsLdZofXgqKh19xOb3zLuChgEruJRu2Aezq2VIQjumT0WnoD0nnYPbykxVSVoBbm7
+         JMgRW6nmWX8pjApqFaa/u6VvRZj1rtT8x4vTtO1SbOVwD74H6Cp+MouXwlJzJtKiyVsv
+         5Ix+v/5e1JX1J/wOcbH+Uw8cRfNOsHaoNqsYCbw6y/UBQtt8iIIxNZn38yBHqpl+Ko8L
+         twXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKGUtPa+ezoKg/syf+ZeF2OLtkn21wdPqoZkV/4gfsHwJ0wX7HSgWAvn09BV8kEqg/32+xIRc7QES1q64=@vger.kernel.org, AJvYcCWgnRYj15a60DaERjOqziGCKMNWgQNe4SKEMAa0eRssMTRveHbkVr2iotvVy14LKXlQHGedLQFx@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZJbwJSJr1XnIS0pS+yRsQdrkzSjGUi59RsTvq5/m7/7n8g5Zd
+	jkVhhXdVLzzx4lzI4xrgDWUVaAyevlDcruY7bLKY09kkhlF+deiZ
+X-Google-Smtp-Source: AGHT+IEDzWwIdJCb/fzy5ZaO9rMBbEN7d+bsMKvBKcStuvOMuftMzbHUx2AFtEX4U0mXqs1Ce4I5Fg==
+X-Received: by 2002:a17:902:d48f:b0:20b:937e:ca1e with SMTP id d9443c01a7336-20bfdfd29a3mr104299925ad.18.1728197806425;
+        Sat, 05 Oct 2024 23:56:46 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.25.208])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138af813sm21749865ad.9.2024.10.05.23.56.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 23:56:46 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: idosch@nvidia.com,
+	kuba@kernel.org,
+	aleksander.lobakin@intel.com,
+	horms@kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	dsahern@kernel.org,
+	dongml2@chinatelecom.cn,
+	amcohen@nvidia.com,
+	gnault@redhat.com,
+	bpoirier@nvidia.com,
+	b.galvani@gmail.com,
+	razor@blackwall.org,
+	petrm@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v5 00/12] net: vxlan: add skb drop reasons support
+Date: Sun,  6 Oct 2024 14:56:04 +0800
+Message-Id: <20241006065616.2563243-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004-ad7606_add_iio_backend_support-v3-7-38757012ce82@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Guillaume,
+In this series, we add skb drop reasons support to VXLAN, and following
+new skb drop reasons are introduced:
 
-kernel test robot noticed the following build warnings:
+  SKB_DROP_REASON_VXLAN_INVALID_HDR
+  SKB_DROP_REASON_VXLAN_VNI_NOT_FOUND
+  SKB_DROP_REASON_VXLAN_ENTRY_EXISTS
+  SKB_DROP_REASON_VXLAN_NO_REMOTE
+  SKB_DROP_REASON_MAC_INVALID_SOURCE
+  SKB_DROP_REASON_IP_TUNNEL_ECN
+  SKB_DROP_REASON_TUNNEL_TXINFO
+  SKB_DROP_REASON_LOCAL_MAC
 
-[auto build test WARNING on 35307f34d6fef8f9d41a1e8f4f532e4b0a7ee422]
+We add some helper functions in this series, who will capture the drop
+reasons from pskb_may_pull_reason and return them:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Guillaume-Stols/iio-adc-ad7606-Fix-typo-in-the-driver-name/20241005-055256
-base:   35307f34d6fef8f9d41a1e8f4f532e4b0a7ee422
-patch link:    https://lore.kernel.org/r/20241004-ad7606_add_iio_backend_support-v3-7-38757012ce82%40baylibre.com
-patch subject: [PATCH v3 07/10] iio: adc: ad7606: Add compatibility to fw_nodes
-config: i386-randconfig-062-20241006 (https://download.01.org/0day-ci/archive/20241006/202410061420.L3sUSK8b-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410061420.L3sUSK8b-lkp@intel.com/reproduce)
+  pskb_network_may_pull_reason()
+  pskb_inet_may_pull_reason()
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410061420.L3sUSK8b-lkp@intel.com/
+And we also make the following functions return skb drop reasons:
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/iio/adc/ad7606_spi.c:324:29: sparse: sparse: symbol 'ad7606_spi_bops' was not declared. Should it be static?
->> drivers/iio/adc/ad7606_spi.c:328:29: sparse: sparse: symbol 'ad7616_spi_bops' was not declared. Should it be static?
->> drivers/iio/adc/ad7606_spi.c:337:29: sparse: sparse: symbol 'ad7606b_spi_bops' was not declared. Should it be static?
->> drivers/iio/adc/ad7606_spi.c:346:29: sparse: sparse: symbol 'ad7606c_18_spi_bops' was not declared. Should it be static?
->> drivers/iio/adc/ad7606_spi.c:370:30: sparse: sparse: symbol 'ad7606_4_bus_info' was not declared. Should it be static?
->> drivers/iio/adc/ad7606_spi.c:375:30: sparse: sparse: symbol 'ad7606b_bus_info' was not declared. Should it be static?
->> drivers/iio/adc/ad7606_spi.c:380:30: sparse: sparse: symbol 'ad7606c_16_bus_info' was not declared. Should it be static?
->> drivers/iio/adc/ad7606_spi.c:385:30: sparse: sparse: symbol 'ad7606c_18_bus_info' was not declared. Should it be static?
->> drivers/iio/adc/ad7606_spi.c:390:30: sparse: sparse: symbol 'ad7616_bus_info' was not declared. Should it be static?
+  skb_vlan_inet_prepare()
+  vxlan_remcsum()
+  vxlan_snoop()
+  vxlan_set_mac()
 
-vim +/ad7606_spi_bops +324 drivers/iio/adc/ad7606_spi.c
+Changes since v4:
+- make skb_vlan_inet_prepare() return drop reasons, instead of introduce
+  a wrapper for it in the 3rd patch.
+- modify the document for SKB_DROP_REASON_LOCAL_MAC and
+  SKB_DROP_REASON_TUNNEL_TXINFO.
 
-   323	
- > 324	const struct ad7606_bus_ops ad7606_spi_bops = {
-   325		.read_block = ad7606_spi_read_block,
-   326	};
-   327	
- > 328	const struct ad7606_bus_ops ad7616_spi_bops = {
-   329		.read_block = ad7606_spi_read_block,
-   330		.reg_read = ad7606_spi_reg_read,
-   331		.reg_write = ad7606_spi_reg_write,
-   332		.write_mask = ad7606_spi_write_mask,
-   333		.rd_wr_cmd = ad7616_spi_rd_wr_cmd,
-   334		.sw_mode_config = ad7616_sw_mode_config,
-   335	};
-   336	
- > 337	const struct ad7606_bus_ops ad7606b_spi_bops = {
-   338		.read_block = ad7606_spi_read_block,
-   339		.reg_read = ad7606_spi_reg_read,
-   340		.reg_write = ad7606_spi_reg_write,
-   341		.write_mask = ad7606_spi_write_mask,
-   342		.rd_wr_cmd = ad7606B_spi_rd_wr_cmd,
-   343		.sw_mode_config = ad7606B_sw_mode_config,
-   344	};
-   345	
- > 346	const struct ad7606_bus_ops ad7606c_18_spi_bops = {
-   347		.read_block = ad7606_spi_read_block18to32,
-   348		.reg_read = ad7606_spi_reg_read,
-   349		.reg_write = ad7606_spi_reg_write,
-   350		.write_mask = ad7606_spi_write_mask,
-   351		.rd_wr_cmd = ad7606B_spi_rd_wr_cmd,
-   352		.sw_mode_config = ad7606c_18_sw_mode_config,
-   353	};
-   354	
-   355	static const struct ad7606_bus_info ad7605_4_bus_info = {
-   356		.chip_info = &ad7605_4_info,
-   357		.bops = &ad7606_spi_bops,
-   358	};
-   359	
-   360	static const struct ad7606_bus_info ad7606_8_bus_info = {
-   361		.chip_info = &ad7606_8_info,
-   362		.bops = &ad7606_spi_bops,
-   363	};
-   364	
-   365	static const struct ad7606_bus_info ad7606_6_bus_info = {
-   366		.chip_info = &ad7606_6_info,
-   367		.bops = &ad7606_spi_bops,
-   368	};
-   369	
- > 370	const struct ad7606_bus_info ad7606_4_bus_info = {
-   371		.chip_info = &ad7606_4_info,
-   372		.bops = &ad7606_spi_bops,
-   373	};
-   374	
- > 375	const struct ad7606_bus_info ad7606b_bus_info = {
-   376		.chip_info = &ad7606b_info,
-   377		.bops = &ad7606b_spi_bops,
-   378	};
-   379	
- > 380	const struct ad7606_bus_info ad7606c_16_bus_info = {
-   381		.chip_info = &ad7606c_16_info,
-   382		.bops = &ad7606b_spi_bops,
-   383	};
-   384	
- > 385	const struct ad7606_bus_info ad7606c_18_bus_info = {
-   386		.chip_info = &ad7606c_18_info,
-   387		.bops = &ad7606c_18_spi_bops,
-   388	};
-   389	
- > 390	const struct ad7606_bus_info ad7616_bus_info = {
-   391		.chip_info = &ad7616_info,
-   392		.bops = &ad7616_spi_bops,
-   393	};
-   394	
+Changes since v3:
+- rename SKB_DROP_REASON_VXLAN_INVALID_SMAC to
+  SKB_DROP_REASON_MAC_INVALID_SOURCE in the 6th patch
+
+Changes since v2:
+- move all the drop reasons of VXLAN to the "core", instead of introducing
+  the VXLAN drop reason subsystem
+- add the 6th patch, which capture the drop reasons from vxlan_snoop()
+- move the commits for vxlan_remcsum() and vxlan_set_mac() after
+  vxlan_rcv() to update the call of them accordingly
+- fix some format problems
+
+Changes since v1:
+- document all the drop reasons that we introduce
+- rename the drop reasons to make them more descriptive, as Ido advised
+- remove the 2nd patch, which introduce the SKB_DR_RESET
+- add the 4th patch, which adds skb_vlan_inet_prepare_reason() helper
+- introduce the 6th patch, which make vxlan_set_mac return drop reasons
+- introduce the 10th patch, which uses VXLAN_DROP_NO_REMOTE as the drop
+  reasons, as Ido advised
+
+Menglong Dong (12):
+  net: skb: add pskb_network_may_pull_reason() helper
+  net: tunnel: add pskb_inet_may_pull_reason() helper
+  net: tunnel: make skb_vlan_inet_prepare() return drop reasons
+  net: vxlan: add skb drop reasons to vxlan_rcv()
+  net: vxlan: make vxlan_remcsum() return drop reasons
+  net: vxlan: make vxlan_snoop() return drop reasons
+  net: vxlan: make vxlan_set_mac() return drop reasons
+  net: vxlan: use kfree_skb_reason() in vxlan_xmit()
+  net: vxlan: add drop reasons support to vxlan_xmit_one()
+  net: vxlan: use kfree_skb_reason() in vxlan_mdb_xmit()
+  net: vxlan: use kfree_skb_reason() in vxlan_encap_bypass()
+  net: vxlan: use kfree_skb_reason() in encap_bypass_if_local()
+
+ drivers/net/bareudp.c          |   4 +-
+ drivers/net/geneve.c           |   4 +-
+ drivers/net/vxlan/vxlan_core.c | 111 +++++++++++++++++++++------------
+ drivers/net/vxlan/vxlan_mdb.c  |   2 +-
+ include/linux/skbuff.h         |   8 ++-
+ include/net/dropreason-core.h  |  39 ++++++++++++
+ include/net/ip_tunnels.h       |  23 ++++---
+ 7 files changed, 138 insertions(+), 53 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.5
+
 
