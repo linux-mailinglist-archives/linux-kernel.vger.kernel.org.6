@@ -1,129 +1,127 @@
-Return-Path: <linux-kernel+bounces-352280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29627991CE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:00:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 715D6991CE5
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 09:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ADB51C2187F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:00:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273CD1F24393
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 07:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED3317A93C;
-	Sun,  6 Oct 2024 06:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C389216F908;
+	Sun,  6 Oct 2024 06:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlLXcs7z"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PipkX5Ft"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E2D166F34;
-	Sun,  6 Oct 2024 06:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC88216D4E8;
+	Sun,  6 Oct 2024 06:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728197890; cv=none; b=FTk7AjWMNcmAdQQkLXAx90pj0s2SJ4zfQJMSQCFon4MuLcCGD/ARG0Gsnd27KeQPEDWH62lkWUAwP1T6HC2A96bUZKFddrGwmqwjfU0yGzlw6HBjBSUgLzHHHE6zXTWiMrRdCc50fR/VfK9N3qeYbKm7mbmMa2fRPZO0uBcH96E=
+	t=1728197944; cv=none; b=m7E5VeFOhOcoAOsbIYiVLiHounRxaO2Yw4fd8YJkNqPfrp5XIuHK48E2ZrsD5bdQJNw5oCunaYGUOuc1BQP6xGPiVXAu8X5sWhISUBEBgQnwnoEhomZSrYHCqUhfMoyLsmk5C8/WxcGCD4s1NbLDrB8zCFG4IKJ6qqjF/sybueM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728197890; c=relaxed/simple;
-	bh=R8vmG0u3lFl9fsXKHPJv8VqmdcKKDyrNnQXHw0Dmp2U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iJk9TTud4PzkrR2m1fLMLQJ76dqtK5IaOozT4W2Hqggn5zGXeT3gE0xp01d2+rTeFHEtR3s5nt3y4S3SH3y9yu+pjMC+72IF+wpvYtwQ9CdqbJhHd8XmEP++mRerl0GoSJRWnyGqG22zL4Wju3eo64y5SnFtWHYLv20iULlHDtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RlLXcs7z; arc=none smtp.client-ip=209.85.214.196
+	s=arc-20240116; t=1728197944; c=relaxed/simple;
+	bh=/ZJ7KmFOl0EpI21Y0KEtqt/Oqi3/GZoai/I0cVMf/YE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bLDEXV1Ufb9+9nCvz7rPBGIj1EmgKJ1Si8DRRdK6fY8QII4qCSSHkFpI+MKy0kHS04h/xpMyuTKRxbPtF+5MovioASHJcHEPgwckeWtleakcBkRcF37LE6VUYw8LdrAtwSg+/rUTkiZUcw4d97jOpfWbHOvvClrs11Msa8XCraw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PipkX5Ft; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-20b8be13cb1so36788035ad.1;
-        Sat, 05 Oct 2024 23:58:09 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71b00a97734so3183553b3a.1;
+        Sat, 05 Oct 2024 23:59:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728197889; x=1728802689; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KyNsEi0JeRXi6J1a9d2wdU47n7lnZVibMGfNyAtDMsk=;
-        b=RlLXcs7zSqq16XUxgkaXFPYbt/1n2MydCS1RwnXY69FZkgFEOiw5SqYs0fdgGYueer
-         STmJNVGlqDdn+SCGlo6QOtsK7lG4dIcJ2Ls7lwgh5VozRxNI/9Dx2wHUywYH1IHuPjXy
-         S6gIX135QwTy5a/nfL5WZ2lWFH19h74/+iLSGFU4HKE5fxLBJM2NJ5mFadUYiB6U0iIM
-         GgFQJFkspT6MLAhSdqpU3g1bfIlQUc0qDES3EAcDGx0qt2tF1DQ+8hAHeajuSn5PpjHN
-         /S2bPIANQBrpeEyo2LFyKgakh0Cg78zRB5GhJ0Y1yj7Awskk8ODVRQGEDhlQg3nD474f
-         a9WQ==
+        d=gmail.com; s=20230601; t=1728197942; x=1728802742; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6i+cth8VkyIuhVRMhBqiNkopkDZ/SGnIu+dJ7Vv/9ds=;
+        b=PipkX5FtxhgMs8ue/n96FPR5CZAJz77gOrAt5VJblPd8gGTVFcR7XL+0JjIAMnlfpS
+         pbKeLgsl/PDNIa/iaglODn/vHCSJCGBIUgPlTtpNNzv7Kg1D9Ldw9QkxSlv63sfLS1PN
+         vKRYI75VmTdhjiunoi+NZEHIr8fULPENCVc4N+/b5YxVnUe3i9y1MTTFSDXb2Fc3sSCD
+         e04l4ae9LwrMAm6zFdOGaru3MwWMpqrUvVnRpU4gAlg9hEEeTmPrRtoSbfkWENxj1eW1
+         ha5CsE8X7wMa6mbZw7/goFJuFRFvfaQ1xXppIH91fee8djvFbgwVq4XXHPYF6OMGXmTT
+         xf+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728197889; x=1728802689;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KyNsEi0JeRXi6J1a9d2wdU47n7lnZVibMGfNyAtDMsk=;
-        b=KuIQe/IVFqFIsrNV2QbDvKhoP9PuwkA+mWkOaKWBePR7IP2VuEuBpwdgPZcA6HC2wN
-         Rc75hy3+Ov+w40PKt5/0HWtT7FlC3cOGJXyaAx2jBdWKfpyf7jCZN3TMqRbPqACh669o
-         Vt5Ik22NP5WmjTYH4OwrKvy1bdVrFHmNfpt2LwHtZhu4rMgCnwLoPKiy+VyQuEi8m2rQ
-         e84oAa8NoRTOK+KczWQUJh0lhl0Pxg+2y/yVeZxdW+VYbnhcuXDswuppw2T9WlnbKrGE
-         NgcL+hvgxV70ZFlYyq5Sdm8Lg9vqgktwyNfcSJ9TCKjf9/sUmBcS2VxUjPWamQ6jLZW3
-         VAfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgQ1/BrXil23i+qC79tp2lBdcCECcZovB/uyHC90WIZ+3+Ft3OlhHuF4Wv8nvCc7LQBeOjlWo9JjQcnpU=@vger.kernel.org, AJvYcCWdqHsukdx+kT0s9V8DQSnkf7i04OHY0oKTjU+KBLoYV6cKU6krAuT+fpDLLA2QTvV+jM+r8Zh0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym7z4nqxVHuOz479R176xTcm9njnDrX/AVgI5qkR9oaxdh9f8b
-	qG1HJi/P1dGi6YFk9VBIPim9DMCM0z3Lc205pD2PMWag5iLrwVIG
-X-Google-Smtp-Source: AGHT+IHx42K0WqJ7EvcJSGjOcyT5M9GQpn0waDeAp3xdXSAlH9kCkGHV8u7YOUh7HcgCxMClRPiyXQ==
-X-Received: by 2002:a17:902:7446:b0:205:4885:235e with SMTP id d9443c01a7336-20bff04b26bmr98164725ad.39.1728197888703;
-        Sat, 05 Oct 2024 23:58:08 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138af813sm21749865ad.9.2024.10.05.23.58.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 23:58:08 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: idosch@nvidia.com,
-	kuba@kernel.org,
-	aleksander.lobakin@intel.com,
-	horms@kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	dsahern@kernel.org,
-	dongml2@chinatelecom.cn,
-	amcohen@nvidia.com,
-	gnault@redhat.com,
-	bpoirier@nvidia.com,
-	b.galvani@gmail.com,
-	razor@blackwall.org,
-	petrm@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-Subject: [PATCH net-next v5 12/12] net: vxlan: use kfree_skb_reason() in encap_bypass_if_local()
-Date: Sun,  6 Oct 2024 14:56:16 +0800
-Message-Id: <20241006065616.2563243-13-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241006065616.2563243-1-dongml2@chinatelecom.cn>
-References: <20241006065616.2563243-1-dongml2@chinatelecom.cn>
+        d=1e100.net; s=20230601; t=1728197942; x=1728802742;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6i+cth8VkyIuhVRMhBqiNkopkDZ/SGnIu+dJ7Vv/9ds=;
+        b=IY6Utg2aCwnSGlFYHSUiJw1jjzdXytQH4H86THh6A9EMuJ7wk172wbz649k9+HLjMX
+         jXskcEXZdOHbEQeNL+ULZZix1BxWI3yUlD7XMctYNO8nniV/e0S0edeVn2Cen4QAvhJL
+         63OhAOXWxQ34w2RfhJJzDGGh/K5WkcEvjPyaNxcva8qAYZXKptIxzDh7/bFsAE35BfG0
+         JNv4gVVdJd/iXTA0MO1QtGB7WurBFk+GajiTE3Je6UlBUO13D+wgH0/PWQ7kzXdHbrqd
+         QnbScE/Oh3GPwrMsgBOvVYHvHHN6eUeRnILTr10VLXDycX0PsZIZnRB1/X+jc4gvG1M0
+         14ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVn89FB4+c3efqIFPpEyCD1PEYyAGN4kIygLSFhMPmrBb532ZijY+RsO7V9y1OwfMIb2VYuk2k57vtb3BRX@vger.kernel.org, AJvYcCWqu3aniGYztJT5h4W+JEA4NzperWMmxUC0H16Ql9fK5ZD1/e0z1FmYxUyOlVrfwaTdoWGrsS0jePIA5Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8k3Ebw6r6joyvXZ28Oz/Ym3FFJxnR73vNCtSJwhwjXkVevDZk
+	UEeq8J0oQp0ytK1MmVkNy+nGW7HfdFpeFTWDT6b4HTnWu9DlgK+6Fw1FYw==
+X-Google-Smtp-Source: AGHT+IG9vz8p5FUmnO6dAYjAuUD+uETY9KO4Rrxcroy4S/nYfi9f0mZ4v5TkdZzJoYa6FVs+Y961ZA==
+X-Received: by 2002:aa7:88c2:0:b0:718:d7de:3be2 with SMTP id d2e1a72fcca58-71de23df1c8mr11603943b3a.14.1728197942007;
+        Sat, 05 Oct 2024 23:59:02 -0700 (PDT)
+Received: from ?IPV6:2409:40c0:230:2966:8a2:4c2e:bb52:a9af? ([2409:40c0:230:2966:8a2:4c2e:bb52:a9af])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d4a278sm2438134b3a.140.2024.10.05.23.58.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 05 Oct 2024 23:59:01 -0700 (PDT)
+Message-ID: <b22f1750-c53d-481f-8233-12adac30a807@gmail.com>
+Date: Sun, 6 Oct 2024 12:28:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Explanation on Uninitialized Variable bio in blk_rq_prep_clone
+To: John Garry <john.g.garry@oracle.com>, hch@infradead.org
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <Zv_eFIjstVns-ebG@infradead.org>
+ <20241004141037.43277-1-surajsonawane0215@gmail.com>
+ <6a0ec577-fba1-44b3-87d8-3a202df19d8c@oracle.com>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <6a0ec577-fba1-44b3-87d8-3a202df19d8c@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Replace kfree_skb() with kfree_skb_reason() in encap_bypass_if_local, and
-no new skb drop reason is added in this commit.
+On 04/10/24 20:03, John Garry wrote:
+> On 04/10/2024 15:10, SurajSonawane2415 wrote:
+>> Explaination of how bio could be used uninitialized in this function:
+>>
+>> In the function blk_rq_prep_clone, the variable bio is declared but 
+>> can remain uninitialized
+>> if the allocation with bio_alloc_clone fails. This can lead to 
+>> undefined behavior when the
+>> function attempts to free bio in the error handling section using 
+>> bio_put(bio).
+>> By initializing bio to NULL at declaration, we ensure that the cleanup 
+>> code will only
+>> interact with bio if it has been successfully allocated.
+>>
+>>
+> 
+> What about if rq_src->bio is NULL for blk_rq_prep_clone() -> 
+> __rq_for_each_bio(,rq_src):
+> 
+> #define __rq_for_each_bio(_bio, rq)    \
+>      if ((rq->bio))            \
+>          for (_bio = (rq)->bio; _bio; _bio = _bio->bi_next)
+> 
+> Then I don't think bio it get init'ed. Whether this is possible 
+> (rq_src->bio is NULL) is another question.
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
----
- drivers/net/vxlan/vxlan_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Keith,
 
-diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
-index da4de19d0331..f7e94bb8e30e 100644
---- a/drivers/net/vxlan/vxlan_core.c
-+++ b/drivers/net/vxlan/vxlan_core.c
-@@ -2341,7 +2341,7 @@ static int encap_bypass_if_local(struct sk_buff *skb, struct net_device *dev,
- 			DEV_STATS_INC(dev, tx_errors);
- 			vxlan_vnifilter_count(vxlan, vni, NULL,
- 					      VXLAN_VNI_STATS_TX_ERRORS, 0);
--			kfree_skb(skb);
-+			kfree_skb_reason(skb, SKB_DROP_REASON_VXLAN_INVALID_HDR);
- 
- 			return -ENOENT;
- 		}
--- 
-2.39.5
+You're right to bring this up. If rq_src->bio is NULL, the 
+__rq_for_each_bio macro will skip the loop, meaning the bio variable 
+won't be used at all. So, even if bio isn’t initialized, it won't cause 
+any issues in that case.
 
+Thanks for pointing that out.
+
+Best regards,
+Suraj
 
