@@ -1,177 +1,159 @@
-Return-Path: <linux-kernel+bounces-352344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE1D991DDF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:31:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5588C991DE2
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79C82823BC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:31:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 854281C20BCD
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48581172BDF;
-	Sun,  6 Oct 2024 10:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA7F173355;
+	Sun,  6 Oct 2024 10:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c2BSxm6q"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dijUyOvR"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0568F16D4E5
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 10:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C4F7F6
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 10:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728210702; cv=none; b=t+s9pSqOrnYCUj3mdS5oTz+/Cfwqs2vYL9aVoMO1lBQg1mP/892TigWToE31d9Io1wk8kZnmbKZhvXW5hQoTpK/2pDJDxxws4167Yv2d8WN7dAMKt4xTk7iVR47aItUw0ufonGPJwLI3r86lnKZQ9hOnFlKKJWssRCCTUtZ2Lcw=
+	t=1728211104; cv=none; b=I7ovcl0hRYS3TW+uo80vbLDXwzkmQ8Xvepzc7RrIixZ95z1kYXvOE+jcwL6I6+xNJxLPR5tpw+ztOLgfIQPS5Z3MSNGEvxIpulfz3Zg9FxR/psI7zWXI2dLNtV6lR4O9blTpEx1H8dUN4MIxh0BaTyk3xtMUnCcFZ+M9tmCd2nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728210702; c=relaxed/simple;
-	bh=+1hMTw3yjrhtuWg/B41NsVCZVs0eLqPm2W6ekE6WIWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dcJ/1cFMzLmWShOoOLDRnkG1ws6dkp/liOYCIPZnkglTxjR7vcp77lscTziNuGtGEnQBbCUZ5uwapFtXMxtwOflM4NKDdJXJsRpd94Rip8WhpzwkN6guyfE7/ZN5Aop5wmLA/jB0130gnnb6u+v8GsQnm/xnBXZV8kZzZeh96BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c2BSxm6q; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1728211104; c=relaxed/simple;
+	bh=f2xxi2DKOs66PGZFJ5bjsk68GauCtWp8hrFiJiYR5JA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fGdP/Fx3R3CtV+UQTF59reV9wOSNevFzTZoS0KXI/lmdpdBtNyKiJXqqd1RyPtCu7ik8Iwt3CwW2jj591uoxcIUxNUamdqclARvS2h3fzLGSPUItlfbX5teuPVBzmWOx2jpM91tv+8SiHrxCE2sV1BrUtPzUjutMYLy6oKMIL0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dijUyOvR; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728210700;
+	s=mimecast20190719; t=1728211101;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JCGr2POOT5uxbuD68RQ0lpX6z0IGw4KIWstExrGNdbk=;
-	b=c2BSxm6qwBD5GfrTRm6sixBQqHCM1i3e6y5ZkUQrClZQ1VfsKgLzEQaplkOhOlKgZ0jZME
-	/aNcJqK8iZngMkD10C2O8zZIrzNuZMjk8TjfRhFiJXrbdCUEzySYrXg8C2Ue+Wyddk5qkA
-	Bw85DxSdoKThVZ8EMZF6deFnuzq/YhA=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3jIevzNX1rCjaTgjZLvCdPeQriMBLs6C6UIuyj0VsKA=;
+	b=dijUyOvRd3UPKnfyNhfwBe578tuAerOvrVzrNGwtwIh3dPmv1LRmPinsNlnz4j/SMkK4Ot
+	yLh6Shjo/ZCEB18x8W70l1MXuKhWOvjpwBV1kOirgSV7k8A7bGrBUAVOUvgiYfjZOmfp2Z
+	StjMXig4YI04H7BDSxXh4THhIp0kVlk=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653-xiBoOOjlOy6fcXmoMzntjQ-1; Sun, 06 Oct 2024 06:31:38 -0400
-X-MC-Unique: xiBoOOjlOy6fcXmoMzntjQ-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a8711c48990so369938166b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 03:31:38 -0700 (PDT)
+ us-mta-379--FDeMN-vOfuwZphPpaqz5g-1; Sun, 06 Oct 2024 06:38:20 -0400
+X-MC-Unique: -FDeMN-vOfuwZphPpaqz5g-1
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5c87a33e5bfso4543177a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 03:38:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728210697; x=1728815497;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JCGr2POOT5uxbuD68RQ0lpX6z0IGw4KIWstExrGNdbk=;
-        b=QlcPjn5+7QKXDXpvIZltyYGjRTWq85FBAfJya3ltl0UrwsND1+nmi4YY40YBSj1tjW
-         U6MG2V3StGcqIpbQ7iPOgjRiv9PFC7CKai5enXJ/D60D/JVj98Idmx6OsJDkRZlfBIps
-         ixw7YFTQVd9jSqdksoy/keIROsfUIb0Jv2n3iZrFzsDYDGYrvrsFnbUOSxabkcAFyIGd
-         6LcBMOCppjwu7MtkUolPZwiM65pPs9Hg1PNngNlNRzS6WXR+l721q0zXG8VeofWf96P1
-         Agks4POuY6zQRbM7dL2OOEGGhy9L0zCM/vwXaaIjUWsBMth2DXYhQ3vck5uFWZDtRnFa
-         0L0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUpqw8ioxtVyqp4WboMHtu0VFkXFcTImaEsx0Mkn+mf7wgQquzBq4ntuSHCOHEzRJA/+ATEjMMQ94/RT3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu4Xc3GFh8ePa1wLmlCDFbvwnCNWN3YIdUxq8ENMOAXTMbZvdl
-	xOmEQW4//QZJyZWctFKJi3GylRwND71eOlsE5Y14QJftDHkmp5XZpFtO5tUA92/BIEvRJBrP+lS
-	zWcHTwgLlmEDQXAXEGzmGZBAIp26WKvhOQoNFWYbJywKlG26OO1T6V0nOP3IE+A==
-X-Received: by 2002:a17:907:745:b0:a8d:caa:7fee with SMTP id a640c23a62f3a-a991bd04d9fmr915433566b.7.1728210697266;
-        Sun, 06 Oct 2024 03:31:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSx1R/LgYBtLI5vnf0Pf3LDe+dvGQmKU2skfmJeTA+eT0pHsSB2e/ggYoF1agP+LPkJ5N0lg==
-X-Received: by 2002:a17:907:745:b0:a8d:caa:7fee with SMTP id a640c23a62f3a-a991bd04d9fmr915431166b.7.1728210696829;
-        Sun, 06 Oct 2024 03:31:36 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e0598947sm1867769a12.11.2024.10.06.03.31.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Oct 2024 03:31:35 -0700 (PDT)
-Message-ID: <9cfb6e26-e3d1-403a-a894-4a0902905407@redhat.com>
-Date: Sun, 6 Oct 2024 12:31:34 +0200
+        d=1e100.net; s=20230601; t=1728211099; x=1728815899;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3jIevzNX1rCjaTgjZLvCdPeQriMBLs6C6UIuyj0VsKA=;
+        b=Shz8F1cKqQCOLeQgcPy6A6eBouqNZp1NWYLTtVQJcOcl8KGln1Ns/IZE8uzK/pdrkG
+         oE0wBfIij0l/+kzxI5sr1bZNn6CRz41vGorBFsfjNJfiKejyGd8p9qifkYhyMt7sWZS/
+         00v667y2TkPeDjaZ38VJke5/8ZSSh6ZAHlTUkJxzV47t284A3ITItVfkhpsnaBYl9WzI
+         ZXC0CXCGatkFpcaZcQmrjVAIkZAN1FmQjQ3ghk6Anp3vNJi1lN8QTJtYmR1T+sOKuhg9
+         4pegh6L309sjL9UuOmfDbcGq8RKtqFzWQRz9KOsCIV38UdJq8G8HyoKqSVrgLRjfyoVp
+         s2pg==
+X-Gm-Message-State: AOJu0Yyi8vcmftwKlQCvd/bdejTCHRh51Fucd4E+2r0XTMDUTZECaPz2
+	C8uBn+mlILBnRgO7bL05jsI6Z01TLp/wuuEsqTV6s7QajZ0BvgNtw/GMmGmpLGzOCOJ3+7+2Oib
+	40x3uZyL6N9yNC7XMA+7MeIcqPhRJhveFH2ZZ4ph0sXvMyKg4LB3iAnKVYTGAsQ==
+X-Received: by 2002:a17:907:97d5:b0:a99:3eae:87f3 with SMTP id a640c23a62f3a-a993eae8b86mr403715766b.47.1728211098985;
+        Sun, 06 Oct 2024 03:38:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnLTM5tVtHu/M77oCObxmLChhB1MJWc1zEWDoVC80fUmtRwNGJNwtxYPzjHmHgXDBx8JZuTQ==
+X-Received: by 2002:a17:907:97d5:b0:a99:3eae:87f3 with SMTP id a640c23a62f3a-a993eae8b86mr403713766b.47.1728211098583;
+        Sun, 06 Oct 2024 03:38:18 -0700 (PDT)
+Received: from avogadro.local ([151.95.43.71])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9937dbb84csm204933666b.99.2024.10.06.03.38.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 03:38:17 -0700 (PDT)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: [GIT PULL] KVM fixes for Linux 6.12-rc2
+Date: Sun,  6 Oct 2024 12:38:14 +0200
+Message-ID: <20241006103814.1173034-1-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 3/3] platform/x86: dell-laptop: Do not fail when
- encountering unsupported batteries
-To: Armin Wolf <W_Armin@gmx.de>, pali@kernel.org, dilinger@queued.net
-Cc: rafael@kernel.org, lenb@kernel.org, ilpo.jarvinen@linux.intel.com,
- platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241001212835.341788-1-W_Armin@gmx.de>
- <20241001212835.341788-4-W_Armin@gmx.de>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241001212835.341788-4-W_Armin@gmx.de>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Linus,
 
-On 1-Oct-24 11:28 PM, Armin Wolf wrote:
-> If the battery hook encounters a unsupported battery, it will
-> return an error. This in turn will cause the battery driver to
-> automatically unregister the battery hook.
-> 
-> On machines with multiple batteries however, this will prevent
-> the battery hook from handling the primary battery, since it will
-> always get unregistered upon encountering one of the unsupported
-> batteries.
-> 
-> Fix this by simply ignoring unsupported batteries.
-> 
-> Reviewed-by: Pali Rohár <pali@kernel.org>
-> Fixes: ab58016c68cc ("platform/x86:dell-laptop: Add knobs to change battery charge settings")
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-Thank you for your patch/series, I've applied this patch
-(series) to my review-hans branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
-Note it will show up in the pdx86 review-hans branch once I've
-pushed my local branch there, which might take a while.
+are available in the Git repository at:
 
-I will include this patch in my next fixes pull-req to Linus
-for the current kernel development cycle.
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
 
-Regards,
+for you to fetch changes up to c8d430db8eec7d4fd13a6bea27b7086a54eda6da:
 
-Hans
+  Merge tag 'kvmarm-fixes-6.12-1' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD (2024-10-06 03:59:22 -0400)
 
+----------------------------------------------------------------
+ARM64:
 
+* Fix pKVM error path on init, making sure we do not change critical
+  system registers as we're about to fail
 
-> ---
->  drivers/platform/x86/dell/dell-laptop.c | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/dell/dell-laptop.c b/drivers/platform/x86/dell/dell-laptop.c
-> index a3cd0505f282..5671bd0deee7 100644
-> --- a/drivers/platform/x86/dell/dell-laptop.c
-> +++ b/drivers/platform/x86/dell/dell-laptop.c
-> @@ -2391,12 +2391,18 @@ static struct attribute *dell_battery_attrs[] = {
->  };
->  ATTRIBUTE_GROUPS(dell_battery);
-> 
-> +static bool dell_battery_supported(struct power_supply *battery)
-> +{
-> +	/* We currently only support the primary battery */
-> +	return strcmp(battery->desc->name, "BAT0") == 0;
-> +}
-> +
->  static int dell_battery_add(struct power_supply *battery,
->  		struct acpi_battery_hook *hook)
->  {
-> -	/* this currently only supports the primary battery */
-> -	if (strcmp(battery->desc->name, "BAT0") != 0)
-> -		return -ENODEV;
-> +	/* Return 0 instead of an error to avoid being unloaded */
-> +	if (!dell_battery_supported(battery))
-> +		return 0;
-> 
->  	return device_add_groups(&battery->dev, dell_battery_groups);
->  }
-> @@ -2404,6 +2410,9 @@ static int dell_battery_add(struct power_supply *battery,
->  static int dell_battery_remove(struct power_supply *battery,
->  		struct acpi_battery_hook *hook)
->  {
-> +	if (!dell_battery_supported(battery))
-> +		return 0;
-> +
->  	device_remove_groups(&battery->dev, dell_battery_groups);
->  	return 0;
->  }
-> --
-> 2.39.5
-> 
-> 
+* Make sure that the host's vector length is at capped by a value
+  common to all CPUs
+
+* Fix kvm_has_feat*() handling of "negative" features, as the current
+  code is pretty broken
+
+* Promote Joey to the status of official reviewer, while James steps
+  down -- hopefully only temporarly
+
+x86:
+
+* Fix compilation with KVM_INTEL=KVM_AMD=n
+
+* Fix disabling KVM_X86_QUIRK_SLOT_ZAP_ALL when shadow MMU is in use
+
+Selftests:
+
+* Fix compilation on non-x86 architectures
+
+----------------------------------------------------------------
+Marc Zyngier (2):
+      KVM: arm64: Another reviewer reshuffle
+      KVM: arm64: Fix kvm_has_feat*() handling of negative features
+
+Mark Brown (2):
+      KVM: arm64: Constrain the host to the maximum shared SVE VL with pKVM
+      KVM: selftests: Fix build on architectures other than x86_64
+
+Paolo Bonzini (4):
+      KVM: x86/mmu: fix KVM_X86_QUIRK_SLOT_ZAP_ALL for shadow MMU
+      KVM: x86: leave kvm.ko out of the build if no vendor module is requested
+      x86/reboot: emergency callbacks are now registered by common KVM code
+      Merge tag 'kvmarm-fixes-6.12-1' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
+
+Vincent Donnefort (1):
+      KVM: arm64: Fix __pkvm_init_vcpu cptr_el2 error path
+
+ MAINTAINERS                                        |  2 +-
+ arch/arm64/include/asm/kvm_host.h                  | 25 ++++-----
+ arch/arm64/kvm/hyp/include/hyp/switch.h            |  2 +-
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c                 | 12 +++--
+ arch/arm64/kvm/hyp/nvhe/pkvm.c                     |  6 ++-
+ arch/x86/include/asm/reboot.h                      |  4 +-
+ arch/x86/kernel/reboot.c                           |  4 +-
+ arch/x86/kvm/Kconfig                               |  9 ++--
+ arch/x86/kvm/Makefile                              |  2 +-
+ arch/x86/kvm/mmu/mmu.c                             | 60 +++++++++++++++++-----
+ .../kvm/memslot_modification_stress_test.c         |  2 +
+ tools/testing/selftests/kvm/memslot_perf_test.c    |  6 +++
+ 12 files changed, 91 insertions(+), 43 deletions(-)
 
 
