@@ -1,216 +1,152 @@
-Return-Path: <linux-kernel+bounces-352427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0455D991EEF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B1B991EF4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 16:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217991C21023
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:37:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 303861C20A9B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 14:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988AB763F8;
-	Sun,  6 Oct 2024 14:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A692D130E27;
+	Sun,  6 Oct 2024 14:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRaSx2br"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzXH+HzN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4C75733A
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 14:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02568273DC;
+	Sun,  6 Oct 2024 14:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728225458; cv=none; b=i5gFWz9ijy88uISxauI7YsjbuzcC/V7EVLylHoi9OjKNwz1VYfOgwTqhHbb1oFL5G+zAHzYIjQr3JeZMCTW2pbJWjptSmaApSDAjwmAOCznGLaDyUOYe7Utwfyq3Mrcups+NuKcaFuVWWhoSqXB6Uo2/vM960gyXC5O8dF/ZCHQ=
+	t=1728225796; cv=none; b=NvMSduS7X+sczHjvMgAE5AAAcVdcjnPqJuHx6rHBGmcovz62Wc3pEKVMPMoG40004oJb5jWqoABiLVWrfHiW2dtjvdiXcMFRlgmLIEFU8SiRrHUaPBMPGp4sAs7CTYzPiVnMzDVNf+Qr8i8XwuncpaUKcc8SM+xB6J9HRLu4FX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728225458; c=relaxed/simple;
-	bh=BdPxsKQxTnwSTG2BoMp54yXKZgPysJ0Ur7LR3xWZRiI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o5gQ4FHQoK24iSVunBOeF/TvEdyq2s8IoCiE7jhKKuBL5ig/Duvi2z7uF2lyL4ZpaRqW0CpGGo1COm4E4WzYbI7VczWiNyd+pVzjZyNot2wLkZbc5lA4OAKMrDtlSxsmYFnrP/VIT/Ws76bsd9IGjQrtxJEZiJIFGKVltVz7fKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YRaSx2br; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539908f238fso3906932e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 07:37:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728225455; x=1728830255; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ND5Svx26eAZVcwpez7MW0bsvA1vYACvoD5M7KxqAkR0=;
-        b=YRaSx2brckIJjIDMtK6XkGW4MrMO1wbEzXzoLkTUjNivvOdoWdYg71nwj1jB2fDRPn
-         I3Zy+vooFkHyQBldc5m9/tsp3najMAF+FY/dlsSxnBNjN1qjxFjXDsff9SvdnO+3dIls
-         cswDFpcFKpBTXTCeZXn7drzn0VKP5D/XGIJHtydJuroDvU3kl3UIfTY3t+pR2yJl/5tC
-         RL4TwWOTokI6UoLVrMJ2w1+1aSS88ZrVHILCzp9v1rK8IkQTOXEcyGYIUijjzRCcoaej
-         i9ogg0/iy96FB+QfNDYZ6SaTfJFo3zoS3CVR0Ek7pM11qFFojQ3gkP4NLtK3lTnqNaRT
-         eNsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728225455; x=1728830255;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ND5Svx26eAZVcwpez7MW0bsvA1vYACvoD5M7KxqAkR0=;
-        b=Irr3Oaej7MAo8e0yLmQfNTh812kb65h2FUU7oemfKX/4M6CBBJV1gqApfvdduAPW0s
-         003loPHlGORVyUMEO9EZlxhP4Vb3tmsd7Hbu9ZIofxARY22ynAhWWemQIPsCseajFIUG
-         op72uAfmnUXIzY2tnQJqjYMn1G09CbpHj6zBoAXr7CLvImlKYFNfo5DAqGVJoJBGdqM2
-         WRqoQBZne487EaQQ/R/PN41bVT0Gw65LQehWaJz+Lg7PPU8o3xjKfdQuRZXruRv8gknr
-         H3+HrP3Gkvnw89shTkLAIwQFs9KM75nV7D3rTh9+8kz7rwK4AvGsK70wlM3Qkhnbh3X7
-         xsSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWX6ie90clHlI9w7oMBtR21dykR86Eawy71On1RO2uIrYEy46/QQAsuGoDZ88I9xVp1frupt8bdgqsZfDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2LRkb/dXYXdevjU5jJSsxX38rVnivl8xYHkvMZI5JMDdgyN9Q
-	kMIGkEP7gBmbu4BKAQ5N0ASRNTquVOhYmqrcNf+DgAj1XA+1EOSF2iVge94Ey7Jpf77aFmGhovu
-	qfOvt/CbzFOnm1NbK+FlMhOOEVyM=
-X-Google-Smtp-Source: AGHT+IHpGKIOejf5iRK2qFu64BjRL/QI8CawWgIdyDY+8/fGVSi35n4BU6U1tnTTr0Qo/rjJiqLbZzf9VgtOLcmclhs=
-X-Received: by 2002:a05:6512:3b8e:b0:537:a855:7d6f with SMTP id
- 2adb3069b0e04-539ab891f52mr4358542e87.34.1728225454894; Sun, 06 Oct 2024
- 07:37:34 -0700 (PDT)
+	s=arc-20240116; t=1728225796; c=relaxed/simple;
+	bh=yw0YpB9rK2tU6C+etLif3D2HyoGw03c7kDYJQ4i20mg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XO9jfKgeJe3Wt1+UZlCF+BYmzPuAMbO7sY+ZQ9s6ctcL8tQdWdf0RylaIZQbbjUElsOe0gNTNR+YPklPyyFS25NJnan4pUFJl112IId7ylATp3wyPBlpKkN6OE0rhty44fCxjf5tvYf7IFkYIZwtCFvMPhs0r0ZKQ3H0V9nl67o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzXH+HzN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 872C3C4CEC5;
+	Sun,  6 Oct 2024 14:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728225795;
+	bh=yw0YpB9rK2tU6C+etLif3D2HyoGw03c7kDYJQ4i20mg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JzXH+HzNGHIicfYULq0cOtSL4AjoS19fgIbn2TuXIk8xRltRYx7niCMtbBAFXG+oi
+	 rBkuLyg6Bx2iL1ZXrBe5WIK6YECjF8ptHtLHLz0ORM8+2e0zSmI+5PpBVKmcmV+xIf
+	 iJKMZ3uTj2AkaM2pCeT9asp6pdvIjBXVvxxCIRJffyYth2GU5e8//xlqKJHi/DgGnz
+	 BUUmLxVj9SU71LztphN68wCuCt48AlRRF8l1SRXSl6UTZvuDVSBkd+a1GC45qNStPW
+	 Q0crj1nfCu8tkmU+u8pOZQVIPi2+TigTVTMVI8So1c2a1g8C4sP4rSx6RZe17Jockt
+	 aUhQduKV0suAw==
+Date: Sun, 6 Oct 2024 15:42:53 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Michael
+ Hennerich <michael.hennerich@analog.com>, Kim Seer Paller
+ <kimseer.paller@analog.com>, Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v2] iioc: dac: ltc2664: Fix span variable usage in
+ ltc2664_channel_config function
+Message-ID: <20241006154253.1a7824bf@jic23-huawei>
+In-Reply-To: <20241006152533.329d9b59@jic23-huawei>
+References: <20241005170722.19542-1-pvmohammedanees2003@gmail.com>
+	<20241006152533.329d9b59@jic23-huawei>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001-strict_numa-v3-1-ee31405056ee@gentwo.org>
-In-Reply-To: <20241001-strict_numa-v3-1-ee31405056ee@gentwo.org>
-From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Date: Sun, 6 Oct 2024 23:37:22 +0900
-Message-ID: <CAB=+i9T8cOLQt4YprvUghwWZx1nOaiQ-0vV1N1zOOHWAFXza0Q@mail.gmail.com>
-Subject: Re: [PATCH v3] SLUB: Add support for per object memory policies
-To: cl@gentwo.org
-Cc: Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>, 
-	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Yang Shi <shy828301@gmail.com>, Christoph Lameter <cl@linux.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Huang Shijie <shijie@os.amperecomputing.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 2, 2024 at 4:08=E2=80=AFAM Christoph Lameter via B4 Relay
-<devnull+cl.gentwo.org@kernel.org> wrote:
->
-> From: Christoph Lameter <cl@gentwo.org>
->
->     The old SLAB allocator used to support memory policies on a per
->     allocation bases. In SLUB the memory policies are applied on a
->     per page frame / folio bases. Doing so avoids having to check memory
->     policies in critical code paths for kmalloc and friends.
->
->     This worked on general well on Intel/AMD/PowerPC because the
->     interconnect technology is mature and can minimize the latencies
->     through intelligent caching even if a small object is not
->     placed optimally.
->
->     However, on ARM we have an emergence of new NUMA interconnect
->     technology based more on embedded devices. Caching of remote content
->     can currently be ineffective using the standard building blocks / mes=
-h
->     available on that platform. Such architectures benefit if each slab
->     object is individually placed according to memory policies
->     and other restrictions.
->
->     This patch adds another kernel parameter
->
->             slab_strict_numa
->
->     If that is set then a static branch is activated that will cause
->     the hotpaths of the allocator to evaluate the current memory
->     allocation policy. Each object will be properly placed by
->     paying the price of extra processing and SLUB will no longer
->     defer to the page allocator to apply memory policies at the
->     folio level.
->
->     This patch improves performance of memcached running
->     on Ampere Altra 2P system (ARM Neoverse N1 processor)
->     by 3.6% due to accurate placement of small kernel objects.
->
-> Tested-by: Huang Shijie <shijie@os.amperecomputing.com>
-> Signed-off-by: Christoph Lameter (Ampere) <cl@gentwo.org>
-> ---
-> Changes in v3:
-> - Make the static key a static in slub.c
-> - Use pr_warn / pr_info instead of printk
-> - Link to v2: https://lore.kernel.org/r/20240906-strict_numa-v2-1-f104e6d=
-e6d1e@gentwo.org
->
-> Changes in v2:
-> - Fix various issues
-> - Testing
-> ---
->  mm/slub.c | 42 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
->
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 21f71cb6cc06..7ae94f79740d 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -218,6 +218,10 @@ DEFINE_STATIC_KEY_FALSE(slub_debug_enabled);
->  #endif
->  #endif         /* CONFIG_SLUB_DEBUG */
->
-> +#ifdef CONFIG_NUMA
-> +static DEFINE_STATIC_KEY_FALSE(strict_numa);
-> +#endif
-> +
->  /* Structure holding parameters for get_partial() call chain */
->  struct partial_context {
->         gfp_t flags;
-> @@ -3957,6 +3961,28 @@ static __always_inline void *__slab_alloc_node(str=
-uct kmem_cache *s,
->         object =3D c->freelist;
->         slab =3D c->slab;
->
-> +#ifdef CONFIG_NUMA
-> +       if (static_branch_unlikely(&strict_numa) &&
-> +                       node =3D=3D NUMA_NO_NODE) {
-> +
-> +               struct mempolicy *mpol =3D current->mempolicy;
-> +
-> +               if (mpol) {
-> +                       /*
-> +                        * Special BIND rule support. If existing slab
-> +                        * is in permitted set then do not redirect
-> +                        * to a particular node.
-> +                        * Otherwise we apply the memory policy to get
-> +                        * the node we need to allocate on.
-> +                        */
-> +                       if (mpol->mode !=3D MPOL_BIND || !slab ||
-> +                                       !node_isset(slab_nid(slab), mpol-=
->nodes))
-> +
-> +                               node =3D mempolicy_slab_node();
-> +               }
+On Sun, 6 Oct 2024 15:25:33 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Is it intentional to allow the local node only (via
-mempolicy_slab_node()) in interrupt contexts?
+> On Sat,  5 Oct 2024 22:37:22 +0530
+> Mohammed Anees <pvmohammedanees2003@gmail.com> wrote:
+> 
+> > In the current implementation of the ltc2664_channel_config function,
+> > a variable named span is declared and initialized to 0, intended to
+> > capture the return value of the ltc2664_set_span function. However,
+> > the output of ltc2664_set_span is directly assigned to chan->span,
+> > leaving span unchanged. As a result, when the function later checks
+> > if (span < 0), this condition will never trigger an error since
+> > span remains 0, this flaw leads to ineffective error handling. The
+> > current patch resolves this issue by using the ret variable for 
+> > getting the return value, later assigning if successful and also 
+> > effectively removing span variable.
+> > 
+> > Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+> > Fixes: 4cc2fc445d2e4e63ed6bd5d310752d88d365f8e4
+Hmm. I see you had a v3. For some reason that hasn't reached my inbox.
+Also note the fixes tag was wrong and you've fixed that.
 
-> +       }
-> +#endif
-> +
->         if (!USE_LOCKLESS_FAST_PATH() ||
->             unlikely(!object || !slab || !node_match(slab, node))) {
->                 object =3D __slab_alloc(s, gfpflags, node, addr, c, orig_=
-size);
-> @@ -5601,6 +5627,22 @@ static int __init setup_slub_min_objects(char *str=
-)
->  __setup("slab_min_objects=3D", setup_slub_min_objects);
->  __setup_param("slub_min_objects=3D", slub_min_objects, setup_slub_min_ob=
-jects, 0);
->
-> +#ifdef CONFIG_NUMA
-> +static int __init setup_slab_strict_numa(char *str)
-> +{
-> +       if (nr_node_ids > 1) {
-> +               static_branch_enable(&strict_numa);
-> +               pr_info("SLUB: Strict NUMA enabled.\n");
-> +       } else
-> +               pr_warn("slab_strict_numa parameter set on non NUMA syste=
-m.\n");
+I've picked up v3 and applied it to the fixes-togreg branch of iio.git
+and marked it for stable inclusion.
 
-nit: this statement should be enclosed within braces per coding style guide=
-line.
-Otherwise everything looks good to me (including the document amended).
+Thanks,
 
-Best,
-Hyeonggon
+J
+> > ---
+> > v2:
+> > - Using the ret variable to store the result from ltc2664_set_span
+> > ---
+> >  drivers/iio/dac/ltc2664.c | 18 +++++++++++-------
+> >  1 file changed, 11 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/iio/dac/ltc2664.c b/drivers/iio/dac/ltc2664.c
+> > index 5be5345ac5c8..7dafcba7ece7 100644
+> > --- a/drivers/iio/dac/ltc2664.c
+> > +++ b/drivers/iio/dac/ltc2664.c
+> > @@ -516,7 +516,7 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
+> >  	const struct ltc2664_chip_info *chip_info = st->chip_info;
+> >  	struct device *dev = &st->spi->dev;
+> >  	u32 reg, tmp[2], mspan;
+> > -	int ret, span = 0;
+> > +	int ret;
+> >  
+> >  	mspan = LTC2664_MSPAN_SOFTSPAN;
+> >  	ret = device_property_read_u32(dev, "adi,manual-span-operation-config",
+> > @@ -579,20 +579,24 @@ static int ltc2664_channel_config(struct ltc2664_state *st)
+> >  		ret = fwnode_property_read_u32_array(child, "output-range-microvolt",
+> >  						     tmp, ARRAY_SIZE(tmp));
+> >  		if (!ret && mspan == LTC2664_MSPAN_SOFTSPAN) {
+> > -			chan->span = ltc2664_set_span(st, tmp[0] / 1000,
+> > +			ret = ltc2664_set_span(st, tmp[0] / 1000,
+> >  						      tmp[1] / 1000, reg);
+> > -			if (span < 0)
+> > -				return dev_err_probe(dev, span,
+> > +			if (ret < 0)
+> > +				return dev_err_probe(dev, ret,
+> >  						     "Failed to set span\n");
+> > +			else  
+> else is unnecessary here as we have the standard check and error and return
+> if set pattern.
+> 
+> 
+> > +				chan->span = ret;
+> >  		}
+> >  
+> >  		ret = fwnode_property_read_u32_array(child, "output-range-microamp",
+> >  						     tmp, ARRAY_SIZE(tmp));
+> >  		if (!ret) {
+> > -			chan->span = ltc2664_set_span(st, 0, tmp[1] / 1000, reg);
+> > -			if (span < 0)
+> > -				return dev_err_probe(dev, span,
+> > +			ret = ltc2664_set_span(st, 0, tmp[1] / 1000, reg);
+> > +			if (ret < 0)
+> > +				return dev_err_probe(dev, ret,
+> >  						     "Failed to set span\n");
+> > +			else  
+> and here.
+> > +				chan->span = ret;
+> >  		}
+> >  	}
+> >    
+> 
+> 
+
 
