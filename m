@@ -1,163 +1,108 @@
-Return-Path: <linux-kernel+bounces-352250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4053991C6D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 05:43:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DD7991C71
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 05:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBAA61C21396
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 03:43:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF15C1C21396
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 03:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5191F16A397;
-	Sun,  6 Oct 2024 03:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481D816A397;
+	Sun,  6 Oct 2024 03:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W/ihGSdW"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LaxeQs9n"
+Received: from mail-yb1-f196.google.com (mail-yb1-f196.google.com [209.85.219.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE46155336
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 03:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4730914A0A4;
+	Sun,  6 Oct 2024 03:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728186184; cv=none; b=ZO3wYhqd9BIAzfrmIiKaRjmaEAML0xInBSKe4RE31l2NLb1aygDkEIbUa41SfF7q7LO6WGqLd6hqxMIz7hpEnfQYiCkuf1mCy5sXyELz+EoUEzCiu6zNegtUZxvsuXjN4kYadk+CLhQ+89t8V7AECGZHjGOD/pMorY55ZgB2M9o=
+	t=1728186709; cv=none; b=O8ieQlGpXjCC/RuMsTSKxSPZTDhSosXtMoauOUr0t0YB+n+i18cNa1fzLt2xnHe8tVhs+AgrhSZN6mKVmdLhB+cCtvptNGzPGGHSjdEvXVFwhxu9MMiDxAtUQJnc2IGoN347DeZdeBSxHBqwtyL7wkVmVo4QaikJNg430z2J0UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728186184; c=relaxed/simple;
-	bh=N2hmapaVYcoCs611h4gdMKWRM4aDYfZ1XusjU4/qjp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NdeO9gTgB1xH42ESH3+HiOgCX04lNhMXuwMTgNdsI5UvbFv3MDkaRDXfmW4bDFmc6WiK/S5zWpHqaG6SFDYoFbvKQlJee4BWfsRtxSYtQyyGJw/VhXOOoZwySxbbaIe/fDhXFxeUJZj314AN8Cb8n/wze+s2KhoIMVpTi2CR/Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W/ihGSdW; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 5 Oct 2024 23:42:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728186180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cXGBLqKQO+xeAR5ecgv73dMkpFHtDaW1iRkrgZlVimI=;
-	b=W/ihGSdWgiKIzZHWWHkxTmp8hNN2PLgTL690k61dJqO74aOIO2SmYd/AQUPA6WflIfNtGQ
-	BqAdq9+H0xOSeVNTr8QM4ihyOm/7mTi/Un67bUItwILa9R7B2xxfxIgwvnoTiNWQ0apK4B
-	M/rk9fgjuMY2LBOIpQJTm8ykhqugX7s=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: "Carl E. Thompson" <list-bcachefs@carlthompson.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <yrhcxgitslbfm473daku7m5baox4qgagr2nbsa6brjsiqkj4pv@rtaqdzmjrqug>
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
- <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
- <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
- <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
- <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
- <345264611.558.1728177653590@mail.carlthompson.net>
- <coczqmiqvuy4h74j462mjyro3skeybyt2y3kcqdcuwy4bwibjy@pquinazt4h22>
- <941798317.650.1728183991400@mail.carlthompson.net>
+	s=arc-20240116; t=1728186709; c=relaxed/simple;
+	bh=jZKZ2UO/jNkIH84KCkvT3ekASIzLWn4Ix+KvLPyBI9Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q+jFZky1MQXPjoz+U8YsKa/ScTyMYTerMhDGHulGSy4D0BD5SGtDlhUPi3jyOwjCh7DR2Rz0ccZT2VAyU8BtLq0YArLqgJWl7lz6l6KIK++yuS+AhRGlY1TMSJH5DkP3TsSIY/itrzpdPFGMpyHUwd1l+yMzpISbX7RqReA5xoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LaxeQs9n; arc=none smtp.client-ip=209.85.219.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f196.google.com with SMTP id 3f1490d57ef6-e1651f48c31so3088034276.0;
+        Sat, 05 Oct 2024 20:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728186707; x=1728791507; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DmnrKeM8ZtCj0YQObsIfTA4iodtEfxZrWAoQnmY7rLA=;
+        b=LaxeQs9nlmlOs6W7JwiVshv8B1XnvRITwgrTjxfc0m8BUbMmrrflrNjJQiNXoeXZQ5
+         CfxujrZlLTaUqD6YUX/1UC6A3ZvCy0TR2/JwX1b4LiwFyHcyznh7wxII/qqrZ583XZsa
+         KEFkrOu44WE4oO8jzS+cqgRVU+SdvTyY2Lv/DC3wLxR7VJmiZGxNchNkKT5hx4fLhrfQ
+         HO8pOTXNc1rdIvElm/7RarQNsgtKCM9PLJMFS2iMOyCwrVn+BSZxjT0UKF2E8j3ntCQ7
+         RVSqVOmxRh3Lvz2+PQUiw23SxDI8Y+ncoD54OxcOM6Gfbsx0x1+bVJ5RJDNuTlXo9bKW
+         wv6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728186707; x=1728791507;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DmnrKeM8ZtCj0YQObsIfTA4iodtEfxZrWAoQnmY7rLA=;
+        b=kdP6FYvBb8iTfPDW0yYaAgozS2w0SKGJvqaIjf1FuvvmyaRO8iN79YXEijwq9t0Lew
+         Jgk9W2cBZmwV8VnGUJ8xqUCGg+h/GYCXuLC0PXKrDmnPnLUxBsepBxOfbKnJvcQXkuAT
+         LrA5o8kOCEBXfbpqpfqfk1z1IXF9CJws+3MN5r3LvrJUouAgte87uwEY2d77Ut1SoVKt
+         is5he1BDevCBLpk00Kyk9mSRmZ+EfzZu5wg11/ztWucKKVXIGPh4TAQnq6Ce0QMDnujD
+         RECpgLTgnKHJbvqg39cPAw0LbmOWYBm61vXWmYGb1Sis1s+KhvRRWHNRVpRDVplUzbA3
+         oY9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVE5pr+EEvssEqob9bSGjRlLutDMZ9yVqxoiii+1wlD4mbdPMpnqX56AQG6CiIgneAY2xxaHSPF@vger.kernel.org, AJvYcCVFNwol8WMaCK+NwceyNgMwXMBPveKbPJhIWdNK9XkavtrhA26fr/p29jD74o6y79bGq5ycFNgtetRv6Uk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg3WPsJAFx33KzfaUdJmRyf8QGmDyT25HAU++CfahikCsHmY3e
+	OB3JG+w8vUwJN9WclrEupqpi7PsxuN0lAEVTNLxTgEDGyqMN+I3wsWHpjxeuZdlnmU0yGGrkLc3
+	1bMyuDnc2LHJGtAA9WyCSYXPGqCc=
+X-Google-Smtp-Source: AGHT+IF0o4MtgQJ+VCa/5g+9ZpMnVWuoLvL2PomI6Eh/cEZuBzu3afuJFrPowCmyC+39xUQ9Xmx2QtYEQ5Wus855HM0=
+X-Received: by 2002:a05:6902:2b8b:b0:e26:1400:2ba0 with SMTP id
+ 3f1490d57ef6-e28939488bcmr5686625276.51.1728186707230; Sat, 05 Oct 2024
+ 20:51:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <941798317.650.1728183991400@mail.carlthompson.net>
-X-Migadu-Flow: FLOW_OUT
+References: <20241001073225.807419-1-dongml2@chinatelecom.cn>
+ <20241001073225.807419-4-dongml2@chinatelecom.cn> <20241004094314.735bb69c@kernel.org>
+In-Reply-To: <20241004094314.735bb69c@kernel.org>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Sun, 6 Oct 2024 11:51:40 +0800
+Message-ID: <CADxym3aO+KR8wthn9-LK7nOBKH+=+gbWykw-E-sVaaa+Lwpp-w@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 03/12] net: tunnel: add skb_vlan_inet_prepare_reason()
+ helper
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: idosch@nvidia.com, aleksander.lobakin@intel.com, horms@kernel.org, 
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
+	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com, 
+	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 05, 2024 at 08:06:31PM GMT, Carl E. Thompson wrote:
-> Yeah, of course there were the disk accounting issues and before that
-> was the kernel upgrade-downgrade bug going from 6.8 back to 6.7.
-> Currently over on Reddit at least one user is mention read errors and
-> / or performance regressions on the current RC version that I'd rather
-> avoid.
+On Sat, Oct 5, 2024 at 12:43=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Tue,  1 Oct 2024 15:32:16 +0800 Menglong Dong wrote:
+> > -static inline bool skb_vlan_inet_prepare(struct sk_buff *skb,
+> > -                                      bool inner_proto_inherit)
+> > +static inline enum skb_drop_reason
+> > +skb_vlan_inet_prepare_reason(struct sk_buff *skb, bool inner_proto_inh=
+erit)
+>
+> this only has 5 callers, please convert them to expect a drop
+> reason to be returned instead of adding a compatibility wrapper
 
-So, disk accounting rewrite: that code was basically complete, just
-baking, for a full six months before merging - so, not exactly rushed,
-and it saw user testing before merging. Given the size, and how invasive
-it was, some regressions were inevitable and they were pretty small and
-localized.
+Okay!
 
-The upgrade/downgrade bug was really nasty, yeah.
-
-> There were a number of other issues that cropped up in some earlier
-> versions but not others such as deadlocks when using compression
-> (particularly zstd), weirdness when using compression with 4k blocks
-> and suspend / resume failures when using bcachefs. 
-
-I don't believe any of those were bcachefs regressions, although some
-are bcachefs bugs - suspend/resume for example there's still an open
-bug.
-
-I've seen multiple compression bugs that were mostly not bcachefs bugs
-(i.e. there was a zstd bug that affected bcachefs that took forever to
-fix, and there's a recently reported LZ4HC bug that may or may not be
-bcachefs).
-
-> None of those things were a big deal to me as I mostly only use
-> bcachefs on root filesystems which are of course easy to recreate. But
-> I do currently use bcachefs for all the filesystems on my main laptop
-> so issues there can be more of a pain.
-
-Are you talking about issues you've hit, or issues that you've seen
-reported? Because the main subject of discussion is regressions.
-
-> 
-> As an example of potential issues I'd like to avoid I often upgrade my
-> laptop and swap the old SSD in and am currently considering pulling
-> the trigger on a Ryzen AI laptop such as the ProArt P16. However, this
-> new processor has some cutting edge features only fully supported in
-> 6.12 so I'd prefer to use that kernel if I can. But... because
-> according to Reddit there are apparently issues with bcachefs in the
-> 6.12RC kernels that means I am hesitant to buy the laptop and use the
-> RC kernel the carefree manor I normally would. Yeah, first world
-> problems!
-
-The main 6.12-rc1 issue was actually caused by Christain's change to
-inode state wakeups - it was a VFS change where bcachefs wasn't updated.
-
-That should've been caught by automated testing on fs-next - so that
-one's on me; fs-next is still fairly new and I still need to get that
-going.
-
-> Speaking of Reddit, I don't know if you saw it but a user there quotes
-> you as saying users who use release candidates should expect them to
-> be "dangerous as crap." I could not find a post where you said that in
-> the thread that user pointed to but if you **did** say something like
-> that then I guess I have a different concept of what "release
-> candidate" means.
-
-I don't recall saying that, but I did say something about Canonical
-shipping rc kernels to the general population - that's a bit crazy.
-Rc kernels should generally be run by users who know what they're
-getting into and have some ability to help test and debug.
-
-> So for me it would be a lot easier if bcachefs versions were decoupled
-> from kernel versions. 
-
-Well, this sounds more like generalized concern than anything concrete I
-can act on, to be honest - but if you've got regressions that you've
-been hit by, please tell me about those.
-
-The feedback I've generally been getting has been that each release has
-been getting steadily better, and more stable and usable - and lately
-pretty much all I've been doing has been fixing user reported bugs, so
-those I naturally want to get out quickly if the bugs are serious enough
-and I'm confident that they'll be low risk - and there has been a lot of
-that.
-
-The shrinker fixes for fsck OOMing that didn't land in 6.11 were
-particularly painful for a lot of users.
-
-The key cache/rcu pending work that didn't land in 6.11, that was a
-major usability issue for several users that I talked to.
-
-The past couple weeks I've been working on filesystem repair and
-snapshots issues for several users that were inadvertently torture
-testing snapshots - the fixes are turning out to be fairly involved, but
-I'm also weighing there "how likely are other users to be affected by
-this, and do we want to wait another 3 months", and I've got multiple
-reports of affected users.
+> --
+> pw-bot: cr
 
