@@ -1,86 +1,170 @@
-Return-Path: <linux-kernel+bounces-352370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A91D991E34
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:49:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98AC1991E37
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 523E1282844
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:49:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B74C91C20FDD
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751F4175D45;
-	Sun,  6 Oct 2024 11:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AF/d+U82"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDCC17623A;
+	Sun,  6 Oct 2024 11:56:35 +0000 (UTC)
+Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16D0EC5;
-	Sun,  6 Oct 2024 11:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91165364A0;
+	Sun,  6 Oct 2024 11:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728215355; cv=none; b=as5rvGP1XTCksUmolCZleKOLTJ3m4GmuXC3+TevSF9llG6uedMG9Zyd1Oe+DHU+MKBfgsM5461QVwRg+IAxTH8/jSRBCDQE5TdZ7h5YiKDJfkXVVkzjKxL2xN+S1udZ3JcLvvf5MfFI6dVBXZQKKaQXc48zIZHr7eS0P+ykl9QQ=
+	t=1728215795; cv=none; b=WqEY92OOBt59zseCJGCa5RyQdWGYAOvX71bK3BqEZA9lcFQDZwzEjCzXh+OQ7S6reCG2oTPIZMjFzvmFv6PJ4/WvEif7r7vlhvsb/Y4QRgNMM/dUiwVK5A7cwqEGbmQ+a065QFYjmZdOUurYTbRhwtQOIG3c4/3AKtaNS3Dwers=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728215355; c=relaxed/simple;
-	bh=v6SW59OPf4bvpxmuyWCE2we6FDjoWhx+L3PQNr/qC3s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=smjd8fmJL2Nq0YO7YzdtHn1TyGg2tJiacpjn0MEOpC5M2hzOlU7t0IZML9/2igSl1kvs38BUsD+AJeXz2qdLkRtAh4cazYPo8Yid4Z+FlX96UXC64homUjW3QWsdFRP7Ob/G8UoowGTZKuyJlaSlB2qRB5lGEC6Ru4GhrZYUJmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AF/d+U82; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFD6AC4CEC5;
-	Sun,  6 Oct 2024 11:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728215355;
-	bh=v6SW59OPf4bvpxmuyWCE2we6FDjoWhx+L3PQNr/qC3s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=AF/d+U82gx76P42/xScTP5Kj1FchPiuIZRGnb6k4xqM/RR4zd39A4/JxwxL365deq
-	 3zncpYwZnM9aKlwdd3Pdnxrf5GnpS37xW8vBREN6KsZl3CpXw1qSFRtNkH5L9tZ6G4
-	 Hmh5/eG1+X8+WHtUjySwqT6Ug9kiALHH/qrl4W07Cz7/VF5U8RfPBWLGIwm5LYiHmR
-	 8134d0QS+UuSe5fui8ENNIDxWU2cX8Do749rRXwWpYUZezjtFp7o3ZB1okftz6+cj6
-	 adh19JujgepnciJbEkYKsjCQh4Ym8D/w5hkxSzgd7yEh73FDQBWoQ0A9DaRItMS352
-	 wkPZm4JE5i7Jw==
-From: Leon Romanovsky <leon@kernel.org>
-To: jgg@ziepe.ca, Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com, 
- linux-kernel@vger.kernel.org, tangchengchang@huawei.com
-In-Reply-To: <20240927103323.1897094-1-huangjunxian6@hisilicon.com>
-References: <20240927103323.1897094-1-huangjunxian6@hisilicon.com>
-Subject: Re: [PATCH v6 for-next 0/2] RDMA: Provide an API for drivers to
- disassociate mmap pages
-Message-Id: <172821535029.66120.2694855650347768865.b4-ty@kernel.org>
-Date: Sun, 06 Oct 2024 14:49:10 +0300
+	s=arc-20240116; t=1728215795; c=relaxed/simple;
+	bh=fYm8XZM7szcIecmiSvIW0b+adLjsjNfHN8DO3gDpkPA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qxPbkzXW39NXLHCwk1fAMO9fUqihA36OW/dVNHThwb9RGqAgJ2qIxr+bq0L8MeobRSlNmM2EY6eb+R3RxdxPGu030e4yIF5134rvvsxSpjkzf6Q0vLdmHxkFb8GrZjV0GureG2SKYY0JCQx7f3sDlm9ZCnV5XMRDhv74MeqicLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by mail.lichtvoll.de (Postfix) with ESMTPSA id 9E79A73FD6;
+	Sun, 06 Oct 2024 11:49:23 +0000 (UTC)
+Authentication-Results: mail.lichtvoll.de;
+	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
+Date: Sun, 06 Oct 2024 13:49:23 +0200
+Message-ID: <5987583.MhkbZ0Pkbq@lichtvoll.de>
+In-Reply-To: <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
+References:
+ <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+ <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
+ <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+
+Hi Kent, hi Linus.
+
+Kent Overstreet - 06.10.24, 02:54:32 CEST:
+> On Sat, Oct 05, 2024 at 05:14:31PM GMT, Linus Torvalds wrote:
+> > On Sat, 5 Oct 2024 at 16:41, Kent Overstreet=20
+<kent.overstreet@linux.dev> wrote:
+> > > If what you want is patches appearing on the list, I'm not unwilling
+> > > to
+> > > make that change.
+> >=20
+> > I want you to WORK WITH OTHERS. Including me - which means working
+> > with the rules and processes we have in place.
+>=20
+> That has to work both ways.
+
+Exactly, Kent.
+
+And it is my impression from reading the whole thread up to now and from=20
+reading previous threads it is actually about: Having your way and your=20
+way only.
+
+That is not exactly "work both ways".
+
+Quite similarly regarding your stand towards distributions like Debian.
+
+Sure you can question well established rules all the way you want and=20
+maybe you are even right about it. I do not feel qualified enough to judge=
+=20
+on that. I am all for challenging well established rules on justified=20
+grounds=E2=80=A6
+
+But=E2=80=A6 even if that is the case it is still a negotiation process. Ex=
+pecting=20
+that communities change well established rules on the spot just cause you=20
+are asking for it=E2=80=A6 quite bold if you ask me. It would be a negotiat=
+ion=20
+process and work both ways would mean to agree on some kind of middle=20
+ground. But it appears to me you do not seem to have the patience for such=
+=20
+a process. So it is arguing on both sides which costs a lot of energy of=20
+everyone involved.
+
+=46rom what I perceive you are actually actively working against well=20
+established rules. And you are surprised on the reaction? That is kind of=20
+naive if you ask me.
+
+At least you wrote you are willing to post patches to the mailing list: So=
+=20
+why not start with at least that *minimal* requirement according to Linus=20
+as a step you do? Maybe even just as a sign of good will towards the=20
+kernel community? That has been asked of you concretely, so why not just=20
+do it?
+
+Maybe this can work out by negotiating a middle ground going one little=20
+step at a time?
 
 
-On Fri, 27 Sep 2024 18:33:21 +0800, Junxian Huang wrote:
-> Provide an API rdma_user_mmap_disassociate() for drivers to disassociate
-> mmap pages. Use this API in hns to prevent userspace from ringing doorbell
-> when HW is reset.
-> 
-> v5 -> v6:
-> * Fix build warning of unused label in patch #1
-> * inline the call to rdma_user_mmap_disassociate() in patch #2
-> 
-> [...]
+I still do have a BCacheFS on my laptop for testing, but meanwhile I=20
+wonder whether some of the crazy kernel regressions I have seen with the=20
+last few kernels where exactly related to having mounted that BCacheFS=20
+test filesystem. I am tempted to replace the BCacheFS with a BTRFS just to=
+=20
+find out.
 
-Applied, thanks!
+Lastly 6.10.12-1 Debian kernel crashes on a pool-spawner thread when I=20
+enter the command =E2=80=9Ereboot=E2=80=9C. That is right a reboot crashes =
+the system =E2=80=93 I=20
+never have seen anything this crazy with any Linux kernel so far! I have=20
+made a photo of it but after that long series of regressions I am even too=
+=20
+tired to post a bug report about it just to be told again to bisect the=20
+issue. And it is not the first work queue related issue I found between 6.8=
+=20
+and 6.11 kernels.
 
-[1/2] RDMA/core: Provide rdma_user_mmap_disassociate() to disassociate mmap pages
-      https://git.kernel.org/rdma/rdma/c/4fea8bfc11b2fc
-[2/2] RDMA/hns: Disassociate mmap pages for all uctx when HW is being reset
-      https://git.kernel.org/rdma/rdma/c/23ab1cdca331e1
+Actually I think I just replace that BCacheFS with another BTRFS in order=20
+to see whether it reduces the amount of crazy regressions I got so fed up=20
+with recently. Especially its not fair to report all of this to the Lenovo=
+=20
+Linux community guy Mark Pearson in case its not even related to the new=20
+ThinkPad T14 AMD Gen 5 I am using. Mind you that series of regressions=20
+started with a T14 AMD Gen 1 roughly at the time I started testing=20
+BCacheFS and I had hoped they go away with the new laptop. Additionally I=20
+have not seen a single failure with BTRFS on any on my systems =E2=80=93 in=
+cluding=20
+quite some laptops and several servers, even using LXC containers =E2=80=93=
+ for=E2=80=A6 I=20
+don't remember when. Since kernel 4.6 BTRFS at least for me is rock=20
+stable. And I agree, it took a huge lot of time until it was stable. But=20
+whether that is due to the processes you criticize or other reasons or a=20
+combination thereof=E2=80=A6 do you know for sure?
 
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
+I am wondering: did the mainline kernel just get so much more unstable in=20
+the last 3-6 months or may there be a relationship to the test BCacheFS=20
+filesystem I was using that eluded me so far. Of course, I do not know for=
+=20
+now, but reading Carl's mails really made me wonder.
+
+Maybe there is none, so don't get me wrong=E2=80=A6 but reading this thread=
+ got me=20
+suspicious now. I am happily proven wrong on that suspicion and I commit=20
+to report back on it. Especially when the amount of regressions does not=20
+decline and I got suspicious of BCacheFS unjustly.
+
+Best,
+=2D-=20
+Martin
+
 
 
