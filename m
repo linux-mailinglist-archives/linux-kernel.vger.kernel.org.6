@@ -1,162 +1,127 @@
-Return-Path: <linux-kernel+bounces-352306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FA1991D49
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:32:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49ACC991D4B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A4ED1F21D4F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:32:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B18D1C204E8
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 08:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD571714B5;
-	Sun,  6 Oct 2024 08:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B59A170A3A;
+	Sun,  6 Oct 2024 08:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMHlRysQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U42dyjA1"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E26623CB;
-	Sun,  6 Oct 2024 08:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6BD16C451;
+	Sun,  6 Oct 2024 08:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728203551; cv=none; b=VYf8BSABT3oDP41Bi2wix0CyuxmSDXESEO471K8wy5v+nEZIEv4SGydc/ZzDp/pgejl+Wuc0P9IvkeOyCOT236Enu04306lyJgMMUIPRmOmSpp5TdCocVe3Bg6OSqtrutLSkc1pnZ/ST0SDQkFXhLkJu406L0iDIMf+NT8ClrjY=
+	t=1728203571; cv=none; b=ORAObtL9AC3XcTLjV5rBBgYKVvK3hibX7dfAm8WSpBwAG+rTwCved0iSkFEuhbBXZbmFaoZx08znjxte80eZ6AjkZCv4qpQkGIlbUsSePO2NzS99d4BaPnBc7vEpN/iN9oVzlxWtRho5JmU+QMRk87K645+V/sAK+Z2w9TdnvQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728203551; c=relaxed/simple;
-	bh=claH/7BldzicEj6PBtravPltI+nexV7FMkLbKC8oozw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZCLoe8KhfIyRVj6J7MAsMEYrQ1MdHV9STfS4fnshVd2PnU0MLetQQtqfa/xzK9vii4Asu/Ar1/h0bVxCmoq29CszqneoM5WD4D3d0VbYfo3q5lMSYN34ySCA0lfg7rJaVS1+69+Dh+1jXKBwCRnkfLpK3j52XOaHLohHxSOgBhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMHlRysQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E849EC4CEC5;
-	Sun,  6 Oct 2024 08:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728203551;
-	bh=claH/7BldzicEj6PBtravPltI+nexV7FMkLbKC8oozw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sMHlRysQgn1zaz8HEv872FS5YgSoTTnDJVPwcZ4WEuLLfhOEa+2lLQRcZoy/tAy9X
-	 50rMIe141/QOR29J6Hy894lgp5RnvOob1G0PzQ94ChHfgWejNCcraXCNlZT+abCUwW
-	 TT7/j3FdrqCXnvmhHPy7AH79bpsIEwtM7nraK1HSOGvknEW10Tg1P4pF5cVSGcQAXL
-	 RqPYd9oOyfiLe5ruFY4BMwy/q6tLsFreAaFMI0Cn2By8JTtg5tTMjnLDSA1ew3DrYv
-	 MOxaMYoWfHlUprgG+danlcIAa29LpOWE5a+8M91qNefL+XeyyGZTrwBLxp3PcS8fWm
-	 f2TNbIj99VyaQ==
-Message-ID: <070bd760-9095-496b-8f46-1825c592754c@kernel.org>
-Date: Sun, 6 Oct 2024 10:32:22 +0200
+	s=arc-20240116; t=1728203571; c=relaxed/simple;
+	bh=EcE5kkC/aV04D+38cw9XnaHZcYDrUwly0hGfP3HlXVE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=kdmMYuVUnqShV2ZvLqe+wBGP9GEDd50vRXTt12uw0F5LqgIprQ8vSubhNPyCvKlKtCqewET0ZVWjZJHnYGD1zLz6O9Xz506+RZrStPRAgR8dO9Zdd9yGdKL/dB7YP8zvIVCoX38KOM8RPUbsi92Zgv0qfuAwytz5wdO0IeFOsiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U42dyjA1; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20bcae5e482so30094025ad.0;
+        Sun, 06 Oct 2024 01:32:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728203569; x=1728808369; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+HYNc/KYuEUWw9uZAUDI4SOR38k7OjxCUwwxBdge0lA=;
+        b=U42dyjA1DuXmV0883Z/oF4FMi9N9jNC3epdN6RKLKSSDPWRgsUtb/towig5eaNkMQ2
+         hS25cVBPE+wvUkT4jrPR3zU3oXuq9X4mF4OVkX56AJXD73UEha4fAjY+5IQrnD5Am91U
+         Q9xggTh+GNYGcG+Eh7PcRSAN8p21i3Zrb6CDSPhy1H+STi5NrQoJNdrPu2rmBfaNqHgp
+         NYhIrs8RAsnFDJ80rRxqmPuhaigPaxaoZrkSRyjMX05szBY+u93t99YxvV1Y3PkGbqRK
+         4JL0+igV/iLWShI7ReJJfhm1qRhvNOC+iTsxV+85U8GyC7MslHfNBbvFX4HnIkjNbppp
+         qDOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728203569; x=1728808369;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+HYNc/KYuEUWw9uZAUDI4SOR38k7OjxCUwwxBdge0lA=;
+        b=FrYYQq/C0pGSKMgv1UCnovdh8c5krx9U2K6hNLP6v59wJykK+jy/M9U6nGw54nYdj8
+         yu3ZKP0LgnpqCJHbGVjT0qsTyRJaqaTsQm3Vqjh9lTUBVuSBJJ+CTyPt7NR/ZneHqjzr
+         dwBzFCBtNPd7XbaTOGMwGp4g+vQl0Lq+3Wrjst/i4J+XnB4Tk/4KuXYgp7lbw74Se4LR
+         v4NadwhMt22lcCndtMjKpcMer1Xc9wO0t8jfFkA8d42106C3JnTM0dGFcPbEnde7iYMc
+         wY/IBqzyI01ZPnDdrbB5/ItKRIRbVV4yl0eUPE4xiNDjslx9drWmchdLoB0OIBocGb8X
+         0f6g==
+X-Forwarded-Encrypted: i=1; AJvYcCV4wNFZ4fliWN9DSZhNlmu2k2OklfPTqs209IF8mIcofplUpoEG7Hr8mc1l6x11JUbZBp/vEjsu0WWLh+E=@vger.kernel.org, AJvYcCVPuQd9OJgZTq+kacRqsokZO9SrtZnzpzgGWzQQPwS0JFHROeJKzkMXNFdG0kFx3jO3eoPD0rXQQOyqYcMv0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuGORGSYxgiaFBIOFzLoZMmdL2xff5NVXVrhcFvm3B6Crga0FK
+	aiW9eQSKYOMEcMQ064e93cvC0ug4EfAIWs3UL/e1SPX1oQLsOvb+99zt7N6zJTs=
+X-Google-Smtp-Source: AGHT+IH8JPzFFA9Qy0/ZGmPAeHCuUUjxqcHrPAi9XSp9Els6hlOWzwN4gCdOkPxPxi41vC3OXNKrCQ==
+X-Received: by 2002:a17:902:dac7:b0:20c:2e8:9bb7 with SMTP id d9443c01a7336-20c02e89ca4mr114633485ad.36.1728203569501;
+        Sun, 06 Oct 2024 01:32:49 -0700 (PDT)
+Received: from smtpclient.apple ([198.11.176.14])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f681f0dcsm2843091a12.24.2024.10.06.01.32.46
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 06 Oct 2024 01:32:49 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 2/3] arm64: dts: qcom: sm8650: Add ICE algorithm
- entries
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>,
- manivannan.sadhasivam@linaro.org, alim.akhtar@samsung.com,
- avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- konrad.dybcio@linaro.org, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, agross@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- quic_narepall@quicinc.com, quic_nitirawa@quicinc.com
-References: <20241005064307.18972-1-quic_rdwivedi@quicinc.com>
- <20241005064307.18972-3-quic_rdwivedi@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241005064307.18972-3-quic_rdwivedi@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH V3 1/1] livepatch: Add "stack_order" sysfs attribute
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <20241003152516.fzga2uaivzg57q4s@treble>
+Date: Sun, 6 Oct 2024 16:32:34 +0800
+Cc: Petr Mladek <pmladek@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>,
+ Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
 Content-Transfer-Encoding: 7bit
+Message-Id: <9E708EDA-C28E-40BB-8B5F-703132E95096@gmail.com>
+References: <20240929144335.40637-1-zhangwarden@gmail.com>
+ <20240929144335.40637-2-zhangwarden@gmail.com>
+ <20240930232600.ku2zkttvvkxngdmc@treble>
+ <14D5E109-9389-47E7-A3D6-557B85452495@gmail.com>
+ <Zv6FjZL1VgiRkyaP@pathway.suse.cz>
+ <A7799C9D-52EF-4C9A-9C22-1B98AAAD997A@gmail.com>
+ <20241003152516.fzga2uaivzg57q4s@treble>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On 05/10/2024 08:43, Ram Kumar Dwivedi wrote:
-> There are three algorithms supported for inline crypto engine:
-> Floor based, Static and Instantaneous algorithm.
+
+
+> On Oct 3, 2024, at 23:25, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
 > 
-> Add ice algorithm entries and enable instantaneous algorithm
-> by default.
+> On Thu, Oct 03, 2024 at 10:59:11PM +0800, zhang warden wrote:
+>>> This attribute specifies the sequence in which live patch modules
+>>> are applied to the system. If multiple live patches modify the same
+>>> function, the implementation with the highest stack order is used,
+>>> unless a transition is currently in progress.
+>> 
+>> This description looks good to me. What's the suggestion of 
+>> other maintainers ?
 > 
-> Co-developed-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
-> Signed-off-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
-> Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sm8650.dtsi | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+> I like it, though "highest stack order" is still a bit arbitrary, since
+> the highest stack order is actually the lowest number.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> index 9d9bbb9aca64..56a7ca6a3af4 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> @@ -2590,6 +2590,25 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
->  			#reset-cells = <1>;
->  
->  			status = "disabled";
-> +
-> +			ice_cfg: ice-config {
-> +				alg1 {
-> +					alg-name = "alg1";
-> +					rx-alloc-percent = <60>;
-> +					status = "disabled";
-> +				};
-> +
-> +				alg2 {
-> +					alg-name = "alg2";
-> +					status = "disabled";
-> +				};
-> +
-> +				alg3 {
-> +					alg-name = "alg3";
-> +					num-core = <28 28 15 13>;
-> +					status = "ok";
+> -- 
+> Josh
 
-NAK. This has so many issues... First, describes OS policy. Second,
-there is no "ok".
+How about:
 
-Best regards,
-Krzysztof
+This attribute specifies the sequence in which live patch module 
+are applied to the system. If multiple live patches modify the same
+function, the implementation with the biggest 'stack_order' number
+is used, unless a transition is currently in progress.
 
+Regards.
+Wardenjohn.
 
