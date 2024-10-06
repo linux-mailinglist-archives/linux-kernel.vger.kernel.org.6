@@ -1,81 +1,96 @@
-Return-Path: <linux-kernel+bounces-352213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64994991BE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 03:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D645E991BE6
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 03:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F077B1C2126F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 01:56:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13E261C203E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 01:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C9914D283;
-	Sun,  6 Oct 2024 01:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2F02AE94;
+	Sun,  6 Oct 2024 01:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hw9LcFcy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DHvG1uzh"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEF216F8F5;
-	Sun,  6 Oct 2024 01:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A9013B791
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 01:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728179746; cv=none; b=qDeV4fqc889OougaoxlodvgJiTjk+3HzY4wy3aacSvMPbEXyDiNR7CfqVtwMmJME3IUu7PrK5ntlzBPkAXHvPvuWDo85MGpXxWlovpcYzzEU4GPZaGqrWKxfN4IEcuy/kN4m5ojVs+cXA/hXMJ54ilY1z+6vfIC30huhbcgK+cA=
+	t=1728179804; cv=none; b=quxkmzvnO1YQu2RQvflP+RCuZn4gBm/hH9BiPFwBICaF2/2ke03BWhkozzC5y2xLkYOA5bVHHbuOvHX2Z5qUbmN+D0Hnq7/Mw2/Vw2o56mjmb4k3BQdMSEtHOBSR6Y3uPbknoraHC8KkjiusGPAMW2Dm2OpJc2tqymLdI1h/k4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728179746; c=relaxed/simple;
-	bh=zw+lYmIsUUtG6llFvvFh8py/ONLluzPaFpK3KvDFun4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EnFUxx5rzceiCeZ0bJJi6DREoBzvtKtxTIU/oXRPWBN/HQx1reY82FW6UorcJnnzaYic08iWms/RrFWiNzL62qlaWRTznm8kyI/TxlqYvBZeE36AshnJwSDHJiLvTtMtoiPG3mrxjzVpJbaJ2Y9J4vHLZ4PalU6ZAbWgVhfdRH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hw9LcFcy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C343C4CED0;
-	Sun,  6 Oct 2024 01:55:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728179746;
-	bh=zw+lYmIsUUtG6llFvvFh8py/ONLluzPaFpK3KvDFun4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Hw9LcFcybMm292buA4T44wu+f7hEkexz7WQPB/Z09LbIi6f3627c0roxRtPg18NFf
-	 ZhOjhHzU1ciCYg53BETGGVAaBseQy6H+21SiPOTTMdpkgVTvmLWYITfCenSj2tiUdm
-	 rfmN+bSCjd5iq1zP2rwy85WU2BO7S4YRDllvvcA69/ak56iq26zK+m6a0/4ohy1m4I
-	 9a0DSeizNNRRHCZNYSpv5qSb0u5NmdVtUbOs33q+fJOK5PBH2WmjWkpQD33nXYfege
-	 ZaSeCbkv+jpiTFBPuaGArlo0N9hXRjoCoNmrsW4sNVPSKy3Amcwzhw2o/fEfc6DCMi
-	 aswT94mE23PIg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <quic_kdybcio@quicinc.com>
-Subject: Re: [PATCH RFC v2] soc: qcom: llcc: Use designated initializers for LLC settings
-Date: Sat,  5 Oct 2024 20:55:36 -0500
-Message-ID: <172817973310.398361.2166607250234825054.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240910-topic-llcc_unwrap-v2-1-f0487c983373@quicinc.com>
-References: <20240910-topic-llcc_unwrap-v2-1-f0487c983373@quicinc.com>
+	s=arc-20240116; t=1728179804; c=relaxed/simple;
+	bh=W5n2YU4QYClAkBUY46U5PjuC1TvuyQDbXqJIUIDs8QM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LMqTNtqFtziQ7SB7tJuteoYeO4K16FwkpJUNjfexgp5sQvVvjrE+9S3a6MlP/zmVFncmEBB5bKvfJfZ2/lkZ9GoQ6GKcvvDqexTM3MxVSo8/Ztb7Zpe4X+CQ74Nq80xcLd+nJuu1xWmE6OVNasx2UEaLj0vhfltMwFsV6yAGAfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DHvG1uzh; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 5 Oct 2024 21:56:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728179799;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BnnHTDOn4QrAu1ULVkfdeQk3x6v9dEhgIZ7d2QgOsVc=;
+	b=DHvG1uzha+RVUdKvfClOmkw4ftOPlaP1pEp2dR6pDiSim1fKwT8xMuk1a9LuumSwqCCol4
+	mDQlaFwaIY29deO50w0wxl16dAIsFJd8tT1Z+rHTU7bqs+VdD7OmnpmPs1ujzM6LGNocSF
+	o6epLVNwqmMnNP53/g8Srag7xu0JVWs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: "Carl E. Thompson" <cet@carlthompson.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
+Message-ID: <coczqmiqvuy4h74j462mjyro3skeybyt2y3kcqdcuwy4bwibjy@pquinazt4h22>
+References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+ <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
+ <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
+ <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
+ <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
+ <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
+ <345264611.558.1728177653590@mail.carlthompson.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <345264611.558.1728177653590@mail.carlthompson.net>
+X-Migadu-Flow: FLOW_OUT
 
-
-On Tue, 10 Sep 2024 17:01:39 +0200, Konrad Dybcio wrote:
-> The current way of storing the configuration is very much
-> unmaintainable. Convert the data to use designated initializers to make
-> it easier both to understand and add/update the slice configuration
-> data.
+On Sat, Oct 05, 2024 at 06:20:53PM GMT, Carl E. Thompson wrote:
+> Here is a user's perspective from someone who's built a career from Linux (thanks to all of you)...
 > 
+> The big hardship with testing bcachefs before it was merged into the kernel was that it couldn't be built as an out-of-tree module and instead a whole other kernel tree needed to be built. That was a pain.
 > 
+> Now, the core kernel infrastructure changes that bcachefs relies on are in the kernel and bcachefs can very easily and quickly be built as an out-of-tree module in just a few seconds. I submit to all involved that maybe that's the best way to go **for now**. 
+> 
+> Switching to out of tree for now would make it much easier for Kent to have the fast-paced development model he desires for this stage in bcachefs' development. It would also make using and testing bcachefs much easier for power users like me because when an issue is detected we could get a fix or new feature much faster than having to wait for a distribution to ship the next kernel version and with less ancillary risk than building and using a less-tested kernel tree. Distributions themselves also are very familiar with packaging up out-of-tree modules and distribution tools like dkms make using them dead simple even for casual users.
+> 
+> The way things are now isn't great for me as a Linux power user. I
+> often want to use the latest or even RC kernels on my systems to get
+> some new hardware support or other feature and I'm used to being able
+> to do that without too many problems. But recently I've had to skip
+> cutting-edge kernel versions that I otherwise wanted to try because
+> there have been issues in bcachefs that I didn't want to have to face
+> or work around. Switching to an out of tree module for now would be
+> the best of all worlds for me because I could pick and choose which
+> combination of kernel / bcachefs to use for each system and situation.
 
-Applied, thanks!
+Carl - thanks, I wasn't aware of this.
 
-[1/1] soc: qcom: llcc: Use designated initializers for LLC settings
-      commit: 20a0a05f40faf82f64f1c2ad3e9f5006b80ca0cb
+Can you give me details? 6.11 had the disk accounting rewrite, which was
+huge and (necessarily) had some fallout, if you're seeing regressions
+otherwise that are slipping through then - yes it's time to slow down
+and reevaluate.
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Details would be extremely helpful, so we can improve our regression
+testing.
 
