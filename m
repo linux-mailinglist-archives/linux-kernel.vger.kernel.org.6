@@ -1,160 +1,123 @@
-Return-Path: <linux-kernel+bounces-352484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2EF2991FE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:24:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E649991FE5
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38D01F21481
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAAF12813F1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717B2189F2D;
-	Sun,  6 Oct 2024 17:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E81428691;
+	Sun,  6 Oct 2024 17:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmQNYOXK"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQyuMQ/a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A42F9E4;
-	Sun,  6 Oct 2024 17:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86242F9E4;
+	Sun,  6 Oct 2024 17:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728235487; cv=none; b=QaVruFD2jZIKmRTFZr8jQiMUq4gdqSou8+uMSwkWmEOD4CPIjFeTgiL4OfZ3F5qW6kwjT3v1SisBeeVz5er5Zb4LkkvfT28iB2Au5nQtUV9hkUq+vRW4SA8YGpjNWLTYl31WTqMh82KJlUeIJlNSslcbdvdHevdgH5b8v7Kp1xQ=
+	t=1728235516; cv=none; b=iIuu7xNHr4v6mgCgnzziynNrkT8+JwHCBPB7eW6tB5OgHZTQDCpU5UrEEx0F+AeLx4I1qcC6jByrGfQjql7BsthaLdKwOiDCzSNzZoNWb1eObTgzMjodrEJj42XOfdg0oXVkBKCzO6iefyZsmvUSUjlpWfmalmmFGQGlZKdAF7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728235487; c=relaxed/simple;
-	bh=2fGz3KDCfRGPhSy/5QFDgAdl2Tf/XHGIHJZ5BSKta64=;
+	s=arc-20240116; t=1728235516; c=relaxed/simple;
+	bh=i8XgxReESpSMnrfon08suU+V65SF9sHPBWPllSUMl/I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CWg84jblvpg/LSv4Tv7GbgY01ktJOpwixNBnY4sFyCTHm7WwYDRtCIo4EjJ0pZl2sosGj/2dAS44+8qXv6hcbVMq+YgHTFeEootuYcAn8u3YOy5solHJjn3MjXIu1h2AKOPIw/5bno8QD6esg39RV8NKHJO6P9Uahuzh92bQ9FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmQNYOXK; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ea06275ef2so267283a12.0;
-        Sun, 06 Oct 2024 10:24:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728235486; x=1728840286; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xbYAwkvWDSG9D9+tHniJsFSvQn8xIlp1Sld5HghW6Ws=;
-        b=nmQNYOXKuNZKNjZ8iAVZlPJg0l+7MWWVwnaGWMhLS8/iKN71wFOldD39YyEQ7jz6ww
-         0DCOA5rdbR3UAxwhfqEsB0RfQjCChgG8Tqp/9Ao30mPzlA2Z6fImmdyZEWZjRrYSYwOC
-         SA4jRDWLo1D2urkeh1pALxVuFyGhjJ6oGFD8DcUcCWlVTxijf90opVlFKu45ZIF2Apb/
-         KVhPuNBNOV05tUiZsZh26Ugc5QAt4kTpegs6wblVF33uuQDShI50fYQKS6kPunV5EPBh
-         jZ9gi+h5XJ0cdRXluL1tsSQ6uTBKkT6I8YQTbDpwr/zPuwWwxMrRME8vDyX74jaKAS58
-         yyJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728235486; x=1728840286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xbYAwkvWDSG9D9+tHniJsFSvQn8xIlp1Sld5HghW6Ws=;
-        b=cdHcPPC5dLDm/mJdzhUoTn7HSj4xeNv/r0eZ4kxm0/WOdB3VCRVFV46tdZTrGlPdNh
-         dbJORMAH8odDNphcw66MlbKCXhkD6WUFUhMvCJvBa3G/MTrtv5TYmHv0HzenbWtKSfFU
-         cEyklDvzoWkQKkfzJjWGRmn0dIGOmTlaOc38YC+CJxMh9vF2Ujycv5cZ0nHx/B6FSjeb
-         hvuVXBqiPmUvVBz09jS7ZQT2JTj+3fXl+euD+tyS/yQpsLxbpGAxkDQ5Kk80ZnTOgyVM
-         f5wrcpDUMMR1nVnYUvryev69hoWNlgocYidIwt5Rjg0ayVd78AfC0wiy9vj4lB64yhvt
-         X+LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBxyJrHvCBoNPX/Sd2qOt7FvKcITgGzMPzxyt3gBlrB0zFeMXKxQ+6y/N8Mg5o+KZIM6jhp+c4@vger.kernel.org, AJvYcCX0WSzGpplf77rqigoTHTvmfEwhA2nMRhmWQ6qOC1492bgy9aNwITWoPeTi3iT5kpkzH3M2ZeH5VfTHK30=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk+m5kN9pLBZR+kP9iC0w7L1BXG8Lcr6Z2JrOmT/7E9jZ1ukEb
-	y+98Oa9cOf1+KWy1PRfoULhugpKMdkdr/SoskJ6khcGhHf2Atr14Fbw1bzhYU1677DUM82Xtsk3
-	Lnc/Oz4XmD2o/3vJcFCkeYojWphk=
-X-Google-Smtp-Source: AGHT+IEKWiJBjLKDIaFaOkfEDPUqRHlD/TfcUp548Ta0mblv55/mAWH4xtREyw4zmdXVZiry7Yu1PYw8VwIpPFTooZw=
-X-Received: by 2002:a17:90a:bc92:b0:2e0:9147:7db5 with SMTP id
- 98e67ed59e1d1-2e1e63bf552mr10986428a91.38.1728235485708; Sun, 06 Oct 2024
- 10:24:45 -0700 (PDT)
+	 To:Cc:Content-Type; b=m0wtNdDYokERrDklg85jXBJSfWL2i+4AJbKnZvKfOsB3R/0DwiIOJYTYBbGjH/mUHXc/ec2wlw75HQr8FJxqD3sDKX6rr8rveXwomDUHJaBGQzNwd7izlSp1dL3wNJN9fT2I6QCrVf3qJKugxzbRZ8qTspVvzestSpwi1XyybF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQyuMQ/a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 100FDC4CECD;
+	Sun,  6 Oct 2024 17:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728235516;
+	bh=i8XgxReESpSMnrfon08suU+V65SF9sHPBWPllSUMl/I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MQyuMQ/aDLBY1GICvOmNOkZA7K+ZYMeiugzeLNVF10tKz4j9a5KZULcl0kEMdUO9l
+	 rwIWTCgLknSwwfNgfrqksgceEyJ4Zt6T76RNiupMsQMxYVL3YD0b8SjTTBDcBwiVA4
+	 m4JjW0v5RJkoH2cIb50xKzx1fvAe2uvprQNktV9iltEO7ahmGMuzySrNTtMM+APO95
+	 J6FO5wTiTsH66gWkNZxywcNMWgwrgX63Cql75o5n+7FnzYTaxtH2auIxhI8WjRG/dW
+	 jszVorpnedUzSiyfPXpPH5Zy4ocJRAASZYuPVeswn5tP7YutQzv0MEyJS1kM8QQPjz
+	 WGPmb2ZlTTJaw==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5398e7dda5fso3574567e87.0;
+        Sun, 06 Oct 2024 10:25:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWvgHCd41MrWaV9C8Lq1hSSjXEe69Kr/xP1hhb9vWnEG0a7/XSJx4VocHFfZLQ5mWwAjigRR8nYy4MXvspX@vger.kernel.org, AJvYcCXGFQsxzUvz845GQV9wovbKia/wqgxUCh5GX2IpqTI6+gROCwSW14Raij1JOxioPdt5LdGWT3Np+I916FE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTwNVa9Yn2Bf260bCDyoFavezXTflZQkqb0N1Ct/t+OJ2PlC5H
+	QhV3KnfXyuXKQ7A74r7f3BUklChBhTOlM6SkpNnOQuvrpw0crDqqZ9A2pjvN2h8UZ3sw7XUX/Yv
+	oFnL9kjuPvJkYD5m3xy4/r9OAAcA=
+X-Google-Smtp-Source: AGHT+IFcXrmU33l1b7EiZ75ABx04q/wNOhhIJqu7byBcRzWlWweg3OiLg2f2Dkkl8oGFWhyGYvI0Wg5HlzcDCfs2O7Y=
+X-Received: by 2002:a05:6512:1155:b0:536:54c2:fb83 with SMTP id
+ 2adb3069b0e04-539ab877115mr4642833e87.23.1728235514778; Sun, 06 Oct 2024
+ 10:25:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005014514.1541240-1-ingamedeo@gmail.com> <c06d9227-dcac-4131-9c2d-83dace086a5d@blackwall.org>
-In-Reply-To: <c06d9227-dcac-4131-9c2d-83dace086a5d@blackwall.org>
-From: Amedeo Baragiola <ingamedeo@gmail.com>
-Date: Sun, 6 Oct 2024 10:24:34 -0700
-Message-ID: <CAK_HC7bOe2KhVnDiG4Z3tpkodiCkewEct7r2gXanjGBC8WwFsQ@mail.gmail.com>
-Subject: Re: [PATCH] bridge: use promisc arg instead of skb flags
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: Roopa Prabhu <roopa@nvidia.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	bridge@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Pablo Neira Ayuso <pablo@netfilter.org>
+References: <20241004075245.169046-1-dev@aaront.org>
+In-Reply-To: <20241004075245.169046-1-dev@aaront.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 7 Oct 2024 02:24:38 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQBagfFwWBrr61xS1H6igcvNx+xt3PRK+4J5dsdBAZLDQ@mail.gmail.com>
+Message-ID: <CAK7LNAQBagfFwWBrr61xS1H6igcvNx+xt3PRK+4J5dsdBAZLDQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: deb-pkg: Remove blank first line from maint scripts
+To: Aaron Thompson <dev@aaront.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-I agree, just patch actually changes the behaviour when a BR_FDB_LOCAL
-dst is found and drops the traffic because promisc is *always* set to
-false when a BR_FDB_LOCAL dst is found in br_handle_frame_finish().
-I guess the problem I was trying to solve was that since the
-introduction of the promisc flag we still use brdev->flags &
-IFF_PROMISC in br_pass_frame_up() which is essentially the value of
-promisc (except in the BR_FDB_LOCAL case above) instead of promisc
-itself.
+On Fri, Oct 4, 2024 at 4:54=E2=80=AFPM Aaron Thompson <dev@aaront.org> wrot=
+e:
+>
+> From: Aaron Thompson <dev@aaront.org>
+>
+> The blank line causes execve() to fail:
+>
+>   # strace ./postinst
+>   execve("./postinst", ...) =3D -1 ENOEXEC (Exec format error)
+>   strace: exec: Exec format error
+>   +++ exited with 1 +++
+>
+> However running the scripts via shell does work (at least with bash)
+> because the shell attempts to execute the file as a shell script when
+> execve() fails.
+>
+> Fixes: b611daae5efc ("kbuild: deb-pkg: split image and debug objects stag=
+ing out into functions")
+> Signed-off-by: Aaron Thompson <dev@aaront.org>
+> ---
 
-Amedeo
+Applied to linux-kbuild.
+Thanks.
 
 
-On Sat, Oct 5, 2024 at 7:06=E2=80=AFAM Nikolay Aleksandrov <razor@blackwall=
-.org> wrote:
+>  scripts/package/builddeb | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> On 05/10/2024 04:44, Amedeo Baragiola wrote:
-> > Since commit 751de2012eaf ("netfilter: br_netfilter: skip conntrack inp=
-ut hook for promisc packets")
-> > a second argument (promisc) has been added to br_pass_frame_up which
-> > represents whether the interface is in promiscuous mode. However,
-> > internally - in one remaining case - br_pass_frame_up checks the device
-> > flags derived from skb instead of the argument being passed in.
-> > This one-line changes addresses this inconsistency.
-> >
-> > Signed-off-by: Amedeo Baragiola <ingamedeo@gmail.com>
-> > ---
-> >  net/bridge/br_input.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
-> > index ceaa5a89b947..156c18f42fa3 100644
-> > --- a/net/bridge/br_input.c
-> > +++ b/net/bridge/br_input.c
-> > @@ -50,8 +50,7 @@ static int br_pass_frame_up(struct sk_buff *skb, bool=
- promisc)
-> >        * packet is allowed except in promisc mode when someone
-> >        * may be running packet capture.
-> >        */
-> > -     if (!(brdev->flags & IFF_PROMISC) &&
-> > -         !br_allowed_egress(vg, skb)) {
-> > +     if (!promisc && !br_allowed_egress(vg, skb)) {
-> >               kfree_skb(skb);
-> >               return NET_RX_DROP;
-> >       }
+> diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+> index c1757db6aa8a..404587fc71fe 100755
+> --- a/scripts/package/builddeb
+> +++ b/scripts/package/builddeb
+> @@ -74,7 +74,6 @@ install_linux_image () {
 >
-> This is subtle, but it does change behaviour when a BR_FDB_LOCAL dst
-> is found it will always drop the traffic after this patch (w/ promisc) if=
- it
-> doesn't pass br_allowed_egress(). It would've been allowed before, but cu=
-rrent
-> situation does make the patch promisc bit inconsistent, i.e. we get
-> there because of BR_FDB_LOCAL regardless of the promisc flag.
+>                 mkdir -p "${pdir}/DEBIAN"
+>                 cat <<-EOF > "${pdir}/DEBIAN/${script}"
+> -
+>                 #!/bin/sh
 >
-> Because we can have a BR_FDB_LOCAL dst and still pass up such skb because=
- of
-> the flag instead of local_rcv (see br_br_handle_frame_finish()).
+>                 set -e
 >
-> CCing also Pablo for a second pair of eyes and as the original patch
-> author. :)
+> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> --
+> 2.39.5
 >
-> Pablo WDYT?
 >
-> Just FYI we definitely want to see all traffic if promisc is set, so
-> this patch is a no-go.
->
-> Cheers,
->  Nik
-
 
 
 --=20
-Thanks,
-Amedeo
+Best Regards
+Masahiro Yamada
 
