@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-352207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DBDE991BBF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 03:22:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1274E991BC6
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 03:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EF161C20DB8
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 01:22:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C94722831CE
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 01:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E95C125;
-	Sun,  6 Oct 2024 01:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEB3163A9B;
+	Sun,  6 Oct 2024 01:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="CsWIlDQq"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etxYSCv+"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE161A932;
-	Sun,  6 Oct 2024 01:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65BA14A0A4;
+	Sun,  6 Oct 2024 01:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728177744; cv=none; b=ISlkmNX0BryRu0u3ahRqNzZw0oYSxgDkuIi2Rz2LpIkrYX6PyVILpGYXAlq7MwSOP7GZDw5YOLqPm67IYMkekHGHNJygSuWE9k+cq07Nu26eYA55GxpXl/gz4re6q0Z41GAZp+J8evXyPpVXLndDn0RQjIFoP2o/xI9szG4+fm0=
+	t=1728178783; cv=none; b=gKy5IRYxFimwkDSZs7N0giMogPQ1U88N6j2wX/PtCtObiZz/RsQLQKpdMlM6C+C+2QDRux8a72D5V86lLazyTa9JS0cCEct2aEBL6mRr/WiLPFvFq7B8W6icmDGeMoW+ukz7dLJ/i6fLPQbyiFc1xKtioD6dmT/LQMIi2ilOvT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728177744; c=relaxed/simple;
-	bh=gQMm9AkLwf2L6HRLj1OwQP+An2MMteBTn0/2c25qQLE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m/FJ+G4eWvpkJOpDbei0eHk9oJJxDtTLSJyTDxz2gnfK/IhNwH8UK19it6bV47KZ9+onxrUrGPLTlV1UiNhazuocIGTs2c0Nc/JRMbO+ENjuQ3JvJ/tVzFxgl665koSrHDsR+lrbviRTj1qwvmStqudU0RLNLCDpGVEYi2CtDa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=CsWIlDQq; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=Pqh8codxrX22SToFGaI1BL/8kRezKW4jx+SJzOiKeVw=; b=CsWIlDQqKcpXAGHS
-	9Ph4jTyh0b281KXLZ0AQ/5Zec2s3kGWFYw4XUce1EyJm0U68V6UeLOcwpPNYOi9TzQ2KwEscXvsT5
-	VklS37S8D9OIUOdrS1nHiL/Ew64lk7gZFs5gezIMOXj0geAlcGEqpyx9MvzV0cJRnkb2bjMJDzB0K
-	HgZZb0WSLQrUz8rVfKB1mUfx8cj4yT4AiG54yTEnJ1HvkRridJh1qT7j9GG4y7oXmMn3heEfFZSPZ
-	oMi9DRNUdXLaeXWytJpSGnVgKotIu449ev8TRbUg4YBDiXbYadvqgSEaPtGV7y/j/2EBGR1lPMkw3
-	VFEQPvv8QoVSmwNHdw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sxFyH-009Dy6-1P;
-	Sun, 06 Oct 2024 01:22:05 +0000
-From: linux@treblig.org
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] perf callchain: Remove unused callchain_branch_counts
-Date: Sun,  6 Oct 2024 02:22:04 +0100
-Message-ID: <20241006012204.373803-1-linux@treblig.org>
+	s=arc-20240116; t=1728178783; c=relaxed/simple;
+	bh=pYSc6OiU9q1iKa1xX0rwZ0lR9e6LiTxKsuskqYnE4HU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BqrnVUV1w8NfBAyxGgNhr6cHJJn0Nc4+NJcKY8Gh/dNHMSjtDGnIVzVGHxsPtBZvcEGKpSvkk9CEsjtpYTQ46ogVQtRUeHvoS1lUTUhYvjd8k18SdbPHXdosWzPyErHm4eKUQ0LrVKDAf9prVJvHVDdgkuL7sSdc8yd18/cXMJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etxYSCv+; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e1bfa9ddb3so2511104a91.0;
+        Sat, 05 Oct 2024 18:39:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728178781; x=1728783581; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kNE28Sv8c9PciX0+hCX7nPdBUet0b7HWalzU8LzDp1c=;
+        b=etxYSCv+D3g4/EjcV0kszYeiMz4S1brRgMdrlSqDJETnuqanJcBcJPgqzE5n18d/P0
+         mZQrVmNVrBV7tR3+n9fziM0CL8WDRSf8su7aBrPDFPb66WmPwOCGtvRK8LsIyeMneG1y
+         MmSxI5w13YRZZl3Nc/zTixsei6bP+tPy9nD07X6qtVXnDfTLnGEOrQ4TkXXUJkLsj6UW
+         chQ+AmoJ7TLTwO5JEVe5qi5jIxqS2DUGBy0WtbZsr0JSQoRP1p8BLY+ttARL7W5fYKom
+         jtWXo9ttRwil8RobkzsKaLk8X7wBzxZjU5AnAnoIaOqupD288XEBbzu1Kk43I+ByYPKr
+         fp4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728178781; x=1728783581;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kNE28Sv8c9PciX0+hCX7nPdBUet0b7HWalzU8LzDp1c=;
+        b=wjld677w66kr13YPnGyUO/8gN3UPLyTU+ME95kM2JWsQcZqPRPRhtOpjGc6bxd/mPa
+         M4xJYB4DfmPZEuQnhiwX3e1KKW0oN53o5kIKvcolEous/AhEekHbNjwqZrdNOEndr8W6
+         eUSgKEYyHYw2Mw3xBZz2x30I6mkXMB1ldvp2Cm2z9NAKk7ZJwVC+yKS8shP2DVP/qKUN
+         ptQycZW/EynF70LSSMbBJfi5Ub9RKF6dWaHFujB4QHNb5wdsvYTbK7Jg3MNKNG1rQnVt
+         KLBnOQw0AHGIHZiy4xNiEXngue59dItMf7Ies+XF9WXh2dhy4LKsB2qmI/LbO9vhgRU6
+         mSYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhi9F07hfRpBKgyC6aiMmpi1beKmMeAPGlipqHYRgjOaeoIDBLW7aXevuMHogJEP7PkuNkxBPSugrSr6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzogGGrwFwZKAbhNWlsbkGf/srMry9fMwSv6IZ8hxPWvcME6okT
+	FYeV7UrJScDOMnZkVj7E5/TvRmC/Bz8icCRo4xSuQrx2w3IdDSV0Ce16gA==
+X-Google-Smtp-Source: AGHT+IG8Oe7ycEcoa/ELyN1z6vBugxKaa+tkUCsDG2fj6jGmblMGDfHiuimp+BiRrGbqF4NWOigU7w==
+X-Received: by 2002:a17:90b:3890:b0:2e1:e280:3d59 with SMTP id 98e67ed59e1d1-2e1e639f23amr8600486a91.33.1728178780749;
+        Sat, 05 Oct 2024 18:39:40 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e83cab42sm4311359a91.2.2024.10.05.18.39.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2024 18:39:39 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] net: bgmac: use devm for register_netdev
+Date: Sat,  5 Oct 2024 18:39:37 -0700
+Message-ID: <20241006013937.948364-1-rosenp@gmail.com>
 X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,117 +85,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Removes need to unregister in _remove.
 
-callchain_branch_counts() was added in 2016 by commit
-3dd029ef9401 ("perf report: Calculate and return the branch flag counting")
-but unused.
+Tested on ASUS RT-N16. No change in behavior.
 
-Remove it and it's helpers.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- tools/perf/util/callchain.c | 71 -------------------------------------
- tools/perf/util/callchain.h |  4 ---
- 2 files changed, 75 deletions(-)
+ drivers/net/ethernet/broadcom/bgmac.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-index 0c7564747a14..11435b72afbe 100644
---- a/tools/perf/util/callchain.c
-+++ b/tools/perf/util/callchain.c
-@@ -1266,77 +1266,6 @@ int callchain_node__fprintf_value(struct callchain_node *node,
- 	return 0;
- }
+diff --git a/drivers/net/ethernet/broadcom/bgmac.c b/drivers/net/ethernet/broadcom/bgmac.c
+index 6ffdc4229407..2599ffe46e27 100644
+--- a/drivers/net/ethernet/broadcom/bgmac.c
++++ b/drivers/net/ethernet/broadcom/bgmac.c
+@@ -1546,7 +1546,7 @@ int bgmac_enet_probe(struct bgmac *bgmac)
  
--static void callchain_counts_value(struct callchain_node *node,
--				   u64 *branch_count, u64 *predicted_count,
--				   u64 *abort_count, u64 *cycles_count)
--{
--	struct callchain_list *clist;
--
--	list_for_each_entry(clist, &node->val, list) {
--		if (branch_count)
--			*branch_count += clist->branch_count;
--
--		if (predicted_count)
--			*predicted_count += clist->predicted_count;
--
--		if (abort_count)
--			*abort_count += clist->abort_count;
--
--		if (cycles_count)
--			*cycles_count += clist->cycles_count;
--	}
--}
--
--static int callchain_node_branch_counts_cumul(struct callchain_node *node,
--					      u64 *branch_count,
--					      u64 *predicted_count,
--					      u64 *abort_count,
--					      u64 *cycles_count)
--{
--	struct callchain_node *child;
--	struct rb_node *n;
--
--	n = rb_first(&node->rb_root_in);
--	while (n) {
--		child = rb_entry(n, struct callchain_node, rb_node_in);
--		n = rb_next(n);
--
--		callchain_node_branch_counts_cumul(child, branch_count,
--						   predicted_count,
--						   abort_count,
--						   cycles_count);
--
--		callchain_counts_value(child, branch_count,
--				       predicted_count, abort_count,
--				       cycles_count);
--	}
--
--	return 0;
--}
--
--int callchain_branch_counts(struct callchain_root *root,
--			    u64 *branch_count, u64 *predicted_count,
--			    u64 *abort_count, u64 *cycles_count)
--{
--	if (branch_count)
--		*branch_count = 0;
--
--	if (predicted_count)
--		*predicted_count = 0;
--
--	if (abort_count)
--		*abort_count = 0;
--
--	if (cycles_count)
--		*cycles_count = 0;
--
--	return callchain_node_branch_counts_cumul(&root->node,
--						  branch_count,
--						  predicted_count,
--						  abort_count,
--						  cycles_count);
--}
--
- static int count_pri64_printf(int idx, const char *str, u64 value, char *bf, int bfsize)
+ 	bgmac->in_init = false;
+ 
+-	err = register_netdev(bgmac->net_dev);
++	err = devm_register_netdev(bgmac->dev, bgmac->net_dev);
+ 	if (err) {
+ 		dev_err(bgmac->dev, "Cannot register net device\n");
+ 		goto err_phy_disconnect;
+@@ -1568,7 +1568,6 @@ EXPORT_SYMBOL_GPL(bgmac_enet_probe);
+ 
+ void bgmac_enet_remove(struct bgmac *bgmac)
  {
- 	return scnprintf(bf, bfsize, "%s%s:%" PRId64 "", (idx) ? " " : " (", str, value);
-diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
-index 86ed9e4d04f9..d7741fa9e9de 100644
---- a/tools/perf/util/callchain.h
-+++ b/tools/perf/util/callchain.h
-@@ -298,10 +298,6 @@ void free_callchain(struct callchain_root *root);
- void decay_callchain(struct callchain_root *root);
- int callchain_node__make_parent_list(struct callchain_node *node);
- 
--int callchain_branch_counts(struct callchain_root *root,
--			    u64 *branch_count, u64 *predicted_count,
--			    u64 *abort_count, u64 *cycles_count);
--
- void callchain_param_setup(u64 sample_type, const char *arch);
- 
- bool callchain_cnode_matched(struct callchain_node *base_cnode,
+-	unregister_netdev(bgmac->net_dev);
+ 	phy_disconnect(bgmac->net_dev->phydev);
+ 	netif_napi_del(&bgmac->napi);
+ 	bgmac_dma_free(bgmac);
 -- 
 2.46.2
 
