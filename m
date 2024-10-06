@@ -1,147 +1,143 @@
-Return-Path: <linux-kernel+bounces-352382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3736F991E60
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:05:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA41991E62
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0EF21F21BC4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:05:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DE49281D26
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B2F17335E;
-	Sun,  6 Oct 2024 13:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B188A176FA5;
+	Sun,  6 Oct 2024 13:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0uu4XCo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOpAM59G"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FD413C908;
-	Sun,  6 Oct 2024 13:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BDB170A3F;
+	Sun,  6 Oct 2024 13:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728219936; cv=none; b=MjJGA1JjrPMTehQNMq02s4zq305wXeyvA8AZ+DKK91pTmCNiXuxpRUDSwVjvNihlnvO84ZLdinlenuiM1elL6qslR0GUye9Co8pbFyycXx9cDYdy3ARUH3iPz+bECj80Iuw0/Jsq2+Q0IzYhW7xr98/UzzhVYkAUI+UqKAPHt+0=
+	t=1728219970; cv=none; b=Um/eO9ya2icNyHPu0NFLCELa6gwVUrBU0IEi0qZr7dyaVMZIWn8MxgU+QL3v7MQrNBtFBYBp+uhpO15l1j7nr9/L3Rla35lcz15ujdKWhWL0Uj01EBSiA3IutIMeZOdF+0qMirAOqLtOC0zTVbZHHq2bN8iBOpaob3HUJ77i7ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728219936; c=relaxed/simple;
-	bh=snuEqpkwiIlr2gA5eRHM9nmVH5FfF38QLtajK7OLh8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M3Vs2r5GU078FZfoCvOps7WejKGckm+XuPCaHehB7pSCMxJ78oiHxm9f1P3LFAyLUB8cgx/Ou0SrC5J3wINJpxg+feIncJ0NnA026m7WbGhoZEgnUVfmdWhmChBW7p846PTqAw4L6SRGsB6LwDZIlS49jC42o5742sAEcfJhStE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0uu4XCo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D04AC4CEC5;
-	Sun,  6 Oct 2024 13:05:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728219935;
-	bh=snuEqpkwiIlr2gA5eRHM9nmVH5FfF38QLtajK7OLh8g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V0uu4XCo7+eZGIWwPBey0epupClafF6GrZs33XB7xJ5X+9N+g0V9wzEd15qGRGoPb
-	 KUquAVVo7ZiGNRC4g7of8z/ZU79DIXrLL7/7GWSMN+bA3YHlEIFNGI2CMc01giqBv1
-	 SFUBfYmu4GABQ7bHY5PAyKwFds6N5iQUZtJEE67CVKfZdrupeTsDYiqDtqPbYyQpPH
-	 UPYUJQVdd6QoK7N88uZH0uBuJor1lLW+CStg1nz1/f8AtPfwUXWj+kzFv+xtB+Q4Ib
-	 hwSh0tJlkXnjSutfG7f+9hyDuIKrz1q2JWFrqsipMsYIsAxcsu3yx4HvOclaGZTCND
-	 LoWraX42i4Knw==
-Date: Sun, 6 Oct 2024 14:05:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Herve Codina <herve.codina@bootlin.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Ian Ray <ian.ray@gehealthcare.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 3/4] iio: adc: Add support for the GE HealthCare PMC
- ADC
-Message-ID: <20241006140520.5b955b76@jic23-huawei>
-In-Reply-To: <cdc27a53-281d-41d7-a9b5-196f2650c468@baylibre.com>
-References: <20241003114641.672086-1-herve.codina@bootlin.com>
-	<20241003114641.672086-4-herve.codina@bootlin.com>
-	<cdc27a53-281d-41d7-a9b5-196f2650c468@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728219970; c=relaxed/simple;
+	bh=ghsLtM0pTCsjVShmbZaKihMZoOQLife8+lrCa1ftocM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=o2PWTJzOPGefe4etCogvnpzYPR8MImIx1wjBWjsjfjDWJEW9kA+Whirr72BOxa77Dy594kjhonFGonnngRj5vXKHaY5Nq+1SQN1sRFYaNEsFoH367WhGlzBBY0elsK5jYGl4/mgkYFUXZzrlxeIiYt4USvKNR3gzc3Lhx47wuyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOpAM59G; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-537a399e06dso3670917e87.1;
+        Sun, 06 Oct 2024 06:06:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728219966; x=1728824766; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xCcZz9kdtfMEP9gzd1Dde8CK441Z4S44KrNH914zWQA=;
+        b=WOpAM59GmRs2pGZhGXk6yoKv1pHgP5fVpTcpVMWp7gE3XkzWcacSTKTO2PpBmvhLUH
+         q7Pf9hTF9xksx8kGtFC3aaR+xxv+RN0JtVhYEwrWsXvCagtoK54ng0VdHomiGMBB3Keo
+         eB/FXWz6BHF2ELmU3nqYDxkYLdvWIzvohe0fWZ+AerRLw1wL2azudBV5+Z1umQKSE5jr
+         JdVQ+LNtf2i/UfiBGsm/mzGHnmcN5jQoXNj7K5z246iv6YSpaSUUv/+MG83VxDWW+3nY
+         4YqeaxFIuggL7Ukr+mOc3SsMIq1pDMhUQY0XfsVUruMWLArsA80CyaeTZKRwMnAbnq14
+         SCXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728219966; x=1728824766;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xCcZz9kdtfMEP9gzd1Dde8CK441Z4S44KrNH914zWQA=;
+        b=PXdbM/FKYgzQ5Kz4wegKI5MsVbdAo3hjz1qkxx/9PXzfaJcxyhZV7b2SPo4V2IelLG
+         +KnN00qyTOYXlBHvY3Rz6vrigBw76q7B5CzOTSoEZhV6mNPQiWyW2J9v/T5yGFNc8Y4r
+         GcIsXD3PY89AerRDkyzr7Z6QRQYB1B0idyOF9Z936G7E1xuv2e2ywqXvrJusWNm1EqYC
+         b3zum+E0gEvsbiM2dR0obrclgHtJQ6W6zRjirUu/neVMs5gw5S4pDCm7Hg+gi1WoYsgH
+         /QgqleSsu22ZlrnW0bxnKNAK25kqvd8CdVuMhk5MJRCNziLLjIbtuSSixQwdxH/JGm4W
+         Vh4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVnmlz1IAGFKs/+hUObE2IPWg7XI1xXRdrgTsjSHCh8HfqGcQA+M/H1IxDWzJXKQnHuyh3CAGKlUaRu@vger.kernel.org, AJvYcCWsOzJAu7TUDH6LI9arVqW2kNNYDL2f+bMaV3RD6Ksi3qmHZSrZMk1Lbk15Wwf5PrAhmqJgFenZPeZfmt0N@vger.kernel.org
+X-Gm-Message-State: AOJu0YySQ7OZAKLFBPomAMY9qUOTuZTljUVRYFmBfFO62c+cBeR70454
+	srISIMk8CEpZ7//S82nPFLnod505NiVuhyNyWD03/29ogACa0qbgxBXrPbGC
+X-Google-Smtp-Source: AGHT+IE7ir8o4cWTVBT0eg+WMbzZaxX6cQc8ByXueTcuHKSKXe/X63JB/yfxgYkQ0h+8EibvR3ZeDQ==
+X-Received: by 2002:a05:6512:b11:b0:533:482f:afb7 with SMTP id 2adb3069b0e04-539ab9dd601mr3908904e87.39.1728219966177;
+        Sun, 06 Oct 2024 06:06:06 -0700 (PDT)
+Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff2904csm512749e87.304.2024.10.06.06.06.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 06:06:04 -0700 (PDT)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH v4 0/2] Add support for "on-die" ECC on Davinci.
+Date: Sun, 06 Oct 2024 15:05:45 +0200
+Message-Id: <20241006-ondie-v4-0-ff9b9fd9a81d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACmLAmcC/13M0QqDIBTG8VcJr+fQozbb1d5j7MLpqYSVQ4dsR
+ O8+C4Lo8juc338iCaPHRK7VRCJmn3wYy5CnitjejB1S78omwEByxjgNo/NIDUNnW9CtljUpv++
+ Irf+unfuj7N6nT4i/NZv5cj0WMqeMGuGMQa6sbtytG4x/nW0YyFLIsFewKShKcM1V7bS9POVRi
+ b1SmxJFSdW4xgoAUHav5nn+A5wxjpQGAQAA
+X-Change-ID: 20241001-ondie-a0edcf28f846
+To: Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1263;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=ghsLtM0pTCsjVShmbZaKihMZoOQLife8+lrCa1ftocM=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBnAosqO1hp6WkL2wUfK/sEBFv40JZaYb3nufEcC
+ dYzCtnQXoOJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZwKLKgAKCRCIgE5vWV1S
+ MmWhD/0VPUd1y9HkiwZx6DH1BspK+8svEoOP1SgHpOn9YL2ibIrZVxZjAow2ErycSLDAOXdl2JN
+ lJoSXzgIanN/eGkI6CqaeIdCB2iijSR6nVbt/F2TQkyNoZAuDF5xAPoFC7uQ3TQjZ5u3yl3E+rv
+ sfgYhv2ixsI6oIegsjtUluuJognI9Nw9YE/ySASl3nCDuBROL/49rrAYZ/dTzsdo3VauitekGUN
+ MF3ZMbpt/JqGLemE5Fb4rLSaibH7hTm4apfGbvUFCmedg2Fd2v9N08xze2lyHeFsD2d+FrftaE1
+ t/uf4604gt8Bihu620WpH4Ihlcdx2/gOzeeVUIlXptwRk5ifb1X5VGolr4ZNLgcFp19L/QiDSsf
+ oRcjJW0siTTcRQwhx4iNFko9Qg3N9KZY9FJVtg3K7Apb6gdzyoO6uskK0FUDsWEMZYup2gNrA1A
+ Uj+fyNQPViWKAUGm0lIKj9gx30+rJRp+TmvZ24lkcHqaIHvVwvARHb2pRjf3nbfl36+g2nRMofy
+ UbV5lsdtcV/e9t1w3rd4KDaN6XB67IEztOzxFDDqwz0VFp4rBMUcFhx8Sb9DqwbG6qlSfMRBN3V
+ NAk/Pe2rppQolPlu4xv7i4fVGDvXrNLW7LMEtEOf+cj2yog4ifYiUa4sdrKSwZWhsMQ2YSRtkrO
+ EszNyQ3ZeUfP7/w==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-On Thu, 3 Oct 2024 08:39:54 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+Some chips, e.g. Micron MT29F1G08ABBFAH4, has a mandatory on-die ECC.
+Add "on-die" as ECC engine type in order to be compatible with those.
 
-> On 10/3/24 6:46 AM, Herve Codina wrote:
-> > The GE HealthCare PMC Analog to Digital Converter (ADC) is a 16-Channel
-> > (voltage and current), 16-Bit ADC with an I2C Interface.
-> > 
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > ---  
-> 
-> ...
-> 
-> 
-> > +
-> > +static int pmc_adc_probe(struct i2c_client *client)
-> > +{
-> > +	struct iio_dev *indio_dev;
-> > +	struct pmc_adc *pmc_adc;
-> > +	struct clk *clk;
-> > +	s32 val;
-> > +	int ret;
-> > +
-> > +	ret = devm_regulator_bulk_get_enable(&client->dev, ARRAY_SIZE(pmc_adc_regulator_names),
-> > +					     pmc_adc_regulator_names);
-> > +	if (ret)
-> > +		return dev_err_probe(&client->dev, ret, "Failed to get regulators\n");
-> > +
-> > +	clk = devm_clk_get_optional_enabled(&client->dev, "osc");
-> > +	if (IS_ERR(clk))
-> > +		return dev_err_probe(&client->dev, PTR_ERR(clk), "Failed to get osc clock\n");
-> > +
-> > +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*pmc_adc));
-> > +	if (!indio_dev)
-> > +		return -ENOMEM;
-> > +
-> > +	pmc_adc = iio_priv(indio_dev);
-> > +	pmc_adc->client = client;
-> > +
-> > +	val = i2c_smbus_read_byte_data(pmc_adc->client, PMC_ADC_CMD_REQUEST_PROTOCOL_VERSION);
-> > +	if (val < 0)
-> > +		return dev_err_probe(&client->dev, val, "Failed to get protocol version\n");
-> > +
-> > +	if (val != 0x01)
-> > +		return dev_err_probe(&client->dev, -EINVAL,
-> > +				     "Unsupported protocol version 0x%02x\n", val);
-> > +
-> > +	indio_dev->name = "pmc_adc";
-> > +	indio_dev->info = &pmc_adc_info;
-> > +	indio_dev->channels = pmc_adc_channels;
-> > +	indio_dev->num_channels = ARRAY_SIZE(pmc_adc_channels);  
-> 
-> I don't think the core code actually checks this, but for
-> correctness we should add:
-> 
-> 	indio_dev->modes = INDIO_DIRECT_MODE;
-True.  This is a bit of an oddity of history :(
-Maybe at somepoint we'll just drop this but for now it should be there.
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+Changes in v4:
+- Silent errors in `make  dt_binding_check  DT_SCHEMA_FILES=ti,davinci-nand.yaml`
+- Link to v3: https://lore.kernel.org/r/20241005-ondie-v3-0-459d9c32225c@gmail.com
 
-Given everything else looks good I've added that whilst
-applying the series.  Applied to the togreg branch of iio.git and
-pushed out as testing for 0-day to poke at it.
+Changes in v3:
+- Fix formatting issues in yaml file
+- Link to v2: https://lore.kernel.org/r/20241002-ondie-v2-0-318156d8c7b4@gmail.com
 
-Thanks,
+Changes in v2:
+- Convert dt-bindings file to yaml
+- Link to v1: https://lore.kernel.org/r/20241001-ondie-v1-0-a3daae15c89d@gmail.com
 
-Jonathan
+---
+Marcus Folkesson (2):
+      mtd: nand: davinci: add support for on-die ECC engine type
+      dt-bindings: mtd: davinci: convert to yaml
 
+ .../devicetree/bindings/mtd/davinci-nand.txt       |  94 -----------------
+ .../devicetree/bindings/mtd/ti,davinci-nand.yaml   | 115 +++++++++++++++++++++
+ drivers/mtd/nand/raw/davinci_nand.c                |   5 +-
+ 3 files changed, 119 insertions(+), 95 deletions(-)
+---
+base-commit: 200289db261f0c8131a5756133e9d30966289c3b
+change-id: 20241001-ondie-a0edcf28f846
 
-> 
-> > +
-> > +	return devm_iio_device_register(&client->dev, indio_dev);
-> > +}
-> > +  
-> 
-> With that...
-> 
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
-> 
+Best regards,
+-- 
+Marcus Folkesson <marcus.folkesson@gmail.com>
+
 
