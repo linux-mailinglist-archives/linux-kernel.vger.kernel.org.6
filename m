@@ -1,154 +1,107 @@
-Return-Path: <linux-kernel+bounces-352652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1F5992230
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:55:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E72A1992231
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4CC428181E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:55:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59FC52817B2
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBB918BBBB;
-	Sun,  6 Oct 2024 22:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB1D18BBBD;
+	Sun,  6 Oct 2024 22:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="YoIqCU6k"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Q7Ipy8tu"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7D6189F3F
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 22:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAC418A957
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 22:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728255318; cv=none; b=OcttFpcI27ncESmoQKiRNgkTgMPNK6Dh08De1K9f2obGcMKczlymcSXy+hmqPcCj2p/cMs7n0Fz7rd+I4rYsF+CDKEuBvk64wiT+rAMXVNDTR6dLzqWhnyUTE5TkF37lguZs57uOMyY9/0rEoebYccc6jFQSwFZ7bS6iRvG+RKM=
+	t=1728255504; cv=none; b=sW2TLZQy5Iwo4aetaEXXGB0iIWsomC4PV/CvebKXmJaQ97txwStZeFfNdTB7Qlmi+nuOoDbR504h5fmRd9tSepWNmGxZT6bB+fP6y1Zm8CoydOM9+YmRXIhmuyxI++DJ+3k76l/chDhuwJvV1Qtn85Jf94S/WaoH85BF/JIdqRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728255318; c=relaxed/simple;
-	bh=lagJWk8SU2D98SWrrZx4DJjfRm4K1eJDvb+SdgpIyLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tgHPRRQEPXJAqMeCZ55r0dQCEssLK0GeE5EavYAgNwbIgpUr+jHUCT02Mh1qltrvj4D4uGaJYD4YLRA4iY0C1fY/a0rQXwGMyvvTA+exq4VuV84ZbOSP5je0+X1VgwmDa6MAijmyfhAeS+RnDdeJUhW5CvlKccqt9PPmruLYSoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=YoIqCU6k; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=9BP4B/IfvM42ahXgRgTste/nSR7JJMWEXNyvBtekDzY=; b=YoIqCU6kFeGn19sq
-	HjF+fT7cpNlZQa40XuprvoF3DB81LzQONxHC+cr960Z94ioJ6MkiZo+kQSEebzxNaNDg94ihGKn7n
-	pLN+TDChKRPI7/zFWF4Bo06/Ubj1Y/EY4tSBklgdDkHFIWbqUmcTOo24zrzejWs6q/iowlTS60eSp
-	ny/j/azg4XPiakIOJ/xkdKKlBZOahgwkL9ecBVAkgZ/dI4UAP4plvoZLMuXTnaU7hncJY3QBPPSdU
-	kKMANWIeNQWR3dnIYr3uGQQpOjn2Whn0GsIEd6ZaNIZogLOqILjU1L/Dz3PRKd8TjxueGL4CP2sAB
-	xjPVdrGQCnvDKix7LA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sxa9h-009Lff-0l;
-	Sun, 06 Oct 2024 22:55:13 +0000
-From: linux@treblig.org
-To: ojeda@kernel.org,
-	andy@kernel.org,
-	geert@linux-m68k.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] auxdisplay: Remove unused functions
-Date: Sun,  6 Oct 2024 23:55:11 +0100
-Message-ID: <20241006225511.121579-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728255504; c=relaxed/simple;
+	bh=shZDyWvvJS1+vbJKipKl7TBJestfbUJaPNb4A0EOoas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=noWcDebkLRgV6mazyrDbTQKy5vmEbh6QiW96VMwssChSZThThUUBn8pX7V0t7dYZS9GIoihXgHsRWKvMmT/IWw46xrmlTA/uw9W7R7XI9rhPNem+W0fQit4w8fP0s44a8v8t6uehSMG+8dF8/LAWxUwzBs4P74JxfTfuztXxxPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Q7Ipy8tu; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-207115e3056so33686455ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 15:58:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1728255498; x=1728860298; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=shZDyWvvJS1+vbJKipKl7TBJestfbUJaPNb4A0EOoas=;
+        b=Q7Ipy8tu/MgBRHVxVfgDLGa7zIPC9ock/zI1bOcq9/jogk6G2EH1AMat11YO9ERxc9
+         DKXMr98nr62N3U97cxGQcpUSjGX0BKeBCXN4zd2u3xecrMyTfA9YRMVKCNxn50MFHSF2
+         q33fXu0rSYKmKjIC0Gg335DxJo4ldfOY/LiVrAIRlwenjXqtRYNBrbyLa/ov7WeB3TvF
+         g32WNV8q2E86DviVlUqNNxcH5SzMZbhG5FjH+Z/y2iUyQoyDSNKGwtmAYNXmlZ6FcI0y
+         GiJz4Sssr/3qKfQyIdf0FyAZF3VtnTs6PuMvT2ONXnpxQ31MlPrxc3bJVvVQOw2lzAp0
+         cLNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728255498; x=1728860298;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=shZDyWvvJS1+vbJKipKl7TBJestfbUJaPNb4A0EOoas=;
+        b=GXgIJ1XL0m3p2kKUqoQtcjx8LUBDmqygxEHLg3XjZFxrpNT6X2zLJ/VsTvaNgqOFx4
+         2LPC0HqpQoHC12VmAOWSm+UOhgeA6oUjzpLJITMN1fCM/DBz3QI/Q4ecUPYM/biNIjox
+         YF5pCB2bWuWFx0oLrLE6PNBXm5fOtdCpUmo8/2Je2AIxsM3qE5i1x2pA/1OPbD01Tb33
+         HmF6CvkSCzfVVy5rz7y72oQQOcYg7bkEbQaT9AkkSHY2trHV0M5a9LsrgTJPz/FHSu1o
+         TRSR0vUMgAGbe8Mck8zEk5xDLisw6MJ480AnmKWcoalVRIy99MMcf7DvuNvAVi1TwNC5
+         /gzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXd7AUFRYY+jQ7aPzHeLA/WjGLVFXcLykD8nVFKQIOY+dokgc/hHVN62W1QvMpXrDtDgzm0AVPNaTRHOIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzubsqe/FgFyHsq3+AtVwYG1cg86xFVhh7VPezOJrVk+27Ohndf
+	gWb69lOkHuquFs4Xjedll4yanp6r3qOvQ0UFyL8LdqpHZ1QTjUqnMeNCJBll26QCdFGYVBa7QzI
+	E
+X-Google-Smtp-Source: AGHT+IFPMCwXglsgE0YefVyYhHWUFUL20s0BZFZ9Wmp5tfe5UAbc/+G9dWvwujGP9G02so7NPzQewQ==
+X-Received: by 2002:a17:902:ecca:b0:205:753e:b496 with SMTP id d9443c01a7336-20bfdf80029mr116924685ad.3.1728255498269;
+        Sun, 06 Oct 2024 15:58:18 -0700 (PDT)
+Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20aeba043sm3981434a91.13.2024.10.06.15.58.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 15:58:17 -0700 (PDT)
+Date: Sun, 6 Oct 2024 15:58:16 -0700
+From: Drew Fustini <dfustini@tenstorrent.com>
+To: Vladimir Kondratiev <Vladimir.Kondratiev@mobileye.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH v1] riscv: make ZONE_DMA32 optional
+Message-ID: <ZwMWCNYUwrW0oWVn@x1>
+References: <20240827113611.537302-1-vladimir.kondratiev@mobileye.com>
+ <e8f6ed93-d47c-4c07-963c-8f16f498abed@ghiti.fr>
+ <VI1PR09MB2333FEC324AA0B3E5F1D7F98947C2@VI1PR09MB2333.eurprd09.prod.outlook.com>
+ <VI1PR09MB233370D7BD8553E7891EF46F947C2@VI1PR09MB2333.eurprd09.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR09MB233370D7BD8553E7891EF46F947C2@VI1PR09MB2333.eurprd09.prod.outlook.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Sun, Oct 06, 2024 at 10:55:39AM +0000, Vladimir Kondratiev wrote:
+> It is not necessary any RISCV platform has ZONE_DMA32.
+> Platforms that not support ZONE_DMA32 should set
+> CONFIG_NONPORTABLE because lack of ZONE_DMA32
+> makes such platform non-portable indeed
 
-cfag12864b_getrate() and cfag12864b_isenabled() were both added
-in commit 70e840499aae ("[PATCH] drivers: add LCD support")
-but never used.
+I think requiring CONFIG_NONPORTABLE is a good idea. However, it seems
+this patch was sent as a reply to the existing discussion thread.
 
-Remove them.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/auxdisplay/cfag12864b.c | 12 ------------
- include/linux/cfag12864b.h      | 17 -----------------
- 2 files changed, 29 deletions(-)
-
-diff --git a/drivers/auxdisplay/cfag12864b.c b/drivers/auxdisplay/cfag12864b.c
-index 6526aa51fb1d..e1a94ae3eb0c 100644
---- a/drivers/auxdisplay/cfag12864b.c
-+++ b/drivers/auxdisplay/cfag12864b.c
-@@ -37,11 +37,6 @@ module_param(cfag12864b_rate, uint, 0444);
- MODULE_PARM_DESC(cfag12864b_rate,
- 	"Refresh rate (hertz)");
- 
--unsigned int cfag12864b_getrate(void)
--{
--	return cfag12864b_rate;
--}
--
- /*
-  * cfag12864b Commands
-  *
-@@ -249,11 +244,6 @@ void cfag12864b_disable(void)
- 	mutex_unlock(&cfag12864b_mutex);
- }
- 
--unsigned char cfag12864b_isenabled(void)
--{
--	return cfag12864b_updating;
--}
--
- static void cfag12864b_update(struct work_struct *work)
- {
- 	unsigned char c;
-@@ -293,10 +283,8 @@ static void cfag12864b_update(struct work_struct *work)
-  */
- 
- EXPORT_SYMBOL_GPL(cfag12864b_buffer);
--EXPORT_SYMBOL_GPL(cfag12864b_getrate);
- EXPORT_SYMBOL_GPL(cfag12864b_enable);
- EXPORT_SYMBOL_GPL(cfag12864b_disable);
--EXPORT_SYMBOL_GPL(cfag12864b_isenabled);
- 
- /*
-  * Is the module inited?
-diff --git a/include/linux/cfag12864b.h b/include/linux/cfag12864b.h
-index 6617d9c68d86..83e6613d12ae 100644
---- a/include/linux/cfag12864b.h
-+++ b/include/linux/cfag12864b.h
-@@ -27,13 +27,6 @@
-  */
- extern unsigned char * cfag12864b_buffer;
- 
--/*
-- * Get the refresh rate of the LCD
-- *
-- * Returns the refresh rate (hertz).
-- */
--extern unsigned int cfag12864b_getrate(void);
--
- /*
-  * Enable refreshing
-  *
-@@ -49,16 +42,6 @@ extern unsigned char cfag12864b_enable(void);
-  */
- extern void cfag12864b_disable(void);
- 
--/*
-- * Is enabled refreshing? (is anyone using the module?)
-- *
-- * Returns 0 if refreshing is not enabled (anyone is using it),
-- * or != 0 if refreshing is enabled (someone is using it).
-- *
-- * Useful for buffer read-only modules.
-- */
--extern unsigned char cfag12864b_isenabled(void);
--
- /*
-  * Is the module inited?
-  */
--- 
-2.46.2
-
+Thanks,
+Drew
 
