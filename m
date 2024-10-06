@@ -1,97 +1,131 @@
-Return-Path: <linux-kernel+bounces-352563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA039920C4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:39:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CFF79920CC
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C0A0280C2C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:39:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6AE5B21220
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3C018A6C4;
-	Sun,  6 Oct 2024 19:39:06 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F5C18B46D;
+	Sun,  6 Oct 2024 19:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Lc9PbUpM"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEC6F4F1
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 19:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E2A14A630;
+	Sun,  6 Oct 2024 19:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728243546; cv=none; b=VP3+9Bn8kG0C6rm5VVFGzCBNUpoS0kGzE17EV697qfps1ikS8VsLmfGJE3EeSJCjPs/M8cMMou0MO50uP0qwUpsIQVC44iBnCFpNujEhMBg4VuXT240WnR5yYfjRZ1+XYATND753Vopx0M/KbOVQ/GOwKrA1ojFz9Z79sSGs2DA=
+	t=1728243588; cv=none; b=FRLOxwocPolZph5fv6JLhixrU+rsqdIrdr3xUJrGpwVYRpdBqz/x672ZYFiNpWID9ZAAq1qc96Qky3ugFfIqfV9ozWHN8TRiFTN5SCCdHVIZKGgqkPlBiSOU/xqmoGubULyucqqICILL49OXiVLLC83EvalqzZdBi356GzooDBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728243546; c=relaxed/simple;
-	bh=OBak1uHJl3ZubY+7sFMouOJ6LXknbTouSx/aTwbNTaY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=X2/t65Jb8QLiauCOyYrI31Qzj407mTjYwE/MWSaYL60vWcckQghBk/87+F4dr/M189Q/fTN4hMKCjD7Jh+RuwiMXSGAMYMSL1LGhhP2W34FHIgQsxtVJ44WStOUSGeCKjNWUuGYqjhtJV7vjR7Cm5acZlPAysnTCwcC/bxs+oFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-166-CaeKJMmCMmWEp8bxsb_GbA-1; Sun, 06 Oct 2024 20:39:01 +0100
-X-MC-Unique: CaeKJMmCMmWEp8bxsb_GbA-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 6 Oct
- 2024 20:38:07 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 6 Oct 2024 20:38:07 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Al Viro' <viro@zeniv.linux.org.uk>, Brahmajit Das
-	<brahmajit.xyz@gmail.com>
-CC: "brauner@kernel.org" <brauner@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/1] fs/qnx6: Fix building with GCC 15
-Thread-Topic: [PATCH 1/1] fs/qnx6: Fix building with GCC 15
-Thread-Index: AQHbFpcN/zElNcWuRkuJdieTZ+k397J6HYnw
-Date: Sun, 6 Oct 2024 19:38:07 +0000
-Message-ID: <665bcd89cf5f4679a38e9a84fa0ba42a@AcuMS.aculab.com>
-References: <vch6gmzqaeo22c7473qyabrfwxlkdhx5vgvosjyp5l2nwgqnxl@5x3ny35qyfgx>
- <20241004094921.615688-1-brahmajit.xyz@gmail.com>
- <20241004184440.GQ4017910@ZenIV>
-In-Reply-To: <20241004184440.GQ4017910@ZenIV>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1728243588; c=relaxed/simple;
+	bh=9wpGerdLjrs32NAAxWuQr0Zn5/RQ55cLXb4OynSTbGk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=DjH8RbgYutDhtr8v7dMYC0eFEn2vEo55Cn49HS6l7GYeAdkRz/lVq0BW54lmDuBv+XSkJLBR5EMxRCJG8/w8a3t6xEuw1d5Dh/MqO92+MdySIjPKccBAiSckns6nHleYJE7pdwXw49DLP8X/QfkwKflEc6naKNDF3tv6xlJfYUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Lc9PbUpM; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 496JcqMQ1925401
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sun, 6 Oct 2024 12:38:53 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 496JcqMQ1925401
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024091601; t=1728243536;
+	bh=9wpGerdLjrs32NAAxWuQr0Zn5/RQ55cLXb4OynSTbGk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Lc9PbUpMwsnXTOWaJN9CXcxjSSWv5nTCaZBiscG/TQ3eHw4J2mI5nopG2gSeaI79L
+	 vKMiLkZHfC5ubwiFJzuDuyB+F5uMgvtF2z0wUtlZmg4On1bnmVK4vei8WgNxba4q9u
+	 muWB/vSp7UxaBGIboP+agmWEZxkTp81yyJwnS6yc0YXqeqxb0x7Ta7UpicAdHSSWND
+	 7UPqiYheLQ57e2ykSnaWM8GW2tnbAX4B6xnsny8QXDU+qdSEJsjRLl9oDtWqQ/ecCq
+	 0sAHRDWAdgyw5syyYB6N3mg/bKR+nVFfm3xWMRSeaGRrxOVCrWF7OfUMb2ogPNfF4Q
+	 GIubVa2r9kh9w==
+Date: Sun, 06 Oct 2024 12:38:52 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Uros Bizjak <ubizjak@gmail.com>, David Laight <David.Laight@aculab.com>
+CC: Ard Biesheuvel <ardb@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ard Biesheuvel <ardb+git@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Dennis Zhou <dennis@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada <masahiroy@kernel.org>,
+        Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+        Keith Packard <keithp@keithp.com>,
+        Justin Stitt <justinstitt@google.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+        "llvm@lists.linux.dev" <llvm@lists.linux.dev>
+Subject: Re: [RFC PATCH 25/28] x86: Use PIE codegen for the core kernel
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAFULd4awNUm8MpZQ6XhPTRs6+2ZLtfnr=6vkK5DrY9L2rGR-5w@mail.gmail.com>
+References: <20240925150059.3955569-30-ardb+git@google.com> <20240925150059.3955569-55-ardb+git@google.com> <99446363-152f-43a8-8b74-26f0d883a364@zytor.com> <CAMj1kXG7ZELM8D7Ft3H+dD5BHqENjY9eQ9kzsq2FzTgP5+2W3A@mail.gmail.com> <CAHk-=wj0HG2M1JgoN-zdCwFSW=N7j5iMB0RR90aftTS3oqwKTg@mail.gmail.com> <CAMj1kXEU5RU0i11zqD0433_LMMyNQH2gCoSkU7GeXmaRXGF1Yw@mail.gmail.com> <5c7490bb-aa74-427b-849e-c28c343b7409@zytor.com> <CAFULd4Yj9LfTnWFu=c1M7Eh44+XFk0ibwL57r5H7wZjvKZ8yaA@mail.gmail.com> <3bbb85ae-8ba5-4777-999f-d20705c386e7@zytor.com> <CAFULd4b==a7H0zdGVfABntL0efrS-F3eeHGu-63oyz1eh1DwXQ@mail.gmail.com> <bfa1a86c3e4348159049e8277e9859dd@AcuMS.aculab.com> <CAFULd4awNUm8MpZQ6XhPTRs6+2ZLtfnr=6vkK5DrY9L2rGR-5w@mail.gmail.com>
+Message-ID: <2E1160A8-3A0C-45BD-B729-D20EAE97A075@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Li4uDQo+IHdvdWxkIGV4cGxhaW4gd2hhdCB3YXMgcmVhbGx5IGdvaW5nIG9uIC0gdGhlIHBvaW50
-IGlzIG5vdCB0byBtYWtlIGdjYyBTVEZVLCBpdCdzDQo+IHRvIG1ha2UgdGhlIGNvZGUgbW9yZSBz
-dHJhaWdodGZvcndhcmQuICBUaGUgd2FybmluZyBpcyBiYXNpY2FsbHkgIml0IHNtZWxscw0KPiBz
-b21ld2hhdCBmaXNoeSBhcm91bmQgPmhlcmU8LCBtaWdodCBiZSB3b3J0aCB0YWtpbmcgYSBsb29r
-Ii4gIEFuZCB5ZXMsIGl0IHR1cm5lZA0KPiBvdXQgdG8gYmUgZmlzaHk7IG1pbmltYWwgIm1ha2Ug
-aXQgU1RGVSIgd291bGQgYmUgdG8gc3RyaXAgdGhvc2UgTlVMcyBmcm9tDQo+IHRoZSBpbml0aWFs
-aXplcnMgKGkuZS4ganVzdCBnbyBmb3Igc3RhdGljIGNoYXIgbWF0Y2hfcm9vdFsyXVszXSA9IHsi
-LiIsICIuLiJ9OyAtDQo+IGFuIGFycmF5IGluaXRpYWxpemVyIGlzIHplcm8tcGFkZGVkIGlmIGl0
-J3Mgc2hvcnRlciB0aGFuIHRoZSBhcnJheSksIGJ1dCB0aGF0DQo+IHdhc24ndCB0aGUgb25seSwg
-ZXIsIG9kZGl0eSBpbiB0aGF0IGNvZGUuDQoNCkluZGVlZCAtIGxvb2tzIGxpa2UgaXQgaXMgY2hl
-Y2tpbmcgdGhhdCB0aGUgZmlyc3QgdHdvIGRpcmVjdG9yeSBlbnRyaWVzDQphcmUgIi4iIGFuZCAi
-Li4iIGluIGFib3V0IHRoZSBtb3N0IGNvbXBsZXggd2F5IHBvc3NpYmxlLg0KDQpJIGhhdmUgdmFn
-dWUgcmVjb2xsZWN0aW9ucyBvbiBzb21lIGNvZGUgdGhhdCBpZ25vcmVkIHRoZSBmaXJzdCB0d28g
-ZW50cmllcw0KYmVjYXVzZSB0aGV5ICdtdXN0IGJlICIuIiBhbmQgIi4uIicgLSBhbmQgdGhlbiBm
-YWlsZWQgYmVjYXVzZSBzb21lIGZpbGVzeXN0ZW0NCihhbmQgSSBjYW4ndCBldmVuIHJlbWVtYmVy
-IHRoZSBPL1MpIGRpZG4ndCBtZWV0IGl0cyBleHBlY3RhdGlvbnMhDQoNCkEgc2ltcGxlOg0KCWlm
-IChzdHJjbXAoZGlyX2VudHJ5WzBdLmRlX2ZuYW1lLCAiLiIpIHx8IHN0cmNtcChkaXJfZW50cnlb
-MV0uZGVfZm5hbWUsICIuLiIpKQ0KCQllcnJvciA9IDE7DQp3b3VsZCBzdWZmaWNlLg0KVGhlIGNv
-bXBpbGVyIG91Z2h0IHRvIGNvbXBsZXRlbHkgaW5saW5lIHRoZW0uDQpPbiB4ODYgdG86DQoJZXJy
-b3IgfD0gKih1MTYgKilkaXJfZW50cnlbMF0uZGVfZm5hbWUgXiAnLic7DQoJZXJyb3IgfD0gKCoo
-dTMyICopZGlyX2VudHJ5WzFdLmRlX2ZuYW1lICYgMHhmZmZmZmYpIF4gKCcuJyAqIDB4MTAxKTsN
-CmJ1dCBJIGJldCBpdCBkb2Vzbid0IQ0KKGFuZCBpdCBpc24ndCBxdWl0ZSB0aGUgc2FtZSkNCg0K
-CURhdmlkLg0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwg
-TW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzog
-MTM5NzM4NiAoV2FsZXMpDQo=
+On October 6, 2024 12:17:40 PM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> wrote=
+:
+>On Sun, Oct 6, 2024 at 8:01=E2=80=AFPM David Laight <David=2ELaight@acula=
+b=2Ecom> wrote:
+>>
+>> =2E=2E=2E
+>> > Due to the non-negligible impact of PIE, perhaps some kind of
+>> > CONFIG_PIE config definition should be introduced, so the assembly
+>> > code would be able to choose optimal asm sequence when PIE and non-PI=
+E
+>> > is requested?
+>>
+>> I wouldn't have thought that performance mattered in the asm code
+>> that runs during startup?
+>
+>No, not the code that runs only once, where performance impact can be tol=
+erated=2E
+>
+>This one:
+>
+>https://lore=2Ekernel=2Eorg/lkml/20240925150059=2E3955569-44-ardb+git@goo=
+gle=2Ecom/
+>
+>Uros=2E
+>
 
+Yeah, running the kernel proper as PIE seems like a lose all around=2E The=
+ decompressor, ELF stub, etc, are of course a different matter entirely (an=
+d at least the latter can't rely on the small or kernel memory models anywa=
+y=2E)
 
