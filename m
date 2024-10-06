@@ -1,169 +1,157 @@
-Return-Path: <linux-kernel+bounces-352540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2AA992080
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:58:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE754992082
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 21:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4961C281DD4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 18:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7783C1F21430
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5BA18A6D8;
-	Sun,  6 Oct 2024 18:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E323318A936;
+	Sun,  6 Oct 2024 19:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lD/XbXKf"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzK+NVy7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9EE189BBA
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 18:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A8718A6D3;
+	Sun,  6 Oct 2024 19:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728241129; cv=none; b=dPcs+qtw+8E7l7IVC33AVSMYkvRwAg5zrYcri333RRPqvxpCoL7mHE8f7c+pO0XTxdNbpfA+GRiRUmVch6mh/2xJ2wRJGaDRo+asOc0SdnWKxTYorg27gzteePQ49ufDFoRdwMHESAczOTYVnJnITkv9TT7MgcCrhfW7rtfaRfo=
+	t=1728241219; cv=none; b=h7MiuVYBsEVbOh6L1OyDTg0GYHEU/IBdosaSfEirjASfGqxt6OTtcAcv4IclYHEup2X+Hs6tU6t1cl8pLAluupg3Z0wCVg7gOa9wHlLSgK+BzatjGlMldIIZdC/WqJkyL69dPm9+/rjO4D4SLnZFSIQmnfe41K2g3G7oN8huRgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728241129; c=relaxed/simple;
-	bh=0TqNAPG8laE1uyVYQXjNTF6m82JcAQP4lFRuHi+PEvo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SNHHRRKQnvusvTLukwn80Jc2oyMplBwm8ae8PCFU7ZtkefOPKk4CmsRtVyRZ3oO3L2encz9c8U7k1/40j/lOZutHURnoHtIn6/hJwbRhAzKN1qMNAnlduCjORuw21njy1AKUnWPicAxPKrweqgvWbqv5Lba3A9Gf9TJ/CYwuxys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lD/XbXKf; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c8af23a4fcso4715790a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 11:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728241126; x=1728845926; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vprB2WDxqemi4ZH8WwqIh0DGGmx9lr1o5ssCURSxxWM=;
-        b=lD/XbXKfGtk4GWw1U3U8+/PTqz0zZxJ3MunL7Wajf2aRVa7LgtiVhqJ0fwQtUrjQ3D
-         LiNIArdzFoXInS/qvuZtod59iXPU67GOEvM2mNbBj0u5YLaeUpQQOteSECTMyocRb1Dm
-         1xlh04vqIh4J30iKpK1xsJjlj3c2EymvckQduPs0V1e8mcwn8MqgcAkB3D1G9EqXZWAy
-         jy7EWt+nqXGakdP0Nx0epFY70bHAfy+IDz160N/i3MxwHW0p8YfVwI54PUrKWsCqInvU
-         5znA/+94rgsCTd2ggJEdCXCPCYcJw0gSJ9OqKDh4kXCPYMXxWHvTkVtBNsJJa2ERXpWz
-         hjHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728241126; x=1728845926;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vprB2WDxqemi4ZH8WwqIh0DGGmx9lr1o5ssCURSxxWM=;
-        b=pepNknrYQpQiNjrRcEM0y5KilbiW8w/QKb2dno7dSGWx7+mHFdeksYzTBe2rVzc9Yt
-         /RCA2Ui9wcZBGIzgvltnIwFbXp2Sp4OHhARc1j2O39/zTudb0FE50s/Z67mDpT3zYxwv
-         w+O2Z/cokDLJANHW/cLDA9L+EKxn5xDQ3ubkFKeExguDYh5qlyTzOc24SRr9P7frUrG0
-         68G7PT0celvFlMA5bNX5yRh+cQtPm0/dVuHwEOEHAekctsfDt6ZcqZF31kMzBQuC/18U
-         l0aY9H6mZfIjtng7pw5wmSM8KgGTXhykMZivurQy8qU83l+Kl/uoGbPLdui2FOjPfKrs
-         6COg==
-X-Forwarded-Encrypted: i=1; AJvYcCX97dnng4EMOfyGyi10ytXGlQ+rQ6LM1s9s+fC0IqByikbZvBCKTyEErMuF1XZz7J0EUh/f0vrpxolpbWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV5M+qNM9Fspvx+9DzHJJDfeB5ZI80NqJ913GDQ4luDWual9Ao
-	5faqzLvaaN3Snei9qb/9sNyt0uFejzBJKTpgUBfJeDl8KRLo6RGK/M/zBZ4vt2RrquNBRDTlT0n
-	1Z0z7f72USaXkEx5ArsU9DoYrItm1/cS0cHJu
-X-Google-Smtp-Source: AGHT+IG0S94gzwLfasbSNf2NETOTvaK2CP62HiACmuLwwiYeeZRTyrtgvdvsV3AUJRQRmf0lpJqb3Cb/56a7O6ucS74=
-X-Received: by 2002:a17:906:c10f:b0:a99:4162:4e42 with SMTP id
- a640c23a62f3a-a994162606bmr489016466b.37.1728241125532; Sun, 06 Oct 2024
- 11:58:45 -0700 (PDT)
+	s=arc-20240116; t=1728241219; c=relaxed/simple;
+	bh=iwFEjW6d6zkYqFBkePAlQ+Q5V3zdYkn/YSKeM+fBUbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=klzQtDgaQHyiR6iNracDyS7ZxqQZegorcMVb8nMnPzwwhJQEr22orjUCyyodrHVKl/toXk7pyh9Pwej+a9UuaBCROpZIMHeE/Z0CcEcxfoaeyXkaaV92wYf4y3F7le2Vg+QaY+sLWlTFXYpGcdhw9sxQ6urFPxE1X8c5hJgE13c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzK+NVy7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1838C4CEC5;
+	Sun,  6 Oct 2024 19:00:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728241218;
+	bh=iwFEjW6d6zkYqFBkePAlQ+Q5V3zdYkn/YSKeM+fBUbk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jzK+NVy77xMQ8mnIGl5r8YW8+gaIHZFA6eeSX7S+J2wGME1FquMnX2XrvprpuspJ/
+	 wWftMSgXu4tb51+8QCqI5+J/FfvpQoK8P/aT32PjEJpKaYVBwq5N6exYbVI960FKf4
+	 MuZi4T66F8wsD1e9FJY64FroxojUCkPGziLTseK1oxwQNuM4demxK2/L8H6rq3fmcf
+	 zgfgLJLn+s28cs5KgVvtP/nmmMXoGLKIg33u65qtj2P3gyKBgFa6lcZqTrYYAi2V0H
+	 9THLt3UC4ktBSh+8huDttITbxGHk2fUbmhf65cP2h5PZtvq3Y6fALp1j9XEp2Z9K98
+	 /zbaqJVyWTRug==
+Date: Sun, 6 Oct 2024 12:00:16 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm <linux-mm@kvack.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v4 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
+Message-ID: <ZwLeQO6KxAh7YNvt@google.com>
+References: <20241002180956.1781008-1-namhyung@kernel.org>
+ <20241002180956.1781008-3-namhyung@kernel.org>
+ <CAPhsuW7Bh-ZXfM2aYB=Yj8WaJHFc==AKmv6LDRgBq-TfdQ3s8A@mail.gmail.com>
+ <ZwBdS86yBtOWy3iD@google.com>
+ <CAPhsuW6AhfG7Xv2izDYnMM+z03X29peZfmWNy0rf98aEaAUfVg@mail.gmail.com>
+ <ZwBk8i23odCe7qVK@google.com>
+ <CAPhsuW4AjZMQxCbqYmEgbnkP0gWenKo4wVi8tW1zYcsaF5h7iQ@mail.gmail.com>
+ <CAADnVQK0VQXvxqxm6WudyeLao1L+jMTvmUauciBc8_vcLcR=vQ@mail.gmail.com>
+ <CAPhsuW6gB5PaNDQ5x20oRXUtgf7KPNTQpN_WLvtYm=-7CLhn-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230830112600.4483-1-hdanton@sina.com> <f607a7d5-8075-f321-e3c0-963993433b14@I-love.SAKURA.ne.jp>
- <20230831114108.4744-1-hdanton@sina.com> <CANn89iLCCGsP7SFn9HKpvnKu96Td4KD08xf7aGtiYgZnkjaL=w@mail.gmail.com>
- <20230903005334.5356-1-hdanton@sina.com> <CANn89iJj_VR0L7g3-0=aZpKbXfVo7=BG0tsb8rhiTBc4zi_EtQ@mail.gmail.com>
- <20230905111059.5618-1-hdanton@sina.com> <CANn89iKvoLUy=TMxW124tiixhOBL+SsV2jcmYhH8MFh3O75mow@mail.gmail.com>
- <CA+G9fYvskJfx3=h4oCTAyxDWO1-aG7S0hAxSk4Jm+xSx=P1dhA@mail.gmail.com> <CADvbK_fxXdNiyJ3j0H+KHgMF11iOGhnjtYFy6R18NyBX9wB4Kw@mail.gmail.com>
-In-Reply-To: <CADvbK_fxXdNiyJ3j0H+KHgMF11iOGhnjtYFy6R18NyBX9wB4Kw@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Sun, 6 Oct 2024 20:58:34 +0200
-Message-ID: <CANn89iKrLE69O+qOuhGG0ts2zmxJzw5jAAFLfzspi8uOQe8pQw@mail.gmail.com>
-Subject: Re: selftests: net: pmtu.sh: Unable to handle kernel paging request
- at virtual address
-To: Xin Long <lucien.xin@gmail.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, Hillf Danton <hdanton@sina.com>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Netdev <netdev@vger.kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPhsuW6gB5PaNDQ5x20oRXUtgf7KPNTQpN_WLvtYm=-7CLhn-g@mail.gmail.com>
 
-On Sun, Oct 6, 2024 at 8:08=E2=80=AFPM Xin Long <lucien.xin@gmail.com> wrot=
-e:
->
-> Sorry for bringing up this issue, it recently occurred on my aarch64 kern=
-el
-> with blackhole_netdev backported. I tracked it down, and when deleting
-> the netns, the path is:
->
-> In cleanup_net():
->
->   default_device_exit_batch()
->     unregister_netdevice_many()
->       addrconf_ifdown() -> call_rcu(rcu, fib6_info_destroy_rcu) <--- [1]
->     netdev_run_todo()
->       rcu_barrier() <- [2]
->   ip6_route_net_exit() -> dst_entries_destroy(net->ip6_dst_ops) <--- [3]
->
-> In fib6_info_destroy_rcu():
->
->   dst_dev_put()
->   dst_release() -> call_rcu(rcu, dst_destroy_rcu) <--- [5]
->
-> In dst_destroy_rcu():
->   dst_destroy() -> dst_entries_add(dst->ops, -1); <--- [6]
->
-> fib6_info_destroy_rcu() is scheduled at [1], rcu_barrier() will wait
-> for fib6_info_destroy_rcu() to be done at [2]. However, another callback
-> dst_destroy_rcu() is scheduled() in fib6_info_destroy_rcu() at [5], and
-> there's no place calling rcu_barrier() to wait for dst_destroy_rcu() to
-> be done. It means dst_entries_add() at [6] might be run later than
-> dst_entries_destroy() at [3], then this UAF will trigger the panic.
->
-> On Tue, Oct 17, 2023 at 1:02=E2=80=AFPM Naresh Kamboju
-> <naresh.kamboju@linaro.org> wrote:
+Hello,
+
+On Fri, Oct 04, 2024 at 04:56:57PM -0700, Song Liu wrote:
+> On Fri, Oct 4, 2024 at 4:44 PM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> [...]
+> > > diff --git i/kernel/bpf/helpers.c w/kernel/bpf/helpers.c
+> > > index 3709fb142881..7311a26ecb01 100644
+> > > --- i/kernel/bpf/helpers.c
+> > > +++ w/kernel/bpf/helpers.c
+> > > @@ -3090,7 +3090,7 @@ BTF_ID_FLAGS(func, bpf_iter_bits_new, KF_ITER_NEW)
+> > >  BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)
+> > >  BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
+> > >  BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
+> > > -BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RET_NULL)
+> > > +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RET_NULL | KF_TRUSTED_ARGS
+> > > | KF_RCU_PROTECTED)
 > >
-> > On Tue, 5 Sept 2023 at 17:55, Eric Dumazet <edumazet@google.com> wrote:
-> > >
-> > > On Tue, Sep 5, 2023 at 1:52=E2=80=AFPM Hillf Danton <hdanton@sina.com=
-> wrote:
-> > > >
-> > > > On Mon, 4 Sep 2023 13:29:57 +0200 Eric Dumazet <edumazet@google.com=
->
-> > > > > On Sun, Sep 3, 2023 at 5:57=3DE2=3D80=3DAFAM Hillf Danton <hdanto=
-n@sina.com>
-> > > > > > On Thu, 31 Aug 2023 15:12:30 +0200 Eric Dumazet <edumazet@googl=
-e.com>
-> > > > > > > --- a/net/core/dst.c
-> > > > > > > +++ b/net/core/dst.c
-> > > > > > > @@ -163,8 +163,13 @@ EXPORT_SYMBOL(dst_dev_put);
-> > > > > > >
-> > > > > > >  void dst_release(struct dst_entry *dst)
-> > > > > > >  {
-> > > > > > > -       if (dst && rcuref_put(&dst->__rcuref))
-> > > > > > > +       if (dst && rcuref_put(&dst->__rcuref)) {
-> > > > > > > +               if (!(dst->flags & DST_NOCOUNT)) {
-> > > > > > > +                       dst->flags |=3D DST_NOCOUNT;
-> > > > > > > +                       dst_entries_add(dst->ops, -1);
-> > > > > >
-> So I think it makes sense to NOT call dst_entries_add() in the path
-> dst_destroy_rcu() -> dst_destroy(), as it does on the patch above,
-> but I don't see it get posted.
->
-> Hi, Eric, would you like to move forward with your patch above ?
->
-> Or we can also move the dst_entries_add(dst->ops, -1) from dst_destroy()
-> to dst_release():
->
-> Note, dst_destroy() is not used outside net/core/dst.c, we may delete
-> EXPORT_SYMBOL(dst_destroy) in the future.
->
->
+> > I don't think KF_TRUSTED_ARGS approach would fit here.
+> > Namhyung's use case is tracing. The 'addr' will be some potentially
+> > arbitrary address from somewhere. The chance to see a trusted pointer
+> > is probably very low in such a tracing use case.
+> 
+> I thought the primary use case was to trace lock contention, for
+> example, queued_spin_lock_slowpath(). Of course, a more
+> general solution is better.
 
-Current kernel has known issue with dst_cache, triggering quite often
-with  selftests: net: pmtu.sh
+Right, my intended use case is the lock contention profiling so probably
+it's ok to limit it for trusted pointers if it helps.  But as Song said,
+a general solution should be better. :)
 
-(Although for some reason it does no longer trigger 'often' any more
-in my vng tests)
+> 
+> >
+> > The verifier change can mainly be the following:
+> >
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index 7d9b38ffd220..e09eb108e956 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
+> > @@ -12834,6 +12834,9 @@ static int check_kfunc_call(struct
+> > bpf_verifier_env *env, struct bpf_insn *insn,
+> >                         regs[BPF_REG_0].type = PTR_TO_BTF_ID;
+> >                         regs[BPF_REG_0].btf_id = ptr_type_id;
+> >
+> > +                       if (meta.func_id == special_kfunc_list[KF_get_kmem_cache])
+> > +                               regs[BPF_REG_0].type |= PTR_UNTRUSTED;
+> > +
+> >                         if (is_iter_next_kfunc(&meta)) {
+> >                                 struct bpf_reg_state *cur_iter;
+> 
+> This is easier than I thought.
+
+Indeed!  Thanks for providing the code.
+
+> 
+> > The returned 'struct kmem_cache *' won't be refcnt-ed (acquired).
+> > It will be readonly via ptr_to_btf_id logic.
+> > s->flags;
+> > s->size;
+> > s->offset;
+> > access will be allowed but the verifier will sanitize them
+> > with an inlined version of probe_read_kernel.
+> > Even KF_RET_NULL can be dropped.
+
+Ok, I'll check this out.  By having PTR_UNTRUSTED, are the callers
+still required to check NULL or is it handled by probe_read_kernel()?
+
+Thanks,
+Namhyung
 
