@@ -1,262 +1,142 @@
-Return-Path: <linux-kernel+bounces-352247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E58991C3C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 05:28:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83EBC991C3F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 05:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2045E1F21F9A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 03:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310412830ED
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 03:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B1015623A;
-	Sun,  6 Oct 2024 03:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D2E166F1B;
+	Sun,  6 Oct 2024 03:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U9Eg/56s"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvlS4A0N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA271DFE4
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 03:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6090AD55;
+	Sun,  6 Oct 2024 03:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728185300; cv=none; b=OWoOtV9T19fxTUPjveEOZHi05iv7k8Yig1smQaQpoz96UVP4Ezua0mPpG0IAv7rz+ygOWjtlSMnkdykcZGybnhMdDMsDbJbWwjT/qTXMdaKMBVky8FlInVkA4PdNRB/t4cTII5OZilaxu4JaX/s3nrakm4G1JdbtalaS3ACQRMc=
+	t=1728185345; cv=none; b=NDUSCIKT2Ss28kN2O14kKf+/84q6ABDHKUNMLZZ8Ngp9RZEdXRkNtkrMVmc+nhsxe6Kidp6pZ7Y84PVtkL+8gyrrNplEL0pZk7kqjoKVmdKipiNPwcVl+kiKulLCGeL8xCOsbSLjj5Bq3wgzEUUSa2sm3JhYqqdKqy0r5XXLBYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728185300; c=relaxed/simple;
-	bh=5dnxUnkPTfCQpQKGkyVKYy+e8f8pyjQtDOVPnj5Ojws=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=Hbv1LOcIwYIaZq8qchDXK8Orm2HFYPdRIi6d2SwUDbiRQJ0Z+5RFg8/Jk7ONTjBShHZrDqzkwQUH9HDsAtTPaAS5FtTF/c0PVz2ANpEMLfCVthvxcoM+34LQC79rsV7yp91bBSrUHOSepKcKYHFh9ju0LY1wYSXbbBKvbTzH59A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U9Eg/56s; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1728185345; c=relaxed/simple;
+	bh=sn+rhuJFS4QcAX7nHTjMNJqUeOzV5xBHQDk6dVxGcFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ssZpC7buYp7TptimgZ/zTlpFCd7iBoGJSXtMHkZeG/puIztmBAbdn8+lnVoZ+7+sFlNocCOURsHGVKOKyywwh66K/aBOu3sdOF8hqAcauTc7FRpNv17MekyDH1l04BMi9j0jObSG+w/PKCjAhHReGPaf3gKcx3QFaci7XvpwRr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QvlS4A0N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DD55C4CEC7;
+	Sun,  6 Oct 2024 03:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728185345;
+	bh=sn+rhuJFS4QcAX7nHTjMNJqUeOzV5xBHQDk6dVxGcFI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QvlS4A0NP0//x72QRsOWfdhC16oDn8p0xxy1TS2pbVn7BySM0+RvCzHr79SFWIYZ4
+	 4Otz53pJGhB8YFCpiHL+3StUBGkLIXo2NwLlI7JLe+kR+ojPFoNJl7kWBIejQgwPrv
+	 itUAv7lUGBBibBkMqdDjcZDndEg+KZlNax6RoGv1fyW++2yCexdy5uw86xCR6KlFZC
+	 BKePBEqcp/LoKFF9kaobmq6KOmdzvKtIA3MKiwsJPkB74GiMAW85gBOzOxSA7Aq0yJ
+	 hmNZ/0SJ3SbMR8+bacqjmeV2rUQGVclJVhfL518JZuBpHoSXbY0zn1YYt+zhasapB4
+	 PVIKAoH4137sQ==
+Date: Sat, 5 Oct 2024 22:29:02 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Rakesh Kota <quic_kotarake@quicinc.com>
+Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_kamalw@quicinc.com, quic_jprakash@quicinc.com
+Subject: Re: [PATCH] arm64: dts: qcom: qcm6490: Allow UFS regulators
+ load/mode setting
+Message-ID: <qwkuuh4yceordfjsvfn4gs6kpj6fkqx77yrsz3fbw5efffjjsx@dnsiz3eqj5cr>
+References: <20241004080110.4150476-1-quic_kotarake@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728185291;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kS0fZsl5Whbpe2zbdUH52+8dlKs/U98L5gW/tvZT5H8=;
-	b=U9Eg/56s3rsmKFZDP4NChsDp9O+MxZQEYIMmE8lBMIpA/ye9PDYFnzu/yhWHeJlBxIHs8F
-	YsRVAWPT/K0VePxUpPybfT7wAYJYtj1E5NnJPuVleXqaE0Qmf6twRjCMReR4t7gatEjY98
-	YB3DY6N/yOlejwVwJmUfsYPltIEYh7g=
-Date: Sun, 06 Oct 2024 03:28:08 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: jeff.xie@linux.dev
-Message-ID: <f92748848274c135f2bdb7ffce0d747dc9d77f9a@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH v3] ftrace: Get the true parent ip for function tracer
-To: "Steven Rostedt" <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- xiehuan09@gmail.com, dolinux.peng@gmail.com, chensong_2000@189.cn
-In-Reply-To: <20241005101320.766c1100@rorschach.local.home>
-References: <20240910133620.19711-1-jeff.xie@linux.dev>
- <20241005101320.766c1100@rorschach.local.home>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004080110.4150476-1-quic_kotarake@quicinc.com>
 
-October 5, 2024 at 10:13 PM, "Steven Rostedt" <rostedt@goodmis.org> wrote=
-:
+On Fri, Oct 04, 2024 at 01:31:10PM GMT, Rakesh Kota wrote:
+> The UFS driver expects to be able to set load (and by extension, mode)
+> on its supply regulators. Add the necessary properties to make that
+> possible.
+> 
+> While at it, UFS rails have different voltage requirement for UFS2.x
+> v/s UFS3.x. Bootloader sets the proper voltage based on UFS type.
+> There can be case where the voltage set by bootloader is overridden
+> by HLOS client.
+> 
+
+It's generally not accepted to do "while at it"-changes, but it happens
+that I accept it. This one however, is controversial. We tend to want to
+properly describe the voltage constraints, so this departure from that
+stance definitely isn't an acceptable "while at it"-change...
+
+> To prevent above issue, add change to remove voltage voting support
+> for dedicated UFS rails.
+
+You state that the bootloader will configure the appropriate voltage, I
+don't see a issue description.
 
 
+Either way, please split this in two.
 
->=20
->=20On Tue, 10 Sep 2024 21:36:20 +0800
->=20
->=20Jeff Xie <jeff.xie@linux.dev> wrote:
->=20
->=20>=20
->=20> When using both function tracer and function graph simultaneously,
-> >=20
->=20>  it is found that function tracer sometimes captures a fake parent =
-ip
-> >=20
->=20>  (return_to_handler) instead of the true parent ip.
-> >=20
->=20>=20=20
->=20>=20
->=20>  This issue is easy to reproduce. Below are my reproduction steps:
-> >=20
->=20>=20=20
->=20>=20
->=20>  jeff-labs:~/bin # ./trace-net.sh
-> >=20
->=20
-> I applied this and it failed one of my testes:
->=20
->=20On x86 32 bit:
->=20
->=20[ 668.043429] BUG: kernel NULL pointer dereference, address: 0000003c
->=20
->=20[ 668.045840] #PF: supervisor read access in kernel mode
->=20
->=20[ 668.047869] #PF: error_code(0x0000) - not-present page
->=20
->=20[ 668.049867] *pdpt =3D 000000000afad001 *pde =3D 0000000000000000=20
->=20
-> [ 668.052481] Oops: Oops: 0000 [#1] PREEMPT SMP PTI
->=20
->=20[ 668.054408] CPU: 3 UID: 0 PID: 4347 Comm: cat Not tainted 6.12.0-rc=
-1-test-00008-gc274c40c37e8-dirty #444
->=20
->=20[ 668.057679] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIO=
-S 1.16.3-debian-1.16.3-2 04/01/2014
->=20
->=20[ 668.060944] EIP: function_trace_call+0x14b/0x1a0
->=20
->=20[ 668.062824] Code: ff b8 10 00 00 00 e9 56 ff ff ff 8d 74 26 00 e8 1=
-b c7 c0 00 eb a1 2e 8d b4 26 00 00 00 00 90 8b 45 e0 8d 55 ec b9 98 9e 10=
- c7 <ff> 70 3c 89 f8 e8 eb 0a 01 00 89 45 e8 5a e9 47 ff ff ff 8b 87 ac
->=20
->=20[ 668.068726] EAX: 00000000 EBX: c1b02000 ECX: c7109e98 EDX: cab21e50
->=20
->=20[ 668.071076] ESI: fffffff7 EDI: ca828000 EBP: cab21e64 ESP: cab21e44
->=20
->=20[ 668.073425] DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068 EFLAGS: 00=
-010246
->=20
->=20[ 668.075938] CR0: 80050033 CR2: 0000003c CR3: 091a0000 CR4: 000006f0
->=20
->=20[ 668.078331] Call Trace:
->=20
->=20[ 668.079687] ? ftrace_graph_caller+0x1c/0x1c
->=20
->=20[ 668.081541] ? __die_body.cold+0x14/0x1b
->=20
->=20[ 668.083440] ? ftrace_graph_caller+0x1c/0x1c
->=20
->=20[ 668.085347] ? __die+0x21/0x28
->=20
->=20[ 668.087062] ? ftrace_graph_caller+0x1c/0x1c
->=20
->=20[ 668.088944] ? page_fault_oops+0x68/0x120
->=20
->=20[ 668.091245] ? ftrace_graph_caller+0x1c/0x1c
->=20
->=20[ 668.093208] ? kernelmode_fixup_or_oops.constprop.0+0x58/0x70
->=20
->=20[ 668.095669] ? ftrace_graph_caller+0x1c/0x1c
->=20
->=20[ 668.097574] ? __bad_area_nosemaphore.constprop.0+0x107/0x130
->=20
->=20[ 668.101278] ? ftrace_graph_caller+0x18/0x1c
->=20
->=20[ 668.103358] ? ftrace_graph_caller+0x1c/0x1c
->=20
->=20[ 668.105272] ? bad_area_nosemaphore+0xf/0x20
->=20
->=20[ 668.107276] ? ftrace_graph_caller+0x1c/0x1c
->=20
->=20[ 668.109279] ? do_user_addr_fault+0x20b/0x3d0
->=20
->=20[ 668.111518] ? exc_page_fault+0x5b/0x240
->=20
->=20[ 668.113474] ? pvclock_clocksource_read_nowd+0x110/0x110
->=20
->=20[ 668.115738] ? handle_exception+0x133/0x133
->=20
->=20[ 668.117689] ? ftrace_graph_caller+0x1c/0x1c
->=20
->=20[ 668.119827] ? ftrace_graph_set_hash+0xbb/0x1c0
->=20
->=20[ 668.121955] ? pvclock_clocksource_read_nowd+0x110/0x110
->=20
->=20[ 668.124258] ? function_trace_call+0x14b/0x1a0
->=20
->=20[ 668.126456] ? pvclock_clocksource_read_nowd+0x110/0x110
->=20
->=20[ 668.128773] ? function_trace_call+0x14b/0x1a0
->=20
->=20[ 668.130909] ? sched_tick+0x370/0x370
->=20
->=20[ 668.134063] ? ftrace_graph_caller+0x1c/0x1c
->=20
->=20[ 668.136213] ? ftrace_stacktrace_count+0xa0/0xa0
->=20
->=20The crash happened here:
->=20
->=20static __always_inline unsigned long
->=20
->=20function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_re=
-gs *fregs)
->=20
->=20{
->=20
->=20 unsigned long true_parent_ip;
->=20
->=20 int idx =3D 0;
->=20
->=20 true_parent_ip =3D parent_ip;
->=20
->=20 if (unlikely(parent_ip =3D=3D (unsigned long)&return_to_handler))
->=20
->=20 true_parent_ip =3D ftrace_graph_ret_addr(current, &idx, parent_ip, <=
-<<----- CRASH
->=20
->=20 (unsigned long *)fregs->regs.sp);
->=20
->=20 return true_parent_ip;
->=20
->=20}
->=20
->=20It appears that on some archs (x86 32 bit) the function tracer can be
->=20
->=20called when "current" is not set up yet, and can crash when accessing=
- it.
->=20
->=20So perhaps we need to add:
->=20
->=20#ifdef CONFIG_ARCH_WANTS_NO_INSTR
->=20
->=20static __always_inline unsigned long
->=20
->=20function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_re=
-gs *fregs)
->=20
->=20{
->=20
->=20 unsigned long true_parent_ip;
->=20
->=20 int idx =3D 0;
->=20
->=20 true_parent_ip =3D parent_ip;
->=20
->=20 if (unlikely(parent_ip =3D=3D (unsigned long)&return_to_handler))
->=20
->=20 true_parent_ip =3D ftrace_graph_ret_addr(current, &idx, parent_ip, <=
-<<----- CRASH
->=20
->=20 (unsigned long *)fregs->regs.sp);
->=20
->=20 return true_parent_ip;
->=20
->=20}
->=20
->=20#else
->=20
->=20# define function_get_true_parent_ip(parent_ip, fregs) parent_ip
->=20
->=20#endif
->=20
->=20That is, if the arch has noinstr implemented, it should always be saf=
-e
->=20
->=20to access current, but if not, then there's no guarantee.
->=20
->=20?
+Regards,
+Bjorn
 
-Makes sense. Thanks for the test and detailed explanation! I=E2=80=99ll s=
-end a new version.
-
->=20
->=20-- Steve
->
+> 
+> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> index 84c45419cb8d..8a4df9c2a946 100644
+> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> @@ -258,13 +258,15 @@ vreg_l6b_1p2: ldo6 {
+>  			regulator-name = "vreg_l6b_1p2";
+>  			regulator-min-microvolt = <1140000>;
+>  			regulator-max-microvolt = <1260000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+>  		vreg_l7b_2p952: ldo7 {
+>  			regulator-name = "vreg_l7b_2p952";
+> -			regulator-min-microvolt = <2400000>;
+> -			regulator-max-microvolt = <3544000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+> @@ -277,8 +279,8 @@ vreg_l8b_0p904: ldo8 {
+>  
+>  		vreg_l9b_1p2: ldo9 {
+>  			regulator-name = "vreg_l9b_1p2";
+> -			regulator-min-microvolt = <1200000>;
+> -			regulator-max-microvolt = <1304000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+> @@ -467,6 +469,8 @@ vreg_l10c_0p88: ldo10 {
+>  			regulator-name = "vreg_l10c_0p88";
+>  			regulator-min-microvolt = <720000>;
+>  			regulator-max-microvolt = <1050000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+> -- 
+> 2.34.1
+> 
 
